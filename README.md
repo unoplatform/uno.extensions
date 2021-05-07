@@ -8,7 +8,7 @@ We use `dotnet` project templates to easily create new projects. It simplifies t
 
 ### Installing and uninstalling the template
 
-1. In order to install the template, clone this repository on your machine and open a command prompt at the root of the project and run the following command
+1. In order to install the template, clone this repository on your machine and open a command prompt at the root of the project and run the following command 
 
    `dotnet new -i ./`
 
@@ -41,7 +41,6 @@ This repository provides documentation on different topics under the [doc](doc/)
 - [Architecture](doc/Architecture.md)
 - [BuildPipeline](doc/BuildPipeline.md)
 - [Configuration](doc/Configuration.md)
-- [Code Style](doc/CodeStyle.md)
 - [Data Loading](doc/DataLoading.md)
 - [Dependency Injection](doc/DependencyInjection.md)
 - [Environments](doc/Environments.md)
