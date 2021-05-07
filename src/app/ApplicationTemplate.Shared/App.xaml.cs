@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,19 +8,6 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
-//-:cnd:noEmit
-#if WINDOWS_UWP
-//+:cnd:noEmit
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-//-:cnd:noEmit
-#else
-//+:cnd:noEmit
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -28,9 +15,6 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
-//-:cnd:noEmit
-#endif
-//+:cnd:noEmit
 
 namespace ApplicationTemplate
 {
@@ -49,60 +33,33 @@ namespace ApplicationTemplate
 
             this.InitializeComponent();
 
-//-:cnd:noEmit
 #if HAS_UNO || NETFX_CORE
-//+:cnd:noEmit
-			this.Suspending += OnSuspending;
-			//-:cnd:noEmit
+            this.Suspending += OnSuspending;
 #endif
-			//+:cnd:noEmit
-		}
+        }
 
-		/// <summary>
-		/// Invoked when the application is launched normally by the end user.  Other entry points
-		/// will be used such as when the application is launched to open a specific file.
-		/// </summary>
-		/// <param name="e">Details about the launch request and process.</param>
-//-:cnd:noEmit
-#if WINDOWS_UWP
-//+:cnd:noEmit
-		protected override void OnLaunched(LaunchActivatedEventArgs e)
-//-:cnd:noEmit
-#else
-//+:cnd:noEmit
-		protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs e)
-//-:cnd:noEmit
-#endif
-//+:cnd:noEmit
+        /// <summary>
+        /// Invoked when the application is launched normally by the end user.  Other entry points
+        /// will be used such as when the application is launched to open a specific file.
+        /// </summary>
+        /// <param name="e">Details about the launch request and process.</param>
+        protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs e)
         {
-//-:cnd:noEmit
 #if DEBUG
-//+:cnd:noEmit
-			if (System.Diagnostics.Debugger.IsAttached)
+            if (System.Diagnostics.Debugger.IsAttached)
             {
                 // this.DebugSettings.EnableFrameRateCounter = true;
             }
-//-:cnd:noEmit
 #endif
-//+:cnd:noEmit
 
-//-:cnd:noEmit
 #if NET5_0 && WINDOWS
-//+:cnd:noEmit
             var window = new Window();
             window.Activate();
-//-:cnd:noEmit
-#elif WINDOWS_UWP
-//+:cnd:noEmit
-			var window = Window.Current;
-//-:cnd:noEmit
 #else
-//+:cnd:noEmit
             var window = Microsoft.UI.Xaml.Window.Current;
-//-:cnd:noEmit
 #endif
-//+:cnd:noEmit
-			var rootFrame = window.Content as Frame;
+
+            var rootFrame = window.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
@@ -113,18 +70,7 @@ namespace ApplicationTemplate
 
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
-//-:cnd:noEmit
-#if WINDOWS_UWP
-//+:cnd:noEmit
-
-                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
-//-:cnd:noEmit
-#else
-//+:cnd:noEmit
                 if (e.UWPLaunchActivatedEventArgs.PreviousExecutionState == ApplicationExecutionState.Terminated)
-//-:cnd:noEmit
-#endif
-//+:cnd:noEmit
                 {
                     //TODO: Load state from previously suspended application
                 }
@@ -133,17 +79,9 @@ namespace ApplicationTemplate
                 window.Content = rootFrame;
             }
 
-//-:cnd:noEmit
-#if WINDOWS_UWP
-//+:cnd:noEmit
-            if (e.PrelaunchActivated == false)
-//-:cnd:noEmit
-#elif !(NET5_0 && WINDOWS)
-//+:cnd:noEmit
+#if !(NET5_0 && WINDOWS)
             if (e.UWPLaunchActivatedEventArgs.PrelaunchActivated == false)
-//-:cnd:noEmit
 #endif
-//+:cnd:noEmit
             {
                 if (rootFrame.Content == null)
                 {
@@ -188,25 +126,15 @@ namespace ApplicationTemplate
         {
             var factory = LoggerFactory.Create(builder =>
             {
-//-:cnd:noEmit
 #if __WASM__
-//+:cnd:noEmit
                 builder.AddProvider(new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider());
-//-:cnd:noEmit
 #elif __IOS__
-//+:cnd:noEmit
                 builder.AddProvider(new global::Uno.Extensions.Logging.OSLogLoggerProvider());
-//-:cnd:noEmit
-#elif NETFX_CORE && !WINDOWS_UWP
-//+:cnd:noEmit
+#elif NETFX_CORE
                 builder.AddDebug();
-//-:cnd:noEmit
 #else
-//+:cnd:noEmit
                 builder.AddConsole();
-//-:cnd:noEmit
 #endif
-//+:cnd:noEmit
 
                 // Exclude logs below this level
                 builder.SetMinimumLevel(LogLevel.Information);

@@ -1,9 +1,9 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
-    <ProjectGuid>{7B0DAC1F-8261-495B-82D9-6966D34EE672}</ProjectGuid>
+    <ProjectGuid>7b0dac1f-8261-495b-82d9-6966d34ee672</ProjectGuid>
     <ProjectTypeGuids>{FEACFBD2-3405-455C-9665-78FE426C6842};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Exe</OutputType>
     <RootNamespace>ApplicationTemplate</RootNamespace>
@@ -115,8 +115,8 @@
     <BundleResource Include="Resources\Fonts\uno-fluentui-assets.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Uno.WinUI" Version="3.7.3" />
-    <PackageReference Include="Uno.WinUI.RemoteControl" Version="3.7.3" Condition="'$(Configuration)'=='Debug'" />
+    <PackageReference Include="Uno.WinUI" Version="3.7.0-dev.340" />
+    <PackageReference Include="Uno.WinUI.RemoteControl" Version="3.7.0-dev.340" Condition="'$(Configuration)'=='Debug'" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
     <PackageReference Include="Uno.Extensions.Logging.OSLog " Version="1.0.1" />
   </ItemGroup>
@@ -149,7 +149,11 @@
       <Visible>false</Visible>
     </ImageAsset>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Media" Visible="false" />
+    <Folder Include="Media\AppIcons" Visible="false" />
+    <Folder Include="Media\LaunchImages" Visible="false" />
+  </ItemGroup>
   <Import Project="..\ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>
