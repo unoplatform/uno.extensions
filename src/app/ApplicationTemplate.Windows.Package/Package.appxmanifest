@@ -2,14 +2,17 @@
 
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
-  IgnorableNamespaces="uap rescap">
+  IgnorableNamespaces="uap mp rescap">
 
   <Identity
-    Name="3c3828b5-72ce-4dd0-910e-27630b956ddd"
-    Publisher="O=ApplicationTemplate"
+    Name="D4007305-8C6E-4BC8-AFB9-88FFECA023D3"
+    Publisher="$XmlEscapedPublisherDistinguishedName$"
     Version="1.0.0.0" />
+
+  <mp:PhoneIdentity PhoneProductId="D4007305-8C6E-4BC8-AFB9-88FFECA023D3" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
 	<DisplayName>ApplicationTemplate</DisplayName>
