@@ -8,6 +8,15 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+#if WINDOWS_UWP
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Navigation;
+#else
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -15,6 +24,7 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+#endif
 
 namespace ApplicationTemplate
 {
@@ -43,7 +53,11 @@ namespace ApplicationTemplate
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
+#if WINDOWS_UWP
+        protected override void OnLaunched(LaunchActivatedEventArgs e)
+#else
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs e)
+#endif
         {
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
@@ -55,6 +69,8 @@ namespace ApplicationTemplate
 #if NET5_0 && WINDOWS
             var window = new Window();
             window.Activate();
+#elif WINDOWS_UWP
+            var window = Window.Current;
 #else
             var window = Microsoft.UI.Xaml.Window.Current;
 #endif
@@ -70,7 +86,11 @@ namespace ApplicationTemplate
 
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
+#if WINDOWS_UWP
+                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
+#else
                 if (e.UWPLaunchActivatedEventArgs.PreviousExecutionState == ApplicationExecutionState.Terminated)
+#endif
                 {
                     //TODO: Load state from previously suspended application
                 }
@@ -79,7 +99,9 @@ namespace ApplicationTemplate
                 window.Content = rootFrame;
             }
 
-#if !(NET5_0 && WINDOWS)
+#if WINDOWS_UWP
+            if (e.PrelaunchActivated == false)
+#elif !(NET5_0 && WINDOWS)
             if (e.UWPLaunchActivatedEventArgs.PrelaunchActivated == false)
 #endif
             {
@@ -130,7 +152,7 @@ namespace ApplicationTemplate
                 builder.AddProvider(new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider());
 #elif __IOS__
                 builder.AddProvider(new global::Uno.Extensions.Logging.OSLogLoggerProvider());
-#elif NETFX_CORE
+#elif NETFX_CORE && !WINDOWS_UWP
                 builder.AddDebug();
 #else
                 builder.AddConsole();
