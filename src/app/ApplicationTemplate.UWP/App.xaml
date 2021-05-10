@@ -1,0 +1,40 @@
+﻿<Application x:Class="ApplicationTemplate.App"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 RequestedTheme="Light">
+
+	<Application.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="Views/Styles/Application/Converters.xaml" />
+				<ResourceDictionary Source="Views/Styles/Application/Colors.xaml" />
+				<ResourceDictionary Source="Views/Styles/Application/Fonts.xaml" />
+				<ResourceDictionary Source="Views/Styles/Application/LayoutConstants.xaml" />
+				<ResourceDictionary Source="Views/Styles/Controls/AsyncWebView.xaml" />
+				<ResourceDictionary Source="Views/Styles/Controls/Button.xaml" />
+				<ResourceDictionary Source="Views/Styles/Controls/CheckBox.xaml" />
+				<ResourceDictionary Source="Views/Styles/Controls/ComboBox.xaml" />
+				<ResourceDictionary Source="Views/Styles/Controls/CommandBar.xaml" />
+				<ResourceDictionary Source="Views/Styles/Controls/DataLoaderView.xaml" />
+				<ResourceDictionary Source="Views/Styles/Controls/DataValidationView.xaml" />
+				<ResourceDictionary Source="Views/Styles/Controls/ExtendedSplashScreen.xaml" />
+				<ResourceDictionary Source="Views/Styles/Controls/FlipViewItem.xaml" />
+				<ResourceDictionary Source="Views/Styles/Controls/GridViewHeaderItem.xaml" />
+				<ResourceDictionary Source="Views/Styles/Controls/GridViewItem.xaml" />
+				<ResourceDictionary Source="Views/Styles/Controls/HyperlinkButton.xaml" />
+				<ResourceDictionary Source="Views/Styles/Controls/ImagePresenter.xaml" />
+				<ResourceDictionary Source="Views/Styles/Controls/ListView.xaml" />
+				<ResourceDictionary Source="Views/Styles/Controls/ListViewHeaderItem.xaml" />
+				<ResourceDictionary Source="Views/Styles/Controls/ListViewItem.xaml" />
+				<ResourceDictionary Source="Views/Styles/Controls/PasswordBox.xaml" />
+				<ResourceDictionary Source="Views/Styles/Controls/PathControl.xaml" />
+				<ResourceDictionary Source="Views/Styles/Controls/RadioButton.xaml" />
+				<ResourceDictionary Source="Views/Styles/Controls/TextBlock.xaml" />
+				<ResourceDictionary Source="Views/Styles/Controls/TextBox.xaml" />
+				<ResourceDictionary Source="Views/Styles/Controls/ToggleButton.xaml" />
+				<ResourceDictionary Source="Views/Styles/Controls/ToggleSwitch.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</Application.Resources>
+
+</Application>

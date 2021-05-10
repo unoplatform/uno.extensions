@@ -1,0 +1,14 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+					xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+					xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+					xmlns:android="http://nventive.com/android"
+					xmlns:ios="http://nventive.com/ios"
+					mc:Ignorable="d android ios">
+
+	<win:FontFamily x:Key="SymbolThemeFontFamily">Segoe MDL2 Assets</win:FontFamily>
+	<ios:FontFamily x:Key="SymbolThemeFontFamily">Segoe MDL2 Assets</ios:FontFamily>
+	<android:FontFamily x:Key="SymbolThemeFontFamily">ms-appx:///Assets/Fonts/segmdl2.ttf#Segoe MDL2 Assets</android:FontFamily>
+
+</ResourceDictionary>

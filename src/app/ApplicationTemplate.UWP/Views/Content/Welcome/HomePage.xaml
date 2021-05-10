@@ -1,0 +1,56 @@
+﻿<Page x:Class="ApplicationTemplate.Views.Content.HomePage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:local="using:ApplicationTemplate"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  mc:Ignorable="d">
+
+	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+
+		<TextBlock Text="Home"
+				   x:Uid="Home_Title"
+				   FontSize="30"
+				   Margin="20,40,20,20" />
+
+		<StackPanel Margin="20,0,20,20"
+					Grid.Row="1">
+			<Button Content="Posts"
+					x:Uid="Home_Posts"
+					HorizontalAlignment="Stretch"
+					Margin="0,4"
+					Command="{Binding NavigateToPostsPage}" />
+
+			<Button Content="Posts (No network)"
+					HorizontalAlignment="Stretch"
+					Margin="0,4"
+					Command="{Binding NavigateToPostsPageWithNoNetwork}" />
+
+			<Button Content="Posts (Odd error)"
+					HorizontalAlignment="Stretch"
+					Margin="0,4"
+					Command="{Binding NavigateToPostsPageWithOddError}" />
+
+			<Button Content="Posts (Even error)"
+					HorizontalAlignment="Stretch"
+					Margin="0,4"
+					Command="{Binding NavigateToPostsPageWithEvenError}" />
+
+			<Button Content="Chuck Norris"
+					HorizontalAlignment="Stretch"
+					Margin="0,4"
+					Command="{Binding NavigateToChuckNorrisSearchPage}" />
+
+			<Button Content="Settings"
+					x:Uid="Home_Settings"
+					HorizontalAlignment="Stretch"
+					Margin="0,4"
+					Command="{Binding NavigateToSettingsPage}" />
+		</StackPanel>
+	</Grid>
+</Page>

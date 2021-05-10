@@ -1,0 +1,87 @@
+﻿<local:AttachableUserControl x:Class="ApplicationTemplate.Views.Content.Menu"
+							 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+							 xmlns:local="using:ApplicationTemplate.Views"
+							 xmlns:ne="using:Nventive.View.Extensions"
+							 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+							 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+							 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+							 ne:BindableVisualState.VisualStateName="{Binding MenuState}">
+
+	<Grid x:Name="MenuRoot"
+		  Background="{StaticResource AccentColorBrush}">
+		<VisualStateManager.VisualStateGroups>
+			<VisualStateGroup x:Name="MenuStates">
+
+				<VisualStateGroup.Transitions>
+					<VisualTransition From="Open"
+									  To="Closed">
+						<Storyboard>
+							<!-- CloseTranslateAnimation.To is set in code behind -->
+							<DoubleAnimation x:Name="CloseTranslateAnimation"
+											 Storyboard.TargetName="MenuRoot"
+											 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+											 To="80"
+											 Duration="0:0:0.3">
+								<DoubleAnimation.EasingFunction>
+									<CubicEase EasingMode="EaseInOut" />
+								</DoubleAnimation.EasingFunction>
+							</DoubleAnimation>
+						</Storyboard>
+					</VisualTransition>
+				</VisualStateGroup.Transitions>
+
+				<VisualState x:Name="Open">
+					<Storyboard>
+						<DoubleAnimation Storyboard.TargetName="MenuRoot"
+										 Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+										 To="0"
+										 Duration="0:0:0.3">
+							<DoubleAnimation.EasingFunction>
+								<CubicEase EasingMode="EaseInOut" />
+							</DoubleAnimation.EasingFunction>
+						</DoubleAnimation>
+					</Storyboard>
+				</VisualState>
+
+				<VisualState x:Name="Closed" />
+			</VisualStateGroup>
+		</VisualStateManager.VisualStateGroups>
+
+		<Grid.RenderTransform>
+			<!-- MenuTranslateTransform.Y is set in code behind -->
+			<TranslateTransform x:Name="MenuTranslateTransform"
+								Y="80" />
+		</Grid.RenderTransform>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="56" />
+			<!-- SafeAreaRow.Height is set in code behind -->
+			<RowDefinition x:Name="SafeAreaRow"
+						   Height="0" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+
+		<RadioButton Content="Home"
+					 x:Uid="Menu_Home"
+					 Foreground="White"
+					 HorizontalAlignment="Center"
+					 Command="{Binding ShowHome}" />
+
+		<RadioButton Content="Posts"
+					 x:Uid="Menu_Posts"
+					 Foreground="White"
+					 HorizontalAlignment="Center"
+					 Command="{Binding ShowPosts}"
+					 Grid.Column="1" />
+
+		<RadioButton Content="Settings"
+					 x:Uid="Menu_Settings"
+					 Foreground="White"
+					 HorizontalAlignment="Center"
+					 Command="{Binding ShowSettings}"
+					 Grid.Column="2" />
+	</Grid>
+</local:AttachableUserControl>

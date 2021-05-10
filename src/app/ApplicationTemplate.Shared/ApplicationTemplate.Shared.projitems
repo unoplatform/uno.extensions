@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -9,29 +9,136 @@
     <Import_RootNamespace>ApplicationTemplate</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="$(MSBuildThisFileDirectory)App.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </ApplicationDefinition>
+    <Compile Include="$(MSBuildThisFileDirectory)Business\Entities\ChuckNorrisQuote.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Business\IAuthenticationService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Business\IChuckNorrisService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Business\Impl\ChuckNorrisService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Business\Impl\UserProfileService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Business\IUserProfileService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Client\Data\ChuckNorrisData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Client\Data\ChuckNorrisErrorResponse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Client\Data\ChuckNorrisResponse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Client\Data\ErrorData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Client\Data\UserProfileData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Client\IAuthenticationEndpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Client\IUserProfileEndpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Client\Mock\AuthenticationEndpointMock.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Client\Exceptions\ChuckNorrisException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Client\IChuckNorrisEndpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Client\Mock\ChuckNorrisEndpointMock.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Client\Mock\UserProfileEndpointMock.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\ConfigurationSettings.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\DiagnosticsConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\ErrorConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\FluentValidationLanguageManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\LinkerConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\LocalizationConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\NavigationCoreConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\_Configuration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Framework\Browser\DispatcherBrowserDecorator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Framework\DataLoader\OnDataLostDataLoaderStrategy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Framework\DataLoader\AnalyticsDataLoaderStrategy.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Framework\BaseMock.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Framework\DynamicData\IChangeSet.Extensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Framework\DataLoader\NetworkReconnectionDataLoaderTrigger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Framework\DynamicMvvm\IViewModel.Extensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Framework\Serialization\ObjectSerializerToContentSerializerAdapter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Framework\Serialization\ObjectSerializerToResponseContentDeserializer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Client\Data\PostErrorResponse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Client\Exceptions\PostEndpointException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Client\IPostEndpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Client\Mock\PostEndpointMock.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Client\Data\PostData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\ApiConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\AppSettingsConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\LoggingConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\PersistenceConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\SerializationConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\AppServicesConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\ViewModelConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Framework\Startup\CoreStartupBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CoreStartup.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Framework\Serialization\ObjectSerializerToSettingsSerializerAdapter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Framework\Reactive\IObservable.Extensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Framework\Serialization\SystemTextJsonToObjectSerializerAdapter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Framework\Serialization\SystemTextJsonToContentSerializerAdapter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Framework\Startup\StartupBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Framework\Startup\StartupState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Framework\Validation\DataValidationState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Framework\Validation\DataValidationStateType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Framework\Validation\DataValidationView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Authentication\CreateAccountFormViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Authentication\LoginFormViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Authentication\ForgotPasswordFormViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\ChuckNorris\ChuckNorrisFavoritesPageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\ChuckNorris\ChuckNorrisItemViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\ChuckNorris\ChuckNorrisSearchPageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Diagnostics\CultureDiagnosticsViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Diagnostics\DiagnosticsCountersService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Extensions\SectionNavigatorExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\IViewModel.Extensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\MenuViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Settings\EditProfileFormViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Settings\EditProfilePageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Settings\LicensesPageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Settings\WebViewPageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\ShellViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Diagnostics\DiagnosticsPageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Posts\EditPostPageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Posts\PostFormViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Posts\PostsPageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Authentication\LoginPageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\ViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Welcome\HomePageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Authentication\ForgotPasswordPageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Authentication\CreateAccountPageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Settings\SettingsPageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Diagnostics\DiagnosticsOverlayViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Diagnostics\ExceptionsDiagnosticsViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Diagnostics\LoggersDiagnosticsViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Diagnostics\SummaryDiagnosticsViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Diagnostics\EnvironmentPickerPageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Diagnostics\NetworkDiagnosticsViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Diagnostics\SettingsDiagnosticsViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Welcome\WelcomePageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Welcome\OnboardingPageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Welcome\OnboardingItemViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Business\IPostService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Business\Impl\PostService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Business\Impl\AuthenticationService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Business\Impl\ApplicationSettingsService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Business\Entities\ApplicationSettings.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Client\Data\AuthenticationToken.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Client\Data\AuthenticationData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Business\IApplicationSettingsService.cs" />
+    <!--#if (IncludeFirebaseAnalytics)
+    <Compile Include="$(MSBuildThisFileDirectory)Framework\FirebasePerformanceHandler.cs" />
+    #endif -->
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)MainPage.xaml.cs">
-      <DependentUpon>MainPage.xaml</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="$(MSBuildThisFileDirectory)MainPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)Assets\SharedAssets.md" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Client\Mock\UserProfileEndpointMock.Get.json" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)ThirdPartySoftwareLicenses.txt" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)appsettings.staging.json" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Client\Mock\PostEndpointMock.GetAll.json" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)appsettings.development.json" />
+    <None Include="$(MSBuildThisFileDirectory)SerializationConfig.xml" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)appsettings.json" />
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\Resources.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\fr\Resources.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Framework\DataLoader\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Framework\Reactive\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Framework\Serialization\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Presentation\Posts\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Presentation\Welcome\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Client\Mock\ChuckNorrisEndpointMock.Search.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)appsettings.production.json" />
   </ItemGroup>
 </Project>
