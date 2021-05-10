@@ -1,0 +1,37 @@
+{
+	"$schema": "http://json.schemastore.org/dotnetcli.host",
+	"symbolInfo": {
+		"iOS": {
+			"longName": "iOS",
+			"shortName": "ios"
+		},
+		"Android": {
+			"longName": "Android",
+			"shortName": "android"
+		},
+		"macOS": {
+			"longName": "macOS",
+			"shortName": "macos"
+		},
+		"WebAssembly": {
+			"longName": "WebAssembly",
+			"shortName": "wasm"
+		},
+		"Windows (Desktop)": {
+			"longName": "WinUI-Desktop",
+			"shortName": "winui-desktop"
+		},
+		"UWP": {
+			"longName": "Uwp",
+			"shortName": "uwp"
+		},
+		"WPF": {
+			"longName": "skia-wpf",
+			"shortName": "skia-wpf"
+		},
+		"Linux (GTK)": {
+			"longName": "skia-wpf",
+			"shortName": "skia-wpf"
+		}
+	}
+}
