@@ -35,9 +35,9 @@ namespace ApplicationTemplate
 		/// <returns><see cref="IServiceCollection"/>.</returns>
 		public static IServiceCollection AddLocalization(this IServiceCollection services)
 		{
-			return services
-				.AddSingleton(_cultureOverrideService)
-				.AddSingleton<IStringLocalizer, ResourceLoaderStringLocalizer>();
+            return services
+                .AddSingleton(_cultureOverrideService);
+//				.AddSingleton<IStringLocalizer, ResourceLoaderStringLocalizer>();
 		}
 
 		public static void PreInitialize()
@@ -89,63 +89,63 @@ namespace ApplicationTemplate
 		}
 	}
 
-	/// <summary>
-	/// This implementation of <see cref="IStringLocalizer"/> uses <see cref="ResourceLoader"/>
-	/// to get the string resources.
-	/// </summary>
-	public class ResourceLoaderStringLocalizer : IStringLocalizer
-	{
-		private const string SearchLocation = "Resources";
-		private readonly ResourceLoader _resourceLoader;
-		private readonly bool _treatEmptyAsNotFound;
+	///// <summary>
+	///// This implementation of <see cref="IStringLocalizer"/> uses <see cref="ResourceLoader"/>
+	///// to get the string resources.
+	///// </summary>
+	//public class ResourceLoaderStringLocalizer : IStringLocalizer
+	//{
+	//	private const string SearchLocation = "Resources";
+	//	private readonly ResourceLoader _resourceLoader;
+	//	private readonly bool _treatEmptyAsNotFound;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="ResourceLoaderStringLocalizer"/> class.
-		/// </summary>
-		/// <param name="treatEmptyAsNotFound">If empty strings should be treated as not found.</param>
-		public ResourceLoaderStringLocalizer(bool treatEmptyAsNotFound = true)
-		{
-			_treatEmptyAsNotFound = treatEmptyAsNotFound;
-			_resourceLoader = ResourceLoader.GetForViewIndependentUse();
-		}
+	//	/// <summary>
+	//	/// Initializes a new instance of the <see cref="ResourceLoaderStringLocalizer"/> class.
+	//	/// </summary>
+	//	/// <param name="treatEmptyAsNotFound">If empty strings should be treated as not found.</param>
+	//	public ResourceLoaderStringLocalizer(bool treatEmptyAsNotFound = true)
+	//	{
+	//		_treatEmptyAsNotFound = treatEmptyAsNotFound;
+	//		_resourceLoader = ResourceLoader.GetForViewIndependentUse();
+	//	}
 
-		/// <inheritdoc/>
-		public LocalizedString this[string name] => GetLocalizedString(name);
+	//	/// <inheritdoc/>
+	//	public LocalizedString this[string name] => GetLocalizedString(name);
 
-		/// <inheritdoc/>
-		public LocalizedString this[string name, params object[] arguments] => GetLocalizedString(name, arguments);
+	//	/// <inheritdoc/>
+	//	public LocalizedString this[string name, params object[] arguments] => GetLocalizedString(name, arguments);
 
-		private LocalizedString GetLocalizedString(string name, params object[] arguments)
-		{
-			if (name is null)
-			{
-				throw new ArgumentNullException(nameof(name));
-			}
+	//	private LocalizedString GetLocalizedString(string name, params object[] arguments)
+	//	{
+	//		if (name is null)
+	//		{
+	//			throw new ArgumentNullException(nameof(name));
+	//		}
 
-			var resource = _resourceLoader.GetString(name);
+	//		var resource = _resourceLoader.GetString(name);
 
-			if (_treatEmptyAsNotFound && string.IsNullOrEmpty(resource))
-			{
-				resource = null;
-			}
+	//		if (_treatEmptyAsNotFound && string.IsNullOrEmpty(resource))
+	//		{
+	//			resource = null;
+	//		}
 
-			resource = resource ?? name;
+	//		resource = resource ?? name;
 
-			var value = arguments.Any()
-				? string.Format(CultureInfo.CurrentCulture, resource, arguments)
-				: resource;
+	//		var value = arguments.Any()
+	//			? string.Format(CultureInfo.CurrentCulture, resource, arguments)
+	//			: resource;
 
-			return new LocalizedString(name, value, resourceNotFound: resource == null, searchedLocation: SearchLocation);
-		}
+	//		return new LocalizedString(name, value, resourceNotFound: resource == null, searchedLocation: SearchLocation);
+	//	}
 
-		/// <inheritdoc/>
-		public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
-			=> throw new NotSupportedException("ResourceLoader doesn't support listing all strings.");
+	//	/// <inheritdoc/>
+	//	public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
+	//		=> throw new NotSupportedException("ResourceLoader doesn't support listing all strings.");
 
-		/// <inheritdoc/>
-		public IStringLocalizer WithCulture(CultureInfo culture) =>
-			throw new NotSupportedException("This method is obsolete.");
-	}
+	//	/// <inheritdoc/>
+	//	public IStringLocalizer WithCulture(CultureInfo culture) =>
+	//		throw new NotSupportedException("This method is obsolete.");
+	//}
 
 	public class ThreadCultureOverrideService
 	{

@@ -6,7 +6,7 @@ using Windows.UI.Xaml.Data;
 
 namespace ApplicationTemplate.Client
 {
-	[Bindable]
+	//[Bindable]
 	[GeneratedImmutable]
 	public partial class UserProfileData
 	{

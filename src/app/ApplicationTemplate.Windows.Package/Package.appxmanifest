@@ -9,7 +9,7 @@
 
   <Identity
     Name="D4007305-8C6E-4BC8-AFB9-88FFECA023D3"
-    Publisher="$XmlEscapedPublisherDistinguishedName$"
+    Publisher="O=UnoPlatform"
     Version="1.0.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="D4007305-8C6E-4BC8-AFB9-88FFECA023D3" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>

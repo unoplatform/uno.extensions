@@ -9,6 +9,9 @@
     <Import_RootNamespace>ApplicationTemplate</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Business\Entities\ChuckNorrisQuote.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Business\IAuthenticationService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Business\IChuckNorrisService.cs" />
@@ -33,11 +36,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\FluentValidationLanguageManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\LinkerConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\LocalizationConfiguration.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Configuration\NavigationConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\NavigationCoreConfiguration.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Configuration\ViewServicesConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\_Configuration.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Configuration\_ViewConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\DebugConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Framework\AttachableUserControl.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Framework\Browser\DispatcherBrowserDecorator.cs" />
@@ -99,12 +99,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Authentication\CreateAccountPageViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Settings\SettingsPageViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Diagnostics\DiagnosticsOverlayViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Diagnostics\ExceptionsDiagnosticsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Diagnostics\LoggersDiagnosticsViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Diagnostics\SummaryDiagnosticsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Diagnostics\EnvironmentPickerPageViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Diagnostics\NetworkDiagnosticsViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Diagnostics\SettingsDiagnosticsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Welcome\WelcomePageViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Welcome\OnboardingPageViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Welcome\OnboardingItemViewModel.cs" />
@@ -153,5 +150,11 @@
     <Content Include="$(MSBuildThisFileDirectory)Assets\Image_Example.scale-200.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Image_Example.scale-300.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Image_Example.scale-400.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="$(MSBuildThisFileDirectory)App.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </ApplicationDefinition>
   </ItemGroup>
 </Project>
