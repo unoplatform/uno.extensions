@@ -1,65 +1,65 @@
 ﻿<Page x:Class="ApplicationTemplate.Views.Content.OnboardingPage"
-	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	  xmlns:local="using:ApplicationTemplate"
-	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	  xmlns:uc="using:Nventive.View.Converters"
-	  xmlns:u="using:Nventive.View.Controls"
-	  mc:Ignorable="d">
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:ApplicationTemplate"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:uc="using:Nventive.View.Converters"
+      xmlns:u="using:Nventive.View.Controls"
+      mc:Ignorable="d">
 
-	<Page.Resources>
-		<ResourceDictionary>
-			<uc:PartitionConverter x:Key="SelectedIndexToButtonContent"
-								   DefaultValue="Skip"
-								   x:Uid="Onboarding_Skip">
-				<uc:IntervalPartition LowerBound="2"
-									  InRangeValue="Continue"
-									  x:Uid="Onboarding_Continue" />
-			</uc:PartitionConverter>
+    <Page.Resources>
+        <ResourceDictionary>
+            <uc:PartitionConverter x:Key="SelectedIndexToButtonContent"
+                                   DefaultValue="Skip"
+                                   x:Uid="Onboarding_Skip">
+                <uc:IntervalPartition LowerBound="2"
+                                      InRangeValue="Continue"
+                                      x:Uid="Onboarding_Continue" />
+            </uc:PartitionConverter>
 
-			<DataTemplate x:Key="OnboardingItemTemplate">
-				<Grid Background="Black">
-					<TextBlock Text="{Binding PrimaryText}"
-							   Foreground="White"
-							   FontSize="25"
-							   Margin="40"
-							   HorizontalAlignment="Center" />
+            <DataTemplate x:Key="OnboardingItemTemplate">
+                <Grid Background="Black">
+                    <TextBlock Text="{Binding PrimaryText}"
+                               Foreground="White"
+                               FontSize="25"
+                               Margin="40"
+                               HorizontalAlignment="Center" />
 
-					<Image Source="{Binding ImageUrl}"
-						   Stretch="Uniform"
-						   Margin="20"
-						   VerticalAlignment="Center" />
-				</Grid>
-			</DataTemplate>
+                    <Image Source="{Binding ImageUrl}"
+                           Stretch="Uniform"
+                           Margin="20"
+                           VerticalAlignment="Center" />
+                </Grid>
+            </DataTemplate>
 
-			<DataTemplate x:Key="OnboardingIndexIndicatorTemplate">
-				<Rectangle Fill="Gray"
-						   Width="20"
-						   Height="10" />
-			</DataTemplate>
+            <DataTemplate x:Key="OnboardingIndexIndicatorTemplate">
+                <Rectangle Fill="Gray"
+                           Width="20"
+                           Height="10" />
+            </DataTemplate>
 
-			<DataTemplate x:Key="OnboardingSelectedIndexIndicatorTemplate">
-				<Rectangle Fill="White"
-						   Width="20"
-						   Height="10" />
-			</DataTemplate>
-		</ResourceDictionary>
-	</Page.Resources>
+            <DataTemplate x:Key="OnboardingSelectedIndexIndicatorTemplate">
+                <Rectangle Fill="White"
+                           Width="20"
+                           Height="10" />
+            </DataTemplate>
+        </ResourceDictionary>
+    </Page.Resources>
 
-	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-		<u:ImageSlideshow x:Name="OnboardingSlideshow"
-						  ItemsSource="{Binding OnboardingItems}"
-						  ItemTemplate="{StaticResource OnboardingItemTemplate}"
-						  IndexIndicatorTemplate="{StaticResource OnboardingIndexIndicatorTemplate}"
-						  SelectedIndexIndicatorTemplate="{StaticResource OnboardingSelectedIndexIndicatorTemplate}" />
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <u:ImageSlideshow x:Name="OnboardingSlideshow"
+                          ItemsSource="{Binding OnboardingItems}"
+                          ItemTemplate="{StaticResource OnboardingItemTemplate}"
+                          IndexIndicatorTemplate="{StaticResource OnboardingIndexIndicatorTemplate}"
+                          SelectedIndexIndicatorTemplate="{StaticResource OnboardingSelectedIndexIndicatorTemplate}" />
 
-		<Button Content="{Binding ElementName=OnboardingSlideshow, Path=SelectedIndex, Converter={StaticResource SelectedIndexToButtonContent}}"
-				Command="{Binding NavigateToWelcomePage}"
-				VerticalAlignment="Bottom"
-				HorizontalAlignment="Center"
-				Background="White"
-				Foreground="Black"
-				Margin="0,0,0,40" />
-	</Grid>
+        <Button Content="{Binding ElementName=OnboardingSlideshow, Path=SelectedIndex, Converter={StaticResource SelectedIndexToButtonContent}}"
+                Command="{Binding NavigateToWelcomePage}"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Center"
+                Background="White"
+                Foreground="Black"
+                Margin="0,0,0,40" />
+    </Grid>
 </Page>

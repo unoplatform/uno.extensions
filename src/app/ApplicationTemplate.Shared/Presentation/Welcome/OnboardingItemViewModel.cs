@@ -2,16 +2,16 @@
 
 namespace ApplicationTemplate.Presentation
 {
-	public class OnboardingItemViewModel
-	{
-		public OnboardingItemViewModel(string primaryText, string imageUrl)
-		{
-			PrimaryText = primaryText;
-			ImageUrl = imageUrl;
-		}
+    public class OnboardingItemViewModel
+    {
+        public OnboardingItemViewModel(string primaryText, string imageUrl)
+        {
+            PrimaryText = primaryText;
+            ImageUrl = imageUrl;
+        }
 
-		public string PrimaryText { get; }
+        public string PrimaryText { get; }
 
-		public string ImageUrl { get; }
-	}
+        public string ImageUrl { get; }
+    }
 }

@@ -5,27 +5,27 @@ using Windows.UI.Xaml.Controls;
 
 namespace ApplicationTemplate
 {
-	public sealed partial class Shell : UserControl
-	{
-		public Shell(IActivatedEventArgs e)
-		{
-			this.InitializeComponent();
+    public sealed partial class Shell : UserControl
+    {
+        public Shell(IActivatedEventArgs e)
+        {
+            this.InitializeComponent();
 
-			Instance = this;
+            Instance = this;
 
 //-:cnd:noEmit
 #if WINDOWS_UWP
 //+:cnd:noEmit
-			AppExtendedSplashScreen.SplashScreen = e?.SplashScreen;
+            AppExtendedSplashScreen.SplashScreen = e?.SplashScreen;
 //-:cnd:noEmit
 #endif
 //+:cnd:noEmit
-		}
+        }
 
-		public static Shell Instance { get; private set; }
+        public static Shell Instance { get; private set; }
 
-		public IExtendedSplashScreen ExtendedSplashScreen => this.AppExtendedSplashScreen;
+        public IExtendedSplashScreen ExtendedSplashScreen => this.AppExtendedSplashScreen;
 
-		public MultiFrame NavigationMultiFrame => this.RootNavigationMultiFrame;
-	}
+        public MultiFrame NavigationMultiFrame => this.RootNavigationMultiFrame;
+    }
 }

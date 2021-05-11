@@ -1,118 +1,118 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-					xmlns:u="using:Nventive.View.Controls">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:u="using:Nventive.View.Controls">
 
-	<!-- NOTE : If you don't need to have CornerRadius or a Circle, please use the style below for a better performance -->
-	<!-- [ Related UserEcho : https://feedback.nventive.com/communities/1/topics/3133-imagepresenter-imagebrush-is-sometimes-deformed ] -->
-	<Style x:Key="DefaultImagePresenterStyle"
-		   TargetType="u:ImagePresenter">
-		<Setter Property="HorizontalContentAlignment"
-				Value="Stretch" />
-		<Setter Property="VerticalContentAlignment"
-				Value="Stretch" />
-		<Setter Property="Stretch"
-				Value="UniformToFill" />
-		<Setter Property="Template">
-			<Setter.Value>
-				<ControlTemplate TargetType="u:ImagePresenter">
-					<!--Container-->
-					<Grid x:Name="PART_Grid"
-						  CornerRadius="{TemplateBinding CornerRadius}"
-						  BorderBrush="{TemplateBinding BorderBrush}"
-						  BorderThickness="{TemplateBinding BorderThickness}"
-						  Background="{TemplateBinding Background}">
-						<VisualStateManager.VisualStateGroups>
-							<VisualStateGroup x:Name="ImageStates">
-								<VisualState x:Name="Placeholder" />
-								<VisualState x:Name="Image">
-									<VisualState.Setters>
-										<Setter Target="PART_PlaceholderContentPresenter.Opacity"
-												Value="0" />
-										<Setter Target="PART_ImageBorder.Opacity"
-												Value="1" />
-									</VisualState.Setters>
-								</VisualState>
-							</VisualStateGroup>
-						</VisualStateManager.VisualStateGroups>
-						<!--Default Placeholder-->
-						<!-- NOTE: By default a picture inside the Placeholder will not have the CornerRadius.-->
-						<!--       You need to use a Border with ImageBrush inside the PlaceholderContentTemplate and correctly set the CornerRadius on it -->
-						<ContentPresenter x:Name="PART_PlaceholderContentPresenter"
-										  CornerRadius="{TemplateBinding CornerRadius}"
-										  Content="{TemplateBinding PlaceholderContent}"
-										  ContentTemplate="{TemplateBinding PlaceholderContentTemplate}"
-										  ContentTemplateSelector="{TemplateBinding PlaceholderContentTemplateSelector}"
-										  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-										  VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+    <!-- NOTE : If you don't need to have CornerRadius or a Circle, please use the style below for a better performance -->
+    <!-- [ Related UserEcho : https://feedback.nventive.com/communities/1/topics/3133-imagepresenter-imagebrush-is-sometimes-deformed ] -->
+    <Style x:Key="DefaultImagePresenterStyle"
+           TargetType="u:ImagePresenter">
+        <Setter Property="HorizontalContentAlignment"
+                Value="Stretch" />
+        <Setter Property="VerticalContentAlignment"
+                Value="Stretch" />
+        <Setter Property="Stretch"
+                Value="UniformToFill" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="u:ImagePresenter">
+                    <!--Container-->
+                    <Grid x:Name="PART_Grid"
+                          CornerRadius="{TemplateBinding CornerRadius}"
+                          BorderBrush="{TemplateBinding BorderBrush}"
+                          BorderThickness="{TemplateBinding BorderThickness}"
+                          Background="{TemplateBinding Background}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="ImageStates">
+                                <VisualState x:Name="Placeholder" />
+                                <VisualState x:Name="Image">
+                                    <VisualState.Setters>
+                                        <Setter Target="PART_PlaceholderContentPresenter.Opacity"
+                                                Value="0" />
+                                        <Setter Target="PART_ImageBorder.Opacity"
+                                                Value="1" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <!--Default Placeholder-->
+                        <!-- NOTE: By default a picture inside the Placeholder will not have the CornerRadius.-->
+                        <!--       You need to use a Border with ImageBrush inside the PlaceholderContentTemplate and correctly set the CornerRadius on it -->
+                        <ContentPresenter x:Name="PART_PlaceholderContentPresenter"
+                                          CornerRadius="{TemplateBinding CornerRadius}"
+                                          Content="{TemplateBinding PlaceholderContent}"
+                                          ContentTemplate="{TemplateBinding PlaceholderContentTemplate}"
+                                          ContentTemplateSelector="{TemplateBinding PlaceholderContentTemplateSelector}"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
 
-						<!--Image-->
-						<Border x:Name="PART_ImageBorder"
-								HorizontalAlignment="Stretch"
-								VerticalAlignment="Stretch"
-								CornerRadius="{TemplateBinding CornerRadius}"
-								Opacity="0">
-							<Border.Background>
-								<ImageBrush x:Name="PART_ImageBrush"
-											Stretch="{TemplateBinding Stretch}" />
-							</Border.Background>
-						</Border>
-					</Grid>
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
-	</Style>
+                        <!--Image-->
+                        <Border x:Name="PART_ImageBorder"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                CornerRadius="{TemplateBinding CornerRadius}"
+                                Opacity="0">
+                            <Border.Background>
+                                <ImageBrush x:Name="PART_ImageBrush"
+                                            Stretch="{TemplateBinding Stretch}" />
+                            </Border.Background>
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-	<!-- NOTE : This Style is using an Image in order to have a better performance and avoid flickering-->
-	<!-- or stretching issues inside lists or other pages instead of using an ImageBrush. -->
-	<!-- If you need CornerRadius/Circle, use the previous style -->
-	<!-- [ Related UserEcho : https://feedback.nventive.com/communities/1/topics/3133-imagepresenter-imagebrush-is-sometimes-deformed ] -->
-	<Style x:Key="DefaultImagePresenterWithImageStyle"
-		   TargetType="u:ImagePresenter">
-		<Setter Property="Stretch"
-				Value="UniformToFill" />
-		<Setter Property="Template">
-			<Setter.Value>
-				<ControlTemplate TargetType="u:ImagePresenter">
-					<!--Container-->
-					<Grid x:Name="PART_Grid"
-						  BorderBrush="{TemplateBinding BorderBrush}"
-						  BorderThickness="{TemplateBinding BorderThickness}"
-						  Background="{TemplateBinding Background}">
-						<VisualStateManager.VisualStateGroups>
-							<VisualStateGroup x:Name="ImageStates">
-								<VisualState x:Name="Placeholder" />
-								<VisualState x:Name="Image">
-									<VisualState.Setters>
-										<Setter Target="PART_PlaceholderContentPresenter.Opacity"
-												Value="0" />
-										<Setter Target="PART_Image.Opacity"
-												Value="1" />
-									</VisualState.Setters>
-								</VisualState>
-							</VisualStateGroup>
-						</VisualStateManager.VisualStateGroups>
-						<!--Default Placeholder-->
-						<ContentPresenter x:Name="PART_PlaceholderContentPresenter"
-										  Content="{TemplateBinding PlaceholderContent}"
-										  ContentTemplate="{TemplateBinding PlaceholderContentTemplate}"
-										  ContentTemplateSelector="{TemplateBinding PlaceholderContentTemplateSelector}"
-										  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-										  VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+    <!-- NOTE : This Style is using an Image in order to have a better performance and avoid flickering-->
+    <!-- or stretching issues inside lists or other pages instead of using an ImageBrush. -->
+    <!-- If you need CornerRadius/Circle, use the previous style -->
+    <!-- [ Related UserEcho : https://feedback.nventive.com/communities/1/topics/3133-imagepresenter-imagebrush-is-sometimes-deformed ] -->
+    <Style x:Key="DefaultImagePresenterWithImageStyle"
+           TargetType="u:ImagePresenter">
+        <Setter Property="Stretch"
+                Value="UniformToFill" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="u:ImagePresenter">
+                    <!--Container-->
+                    <Grid x:Name="PART_Grid"
+                          BorderBrush="{TemplateBinding BorderBrush}"
+                          BorderThickness="{TemplateBinding BorderThickness}"
+                          Background="{TemplateBinding Background}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="ImageStates">
+                                <VisualState x:Name="Placeholder" />
+                                <VisualState x:Name="Image">
+                                    <VisualState.Setters>
+                                        <Setter Target="PART_PlaceholderContentPresenter.Opacity"
+                                                Value="0" />
+                                        <Setter Target="PART_Image.Opacity"
+                                                Value="1" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <!--Default Placeholder-->
+                        <ContentPresenter x:Name="PART_PlaceholderContentPresenter"
+                                          Content="{TemplateBinding PlaceholderContent}"
+                                          ContentTemplate="{TemplateBinding PlaceholderContentTemplate}"
+                                          ContentTemplateSelector="{TemplateBinding PlaceholderContentTemplateSelector}"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
 
-						<!--Image-->
-						<Image x:Name="PART_Image"
-							   HorizontalAlignment="Stretch"
-							   VerticalAlignment="Stretch"
-							   Stretch="{TemplateBinding Stretch}"
-							   Opacity="0" />
-					</Grid>
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
-	</Style>
+                        <!--Image-->
+                        <Image x:Name="PART_Image"
+                               HorizontalAlignment="Stretch"
+                               VerticalAlignment="Stretch"
+                               Stretch="{TemplateBinding Stretch}"
+                               Opacity="0" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-	<!-- Implicit Style -->
-	<Style  TargetType="u:ImagePresenter"
-			BasedOn="{StaticResource DefaultImagePresenterStyle}" />
+    <!-- Implicit Style -->
+    <Style  TargetType="u:ImagePresenter"
+            BasedOn="{StaticResource DefaultImagePresenterStyle}" />
 
 </ResourceDictionary>

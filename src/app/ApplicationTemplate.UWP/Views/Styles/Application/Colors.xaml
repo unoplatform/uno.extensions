@@ -1,43 +1,43 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-					xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-					xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-					xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-					xmlns:xamarin="http://nventive.com/xamarin"
-					xmlns:android="http://nventive.com/android"
-					xmlns:ios="http://nventive.com/ios"
-					xmlns:not_ios="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-					xmlns:not_android="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-					mc:Ignorable="d xamarin android ios"
-					d:DesignHeight="300"
-					d:DesignWidth="400">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:xamarin="http://nventive.com/xamarin"
+                    xmlns:android="http://nventive.com/android"
+                    xmlns:ios="http://nventive.com/ios"
+                    xmlns:not_ios="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:not_android="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    mc:Ignorable="d xamarin android ios"
+                    d:DesignHeight="300"
+                    d:DesignWidth="400">
 
-	<!-- Base Colors Resources -->
+    <!-- Base Colors Resources -->
 
-	<!-- AccentColor is duplicated in some of the platform-specific projects. Don't forget to update them as needed -->
-	<!-- UWP: Package.appxmanifest -> Tile Background and splashscreen background -->
-	<!-- Android: Resources/values/Colors.xml, update PrimaryColor -->
-	<!-- Android: Resources/drawable/splash.xml -->
-	<!-- Android: adaptive-icon in mipmap-anydpi-v26/ic_launcher.xml -->
-	<!-- iOS: launchscreen.storyboard -->
-	<Color x:Key="AccentColor">#FF274A9D</Color>
-	<Color x:Key="SecondaryColor">#FFEE494C</Color>
-	<Color x:Key="PrimaryForegroundColor">#FFFFFFFF</Color>
+    <!-- AccentColor is duplicated in some of the platform-specific projects. Don't forget to update them as needed -->
+    <!-- UWP: Package.appxmanifest -> Tile Background and splashscreen background -->
+    <!-- Android: Resources/values/Colors.xml, update PrimaryColor -->
+    <!-- Android: Resources/drawable/splash.xml -->
+    <!-- Android: adaptive-icon in mipmap-anydpi-v26/ic_launcher.xml -->
+    <!-- iOS: launchscreen.storyboard -->
+    <Color x:Key="AccentColor">#FF274A9D</Color>
+    <Color x:Key="SecondaryColor">#FFEE494C</Color>
+    <Color x:Key="PrimaryForegroundColor">#FFFFFFFF</Color>
 
-	<!-- Base Color Brushes -->
+    <!-- Base Color Brushes -->
 
-	<SolidColorBrush x:Key="AccentColorBrush"
-					 Color="{StaticResource AccentColor}" />
-	<SolidColorBrush x:Key="SecondaryColorBrush"
-					 Color="{StaticResource SecondaryColor}" />
-	<SolidColorBrush x:Key="PrimaryForegroundColorBrush"
-					 Color="{StaticResource PrimaryForegroundColor}" />
+    <SolidColorBrush x:Key="AccentColorBrush"
+                     Color="{StaticResource AccentColor}" />
+    <SolidColorBrush x:Key="SecondaryColorBrush"
+                     Color="{StaticResource SecondaryColor}" />
+    <SolidColorBrush x:Key="PrimaryForegroundColorBrush"
+                     Color="{StaticResource PrimaryForegroundColor}" />
 
-	<!-- Control-Generic colors -->
-	<!-- Those colors are there to help you theme the application quickly -->
-	<SolidColorBrush x:Key="CommandBarBackgroundBrush"
-					 Color="{StaticResource AccentColor}" />
-	<SolidColorBrush x:Key="CommandBarForegroundBrush"
-					 Color="White" />
+    <!-- Control-Generic colors -->
+    <!-- Those colors are there to help you theme the application quickly -->
+    <SolidColorBrush x:Key="CommandBarBackgroundBrush"
+                     Color="{StaticResource AccentColor}" />
+    <SolidColorBrush x:Key="CommandBarForegroundBrush"
+                     Color="White" />
 
 </ResourceDictionary>

@@ -5,14 +5,14 @@ using Uno;
 
 namespace ApplicationTemplate.Business
 {
-	[GeneratedImmutable]
-	public partial class ApplicationSettings
-	{
-		[EqualityHash]
-		public AuthenticationData AuthenticationData { get; }
+    [GeneratedImmutable]
+    public partial class ApplicationSettings
+    {
+        [EqualityHash]
+        public AuthenticationData AuthenticationData { get; }
 
-		public bool IsOnboardingCompleted { get; }
+        public bool IsOnboardingCompleted { get; }
 
-		public ImmutableDictionary<string, ChuckNorrisQuote> FavoriteQuotes { get; } = ImmutableDictionary<string, ChuckNorrisQuote>.Empty;
-	}
+        public ImmutableDictionary<string, ChuckNorrisQuote> FavoriteQuotes { get; } = ImmutableDictionary<string, ChuckNorrisQuote>.Empty;
+    }
 }

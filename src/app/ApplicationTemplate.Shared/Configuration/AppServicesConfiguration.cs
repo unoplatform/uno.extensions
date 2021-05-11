@@ -19,67 +19,67 @@ using Xamarin.Essentials.Interfaces;
 
 namespace ApplicationTemplate
 {
-	/// <summary>
-	/// This class is used for application services configuration.
-	/// - Configures business services.
-	/// - Configures platform services.
-	/// </summary>
-	public static class AppServicesConfiguration
-	{
-		/// <summary>
-		/// Adds the application services to the <see cref="IServiceCollection"/>.
-		/// </summary>
-		/// <param name="services">Service collection.</param>
-		/// <returns><see cref="IServiceCollection"/>.</returns>
-		public static IServiceCollection AddAppServices(this IServiceCollection services)
-		{
-			return services
-				.AddXamarinEssentials()
-				.AddMessageDialog()
-				.AddSingleton<IBackgroundScheduler>(s => TaskPoolScheduler.Default.ToBackgroundScheduler())
-				.AddSingleton<IApplicationSettingsService, ApplicationSettingsService>()
-				.AddSingleton<IPostService, PostService>()
-				.AddSingleton<IChuckNorrisService, ChuckNorrisService>()
-				.AddSingleton<IAuthenticationService, AuthenticationService>()
-				.AddSingleton<IUserProfileService, UserProfileService>()
-				.AddSingleton<DiagnosticsCountersService>();
-		}
+    /// <summary>
+    /// This class is used for application services configuration.
+    /// - Configures business services.
+    /// - Configures platform services.
+    /// </summary>
+    public static class AppServicesConfiguration
+    {
+        /// <summary>
+        /// Adds the application services to the <see cref="IServiceCollection"/>.
+        /// </summary>
+        /// <param name="services">Service collection.</param>
+        /// <returns><see cref="IServiceCollection"/>.</returns>
+        public static IServiceCollection AddAppServices(this IServiceCollection services)
+        {
+            return services
+                .AddXamarinEssentials()
+                .AddMessageDialog()
+                .AddSingleton<IBackgroundScheduler>(s => TaskPoolScheduler.Default.ToBackgroundScheduler())
+                .AddSingleton<IApplicationSettingsService, ApplicationSettingsService>()
+                .AddSingleton<IPostService, PostService>()
+                .AddSingleton<IChuckNorrisService, ChuckNorrisService>()
+                .AddSingleton<IAuthenticationService, AuthenticationService>()
+                .AddSingleton<IUserProfileService, UserProfileService>()
+                .AddSingleton<DiagnosticsCountersService>();
+        }
 
-		private static IServiceCollection AddXamarinEssentials(this IServiceCollection services)
-		{
-			return services
-				.AddSingleton<IDeviceInfo, DeviceInfoImplementation>()
-				.AddSingleton<IAppInfo, AppInfoImplementation>()
+        private static IServiceCollection AddXamarinEssentials(this IServiceCollection services)
+        {
+            return services
+                .AddSingleton<IDeviceInfo, DeviceInfoImplementation>()
+                .AddSingleton<IAppInfo, AppInfoImplementation>()
 //-:cnd:noEmit
 #if WINDOWS_UWP || __IOS__ || __ANDROID__
 //+:cnd:noEmit
-				//.AddSingleton<IBrowser>(s => new DispatcherBrowserDecorator(new BrowserImplementation(), App.Instance.Shell.Dispatcher))
+                //.AddSingleton<IBrowser>(s => new DispatcherBrowserDecorator(new BrowserImplementation(), App.Instance.Shell.Dispatcher))
 //-:cnd:noEmit
 #endif
 //+:cnd:noEmit
-				.AddSingleton<IEmail, EmailImplementation>();
-		}
+                .AddSingleton<IEmail, EmailImplementation>();
+        }
 
-		private static IServiceCollection AddMessageDialog(this IServiceCollection services)
-		{
-			return services.AddSingleton<IMessageDialogService>(s =>
+        private static IServiceCollection AddMessageDialog(this IServiceCollection services)
+        {
+            return services.AddSingleton<IMessageDialogService>(s =>
 //-:cnd:noEmit
 #if WINDOWS_UWP || __IOS__ || __ANDROID__
 //+:cnd:noEmit
-				new MessageDialogService.MessageDialogService(
-					() => s.GetRequiredService<Windows.UI.Core.CoreDispatcher>(),
-					new MessageDialogBuilderDelegate(
-						key => s.GetRequiredService<IStringLocalizer>()[key]
-					)
-				)
+                new MessageDialogService.MessageDialogService(
+                    () => s.GetRequiredService<Windows.UI.Core.CoreDispatcher>(),
+                    new MessageDialogBuilderDelegate(
+                        key => s.GetRequiredService<IStringLocalizer>()[key]
+                    )
+                )
 //-:cnd:noEmit
 #else
 //+:cnd:noEmit
-				new AcceptOrDefaultMessageDialogService()
+                new AcceptOrDefaultMessageDialogService()
 //-:cnd:noEmit
 #endif
 //+:cnd:noEmit
-			);
-		}
-	}
+            );
+        }
+    }
 }

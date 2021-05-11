@@ -3,28 +3,28 @@
                     xmlns:converters="using:ApplicationTemplate.Views"
                     xmlns:uc="using:Nventive.View.Converters">
 
-	<uc:FromNullableBoolToVisibilityConverter x:Key="TrueToCollapsed"
-											VisibilityIfTrue="Collapsed" />
+    <uc:FromNullableBoolToVisibilityConverter x:Key="TrueToCollapsed"
+                                            VisibilityIfTrue="Collapsed" />
 
-	<uc:FromNullableBoolToVisibilityConverter x:Key="TrueToVisible"
-											VisibilityIfTrue="Visible" />
+    <uc:FromNullableBoolToVisibilityConverter x:Key="TrueToVisible"
+                                            VisibilityIfTrue="Visible" />
 
-	<uc:FromNullableBoolToCustomValueConverter x:Key="TrueToOpaque"
-											   TrueValue="1"
-											   NullOrFalseValue="0" />
+    <uc:FromNullableBoolToCustomValueConverter x:Key="TrueToOpaque"
+                                               TrueValue="1"
+                                               NullOrFalseValue="0" />
 
-	<uc:FromNullableBoolToCustomValueConverter x:Key="TrueToTransparent"
-											   TrueValue="0"
-											   NullOrFalseValue="1" />
+    <uc:FromNullableBoolToCustomValueConverter x:Key="TrueToTransparent"
+                                               TrueValue="0"
+                                               NullOrFalseValue="1" />
 
-	<uc:FromEmptyStringToCustomValueConverter x:Key="EmptyStringToCollapsed"
-											  ValueIfEmpty="Collapsed"
-											  ValueIfNotEmpty="Visible" />
+    <uc:FromEmptyStringToCustomValueConverter x:Key="EmptyStringToCollapsed"
+                                              ValueIfEmpty="Collapsed"
+                                              ValueIfNotEmpty="Visible" />
 
-	<uc:FromEmptyStringToCustomValueConverter x:Key="EmptyStringToVisible"
-											  ValueIfEmpty="Visible"
-											  ValueIfNotEmpty="Collapsed"  />
+    <uc:FromEmptyStringToCustomValueConverter x:Key="EmptyStringToVisible"
+                                              ValueIfEmpty="Visible"
+                                              ValueIfNotEmpty="Collapsed"  />
 
-	<converters:DebugConverter x:Key="debug" />
+    <converters:DebugConverter x:Key="debug" />
 
 </ResourceDictionary>

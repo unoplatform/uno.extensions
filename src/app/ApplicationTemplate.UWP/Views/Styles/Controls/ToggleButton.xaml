@@ -1,108 +1,108 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-					xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-					xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-					xmlns:xamarin="http://nventive.com/xamarin"
-					xmlns:android="http://nventive.com/android"
-					xmlns:ios="http://nventive.com/ios"
-					xmlns:not_android="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-					xmlns:not_ios="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-					xmlns:u="using:Nventive.View.Controls"
-					xmlns:ue="using:Nventive.View.Extensions"
-					xmlns:uc="using:Nventive.View.Converters"
-					xmlns:uloc="http://nventive.com/localization/1.0"
-					mc:Ignorable="xamarin android ios">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:xamarin="http://nventive.com/xamarin"
+                    xmlns:android="http://nventive.com/android"
+                    xmlns:ios="http://nventive.com/ios"
+                    xmlns:not_android="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:not_ios="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:u="using:Nventive.View.Controls"
+                    xmlns:ue="using:Nventive.View.Extensions"
+                    xmlns:uc="using:Nventive.View.Converters"
+                    xmlns:uloc="http://nventive.com/localization/1.0"
+                    mc:Ignorable="xamarin android ios">
 
-	<!-- 
-		Find the latest styles here:
-		C:\Program Files (x86)\Windows Kits\10\DesignTime\CommonConfiguration\Neutral\UAP\10.0.14393.0\Generic\generic.xaml  (replace 10.0.14393.0 with the version you have installed)
-		
-		Find the latest supported styles here:
-		https://github.com/unoplatform/uno/tree/master/src/Uno.UI/UI/Xaml/Style/Generic
-	-->
+    <!-- 
+        Find the latest styles here:
+        C:\Program Files (x86)\Windows Kits\10\DesignTime\CommonConfiguration\Neutral\UAP\10.0.14393.0\Generic\generic.xaml  (replace 10.0.14393.0 with the version you have installed)
+        
+        Find the latest supported styles here:
+        https://github.com/unoplatform/uno/tree/master/src/Uno.UI/UI/Xaml/Style/Generic
+    -->
 
-	<Style TargetType="ToggleButton"
-		   x:Key="DeaultToggleButtonStyle">
+    <Style TargetType="ToggleButton"
+           x:Key="DeaultToggleButtonStyle">
 
-		<Setter Property="Background"
-				Value="White" />
-		<Setter Property="Foreground"
-				Value="#FFEFF3FB" />
-		<Setter Property="VerticalContentAlignment"
-				Value="Stretch" />
-		<Setter Property="HorizontalContentAlignment"
-				Value="Stretch" />
-		<Setter Property="FontSize"
-				Value="16" />
+        <Setter Property="Background"
+                Value="White" />
+        <Setter Property="Foreground"
+                Value="#FFEFF3FB" />
+        <Setter Property="VerticalContentAlignment"
+                Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment"
+                Value="Stretch" />
+        <Setter Property="FontSize"
+                Value="16" />
 
-		<Setter Property="Template">
-			<Setter.Value>
-				<ControlTemplate TargetType="ToggleButton">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
 
-					<Grid x:Name="ContentRoot"
-							Background="{TemplateBinding Background}"
-							Padding="10">
+                    <Grid x:Name="ContentRoot"
+                            Background="{TemplateBinding Background}"
+                            Padding="10">
 
-						<VisualStateManager.VisualStateGroups>
-							<VisualStateGroup x:Name="CommonStates">
-								<VisualState x:Name="Normal" />
-								<VisualState x:Name="PointerOver" />
-								
-								<VisualState x:Name="Pressed">
-									<VisualState.Setters>
-										<Setter Target="ContentRoot.Opacity"
-												Value="0.7" />
-									</VisualState.Setters>
-								</VisualState>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver" />
+                                
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentRoot.Opacity"
+                                                Value="0.7" />
+                                    </VisualState.Setters>
+                                </VisualState>
 
-								<VisualState x:Name="CheckedPointerOver">
-									<VisualState.Setters>
-										<Setter Target="Star.Fill"
-												Value="{StaticResource AccentColorBrush}" />
-									</VisualState.Setters>
-								</VisualState>
+                                <VisualState x:Name="CheckedPointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="Star.Fill"
+                                                Value="{StaticResource AccentColorBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
 
-								<VisualState x:Name="Checked">
-									<VisualState.Setters>
-										<Setter Target="Star.Fill"
-												Value="{StaticResource AccentColorBrush}" />
-									</VisualState.Setters>
-								</VisualState>
+                                <VisualState x:Name="Checked">
+                                    <VisualState.Setters>
+                                        <Setter Target="Star.Fill"
+                                                Value="{StaticResource AccentColorBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
 
-								<VisualState x:Name="CheckedPressed">
-									<VisualState.Setters>
-										<Setter Target="ContentRoot.Opacity"
-												Value="0.7" />
-										<Setter Target="Star.Fill"
-												Value="{StaticResource AccentColorBrush}" />
-									</VisualState.Setters>
-								</VisualState>
-							</VisualStateGroup>
-						</VisualStateManager.VisualStateGroups>
+                                <VisualState x:Name="CheckedPressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentRoot.Opacity"
+                                                Value="0.7" />
+                                        <Setter Target="Star.Fill"
+                                                Value="{StaticResource AccentColorBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
 
-						<ContentPresenter x:Name="ContentPresenter"
-										  Foreground="{TemplateBinding Foreground}"
-										  ContentTemplate="{TemplateBinding ContentTemplate}"
-										  VerticalAlignment="Stretch"
-										  HorizontalAlignment="Stretch"
-										  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-										  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}">
+                        <ContentPresenter x:Name="ContentPresenter"
+                                          Foreground="{TemplateBinding Foreground}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          VerticalAlignment="Stretch"
+                                          HorizontalAlignment="Stretch"
+                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}">
 
-							<Path x:Name="Star"  
-								  Data="M16.001007,0L20.944,10.533997 32,12.223022 23.998993,20.421997 25.889008,32 16.001007,26.533997 6.1109924,32 8,20.421997 0,12.223022 11.057007,10.533997z"
-								  Fill="{TemplateBinding Foreground}"
-								  VerticalAlignment="Center"
-								  HorizontalAlignment="Center"
-								  Stretch="Uniform"
-								  Width="30" />
-						</ContentPresenter>
-					</Grid>
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
-	</Style>
+                            <Path x:Name="Star"  
+                                  Data="M16.001007,0L20.944,10.533997 32,12.223022 23.998993,20.421997 25.889008,32 16.001007,26.533997 6.1109924,32 8,20.421997 0,12.223022 11.057007,10.533997z"
+                                  Fill="{TemplateBinding Foreground}"
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Center"
+                                  Stretch="Uniform"
+                                  Width="30" />
+                        </ContentPresenter>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-	<!--Default Style-->
-	<Style TargetType="ToggleButton"
-		   BasedOn="{StaticResource DeaultToggleButtonStyle}" />
+    <!--Default Style-->
+    <Style TargetType="ToggleButton"
+           BasedOn="{StaticResource DeaultToggleButtonStyle}" />
 </ResourceDictionary>

@@ -6,11 +6,11 @@ using Uno;
 
 namespace ApplicationTemplate.Client
 {
-	[GeneratedImmutable]
-	public partial class ChuckNorrisResponse
-	{
-		[EqualityHash]
-		[SerializationProperty("result")]
-		public ChuckNorrisData[] Quotes { get; }
-	}
+    [GeneratedImmutable]
+    public partial class ChuckNorrisResponse
+    {
+        [EqualityHash]
+        [SerializationProperty("result")]
+        public ChuckNorrisData[] Quotes { get; }
+    }
 }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ApplicationTemplate.Client
 {
-	public class ErrorData
-	{
-	}
+    public class ErrorData
+    {
+    }
 }

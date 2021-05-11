@@ -9,35 +9,35 @@ using GeneratedSerializers;
 
 namespace ApplicationTemplate.Client
 {
-	public class UserProfileEndpointMock : BaseMock, IUserProfileEndpoint
-	{
-		private readonly IApplicationSettingsService _applicationSettingsService;
+    public class UserProfileEndpointMock : BaseMock, IUserProfileEndpoint
+    {
+        private readonly IApplicationSettingsService _applicationSettingsService;
 
-		public UserProfileEndpointMock(
-			IObjectSerializer serializer,
-			IApplicationSettingsService applicationSettingsService
-		) : base(serializer)
-		{
-			_applicationSettingsService = applicationSettingsService ?? throw new ArgumentNullException(nameof(applicationSettingsService));
-		}
+        public UserProfileEndpointMock(
+            IObjectSerializer serializer,
+            IApplicationSettingsService applicationSettingsService
+        ) : base(serializer)
+        {
+            _applicationSettingsService = applicationSettingsService ?? throw new ArgumentNullException(nameof(applicationSettingsService));
+        }
 
-		public async Task<UserProfileData> Get(CancellationToken ct)
-		{
-			var settings = await _applicationSettingsService.GetAndObserveCurrent().FirstAsync(ct);
+        public async Task<UserProfileData> Get(CancellationToken ct)
+        {
+            var settings = await _applicationSettingsService.GetAndObserveCurrent().FirstAsync(ct);
 
-			if (settings.AuthenticationData == default(AuthenticationData))
-			{
-				return default(UserProfileData);
-			}
+            if (settings.AuthenticationData == default(AuthenticationData))
+            {
+                return default(UserProfileData);
+            }
 
-			await Task.Delay(TimeSpan.FromSeconds(2));
+            await Task.Delay(TimeSpan.FromSeconds(2));
 
-			return await GetTaskFromEmbeddedResource<UserProfileData>();
-		}
+            return await GetTaskFromEmbeddedResource<UserProfileData>();
+        }
 
-		public async Task Update(CancellationToken ct, UserProfileData userProfile)
-		{
-			await Task.Delay(TimeSpan.FromSeconds(2));
-		}
-	}
+        public async Task Update(CancellationToken ct, UserProfileData userProfile)
+        {
+            await Task.Delay(TimeSpan.FromSeconds(2));
+        }
+    }
 }

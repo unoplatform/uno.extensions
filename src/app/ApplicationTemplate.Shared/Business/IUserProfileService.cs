@@ -7,21 +7,21 @@ using ApplicationTemplate.Client;
 
 namespace ApplicationTemplate.Business
 {
-	public interface IUserProfileService
-	{
-		/// <summary>
-		/// Gets the current user profile.
-		/// </summary>
-		/// <param name="ct"><see cref="CancellationToken"/></param>
-		/// <returns><see cref="UserProfileData"/></returns>
-		Task<UserProfileData> GetCurrent(CancellationToken ct);
+    public interface IUserProfileService
+    {
+        /// <summary>
+        /// Gets the current user profile.
+        /// </summary>
+        /// <param name="ct"><see cref="CancellationToken"/></param>
+        /// <returns><see cref="UserProfileData"/></returns>
+        Task<UserProfileData> GetCurrent(CancellationToken ct);
 
-		/// <summary>
-		/// Updates the current user profile.
-		/// </summary>
-		/// <param name="ct"><see cref="CancellationToken"/></param>
-		/// <param name="userProfile"><see cref="UserProfileData"/></param>
-		/// <returns><see cref="Task"/></returns>
-		Task Update(CancellationToken ct, UserProfileData userProfile);
-	}
+        /// <summary>
+        /// Updates the current user profile.
+        /// </summary>
+        /// <param name="ct"><see cref="CancellationToken"/></param>
+        /// <param name="userProfile"><see cref="UserProfileData"/></param>
+        /// <returns><see cref="Task"/></returns>
+        Task Update(CancellationToken ct, UserProfileData userProfile);
+    }
 }

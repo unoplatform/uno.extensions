@@ -1,63 +1,63 @@
 ﻿<Page x:Class="ApplicationTemplate.Views.Content.PostsPage"
-	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	  xmlns:local="using:ApplicationTemplate"
-	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	  xmlns:ue="using:Nventive.View.Extensions"
-	  xmlns:u="using:Nventive.View.Controls"
-	  xmlns:dl="using:Chinook.DataLoader"
-	  mc:Ignorable="d">
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:ApplicationTemplate"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:ue="using:Nventive.View.Extensions"
+      xmlns:u="using:Nventive.View.Controls"
+      xmlns:dl="using:Chinook.DataLoader"
+      mc:Ignorable="d">
 
-	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="*" />
-		</Grid.RowDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
-		<CommandBar Content="Posts"
-					x:Uid="Posts_CommandBar" />
+        <CommandBar Content="Posts"
+                    x:Uid="Posts_CommandBar" />
 
-		<Button Content="New post"
-				x:Uid="Posts_NewPost"
-				Command="{Binding NavigateToNewPost}"
-				Margin="0,4"
-				HorizontalAlignment="Stretch"
-				Grid.Row="1" />
+        <Button Content="New post"
+                x:Uid="Posts_NewPost"
+                Command="{Binding NavigateToNewPost}"
+                Margin="0,4"
+                HorizontalAlignment="Stretch"
+                Grid.Row="1" />
 
-		<StackPanel Orientation="Horizontal"
-					Margin="12,0,0,0"
-					Grid.Row="2">
-			
-			<TextBlock Text="Example of an image" />
-			<Image Source="ms-appx:///Assets/Image_Example.png"
-				   Height="20"
-				   Width="20"
-				   Margin="4,0" />
-		</StackPanel>
+        <StackPanel Orientation="Horizontal"
+                    Margin="12,0,0,0"
+                    Grid.Row="2">
+            
+            <TextBlock Text="Example of an image" />
+            <Image Source="ms-appx:///Assets/Image_Example.png"
+                   Height="20"
+                   Width="20"
+                   Margin="4,0" />
+        </StackPanel>
 
-		<dl:DataLoaderView Source="{Binding Posts}"
-						   RefreshCommand="{Binding RefreshPosts}"
-						   Margin="0,12,0,0"
-						   Grid.Row="3">
-			<DataTemplate>
-				<u:SwipeRefresh RefreshCommand="{Binding Parent.RefreshPosts}"
-								IsRefreshing="{Binding Parent.RefreshPosts.IsExecuting}"
-								IndicatorColor="Black">
-					<ListView ItemsSource="{Binding Data}"
-							  ue:ListViewBaseExtensions.Command="{Binding Parent.NavigateToPost}"
-							  IsItemClickEnabled="True">
-						<ListView.ItemTemplate>
-							<DataTemplate>
-								<TextBlock Text="{Binding Title}" />
-							</DataTemplate>
-						</ListView.ItemTemplate>
-					</ListView>
-				</u:SwipeRefresh>
-			</DataTemplate>
-		</dl:DataLoaderView>
-	</Grid>
+        <dl:DataLoaderView Source="{Binding Posts}"
+                           RefreshCommand="{Binding RefreshPosts}"
+                           Margin="0,12,0,0"
+                           Grid.Row="3">
+            <DataTemplate>
+                <u:SwipeRefresh RefreshCommand="{Binding Parent.RefreshPosts}"
+                                IsRefreshing="{Binding Parent.RefreshPosts.IsExecuting}"
+                                IndicatorColor="Black">
+                    <ListView ItemsSource="{Binding Data}"
+                              ue:ListViewBaseExtensions.Command="{Binding Parent.NavigateToPost}"
+                              IsItemClickEnabled="True">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Title}" />
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </u:SwipeRefresh>
+            </DataTemplate>
+        </dl:DataLoaderView>
+    </Grid>
 </Page>

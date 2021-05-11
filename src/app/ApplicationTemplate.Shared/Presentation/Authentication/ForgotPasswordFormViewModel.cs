@@ -6,25 +6,25 @@ using FluentValidation;
 
 namespace ApplicationTemplate.Presentation
 {
-	public class ForgotPasswordFormViewModel : ViewModel
-	{
-		public ForgotPasswordFormViewModel()
-		{
-			this.AddValidation(this.GetProperty(x => x.Email));
-		}
+    public class ForgotPasswordFormViewModel : ViewModel
+    {
+        public ForgotPasswordFormViewModel()
+        {
+            this.AddValidation(this.GetProperty(x => x.Email));
+        }
 
-		public string Email
-		{
-			get => this.Get<string>();
-			set => this.Set(value);
-		}
-	}
+        public string Email
+        {
+            get => this.Get<string>();
+            set => this.Set(value);
+        }
+    }
 
-	public class ForgotPasswordFormValidator : AbstractValidator<ForgotPasswordFormViewModel>
-	{
-		public ForgotPasswordFormValidator()
-		{
-			RuleFor(x => x.Email).NotEmpty().EmailAddress();
-		}
-	}
+    public class ForgotPasswordFormValidator : AbstractValidator<ForgotPasswordFormViewModel>
+    {
+        public ForgotPasswordFormValidator()
+        {
+            RuleFor(x => x.Email).NotEmpty().EmailAddress();
+        }
+    }
 }

@@ -2,11 +2,11 @@
 
 namespace ApplicationTemplate.Views.Content
 {
-	public sealed partial class EditProfilePage : Page
-	{
-		public EditProfilePage()
-		{
-			this.InitializeComponent();
-		}
-	}
+    public sealed partial class EditProfilePage : Page
+    {
+        public EditProfilePage()
+        {
+            this.InitializeComponent();
+        }
+    }
 }

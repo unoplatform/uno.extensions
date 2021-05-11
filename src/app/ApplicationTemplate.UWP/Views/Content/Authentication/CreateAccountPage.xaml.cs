@@ -2,11 +2,11 @@
 
 namespace ApplicationTemplate.Views.Content
 {
-	public sealed partial class CreateAccountPage : Page
-	{
-		public CreateAccountPage()
-		{
-			this.InitializeComponent();
-		}
-	}
+    public sealed partial class CreateAccountPage : Page
+    {
+        public CreateAccountPage()
+        {
+            this.InitializeComponent();
+        }
+    }
 }

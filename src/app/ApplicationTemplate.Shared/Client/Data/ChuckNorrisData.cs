@@ -6,17 +6,17 @@ using Uno;
 
 namespace ApplicationTemplate.Client
 {
-	[GeneratedImmutable]
-	public partial class ChuckNorrisData
-	{
-		[EqualityKey]
-		public string Id { get; }
+    [GeneratedImmutable]
+    public partial class ChuckNorrisData
+    {
+        [EqualityKey]
+        public string Id { get; }
 
-		public string Value { get; }
+        public string Value { get; }
 
-		[SerializationProperty("icon_url")]
-		public string IconUrl { get; }
+        [SerializationProperty("icon_url")]
+        public string IconUrl { get; }
 
-		public string[] Categories { get; }
-	}
+        public string[] Categories { get; }
+    }
 }

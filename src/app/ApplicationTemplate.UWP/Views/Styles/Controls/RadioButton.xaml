@@ -1,119 +1,119 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-					xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-					xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-					xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-					xmlns:xamarin="http://nventive.com/xamarin"
-					xmlns:android="http://nventive.com/android"
-					xmlns:ios="http://nventive.com/ios"
-					xmlns:not_android="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-					xmlns:not_ios="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-					xmlns:u="using:Nventive.View.Controls"
-					xmlns:ue="using:Nventive.View.Extensions"
-					xmlns:uc="using:Nventive.View.Converters"
-					xmlns:uloc="http://nventive.com/localization/1.0"
-					mc:Ignorable="xamarin android ios">
-	<!-- 
-		Find the latest styles here:
-		C:\Program Files (x86)\Windows Kits\10\DesignTime\CommonConfiguration\Neutral\UAP\10.0.14393.0\Generic\generic.xaml  (replace 10.0.14393.0 with the version you have installed)
-		
-		Find the latest supported styles here:
-		https://github.com/unoplatform/uno/tree/master/src/Uno.UI/UI/Xaml/Style/Generic
-	-->
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:xamarin="http://nventive.com/xamarin"
+                    xmlns:android="http://nventive.com/android"
+                    xmlns:ios="http://nventive.com/ios"
+                    xmlns:not_android="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:not_ios="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:u="using:Nventive.View.Controls"
+                    xmlns:ue="using:Nventive.View.Extensions"
+                    xmlns:uc="using:Nventive.View.Converters"
+                    xmlns:uloc="http://nventive.com/localization/1.0"
+                    mc:Ignorable="xamarin android ios">
+    <!-- 
+        Find the latest styles here:
+        C:\Program Files (x86)\Windows Kits\10\DesignTime\CommonConfiguration\Neutral\UAP\10.0.14393.0\Generic\generic.xaml  (replace 10.0.14393.0 with the version you have installed)
+        
+        Find the latest supported styles here:
+        https://github.com/unoplatform/uno/tree/master/src/Uno.UI/UI/Xaml/Style/Generic
+    -->
 
-	<!-- Default Radio Button Style -->
-	<Style x:Key="DefaultRadioButtonStyle"
-		   TargetType="RadioButton">
+    <!-- Default Radio Button Style -->
+    <Style x:Key="DefaultRadioButtonStyle"
+           TargetType="RadioButton">
 
-		<Setter Property="Background"
-				Value="Transparent" />
-		<Setter Property="MinHeight"
-				Value="45" />
-		<Setter Property="HorizontalAlignment"
-				Value="Stretch" />
-		<Setter Property="VerticalAlignment"
-				Value="Center" />
-		<Setter Property="HorizontalContentAlignment"
-				Value="Center" />
-		<Setter Property="VerticalContentAlignment"
-				Value="Center" />
-		<Setter Property="Padding"
-				Value="0" />
-		<Setter Property="FontSize"
-				Value="17" />
-		<Setter Property="Foreground"
-				Value="Black" />
+        <Setter Property="Background"
+                Value="Transparent" />
+        <Setter Property="MinHeight"
+                Value="45" />
+        <Setter Property="HorizontalAlignment"
+                Value="Stretch" />
+        <Setter Property="VerticalAlignment"
+                Value="Center" />
+        <Setter Property="HorizontalContentAlignment"
+                Value="Center" />
+        <Setter Property="VerticalContentAlignment"
+                Value="Center" />
+        <Setter Property="Padding"
+                Value="0" />
+        <Setter Property="FontSize"
+                Value="17" />
+        <Setter Property="Foreground"
+                Value="Black" />
 
-		<Setter Property="Template">
-			<Setter.Value>
-				<ControlTemplate TargetType="RadioButton">
-					<Grid Background="{TemplateBinding Background}"
-						  BorderBrush="{TemplateBinding BorderBrush}"
-						  BorderThickness="{TemplateBinding BorderThickness}">
-						<VisualStateManager.VisualStateGroups>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <Grid Background="{TemplateBinding Background}"
+                          BorderBrush="{TemplateBinding BorderBrush}"
+                          BorderThickness="{TemplateBinding BorderThickness}">
+                        <VisualStateManager.VisualStateGroups>
 
-							<VisualStateGroup x:Name="CommonStates">
-								<VisualState x:Name="Normal" />
-								<VisualState x:Name="PointerOver" />
-								<VisualState x:Name="Pressed" />
-								<VisualState x:Name="Disabled" />
-							</VisualStateGroup>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver" />
+                                <VisualState x:Name="Pressed" />
+                                <VisualState x:Name="Disabled" />
+                            </VisualStateGroup>
 
-							<VisualStateGroup x:Name="CheckStates">
-								<VisualState x:Name="Checked">
-									<VisualState.Setters>
-										<Setter Target="Icon.Opacity"
-												Value="1" />
-									</VisualState.Setters>
-								</VisualState>
-								<VisualState x:Name="Unchecked" />
-								<VisualState x:Name="Indeterminate" />
-							</VisualStateGroup>
+                            <VisualStateGroup x:Name="CheckStates">
+                                <VisualState x:Name="Checked">
+                                    <VisualState.Setters>
+                                        <Setter Target="Icon.Opacity"
+                                                Value="1" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Unchecked" />
+                                <VisualState x:Name="Indeterminate" />
+                            </VisualStateGroup>
 
-							<VisualStateGroup x:Name="FocusStates">
-								<VisualState x:Name="Focused" />
-								<VisualState x:Name="Unfocused" />
-								<VisualState x:Name="PointerFocused" />
-							</VisualStateGroup>
-						</VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="FocusStates">
+                                <VisualState x:Name="Focused" />
+                                <VisualState x:Name="Unfocused" />
+                                <VisualState x:Name="PointerFocused" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
 
-						<Grid Background="Transparent"
-							  Height="20"
-							  Width="20"
-							  VerticalAlignment="Center"
-							  HorizontalAlignment="Left"
-							  CornerRadius="10"
-							  BorderThickness="2"
-							  BorderBrush="Black"
-							  Margin="15,0,0,0">
+                        <Grid Background="Transparent"
+                              Height="20"
+                              Width="20"
+                              VerticalAlignment="Center"
+                              HorizontalAlignment="Left"
+                              CornerRadius="10"
+                              BorderThickness="2"
+                              BorderBrush="Black"
+                              Margin="15,0,0,0">
 
-							<Grid x:Name="Icon"
-								  Background="Black"
-								  CornerRadius="6"
-								  Height="12"
-								  Width="12"
-								  VerticalAlignment="Center"
-								  HorizontalAlignment="Center"
-								  Opacity="0" />
-						</Grid>
+                            <Grid x:Name="Icon"
+                                  Background="Black"
+                                  CornerRadius="6"
+                                  Height="12"
+                                  Width="12"
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Center"
+                                  Opacity="0" />
+                        </Grid>
 
-						<!-- Content Presenter -->
-						<ContentPresenter x:Name="ContentPresenter"
-										  Content="{TemplateBinding Content}"
-										  ContentTransitions="{TemplateBinding ContentTransitions}"
-										  ContentTemplate="{TemplateBinding ContentTemplate}"
-										  Foreground="{TemplateBinding Foreground}"
-										  HorizontalAlignment="Left"
-										  VerticalAlignment="Center"
-										  AutomationProperties.AccessibilityView="Raw"
-										  Margin="50,0,0,2" />
-					</Grid>
-				</ControlTemplate>
-			</Setter.Value>
-		</Setter>
-	</Style>
+                        <!-- Content Presenter -->
+                        <ContentPresenter x:Name="ContentPresenter"
+                                          Content="{TemplateBinding Content}"
+                                          ContentTransitions="{TemplateBinding ContentTransitions}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          Foreground="{TemplateBinding Foreground}"
+                                          HorizontalAlignment="Left"
+                                          VerticalAlignment="Center"
+                                          AutomationProperties.AccessibilityView="Raw"
+                                          Margin="50,0,0,2" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-	<!--Default Style-->
-	<Style TargetType="RadioButton"
-		   BasedOn="{StaticResource DefaultRadioButtonStyle}" />
+    <!--Default Style-->
+    <Style TargetType="RadioButton"
+           BasedOn="{StaticResource DefaultRadioButtonStyle}" />
 </ResourceDictionary>

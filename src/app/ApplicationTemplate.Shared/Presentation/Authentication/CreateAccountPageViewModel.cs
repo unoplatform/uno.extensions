@@ -7,20 +7,20 @@ using Chinook.StackNavigation;
 
 namespace ApplicationTemplate.Presentation
 {
-	public class CreateAccountPageViewModel : ViewModel
-	{
-		public CreateAccountFormViewModel Form => this.GetChild(() => new CreateAccountFormViewModel());
+    public class CreateAccountPageViewModel : ViewModel
+    {
+        public CreateAccountFormViewModel Form => this.GetChild(() => new CreateAccountFormViewModel());
 
-		public IDynamicCommand CreateAccount => this.GetCommandFromTask(async ct =>
-		{
-			var validationResult = await Form.Validate(ct);
+        public IDynamicCommand CreateAccount => this.GetCommandFromTask(async ct =>
+        {
+            var validationResult = await Form.Validate(ct);
 
-			if (validationResult.IsValid)
-			{
-				await this.GetService<IAuthenticationService>().CreateAccount(ct, Form.Email.Trim(), Form.Password);
+            if (validationResult.IsValid)
+            {
+                await this.GetService<IAuthenticationService>().CreateAccount(ct, Form.Email.Trim(), Form.Password);
 
-				await this.GetService<IStackNavigator>().NavigateAndClear(ct, () => new HomePageViewModel());
-			}
-		});
-	}
+                await this.GetService<IStackNavigator>().NavigateAndClear(ct, () => new HomePageViewModel());
+            }
+        });
+    }
 }

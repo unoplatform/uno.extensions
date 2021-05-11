@@ -1,29 +1,29 @@
 ﻿<UserControl x:Class="ApplicationTemplate.Shell"
-			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:local="using:ApplicationTemplate.Views.Content"
-			 xmlns:splash="using:Nventive.ExtendedSplashScreen"
-			 xmlns:nav="using:Chinook.SectionsNavigation"
-			 xmlns:ue="using:Nventive.View.Extensions"
-			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 mc:Ignorable="d">
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:ApplicationTemplate.Views.Content"
+             xmlns:splash="using:Nventive.ExtendedSplashScreen"
+             xmlns:nav="using:Chinook.SectionsNavigation"
+             xmlns:ue="using:Nventive.View.Extensions"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
 
-	<Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-		<nav:MultiFrame x:Name="RootNavigationMultiFrame"
-						CommaSeparatedSectionsFrameNames="Home,Posts,Settings" />
+        <nav:MultiFrame x:Name="RootNavigationMultiFrame"
+                        CommaSeparatedSectionsFrameNames="Home,Posts,Settings" />
 
-		<local:Menu x:Name="Menu"
-					DataContext="{Binding Menu}"
-					VerticalAlignment="Bottom" />
+        <local:Menu x:Name="Menu"
+                    DataContext="{Binding Menu}"
+                    VerticalAlignment="Bottom" />
 
-		<local:DiagnosticsOverlay DataContext="{Binding DiagnosticsOverlay}"
-								  Visibility="{Binding IsDiagnosticsOverlayEnabled, Converter={StaticResource TrueToVisible}, FallbackValue=Collapsed}" />
+        <local:DiagnosticsOverlay DataContext="{Binding DiagnosticsOverlay}"
+                                  Visibility="{Binding IsDiagnosticsOverlayEnabled, Converter={StaticResource TrueToVisible}, FallbackValue=Collapsed}" />
 
-		<splash:ExtendedSplashScreen x:Name="AppExtendedSplashScreen"
-									 ue:MultipleTapExtension.Command="{Binding DiagnosticsOverlay.NavigateToDiagnosticsPage}"
-									 ue:MultipleTapExtension.TapCount="3" />
-	</Grid>
+        <splash:ExtendedSplashScreen x:Name="AppExtendedSplashScreen"
+                                     ue:MultipleTapExtension.Command="{Binding DiagnosticsOverlay.NavigateToDiagnosticsPage}"
+                                     ue:MultipleTapExtension.TapCount="3" />
+    </Grid>
 
 </UserControl>

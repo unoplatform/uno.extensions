@@ -9,128 +9,128 @@ using Windows.UI.Xaml.Controls;
 
 namespace ApplicationTemplate
 {
-	public partial class DataValidationView : ContentControl
-	{
-		private bool _isDefaultState = true;
+    public partial class DataValidationView : ContentControl
+    {
+        private bool _isDefaultState = true;
 
-		public DataValidationView()
-		{
-			DefaultStyleKey = typeof(DataValidationView);
+        public DataValidationView()
+        {
+            DefaultStyleKey = typeof(DataValidationView);
 
-			IsTabStop = false;
-		}
+            IsTabStop = false;
+        }
 
-		public INotifyDataErrorInfo Model
-		{
-			get => (INotifyDataErrorInfo)GetValue(ModelProperty);
-			set => SetValue(ModelProperty, value);
-		}
+        public INotifyDataErrorInfo Model
+        {
+            get => (INotifyDataErrorInfo)GetValue(ModelProperty);
+            set => SetValue(ModelProperty, value);
+        }
 
-		public static readonly DependencyProperty ModelProperty =
-			DependencyProperty.Register("Model", typeof(INotifyDataErrorInfo), typeof(DataValidationView), new PropertyMetadata(default(INotifyDataErrorInfo), (d, e) => ((DataValidationView)d).OnModelChanged((INotifyDataErrorInfo)e.OldValue, (INotifyDataErrorInfo)e.NewValue)));
+        public static readonly DependencyProperty ModelProperty =
+            DependencyProperty.Register("Model", typeof(INotifyDataErrorInfo), typeof(DataValidationView), new PropertyMetadata(default(INotifyDataErrorInfo), (d, e) => ((DataValidationView)d).OnModelChanged((INotifyDataErrorInfo)e.OldValue, (INotifyDataErrorInfo)e.NewValue)));
 
-		public string PropertyName
-		{
-			get => (string)GetValue(PropertyNameProperty);
-			set => SetValue(PropertyNameProperty, value);
-		}
+        public string PropertyName
+        {
+            get => (string)GetValue(PropertyNameProperty);
+            set => SetValue(PropertyNameProperty, value);
+        }
 
-		public static readonly DependencyProperty PropertyNameProperty =
-			DependencyProperty.Register("PropertyName", typeof(string), typeof(DataValidationView), new PropertyMetadata(default(string), (d, e) => ((DataValidationView)d).OnPropertyNamedChanged()));
+        public static readonly DependencyProperty PropertyNameProperty =
+            DependencyProperty.Register("PropertyName", typeof(string), typeof(DataValidationView), new PropertyMetadata(default(string), (d, e) => ((DataValidationView)d).OnPropertyNamedChanged()));
 
-		public DataValidationState State
-		{
-			get => (DataValidationState)GetValue(FieldValidationStateProperty);
-			set => SetValue(FieldValidationStateProperty, value);
-		}
+        public DataValidationState State
+        {
+            get => (DataValidationState)GetValue(FieldValidationStateProperty);
+            set => SetValue(FieldValidationStateProperty, value);
+        }
 
-		public static readonly DependencyProperty FieldValidationStateProperty =
-			DependencyProperty.Register("State", typeof(DataValidationState), typeof(DataValidationView), new PropertyMetadata(default(DataValidationState)));
+        public static readonly DependencyProperty FieldValidationStateProperty =
+            DependencyProperty.Register("State", typeof(DataValidationState), typeof(DataValidationView), new PropertyMetadata(default(DataValidationState)));
 
-		protected override void OnApplyTemplate()
-		{
-			base.OnApplyTemplate();
+        protected override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
 
-			Update();
-		}
+            Update();
+        }
 
-		private void OnModelChanged(INotifyDataErrorInfo oldModel, INotifyDataErrorInfo newModel)
-		{
-			_isDefaultState = true;
+        private void OnModelChanged(INotifyDataErrorInfo oldModel, INotifyDataErrorInfo newModel)
+        {
+            _isDefaultState = true;
 
-			if (oldModel != null)
-			{
-				oldModel.ErrorsChanged -= OnErrorsChanged;
-			}
+            if (oldModel != null)
+            {
+                oldModel.ErrorsChanged -= OnErrorsChanged;
+            }
 
-			if (newModel != null)
-			{
-				newModel.ErrorsChanged += OnErrorsChanged;
-			}
+            if (newModel != null)
+            {
+                newModel.ErrorsChanged += OnErrorsChanged;
+            }
 
-			Update();
-		}
+            Update();
+        }
 
-		private void OnPropertyNamedChanged()
-		{
-			_isDefaultState = true;
+        private void OnPropertyNamedChanged()
+        {
+            _isDefaultState = true;
 
-			Update();
-		}
+            Update();
+        }
 
-		private void OnErrorsChanged(object sender, DataErrorsChangedEventArgs e)
-		{
-			//_ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, ErrorsChangedUI);
+        private void OnErrorsChanged(object sender, DataErrorsChangedEventArgs e)
+        {
+            //_ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, ErrorsChangedUI);
 
-			void ErrorsChangedUI()
-			{
-				// Errors have changed but not for that property; don't update.
-				if (PropertyName != null && e.PropertyName != null && PropertyName != e.PropertyName)
-				{
-					return;
-				}
+            void ErrorsChangedUI()
+            {
+                // Errors have changed but not for that property; don't update.
+                if (PropertyName != null && e.PropertyName != null && PropertyName != e.PropertyName)
+                {
+                    return;
+                }
 
-				// It should no longer be in the default state.
-				_isDefaultState = false;
+                // It should no longer be in the default state.
+                _isDefaultState = false;
 
-				Update();
-			}
-		}
+                Update();
+            }
+        }
 
-		private void Update()
-		{
-			State = GetDataValidationState();
+        private void Update()
+        {
+            State = GetDataValidationState();
 
-			VisualStateManager.GoToState(this, State.StateType.ToString(), true);
-		}
+            VisualStateManager.GoToState(this, State.StateType.ToString(), true);
+        }
 
-		private DataValidationState GetDataValidationState()
-		{
-			if (Model == null || _isDefaultState)
-			{
-				return new DataValidationState(DataValidationStateType.Default);
-			}
+        private DataValidationState GetDataValidationState()
+        {
+            if (Model == null || _isDefaultState)
+            {
+                return new DataValidationState(DataValidationStateType.Default);
+            }
 
-			var state = new DataValidationState(DataValidationStateType.Valid);
+            var state = new DataValidationState(DataValidationStateType.Valid);
 
-			if (Model.HasErrors)
-			{
-				var errors = Model
-					.GetErrors(PropertyName)
-					.Cast<object>()
-					.ToImmutableList();
+            if (Model.HasErrors)
+            {
+                var errors = Model
+                    .GetErrors(PropertyName)
+                    .Cast<object>()
+                    .ToImmutableList();
 
-				if (errors.Any())
-				{
-					state = new DataValidationState(DataValidationStateType.Error, errors);
-				}
-				else
-				{
-					// The errors are not related to that property; it's valid.
-				}
-			}
+                if (errors.Any())
+                {
+                    state = new DataValidationState(DataValidationStateType.Error, errors);
+                }
+                else
+                {
+                    // The errors are not related to that property; it's valid.
+                }
+            }
 
-			return state;
-		}
-	}
+            return state;
+        }
+    }
 }
