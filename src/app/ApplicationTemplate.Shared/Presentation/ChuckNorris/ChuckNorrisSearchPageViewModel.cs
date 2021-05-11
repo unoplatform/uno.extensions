@@ -5,9 +5,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using ApplicationTemplate;
 using ApplicationTemplate.Business;
-using Chinook.DataLoader;
-using Chinook.DynamicMvvm;
-using Chinook.StackNavigation;
+//using Chinook.DataLoader;
+//using Chinook.DynamicMvvm;
+//using Chinook.StackNavigation;
 using DynamicData;
 
 namespace ApplicationTemplate.Presentation

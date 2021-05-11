@@ -24,10 +24,10 @@ namespace ApplicationTemplate
             return hostBuilder
                 .AddApi()
                 .ConfigureServices(s => s
-                    .AddMvvm()
-                    .AddPersistence()
-                    .AddNavigationCore()
-                    .AddErrorHandling()
+                    //.AddMvvm()
+                    //.AddPersistence()
+                    //.AddNavigationCore()
+                    //.AddErrorHandling()
                     .AddSerialization()
                     .AddLocalization()
                     .AddAppServices()

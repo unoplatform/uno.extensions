@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ApplicationTemplate.Client;
-using DynamicData;
+//using DynamicData;
 using Uno.Extensions;
 
 namespace ApplicationTemplate.Business
@@ -14,7 +14,7 @@ namespace ApplicationTemplate.Business
     {
         private readonly IApplicationSettingsService _applicationSettingsService;
         private readonly IChuckNorrisEndpoint _chuckNorrisEndpoint;
-        private SourceList<ChuckNorrisQuote> _favouriteQuotes;
+        //private SourceList<ChuckNorrisQuote> _favouriteQuotes;
 
         public ChuckNorrisService(IApplicationSettingsService applicationSettingsService, IChuckNorrisEndpoint chuckNorrisEndpoint)
         {
@@ -42,11 +42,11 @@ namespace ApplicationTemplate.Business
                 .ToArray();
         }
 
-        public async Task<IObservableList<ChuckNorrisQuote>> GetFavorites(CancellationToken ct)
-        {
-            var source = await GetFavouriteQuotesSource(ct);
-            return source.AsObservableList();
-        }
+        //public async Task<IObservableList<ChuckNorrisQuote>> GetFavorites(CancellationToken ct)
+        //{
+        //    var source = await GetFavouriteQuotesSource(ct);
+        //    return source.AsObservableList();
+        //}
 
         public async Task SetIsFavorite(CancellationToken ct, ChuckNorrisQuote quote, bool isFavorite)
         {
@@ -65,38 +65,38 @@ namespace ApplicationTemplate.Business
 
             await _applicationSettingsService.SetFavoriteQuotes(ct, updatedFavorites);
 
-            var source = await GetFavouriteQuotesSource(ct);
+            //var source = await GetFavouriteQuotesSource(ct);
 
-            if (isFavorite)
-            {
-                if (source.Items.None(q => q.Id == quote.Id))
-                {
-                    source.Add(quote);
-                }
-            }
-            else
-            {
-                var item = source.Items.FirstOrDefault(q => q.Id == quote.Id);
-                source.Remove(item);
-            }
+            //if (isFavorite)
+            //{
+            //    if (source.Items.None(q => q.Id == quote.Id))
+            //    {
+            //        source.Add(quote);
+            //    }
+            //}
+            //else
+            //{
+            //    var item = source.Items.FirstOrDefault(q => q.Id == quote.Id);
+            //    source.Remove(item);
+            //}
         }
 
-        private async Task<SourceList<ChuckNorrisQuote>> GetFavouriteQuotesSource(CancellationToken ct)
-        {
-            if (_favouriteQuotes == null)
-            {
-                var settings = await _applicationSettingsService.GetCurrent(ct);
+        //private async Task<SourceList<ChuckNorrisQuote>> GetFavouriteQuotesSource(CancellationToken ct)
+        //{
+        //    if (_favouriteQuotes == null)
+        //    {
+        //        var settings = await _applicationSettingsService.GetCurrent(ct);
 
-                _favouriteQuotes = new SourceList<ChuckNorrisQuote>();
-                _favouriteQuotes.AddRange(settings.FavoriteQuotes.Values);
-            }
+        //        _favouriteQuotes = new SourceList<ChuckNorrisQuote>();
+        //        _favouriteQuotes.AddRange(settings.FavoriteQuotes.Values);
+        //    }
 
-            return _favouriteQuotes;
-        }
+        //    return _favouriteQuotes;
+        //}
 
         public void Dispose()
         {
-            _favouriteQuotes?.Dispose();
+            //_favouriteQuotes?.Dispose();
         }
     }
 }

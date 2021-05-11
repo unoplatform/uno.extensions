@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using DynamicData;
+//using DynamicData;
 
 namespace ApplicationTemplate.Business
 {
@@ -17,12 +17,12 @@ namespace ApplicationTemplate.Business
         /// <returns>List of quotes</returns>
         Task<ChuckNorrisQuote[]> Search(CancellationToken ct, string searchTerm);
 
-        /// <summary>
-        /// Returns the list of favorite quotes.
-        /// </summary>
-        /// <param name="ct"><see cref="CancellationToken"/></param>
-        /// <returns>List of favorite quotes</returns>
-        Task<IObservableList<ChuckNorrisQuote>> GetFavorites(CancellationToken ct);
+        ///// <summary>
+        ///// Returns the list of favorite quotes.
+        ///// </summary>
+        ///// <param name="ct"><see cref="CancellationToken"/></param>
+        ///// <returns>List of favorite quotes</returns>
+        //Task<IObservableList<ChuckNorrisQuote>> GetFavorites(CancellationToken ct);
 
         /// <summary>
         /// Sets whether or not a quote is favorite.

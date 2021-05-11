@@ -2,8 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Chinook.DataLoader;
-using Chinook.DynamicMvvm;
+//using Chinook.DataLoader;
+//using Chinook.DynamicMvvm;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

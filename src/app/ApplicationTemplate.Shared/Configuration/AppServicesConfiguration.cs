@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 using ApplicationTemplate;
 using ApplicationTemplate.Business;
 using ApplicationTemplate.Presentation;
-using MessageDialogService;
+//using MessageDialogService;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
-using Nventive.ExtendedSplashScreen;
+//using Nventive.ExtendedSplashScreen;
 using Windows.ApplicationModel;
 using Xamarin.Essentials.Implementation;
 using Xamarin.Essentials.Interfaces;
@@ -35,14 +35,14 @@ namespace ApplicationTemplate
         {
             return services
                 .AddXamarinEssentials()
-                .AddMessageDialog()
-                .AddSingleton<IBackgroundScheduler>(s => TaskPoolScheduler.Default.ToBackgroundScheduler())
+                //.AddMessageDialog()
+                //.AddSingleton<IBackgroundScheduler>(s => TaskPoolScheduler.Default.ToBackgroundScheduler())
                 .AddSingleton<IApplicationSettingsService, ApplicationSettingsService>()
                 .AddSingleton<IPostService, PostService>()
                 .AddSingleton<IChuckNorrisService, ChuckNorrisService>()
                 .AddSingleton<IAuthenticationService, AuthenticationService>()
-                .AddSingleton<IUserProfileService, UserProfileService>()
-                .AddSingleton<DiagnosticsCountersService>();
+                .AddSingleton<IUserProfileService, UserProfileService>();
+//                .AddSingleton<DiagnosticsCountersService>();
         }
 
         private static IServiceCollection AddXamarinEssentials(this IServiceCollection services)
@@ -60,26 +60,26 @@ namespace ApplicationTemplate
                 .AddSingleton<IEmail, EmailImplementation>();
         }
 
-        private static IServiceCollection AddMessageDialog(this IServiceCollection services)
-        {
-            return services.AddSingleton<IMessageDialogService>(s =>
-//-:cnd:noEmit
-#if WINDOWS_UWP || __IOS__ || __ANDROID__
-//+:cnd:noEmit
-                new MessageDialogService.MessageDialogService(
-                    () => s.GetRequiredService<Windows.UI.Core.CoreDispatcher>(),
-                    new MessageDialogBuilderDelegate(
-                        key => s.GetRequiredService<IStringLocalizer>()[key]
-                    )
-                )
-//-:cnd:noEmit
-#else
-//+:cnd:noEmit
-                new AcceptOrDefaultMessageDialogService()
-//-:cnd:noEmit
-#endif
-//+:cnd:noEmit
-            );
-        }
+//        private static IServiceCollection AddMessageDialog(this IServiceCollection services)
+//        {
+//            return services.AddSingleton<IMessageDialogService>(s =>
+////-:cnd:noEmit
+//#if WINDOWS_UWP || __IOS__ || __ANDROID__
+////+:cnd:noEmit
+//                new MessageDialogService.MessageDialogService(
+//                    () => s.GetRequiredService<Windows.UI.Core.CoreDispatcher>(),
+//                    new MessageDialogBuilderDelegate(
+//                        key => s.GetRequiredService<IStringLocalizer>()[key]
+//                    )
+//                )
+////-:cnd:noEmit
+//#else
+////+:cnd:noEmit
+//                new AcceptOrDefaultMessageDialogService()
+////-:cnd:noEmit
+//#endif
+////+:cnd:noEmit
+//            );
+//        }
     }
 }

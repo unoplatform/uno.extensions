@@ -3,14 +3,14 @@ using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ApplicationTemplate.Presentation;
-using Chinook.BackButtonManager;
-using Chinook.DynamicMvvm;
-using Chinook.SectionsNavigation;
+//using Chinook.BackButtonManager;
+//using Chinook.DynamicMvvm;
+//using Chinook.SectionsNavigation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Uno.UI;
-using Windows.UI.Core;
+//using Uno.UI;
+//using Windows.UI.Core;
 
 namespace ApplicationTemplate.Views
 {
@@ -40,7 +40,7 @@ namespace ApplicationTemplate.Views
 
         protected override void OnInitialized(IServiceProvider services)
         {
-            AsyncWebView.AsyncWebView.Logger = services.GetRequiredService<ILogger<AsyncWebView.AsyncWebView>>();
+            //AsyncWebView.AsyncWebView.Logger = services.GetRequiredService<ILogger<AsyncWebView.AsyncWebView>>();
         }
 
         protected override async Task StartViewServices(IServiceProvider services, bool isFirstStart)

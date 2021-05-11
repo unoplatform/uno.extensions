@@ -4,8 +4,8 @@ using System.Globalization;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Chinook.DynamicMvvm;
-using MessageDialogService;
+//using Chinook.DynamicMvvm;
+//using MessageDialogService;
 
 namespace ApplicationTemplate.Presentation
 {

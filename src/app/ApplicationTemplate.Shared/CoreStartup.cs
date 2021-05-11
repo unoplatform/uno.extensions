@@ -5,17 +5,17 @@ using System.Threading;
 using System.Threading.Tasks;
 using ApplicationTemplate.Business;
 using ApplicationTemplate.Presentation;
-using Chinook.BackButtonManager;
-using Chinook.DataLoader;
-using Chinook.DynamicMvvm;
-using Chinook.SectionsNavigation;
-using Chinook.StackNavigation;
+//using Chinook.BackButtonManager;
+//using Chinook.DataLoader;
+//using Chinook.DynamicMvvm;
+//using Chinook.SectionsNavigation;
+//using Chinook.StackNavigation;
 using FluentValidation;
-using MessageDialogService;
+//using MessageDialogService;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Nventive.ExtendedSplashScreen;
+//using Nventive.ExtendedSplashScreen;
 using Uno.Disposables;
 using Windows.UI.Core;
 
@@ -38,7 +38,7 @@ namespace ApplicationTemplate
 
         protected override void OnInitialized(IServiceProvider services)
         {
-            ViewModelBase.DefaultServiceProvider = services;
+            //ViewModelBase.DefaultServiceProvider = services;
 
             InitializeLoggerFactories(services);
 
@@ -55,7 +55,7 @@ namespace ApplicationTemplate
 
                 NotifyUserOnSessionExpired(services);
 
-                services.GetRequiredService<DiagnosticsCountersService>().Start();
+                //services.GetRequiredService<DiagnosticsCountersService>().Start();
 
                 await ExecuteInitialNavigation(CancellationToken.None, services);
             }
@@ -63,79 +63,80 @@ namespace ApplicationTemplate
 
         private async Task ExecuteInitialNavigation(CancellationToken ct, IServiceProvider services)
         {
-            var applicationSettingsService = services.GetRequiredService<IApplicationSettingsService>();
-            var sectionsNavigator = services.GetRequiredService<ISectionsNavigator>();
+            // TODO: Implement initial navigation
+//            var applicationSettingsService = services.GetRequiredService<IApplicationSettingsService>();
+//            var sectionsNavigator = services.GetRequiredService<ISectionsNavigator>();
 
-            var section = await sectionsNavigator.SetActiveSection(ct, "Home");
+//            var section = await sectionsNavigator.SetActiveSection(ct, "Home");
 
-            var navigationController = sectionsNavigator.State.ActiveSection;
+//            var navigationController = sectionsNavigator.State.ActiveSection;
 
-            var currentSettings = await applicationSettingsService.GetAndObserveCurrent().FirstAsync(ct);
+//            var currentSettings = await applicationSettingsService.GetAndObserveCurrent().FirstAsync(ct);
 
-            if (currentSettings.IsOnboardingCompleted)
-            {
-                await section.Navigate(ct, () => new HomePageViewModel());
-            }
-            else
-            {
-                await section.Navigate(ct, () => new OnboardingPageViewModel());
-            }
-//-:cnd:noEmit
-#if __MOBILE__ || WINDOWS_UWP
-//+:cnd:noEmit
-            var dispatcher = services.GetRequiredService<CoreDispatcher>();
+//            if (currentSettings.IsOnboardingCompleted)
+//            {
+//                await section.Navigate(ct, () => new HomePageViewModel());
+//            }
+//            else
+//            {
+//                await section.Navigate(ct, () => new OnboardingPageViewModel());
+//            }
+////-:cnd:noEmit
+//#if __MOBILE__ || WINDOWS_UWP
+////+:cnd:noEmit
+//            var dispatcher = services.GetRequiredService<CoreDispatcher>();
 
-            _ = dispatcher.RunAsync(CoreDispatcherPriority.Normal, DismissSplashScreen);
+//            _ = dispatcher.RunAsync(CoreDispatcherPriority.Normal, DismissSplashScreen);
 
-            void DismissSplashScreen() // Runs on UI thread
-            {
-                Shell.Instance.ExtendedSplashScreen.Dismiss();
-            }
-//-:cnd:noEmit
-#endif
-//+:cnd:noEmit
+//            void DismissSplashScreen() // Runs on UI thread
+//            {
+//                Shell.Instance.ExtendedSplashScreen.Dismiss();
+//            }
+////-:cnd:noEmit
+//#endif
+////+:cnd:noEmit
         }
 
         private void NotifyUserOnSessionExpired(IServiceProvider services)
         {
             var authenticationService = services.GetRequiredService<IAuthenticationService>();
-            var messageDialogService = services.GetRequiredService<IMessageDialogService>();
+            //var messageDialogService = services.GetRequiredService<IMessageDialogService>();
 
-            authenticationService
-                .ObserveSessionExpired()
-                .SkipWhileSelectMany(async (ct, s) =>
-                {
-                    await messageDialogService.ShowMessage(ct, mb => mb
-                        .TitleResource("SessionExpired_DialogTitle")
-                        .ContentResource("SessionExpired_DialogBody")
-                        .OkCommand()
-                    );
-                })
-                .Subscribe(_ => { }, e => Logger.LogError(e, "Failed to notify user of session expiration."))
-                .DisposeWith(_neverDisposed);
+            //authenticationService
+            //    .ObserveSessionExpired()
+            //    .SkipWhileSelectMany(async (ct, s) =>
+            //    {
+            //        await messageDialogService.ShowMessage(ct, mb => mb
+            //            .TitleResource("SessionExpired_DialogTitle")
+            //            .ContentResource("SessionExpired_DialogBody")
+            //            .OkCommand()
+            //        );
+            //    })
+            //    .Subscribe(_ => { }, e => Logger.LogError(e, "Failed to notify user of session expiration."))
+            //    .DisposeWith(_neverDisposed);
         }
 
         private static void InitializeLoggerFactories(IServiceProvider services)
         {
             var loggerFactory = services.GetRequiredService<ILoggerFactory>();
 
-            StackNavigationConfiguration.LoggerFactory = loggerFactory;
-            SectionsNavigationConfiguration.LoggerFactory = loggerFactory;
-            BackButtonManagerConfiguration.LoggerFactory = loggerFactory;
-            DynamicMvvmConfiguration.LoggerFactory = loggerFactory;
-            DataLoaderConfiguration.LoggerFactory = loggerFactory;
+            //StackNavigationConfiguration.LoggerFactory = loggerFactory;
+            //SectionsNavigationConfiguration.LoggerFactory = loggerFactory;
+            //BackButtonManagerConfiguration.LoggerFactory = loggerFactory;
+            //DynamicMvvmConfiguration.LoggerFactory = loggerFactory;
+            //DataLoaderConfiguration.LoggerFactory = loggerFactory;
         }
 
         private static void HandleUnhandledExceptions(IServiceProvider services)
         {
-            void OnError(Exception e, bool isTerminating = false) => ErrorConfiguration.OnUnhandledException(e, isTerminating, services);
+            //void OnError(Exception e, bool isTerminating = false) => ErrorConfiguration.OnUnhandledException(e, isTerminating, services);
 
 //-:cnd:noEmit
 #if WINDOWS_UWP || __ANDROID__ || __IOS__
 //+:cnd:noEmit
             Windows.UI.Xaml.Application.Current.UnhandledException += (s, e) =>
             {
-                OnError(e.Exception);
+                //OnError(e.Exception);
                 e.Handled = true;
             };
 //-:cnd:noEmit
@@ -155,7 +156,7 @@ namespace ApplicationTemplate
 
             TaskScheduler.UnobservedTaskException += (s, e) =>
             {
-                OnError(e.Exception);
+                //OnError(e.Exception);
                 e.SetObserved();
             };
 
@@ -182,7 +183,7 @@ namespace ApplicationTemplate
 //+:cnd:noEmit
 #endif
 
-                OnError(exception, e.IsTerminating);
+                //OnError(exception, e.IsTerminating);
 
                 #if (IncludeFirebaseAnalytics)
 //-:cnd:noEmit

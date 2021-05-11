@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Threading.Tasks;
 using ApplicationTemplate.Views;
-using Chinook.SectionsNavigation;
+//using Chinook.SectionsNavigation;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Graphics.Display;
@@ -119,22 +119,22 @@ namespace ApplicationTemplate
 
         private void ConfigureStatusBar()
         {
-            var resources = Windows.UI.Xaml.Application.Current.Resources;
+            var resources = Application.Current.Resources;
 
-//-:cnd:noEmit
-#if WINDOWS_UWP
-//+:cnd:noEmit
-            var hasStatusBar = false;
-//-:cnd:noEmit
-#else
-//+:cnd:noEmit
-            var hasStatusBar = true;
-            Windows.UI.ViewManagement.StatusBar.GetForCurrentView().ForegroundColor = Windows.UI.Colors.White;
-//-:cnd:noEmit
-#endif
-//+:cnd:noEmit
+            ////-:cnd:noEmit
+            //#if WINDOWS_UWP
+            ////+:cnd:noEmit
+            //            var hasStatusBar = false;
+            ////-:cnd:noEmit
+            //#else
+            ////+:cnd:noEmit
+            //            var hasStatusBar = true;
+            //            Windows.UI.ViewManagement.StatusBar.GetForCurrentView().ForegroundColor = Windows.UI.Colors.White;
+            ////-:cnd:noEmit
+            //#endif
+            ////+:cnd:noEmit
 
-            var statusBarHeight = hasStatusBar ? Windows.UI.ViewManagement.StatusBar.GetForCurrentView().OccludedRect.Height : 0;
+            var statusBarHeight = 0;// hasStatusBar ? Windows.UI.ViewManagement.StatusBar.GetForCurrentView().OccludedRect.Height : 0;
 
             resources.Add("StatusBarDouble", (double)statusBarHeight);
             resources.Add("StatusBarThickness", new Thickness(0, statusBarHeight, 0, 0));
