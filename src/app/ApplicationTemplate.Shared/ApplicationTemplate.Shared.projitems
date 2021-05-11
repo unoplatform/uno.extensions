@@ -33,8 +33,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\FluentValidationLanguageManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\LinkerConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\LocalizationConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\NavigationConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\NavigationCoreConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\ViewServicesConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\_Configuration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\_ViewConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\DebugConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Framework\AttachableUserControl.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Framework\Browser\DispatcherBrowserDecorator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Framework\DataLoader\OnDataLostDataLoaderStrategy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Framework\DataLoader\AnalyticsDataLoaderStrategy.cs" />
@@ -111,6 +116,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Client\Data\AuthenticationToken.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Client\Data\AuthenticationData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Business\IApplicationSettingsService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Startup.cs" />
     <!--#if (IncludeFirebaseAnalytics)
     <Compile Include="$(MSBuildThisFileDirectory)Framework\FirebasePerformanceHandler.cs" />
     #endif -->
@@ -140,5 +146,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)appsettings.production.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Image_Example.scale-100.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Image_Example.scale-150.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Image_Example.scale-200.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Image_Example.scale-300.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Image_Example.scale-400.png" />
   </ItemGroup>
 </Project>

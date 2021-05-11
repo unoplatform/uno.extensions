@@ -471,7 +471,6 @@
     </Page>
   </ItemGroup>
   <Import Project="..\ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems" Label="Shared" Condition="Exists('..\ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems')" />
-  <Import Project="..\ApplicationTemplate.Shared.Views\ApplicationTemplate.Shared.Views.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
