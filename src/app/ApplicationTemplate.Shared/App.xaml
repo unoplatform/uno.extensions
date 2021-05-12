@@ -6,7 +6,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Views/Styles/Application/Converters.xaml" />
+                <!--<ResourceDictionary Source="Views/Styles/Application/Converters.xaml" />
                 <ResourceDictionary Source="Views/Styles/Application/Colors.xaml" />
                 <ResourceDictionary Source="Views/Styles/Application/Fonts.xaml" />
                 <ResourceDictionary Source="Views/Styles/Application/LayoutConstants.xaml" />
@@ -32,7 +32,7 @@
                 <ResourceDictionary Source="Views/Styles/Controls/TextBlock.xaml" />
                 <ResourceDictionary Source="Views/Styles/Controls/TextBox.xaml" />
                 <ResourceDictionary Source="Views/Styles/Controls/ToggleButton.xaml" />
-                <ResourceDictionary Source="Views/Styles/Controls/ToggleSwitch.xaml" />
+                <ResourceDictionary Source="Views/Styles/Controls/ToggleSwitch.xaml" />-->
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

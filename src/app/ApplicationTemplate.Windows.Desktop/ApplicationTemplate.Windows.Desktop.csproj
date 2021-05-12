@@ -9,6 +9,9 @@
         <RuntimeIdentifiers>win10-x86;win10-x64</RuntimeIdentifiers>
     <DefaultLanguage>en</DefaultLanguage>
     </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+      <DefineConstants>WINDOWS</DefineConstants>
+    </PropertyGroup>
 
     <ItemGroup>
     <Manifest Include="$(ApplicationManifest)" />

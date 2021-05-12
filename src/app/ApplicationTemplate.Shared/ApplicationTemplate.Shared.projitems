@@ -73,6 +73,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Client\Data\AuthenticationData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Business\IApplicationSettingsService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Startup.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Shell.xaml.cs">
+      <DependentUpon>Shell.xaml</DependentUpon>
+    </Compile>
     <!--#if (IncludeFirebaseAnalytics)
     <Compile Include="$(MSBuildThisFileDirectory)Framework\FirebasePerformanceHandler.cs" />
     #endif -->
@@ -123,5 +126,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Shell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 </Project>

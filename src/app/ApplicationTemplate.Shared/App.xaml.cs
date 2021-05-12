@@ -39,70 +39,95 @@ namespace ApplicationTemplate
         {
             Instance = this;
 
-            //Startup = new Startup();
-            //Startup.PreInitialize();
+            Startup = new Startup();
+            Startup.PreInitialize();
 
             InitializeComponent();
 
-            //ConfigureOrientation();
+            ConfigureOrientation();
         }
 
-        //public Activity ShellActivity { get; } = new Activity(nameof(Shell));
+        public Activity ShellActivity { get; } = new Activity(nameof(Shell));
 
         public static App Instance { get; private set; }
 
-        //public static Startup Startup { get; private set; }
+        public static Startup Startup { get; private set; }
 
-        //public Shell Shell { get; private set; }
+        public Shell Shell { get; private set; }
 
-        //public MultiFrame NavigationMultiFrame => Shell?.NavigationMultiFrame;
+        public Frame NavigationFrame => Shell?.NavigationFrame;
 
-        public Window CurrentWindow => Window.Current;
+        public Window CurrentWindow { get; private set; }
 
-//        protected override void OnLaunched(LaunchActivatedEventArgs args)
-//        {
-//            InitializeAndStart(args);
-//        }
+//-:cnd:noEmit
+#if WINDOWS_UWP
+//+:cnd:noEmit
+        protected override void OnLaunched(Windows.ApplicationModel.Activation.LaunchActivatedEventArgs args)
+        {
+            InitializeAndStart(args);
+        }
+//-:cnd:noEmit
+#else
+//+:cnd:noEmit
+        protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
+        {
+            InitializeAndStart(args.UWPLaunchActivatedEventArgs);
+        }
+        //-:cnd:noEmit
+#endif
+        //+:cnd:noEmit
 
-//        protected override void OnActivated(IActivatedEventArgs args)
-//        {
-//            // This is where your app launches if you use custom schemes, Universal Links, or Android App Links.
-//            InitializeAndStart(args);
-//        }
+//-:cnd:noEmit
+#if !(NET5_0 && WINDOWS)
+//+:cnd:noEmit
+        //protected override void OnActivated(IActivatedEventArgs args)
+        //{
+        //    // This is where your app launches if you use custom schemes, Universal Links, or Android App Links.
+        //    InitializeAndStart(args);
+        //}
+//-:cnd:noEmit
+#endif
+        //+:cnd:noEmit
 
-//        private void InitializeAndStart(IActivatedEventArgs args)
-//        {
-//            Shell = CurrentWindow.Content as Shell;
+        private void InitializeAndStart(IActivatedEventArgs args)
+        {
+#if NET5_0 && WINDOWS
+            CurrentWindow = new Window();
+#else
+			CurrentWindow = Window.Current;
+#endif
 
-//            var isFirstLaunch = Shell == null;
+            Shell = CurrentWindow.Content as Shell;
 
-//            if (isFirstLaunch)
-//            {
-//                ConfigureViewSize();
-//                ConfigureStatusBar();
+            var isFirstLaunch = Shell == null;
 
-//                Startup.Initialize();
+            if (isFirstLaunch)
+            {
+                ConfigureViewSize();
+                ConfigureStatusBar();
+
+                Startup.Initialize();
 
 //#if (IncludeFirebaseAnalytics)
 //                ConfigureFirebase();
 //#endif
 
-//                ShellActivity.Start();
+                ShellActivity.Start();
 
-//                CurrentWindow.Content = Shell = new Shell(args);
+                CurrentWindow.Content = Shell = new Shell(args);
 
-//                ShellActivity.Stop();
-//            }
+                ShellActivity.Stop();
+            }
 
-//            CurrentWindow.Activate();
+            CurrentWindow.Activate();
 
-//            _ = Task.Run(() => Startup.Start());
-//        }
+            _ = Task.Run(() => Startup.Start());
+        }
 
-//        private void ConfigureOrientation()
-//        {
-//            DisplayInformation.AutoRotationPreferences = DisplayOrientations.Portrait;
-//        }
+        private void ConfigureOrientation()
+        {
+            DisplayInformation.AutoRotationPreferences = DisplayOrientations.Portrait;
+        }
 
         private void ConfigureViewSize()
         {
@@ -121,38 +146,36 @@ namespace ApplicationTemplate
         {
             var resources = Application.Current.Resources;
 
-            ////-:cnd:noEmit
-            //#if WINDOWS_UWP
-            ////+:cnd:noEmit
-            //            var hasStatusBar = false;
-            ////-:cnd:noEmit
-            //#else
-            ////+:cnd:noEmit
-            //            var hasStatusBar = true;
-            //            Windows.UI.ViewManagement.StatusBar.GetForCurrentView().ForegroundColor = Windows.UI.Colors.White;
-            ////-:cnd:noEmit
-            //#endif
-            ////+:cnd:noEmit
-
-            var statusBarHeight = 0;// hasStatusBar ? Windows.UI.ViewManagement.StatusBar.GetForCurrentView().OccludedRect.Height : 0;
+            //-:cnd:noEmit
+#if WINDOWS_UWP || (NET5_0 && WINDOWS)
+            //+:cnd:noEmit
+            var statusBarHeight = 0;
+            //-:cnd:noEmit
+#else
+            //+:cnd:noEmit
+                        var statusBarHeight = Windows.UI.ViewManagement.StatusBar.GetForCurrentView().OccludedRect.Height;
+                        Windows.UI.ViewManagement.StatusBar.GetForCurrentView().ForegroundColor = Windows.UI.Colors.White;
+            //-:cnd:noEmit
+#endif
+            //+:cnd:noEmit
 
             resources.Add("StatusBarDouble", (double)statusBarHeight);
             resources.Add("StatusBarThickness", new Thickness(0, statusBarHeight, 0, 0));
             resources.Add("StatusBarGridLength", new GridLength(statusBarHeight, GridUnitType.Pixel));
         }
 
-#if (IncludeFirebaseAnalytics)
-        private void ConfigureFirebase()
-        {
-//-:cnd:noEmit
-#if __IOS__
-//+:cnd:noEmit
-            // This is used to initalize firebase and crashlytics.
-            Firebase.Core.App.Configure();
-//-:cnd:noEmit
-#endif
-//+:cnd:noEmit
-        }
-#endif
+//#if (IncludeFirebaseAnalytics)
+//        private void ConfigureFirebase()
+//        {
+////-:cnd:noEmit
+//#if __IOS__
+////+:cnd:noEmit
+//            // This is used to initalize firebase and crashlytics.
+//            Firebase.Core.App.Configure();
+////-:cnd:noEmit
+//#endif
+////+:cnd:noEmit
+//        }
+//#endif
     }
 }
