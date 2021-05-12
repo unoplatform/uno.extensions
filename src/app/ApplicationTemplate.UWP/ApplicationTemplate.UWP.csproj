@@ -144,9 +144,6 @@
     <Compile Include="Views\Content\Settings\WebViewPage.xaml.cs">
       <DependentUpon>WebViewPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Content\Welcome\HomePage.xaml.cs">
-      <DependentUpon>HomePage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Content\Welcome\OnboardingPage.xaml.cs">
       <DependentUpon>OnboardingPage.xaml</DependentUpon>
     </Compile>
@@ -337,10 +334,6 @@
     <Page Include="Views\Content\Settings\WebViewPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Content\Welcome\HomePage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Content\Welcome\OnboardingPage.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -99,7 +99,7 @@ namespace ApplicationTemplate
 
         private void NotifyUserOnSessionExpired(IServiceProvider services)
         {
-            var authenticationService = services.GetRequiredService<IAuthenticationService>();
+            //var authenticationService = services.GetRequiredService<IAuthenticationService>();
             //var messageDialogService = services.GetRequiredService<IMessageDialogService>();
 
             //authenticationService

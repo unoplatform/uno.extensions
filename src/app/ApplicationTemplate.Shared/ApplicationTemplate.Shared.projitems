@@ -35,7 +35,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\FluentValidationLanguageManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\LinkerConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\LocalizationConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\RouterConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\ViewServicesConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\_Configuration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\_ViewConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Framework\AttachableUserControl.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Framework\Browser\DispatcherBrowserDecorator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Framework\BaseMock.cs" />
@@ -72,7 +75,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Client\Data\AuthenticationToken.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Client\Data\AuthenticationData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Business\IApplicationSettingsService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Welcome\HomePageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Routing\Router.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Startup.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Content\Welcome\HomePage.xaml.cs">
+      <DependentUpon>HomePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\Shell.xaml.cs">
       <DependentUpon>Shell.xaml</DependentUpon>
     </Compile>
@@ -106,7 +114,6 @@
     <Folder Include="$(MSBuildThisFileDirectory)Presentation\Extensions\" />
     <Folder Include="$(MSBuildThisFileDirectory)Presentation\Posts\" />
     <Folder Include="$(MSBuildThisFileDirectory)Presentation\Settings\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Presentation\Welcome\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Client\Mock\ChuckNorrisEndpointMock.Search.json" />
@@ -128,6 +135,10 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Content\Welcome\HomePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\Shell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

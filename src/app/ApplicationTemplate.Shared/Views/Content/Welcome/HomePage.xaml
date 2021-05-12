@@ -17,8 +17,12 @@
                    x:Uid="Home_Title"
                    FontSize="30"
                    Margin="20,40,20,20" />
+        <TextBlock Text="{Binding Welcome}"
+                   Grid.Row="1"
+                   FontSize="30"
+                   Margin="20,40,20,20" />
 
-        <StackPanel Margin="20,0,20,20"
+        <!--<StackPanel Margin="20,0,20,20"
                     Grid.Row="1">
             <Button Content="Posts"
                     x:Uid="Home_Posts"
@@ -51,6 +55,6 @@
                     HorizontalAlignment="Stretch"
                     Margin="0,4"
                     Command="{Binding NavigateToSettingsPage}" />
-        </StackPanel>
+        </StackPanel>-->
     </Grid>
 </Page>

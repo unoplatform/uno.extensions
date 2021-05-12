@@ -7,6 +7,7 @@
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <Platforms>x86;x64</Platforms>
         <RuntimeIdentifiers>win10-x86;win10-x64</RuntimeIdentifiers>
+      <LangVersion>9.0</LangVersion>
     <DefaultLanguage>en</DefaultLanguage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
@@ -30,7 +31,9 @@
     <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
     <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="4.7.0" />-->
     <!--<PackageReference Include="MessageDialogService.Uno" Version="0.3.0-dev.5" />-->
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.0" />
+      <PackageReference Include="System.Reactive" Version="5.0.0" />
+
+      <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.0" />
     <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="3.1.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.1.0" />

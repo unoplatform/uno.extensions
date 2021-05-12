@@ -23,7 +23,8 @@ namespace ApplicationTemplate.Views
 
             return hostBuilder
                 .ConfigureServices(s => s
-                    .AddNavigation()
+                    //.AddNavigation()
+                    .AddRouting()
                     .AddViewServices()
                 );
         }

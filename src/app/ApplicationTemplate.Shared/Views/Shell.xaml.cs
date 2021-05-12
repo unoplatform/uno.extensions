@@ -36,13 +36,13 @@ namespace ApplicationTemplate
 
             Instance = this;
 
-//-:cnd:noEmit
-#if WINDOWS_UWP
-//+:cnd:noEmit
-            AppExtendedSplashScreen.SplashScreen = e?.SplashScreen;
-//-:cnd:noEmit
-#endif
-//+:cnd:noEmit
+////-:cnd:noEmit
+//#if WINDOWS_UWP
+////+:cnd:noEmit
+//            AppExtendedSplashScreen.SplashScreen = e?.SplashScreen;
+////-:cnd:noEmit
+//#endif
+////+:cnd:noEmit
         }
 
         public static Shell Instance { get; private set; }

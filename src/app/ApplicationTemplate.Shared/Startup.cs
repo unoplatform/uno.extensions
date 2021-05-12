@@ -3,6 +3,8 @@ using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ApplicationTemplate.Presentation;
+using ApplicationTemplate.Routing;
+using CommunityToolkit.Mvvm.Messaging;
 //using Chinook.BackButtonManager;
 //using Chinook.DynamicMvvm;
 //using Chinook.SectionsNavigation;
@@ -35,7 +37,7 @@ namespace ApplicationTemplate.Views
 
         protected override void InitializeViewServices(IHostBuilder hostBuilder)
         {
-            //hostBuilder.AddViewServices();
+            hostBuilder.AddViewServices();
         }
 
         protected override void OnInitialized(IServiceProvider services)
@@ -47,6 +49,9 @@ namespace ApplicationTemplate.Views
         {
             if (isFirstStart)
             {
+                var router = services.GetRequiredService<IRouter>();
+                var messenger = services.GetRequiredService<IMessenger>();
+                messenger.Send< BaseRoutingMessage>(new ShowMessage(this));
                 // Start your view services here.
                 //await SetShellViewModel();
                 //await AddSystemBackButtonSource(services);
