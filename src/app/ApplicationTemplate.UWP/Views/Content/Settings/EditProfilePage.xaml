@@ -1,0 +1,58 @@
+﻿<Page x:Class="ApplicationTemplate.Views.Content.EditProfilePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:ApplicationTemplate"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:ue="using:Nventive.View.Extensions"
+      xmlns:android="http://nventive.com/android"
+      xmlns:ios="http://nventive.com/ios"
+      mc:Ignorable="d android ios">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <CommandBar Content="Profile"
+                    x:Uid="Profile_CommandBar" />
+        
+        <ScrollViewer Grid.Row="1">
+            <StackPanel Margin="20,0,20,20">
+
+                <!-- First name -->
+                <local:DataValidationView Model="{Binding Form}"
+                                          PropertyName="FirstName"
+                                          Margin="0,4">
+                    <TextBox PlaceholderText="First name"
+                             x:Uid="Profile_FirstName"
+                             Text="{Binding Form.FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             ios:ReturnKeyType="Next"
+                             android:ImeOptions="Next"
+                             FontSize="16" />
+                </local:DataValidationView>
+
+                <!-- Last name -->
+                <local:DataValidationView Model="{Binding Form}"
+                                          PropertyName="LastName"
+                                          Margin="0,4">
+                    <TextBox PlaceholderText="Last name"
+                             x:Uid="Profile_LastName"
+                             Text="{Binding Form.LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             ue:TextBoxBehavior.DismissKeyboardOnEnter="True"
+                             ue:TextBoxBehavior.EnterCommand="{Binding UpdateProfile}"
+                             FontSize="16" />
+                </local:DataValidationView>
+
+                <Button Command="{Binding UpdateProfile}"
+                        x:Uid="Profile_Save"
+                        Content="Save"
+                        Style="{StaticResource ExecutingButtonStyle}"
+                        HorizontalAlignment="Stretch"
+                        Margin="0,4" />
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

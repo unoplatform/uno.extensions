@@ -118,6 +118,207 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ApplicationName" xml:space="preserve">
-    <value>$ext_safeprojectname$</value>
+    <value>ApplicationTemplate</value>
+  </data>
+  <data name="MessageDialog_Ok_Label" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="MessageDialog_Cancel_Label" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="MessageDialog_No_Label" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="MessageDialog_Retry_Label" xml:space="preserve">
+    <value>Retry</value>
+  </data>
+  <data name="MessageDialog_Close_Label" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="Default_Error_Title" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="Default_Error_Body" xml:space="preserve">
+    <value>An unexpected error has occurred.</value>
+  </data>
+  <data name="Default_Error_DialogTitle" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="Default_Error_DialogBody" xml:space="preserve">
+    <value>An unexpected error has occurred.</value>
+  </data>
+  <data name="NoNetwork_Error_DialogTitle" xml:space="preserve">
+    <value>No network</value>
+  </data>
+  <data name="NoNetwork_Error_DialogBody" xml:space="preserve">
+    <value>Please check your network connectivity.</value>
+  </data>
+  <data name="Login_Error_DialogTitle" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="Login_Error_DialogBody" xml:space="preserve">
+    <value>Failed to login.</value>
+  </data>
+  <data name="Logout_Title" xml:space="preserve">
+    <value>Logging out</value>
+  </data>
+  <data name="Logout_Content" xml:space="preserve">
+    <value>Are you sure you want to log out?</value>
+  </data>
+  <data name="Logout_Confirm" xml:space="preserve">
+    <value>Log Out</value>
+  </data>
+  <data name="CreateAccount_CommandBar.Content" xml:space="preserve">
+    <value>Create Account</value>
+  </data>
+  <data name="Settings_Login.Content" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="Settings_Logout.Content" xml:space="preserve">
+    <value>Logout</value>
+  </data>
+  <data name="Settings_CommandBar.Content" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Settings_Licenses.Content" xml:space="preserve">
+    <value>Licenses</value>
+  </data>
+  <data name="Settings_PrivacyPolicy.Content" xml:space="preserve">
+    <value>Privacy Policy</value>
+  </data>
+  <data name="Settings_TermsAndConditions.Content" xml:space="preserve">
+    <value>Terms and Conditions</value>
+  </data>
+  <data name="Settings_EditProfile.Content" xml:space="preserve">
+    <value>Edit profile</value>
+  </data>
+  <data name="Settings_Version.Text" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="Settings_Licenses.Content" xml:space="preserve">
+    <value>Licenses</value>
+  </data>
+  <data name="Welcome_Title.Text" xml:space="preserve">
+    <value>Welcome</value>
+  </data>
+  <data name="Welcome_Login.Content" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="Welcome_CreateAccount.Content" xml:space="preserve">
+    <value>Create account</value>
+  </data>
+  <data name="Welcome_Continue.Content" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="Posts_CommandBar.Content" xml:space="preserve">
+    <value>Posts</value>
+  </data>
+  <data name="Posts_NewPost.Content" xml:space="preserve">
+    <value>New post</value>
+  </data>
+  <data name="Onboarding_Continue.InRangeValue" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="Onboarding_Skip.DefaultValue" xml:space="preserve">
+    <value>Skip</value>
+  </data>
+  <data name="Menu_Home.Content" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="Menu_Posts.Content" xml:space="preserve">
+    <value>Posts</value>
+  </data>
+  <data name="Menu_Settings.Content" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Login_CommandBar.Content" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="Login_Email.PlaceholderText" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Login_Password.PlaceholderText" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="Login_Login.Content" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="Login_CreateAccount.Content" xml:space="preserve">
+    <value>Create account</value>
+  </data>
+  <data name="Login_ForgotPassword.Content" xml:space="preserve">
+    <value>Forgot password?</value>
+  </data>
+  <data name="Home_Title.Text" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="Home_Posts.Content" xml:space="preserve">
+    <value>Posts</value>
+  </data>
+  <data name="Home_Settings.Content" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="ForgotPassword_CommandBar.Content" xml:space="preserve">
+    <value>Forgot Password</value>
+  </data>
+  <data name="EditPost_NewPost" xml:space="preserve">
+    <value>New Post</value>
+  </data>
+  <data name="EditPost_Save.Content" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="EditPost_Delete.Content" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="SessionExpired_DialogTitle" xml:space="preserve">
+    <value>Session Expired</value>
+  </data>
+  <data name="SessionExpired_DialogBody" xml:space="preserve">
+    <value>Your session is expired. Please re-login.</value>
+  </data>
+  <data name="PrivacyPolicyUrl" xml:space="preserve">
+    <value>http://nventive.com</value>
+  </data>
+  <data name="TermsAndConditionsUrl" xml:space="preserve">
+    <value>http://nventive.com</value>
+  </data>
+  <data name="Licenses_CommandBar" xml:space="preserve">
+    <value>Licenses</value>
+  </data>
+  <data name="CreateAccount_Email.PlaceholderText" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="CreateAccount_Password.PlaceholderText" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="CreateAccount_Confirm.Content" xml:space="preserve">
+    <value>Create account</value>
+  </data>
+  <data name="ForgotPassword_Email.PlaceholderText" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="ForgotPassword_Reset.Content" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="ChuckNorrisSearch_CommandBar" xml:space="preserve">
+    <value>Quotes</value>
+  </data>
+  <data name="ChuckNorrisSearch_SearchTerm.PlaceholderText" xml:space="preserve">
+    <value>Enter a search term</value>
+  </data>
+  <data name="Profile_CommandBar" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="Profile_FirstName.PlaceholderText" xml:space="preserve">
+    <value>First name</value>
+  </data>
+  <data name="Profile_LastName.PlaceholderText" xml:space="preserve">
+    <value>Last name</value>
+  </data>
+  <data name="Profile_Save.Content" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="ValidationNotEmpty_Email" xml:space="preserve">
+    <value>The email must not be empty.</value>
   </data>
 </root>

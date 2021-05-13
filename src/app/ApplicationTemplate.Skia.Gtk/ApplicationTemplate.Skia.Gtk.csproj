@@ -1,9 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType Condition="'$(Configuration)'=='Release'">WinExe</OutputType>
     <OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>ApplicationTemplate</RootNamespace>
   </PropertyGroup>
   <ItemGroup Condition="exists('..\ApplicationTemplate.UWP')">
     <EmbeddedResource Include="..\ApplicationTemplate.UWP\Package.appxmanifest" LogicalName="Package.appxmanifest" />
