@@ -68,8 +68,18 @@ namespace ApplicationTemplate.Routing
                     Registrations.TryGetValue(vm.GetType(), out pageType);
                 }
 
-                NavigationFrame.DispatcherQueue.TryEnqueue(() =>
-                {
+//-:cnd:noEmit
+#if WINDOWS_UWP
+//+:cnd:noEmit
+                NavigationFrame.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,
+//-:cnd:noEmit
+#else
+//+:cnd:noEmit
+                NavigationFrame.DispatcherQueue.TryEnqueue(
+//-:cnd:noEmit
+#endif
+//+:cnd:noEmit
+                () =>{
                     switch (message)
                     {
                         case ShowMessage show:
@@ -138,3 +148,12 @@ namespace ApplicationTemplate.Routing
 
     public record SelectItemMessage<TItem>(IEnumerable<TItem> ItemsToSelectFrom, object? Sender = null) : BaseRoutingMessage(Sender) { };
 }
+
+
+namespace System.Runtime.CompilerServices
+{
+    public class IsExternalInit
+    { }
+
+}
+
