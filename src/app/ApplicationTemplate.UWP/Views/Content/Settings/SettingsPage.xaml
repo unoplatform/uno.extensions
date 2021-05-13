@@ -1,0 +1,98 @@
+﻿<Page x:Class="ApplicationTemplate.Views.Content.SettingsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:ApplicationTemplate"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:ue="using:Nventive.View.Extensions"
+      xmlns:dl="using:Chinook.DataLoader"
+      mc:Ignorable="d">
+
+    <Page.Resources>
+        <DataTemplate x:Key="UserEmptyTemplate">
+            <Button Content="Login"
+                    x:Uid="Settings_Login"
+                    HorizontalAlignment="Stretch"
+                    Margin="0,4"
+                    Command="{Binding Parent.NavigateToLoginPage}" />
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <CommandBar Content="Settings"
+                    x:Uid="Settings_CommandBar" />
+
+        <StackPanel Margin="20,0,20,20"
+                    Grid.Row="1">
+
+            <dl:DataLoaderView Source="{Binding UserProfile}"
+                               EmptyTemplate="{StaticResource UserEmptyTemplate}">
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock FontSize="24">
+                            <Run Text="Hello" />
+                            <Run Text="{Binding Data.FirstName}"
+                                 FontWeight="Bold"/>
+                        </TextBlock>
+
+                        <Button Content="Edit profile"
+                                x:Uid="Settings_EditProfile"
+                                HorizontalAlignment="Stretch"
+                                Margin="0,4"
+                                Command="{Binding Parent.NavigateToEditProfilePage}" />
+
+                        <Button Content="Logout"
+                                x:Uid="Settings_Logout"
+                                HorizontalAlignment="Stretch"
+                                Margin="0,4"
+                                Command="{Binding Parent.Logout}" />
+                    </StackPanel>
+                </DataTemplate>
+            </dl:DataLoaderView>
+
+            <Button Content="Terms and Conditions"
+                    x:Uid="Settings_TermsAndConditions"
+                    HorizontalAlignment="Stretch"
+                    Padding="12"
+                    Margin="0,5"
+                    Command="{Binding NavigateToTermsAndConditionsPage}" />
+
+            <Button Content="Privacy Policy"
+                    x:Uid="Settings_PrivacyPolicy"
+                    HorizontalAlignment="Stretch"
+                    Padding="12"
+                    Margin="0,5"
+                    Command="{Binding NavigateToPrivacyPolicyPage}" />
+
+            <Button Content="Licenses"
+                    x:Uid="Settings_Licenses"
+                    HorizontalAlignment="Stretch"
+                    Padding="12"
+                    Margin="0,5"
+                    Command="{Binding NavigateToLicensesPage}" />
+
+            <Button Content="WebView"
+                    HorizontalAlignment="Stretch"
+                    Padding="12"
+                    Margin="0,5"
+                    Command="{Binding NavigateToWebViewPage}" />
+
+            <Grid HorizontalAlignment="Center"
+                  Background="Transparent"
+                  ue:MultipleTapExtension.Command="{Binding NavigateToDiagnosticsPage}"
+                  ue:MultipleTapExtension.TapCount="3">
+                <TextBlock>
+                    <Run Text="Version"
+                         x:Uid="Settings_Version" />
+                    <Run Text="{Binding VersionNumber}" />
+                </TextBlock>
+            </Grid>
+        </StackPanel>
+    </Grid>
+</Page>

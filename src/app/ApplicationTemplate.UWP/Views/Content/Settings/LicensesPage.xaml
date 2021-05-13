@@ -1,0 +1,25 @@
+﻿<Page x:Class="ApplicationTemplate.Views.Content.LicensesPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <CommandBar Content="Licenses"
+                    x:Uid="Licenses_CommandBar" />
+
+        <ScrollViewer Grid.Row="1"
+                      Padding="10">
+            <TextBlock Text="{Binding Licenses}"
+                       TextTrimming="Clip"
+                       TextWrapping="Wrap" />
+        </ScrollViewer>
+    </Grid>
+</Page>

@@ -1,13 +1,11 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.ApplicationModel;
+﻿using System.Diagnostics;
+using System.Threading.Tasks;
+using ApplicationTemplate.Views;
+//using Chinook.SectionsNavigation;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
+using Windows.Graphics.Display;
+
 //-:cnd:noEmit
 #if WINDOWS_UWP
 //+:cnd:noEmit
@@ -18,6 +16,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.ViewManagement;
 //-:cnd:noEmit
 #else
 //+:cnd:noEmit
@@ -34,217 +33,149 @@ using Microsoft.UI.Xaml.Navigation;
 
 namespace ApplicationTemplate
 {
-    /// <summary>
-    /// Provides application-specific behavior to supplement the default Application class.
-    /// </summary>
-    public sealed partial class App : Application
+    sealed partial class App : Application
     {
-        /// <summary>
-        /// Initializes the singleton application object.  This is the first line of authored code
-        /// executed, and as such is the logical equivalent of main() or WinMain().
-        /// </summary>
         public App()
         {
-            InitializeLogging();
+            Instance = this;
 
-            this.InitializeComponent();
+            Startup = new Startup();
+            Startup.PreInitialize();
 
-//-:cnd:noEmit
-#if HAS_UNO || NETFX_CORE
-//+:cnd:noEmit
-			this.Suspending += OnSuspending;
-			//-:cnd:noEmit
-#endif
-			//+:cnd:noEmit
-		}
+            InitializeComponent();
 
-		/// <summary>
-		/// Invoked when the application is launched normally by the end user.  Other entry points
-		/// will be used such as when the application is launched to open a specific file.
-		/// </summary>
-		/// <param name="e">Details about the launch request and process.</param>
+            ConfigureOrientation();
+        }
+
+        public Activity ShellActivity { get; } = new Activity(nameof(Shell));
+
+        public static App Instance { get; private set; }
+
+        public static Startup Startup { get; private set; }
+
+        public Shell Shell { get; private set; }
+
+        public Frame NavigationFrame => Shell?.NavigationFrame;
+
+        public Window CurrentWindow { get; private set; }
+
 //-:cnd:noEmit
 #if WINDOWS_UWP
 //+:cnd:noEmit
-		protected override void OnLaunched(LaunchActivatedEventArgs e)
+        protected override void OnLaunched(Windows.ApplicationModel.Activation.LaunchActivatedEventArgs args)
+        {
+            InitializeAndStart(args);
+        }
 //-:cnd:noEmit
 #else
 //+:cnd:noEmit
-		protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs e)
-//-:cnd:noEmit
-#endif
-//+:cnd:noEmit
+        protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
-//-:cnd:noEmit
-#if DEBUG
-//+:cnd:noEmit
-			if (System.Diagnostics.Debugger.IsAttached)
-            {
-                // this.DebugSettings.EnableFrameRateCounter = true;
-            }
-//-:cnd:noEmit
+            InitializeAndStart(args.UWPLaunchActivatedEventArgs);
+        }
+        //-:cnd:noEmit
 #endif
-//+:cnd:noEmit
+        //+:cnd:noEmit
 
 //-:cnd:noEmit
+#if !(NET5_0 && WINDOWS)
+//+:cnd:noEmit
+        //protected override void OnActivated(IActivatedEventArgs args)
+        //{
+        //    // This is where your app launches if you use custom schemes, Universal Links, or Android App Links.
+        //    InitializeAndStart(args);
+        //}
+//-:cnd:noEmit
+#endif
+        //+:cnd:noEmit
+
+        private void InitializeAndStart(IActivatedEventArgs args)
+        {
 #if NET5_0 && WINDOWS
-//+:cnd:noEmit
-            var window = new Window();
-            window.Activate();
-//-:cnd:noEmit
-#elif WINDOWS_UWP
-//+:cnd:noEmit
-			var window = Window.Current;
-//-:cnd:noEmit
+            CurrentWindow = new Window();
 #else
-//+:cnd:noEmit
-            var window = Microsoft.UI.Xaml.Window.Current;
-//-:cnd:noEmit
+			CurrentWindow = Window.Current;
 #endif
-//+:cnd:noEmit
-			var rootFrame = window.Content as Frame;
 
-            // Do not repeat app initialization when the Window already has content,
-            // just ensure that the window is active
-            if (rootFrame == null)
+            Shell = CurrentWindow.Content as Shell;
+
+            var isFirstLaunch = Shell == null;
+
+            if (isFirstLaunch)
             {
-                // Create a Frame to act as the navigation context and navigate to the first page
-                rootFrame = new Frame();
+                ConfigureViewSize();
+                ConfigureStatusBar();
 
-                rootFrame.NavigationFailed += OnNavigationFailed;
+                Startup.Initialize();
 
+//#if (IncludeFirebaseAnalytics)
+//                ConfigureFirebase();
+//#endif
+
+                ShellActivity.Start();
+
+                CurrentWindow.Content = Shell = new Shell(args);
+
+                ShellActivity.Stop();
+            }
+
+            CurrentWindow.Activate();
+
+            _ = Task.Run(() => Startup.Start());
+        }
+
+        private void ConfigureOrientation()
+        {
+            DisplayInformation.AutoRotationPreferences = DisplayOrientations.Portrait;
+        }
+
+        private void ConfigureViewSize()
+        {
 //-:cnd:noEmit
 #if WINDOWS_UWP
 //+:cnd:noEmit
-
-                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
+            ApplicationView.PreferredLaunchViewSize = new Size(480, 800);
+            ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
+            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 480));
 //-:cnd:noEmit
+#endif
+//+:cnd:noEmit
+        }
+
+        private void ConfigureStatusBar()
+        {
+            var resources = Application.Current.Resources;
+
+            //-:cnd:noEmit
+#if WINDOWS_UWP || (NET5_0 && WINDOWS)
+            //+:cnd:noEmit
+            var statusBarHeight = 0;
+            //-:cnd:noEmit
 #else
-//+:cnd:noEmit
-                if (e.UWPLaunchActivatedEventArgs.PreviousExecutionState == ApplicationExecutionState.Terminated)
-//-:cnd:noEmit
+            //+:cnd:noEmit
+                        var statusBarHeight = Windows.UI.ViewManagement.StatusBar.GetForCurrentView().OccludedRect.Height;
+                        Windows.UI.ViewManagement.StatusBar.GetForCurrentView().ForegroundColor = Windows.UI.Colors.White;
+            //-:cnd:noEmit
 #endif
-//+:cnd:noEmit
-                {
-                    //TODO: Load state from previously suspended application
-                }
+            //+:cnd:noEmit
 
-                // Place the frame in the current Window
-                window.Content = rootFrame;
-            }
-
-//-:cnd:noEmit
-#if WINDOWS_UWP
-//+:cnd:noEmit
-            if (e.PrelaunchActivated == false)
-//-:cnd:noEmit
-#elif !(NET5_0 && WINDOWS)
-//+:cnd:noEmit
-            if (e.UWPLaunchActivatedEventArgs.PrelaunchActivated == false)
-//-:cnd:noEmit
-#endif
-//+:cnd:noEmit
-            {
-                if (rootFrame.Content == null)
-                {
-                    // When the navigation stack isn't restored navigate to the first page,
-                    // configuring the new page by passing required information as a navigation
-                    // parameter
-                    rootFrame.Navigate(typeof(MainPage), e.Arguments);
-                }
-                // Ensure the current window is active
-                window.Activate();
-            }
+            resources.Add("StatusBarDouble", (double)statusBarHeight);
+            resources.Add("StatusBarThickness", new Thickness(0, statusBarHeight, 0, 0));
+            resources.Add("StatusBarGridLength", new GridLength(statusBarHeight, GridUnitType.Pixel));
         }
 
-        /// <summary>
-        /// Invoked when Navigation to a certain page fails
-        /// </summary>
-        /// <param name="sender">The Frame which failed navigation</param>
-        /// <param name="e">Details about the navigation failure</param>
-        void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
-        {
-            throw new Exception($"Failed to load {e.SourcePageType.FullName}: {e.Exception}");
-        }
-
-        /// <summary>
-        /// Invoked when application execution is being suspended.  Application state is saved
-        /// without knowing whether the application will be terminated or resumed with the contents
-        /// of memory still intact.
-        /// </summary>
-        /// <param name="sender">The source of the suspend request.</param>
-        /// <param name="e">Details about the suspend request.</param>
-        private void OnSuspending(object sender, SuspendingEventArgs e)
-        {
-            var deferral = e.SuspendingOperation.GetDeferral();
-            //TODO: Save application state and stop any background activity
-            deferral.Complete();
-        }
-
-        /// <summary>
-        /// Configures global Uno Platform logging
-        /// </summary>
-        private static void InitializeLogging()
-        {
-            var factory = LoggerFactory.Create(builder =>
-            {
-//-:cnd:noEmit
-#if __WASM__
-//+:cnd:noEmit
-                builder.AddProvider(new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider());
-//-:cnd:noEmit
-#elif __IOS__
-//+:cnd:noEmit
-                builder.AddProvider(new global::Uno.Extensions.Logging.OSLogLoggerProvider());
-//-:cnd:noEmit
-#elif NETFX_CORE && !WINDOWS_UWP
-//+:cnd:noEmit
-                builder.AddDebug();
-//-:cnd:noEmit
-#else
-//+:cnd:noEmit
-                builder.AddConsole();
-//-:cnd:noEmit
-#endif
-//+:cnd:noEmit
-
-                // Exclude logs below this level
-                builder.SetMinimumLevel(LogLevel.Information);
-
-                // Default filters for Uno Platform namespaces
-                builder.AddFilter("Uno", LogLevel.Warning);
-                builder.AddFilter("Windows", LogLevel.Warning);
-                builder.AddFilter("Microsoft", LogLevel.Warning);
-
-                // Generic Xaml events
-                // builder.AddFilter("Microsoft.UI.Xaml", LogLevel.Debug );
-                // builder.AddFilter("Microsoft.UI.Xaml.VisualStateGroup", LogLevel.Debug );
-                // builder.AddFilter("Microsoft.UI.Xaml.StateTriggerBase", LogLevel.Debug );
-                // builder.AddFilter("Microsoft.UI.Xaml.UIElement", LogLevel.Debug );
-                // builder.AddFilter("Microsoft.UI.Xaml.FrameworkElement", LogLevel.Trace );
-
-                // Layouter specific messages
-                // builder.AddFilter("Microsoft.UI.Xaml.Controls", LogLevel.Debug );
-                // builder.AddFilter("Microsoft.UI.Xaml.Controls.Layouter", LogLevel.Debug );
-                // builder.AddFilter("Microsoft.UI.Xaml.Controls.Panel", LogLevel.Debug );
-
-                // builder.AddFilter("Windows.Storage", LogLevel.Debug );
-
-                // Binding related messages
-                // builder.AddFilter("Microsoft.UI.Xaml.Data", LogLevel.Debug );
-                // builder.AddFilter("Microsoft.UI.Xaml.Data", LogLevel.Debug );
-
-                // Binder memory references tracking
-                // builder.AddFilter("Uno.UI.DataBinding.BinderReferenceHolder", LogLevel.Debug );
-
-                // RemoteControl and HotReload related
-                // builder.AddFilter("Uno.UI.RemoteControl", LogLevel.Information);
-
-                // Debug JS interop
-                // builder.AddFilter("Uno.Foundation.WebAssemblyRuntime", LogLevel.Debug );
-            });
-
-            global::Uno.Extensions.LogExtensionPoint.AmbientLoggerFactory = factory;
-        }
+//#if (IncludeFirebaseAnalytics)
+//        private void ConfigureFirebase()
+//        {
+////-:cnd:noEmit
+//#if __IOS__
+////+:cnd:noEmit
+//            // This is used to initalize firebase and crashlytics.
+//            Firebase.Core.App.Configure();
+////-:cnd:noEmit
+//#endif
+////+:cnd:noEmit
+//        }
+//#endif
     }
 }
