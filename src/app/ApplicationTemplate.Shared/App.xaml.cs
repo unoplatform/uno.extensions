@@ -5,6 +5,11 @@ using ApplicationTemplate.Views;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Graphics.Display;
+using ApplicationTemplate.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using ApplicationTemplate.Routing;
+using CommunityToolkit.Mvvm.Messaging;
 
 //-:cnd:noEmit
 #if WINDOWS_UWP
@@ -35,9 +40,28 @@ namespace ApplicationTemplate
 {
     sealed partial class App : Application
     {
+        private IHost host { get; }
         public App()
         {
             Instance = this;
+
+            host = UnoHost.CreateDefaultHostWithStartup<AppServiceConfigurer>();
+            var lifetime = host.Services.GetRequiredService<IHostApplicationLifetime>();
+
+            var services = host.Services;
+            lifetime.ApplicationStarted.Register(() =>
+            {
+                var router = services.GetRequiredService<IRouter>();
+                var messenger = services.GetRequiredService<IMessenger>();
+                messenger.Send<BaseRoutingMessage>(new ShowMessage(this));
+
+            });
+            lifetime.ApplicationStopping.Register(() =>
+            {
+            });
+            lifetime.ApplicationStopped.Register(() =>
+            {
+            });
 
             Startup = new Startup();
             Startup.PreInitialize();
@@ -59,7 +83,7 @@ namespace ApplicationTemplate
 
         public Window CurrentWindow { get; private set; }
 
-//-:cnd:noEmit
+        //-:cnd:noEmit
 #if WINDOWS_UWP
 //+:cnd:noEmit
         protected override void OnLaunched(Windows.ApplicationModel.Activation.LaunchActivatedEventArgs args)
@@ -68,7 +92,7 @@ namespace ApplicationTemplate
         }
 //-:cnd:noEmit
 #else
-//+:cnd:noEmit
+        //+:cnd:noEmit
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
             InitializeAndStart(args.UWPLaunchActivatedEventArgs);
@@ -77,7 +101,7 @@ namespace ApplicationTemplate
 #endif
         //+:cnd:noEmit
 
-//-:cnd:noEmit
+        //-:cnd:noEmit
 #if !(NET5_0 && WINDOWS)
 //+:cnd:noEmit
         //protected override void OnActivated(IActivatedEventArgs args)
@@ -108,20 +132,25 @@ namespace ApplicationTemplate
 
                 Startup.Initialize();
 
-//#if (IncludeFirebaseAnalytics)
-//                ConfigureFirebase();
-//#endif
+                //#if (IncludeFirebaseAnalytics)
+                //                ConfigureFirebase();
+                //#endif
 
                 ShellActivity.Start();
 
                 CurrentWindow.Content = Shell = new Shell(args);
 
                 ShellActivity.Stop();
+
             }
 
             CurrentWindow.Activate();
 
-            _ = Task.Run(() => Startup.Start());
+            _ = Task.Run(() =>
+            {
+                Startup.Start();
+                host.Run();
+            });
         }
 
         private void ConfigureOrientation()
@@ -131,7 +160,7 @@ namespace ApplicationTemplate
 
         private void ConfigureViewSize()
         {
-//-:cnd:noEmit
+            //-:cnd:noEmit
 #if WINDOWS_UWP
 //+:cnd:noEmit
             ApplicationView.PreferredLaunchViewSize = new Size(480, 800);
@@ -139,7 +168,7 @@ namespace ApplicationTemplate
             ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 480));
 //-:cnd:noEmit
 #endif
-//+:cnd:noEmit
+            //+:cnd:noEmit
         }
 
         private void ConfigureStatusBar()
@@ -164,18 +193,18 @@ namespace ApplicationTemplate
             resources.Add("StatusBarGridLength", new GridLength(statusBarHeight, GridUnitType.Pixel));
         }
 
-//#if (IncludeFirebaseAnalytics)
-//        private void ConfigureFirebase()
-//        {
-////-:cnd:noEmit
-//#if __IOS__
-////+:cnd:noEmit
-//            // This is used to initalize firebase and crashlytics.
-//            Firebase.Core.App.Configure();
-////-:cnd:noEmit
-//#endif
-////+:cnd:noEmit
-//        }
-//#endif
+        //#if (IncludeFirebaseAnalytics)
+        //        private void ConfigureFirebase()
+        //        {
+        ////-:cnd:noEmit
+        //#if __IOS__
+        ////+:cnd:noEmit
+        //            // This is used to initalize firebase and crashlytics.
+        //            Firebase.Core.App.Configure();
+        ////-:cnd:noEmit
+        //#endif
+        ////+:cnd:noEmit
+        //        }
+        //#endif
     }
 }

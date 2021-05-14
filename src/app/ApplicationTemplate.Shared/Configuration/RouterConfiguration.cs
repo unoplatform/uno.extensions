@@ -33,7 +33,7 @@ namespace ApplicationTemplate.Views
             );
         }
 
-        private static IReadOnlyDictionary<Type, IRoute> GetRoutes() => new Dictionary<Type, IRoute>()
+        public static IReadOnlyDictionary<Type, IRoute> GetRoutes() => new Dictionary<Type, IRoute>()
         {
             {typeof(ShowMessage),new Route<ShowMessage>(msg=>{
 
@@ -42,7 +42,7 @@ namespace ApplicationTemplate.Views
             }) }
         };
 
-        private static IReadOnlyDictionary<Type, Type> GetPageRegistrations() => new Dictionary<Type, Type>()
+        public static IReadOnlyDictionary<Type, Type> GetPageRegistrations() => new Dictionary<Type, Type>()
         {
             { typeof(HomePageViewModel), typeof(HomePage) },
             //{ typeof(PostsPageViewModel), typeof(PostsPage) },
