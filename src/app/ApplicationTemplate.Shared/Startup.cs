@@ -49,9 +49,9 @@ namespace ApplicationTemplate.Views
         {
             if (isFirstStart)
             {
-                var router = services.GetRequiredService<IRouter>();
-                var messenger = services.GetRequiredService<IMessenger>();
-                messenger.Send< BaseRoutingMessage>(new ShowMessage(this));
+                //var router = services.GetRequiredService<IRouter>();
+                //var messenger = services.GetRequiredService<IMessenger>();
+                //messenger.Send< BaseRoutingMessage>(new ShowMessage(this));
                 // Start your view services here.
                 //await SetShellViewModel();
                 //await AddSystemBackButtonSource(services);

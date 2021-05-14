@@ -71,7 +71,7 @@ namespace ApplicationTemplate.Routing
 //-:cnd:noEmit
 #if WINDOWS_UWP
 //+:cnd:noEmit
-                NavigationFrame.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,
+                NavigationFrame.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High,
 //-:cnd:noEmit
 #else
 //+:cnd:noEmit

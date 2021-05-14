@@ -12,6 +12,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)AppServiceConfigurer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Business\Entities\ChuckNorrisQuote.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Business\IAuthenticationService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Business\IChuckNorrisService.cs" />
