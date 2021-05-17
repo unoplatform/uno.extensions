@@ -8,10 +8,8 @@
         <Platforms>x86;x64</Platforms>
         <RuntimeIdentifiers>win10-x86;win10-x64</RuntimeIdentifiers>
       <LangVersion>9.0</LangVersion>
-    <DefaultLanguage>en</DefaultLanguage>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
       <DefineConstants>WINDOWS</DefineConstants>
+    <DefaultLanguage>en</DefaultLanguage>
     </PropertyGroup>
 
     <ItemGroup>
@@ -40,7 +38,7 @@
     <!--<PackageReference Include="Microsoft.Extensions.Logging.Filter" Version="1.1.2" />-->
     <!--<PackageReference Include="Uno.Microsoft.Toolkit.Uwp.DeveloperTools" Version="6.1.0-build.205.g2e0e348372" />-->
     <PackageReference Include="Uno.SourceGenerationTasks">
-      <Version>3.0.0</Version>
+      <Version>3.1.0-dev.6</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.5.3.2" />
     <PackageReference Include="Serilog.Extensions.Hosting" Version="3.0.0" />
