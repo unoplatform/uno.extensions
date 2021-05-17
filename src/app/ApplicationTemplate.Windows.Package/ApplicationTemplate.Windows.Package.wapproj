@@ -59,6 +59,7 @@
     <ProjectReference Include="..\ApplicationTemplate.Windows.Desktop\ApplicationTemplate.Windows.Desktop.csproj">
       <SkipGetTargetFrameworkProperties>True</SkipGetTargetFrameworkProperties>
       <PublishProfile>Properties\PublishProfiles\win10-$(Platform).pubxml</PublishProfile>
+      <TrustLevel>Partial</TrustLevel>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
