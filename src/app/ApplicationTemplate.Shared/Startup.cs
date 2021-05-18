@@ -3,7 +3,6 @@ using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ApplicationTemplate.Presentation;
-using ApplicationTemplate.Routing;
 using CommunityToolkit.Mvvm.Messaging;
 //using Chinook.BackButtonManager;
 //using Chinook.DynamicMvvm;
