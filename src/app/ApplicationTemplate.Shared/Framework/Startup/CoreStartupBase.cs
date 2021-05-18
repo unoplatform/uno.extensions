@@ -74,17 +74,17 @@ namespace ApplicationTemplate
 
             BuildHostActivity.Start();
 
-            var hostBuilder = InitializeServices(new HostBuilder()
-                .UseContentRoot(contentRootPath)
-            );
+            //var hostBuilder = InitializeServices(new HostBuilder()
+            //    .UseContentRoot(contentRootPath)
+            //);
 
-            extraHostConfiguration?.Invoke(hostBuilder);
+            //extraHostConfiguration?.Invoke(hostBuilder);
 
-            var host = hostBuilder.Build();
+            //var host = hostBuilder.Build();
 
             BuildHostActivity.Stop();
 
-            ServiceProvider = host.Services;
+            //ServiceProvider = host.Services;
 
             OnInitialized(ServiceProvider);
 

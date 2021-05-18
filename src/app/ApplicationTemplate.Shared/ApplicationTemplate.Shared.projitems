@@ -77,7 +77,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Client\Data\AuthenticationData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Business\IApplicationSettingsService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Welcome\HomePageViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Routing\Router.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Startup.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\Content\Welcome\HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>

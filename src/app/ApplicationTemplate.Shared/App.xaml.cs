@@ -6,10 +6,11 @@ using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Graphics.Display;
 using ApplicationTemplate.Hosting;
+using ApplicationTemplate.Navigation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using ApplicationTemplate.Routing;
 using CommunityToolkit.Mvvm.Messaging;
+using System.Threading;
 
 //-:cnd:noEmit
 #if WINDOWS_UWP
@@ -44,27 +45,32 @@ namespace ApplicationTemplate
         public App()
         {
             Instance = this;
+            host = UnoHost.CreateDefaultBuilder()
+                .ConfigureServices(sp =>
+                {
+                    sp.AddRouting< RouterConfiguration, LaunchMessage>(() => App.Instance.NavigationFrame);
+                })
+                .Build();
+            //host = UnoHost.CreateDefaultHostWithStartup<AppServiceConfigurer>();
+            //var lifetime = host.Services.GetRequiredService<IHostApplicationLifetime>();
 
-            host = UnoHost.CreateDefaultHostWithStartup<AppServiceConfigurer>();
-            var lifetime = host.Services.GetRequiredService<IHostApplicationLifetime>();
+            //var services = host.Services;
+            //lifetime.ApplicationStarted.Register(() =>
+            //{
+            //    //var router = services.GetRequiredService<IRouter>();
+            //    //var messenger = services.GetRequiredService<IMessenger>();
+            //    //messenger.Send<BaseRoutingMessage>(new ShowMessage(this));
 
-            var services = host.Services;
-            lifetime.ApplicationStarted.Register(() =>
-            {
-                var router = services.GetRequiredService<IRouter>();
-                var messenger = services.GetRequiredService<IMessenger>();
-                messenger.Send<BaseRoutingMessage>(new ShowMessage(this));
+            //});
+            //lifetime.ApplicationStopping.Register(() =>
+            //{
+            //});
+            //lifetime.ApplicationStopped.Register(() =>
+            //{
+            //});
 
-            });
-            lifetime.ApplicationStopping.Register(() =>
-            {
-            });
-            lifetime.ApplicationStopped.Register(() =>
-            {
-            });
-
-            Startup = new Startup();
-            Startup.PreInitialize();
+            //Startup = new Startup();
+            //Startup.PreInitialize();
 
             InitializeComponent();
 
@@ -130,7 +136,7 @@ namespace ApplicationTemplate
                 ConfigureViewSize();
                 ConfigureStatusBar();
 
-                Startup.Initialize();
+                //Startup.Initialize();
 
                 //#if (IncludeFirebaseAnalytics)
                 //                ConfigureFirebase();
@@ -148,7 +154,7 @@ namespace ApplicationTemplate
 
             _ = Task.Run(() =>
             {
-                Startup.Start();
+                //Startup.Start();
                 host.Run();
             });
         }
@@ -207,4 +213,7 @@ namespace ApplicationTemplate
         //        }
         //#endif
     }
+
+
+
 }
