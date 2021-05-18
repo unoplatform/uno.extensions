@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+
 using Microsoft.Extensions.Logging.EventLog;
 
 namespace ApplicationTemplate.Hosting
