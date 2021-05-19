@@ -182,13 +182,13 @@ namespace ApplicationTemplate
             var resources = Application.Current.Resources;
 
             //-:cnd:noEmit
-#if WINDOWS_UWP || (NET5_0 && WINDOWS)
+#if WINDOWS_UWP || (NET5_0 && WINDOWS) || HAS_UNO_SKIA
             //+:cnd:noEmit
             var statusBarHeight = 0;
             //-:cnd:noEmit
 #else
             //+:cnd:noEmit
-                        var statusBarHeight = Windows.UI.ViewManagement.StatusBar.GetForCurrentView().OccludedRect.Height;
+            var statusBarHeight = Windows.UI.ViewManagement.StatusBar.GetForCurrentView().OccludedRect.Height;
                         Windows.UI.ViewManagement.StatusBar.GetForCurrentView().ForegroundColor = Windows.UI.Colors.White;
             //-:cnd:noEmit
 #endif

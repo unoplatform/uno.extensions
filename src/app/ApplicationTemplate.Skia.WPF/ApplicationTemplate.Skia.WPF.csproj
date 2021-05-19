@@ -5,13 +5,38 @@
     <RootNamespace>ApplicationTemplate</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
     <PackageReference Include="Uno.WinUI.Skia.Wpf" Version="3.7.3" />
     <PackageReference Include="Uno.WinUI.RemoteControl" Version="3.7.3" Condition="'$(Configuration)'=='Debug'" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="5.0.0" />
+    <PackageReference Include="System.Reactive" Version="5.0.0" />
+    <PackageReference Include="Uno.SourceGenerationTasks">
+      <Version>3.1.0-dev.6</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.5.3.2" />
+    <PackageReference Include="Serilog.Extensions.Hosting" Version="3.0.0" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="3.1.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="4.0.0" />
+    <PackageReference Include="Serilog.Sinks.Debug" Version="1.0.1" />
+    <PackageReference Include="MallardMessageHandlers" Version="0.2.0-dev.16" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="9.3.0" />
+    <PackageReference Include="Refit" Version="4.7.51" />
+    <PackageReference Include="GeneratedSerializers.Json" Version="0.2.0-dev.10" />
+    <PackageReference Include="Reactive.Annex" Version="0.3.0-dev.18" />
+    <PackageReference Include="Uno.Injectable" Version="1.34.0-dev.175" />
+    <PackageReference Include="Uno.CodeGen" Version="1.34.0-dev.175" />
+    <PackageReference Include="Nventive.Persistence.Reactive" Version="0.2.0-dev.14" />
   </ItemGroup>
   <ItemGroup>
     <UpToDateCheckInput Include="..\ApplicationTemplate.Shared\**\*.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ApplicationTemplate.Hosting\ApplicationTemplate.Hosting.csproj" />
+    <ProjectReference Include="..\ApplicationTemplate.Navigation\ApplicationTemplate.Navigation.csproj" />
   </ItemGroup>
   <Import Project="..\ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems" Label="Shared" />
 </Project>
