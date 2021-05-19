@@ -31,7 +31,7 @@ namespace ApplicationTemplate.Navigation
         public void Navigate(Type destinationPage, object? viewModel=null)
         {
 //-:cnd:noEmit
-#if WINDOWS_UWP
+#if !WINUI
 //+:cnd:noEmit
             NavigationFrame.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High,
             //-:cnd:noEmit

@@ -24,19 +24,19 @@ namespace ApplicationTemplate.Views
 
         protected override void PreInitializeServices()
         {
-//-:cnd:noEmit
-#if __ANDROID__ || __IOS__
-//+:cnd:noEmit
+////-:cnd:noEmit
+//#if __ANDROID__ || __IOS__
+////+:cnd:noEmit
 
-            FeatureConfiguration.Style.ConfigureNativeFrameNavigation();
-//-:cnd:noEmit
-#endif
-//+:cnd:noEmit
+//            FeatureConfiguration.Style.ConfigureNativeFrameNavigation();
+////-:cnd:noEmit
+//#endif
+////+:cnd:noEmit
         }
 
         protected override void InitializeViewServices(IHostBuilder hostBuilder)
         {
-            hostBuilder.AddViewServices();
+            //hostBuilder.AddViewServices();
         }
 
         protected override void OnInitialized(IServiceProvider services)
