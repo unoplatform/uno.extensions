@@ -9,6 +9,9 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Logging.EventLog;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Hosting.Internal;
+using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
+
 
 namespace ApplicationTemplate.Hosting
 {
@@ -16,6 +19,20 @@ namespace ApplicationTemplate.Hosting
     {
         public static IHostBuilder CreateDefaultBuilder() =>
             Host.CreateDefaultBuilder()
+//-:cnd:noEmit
+#if XAMARINIOS10
+//+:cnd:noEmit
+                .ConfigureHostConfiguration(config =>
+                {
+                    var disablereload = new Dictionary<string, string>
+                            {
+                                { "hostBuilder:reloadConfigOnChange", "false" }
+                            };
+                    config.AddInMemoryCollection(disablereload);
+                })
+//-:cnd:noEmit
+#endif
+//+:cnd:noEmit
                 .ConfigureLogging((_, factory) =>
                 {
 //-:cnd:noEmit
@@ -27,7 +44,7 @@ namespace ApplicationTemplate.Hosting
 //+:cnd:noEmit
                 })
 //-:cnd:noEmit
-#if ANDROID
+#if ANDROID || XAMARINIOS10
 //+:cnd:noEmit
             .ConfigureServices(services=>
             {
@@ -42,7 +59,7 @@ namespace ApplicationTemplate.Hosting
 }
 
 //-:cnd:noEmit
-#if ANDROID
+#if ANDROID || XAMARINIOS10
 //+:cnd:noEmit
 namespace Microsoft.Extensions.Hosting.Internal
 {
