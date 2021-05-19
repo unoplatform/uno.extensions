@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Uno;
-using Windows.UI.Xaml.Data;
+//using Windows.UI.Xaml.Data;
 
 namespace ApplicationTemplate.Client
 {
