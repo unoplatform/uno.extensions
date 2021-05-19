@@ -1,12 +1,4 @@
 ﻿using System;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Console;
-using Microsoft.Extensions.Logging.Debug;
-using Microsoft.Extensions.Logging.EventLog;
 
 namespace Microsoft.Extensions.DependencyInjection.Extensions
 {

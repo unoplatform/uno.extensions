@@ -11,6 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using CommunityToolkit.Mvvm.Messaging;
 using System.Threading;
+using System.Collections.Generic;
+using Microsoft.Extensions.Configuration;
 
 //-:cnd:noEmit
 #if WINDOWS_UWP
@@ -123,8 +125,10 @@ namespace ApplicationTemplate
         {
 #if NET5_0 && WINDOWS
             CurrentWindow = new Window();
-#else
+#elif WINDOWS_UWP
 			CurrentWindow = Window.Current;
+#else
+            CurrentWindow = Microsoft.UI.Xaml.Window.Current;
 #endif
 
             Shell = CurrentWindow.Content as Shell;
