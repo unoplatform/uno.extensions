@@ -453,13 +453,13 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ApplicationTemplate.Hosting\ApplicationTemplate.Hosting.csproj">
+    <ProjectReference Include="..\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj">
       <Project>{ea4f9862-63ee-47d6-bd2b-2d1b83e2fd6a}</Project>
-      <Name>ApplicationTemplate.Hosting</Name>
+      <Name>Uno.Extensions.Hosting</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ApplicationTemplate.Navigation\ApplicationTemplate.Navigation.csproj">
+    <ProjectReference Include="..\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj">
       <Project>{ad3c0a66-450d-4355-b5c4-fdaf0d7746ad}</Project>
-      <Name>ApplicationTemplate.Navigation</Name>
+      <Name>Uno.Extensions.Navigation</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="..\ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems" Label="Shared" Condition="Exists('..\ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems')" />

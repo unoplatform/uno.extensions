@@ -1,4 +1,5 @@
-﻿//-:cnd:noEmit
+﻿using System;
+//-:cnd:noEmit
 #if WINDOWS_UWP
 //+:cnd:noEmit
 //-:cnd:noEmit
@@ -15,11 +16,12 @@ using Microsoft.UI.Xaml.Navigation;
 #endif
 //+:cnd:noEmit
 
-namespace ApplicationTemplate.Navigation
+namespace Uno.Extensions.Navigation
 {
-    public interface IRouter
+    public interface INavigator
     {
-
+        void Navigate(Type destinationPage, object? viewModel=null);
+        void GoBack();
     }
 }
 
