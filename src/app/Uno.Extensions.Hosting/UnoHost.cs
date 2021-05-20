@@ -13,7 +13,7 @@ using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 
 
-namespace ApplicationTemplate.Hosting
+namespace Uno.Extensions.Hosting
 {
     public static class UnoHost
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reactive.Concurrency;
 using System.Text;
-using ApplicationTemplate.Navigation;
+using Uno.Extensions.Navigation;
 using ApplicationTemplate.Presentation;
 using ApplicationTemplate.Views.Content;
 using CommunityToolkit.Mvvm.Messaging;

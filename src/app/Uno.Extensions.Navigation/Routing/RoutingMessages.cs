@@ -17,7 +17,7 @@ using Microsoft.UI.Xaml.Navigation;
 
 using System.Collections.Generic;
 
-namespace ApplicationTemplate.Navigation
+namespace Uno.Extensions.Navigation
 {
     public abstract record BaseRoutingMessage(object? Sender = null) { };
 

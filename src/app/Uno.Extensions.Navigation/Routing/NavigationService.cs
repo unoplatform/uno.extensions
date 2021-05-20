@@ -20,7 +20,7 @@ using Microsoft.UI.Xaml.Navigation;
 #endif
 //+:cnd:noEmit
 
-namespace ApplicationTemplate.Navigation
+namespace Uno.Extensions.Navigation
 {
     public record NavigationService<TMessage>(IRouter router, IMessenger Messenger) : IHostedService
         where TMessage : BaseRoutingMessage, new()

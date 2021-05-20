@@ -17,7 +17,7 @@ using Microsoft.UI.Xaml.Navigation;
 #endif
 //+:cnd:noEmit
 
-namespace ApplicationTemplate.Navigation
+namespace Uno.Extensions.Navigation
 {
     public record Navigator : INavigator
     {
