@@ -88,6 +88,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
+      <ProjectReference Include="..\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj" />
       <ProjectReference Include="..\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
     </ItemGroup>
     
