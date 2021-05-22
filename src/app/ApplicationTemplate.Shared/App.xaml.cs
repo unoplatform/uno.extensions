@@ -14,6 +14,7 @@ using System.Threading;
 using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using Uno.Extensions.Logging.Serilog;
+using Uno.Extensions.Logging;
 
 //-:cnd:noEmit
 #if WINDOWS_UWP
@@ -50,6 +51,15 @@ namespace ApplicationTemplate
             Instance = this;
             host = UnoHost.CreateDefaultBuilder()
                 .UseRouting<RouterConfiguration, LaunchMessage>(() => App.Instance.NavigationFrame)
+                .UseUnoLogging(logBuilder =>
+                {
+                    logBuilder
+                    .MinimumLogLevel(Microsoft.Extensions.Logging.LogLevel.Information)
+                    .CoreLogLevel(Microsoft.Extensions.Logging.LogLevel.Information)
+                    .XamlBindingLogLevel(Microsoft.Extensions.Logging.LogLevel.Information)
+                    .XamlLayoutLogLevel(Microsoft.Extensions.Logging.LogLevel.Information)
+                    .XamlLogLevel(Microsoft.Extensions.Logging.LogLevel.Information);
+                })
                 .UseSerilog(true,true, true)
                 .Build();
             //host = UnoHost.CreateDefaultHostWithStartup<AppServiceConfigurer>();
