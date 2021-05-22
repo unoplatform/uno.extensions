@@ -84,10 +84,10 @@ namespace Uno.Extensions.Logging.Serilog
         private static string GetLogFilePath(bool isAppLogging = true)
         {
             var logDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-
+            var assemblyName = Assembly.GetEntryAssembly()?.FullName ?? "unologging";
             return isAppLogging
-                ? Path.Combine(logDirectory, $"{Assembly.GetEntryAssembly().FullName}.log")
-                : Path.Combine(logDirectory, $"{Assembly.GetEntryAssembly().FullName}.host.log");
+                ? Path.Combine(logDirectory, $"{assemblyName}.log")
+                : Path.Combine(logDirectory, $"{assemblyName}.host.log");
         }
     }
 }
