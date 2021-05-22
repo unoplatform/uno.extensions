@@ -13,6 +13,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using System.Threading;
 using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
+using Uno.Extensions.Logging.Serilog;
 
 //-:cnd:noEmit
 #if WINDOWS_UWP
@@ -48,10 +49,8 @@ namespace ApplicationTemplate
         {
             Instance = this;
             host = UnoHost.CreateDefaultBuilder()
-                .ConfigureServices(sp =>
-                {
-                    sp.AddRouting< RouterConfiguration, LaunchMessage>(() => App.Instance.NavigationFrame);
-                })
+                .UseRouting<RouterConfiguration, LaunchMessage>(() => App.Instance.NavigationFrame)
+                .UseSerilog(true,true, true)
                 .Build();
             //host = UnoHost.CreateDefaultHostWithStartup<AppServiceConfigurer>();
             //var lifetime = host.Services.GetRequiredService<IHostApplicationLifetime>();
