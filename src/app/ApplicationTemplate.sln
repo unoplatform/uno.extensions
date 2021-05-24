@@ -28,9 +28,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Hosting", "U
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation", "Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj", "{AD3C0A66-450D-4355-B5C4-FDAF0D7746AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Logging.Serilog", "Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj", "{3F01A0DE-4B9E-496F-AC6B-94DAF315A20F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Logging.Serilog", "Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj", "{3F01A0DE-4B9E-496F-AC6B-94DAF315A20F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Logging", "Uno.Extensions.Logging\Uno.Extensions.Logging.csproj", "{406A741F-FB06-482F-9037-154B55FCB2CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Logging", "Uno.Extensions.Logging\Uno.Extensions.Logging.csproj", "{406A741F-FB06-482F-9037-154B55FCB2CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Configuration", "Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj", "{0DDE79DE-181B-42EF-AF00-56DC622A6AFA}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -412,6 +414,34 @@ Global
 		{406A741F-FB06-482F-9037-154B55FCB2CE}.Release|x64.Build.0 = Release|Any CPU
 		{406A741F-FB06-482F-9037-154B55FCB2CE}.Release|x86.ActiveCfg = Release|Any CPU
 		{406A741F-FB06-482F-9037-154B55FCB2CE}.Release|x86.Build.0 = Release|Any CPU
+		{0DDE79DE-181B-42EF-AF00-56DC622A6AFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DDE79DE-181B-42EF-AF00-56DC622A6AFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DDE79DE-181B-42EF-AF00-56DC622A6AFA}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{0DDE79DE-181B-42EF-AF00-56DC622A6AFA}.Debug|ARM.Build.0 = Debug|Any CPU
+		{0DDE79DE-181B-42EF-AF00-56DC622A6AFA}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{0DDE79DE-181B-42EF-AF00-56DC622A6AFA}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{0DDE79DE-181B-42EF-AF00-56DC622A6AFA}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{0DDE79DE-181B-42EF-AF00-56DC622A6AFA}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{0DDE79DE-181B-42EF-AF00-56DC622A6AFA}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{0DDE79DE-181B-42EF-AF00-56DC622A6AFA}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{0DDE79DE-181B-42EF-AF00-56DC622A6AFA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0DDE79DE-181B-42EF-AF00-56DC622A6AFA}.Debug|x64.Build.0 = Debug|Any CPU
+		{0DDE79DE-181B-42EF-AF00-56DC622A6AFA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0DDE79DE-181B-42EF-AF00-56DC622A6AFA}.Debug|x86.Build.0 = Debug|Any CPU
+		{0DDE79DE-181B-42EF-AF00-56DC622A6AFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0DDE79DE-181B-42EF-AF00-56DC622A6AFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0DDE79DE-181B-42EF-AF00-56DC622A6AFA}.Release|ARM.ActiveCfg = Release|Any CPU
+		{0DDE79DE-181B-42EF-AF00-56DC622A6AFA}.Release|ARM.Build.0 = Release|Any CPU
+		{0DDE79DE-181B-42EF-AF00-56DC622A6AFA}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{0DDE79DE-181B-42EF-AF00-56DC622A6AFA}.Release|ARM64.Build.0 = Release|Any CPU
+		{0DDE79DE-181B-42EF-AF00-56DC622A6AFA}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{0DDE79DE-181B-42EF-AF00-56DC622A6AFA}.Release|iPhone.Build.0 = Release|Any CPU
+		{0DDE79DE-181B-42EF-AF00-56DC622A6AFA}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{0DDE79DE-181B-42EF-AF00-56DC622A6AFA}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{0DDE79DE-181B-42EF-AF00-56DC622A6AFA}.Release|x64.ActiveCfg = Release|Any CPU
+		{0DDE79DE-181B-42EF-AF00-56DC622A6AFA}.Release|x64.Build.0 = Release|Any CPU
+		{0DDE79DE-181B-42EF-AF00-56DC622A6AFA}.Release|x86.ActiveCfg = Release|Any CPU
+		{0DDE79DE-181B-42EF-AF00-56DC622A6AFA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

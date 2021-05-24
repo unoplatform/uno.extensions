@@ -8,6 +8,7 @@ using ApplicationTemplate.Views.Content;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace ApplicationTemplate.Views
 {
@@ -38,12 +39,12 @@ namespace ApplicationTemplate.Views
         {
             {typeof(ShowMessage),new Route<ShowMessage>(msg=>{
 
-                return new HomePageViewModel();
+                return Ioc.Default.GetService<HomePageViewModel>();
 
             }) },
             {typeof(LaunchMessage),new Route<LaunchMessage>(msg=>{
 
-                return new HomePageViewModel();
+                return Ioc.Default.GetService<HomePageViewModel>();
 
             }) }
         };
