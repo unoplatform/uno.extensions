@@ -7,6 +7,9 @@ using System.Text.RegularExpressions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Uno.Extensions.Configuration
 {
@@ -110,6 +113,14 @@ namespace Uno.Extensions.Configuration
             );
         }
 
+
+        public static IHostBuilder UseCustomAppSettings(this IHostBuilder hostBuilder)
+        {
+            return hostBuilder.ConfigureAppConfiguration(b =>
+                b.AddJsonFile(Path.Combine(AppContext.BaseDirectory,"customappsettings.json"), optional: true, reloadOnChange:true)
+            );
+        }
+
         public static IHostBuilder UseAppSettings<TApplicationRoot>(this IHostBuilder hostBuilder)
             where TApplicationRoot : class
         {
@@ -158,5 +169,96 @@ namespace Uno.Extensions.Configuration
             return configurationBuilder;
         }
 
+
+        public static IHostBuilder UseWritableSettings<TSettingsOptions>(this IHostBuilder hostBuilder, Func<HostBuilderContext, IConfigurationSection> configSection)
+            where TSettingsOptions : class, new()
+        {
+            Func<HostBuilderContext, string> filePath = (hctx) =>
+            {
+                var file = $"appsettings.{typeof(TSettingsOptions).Name}.json";
+
+                var fileProvider = hctx.HostingEnvironment.ContentRootFileProvider;
+                var fileInfo = fileProvider.GetFileInfo(file);
+                return fileInfo.PhysicalPath;
+            };
+
+            // This is consistent with HostBuilder, which defaults to Production
+            return hostBuilder
+                .ConfigureAppConfiguration((ctx, b) =>
+                {
+                    
+
+                    b.AddJsonFile(filePath(ctx), optional: true, reloadOnChange: true);
+                })
+                .ConfigureServices((ctx,services)=>
+                {
+                    var section = configSection(ctx);
+                    services.ConfigureWritable<TSettingsOptions>(section, filePath(ctx));
+                }
+                    );
+        }
+
+        
+
+
+        public static void ConfigureWritable<T>(
+           this IServiceCollection services,
+           IConfigurationSection section,
+           string file = null) where T : class, new()
+        {
+
+            services.Configure<T>(section);
+            services.AddTransient<IWritableOptions<T>>(provider =>
+            {
+                var options = provider.GetService<IOptionsMonitor<T>>();
+                return new WritableOptions<T>( options, section.Key, file);
+            });
+        }
     }
+
+
+
+    public interface IWritableOptions<out T> : IOptionsSnapshot<T> where T : class, new()
+    {
+        void Update(Action<T> applyChanges);
+    }
+
+    public class WritableOptions<T> : IWritableOptions<T> where T : class, new()
+    {
+        private readonly IOptionsMonitor<T> _options;
+        private readonly string _section;
+        private readonly string _file;
+
+        public WritableOptions(
+            IOptionsMonitor<T> options,
+            string section,
+            string file)
+        {
+            _options = options;
+            _section = section;
+            _file = file;
+        }
+
+        public T Value => _options.CurrentValue;
+        public T Get(string name) => _options.Get(name);
+
+        public void Update(Action<T> applyChanges)
+        {
+            var physicalPath = _file;
+
+            var jObject =
+                File.Exists(physicalPath)?
+                JsonConvert.DeserializeObject<JObject>(File.ReadAllText(physicalPath)):
+                new JObject();
+            var sectionObject = jObject.TryGetValue(_section, out JToken section) ?
+                JsonConvert.DeserializeObject<T>(section.ToString()) : (Value ?? new T());
+
+            applyChanges(sectionObject);
+
+            jObject[_section] = JObject.Parse(JsonConvert.SerializeObject(sectionObject));
+            File.WriteAllText(physicalPath, JsonConvert.SerializeObject(jObject, Formatting.Indented));
+        }
+    }
+
+
 }

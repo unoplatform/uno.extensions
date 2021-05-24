@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
+using Uno.Extensions;
+using Uno.Extensions.Configuration;
 //using Chinook.DynamicMvvm;
 //using Chinook.StackNavigation;
 //using MallardMessageHandlers;
@@ -9,11 +11,26 @@ namespace ApplicationTemplate.Presentation
 {
     public partial class HomePageViewModel : ViewModel
     {
-        public string Welcome { get; } = "Welcome to App Template";
+        public string Welcome { get; set; } = "Welcome to App Template";
 
-        public HomePageViewModel(IOptions<EndpointOptions> endpoint)
+        private IWritableOptions<EndpointOptions> Settings { get; }
+
+        public HomePageViewModel(IWritableOptions<EndpointOptions> endpoint) // IOptionsMonitor<EndpointOptions> endpoint)
         {
+            Settings = endpoint;
+            Welcome = Settings.Value.Url;
+            //endpoint.OnChange(options =>
+            //{
+                
+            //});
+        }
 
+        public void Save()
+        {
+            Settings.Update(options =>
+            {
+                options.Url = Welcome;
+            });
         }
 
         //public IDynamicCommand NavigateToPostsPage => this.GetCommandFromTask(async ct =>

@@ -19,6 +19,7 @@ namespace Uno.Extensions.Hosting
     {
         public static IHostBuilder CreateDefaultBuilder() =>
             Host.CreateDefaultBuilder()
+            .UseContentRoot(PlatformSpecificContentRootPath())
 //-:cnd:noEmit
 #if XAMARINIOS10
 //+:cnd:noEmit
@@ -55,6 +56,18 @@ namespace Uno.Extensions.Hosting
 #endif
 //+:cnd:noEmit
             ;
+
+
+        private static string PlatformSpecificContentRootPath()
+        {
+            //-:cnd:noEmit
+#if WINUI //WINDOWS_UWP || __ANDROID__ || __IOS__ || __WASM__
+            return Windows.Storage.ApplicationData.Current.LocalFolder.Path;
+#else
+            return string.Empty;
+#endif
+            //+:cnd:noEmit
+        }
     }
 }
 
