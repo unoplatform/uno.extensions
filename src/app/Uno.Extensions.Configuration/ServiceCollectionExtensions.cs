@@ -121,12 +121,9 @@ namespace Uno.Extensions.Configuration
         public static IHostBuilder UseEnvironmentAppSettings<TApplicationRoot>(this IHostBuilder hostBuilder)
             where TApplicationRoot : class
         {
+            // This is consistent with HostBuilder, which defaults to Production
             return hostBuilder.ConfigureAppConfiguration((ctx,b) =>
-            {
-                IHostEnvironment env = ctx.HostingEnvironment;
-                b.AddEnvironmentAppSettings<TApplicationRoot>(env.EnvironmentName ?? Environments.Production); // This is consistent with HostBuilder defaults
-            }
-            );
+                b.AddEnvironmentAppSettings<TApplicationRoot>(ctx.HostingEnvironment?.EnvironmentName ?? Environments.Production));
         }
 
         private static IConfigurationBuilder AddAppSettings<TApplicationRoot>(this IConfigurationBuilder configurationBuilder)
