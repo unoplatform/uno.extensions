@@ -19,18 +19,18 @@ using System.Collections.Generic;
 
 namespace Uno.Extensions.Navigation
 {
-    public abstract record BaseRoutingMessage(object? Sender = null) { };
+    public record BaseRoutingMessage(object? Sender = null, string path="") { };
 
     public record LaunchMessage() : BaseRoutingMessage() { };
 
-    public record ShowMessage(object? Sender = null) : BaseRoutingMessage(Sender) { };
+    //public record ShowMessage(object? Sender = null) : BaseRoutingMessage(Sender) { };
 
-    public record ShowItemMessage<TItem>(TItem ItemToShow, object? Sender = null) : BaseRoutingMessage(Sender) { };
+    //public record ShowItemMessage<TItem>(TItem ItemToShow, object? Sender = null) : BaseRoutingMessage(Sender) { };
 
-    public record CloseMessage(bool? canBeCancelled = true, object? Sender = null) : BaseRoutingMessage(Sender) { };
+    //public record CloseMessage(bool? canBeCancelled = true, object? Sender = null) : BaseRoutingMessage(Sender) { };
 
-    public record SelectedItemMessage<TItem>(TItem ItemSelected, object? Sender = null) : BaseRoutingMessage(Sender) { };
+    //public record SelectedItemMessage<TItem>(TItem ItemSelected, object? Sender = null) : BaseRoutingMessage(Sender) { };
 
-    public record SelectItemMessage<TItem>(IEnumerable<TItem> ItemsToSelectFrom, object? Sender = null) : BaseRoutingMessage(Sender) { };
+    //public record SelectItemMessage<TItem>(IEnumerable<TItem> ItemsToSelectFrom, object? Sender = null) : BaseRoutingMessage(Sender) { };
 }
 

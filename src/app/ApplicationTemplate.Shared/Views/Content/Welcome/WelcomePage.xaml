@@ -37,6 +37,9 @@
                     HorizontalAlignment="Stretch"
                     Margin="0,4"
                     Command="{Binding NavigateToHomePage}" />
-        </StackPanel>
+
+            <TextBlock Text="Welcome"/>
+                <Button Content="Reset" Click="ResetClick"/>
+            </StackPanel>
     </Grid>
 </Page>
