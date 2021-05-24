@@ -109,15 +109,7 @@ namespace Uno.Extensions.Configuration
             where TApplicationRoot : class
         {
             return hostBuilder.ConfigureHostConfiguration(b =>
-                b.AddAppSettings< TApplicationRoot>()
-            );
-        }
-
-
-        public static IHostBuilder UseCustomAppSettings(this IHostBuilder hostBuilder)
-        {
-            return hostBuilder.ConfigureAppConfiguration(b =>
-                b.AddJsonFile(Path.Combine(AppContext.BaseDirectory,"customappsettings.json"), optional: true, reloadOnChange:true)
+                b.AddAppSettings<TApplicationRoot>()
             );
         }
 
@@ -133,7 +125,7 @@ namespace Uno.Extensions.Configuration
             where TApplicationRoot : class
         {
             // This is consistent with HostBuilder, which defaults to Production
-            return hostBuilder.ConfigureAppConfiguration((ctx,b) =>
+            return hostBuilder.ConfigureAppConfiguration((ctx, b) =>
                 b.AddEnvironmentAppSettings<TApplicationRoot>(ctx.HostingEnvironment?.EnvironmentName ?? Environments.Production));
         }
 
@@ -175,7 +167,7 @@ namespace Uno.Extensions.Configuration
         {
             Func<HostBuilderContext, string> filePath = (hctx) =>
             {
-                var file = $"appsettings.{typeof(TSettingsOptions).Name}.json";
+                var file = $"{AppSettings.AppSettingsFileName}.{typeof(TSettingsOptions).Name}.json";
 
                 var fileProvider = hctx.HostingEnvironment.ContentRootFileProvider;
                 var fileInfo = fileProvider.GetFileInfo(file);
@@ -186,11 +178,11 @@ namespace Uno.Extensions.Configuration
             return hostBuilder
                 .ConfigureAppConfiguration((ctx, b) =>
                 {
-                    
+
 
                     b.AddJsonFile(filePath(ctx), optional: true, reloadOnChange: true);
                 })
-                .ConfigureServices((ctx,services)=>
+                .ConfigureServices((ctx, services) =>
                 {
                     var section = configSection(ctx);
                     services.ConfigureWritable<TSettingsOptions>(section, filePath(ctx));
@@ -198,67 +190,17 @@ namespace Uno.Extensions.Configuration
                     );
         }
 
-        
-
-
         public static void ConfigureWritable<T>(
            this IServiceCollection services,
            IConfigurationSection section,
            string file = null) where T : class, new()
         {
-
             services.Configure<T>(section);
             services.AddTransient<IWritableOptions<T>>(provider =>
             {
                 var options = provider.GetService<IOptionsMonitor<T>>();
-                return new WritableOptions<T>( options, section.Key, file);
+                return new WritableOptions<T>(options, section.Key, file);
             });
         }
     }
-
-
-
-    public interface IWritableOptions<out T> : IOptionsSnapshot<T> where T : class, new()
-    {
-        void Update(Action<T> applyChanges);
-    }
-
-    public class WritableOptions<T> : IWritableOptions<T> where T : class, new()
-    {
-        private readonly IOptionsMonitor<T> _options;
-        private readonly string _section;
-        private readonly string _file;
-
-        public WritableOptions(
-            IOptionsMonitor<T> options,
-            string section,
-            string file)
-        {
-            _options = options;
-            _section = section;
-            _file = file;
-        }
-
-        public T Value => _options.CurrentValue;
-        public T Get(string name) => _options.Get(name);
-
-        public void Update(Action<T> applyChanges)
-        {
-            var physicalPath = _file;
-
-            var jObject =
-                File.Exists(physicalPath)?
-                JsonConvert.DeserializeObject<JObject>(File.ReadAllText(physicalPath)):
-                new JObject();
-            var sectionObject = jObject.TryGetValue(_section, out JToken section) ?
-                JsonConvert.DeserializeObject<T>(section.ToString()) : (Value ?? new T());
-
-            applyChanges(sectionObject);
-
-            jObject[_section] = JObject.Parse(JsonConvert.SerializeObject(sectionObject));
-            File.WriteAllText(physicalPath, JsonConvert.SerializeObject(jObject, Formatting.Indented));
-        }
-    }
-
-
 }
