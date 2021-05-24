@@ -59,11 +59,12 @@ namespace ApplicationTemplate
                 .UseHostConfigurationForApp()
                 .UseEnvironmentAppSettings<App>()
                 .UseWritableSettings< EndpointOptions>(ctx => ctx.Configuration.GetSection("ChuckNorrisEndpoint"))
+                .UseWritableSettings<OnboardingOptions>(ctx => ctx.Configuration.GetSection("Onboarding"))
                 //.ConfigureServices((ctx,services) =>
-                //{
-                //    //services.Configure<EndpointOptions>(ctx.Configuration.GetSection("ChuckNorrisEndpoint"));
-                //    services.ConfigureWritable<EndpointOptions>(ctx.Configuration.GetSection("ChuckNorrisEndpoint"));
-                //})
+                                 //{
+                                 //    //services.Configure<EndpointOptions>(ctx.Configuration.GetSection("ChuckNorrisEndpoint"));
+                                 //    services.ConfigureWritable<EndpointOptions>(ctx.Configuration.GetSection("ChuckNorrisEndpoint"));
+                                 //})
                 .UseRouting<RouterConfiguration, LaunchMessage>(() => App.Instance.NavigationFrame)
                 .ConfigureServices(services =>
                 {

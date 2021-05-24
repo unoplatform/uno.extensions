@@ -36,36 +36,37 @@ namespace Uno.Extensions.Navigation
     public class Router : IRouter, IRecipient<BaseRoutingMessage>
     {
         public INavigator Navigator { get; }
-        public IReadOnlyDictionary<Type, IRoute> Routes { get; }
-        public IReadOnlyDictionary<Type, Type> Registrations { get; }
+        public IReadOnlyDictionary<string, (Type, Action<IServiceCollection>, Func<IServiceProvider, object>)> Routes { get; }
+        public IReadOnlyDictionary<string, Func<IServiceProvider, string[], string, string>> Redirections { get; }
+        public IServiceProvider Services { get; }
+        public Stack<string> NavigationStack { get; } = new Stack<string>();
         public Router(
             INavigator navigator,
             IMessenger messenger,
-            IRouteDefinitions routeDefinitions
+            IRouteDefinitions routeDefinitions,
+            IServiceProvider services
             )
         {
             Navigator = navigator;
             Routes = routeDefinitions.Routes;
-            Registrations = routeDefinitions.ViewModelMappings;
+            Redirections = routeDefinitions.Redirections;
+            Services = services;
             messenger.RegisterAll(this);
         }
 
         public void Receive(BaseRoutingMessage message)
         {
-            if (Routes.TryGetValue(message.GetType(), out var route))
+            var path = message.path;
+            if (Redirections.TryGetValue(message.path, out var redirection))
             {
-                var vm = route.BuildRoute(message);
-                Type pageType = null;
-                if (vm is not null)
-                {
-                    Registrations.TryGetValue(vm.GetType(), out pageType);
-                }
-                switch (message)
-                {
-                    case LaunchMessage show:
-                        Navigator.Navigate(pageType, vm);
-                        break;
-                }
+                path = redirection(Services, NavigationStack.ToArray(), path);
+            }
+
+            if (Routes.TryGetValue(path, out var route))
+            {
+                var vm = route.Item3?.Invoke(Services);
+                Type pageType = route.Item1;
+                Navigator.Navigate(pageType, vm);
             }
         }
     }

@@ -8,7 +8,7 @@
       xmlns:u="using:Nventive.View.Controls"
       mc:Ignorable="d">
 
-    <Page.Resources>
+    <!--<Page.Resources>
         <ResourceDictionary>
             <uc:PartitionConverter x:Key="SelectedIndexToButtonContent"
                                    DefaultValue="Skip"
@@ -45,10 +45,10 @@
                            Height="10" />
             </DataTemplate>
         </ResourceDictionary>
-    </Page.Resources>
+    </Page.Resources>-->
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <u:ImageSlideshow x:Name="OnboardingSlideshow"
+        <!--<u:ImageSlideshow x:Name="OnboardingSlideshow"
                           ItemsSource="{Binding OnboardingItems}"
                           ItemTemplate="{StaticResource OnboardingItemTemplate}"
                           IndexIndicatorTemplate="{StaticResource OnboardingIndexIndicatorTemplate}"
@@ -60,6 +60,10 @@
                 HorizontalAlignment="Center"
                 Background="White"
                 Foreground="Black"
-                Margin="0,0,0,40" />
+                Margin="0,0,0,40" />-->
+        <StackPanel>
+            <TextBlock Text="Onbarding"/>
+            <Button Content="Continue" Click="ContinueClick"/>
+        </StackPanel>
     </Grid>
 </Page>

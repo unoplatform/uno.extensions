@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
 //-:cnd:noEmit
 #if WINDOWS_UWP
 //+:cnd:noEmit
@@ -21,9 +22,13 @@ namespace Uno.Extensions.Navigation
 {
     public interface IRouteDefinitions
     {
-        IReadOnlyDictionary<Type, IRoute> Routes { get;}
+        IReadOnlyDictionary<string, (Type, Action<IServiceCollection>, Func<IServiceProvider, object>)> Routes { get; }
 
-        IReadOnlyDictionary<Type, Type> ViewModelMappings { get; }
+        IReadOnlyDictionary<string, Func<IServiceProvider, string[], string, string>> Redirections { get; }
+
+        //IReadOnlyDictionary<Type, IRoute> Routes { get;}
+
+        //IReadOnlyDictionary<Type, Type> ViewModelMappings { get; }
     }
 }
 

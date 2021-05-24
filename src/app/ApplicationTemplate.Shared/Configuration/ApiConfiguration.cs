@@ -250,4 +250,9 @@ namespace ApplicationTemplate
 
         public bool EnableMock { get; set; }
     }
+
+    public class OnboardingOptions
+    {
+        public bool IsOnboardingCompleted { get; set; }
+    }
 }

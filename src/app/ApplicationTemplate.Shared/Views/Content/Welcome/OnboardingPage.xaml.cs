@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
-using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.Extensions.Hosting;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
+﻿using ApplicationTemplate.Presentation;
 //-:cnd:noEmit
 #if WINDOWS_UWP
 //+:cnd:noEmit
@@ -20,6 +13,7 @@ using Windows.UI.ViewManagement;
 //-:cnd:noEmit
 #else
 //+:cnd:noEmit
+using ApplicationTemplate.Presentation;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -31,19 +25,18 @@ using Microsoft.UI.Xaml.Navigation;
 #endif
 //+:cnd:noEmit
 
-namespace Uno.Extensions.Navigation
+namespace ApplicationTemplate.Views.Content
 {
-    public class Route<TMessage>:IRoute
+    public sealed partial class OnboardingPage : Page
     {
-        public Func<TMessage, object> RouteBuilder { get; }
-        public Route(Func<TMessage,object> routeBuilder)
+        public OnboardingPage()
         {
-            RouteBuilder = routeBuilder;
+            this.InitializeComponent();
         }
 
-        public object BuildRoute(object message)
+        private void ContinueClick(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
-            return RouteBuilder((TMessage)message);
+            (DataContext as OnboardingPageViewModel).CompleteOnboarding();
         }
     }
 }
