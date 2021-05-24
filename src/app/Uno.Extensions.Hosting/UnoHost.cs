@@ -61,8 +61,10 @@ namespace Uno.Extensions.Hosting
         private static string PlatformSpecificContentRootPath()
         {
             //-:cnd:noEmit
-#if WINUI //WINDOWS_UWP || __ANDROID__ || __IOS__ || __WASM__
+#if WINUI || WINDOWS_UWP // || __WASM__
             return Windows.Storage.ApplicationData.Current.LocalFolder.Path;
+#elif __ANDROID__ || __IOS__ 
+			return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 #else
             return string.Empty;
 #endif

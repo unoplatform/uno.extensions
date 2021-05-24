@@ -58,7 +58,6 @@ namespace ApplicationTemplate
                 .UseAppSettingsForHostConfiguration<App>()
                 .UseHostConfigurationForApp()
                 .UseEnvironmentAppSettings<App>()
-                .UseCustomAppSettings()
                 .UseWritableSettings< EndpointOptions>(ctx => ctx.Configuration.GetSection("ChuckNorrisEndpoint"))
                 //.ConfigureServices((ctx,services) =>
                 //{
