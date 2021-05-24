@@ -62,5 +62,6 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="5.0.0" />
     <PackageReference Include="Uno.Core" Version="2.4.0-dev.2" />
+    <PackageReference Include="Newtonsoft.Json" Version ="13.0.1"/>
   </ItemGroup>
 </Project>

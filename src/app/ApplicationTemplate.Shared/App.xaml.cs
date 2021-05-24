@@ -58,10 +58,13 @@ namespace ApplicationTemplate
                 .UseAppSettingsForHostConfiguration<App>()
                 .UseHostConfigurationForApp()
                 .UseEnvironmentAppSettings<App>()
-                .ConfigureServices((ctx,services) =>
-                {
-                    services.Configure<EndpointOptions>(ctx.Configuration.GetSection("ChuckNorrisEndpoint"));
-                })
+                .UseCustomAppSettings()
+                .UseWritableSettings< EndpointOptions>(ctx => ctx.Configuration.GetSection("ChuckNorrisEndpoint"))
+                //.ConfigureServices((ctx,services) =>
+                //{
+                //    //services.Configure<EndpointOptions>(ctx.Configuration.GetSection("ChuckNorrisEndpoint"));
+                //    services.ConfigureWritable<EndpointOptions>(ctx.Configuration.GetSection("ChuckNorrisEndpoint"));
+                //})
                 .UseRouting<RouterConfiguration, LaunchMessage>(() => App.Instance.NavigationFrame)
                 .ConfigureServices(services =>
                 {
