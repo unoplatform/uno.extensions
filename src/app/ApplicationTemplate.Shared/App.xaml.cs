@@ -15,6 +15,10 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using Uno.Extensions.Logging.Serilog;
 using Uno.Extensions.Logging;
+using ApplicationTemplate.Client;
+using ApplicationTemplate.Presentation;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using Uno.Extensions.Configuration;
 
 //-:cnd:noEmit
 #if WINDOWS_UWP
@@ -50,7 +54,19 @@ namespace ApplicationTemplate
         {
             Instance = this;
             host = UnoHost.CreateDefaultBuilder()
+                .UseEnvironment("Staging")
+                .UseAppSettingsForHostConfiguration<App>()
+                .UseHostConfigurationForApp()
+                .UseEnvironmentAppSettings<App>()
+                .ConfigureServices((ctx,services) =>
+                {
+                    services.Configure<EndpointOptions>(ctx.Configuration.GetSection("ChuckNorrisEndpoint"));
+                })
                 .UseRouting<RouterConfiguration, LaunchMessage>(() => App.Instance.NavigationFrame)
+                .ConfigureServices(services =>
+                {
+                    services.AddTransient<HomePageViewModel>();
+                })
                 .UseUnoLogging(logBuilder =>
                 {
                     logBuilder
@@ -62,6 +78,7 @@ namespace ApplicationTemplate
                 })
                 .UseSerilog(true,true, true)
                 .Build();
+            Ioc.Default.ConfigureServices(host.Services);
             //host = UnoHost.CreateDefaultHostWithStartup<AppServiceConfigurer>();
             //var lifetime = host.Services.GetRequiredService<IHostApplicationLifetime>();
 

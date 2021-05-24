@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 //using Chinook.DynamicMvvm;
 //using Chinook.StackNavigation;
 //using MallardMessageHandlers;
@@ -9,6 +10,11 @@ namespace ApplicationTemplate.Presentation
     public partial class HomePageViewModel : ViewModel
     {
         public string Welcome { get; } = "Welcome to App Template";
+
+        public HomePageViewModel(IOptions<EndpointOptions> endpoint)
+        {
+
+        }
 
         //public IDynamicCommand NavigateToPostsPage => this.GetCommandFromTask(async ct =>
         //{

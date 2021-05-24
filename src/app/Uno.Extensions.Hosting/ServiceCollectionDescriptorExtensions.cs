@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 
 namespace Microsoft.Extensions.DependencyInjection.Extensions
 {
@@ -27,5 +30,17 @@ namespace Microsoft.Extensions.DependencyInjection.Extensions
 
             return collection;
         }
+
+        //public static IHostBuilder UseEnvironment(this IHostBuilder builder, string environmentName)
+        //{
+        //    return builder.ConfigureHostConfiguration(config =>
+        //     {
+        //         var disablereload = new Dictionary<string, string>
+        //                    {
+        //                        { "environment", environmentName}
+        //                    };
+        //         config.AddInMemoryCollection(disablereload);
+        //     });
+        //}
     }
 }

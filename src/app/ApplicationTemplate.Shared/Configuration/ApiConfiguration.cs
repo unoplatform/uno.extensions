@@ -141,7 +141,7 @@ namespace ApplicationTemplate
         private static IServiceCollection AddMainHandler(this IServiceCollection services)
         {
             return services.AddTransient<HttpMessageHandler>(s =>
-//-:cnd:noEmit
+                //-:cnd:noEmit
 #if __IOS__
 //+:cnd:noEmit
                 new NSUrlSessionHandler()
@@ -151,11 +151,11 @@ namespace ApplicationTemplate
                 new Xamarin.Android.Net.AndroidClientHandler()
 //-:cnd:noEmit
 #else
-//+:cnd:noEmit
+                //+:cnd:noEmit
                 new HttpClientHandler()
-//-:cnd:noEmit
+            //-:cnd:noEmit
 #endif
-//+:cnd:noEmit
+            //+:cnd:noEmit
             );
         }
 
@@ -204,7 +204,7 @@ namespace ApplicationTemplate
 
         private static Task<bool> GetIsNetworkAvailable(CancellationToken ct)
         {
-//-:cnd:noEmit
+            //-:cnd:noEmit
 #if WINDOWS_UWP || __ANDROID__ || __IOS__
             // TODO #172362: Not implemented in Uno.
             // return NetworkInformation.GetInternetConnectionProfile()?.GetNetworkConnectivityLevel() == NetworkConnectivityLevel.InternetAccess;
@@ -212,7 +212,7 @@ namespace ApplicationTemplate
 #else
             return Task.FromResult(true);
 #endif
-//+:cnd:noEmit
+            //+:cnd:noEmit
         }
 
         private static void AddDefaultHeaders(HttpClient client, IServiceProvider serviceProvider)
@@ -241,11 +241,13 @@ namespace ApplicationTemplate
                 .AddTypedClient((client, serviceProvider) => RestService.For(client, serviceProvider.GetService<IRequestBuilder<T>>()));
         }
 
-        private class EndpointOptions
-        {
-            public string Url { get; set; }
 
-            public bool EnableMock { get; set; }
-        }
+    }
+
+    public class EndpointOptions
+    {
+        public string Url { get; set; }
+
+        public bool EnableMock { get; set; }
     }
 }
