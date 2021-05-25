@@ -101,9 +101,6 @@
   <ItemGroup>
     <Compile Include="ConverterBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Views\Content\Authentication\ForgotPasswordPage.xaml.cs">
-      <DependentUpon>ForgotPasswordPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Content\ChuckNorris\ChuckNorrisFavoritesPage.xaml.cs">
       <DependentUpon>ChuckNorrisFavoritesPage.xaml</DependentUpon>
     </Compile>
@@ -264,10 +261,6 @@
     <Content Include="Properties\Default.rd.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Views\Content\Authentication\ForgotPasswordPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\Content\ChuckNorris\ChuckNorrisFavoritesPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -328,6 +321,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Views\Content\Authentication\" />
     <Folder Include="Views\Content\Welcome\" />
   </ItemGroup>
   <Import Project="..\ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems" Label="Shared" Condition="Exists('..\ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems')" />

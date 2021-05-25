@@ -51,10 +51,10 @@
                                               ContentTransitions="{TemplateBinding ContentTransitions}"
                                               ContentTemplate="{TemplateBinding ContentTemplate}"
                                               AutomationProperties.AccessibilityView="Raw"
-                                              Opacity="{Binding Command.IsExecuting, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource TrueToTransparent}}" />
+                                              Opacity="{Binding Command.IsRunning, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource TrueToTransparent}}" />
 
-                            <ProgressRing IsActive="{Binding Command.IsExecuting, RelativeSource={RelativeSource Mode=TemplatedParent}}"
-                                          Opacity="{Binding Command.IsExecuting, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource TrueToOpaque}}"
+                            <ProgressRing IsActive="{Binding Command.IsRunning, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                          Opacity="{Binding Command.IsRunning, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource TrueToOpaque}}"
                                           Foreground="{TemplateBinding Foreground}"
                                           Width="16"
                                           Height="16"/>
