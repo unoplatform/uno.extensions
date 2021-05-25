@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using ApplicationTemplate.Business;
+using CommunityToolkit.Mvvm.Input;
 //using Chinook.DynamicMvvm;
 //using Chinook.StackNavigation;
 using Uno.Extensions.Configuration;
@@ -19,10 +22,10 @@ namespace ApplicationTemplate.Presentation
             Messenger = messenger;
         }
 
-        public void CompleteOnboarding()
+        private async void CompleteOnboarding()
         {
             Onboarding.Update(options => options.IsOnboardingCompleted = true);
-            Messenger.Send<BaseRoutingMessage>(new BaseRoutingMessage(this));
+            Messenger.Send<BaseRoutingMessage>(new ClearStackMessage(this));
         }
 
         //public IDynamicCommand NavigateToWelcomePage => this.GetCommandFromTask(async ct =>
@@ -32,11 +35,13 @@ namespace ApplicationTemplate.Presentation
         //    await this.GetService<IStackNavigator>().NavigateAndClear(ct, () => new WelcomePageViewModel());
         //});
 
-        //public OnboardingItemViewModel[] OnboardingItems { get; } = new[]
-        //{
-        //    new OnboardingItemViewModel("Page 1", "https://i.imgur.com/hoNgoms.png"),
-        //    new OnboardingItemViewModel("Page 2", "https://i.imgur.com/hoNgoms.png"),
-        //    new OnboardingItemViewModel("Page 3", "https://i.imgur.com/hoNgoms.png"),
-        //};
+        public ICommand NavigateToWelcomePage => new RelayCommand(CompleteOnboarding);
+
+        public OnboardingItemViewModel[] OnboardingItems { get; } = new[]
+        {
+            new OnboardingItemViewModel("Page 1", "https://i.imgur.com/hoNgoms.png"),
+            new OnboardingItemViewModel("Page 2", "https://i.imgur.com/hoNgoms.png"),
+            new OnboardingItemViewModel("Page 3", "https://i.imgur.com/hoNgoms.png"),
+        };
     }
 }

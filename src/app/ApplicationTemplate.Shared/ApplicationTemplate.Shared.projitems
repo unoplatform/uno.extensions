@@ -74,6 +74,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Client\Data\AuthenticationData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Business\IApplicationSettingsService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Welcome\HomePageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Welcome\OnboardingItemViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Welcome\OnboardingPageViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Welcome\WelcomePageViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Startup.cs" />

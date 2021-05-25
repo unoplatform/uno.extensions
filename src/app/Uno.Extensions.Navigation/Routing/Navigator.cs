@@ -67,6 +67,24 @@ namespace Uno.Extensions.Navigation
                 NavigationFrame.GoBack();
             });
         }
+
+        public void Clear()
+        {
+            //-:cnd:noEmit
+#if WINDOWS_UWP
+            //+:cnd:noEmit
+            NavigationFrame.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High,
+            //-:cnd:noEmit
+#else
+            //+:cnd:noEmit
+            NavigationFrame.DispatcherQueue.TryEnqueue(
+        //-:cnd:noEmit
+#endif
+        //+:cnd:noEmit
+        () => {
+            NavigationFrame.BackStack.Clear();
+        });
+        }
     }
 }
 
