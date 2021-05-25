@@ -36,7 +36,10 @@ namespace ApplicationTemplate.Views
             {typeof(WelcomePageViewModel).Name.ToLower(), (typeof(WelcomePage),services=>services.AddTransient<WelcomePageViewModel>(),sp=>sp.GetService<WelcomePageViewModel>() ) },
             {typeof(LoginPageViewModel).Name.ToLower(), (typeof(LoginPage),services=>services.AddTransient<LoginPageViewModel>(),sp=>sp.GetService<LoginPageViewModel>() ) },
             {typeof(CreateAccountPageViewModel).Name.ToLower(), (typeof(CreateAccountPage),services=>services.AddTransient<CreateAccountPageViewModel>(),sp=>sp.GetService<CreateAccountPageViewModel>() ) },
-            {typeof(ForgotPasswordPageViewModel).Name.ToLower(), (typeof(ForgotPasswordPage),services=>services.AddTransient<ForgotPasswordPageViewModel>(),sp=>sp.GetService<ForgotPasswordPageViewModel>() ) }
+            {typeof(ForgotPasswordPageViewModel).Name.ToLower(), (typeof(ForgotPasswordPage),services=>services.AddTransient<ForgotPasswordPageViewModel>(),sp=>sp.GetService<ForgotPasswordPageViewModel>() ) },
+            {typeof(PostsPageViewModel).Name.ToLower(), (typeof(PostsPage),services=>services.AddTransient<PostsPageViewModel>(),sp=>sp.GetService<PostsPageViewModel>() ) },
+            {typeof(ChuckNorrisSearchPageViewModel).Name.ToLower(), (typeof(ChuckNorrisSearchPage),services=>services.AddTransient<ChuckNorrisSearchPageViewModel>(),sp=>sp.GetService<ChuckNorrisSearchPageViewModel>() ) },
+            {typeof(SettingsPageViewModel).Name.ToLower(), (typeof(SettingsPage),services=>services.AddTransient<SettingsPageViewModel>(),sp=>sp.GetService<SettingsPageViewModel>() ) }
         };
 
         public IReadOnlyDictionary<

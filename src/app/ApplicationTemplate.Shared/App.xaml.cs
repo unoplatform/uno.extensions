@@ -68,9 +68,11 @@ namespace ApplicationTemplate
                     services
                         .AddSerialization()
                         .AddAppServices()
+                        .AddTransient<ShellViewModel>()
                         .AddTransient<CreateAccountFormViewModel>()
                         .AddTransient<LoginFormViewModel>()
-                        .AddTransient<ForgotPasswordFormViewModel>();
+                        .AddTransient<ForgotPasswordFormViewModel>()
+                        .AddTransient<MenuViewModel>();
                 })
                 .UseUnoLogging(logBuilder =>
                 {
@@ -180,6 +182,7 @@ namespace ApplicationTemplate
                 ShellActivity.Start();
 
                 CurrentWindow.Content = Shell = new Shell(args);
+                Shell.DataContext = host.Services.GetService<ShellViewModel>();
 
                 ShellActivity.Stop();
 

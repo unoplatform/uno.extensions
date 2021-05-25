@@ -1,11 +1,11 @@
 ﻿<local:AttachableUserControl x:Class="ApplicationTemplate.Views.Content.Menu"
                              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                              xmlns:local="using:ApplicationTemplate.Views"
-                             xmlns:ne="using:Nventive.View.Extensions"
                              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                             ne:BindableVisualState.VisualStateName="{Binding MenuState}">
+                             local:BindableVisualState.VisualStateName="{Binding MenuState}">
+    <!--xmlns:ne="using:Nventive.View.Extensions"-->
 
     <Grid x:Name="MenuRoot"
           Background="{StaticResource AccentColorBrush}">

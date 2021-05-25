@@ -4,10 +4,10 @@
       xmlns:local="using:ApplicationTemplate"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:ue="using:Nventive.View.Extensions"
-      xmlns:u="using:Nventive.View.Controls"
-      xmlns:dl="using:Chinook.DataLoader"
       mc:Ignorable="d">
+    <!--xmlns:ue="using:Nventive.View.Extensions"
+      xmlns:u="using:Nventive.View.Controls"
+      xmlns:dl="using:Chinook.DataLoader"-->
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -39,25 +39,28 @@
                    Margin="4,0" />
         </StackPanel>
 
-        <dl:DataLoaderView Source="{Binding Posts}"
+        <Grid Grid.Row="3">
+            <!--<dl:DataLoaderView Source="{Binding Posts}"
                            RefreshCommand="{Binding RefreshPosts}"
                            Margin="0,12,0,0"
                            Grid.Row="3">
             <DataTemplate>
                 <u:SwipeRefresh RefreshCommand="{Binding Parent.RefreshPosts}"
                                 IsRefreshing="{Binding Parent.RefreshPosts.IsExecuting}"
-                                IndicatorColor="Black">
-                    <ListView ItemsSource="{Binding Data}"
-                              ue:ListViewBaseExtensions.Command="{Binding Parent.NavigateToPost}"
+                                IndicatorColor="Black">-->
+            <ListView ItemsSource="{Binding Data}"
+                              
                               IsItemClickEnabled="True">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Title}" />
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                </u:SwipeRefresh>
+                <!--ue:ListViewBaseExtensions.Command="{Binding Parent.NavigateToPost}"-->
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Title}" />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <!--</u:SwipeRefresh>
             </DataTemplate>
-        </dl:DataLoaderView>
+        </dl:DataLoaderView>-->
+        </Grid>
     </Grid>
 </Page>

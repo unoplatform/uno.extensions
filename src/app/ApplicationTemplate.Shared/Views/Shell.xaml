@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="using:ApplicationTemplate.Views.Content"
              mc:Ignorable="d">
     <!--xmlns:splash="using:Nventive.ExtendedSplashScreen"
              xmlns:nav="using:Chinook.SectionsNavigation"
@@ -11,13 +12,13 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Frame x:Name="RootFrame"/>
         <!--<nav:MultiFrame x:Name="RootNavigationMultiFrame"
-                        CommaSeparatedSectionsFrameNames="Home,Posts,Settings" />
+                        CommaSeparatedSectionsFrameNames="Home,Posts,Settings" />-->
 
         <local:Menu x:Name="Menu"
                     DataContext="{Binding Menu}"
                     VerticalAlignment="Bottom" />
 
-        <local:DiagnosticsOverlay DataContext="{Binding DiagnosticsOverlay}"
+        <!--<local:DiagnosticsOverlay DataContext="{Binding DiagnosticsOverlay}"
                                   Visibility="{Binding IsDiagnosticsOverlayEnabled, Converter={StaticResource TrueToVisible}, FallbackValue=Collapsed}" />
 
         <splash:ExtendedSplashScreen x:Name="AppExtendedSplashScreen"
