@@ -12,6 +12,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using Uno.Extensions.Specialized;
 using Microsoft.Extensions.Options;
 using Uno.Extensions.Configuration;
+using ApplicationTemplate.Business;
 
 namespace ApplicationTemplate.Views
 {
@@ -21,77 +22,52 @@ namespace ApplicationTemplate.Views
     /// </summary>
     public class RouterConfiguration : IRouteDefinitions
     {
-        //public static IServiceCollection AddRouting(this IServiceCollection services)
-        //{
-        //    return services
-        //        .AddSingleton<IMessenger, WeakReferenceMessenger>()
-        //        .AddSingleton<IRouteMessenger, RouteMessenger>()
-        //        .AddSingleton<IRouter>(s =>
-        //        new Router(
-        //            App.Instance.NavigationFrame,
-        //            s.GetRequiredService<IMessenger>(),
-        //            //s.GetRequiredService < IDispatcherScheduler>(),
-        //            GetPageRegistrations(),
-        //            GetRoutes()
-        //        )
-        //    );
-        //}
+        public const string ActionsKey = "action";
 
-        //public IReadOnlyDictionary<Type, IRoute> Routes { get; }
-        //= new Dictionary<Type, IRoute>()
-        //{
-        //    {typeof(ShowMessage),new Route<ShowMessage>(msg=>{
+        public enum Actions
+        {
+            Login
+        }
 
-        //        return Ioc.Default.GetService<HomePageViewModel>();
-
-        //    }) },
-        //    {typeof(LaunchMessage),new Route<LaunchMessage>(msg=>{
-
-        //        return Ioc.Default.GetService<HomePageViewModel>();
-
-        //    }) }
-        //};
-
-        public IReadOnlyDictionary<string, (Type,Action<IServiceCollection>, Func<IServiceProvider, object>)> Routes { get; } = new Dictionary<string, (Type, Action<IServiceCollection>, Func<IServiceProvider, object>)>()
+        public IReadOnlyDictionary<string, (Type, Action<IServiceCollection>, Func<IServiceProvider, object>)> Routes { get; } = new Dictionary<string, (Type, Action<IServiceCollection>, Func<IServiceProvider, object>)>()
         {
             {typeof(HomePageViewModel).Name.ToLower(), (typeof(HomePage),services=>services.AddTransient<HomePageViewModel>(),sp=>sp.GetService<HomePageViewModel>() ) },
             {typeof(OnboardingPageViewModel).Name.ToLower(), (typeof(OnboardingPage),services=>services.AddTransient<OnboardingPageViewModel>(),sp=>sp.GetService<OnboardingPageViewModel>() ) },
-            {typeof(WelcomePageViewModel).Name.ToLower(), (typeof(WelcomePage),services=>services.AddTransient<WelcomePageViewModel>(),sp=>sp.GetService<WelcomePageViewModel>() ) }
+            {typeof(WelcomePageViewModel).Name.ToLower(), (typeof(WelcomePage),services=>services.AddTransient<WelcomePageViewModel>(),sp=>sp.GetService<WelcomePageViewModel>() ) },
+            {typeof(LoginPageViewModel).Name.ToLower(), (typeof(LoginPage),services=>services.AddTransient<LoginPageViewModel>(),sp=>sp.GetService<LoginPageViewModel>() ) },
+            {typeof(CreateAccountPageViewModel).Name.ToLower(), (typeof(CreateAccountPage),services=>services.AddTransient<CreateAccountPageViewModel>(),sp=>sp.GetService<CreateAccountPageViewModel>() ) }
         };
 
-        public IReadOnlyDictionary<string, Func<IServiceProvider, string[], string, string>> Redirections { get; } = new Dictionary<string, Func<IServiceProvider, string[], string, string>>()
+        public IReadOnlyDictionary<
+            string,
+            Func<
+                IServiceProvider,               // Service provider for looking up services
+                string[],                       // navigation stack
+                string,                         // new path
+                IDictionary<string, object>,    // args
+                string                          // relative path
+                >> Redirections
+        { get; } = new Dictionary<string, Func<IServiceProvider, string[], string, IDictionary<string, object>, string>>()
         {
-            {"",(sp, stack,route)=>{
-                var onboarding = sp.GetService<IWritableOptions<OnboardingOptions>>();
-                if(!onboarding.Value.IsOnboardingCompleted){
-                    return typeof(OnboardingPageViewModel).Name.ToLower();
-                }
-                else{
-                    return typeof(WelcomePageViewModel).Name.ToLower();
+            {"",(sp, stack,route, args)=>{
+                    if(args is not null && args.TryGetValue(RouterConfiguration.ActionsKey, out var action)) {
+                        if(((RouterConfiguration.Actions)action) == RouterConfiguration.Actions.Login)
+                        {
+                            return typeof(LoginPageViewModel).Name.ToLower();
+                        }
                     }
-            } }
+
+                    var onboarding = sp.GetService<IWritableOptions<ApplicationSettings>>();
+                    if(!onboarding.Value.IsOnboardingCompleted){
+                        return typeof(OnboardingPageViewModel).Name.ToLower();
+                    }
+                    else{
+                        return typeof(WelcomePageViewModel).Name.ToLower();
+                    }
+                }
+            }
         };
 
-
-        //public IReadOnlyDictionary<Type, Type> ViewModelMappings { get;} = new Dictionary<Type, Type>()
-        //{
-        //    { typeof(HomePageViewModel), typeof(HomePage) },
-        //    //{ typeof(PostsPageViewModel), typeof(PostsPage) },
-        //    //{ typeof(EditPostPageViewModel), typeof(EditPostPage) },
-        //    //{ typeof(DiagnosticsPageViewModel), typeof(DiagnosticsPage) },
-        //    //{ typeof(WelcomePageViewModel), typeof(WelcomePage) },
-        //    //{ typeof(CreateAccountPageViewModel), typeof(CreateAccountPage) },
-        //    //{ typeof(ForgotPasswordPageViewModel), typeof(ForgotPasswordPage) },
-        //    //{ typeof(LoginPageViewModel), typeof(LoginPage) },
-        //    //{ typeof(OnboardingPageViewModel), typeof(OnboardingPage) },
-        //    //{ typeof(SettingsPageViewModel), typeof(SettingsPage) },
-        //    //{ typeof(LicensesPageViewModel), typeof(LicensesPage) },
-        //    //{ typeof(WebViewPageViewModel), typeof(WebViewPage) },
-        //    //{ typeof(EnvironmentPickerPageViewModel), typeof(EnvironmentPickerPage) },
-        //    //{ typeof(EditProfilePageViewModel), typeof(EditProfilePage) },
-        //    //{ typeof(ChuckNorrisSearchPageViewModel), typeof(ChuckNorrisSearchPage) },
-        //    //{ typeof(ChuckNorrisFavoritesPageViewModel), typeof(ChuckNorrisFavoritesPage) },
-        //};
 
     }
 }

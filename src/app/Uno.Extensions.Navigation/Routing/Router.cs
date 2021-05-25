@@ -34,11 +34,11 @@ using Microsoft.UI.Xaml.Navigation;
 
 namespace Uno.Extensions.Navigation
 {
-    public class Router : IRouter, IRecipient<BaseRoutingMessage>
+    public class Router : IRouter, IRecipient<RoutingMessage>
     {
         public INavigator Navigator { get; }
         public IReadOnlyDictionary<string, (Type, Action<IServiceCollection>, Func<IServiceProvider, object>)> Routes { get; }
-        public IReadOnlyDictionary<string, Func<IServiceProvider, string[], string, string>> Redirections { get; }
+        public IReadOnlyDictionary<string, Func<IServiceProvider, string[], string,IDictionary<string,object>, string>> Redirections { get; }
         public IServiceProvider Services { get; }
         public Stack<string> NavigationStack { get; } = new Stack<string>();
         public Router(
@@ -55,15 +55,15 @@ namespace Uno.Extensions.Navigation
             messenger.RegisterAll(this);
         }
 
-        public void Receive(BaseRoutingMessage message)
+        public void Receive(RoutingMessage message)
         {
             var fullPath = (message.path + "");
-            var routeSegments = fullPath.Split('/');
+            var routeSegments = fullPath.Split('/').Select(x => (x+"").ToLower()).ToArray();
 
             var path = routeSegments.Last();
             if (Redirections.TryGetValue(path, out var redirection))
             {
-                path = redirection(Services, NavigationStack.ToArray(), path);
+                path = redirection(Services, NavigationStack.ToArray(), path, message.args);
             }
 
             if(path=="..")

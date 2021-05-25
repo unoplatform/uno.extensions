@@ -8,7 +8,7 @@
         <Platforms>x86;x64</Platforms>
         <RuntimeIdentifiers>win10-x86;win10-x64</RuntimeIdentifiers>
       <LangVersion>9.0</LangVersion>
-      <DefineConstants>WINDOWS</DefineConstants>
+      <DefineConstants>WINDOWS,WINUI</DefineConstants>
     <DefaultLanguage>en</DefaultLanguage>
     </PropertyGroup>
 

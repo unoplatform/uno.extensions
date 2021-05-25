@@ -19,17 +19,23 @@ using System.Collections.Generic;
 
 namespace Uno.Extensions.Navigation
 {
-    public record BaseRoutingMessage(object? Sender = null, string path = "") { };
+    public record RoutingMessage(object? Sender = null, string path = "", IDictionary<string, object> args = null) { };
 
-    public record LaunchMessage() : BaseRoutingMessage() { };
+    public record LaunchMessage() : RoutingMessage() { };
 
-    public record ClearStackMessage(object? Sender =null) : BaseRoutingMessage(Sender,path: "/") { };
+    public record ClearStackMessage(object? Sender = null, string path="") : RoutingMessage(Sender, path: $"/{path}") { };
+
+    public record ActionMessage<TAction>(
+        object? Sender = null,
+        string actionArgumentKey = default,
+        TAction action = default) :
+        RoutingMessage(Sender, args: new Dictionary<string,object>() { { actionArgumentKey, action } });
 
     //public record ShowMessage(object? Sender = null) : BaseRoutingMessage(Sender) { };
 
     //public record ShowItemMessage<TItem>(TItem ItemToShow, object? Sender = null) : BaseRoutingMessage(Sender) { };
 
-    public record CloseMessage(object? Sender = null) : BaseRoutingMessage(Sender, path: "..") { };
+    public record CloseMessage(object? Sender = null) : RoutingMessage(Sender, path: "..") { };
 
     //public record SelectedItemMessage<TItem>(TItem ItemSelected, object? Sender = null) : BaseRoutingMessage(Sender) { };
 

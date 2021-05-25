@@ -1,11 +1,11 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                    xmlns:u="using:Nventive.View.Controls"
-                    xmlns:ue="using:Nventive.View.Extensions"
-                    xmlns:uc="using:Nventive.View.Converters"
                     xmlns:android="http://nventive.com/android"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     mc:Ignorable="android">
+    <!--xmlns:u="using:Nventive.View.Controls"
+                    xmlns:ue="using:Nventive.View.Extensions"
+                    xmlns:uc="using:Nventive.View.Converters"-->
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="../Application/Colors.xaml" />

@@ -1,10 +1,17 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                    xmlns:u="using:Nventive.View.Controls"
+                    xmlns:win="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:xamarin="http://nventive.com/xamarin"
+                    xmlns:android="http://nventive.com/android"
+                    xmlns:ios="http://nventive.com/ios"
+                    xmlns:not_android="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:not_ios="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:uloc="http://nventive.com/localization/1.0"
+                    mc:Ignorable="xamarin android ios">
+    <!--xmlns:u="using:Nventive.View.Controls"
                     xmlns:ue="using:Nventive.View.Extensions"
-                    xmlns:uc="using:Nventive.View.Converters"
-                    mc:Ignorable="">
+                    xmlns:uc="using:Nventive.View.Converters"-->
 
     <!-- 
         Find the latest styles here:
@@ -13,32 +20,39 @@
         Find the latest supported styles here:
         https://github.com/unoplatform/uno/tree/master/src/Uno.UI/UI/Xaml/Style/Generic
     -->
-
-    <!-- Styles -->
-    <Style x:Key="DefaultListViewHeaderItemStyle"
-           TargetType="ListViewHeaderItem">
-
+    
+    <Style x:Key="DefaultGridViewHeaderItemStyle"
+           TargetType="GridViewHeaderItem">
+        
         <Setter Property="Background"
-                Value="Transparent" />
+                Value="DarkGray" />
         <Setter Property="Margin"
                 Value="0" />
         <Setter Property="Padding"
-                Value="0" />
+                Value="15" />
         <Setter Property="HorizontalContentAlignment"
                 Value="Stretch" />
         <Setter Property="VerticalContentAlignment"
                 Value="Top" />
-        <Setter Property="UseSystemFocusVisuals"
-                Value="True" />
         <Setter Property="MinHeight"
                 Value="0" />
+        <Setter Property="UseSystemFocusVisuals"
+                Value="True" />
+
+        <!-- Based on TypoXX -->
+        <Setter Property="FontSize"
+                Value="16" />
+        <Setter Property="Foreground"
+                Value="Black" />
 
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="ListViewHeaderItem">
-                    <Border Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}">
+                <ControlTemplate TargetType="GridViewHeaderItem">
+                    
+                    <StackPanel Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                        
                         <ContentPresenter x:Name="ContentPresenter"
                                           Margin="{TemplateBinding Padding}"
                                           Content="{TemplateBinding Content}"
@@ -46,12 +60,14 @@
                                           ContentTransitions="{TemplateBinding ContentTransitions}"
                                           HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                           VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
-                    </Border>
+                    </StackPanel>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
 
-    <Style TargetType="ListViewHeaderItem"
-           BasedOn="{StaticResource DefaultListViewHeaderItemStyle}" />
+    <!-- Default Style -->
+    <Style  TargetType="GridViewHeaderItem"
+            BasedOn="{StaticResource DefaultGridViewHeaderItemStyle}" />
+
 </ResourceDictionary>

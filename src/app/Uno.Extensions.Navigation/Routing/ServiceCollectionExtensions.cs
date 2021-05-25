@@ -27,7 +27,7 @@ namespace Uno.Extensions.Navigation
         public static IHostBuilder UseRouting<TRouteDefinitions, TLaunchMessage>(
             this IHostBuilder builder, Func<Frame> navigationFrameLocator)
             where TRouteDefinitions : class, IRouteDefinitions, new()
-            where TLaunchMessage : BaseRoutingMessage, new()
+            where TLaunchMessage : RoutingMessage, new()
         {
             return builder
                 .ConfigureServices(sp =>
@@ -39,7 +39,7 @@ namespace Uno.Extensions.Navigation
         public static IServiceCollection AddRouting<TRouteDefinitions, TLaunchMessage>(
             this IServiceCollection services, Func<Frame> navigationFrameLocator)
             where TRouteDefinitions : class, IRouteDefinitions, new()
-            where TLaunchMessage : BaseRoutingMessage, new()
+            where TLaunchMessage : RoutingMessage, new()
         {
             var def = new TRouteDefinitions();
             var routes = def.Routes;

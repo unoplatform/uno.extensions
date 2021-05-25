@@ -41,9 +41,9 @@ namespace Uno.Extensions.Navigation
             Messenger = messenger;
         }
     
-        public void Send<TMessage>(TMessage message) where TMessage : BaseRoutingMessage
+        public void Send<TMessage>(TMessage message) where TMessage : RoutingMessage
         {
-            Messenger.Send(message);
+            Messenger.Send< RoutingMessage>(message);
         }
     }
 }

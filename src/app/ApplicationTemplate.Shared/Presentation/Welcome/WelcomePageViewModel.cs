@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Windows.Input;
+using ApplicationTemplate.Business;
+using ApplicationTemplate.Views;
+using CommunityToolkit.Mvvm.Input;
 using Uno.Extensions.Configuration;
 using Uno.Extensions.Navigation;
 //using Chinook.DynamicMvvm;
@@ -8,10 +12,10 @@ namespace ApplicationTemplate.Presentation
 {
     public partial class WelcomePageViewModel : ViewModel
     {
-        public IWritableOptions<OnboardingOptions> Onboarding { get; }
+        public IWritableOptions<ApplicationSettings> Onboarding { get; }
         public IRouteMessenger Messenger { get; }
         public WelcomePageViewModel(
-            IWritableOptions<OnboardingOptions> onboarding,
+            IWritableOptions<ApplicationSettings> onboarding,
             IRouteMessenger messenger)
         {
             Onboarding = onboarding;
@@ -21,7 +25,7 @@ namespace ApplicationTemplate.Presentation
         public void ResetOnboarding()
         {
             Onboarding.Update(options => options.IsOnboardingCompleted = false);
-            Messenger.Send<BaseRoutingMessage>(new BaseRoutingMessage(this));
+            Messenger.Send(new ClearStackMessage(this));
         }
         //public IDynamicCommand NavigateToHomePage => this.GetCommandFromTask(async ct =>
         //{
@@ -40,5 +44,17 @@ namespace ApplicationTemplate.Presentation
         //{
         //    await this.GetService<IStackNavigator>().Navigate(ct, () => new CreateAccountPageViewModel());
         //});
+
+        public ICommand NavigateToHomePage => new RelayCommand(() =>
+            Messenger.Send(new RoutingMessage(this,typeof(HomePageViewModel).Name.ToString() )));
+
+        public ICommand NavigateToLoginPage => new RelayCommand(() =>
+            Messenger.Send(
+                new ActionMessage<RouterConfiguration.Actions>(
+                    this, RouterConfiguration.ActionsKey, RouterConfiguration.Actions.Login
+                    )));
+
+        public ICommand NavigateToCreateAccountPage => new RelayCommand(() =>
+           Messenger.Send(new RoutingMessage(this, typeof(CreateAccountPageViewModel).Name.ToString())));
     }
 }

@@ -19,6 +19,7 @@ using ApplicationTemplate.Client;
 using ApplicationTemplate.Presentation;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Uno.Extensions.Configuration;
+using ApplicationTemplate.Business;
 
 //-:cnd:noEmit
 #if WINDOWS_UWP
@@ -59,16 +60,14 @@ namespace ApplicationTemplate
                 .UseHostConfigurationForApp()
                 .UseEnvironmentAppSettings<App>()
                 .UseWritableSettings< EndpointOptions>(ctx => ctx.Configuration.GetSection("ChuckNorrisEndpoint"))
-                .UseWritableSettings<OnboardingOptions>(ctx => ctx.Configuration.GetSection("Onboarding"))
-                //.ConfigureServices((ctx,services) =>
-                                 //{
-                                 //    //services.Configure<EndpointOptions>(ctx.Configuration.GetSection("ChuckNorrisEndpoint"));
-                                 //    services.ConfigureWritable<EndpointOptions>(ctx.Configuration.GetSection("ChuckNorrisEndpoint"));
-                                 //})
+                .UseWritableSettings<ApplicationSettings>(ctx => ctx.Configuration.GetSection(nameof(ApplicationSettings)))
                 .UseRouting<RouterConfiguration, LaunchMessage>(() => App.Instance.NavigationFrame)
+                .AddApi()
                 .ConfigureServices(services =>
                 {
-                    services.AddTransient<HomePageViewModel>();
+                    services.AddSerialization();
+                    services.AddAppServices();
+                    services.AddTransient<CreateAccountFormViewModel>();
                 })
                 .UseUnoLogging(logBuilder =>
                 {

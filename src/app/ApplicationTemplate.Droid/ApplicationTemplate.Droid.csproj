@@ -89,6 +89,7 @@
     <PackageReference Include="Nventive.Persistence.Reactive" Version="0.2.0-dev.14" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConverterBase.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Main.cs" />

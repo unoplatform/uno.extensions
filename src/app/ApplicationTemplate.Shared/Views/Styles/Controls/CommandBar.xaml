@@ -5,11 +5,11 @@
                     xmlns:xamarin="http://nventive.com/xamarin"
                     xmlns:android="http://nventive.com/android"
                     xmlns:ios="http://nventive.com/ios"
-                    xmlns:u="using:Nventive.View.Controls"
-                    xmlns:ue="using:Nventive.View.Extensions"
-                    xmlns:toolkit="using:Uno.UI.Toolkit"
-                    mc:Ignorable="xamarin android ios">
 
+                    mc:Ignorable="xamarin android ios">
+    <!--xmlns:u="using:Nventive.View.Controls"
+                    xmlns:ue="using:Nventive.View.Extensions"
+                    xmlns:toolkit="using:Uno.UI.Toolkit"-->
     <!-- 
         IMPORTANT DOCUMENTATION
         https://github.com/unoplatform/uno/blob/master/doc/articles/controls/CommandBar.md
@@ -23,8 +23,8 @@
            TargetType="CommandBar"
            xamarin:BasedOn="{StaticResource NativeDefaultCommandBar}">
         <!-- COMMON SETTERS -->
-        <Setter Property="toolkit:CommandBarExtensions.BackButtonForeground"
-                Value="{StaticResource CommandBarForegroundBrush}" />
+        <!--<Setter Property="toolkit:CommandBarExtensions.BackButtonForeground"
+                Value="{StaticResource CommandBarForegroundBrush}" />-->
         <Setter Property="Background"
                 Value="{StaticResource CommandBarBackgroundBrush}" />
         <Setter Property="Foreground"
@@ -45,13 +45,13 @@
                 Value="" />
 
         <!-- ANDROID SETTERS -->
-        <android:Setter Property="toolkit:UIElementExtensions.Elevation"
-                        Value="4" />
+        <!--<android:Setter Property="toolkit:UIElementExtensions.Elevation"
+                        Value="4" />-->
 
         <!-- IOS SETTERS -->
         <!-- Remove the back button title (and only leave the back arrow) -->
-        <ios:Setter Property="(toolkit:CommandBarExtensions.BackButtonTitle)"
-                    Value="" />
+        <!--<ios:Setter Property="(toolkit:CommandBarExtensions.BackButtonTitle)"
+                    Value="" />-->
         <ios:Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="CommandBar">
@@ -111,11 +111,11 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <ContentControl x:Name="NavigationCommand"
+                            <!--<ContentControl x:Name="NavigationCommand"
                                             Grid.Column="0"
                                             IsTabStop="False"
                                             Foreground="{TemplateBinding Foreground}"
-                                            Content="{Binding (toolkit:CommandBarExtensions.NavigationCommand), RelativeSource={RelativeSource TemplatedParent}}" />
+                                            Content="{Binding (toolkit:CommandBarExtensions.NavigationCommand), RelativeSource={RelativeSource TemplatedParent}}" />-->
                             <!-- Use a ContentControl rather than a ContentPresenter so that IsEnabled can be set to false
                                  in the Minimal/HiddenClosed states to remove it from being a tab-stop candidate. -->
                             <ContentControl x:Name="ContentControl"
