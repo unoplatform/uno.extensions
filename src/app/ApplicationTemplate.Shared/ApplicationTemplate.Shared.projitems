@@ -72,6 +72,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Authentication\LoginFormViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Authentication\LoginPageViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\ChuckNorris\ChuckNorrisSearchPageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Diagnostics\DiagnosticsOverlayViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\MenuViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Posts\PostsPageViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Settings\SettingsPageViewModel.cs" />
@@ -101,6 +102,9 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\Content\ChuckNorris\ChuckNorrisSearchPage.xaml.cs">
       <DependentUpon>ChuckNorrisSearchPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Content\Diagnostics\DiagnosticsOverlay.xaml.cs">
+      <DependentUpon>DiagnosticsOverlay.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\Content\Posts\PostsPage.xaml.cs">
       <DependentUpon>PostsPage.xaml</DependentUpon>
@@ -146,7 +150,6 @@
     <Folder Include="$(MSBuildThisFileDirectory)Framework\DynamicMvvm\" />
     <Folder Include="$(MSBuildThisFileDirectory)Framework\Reactive\" />
     <Folder Include="$(MSBuildThisFileDirectory)Framework\Serialization\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Presentation\Diagnostics\" />
     <Folder Include="$(MSBuildThisFileDirectory)Presentation\Extensions\" />
   </ItemGroup>
   <ItemGroup>
@@ -182,6 +185,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\Content\ChuckNorris\ChuckNorrisSearchPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Content\Diagnostics\DiagnosticsOverlay.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

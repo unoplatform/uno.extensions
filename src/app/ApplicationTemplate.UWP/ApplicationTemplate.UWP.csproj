@@ -101,15 +101,6 @@
   <ItemGroup>
     <Compile Include="ConverterBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Views\Content\Diagnostics\DiagnosticsOverlay.xaml.cs">
-      <DependentUpon>DiagnosticsOverlay.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Content\Diagnostics\DiagnosticsPage.xaml.cs">
-      <DependentUpon>DiagnosticsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Content\Diagnostics\EnvironmentPickerPage.xaml.cs">
-      <DependentUpon>EnvironmentPickerPage.xaml</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm">
@@ -232,20 +223,6 @@
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
     <Content Include="Properties\Default.rd.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="Views\Content\Diagnostics\DiagnosticsOverlay.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Content\Diagnostics\DiagnosticsPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Content\Diagnostics\EnvironmentPickerPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj">

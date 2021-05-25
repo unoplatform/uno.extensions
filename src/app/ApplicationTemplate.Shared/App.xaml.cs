@@ -69,6 +69,7 @@ namespace ApplicationTemplate
                         .AddSerialization()
                         .AddAppServices()
                         .AddTransient<ShellViewModel>()
+                        .AddTransient<DiagnosticsOverlayViewModel>()
                         .AddTransient<CreateAccountFormViewModel>()
                         .AddTransient<LoginFormViewModel>()
                         .AddTransient<ForgotPasswordFormViewModel>()
