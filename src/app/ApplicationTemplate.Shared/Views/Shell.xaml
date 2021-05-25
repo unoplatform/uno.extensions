@@ -18,10 +18,10 @@
                     DataContext="{Binding Menu}"
                     VerticalAlignment="Bottom" />
 
-        <!--<local:DiagnosticsOverlay DataContext="{Binding DiagnosticsOverlay}"
+        <local:DiagnosticsOverlay DataContext="{Binding DiagnosticsOverlay}"
                                   Visibility="{Binding IsDiagnosticsOverlayEnabled, Converter={StaticResource TrueToVisible}, FallbackValue=Collapsed}" />
 
-        <splash:ExtendedSplashScreen x:Name="AppExtendedSplashScreen"
+        <!--<splash:ExtendedSplashScreen x:Name="AppExtendedSplashScreen"
                                      ue:MultipleTapExtension.Command="{Binding DiagnosticsOverlay.NavigateToDiagnosticsPage}"
                                      ue:MultipleTapExtension.TapCount="3" />-->
     </Grid>
