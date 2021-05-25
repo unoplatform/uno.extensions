@@ -1,11 +1,12 @@
 ﻿<Application x:Class="ApplicationTemplate.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             RequestedTheme="Light">
+             >
 
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
                 <!--<ResourceDictionary Source="Views/Styles/Application/Converters.xaml" />
                 <ResourceDictionary Source="Views/Styles/Application/Colors.xaml" />
                 <ResourceDictionary Source="Views/Styles/Application/Fonts.xaml" />

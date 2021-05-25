@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Hosting;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
 //-:cnd:noEmit
 #if WINDOWS_UWP
 //+:cnd:noEmit
@@ -56,17 +57,29 @@ namespace Uno.Extensions.Navigation
 
         public void Receive(BaseRoutingMessage message)
         {
-            var path = message.path;
-            if (Redirections.TryGetValue(message.path, out var redirection))
+            var fullPath = (message.path + "");
+            var routeSegments = fullPath.Split('/');
+
+            var path = routeSegments.Last();
+            if (Redirections.TryGetValue(path, out var redirection))
             {
                 path = redirection(Services, NavigationStack.ToArray(), path);
             }
 
-            if (Routes.TryGetValue(path, out var route))
+            if(path=="..")
+            {
+                Navigator.GoBack();
+            }
+            else if (Routes.TryGetValue(path, out var route))
             {
                 var vm = route.Item3?.Invoke(Services);
                 Type pageType = route.Item1;
                 Navigator.Navigate(pageType, vm);
+
+                if(fullPath.StartsWith("/"))
+                {
+                    Navigator.Clear();
+                }
             }
         }
     }

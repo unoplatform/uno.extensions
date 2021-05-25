@@ -1,8 +1,11 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Uno.Extensions.Specialized;
 
 namespace Uno.Extensions.Configuration
 {
@@ -11,12 +14,15 @@ namespace Uno.Extensions.Configuration
         private readonly IOptionsMonitor<T> _options;
         private readonly string _section;
         private readonly string _file;
+        private readonly IConfigurationRoot _config;
 
         public WritableOptions(
+            IConfigurationRoot configRoot,
             IOptionsMonitor<T> options,
             string section,
             string file)
         {
+            _config = configRoot;
             _options = options;
             _section = section;
             _file = file;
@@ -40,6 +46,11 @@ namespace Uno.Extensions.Configuration
 
             jObject[_section] = JObject.Parse(JsonConvert.SerializeObject(sectionObject));
             File.WriteAllText(physicalPath, JsonConvert.SerializeObject(jObject, Formatting.Indented));
+            var fileProviders = _config.Providers.OfType<FileConfigurationProvider>();
+            foreach (var fp in fileProviders)
+            {
+                fp.Load();
+            }
         }
     }
 

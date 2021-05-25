@@ -62,7 +62,7 @@
   </ItemGroup>
   <!--<ItemGroup Condition="'$(IsTestProject)' != 'true' and '$(SourceLinkEnabled)' != 'false' and '$(IsLibraryProject)' == 'true'">-->
   <ItemGroup Condition="'$(IsWinUI)' == 'true'">
-    <PackageReference Include="Microsoft.ProjectReunion" Version="0.5.6" />
+    <PackageReference Include="Microsoft.ProjectReunion" Version="0.5.7" />
   </ItemGroup>
   <ItemGroup>
   <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.19041.16" />

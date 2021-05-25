@@ -101,7 +101,10 @@ namespace Uno.Extensions.Configuration
         public static IHostBuilder UseHostConfigurationForApp(this IHostBuilder hostBuilder)
         {
             return hostBuilder.ConfigureServices((ctx, s) =>
-                s.AddSingleton(a => ctx.Configuration)
+            {
+                s.AddSingleton<IConfiguration>(a => ctx.Configuration);
+                s.AddSingleton<IConfigurationRoot>(a => ctx.Configuration as IConfigurationRoot);
+            }
             );
         }
 
@@ -198,8 +201,9 @@ namespace Uno.Extensions.Configuration
             services.Configure<T>(section);
             services.AddTransient<IWritableOptions<T>>(provider =>
             {
+                var root = provider.GetService<IConfigurationRoot>();
                 var options = provider.GetService<IOptionsMonitor<T>>();
-                return new WritableOptions<T>(options, section.Key, file);
+                return new WritableOptions<T>(root, options, section.Key, file);
             });
         }
     }

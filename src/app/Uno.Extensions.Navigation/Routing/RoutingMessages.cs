@@ -19,15 +19,17 @@ using System.Collections.Generic;
 
 namespace Uno.Extensions.Navigation
 {
-    public record BaseRoutingMessage(object? Sender = null, string path="") { };
+    public record BaseRoutingMessage(object? Sender = null, string path = "") { };
 
     public record LaunchMessage() : BaseRoutingMessage() { };
+
+    public record ClearStackMessage(object? Sender =null) : BaseRoutingMessage(Sender,path: "/") { };
 
     //public record ShowMessage(object? Sender = null) : BaseRoutingMessage(Sender) { };
 
     //public record ShowItemMessage<TItem>(TItem ItemToShow, object? Sender = null) : BaseRoutingMessage(Sender) { };
 
-    //public record CloseMessage(bool? canBeCancelled = true, object? Sender = null) : BaseRoutingMessage(Sender) { };
+    public record CloseMessage(object? Sender = null) : BaseRoutingMessage(Sender, path: "..") { };
 
     //public record SelectedItemMessage<TItem>(TItem ItemSelected, object? Sender = null) : BaseRoutingMessage(Sender) { };
 

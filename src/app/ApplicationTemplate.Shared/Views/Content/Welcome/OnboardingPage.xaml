@@ -8,32 +8,34 @@
       xmlns:u="using:Nventive.View.Controls"
       mc:Ignorable="d">
 
-    <!--<Page.Resources>
+    <Page.Resources>
         <ResourceDictionary>
-            <uc:PartitionConverter x:Key="SelectedIndexToButtonContent"
+            <!--<uc:PartitionConverter x:Key="SelectedIndexToButtonContent"
                                    DefaultValue="Skip"
                                    x:Uid="Onboarding_Skip">
                 <uc:IntervalPartition LowerBound="2"
                                       InRangeValue="Continue"
                                       x:Uid="Onboarding_Continue" />
-            </uc:PartitionConverter>
+            </uc:PartitionConverter>-->
 
             <DataTemplate x:Key="OnboardingItemTemplate">
-                <Grid Background="Black">
+                <Grid Background="Black" Height="200" Width="200">
                     <TextBlock Text="{Binding PrimaryText}"
                                Foreground="White"
                                FontSize="25"
                                Margin="40"
                                HorizontalAlignment="Center" />
 
+                    <Border BorderBrush="Red" BorderThickness="2">
                     <Image Source="{Binding ImageUrl}"
                            Stretch="Uniform"
                            Margin="20"
                            VerticalAlignment="Center" />
+                    </Border>
                 </Grid>
             </DataTemplate>
 
-            <DataTemplate x:Key="OnboardingIndexIndicatorTemplate">
+            <!--<DataTemplate x:Key="OnboardingIndexIndicatorTemplate">
                 <Rectangle Fill="Gray"
                            Width="20"
                            Height="10" />
@@ -43,27 +45,30 @@
                 <Rectangle Fill="White"
                            Width="20"
                            Height="10" />
-            </DataTemplate>
+            </DataTemplate>-->
         </ResourceDictionary>
-    </Page.Resources>-->
+    </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <!--<u:ImageSlideshow x:Name="OnboardingSlideshow"
                           ItemsSource="{Binding OnboardingItems}"
                           ItemTemplate="{StaticResource OnboardingItemTemplate}"
                           IndexIndicatorTemplate="{StaticResource OnboardingIndexIndicatorTemplate}"
-                          SelectedIndexIndicatorTemplate="{StaticResource OnboardingSelectedIndexIndicatorTemplate}" />
+                          SelectedIndexIndicatorTemplate="{StaticResource OnboardingSelectedIndexIndicatorTemplate}" /> -->
 
-        <Button Content="{Binding ElementName=OnboardingSlideshow, Path=SelectedIndex, Converter={StaticResource SelectedIndexToButtonContent}}"
+        <ListView ItemsSource="{Binding OnboardingItems}"
+                          ItemTemplate="{StaticResource OnboardingItemTemplate}"/>
+            <!--Content="{Binding ElementName=OnboardingSlideshow, Path=SelectedIndex, Converter={StaticResource SelectedIndexToButtonContent}}"-->
+            <Button Content="Navigate"
                 Command="{Binding NavigateToWelcomePage}"
                 VerticalAlignment="Bottom"
                 HorizontalAlignment="Center"
                 Background="White"
                 Foreground="Black"
-                Margin="0,0,0,40" />-->
-        <StackPanel>
+                Margin="0,0,0,40" />
+            <!--<StackPanel>
             <TextBlock Text="Onbarding"/>
             <Button Content="Continue" Click="ContinueClick"/>
-        </StackPanel>
+        </StackPanel>-->
     </Grid>
 </Page>
