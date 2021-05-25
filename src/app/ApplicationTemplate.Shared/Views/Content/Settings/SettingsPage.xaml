@@ -34,7 +34,7 @@
             <!--<dl:DataLoaderView Source="{Binding UserProfile}"
                                EmptyTemplate="{StaticResource UserEmptyTemplate}">
                 <DataTemplate>-->
-                    <StackPanel>
+            <StackPanel DataContext="{Binding UserProfile}">
                         <TextBlock FontSize="24">
                             <Run Text="Hello" />
                             <Run Text="{Binding Data.FirstName}"

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Chinook.DynamicMvvm;
+//using Chinook.DynamicMvvm;
 
 namespace ApplicationTemplate.Presentation
 {
@@ -13,9 +13,23 @@ namespace ApplicationTemplate.Presentation
     {
         private const string LicensesFileName = "ThirdPartySoftwareLicenses.txt";
 
-        public string Licenses => this.GetFromTask(GetLicenses, initialValue: string.Empty);
+        public LicensesPageViewModel()
+        {
+            LoadLicenses();
+        }
 
-        private async Task<string> GetLicenses(CancellationToken ct)
+        private async void LoadLicenses()
+        {
+            Licenses = await GetLicenses();
+        }
+
+        private string licenses;
+        public string Licenses {
+            get => licenses;
+            set => SetProperty(ref licenses, value);
+        }//=> this.GetFromTask(GetLicenses, initialValue: string.Empty);
+
+        private async Task<string> GetLicenses()
         {
             var assembly = GetType().Assembly;
 

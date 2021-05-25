@@ -2,14 +2,17 @@
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using ApplicationTemplate.Business;
 using ApplicationTemplate.Client;
+using CommunityToolkit.Mvvm.Input;
 //using Chinook.DataLoader;
 //using Chinook.DynamicMvvm;
 //using Chinook.SectionsNavigation;
 //using Chinook.StackNavigation;
 //using MessageDialogService;
 using Microsoft.Extensions.Localization;
+using Uno.Extensions.Navigation;
 using Xamarin.Essentials;
 using Xamarin.Essentials.Interfaces;
 
@@ -17,8 +20,40 @@ namespace ApplicationTemplate.Presentation
 {
     public partial class SettingsPageViewModel : ViewModel
     {
-        //public string VersionNumber => this.Get(GetVersionNumber);
+        private IUserProfileService UserProfileService { get; }
+        private IAppInfo AppInfo { get; }
+        private IRouteMessenger Messenger { get; }
+        private IAuthenticationService AuthService { get; }
 
+        public SettingsPageViewModel(
+            //IUserProfileService userProfileService,
+            //IAppInfo appInfo,
+            IAuthenticationService authService,
+            IRouteMessenger messenger)
+        {
+            //UserProfileService = userProfileService;
+            //AppInfo = appInfo;
+            Messenger = messenger;
+            AuthService = authService;
+
+            //LoadData();
+            //VersionNumber = appInfo.VersionString;
+        }
+
+        private async void LoadData()
+        {
+            var cancel = new CancellationTokenSource();
+            UserProfile = await UserProfileService.GetCurrent(cancel.Token);
+
+        }
+
+        public string VersionNumber { get; }// => this.Get(GetVersionNumber);
+
+        private UserProfileData userProfile;
+        public UserProfileData UserProfile {
+            get => userProfile;
+            set => SetProperty(ref userProfile, value);
+        }// => this.GetDataLoader(GetUserProfile, db => db
         //public IDataLoader<UserProfileData> UserProfile => this.GetDataLoader(GetUserProfile, db => db
         //    .TriggerFromObservable(this.GetService<IAuthenticationService>().GetAndObserveIsAuthenticated().Skip(1))
         //);
@@ -37,11 +72,18 @@ namespace ApplicationTemplate.Presentation
         //        await this.GetService<IAuthenticationService>().Logout(ct);
         //    }
         //});
+        public ICommand Logout => new AsyncRelayCommand(async () =>
+        {
+            var cancel = new CancellationTokenSource();
+            await AuthService.Logout(cancel.Token);
+        });
 
         //public IDynamicCommand NavigateToDiagnosticsPage => this.GetCommandFromTask(async ct =>
         //{
         //    await this.GetService<ISectionsNavigator>().OpenModal(ct, () => new DiagnosticsPageViewModel());
         //});
+        public ICommand NavigateToDiagnosticsPage => new RelayCommand(() =>
+           Messenger.Send(new RoutingMessage(this, typeof(DiagnosticsPageViewModel).Name.ToString())));
 
         //public IDynamicCommand NavigateToEditProfilePage => this.GetCommandFromTask(async ct =>
         //{
@@ -49,6 +91,8 @@ namespace ApplicationTemplate.Presentation
 
         //    await this.GetService<IStackNavigator>().Navigate(ct, () => new EditProfilePageViewModel(userProfile));
         //});
+        public ICommand NavigateToEditProfilePage => new RelayCommand(() =>
+           Messenger.Send(new RoutingMessage(this, typeof(EditProfilePageViewModel).Name.ToString())));
 
         //public IDynamicCommand NavigateToLoginPage => this.GetCommandFromTask(async ct =>
         //{
@@ -57,11 +101,16 @@ namespace ApplicationTemplate.Presentation
         //        await this.GetService<ISectionsNavigator>().NavigateBackOrCloseModal(ct2);
         //    }));
         //});
+        public ICommand NavigateToLoginPage => new RelayCommand(() =>
+           Messenger.Send(new RoutingMessage(this, typeof(LoginPageViewModel).Name.ToString())));
 
         //public IDynamicCommand NavigateToLicensesPage => this.GetCommandFromTask(async ct =>
         //{
         //    await this.GetService<IStackNavigator>().Navigate(ct, () => new LicensesPageViewModel());
         //});
+
+        public ICommand NavigateToLicensesPage => new RelayCommand(() =>
+           Messenger.Send(new RoutingMessage(this, typeof(LicensesPageViewModel).Name.ToString())));
 
         //public IDynamicCommand NavigateToPrivacyPolicyPage => this.GetCommandFromTask(async ct =>
         //{
@@ -70,12 +119,14 @@ namespace ApplicationTemplate.Presentation
         //    await this.GetService<IBrowser>().OpenAsync(new Uri(url), BrowserLaunchMode.SystemPreferred);
         //});
 
+
         //public IDynamicCommand NavigateToTermsAndConditionsPage => this.GetCommandFromTask(async ct =>
         //{
         //    var url = this.GetService<IStringLocalizer>()["TermsAndConditionsUrl"];
 
         //    await this.GetService<IBrowser>().OpenAsync(new Uri(url), BrowserLaunchMode.External);
         //});
+
 
         //public IDynamicCommand NavigateToWebViewPage => this.GetCommandFromTask(async ct =>
         //{

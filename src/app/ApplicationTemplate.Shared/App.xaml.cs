@@ -61,6 +61,7 @@ namespace ApplicationTemplate
                 .UseEnvironmentAppSettings<App>()
                 .UseWritableSettings< EndpointOptions>(ctx => ctx.Configuration.GetSection("ChuckNorrisEndpoint"))
                 .UseWritableSettings<ApplicationSettings>(ctx => ctx.Configuration.GetSection(nameof(ApplicationSettings)))
+                .UseWritableSettings<DiagnosticSettings>(ctx => ctx.Configuration.GetSection(nameof(DiagnosticSettings)))
                 .UseRouting<RouterConfiguration, LaunchMessage>(() => App.Instance.NavigationFrame)
                 .AddApi()
                 .ConfigureServices(services =>
@@ -73,6 +74,7 @@ namespace ApplicationTemplate
                         .AddTransient<CreateAccountFormViewModel>()
                         .AddTransient<LoginFormViewModel>()
                         .AddTransient<ForgotPasswordFormViewModel>()
+                        .AddTransient<EditProfileFormViewModel>()
                         .AddTransient<MenuViewModel>();
                 })
                 .UseUnoLogging(logBuilder =>

@@ -13,6 +13,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Business\Entities\ChuckNorrisQuote.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Business\Entities\DiagnosticSettings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Business\IAuthenticationService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Business\IChuckNorrisService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Business\Impl\ChuckNorrisService.cs" />
@@ -31,7 +32,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Client\Mock\ChuckNorrisEndpointMock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Client\Mock\UserProfileEndpointMock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\ConfigurationSettings.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Configuration\DiagnosticsConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\FluentValidationLanguageManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\LinkerConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\LocalizationConfiguration.cs" />
@@ -72,9 +72,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Authentication\LoginFormViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Authentication\LoginPageViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\ChuckNorris\ChuckNorrisSearchPageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Diagnostics\DiagnosticsCountersService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Diagnostics\DiagnosticsOverlayViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Diagnostics\DiagnosticsPageViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\MenuViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Posts\PostsPageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Settings\EditProfileFormViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Settings\EditProfilePageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Settings\LicensesPageViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Settings\SettingsPageViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\ShellViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\ViewModel.cs" />
@@ -106,8 +111,17 @@
     <Compile Include="$(MSBuildThisFileDirectory)Views\Content\Diagnostics\DiagnosticsOverlay.xaml.cs">
       <DependentUpon>DiagnosticsOverlay.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Content\Diagnostics\DiagnosticsPage.xaml.cs">
+      <DependentUpon>DiagnosticsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\Content\Posts\PostsPage.xaml.cs">
       <DependentUpon>PostsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Content\Settings\EditProfilePage.xaml.cs">
+      <DependentUpon>EditProfilePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Content\Settings\LicensesPage.xaml.cs">
+      <DependentUpon>LicensesPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\Content\Settings\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
@@ -192,7 +206,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Content\Diagnostics\DiagnosticsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\Content\Posts\PostsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Content\Settings\EditProfilePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Content\Settings\LicensesPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
