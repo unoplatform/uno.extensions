@@ -35,7 +35,8 @@ namespace ApplicationTemplate.Views
             {typeof(OnboardingPageViewModel).Name.ToLower(), (typeof(OnboardingPage),services=>services.AddTransient<OnboardingPageViewModel>(),sp=>sp.GetService<OnboardingPageViewModel>() ) },
             {typeof(WelcomePageViewModel).Name.ToLower(), (typeof(WelcomePage),services=>services.AddTransient<WelcomePageViewModel>(),sp=>sp.GetService<WelcomePageViewModel>() ) },
             {typeof(LoginPageViewModel).Name.ToLower(), (typeof(LoginPage),services=>services.AddTransient<LoginPageViewModel>(),sp=>sp.GetService<LoginPageViewModel>() ) },
-            {typeof(CreateAccountPageViewModel).Name.ToLower(), (typeof(CreateAccountPage),services=>services.AddTransient<CreateAccountPageViewModel>(),sp=>sp.GetService<CreateAccountPageViewModel>() ) }
+            {typeof(CreateAccountPageViewModel).Name.ToLower(), (typeof(CreateAccountPage),services=>services.AddTransient<CreateAccountPageViewModel>(),sp=>sp.GetService<CreateAccountPageViewModel>() ) },
+            {typeof(ForgotPasswordPageViewModel).Name.ToLower(), (typeof(ForgotPasswordPage),services=>services.AddTransient<ForgotPasswordPageViewModel>(),sp=>sp.GetService<ForgotPasswordPageViewModel>() ) }
         };
 
         public IReadOnlyDictionary<

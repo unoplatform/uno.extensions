@@ -53,8 +53,8 @@
                         Content="Create account"
                         Command="{Binding CreateAccount}"
                         HorizontalAlignment="Stretch"
+                        Style="{StaticResource ExecutingButtonStyle}"
                         Margin="0,4" />
-                <!--Style="{StaticResource ExecutingButtonStyle}"-->
             </StackPanel>
         </ScrollViewer>
     </Grid>

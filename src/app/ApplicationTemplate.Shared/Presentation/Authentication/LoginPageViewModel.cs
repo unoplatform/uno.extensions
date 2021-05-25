@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using ApplicationTemplate.Business;
+using CommunityToolkit.Mvvm.Input;
+using Uno.Extensions.Navigation;
 //using Chinook.DynamicMvvm;
 //using Chinook.StackNavigation;
 //using FluentValidation;
@@ -16,6 +19,18 @@ namespace ApplicationTemplate.Presentation
         //{
         //    _onSuccessfulLogin = onSuccessfulLogin ?? throw new ArgumentNullException(nameof(onSuccessfulLogin));
         //}
+
+        public LoginFormViewModel Form { get; }//  => this.GetChild(() => new LoginFormViewModel());
+
+        private IAuthenticationService AuthService { get; }
+        private IRouteMessenger Messenger { get; }
+
+        public LoginPageViewModel(LoginFormViewModel form, IAuthenticationService authService, IRouteMessenger messenger)
+        {
+            Form = form;
+            AuthService = authService;
+            Messenger = messenger;
+        }
 
         //public LoginFormViewModel Form => this.GetChild(() => new LoginFormViewModel());
 
@@ -40,5 +55,22 @@ namespace ApplicationTemplate.Presentation
         //{
         //    await this.GetService<IStackNavigator>().Navigate(ct, () => new ForgotPasswordPageViewModel());
         //});
+
+
+        public ICommand Login => new AsyncRelayCommand(async () => {
+            var hasNoErrors = this.Form.Validate();
+            if (hasNoErrors)
+            {
+                var cancel = new CancellationTokenSource();
+                await AuthService.Login(cancel.Token, Form.Email, Form.Password);
+                Messenger.Send(new ClearStackMessage(this, typeof(HomePageViewModel).Name.ToString()));
+            }
+        });
+
+        public ICommand NavigateToCreateAccountPage => new RelayCommand(() =>
+   Messenger.Send(new RoutingMessage(this, typeof(CreateAccountPageViewModel).Name.ToString())));
+
+        public ICommand NavigateToForgotPasswordPage => new RelayCommand(() =>
+   Messenger.Send(new RoutingMessage(this, typeof(ForgotPasswordPageViewModel).Name.ToString())));
     }
 }

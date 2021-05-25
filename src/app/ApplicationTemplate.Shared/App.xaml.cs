@@ -65,9 +65,12 @@ namespace ApplicationTemplate
                 .AddApi()
                 .ConfigureServices(services =>
                 {
-                    services.AddSerialization();
-                    services.AddAppServices();
-                    services.AddTransient<CreateAccountFormViewModel>();
+                    services
+                        .AddSerialization()
+                        .AddAppServices()
+                        .AddTransient<CreateAccountFormViewModel>()
+                        .AddTransient<LoginFormViewModel>()
+                        .AddTransient<ForgotPasswordFormViewModel>();
                 })
                 .UseUnoLogging(logBuilder =>
                 {

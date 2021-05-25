@@ -1,22 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
-using Chinook.DynamicMvvm;
+//using Chinook.DynamicMvvm;
 using FluentValidation;
 
 namespace ApplicationTemplate.Presentation
 {
     public class ForgotPasswordFormViewModel : ViewModel
     {
-        public ForgotPasswordFormViewModel()
-        {
-            this.AddValidation(this.GetProperty(x => x.Email));
-        }
+        //public ForgotPasswordFormViewModel()
+        //{
+        //    this.AddValidation(this.GetProperty(x => x.Email));
+        //}
 
+        private string email;
+
+        [Required]
         public string Email
         {
-            get => this.Get<string>();
-            set => this.Set(value);
+            get => email;
+            set => SetProperty(ref email, value, true);
         }
     }
 

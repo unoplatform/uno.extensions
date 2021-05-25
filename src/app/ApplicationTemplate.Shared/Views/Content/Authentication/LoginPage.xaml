@@ -21,9 +21,9 @@
             <StackPanel Margin="20,0,20,20">
 
                  <!--Email--> 
-                <!--<local:DataValidationView Model="{Binding Form}"
+                <local:DataValidationView Model="{Binding Form}"
                                           PropertyName="Email"
-                                          Margin="0,4">-->
+                                          Margin="0,4">
                     <TextBox PlaceholderText="Email"
                              Text="{Binding Form.Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              InputScope="EmailSmtpAddress"
@@ -33,12 +33,12 @@
                              x:Uid="Login_Email"
                              FontSize="16" />
                 <!--ue:TextBoxBehavior.NextControl="{Binding ElementName=PasswordField}"-->
-                <!--</local:DataValidationView>-->
+                </local:DataValidationView>
 
                  <!--Password--> 
-                <!--<local:DataValidationView Model="{Binding Form}"
+                <local:DataValidationView Model="{Binding Form}"
                                           PropertyName="Password"
-                                          Margin="0,4">-->
+                                          Margin="0,4">
                     <PasswordBox x:Name="PasswordField"
                                  PlaceholderText="Password"
                                  Password="{Binding Form.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -49,7 +49,7 @@
                                  FontSize="16" />
                 <!--ue:PasswordBoxBehavior.DismissKeyboardOnEnter="True"
                                  ue:PasswordBoxBehavior.EnterCommand="{Binding Login}"-->
-                <!--</local:DataValidationView>-->
+                </local:DataValidationView>
 
                 <HyperlinkButton Content="Forgot password?"
                                  x:Uid="Login_ForgotPassword"
