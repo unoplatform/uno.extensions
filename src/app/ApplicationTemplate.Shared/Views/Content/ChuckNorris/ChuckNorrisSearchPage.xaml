@@ -3,10 +3,10 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:dl="using:Chinook.DataLoader"
-      xmlns:ue="using:Nventive.View.Extensions"
-      xmlns:u="using:Nventive.View.Controls"
       mc:Ignorable="d">
+    <!--xmlns:dl="using:Chinook.DataLoader"
+      xmlns:ue="using:Nventive.View.Extensions"
+      xmlns:u="using:Nventive.View.Controls"-->
 
     <Page.Resources>
         <DataTemplate x:Key="QuotesEmptyTemplate">
@@ -58,51 +58,53 @@
                  HorizontalAlignment="Stretch"
                  Grid.Row="1" />
 
-        <dl:DataLoaderView Source="{Binding Quotes}"
+        <Grid Grid.Row="2">
+            <!--<dl:DataLoaderView Source="{Binding Quotes}"
                            EmptyTemplate="{StaticResource QuotesEmptyTemplate}"
                            Grid.Row="2">
-            <DataTemplate>
-                <u:SwipeRefresh RefreshCommand="{Binding Parent.RefreshQuotes}"
+            <DataTemplate>-->
+            <!--<u:SwipeRefresh RefreshCommand="{Binding Parent.RefreshQuotes}"
                                 IsRefreshing="{Binding Parent.RefreshQuotes.IsExecuting}"
-                                IndicatorColor="Black">
-                    <ListView ItemsSource="{Binding Data}"
+                                IndicatorColor="Black">-->
+            <ListView ItemsSource="{Binding Data}"
                               Header="{Binding}">
-                        <ListView.HeaderTemplate>
-                            <DataTemplate>
-                                <Grid>
-                                    <Button Content="My favorites quotes"
+                <ListView.HeaderTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Button Content="My favorites quotes"
                                             Command="{Binding Parent.NavigateToFavoriteQuotes}"
                                             Margin="0,8"
                                             HorizontalAlignment="Center" />
-                                </Grid>
-                            </DataTemplate>
-                        </ListView.HeaderTemplate>
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="60" />
-                                    </Grid.ColumnDefinitions>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.HeaderTemplate>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="60" />
+                            </Grid.ColumnDefinitions>
 
-                                    <TextBlock Text="{Binding Quote.Value}" />
-                                    
-                                    <TextBlock Text="{Binding IsFavorite}"
+                            <TextBlock Text="{Binding Quote.Value}" />
+
+                            <TextBlock Text="{Binding IsFavorite}"
                                                Grid.Column="1"
                                                Margin="4,0,0,0"/>
 
-                                    <ToggleButton IsChecked="{Binding IsFavorite}"
+                            <ToggleButton IsChecked="{Binding IsFavorite}"
                                                   Command="{Binding Parent.ToggleIsFavorite}"
                                                   CommandParameter="{Binding}"
                                                   HorizontalAlignment="Center"
                                                   Grid.Column="2" />
-                                </Grid>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                </u:SwipeRefresh>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <!--</u:SwipeRefresh>
             </DataTemplate>
-        </dl:DataLoaderView>
+        </dl:DataLoaderView>-->
+        </Grid>
     </Grid>
 </Page>

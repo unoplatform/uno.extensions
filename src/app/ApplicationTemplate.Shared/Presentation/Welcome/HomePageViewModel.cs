@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Options;
 using Uno.Extensions;
 using Uno.Extensions.Configuration;
+using Uno.Extensions.Navigation;
 //using Chinook.DynamicMvvm;
 //using Chinook.StackNavigation;
 //using MallardMessageHandlers;
@@ -11,32 +14,18 @@ namespace ApplicationTemplate.Presentation
 {
     public partial class HomePageViewModel : ViewModel
     {
-        public string Welcome { get; set; } = "Welcome to App Template";
-
-        private IWritableOptions<EndpointOptions> Settings { get; }
-
-        public HomePageViewModel(IWritableOptions<EndpointOptions> endpoint) // IOptionsMonitor<EndpointOptions> endpoint)
+        public IRouteMessenger Messenger { get; }
+        public HomePageViewModel(IRouteMessenger messenger)
         {
-            Settings = endpoint;
-            Welcome = Settings.Value.Url;
-            //endpoint.OnChange(options =>
-            //{
-                
-            //});
-        }
-
-        public void Save()
-        {
-            Settings.Update(options =>
-            {
-                options.Url = Welcome;
-            });
+            Messenger = messenger;
         }
 
         //public IDynamicCommand NavigateToPostsPage => this.GetCommandFromTask(async ct =>
         //{
         //    await this.GetService<IStackNavigator>().Navigate(ct, () => new PostsPageViewModel());
         //});
+        public ICommand NavigateToPostsPage => new RelayCommand(() =>
+   Messenger.Send(new RoutingMessage(this, typeof(PostsPageViewModel).Name.ToString())));
 
         //public IDynamicCommand NavigateToPostsPageWithNoNetwork => this.GetCommandFromTask(async ct =>
         //{
@@ -49,6 +38,8 @@ namespace ApplicationTemplate.Presentation
         //        })
         //    );
         //});
+        public ICommand NavigateToPostsPageWithNoNetwork => new RelayCommand(() =>
+   Messenger.Send(new RoutingMessage(this, typeof(PostsPageViewModel).Name.ToString())));
 
         //public IDynamicCommand NavigateToPostsPageWithOddError => this.GetCommandFromTask(async ct =>
         //{
@@ -66,6 +57,8 @@ namespace ApplicationTemplate.Presentation
         //        }
         //    ));
         //});
+        public ICommand NavigateToPostsPageWithOddError => new RelayCommand(() =>
+   Messenger.Send(new RoutingMessage(this, typeof(PostsPageViewModel).Name.ToString())));
 
         //public IDynamicCommand NavigateToPostsPageWithEvenError => this.GetCommandFromTask(async ct =>
         //{
@@ -83,15 +76,22 @@ namespace ApplicationTemplate.Presentation
         //        }
         //    ));
         //});
+        public ICommand NavigateToPostsPageWithEvenError => new RelayCommand(() =>
+   Messenger.Send(new RoutingMessage(this, typeof(PostsPageViewModel).Name.ToString())));
 
         //public IDynamicCommand NavigateToChuckNorrisSearchPage => this.GetCommandFromTask(async ct =>
         //{
         //    await this.GetService<IStackNavigator>().Navigate(ct, () => new ChuckNorrisSearchPageViewModel());
         //});
+        public ICommand NavigateToChuckNorrisSearchPage => new RelayCommand(() =>
+           Messenger.Send(new RoutingMessage(this, typeof(ChuckNorrisSearchPageViewModel).Name.ToString())));
 
         //public IDynamicCommand NavigateToSettingsPage => this.GetCommandFromTask(async ct =>
         //{
         //    await this.GetService<IStackNavigator>().Navigate(ct, () => new SettingsPageViewModel());
         //});
+
+        public ICommand NavigateToSettingsPage => new RelayCommand(() =>
+           Messenger.Send(new RoutingMessage(this, typeof(SettingsPageViewModel).Name.ToString())));
     }
 }

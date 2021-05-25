@@ -1,11 +1,10 @@
 ﻿namespace ApplicationTemplate.Views.Content
 {
-    public sealed partial class HomePage 
+    public sealed partial class SettingsPage
     {
-        public HomePage()
+        public SettingsPage()
         {
             this.InitializeComponent();
         }
-
     }
 }

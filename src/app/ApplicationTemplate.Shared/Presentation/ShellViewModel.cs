@@ -7,6 +7,11 @@ namespace ApplicationTemplate.Presentation
     {
         //public IViewModel DiagnosticsOverlay => this.GetChild<DiagnosticsOverlayViewModel>();
 
-        //public IViewModel Menu => this.GetChild<MenuViewModel>();
+        public ViewModel Menu { get; }// => this.GetChild<MenuViewModel>();
+
+        public ShellViewModel(MenuViewModel menu)
+        {
+            Menu = menu;
+        }
     }
 }
