@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
+using System.Windows.Input;
 using ApplicationTemplate.Business;
 using ApplicationTemplate.Client;
-using Chinook.DynamicMvvm;
-using Chinook.SectionsNavigation;
+using CommunityToolkit.Mvvm.Input;
+using Uno.Extensions.Navigation;
+//using Chinook.DynamicMvvm;
+//using Chinook.SectionsNavigation;
 
 namespace ApplicationTemplate.Presentation
 {
@@ -12,26 +16,60 @@ namespace ApplicationTemplate.Presentation
     {
         private readonly UserProfileData _userProfile;
 
-        public EditProfilePageViewModel(UserProfileData userProfile)
+        public EditProfileFormViewModel Form { get; }// => this.GetChild(() => new EditProfileFormViewModel(_userProfile));
+
+        private IUserProfileService ProfileService { get; }
+        private IRouteMessenger Messenger { get; }
+
+        public EditProfilePageViewModel(
+            EditProfileFormViewModel form,
+            IUserProfileService profileService,
+            IRouteMessenger messenger)
         {
-            _userProfile = userProfile ?? throw new ArgumentNullException(nameof(userProfile));
+            Form = form;
+            ProfileService = profileService;
+            Messenger = messenger;
+
+            LoadProfile();
         }
 
-        public EditProfileFormViewModel Form => this.GetChild(() => new EditProfileFormViewModel(_userProfile));
-
-        public IDynamicCommand UpdateProfile => this.GetCommandFromTask(async ct =>
+        public async void LoadProfile()
         {
-            var validationResult = await Form.Validate(ct);
+            var cancel = new CancellationTokenSource();
+            Form.UserProfileData = await ProfileService.GetCurrent(cancel.Token);
 
-            if (validationResult.IsValid)
+        }
+
+        //public EditProfilePageViewModel(UserProfileData userProfile)
+        //{
+        //    _userProfile = userProfile ?? throw new ArgumentNullException(nameof(userProfile));
+        //}
+
+
+        //public IDynamicCommand UpdateProfile => this.GetCommandFromTask(async ct =>
+        //{
+        //    var validationResult = await Form.Validate(ct);
+
+        //    if (validationResult.IsValid)
+        //    {
+        //        var updatedUserProfile = _userProfile
+        //            .WithFirstName(Form.FirstName)
+        //            .WithLastName(Form.LastName);
+
+        //        await this.GetService<IUserProfileService>().Update(ct, updatedUserProfile);
+
+        //        await this.GetService<ISectionsNavigator>().NavigateBackOrCloseModal(ct);
+        //    }
+        //});
+
+        public ICommand UpdateProfile => new AsyncRelayCommand(async () =>
+        {
+            var hasNoErrors = Form.Validate();
+            if(!hasNoErrors)
             {
-                var updatedUserProfile = _userProfile
-                    .WithFirstName(Form.FirstName)
-                    .WithLastName(Form.LastName);
-
-                await this.GetService<IUserProfileService>().Update(ct, updatedUserProfile);
-
-                await this.GetService<ISectionsNavigator>().NavigateBackOrCloseModal(ct);
+                var cancel = new CancellationTokenSource();
+                await ProfileService.Update(cancel.Token, Form.UserProfileData);
+                Messenger.Send(new CloseMessage(this));
             }
         });
     }

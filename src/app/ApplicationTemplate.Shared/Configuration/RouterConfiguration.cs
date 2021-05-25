@@ -39,7 +39,10 @@ namespace ApplicationTemplate.Views
             {typeof(ForgotPasswordPageViewModel).Name.ToLower(), (typeof(ForgotPasswordPage),services=>services.AddTransient<ForgotPasswordPageViewModel>(),sp=>sp.GetService<ForgotPasswordPageViewModel>() ) },
             {typeof(PostsPageViewModel).Name.ToLower(), (typeof(PostsPage),services=>services.AddTransient<PostsPageViewModel>(),sp=>sp.GetService<PostsPageViewModel>() ) },
             {typeof(ChuckNorrisSearchPageViewModel).Name.ToLower(), (typeof(ChuckNorrisSearchPage),services=>services.AddTransient<ChuckNorrisSearchPageViewModel>(),sp=>sp.GetService<ChuckNorrisSearchPageViewModel>() ) },
-            {typeof(SettingsPageViewModel).Name.ToLower(), (typeof(SettingsPage),services=>services.AddTransient<SettingsPageViewModel>(),sp=>sp.GetService<SettingsPageViewModel>() ) }
+            {typeof(SettingsPageViewModel).Name.ToLower(), (typeof(SettingsPage),services=>services.AddTransient<SettingsPageViewModel>(),sp=>sp.GetService<SettingsPageViewModel>() ) },
+            {typeof(DiagnosticsPageViewModel).Name.ToLower(), (typeof(DiagnosticsPage),services=>services.AddTransient<DiagnosticsPageViewModel>(),sp=>sp.GetService<DiagnosticsPageViewModel>() ) },
+            {typeof(LicensesPageViewModel).Name.ToLower(), (typeof(LicensesPage),services=>services.AddTransient<LicensesPageViewModel>(),sp=>sp.GetService<LicensesPageViewModel>() ) },
+            {typeof(EditProfilePageViewModel).Name.ToLower(), (typeof(EditProfilePage),services=>services.AddTransient<EditProfilePageViewModel>(),sp=>sp.GetService<EditProfilePageViewModel>() ) }
         };
 
         public IReadOnlyDictionary<

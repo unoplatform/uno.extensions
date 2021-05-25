@@ -41,8 +41,8 @@ namespace ApplicationTemplate
                 .AddSingleton<IPostService, PostService>()
                 .AddSingleton<IChuckNorrisService, ChuckNorrisService>()
                 .AddSingleton<IAuthenticationService, AuthenticationService>()
-                .AddSingleton<IUserProfileService, UserProfileService>();
-//                .AddSingleton<DiagnosticsCountersService>();
+                .AddSingleton<IUserProfileService, UserProfileService>()
+                .AddSingleton<DiagnosticsCountersService>();
         }
 
         private static IServiceCollection AddXamarinEssentials(this IServiceCollection services)

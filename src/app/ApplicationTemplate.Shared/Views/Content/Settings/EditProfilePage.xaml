@@ -4,10 +4,10 @@
       xmlns:local="using:ApplicationTemplate"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:ue="using:Nventive.View.Extensions"
       xmlns:android="http://nventive.com/android"
       xmlns:ios="http://nventive.com/ios"
       mc:Ignorable="d android ios">
+      <!--xmlns:ue="using:Nventive.View.Extensions"-->
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -41,9 +41,9 @@
                     <TextBox PlaceholderText="Last name"
                              x:Uid="Profile_LastName"
                              Text="{Binding Form.LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             ue:TextBoxBehavior.DismissKeyboardOnEnter="True"
-                             ue:TextBoxBehavior.EnterCommand="{Binding UpdateProfile}"
                              FontSize="16" />
+                             <!--ue:TextBoxBehavior.DismissKeyboardOnEnter="True"
+                             ue:TextBoxBehavior.EnterCommand="{Binding UpdateProfile}"-->
                 </local:DataValidationView>
 
                 <Button Command="{Binding UpdateProfile}"
