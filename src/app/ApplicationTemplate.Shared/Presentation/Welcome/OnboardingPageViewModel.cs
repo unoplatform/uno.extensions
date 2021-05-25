@@ -12,10 +12,10 @@ namespace ApplicationTemplate.Presentation
 {
     public partial class OnboardingPageViewModel : ViewModel
     {
-        public IWritableOptions<OnboardingOptions> Onboarding {get;}
+        public IWritableOptions<ApplicationSettings> Onboarding {get;}
         public IRouteMessenger Messenger { get; }
         public OnboardingPageViewModel(
-            IWritableOptions<OnboardingOptions> onboarding,
+            IWritableOptions<ApplicationSettings> onboarding,
             IRouteMessenger messenger)
         {
             Onboarding = onboarding;
@@ -25,7 +25,7 @@ namespace ApplicationTemplate.Presentation
         private async void CompleteOnboarding()
         {
             Onboarding.Update(options => options.IsOnboardingCompleted = true);
-            Messenger.Send<BaseRoutingMessage>(new ClearStackMessage(this));
+            Messenger.Send(new ClearStackMessage(this));
         }
 
         //public IDynamicCommand NavigateToWelcomePage => this.GetCommandFromTask(async ct =>

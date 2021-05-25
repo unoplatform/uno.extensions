@@ -8,11 +8,13 @@
                     xmlns:ios="http://nventive.com/ios"
                     xmlns:not_android="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:not_ios="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:u="using:Nventive.View.Controls"
                     xmlns:uloc="http://nventive.com/localization/1.0"
                     mc:Ignorable="d xamarin android ios"
                     d:DesignHeight="300"
                     d:DesignWidth="400">
+
+    <!--xmlns:u="using:Nventive.View.Controls"-->
+
     <!--
         TODO: BLUE 50218 - ThemeResource causes leak when used in defalt Style-level setter for HeaderBackgroundBrush or HeaderForegroundBrush
                  When the bug is fixed, uncomment and use the inverted colors below for the "Dark" theme.

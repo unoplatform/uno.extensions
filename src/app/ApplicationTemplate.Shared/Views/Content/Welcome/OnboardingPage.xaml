@@ -19,19 +19,17 @@
             </uc:PartitionConverter>-->
 
             <DataTemplate x:Key="OnboardingItemTemplate">
-                <Grid Background="Black" Height="200" Width="200">
+                <Grid Background="Black" Height="600" Width="400">
                     <TextBlock Text="{Binding PrimaryText}"
                                Foreground="White"
                                FontSize="25"
                                Margin="40"
                                HorizontalAlignment="Center" />
 
-                    <Border BorderBrush="Red" BorderThickness="2">
                     <Image Source="{Binding ImageUrl}"
-                           Stretch="Uniform"
-                           Margin="20"
-                           VerticalAlignment="Center" />
-                    </Border>
+                        Stretch="Uniform"
+                        Margin="20"
+                        VerticalAlignment="Center" />
                 </Grid>
             </DataTemplate>
 
@@ -57,16 +55,27 @@
                           SelectedIndexIndicatorTemplate="{StaticResource OnboardingSelectedIndexIndicatorTemplate}" /> -->
 
         <ListView ItemsSource="{Binding OnboardingItems}"
-                          ItemTemplate="{StaticResource OnboardingItemTemplate}"/>
-            <!--Content="{Binding ElementName=OnboardingSlideshow, Path=SelectedIndex, Converter={StaticResource SelectedIndexToButtonContent}}"-->
-            <Button Content="Navigate"
+                          ItemTemplate="{StaticResource OnboardingItemTemplate}"
+                    ScrollViewer.HorizontalScrollMode="Auto"
+                  ScrollViewer.VerticalScrollMode="Disabled"
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                  VerticalAlignment="Top"
+                  >
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"/>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+        </ListView>
+        <!--Content="{Binding ElementName=OnboardingSlideshow, Path=SelectedIndex, Converter={StaticResource SelectedIndexToButtonContent}}"-->
+        <Button Content="Navigate"
                 Command="{Binding NavigateToWelcomePage}"
                 VerticalAlignment="Bottom"
                 HorizontalAlignment="Center"
                 Background="White"
                 Foreground="Black"
                 Margin="0,0,0,40" />
-            <!--<StackPanel>
+        <!--<StackPanel>
             <TextBlock Text="Onbarding"/>
             <Button Content="Continue" Click="ContinueClick"/>
         </StackPanel>-->

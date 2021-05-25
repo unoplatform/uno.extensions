@@ -1,5 +1,4 @@
 ﻿using System;
-using Nventive.View.Converters;
 
 namespace ApplicationTemplate.Views
 {

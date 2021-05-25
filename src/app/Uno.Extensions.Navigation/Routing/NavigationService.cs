@@ -23,11 +23,11 @@ using Microsoft.UI.Xaml.Navigation;
 namespace Uno.Extensions.Navigation
 {
     public record NavigationService<TMessage>(IRouter router, IMessenger Messenger) : IHostedService
-        where TMessage : BaseRoutingMessage, new()
+        where TMessage : RoutingMessage, new()
     {
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            Messenger.Send<BaseRoutingMessage>(new TMessage());
+            Messenger.Send<RoutingMessage>(new TMessage());
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)

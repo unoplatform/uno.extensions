@@ -1,13 +1,13 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                    xmlns:u="using:Nventive.View.Controls"
-                    xmlns:ue="using:Nventive.View.Extensions"
-                    xmlns:uc="using:Nventive.View.Converters"
                     xmlns:xamarin="http://nventive.com/xamarin"
                     xmlns:android="http://nventive.com/android"
                     xmlns:ios="http://nventive.com/ios"
                     mc:Ignorable="xamarin android ios">
+    <!--xmlns:u="using:Nventive.View.Controls"
+                    xmlns:ue="using:Nventive.View.Extensions"
+                    xmlns:uc="using:Nventive.View.Converters"-->
 
     <!-- 
         Find the latest styles here:
@@ -51,8 +51,8 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="CheckBox">
-
-                    <u:StarStackPanel x:Name="RootGrid"
+                    <!--u:StarStackPanel-->
+                    <StackPanel x:Name="RootGrid"
                                       Orientation="Horizontal"
                                       Background="{TemplateBinding Background}"
                                       Padding="{TemplateBinding Padding}">
@@ -118,13 +118,13 @@
                               Width="24">
 
                             <!-- Mark -->
-                            <u:PathControl x:Name="Mark"
+                            <!--<u:PathControl x:Name="Mark"
                                            Data="M4.5,12.1c-0.3,0-0.5-0.1-0.7-0.3L0.3,8.4c-0.4-0.4-0.4-1,0-1.4c0.4-0.4,1-0.4,1.4,0l0,0l2.7,2.7l7.8-9.3c0.4-0.4,1-0.5,1.4-0.1c0.4,0.4,0.5,1,0.1,1.4L5.2,11.7C5,12,4.8,12.1,4.5,12.1L4.5,12.1z"
                                            Stretch="Uniform"
                                            Width="13"
                                            VerticalAlignment="Center"
                                            HorizontalAlignment="Center"
-                                           Opacity="0" />
+                                           Opacity="0" />-->
                         </Grid>
 
                         <!-- ContentPresenter -->
@@ -140,7 +140,7 @@
                                           AutomationProperties.AccessibilityView="Raw"
                                           TextWrapping="Wrap"
                                           Margin="16,0,0,2" />
-                    </u:StarStackPanel>
+                    </StackPanel>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

@@ -5,14 +5,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using ApplicationTemplate.Client;
 using Nventive.Persistence;
+using Uno.Extensions.Configuration;
 
 namespace ApplicationTemplate.Business
 {
     public partial class ApplicationSettingsService : IApplicationSettingsService
     {
-        private readonly IObservableDataPersister<ApplicationSettings> _dataPersister;
+        private readonly IWritableOptions<ApplicationSettings> _dataPersister;
 
-        public ApplicationSettingsService(IObservableDataPersister<ApplicationSettings> dataPersister)
+        public ApplicationSettingsService(IWritableOptions<ApplicationSettings> dataPersister)
         {
             _dataPersister = dataPersister ?? throw new ArgumentNullException(nameof(dataPersister));
         }
@@ -20,52 +21,51 @@ namespace ApplicationTemplate.Business
         /// <inheritdoc />
         public async Task<ApplicationSettings> GetCurrent(CancellationToken ct)
         {
-            var result = await _dataPersister.Load(ct);
+            return _dataPersister.Value ?? default;
+            //var result = await _dataPersister.Value;
 
-            return result.Value ?? ApplicationSettings.Default;
+            //return result.Value ?? ApplicationSettings.Default;
         }
 
         /// <inheritdoc />
         public IObservable<ApplicationSettings> GetAndObserveCurrent()
         {
-            return _dataPersister.GetAndObserve().Select(r => r.Value ?? ApplicationSettings.Default);
+            return null; // TODO: listen to changes in the IWritableOptions
+            //return _dataPersister.GetAndObserve().Select(r => r.Value ?? ApplicationSettings.Default);
         }
 
         /// <inheritdoc />
         public async Task CompleteOnboarding(CancellationToken ct)
         {
-            await Update(ct, s => s.WithIsOnboardingCompleted(true));
+            await Update(s => s.IsOnboardingCompleted = true);
         }
 
         /// <inheritdoc />
         public async Task SetAuthenticationData(CancellationToken ct, AuthenticationData authenticationData)
         {
-            await Update(ct, s => s.WithAuthenticationData(authenticationData));
+            await Update(s => s.AuthenticationData = authenticationData);
         }
 
         /// <inheritdoc />
         public async Task SetFavoriteQuotes(CancellationToken ct, ImmutableDictionary<string, ChuckNorrisQuote> quotes)
         {
-            await Update(ct, s => s.WithFavoriteQuotes(quotes));
+            await Update(s=>s.FavoriteQuotes = quotes);
         }
 
         /// <inheritdoc />
         public async Task DiscardUserSettings(CancellationToken ct)
         {
-            await Update(ct, s => s
-                .WithFavoriteQuotes(ImmutableDictionary<string, ChuckNorrisQuote>.Empty)
-                .WithAuthenticationData(default(AuthenticationData))
-            );
+            await Update(s =>
+            {
+                s.FavoriteQuotes = ImmutableDictionary<string, ChuckNorrisQuote>.Empty;
+                s.IsOnboardingCompleted = false;
+                s.AuthenticationData = default;
+            });
         }
 
-        private async Task Update(CancellationToken ct, Func<ApplicationSettings, ApplicationSettings> updateFunction)
+        private async Task Update(Action<ApplicationSettings> updateFunction)
         {
-            await _dataPersister.Update(ct, context =>
-            {
-                var settings = context.GetReadValueOrDefault(ApplicationSettings.Default);
-
-                context.Commit(updateFunction(settings));
-            });
+            _dataPersister.Update(updateFunction);
         }
     }
 }

@@ -1,10 +1,9 @@
-﻿<Page x:Class="ApplicationTemplate.Views.Content.CreateAccountPage"
+﻿<Page x:Class="ApplicationTemplate.Views.Content.LoginPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="using:ApplicationTemplate"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:ue="using:Nventive.View.Extensions"
       xmlns:android="http://nventive.com/android"
       xmlns:ios="http://nventive.com/ios"
       mc:Ignorable="d ios android">
@@ -15,46 +14,60 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-
-        <CommandBar Content="Create Account"
-                    x:Uid="CreateAccount_CommandBar" />
+        <CommandBar Content="Login"
+                    x:Uid="Login_CommandBar" />
 
         <ScrollViewer Grid.Row="1">
             <StackPanel Margin="20,0,20,20">
 
-                <!-- Email -->
-                <local:DataValidationView Model="{Binding Form}"
+                 <!--Email--> 
+                <!--<local:DataValidationView Model="{Binding Form}"
                                           PropertyName="Email"
-                                          Margin="0,4">
+                                          Margin="0,4">-->
                     <TextBox PlaceholderText="Email"
-                             x:Uid="CreateAccount_Email"
                              Text="{Binding Form.Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              InputScope="EmailSmtpAddress"
                              IsSpellCheckEnabled="False"
                              ios:ReturnKeyType="Next"
                              android:ImeOptions="Next"
-                             ue:TextBoxBehavior.NextControl="{Binding ElementName=PasswordField}" />
-                </local:DataValidationView>
+                             x:Uid="Login_Email"
+                             FontSize="16" />
+                <!--ue:TextBoxBehavior.NextControl="{Binding ElementName=PasswordField}"-->
+                <!--</local:DataValidationView>-->
 
-                <!-- Password -->
-                <local:DataValidationView Model="{Binding Form}"
+                 <!--Password--> 
+                <!--<local:DataValidationView Model="{Binding Form}"
                                           PropertyName="Password"
-                                          Margin="0,4">
+                                          Margin="0,4">-->
                     <PasswordBox x:Name="PasswordField"
-                                 x:Uid="CreateAccount_Password"
                                  PlaceholderText="Password"
                                  Password="{Binding Form.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                  ios:ReturnKeyType="Done"
                                  android:ImeOptions="Done"
-                                 ue:PasswordBoxBehavior.DismissKeyboardOnEnter="True"
-                                 ue:PasswordBoxBehavior.EnterCommand="{Binding CreateAccount}" />
-                </local:DataValidationView>
+                                
+                                 x:Uid="Login_Password"
+                                 FontSize="16" />
+                <!--ue:PasswordBoxBehavior.DismissKeyboardOnEnter="True"
+                                 ue:PasswordBoxBehavior.EnterCommand="{Binding Login}"-->
+                <!--</local:DataValidationView>-->
 
-                <Button x:Name="ConfirmButton"
-                        x:Uid="CreateAccount_Confirm"
-                        Content="Create account"
-                        Command="{Binding CreateAccount}"
+                <HyperlinkButton Content="Forgot password?"
+                                 x:Uid="Login_ForgotPassword"
+                                 HorizontalAlignment="Right"
+                                 VerticalContentAlignment="Top"
+                                 Command="{Binding NavigateToForgotPasswordPage}"
+                                 Margin="0,4" />
+
+                <Button Command="{Binding Login}"
+                        Content="Login"
+                        x:Uid="Login_Login"
                         Style="{StaticResource ExecutingButtonStyle}"
+                        HorizontalAlignment="Stretch"
+                        Margin="0,4" />
+
+                <Button Command="{Binding NavigateToCreateAccountPage}"
+                        Content="Create account"
+                        x:Uid="Login_CreateAccount"
                         HorizontalAlignment="Stretch"
                         Margin="0,4" />
             </StackPanel>

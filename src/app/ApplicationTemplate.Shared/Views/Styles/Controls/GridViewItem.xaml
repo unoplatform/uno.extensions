@@ -1,12 +1,12 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                    xmlns:u="using:Nventive.View.Controls"
-                    xmlns:ue="using:Nventive.View.Extensions"
-                    xmlns:uc="using:Nventive.View.Converters"
                     xmlns:ios="http:///uno.ui/ui/ios"
                     xmlns:not_ios="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     mc:Ignorable="ios">
+    <!--xmlns:u="using:Nventive.View.Controls"
+                    xmlns:ue="using:Nventive.View.Extensions"
+                    xmlns:uc="using:Nventive.View.Converters"-->
 
     <!-- 
         Find the latest styles here:

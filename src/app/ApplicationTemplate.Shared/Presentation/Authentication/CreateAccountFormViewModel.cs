@@ -1,29 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
-using Chinook.DynamicMvvm;
+//using Chinook.DynamicMvvm;
 using FluentValidation;
 
 namespace ApplicationTemplate.Presentation
 {
     public class CreateAccountFormViewModel : ViewModel
     {
-        public CreateAccountFormViewModel()
-        {
-            this.AddValidation(this.GetProperty(x => x.Email));
-            this.AddValidation(this.GetProperty(x => x.Password));
-        }
+        //public CreateAccountFormViewModel()
+        //{
+        //    this.AddValidation(this.GetProperty(x => x.Email));
+        //    this.AddValidation(this.GetProperty(x => x.Password));
+        //}
 
+        private string email;
+
+        [Required]
         public string Email
         {
-            get => this.Get<string>();
-            set => this.Set(value);
+            get => email;
+            set => SetProperty(ref email,value, true);
         }
 
+        private string password;
+
+        [Required]
         public string Password
         {
-            get => this.Get<string>();
-            set => this.Set(value);
+            get => password;
+            set => SetProperty(ref password,  value, true);
         }
     }
 

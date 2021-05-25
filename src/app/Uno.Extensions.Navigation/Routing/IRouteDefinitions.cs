@@ -24,7 +24,7 @@ namespace Uno.Extensions.Navigation
     {
         IReadOnlyDictionary<string, (Type, Action<IServiceCollection>, Func<IServiceProvider, object>)> Routes { get; }
 
-        IReadOnlyDictionary<string, Func<IServiceProvider, string[], string, string>> Redirections { get; }
+        IReadOnlyDictionary<string, Func<IServiceProvider, string[], string, IDictionary<string, object>, string>> Redirections { get; }
 
         //IReadOnlyDictionary<Type, IRoute> Routes { get;}
 

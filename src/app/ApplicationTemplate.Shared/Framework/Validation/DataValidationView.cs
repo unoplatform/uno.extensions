@@ -101,7 +101,18 @@ namespace ApplicationTemplate
 
         private void OnErrorsChanged(object sender, DataErrorsChangedEventArgs e)
         {
-            //_ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, ErrorsChangedUI);
+            //-:cnd:noEmit
+#if !WINUI
+            //+:cnd:noEmit
+            Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal,
+            //-:cnd:noEmit
+#else
+//+:cnd:noEmit
+                DispatcherQueue.TryEnqueue(
+//-:cnd:noEmit
+#endif
+            //+:cnd:noEmit
+                ErrorsChangedUI);
 
             void ErrorsChangedUI()
             {

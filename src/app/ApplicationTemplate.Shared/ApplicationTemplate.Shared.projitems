@@ -37,6 +37,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\LocalizationConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\RouterConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\_Configuration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\ConverterBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\DebugConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Framework\AttachableUserControl.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Framework\Browser\DispatcherBrowserDecorator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Framework\BaseMock.cs" />
@@ -63,6 +65,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Framework\Validation\DataValidationState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Framework\Validation\DataValidationStateType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Framework\Validation\DataValidationView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Authentication\CreateAccountFormViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Authentication\CreateAccountPageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\Authentication\LoginPageViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\ShellViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\ViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Business\IPostService.cs" />
@@ -78,6 +83,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Welcome\OnboardingPageViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Welcome\WelcomePageViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Startup.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Content\Authentication\CreateAccountPage.xaml.cs">
+      <DependentUpon>CreateAccountPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Content\Authentication\LoginPage.xaml.cs">
+      <DependentUpon>LoginPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\Content\Welcome\HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
     </Compile>
@@ -108,13 +119,11 @@
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\fr\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Converters\" />
     <Folder Include="$(MSBuildThisFileDirectory)Framework\DataLoader\" />
     <Folder Include="$(MSBuildThisFileDirectory)Framework\DynamicData\" />
     <Folder Include="$(MSBuildThisFileDirectory)Framework\DynamicMvvm\" />
     <Folder Include="$(MSBuildThisFileDirectory)Framework\Reactive\" />
     <Folder Include="$(MSBuildThisFileDirectory)Framework\Serialization\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Presentation\Authentication\" />
     <Folder Include="$(MSBuildThisFileDirectory)Presentation\ChuckNorris\" />
     <Folder Include="$(MSBuildThisFileDirectory)Presentation\Diagnostics\" />
     <Folder Include="$(MSBuildThisFileDirectory)Presentation\Extensions\" />
@@ -141,6 +150,14 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Content\Authentication\CreateAccountPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Content\Authentication\LoginPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\Content\Welcome\HomePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -154,6 +171,38 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\Shell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Styles\Application\Colors.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Styles\Application\Converters.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Styles\Application\Fonts.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Styles\Application\LayoutConstants.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Styles\Controls\Button.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Styles\Controls\CheckBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Styles\Controls\CommandBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\Styles\Controls\DataValidationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

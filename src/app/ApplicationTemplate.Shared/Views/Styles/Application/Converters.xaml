@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:converters="using:ApplicationTemplate.Views"
-                    xmlns:uc="using:Nventive.View.Converters">
+                    xmlns:uc="using:ApplicationTemplate.Views">
 
     <uc:FromNullableBoolToVisibilityConverter x:Key="TrueToCollapsed"
                                             VisibilityIfTrue="Collapsed" />
@@ -25,6 +25,6 @@
                                               ValueIfEmpty="Visible"
                                               ValueIfNotEmpty="Collapsed"  />
 
-    <!--<converters:DebugConverter x:Key="debug" />-->
+    <uc:DebugConverter x:Key="debug" />
 
 </ResourceDictionary>

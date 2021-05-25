@@ -17,14 +17,20 @@ namespace ApplicationTemplate.Presentation
     /// <summary>
     /// ViewModel to use as a base for all other ViewModels.
     /// </summary>
-    public class ViewModel : ObservableObject //, INavigableViewModel
+    public abstract class ViewModel : ObservableValidator //, INavigableViewModel
     {
+        public bool Validate()
+        {
+            this.ValidateAllProperties();
+            return !HasErrors;
+        }
+
         // Add properties or commands you want to have on all your ViewModels
 
-        public ViewModel()
-        {
-            //(this as IInjectable)?.Inject((t, n) => this.GetService(t));
-        }
+        //public ViewModel()
+        //{
+        //    //(this as IInjectable)?.Inject((t, n) => this.GetService(t));
+        //}
 
 //        public IDynamicCommand NavigateBack => this.GetCommandFromTask(async ct =>
 //        {
