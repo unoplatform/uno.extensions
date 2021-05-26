@@ -38,34 +38,30 @@ namespace Uno.Extensions.Navigation
     {
         public INavigator Navigator { get; }
         public IReadOnlyDictionary<string, (Type, Type)> Routes { get; }
-        public IReadOnlyDictionary<string, Func<IServiceProvider, string[], string,IDictionary<string,object>, string>> Redirections { get; }
+        public Func<string[], string,IDictionary<string,object>, string> Redirection { get; }
         public IServiceProvider Services { get; }
         public Stack<string> NavigationStack { get; } = new Stack<string>();
         public Router(
             INavigator navigator,
             IMessenger messenger,
             IRouteDefinitions routeDefinitions,
-            IServiceProvider services
+            IServiceProvider services,
+            IRouteRedirection redirection=default
             )
         {
             Navigator = navigator;
             Routes = routeDefinitions.Routes;
-            Redirections = routeDefinitions.Redirections;
+            Redirection = redirection?.Redirection;
             Services = services;
             messenger.RegisterAll(this);
         }
 
         public void Receive(RoutingMessage message)
         {
-            var fullPath = (message.path + "");
+            var fullPath = (Redirection?.Invoke(NavigationStack.ToArray(), message.path, message.args)?? message.path + "");
             var routeSegments = fullPath.Split('/').Select(x => (x+"").ToLower()).ToArray();
 
             var path = routeSegments.Last();
-            if (Redirections.TryGetValue(path, out var redirection))
-            {
-                path = redirection(Services, NavigationStack.ToArray(), path, message.args);
-            }
-
             if(path=="..")
             {
                 Navigator.GoBack();

@@ -24,6 +24,24 @@ namespace Uno.Extensions.Navigation
 {
     public static class ServiceCollectionExtensions
     {
+
+        public static IHostBuilder UseRoutingWithRedirection<TRouteDefinitions, TLaunchMessage, TRouteRedirection>(
+                    this IHostBuilder builder,
+                    Func<Frame> navigationFrameLocator)
+                        where TRouteDefinitions : class, IRouteDefinitions, new()
+                        where TLaunchMessage : RoutingMessage, new()
+                        where TRouteRedirection : class, IRouteRedirection
+        {
+            return builder
+                .UseRouting<TRouteDefinitions, TLaunchMessage>(navigationFrameLocator)
+                .ConfigureServices(sp =>
+                {
+                    sp.AddSingleton<IRouteRedirection, TRouteRedirection>();
+                });
+        }
+
+
+
         public static IHostBuilder UseRouting<TRouteDefinitions, TLaunchMessage>(
             this IHostBuilder builder, Func<Frame> navigationFrameLocator)
             where TRouteDefinitions : class, IRouteDefinitions, new()

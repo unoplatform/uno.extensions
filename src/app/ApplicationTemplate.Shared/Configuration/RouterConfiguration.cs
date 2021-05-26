@@ -43,6 +43,7 @@ namespace ApplicationTemplate.Views
             Login
         }
 
+
         public IReadOnlyDictionary<string, (Type, Type)> Routes { get; } = new Dictionary<string, (Type, Type)>()
                         .RegisterPage<HomePageViewModel, HomePage>()
                         .RegisterPage<OnboardingPageViewModel, OnboardingPage>()
@@ -57,35 +58,45 @@ namespace ApplicationTemplate.Views
                         .RegisterPage<LicensesPageViewModel, LicensesPage>()
                         .RegisterPage<EditProfilePageViewModel, EditProfilePage>();
 
-        public IReadOnlyDictionary<
-            string,
-            Func<
-                IServiceProvider,               // Service provider for looking up services
-                string[],                       // navigation stack
-                string,                         // new path
-                IDictionary<string, object>,    // args
-                string                          // relative path
-                >> Redirections
-        { get; } = new Dictionary<string, Func<IServiceProvider, string[], string, IDictionary<string, object>, string>>()
+    }
+
+
+    public class RouterRedirection : IRouteRedirection
+    {
+        private IServiceProvider Services { get; }
+        public RouterRedirection(IServiceProvider services)
         {
-            {"",(sp, stack,route, args)=>{
-                    if(args is not null && args.TryGetValue(RouterConfiguration.ActionsKey, out var action)) {
-                        if(((RouterConfiguration.Actions)action) == RouterConfiguration.Actions.Login)
+            Services = services;
+            Redirection =
+                (stack, route, args) => {
+                    if (args is not null && args.TryGetValue(RouterConfiguration.ActionsKey, out var action))
+                    {
+                        if (((RouterConfiguration.Actions)action) == RouterConfiguration.Actions.Login)
                         {
                             return typeof(LoginPageViewModel).AsRoute();
                         }
                     }
 
-                    var onboarding = sp.GetService<IWritableOptions<ApplicationSettings>>();
-                    if(!onboarding.Value.IsOnboardingCompleted){
+                    var onboarding = Services.GetService<IWritableOptions<ApplicationSettings>>();
+                    if (!onboarding.Value.IsOnboardingCompleted)
+                    {
                         return typeof(OnboardingPageViewModel).AsRoute();
                     }
-                    else{
+                    else
+                    {
                         return typeof(WelcomePageViewModel).AsRoute();
                     }
-                }
-            }
-        };
+                };
+        }
+
+    
+        public Func<
+                string[],                       // navigation stack
+                string,                         // new path
+                IDictionary<string, object>,    // args
+                string                          // relative path
+                > Redirection
+        { get; }
 
 
     }
