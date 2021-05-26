@@ -22,7 +22,7 @@ namespace Uno.Extensions.Navigation
 {
     public interface IRouteDefinitions
     {
-        IReadOnlyDictionary<string, (Type, Action<IServiceCollection>, Func<IServiceProvider, object>)> Routes { get; }
+        IReadOnlyDictionary<string, (Type, Type)> Routes { get; }
 
         IReadOnlyDictionary<string, Func<IServiceProvider, string[], string, IDictionary<string, object>, string>> Redirections { get; }
 

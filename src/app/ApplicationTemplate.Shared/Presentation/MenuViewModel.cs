@@ -5,6 +5,7 @@ using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Text;
 using System.Windows.Input;
+using ApplicationTemplate.Views;
 using CommunityToolkit.Mvvm.Input;
 //using Chinook.DynamicMvvm;
 //using Chinook.SectionsNavigation;
@@ -39,21 +40,21 @@ namespace ApplicationTemplate.Presentation
         //    await this.GetService<ISectionsNavigator>().SetActiveSection(ct, "Home", () => new HomePageViewModel());
         //});
         public ICommand ShowHome => new RelayCommand(() =>
-           Messenger.Send(new RoutingMessage(this, typeof(HomePageViewModel).Name.ToString())));
+           Messenger.Send(new RoutingMessage(this, typeof(HomePageViewModel).AsRoute())));
 
         //public IDynamicCommand ShowPosts => this.GetCommandFromTask(async ct =>
         //{
         //    await this.GetService<ISectionsNavigator>().SetActiveSection(ct, "Posts", () => new PostsPageViewModel());
         //});
         public ICommand ShowPosts => new RelayCommand(() =>
-           Messenger.Send(new RoutingMessage(this, typeof(PostsPageViewModel).Name.ToString())));
+           Messenger.Send(new RoutingMessage(this, typeof(PostsPageViewModel).AsRoute())));
 
         //public IDynamicCommand ShowSettings => this.GetCommandFromTask(async ct =>
         //{
         //    await this.GetService<ISectionsNavigator>().SetActiveSection(ct, "Settings", () => new SettingsPageViewModel());
         //});
         public ICommand ShowSettings => new RelayCommand(() =>
-           Messenger.Send(new RoutingMessage(this, typeof(SettingsPageViewModel).Name.ToString())));
+           Messenger.Send(new RoutingMessage(this, typeof(SettingsPageViewModel).AsRoute())));
 
 
         public string MenuState => "Open";

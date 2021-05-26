@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using ApplicationTemplate.Views;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Options;
 using Uno.Extensions;
@@ -25,7 +26,7 @@ namespace ApplicationTemplate.Presentation
         //    await this.GetService<IStackNavigator>().Navigate(ct, () => new PostsPageViewModel());
         //});
         public ICommand NavigateToPostsPage => new RelayCommand(() =>
-   Messenger.Send(new RoutingMessage(this, typeof(PostsPageViewModel).Name.ToString())));
+   Messenger.Send(new RoutingMessage(this, typeof(PostsPageViewModel).AsRoute())));
 
         //public IDynamicCommand NavigateToPostsPageWithNoNetwork => this.GetCommandFromTask(async ct =>
         //{
@@ -39,7 +40,7 @@ namespace ApplicationTemplate.Presentation
         //    );
         //});
         public ICommand NavigateToPostsPageWithNoNetwork => new RelayCommand(() =>
-   Messenger.Send(new RoutingMessage(this, typeof(PostsPageViewModel).Name.ToString())));
+   Messenger.Send(new RoutingMessage(this, typeof(PostsPageViewModel).AsRoute())));
 
         //public IDynamicCommand NavigateToPostsPageWithOddError => this.GetCommandFromTask(async ct =>
         //{
@@ -58,7 +59,7 @@ namespace ApplicationTemplate.Presentation
         //    ));
         //});
         public ICommand NavigateToPostsPageWithOddError => new RelayCommand(() =>
-   Messenger.Send(new RoutingMessage(this, typeof(PostsPageViewModel).Name.ToString())));
+   Messenger.Send(new RoutingMessage(this, typeof(PostsPageViewModel).AsRoute())));
 
         //public IDynamicCommand NavigateToPostsPageWithEvenError => this.GetCommandFromTask(async ct =>
         //{
@@ -77,14 +78,14 @@ namespace ApplicationTemplate.Presentation
         //    ));
         //});
         public ICommand NavigateToPostsPageWithEvenError => new RelayCommand(() =>
-   Messenger.Send(new RoutingMessage(this, typeof(PostsPageViewModel).Name.ToString())));
+   Messenger.Send(new RoutingMessage(this, typeof(PostsPageViewModel).AsRoute())));
 
         //public IDynamicCommand NavigateToChuckNorrisSearchPage => this.GetCommandFromTask(async ct =>
         //{
         //    await this.GetService<IStackNavigator>().Navigate(ct, () => new ChuckNorrisSearchPageViewModel());
         //});
         public ICommand NavigateToChuckNorrisSearchPage => new RelayCommand(() =>
-           Messenger.Send(new RoutingMessage(this, typeof(ChuckNorrisSearchPageViewModel).Name.ToString())));
+           Messenger.Send(new RoutingMessage(this, typeof(ChuckNorrisSearchPageViewModel).AsRoute())));
 
         //public IDynamicCommand NavigateToSettingsPage => this.GetCommandFromTask(async ct =>
         //{
@@ -92,6 +93,6 @@ namespace ApplicationTemplate.Presentation
         //});
 
         public ICommand NavigateToSettingsPage => new RelayCommand(() =>
-           Messenger.Send(new RoutingMessage(this, typeof(SettingsPageViewModel).Name.ToString())));
+           Messenger.Send(new RoutingMessage(this, typeof(SettingsPageViewModel).AsRoute())));
     }
 }

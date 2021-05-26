@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using ApplicationTemplate.Business;
+using ApplicationTemplate.Views;
 using CommunityToolkit.Mvvm.Input;
 using Uno.Extensions.Navigation;
 //using Chinook.DynamicMvvm;
@@ -44,7 +45,7 @@ namespace ApplicationTemplate.Presentation
             {
                 var cancel = new CancellationTokenSource();
                 await AuthService.ResetPassword(cancel.Token, Form.Email.Trim());
-                Messenger.Send(new ClearStackMessage(this, typeof(HomePageViewModel).Name.ToString()));
+                Messenger.Send(new ClearStackMessage(this, typeof(HomePageViewModel).AsRoute()));
             }
         });
     }

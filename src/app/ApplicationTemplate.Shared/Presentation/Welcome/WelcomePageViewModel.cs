@@ -46,7 +46,7 @@ namespace ApplicationTemplate.Presentation
         //});
 
         public ICommand NavigateToHomePage => new RelayCommand(() =>
-            Messenger.Send(new RoutingMessage(this,typeof(HomePageViewModel).Name.ToString() )));
+            Messenger.Send(new RoutingMessage(this,typeof(HomePageViewModel).AsRoute() )));
 
         public ICommand NavigateToLoginPage => new RelayCommand(() =>
             Messenger.Send(
@@ -55,6 +55,6 @@ namespace ApplicationTemplate.Presentation
                     )));
 
         public ICommand NavigateToCreateAccountPage => new RelayCommand(() =>
-           Messenger.Send(new RoutingMessage(this, typeof(CreateAccountPageViewModel).Name.ToString())));
+           Messenger.Send(new RoutingMessage(this, typeof(CreateAccountPageViewModel).AsRoute())));
     }
 }

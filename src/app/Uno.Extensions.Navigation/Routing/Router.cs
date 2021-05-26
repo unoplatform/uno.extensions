@@ -37,7 +37,7 @@ namespace Uno.Extensions.Navigation
     public class Router : IRouter, IRecipient<RoutingMessage>
     {
         public INavigator Navigator { get; }
-        public IReadOnlyDictionary<string, (Type, Action<IServiceCollection>, Func<IServiceProvider, object>)> Routes { get; }
+        public IReadOnlyDictionary<string, (Type, Type)> Routes { get; }
         public IReadOnlyDictionary<string, Func<IServiceProvider, string[], string,IDictionary<string,object>, string>> Redirections { get; }
         public IServiceProvider Services { get; }
         public Stack<string> NavigationStack { get; } = new Stack<string>();
@@ -72,7 +72,7 @@ namespace Uno.Extensions.Navigation
             }
             else if (Routes.TryGetValue(path, out var route))
             {
-                var vm = route.Item3?.Invoke(Services);
+                var vm = Services.GetService(route.Item2);
                 Type pageType = route.Item1;
                 Navigator.Navigate(pageType, vm);
 

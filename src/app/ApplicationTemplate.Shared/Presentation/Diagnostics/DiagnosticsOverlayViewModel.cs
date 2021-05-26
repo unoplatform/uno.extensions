@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Windows.Input;
 using ApplicationTemplate.Business;
+using ApplicationTemplate.Views;
 using CommunityToolkit.Mvvm.Input;
 using Uno.Extensions.Configuration;
 using Uno.Extensions.Navigation;
@@ -45,7 +46,7 @@ namespace ApplicationTemplate.Presentation
         //    await this.GetService<ISectionsNavigator>().OpenModal(ct, () => new DiagnosticsPageViewModel());
         //});
         public ICommand NavigateToDiagnosticsPage => new RelayCommand(() =>
-           Messenger.Send(new RoutingMessage(this, typeof(DiagnosticsPageViewModel).Name.ToString())));
+           Messenger.Send(new RoutingMessage(this, typeof(DiagnosticsPageViewModel).AsRoute())));
 
         public bool IsDiagnosticsOverlayEnabled => Settings.Value.DiagnosticOverlayEnabled;
         //public bool IsDiagnosticsOverlayEnabled => DiagnosticsConfiguration.DiagnosticsOverlay.GetIsEnabled();

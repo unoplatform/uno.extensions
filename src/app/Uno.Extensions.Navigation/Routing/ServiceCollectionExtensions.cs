@@ -43,9 +43,11 @@ namespace Uno.Extensions.Navigation
         {
             var def = new TRouteDefinitions();
             var routes = def.Routes;
+
+            // Register each of the view model types
             foreach (var r in routes)
             {
-                r.Value.Item2(services);
+                services.AddTransient(r.Value.Item2);
             }
 
             return services

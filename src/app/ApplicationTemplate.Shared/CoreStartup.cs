@@ -44,7 +44,7 @@ namespace ApplicationTemplate
 
             HandleUnhandledExceptions(services);
 
-            ValidatorOptions.LanguageManager = new FluentValidationLanguageManager();
+            ValidatorOptions.Global.LanguageManager = new FluentValidationLanguageManager();
         }
 
         protected override async Task StartServices(IServiceProvider services, bool isFirstStart)
