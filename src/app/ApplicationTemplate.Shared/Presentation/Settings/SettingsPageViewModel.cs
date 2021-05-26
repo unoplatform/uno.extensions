@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using ApplicationTemplate.Business;
 using ApplicationTemplate.Client;
+using ApplicationTemplate.Views;
 using CommunityToolkit.Mvvm.Input;
 //using Chinook.DataLoader;
 //using Chinook.DynamicMvvm;
@@ -83,7 +84,7 @@ namespace ApplicationTemplate.Presentation
         //    await this.GetService<ISectionsNavigator>().OpenModal(ct, () => new DiagnosticsPageViewModel());
         //});
         public ICommand NavigateToDiagnosticsPage => new RelayCommand(() =>
-           Messenger.Send(new RoutingMessage(this, typeof(DiagnosticsPageViewModel).Name.ToString())));
+           Messenger.Send(new RoutingMessage(this, typeof(DiagnosticsPageViewModel).AsRoute())));
 
         //public IDynamicCommand NavigateToEditProfilePage => this.GetCommandFromTask(async ct =>
         //{
@@ -92,7 +93,7 @@ namespace ApplicationTemplate.Presentation
         //    await this.GetService<IStackNavigator>().Navigate(ct, () => new EditProfilePageViewModel(userProfile));
         //});
         public ICommand NavigateToEditProfilePage => new RelayCommand(() =>
-           Messenger.Send(new RoutingMessage(this, typeof(EditProfilePageViewModel).Name.ToString())));
+           Messenger.Send(new RoutingMessage(this, typeof(EditProfilePageViewModel).AsRoute())));
 
         //public IDynamicCommand NavigateToLoginPage => this.GetCommandFromTask(async ct =>
         //{
@@ -102,7 +103,7 @@ namespace ApplicationTemplate.Presentation
         //    }));
         //});
         public ICommand NavigateToLoginPage => new RelayCommand(() =>
-           Messenger.Send(new RoutingMessage(this, typeof(LoginPageViewModel).Name.ToString())));
+           Messenger.Send(new RoutingMessage(this, typeof(LoginPageViewModel).AsRoute())));
 
         //public IDynamicCommand NavigateToLicensesPage => this.GetCommandFromTask(async ct =>
         //{
@@ -110,7 +111,7 @@ namespace ApplicationTemplate.Presentation
         //});
 
         public ICommand NavigateToLicensesPage => new RelayCommand(() =>
-           Messenger.Send(new RoutingMessage(this, typeof(LicensesPageViewModel).Name.ToString())));
+           Messenger.Send(new RoutingMessage(this, typeof(LicensesPageViewModel).AsRoute())));
 
         //public IDynamicCommand NavigateToPrivacyPolicyPage => this.GetCommandFromTask(async ct =>
         //{
