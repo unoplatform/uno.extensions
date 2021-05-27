@@ -8,6 +8,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Microsoft.Extensions.Hosting;
 //-:cnd:noEmit
 #if WINDOWS_UWP
 //+:cnd:noEmit
@@ -32,6 +33,7 @@ using Microsoft.UI.Xaml.Navigation;
 //-:cnd:noEmit
 #endif
 //+:cnd:noEmit
+using Uno.Extensions.Hosting;
 
 namespace ApplicationTemplate
 {
@@ -41,6 +43,7 @@ namespace ApplicationTemplate
     public sealed partial class App : Application
     {
         private Window _window;
+        private IHost host { get; }
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -48,6 +51,9 @@ namespace ApplicationTemplate
         /// </summary>
         public App()
         {
+            host = UnoHost.CreateDefaultBuilder()
+                .UseEnvironment("Staging")
+                .Build();
 
             this.InitializeComponent();
 
