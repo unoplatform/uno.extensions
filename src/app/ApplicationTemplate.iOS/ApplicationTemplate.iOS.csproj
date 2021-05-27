@@ -13,6 +13,7 @@
     </NuGetPackageImportStamp>
     <ResourcesDirectory>..\ApplicationTemplate.Shared\Strings</ResourcesDirectory>
     <ProvisioningType>automatic</ProvisioningType>
+  <LangVersion>9.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
     <DebugSymbols>true</DebugSymbols>
@@ -175,13 +176,37 @@
     </ImageAsset>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ApplicationTemplate.Hosting\ApplicationTemplate.Hosting.csproj">
+    <ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj">
+      <Project>{0dde79de-181b-42ef-af00-56dc622a6afa}</Project>
+      <Name>Uno.Extensions.Configuration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj">
       <Project>{ea4f9862-63ee-47d6-bd2b-2d1b83e2fd6a}</Project>
       <Name>ApplicationTemplate.Hosting</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ApplicationTemplate.Navigation\ApplicationTemplate.Navigation.csproj">
+    <ProjectReference Include="..\Uno.Extensions.Http\Uno.Extensions.Http.csproj">
+      <Project>{29bfc492-b537-4985-9163-649fc56ebf12}</Project>
+      <Name>Uno.Extensions.Http</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Uno.Extensions.Localization\Uno.Extensions.Localization.csproj">
+      <Project>{3f8f8b81-03af-48e8-a901-ab3b14f15b10}</Project>
+      <Name>Uno.Extensions.Localization</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj">
+      <Project>{3f01a0de-4b9e-496f-ac6b-94daf315a20f}</Project>
+      <Name>Uno.Extensions.Logging.Serilog</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Uno.Extensions.Logging\Uno.Extensions.Logging.csproj">
+      <Project>{406a741f-fb06-482f-9037-154b55fcb2ce}</Project>
+      <Name>Uno.Extensions.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj">
       <Project>{ad3c0a66-450d-4355-b5c4-fdaf0d7746ad}</Project>
       <Name>ApplicationTemplate.Navigation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj">
+      <Project>{5123670c-9756-4c9e-9844-f4a9c0aee633}</Project>
+      <Name>Uno.Extensions.Serialization</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="XamarinForms.targets" Condition="'$(Configuration)'=='Debug'" />

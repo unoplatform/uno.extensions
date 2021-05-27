@@ -21,6 +21,7 @@
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <AndroidUseIntermediateDesignerFile>True</AndroidUseIntermediateDesignerFile>
     <ResourcesDirectory>..\ApplicationTemplate.Shared\Strings</ResourcesDirectory>
+    <LangVersion>9.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -60,6 +61,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm">
+      <Version>7.0.2</Version>
+    </PackageReference>
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="Uno.WinUI" Version="3.7.3" />
     <!--<PackageReference Include="Uno.WinUI.RemoteControl" Version="3.7.3" Condition="'$(Configuration)'=='Debug'" />-->
@@ -70,6 +74,7 @@
     <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="5.0.0" />
     <PackageReference Include="System.Reactive" Version="5.0.0" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     <PackageReference Include="Uno.SourceGenerationTasks">
       <Version>3.1.0-dev.6</Version>
     </PackageReference>
@@ -89,7 +94,6 @@
     <PackageReference Include="Nventive.Persistence.Reactive" Version="0.2.0-dev.14" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConverterBase.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Main.cs" />
@@ -120,6 +124,14 @@
       <Project>{ea4f9862-63ee-47d6-bd2b-2d1b83e2fd6a}</Project>
       <Name>Uno.Extensions.Hosting</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Uno.Extensions.Http\Uno.Extensions.Http.csproj">
+      <Project>{29bfc492-b537-4985-9163-649fc56ebf12}</Project>
+      <Name>Uno.Extensions.Http</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Uno.Extensions.Localization\Uno.Extensions.Localization.csproj">
+      <Project>{3f8f8b81-03af-48e8-a901-ab3b14f15b10}</Project>
+      <Name>Uno.Extensions.Localization</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj">
       <Project>{3f01a0de-4b9e-496f-ac6b-94daf315a20f}</Project>
       <Name>Uno.Extensions.Logging.Serilog</Name>
@@ -131,6 +143,10 @@
     <ProjectReference Include="..\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj">
       <Project>{ad3c0a66-450d-4355-b5c4-fdaf0d7746ad}</Project>
       <Name>Uno.Extensions.Navigation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj">
+      <Project>{5123670c-9756-4c9e-9844-f4a9c0aee633}</Project>
+      <Name>Uno.Extensions.Serialization</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="..\ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems" Label="Shared" />

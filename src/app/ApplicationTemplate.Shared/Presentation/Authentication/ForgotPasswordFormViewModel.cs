@@ -16,7 +16,7 @@ namespace ApplicationTemplate.Presentation
 
         private string email;
 
-        [Required]
+        //[Required]
         public string Email
         {
             get => email;

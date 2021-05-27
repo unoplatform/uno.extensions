@@ -8,6 +8,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Shapes;
 using Windows.UI.ViewManagement;
 //-:cnd:noEmit
 #else
@@ -38,7 +39,7 @@ namespace ApplicationTemplate.Views.Content
     /// <summary>
     /// Taken from the CommunityToolkit - until there there is a Winui/uno compatible version
     /// </summary>
-    public class AlignmentGrid : ContentControl
+    public partial class AlignmentGrid : ContentControl
     {
         /// <summary>
         /// Identifies the <see cref="P:Microsoft.Toolkit.Uwp.DeveloperTools.AlignmentGrid.LineBrush" /> dependency property.
