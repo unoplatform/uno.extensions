@@ -17,7 +17,7 @@ namespace ApplicationTemplate.Presentation
 
         private string email;
 
-        [Required]
+        //[Required]
         public string Email
         {
             get => email;
@@ -26,7 +26,7 @@ namespace ApplicationTemplate.Presentation
 
         private string password;
 
-        [Required]
+        //[Required]
         public string Password
         {
             get => password;

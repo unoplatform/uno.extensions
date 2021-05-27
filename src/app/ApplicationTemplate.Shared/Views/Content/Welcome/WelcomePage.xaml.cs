@@ -34,7 +34,7 @@ namespace ApplicationTemplate.Views.Content
             this.InitializeComponent();
         }
 
-        private void ResetClick(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        private void ResetClick(object sender, RoutedEventArgs e)
         {
             (DataContext as WelcomePageViewModel).ResetOnboarding();
         }
