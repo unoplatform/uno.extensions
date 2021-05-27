@@ -4,7 +4,7 @@ using System.Text;
 using GeneratedSerializers;
 using Nventive.Persistence;
 
-namespace ApplicationTemplate
+namespace Uno.Extensions.Serialization
 {
     public class ObjectSerializerToSettingsSerializerAdapter : ISettingsSerializer
     {

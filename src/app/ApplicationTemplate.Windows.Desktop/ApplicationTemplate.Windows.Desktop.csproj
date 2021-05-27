@@ -89,9 +89,11 @@
     <ItemGroup>
       <ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
       <ProjectReference Include="..\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
+      <ProjectReference Include="..\Uno.Extensions.Localization\Uno.Extensions.Localization.csproj" />
       <ProjectReference Include="..\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj" />
       <ProjectReference Include="..\Uno.Extensions.Logging\Uno.Extensions.Logging.csproj" />
       <ProjectReference Include="..\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
+      <ProjectReference Include="..\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
     </ItemGroup>
     
     <ItemGroup>

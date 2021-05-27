@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using GeneratedSerializers;
 using Refit;
 
-namespace ApplicationTemplate
+namespace Uno.Extensions.Serialization
 {
     /// <summary>
     /// This serializer adapter enables usage of the

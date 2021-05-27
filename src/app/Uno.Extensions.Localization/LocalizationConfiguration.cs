@@ -5,87 +5,77 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Uno.Extensions.Configuration;
 using Windows.ApplicationModel.Resources;
 
-namespace ApplicationTemplate
+namespace Uno.Extensions.Localization
 {
-    /// <summary>
-    /// This class is used for localization configuration.
-    /// - Configures the supported cultures.
-    /// - Configures the localization services.
-    /// </summary>
-    public static class LocalizationConfiguration
+    public class LocalizationSettings
     {
-        private static ThreadCultureOverrideService _cultureOverrideService;
+        public string[] Cultures { get; set; }
+        public string CurrentCulture { get; set; }
+    }
 
-        private static CultureInfo[] SupportedCultures { get; } = new CultureInfo[]
-        {
-            new CultureInfo("en-CA"),
-            new CultureInfo("fr-CA"),
-        };
 
-        /// <summary>
-        /// Adds the localization services to the <see cref="IServiceCollection"/>.
-        /// </summary>
-        /// <param name="services">Service collection.</param>
-        /// <returns><see cref="IServiceCollection"/>.</returns>
-        public static IServiceCollection AddLocalization(this IServiceCollection services)
+    public static class ServiceCollectionExtensions
+    {
+        public static IHostBuilder UseLocalization(this IHostBuilder builder)
         {
-            return services
-                .AddSingleton(_cultureOverrideService)
+            return builder
+                .UseWritableSettings<LocalizationSettings>(ctx => ctx.Configuration.GetSection(nameof(LocalizationSettings)))
+
+                .ConfigureServices((ctx, services) =>
+            {
+                services
+                .AddHostedService<LocalizationService>()
                 .AddSingleton<IStringLocalizer, ResourceLoaderStringLocalizer>();
+            });
+        }
+    }
+
+    public class LocalizationService : IHostedService
+    {
+        private ThreadCultureOverrideService _cultureOverrideService;
+
+        private IWritableOptions<LocalizationSettings> Settings { get; }
+
+        private CultureInfo[] SupportedCultures => !(Settings?.Value?.Cultures?.Any() ?? false) ?
+            new[] { new CultureInfo("en-US") } :
+            Settings.Value.Cultures.Select(c => new CultureInfo(c)).ToArray();
+
+        public LocalizationService(IWritableOptions<LocalizationSettings> settings)
+        {
+            Settings = settings;
         }
 
-        public static void PreInitialize()
+        public async Task StartAsync(CancellationToken cancellationToken)
         {
-            // This will override the system culture with a user preference.
-            // This is used to change the language of the application.
-            // It needs to be executed very early on the UI thread to make sure the app is completely localized.
             _cultureOverrideService = new ThreadCultureOverrideService(
                 Thread.CurrentThread,
                 SupportedCultures.Select(c => c.TwoLetterISOLanguageName).ToArray(),
-                SupportedCultures.First(),
-                GetSettingFilePath()
+                SupportedCultures.First()
             );
 
             _cultureOverrideService.TryApply();
 
-//-:cnd:noEmit
+            //-:cnd:noEmit
 #if NET461
 //+:cnd:noEmit
             // This is required for test projects otherwise the ResourceLoader will throw an exception.
             Windows.ApplicationModel.Resources.ResourceLoader.DefaultLanguage = SupportedCultures.First().Name;
 //-:cnd:noEmit
 #endif
-//+:cnd:noEmit
+            //+:cnd:noEmit
         }
 
-        /// <summary>
-        /// Gets the path to the culture override settings file.
-        /// </summary>
-        private static string GetSettingFilePath()
+        public async Task StopAsync(CancellationToken cancellationToken)
         {
-//-:cnd:noEmit
-#if WINDOWS_UWP
-//+:cnd:noEmit
-            var folderPath = Windows.Storage.ApplicationData.Current.LocalFolder.Path; // TODO: Tests can use that?
-//-:cnd:noEmit
-#elif __ANDROID__ || __IOS__
-//+:cnd:noEmit
-            var folderPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-//-:cnd:noEmit
-#else
-//+:cnd:noEmit
-            var folderPath = string.Empty;
-//-:cnd:noEmit
-#endif
-//+:cnd:noEmit
-
-            return Path.Combine(folderPath, "culture-override");
         }
     }
 
@@ -150,7 +140,6 @@ namespace ApplicationTemplate
     public class ThreadCultureOverrideService
     {
         private readonly Thread _uiThread;
-        private readonly string _settingFilePath;
         private readonly string[] _supportedLanguages;
         private readonly CultureInfo _fallbackCulture;
         private readonly ILogger _logger;
@@ -167,14 +156,12 @@ namespace ApplicationTemplate
             Thread uiThread,
             string[] supportedLanguages,
             CultureInfo fallbackCulture,
-            string settingFilePath,
             ILogger<ThreadCultureOverrideService> logger = null
         )
         {
             _uiThread = uiThread ?? throw new ArgumentNullException(nameof(uiThread));
             _supportedLanguages = supportedLanguages ?? throw new ArgumentNullException(nameof(supportedLanguages));
             _fallbackCulture = fallbackCulture ?? throw new ArgumentNullException(nameof(supportedLanguages));
-            _settingFilePath = settingFilePath ?? throw new ArgumentNullException(nameof(settingFilePath));
             _logger = logger ?? NullLogger<ThreadCultureOverrideService>.Instance;
         }
 
@@ -188,13 +175,6 @@ namespace ApplicationTemplate
             try
             {
                 var culture = CultureInfo.CurrentCulture;
-
-                // Use the settings culture if it is set.
-                var settingsCulture = GetCulture();
-                if (settingsCulture != null)
-                {
-                    culture = settingsCulture;
-                }
 
                 // Use the fallback culture if the language is not supported.
                 if (!_supportedLanguages.Any(l => l.StartsWith(culture.TwoLetterISOLanguageName, StringComparison.InvariantCultureIgnoreCase)))
@@ -217,40 +197,6 @@ namespace ApplicationTemplate
                 _logger.LogError(e, "Failed to apply the culture override.");
 
                 return false;
-            }
-        }
-
-        /// <summary>
-        /// Gets the culture override set using the <see cref="SetCulture"/> method.
-        /// </summary>
-        /// <returns>Current culture override. Null if not set.</returns>
-        public CultureInfo GetCulture()
-        {
-            if (!File.Exists(_settingFilePath))
-            {
-                return null;
-            }
-
-            var culture = File.ReadAllText(_settingFilePath);
-
-            return new CultureInfo(culture);
-        }
-
-        /// <summary>
-        /// Sets the specified <paramref name="culture"/> as the culture override.
-        /// To apply these changes, use the <see cref="TryApply"/> method.
-        /// </summary>
-        /// <param name="culture">Culture</param>
-        public void SetCulture(CultureInfo culture)
-        {
-            if (culture is null)
-            {
-                throw new ArgumentNullException(nameof(culture));
-            }
-
-            using (var writer = File.CreateText(_settingFilePath))
-            {
-                writer.Write(culture.Name);
             }
         }
     }

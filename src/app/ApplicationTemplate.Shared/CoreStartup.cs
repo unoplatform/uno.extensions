@@ -30,10 +30,10 @@ namespace ApplicationTemplate
 
         protected override IHostBuilder InitializeServices(IHostBuilder hostBuilder)
         {
-            return hostBuilder
-                .AddAppLogging()
-                .AddAppSettings()
-                .AddServices();
+            return hostBuilder;
+                //.AddAppLogging()
+                //.AddAppSettings()
+                //.AddServices();
         }
 
         protected override void OnInitialized(IServiceProvider services)
