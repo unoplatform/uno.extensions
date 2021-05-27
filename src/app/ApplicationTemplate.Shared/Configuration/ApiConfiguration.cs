@@ -16,6 +16,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Refit;
 using Uno.Extensions.Serialization;
+using Uno.Extensions.Http;
 
 namespace ApplicationTemplate
 {
@@ -117,7 +118,7 @@ namespace ApplicationTemplate
                     .ConfigureHttpClient((serviceProvider, client) =>
                     {
                         client.BaseAddress = new Uri(options.Value.Url);
-                        AddDefaultHeaders(client, serviceProvider);
+                        client.AddDefaultHeaders(serviceProvider);
                     })
                     .AddHttpMessageHandler<ExceptionHubHandler>();
 
@@ -139,45 +140,45 @@ namespace ApplicationTemplate
             return services;
         }
 
-        private static IServiceCollection AddMainHandler(this IServiceCollection services)
-        {
-            return services.AddTransient<HttpMessageHandler>(s =>
-                //-:cnd:noEmit
-#if __IOS__
-//+:cnd:noEmit
-                new NSUrlSessionHandler()
-//-:cnd:noEmit
-#elif __ANDROID__
-//+:cnd:noEmit
-                new Xamarin.Android.Net.AndroidClientHandler()
-//-:cnd:noEmit
-#else
-                //+:cnd:noEmit
-                new HttpClientHandler()
-            //-:cnd:noEmit
-#endif
-            //+:cnd:noEmit
-            );
-        }
+//        private static IServiceCollection AddMainHandler(this IServiceCollection services)
+//        {
+//            return services.AddTransient<HttpMessageHandler>(s =>
+//                //-:cnd:noEmit
+//#if __IOS__
+////+:cnd:noEmit
+//                new NSUrlSessionHandler()
+////-:cnd:noEmit
+//#elif __ANDROID__
+////+:cnd:noEmit
+//                new Xamarin.Android.Net.AndroidClientHandler()
+////-:cnd:noEmit
+//#else
+//                //+:cnd:noEmit
+//                new HttpClientHandler()
+//            //-:cnd:noEmit
+//#endif
+//            //+:cnd:noEmit
+//            );
+//        }
 
-        private static IServiceCollection AddResponseContentDeserializer(this IServiceCollection services)
-        {
-            return services.AddSingleton<IResponseContentDeserializer, ObjectSerializerToResponseContentDeserializer>();
-        }
+//        private static IServiceCollection AddResponseContentDeserializer(this IServiceCollection services)
+//        {
+//            return services.AddSingleton<IResponseContentDeserializer, ObjectSerializerToResponseContentDeserializer>();
+//        }
 
-        private static IServiceCollection AddNetworkExceptionHandler(this IServiceCollection services)
-        {
-            return services
-                .AddSingleton<INetworkAvailabilityChecker>(new NetworkAvailabilityChecker(GetIsNetworkAvailable))
-                .AddTransient<NetworkExceptionHandler>();
-        }
+//        private static IServiceCollection AddNetworkExceptionHandler(this IServiceCollection services)
+//        {
+//            return services
+//                .AddSingleton<INetworkAvailabilityChecker>(new NetworkAvailabilityChecker(GetIsNetworkAvailable))
+//                .AddTransient<NetworkExceptionHandler>();
+//        }
 
-        private static IServiceCollection AddExceptionHubHandler(this IServiceCollection services)
-        {
-            return services
-                .AddSingleton<IExceptionHub>(new ExceptionHub())
-                .AddTransient<ExceptionHubHandler>();
-        }
+//        private static IServiceCollection AddExceptionHubHandler(this IServiceCollection services)
+//        {
+//            return services
+//                .AddSingleton<IExceptionHub>(new ExceptionHub())
+//                .AddTransient<ExceptionHubHandler>();
+//        }
 
         private static IServiceCollection AddAuthenticationTokenHandler(this IServiceCollection services)
         {
@@ -186,61 +187,61 @@ namespace ApplicationTemplate
                 .AddTransient<AuthenticationTokenHandler<AuthenticationData>>();
         }
 
-#if (IncludeFirebaseAnalytics)
-        private static IServiceCollection AddFirebaseHandler(this IServiceCollection services)
-        {
-//-:cnd:noEmit
-#if __ANDROID__
-//+:cnd:noEmit
-            return services.AddTransient<FirebasePerformanceHandler>();
-//-:cnd:noEmit
-#else
-//+:cnd:noEmit
-            return services;
-//-:cnd:noEmit
-#endif
-//+:cnd:noEmit
-        }
-#endif
+//#if (IncludeFirebaseAnalytics)
+//        private static IServiceCollection AddFirebaseHandler(this IServiceCollection services)
+//        {
+////-:cnd:noEmit
+//#if __ANDROID__
+////+:cnd:noEmit
+//            return services.AddTransient<FirebasePerformanceHandler>();
+////-:cnd:noEmit
+//#else
+////+:cnd:noEmit
+//            return services;
+////-:cnd:noEmit
+//#endif
+////+:cnd:noEmit
+//        }
+//#endif
 
-        private static Task<bool> GetIsNetworkAvailable(CancellationToken ct)
-        {
-            //-:cnd:noEmit
-#if WINDOWS_UWP || __ANDROID__ || __IOS__
-            // TODO #172362: Not implemented in Uno.
-            // return NetworkInformation.GetInternetConnectionProfile()?.GetNetworkConnectivityLevel() == NetworkConnectivityLevel.InternetAccess;
-            return Task.FromResult(Xamarin.Essentials.Connectivity.NetworkAccess == Xamarin.Essentials.NetworkAccess.Internet);
-#else
-            return Task.FromResult(true);
-#endif
-            //+:cnd:noEmit
-        }
+//        private static Task<bool> GetIsNetworkAvailable(CancellationToken ct)
+//        {
+//            //-:cnd:noEmit
+//#if WINDOWS_UWP || __ANDROID__ || __IOS__
+//            // TODO #172362: Not implemented in Uno.
+//            // return NetworkInformation.GetInternetConnectionProfile()?.GetNetworkConnectivityLevel() == NetworkConnectivityLevel.InternetAccess;
+//            return Task.FromResult(Xamarin.Essentials.Connectivity.NetworkAccess == Xamarin.Essentials.NetworkAccess.Internet);
+//#else
+//            return Task.FromResult(true);
+//#endif
+//            //+:cnd:noEmit
+//        }
 
-        private static void AddDefaultHeaders(HttpClient client, IServiceProvider serviceProvider)
-        {
-            client.DefaultRequestHeaders.Add("Accept-Language", CultureInfo.CurrentCulture.Name);
+//        private static void AddDefaultHeaders(HttpClient client, IServiceProvider serviceProvider)
+//        {
+//            client.DefaultRequestHeaders.Add("Accept-Language", CultureInfo.CurrentCulture.Name);
 
-            // TODO #172779: Looks like our UserAgent is not of a valid format.
-            // TODO #183437: Find alternative for UserAgent.
-            // client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", serviceProvider.GetRequiredService<IEnvironmentService>().UserAgent);
-        }
+//            // TODO #172779: Looks like our UserAgent is not of a valid format.
+//            // TODO #183437: Find alternative for UserAgent.
+//            // client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", serviceProvider.GetRequiredService<IEnvironmentService>().UserAgent);
+//        }
 
-        /// <summary>
-        /// Adds a Refit client to the service collection.
-        /// </summary>
-        /// <typeparam name="T">Type of the Refit interface</typeparam>
-        /// <param name="services">Service collection</param>
-        /// <param name="settings">Optional. Settings to configure the instance with</param>
-        /// <returns>Updated IHttpClientBuilder</returns>
-        private static IHttpClientBuilder AddRefitHttpClient<T>(this IServiceCollection services, Func<IServiceProvider, RefitSettings> settings = null)
-            where T : class
-        {
-            services.AddSingleton(serviceProvider => RequestBuilder.ForType<T>(settings?.Invoke(serviceProvider)));
+//        /// <summary>
+//        /// Adds a Refit client to the service collection.
+//        /// </summary>
+//        /// <typeparam name="T">Type of the Refit interface</typeparam>
+//        /// <param name="services">Service collection</param>
+//        /// <param name="settings">Optional. Settings to configure the instance with</param>
+//        /// <returns>Updated IHttpClientBuilder</returns>
+//        private static IHttpClientBuilder AddRefitHttpClient<T>(this IServiceCollection services, Func<IServiceProvider, RefitSettings> settings = null)
+//            where T : class
+//        {
+//            services.AddSingleton(serviceProvider => RequestBuilder.ForType<T>(settings?.Invoke(serviceProvider)));
 
-            return services
-                .AddHttpClient(typeof(T).FullName)
-                .AddTypedClient((client, serviceProvider) => RestService.For(client, serviceProvider.GetService<IRequestBuilder<T>>()));
-        }
+//            return services
+//                .AddHttpClient(typeof(T).FullName)
+//                .AddTypedClient((client, serviceProvider) => RestService.For(client, serviceProvider.GetService<IRequestBuilder<T>>()));
+//        }
 
 
     }
