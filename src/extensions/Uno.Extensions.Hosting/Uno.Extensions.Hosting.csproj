@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="MSBuild.Sdk.Extras">
   <PropertyGroup>
-    <TargetFrameworks>net5.0-windows10.0.19041.0;uap10.0.16299;netstandard2.0;xamarinios10;xamarinmac20;monoandroid11.0</TargetFrameworks>
+    <TargetFrameworks>net5.0-windows10.0.19041.0;uap10.0.16299;netstandard2.0;xamarinios10;xamarinmac20;monoandroid10.0;monoandroid11.0</TargetFrameworks>
     <LangVersion>9.0</LangVersion>
     <IsWinUI>false</IsWinUI>
     <IsUWP>false</IsUWP>
@@ -17,7 +17,7 @@
     <IsUWP>true</IsUWP>
   </PropertyGroup>
   <PropertyGroup Condition="$(TargetFramework.StartsWith('xamarin.ios'))">
-    <DefineConstants>$(DefineConstants);MONO;UIKIT;COCOA;APPLE;IOS</DefineConstants>
+    <DefineConstants>$(DefineConstants);MONO;UIKIT;COCOA;APPLE;IOS;__IOS__</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="$(TargetFramework.StartsWith('xamarin.mac'))">
     <DefineConstants>$(DefineConstants);MONO;COCOA;APPLE;MAC</DefineConstants>
@@ -29,7 +29,7 @@
     <DefineConstants>$(DefineConstants);MONO;COCOA;APPLE;WATCHOS</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="$(TargetFramework.StartsWith('monoandroid'))">
-    <DefineConstants>$(DefineConstants);MONO;ANDROID</DefineConstants>
+    <DefineConstants>$(DefineConstants);MONO;ANDROID;__ANDROID__</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'monoandroid10.0'">
     <DefineConstants>$(DefineConstants);MONO;ANDROID;__ANDROID_29__;</DefineConstants>
