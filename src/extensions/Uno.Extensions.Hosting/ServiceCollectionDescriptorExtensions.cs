@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Microsoft.Extensions.DependencyInjection.Extensions
+namespace Uno.Extensions.Hosting
 {
-    public static class ServiceCollectionDescriptorExtensions
+    public static class ServiceCollectionExtensions
     {
         public static IServiceCollection RemoveAllIncludeImplementations<T>(this IServiceCollection collection)
         {
@@ -30,17 +28,5 @@ namespace Microsoft.Extensions.DependencyInjection.Extensions
 
             return collection;
         }
-
-        //public static IHostBuilder UseEnvironment(this IHostBuilder builder, string environmentName)
-        //{
-        //    return builder.ConfigureHostConfiguration(config =>
-        //     {
-        //         var disablereload = new Dictionary<string, string>
-        //                    {
-        //                        { "environment", environmentName}
-        //                    };
-        //         config.AddInMemoryCollection(disablereload);
-        //     });
-        //}
     }
 }
