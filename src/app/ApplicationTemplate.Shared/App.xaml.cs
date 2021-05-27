@@ -42,13 +42,12 @@ namespace ApplicationTemplate
     {
         private Window _window;
 
-	/// <summary>
-	/// Initializes the singleton application object.  This is the first line of authored code
-	/// executed, and as such is the logical equivalent of main() or WinMain().
-	/// </summary>
-	public App()
+        /// <summary>
+        /// Initializes the singleton application object.  This is the first line of authored code
+        /// executed, and as such is the logical equivalent of main() or WinMain().
+        /// </summary>
+        public App()
         {
-            InitializeLogging();
 
             this.InitializeComponent();
 
@@ -63,7 +62,7 @@ namespace ApplicationTemplate
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
 #if WINDOWS_UWP
-            protected override void OnLaunched(LaunchActivatedEventArgs e)
+        protected override void OnLaunched(LaunchActivatedEventArgs e)
 #else
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs e)
 #endif
