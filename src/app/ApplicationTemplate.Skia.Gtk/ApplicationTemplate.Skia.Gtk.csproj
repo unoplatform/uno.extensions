@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType Condition="'$(Configuration)'=='Release'">WinExe</OutputType>
+    <OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup Condition="exists('..\ApplicationTemplate.UWP')">
+    <EmbeddedResource Include="..\ApplicationTemplate.UWP\Package.appxmanifest" LogicalName="Package.appxmanifest" />
+    <Content Include="..\ApplicationTemplate.UWP\Assets\StoreLogo.png" Link="Assets\StoreLogo.png" />
+    <Content Include="Assets\Fonts\uno-fluentui-assets.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <UpToDateCheckInput Include="..\ApplicationTemplate.Shared\**\*.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
+    <PackageReference Include="Uno.WinUI.Skia.Gtk" Version="3.8.0-dev.257" />
+    <PackageReference Include="Uno.WinUI.RemoteControl" Version="3.8.0-dev.257" Condition="'$(Configuration)'=='Debug'" />
+  </ItemGroup>
+  <Import Project="..\ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems" Label="Shared" />
+</Project>
