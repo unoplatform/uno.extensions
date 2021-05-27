@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="MSBuild.Sdk.Extras">
+  <PropertyGroup>
+    <TargetFrameworks>net5.0-windows10.0.19041.0;uap10.0.16299;netstandard2.0;xamarinios10;xamarinmac20;monoandroid11.0</TargetFrameworks>
+    <LangVersion>9.0</LangVersion>
+    <IsWinUI>false</IsWinUI>
+    <IsUWP>false</IsUWP>
+    <IsXamarin>false</IsXamarin>
+    <IsIOS>false</IsIOS>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('netstandard'))">
+    <DefineConstants>$(DefineConstants);NETSTANDARD;PORTABLE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('net4'))">
+    <DefineConstants>$(DefineConstants);NET;WPF;XAML</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('uap'))">
+    <DefineConstants>$(DefineConstants);NETFX_CORE;XAML;WINDOWS;WINDOWS_UWP;UWP</DefineConstants>
+    <IsUWP>true</IsUWP>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('xamarinios'))">
+    <DefineConstants>$(DefineConstants);MONO;UIKIT;COCOA;APPLE;IOS,__IOS__</DefineConstants>
+    <IsXamarin>true</IsXamarin>
+    <IsIOS>true</IsIOS>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('xamarinmac'))">
+    <DefineConstants>$(DefineConstants);MONO;COCOA;APPLE;MAC</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('xamarintvos'))">
+    <DefineConstants>$(DefineConstants);MONO;COCOA;APPLE;TVOS</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('xamarinwatchos'))">
+    <DefineConstants>$(DefineConstants);MONO;COCOA;APPLE;WATCHOS</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('monoandroid'))">
+    <DefineConstants>$(DefineConstants);MONO;ANDROID;__ANDROID__</DefineConstants>
+    <IsXamarin>true</IsXamarin>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'monoandroid10.0'">
+    <DefineConstants>$(DefineConstants);MONO;ANDROID;__ANDROID_29__;</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('netcoreapp'))">
+    <DefineConstants>$(DefineConstants);NETCORE;NETCOREAPP</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('netcoreapp3.'))">
+    <DefineConstants>$(DefineConstants);WPF</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('tizen'))">
+    <DefineConstants>$(DefineConstants);TIZEN</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.Contains('windows10'))">
+    <DefineConstants>$(DefineConstants);NETFX_CORE;WINUI;WINDOWS</DefineConstants>
+    <IsWinUI>true</IsWinUI>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
+    <PackageReference Include="System.Text.Json" Version="5.0.2" />
+    <PackageReference Include="System.Runtime.Handles" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0" />
+    <PackageReference Include="Uno.Core" Version="2.4.0-dev.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="GeneratedSerializers.Json" Version="0.2.0-dev.10" />
+    <PackageReference Include="Nventive.Persistence.Reactive" Version="0.2.0-dev.14" />
+    <PackageReference Include="MallardMessageHandlers" Version="0.2.0-dev.16" />
+    <PackageReference Include="Refit" Version="4.7.51" />
+    <PackageReference Include="Uno.SourceGenerationTasks">
+      <Version>3.1.0-dev.6</Version>
+    </PackageReference>
+
+
+  </ItemGroup>
+</Project>

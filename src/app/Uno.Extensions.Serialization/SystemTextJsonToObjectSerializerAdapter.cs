@@ -4,7 +4,7 @@ using System.Text;
 using System.Text.Json;
 using GeneratedSerializers;
 
-namespace ApplicationTemplate
+namespace Uno.Extensions.Serialization
 {
     /// <summary>
     /// This serializer adapter enables usage of the

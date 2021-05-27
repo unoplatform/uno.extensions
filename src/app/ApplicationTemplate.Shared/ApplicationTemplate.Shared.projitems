@@ -36,14 +36,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\LinkerConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\LocalizationConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\RouterConfiguration.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Configuration\_Configuration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\ConverterBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\DebugConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Framework\AttachableUserControl.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Framework\Browser\DispatcherBrowserDecorator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Framework\BaseMock.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Framework\Serialization\ObjectSerializerToContentSerializerAdapter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Framework\Serialization\ObjectSerializerToResponseContentDeserializer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Client\Data\PostErrorResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Client\Exceptions\PostEndpointException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Client\IPostEndpoint.cs" />
@@ -56,10 +53,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\AppServicesConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Framework\Startup\CoreStartupBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CoreStartup.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Framework\Serialization\ObjectSerializerToSettingsSerializerAdapter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Framework\Reactive\IObservable.Extensions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Framework\Serialization\SystemTextJsonToObjectSerializerAdapter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Framework\Serialization\SystemTextJsonToContentSerializerAdapter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Framework\Startup\StartupBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Framework\Startup\StartupState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Framework\Validation\DataValidationState.cs" />

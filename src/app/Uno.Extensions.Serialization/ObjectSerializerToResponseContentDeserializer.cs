@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using GeneratedSerializers;
 using MallardMessageHandlers;
 
-namespace ApplicationTemplate
+namespace Uno.Extensions.Serialization
 {
     public class ObjectSerializerToResponseContentDeserializer : IResponseContentDeserializer
     {

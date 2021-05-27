@@ -20,6 +20,8 @@ using ApplicationTemplate.Presentation;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Uno.Extensions.Configuration;
 using ApplicationTemplate.Business;
+using Uno.Extensions.Serialization;
+using Uno.Extensions.Localization;
 
 //-:cnd:noEmit
 #if WINDOWS_UWP
@@ -59,6 +61,7 @@ namespace ApplicationTemplate
                 .UseAppSettingsForHostConfiguration<App>()
                 .UseHostConfigurationForApp()
                 .UseEnvironmentAppSettings<App>()
+                .UseLocalization()
                 .UseWritableSettings< EndpointOptions>(ctx => ctx.Configuration.GetSection("ChuckNorrisEndpoint"))
                 .UseWritableSettings<ApplicationSettings>(ctx => ctx.Configuration.GetSection(nameof(ApplicationSettings)))
                 .UseWritableSettings<DiagnosticSettings>(ctx => ctx.Configuration.GetSection(nameof(DiagnosticSettings)))
@@ -68,7 +71,7 @@ namespace ApplicationTemplate
                 .ConfigureServices(services =>
                 {
                     services
-                        .AddSerialization()
+                        .AddSerialization(SerializationGeneratorConfiguration.Initialize)
                         .AddAppServices()
                         .AddTransient<ShellViewModel>()
                         .AddTransient<DiagnosticsOverlayViewModel>()

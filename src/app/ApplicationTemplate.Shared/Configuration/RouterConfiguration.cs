@@ -77,6 +77,7 @@ namespace ApplicationTemplate.Views
                         }
                     }
 
+                    if (route != "") return route;
                     var onboarding = Services.GetService<IWritableOptions<ApplicationSettings>>();
                     if (!onboarding.Value.IsOnboardingCompleted)
                     {
