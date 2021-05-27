@@ -31,7 +31,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Client\IChuckNorrisEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Client\Mock\ChuckNorrisEndpointMock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Client\Mock\UserProfileEndpointMock.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Configuration\ConfigurationSettings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\FluentValidationLanguageManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\LinkerConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\LocalizationConfiguration.cs" />
@@ -47,8 +46,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Client\Mock\PostEndpointMock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Client\Data\PostData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\ApiConfiguration.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Configuration\AppSettingsConfiguration.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Configuration\LoggingConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\SerializationConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\AppServicesConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Framework\Startup\CoreStartupBase.cs" />

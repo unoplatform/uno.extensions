@@ -160,8 +160,8 @@ namespace ApplicationTemplate
 
             var coreHost = new HostBuilder()
                 .UseContentRoot(contentRootPath)
-                .AddAppSettings()
-                .AddHostLogging()
+                //.AddAppSettings()
+                //.AddHostLogging()
                 .Build();
 
             return GetOrCreateLogger(coreHost.Services);
