@@ -1,17 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Logging.EventLog;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Hosting.Internal;
-using Microsoft.Extensions.Configuration;
-using System.Collections.Generic;
-
 
 namespace Uno.Extensions.Hosting
 {
