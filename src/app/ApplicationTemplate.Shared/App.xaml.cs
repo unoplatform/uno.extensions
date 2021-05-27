@@ -9,6 +9,7 @@ using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 //-:cnd:noEmit
 #if WINDOWS_UWP
 //+:cnd:noEmit
@@ -34,6 +35,11 @@ using Microsoft.UI.Xaml.Navigation;
 #endif
 //+:cnd:noEmit
 using Uno.Extensions.Hosting;
+using Uno.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Uno.Extensions.Navigation;
+using CommunityToolkit.Mvvm.ComponentModel;
+using System.Threading.Tasks;
 
 namespace ApplicationTemplate
 {
@@ -43,6 +49,7 @@ namespace ApplicationTemplate
     public sealed partial class App : Application
     {
         private Window _window;
+        private Frame _rootFrame;
         private IHost host { get; }
 
         /// <summary>
@@ -53,7 +60,13 @@ namespace ApplicationTemplate
         {
             host = UnoHost.CreateDefaultBuilder()
                 .UseEnvironment("Staging")
+                .UseAppSettings<App>()
+                .ConfigureServices((ctx,services)=>services.Configure< SettingsText>(ctx.Configuration.GetSection("CustomSettings")))
+                .UseRouting<RouterConfiguration, LaunchMessage>(() => _rootFrame)
                 .Build();
+
+            var settings = host.Services.GetService<IOptions<SettingsText>>();
+
 
             this.InitializeComponent();
 
@@ -97,6 +110,7 @@ namespace ApplicationTemplate
             {
                 // Create a Frame to act as the navigation context and navigate to the first page
                 rootFrame = new Frame();
+                _rootFrame = rootFrame;
 
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
@@ -120,14 +134,19 @@ namespace ApplicationTemplate
             {
                 if (rootFrame.Content == null)
                 {
-                    // When the navigation stack isn't restored navigate to the first page,
-                    // configuring the new page by passing required information as a navigation
-                    // parameter
-                    rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                    //// When the navigation stack isn't restored navigate to the first page,
+                    //// configuring the new page by passing required information as a navigation
+                    //// parameter
+                    //rootFrame.Navigate(typeof(MainPage), e.Arguments);
                 }
                 // Ensure the current window is active
                 _window.Activate();
             }
+
+            _ = Task.Run(() =>
+            {
+                host.Run();
+            });
         }
 
         /// <summary>
@@ -154,4 +173,45 @@ namespace ApplicationTemplate
             deferral.Complete();
         }
     }
+
+    public class SettingsText
+    {
+        public string Introduction { get; set; }
+    }
+
+    public class RouterConfiguration : IRouteDefinitions
+    {
+        public const string ActionsKey = "action";
+
+        public enum Actions
+        {
+            Login
+        }
+
+
+        public IReadOnlyDictionary<string, (Type, Type)> Routes { get; } = new Dictionary<string, (Type, Type)>()
+                        .RegisterPage<MainPageViewModel, MainPage>("");
+
+    }
+
+
+    public static class RouteTypeExtensions
+    {
+        public static string AsRoute(this Type routeViewModel)
+        {
+            return routeViewModel.Name.ToLower().Replace("pageviewmodel", "");
+        }
+
+        public static Dictionary<string, (Type, Type)> RegisterPage<TViewModel, TPage>(this Dictionary<string, (Type, Type)> routeDictionary, string path=null)
+        {
+            if(path !=null)
+            {
+                routeDictionary[path] = (typeof(TPage), typeof(TViewModel));
+            }
+            routeDictionary[typeof(TViewModel).AsRoute()] = (typeof(TPage), typeof(TViewModel));
+            return routeDictionary;
+        }
+    }
+
+    public class MainPageViewModel : ObservableValidator  { }
 }

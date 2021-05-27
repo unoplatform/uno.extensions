@@ -36,16 +36,19 @@
     <None Include="wwwroot\web.config" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="7.0.2" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
     <PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.0.1" />
     <PackageReference Include="Uno.WinUI.WebAssembly" Version="3.8.0-dev.257" />
     <PackageReference Include="Uno.WinUI.RemoteControl" Version="3.8.0-dev.257" Condition="'$(Configuration)'=='Debug'" />
-    <PackageReference Include="Uno.Wasm.Bootstrap" Version="1.3.4" />
-    <PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="1.3.4" />
+    <PackageReference Include="Uno.Wasm.Bootstrap" Version="2.1.0" />
+    <PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="2.1.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\extensions\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
     <ProjectReference Include="..\..\extensions\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
+    <ProjectReference Include="..\..\extensions\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
   </ItemGroup>
   <Import Project="..\ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems" Label="Shared" Condition="Exists('..\ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems')" />
 </Project>

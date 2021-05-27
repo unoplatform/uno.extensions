@@ -14,14 +14,17 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="7.0.2" />
 		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="5.0.0" />
-		<PackageReference Include="Microsoft.ProjectReunion" Version="0.5.6" />
+		<PackageReference Include="Microsoft.ProjectReunion" Version="0.5.7" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
 		<PackageReference Include="Uno.Core" Version="2.4.0-dev.2" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\extensions\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
 	  <ProjectReference Include="..\..\extensions\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
+	  <ProjectReference Include="..\..\extensions\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
 	</ItemGroup>
 	
 	<ItemGroup>
