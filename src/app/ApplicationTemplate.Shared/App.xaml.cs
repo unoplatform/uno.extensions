@@ -213,5 +213,12 @@ namespace ApplicationTemplate
         }
     }
 
-    public class MainPageViewModel : ObservableValidator  { }
+    public class MainPageViewModel : ObservableValidator {
+
+        public string Introduction { get; }
+
+        public MainPageViewModel(IOptions<SettingsText> settings){
+            Introduction = settings.Value.Introduction;
+            }
+    }
 }
