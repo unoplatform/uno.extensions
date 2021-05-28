@@ -1,0 +1,53 @@
+﻿<Project>
+<PropertyGroup>
+    <LangVersion>9.0</LangVersion>
+    <IsWinUI>false</IsWinUI>
+    <IsUWP>false</IsUWP>
+    <IsXamarin>false</IsXamarin>
+    <IsIOS>false</IsIOS>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('netstandard'))">
+    <DefineConstants>$(DefineConstants);NETSTANDARD;PORTABLE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('net4'))">
+    <DefineConstants>$(DefineConstants);NET;WPF;XAML</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('uap'))">
+    <DefineConstants>$(DefineConstants);NETFX_CORE;XAML;WINDOWS;WINDOWS_UWP;UWP</DefineConstants>
+    <IsUWP>true</IsUWP>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('xamarinios'))">
+    <DefineConstants>$(DefineConstants);MONO;UIKIT;COCOA;APPLE;IOS,__IOS__</DefineConstants>
+    <IsXamarin>true</IsXamarin>
+    <IsIOS>true</IsIOS>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('xamarinmac'))">
+    <DefineConstants>$(DefineConstants);MONO;COCOA;APPLE;MAC;__MAC__</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('xamarintvos'))">
+    <DefineConstants>$(DefineConstants);MONO;COCOA;APPLE;TVOS;__TVOS__</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('xamarinwatchos'))">
+    <DefineConstants>$(DefineConstants);MONO;COCOA;APPLE;WATCHOS;__WATCHOS__</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('monoandroid'))">
+    <DefineConstants>$(DefineConstants);MONO;ANDROID;__ANDROID__</DefineConstants>
+    <IsXamarin>true</IsXamarin>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'monoandroid10.0'">
+    <DefineConstants>$(DefineConstants);__ANDROID_29__;</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('netcoreapp'))">
+    <DefineConstants>$(DefineConstants);NETCORE;NETCOREAPP</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('netcoreapp3.'))">
+    <DefineConstants>$(DefineConstants);WPF</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('tizen'))">
+    <DefineConstants>$(DefineConstants);TIZEN</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.Contains('windows10'))">
+    <DefineConstants>$(DefineConstants);NETFX_CORE;WINUI;WINDOWS</DefineConstants>
+    <IsWinUI>true</IsWinUI>
+  </PropertyGroup>
+</Project>
