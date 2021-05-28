@@ -31,14 +31,6 @@ namespace Uno.Extensions.Navigation
         TAction action = default) :
         RoutingMessage(Sender, args: new Dictionary<string,object>() { { actionArgumentKey, action } });
 
-    //public record ShowMessage(object? Sender = null) : BaseRoutingMessage(Sender) { };
-
-    //public record ShowItemMessage<TItem>(TItem ItemToShow, object? Sender = null) : BaseRoutingMessage(Sender) { };
-
     public record CloseMessage(object? Sender = null) : RoutingMessage(Sender, path: "..") { };
-
-    //public record SelectedItemMessage<TItem>(TItem ItemSelected, object? Sender = null) : BaseRoutingMessage(Sender) { };
-
-    //public record SelectItemMessage<TItem>(IEnumerable<TItem> ItemsToSelectFrom, object? Sender = null) : BaseRoutingMessage(Sender) { };
 }
 
