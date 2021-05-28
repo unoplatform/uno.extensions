@@ -12,14 +12,19 @@ namespace Uno.Extensions.Hosting
 
         public static IServiceCollection RemoveAllIncludeImplementations(this IServiceCollection collection, Type serviceType)
         {
+            if (collection == null)
+            {
+                throw new ArgumentNullException(nameof(collection));
+            }
+
             if (serviceType == null)
             {
                 throw new ArgumentNullException(nameof(serviceType));
             }
 
-            for (int i = collection.Count - 1; i >= 0; i--)
+            for (var i = collection.Count - 1; i >= 0; i--)
             {
-                ServiceDescriptor? descriptor = collection[i];
+                var descriptor = collection[i];
                 if (descriptor.ServiceType == serviceType || descriptor.ImplementationType == serviceType)
                 {
                     collection.RemoveAt(i);
