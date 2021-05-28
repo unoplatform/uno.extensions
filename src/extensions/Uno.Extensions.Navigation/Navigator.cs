@@ -32,7 +32,7 @@ namespace Uno.Extensions.Navigation
             });
         }
 
-        public void GoBack()
+        public void GoBack(object viewModelForPreviousPage = null)
         {
 #if !WINUI
             _ = NavigationFrame.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () =>
@@ -41,6 +41,11 @@ namespace Uno.Extensions.Navigation
 #endif
             {
                 NavigationFrame.GoBack();
+                var current = NavigationFrame.Content as Page;
+                if(current is not null && viewModelForPreviousPage is not null)
+                {
+                    current.DataContext = viewModelForPreviousPage;
+                }
             });
         }
 
