@@ -5,11 +5,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Uno.Extensions.Specialized;
 
 namespace Uno.Extensions.Configuration
 {
-    public class WritableOptions<T> : IWritableOptions<T> where T : class, new()
+    public class WritableOptions<T> : IWritableOptions<T>
+        where T : class, new()
     {
         private readonly IOptionsMonitor<T> _options;
         private readonly string _section;
@@ -29,6 +29,7 @@ namespace Uno.Extensions.Configuration
         }
 
         public T Value => _options.CurrentValue;
+
         public T Get(string name) => _options.Get(name);
 
         public void Update(Action<T> applyChanges)
@@ -36,8 +37,8 @@ namespace Uno.Extensions.Configuration
             var physicalPath = _file;
 
             var jObject =
-                File.Exists(physicalPath)?
-                JsonConvert.DeserializeObject<JObject>(File.ReadAllText(physicalPath)):
+                File.Exists(physicalPath) ?
+                JsonConvert.DeserializeObject<JObject>(File.ReadAllText(physicalPath)) :
                 new JObject();
             var sectionObject = jObject.TryGetValue(_section, out JToken section) ?
                 JsonConvert.DeserializeObject<T>(section.ToString()) : (Value ?? new T());
@@ -53,6 +54,4 @@ namespace Uno.Extensions.Configuration
             }
         }
     }
-
-
 }
