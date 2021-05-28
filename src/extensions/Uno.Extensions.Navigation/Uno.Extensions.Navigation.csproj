@@ -12,6 +12,6 @@
     <PackageReference Include="Uno.WinUI" Version="3.8.0-dev.260" />
   </ItemGroup>
   <ItemGroup Condition="'$(IsWinUI)' == 'true'">
-    <PackageReference Include="Microsoft.ProjectReunion" Version="0.8.0-preview" />
+    <PackageReference Include="Microsoft.ProjectReunion" Version="0.5.7" />
   </ItemGroup>
 </Project>

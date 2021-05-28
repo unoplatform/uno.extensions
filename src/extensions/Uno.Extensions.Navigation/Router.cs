@@ -51,9 +51,9 @@ namespace Uno.Extensions.Navigation
                 var pageType = route.Item1;
                 Navigator.Navigate(pageType, vm);
 
-#pragma warning disable CA1307 // Specify StringComparison - ignore culture
+#pragma warning disable CA1307, CA1310 // Specify StringComparison - ignore culture
                 if (fullPath.StartsWith("/"))
-#pragma warning restore CA1307 // Specify StringComparison
+#pragma warning restore CA1307, CA1310 // Specify StringComparison
                 {
                     Navigator.Clear();
                 }
