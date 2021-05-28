@@ -6,7 +6,7 @@ namespace Uno.Extensions.Navigation
     {
         void Navigate(Type destinationPage, object viewModel = null);
 
-        void GoBack();
+        void GoBack(object viewModelForPreviousPage = null);
 
         void Clear();
     }

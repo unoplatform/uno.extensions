@@ -40,6 +40,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Input;
+using System.Windows.Input;
 
 namespace ApplicationTemplate
 {
@@ -188,9 +190,9 @@ namespace ApplicationTemplate
             Login
         }
 
-
         public IReadOnlyDictionary<string, (Type, Type)> Routes { get; } = new Dictionary<string, (Type, Type)>()
-                        .RegisterPage<MainPageViewModel, MainPage>("");
+            .RegisterPage<MainPageViewModel, MainPage>("")
+            .RegisterPage<SecondPageViewModel, SecondPage>();
 
     }
 
@@ -213,12 +215,48 @@ namespace ApplicationTemplate
         }
     }
 
-    public class MainPageViewModel : ObservableValidator {
+    public class MainPageViewModel : ObservableValidator
+    {
 
         public string Introduction { get; }
 
-        public MainPageViewModel(IOptions<CustomIntroduction> settings){
+        private IRouteMessenger Messenger { get; }
+
+        public ICommand GoSecondCommand { get; }
+
+        public MainPageViewModel(
+            IOptions<CustomIntroduction> settings,
+            IRouteMessenger messenger)
+        {
             Introduction = settings.Value.Introduction;
-            }
+            Messenger = messenger;
+            GoSecondCommand = new RelayCommand(GoSecond);
+        }
+
+        public void GoSecond()
+        {
+            Messenger.Send(new RoutingMessage(this, typeof(SecondPageViewModel).AsRoute()));
+        }
+    }
+
+    public class SecondPageViewModel : ObservableObject
+    {
+        public string Title { get; } = "Page 2";
+
+        private IRouteMessenger Messenger { get; }
+
+        public ICommand GoBackCommand { get; }
+
+        public SecondPageViewModel(
+            IRouteMessenger messenger)
+        {
+            Messenger = messenger;
+            GoBackCommand = new RelayCommand(GoBack);
+        }
+
+        public void GoBack()
+        {
+            Messenger.Send(new CloseMessage(this));
+        }
     }
 }

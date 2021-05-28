@@ -31,6 +31,7 @@ namespace Uno.Extensions.Navigation
         public IServiceProvider Services { get; }
 
         public Stack<string> NavigationStack { get; } = new Stack<string>();
+        public Stack<object> NavigationViewModelInstances { get; } = new Stack<object>();
 
         public void Receive(RoutingMessage message)
         {
@@ -43,13 +44,17 @@ namespace Uno.Extensions.Navigation
 
             if (path == "..")
             {
-                Navigator.GoBack();
+                NavigationStack.Pop();
+                NavigationViewModelInstances.Pop();
+                Navigator.GoBack(NavigationViewModelInstances.Peek());
             }
             else if (Routes.TryGetValue(path, out var route))
             {
                 var vm = Services.GetService(route.Item2);
                 var pageType = route.Item1;
                 Navigator.Navigate(pageType, vm);
+                NavigationStack.Push(path);
+                NavigationViewModelInstances.Push(vm);
 
 #pragma warning disable CA1307, CA1310 // Specify StringComparison - ignore culture
                 if (fullPath.StartsWith("/"))
