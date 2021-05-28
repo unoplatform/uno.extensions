@@ -10,11 +10,11 @@ namespace Uno.Extensions.Configuration
         /// Configures a Configuration section to be exposed to the
         /// application as either IOptions<typeparamref name="T"/> (static)
         /// or as IWriteableOptions<typeparamref name="T"/> which can be
-        /// updated and persisted (aka application settings)
+        /// updated and persisted (aka application settings).
         /// </summary>
-        /// <typeparam name="T">The DTO that the Configuration section will be deserialized to</typeparam>
-        /// <param name="services">The Microsoft.Extensions.DependencyInjection.IServiceCollection to add the services to</param>
-        /// <param name="section">The Microsoft.Extensions.Configuration.IConfigurationSection to retrieve</param>
+        /// <typeparam name="T">The DTO that the Configuration section will be deserialized to.</typeparam>
+        /// <param name="services">The Microsoft.Extensions.DependencyInjection.IServiceCollection to add the services to.</param>
+        /// <param name="section">The Microsoft.Extensions.Configuration.IConfigurationSection to retrieve.</param>
         /// <param name="file">The full path to the file where updated section data will be written.</param>
         /// <returns>The Microsoft.Extensions.DependencyInjection.IServiceCollection so that additional calls can be chained.</returns>
         public static IServiceCollection ConfigureAsWritable<T>(

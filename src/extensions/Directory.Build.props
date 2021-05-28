@@ -55,4 +55,25 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
     <PackageReference Include="Uno.Core" Version="2.4.0-dev.2" />
   </ItemGroup>
+
+
+    <ItemGroup>
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="..\..\..\stylecop.json" />
+  </ItemGroup>
+
+  <PropertyGroup>
+		<!-- Forces Uno's XamlFileGenerator to write error when XAML is invalid-->
+		<ShouldWriteErrorOnInvalidXaml>True</ShouldWriteErrorOnInvalidXaml>
+	</PropertyGroup>
 </Project>
