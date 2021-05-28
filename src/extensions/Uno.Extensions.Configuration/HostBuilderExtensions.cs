@@ -9,7 +9,7 @@ namespace Uno.Extensions.Configuration
     {
         public static IHostBuilder UseHostConfigurationForApp(this IHostBuilder hostBuilder)
         {
-            return hostBuilder
+            return hostBuilder?
                     .ConfigureServices((ctx, s) =>
                     {
                         _ = s.AddSingleton<IConfiguration>(a => ctx.Configuration)
@@ -21,7 +21,7 @@ namespace Uno.Extensions.Configuration
         public static IHostBuilder UseAppSettingsForHostConfiguration<TApplicationRoot>(this IHostBuilder hostBuilder)
             where TApplicationRoot : class
         {
-            return hostBuilder
+            return hostBuilder?
                     .ConfigureHostConfiguration(b =>
                         b.AddAppSettings<TApplicationRoot>()
                     );
@@ -40,7 +40,7 @@ namespace Uno.Extensions.Configuration
             where TApplicationRoot : class
         {
             // This is consistent with HostBuilder, which defaults to Production
-            return hostBuilder
+            return hostBuilder?
                     .ConfigureAppConfiguration((ctx, b) =>
                         b.AddEnvironmentAppSettings<TApplicationRoot>(ctx.HostingEnvironment?.EnvironmentName ?? Environments.Production));
         }
@@ -50,25 +50,25 @@ namespace Uno.Extensions.Configuration
             Func<HostBuilderContext, IConfigurationSection> configSection)
                 where TSettingsOptions : class, new()
         {
-            Func<HostBuilderContext, string> filePath = (hctx) =>
+            static string FilePath(HostBuilderContext hctx)
             {
                 var file = $"{AppSettings.AppSettingsFileName}.{typeof(TSettingsOptions).Name}.json";
 
                 var fileProvider = hctx.HostingEnvironment.ContentRootFileProvider;
                 var fileInfo = fileProvider.GetFileInfo(file);
                 return fileInfo.PhysicalPath;
-            };
+            }
 
             // This is consistent with HostBuilder, which defaults to Production
-            return hostBuilder
+            return hostBuilder?
                 .ConfigureAppConfiguration((ctx, b) =>
                     {
-                        b.AddJsonFile(filePath(ctx), optional: true, reloadOnChange: true);
+                        b.AddJsonFile(FilePath(ctx), optional: true, reloadOnChange: true);
                     })
                     .ConfigureServices((ctx, services) =>
                     {
                         var section = configSection(ctx);
-                        _ = services.ConfigureAsWritable<TSettingsOptions>(section, filePath(ctx));
+                        _ = services.ConfigureAsWritable<TSettingsOptions>(section, FilePath(ctx));
                     }
                 );
         }
@@ -76,7 +76,7 @@ namespace Uno.Extensions.Configuration
         public static IHostBuilder UseConfigurationSectionInApp<TOptions>(this IHostBuilder hostBuilder, string configurationSection)
             where TOptions : class
         {
-            return hostBuilder
+            return hostBuilder?
                 .ConfigureServices((ctx, services) => services.Configure<TOptions>(ctx.Configuration.GetSection(configurationSection)));
         }
     }

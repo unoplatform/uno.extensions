@@ -40,10 +40,10 @@ namespace Uno.Extensions.Configuration
                 File.Exists(physicalPath) ?
                 JsonConvert.DeserializeObject<JObject>(File.ReadAllText(physicalPath)) :
                 new JObject();
-            var sectionObject = jObject.TryGetValue(_section, out JToken section) ?
+            var sectionObject = jObject.TryGetValue(_section, out var section) ?
                 JsonConvert.DeserializeObject<T>(section.ToString()) : (Value ?? new T());
 
-            applyChanges(sectionObject);
+            applyChanges?.Invoke(sectionObject);
 
             jObject[_section] = JObject.Parse(JsonConvert.SerializeObject(sectionObject));
             File.WriteAllText(physicalPath, JsonConvert.SerializeObject(jObject, Formatting.Indented));
