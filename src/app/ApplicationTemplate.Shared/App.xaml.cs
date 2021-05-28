@@ -61,11 +61,11 @@ namespace ApplicationTemplate
             host = UnoHost.CreateDefaultBuilder()
                 .UseEnvironment("Staging")
                 .UseAppSettings<App>()
-                .ConfigureServices((ctx,services)=>services.Configure< SettingsText>(ctx.Configuration.GetSection("CustomSettings")))
+                .UseConfigurationSectionInApp<CustomIntroduction>("CustomSettings")
                 .UseRouting<RouterConfiguration, LaunchMessage>(() => _rootFrame)
                 .Build();
 
-            var settings = host.Services.GetService<IOptions<SettingsText>>();
+            var settings = host.Services.GetService<IOptions<CustomIntroduction>>();
 
 
             this.InitializeComponent();
@@ -174,7 +174,7 @@ namespace ApplicationTemplate
         }
     }
 
-    public class SettingsText
+    public class CustomIntroduction
     {
         public string Introduction { get; set; }
     }
@@ -217,7 +217,7 @@ namespace ApplicationTemplate
 
         public string Introduction { get; }
 
-        public MainPageViewModel(IOptions<SettingsText> settings){
+        public MainPageViewModel(IOptions<CustomIntroduction> settings){
             Introduction = settings.Value.Introduction;
             }
     }

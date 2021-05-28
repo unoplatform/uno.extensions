@@ -206,5 +206,13 @@ namespace Uno.Extensions.Configuration
                 return new WritableOptions<T>(root, options, section.Key, file);
             });
         }
+
+
+        public static IHostBuilder UseConfigurationSectionInApp<TOptions>(this IHostBuilder hostBuilder, string configurationSection)
+            where TOptions : class
+        {
+            return hostBuilder
+                .ConfigureServices((ctx, services) => services.Configure<TOptions>(ctx.Configuration.GetSection(configurationSection)));
+        }
     }
 }
