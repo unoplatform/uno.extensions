@@ -32,6 +32,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Configuratio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation", "..\extensions\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj", "{AF8FD2BD-827D-4324-9F2F-22E44F702448}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BE7D7945-13FA-46B0-8C85-494528E46C8F}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems*{0539d31e-0009-4611-87bc-455bbc58e952}*SharedItemsImports = 5

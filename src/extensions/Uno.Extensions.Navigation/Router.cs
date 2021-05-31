@@ -31,6 +31,7 @@ namespace Uno.Extensions.Navigation
         public IServiceProvider Services { get; }
 
         public Stack<string> NavigationStack { get; } = new Stack<string>();
+
         public Stack<object> NavigationViewModelInstances { get; } = new Stack<object>();
 
         public void Receive(RoutingMessage message)

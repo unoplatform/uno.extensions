@@ -1,4 +1,4 @@
-root = true
+﻿root = true
 
 #############################
 # Core EditorConfig Options #
@@ -212,6 +212,8 @@ dotnet_diagnostic.CS1591.severity = suggestion
 dotnet_diagnostic.CA1033.severity = suggestion
 # CA1010:Collections should implement generic interface
 dotnet_diagnostic.CA1010.severity = suggestion
+# CA1014:Mark assemblies with CLSCompliant
+dotnet_diagnostic.CA1014.severity = none
 # CA1710:Identifiers should have correct suffix
 dotnet_diagnostic.CA1710.severity = suggestion
 # CA2007:Consider calling ConfigureAwait on the awaited task
@@ -316,3 +318,6 @@ dotnet_diagnostic.SA1413.severity = suggestion
 dotnet_diagnostic.CA1062.severity = suggestion
 # CA2227: Collection properties should be read only
 dotnet_diagnostic.CA2227.severity = silent
+
+# SA0001: XML comment analysis disabled
+dotnet_diagnostic.SA0001.severity = none
