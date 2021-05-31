@@ -42,7 +42,7 @@ namespace Uno.Extensions.Navigation
             {
                 NavigationFrame.GoBack();
                 var current = NavigationFrame.Content as Page;
-                if(current is not null && viewModelForPreviousPage is not null)
+                if (current is not null && viewModelForPreviousPage is not null)
                 {
                     current.DataContext = viewModelForPreviousPage;
                 }
@@ -58,7 +58,7 @@ namespace Uno.Extensions.Navigation
 #endif
             {
                 NavigationFrame.BackStack.Clear();
-        });
+            });
         }
     }
 }
