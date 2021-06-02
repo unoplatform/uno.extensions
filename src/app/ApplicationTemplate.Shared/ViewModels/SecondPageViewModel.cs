@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Messages;
 
-namespace ApplicationTemplate
+namespace ApplicationTemplate.ViewModels
 {
     public class SecondPageViewModel : ObservableObject
     {

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using ApplicationTemplate.Views;
+using ApplicationTemplate.ViewModels;
 using Uno.Extensions.Navigation;
 
 namespace ApplicationTemplate

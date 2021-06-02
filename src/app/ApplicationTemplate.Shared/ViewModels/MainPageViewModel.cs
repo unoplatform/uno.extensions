@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Messages;
 
-namespace ApplicationTemplate
+namespace ApplicationTemplate.ViewModels
 {
     public class MainPageViewModel : ObservableValidator
     {

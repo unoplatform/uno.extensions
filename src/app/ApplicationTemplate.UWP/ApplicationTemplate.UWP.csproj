@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ApplicationTemplate.UWP</RootNamespace>
     <AssemblyName>ApplicationTemplate.UWP</AssemblyName>
-    <DefaultLanguage>en-US</DefaultLanguage>
+    <DefaultLanguage>en</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.19041.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
@@ -134,26 +134,11 @@
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm">
-      <Version>7.0.2</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions">
-      <Version>5.0.0</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Logging.Console">
-      <Version>5.0.0</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug">
-      <Version>5.0.0</Version>
-    </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.12</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml">
       <Version>2.5.0</Version>
-    </PackageReference>
-    <PackageReference Include="Uno.Core">
-      <Version>2.3.0</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -165,11 +150,16 @@
       <Project>{57dd1e2f-1860-4e8e-93b0-2483948185a9}</Project>
       <Name>Uno.Extensions.Hosting</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\extensions\Uno.Extensions.Logging\Uno.Extensions.Logging.csproj">
+      <Project>{ba965e09-f957-44f7-9d4f-28db2876218a}</Project>
+      <Name>Uno.Extensions.Logging</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\extensions\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj">
       <Project>{af8fd2bd-827d-4324-9f2f-22e44f702448}</Project>
       <Name>Uno.Extensions.Navigation</Name>
     </ProjectReference>
   </ItemGroup>
+  <Import Project="..\applicationtemplate.targets" />
   <Import Project="..\ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

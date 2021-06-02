@@ -1,9 +1,19 @@
-<linker>
+﻿<linker>
   <assembly fullname="ApplicationTemplate.Wasm" />
   <assembly fullname="Uno.UI" />
-  <assembly fullname="Microsoft.Extensions.Options" />
+    <!--<assembly fullname="Uno.Extensions.Configuration" />
+    <assembly fullname="Uno.Extensions.Logging" />-->
+    <assembly fullname="Uno.Extensions.Hosting" />
+    <assembly fullname="Uno.Extensions.Navigation" />
+    <assembly fullname="Microsoft.Extensions.Options" />
+  <assembly fullname="Microsoft.Extensions.Hosting" />
+    <assembly fullname="Microsoft.Extensions.Logging" />
+    <assembly fullname="Microsoft.Extensions.Logging.Configuration" />
+    <assembly fullname="Microsoft.Extensions.Logging.Console" />
+    <assembly fullname="Microsoft.Extensions.Logging.Debug" />
+    <assembly fullname="Microsoft.Extensions.Logging.EventSource" />
 
-  <assembly fullname="System.Core">
+    <assembly fullname="System.Core">
 	<!-- This is required by JSon.NET and any expression.Compile caller -->
 	<type fullname="System.Linq.Expressions*" />
   </assembly>
