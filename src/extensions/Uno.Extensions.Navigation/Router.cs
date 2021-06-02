@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CommunityToolkit.Mvvm.Messaging;
+using Uno.Extensions.Navigation.Messages;
 
 namespace Uno.Extensions.Navigation
 {

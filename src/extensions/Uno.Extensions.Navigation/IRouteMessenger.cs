@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Navigation
+﻿using Uno.Extensions.Navigation.Messages;
+
+namespace Uno.Extensions.Navigation
 {
     public interface IRouteMessenger
     {

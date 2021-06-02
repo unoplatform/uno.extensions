@@ -1,14 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.ApplicationModel;
-using Windows.ApplicationModel.Activation;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+﻿#pragma warning disable SA1005 // Single line comments should begin with single space
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 //-:cnd:noEmit
 #if WINDOWS_UWP
@@ -26,56 +19,54 @@ using Windows.UI.ViewManagement;
 //+:cnd:noEmit
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 //-:cnd:noEmit
 #endif
 //+:cnd:noEmit
-using Uno.Extensions.Hosting;
-using Uno.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Uno.Extensions.Navigation;
-using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.Input;
-using System.Windows.Input;
+using Uno.Extensions.Configuration;
+using Uno.Extensions.Hosting;
+using Uno.Extensions.Logging;
+using Uno.Extensions.Navigation;
+using Uno.Extensions.Navigation.Messages;
+using Windows.ApplicationModel;
+using Windows.ApplicationModel.Activation;
+#pragma warning restore SA1005 // Single line comments should begin with single space
 
 namespace ApplicationTemplate
 {
-    /// <summary>
-    /// Provides application-specific behavior to supplement the default Application class.
-    /// </summary>
     public sealed partial class App : Application
     {
         private Window _window;
-        private Frame _rootFrame;
-        private IHost host { get; }
+        private Frame _frame;
 
-        /// <summary>
-        /// Initializes the singleton application object.  This is the first line of authored code
-        /// executed, and as such is the logical equivalent of main() or WinMain().
-        /// </summary>
         public App()
         {
-            host = UnoHost.CreateDefaultBuilder()
+            Host = UnoHost.CreateDefaultBuilder()
                 .UseEnvironment("Staging")
                 .UseAppSettings<App>()
-                .UseConfigurationSectionInApp<CustomIntroduction>("CustomSettings")
-                .UseRouting<RouterConfiguration, LaunchMessage>(() => _rootFrame)
+                .UseConfigurationSectionInApp<CustomIntroduction>(nameof(CustomIntroduction))
+                .UseUnoLogging(logBuilder =>
+                {
+                    logBuilder
+                        .SetMinimumLevel(LogLevel.Information)
+                        .XamlLogLevel(LogLevel.Information)
+                        .XamlLayoutLogLevel(LogLevel.Information);
+                })
+                .UseRouting<RouterConfiguration, LaunchMessage>(() => _frame)
                 .Build();
 
-            var settings = host.Services.GetService<IOptions<CustomIntroduction>>();
+            var settings = Host.Services.GetService<IOptions<CustomIntroduction>>();
 
-
-            this.InitializeComponent();
+            InitializeComponent();
 
 #if HAS_UNO || NETFX_CORE
-            this.Suspending += OnSuspending;
+            Suspending += OnSuspending;
 #endif
         }
+
+        private IHost Host { get; }
 
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
@@ -104,42 +95,41 @@ namespace ApplicationTemplate
             _window = Microsoft.UI.Xaml.Window.Current;
 #endif
 
-            var rootFrame = _window.Content as Frame;
+            _frame = _window.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
-            if (rootFrame == null)
+            if (_frame == null)
             {
                 // Create a Frame to act as the navigation context and navigate to the first page
-                rootFrame = new Frame();
-                _rootFrame = rootFrame;
+                _frame = new Frame();
 
-                rootFrame.NavigationFailed += OnNavigationFailed;
+                _frame.NavigationFailed += OnNavigationFailed;
 
 #if WINDOWS_UWP
-                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
+                if (e?.PreviousExecutionState == ApplicationExecutionState.Terminated)
 #else
-                if (e.UWPLaunchActivatedEventArgs.PreviousExecutionState == ApplicationExecutionState.Terminated)
+                if (e?.UWPLaunchActivatedEventArgs?.PreviousExecutionState == ApplicationExecutionState.Terminated)
 #endif
                 {
-                    //TODO: Load state from previously suspended application
+                    // TODO: Load state from previously suspended application
                 }
 
                 // Place the frame in the current Window
-                _window.Content = rootFrame;
+                _window.Content = _frame;
             }
 #if WINDOWS_UWP
-            if (e.PrelaunchActivated == false)
+            if (e?.PrelaunchActivated == false)
 #elif !(NET5_0 && WINDOWS)
-            if (e.UWPLaunchActivatedEventArgs.PrelaunchActivated == false)
+            if (e?.UWPLaunchActivatedEventArgs.PrelaunchActivated == false)
 #endif
             {
-                if (rootFrame.Content == null)
+                if (_frame.Content == null)
                 {
-                    //// When the navigation stack isn't restored navigate to the first page,
-                    //// configuring the new page by passing required information as a navigation
-                    //// parameter
-                    //rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                    // // When the navigation stack isn't restored navigate to the first page,
+                    // // configuring the new page by passing required information as a navigation
+                    // // parameter
+                    // rootFrame.Navigate(typeof(MainPage), e.Arguments);
                 }
                 // Ensure the current window is active
                 _window.Activate();
@@ -147,16 +137,16 @@ namespace ApplicationTemplate
 
             _ = Task.Run(() =>
             {
-                host.Run();
+                Host.Run();
             });
         }
 
         /// <summary>
-        /// Invoked when Navigation to a certain page fails
+        /// Invoked when Navigation to a certain page fails.
         /// </summary>
-        /// <param name="sender">The Frame which failed navigation</param>
-        /// <param name="e">Details about the navigation failure</param>
-        void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
+        /// <param name="sender">The Frame which failed navigation.</param>
+        /// <param name="e">Details about the navigation failure.</param>
+        private void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
             throw new Exception($"Failed to load {e.SourcePageType.FullName}: {e.Exception}");
         }
@@ -171,92 +161,9 @@ namespace ApplicationTemplate
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
-            //TODO: Save application state and stop any background activity
+
+            // TODO: Save application state and stop any background activity
             deferral.Complete();
-        }
-    }
-
-    public class CustomIntroduction
-    {
-        public string Introduction { get; set; }
-    }
-
-    public class RouterConfiguration : IRouteDefinitions
-    {
-        public const string ActionsKey = "action";
-
-        public enum Actions
-        {
-            Login
-        }
-
-        public IReadOnlyDictionary<string, (Type, Type)> Routes { get; } = new Dictionary<string, (Type, Type)>()
-            .RegisterPage<MainPageViewModel, MainPage>("")
-            .RegisterPage<SecondPageViewModel, SecondPage>();
-
-    }
-
-
-    public static class RouteTypeExtensions
-    {
-        public static string AsRoute(this Type routeViewModel)
-        {
-            return routeViewModel.Name.ToLower().Replace("pageviewmodel", "");
-        }
-
-        public static Dictionary<string, (Type, Type)> RegisterPage<TViewModel, TPage>(this Dictionary<string, (Type, Type)> routeDictionary, string path=null)
-        {
-            if(path !=null)
-            {
-                routeDictionary[path] = (typeof(TPage), typeof(TViewModel));
-            }
-            routeDictionary[typeof(TViewModel).AsRoute()] = (typeof(TPage), typeof(TViewModel));
-            return routeDictionary;
-        }
-    }
-
-    public class MainPageViewModel : ObservableValidator
-    {
-
-        public string Introduction { get; }
-
-        private IRouteMessenger Messenger { get; }
-
-        public ICommand GoSecondCommand { get; }
-
-        public MainPageViewModel(
-            IOptions<CustomIntroduction> settings,
-            IRouteMessenger messenger)
-        {
-            Introduction = settings.Value.Introduction;
-            Messenger = messenger;
-            GoSecondCommand = new RelayCommand(GoSecond);
-        }
-
-        public void GoSecond()
-        {
-            Messenger.Send(new RoutingMessage(this, typeof(SecondPageViewModel).AsRoute()));
-        }
-    }
-
-    public class SecondPageViewModel : ObservableObject
-    {
-        public string Title { get; } = "Page 2";
-
-        private IRouteMessenger Messenger { get; }
-
-        public ICommand GoBackCommand { get; }
-
-        public SecondPageViewModel(
-            IRouteMessenger messenger)
-        {
-            Messenger = messenger;
-            GoBackCommand = new RelayCommand(GoBack);
-        }
-
-        public void GoBack()
-        {
-            Messenger.Send(new CloseMessage(this));
         }
     }
 }
