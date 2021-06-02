@@ -1,12 +1,12 @@
 ﻿using System;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 #if WINDOWS_UWP
 using Windows.UI.Xaml.Controls;
 #else
 using Microsoft.UI.Xaml.Controls;
 #endif
+using Uno.Extensions.Navigation.Messages;
 
 namespace Uno.Extensions.Navigation
 {

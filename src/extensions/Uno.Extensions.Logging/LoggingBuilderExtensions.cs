@@ -1,47 +1,9 @@
-﻿using System;
-using System.IO;
-using System.Reflection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Uno.Extensions;
+﻿using Microsoft.Extensions.Logging;
 
 namespace Uno.Extensions.Logging
 {
-    public static class ServiceCollectionExtensions
+    public static class LoggingBuilderExtensions
     {
-        public static IHostBuilder UseUnoLogging(this IHostBuilder hostBuilder)
-        {
-            return hostBuilder.UseUnoLogging(builder => { });
-        }
-
-        public static IHostBuilder UseUnoLogging(this IHostBuilder hostBuilder,
-            Action<ILoggingBuilder> configure)
-        {
-            var factory = LoggerFactory.Create(builder =>
-            {
-#if __WASM__
-                builder.AddProvider(new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider());
-#elif __IOS__
-                builder.AddProvider(new global::Uno.Extensions.Logging.OSLogLoggerProvider());
-#elif NETFX_CORE
-                builder.AddDebug();
-#else
-                builder.AddConsole();
-#endif
-                configure(builder);
-            });
-
-            global::Uno.Extensions.LogExtensionPoint.AmbientLoggerFactory = factory;
-            return hostBuilder;
-        }
-
-        public static ILoggingBuilder MinimumLogLevel(this ILoggingBuilder builder, LogLevel minLogLevel)
-        {
-            // Exclude logs below this level
-            builder.SetMinimumLevel(minLogLevel);
-            return builder;
-        }
-
         public static ILoggingBuilder CoreLogLevel(this ILoggingBuilder builder, LogLevel logLevel)
         {
             // Default filters for Uno Platform namespaces
@@ -59,6 +21,11 @@ namespace Uno.Extensions.Logging
             builder.AddFilter("Microsoft.UI.Xaml.StateTriggerBase", logLevel);
             builder.AddFilter("Microsoft.UI.Xaml.UIElement", logLevel);
             builder.AddFilter("Microsoft.UI.Xaml.FrameworkElement", logLevel);
+            builder.AddFilter("Windows.UI.Xaml", logLevel);
+            builder.AddFilter("Windows.UI.Xaml.VisualStateGroup", logLevel);
+            builder.AddFilter("Windows.UI.Xaml.StateTriggerBase", logLevel);
+            builder.AddFilter("Windows.UI.Xaml.UIElement", logLevel);
+            builder.AddFilter("Windows.UI.Xaml.FrameworkElement", logLevel);
             return builder;
         }
 
@@ -68,6 +35,9 @@ namespace Uno.Extensions.Logging
             builder.AddFilter("Microsoft.UI.Xaml.Controls", logLevel);
             builder.AddFilter("Microsoft.UI.Xaml.Controls.Layouter", logLevel);
             builder.AddFilter("Microsoft.UI.Xaml.Controls.Panel", logLevel);
+            builder.AddFilter("Windows.UI.Xaml.Controls", logLevel);
+            builder.AddFilter("Windows.UI.Xaml.Controls.Layouter", logLevel);
+            builder.AddFilter("Windows.UI.Xaml.Controls.Panel", logLevel);
             return builder;
         }
 
@@ -81,7 +51,7 @@ namespace Uno.Extensions.Logging
         {
             // Binding related messages
             builder.AddFilter("Microsoft.UI.Xaml.Data", logLevel);
-            builder.AddFilter("Microsoft.UI.Xaml.Data", logLevel);
+            builder.AddFilter("Windows.UI.Xaml.Data", logLevel);
             return builder;
         }
 

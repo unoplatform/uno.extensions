@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Hosting;
+using Uno.Extensions.Navigation.Messages;
 
 namespace Uno.Extensions.Navigation
 {
