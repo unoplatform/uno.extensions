@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 
 namespace Uno.Extensions.Hosting
 {
-#if __ANDROID__ || __IOS__
+#if __ANDROID__ || __IOS__ || NETSTANDARD
     /// <summary>
     /// Listens for Ctrl+C or SIGTERM and initiates shutdown - replaces
     /// the default ConsoleLifetime class that's part of the Hosting extensions

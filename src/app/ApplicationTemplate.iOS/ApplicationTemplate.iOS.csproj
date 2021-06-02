@@ -115,15 +115,6 @@
     <BundleResource Include="Resources\Fonts\uno-fluentui-assets.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm">
-      <Version>7.0.2</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions">
-      <Version>5.0.0</Version>
-    </PackageReference>
-    <PackageReference Include="Uno.WinUI" Version="3.8.0-dev.257" />
-    <PackageReference Include="Uno.WinUI.RemoteControl" Version="3.8.0-dev.257" Condition="'$(Configuration)'=='Debug'" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
     <PackageReference Include="Uno.Extensions.Logging.OSLog " Version="1.0.1" />
   </ItemGroup>
   <ItemGroup>
@@ -164,12 +155,18 @@
       <Project>{57dd1e2f-1860-4e8e-93b0-2483948185a9}</Project>
       <Name>Uno.Extensions.Hosting</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\extensions\Uno.Extensions.Logging\Uno.Extensions.Logging.csproj">
+      <Project>{ba965e09-f957-44f7-9d4f-28db2876218a}</Project>
+      <Name>Uno.Extensions.Logging</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\extensions\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj">
       <Project>{af8fd2bd-827d-4324-9f2f-22e44f702448}</Project>
       <Name>Uno.Extensions.Navigation</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="XamarinForms.targets" Condition="'$(Configuration)'=='Debug'" />
+  <Import Project="..\applicationtemplate.targets" />
+  <Import Project="..\uno.winui.targets" />
   <Import Project="..\ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

@@ -19,22 +19,22 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)CustomIntroduction.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)MainPage.xaml.cs">
+    <Compile Include="$(MSBuildThisFileDirectory)Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)MainPageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MainPageViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RouterConfiguration.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)SecondPage.xaml.cs">
+    <Compile Include="$(MSBuildThisFileDirectory)Views\SecondPage.xaml.cs">
       <DependentUpon>SecondPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)SecondPageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\SecondPageViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="$(MSBuildThisFileDirectory)MainPage.xaml">
+    <Page Include="$(MSBuildThisFileDirectory)Views\MainPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="$(MSBuildThisFileDirectory)SecondPage.xaml">
+    <Page Include="$(MSBuildThisFileDirectory)Views\SecondPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -47,5 +47,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)appsettings.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)ViewModels\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Views\" />
   </ItemGroup>
 </Project>

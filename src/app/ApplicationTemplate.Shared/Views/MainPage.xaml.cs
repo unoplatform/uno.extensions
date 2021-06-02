@@ -26,9 +26,11 @@ using Microsoft.UI.Xaml.Navigation;
 //+:cnd:noEmit
 #pragma warning restore SA1005 // Single line comments should begin with single space
 
-namespace ApplicationTemplate
+namespace ApplicationTemplate.Views
 {
+#pragma warning disable CA1010 // Generic interface should also be implemented
     public sealed partial class MainPage
+#pragma warning restore CA1010 // Generic interface should also be implemented
     {
         public MainPage()
         {

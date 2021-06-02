@@ -32,6 +32,7 @@ using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Messages;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using ApplicationTemplate.Views;
 #pragma warning restore SA1005 // Single line comments should begin with single space
 
 namespace ApplicationTemplate
@@ -43,21 +44,29 @@ namespace ApplicationTemplate
 
         public App()
         {
-            Host = UnoHost.CreateDefaultBuilder()
+            Host = UnoHost
+#if __WASM__
+                .CreateDefaultBuilderForWASM()
+#else
+                .CreateDefaultBuilder()
+#endif
                 .UseEnvironment("Staging")
                 .UseAppSettings<App>()
                 .UseConfigurationSectionInApp<CustomIntroduction>(nameof(CustomIntroduction))
                 .UseUnoLogging(logBuilder =>
-                {
-                    logBuilder
-                        .SetMinimumLevel(LogLevel.Information)
-                        .XamlLogLevel(LogLevel.Information)
-                        .XamlLayoutLogLevel(LogLevel.Information);
-                })
+                    {
+                        logBuilder
+                            .SetMinimumLevel(LogLevel.Debug)
+                            .XamlLogLevel(LogLevel.Information)
+                            .XamlLayoutLogLevel(LogLevel.Information);
+                    }
+#if __WASM__
+                    , new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider()
+#endif
+                )
                 .UseRouting<RouterConfiguration, LaunchMessage>(() => _frame)
-                .Build();
-
-            var settings = Host.Services.GetService<IOptions<CustomIntroduction>>();
+                .Build()
+                .EnableUnoLogging();
 
             InitializeComponent();
 
@@ -126,10 +135,10 @@ namespace ApplicationTemplate
             {
                 if (_frame.Content == null)
                 {
-                    // // When the navigation stack isn't restored navigate to the first page,
-                    // // configuring the new page by passing required information as a navigation
-                    // // parameter
-                    // rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                    // When the navigation stack isn't restored navigate to the first page,
+                    // configuring the new page by passing required information as a navigation
+                    // parameter
+                    //_frame.Navigate(typeof(MainPage), e.Arguments);
                 }
                 // Ensure the current window is active
                 _window.Activate();
