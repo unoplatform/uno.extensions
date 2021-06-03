@@ -7,6 +7,7 @@ using ApplicationTemplate.Views;
 using CommunityToolkit.Mvvm.Input;
 using Uno.Extensions.Configuration;
 using Uno.Extensions.Navigation;
+using Uno.Extensions.Navigation.Messages;
 //using Chinook.DynamicMvvm;
 //using Chinook.SectionsNavigation;
 

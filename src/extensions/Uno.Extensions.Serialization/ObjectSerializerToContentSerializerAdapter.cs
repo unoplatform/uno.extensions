@@ -14,7 +14,7 @@ namespace Uno.Extensions.Serialization
     /// </summary>
     public class ObjectSerializerToContentSerializerAdapter : IContentSerializer
     {
-        private static readonly MediaTypeHeaderValue _jsonMediaType = new MediaTypeHeaderValue("application/json") { CharSet = Encoding.UTF8.WebName };
+        private static readonly MediaTypeHeaderValue _jsonMediaType = new ("application/json") { CharSet = Encoding.UTF8.WebName };
 
         private readonly IObjectSerializer _serializer;
 

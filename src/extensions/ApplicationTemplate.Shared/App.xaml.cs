@@ -3,25 +3,21 @@ using System.Threading.Tasks;
 using ApplicationTemplate.Views;
 //using Chinook.SectionsNavigation;
 using Windows.ApplicationModel.Activation;
-using Windows.Foundation;
 using Windows.Graphics.Display;
 using Uno.Extensions.Hosting;
 using Uno.Extensions.Navigation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using CommunityToolkit.Mvvm.Messaging;
-using System.Threading;
-using System.Collections.Generic;
-using Microsoft.Extensions.Configuration;
 using Uno.Extensions.Logging.Serilog;
 using Uno.Extensions.Logging;
-using ApplicationTemplate.Client;
 using ApplicationTemplate.Presentation;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Uno.Extensions.Configuration;
 using ApplicationTemplate.Business;
 using Uno.Extensions.Serialization;
 using Uno.Extensions.Localization;
+using Uno.Extensions.Navigation.Messages;
+using Microsoft.Extensions.Logging;
 
 //-:cnd:noEmit
 #if WINDOWS_UWP
@@ -39,11 +35,6 @@ using Windows.UI.ViewManagement;
 //+:cnd:noEmit
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 //-:cnd:noEmit
 #endif
 //+:cnd:noEmit
@@ -84,7 +75,7 @@ namespace ApplicationTemplate
                 .UseUnoLogging(logBuilder =>
                 {
                     logBuilder
-                    .MinimumLogLevel(Microsoft.Extensions.Logging.LogLevel.Information)
+                    .SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Information)
                     .CoreLogLevel(Microsoft.Extensions.Logging.LogLevel.Information)
                     .XamlBindingLogLevel(Microsoft.Extensions.Logging.LogLevel.Information)
                     .XamlLayoutLogLevel(Microsoft.Extensions.Logging.LogLevel.Information)
@@ -258,7 +249,4 @@ namespace ApplicationTemplate
         //        }
         //#endif
     }
-
-
-
 }

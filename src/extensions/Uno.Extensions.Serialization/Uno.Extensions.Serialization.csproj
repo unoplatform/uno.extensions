@@ -5,11 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!--<PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
-    <PackageReference Include="System.Text.Json" Version="5.0.2" />
-    <PackageReference Include="System.Runtime.Handles" Version="4.3.0" />
-    <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
-    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0" />-->
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="GeneratedSerializers.Json" Version="0.2.0-dev.10" />
     <PackageReference Include="Nventive.Persistence.Reactive" Version="0.2.0-dev.14" />

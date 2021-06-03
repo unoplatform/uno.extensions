@@ -14,6 +14,7 @@ using CommunityToolkit.Mvvm.Input;
 //using MessageDialogService;
 using Microsoft.Extensions.Localization;
 using Uno.Extensions.Navigation;
+using Uno.Extensions.Navigation.Messages;
 using Xamarin.Essentials;
 using Xamarin.Essentials.Interfaces;
 

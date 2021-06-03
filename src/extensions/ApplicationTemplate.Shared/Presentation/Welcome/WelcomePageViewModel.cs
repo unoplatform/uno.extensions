@@ -5,6 +5,7 @@ using ApplicationTemplate.Views;
 using CommunityToolkit.Mvvm.Input;
 using Uno.Extensions.Configuration;
 using Uno.Extensions.Navigation;
+using Uno.Extensions.Navigation.Messages;
 //using Chinook.DynamicMvvm;
 //using Chinook.StackNavigation;
 
@@ -49,10 +50,8 @@ namespace ApplicationTemplate.Presentation
             Messenger.Send(new RoutingMessage(this,typeof(HomePageViewModel).AsRoute() )));
 
         public ICommand NavigateToLoginPage => new RelayCommand(() =>
-            Messenger.Send(
-                new ActionMessage<RouterConfiguration.Actions>(
-                    this, RouterConfiguration.ActionsKey, RouterConfiguration.Actions.Login
-                    )));
+           Messenger.Send(new RoutingMessage(this, typeof(LoginPageViewModel).AsRoute())));
+
 
         public ICommand NavigateToCreateAccountPage => new RelayCommand(() =>
            Messenger.Send(new RoutingMessage(this, typeof(CreateAccountPageViewModel).AsRoute())));
