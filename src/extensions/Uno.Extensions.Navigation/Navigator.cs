@@ -1,4 +1,6 @@
 ﻿using System;
+using Microsoft.Extensions.Logging;
+using Uno.Extensions.Logging;
 #if WINDOWS_UWP
 using Windows.UI.Xaml.Controls;
 #else
@@ -7,26 +9,35 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation
 {
-    public record Navigator : INavigator
+    public record Navigator(ILogger<Navigator> Logger, Func<Frame> NavigationFrameFunc) : INavigator
     {
-        public Frame NavigationFrame { get; }
-
-        public Navigator(Frame navFrame)
+        private Frame _navigationFrame;
+        private Frame NavigationFrame
         {
-            NavigationFrame = navFrame;
+            get
+            {
+                if (_navigationFrame == null)
+                {
+                    _navigationFrame = NavigationFrameFunc();
+                }
+                return _navigationFrame;
+            }
         }
 
         public void Navigate(Type destinationPage, object viewModel = null)
         {
+            Logger.LazyLogDebug(() => $"Dispatching");
 #if !WINUI
             _ = NavigationFrame.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () =>
 #else
             _ = NavigationFrame.DispatcherQueue.TryEnqueue(() =>
 #endif
             {
+                Logger.LazyLogDebug(() => $"Navigating to {destinationPage.Name}");
                 var navResults = NavigationFrame.Navigate(destinationPage);
                 if (navResults && viewModel is not null)
                 {
+                    Logger.LazyLogDebug(() => $"Setting DataContext of type {viewModel.GetType().Name}");
                     (NavigationFrame.Content as Page).DataContext = viewModel;
                 }
             });
@@ -34,16 +45,22 @@ namespace Uno.Extensions.Navigation
 
         public void GoBack(object viewModelForPreviousPage = null)
         {
+            Logger.LazyLogDebug(() => $"Dispatching");
 #if !WINUI
             _ = NavigationFrame.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () =>
 #else
             _ = NavigationFrame.DispatcherQueue.TryEnqueue(() =>
 #endif
             {
+                Logger.LazyLogDebug(() => $"Navigating back to previous page");
                 NavigationFrame.GoBack();
+                Logger.LazyLogDebug(() => $"New page is {NavigationFrame.Content?.GetType()?.Name}");
                 var current = NavigationFrame.Content as Page;
-                if (current is not null && viewModelForPreviousPage is not null)
+                if (current is not null &&
+                    viewModelForPreviousPage is not null &&
+                    current.DataContext != viewModelForPreviousPage)
                 {
+                    Logger.LazyLogDebug(() => $"Restoring DataContext of type {viewModelForPreviousPage.GetType().Name}");
                     current.DataContext = viewModelForPreviousPage;
                 }
             });
@@ -51,12 +68,14 @@ namespace Uno.Extensions.Navigation
 
         public void Clear()
         {
+            Logger.LazyLogDebug(() => $"Dispatching");
 #if !WINUI
             _ = NavigationFrame.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High, () =>
 #else
             _ = NavigationFrame.DispatcherQueue.TryEnqueue(() =>
 #endif
             {
+                Logger.LazyLogDebug(() => $"Clearing backstack of length {NavigationFrame.BackStack.Count}");
                 NavigationFrame.BackStack.Clear();
             });
         }

@@ -17,4 +17,8 @@
   <ItemGroup Condition="'$(IsWinUI)' == 'true'">
     <PackageReference Include="Microsoft.ProjectReunion" Version="0.5.7" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Uno.Extensions.Logging\Uno.Extensions.Logging.csproj" />
+  </ItemGroup>
 </Project>

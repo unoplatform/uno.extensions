@@ -27,7 +27,8 @@ namespace Uno.Extensions.Navigation
             }
 
             return services
-                .AddSingleton<INavigator>(s => new Navigator(navigationFrameLocator()))
+                .AddSingleton<Func<Frame>>(navigationFrameLocator)
+                .AddSingleton<INavigator, Navigator>()
                 .AddSingleton<IMessenger, WeakReferenceMessenger>()
                 .AddSingleton<IRouteMessenger, RouteMessenger>()
                 .AddSingleton<IRouteDefinitions>(def)
