@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using GeneratedSerializers;
-using Nventive.Persistence;
-
 using Microsoft.Extensions.DependencyInjection;
+using Nventive.Persistence;
 
 [assembly: JsonSerializationConfiguration(GenerateOnlyRegisteredTypes = true)]
 
