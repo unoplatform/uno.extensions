@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using GeneratedSerializers;
 using MallardMessageHandlers;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Refit;
 using Uno.Extensions.Serialization;
 
@@ -167,14 +162,5 @@ namespace Uno.Extensions.Http
                 .AddHttpClient(typeof(T).FullName)
                 .AddTypedClient((client, serviceProvider) => RestService.For(client, serviceProvider.GetService<IRequestBuilder<T>>()));
         }
-
-
-    }
-
-    public class EndpointOptions
-    {
-        public string Url { get; set; }
-
-        public bool EnableMock { get; set; }
     }
 }
