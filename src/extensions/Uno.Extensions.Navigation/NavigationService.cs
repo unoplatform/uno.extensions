@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Messages;
 
 namespace Uno.Extensions.Navigation
@@ -14,13 +15,14 @@ namespace Uno.Extensions.Navigation
     {
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            Logger.LogInformation("Starting navigation service");
+            Logger.LazyLogDebug(() => $"Sending {typeof(TMessage).Name} to navigate to first page");
             _ = Messenger.Send<RoutingMessage>(new TMessage());
             return Task.CompletedTask;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
+            Logger.LazyLogDebug(() => $"Stopped");
             return Task.CompletedTask;
         }
     }

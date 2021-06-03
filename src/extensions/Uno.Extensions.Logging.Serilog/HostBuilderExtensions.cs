@@ -3,51 +3,43 @@ using System.IO;
 using System.Reflection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
-using Uno.Extensions;
 
 namespace Uno.Extensions.Logging.Serilog
 {
-    public static class ServiceCollectionExtensions
+    public static class HostBuilderExtensions
     {
         public static IHostBuilder UseSerilog(this IHostBuilder hostBuilder,
             bool consoleLoggingEnabled = false,
-            bool fileLoggineEnabled = false,
-            bool isAppLogging = true)
+            bool fileLoggingEnabled = false)
         {
-            return hostBuilder.UseSerilog(() => consoleLoggingEnabled, () => fileLoggineEnabled, isAppLogging);
+            return hostBuilder.UseSerilog(() => consoleLoggingEnabled, () => fileLoggingEnabled);
         }
 
         public static IHostBuilder UseSerilog(this IHostBuilder hostBuilder,
-            Func<bool> consoleLoggingEnabled = null,
-            Func<bool> fileLoggineEnabled = null,
-            bool isAppLogging = true)
+            Func<bool> consoleLoggingEnabled,
+            Func<bool> fileLoggingEnabled)
         {
-            return hostBuilder.ConfigureLogging((context, loggingBuilder) =>
-            {
-                var loggerConfiguration = new LoggerConfiguration();
+            return hostBuilder
+                    .ConfigureLogging((context, loggingBuilder) =>
+                    {
+                        var loggerConfiguration = new LoggerConfiguration();
 
-                loggerConfiguration.ReadFrom.Configuration(context.Configuration);
+                        loggerConfiguration.ReadFrom.Configuration(context.Configuration);
 
-                if (consoleLoggingEnabled?.Invoke() ?? false)
-                {
-                    AddConsoleLogging(loggerConfiguration);
-                }
+                        if (consoleLoggingEnabled?.Invoke() ?? false)
+                        {
+                            AddConsoleLogging(loggerConfiguration);
+                        }
 
-                if (fileLoggineEnabled?.Invoke() ?? false)
-                {
-                    AddFileLogging(loggerConfiguration, GetLogFilePath(isAppLogging));
-                }
+                        if (fileLoggingEnabled?.Invoke() ?? false)
+                        {
+                            AddFileLogging(loggerConfiguration, GetLogFilePath(context));
+                        }
 
-                var logger = loggerConfiguration.CreateLogger();
+                        var logger = loggerConfiguration.CreateLogger();
 
-                if (isAppLogging)
-                {
-                    // The logs coming from Uno will be sent to the app logger and not the host logger.
-                    LogExtensionPoint.AmbientLoggerFactory.AddSerilog(logger);
-                }
-
-                loggingBuilder.AddSerilog(logger);
-            });
+                        loggingBuilder.AddSerilog(logger);
+                    });
         }
 
         private static LoggerConfiguration AddConsoleLogging(LoggerConfiguration configuration)
@@ -81,13 +73,16 @@ namespace Uno.Extensions.Logging.Serilog
             //+:cnd:noEmit
         }
 
-        private static string GetLogFilePath(bool isAppLogging = true)
+        private static string GetLogFilePath(HostBuilderContext hostBuilderContext)
         {
-            var logDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            var logDirectory = hostBuilderContext.HostingEnvironment.ContentRootPath;
+            if (string.IsNullOrWhiteSpace(logDirectory))
+            {
+                return null;
+            }
+
             var assemblyName = Assembly.GetEntryAssembly()?.FullName ?? "unologging";
-            return isAppLogging
-                ? Path.Combine(logDirectory, $"{assemblyName}.log")
-                : Path.Combine(logDirectory, $"{assemblyName}.host.log");
+            return Path.Combine(logDirectory, $"{assemblyName}.log");
         }
     }
 }

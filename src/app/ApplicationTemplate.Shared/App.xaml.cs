@@ -33,6 +33,7 @@ using Uno.Extensions.Navigation.Messages;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using ApplicationTemplate.Views;
+using Uno.Extensions.Logging.Serilog;
 #pragma warning restore SA1005 // Single line comments should begin with single space
 
 namespace ApplicationTemplate
@@ -64,6 +65,7 @@ namespace ApplicationTemplate
                     , new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider()
 #endif
                 )
+                .UseSerilog(true)
                 .UseRouting<RouterConfiguration, LaunchMessage>(() => _frame)
                 .Build()
                 .EnableUnoLogging();
