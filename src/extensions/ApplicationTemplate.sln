@@ -38,19 +38,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApplicationTemplate", "Appl
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", "{7BDBE6A8-65E4-4837-8B11-A9E7569CC853}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Serialization", "Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj", "{5123670C-9756-4C9E-9844-F4A9C0AEE633}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Serialization", "Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj", "{5123670C-9756-4C9E-9844-F4A9C0AEE633}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Localization", "Uno.Extensions.Localization\Uno.Extensions.Localization.csproj", "{3F8F8B81-03AF-48E8-A901-AB3B14F15B10}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Localization", "Uno.Extensions.Localization\Uno.Extensions.Localization.csproj", "{3F8F8B81-03AF-48E8-A901-AB3B14F15B10}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Http", "Uno.Extensions.Http\Uno.Extensions.Http.csproj", "{29BFC492-B537-4985-9163-649FC56EBF12}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Http", "Uno.Extensions.Http\Uno.Extensions.Http.csproj", "{29BFC492-B537-4985-9163-649FC56EBF12}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems*{1aa13270-f438-4864-9435-54fd806e10ea}*SharedItemsImports = 5
 		ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems*{6279c845-92f8-4333-ab99-3d213163593c}*SharedItemsImports = 13
-		ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems*{7b0dac1f-8261-495b-82d9-6966d34ee672}*SharedItemsImports = 4
-		ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems*{c76e144c-92ad-4b8f-93f4-232d1ccddaf0}*SharedItemsImports = 4
-		ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems*{c8cbff8c-92b4-4e6f-9fae-81ddc20529c2}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -353,8 +350,8 @@ Global
 		{AD3C0A66-450D-4355-B5C4-FDAF0D7746AD}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
 		{AD3C0A66-450D-4355-B5C4-FDAF0D7746AD}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{AD3C0A66-450D-4355-B5C4-FDAF0D7746AD}.Debug|x64.Build.0 = Debug|Any CPU
-		{AD3C0A66-450D-4355-B5C4-FDAF0D7746AD}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{AD3C0A66-450D-4355-B5C4-FDAF0D7746AD}.Debug|x86.Build.0 = Debug|Any CPU
+		{AD3C0A66-450D-4355-B5C4-FDAF0D7746AD}.Debug|x86.ActiveCfg = Debug|x86
+		{AD3C0A66-450D-4355-B5C4-FDAF0D7746AD}.Debug|x86.Build.0 = Debug|x86
 		{AD3C0A66-450D-4355-B5C4-FDAF0D7746AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AD3C0A66-450D-4355-B5C4-FDAF0D7746AD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AD3C0A66-450D-4355-B5C4-FDAF0D7746AD}.Release|ARM.ActiveCfg = Release|Any CPU

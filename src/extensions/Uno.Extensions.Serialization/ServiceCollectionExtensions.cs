@@ -20,7 +20,7 @@ namespace Uno.Extensions.Serialization
         /// <returns><see cref="IServiceCollection"/>.</returns>
         public static IServiceCollection AddSerialization(this IServiceCollection services, Action<Action<Func<ISerializer, ISerializer>>> initialize)
         {
-            initialize(serializerRegistry =>
+            initialize?.Invoke(serializerRegistry =>
             {
                 // If you want to use a custom implementation of ISerializer,
                 // replace this with your implementation.
