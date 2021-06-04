@@ -8,8 +8,11 @@ namespace Uno.Extensions.Logging
     {
         public static IHost EnableUnoLogging(this IHost host)
         {
-            var factory = host.Services.GetService<ILoggerFactory>();
-            global::Uno.Extensions.LogExtensionPoint.AmbientLoggerFactory = factory;
+            var factory = host?.Services?.GetService<ILoggerFactory>();
+            if (factory is not null)
+            {
+                global::Uno.Extensions.LogExtensionPoint.AmbientLoggerFactory = factory;
+            }
             return host;
         }
     }

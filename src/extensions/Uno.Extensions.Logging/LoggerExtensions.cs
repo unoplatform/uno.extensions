@@ -6,18 +6,18 @@ namespace Uno.Extensions.Logging
 {
     public static class LoggerExtensions
     {
-        private static bool? debugLogEnabled;
+        private static bool? _debugLogEnabled;
 
         public static void LazyLogDebug(this ILogger logger, Func<string> message, [CallerMemberName] string callerMethod = null)
         {
-            if (!debugLogEnabled.HasValue)
+            if (!_debugLogEnabled.HasValue)
             {
-                debugLogEnabled = logger.IsEnabled(LogLevel.Debug);
+                _debugLogEnabled = logger?.IsEnabled(LogLevel.Debug);
             }
 
-            if (debugLogEnabled.Value)
+            if (_debugLogEnabled.Value)
             {
-                logger.LogDebug($"{callerMethod} - {message?.Invoke()}");
+                logger?.LogDebug($"{callerMethod} - {message?.Invoke()}");
             }
         }
     }
