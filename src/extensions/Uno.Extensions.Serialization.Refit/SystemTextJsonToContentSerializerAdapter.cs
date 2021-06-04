@@ -6,7 +6,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Refit;
 
-namespace Uno.Extensions.Serialization
+namespace Uno.Extensions.Serialization.Refit
 {
     /// <summary>
     /// This serializer adapter enables usage of the

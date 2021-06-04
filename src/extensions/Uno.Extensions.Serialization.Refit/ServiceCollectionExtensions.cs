@@ -1,5 +1,7 @@
 ﻿using GeneratedSerializers;
 using Microsoft.Extensions.DependencyInjection;
+using Refit;
+using Uno.Extensions.Serialization.Refit;
 
 [assembly: JsonSerializationConfiguration(GenerateOnlyRegisteredTypes = true)]
 
@@ -16,11 +18,16 @@ namespace Uno.Extensions.Serialization
         /// </summary>
         /// <param name="services">Service collection.</param>
         /// <returns><see cref="IServiceCollection"/>.</returns>
-        public static IServiceCollection AddSystemTextJsonSerialization(
-            this IServiceCollection services)
+        public static IServiceCollection AddObjectContentSerializer(this IServiceCollection services)
+        { 
+            return services
+                .AddSingleton<IContentSerializer, ObjectSerializerToContentSerializerAdapter>();
+        }
+
+        public static IServiceCollection AddSystemTextJsonContentSerializer(this IServiceCollection services)
         {
             return services
-                .AddSingleton<IObjectSerializer, SystemTextJsonToObjectSerializerAdapter>();
+                .AddSingleton<IContentSerializer, SystemTextJsonToContentSerializerAdapter>();
         }
     }
 }
