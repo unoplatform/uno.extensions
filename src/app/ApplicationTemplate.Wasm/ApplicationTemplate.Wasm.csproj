@@ -49,6 +49,7 @@
     <ProjectReference Include="..\..\extensions\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
     <ProjectReference Include="..\..\extensions\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
     <ProjectReference Include="..\..\extensions\Uno.Extensions.Logging\Uno.Extensions.Logging.csproj"/>
+    <ProjectReference Include="..\..\extensions\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj"/>
   </ItemGroup>
   <Import Project="..\ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems" Label="Shared" Condition="Exists('..\ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems')" />
 </Project>
