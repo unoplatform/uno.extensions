@@ -17,14 +17,8 @@
 		<PackageReference Include="Microsoft.ProjectReunion" Version="0.5.7" />
 	</ItemGroup>
 
+  <Import Project="..\uno.extensions.targets" />
   <Import Project="..\applicationtemplate.targets" />
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\extensions\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
-    <ProjectReference Include="..\..\extensions\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
-    <ProjectReference Include="..\..\extensions\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
-    <ProjectReference Include="..\..\extensions\Uno.Extensions.Logging\Uno.Extensions.Logging.csproj"/>
-  </ItemGroup>
 	
 	<ItemGroup>
 		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.19041.16" />
