@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using MallardMessageHandlers;
 using Microsoft.Extensions.DependencyInjection;
 using Refit;
-using Uno.Extensions.Serialization;
 
 namespace Uno.Extensions.Http
 {
@@ -60,30 +59,19 @@ namespace Uno.Extensions.Http
 //            return services;
 //        }
 
-        public static IServiceCollection AddMainHandler(this IServiceCollection services)
+        public static IServiceCollection AddNativeHandler(this IServiceCollection services)
         {
             return services.AddTransient<HttpMessageHandler>(s =>
-                //-:cnd:noEmit
 #if __IOS__
-//+:cnd:noEmit
                 new NSUrlSessionHandler()
-//-:cnd:noEmit
 #elif __ANDROID__
-//+:cnd:noEmit
                 new Xamarin.Android.Net.AndroidClientHandler()
-//-:cnd:noEmit
+#elif NETFX_CORE
+                new WinHttpHandler()
 #else
-                //+:cnd:noEmit
                 new HttpClientHandler()
-            //-:cnd:noEmit
 #endif
-            //+:cnd:noEmit
             );
-        }
-
-        public static IServiceCollection AddResponseContentDeserializer(this IServiceCollection services)
-        {
-            return services.AddSingleton<IResponseContentDeserializer, ObjectSerializerToResponseContentDeserializer>();
         }
 
         public static IServiceCollection AddNetworkExceptionHandler(this IServiceCollection services)

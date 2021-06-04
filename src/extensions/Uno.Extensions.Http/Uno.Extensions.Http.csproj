@@ -8,6 +8,10 @@
     <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(IsUWP)' == 'true' or '$(IsWinUI)' == 'true'">
+    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="5.0.0" />
+  </ItemGroup>
+  
   <ItemGroup>
     <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Text.Json" Version="5.0.2" />
@@ -17,10 +21,6 @@
     <PackageReference Include="GeneratedSerializers.Json" Version="0.2.0-dev.10" />
     <PackageReference Include="MallardMessageHandlers" Version="0.2.0-dev.16" />
     <PackageReference Include="Refit" Version="4.7.51" />
-    <PackageReference Include="Uno.SourceGenerationTasks" Version="3.1.0-dev.6"/>
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
+    <PackageReference Include="Uno.SourceGenerationTasks" Version="3.1.0-dev.6" />
   </ItemGroup>
 </Project>
