@@ -1,0 +1,52 @@
+﻿<Project>
+  <ItemGroup>
+    <ProjectReference Include="..\..\extensions\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj">
+      <Project>{4a689ca8-1be3-4d93-8b1a-86a5adc55952}</Project>
+      <Name>Uno.Extensions.Configuration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\extensions\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj">
+      <Project>{57dd1e2f-1860-4e8e-93b0-2483948185a9}</Project>
+      <Name>Uno.Extensions.Hosting</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\extensions\Uno.Extensions.Http\Uno.Extensions.Http.csproj">
+      <Project>{0f799d30-0769-41ca-8125-46c368fdb9dc}</Project>
+      <Name>Uno.Extensions.Http</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\extensions\Uno.Extensions.Localization\Uno.Extensions.Localization.csproj">
+      <Project>{4331c6f4-9ca7-466c-b788-4087a3a41849}</Project>
+      <Name>Uno.Extensions.Localization</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\extensions\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj">
+      <Project>{47d29062-a37d-4972-9b90-68a6c3ba0fea}</Project>
+      <Name>Uno.Extensions.Logging.Serilog</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\extensions\Uno.Extensions.Logging\Uno.Extensions.Logging.csproj">
+      <Project>{ba965e09-f957-44f7-9d4f-28db2876218a}</Project>
+      <Name>Uno.Extensions.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\extensions\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj">
+      <Project>{af8fd2bd-827d-4324-9f2f-22e44f702448}</Project>
+      <Name>Uno.Extensions.Navigation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\extensions\Uno.Extensions.Serialization.Generators\Uno.Extensions.Serialization.Generators.csproj">
+      <Project>{ceeab7a1-53e3-4fc1-aa3e-03c16dbccb24}</Project>
+      <Name>Uno.Extensions.Serialization.Generators</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\extensions\Uno.Extensions.Serialization.Http\Uno.Extensions.Serialization.Http.csproj">
+      <Project>{65b94e8b-1723-44d2-911d-8a0221de4999}</Project>
+      <Name>Uno.Extensions.Serialization.Http</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\extensions\Uno.Extensions.Serialization.Persistence\Uno.Extensions.Serialization.Persistence.csproj">
+      <Project>{11760099-44da-4b30-bdd9-26a6144d880f}</Project>
+      <Name>Uno.Extensions.Serialization.Persistence</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\extensions\Uno.Extensions.Serialization.Refit\Uno.Extensions.Serialization.Refit.csproj">
+      <Project>{a2681b53-af16-4d11-a8ec-64944adb3d4d}</Project>
+      <Name>Uno.Extensions.Serialization.Refit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\extensions\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj">
+      <Project>{16c5d21e-9789-4ad8-9cbc-76a9f1e4a0b7}</Project>
+      <Name>Uno.Extensions.Serialization</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>
