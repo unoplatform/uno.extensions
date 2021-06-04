@@ -10,14 +10,16 @@ namespace Uno.Extensions.Logging.Serilog
     {
         public static IHostBuilder UseSerilog(this IHostBuilder hostBuilder,
             bool consoleLoggingEnabled = false,
-            bool fileLoggingEnabled = false)
+            bool fileLoggingEnabled = false,
+            Action<LoggerConfiguration> configureLogger = null)
         {
-            return hostBuilder.UseSerilog(() => consoleLoggingEnabled, () => fileLoggingEnabled);
+            return hostBuilder.UseSerilog(() => consoleLoggingEnabled, () => fileLoggingEnabled, configureLogger);
         }
 
         public static IHostBuilder UseSerilog(this IHostBuilder hostBuilder,
             Func<bool> consoleLoggingEnabled,
-            Func<bool> fileLoggingEnabled)
+            Func<bool> fileLoggingEnabled,
+            Action<LoggerConfiguration> configureLogger = null)
         {
             return hostBuilder
                     .ConfigureLogging((context, loggingBuilder) =>
@@ -35,6 +37,8 @@ namespace Uno.Extensions.Logging.Serilog
                         {
                             AddFileLogging(loggerConfiguration, GetLogFilePath(context));
                         }
+
+                        configureLogger?.Invoke(loggerConfiguration);
 
                         var logger = loggerConfiguration.CreateLogger();
 
