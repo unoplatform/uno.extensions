@@ -46,24 +46,25 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Logging.Seri
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Serialization", "..\extensions\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj", "{16C5D21E-9789-4AD8-9CBC-76A9F1E4A0B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Serialization.Refit", "..\extensions\Uno.Extensions.Serialization.Refit\Uno.Extensions.Serialization.Refit.csproj", "{A2681B53-AF16-4D11-A8EC-64944ADB3D4D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Serialization.Refit", "..\extensions\Uno.Extensions.Serialization.Refit\Uno.Extensions.Serialization.Refit.csproj", "{A2681B53-AF16-4D11-A8EC-64944ADB3D4D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Serialization.Persistence", "..\extensions\Uno.Extensions.Serialization.Persistence\Uno.Extensions.Serialization.Persistence.csproj", "{11760099-44DA-4B30-BDD9-26A6144D880F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Serialization.Persistence", "..\extensions\Uno.Extensions.Serialization.Persistence\Uno.Extensions.Serialization.Persistence.csproj", "{11760099-44DA-4B30-BDD9-26A6144D880F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Serialization.Generators", "..\extensions\Uno.Extensions.Serialization.Generators\Uno.Extensions.Serialization.Generators.csproj", "{CEEAB7A1-53E3-4FC1-AA3E-03C16DBCCB24}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Serialization.Generators", "..\extensions\Uno.Extensions.Serialization.Generators\Uno.Extensions.Serialization.Generators.csproj", "{CEEAB7A1-53E3-4FC1-AA3E-03C16DBCCB24}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Serialization.Http", "..\extensions\Uno.Extensions.Serialization.Http\Uno.Extensions.Serialization.Http.csproj", "{65B94E8B-1723-44D2-911D-8A0221DE4999}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Serialization.Http", "..\extensions\Uno.Extensions.Serialization.Http\Uno.Extensions.Serialization.Http.csproj", "{65B94E8B-1723-44D2-911D-8A0221DE4999}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Http", "..\extensions\Uno.Extensions.Http\Uno.Extensions.Http.csproj", "{0F799D30-0769-41CA-8125-46C368FDB9DC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Localization", "..\extensions\Uno.Extensions.Localization\Uno.Extensions.Localization.csproj", "{4331C6F4-9CA7-466C-B788-4087A3A41849}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Serialization.Tests", "..\extensions\Uno.Extensions.Serialization.Tests\Uno.Extensions.Serialization.Tests.csproj", "{E00F7318-EE38-4A7A-A0B1-DA6596D1AED1}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems*{2f467e36-eb42-4f67-bd9d-280d0d223257}*SharedItemsImports = 4
-		ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems*{40ea03f7-8a22-4143-b251-79bac3eb13d2}*SharedItemsImports = 5
+		ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems*{1aa13270-f438-4864-9435-54fd806e10ea}*SharedItemsImports = 5
 		ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems*{6279c845-92f8-4333-ab99-3d213163593c}*SharedItemsImports = 13
-		ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems*{e6c91d48-e1e1-49b2-b0b6-94925aef9212}*SharedItemsImports = 4
+		ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems*{e2399068-2d5b-4dcf-96ae-6e4615569511}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -716,6 +717,34 @@ Global
 		{4331C6F4-9CA7-466C-B788-4087A3A41849}.Release|x64.Build.0 = Release|Any CPU
 		{4331C6F4-9CA7-466C-B788-4087A3A41849}.Release|x86.ActiveCfg = Release|Any CPU
 		{4331C6F4-9CA7-466C-B788-4087A3A41849}.Release|x86.Build.0 = Release|Any CPU
+		{E00F7318-EE38-4A7A-A0B1-DA6596D1AED1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E00F7318-EE38-4A7A-A0B1-DA6596D1AED1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E00F7318-EE38-4A7A-A0B1-DA6596D1AED1}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{E00F7318-EE38-4A7A-A0B1-DA6596D1AED1}.Debug|ARM.Build.0 = Debug|Any CPU
+		{E00F7318-EE38-4A7A-A0B1-DA6596D1AED1}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{E00F7318-EE38-4A7A-A0B1-DA6596D1AED1}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{E00F7318-EE38-4A7A-A0B1-DA6596D1AED1}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{E00F7318-EE38-4A7A-A0B1-DA6596D1AED1}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{E00F7318-EE38-4A7A-A0B1-DA6596D1AED1}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{E00F7318-EE38-4A7A-A0B1-DA6596D1AED1}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{E00F7318-EE38-4A7A-A0B1-DA6596D1AED1}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E00F7318-EE38-4A7A-A0B1-DA6596D1AED1}.Debug|x64.Build.0 = Debug|Any CPU
+		{E00F7318-EE38-4A7A-A0B1-DA6596D1AED1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E00F7318-EE38-4A7A-A0B1-DA6596D1AED1}.Debug|x86.Build.0 = Debug|Any CPU
+		{E00F7318-EE38-4A7A-A0B1-DA6596D1AED1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E00F7318-EE38-4A7A-A0B1-DA6596D1AED1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E00F7318-EE38-4A7A-A0B1-DA6596D1AED1}.Release|ARM.ActiveCfg = Release|Any CPU
+		{E00F7318-EE38-4A7A-A0B1-DA6596D1AED1}.Release|ARM.Build.0 = Release|Any CPU
+		{E00F7318-EE38-4A7A-A0B1-DA6596D1AED1}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{E00F7318-EE38-4A7A-A0B1-DA6596D1AED1}.Release|ARM64.Build.0 = Release|Any CPU
+		{E00F7318-EE38-4A7A-A0B1-DA6596D1AED1}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{E00F7318-EE38-4A7A-A0B1-DA6596D1AED1}.Release|iPhone.Build.0 = Release|Any CPU
+		{E00F7318-EE38-4A7A-A0B1-DA6596D1AED1}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{E00F7318-EE38-4A7A-A0B1-DA6596D1AED1}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{E00F7318-EE38-4A7A-A0B1-DA6596D1AED1}.Release|x64.ActiveCfg = Release|Any CPU
+		{E00F7318-EE38-4A7A-A0B1-DA6596D1AED1}.Release|x64.Build.0 = Release|Any CPU
+		{E00F7318-EE38-4A7A-A0B1-DA6596D1AED1}.Release|x86.ActiveCfg = Release|Any CPU
+		{E00F7318-EE38-4A7A-A0B1-DA6596D1AED1}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -733,6 +762,7 @@ Global
 		{65B94E8B-1723-44D2-911D-8A0221DE4999} = {6035DB7C-59AB-4DE9-BC8A-AA04C1D994C3}
 		{0F799D30-0769-41CA-8125-46C368FDB9DC} = {6035DB7C-59AB-4DE9-BC8A-AA04C1D994C3}
 		{4331C6F4-9CA7-466C-B788-4087A3A41849} = {6035DB7C-59AB-4DE9-BC8A-AA04C1D994C3}
+		{E00F7318-EE38-4A7A-A0B1-DA6596D1AED1} = {6035DB7C-59AB-4DE9-BC8A-AA04C1D994C3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C7433AE2-B1A0-4C1A-887E-5CAA7AAF67A6}

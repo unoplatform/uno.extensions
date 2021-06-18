@@ -1,8 +1,5 @@
-﻿using GeneratedSerializers;
-using MallardMessageHandlers;
+﻿using MallardMessageHandlers;
 using Microsoft.Extensions.DependencyInjection;
-
-[assembly: JsonSerializationConfiguration(GenerateOnlyRegisteredTypes = true)]
 
 namespace Uno.Extensions.Serialization
 {
@@ -20,7 +17,7 @@ namespace Uno.Extensions.Serialization
         public static IServiceCollection AddResponseObjectDeserializer(this IServiceCollection services)
         { 
             return services
-                .AddSingleton<IResponseContentDeserializer, ObjectSerializerToResponseContentDeserializer>();
+                .AddSingleton<IResponseContentDeserializer, StreamSerializerToResponseContentDeserializer>();
         }
     }
 }

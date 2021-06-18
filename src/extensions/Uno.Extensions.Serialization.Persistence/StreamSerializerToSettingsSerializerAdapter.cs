@@ -1,14 +1,13 @@
 ﻿using System;
-using GeneratedSerializers;
 using Nventive.Persistence;
 
 namespace Uno.Extensions.Serialization
 {
-    public class ObjectSerializerToSettingsSerializerAdapter : ISettingsSerializer
+    public class StreamSerializerToSettingsSerializerAdapter : ISettingsSerializer
     {
-        private readonly IObjectSerializer _objectSerializer;
+        private readonly IStreamSerializer _objectSerializer;
 
-        public ObjectSerializerToSettingsSerializerAdapter(IObjectSerializer objectSerializer)
+        public StreamSerializerToSettingsSerializerAdapter(IStreamSerializer objectSerializer)
         {
             _objectSerializer = objectSerializer ?? throw new ArgumentNullException(nameof(objectSerializer));
         }
