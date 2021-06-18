@@ -3,7 +3,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using GeneratedSerializers;
 using Refit;
 
 namespace Uno.Extensions.Serialization.Refit
@@ -12,13 +11,13 @@ namespace Uno.Extensions.Serialization.Refit
     /// This serializer adapter enables usage of the
     /// static serializers with Refit.
     /// </summary>
-    public class ObjectSerializerToContentSerializerAdapter : IContentSerializer
+    public class StreamSerializerToContentSerializerAdapter : IContentSerializer
     {
         private static readonly MediaTypeHeaderValue _jsonMediaType = new ("application/json") { CharSet = Encoding.UTF8.WebName };
 
-        private readonly IObjectSerializer _serializer;
+        private readonly IStreamSerializer _serializer;
 
-        public ObjectSerializerToContentSerializerAdapter(IObjectSerializer serializer)
+        public StreamSerializerToContentSerializerAdapter(IStreamSerializer serializer)
         {
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
         }
@@ -32,7 +31,7 @@ namespace Uno.Extensions.Serialization.Refit
 
             using (var stream = await content.ReadAsStreamAsync())
             {
-                return (T)_serializer.FromStream(stream, typeof(T));
+                return _serializer.FromStream<T>(stream);
             }
         }
 

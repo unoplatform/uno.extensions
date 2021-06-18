@@ -1,7 +1,4 @@
-﻿using GeneratedSerializers;
-using Microsoft.Extensions.DependencyInjection;
-
-[assembly: JsonSerializationConfiguration(GenerateOnlyRegisteredTypes = true)]
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace Uno.Extensions.Serialization
 {
@@ -20,7 +17,7 @@ namespace Uno.Extensions.Serialization
             this IServiceCollection services)
         {
             return services
-                .AddSingleton<IObjectSerializer, SystemTextJsonToObjectSerializerAdapter>();
+                .AddSingleton<IStreamSerializer, SystemTextJsonStreamSerializer>();
         }
     }
 }

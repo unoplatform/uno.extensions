@@ -2,16 +2,15 @@
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using GeneratedSerializers;
 using MallardMessageHandlers;
 
 namespace Uno.Extensions.Serialization
 {
-    public class ObjectSerializerToResponseContentDeserializer : IResponseContentDeserializer
+    public class StreamSerializerToResponseContentDeserializer : IResponseContentDeserializer
     {
-        private readonly IObjectSerializer _objectSerializer;
+        private readonly IStreamSerializer _objectSerializer;
 
-        public ObjectSerializerToResponseContentDeserializer(IObjectSerializer objectSerializer)
+        public StreamSerializerToResponseContentDeserializer(IStreamSerializer objectSerializer)
         {
             _objectSerializer = objectSerializer ?? throw new ArgumentNullException(nameof(objectSerializer));
         }
@@ -25,7 +24,7 @@ namespace Uno.Extensions.Serialization
 
             using (var stream = await content.ReadAsStreamAsync())
             {
-                return (TResponse)_objectSerializer.FromStream(stream, typeof(TResponse));
+                return _objectSerializer.FromStream<TResponse>(stream);
             }
         }
     }

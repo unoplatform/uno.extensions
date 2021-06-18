@@ -1,8 +1,5 @@
-﻿using GeneratedSerializers;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Nventive.Persistence;
-
-[assembly: JsonSerializationConfiguration(GenerateOnlyRegisteredTypes = true)]
 
 namespace Uno.Extensions.Serialization
 {
@@ -20,7 +17,7 @@ namespace Uno.Extensions.Serialization
         public static IServiceCollection AddSettingsSerializer(this IServiceCollection services)
         { 
             return services
-                .AddSingleton<ISettingsSerializer, ObjectSerializerToSettingsSerializerAdapter>();
+                .AddSingleton<ISettingsSerializer, StreamSerializerToSettingsSerializerAdapter>();
         }
     }
 }
