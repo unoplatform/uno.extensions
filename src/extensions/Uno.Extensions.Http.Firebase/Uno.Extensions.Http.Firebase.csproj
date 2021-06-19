@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="MSBuild.Sdk.Extras">
+  <PropertyGroup>
+    <TargetFrameworks>monoandroid10.0;monoandroid11.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(IsXamarin)' == 'true' or '$(IsUWP)' == 'true'">
+    <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(IsUWP)' == 'true' or '$(IsWinUI)' == 'true'">
+    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
+
+      <PackageReference Include="Xamarin.Firebase.Core" Version="119.0.0" />
+    <PackageReference Include="Xamarin.Firebase.Crashlytics" Version="118.0.1 " />
+    <PackageReference Include="Xamarin.Firebase.Analytics" Version="119.0.0 " />
+    <PackageReference Include="Xamarin.Firebase.Common" Version="120.0.0" />
+    <PackageReference Include="Xamarin.Firebase.Iid" Version="121.1.0" />
+    <PackageReference Include="Xamarin.Firebase.Perf" Version="120.0.1" />
+  </ItemGroup>
+
+</Project>
