@@ -32,7 +32,7 @@ namespace Uno.Extensions.Configuration
 
         public T Get(string name) => _options.Get(name);
 
-        public void Update(Action<T> applyChanges)
+        public void Update(Func<T, T> applyChanges)
         {
             var physicalPath = _file;
 
@@ -43,7 +43,7 @@ namespace Uno.Extensions.Configuration
             var sectionObject = jObject.TryGetValue(_section, out var section) ?
                 JsonConvert.DeserializeObject<T>(section.ToString()) : (Value ?? new T());
 
-            applyChanges?.Invoke(sectionObject);
+            sectionObject = applyChanges?.Invoke(sectionObject);
 
             jObject[_section] = JObject.Parse(JsonConvert.SerializeObject(sectionObject));
             File.WriteAllText(physicalPath, JsonConvert.SerializeObject(jObject, Formatting.Indented));

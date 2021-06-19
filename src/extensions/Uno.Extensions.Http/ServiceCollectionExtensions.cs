@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using MallardMessageHandlers;
 using Microsoft.Extensions.DependencyInjection;
-using Refit;
 
 namespace Uno.Extensions.Http
 {
@@ -88,29 +87,12 @@ namespace Uno.Extensions.Http
                 .AddTransient<ExceptionHubHandler>();
         }
 
-        //public static IServiceCollection AddAuthenticationTokenHandler(this IServiceCollection services)
-        //{
-        //    return services
-        //        .AddSingleton<IAuthenticationTokenProvider<AuthenticationData>>(s => s.GetRequiredService<IAuthenticationService>() as AuthenticationService)
-        //        .AddTransient<AuthenticationTokenHandler<AuthenticationData>>();
-        //}
-
-#if (IncludeFirebaseAnalytics)
-        private static IServiceCollection AddFirebaseHandler(this IServiceCollection services)
+        public static IServiceCollection AddAuthenticationTokenHandler(this IServiceCollection services)
         {
-//-:cnd:noEmit
-#if __ANDROID__
-//+:cnd:noEmit
-            return services.AddTransient<FirebasePerformanceHandler>();
-//-:cnd:noEmit
-#else
-//+:cnd:noEmit
-            return services;
-//-:cnd:noEmit
-#endif
-//+:cnd:noEmit
+            return services
+                .AddSingleton<IAuthenticationTokenProvider<AuthenticationData>>(s => s.GetRequiredService<IAuthenticationService>() as AuthenticationService)
+                .AddTransient<AuthenticationTokenHandler<AuthenticationData>>();
         }
-#endif
 
         public static Task<bool> GetIsNetworkAvailable(CancellationToken ct)
         {
@@ -132,23 +114,6 @@ namespace Uno.Extensions.Http
             // TODO #172779: Looks like our UserAgent is not of a valid format.
             // TODO #183437: Find alternative for UserAgent.
             // client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", serviceProvider.GetRequiredService<IEnvironmentService>().UserAgent);
-        }
-
-        /// <summary>
-        /// Adds a Refit client to the service collection.
-        /// </summary>
-        /// <typeparam name="T">Type of the Refit interface</typeparam>
-        /// <param name="services">Service collection</param>
-        /// <param name="settings">Optional. Settings to configure the instance with</param>
-        /// <returns>Updated IHttpClientBuilder</returns>
-        public static IHttpClientBuilder AddRefitHttpClient<T>(this IServiceCollection services, Func<IServiceProvider, RefitSettings> settings = null)
-            where T : class
-        {
-            services.AddSingleton(serviceProvider => RequestBuilder.ForType<T>(settings?.Invoke(serviceProvider)));
-
-            return services
-                .AddHttpClient(typeof(T).FullName)
-                .AddTypedClient((client, serviceProvider) => RestService.For(client, serviceProvider.GetService<IRequestBuilder<T>>()));
         }
     }
 }

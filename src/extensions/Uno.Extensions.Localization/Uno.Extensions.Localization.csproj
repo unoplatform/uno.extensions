@@ -11,11 +11,6 @@
     <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
     <PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0" />-->
     <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="5.0.0" />
-    <PackageReference Include="Uno.SourceGenerationTasks">
-      <Version>3.1.0-dev.6</Version>
-    </PackageReference>
-
-
   </ItemGroup>
   <ItemGroup Condition="'$(IsWinUI)' != 'true' and '$(IsUWP)' != 'true'">
     <PackageReference Include="Uno.WinUI" Version="3.8.0-dev.169" />
