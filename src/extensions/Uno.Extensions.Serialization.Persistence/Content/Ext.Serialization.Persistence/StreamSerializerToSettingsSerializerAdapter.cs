@@ -1,7 +1,7 @@
 ﻿using System;
 using Nventive.Persistence;
 
-namespace Uno.Extensions.Serialization
+namespace Uno.Extensions.Serialization.Persistence
 {
     public class StreamSerializerToSettingsSerializerAdapter : ISettingsSerializer
     {

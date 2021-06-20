@@ -2,7 +2,7 @@
 using System.IO;
 using GeneratedSerializers;
 
-namespace Uno.Extensions.Serialization
+namespace Uno.Extensions.Serialization.Generators
 {
     public class GeneratedStreamSerializer : IStreamSerializer
     {

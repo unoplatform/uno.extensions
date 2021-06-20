@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MallardMessageHandlers;
 
-namespace Uno.Extensions.Serialization
+namespace Uno.Extensions.Serialization.Http
 {
     public class StreamSerializerToResponseContentDeserializer : IResponseContentDeserializer
     {
