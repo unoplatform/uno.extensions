@@ -1,8 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Refit;
-using Uno.Extensions.Serialization.Refit;
+﻿using MallardMessageHandlers;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Uno.Extensions.Serialization
+namespace Uno.Extensions.Serialization.Http
 {
     /// <summary>
     /// This class is used for serialization configuration.
@@ -15,10 +14,10 @@ namespace Uno.Extensions.Serialization
         /// </summary>
         /// <param name="services">Service collection.</param>
         /// <returns><see cref="IServiceCollection"/>.</returns>
-        public static IServiceCollection AddObjectContentSerializer(this IServiceCollection services)
+        public static IServiceCollection AddResponseObjectDeserializer(this IServiceCollection services)
         { 
             return services
-                .AddSingleton<IContentSerializer, StreamSerializerToContentSerializerAdapter>();
+                .AddSingleton<IResponseContentDeserializer, StreamSerializerToResponseContentDeserializer>();
         }
     }
 }

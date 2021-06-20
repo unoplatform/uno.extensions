@@ -10,6 +10,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
+    <PackageReference Include="Uno.Extensions.Serialization" Version="1.0.0" />
   </ItemGroup>
 </Project>

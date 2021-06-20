@@ -23,6 +23,6 @@
     <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.19041.16" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
+    <PackageReference Include="Uno.Extensions.Configuration" Version="1.0.0" />
   </ItemGroup>
 </Project>

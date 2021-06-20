@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Refit;
 
-namespace Uno.Extensions.Http
+namespace Uno.Extensions.Http.Refit
 {
     public static class ServiceCollectionExtensions
     {

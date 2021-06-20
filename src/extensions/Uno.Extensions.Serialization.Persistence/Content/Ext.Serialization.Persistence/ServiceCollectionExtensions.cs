@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Nventive.Persistence;
 
-namespace Uno.Extensions.Serialization
+namespace Uno.Extensions.Serialization.Persistence
 {
     /// <summary>
     /// This class is used for serialization configuration.

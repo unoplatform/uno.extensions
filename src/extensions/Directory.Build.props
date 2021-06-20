@@ -1,6 +1,11 @@
 ﻿<Project>
 <PropertyGroup>
-    <LangVersion>9.0</LangVersion>
+  <IncludeContentInPack>true</IncludeContentInPack>
+
+  <!-- This project does not create any binary -->
+  <IncludeBuildOutput>false</IncludeBuildOutput>
+
+  <LangVersion>9.0</LangVersion>
     <IsWinUI>false</IsWinUI>
     <IsUWP>false</IsUWP>
     <IsXamarin>false</IsXamarin>
@@ -72,6 +77,14 @@
   <PropertyGroup>
   <AnalysisMode>AllEnabledByDefault</AnalysisMode>
 </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="Content\**\*.cs">
+      <!-- Ensure that the content's build action in the target project is Compile -->
+      <BuildAction>Compile</BuildAction>
+    </Content>
+  </ItemGroup>
+
 
   <ItemGroup>
     <AdditionalFiles Include="..\..\..\stylecop.json" />
