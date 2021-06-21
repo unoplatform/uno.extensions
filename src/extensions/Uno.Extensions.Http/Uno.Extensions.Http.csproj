@@ -15,10 +15,14 @@
   <ItemGroup>
     <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Text.Json" Version="5.0.2" />
-    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.7.0" />
     <PackageReference Include="System.Reactive" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
     <PackageReference Include="MallardMessageHandlers" Version="0.2.0-dev.16" />
     <PackageReference Include="Uno.Extensions.Configuration" Version="1.0.0" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Update="Uno.Core" Version="2.4.0" />
   </ItemGroup>
 </Project>

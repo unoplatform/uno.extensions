@@ -23,4 +23,8 @@
     <PackageReference Include="Xamarin.Firebase.Perf" Version="120.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Update="Uno.Core" Version="2.4.0" />
+  </ItemGroup>
+
 </Project>

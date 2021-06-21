@@ -1,15 +1,16 @@
 ﻿<Project>
-<PropertyGroup>
-  <IncludeContentInPack>true</IncludeContentInPack>
+  <PropertyGroup>
+    <IncludeContentInPack>true</IncludeContentInPack>
 
-  <!-- This project does not create any binary -->
-  <IncludeBuildOutput>false</IncludeBuildOutput>
+    <!-- This project does not create any binary -->
+    <IncludeBuildOutput>false</IncludeBuildOutput>
 
-  <LangVersion>9.0</LangVersion>
+    <LangVersion>9.0</LangVersion>
     <IsWinUI>false</IsWinUI>
     <IsUWP>false</IsUWP>
     <IsXamarin>false</IsXamarin>
     <IsIOS>false</IsIOS>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <PropertyGroup Condition="$(TargetFramework.StartsWith('netstandard'))">
     <DefineConstants>$(DefineConstants);NETSTANDARD;PORTABLE</DefineConstants>
@@ -56,15 +57,19 @@
     <IsWinUI>true</IsWinUI>
   </PropertyGroup>
 
-    <ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
-    <PackageReference Include="Uno.Core" Version="2.4.0-dev.4" />
+    <PackageReference Include="Uno.Core" Version="2.4.0" />
   </ItemGroup>
 
 
-    <ItemGroup>
+  <ItemGroup  Condition="$(TargetFramework.StartsWith('uap'))">
+    <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform" Version="6.2.12" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
@@ -75,8 +80,8 @@
     </PackageReference>
   </ItemGroup>
   <PropertyGroup>
-  <AnalysisMode>AllEnabledByDefault</AnalysisMode>
-</PropertyGroup>
+    <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+  </PropertyGroup>
 
   <ItemGroup>
     <Content Include="Content\**\*.cs">
@@ -91,7 +96,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-		<!-- Forces Uno's XamlFileGenerator to write error when XAML is invalid-->
-		<ShouldWriteErrorOnInvalidXaml>True</ShouldWriteErrorOnInvalidXaml>
-	</PropertyGroup>
+    <!-- Forces Uno's XamlFileGenerator to write error when XAML is invalid-->
+    <ShouldWriteErrorOnInvalidXaml>True</ShouldWriteErrorOnInvalidXaml>
+  </PropertyGroup>
 </Project>

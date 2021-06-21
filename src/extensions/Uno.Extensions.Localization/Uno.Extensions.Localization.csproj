@@ -10,10 +10,10 @@
     <PackageReference Include="System.Runtime.Handles" Version="4.3.0" />
     <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
     <PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0" />-->
-    <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="5.0.7" />
   </ItemGroup>
   <ItemGroup Condition="'$(IsWinUI)' != 'true' and '$(IsUWP)' != 'true'">
-    <PackageReference Include="Uno.WinUI" Version="3.8.0-dev.169" />
+    <PackageReference Include="Uno.WinUI" Version="3.8.6" />
   </ItemGroup>
   <ItemGroup Condition="'$(IsWinUI)' == 'true'">
     <PackageReference Include="Microsoft.ProjectReunion" Version="0.5.7" />
@@ -24,5 +24,8 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Uno.Extensions.Configuration" Version="1.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="Uno.Core" Version="2.4.0" />
   </ItemGroup>
 </Project>

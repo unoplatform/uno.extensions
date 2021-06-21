@@ -1,10 +1,6 @@
 ﻿<linker>
   <assembly fullname="ApplicationTemplate.Wasm" />
   <assembly fullname="Uno.UI" />
-    <!--<assembly fullname="Uno.Extensions.Configuration" />
-    <assembly fullname="Uno.Extensions.Logging" />-->
-    <assembly fullname="Uno.Extensions.Hosting" />
-    <assembly fullname="Uno.Extensions.Navigation" />
     <assembly fullname="Microsoft.Extensions.Options" />
   <assembly fullname="Microsoft.Extensions.Hosting" />
     <assembly fullname="Microsoft.Extensions.Logging" />

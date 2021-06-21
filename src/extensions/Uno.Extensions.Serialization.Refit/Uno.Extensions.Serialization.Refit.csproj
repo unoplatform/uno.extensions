@@ -5,10 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Refit" Version="4.7.51" />
+    <PackageReference Include="Refit" Version="6.0.38" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
+    <PackageReference Include="Uno.Extensions.Serialization" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Uno.Core" Version="2.4.0" />
   </ItemGroup>
 </Project>
