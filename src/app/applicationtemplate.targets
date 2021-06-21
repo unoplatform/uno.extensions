@@ -1,9 +1,12 @@
 ﻿<Project>
+  <PropertyGroup>
+    <LangVersion>9.0</LangVersion>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="7.0.2" />
-    <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="5.0.7" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
-    <PackageReference Include="Uno.Core" Version="2.4.0-dev.4" />
+    <PackageReference Include="Uno.Core" Version="2.4.0" />
   </ItemGroup>
 </Project>

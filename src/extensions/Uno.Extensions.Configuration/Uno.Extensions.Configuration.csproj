@@ -6,4 +6,7 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="Uno.Core" Version="2.4.0" />
+  </ItemGroup>
 </Project>

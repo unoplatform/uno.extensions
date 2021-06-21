@@ -6,10 +6,14 @@
 
   <ItemGroup>
     <PackageReference Include="GeneratedSerializers.Json" Version="0.2.0-dev.10" />
-    <PackageReference Include="Uno.SourceGenerationTasks" Version="3.1.0-dev.6" />
+    <PackageReference Include="Uno.SourceGenerationTasks" Version="3.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Uno.Extensions.Serialization" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Uno.Core" Version="2.4.0" />
   </ItemGroup>
 </Project>

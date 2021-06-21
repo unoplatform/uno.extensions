@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Refit;
 
@@ -11,7 +13,7 @@ namespace Uno.Extensions.Serialization.Refit
     /// This serializer adapter enables usage of the
     /// static serializers with Refit.
     /// </summary>
-    public class StreamSerializerToContentSerializerAdapter : IContentSerializer
+    public class StreamSerializerToContentSerializerAdapter : IHttpContentSerializer
     {
         private static readonly MediaTypeHeaderValue _jsonMediaType = new ("application/json") { CharSet = Encoding.UTF8.WebName };
 
@@ -35,13 +37,35 @@ namespace Uno.Extensions.Serialization.Refit
             }
         }
 
-        public Task<HttpContent> SerializeAsync<T>(T item)
+        public async Task<T?> FromHttpContentAsync<T>(HttpContent content, CancellationToken cancellationToken = default)
+        {
+            if (content is null)
+            {
+                throw new ArgumentNullException(nameof(content));
+            }
+
+#if WINUI
+            using (var stream = await content.ReadAsStreamAsync(cancellationToken))
+#else
+            using (var stream = await content.ReadAsStreamAsync())
+#endif
+            {
+                return _serializer.FromStream<T>(stream);
+            }
+        }
+
+        public string GetFieldNameForProperty(PropertyInfo propertyInfo)
+        {
+            return propertyInfo.Name;
+        }
+
+        public HttpContent ToHttpContent<T>(T item)
         {
             var stream = _serializer.ToStream(item, item.GetType());
             var content = new StreamContent(stream);
             content.Headers.ContentType = _jsonMediaType;
 
-            return Task.FromResult<HttpContent>(content);
+            return content;
         }
     }
 }

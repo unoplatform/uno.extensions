@@ -12,7 +12,7 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="7.0.2" />
   </ItemGroup>
   <ItemGroup Condition="'$(IsWinUI)' != 'true' and '$(IsUWP)' != 'true'">
-    <PackageReference Include="Uno.WinUI" Version="3.8.0-dev.302" />
+    <PackageReference Include="Uno.WinUI" Version="3.8.6" />
   </ItemGroup>
   <ItemGroup Condition="'$(IsWinUI)' == 'true'">
     <PackageReference Include="Microsoft.ProjectReunion" Version="0.5.7" />
@@ -20,5 +20,9 @@
 
   <ItemGroup>
     <PackageReference Include="Uno.Extensions.Logging" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Uno.Core" Version="2.4.0" />
   </ItemGroup>
 </Project>

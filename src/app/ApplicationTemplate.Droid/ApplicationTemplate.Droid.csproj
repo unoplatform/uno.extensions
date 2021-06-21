@@ -17,21 +17,26 @@
     <AndroidUseAapt2>true</AndroidUseAapt2>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <AndroidUseLatestPlatformSdk>False</AndroidUseLatestPlatformSdk>
-    <TargetFrameworkVersion>v10.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v11.0.99</TargetFrameworkVersion>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <AndroidUseIntermediateDesignerFile>True</AndroidUseIntermediateDesignerFile>
     <ResourcesDirectory>..\ApplicationTemplate.Shared\Strings</ResourcesDirectory>
+    <LangVersion>9.0</LangVersion>
+    <DefineConstants>__ANDROID__</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>$(DefineConstants);DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidUseSharedRuntime>True</AndroidUseSharedRuntime>
     <AndroidLinkMode>None</AndroidLinkMode>
+    <MandroidI18n />
+    <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
+    <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>portable</DebugType>
@@ -39,7 +44,7 @@
     <AndroidManagedSymbols>true</AndroidManagedSymbols>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>$(DefineConstants);TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
@@ -60,7 +65,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="GeneratedSerializers.Json">
+      <Version>0.2.0-dev.10</Version>
+    </PackageReference>
+    <PackageReference Include="MallardMessageHandlers">
+      <Version>0.2.0-dev.16</Version>
+    </PackageReference>
     <PackageReference Include="Uno.UniversalImageLoader" Version="1.9.33" />
+    <PackageReference Include="Xamarin.Firebase.Core" Version="119.0.0" />
+    <PackageReference Include="Xamarin.Firebase.Crashlytics" Version="118.0.1 " />
+    <PackageReference Include="Xamarin.Firebase.Analytics" Version="119.0.0 " />
+    <PackageReference Include="Xamarin.Firebase.Common" Version="120.0.0" />
+    <PackageReference Include="Xamarin.Firebase.Iid" Version="121.1.0" />
+    <PackageReference Include="Xamarin.Firebase.Perf" Version="120.0.1" />
+    <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+    <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
+    <PackageReference Include="System.Text.Json" Version="5.0.2" />
+    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.7.0" />
+    <PackageReference Include="System.Reactive" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />
@@ -84,7 +108,6 @@
   <ItemGroup>
     <AndroidResource Include="Resources\values\Styles.xml" />
   </ItemGroup>
-
   <Import Project="..\uno.extensions.targets" />
   <Import Project="..\applicationtemplate.targets" />
   <Import Project="..\uno.winui.targets" />
