@@ -12,6 +12,7 @@ using ApplicationTemplate.Presentation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
+using Uno.Extensions.Http;
 //using Nventive.ExtendedSplashScreen;
 using Windows.ApplicationModel;
 using Xamarin.Essentials.Implementation;

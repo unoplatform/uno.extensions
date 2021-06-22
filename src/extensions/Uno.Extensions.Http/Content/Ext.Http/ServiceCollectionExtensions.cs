@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using MallardMessageHandlers;
+using Uno.Extensions.Http.Handlers;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Uno.Extensions.Http
@@ -30,7 +30,7 @@ namespace Uno.Extensions.Http
 //                var httpClientBuilder = services
 //                    .AddRefitHttpClient<TInterface>(settings: serviceProvider => new RefitSettings()
 //                    {
-//                        ContentSerializer = new ObjectSerializerToContentSerializerAdapter(serviceProvider.GetRequiredService<IObjectSerializer>()),
+//                        ContentSerializer = new ObjectSerializerToContentSerializerAdapter(serviceProvider.GetRequiredService<ISerializer>()),
 //                    })
 //                    .ConfigurePrimaryHttpMessageHandler(serviceProvider => serviceProvider.GetRequiredService<HttpMessageHandler>())
 //                    .ConfigureHttpClient((serviceProvider, client) =>

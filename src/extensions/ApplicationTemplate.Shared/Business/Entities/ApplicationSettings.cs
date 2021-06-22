@@ -2,6 +2,7 @@
 using System.Collections.Immutable;
 using ApplicationTemplate.Client;
 using Uno;
+using Uno.Extensions.Http;
 
 namespace ApplicationTemplate.Business
 {

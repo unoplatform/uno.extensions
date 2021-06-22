@@ -6,7 +6,6 @@ using Uno;
 
 namespace ApplicationTemplate.Business
 {
-    [GeneratedImmutable]
     public partial class ChuckNorrisQuote
     {
         public ChuckNorrisQuote(ChuckNorrisData data, bool isFavorite)
@@ -23,8 +22,6 @@ namespace ApplicationTemplate.Business
             IsFavorite = isFavorite;
         }
 
-        [EqualityKey]
-        [EqualityHash]
         public string Id { get; }
 
         public string Value { get; }
@@ -33,7 +30,6 @@ namespace ApplicationTemplate.Business
 
         public string[] Categories { get; }
 
-        [EqualityIgnore]
         public bool IsFavorite { get; }
     }
 }

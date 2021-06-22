@@ -4,8 +4,8 @@ using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ApplicationTemplate.Client;
-using Nventive.Persistence;
 using Uno.Extensions.Configuration;
+using Uno.Extensions.Http;
 
 namespace ApplicationTemplate.Business
 {

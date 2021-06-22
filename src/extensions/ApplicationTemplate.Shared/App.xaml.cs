@@ -18,6 +18,7 @@ using Uno.Extensions.Serialization;
 using Uno.Extensions.Localization;
 using Uno.Extensions.Navigation.Messages;
 using Microsoft.Extensions.Logging;
+using Uno.Extensions.Http;
 
 //-:cnd:noEmit
 #if WINDOWS_UWP
@@ -53,7 +54,8 @@ namespace ApplicationTemplate
                 .UseHostConfigurationForApp()
                 .UseEnvironmentAppSettings<App>()
                 .UseLocalization()
-                .UseWritableSettings< EndpointOptions>(ctx => ctx.Configuration.GetSection("ChuckNorrisEndpoint"))
+                .UseWritableSettings<EndpointOptions>(ctx => ctx.Configuration.GetSection("ChuckNorrisEndpoint"))
+                .UseWritableSettings<AuthenticationData>(ctx => ctx.Configuration.GetSection(nameof(AuthenticationData)))
                 .UseWritableSettings<ApplicationSettings>(ctx => ctx.Configuration.GetSection(nameof(ApplicationSettings)))
                 .UseWritableSettings<DiagnosticSettings>(ctx => ctx.Configuration.GetSection(nameof(DiagnosticSettings)))
                 //.UseRouting<RouterConfiguration, LaunchMessage>(() => App.Instance.NavigationFrame)
@@ -62,7 +64,8 @@ namespace ApplicationTemplate
                 .ConfigureServices(services =>
                 {
                     services
-                        .AddSerialization(SerializationGeneratorConfiguration.Initialize)
+                        //.AddSerialization(SerializationGeneratorConfiguration.Initialize)
+                        .AddSystemTextJsonSerialization()
                         .AddAppServices()
                         .AddTransient<ShellViewModel>()
                         .AddTransient<DiagnosticsOverlayViewModel>()
@@ -81,7 +84,7 @@ namespace ApplicationTemplate
                     .XamlLayoutLogLevel(Microsoft.Extensions.Logging.LogLevel.Information)
                     .XamlLogLevel(Microsoft.Extensions.Logging.LogLevel.Information);
                 })
-                .UseSerilog(true,true, true)
+                .UseSerilog(true, true)
                 .Build();
             Ioc.Default.ConfigureServices(host.Services);
             //host = UnoHost.CreateDefaultHostWithStartup<AppServiceConfigurer>();

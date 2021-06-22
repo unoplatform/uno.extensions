@@ -26,7 +26,7 @@ namespace Uno.Extensions.Http.Refit
 //                var httpClientBuilder = services
 //                    .AddRefitHttpClient<TInterface>(settings: serviceProvider => new RefitSettings()
 //                    {
-//                        ContentSerializer = new ObjectSerializerToContentSerializerAdapter(serviceProvider.GetRequiredService<IObjectSerializer>()),
+//                        ContentSerializer = new ObjectSerializerToContentSerializerAdapter(serviceProvider.GetRequiredService<ISerializer>()),
 //                    })
 //                    .ConfigurePrimaryHttpMessageHandler(serviceProvider => serviceProvider.GetRequiredService<HttpMessageHandler>())
 //                    .ConfigureHttpClient((serviceProvider, client) =>

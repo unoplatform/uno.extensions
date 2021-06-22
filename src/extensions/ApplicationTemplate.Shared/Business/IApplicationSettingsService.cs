@@ -3,6 +3,7 @@ using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using ApplicationTemplate.Client;
+using Uno.Extensions.Http;
 
 namespace ApplicationTemplate.Business
 {

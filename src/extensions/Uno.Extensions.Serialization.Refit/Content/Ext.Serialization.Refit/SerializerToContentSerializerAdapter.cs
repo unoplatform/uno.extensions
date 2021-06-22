@@ -13,13 +13,13 @@ namespace Uno.Extensions.Serialization.Refit
     /// This serializer adapter enables usage of the
     /// static serializers with Refit.
     /// </summary>
-    public class StreamSerializerToContentSerializerAdapter : IHttpContentSerializer
+    public class SerializerToContentSerializerAdapter : IHttpContentSerializer
     {
         private static readonly MediaTypeHeaderValue _jsonMediaType = new ("application/json") { CharSet = Encoding.UTF8.WebName };
 
-        private readonly IStreamSerializer _serializer;
+        private readonly ISerializer _serializer;
 
-        public StreamSerializerToContentSerializerAdapter(IStreamSerializer serializer)
+        public SerializerToContentSerializerAdapter(ISerializer serializer)
         {
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
         }

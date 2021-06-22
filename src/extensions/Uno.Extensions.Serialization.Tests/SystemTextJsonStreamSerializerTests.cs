@@ -9,7 +9,7 @@ namespace Uno.Extensions.Serialization.Tests
     {
         private const string SimpleText = "Hello World!";
 
-        private IStreamSerializer Serializer { get; set; }
+        private ISerializer Serializer { get; set; }
 
         [TestInitialize]
         public void InitializeTests()

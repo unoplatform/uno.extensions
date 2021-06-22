@@ -6,15 +6,15 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using GeneratedSerializers;
+using Uno.Extensions.Serialization;
 
 namespace ApplicationTemplate
 {
     public class BaseMock
     {
-        private readonly IObjectSerializer _serializer;
+        private readonly ISerializer _serializer;
 
-        public BaseMock(IObjectSerializer serializer)
+        public BaseMock(ISerializer serializer)
         {
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
         }
@@ -35,7 +35,7 @@ namespace ApplicationTemplate
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1307:Specify StringComparison", Justification = "Not available for Desktop")]
         protected T GetFromEmbeddedResource<T>(
             string resourceName = null,
-            IObjectSerializer serializer = null,
+            ISerializer serializer = null,
             [CallerMemberName] string callerMemberName = null)
         {
             var assembly = GetType().GetTypeInfo().Assembly;
@@ -55,7 +55,7 @@ namespace ApplicationTemplate
 
             using (var stream = assembly.GetManifestResourceStream(actualResourceName))
             {
-                return (T)(serializer ?? _serializer).FromStream(stream, typeof(T));
+                return (T)(serializer ?? _serializer).ReadFromStream(stream, typeof(T));
             }
         }
 
@@ -74,7 +74,7 @@ namespace ApplicationTemplate
         /// <returns>Deserialized object</returns>
         protected Task<T> GetTaskFromEmbeddedResource<T>(
             string resourceName = null,
-            IObjectSerializer serializer = null,
+            ISerializer serializer = null,
             [CallerMemberName] string callerMemberName = null
         ) => Task.FromResult(GetFromEmbeddedResource<T>(resourceName, serializer, callerMemberName));
     }

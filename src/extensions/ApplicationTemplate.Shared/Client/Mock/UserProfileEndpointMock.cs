@@ -5,7 +5,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ApplicationTemplate.Business;
-using GeneratedSerializers;
+using Uno.Extensions.Http;
+using Uno.Extensions.Serialization;
 
 namespace ApplicationTemplate.Client
 {
@@ -14,7 +15,7 @@ namespace ApplicationTemplate.Client
         private readonly IApplicationSettingsService _applicationSettingsService;
 
         public UserProfileEndpointMock(
-            IObjectSerializer serializer,
+            ISerializer serializer,
             IApplicationSettingsService applicationSettingsService
         ) : base(serializer)
         {
@@ -23,12 +24,12 @@ namespace ApplicationTemplate.Client
 
         public async Task<UserProfileData> Get(CancellationToken ct)
         {
-            var settings = await _applicationSettingsService.GetAndObserveCurrent().FirstAsync(ct);
+            //var settings = await _applicationSettingsService.GetAndObserveCurrent().FirstAsync(ct);
 
-            if (settings.AuthenticationData == default(AuthenticationData))
-            {
-                return default(UserProfileData);
-            }
+            //if (settings.AuthenticationData == default(AuthenticationData))
+            //{
+            //    return default(UserProfileData);
+            //}
 
             await Task.Delay(TimeSpan.FromSeconds(2));
 

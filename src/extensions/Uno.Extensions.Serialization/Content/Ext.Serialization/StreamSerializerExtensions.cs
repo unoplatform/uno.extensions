@@ -6,12 +6,12 @@ namespace Uno.Extensions.Serialization
     public static class StreamSerializerExtensions
     {
 
-        public static T ReadFromStream<T>(this IStreamSerializer serializer, Stream stream)
+        public static T ReadFromStream<T>(this ISerializer serializer, Stream stream)
         {
             return (T)serializer.ReadFromStream(stream, typeof(T));
         }
 
-        public static T FromStream<T>(this IStreamSerializer serializer, Stream stream)
+        public static T FromStream<T>(this ISerializer serializer, Stream stream)
         {
             var pos = stream.Position;
             var value = (T)serializer.ReadFromStream<T>(stream);
@@ -19,24 +19,24 @@ namespace Uno.Extensions.Serialization
             return value;
         }
 
-        public static IStreamSerializer WriteToStream<T>(this IStreamSerializer serializer, Stream stream, T value)
+        public static ISerializer WriteToStream<T>(this ISerializer serializer, Stream stream, T value)
         {
             serializer.WriteToStream(stream, value, typeof(T));
             return serializer;
         }
 
-        public static IStreamSerializer WriteToStream(this IStreamSerializer serializer, Stream stream, object value)
+        public static ISerializer WriteToStream(this ISerializer serializer, Stream stream, object value)
         {
             serializer.WriteToStream(stream, value, value.GetType());
             return serializer;
         }
 
-        public static Stream ToStream<T>(this IStreamSerializer serializer, T value)
+        public static Stream ToStream<T>(this ISerializer serializer, T value)
         {
             return serializer.ToStream(value, typeof(T));
         }
 
-        public static Stream ToStream(this IStreamSerializer serializer, object value, Type valueType)
+        public static Stream ToStream(this ISerializer serializer, object value, Type valueType)
         {
             var memoryStream = new MemoryStream();
 
@@ -46,12 +46,12 @@ namespace Uno.Extensions.Serialization
             return memoryStream;
         }
 
-        public static string ToString<T>(this IStreamSerializer serializer, T value)
+        public static string ToString<T>(this ISerializer serializer, T value)
         {
             return serializer.ToString(value, typeof(T));
         }
 
-        public static T FromString<T>(this IStreamSerializer serializer, string valueAsString)
+        public static T FromString<T>(this ISerializer serializer, string valueAsString)
         {
             return (T)serializer.FromString(valueAsString, typeof(T));
         }

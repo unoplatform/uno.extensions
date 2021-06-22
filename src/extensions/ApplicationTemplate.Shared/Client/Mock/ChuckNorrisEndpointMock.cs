@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using GeneratedSerializers;
 using Refit;
+using Uno.Extensions.Serialization;
 
 namespace ApplicationTemplate.Client
 {
     public class ChuckNorrisEndpointMock : BaseMock, IChuckNorrisEndpoint
     {
-        public ChuckNorrisEndpointMock(IObjectSerializer serializer)
+        public ChuckNorrisEndpointMock(ISerializer serializer)
             : base(serializer)
         {
         }

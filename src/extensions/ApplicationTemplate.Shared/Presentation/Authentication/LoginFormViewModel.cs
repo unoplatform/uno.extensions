@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 //using Chinook.DynamicMvvm;
-using FluentValidation;
+// using FluentValidation;
 using Microsoft.Extensions.Localization;
 
 namespace ApplicationTemplate.Presentation
@@ -35,13 +35,13 @@ namespace ApplicationTemplate.Presentation
         }
     }
 
-    public class LoginFormValidator : AbstractValidator<LoginFormViewModel>
-    {
-        public LoginFormValidator(IStringLocalizer localizer)
-        {
-            // This is an example of overriding one specific validation error message
-            RuleFor(x => x.Email).NotEmpty().WithMessage(_ => localizer["ValidationNotEmpty_Email"]).EmailAddress();
-            RuleFor(x => x.Password).NotEmpty();
-        }
-    }
+    //public class LoginFormValidator : AbstractValidator<LoginFormViewModel>
+    //{
+    //    public LoginFormValidator(IStringLocalizer localizer)
+    //    {
+    //        // This is an example of overriding one specific validation error message
+    //        RuleFor(x => x.Email).NotEmpty().WithMessage(_ => localizer["ValidationNotEmpty_Email"]).EmailAddress();
+    //        RuleFor(x => x.Password).NotEmpty();
+    //    }
+    //}
 }

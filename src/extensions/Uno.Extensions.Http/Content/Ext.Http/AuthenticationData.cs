@@ -1,5 +1,5 @@
 ﻿using System;
-using MallardMessageHandlers;
+using Uno.Extensions.Http.Handlers;
 
 namespace Uno.Extensions.Http
 {

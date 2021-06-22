@@ -7,5 +7,6 @@ namespace Uno.Extensions.Configuration
         where T : class, new()
     {
         void Update(Func<T, T> applyChanges);
+        void Update(Action<T> applyChanges);
     }
 }

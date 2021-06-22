@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 //using Chinook.DynamicMvvm;
-using FluentValidation;
+// using FluentValidation;
 
 namespace ApplicationTemplate.Presentation
 {
@@ -24,11 +24,11 @@ namespace ApplicationTemplate.Presentation
         }
     }
 
-    public class ForgotPasswordFormValidator : AbstractValidator<ForgotPasswordFormViewModel>
-    {
-        public ForgotPasswordFormValidator()
-        {
-            RuleFor(x => x.Email).NotEmpty().EmailAddress();
-        }
-    }
+    //public class ForgotPasswordFormValidator : AbstractValidator<ForgotPasswordFormViewModel>
+    //{
+    //    public ForgotPasswordFormValidator()
+    //    {
+    //        RuleFor(x => x.Email).NotEmpty().EmailAddress();
+    //    }
+    //}
 }

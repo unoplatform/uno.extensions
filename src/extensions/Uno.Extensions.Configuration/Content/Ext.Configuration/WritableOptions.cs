@@ -32,6 +32,15 @@ namespace Uno.Extensions.Configuration
 
         public T Get(string name) => _options.Get(name);
 
+        public void Update(Action<T> applyChanges)
+        {
+            Update(options =>
+            {
+                applyChanges(options);
+                return options;
+            });
+        }
+
         public void Update(Func<T, T> applyChanges)
         {
             var physicalPath = _file;

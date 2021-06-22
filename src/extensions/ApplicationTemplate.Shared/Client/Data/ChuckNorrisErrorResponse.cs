@@ -5,10 +5,8 @@ using Uno;
 
 namespace ApplicationTemplate.Client
 {
-    [GeneratedImmutable]
     public partial class ChuckNorrisErrorResponse
     {
-        [EqualityHash]
         public string Message { get; }
     }
 }

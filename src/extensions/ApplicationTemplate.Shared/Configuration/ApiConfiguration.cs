@@ -8,15 +8,17 @@ using System.Threading.Tasks;
 using ApplicationTemplate;
 using ApplicationTemplate.Business;
 using ApplicationTemplate.Client;
-using GeneratedSerializers;
-using MallardMessageHandlers;
+using Uno.Extensions.Serialization;
+using Uno.Extensions.Http.Handlers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Refit;
-using Uno.Extensions.Serialization;
 using Uno.Extensions.Http;
+using Uno.Extensions.Serialization.Http;
+using Uno.Extensions.Http.Refit;
+using Uno.Extensions.Serialization.Refit;
 
 namespace ApplicationTemplate
 {
@@ -40,7 +42,7 @@ namespace ApplicationTemplate
             }
 
             return hostBuilder.ConfigureServices((context, s) => s
-                .AddMainHandler()
+                .AddNativeHandler()
                 .AddNetworkExceptionHandler()
                 .AddExceptionHubHandler()
                 .AddAuthenticationTokenHandler()
@@ -112,7 +114,7 @@ namespace ApplicationTemplate
                 var httpClientBuilder = services
                     .AddRefitHttpClient<TInterface>(settings: serviceProvider => new RefitSettings()
                     {
-                        ContentSerializer = new ObjectSerializerToContentSerializerAdapter(serviceProvider.GetRequiredService<IObjectSerializer>()),
+                        ContentSerializer = new SerializerToContentSerializerAdapter(serviceProvider.GetRequiredService<ISerializer>()),
                     })
                     .ConfigurePrimaryHttpMessageHandler(serviceProvider => serviceProvider.GetRequiredService<HttpMessageHandler>())
                     .ConfigureHttpClient((serviceProvider, client) =>
