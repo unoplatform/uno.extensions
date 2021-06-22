@@ -14,31 +14,28 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Business\Entities\ChuckNorrisQuote.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Business\Entities\DiagnosticSettings.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Business\IAuthenticationService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Business\IChuckNorrisService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Business\Impl\ChuckNorrisService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Business\Impl\UserProfileService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Business\IUserProfileService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Client\Data\AuthenticationToken.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Client\Data\ChuckNorrisData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Client\Data\ChuckNorrisErrorResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Client\Data\ChuckNorrisResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Client\Data\ErrorData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Client\Data\UserProfileData.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Client\IAuthenticationEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Client\IUserProfileEndpoint.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Client\Mock\AuthenticationEndpointMock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Client\Exceptions\ChuckNorrisException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Client\IChuckNorrisEndpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Client\Mock\AuthenticationEndpointMock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Client\Mock\ChuckNorrisEndpointMock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Client\Mock\UserProfileEndpointMock.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Configuration\FluentValidationLanguageManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\LinkerConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\LocalizationConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\RouterConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\ConverterBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\DebugConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Framework\AttachableUserControl.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Framework\Browser\DispatcherBrowserDecorator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Framework\BaseMock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Client\Data\PostErrorResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Client\Exceptions\PostEndpointException.cs" />
@@ -76,11 +73,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\ViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Business\IPostService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Business\Impl\PostService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Business\Impl\AuthenticationService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Business\Impl\ApplicationSettingsService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Business\Entities\ApplicationSettings.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Client\Data\AuthenticationToken.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Client\Data\AuthenticationData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Business\IApplicationSettingsService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Welcome\HomePageViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Welcome\OnboardingItemViewModel.cs" />
@@ -150,6 +144,7 @@
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\fr\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Framework\Browser\" />
     <Folder Include="$(MSBuildThisFileDirectory)Framework\DataLoader\" />
     <Folder Include="$(MSBuildThisFileDirectory)Framework\DynamicData\" />
     <Folder Include="$(MSBuildThisFileDirectory)Framework\DynamicMvvm\" />

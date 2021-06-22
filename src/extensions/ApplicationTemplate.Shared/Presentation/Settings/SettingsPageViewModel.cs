@@ -13,6 +13,7 @@ using CommunityToolkit.Mvvm.Input;
 //using Chinook.StackNavigation;
 //using MessageDialogService;
 using Microsoft.Extensions.Localization;
+using Uno.Extensions.Http;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Messages;
 using Xamarin.Essentials;

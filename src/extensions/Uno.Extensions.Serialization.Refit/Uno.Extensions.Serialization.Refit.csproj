@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Uno.Extensions.Serialization" Version="1.0.0" />
+    <ProjectReference Include="..\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 //using Chinook.DynamicMvvm;
-using FluentValidation;
+// using FluentValidation;
 
 namespace ApplicationTemplate.Presentation
 {
@@ -34,12 +34,12 @@ namespace ApplicationTemplate.Presentation
         }
     }
 
-    public class CreateAccountFormValidator : AbstractValidator<CreateAccountFormViewModel>
-    {
-        public CreateAccountFormValidator()
-        {
-            RuleFor(x => x.Email).NotEmpty().EmailAddress();
-            RuleFor(x => x.Password).NotEmpty();
-        }
-    }
+    //public class CreateAccountFormValidator : AbstractValidator<CreateAccountFormViewModel>
+    //{
+    //    public CreateAccountFormValidator()
+    //    {
+    //        RuleFor(x => x.Email).NotEmpty().EmailAddress();
+    //        RuleFor(x => x.Password).NotEmpty();
+    //    }
+    //}
 }

@@ -4,7 +4,7 @@ using System.Reactive;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
-using MallardMessageHandlers;
+using Uno.Extensions.Http.Handlers;
 using Uno.Extensions.Configuration;
 
 namespace Uno.Extensions.Http

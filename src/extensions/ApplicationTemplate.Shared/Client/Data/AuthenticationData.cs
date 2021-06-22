@@ -1,18 +1,17 @@
 ﻿using System;
-using GeneratedSerializers;
-using MallardMessageHandlers;
+using Uno.Extensions.Serialization;
+using Uno.Extensions.Http.Handlers;
 using Uno;
+using System.Text.Json.Serialization;
 
 namespace ApplicationTemplate.Client
 {
-    [GeneratedImmutable]
     public partial class AuthenticationData : IAuthenticationToken
     {
-        [EqualityHash]
-        [SerializationProperty("access_token")]
-        public JwtData<AuthenticationToken> AccessToken { get; }
+        [JsonPropertyName("access_token")]
+        public string AccessToken { get; }
 
-        [SerializationProperty("refresh_token")]
+        [JsonPropertyName("refresh_token")]
         public string RefreshToken { get; }
 
         public DateTimeOffset? Expiration { get; }

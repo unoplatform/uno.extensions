@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Uno.Extensions.Logging" Version="1.0.0" />
+    <ProjectReference Include="..\Uno.Extensions.Logging\Uno.Extensions.Logging.csproj" />
   </ItemGroup>
 
   <ItemGroup>

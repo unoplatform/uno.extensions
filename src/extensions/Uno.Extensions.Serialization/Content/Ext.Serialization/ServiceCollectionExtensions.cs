@@ -17,7 +17,7 @@ namespace Uno.Extensions.Serialization
             this IServiceCollection services)
         {
             return services
-                .AddSingleton<IStreamSerializer, SystemTextJsonStreamSerializer>();
+                .AddSingleton<ISerializer, SystemTextJsonStreamSerializer>();
         }
     }
 }

@@ -5,11 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MallardMessageHandlers" Version="0.2.0-dev.16" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Uno.Extensions.Serialization" Version="1.0.0" />
+    <ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
+    <ProjectReference Include="..\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
+    <ProjectReference Include="..\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
   </ItemGroup>
 
   <ItemGroup>

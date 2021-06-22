@@ -21,8 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Uno.Extensions.Configuration" Version="1.0.0" />
-    <PackageReference Include="Uno.Extensions.Http" Version="1.0.0" />
+    <ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
+    <ProjectReference Include="..\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
   </ItemGroup>
 
   <ItemGroup>

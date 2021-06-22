@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Uno.Extensions.Serialization
 {
-    public interface IStreamSerializer
+    public interface ISerializer
     {
         // Summary:
         //     Creates an instance of targetType from a serialized representation.

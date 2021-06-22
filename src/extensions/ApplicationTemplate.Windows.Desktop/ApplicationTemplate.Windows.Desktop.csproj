@@ -1,75 +1,41 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <OutputType>WinExe</OutputType>
-        <TargetFramework>net5.0-windows10.0.19041.0</TargetFramework>
-        <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
-        <RootNamespace>ApplicationTemplate</RootNamespace>
-        <ApplicationManifest>app.manifest</ApplicationManifest>
-        <Platforms>x86;x64</Platforms>
-        <RuntimeIdentifiers>win10-x86;win10-x64</RuntimeIdentifiers>
-      <LangVersion>9.0</LangVersion>
-      <DefineConstants>WINDOWS,WINUI</DefineConstants>
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows10.0.19041.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <RootNamespace>ApplicationTemplate</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Platforms>x86;x64</Platforms>
+    <RuntimeIdentifiers>win10-x86;win10-x64</RuntimeIdentifiers>
+    <LangVersion>9.0</LangVersion>
+    <DefineConstants>WINDOWS,WINUI</DefineConstants>
     <DefaultLanguage>en</DefaultLanguage>
-    </PropertyGroup>
+  </PropertyGroup>
 
-    <ItemGroup>
+  <ItemGroup>
     <Manifest Include="$(ApplicationManifest)" />
 
-    <PackageReference Include="Microsoft.ProjectReunion" Version="0.5.7" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
-        <PackageReference Include="Uno.Core" Version="2.4.0-dev.4" />
+    <PackageReference Include="System.Reactive" Version="5.0.0" />
+    <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
+    <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
+    
 
 
-      
-<PackageReference Include="CommunityToolkit.Mvvm" Version="7.0.2" />
-      <!--<PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0" />
-    <PackageReference Include="System.Collections" Version="4.3.0" />
-    <PackageReference Include="System.Runtime.Handles" Version="4.3.0" />-->
-    <!--<PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />-->
-    <!--<PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
-    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="4.7.0" />-->
-    <!--<PackageReference Include="MessageDialogService.Uno" Version="0.3.0-dev.5" />-->
-      <PackageReference Include="System.Reactive" Version="5.0.0" />
-
-      <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="5.0.0" />
-    <!--<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.1.0" />-->
-    <!--<PackageReference Include="Microsoft.Extensions.Logging.Filter" Version="1.1.2" />-->
-    <!--<PackageReference Include="Uno.Microsoft.Toolkit.Uwp.DeveloperTools" Version="6.1.0-build.205.g2e0e348372" />-->
-    <PackageReference Include="Uno.SourceGenerationTasks">
-      <Version>3.1.0-dev.6</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.5.3.2" />
-    <PackageReference Include="Serilog.Extensions.Hosting" Version="3.0.0" />
-    <PackageReference Include="Serilog.Settings.Configuration" Version="3.1.0" />
-    <PackageReference Include="Serilog.Sinks.Debug" Version="1.0.1" />
-    <PackageReference Include="MallardMessageHandlers" Version="0.2.0-dev.16" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="7.0.2" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="9.3.0" />
-    <PackageReference Include="Refit" Version="4.7.51" />
-    <PackageReference Include="GeneratedSerializers.Json" Version="0.2.0-dev.10" />
-    <!--<PackageReference Include="Reactive.Annex.Uno" Version="0.3.0-dev.18" />
-    <PackageReference Include="Uno.UI" Version="3.6.6" />-->
+    <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="5.0.7" />
+    <PackageReference Include="Microsoft.ProjectReunion" Version="0.5.7" />
+    <PackageReference Include="Serilog.Extensions.Hosting" Version="4.1.2" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="3.1.0" />
+    <PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0" />
+    <!--<PackageReference Include="Uno.CodeGen" Version="1.34.0-dev.175" />
     <PackageReference Include="Uno.Injectable" Version="1.34.0-dev.175" />
-    <PackageReference Include="Uno.CodeGen" Version="1.34.0-dev.175" />
-    <!--<PackageReference Include="Chinook.DynamicMvvm" Version="0.4.0-dev.41" />
-    <PackageReference Include="Chinook.DynamicMvvm.Uno" Version="0.4.0-dev.41" />
-    <PackageReference Include="Chinook.DynamicMvvm.Reactive" Version="0.4.0-dev.41" />
-    <PackageReference Include="Chinook.DynamicMvvm.FluentValidation" Version="0.4.0-dev.41" />
-    <PackageReference Include="Chinook.BackButtonManager" Version="0.3.0-dev.22" />
-    <PackageReference Include="Chinook.BackButtonManager.Uno" Version="0.3.0-dev.22" />
-    <PackageReference Include="Chinook.SectionsNavigation.Uno" Version="0.4.0-dev.59" />
-    <PackageReference Include="Chinook.SectionsNavigation.Reactive" Version="0.4.0-dev.59" />
-    <PackageReference Include="Chinook.DataLoader.Uno" Version="0.3.0-dev.42" />
-    <PackageReference Include="Chinook.DataLoader.DynamicMvvm" Version="0.3.0-dev.42" />
-    <PackageReference Include="DynamicData" Version="7.1.1" />
-    <PackageReference Include="Nventive.AsyncWebView.Uno" Version="0.2.0-dev.11" />
-    <PackageReference Include="Nventive.ExtendedSplashScreen.Uno" Version="0.2.0-dev.24" />-->
-    <PackageReference Include="Nventive.Persistence.Reactive" Version="0.2.0-dev.14" />
-    <!--<PackageReference Include="Nventive.Persistence.Uno" Version="0.2.0-dev.14" />-->
-    <!--<PackageReference Include="Nventive.View.Uno" Version="0.2.0-dev.9" />-->
-      <PackageReference Include="Reactive.Annex" Version="0.3.0-dev.18" />
-      <PackageReference Include="nventive.Nimue.Application.Building.Light">
+    <PackageReference Include="Uno.SourceGenerationTasks" Version="3.1.0"/>-->
+    <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.5.3.2" />
+    <PackageReference Include="Refit" Version="6.0.38" />
+    <PackageReference Include="Reactive.Annex" Version="0.3.0-dev.18" />
+    <PackageReference Include="nventive.Nimue.Application.Building.Light">
       <Version>0.1.0-alpha.73</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -84,23 +50,26 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    </ItemGroup>
+  </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
-      <ProjectReference Include="..\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
-      <ProjectReference Include="..\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
-      <ProjectReference Include="..\Uno.Extensions.Localization\Uno.Extensions.Localization.csproj" />
-      <ProjectReference Include="..\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj" />
-      <ProjectReference Include="..\Uno.Extensions.Logging\Uno.Extensions.Logging.csproj" />
-      <ProjectReference Include="..\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
-      <ProjectReference Include="..\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
-    </ItemGroup>
-    
-    <ItemGroup>
-        <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.19041.16" />
-        <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.19041.16" />
-    </ItemGroup>
-    
-    <Import Project="..\ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems" Label="Shared" />
+  <ItemGroup>
+    <ProjectReference Include="..\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
+    <ProjectReference Include="..\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
+    <ProjectReference Include="..\Uno.Extensions.Http.Refit\Uno.Extensions.Http.Refit.csproj" />
+    <ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
+    <ProjectReference Include="..\Uno.Extensions.Localization\Uno.Extensions.Localization.csproj" />
+    <ProjectReference Include="..\Uno.Extensions.Logging\Uno.Extensions.Logging.csproj" />
+    <ProjectReference Include="..\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj" />
+    <ProjectReference Include="..\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
+    <ProjectReference Include="..\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
+    <ProjectReference Include="..\Uno.Extensions.Serialization.Http\Uno.Extensions.Serialization.Http.csproj" />
+    <ProjectReference Include="..\Uno.Extensions.Serialization.Refit\Uno.Extensions.Serialization.Refit.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.19041.16" />
+    <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.19041.16" />
+  </ItemGroup>
+
+  <Import Project="..\ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems" Label="Shared" />
 </Project>

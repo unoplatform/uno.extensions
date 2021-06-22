@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using GeneratedSerializers;
+using System.Text.Json.Serialization;
 using Uno;
 
 namespace ApplicationTemplate.Client
 {
-    [GeneratedImmutable]
     public partial class ChuckNorrisResponse
     {
-        [EqualityHash]
-        [SerializationProperty("result")]
+        [JsonPropertyName("result")]
         public ChuckNorrisData[] Quotes { get; }
     }
 }

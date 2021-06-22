@@ -7,7 +7,8 @@ using System.Reactive.Threading.Tasks;
 using System.Threading;
 using System.Threading.Tasks;
 using ApplicationTemplate.Client;
-using MallardMessageHandlers;
+using Uno.Extensions.Http;
+using Uno.Extensions.Http.Handlers;
 
 namespace ApplicationTemplate.Business
 {

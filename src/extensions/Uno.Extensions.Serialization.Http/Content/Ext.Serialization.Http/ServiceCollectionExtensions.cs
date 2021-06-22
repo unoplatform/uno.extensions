@@ -1,4 +1,4 @@
-﻿using MallardMessageHandlers;
+﻿using Uno.Extensions.Http.Handlers;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Uno.Extensions.Serialization.Http
@@ -14,7 +14,7 @@ namespace Uno.Extensions.Serialization.Http
         /// </summary>
         /// <param name="services">Service collection.</param>
         /// <returns><see cref="IServiceCollection"/>.</returns>
-        public static IServiceCollection AddResponseObjectDeserializer(this IServiceCollection services)
+        public static IServiceCollection AddResponseContentDeserializer(this IServiceCollection services)
         { 
             return services
                 .AddSingleton<IResponseContentDeserializer, StreamSerializerToResponseContentDeserializer>();

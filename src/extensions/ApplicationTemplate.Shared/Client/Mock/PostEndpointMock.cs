@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using GeneratedSerializers;
+using Uno.Extensions.Serialization;
 using Refit;
+
 
 namespace ApplicationTemplate.Client
 {
     public class PostEndpointMock : BaseMock, IPostEndpoint
     {
-        public PostEndpointMock(IObjectSerializer serializer)
+        public PostEndpointMock(ISerializer serializer)
             : base(serializer)
         {
         }

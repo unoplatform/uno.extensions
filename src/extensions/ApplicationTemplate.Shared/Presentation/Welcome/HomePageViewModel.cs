@@ -8,9 +8,6 @@ using Uno.Extensions;
 using Uno.Extensions.Configuration;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Messages;
-//using Chinook.DynamicMvvm;
-//using Chinook.StackNavigation;
-//using MallardMessageHandlers;
 
 namespace ApplicationTemplate.Presentation
 {

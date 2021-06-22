@@ -2,15 +2,15 @@
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using MallardMessageHandlers;
+using Uno.Extensions.Http.Handlers;
 
 namespace Uno.Extensions.Serialization.Http
 {
     public class StreamSerializerToResponseContentDeserializer : IResponseContentDeserializer
     {
-        private readonly IStreamSerializer _objectSerializer;
+        private readonly ISerializer _objectSerializer;
 
-        public StreamSerializerToResponseContentDeserializer(IStreamSerializer objectSerializer)
+        public StreamSerializerToResponseContentDeserializer(ISerializer objectSerializer)
         {
             _objectSerializer = objectSerializer ?? throw new ArgumentNullException(nameof(objectSerializer));
         }

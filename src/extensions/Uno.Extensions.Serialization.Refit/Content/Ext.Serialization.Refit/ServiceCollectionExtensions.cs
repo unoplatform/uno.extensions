@@ -17,7 +17,7 @@ namespace Uno.Extensions.Serialization.Refit
         public static IServiceCollection AddObjectContentSerializer(this IServiceCollection services)
         { 
             return services
-                .AddSingleton<IHttpContentSerializer, StreamSerializerToContentSerializerAdapter>();
+                .AddSingleton<IHttpContentSerializer, SerializerToContentSerializerAdapter>();
         }
     }
 }

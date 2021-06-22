@@ -57,13 +57,13 @@ namespace ApplicationTemplate.Business
 
             var settings = await _applicationSettingsService.GetCurrent(ct);
 
-            quote = quote.WithIsFavorite(isFavorite);
+            //quote = quote.WithIsFavorite(isFavorite);
 
-            var updatedFavorites = isFavorite && !settings.FavoriteQuotes.ContainsKey(quote.Id)
-                ? settings.FavoriteQuotes.Add(quote.Id, quote)
-                : settings.FavoriteQuotes.Remove(quote.Id);
+            //var updatedFavorites = isFavorite && !settings.FavoriteQuotes.ContainsKey(quote.Id)
+            //    ? settings.FavoriteQuotes.Add(quote.Id, quote)
+            //    : settings.FavoriteQuotes.Remove(quote.Id);
 
-            await _applicationSettingsService.SetFavoriteQuotes(ct, updatedFavorites);
+            //await _applicationSettingsService.SetFavoriteQuotes(ct, updatedFavorites);
 
             //var source = await GetFavouriteQuotesSource(ct);
 

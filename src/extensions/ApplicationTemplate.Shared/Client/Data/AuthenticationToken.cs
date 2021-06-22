@@ -1,22 +1,19 @@
 ﻿using System;
-using GeneratedSerializers;
+using Uno.Extensions.Serialization;
 using Uno;
+using System.Text.Json.Serialization;
 
 namespace ApplicationTemplate.Client
 {
-    [GeneratedImmutable]
     public partial class AuthenticationToken
     {
-        [EqualityKey]
-        [SerializationProperty("unique_name")]
+        [JsonPropertyName("unique_name")]
         public string Email { get; }
 
-        [SerializationProperty("exp")]
-        [CustomDeserializer(typeof(UnixTimestampSerializer))]
+        [JsonPropertyName("exp")]
         public DateTimeOffset Expiration { get; } = DateTimeOffset.MinValue;
 
-        [SerializationProperty("iat")]
-        [CustomDeserializer(typeof(UnixTimestampSerializer))]
+        [JsonPropertyName("iat")]
         public DateTimeOffset IssuedAt { get; } = DateTimeOffset.MinValue;
     }
 }

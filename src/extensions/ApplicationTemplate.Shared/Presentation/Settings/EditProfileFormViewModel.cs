@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ApplicationTemplate.Client;
 //using Chinook.DynamicMvvm;
-using FluentValidation;
+// using FluentValidation;
 
 namespace ApplicationTemplate.Presentation
 {
@@ -48,12 +48,12 @@ namespace ApplicationTemplate.Presentation
         }
     }
 
-    public class EditProfileFormValidator : AbstractValidator<EditProfileFormViewModel>
-    {
-        public EditProfileFormValidator()
-        {
-            RuleFor(x => x.FirstName).NotEmpty();
-            RuleFor(x => x.LastName).NotEmpty();
-        }
-    }
+    //public class EditProfileFormValidator : AbstractValidator<EditProfileFormViewModel>
+    //{
+    //    public EditProfileFormValidator()
+    //    {
+    //        RuleFor(x => x.FirstName).NotEmpty();
+    //        RuleFor(x => x.LastName).NotEmpty();
+    //    }
+    //}
 }

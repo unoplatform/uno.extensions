@@ -54,15 +54,15 @@ namespace ApplicationTemplate.Presentation
 //            //+:cnd:noEmit
 //        }
 
-        /// <summary>
-        /// Executes the specified <paramref name="action"/> on the dispatcher.
-        /// </summary>
-        /// <param name="ct"><see cref="CancellationToken"/>.</param>
-        /// <param name="action">Action to execute.</param>
-        /// <returns><see cref="Task"/>.</returns>
-        public async Task RunOnDispatcher(CancellationToken ct, Func<CancellationToken, Task> action)
-        {
-            await Ioc.Default.GetService<IDispatcherScheduler>().Run(ct2 => action(ct2), ct);
-        }
+        ///// <summary>
+        ///// Executes the specified <paramref name="action"/> on the dispatcher.
+        ///// </summary>
+        ///// <param name="ct"><see cref="CancellationToken"/>.</param>
+        ///// <param name="action">Action to execute.</param>
+        ///// <returns><see cref="Task"/>.</returns>
+        //public async Task RunOnDispatcher(CancellationToken ct, Func<CancellationToken, Task> action)
+        //{
+        //    await Ioc.Default.GetService<IDispatcherScheduler>().Run(ct2 => action(ct2), ct);
+        //}
     }
 }

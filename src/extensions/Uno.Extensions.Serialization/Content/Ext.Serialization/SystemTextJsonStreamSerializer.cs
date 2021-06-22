@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Uno.Extensions.Serialization
 {
-    public class SystemTextJsonStreamSerializer : IStreamSerializer
+    public class SystemTextJsonStreamSerializer : ISerializer
     {
         private const int DefaultBufferSize = 1024;
 
