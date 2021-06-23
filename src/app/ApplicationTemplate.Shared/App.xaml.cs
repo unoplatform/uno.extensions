@@ -46,11 +46,17 @@ namespace ApplicationTemplate
         public App()
         {
             Host = UnoHost
+//-:cnd:noEmit
 #if __WASM__
+//+:cnd:noEmit
                 .CreateDefaultBuilderForWASM()
+//-:cnd:noEmit
 #else
+//+:cnd:noEmit
                 .CreateDefaultBuilder()
+//-:cnd:noEmit
 #endif
+//+:cnd:noEmit
                 .UseEnvironment("Staging")
                 .UseAppSettings<App>()
                 .UseConfigurationSectionInApp<CustomIntroduction>(nameof(CustomIntroduction))
@@ -61,9 +67,13 @@ namespace ApplicationTemplate
                             .XamlLogLevel(LogLevel.Information)
                             .XamlLayoutLogLevel(LogLevel.Information);
                     }
+//-:cnd:noEmit
 #if __WASM__
+//+:cnd:noEmit
                     , new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider()
+//-:cnd:noEmit
 #endif
+//+:cnd:noEmit
                 )
                 .UseSerilog(true)
                 .UseRouting<RouterConfiguration, LaunchMessage>(() => _frame)
@@ -72,9 +82,13 @@ namespace ApplicationTemplate
 
             InitializeComponent();
 
+//-:cnd:noEmit
 #if HAS_UNO || NETFX_CORE
+//+:cnd:noEmit
             Suspending += OnSuspending;
+//-:cnd:noEmit
 #endif
+//+:cnd:noEmit
         }
 
         private IHost Host { get; }
@@ -84,27 +98,45 @@ namespace ApplicationTemplate
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
+//-:cnd:noEmit
 #if WINDOWS_UWP
+//+:cnd:noEmit
         protected override void OnLaunched(LaunchActivatedEventArgs e)
+//-:cnd:noEmit
 #else
+//+:cnd:noEmit
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs e)
+//-:cnd:noEmit
 #endif
+//+:cnd:noEmit
         {
+//-:cnd:noEmit
 #if DEBUG
+//+:cnd:noEmit
             if (System.Diagnostics.Debugger.IsAttached)
             {
                 // this.DebugSettings.EnableFrameRateCounter = true;
             }
+//-:cnd:noEmit
 #endif
+//+:cnd:noEmit
 
+//-:cnd:noEmit
 #if NET5_0 && WINDOWS
+//+:cnd:noEmit
             _window = new Window();
             _window.Activate();
+//-:cnd:noEmit
 #elif WINDOWS_UWP
+//+:cnd:noEmit
             _window = Window.Current;
+//-:cnd:noEmit
 #else
+//+:cnd:noEmit
             _window = Microsoft.UI.Xaml.Window.Current;
+//-:cnd:noEmit
 #endif
+//+:cnd:noEmit
 
             _frame = _window.Content as Frame;
 
@@ -117,11 +149,17 @@ namespace ApplicationTemplate
 
                 _frame.NavigationFailed += OnNavigationFailed;
 
+//-:cnd:noEmit
 #if WINDOWS_UWP
+//+:cnd:noEmit
                 if (e?.PreviousExecutionState == ApplicationExecutionState.Terminated)
+//-:cnd:noEmit
 #else
+//+:cnd:noEmit
                 if (e?.UWPLaunchActivatedEventArgs?.PreviousExecutionState == ApplicationExecutionState.Terminated)
+//-:cnd:noEmit
 #endif
+//+:cnd:noEmit
                 {
                     // TODO: Load state from previously suspended application
                 }
@@ -129,11 +167,17 @@ namespace ApplicationTemplate
                 // Place the frame in the current Window
                 _window.Content = _frame;
             }
+//-:cnd:noEmit
 #if WINDOWS_UWP
+//+:cnd:noEmit
             if (e?.PrelaunchActivated == false)
+//-:cnd:noEmit
 #elif !(NET5_0 && WINDOWS)
+//+:cnd:noEmit
             if (e?.UWPLaunchActivatedEventArgs.PrelaunchActivated == false)
+//-:cnd:noEmit
 #endif
+//+:cnd:noEmit
             {
                 if (_frame.Content == null)
                 {
