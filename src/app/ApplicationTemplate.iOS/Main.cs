@@ -14,7 +14,9 @@ namespace ApplicationTemplate.iOS
         }
     }
 
+//-:cnd:noEmit
 #if DEBUG
+//+:cnd:noEmit
     public class HotRestartDelegate : Xamarin.Forms.Platform.iOS.FormsApplicationDelegate
     {
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
@@ -23,5 +25,7 @@ namespace ApplicationTemplate.iOS
             return base.FinishedLaunching(uiApplication, launchOptions);
         }
     }
+//-:cnd:noEmit
 #endif
+//+:cnd:noEmit
 }
