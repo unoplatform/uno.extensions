@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <Import Project="..\uno.extensions.targets" />
-  <Import Project="..\applicationtemplate.targets" />
+  <Import Project="..\app.targets" />
   <Import Project="..\uno.winui.targets" />
   <Import Project="..\ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems" Label="Shared" />
 </Project>
