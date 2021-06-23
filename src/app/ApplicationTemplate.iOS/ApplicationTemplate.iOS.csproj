@@ -154,7 +154,7 @@
   </ItemGroup>
   <Import Project="XamarinForms.targets" Condition="'$(Configuration)'=='Debug'" />
   <Import Project="..\uno.extensions.targets" />
-  <Import Project="..\applicationtemplate.targets" />
+  <Import Project="..\app.targets" />
   <Import Project="..\uno.winui.targets" />
   <Import Project="..\ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />

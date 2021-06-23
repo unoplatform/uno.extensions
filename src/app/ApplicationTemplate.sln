@@ -27,7 +27,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BE7D7945-13FA-46B0-8C85-494528E46C8F}"
 	ProjectSection(SolutionItems) = preProject
 		applicationtemplate.targets = applicationtemplate.targets
-		..\extensions\Directory.Build.props = ..\extensions\Directory.Build.props
 		uno.extensions.targets = uno.extensions.targets
 		uno.winui.targets = uno.winui.targets
 	EndProjectSection
