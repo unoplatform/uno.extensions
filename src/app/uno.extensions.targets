@@ -13,7 +13,7 @@
     <PackageReference Include="Uno.Extensions.Serialization.Refit" Version="1.0.0" />
   </ItemGroup>
 
-  <ItemGroup  Condition="$(TargetFramework.StartsWith('monoandroid'))">
+  <!-- <ItemGroup  Condition="$(TargetFramework.StartsWith('monoandroid'))">
     <PackageReference Include="Uno.Extensions.Http.Firebase" Version="1.0.0" />
-  </ItemGroup>
+  </ItemGroup> -->
 </Project>
