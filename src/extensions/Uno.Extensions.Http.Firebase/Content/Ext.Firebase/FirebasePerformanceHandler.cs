@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace Uno.Extensions.Http.Firebase
 {
+#if __ANDROID__
     public class FirebasePerformanceHandler : DelegatingHandler
     {
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
@@ -37,4 +38,5 @@ namespace Uno.Extensions.Http.Firebase
             }
         }
     }
+#endif
 }

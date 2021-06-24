@@ -64,19 +64,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="GeneratedSerializers.Json">
-      <Version>0.2.0-dev.10</Version>
-    </PackageReference>
-    <PackageReference Include="MallardMessageHandlers">
-      <Version>0.2.0-dev.16</Version>
-    </PackageReference>
     <PackageReference Include="Uno.UniversalImageLoader" Version="1.9.33" />
-    <!-- <PackageReference Include="Xamarin.Firebase.Core" Version="119.0.0" />
-    <PackageReference Include="Xamarin.Firebase.Crashlytics" Version="118.0.1 " />
-    <PackageReference Include="Xamarin.Firebase.Analytics" Version="119.0.0 " />
-    <PackageReference Include="Xamarin.Firebase.Common" Version="120.0.0" />
-    <PackageReference Include="Xamarin.Firebase.Iid" Version="121.1.0" />
-    <PackageReference Include="Xamarin.Firebase.Perf" Version="120.0.1" /> -->
+    <!--<PackageReference Include="Xamarin.Firebase.Core" Version="118.0.0" />
+    <PackageReference Include="Xamarin.Firebase.Crashlytics" Version="117.3.0 " />
+    <PackageReference Include="Xamarin.Firebase.Analytics" Version="118.0.0 " />
+    <PackageReference Include="Xamarin.Firebase.Common" Version="119.5.0" />
+    <PackageReference Include="Xamarin.Firebase.Iid" Version="121.0.1" />-->
+    <PackageReference Include="Xamarin.Firebase.Perf" Version="119.0.11" />
+    <PackageReference Include="Xamarin.AndroidX.Annotation" Version="1.2.0" />
     <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />

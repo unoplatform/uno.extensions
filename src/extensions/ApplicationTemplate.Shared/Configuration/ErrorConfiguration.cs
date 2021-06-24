@@ -29,7 +29,8 @@ namespace ApplicationTemplate
         public static IServiceCollection AddErrorHandling(this IServiceCollection services)
         {
             return services.AddSingleton<IDynamicCommandErrorHandler>(s => new DynamicCommandErrorHandler(
-                (ct, command, exception) => HandleCommandException(ct, command, exception, s)
+                (ct, command, exception) =>
+                (ct, command, exception, s)
             ));
         }
 
