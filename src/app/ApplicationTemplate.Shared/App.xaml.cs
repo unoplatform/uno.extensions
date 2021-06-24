@@ -27,6 +27,8 @@ using System;
 using System.Threading.Tasks;
 using Uno.Extensions.Configuration;
 using Uno.Extensions.Hosting;
+using Uno.Extensions.Http.Firebase;
+using Uno.Extensions.Http;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Messages;
@@ -46,17 +48,17 @@ namespace ApplicationTemplate
         public App()
         {
             Host = UnoHost
-//-:cnd:noEmit
+                //-:cnd:noEmit
 #if __WASM__
 //+:cnd:noEmit
                 .CreateDefaultBuilderForWASM()
 //-:cnd:noEmit
 #else
-//+:cnd:noEmit
+                //+:cnd:noEmit
                 .CreateDefaultBuilder()
-//-:cnd:noEmit
+                //-:cnd:noEmit
 #endif
-//+:cnd:noEmit
+                //+:cnd:noEmit
                 .UseEnvironment("Staging")
                 .UseAppSettings<App>()
                 .UseConfigurationSectionInApp<CustomIntroduction>(nameof(CustomIntroduction))
@@ -67,16 +69,21 @@ namespace ApplicationTemplate
                             .XamlLogLevel(LogLevel.Information)
                             .XamlLayoutLogLevel(LogLevel.Information);
                     }
-//-:cnd:noEmit
+                //-:cnd:noEmit
 #if __WASM__
 //+:cnd:noEmit
                     , new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider()
 //-:cnd:noEmit
 #endif
-//+:cnd:noEmit
+                //+:cnd:noEmit
                 )
                 .UseSerilog(true)
                 .UseRouting<RouterConfiguration, LaunchMessage>(() => _frame)
+                .ConfigureServices(services =>
+                {
+                    _ = services.AddNativeHandler();
+                })
+                .UseFirebaseHandler()
                 .Build()
                 .EnableUnoLogging();
 

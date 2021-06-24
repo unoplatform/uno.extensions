@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace Uno.Extensions.Http.Firebase
 {
@@ -9,7 +6,11 @@ namespace Uno.Extensions.Http.Firebase
     {
         public static IServiceCollection AddFirebaseHandler(this IServiceCollection services)
         {
-            return services.AddTransient<FirebasePerformanceHandler>();
+            return services
+#if __ANDROID__
+                .AddTransient<FirebasePerformanceHandler>()
+#endif
+                ;
         }
     }
 }

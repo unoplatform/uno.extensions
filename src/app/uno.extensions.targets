@@ -3,6 +3,7 @@
     <PackageReference Include="Uno.Extensions.Configuration" Version="1.0.0" />
     <PackageReference Include="Uno.Extensions.Hosting" Version="1.0.0" />
     <PackageReference Include="Uno.Extensions.Http" Version="1.0.0" />
+    <PackageReference Include="Uno.Extensions.Http.Firebase" Version="1.0.0" />
     <PackageReference Include="Uno.Extensions.Http.Refit" Version="1.0.0" />
     <PackageReference Include="Uno.Extensions.Localization" Version="1.0.0" />
     <PackageReference Include="Uno.Extensions.Logging" Version="1.0.0" />
@@ -12,8 +13,4 @@
     <PackageReference Include="Uno.Extensions.Serialization.Http" Version="1.0.0" />
     <PackageReference Include="Uno.Extensions.Serialization.Refit" Version="1.0.0" />
   </ItemGroup>
-
-  <!-- <ItemGroup  Condition="$(TargetFramework.StartsWith('monoandroid'))">
-    <PackageReference Include="Uno.Extensions.Http.Firebase" Version="1.0.0" />
-  </ItemGroup> -->
 </Project>

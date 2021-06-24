@@ -10,6 +10,8 @@
     <IsUWP>false</IsUWP>
     <IsXamarin>false</IsXamarin>
     <IsIOS>false</IsIOS>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <PropertyGroup Condition="$(TargetFramework.StartsWith('netstandard'))">

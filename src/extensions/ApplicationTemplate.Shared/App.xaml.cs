@@ -19,6 +19,7 @@ using Uno.Extensions.Localization;
 using Uno.Extensions.Navigation.Messages;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Http;
+using Uno.Extensions.Http.Firebase;
 
 //-:cnd:noEmit
 #if WINDOWS_UWP
@@ -61,6 +62,7 @@ namespace ApplicationTemplate
                 //.UseRouting<RouterConfiguration, LaunchMessage>(() => App.Instance.NavigationFrame)
                 .UseRoutingWithRedirection<RouterConfiguration, LaunchMessage, RouterRedirection>(() => App.Instance.NavigationFrame)
                 .AddApi()
+                .UseFirebaseHandler()
                 .ConfigureServices(services =>
                 {
                     services
