@@ -20,8 +20,4 @@
     <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
     <ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
   </ItemGroup>
-  
-  <ItemGroup>
-    <PackageReference Update="Uno.Core" Version="2.4.0" />
-  </ItemGroup>
 </Project>

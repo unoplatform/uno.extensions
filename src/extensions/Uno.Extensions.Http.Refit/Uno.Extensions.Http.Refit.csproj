@@ -24,8 +24,4 @@
     <ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
     <ProjectReference Include="..\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Update="Uno.Core" Version="2.4.0" />
-  </ItemGroup>
 </Project>
