@@ -19,9 +19,4 @@
     <PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
   </ItemGroup>
-
-
-  <ItemGroup>
-    <PackageReference Update="Uno.Core" Version="2.4.0" />
-  </ItemGroup>
 </Project>

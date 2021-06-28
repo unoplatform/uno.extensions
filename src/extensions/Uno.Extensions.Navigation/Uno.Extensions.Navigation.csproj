@@ -3,26 +3,12 @@
   <PropertyGroup>
     <TargetFrameworks>net5.0-windows10.0.19041.0;uap10.0.16299;netstandard2.0;xamarinios10;xamarinmac20;monoandroid10.0;monoandroid11.0</TargetFrameworks>
  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(IsWinUI)' == 'true'">
-    <Platforms>x86;x64;arm64</Platforms>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="7.0.2" />
   </ItemGroup>
-  <ItemGroup Condition="'$(IsWinUI)' != 'true' and '$(IsUWP)' != 'true'">
-    <PackageReference Include="Uno.WinUI" Version="3.8.6" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(IsWinUI)' == 'true'">
-    <PackageReference Include="Microsoft.ProjectReunion" Version="0.5.7" />
-  </ItemGroup>
+
 
   <ItemGroup>
     <ProjectReference Include="..\Uno.Extensions.Logging\Uno.Extensions.Logging.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Update="Uno.Core" Version="2.4.0" />
   </ItemGroup>
 </Project>

@@ -7,8 +7,4 @@
   <ItemGroup Condition="'$(IsIOS)' == 'true'">
     <PackageReference Include="uno.extensions.logging.oslog" Version="1.1.0" />
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Update="Uno.Core" Version="2.4.0" />
-  </ItemGroup>
 </Project>

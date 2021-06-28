@@ -57,6 +57,7 @@
   <PropertyGroup Condition="$(TargetFramework.Contains('windows10'))">
     <DefineConstants>$(DefineConstants);NETFX_CORE;WINUI;WINDOWS</DefineConstants>
     <IsWinUI>true</IsWinUI>
+    <UseWinUI>true</UseWinUI>
   </PropertyGroup>
 
   <ItemGroup>
@@ -96,6 +97,23 @@
   <ItemGroup>
     <AdditionalFiles Include="..\..\..\stylecop.json" />
   </ItemGroup>
+
+  <PropertyGroup Condition="'$(IsWinUI)' == 'true'">
+    <!--<Platforms>x86;x64;arm64</Platforms>-->
+    <RuntimeIdentifiers>win10-x86;win10-x64</RuntimeIdentifiers>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(IsWinUI)' != 'true' and '$(IsUWP)' != 'true'">
+    <PackageReference Include="Uno.WinUI" Version="3.8.6" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(IsWinUI)' == 'true'">
+    <PackageReference Include="Microsoft.ProjectReunion" Version="0.8.0" />
+  </ItemGroup>
+
+  <!--<ItemGroup>
+    <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.19041.16" />
+    <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.19041.16" />
+  </ItemGroup>-->
 
   <PropertyGroup>
     <!-- Forces Uno's XamlFileGenerator to write error when XAML is invalid-->
