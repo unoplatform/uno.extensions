@@ -10,6 +10,7 @@
     <LangVersion>9.0</LangVersion>
     <DefineConstants>WINDOWS,WINUI</DefineConstants>
     <DefaultLanguage>en</DefaultLanguage>
+    <UseWinUI>true</UseWinUI>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,13 +20,12 @@
     <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
     <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
-    
 
+    <PackageReference Include="Microsoft.ProjectReunion" Version="0.8.0"/>
 
     <PackageReference Include="CommunityToolkit.Mvvm" Version="7.0.2" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="9.3.0" />
     <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="5.0.7" />
-    <PackageReference Include="Microsoft.ProjectReunion" Version="0.5.7" />
     <PackageReference Include="Serilog.Extensions.Hosting" Version="4.1.2" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="3.1.0" />
     <PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0" />
@@ -54,6 +54,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
+    <ProjectReference Include="..\Uno.Extensions.Http.Firebase\Uno.Extensions.Http.Firebase.csproj" />
     <ProjectReference Include="..\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
     <ProjectReference Include="..\Uno.Extensions.Http.Refit\Uno.Extensions.Http.Refit.csproj" />
     <ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
@@ -64,11 +65,6 @@
     <ProjectReference Include="..\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
     <ProjectReference Include="..\Uno.Extensions.Serialization.Http\Uno.Extensions.Serialization.Http.csproj" />
     <ProjectReference Include="..\Uno.Extensions.Serialization.Refit\Uno.Extensions.Serialization.Refit.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.19041.16" />
-    <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.19041.16" />
   </ItemGroup>
 
   <Import Project="..\ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems" Label="Shared" />
