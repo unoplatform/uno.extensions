@@ -32,6 +32,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.ViewManagement;
+using Windows.Foundation;
 //-:cnd:noEmit
 #else
 //+:cnd:noEmit
@@ -49,19 +50,24 @@ namespace ApplicationTemplate
         public App()
         {
             Instance = this;
-            host = UnoHost.CreateDefaultBuilder()
+            host = UnoHost
+#if __WASM__
+                .CreateDefaultBuilderForWASM()
+#else
+                .CreateDefaultBuilder()
+#endif
                 .UseEnvironment("Staging")
                 .UseAppSettingsForHostConfiguration<App>()
-                .UseHostConfigurationForApp()
-                .UseEnvironmentAppSettings<App>()
-                .UseLocalization()
-                .UseWritableSettings<EndpointOptions>(ctx => ctx.Configuration.GetSection("ChuckNorrisEndpoint"))
-                .UseWritableSettings<AuthenticationData>(ctx => ctx.Configuration.GetSection(nameof(AuthenticationData)))
-                .UseWritableSettings<ApplicationSettings>(ctx => ctx.Configuration.GetSection(nameof(ApplicationSettings)))
-                .UseWritableSettings<DiagnosticSettings>(ctx => ctx.Configuration.GetSection(nameof(DiagnosticSettings)))
+                //.UseHostConfigurationForApp()
+                //.UseEnvironmentAppSettings<App>()
+                //.UseLocalization()
+                //.UseWritableSettings<EndpointOptions>(ctx => ctx.Configuration.GetSection("ChuckNorrisEndpoint"))
+                //.UseWritableSettings<AuthenticationData>(ctx => ctx.Configuration.GetSection(nameof(AuthenticationData)))
+                //.UseWritableSettings<ApplicationSettings>(ctx => ctx.Configuration.GetSection(nameof(ApplicationSettings)))
+                //.UseWritableSettings<DiagnosticSettings>(ctx => ctx.Configuration.GetSection(nameof(DiagnosticSettings)))
                 //.UseRouting<RouterConfiguration, LaunchMessage>(() => App.Instance.NavigationFrame)
                 .UseRoutingWithRedirection<RouterConfiguration, LaunchMessage, RouterRedirection>(() => App.Instance.NavigationFrame)
-                .AddApi()
+                //.AddApi()
                 .UseFirebaseHandler()
                 .ConfigureServices(services =>
                 {
@@ -85,9 +91,15 @@ namespace ApplicationTemplate
                     .XamlBindingLogLevel(Microsoft.Extensions.Logging.LogLevel.Information)
                     .XamlLayoutLogLevel(Microsoft.Extensions.Logging.LogLevel.Information)
                     .XamlLogLevel(Microsoft.Extensions.Logging.LogLevel.Information);
-                })
-                .UseSerilog(true, true)
-                .Build();
+                }
+                #if __WASM__
+                    , new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider()
+#endif
+                )
+                //.UseSerilog(true, true)
+                .Build()
+                .EnableUnoLogging();
+
             Ioc.Default.ConfigureServices(host.Services);
             //host = UnoHost.CreateDefaultHostWithStartup<AppServiceConfigurer>();
             //var lifetime = host.Services.GetRequiredService<IHostApplicationLifetime>();
@@ -223,7 +235,7 @@ namespace ApplicationTemplate
             var resources = Application.Current.Resources;
 
             //-:cnd:noEmit
-#if WINDOWS_UWP || (NET5_0 && WINDOWS) || HAS_UNO_SKIA
+#if WINDOWS_UWP || (NET5_0 && WINDOWS) || HAS_UNO_SKIA || __WASM__
             //+:cnd:noEmit
             var statusBarHeight = 0;
             //-:cnd:noEmit

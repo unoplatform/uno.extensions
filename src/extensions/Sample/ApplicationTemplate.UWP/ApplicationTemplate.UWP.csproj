@@ -108,14 +108,13 @@
     <PackageReference Include="Microsoft.UI.Xaml">
       <Version>2.5.0</Version>
     </PackageReference>
-    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0" />
+    <!--<PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0" />
     <PackageReference Include="System.Collections" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Handles" Version="4.3.0" />
     <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
-    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="4.7.0" />
-    <PackageReference Include="MessageDialogService.Uno" Version="0.3.0-dev.5" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="4.7.0" />-->
+    <!--<PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
@@ -123,17 +122,19 @@
     <PackageReference Include="Uno.Microsoft.Toolkit.Uwp.DeveloperTools" Version="6.1.0-build.205.g2e0e348372" />
     <PackageReference Include="Uno.SourceGenerationTasks">
       <Version>3.0.0</Version>
-    </PackageReference>
+    </PackageReference>-->
+    <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="5.0.7" />
+
     <PackageReference Include="Xamarin.Essentials.Interfaces" Version="1.5.3.2" />
-    <PackageReference Include="Serilog.Extensions.Hosting" Version="3.0.0" />
+    <PackageReference Include="Serilog.Extensions.Hosting" Version="4.1.2" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="3.1.0" />
-    <PackageReference Include="Serilog.Sinks.Debug" Version="1.0.1" />
-    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="9.3.0" />
-    <PackageReference Include="Refit" Version="4.7.51" />
-    <PackageReference Include="GeneratedSerializers.Json" Version="0.2.0-dev.10" />
+    <PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0" />
+    <!--<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="9.3.0" />-->
+    <PackageReference Include="Refit" Version="6.0.38" />
+    <!--<PackageReference Include="GeneratedSerializers.Json" Version="0.2.0-dev.10" />-->
     <PackageReference Include="Reactive.Annex.Uno" Version="0.3.0-dev.18" />
-    <PackageReference Include="Uno.UI" Version="3.6.6" />
-    <PackageReference Include="Uno.Injectable" Version="1.34.0-dev.175" />
+    <PackageReference Include="Uno.UI" Version="3.8.6" />
+    <!--<PackageReference Include="Uno.Injectable" Version="1.34.0-dev.175" />
     <PackageReference Include="Uno.CodeGen" Version="1.34.0-dev.175" />
     <PackageReference Include="Chinook.DynamicMvvm" Version="0.4.0-dev.41" />
     <PackageReference Include="Chinook.DynamicMvvm.Uno" Version="0.4.0-dev.41" />
@@ -150,8 +151,8 @@
     <PackageReference Include="Nventive.ExtendedSplashScreen.Uno" Version="0.2.0-dev.24" />
     <PackageReference Include="Nventive.Persistence.Reactive" Version="0.2.0-dev.14" />
     <PackageReference Include="Nventive.Persistence.Uno" Version="0.2.0-dev.14" />
-    <PackageReference Include="Nventive.View.Uno" Version="0.2.0-dev.9" />
-    <PackageReference Include="nventive.Nimue.Application.Building.Light">
+    <PackageReference Include="Nventive.View.Uno" Version="0.2.0-dev.9" />-->
+    <!--<PackageReference Include="nventive.Nimue.Application.Building.Light">
       <Version>0.1.0-alpha.73</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -165,13 +166,13 @@
       <Version>0.1.0-alpha.73</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
+    </PackageReference>-->
   </ItemGroup>
-  <ItemGroup>
+  <!--<ItemGroup>
     <SDKReference Include="WindowsMobile, Version=10.0.18362.0">
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
-  </ItemGroup>
+  </ItemGroup>-->
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
@@ -226,43 +227,56 @@
     <Content Include="Properties\Default.rd.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj">
+    <ProjectReference Include="..\..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj">
       <Project>{0dde79de-181b-42ef-af00-56dc622a6afa}</Project>
       <Name>Uno.Extensions.Configuration</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj">
+    <ProjectReference Include="..\..\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj">
       <Project>{ea4f9862-63ee-47d6-bd2b-2d1b83e2fd6a}</Project>
       <Name>Uno.Extensions.Hosting</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Uno.Extensions.Http\Uno.Extensions.Http.csproj">
+    <ProjectReference Include="..\..\Uno.Extensions.Http.Firebase\Uno.Extensions.Http.Firebase.csproj">
+      <Project>{8050e715-f905-4ff7-8e6c-262d71d5e51b}</Project>
+      <Name>Uno.Extensions.Http.Firebase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Uno.Extensions.Http.Refit\Uno.Extensions.Http.Refit.csproj">
+      <Project>{63a16363-b360-4075-9ed0-911cad14e6ea}</Project>
+      <Name>Uno.Extensions.Http.Refit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Uno.Extensions.Http\Uno.Extensions.Http.csproj">
       <Project>{29bfc492-b537-4985-9163-649fc56ebf12}</Project>
       <Name>Uno.Extensions.Http</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Uno.Extensions.Localization\Uno.Extensions.Localization.csproj">
+    <ProjectReference Include="..\..\Uno.Extensions.Localization\Uno.Extensions.Localization.csproj">
       <Project>{3f8f8b81-03af-48e8-a901-ab3b14f15b10}</Project>
       <Name>Uno.Extensions.Localization</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj">
+    <ProjectReference Include="..\..\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj">
       <Project>{3f01a0de-4b9e-496f-ac6b-94daf315a20f}</Project>
       <Name>Uno.Extensions.Logging.Serilog</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Uno.Extensions.Logging\Uno.Extensions.Logging.csproj">
+    <ProjectReference Include="..\..\Uno.Extensions.Logging\Uno.Extensions.Logging.csproj">
       <Project>{406a741f-fb06-482f-9037-154b55fcb2ce}</Project>
       <Name>Uno.Extensions.Logging</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj">
+    <ProjectReference Include="..\..\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj">
       <Project>{ad3c0a66-450d-4355-b5c4-fdaf0d7746ad}</Project>
       <Name>Uno.Extensions.Navigation</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj">
+    <ProjectReference Include="..\..\Uno.Extensions.Serialization.Http\Uno.Extensions.Serialization.Http.csproj">
+      <Project>{629c0ea7-1e92-481b-993d-059cb4b51a13}</Project>
+      <Name>Uno.Extensions.Serialization.Http</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Uno.Extensions.Serialization.Refit\Uno.Extensions.Serialization.Refit.csproj">
+      <Project>{5b0c5424-a8a4-439a-b01e-641ef2223244}</Project>
+      <Name>Uno.Extensions.Serialization.Refit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj">
       <Project>{5123670c-9756-4c9e-9844-f4a9c0aee633}</Project>
       <Name>Uno.Extensions.Serialization</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Views\Content\Authentication\" />
-    <Folder Include="Views\Content\Welcome\" />
-  </ItemGroup>
+
   <Import Project="..\ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems" Label="Shared" Condition="Exists('..\ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems')" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
