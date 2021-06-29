@@ -16,10 +16,10 @@ namespace ApplicationTemplate.Presentation
         public IWritableOptions<ApplicationSettings> Onboarding { get; }
         public IRouteMessenger Messenger { get; }
         public WelcomePageViewModel(
-            //IWritableOptions<ApplicationSettings> onboarding,
+            IWritableOptions<ApplicationSettings> onboarding,
             IRouteMessenger messenger)
         {
-            //Onboarding = onboarding;
+            Onboarding = onboarding;
             Messenger = messenger;
         }
 
