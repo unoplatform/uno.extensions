@@ -19,11 +19,11 @@ namespace ApplicationTemplate.Presentation
         private IWritableOptions<DiagnosticSettings> Settings { get; }
         public DiagnosticsOverlayViewModel(
             DiagnosticsCountersService counterService,
-            IWritableOptions<DiagnosticSettings> settings,
+           // IWritableOptions<DiagnosticSettings> settings,
             IRouteMessenger messenger)
         {
             DiagnosticsCountersService = counterService;
-            Settings = settings;
+            //Settings = settings;
                 Messenger = messenger;
         }
 
@@ -49,7 +49,7 @@ namespace ApplicationTemplate.Presentation
         public ICommand NavigateToDiagnosticsPage => new RelayCommand(() =>
            Messenger.Send(new RoutingMessage(this, typeof(DiagnosticsPageViewModel).AsRoute())));
 
-        public bool IsDiagnosticsOverlayEnabled => Settings.Value.DiagnosticOverlayEnabled;
+        public bool IsDiagnosticsOverlayEnabled => Settings?.Value.DiagnosticOverlayEnabled??false;
         //public bool IsDiagnosticsOverlayEnabled => DiagnosticsConfiguration.DiagnosticsOverlay.GetIsEnabled();
 
         private bool isAlignmentGridEnabled;

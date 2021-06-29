@@ -42,7 +42,7 @@ namespace ApplicationTemplate.Views
                 (stack, route, args) => {
                     if (route != "") return route;
                     var onboarding = Services.GetService<IWritableOptions<ApplicationSettings>>();
-                    if (!onboarding.Value.IsOnboardingCompleted)
+                    if (!(onboarding?.Value.IsOnboardingCompleted)??false)
                     {
                         return typeof(OnboardingPageViewModel).AsRoute();
                     }
