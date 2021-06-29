@@ -12,15 +12,20 @@ namespace Uno.Extensions.Hosting
     {
         public static IHostBuilder CreateDefaultBuilderForWASM() =>
             CreateDefaultBuilder()
+                .ConfigureHostConfiguration(config =>
+                {
+                    // Note that this environment variable is being set so that in .net6 we can leverage polling file watcher
+                    Environment.SetEnvironmentVariable("DOTNET_USE_POLLING_FILE_WATCHER", "true"); 
+                })
                 .ConfigureLogging((_, factory) =>
                 {
                     factory.Services.RemoveAllIncludeImplementations<ConsoleLoggerProvider>();
                 });
-
+        
 
         public static IHostBuilder CreateDefaultBuilder() =>
             Host.CreateDefaultBuilder()
-#if WINUI || WINDOWS_UWP || __IOS__ || __ANDROID__
+#if WINUI || WINDOWS_UWP || __IOS__ || __ANDROID__ || __WINUI__
             .UseContentRoot(PlatformSpecificContentRootPath())
 #endif
 #if __IOS__ || NETSTANDARD
@@ -51,7 +56,7 @@ namespace Uno.Extensions.Hosting
 
         private static string PlatformSpecificContentRootPath()
         {
-#if WINUI || WINDOWS_UWP
+#if WINUI || WINDOWS_UWP || __WINUI__
             return Windows.Storage.ApplicationData.Current.LocalFolder.Path;
 #elif __ANDROID__ || __IOS__
             return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);

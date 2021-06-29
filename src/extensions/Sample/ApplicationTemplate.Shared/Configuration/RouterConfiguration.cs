@@ -40,9 +40,9 @@ namespace ApplicationTemplate.Views
             Services = services;
             Redirection =
                 (stack, route, args) => {
-                    if (route != "") return route;
+                    if (route != "" && route!="/") return route;
                     var onboarding = Services.GetService<IWritableOptions<ApplicationSettings>>();
-                    if (!(onboarding?.Value.IsOnboardingCompleted)??false)
+                    if (!(onboarding?.Value.IsOnboardingCompleted??false))
                     {
                         return typeof(OnboardingPageViewModel).AsRoute();
                     }
