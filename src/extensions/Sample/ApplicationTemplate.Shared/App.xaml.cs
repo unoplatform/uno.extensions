@@ -20,6 +20,7 @@ using Uno.Extensions.Navigation.Messages;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Http;
 using Uno.Extensions.Http.Firebase;
+using System;
 
 //-:cnd:noEmit
 #if WINDOWS_UWP
@@ -50,6 +51,7 @@ namespace ApplicationTemplate
         public App()
         {
             Instance = this;
+
             host = UnoHost
 #if __WASM__
                 .CreateDefaultBuilderForWASM()
@@ -58,16 +60,16 @@ namespace ApplicationTemplate
 #endif
                 .UseEnvironment("Staging")
                 .UseAppSettingsForHostConfiguration<App>()
-                //.UseHostConfigurationForApp()
-                //.UseEnvironmentAppSettings<App>()
-                //.UseLocalization()
-                //.UseWritableSettings<EndpointOptions>(ctx => ctx.Configuration.GetSection("ChuckNorrisEndpoint"))
-                //.UseWritableSettings<AuthenticationData>(ctx => ctx.Configuration.GetSection(nameof(AuthenticationData)))
-                //.UseWritableSettings<ApplicationSettings>(ctx => ctx.Configuration.GetSection(nameof(ApplicationSettings)))
-                //.UseWritableSettings<DiagnosticSettings>(ctx => ctx.Configuration.GetSection(nameof(DiagnosticSettings)))
+                .UseHostConfigurationForApp()
+                .UseEnvironmentAppSettings<App>()
+                .UseLocalization()
+                .UseWritableSettings<EndpointOptions>(ctx => ctx.Configuration.GetSection("ChuckNorrisEndpoint"))
+                .UseWritableSettings<AuthenticationData>(ctx => ctx.Configuration.GetSection(nameof(AuthenticationData)))
+                .UseWritableSettings<ApplicationSettings>(ctx => ctx.Configuration.GetSection(nameof(ApplicationSettings)))
+                .UseWritableSettings<DiagnosticSettings>(ctx => ctx.Configuration.GetSection(nameof(DiagnosticSettings)))
                 //.UseRouting<RouterConfiguration, LaunchMessage>(() => App.Instance.NavigationFrame)
                 .UseRoutingWithRedirection<RouterConfiguration, LaunchMessage, RouterRedirection>(() => App.Instance.NavigationFrame)
-                //.AddApi()
+                .AddApi()
                 .UseFirebaseHandler()
                 .ConfigureServices(services =>
                 {

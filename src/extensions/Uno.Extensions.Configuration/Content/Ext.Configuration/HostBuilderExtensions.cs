@@ -63,7 +63,7 @@ namespace Uno.Extensions.Configuration
             return hostBuilder?
                 .ConfigureAppConfiguration((ctx, b) =>
                     {
-                        b.AddJsonFile(FilePath(ctx), optional: true, reloadOnChange: true);
+                        b.AddJsonFile(FilePath(ctx), optional: true, reloadOnChange: false); // In .NET6 we can enable this again because we can use polling
                     })
                     .ConfigureServices((ctx, services) =>
                     {
