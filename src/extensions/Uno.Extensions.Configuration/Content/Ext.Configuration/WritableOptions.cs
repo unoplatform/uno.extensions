@@ -1,15 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Uno.Extensions.Logging;
-using Windows.Storage;
 
 namespace Uno.Extensions.Configuration
 {
@@ -66,19 +62,32 @@ namespace Uno.Extensions.Configuration
             _logger.LazyLogDebug(() => $@"Updating options, saving to file '{_file}'");
 
             var physicalPath = _file;
-            var jObject =
-                File.Exists(physicalPath) ?
-                JsonConvert.DeserializeObject<JObject>(File.ReadAllText(physicalPath)) :
-                new JObject();
-            var sectionObject = jObject.TryGetValue(_section, out var section) ?
-                JsonConvert.DeserializeObject<T>(section.ToString()) : (Value ?? new T());
+            var jObject = JsonSerializer.Deserialize<Dictionary<string, object>>(File.Exists(physicalPath) ? File.ReadAllText(physicalPath) : string.Empty);
+            var sectionObject = Value ?? new T();
 
             sectionObject = applyChanges?.Invoke(sectionObject);
 
-            jObject[_section] = JObject.Parse(JsonConvert.SerializeObject(sectionObject));
-            File.WriteAllText(physicalPath, JsonConvert.SerializeObject(jObject, Formatting.Indented));
+            jObject[_section] = sectionObject;
+
+            var json = JsonSerializer.Serialize(jObject);
+
+            File.WriteAllText(physicalPath, json);
 
             await _reloader.ReloadAllFileConfigurationProviders(physicalPath);
+        }
+    }
+
+    public static class JsonHelpers
+    {
+        public static T ToObject<T>(this JsonElement element)
+        {
+            var json = element.GetRawText();
+            return JsonSerializer.Deserialize<T>(json);
+        }
+        public static T ToObject<T>(this JsonDocument document)
+        {
+            var json = document.RootElement.GetRawText();
+            return JsonSerializer.Deserialize<T>(json);
         }
     }
 }
