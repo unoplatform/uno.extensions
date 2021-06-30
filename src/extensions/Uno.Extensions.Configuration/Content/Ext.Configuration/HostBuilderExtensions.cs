@@ -1,12 +1,14 @@
 ﻿using System;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 
 namespace Uno.Extensions.Configuration
 {
     public static class HostBuilderExtensions
     {
+        public const string ConfigurationFolderName = "config";
         public static IHostBuilder UseHostConfigurationForApp(this IHostBuilder hostBuilder)
         {
             return hostBuilder?
@@ -52,8 +54,7 @@ namespace Uno.Extensions.Configuration
         {
             static string FilePath(HostBuilderContext hctx)
             {
-                var file = $"{AppSettings.AppSettingsFileName}.{typeof(TSettingsOptions).Name}.json";
-
+                var file = $"{ConfigurationFolderName}/{AppSettings.AppSettingsFileName}.{typeof(TSettingsOptions).Name}.json";
                 var fileProvider = hctx.HostingEnvironment.ContentRootFileProvider;
                 var fileInfo = fileProvider.GetFileInfo(file);
                 return fileInfo.PhysicalPath;
@@ -63,13 +64,21 @@ namespace Uno.Extensions.Configuration
             return hostBuilder?
                 .ConfigureAppConfiguration((ctx, b) =>
                     {
-                        b.AddJsonFile(FilePath(ctx), optional: true, reloadOnChange: false); // In .NET6 we can enable this again because we can use polling
+                        var path = FilePath(ctx);
+                        Console.WriteLine($"iwrit Config path {path}");
+                        b.AddJsonFile(path, optional: true, reloadOnChange: false); // In .NET6 we can enable this again because we can use polling
                     })
                     .ConfigureServices((ctx, services) =>
                     {
                         var section = configSection(ctx);
-                        _ = services.ConfigureAsWritable<TSettingsOptions>(section, FilePath(ctx));
+                        services.TryAddSingleton<Reloader>();
+                        _ = services
+#if NETSTANDARD || __WASM__
+                                .AddHostedService<ReloadService>()
+#endif
+                                .ConfigureAsWritable<TSettingsOptions>(section, FilePath(ctx));
                     }
+
                 );
         }
 

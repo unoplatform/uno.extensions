@@ -65,7 +65,7 @@ namespace ApplicationTemplate.Business
 
         private async Task Update(Action<ApplicationSettings> updateFunction)
         {
-            _dataPersister.Update(updateFunction);
+            await _dataPersister.Update(updateFunction);
         }
     }
 }

@@ -25,7 +25,7 @@ namespace ApplicationTemplate.Presentation
 
         private async void CompleteOnboarding()
         {
-            Onboarding.Update(options => options.IsOnboardingCompleted = true);
+            await Onboarding.Update(options => options.IsOnboardingCompleted = true);
             Messenger.Send(new ClearStackMessage(this));
         }
 

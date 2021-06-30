@@ -25,7 +25,7 @@ namespace Uno.Extensions.Hosting
 
         public static IHostBuilder CreateDefaultBuilder() =>
             Host.CreateDefaultBuilder()
-#if WINUI || WINDOWS_UWP || __IOS__ || __ANDROID__ || __WINUI__
+#if WINUI || WINDOWS_UWP || __IOS__ || __ANDROID__ || NETSTANDARD
             .UseContentRoot(PlatformSpecificContentRootPath())
 #endif
 #if __IOS__ || NETSTANDARD
@@ -56,7 +56,7 @@ namespace Uno.Extensions.Hosting
 
         private static string PlatformSpecificContentRootPath()
         {
-#if WINUI || WINDOWS_UWP || __WINUI__
+#if WINUI || WINDOWS_UWP || NETSTANDARD
             return Windows.Storage.ApplicationData.Current.LocalFolder.Path;
 #elif __ANDROID__ || __IOS__
             return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
