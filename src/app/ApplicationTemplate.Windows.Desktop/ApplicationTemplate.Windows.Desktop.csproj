@@ -8,6 +8,7 @@
 		<Platforms>x86;x64;arm64</Platforms>
 		<RuntimeIdentifiers>win10-x86;win10-x64</RuntimeIdentifiers>
     <DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+    <UseWinUI>true</UseWinUI>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -15,16 +16,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.ProjectReunion" Version="0.5.7" />
+		<PackageReference Include="Microsoft.ProjectReunion" Version="0.8.0" />
 	</ItemGroup>
 
   <Import Project="..\uno.extensions.targets" />
   <Import Project="..\app.targets" />
 
-	<ItemGroup>
+	<!--<ItemGroup>
 		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.19041.16" />
 		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.19041.16" />
-	</ItemGroup>
+	</ItemGroup>-->
 
 	<ItemGroup>
 	  <PackageReference Update="Microsoft.Extensions.Localization.Abstractions" Version="5.0.7" />
