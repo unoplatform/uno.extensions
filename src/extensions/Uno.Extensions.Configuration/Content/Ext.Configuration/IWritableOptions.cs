@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 
 namespace Uno.Extensions.Configuration
@@ -6,7 +7,7 @@ namespace Uno.Extensions.Configuration
     public interface IWritableOptions<T> : IOptionsSnapshot<T>
         where T : class, new()
     {
-        void Update(Func<T, T> applyChanges);
-        void Update(Action<T> applyChanges);
+        Task Update(Func<T, T> applyChanges);
+        Task Update(Action<T> applyChanges);
     }
 }

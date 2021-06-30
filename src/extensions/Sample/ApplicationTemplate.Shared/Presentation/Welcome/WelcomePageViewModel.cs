@@ -23,9 +23,9 @@ namespace ApplicationTemplate.Presentation
             Messenger = messenger;
         }
 
-        public void ResetOnboarding()
+        public async void ResetOnboarding()
         {
-            Onboarding.Update(options => options.IsOnboardingCompleted = false);
+            await Onboarding.Update(options => options.IsOnboardingCompleted = false);
             Messenger.Send(new ClearStackMessage(this));
         }
         //public IDynamicCommand NavigateToHomePage => this.GetCommandFromTask(async ct =>

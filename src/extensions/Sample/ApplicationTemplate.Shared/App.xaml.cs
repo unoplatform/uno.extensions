@@ -21,6 +21,9 @@ using Microsoft.Extensions.Logging;
 using Uno.Extensions.Http;
 using Uno.Extensions.Http.Firebase;
 using System;
+using Windows.Storage;
+using Microsoft.Extensions.Configuration;
+using System.Threading;
 
 //-:cnd:noEmit
 #if WINDOWS_UWP
@@ -45,12 +48,50 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace ApplicationTemplate
 {
-    sealed partial class App : Application
+
+  
+sealed partial class App : Application
     {
         private IHost host { get; }
         public App()
         {
             Instance = this;
+
+            //var localFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
+            //Console.WriteLine($"Local '{ localFolder.Path}'");
+            //var methods = localFolder.GetType().GetMethods(
+            //    System.Reflection.BindingFlags.Instance |
+            //    System.Reflection.BindingFlags.NonPublic |
+            //    System.Reflection.BindingFlags.Public |
+            //    System.Reflection.BindingFlags.FlattenHierarchy |
+            //    System.Reflection.BindingFlags.IgnoreCase);
+            //foreach (var m in methods)
+            //{
+            //    Console.WriteLine($"Method '{m.Name}'");
+            //}
+            //var implmethod= localFolder.GetType().GetMethod("get_Implementation",
+            //    System.Reflection.BindingFlags.Instance |
+            //    System.Reflection.BindingFlags.NonPublic |
+            //    System.Reflection.BindingFlags.Public |
+            //    System.Reflection.BindingFlags.FlattenHierarchy |
+            //    System.Reflection.BindingFlags.IgnoreCase);
+
+            //var impl = implmethod.Invoke(localFolder, null);
+            //methods = impl.GetType().GetMethods(
+            //    System.Reflection.BindingFlags.Instance |
+            //    System.Reflection.BindingFlags.NonPublic |
+            //    System.Reflection.BindingFlags.Public |
+            //    System.Reflection.BindingFlags.FlattenHierarchy |
+            //    System.Reflection.BindingFlags.IgnoreCase);
+            //foreach (var m in methods)
+            //{
+            //    Console.WriteLine($"Imp - Method '{m.Name}'");
+            //}
+
+            ////method.Invoke(localFolder,null);
+            //Console.WriteLine($"Local created '{ localFolder.Path}'");
+            //var configTask = localFolder.CreateFolderAsync("config", CreationCollisionOption.OpenIfExists);
+
 
             host = UnoHost
 #if __WASM__
@@ -88,17 +129,22 @@ namespace ApplicationTemplate
                 .UseUnoLogging(logBuilder =>
                 {
                     logBuilder
-                    .SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Information)
-                    .CoreLogLevel(Microsoft.Extensions.Logging.LogLevel.Information)
-                    .XamlBindingLogLevel(Microsoft.Extensions.Logging.LogLevel.Information)
-                    .XamlLayoutLogLevel(Microsoft.Extensions.Logging.LogLevel.Information)
-                    .XamlLogLevel(Microsoft.Extensions.Logging.LogLevel.Information);
+                    .SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Debug)
+                    .CoreLogLevel(Microsoft.Extensions.Logging.LogLevel.Critical)
+                    .XamlBindingLogLevel(Microsoft.Extensions.Logging.LogLevel.Critical)
+                    .XamlLayoutLogLevel(Microsoft.Extensions.Logging.LogLevel.Critical)
+                    .XamlLogLevel(Microsoft.Extensions.Logging.LogLevel.Critical)
+                    .StorageLogLevel(Microsoft.Extensions.Logging.LogLevel.Trace)
+                    .XamlBindingLogLevel(Microsoft.Extensions.Logging.LogLevel.Critical)
+                    .BinderMemoryReferenceLogLevel(Microsoft.Extensions.Logging.LogLevel.Critical)
+                    .HotReloadCoreLogLevel(Microsoft.Extensions.Logging.LogLevel.Critical)
+                    .WebAssemblyLogLevel(Microsoft.Extensions.Logging.LogLevel.Critical);
                 }
-                #if __WASM__
+#if __WASM__
                     , new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider()
 #endif
                 )
-                //.UseSerilog(true, true)
+                .UseSerilog(true)
                 .Build()
                 .EnableUnoLogging();
 
@@ -161,13 +207,13 @@ namespace ApplicationTemplate
 
         //-:cnd:noEmit
 #if !(NET5_0 && WINDOWS)
-//+:cnd:noEmit
+        //+:cnd:noEmit
         //protected override void OnActivated(IActivatedEventArgs args)
         //{
         //    // This is where your app launches if you use custom schemes, Universal Links, or Android App Links.
         //    InitializeAndStart(args);
         //}
-//-:cnd:noEmit
+        //-:cnd:noEmit
 #endif
         //+:cnd:noEmit
 

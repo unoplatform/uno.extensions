@@ -37,7 +37,7 @@ namespace Uno.Extensions.Http
         public async Task<AuthenticationData> Login(CancellationToken ct, string email, string password)
         {
             var authenticationData = await _authenticationEndpoint.Login(ct, email, password);
-            _authenticationData.Update(auth => authenticationData);
+            await _authenticationData.Update(auth => authenticationData);
 
             return authenticationData;
         }
@@ -45,7 +45,7 @@ namespace Uno.Extensions.Http
         /// <inheritdoc/>
         public async Task Logout(CancellationToken ct)
         {
-            _authenticationData.Update(auth => null);
+            await _authenticationData.Update(auth => null);
         }
 
         /// <inheritdoc/>
@@ -61,7 +61,7 @@ namespace Uno.Extensions.Http
         {
             var authenticationData = await _authenticationEndpoint.RefreshToken(ct, unauthorizedToken);
 
-            _authenticationData.Update(auth => authenticationData);
+            await _authenticationData.Update(auth => authenticationData);
 
             return authenticationData;
         }
@@ -69,7 +69,7 @@ namespace Uno.Extensions.Http
         /// <inheritdoc/>
         public async Task NotifySessionExpired(CancellationToken ct, HttpRequestMessage request, AuthenticationData unauthorizedToken)
         {
-            _authenticationData.Update(auth => null);
+            await _authenticationData.Update(auth => null);
 
             _sessionExpired.OnNext(Unit.Default);
         }

@@ -1,5 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System.Linq;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -29,7 +31,7 @@ namespace Uno.Extensions.Configuration
                 .AddTransient<IWritableOptions<T>>(provider =>
                 {
                     var logger = provider.GetService<ILogger<IWritableOptions<T>>>();
-                    var root = provider.GetService<IConfigurationRoot>();
+                    var root = provider.GetService<Reloader>();
                     var options = provider.GetService<IOptionsMonitor<T>>();
                     return new WritableOptions<T>(logger, root, options, section.Key, file);
                 });
