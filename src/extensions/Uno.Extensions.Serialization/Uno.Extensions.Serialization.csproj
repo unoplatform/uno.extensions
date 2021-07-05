@@ -3,4 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>net5.0-windows10.0.19041.0;uap10.0.16299;netstandard2.0;xamarinios10;xamarinmac20;monoandroid10.0;monoandroid11.0</TargetFrameworks>
   </PropertyGroup>
+  <ItemGroup>
+    <Content Remove="Content\Ext.Serialization\HostBuilderExtensions.cs" />
+  </ItemGroup>
 </Project>
