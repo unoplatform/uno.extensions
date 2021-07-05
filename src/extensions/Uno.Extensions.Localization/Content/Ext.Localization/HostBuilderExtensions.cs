@@ -5,7 +5,7 @@ using Uno.Extensions.Configuration;
 
 namespace Uno.Extensions.Localization
 {
-    public static class ServiceCollectionExtensions
+    public static class HostBuilderExtensions
     {
         public static IHostBuilder UseLocalization(this IHostBuilder builder)
         {

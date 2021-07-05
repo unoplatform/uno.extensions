@@ -104,7 +104,7 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(IsWinUI)' != 'true' and '$(IsUWP)' != 'true'">
-    <PackageReference Include="Uno.WinUI" Version="3.8.6" />
+    <PackageReference Include="Uno.WinUI" Version="3.8.11" />
   </ItemGroup>
   <ItemGroup Condition="'$(IsWinUI)' == 'true'">
     <PackageReference Include="Microsoft.ProjectReunion" Version="0.8.0" />
