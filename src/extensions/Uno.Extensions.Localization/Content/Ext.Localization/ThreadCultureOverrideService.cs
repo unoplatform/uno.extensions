@@ -12,6 +12,7 @@ namespace Uno.Extensions.Localization
         private readonly Thread _uiThread;
         private readonly string[] _supportedLanguages;
         private readonly CultureInfo _fallbackCulture;
+        private readonly CultureInfo _settingsCulture;
         private readonly ILogger _logger;
 
         /// <summary>
@@ -20,11 +21,12 @@ namespace Uno.Extensions.Localization
         /// <param name="uiThread">UI thread</param>
         /// <param name="supportedLanguages">Supported languages</param>
         /// <param name="fallbackCulture">Fallback culture</param>
-        /// <param name="settingFilePath">Path to the file where the preference will be stored</param>
+        /// <param name="settingsCulture">Culture read from settings</param>
         /// <param name="logger">Logger</param>
         public ThreadCultureOverrideService(
             Thread uiThread,
             string[] supportedLanguages,
+            CultureInfo settingsCulture,
             CultureInfo fallbackCulture,
             ILogger<ThreadCultureOverrideService> logger = null
         )
@@ -32,6 +34,7 @@ namespace Uno.Extensions.Localization
             _uiThread = uiThread ?? throw new ArgumentNullException(nameof(uiThread));
             _supportedLanguages = supportedLanguages ?? throw new ArgumentNullException(nameof(supportedLanguages));
             _fallbackCulture = fallbackCulture ?? throw new ArgumentNullException(nameof(supportedLanguages));
+            _settingsCulture = settingsCulture;
             _logger = logger ?? NullLogger<ThreadCultureOverrideService>.Instance;
         }
 
@@ -44,13 +47,17 @@ namespace Uno.Extensions.Localization
         {
             try
             {
-                var culture = CultureInfo.CurrentCulture;
+                // Pick language from supported languages
+                // Check first for culture saved to settings
+                // If no culture set, then use CurrentCulture
+                var language = (_settingsCulture is not null) ?
+                    PickSupportedLanguage(_settingsCulture) :
+                    PickSupportedLanguage(CultureInfo.CurrentCulture);
 
                 // Use the fallback culture if the language is not supported.
-                if (!_supportedLanguages.Any(l => l.StartsWith(culture.TwoLetterISOLanguageName, StringComparison.InvariantCultureIgnoreCase)))
-                {
-                    culture = _fallbackCulture;
-                }
+                var culture = (!string.IsNullOrWhiteSpace(language)) ?
+                                    new CultureInfo(language) :
+                                    _fallbackCulture;
 
                 // Override the current thread culture
                 _uiThread.CurrentCulture = culture;
@@ -59,6 +66,7 @@ namespace Uno.Extensions.Localization
                 // Override any new thread culture
                 CultureInfo.DefaultThreadCurrentCulture = culture;
                 CultureInfo.DefaultThreadCurrentUICulture = culture;
+                // Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = culture.Name;
 
                 return true;
             }
@@ -69,5 +77,8 @@ namespace Uno.Extensions.Localization
                 return false;
             }
         }
+
+        private string PickSupportedLanguage(CultureInfo culture)
+            => _supportedLanguages.FirstOrDefault(l => l.StartsWith(culture.TwoLetterISOLanguageName, StringComparison.InvariantCultureIgnoreCase));
     }
 }

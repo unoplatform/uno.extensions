@@ -25,7 +25,7 @@ namespace ApplicationTemplate
     {
         protected override void PreInitializeServices()
         {
-            LocalizationConfiguration.PreInitialize();
+            //LocalizationConfiguration.PreInitialize();
         }
 
         protected override IHostBuilder InitializeServices(IHostBuilder hostBuilder)

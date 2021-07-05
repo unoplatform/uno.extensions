@@ -14,7 +14,7 @@ namespace Uno.Extensions.Localization
 
                 .ConfigureServices((ctx, services) =>
             {
-                services
+                _ = services
                 .AddHostedService<LocalizationService>()
                 .AddSingleton<IStringLocalizer, ResourceLoaderStringLocalizer>();
             });
