@@ -5,16 +5,31 @@ using System.Text;
 //using Chinook.DynamicMvvm;
 // using FluentValidation;
 using Microsoft.Extensions.Localization;
+using Uno.Extensions;
+using Uno.Extensions.Configuration;
+using Uno.Extensions.Localization;
 
 namespace ApplicationTemplate.Presentation
 {
     public class LoginFormViewModel : ViewModel
     {
-        //public LoginFormViewModel()
-        //{
-        //    this.AddValidation(this.GetProperty(x => x.Email));
-        //    this.AddValidation(this.GetProperty(x => x.Password));
-        //}
+        private readonly IStringLocalizer _localizer;
+        public LoginFormViewModel(
+            IStringLocalizer localizer,
+            IWritableOptions<LocalizationSettings> localization)
+        {
+            _localizer = localizer;
+            var validation = _localizer["ValidationNotEmpty_Email"];
+            //    this.AddValidation(this.GetProperty(x => x.Email));
+            //    this.AddValidation(this.GetProperty(x => x.Password));
+
+            localization.Update(settings =>
+            {
+                var current = settings.CurrentCulture;
+                var index = current!=null?settings.Cultures.IndexOf(current):-1;
+                settings.CurrentCulture = settings.Cultures[(++index) % settings.Cultures.Length];
+            });
+        }
 
         private string email;
 

@@ -18,6 +18,10 @@ namespace Uno.Extensions.Localization
             new[] { new CultureInfo("en-US") } :
             Settings.Value.Cultures.Select(c => new CultureInfo(c)).ToArray();
 
+        private CultureInfo CurrentCulture => (Settings?.Value?.CurrentCulture is not null) ?
+            new CultureInfo(Settings.Value.CurrentCulture) :
+            null;
+
         public LocalizationService(IWritableOptions<LocalizationSettings> settings)
         {
             Settings = settings;
@@ -28,6 +32,7 @@ namespace Uno.Extensions.Localization
             _cultureOverrideService = new ThreadCultureOverrideService(
                 Thread.CurrentThread,
                 SupportedCultures.Select(c => c.TwoLetterISOLanguageName).ToArray(),
+                CurrentCulture,
                 SupportedCultures.First()
             );
 
@@ -46,5 +51,6 @@ namespace Uno.Extensions.Localization
         public async Task StopAsync(CancellationToken cancellationToken)
         {
         }
+
     }
 }
