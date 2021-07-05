@@ -112,11 +112,12 @@ sealed partial class App : Application
                 .UseRoutingWithRedirection<RouterConfiguration, LaunchMessage, RouterRedirection>(() => App.Instance.NavigationFrame)
                 .AddApi()
                 .UseFirebaseHandler()
+                .UseSerialization()
                 .ConfigureServices(services =>
                 {
                     services
                         //.AddSerialization(SerializationGeneratorConfiguration.Initialize)
-                        .AddSystemTextJsonSerialization()
+                        //.AddSystemTextJsonSerialization()
                         .AddAppServices()
                         .AddTransient<ShellViewModel>()
                         .AddTransient<DiagnosticsOverlayViewModel>()
