@@ -121,6 +121,6 @@
     <value>$ext_safeprojectname$</value>
   </data>
   <data name="HelloWorld" xml:space="preserve">
-    <value>Hello World from en Resource</value>
+    <value>Hello World from fr Resource</value>
   </data>
 </root>
