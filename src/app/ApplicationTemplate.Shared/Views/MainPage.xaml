@@ -11,6 +11,8 @@
         <StackPanel>
             <TextBlock Text="Hello, world!" Margin="20" FontSize="30" />
             <TextBlock Text="{Binding Introduction}" Margin="20" FontSize="20" />
+            <TextBlock Text="{Binding ResourcedIntroduction}" Margin="20" FontSize="20" />
+            <Button Content="Toggle Localization" Command="{Binding ToggleLocalizationCommand}"/>
             <Button Content="Second" Command="{Binding GoSecondCommand}"/>
         </StackPanel>
     </Grid>

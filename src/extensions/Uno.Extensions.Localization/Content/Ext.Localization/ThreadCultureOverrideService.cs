@@ -66,7 +66,7 @@ namespace Uno.Extensions.Localization
                 // Override any new thread culture
                 CultureInfo.DefaultThreadCurrentCulture = culture;
                 CultureInfo.DefaultThreadCurrentUICulture = culture;
-                // Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = culture.Name;
+                Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = culture.Name;
 
                 return true;
             }

@@ -62,7 +62,7 @@ namespace Uno.Extensions.Configuration
             _logger.LazyLogDebug(() => $@"Updating options, saving to file '{_file}'");
 
             var physicalPath = _file;
-            var jObject = File.Exists(physicalPath) ?JsonSerializer.Deserialize<Dictionary<string, object>>( File.ReadAllText(physicalPath)) : new Dictionary<string, object>();
+            var jObject = File.Exists(physicalPath) ? JsonSerializer.Deserialize<Dictionary<string, object>>(File.ReadAllText(physicalPath)) : new Dictionary<string, object>();
             var sectionObject = Value ?? new T();
 
             sectionObject = applyChanges?.Invoke(sectionObject);

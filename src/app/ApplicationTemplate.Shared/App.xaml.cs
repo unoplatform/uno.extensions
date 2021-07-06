@@ -36,6 +36,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using ApplicationTemplate.Views;
 using Uno.Extensions.Logging.Serilog;
+using Uno.Extensions.Localization;
 #pragma warning restore SA1005 // Single line comments should begin with single space
 
 namespace ApplicationTemplate
@@ -61,6 +62,7 @@ namespace ApplicationTemplate
                 //+:cnd:noEmit
                 .UseEnvironment("Staging")
                 .UseAppSettings<App>()
+                .UseHostConfigurationForApp()
                 .UseConfigurationSectionInApp<CustomIntroduction>(nameof(CustomIntroduction))
                 .UseUnoLogging(logBuilder =>
                     {
@@ -78,6 +80,7 @@ namespace ApplicationTemplate
                 //+:cnd:noEmit
                 )
                 .UseSerilog(true)
+                .UseLocalization()
                 .UseRouting<RouterConfiguration, LaunchMessage>(() => _frame)
                 .ConfigureServices(services =>
                 {
