@@ -24,6 +24,7 @@ using System;
 using Windows.Storage;
 using Microsoft.Extensions.Configuration;
 using System.Threading;
+using System.Text.Json;
 
 //-:cnd:noEmit
 #if WINDOWS_UWP
@@ -104,7 +105,7 @@ sealed partial class App : Application
                 .UseHostConfigurationForApp()
                 .UseEnvironmentAppSettings<App>()
                 .UseLocalization()
-                .UseWritableSettings<EndpointOptions>(ctx => ctx.Configuration.GetSection("ChuckNorrisEndpoint"))
+                //.UseWritableSettings<EndpointOptions>(ctx => ctx.Configuration.GetSection("ChuckNorrisEndpoint"))
                 .UseWritableSettings<AuthenticationData>(ctx => ctx.Configuration.GetSection(nameof(AuthenticationData)))
                 .UseWritableSettings<ApplicationSettings>(ctx => ctx.Configuration.GetSection(nameof(ApplicationSettings)))
                 .UseWritableSettings<DiagnosticSettings>(ctx => ctx.Configuration.GetSection(nameof(DiagnosticSettings)))
@@ -116,6 +117,7 @@ sealed partial class App : Application
                 .ConfigureServices(services =>
                 {
                     services
+                        .AddSingleton(new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
                         //.AddSerialization(SerializationGeneratorConfiguration.Initialize)
                         //.AddSystemTextJsonSerialization()
                         .AddAppServices()

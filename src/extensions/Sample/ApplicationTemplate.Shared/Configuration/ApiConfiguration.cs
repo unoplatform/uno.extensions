@@ -19,6 +19,7 @@ using Uno.Extensions.Http;
 using Uno.Extensions.Serialization.Http;
 using Uno.Extensions.Http.Refit;
 using Uno.Extensions.Serialization.Refit;
+using Uno.Extensions.Http.Firebase;
 
 namespace ApplicationTemplate
 {
@@ -46,9 +47,8 @@ namespace ApplicationTemplate
                 .AddNetworkExceptionHandler()
                 .AddExceptionHubHandler()
                 .AddAuthenticationTokenHandler()
-#if (IncludeFirebaseAnalytics)
+                .AddContentSerializer()
                 .AddFirebaseHandler()
-#endif
                 .AddResponseContentDeserializer()
                 .AddAuthenticationEndpoint(context)
                 .AddPostEndpoint(context)
@@ -59,12 +59,14 @@ namespace ApplicationTemplate
 
         private static IServiceCollection AddUserProfileEndpoint(this IServiceCollection services, HostBuilderContext context)
         {
-            return services.AddEndpoint<IUserProfileEndpoint, UserProfileEndpointMock>(context, "UserProfileEndpoint");
+            return services.AddTransient<IUserProfileEndpoint, UserProfileEndpointMock>();
+            //return services.AddEndpoint<IUserProfileEndpoint, UserProfileEndpointMock>(context, "UserProfileEndpoint");
         }
 
         private static IServiceCollection AddAuthenticationEndpoint(this IServiceCollection services, HostBuilderContext context)
         {
-            return services.AddEndpoint<IAuthenticationEndpoint, AuthenticationEndpointMock>(context, "AuthenticationEndpoint");
+            return services.AddTransient<IAuthenticationEndpoint, AuthenticationEndpointMock>();
+            //return services.AddEndpoint<IAuthenticationEndpoint, AuthenticationEndpointMock>(context, "AuthenticationEndpoint");
         }
 
         private static IServiceCollection AddPostEndpoint(this IServiceCollection services, HostBuilderContext context)
@@ -75,7 +77,7 @@ namespace ApplicationTemplate
                     (request, response, deserializedResponse) => new PostEndpointException(deserializedResponse)
                 ))
                 .AddTransient<ExceptionInterpreterHandler<PostErrorResponse>>()
-                .AddEndpoint<IPostEndpoint, PostEndpointMock>(context, "PostEndpoint", b => b
+                .AddRefitClient< IPostEndpoint>(context, "PostEndpoint",b => b
                     .AddHttpMessageHandler<ExceptionInterpreterHandler<PostErrorResponse>>()
                     .AddHttpMessageHandler<AuthenticationTokenHandler<AuthenticationData>>()
                 );
@@ -89,58 +91,58 @@ namespace ApplicationTemplate
                     (request, response, deserializedResponse) => new ChuckNorrisException(deserializedResponse.Message)
                 ))
                 .AddTransient<ExceptionInterpreterHandler<ChuckNorrisErrorResponse>>()
-                .AddEndpoint<IChuckNorrisEndpoint, ChuckNorrisEndpointMock>(context, "ChuckNorrisEndpoint", b => b
+                .AddRefitClient<IChuckNorrisEndpoint>(context, "ChuckNorrisEndpoint", b => b
                     .AddHttpMessageHandler<ExceptionInterpreterHandler<ChuckNorrisErrorResponse>>()
                 );
         }
 
-        private static IServiceCollection AddEndpoint<TInterface, TMock>(
-            this IServiceCollection services,
-            HostBuilderContext context,
-            string name,
-            Func<IHttpClientBuilder, IHttpClientBuilder> configure = null
-        )
-            where TInterface : class
-            where TMock : class, TInterface
-        {
-            var options = Options.Create(context.Configuration.GetSection(name).Get<EndpointOptions>());
+//        private static IServiceCollection AddEndpoint<TInterface, TMock>(
+//            this IServiceCollection services,
+//            HostBuilderContext context,
+//            string name,
+//            Func<IHttpClientBuilder, IHttpClientBuilder> configure = null
+//        )
+//            where TInterface : class
+//            where TMock : class, TInterface
+//        {
+//            var options = Options.Create(context.Configuration.GetSection(name).Get<EndpointOptions>());
 
-            if (options.Value.EnableMock)
-            {
-                services.AddSingleton<TInterface, TMock>();
-            }
-            else
-            {
-                var httpClientBuilder = services
-                    .AddRefitHttpClient<TInterface>(settings: serviceProvider => new RefitSettings()
-                    {
-                        ContentSerializer = new SerializerToContentSerializerAdapter(serviceProvider.GetRequiredService<ISerializer>()),
-                    })
-                    .ConfigurePrimaryHttpMessageHandler(serviceProvider => serviceProvider.GetRequiredService<HttpMessageHandler>())
-                    .ConfigureHttpClient((serviceProvider, client) =>
-                    {
-                        client.BaseAddress = new Uri(options.Value.Url);
-                        client.AddDefaultHeaders(serviceProvider);
-                    })
-                    .AddHttpMessageHandler<ExceptionHubHandler>();
+//            if (options.Value.EnableMock)
+//            {
+//                services.AddSingleton<TInterface, TMock>();
+//            }
+//            else
+//            {
+//                var httpClientBuilder = services
+//                    .AddRefitHttpClient<TInterface>(settings: serviceProvider => new RefitSettings()
+//                    {
+//                        ContentSerializer = new SerializerToContentSerializerAdapter(serviceProvider.GetRequiredService<ISerializer>()),
+//                    })
+//                    .ConfigurePrimaryHttpMessageHandler(serviceProvider => serviceProvider.GetRequiredService<HttpMessageHandler>())
+//                    .ConfigureHttpClient((serviceProvider, client) =>
+//                    {
+//                        client.BaseAddress = new Uri(options.Value.Url);
+//                        client.AddDefaultHeaders(serviceProvider);
+//                    })
+//                    .AddHttpMessageHandler<ExceptionHubHandler>();
 
-                configure?.Invoke(httpClientBuilder);
+//                configure?.Invoke(httpClientBuilder);
 
-                httpClientBuilder.AddHttpMessageHandler<NetworkExceptionHandler>();
+//                httpClientBuilder.AddHttpMessageHandler<NetworkExceptionHandler>();
 
-#if (IncludeFirebaseAnalytics)
-//-:cnd:noEmit
-#if __ANDROID__
-//+:cnd:noEmit
-                httpClientBuilder.AddHttpMessageHandler<FirebasePerformanceHandler>();
-//-:cnd:noEmit
-#endif
-//+:cnd:noEmit
-#endif
-            }
+//#if (IncludeFirebaseAnalytics)
+////-:cnd:noEmit
+//#if __ANDROID__
+////+:cnd:noEmit
+//                httpClientBuilder.AddHttpMessageHandler<FirebasePerformanceHandler>();
+////-:cnd:noEmit
+//#endif
+////+:cnd:noEmit
+//#endif
+//            }
 
-            return services;
-        }
+//            return services;
+//        }
 
 //        private static IServiceCollection AddMainHandler(this IServiceCollection services)
 //        {
@@ -248,10 +250,10 @@ namespace ApplicationTemplate
 
     }
 
-    public class EndpointOptions
-    {
-        public string Url { get; set; }
+    //public class EndpointOptions
+    //{
+    //    public string Url { get; set; }
 
-        public bool EnableMock { get; set; }
-    }
+    //    public bool EnableMock { get; set; }
+    //}
 }

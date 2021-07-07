@@ -8,13 +8,13 @@ namespace ApplicationTemplate.Client
 {
     public partial class ChuckNorrisData
     {
-        public string Id { get; }
+        public string Id { get; set; }
 
-        public string Value { get; }
+        public string Value { get; set; }
 
         [JsonPropertyName("icon_url")]
-        public string IconUrl { get; }
+        public string IconUrl { get; set; }
 
-        public string[] Categories { get; }
+        public string[] Categories { get; set; }
     }
 }

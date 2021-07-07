@@ -1,58 +1,32 @@
 ﻿using System;
+using System.Net.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Refit;
+using Uno.Extensions.Http.Handlers;
+using Uno.Extensions.Serialization;
 
 namespace Uno.Extensions.Http.Refit
 {
     public static class ServiceCollectionExtensions
     {
-//        public static IServiceCollection AddEndpoint<TInterface, TMock>(
-//               this IServiceCollection services,
-//               HostBuilderContext context,
-//               string name,
-//               Func<IHttpClientBuilder, IHttpClientBuilder> configure = null
-//           )
-//               where TInterface : class
-//               where TMock : class, TInterface
-//        {
-//            var options = Options.Create(context.Configuration.GetSection(name).Get<EndpointOptions>());
+        public static IServiceCollection AddRefitClient<TInterface>(
+               this IServiceCollection services,
+               HostBuilderContext context,
+               string name,
+               Func<IHttpClientBuilder, IHttpClientBuilder> configure = null
+           )
+               where TInterface : class
+        {
+            return services.AddClient<TInterface>(context, name,
+                (s, c) => s.AddRefitHttpClient<TInterface>(settings: serviceProvider => new RefitSettings()
+                {
+                    ContentSerializer = serviceProvider.GetRequiredService<IHttpContentSerializer>(),
+                }));
 
-//            if (options.Value.EnableMock)
-//            {
-//                services.AddSingleton<TInterface, TMock>();
-//            }
-//            else
-//            {
-//                var httpClientBuilder = services
-//                    .AddRefitHttpClient<TInterface>(settings: serviceProvider => new RefitSettings()
-//                    {
-//                        ContentSerializer = new ObjectSerializerToContentSerializerAdapter(serviceProvider.GetRequiredService<ISerializer>()),
-//                    })
-//                    .ConfigurePrimaryHttpMessageHandler(serviceProvider => serviceProvider.GetRequiredService<HttpMessageHandler>())
-//                    .ConfigureHttpClient((serviceProvider, client) =>
-//                    {
-//                        client.BaseAddress = new Uri(options.Value.Url);
-//                        AddDefaultHeaders(client, serviceProvider);
-//                    })
-//                    .AddHttpMessageHandler<ExceptionHubHandler>();
-
-//                configure?.Invoke(httpClientBuilder);
-
-//                httpClientBuilder.AddHttpMessageHandler<NetworkExceptionHandler>();
-
-//#if (IncludeFirebaseAnalytics)
-////-:cnd:noEmit
-//#if __ANDROID__
-////+:cnd:noEmit
-//                httpClientBuilder.AddHttpMessageHandler<FirebasePerformanceHandler>();
-////-:cnd:noEmit
-//#endif
-////+:cnd:noEmit
-//#endif
-//            }
-
-//            return services;
-//        }
+        }
 
         /// <summary>
         /// Adds a Refit client to the service collection.
@@ -67,8 +41,8 @@ namespace Uno.Extensions.Http.Refit
             services.AddSingleton(serviceProvider => RequestBuilder.ForType<T>(settings?.Invoke(serviceProvider)));
 
             return services
-                .AddHttpClient(typeof(T).FullName)
-                .AddTypedClient((client, serviceProvider) => RestService.For(client, serviceProvider.GetService<IRequestBuilder<T>>()));
+                .AddTypedHttpClient((client, serviceProvider) => RestService.For(client, serviceProvider.GetService<IRequestBuilder<T>>()));
         }
+
     }
 }

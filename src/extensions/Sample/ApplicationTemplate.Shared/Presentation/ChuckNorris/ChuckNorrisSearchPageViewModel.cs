@@ -3,8 +3,10 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using ApplicationTemplate;
 using ApplicationTemplate.Business;
+using CommunityToolkit.Mvvm.Input;
 //using Chinook.DataLoader;
 //using Chinook.DynamicMvvm;
 //using Chinook.StackNavigation;
@@ -14,11 +16,28 @@ namespace ApplicationTemplate.Presentation
 {
     public class ChuckNorrisSearchPageViewModel : ViewModel
     {
+        public string SearchTerm { get; set; }
         //public string SearchTerm
         //{
         //    get => this.Get<string>();
         //    set => this.Set(value);
         //}
+
+        private readonly IChuckNorrisService _chuck;
+
+        public ICommand Load { get; set; }
+        public ChuckNorrisSearchPageViewModel(IChuckNorrisService chuckService)
+        {
+            _chuck = chuckService;
+            Load = new RelayCommand(LoadAllQuotes);
+        }
+
+        private async void LoadAllQuotes()
+        {
+            var cancel = new CancellationTokenSource();
+            var quotes = await LoadQuotes(cancel.Token);
+        }
+
 
         //public IDynamicCommand NavigateToFavoriteQuotes => this.GetCommandFromTask(async ct =>
         //{
@@ -56,6 +75,16 @@ namespace ApplicationTemplate.Presentation
         //        .Select(q => this.GetChild(() => new ChuckNorrisItemViewModel(this, q), q.Id))
         //        .ToArray();
         //}
+
+        private async Task<ChuckNorrisItemViewModel[]> LoadQuotes(CancellationToken ct)
+        {
+
+            var quotes = await _chuck.Search(ct, SearchTerm);
+
+            return quotes
+                .Select(q => new ChuckNorrisItemViewModel(q))
+                .ToArray();
+        }
 
         //private async Task SetupFavoritesUpdate(CancellationToken ct)
         //{

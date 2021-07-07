@@ -50,7 +50,7 @@ namespace Uno.Extensions.Serialization.Refit
             using (var stream = await content.ReadAsStreamAsync())
 #endif
             {
-                return _serializer.FromStream<T>(stream);
+                return _serializer.ReadFromStream<T>(stream);
             }
         }
 

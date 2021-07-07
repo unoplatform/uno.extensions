@@ -9,6 +9,6 @@ namespace ApplicationTemplate.Client
     public partial class ChuckNorrisResponse
     {
         [JsonPropertyName("result")]
-        public ChuckNorrisData[] Quotes { get; }
+        public ChuckNorrisData[] Quotes { get; set; }
     }
 }
