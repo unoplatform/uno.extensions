@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using Uno.Extensions.Http.Handlers;
 using Xunit;
 
@@ -16,8 +18,11 @@ namespace Uno.Extensions.Http.Handlers.Tests
 		[Fact]
 		public async Task It_Throws_NoNetworkException_When_ExceptionAndNoNetwork()
 		{
+            var checker = new Mock<INetworkAvailabilityChecker>();
+            checker.Setup(c=>c.CheckIsNetworkAvailable(It.IsAny<CancellationToken>())).Returns(Task.FromResult(false));
+                
 			void BuildServices(IServiceCollection s) => s
-				.AddSingleton<INetworkAvailabilityChecker>(new NetworkAvailabilityChecker(ct => Task.FromResult(false))) // No network
+				.AddSingleton<INetworkAvailabilityChecker>(checker.Object) // No network
 				.AddTransient(_ => new TestHandler((r, ct) => throw new TestException())) // Exception
 				.AddTransient<NetworkExceptionHandler>();
 
@@ -33,8 +38,11 @@ namespace Uno.Extensions.Http.Handlers.Tests
 		[Fact]
 		public async Task It_Throws_CustomNetworkException_When_ExceptionAndNoNetwork()
 		{
-			void BuildServices(IServiceCollection s) => s
-				.AddSingleton<INetworkAvailabilityChecker>(new NetworkAvailabilityChecker(ct => Task.FromResult(false))) // No network
+            var checker = new Mock<INetworkAvailabilityChecker>();
+            checker.Setup(c => c.CheckIsNetworkAvailable(It.IsAny<CancellationToken>())).Returns(Task.FromResult(false));
+
+            void BuildServices(IServiceCollection s) => s
+				.AddSingleton<INetworkAvailabilityChecker>(checker.Object) // No network
 				.AddSingleton<INetworkExceptionFactory>(new CustomNetworkExceptionFactory())
 				.AddTransient(_ => new TestHandler((r, ct) => throw new TestException())) // Exception
 				.AddTransient<NetworkExceptionHandler>();
@@ -51,8 +59,11 @@ namespace Uno.Extensions.Http.Handlers.Tests
 		[Fact]
 		public async Task It_Doesnt_Throw_NoNetworkException_When_ExceptionAndNetwork()
 		{
-			void BuildServices(IServiceCollection s) => s
-				.AddSingleton<INetworkAvailabilityChecker>(new NetworkAvailabilityChecker(ct => Task.FromResult(true))) // Has network
+            var checker = new Mock<INetworkAvailabilityChecker>();
+            checker.Setup(c => c.CheckIsNetworkAvailable(It.IsAny<CancellationToken>())).Returns(Task.FromResult(true));
+
+            void BuildServices(IServiceCollection s) => s
+				.AddSingleton<INetworkAvailabilityChecker>(checker.Object) // Has network
 				.AddTransient(_ => new TestHandler((r, ct) => throw new TestException())) // Exception
 				.AddTransient<NetworkExceptionHandler>();
 
@@ -67,11 +78,14 @@ namespace Uno.Extensions.Http.Handlers.Tests
 
 		[Fact]
 		public async Task It_Doesnt_Throw_NoNetworkException_When_NoExceptionAndNetwork()
-		{
-			var expectedResponse = new HttpResponseMessage();
+        {
+            var checker = new Mock<INetworkAvailabilityChecker>();
+            checker.Setup(c => c.CheckIsNetworkAvailable(It.IsAny<CancellationToken>())).Returns(Task.FromResult(true));
+
+            var expectedResponse = new HttpResponseMessage();
 
 			void BuildServices(IServiceCollection s) => s
-				.AddSingleton<INetworkAvailabilityChecker>(new NetworkAvailabilityChecker(ct => Task.FromResult(true))) // Has network
+				.AddSingleton<INetworkAvailabilityChecker>(checker.Object) // Has network
 				.AddTransient(_ => new TestHandler((r, ct) => Task.FromResult(expectedResponse))) // No exception
 				.AddTransient<NetworkExceptionHandler>();
 

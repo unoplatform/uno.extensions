@@ -58,6 +58,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Authentication\ForgotPasswordPageViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Authentication\LoginFormViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Authentication\LoginPageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Presentation\ChuckNorris\ChuckNorrisItemViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\ChuckNorris\ChuckNorrisSearchPageViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Diagnostics\DiagnosticsCountersService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Presentation\Diagnostics\DiagnosticsOverlayViewModel.cs" />

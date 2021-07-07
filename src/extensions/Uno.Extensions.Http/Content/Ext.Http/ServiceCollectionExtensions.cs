@@ -5,58 +5,78 @@ using System.Threading;
 using System.Threading.Tasks;
 using Uno.Extensions.Http.Handlers;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
 
 namespace Uno.Extensions.Http
 {
     public static class ServiceCollectionExtensions
     {
-//        public static IServiceCollection AddEndpoint<TInterface, TMock>(
-//               this IServiceCollection services,
-//               HostBuilderContext context,
-//               string name,
-//               Func<IHttpClientBuilder, IHttpClientBuilder> configure = null
-//           )
-//               where TInterface : class
-//               where TMock : class, TInterface
-//        {
-//            var options = Options.Create(context.Configuration.GetSection(name).Get<EndpointOptions>());
+        public static T Conditional<T>(
+            this T builder,
+            bool predicate,
+            Func<T, T> configureBuilder)
+        {
+            return predicate ? configureBuilder(builder) : builder;
+        }
 
-//            if (options.Value.EnableMock)
-//            {
-//                services.AddSingleton<TInterface, TMock>();
-//            }
-//            else
-//            {
-//                var httpClientBuilder = services
-//                    .AddRefitHttpClient<TInterface>(settings: serviceProvider => new RefitSettings()
-//                    {
-//                        ContentSerializer = new ObjectSerializerToContentSerializerAdapter(serviceProvider.GetRequiredService<ISerializer>()),
-//                    })
-//                    .ConfigurePrimaryHttpMessageHandler(serviceProvider => serviceProvider.GetRequiredService<HttpMessageHandler>())
-//                    .ConfigureHttpClient((serviceProvider, client) =>
-//                    {
-//                        client.BaseAddress = new Uri(options.Value.Url);
-//                        AddDefaultHeaders(client, serviceProvider);
-//                    })
-//                    .AddHttpMessageHandler<ExceptionHubHandler>();
+        public static IServiceCollection AddClient<TInterface>(
+              this IServiceCollection services,
+              HostBuilderContext context,
+              string name,
+              Func<IServiceCollection, HostBuilderContext, IHttpClientBuilder> httpClientFactory,
+              Func<IHttpClientBuilder, IHttpClientBuilder> configure = null
+          )
+              where TInterface : class
+        {
+            var options = context.Configuration.GetSection(name).Get<EndpointOptions>();
 
-//                configure?.Invoke(httpClientBuilder);
+            var httpClientBuilder = httpClientFactory(services, context);
 
-//                httpClientBuilder.AddHttpMessageHandler<NetworkExceptionHandler>();
+            _ = httpClientBuilder
+                .Conditional(
+                    options.UseNativeHandler,
+                    builder => builder.ConfigurePrimaryHttpMessageHandler<HttpMessageHandler>())
+                .ConfigureHttpClient((serviceProvider, client) =>
+                {
+                    client.BaseAddress = new Uri(options.Url);
+                    client.Conditional(
+                        options.UseDefaultHeaders,
+                        c => c.AddDefaultHeaders(serviceProvider));
+                })
+                .Conditional(
+                    options.UseExceptionHubHandler,
+                    builder => builder.AddHttpMessageHandler<ExceptionHubHandler>())
+                .Conditional(
+                    configure is not null,
+                    builder => configure(builder))
+                .Conditional(
+                    options.UseNetworkExceptionHandler,
+                    builder => builder.AddHttpMessageHandler<NetworkExceptionHandler>());
+            return services;
+        }
 
-//#if (IncludeFirebaseAnalytics)
-////-:cnd:noEmit
-//#if __ANDROID__
-////+:cnd:noEmit
-//                httpClientBuilder.AddHttpMessageHandler<FirebasePerformanceHandler>();
-////-:cnd:noEmit
-//#endif
-////+:cnd:noEmit
-//#endif
-//            }
+        public static IServiceCollection AddClient<TInterface>(
+             this IServiceCollection services,
+             HostBuilderContext context,
+             string name,
+             Func<IHttpClientBuilder, IHttpClientBuilder> configure = null
+         )
+             where TInterface : class
+        {
+            return services.AddClient<TInterface>(context, name, (s, c) => s.AddHttpClient(name));
+        }
 
-//            return services;
-//        }
+
+        public static IHttpClientBuilder AddTypedHttpClient<TClient>(
+            this IServiceCollection services,
+            Func<HttpClient, IServiceProvider, TClient> factory)
+           where TClient : class
+        {
+            return services
+                .AddHttpClient(typeof(TClient).FullName)
+                .AddTypedClient(factory);
+        }
 
         public static IServiceCollection AddNativeHandler(this IServiceCollection services)
         {
@@ -76,7 +96,7 @@ namespace Uno.Extensions.Http
         public static IServiceCollection AddNetworkExceptionHandler(this IServiceCollection services)
         {
             return services
-                .AddSingleton<INetworkAvailabilityChecker>(new NetworkAvailabilityChecker(GetIsNetworkAvailable))
+                .AddSingleton<INetworkAvailabilityChecker, NetworkAvailabilityChecker>()
                 .AddTransient<NetworkExceptionHandler>();
         }
 
@@ -94,26 +114,14 @@ namespace Uno.Extensions.Http
                 .AddTransient<AuthenticationTokenHandler<AuthenticationData>>();
         }
 
-        public static Task<bool> GetIsNetworkAvailable(CancellationToken ct)
-        {
-            //-:cnd:noEmit
-#if WINDOWS_UWP || __ANDROID__ || __IOS__
-            // TODO #172362: Not implemented in Uno.
-            // return NetworkInformation.GetInternetConnectionProfile()?.GetNetworkConnectivityLevel() == NetworkConnectivityLevel.InternetAccess;
-            return Task.FromResult(Xamarin.Essentials.Connectivity.NetworkAccess == Xamarin.Essentials.NetworkAccess.Internet);
-#else
-            return Task.FromResult(true);
-#endif
-            //+:cnd:noEmit
-        }
-
-        public static void AddDefaultHeaders(this HttpClient client, IServiceProvider serviceProvider)
+        public static HttpClient AddDefaultHeaders(this HttpClient client, IServiceProvider serviceProvider)
         {
             client.DefaultRequestHeaders.Add("Accept-Language", CultureInfo.CurrentCulture.Name);
 
             // TODO #172779: Looks like our UserAgent is not of a valid format.
             // TODO #183437: Find alternative for UserAgent.
             // client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", serviceProvider.GetRequiredService<IEnvironmentService>().UserAgent);
+            return client;
         }
     }
 }

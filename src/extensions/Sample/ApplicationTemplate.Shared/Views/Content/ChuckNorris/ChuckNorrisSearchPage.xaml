@@ -8,7 +8,7 @@
       xmlns:ue="using:Nventive.View.Extensions"
       xmlns:u="using:Nventive.View.Controls"-->
 
-    <Page.Resources>
+    <!--<Page.Resources>
         <DataTemplate x:Key="QuotesEmptyTemplate">
             <Grid>
                 <StackPanel VerticalAlignment="Center"
@@ -38,7 +38,7 @@
                 </StackPanel>
             </Grid>
         </DataTemplate>
-    </Page.Resources>
+    </Page.Resources>-->
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -70,12 +70,16 @@
                               Header="{Binding}">
                 <ListView.HeaderTemplate>
                     <DataTemplate>
-                        <Grid>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="Load"
+                                            Command="{Binding Load}"
+                                            Margin="0,8"
+                                            HorizontalAlignment="Center" />
                             <Button Content="My favorites quotes"
                                             Command="{Binding Parent.NavigateToFavoriteQuotes}"
                                             Margin="0,8"
                                             HorizontalAlignment="Center" />
-                        </Grid>
+                        </StackPanel>
                     </DataTemplate>
                 </ListView.HeaderTemplate>
                 <ListView.ItemTemplate>

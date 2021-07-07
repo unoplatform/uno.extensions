@@ -7,53 +7,53 @@ using System.Threading.Tasks;
 
 namespace Uno.Extensions.Http.Handlers
 {
-	/// <summary>
-	/// This <see cref="HttpMessageHandler"/> throws a specific type of
-	/// exception if the request fails and there is no network.
-	/// </summary>
-	
-	public class NetworkExceptionHandler : DelegatingHandler
-	{
-		private readonly INetworkAvailabilityChecker _networkAvailabilityChecker;
-		private readonly INetworkExceptionFactory _networkExceptionFactory;
+    /// <summary>
+    /// This <see cref="HttpMessageHandler"/> throws a specific type of
+    /// exception if the request fails and there is no network.
+    /// </summary>
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="NetworkExceptionHandler"/> class.
-		/// </summary>
-		/// <param name="networkAvailabilityChecker"><see cref="INetworkAvailabilityChecker"/></param>
-		/// <param name="networkExceptionFactory"><see cref="INetworkExceptionFactory"/></param>
-		public NetworkExceptionHandler(
-			INetworkAvailabilityChecker networkAvailabilityChecker,
-			INetworkExceptionFactory networkExceptionFactory = null
-		)
-		{
-			_networkAvailabilityChecker = networkAvailabilityChecker ?? throw new ArgumentNullException(nameof(networkAvailabilityChecker));
-			_networkExceptionFactory = networkExceptionFactory ?? new NetworkExceptionFactory();
-		}
+    public class NetworkExceptionHandler : DelegatingHandler
+    {
+        private readonly INetworkAvailabilityChecker _networkAvailabilityChecker;
+        private readonly INetworkExceptionFactory _networkExceptionFactory;
 
-		/// <inheritdoc/>
-		protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken ct)
-		{
-			try
-			{
-				return await base.SendAsync(request, ct);
-			}
-			catch (Exception e)
-			{
-				if (!await _networkAvailabilityChecker.CheckIsNetworkAvailable(ct))
-				{
-					var noNetworkException = _networkExceptionFactory.CreateNetworkException(e);
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NetworkExceptionHandler"/> class.
+        /// </summary>
+        /// <param name="networkAvailabilityChecker"><see cref="INetworkAvailabilityChecker"/></param>
+        /// <param name="networkExceptionFactory"><see cref="INetworkExceptionFactory"/></param>
+        public NetworkExceptionHandler(
+            INetworkAvailabilityChecker networkAvailabilityChecker,
+            INetworkExceptionFactory networkExceptionFactory = null
+        )
+        {
+            _networkAvailabilityChecker = networkAvailabilityChecker ?? throw new ArgumentNullException(nameof(networkAvailabilityChecker));
+            _networkExceptionFactory = networkExceptionFactory ?? new NetworkExceptionFactory();
+        }
 
-					if (noNetworkException == null)
-					{
-						throw new InvalidOperationException("{exception} cannot be null.", noNetworkException);
-					}
+        /// <inheritdoc/>
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken ct)
+        {
+            try
+            {
+                return await base.SendAsync(request, ct);
+            }
+            catch (Exception e)
+            {
+                if (!await _networkAvailabilityChecker.CheckIsNetworkAvailable(ct))
+                {
+                    var noNetworkException = _networkExceptionFactory.CreateNetworkException(e);
 
-					throw noNetworkException;
-				}
+                    if (noNetworkException == null)
+                    {
+                        throw new InvalidOperationException("No network exception cannot be null.", e);
+                    }
 
-				throw;
-			}
-		}
-	}
+                    throw noNetworkException;
+                }
+
+                throw;
+            }
+        }
+    }
 }
