@@ -25,7 +25,7 @@ namespace Uno.Extensions.Http
               HostBuilderContext context,
               string name,
               Func<IServiceCollection, HostBuilderContext, IHttpClientBuilder> httpClientFactory,
-              Func<IHttpClientBuilder, IHttpClientBuilder> configure = null
+              Func<IHttpClientBuilder,EndpointOptions, IHttpClientBuilder> configure = null
           )
               where TInterface : class
         {
@@ -49,7 +49,7 @@ namespace Uno.Extensions.Http
                     builder => builder.AddHttpMessageHandler<ExceptionHubHandler>())
                 .Conditional(
                     configure is not null,
-                    builder => configure(builder))
+                    builder => configure(builder, options))
                 .Conditional(
                     options.UseNetworkExceptionHandler,
                     builder => builder.AddHttpMessageHandler<NetworkExceptionHandler>());
@@ -60,7 +60,7 @@ namespace Uno.Extensions.Http
              this IServiceCollection services,
              HostBuilderContext context,
              string name,
-             Func<IHttpClientBuilder, IHttpClientBuilder> configure = null
+             Func<IHttpClientBuilder, EndpointOptions, IHttpClientBuilder> configure = null
          )
              where TInterface : class
         {

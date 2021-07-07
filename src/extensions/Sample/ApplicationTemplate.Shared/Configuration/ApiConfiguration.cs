@@ -77,7 +77,7 @@ namespace ApplicationTemplate
                     (request, response, deserializedResponse) => new PostEndpointException(deserializedResponse)
                 ))
                 .AddTransient<ExceptionInterpreterHandler<PostErrorResponse>>()
-                .AddRefitClient< IPostEndpoint>(context, "PostEndpoint",b => b
+                .AddRefitClient< IPostEndpoint>(context, "PostEndpoint",(b,opt) => b
                     .AddHttpMessageHandler<ExceptionInterpreterHandler<PostErrorResponse>>()
                     .AddHttpMessageHandler<AuthenticationTokenHandler<AuthenticationData>>()
                 );
@@ -91,8 +91,9 @@ namespace ApplicationTemplate
                     (request, response, deserializedResponse) => new ChuckNorrisException(deserializedResponse.Message)
                 ))
                 .AddTransient<ExceptionInterpreterHandler<ChuckNorrisErrorResponse>>()
-                .AddRefitClient<IChuckNorrisEndpoint>(context, "ChuckNorrisEndpoint", b => b
+                .AddRefitClient<IChuckNorrisEndpoint>(context, "ChuckNorrisEndpoint", (b ,opt)=> b
                     .AddHttpMessageHandler<ExceptionInterpreterHandler<ChuckNorrisErrorResponse>>()
+                    .Conditional(opt.UseFirebaseHandler(),builder=>builder.AddFirebaseHandler())
                 );
         }
 

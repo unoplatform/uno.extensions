@@ -10,7 +10,7 @@ namespace Uno.Extensions.Http
 
         public Dictionary<string, bool> Features { get; set; }
 
-        protected bool FeatureEnabled([CallerMemberName] string feature = null)
+        public bool FeatureEnabled([CallerMemberName] string feature = null)
         {
             if (string.IsNullOrEmpty(feature))
             {

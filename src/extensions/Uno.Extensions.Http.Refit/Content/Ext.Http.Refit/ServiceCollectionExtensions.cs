@@ -16,7 +16,7 @@ namespace Uno.Extensions.Http.Refit
                this IServiceCollection services,
                HostBuilderContext context,
                string name,
-               Func<IHttpClientBuilder, IHttpClientBuilder> configure = null
+               Func<IHttpClientBuilder, EndpointOptions, IHttpClientBuilder> configure = null
            )
                where TInterface : class
         {
@@ -24,7 +24,8 @@ namespace Uno.Extensions.Http.Refit
                 (s, c) => s.AddRefitHttpClient<TInterface>(settings: serviceProvider => new RefitSettings()
                 {
                     ContentSerializer = serviceProvider.GetRequiredService<IHttpContentSerializer>(),
-                }));
+                }),
+                configure);
 
         }
 
