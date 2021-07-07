@@ -16,4 +16,10 @@
     <PackageReference Include="Xamarin.Firebase.Perf" Version="119.0.11" />
     <PackageReference Include="Xamarin.AndroidX.Annotation" Version="1.2.0"/>
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
+    <ProjectReference Include="..\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
+  </ItemGroup>
+
 </Project>
