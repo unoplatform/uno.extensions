@@ -11,17 +11,17 @@ namespace Uno.Extensions.Http.Handlers
     /// This <see cref="HttpMessageHandler"/> throws a specific type of
     /// exception if the request fails and there is no network.
     /// </summary>
-
     public class NetworkExceptionHandler : DelegatingHandler
     {
         private readonly INetworkAvailabilityChecker _networkAvailabilityChecker;
+
         private readonly INetworkExceptionFactory _networkExceptionFactory;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NetworkExceptionHandler"/> class.
         /// </summary>
-        /// <param name="networkAvailabilityChecker"><see cref="INetworkAvailabilityChecker"/></param>
-        /// <param name="networkExceptionFactory"><see cref="INetworkExceptionFactory"/></param>
+        /// <param name="networkAvailabilityChecker"><see cref="INetworkAvailabilityChecker"/>.</param>
+        /// <param name="networkExceptionFactory"><see cref="INetworkExceptionFactory"/>.</param>
         public NetworkExceptionHandler(
             INetworkAvailabilityChecker networkAvailabilityChecker,
             INetworkExceptionFactory networkExceptionFactory = null
@@ -32,15 +32,15 @@ namespace Uno.Extensions.Http.Handlers
         }
 
         /// <inheritdoc/>
-        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken ct)
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             try
             {
-                return await base.SendAsync(request, ct);
+                return await base.SendAsync(request, cancellationToken);
             }
             catch (Exception e)
             {
-                if (!await _networkAvailabilityChecker.CheckIsNetworkAvailable(ct))
+                if (!await _networkAvailabilityChecker.CheckIsNetworkAvailable(cancellationToken))
                 {
                     var noNetworkException = _networkExceptionFactory.CreateNetworkException(e);
 

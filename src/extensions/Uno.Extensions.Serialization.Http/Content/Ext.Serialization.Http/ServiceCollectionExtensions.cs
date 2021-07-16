@@ -1,5 +1,5 @@
-﻿using Uno.Extensions.Http.Handlers;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Uno.Extensions.Http.Handlers;
 
 namespace Uno.Extensions.Serialization.Http
 {
@@ -15,7 +15,7 @@ namespace Uno.Extensions.Serialization.Http
         /// <param name="services">Service collection.</param>
         /// <returns><see cref="IServiceCollection"/>.</returns>
         public static IServiceCollection AddResponseContentDeserializer(this IServiceCollection services)
-        { 
+        {
             return services
                 .AddSingleton<IResponseContentDeserializer, StreamSerializerToResponseContentDeserializer>();
         }

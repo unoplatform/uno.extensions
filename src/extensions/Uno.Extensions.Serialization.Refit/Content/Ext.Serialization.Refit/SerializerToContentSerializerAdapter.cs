@@ -31,13 +31,11 @@ namespace Uno.Extensions.Serialization.Refit
                 throw new ArgumentNullException(nameof(content));
             }
 
-            using (var stream = await content.ReadAsStreamAsync())
-            {
-                return _serializer.FromStream<T>(stream);
-            }
+            using var stream = await content.ReadAsStreamAsync();
+            return _serializer.FromStream<T>(stream);
         }
 
-        public async Task<T?> FromHttpContentAsync<T>(HttpContent content, CancellationToken cancellationToken = default)
+        public async Task<T> FromHttpContentAsync<T>(HttpContent content, CancellationToken cancellationToken = default)
         {
             if (content is null)
             {
@@ -45,23 +43,21 @@ namespace Uno.Extensions.Serialization.Refit
             }
 
 #if WINUI
-            using (var stream = await content.ReadAsStreamAsync(cancellationToken))
+            using var stream = await content.ReadAsStreamAsync(cancellationToken);
 #else
-            using (var stream = await content.ReadAsStreamAsync())
+            using var stream = await content.ReadAsStreamAsync();
 #endif
-            {
-                return _serializer.ReadFromStream<T>(stream);
-            }
+            return _serializer.ReadFromStream<T>(stream);
         }
 
         public string GetFieldNameForProperty(PropertyInfo propertyInfo)
         {
-            return propertyInfo.Name;
+            return propertyInfo?.Name;
         }
 
         public HttpContent ToHttpContent<T>(T item)
         {
-            var stream = _serializer.ToStream(item, item.GetType());
+            var stream = _serializer.ToStream(item, item?.GetType());
             var content = new StreamContent(stream);
             content.Headers.ContentType = _jsonMediaType;
 

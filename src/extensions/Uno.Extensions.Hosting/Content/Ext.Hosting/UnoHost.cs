@@ -15,13 +15,12 @@ namespace Uno.Extensions.Hosting
                 .ConfigureHostConfiguration(config =>
                 {
                     // Note that this environment variable is being set so that in .net6 we can leverage polling file watcher
-                    Environment.SetEnvironmentVariable("DOTNET_USE_POLLING_FILE_WATCHER", "true"); 
+                    Environment.SetEnvironmentVariable("DOTNET_USE_POLLING_FILE_WATCHER", "true");
                 })
                 .ConfigureLogging((_, factory) =>
                 {
                     factory.Services.RemoveAllIncludeImplementations<ConsoleLoggerProvider>();
                 });
-        
 
         public static IHostBuilder CreateDefaultBuilder() =>
             Host.CreateDefaultBuilder()
@@ -54,6 +53,7 @@ namespace Uno.Extensions.Hosting
 #endif
             ;
 
+#if WINUI || WINDOWS_UWP || __IOS__ || __ANDROID__ || NETSTANDARD
         private static string PlatformSpecificContentRootPath()
         {
 #if WINUI || WINDOWS_UWP || NETSTANDARD
@@ -64,5 +64,6 @@ namespace Uno.Extensions.Hosting
             return string.Empty;
 #endif
         }
+#endif
     }
 }

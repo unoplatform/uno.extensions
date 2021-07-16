@@ -12,6 +12,11 @@ namespace Uno.Extensions.Localization
     {
         private ThreadCultureOverrideService _cultureOverrideService;
 
+        public LocalizationService(IWritableOptions<LocalizationSettings> settings)
+        {
+            Settings = settings;
+        }
+
         private IWritableOptions<LocalizationSettings> Settings { get; }
 
         private CultureInfo[] SupportedCultures => !(Settings?.Value?.Cultures?.Any() ?? false) ?
@@ -22,12 +27,7 @@ namespace Uno.Extensions.Localization
             new CultureInfo(Settings.Value.CurrentCulture) :
             null;
 
-        public LocalizationService(IWritableOptions<LocalizationSettings> settings)
-        {
-            Settings = settings;
-        }
-
-        public async Task StartAsync(CancellationToken cancellationToken)
+        public Task StartAsync(CancellationToken cancellationToken)
         {
             _cultureOverrideService = new ThreadCultureOverrideService(
                 Thread.CurrentThread,
@@ -38,19 +38,16 @@ namespace Uno.Extensions.Localization
 
             _cultureOverrideService.TryApply();
 
-            //-:cnd:noEmit
 #if NET461
-//+:cnd:noEmit
             // This is required for test projects otherwise the ResourceLoader will throw an exception.
             Windows.ApplicationModel.Resources.ResourceLoader.DefaultLanguage = SupportedCultures.First().Name;
-//-:cnd:noEmit
 #endif
-            //+:cnd:noEmit
+            return Task.CompletedTask;
         }
 
-        public async Task StopAsync(CancellationToken cancellationToken)
+        public Task StopAsync(CancellationToken cancellationToken)
         {
+            return Task.CompletedTask;
         }
-
     }
 }
