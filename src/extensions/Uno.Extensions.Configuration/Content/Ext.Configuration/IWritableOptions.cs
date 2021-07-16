@@ -8,6 +8,7 @@ namespace Uno.Extensions.Configuration
         where T : class, new()
     {
         Task Update(Func<T, T> applyChanges);
+
         Task Update(Action<T> applyChanges);
     }
 }

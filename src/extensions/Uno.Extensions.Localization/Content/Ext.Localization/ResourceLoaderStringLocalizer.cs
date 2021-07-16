@@ -33,6 +33,10 @@ namespace Uno.Extensions.Localization
         /// <inheritdoc/>
         public LocalizedString this[string name, params object[] arguments] => GetLocalizedString(name, arguments);
 
+        /// <inheritdoc/>
+        public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
+            => throw new NotSupportedException("ResourceLoader doesn't support listing all strings.");
+
         private LocalizedString GetLocalizedString(string name, params object[] arguments)
         {
             if (name is null)
@@ -47,21 +51,15 @@ namespace Uno.Extensions.Localization
                 resource = null;
             }
 
-            resource = resource ?? name;
+            var notFound = resource == null;
+
+            resource ??= name;
 
             var value = arguments.Any()
                 ? string.Format(CultureInfo.CurrentCulture, resource, arguments)
                 : resource;
 
-            return new LocalizedString(name, value, resourceNotFound: resource == null, searchedLocation: SearchLocation);
+            return new LocalizedString(name, value, resourceNotFound: notFound, searchedLocation: SearchLocation);
         }
-
-        /// <inheritdoc/>
-        public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
-            => throw new NotSupportedException("ResourceLoader doesn't support listing all strings.");
-
-        /// <inheritdoc/>
-        public IStringLocalizer WithCulture(CultureInfo culture) =>
-            throw new NotSupportedException("This method is obsolete.");
     }
 }

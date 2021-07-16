@@ -11,12 +11,12 @@ namespace Uno.Extensions.Http.Handlers
         }
 
         public NoNetworkException(string message)
-			: base(message)
+            : base(message)
         {
         }
 
         public NoNetworkException(string message, Exception innerException)
-			: base(message, innerException)
+            : base(message, innerException)
         {
         }
     }

@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Globalization;
 using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-using Uno.Extensions.Http.Handlers;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Configuration;
+using Uno.Extensions.Http.Handlers;
 
 namespace Uno.Extensions.Http
 {
@@ -17,7 +15,7 @@ namespace Uno.Extensions.Http
             bool predicate,
             Func<T, T> configureBuilder)
         {
-            return predicate ? configureBuilder(builder) : builder;
+            return (configureBuilder is not null && predicate) ? configureBuilder(builder) : builder;
         }
 
         public static IServiceCollection AddClient<TInterface>(
@@ -25,11 +23,16 @@ namespace Uno.Extensions.Http
               HostBuilderContext context,
               string name,
               Func<IServiceCollection, HostBuilderContext, IHttpClientBuilder> httpClientFactory,
-              Func<IHttpClientBuilder,EndpointOptions, IHttpClientBuilder> configure = null
+              Func<IHttpClientBuilder, EndpointOptions, IHttpClientBuilder> configure = null
           )
               where TInterface : class
         {
-            var options = context.Configuration.GetSection(name).Get<EndpointOptions>();
+            if (httpClientFactory is null)
+            {
+                throw new ArgumentNullException(nameof(httpClientFactory));
+            }
+
+            var options = context?.Configuration?.GetSection(name)?.Get<EndpointOptions>();
 
             var httpClientBuilder = httpClientFactory(services, context);
 
@@ -64,9 +67,8 @@ namespace Uno.Extensions.Http
          )
              where TInterface : class
         {
-            return services.AddClient<TInterface>(context, name, (s, c) => s.AddHttpClient(name));
+            return services.AddClient<TInterface>(context, name, (s, c) => s.AddHttpClient(name), configure);
         }
-
 
         public static IHttpClientBuilder AddTypedHttpClient<TClient>(
             this IServiceCollection services,
@@ -114,9 +116,11 @@ namespace Uno.Extensions.Http
                 .AddTransient<AuthenticationTokenHandler<AuthenticationData>>();
         }
 
+#pragma warning disable CA1801, IDE0060, IDE0079 // Review unused parameters - keeping serviceProvider parameter so that the useragent issue can be fixed
         public static HttpClient AddDefaultHeaders(this HttpClient client, IServiceProvider serviceProvider)
+#pragma warning restore CA1801, IDE0060, IDE0079 // Review unused parameters
         {
-            client.DefaultRequestHeaders.Add("Accept-Language", CultureInfo.CurrentCulture.Name);
+            client?.DefaultRequestHeaders?.Add("Accept-Language", CultureInfo.CurrentCulture.Name);
 
             // TODO #172779: Looks like our UserAgent is not of a valid format.
             // TODO #183437: Find alternative for UserAgent.

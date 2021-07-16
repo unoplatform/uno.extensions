@@ -50,7 +50,7 @@ namespace Uno.Extensions.Navigation
             }
 
             Logger.LazyLogDebug(() => $"Received message of type {message.GetType().Name} - {message}");
-            var fullPath = Redirection?.Invoke(NavigationStack.ToArray(), message?.Path, message?.Args) ?? message?.Path + string.Empty;
+            var fullPath = Redirection?.Invoke(NavigationStack.ToArray(), message.Path, message.Args) ?? message?.Path + string.Empty;
             Logger.LazyLogDebug(() => $"Full path to navigate to {fullPath}");
 #pragma warning disable CA1304 // Specify CultureInfo - no culture required
             var routeSegments = fullPath.Split('/').Select(x => (x + string.Empty).ToLower()).ToArray();

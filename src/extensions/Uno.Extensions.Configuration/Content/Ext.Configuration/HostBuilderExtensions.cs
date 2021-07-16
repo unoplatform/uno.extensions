@@ -9,6 +9,7 @@ namespace Uno.Extensions.Configuration
     public static class HostBuilderExtensions
     {
         public const string ConfigurationFolderName = "config";
+
         public static IHostBuilder UseHostConfigurationForApp(this IHostBuilder hostBuilder)
         {
             return hostBuilder?

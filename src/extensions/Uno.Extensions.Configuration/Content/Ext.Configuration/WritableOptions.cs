@@ -13,8 +13,11 @@ namespace Uno.Extensions.Configuration
         where T : class, new()
     {
         private readonly IOptionsMonitor<T> _options;
+
         private readonly string _section;
+
         private readonly string _file;
+
         private readonly Reloader _reloader;
 
         private readonly ILogger _logger;
@@ -78,20 +81,6 @@ namespace Uno.Extensions.Configuration
             File.WriteAllText(physicalPath, json);
 
             await _reloader.ReloadAllFileConfigurationProviders(physicalPath);
-        }
-    }
-
-    public static class JsonHelpers
-    {
-        public static T ToObject<T>(this JsonElement element)
-        {
-            var json = element.GetRawText();
-            return JsonSerializer.Deserialize<T>(json);
-        }
-        public static T ToObject<T>(this JsonDocument document)
-        {
-            var json = document.RootElement.GetRawText();
-            return JsonSerializer.Deserialize<T>(json);
         }
     }
 }

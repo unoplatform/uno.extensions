@@ -13,12 +13,12 @@ namespace Uno.Extensions.Http.Handlers
 
         public TestHandler(Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> sendFunction)
         {
-			_sendFunction = sendFunction ?? throw new ArgumentNullException(nameof(sendFunction));
+            _sendFunction = sendFunction ?? throw new ArgumentNullException(nameof(sendFunction));
         }
 
-        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken ct)
+        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-			return _sendFunction(request, ct);
-		}
-	}
+            return _sendFunction(request, cancellationToken);
+        }
+    }
 }

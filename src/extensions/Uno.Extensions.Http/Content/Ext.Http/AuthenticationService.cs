@@ -4,8 +4,8 @@ using System.Reactive;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
-using Uno.Extensions.Http.Handlers;
 using Uno.Extensions.Configuration;
+using Uno.Extensions.Http.Handlers;
 
 namespace Uno.Extensions.Http
 {
@@ -32,7 +32,6 @@ namespace Uno.Extensions.Http
         /// <inheritdoc/>
         public IObservable<Unit> ObserveSessionExpired() => _sessionExpired;
 
-
         /// <inheritdoc/>
         public async Task<AuthenticationData> Login(CancellationToken ct, string email, string password)
         {
@@ -49,11 +48,11 @@ namespace Uno.Extensions.Http
         }
 
         /// <inheritdoc/>
-        public async Task<AuthenticationData> GetToken(CancellationToken ct, HttpRequestMessage request)
+        public Task<AuthenticationData> GetToken(CancellationToken ct, HttpRequestMessage request)
         {
             var settings = _authenticationData.Value;
 
-            return settings;
+            return Task.FromResult(settings);
         }
 
         /// <inheritdoc/>
