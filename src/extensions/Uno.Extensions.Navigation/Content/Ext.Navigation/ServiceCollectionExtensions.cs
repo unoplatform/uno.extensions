@@ -1,7 +1,7 @@
 ﻿using System;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
-#if WINDOWS_UWP
+#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Xaml.Controls;
 #else
 using Microsoft.UI.Xaml.Controls;

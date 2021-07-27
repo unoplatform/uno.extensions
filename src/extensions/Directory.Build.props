@@ -10,6 +10,7 @@
     <IsUWP>false</IsUWP>
     <IsXamarin>false</IsXamarin>
     <IsIOS>false</IsIOS>
+    <UnoCompatibility>WinUI</UnoCompatibility>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -103,9 +104,19 @@
     <RuntimeIdentifiers>win10-x86;win10-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(IsWinUI)' != 'true' and '$(IsUWP)' != 'true'">
-    <PackageReference Include="Uno.WinUI" Version="3.8.11" />
+  <ItemGroup Condition="'$(IsWinUI)' != 'true' and '$(IsUWP)' != 'true' and '$(UnoCompatibility)' != 'UWP'">
+    <PackageReference Include="Uno.WinUI" Version="3.8.11" >
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
+  <ItemGroup Condition="'$(IsWinUI)' != 'true' and '$(IsUWP)' != 'true' and '$(UnoCompatibility)' == 'UWP'">
+    <PackageReference Include="Uno.UI" Version="3.8.11">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+  <PropertyGroup Condition="'$(IsWinUI)' != 'true' and '$(IsUWP)' != 'true' and '$(UnoCompatibility)' == 'UWP'">
+    <DefineConstants>$(DefineConstants);UNO_UWP_COMPATIBILITY</DefineConstants>
+  </PropertyGroup>
   <ItemGroup Condition="'$(IsWinUI)' == 'true'">
     <PackageReference Include="Microsoft.ProjectReunion" Version="0.8.0" />
   </ItemGroup>
@@ -119,4 +130,33 @@
     <!-- Forces Uno's XamlFileGenerator to write error when XAML is invalid-->
     <ShouldWriteErrorOnInvalidXaml>True</ShouldWriteErrorOnInvalidXaml>
   </PropertyGroup>
+
+  <!--<Content Include="build\xamarinios\uno.targets">
+    <Pack>true</Pack>
+    <PackagePath>build\xamarinios10</PackagePath>
+  </Content>
+  <Content Include="build\xamarinios\uno.targets">
+    <Pack>true</Pack>
+    <PackagePath>build\xamarinmac20</PackagePath>
+  </Content>
+  <Content Include="build\monoandroid\uno.targets">
+    <Pack>true</Pack>
+    <PackagePath>build\monoandroid10.0</PackagePath>
+  </Content>
+  <Content Include="build\monoandroid\uno.targets">
+    <Pack>true</Pack>
+    <PackagePath>build\monoandroid11.0</PackagePath>
+  </Content>
+  <Content Include="build\uap\uno.targets">
+    <Pack>true</Pack>
+    <PackagePath>build\uap10.0.16299</PackagePath>
+  </Content>
+  <Content Include="build\net-windows\uno.targets">
+    <Pack>true</Pack>
+    <PackagePath>build\net5.0-windows10.0.19041.0</PackagePath>
+  </Content>
+  <Content Include="build\netstandard\uno.targets">
+    <Pack>true</Pack>
+    <PackagePath>build\netstandard2.0</PackagePath>
+  </Content>-->
 </Project>
