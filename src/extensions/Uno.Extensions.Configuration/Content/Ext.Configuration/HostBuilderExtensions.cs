@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -88,6 +89,16 @@ namespace Uno.Extensions.Configuration
         {
             return hostBuilder?
                 .ConfigureServices((ctx, services) => services.Configure<TOptions>(ctx.Configuration.GetSection(configurationSection)));
+        }
+
+        public static IHostBuilder AddConfigurationSectionFromEntity<TEntity>(
+            this IHostBuilder hostBuilder,
+            TEntity entity,
+            string sectionName = null)
+        {
+            return hostBuilder?
+                    .ConfigureHostConfiguration(
+                        configurationBuilder => configurationBuilder.AddSectionFromEntity(entity, sectionName));
         }
     }
 }

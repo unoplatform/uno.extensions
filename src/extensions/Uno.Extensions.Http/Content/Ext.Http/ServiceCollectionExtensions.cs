@@ -18,18 +18,34 @@ namespace Uno.Extensions.Http
             return (configureBuilder is not null && predicate) ? configureBuilder(builder) : builder;
         }
 
+        public static IServiceCollection AddClient<TClient, TImplementation>(
+             this IServiceCollection services,
+             HostBuilderContext context,
+             string name = null,
+             Func<IHttpClientBuilder, EndpointOptions, IHttpClientBuilder> configure = null
+         )
+            where TClient : class
+            where TImplementation : class, TClient
+        {
+            Func<IServiceCollection, HostBuilderContext, IHttpClientBuilder> httpClientFactory = (s, c) => s.AddHttpClient<TClient, TImplementation>();
+
+            return services.AddClient<TClient>(context, name, httpClientFactory, configure);
+        }
+
         public static IServiceCollection AddClient<TInterface>(
               this IServiceCollection services,
               HostBuilderContext context,
-              string name,
-              Func<IServiceCollection, HostBuilderContext, IHttpClientBuilder> httpClientFactory,
+              string name = null,
+              Func<IServiceCollection, HostBuilderContext, IHttpClientBuilder> httpClientFactory = null,
               Func<IHttpClientBuilder, EndpointOptions, IHttpClientBuilder> configure = null
           )
               where TInterface : class
         {
+            name ??= typeof(TInterface).Name;
+
             if (httpClientFactory is null)
             {
-                throw new ArgumentNullException(nameof(httpClientFactory));
+                httpClientFactory = (s, c) => s.AddHttpClient(name);
             }
 
             var options = context?.Configuration?.GetSection(name)?.Get<EndpointOptions>();
@@ -59,17 +75,6 @@ namespace Uno.Extensions.Http
             return services;
         }
 
-        public static IServiceCollection AddClient<TInterface>(
-             this IServiceCollection services,
-             HostBuilderContext context,
-             string name,
-             Func<IHttpClientBuilder, EndpointOptions, IHttpClientBuilder> configure = null
-         )
-             where TInterface : class
-        {
-            return services.AddClient<TInterface>(context, name, (s, c) => s.AddHttpClient(name), configure);
-        }
-
         public static IHttpClientBuilder AddTypedHttpClient<TClient>(
             this IServiceCollection services,
             Func<HttpClient, IServiceProvider, TClient> factory)
@@ -80,9 +85,10 @@ namespace Uno.Extensions.Http
                 .AddTypedClient(factory);
         }
 
-        public static IServiceCollection AddNativeHandler(this IServiceCollection services)
+        public static IServiceCollection AddNativeHandler(this IServiceCollection services, Func<HttpMessageHandler> handlerOverride = null)
         {
             return services.AddTransient<HttpMessageHandler>(s =>
+            (handlerOverride?.Invoke()) ??
 #if __IOS__
                 new NSUrlSessionHandler()
 #elif __ANDROID__

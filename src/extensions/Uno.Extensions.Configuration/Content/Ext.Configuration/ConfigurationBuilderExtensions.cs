@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
+using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 
 namespace Uno.Extensions.Configuration
@@ -38,6 +42,22 @@ namespace Uno.Extensions.Configuration
             }
 
             return configurationBuilder;
+        }
+
+        public static IConfigurationBuilder AddSectionFromEntity<TEntity>(
+            this IConfigurationBuilder configurationBuilder,
+            TEntity entity,
+            string sectionName = null)
+        {
+            return configurationBuilder
+                .AddJsonStream(
+                    new MemoryStream(
+                        Encoding.ASCII.GetBytes(
+                            JsonSerializer.Serialize(
+                                new Dictionary<string, TEntity>
+                                {
+                                    { sectionName ?? typeof(TEntity).Name, entity }
+                                }))));
         }
     }
 }

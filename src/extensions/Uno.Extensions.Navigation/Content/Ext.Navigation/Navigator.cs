@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
-#if WINDOWS_UWP
+#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Xaml.Controls;
 #else
 using Microsoft.UI.Xaml.Controls;

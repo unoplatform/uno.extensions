@@ -15,7 +15,7 @@ namespace Uno.Extensions.Http.Refit
         public static IServiceCollection AddRefitClient<TInterface>(
                this IServiceCollection services,
                HostBuilderContext context,
-               string name,
+               string name = null,
                Func<IHttpClientBuilder, EndpointOptions, IHttpClientBuilder> configure = null
            )
                where TInterface : class
