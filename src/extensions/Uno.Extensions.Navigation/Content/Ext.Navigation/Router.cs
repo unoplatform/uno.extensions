@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
@@ -37,17 +38,19 @@ namespace Uno.Extensions.Navigation
 
         public IServiceProvider Services { get; }
 
-        public Stack<string> NavigationStack { get; } = new Stack<string>();
+        public Stack<string> NavigationStack { get; protected set; } = new Stack<string>();
 
-        public Stack<object> NavigationViewModelInstances { get; } = new Stack<object>();
+        public Stack<object> NavigationViewModelInstances { get; protected set; } = new Stack<object>();
 
-        public void Receive(RoutingMessage message)
+        public async void Receive(RoutingMessage message)
         {
             if (message == null)
             {
                 Logger.LazyLogDebug(() => $"Received null message - exiting handler");
                 return;
             }
+
+            message = await Preprocess(message);
 
             Logger.LazyLogDebug(() => $"Received message of type {message.GetType().Name} - {message}");
             var fullPath = Redirection?.Invoke(NavigationStack.ToArray(), message.Path, message.Args) ?? message?.Path + string.Empty;
@@ -63,18 +66,32 @@ namespace Uno.Extensions.Navigation
             {
                 Logger.LazyLogDebug(() => $"Pop from path and viewmodel stack");
                 NavigationStack.Pop();
-                NavigationViewModelInstances.Pop();
+                var oldVM = NavigationViewModelInstances.Pop();
+                await ((oldVM as ILifecycleStop)?.Stop(true) ?? Task.CompletedTask);
+
                 Logger.LazyLogDebug(() => $"Navigate to previous page");
-                Navigator.GoBack(NavigationViewModelInstances.Peek());
+                var vm = NavigationViewModelInstances.Peek();
+                Navigator.GoBack(vm);
+                await ((vm as ILifecycleStart)?.Start(false) ?? Task.CompletedTask);
             }
             else if (Routes.TryGetValue(path, out var route))
             {
+                if (NavigationViewModelInstances.Count > 0)
+                {
+                    var oldVM = NavigationViewModelInstances.Peek();
+                    await ((oldVM as ILifecycleStop)?.Stop(false) ?? Task.CompletedTask);
+                }
+
                 Logger.LazyLogDebug(() => $"Create the ViewModel of type {route.Item2.Name}");
                 var vm = Services.GetService(route.Item2);
+                await ((vm as IInitialise)?.Initialize(message.Args) ?? Task.CompletedTask);
+
                 var pageType = route.Item1;
                 Navigator.Navigate(pageType, vm);
                 NavigationStack.Push(path);
                 NavigationViewModelInstances.Push(vm);
+
+                await ((vm as ILifecycleStart)?.Start(true) ?? Task.CompletedTask);
 
 #pragma warning disable CA1307, CA1310 // Specify StringComparison - ignore culture
                 if (fullPath.StartsWith("/"))
@@ -84,5 +101,25 @@ namespace Uno.Extensions.Navigation
                 }
             }
         }
+
+        protected virtual Task<RoutingMessage> Preprocess(RoutingMessage message)
+        {
+            return Task.FromResult(message);
+        }
+    }
+
+    public interface IInitialise
+    {
+        Task Initialize(IDictionary<string, object> args);
+    }
+
+    public interface ILifecycleStart
+    {
+        Task Start(bool create);
+    }
+
+    public interface ILifecycleStop
+    {
+        Task Stop(bool cleanup);
     }
 }

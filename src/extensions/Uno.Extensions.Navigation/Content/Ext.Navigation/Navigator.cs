@@ -13,18 +13,12 @@ namespace Uno.Extensions.Navigation
     public record Navigator(ILogger<Navigator> Logger, Func<Frame> NavigationFrameFunc) : INavigator
 #pragma warning restore SA1313 // Parameter names should begin with lower-case letter
     {
-        private Frame _navigationFrame;
-        private Frame NavigationFrame
-        {
-            get
-            {
-                if (_navigationFrame == null)
-                {
-                    _navigationFrame = NavigationFrameFunc();
-                }
-                return _navigationFrame;
-            }
-        }
+        /// <summary>
+        /// Gets current navigation frame.
+        /// This used to cache the result but in scenario where there are multiple
+        /// frames (eg tabs) this needs to return the active frame
+        /// </summary>
+        private Frame NavigationFrame => NavigationFrameFunc();
 
         public void Navigate(Type destinationPage, object viewModel = null)
         {
