@@ -66,3 +66,15 @@ For example, if you have two keys with the same name, the last one will overwrit
 ## References
 
 - [Using IConfiguration](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-3.1)
+
+
+
+By default, the template offers the following runtime environments, defined by their corresponding `appsettings` files.
+
+- Development (`appsettings.development.json`)
+- Staging (`appsettings.staging.json`)
+- Production (`appsettings.production.json`)
+
+You can add / remove runtime environments by simply adding or removing appsettings files (e.g. `appsettings.myenvironment.json` will create a new runtime environment named `myenvironment`).
+
+This is configured inside the [AppSettingsConfiguration.cs](../src/app/ApplicationTemplate.Shared/Configuration/AppSettingsConfiguration.cs) file.
