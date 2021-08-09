@@ -4,7 +4,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 //-:cnd:noEmit
-#if WINDOWS_UWP
+#if !WINUI
 //+:cnd:noEmit
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -49,36 +49,19 @@ namespace ApplicationTemplate
         public App()
         {
             Host = UnoHost
-                //-:cnd:noEmit
-#if __WASM__
-//+:cnd:noEmit
-                .CreateDefaultBuilderForWASM()
-//-:cnd:noEmit
-#else
-                //+:cnd:noEmit
                 .CreateDefaultBuilder()
-                //-:cnd:noEmit
-#endif
-                //+:cnd:noEmit
                 .UseEnvironment("Staging")
                 .UseAppSettings<App>()
                 .UseHostConfigurationForApp()
                 .UseConfigurationSectionInApp<CustomIntroduction>(nameof(CustomIntroduction))
-                .UseUnoLogging(logBuilder =>
-                    {
-                        logBuilder
-                            .SetMinimumLevel(LogLevel.Debug)
-                            .XamlLogLevel(LogLevel.Information)
-                            .XamlLayoutLogLevel(LogLevel.Information);
-                    }
-                //-:cnd:noEmit
-#if __WASM__
-//+:cnd:noEmit
-                    , new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider()
-//-:cnd:noEmit
-#endif
-                //+:cnd:noEmit
-                )
+                .UsePlatformLoggerProvider()
+                .ConfigureLogging(logBuilder =>
+                {
+                    logBuilder
+                        .SetMinimumLevel(LogLevel.Debug)
+                        .XamlLogLevel(LogLevel.Information)
+                        .XamlLayoutLogLevel(LogLevel.Information);
+                })
                 .UseSerilog(true)
                 .UseLocalization()
                 .UseRouting<RouterConfiguration, LaunchMessage>(() => _frame)
@@ -109,7 +92,7 @@ namespace ApplicationTemplate
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
 //-:cnd:noEmit
-#if WINDOWS_UWP
+#if !WINUI
 //+:cnd:noEmit
         protected override void OnLaunched(LaunchActivatedEventArgs e)
 //-:cnd:noEmit
@@ -137,7 +120,7 @@ namespace ApplicationTemplate
             _window = new Window();
             _window.Activate();
 //-:cnd:noEmit
-#elif WINDOWS_UWP
+#elif !WINUI
 //+:cnd:noEmit
             _window = Window.Current;
 //-:cnd:noEmit
@@ -160,7 +143,7 @@ namespace ApplicationTemplate
                 _frame.NavigationFailed += OnNavigationFailed;
 
 //-:cnd:noEmit
-#if WINDOWS_UWP
+#if !WINUI
 //+:cnd:noEmit
                 if (e?.PreviousExecutionState == ApplicationExecutionState.Terminated)
 //-:cnd:noEmit
@@ -178,7 +161,7 @@ namespace ApplicationTemplate
                 _window.Content = _frame;
             }
 //-:cnd:noEmit
-#if WINDOWS_UWP
+#if !WINUI
 //+:cnd:noEmit
             if (e?.PrelaunchActivated == false)
 //-:cnd:noEmit
