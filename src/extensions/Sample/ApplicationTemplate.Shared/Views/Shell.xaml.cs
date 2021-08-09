@@ -2,7 +2,7 @@
 //using Nventive.ExtendedSplashScreen;
 using Windows.ApplicationModel.Activation;
 //-:cnd:noEmit
-#if WINDOWS_UWP
+#if !WINUI
 //+:cnd:noEmit
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -37,7 +37,7 @@ namespace ApplicationTemplate
             Instance = this;
 
 ////-:cnd:noEmit
-//#if WINDOWS_UWP
+//#if !WINUI
 ////+:cnd:noEmit
 //            AppExtendedSplashScreen.SplashScreen = e?.SplashScreen;
 ////-:cnd:noEmit

@@ -27,7 +27,7 @@ using System.Threading;
 using System.Text.Json;
 
 //-:cnd:noEmit
-#if WINDOWS_UWP
+#if !WINUI
 //+:cnd:noEmit
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -95,11 +95,7 @@ sealed partial class App : Application
 
 
             host = UnoHost
-#if __WASM__
-                .CreateDefaultBuilderForWASM()
-#else
                 .CreateDefaultBuilder()
-#endif
                 .UseEnvironment("Staging")
                 .UseAppSettingsForHostConfiguration<App>()
                 .UseHostConfigurationForApp()
@@ -191,7 +187,7 @@ sealed partial class App : Application
         public Window CurrentWindow { get; private set; }
 
         //-:cnd:noEmit
-#if WINDOWS_UWP
+#if !WINUI
 //+:cnd:noEmit
         protected override void OnLaunched(Windows.ApplicationModel.Activation.LaunchActivatedEventArgs args)
         {
@@ -224,7 +220,7 @@ sealed partial class App : Application
         {
 #if NET5_0 && WINDOWS
             CurrentWindow = new Window();
-#elif WINDOWS_UWP
+#elif !WINUI
 			CurrentWindow = Window.Current;
 #else
             CurrentWindow = Microsoft.UI.Xaml.Window.Current;
@@ -271,7 +267,7 @@ sealed partial class App : Application
         private void ConfigureViewSize()
         {
             //-:cnd:noEmit
-#if WINDOWS_UWP
+#if !WINUI
 //+:cnd:noEmit
             ApplicationView.PreferredLaunchViewSize = new Size(480, 800);
             ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
@@ -286,7 +282,7 @@ sealed partial class App : Application
             var resources = Application.Current.Resources;
 
             //-:cnd:noEmit
-#if WINDOWS_UWP || (NET5_0 && WINDOWS) || HAS_UNO_SKIA || __WASM__
+#if !WINUI || (NET5_0 && WINDOWS) || HAS_UNO_SKIA || __WASM__
             //+:cnd:noEmit
             var statusBarHeight = 0;
             //-:cnd:noEmit
