@@ -28,16 +28,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		app.targets = app.targets
 		uno.extensions.targets = uno.extensions.targets
+		uno.ui.targets = uno.ui.targets
 		uno.winui.targets = uno.winui.targets
 	EndProjectSection
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems*{1aa13270-f438-4864-9435-54fd806e10ea}*SharedItemsImports = 5
 		ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems*{40ea03f7-8a22-4143-b251-79bac3eb13d2}*SharedItemsImports = 5
 		ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems*{6279c845-92f8-4333-ab99-3d213163593c}*SharedItemsImports = 13
 		ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems*{c86fb799-8e66-44e9-8f30-99ed7b801299}*SharedItemsImports = 4
-		ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems*{e2399068-2d5b-4dcf-96ae-6e4615569511}*SharedItemsImports = 4
 		ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems*{e6c91d48-e1e1-49b2-b0b6-94925aef9212}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

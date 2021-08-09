@@ -1,6 +1,6 @@
 ﻿#pragma warning disable SA1005 // Single line comments should begin with single space
 //-:cnd:noEmit
-#if WINDOWS_UWP
+#if !WINUI
 //+:cnd:noEmit
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;

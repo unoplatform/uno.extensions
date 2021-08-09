@@ -1,7 +1,4 @@
-﻿using System;
-using Microsoft.UI.Xaml;
-
-namespace ApplicationTemplate.Wasm
+﻿namespace ApplicationTemplate.Wasm
 {
     public class Program
     {
@@ -9,7 +6,7 @@ namespace ApplicationTemplate.Wasm
 
         static int Main(string[] args)
         {
-            Microsoft.UI.Xaml.Application.Start(_ => _app = new App());
+            Windows.UI.Xaml.Application.Start(_ => _app = new App());
 
             return 0;
         }

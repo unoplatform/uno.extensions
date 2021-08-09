@@ -37,14 +37,16 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.1.0" />
-    <PackageReference Include="Uno.WinUI.WebAssembly" Version="3.8.6" />
+    <PackageReference Include="Uno.UI.WebAssembly" Version="3.8.6" />
     <PackageReference Include="Uno.Wasm.Bootstrap" Version="2.1.0" />
     <PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="2.1.0" />
+    <PackageReference Include="Uno.Extensions.Hosting.Wasm" Version="1.0.0" />
+    <PackageReference Include="Uno.Extensions.Logging.Wasm" Version="1.0.0" />
   </ItemGroup>
 
   <Import Project="..\uno.extensions.targets" />
   <Import Project="..\app.targets" />
-  <Import Project="..\uno.winui.targets" />
+  <Import Project="..\uno.ui.targets" />
   <Import Project="..\ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems" Label="Shared" Condition="Exists('..\ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems')" />
   <ItemGroup>
     <PackageReference Update="Microsoft.Extensions.Localization.Abstractions" Version="5.0.7" />
