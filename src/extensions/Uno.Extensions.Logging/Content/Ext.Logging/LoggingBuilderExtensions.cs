@@ -7,9 +7,9 @@ namespace Uno.Extensions.Logging
         public static ILoggingBuilder CoreLogLevel(this ILoggingBuilder builder, LogLevel logLevel)
         {
             // Default filters for Uno Platform namespaces
-            builder.AddFilter("Uno", logLevel);
-            builder.AddFilter("Windows", logLevel);
-            builder.AddFilter("Microsoft", logLevel);
+            builder.AddFilter("Uno.", logLevel);
+            builder.AddFilter("Windows.", logLevel);
+            builder.AddFilter("Microsoft.", logLevel);
             return builder;
         }
 
