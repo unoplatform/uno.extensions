@@ -56,6 +56,7 @@
     <ProjectReference Include="..\..\uno.extensions.Http.Refit\Uno.Extensions.Http.Refit.csproj" />
     <ProjectReference Include="..\..\uno.extensions.Configuration\Uno.Extensions.Configuration.csproj" />
     <ProjectReference Include="..\..\uno.extensions.Localization\Uno.Extensions.Localization.csproj" />
+    <ProjectReference Include="..\..\Uno.Extensions.Logging.Wasm\Uno.Extensions.Logging.Wasm.csproj" />
     <ProjectReference Include="..\..\uno.extensions.Logging\Uno.Extensions.Logging.csproj" />
     <ProjectReference Include="..\..\uno.extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj" />
     <ProjectReference Include="..\..\uno.extensions.Navigation\Uno.Extensions.Navigation.csproj" />

@@ -12,29 +12,59 @@ namespace Uno.Extensions.Logging
 {
     public static class HostBuilderExtensions
     {
-        public static IHostBuilder UseUnoLogging(this IHostBuilder hostBuilder,
-            Action<ILoggingBuilder> configure = null,
-            ILoggerProvider consoleProvider = null)
+#if !NETSTANDARD || WINUI
+        public static IHostBuilder UsePlatformLoggerProvider(this IHostBuilder hostBuilder,
+            Action<ILoggingBuilder> configure = null)
         {
             return hostBuilder
                     .ConfigureLogging(builder =>
-                        {
-                            if (consoleProvider == null)
-                            {
+                    {
 #if __IOS__
-                                builder.AddProvider(new global::Uno.Extensions.Logging.OSLogLoggerProvider());
+                        builder.AddProvider(new global::Uno.Extensions.Logging.OSLogLoggerProvider());
 #elif NETFX_CORE
-                                builder.AddDebug();
+                        builder.AddDebug();
 #else
-                                builder.AddConsole();
+                        builder.AddConsole();
 #endif
-                            }
-                            else
-                            {
-                                builder.AddProvider(consoleProvider);
-                            }
-                            configure?.Invoke(builder);
-                        });
+                        configure?.Invoke(builder);
+                    });
         }
+#elif __WASM__
+        public static IHostBuilder UsePlatformLoggerProvider(this IHostBuilder hostBuilder,
+            Action<ILoggingBuilder> configure = null)
+        {
+            return hostBuilder
+                    .ConfigureLogging(builder =>
+                    {
+                        builder.AddProvider(new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider());
+                        configure?.Invoke(builder);
+                    });
+        }
+
+#endif
+//        public static IHostBuilder UseUnoLogging(this IHostBuilder hostBuilder,
+//            Action<ILoggingBuilder> configure = null,
+//            ILoggerProvider consoleProvider = null)
+//        {
+//            return hostBuilder
+//                    .ConfigureLogging(builder =>
+//                        {
+//                            if (consoleProvider == null)
+//                            {
+//#if __IOS__
+//                                builder.AddProvider(new global::Uno.Extensions.Logging.OSLogLoggerProvider());
+//#elif NETFX_CORE
+//                                builder.AddDebug();
+//#else
+//                                builder.AddConsole();
+//#endif
+//                            }
+//                            else
+//                            {
+//                                builder.AddProvider(consoleProvider);
+//                            }
+//                            configure?.Invoke(builder);
+//                        });
+//        }
     }
 }

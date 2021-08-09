@@ -125,25 +125,22 @@ sealed partial class App : Application
                         .AddTransient<EditProfileFormViewModel>()
                         .AddTransient<MenuViewModel>();
                 })
-                .UseUnoLogging(logBuilder =>
+                .UsePlatformLoggerProvider()
+                .ConfigureLogging(logBuilder =>
                 {
                     logBuilder
                     .SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Debug)
-                    .CoreLogLevel(Microsoft.Extensions.Logging.LogLevel.Critical)
-                    .XamlBindingLogLevel(Microsoft.Extensions.Logging.LogLevel.Critical)
-                    .XamlLayoutLogLevel(Microsoft.Extensions.Logging.LogLevel.Critical)
-                    .XamlLogLevel(Microsoft.Extensions.Logging.LogLevel.Critical)
-                    .StorageLogLevel(Microsoft.Extensions.Logging.LogLevel.Trace)
-                    .XamlBindingLogLevel(Microsoft.Extensions.Logging.LogLevel.Critical)
-                    .BinderMemoryReferenceLogLevel(Microsoft.Extensions.Logging.LogLevel.Critical)
-                    .HotReloadCoreLogLevel(Microsoft.Extensions.Logging.LogLevel.Critical)
-                    .WebAssemblyLogLevel(Microsoft.Extensions.Logging.LogLevel.Critical);
-                }
-#if __WASM__
-                    , new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider()
-#endif
-                )
-                .UseSerilog(true)
+                    .CoreLogLevel(Microsoft.Extensions.Logging.LogLevel.Error)
+                    .XamlBindingLogLevel(Microsoft.Extensions.Logging.LogLevel.Error)
+                    .XamlLayoutLogLevel(Microsoft.Extensions.Logging.LogLevel.Error)
+                    .XamlLogLevel(Microsoft.Extensions.Logging.LogLevel.Error)
+                    .StorageLogLevel(Microsoft.Extensions.Logging.LogLevel.Error)
+                    .XamlBindingLogLevel(Microsoft.Extensions.Logging.LogLevel.Error)
+                    .BinderMemoryReferenceLogLevel(Microsoft.Extensions.Logging.LogLevel.Error)
+                    .HotReloadCoreLogLevel(Microsoft.Extensions.Logging.LogLevel.Error)
+                    .WebAssemblyLogLevel(Microsoft.Extensions.Logging.LogLevel.Error);
+                })
+                .UseSerilog()
                 .Build()
                 .EnableUnoLogging();
 
