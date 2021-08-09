@@ -4,7 +4,7 @@ using System.Reactive.Concurrency;
 using Microsoft.Extensions.DependencyInjection;
 using Windows.UI.Core;
 //-:cnd:noEmit
-#if WINDOWS_UWP
+#if !WINUI
 //+:cnd:noEmit
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;

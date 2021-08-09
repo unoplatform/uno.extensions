@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 //-:cnd:noEmit
-#if WINDOWS_UWP
+#if !WINUI
 //+:cnd:noEmit
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;

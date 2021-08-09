@@ -132,7 +132,7 @@ namespace ApplicationTemplate
             //void OnError(Exception e, bool isTerminating = false) => ErrorConfiguration.OnUnhandledException(e, isTerminating, services);
 
 //-:cnd:noEmit
-#if WINDOWS_UWP || __ANDROID__ || __IOS__
+#if !WINUI || __ANDROID__ || __IOS__
 //+:cnd:noEmit
             //Windows.UI.Xaml.Application.Current.UnhandledException += (s, e) =>
             //{

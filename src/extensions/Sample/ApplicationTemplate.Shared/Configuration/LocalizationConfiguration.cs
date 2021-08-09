@@ -70,7 +70,7 @@ namespace ApplicationTemplate
         private static string GetSettingFilePath()
         {
 //-:cnd:noEmit
-#if WINDOWS_UWP
+#if !WINUI
 //+:cnd:noEmit
             var folderPath = Windows.Storage.ApplicationData.Current.LocalFolder.Path; // TODO: Tests can use that?
 //-:cnd:noEmit

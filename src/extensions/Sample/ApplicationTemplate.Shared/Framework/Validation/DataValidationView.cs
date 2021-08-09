@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 //-:cnd:noEmit
-#if WINDOWS_UWP
+#if !WINUI
 //+:cnd:noEmit
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;

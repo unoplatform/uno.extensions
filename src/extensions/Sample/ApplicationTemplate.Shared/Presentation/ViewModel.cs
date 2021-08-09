@@ -45,7 +45,7 @@ namespace ApplicationTemplate.Presentation
 //        void INavigableViewModel.SetView(object view)
 //        {
 //            //-:cnd:noEmit
-//#if WINDOWS_UWP || __IOS__ || __ANDROID__ || __WASM__
+//#if !WINUI || __IOS__ || __ANDROID__ || __WASM__
 //            //+:cnd:noEmit
 //            var frameworkElement = view as Windows.UI.Xaml.FrameworkElement;
 //            View = new ViewModelView(frameworkElement);

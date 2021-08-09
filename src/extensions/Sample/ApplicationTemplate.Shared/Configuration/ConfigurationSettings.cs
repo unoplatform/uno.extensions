@@ -67,7 +67,7 @@ namespace ApplicationTemplate
         private static string GetSettingsFilePath(string fileName)
         {
 //-:cnd:noEmit
-#if WINDOWS_UWP
+#if !WINUI
 //+:cnd:noEmit
             var folderPath = Windows.Storage.ApplicationData.Current.LocalFolder.Path;
 //-:cnd:noEmit

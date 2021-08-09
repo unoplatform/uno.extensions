@@ -52,7 +52,7 @@ namespace ApplicationTemplate
                 .AddSingleton<IDeviceInfo, DeviceInfoImplementation>()
                 .AddSingleton<IAppInfo, AppInfoImplementation>()
 //-:cnd:noEmit
-#if WINDOWS_UWP || __IOS__ || __ANDROID__
+#if !WINUI || __IOS__ || __ANDROID__
 //+:cnd:noEmit
                 //.AddSingleton<IBrowser>(s => new DispatcherBrowserDecorator(new BrowserImplementation(), App.Instance.Shell.Dispatcher))
 //-:cnd:noEmit
@@ -65,7 +65,7 @@ namespace ApplicationTemplate
 //        {
 //            return services.AddSingleton<IMessageDialogService>(s =>
 ////-:cnd:noEmit
-//#if WINDOWS_UWP || __IOS__ || __ANDROID__
+//#if !WINUI || __IOS__ || __ANDROID__
 ////+:cnd:noEmit
 //                new MessageDialogService.MessageDialogService(
 //                    () => s.GetRequiredService<Windows.UI.Core.CoreDispatcher>(),

@@ -8,20 +8,9 @@ using Microsoft.Extensions.Logging.EventLog;
 
 namespace Uno.Extensions.Hosting
 {
+#if !NETSTANDARD || WINUI || __WASM__
     public static class UnoHost
     {
-        public static IHostBuilder CreateDefaultBuilderForWASM() =>
-            CreateDefaultBuilder()
-                .ConfigureHostConfiguration(config =>
-                {
-                    // Note that this environment variable is being set so that in .net6 we can leverage polling file watcher
-                    Environment.SetEnvironmentVariable("DOTNET_USE_POLLING_FILE_WATCHER", "true");
-                })
-                .ConfigureLogging((_, factory) =>
-                {
-                    factory.Services.RemoveAllIncludeImplementations<ConsoleLoggerProvider>();
-                });
-
         public static IHostBuilder CreateDefaultBuilder() =>
             Host.CreateDefaultBuilder()
 #if WINUI || WINDOWS_UWP || __IOS__ || __ANDROID__ || NETSTANDARD
@@ -37,6 +26,13 @@ namespace Uno.Extensions.Hosting
                 config.AddInMemoryCollection(disablereload);
             })
 #endif
+#if __WASM__
+            .ConfigureHostConfiguration(config =>
+            {
+                // Note that this environment variable is being set so that in .net6 we can leverage polling file watcher
+                Environment.SetEnvironmentVariable("DOTNET_USE_POLLING_FILE_WATCHER", "true");
+            })
+#endif
             .ConfigureLogging((_, factory) =>
             {
 #if WINDOWS_UWP || NETSTANDARD // We only need to do this on Windows for UWP because of an assumption dotnet makes that every Windows app can access eventlog
@@ -44,8 +40,11 @@ namespace Uno.Extensions.Hosting
                 factory.Services.RemoveWhere(sd => sd?.ImplementationType?.Name == "EventLogFiltersConfigureOptions");
                 factory.Services.RemoveWhere(sd => sd?.ImplementationType?.Name == "EventLogFiltersConfigureOptionsChangeSource");
 #endif
+#if __WASM__
+                factory.Services.RemoveAllIncludeImplementations<ConsoleLoggerProvider>();
+#endif 
             })
-#if __ANDROID__ || __IOS__  || NETSTANDARD
+#if __ANDROID__ || __IOS__ || NETSTANDARD
             .ConfigureServices(services =>
             {
                 services.AddSingleton<IHostLifetime, XamarinConsoleLifetime>();
@@ -66,4 +65,5 @@ namespace Uno.Extensions.Hosting
         }
 #endif
     }
-}
+#endif
+            }

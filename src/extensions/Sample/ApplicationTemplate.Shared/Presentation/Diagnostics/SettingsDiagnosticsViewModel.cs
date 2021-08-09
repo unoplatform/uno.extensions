@@ -35,7 +35,7 @@ namespace ApplicationTemplate.Presentation
             this.GetService<IDispatcherScheduler>().ScheduleTask(async (ct2, s) =>
             {
 //-:cnd:noEmit
-#if WINDOWS_UWP
+#if !WINUI
 //+:cnd:noEmit
                 await Launcher.LaunchFolderAsync(localFolder).AsTask(ct2);
 //-:cnd:noEmit
@@ -46,7 +46,7 @@ namespace ApplicationTemplate.Presentation
 
         public bool CanOpenSettingsFolder { get; } =
 //-:cnd:noEmit
-#if WINDOWS_UWP
+#if !WINUI
 //+:cnd:noEmit
             true;
 //-:cnd:noEmit
