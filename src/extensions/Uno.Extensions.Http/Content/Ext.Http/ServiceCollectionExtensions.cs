@@ -85,10 +85,9 @@ namespace Uno.Extensions.Http
                 .AddTypedClient(factory);
         }
 
-        public static IServiceCollection AddNativeHandler(this IServiceCollection services, Func<HttpMessageHandler> handlerOverride = null)
+        public static IServiceCollection AddNativeHandler(this IServiceCollection services)
         {
             return services.AddTransient<HttpMessageHandler>(s =>
-            (handlerOverride?.Invoke()) ??
 #if __IOS__
                 new NSUrlSessionHandler()
 #elif __ANDROID__

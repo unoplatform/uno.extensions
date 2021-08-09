@@ -43,11 +43,7 @@ namespace ApplicationTemplate
             }
 
             return hostBuilder.ConfigureServices((context, s) => s
-                .AddNativeHandler(
-#if __WASM__
-                ()=>new Uno.UI.Wasm.WasmHttpHandler()
-#endif
-                )
+                .AddNativeHandler()
                 .AddNetworkExceptionHandler()
                 .AddExceptionHubHandler()
                 .AddAuthenticationTokenHandler()
