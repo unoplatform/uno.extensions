@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="MSBuild.Sdk.Extras">
   <PropertyGroup>
-    <TargetFrameworks>net5.0-windows10.0.19041.0;uap10.0.16299;netstandard2.0;xamarinios10;xamarinmac20;monoandroid10.0;monoandroid11.0</TargetFrameworks>
+    <TargetFrameworks>net5.0-windows10.0.19041.0;uap10.0.16299;netstandard2.0;xamarinios10;xamarinmac20;monoandroid10.0;monoandroid11.0;net6.0-ios;net6.0-android</TargetFrameworks>
   </PropertyGroup>
   
   <ItemGroup Condition="'$(IsXamarin)' == 'true' or '$(IsUWP)' == 'true'">
@@ -9,15 +9,15 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(IsUWP)' == 'true' or '$(IsWinUI)' == 'true'">
-    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="5.0.0" />
+    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="6.0.0-preview.7.21377.19" />
   </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
-    <PackageReference Include="System.Text.Json" Version="5.0.2" />
+    <PackageReference Include="System.Text.Json" Version="6.0.0-preview.7.21377.19" />
     <PackageReference Include="System.Reflection.TypeExtensions" Version="4.7.0" />
     <PackageReference Include="System.Reactive" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0-preview.7.21377.19" />
     <ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
   </ItemGroup>
 </Project>

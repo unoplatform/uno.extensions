@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="MSBuild.Sdk.Extras">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;uap10.0.16299;monoandroid10.0;monoandroid11.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;uap10.0.16299;monoandroid10.0;monoandroid11.0;net6.0-ios;net6.0-android</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0-preview.7.21377.19" />
   </ItemGroup>
   <ItemGroup Condition="$(TargetFramework.StartsWith('monoandroid'))">
     <!--<PackageReference Include="Xamarin.Firebase.Core" Version="118.0.0" />
