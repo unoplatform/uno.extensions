@@ -12,11 +12,7 @@ private IHost Host { get; }
 public App()
 {
     Host = UnoHost
-#if __WASM__
-        .CreateDefaultBuilderForWASM()
-#else
         .CreateDefaultBuilder()
-#endif
         .Build();
     // ........ //
 }
@@ -49,11 +45,7 @@ private IHost Host { get; }
 public App()
 {
     Host = UnoHost
-#if __WASM__
-        .CreateDefaultBuilderForWASM()
-#else
         .CreateDefaultBuilder()
-#endif
         .ConfigureServices(service => service.AddHostedService<SimpleHostService>())
         .Build();
     // ........ //
@@ -90,11 +82,7 @@ private IHost Host { get; }
 public App()
 {
     Host = UnoHost
-#if __WASM__
-        .CreateDefaultBuilderForWASM()
-#else
         .CreateDefaultBuilder()
-#endif
         .UseEnvironment("Staging")
         .Build();
     // ........ //
@@ -120,5 +108,8 @@ The current hosting environment can also used when configuring the host builder.
 **NOTE: In general it's good to avoid writing code that contains logic specific to any environment. It's preferable to have all environments behave as close as possible to each other, thus minimizing any environment specific bugs that may be introduced by environment specific code.
 
 Any environment specific secure variables should be set as part of a multi-environment CI/CD pipeline. For example service urls, application key, account information etc. Non-secure per-environment variables can be included using a settings file (this is covered in [Configuration](./02 Configuration.md).  
+
+## WASM
+Do not add a reference to Uno.Extensions.Hosting in the WASM project. Instead, add a reference to Uno.Extensions.Hosting.Wasm package.
 
 

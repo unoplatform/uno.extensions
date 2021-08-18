@@ -52,6 +52,7 @@ namespace ApplicationTemplate
                 .CreateDefaultBuilder()
                 .UseEnvironment("Staging")
                 .UseAppSettings<App>()
+                .UseAppSettingsForHostConfiguration<App>()
                 .UseHostConfigurationForApp()
                 .UseConfigurationSectionInApp<CustomIntroduction>(nameof(CustomIntroduction))
                 .UsePlatformLoggerProvider()
