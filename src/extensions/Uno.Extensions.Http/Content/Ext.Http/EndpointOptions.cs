@@ -8,7 +8,7 @@ namespace Uno.Extensions.Http
     {
         public string Url { get; set; }
 
-        public Dictionary<string, bool> Features { get; set; }
+        public Dictionary<string, bool> Features { get; set; } = new Dictionary<string, bool>();
 
         public bool FeatureEnabled([CallerMemberName] string feature = null)
         {
@@ -30,5 +30,14 @@ namespace Uno.Extensions.Http
 
         [JsonIgnore]
         public bool UseNetworkExceptionHandler => FeatureEnabled();
+    }
+
+    public static class EndpointOptionsHelper
+    {
+        public static EndpointOptions Enable(this EndpointOptions options, string feature)
+        {
+            options.Features[feature] = true;
+            return options;
+        }
     }
 }

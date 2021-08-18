@@ -1,16 +1,10 @@
-﻿# Dependency injection
-_[TBD - Review and update this guidance]_
+# Dependency injection
 
-We use [Microsoft.Extensions.Hosting](https://www.nuget.org/packages/Microsoft.Extensions.Hosting) for any IoC related work.
+Uno.Extensions.Hosting use [Microsoft.Extensions.Hosting](https://www.nuget.org/packages/Microsoft.Extensions.Hosting) for any IoC related work.
 
 For more documentation on dependency injection, read the references listed at the bottom.
 
 ## Registering
-
-- Services are registered into `IServiceCollection`. We can register different services depending on the current configuration defined into the `HostBuilderContext.HostingEnvironment.EnvironmentName` property. 
-
-- We could leverage more hosting extensions under the `Microsoft.Extensions.DependencyInjection` namespace when adding internal packages.
-For example, we could have a `.AddLocation()` extension to include everything IoC related to a location services.
 
 - You can register a singleton service using `services.AddSingleton<IService, ServiceImplementation>()`. This service will be shared by every user.
 
@@ -46,21 +40,26 @@ You can also use `IServiceProvider.GetService<IService>()` which will return `de
 
 - You can access your services from a **view model** using `this.GetService<MyService>`.
 
-- You can also access your services from a **view model** using the `[Inject]` attribute.
+## CommunityToolkit.Mvvm
 
-  ```csharp
-  // Your class needs to be partial.
-  public partial class MyViewModel
-  {
-    // This property will be automatically assigned in the constructor.
-    [Inject] private MyService _service;
-  }
-  ```
+If you want to access the DI container via the Ioc.Default API exposed via the CommunityToolkit, you need to configure the service collection after building the Host.
 
-  Support of this attribute is done in the [ViewModel.cs](../src/app/ApplicationTemplate.Shared/Presentation/ViewModel.cs) file.
+```csharp
+private IHost Host { get; }
+
+public App()
+{
+    Host = UnoHost
+        .CreateDefaultBuilder()
+        .Build();
+    Ioc.Default.ConfigureServices(Host.Services);
+    // ........ //
+}
+```
+
+
 
 ## References
 
 - [Understanding Generic Host](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/generic-host?view=aspnetcore-3.0)
 - [Using dependency injection](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-3.0)
-- [Using Uno.Injectable](https://github.com/unoplatform/Uno.CodeGen/blob/master/doc/Injectable%20Generation.md)

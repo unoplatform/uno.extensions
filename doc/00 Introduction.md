@@ -25,9 +25,4 @@ In addition to referencing Uno, the Guidance Template also references the follow
 
 The Uno.Extensions is a series of packages designed to encapsulate common developer tasks associated with building cross platform mobile, desktop and web applications using the Uno platform. 
 
-Each package is delivered as source code, making it possible for developers to extend or adapt the code without having to be concerned with bloating their application with unnecessary assemblies, or running into issues with compatibility issues between different package versions. 
-
-The Uno.Extensions support both WinUI and UWP. However, in order to handle the change in namespaces it's necessary to include the UNO_UWP_COMPATIBILITY compilation constant in the csproj eg:
-<DefineConstants>$(DefineConstants);UNO_UWP_COMPATIBILITY</DefineConstants>
-
 

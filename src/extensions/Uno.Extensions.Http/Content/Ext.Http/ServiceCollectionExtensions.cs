@@ -32,23 +32,53 @@ namespace Uno.Extensions.Http
             return services.AddClient<TClient>(context, name, httpClientFactory, configure);
         }
 
+        public static IServiceCollection AddClient<TClient, TImplementation>(
+             this IServiceCollection services,
+             HostBuilderContext context,
+             EndpointOptions options,
+             string name = null,
+             Func<IHttpClientBuilder, EndpointOptions, IHttpClientBuilder> configure = null
+         )
+            where TClient : class
+            where TImplementation : class, TClient
+        {
+            Func<IServiceCollection, HostBuilderContext, IHttpClientBuilder> httpClientFactory = (s, c) => s.AddHttpClient<TClient, TImplementation>();
+
+            return services.AddClient<TClient>(context, options, name, httpClientFactory, configure);
+        }
+
+        public static IServiceCollection AddClient<TInterface>(
+             this IServiceCollection services,
+             HostBuilderContext context,
+             string name = null,
+             Func<IServiceCollection, HostBuilderContext, IHttpClientBuilder> httpClientFactory = null,
+             Func<IHttpClientBuilder, EndpointOptions, IHttpClientBuilder> configure = null
+         )
+             where TInterface : class
+        {
+            name ??= typeof(TInterface).IsInterface ? typeof(TInterface).Name.TrimStart("I") : typeof(TInterface).Name;
+            var options = context?.Configuration?.GetSection(name)?.Get<EndpointOptions>();
+
+            return services.AddClient<TInterface>(context, options, name, httpClientFactory, configure);
+        }
+
         public static IServiceCollection AddClient<TInterface>(
               this IServiceCollection services,
               HostBuilderContext context,
+              EndpointOptions options,
               string name = null,
               Func<IServiceCollection, HostBuilderContext, IHttpClientBuilder> httpClientFactory = null,
               Func<IHttpClientBuilder, EndpointOptions, IHttpClientBuilder> configure = null
           )
               where TInterface : class
         {
-            name ??= typeof(TInterface).Name;
+            name ??= typeof(TInterface).IsInterface ? typeof(TInterface).Name.TrimStart("I") : typeof(TInterface).Name;
 
             if (httpClientFactory is null)
             {
                 httpClientFactory = (s, c) => s.AddHttpClient(name);
             }
 
-            var options = context?.Configuration?.GetSection(name)?.Get<EndpointOptions>();
 
             var httpClientBuilder = httpClientFactory(services, context);
 
