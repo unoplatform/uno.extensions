@@ -11,8 +11,8 @@ namespace Uno.Extensions.Hosting
 #if !NETSTANDARD || WINUI || __WASM__
     public static class UnoHost
     {
-        public static IHostBuilder CreateDefaultBuilder() =>
-            Host.CreateDefaultBuilder()
+        public static IHostBuilder CreateDefaultBuilder(bool custom=false) =>
+            (custom? CustomHost.CreateDefaultBuilder(): Host.CreateDefaultBuilder())
 #if WINUI || WINDOWS_UWP || __IOS__ || __ANDROID__ || NETSTANDARD
             .UseContentRoot(PlatformSpecificContentRootPath())
 #endif
@@ -42,12 +42,14 @@ namespace Uno.Extensions.Hosting
 #endif
 #if __WASM__
                 factory.Services.RemoveAllIncludeImplementations<ConsoleLoggerProvider>();
-#endif 
+#endif
             })
 #if __ANDROID__ || __IOS__ || NETSTANDARD
             .ConfigureServices(services =>
             {
-                services.AddSingleton<IHostLifetime, XamarinConsoleLifetime>();
+            if(!custom){
+            services.AddSingleton<IHostLifetime, XamarinConsoleLifetime>();
+            }
             })
 #endif
             ;
@@ -66,4 +68,4 @@ namespace Uno.Extensions.Hosting
 #endif
     }
 #endif
-            }
+}
