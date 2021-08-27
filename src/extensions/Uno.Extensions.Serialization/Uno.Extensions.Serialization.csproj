@@ -3,7 +3,4 @@
   <PropertyGroup>
     <TargetFrameworks>net5.0-windows10.0.19041.0;uap10.0.16299;netstandard2.0;xamarinios10;xamarinmac20;monoandroid10.0;monoandroid11.0;net6.0-ios;net6.0-android</TargetFrameworks>
   </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="Uno.UI" Version="3.10.0-dev.520" />
-  </ItemGroup>
 </Project>

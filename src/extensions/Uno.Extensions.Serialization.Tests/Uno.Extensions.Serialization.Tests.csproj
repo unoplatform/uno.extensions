@@ -18,8 +18,5 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Update="Uno.UI" Version="3.10.0-dev.520" />
-  </ItemGroup>
 
 </Project>
