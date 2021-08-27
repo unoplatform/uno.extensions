@@ -25,7 +25,6 @@ namespace Uno.Extensions.Navigation
             NavigationFrame.Navigate(navigationType.View);
 
             return new NavigationResult(request, Task.CompletedTask);
-            }
+        }
     }
-
 }
