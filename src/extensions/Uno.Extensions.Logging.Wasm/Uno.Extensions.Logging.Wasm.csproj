@@ -8,7 +8,7 @@
     <Compile Include="..\Uno.Extensions.Logging\Content\Ext.Logging\HostBuilderExtensions.cs" Link="HostBuilderExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.1.0" />
+    <PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.3.0-dev.1" />
   </ItemGroup>
 
   <ItemGroup>

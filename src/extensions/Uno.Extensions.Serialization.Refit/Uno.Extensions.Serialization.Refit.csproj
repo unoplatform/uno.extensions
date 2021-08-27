@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Refit" Version="6.0.94" />
+    <PackageReference Include="Uno.UI" Version="3.10.0-dev.520" />
   </ItemGroup>
 
   <ItemGroup>
