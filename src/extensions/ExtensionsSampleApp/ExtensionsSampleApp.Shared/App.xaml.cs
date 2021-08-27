@@ -1,9 +1,14 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
+using Uno.Extensions.Hosting;
+using Uno.Extensions.Logging;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
@@ -29,14 +34,28 @@ namespace ExtensionsSampleApp
 #else
         private Windows.UI.Xaml.Window _window;
 #endif
-
+        private IHost Host { get; }
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
         public App()
         {
-            InitializeLogging();
+            Host = UnoHost
+               .CreateDefaultBuilder(true)
+               .UsePlatformLoggerProvider()
+               .ConfigureLogging(logBuilder =>
+               {
+                   logBuilder
+                        .SetMinimumLevel(LogLevel.Debug)
+                        .XamlLogLevel(LogLevel.Information)
+                        .XamlLayoutLogLevel(LogLevel.Information);
+               })
+               .Build()
+               .EnableUnoLogging();
+            Ioc.Default.ConfigureServices(Host.Services);
+
+            //InitializeLogging();
 
             this.InitializeComponent();
 
@@ -100,6 +119,12 @@ namespace ExtensionsSampleApp
                 // Ensure the current window is active
                 _window.Activate();
             }
+
+            _ = Task.Run(() =>
+            {
+                //Startup.Start();
+                Host.Run();
+            });
         }
 
         /// <summary>
