@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
@@ -9,6 +10,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Uno.Extensions.Hosting;
 using Uno.Extensions.Logging;
+using Uno.Extensions.Navigation;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
@@ -51,9 +53,14 @@ namespace ExtensionsSampleApp
                         .XamlLogLevel(LogLevel.Information)
                         .XamlLayoutLogLevel(LogLevel.Information);
                })
+               .UseNavigation()
                .Build()
                .EnableUnoLogging();
             Ioc.Default.ConfigureServices(Host.Services);
+
+            var mapping = Host.Services.GetService< INavigationMapping>();
+            mapping.Register(new NavigationMap(typeof(MainPage).Name, typeof(MainPage)));
+
 
             //InitializeLogging();
 
@@ -93,7 +100,8 @@ namespace ExtensionsSampleApp
             {
                 // Create a Frame to act as the navigation context and navigate to the first page
                 rootFrame = new Frame();
-
+                var adapter = Host.Services.GetService<INavigationAdapter>() as FrameNavigationAdapter;
+                adapter.NavigationFrame = rootFrame;
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
@@ -111,10 +119,14 @@ namespace ExtensionsSampleApp
             {
                 if (rootFrame.Content == null)
                 {
-                    // When the navigation stack isn't restored navigate to the first page,
-                    // configuring the new page by passing required information as a navigation
-                    // parameter
-                    rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                    //// When the navigation stack isn't restored navigate to the first page,
+                    //// configuring the new page by passing required information as a navigation
+                    //// parameter
+                    //rootFrame.Navigate(typeof(MainPage), e.Arguments);
+
+                    var nav = Ioc.Default.GetService<INavigationService>();
+                    //var navResult = nav.Navigate(new NavigationRequest(this, new NavigationRoute(new Uri("MainPage", UriKind.Relative))));
+                    var navResult = nav.NavigateToView<MainPage>(this);
                 }
                 // Ensure the current window is active
                 _window.Activate();
