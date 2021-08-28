@@ -9,6 +9,8 @@ namespace Uno.Extensions.Navigation
 {
     public class FrameNavigationAdapter : INavigationAdapter
     {
+        public const string PreviousViewUri = "..";
+
         public Frame NavigationFrame { get; set; }
 
         private INavigationMapping Mapping { get; }
@@ -20,10 +22,17 @@ namespace Uno.Extensions.Navigation
 
         public NavigationResult Navigate(NavigationRequest request)
         {
-            var navigationType = Mapping.LookupByPath(request.Route.Path.OriginalString);
+            var path = request.Route.Path.OriginalString;
+            if (path == PreviousViewUri)
+            {
+                NavigationFrame.GoBack();
+            }
+            else
+            {
+                var navigationType = Mapping.LookupByPath(path);
 
-            NavigationFrame.Navigate(navigationType.View);
-
+                NavigationFrame.Navigate(navigationType.View);
+            }
             return new NavigationResult(request, Task.CompletedTask);
         }
     }

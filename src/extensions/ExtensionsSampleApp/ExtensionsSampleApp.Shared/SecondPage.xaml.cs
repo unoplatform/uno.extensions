@@ -15,30 +15,32 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
+// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace ExtensionsSampleApp
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainPage : Page
+    public sealed partial class SecondPage : Page
     {
-        public MainPage()
+        public SecondPage()
         {
             this.InitializeComponent();
         }
 
-        private void NextPageNavigationRequestClick(object sender, RoutedEventArgs e)
+        private void GoBackNavigationRequestClick(object sender, RoutedEventArgs e)
         {
             var nav = Ioc.Default.GetService<INavigationService>();
-            nav.Navigate(new NavigationRequest(this, new NavigationRoute(new Uri("SecondPage", UriKind.Relative))));
+            nav.Navigate(new NavigationRequest(this, new NavigationRoute(new Uri("..", UriKind.Relative))));
+
         }
 
-        private void NextPageNavigateToViewClick(object sender, RoutedEventArgs e)
+        private void GoBackNavigateToPreviousViewClick(object sender, RoutedEventArgs e)
         {
             var nav = Ioc.Default.GetService<INavigationService>();
-            nav.NavigateToView<SecondPage>(this);
+            nav.NavigateToPreviousView(this);
+
         }
     }
 }
