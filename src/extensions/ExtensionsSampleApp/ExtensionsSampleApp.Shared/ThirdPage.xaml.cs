@@ -11,18 +11,11 @@ namespace ExtensionsSampleApp
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class SecondPage : Page
+    public sealed partial class ThirdPage : Page
     {
-        public SecondPage()
+        public ThirdPage()
         {
             this.InitializeComponent();
-        }
-
-        private void GoBackNavigationRequestClick(object sender, RoutedEventArgs e)
-        {
-            var nav = Ioc.Default.GetService<INavigationService>();
-            nav.Navigate(new NavigationRequest(this, new NavigationRoute(new Uri("..", UriKind.Relative))));
-
         }
 
         private void GoBackNavigateToPreviousViewClick(object sender, RoutedEventArgs e)
@@ -32,10 +25,23 @@ namespace ExtensionsSampleApp
 
         }
 
+        private void GoToFourthPageRemoveOnePageNavigationRequestClick(object sender, RoutedEventArgs e)
+        {
+            var nav = Ioc.Default.GetService<INavigationService>();
+            nav.Navigate(new NavigationRequest(this, new NavigationRoute(new Uri("../FourthPage", UriKind.Relative))));
+        }
+
+        private void GoToFourthPageRemoveTwoPagesNavigationRequestClick(object sender, RoutedEventArgs e)
+        {
+            var nav = Ioc.Default.GetService<INavigationService>();
+            nav.Navigate(new NavigationRequest(this, new NavigationRoute(new Uri("../../FourthPage", UriKind.Relative))));
+        }
+
+
         private void NextPageClick(object sender, RoutedEventArgs e)
         {
             var nav = Ioc.Default.GetService<INavigationService>();
-            nav.NavigateToView<ThirdPage>(this);
+            nav.NavigateToView<FourthPage>(this);
         }
     }
 }
