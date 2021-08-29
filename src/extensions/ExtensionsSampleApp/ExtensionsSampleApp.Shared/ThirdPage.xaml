@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="ExtensionsSampleApp.SecondPage"
+    x:Class="ExtensionsSampleApp.ThirdPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:ExtensionsSampleApp"
@@ -10,9 +10,10 @@
 
     <Grid>
         <StackPanel>
-            <TextBlock Text="Page 2" Margin="20" FontSize="30" />
+            <TextBlock Text="Page 3" Margin="20" FontSize="30" />
             <Button Content="Next Page" Click="NextPageClick"/>
-            <Button Content="Go Back - NavigationRequest" Click="GoBackNavigationRequestClick"/>
+            <Button Content="Go to Fourth Page and remove third page - NavigationRequest" Click="GoToFourthPageRemoveOnePageNavigationRequestClick"/>
+            <Button Content="Go to Fourth Page and remove second and third page - NavigationRequest" Click="GoToFourthPageRemoveTwoPagesNavigationRequestClick"/>
             <Button Content="Go Back - NavigateToPreviousView" Click="GoBackNavigateToPreviousViewClick"/>
         </StackPanel>
     </Grid>

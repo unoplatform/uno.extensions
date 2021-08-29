@@ -51,6 +51,8 @@ namespace ExtensionsSampleApp
             var mapping = Host.Services.GetService< INavigationMapping>();
             mapping.Register(new NavigationMap(typeof(MainPage).Name, typeof(MainPage)));
             mapping.Register(new NavigationMap(typeof(SecondPage).Name, typeof(SecondPage)));
+            mapping.Register(new NavigationMap(typeof(ThirdPage).Name, typeof(ThirdPage)));
+            mapping.Register(new NavigationMap(typeof(FourthPage).Name, typeof(FourthPage)));
 
 
             //InitializeLogging();
