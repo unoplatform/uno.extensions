@@ -12,6 +12,7 @@ namespace Uno.Extensions.Navigation
                 .ConfigureServices(sp =>
                 {
                     _ = sp.AddSingleton<INavigationMapping, NavigationMapping>()
+                           .AddSingleton<IFrameWrapper, FrameWrapper>()
                            .AddSingleton<INavigationAdapter, FrameNavigationAdapter>()
                            .AddSingleton<INavigationService, NavigationService>();
                 });

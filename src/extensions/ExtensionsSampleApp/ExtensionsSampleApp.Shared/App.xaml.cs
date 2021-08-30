@@ -93,7 +93,7 @@ namespace ExtensionsSampleApp
             {
                 // Create a Frame to act as the navigation context and navigate to the first page
                 rootFrame = new Frame();
-                var adapter = Host.Services.GetService<INavigationAdapter>() as FrameNavigationAdapter;
+                var adapter = Host.Services.GetService<IFrameWrapper>() as FrameWrapper;
                 adapter.NavigationFrame = rootFrame;
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
