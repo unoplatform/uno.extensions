@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
@@ -9,16 +10,50 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation
 {
+
+    public class FrameWrapper : IFrameWrapper
+    {
+        public Frame NavigationFrame { get; set; }
+
+        public void GoBack()
+        {
+            NavigationFrame.GoBack();
+        }
+
+        public bool Navigate(Type sourcePageType, object parameter = null)
+        {
+            Debug.WriteLine("Backstack (Navigate - before): " + string.Join(",", NavigationFrame.BackStack.Select(x => x.SourcePageType.Name)));
+            var nav = NavigationFrame.Navigate(sourcePageType, parameter);
+            Debug.WriteLine("Backstack (Navigate - after): " + string.Join(",", NavigationFrame.BackStack.Select(x => x.SourcePageType.Name)));
+            return nav;
+        }
+
+        public void RemoveLastFromBackStack()
+        {
+            Debug.WriteLine("Backstack (RemoveLastFromBackStack - before): " + string.Join(",", NavigationFrame.BackStack.Select(x => x.SourcePageType.Name)));
+            NavigationFrame.BackStack.RemoveAt(NavigationFrame.BackStack.Count - 1);
+            Debug.WriteLine("Backstack (RemoveLastFromBackStack - after): " + string.Join(",", NavigationFrame.BackStack.Select(x => x.SourcePageType.Name)));
+        }
+
+        public void ClearBackStack()
+        {
+            Debug.WriteLine("Backstack (ClearBackStack - before): " + string.Join(",", NavigationFrame.BackStack.Select(x => x.SourcePageType.Name)));
+            NavigationFrame.BackStack.Clear();
+            Debug.WriteLine("Backstack (ClearBackStack - after): " + string.Join(",", NavigationFrame.BackStack.Select(x => x.SourcePageType.Name)));
+        }
+    }
+
     public class FrameNavigationAdapter : INavigationAdapter
     {
         public const string PreviousViewUri = "..";
 
-        public Frame NavigationFrame { get; set; }
+        private IFrameWrapper NavigationFrame { get; }
 
         private INavigationMapping Mapping { get; }
 
-        public FrameNavigationAdapter(INavigationMapping navigationMapping)
+        public FrameNavigationAdapter(IFrameWrapper frameWrapper, INavigationMapping navigationMapping)
         {
+            NavigationFrame = frameWrapper;
             Mapping = navigationMapping;
         }
 
@@ -58,12 +93,11 @@ namespace Uno.Extensions.Navigation
                 removeCurrentPageFromBackStack = false;
             }
 
-            Debug.WriteLine("Backstack (before): " + string.Join(",", NavigationFrame.BackStack.Select(x => x.SourcePageType.Name)));
 
-            
+
             while (numberOfPagesToRemove > 0)
             {
-                NavigationFrame.BackStack.RemoveAt(NavigationFrame.BackStack.Count - 1);
+                NavigationFrame.RemoveLastFromBackStack();
                 numberOfPagesToRemove--;
             }
 
@@ -80,15 +114,15 @@ namespace Uno.Extensions.Navigation
 
                 if (isRooted)
                 {
-                    NavigationFrame.BackStack.Clear();
+                    NavigationFrame.ClearBackStack();
                 }
+
                 if (removeCurrentPageFromBackStack)
                 {
-                    NavigationFrame.BackStack.RemoveAt(NavigationFrame.BackStack.Count - 1);
+                    NavigationFrame.RemoveLastFromBackStack();
                 }
             }
 
-            Debug.WriteLine("Backstack (after): " + string.Join(",", NavigationFrame.BackStack.Select(x => x.SourcePageType.Name)));
             return new NavigationResult(request, Task.CompletedTask);
         }
     }
