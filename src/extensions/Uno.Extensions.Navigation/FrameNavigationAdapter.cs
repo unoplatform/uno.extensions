@@ -27,6 +27,8 @@ namespace Uno.Extensions.Navigation
             var path = request.Route.Path.OriginalString;
             Debug.WriteLine("Navigation: " + path);
 
+            var isRooted = path.StartsWith("/");
+
             var segments = path.Split('/');
             var numberOfPagesToRemove = 0;
             var navPath = string.Empty;
@@ -67,7 +69,6 @@ namespace Uno.Extensions.Navigation
 
             if (navPath == PreviousViewUri)
             {
-
                 NavigationFrame.GoBack();
             }
             else
@@ -77,6 +78,10 @@ namespace Uno.Extensions.Navigation
 
                 var success = NavigationFrame.Navigate(navigationType.View);
 
+                if (isRooted)
+                {
+                    NavigationFrame.BackStack.Clear();
+                }
                 if (removeCurrentPageFromBackStack)
                 {
                     NavigationFrame.BackStack.RemoveAt(NavigationFrame.BackStack.Count - 1);

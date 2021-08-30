@@ -15,7 +15,9 @@
             <Button Content="Go Back x 2- NavigationRequest" Click="GoBackTwiceNavigationRequestClick"/>
             <Button Content="Go To Third Page with Back x 2 - NavigationRequest" Click="GoToThirdPageBackTwiceNavigationRequestClick"/>
             <Button Content="Go To Third Page with Back x 3 - NavigationRequest" Click="GoToThirdPageBackThreeTimesNavigationRequestClick"/>
-        </StackPanel>
+            <Button Content="Go To /Main - NavigationRequest" Click="GoToRootedMainPageNavigationRequestClick"/>
+            <Button Content="Go To /Third Page- NavigationRequest" Click="GoToRootedThirdPageNavigationRequestClick"/>
+</StackPanel>
 
     </Grid>
 </Page>
