@@ -42,5 +42,16 @@ namespace ExtensionsSampleApp
             var nav = Ioc.Default.GetService<INavigationService>();
             nav.Navigate(new NavigationRequest(this, new NavigationRoute(new Uri("../../../ThirdPage", UriKind.Relative))));
         }
+
+        private void GoToRootedMainPageNavigationRequestClick(object sender, RoutedEventArgs e)
+        {
+            var nav = Ioc.Default.GetService<INavigationService>();
+            nav.Navigate(new NavigationRequest(this, new NavigationRoute(new Uri("/MainPage", UriKind.Relative))));
+        }
+        private void GoToRootedThirdPageNavigationRequestClick(object sender, RoutedEventArgs e)
+        {
+            var nav = Ioc.Default.GetService<INavigationService>();
+            nav.Navigate(new NavigationRequest(this, new NavigationRoute(new Uri("/ThirdPage", UriKind.Relative))));
+        }
     }
 }
