@@ -6,10 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
+    <ProjectReference Include="..\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="6.1.0" />
     <PackageReference Include="Moq" Version="4.16.1" />
     <PackageReference Include="MSTest.TestAdapter">
       <Version>2.2.4</Version>
