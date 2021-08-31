@@ -63,5 +63,29 @@ namespace ExtensionsSampleApp
             nav.NavigateToView<ThirdPage>(this);
 
         }
+        private void SecondPageClick(object sender, RoutedEventArgs e)
+        {
+            var nav = Ioc.Default.GetService<INavigationService>();
+            nav.NavigateToView<SecondPage>(this);
+        }
+        private void FourthPageClick(object sender, RoutedEventArgs e)
+        {
+            var nav = Ioc.Default.GetService<INavigationService>();
+            nav.NavigateToView<FourthPage>(this);
+        }
+
+        private INavigationService innerFrameAdapter;
+        private void TabSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var nav = Ioc.Default.GetService<INavigationManager>();
+            if (e.AddedItems?.FirstOrDefault() == doc2)
+            {
+                nav.ActivateAdapter(InnerFrame);
+            }
+            else if(innerFrameAdapter != null)
+                {
+                nav.DeactivateAdapter(innerFrameAdapter);
+            }
+        }
     }
 }
