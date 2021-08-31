@@ -122,23 +122,26 @@ namespace ExtensionsSampleApp
             {
                 if (rootFrame.Content == null)
                 {
-                    //// When the navigation stack isn't restored navigate to the first page,
-                    //// configuring the new page by passing required information as a navigation
-                    //// parameter
-                    //rootFrame.Navigate(typeof(TabbedPage), e.Arguments);
-                    //var adapter = Host.Services.GetService<ITabWrapper>() as TabWrapper;
-                    //adapter.Tabs = (rootFrame.Content as TabbedPage).FindVisualChildByType<TabView>();
+//// When the navigation stack isn't restored navigate to the first page,
+//// configuring the new page by passing required information as a navigation
+//// parameter
+//rootFrame.Navigate(typeof(TabbedPage), e.Arguments);
+//var adapter = Host.Services.GetService<ITabWrapper>() as TabWrapper;
+//adapter.Tabs = (rootFrame.Content as TabbedPage).FindVisualChildByType<TabView>();
 
-                    //var adapter = Host.Services.GetService<IFrameWrapper>() as FrameWrapper;
-                    //adapter.NavigationFrame = rootFrame;
-                    //var nav = Ioc.Default.GetService<INavigationService>();
-                    ////var navResult = nav.Navigate(new NavigationRequest(this, new NavigationRoute(new Uri("MainPage", UriKind.Relative))));
-                    //var navResult = nav.NavigateToView<MainPage>(this);
-
-                    var nav = Ioc.Default.GetService<INavigationManager>();
-                    nav.ActivateAdapter(rootFrame);
-                    var navResult = nav.NavigateToView<MainPage>(this);
-
+//var adapter = Host.Services.GetService<IFrameWrapper>() as FrameWrapper;
+//adapter.NavigationFrame = rootFrame;
+//var nav = Ioc.Default.GetService<INavigationService>();
+////var navResult = nav.Navigate(new NavigationRequest(this, new NavigationRoute(new Uri("MainPage", UriKind.Relative))));
+//var navResult = nav.NavigateToView<MainPage>(this);
+nav: Navigation.SetIsEnabled(rootFrame, true);
+                    //var nav = Ioc.Default.GetService<INavigationManager>();
+                    //nav.ActivateAdapter(rootFrame);
+                    rootFrame.Loaded += (fs, fe) =>
+                    {
+                        var nav = Ioc.Default.GetService<INavigationService>();
+                        var navResult = nav.NavigateToView<MainPage>(this);
+                    };
 
                 }
                 // Ensure the current window is active

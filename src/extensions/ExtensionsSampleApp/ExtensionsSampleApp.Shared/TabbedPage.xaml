@@ -6,11 +6,13 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.UI.Xaml.Controls"
+    xmlns:nav="using:Uno.Extensions.Navigation.Controls"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <controls:TabView
+        nav:Navigation.IsEnabled="true"
         x:Name="Tabs" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsAddTabButtonVisible="False"
-        SelectionChanged="TabSelectionChanged">
+        >
         <controls:TabViewItem Header="Home" IsClosable="False" x:Name="home">
             <controls:TabViewItem.IconSource>
                 <controls:SymbolIconSource Symbol="Home" />
@@ -42,7 +44,7 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <Frame x:Name="InnerFrame"/>
+                <Frame x:Name="InnerFrame" nav:Navigation.IsEnabled="true"/>
                 <StackPanel Orientation="Horizontal">
                     <Button Content="Page Two" Click="SecondPageClick"/>
                     <Button Content="Page Four" Click="FourthPageClick"/>

@@ -10,7 +10,8 @@ namespace Uno.Extensions.Navigation
 
     public interface INavigationManager : INavigationService
         {
-        INavigationService ActivateAdapter<TControl>(TControl control);
-        void DeactivateAdapter(INavigationService adapter);
+        INavigationService AddAdapter<TControl>(TControl control, bool enabled);
+        void ActivateAdapter(INavigationService adapter);
+        void DeactivateAdapter(INavigationService adapter, bool cleanup=true);
     }
 }
