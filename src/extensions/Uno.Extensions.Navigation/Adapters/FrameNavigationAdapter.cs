@@ -3,22 +3,37 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Uno.Extensions.Navigation.Controls;
+#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+using Windows.UI.Xaml.Controls;
+#else
+using Microsoft.UI.Xaml.Controls;
+#endif
 
 namespace Uno.Extensions.Navigation.Adapters
 {
-    public class FrameNavigationAdapter : INavigationAdapter
+    public class FrameNavigationAdapter : INavigationAdapter<Frame>
     {
         public const string PreviousViewUri = "..";
 
-        private IFrameWrapper NavigationFrame { get; }
+        private IFrameWrapper Frame { get; }
 
         private INavigationMapping Mapping { get; }
 
+        public void Inject(Frame control)
+        {
+            Frame.Inject(control);
+        }
         public FrameNavigationAdapter(IFrameWrapper frameWrapper, INavigationMapping navigationMapping)
         {
-            NavigationFrame = frameWrapper;
+            Frame = frameWrapper;
             Mapping = navigationMapping;
         }
+
+        public bool CanNavigate(NavigationRequest request)
+        {
+            return true;
+        }
+
 
         public NavigationResult Navigate(NavigationRequest request)
         {
@@ -60,29 +75,29 @@ namespace Uno.Extensions.Navigation.Adapters
 
             while (numberOfPagesToRemove > 0)
             {
-                NavigationFrame.RemoveLastFromBackStack();
+                Frame.RemoveLastFromBackStack();
                 numberOfPagesToRemove--;
             }
 
             if (navPath == PreviousViewUri)
             {
-                NavigationFrame.GoBack();
+                Frame.GoBack();
             }
             else
             {
 
                 var navigationType = Mapping.LookupByPath(navPath);
 
-                var success = NavigationFrame.Navigate(navigationType.View);
+                var success = Frame.Navigate(navigationType.View);
 
                 if (isRooted)
                 {
-                    NavigationFrame.ClearBackStack();
+                    Frame.ClearBackStack();
                 }
 
                 if (removeCurrentPageFromBackStack)
                 {
-                    NavigationFrame.RemoveLastFromBackStack();
+                    Frame.RemoveLastFromBackStack();
                 }
             }
 
