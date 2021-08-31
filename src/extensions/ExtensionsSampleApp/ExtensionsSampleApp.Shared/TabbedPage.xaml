@@ -8,7 +8,7 @@
     xmlns:controls="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-    <controls:TabView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsAddTabButtonVisible="False">
+    <controls:TabView x:Name="Tabs" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsAddTabButtonVisible="False">
         <controls:TabViewItem Header="Home" IsClosable="False" x:Name="home">
             <controls:TabViewItem.IconSource>
                 <controls:SymbolIconSource Symbol="Home" />
@@ -21,9 +21,10 @@
             <controls:TabViewItem.IconSource>
                 <controls:SymbolIconSource Symbol="Document" />
             </controls:TabViewItem.IconSource>
-            <Grid>
+            <StackPanel>
                 <Button Content="Home" Click="ActivateHomeClick"/>
-            </Grid>
+                <Button Content="Third Page" Click="ThirdPageClick"/>
+            </StackPanel>
         </controls:TabViewItem>
         <controls:TabViewItem Header="Document 1" x:Name="doc1">
             <controls:TabViewItem.IconSource>

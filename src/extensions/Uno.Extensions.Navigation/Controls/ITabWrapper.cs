@@ -1,7 +1,14 @@
-﻿namespace Uno.Extensions.Navigation.Controls;
+﻿#if WINDOWS_UWP 
+using Windows.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
+#else
+using Microsoft.UI.Xaml.Controls;
+#endif
 
-public interface ITabWrapper
+namespace Uno.Extensions.Navigation.Controls;
+
+public interface ITabWrapper : IInjectable<TabView>
 {
-
+    bool ContainsTab(string tabName);
     bool ActivateTab(string tabName);
 }

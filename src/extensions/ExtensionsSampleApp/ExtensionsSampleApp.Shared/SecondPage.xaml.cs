@@ -37,5 +37,11 @@ namespace ExtensionsSampleApp
             var nav = Ioc.Default.GetService<INavigationService>();
             nav.NavigateToView<ThirdPage>(this);
         }
+
+        private void TabbedPageNavigationByViewClick(object sender, RoutedEventArgs e)
+        {
+            var nav = Ioc.Default.GetService<INavigationService>();
+            nav.NavigateToView<TabbedPage>(this);
+        }
     }
 }
