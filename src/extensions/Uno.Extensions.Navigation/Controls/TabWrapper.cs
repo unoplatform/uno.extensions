@@ -1,6 +1,6 @@
-﻿#if WINDOWS_UWP 
-using Windows.UI.Xaml.Controls;
+﻿#if WINDOWS_UWP
 using Microsoft.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls;
 #else
 using Microsoft.UI.Xaml.Controls;
 #endif
@@ -17,10 +17,11 @@ public class TabWrapper : ITabWrapper
 
     private TabViewItem FindByName(string tabName)
     {
-        return   (from t in Tabs.TabItems.OfType<TabViewItem>()
-                          where t.Name == tabName
-                          select t).FirstOrDefault();
+        return (from t in Tabs.TabItems.OfType<TabViewItem>()
+                where t.Name == tabName
+                select t).FirstOrDefault();
     }
+
     public bool ContainsTab(string tabName)
     {
         return FindByName(tabName) is not null;
