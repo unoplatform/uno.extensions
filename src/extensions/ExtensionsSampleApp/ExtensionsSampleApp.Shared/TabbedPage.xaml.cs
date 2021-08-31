@@ -28,22 +28,22 @@ namespace ExtensionsSampleApp
         {
             this.InitializeComponent();
 
-            Loaded += TabbedPage_Loaded;
-            Unloaded += TabbedPage_Unloaded;
+            //Loaded += TabbedPage_Loaded;
+            //Unloaded += TabbedPage_Unloaded;
         }
 
-        private void TabbedPage_Unloaded(object sender, RoutedEventArgs e)
-        {
-            var nav = Ioc.Default.GetService<INavigationManager>();
-            nav.DeactivateAdapter(adapter);
-        }
+        //private void TabbedPage_Unloaded(object sender, RoutedEventArgs e)
+        //{
+        //    var nav = Ioc.Default.GetService<INavigationManager>();
+        //    nav.DeactivateAdapter(adapter);
+        //}
 
-        private INavigationService adapter;
-        private void TabbedPage_Loaded(object sender, RoutedEventArgs e)
-        {
-            var nav = Ioc.Default.GetService<INavigationManager>();
-            adapter = nav.ActivateAdapter(Tabs);
-        }
+        //private INavigationService adapter;
+        //private void TabbedPage_Loaded(object sender, RoutedEventArgs e)
+        //{
+        //    var nav = Ioc.Default.GetService<INavigationManager>();
+        //    adapter = nav.ActivateAdapter(Tabs);
+        //}
 
         private void ActivateDoc0Click(object sender, RoutedEventArgs e)
         {
@@ -74,18 +74,19 @@ namespace ExtensionsSampleApp
             nav.NavigateToView<FourthPage>(this);
         }
 
-        private INavigationService innerFrameAdapter;
-        private void TabSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var nav = Ioc.Default.GetService<INavigationManager>();
-            if (e.AddedItems?.FirstOrDefault() == doc2)
-            {
-                nav.ActivateAdapter(InnerFrame);
-            }
-            else if(innerFrameAdapter != null)
-                {
-                nav.DeactivateAdapter(innerFrameAdapter);
-            }
-        }
+        //private INavigationService innerFrameAdapter;
+        //private void TabSelectionChanged(object sender, SelectionChangedEventArgs e)
+        //{
+        //    var nav = Ioc.Default.GetService<INavigationManager>();
+        //    if (e.AddedItems?.FirstOrDefault() == doc2)
+        //    {
+        //        innerFrameAdapter= nav.AddAdapter(InnerFrame);
+        //    }
+        //    else if(innerFrameAdapter != null)
+        //        {
+        //        nav.DeactivateAdapter(innerFrameAdapter);
+        //        innerFrameAdapter = null;
+        //    }
+        //}
     }
 }
