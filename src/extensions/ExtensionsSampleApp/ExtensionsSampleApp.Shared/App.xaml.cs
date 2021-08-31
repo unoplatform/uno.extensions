@@ -107,6 +107,18 @@ namespace ExtensionsSampleApp
                 rootFrame = new Frame();
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
+                // This would normally be done in XAML but since we're manually
+                // creating the frame we need to hook it to the navigation service
+                Navigation.SetIsEnabled(rootFrame, true);
+
+                // We need to make sure the root frame is loaded before we attempt
+                // to navigate otherwise the adapter won't be enabled
+                rootFrame.Loaded += (fs, fe) =>
+                {
+                    var nav = Ioc.Default.GetService<INavigationService>();
+                    var navResult = nav.NavigateToView<MainPage>(this);
+                };
+
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
                 {
                     //TODO: Load state from previously suspended application
@@ -122,27 +134,10 @@ namespace ExtensionsSampleApp
             {
                 if (rootFrame.Content == null)
                 {
-//// When the navigation stack isn't restored navigate to the first page,
-//// configuring the new page by passing required information as a navigation
-//// parameter
-//rootFrame.Navigate(typeof(TabbedPage), e.Arguments);
-//var adapter = Host.Services.GetService<ITabWrapper>() as TabWrapper;
-//adapter.Tabs = (rootFrame.Content as TabbedPage).FindVisualChildByType<TabView>();
-
-//var adapter = Host.Services.GetService<IFrameWrapper>() as FrameWrapper;
-//adapter.NavigationFrame = rootFrame;
-//var nav = Ioc.Default.GetService<INavigationService>();
-////var navResult = nav.Navigate(new NavigationRequest(this, new NavigationRoute(new Uri("MainPage", UriKind.Relative))));
-//var navResult = nav.NavigateToView<MainPage>(this);
-nav: Navigation.SetIsEnabled(rootFrame, true);
-                    //var nav = Ioc.Default.GetService<INavigationManager>();
-                    //nav.ActivateAdapter(rootFrame);
-                    rootFrame.Loaded += (fs, fe) =>
-                    {
-                        var nav = Ioc.Default.GetService<INavigationService>();
-                        var navResult = nav.NavigateToView<MainPage>(this);
-                    };
-
+                    //// When the navigation stack isn't restored navigate to the first page,
+                    //// configuring the new page by passing required information as a navigation
+                    //// parameter
+                    //rootFrame.Navigate(typeof(TabbedPage), e.Arguments);
                 }
                 // Ensure the current window is active
                 _window.Activate();
@@ -243,7 +238,7 @@ nav: Navigation.SetIsEnabled(rootFrame, true);
         {
             if (element == null)
             {
-                return null;
+                return default(T);
             }
 
             if (element is T elementAsT)
@@ -261,7 +256,7 @@ nav: Navigation.SetIsEnabled(rootFrame, true);
                 }
             }
 
-            return null;
+            return default(T);
         }
 
         public static FrameworkElement FindVisualChildByName(this DependencyObject element, string name)

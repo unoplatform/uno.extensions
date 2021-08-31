@@ -87,7 +87,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtensionsSampleApp.Skia.Wp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtensionsSampleApp.Skia.Wpf.Host", "ExtensionsSampleApp\ExtensionsSampleApp.Skia.Wpf.Host\ExtensionsSampleApp.Skia.Wpf.Host.csproj", "{161F8672-33AA-481D-9CBD-7EBCDC91F630}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Navigation.Tests", "Uno.Extensions.Navigation.Tests\Uno.Extensions.Navigation.Tests.csproj", "{51D964F8-D89C-441A-9860-D592A59F7FF1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation.Tests", "Uno.Extensions.Navigation.Tests\Uno.Extensions.Navigation.Tests.csproj", "{51D964F8-D89C-441A-9860-D592A59F7FF1}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -101,6 +101,7 @@ Global
 		sample\ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems*{c76e144c-92ad-4b8f-93f4-232d1ccddaf0}*SharedItemsImports = 4
 		sample\ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems*{c8cbff8c-92b4-4e6f-9fae-81ddc20529c2}*SharedItemsImports = 4
 		ExtensionsSampleApp\ExtensionsSampleApp.Shared\ExtensionsSampleApp.Shared.projitems*{d4e245ef-b070-48f9-9a3d-3acd1c8a8242}*SharedItemsImports = 4
+		ExtensionsSampleApp\ExtensionsSampleApp.Shared\ExtensionsSampleApp.Shared.projitems*{ee41362e-6928-40ba-8cc5-fedfbfaa9922}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Ad-Hoc|Any CPU = Ad-Hoc|Any CPU
