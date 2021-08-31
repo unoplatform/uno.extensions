@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
-using Windows.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls;
-using Windows.UI.Xaml;
 using Microsoft.UI.Xaml;
-using Windows.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 #else
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -108,7 +106,7 @@ namespace Uno.Extensions.Navigation.Controls
                             break;
                         }
 
-                        predicates.Add(() => tabs.SelectedItem == tab);
+                        predicates.Add(() => tabs.SelectedItem as TabViewItem == tab);
                         SelectionChangedEventHandler handler = (s, e) => updateActivation();
                         tabs.SelectionChanged += handler;
                         disposes.Add(() => tabs.SelectionChanged -= handler);
@@ -123,19 +121,19 @@ namespace Uno.Extensions.Navigation.Controls
         {
             element.SetValue(IsEnabledProperty, value);
         }
+
         public static bool GetIsEnabled(FrameworkElement element)
         {
             return (bool)element.GetValue(IsEnabledProperty);
         }
 
-
         public static readonly DependencyProperty PathProperty =
-DependencyProperty.RegisterAttached(
-  "Path",
-  typeof(string),
-  typeof(Navigation),
-  new PropertyMetadata(null, PathChanged)
-);
+                    DependencyProperty.RegisterAttached(
+                      "Path",
+                      typeof(string),
+                      typeof(Navigation),
+                      new PropertyMetadata(null, PathChanged)
+                    );
 
         private static void PathChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -162,6 +160,7 @@ DependencyProperty.RegisterAttached(
         {
             element.SetValue(PathProperty, value);
         }
+
         public static string GetPath(FrameworkElement element)
         {
             return (string)element.GetValue(PathProperty);

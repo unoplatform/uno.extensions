@@ -102,12 +102,12 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(IsWinUI)' != 'true' and '$(IsUWP)' != 'true' and '$(UnoCompatibility)' != 'UWP'">
-    <PackageReference Include="Uno.WinUI" Version="3.10.0-dev.520" >
+    <PackageReference Include="Uno.WinUI" Version="3.10.0-dev.581" >
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
   <ItemGroup Condition="'$(IsWinUI)' != 'true' and '$(IsUWP)' != 'true' and '$(UnoCompatibility)' == 'UWP'">
-    <PackageReference Include="Uno.UI" Version="3.10.0-dev.520">
+    <PackageReference Include="Uno.UI" Version="3.10.0-dev.581">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>

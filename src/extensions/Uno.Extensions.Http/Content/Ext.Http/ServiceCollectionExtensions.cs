@@ -79,7 +79,6 @@ namespace Uno.Extensions.Http
                 httpClientFactory = (s, c) => s.AddHttpClient(name);
             }
 
-
             var httpClientBuilder = httpClientFactory(services, context);
 
             _ = httpClientBuilder

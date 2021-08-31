@@ -7,8 +7,11 @@ namespace Uno.Extensions.Navigation
     public class NavigationService : INavigationManager
     {
         private IList<INavigationService> Adapters { get; } = new List<INavigationService>();
+
         private IList<bool> ActiveAdapters { get; } = new List<bool>();
+
         private IServiceProvider Services { get; }
+
         public NavigationService(IServiceProvider services)
         {
             Services = services;
@@ -22,7 +25,7 @@ namespace Uno.Extensions.Navigation
             // Default the first adapter to true
             // This is to capture the initial navigation on the system which could be attempted
             // before the frame has been loaded
-            ActiveAdapters.Insert(0, enabled  || ActiveAdapters.Count==0); 
+            ActiveAdapters.Insert(0, enabled || ActiveAdapters.Count == 0);
             return adapter;
         }
 
@@ -31,6 +34,7 @@ namespace Uno.Extensions.Navigation
             var index = Adapters.IndexOf(adapter);
             ActiveAdapters[index] = true;
         }
+
         public void DeactivateAdapter(INavigationService adapter, bool cleanup)
         {
             var index = Adapters.IndexOf(adapter);
