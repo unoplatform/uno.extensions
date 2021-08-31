@@ -1,4 +1,5 @@
 ﻿using System;
+using Uno.Extensions.Navigation.Adapters;
 
 namespace Uno.Extensions.Navigation
 {

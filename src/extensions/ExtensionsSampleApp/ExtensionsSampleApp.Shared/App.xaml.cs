@@ -4,14 +4,25 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.UI.Xaml.Controls;
 using Uno.Extensions.Hosting;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation;
+using Uno.Extensions.Navigation.Controls;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+
+#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+#else
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Navigation;
+#endif
 
 namespace ExtensionsSampleApp
 {
@@ -93,8 +104,8 @@ namespace ExtensionsSampleApp
             {
                 // Create a Frame to act as the navigation context and navigate to the first page
                 rootFrame = new Frame();
-                var adapter = Host.Services.GetService<IFrameWrapper>() as FrameWrapper;
-                adapter.NavigationFrame = rootFrame;
+                //var adapter = Host.Services.GetService<IFrameWrapper>() as FrameWrapper;
+                //adapter.NavigationFrame = rootFrame;
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
@@ -112,14 +123,17 @@ namespace ExtensionsSampleApp
             {
                 if (rootFrame.Content == null)
                 {
-                    //// When the navigation stack isn't restored navigate to the first page,
-                    //// configuring the new page by passing required information as a navigation
-                    //// parameter
-                    //rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                    // When the navigation stack isn't restored navigate to the first page,
+                    // configuring the new page by passing required information as a navigation
+                    // parameter
+                    rootFrame.Navigate(typeof(TabbedPage), e.Arguments);
 
-                    var nav = Ioc.Default.GetService<INavigationService>();
-                    //var navResult = nav.Navigate(new NavigationRequest(this, new NavigationRoute(new Uri("MainPage", UriKind.Relative))));
-                    var navResult = nav.NavigateToView<MainPage>(this);
+                    var adapter = Host.Services.GetService<ITabWrapper>() as TabWrapper;
+                    adapter.Tabs = (rootFrame.Content as TabbedPage).FindVisualChildByType<TabView>();
+
+                    //var nav = Ioc.Default.GetService<INavigationService>();
+                    ////var navResult = nav.Navigate(new NavigationRequest(this, new NavigationRoute(new Uri("MainPage", UriKind.Relative))));
+                    //var navResult = nav.NavigateToView<MainPage>(this);
                 }
                 // Ensure the current window is active
                 _window.Activate();
@@ -210,6 +224,60 @@ namespace ExtensionsSampleApp
             });
 
             global::Uno.Extensions.LogExtensionPoint.AmbientLoggerFactory = factory;
+        }
+    }
+
+    public static class VisualTreeUtils
+    {
+        public static T FindVisualChildByType<T>(this DependencyObject element)
+            where T : DependencyObject
+        {
+            if (element == null)
+            {
+                return null;
+            }
+
+            if (element is T elementAsT)
+            {
+                return elementAsT;
+            }
+
+            int childrenCount = VisualTreeHelper.GetChildrenCount(element);
+            for (int i = 0; i < childrenCount; i++)
+            {
+                var result = VisualTreeHelper.GetChild(element, i).FindVisualChildByType<T>();
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+
+            return null;
+        }
+
+        public static FrameworkElement FindVisualChildByName(this DependencyObject element, string name)
+        {
+            if (element == null || string.IsNullOrWhiteSpace(name))
+            {
+                return null;
+            }
+
+            if (element is FrameworkElement elementAsFE && elementAsFE.Name == name)
+            {
+                return elementAsFE;
+            }
+
+            int childrenCount = VisualTreeHelper.GetChildrenCount(element);
+            for (int i = 0; i < childrenCount; i++)
+            {
+                var result = VisualTreeHelper.GetChild(element, i).FindVisualChildByName(name);
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+
+            return null;
         }
     }
 }

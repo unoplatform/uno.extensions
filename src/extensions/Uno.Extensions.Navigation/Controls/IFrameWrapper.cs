@@ -4,7 +4,7 @@ using Windows.UI.Xaml.Controls;
 #else
 #endif
 
-namespace Uno.Extensions.Navigation
+namespace Uno.Extensions.Navigation.Controls
 {
     public interface IFrameWrapper
     {
