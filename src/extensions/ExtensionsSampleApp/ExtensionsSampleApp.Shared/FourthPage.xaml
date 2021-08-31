@@ -1,23 +1,29 @@
-﻿<Page
-    x:Class="ExtensionsSampleApp.FourthPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:ExtensionsSampleApp"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+﻿<Page x:Class="ExtensionsSampleApp.FourthPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:ExtensionsSampleApp"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d"
+      xmlns:nav="using:Uno.Extensions.Navigation.Controls"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Grid>
         <StackPanel>
-            <TextBlock Text="Page 4" Margin="20" FontSize="30" />
-            <Button Content="Go Back - NavigateToPreviousView" Click="GoBackNavigateToPreviousViewClick"/>
-            <Button Content="Go Back x 2- NavigationRequest" Click="GoBackTwiceNavigationRequestClick"/>
-            <Button Content="Go To Third Page with Back x 2 - NavigationRequest" Click="GoToThirdPageBackTwiceNavigationRequestClick"/>
-            <Button Content="Go To Third Page with Back x 3 - NavigationRequest" Click="GoToThirdPageBackThreeTimesNavigationRequestClick"/>
-            <Button Content="Go To /Main - NavigationRequest" Click="GoToRootedMainPageNavigationRequestClick"/>
-            <Button Content="Go To /Third Page- NavigationRequest" Click="GoToRootedThirdPageNavigationRequestClick"/>
-</StackPanel>
-
+            <TextBlock Text="Page 4"
+                       Margin="20"
+                       FontSize="30" />
+            <Button Content="Go Back - NavigateToPreviousView"
+                    nav:Navigation.Path=".." />
+            <Button Content="Go Back x 2- NavigationRequest"
+                    nav:Navigation.Path="../../" />
+            <Button Content="Go To Third Page with Back x 2 - NavigationRequest"
+                    nav:Navigation.Path="../../ThirdPage" />
+            <Button Content="Go To Third Page with Back x 3 - NavigationRequest"
+                    nav:Navigation.Path="../../../ThirdPage" />
+            <Button Content="Go To /Main - NavigationRequest"
+                    nav:Navigation.Path="/MainPage" />
+            <Button Content="Go To /Third Page- NavigationRequest"
+                    nav:Navigation.Path="/ThirdPage" />
+        </StackPanel>
     </Grid>
 </Page>

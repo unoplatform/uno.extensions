@@ -19,7 +19,7 @@ using Microsoft.UI.Xaml.Media;
 
 namespace Uno.Extensions.Navigation.Controls
 {
-    public partial class Navigation: DependencyObject
+    public partial class Navigation : DependencyObject
     {
         public static readonly DependencyProperty IsEnabledProperty =
         DependencyProperty.RegisterAttached(
@@ -31,7 +31,7 @@ namespace Uno.Extensions.Navigation.Controls
 
         private static void IsEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if(d is FrameworkElement element)
+            if (d is FrameworkElement element)
             {
                 RegisterElement(element);
             }
@@ -86,11 +86,6 @@ namespace Uno.Extensions.Navigation.Controls
                     }
                 };
             };
-            //    element.Loaded += (s, e) =>
-            //{
-            //    WalkHierarchy(element, predicates, updateActivation);
-            //    updateActivation();
-            //};
         }
 
         private static void WalkHierarchy(FrameworkElement element, List<Func<bool>> predicates, Action updateActivation, List<Action> disposes)
@@ -100,7 +95,7 @@ namespace Uno.Extensions.Navigation.Controls
             elements.Add(element);
             while (parent != null)
             {
-                switch(parent)
+                switch (parent)
                 {
                     case Frame frame:
                         break;
@@ -108,7 +103,7 @@ namespace Uno.Extensions.Navigation.Controls
                         var tab = (from t in tabs.TabItems.OfType<TabViewItem>()
                                    where elements.Contains(t.Content)
                                    select t).FirstOrDefault();
-                        if(tab is null)
+                        if (tab is null)
                         {
                             break;
                         }
@@ -131,6 +126,45 @@ namespace Uno.Extensions.Navigation.Controls
         public static bool GetIsEnabled(FrameworkElement element)
         {
             return (bool)element.GetValue(IsEnabledProperty);
+        }
+
+
+        public static readonly DependencyProperty PathProperty =
+DependencyProperty.RegisterAttached(
+  "Path",
+  typeof(string),
+  typeof(Navigation),
+  new PropertyMetadata(null, PathChanged)
+);
+
+        private static void PathChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is Button element)
+            {
+                var path = GetPath(element);
+                RoutedEventHandler handler = (s, e) =>
+                    {
+                        var nav = Ioc.Default.GetService<INavigationService>();
+                        nav.Navigate(new NavigationRequest(s, new NavigationRoute(new Uri(path, UriKind.Relative))));
+                    };
+                element.Loaded += (s, e) =>
+                {
+                    element.Click += handler;
+                };
+                element.Unloaded += (s, e) =>
+                {
+                    element.Click -= handler;
+                };
+            }
+        }
+
+        public static void SetPath(FrameworkElement element, string value)
+        {
+            element.SetValue(PathProperty, value);
+        }
+        public static string GetPath(FrameworkElement element)
+        {
+            return (string)element.GetValue(PathProperty);
         }
     }
 }

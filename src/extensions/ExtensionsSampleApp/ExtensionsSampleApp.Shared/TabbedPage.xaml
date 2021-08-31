@@ -1,62 +1,75 @@
-﻿<Page
-    x:Class="ExtensionsSampleApp.TabbedPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:ExtensionsSampleApp"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:controls="using:Microsoft.UI.Xaml.Controls"
-    xmlns:nav="using:Uno.Extensions.Navigation.Controls"
-    mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-    <controls:TabView
-        nav:Navigation.IsEnabled="true"
-        x:Name="Tabs" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsAddTabButtonVisible="False"
-        >
-        <controls:TabViewItem Header="Home" IsClosable="False" x:Name="home">
+﻿<Page x:Class="ExtensionsSampleApp.TabbedPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:ExtensionsSampleApp"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:controls="using:Microsoft.UI.Xaml.Controls"
+      xmlns:nav="using:Uno.Extensions.Navigation.Controls"
+      mc:Ignorable="d"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <controls:TabView nav:Navigation.IsEnabled="true"
+                      x:Name="Tabs"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      IsAddTabButtonVisible="False">
+        <controls:TabViewItem Header="Home"
+                              IsClosable="False"
+                              x:Name="home">
             <controls:TabViewItem.IconSource>
                 <controls:SymbolIconSource Symbol="Home" />
             </controls:TabViewItem.IconSource>
             <Grid>
-                <Button Content="Doc0" Click="ActivateDoc0Click"/>
+                <Button Content="Doc0"
+                        nav:Navigation.Path="doc0" />
             </Grid>
         </controls:TabViewItem>
-        <controls:TabViewItem Header="Document 0" x:Name="doc0">
+        <controls:TabViewItem Header="Document 0"
+                              x:Name="doc0">
             <controls:TabViewItem.IconSource>
                 <controls:SymbolIconSource Symbol="Document" />
             </controls:TabViewItem.IconSource>
             <StackPanel>
-                <Button Content="Home" Click="ActivateHomeClick"/>
-                <Button Content="Third Page" Click="ThirdPageClick"/>
+                <Button Content="Home"
+                        nav:Navigation.Path="home" />
+                <Button Content="Third Page"
+                        nav:Navigation.Path="ThirdPage" />
             </StackPanel>
         </controls:TabViewItem>
-        <controls:TabViewItem Header="Document 1" x:Name="doc1">
+        <controls:TabViewItem Header="Document 1"
+                              x:Name="doc1">
             <controls:TabViewItem.IconSource>
                 <controls:SymbolIconSource Symbol="Document" />
             </controls:TabViewItem.IconSource>
         </controls:TabViewItem>
-        <controls:TabViewItem Header="Document 2" x:Name="doc2">
+        <controls:TabViewItem Header="Document 2"
+                              x:Name="doc2">
             <controls:TabViewItem.IconSource>
                 <controls:SymbolIconSource Symbol="Document" />
             </controls:TabViewItem.IconSource>
-            <Grid >
+            <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <Frame x:Name="InnerFrame" nav:Navigation.IsEnabled="true"/>
+                <Frame x:Name="InnerFrame"
+                       nav:Navigation.IsEnabled="true" />
                 <StackPanel Orientation="Horizontal">
-                    <Button Content="Page Two" Click="SecondPageClick"/>
-                    <Button Content="Page Four" Click="FourthPageClick"/>
+                    <Button Content="Page Two"
+                            nav:Navigation.Path="SecondPage" />
+                    <Button Content="Page Four"
+                            nav:Navigation.Path="FourthPage" />
                 </StackPanel>
             </Grid>
         </controls:TabViewItem>
 
         <controls:TabView.TabStripHeader>
-            <Grid x:Name="ShellTitlebarInset" Background="Transparent" />
+            <Grid x:Name="ShellTitlebarInset"
+                  Background="Transparent" />
         </controls:TabView.TabStripHeader>
         <controls:TabView.TabStripFooter>
-            <Grid x:Name="CustomDragRegion" Background="Transparent" />
+            <Grid x:Name="CustomDragRegion"
+                  Background="Transparent" />
         </controls:TabView.TabStripFooter>
     </controls:TabView>
 </Page>
