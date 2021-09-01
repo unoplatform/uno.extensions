@@ -59,13 +59,14 @@ namespace ExtensionsSampleApp
                .ConfigureServices(services =>
                {
                    services
-                   .AddTransient<MainViewModel>()
-                   .AddTransient<SecondViewModel>()
-                   .AddTransient<ThirdViewModel>()
-                   .AddTransient<FourthViewModel>()
-                   .AddTransient<TabbedViewModel>()
-                   .AddTransient< TabDoc0ViewModel>()
-                   .AddTransient<TabDoc1ViewModel>();
+                   .AddScoped<MainViewModel>()
+                   .AddScoped<SecondViewModel>()
+                   .AddViewModelData<Widget>()
+                   .AddScoped<ThirdViewModel>()
+                   .AddScoped<FourthViewModel>()
+                   .AddScoped<TabbedViewModel>()
+                   .AddScoped<TabDoc0ViewModel>()
+                   .AddScoped<TabDoc1ViewModel>();
                })
                .UseNavigation()
                .Build()

@@ -28,14 +28,14 @@ public class TabWrapper : ITabWrapper
         return FindByName(tabName) is not null;
     }
 
-    public bool ActivateTab(string tabName, Type viewModel, Func<object> creator)
+    public bool ActivateTab(string tabName, object viewModel)
     {
         var tab = FindByName(tabName);
         if (tab is not null)
         {
-            if (tab.DataContext == null || viewModel is null || tab.DataContext.GetType() != viewModel)
+            if (tab.DataContext != viewModel)
             {
-                tab.DataContext = creator();
+                tab.DataContext = viewModel;
             }
             Tabs.SelectedItem = tab;
             return true;
