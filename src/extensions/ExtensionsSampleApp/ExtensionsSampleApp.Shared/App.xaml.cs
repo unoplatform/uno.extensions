@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using ExtensionsSampleApp.ViewModels;
+using ExtensionsSampleApp.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -60,11 +62,11 @@ namespace ExtensionsSampleApp
             Ioc.Default.ConfigureServices(Host.Services);
 
             var mapping = Host.Services.GetService< INavigationMapping>();
-            mapping.Register(new NavigationMap(typeof(MainPage).Name, typeof(MainPage)));
-            mapping.Register(new NavigationMap(typeof(SecondPage).Name, typeof(SecondPage)));
-            mapping.Register(new NavigationMap(typeof(ThirdPage).Name, typeof(ThirdPage)));
-            mapping.Register(new NavigationMap(typeof(FourthPage).Name, typeof(FourthPage)));
-            mapping.Register(new NavigationMap(typeof(TabbedPage).Name, typeof(TabbedPage)));
+            mapping.Register(new NavigationMap(typeof(MainPage).Name, typeof(MainPage), typeof(MainViewModel)));
+            mapping.Register(new NavigationMap(typeof(SecondPage).Name, typeof(SecondPage), typeof(SecondViewModel), typeof(Widget)));
+            mapping.Register(new NavigationMap(typeof(ThirdPage).Name, typeof(ThirdPage), typeof(ThirdViewModel)));
+            mapping.Register(new NavigationMap(typeof(FourthPage).Name, typeof(FourthPage), typeof(FourthViewModel)));
+            mapping.Register(new NavigationMap(typeof(TabbedPage).Name, typeof(TabbedPage), typeof(TabbedViewModel)));
 
 
             //InitializeLogging();

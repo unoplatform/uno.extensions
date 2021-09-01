@@ -6,7 +6,7 @@ using Uno.Extensions.Navigation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Navigation;
 
-namespace ExtensionsSampleApp
+namespace ExtensionsSampleApp.Views
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
