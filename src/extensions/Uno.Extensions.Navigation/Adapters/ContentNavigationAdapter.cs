@@ -37,7 +37,15 @@ namespace Uno.Extensions.Navigation.Adapters
 
         public bool CanNavigate(NavigationRequest request)
         {
-            return true;
+            var path = request.Route.Path.OriginalString;
+            Debug.WriteLine("Navigation: " + path);
+
+            var map = Mapping.LookupByPath(path);
+            if (map?.View is not null)
+            {
+                return !map.View.IsSubclassOf(typeof(Page));
+            }
+            return false;
         }
 
         public NavigationResult Navigate(NavigationRequest request)
