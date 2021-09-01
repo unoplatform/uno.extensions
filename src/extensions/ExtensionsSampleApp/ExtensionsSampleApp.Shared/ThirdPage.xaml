@@ -13,6 +13,9 @@
             <TextBlock Text="Page 3"
                        Margin="20"
                        FontSize="30" />
+            <TextBlock x:Name="ParametersText"
+                       Margin="20"
+                       FontSize="30" Foreground="Red"/>
             <Button Content="Next Page"
                     nav:Navigation.Path="FourthPage" />
             <Button Content="Go to Fourth Page and remove third page - NavigationRequest"
