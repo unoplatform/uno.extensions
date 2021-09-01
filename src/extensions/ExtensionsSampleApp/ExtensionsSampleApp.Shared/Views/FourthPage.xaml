@@ -9,9 +9,7 @@
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Grid>
         <StackPanel>
-            <TextBlock Text="Page 4"
-                       Margin="20"
-                       FontSize="30" />
+            <TextBlock Margin="20" FontSize="30"><Run Text="Page 4 - " /><Run Text="{Binding Title}" /></TextBlock>
             <Button Content="Go Back - NavigateToPreviousView"
                     nav:Navigation.Path=".." />
             <Button Content="Go Back x 2- NavigationRequest"

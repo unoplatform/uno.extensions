@@ -9,9 +9,8 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <StackPanel>
-            <TextBlock Text="Hello, world!"
-                       Margin="20"
-                       FontSize="30" />
+            <TextBlock Margin="20"
+                       FontSize="30"><Run Text="Main - " /><Run Text="{Binding Title}" /></TextBlock>
             <Button Content="Next page - NavigationRequest"
                     nav:Navigation.Path="SecondPage" />
             <Button Content="Next page - NavigateToView"

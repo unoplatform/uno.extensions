@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Uno.Extensions.Navigation.Controls;
+using System;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Xaml.Controls;
 #else
@@ -19,13 +20,21 @@ namespace Uno.Extensions.Navigation.Adapters
 
         private INavigationMapping Mapping { get; }
 
+        private IServiceProvider Services { get; }
+
+        private IList<(string,object)> NavigationViewModelInstances { get; } = new List<(string,object)>();
+
         public void Inject(Frame control)
         {
             Frame.Inject(control);
         }
 
-        public FrameNavigationAdapter(IFrameWrapper frameWrapper, INavigationMapping navigationMapping)
+        public FrameNavigationAdapter(
+            IServiceProvider services,
+            INavigationMapping navigationMapping,
+            IFrameWrapper frameWrapper)
         {
+            Services = services;
             Frame = frameWrapper;
             Mapping = navigationMapping;
         }
@@ -109,33 +118,78 @@ namespace Uno.Extensions.Navigation.Adapters
 
             while (numberOfPagesToRemove > 0)
             {
+                NavigationViewModelInstances.RemoveAt(NavigationViewModelInstances.Count - 2);
                 Frame.RemoveLastFromBackStack();
                 numberOfPagesToRemove--;
             }
 
             if (navPath == PreviousViewUri)
             {
-                Frame.GoBack(request.Route.Data);
+                var oldVM = NavigationViewModelInstances.Pop();
+                //await((oldVM as ILifecycleStop)?.Stop(true) ?? Task.CompletedTask);
+                var vm = NavigationViewModelInstances.Peek();
+                Frame.GoBack(request.Route.Data, vm);
+                //await((vm as ILifecycleStart)?.Start(false) ?? Task.CompletedTask);
             }
             else
             {
+                if (NavigationViewModelInstances.Count > 0)
+                {
+                    var oldVM = NavigationViewModelInstances.Peek();
+                    //await((oldVM as ILifecycleStop)?.Stop(false) ?? Task.CompletedTask);
+                }
 
                 var navigationType = Mapping.LookupByPath(navPath);
 
-                var success = Frame.Navigate(navigationType.View, request.Route.Data);
+                object vm = default;
+                if (navigationType.ViewModel is not null)
+                {
+                    vm = Services.GetService(navigationType.ViewModel);
+                    //await((vm as IInitialise)?.Initialize(message.Args) ?? Task.CompletedTask);
+                }
+
+                NavigationViewModelInstances.Push((navPath, vm));
+                var success = Frame.Navigate(navigationType.View, request.Route.Data, vm);
 
                 if (isRooted)
                 {
+                    while (NavigationViewModelInstances.Count > 1)
+                    {
+                        NavigationViewModelInstances.RemoveAt(0);
+                    }
+
                     Frame.ClearBackStack();
                 }
 
                 if (removeCurrentPageFromBackStack)
                 {
+                    NavigationViewModelInstances.RemoveAt(NavigationViewModelInstances.Count - 2);
                     Frame.RemoveLastFromBackStack();
                 }
             }
 
             return new NavigationResult(request, Task.CompletedTask);
+        }
+    }
+
+    public static class ListHelpers
+    {
+        public static T Peek<T>(this IList<T> list)
+        {
+            var t = list.Last();
+            return t;
+        }
+
+        public static T Pop<T>(this IList<T> list)
+        {
+            var t = list.Last();
+            list.RemoveAt(list.Count - 1);
+            return t;
+        }
+
+        public static void Push<T>(this IList<T> list, T item)
+        {
+            list.Add(item);
         }
     }
 }

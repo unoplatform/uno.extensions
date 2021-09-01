@@ -1,4 +1,5 @@
-﻿#if WINDOWS_UWP
+﻿using System;
+#if WINDOWS_UWP
 using Microsoft.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls;
 #else
@@ -27,12 +28,16 @@ public class TabWrapper : ITabWrapper
         return FindByName(tabName) is not null;
     }
 
-    public bool ActivateTab(string tabName)
+    public bool ActivateTab(string tabName, Type viewModel, Func<object> creator)
     {
         var tab = FindByName(tabName);
         if (tab is not null)
         {
             Tabs.SelectedItem = tab;
+            if (tab.DataContext == null || viewModel is null || tab.DataContext.GetType() != viewModel)
+            {
+                tab.DataContext = creator();
+            }
             return true;
         }
         return false;

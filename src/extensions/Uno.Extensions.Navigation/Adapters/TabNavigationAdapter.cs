@@ -1,7 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Threading.Tasks;
 using Uno.Extensions.Navigation.Controls;
-#if WINDOWS_UWP 
+using System;
+#if WINDOWS_UWP
 using Windows.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls;
 #else
@@ -12,13 +13,24 @@ namespace Uno.Extensions.Navigation.Adapters
 {
     public class TabNavigationAdapter : INavigationAdapter<TabView>
     {
+        private INavigationMapping Mapping { get; }
+
+        private IServiceProvider Services { get; }
+
         private ITabWrapper Tabs { get; }
+
         public void Inject(TabView control)
         {
             Tabs.Inject(control);
         }
-        public TabNavigationAdapter(ITabWrapper tabWrapper)
+
+        public TabNavigationAdapter(
+            IServiceProvider services,
+            INavigationMapping navigationMapping,
+            ITabWrapper tabWrapper)
         {
+            Services = services;
+            Mapping = navigationMapping;
             Tabs = tabWrapper;
         }
 
@@ -33,7 +45,11 @@ namespace Uno.Extensions.Navigation.Adapters
             var path = request.Route.Path.OriginalString;
             Debug.WriteLine("Navigation: " + path);
 
-            Tabs.ActivateTab(path);   
+            var map = Mapping.LookupByPath(path);
+
+            Func<object> creator = () => map.ViewModel is not null ? Services.GetService(map.ViewModel) : null;
+
+            Tabs.ActivateTab(path, map.ViewModel, creator);
 
             return new NavigationResult(request, Task.CompletedTask);
         }

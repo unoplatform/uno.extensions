@@ -4,7 +4,7 @@ namespace Uno.Extensions.Navigation
 {
     public record NavigationMap(
         string Path,
-        Type View,
+        Type View = null,
         Type ViewModel = null,
         Type Data = null)
     { }
