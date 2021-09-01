@@ -19,10 +19,12 @@
             <controls:TabViewItem.IconSource>
                 <controls:SymbolIconSource Symbol="Home" />
             </controls:TabViewItem.IconSource>
-            <Grid>
+            <StackPanel>
+                <TextBlock Margin="20"
+                           FontSize="30"><Run Text="Doc1 - " /><Run Text="{Binding Title}" /></TextBlock>
                 <Button Content="Doc0"
                         nav:Navigation.Path="doc0" />
-            </Grid>
+            </StackPanel>
         </controls:TabViewItem>
         <controls:TabViewItem Header="Document 0"
                               x:Name="doc0">
@@ -36,6 +38,8 @@
                         nav:Navigation.Path="home" />
                 <Button Content="Third Page"
                         nav:Navigation.Path="ThirdPage" />
+                <Button Content="Doc1 - ViewModel"
+                        Command="{Binding NavigateToDoc1Command}" />
             </StackPanel>
         </controls:TabViewItem>
         <controls:TabViewItem Header="Document 1"
@@ -43,6 +47,10 @@
             <controls:TabViewItem.IconSource>
                 <controls:SymbolIconSource Symbol="Document" />
             </controls:TabViewItem.IconSource>
+            <StackPanel>
+                <TextBlock Margin="20"
+                           FontSize="30"><Run Text="Doc1 - " /><Run Text="{Binding Title}" /></TextBlock>
+            </StackPanel>
         </controls:TabViewItem>
         <controls:TabViewItem Header="Document 2"
                               x:Name="doc2">
@@ -51,12 +59,16 @@
             </controls:TabViewItem.IconSource>
             <Grid>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
+                <TextBlock Margin="20"
+                           FontSize="30"><Run Text="Doc2 - " /><Run Text="{Binding Title}" /></TextBlock>
                 <Frame x:Name="InnerFrame"
+                       Grid.Row="1"
                        nav:Navigation.IsEnabled="true" />
-                <StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Horizontal" Grid.Row="2">
                     <Button Content="Page Two"
                             nav:Navigation.Path="SecondPage" />
                     <Button Content="Page Four"

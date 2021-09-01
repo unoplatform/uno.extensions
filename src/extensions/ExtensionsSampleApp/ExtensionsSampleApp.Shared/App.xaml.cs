@@ -64,7 +64,8 @@ namespace ExtensionsSampleApp
                    .AddTransient<ThirdViewModel>()
                    .AddTransient<FourthViewModel>()
                    .AddTransient<TabbedViewModel>()
-                   .AddTransient< TabDoc0ViewModel>();
+                   .AddTransient< TabDoc0ViewModel>()
+                   .AddTransient<TabDoc1ViewModel>();
                })
                .UseNavigation()
                .Build()
@@ -78,6 +79,7 @@ namespace ExtensionsSampleApp
             mapping.Register(new NavigationMap(typeof(FourthPage).Name, typeof(FourthPage), typeof(FourthViewModel)));
             mapping.Register(new NavigationMap(typeof(TabbedPage).Name, typeof(TabbedPage), typeof(TabbedViewModel)));
             mapping.Register(new NavigationMap("doc0", ViewModel:typeof(TabDoc0ViewModel)));
+            mapping.Register(new NavigationMap("doc1", ViewModel: typeof(TabDoc1ViewModel)));
 
 
             //InitializeLogging();

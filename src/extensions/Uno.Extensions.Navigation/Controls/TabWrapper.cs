@@ -33,11 +33,11 @@ public class TabWrapper : ITabWrapper
         var tab = FindByName(tabName);
         if (tab is not null)
         {
-            Tabs.SelectedItem = tab;
             if (tab.DataContext == null || viewModel is null || tab.DataContext.GetType() != viewModel)
             {
                 tab.DataContext = creator();
             }
+            Tabs.SelectedItem = tab;
             return true;
         }
         return false;
