@@ -45,6 +45,7 @@ namespace Uno.Extensions.Navigation.Controls
                 {
                     Frame frame => nav.AddAdapter(frame, false),
                     TabView tabs => nav.AddAdapter(tabs, false),
+                    ContentControl content => nav.AddAdapter(content,false),
                     _ => default
                 };
                 var predicates = new List<Func<bool>>();
