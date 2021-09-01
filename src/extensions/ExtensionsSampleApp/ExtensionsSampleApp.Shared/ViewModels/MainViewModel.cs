@@ -45,5 +45,26 @@ namespace ExtensionsSampleApp.ViewModels
     }
 
     public class TabDoc0ViewModel
-    { public string Title => "Doc0"; }
+    {
+        public string Title => "Doc0";
+
+
+        private INavigationService Navigation { get; }
+        public TabDoc0ViewModel(INavigationService navigation)
+        {
+            Navigation = navigation;
+            NavigateToDoc1Command = new RelayCommand(NavigateToDoc1);
+        }
+
+
+        public ICommand NavigateToDoc1Command { get; }
+
+        private void NavigateToDoc1() => Navigation.NavigateToViewModel<TabDoc1ViewModel>(this);
+    }
+
+    public class TabDoc1ViewModel
+    {
+        public string Title => "Doc1";
+    }
+
 }
