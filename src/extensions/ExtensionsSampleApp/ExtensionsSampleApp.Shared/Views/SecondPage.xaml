@@ -9,6 +9,11 @@
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
         <StackPanel>
             <TextBlock Margin="20"
                        FontSize="30"><Run Text="Page 2 - " /><Run Text="{Binding Title}" /></TextBlock>
@@ -30,6 +35,13 @@
                     Click="GoBackNavigateToPreviousViewClick" />
             <Button Content="Tabbed Page - NavigationRequest"
                     nav:Navigation.Path="TabbedPage" />
+        </StackPanel>
+        <ContentControl Grid.Row="1" nav:Navigation.IsEnabled="true" />
+        <StackPanel Grid.Row="2">
+            <Button Content="Content Page 1"
+                    nav:Navigation.Path="Content1" />
+            <Button Content="Content Page 2"
+                    nav:Navigation.Path="Content2" />
         </StackPanel>
     </Grid>
 </Page>

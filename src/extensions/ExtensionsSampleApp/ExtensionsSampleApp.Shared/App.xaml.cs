@@ -90,6 +90,8 @@ namespace ExtensionsSampleApp
             mapping.Register(new NavigationMap(typeof(TabbedPage).Name, typeof(TabbedPage), typeof(TabbedViewModel)));
             mapping.Register(new NavigationMap("doc0", ViewModel:typeof(TabDoc0ViewModel)));
             mapping.Register(new NavigationMap("doc1", ViewModel: typeof(TabDoc1ViewModel)));
+            mapping.Register(new NavigationMap(typeof(Content1).Name, typeof(Content1)));
+            mapping.Register(new NavigationMap(typeof(Content2).Name, typeof(Content2)));
 
 
             //InitializeLogging();
