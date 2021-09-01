@@ -19,7 +19,7 @@ namespace Uno.Extensions.Navigation
 
         public NavigationMap LookupByPath(string path)
         {
-            return Mappings[path];
+            return Mappings.TryGetValue(path, out var map) ? map : default;
         }
 
         public NavigationMap LookupByViewModel(Type viewModelType)

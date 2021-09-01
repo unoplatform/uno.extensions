@@ -10,9 +10,8 @@
 
     <Grid>
         <StackPanel>
-            <TextBlock Text="Page 2"
-                       Margin="20"
-                       FontSize="30" />
+            <TextBlock Margin="20"
+                       FontSize="30"><Run Text="Page 2 - " /><Run Text="{Binding Title}" /></TextBlock>
             <TextBlock x:Name="ParametersText"
                        Margin="20"
                        FontSize="30"

@@ -30,6 +30,8 @@
                 <controls:SymbolIconSource Symbol="Document" />
             </controls:TabViewItem.IconSource>
             <StackPanel>
+                <TextBlock Margin="20"
+                           FontSize="30"><Run Text="Doc0 - " /><Run Text="{Binding Title}" /></TextBlock>
                 <Button Content="Home"
                         nav:Navigation.Path="home" />
                 <Button Content="Third Page"

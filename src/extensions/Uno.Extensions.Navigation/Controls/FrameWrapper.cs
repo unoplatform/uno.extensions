@@ -2,9 +2,11 @@
 using System.Diagnostics;
 using System.Linq;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 #else
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 #endif
@@ -17,7 +19,7 @@ namespace Uno.Extensions.Navigation.Controls
 
         public void Inject(Frame control) => Frame = control; 
 
-        public void GoBack(object parameter = null)
+        public void GoBack(object parameter, object viewModel)
         {
             if(parameter is not null)
             {
@@ -28,13 +30,27 @@ namespace Uno.Extensions.Navigation.Controls
             }
 
             Frame.GoBack();
+
+            var current = Frame.Content as FrameworkElement;
+            if (current is not null &&
+                viewModel is not null &&
+                current.DataContext != viewModel)
+            {
+                current.DataContext = viewModel;
+            }
         }
 
-        public bool Navigate(Type sourcePageType, object parameter = null)
+        public bool Navigate(Type sourcePageType, object parameter, object viewModel)
         {
             Debug.WriteLine("Backstack (Navigate - before): " + string.Join(",", Frame.BackStack.Select(x => x.SourcePageType.Name)));
             var nav = Frame.Navigate(sourcePageType, parameter);
             Debug.WriteLine("Backstack (Navigate - after): " + string.Join(",", Frame.BackStack.Select(x => x.SourcePageType.Name)));
+
+            if (nav && viewModel is not null)
+            {
+                (Frame.Content as FrameworkElement).DataContext = viewModel;
+            }
+
             return nav;
         }
 
