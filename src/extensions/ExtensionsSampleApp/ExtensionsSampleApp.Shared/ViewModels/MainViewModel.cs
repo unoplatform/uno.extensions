@@ -1,6 +1,7 @@
 ﻿using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using ExtensionsSampleApp.Views;
 using Uno.Extensions.Navigation;
 
 namespace ExtensionsSampleApp.ViewModels
@@ -19,13 +20,18 @@ namespace ExtensionsSampleApp.ViewModels
 
         public ICommand NavigateToSecondPageCommand { get; }
 
-        private void NavigateToSecondPage() => Navigation.NavigateToViewModel<SecondViewModel>(this);
+        private void NavigateToSecondPage() => Navigation.NavigateToViewModel<SecondViewModel>(this, new Widget());
 
     }
 
     public class SecondViewModel
     {
-        public string Title => "Second";
+        public string Title => "Second - " + Data;
+        private Widget Data;
+        public SecondViewModel(Widget data)
+        {
+            Data = data;
+        }
     }
 
     public class ThirdViewModel

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Uno.Extensions.Navigation.Controls;
 using System;
+using Microsoft.Extensions.DependencyInjection;
 #if WINDOWS_UWP
 using Windows.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls;
@@ -29,7 +30,7 @@ namespace Uno.Extensions.Navigation.Adapters
             INavigationMapping navigationMapping,
             ITabWrapper tabWrapper)
         {
-            Services = services;
+            Services = services.CreateScope().ServiceProvider;
             Mapping = navigationMapping;
             Tabs = tabWrapper;
         }
@@ -47,9 +48,9 @@ namespace Uno.Extensions.Navigation.Adapters
 
             var map = Mapping.LookupByPath(path);
 
-            Func<object> creator = () => map.ViewModel is not null ? Services.GetService(map.ViewModel) : null;
+            var vm =  map.ViewModel is not null ? Services.GetService(map.ViewModel) : null;
 
-            Tabs.ActivateTab(path, map.ViewModel, creator);
+            Tabs.ActivateTab(path, vm);
 
             return new NavigationResult(request, Task.CompletedTask);
         }

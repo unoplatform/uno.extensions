@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Uno.Extensions.Navigation.Controls;
 using System;
+using Microsoft.Extensions.DependencyInjection;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Xaml.Controls;
 #else
@@ -22,7 +23,7 @@ namespace Uno.Extensions.Navigation.Adapters
 
         private IServiceProvider Services { get; }
 
-        private IList<(string,object)> NavigationViewModelInstances { get; } = new List<(string,object)>();
+        private IList<(string,IServiceProvider)> NavigationViewModelInstances { get; } = new List<(string, IServiceProvider)>();
 
         public void Inject(Frame control)
         {
@@ -46,7 +47,7 @@ namespace Uno.Extensions.Navigation.Adapters
 
         private IDictionary<string, object> ParseQueryParameters(string queryString)
         {
-            return (from pair in queryString.Split('&')
+            return (from pair in (queryString+string.Empty).Split('&')
                     where pair is not null
                     let bits = pair.Split('=')
                     where bits.Length == 2
@@ -72,18 +73,12 @@ namespace Uno.Extensions.Navigation.Adapters
                 path = path.Substring(0, queryIdx - 1);
             }
 
-            if (!string.IsNullOrWhiteSpace(query))
-            {
                 var paras = ParseQueryParameters(query);
-                if (paras?.Any() ?? false)
+                if (request.Route.Data is not null)
                 {
-                    if (request.Route.Data is not null)
-                    {
-                        paras[string.Empty] = request.Route.Data;
-                    }
-                    request = request with { Route = request.Route with { Data = paras } };
+                    paras[string.Empty] = request.Route.Data;
                 }
-            }
+                request = request with { Route = request.Route with { Data = paras } };
 
             var isRooted = path.StartsWith("/");
 
@@ -127,8 +122,19 @@ namespace Uno.Extensions.Navigation.Adapters
             {
                 var oldVM = NavigationViewModelInstances.Pop();
                 //await((oldVM as ILifecycleStop)?.Stop(true) ?? Task.CompletedTask);
-                var vm = NavigationViewModelInstances.Peek();
-                Frame.GoBack(request.Route.Data, vm.Item2);
+                var sp = NavigationViewModelInstances.Peek();
+                var navigationType = Mapping.LookupByPath(sp.Item1);
+                object vm = default;
+                if (navigationType.ViewModel is not null)
+                {
+                    var services = sp.Item2;
+                    var dataFactor = services.GetService<ViewModelDataProvider>();
+                    dataFactor.Parameters = request.Route.Data as IDictionary<string, object>;
+
+                    vm = services.GetService(navigationType.ViewModel);
+                    //await((vm as IInitialise)?.Initialize(message.Args) ?? Task.CompletedTask);
+                }
+                Frame.GoBack(request.Route.Data, vm);
                 //await((vm as ILifecycleStart)?.Start(false) ?? Task.CompletedTask);
             }
             else
@@ -139,16 +145,21 @@ namespace Uno.Extensions.Navigation.Adapters
                     //await((oldVM as ILifecycleStop)?.Stop(false) ?? Task.CompletedTask);
                 }
 
+
+                var scope = Services.CreateScope();
+                var dataFactor = scope.ServiceProvider.GetService<ViewModelDataProvider>();
+                dataFactor.Parameters = request.Route.Data as IDictionary<string, object>;
+
                 var navigationType = Mapping.LookupByPath(navPath);
 
                 object vm = default;
                 if (navigationType.ViewModel is not null)
                 {
-                    vm = Services.GetService(navigationType.ViewModel);
+                    vm = scope.ServiceProvider.GetService(navigationType.ViewModel);
                     //await((vm as IInitialise)?.Initialize(message.Args) ?? Task.CompletedTask);
                 }
 
-                NavigationViewModelInstances.Push((navPath, vm));
+                NavigationViewModelInstances.Push((navPath, scope.ServiceProvider));
                 var success = Frame.Navigate(navigationType.View, request.Route.Data, vm);
 
                 if (isRooted)
