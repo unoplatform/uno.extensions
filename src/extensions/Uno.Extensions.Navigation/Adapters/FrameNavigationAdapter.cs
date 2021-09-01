@@ -1,9 +1,8 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Uno.Extensions.Navigation.Controls;
-using System.Collections.Generic;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Xaml.Controls;
 #else
@@ -24,6 +23,7 @@ namespace Uno.Extensions.Navigation.Adapters
         {
             Frame.Inject(control);
         }
+
         public FrameNavigationAdapter(IFrameWrapper frameWrapper, INavigationMapping navigationMapping)
         {
             Frame = frameWrapper;
@@ -76,7 +76,6 @@ namespace Uno.Extensions.Navigation.Adapters
                 }
             }
 
-
             var isRooted = path.StartsWith("/");
 
             var segments = path.Split('/');
@@ -107,8 +106,6 @@ namespace Uno.Extensions.Navigation.Adapters
                 navPath = PreviousViewUri;
                 removeCurrentPageFromBackStack = false;
             }
-
-
 
             while (numberOfPagesToRemove > 0)
             {

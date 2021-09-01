@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Uno.Extensions.Navigation.Controls;
 
 namespace Uno.Extensions.Navigation.Tests;
 
@@ -18,7 +19,7 @@ public class NavigationServiceExtensionsTests : BaseNavigationTests
             .Callback(() => navigationCounter++)
             .Returns(true);
         mockFrame
-            .Setup(foo => foo.GoBack())
+            .Setup(foo => foo.GoBack(null))
             .Callback(() => navigationCounter--);
         services.AddSingleton<IFrameWrapper>(mockFrame.Object);
     }
