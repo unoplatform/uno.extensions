@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using Uno.Extensions.Navigation;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Navigation;
 
 namespace ExtensionsSampleApp
@@ -19,15 +22,32 @@ namespace ExtensionsSampleApp
         {
             base.OnNavigatedTo(e);
 
-            if(e.Parameter is IDictionary<string,object> argsDict )
+            ParametersText.Text = e.Parameter.ParseParameter();
+        }
+
+        private void NextPagePreviousViewWithDataClick(object sender, RoutedEventArgs e)
+        {
+            var nav = Ioc.Default.GetService<INavigationService>();
+            nav.NavigateToPreviousView(this, new Widget());
+        }
+
+        private void NextPagePreviousViewWithArgsAndDataClick(object sender, RoutedEventArgs e)
+        {
+            var nav = Ioc.Default.GetService<INavigationService>();
+            nav.Navigate(new NavigationRequest(sender, new NavigationRoute(new Uri(typeof(ThirdPage).Name + "?arg1=val1&arg2=val2", UriKind.Relative), new Widget())));
+        }
+    }
+
+    public static class PageHelpers
+    {
+        public static string ParseParameter(this object parameter)
+        {
+            if (parameter is IDictionary<string, object> argsDict)
             {
-                ParametersText.Text = string.Join(Environment.NewLine, (from p in argsDict
-                                                                        select $"key '{p.Key}' val '{p.Value}'"));
+                return string.Join(Environment.NewLine, from p in argsDict
+                                                         select $"key '{p.Key}' val '{p.Value}'");
             }
-            else if(e.Parameter != null)
-            {
-                ParametersText.Text = e.Parameter.ToString();
-            }
+            return parameter?.ToString()??string.Empty;
         }
     }
 }

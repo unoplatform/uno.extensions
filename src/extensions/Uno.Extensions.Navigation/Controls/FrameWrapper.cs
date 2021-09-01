@@ -3,8 +3,10 @@ using System.Diagnostics;
 using System.Linq;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 #else
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 #endif
 
 namespace Uno.Extensions.Navigation.Controls
@@ -15,8 +17,16 @@ namespace Uno.Extensions.Navigation.Controls
 
         public void Inject(Frame control) => Frame = control; 
 
-        public void GoBack()
+        public void GoBack(object parameter = null)
         {
+            if(parameter is not null)
+            {
+                var entry = Frame.BackStack.Last();
+                var newEntry = new PageStackEntry(entry.SourcePageType, parameter, entry.NavigationTransitionInfo);
+                Frame.BackStack.Remove(entry);
+                Frame.BackStack.Add(newEntry);
+            }
+
             Frame.GoBack();
         }
 
