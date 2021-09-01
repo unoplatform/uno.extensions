@@ -68,6 +68,15 @@ namespace ExtensionsSampleApp
                    .AddScoped<TabDoc0ViewModel>()
                    .AddScoped<TabDoc1ViewModel>();
                })
+               /*
+                * .ConfigureNavigationMapping(mapping=>{
+                *   mapping
+                *      .Register("path")                    // Path = path
+                *      .ForView<TView>()                    // View = typeof(TView)
+                *      .WithViewModel<TViewModel>()         // ViewModel = typeof(TViewModel) <-- also need to register with DI
+                *      .HandlesData<TData>()                // Data = typeof(TData)  <-- also need to register with DI 
+                * })
+                */
                .UseNavigation()
                .Build()
                .EnableUnoLogging();
