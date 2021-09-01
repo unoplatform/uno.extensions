@@ -1,8 +1,26 @@
-﻿namespace ExtensionsSampleApp.ViewModels
+﻿using System.Windows.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Uno.Extensions.Navigation;
+
+namespace ExtensionsSampleApp.ViewModels
 {
-    public class MainViewModel
+    public class MainViewModel : ObservableObject
     {
         public string Title => "Main";
+
+        private INavigationService Navigation { get; }
+        public MainViewModel(INavigationService navigation)
+        {
+            Navigation = navigation;
+            NavigateToSecondPageCommand = new RelayCommand(NavigateToSecondPage);
+        }
+
+
+        public ICommand NavigateToSecondPageCommand { get; }
+
+        private void NavigateToSecondPage() => Navigation.NavigateToViewModel<SecondViewModel>(this);
+
     }
 
     public class SecondViewModel

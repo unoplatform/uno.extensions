@@ -128,7 +128,7 @@ namespace Uno.Extensions.Navigation.Adapters
                 var oldVM = NavigationViewModelInstances.Pop();
                 //await((oldVM as ILifecycleStop)?.Stop(true) ?? Task.CompletedTask);
                 var vm = NavigationViewModelInstances.Peek();
-                Frame.GoBack(request.Route.Data, vm);
+                Frame.GoBack(request.Route.Data, vm.Item2);
                 //await((vm as ILifecycleStart)?.Start(false) ?? Task.CompletedTask);
             }
             else
