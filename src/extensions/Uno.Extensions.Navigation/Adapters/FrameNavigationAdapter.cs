@@ -118,7 +118,7 @@ namespace Uno.Extensions.Navigation.Adapters
 
             if (navPath == PreviousViewUri)
             {
-                Frame.GoBack();
+                Frame.GoBack(request.Route.Data);
             }
             else
             {

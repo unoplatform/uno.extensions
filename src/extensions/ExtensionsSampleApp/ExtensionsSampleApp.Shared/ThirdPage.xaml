@@ -22,8 +22,16 @@
                     nav:Navigation.Path="../FourthPage" />
             <Button Content="Go to Fourth Page and remove second and third page - NavigationRequest"
                     nav:Navigation.Path="../../FourthPage" />
-            <Button Content="Go Back - NavigateToPreviousView"
+            <Button Content="Go Back"
                     nav:Navigation.Path=".." />
+            <Button Content="Go Back with args"
+                    nav:Navigation.Path="..?args1=returnval1&amp;args2=returnval2" />
+            <Button Content="Go Back with data"
+                    Click="NextPagePreviousViewWithDataClick"/>
+            <Button Content="Go Back with args and data"
+                    Click="NextPagePreviousViewWithArgsAndDataClick"/>
+
+            
         </StackPanel>
     </Grid>
 </Page>

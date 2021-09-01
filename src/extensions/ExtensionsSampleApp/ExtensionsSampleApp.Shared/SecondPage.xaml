@@ -13,6 +13,10 @@
             <TextBlock Text="Page 2"
                        Margin="20"
                        FontSize="30" />
+            <TextBlock x:Name="ParametersText"
+                       Margin="20"
+                       FontSize="30"
+                       Foreground="Red" />
             <Button Content="Next Page"
                     nav:Navigation.Path="ThirdPage" />
             <Button Content="Next Page with args"

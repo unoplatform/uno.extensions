@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Uno.Extensions.Navigation;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Navigation;
 
 namespace ExtensionsSampleApp
 {
@@ -13,6 +14,13 @@ namespace ExtensionsSampleApp
         public SecondPage()
         {
             InitializeComponent();
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+
+            ParametersText.Text = e.Parameter.ParseParameter();
         }
 
         private void GoBackNavigateToPreviousViewClick(object sender, RoutedEventArgs e)
@@ -37,5 +45,10 @@ namespace ExtensionsSampleApp
     public class Widget
     {
         public string Title { get; } = "This is a widget to test sending data in navigation - " + DateTimeOffset.Now.ToString();
+
+        public override string ToString()
+        {
+            return $"Widget - {Title}";
+        }
     }
 }

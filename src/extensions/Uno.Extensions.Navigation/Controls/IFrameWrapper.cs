@@ -10,7 +10,7 @@ namespace Uno.Extensions.Navigation.Controls
 
     public interface IFrameWrapper : IInjectable<Frame>
     {
-        void GoBack();
+        void GoBack(object parameter = null);
 
         bool Navigate(Type sourcePageType, object parameter = null);
 
