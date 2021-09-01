@@ -1,4 +1,4 @@
-﻿<Page x:Class="ExtensionsSampleApp.MainPage"
+﻿<Page x:Class="ExtensionsSampleApp.Views.MainPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="using:ExtensionsSampleApp"
@@ -16,6 +16,10 @@
                     nav:Navigation.Path="SecondPage" />
             <Button Content="Next page - NavigateToView"
                     Click="NextPageNavigateToViewClick" />
+            <Button Content="Next page - NavigateToViewModel"
+                    Click="NextPageNavigateToViewModelClick" />
+            <Button Content="Next page - NavigateForData"
+                    Click="NextPageNavigateForDataClick" />
         </StackPanel>
     </Grid>
 </Page>

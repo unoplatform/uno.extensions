@@ -1,4 +1,4 @@
-﻿namespace ExtensionsSampleApp
+﻿namespace ExtensionsSampleApp.Views
 {
 
     public sealed partial class FourthPage
