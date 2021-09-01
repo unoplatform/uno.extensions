@@ -12,7 +12,7 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
-  <PropertyGroup Condition="$(TargetFramework.StartsWith('netstandard'))">
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('netstandard')) or '$(TargetFramework)' == 'net5.0' or '$(TargetFramework)' == 'net6.0'">
     <DefineConstants>$(DefineConstants);NETSTANDARD;PORTABLE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="$(TargetFramework.StartsWith('net4'))">
@@ -60,6 +60,10 @@
     <DefineConstants>$(DefineConstants);NETFX_CORE;WINUI;WINDOWS</DefineConstants>
     <IsWinUI>true</IsWinUI>
     <UseWinUI>true</UseWinUI>
+  </PropertyGroup>
+   <PropertyGroup Condition="$(TargetFramework.StartsWith('net5'))">
+    <DefineConstants>$(DefineConstants);__NET5__</DefineConstants>
+    <IsNet5>true</IsNet5>
   </PropertyGroup>
   <PropertyGroup Condition="$(TargetFramework.StartsWith('net6'))">
     <DefineConstants>$(DefineConstants);__NET6__</DefineConstants>
