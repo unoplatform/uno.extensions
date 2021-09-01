@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Uno.Extensions.Navigation.Controls;
+using System.Collections.Generic;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Xaml.Controls;
 #else
@@ -34,11 +35,47 @@ namespace Uno.Extensions.Navigation.Adapters
             return true;
         }
 
+        private IDictionary<string, object> ParseQueryParameters(string queryString)
+        {
+            return (from pair in queryString.Split('&')
+                    where pair is not null
+                    let bits = pair.Split('=')
+                    where bits.Length == 2
+                    let key = bits[0]
+                    let val = bits[1]
+                    where key is not null && val is not null
+                    select new { key, val })
+                    .ToDictionary(x => x.key, x => (object)x.val);
+        }
+
 
         public NavigationResult Navigate(NavigationRequest request)
         {
             var path = request.Route.Path.OriginalString;
             Debug.WriteLine("Navigation: " + path);
+
+            var queryIdx = path.IndexOf('?');
+            var query = string.Empty;
+            if (queryIdx >= 0)
+            {
+                queryIdx++; // Step over the ?
+                query = queryIdx < path.Length ? path.Substring(queryIdx) : string.Empty;
+                path = path.Substring(0, queryIdx - 1);
+            }
+
+            if (!string.IsNullOrWhiteSpace(query))
+            {
+                var paras = ParseQueryParameters(query);
+                if (paras?.Any() ?? false)
+                {
+                    if (request.Route.Data is not null)
+                    {
+                        paras[string.Empty] = request.Route.Data;
+                    }
+                    request = request with { Route = request.Route with { Data = paras } };
+                }
+            }
+
 
             var isRooted = path.StartsWith("/");
 
@@ -88,7 +125,7 @@ namespace Uno.Extensions.Navigation.Adapters
 
                 var navigationType = Mapping.LookupByPath(navPath);
 
-                var success = Frame.Navigate(navigationType.View);
+                var success = Frame.Navigate(navigationType.View, request.Route.Data);
 
                 if (isRooted)
                 {

@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using System;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using Uno.Extensions.Navigation;
 using Windows.UI.Xaml;
 
@@ -19,5 +20,22 @@ namespace ExtensionsSampleApp
             var nav = Ioc.Default.GetService<INavigationService>();
             nav.NavigateToPreviousView(this);
         }
+
+        private void NextPageNavigateToViewWithDataClick(object sender, RoutedEventArgs e)
+        {
+            var nav = Ioc.Default.GetService<INavigationService>();
+            nav.NavigateToView<ThirdPage>(this, new Widget());
+        }
+
+        private void NextPageNavigateToViewWithQueryAndDataClick(object sender, RoutedEventArgs e)
+        {
+            var nav = Ioc.Default.GetService<INavigationService>();
+            nav.Navigate(new NavigationRequest(sender, new NavigationRoute(new Uri(typeof(ThirdPage).Name+"?arg1=val1&arg2=val2", UriKind.Relative), new Widget())));
+        }
+    }
+
+    public class Widget
+    {
+        public string Title { get; } = "This is a widget to test sending data in navigation - " + DateTimeOffset.Now.ToString();
     }
 }
