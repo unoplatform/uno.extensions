@@ -54,7 +54,7 @@ namespace Uno.Extensions.Navigation.Adapters
 
             Tabs.ActivateTab(path, vm);
 
-            return new NavigationResult(request, Task.CompletedTask, Task.CompletedTask);
+            return new NavigationResult(request, Task.CompletedTask, null);
         }
     }
 }

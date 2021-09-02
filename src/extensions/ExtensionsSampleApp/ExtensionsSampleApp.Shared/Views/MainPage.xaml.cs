@@ -32,5 +32,12 @@ namespace ExtensionsSampleApp.Views
             var nav = Ioc.Default.GetService<INavigationService>();
             nav.NavigateForData(this, new Widget());
         }
+
+        private async void NextPageRequestResponseClick(object sender, RoutedEventArgs e)
+        {
+            var nav = Ioc.Default.GetService<INavigationService>();
+            var navresult = nav.NavigateToViewModel<SecondViewModel, Widget>(this);
+            var response = await navresult.Response;
+        }
     }
 }

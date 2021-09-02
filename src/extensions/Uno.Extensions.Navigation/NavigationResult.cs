@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Uno.Extensions.Navigation
 {
-    public record NavigationResult(NavigationRequest Request, Task NavigationTask, Task Response) : INotifyCompletion
+    public record NavigationResult(NavigationRequest Request, Task NavigationTask, Task<object> Response) : INotifyCompletion
     {
         public void OnCompleted(Action continuation)
         {
