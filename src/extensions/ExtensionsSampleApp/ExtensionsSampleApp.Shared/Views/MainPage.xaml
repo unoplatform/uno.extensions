@@ -23,6 +23,8 @@
                     Command="{Binding NavigateToSecondPageCommand}" />
             <Button Content="Next page - NavigationRequest with response"
                     Click="NextPageRequestResponseClick" />
+            <Button Content="Content Dialog"
+                    Click="ContentDialogResponseClick" />
         </StackPanel>
     </Grid>
 </Page>

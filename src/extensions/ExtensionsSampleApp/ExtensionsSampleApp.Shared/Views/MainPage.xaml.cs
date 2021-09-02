@@ -39,5 +39,12 @@ namespace ExtensionsSampleApp.Views
             var navresult = nav.NavigateToViewModel<SecondViewModel, Widget>(this);
             var response = await navresult.Response;
         }
+
+        private async void ContentDialogResponseClick(object sender, RoutedEventArgs e)
+        {
+            var nav = Ioc.Default.GetService<INavigationService>();
+            var navresult = nav.NavigateToView<SimpleContentDialog, Widget>(this);
+            var response = await navresult.Response;
+        }
     }
 }

@@ -170,6 +170,14 @@ namespace Uno.Extensions.Navigation.Adapters
                     context = context with { Mapping = mapping };
                 }
 
+                if(mapping.View?.IsSubclassOf(typeof(ContentDialog))??false)
+                {
+                    var dialog = Activator.CreateInstance(mapping.View) as ContentDialog;
+                    await dialog.ShowAsync();
+                    context.ResponseCompletion?.SetResult(null);
+                    return;
+                }
+
                 // Push the new navigation context
                 NavigationContexts.Push((navPath, context));
 
