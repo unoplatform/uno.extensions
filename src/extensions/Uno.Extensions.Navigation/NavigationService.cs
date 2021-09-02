@@ -81,7 +81,7 @@ namespace Uno.Extensions.Navigation
             var dataFactor = services.GetService<ViewModelDataProvider>();
             dataFactor.Parameters = request.Route.Data as IDictionary<string, object>;
 
-            var context = new NavigationContext(services, request, new CancellationTokenSource(), true);
+            var context = new NavigationContext(services, request, new CancellationTokenSource(),null, true);
             for (int i = 0; i < Adapters.Count; i++)
             {
                 var adapter = Adapters[i];

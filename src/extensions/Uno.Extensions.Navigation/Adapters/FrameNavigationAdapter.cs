@@ -52,9 +52,16 @@ namespace Uno.Extensions.Navigation.Adapters
         public NavigationResult Navigate(NavigationContext context)
         {
             var request = context.Request;
+
+            if (request.Response != null)
+            {
+                var tcs = new TaskCompletionSource<object>();
+                context = context with { ResponseCompletion = tcs };
+            }
+
             var navTask = InternalNavigate(context);
 
-            return new NavigationResult(request, navTask, Task.CompletedTask);
+            return new NavigationResult(request, navTask, context.ResponseCompletion?.Task ?? Task.FromResult<object>(null));
         }
 
         private async Task InternalNavigate(NavigationContext context)
@@ -115,6 +122,22 @@ namespace Uno.Extensions.Navigation.Adapters
             // before we remove anything from backstack
             if (NavigationContexts.Count > 0)
             {
+                if(navPath == PreviousViewUri)
+                {
+                    var previousContext = NavigationContexts.Peek().Item2;
+                    if (previousContext.Request.Response is not null)
+                    {
+                        var completion = (previousContext as NavigationContext)?.ResponseCompletion;
+                        if (completion is not null &&
+                            (request.Route.Data is IDictionary<string, object> data) &&
+                            data.TryGetValue(string.Empty, out var response))
+                        {
+                            completion.SetResult(response);
+                        }
+                    }
+                }
+
+
                 var currentVM = await StopCurrentViewModel(context, navPath == PreviousViewUri);
                 if (context.CancellationToken.IsCancellationRequested)
                 {
@@ -133,7 +156,11 @@ namespace Uno.Extensions.Navigation.Adapters
             {
                 var vm = await InitializeViewModel();
                 Frame.GoBack(request.Route.Data, vm);
+
+               
+
                 await ((vm as INavigationStart)?.Start(NavigationContexts.Peek().Item2, false) ?? Task.CompletedTask);
+
             }
             else
             {

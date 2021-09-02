@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Navigation
+﻿using System;
+
+namespace Uno.Extensions.Navigation
 {
     public interface INavigationService
     {

@@ -61,7 +61,7 @@ namespace Uno.Extensions.Navigation.Adapters
 
             ContentHost.ShowContent(map.View, vm);
 
-            return new NavigationResult(request, Task.CompletedTask, Task.CompletedTask);
+            return new NavigationResult(request, Task.CompletedTask, null);
         }
     }
 }

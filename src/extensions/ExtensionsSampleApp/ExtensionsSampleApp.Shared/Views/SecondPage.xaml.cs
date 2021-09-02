@@ -26,7 +26,7 @@ namespace ExtensionsSampleApp.Views
         private void GoBackNavigateToPreviousViewClick(object sender, RoutedEventArgs e)
         {
             var nav = Ioc.Default.GetService<INavigationService>();
-            nav.NavigateToPreviousView(this);
+            nav.NavigateToPreviousView(this, new Widget());
         }
 
         private void NextPageNavigateToViewWithDataClick(object sender, RoutedEventArgs e)

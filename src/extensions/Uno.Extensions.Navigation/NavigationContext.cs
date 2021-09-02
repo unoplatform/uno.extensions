@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Uno.Extensions.Navigation
 {
@@ -7,6 +8,7 @@ namespace Uno.Extensions.Navigation
         IServiceProvider Services,
         NavigationRequest Request,
         CancellationTokenSource CancellationSource,
+        TaskCompletionSource<object> ResponseCompletion,
         bool CanCancel,
         NavigationMap Mapping = null): INavigationContext
     {

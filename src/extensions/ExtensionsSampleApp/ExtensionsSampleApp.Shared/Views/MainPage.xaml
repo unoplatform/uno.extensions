@@ -21,6 +21,8 @@
                     Click="NextPageNavigateForDataClick" />
             <Button Content="Next page - NavigateToViewModel (MainViewModel)"
                     Command="{Binding NavigateToSecondPageCommand}" />
+            <Button Content="Next page - NavigationRequest with response"
+                    Click="NextPageRequestResponseClick" />
         </StackPanel>
     </Grid>
 </Page>
