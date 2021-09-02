@@ -4,7 +4,22 @@ using System.Runtime.CompilerServices;
 
 namespace Uno.Extensions.Navigation
 {
-    public record NavigationResult(NavigationRequest Request, Task NavigationTask, Task<object> Response) : INotifyCompletion
+    public record NavigationResult<TResult>(NavigationRequest Request, Task NavigationTask, Task<TResult> Response) : BaseNavigationResult(Request, NavigationTask) {
+        public NavigationResult<TResult> GetAwaiter()
+        {
+            return this;
+        }
+    }
+
+
+    public record NavigationResult(NavigationRequest Request, Task NavigationTask, Task<object> Response): BaseNavigationResult(Request, NavigationTask) {
+        public NavigationResult GetAwaiter()
+        {
+            return this;
+        }
+    }
+
+    public record BaseNavigationResult(NavigationRequest Request, Task NavigationTask) : INotifyCompletion
     {
         public void OnCompleted(Action continuation)
         {
@@ -33,9 +48,6 @@ namespace Uno.Extensions.Navigation
         {
         }
 
-        public NavigationResult GetAwaiter()
-        {
-            return this;
-        }
+
     }
 }
