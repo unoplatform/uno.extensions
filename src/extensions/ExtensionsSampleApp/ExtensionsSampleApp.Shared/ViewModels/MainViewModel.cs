@@ -1,4 +1,7 @@
-﻿using System.Windows.Input;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ExtensionsSampleApp.Views;
@@ -24,13 +27,27 @@ namespace ExtensionsSampleApp.ViewModels
 
     }
 
-    public class SecondViewModel
+    public class SecondViewModel:INavigationStart, INavigationStop
     {
         public string Title => "Second - " + Data;
         private Widget Data;
         public SecondViewModel(Widget data)
         {
             Data = data;
+        }
+
+        public async Task Start(INavigationContext context, bool create)
+        {
+            await Task.Delay(10000);
+        }
+
+        public async Task Stop(INavigationContext context, bool cleanup)
+        {
+            if (context.Request.Route.Path.OriginalString == typeof(ThirdPage).Name &&
+                !((context.Request.Route.Data as IDictionary<string,object>)?.Any()??false))
+            {
+                context.Cancel();
+            }
         }
     }
 

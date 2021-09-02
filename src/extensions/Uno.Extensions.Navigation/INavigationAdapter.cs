@@ -2,7 +2,14 @@
 
 namespace Uno.Extensions.Navigation
 {
-    public interface INavigationAdapter<TControl> :INavigationService, IInjectable<TControl>
+    public interface INavigationAdapter<TControl> : INavigationAdapter, IInjectable<TControl>
     {
+    }
+
+    public interface INavigationAdapter
+    {
+        bool CanNavigate(NavigationContext context);
+
+        NavigationResult Navigate(NavigationContext context);
     }
 }
