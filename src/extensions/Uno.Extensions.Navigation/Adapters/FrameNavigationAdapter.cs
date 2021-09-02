@@ -23,7 +23,7 @@ namespace Uno.Extensions.Navigation.Adapters
 
         private IServiceProvider Services { get; }
 
-        private IList<(string,IServiceProvider)> NavigationViewModelInstances { get; } = new List<(string, IServiceProvider)>();
+        private IList<(string, INavigationContext)> NavigationContexts { get; } = new List<(string, INavigationContext)>();
 
         public void Inject(Frame control)
         {
@@ -40,45 +40,44 @@ namespace Uno.Extensions.Navigation.Adapters
             Mapping = navigationMapping;
         }
 
-        public bool CanNavigate(NavigationRequest request)
+        public bool CanNavigate(NavigationContext context)
         {
+            var request = context.Request;
             return true;
         }
 
-        private IDictionary<string, object> ParseQueryParameters(string queryString)
+
+
+
+        public NavigationResult Navigate(NavigationContext context)
         {
-            return (from pair in (queryString+string.Empty).Split('&')
-                    where pair is not null
-                    let bits = pair.Split('=')
-                    where bits.Length == 2
-                    let key = bits[0]
-                    let val = bits[1]
-                    where key is not null && val is not null
-                    select new { key, val })
-                    .ToDictionary(x => x.key, x => (object)x.val);
+            var request = context.Request;
+            var navTask = InternalNavigate(context);
+
+            return new NavigationResult(request, navTask, Task.CompletedTask);
         }
 
-
-        public NavigationResult Navigate(NavigationRequest request)
+        private async Task InternalNavigate(NavigationContext context)
         {
+            var request = context.Request;
             var path = request.Route.Path.OriginalString;
-            Debug.WriteLine("Navigation: " + path);
+            //Debug.WriteLine("Navigation: " + path);
 
-            var queryIdx = path.IndexOf('?');
-            var query = string.Empty;
-            if (queryIdx >= 0)
-            {
-                queryIdx++; // Step over the ?
-                query = queryIdx < path.Length ? path.Substring(queryIdx) : string.Empty;
-                path = path.Substring(0, queryIdx - 1);
-            }
+            //var queryIdx = path.IndexOf('?');
+            //var query = string.Empty;
+            //if (queryIdx >= 0)
+            //{
+            //    queryIdx++; // Step over the ?
+            //    query = queryIdx < path.Length ? path.Substring(queryIdx) : string.Empty;
+            //    path = path.Substring(0, queryIdx - 1);
+            //}
 
-                var paras = ParseQueryParameters(query);
-                if (request.Route.Data is not null)
-                {
-                    paras[string.Empty] = request.Route.Data;
-                }
-                request = request with { Route = request.Route with { Data = paras } };
+            //    var paras = ParseQueryParameters(query);
+            //    if (request.Route.Data is not null)
+            //    {
+            //        paras[string.Empty] = request.Route.Data;
+            //    }
+            //    request = request with { Route = request.Route with { Data = paras } };
 
             var isRooted = path.StartsWith("/");
 
@@ -111,62 +110,51 @@ namespace Uno.Extensions.Navigation.Adapters
                 removeCurrentPageFromBackStack = false;
             }
 
+            // If there's a current nav context, make sure it's stopped before
+            // we proceed - this could cancel the navigation, so need to know
+            // before we remove anything from backstack
+            if (NavigationContexts.Count > 0)
+            {
+                var currentVM = await StopCurrentViewModel(context, navPath == PreviousViewUri);
+                if (context.CancellationToken.IsCancellationRequested)
+                {
+                    return;
+                }
+            }
+
             while (numberOfPagesToRemove > 0)
             {
-                NavigationViewModelInstances.RemoveAt(NavigationViewModelInstances.Count - 2);
+                NavigationContexts.RemoveAt(NavigationContexts.Count - 2);
                 Frame.RemoveLastFromBackStack();
                 numberOfPagesToRemove--;
             }
 
             if (navPath == PreviousViewUri)
             {
-                var oldVM = NavigationViewModelInstances.Pop();
-                //await((oldVM as ILifecycleStop)?.Stop(true) ?? Task.CompletedTask);
-                var sp = NavigationViewModelInstances.Peek();
-                var navigationType = Mapping.LookupByPath(sp.Item1);
-                object vm = default;
-                if (navigationType.ViewModel is not null)
-                {
-                    var services = sp.Item2;
-                    var dataFactor = services.GetService<ViewModelDataProvider>();
-                    dataFactor.Parameters = request.Route.Data as IDictionary<string, object>;
-
-                    vm = services.GetService(navigationType.ViewModel);
-                    //await((vm as IInitialise)?.Initialize(message.Args) ?? Task.CompletedTask);
-                }
+                var vm = await InitializeViewModel();
                 Frame.GoBack(request.Route.Data, vm);
-                //await((vm as ILifecycleStart)?.Start(false) ?? Task.CompletedTask);
+                await ((vm as INavigationStart)?.Start(NavigationContexts.Peek().Item2, false) ?? Task.CompletedTask);
             }
             else
             {
-                if (NavigationViewModelInstances.Count > 0)
+                var mapping = Mapping.LookupByPath(navPath);
+                if (mapping is not null)
                 {
-                    var oldVM = NavigationViewModelInstances.Peek();
-                    //await((oldVM as ILifecycleStop)?.Stop(false) ?? Task.CompletedTask);
+                    context = context with { Mapping = mapping };
                 }
 
+                // Push the new navigation context
+                NavigationContexts.Push((navPath, context));
 
-                var scope = Services.CreateScope();
-                var dataFactor = scope.ServiceProvider.GetService<ViewModelDataProvider>();
-                dataFactor.Parameters = request.Route.Data as IDictionary<string, object>;
+                var vm = await InitializeViewModel();
 
-                var navigationType = Mapping.LookupByPath(navPath);
-
-                object vm = default;
-                if (navigationType.ViewModel is not null)
-                {
-                    vm = scope.ServiceProvider.GetService(navigationType.ViewModel);
-                    //await((vm as IInitialise)?.Initialize(message.Args) ?? Task.CompletedTask);
-                }
-
-                NavigationViewModelInstances.Push((navPath, scope.ServiceProvider));
-                var success = Frame.Navigate(navigationType.View, request.Route.Data, vm);
-
+                var success = Frame.Navigate(context.Mapping.View, request.Route.Data, vm);
+                await ((vm as INavigationStart)?.Start(context, true) ?? Task.CompletedTask);
                 if (isRooted)
                 {
-                    while (NavigationViewModelInstances.Count > 1)
+                    while (NavigationContexts.Count > 1)
                     {
-                        NavigationViewModelInstances.RemoveAt(0);
+                        NavigationContexts.RemoveAt(0);
                     }
 
                     Frame.ClearBackStack();
@@ -174,12 +162,52 @@ namespace Uno.Extensions.Navigation.Adapters
 
                 if (removeCurrentPageFromBackStack)
                 {
-                    NavigationViewModelInstances.RemoveAt(NavigationViewModelInstances.Count - 2);
+                    NavigationContexts.RemoveAt(NavigationContexts.Count - 2);
                     Frame.RemoveLastFromBackStack();
                 }
             }
 
-            return new NavigationResult(request, Task.CompletedTask);
+        }
+
+        private async Task<object> StopCurrentViewModel(INavigationContext navigation, bool popContext)
+        {
+            var ctx = NavigationContexts.Peek();
+            var path = ctx.Item1;
+            var context = ctx.Item2;
+
+            //var mapping = Mapping.LookupByPath(path);
+            object oldVm = default;
+            if (context.Mapping.ViewModel is not null)
+            {
+                var services = context.Services;
+                oldVm = services.GetService(context.Mapping.ViewModel);
+                await ((oldVm as INavigationStop)?.Stop(navigation, false) ?? Task.CompletedTask);
+            }
+            if (popContext)
+            {
+                NavigationContexts.Pop();
+            }
+            return oldVm;
+        }
+
+        private async Task<object> InitializeViewModel()
+        {
+            var ctx = NavigationContexts.Peek();
+            var path = ctx.Item1;
+            var context = ctx.Item2;
+
+            var mapping = context.Mapping;// Mapping.LookupByPath(path);
+            object vm = default;
+            if (mapping.ViewModel is not null)
+            {
+                var services = context.Services;
+                var dataFactor = services.GetService<ViewModelDataProvider>();
+                dataFactor.Parameters = context.Request.Route.Data as IDictionary<string, object>;
+
+                vm = services.GetService(mapping.ViewModel);
+                await ((vm as IInitialise)?.Initialize(context) ?? Task.CompletedTask);
+            }
+            return vm;
         }
     }
 
@@ -197,6 +225,9 @@ namespace Uno.Extensions.Navigation.Adapters
             list.RemoveAt(list.Count - 1);
             return t;
         }
+
+
+
 
         public static void Push<T>(this IList<T> list, T item)
         {

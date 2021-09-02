@@ -15,11 +15,11 @@ public class NavigationServiceExtensionsTests : BaseNavigationTests
     {
         var mockFrame = new Mock<IFrameWrapper>(); 
         mockFrame
-            .Setup(foo => foo.Navigate(typeof(PageOne), null))
+            .Setup(foo => foo.Navigate(typeof(PageOne), null, null))
             .Callback(() => navigationCounter++)
             .Returns(true);
         mockFrame
-            .Setup(foo => foo.GoBack(null))
+            .Setup(foo => foo.GoBack(null, null))
             .Callback(() => navigationCounter--);
         services.AddSingleton<IFrameWrapper>(mockFrame.Object);
     }

@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Uno.Extensions.Navigation
 {
     public class NavigationService : INavigationManager
     {
-        private IList<INavigationService> Adapters { get; } = new List<INavigationService>();
+        private IList<INavigationAdapter> Adapters { get; } = new List<INavigationAdapter>();
 
         private IList<bool> ActiveAdapters { get; } = new List<bool>();
 
@@ -17,7 +19,7 @@ namespace Uno.Extensions.Navigation
             Services = services;
         }
 
-        public INavigationService AddAdapter<TControl>(TControl control, bool enabled)
+        public INavigationAdapter AddAdapter<TControl>(TControl control, bool enabled)
         {
             var adapter = Services.GetService<INavigationAdapter<TControl>>();
             adapter.Inject(control);
@@ -29,13 +31,13 @@ namespace Uno.Extensions.Navigation
             return adapter;
         }
 
-        public void ActivateAdapter(INavigationService adapter)
+        public void ActivateAdapter(INavigationAdapter adapter)
         {
             var index = Adapters.IndexOf(adapter);
             ActiveAdapters[index] = true;
         }
 
-        public void DeactivateAdapter(INavigationService adapter, bool cleanup)
+        public void DeactivateAdapter(INavigationAdapter adapter, bool cleanup)
         {
             var index = Adapters.IndexOf(adapter);
             if (index < 0)
@@ -53,23 +55,56 @@ namespace Uno.Extensions.Navigation
             }
         }
 
-        public bool CanNavigate(NavigationRequest request)
-        {
-            return true;
-        }
-
         public NavigationResult Navigate(NavigationRequest request)
         {
+            var path = request.Route.Path.OriginalString;
+
+            var queryIdx = path.IndexOf('?');
+            var query = string.Empty;
+            if (queryIdx >= 0)
+            {
+                queryIdx++; // Step over the ?
+                query = queryIdx < path.Length ? path.Substring(queryIdx) : string.Empty;
+                path = path.Substring(0, queryIdx - 1);
+            }
+
+            var paras = ParseQueryParameters(query);
+            if (request.Route.Data is not null)
+            {
+                paras[string.Empty] = request.Route.Data;
+            }
+            request = request with { Route = request.Route with { Path = new Uri(path, UriKind.Relative), Data = paras } };
+
+
+            var scope = Services.CreateScope();
+            var services = scope.ServiceProvider;
+            var dataFactor = services.GetService<ViewModelDataProvider>();
+            dataFactor.Parameters = request.Route.Data as IDictionary<string, object>;
+
+            var context = new NavigationContext(services, request, new CancellationTokenSource(), true);
             for (int i = 0; i < Adapters.Count; i++)
             {
                 var adapter = Adapters[i];
-                if (ActiveAdapters[i] && adapter.CanNavigate(request))
+                if (ActiveAdapters[i] && adapter.CanNavigate(context))
                 {
-                    return adapter.Navigate(request);
+                    return adapter.Navigate(context);
                 }
             }
 
             return default;
+        }
+
+        private IDictionary<string, object> ParseQueryParameters(string queryString)
+        {
+            return (from pair in (queryString + string.Empty).Split('&')
+                    where pair is not null
+                    let bits = pair.Split('=')
+                    where bits.Length == 2
+                    let key = bits[0]
+                    let val = bits[1]
+                    where key is not null && val is not null
+                    select new { key, val })
+                    .ToDictionary(x => x.key, x => (object)x.val);
         }
     }
 }

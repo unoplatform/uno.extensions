@@ -15,10 +15,10 @@ namespace ExtensionsSampleApp.Views
             InitializeComponent();
         }
 
-        private void NextPageNavigateToViewClick(object sender, RoutedEventArgs e)
+        private async void NextPageNavigateToViewClick(object sender, RoutedEventArgs e)
         {
             var nav = Ioc.Default.GetService<INavigationService>();
-            nav.NavigateToView<SecondPage>(this);
+            await nav.NavigateToView<SecondPage>(this);
         }
 
         private void NextPageNavigateToViewModelClick(object sender, RoutedEventArgs e)

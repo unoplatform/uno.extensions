@@ -35,14 +35,16 @@ namespace Uno.Extensions.Navigation.Adapters
             Tabs = tabWrapper;
         }
 
-        public bool CanNavigate(NavigationRequest request)
+        public bool CanNavigate(NavigationContext context)
         {
+            var request = context.Request;
             var path = request.Route.Path.OriginalString;
             return Tabs.ContainsTab(path);
         }
 
-        public NavigationResult Navigate(NavigationRequest request)
+        public NavigationResult Navigate(NavigationContext context)
         {
+            var request = context.Request;
             var path = request.Route.Path.OriginalString;
             Debug.WriteLine("Navigation: " + path);
 
@@ -52,7 +54,7 @@ namespace Uno.Extensions.Navigation.Adapters
 
             Tabs.ActivateTab(path, vm);
 
-            return new NavigationResult(request, Task.CompletedTask);
+            return new NavigationResult(request, Task.CompletedTask, Task.CompletedTask);
         }
     }
 }

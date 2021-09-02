@@ -35,8 +35,9 @@ namespace Uno.Extensions.Navigation.Adapters
             ContentHost = contentWrapper;
         }
 
-        public bool CanNavigate(NavigationRequest request)
+        public bool CanNavigate(NavigationContext context)
         {
+            var request = context.Request;
             var path = request.Route.Path.OriginalString;
             Debug.WriteLine("Navigation: " + path);
 
@@ -48,8 +49,9 @@ namespace Uno.Extensions.Navigation.Adapters
             return false;
         }
 
-        public NavigationResult Navigate(NavigationRequest request)
+        public NavigationResult Navigate(NavigationContext context)
         {
+            var request = context.Request;
             var path = request.Route.Path.OriginalString;
             Debug.WriteLine("Navigation: " + path);
 
@@ -59,7 +61,7 @@ namespace Uno.Extensions.Navigation.Adapters
 
             ContentHost.ShowContent(map.View, vm);
 
-            return new NavigationResult(request, Task.CompletedTask);
+            return new NavigationResult(request, Task.CompletedTask, Task.CompletedTask);
         }
     }
 }
