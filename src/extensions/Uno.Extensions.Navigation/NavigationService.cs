@@ -71,7 +71,14 @@ namespace Uno.Extensions.Navigation
             var paras = ParseQueryParameters(query);
             if (request.Route.Data is not null)
             {
-                paras[string.Empty] = request.Route.Data;
+                if (request.Route.Data is IDictionary<string, object> paraDict)
+                {
+                    paras.AddRange(paraDict);
+                }
+                else
+                {
+                    paras[string.Empty] = request.Route.Data;
+                }
             }
             request = request with { Route = request.Route with { Path = new Uri(path, UriKind.Relative), Data = paras } };
 

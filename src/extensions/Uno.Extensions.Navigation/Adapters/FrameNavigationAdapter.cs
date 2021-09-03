@@ -5,9 +5,14 @@ using System.Threading.Tasks;
 using Uno.Extensions.Navigation.Controls;
 using System;
 using Microsoft.Extensions.DependencyInjection;
+using Windows.Foundation;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Popups;
+using UICommand = Windows.UI.Popups.UICommand;
 #else
+using Windows.UI.Popups;
+using UICommand = Windows.UI.Popups.UICommand;
 using Microsoft.UI.Xaml.Controls;
 #endif
 using Uno.Extensions.Navigation;
@@ -17,6 +22,13 @@ namespace Uno.Extensions.Navigation.Adapters
     public class FrameNavigationAdapter : INavigationAdapter<Frame>
     {
         public const string PreviousViewUri = "..";
+        public const string MessageDialogUri = "__md__";
+        public const string MessageDialogParameterContent = MessageDialogUri + "content";
+        public const string MessageDialogParameterTitle = MessageDialogUri + "title";
+        public const string MessageDialogParameterOptions = MessageDialogUri + "options";
+        public const string MessageDialogParameterDefaultCommand = MessageDialogUri + "default";
+        public const string MessageDialogParameterCancelCommand = MessageDialogUri + "cancel";
+        public const string MessageDialogParameterCommands = MessageDialogUri + "commands";
 
         private IFrameWrapper Frame { get; }
 
@@ -28,7 +40,7 @@ namespace Uno.Extensions.Navigation.Adapters
 
         private IList<(string, INavigationContext)> NavigationContexts { get; } = new List<(string, INavigationContext)>();
 
-        private IList<ContentDialog> OpenDialogs { get;  } = new    List<ContentDialog>();
+        private IList<object> OpenDialogs { get; } = new List<object>();
 
         public void Inject(Frame control)
         {
@@ -130,18 +142,29 @@ namespace Uno.Extensions.Navigation.Adapters
             // before we remove anything from backstack
             if (NavigationContexts.Count > 0)
             {
-                if(navPath == PreviousViewUri)
+                if (navPath == PreviousViewUri)
                 {
                     var responseData = (request.Route.Data is IDictionary<string, object> data) &&
                             data.TryGetValue(string.Empty, out var response) ? response : default;
 
                     var previousContext = NavigationContexts.Peek().Item2;
 
-                    if (previousContext.Mapping.View.IsSubclassOf(typeof(ContentDialog)))
+                    if (previousContext.Request.Route.Path.OriginalString == MessageDialogUri)
                     {
                         frameNavigationRequired = false;
-                        var dialog = OpenDialogs.LastOrDefault(x => x.GetType() == previousContext.Mapping.View);
-                        if(dialog is not null)
+                        var dialog = OpenDialogs.LastOrDefault(x => x is IAsyncOperation<IUICommand>) as IAsyncOperation<IUICommand>;
+                        if (dialog is not null)
+                        {
+                            OpenDialogs.Remove(dialog);
+                            dialog.Cancel();
+                        }
+
+                    }
+                    if (previousContext.Mapping?.View?.IsSubclassOf(typeof(ContentDialog))??false)
+                    {
+                        frameNavigationRequired = false;
+                        var dialog = OpenDialogs.LastOrDefault(x => x.GetType() == previousContext.Mapping.View) as ContentDialog;
+                        if (dialog is not null)
                         {
                             OpenDialogs.Remove(dialog);
                             if (!(responseData is ContentDialogResult))
@@ -196,15 +219,34 @@ namespace Uno.Extensions.Navigation.Adapters
                     context = context with { Mapping = mapping };
                 }
 
-               
+
 
                 // Push the new navigation context
                 NavigationContexts.Push((navPath, context));
 
                 var vm = await InitializeViewModel();
 
-
-                if (mapping.View?.IsSubclassOf(typeof(ContentDialog)) ?? false)
+                var data = context.Request.Route.Data as IDictionary<string, object>;
+                if (navPath == MessageDialogUri)
+                {
+                    var md = new MessageDialog(data[MessageDialogParameterContent] as string, data[MessageDialogParameterTitle] as string)
+                    {
+                        Options = (MessageDialogOptions)data[MessageDialogParameterOptions],
+                        DefaultCommandIndex = (uint)data[MessageDialogParameterDefaultCommand],
+                        CancelCommandIndex = (uint)data[MessageDialogParameterCancelCommand]
+                    };
+                    md.Commands.AddRange((data[MessageDialogParameterCommands] as UICommand[]) ?? new UICommand[] { });
+                    var showTask = md.ShowAsync();
+                    OpenDialogs.Add(showTask);
+                    showTask.AsTask().ContinueWith(result =>
+                    {
+                        if (result.Status != TaskStatus.Canceled)
+                        {
+                            Navigation.Navigate(new NavigationRequest(md, new NavigationRoute(new Uri(PreviousViewUri, UriKind.Relative), result.Result)));
+                        }
+                    });
+                }
+                else if (mapping.View?.IsSubclassOf(typeof(ContentDialog)) ?? false)
                 {
                     var dialog = Activator.CreateInstance(mapping.View) as ContentDialog;
                     if (vm is not null)
@@ -214,17 +256,10 @@ namespace Uno.Extensions.Navigation.Adapters
                     OpenDialogs.Add(dialog);
                     dialog.ShowAsync().AsTask().ContinueWith(result =>
                     {
-                        Navigation.Navigate(new NavigationRequest(dialog, new NavigationRoute(new Uri(PreviousViewUri, UriKind.Relative), result.Result)));
-                        //OpenDialogs.Remove(dialog);
-                        //if (context.ResponseCompletion is not null)
-                        //{
-                        //    // Only set the result if there hasn't been some other navigation to close
-                        //    // the dialog and set a different response
-                        //    if (!context.ResponseCompletion.Task.IsCompleted)
-                        //    {
-                        //        context.ResponseCompletion?.SetResult(result);
-                        //    }
-                        //}
+                        if (result.Status != TaskStatus.Canceled)
+                        {
+                            Navigation.Navigate(new NavigationRequest(dialog, new NavigationRoute(new Uri(PreviousViewUri, UriKind.Relative), result.Result)));
+                        }
                     });
                 }
                 else
@@ -259,7 +294,7 @@ namespace Uno.Extensions.Navigation.Adapters
 
             //var mapping = Mapping.LookupByPath(path);
             object oldVm = default;
-            if (context.Mapping.ViewModel is not null)
+            if (context.Mapping?.ViewModel is not null)
             {
                 var services = context.Services;
                 oldVm = services.GetService(context.Mapping.ViewModel);
@@ -280,7 +315,7 @@ namespace Uno.Extensions.Navigation.Adapters
 
             var mapping = context.Mapping;// Mapping.LookupByPath(path);
             object vm = default;
-            if (mapping.ViewModel is not null)
+            if (mapping?.ViewModel is not null)
             {
                 var services = context.Services;
                 var dataFactor = services.GetService<ViewModelDataProvider>();

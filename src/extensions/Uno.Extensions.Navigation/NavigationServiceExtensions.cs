@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Uno.Extensions.Navigation.Adapters;
+using Windows.UI.Popups;
+using UICommand = Windows.UI.Popups.UICommand;
 
 namespace Uno.Extensions.Navigation
 {
@@ -28,6 +31,7 @@ namespace Uno.Extensions.Navigation
             var map = mapping.LookupByViewModel(typeof(TViewViewModel));
             return service.Navigate(new NavigationRequest(sender, new NavigationRoute(new Uri(map.Path, UriKind.Relative), data)));
         }
+
         public static NavigationResult<TResponse> NavigateToViewModel<TViewViewModel, TResponse>(this INavigationService service, object sender, object data = null)
         {
             var mapping = Ioc.Default.GetRequiredService<INavigationMapping>();
@@ -46,6 +50,32 @@ namespace Uno.Extensions.Navigation
         public static NavigationResult NavigateToPreviousView(this INavigationService service, object sender, object data = null)
         {
             return service.Navigate(new NavigationRequest(sender, new NavigationRoute(new Uri(FrameNavigationAdapter.PreviousViewUri, UriKind.Relative), data)));
+        }
+
+        public static NavigationResult<Windows.UI.Popups.UICommand> ShowMessageDialog(
+            this INavigationService service,
+            object sender,
+            string content,
+            string title = null,
+            MessageDialogOptions options = MessageDialogOptions.None,
+            uint defaultCommandIndex = 0,
+            uint cancelCommandIndex = 0,
+            params Windows.UI.Popups.UICommand[] commands)
+        {
+
+
+            var data = new Dictionary<string, object>()
+            {
+                {FrameNavigationAdapter.MessageDialogParameterTitle,title },
+                {FrameNavigationAdapter.MessageDialogParameterContent,content },
+                {FrameNavigationAdapter.MessageDialogParameterOptions, options},
+                {FrameNavigationAdapter.MessageDialogParameterDefaultCommand,defaultCommandIndex },
+                {FrameNavigationAdapter.MessageDialogParameterCancelCommand, cancelCommandIndex},
+                {FrameNavigationAdapter.MessageDialogParameterCommands, commands}
+            };
+
+            var result = service.Navigate(new NavigationRequest(sender, new NavigationRoute(new Uri(FrameNavigationAdapter.MessageDialogUri, UriKind.Relative), data), typeof(UICommand)));
+            return new NavigationResult<UICommand>(result.Request, result.NavigationTask, result.Response.ContinueWith(x => (UICommand)x.Result));
         }
     }
 }

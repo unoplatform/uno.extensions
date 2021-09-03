@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using System.Diagnostics;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using ExtensionsSampleApp.ViewModels;
 using Uno.Extensions.Navigation;
 using Windows.UI.Xaml;
@@ -52,6 +54,14 @@ namespace ExtensionsSampleApp.Views
         {
             var nav = Ioc.Default.GetService<INavigationService>();
             var navresult = nav.NavigateToView<SimpleContentDialog, Widget>(this);
+            var response = await navresult.Response;
+        }
+        private async void MessageDialogClick(object sender, RoutedEventArgs e)
+        {
+            var nav = Ioc.Default.GetService<INavigationService>();
+            var navresult = nav.ShowMessageDialog(this,"Basic content", "Content Title",commands: new Windows.UI.Popups.UICommand("test",command=>Debug.WriteLine("TEST")));
+            await Task.Delay(2000);
+            //nav.NavigateToPreviousView(this);
             var response = await navresult.Response;
         }
     }
