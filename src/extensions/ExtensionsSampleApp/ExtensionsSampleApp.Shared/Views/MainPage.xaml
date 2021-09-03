@@ -27,6 +27,8 @@
                     Click="ContentDialogResponseClick" />
             <Button Content="Content Dialog - Widget Response"
                     Click="ContentDialogWidgetResponseClick" />
+            <Button Content="Message Dialog"
+                    Click="MessageDialogClick" />
         </StackPanel>
     </Grid>
 </Page>
