@@ -35,5 +35,6 @@
                   Content="I am over 13 years of age."
                   Checked="ConfirmAgeCheckBox_Checked"
                   Unchecked="ConfirmAgeCheckBox_Unchecked" />
+        <Button Content="Close with response object" Click="CloseWithResponseClick" />
     </StackPanel>
 </ContentDialog>

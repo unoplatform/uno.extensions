@@ -10,6 +10,7 @@ using Windows.UI.Xaml.Controls;
 #else
 using Microsoft.UI.Xaml.Controls;
 #endif
+using Uno.Extensions.Navigation;
 
 namespace Uno.Extensions.Navigation.Adapters
 {
@@ -23,7 +24,11 @@ namespace Uno.Extensions.Navigation.Adapters
 
         private IServiceProvider Services { get; }
 
+        private INavigationService Navigation { get; }
+
         private IList<(string, INavigationContext)> NavigationContexts { get; } = new List<(string, INavigationContext)>();
+
+        private IList<ContentDialog> OpenDialogs { get;  } = new    List<ContentDialog>();
 
         public void Inject(Frame control)
         {
@@ -31,10 +36,12 @@ namespace Uno.Extensions.Navigation.Adapters
         }
 
         public FrameNavigationAdapter(
+            INavigationService navigation,
             IServiceProvider services,
             INavigationMapping navigationMapping,
             IFrameWrapper frameWrapper)
         {
+            Navigation = navigation;
             Services = services;
             Frame = frameWrapper;
             Mapping = navigationMapping;
@@ -117,6 +124,7 @@ namespace Uno.Extensions.Navigation.Adapters
                 removeCurrentPageFromBackStack = false;
             }
 
+            var frameNavigationRequired = true;
             // If there's a current nav context, make sure it's stopped before
             // we proceed - this could cancel the navigation, so need to know
             // before we remove anything from backstack
@@ -124,15 +132,31 @@ namespace Uno.Extensions.Navigation.Adapters
             {
                 if(navPath == PreviousViewUri)
                 {
+                    var responseData = (request.Route.Data is IDictionary<string, object> data) &&
+                            data.TryGetValue(string.Empty, out var response) ? response : default;
+
                     var previousContext = NavigationContexts.Peek().Item2;
+
+                    if (previousContext.Mapping.View.IsSubclassOf(typeof(ContentDialog)))
+                    {
+                        frameNavigationRequired = false;
+                        var dialog = OpenDialogs.LastOrDefault(x => x.GetType() == previousContext.Mapping.View);
+                        if(dialog is not null)
+                        {
+                            OpenDialogs.Remove(dialog);
+                            if (!(responseData is ContentDialogResult))
+                            {
+                                dialog.Hide();
+                            }
+                        }
+                    }
+
                     if (previousContext.Request.Response is not null)
                     {
                         var completion = (previousContext as NavigationContext)?.ResponseCompletion;
-                        if (completion is not null &&
-                            (request.Route.Data is IDictionary<string, object> data) &&
-                            data.TryGetValue(string.Empty, out var response))
+                        if (completion is not null)
                         {
-                            completion.SetResult(response);
+                            completion.SetResult(responseData);
                         }
                     }
                 }
@@ -155,9 +179,11 @@ namespace Uno.Extensions.Navigation.Adapters
             if (navPath == PreviousViewUri)
             {
                 var vm = await InitializeViewModel();
-                Frame.GoBack(request.Route.Data, vm);
 
-               
+                if (frameNavigationRequired)
+                {
+                    Frame.GoBack(request.Route.Data, vm);
+                }
 
                 await ((vm as INavigationStart)?.Start(NavigationContexts.Peek().Item2, false) ?? Task.CompletedTask);
 
@@ -170,20 +196,41 @@ namespace Uno.Extensions.Navigation.Adapters
                     context = context with { Mapping = mapping };
                 }
 
-                if(mapping.View?.IsSubclassOf(typeof(ContentDialog))??false)
-                {
-                    var dialog = Activator.CreateInstance(mapping.View) as ContentDialog;
-                    await dialog.ShowAsync();
-                    context.ResponseCompletion?.SetResult(null);
-                    return;
-                }
+               
 
                 // Push the new navigation context
                 NavigationContexts.Push((navPath, context));
 
                 var vm = await InitializeViewModel();
 
-                var success = Frame.Navigate(context.Mapping.View, request.Route.Data, vm);
+
+                if (mapping.View?.IsSubclassOf(typeof(ContentDialog)) ?? false)
+                {
+                    var dialog = Activator.CreateInstance(mapping.View) as ContentDialog;
+                    if (vm is not null)
+                    {
+                        dialog.DataContext = vm;
+                    }
+                    OpenDialogs.Add(dialog);
+                    dialog.ShowAsync().AsTask().ContinueWith(result =>
+                    {
+                        Navigation.Navigate(new NavigationRequest(dialog, new NavigationRoute(new Uri(PreviousViewUri, UriKind.Relative), result.Result)));
+                        //OpenDialogs.Remove(dialog);
+                        //if (context.ResponseCompletion is not null)
+                        //{
+                        //    // Only set the result if there hasn't been some other navigation to close
+                        //    // the dialog and set a different response
+                        //    if (!context.ResponseCompletion.Task.IsCompleted)
+                        //    {
+                        //        context.ResponseCompletion?.SetResult(result);
+                        //    }
+                        //}
+                    });
+                }
+                else
+                {
+                    var success = Frame.Navigate(context.Mapping.View, request.Route.Data, vm);
+                }
                 await ((vm as INavigationStart)?.Start(context, true) ?? Task.CompletedTask);
                 if (isRooted)
                 {

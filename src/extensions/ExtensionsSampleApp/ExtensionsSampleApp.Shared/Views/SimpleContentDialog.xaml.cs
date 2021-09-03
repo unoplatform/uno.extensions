@@ -1,4 +1,6 @@
-﻿using Windows.UI.Xaml;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using Uno.Extensions.Navigation;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace ExtensionsSampleApp.Views
@@ -24,6 +26,12 @@ namespace ExtensionsSampleApp.Views
         private void ConfirmAgeCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             this.IsPrimaryButtonEnabled = false;
+        }
+
+        private void CloseWithResponseClick(object sender, RoutedEventArgs e)
+        {
+            var nav = Ioc.Default.GetService<INavigationService>();
+            nav.NavigateToPreviousView(this, new Widget());
         }
     }
 }

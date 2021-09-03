@@ -25,6 +25,8 @@
                     Click="NextPageRequestResponseClick" />
             <Button Content="Content Dialog"
                     Click="ContentDialogResponseClick" />
+            <Button Content="Content Dialog - Widget Response"
+                    Click="ContentDialogWidgetResponseClick" />
         </StackPanel>
     </Grid>
 </Page>
