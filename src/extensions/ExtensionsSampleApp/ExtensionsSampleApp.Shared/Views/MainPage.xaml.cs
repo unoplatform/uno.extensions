@@ -2,6 +2,7 @@
 using ExtensionsSampleApp.ViewModels;
 using Uno.Extensions.Navigation;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace ExtensionsSampleApp.Views
 {
@@ -41,6 +42,13 @@ namespace ExtensionsSampleApp.Views
         }
 
         private async void ContentDialogResponseClick(object sender, RoutedEventArgs e)
+        {
+            var nav = Ioc.Default.GetService<INavigationService>();
+            var navresult = nav.NavigateToView<SimpleContentDialog, ContentDialogResult>(this);
+            var response = await navresult.Response;
+        }
+
+        private async void ContentDialogWidgetResponseClick(object sender, RoutedEventArgs e)
         {
             var nav = Ioc.Default.GetService<INavigationService>();
             var navresult = nav.NavigateToView<SimpleContentDialog, Widget>(this);
