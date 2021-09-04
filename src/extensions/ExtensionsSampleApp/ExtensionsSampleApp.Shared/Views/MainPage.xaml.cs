@@ -11,8 +11,9 @@ namespace ExtensionsSampleApp.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainPage 
+    public sealed partial class MainPage: INavigationAware
     {
+        public INavigationService Navigation { get; set; }
         public MainPage()
         {
             InitializeComponent();
@@ -20,46 +21,39 @@ namespace ExtensionsSampleApp.Views
 
         private async void NextPageNavigateToViewClick(object sender, RoutedEventArgs e)
         {
-            var nav = Ioc.Default.GetService<INavigationService>();
-            await nav.NavigateToView<SecondPage>(this);
+            await Navigation.NavigateToView<SecondPage>(this);
         }
 
         private void NextPageNavigateToViewModelClick(object sender, RoutedEventArgs e)
         {
-            var nav = Ioc.Default.GetService<INavigationService>();
-            nav.NavigateToViewModel<SecondViewModel>(this);
+            Navigation.NavigateToViewModel<SecondViewModel>(this);
         }
 
         private void NextPageNavigateForDataClick(object sender, RoutedEventArgs e)
         {
-            var nav = Ioc.Default.GetService<INavigationService>();
-            nav.NavigateForData(this, new Widget());
+            Navigation.NavigateForData(this, new Widget());
         }
 
         private async void NextPageRequestResponseClick(object sender, RoutedEventArgs e)
         {
-            var nav = Ioc.Default.GetService<INavigationService>();
-            var navresult = nav.NavigateToViewModel<SecondViewModel, Widget>(this);
+            var navresult = Navigation.NavigateToViewModel<SecondViewModel, Widget>(this);
             var response = await navresult.Response;
         }
 
         private async void ContentDialogResponseClick(object sender, RoutedEventArgs e)
         {
-            var nav = Ioc.Default.GetService<INavigationService>();
-            var navresult = nav.NavigateToView<SimpleContentDialog, ContentDialogResult>(this);
+            var navresult = Navigation.NavigateToView<SimpleContentDialog, ContentDialogResult>(this);
             var response = await navresult.Response;
         }
 
         private async void ContentDialogWidgetResponseClick(object sender, RoutedEventArgs e)
         {
-            var nav = Ioc.Default.GetService<INavigationService>();
-            var navresult = nav.NavigateToView<SimpleContentDialog, Widget>(this);
+            var navresult = Navigation.NavigateToView<SimpleContentDialog, Widget>(this);
             var response = await navresult.Response;
         }
         private async void MessageDialogClick(object sender, RoutedEventArgs e)
         {
-            var nav = Ioc.Default.GetService<INavigationService>();
-            var navresult = nav.ShowMessageDialog(this,"Basic content", "Content Title",commands: new Windows.UI.Popups.UICommand("test",command=>Debug.WriteLine("TEST")));
+            var navresult = Navigation.ShowMessageDialog(this,"Basic content", "Content Title",commands: new Windows.UI.Popups.UICommand("test",command=>Debug.WriteLine("TEST")));
             await Task.Delay(2000);
             //nav.NavigateToPreviousView(this);
             var response = await navresult.Response;

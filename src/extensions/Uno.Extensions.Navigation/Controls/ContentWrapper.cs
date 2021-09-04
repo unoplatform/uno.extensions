@@ -17,7 +17,7 @@ public class ContentWrapper : IContentWrapper
 
     public void Inject(ContentControl control) => Host = control;
 
-    public bool ShowContent(Type contentControl, object viewModel)
+    public object ShowContent(Type contentControl, object viewModel)
     {
         var content = Activator.CreateInstance(contentControl) ;
         if (viewModel is not null && content is FrameworkElement fe)
@@ -25,6 +25,6 @@ public class ContentWrapper : IContentWrapper
             fe.DataContext = viewModel;
         }
         Host.Content = content;
-        return true;
+        return content;
     }
 }

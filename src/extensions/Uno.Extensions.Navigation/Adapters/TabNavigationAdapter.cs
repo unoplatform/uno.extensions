@@ -20,12 +20,15 @@ namespace Uno.Extensions.Navigation.Adapters
 
         private ITabWrapper Tabs { get; }
 
+        private INavigationService Navigation { get; }
+
         public void Inject(TabView control)
         {
             Tabs.Inject(control);
         }
 
         public TabNavigationAdapter(
+            INavigationService navigation,
             IServiceProvider services,
             INavigationMapping navigationMapping,
             ITabWrapper tabWrapper)
@@ -52,7 +55,12 @@ namespace Uno.Extensions.Navigation.Adapters
 
             var vm =  map?.ViewModel is not null ? Services.GetService(map.ViewModel) : null;
 
-            Tabs.ActivateTab(path, vm);
+            var view = Tabs.ActivateTab(path, vm);
+
+            if(view is INavigationAware navAware)
+            {
+                navAware.Navigation = Navigation;
+            }
 
             return new NavigationResult(request, Task.CompletedTask, null);
         }

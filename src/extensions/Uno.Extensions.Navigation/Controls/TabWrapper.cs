@@ -28,7 +28,7 @@ public class TabWrapper : ITabWrapper
         return FindByName(tabName) is not null;
     }
 
-    public bool ActivateTab(string tabName, object viewModel)
+    public object ActivateTab(string tabName, object viewModel)
     {
         var tab = FindByName(tabName);
         if (tab is not null)
@@ -38,8 +38,8 @@ public class TabWrapper : ITabWrapper
                 tab.DataContext = viewModel;
             }
             Tabs.SelectedItem = tab;
-            return true;
+            return tab;
         }
-        return false;
+        return null;
     }
 }
