@@ -205,7 +205,11 @@ namespace Uno.Extensions.Navigation.Adapters
 
                 if (frameNavigationRequired)
                 {
-                    Frame.GoBack(request.Route.Data, vm);
+                    var view = Frame.GoBack(request.Route.Data, vm);
+                    if (view is INavigationAware navAware)
+                    {
+                        navAware.Navigation = Navigation;
+                    }
                 }
 
                 await ((vm as INavigationStart)?.Start(NavigationContexts.Peek().Item2, false) ?? Task.CompletedTask);
@@ -264,7 +268,11 @@ namespace Uno.Extensions.Navigation.Adapters
                 }
                 else
                 {
-                    var success = Frame.Navigate(context.Mapping.View, request.Route.Data, vm);
+                    var view = Frame.Navigate(context.Mapping.View, request.Route.Data, vm);
+                    if(view is INavigationAware navAware)
+                    {
+                        navAware.Navigation = Navigation;
+                    }
                 }
                 await ((vm as INavigationStart)?.Start(context, true) ?? Task.CompletedTask);
                 if (isRooted)

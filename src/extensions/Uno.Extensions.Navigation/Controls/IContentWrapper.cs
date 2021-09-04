@@ -13,5 +13,5 @@ namespace Uno.Extensions.Navigation.Controls;
 
 public interface IContentWrapper : IInjectable<ContentControl>
 {
-    bool ShowContent(Type contentControl, object viewModel);
+    object ShowContent(Type contentControl, object viewModel);
 }

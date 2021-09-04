@@ -19,7 +19,7 @@ namespace Uno.Extensions.Navigation.Controls
 
         public void Inject(Frame control) => Frame = control; 
 
-        public void GoBack(object parameter, object viewModel)
+        public object GoBack(object parameter, object viewModel)
         {
             if(parameter is not null)
             {
@@ -38,9 +38,11 @@ namespace Uno.Extensions.Navigation.Controls
             {
                 current.DataContext = viewModel;
             }
+
+            return Frame.Content;
         }
 
-        public bool Navigate(Type sourcePageType, object parameter, object viewModel)
+        public object Navigate(Type sourcePageType, object parameter, object viewModel)
         {
             Debug.WriteLine("Backstack (Navigate - before): " + string.Join(",", Frame.BackStack.Select(x => x.SourcePageType.Name)));
             var nav = Frame.Navigate(sourcePageType, parameter);
@@ -51,7 +53,7 @@ namespace Uno.Extensions.Navigation.Controls
                 (Frame.Content as FrameworkElement).DataContext = viewModel;
             }
 
-            return nav;
+            return Frame.Content;
         }
 
         public void RemoveLastFromBackStack()

@@ -20,12 +20,15 @@ namespace Uno.Extensions.Navigation.Adapters
 
         private IContentWrapper ContentHost { get; }
 
+        private INavigationService Navigation { get; }
+
         public void Inject(ContentControl control)
         {
             ContentHost.Inject(control);
         }
 
         public ContentNavigationAdapter(
+            INavigationService navigation,
             IServiceProvider services,
             INavigationMapping navigationMapping,
             IContentWrapper contentWrapper)
@@ -57,9 +60,14 @@ namespace Uno.Extensions.Navigation.Adapters
 
             var map = Mapping.LookupByPath(path);
 
-            var vm =  map.ViewModel is not null ? Services.GetService(map.ViewModel) : null;
+            var vm = map.ViewModel is not null ? Services.GetService(map.ViewModel) : null;
 
-            ContentHost.ShowContent(map.View, vm);
+            var view = ContentHost.ShowContent(map.View, vm);
+
+            if (view is INavigationAware navAware)
+            {
+                navAware.Navigation = Navigation;
+            }
 
             return new NavigationResult(request, Task.CompletedTask, null);
         }

@@ -6,4 +6,9 @@ namespace Uno.Extensions.Navigation
     {
         Task Stop(INavigationContext context, bool cleanup);
     }
+
+    public interface INavigationAware
+    {
+        INavigationService Navigation { get; set; }
+    }
 }

@@ -21,7 +21,7 @@
                        Margin="20"
                        FontSize="30"
                        Foreground="Red" />
-            <Button Content="Next Page"
+            <Button Content="Next Page (cancelled - won't navigate)"
                     nav:Navigation.Path="ThirdPage" />
             <Button Content="Next Page with args"
                     nav:Navigation.Path="ThirdPage?arg1=val1&amp;arg2=val2" />
