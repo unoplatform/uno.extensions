@@ -36,7 +36,7 @@ namespace Uno.Extensions.Navigation.Adapters
 
         private IServiceProvider Services { get; }
 
-        private INavigationService Navigation { get; }
+        public INavigationService Navigation { get; set; }
 
         private IList<(string, INavigationContext)> NavigationContexts { get; } = new List<(string, INavigationContext)>();
 
@@ -48,12 +48,12 @@ namespace Uno.Extensions.Navigation.Adapters
         }
 
         public FrameNavigationAdapter(
-            INavigationService navigation,
+            // INavigationService navigation, // Note: Don't pass in - implement INaviationAware instead
             IServiceProvider services,
             INavigationMapping navigationMapping,
             IFrameWrapper frameWrapper)
         {
-            Navigation = navigation;
+            //Navigation = navigation;
             Services = services;
             Frame = frameWrapper;
             Mapping = navigationMapping;

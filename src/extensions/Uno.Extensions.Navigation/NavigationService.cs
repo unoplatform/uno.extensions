@@ -21,7 +21,14 @@ namespace Uno.Extensions.Navigation
 
         public INavigationAdapter AddAdapter<TControl>(TControl control, bool enabled)
         {
-            var adapter = Services.GetService<INavigationAdapter<TControl>>();
+            var scope = Services.CreateScope();
+            var services = scope.ServiceProvider;
+
+            var adapter = services.GetService<INavigationAdapter<TControl>>();
+            if (adapter is INavigationAware navAware)
+            {
+                navAware.Navigation = new ActiveNavigationService(this, adapter);
+            }
             adapter.Inject(control);
             Adapters.Insert(0, adapter);
             // Default the first adapter to true
@@ -57,6 +64,11 @@ namespace Uno.Extensions.Navigation
 
         public NavigationResult Navigate(NavigationRequest request)
         {
+            return NavigateWithAdapter(request, Adapters.Last());
+        }
+
+        public NavigationResult NavigateWithAdapter(NavigationRequest request, INavigationAdapter adapter)
+        {
             var path = request.Route.Path.OriginalString;
 
             var queryIdx = path.IndexOf('?');
@@ -87,16 +99,18 @@ namespace Uno.Extensions.Navigation
             var services = scope.ServiceProvider;
             var dataFactor = services.GetService<ViewModelDataProvider>();
             dataFactor.Parameters = request.Route.Data as IDictionary<string, object>;
+            var navWrapper = services.GetService<NavigationServiceProvider>();
+            navWrapper.Navigation = new ActiveNavigationService(this, adapter);
 
-            var context = new NavigationContext(services, request, new CancellationTokenSource(),null, true);
-            for (int i = 0; i < Adapters.Count; i++)
-            {
-                var adapter = Adapters[i];
-                if (ActiveAdapters[i] && adapter.CanNavigate(context))
-                {
-                    return adapter.Navigate(context);
-                }
-            }
+            var context = new NavigationContext(services, request, new CancellationTokenSource(), null, true);
+            //for (int i = 0; i < Adapters.Count; i++)
+            //{
+            //    var adapter = Adapters[i];
+            //    if (ActiveAdapters[i] && adapter.CanNavigate(context))
+            //    {
+            return adapter.Navigate(context);
+            //    }
+            //}
 
             return default;
         }
@@ -113,5 +127,66 @@ namespace Uno.Extensions.Navigation
                     select new { key, val })
                     .ToDictionary(x => x.key, x => (object)x.val);
         }
+
+        public INavigationService ParentNavigation()
+        {
+            return ParentNavigation(Adapters.First());
+        }
+
+        public INavigationService ParentNavigation(INavigationAdapter adapter)
+        {
+            var idx = Adapters.IndexOf(adapter);
+            if (idx < 0)
+            {
+                return null;
+            }
+
+            if (idx < Adapters.Count - 1)
+            {
+                idx++;
+            }
+
+            return new ActiveNavigationService(this, Adapters[idx]);
+        }
+
+        public INavigationService ChildNavigation()
+        {
+            return ChildNavigation(Adapters.First());
+        }
+
+        public INavigationService ChildNavigation(INavigationAdapter adapter)
+        {
+            var idx = Adapters.IndexOf(adapter);
+            if (idx < 0)
+            {
+                return null;
+            }
+
+            if (idx > 0)
+            {
+                idx--;
+            }
+
+            return new ActiveNavigationService(this, Adapters[idx]);
+        }
+    }
+
+    public record ActiveNavigationService(NavigationService Navigation, INavigationAdapter Adapter) : INavigationService
+    {
+        public NavigationResult Navigate(NavigationRequest request)
+        {
+            return Navigation.NavigateWithAdapter(request, Adapter);
+        }
+
+        public INavigationService ParentNavigation()
+        {
+            return Navigation.ParentNavigation(Adapter);
+        }
+
+        public INavigationService ChildNavigation()
+        {
+            return Navigation.ChildNavigation(Adapter);
+        }
+
     }
 }
