@@ -29,7 +29,8 @@ public static class ServiceCollectionExtensions
                     .AddTransient<INavigationAdapter<TabView>, TabNavigationAdapter>()
                     .AddTransient<INavigationAdapter<ContentControl>, ContentNavigationAdapter>()
                     .AddSingleton<INavigationManager, NavigationService>()
-                    .AddSingleton<INavigationService>(services => services.GetService<INavigationManager>())
+                    .AddScoped<NavigationServiceProvider>()
+                    .AddScoped<INavigationService>(services => services.GetService<NavigationServiceProvider>().Navigation)
                     .AddScoped<ViewModelDataProvider>()
                     .AddScoped<IDictionary<string, object>>(services => services.GetService<ViewModelDataProvider>().Parameters);
     }
@@ -53,5 +54,17 @@ public class ViewModelDataProvider
     public TData GetData<TData>() where TData : class
     {
         return Parameters.TryGetValue(string.Empty, out var data) ? data as TData : default;
+    }
+}
+
+public class NavigationServiceProvider
+{
+    public INavigationService Navigation { get; set; }
+
+    public NavigationServiceProvider(INavigationManager manager)
+    {
+        // Set the default Navigation Service - expect this to be
+        // overriden for scoped contexts
+        Navigation = manager;
     }
 }

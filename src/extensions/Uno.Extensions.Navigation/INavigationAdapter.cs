@@ -6,7 +6,7 @@ namespace Uno.Extensions.Navigation
     {
     }
 
-    public interface INavigationAdapter
+    public interface INavigationAdapter : INavigationAware
     {
         bool CanNavigate(NavigationContext context);
 

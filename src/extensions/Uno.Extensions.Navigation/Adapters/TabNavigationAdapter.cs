@@ -20,7 +20,7 @@ namespace Uno.Extensions.Navigation.Adapters
 
         private ITabWrapper Tabs { get; }
 
-        private INavigationService Navigation { get; }
+        public INavigationService Navigation { get; set;  }
 
         public void Inject(TabView control)
         {
@@ -28,7 +28,7 @@ namespace Uno.Extensions.Navigation.Adapters
         }
 
         public TabNavigationAdapter(
-            INavigationService navigation,
+            // INavigationService navigation, // Note: Don't pass in - implement INaviationAware instead
             IServiceProvider services,
             INavigationMapping navigationMapping,
             ITabWrapper tabWrapper)

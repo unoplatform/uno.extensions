@@ -31,7 +31,7 @@ namespace ExtensionsSampleApp.ViewModels
     {
         public string Title => "Second - " + Data;
         private Widget Data;
-        public SecondViewModel(Widget data)
+        public SecondViewModel(INavigationService nav, Widget data)
         {
             Data = data;
         }

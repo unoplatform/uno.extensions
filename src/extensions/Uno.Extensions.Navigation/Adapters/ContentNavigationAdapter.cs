@@ -20,7 +20,7 @@ namespace Uno.Extensions.Navigation.Adapters
 
         private IContentWrapper ContentHost { get; }
 
-        private INavigationService Navigation { get; }
+        public INavigationService Navigation { get; set; }
 
         public void Inject(ContentControl control)
         {
@@ -28,7 +28,7 @@ namespace Uno.Extensions.Navigation.Adapters
         }
 
         public ContentNavigationAdapter(
-            INavigationService navigation,
+            // INavigationService navigation, // Note: Don't pass in - implement INaviationAware instead
             IServiceProvider services,
             INavigationMapping navigationMapping,
             IContentWrapper contentWrapper)
