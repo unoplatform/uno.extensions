@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Uno.Extensions.Navigation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -17,11 +18,19 @@ using Windows.UI.Xaml.Navigation;
 
 namespace ExtensionsSampleApp.Views
 {
-    public sealed partial class Content1 : UserControl
+    public sealed partial class Content1 : UserControl, INavigationAware
     {
+        public INavigationService Navigation { get; set; }
+
         public Content1()
         {
             this.InitializeComponent();
+        }
+
+        private async void ContentDialogResponseClick(object sender, RoutedEventArgs e)
+        {
+            var navresult = Navigation.NavigateToView<SimpleContentDialog, ContentDialogResult>(this);
+            var response = await navresult.Response;
         }
     }
 }

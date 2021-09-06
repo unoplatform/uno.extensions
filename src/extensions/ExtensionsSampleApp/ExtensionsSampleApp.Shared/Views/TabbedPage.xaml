@@ -54,6 +54,8 @@
             <StackPanel>
                 <TextBlock Margin="20"
                            FontSize="30"><Run Text="Doc1 - " /><Run Text="{Binding Title}" /></TextBlock>
+                <Button Content="Content Dialog"
+                        Click="ContentDialogResponseClick" />
             </StackPanel>
         </controls:TabViewItem>
         <controls:TabViewItem Header="Document 2"

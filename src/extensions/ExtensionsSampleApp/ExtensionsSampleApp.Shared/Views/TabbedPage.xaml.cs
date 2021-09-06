@@ -1,5 +1,7 @@
 ﻿using ExtensionsSampleApp.ViewModels;
 using Uno.Extensions.Navigation;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace ExtensionsSampleApp.Views
 {
@@ -18,6 +20,12 @@ namespace ExtensionsSampleApp.Views
         private void NavigateToDoc0Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             Navigation.ChildNavigation().NavigateToViewModel<TabDoc0ViewModel>(this);
+        }
+
+        private async void ContentDialogResponseClick(object sender, RoutedEventArgs e)
+        {
+            var navresult = Navigation.NavigateToView<SimpleContentDialog, ContentDialogResult>(this);
+            var response = await navresult.Response;
         }
     }
 }

@@ -9,8 +9,9 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid>
+    <StackPanel>
         <TextBlock Text="Content 1" />
-
-    </Grid>
+        <Button Content="Content Dialog"
+                Click="ContentDialogResponseClick" />
+    </StackPanel>
 </UserControl>

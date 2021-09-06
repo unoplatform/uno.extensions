@@ -147,6 +147,12 @@ namespace Uno.Extensions.Navigation
                 }
             }
 
+            if (navPath == string.Empty)
+            {
+                navPath = BaseNavigationAdapter<object>.PreviousViewUri;
+                numberOfPagesToRemove--;
+            }
+
             var scope = Services.CreateScope();
             var services = scope.ServiceProvider;
             var dataFactor = services.GetService<ViewModelDataProvider>();
