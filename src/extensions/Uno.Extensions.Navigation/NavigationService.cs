@@ -11,6 +11,8 @@ namespace Uno.Extensions.Navigation
     {
         private IList<INavigationAdapter> Adapters { get; } = new List<INavigationAdapter>();
 
+        private IDictionary<object, INavigationAdapter> AdapterLookup { get; } = new Dictionary<object, INavigationAdapter>();
+
         private IList<bool> ActiveAdapters { get; } = new List<bool>();
 
         private IServiceProvider Services { get; }
@@ -37,6 +39,7 @@ namespace Uno.Extensions.Navigation
             // This is to capture the initial navigation on the system which could be attempted
             // before the frame has been loaded
             ActiveAdapters.Insert(0, enabled || ActiveAdapters.Count == 0);
+            AdapterLookup[control] = adapter;
             return adapter;
         }
 
@@ -57,12 +60,29 @@ namespace Uno.Extensions.Navigation
             {
                 Adapters.RemoveAt(index);
                 ActiveAdapters.RemoveAt(index);
+                AdapterLookup.Remove(kvp => kvp.Value == adapter);
             }
             else
             {
                 ActiveAdapters[index] = false;
             }
         }
+
+        public INavigationService ScopedServiceForControl(object control)
+        {
+            if(control is null)
+            {
+                return null;
+            }
+
+            if (AdapterLookup.TryGetValue(control, out var adapter))
+            {
+                return new ActiveNavigationService(this, adapter);
+            }
+
+            return null;
+        }
+
 
         public NavigationResult Navigate(NavigationRequest request)
         {
@@ -95,7 +115,7 @@ namespace Uno.Extensions.Navigation
                 }
             }
 
-            while(path.StartsWith("//"))
+            while (path.StartsWith("//"))
             {
                 adapter = (ParentNavigation(adapter) as ActiveNavigationService).Adapter;
                 path = path.Length > 2 ? path.Substring(2) : string.Empty;
@@ -134,7 +154,7 @@ namespace Uno.Extensions.Navigation
             var navWrapper = services.GetService<NavigationServiceProvider>();
             navWrapper.Navigation = new ActiveNavigationService(this, adapter);
 
-            var context = new NavigationContext(services, request,navPath,isRooted,numberOfPagesToRemove ,paras, new CancellationTokenSource(), null, true);
+            var context = new NavigationContext(services, request, navPath, isRooted, numberOfPagesToRemove, paras, new CancellationTokenSource(), null, true);
             //for (int i = 0; i < Adapters.Count; i++)
             //{
             //    var adapter = Adapters[i];

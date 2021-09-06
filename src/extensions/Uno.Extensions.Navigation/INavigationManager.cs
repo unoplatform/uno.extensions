@@ -7,5 +7,7 @@
         void ActivateAdapter(INavigationAdapter adapter);
 
         void DeactivateAdapter(INavigationAdapter adapter, bool cleanup = true);
+
+        INavigationService ScopedServiceForControl(object control);
     }
 }

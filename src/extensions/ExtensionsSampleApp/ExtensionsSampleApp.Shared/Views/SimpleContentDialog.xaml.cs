@@ -5,8 +5,10 @@ using Windows.UI.Xaml.Controls;
 
 namespace ExtensionsSampleApp.Views
 {
-    public sealed partial class SimpleContentDialog : ContentDialog
+    public sealed partial class SimpleContentDialog : ContentDialog, INavigationAware
     {
+        public INavigationService Navigation { get; set; }
+
         public SimpleContentDialog()
         {
             this.InitializeComponent();
@@ -30,8 +32,8 @@ namespace ExtensionsSampleApp.Views
 
         private void CloseWithResponseClick(object sender, RoutedEventArgs e)
         {
-            var nav = Ioc.Default.GetService<INavigationService>();
-            nav.NavigateToPreviousView(this, new Widget());
+            //var nav = Ioc.Default.GetService<INavigationService>();
+            Navigation.NavigateToPreviousView(this, new Widget());
         }
     }
 }
