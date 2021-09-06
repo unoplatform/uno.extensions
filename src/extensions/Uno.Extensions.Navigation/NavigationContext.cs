@@ -5,18 +5,21 @@ using System.Threading.Tasks;
 
 namespace Uno.Extensions.Navigation
 {
+#pragma warning disable SA1313 // Parameter names should begin with lower-case letter
     public record NavigationContext(
         IServiceProvider Services,
         NavigationRequest Request,
         string Path,
         bool PathIsRooted,
         int FramesToRemove,
-        IDictionary<string,object> Data,
+        IDictionary<string, object> Data,
         CancellationTokenSource CancellationSource,
         TaskCompletionSource<object> ResponseCompletion,
         bool CanCancel,
         NavigationMap Mapping = null)
     {
+#pragma warning restore SA1313 // Parameter names should begin with lower-case letter
+
         public CancellationToken CancellationToken => CancellationSource.Token;
 
         public void Cancel()

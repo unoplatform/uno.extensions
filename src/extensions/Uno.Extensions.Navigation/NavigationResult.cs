@@ -1,18 +1,19 @@
 ﻿using System;
-using System.Threading.Tasks;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace Uno.Extensions.Navigation
 {
-    public record NavigationResult<TResult>(NavigationRequest Request, Task NavigationTask, Task<TResult> Response) : BaseNavigationResult(Request, NavigationTask) {
+    public record NavigationResult<TResult>(NavigationRequest Request, Task NavigationTask, Task<TResult> Response) : BaseNavigationResult(Request, NavigationTask)
+    {
         public NavigationResult<TResult> GetAwaiter()
         {
             return this;
         }
     }
 
-
-    public record NavigationResult(NavigationRequest Request, Task NavigationTask, Task<object> Response): BaseNavigationResult(Request, NavigationTask) {
+    public record NavigationResult(NavigationRequest Request, Task NavigationTask, Task<object> Response) : BaseNavigationResult(Request, NavigationTask)
+    {
         public NavigationResult GetAwaiter()
         {
             return this;
@@ -47,7 +48,5 @@ namespace Uno.Extensions.Navigation
         public void GetResult()
         {
         }
-
-
     }
 }

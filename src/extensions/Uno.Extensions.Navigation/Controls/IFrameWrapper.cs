@@ -7,7 +7,6 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Controls
 {
-
     public interface IFrameWrapper : IInjectable<Frame>
     {
         object GoBack(object parameter, object viewModel);

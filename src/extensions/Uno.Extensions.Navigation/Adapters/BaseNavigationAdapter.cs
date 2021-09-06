@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Uno.Extensions.Navigation.Controls;
-using System;
 using Microsoft.Extensions.DependencyInjection;
+using Uno.Extensions.Navigation.Controls;
 using Windows.Foundation;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Xaml.Controls;
@@ -15,11 +14,10 @@ using Windows.UI.Popups;
 using UICommand = Windows.UI.Popups.UICommand;
 using Microsoft.UI.Xaml.Controls;
 #endif
-using Uno.Extensions.Navigation;
 
 namespace Uno.Extensions.Navigation.Adapters
 {
-    public abstract class BaseNavigationAdapter<TControl>: INavigationAdapter<TControl>
+    public abstract class BaseNavigationAdapter<TControl> : INavigationAdapter<TControl>
     {
         public const string PreviousViewUri = "..";
         public const string MessageDialogUri = "__md__";
@@ -185,8 +183,8 @@ namespace Uno.Extensions.Navigation.Adapters
                             OpenDialogs.Remove(dialog);
                             dialog.Cancel();
                         }
-
                     }
+
                     if (previousContext.Mapping?.View?.IsSubclassOf(typeof(ContentDialog)) ?? false)
                     {
                         frameNavigationRequired = false;
@@ -212,8 +210,8 @@ namespace Uno.Extensions.Navigation.Adapters
                 }
 
                 var currentVM = await StopCurrentViewModel(context, context.Path == PreviousViewUri);
-
             }
+
             return frameNavigationRequired;
         }
 
@@ -243,13 +241,13 @@ namespace Uno.Extensions.Navigation.Adapters
             var path = ctx.Item1;
             var context = ctx.Item2;
 
-            var mapping = context.Mapping;// Mapping.LookupByPath(path);
+            var mapping = context.Mapping;
             object vm = default;
             if (mapping?.ViewModel is not null)
             {
                 var services = context.Services;
                 var dataFactor = services.GetService<ViewModelDataProvider>();
-                dataFactor.Parameters = context.Data;//.Route.Data as IDictionary<string, object>;
+                dataFactor.Parameters = context.Data;
 
                 vm = services.GetService(mapping.ViewModel);
                 await ((vm as IInitialise)?.Initialize(context) ?? Task.CompletedTask);
