@@ -143,7 +143,8 @@ namespace Uno.Extensions.Navigation.Controls
                 var path = GetPath(element);
                 RoutedEventHandler handler = (s, e) =>
                     {
-                        var nav = Ioc.Default.GetService<INavigationService>();
+                        var nm = Ioc.Default.GetService<INavigationManager>();
+                        var nav = ScopedServiceForControl(nm, s as DependencyObject);
                         nav.Navigate(new NavigationRequest(s, new NavigationRoute(new Uri(path, UriKind.Relative))));
                     };
                 element.Loaded += (s, e) =>
@@ -155,6 +156,20 @@ namespace Uno.Extensions.Navigation.Controls
                     element.Click -= handler;
                 };
             }
+        }
+
+        private static INavigationService ScopedServiceForControl(INavigationManager manager, DependencyObject element)
+        {
+            var service = manager.ScopedServiceForControl(element);
+            if (service is not null)
+            {
+                return service;
+            }
+
+            var parent = VisualTreeHelper.GetParent(element);
+            // If parent is null, we're at top of visual tree,
+            // so just return the nav manager itself 
+            return parent is not null ? ScopedServiceForControl(manager, parent) : manager; 
         }
 
         public static void SetPath(FrameworkElement element, string value)

@@ -88,7 +88,7 @@ namespace Uno.Extensions.Navigation.Adapters
 
                     var previousContext = NavigationContexts.Peek().Item2;
 
-                    if (previousContext.Request.Route.Path.OriginalString == MessageDialogUri)
+                    if (previousContext.Path == MessageDialogUri)
                     {
                         frameNavigationRequired = false;
                         var dialog = OpenDialogs.LastOrDefault(x => x is IAsyncOperation<IUICommand>) as IAsyncOperation<IUICommand>;
@@ -122,7 +122,6 @@ namespace Uno.Extensions.Navigation.Adapters
                         }
                     }
                 }
-
 
                 var currentVM = await StopCurrentViewModel(context, context.Path == PreviousViewUri);
                 if (context.CancellationToken.IsCancellationRequested)
@@ -194,10 +193,15 @@ namespace Uno.Extensions.Navigation.Adapters
                     {
                         dialog.DataContext = vm;
                     }
+                    if(dialog is INavigationAware navAware)
+                    {
+                        navAware.Navigation = Navigation;
+                    }
                     OpenDialogs.Add(dialog);
                     dialog.ShowAsync().AsTask().ContinueWith(result =>
                     {
-                        if (result.Status != TaskStatus.Canceled)
+                        if (result.Status != TaskStatus.Canceled &&
+                        result.Status != TaskStatus.RanToCompletion)
                         {
                             Navigation.Navigate(new NavigationRequest(dialog, new NavigationRoute(new Uri(PreviousViewUri, UriKind.Relative), result.Result)));
                         }
