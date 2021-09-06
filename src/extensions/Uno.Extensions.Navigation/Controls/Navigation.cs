@@ -19,23 +19,23 @@ namespace Uno.Extensions.Navigation.Controls
 {
     public partial class Navigation : DependencyObject
     {
-        public static readonly DependencyProperty IsEnabledProperty =
+        public static readonly DependencyProperty AdapterNameProperty =
         DependencyProperty.RegisterAttached(
-          "IsEnabled",
-          typeof(bool),
+          "AdapterName",
+          typeof(string),
           typeof(Navigation),
-          new PropertyMetadata(false, IsEnabledChanged)
+          new PropertyMetadata(false, AdapterNameChanged)
         );
 
-        private static void IsEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void AdapterNameChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is FrameworkElement element)
             {
-                RegisterElement(element);
+                RegisterElement(element, e.NewValue as string);
             }
         }
 
-        private static void RegisterElement(FrameworkElement element)
+        private static void RegisterElement(FrameworkElement element, string adapterName)
         {
             var nav = Ioc.Default.GetService<INavigationManager>();
 
@@ -43,9 +43,9 @@ namespace Uno.Extensions.Navigation.Controls
             {
                 var adapter = element switch
                 {
-                    Frame frame => nav.AddAdapter(frame, false),
-                    TabView tabs => nav.AddAdapter(tabs, false),
-                    ContentControl content => nav.AddAdapter(content,false),
+                    Frame frame => nav.AddAdapter(adapterName, frame, false),
+                    TabView tabs => nav.AddAdapter(adapterName, tabs, false),
+                    ContentControl content => nav.AddAdapter(adapterName, content, false),
                     _ => default
                 };
                 var predicates = new List<Func<bool>>();
@@ -118,14 +118,14 @@ namespace Uno.Extensions.Navigation.Controls
             }
         }
 
-        public static void SetIsEnabled(FrameworkElement element, bool value)
+        public static void SetAdapterName(FrameworkElement element, string value)
         {
-            element.SetValue(IsEnabledProperty, value);
+            element.SetValue(AdapterNameProperty, value);
         }
 
-        public static bool GetIsEnabled(FrameworkElement element)
+        public static string GetAdapterName(FrameworkElement element)
         {
-            return (bool)element.GetValue(IsEnabledProperty);
+            return (string)element.GetValue(AdapterNameProperty);
         }
 
         public static readonly DependencyProperty PathProperty =

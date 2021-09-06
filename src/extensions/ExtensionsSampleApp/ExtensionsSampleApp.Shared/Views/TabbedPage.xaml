@@ -8,7 +8,7 @@
       xmlns:nav="using:Uno.Extensions.Navigation.Controls"
       mc:Ignorable="d"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-    <controls:TabView nav:Navigation.IsEnabled="true"
+    <controls:TabView nav:Navigation.AdapterName="tabs"
                       x:Name="Tabs"
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch"
@@ -39,7 +39,7 @@
                 <Button Content="Home"
                         nav:Navigation.Path="home" />
                 <Button Content="Third Page"
-                        nav:Navigation.Path="ThirdPage" />
+                        nav:Navigation.Path="//ThirdPage" />
                 <Button Content="Doc1 - ViewModel"
                         Command="{Binding NavigateToDoc1Command}" />
             </StackPanel>
@@ -69,7 +69,7 @@
                            FontSize="30"><Run Text="Doc2 - " /><Run Text="{Binding Title}" /></TextBlock>
                 <Frame x:Name="InnerFrame"
                        Grid.Row="1"
-                       nav:Navigation.IsEnabled="true" />
+                       nav:Navigation.AdapterName="tabframe" />
                 <StackPanel Orientation="Horizontal" Grid.Row="2">
                     <Button Content="Page Two"
                             nav:Navigation.Path="SecondPage" />

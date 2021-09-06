@@ -36,12 +36,12 @@ namespace ExtensionsSampleApp.ViewModels
             Data = data;
         }
 
-        public async Task Start(INavigationContext context, bool create)
+        public async Task Start(NavigationContext context, bool create)
         {
             await Task.Delay(10000);
         }
 
-        public async Task Stop(INavigationContext context, bool cleanup)
+        public async Task Stop(NavigationContext context, bool cleanup)
         {
             if (context.Request.Route.Path.OriginalString == typeof(ThirdPage).Name &&
                 !((context.Request.Route.Data as IDictionary<string,object>)?.Any()??false))

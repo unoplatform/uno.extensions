@@ -2,7 +2,7 @@
 {
     public interface INavigationManager : INavigationService
     {
-        INavigationAdapter AddAdapter<TControl>(TControl control, bool enabled);
+        INavigationAdapter AddAdapter<TControl>(string adapterName, TControl control, bool enabled);
 
         void ActivateAdapter(INavigationAdapter adapter);
 

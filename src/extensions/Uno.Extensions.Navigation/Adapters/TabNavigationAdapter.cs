@@ -12,43 +12,22 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Adapters
 {
-    public class TabNavigationAdapter : INavigationAdapter<TabView>
+    public class TabNavigationAdapter : BaseNavigationAdapter<TabView>
     {
-        private INavigationMapping Mapping { get; }
-
-        private IServiceProvider Services { get; }
-
-        private ITabWrapper Tabs { get; }
-
-        public INavigationService Navigation { get; set;  }
-
-        public void Inject(TabView control)
-        {
-            Tabs.Inject(control);
-        }
+        private ITabWrapper Tabs => ControlWrapper as ITabWrapper;
 
         public TabNavigationAdapter(
             // INavigationService navigation, // Note: Don't pass in - implement INaviationAware instead
             IServiceProvider services,
             INavigationMapping navigationMapping,
-            ITabWrapper tabWrapper)
+            ITabWrapper tabWrapper):base(services,navigationMapping,tabWrapper)
         {
-            Services = services.CreateScope().ServiceProvider;
-            Mapping = navigationMapping;
-            Tabs = tabWrapper;
         }
 
-        public bool CanNavigate(NavigationContext context)
+        public override NavigationResult Navigate(NavigationContext context)
         {
             var request = context.Request;
-            var path = request.Route.Path.OriginalString;
-            return Tabs.ContainsTab(path);
-        }
-
-        public NavigationResult Navigate(NavigationContext context)
-        {
-            var request = context.Request;
-            var path = request.Route.Path.OriginalString;
+            var path = context.Path;
             Debug.WriteLine("Navigation: " + path);
 
             var map = Mapping.LookupByPath(path);

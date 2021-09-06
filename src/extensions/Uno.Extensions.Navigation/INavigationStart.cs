@@ -4,6 +4,6 @@ namespace Uno.Extensions.Navigation
 {
     public interface INavigationStart
     {
-        Task Start(INavigationContext context, bool create);
+        Task Start(NavigationContext context, bool create);
     }
 }
