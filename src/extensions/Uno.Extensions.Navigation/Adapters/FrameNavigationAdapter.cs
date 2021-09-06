@@ -132,7 +132,7 @@ namespace Uno.Extensions.Navigation.Adapters
 
             while (numberOfPagesToRemove > 0)
             {
-                NavigationContexts.RemoveAt(NavigationContexts.Count - 2);
+                NavigationContexts.RemoveAt(NavigationContexts.Count - 1);
                 Frame.RemoveLastFromBackStack();
                 numberOfPagesToRemove--;
             }
@@ -143,7 +143,7 @@ namespace Uno.Extensions.Navigation.Adapters
 
                 if (frameNavigationRequired)
                 {
-                    var view = Frame.GoBack(request.Route.Data, vm);
+                    var view = Frame.GoBack(context.Data, vm);
                     if (view is INavigationAware navAware)
                     {
                         navAware.Navigation = Navigation;
@@ -180,7 +180,9 @@ namespace Uno.Extensions.Navigation.Adapters
                     OpenDialogs.Add(showTask);
                     showTask.AsTask().ContinueWith(result =>
                     {
-                        if (result.Status != TaskStatus.Canceled)
+                        if (result.Status != TaskStatus.Canceled &&
+                        context.ResponseCompletion.Task.Status != TaskStatus.Canceled &&
+                        context.ResponseCompletion.Task.Status != TaskStatus.RanToCompletion)
                         {
                             Navigation.Navigate(new NavigationRequest(md, new NavigationRoute(new Uri(PreviousViewUri, UriKind.Relative), result.Result)));
                         }
@@ -201,7 +203,8 @@ namespace Uno.Extensions.Navigation.Adapters
                     dialog.ShowAsync().AsTask().ContinueWith(result =>
                     {
                         if (result.Status != TaskStatus.Canceled &&
-                        result.Status != TaskStatus.RanToCompletion)
+                        context.ResponseCompletion.Task.Status != TaskStatus.Canceled &&
+                        context.ResponseCompletion.Task.Status != TaskStatus.RanToCompletion)
                         {
                             Navigation.Navigate(new NavigationRequest(dialog, new NavigationRoute(new Uri(PreviousViewUri, UriKind.Relative), result.Result)));
                         }
@@ -209,7 +212,7 @@ namespace Uno.Extensions.Navigation.Adapters
                 }
                 else
                 {
-                    var view = Frame.Navigate(context.Mapping.View, request.Route.Data, vm);
+                    var view = Frame.Navigate(context.Mapping.View, context.Data, vm);
                     if (view is INavigationAware navAware)
                     {
                         navAware.Navigation = Navigation;

@@ -32,7 +32,7 @@ namespace Uno.Extensions.Navigation.Adapters
 
             var map = Mapping.LookupByPath(path);
 
-            var vm =  map?.ViewModel is not null ? Services.GetService(map.ViewModel) : null;
+            var vm =  map?.ViewModel is not null ? context.Services.GetService(map.ViewModel) : null;
 
             var view = Tabs.ActivateTab(path, vm);
 

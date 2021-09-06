@@ -9,8 +9,10 @@ namespace ExtensionsSampleApp.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class SecondPage 
+    public sealed partial class SecondPage : INavigationAware
     {
+        public INavigationService Navigation { get; set; }
+
         public SecondPage()
         {
             InitializeComponent();
@@ -25,20 +27,17 @@ namespace ExtensionsSampleApp.Views
 
         private void GoBackNavigateToPreviousViewClick(object sender, RoutedEventArgs e)
         {
-            var nav = Ioc.Default.GetService<INavigationService>();
-            nav.NavigateToPreviousView(this, new Widget());
+            Navigation.NavigateToPreviousView(this, new Widget());
         }
 
         private void NextPageNavigateToViewWithDataClick(object sender, RoutedEventArgs e)
         {
-            var nav = Ioc.Default.GetService<INavigationService>();
-            nav.NavigateToView<ThirdPage>(this, new Widget());
+            Navigation.NavigateToView<ThirdPage>(this, new Widget());
         }
 
         private void NextPageNavigateToViewWithQueryAndDataClick(object sender, RoutedEventArgs e)
         {
-            var nav = Ioc.Default.GetService<INavigationService>();
-            nav.Navigate(new NavigationRequest(sender, new NavigationRoute(new Uri(typeof(ThirdPage).Name+"?arg1=val1&arg2=val2", UriKind.Relative), new Widget())));
+            Navigation.Navigate(new NavigationRequest(sender, new NavigationRoute(new Uri(typeof(ThirdPage).Name + "?arg1=val1&arg2=val2", UriKind.Relative), new Widget())));
         }
     }
 
