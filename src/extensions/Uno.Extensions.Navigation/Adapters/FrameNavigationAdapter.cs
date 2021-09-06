@@ -19,7 +19,7 @@ using Uno.Extensions.Navigation;
 
 namespace Uno.Extensions.Navigation.Adapters
 {
-    public class FrameNavigationAdapter : INavigationAdapter<Frame>
+    public class FrameNavigationAdapter : BaseNavigationAdapter<Frame>
     {
         public const string PreviousViewUri = "..";
         public const string MessageDialogUri = "__md__";
@@ -30,45 +30,21 @@ namespace Uno.Extensions.Navigation.Adapters
         public const string MessageDialogParameterCancelCommand = MessageDialogUri + "cancel";
         public const string MessageDialogParameterCommands = MessageDialogUri + "commands";
 
-        private IFrameWrapper Frame { get; }
+        private IFrameWrapper Frame => ControlWrapper as IFrameWrapper;
 
-        private INavigationMapping Mapping { get; }
-
-        private IServiceProvider Services { get; }
-
-        public INavigationService Navigation { get; set; }
-
-        private IList<(string, INavigationContext)> NavigationContexts { get; } = new List<(string, INavigationContext)>();
+        private IList<(string, NavigationContext)> NavigationContexts { get; } = new List<(string, NavigationContext)>();
 
         private IList<object> OpenDialogs { get; } = new List<object>();
-
-        public void Inject(Frame control)
-        {
-            Frame.Inject(control);
-        }
 
         public FrameNavigationAdapter(
             // INavigationService navigation, // Note: Don't pass in - implement INaviationAware instead
             IServiceProvider services,
             INavigationMapping navigationMapping,
-            IFrameWrapper frameWrapper)
+            IFrameWrapper frameWrapper):base(services,navigationMapping,frameWrapper)
         {
-            //Navigation = navigation;
-            Services = services;
-            Frame = frameWrapper;
-            Mapping = navigationMapping;
         }
 
-        public bool CanNavigate(NavigationContext context)
-        {
-            var request = context.Request;
-            return true;
-        }
-
-
-
-
-        public NavigationResult Navigate(NavigationContext context)
+        public override NavigationResult Navigate(NavigationContext context)
         {
             var request = context.Request;
 
@@ -86,53 +62,17 @@ namespace Uno.Extensions.Navigation.Adapters
         private async Task InternalNavigate(NavigationContext context)
         {
             var request = context.Request;
-            var path = request.Route.Path.OriginalString;
-            //Debug.WriteLine("Navigation: " + path);
+            var path = context.Path;
 
-            //var queryIdx = path.IndexOf('?');
-            //var query = string.Empty;
-            //if (queryIdx >= 0)
-            //{
-            //    queryIdx++; // Step over the ?
-            //    query = queryIdx < path.Length ? path.Substring(queryIdx) : string.Empty;
-            //    path = path.Substring(0, queryIdx - 1);
-            //}
 
-            //    var paras = ParseQueryParameters(query);
-            //    if (request.Route.Data is not null)
-            //    {
-            //        paras[string.Empty] = request.Route.Data;
-            //    }
-            //    request = request with { Route = request.Route with { Data = paras } };
-
-            var isRooted = path.StartsWith("/");
-
-            var segments = path.Split('/');
-            var numberOfPagesToRemove = 0;
-            var navPath = string.Empty;
-            for (int i = 0; i < segments.Length; i++)
-            {
-                if (string.IsNullOrWhiteSpace(segments[i]))
-                {
-                    continue;
-                }
-                if (segments[i] == PreviousViewUri)
-                {
-                    numberOfPagesToRemove++;
-                }
-                else
-                {
-                    navPath = segments[i];
-                }
-            }
-
+            var numberOfPagesToRemove = context.FramesToRemove;
             bool removeCurrentPageFromBackStack = numberOfPagesToRemove > 0;
             // If nav back, we need to remove one less page from stack
             // If nav forward, we need to remove the current page from stack after navigation
             numberOfPagesToRemove--;
-            if (navPath == string.Empty)
+            if (context.Path == string.Empty)
             {
-                navPath = PreviousViewUri;
+                context = context with { Path = PreviousViewUri };
                 removeCurrentPageFromBackStack = false;
             }
 
@@ -142,10 +82,9 @@ namespace Uno.Extensions.Navigation.Adapters
             // before we remove anything from backstack
             if (NavigationContexts.Count > 0)
             {
-                if (navPath == PreviousViewUri)
+                if (context.Path == PreviousViewUri)
                 {
-                    var responseData = (request.Route.Data is IDictionary<string, object> data) &&
-                            data.TryGetValue(string.Empty, out var response) ? response : default;
+                    var responseData = context.Data.TryGetValue(string.Empty, out var response) ? response : default;
 
                     var previousContext = NavigationContexts.Peek().Item2;
 
@@ -160,7 +99,7 @@ namespace Uno.Extensions.Navigation.Adapters
                         }
 
                     }
-                    if (previousContext.Mapping?.View?.IsSubclassOf(typeof(ContentDialog))??false)
+                    if (previousContext.Mapping?.View?.IsSubclassOf(typeof(ContentDialog)) ?? false)
                     {
                         frameNavigationRequired = false;
                         var dialog = OpenDialogs.LastOrDefault(x => x.GetType() == previousContext.Mapping.View) as ContentDialog;
@@ -185,7 +124,7 @@ namespace Uno.Extensions.Navigation.Adapters
                 }
 
 
-                var currentVM = await StopCurrentViewModel(context, navPath == PreviousViewUri);
+                var currentVM = await StopCurrentViewModel(context, context.Path == PreviousViewUri);
                 if (context.CancellationToken.IsCancellationRequested)
                 {
                     return;
@@ -199,7 +138,7 @@ namespace Uno.Extensions.Navigation.Adapters
                 numberOfPagesToRemove--;
             }
 
-            if (navPath == PreviousViewUri)
+            if (context.Path == PreviousViewUri)
             {
                 var vm = await InitializeViewModel();
 
@@ -217,21 +156,19 @@ namespace Uno.Extensions.Navigation.Adapters
             }
             else
             {
-                var mapping = Mapping.LookupByPath(navPath);
+                var mapping = Mapping.LookupByPath(context.Path);
                 if (mapping is not null)
                 {
                     context = context with { Mapping = mapping };
                 }
 
-
-
                 // Push the new navigation context
-                NavigationContexts.Push((navPath, context));
+                NavigationContexts.Push((context.Path, context));
 
                 var vm = await InitializeViewModel();
 
-                var data = context.Request.Route.Data as IDictionary<string, object>;
-                if (navPath == MessageDialogUri)
+                var data = context.Data;
+                if (context.Path == MessageDialogUri)
                 {
                     var md = new MessageDialog(data[MessageDialogParameterContent] as string, data[MessageDialogParameterTitle] as string)
                     {
@@ -269,13 +206,13 @@ namespace Uno.Extensions.Navigation.Adapters
                 else
                 {
                     var view = Frame.Navigate(context.Mapping.View, request.Route.Data, vm);
-                    if(view is INavigationAware navAware)
+                    if (view is INavigationAware navAware)
                     {
                         navAware.Navigation = Navigation;
                     }
                 }
                 await ((vm as INavigationStart)?.Start(context, true) ?? Task.CompletedTask);
-                if (isRooted)
+                if (context.PathIsRooted)
                 {
                     while (NavigationContexts.Count > 1)
                     {
@@ -294,7 +231,7 @@ namespace Uno.Extensions.Navigation.Adapters
 
         }
 
-        private async Task<object> StopCurrentViewModel(INavigationContext navigation, bool popContext)
+        private async Task<object> StopCurrentViewModel(NavigationContext navigation, bool popContext)
         {
             var ctx = NavigationContexts.Peek();
             var path = ctx.Item1;
@@ -327,7 +264,7 @@ namespace Uno.Extensions.Navigation.Adapters
             {
                 var services = context.Services;
                 var dataFactor = services.GetService<ViewModelDataProvider>();
-                dataFactor.Parameters = context.Request.Route.Data as IDictionary<string, object>;
+                dataFactor.Parameters = context.Data;//.Route.Data as IDictionary<string, object>;
 
                 vm = services.GetService(mapping.ViewModel);
                 await ((vm as IInitialise)?.Initialize(context) ?? Task.CompletedTask);

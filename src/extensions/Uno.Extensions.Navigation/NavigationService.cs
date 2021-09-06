@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Microsoft.Extensions.DependencyInjection;
+using Uno.Extensions.Navigation.Adapters;
 
 namespace Uno.Extensions.Navigation
 {
@@ -19,12 +20,13 @@ namespace Uno.Extensions.Navigation
             Services = services;
         }
 
-        public INavigationAdapter AddAdapter<TControl>(TControl control, bool enabled)
+        public INavigationAdapter AddAdapter<TControl>(string adapterName, TControl control, bool enabled)
         {
             var scope = Services.CreateScope();
             var services = scope.ServiceProvider;
 
             var adapter = services.GetService<INavigationAdapter<TControl>>();
+            adapter.Name = adapterName;
             if (adapter is INavigationAware navAware)
             {
                 navAware.Navigation = new ActiveNavigationService(this, adapter);
@@ -92,17 +94,47 @@ namespace Uno.Extensions.Navigation
                     paras[string.Empty] = request.Route.Data;
                 }
             }
-            request = request with { Route = request.Route with { Path = new Uri(path, UriKind.Relative), Data = paras } };
 
+            while(path.StartsWith("//"))
+            {
+                adapter = (ParentNavigation(adapter) as ActiveNavigationService).Adapter;
+                path = path.Length > 2 ? path.Substring(2) : string.Empty;
+            }
+
+
+            var isRooted = path.StartsWith("/");
+
+            var segments = path.Split('/');
+            var numberOfPagesToRemove = 0;
+            var navPath = string.Empty;
+            for (int i = 0; i < segments.Length; i++)
+            {
+                if (string.IsNullOrWhiteSpace(segments[i]))
+                {
+                    continue;
+                }
+                if (segments[i] == FrameNavigationAdapter.PreviousViewUri)
+                {
+                    numberOfPagesToRemove++;
+                }
+                else
+                {
+                    if (!string.IsNullOrWhiteSpace(navPath))
+                    {
+                        adapter = (ChildNavigation(adapter, navPath) as ActiveNavigationService).Adapter;
+                    }
+                    navPath = segments[i];
+                }
+            }
 
             var scope = Services.CreateScope();
             var services = scope.ServiceProvider;
             var dataFactor = services.GetService<ViewModelDataProvider>();
-            dataFactor.Parameters = request.Route.Data as IDictionary<string, object>;
+            dataFactor.Parameters = paras; // request.Route.Data as IDictionary<string, object>;
             var navWrapper = services.GetService<NavigationServiceProvider>();
             navWrapper.Navigation = new ActiveNavigationService(this, adapter);
 
-            var context = new NavigationContext(services, request, new CancellationTokenSource(), null, true);
+            var context = new NavigationContext(services, request,navPath,isRooted,numberOfPagesToRemove ,paras, new CancellationTokenSource(), null, true);
             //for (int i = 0; i < Adapters.Count; i++)
             //{
             //    var adapter = Adapters[i];
@@ -149,12 +181,12 @@ namespace Uno.Extensions.Navigation
             return new ActiveNavigationService(this, Adapters[idx]);
         }
 
-        public INavigationService ChildNavigation()
+        public INavigationService ChildNavigation(string adapterName = null)
         {
-            return ChildNavigation(Adapters.First());
+            return ChildNavigation(Adapters.First(), adapterName = null);
         }
 
-        public INavigationService ChildNavigation(INavigationAdapter adapter)
+        public INavigationService ChildNavigation(INavigationAdapter adapter, string adapterName = null)
         {
             var idx = Adapters.IndexOf(adapter);
             if (idx < 0)
@@ -162,7 +194,7 @@ namespace Uno.Extensions.Navigation
                 return null;
             }
 
-            if (idx > 0)
+            while (idx > 0 && (string.IsNullOrWhiteSpace(adapterName) || Adapters[idx].Name != adapterName))
             {
                 idx--;
             }
@@ -183,9 +215,9 @@ namespace Uno.Extensions.Navigation
             return Navigation.ParentNavigation(Adapter);
         }
 
-        public INavigationService ChildNavigation()
+        public INavigationService ChildNavigation(string adapterName = null)
         {
-            return Navigation.ChildNavigation(Adapter);
+            return Navigation.ChildNavigation(Adapter, adapterName);
         }
 
     }

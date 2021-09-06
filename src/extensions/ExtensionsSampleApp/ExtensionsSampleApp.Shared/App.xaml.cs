@@ -137,7 +137,7 @@ namespace ExtensionsSampleApp
 
                 // This would normally be done in XAML but since we're manually
                 // creating the frame we need to hook it to the navigation service
-                Navigation.SetIsEnabled(rootFrame, true);
+                Navigation.SetAdapterName(rootFrame, "root");
 
                 // We need to make sure the root frame is loaded before we attempt
                 // to navigate otherwise the adapter won't be enabled

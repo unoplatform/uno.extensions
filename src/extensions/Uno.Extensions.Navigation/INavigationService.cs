@@ -8,6 +8,6 @@ namespace Uno.Extensions.Navigation
 
         INavigationService ParentNavigation();
 
-        INavigationService ChildNavigation();
+        INavigationService ChildNavigation(string adapterName = null);
     }
 }

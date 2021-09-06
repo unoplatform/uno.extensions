@@ -4,6 +4,6 @@ namespace Uno.Extensions.Navigation
 {
     public interface IInitialise
     {
-        Task Initialize(INavigationContext context);
+        Task Initialize(NavigationContext context);
     }
 }

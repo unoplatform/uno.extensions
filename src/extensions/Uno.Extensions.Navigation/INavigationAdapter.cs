@@ -8,7 +8,9 @@ namespace Uno.Extensions.Navigation
 
     public interface INavigationAdapter : INavigationAware
     {
-        bool CanNavigate(NavigationContext context);
+        public string Name { get; set; }
+
+        //bool CanNavigate(NavigationContext context);
 
         NavigationResult Navigate(NavigationContext context);
     }

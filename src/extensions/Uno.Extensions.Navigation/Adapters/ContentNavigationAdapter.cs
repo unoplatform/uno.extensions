@@ -12,55 +12,27 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Adapters
 {
-    public class ContentNavigationAdapter : INavigationAdapter<ContentControl>
+    public class ContentNavigationAdapter : BaseNavigationAdapter<ContentControl>
     {
-        private INavigationMapping Mapping { get; }
-
-        private IServiceProvider Services { get; }
-
-        private IContentWrapper ContentHost { get; }
-
-        public INavigationService Navigation { get; set; }
-
-        public void Inject(ContentControl control)
-        {
-            ContentHost.Inject(control);
-        }
+        private IContentWrapper ContentHost => ControlWrapper as IContentWrapper;
 
         public ContentNavigationAdapter(
             // INavigationService navigation, // Note: Don't pass in - implement INaviationAware instead
             IServiceProvider services,
             INavigationMapping navigationMapping,
-            IContentWrapper contentWrapper)
+            IContentWrapper contentWrapper) : base(services,navigationMapping,contentWrapper)
         {
-            Services = services.CreateScope().ServiceProvider;
-            Mapping = navigationMapping;
-            ContentHost = contentWrapper;
         }
 
-        public bool CanNavigate(NavigationContext context)
+        public override NavigationResult Navigate(NavigationContext context)
         {
             var request = context.Request;
-            var path = request.Route.Path.OriginalString;
-            Debug.WriteLine("Navigation: " + path);
-
-            var map = Mapping.LookupByPath(path);
-            if (map?.View is not null)
-            {
-                return !map.View.IsSubclassOf(typeof(Page));
-            }
-            return false;
-        }
-
-        public NavigationResult Navigate(NavigationContext context)
-        {
-            var request = context.Request;
-            var path = request.Route.Path.OriginalString;
+            var path = context.Path;
             Debug.WriteLine("Navigation: " + path);
 
             var map = Mapping.LookupByPath(path);
 
-            var vm = map.ViewModel is not null ? Services.GetService(map.ViewModel) : null;
+            var vm = map?.ViewModel is not null ? Services.GetService(map.ViewModel) : null;
 
             var view = ContentHost.ShowContent(map.View, vm);
 

@@ -36,12 +36,12 @@
             <Button Content="Tabbed Page - NavigationRequest"
                     nav:Navigation.Path="TabbedPage" />
         </StackPanel>
-        <ContentControl Grid.Row="1" nav:Navigation.IsEnabled="true" />
+        <ContentControl Grid.Row="1" nav:Navigation.AdapterName="content" />
         <StackPanel Grid.Row="2">
             <Button Content="Content Page 1"
-                    nav:Navigation.Path="Content1" />
+                    nav:Navigation.Path="content/Content1" />
             <Button Content="Content Page 2"
-                    nav:Navigation.Path="Content2" />
+                    nav:Navigation.Path="content/Content2" />
         </StackPanel>
     </Grid>
 </Page>
