@@ -1,8 +1,8 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
-using Uno.Extensions.Navigation.Controls;
-using System;
 using Microsoft.Extensions.DependencyInjection;
+using Uno.Extensions.Navigation.Controls;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls;
@@ -42,13 +42,11 @@ namespace Uno.Extensions.Navigation.Adapters
                 var currentVM = await InitializeViewModel();
 
                 await ((currentVM as INavigationStart)?.Start(NavigationContexts.Peek().Item2, false) ?? Task.CompletedTask);
-
             }
             else
             {
                 await DoForwardNavigation(context, (ctx, vm) =>
                 {
-
                     var view = ContentHost.ShowContent(ctx.Mapping.View, vm);
 
                     if (view is INavigationAware navAware)
@@ -63,7 +61,6 @@ namespace Uno.Extensions.Navigation.Adapters
                         NavigationContexts.RemoveAt(NavigationContexts.Count - 2);
                     }
                 });
-
             }
         }
     }

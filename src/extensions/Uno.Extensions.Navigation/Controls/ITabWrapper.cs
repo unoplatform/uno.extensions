@@ -1,7 +1,7 @@
 ﻿using System;
-#if WINDOWS_UWP 
-using Windows.UI.Xaml.Controls;
+#if WINDOWS_UWP
 using Microsoft.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls;
 #else
 using Microsoft.UI.Xaml.Controls;
 #endif

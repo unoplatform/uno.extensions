@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using Uno.Extensions.Navigation;
+﻿using Uno.Extensions.Navigation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -32,7 +31,6 @@ namespace ExtensionsSampleApp.Views
 
         private void CloseWithResponseClick(object sender, RoutedEventArgs e)
         {
-            //var nav = Ioc.Default.GetService<INavigationService>();
             Navigation.NavigateToPreviousView(this, new Widget());
         }
     }

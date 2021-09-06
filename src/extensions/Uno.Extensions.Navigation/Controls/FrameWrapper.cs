@@ -17,11 +17,11 @@ namespace Uno.Extensions.Navigation.Controls
     {
         private Frame Frame { get; set; }
 
-        public void Inject(Frame control) => Frame = control; 
+        public void Inject(Frame control) => Frame = control;
 
         public object GoBack(object parameter, object viewModel)
         {
-            if(parameter is not null)
+            if (parameter is not null)
             {
                 var entry = Frame.BackStack.Last();
                 var newEntry = new PageStackEntry(entry.SourcePageType, parameter, entry.NavigationTransitionInfo);

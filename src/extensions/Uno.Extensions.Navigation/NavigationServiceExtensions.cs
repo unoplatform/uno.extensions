@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Uno.Extensions.Navigation.Adapters;
 using Windows.UI.Popups;
@@ -62,16 +61,14 @@ namespace Uno.Extensions.Navigation
             uint cancelCommandIndex = 0,
             params Windows.UI.Popups.UICommand[] commands)
         {
-
-
             var data = new Dictionary<string, object>()
             {
-                {FrameNavigationAdapter.MessageDialogParameterTitle,title },
-                {FrameNavigationAdapter.MessageDialogParameterContent,content },
-                {FrameNavigationAdapter.MessageDialogParameterOptions, options},
-                {FrameNavigationAdapter.MessageDialogParameterDefaultCommand,defaultCommandIndex },
-                {FrameNavigationAdapter.MessageDialogParameterCancelCommand, cancelCommandIndex},
-                {FrameNavigationAdapter.MessageDialogParameterCommands, commands}
+                { FrameNavigationAdapter.MessageDialogParameterTitle, title },
+                { FrameNavigationAdapter.MessageDialogParameterContent, content },
+                { FrameNavigationAdapter.MessageDialogParameterOptions, options },
+                { FrameNavigationAdapter.MessageDialogParameterDefaultCommand, defaultCommandIndex },
+                { FrameNavigationAdapter.MessageDialogParameterCancelCommand, cancelCommandIndex },
+                { FrameNavigationAdapter.MessageDialogParameterCommands, commands }
             };
 
             var result = service.Navigate(new NavigationRequest(sender, new NavigationRoute(new Uri(FrameNavigationAdapter.MessageDialogUri, UriKind.Relative), data), typeof(UICommand)));

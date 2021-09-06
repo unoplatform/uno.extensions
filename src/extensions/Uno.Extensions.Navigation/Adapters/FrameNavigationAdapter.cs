@@ -1,11 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Uno.Extensions.Navigation.Controls;
-using System;
-using Microsoft.Extensions.DependencyInjection;
-using Windows.Foundation;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Popups;
@@ -15,14 +12,11 @@ using Windows.UI.Popups;
 using UICommand = Windows.UI.Popups.UICommand;
 using Microsoft.UI.Xaml.Controls;
 #endif
-using Uno.Extensions.Navigation;
 
 namespace Uno.Extensions.Navigation.Adapters
 {
     public class FrameNavigationAdapter : BaseNavigationAdapter<Frame>
     {
-
-
         private IFrameWrapper Frame => ControlWrapper as IFrameWrapper;
 
         public FrameNavigationAdapter(
@@ -30,10 +24,7 @@ namespace Uno.Extensions.Navigation.Adapters
             IServiceProvider services,
             INavigationMapping navigationMapping,
             IFrameWrapper frameWrapper) : base(services, navigationMapping, frameWrapper)
-        {
-        }
-
-
+        { }
 
         protected override async Task InternalNavigate(NavigationContext context)
         {
@@ -76,41 +67,35 @@ namespace Uno.Extensions.Navigation.Adapters
                 }
 
                 await ((vm as INavigationStart)?.Start(NavigationContexts.Peek().Item2, false) ?? Task.CompletedTask);
-
             }
             else
             {
-                await DoForwardNavigation(context,(ctx,vm)=>
-                {
-                    var view = Frame.Navigate(ctx.Mapping.View, ctx.Data, vm);
-                    if (view is INavigationAware navAware)
-                    {
-                        navAware.Navigation = Navigation;
-                    }
+                await DoForwardNavigation(context, (ctx, vm) =>
+                 {
+                     var view = Frame.Navigate(ctx.Mapping.View, ctx.Data, vm);
+                     if (view is INavigationAware navAware)
+                     {
+                         navAware.Navigation = Navigation;
+                     }
 
-                    if (ctx.PathIsRooted)
-                    {
-                        while (NavigationContexts.Count > 1)
-                        {
-                            NavigationContexts.RemoveAt(0);
-                        }
+                     if (ctx.PathIsRooted)
+                     {
+                         while (NavigationContexts.Count > 1)
+                         {
+                             NavigationContexts.RemoveAt(0);
+                         }
 
-                        Frame.ClearBackStack();
-                    }
+                         Frame.ClearBackStack();
+                     }
 
-                    if (removeCurrentPageFromBackStack)
-                    {
-                        NavigationContexts.RemoveAt(NavigationContexts.Count - 2);
-                        Frame.RemoveLastFromBackStack();
-                    }
-
-                });
-                
+                     if (removeCurrentPageFromBackStack)
+                     {
+                         NavigationContexts.RemoveAt(NavigationContexts.Count - 2);
+                         Frame.RemoveLastFromBackStack();
+                     }
+                 });
             }
-
         }
-
-    
     }
 
     public static class ListHelpers
@@ -127,9 +112,6 @@ namespace Uno.Extensions.Navigation.Adapters
             list.RemoveAt(list.Count - 1);
             return t;
         }
-
-
-
 
         public static void Push<T>(this IList<T> list, T item)
         {

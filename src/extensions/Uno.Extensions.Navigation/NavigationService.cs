@@ -70,7 +70,7 @@ namespace Uno.Extensions.Navigation
 
         public INavigationService ScopedServiceForControl(object control)
         {
-            if(control is null)
+            if (control is null)
             {
                 return null;
             }
@@ -82,7 +82,6 @@ namespace Uno.Extensions.Navigation
 
             return null;
         }
-
 
         public NavigationResult Navigate(NavigationRequest request)
         {
@@ -120,7 +119,6 @@ namespace Uno.Extensions.Navigation
                 adapter = (ParentNavigation(adapter) as ActiveNavigationService).Adapter;
                 path = path.Length > 2 ? path.Substring(2) : string.Empty;
             }
-
 
             var isRooted = path.StartsWith("/");
 
@@ -227,24 +225,5 @@ namespace Uno.Extensions.Navigation
 
             return new ActiveNavigationService(this, Adapters[idx]);
         }
-    }
-
-    public record ActiveNavigationService(NavigationService Navigation, INavigationAdapter Adapter) : INavigationService
-    {
-        public NavigationResult Navigate(NavigationRequest request)
-        {
-            return Navigation.NavigateWithAdapter(request, Adapter);
-        }
-
-        public INavigationService ParentNavigation()
-        {
-            return Navigation.ParentNavigation(Adapter);
-        }
-
-        public INavigationService ChildNavigation(string adapterName = null)
-        {
-            return Navigation.ChildNavigation(Adapter, adapterName);
-        }
-
     }
 }

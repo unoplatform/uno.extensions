@@ -4,46 +4,10 @@
     <TargetFrameworks>net5.0-windows10.0.19041.0;uap10.0.16299;netstandard2.0;net5.0;net6.0;xamarinios10;xamarinmac20;monoandroid10.0;monoandroid11.0;net6.0-ios;net6.0-android</TargetFrameworks>
  </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Content\Ext.Navigation\HostBuilderExtensions.cs" />
-    <Compile Remove="Content\Ext.Navigation\INavigator.cs" />
-    <Compile Remove="Content\Ext.Navigation\IRouteDefinitions.cs" />
-    <Compile Remove="Content\Ext.Navigation\IRouteMessenger.cs" />
-    <Compile Remove="Content\Ext.Navigation\IRouter.cs" />
-    <Compile Remove="Content\Ext.Navigation\IRouteRedirection.cs" />
-    <Compile Remove="Content\Ext.Navigation\Messages\ClearStackMessage.cs" />
-    <Compile Remove="Content\Ext.Navigation\Messages\CloseMessage.cs" />
-    <Compile Remove="Content\Ext.Navigation\Messages\LaunchMessage.cs" />
-    <Compile Remove="Content\Ext.Navigation\Messages\RoutingMessage.cs" />
-    <Compile Remove="Content\Ext.Navigation\NavigationService.cs" />
-    <Compile Remove="Content\Ext.Navigation\Navigator.cs" />
-    <Compile Remove="Content\Ext.Navigation\RouteMessenger.cs" />
-    <Compile Remove="Content\Ext.Navigation\Router.cs" />
-    <Compile Remove="Content\Ext.Navigation\RouteTypeExtensions.cs" />
-    <Compile Remove="Content\Ext.Navigation\ServiceCollectionExtensions.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Content\Ext.Navigation\HostBuilderExtensions.cs" />
-    <None Include="Content\Ext.Navigation\INavigator.cs" />
-    <None Include="Content\Ext.Navigation\IRouteDefinitions.cs" />
-    <None Include="Content\Ext.Navigation\IRouteMessenger.cs" />
-    <None Include="Content\Ext.Navigation\IRouter.cs" />
-    <None Include="Content\Ext.Navigation\IRouteRedirection.cs" />
-    <None Include="Content\Ext.Navigation\Messages\ClearStackMessage.cs" />
-    <None Include="Content\Ext.Navigation\Messages\CloseMessage.cs" />
-    <None Include="Content\Ext.Navigation\Messages\LaunchMessage.cs" />
-    <None Include="Content\Ext.Navigation\Messages\RoutingMessage.cs" />
-    <None Include="Content\Ext.Navigation\NavigationService.cs" />
-    <None Include="Content\Ext.Navigation\Navigator.cs" />
-    <None Include="Content\Ext.Navigation\RouteMessenger.cs" />
-    <None Include="Content\Ext.Navigation\Router.cs" />
-    <None Include="Content\Ext.Navigation\RouteTypeExtensions.cs" />
-    <None Include="Content\Ext.Navigation\ServiceCollectionExtensions.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="7.0.3" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(IsUWP)' == 'true'" >
+  <ItemGroup Condition="'$(IsUWP)' == 'true'">
     <PackageReference Include="Microsoft.UI.Xaml" Version="2.6.2" />
   </ItemGroup>
 
