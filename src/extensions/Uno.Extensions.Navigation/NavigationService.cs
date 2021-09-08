@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Adapters;
 
@@ -158,17 +159,8 @@ namespace Uno.Extensions.Navigation
             var navWrapper = services.GetService<NavigationServiceProvider>();
             navWrapper.Navigation = new ActiveNavigationService(this, adapter);
 
-            var context = new NavigationContext(services, request, navPath, isRooted, numberOfPagesToRemove, paras, new CancellationTokenSource(), null, true);
-            //for (int i = 0; i < Adapters.Count; i++)
-            //{
-            //    var adapter = Adapters[i];
-            //    if (ActiveAdapters[i] && adapter.CanNavigate(context))
-            //    {
+            var context = new NavigationContext(services, request, navPath, isRooted, numberOfPagesToRemove, paras, new CancellationTokenSource(), new TaskCompletionSource<object>());
             return adapter.Navigate(context);
-            //    }
-            //}
-
-            return default;
         }
 
         private IDictionary<string, object> ParseQueryParameters(string queryString)

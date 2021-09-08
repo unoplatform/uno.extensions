@@ -24,18 +24,10 @@ namespace Uno.Extensions.Navigation.Adapters
         {
         }
 
-        protected override async Task InternalNavigate(NavigationContext context)
+        protected override async Task<NavigationContext> AdapterNavigate(NavigationContext context, bool navBackRequired)
         {
             var request = context.Request;
             var path = context.Path;
-            Debug.WriteLine("Navigation: " + path);
-
-            await EndCurrentNavigationContext(context);
-
-            if (context.CancellationToken.IsCancellationRequested)
-            {
-                return;
-            }
 
             if (context.Path == PreviousViewUri)
             {
@@ -55,6 +47,8 @@ namespace Uno.Extensions.Navigation.Adapters
                     }
                 });
             }
+
+            return context with { CanCancel = false };
         }
     }
 }

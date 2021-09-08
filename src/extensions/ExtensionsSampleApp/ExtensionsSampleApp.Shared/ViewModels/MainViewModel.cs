@@ -38,7 +38,7 @@ namespace ExtensionsSampleApp.ViewModels
 
         public async Task Start(NavigationContext context, bool create)
         {
-            await Task.Delay(10000);
+            await Task.Delay(5000);
         }
 
         public async Task Stop(NavigationContext context, bool cleanup)

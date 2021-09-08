@@ -46,6 +46,12 @@ namespace ExtensionsSampleApp.Views
             var response = await navresult.Response;
         }
 
+private async void NextPageRequestResponseWithTimeoutClick(object sender, RoutedEventArgs e)
+        {
+            var navresult = Navigation.NavigateToViewModel<SecondViewModel, Widget>(this);
+            Task.Run(() => Task.Delay(10000)).ConfigureAwait(true).GetAwaiter().OnCompleted(() => navresult.CancellationSource.Cancel());
+            var response = await navresult.Response;
+        }
         private async void ContentDialogResponseClick(object sender, RoutedEventArgs e)
         {
             var navresult = Navigation.NavigateToView<SimpleContentDialog, ContentDialogResult>(this);
