@@ -24,6 +24,10 @@ namespace ExtensionsSampleApp.Views
 
             ParametersText.Text = e.Parameter.ParseParameter();
         }
+        private void GoBackNavigationRequestClick(object sender, RoutedEventArgs e)
+        {
+            Navigation.Navigate(new NavigationRequest(sender, new NavigationRoute(new Uri("..", UriKind.Relative))));
+        }
 
         private void GoBackNavigateToPreviousViewClick(object sender, RoutedEventArgs e)
         {

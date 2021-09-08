@@ -12,6 +12,8 @@
             <TextBlock Margin="20"
                        FontSize="30"><Run Text="Main - " /><Run Text="{Binding Title}" /></TextBlock>
             <Button Content="Next page - NavigationRequest"
+                    Click="NextPageNavigationRequestClick" />
+            <Button Content="Next page - Navigation Path"
                     nav:Navigation.Path="SecondPage" />
             <Button Content="Next page - NavigateToView"
                     Click="NextPageNavigateToViewClick" />

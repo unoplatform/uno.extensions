@@ -30,6 +30,8 @@
             <Button Content="Next Page with args and data"
                     Click="NextPageNavigateToViewWithQueryAndDataClick" />
             <Button Content="Go Back - NavigationRequest"
+                    Click="GoBackNavigationRequestClick" />
+            <Button Content="Go Back - Navigation Path"
                     nav:Navigation.Path=".." />
             <Button Content="Go Back - NavigateToPreviousView"
                     Click="GoBackNavigateToPreviousViewClick" />
