@@ -60,8 +60,6 @@ namespace ExtensionsSampleApp.Views
         private async void MessageDialogClick(object sender, RoutedEventArgs e)
         {
             var navresult = Navigation.ShowMessageDialog(this,"Basic content", "Content Title",commands: new Windows.UI.Popups.UICommand("test",command=>Debug.WriteLine("TEST")));
-            await Task.Delay(2000);
-            //nav.NavigateToPreviousView(this);
             var response = await navresult.Response;
         }
 
