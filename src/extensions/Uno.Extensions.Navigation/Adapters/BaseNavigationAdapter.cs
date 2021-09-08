@@ -62,18 +62,32 @@ namespace Uno.Extensions.Navigation.Adapters
         {
             var request = context.Request;
 
-            if (request.Response != null)
-            {
-                var tcs = new TaskCompletionSource<object>();
-                context = context with { ResponseCompletion = tcs };
-            }
-
             var navTask = InternalNavigate(context);
 
-            return new NavigationResult(request, navTask, context.ResponseCompletion?.Task ?? Task.FromResult<object>(null));
+            return new NavigationResult(request, navTask, context.CancellationSource, context.ResponseCompletion.Task);
         }
 
-        protected abstract Task InternalNavigate(NavigationContext context);
+        private async Task InternalNavigate(NavigationContext context)
+        {
+            var navBackRequired = await EndCurrentNavigationContext(context);
+
+            if (context.CancellationToken.IsCancellationRequested)
+            {
+                await Task.FromCanceled(context.CancellationToken);
+            }
+
+            context = await AdapterNavigate(context, navBackRequired);
+
+            if (context.CanCancel)
+            {
+                context.CancellationToken.Register(() =>
+                {
+                    Navigation.NavigateToPreviousView(context.Request.Sender);
+                });
+            }
+        }
+
+        protected abstract Task<NavigationContext> AdapterNavigate(NavigationContext context, bool navBackRequired);
 
         protected async Task DoForwardNavigation(NavigationContext context, Action<NavigationContext, object> adapterNavigation)
         {
@@ -168,11 +182,18 @@ namespace Uno.Extensions.Navigation.Adapters
             // before we remove anything from backstack
             if (NavigationContexts.Count > 0)
             {
+                var currentVM = await StopCurrentViewModel(context);
+
+                if (context.IsCancelled)
+                {
+                    return false;
+                }
+
                 if (context.Path == PreviousViewUri)
                 {
                     var responseData = context.Data.TryGetValue(string.Empty, out var response) ? response : default;
 
-                    var previousContext = NavigationContexts.Peek().Item2;
+                    var previousContext = NavigationContexts.Pop().Item2;
 
                     if (previousContext.Path == MessageDialogUri)
                     {
@@ -201,7 +222,7 @@ namespace Uno.Extensions.Navigation.Adapters
 
                     if (previousContext.Request.Response is not null)
                     {
-                        var completion = (previousContext as NavigationContext)?.ResponseCompletion;
+                        var completion = previousContext.ResponseCompletion;
                         if (completion is not null)
                         {
                             completion.SetResult(responseData);
@@ -209,13 +230,12 @@ namespace Uno.Extensions.Navigation.Adapters
                     }
                 }
 
-                var currentVM = await StopCurrentViewModel(context, context.Path == PreviousViewUri);
             }
 
             return frameNavigationRequired;
         }
 
-        protected async Task<object> StopCurrentViewModel(NavigationContext navigation, bool popContext)
+        protected async Task<object> StopCurrentViewModel(NavigationContext navigation)
         {
             var ctx = NavigationContexts.Peek();
             var path = ctx.Item1;
@@ -227,10 +247,6 @@ namespace Uno.Extensions.Navigation.Adapters
                 var services = context.Services;
                 oldVm = services.GetService(context.Mapping.ViewModel);
                 await ((oldVm as INavigationStop)?.Stop(navigation, false) ?? Task.CompletedTask);
-            }
-            if (popContext)
-            {
-                NavigationContexts.Pop();
             }
             return oldVm;
         }

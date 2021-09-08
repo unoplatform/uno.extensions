@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Uno.Extensions.Navigation
 {
-    public record NavigationResult<TResult>(NavigationRequest Request, Task NavigationTask, Task<TResult> Response) : BaseNavigationResult(Request, NavigationTask)
+    public record NavigationResult<TResult>(NavigationRequest Request, Task NavigationTask, CancellationTokenSource CancellationSource, Task<TResult> Response) : BaseNavigationResult(Request, NavigationTask)
     {
         public NavigationResult<TResult> GetAwaiter()
         {
@@ -12,7 +13,7 @@ namespace Uno.Extensions.Navigation
         }
     }
 
-    public record NavigationResult(NavigationRequest Request, Task NavigationTask, Task<object> Response) : BaseNavigationResult(Request, NavigationTask)
+    public record NavigationResult(NavigationRequest Request, Task NavigationTask, CancellationTokenSource CancellationSource, Task<object> Response) : BaseNavigationResult(Request, NavigationTask)
     {
         public NavigationResult GetAwaiter()
         {

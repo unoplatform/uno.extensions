@@ -15,7 +15,7 @@ namespace Uno.Extensions.Navigation
         IDictionary<string, object> Data,
         CancellationTokenSource CancellationSource,
         TaskCompletionSource<object> ResponseCompletion,
-        bool CanCancel,
+        bool CanCancel = true,
         NavigationMap Mapping = null)
     {
 #pragma warning restore SA1313 // Parameter names should begin with lower-case letter
@@ -29,5 +29,7 @@ namespace Uno.Extensions.Navigation
                 CancellationSource.Cancel();
             }
         }
+
+        public bool IsCancelled => CancellationToken.IsCancellationRequested;
     }
 }

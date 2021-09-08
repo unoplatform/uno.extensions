@@ -25,6 +25,8 @@
                     Command="{Binding NavigateToSecondPageCommand}" />
             <Button Content="Next page - NavigationRequest with response"
                     Click="NextPageRequestResponseClick" />
+            <Button Content="Next page - NavigationRequest with response (10 second timeout)"
+                    Click="NextPageRequestResponseWithTimeoutClick" />
             <Button Content="Content Dialog"
                     Click="ContentDialogResponseClick" />
             <Button Content="Content Dialog - Widget Response"

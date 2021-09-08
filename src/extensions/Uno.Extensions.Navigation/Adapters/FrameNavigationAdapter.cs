@@ -26,24 +26,16 @@ namespace Uno.Extensions.Navigation.Adapters
             IFrameWrapper frameWrapper) : base(services, navigationMapping, frameWrapper)
         { }
 
-        protected override async Task InternalNavigate(NavigationContext context)
+        protected override async Task<NavigationContext> AdapterNavigate(NavigationContext context, bool navBackRequired)
         {
             var request = context.Request;
             var path = context.Path;
-
 
             var numberOfPagesToRemove = context.FramesToRemove;
             bool removeCurrentPageFromBackStack = numberOfPagesToRemove > 0;
             if (context.Path != PreviousViewUri && removeCurrentPageFromBackStack)
             {
                 numberOfPagesToRemove--;
-            }
-
-            var frameNavigationRequired = await EndCurrentNavigationContext(context);
-
-            if (context.CancellationToken.IsCancellationRequested)
-            {
-                return;
             }
 
             while (numberOfPagesToRemove > 0)
@@ -57,7 +49,7 @@ namespace Uno.Extensions.Navigation.Adapters
             {
                 var vm = await InitializeViewModel();
 
-                if (frameNavigationRequired)
+                if (navBackRequired)
                 {
                     var view = Frame.GoBack(context.Data, vm);
                     if (view is INavigationAware navAware)
@@ -95,6 +87,8 @@ namespace Uno.Extensions.Navigation.Adapters
                      }
                  });
             }
+
+            return context;
         }
     }
 
