@@ -11,8 +11,13 @@ namespace Uno.Extensions.Navigation
     {
         public static NavigationResult NavigateToView<TView>(this INavigationService service, object sender, object data = null)
         {
+            return service.NavigateToView(sender, typeof(TView), data);
+        }
+
+        public static NavigationResult NavigateToView(this INavigationService service, object sender, Type viewType, object data = null)
+        { 
             var mapping = Ioc.Default.GetRequiredService<INavigationMapping>();
-            var map = mapping.LookupByView(typeof(TView));
+            var map = mapping.LookupByView(viewType);
             return service.Navigate(new NavigationRequest(sender, new NavigationRoute(new Uri(map.Path, UriKind.Relative), data)));
         }
 
@@ -26,8 +31,14 @@ namespace Uno.Extensions.Navigation
 
         public static NavigationResult NavigateToViewModel<TViewViewModel>(this INavigationService service, object sender, object data = null)
         {
+            return service.NavigateToViewModel(sender, typeof(TViewViewModel), data);
+        }
+
+        public static NavigationResult NavigateToViewModel(this INavigationService service, object sender, Type viewModelType, object data = null)
+        {
+
             var mapping = Ioc.Default.GetRequiredService<INavigationMapping>();
-            var map = mapping.LookupByViewModel(typeof(TViewViewModel));
+            var map = mapping.LookupByViewModel(viewModelType);
             return service.Navigate(new NavigationRequest(sender, new NavigationRoute(new Uri(map.Path, UriKind.Relative), data)));
         }
 
