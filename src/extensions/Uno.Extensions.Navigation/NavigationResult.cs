@@ -26,17 +26,9 @@ namespace Uno.Extensions.Navigation
         {
             if (NavigationTask is not null)
             {
-                var task = Task.Delay(10000);
-                task.GetAwaiter().OnCompleted(() =>
-                {
-                    IsCompleted = true;
-                    continuation?.Invoke();
-                });
+                continuation?.Invoke();
             }
-            else
-            {
-                IsCompleted = true;
-            }
+            IsCompleted = true;
         }
 
         public bool IsCompleted

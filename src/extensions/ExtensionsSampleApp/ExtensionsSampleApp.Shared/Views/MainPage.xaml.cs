@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using ExtensionsSampleApp.ViewModels;
@@ -17,6 +18,11 @@ namespace ExtensionsSampleApp.Views
         public MainPage()
         {
             InitializeComponent();
+        }
+
+        private void NextPageNavigationRequestClick(object sender, RoutedEventArgs e)
+        {
+            Navigation.Navigate(new NavigationRequest(sender, new NavigationRoute(new Uri("SecondPage", UriKind.Relative))));
         }
 
         private async void NextPageNavigateToViewClick(object sender, RoutedEventArgs e)
@@ -58,5 +64,6 @@ namespace ExtensionsSampleApp.Views
             //nav.NavigateToPreviousView(this);
             var response = await navresult.Response;
         }
+
     }
 }
