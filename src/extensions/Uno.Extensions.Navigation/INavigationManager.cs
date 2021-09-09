@@ -2,12 +2,10 @@
 {
     public interface INavigationManager : INavigationService
     {
-        INavigationAdapter AddAdapter<TControl>(string adapterName, TControl control, bool enabled);
+        INavigationService AddAdapter<TControl>(INavigationService parentAdapter, string routeName, TControl control, INavigationService existingAdapter);
 
-        void ActivateAdapter(INavigationAdapter adapter);
+        void RemoveAdapter(INavigationService adapter);
 
-        void DeactivateAdapter(INavigationAdapter adapter, bool cleanup = true);
-
-        INavigationService ScopedServiceForControl(object control);
+        //INavigationService ScopedServiceForControl(object control);
     }
 }

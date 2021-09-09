@@ -31,27 +31,27 @@ namespace Uno.Extensions.Navigation.Adapters
 
             if (context.Path == PreviousViewUri)
             {
-                var currentVM = await InitializeViewModel();
+                var currentVM = await InitializeViewModel(CurrentContext);
 
-                await ((currentVM as INavigationStart)?.Start(NavigationContexts.Peek().Item2, false) ?? Task.CompletedTask);
+                await ((currentVM as INavigationStart)?.Start(CurrentContext, false) ?? Task.CompletedTask);
             }
             else
             {
                 await DoForwardNavigation(context, (ctx, vm) =>
                 {
-                    var view = ContentHost.ShowContent(ctx.Mapping.View, vm);
+                    var view = ContentHost.ShowContent(ctx, ctx.Mapping.View, vm);
 
                     if (view is INavigationAware navAware)
                     {
                         navAware.Navigation = Navigation;
                     }
 
-                    // Content control can only show one view at a time, so remove
-                    // any old contexts
-                    if (NavigationContexts.Count > 1)
-                    {
-                        NavigationContexts.RemoveAt(NavigationContexts.Count - 2);
-                    }
+                    //// Content control can only show one view at a time, so remove
+                    //// any old contexts
+                    //if (NavigationContexts.Count > 1)
+                    //{
+                    //    NavigationContexts.RemoveAt(NavigationContexts.Count - 2);
+                    //}
                 });
             }
 

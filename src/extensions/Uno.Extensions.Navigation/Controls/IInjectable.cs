@@ -8,5 +8,7 @@ namespace Uno.Extensions.Navigation.Controls
     public interface IInjectable<TControl>
     {
         void Inject(TControl control);
+
+        NavigationContext CurrentContext { get; }
     }
 }

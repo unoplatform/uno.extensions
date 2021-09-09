@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using ExtensionsSampleApp.ViewModels;
 using Uno.Extensions.Navigation;
+using Uno.Extensions.Navigation.Adapters;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -61,6 +62,12 @@ namespace ExtensionsSampleApp.Views
         private async void ContentDialogWidgetResponseClick(object sender, RoutedEventArgs e)
         {
             var navresult = Navigation.NavigateToView<SimpleContentDialog, Widget>(this);
+            var response = await navresult.Result;
+        }
+
+        private async void ContentDialogResultAndWidgetResponseClick(object sender, RoutedEventArgs e)
+        {
+            var navresult = Navigation.NavigateToView<SimpleContentDialog, ContentResult>(this);
             var response = await navresult.Result;
         }
         private async void MessageDialogClick(object sender, RoutedEventArgs e)

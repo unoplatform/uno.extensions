@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Controls;
 using Windows.Foundation;
+using System.Threading;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Popups;
@@ -30,6 +31,8 @@ namespace Uno.Extensions.Navigation.Adapters
 
         protected IInjectable<TControl> ControlWrapper { get; }
 
+        public virtual NavigationContext CurrentContext => ControlWrapper.CurrentContext;
+
         public string Name { get; set; }
 
         protected INavigationMapping Mapping { get; }
@@ -38,13 +41,18 @@ namespace Uno.Extensions.Navigation.Adapters
 
         public INavigationService Navigation { get; set; }
 
-        protected IList<(string, NavigationContext)> NavigationContexts { get; } = new List<(string, NavigationContext)>();
+        // protected IList<(string, NavigationContext)> NavigationContexts { get; } = new List<(string, NavigationContext)>();
 
-        protected IList<object> OpenDialogs { get; } = new List<object>();
+        protected Stack<(IAsyncInfo, NavigationContext)> OpenDialogs { get; } = new Stack<(IAsyncInfo, NavigationContext)>();
 
         public void Inject(TControl control)
         {
             ControlWrapper.Inject(control);
+        }
+
+        public virtual bool IsCurrentPath(string path)
+        {
+            return CurrentContext.Path == path;
         }
 
         public BaseNavigationAdapter(
@@ -97,10 +105,10 @@ namespace Uno.Extensions.Navigation.Adapters
                 context = context with { Mapping = mapping };
             }
 
-            // Push the new navigation context
-            NavigationContexts.Push((context.Path, context));
+            //// Push the new navigation context
+            //NavigationContexts.Push((context.Path, context));
 
-            var vm = await InitializeViewModel();
+            var vm = await InitializeViewModel(context);
 
             var data = context.Data;
             if (context.Path == MessageDialogUri)
@@ -113,7 +121,7 @@ namespace Uno.Extensions.Navigation.Adapters
                 };
                 md.Commands.AddRange((data[MessageDialogParameterCommands] as UICommand[]) ?? new UICommand[] { });
                 var showTask = md.ShowAsync();
-                OpenDialogs.Add(showTask);
+                OpenDialogs.Push((showTask, context));
                 showTask.AsTask().ContinueWith(result =>
                 {
                     if (result.Status != TaskStatus.Canceled &&
@@ -122,9 +130,11 @@ namespace Uno.Extensions.Navigation.Adapters
                     {
                         Navigation.Navigate(new NavigationRequest(md, new NavigationRoute(new Uri(PreviousViewUri, UriKind.Relative), result.Result)));
                     }
-                });
+                }, CancellationToken.None,
+                                TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.DenyChildAttach,
+                                TaskScheduler.FromCurrentSynchronizationContext());
             }
-            else if (mapping.View?.IsSubclassOf(typeof(ContentDialog)) ?? false)
+            else if (mapping?.View?.IsSubclassOf(typeof(ContentDialog)) ?? false)
             {
                 var dialog = Activator.CreateInstance(mapping.View) as ContentDialog;
                 if (vm is not null)
@@ -135,41 +145,25 @@ namespace Uno.Extensions.Navigation.Adapters
                 {
                     navAware.Navigation = Navigation;
                 }
-                OpenDialogs.Add(dialog);
-                dialog.ShowAsync().AsTask().ContinueWith(result =>
-                {
-                    if (result.Status != TaskStatus.Canceled &&
-                    context.ResultCompletion.Task.Status != TaskStatus.Canceled &&
-                    context.ResultCompletion.Task.Status != TaskStatus.RanToCompletion)
-                    {
-                        Navigation.Navigate(new NavigationRequest(dialog, new NavigationRoute(new Uri(PreviousViewUri, UriKind.Relative), result.Result)));
-                    }
-                });
+
+                var showTask = dialog.ShowAsync();
+                OpenDialogs.Push((showTask, context));
+
+                showTask.AsTask().ContinueWith(result =>
+                                {
+                                    if (result.Status != TaskStatus.Canceled &&
+                                    context.ResultCompletion.Task.Status != TaskStatus.Canceled &&
+                                    context.ResultCompletion.Task.Status != TaskStatus.RanToCompletion)
+                                    {
+                                        Navigation.Navigate(new NavigationRequest(dialog, new NavigationRoute(new Uri(PreviousViewUri, UriKind.Relative), result.Result)));
+                                    }
+                                }, CancellationToken.None,
+                                TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.DenyChildAttach,
+                                TaskScheduler.FromCurrentSynchronizationContext());
             }
             else
             {
                 adapterNavigation(context, vm);
-                //var view = Frame.Navigate(context.Mapping.View, context.Data, vm);
-                //if (view is INavigationAware navAware)
-                //{
-                //    navAware.Navigation = Navigation;
-                //}
-
-                //if (context.PathIsRooted)
-                //{
-                //    while (NavigationContexts.Count > 1)
-                //    {
-                //        NavigationContexts.RemoveAt(0);
-                //    }
-
-                //    Frame.ClearBackStack();
-                //}
-
-                //if (removeCurrentPageFromBackStack)
-                //{
-                //    NavigationContexts.RemoveAt(NavigationContexts.Count - 2);
-                //    Frame.RemoveLastFromBackStack();
-                //}
             }
             await ((vm as INavigationStart)?.Start(context, true) ?? Task.CompletedTask);
         }
@@ -180,7 +174,7 @@ namespace Uno.Extensions.Navigation.Adapters
             // If there's a current nav context, make sure it's stopped before
             // we proceed - this could cancel the navigation, so need to know
             // before we remove anything from backstack
-            if (NavigationContexts.Count > 0)
+            if (CurrentContext is not null)
             {
                 var currentVM = await StopCurrentViewModel(context);
 
@@ -193,33 +187,53 @@ namespace Uno.Extensions.Navigation.Adapters
                 {
                     var responseData = context.Data.TryGetValue(string.Empty, out var response) ? response : default;
 
-                    var previousContext = NavigationContexts.Pop().Item2;
+                    var previousContext = CurrentContext;
 
-                    if (previousContext.Path == MessageDialogUri)
+                    if (OpenDialogs.Any())
                     {
-                        frameNavigationRequired = false;
-                        var dialog = OpenDialogs.LastOrDefault(x => x is IAsyncOperation<IUICommand>) as IAsyncOperation<IUICommand>;
-                        if (dialog is not null)
+                        var dialog = OpenDialogs.Pop();
+                        var showTask = dialog.Item1;
+                        previousContext = dialog.Item2;
+                        if (showTask is IAsyncOperation<IUICommand> showMessageDialogTask)
                         {
-                            OpenDialogs.Remove(dialog);
-                            dialog.Cancel();
+                            frameNavigationRequired = false;
+                            showMessageDialogTask.Cancel();
                         }
-                    }
 
-                    if (previousContext.Mapping?.View?.IsSubclassOf(typeof(ContentDialog)) ?? false)
-                    {
-                        frameNavigationRequired = false;
-                        var dialog = OpenDialogs.LastOrDefault(x => x.GetType() == previousContext.Mapping.View) as ContentDialog;
-                        if (dialog is not null)
+                        if (showTask is IAsyncOperation<ContentDialogResult> contentDialogTask)
                         {
-                            OpenDialogs.Remove(dialog);
+                            frameNavigationRequired = false;
                             if (!(responseData is ContentDialogResult))
                             {
-                                dialog.Hide();
+                                contentDialogTask.Cancel();
                             }
+
+                            var resultType = previousContext.Request.Result;
+
+                            if (resultType is not null && responseData is not null)
+                            {
+                                if (resultType == typeof(ContentDialogResult))
+                                {
+                                    if (responseData is not ContentDialogResult result)
+                                    {
+                                        responseData = ContentDialogResult.None;
+                                    }
+                                }
+                                else if (resultType == typeof(ContentResult))
+                                {
+                                    if (responseData is ContentDialogResult result)
+                                    {
+                                        responseData = new ContentResult(result);
+                                    }
+                                    else
+                                    {
+                                        responseData = new ContentResult(ContentDialogResult.None, responseData);
+                                    }
+                                }
+                            }
+
                         }
                     }
-
                     if (previousContext.Request.Result is not null)
                     {
                         var completion = previousContext.ResultCompletion;
@@ -237,9 +251,7 @@ namespace Uno.Extensions.Navigation.Adapters
 
         protected async Task<object> StopCurrentViewModel(NavigationContext navigation)
         {
-            var ctx = NavigationContexts.Peek();
-            var path = ctx.Item1;
-            var context = ctx.Item2;
+            var context = CurrentContext;
 
             object oldVm = default;
             if (context.Mapping?.ViewModel is not null)
@@ -251,12 +263,8 @@ namespace Uno.Extensions.Navigation.Adapters
             return oldVm;
         }
 
-        protected async Task<object> InitializeViewModel()
+        protected async Task<object> InitializeViewModel(NavigationContext context)
         {
-            var ctx = NavigationContexts.Peek();
-            var path = ctx.Item1;
-            var context = ctx.Item2;
-
             var mapping = context.Mapping;
             object vm = default;
             if (mapping?.ViewModel is not null)
@@ -269,6 +277,15 @@ namespace Uno.Extensions.Navigation.Adapters
                 await ((vm as IInitialise)?.Initialize(context) ?? Task.CompletedTask);
             }
             return vm;
+        }
+    }
+
+    public record ContentResult (ContentDialogResult Result, object Data=null)
+    {
+        public static implicit operator ContentDialogResult(
+                                       ContentResult entity)
+        {
+            return entity.Result;
         }
     }
 }

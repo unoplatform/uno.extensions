@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using CommunityToolkit.Mvvm.DependencyInjection;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
@@ -17,17 +18,58 @@ using Microsoft.UI.Xaml.Media;
 
 namespace Uno.Extensions.Navigation.Controls
 {
-    public partial class Navigation : DependencyObject
+    public static class Navigation
     {
-        public static readonly DependencyProperty AdapterNameProperty =
+        private static INavigationManager navigationManager;
+        private static INavigationManager NavigationManager
+        {
+            get
+            {
+                return navigationManager ?? (navigationManager = Ioc.Default.GetService<INavigationManager>());
+            }
+        }
+
+        public static readonly DependencyProperty AdapterProperty =
+       DependencyProperty.RegisterAttached(
+         "Adapter",
+         typeof(INavigationService),
+         typeof(Navigation),
+         new PropertyMetadata(null)
+       );
+
+        public static readonly DependencyProperty ContextProperty =
         DependencyProperty.RegisterAttached(
-          "AdapterName",
-          typeof(string),
+          "Context",
+          typeof(NavigationContext),
           typeof(Navigation),
-          new PropertyMetadata(false, AdapterNameChanged)
+          new PropertyMetadata(null)
         );
 
-        private static void AdapterNameChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        public static readonly DependencyProperty IsContainerProperty =
+        DependencyProperty.RegisterAttached(
+          "IsContainer",
+          typeof(bool),
+          typeof(Navigation),
+          new PropertyMetadata(false, IsContainerChanged)
+        );
+
+        private static void IsContainerChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is FrameworkElement element)
+            {
+                RegisterElement(element, string.Empty);
+            }
+        }
+
+        public static readonly DependencyProperty RouteNameProperty =
+        DependencyProperty.RegisterAttached(
+          "RouteName",
+          typeof(string),
+          typeof(Navigation),
+          new PropertyMetadata(false, RouteNameChanged)
+        );
+
+        private static void RouteNameChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is FrameworkElement element)
             {
@@ -35,97 +77,84 @@ namespace Uno.Extensions.Navigation.Controls
             }
         }
 
-        private static void RegisterElement(FrameworkElement element, string adapterName)
+        private static void RegisterElement(FrameworkElement element, string routeName)
         {
-            var nav = Ioc.Default.GetService<INavigationManager>();
 
-            element.Loaded += (s, e) =>
+            element.Loaded += (sLoaded, eLoaded) =>
             {
+                var loadedElement = sLoaded as FrameworkElement;
+                var existingAdapter = loadedElement.GetAdapter();
+                var parent = ScopedServiceForControl(loadedElement.Parent);
                 var adapter = element switch
                 {
-                    Frame frame => nav.AddAdapter(adapterName, frame, false),
-                    TabView tabs => nav.AddAdapter(adapterName, tabs, false),
-                    ContentControl content => nav.AddAdapter(adapterName, content, false),
+                    Frame frame => NavigationManager.AddAdapter(parent, routeName, frame, existingAdapter),
+                    TabView tabs => NavigationManager.AddAdapter(parent, routeName, tabs, existingAdapter),
+                    ContentControl content => NavigationManager.AddAdapter(parent, routeName, content, existingAdapter),
                     _ => default
                 };
-                var predicates = new List<Func<bool>>();
-                var disposes = new List<Action>();
-                Action updateActivation = () =>
-                {
-                    var enabled = true;
-                    foreach (var p in predicates)
-                    {
-                        if (!p())
-                        {
-                            enabled = false;
-                            break;
-                        }
-                    }
-                    if (enabled)
-                    {
-                        nav.ActivateAdapter(adapter);
-                    }
-                    else
-                    {
-                        nav.DeactivateAdapter(adapter, false);
-                    }
-                };
-                WalkHierarchy(element, predicates, updateActivation, disposes);
-                updateActivation();
-
-                element.Unloaded += (s, e) =>
-                {
-                    if (adapter != null)
-                    {
-                        foreach (var d in disposes)
-                        {
-                            d();
-                        }
-                        nav.DeactivateAdapter(adapter);
-                    }
-                };
+                loadedElement.SetAdapter(adapter);
+                loadedElement.Unloaded += (sUnloaded, eUnloaded) =>
+               {
+                   if (adapter != null)
+                   {
+                       NavigationManager.RemoveAdapter(adapter);
+                   }
+               };
             };
         }
 
-        private static void WalkHierarchy(FrameworkElement element, List<Func<bool>> predicates, Action updateActivation, List<Action> disposes)
+        public static void SetAdapter(this FrameworkElement element, INavigationService value)
         {
-            var parent = VisualTreeHelper.GetParent(element);
-            var elements = new List<DependencyObject>();
-            elements.Add(element);
-            while (parent != null)
+            element.SetValue(AdapterProperty, value);
+        }
+
+        public static INavigationService GetAdapter(this FrameworkElement element)
+        {
+            if (element is null)
             {
-                switch (parent)
-                {
-                    case Frame frame:
-                        break;
-                    case TabView tabs:
-                        var tab = (from t in tabs.TabItems.OfType<TabViewItem>()
-                                   where elements.Contains(t.Content)
-                                   select t).FirstOrDefault();
-                        if (tab is null)
-                        {
-                            break;
-                        }
-
-                        predicates.Add(() => tabs.SelectedItem as TabViewItem == tab);
-                        SelectionChangedEventHandler handler = (s, e) => updateActivation();
-                        tabs.SelectionChanged += handler;
-                        disposes.Add(() => tabs.SelectionChanged -= handler);
-                        break;
-                }
-                elements.Add(parent);
-                parent = VisualTreeHelper.GetParent(parent);
+                return null;
             }
+            return (INavigationService)element.GetValue(AdapterProperty);
+        }
+        public static void SetContext(this FrameworkElement element, NavigationContext value)
+        {
+            element.SetValue(ContextProperty, value);
         }
 
-        public static void SetAdapterName(FrameworkElement element, string value)
+        public static NavigationContext GetContext(this FrameworkElement element)
         {
-            element.SetValue(AdapterNameProperty, value);
+            if (element is null)
+            {
+                return null;
+            }
+            return (NavigationContext)element.GetValue(ContextProperty);
         }
 
-        public static string GetAdapterName(FrameworkElement element)
+        public static TElement AsContainer<TElement>(this TElement element)
+            where TElement : FrameworkElement
         {
-            return (string)element.GetValue(AdapterNameProperty);
+            element.SetValue(IsContainerProperty, true);
+            return element;
+        }
+
+        public static void SetIsContainer(FrameworkElement element, bool value)
+        {
+            element.SetValue(IsContainerProperty, value);
+        }
+
+        public static bool GetIsContainer(FrameworkElement element)
+        {
+            return (bool)element.GetValue(IsContainerProperty);
+        }
+
+        public static void SetRouteName(FrameworkElement element, string value)
+        {
+            element.SetValue(RouteNameProperty, value);
+        }
+
+        public static string GetRouteName(FrameworkElement element)
+        {
+            return (string)element.GetValue(RouteNameProperty);
         }
 
         public static readonly DependencyProperty PathProperty =
@@ -143,8 +172,7 @@ namespace Uno.Extensions.Navigation.Controls
                 var path = GetPath(element);
                 RoutedEventHandler handler = (s, e) =>
                     {
-                        var nm = Ioc.Default.GetService<INavigationManager>();
-                        var nav = ScopedServiceForControl(nm, s as DependencyObject);
+                        var nav = ScopedServiceForControl(s as DependencyObject);
                         nav.Navigate(new NavigationRequest(s, new NavigationRoute(new Uri(path, UriKind.Relative))));
                     };
                 element.Loaded += (s, e) =>
@@ -158,9 +186,9 @@ namespace Uno.Extensions.Navigation.Controls
             }
         }
 
-        private static INavigationService ScopedServiceForControl(INavigationManager manager, DependencyObject element)
+        private static INavigationService ScopedServiceForControl(DependencyObject element)
         {
-            var service = manager.ScopedServiceForControl(element);
+            var service = (element as FrameworkElement).GetAdapter();
             if (service is not null)
             {
                 return service;
@@ -169,7 +197,7 @@ namespace Uno.Extensions.Navigation.Controls
             var parent = VisualTreeHelper.GetParent(element);
             // If parent is null, we're at top of visual tree,
             // so just return the nav manager itself
-            return parent is not null ? ScopedServiceForControl(manager, parent) : manager;
+            return parent is not null ? ScopedServiceForControl(parent) : NavigationManager;
         }
 
         public static void SetPath(FrameworkElement element, string value)

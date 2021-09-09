@@ -31,6 +31,8 @@
                     Click="ContentDialogResponseClick" />
             <Button Content="Content Dialog - Widget Response"
                     Click="ContentDialogWidgetResponseClick" />
+            <Button Content="Content Dialog - Data and Widget Response"
+                    Click="ContentDialogResultAndWidgetResponseClick" />
             <Button Content="Message Dialog"
                     Click="MessageDialogClick" />
         </StackPanel>

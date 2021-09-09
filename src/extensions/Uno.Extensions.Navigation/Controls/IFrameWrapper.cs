@@ -11,7 +11,7 @@ namespace Uno.Extensions.Navigation.Controls
     {
         object GoBack(object parameter, object viewModel);
 
-        object Navigate(Type sourcePageType, object parameter, object viewModel);
+        object Navigate(NavigationContext context, Type sourcePageType, object parameter, object viewModel);
 
         void RemoveLastFromBackStack();
 

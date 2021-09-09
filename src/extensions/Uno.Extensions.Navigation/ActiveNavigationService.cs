@@ -1,21 +1,23 @@
-﻿namespace Uno.Extensions.Navigation
+﻿using System.Collections.Generic;
+
+namespace Uno.Extensions.Navigation;
+
+public record ActiveNavigationService(NavigationService Navigation, INavigationAdapter Adapter, ActiveNavigationService ParentAdapter = null) : INavigationService
 {
-    public record ActiveNavigationService(NavigationService Navigation, INavigationAdapter Adapter) : INavigationService
+    public IDictionary<string, ActiveNavigationService> NestedAdapters { get; } =   new Dictionary<string, ActiveNavigationService>();
+
+    public NavigationResponse Navigate(NavigationRequest request)
     {
-        public NavigationResponse Navigate(NavigationRequest request)
-        {
-            return Navigation.NavigateWithAdapter(request, Adapter);
-        }
+        return Navigation.NavigateWithAdapter(request, this);
+    }
 
-        public INavigationService ParentNavigation()
-        {
-            return Navigation.ParentNavigation(Adapter);
-        }
+    public INavigationService ParentNavigation()
+    {
+        return ParentAdapter;
+    }
 
-        public INavigationService ChildNavigation(string adapterName = null)
-        {
-            return Navigation.ChildNavigation(Adapter, adapterName);
-        }
-
+    public INavigationService NestedNavigation(string routeName = null)
+    {
+        return NestedAdapters.TryGetValue(routeName + string.Empty, out var service) ? service : null;
     }
 }
