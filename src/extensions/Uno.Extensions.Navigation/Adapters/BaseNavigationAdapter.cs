@@ -64,7 +64,7 @@ namespace Uno.Extensions.Navigation.Adapters
 
             var navTask = InternalNavigate(context);
 
-            return new NavigationResult(request, navTask, context.CancellationSource, context.ResponseCompletion.Task);
+            return new NavigationResult(request, navTask, context.CancellationSource, context.ResultCompletion.Task);
         }
 
         private async Task InternalNavigate(NavigationContext context)
@@ -117,8 +117,8 @@ namespace Uno.Extensions.Navigation.Adapters
                 showTask.AsTask().ContinueWith(result =>
                 {
                     if (result.Status != TaskStatus.Canceled &&
-                    context.ResponseCompletion.Task.Status != TaskStatus.Canceled &&
-                    context.ResponseCompletion.Task.Status != TaskStatus.RanToCompletion)
+                    context.ResultCompletion.Task.Status != TaskStatus.Canceled &&
+                    context.ResultCompletion.Task.Status != TaskStatus.RanToCompletion)
                     {
                         Navigation.Navigate(new NavigationRequest(md, new NavigationRoute(new Uri(PreviousViewUri, UriKind.Relative), result.Result)));
                     }
@@ -139,8 +139,8 @@ namespace Uno.Extensions.Navigation.Adapters
                 dialog.ShowAsync().AsTask().ContinueWith(result =>
                 {
                     if (result.Status != TaskStatus.Canceled &&
-                    context.ResponseCompletion.Task.Status != TaskStatus.Canceled &&
-                    context.ResponseCompletion.Task.Status != TaskStatus.RanToCompletion)
+                    context.ResultCompletion.Task.Status != TaskStatus.Canceled &&
+                    context.ResultCompletion.Task.Status != TaskStatus.RanToCompletion)
                     {
                         Navigation.Navigate(new NavigationRequest(dialog, new NavigationRoute(new Uri(PreviousViewUri, UriKind.Relative), result.Result)));
                     }
@@ -220,9 +220,9 @@ namespace Uno.Extensions.Navigation.Adapters
                         }
                     }
 
-                    if (previousContext.Request.Response is not null)
+                    if (previousContext.Request.Result is not null)
                     {
-                        var completion = previousContext.ResponseCompletion;
+                        var completion = previousContext.ResultCompletion;
                         if (completion is not null)
                         {
                             completion.SetResult(responseData);
