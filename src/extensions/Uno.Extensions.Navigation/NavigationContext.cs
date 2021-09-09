@@ -14,7 +14,7 @@ namespace Uno.Extensions.Navigation
         int FramesToRemove,
         IDictionary<string, object> Data,
         CancellationTokenSource CancellationSource,
-        TaskCompletionSource<object> ResponseCompletion,
+        TaskCompletionSource<object> ResultCompletion,
         bool CanCancel = true,
         NavigationMap Mapping = null)
     {

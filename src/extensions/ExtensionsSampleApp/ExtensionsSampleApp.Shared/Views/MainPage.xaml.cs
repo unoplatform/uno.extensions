@@ -43,30 +43,30 @@ namespace ExtensionsSampleApp.Views
         private async void NextPageRequestResponseClick(object sender, RoutedEventArgs e)
         {
             var navresult = Navigation.NavigateToViewModel<SecondViewModel, Widget>(this);
-            var response = await navresult.Response;
+            var response = await navresult.Result;
         }
 
 private async void NextPageRequestResponseWithTimeoutClick(object sender, RoutedEventArgs e)
         {
             var navresult = Navigation.NavigateToViewModel<SecondViewModel, Widget>(this);
             Task.Run(() => Task.Delay(10000)).ConfigureAwait(true).GetAwaiter().OnCompleted(() => navresult.CancellationSource.Cancel());
-            var response = await navresult.Response;
+            var response = await navresult.Result;
         }
         private async void ContentDialogResponseClick(object sender, RoutedEventArgs e)
         {
             var navresult = Navigation.NavigateToView<SimpleContentDialog, ContentDialogResult>(this);
-            var response = await navresult.Response;
+            var response = await navresult.Result;
         }
 
         private async void ContentDialogWidgetResponseClick(object sender, RoutedEventArgs e)
         {
             var navresult = Navigation.NavigateToView<SimpleContentDialog, Widget>(this);
-            var response = await navresult.Response;
+            var response = await navresult.Result;
         }
         private async void MessageDialogClick(object sender, RoutedEventArgs e)
         {
             var navresult = Navigation.ShowMessageDialog(this,"Basic content", "Content Title",commands: new Windows.UI.Popups.UICommand("test",command=>Debug.WriteLine("TEST")));
-            var response = await navresult.Response;
+            var response = await navresult.Result;
         }
 
     }
