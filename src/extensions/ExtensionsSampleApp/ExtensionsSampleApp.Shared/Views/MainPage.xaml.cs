@@ -12,7 +12,7 @@ namespace ExtensionsSampleApp.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainPage: INavigationAware
+    public sealed partial class MainPage : INavigationAware
     {
         public INavigationService Navigation { get; set; }
         public MainPage()
@@ -46,7 +46,7 @@ namespace ExtensionsSampleApp.Views
             var response = await navresult.Result;
         }
 
-private async void NextPageRequestResponseWithTimeoutClick(object sender, RoutedEventArgs e)
+        private async void NextPageRequestResponseWithTimeoutClick(object sender, RoutedEventArgs e)
         {
             var navresult = Navigation.NavigateToViewModel<SecondViewModel, Widget>(this);
             Task.Run(() => Task.Delay(10000)).ConfigureAwait(true).GetAwaiter().OnCompleted(() => navresult.CancellationSource.Cancel());
@@ -65,7 +65,7 @@ private async void NextPageRequestResponseWithTimeoutClick(object sender, Routed
         }
         private async void MessageDialogClick(object sender, RoutedEventArgs e)
         {
-            var navresult = Navigation.ShowMessageDialog(this,"Basic content", "Content Title",commands: new Windows.UI.Popups.UICommand("test",command=>Debug.WriteLine("TEST")));
+            var navresult = Navigation.ShowMessageDialog(this, "Basic content", "Content Title", commands: new Windows.UI.Popups.UICommand("test", command => Debug.WriteLine("TEST")));
             var response = await navresult.Result;
         }
 
