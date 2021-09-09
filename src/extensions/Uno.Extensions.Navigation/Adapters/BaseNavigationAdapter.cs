@@ -58,13 +58,13 @@ namespace Uno.Extensions.Navigation.Adapters
             ControlWrapper = control;
         }
 
-        public NavigationResult Navigate(NavigationContext context)
+        public NavigationResponse Navigate(NavigationContext context)
         {
             var request = context.Request;
 
             var navTask = InternalNavigate(context);
 
-            return new NavigationResult(request, navTask, context.CancellationSource, context.ResultCompletion.Task);
+            return new NavigationResponse(request, navTask, context.CancellationSource, context.ResultCompletion.Task);
         }
 
         private async Task InternalNavigate(NavigationContext context)

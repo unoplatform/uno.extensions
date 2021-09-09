@@ -4,7 +4,7 @@ namespace Uno.Extensions.Navigation
 {
     public interface INavigationService
     {
-        NavigationResult Navigate(NavigationRequest request);
+        NavigationResponse Navigate(NavigationRequest request);
 
         INavigationService ParentNavigation();
 

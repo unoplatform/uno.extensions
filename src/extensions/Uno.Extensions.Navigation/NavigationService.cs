@@ -84,12 +84,12 @@ namespace Uno.Extensions.Navigation
             return null;
         }
 
-        public NavigationResult Navigate(NavigationRequest request)
+        public NavigationResponse Navigate(NavigationRequest request)
         {
             return NavigateWithAdapter(request, Adapters.Last());
         }
 
-        public NavigationResult NavigateWithAdapter(NavigationRequest request, INavigationAdapter adapter)
+        public NavigationResponse NavigateWithAdapter(NavigationRequest request, INavigationAdapter adapter)
         {
             var path = request.Route.Path.OriginalString;
 

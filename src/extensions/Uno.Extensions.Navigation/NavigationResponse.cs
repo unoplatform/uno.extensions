@@ -5,23 +5,23 @@ using System.Threading.Tasks;
 
 namespace Uno.Extensions.Navigation
 {
-    public record NavigationResult<TResult>(NavigationRequest Request, Task NavigationTask, CancellationTokenSource CancellationSource, Task<TResult> Result) : BaseNavigationResult(Request, NavigationTask)
+    public record NavigationResponse<TResult>(NavigationRequest Request, Task NavigationTask, CancellationTokenSource CancellationSource, Task<TResult> Result) : BaseNavigationResponse(Request, NavigationTask)
     {
-        public NavigationResult<TResult> GetAwaiter()
+        public NavigationResponse<TResult> GetAwaiter()
         {
             return this;
         }
     }
 
-    public record NavigationResult(NavigationRequest Request, Task NavigationTask, CancellationTokenSource CancellationSource, Task<object> Result) : BaseNavigationResult(Request, NavigationTask)
+    public record NavigationResponse(NavigationRequest Request, Task NavigationTask, CancellationTokenSource CancellationSource, Task<object> Result) : BaseNavigationResponse(Request, NavigationTask)
     {
-        public NavigationResult GetAwaiter()
+        public NavigationResponse GetAwaiter()
         {
             return this;
         }
     }
 
-    public record BaseNavigationResult(NavigationRequest Request, Task NavigationTask) : INotifyCompletion
+    public record BaseNavigationResponse(NavigationRequest Request, Task NavigationTask) : INotifyCompletion
     {
         public void OnCompleted(Action continuation)
         {

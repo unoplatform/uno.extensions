@@ -2,7 +2,7 @@
 {
     public record ActiveNavigationService(NavigationService Navigation, INavigationAdapter Adapter) : INavigationService
     {
-        public NavigationResult Navigate(NavigationRequest request)
+        public NavigationResponse Navigate(NavigationRequest request)
         {
             return Navigation.NavigateWithAdapter(request, Adapter);
         }

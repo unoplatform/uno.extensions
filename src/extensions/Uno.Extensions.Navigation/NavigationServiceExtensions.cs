@@ -9,32 +9,32 @@ namespace Uno.Extensions.Navigation
 {
     public static class NavigationServiceExtensions
     {
-        public static NavigationResult NavigateToView<TView>(this INavigationService service, object sender, object data = null)
+        public static NavigationResponse NavigateToView<TView>(this INavigationService service, object sender, object data = null)
         {
             return service.NavigateToView(sender, typeof(TView), data);
         }
 
-        public static NavigationResult NavigateToView(this INavigationService service, object sender, Type viewType, object data = null)
+        public static NavigationResponse NavigateToView(this INavigationService service, object sender, Type viewType, object data = null)
         { 
             var mapping = Ioc.Default.GetRequiredService<INavigationMapping>();
             var map = mapping.LookupByView(viewType);
             return service.Navigate(new NavigationRequest(sender, new NavigationRoute(new Uri(map.Path, UriKind.Relative), data)));
         }
 
-        public static NavigationResult<TResponse> NavigateToView<TView, TResponse>(this INavigationService service, object sender, object data = null)
+        public static NavigationResponse<TResult> NavigateToView<TView, TResult>(this INavigationService service, object sender, object data = null)
         {
             var mapping = Ioc.Default.GetRequiredService<INavigationMapping>();
             var map = mapping.LookupByView(typeof(TView));
-            var result = service.Navigate(new NavigationRequest(sender, new NavigationRoute(new Uri(map.Path, UriKind.Relative), data), typeof(TResponse)));
-            return new NavigationResult<TResponse>(result.Request, result.NavigationTask, result.CancellationSource, result.Result.ContinueWith(x => (TResponse)x.Result));
+            var result = service.Navigate(new NavigationRequest(sender, new NavigationRoute(new Uri(map.Path, UriKind.Relative), data), typeof(TResult)));
+            return new NavigationResponse<TResult>(result.Request, result.NavigationTask, result.CancellationSource, result.Result.ContinueWith(x => (TResult)x.Result));
         }
 
-        public static NavigationResult NavigateToViewModel<TViewViewModel>(this INavigationService service, object sender, object data = null)
+        public static NavigationResponse NavigateToViewModel<TViewViewModel>(this INavigationService service, object sender, object data = null)
         {
             return service.NavigateToViewModel(sender, typeof(TViewViewModel), data);
         }
 
-        public static NavigationResult NavigateToViewModel(this INavigationService service, object sender, Type viewModelType, object data = null)
+        public static NavigationResponse NavigateToViewModel(this INavigationService service, object sender, Type viewModelType, object data = null)
         {
 
             var mapping = Ioc.Default.GetRequiredService<INavigationMapping>();
@@ -42,27 +42,27 @@ namespace Uno.Extensions.Navigation
             return service.Navigate(new NavigationRequest(sender, new NavigationRoute(new Uri(map.Path, UriKind.Relative), data)));
         }
 
-        public static NavigationResult<TResponse> NavigateToViewModel<TViewViewModel, TResponse>(this INavigationService service, object sender, object data = null)
+        public static NavigationResponse<TResult> NavigateToViewModel<TViewViewModel, TResult>(this INavigationService service, object sender, object data = null)
         {
             var mapping = Ioc.Default.GetRequiredService<INavigationMapping>();
             var map = mapping.LookupByViewModel(typeof(TViewViewModel));
-            var result = service.Navigate(new NavigationRequest(sender, new NavigationRoute(new Uri(map.Path, UriKind.Relative), data), typeof(TResponse)));
-            return new NavigationResult<TResponse>(result.Request, result.NavigationTask, result.CancellationSource, result.Result.ContinueWith(x => (TResponse)x.Result));
+            var result = service.Navigate(new NavigationRequest(sender, new NavigationRoute(new Uri(map.Path, UriKind.Relative), data), typeof(TResult)));
+            return new NavigationResponse<TResult>(result.Request, result.NavigationTask, result.CancellationSource, result.Result.ContinueWith(x => (TResult)x.Result));
         }
 
-        public static NavigationResult NavigateForData<TData>(this INavigationService service, object sender, TData data)
+        public static NavigationResponse NavigateForData<TData>(this INavigationService service, object sender, TData data)
         {
             var mapping = Ioc.Default.GetRequiredService<INavigationMapping>();
             var map = mapping.LookupByData(typeof(TData));
             return service.Navigate(new NavigationRequest(sender, new NavigationRoute(new Uri(map.Path, UriKind.Relative), data)));
         }
 
-        public static NavigationResult NavigateToPreviousView(this INavigationService service, object sender, object data = null)
+        public static NavigationResponse NavigateToPreviousView(this INavigationService service, object sender, object data = null)
         {
             return service.Navigate(new NavigationRequest(sender, new NavigationRoute(new Uri(FrameNavigationAdapter.PreviousViewUri, UriKind.Relative), data)));
         }
 
-        public static NavigationResult<Windows.UI.Popups.UICommand> ShowMessageDialog(
+        public static NavigationResponse<Windows.UI.Popups.UICommand> ShowMessageDialog(
             this INavigationService service,
             object sender,
             string content,
@@ -83,7 +83,7 @@ namespace Uno.Extensions.Navigation
             };
 
             var result = service.Navigate(new NavigationRequest(sender, new NavigationRoute(new Uri(FrameNavigationAdapter.MessageDialogUri, UriKind.Relative), data), typeof(UICommand)));
-            return new NavigationResult<UICommand>(result.Request, result.NavigationTask, result.CancellationSource, result.Result.ContinueWith(x => (UICommand)x.Result));
+            return new NavigationResponse<UICommand>(result.Request, result.NavigationTask, result.CancellationSource, result.Result.ContinueWith(x => (UICommand)x.Result));
         }
     }
 }
