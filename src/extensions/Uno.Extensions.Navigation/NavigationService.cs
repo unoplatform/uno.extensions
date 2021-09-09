@@ -10,11 +10,12 @@ namespace Uno.Extensions.Navigation
 {
     public class NavigationService : INavigationManager
     {
-        private IList<INavigationAdapter> Adapters { get; } = new List<INavigationAdapter>();
+        private ActiveNavigationService RootAdapter { get; set; }
+        //private IList<INavigationAdapter> Adapters { get; } = new List<INavigationAdapter>();
 
-        private IDictionary<object, INavigationAdapter> AdapterLookup { get; } = new Dictionary<object, INavigationAdapter>();
+        //private IDictionary<object, ActiveNavigationService> AdapterLookup { get; } = new Dictionary<object, ActiveNavigationService>();
 
-        private IList<bool> ActiveAdapters { get; } = new List<bool>();
+        //private IList<bool> ActiveAdapters { get; } = new List<bool>();
 
         private IServiceProvider Services { get; }
 
@@ -23,73 +24,84 @@ namespace Uno.Extensions.Navigation
             Services = services;
         }
 
-        public INavigationAdapter AddAdapter<TControl>(string adapterName, TControl control, bool enabled)
+        public INavigationService AddAdapter<TControl>(INavigationService parentAdapter, string routeName, TControl control, INavigationService existingAdapter)
         {
-            var scope = Services.CreateScope();
-            var services = scope.ServiceProvider;
-
-            var adapter = services.GetService<INavigationAdapter<TControl>>();
-            adapter.Name = adapterName;
-            if (adapter is INavigationAware navAware)
+            var ans = existingAdapter as ActiveNavigationService;
+            var parent = parentAdapter as ActiveNavigationService;
+            if (ans is null)
             {
-                navAware.Navigation = new ActiveNavigationService(this, adapter);
+                var scope = Services.CreateScope();
+                var services = scope.ServiceProvider;
+
+                var adapter = services.GetService<INavigationAdapter<TControl>>();
+                adapter.Name = routeName;
+                adapter.Inject(control);
+
+                ans = new ActiveNavigationService(this, adapter, parent);
             }
-            adapter.Inject(control);
-            Adapters.Insert(0, adapter);
-            // Default the first adapter to true
-            // This is to capture the initial navigation on the system which could be attempted
-            // before the frame has been loaded
-            ActiveAdapters.Insert(0, enabled || ActiveAdapters.Count == 0);
-            AdapterLookup[control] = adapter;
-            return adapter;
-        }
 
-        public void ActivateAdapter(INavigationAdapter adapter)
-        {
-            var index = Adapters.IndexOf(adapter);
-            ActiveAdapters[index] = true;
-        }
-
-        public void DeactivateAdapter(INavigationAdapter adapter, bool cleanup)
-        {
-            var index = Adapters.IndexOf(adapter);
-            if (index < 0)
+            if (parent is null)
             {
-                return;
-            }
-            if (cleanup)
-            {
-                Adapters.RemoveAt(index);
-                ActiveAdapters.RemoveAt(index);
-                AdapterLookup.Remove(kvp => kvp.Value == adapter);
+#if DEBUG
+                if (RootAdapter is not null) throw new Exception("Null root adapter expected");
+#endif
+                RootAdapter = ans;
             }
             else
             {
-                ActiveAdapters[index] = false;
+                parent.NestedAdapters[routeName + string.Empty] = ans;
             }
+
+            if (ans.Adapter is INavigationAware navAware)
+            {
+                navAware.Navigation = ans;
+            }
+
+            //AdapterLookup[control] = ans;
+            return ans;
         }
 
-        public INavigationService ScopedServiceForControl(object control)
+        public void RemoveAdapter(INavigationService adapter)
         {
-            if (control is null)
+            var ans = adapter as ActiveNavigationService;
+            if (ans is null)
             {
-                return null;
+                return;
             }
 
-            if (AdapterLookup.TryGetValue(control, out var adapter))
+            // Detach adapter from parent
+            var parent = adapter.ParentNavigation() as ActiveNavigationService;
+            if (parent is not null)
             {
-                return new ActiveNavigationService(this, adapter);
+                parent.NestedAdapters.Remove(kvp => kvp.Value == ans);
             }
 
-            return null;
+            //// Remove adapter from control lookup
+            //AdapterLookup.Remove(kvp => kvp.Value == ans);
         }
+
+
+        //public INavigationService ScopedServiceForControl(object control)
+        //{
+        //    if (control is null)
+        //    {
+        //        return null;
+        //    }
+
+        //    if (AdapterLookup.TryGetValue(control, out var adapter))
+        //    {
+        //        return adapter;
+        //    }
+
+        //    return null;
+        //}
 
         public NavigationResponse Navigate(NavigationRequest request)
         {
-            return NavigateWithAdapter(request, Adapters.Last());
+            return NavigateWithAdapter(request, RootAdapter);
         }
 
-        public NavigationResponse NavigateWithAdapter(NavigationRequest request, INavigationAdapter adapter)
+        public NavigationResponse NavigateWithAdapter(NavigationRequest request, ActiveNavigationService navService)
         {
             var path = request.Route.Path.OriginalString;
 
@@ -117,7 +129,7 @@ namespace Uno.Extensions.Navigation
 
             while (path.StartsWith("//"))
             {
-                adapter = (ParentNavigation(adapter) as ActiveNavigationService).Adapter;
+                navService = navService.ParentAdapter;
                 path = path.Length > 2 ? path.Substring(2) : string.Empty;
             }
 
@@ -140,7 +152,14 @@ namespace Uno.Extensions.Navigation
                 {
                     if (!string.IsNullOrWhiteSpace(navPath))
                     {
-                        adapter = (ChildNavigation(adapter, navPath) as ActiveNavigationService).Adapter;
+                        if (navService.Adapter.IsCurrentPath(navPath))
+                        {
+                            navService = navService.NestedAdapters[string.Empty];
+                        }
+                        else
+                        {
+                            navService = navService.NestedAdapters[navPath];
+                        }
                     }
                     navPath = segments[i];
                 }
@@ -157,10 +176,10 @@ namespace Uno.Extensions.Navigation
             var dataFactor = services.GetService<ViewModelDataProvider>();
             dataFactor.Parameters = paras; // request.Route.Data as IDictionary<string, object>;
             var navWrapper = services.GetService<NavigationServiceProvider>();
-            navWrapper.Navigation = new ActiveNavigationService(this, adapter);
+            navWrapper.Navigation = navService;
 
             var context = new NavigationContext(services, request, navPath, isRooted, numberOfPagesToRemove, paras, new CancellationTokenSource(), new TaskCompletionSource<object>());
-            return adapter.Navigate(context);
+            return navService.Adapter.Navigate(context);
         }
 
         private IDictionary<string, object> ParseQueryParameters(string queryString)
@@ -178,44 +197,44 @@ namespace Uno.Extensions.Navigation
 
         public INavigationService ParentNavigation()
         {
-            return ParentNavigation(Adapters.First());
+            return RootAdapter;
         }
 
-        public INavigationService ParentNavigation(INavigationAdapter adapter)
+        //public INavigationService ParentNavigation(INavigationAdapter adapter)
+        //{
+        //    var idx = Adapters.IndexOf(adapter);
+        //    if (idx < 0)
+        //    {
+        //        return null;
+        //    }
+
+        //    if (idx < Adapters.Count - 1)
+        //    {
+        //        idx++;
+        //    }
+
+        //    return new ActiveNavigationService(this, Adapters[idx]);
+        //}
+
+        public INavigationService NestedNavigation(string routeName = null)
         {
-            var idx = Adapters.IndexOf(adapter);
-            if (idx < 0)
-            {
-                return null;
-            }
-
-            if (idx < Adapters.Count - 1)
-            {
-                idx++;
-            }
-
-            return new ActiveNavigationService(this, Adapters[idx]);
+            return RootAdapter.NestedNavigation(routeName);
         }
 
-        public INavigationService ChildNavigation(string adapterName = null)
-        {
-            return ChildNavigation(Adapters.First(), adapterName = null);
-        }
+        //public INavigationService NestedNavigation(INavigationAdapter adapter, string routeName = null)
+        //{
+        //    var idx = Adapters.IndexOf(adapter);
+        //    if (idx < 0)
+        //    {
+        //        return null;
+        //    }
 
-        public INavigationService ChildNavigation(INavigationAdapter adapter, string adapterName = null)
-        {
-            var idx = Adapters.IndexOf(adapter);
-            if (idx < 0)
-            {
-                return null;
-            }
+        //    while (idx > 0 && (string.IsNullOrWhiteSpace(routeName) || Adapters[idx].Name != routeName))
+        //    {
+        //        idx--;
+        //    }
 
-            while (idx > 0 && (string.IsNullOrWhiteSpace(adapterName) || Adapters[idx].Name != adapterName))
-            {
-                idx--;
-            }
-
-            return new ActiveNavigationService(this, Adapters[idx]);
-        }
+        //    return new ActiveNavigationService(this, Adapters[idx]);
+        //}
     }
 }

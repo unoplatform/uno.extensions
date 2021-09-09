@@ -16,6 +16,11 @@ namespace Uno.Extensions.Navigation.Adapters
     {
         private ITabWrapper Tabs => ControlWrapper as ITabWrapper;
 
+        public override bool IsCurrentPath(string path)
+        {
+            return Tabs.CurrentTabName == path;
+        }
+
         public TabNavigationAdapter(
             // INavigationService navigation, // Note: Don't pass in - implement INaviationAware instead
             IServiceProvider services,
@@ -31,15 +36,15 @@ namespace Uno.Extensions.Navigation.Adapters
 
             if (context.Path == PreviousViewUri)
             {
-                var currentVM = await InitializeViewModel();
+                var currentVM = await InitializeViewModel(CurrentContext);
 
-                await ((currentVM as INavigationStart)?.Start(NavigationContexts.Peek().Item2, false) ?? Task.CompletedTask);
+                await ((currentVM as INavigationStart)?.Start(CurrentContext, false) ?? Task.CompletedTask);
             }
             else
             {
                 await DoForwardNavigation(context, (ctx, vm) =>
                 {
-                    var view = Tabs.ActivateTab(ctx.Path, vm);
+                    var view = Tabs.ActivateTab(ctx, ctx.Path, vm);
 
                     if (view is INavigationAware navAware)
                     {

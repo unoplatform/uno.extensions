@@ -8,8 +8,7 @@
       xmlns:nav="using:Uno.Extensions.Navigation.Controls"
       mc:Ignorable="d"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-    <controls:TabView nav:Navigation.AdapterName="tabs"
-                      x:Name="Tabs"
+    <controls:TabView nav:Navigation.IsContainer="true"
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch"
                       IsAddTabButtonVisible="False">
@@ -38,6 +37,8 @@
                            FontSize="30"><Run Text="Doc0 - " /><Run Text="{Binding Title}" /></TextBlock>
                 <Button Content="Home"
                         nav:Navigation.Path="home" />
+                <Button Content="Go back"
+                        nav:Navigation.Path="//.." />
                 <Button Content="Third Page"
                         nav:Navigation.Path="//ThirdPage" />
                 <Button Content="Third Page (rooted)"
@@ -73,12 +74,12 @@
                            FontSize="30"><Run Text="Doc2 - " /><Run Text="{Binding Title}" /></TextBlock>
                 <Frame x:Name="InnerFrame"
                        Grid.Row="1"
-                       nav:Navigation.AdapterName="tabframe" />
+                       nav:Navigation.IsContainer="true" />
                 <StackPanel Orientation="Horizontal" Grid.Row="2">
                     <Button Content="Page Two"
-                            nav:Navigation.Path="tabframe/SecondPage" />
+                            nav:Navigation.Path="doc2/SecondPage" />
                     <Button Content="Page Four"
-                            nav:Navigation.Path="tabframe/FourthPage" />
+                            nav:Navigation.Path="doc2/FourthPage" />
                 </StackPanel>
             </Grid>
         </controls:TabViewItem>

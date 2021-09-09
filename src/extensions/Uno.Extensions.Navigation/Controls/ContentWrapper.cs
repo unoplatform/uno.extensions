@@ -11,18 +11,22 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Controls;
 
-public class ContentWrapper : IContentWrapper
+public class ContentWrapper : BaseWrapper<ContentControl>, IContentWrapper
 {
-    private ContentControl Host { get; set; }
+    private ContentControl Host => Control;
 
-    public void Inject(ContentControl control) => Host = control;
+    public override NavigationContext CurrentContext => (Host.Content as FrameworkElement).GetContext();
 
-    public object ShowContent(Type contentControl, object viewModel)
+    public object ShowContent(NavigationContext context, Type contentControl, object viewModel)
     {
         var content = Activator.CreateInstance(contentControl) ;
-        if (viewModel is not null && content is FrameworkElement fe)
+        if (content is FrameworkElement fe)
         {
-            fe.DataContext = viewModel;
+            fe.SetContext(context);
+            if (viewModel is not null)
+            {
+                fe.DataContext = viewModel;
+            }
         }
         Host.Content = content;
         return content;

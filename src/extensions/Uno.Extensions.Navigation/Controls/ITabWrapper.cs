@@ -10,7 +10,9 @@ namespace Uno.Extensions.Navigation.Controls;
 
 public interface ITabWrapper : IInjectable<TabView>
 {
+    string CurrentTabName { get; }
+
     bool ContainsTab(string tabName);
 
-    object ActivateTab(string tabName, object viewModel);
+    object ActivateTab(NavigationContext context, string tabName, object viewModel);
 }

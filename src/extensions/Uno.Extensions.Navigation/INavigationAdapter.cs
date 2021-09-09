@@ -12,6 +12,8 @@ namespace Uno.Extensions.Navigation
 
         //bool CanNavigate(NavigationContext context);
 
+        bool IsCurrentPath(string path);
+
         NavigationResponse Navigate(NavigationContext context);
     }
 }

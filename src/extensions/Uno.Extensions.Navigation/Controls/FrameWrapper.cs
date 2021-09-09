@@ -13,11 +13,12 @@ using Microsoft.UI.Xaml.Navigation;
 
 namespace Uno.Extensions.Navigation.Controls
 {
-    public class FrameWrapper : IFrameWrapper
-    {
-        private Frame Frame { get; set; }
 
-        public void Inject(Frame control) => Frame = control;
+    public class FrameWrapper : BaseWrapper<Frame>, IFrameWrapper
+    {
+        private Frame Frame => Control;
+
+        public override NavigationContext CurrentContext => (Frame.Content as FrameworkElement).GetContext();
 
         public object GoBack(object parameter, object viewModel)
         {
@@ -42,15 +43,19 @@ namespace Uno.Extensions.Navigation.Controls
             return Frame.Content;
         }
 
-        public object Navigate(Type sourcePageType, object parameter, object viewModel)
+        public object Navigate(NavigationContext context, Type sourcePageType, object parameter, object viewModel)
         {
             Debug.WriteLine("Backstack (Navigate - before): " + string.Join(",", Frame.BackStack.Select(x => x.SourcePageType.Name)));
             var nav = Frame.Navigate(sourcePageType, parameter);
             Debug.WriteLine("Backstack (Navigate - after): " + string.Join(",", Frame.BackStack.Select(x => x.SourcePageType.Name)));
 
-            if (nav && viewModel is not null)
+            if (nav && Frame.Content is FrameworkElement element)
             {
-                (Frame.Content as FrameworkElement).DataContext = viewModel;
+                element.SetContext(context);
+                if (viewModel is not null)
+                {
+                    element.DataContext = viewModel;
+                }
             }
 
             return Frame.Content;
