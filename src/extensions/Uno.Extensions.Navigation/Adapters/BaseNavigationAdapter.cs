@@ -69,8 +69,6 @@ namespace Uno.Extensions.Navigation.Adapters
 
             if (!navigationHandled)
             {
-                PreNavigation(context);
-
                 if (context.IsBackNavigation)
                 {
                     await DoBackNavigation(context);
@@ -79,7 +77,6 @@ namespace Uno.Extensions.Navigation.Adapters
                 {
                     await DoForwardNavigation(context);
                 }
-
             }
 
             context = context with { CanCancel = this.CanGoBack || OpenDialogs.Any() };
@@ -92,7 +89,6 @@ namespace Uno.Extensions.Navigation.Adapters
                 });
             }
         }
-
 
         protected virtual async Task DoBackNavigation(NavigationContext context)
         {
@@ -122,17 +118,13 @@ namespace Uno.Extensions.Navigation.Adapters
             await ((vm as INavigationStart)?.Start(context, true) ?? Task.CompletedTask);
         }
 
-        protected virtual void PreNavigation(NavigationContext context)
-        {
-        }
-
         protected virtual void AdapterNavigation(NavigationContext context, object viewModel)
         {
             CurrentContext = context;
             ControlWrapper.Navigate(context, false, viewModel);
         }
 
-        protected async Task<bool> EndCurrentNavigationContext(NavigationContext navigationContext)
+        private async Task<bool> EndCurrentNavigationContext(NavigationContext navigationContext)
         {
             // If this is back navigation, then make sure it's used to close
             // any of the open dialogs
@@ -157,6 +149,11 @@ namespace Uno.Extensions.Navigation.Adapters
                     return true;
                 }
 
+                // If this is a back navigation then we need to pass back
+                // any data to the current context. This is done by setting
+                // the results on the ResultCompletion object
+                // Note: We note performing the back navigation here, we just
+                // passing data back to any caller that's waiting on it.
                 if (navigationContext.IsBackNavigation)
                 {
                     var responseData = navigationContext.Data.TryGetValue(string.Empty, out var response) ? response : default;
@@ -184,7 +181,6 @@ namespace Uno.Extensions.Navigation.Adapters
             var responseData = navigationContext.Data.TryGetValue(string.Empty, out var response) ? response : default;
             await dialog.Context.StopVieModel(navigationContext);
 
-
             responseData = dialog.Manager.CloseDialog(dialog, navigationContext, responseData);
 
             if (dialog.Context.Request.Result is not null)
@@ -200,39 +196,6 @@ namespace Uno.Extensions.Navigation.Adapters
             var currentVM = await CurrentContext.InitializeViewModel();
 
             await ((currentVM as INavigationStart)?.Start(CurrentContext, false) ?? Task.CompletedTask);
-        }
-    }
-
-
-
-    public static class NavigationContextHelpers
-    {
-        public static async Task<object> StopVieModel(this NavigationContext contextToStop, NavigationContext navigationContext)
-        {
-            object oldVm = default;
-            if (contextToStop.Mapping?.ViewModel is not null)
-            {
-                var services = contextToStop.Services;
-                oldVm = services.GetService(contextToStop.Mapping.ViewModel);
-                await ((oldVm as INavigationStop)?.Stop(navigationContext, navigationContext.IsBackNavigation) ?? Task.CompletedTask);
-            }
-            return oldVm;
-        }
-
-        public static async Task<object> InitializeViewModel(this NavigationContext contextToInitialize)
-        {
-            var mapping = contextToInitialize.Mapping;
-            object vm = default;
-            if (mapping?.ViewModel is not null)
-            {
-                var services = contextToInitialize.Services;
-                var dataFactor = services.GetService<ViewModelDataProvider>();
-                dataFactor.Parameters = contextToInitialize.Data;
-
-                vm = services.GetService(mapping.ViewModel);
-                await ((vm as IInitialise)?.Initialize(contextToInitialize) ?? Task.CompletedTask);
-            }
-            return vm;
         }
     }
 }
