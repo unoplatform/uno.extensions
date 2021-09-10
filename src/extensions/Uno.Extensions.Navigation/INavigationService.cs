@@ -6,8 +6,8 @@ namespace Uno.Extensions.Navigation
     {
         NavigationResponse Navigate(NavigationRequest request);
 
-        INavigationService ParentNavigation();
+        INavigationService Parent { get; }
 
-        INavigationService NestedNavigation(string routeName = null);
+        INavigationService Nested(string routeName = null);
     }
 }

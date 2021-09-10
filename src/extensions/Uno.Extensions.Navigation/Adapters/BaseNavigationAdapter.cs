@@ -20,15 +20,6 @@ namespace Uno.Extensions.Navigation.Adapters
 {
     public abstract class BaseNavigationAdapter<TControl> : INavigationAdapter
     {
-        public const string PreviousViewUri = "..";
-        public const string MessageDialogUri = "__md__";
-        public const string MessageDialogParameterContent = MessageDialogUri + "content";
-        public const string MessageDialogParameterTitle = MessageDialogUri + "title";
-        public const string MessageDialogParameterOptions = MessageDialogUri + "options";
-        public const string MessageDialogParameterDefaultCommand = MessageDialogUri + "default";
-        public const string MessageDialogParameterCancelCommand = MessageDialogUri + "cancel";
-        public const string MessageDialogParameterCommands = MessageDialogUri + "commands";
-
         protected IControlNavigation ControlWrapper { get; }
 
         public virtual NavigationContext CurrentContext { get; protected set; }
@@ -37,11 +28,9 @@ namespace Uno.Extensions.Navigation.Adapters
 
         protected INavigationMapping Mapping { get; }
 
-        protected IServiceProvider Services { get; }
+        public IServiceProvider Services { get; }
 
         public INavigationService Navigation { get; set; }
-
-        // protected IList<(string, NavigationContext)> NavigationContexts { get; } = new List<(string, NavigationContext)>();
 
         protected Stack<(IAsyncInfo, NavigationContext)> OpenDialogs { get; } = new Stack<(IAsyncInfo, NavigationContext)>();
 
@@ -102,7 +91,7 @@ namespace Uno.Extensions.Navigation.Adapters
 
             PreNavigation(context);
 
-            if (context.Path == PreviousViewUri)
+            if (context.Path == NavigationConstants.PreviousViewUri)
             {
                 var currentVM = await InitializeViewModel(CurrentContext, navBackRequired);
 
@@ -130,15 +119,15 @@ namespace Uno.Extensions.Navigation.Adapters
             var vm = await InitializeViewModel(context, false);
 
             var data = context.Data;
-            if (context.Path == MessageDialogUri)
+            if (context.Path == NavigationConstants.MessageDialogUri)
             {
-                var md = new MessageDialog(data[MessageDialogParameterContent] as string, data[MessageDialogParameterTitle] as string)
+                var md = new MessageDialog(data[NavigationConstants.MessageDialogParameterContent] as string, data[NavigationConstants.MessageDialogParameterTitle] as string)
                 {
-                    Options = (MessageDialogOptions)data[MessageDialogParameterOptions],
-                    DefaultCommandIndex = (uint)data[MessageDialogParameterDefaultCommand],
-                    CancelCommandIndex = (uint)data[MessageDialogParameterCancelCommand]
+                    Options = (MessageDialogOptions)data[NavigationConstants.MessageDialogParameterOptions],
+                    DefaultCommandIndex = (uint)data[NavigationConstants.MessageDialogParameterDefaultCommand],
+                    CancelCommandIndex = (uint)data[NavigationConstants.MessageDialogParameterCancelCommand]
                 };
-                md.Commands.AddRange((data[MessageDialogParameterCommands] as UICommand[]) ?? new UICommand[] { });
+                md.Commands.AddRange((data[NavigationConstants.MessageDialogParameterCommands] as UICommand[]) ?? new UICommand[] { });
                 var showTask = md.ShowAsync();
                 OpenDialogs.Push((showTask, context));
                 showTask.AsTask().ContinueWith(result =>
@@ -147,7 +136,7 @@ namespace Uno.Extensions.Navigation.Adapters
                     context.ResultCompletion.Task.Status != TaskStatus.Canceled &&
                     context.ResultCompletion.Task.Status != TaskStatus.RanToCompletion)
                     {
-                        Navigation.Navigate(new NavigationRequest(md, new NavigationRoute(new Uri(PreviousViewUri, UriKind.Relative), result.Result)));
+                        Navigation.Navigate(new NavigationRequest(md, new NavigationRoute(new Uri(NavigationConstants.PreviousViewUri, UriKind.Relative), result.Result)));
                     }
                 }, CancellationToken.None,
                                 TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.DenyChildAttach,
@@ -174,7 +163,7 @@ namespace Uno.Extensions.Navigation.Adapters
                                     context.ResultCompletion.Task.Status != TaskStatus.Canceled &&
                                     context.ResultCompletion.Task.Status != TaskStatus.RanToCompletion)
                                     {
-                                        Navigation.Navigate(new NavigationRequest(dialog, new NavigationRoute(new Uri(PreviousViewUri, UriKind.Relative), result.Result)));
+                                        Navigation.Navigate(new NavigationRequest(dialog, new NavigationRoute(new Uri(NavigationConstants.PreviousViewUri, UriKind.Relative), result.Result)));
                                     }
                                 }, CancellationToken.None,
                                 TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.DenyChildAttach,
@@ -212,7 +201,7 @@ namespace Uno.Extensions.Navigation.Adapters
                     return false;
                 }
 
-                if (context.Path == PreviousViewUri)
+                if (context.Path == NavigationConstants.PreviousViewUri)
                 {
                     var responseData = context.Data.TryGetValue(string.Empty, out var response) ? response : default;
 
