@@ -34,6 +34,8 @@ namespace Uno.Extensions.Navigation.Adapters
 
         protected Stack<(IAsyncInfo, NavigationContext)> OpenDialogs { get; } = new Stack<(IAsyncInfo, NavigationContext)>();
 
+        public virtual bool CanGoBack => false;
+
         public void Inject(object control)
         {
             ControlWrapper.Inject(control);
@@ -66,14 +68,29 @@ namespace Uno.Extensions.Navigation.Adapters
 
         private async Task InternalNavigate(NavigationContext context)
         {
-            var navBackRequired = await EndCurrentNavigationContext(context);
+            var navigationHandled = await EndCurrentNavigationContext(context);
 
             if (context.CancellationToken.IsCancellationRequested)
             {
                 await Task.FromCanceled(context.CancellationToken);
             }
 
-            context = await AdapterNavigate(context, navBackRequired);
+            if (!navigationHandled)
+            {
+                PreNavigation(context);
+
+                if (context.IsBackNavigation)
+                {
+                    await DoBackNavigation(context);
+                }
+                else
+                {
+                    await DoForwardNavigation(context);
+                }
+
+            }
+
+            context = context with { CanCancel = this.CanGoBack || OpenDialogs.Any() };
 
             if (context.CanCancel)
             {
@@ -84,25 +101,10 @@ namespace Uno.Extensions.Navigation.Adapters
             }
         }
 
-        protected async Task<NavigationContext> AdapterNavigate(NavigationContext context, bool navBackRequired)
+ 
+        protected virtual async Task DoBackNavigation(NavigationContext context)
         {
-            var request = context.Request;
-            var path = context.Path;
-
-            PreNavigation(context);
-
-            if (context.Path == NavigationConstants.PreviousViewUri)
-            {
-                var currentVM = await InitializeViewModel(CurrentContext, navBackRequired);
-
-                await ((currentVM as INavigationStart)?.Start(CurrentContext, false) ?? Task.CompletedTask);
-            }
-            else
-            {
-                await DoForwardNavigation(context);
-            }
-
-            return context with { CanCancel = false };
+            throw new NotSupportedException();
         }
 
         protected async Task DoForwardNavigation(NavigationContext context)
@@ -113,197 +115,234 @@ namespace Uno.Extensions.Navigation.Adapters
                 context = context with { Mapping = mapping };
             }
 
-            //// Push the new navigation context
-            //NavigationContexts.Push((context.Path, context));
+            var vm = await context.InitializeViewModel();
 
-            var vm = await InitializeViewModel(context, false);
-
-            var data = context.Data;
             if (context.Path == NavigationConstants.MessageDialogUri)
             {
-                var md = new MessageDialog(data[NavigationConstants.MessageDialogParameterContent] as string, data[NavigationConstants.MessageDialogParameterTitle] as string)
-                {
-                    Options = (MessageDialogOptions)data[NavigationConstants.MessageDialogParameterOptions],
-                    DefaultCommandIndex = (uint)data[NavigationConstants.MessageDialogParameterDefaultCommand],
-                    CancelCommandIndex = (uint)data[NavigationConstants.MessageDialogParameterCancelCommand]
-                };
-                md.Commands.AddRange((data[NavigationConstants.MessageDialogParameterCommands] as UICommand[]) ?? new UICommand[] { });
-                var showTask = md.ShowAsync();
-                OpenDialogs.Push((showTask, context));
-                showTask.AsTask().ContinueWith(result =>
-                {
-                    if (result.Status != TaskStatus.Canceled &&
-                    context.ResultCompletion.Task.Status != TaskStatus.Canceled &&
-                    context.ResultCompletion.Task.Status != TaskStatus.RanToCompletion)
-                    {
-                        Navigation.Navigate(new NavigationRequest(md, new NavigationRoute(new Uri(NavigationConstants.PreviousViewUri, UriKind.Relative), result.Result)));
-                    }
-                }, CancellationToken.None,
-                                TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.DenyChildAttach,
-                                TaskScheduler.FromCurrentSynchronizationContext());
+                ShowMessageDialog(context);
             }
             else if (mapping?.View?.IsSubclassOf(typeof(ContentDialog)) ?? false)
             {
-                var dialog = Activator.CreateInstance(mapping.View) as ContentDialog;
-                if (vm is not null)
-                {
-                    dialog.DataContext = vm;
-                }
-                if (dialog is INavigationAware navAware)
-                {
-                    navAware.Navigation = Navigation;
-                }
-
-                var showTask = dialog.ShowAsync();
-                OpenDialogs.Push((showTask, context));
-
-                showTask.AsTask().ContinueWith(result =>
-                                {
-                                    if (result.Status != TaskStatus.Canceled &&
-                                    context.ResultCompletion.Task.Status != TaskStatus.Canceled &&
-                                    context.ResultCompletion.Task.Status != TaskStatus.RanToCompletion)
-                                    {
-                                        Navigation.Navigate(new NavigationRequest(dialog, new NavigationRoute(new Uri(NavigationConstants.PreviousViewUri, UriKind.Relative), result.Result)));
-                                    }
-                                }, CancellationToken.None,
-                                TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.DenyChildAttach,
-                                TaskScheduler.FromCurrentSynchronizationContext());
+                ShowContentDialog(context, mapping, vm);
             }
             else
             {
                 AdapterNavigation(context, vm);
             }
+
             await ((vm as INavigationStart)?.Start(context, true) ?? Task.CompletedTask);
+        }
+
+        private void ShowMessageDialog(NavigationContext context)
+        {
+            var data = context.Data;
+            var md = new MessageDialog(data[NavigationConstants.MessageDialogParameterContent] as string, data[NavigationConstants.MessageDialogParameterTitle] as string)
+            {
+                Options = (MessageDialogOptions)data[NavigationConstants.MessageDialogParameterOptions],
+                DefaultCommandIndex = (uint)data[NavigationConstants.MessageDialogParameterDefaultCommand],
+                CancelCommandIndex = (uint)data[NavigationConstants.MessageDialogParameterCancelCommand]
+            };
+            md.Commands.AddRange((data[NavigationConstants.MessageDialogParameterCommands] as UICommand[]) ?? new UICommand[] { });
+            var showTask = md.ShowAsync();
+            OpenDialogs.Push((showTask, context));
+            showTask.AsTask().ContinueWith(result =>
+            {
+                if (result.Status != TaskStatus.Canceled &&
+                context.ResultCompletion.Task.Status != TaskStatus.Canceled &&
+                context.ResultCompletion.Task.Status != TaskStatus.RanToCompletion)
+                {
+                    Navigation.Navigate(new NavigationRequest(md, new NavigationRoute(new Uri(NavigationConstants.PreviousViewUri, UriKind.Relative), result.Result)));
+                }
+            }, CancellationToken.None,
+                            TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.DenyChildAttach,
+                            TaskScheduler.FromCurrentSynchronizationContext());
+        }
+
+        private void ShowContentDialog(NavigationContext context, NavigationMap mapping, object vm)
+        {
+            var dialog = Activator.CreateInstance(mapping.View) as ContentDialog;
+            if (vm is not null)
+            {
+                dialog.DataContext = vm;
+            }
+            if (dialog is INavigationAware navAware)
+            {
+                navAware.Navigation = Navigation;
+            }
+
+            var showTask = dialog.ShowAsync();
+            OpenDialogs.Push((showTask, context));
+
+            showTask.AsTask().ContinueWith(result =>
+            {
+                if (result.Status != TaskStatus.Canceled &&
+                context.ResultCompletion.Task.Status != TaskStatus.Canceled &&
+                context.ResultCompletion.Task.Status != TaskStatus.RanToCompletion)
+                {
+                    Navigation.Navigate(new NavigationRequest(dialog, new NavigationRoute(new Uri(NavigationConstants.PreviousViewUri, UriKind.Relative), result.Result)));
+                }
+            }, CancellationToken.None,
+                            TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.DenyChildAttach,
+                            TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         protected virtual void PreNavigation(NavigationContext context)
         {
-
         }
+
         protected virtual void AdapterNavigation(NavigationContext context, object viewModel)
         {
             CurrentContext = context;
-            ControlWrapper.Navigate(context,false, viewModel);
+            ControlWrapper.Navigate(context, false, viewModel);
         }
 
-        protected async Task<bool> EndCurrentNavigationContext(NavigationContext context)
+        protected async Task<bool> EndCurrentNavigationContext(NavigationContext navigationContext)
         {
-            var frameNavigationRequired = true;
+            // If this is back navigation, then make sure it's used to close
+            // any of the open dialogs
+            if (navigationContext.IsBackNavigation && OpenDialogs.Any())
+            {
+                await CloseDialog(navigationContext);
+                return true;
+            }
+
             // If there's a current nav context, make sure it's stopped before
             // we proceed - this could cancel the navigation, so need to know
             // before we remove anything from backstack
             if (CurrentContext is not null)
             {
-                var currentVM = await StopCurrentViewModel(context);
+                // Stop the currently active viewmodel
+                await CurrentContext.StopVieModel(navigationContext);
 
-                if (context.IsCancelled)
+                // Check if navigation was cancelled - if it is,
+                // then indicate that navigation has been handled
+                if (navigationContext.IsCancelled)
                 {
-                    return false;
+                    return true;
                 }
 
-                if (context.Path == NavigationConstants.PreviousViewUri)
+                if (navigationContext.IsBackNavigation)
                 {
-                    var responseData = context.Data.TryGetValue(string.Empty, out var response) ? response : default;
+                    var responseData = navigationContext.Data.TryGetValue(string.Empty, out var response) ? response : default;
 
-                    var previousContext = CurrentContext;
+                    var context = CurrentContext;
 
-                    if (OpenDialogs.Any())
+                    if (context.Request.Result is not null)
                     {
-                        var dialog = OpenDialogs.Pop();
-                        var showTask = dialog.Item1;
-                        previousContext = dialog.Item2;
-                        if (showTask is IAsyncOperation<IUICommand> showMessageDialogTask)
-                        {
-                            frameNavigationRequired = false;
-                            showMessageDialogTask.Cancel();
-                        }
-
-                        if (showTask is IAsyncOperation<ContentDialogResult> contentDialogTask)
-                        {
-                            frameNavigationRequired = false;
-                            if (!(responseData is ContentDialogResult))
-                            {
-                                contentDialogTask.Cancel();
-                            }
-
-                            var resultType = previousContext.Request.Result;
-
-                            if (resultType is not null && responseData is not null)
-                            {
-                                if (resultType == typeof(ContentDialogResult))
-                                {
-                                    if (responseData is not ContentDialogResult result)
-                                    {
-                                        responseData = ContentDialogResult.None;
-                                    }
-                                }
-                                else if (resultType == typeof(ContentResult))
-                                {
-                                    if (responseData is ContentDialogResult result)
-                                    {
-                                        responseData = new ContentResult(result);
-                                    }
-                                    else
-                                    {
-                                        responseData = new ContentResult(ContentDialogResult.None, responseData);
-                                    }
-                                }
-                            }
-
-                        }
-                    }
-                    if (previousContext.Request.Result is not null)
-                    {
-                        var completion = previousContext.ResultCompletion;
+                        var completion = context.ResultCompletion;
                         if (completion is not null)
                         {
                             completion.SetResult(responseData);
                         }
                     }
                 }
-
             }
 
-            return frameNavigationRequired;
+            return false;
         }
 
-        protected async Task<object> StopCurrentViewModel(NavigationContext navigation)
+        protected async Task CloseDialog(NavigationContext navigationContext)
         {
-            var context = CurrentContext;
+            var responseData = navigationContext.Data.TryGetValue(string.Empty, out var response) ? response : default;
 
-            object oldVm = default;
-            if (context.Mapping?.ViewModel is not null)
+            var dialog = OpenDialogs.Pop();
+            var showTask = dialog.Item1;
+            var dialogContext = dialog.Item2;
+
+            await dialogContext.StopVieModel(navigationContext);
+
+            if (showTask is IAsyncOperation<IUICommand> showMessageDialogTask)
             {
-                var services = context.Services;
-                oldVm = services.GetService(context.Mapping.ViewModel);
-                await ((oldVm as INavigationStop)?.Stop(navigation, false) ?? Task.CompletedTask);
+                showMessageDialogTask.Cancel();
             }
-            return oldVm;
+
+            if (showTask is IAsyncOperation<ContentDialogResult> contentDialogTask)
+            {
+                if (!(responseData is ContentDialogResult))
+                {
+                    contentDialogTask.Cancel();
+                }
+
+                var resultType = dialogContext.Request.Result;
+
+                if (resultType is not null && responseData is not null)
+                {
+                    if (resultType == typeof(ContentDialogResult))
+                    {
+                        if (responseData is not ContentDialogResult)
+                        {
+                            responseData = ContentDialogResult.None;
+                        }
+                    }
+                    else if (resultType == typeof(ContentResult))
+                    {
+                        if (responseData is ContentDialogResult result)
+                        {
+                            responseData = new ContentResult(result);
+                        }
+                        else
+                        {
+                            responseData = new ContentResult(ContentDialogResult.None, responseData);
+                        }
+                    }
+                }
+            }
+
+            if (dialogContext.Request.Result is not null)
+            {
+                var completion = dialogContext.ResultCompletion;
+                if (completion is not null)
+                {
+                    completion.SetResult(responseData);
+                }
+            }
+
+            // Restart the view model for the current context
+            var currentVM = await CurrentContext.InitializeViewModel();
+
+            await ((currentVM as INavigationStart)?.Start(CurrentContext, false) ?? Task.CompletedTask);
         }
 
-        protected virtual async Task<object> InitializeViewModel(NavigationContext context, bool navBackRequired)
-        {
-            var mapping = context.Mapping;
-            object vm = default;
-            if (mapping?.ViewModel is not null)
-            {
-                var services = context.Services;
-                var dataFactor = services.GetService<ViewModelDataProvider>();
-                dataFactor.Parameters = context.Data;
-
-                vm = services.GetService(mapping.ViewModel);
-                await ((vm as IInitialise)?.Initialize(context) ?? Task.CompletedTask);
-            }
-            return vm;
-        }
+       
     }
 
-    public record ContentResult (ContentDialogResult Result, object Data=null)
+    public record ContentResult(ContentDialogResult Result, object Data = null)
     {
         public static implicit operator ContentDialogResult(
                                        ContentResult entity)
         {
             return entity.Result;
+        }
+    }
+
+    public static class NavigationContextHelpers
+    {
+        public static async Task<object> StopVieModel(this NavigationContext contextToStop, NavigationContext navigationContext)
+        {
+            object oldVm = default;
+            if (contextToStop.Mapping?.ViewModel is not null)
+            {
+                var services = contextToStop.Services;
+                oldVm = services.GetService(contextToStop.Mapping.ViewModel);
+                await ((oldVm as INavigationStop)?.Stop(navigationContext, navigationContext.IsBackNavigation) ?? Task.CompletedTask);
+            }
+            return oldVm;
+        }
+
+        public static async Task<object> InitializeViewModel(this NavigationContext contextToInitialize)
+        {
+            var mapping = contextToInitialize.Mapping;
+            object vm = default;
+            if (mapping?.ViewModel is not null)
+            {
+                var services = contextToInitialize.Services;
+                var dataFactor = services.GetService<ViewModelDataProvider>();
+                dataFactor.Parameters = contextToInitialize.Data;
+
+                vm = services.GetService(mapping.ViewModel);
+                await ((vm as IInitialise)?.Initialize(contextToInitialize) ?? Task.CompletedTask);
+            }
+            return vm;
         }
     }
 }

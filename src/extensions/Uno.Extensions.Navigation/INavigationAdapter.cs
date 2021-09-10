@@ -12,5 +12,7 @@ namespace Uno.Extensions.Navigation
         bool IsCurrentPath(string path);
 
         NavigationResponse Navigate(NavigationContext context);
+
+        bool CanGoBack { get; }
     }
 }
