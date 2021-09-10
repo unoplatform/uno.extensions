@@ -4,21 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Controls;
-using Windows.Foundation;
-using System.Threading;
-#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Popups;
-using UICommand = Windows.UI.Popups.UICommand;
-#else
-using Windows.UI.Popups;
-using UICommand = Windows.UI.Popups.UICommand;
-using Microsoft.UI.Xaml.Controls;
-#endif
 
 namespace Uno.Extensions.Navigation.Adapters
 {
-    public abstract class BaseNavigationAdapter<TControl> : INavigationAdapter
+    public abstract class BaseNavigationAdapter : INavigationAdapter
     {
         protected IControlNavigation ControlWrapper { get; }
 
@@ -30,9 +19,11 @@ namespace Uno.Extensions.Navigation.Adapters
 
         public IServiceProvider Services { get; }
 
+        private IDialogProvider DialogProvider { get; }
+
         public INavigationService Navigation { get; set; }
 
-        protected Stack<(IAsyncInfo, NavigationContext)> OpenDialogs { get; } = new Stack<(IAsyncInfo, NavigationContext)>();
+        protected Stack<Dialog> OpenDialogs { get; } = new Stack<Dialog>();
 
         public virtual bool CanGoBack => false;
 
@@ -53,6 +44,7 @@ namespace Uno.Extensions.Navigation.Adapters
             IControlNavigation control)
         {
             Services = services.CreateScope().ServiceProvider;
+            DialogProvider = Services.GetService<IDialogProvider>();
             Mapping = navigationMapping;
             ControlWrapper = control;
         }
@@ -101,7 +93,7 @@ namespace Uno.Extensions.Navigation.Adapters
             }
         }
 
- 
+
         protected virtual async Task DoBackNavigation(NavigationContext context)
         {
             throw new NotSupportedException();
@@ -117,13 +109,10 @@ namespace Uno.Extensions.Navigation.Adapters
 
             var vm = await context.InitializeViewModel();
 
-            if (context.Path == NavigationConstants.MessageDialogUri)
+            var dialog = DialogProvider.CreateDialog(Navigation, context, vm);
+            if (dialog is not null)
             {
-                ShowMessageDialog(context);
-            }
-            else if (mapping?.View?.IsSubclassOf(typeof(ContentDialog)) ?? false)
-            {
-                ShowContentDialog(context, mapping, vm);
+                OpenDialogs.Push(dialog);
             }
             else
             {
@@ -131,59 +120,6 @@ namespace Uno.Extensions.Navigation.Adapters
             }
 
             await ((vm as INavigationStart)?.Start(context, true) ?? Task.CompletedTask);
-        }
-
-        private void ShowMessageDialog(NavigationContext context)
-        {
-            var data = context.Data;
-            var md = new MessageDialog(data[NavigationConstants.MessageDialogParameterContent] as string, data[NavigationConstants.MessageDialogParameterTitle] as string)
-            {
-                Options = (MessageDialogOptions)data[NavigationConstants.MessageDialogParameterOptions],
-                DefaultCommandIndex = (uint)data[NavigationConstants.MessageDialogParameterDefaultCommand],
-                CancelCommandIndex = (uint)data[NavigationConstants.MessageDialogParameterCancelCommand]
-            };
-            md.Commands.AddRange((data[NavigationConstants.MessageDialogParameterCommands] as UICommand[]) ?? new UICommand[] { });
-            var showTask = md.ShowAsync();
-            OpenDialogs.Push((showTask, context));
-            showTask.AsTask().ContinueWith(result =>
-            {
-                if (result.Status != TaskStatus.Canceled &&
-                context.ResultCompletion.Task.Status != TaskStatus.Canceled &&
-                context.ResultCompletion.Task.Status != TaskStatus.RanToCompletion)
-                {
-                    Navigation.Navigate(new NavigationRequest(md, new NavigationRoute(new Uri(NavigationConstants.PreviousViewUri, UriKind.Relative), result.Result)));
-                }
-            }, CancellationToken.None,
-                            TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.DenyChildAttach,
-                            TaskScheduler.FromCurrentSynchronizationContext());
-        }
-
-        private void ShowContentDialog(NavigationContext context, NavigationMap mapping, object vm)
-        {
-            var dialog = Activator.CreateInstance(mapping.View) as ContentDialog;
-            if (vm is not null)
-            {
-                dialog.DataContext = vm;
-            }
-            if (dialog is INavigationAware navAware)
-            {
-                navAware.Navigation = Navigation;
-            }
-
-            var showTask = dialog.ShowAsync();
-            OpenDialogs.Push((showTask, context));
-
-            showTask.AsTask().ContinueWith(result =>
-            {
-                if (result.Status != TaskStatus.Canceled &&
-                context.ResultCompletion.Task.Status != TaskStatus.Canceled &&
-                context.ResultCompletion.Task.Status != TaskStatus.RanToCompletion)
-                {
-                    Navigation.Navigate(new NavigationRequest(dialog, new NavigationRoute(new Uri(NavigationConstants.PreviousViewUri, UriKind.Relative), result.Result)));
-                }
-            }, CancellationToken.None,
-                            TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.DenyChildAttach,
-                            TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         protected virtual void PreNavigation(NavigationContext context)
@@ -243,54 +179,17 @@ namespace Uno.Extensions.Navigation.Adapters
 
         protected async Task CloseDialog(NavigationContext navigationContext)
         {
-            var responseData = navigationContext.Data.TryGetValue(string.Empty, out var response) ? response : default;
-
             var dialog = OpenDialogs.Pop();
-            var showTask = dialog.Item1;
-            var dialogContext = dialog.Item2;
 
-            await dialogContext.StopVieModel(navigationContext);
+            var responseData = navigationContext.Data.TryGetValue(string.Empty, out var response) ? response : default;
+            await dialog.Context.StopVieModel(navigationContext);
 
-            if (showTask is IAsyncOperation<IUICommand> showMessageDialogTask)
+
+            responseData = dialog.Manager.CloseDialog(dialog, navigationContext, responseData);
+
+            if (dialog.Context.Request.Result is not null)
             {
-                showMessageDialogTask.Cancel();
-            }
-
-            if (showTask is IAsyncOperation<ContentDialogResult> contentDialogTask)
-            {
-                if (!(responseData is ContentDialogResult))
-                {
-                    contentDialogTask.Cancel();
-                }
-
-                var resultType = dialogContext.Request.Result;
-
-                if (resultType is not null && responseData is not null)
-                {
-                    if (resultType == typeof(ContentDialogResult))
-                    {
-                        if (responseData is not ContentDialogResult)
-                        {
-                            responseData = ContentDialogResult.None;
-                        }
-                    }
-                    else if (resultType == typeof(ContentResult))
-                    {
-                        if (responseData is ContentDialogResult result)
-                        {
-                            responseData = new ContentResult(result);
-                        }
-                        else
-                        {
-                            responseData = new ContentResult(ContentDialogResult.None, responseData);
-                        }
-                    }
-                }
-            }
-
-            if (dialogContext.Request.Result is not null)
-            {
-                var completion = dialogContext.ResultCompletion;
+                var completion = dialog.Context.ResultCompletion;
                 if (completion is not null)
                 {
                     completion.SetResult(responseData);
@@ -302,18 +201,9 @@ namespace Uno.Extensions.Navigation.Adapters
 
             await ((currentVM as INavigationStart)?.Start(CurrentContext, false) ?? Task.CompletedTask);
         }
-
-       
     }
 
-    public record ContentResult(ContentDialogResult Result, object Data = null)
-    {
-        public static implicit operator ContentDialogResult(
-                                       ContentResult entity)
-        {
-            return entity.Result;
-        }
-    }
+
 
     public static class NavigationContextHelpers
     {

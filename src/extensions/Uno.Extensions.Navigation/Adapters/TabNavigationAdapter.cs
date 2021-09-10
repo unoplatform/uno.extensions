@@ -1,18 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Controls;
-#if WINDOWS_UWP
-using Windows.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls;
-#else
-using Microsoft.UI.Xaml.Controls;
-#endif
 
 namespace Uno.Extensions.Navigation.Adapters
 {
-    public class TabNavigationAdapter : BaseNavigationAdapter<TabView>
+    public class TabNavigationAdapter : BaseNavigationAdapter
     {
         private ITabWrapper Tabs => ControlWrapper as ITabWrapper;
 
