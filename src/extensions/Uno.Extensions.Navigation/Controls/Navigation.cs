@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using CommunityToolkit.Mvvm.DependencyInjection;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml;
@@ -21,6 +18,7 @@ namespace Uno.Extensions.Navigation.Controls
     public static class Navigation
     {
         private static INavigationManager navigationManager;
+
         private static INavigationManager NavigationManager
         {
             get
@@ -36,14 +34,6 @@ namespace Uno.Extensions.Navigation.Controls
          typeof(Navigation),
          new PropertyMetadata(null)
        );
-
-        public static readonly DependencyProperty ContextProperty =
-        DependencyProperty.RegisterAttached(
-          "Context",
-          typeof(NavigationContext),
-          typeof(Navigation),
-          new PropertyMetadata(null)
-        );
 
         public static readonly DependencyProperty IsContainerProperty =
         DependencyProperty.RegisterAttached(
@@ -110,19 +100,6 @@ namespace Uno.Extensions.Navigation.Controls
             }
             return (INavigationService)element.GetValue(AdapterProperty);
         }
-        //public static void SetContext(this FrameworkElement element, NavigationContext value)
-        //{
-        //    element.SetValue(ContextProperty, value);
-        //}
-
-        //public static NavigationContext GetContext(this FrameworkElement element)
-        //{
-        //    if (element is null)
-        //    {
-        //        return null;
-        //    }
-        //    return (NavigationContext)element.GetValue(ContextProperty);
-        //}
 
         public static TElement AsContainer<TElement>(this TElement element)
             where TElement : FrameworkElement

@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Linq;
 #if WINDOWS_UWP
 using Microsoft.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls;
 #else
 using Microsoft.UI.Xaml.Controls;
 #endif
-
-using System.Linq;
 
 namespace Uno.Extensions.Navigation.Controls;
 
@@ -37,7 +34,6 @@ public class TabWrapper : BaseWrapper, ITabWrapper
     }
 
     public void Navigate(NavigationContext context,bool isBackNavigation, object viewModel)
-        //public object ActivateTab(NavigationContext context, string tabName, object viewModel)
     {
         var tab = FindByName(context.Path);
         if (tab is not null)
