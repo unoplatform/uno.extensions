@@ -2,17 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Uno.Extensions.Navigation.Controls;
 using Microsoft.Extensions.DependencyInjection;
-#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Popups;
-using UICommand = Windows.UI.Popups.UICommand;
-#else
-using Windows.UI.Popups;
-using UICommand = Windows.UI.Popups.UICommand;
-using Microsoft.UI.Xaml.Controls;
-#endif
+using Uno.Extensions.Navigation.Controls;
 
 namespace Uno.Extensions.Navigation.Adapters
 {
@@ -29,7 +20,7 @@ namespace Uno.Extensions.Navigation.Adapters
         }
     }
 
-    public class FrameNavigationAdapter : BaseNavigationAdapter<Frame>
+    public class FrameNavigationAdapter : BaseNavigationAdapter
     {
         private IFrameWrapper Frame => ControlWrapper as IFrameWrapper;
         protected IList<NavigationContext> NavigationContexts { get; } = new List<NavigationContext>();
