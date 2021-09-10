@@ -191,7 +191,7 @@ namespace Uno.Extensions.Navigation.Controls
             var parent = VisualTreeHelper.GetParent(element);
             // If parent is null, we're at top of visual tree,
             // so just return the nav manager itself
-            return parent is not null ? ScopedServiceForControl(parent) : NavigationManager;
+            return parent is not null ? ScopedServiceForControl(parent) : null;
         }
 
         public static void SetPath(FrameworkElement element, string value)

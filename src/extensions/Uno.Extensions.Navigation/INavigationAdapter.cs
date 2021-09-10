@@ -5,6 +5,8 @@ namespace Uno.Extensions.Navigation
 {
     public interface INavigationAdapter : INavigationAware, IInjectable
     {
+        IServiceProvider Services { get; }
+
         public string Name { get; set; }
 
         bool IsCurrentPath(string path);

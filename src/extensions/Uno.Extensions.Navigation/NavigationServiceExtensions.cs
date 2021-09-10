@@ -59,7 +59,7 @@ namespace Uno.Extensions.Navigation
 
         public static NavigationResponse NavigateToPreviousView(this INavigationService service, object sender, object data = null)
         {
-            return service.Navigate(new NavigationRequest(sender, new NavigationRoute(new Uri(FrameNavigationAdapter.PreviousViewUri, UriKind.Relative), data)));
+            return service.Navigate(new NavigationRequest(sender, new NavigationRoute(new Uri(NavigationConstants.PreviousViewUri, UriKind.Relative), data)));
         }
 
         public static NavigationResponse<Windows.UI.Popups.UICommand> ShowMessageDialog(
@@ -74,15 +74,15 @@ namespace Uno.Extensions.Navigation
         {
             var data = new Dictionary<string, object>()
             {
-                { FrameNavigationAdapter.MessageDialogParameterTitle, title },
-                { FrameNavigationAdapter.MessageDialogParameterContent, content },
-                { FrameNavigationAdapter.MessageDialogParameterOptions, options },
-                { FrameNavigationAdapter.MessageDialogParameterDefaultCommand, defaultCommandIndex },
-                { FrameNavigationAdapter.MessageDialogParameterCancelCommand, cancelCommandIndex },
-                { FrameNavigationAdapter.MessageDialogParameterCommands, commands }
+                { NavigationConstants.MessageDialogParameterTitle, title },
+                { NavigationConstants.MessageDialogParameterContent, content },
+                { NavigationConstants.MessageDialogParameterOptions, options },
+                { NavigationConstants.MessageDialogParameterDefaultCommand, defaultCommandIndex },
+                { NavigationConstants.MessageDialogParameterCancelCommand, cancelCommandIndex },
+                { NavigationConstants.MessageDialogParameterCommands, commands }
             };
 
-            var result = service.Navigate(new NavigationRequest(sender, new NavigationRoute(new Uri(FrameNavigationAdapter.MessageDialogUri, UriKind.Relative), data), typeof(UICommand)));
+            var result = service.Navigate(new NavigationRequest(sender, new NavigationRoute(new Uri(NavigationConstants.MessageDialogUri, UriKind.Relative), data), typeof(UICommand)));
             return new NavigationResponse<UICommand>(result.Request, result.NavigationTask, result.CancellationSource, result.Result.ContinueWith(x => (UICommand)x.Result));
         }
     }

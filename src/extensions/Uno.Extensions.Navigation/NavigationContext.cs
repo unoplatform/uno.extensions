@@ -21,7 +21,7 @@ namespace Uno.Extensions.Navigation
     {
 #pragma warning restore SA1313 // Parameter names should begin with lower-case letter
 
-        public bool IsBackNavigation => Path == BaseNavigationAdapter<object>.PreviousViewUri;
+        public bool IsBackNavigation => Path == NavigationConstants.PreviousViewUri;
 
         public CancellationToken CancellationToken => CancellationSource.Token;
 
