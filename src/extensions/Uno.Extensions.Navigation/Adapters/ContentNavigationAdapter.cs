@@ -23,39 +23,5 @@ namespace Uno.Extensions.Navigation.Adapters
             IContentWrapper contentWrapper) : base(services, navigationMapping, contentWrapper)
         {
         }
-
-        protected override async Task<NavigationContext> AdapterNavigate(NavigationContext context, bool navBackRequired)
-        {
-            var request = context.Request;
-            var path = context.Path;
-
-            if (context.Path == PreviousViewUri)
-            {
-                var currentVM = await InitializeViewModel(CurrentContext);
-
-                await ((currentVM as INavigationStart)?.Start(CurrentContext, false) ?? Task.CompletedTask);
-            }
-            else
-            {
-                await DoForwardNavigation(context, (ctx, vm) =>
-                {
-                    var view = ContentHost.ShowContent(ctx, ctx.Mapping.View, vm);
-
-                    if (view is INavigationAware navAware)
-                    {
-                        navAware.Navigation = Navigation;
-                    }
-
-                    //// Content control can only show one view at a time, so remove
-                    //// any old contexts
-                    //if (NavigationContexts.Count > 1)
-                    //{
-                    //    NavigationContexts.RemoveAt(NavigationContexts.Count - 2);
-                    //}
-                });
-            }
-
-            return context with { CanCancel = false };
-        }
     }
 }

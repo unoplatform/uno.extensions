@@ -28,32 +28,5 @@ namespace Uno.Extensions.Navigation.Adapters
             ITabWrapper tabWrapper) : base(services, navigationMapping, tabWrapper)
         {
         }
-
-        protected override async Task<NavigationContext> AdapterNavigate(NavigationContext context, bool navBackRequired)
-        {
-            var request = context.Request;
-            var path = context.Path;
-
-            if (context.Path == PreviousViewUri)
-            {
-                var currentVM = await InitializeViewModel(CurrentContext);
-
-                await ((currentVM as INavigationStart)?.Start(CurrentContext, false) ?? Task.CompletedTask);
-            }
-            else
-            {
-                await DoForwardNavigation(context, (ctx, vm) =>
-                {
-                    var view = Tabs.ActivateTab(ctx, ctx.Path, vm);
-
-                    if (view is INavigationAware navAware)
-                    {
-                        navAware.Navigation = Navigation;
-                    }
-                });
-            }
-
-            return context with { CanCancel = false };
-        }
     }
 }

@@ -18,7 +18,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Adapters
 {
-    public abstract class BaseNavigationAdapter<TControl> : INavigationAdapter<TControl>
+    public abstract class BaseNavigationAdapter<TControl> : INavigationAdapter
     {
         public const string PreviousViewUri = "..";
         public const string MessageDialogUri = "__md__";
@@ -29,9 +29,9 @@ namespace Uno.Extensions.Navigation.Adapters
         public const string MessageDialogParameterCancelCommand = MessageDialogUri + "cancel";
         public const string MessageDialogParameterCommands = MessageDialogUri + "commands";
 
-        protected IInjectable<TControl> ControlWrapper { get; }
+        protected IControlNavigation ControlWrapper { get; }
 
-        public virtual NavigationContext CurrentContext => ControlWrapper.CurrentContext;
+        public virtual NavigationContext CurrentContext { get; protected set; }
 
         public string Name { get; set; }
 
@@ -45,7 +45,7 @@ namespace Uno.Extensions.Navigation.Adapters
 
         protected Stack<(IAsyncInfo, NavigationContext)> OpenDialogs { get; } = new Stack<(IAsyncInfo, NavigationContext)>();
 
-        public void Inject(TControl control)
+        public void Inject(object control)
         {
             ControlWrapper.Inject(control);
         }
@@ -59,7 +59,7 @@ namespace Uno.Extensions.Navigation.Adapters
             // INavigationService navigation, // Note: Don't pass in - implement INaviationAware instead
             IServiceProvider services,
             INavigationMapping navigationMapping,
-            IInjectable<TControl> control)
+            IControlNavigation control)
         {
             Services = services.CreateScope().ServiceProvider;
             Mapping = navigationMapping;
@@ -95,9 +95,28 @@ namespace Uno.Extensions.Navigation.Adapters
             }
         }
 
-        protected abstract Task<NavigationContext> AdapterNavigate(NavigationContext context, bool navBackRequired);
+        protected async Task<NavigationContext> AdapterNavigate(NavigationContext context, bool navBackRequired)
+        {
+            var request = context.Request;
+            var path = context.Path;
 
-        protected async Task DoForwardNavigation(NavigationContext context, Action<NavigationContext, object> adapterNavigation)
+            PreNavigation(context);
+
+            if (context.Path == PreviousViewUri)
+            {
+                var currentVM = await InitializeViewModel(CurrentContext, navBackRequired);
+
+                await ((currentVM as INavigationStart)?.Start(CurrentContext, false) ?? Task.CompletedTask);
+            }
+            else
+            {
+                await DoForwardNavigation(context);
+            }
+
+            return context with { CanCancel = false };
+        }
+
+        protected async Task DoForwardNavigation(NavigationContext context)
         {
             var mapping = Mapping.LookupByPath(context.Path);
             if (mapping is not null)
@@ -108,7 +127,7 @@ namespace Uno.Extensions.Navigation.Adapters
             //// Push the new navigation context
             //NavigationContexts.Push((context.Path, context));
 
-            var vm = await InitializeViewModel(context);
+            var vm = await InitializeViewModel(context, false);
 
             var data = context.Data;
             if (context.Path == MessageDialogUri)
@@ -163,9 +182,19 @@ namespace Uno.Extensions.Navigation.Adapters
             }
             else
             {
-                adapterNavigation(context, vm);
+                AdapterNavigation(context, vm);
             }
             await ((vm as INavigationStart)?.Start(context, true) ?? Task.CompletedTask);
+        }
+
+        protected virtual void PreNavigation(NavigationContext context)
+        {
+
+        }
+        protected virtual void AdapterNavigation(NavigationContext context, object viewModel)
+        {
+            CurrentContext = context;
+            ControlWrapper.Navigate(context,false, viewModel);
         }
 
         protected async Task<bool> EndCurrentNavigationContext(NavigationContext context)
@@ -263,7 +292,7 @@ namespace Uno.Extensions.Navigation.Adapters
             return oldVm;
         }
 
-        protected async Task<object> InitializeViewModel(NavigationContext context)
+        protected virtual async Task<object> InitializeViewModel(NavigationContext context, bool navBackRequired)
         {
             var mapping = context.Mapping;
             object vm = default;

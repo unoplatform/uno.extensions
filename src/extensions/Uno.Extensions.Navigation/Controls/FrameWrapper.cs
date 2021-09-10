@@ -14,13 +14,11 @@ using Microsoft.UI.Xaml.Navigation;
 namespace Uno.Extensions.Navigation.Controls
 {
 
-    public class FrameWrapper : BaseWrapper<Frame>, IFrameWrapper
+    public class FrameWrapper : BaseWrapper, IFrameWrapper
     {
-        private Frame Frame => Control;
+        private Frame Frame => Control as Frame;
 
-        public override NavigationContext CurrentContext => (Frame.Content as FrameworkElement).GetContext();
-
-        public object GoBack(object parameter, object viewModel)
+        private void GoBack(NavigationContext context, object parameter, object viewModel)
         {
             if (parameter is not null)
             {
@@ -32,33 +30,42 @@ namespace Uno.Extensions.Navigation.Controls
 
             Frame.GoBack();
 
-            var current = Frame.Content as FrameworkElement;
-            if (current is not null &&
-                viewModel is not null &&
-                current.DataContext != viewModel)
-            {
-                current.DataContext = viewModel;
-            }
+            InitialiseView(Frame.Content, context, viewModel);
 
-            return Frame.Content;
+            //var current = Frame.Content as FrameworkElement;
+            //if (current is not null &&
+            //    viewModel is not null &&
+            //    current.DataContext != viewModel)
+            //{
+            //    current.DataContext = viewModel;
+            //}
+
+            //return Frame.Content;
         }
 
-        public object Navigate(NavigationContext context, Type sourcePageType, object parameter, object viewModel)
+        public void Navigate(NavigationContext context, bool isBackNavigation, object viewModel)
+        //public object Navigate(NavigationContext context, Type sourcePageType, object parameter, object viewModel)
         {
+            if (isBackNavigation)
+            {
+                GoBack(context, context.Data, viewModel);
+                return;
+            }
             Debug.WriteLine("Backstack (Navigate - before): " + string.Join(",", Frame.BackStack.Select(x => x.SourcePageType.Name)));
-            var nav = Frame.Navigate(sourcePageType, parameter);
+            var nav = Frame.Navigate(context.Mapping.View, context.Data);
             Debug.WriteLine("Backstack (Navigate - after): " + string.Join(",", Frame.BackStack.Select(x => x.SourcePageType.Name)));
 
             if (nav && Frame.Content is FrameworkElement element)
             {
-                element.SetContext(context);
-                if (viewModel is not null)
-                {
-                    element.DataContext = viewModel;
-                }
+                InitialiseView(Frame.Content, context, viewModel);
+                //element.SetContext(context);
+                //if (viewModel is not null)
+                //{
+                //    element.DataContext = viewModel;
+                //}
             }
 
-            return Frame.Content;
+            //return Frame.Content;
         }
 
         public void RemoveLastFromBackStack()

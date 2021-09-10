@@ -2,7 +2,7 @@
 {
     public interface INavigationManager : INavigationService
     {
-        INavigationService AddAdapter<TControl>(INavigationService parentAdapter, string routeName, TControl control, INavigationService existingAdapter);
+        INavigationService AddAdapter(INavigationService parentAdapter, string routeName, object control, INavigationService existingAdapter);
 
         void RemoveAdapter(INavigationService adapter);
 

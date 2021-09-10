@@ -85,13 +85,7 @@ namespace Uno.Extensions.Navigation.Controls
                 var loadedElement = sLoaded as FrameworkElement;
                 var existingAdapter = loadedElement.GetAdapter();
                 var parent = ScopedServiceForControl(loadedElement.Parent);
-                var adapter = element switch
-                {
-                    Frame frame => NavigationManager.AddAdapter(parent, routeName, frame, existingAdapter),
-                    TabView tabs => NavigationManager.AddAdapter(parent, routeName, tabs, existingAdapter),
-                    ContentControl content => NavigationManager.AddAdapter(parent, routeName, content, existingAdapter),
-                    _ => default
-                };
+                var adapter = NavigationManager.AddAdapter(parent, routeName, element, existingAdapter);
                 loadedElement.SetAdapter(adapter);
                 loadedElement.Unloaded += (sUnloaded, eUnloaded) =>
                {
@@ -116,19 +110,19 @@ namespace Uno.Extensions.Navigation.Controls
             }
             return (INavigationService)element.GetValue(AdapterProperty);
         }
-        public static void SetContext(this FrameworkElement element, NavigationContext value)
-        {
-            element.SetValue(ContextProperty, value);
-        }
+        //public static void SetContext(this FrameworkElement element, NavigationContext value)
+        //{
+        //    element.SetValue(ContextProperty, value);
+        //}
 
-        public static NavigationContext GetContext(this FrameworkElement element)
-        {
-            if (element is null)
-            {
-                return null;
-            }
-            return (NavigationContext)element.GetValue(ContextProperty);
-        }
+        //public static NavigationContext GetContext(this FrameworkElement element)
+        //{
+        //    if (element is null)
+        //    {
+        //        return null;
+        //    }
+        //    return (NavigationContext)element.GetValue(ContextProperty);
+        //}
 
         public static TElement AsContainer<TElement>(this TElement element)
             where TElement : FrameworkElement
