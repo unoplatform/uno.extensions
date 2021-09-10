@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Extensions.DependencyInjection;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -11,24 +12,16 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Controls;
 
-public class ContentWrapper : BaseWrapper<ContentControl>, IContentWrapper
+public class ContentWrapper : BaseWrapper, IContentWrapper
 {
-    private ContentControl Host => Control;
+    private ContentControl Host => Control as ContentControl;
 
-    public override NavigationContext CurrentContext => (Host.Content as FrameworkElement).GetContext();
-
-    public object ShowContent(NavigationContext context, Type contentControl, object viewModel)
+    public void Navigate(NavigationContext context, bool isBackNavigation, object viewModel)
+    //public object ShowContent(NavigationContext context, Type contentControl, object viewModel)
     {
-        var content = Activator.CreateInstance(contentControl) ;
-        if (content is FrameworkElement fe)
-        {
-            fe.SetContext(context);
-            if (viewModel is not null)
-            {
-                fe.DataContext = viewModel;
-            }
-        }
+        var content = Activator.CreateInstance(context.Mapping.View);
         Host.Content = content;
-        return content;
+
+        InitialiseView(content, context, viewModel);
     }
 }

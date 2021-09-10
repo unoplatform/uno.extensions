@@ -1,14 +1,14 @@
-﻿#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
-using Windows.UI.Xaml.Controls;
-#else
-#endif
+﻿using System;
 
-namespace Uno.Extensions.Navigation.Controls
+namespace Uno.Extensions.Navigation.Controls;
+
+public interface IControlNavigation : IInjectable
 {
-    public interface IInjectable<TControl>
-    {
-        void Inject(TControl control);
-
-        NavigationContext CurrentContext { get; }
-    }
+    void Navigate(NavigationContext context, bool isBackNavigation, object viewModel);
 }
+
+public interface IInjectable
+{
+    void Inject(object control);
+}
+

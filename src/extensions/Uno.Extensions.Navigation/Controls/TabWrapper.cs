@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 #if WINDOWS_UWP
 using Microsoft.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls;
@@ -10,11 +11,9 @@ using System.Linq;
 
 namespace Uno.Extensions.Navigation.Controls;
 
-public class TabWrapper : BaseWrapper<TabView>, ITabWrapper
+public class TabWrapper : BaseWrapper, ITabWrapper
 {
-    private TabView Tabs => Control;
-
-    public override NavigationContext CurrentContext => (Tabs.SelectedItem as TabViewItem).GetContext(); 
+    private TabView Tabs => Control as TabView;
 
     private TabViewItem FindByName(string tabName)
     {
@@ -37,19 +36,14 @@ public class TabWrapper : BaseWrapper<TabView>, ITabWrapper
         return FindByName(tabName) is not null;
     }
 
-    public object ActivateTab(NavigationContext context, string tabName, object viewModel)
+    public void Navigate(NavigationContext context,bool isBackNavigation, object viewModel)
+        //public object ActivateTab(NavigationContext context, string tabName, object viewModel)
     {
-        var tab = FindByName(tabName);
+        var tab = FindByName(context.Path);
         if (tab is not null)
         {
-            if (tab.DataContext != viewModel)
-            {
-                tab.DataContext = viewModel;
-            }
-            tab.SetContext(context);
+            InitialiseView(tab, context, viewModel);
             Tabs.SelectedItem = tab;
-            return tab;
         }
-        return null;
     }
 }

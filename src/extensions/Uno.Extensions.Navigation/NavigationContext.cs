@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Uno.Extensions.Navigation.Adapters;
 
 namespace Uno.Extensions.Navigation
 {
@@ -19,6 +20,8 @@ namespace Uno.Extensions.Navigation
         NavigationMap Mapping = null)
     {
 #pragma warning restore SA1313 // Parameter names should begin with lower-case letter
+
+        public bool IsBackNavigation => Path == BaseNavigationAdapter<object>.PreviousViewUri;
 
         public CancellationToken CancellationToken => CancellationSource.Token;
 

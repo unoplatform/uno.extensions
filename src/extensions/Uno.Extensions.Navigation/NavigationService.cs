@@ -11,29 +11,29 @@ namespace Uno.Extensions.Navigation
     public class NavigationService : INavigationManager
     {
         private ActiveNavigationService RootAdapter { get; set; }
-        //private IList<INavigationAdapter> Adapters { get; } = new List<INavigationAdapter>();
-
-        //private IDictionary<object, ActiveNavigationService> AdapterLookup { get; } = new Dictionary<object, ActiveNavigationService>();
-
-        //private IList<bool> ActiveAdapters { get; } = new List<bool>();
 
         private IServiceProvider Services { get; }
+
+        private IDictionary<Type,IAdapterFactory> Factories { get;  }
 
         public NavigationService(IServiceProvider services)
         {
             Services = services;
+            var factories = services.GetServices<IAdapterFactory>();
+            Factories = factories.ToDictionary(x => x.ControlType);
         }
 
-        public INavigationService AddAdapter<TControl>(INavigationService parentAdapter, string routeName, TControl control, INavigationService existingAdapter)
+        public INavigationService AddAdapter(INavigationService parentAdapter, string routeName, object control, INavigationService existingAdapter)
         {
             var ans = existingAdapter as ActiveNavigationService;
             var parent = parentAdapter as ActiveNavigationService;
             if (ans is null)
             {
-                var scope = Services.CreateScope();
-                var services = scope.ServiceProvider;
+               
 
-                var adapter = services.GetService<INavigationAdapter<TControl>>();
+                var factory = Factories[control.GetType()];
+
+                var adapter = factory.Create();
                 adapter.Name = routeName;
                 adapter.Inject(control);
 
