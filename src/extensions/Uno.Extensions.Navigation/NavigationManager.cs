@@ -8,7 +8,7 @@ using Uno.Extensions.Navigation.Adapters;
 
 namespace Uno.Extensions.Navigation
 {
-    public class NavigationService : INavigationManager
+    public class NavigationManager : INavigationManager
     {
         private ActiveNavigationService RootAdapter { get; set; }
 
@@ -16,7 +16,7 @@ namespace Uno.Extensions.Navigation
 
         private IDictionary<Type,IAdapterFactory> Factories { get;  }
 
-        public NavigationService(IServiceProvider services)
+        public NavigationManager(IServiceProvider services)
         {
             Services = services;
             var factories = services.GetServices<IAdapterFactory>();
