@@ -2,7 +2,7 @@
 
 namespace Uno.Extensions.Navigation;
 
-public record ActiveNavigationService(NavigationService Navigation, INavigationAdapter Adapter, ActiveNavigationService ParentAdapter = null) : INavigationService
+public record ActiveNavigationService(NavigationManager Navigation, INavigationAdapter Adapter, ActiveNavigationService ParentAdapter = null) : INavigationService
 {
     public IDictionary<string, ActiveNavigationService> NestedAdapters { get; } =   new Dictionary<string, ActiveNavigationService>();
 

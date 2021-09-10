@@ -31,7 +31,7 @@ public static class ServiceCollectionExtensions
                     .AddSingleton<IAdapterFactory, AdapterFactory<Frame, FrameNavigationAdapter>>()
                     .AddSingleton<IAdapterFactory, AdapterFactory<TabView, TabNavigationAdapter>>()
                     .AddSingleton<IAdapterFactory, AdapterFactory<ContentControl, ContentNavigationAdapter>>()
-                    .AddSingleton<INavigationManager, NavigationService>()
+                    .AddSingleton<INavigationManager, NavigationManager>()
                     .AddScoped<NavigationServiceProvider>()
                     .AddScoped<INavigationService>(services => services.GetService<NavigationServiceProvider>().Navigation)
                     .AddScoped<ViewModelDataProvider>()
