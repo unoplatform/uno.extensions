@@ -40,8 +40,6 @@ public class NavigationService : INavigationService
 
     private NavigationResponse NavigateWithAdapter(NavigationRequest request, NavigationService navService)
     {
-
-
         var path = request.Route.Path.OriginalString;
 
         var queryIdx = path.IndexOf('?');
@@ -99,17 +97,6 @@ public class NavigationService : INavigationService
             }
             else
             {
-                //if (!string.IsNullOrWhiteSpace(navPath))
-                //{
-                //    if (navService.Adapter.IsCurrentPath(navPath))
-                //    {
-                //        navService = navService.Nested(string.Empty) as NavigationService;
-                //    }
-                //    else
-                //    {
-                //        navService = navService.Nested(navPath) as NavigationService;
-                //    }
-                //}
                 navPath = segments[i];
                 break;
             }
@@ -124,7 +111,16 @@ public class NavigationService : INavigationService
         var residualRequest = request with { Route = request.Route with { Path = new Uri(residualPath, UriKind.Relative) } };
         if (Adapter is null)
         {
-            PendingNavigation = request;
+            if (Parent is NavigationService parentNav)
+            {
+                parentNav.PendingNavigation = request;
+            }
+            else
+            {
+                // This should only be true for the first navigation in the app
+                // which may occur before the first container is created
+                PendingNavigation = request; 
+            }
             return null;
         }
         else if (!Adapter.IsCurrentPath(navPath))

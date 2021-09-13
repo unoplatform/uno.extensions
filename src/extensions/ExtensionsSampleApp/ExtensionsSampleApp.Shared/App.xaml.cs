@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using ExtensionsSampleApp.ViewModels;
 using ExtensionsSampleApp.Views;
+using ExtensionsSampleApp.Views.Twitter;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -66,7 +67,11 @@ namespace ExtensionsSampleApp
                    .AddScoped<FourthViewModel>()
                    .AddScoped<TabbedViewModel>()
                    .AddScoped<TabDoc0ViewModel>()
-                   .AddScoped<TabDoc1ViewModel>();
+                   .AddScoped<TabDoc1ViewModel>()
+                   .AddScoped<TweetsViewModel>()
+                   .AddScoped<TweetDetailsViewModel>()
+                   .AddScoped<NotificationsViewModel>()
+                   .AddViewModelData<Tweet>();
                })
                /*
                 * .ConfigureNavigationMapping(mapping=>{
@@ -93,6 +98,11 @@ namespace ExtensionsSampleApp
             mapping.Register(new NavigationMap(typeof(Content1).Name, typeof(Content1)));
             mapping.Register(new NavigationMap(typeof(Content2).Name, typeof(Content2)));
             mapping.Register(new NavigationMap(typeof(SimpleContentDialog).Name, typeof(SimpleContentDialog)));
+            mapping.Register(new NavigationMap(typeof(TwitterPage).Name, typeof(TwitterPage)));
+            mapping.Register(new NavigationMap(typeof(TweetsPage).Name, typeof(TweetsPage), typeof(TweetsViewModel)));
+            mapping.Register(new NavigationMap(typeof(TweetDetailsPage).Name, typeof(TweetDetailsPage), typeof(TweetDetailsViewModel), typeof(Tweet)));
+            mapping.Register(new NavigationMap(typeof(NotificationsPage).Name, typeof(NotificationsPage), typeof(NotificationsViewModel)));
+            mapping.Register(new NavigationMap(typeof(ProfilePage).Name, typeof(ProfilePage)));
 
 
             //InitializeLogging();
@@ -136,8 +146,8 @@ namespace ExtensionsSampleApp
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
                 var nav = Ioc.Default.GetService<INavigationService>();
-                //var navResult = nav.NavigateToView<MainPage>(this);
-                var navResult = nav.NavigateByPath(this, "TabbedPage/doc2/SecondPage/content/Content1");
+                var navResult = nav.NavigateToView<MainPage>(this);
+                //var navResult = nav.NavigateByPath(this, "TabbedPage/doc2/SecondPage/content/Content1");
 
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
                 {
