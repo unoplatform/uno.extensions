@@ -108,18 +108,21 @@ public class NavigationService : INavigationService
             numberOfPagesToRemove--;
         }
 
-        var residualRequest = request with { Route = request.Route with { Path = new Uri(residualPath, UriKind.Relative) } };
+        var residualRequest = request.WithPath(residualPath, query); // with { Route = request.Route with { Path = new Uri(residualPath, UriKind.Relative) } };
         if (Adapter is null)
         {
             if (Parent is NavigationService parentNav)
             {
-                parentNav.PendingNavigation = request;
+                if (parentNav.PendingNavigation is null)
+                {
+                    parentNav.PendingNavigation = request;
+                }
             }
             else
             {
                 // This should only be true for the first navigation in the app
                 // which may occur before the first container is created
-                PendingNavigation = request; 
+                PendingNavigation = request;
             }
             return null;
         }
@@ -152,7 +155,7 @@ public class NavigationService : INavigationService
                     else
                     {
                         residualPath = residualPath.TrimStart($"{nextPath}/");
-                        var nestedRequest = request with { Route = request.Route with { Path = new Uri(residualPath, UriKind.Relative) } };
+                        var nestedRequest = request.WithPath(residualPath, query); //with { Route = request.Route with { Path = new Uri(residualPath, UriKind.Relative) } };
                         return nested.Navigate(nestedRequest);
                     }
                 }
@@ -184,5 +187,15 @@ public class NavigationService : INavigationService
                 where key is not null && val is not null
                 select new { key, val })
                 .ToDictionary(x => x.key, x => (object)x.val);
+    }
+
+
+}
+
+public static class NavigationHelpers
+{
+    public static NavigationRequest WithPath(this NavigationRequest request, string path, string queryParameters)
+    {
+        return request with { Route = request.Route with { Path = new Uri(path + (!string.IsNullOrWhiteSpace(queryParameters) ? $"?{queryParameters}" : string.Empty), UriKind.Relative) } };
     }
 }
