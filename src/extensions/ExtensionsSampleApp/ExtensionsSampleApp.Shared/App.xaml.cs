@@ -132,20 +132,12 @@ namespace ExtensionsSampleApp
             if (rootFrame == null)
             {
                 // Create a Frame to act as the navigation context and navigate to the first page
-                rootFrame = new Frame().AsContainer();
+                rootFrame = new Frame().AsNavigationContainer();
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
-                //// This would normally be done in XAML but since we're manually
-                //// creating the frame we need to hook it to the navigation service
-                //Navigation.SetIsContainer(rootFrame, true);
-
-                // We need to make sure the root frame is loaded before we attempt
-                // to navigate otherwise the adapter won't be enabled
-                rootFrame.Loaded += (fs, fe) =>
-                {
-                    var nav = Ioc.Default.GetService<INavigationService>();
-                    var navResult = nav.NavigateToView<MainPage>(this);
-                };
+                var nav = Ioc.Default.GetService<INavigationService>();
+                //var navResult = nav.NavigateToView<MainPage>(this);
+                var navResult = nav.NavigateByPath(this, "TabbedPage/doc2/SecondPage/content/Content1");
 
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
                 {

@@ -16,8 +16,6 @@ namespace Uno.Extensions.Navigation.Adapters
 
         public string Name { get; set; }
 
-        protected INavigationMapping Mapping { get; }
-
         public IServiceProvider Services { get; }
 
         private IDialogProvider DialogProvider { get; }
@@ -35,18 +33,16 @@ namespace Uno.Extensions.Navigation.Adapters
 
         public virtual bool IsCurrentPath(string path)
         {
-            return CurrentContext.Path == path;
+            return CurrentContext?.Path == path;
         }
 
         public BaseNavigationAdapter(
             // INavigationService navigation, // Note: Don't pass in - implement INaviationAware instead
             IServiceProvider services,
-            INavigationMapping navigationMapping,
             IControlNavigation control)
         {
             Services = services;
             DialogProvider = Services.GetService<IDialogProvider>();
-            Mapping = navigationMapping;
             ControlWrapper = control;
         }
 
@@ -98,12 +94,6 @@ namespace Uno.Extensions.Navigation.Adapters
 
         protected async Task DoForwardNavigation(NavigationContext context)
         {
-            var mapping = Mapping.LookupByPath(context.Path);
-            if (mapping is not null)
-            {
-                context = context with { Mapping = mapping };
-            }
-
             var vm = await context.InitializeViewModel();
 
             var dialog = DialogProvider.CreateDialog(Navigation, context, vm);

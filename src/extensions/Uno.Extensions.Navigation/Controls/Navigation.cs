@@ -100,7 +100,7 @@ namespace Uno.Extensions.Navigation.Controls
             return (INavigationService)element.GetValue(AdapterProperty);
         }
 
-        public static TElement AsContainer<TElement>(this TElement element)
+        public static TElement AsNavigationContainer<TElement>(this TElement element)
             where TElement : FrameworkElement
         {
             element.SetValue(IsContainerProperty, true);

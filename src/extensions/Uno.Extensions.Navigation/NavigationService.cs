@@ -11,13 +11,18 @@ public class NavigationService : INavigationService
 {
     public INavigationManager Navigation { get; }
 
+    public INavigationMapping Mapping { get; }
+
     public INavigationAdapter Adapter { get; set; }
 
     public INavigationService Parent { get; }
 
-    public NavigationService(INavigationManager manager, INavigationService parent)
+    public NavigationRequest PendingNavigation { get; set; }
+
+    public NavigationService(INavigationManager manager, INavigationMapping mapping, INavigationService parent)
     {
         Navigation = manager;
+        Mapping = mapping;
         Parent = parent;
     }
 
@@ -35,6 +40,8 @@ public class NavigationService : INavigationService
 
     private NavigationResponse NavigateWithAdapter(NavigationRequest request, NavigationService navService)
     {
+
+
         var path = request.Route.Path.OriginalString;
 
         var queryIdx = path.IndexOf('?');
@@ -70,9 +77,19 @@ public class NavigationService : INavigationService
         var segments = path.Split('/');
         var numberOfPagesToRemove = 0;
         var navPath = string.Empty;
+        var residualPath = path;
+        var nextPath = string.Empty;
         for (int i = 0; i < segments.Length; i++)
         {
-            if (string.IsNullOrWhiteSpace(segments[i]))
+            var navSegment = segments[i];
+            residualPath = residualPath.TrimStart(navSegment);
+            if (residualPath.StartsWith("/"))
+            {
+                residualPath = residualPath.Substring(1);
+            }
+            nextPath = i < segments.Length - 1 ? segments[i + 1] : string.Empty;
+
+            if (string.IsNullOrWhiteSpace(navSegment))
             {
                 continue;
             }
@@ -82,18 +99,19 @@ public class NavigationService : INavigationService
             }
             else
             {
-                if (!string.IsNullOrWhiteSpace(navPath))
-                {
-                    if (navService.Adapter.IsCurrentPath(navPath))
-                    {
-                        navService = navService.Nested(string.Empty) as NavigationService;
-                    }
-                    else
-                    {
-                        navService = navService.Nested(navPath) as NavigationService;
-                    }
-                }
+                //if (!string.IsNullOrWhiteSpace(navPath))
+                //{
+                //    if (navService.Adapter.IsCurrentPath(navPath))
+                //    {
+                //        navService = navService.Nested(string.Empty) as NavigationService;
+                //    }
+                //    else
+                //    {
+                //        navService = navService.Nested(navPath) as NavigationService;
+                //    }
+                //}
                 navPath = segments[i];
+                break;
             }
         }
 
@@ -103,6 +121,49 @@ public class NavigationService : INavigationService
             numberOfPagesToRemove--;
         }
 
+        var residualRequest = request with { Route = request.Route with { Path = new Uri(residualPath, UriKind.Relative) } };
+        if (Adapter is null)
+        {
+            PendingNavigation = request;
+            return null;
+        }
+        else if (!Adapter.IsCurrentPath(navPath))
+        {
+            if (!string.IsNullOrWhiteSpace(residualPath))
+            {
+                PendingNavigation = residualRequest;
+            }
+        }
+        else
+        {
+            if (!string.IsNullOrWhiteSpace(residualPath))
+            {
+                if (!NestedAdapters.Any())
+                {
+                    PendingNavigation = residualRequest;
+                }
+                else
+                {
+                    // navPath is the current path on the adapter
+                    // Need to look at nested services to see if we
+                    // need to pick on, before passing down the residual
+                    // navigation request
+                    var nested = Nested(nextPath) as NavigationService;
+                    if (nested is null)
+                    {
+                        PendingNavigation = residualRequest;
+                    }
+                    else
+                    {
+                        residualPath = residualPath.TrimStart($"{nextPath}/");
+                        var nestedRequest = request with { Route = request.Route with { Path = new Uri(residualPath, UriKind.Relative) } };
+                        return nested.Navigate(nestedRequest);
+                    }
+                }
+            }
+            return null;
+        }
+
         var scope = navService.Adapter.Services.CreateScope();
         var services = scope.ServiceProvider;
         var dataFactor = services.GetService<ViewModelDataProvider>();
@@ -110,7 +171,9 @@ public class NavigationService : INavigationService
         var navWrapper = services.GetService<NavigationServiceProvider>();
         navWrapper.Navigation = navService;
 
-        var context = new NavigationContext(services, request, navPath, isRooted, numberOfPagesToRemove, paras, new CancellationTokenSource(), new TaskCompletionSource<object>());
+        var mapping = Mapping.LookupByPath(navPath);
+
+        var context = new NavigationContext(services, request, navPath, isRooted, numberOfPagesToRemove, paras, new CancellationTokenSource(), new TaskCompletionSource<object>(), Mapping: mapping);
         return navService.Adapter.Navigate(context);
     }
 
