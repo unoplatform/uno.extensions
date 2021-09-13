@@ -44,7 +44,7 @@ namespace Uno.Extensions.Navigation.Adapters
             INavigationMapping navigationMapping,
             IControlNavigation control)
         {
-            Services = services.CreateScope().ServiceProvider;
+            Services = services;
             DialogProvider = Services.GetService<IDialogProvider>();
             Mapping = navigationMapping;
             ControlWrapper = control;

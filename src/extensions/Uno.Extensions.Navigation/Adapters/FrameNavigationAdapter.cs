@@ -7,21 +7,6 @@ using Uno.Extensions.Navigation.Controls;
 
 namespace Uno.Extensions.Navigation.Adapters
 {
-#pragma warning disable SA1313 // Parameter names should begin with lower-case letter
-    public record AdapterFactory<TControl, TAdapter>(IServiceProvider Services) : IAdapterFactory
-#pragma warning restore SA1313 // Parameter names should begin with lower-case letter
-    where TAdapter : INavigationAdapter
-    {
-        public Type ControlType => typeof(TControl);
-
-        public INavigationAdapter Create()
-        {
-            var scope = Services.CreateScope();
-            var services = scope.ServiceProvider;
-            return services.GetService<TAdapter>();
-        }
-    }
-
     public class FrameNavigationAdapter : BaseNavigationAdapter
     {
         private IFrameWrapper Frame => ControlWrapper as IFrameWrapper;

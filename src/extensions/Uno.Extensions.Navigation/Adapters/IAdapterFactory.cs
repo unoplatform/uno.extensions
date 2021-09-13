@@ -6,5 +6,5 @@ public interface IAdapterFactory
 {
     Type ControlType { get; }
 
-    INavigationAdapter Create();
+    INavigationAdapter Create(IServiceProvider services);
 }

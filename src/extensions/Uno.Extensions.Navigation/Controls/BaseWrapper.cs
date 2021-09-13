@@ -12,7 +12,7 @@ namespace Uno.Extensions.Navigation.Controls
     {
         protected object Control { get; private set; }
 
-        public void Inject(object control) => Control = control;
+        public virtual void Inject(object control) => Control = control;
 
         protected static void InitialiseView(object view, NavigationContext context, object viewModel)
         {

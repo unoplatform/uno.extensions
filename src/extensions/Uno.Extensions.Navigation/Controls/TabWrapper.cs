@@ -12,6 +12,29 @@ public class TabWrapper : BaseWrapper, ITabWrapper
 {
     private TabView Tabs => Control as TabView;
 
+    private INavigationService Navigation { get; }
+
+    public TabWrapper(INavigationService navigation)
+    {
+        Navigation = navigation;
+    }
+
+    public override void Inject(object control)
+    {
+        base.Inject(control);
+        Tabs.TabItemsChanged += Tabs_TabItemsChanged;
+    }
+
+    private void Tabs_TabItemsChanged(TabView sender, Windows.Foundation.Collections.IVectorChangedEventArgs args)
+    {
+        if (args.CollectionChange == Windows.Foundation.Collections.CollectionChange.ItemInserted)
+        {
+            var tvi = Tabs.TabItems[(int)args.Index] as TabViewItem;
+            var tabName = tvi.Name;
+            Navigation.NavigateByPath(null, tabName);
+        }
+    }
+
     private TabViewItem FindByName(string tabName)
     {
         return (from t in Tabs.TabItems.OfType<TabViewItem>()
@@ -39,7 +62,14 @@ public class TabWrapper : BaseWrapper, ITabWrapper
         if (tab is not null)
         {
             InitialiseView(tab, context, viewModel);
-            Tabs.SelectedItem = tab;
+
+            // Only set the selected tab if there's a valid sender
+            // otherwise, we're just setting up the viewmodel etc
+            // for tabs when they're created
+            if (context.Request.Sender is not null)
+            {
+                Tabs.SelectedItem = tab;
+            }
         }
     }
 }
