@@ -22,8 +22,7 @@ namespace Uno.Extensions.Navigation.Adapters
         public FrameNavigationAdapter(
             // INavigationService navigation, // Note: Don't pass in - implement INaviationAware instead
             IServiceProvider services,
-            INavigationMapping navigationMapping,
-            IFrameWrapper frameWrapper) : base(services, navigationMapping, frameWrapper)
+            IFrameWrapper frameWrapper) : base(services, frameWrapper)
         {
         }
 
