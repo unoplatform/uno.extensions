@@ -9,6 +9,17 @@ namespace Uno.Extensions.Navigation
 {
     public static class NavigationServiceExtensions
     {
+        public static NavigationResponse NavigateByPath(this INavigationService service, object sender, string path, object data = null)
+        {
+            return service.Navigate(new NavigationRequest(sender, new NavigationRoute(new Uri(path, UriKind.Relative), data)));
+        }
+
+        public static NavigationResponse<TResult> NavigateByPath<TResult>(this INavigationService service, object sender, string path, object data = null)
+        {
+            var result = service.Navigate(new NavigationRequest(sender, new NavigationRoute(new Uri(path, UriKind.Relative), data), typeof(TResult)));
+            return new NavigationResponse<TResult>(result.Request, result.NavigationTask, result.CancellationSource, result.Result.ContinueWith(x => (TResult)x.Result));
+        }
+
         public static NavigationResponse NavigateToView<TView>(this INavigationService service, object sender, object data = null)
         {
             return service.NavigateToView(sender, typeof(TView), data);

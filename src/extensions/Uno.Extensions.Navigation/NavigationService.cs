@@ -7,10 +7,20 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Uno.Extensions.Navigation;
 
-#pragma warning disable SA1313 // Parameter names should begin with lower-case letter
-public record NavigationService(INavigationManager Navigation, INavigationAdapter Adapter, INavigationService Parent) : INavigationService
-#pragma warning restore SA1313 // Parameter names should begin with lower-case letter
+public class NavigationService : INavigationService
 {
+    public INavigationManager Navigation { get; }
+
+    public INavigationAdapter Adapter { get; set; }
+
+    public INavigationService Parent { get; }
+
+    public NavigationService(INavigationManager manager, INavigationService parent)
+    {
+        Navigation = manager;
+        Parent = parent;
+    }
+
     public IDictionary<string, INavigationService> NestedAdapters { get; } = new Dictionary<string, INavigationService>();
 
     public NavigationResponse Navigate(NavigationRequest request)

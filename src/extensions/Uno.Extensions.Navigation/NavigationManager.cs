@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Adapters;
 
 namespace Uno.Extensions.Navigation
@@ -9,10 +10,13 @@ namespace Uno.Extensions.Navigation
     {
         private INavigationService Root { get; set; }
 
+        private IServiceProvider Services { get; }
+
         private IDictionary<Type, IAdapterFactory> Factories { get; }
 
-        public NavigationManager(IEnumerable<IAdapterFactory> factories)
+        public NavigationManager(IServiceProvider services, IEnumerable<IAdapterFactory> factories)
         {
+            Services = services;
             Factories = factories.ToDictionary(x => x.ControlType);
         }
 
@@ -22,13 +26,17 @@ namespace Uno.Extensions.Navigation
             var parent = parentAdapter as NavigationService;
             if (ans is null)
             {
-                var factory = Factories[control.GetType()];
+                ans = new NavigationService(this, parent);
+                var scope = Services.CreateScope();
+                var services = scope.ServiceProvider;
+                var navWrapper = services.GetService<NavigationServiceProvider>();
+                navWrapper.Navigation = ans;
 
-                var adapter = factory.Create();
+                var factory = Factories[control.GetType()];
+                var adapter = factory.Create(services);
                 adapter.Name = routeName;
                 adapter.Inject(control);
-
-                ans = new NavigationService(this, adapter, parent);
+                ans.Adapter = adapter;
             }
 
             if (parent is null)
