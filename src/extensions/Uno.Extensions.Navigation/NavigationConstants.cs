@@ -1,6 +1,6 @@
 ﻿#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Popups;
+using Windows.UI.Xaml.Controls;
 using UICommand = Windows.UI.Popups.UICommand;
 #else
 #endif
@@ -17,6 +17,5 @@ namespace Uno.Extensions.Navigation
         public const string MessageDialogParameterDefaultCommand = MessageDialogUri + "default";
         public const string MessageDialogParameterCancelCommand = MessageDialogUri + "cancel";
         public const string MessageDialogParameterCommands = MessageDialogUri + "commands";
-
     }
 }

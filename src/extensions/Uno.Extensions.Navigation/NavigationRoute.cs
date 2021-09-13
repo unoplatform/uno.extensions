@@ -6,5 +6,5 @@ namespace Uno.Extensions.Navigation
     public record NavigationRoute(Uri Path, object Data = null)
     {
     }
-#pragma warning enable SA1313 // Parameter names should begin with lower-case letter
+#pragma warning restore SA1313 // Parameter names should begin with lower-case letter
 }

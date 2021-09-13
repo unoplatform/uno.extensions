@@ -1,9 +1,7 @@
-﻿using System;
+﻿using Windows.Foundation;
 
-namespace Uno.Extensions.Navigation;
+namespace Uno.Extensions.Navigation.Dialogs;
 
 #pragma warning disable SA1313 // Parameter names should begin with lower-case letter
-public record NavigationRequest(object Sender, NavigationRoute Route, Type Result = null)
+public record Dialog(IDialogManager Manager, IAsyncInfo ShowTask, NavigationContext Context) { }
 #pragma warning restore SA1313 // Parameter names should begin with lower-case letter
-{
-}

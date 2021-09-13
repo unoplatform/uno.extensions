@@ -1,10 +1,11 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Adapters;
 using Uno.Extensions.Navigation.Controls;
-using System.Collections.Generic;
+using Uno.Extensions.Navigation.Dialogs;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
-using Windows.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls;
 #else
 using Microsoft.UI.Xaml.Controls;
 #endif
@@ -40,6 +41,7 @@ public static class ServiceCollectionExtensions
                     .AddScoped<ViewModelDataProvider>()
                     .AddScoped<IDictionary<string, object>>(services => services.GetService<ViewModelDataProvider>().Parameters);
     }
+
     public static IServiceCollection AddViewModelData<TData>(this IServiceCollection services)
         where TData : class
     {
@@ -57,7 +59,8 @@ public class ViewModelDataProvider
 {
     public IDictionary<string, object> Parameters { get; set; }
 
-    public TData GetData<TData>() where TData : class
+    public TData GetData<TData>()
+        where TData : class
     {
         return Parameters.TryGetValue(string.Empty, out var data) ? data as TData : default;
     }

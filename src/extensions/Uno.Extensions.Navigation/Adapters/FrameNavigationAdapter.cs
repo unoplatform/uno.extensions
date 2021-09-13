@@ -7,8 +7,10 @@ using Uno.Extensions.Navigation.Controls;
 
 namespace Uno.Extensions.Navigation.Adapters
 {
+#pragma warning disable SA1313 // Parameter names should begin with lower-case letter
     public record AdapterFactory<TControl, TAdapter>(IServiceProvider Services) : IAdapterFactory
-        where TAdapter : INavigationAdapter
+#pragma warning restore SA1313 // Parameter names should begin with lower-case letter
+    where TAdapter : INavigationAdapter
     {
         public Type ControlType => typeof(TControl);
 
@@ -37,7 +39,8 @@ namespace Uno.Extensions.Navigation.Adapters
             IServiceProvider services,
             INavigationMapping navigationMapping,
             IFrameWrapper frameWrapper) : base(services, navigationMapping, frameWrapper)
-        { }
+        {
+        }
 
         protected override async Task DoBackNavigation(NavigationContext context)
         {
@@ -68,7 +71,6 @@ namespace Uno.Extensions.Navigation.Adapters
 
         protected override void AdapterNavigation(NavigationContext context, object viewModel)
         {
-
             var numberOfPagesToRemove = context.FramesToRemove;
             // We remove 1 less here because we need to remove the current context, after the navigation is completed
             while (numberOfPagesToRemove > 1)

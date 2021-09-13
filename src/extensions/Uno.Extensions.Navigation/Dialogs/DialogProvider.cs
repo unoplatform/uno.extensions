@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 
-namespace Uno.Extensions.Navigation.Controls;
+namespace Uno.Extensions.Navigation.Dialogs;
 
+#pragma warning disable SA1313 // Parameter names should begin with lower-case letter
 public record DialogProvider(IEnumerable<IDialogManager> Dialogs) : IDialogProvider
+#pragma warning restore SA1313 // Parameter names should begin with lower-case letter
 {
     public Dialog CreateDialog(INavigationService navigation, NavigationContext context, object vm)
     {
