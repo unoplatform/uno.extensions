@@ -120,19 +120,28 @@ namespace ExtensionsSampleApp.ViewModels
         };
     }
 
-    public class TweetDetailsViewModel
+    public class TweetDetailsViewModel: ObservableObject, INavigationStart
     {
-        public Tweet Tweet { get; }
+        private Tweet tweet;
+        public Tweet Tweet { get => tweet; set=>SetProperty(ref tweet, value); }
         public TweetDetailsViewModel(Tweet tweet)
         {
             Tweet = tweet;
+        }
+
+        public async Task Start(NavigationContext context, bool create)
+        {
+            if(Tweet is null)
+            {
+                Tweet = new Tweet { Id = int.Parse(context.Data["tweetid"] + ""), Author = "Ned", Text = "Tweet loaded on start" };
+            }
         }
     }
 
     public class Tweet
     {
         public static int NextId = 1;
-        public int Id { get; } = NextId++;
+        public int Id { get; set; } = NextId++;
         public string Author { get; set; }
         public string Text { get; set; }
     }
