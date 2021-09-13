@@ -18,8 +18,8 @@ namespace Uno.Extensions.Navigation
         TaskCompletionSource<object> ResultCompletion,
         bool CanCancel = true,
         NavigationMap Mapping = null)
-    {
 #pragma warning restore SA1313 // Parameter names should begin with lower-case letter
+    {
 
         public bool IsBackNavigation => Path == NavigationConstants.PreviousViewUri;
 

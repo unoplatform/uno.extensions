@@ -69,7 +69,6 @@ namespace Uno.Extensions.Navigation.Controls
 
         private static void RegisterElement(FrameworkElement element, string routeName)
         {
-
             element.Loaded += (sLoaded, eLoaded) =>
             {
                 var loadedElement = sLoaded as FrameworkElement;

@@ -33,7 +33,7 @@ public class TabWrapper : BaseWrapper, ITabWrapper
         return FindByName(tabName) is not null;
     }
 
-    public void Navigate(NavigationContext context,bool isBackNavigation, object viewModel)
+    public void Navigate(NavigationContext context, bool isBackNavigation, object viewModel)
     {
         var tab = FindByName(context.Path);
         if (tab is not null)

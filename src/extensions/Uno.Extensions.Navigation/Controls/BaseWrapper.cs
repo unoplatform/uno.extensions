@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
-using Windows.UI.Xaml;
 using Microsoft.UI.Xaml;
+using Windows.UI.Xaml;
 #else
 using Microsoft.UI.Xaml;
 #endif

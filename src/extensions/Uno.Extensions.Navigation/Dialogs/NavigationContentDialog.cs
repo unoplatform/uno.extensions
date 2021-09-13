@@ -1,23 +1,22 @@
 ﻿using System;
-using System.Threading.Tasks;
 using System.Threading;
+using System.Threading.Tasks;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Popups;
+using Windows.UI.Xaml.Controls;
 using UICommand = Windows.UI.Popups.UICommand;
 #else
+using Microsoft.UI.Xaml.Controls;
 using Windows.UI.Popups;
 using UICommand = Windows.UI.Popups.UICommand;
-using Microsoft.UI.Xaml.Controls;
 #endif
 
-namespace Uno.Extensions.Navigation.Controls;
+namespace Uno.Extensions.Navigation.Dialogs;
 
 public class NavigationContentDialog : IDialogManager
 {
     public object CloseDialog(Dialog dialog, NavigationContext context, object responseData)
     {
-
         if (!(responseData is ContentDialogResult))
         {
             dialog.ShowTask.Cancel();

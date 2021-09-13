@@ -34,7 +34,10 @@ namespace Uno.Extensions.Navigation
             if (parent is null)
             {
 #if DEBUG
-                if (Root is not null) throw new Exception("Null root adapter expected");
+                if (Root is not null)
+                {
+                    throw new Exception("Null root adapter expected");
+                }
 #endif
                 Root = ans;
             }
@@ -62,7 +65,7 @@ namespace Uno.Extensions.Navigation
             var parent = adapter.Parent as NavigationService;
             if (parent is not null)
             {
-                parent.NestedAdapters.Remove(kvp => kvp.Value == ans);
+                parent.NestedAdapters.Remove(kvp => kvp.Value == adapter);
             }
         }
 

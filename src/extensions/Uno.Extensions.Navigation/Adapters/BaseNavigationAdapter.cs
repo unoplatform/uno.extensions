@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Controls;
+using Uno.Extensions.Navigation.Dialogs;
 
 namespace Uno.Extensions.Navigation.Adapters
 {
