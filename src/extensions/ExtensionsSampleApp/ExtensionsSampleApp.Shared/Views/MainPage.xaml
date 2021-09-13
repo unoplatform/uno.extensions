@@ -35,6 +35,9 @@
                     Click="ContentDialogResultAndWidgetResponseClick" />
             <Button Content="Message Dialog"
                     Click="MessageDialogClick" />
+
+            <Button Content="Twitter"
+                    nav:Navigation.Path="/TwitterPage" />
         </StackPanel>
     </Grid>
 </Page>

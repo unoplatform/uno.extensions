@@ -1,0 +1,43 @@
+﻿<Page
+    x:Class="ExtensionsSampleApp.Views.Twitter.NotificationsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ExtensionsSampleApp.Views.Twitter"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+      xmlns:nav="using:Uno.Extensions.Navigation.Controls"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Notifications" />
+        <StackPanel HorizontalAlignment="Center">
+            <Ellipse Fill="Gray"
+                     Height="100"
+                     Width="100" />
+            <TextBlock Text="Fred Bloggs" />
+            <Button Content="Profile"
+                    nav:Navigation.Path="////ProfilePage" />
+        </StackPanel>
+        <ListView Grid.Row="1"
+                  ItemsSource="{Binding Notifications}"
+                  SelectionChanged="TweetSelectionChanged">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock Text="{Binding Id}"
+                                   FontWeight="Bold" />
+                        <TextBlock Text="{Binding Author}"
+                                   FontWeight="Bold" />
+                        <TextBlock Text="{Binding Text}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</Page>

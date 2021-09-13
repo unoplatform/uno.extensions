@@ -17,6 +17,28 @@ public class FrameWrapper : BaseWrapper, IFrameWrapper
 {
     private Frame Frame => Control as Frame;
 
+    public override void Inject(object control)
+    {
+        base.Inject(control);
+        if (Frame.Content is not null)
+        {
+            Navigation.NavigateToView(null, Frame.SourcePageType);
+        }
+        Frame.Navigated += Frame_Navigated;
+    }
+
+    private INavigationService Navigation { get; }
+
+    public FrameWrapper(INavigationService navigation)
+    {
+        Navigation = navigation;
+    }
+
+    private void Frame_Navigated(object sender, NavigationEventArgs e)
+    {
+        Navigation.NavigateToView(null, Frame.SourcePageType);
+    }
+
     private void GoBack(NavigationContext context, object parameter, object viewModel)
     {
         if (parameter is not null)
@@ -39,9 +61,15 @@ public class FrameWrapper : BaseWrapper, IFrameWrapper
             GoBack(context, context.Data, viewModel);
             return;
         }
-        var nav = Frame.Navigate(context.Mapping.View, context.Data);
 
-        if (nav && Frame.Content is FrameworkElement element)
+        if (context.Request.Sender is not null)
+        {
+            Frame.Navigated -= Frame_Navigated;
+            var nav = Frame.Navigate(context.Mapping.View, context.Data);
+            Frame.Navigated += Frame_Navigated;
+        }
+
+        if (Frame.Content is FrameworkElement element)
         {
             InitialiseView(Frame.Content, context, viewModel);
         }
