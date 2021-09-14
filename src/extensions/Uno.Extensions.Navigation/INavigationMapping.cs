@@ -1,17 +1,16 @@
 ﻿using System;
 
-namespace Uno.Extensions.Navigation
+namespace Uno.Extensions.Navigation;
+
+public interface INavigationMapping
 {
-    public interface INavigationMapping
-    {
-        void Register(NavigationMap map);
+    void Register(NavigationMap map);
 
-        NavigationMap LookupByPath(string path);
+    NavigationMap LookupByPath(string path);
 
-        NavigationMap LookupByViewModel(Type viewModelType);
+    NavigationMap LookupByViewModel(Type viewModelType);
 
-        NavigationMap LookupByView(Type viewType);
+    NavigationMap LookupByView(Type viewType);
 
-        NavigationMap LookupByData(Type dataType);
-    }
+    NavigationMap LookupByData(Type dataType);
 }

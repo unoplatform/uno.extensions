@@ -1,13 +1,12 @@
 ﻿using System;
 
-namespace Uno.Extensions.Navigation
+namespace Uno.Extensions.Navigation;
+
+public interface INavigationService
 {
-    public interface INavigationService
-    {
-        NavigationResponse Navigate(NavigationRequest request);
+    NavigationResponse Navigate(NavigationRequest request);
 
-        INavigationService Parent { get; }
+    INavigationService Parent { get; }
 
-        INavigationService Nested(string routeName = null);
-    }
+    INavigationService Nested(string routeName = null);
 }
