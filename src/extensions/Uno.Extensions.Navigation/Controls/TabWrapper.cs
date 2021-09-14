@@ -8,7 +8,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Controls;
 
-public class TabWrapper : BaseWrapper, ITabWrapper
+public class TabWrapper : BaseWrapper, IControlNavigation<TabView>
 {
     private TabView Tabs => Control as TabView;
 

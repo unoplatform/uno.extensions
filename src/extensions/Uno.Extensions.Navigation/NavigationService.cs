@@ -20,11 +20,22 @@ public class NavigationService : INavigationService
 
     public NavigationRequest PendingNavigation { get; set; }
 
-    public NavigationService(INavigationManager manager, INavigationMapping mapping, INavigationService parent)
+    private IServiceProvider ScopedServices { get; }
+
+    public NavigationService(INavigationManager manager, IServiceProvider services, INavigationMapping mapping, INavigationService parent)
     {
         Navigation = manager;
+        ScopedServices = services;
+
+        // Prevent recursion when this is the root nav service
+        if (parent is not null)
+        {
+            var navWrapper = ScopedServices.GetService<NavigationServiceProvider>();
+            navWrapper.Navigation = this;
+            Parent = parent;
+        }
+
         Mapping = mapping;
-        Parent = parent;
     }
 
     public IDictionary<string, INavigationService> NestedAdapters { get; } = new Dictionary<string, INavigationService>();
@@ -164,7 +175,7 @@ public class NavigationService : INavigationService
             return null;
         }
 
-        var scope = navService.Adapter.Services.CreateScope();
+        var scope = navService.ScopedServices.CreateScope();
         var services = scope.ServiceProvider;
         var dataFactor = services.GetService<ViewModelDataProvider>();
         dataFactor.Parameters = paras;
