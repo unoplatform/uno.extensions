@@ -22,16 +22,26 @@ public static class ServiceCollectionExtensions
         }
 
         return services
-                    .AddSingleton<INavigationMapping, NavigationMapping>()
+                    // Register the control navigation implementation (simple or stack based navigation)
                     .AddTransient<IStackNavigation<Frame>, FrameWrapper>()
                     .AddTransient<ISimpleNavigation<TabView>, TabWrapper>()
                     .AddTransient<ISimpleNavigation<ContentControl>, ContentWrapper>()
+
+                    // Register the adapter for each control type
                     .AddAdapter<Frame, StackNavigationAdapter<Frame>>()
                     .AddAdapter<TabView, SimpleNavigationAdapter<TabView>>()
                     .AddAdapter<ContentControl, SimpleNavigationAdapter<ContentControl>>()
+
+                    // Register the different types of dialogs
                     .AddSingleton<IDialogManager, ContentDialogManager>()
                     .AddSingleton<IDialogManager, MessageDialogManager>()
                     .AddSingleton<IDialogFactory, DialogFactory>()
+
+                    // Register the navigation mappings repository
+                    .AddSingleton<INavigationMapping, NavigationMapping>()
+
+                    // Register the navigation manager and the providers for
+                    // navigation data and the navigation service
                     .AddSingleton<INavigationManager, NavigationManager>()
                     .AddScoped<NavigationServiceProvider>()
                     .AddScoped<INavigationService>(services => services.GetService<NavigationServiceProvider>().Navigation)
