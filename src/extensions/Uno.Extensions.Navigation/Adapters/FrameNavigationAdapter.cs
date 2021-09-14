@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Uno.Extensions.Navigation.Controls;
+using Uno.Extensions.Navigation.Dialogs;
 
 namespace Uno.Extensions.Navigation.Adapters;
 
-public class FrameNavigationAdapter : NavigationAdapter<IFrameWrapper>
+public class FrameNavigationAdapter<TControl> : NavigationAdapter<TControl>
 {
-    private IFrameWrapper Frame => ControlWrapper as IFrameWrapper;
+    private IFrameWrapper<TControl> Frame => ControlWrapper as IFrameWrapper<TControl>;
 
     protected IList<NavigationContext> NavigationContexts { get; } = new List<NavigationContext>();
 
@@ -18,10 +18,7 @@ public class FrameNavigationAdapter : NavigationAdapter<IFrameWrapper>
         protected set { }
     }
 
-    public FrameNavigationAdapter(
-        // INavigationService navigation, // Note: Don't pass in - implement INaviationAware instead
-        IServiceProvider services,
-        IFrameWrapper frameWrapper) : base(services, frameWrapper)
+    public FrameNavigationAdapter(IFrameWrapper<TControl> frameWrapper, IDialogFactory dialogFactory) : base(frameWrapper, dialogFactory)
     {
     }
 

@@ -9,14 +9,11 @@ using Uno.Extensions.Navigation.ViewModels;
 
 namespace Uno.Extensions.Navigation.Adapters;
 
-public class NavigationAdapter<TControlWrapper> : INavigationAdapter
-    where TControlWrapper : IControlNavigation
+public class NavigationAdapter<TControl> : INavigationAdapter
 {
-    protected TControlWrapper ControlWrapper { get; }
+    public IControlNavigation<TControl> ControlWrapper { get; }
 
     public virtual NavigationContext CurrentContext { get; protected set; }
-
-    public IServiceProvider Services { get; }
 
     private IDialogFactory DialogProvider { get; }
 
@@ -36,13 +33,9 @@ public class NavigationAdapter<TControlWrapper> : INavigationAdapter
         return CurrentContext?.Path == path;
     }
 
-    public NavigationAdapter(
-        // INavigationService navigation, // Note: Don't pass in - implement INaviationAware instead
-        IServiceProvider services,
-        TControlWrapper control)
+    public NavigationAdapter(IControlNavigation<TControl> control, IDialogFactory dialogFactory)
     {
-        Services = services;
-        DialogProvider = Services.GetService<IDialogFactory>();
+        DialogProvider = dialogFactory;
         ControlWrapper = control;
     }
 
@@ -76,7 +69,7 @@ public class NavigationAdapter<TControlWrapper> : INavigationAdapter
             }
         }
 
-        context = context with { CanCancel = this.CanGoBack || OpenDialogs.Any() };
+        context = context with { CanCancel = CanGoBack || OpenDialogs.Any() };
 
         if (context.CanCancel)
         {
@@ -106,7 +99,7 @@ public class NavigationAdapter<TControlWrapper> : INavigationAdapter
             AdapterNavigation(context, vm);
         }
 
-        await ((vm as INavigationStart)?.Start(context, true) ?? Task.CompletedTask);
+        await context.StartViewModel(vm);
     }
 
     protected virtual void AdapterNavigation(NavigationContext context, object viewModel)

@@ -21,7 +21,7 @@ public class NavigationManager : INavigationManager
         Services = services;
         Mapping = mapping;
         Factories = factories.ToDictionary(x => x.ControlType);
-        Root = new NavigationService(this, Mapping, null);
+        Root = new NavigationService(this, null, Mapping, null);
     }
 
     public INavigationService AddAdapter(INavigationService parentAdapter, string routeName, object control, INavigationService existingAdapter)
@@ -30,11 +30,9 @@ public class NavigationManager : INavigationManager
         var parent = parentAdapter as NavigationService;
         if (ans is null)
         {
-            ans = new NavigationService(this, Mapping, parent);
             var scope = Services.CreateScope();
             var services = scope.ServiceProvider;
-            var navWrapper = services.GetService<NavigationServiceProvider>();
-            navWrapper.Navigation = ans;
+            ans = new NavigationService(this, services, Mapping, parent);
 
             var factory = Factories[control.GetType()];
             var adapter = factory.Create(services);
