@@ -3,7 +3,7 @@ using Uno.Extensions.Navigation.Controls;
 
 namespace Uno.Extensions.Navigation.Adapters;
 
-public class TabNavigationAdapter : BaseNavigationAdapter
+public class TabNavigationAdapter : NavigationAdapter<ITabWrapper>
 {
     private ITabWrapper Tabs => ControlWrapper as ITabWrapper;
 

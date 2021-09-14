@@ -13,7 +13,7 @@ using UICommand = Windows.UI.Popups.UICommand;
 
 namespace Uno.Extensions.Navigation.Dialogs;
 
-public class NavigationMessageDialog : IDialogManager
+public class MessageDialogManager : IDialogManager
 {
     public object CloseDialog(Dialog dialog, NavigationContext context, object responseData)
     {

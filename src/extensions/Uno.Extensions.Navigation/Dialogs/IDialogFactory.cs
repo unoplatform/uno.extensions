@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions.Navigation.Dialogs;
 
-public interface IDialogProvider
+public interface IDialogFactory
 {
     Dialog CreateDialog(INavigationService navigation, NavigationContext context, object vm);
 }

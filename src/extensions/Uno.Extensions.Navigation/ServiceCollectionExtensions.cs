@@ -26,20 +26,30 @@ public static class ServiceCollectionExtensions
                     .AddTransient<IFrameWrapper, FrameWrapper>()
                     .AddTransient<ITabWrapper, TabWrapper>()
                     .AddTransient<IContentWrapper, ContentWrapper>()
-                    .AddTransient<FrameNavigationAdapter>()
-                    .AddTransient<TabNavigationAdapter>()
-                    .AddTransient<ContentNavigationAdapter>()
-                    .AddSingleton<IAdapterFactory, AdapterFactory<Frame, FrameNavigationAdapter>>()
-                    .AddSingleton<IAdapterFactory, AdapterFactory<TabView, TabNavigationAdapter>>()
-                    .AddSingleton<IAdapterFactory, AdapterFactory<ContentControl, ContentNavigationAdapter>>()
-                    .AddSingleton<IDialogManager, NavigationContentDialog>()
-                    .AddSingleton<IDialogManager, NavigationMessageDialog>()
-                    .AddSingleton<IDialogProvider, DialogProvider>()
+                    .AddAdapter<Frame, FrameNavigationAdapter>()
+                    .AddAdapter<TabView, TabNavigationAdapter>()
+                    .AddAdapter<ContentControl, NavigationAdapter<IContentWrapper>>()
+                    .AddSingleton<IDialogManager, ContentDialogManager>()
+                    .AddSingleton<IDialogManager, MessageDialogManager>()
+                    .AddSingleton<IDialogFactory, DialogFactory>()
                     .AddSingleton<INavigationManager, NavigationManager>()
                     .AddScoped<NavigationServiceProvider>()
                     .AddScoped<INavigationService>(services => services.GetService<NavigationServiceProvider>().Navigation)
                     .AddScoped<ViewModelDataProvider>()
                     .AddScoped<IDictionary<string, object>>(services => services.GetService<ViewModelDataProvider>().Parameters);
+    }
+
+    private static IServiceCollection AddAdapter<TControl, TAdapter>(this IServiceCollection services)
+        where TAdapter : class, INavigationAdapter
+    {
+        if (services is null)
+        {
+            return services;
+        }
+
+        return services
+                    .AddTransient<TAdapter>()
+                    .AddSingleton<IAdapterFactory, AdapterFactory<TControl, TAdapter>>();
     }
 
     public static IServiceCollection AddViewModelData<TData>(this IServiceCollection services)
