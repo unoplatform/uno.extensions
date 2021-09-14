@@ -160,6 +160,12 @@ public class NavigationService : INavigationService
                     // need to pick on, before passing down the residual
                     // navigation request
                     var nested = Nested(nextPath) as NavigationService;
+
+                    if(nested == null && NestedAdapters.Any())
+                    {
+                        nested = NestedAdapters.Values.First() as NavigationService;
+                    }
+
                     if (nested is null)
                     {
                         PendingNavigation = residualRequest;
