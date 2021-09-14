@@ -8,11 +8,12 @@ using Microsoft.UI.Xaml;
 
 namespace Uno.Extensions.Navigation.Controls;
 
-public abstract class BaseWrapper : IInjectable
+public abstract class BaseWrapper<TControl> : IInjectable
+    where TControl : class
 {
-    protected object Control { get; private set; }
+    protected TControl Control { get; private set; }
 
-    public virtual void Inject(object control) => Control = control;
+    public virtual void Inject(object control) => Control = control as TControl;
 
     protected static void InitialiseView(object view, NavigationContext context, object viewModel)
     {

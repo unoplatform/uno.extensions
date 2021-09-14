@@ -13,18 +13,16 @@ using Microsoft.UI.Xaml.Navigation;
 
 namespace Uno.Extensions.Navigation.Controls;
 
-public class FrameWrapper : BaseWrapper, IStackNavigation<Frame>
+public class FrameWrapper : BaseWrapper<Frame>, IStackNavigation<Frame>
 {
-    private Frame Frame => Control as Frame;
-
     public override void Inject(object control)
     {
         base.Inject(control);
-        if (Frame.Content is not null)
+        if (Control.Content is not null)
         {
-            Navigation.NavigateToView(null, Frame.SourcePageType);
+            Navigation.NavigateToView(null, Control.SourcePageType);
         }
-        Frame.Navigated += Frame_Navigated;
+        Control.Navigated += Frame_Navigated;
     }
 
     private INavigationService Navigation { get; }
@@ -36,22 +34,22 @@ public class FrameWrapper : BaseWrapper, IStackNavigation<Frame>
 
     private void Frame_Navigated(object sender, NavigationEventArgs e)
     {
-        Navigation.NavigateToView(null, Frame.SourcePageType);
+        Navigation.NavigateToView(null, Control.SourcePageType);
     }
 
     private void GoBack(NavigationContext context, object parameter, object viewModel)
     {
         if (parameter is not null)
         {
-            var entry = Frame.BackStack.Last();
+            var entry = Control.BackStack.Last();
             var newEntry = new PageStackEntry(entry.SourcePageType, parameter, entry.NavigationTransitionInfo);
-            Frame.BackStack.Remove(entry);
-            Frame.BackStack.Add(newEntry);
+            Control.BackStack.Remove(entry);
+            Control.BackStack.Add(newEntry);
         }
 
-        Frame.GoBack();
+        Control.GoBack();
 
-        InitialiseView(Frame.Content, context, viewModel);
+        InitialiseView(Control.Content, context, viewModel);
     }
 
     public void Navigate(NavigationContext context, bool isBackNavigation, object viewModel)
@@ -64,24 +62,24 @@ public class FrameWrapper : BaseWrapper, IStackNavigation<Frame>
 
         if (context.Request.Sender is not null)
         {
-            Frame.Navigated -= Frame_Navigated;
-            var nav = Frame.Navigate(context.Mapping.View, context.Data);
-            Frame.Navigated += Frame_Navigated;
+            Control.Navigated -= Frame_Navigated;
+            var nav = Control.Navigate(context.Mapping.View, context.Data);
+            Control.Navigated += Frame_Navigated;
         }
 
-        if (Frame.Content is FrameworkElement element)
+        if (Control.Content is FrameworkElement element)
         {
-            InitialiseView(Frame.Content, context, viewModel);
+            InitialiseView(Control.Content, context, viewModel);
         }
     }
 
     public void RemoveLastFromBackStack()
     {
-        Frame.BackStack.RemoveAt(Frame.BackStack.Count - 1);
+        Control.BackStack.RemoveAt(Control.BackStack.Count - 1);
     }
 
     public void ClearBackStack()
     {
-        Frame.BackStack.Clear();
+        Control.BackStack.Clear();
     }
 }

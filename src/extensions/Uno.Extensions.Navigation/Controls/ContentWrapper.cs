@@ -11,14 +11,12 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Controls;
 
-public class ContentWrapper : BaseWrapper, ISimpleNavigation<ContentControl>
+public class ContentWrapper : BaseWrapper<ContentControl>, ISimpleNavigation<ContentControl>
 {
-    private ContentControl Host => Control as ContentControl;
-
     public void Navigate(NavigationContext context, bool isBackNavigation, object viewModel)
     {
         var content = Activator.CreateInstance(context.Mapping.View);
-        Host.Content = content;
+        Control.Content = content;
 
         InitialiseView(content, context, viewModel);
     }

@@ -8,10 +8,8 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Controls;
 
-public class TabWrapper : BaseWrapper, ISimpleNavigation<TabView>
+public class TabWrapper : BaseWrapper<TabView>, ISimpleNavigation<TabView>
 {
-    private TabView Tabs => Control as TabView;
-
     private INavigationService Navigation { get; }
 
     public TabWrapper(INavigationService navigation)
@@ -22,14 +20,14 @@ public class TabWrapper : BaseWrapper, ISimpleNavigation<TabView>
     public override void Inject(object control)
     {
         base.Inject(control);
-        Tabs.TabItemsChanged += Tabs_TabItemsChanged;
+        Control.TabItemsChanged += Tabs_TabItemsChanged;
     }
 
     private void Tabs_TabItemsChanged(TabView sender, Windows.Foundation.Collections.IVectorChangedEventArgs args)
     {
         if (args.CollectionChange == Windows.Foundation.Collections.CollectionChange.ItemInserted)
         {
-            var tvi = Tabs.TabItems[(int)args.Index] as TabViewItem;
+            var tvi = Control.TabItems[(int)args.Index] as TabViewItem;
             var tabName = tvi.Name;
             Navigation.NavigateByPath(null, tabName);
         }
@@ -37,7 +35,7 @@ public class TabWrapper : BaseWrapper, ISimpleNavigation<TabView>
 
     private TabViewItem FindByName(string tabName)
     {
-        return (from t in Tabs.TabItems.OfType<TabViewItem>()
+        return (from t in Control.TabItems.OfType<TabViewItem>()
                 where t.Name == tabName
                 select t).FirstOrDefault();
     }
@@ -46,7 +44,7 @@ public class TabWrapper : BaseWrapper, ISimpleNavigation<TabView>
     {
         get
         {
-            var active = Tabs.SelectedItem as TabViewItem;
+            var active = Control.SelectedItem as TabViewItem;
             return active?.Name;
         }
     }
@@ -68,7 +66,7 @@ public class TabWrapper : BaseWrapper, ISimpleNavigation<TabView>
             // for tabs when they're created
             if (context.Request.Sender is not null)
             {
-                Tabs.SelectedItem = tab;
+                Control.SelectedItem = tab;
             }
         }
     }
