@@ -2,37 +2,34 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Uno.Extensions.Navigation.Adapters;
 
-namespace Uno.Extensions.Navigation
-{
+namespace Uno.Extensions.Navigation;
 #pragma warning disable SA1313 // Parameter names should begin with lower-case letter
-    public record NavigationContext(
-        IServiceProvider Services,
-        NavigationRequest Request,
-        string Path,
-        bool PathIsRooted,
-        int FramesToRemove,
-        IDictionary<string, object> Data,
-        CancellationTokenSource CancellationSource,
-        TaskCompletionSource<object> ResultCompletion,
-        bool CanCancel = true,
-        NavigationMap Mapping = null)
+public record NavigationContext(
+    IServiceProvider Services,
+    NavigationRequest Request,
+    string Path,
+    bool PathIsRooted,
+    int FramesToRemove,
+    IDictionary<string, object> Data,
+    CancellationTokenSource CancellationSource,
+    TaskCompletionSource<object> ResultCompletion,
+    bool CanCancel = true,
+    NavigationMap Mapping = null)
 #pragma warning restore SA1313 // Parameter names should begin with lower-case letter
+{
+
+    public bool IsBackNavigation => Path == NavigationConstants.PreviousViewUri;
+
+    public CancellationToken CancellationToken => CancellationSource.Token;
+
+    public void Cancel()
     {
-
-        public bool IsBackNavigation => Path == NavigationConstants.PreviousViewUri;
-
-        public CancellationToken CancellationToken => CancellationSource.Token;
-
-        public void Cancel()
+        if (CanCancel)
         {
-            if (CanCancel)
-            {
-                CancellationSource.Cancel();
-            }
+            CancellationSource.Cancel();
         }
-
-        public bool IsCancelled => CancellationToken.IsCancellationRequested;
     }
+
+    public bool IsCancelled => CancellationToken.IsCancellationRequested;
 }

@@ -4,101 +4,99 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Adapters;
 
-namespace Uno.Extensions.Navigation
+namespace Uno.Extensions.Navigation;
+
+public class NavigationManager : INavigationManager
 {
-    public class NavigationManager : INavigationManager
+    private INavigationService Root { get; }
+
+    private IServiceProvider Services { get; }
+
+    private INavigationMapping Mapping { get; }
+
+    private IDictionary<Type, IAdapterFactory> Factories { get; }
+
+    public NavigationManager(IServiceProvider services, IEnumerable<IAdapterFactory> factories, INavigationMapping mapping)
     {
-        private INavigationService Root { get; }
+        Services = services;
+        Mapping = mapping;
+        Factories = factories.ToDictionary(x => x.ControlType);
+        Root = new NavigationService(this, Mapping, null);
+    }
 
-        private IServiceProvider Services { get; }
-
-        private INavigationMapping Mapping { get; }
-
-        private IDictionary<Type, IAdapterFactory> Factories { get; }
-
-        public NavigationManager(IServiceProvider services, IEnumerable<IAdapterFactory> factories, INavigationMapping mapping)
+    public INavigationService AddAdapter(INavigationService parentAdapter, string routeName, object control, INavigationService existingAdapter)
+    {
+        var ans = existingAdapter as NavigationService;
+        var parent = parentAdapter as NavigationService;
+        if (ans is null)
         {
-            Services = services;
-            Mapping = mapping;
-            Factories = factories.ToDictionary(x => x.ControlType);
-            Root = new NavigationService(this, Mapping, null);
+            ans = new NavigationService(this, Mapping, parent);
+            var scope = Services.CreateScope();
+            var services = scope.ServiceProvider;
+            var navWrapper = services.GetService<NavigationServiceProvider>();
+            navWrapper.Navigation = ans;
+
+            var factory = Factories[control.GetType()];
+            var adapter = factory.Create(services);
+            adapter.Inject(control);
+            ans.Adapter = adapter;
         }
 
-        public INavigationService AddAdapter(INavigationService parentAdapter, string routeName, object control, INavigationService existingAdapter)
+        // This ensures all adapter services have a parent. The root service
+        // is used to cache initial navigation requests before the first
+        // adapter is created
+        if (parent is null)
         {
-            var ans = existingAdapter as NavigationService;
-            var parent = parentAdapter as NavigationService;
-            if (ans is null)
-            {
-                ans = new NavigationService(this, Mapping, parent);
-                var scope = Services.CreateScope();
-                var services = scope.ServiceProvider;
-                var navWrapper = services.GetService<NavigationServiceProvider>();
-                navWrapper.Navigation = ans;
-
-                var factory = Factories[control.GetType()];
-                var adapter = factory.Create(services);
-                adapter.Name = routeName;
-                adapter.Inject(control);
-                ans.Adapter = adapter;
-            }
-
-            // This ensures all adapter services have a parent. The root service
-            // is used to cache initial navigation requests before the first
-            // adapter is created
-            if (parent is null)
-            {
-                parent = Root as NavigationService;
-            }
-
-            parent.NestedAdapters[routeName + string.Empty] = ans;
-
-            if (ans.Adapter is INavigationAware navAware)
-            {
-                navAware.Navigation = ans;
-            }
-
-            if (parent.PendingNavigation is not null)
-            {
-                var pending = parent.PendingNavigation;
-                parent.PendingNavigation = null;
-                if (pending.Route.Path.OriginalString.StartsWith(routeName))
-                {
-                    var nestedRoute = pending.Route.Path.OriginalString.TrimStart($"{routeName}/");
-                    pending = pending with { Route = pending.Route with { Path = new Uri(nestedRoute, UriKind.Relative) } };
-                }
-                ans.Navigate(pending);
-            }
-
-            return ans;
+            parent = Root as NavigationService;
         }
 
-        public void RemoveAdapter(INavigationService adapter)
+        parent.NestedAdapters[routeName + string.Empty] = ans;
+
+        if (ans.Adapter is INavigationAware navAware)
         {
-            var ans = adapter as NavigationService;
-            if (ans is null)
+            navAware.Navigation = ans;
+        }
+
+        if (parent.PendingNavigation is not null)
+        {
+            var pending = parent.PendingNavigation;
+            parent.PendingNavigation = null;
+            if (pending.Route.Path.OriginalString.StartsWith(routeName))
             {
-                return;
+                var nestedRoute = pending.Route.Path.OriginalString.TrimStart($"{routeName}/");
+                pending = pending with { Route = pending.Route with { Path = new Uri(nestedRoute, UriKind.Relative) } };
             }
-
-            // Detach adapter from parent
-            var parent = adapter.Parent as NavigationService;
-            if (parent is not null)
-            {
-                parent.NestedAdapters.Remove(kvp => kvp.Value == adapter);
-            }
+            ans.Navigate(pending);
         }
 
-        public INavigationService Parent => Root;
+        return ans;
+    }
 
-        public NavigationResponse Navigate(NavigationRequest request)
+    public void RemoveAdapter(INavigationService adapter)
+    {
+        var ans = adapter as NavigationService;
+        if (ans is null)
         {
-            return Root.Navigate(request);
+            return;
         }
 
-        public INavigationService Nested(string routeName = null)
+        // Detach adapter from parent
+        var parent = adapter.Parent as NavigationService;
+        if (parent is not null)
         {
-            return Root.Nested(routeName);
+            parent.NestedAdapters.Remove(kvp => kvp.Value == adapter);
         }
+    }
+
+    public INavigationService Parent => Root;
+
+    public NavigationResponse Navigate(NavigationRequest request)
+    {
+        return Root.Navigate(request);
+    }
+
+    public INavigationService Nested(string routeName = null)
+    {
+        return Root.Nested(routeName);
     }
 }

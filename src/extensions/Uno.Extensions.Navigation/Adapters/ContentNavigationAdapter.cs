@@ -1,15 +1,14 @@
 ﻿using System;
 using Uno.Extensions.Navigation.Controls;
 
-namespace Uno.Extensions.Navigation.Adapters
+namespace Uno.Extensions.Navigation.Adapters;
+
+public class ContentNavigationAdapter : BaseNavigationAdapter
 {
-    public class ContentNavigationAdapter : BaseNavigationAdapter
+    public ContentNavigationAdapter(
+        // INavigationService navigation, // Note: Don't pass in - implement INaviationAware instead
+        IServiceProvider services,
+        IContentWrapper contentWrapper) : base(services, contentWrapper)
     {
-        public ContentNavigationAdapter(
-            // INavigationService navigation, // Note: Don't pass in - implement INaviationAware instead
-            IServiceProvider services,
-            IContentWrapper contentWrapper) : base(services, contentWrapper)
-        {
-        }
     }
 }

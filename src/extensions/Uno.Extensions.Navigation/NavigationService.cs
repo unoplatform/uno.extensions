@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Uno.Extensions.Navigation.Adapters;
 
 namespace Uno.Extensions.Navigation;
 
@@ -187,15 +188,5 @@ public class NavigationService : INavigationService
                 where key is not null && val is not null
                 select new { key, val })
                 .ToDictionary(x => x.key, x => (object)x.val);
-    }
-
-
-}
-
-public static class NavigationHelpers
-{
-    public static NavigationRequest WithPath(this NavigationRequest request, string path, string queryParameters)
-    {
-        return request with { Route = request.Route with { Path = new Uri(path + (!string.IsNullOrWhiteSpace(queryParameters) ? $"?{queryParameters}" : string.Empty), UriKind.Relative) } };
     }
 }

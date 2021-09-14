@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ExtensionsSampleApp.Views;
 using Uno.Extensions.Navigation;
+using Uno.Extensions.Navigation.ViewModels;
 
 namespace ExtensionsSampleApp.ViewModels
 {
