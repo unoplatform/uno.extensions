@@ -161,7 +161,7 @@ public class NavigationService : INavigationService
                     // navigation request
                     var nested = Nested(nextPath) as NavigationService;
 
-                    if(nested == null && NestedAdapters.Any())
+                    if (nested == null && NestedAdapters.Any())
                     {
                         nested = NestedAdapters.Values.First() as NavigationService;
                     }
