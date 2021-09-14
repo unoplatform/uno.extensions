@@ -13,7 +13,7 @@ public class NavigationServiceExtensionsTests : BaseNavigationTests
 
     protected override void InitializeServices(IServiceCollection services)
     {
-        var mockFrame = new Mock<IFrameWrapper>(); 
+        var mockFrame = new Mock<IStackNavigation>(); 
         mockFrame
             .Setup(foo => foo.Navigate(typeof(PageOne), null, null))
             .Callback(() => navigationCounter++)
@@ -21,7 +21,7 @@ public class NavigationServiceExtensionsTests : BaseNavigationTests
         mockFrame
             .Setup(foo => foo.GoBack(null, null))
             .Callback(() => navigationCounter--);
-        services.AddSingleton<IFrameWrapper>(mockFrame.Object);
+        services.AddSingleton<IStackNavigation>(mockFrame.Object);
     }
 
     [TestMethod]

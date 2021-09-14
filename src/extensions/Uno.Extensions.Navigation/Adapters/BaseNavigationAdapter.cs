@@ -2,18 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Dialogs;
 using Uno.Extensions.Navigation.ViewModels;
 
 namespace Uno.Extensions.Navigation.Adapters;
 
-public class NavigationAdapter<TControl> : INavigationAdapter
+public abstract class BaseNavigationAdapter<TControl> : INavigationAdapter
 {
-    public IControlNavigation<TControl> ControlWrapper { get; }
+    protected abstract NavigationContext CurrentContext { get; }
 
-    public virtual NavigationContext CurrentContext { get; protected set; }
+    public ISimpleNavigation<TControl> ControlWrapper { get; }
 
     private IDialogFactory DialogProvider { get; }
 
@@ -33,7 +32,7 @@ public class NavigationAdapter<TControl> : INavigationAdapter
         return CurrentContext?.Path == path;
     }
 
-    public NavigationAdapter(IControlNavigation<TControl> control, IDialogFactory dialogFactory)
+    public BaseNavigationAdapter(ISimpleNavigation<TControl> control, IDialogFactory dialogFactory)
     {
         DialogProvider = dialogFactory;
         ControlWrapper = control;
@@ -59,14 +58,9 @@ public class NavigationAdapter<TControl> : INavigationAdapter
 
         if (!navigationHandled)
         {
-            if (context.IsBackNavigation)
-            {
-                await DoBackNavigation(context);
-            }
-            else
-            {
-                await DoForwardNavigation(context);
-            }
+            var vm = await DoNavigation(context);
+
+            await context.StartViewModel(vm);
         }
 
         context = context with { CanCancel = CanGoBack || OpenDialogs.Any() };
@@ -80,12 +74,12 @@ public class NavigationAdapter<TControl> : INavigationAdapter
         }
     }
 
-    protected virtual async Task DoBackNavigation(NavigationContext context)
+    protected virtual Task<object> DoNavigation(NavigationContext context)
     {
-        throw new NotSupportedException();
+        return DoForwardNavigation(context);
     }
 
-    protected async Task DoForwardNavigation(NavigationContext context)
+    protected async Task<object> DoForwardNavigation(NavigationContext context)
     {
         var vm = await context.InitializeViewModel();
 
@@ -99,14 +93,10 @@ public class NavigationAdapter<TControl> : INavigationAdapter
             AdapterNavigation(context, vm);
         }
 
-        await context.StartViewModel(vm);
+        return vm;
     }
 
-    protected virtual void AdapterNavigation(NavigationContext context, object viewModel)
-    {
-        CurrentContext = context;
-        ControlWrapper.Navigate(context, false, viewModel);
-    }
+    protected abstract void AdapterNavigation(NavigationContext context, object viewModel);
 
     private async Task<bool> EndCurrentNavigationContext(NavigationContext navigationContext)
     {

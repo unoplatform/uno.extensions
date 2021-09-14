@@ -13,7 +13,7 @@ using Microsoft.UI.Xaml.Navigation;
 
 namespace Uno.Extensions.Navigation.Controls;
 
-public class FrameWrapper : BaseWrapper, IFrameWrapper<Frame>
+public class FrameWrapper : BaseWrapper, IStackNavigation<Frame>
 {
     private Frame Frame => Control as Frame;
 

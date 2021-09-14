@@ -10,7 +10,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Controls;
 
-public interface IFrameWrapper<TControl> : IControlNavigation<TControl>
+public interface IStackNavigation<TControl> : ISimpleNavigation<TControl>
 {
     void RemoveLastFromBackStack();
 
