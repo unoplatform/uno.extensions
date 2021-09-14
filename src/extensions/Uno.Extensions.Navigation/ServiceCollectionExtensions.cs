@@ -23,12 +23,12 @@ public static class ServiceCollectionExtensions
 
         return services
                     .AddSingleton<INavigationMapping, NavigationMapping>()
-                    .AddTransient<IFrameWrapper<Frame>, FrameWrapper>()
-                    .AddTransient<IControlNavigation<TabView>, TabWrapper>()
-                    .AddTransient<IControlNavigation<ContentControl>, ContentWrapper>()
-                    .AddAdapter<Frame, FrameNavigationAdapter<Frame>>()
-                    .AddAdapter<TabView, NavigationAdapter<TabView>>()
-                    .AddAdapter<ContentControl, NavigationAdapter<ContentControl>>()
+                    .AddTransient<IStackNavigation<Frame>, FrameWrapper>()
+                    .AddTransient<ISimpleNavigation<TabView>, TabWrapper>()
+                    .AddTransient<ISimpleNavigation<ContentControl>, ContentWrapper>()
+                    .AddAdapter<Frame, StackNavigationAdapter<Frame>>()
+                    .AddAdapter<TabView, SimpleNavigationAdapter<TabView>>()
+                    .AddAdapter<ContentControl, SimpleNavigationAdapter<ContentControl>>()
                     .AddSingleton<IDialogManager, ContentDialogManager>()
                     .AddSingleton<IDialogManager, MessageDialogManager>()
                     .AddSingleton<IDialogFactory, DialogFactory>()

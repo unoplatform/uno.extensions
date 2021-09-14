@@ -11,7 +11,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Controls;
 
-public class ContentWrapper : BaseWrapper, IControlNavigation<ContentControl>
+public class ContentWrapper : BaseWrapper, ISimpleNavigation<ContentControl>
 {
     private ContentControl Host => Control as ContentControl;
 

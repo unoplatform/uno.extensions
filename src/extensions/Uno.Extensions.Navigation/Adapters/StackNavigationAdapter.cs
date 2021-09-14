@@ -6,23 +6,31 @@ using Uno.Extensions.Navigation.Dialogs;
 
 namespace Uno.Extensions.Navigation.Adapters;
 
-public class FrameNavigationAdapter<TControl> : NavigationAdapter<TControl>
+public class StackNavigationAdapter<TControl> : BaseNavigationAdapter<TControl>
 {
-    private IFrameWrapper<TControl> Frame => ControlWrapper as IFrameWrapper<TControl>;
+    private IStackNavigation<TControl> Frame => ControlWrapper as IStackNavigation<TControl>;
 
     protected IList<NavigationContext> NavigationContexts { get; } = new List<NavigationContext>();
 
-    public override NavigationContext CurrentContext
-    {
-        get => NavigationContexts.LastOrDefault();
-        protected set { }
-    }
+    protected override NavigationContext CurrentContext => NavigationContexts.LastOrDefault();
 
-    public FrameNavigationAdapter(IFrameWrapper<TControl> frameWrapper, IDialogFactory dialogFactory) : base(frameWrapper, dialogFactory)
+    public StackNavigationAdapter(IStackNavigation<TControl> frameWrapper, IDialogFactory dialogFactory) : base(frameWrapper, dialogFactory)
     {
     }
 
-    protected override async Task DoBackNavigation(NavigationContext context)
+    protected override async Task<object> DoNavigation(NavigationContext context)
+    {
+        if (context.IsBackNavigation)
+        {
+            return await DoBackNavigation(context);
+        }
+        else
+        {
+            return await DoForwardNavigation(context);
+        }
+    }
+
+    protected async Task<object> DoBackNavigation(NavigationContext context)
     {
         // Remove any excess items in the back stack
         var numberOfPagesToRemove = context.FramesToRemove;
@@ -43,8 +51,7 @@ public class FrameNavigationAdapter<TControl> : NavigationAdapter<TControl>
         // Invoke the navigation (which will be a back navigation)
         ControlWrapper.Navigate(context, true, currentVM);
 
-        // Start the view model for the current
-        await CurrentContext.StartViewModel(currentVM);
+        return currentVM;
     }
 
     public override bool CanGoBack => NavigationContexts.Count > 1;
