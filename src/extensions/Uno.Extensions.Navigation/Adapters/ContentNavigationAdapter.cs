@@ -3,7 +3,7 @@ using Uno.Extensions.Navigation.Controls;
 
 namespace Uno.Extensions.Navigation.Adapters;
 
-public class ContentNavigationAdapter : BaseNavigationAdapter
+public class ContentNavigationAdapter : NavigationAdapter<IContentWrapper>
 {
     public ContentNavigationAdapter(
         // INavigationService navigation, // Note: Don't pass in - implement INaviationAware instead

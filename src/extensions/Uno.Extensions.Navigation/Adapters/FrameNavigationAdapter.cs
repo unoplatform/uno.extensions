@@ -6,7 +6,7 @@ using Uno.Extensions.Navigation.Controls;
 
 namespace Uno.Extensions.Navigation.Adapters;
 
-public class FrameNavigationAdapter : BaseNavigationAdapter
+public class FrameNavigationAdapter : NavigationAdapter<IFrameWrapper>
 {
     private IFrameWrapper Frame => ControlWrapper as IFrameWrapper;
 

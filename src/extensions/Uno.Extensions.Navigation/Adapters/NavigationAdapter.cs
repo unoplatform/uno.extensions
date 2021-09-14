@@ -9,15 +9,16 @@ using Uno.Extensions.Navigation.ViewModels;
 
 namespace Uno.Extensions.Navigation.Adapters;
 
-public abstract class BaseNavigationAdapter : INavigationAdapter
+public class NavigationAdapter<TControlWrapper> : INavigationAdapter
+    where TControlWrapper : IControlNavigation
 {
-    protected IControlNavigation ControlWrapper { get; }
+    protected TControlWrapper ControlWrapper { get; }
 
     public virtual NavigationContext CurrentContext { get; protected set; }
 
     public IServiceProvider Services { get; }
 
-    private IDialogProvider DialogProvider { get; }
+    private IDialogFactory DialogProvider { get; }
 
     public INavigationService Navigation { get; set; }
 
@@ -35,13 +36,13 @@ public abstract class BaseNavigationAdapter : INavigationAdapter
         return CurrentContext?.Path == path;
     }
 
-    public BaseNavigationAdapter(
+    public NavigationAdapter(
         // INavigationService navigation, // Note: Don't pass in - implement INaviationAware instead
         IServiceProvider services,
-        IControlNavigation control)
+        TControlWrapper control)
     {
         Services = services;
-        DialogProvider = Services.GetService<IDialogProvider>();
+        DialogProvider = Services.GetService<IDialogFactory>();
         ControlWrapper = control;
     }
 
