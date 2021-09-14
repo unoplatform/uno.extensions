@@ -76,10 +76,13 @@ public class NavigationService : INavigationService
             }
         }
 
-        while (path.StartsWith("//"))
+        if (path.StartsWith("//"))
         {
-            navService = navService.Parent as NavigationService;
+            var parentService = navService.Parent as NavigationService;
             path = path.Length > 2 ? path.Substring(2) : string.Empty;
+
+            var parentRequest = request.WithPath(path, query);
+            return parentService.Navigate(parentRequest);
         }
 
         var isRooted = path.StartsWith("/");
