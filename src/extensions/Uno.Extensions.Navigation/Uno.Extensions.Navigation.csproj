@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
     <ProjectReference Include="..\Uno.Extensions.Logging\Uno.Extensions.Logging.csproj" />
   </ItemGroup>
 </Project>

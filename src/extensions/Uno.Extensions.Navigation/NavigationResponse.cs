@@ -7,16 +7,19 @@ namespace Uno.Extensions.Navigation;
 
 public class NavigationResponse<TResult> : BaseNavigationResponse
 {
-    public Task<TResult> Result { get; }
+    public Task<Options.Option<TResult>> Result { get; }
 
-    public NavigationResponse(NavigationRequest request, Task navigationTask, Task<TResult> result) : base(request, navigationTask)
+    public NavigationResponse(NavigationRequest request, Task navigationTask, Task<Options.Option<TResult>> result) : base(request, navigationTask)
     {
         Result = result;
     }
 
     public NavigationResponse(NavigationResponse response) : base(response.Request, response.NavigationTask)
     {
-        Result = response.Result.ContinueWith(x => (TResult)x.Result);
+        Result = response.Result.ContinueWith(x =>
+                    (x.Result.MatchSome(out var val) && val is TResult tval) ?
+                        Options.Option.Some(tval) :
+                        Options.Option.None<TResult>());
     }
 
     public NavigationResponse<TResult> GetAwaiter()
@@ -27,9 +30,9 @@ public class NavigationResponse<TResult> : BaseNavigationResponse
 
 public class NavigationResponse : BaseNavigationResponse
 {
-    public Task<object> Result { get; }
+    public Task<Options.Option> Result { get; }
 
-    public NavigationResponse(NavigationRequest request, Task navigationTask, Task<object> result) : base(request, navigationTask)
+    public NavigationResponse(NavigationRequest request, Task navigationTask, Task<Options.Option> result) : base(request, navigationTask)
     {
         Result = result;
     }
