@@ -11,7 +11,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Controls;
 
-public class ContentControlSimpleNavigation : BaseControlNavigation<ContentControl>, IViewManager<ContentControl>
+public class ContentControlManager : BaseControlManager<ContentControl>, IViewManager<ContentControl>
 {
     public void ChangeView(NavigationContext context, bool isBackNavigation, object viewModel)
     {

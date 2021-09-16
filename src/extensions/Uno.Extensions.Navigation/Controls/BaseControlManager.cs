@@ -8,7 +8,7 @@ using Microsoft.UI.Xaml;
 
 namespace Uno.Extensions.Navigation.Controls;
 
-public abstract class BaseControlNavigation<TControl> : IInjectable
+public abstract class BaseControlManager<TControl> : IInjectable
     where TControl : class
 {
     protected TControl Control { get; private set; }

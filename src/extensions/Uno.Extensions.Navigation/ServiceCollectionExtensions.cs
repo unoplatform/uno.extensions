@@ -23,9 +23,9 @@ public static class ServiceCollectionExtensions
 
         return services
                     // Register the control navigation implementation (simple or stack based navigation)
-                    .AddTransient<IStackViewManager<Frame>, FrameStackNavigation>()
-                    .AddTransient<IViewManager<TabView>, TabSimpleNavigation>()
-                    .AddTransient<IViewManager<ContentControl>, ContentControlSimpleNavigation>()
+                    .AddTransient<IStackViewManager<Frame>, FrameManager>()
+                    .AddTransient<IViewManager<TabView>, TabManager>()
+                    .AddTransient<IViewManager<ContentControl>, ContentControlManager>()
 
                     // Register the adapter for each control type
                     .AddAdapter<Frame, StackNavigationAdapter<Frame>>()
