@@ -8,13 +8,13 @@ namespace Uno.Extensions.Navigation.Adapters;
 
 public class StackNavigationAdapter<TControl> : BaseNavigationAdapter<TControl>
 {
-    private IStackNavigation<TControl> Frame => ControlWrapper as IStackNavigation<TControl>;
+    private IStackViewManager<TControl> Frame => ControlWrapper as IStackViewManager<TControl>;
 
     protected IList<NavigationContext> NavigationContexts { get; } = new List<NavigationContext>();
 
     protected override NavigationContext CurrentContext => NavigationContexts.LastOrDefault();
 
-    public StackNavigationAdapter(IStackNavigation<TControl> frameWrapper, IDialogFactory dialogFactory) : base(frameWrapper, dialogFactory)
+    public StackNavigationAdapter(IStackViewManager<TControl> frameWrapper, IDialogFactory dialogFactory) : base(frameWrapper, dialogFactory)
     {
     }
 
@@ -49,7 +49,7 @@ public class StackNavigationAdapter<TControl> : BaseNavigationAdapter<TControl>
         var currentVM = await CurrentContext.InitializeViewModel();
 
         // Invoke the navigation (which will be a back navigation)
-        ControlWrapper.Navigate(context, true, currentVM);
+        ControlWrapper.ChangeView(context, true, currentVM);
 
         return currentVM;
     }
@@ -69,7 +69,7 @@ public class StackNavigationAdapter<TControl> : BaseNavigationAdapter<TControl>
 
         // Add the new context to the list of contexts and then navigate away
         NavigationContexts.Add(context);
-        Frame.Navigate(context, false, viewModel);
+        Frame.ChangeView(context, false, viewModel);
 
         // If path starts with / then remove all prior pages and corresponding contexts
         if (context.PathIsRooted)

@@ -13,7 +13,7 @@ using Microsoft.UI.Xaml.Navigation;
 
 namespace Uno.Extensions.Navigation.Controls;
 
-public class FrameStackNavigation : BaseControlNavigation<Frame>, IStackNavigation<Frame>
+public class FrameStackNavigation : BaseControlNavigation<Frame>, IStackViewManager<Frame>
 {
     public override void Inject(object control)
     {
@@ -52,7 +52,7 @@ public class FrameStackNavigation : BaseControlNavigation<Frame>, IStackNavigati
         InitialiseView(Control.Content, context, viewModel);
     }
 
-    public void Navigate(NavigationContext context, bool isBackNavigation, object viewModel)
+    public void ChangeView(NavigationContext context, bool isBackNavigation, object viewModel)
     {
         if (isBackNavigation)
         {

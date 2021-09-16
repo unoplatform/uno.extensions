@@ -16,13 +16,13 @@ public class SimpleNavigationAdapter<TControl> : BaseNavigationAdapter<TControl>
         return CurrentContext?.Path == path;
     }
 
-    public SimpleNavigationAdapter(ISimpleNavigation<TControl> control, IDialogFactory dialogFactory) : base(control, dialogFactory)
+    public SimpleNavigationAdapter(IViewManager<TControl> control, IDialogFactory dialogFactory) : base(control, dialogFactory)
     {
     }
 
     protected override void AdapterNavigation(NavigationContext context, object viewModel)
     {
         currentContext = context;
-        ControlWrapper.Navigate(context, false, viewModel);
+        ControlWrapper.ChangeView(context, false, viewModel);
     }
 }

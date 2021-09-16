@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions.Navigation.Controls;
 
-public interface IStackNavigation<TControl> : ISimpleNavigation<TControl>
+public interface IStackViewManager<TControl> : IViewManager<TControl>
 {
     void RemoveLastFromBackStack();
 

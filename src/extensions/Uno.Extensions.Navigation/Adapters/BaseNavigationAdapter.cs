@@ -12,7 +12,7 @@ public abstract class BaseNavigationAdapter<TControl> : INavigationAdapter
 {
     protected abstract NavigationContext CurrentContext { get; }
 
-    public ISimpleNavigation<TControl> ControlWrapper { get; }
+    public IViewManager<TControl> ControlWrapper { get; }
 
     private IDialogFactory DialogProvider { get; }
 
@@ -32,7 +32,7 @@ public abstract class BaseNavigationAdapter<TControl> : INavigationAdapter
         return CurrentContext?.Path == path;
     }
 
-    public BaseNavigationAdapter(ISimpleNavigation<TControl> control, IDialogFactory dialogFactory)
+    public BaseNavigationAdapter(IViewManager<TControl> control, IDialogFactory dialogFactory)
     {
         DialogProvider = dialogFactory;
         ControlWrapper = control;

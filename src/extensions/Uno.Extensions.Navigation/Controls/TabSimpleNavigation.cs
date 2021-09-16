@@ -8,7 +8,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Controls;
 
-public class TabSimpleNavigation : BaseControlNavigation<TabView>, ISimpleNavigation<TabView>
+public class TabSimpleNavigation : BaseControlNavigation<TabView>, IViewManager<TabView>
 {
     private INavigationService Navigation { get; }
 
@@ -54,7 +54,7 @@ public class TabSimpleNavigation : BaseControlNavigation<TabView>, ISimpleNaviga
         return FindByName(tabName) is not null;
     }
 
-    public void Navigate(NavigationContext context, bool isBackNavigation, object viewModel)
+    public void ChangeView(NavigationContext context, bool isBackNavigation, object viewModel)
     {
         var tab = FindByName(context.Path);
         if (tab is not null)
