@@ -13,7 +13,7 @@ using Microsoft.UI.Xaml.Navigation;
 
 namespace Uno.Extensions.Navigation.Controls;
 
-public class FrameStackNavigation : BaseControlNavigation<Frame>, IStackViewManager<Frame>
+public class FrameManager : BaseControlManager<Frame>, IStackViewManager<Frame>
 {
     public override void Inject(object control)
     {
@@ -27,7 +27,7 @@ public class FrameStackNavigation : BaseControlNavigation<Frame>, IStackViewMana
 
     private INavigationService Navigation { get; }
 
-    public FrameStackNavigation(INavigationService navigation)
+    public FrameManager(INavigationService navigation)
     {
         Navigation = navigation;
     }

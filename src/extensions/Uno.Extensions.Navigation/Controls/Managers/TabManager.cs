@@ -8,11 +8,11 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Controls;
 
-public class TabSimpleNavigation : BaseControlNavigation<TabView>, IViewManager<TabView>
+public class TabManager : BaseControlManager<TabView>, IViewManager<TabView>
 {
     private INavigationService Navigation { get; }
 
-    public TabSimpleNavigation(INavigationService navigation)
+    public TabManager(INavigationService navigation)
     {
         Navigation = navigation;
     }
