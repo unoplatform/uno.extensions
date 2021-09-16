@@ -2,7 +2,7 @@
 
 namespace Uno.Extensions.Navigation.Controls;
 
-public interface IViewManager<TControl> : IInjectable
+public interface IViewManager<TControl>
 {
-    void ChangeView(INavigationService navigation, string path, Type view, bool isBackNavigation, object data, object viewModel, bool setFocus);
+    void ChangeView(string path, Type view, bool isBackNavigation, object data, object viewModel, bool setFocus);
 }

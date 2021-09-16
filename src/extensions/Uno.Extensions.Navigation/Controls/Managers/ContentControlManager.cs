@@ -13,11 +13,18 @@ namespace Uno.Extensions.Navigation.Controls;
 
 public class ContentControlManager : BaseControlManager<ContentControl>, IViewManager<ContentControl>
 {
-    public void ChangeView(INavigationService navigation, string path, Type view, bool isBackNavigation, object data, object viewModel, bool setFocus)
+    public ContentControlManager(INavigationService navigation, RegionControlProvider controlProvider) : base(navigation, controlProvider.RegionControl as ContentControl)
     {
-        var content = Activator.CreateInstance(view);
-        Control.Content = content;
+    }
 
-        InitialiseView(content, navigation, viewModel);
+    public void ChangeView(string path, Type view, bool isBackNavigation, object data, object viewModel, bool setFocus)
+    {
+        if (setFocus)
+        {
+            var content = Activator.CreateInstance(view);
+            Control.Content = content;
+        }
+
+        InitialiseView(Control.Content, viewModel);
     }
 }

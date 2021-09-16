@@ -1,9 +1,6 @@
-﻿using System;
-using Uno.Extensions.Navigation.Controls;
+﻿namespace Uno.Extensions.Navigation.Regions;
 
-namespace Uno.Extensions.Navigation.Regions;
-
-public interface IRegionManager : INavigationAware, IInjectable
+public interface IRegionManager : INavigationAware
 {
     bool IsCurrentPath(string path);
 

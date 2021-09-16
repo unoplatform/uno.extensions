@@ -22,11 +22,6 @@ public abstract class BaseRegionManager<TControl> : IRegionManager
 
     public virtual bool CanGoBack => false;
 
-    public void Inject(object control)
-    {
-        ControlWrapper.Inject(control);
-    }
-
     public virtual bool IsCurrentPath(string path)
     {
         return CurrentContext?.Path == path;
