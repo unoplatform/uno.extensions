@@ -79,22 +79,15 @@ public class NavigationManager : INavigationManager
         }
 
         // Detach adapter from parent
-        var parent = region.Parent as NavigationService;
+        var parent = ans.Parent as NavigationService;
         if (parent is not null)
         {
             parent.NestedRegions.Remove(kvp => kvp.Value == region);
         }
     }
 
-    public INavigationService Parent => Root;
-
     public NavigationResponse Navigate(NavigationRequest request)
     {
         return Root.Navigate(request);
-    }
-
-    public INavigationService Nested(string routeName = null)
-    {
-        return Root.Nested(routeName);
     }
 }

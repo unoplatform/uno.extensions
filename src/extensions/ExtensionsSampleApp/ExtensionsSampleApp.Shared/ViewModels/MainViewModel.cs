@@ -24,7 +24,7 @@ namespace ExtensionsSampleApp.ViewModels
 
         public ICommand NavigateToSecondPageCommand { get; }
 
-        private void NavigateToSecondPage() => Navigation.NavigateToViewModel<SecondViewModel>(this, new Widget());
+        private void NavigateToSecondPage() => Navigation.NavigateToViewModel<SecondViewModel>(this, data: new Widget());
 
     }
 
@@ -78,12 +78,18 @@ namespace ExtensionsSampleApp.ViewModels
         {
             Navigation = navigation;
             NavigateToDoc1Command = new RelayCommand(NavigateToDoc1);
+            NavigateToThirdPageCommand = new RelayCommand(NavigateToThirdPage);
         }
 
+        
 
         public ICommand NavigateToDoc1Command { get; }
+        public ICommand NavigateToThirdPageCommand { get; }
 
         private void NavigateToDoc1() => Navigation.NavigateToViewModel<TabDoc1ViewModel>(this);
+
+        private void NavigateToThirdPage() => Navigation.NavigateToViewModel<ThirdViewModel>(this,NavigationConstants.RelativePath.Parent(1));
+        
     }
 
     public class TabDoc1ViewModel

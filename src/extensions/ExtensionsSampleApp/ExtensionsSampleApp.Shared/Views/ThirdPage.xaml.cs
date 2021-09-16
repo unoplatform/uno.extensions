@@ -29,7 +29,7 @@ namespace ExtensionsSampleApp.Views
             
         private void NextPagePreviousViewWithDataClick(object sender, RoutedEventArgs e)
         {
-            Navigation.NavigateToPreviousView(this, new Widget());
+            Navigation.NavigateToPreviousView(this, data: new Widget());
         }
 
         private void NextPagePreviousViewWithArgsAndDataClick(object sender, RoutedEventArgs e)

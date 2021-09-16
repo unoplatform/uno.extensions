@@ -31,12 +31,12 @@ namespace ExtensionsSampleApp.Views
 
         private void GoBackNavigateToPreviousViewClick(object sender, RoutedEventArgs e)
         {
-            Navigation.NavigateToPreviousView(this, new Widget());
+            Navigation.NavigateToPreviousView(this, data: new Widget());
         }
 
         private void NextPageNavigateToViewWithDataClick(object sender, RoutedEventArgs e)
         {
-            Navigation.NavigateToView<ThirdPage>(this, new Widget());
+            Navigation.NavigateToView<ThirdPage>(this, data: new Widget());
         }
 
         private void NextPageNavigateToViewWithQueryAndDataClick(object sender, RoutedEventArgs e)

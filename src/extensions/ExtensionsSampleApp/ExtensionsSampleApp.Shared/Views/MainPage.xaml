@@ -38,6 +38,8 @@
 
             <Button Content="Twitter"
                     nav:Navigation.Path="/TwitterPage" />
+            <Button Content="TabBar Page - NavigationRequest"
+                    nav:Navigation.Path="TabBarPage" />
         </StackPanel>
     </Grid>
 </Page>
