@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Dialogs;
 
@@ -49,7 +50,7 @@ public class StackNavigationAdapter<TControl> : BaseNavigationAdapter<TControl>
         var currentVM = await CurrentContext.InitializeViewModel();
 
         // Invoke the navigation (which will be a back navigation)
-        ControlWrapper.ChangeView(context, true, currentVM);
+        Frame.ChangeView(context.Services.GetService<INavigationService>(), context.Path, context.Mapping?.View, true, context.Data, currentVM, context.Request.Sender is not null);
 
         return currentVM;
     }
@@ -69,7 +70,7 @@ public class StackNavigationAdapter<TControl> : BaseNavigationAdapter<TControl>
 
         // Add the new context to the list of contexts and then navigate away
         NavigationContexts.Add(context);
-        Frame.ChangeView(context, false, viewModel);
+        Frame.ChangeView(context.Services.GetService<INavigationService>(), context.Path, context.Mapping?.View, false, context.Data, viewModel, context.Request.Sender is not null);
 
         // If path starts with / then remove all prior pages and corresponding contexts
         if (context.PathIsRooted)
