@@ -1,16 +1,16 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Uno.Extensions.Navigation.Adapters;
+namespace Uno.Extensions.Navigation.Regions;
 
 #pragma warning disable SA1313 // Parameter names should begin with lower-case letter
-public record AdapterFactory<TControl, TAdapter> : IAdapterFactory
+public record RegionManagerFactory<TControl, TAdapter> : IRegionManagerFactory
 #pragma warning restore SA1313 // Parameter names should begin with lower-case letter
-    where TAdapter : INavigationAdapter
+    where TAdapter : IRegionManager
 {
     public Type ControlType => typeof(TControl);
 
-    public INavigationAdapter Create(IServiceProvider services)
+    public IRegionManager Create(IServiceProvider services)
     {
         return services.GetService<TAdapter>();
     }

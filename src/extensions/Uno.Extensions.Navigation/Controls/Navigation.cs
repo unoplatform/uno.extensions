@@ -27,9 +27,9 @@ public static class Navigation
         }
     }
 
-    public static readonly DependencyProperty AdapterProperty =
+    public static readonly DependencyProperty RegionManagerProperty =
    DependencyProperty.RegisterAttached(
-     "Adapter",
+     "RegionManager",
      typeof(INavigationService),
      typeof(Navigation),
      new PropertyMetadata(null)
@@ -67,37 +67,37 @@ public static class Navigation
         }
     }
 
-    private static void RegisterElement(FrameworkElement element, string routeName)
+    private static void RegisterElement(FrameworkElement element, string regionName)
     {
         element.Loaded += (sLoaded, eLoaded) =>
         {
             var loadedElement = sLoaded as FrameworkElement;
-            var existingAdapter = loadedElement.GetAdapter();
+            var existingRegion = loadedElement.GetRegionManager();
             var parent = ScopedServiceForControl(loadedElement.Parent);
-            var adapter = NavigationManager.AddAdapter(parent, routeName, element, existingAdapter);
-            loadedElement.SetAdapter(adapter);
+            var region = NavigationManager.AddRegion(parent, regionName, element, existingRegion);
+            loadedElement.SetRegionManager(region);
             loadedElement.Unloaded += (sUnloaded, eUnloaded) =>
            {
-               if (adapter != null)
+               if (region != null)
                {
-                   NavigationManager.RemoveAdapter(adapter);
+                   NavigationManager.RemoveRegion(region);
                }
            };
         };
     }
 
-    public static void SetAdapter(this FrameworkElement element, INavigationService value)
+    public static void SetRegionManager(this FrameworkElement element, INavigationService value)
     {
-        element.SetValue(AdapterProperty, value);
+        element.SetValue(RegionManagerProperty, value);
     }
 
-    public static INavigationService GetAdapter(this FrameworkElement element)
+    public static INavigationService GetRegionManager(this FrameworkElement element)
     {
         if (element is null)
         {
             return null;
         }
-        return (INavigationService)element.GetValue(AdapterProperty);
+        return (INavigationService)element.GetValue(RegionManagerProperty);
     }
 
     public static TElement AsNavigationContainer<TElement>(this TElement element)
@@ -158,7 +158,7 @@ public static class Navigation
 
     private static INavigationService ScopedServiceForControl(DependencyObject element)
     {
-        var service = (element as FrameworkElement).GetAdapter();
+        var service = (element as FrameworkElement).GetRegionManager();
         if (service is not null)
         {
             return service;

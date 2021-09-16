@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
-using Uno.Extensions.Navigation.Adapters;
+using Uno.Extensions.Navigation.Regions;
 
 namespace Uno.Extensions.Navigation;
 
@@ -14,9 +14,9 @@ public class NavigationManager : INavigationManager
 
     private INavigationMapping Mapping { get; }
 
-    private IDictionary<Type, IAdapterFactory> Factories { get; }
+    private IDictionary<Type, IRegionManagerFactory> Factories { get; }
 
-    public NavigationManager(IServiceProvider services, IEnumerable<IAdapterFactory> factories, INavigationMapping mapping)
+    public NavigationManager(IServiceProvider services, IEnumerable<IRegionManagerFactory> factories, INavigationMapping mapping)
     {
         Services = services;
         Mapping = mapping;
@@ -24,10 +24,10 @@ public class NavigationManager : INavigationManager
         Root = new NavigationService(this, null, Mapping, null);
     }
 
-    public INavigationService AddAdapter(INavigationService parentAdapter, string routeName, object control, INavigationService existingAdapter)
+    public INavigationService AddRegion(INavigationService parentRegion, string regionName, object control, INavigationService existingRegion)
     {
-        var ans = existingAdapter as NavigationService;
-        var parent = parentAdapter as NavigationService;
+        var ans = existingRegion as NavigationService;
+        var parent = parentRegion as NavigationService;
         if (ans is null)
         {
             var scope = Services.CreateScope();
@@ -35,9 +35,9 @@ public class NavigationManager : INavigationManager
             ans = new NavigationService(this, services, Mapping, parent);
 
             var factory = Factories[control.GetType()];
-            var adapter = factory.Create(services);
-            adapter.Inject(control);
-            ans.Adapter = adapter;
+            var region = factory.Create(services);
+            region.Inject(control);
+            ans.Region = region;
         }
 
         // This ensures all adapter services have a parent. The root service
@@ -48,9 +48,9 @@ public class NavigationManager : INavigationManager
             parent = Root as NavigationService;
         }
 
-        parent.NestedAdapters[routeName + string.Empty] = ans;
+        parent.NestedRegions[regionName + string.Empty] = ans;
 
-        if (ans.Adapter is INavigationAware navAware)
+        if (ans.Region is INavigationAware navAware)
         {
             navAware.Navigation = ans;
         }
@@ -59,9 +59,9 @@ public class NavigationManager : INavigationManager
         {
             var pending = parent.PendingNavigation;
             parent.PendingNavigation = null;
-            if (pending.Route.Path.OriginalString.StartsWith(routeName))
+            if (pending.Route.Path.OriginalString.StartsWith(regionName))
             {
-                var nestedRoute = pending.Route.Path.OriginalString.TrimStart($"{routeName}/");
+                var nestedRoute = pending.Route.Path.OriginalString.TrimStart($"{regionName}/");
                 pending = pending with { Route = pending.Route with { Path = new Uri(nestedRoute, UriKind.Relative) } };
             }
             ans.Navigate(pending);
@@ -70,19 +70,19 @@ public class NavigationManager : INavigationManager
         return ans;
     }
 
-    public void RemoveAdapter(INavigationService adapter)
+    public void RemoveRegion(INavigationService region)
     {
-        var ans = adapter as NavigationService;
+        var ans = region as NavigationService;
         if (ans is null)
         {
             return;
         }
 
         // Detach adapter from parent
-        var parent = adapter.Parent as NavigationService;
+        var parent = region.Parent as NavigationService;
         if (parent is not null)
         {
-            parent.NestedAdapters.Remove(kvp => kvp.Value == adapter);
+            parent.NestedRegions.Remove(kvp => kvp.Value == region);
         }
     }
 

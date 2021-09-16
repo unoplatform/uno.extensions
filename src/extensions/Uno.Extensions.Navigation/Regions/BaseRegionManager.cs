@@ -6,9 +6,9 @@ using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Dialogs;
 using Uno.Extensions.Navigation.ViewModels;
 
-namespace Uno.Extensions.Navigation.Adapters;
+namespace Uno.Extensions.Navigation.Regions;
 
-public abstract class BaseNavigationAdapter<TControl> : INavigationAdapter
+public abstract class BaseRegionManager<TControl> : IRegionManager
 {
     protected abstract NavigationContext CurrentContext { get; }
 
@@ -32,7 +32,7 @@ public abstract class BaseNavigationAdapter<TControl> : INavigationAdapter
         return CurrentContext?.Path == path;
     }
 
-    public BaseNavigationAdapter(IViewManager<TControl> control, IDialogFactory dialogFactory)
+    public BaseRegionManager(IViewManager<TControl> control, IDialogFactory dialogFactory)
     {
         DialogProvider = dialogFactory;
         ControlWrapper = control;

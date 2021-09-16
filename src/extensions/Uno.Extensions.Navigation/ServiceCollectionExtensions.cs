@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
-using Uno.Extensions.Navigation.Adapters;
 using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Dialogs;
+using Uno.Extensions.Navigation.Regions;
+using Uno.Extensions.Navigation.Regions.Managers;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls;
@@ -28,9 +29,9 @@ public static class ServiceCollectionExtensions
                     .AddTransient<IViewManager<ContentControl>, ContentControlManager>()
 
                     // Register the adapter for each control type
-                    .AddAdapter<Frame, StackNavigationAdapter<Frame>>()
-                    .AddAdapter<TabView, SimpleNavigationAdapter<TabView>>()
-                    .AddAdapter<ContentControl, SimpleNavigationAdapter<ContentControl>>()
+                    .AddAdapter<Frame, StackRegionManager<Frame>>()
+                    .AddAdapter<TabView, SimpleRegionManager<TabView>>()
+                    .AddAdapter<ContentControl, SimpleRegionManager<ContentControl>>()
 
                     // Register the different types of dialogs
                     .AddSingleton<IDialogManager, ContentDialogManager>()
@@ -50,7 +51,7 @@ public static class ServiceCollectionExtensions
     }
 
     private static IServiceCollection AddAdapter<TControl, TAdapter>(this IServiceCollection services)
-        where TAdapter : class, INavigationAdapter
+        where TAdapter : class, IRegionManager
     {
         if (services is null)
         {
@@ -59,7 +60,7 @@ public static class ServiceCollectionExtensions
 
         return services
                     .AddTransient<TAdapter>()
-                    .AddSingleton<IAdapterFactory, AdapterFactory<TControl, TAdapter>>();
+                    .AddSingleton<IRegionManagerFactory, RegionManagerFactory<TControl, TAdapter>>();
     }
 
     public static IServiceCollection AddViewModelData<TData>(this IServiceCollection services)

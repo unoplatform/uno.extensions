@@ -2,9 +2,9 @@
 using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Dialogs;
 
-namespace Uno.Extensions.Navigation.Adapters;
+namespace Uno.Extensions.Navigation.Regions.Managers;
 
-public class SimpleNavigationAdapter<TControl> : BaseNavigationAdapter<TControl>
+public class SimpleRegionManager<TControl> : BaseRegionManager<TControl>
 {
     private NavigationContext currentContext;
 
@@ -17,14 +17,14 @@ public class SimpleNavigationAdapter<TControl> : BaseNavigationAdapter<TControl>
         return CurrentContext?.Path == path;
     }
 
-    public SimpleNavigationAdapter(IViewManager<TControl> control, IDialogFactory dialogFactory) : base(control, dialogFactory)
+    public SimpleRegionManager(IViewManager<TControl> control, IDialogFactory dialogFactory) : base(control, dialogFactory)
     {
     }
 
     protected override void AdapterNavigation(NavigationContext context, object viewModel)
     {
         currentContext = context;
-        ControlWrapper.ChangeView(context.Services.GetService<INavigationService>(),context.Path,context.Mapping?.View, false, context.Data, viewModel, context.Request.Sender is not null);
+        ControlWrapper.ChangeView(context.Services.GetService<INavigationService>(), context.Path, context.Mapping?.View, false, context.Data, viewModel, context.Request.Sender is not null);
         //INavigationService navigation, string path, Type view, bool isBackNavigation, object data, object viewModel, bool setFocus
     }
 }

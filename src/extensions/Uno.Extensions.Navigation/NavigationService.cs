@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Uno.Extensions.Navigation.Adapters;
+using Uno.Extensions.Navigation.Regions;
 
 namespace Uno.Extensions.Navigation;
 
@@ -14,7 +14,7 @@ public class NavigationService : INavigationService
 
     public INavigationMapping Mapping { get; }
 
-    public INavigationAdapter Adapter { get; set; }
+    public IRegionManager Region { get; set; }
 
     public INavigationService Parent { get; }
 
@@ -38,19 +38,14 @@ public class NavigationService : INavigationService
         Mapping = mapping;
     }
 
-    public IDictionary<string, INavigationService> NestedAdapters { get; } = new Dictionary<string, INavigationService>();
+    public IDictionary<string, INavigationService> NestedRegions { get; } = new Dictionary<string, INavigationService>();
+
+    public INavigationService Nested(string regionName = null)
+    {
+        return NestedRegions.TryGetValue(regionName + string.Empty, out var service) ? service : null;
+    }
 
     public NavigationResponse Navigate(NavigationRequest request)
-    {
-        return NavigateWithAdapter(request, this);
-    }
-
-    public INavigationService Nested(string routeName = null)
-    {
-        return NestedAdapters.TryGetValue(routeName + string.Empty, out var service) ? service : null;
-    }
-
-    private NavigationResponse NavigateWithAdapter(NavigationRequest request, NavigationService navService)
     {
         var path = request.Route.Path.OriginalString;
 
@@ -78,7 +73,7 @@ public class NavigationService : INavigationService
 
         if (path.StartsWith("//"))
         {
-            var parentService = navService.Parent as NavigationService;
+            var parentService = Parent as NavigationService;
             path = path.Length > 2 ? path.Substring(2) : string.Empty;
 
             var parentRequest = request.WithPath(path, query);
@@ -124,7 +119,7 @@ public class NavigationService : INavigationService
         }
 
         var residualRequest = request.WithPath(residualPath, query); // with { Route = request.Route with { Path = new Uri(residualPath, UriKind.Relative) } };
-        if (Adapter is null)
+        if (Region is null)
         {
             if (Parent is NavigationService parentNav)
             {
@@ -141,7 +136,7 @@ public class NavigationService : INavigationService
             }
             return null;
         }
-        else if (!Adapter.IsCurrentPath(navPath))
+        else if (!Region.IsCurrentPath(navPath))
         {
             if (!string.IsNullOrWhiteSpace(residualPath))
             {
@@ -152,7 +147,7 @@ public class NavigationService : INavigationService
         {
             if (!string.IsNullOrWhiteSpace(residualPath))
             {
-                if (!NestedAdapters.Any())
+                if (!NestedRegions.Any())
                 {
                     PendingNavigation = residualRequest;
                 }
@@ -164,9 +159,9 @@ public class NavigationService : INavigationService
                     // navigation request
                     var nested = Nested(nextPath) as NavigationService;
 
-                    if (nested == null && NestedAdapters.Any())
+                    if (nested == null && NestedRegions.Any())
                     {
-                        nested = NestedAdapters.Values.First() as NavigationService;
+                        nested = NestedRegions.Values.First() as NavigationService;
                     }
 
                     if (nested is null)
@@ -184,17 +179,17 @@ public class NavigationService : INavigationService
             return null;
         }
 
-        var scope = navService.ScopedServices.CreateScope();
+        var scope = ScopedServices.CreateScope();
         var services = scope.ServiceProvider;
         var dataFactor = services.GetService<ViewModelDataProvider>();
         dataFactor.Parameters = paras;
         var navWrapper = services.GetService<NavigationServiceProvider>();
-        navWrapper.Navigation = navService;
+        navWrapper.Navigation = this;
 
         var mapping = Mapping.LookupByPath(navPath);
 
         var context = new NavigationContext(services, request, navPath, isRooted, numberOfPagesToRemove, paras, new CancellationTokenSource(), new TaskCompletionSource<object>(), Mapping: mapping);
-        return navService.Adapter.Navigate(context);
+        return Region.Navigate(context);
     }
 
     private IDictionary<string, object> ParseQueryParameters(string queryString)
