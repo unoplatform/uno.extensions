@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using ExtensionsSampleApp.ViewModels;
 using Uno.Extensions.Navigation;
@@ -48,10 +49,12 @@ namespace ExtensionsSampleApp.Views
 
         private async void NextPageRequestResponseWithTimeoutClick(object sender, RoutedEventArgs e)
         {
-            var navresult = Navigation.NavigateToViewModelAsync<SecondViewModel, Widget>(this);
-            Task.Run(() => Task.Delay(10000)).ConfigureAwait(true).GetAwaiter().OnCompleted(() => navresult.CancellationSource.Cancel());
+            var cancel = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+            var navresult = Navigation.NavigateToViewModelAsync<SecondViewModel, Widget>(this,cancellation: cancel.Token);
+            //Task.Run(() => Task.Delay(10000)).ConfigureAwait(true).GetAwaiter().OnCompleted(() => navresult.CancellationSource.Cancel());
             var response = await navresult.Result;
         }
+
         private async void ContentDialogResponseClick(object sender, RoutedEventArgs e)
         {
             var navresult = Navigation.NavigateToViewAsync<SimpleContentDialog, ContentDialogResult>(this);
@@ -72,7 +75,7 @@ namespace ExtensionsSampleApp.Views
 
         private async void MessageDialogClick(object sender, RoutedEventArgs e)
         {
-            var navresult = Navigation.ShowMessageDialogAsync(this, "Basic content", "Content Title", commands: new Windows.UI.Popups.UICommand("test", command => Debug.WriteLine("TEST")));
+            var navresult = Navigation.ShowMessageDialogAsync(this, "Basic content", "Content Title", commands: new Windows.UI.Popups.UICommand[] { new Windows.UI.Popups.UICommand("test", command => Debug.WriteLine("TEST")) });
             var response = await navresult.Result;
         }
 

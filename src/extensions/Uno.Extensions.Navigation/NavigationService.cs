@@ -47,7 +47,7 @@ public class NavigationService : INavigationService
 
     public NavigationResponse NavigateAsync(NavigationRequest request)
     {
-        var path = request.Route.Path.OriginalString;
+        var path = request.Route.Uri.OriginalString;
 
         var queryIdx = path.IndexOf('?');
         var query = string.Empty;
@@ -198,7 +198,9 @@ public class NavigationService : INavigationService
 
         var mapping = Mapping.LookupByPath(navPath);
 
-        var context = new NavigationContext(services, request, navPath, isRooted, numberOfPagesToRemove, paras, new CancellationTokenSource(), new TaskCompletionSource<object>(), Mapping: mapping);
+        var context = new NavigationContext(services, request, navPath, isRooted, numberOfPagesToRemove, paras,
+            (request.Cancellation is not null) ? CancellationTokenSource.CreateLinkedTokenSource(request.Cancellation.Value) : new CancellationTokenSource(),
+            new TaskCompletionSource<object>(), Mapping: mapping);
         return Region.Navigate(context);
     }
 

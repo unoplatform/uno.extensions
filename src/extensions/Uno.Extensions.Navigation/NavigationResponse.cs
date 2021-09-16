@@ -5,29 +5,53 @@ using System.Threading.Tasks;
 
 namespace Uno.Extensions.Navigation;
 
-#pragma warning disable SA1313 // Parameter names should begin with lower-case letter
-public record NavigationResponse<TResult>(NavigationRequest Request, Task NavigationTask, CancellationTokenSource CancellationSource, Task<TResult> Result) : BaseNavigationResponse(Request, NavigationTask)
-#pragma warning restore SA1313 // Parameter names should begin with lower-case letter
+public class NavigationResponse<TResult> : BaseNavigationResponse
 {
+    public Task<TResult> Result { get; }
+
+    public NavigationResponse(NavigationRequest request, Task navigationTask, Task<TResult> result) : base(request, navigationTask)
+    {
+        Result = result;
+    }
+
+    public NavigationResponse(NavigationResponse response) : base(response.Request, response.NavigationTask)
+    {
+        Result = response.Result.ContinueWith(x => (TResult)x.Result);
+    }
+
     public NavigationResponse<TResult> GetAwaiter()
     {
         return this;
     }
 }
 
-#pragma warning disable SA1313 // Parameter names should begin with lower-case letter
-public record NavigationResponse(NavigationRequest Request, Task NavigationTask, CancellationTokenSource CancellationSource, Task<object> Result) : BaseNavigationResponse(Request, NavigationTask)
+public class NavigationResponse : BaseNavigationResponse
 {
+    public Task<object> Result { get; }
+
+    public NavigationResponse(NavigationRequest request, Task navigationTask, Task<object> result) : base(request, navigationTask)
+    {
+        Result = result;
+    }
+
     public NavigationResponse GetAwaiter()
     {
         return this;
     }
 }
 
-#pragma warning disable SA1313 // Parameter names should begin with lower-case letter
-public record BaseNavigationResponse(NavigationRequest Request, Task NavigationTask) : INotifyCompletion
-#pragma warning restore SA1313 // Parameter names should begin with lower-case letter
+public class BaseNavigationResponse : INotifyCompletion
 {
+    public NavigationRequest Request { get; }
+
+    public Task NavigationTask { get; }
+
+    protected BaseNavigationResponse(NavigationRequest request, Task navigationTask)
+    {
+        Request = request;
+        NavigationTask = navigationTask;
+    }
+
     public void OnCompleted(Action continuation)
     {
         if (NavigationTask is not null)
