@@ -24,7 +24,6 @@ public class SimpleRegionManager<TControl> : BaseRegionManager<TControl>
     protected override void AdapterNavigation(NavigationContext context, object viewModel)
     {
         currentContext = context;
-        ControlWrapper.ChangeView(context.Services.GetService<INavigationService>(), context.Path, context.Mapping?.View, false, context.Data, viewModel, context.Request.Sender is not null);
-        //INavigationService navigation, string path, Type view, bool isBackNavigation, object data, object viewModel, bool setFocus
+        ControlWrapper.ChangeView(context.Path, context.Mapping?.View, false, context.Data, viewModel, context.Request.Sender is not null);
     }
 }

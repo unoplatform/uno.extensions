@@ -11,16 +11,8 @@ namespace Uno.Extensions.Navigation.Controls;
 
 public class TabManager : BaseControlManager<TabView>, IViewManager<TabView>
 {
-    private INavigationService Navigation { get; }
-
-    public TabManager(INavigationService navigation)
+    public TabManager(INavigationService navigation, RegionControlProvider controlProvider) : base(navigation, controlProvider.RegionControl as TabView)
     {
-        Navigation = navigation;
-    }
-
-    public override void Inject(object control)
-    {
-        base.Inject(control);
         Control.TabItemsChanged += Tabs_TabItemsChanged;
     }
 
@@ -55,12 +47,12 @@ public class TabManager : BaseControlManager<TabView>, IViewManager<TabView>
         return FindByName(tabName) is not null;
     }
 
-    public void ChangeView(INavigationService navigation, string path, Type view, bool isBackNavigation, object data, object viewModel, bool setFocus)
+    public void ChangeView(string path, Type view, bool isBackNavigation, object data, object viewModel, bool setFocus)
     {
         var tab = FindByName(path);
         if (tab is not null)
         {
-            InitialiseView(tab, navigation, viewModel);
+            InitialiseView(tab, viewModel);
 
             // Only set the selected tab if there's a valid sender
             // otherwise, we're just setting up the viewmodel etc

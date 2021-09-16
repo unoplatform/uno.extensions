@@ -8,14 +8,20 @@ using Microsoft.UI.Xaml;
 
 namespace Uno.Extensions.Navigation.Controls;
 
-public abstract class BaseControlManager<TControl> : IInjectable
+public abstract class BaseControlManager<TControl>
     where TControl : class
 {
-    protected TControl Control { get; private set; }
+    protected TControl Control { get; }
 
-    public virtual void Inject(object control) => Control = control as TControl;
+    protected INavigationService Navigation { get; }
 
-    protected static void InitialiseView(object view, INavigationService navigation, object viewModel)
+    protected BaseControlManager(INavigationService navigation, TControl control)
+    {
+        Navigation = navigation;
+        Control = control;
+    }
+
+    protected void InitialiseView(object view, object viewModel)
     {
         if (view is FrameworkElement fe)
         {
@@ -27,7 +33,7 @@ public abstract class BaseControlManager<TControl> : IInjectable
 
         if (view is INavigationAware navAware)
         {
-            navAware.Navigation = navigation;
+            navAware.Navigation = Navigation;
         }
     }
 }

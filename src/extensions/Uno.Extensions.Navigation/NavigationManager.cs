@@ -28,17 +28,6 @@ public class NavigationManager : INavigationManager
     {
         var ans = existingRegion as NavigationService;
         var parent = parentRegion as NavigationService;
-        if (ans is null)
-        {
-            var scope = Services.CreateScope();
-            var services = scope.ServiceProvider;
-            ans = new NavigationService(this, services, Mapping, parent);
-
-            var factory = Factories[control.GetType()];
-            var region = factory.Create(services);
-            region.Inject(control);
-            ans.Region = region;
-        }
 
         // This ensures all adapter services have a parent. The root service
         // is used to cache initial navigation requests before the first
@@ -46,6 +35,20 @@ public class NavigationManager : INavigationManager
         if (parent is null)
         {
             parent = Root as NavigationService;
+        }
+
+        if (ans is null)
+        {
+            var scope = Services.CreateScope();
+            var services = scope.ServiceProvider;
+            // Make the control available via DI
+            services.GetService<RegionControlProvider>().RegionControl = control;
+
+            ans = new NavigationService(this, services, Mapping, parent);
+
+            var factory = Factories[control.GetType()];
+            var region = factory.Create(services);
+            ans.Region = region;
         }
 
         parent.NestedRegions[regionName + string.Empty] = ans;

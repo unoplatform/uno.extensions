@@ -47,6 +47,7 @@ public static class ServiceCollectionExtensions
                     .AddScoped<NavigationServiceProvider>()
                     .AddScoped<INavigationService>(services => services.GetService<NavigationServiceProvider>().Navigation)
                     .AddScoped<ViewModelDataProvider>()
+                    .AddScoped<RegionControlProvider>()
                     .AddScoped<IDictionary<string, object>>(services => services.GetService<ViewModelDataProvider>().Parameters);
     }
 
@@ -97,4 +98,9 @@ public class NavigationServiceProvider
         // overriden for scoped contexts
         Navigation = manager;
     }
+}
+
+public class RegionControlProvider
+{
+    public object RegionControl { get; set; }
 }

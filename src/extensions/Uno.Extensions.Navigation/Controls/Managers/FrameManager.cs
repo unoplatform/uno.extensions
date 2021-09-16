@@ -15,9 +15,8 @@ namespace Uno.Extensions.Navigation.Controls;
 
 public class FrameManager : BaseControlManager<Frame>, IStackViewManager<Frame>
 {
-    public override void Inject(object control)
+    public FrameManager(INavigationService navigation, RegionControlProvider controlProvider) : base(navigation, controlProvider.RegionControl as Frame)
     {
-        base.Inject(control);
         if (Control.Content is not null)
         {
             Navigation.NavigateToViewAsync(null, Control.SourcePageType);
@@ -25,19 +24,12 @@ public class FrameManager : BaseControlManager<Frame>, IStackViewManager<Frame>
         Control.Navigated += Frame_Navigated;
     }
 
-    private INavigationService Navigation { get; }
-
-    public FrameManager(INavigationService navigation)
-    {
-        Navigation = navigation;
-    }
-
     private void Frame_Navigated(object sender, NavigationEventArgs e)
     {
         Navigation.NavigateToViewAsync(null, Control.SourcePageType);
     }
 
-    private void GoBack(INavigationService navigation, object parameter, object viewModel)
+    private void GoBack(object parameter, object viewModel)
     {
         if (parameter is not null)
         {
@@ -49,14 +41,14 @@ public class FrameManager : BaseControlManager<Frame>, IStackViewManager<Frame>
 
         Control.GoBack();
 
-        InitialiseView(Control.Content, navigation, viewModel);
+        InitialiseView(Control.Content, viewModel);
     }
 
-    public void ChangeView(INavigationService navigation, string path, Type view, bool isBackNavigation, object data, object viewModel, bool setFocus)
+    public void ChangeView(string path, Type view, bool isBackNavigation, object data, object viewModel, bool setFocus)
     {
         if (isBackNavigation)
         {
-            GoBack(navigation, data, viewModel);
+            GoBack(data, viewModel);
             return;
         }
 
@@ -69,7 +61,7 @@ public class FrameManager : BaseControlManager<Frame>, IStackViewManager<Frame>
 
         if (Control.Content is FrameworkElement element)
         {
-            InitialiseView(Control.Content, navigation, viewModel);
+            InitialiseView(Control.Content, viewModel);
         }
     }
 

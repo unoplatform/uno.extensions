@@ -50,7 +50,7 @@ public class StackRegionManager<TControl> : BaseRegionManager<TControl>
         var currentVM = await CurrentContext.InitializeViewModel();
 
         // Invoke the navigation (which will be a back navigation)
-        Frame.ChangeView(context.Services.GetService<INavigationService>(), context.Path, context.Mapping?.View, true, context.Data, currentVM, context.Request.Sender is not null);
+        Frame.ChangeView(context.Path, context.Mapping?.View, true, context.Data, currentVM, context.Request.Sender is not null);
 
         return currentVM;
     }
@@ -70,7 +70,7 @@ public class StackRegionManager<TControl> : BaseRegionManager<TControl>
 
         // Add the new context to the list of contexts and then navigate away
         NavigationContexts.Add(context);
-        Frame.ChangeView(context.Services.GetService<INavigationService>(), context.Path, context.Mapping?.View, false, context.Data, viewModel, context.Request.Sender is not null);
+        Frame.ChangeView(context.Path, context.Mapping?.View, false, context.Data, viewModel, context.Request.Sender is not null);
 
         // If path starts with / then remove all prior pages and corresponding contexts
         if (context.PathIsRooted)
