@@ -6,6 +6,6 @@ public static class NavigationHelpers
 {
     public static NavigationRequest WithPath(this NavigationRequest request, string path, string queryParameters)
     {
-        return request with { Route = request.Route with { Path = new Uri(path + (!string.IsNullOrWhiteSpace(queryParameters) ? $"?{queryParameters}" : string.Empty), UriKind.Relative) } };
+        return request with { Route = request.Route with { Uri = new Uri(path + (!string.IsNullOrWhiteSpace(queryParameters) ? $"?{queryParameters}" : string.Empty), UriKind.Relative) } };
     }
 }

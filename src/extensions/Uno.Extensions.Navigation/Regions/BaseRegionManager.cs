@@ -44,7 +44,7 @@ public abstract class BaseRegionManager<TControl> : IRegionManager
 
         var navTask = InternalNavigate(context);
 
-        return new NavigationResponse(request, navTask, context.CancellationSource, context.ResultCompletion.Task);
+        return new NavigationResponse(request, navTask, context.ResultCompletion.Task);
     }
 
     private async Task InternalNavigate(NavigationContext context)

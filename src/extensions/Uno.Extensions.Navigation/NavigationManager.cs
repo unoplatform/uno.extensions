@@ -59,10 +59,10 @@ public class NavigationManager : INavigationManager
         {
             var pending = parent.PendingNavigation;
             parent.PendingNavigation = null;
-            if (pending.Route.Path.OriginalString.StartsWith(regionName))
+            if (pending.Route.Uri.OriginalString.StartsWith(regionName))
             {
-                var nestedRoute = pending.Route.Path.OriginalString.TrimStart($"{regionName}/");
-                pending = pending with { Route = pending.Route with { Path = new Uri(nestedRoute, UriKind.Relative) } };
+                var nestedRoute = pending.Route.Uri.OriginalString.TrimStart($"{regionName}/");
+                pending = pending with { Route = pending.Route with { Uri = new Uri(nestedRoute, UriKind.Relative) } };
             }
             ans.NavigateAsync(pending);
         }
