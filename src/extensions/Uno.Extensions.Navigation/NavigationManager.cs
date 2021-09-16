@@ -64,7 +64,7 @@ public class NavigationManager : INavigationManager
                 var nestedRoute = pending.Route.Path.OriginalString.TrimStart($"{regionName}/");
                 pending = pending with { Route = pending.Route with { Path = new Uri(nestedRoute, UriKind.Relative) } };
             }
-            ans.Navigate(pending);
+            ans.NavigateAsync(pending);
         }
 
         return ans;
@@ -86,8 +86,8 @@ public class NavigationManager : INavigationManager
         }
     }
 
-    public NavigationResponse Navigate(NavigationRequest request)
+    public NavigationResponse NavigateAsync(NavigationRequest request)
     {
-        return Root.Navigate(request);
+        return Root.NavigateAsync(request);
     }
 }

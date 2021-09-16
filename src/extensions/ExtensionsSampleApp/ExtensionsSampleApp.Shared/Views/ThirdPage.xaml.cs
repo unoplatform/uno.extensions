@@ -29,12 +29,12 @@ namespace ExtensionsSampleApp.Views
             
         private void NextPagePreviousViewWithDataClick(object sender, RoutedEventArgs e)
         {
-            Navigation.NavigateToPreviousView(this, data: new Widget());
+            Navigation.NavigateToPreviousViewAsync(this, data: new Widget());
         }
 
         private void NextPagePreviousViewWithArgsAndDataClick(object sender, RoutedEventArgs e)
         {
-            Navigation.Navigate(new NavigationRequest(sender, new NavigationRoute(new Uri(typeof(ThirdPage).Name + "?arg1=val1&arg2=val2", UriKind.Relative), new Widget())));
+            Navigation.NavigateAsync(new NavigationRequest(sender, new NavigationRoute(new Uri(typeof(ThirdPage).Name + "?arg1=val1&arg2=val2", UriKind.Relative), new Widget())));
         }
     }
 

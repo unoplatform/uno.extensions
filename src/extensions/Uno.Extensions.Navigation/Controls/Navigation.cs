@@ -143,7 +143,7 @@ public static class Navigation
             RoutedEventHandler handler = (s, e) =>
                 {
                     var nav = ScopedServiceForControl(s as DependencyObject);
-                    nav.Navigate(new NavigationRequest(s, new NavigationRoute(new Uri(path, UriKind.Relative))));
+                    nav.NavigateAsync(new NavigationRequest(s, new NavigationRoute(new Uri(path, UriKind.Relative))));
                 };
             element.Loaded += (s, e) =>
             {

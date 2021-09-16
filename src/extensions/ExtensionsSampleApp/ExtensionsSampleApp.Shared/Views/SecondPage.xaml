@@ -26,15 +26,15 @@
             <Button Content="Next Page with args"
                     nav:Navigation.Path="ThirdPage?arg1=val1&amp;arg2=val2" />
             <Button Content="Next Page with data"
-                    Click="NextPageNavigateToViewWithDataClick" />
+                    Click="NextPageNavigateToViewAsyncWithDataClick" />
             <Button Content="Next Page with args and data"
-                    Click="NextPageNavigateToViewWithQueryAndDataClick" />
+                    Click="NextPageNavigateToViewAsyncWithQueryAndDataClick" />
             <Button Content="Go Back - NavigationRequest"
                     Click="GoBackNavigationRequestClick" />
             <Button Content="Go Back - Navigation Path"
                     nav:Navigation.Path=".." />
-            <Button Content="Go Back - NavigateToPreviousView"
-                    Click="GoBackNavigateToPreviousViewClick" />
+            <Button Content="Go Back - NavigateToPreviousViewAsync"
+                    Click="GoBackNavigateToPreviousViewAsyncClick" />
             <Button Content="Tabbed Page - NavigationRequest"
                     nav:Navigation.Path="TabbedPage" />
         </StackPanel>

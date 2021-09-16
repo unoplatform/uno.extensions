@@ -33,7 +33,7 @@ namespace ExtensionsSampleApp.Views.Twitter
 
         public void TweetSelectionChanged(object sender, SelectionChangedEventArgs args)
         {
-            Navigation.NavigateForData(this, (sender as ListView).SelectedItem as Tweet);
+            Navigation.NavigateForDataAsync(this, (sender as ListView).SelectedItem as Tweet);
         }
     }
 }

@@ -30,7 +30,7 @@ public class TabManager : BaseControlManager<TabView>, IViewManager<TabView>
         {
             var tvi = Control.TabItems[(int)args.Index] as TabViewItem;
             var tabName = tvi.Name;
-            Navigation.NavigateByPath(null, tabName);
+            Navigation.NavigateByPathAsync(null, tabName);
         }
     }
 
