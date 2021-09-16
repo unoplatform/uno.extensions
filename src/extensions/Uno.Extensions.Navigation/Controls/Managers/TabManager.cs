@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 #if WINDOWS_UWP
 using Microsoft.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls;
@@ -54,17 +55,17 @@ public class TabManager : BaseControlManager<TabView>, IViewManager<TabView>
         return FindByName(tabName) is not null;
     }
 
-    public void ChangeView(NavigationContext context, bool isBackNavigation, object viewModel)
+    public void ChangeView(INavigationService navigation, string path, Type view, bool isBackNavigation, object data, object viewModel, bool setFocus)
     {
-        var tab = FindByName(context.Path);
+        var tab = FindByName(path);
         if (tab is not null)
         {
-            InitialiseView(tab, context, viewModel);
+            InitialiseView(tab, navigation, viewModel);
 
             // Only set the selected tab if there's a valid sender
             // otherwise, we're just setting up the viewmodel etc
             // for tabs when they're created
-            if (context.Request.Sender is not null)
+            if (setFocus)
             {
                 Control.SelectedItem = tab;
             }

@@ -1,6 +1,8 @@
-﻿namespace Uno.Extensions.Navigation.Controls;
+﻿using System;
+
+namespace Uno.Extensions.Navigation.Controls;
 
 public interface IViewManager<TControl> : IInjectable
 {
-    void ChangeView(NavigationContext context, bool isBackNavigation, object viewModel);
+    void ChangeView(INavigationService navigation, string path, Type view, bool isBackNavigation, object data, object viewModel, bool setFocus);
 }

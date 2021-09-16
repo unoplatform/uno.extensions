@@ -37,7 +37,7 @@ public class FrameManager : BaseControlManager<Frame>, IStackViewManager<Frame>
         Navigation.NavigateToView(null, Control.SourcePageType);
     }
 
-    private void GoBack(NavigationContext context, object parameter, object viewModel)
+    private void GoBack(INavigationService navigation, object parameter, object viewModel)
     {
         if (parameter is not null)
         {
@@ -49,27 +49,27 @@ public class FrameManager : BaseControlManager<Frame>, IStackViewManager<Frame>
 
         Control.GoBack();
 
-        InitialiseView(Control.Content, context, viewModel);
+        InitialiseView(Control.Content, navigation, viewModel);
     }
 
-    public void ChangeView(NavigationContext context, bool isBackNavigation, object viewModel)
+    public void ChangeView(INavigationService navigation, string path, Type view, bool isBackNavigation, object data, object viewModel, bool setFocus)
     {
         if (isBackNavigation)
         {
-            GoBack(context, context.Data, viewModel);
+            GoBack(navigation, data, viewModel);
             return;
         }
 
-        if (context.Request.Sender is not null)
+        if (setFocus)
         {
             Control.Navigated -= Frame_Navigated;
-            var nav = Control.Navigate(context.Mapping.View, context.Data);
+            var nav = Control.Navigate(view, data);
             Control.Navigated += Frame_Navigated;
         }
 
         if (Control.Content is FrameworkElement element)
         {
-            InitialiseView(Control.Content, context, viewModel);
+            InitialiseView(Control.Content, navigation, viewModel);
         }
     }
 

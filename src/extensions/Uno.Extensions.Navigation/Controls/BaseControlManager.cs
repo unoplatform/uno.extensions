@@ -15,7 +15,7 @@ public abstract class BaseControlManager<TControl> : IInjectable
 
     public virtual void Inject(object control) => Control = control as TControl;
 
-    protected static void InitialiseView(object view, NavigationContext context, object viewModel)
+    protected static void InitialiseView(object view, INavigationService navigation, object viewModel)
     {
         if (view is FrameworkElement fe)
         {
@@ -27,7 +27,7 @@ public abstract class BaseControlManager<TControl> : IInjectable
 
         if (view is INavigationAware navAware)
         {
-            navAware.Navigation = context.Services.GetService<INavigationService>();
+            navAware.Navigation = navigation;
         }
     }
 }
