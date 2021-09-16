@@ -5,9 +5,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Dialogs;
 
-namespace Uno.Extensions.Navigation.Adapters;
+namespace Uno.Extensions.Navigation.Regions.Managers;
 
-public class StackNavigationAdapter<TControl> : BaseNavigationAdapter<TControl>
+public class StackRegionManager<TControl> : BaseRegionManager<TControl>
 {
     private IStackViewManager<TControl> Frame => ControlWrapper as IStackViewManager<TControl>;
 
@@ -15,7 +15,7 @@ public class StackNavigationAdapter<TControl> : BaseNavigationAdapter<TControl>
 
     protected override NavigationContext CurrentContext => NavigationContexts.LastOrDefault();
 
-    public StackNavigationAdapter(IStackViewManager<TControl> frameWrapper, IDialogFactory dialogFactory) : base(frameWrapper, dialogFactory)
+    public StackRegionManager(IStackViewManager<TControl> frameWrapper, IDialogFactory dialogFactory) : base(frameWrapper, dialogFactory)
     {
     }
 

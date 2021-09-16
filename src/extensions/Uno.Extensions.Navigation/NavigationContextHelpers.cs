@@ -2,7 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.ViewModels;
 
-namespace Uno.Extensions.Navigation.Adapters;
+namespace Uno.Extensions.Navigation
+    ;
 
 public static class NavigationContextHelpers
 {

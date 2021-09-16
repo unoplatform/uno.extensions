@@ -2,7 +2,7 @@
 
 public interface INavigationManager : INavigationService
 {
-    INavigationService AddAdapter(INavigationService parentAdapter, string routeName, object control, INavigationService existingAdapter);
+    INavigationService AddRegion(INavigationService parentRegion, string regionName, object control, INavigationService existingRegion);
 
-    void RemoveAdapter(INavigationService adapter);
+    void RemoveRegion(INavigationService region);
 }
