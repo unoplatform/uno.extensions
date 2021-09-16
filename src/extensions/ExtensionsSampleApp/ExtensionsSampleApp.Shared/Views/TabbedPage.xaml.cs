@@ -19,12 +19,12 @@ namespace ExtensionsSampleApp.Views
 
         private void NavigateToDoc0Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-            Navigation.NavigateToViewModel<TabDoc0ViewModel>(this,NavigationConstants.RelativePath.Nested);
+            Navigation.NavigateToViewModelAsync<TabDoc0ViewModel>(this,NavigationConstants.RelativePath.Nested);
         }
 
         private async void ContentDialogResponseClick(object sender, RoutedEventArgs e)
         {
-            var navresult = Navigation.NavigateToView<SimpleContentDialog, ContentDialogResult>(this);
+            var navresult = Navigation.NavigateToViewAsync<SimpleContentDialog, ContentDialogResult>(this);
             var response = await navresult.Result;
         }
     }

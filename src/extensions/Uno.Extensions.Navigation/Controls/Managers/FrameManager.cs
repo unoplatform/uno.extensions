@@ -20,7 +20,7 @@ public class FrameManager : BaseControlManager<Frame>, IStackViewManager<Frame>
         base.Inject(control);
         if (Control.Content is not null)
         {
-            Navigation.NavigateToView(null, Control.SourcePageType);
+            Navigation.NavigateToViewAsync(null, Control.SourcePageType);
         }
         Control.Navigated += Frame_Navigated;
     }
@@ -34,7 +34,7 @@ public class FrameManager : BaseControlManager<Frame>, IStackViewManager<Frame>
 
     private void Frame_Navigated(object sender, NavigationEventArgs e)
     {
-        Navigation.NavigateToView(null, Control.SourcePageType);
+        Navigation.NavigateToViewAsync(null, Control.SourcePageType);
     }
 
     private void GoBack(INavigationService navigation, object parameter, object viewModel)

@@ -73,7 +73,7 @@ public class ContentDialogManager : IDialogManager
             context.ResultCompletion.Task.Status != TaskStatus.Canceled &&
             context.ResultCompletion.Task.Status != TaskStatus.RanToCompletion)
             {
-                navigation.Navigate(new NavigationRequest(dialog, new NavigationRoute(new Uri(NavigationConstants.PreviousViewUri, UriKind.Relative), result.Result)));
+                navigation.NavigateAsync(new NavigationRequest(dialog, new NavigationRoute(new Uri(NavigationConstants.PreviousViewUri, UriKind.Relative), result.Result)));
             }
         }, CancellationToken.None,
                         TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.DenyChildAttach,

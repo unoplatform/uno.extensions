@@ -26,22 +26,22 @@ namespace ExtensionsSampleApp.Views
         }
         private void GoBackNavigationRequestClick(object sender, RoutedEventArgs e)
         {
-            Navigation.Navigate(new NavigationRequest(sender, new NavigationRoute(new Uri("..", UriKind.Relative))));
+            Navigation.NavigateAsync(new NavigationRequest(sender, new NavigationRoute(new Uri("..", UriKind.Relative))));
         }
 
-        private void GoBackNavigateToPreviousViewClick(object sender, RoutedEventArgs e)
+        private void GoBackNavigateToPreviousViewAsyncClick(object sender, RoutedEventArgs e)
         {
-            Navigation.NavigateToPreviousView(this, data: new Widget());
+            Navigation.NavigateToPreviousViewAsync(this, data: new Widget());
         }
 
-        private void NextPageNavigateToViewWithDataClick(object sender, RoutedEventArgs e)
+        private void NextPageNavigateToViewAsyncWithDataClick(object sender, RoutedEventArgs e)
         {
-            Navigation.NavigateToView<ThirdPage>(this, data: new Widget());
+            Navigation.NavigateToViewAsync<ThirdPage>(this, data: new Widget());
         }
 
-        private void NextPageNavigateToViewWithQueryAndDataClick(object sender, RoutedEventArgs e)
+        private void NextPageNavigateToViewAsyncWithQueryAndDataClick(object sender, RoutedEventArgs e)
         {
-            Navigation.Navigate(new NavigationRequest(sender, new NavigationRoute(new Uri(typeof(ThirdPage).Name + "?arg1=val1&arg2=val2", UriKind.Relative), new Widget())));
+            Navigation.NavigateAsync(new NavigationRequest(sender, new NavigationRoute(new Uri(typeof(ThirdPage).Name + "?arg1=val1&arg2=val2", UriKind.Relative), new Widget())));
         }
     }
 

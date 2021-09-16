@@ -45,7 +45,7 @@ public class NavigationService : INavigationService
         return NestedRegions.TryGetValue(regionName + string.Empty, out var service) ? service : null;
     }
 
-    public NavigationResponse Navigate(NavigationRequest request)
+    public NavigationResponse NavigateAsync(NavigationRequest request)
     {
         var path = request.Route.Path.OriginalString;
 
@@ -77,7 +77,7 @@ public class NavigationService : INavigationService
             path = path.Length > 2 ? path.Substring(2) : string.Empty;
 
             var parentRequest = request.WithPath(path, query);
-            return parentService.Navigate(parentRequest);
+            return parentService.NavigateAsync(parentRequest);
         }
 
         if (path.StartsWith("./"))
@@ -87,7 +87,7 @@ public class NavigationService : INavigationService
             path = path.Length > 2 ? path.Substring(2) : string.Empty;
 
             var parentRequest = request.WithPath(path, query);
-            return nested.Navigate(parentRequest);
+            return nested.NavigateAsync(parentRequest);
         }
 
         var isRooted = path.StartsWith("/");
@@ -182,7 +182,7 @@ public class NavigationService : INavigationService
                     {
                         residualPath = residualPath.TrimStart($"{nextPath}/");
                         var nestedRequest = request.WithPath(residualPath, query); //with { Route = request.Route with { Path = new Uri(residualPath, UriKind.Relative) } };
-                        return nested.Navigate(nestedRequest);
+                        return nested.NavigateAsync(nestedRequest);
                     }
                 }
             }

@@ -69,7 +69,7 @@ public abstract class BaseRegionManager<TControl> : IRegionManager
         {
             context.CancellationToken.Register(() =>
             {
-                Navigation.NavigateToPreviousView(context.Request.Sender);
+                Navigation.NavigateToPreviousViewAsync(context.Request.Sender);
             });
         }
     }

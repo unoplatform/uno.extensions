@@ -43,7 +43,7 @@ public class MessageDialogManager : IDialogManager
             context.ResultCompletion.Task.Status != TaskStatus.Canceled &&
             context.ResultCompletion.Task.Status != TaskStatus.RanToCompletion)
             {
-                navigation.Navigate(new NavigationRequest(md, new NavigationRoute(new Uri(NavigationConstants.PreviousViewUri, UriKind.Relative), result.Result)));
+                navigation.NavigateAsync(new NavigationRequest(md, new NavigationRoute(new Uri(NavigationConstants.PreviousViewUri, UriKind.Relative), result.Result)));
             }
         }, CancellationToken.None,
                         TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.DenyChildAttach,
