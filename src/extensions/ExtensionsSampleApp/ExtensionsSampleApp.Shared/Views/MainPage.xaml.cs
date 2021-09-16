@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using ExtensionsSampleApp.ViewModels;
 using Uno.Extensions.Navigation;
-using Uno.Extensions.Navigation.Adapters;
-using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Dialogs;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;

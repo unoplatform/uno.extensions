@@ -80,6 +80,16 @@ public class NavigationService : INavigationService
             return parentService.Navigate(parentRequest);
         }
 
+        if (path.StartsWith("./"))
+        {
+            var nested = Nested() as NavigationService;
+
+            path = path.Length > 2 ? path.Substring(2) : string.Empty;
+
+            var parentRequest = request.WithPath(path, query);
+            return nested.Navigate(parentRequest);
+        }
+
         var isRooted = path.StartsWith("/");
 
         var segments = path.Split('/');

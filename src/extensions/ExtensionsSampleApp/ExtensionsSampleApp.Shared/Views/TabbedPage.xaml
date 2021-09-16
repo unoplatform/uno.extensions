@@ -41,6 +41,8 @@
                         nav:Navigation.Path="//.." />
                 <Button Content="Third Page"
                         nav:Navigation.Path="//ThirdPage" />
+                <Button Content="Third Page"
+                        Command="{Binding NavigateToThirdPageCommand}" />
                 <Button Content="Third Page (rooted)"
                         nav:Navigation.Path="///ThirdPage" />
                 <Button Content="Doc1 - ViewModel"
