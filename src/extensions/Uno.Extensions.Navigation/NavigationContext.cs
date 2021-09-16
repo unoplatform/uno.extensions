@@ -13,7 +13,7 @@ public record NavigationContext(
     int FramesToRemove,
     IDictionary<string, object> Data,
     CancellationTokenSource CancellationSource,
-    TaskCompletionSource<object> ResultCompletion,
+    TaskCompletionSource<Options.Option> ResultCompletion,
     bool CanCancel = true,
     NavigationMap Mapping = null)
 #pragma warning restore SA1313 // Parameter names should begin with lower-case letter

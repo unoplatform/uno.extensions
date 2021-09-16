@@ -198,9 +198,18 @@ public class NavigationService : INavigationService
 
         var mapping = Mapping.LookupByPath(navPath);
 
-        var context = new NavigationContext(services, request, navPath, isRooted, numberOfPagesToRemove, paras,
-            (request.Cancellation is not null) ? CancellationTokenSource.CreateLinkedTokenSource(request.Cancellation.Value) : new CancellationTokenSource(),
-            new TaskCompletionSource<object>(), Mapping: mapping);
+        var context = new NavigationContext(
+                            services,
+                            request,
+                            navPath,
+                            isRooted,
+                            numberOfPagesToRemove,
+                            paras,
+                            (request.Cancellation is not null) ?
+                                CancellationTokenSource.CreateLinkedTokenSource(request.Cancellation.Value) :
+                                new CancellationTokenSource(),
+                            new TaskCompletionSource<Options.Option>(),
+                            Mapping: mapping);
         return Region.Navigate(context);
     }
 

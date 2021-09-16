@@ -120,6 +120,12 @@ public abstract class BaseRegionManager<TControl> : IRegionManager
             // then indicate that navigation has been handled
             if (navigationContext.IsCancelled)
             {
+                var completion = navigationContext.ResultCompletion;
+                if (completion is not null)
+                {
+                    completion.SetResult(Options.Option.None<object>());
+                }
+
                 return true;
             }
 
@@ -134,12 +140,16 @@ public abstract class BaseRegionManager<TControl> : IRegionManager
 
                 var context = CurrentContext;
 
-                if (context.Request.Result is not null)
+                var completion = context.ResultCompletion;
+                if (completion is not null)
                 {
-                    var completion = context.ResultCompletion;
-                    if (completion is not null)
+                    if (context.Request.Result is not null && responseData is not null)
                     {
-                        completion.SetResult(responseData);
+                        completion.SetResult(Options.Option.Some<object>(responseData));
+                    }
+                    else
+                    {
+                        completion.SetResult(Options.Option.None<object>());
                     }
                 }
             }
@@ -157,12 +167,16 @@ public abstract class BaseRegionManager<TControl> : IRegionManager
 
         responseData = dialog.Manager.CloseDialog(dialog, navigationContext, responseData);
 
-        if (dialog.Context.Request.Result is not null)
+        var completion = dialog.Context.ResultCompletion;
+        if (completion is not null)
         {
-            var completion = dialog.Context.ResultCompletion;
-            if (completion is not null)
+            if (dialog.Context.Request.Result is not null && responseData is not null)
             {
-                completion.SetResult(responseData);
+                completion.SetResult(Options.Option.Some<object>(responseData));
+            }
+            else
+            {
+                completion.SetResult(Options.Option.None<object>());
             }
         }
 
