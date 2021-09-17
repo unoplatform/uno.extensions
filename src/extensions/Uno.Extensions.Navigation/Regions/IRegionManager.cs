@@ -2,7 +2,7 @@
 
 namespace Uno.Extensions.Navigation.Regions;
 
-public interface IRegionManager : INavigationAware
+public interface IRegionManager
 {
     Task NavigateAsync(NavigationContext context);
 }

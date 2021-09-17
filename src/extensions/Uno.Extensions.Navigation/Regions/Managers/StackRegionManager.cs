@@ -15,7 +15,7 @@ public class StackRegionManager<TControl> : BaseRegionManager<TControl>
 
     protected override NavigationContext CurrentContext => NavigationContexts.LastOrDefault();
 
-    public StackRegionManager(IStackViewManager<TControl> frameWrapper, IDialogFactory dialogFactory) : base(frameWrapper, dialogFactory)
+    public StackRegionManager(INavigationService navigation, IStackViewManager<TControl> frameWrapper, IDialogFactory dialogFactory) : base(navigation, frameWrapper, dialogFactory)
     {
     }
 
