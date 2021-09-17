@@ -11,7 +11,7 @@
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <controls:TabView nav:Navigation.IsContainer="true"
+        <controls:TabView nav:Navigation.IsRegion="true"
                           HorizontalAlignment="Stretch"
                           VerticalAlignment="Stretch"
                           IsAddTabButtonVisible="False">
@@ -22,7 +22,7 @@
                     <controls:SymbolIconSource Symbol="Home" />
                 </controls:TabViewItem.IconSource>
                 <Grid>
-                    <Frame  nav:Navigation.IsContainer="true"
+                    <Frame  nav:Navigation.IsRegion="true"
                             SourcePageType="local:TweetsPage" />
                 </Grid>
             </controls:TabViewItem>
@@ -33,7 +33,7 @@
                     <controls:SymbolIconSource Symbol="Document" />
                 </controls:TabViewItem.IconSource>
                 <Grid>
-                    <Frame nav:Navigation.IsContainer="true"
+                    <Frame nav:Navigation.IsRegion="true"
                            SourcePageType="local:NotificationsPage" />
                 </Grid>
             </controls:TabViewItem>
