@@ -54,10 +54,10 @@ public class NavigationManager : INavigationManager
 
         parent.NestedRegions[regionName + string.Empty] = ans;
 
-        if (ans.Region is INavigationAware navAware)
-        {
-            navAware.Navigation = ans;
-        }
+        //if (ans.Region is INavigationAware navAware)
+        //{
+        //    navAware.Navigation = ans;
+        //}
 
         RunPendingNavigation(ans, parent, regionName);
 

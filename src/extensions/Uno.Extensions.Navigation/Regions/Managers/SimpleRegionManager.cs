@@ -10,7 +10,7 @@ public class SimpleRegionManager<TControl> : BaseRegionManager<TControl>
 
     protected override NavigationContext CurrentContext => currentContext;
 
-    public SimpleRegionManager(IViewManager<TControl> control, IDialogFactory dialogFactory) : base(control, dialogFactory)
+    public SimpleRegionManager(INavigationService navigation, IViewManager<TControl> control, IDialogFactory dialogFactory) : base(navigation, control, dialogFactory)
     {
     }
 

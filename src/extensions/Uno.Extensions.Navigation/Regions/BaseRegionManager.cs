@@ -16,14 +16,15 @@ public abstract class BaseRegionManager<TControl> : IRegionManager
 
     private IDialogFactory DialogProvider { get; }
 
-    public INavigationService Navigation { get; set; }
+    public INavigationService Navigation { get; }
 
     protected Stack<Dialog> OpenDialogs { get; } = new Stack<Dialog>();
 
     public virtual bool CanGoBack => false;
 
-    public BaseRegionManager(IViewManager<TControl> control, IDialogFactory dialogFactory)
+    public BaseRegionManager(INavigationService navigation, IViewManager<TControl> control, IDialogFactory dialogFactory)
     {
+        Navigation = navigation;
         DialogProvider = dialogFactory;
         ControlWrapper = control;
     }
