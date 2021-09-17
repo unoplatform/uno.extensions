@@ -55,10 +55,11 @@ public class BaseNavigationResponse : INotifyCompletion
         NavigationTask = navigationTask;
     }
 
-    public void OnCompleted(Action continuation)
+    public async void OnCompleted(Action continuation)
     {
         if (NavigationTask is not null)
         {
+            await NavigationTask;
             continuation?.Invoke();
         }
         IsCompleted = true;

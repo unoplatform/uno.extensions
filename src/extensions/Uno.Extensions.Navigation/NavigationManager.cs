@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Regions;
 
@@ -58,19 +59,28 @@ public class NavigationManager : INavigationManager
             navAware.Navigation = ans;
         }
 
-        if (parent.PendingNavigation is not null)
-        {
-            var pending = parent.PendingNavigation;
-            parent.PendingNavigation = null;
-            if (pending.Route.Uri.OriginalString.StartsWith(regionName))
-            {
-                var nestedRoute = pending.Route.Uri.OriginalString.TrimStart($"{regionName}/");
-                pending = pending with { Route = pending.Route with { Uri = new Uri(nestedRoute, UriKind.Relative) } };
-            }
-            ans.NavigateAsync(pending);
-        }
+        RunPendingNavigation(ans, parent, regionName);
 
         return ans;
+    }
+
+    private async Task RunPendingNavigation(NavigationService ans, NavigationService parent, string regionName)
+    {
+        var pending = parent.PendingNavigation;
+        parent.PendingNavigation = null;
+        if (pending is not null)
+        {
+            var nextNavigationTask = pending.Value.Item1;
+            var nextNavigation = pending.Value.Item2;
+
+            if (nextNavigation.Route.Uri.OriginalString.StartsWith(regionName))
+            {
+                var nestedRoute = nextNavigation.Route.Uri.OriginalString.TrimStart($"{regionName}/");
+                nextNavigation = nextNavigation with { Route = nextNavigation.Route with { Uri = new Uri(nestedRoute, UriKind.Relative) } };
+            }
+            await ans.NavigateAsync(nextNavigation);
+            nextNavigationTask.SetResult(null);
+        }
     }
 
     public void RemoveRegion(INavigationService region)

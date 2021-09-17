@@ -10,13 +10,6 @@ public class SimpleRegionManager<TControl> : BaseRegionManager<TControl>
 
     protected override NavigationContext CurrentContext => currentContext;
 
-    public override bool CanGoBack => false;
-
-    public override bool IsCurrentPath(string path)
-    {
-        return CurrentContext?.Path == path;
-    }
-
     public SimpleRegionManager(IViewManager<TControl> control, IDialogFactory dialogFactory) : base(control, dialogFactory)
     {
     }

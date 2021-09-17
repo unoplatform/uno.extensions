@@ -18,7 +18,7 @@ public class NavigationService : INavigationService
 
     public INavigationService Parent { get; }
 
-    public NavigationRequest PendingNavigation { get; set; }
+    public (TaskCompletionSource<object>, NavigationRequest)? PendingNavigation { get; set; }
 
     private IServiceProvider ScopedServices { get; }
 
@@ -131,62 +131,15 @@ public class NavigationService : INavigationService
         var residualRequest = request.WithPath(residualPath, query); // with { Route = request.Route with { Path = new Uri(residualPath, UriKind.Relative) } };
         if (Region is null)
         {
-            if (Parent is NavigationService parentNav)
-            {
-                if (parentNav.PendingNavigation is null)
-                {
-                    parentNav.PendingNavigation = request;
-                }
-            }
-            else
-            {
-                // This should only be true for the first navigation in the app
-                // which may occur before the first container is created
-                PendingNavigation = request;
-            }
-            return null;
+            // This should only be true for the first navigation in the app
+            // which may occur before the first container is created
+            PendingNavigation = (new TaskCompletionSource<object>(), request);
+            return new NavigationResponse(request, PendingNavigation.Value.Item1.Task, null);
         }
-        else if (!Region.IsCurrentPath(navPath))
-        {
-            if (!string.IsNullOrWhiteSpace(residualPath))
-            {
-                PendingNavigation = residualRequest;
-            }
-        }
-        else
-        {
-            if (!string.IsNullOrWhiteSpace(residualPath))
-            {
-                if (!NestedRegions.Any())
-                {
-                    PendingNavigation = residualRequest;
-                }
-                else
-                {
-                    // navPath is the current path on the adapter
-                    // Need to look at nested services to see if we
-                    // need to pick on, before passing down the residual
-                    // navigation request
-                    var nested = Nested(nextPath) as NavigationService;
 
-                    if (nested == null && NestedRegions.Any())
-                    {
-                        nested = NestedRegions.Values.First() as NavigationService;
-                    }
-
-                    if (nested is null)
-                    {
-                        PendingNavigation = residualRequest;
-                    }
-                    else
-                    {
-                        residualPath = residualPath.TrimStart($"{nextPath}/");
-                        var nestedRequest = request.WithPath(residualPath, query); //with { Route = request.Route with { Path = new Uri(residualPath, UriKind.Relative) } };
-                        return nested.NavigateAsync(nestedRequest);
-                    }
-                }
-            }
-            return null;
+        if (!string.IsNullOrWhiteSpace(residualPath))
+        {
+            PendingNavigation = (new TaskCompletionSource<object>(), residualRequest);
         }
 
         var scope = ScopedServices.CreateScope();
@@ -210,7 +163,50 @@ public class NavigationService : INavigationService
                                 new CancellationTokenSource(),
                             new TaskCompletionSource<Options.Option>(),
                             Mapping: mapping);
-        return Region.Navigate(context);
+        var navTask = RegionNavigateAsync(context);
+
+        return new NavigationResponse(request, navTask, context.ResultCompletion.Task);
+    }
+
+    private async Task RegionNavigateAsync(NavigationContext context)
+    {
+        await Region.NavigateAsync(context);
+
+        var pending = PendingNavigation;
+        if (pending is not null && context.Request.Sender is not null)
+        {
+            var nextNavigationTask = pending.Value.Item1;
+            var nextNavigation = pending.Value.Item2;
+            var nextPath = nextNavigation.FirstRouteSegment;
+
+            // navPath is the current path on the adapter
+            // Need to look at nested services to see if we
+            // need to pick on, before passing down the residual
+            // navigation request
+            var nested = Nested(nextPath) as NavigationService;
+
+            if (nested == null && NestedRegions.Any())
+            {
+                nested = NestedRegions.Values.First() as NavigationService;
+            }
+            else
+            {
+                var residualPath = nextNavigation.Route.Uri.OriginalString;
+                residualPath = residualPath.TrimStart($"{nextPath}/");
+                nextNavigation = nextNavigation.WithPath(residualPath, String.Empty);
+            }
+
+            if (nested is not null)
+            {
+                PendingNavigation = null;
+                await nested.NavigateAsync(nextNavigation);
+                nextNavigationTask.SetResult(null);
+            }
+            else
+            {
+                await nextNavigationTask.Task;
+            }
+        }
     }
 
     private IDictionary<string, object> ParseQueryParameters(string queryString)
