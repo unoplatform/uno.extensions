@@ -17,7 +17,7 @@ public class ContentControlManager : BaseControlManager<ContentControl>, IViewMa
     {
     }
 
-    public void ChangeView(string path, Type view, bool isBackNavigation, object data, object viewModel, bool setFocus)
+    public void Show(string path, Type view, object data, object viewModel, bool setFocus)
     {
         if (setFocus)
         {

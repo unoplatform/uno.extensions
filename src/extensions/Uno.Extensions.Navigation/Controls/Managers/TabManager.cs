@@ -47,7 +47,7 @@ public class TabManager : BaseControlManager<TabView>, IViewManager<TabView>
         return FindByName(tabName) is not null;
     }
 
-    public void ChangeView(string path, Type view, bool isBackNavigation, object data, object viewModel, bool setFocus)
+    public void Show(string path, Type view, object data, object viewModel, bool setFocus)
     {
         var tab = FindByName(path);
         if (tab is not null)
