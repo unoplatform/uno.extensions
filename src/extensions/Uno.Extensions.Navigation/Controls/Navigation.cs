@@ -35,15 +35,15 @@ public static class Navigation
      new PropertyMetadata(null)
    );
 
-    public static readonly DependencyProperty IsContainerProperty =
+    public static readonly DependencyProperty IsRegionProperty =
     DependencyProperty.RegisterAttached(
-      "IsContainer",
+      "IsRegion",
       typeof(bool),
       typeof(Navigation),
-      new PropertyMetadata(false, IsContainerChanged)
+      new PropertyMetadata(false, IsRegionChanged)
     );
 
-    private static void IsContainerChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    private static void IsRegionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         if (d is FrameworkElement element)
         {
@@ -51,15 +51,15 @@ public static class Navigation
         }
     }
 
-    public static readonly DependencyProperty RouteNameProperty =
+    public static readonly DependencyProperty RegionNameProperty =
     DependencyProperty.RegisterAttached(
-      "RouteName",
+      "RegionName",
       typeof(string),
       typeof(Navigation),
-      new PropertyMetadata(false, RouteNameChanged)
+      new PropertyMetadata(false, RegionNameChanged)
     );
 
-    private static void RouteNameChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    private static void RegionNameChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         if (d is FrameworkElement element)
         {
@@ -103,28 +103,28 @@ public static class Navigation
     public static TElement AsNavigationContainer<TElement>(this TElement element)
         where TElement : FrameworkElement
     {
-        element.SetValue(IsContainerProperty, true);
+        element.SetValue(IsRegionProperty, true);
         return element;
     }
 
-    public static void SetIsContainer(FrameworkElement element, bool value)
+    public static void SetIsRegion(FrameworkElement element, bool value)
     {
-        element.SetValue(IsContainerProperty, value);
+        element.SetValue(IsRegionProperty, value);
     }
 
-    public static bool GetIsContainer(FrameworkElement element)
+    public static bool GetIsRegion(FrameworkElement element)
     {
-        return (bool)element.GetValue(IsContainerProperty);
+        return (bool)element.GetValue(IsRegionProperty);
     }
 
-    public static void SetRouteName(FrameworkElement element, string value)
+    public static void SetRegionName(FrameworkElement element, string value)
     {
-        element.SetValue(RouteNameProperty, value);
+        element.SetValue(RegionNameProperty, value);
     }
 
-    public static string GetRouteName(FrameworkElement element)
+    public static string GetRegionName(FrameworkElement element)
     {
-        return (string)element.GetValue(RouteNameProperty);
+        return (string)element.GetValue(RegionNameProperty);
     }
 
     public static readonly DependencyProperty PathProperty =

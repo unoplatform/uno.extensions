@@ -8,7 +8,7 @@
       xmlns:nav="using:Uno.Extensions.Navigation.Controls"
       mc:Ignorable="d"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-    <controls:TabView nav:Navigation.IsContainer="true"
+    <controls:TabView nav:Navigation.IsRegion="true"
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch"
                       IsAddTabButtonVisible="False">
@@ -76,7 +76,7 @@
                            FontSize="30"><Run Text="Doc2 - " /><Run Text="{Binding Title}" /></TextBlock>
                 <Frame x:Name="InnerFrame"
                        Grid.Row="1"
-                       nav:Navigation.IsContainer="true" />
+                       nav:Navigation.IsRegion="true" />
                 <StackPanel Orientation="Horizontal" Grid.Row="2">
                     <Button Content="Page Two"
                             nav:Navigation.Path="doc2/SecondPage" />
