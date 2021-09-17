@@ -29,7 +29,7 @@ public class FrameManager : BaseControlManager<Frame>, IStackViewManager<Frame>
         Navigation.NavigateToViewAsync(null, Control.SourcePageType);
     }
 
-    private void GoBack(object parameter, object viewModel)
+    public void GoBack(object parameter, object viewModel)
     {
         if (parameter is not null)
         {
@@ -44,14 +44,8 @@ public class FrameManager : BaseControlManager<Frame>, IStackViewManager<Frame>
         InitialiseView(Control.Content, viewModel);
     }
 
-    public void ChangeView(string path, Type view, bool isBackNavigation, object data, object viewModel, bool setFocus)
+    public void Show(string path, Type view, object data, object viewModel, bool setFocus)
     {
-        if (isBackNavigation)
-        {
-            GoBack(data, viewModel);
-            return;
-        }
-
         if (setFocus)
         {
             Control.Navigated -= Frame_Navigated;
