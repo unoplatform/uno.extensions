@@ -22,28 +22,16 @@ public abstract class BaseRegionManager<TControl> : IRegionManager
 
     public virtual bool CanGoBack => false;
 
-    public virtual bool IsCurrentPath(string path)
-    {
-        return CurrentContext?.Path == path;
-    }
-
     public BaseRegionManager(IViewManager<TControl> control, IDialogFactory dialogFactory)
     {
         DialogProvider = dialogFactory;
         ControlWrapper = control;
     }
 
-    public NavigationResponse Navigate(NavigationContext context)
+    public async Task NavigateAsync(NavigationContext context)
     {
         var request = context.Request;
-
-        var navTask = InternalNavigate(context);
-
-        return new NavigationResponse(request, navTask, context.ResultCompletion.Task);
-    }
-
-    private async Task InternalNavigate(NavigationContext context)
-    {
+        
         var navigationHandled = await EndCurrentNavigationContext(context);
 
         if (context.CancellationToken.IsCancellationRequested)
