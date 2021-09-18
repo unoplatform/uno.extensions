@@ -7,7 +7,7 @@ using Windows.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls;
 #endif
 
-namespace Uno.Extensions.Navigation.Controls;
+namespace Uno.Extensions.Navigation.Controls.Managers;
 
 public class TabManager : BaseControlManager<TabView>
 {

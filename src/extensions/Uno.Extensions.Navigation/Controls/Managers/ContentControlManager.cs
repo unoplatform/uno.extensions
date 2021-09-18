@@ -9,7 +9,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 #endif
 
-namespace Uno.Extensions.Navigation.Controls;
+namespace Uno.Extensions.Navigation.Controls.Managers;
 
 public class ContentControlManager : BaseControlManager<ContentControl>
 {
