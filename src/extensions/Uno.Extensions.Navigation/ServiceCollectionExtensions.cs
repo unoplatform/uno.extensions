@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Controls;
+using Uno.Extensions.Navigation.Controls.Managers;
 using Uno.Extensions.Navigation.Dialogs;
+using Uno.Extensions.Navigation.Dialogs.Managers;
 using Uno.Extensions.Navigation.Regions;
 using Uno.Extensions.Navigation.Regions.Managers;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY

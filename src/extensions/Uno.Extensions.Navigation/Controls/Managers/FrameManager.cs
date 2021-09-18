@@ -11,7 +11,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 #endif
 
-namespace Uno.Extensions.Navigation.Controls;
+namespace Uno.Extensions.Navigation.Controls.Managers;
 
 public class FrameManager : BaseControlManager<Frame>, IStackViewManager
 {

@@ -11,7 +11,7 @@ using Windows.UI.Popups;
 using UICommand = Windows.UI.Popups.UICommand;
 #endif
 
-namespace Uno.Extensions.Navigation.Dialogs;
+namespace Uno.Extensions.Navigation.Dialogs.Managers;
 
 public class ContentDialogManager : IDialogManager
 {
