@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-#if WINDOWS_UWP
+#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls;
 #else
@@ -13,17 +13,14 @@ public class TabManager : BaseControlManager<TabView>
 {
     public TabManager(INavigationService navigation, RegionControlProvider controlProvider) : base(navigation, controlProvider.RegionControl as TabView)
     {
-        Control.TabItemsChanged += Tabs_TabItemsChanged;
+        Control.SelectionChanged += Tabs_SelectionChanged;
     }
 
-    private void Tabs_TabItemsChanged(TabView sender, Windows.Foundation.Collections.IVectorChangedEventArgs args)
+    private void Tabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (args.CollectionChange == Windows.Foundation.Collections.CollectionChange.ItemInserted)
-        {
-            var tvi = Control.TabItems[(int)args.Index] as TabViewItem;
-            var tabName = tvi.Name;
-            Navigation.NavigateByPathAsync(null, tabName);
-        }
+        var tvi = e.AddedItems?.FirstOrDefault() as TabViewItem;
+        var tabName = tvi.Name;
+        Navigation.NavigateByPathAsync(null, tabName);
     }
 
     private TabViewItem FindByName(string tabName)
@@ -47,18 +44,14 @@ public class TabManager : BaseControlManager<TabView>
         return FindByName(tabName) is not null;
     }
 
-    protected override object InternalShow(string path, Type view, object data, object viewModel, bool setFocus)
+    protected override object InternalShow(string path, Type view, object data, object viewModel)
     {
         var tab = FindByName(path);
         if (tab is not null)
         {
-            // Only set the selected tab if there's a valid sender
-            // otherwise, we're just setting up the viewmodel etc
-            // for tabs when they're created
-            if (setFocus)
-            {
-                Control.SelectedItem = tab;
-            }
+            Control.SelectionChanged -= Tabs_SelectionChanged;
+            Control.SelectedItem = tab;
+            Control.SelectionChanged += Tabs_SelectionChanged;
         }
 
         return tab;

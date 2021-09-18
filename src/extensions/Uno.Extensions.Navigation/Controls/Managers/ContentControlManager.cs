@@ -17,13 +17,10 @@ public class ContentControlManager : BaseControlManager<ContentControl>
     {
     }
 
-    protected override object InternalShow(string path, Type view, object data, object viewModel, bool setFocus)
+    protected override object InternalShow(string path, Type view, object data, object viewModel)
     {
-        if (setFocus)
-        {
-            var content = Activator.CreateInstance(view);
-            Control.Content = content;
-        }
+        var content = Activator.CreateInstance(view);
+        Control.Content = content;
 
         return Control.Content;
     }

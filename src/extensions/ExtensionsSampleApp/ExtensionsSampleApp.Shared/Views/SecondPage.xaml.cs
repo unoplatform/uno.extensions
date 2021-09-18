@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Uno.Extensions.Navigation;
 using Windows.UI.Xaml;
@@ -23,6 +24,11 @@ namespace ExtensionsSampleApp.Views
             base.OnNavigatedTo(e);
 
             ParametersText.Text = e.Parameter.ParseParameter();
+        }
+
+        private void GoBackFrameClick(object sender, RoutedEventArgs e)
+        {
+            this.Frame.GoBack();
         }
         private void GoBackNavigationRequestClick(object sender, RoutedEventArgs e)
         {
