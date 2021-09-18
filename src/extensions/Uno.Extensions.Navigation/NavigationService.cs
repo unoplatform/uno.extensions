@@ -45,127 +45,140 @@ public class NavigationService : INavigationService
         return NestedRegions.TryGetValue(regionName + string.Empty, out var service) ? service : null;
     }
 
+    private int isNavigating = 0;
+
     public NavigationResponse NavigateAsync(NavigationRequest request)
     {
-        var path = request.Route.Uri.OriginalString;
-
-        var queryIdx = path.IndexOf('?');
-        var query = string.Empty;
-        if (queryIdx >= 0)
+        if (Interlocked.CompareExchange(ref isNavigating, 1, 0) == 1)
         {
-            queryIdx++; // Step over the ?
-            query = queryIdx < path.Length ? path.Substring(queryIdx) : string.Empty;
-            path = path.Substring(0, queryIdx - 1);
+            new NavigationResponse(request, Task.CompletedTask, null);
         }
-
-        var paras = ParseQueryParameters(query);
-        if (request.Route.Data is not null)
+        try
         {
-            if (request.Route.Data is IDictionary<string, object> paraDict)
+            var path = request.Route.Uri.OriginalString;
+
+            var queryIdx = path.IndexOf('?');
+            var query = string.Empty;
+            if (queryIdx >= 0)
             {
-                paras.AddRange(paraDict);
+                queryIdx++; // Step over the ?
+                query = queryIdx < path.Length ? path.Substring(queryIdx) : string.Empty;
+                path = path.Substring(0, queryIdx - 1);
             }
-            else
+
+            var paras = ParseQueryParameters(query);
+            if (request.Route.Data is not null)
             {
-                paras[string.Empty] = request.Route.Data;
+                if (request.Route.Data is IDictionary<string, object> paraDict)
+                {
+                    paras.AddRange(paraDict);
+                }
+                else
+                {
+                    paras[string.Empty] = request.Route.Data;
+                }
             }
-        }
 
-        if (path.StartsWith("//"))
-        {
-            var parentService = Parent as NavigationService;
-            path = path.Length > 2 ? path.Substring(2) : string.Empty;
-
-            var parentRequest = request.WithPath(path, query);
-            return parentService.NavigateAsync(parentRequest);
-        }
-
-        if (path.StartsWith("./"))
-        {
-            var nested = Nested() as NavigationService;
-
-            path = path.Length > 2 ? path.Substring(2) : string.Empty;
-
-            var parentRequest = request.WithPath(path, query);
-            return nested.NavigateAsync(parentRequest);
-        }
-
-        var isRooted = path.StartsWith("/");
-
-        var segments = path.Split('/');
-        var numberOfPagesToRemove = 0;
-        var navPath = string.Empty;
-        var residualPath = path;
-        var nextPath = string.Empty;
-        for (int i = 0; i < segments.Length; i++)
-        {
-            var navSegment = segments[i];
-            residualPath = residualPath.TrimStart(navSegment);
-            if (residualPath.StartsWith("/"))
+            if (path.StartsWith("//"))
             {
-                residualPath = residualPath.Substring(1);
-            }
-            nextPath = i < segments.Length - 1 ? segments[i + 1] : string.Empty;
+                var parentService = Parent as NavigationService;
+                path = path.Length > 2 ? path.Substring(2) : string.Empty;
 
-            if (string.IsNullOrWhiteSpace(navSegment))
+                var parentRequest = request.WithPath(path, query);
+                return parentService.NavigateAsync(parentRequest);
+            }
+
+            if (path.StartsWith("./"))
             {
-                continue;
+                var nested = Nested() as NavigationService;
+
+                path = path.Length > 2 ? path.Substring(2) : string.Empty;
+
+                var parentRequest = request.WithPath(path, query);
+                return nested.NavigateAsync(parentRequest);
             }
-            if (segments[i] == NavigationConstants.PreviousViewUri)
+
+            var isRooted = path.StartsWith("/");
+
+            var segments = path.Split('/');
+            var numberOfPagesToRemove = 0;
+            var navPath = string.Empty;
+            var residualPath = path;
+            var nextPath = string.Empty;
+            for (int i = 0; i < segments.Length; i++)
             {
-                numberOfPagesToRemove++;
+                var navSegment = segments[i];
+                residualPath = residualPath.TrimStart(navSegment);
+                if (residualPath.StartsWith("/"))
+                {
+                    residualPath = residualPath.Substring(1);
+                }
+                nextPath = i < segments.Length - 1 ? segments[i + 1] : string.Empty;
+
+                if (string.IsNullOrWhiteSpace(navSegment))
+                {
+                    continue;
+                }
+                if (segments[i] == NavigationConstants.PreviousViewUri)
+                {
+                    numberOfPagesToRemove++;
+                }
+                else
+                {
+                    navPath = segments[i];
+                    break;
+                }
             }
-            else
+
+            if (navPath == string.Empty)
             {
-                navPath = segments[i];
-                break;
+                navPath = NavigationConstants.PreviousViewUri;
+                numberOfPagesToRemove--;
             }
-        }
 
-        if (navPath == string.Empty)
+            var residualRequest = request.WithPath(residualPath, query); // with { Route = request.Route with { Path = new Uri(residualPath, UriKind.Relative) } };
+            if (Region is null)
+            {
+                // This should only be true for the first navigation in the app
+                // which may occur before the first container is created
+                PendingNavigation = (new TaskCompletionSource<object>(), request);
+                return new NavigationResponse(request, PendingNavigation.Value.Item1.Task, null);
+            }
+
+            if (!string.IsNullOrWhiteSpace(residualPath))
+            {
+                PendingNavigation = (new TaskCompletionSource<object>(), residualRequest);
+            }
+
+            var scope = ScopedServices.CreateScope();
+            var services = scope.ServiceProvider;
+            var dataFactor = services.GetService<ViewModelDataProvider>();
+            dataFactor.Parameters = paras;
+            var navWrapper = services.GetService<NavigationServiceProvider>();
+            navWrapper.Navigation = this;
+
+            var mapping = Mapping.LookupByPath(navPath);
+
+            var context = new NavigationContext(
+                                services,
+                                request,
+                                navPath,
+                                isRooted,
+                                numberOfPagesToRemove,
+                                paras,
+                                (request.Cancellation is not null) ?
+                                    CancellationTokenSource.CreateLinkedTokenSource(request.Cancellation.Value) :
+                                    new CancellationTokenSource(),
+                                new TaskCompletionSource<Options.Option>(),
+                                Mapping: mapping);
+            var navTask = RegionNavigateAsync(context);
+
+            return new NavigationResponse(request, navTask, context.ResultCompletion.Task);
+        }
+        finally
         {
-            navPath = NavigationConstants.PreviousViewUri;
-            numberOfPagesToRemove--;
+            Interlocked.Exchange(ref isNavigating, 0);
         }
-
-        var residualRequest = request.WithPath(residualPath, query); // with { Route = request.Route with { Path = new Uri(residualPath, UriKind.Relative) } };
-        if (Region is null)
-        {
-            // This should only be true for the first navigation in the app
-            // which may occur before the first container is created
-            PendingNavigation = (new TaskCompletionSource<object>(), request);
-            return new NavigationResponse(request, PendingNavigation.Value.Item1.Task, null);
-        }
-
-        if (!string.IsNullOrWhiteSpace(residualPath))
-        {
-            PendingNavigation = (new TaskCompletionSource<object>(), residualRequest);
-        }
-
-        var scope = ScopedServices.CreateScope();
-        var services = scope.ServiceProvider;
-        var dataFactor = services.GetService<ViewModelDataProvider>();
-        dataFactor.Parameters = paras;
-        var navWrapper = services.GetService<NavigationServiceProvider>();
-        navWrapper.Navigation = this;
-
-        var mapping = Mapping.LookupByPath(navPath);
-
-        var context = new NavigationContext(
-                            services,
-                            request,
-                            navPath,
-                            isRooted,
-                            numberOfPagesToRemove,
-                            paras,
-                            (request.Cancellation is not null) ?
-                                CancellationTokenSource.CreateLinkedTokenSource(request.Cancellation.Value) :
-                                new CancellationTokenSource(),
-                            new TaskCompletionSource<Options.Option>(),
-                            Mapping: mapping);
-        var navTask = RegionNavigateAsync(context);
-
-        return new NavigationResponse(request, navTask, context.ResultCompletion.Task);
     }
 
     private async Task RegionNavigateAsync(NavigationContext context)
@@ -193,7 +206,7 @@ public class NavigationService : INavigationService
             {
                 var residualPath = nextNavigation.Route.Uri.OriginalString;
                 residualPath = residualPath.TrimStart($"{nextPath}/");
-                nextNavigation = nextNavigation.WithPath(residualPath, String.Empty);
+                nextNavigation = nextNavigation.WithPath(residualPath, string.Empty);
             }
 
             if (nested is not null)

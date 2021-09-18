@@ -22,13 +22,13 @@ public abstract class BaseControlManager<TControl> : IViewManager
         Control = control;
     }
 
-    public void Show(string path, Type viewType, object data, object viewModel, bool setFocus)
+    public void Show(string path, Type viewType, object data, object viewModel)
     {
-        var view = InternalShow(path, viewType, data, viewModel, setFocus);
+        var view = InternalShow(path, viewType, data, viewModel);
         InitialiseView(view, viewModel);
     }
 
-    protected abstract object InternalShow(string path, Type view, object data, object viewModel, bool setFocus);
+    protected abstract object InternalShow(string path, Type view, object data, object viewModel);
 
     protected void InitialiseView(object view, object viewModel)
     {

@@ -26,7 +26,7 @@ public class FrameManager : BaseControlManager<Frame>, IStackViewManager
 
     private void Frame_Navigated(object sender, NavigationEventArgs e)
     {
-        Navigation.NavigateToViewAsync(null, Control.SourcePageType);
+        Navigation.NavigateToViewAsync(null, Control.SourcePageType, data: e.Parameter);
     }
 
     public void GoBack(object parameter, object viewModel)
@@ -44,9 +44,9 @@ public class FrameManager : BaseControlManager<Frame>, IStackViewManager
         InitialiseView(Control.Content, viewModel);
     }
 
-    protected override object InternalShow(string path, Type view, object data, object viewModel, bool setFocus)
+    protected override object InternalShow(string path, Type view, object data, object viewModel)
     {
-        if (setFocus)
+        if (Control.Content?.GetType() != view)
         {
             Control.Navigated -= Frame_Navigated;
             var nav = Control.Navigate(view, data);

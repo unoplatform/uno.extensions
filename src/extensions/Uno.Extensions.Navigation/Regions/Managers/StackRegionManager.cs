@@ -71,7 +71,7 @@ public class StackRegionManager<TControl> : BaseRegionManager<TControl>
 
         // Add the new context to the list of contexts and then navigate away
         NavigationContexts.Add(context);
-        Frame.Show(context.Path, context.Mapping?.View, context.Data, viewModel, context.Request.Sender is not null);
+        Frame.Show(context.Path, context.Mapping?.View, context.Data, viewModel);
 
         // If path starts with / then remove all prior pages and corresponding contexts
         if (context.PathIsRooted)

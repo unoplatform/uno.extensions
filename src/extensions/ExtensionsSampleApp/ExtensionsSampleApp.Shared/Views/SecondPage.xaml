@@ -29,6 +29,8 @@
                     Click="NextPageNavigateToViewAsyncWithDataClick" />
             <Button Content="Next Page with args and data"
                     Click="NextPageNavigateToViewAsyncWithQueryAndDataClick" />
+            <Button Content="Go Back - Frame"
+                    Click="GoBackFrameClick" />
             <Button Content="Go Back - NavigationRequest"
                     Click="GoBackNavigationRequestClick" />
             <Button Content="Go Back - Navigation Path"
