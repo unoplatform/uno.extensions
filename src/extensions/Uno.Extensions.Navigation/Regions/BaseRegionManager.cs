@@ -9,10 +9,11 @@ using Uno.Extensions.Navigation.ViewModels;
 namespace Uno.Extensions.Navigation.Regions;
 
 public abstract class BaseRegionManager<TControl> : IRegionManager
+    where TControl : IViewManager
 {
     protected abstract NavigationContext CurrentContext { get; }
 
-    public IViewManager<TControl> ControlWrapper { get; }
+    public TControl ControlWrapper { get; }
 
     private IDialogFactory DialogProvider { get; }
 
@@ -22,7 +23,7 @@ public abstract class BaseRegionManager<TControl> : IRegionManager
 
     public virtual bool CanGoBack => false;
 
-    public BaseRegionManager(INavigationService navigation, IViewManager<TControl> control, IDialogFactory dialogFactory)
+    public BaseRegionManager(INavigationService navigation, TControl control, IDialogFactory dialogFactory)
     {
         Navigation = navigation;
         DialogProvider = dialogFactory;
@@ -32,7 +33,7 @@ public abstract class BaseRegionManager<TControl> : IRegionManager
     public async Task NavigateAsync(NavigationContext context)
     {
         var request = context.Request;
-        
+
         var navigationHandled = await EndCurrentNavigationContext(context);
 
         if (context.CancellationToken.IsCancellationRequested)

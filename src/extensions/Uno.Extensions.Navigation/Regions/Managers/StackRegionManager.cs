@@ -8,14 +8,15 @@ using Uno.Extensions.Navigation.Dialogs;
 namespace Uno.Extensions.Navigation.Regions.Managers;
 
 public class StackRegionManager<TControl> : BaseRegionManager<TControl>
+    where TControl : IStackViewManager
 {
-    private IStackViewManager<TControl> Frame => ControlWrapper as IStackViewManager<TControl>;
+    private IStackViewManager Frame => ControlWrapper as IStackViewManager;
 
     protected IList<NavigationContext> NavigationContexts { get; } = new List<NavigationContext>();
 
     protected override NavigationContext CurrentContext => NavigationContexts.LastOrDefault();
 
-    public StackRegionManager(INavigationService navigation, IStackViewManager<TControl> frameWrapper, IDialogFactory dialogFactory) : base(navigation, frameWrapper, dialogFactory)
+    public StackRegionManager(INavigationService navigation, TControl frameWrapper, IDialogFactory dialogFactory) : base(navigation, frameWrapper, dialogFactory)
     {
     }
 

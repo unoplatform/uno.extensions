@@ -23,15 +23,10 @@ public static class ServiceCollectionExtensions
         }
 
         return services
-                    // Register the control navigation implementation (simple or stack based navigation)
-                    .AddTransient<IStackViewManager<Frame>, FrameManager>()
-                    .AddTransient<IViewManager<TabView>, TabManager>()
-                    .AddTransient<IViewManager<ContentControl>, ContentControlManager>()
-
                     // Register the adapter for each control type
-                    .AddAdapter<Frame, StackRegionManager<Frame>>()
-                    .AddAdapter<TabView, SimpleRegionManager<TabView>>()
-                    .AddAdapter<ContentControl, SimpleRegionManager<ContentControl>>()
+                    .AddRegion<Frame, FrameManager, StackRegionManager<FrameManager>>()
+                    .AddRegion<TabView, TabManager, SimpleRegionManager<TabManager>>()
+                    .AddRegion<ContentControl, ContentControlManager, SimpleRegionManager<ContentControlManager>>()
 
                     // Register the different types of dialogs
                     .AddSingleton<IDialogManager, ContentDialogManager>()
@@ -51,8 +46,10 @@ public static class ServiceCollectionExtensions
                     .AddScoped<IDictionary<string, object>>(services => services.GetService<ViewModelDataProvider>().Parameters);
     }
 
-    private static IServiceCollection AddAdapter<TControl, TAdapter>(this IServiceCollection services)
-        where TAdapter : class, IRegionManager
+    private static IServiceCollection AddRegion<TControl, TControlManager, TRegionManager>(this IServiceCollection services)
+        where TControl : class
+        where TControlManager : class, IViewManager
+        where TRegionManager : class, IRegionManager
     {
         if (services is null)
         {
@@ -60,8 +57,9 @@ public static class ServiceCollectionExtensions
         }
 
         return services
-                    .AddTransient<TAdapter>()
-                    .AddSingleton<IRegionManagerFactory, RegionManagerFactory<TControl, TAdapter>>();
+                    .AddScoped<TControlManager>()
+                    .AddScoped<TRegionManager>()
+                    .AddSingleton<IRegionManagerFactory, RegionManagerFactory<TControl, TRegionManager>>();
     }
 
     public static IServiceCollection AddViewModelData<TData>(this IServiceCollection services)

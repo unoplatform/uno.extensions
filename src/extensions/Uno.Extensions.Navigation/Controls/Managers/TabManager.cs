@@ -9,7 +9,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Controls;
 
-public class TabManager : BaseControlManager<TabView>, IViewManager<TabView>
+public class TabManager : BaseControlManager<TabView>
 {
     public TabManager(INavigationService navigation, RegionControlProvider controlProvider) : base(navigation, controlProvider.RegionControl as TabView)
     {
@@ -47,13 +47,11 @@ public class TabManager : BaseControlManager<TabView>, IViewManager<TabView>
         return FindByName(tabName) is not null;
     }
 
-    public void Show(string path, Type view, object data, object viewModel, bool setFocus)
+    protected override object InternalShow(string path, Type view, object data, object viewModel, bool setFocus)
     {
         var tab = FindByName(path);
         if (tab is not null)
         {
-            InitialiseView(tab, viewModel);
-
             // Only set the selected tab if there's a valid sender
             // otherwise, we're just setting up the viewmodel etc
             // for tabs when they're created
@@ -62,5 +60,7 @@ public class TabManager : BaseControlManager<TabView>, IViewManager<TabView>
                 Control.SelectedItem = tab;
             }
         }
+
+        return tab;
     }
 }

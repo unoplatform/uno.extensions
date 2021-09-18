@@ -13,7 +13,7 @@ using Microsoft.UI.Xaml.Navigation;
 
 namespace Uno.Extensions.Navigation.Controls;
 
-public class FrameManager : BaseControlManager<Frame>, IStackViewManager<Frame>
+public class FrameManager : BaseControlManager<Frame>, IStackViewManager
 {
     public FrameManager(INavigationService navigation, RegionControlProvider controlProvider) : base(navigation, controlProvider.RegionControl as Frame)
     {
@@ -44,7 +44,7 @@ public class FrameManager : BaseControlManager<Frame>, IStackViewManager<Frame>
         InitialiseView(Control.Content, viewModel);
     }
 
-    public void Show(string path, Type view, object data, object viewModel, bool setFocus)
+    protected override object InternalShow(string path, Type view, object data, object viewModel, bool setFocus)
     {
         if (setFocus)
         {
@@ -53,10 +53,7 @@ public class FrameManager : BaseControlManager<Frame>, IStackViewManager<Frame>
             Control.Navigated += Frame_Navigated;
         }
 
-        if (Control.Content is FrameworkElement element)
-        {
-            InitialiseView(Control.Content, viewModel);
-        }
+        return Control.Content;
     }
 
     public void RemoveLastFromBackStack()

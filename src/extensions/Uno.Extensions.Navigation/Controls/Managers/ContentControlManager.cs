@@ -11,13 +11,13 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Controls;
 
-public class ContentControlManager : BaseControlManager<ContentControl>, IViewManager<ContentControl>
+public class ContentControlManager : BaseControlManager<ContentControl>
 {
     public ContentControlManager(INavigationService navigation, RegionControlProvider controlProvider) : base(navigation, controlProvider.RegionControl as ContentControl)
     {
     }
 
-    public void Show(string path, Type view, object data, object viewModel, bool setFocus)
+    protected override object InternalShow(string path, Type view, object data, object viewModel, bool setFocus)
     {
         if (setFocus)
         {
@@ -25,6 +25,6 @@ public class ContentControlManager : BaseControlManager<ContentControl>, IViewMa
             Control.Content = content;
         }
 
-        InitialiseView(Control.Content, viewModel);
+        return Control.Content;
     }
 }
