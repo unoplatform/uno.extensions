@@ -5,12 +5,13 @@ using Uno.Extensions.Navigation.Dialogs;
 namespace Uno.Extensions.Navigation.Regions.Managers;
 
 public class SimpleRegionManager<TControl> : BaseRegionManager<TControl>
+    where TControl : IViewManager
 {
     private NavigationContext currentContext;
 
     protected override NavigationContext CurrentContext => currentContext;
 
-    public SimpleRegionManager(INavigationService navigation, IViewManager<TControl> control, IDialogFactory dialogFactory) : base(navigation, control, dialogFactory)
+    public SimpleRegionManager(INavigationService navigation, TControl control, IDialogFactory dialogFactory) : base(navigation, control, dialogFactory)
     {
     }
 

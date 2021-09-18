@@ -2,7 +2,7 @@
 
 namespace Uno.Extensions.Navigation.Controls;
 
-public interface IViewManager<TControl>
+public interface IViewManager
 {
-    void Show(string path, Type view, object data, object viewModel, bool setFocus);
+    void Show(string path, Type viewType, object data, object viewModel, bool setFocus);
 }

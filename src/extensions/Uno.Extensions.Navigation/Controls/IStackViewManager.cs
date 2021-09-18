@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions.Navigation.Controls;
 
-public interface IStackViewManager<TControl> : IViewManager<TControl>
+public interface IStackViewManager : IViewManager
 {
     void GoBack(object data, object viewModel);
 
