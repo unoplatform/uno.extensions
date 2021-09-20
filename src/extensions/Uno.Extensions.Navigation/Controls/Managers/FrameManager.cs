@@ -21,6 +21,7 @@ public class FrameManager : BaseControlManager<Frame>, IStackViewManager
         {
             Navigation.NavigateToViewAsync(null, Control.SourcePageType);
         }
+
         Control.Navigated += Frame_Navigated;
     }
 

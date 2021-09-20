@@ -15,7 +15,7 @@ public class SimpleRegionManager<TControl> : BaseRegionManager<TControl>
     {
     }
 
-    protected override void AdapterNavigation(NavigationContext context, object viewModel)
+    protected override void RegionNavigate(NavigationContext context, object viewModel)
     {
         currentContext = context;
         ControlWrapper.Show(context.Path, context.Mapping?.View, context.Data, viewModel);

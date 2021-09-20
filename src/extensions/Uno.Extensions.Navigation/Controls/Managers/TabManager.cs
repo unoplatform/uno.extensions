@@ -30,20 +30,6 @@ public class TabManager : BaseControlManager<TabView>
                 select t).FirstOrDefault();
     }
 
-    public string CurrentTabName
-    {
-        get
-        {
-            var active = Control.SelectedItem as TabViewItem;
-            return active?.Name;
-        }
-    }
-
-    public bool ContainsTab(string tabName)
-    {
-        return FindByName(tabName) is not null;
-    }
-
     protected override object InternalShow(string path, Type view, object data, object viewModel)
     {
         var tab = FindByName(path);

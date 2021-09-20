@@ -25,7 +25,7 @@ public static class ServiceCollectionExtensions
         }
 
         return services
-                    // Register the adapter for each control type
+                    // Register the region for each control type
                     .AddRegion<Frame, FrameManager, StackRegionManager<FrameManager>>()
                     .AddRegion<TabView, TabManager, SimpleRegionManager<TabManager>>()
                     .AddRegion<ContentControl, ContentControlManager, SimpleRegionManager<ContentControlManager>>()
