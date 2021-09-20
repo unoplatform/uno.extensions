@@ -21,18 +21,18 @@ namespace ExtensionsSampleApp.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class TabBarPage : Page, INavigationAware
+    public sealed partial class NavigationViewVisualStatesPage : Page, INavigationAware
     {
-        public TabBarPage()
+        public NavigationViewVisualStatesPage()
         {
             this.InitializeComponent();
         }
 
         public INavigationService Navigation { get; set; }
 
-        private void TabBar_SelectionChanged(Uno.UI.ToolkitLib.TabBar sender, Uno.UI.ToolkitLib.TabBarSelectionChangedEventArgs args)
+        private void NavView_ItemInvoked(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs args)
         {
-            var navPath = Uno.Extensions.Navigation.Controls.Navigation.GetPath(args.NewItem as FrameworkElement);
+            var navPath = Uno.Extensions.Navigation.Controls.Navigation.GetPath(args.InvokedItemContainer as FrameworkElement);
             Navigation.NavigateByPathAsync(this, navPath);
         }
     }

@@ -48,7 +48,7 @@ public static class ServiceCollectionExtensions
                     .AddScoped<IDictionary<string, object>>(services => services.GetService<ViewModelDataProvider>().Parameters);
     }
 
-    private static IServiceCollection AddRegion<TControl, TControlManager, TRegionManager>(this IServiceCollection services)
+    public static IServiceCollection AddRegion<TControl, TControlManager, TRegionManager>(this IServiceCollection services)
         where TControl : class
         where TControlManager : class, IViewManager
         where TRegionManager : class, IRegionManager

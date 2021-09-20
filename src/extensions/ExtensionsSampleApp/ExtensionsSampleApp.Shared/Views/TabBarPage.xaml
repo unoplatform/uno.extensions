@@ -5,23 +5,26 @@
     xmlns:local="using:ExtensionsSampleApp.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:nav="using:Uno.Extensions.Navigation.Controls"
     mc:Ignorable="d"
       xmlns:toolkit="using:Uno.UI.ToolkitLib"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <toolkit:TabBar Background="Tomato">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <toolkit:TabBar Background="Tomato" SelectionChanged="TabBar_SelectionChanged">
             <toolkit:TabBar.Items>
                 <toolkit:TabBarItem Content="Tab 1"
-                                    x:Name="TabBar_SelectionIndicator_Tab1"
-                                    AutomationProperties.AutomationId="TabBar_SelectionIndicator_Tab1" />
+                                    nav:Navigation.Path="./tabcontent/Content1"
+                                    x:Name="TabBar_SelectionIndicator_Tab1" />
                 <toolkit:TabBarItem Content="Tab 2"
-                                    x:Name="TabBar_SelectionIndicator_Tab2"
-                                    AutomationProperties.AutomationId="TabBar_SelectionIndicator_Tab2" />
-                <toolkit:TabBarItem Content="Tab 3"
-                                    x:Name="TabBar_SelectionIndicator_Tab3"
-                                    AutomationProperties.AutomationId="TabBar_SelectionIndicator_Tab3" />
+                                    nav:Navigation.Path="./tabcontent/Content2"
+                                    x:Name="TabBar_SelectionIndicator_Tab2" />
             </toolkit:TabBar.Items>
         </toolkit:TabBar>
+        <ContentControl nav:Navigation.RegionName="tabcontent" Grid.Row="1"/>
     </Grid>
 </Page>

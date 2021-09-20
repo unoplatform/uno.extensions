@@ -47,7 +47,7 @@ public class NavigationManager : INavigationManager
 
             ans = new NavigationService(this, services, Mapping, parent);
 
-            var factory = Factories[control.GetType()];
+            var factory = FindFactoryForControl(control);
             var region = factory.Create(services);
             ans.Region = region;
         }
@@ -62,6 +62,26 @@ public class NavigationManager : INavigationManager
         RunPendingNavigation(ans, parent, regionName);
 
         return ans;
+    }
+
+    private IRegionManagerFactory FindFactoryForControl(object control)
+    {
+        var controlType = control.GetType();
+        if( Factories.TryGetValue(controlType, out var factory))
+        {
+            return factory;
+        }
+
+        var baseTypes = control.GetType().GetBaseTypes().ToArray();
+        for (int i = 0; i < baseTypes.Length; i++)
+        {
+            if (Factories.TryGetValue(baseTypes[i], out var baseFactory))
+            {
+                return baseFactory;
+            }
+        }
+
+        return null;
     }
 
     private async Task RunPendingNavigation(NavigationService ans, NavigationService parent, string regionName)

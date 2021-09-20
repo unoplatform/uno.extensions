@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using ExtensionsSampleApp.Control.Managers;
 using ExtensionsSampleApp.ViewModels;
 using ExtensionsSampleApp.Views;
 using ExtensionsSampleApp.Views.Twitter;
@@ -13,6 +14,7 @@ using Uno.Extensions.Hosting;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Controls;
+using Uno.Extensions.Navigation.Regions.Managers;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 
@@ -61,6 +63,8 @@ namespace ExtensionsSampleApp
                .ConfigureServices(services =>
                {
                    services
+                   .AddRegion<Grid, GridVisiblityManager, SimpleRegionManager<GridVisiblityManager>>()
+                   .AddRegion<Page, PageVisualStateManager, SimpleRegionManager<PageVisualStateManager>>()
                    .AddScoped<MainViewModel>()
                    .AddScoped<SecondViewModel>()
                    .AddViewModelData<Widget>()
@@ -105,7 +109,9 @@ namespace ExtensionsSampleApp
             mapping.Register(new NavigationMap(typeof(TweetDetailsPage).Name, typeof(TweetDetailsPage), typeof(TweetDetailsViewModel), typeof(Tweet)));
             mapping.Register(new NavigationMap(typeof(NotificationsPage).Name, typeof(NotificationsPage), typeof(NotificationsViewModel)));
             mapping.Register(new NavigationMap(typeof(ProfilePage).Name, typeof(ProfilePage)));
-
+            mapping.Register(new NavigationMap(typeof(NavigationViewPage).Name, typeof(NavigationViewPage)));
+            mapping.Register(new NavigationMap(typeof(NavigationViewGridVisibilityPage).Name, typeof(NavigationViewGridVisibilityPage)));
+            mapping.Register(new NavigationMap(typeof(NavigationViewVisualStatesPage).Name, typeof(NavigationViewVisualStatesPage)));
 
             //InitializeLogging();
 

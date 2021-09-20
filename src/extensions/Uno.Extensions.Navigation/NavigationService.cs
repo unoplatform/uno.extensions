@@ -90,12 +90,30 @@ public class NavigationService : INavigationService
 
             if (path.StartsWith("./"))
             {
-                var nested = Nested() as NavigationService;
-
                 path = path.Length > 2 ? path.Substring(2) : string.Empty;
+                var nestedRequest = request.WithPath(path, query);
+                var nestedRoute = nestedRequest.FirstRouteSegment;
 
-                var parentRequest = request.WithPath(path, query);
-                return nested.NavigateAsync(parentRequest);
+                var nested = Nested(nestedRoute) as NavigationService;
+                if (nested is null)
+                {
+                    nested = Nested() as NavigationService;
+                }
+                else
+                {
+                    path = path.TrimStart($"{nestedRoute}/");
+                    nestedRequest = request.WithPath(path, query);
+                }
+
+                if (nested is null)
+                {
+                    // This should only be true for the first navigation in the app
+                    // which may occur before the first container is created
+                    PendingNavigation = (new TaskCompletionSource<object>(), nestedRequest);
+                    return new NavigationResponse(request, PendingNavigation.Value.Item1.Task, null);
+                }
+
+                return nested.NavigateAsync(nestedRequest);
             }
 
             var isRooted = path.StartsWith("/");
