@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -144,6 +145,12 @@ namespace ExtensionsSampleApp.ViewModels
             }
         }
     }
+
+    public class Content2ViewModel
+    {
+        public string Title => "Content2 - " + DateTime.Now.ToString();
+    }
+
 
     public class Tweet
     {

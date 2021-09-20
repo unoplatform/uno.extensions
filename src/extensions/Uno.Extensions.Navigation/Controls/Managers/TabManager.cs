@@ -1,9 +1,14 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 #else
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 #endif
 
@@ -40,6 +45,6 @@ public class TabManager : BaseControlManager<TabView>
             Control.SelectionChanged += Tabs_SelectionChanged;
         }
 
-        return tab;
+        return tab?.Content;
     }
 }
