@@ -54,11 +54,6 @@ public class NavigationManager : INavigationManager
 
         parent.NestedRegions[regionName + string.Empty] = ans;
 
-        //if (ans.Region is INavigationAware navAware)
-        //{
-        //    navAware.Navigation = ans;
-        //}
-
         RunPendingNavigation(ans, parent, regionName);
 
         return ans;
@@ -67,7 +62,7 @@ public class NavigationManager : INavigationManager
     private IRegionManagerFactory FindFactoryForControl(object control)
     {
         var controlType = control.GetType();
-        if( Factories.TryGetValue(controlType, out var factory))
+        if (Factories.TryGetValue(controlType, out var factory))
         {
             return factory;
         }

@@ -8,26 +8,22 @@ using Uno.Extensions.Navigation.ViewModels;
 
 namespace Uno.Extensions.Navigation.Regions;
 
-public abstract class BaseRegionManager<TControl> : IRegionManager
-    where TControl : IViewManager
+public abstract class BaseRegionManager : IRegionManager
 {
     protected abstract NavigationContext CurrentContext { get; }
 
-    public TControl ControlWrapper { get; }
-
-    private IDialogFactory DialogProvider { get; }
-
-    public INavigationService Navigation { get; }
+    protected INavigationService Navigation { get; }
 
     protected Stack<Dialog> OpenDialogs { get; } = new Stack<Dialog>();
 
-    public virtual bool CanGoBack => false;
+    protected virtual bool CanGoBack => false;
 
-    public BaseRegionManager(INavigationService navigation, TControl control, IDialogFactory dialogFactory)
+    private IDialogFactory DialogProvider { get; }
+
+    public BaseRegionManager(INavigationService navigation, IDialogFactory dialogFactory)
     {
         Navigation = navigation;
         DialogProvider = dialogFactory;
-        ControlWrapper = control;
     }
 
     public async Task NavigateAsync(NavigationContext context)
