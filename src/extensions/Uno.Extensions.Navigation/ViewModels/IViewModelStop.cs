@@ -2,7 +2,7 @@
 
 namespace Uno.Extensions.Navigation.ViewModels;
 
-public interface INavigationStop
+public interface IViewModelStop
 {
     Task Stop(NavigationContext context, bool cleanup);
 }

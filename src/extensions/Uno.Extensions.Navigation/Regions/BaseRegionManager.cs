@@ -66,7 +66,7 @@ public abstract class BaseRegionManager<TControl> : IRegionManager
 
     protected async Task<object> DoForwardNavigation(NavigationContext context)
     {
-        var vm = await context.InitializeViewModel();
+        var vm = await context.InitializeViewModel(Navigation);
 
         var dialog = DialogProvider.CreateDialog(Navigation, context, vm);
         if (dialog is not null)
@@ -166,8 +166,8 @@ public abstract class BaseRegionManager<TControl> : IRegionManager
         }
 
         // Restart the view model for the current context
-        var currentVM = await CurrentContext.InitializeViewModel();
+        var currentVM = await CurrentContext.InitializeViewModel(Navigation);
 
-        await ((currentVM as INavigationStart)?.Start(CurrentContext, false) ?? Task.CompletedTask);
+        await ((currentVM as IViewModelStart)?.Start(CurrentContext, false) ?? Task.CompletedTask);
     }
 }
