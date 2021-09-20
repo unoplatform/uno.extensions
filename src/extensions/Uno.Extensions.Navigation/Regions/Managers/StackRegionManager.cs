@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Dialogs;
 
@@ -10,7 +9,7 @@ namespace Uno.Extensions.Navigation.Regions.Managers;
 public class StackRegionManager<TControl> : BaseRegionManager<TControl>
     where TControl : IStackViewManager
 {
-    private IStackViewManager Frame => ControlWrapper as IStackViewManager;
+    private IStackViewManager Frame => ControlWrapper;
 
     protected IList<NavigationContext> NavigationContexts { get; } = new List<NavigationContext>();
 
@@ -58,7 +57,7 @@ public class StackRegionManager<TControl> : BaseRegionManager<TControl>
 
     public override bool CanGoBack => NavigationContexts.Count > 1;
 
-    protected override void AdapterNavigation(NavigationContext context, object viewModel)
+    protected override void RegionNavigate(NavigationContext context, object viewModel)
     {
         var numberOfPagesToRemove = context.FramesToRemove;
         // We remove 1 less here because we need to remove the current context, after the navigation is completed

@@ -75,13 +75,13 @@ public abstract class BaseRegionManager<TControl> : IRegionManager
         }
         else
         {
-            AdapterNavigation(context, vm);
+            RegionNavigate(context, vm);
         }
 
         return vm;
     }
 
-    protected abstract void AdapterNavigation(NavigationContext context, object viewModel);
+    protected abstract void RegionNavigate(NavigationContext context, object viewModel);
 
     private async Task<bool> EndCurrentNavigationContext(NavigationContext navigationContext)
     {

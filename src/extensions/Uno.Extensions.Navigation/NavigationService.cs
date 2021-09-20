@@ -210,7 +210,7 @@ public class NavigationService : INavigationService
             var nextNavigation = pending.Value.Item2;
             var nextPath = nextNavigation.FirstRouteSegment;
 
-            // navPath is the current path on the adapter
+            // navPath is the current path on the region
             // Need to look at nested services to see if we
             // need to pick on, before passing down the residual
             // navigation request

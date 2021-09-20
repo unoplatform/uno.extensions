@@ -30,9 +30,9 @@ public class NavigationManager : INavigationManager
         var ans = existingRegion as NavigationService;
         var parent = parentRegion as NavigationService;
 
-        // This ensures all adapter services have a parent. The root service
+        // This ensures all region services have a parent. The root service
         // is used to cache initial navigation requests before the first
-        // adapter is created
+        // region is created
         if (parent is null)
         {
             parent = Root as NavigationService;
@@ -111,7 +111,7 @@ public class NavigationManager : INavigationManager
             return;
         }
 
-        // Detach adapter from parent
+        // Detach region from parent
         var parent = ans.Parent as NavigationService;
         if (parent is not null)
         {
