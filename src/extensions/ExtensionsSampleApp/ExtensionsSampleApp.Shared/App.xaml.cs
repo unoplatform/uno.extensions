@@ -76,6 +76,7 @@ namespace ExtensionsSampleApp
                    .AddScoped<TweetsViewModel>()
                    .AddScoped<TweetDetailsViewModel>()
                    .AddScoped<NotificationsViewModel>()
+                   .AddScoped<Content2ViewModel>()
                    .AddViewModelData<Tweet>();
                })
                /*
@@ -102,7 +103,7 @@ namespace ExtensionsSampleApp
             mapping.Register(new NavigationMap("doc0", ViewModel:typeof(TabDoc0ViewModel)));
             mapping.Register(new NavigationMap("doc1", ViewModel: typeof(TabDoc1ViewModel)));
             mapping.Register(new NavigationMap(typeof(Content1).Name, typeof(Content1)));
-            mapping.Register(new NavigationMap(typeof(Content2).Name, typeof(Content2)));
+            mapping.Register(new NavigationMap(typeof(Content2).Name, typeof(Content2), typeof(Content2ViewModel)));
             mapping.Register(new NavigationMap(typeof(SimpleContentDialog).Name, typeof(SimpleContentDialog)));
             mapping.Register(new NavigationMap(typeof(TwitterPage).Name, typeof(TwitterPage)));
             mapping.Register(new NavigationMap(typeof(TweetsPage).Name, typeof(TweetsPage), typeof(TweetsViewModel)));
