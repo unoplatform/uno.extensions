@@ -2,7 +2,7 @@
 
 namespace Uno.Extensions.Navigation.ViewModels;
 
-public interface INavigationStart
+public interface IViewModelStart
 {
     Task Start(NavigationContext context, bool create);
 }

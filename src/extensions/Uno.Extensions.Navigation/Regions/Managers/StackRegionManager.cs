@@ -47,7 +47,7 @@ public class StackRegionManager<TControl> : BaseRegionManager<TControl>
         NavigationContexts.RemoveAt(NavigationContexts.Count - 1);
 
         // Initialise the view model for the previous context (which is now the current context)
-        var currentVM = await CurrentContext.InitializeViewModel();
+        var currentVM = await CurrentContext.InitializeViewModel(Navigation);
 
         // Invoke the navigation (which will be a back navigation)
         Frame.GoBack(context.Data, currentVM);

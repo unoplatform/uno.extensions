@@ -14,12 +14,12 @@ public static class NavigationContextHelpers
         {
             var services = contextToStop.Services;
             oldVm = services.GetService(contextToStop.Mapping.ViewModel);
-            await ((oldVm as INavigationStop)?.Stop(navigationContext, navigationContext.IsBackNavigation) ?? Task.CompletedTask);
+            await ((oldVm as IViewModelStop)?.Stop(navigationContext, navigationContext.IsBackNavigation) ?? Task.CompletedTask);
         }
         return oldVm;
     }
 
-    public static async Task<object> InitializeViewModel(this NavigationContext contextToInitialize)
+    public static async Task<object> InitializeViewModel(this NavigationContext contextToInitialize, INavigationService navigation)
     {
         var mapping = contextToInitialize.Mapping;
         object vm = default;
@@ -30,13 +30,17 @@ public static class NavigationContextHelpers
             dataFactor.Parameters = contextToInitialize.Data;
 
             vm = services.GetService(mapping.ViewModel);
-            await ((vm as IInitialise)?.Initialize(contextToInitialize) ?? Task.CompletedTask);
+            if (vm is INavigationAware navAware)
+            {
+                navAware.Navigation = navigation;
+            }
+            await ((vm as IViewModelInitialize)?.Initialize(contextToInitialize) ?? Task.CompletedTask);
         }
         return vm;
     }
 
     public static async Task StartViewModel(this NavigationContext contextToStart, object currentVM)
     {
-        await ((currentVM as INavigationStart)?.Start(contextToStart, false) ?? Task.CompletedTask);
+        await ((currentVM as IViewModelStart)?.Start(contextToStart, false) ?? Task.CompletedTask);
     }
 }

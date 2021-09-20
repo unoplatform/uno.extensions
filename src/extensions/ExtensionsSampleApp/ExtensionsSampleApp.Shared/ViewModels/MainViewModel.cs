@@ -28,7 +28,7 @@ namespace ExtensionsSampleApp.ViewModels
 
     }
 
-    public class SecondViewModel:INavigationStart, INavigationStop
+    public class SecondViewModel : IViewModelStart, IViewModelStop
     {
         public string Title => "Second - " + Data;
         private Widget Data;
@@ -45,7 +45,7 @@ namespace ExtensionsSampleApp.ViewModels
         public async Task Stop(NavigationContext context, bool cleanup)
         {
             if (context.Path == typeof(ThirdPage).Name &&
-                !((context.Data as IDictionary<string,object>)?.Any()??false))
+                !((context.Data as IDictionary<string, object>)?.Any() ?? false))
             {
                 context.Cancel();
             }
@@ -81,15 +81,15 @@ namespace ExtensionsSampleApp.ViewModels
             NavigateToThirdPageCommand = new RelayCommand(NavigateToThirdPage);
         }
 
-        
+
 
         public ICommand NavigateToDoc1Command { get; }
         public ICommand NavigateToThirdPageCommand { get; }
 
         private void NavigateToDoc1() => Navigation.NavigateToViewModelAsync<TabDoc1ViewModel>(this);
 
-        private void NavigateToThirdPage() => Navigation.NavigateToViewModelAsync<ThirdViewModel>(this,NavigationConstants.RelativePath.Parent(1));
-        
+        private void NavigateToThirdPage() => Navigation.NavigateToViewModelAsync<ThirdViewModel>(this, NavigationConstants.RelativePath.Parent(1));
+
     }
 
     public class TabDoc1ViewModel
@@ -127,10 +127,10 @@ namespace ExtensionsSampleApp.ViewModels
         };
     }
 
-    public class TweetDetailsViewModel: ObservableObject, INavigationStart
+    public class TweetDetailsViewModel : ObservableObject, IViewModelStart
     {
         private Tweet tweet;
-        public Tweet Tweet { get => tweet; set=>SetProperty(ref tweet, value); }
+        public Tweet Tweet { get => tweet; set => SetProperty(ref tweet, value); }
         public TweetDetailsViewModel(Tweet tweet)
         {
             Tweet = tweet;
@@ -138,7 +138,7 @@ namespace ExtensionsSampleApp.ViewModels
 
         public async Task Start(NavigationContext context, bool create)
         {
-            if(Tweet is null)
+            if (Tweet is null)
             {
                 Tweet = new Tweet { Id = int.Parse(context.Data["tweetid"] + ""), Author = "Ned", Text = "Tweet loaded on start" };
             }
