@@ -38,8 +38,14 @@
 
             <Button Content="Twitter"
                     nav:Navigation.Path="/TwitterPage" />
-            <Button Content="TabBar Page - NavigationRequest"
+            <Button Content="TabBar Page"
                     nav:Navigation.Path="TabBarPage" />
+            <Button Content="NavigationView Page"
+                    nav:Navigation.Path="NavigationViewPage" />
+            <Button Content="NavigationViewGridVisibility Page"
+                    nav:Navigation.Path="NavigationViewGridVisibilityPage" />
+            <Button Content="NavigationViewVisualStates Page"
+                    nav:Navigation.Path="NavigationViewVisualStatesPage" />
         </StackPanel>
     </Grid>
 </Page>
