@@ -22,4 +22,10 @@ public class SimpleRegionManager<TControl> : BaseRegionManager
         currentContext = context;
         Control.Show(context.Path, context.Mapping?.View, context.Data, viewModel);
     }
+
+    public override string ToString()
+    {
+        return $"Simple({typeof(TControl).Name}) '{CurrentContext?.Path}'";
+    }
+
 }

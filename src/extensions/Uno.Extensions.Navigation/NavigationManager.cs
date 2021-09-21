@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Regions;
 
 namespace Uno.Extensions.Navigation;
@@ -17,16 +20,20 @@ public class NavigationManager : INavigationManager
 
     private IDictionary<Type, IRegionManagerFactory> Factories { get; }
 
-    public NavigationManager(IServiceProvider services, IEnumerable<IRegionManagerFactory> factories, INavigationMapping mapping)
+    private ILogger Logger { get; }
+
+    public NavigationManager(ILogger<NavigationManager> logger, IServiceProvider services, IEnumerable<IRegionManagerFactory> factories, INavigationMapping mapping)
     {
+        Logger = logger;
         Services = services;
         Mapping = mapping;
         Factories = factories.ToDictionary(x => x.ControlType);
-        Root = new NavigationService(this, null, Mapping, null);
+        Root = new NavigationService(Services.GetService<ILogger<NavigationService>>(), this, null, Mapping, null);
     }
 
     public INavigationService AddRegion(INavigationService parentRegion, string regionName, object control, INavigationService existingRegion)
     {
+        Logger.LazyLogDebug(() => $"Adding region with control of type '{control.GetType().Name}' and region name '{regionName}'");
         var ans = existingRegion as NavigationService;
         var parent = parentRegion as NavigationService;
 
@@ -45,7 +52,7 @@ public class NavigationManager : INavigationManager
             // Make the control available via DI
             services.GetService<RegionControlProvider>().RegionControl = control;
 
-            ans = new NavigationService(this, services, Mapping, parent);
+            ans = new NavigationService(Services.GetService<ILogger<NavigationService>>(), this, services, Mapping, parent);
 
             var factory = FindFactoryForControl(control);
             var region = factory.Create(services);
@@ -54,9 +61,41 @@ public class NavigationManager : INavigationManager
 
         parent.NestedRegions[regionName + string.Empty] = ans;
 
+        LogAllRegions();
+
         RunPendingNavigation(ans, parent, regionName);
 
         return ans;
+    }
+
+    private void LogAllRegions()
+    {
+        Logger.LazyLogInformation(() => this.ToString());
+    }
+
+    private void PrintAllRegions(StringBuilder builder, int indent = 0, string regionName = null, INavigationService nav = null)
+    {
+        if (nav is null)
+        {
+            builder.AppendLine("------------------------------------------------------------------------------------------------");
+            PrintAllRegions(builder, 0, "ROOT", Root);
+            builder.AppendLine("------------------------------------------------------------------------------------------------");
+        }
+        else
+        {
+            var ans = nav as NavigationService;
+            var prefix = string.Empty;
+            if (indent > 0)
+            {
+                prefix = new string(' ', indent * 2) + "|-";
+            }
+            var reg = !string.IsNullOrWhiteSpace(regionName) ? $"({regionName}) " : null;
+            builder.AppendLine( $"{prefix}{reg}{ans.Region?.ToString()}");
+            foreach (var nested in ans.NestedRegions)
+            {
+                PrintAllRegions(builder, indent + 1, nested.Key, nested.Value);
+            }
+        }
     }
 
     private IRegionManagerFactory FindFactoryForControl(object control)
@@ -103,8 +142,11 @@ public class NavigationManager : INavigationManager
         var ans = region as NavigationService;
         if (ans is null)
         {
+            Logger.LazyLogError(() => $"Unable to remove region as unable to cast to NavigationService");
             return;
         }
+
+        Logger.LazyLogDebug(() => $"Removing region of type '{ans.Region.GetType().Name}'");
 
         // Detach region from parent
         var parent = ans.Parent as NavigationService;
@@ -112,10 +154,19 @@ public class NavigationManager : INavigationManager
         {
             parent.NestedRegions.Remove(kvp => kvp.Value == region);
         }
+
+        LogAllRegions();
     }
 
     public NavigationResponse NavigateAsync(NavigationRequest request)
     {
         return Root.NavigateAsync(request);
+    }
+
+    public override string ToString()
+    {
+        var sb = new StringBuilder();
+        PrintAllRegions(sb);
+        return sb.ToString();
     }
 }
