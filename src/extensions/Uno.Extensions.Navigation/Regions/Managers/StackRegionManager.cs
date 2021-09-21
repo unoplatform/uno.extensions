@@ -92,4 +92,9 @@ public class StackRegionManager<TControl> : BaseRegionManager
             StackControl.RemoveLastFromBackStack();
         }
     }
+
+    public override string ToString()
+    {
+        return $"Stack({typeof(TControl).Name}) '{CurrentContext?.Path}'";
+    }
 }

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Regions;
 
 namespace Uno.Extensions.Navigation;
@@ -22,8 +24,11 @@ public class NavigationService : INavigationService
 
     private IServiceProvider ScopedServices { get; }
 
-    public NavigationService(INavigationManager manager, IServiceProvider services, INavigationMapping mapping, INavigationService parent)
+    private ILogger Logger { get; }
+
+    public NavigationService(ILogger<NavigationService> logger, INavigationManager manager, IServiceProvider services, INavigationMapping mapping, INavigationService parent)
     {
+        Logger = logger;
         Navigation = manager;
         ScopedServices = services;
 
@@ -51,7 +56,7 @@ public class NavigationService : INavigationService
     {
         if (Interlocked.CompareExchange(ref isNavigating, 1, 0) == 1)
         {
-            new NavigationResponse(request, Task.CompletedTask, null);
+            return new NavigationResponse(request, Task.CompletedTask, null);
         }
         try
         {
@@ -157,10 +162,18 @@ public class NavigationService : INavigationService
             var residualRequest = request.WithPath(residualPath, query); // with { Route = request.Route with { Path = new Uri(residualPath, UriKind.Relative) } };
             if (Region is null)
             {
-                // This should only be true for the first navigation in the app
-                // which may occur before the first container is created
-                PendingNavigation = (new TaskCompletionSource<object>(), request);
-                return new NavigationResponse(request, PendingNavigation.Value.Item1.Task, null);
+                var pending = (new TaskCompletionSource<object>(), request);
+                if (Parent is not null)
+                {
+                    (Parent as NavigationService).PendingNavigation = pending;
+                }
+                else
+                {
+                    // This should only be true for the first navigation in the app
+                    // which may occur before the first container is created
+                    PendingNavigation = pending;
+                }
+                return new NavigationResponse(request, pending.Item1.Task, null);
             }
 
             if (!string.IsNullOrWhiteSpace(residualPath))
@@ -201,42 +214,49 @@ public class NavigationService : INavigationService
 
     private async Task RegionNavigateAsync(NavigationContext context)
     {
-        await Region.NavigateAsync(context);
-
-        var pending = PendingNavigation;
-        if (pending is not null && context.Request.Sender is not null)
+        try
         {
-            var nextNavigationTask = pending.Value.Item1;
-            var nextNavigation = pending.Value.Item2;
-            var nextPath = nextNavigation.FirstRouteSegment;
+            await Region.NavigateAsync(context);
 
-            // navPath is the current path on the region
-            // Need to look at nested services to see if we
-            // need to pick on, before passing down the residual
-            // navigation request
-            var nested = Nested(nextPath) as NavigationService;
+            var pending = PendingNavigation;
+            if (pending is not null && context.Request.Sender is not null)
+            {
+                var nextNavigationTask = pending.Value.Item1;
+                var nextNavigation = pending.Value.Item2;
+                var nextPath = nextNavigation.FirstRouteSegment;
 
-            if (nested == null && NestedRegions.Any())
-            {
-                nested = NestedRegions.Values.First() as NavigationService;
-            }
-            else
-            {
-                var residualPath = nextNavigation.Route.Uri.OriginalString;
-                residualPath = residualPath.TrimStart($"{nextPath}/");
-                nextNavigation = nextNavigation.WithPath(residualPath, string.Empty);
-            }
+                // navPath is the current path on the region
+                // Need to look at nested services to see if we
+                // need to pick on, before passing down the residual
+                // navigation request
+                var nested = Nested(nextPath) as NavigationService;
 
-            if (nested is not null)
-            {
-                PendingNavigation = null;
-                await nested.NavigateAsync(nextNavigation);
-                nextNavigationTask.SetResult(null);
+                if (nested == null && NestedRegions.Any())
+                {
+                    nested = NestedRegions.Values.First() as NavigationService;
+                }
+                else
+                {
+                    var residualPath = nextNavigation.Route.Uri.OriginalString;
+                    residualPath = residualPath.TrimStart($"{nextPath}/");
+                    nextNavigation = nextNavigation.WithPath(residualPath, string.Empty);
+                }
+
+                if (nested is not null)
+                {
+                    PendingNavigation = null;
+                    await nested.NavigateAsync(nextNavigation);
+                    nextNavigationTask.SetResult(null);
+                }
+                else
+                {
+                    await nextNavigationTask.Task;
+                }
             }
-            else
-            {
-                await nextNavigationTask.Task;
-            }
+        }
+        finally
+        {
+            Logger.LazyLogInformation(()=> Navigation.ToString());
         }
     }
 
