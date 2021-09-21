@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Microsoft.Extensions.Logging;
+using Uno.Extensions.Logging;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -25,6 +27,13 @@ public class NavigationMapping : INavigationMapping
     private IDictionary<string, Type> loadedTypes;
 
     private IDictionary<string, NavigationMap> Mappings { get; } = new Dictionary<string, NavigationMap>();
+
+    private ILogger Logger { get; }
+
+    public NavigationMapping(ILogger<NavigationMapping> logger)
+    {
+        Logger = logger;
+    }
 
     public void Register(NavigationMap map)
     {
@@ -62,9 +71,13 @@ public class NavigationMapping : INavigationMapping
     {
         if (!ReturnImplicitMapping)
         {
+            Logger.LazyLogDebug(() => "Implicit mapping disabled");
             return null;
         }
 
+        Logger.LazyLogWarning(() => $"For better performance (avoid reflection), create mapping for for path '{path}', view '{view?.Name}', view model '{viewModel?.Name}'");
+
+        Logger.LazyLogDebug(() => $"Creating default mapping for path '{path}', view '{view?.Name}', view model '{viewModel?.Name}'");
         if (string.IsNullOrWhiteSpace(path))
         {
             path = PathFromTypes(view, viewModel);
@@ -84,9 +97,11 @@ public class NavigationMapping : INavigationMapping
         {
             var defaultMap = new NavigationMap(path, view, viewModel, null);
             Mappings[path] = defaultMap;
+            Logger.LazyLogDebug(() => $"Created default mapping - Path '{defaultMap.Path}', View '{defaultMap.View?.Name}', View Model '{defaultMap.ViewModel?.Name}'");
             return defaultMap;
         }
 
+        Logger.LazyLogDebug(() => $"Unable to create default mapping");
         return null;
     }
 
@@ -158,5 +173,4 @@ public class NavigationMapping : INavigationMapping
             return loadedTypes;
         }
     }
-
 }
