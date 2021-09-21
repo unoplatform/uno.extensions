@@ -94,11 +94,11 @@ namespace ExtensionsSampleApp
             Ioc.Default.ConfigureServices(Host.Services);
 
             var mapping = Host.Services.GetService< INavigationMapping>();
-            mapping.Register(new NavigationMap(typeof(MainPage).Name, typeof(MainPage), typeof(MainViewModel)));
+            //mapping.Register(new NavigationMap(typeof(MainPage).Name, typeof(MainPage), typeof(MainViewModel)));
             mapping.Register(new NavigationMap(typeof(SecondPage).Name, typeof(SecondPage), typeof(SecondViewModel), typeof(Widget)));
-            mapping.Register(new NavigationMap(typeof(ThirdPage).Name, typeof(ThirdPage), typeof(ThirdViewModel)));
-            mapping.Register(new NavigationMap(typeof(FourthPage).Name, typeof(FourthPage), typeof(FourthViewModel)));
-            mapping.Register(new NavigationMap(typeof(TabbedPage).Name, typeof(TabbedPage), typeof(TabbedViewModel)));
+            //mapping.Register(new NavigationMap(typeof(ThirdPage).Name, typeof(ThirdPage), typeof(ThirdViewModel)));
+            //mapping.Register(new NavigationMap(typeof(FourthPage).Name, typeof(FourthPage), typeof(FourthViewModel)));
+            //mapping.Register(new NavigationMap(typeof(TabbedPage).Name, typeof(TabbedPage), typeof(TabbedViewModel)));
             mapping.Register(new NavigationMap(typeof(TabBarPage).Name, typeof(TabBarPage)));
             mapping.Register(new NavigationMap("doc0", ViewModel:typeof(TabDoc0ViewModel)));
             mapping.Register(new NavigationMap("doc1", ViewModel: typeof(TabDoc1ViewModel)));
