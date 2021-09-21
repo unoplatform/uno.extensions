@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls;
@@ -23,7 +24,7 @@ public class NavigationMapping : INavigationMapping
 
     public NavigationMap LookupByPath(string path)
     {
-        return Mappings.TryGetValue(path, out var map) ? map : default;
+        return Mappings.TryGetValue(path, out var map) ? map : DefaultForViewTypePath(path);
     }
 
     public NavigationMap LookupByViewModel(Type viewModelType)
@@ -44,5 +45,15 @@ public class NavigationMapping : INavigationMapping
     private NavigationMap DefaultForType(Type type, bool isView, bool isViewModel)
     {
         return ReturnImplicitMapping ? new NavigationMap(type.Name, isView ? type : null, isViewModel ? type : null, null) : null;
+    }
+
+    private NavigationMap DefaultForViewTypePath(string path)
+    {
+        var viewType = (from asb in AppDomain.CurrentDomain.GetAssemblies()
+                        from t in asb.GetTypes()
+                        where t.Name == path
+                        select t).FirstOrDefault();
+
+        return ReturnImplicitMapping ? new NavigationMap(path, viewType, null, null) : null;
     }
 }
