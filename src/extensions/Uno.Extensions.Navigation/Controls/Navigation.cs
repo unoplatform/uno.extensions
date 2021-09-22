@@ -1,5 +1,7 @@
 ﻿using System;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using Uno.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -24,6 +26,16 @@ public static class Navigation
         get
         {
             return navigationManager ?? (navigationManager = Ioc.Default.GetService<INavigationManager>());
+        }
+    }
+
+    private static ILogger logger;
+
+    private static ILogger Logger
+    {
+        get
+        {
+            return logger ?? (logger = Ioc.Default.GetService(typeof(ILogger<NavigationManager>)) as ILogger);
         }
     }
 
@@ -69,17 +81,23 @@ public static class Navigation
 
     private static void RegisterElement(FrameworkElement element, string regionName)
     {
+        Logger.LazyLogDebug(() => $"Attaching to Loaded event on element {element.GetType().Name}");
         element.Loaded += (sLoaded, eLoaded) =>
         {
+            Logger.LazyLogDebug(() => $"Creating region manager");
             var loadedElement = sLoaded as FrameworkElement;
             var existingRegion = loadedElement.GetRegionManager();
             var parent = ScopedServiceForControl(loadedElement.Parent);
             var region = NavigationManager.AddRegion(parent, regionName, element, existingRegion);
             loadedElement.SetRegionManager(region);
+            Logger.LazyLogDebug(() => $"Region manager created");
+
+            Logger.LazyLogDebug(() => $"Attaching to Unloaded event on element {element.GetType().Name}");
             loadedElement.Unloaded += (sUnloaded, eUnloaded) =>
            {
                if (region != null)
                {
+                   Logger.LazyLogDebug(() => $"Removing region manager");
                    NavigationManager.RemoveRegion(region);
                }
            };

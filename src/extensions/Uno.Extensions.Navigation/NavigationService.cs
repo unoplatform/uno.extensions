@@ -56,11 +56,13 @@ public class NavigationService : INavigationService
     {
         if (Interlocked.CompareExchange(ref isNavigating, 1, 0) == 1)
         {
+            Logger.LazyLogWarning(() => $"Navigation already in progress. Unable to start navigation '{request.ToString()}'");
             return new NavigationResponse(request, Task.CompletedTask, null);
         }
         try
         {
             var path = request.Route.Uri.OriginalString;
+            Logger.LazyLogDebug(() => $"Parsing route '{path}'");
 
             var queryIdx = path.IndexOf('?');
             var query = string.Empty;
@@ -86,6 +88,7 @@ public class NavigationService : INavigationService
 
             if (path.StartsWith("//"))
             {
+                Logger.LazyLogDebug(() => $"Redirecting navigation request to parent Navigation Service");
                 var parentService = Parent as NavigationService;
                 path = path.Length > 2 ? path.Substring(2) : string.Empty;
 
@@ -95,6 +98,7 @@ public class NavigationService : INavigationService
 
             if (path.StartsWith("./"))
             {
+                Logger.LazyLogDebug(() => $"Redirecting navigation request to nested Navigation Service");
                 path = path.Length > 2 ? path.Substring(2) : string.Empty;
                 var nestedRequest = request.WithPath(path, query);
                 var nestedRoute = nestedRequest.FirstRouteSegment;
@@ -112,6 +116,7 @@ public class NavigationService : INavigationService
 
                 if (nested is null)
                 {
+                    Logger.LazyLogDebug(() => $"Nested navigation service doesn't exist, so set pending navigation");
                     // This should only be true for the first navigation in the app
                     // which may occur before the first container is created
                     PendingNavigation = (new TaskCompletionSource<object>(), nestedRequest);
@@ -165,10 +170,12 @@ public class NavigationService : INavigationService
                 var pending = (new TaskCompletionSource<object>(), request);
                 if (Parent is not null)
                 {
+                    Logger.LazyLogDebug(() => $"Region hasn't been set, and Parent exists, so setting the navigation request as a pending navigation on parent");
                     (Parent as NavigationService).PendingNavigation = pending;
                 }
                 else
                 {
+                    Logger.LazyLogDebug(() => $"Parent is null, which means this is the root navigation service. Set the pending navigation");
                     // This should only be true for the first navigation in the app
                     // which may occur before the first container is created
                     PendingNavigation = pending;
@@ -202,7 +209,9 @@ public class NavigationService : INavigationService
                                     new CancellationTokenSource(),
                                 new TaskCompletionSource<Options.Option>(),
                                 Mapping: mapping);
+            Logger.LazyLogDebug(() => $"Invoking navigation with Navigation Context");
             var navTask = RegionNavigateAsync(context);
+            Logger.LazyLogDebug(() => $"Returning NavigationResponse");
 
             return new NavigationResponse(request, navTask, context.ResultCompletion.Task);
         }
@@ -216,11 +225,15 @@ public class NavigationService : INavigationService
     {
         try
         {
+            Logger.LazyLogDebug(() => $"Invoking region navigation");
             await Region.NavigateAsync(context);
+            Logger.LazyLogDebug(() => $"Region Navigation complete");
 
             var pending = PendingNavigation;
             if (pending is not null && context.Request.Sender is not null)
             {
+                Logger.LazyLogDebug(() => $"Handling pending navigation");
+
                 var nextNavigationTask = pending.Value.Item1;
                 var nextNavigation = pending.Value.Item2;
                 var nextPath = nextNavigation.FirstRouteSegment;
@@ -245,18 +258,22 @@ public class NavigationService : INavigationService
                 if (nested is not null)
                 {
                     PendingNavigation = null;
+                    Logger.LazyLogDebug(() => $"Invoking pending navigation");
                     await nested.NavigateAsync(nextNavigation);
+                    Logger.LazyLogDebug(() => $"Pending navigation complete");
                     nextNavigationTask.SetResult(null);
                 }
                 else
                 {
+                    Logger.LazyLogDebug(() => $"Unable to invoke pending navigation, so waiting for task to complete");
                     await nextNavigationTask.Task;
+                    Logger.LazyLogDebug(() => $"Pending navigation task completed");
                 }
             }
         }
         finally
         {
-            Logger.LazyLogInformation(()=> Navigation.ToString());
+            Logger.LazyLogInformation(() => Navigation.ToString());
         }
     }
 

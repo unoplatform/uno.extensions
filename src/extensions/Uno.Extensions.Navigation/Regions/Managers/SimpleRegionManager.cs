@@ -1,4 +1,6 @@
-﻿using Uno.Extensions.Navigation.Controls;
+﻿using Microsoft.Extensions.Logging;
+using Uno.Extensions.Logging;
+using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Dialogs;
 
 namespace Uno.Extensions.Navigation.Regions.Managers;
@@ -12,7 +14,7 @@ public class SimpleRegionManager<TControl> : BaseRegionManager
 
     protected override NavigationContext CurrentContext => currentContext;
 
-    public SimpleRegionManager(INavigationService navigation, IDialogFactory dialogFactory, TControl control) : base(navigation, dialogFactory)
+    public SimpleRegionManager(ILogger<SimpleRegionManager<TControl>> logger, INavigationService navigation, IDialogFactory dialogFactory, TControl control) : base(logger, navigation, dialogFactory)
     {
         Control = control;
     }
@@ -20,6 +22,7 @@ public class SimpleRegionManager<TControl> : BaseRegionManager
     protected override void RegionNavigate(NavigationContext context, object viewModel)
     {
         currentContext = context;
+        Logger.LazyLogDebug(() => $"Navigating to path '{context.Path}' with view '{context.Mapping?.View?.Name}'");
         Control.Show(context.Path, context.Mapping?.View, context.Data, viewModel);
     }
 

@@ -1,4 +1,6 @@
 ﻿using System;
+using Microsoft.Extensions.Logging;
+using Uno.Extensions.Logging;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -13,15 +15,25 @@ namespace Uno.Extensions.Navigation.Controls.Managers;
 
 public class ContentControlManager : BaseControlManager<ContentControl>
 {
-    public ContentControlManager(INavigationService navigation, RegionControlProvider controlProvider) : base(navigation, controlProvider.RegionControl as ContentControl)
+    public ContentControlManager(ILogger<ContentControlManager> logger, INavigationService navigation, RegionControlProvider controlProvider) : base(logger, navigation, controlProvider.RegionControl as ContentControl)
     {
     }
 
-    protected override object InternalShow(string path, Type view, object data, object viewModel)
+    protected override object InternalShow(string path, Type view, object data)
     {
-        var content = Activator.CreateInstance(view);
-        Control.Content = content;
+        try
+        {
+            Logger.LazyLogDebug(() => $"Creating instance of type '{view.Name}'");
+            var content = Activator.CreateInstance(view);
+            Control.Content = content;
+            Logger.LazyLogDebug(() => "Instance created");
 
-        return Control.Content;
+            return Control.Content;
+        }
+        catch (Exception ex)
+        {
+            Logger.LazyLogError(() => $"Unable to create instance - {ex.Message}");
+            return null;
+        }
     }
 }

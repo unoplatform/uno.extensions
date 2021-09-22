@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Controls;
 using Windows.UI.Xaml;
@@ -8,12 +9,12 @@ namespace ExtensionsSampleApp.Control.Managers
 {
     public class GridVisiblityManager : BaseControlManager<Grid>
     {
-        public GridVisiblityManager(INavigationService navigation, RegionControlProvider controlProvider) : base(navigation, controlProvider.RegionControl as Grid)
+        public GridVisiblityManager(ILogger<GridVisiblityManager> logger, INavigationService navigation, RegionControlProvider controlProvider) : base(logger, navigation, controlProvider.RegionControl as Grid)
         {
         }
 
         private FrameworkElement CurrentlyVisibleControl { get; set; }
-        protected override object InternalShow(string path, Type view, object data, object viewModel)
+        protected override object InternalShow(string path, Type view, object data)
         {
             var controlToShow = Control.FindName(path) as FrameworkElement;
             if(controlToShow is null)
