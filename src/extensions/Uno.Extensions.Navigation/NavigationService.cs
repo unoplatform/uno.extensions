@@ -170,8 +170,11 @@ public class NavigationService : INavigationService
                 var pending = (new TaskCompletionSource<object>(), request);
                 if (Parent is not null)
                 {
-                    Logger.LazyLogDebug(() => $"Region hasn't been set, and Parent exists, so setting the navigation request as a pending navigation on parent");
-                    (Parent as NavigationService).PendingNavigation = pending;
+                    if ((Parent as NavigationService).PendingNavigation is null)
+                    {
+                        Logger.LazyLogDebug(() => $"Region hasn't been set, and Parent exists, so setting the navigation request as a pending navigation on parent");
+                        (Parent as NavigationService).PendingNavigation = pending;
+                    }
                 }
                 else
                 {
