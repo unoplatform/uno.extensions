@@ -34,7 +34,7 @@ namespace ExtensionsSampleApp.Views
 
         private void NextPagePreviousViewWithArgsAndDataClick(object sender, RoutedEventArgs e)
         {
-            Navigation.NavigateAsync(new NavigationRequest(sender, new NavigationRoute(new Uri(typeof(ThirdPage).Name + "?arg1=val1&arg2=val2", UriKind.Relative), new Widget())));
+            Navigation.NavigateAsync(new NavigationRequest(sender, new NavigationRoute(new Uri("..?arg1=val1&arg2=val2", UriKind.Relative), new Widget())));
         }
     }
 
