@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Dialogs;
 using Uno.Extensions.Navigation.ViewModels;
@@ -10,6 +12,8 @@ namespace Uno.Extensions.Navigation.Regions;
 
 public abstract class BaseRegionManager : IRegionManager
 {
+    protected ILogger Logger { get; }
+
     protected abstract NavigationContext CurrentContext { get; }
 
     protected INavigationService Navigation { get; }
@@ -20,8 +24,9 @@ public abstract class BaseRegionManager : IRegionManager
 
     private IDialogFactory DialogProvider { get; }
 
-    public BaseRegionManager(INavigationService navigation, IDialogFactory dialogFactory)
+    public BaseRegionManager(ILogger logger, INavigationService navigation, IDialogFactory dialogFactory)
     {
+        Logger = logger;
         Navigation = navigation;
         DialogProvider = dialogFactory;
     }

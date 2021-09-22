@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Dialogs;
 
@@ -15,7 +17,7 @@ public class StackRegionManager<TControl> : BaseRegionManager
 
     protected override NavigationContext CurrentContext => NavigationContexts.LastOrDefault();
 
-    public StackRegionManager(INavigationService navigation, IDialogFactory dialogFactory, TControl control) : base(navigation, dialogFactory)
+    public StackRegionManager(ILogger<StackRegionManager<TControl>> logger, INavigationService navigation, IDialogFactory dialogFactory, TControl control) : base(logger, navigation, dialogFactory)
     {
         StackControl = control;
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Controls;
 using Windows.UI.Xaml;
@@ -8,11 +9,11 @@ namespace ExtensionsSampleApp.Control.Managers
 {
     public class PageVisualStateManager : BaseControlManager<Page>
     {
-        public PageVisualStateManager(INavigationService navigation, RegionControlProvider controlProvider) : base(navigation, controlProvider.RegionControl as Page)
+        public PageVisualStateManager(ILogger<PageVisualStateManager> logger, INavigationService navigation, RegionControlProvider controlProvider) : base(logger, navigation, controlProvider.RegionControl as Page)
         {
         }
 
-        protected override object InternalShow(string path, Type view, object data, object viewModel)
+        protected override object InternalShow(string path, Type view, object data)
         {
             VisualStateManager.GoToState(Control, path, true);
             return null;

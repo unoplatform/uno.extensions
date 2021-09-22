@@ -22,4 +22,5 @@ public record NavigationRequest(object Sender, NavigationRoute Route, Cancellati
         }
     }
 
+    public override string ToString() => $"Navigation Request [Path:{Route?.Uri?.OriginalString}]";
 }

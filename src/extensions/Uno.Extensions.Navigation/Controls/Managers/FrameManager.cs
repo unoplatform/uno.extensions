@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using Microsoft.Extensions.Logging;
+using Uno.Extensions.Logging;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -15,10 +17,14 @@ namespace Uno.Extensions.Navigation.Controls.Managers;
 
 public class FrameManager : BaseControlManager<Frame>, IStackViewManager
 {
-    public FrameManager(INavigationService navigation, RegionControlProvider controlProvider) : base(navigation, controlProvider.RegionControl as Frame)
+    public FrameManager(ILogger<FrameManager> logger, INavigationService navigation, RegionControlProvider controlProvider) : base(logger, navigation, controlProvider.RegionControl as Frame)
     {
         if (Control.Content is not null)
         {
+            Logger.LazyLogDebug(() => $"Navigating to type '{Control.SourcePageType.Name}' (initial Content set on Frame)");
+
+            // This happens when the SourcePageType property is set on the Frame. The
+            // page is set as the content, without actually navigating to the page
             Navigation.NavigateToViewAsync(null, Control.SourcePageType);
         }
 
@@ -27,6 +33,9 @@ public class FrameManager : BaseControlManager<Frame>, IStackViewManager
 
     private void Frame_Navigated(object sender, NavigationEventArgs e)
     {
+        Logger.LazyLogDebug(() => $"Frame has navigated to page '{e.SourcePageType.Name}'");
+        // This happens when the Navigate method is called directly on the Frame,
+        // rather than via the navigationservice api
         Navigation.NavigateToViewAsync(null, Control.SourcePageType, data: e.Parameter);
     }
 
@@ -34,36 +43,56 @@ public class FrameManager : BaseControlManager<Frame>, IStackViewManager
     {
         if (parameter is not null)
         {
+            Logger.LazyLogDebug(() => $"Replacing last backstack item to inject parameter '{parameter.GetType().Name}'");
+            // If a parameter is being sent back, we need to replace
+            // the last frame on the backstack with one that has the correct
+            // parameter value. This value can be extracted via the OnNavigatedTo method
             var entry = Control.BackStack.Last();
             var newEntry = new PageStackEntry(entry.SourcePageType, parameter, entry.NavigationTransitionInfo);
             Control.BackStack.Remove(entry);
             Control.BackStack.Add(newEntry);
         }
 
+        Logger.LazyLogDebug(() => $"Invoking Frame.GoBack");
         Control.GoBack();
+        Logger.LazyLogDebug(() => $"Frame.GoBack completed");
 
         InitialiseView(Control.Content, viewModel);
     }
 
-    protected override object InternalShow(string path, Type view, object data, object viewModel)
+    protected override object InternalShow(string path, Type view, object data)
     {
-        if (Control.Content?.GetType() != view)
+        try
         {
-            Control.Navigated -= Frame_Navigated;
-            var nav = Control.Navigate(view, data);
-            Control.Navigated += Frame_Navigated;
-        }
+            if (Control.Content?.GetType() != view)
+            {
+                Logger.LazyLogDebug(() => $"Invoking Frame.Navigate to type '{view.Name}'");
+                Control.Navigated -= Frame_Navigated;
+                var nav = Control.Navigate(view, data);
+                Control.Navigated += Frame_Navigated;
+                Logger.LazyLogDebug(() => $"Frame.Navigate completed");
+            }
 
-        return Control.Content;
+            return Control.Content;
+        }
+        catch (Exception ex)
+        {
+            Logger.LazyLogError(() => $"Unable to navigate to page - {ex.Message}");
+            return null;
+        }
     }
 
     public void RemoveLastFromBackStack()
     {
+        Logger.LazyLogDebug(() => $"Removing last item from backstack (current count = {Control.BackStack.Count})");
         Control.BackStack.RemoveAt(Control.BackStack.Count - 1);
+        Logger.LazyLogDebug(() => $"Item removed from backstack");
     }
 
     public void ClearBackStack()
     {
+        Logger.LazyLogDebug(() => $"Clearing backstack");
         Control.BackStack.Clear();
+        Logger.LazyLogDebug(() => $"Backstack cleared");
     }
 }

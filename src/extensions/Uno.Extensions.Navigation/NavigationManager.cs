@@ -77,6 +77,7 @@ public class NavigationManager : INavigationManager
     {
         if (nav is null)
         {
+            builder.AppendLine("");
             builder.AppendLine("------------------------------------------------------------------------------------------------");
             PrintAllRegions(builder, 0, "ROOT", Root);
             builder.AppendLine("------------------------------------------------------------------------------------------------");
