@@ -6,13 +6,16 @@ using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Controls.Primitives;
 #else
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Controls.Primitives;
 #endif
 
 namespace Uno.Extensions.Navigation.Controls;
@@ -155,7 +158,7 @@ public static class Navigation
 
     private static void PathChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        if (d is Button element)
+        if (d is ButtonBase element)
         {
             var path = GetPath(element);
             RoutedEventHandler handler = (s, e) =>
