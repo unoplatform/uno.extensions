@@ -14,7 +14,7 @@ public abstract class BaseRegionManager : IRegionManager
 {
     protected ILogger Logger { get; }
 
-    protected abstract NavigationContext CurrentContext { get; }
+    public abstract NavigationContext CurrentContext { get; }
 
     protected INavigationService Navigation { get; }
 

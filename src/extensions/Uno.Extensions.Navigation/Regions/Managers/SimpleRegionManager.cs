@@ -12,7 +12,7 @@ public class SimpleRegionManager<TControl> : BaseRegionManager
 
     private NavigationContext currentContext;
 
-    protected override NavigationContext CurrentContext => currentContext;
+    public override NavigationContext CurrentContext => currentContext;
 
     public SimpleRegionManager(ILogger<SimpleRegionManager<TControl>> logger, INavigationService navigation, IDialogFactory dialogFactory, TControl control) : base(logger, navigation, dialogFactory)
     {
