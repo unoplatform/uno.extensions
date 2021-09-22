@@ -75,7 +75,7 @@ namespace ExtensionsSampleApp.Views
 
         private async void MessageDialogClick(object sender, RoutedEventArgs e)
         {
-            var navresult = Navigation.ShowMessageDialogAsync(this, "Basic content", "Content Title", commands: new Windows.UI.Popups.UICommand[] { new Windows.UI.Popups.UICommand("test", command => Debug.WriteLine("TEST")) });
+            var navresult = Navigation.ShowMessageDialogAsync(this, "Basic content", "Content Title");//, commands: new Windows.UI.Popups.UICommand[] { new Windows.UI.Popups.UICommand("test", command => Debug.WriteLine("TEST")) });
             var response = await navresult.Result;
         }
 

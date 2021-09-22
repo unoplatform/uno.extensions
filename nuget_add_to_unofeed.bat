@@ -19,8 +19,8 @@
 @REM rmdir .\unofeed\uno.extensions.localization /s /q
 @REM nuget add .\src\extensions\Uno.Extensions.Localization\bin\Release\Uno.Extensions.Localization.1.0.0.nupkg -Source .\unofeed
 
-@REM rmdir .\unofeed\uno.extensions.logging /s /q
-@REM nuget add .\src\extensions\Uno.Extensions.Logging\bin\Release\Uno.Extensions.Logging.1.0.0.nupkg -Source .\unofeed
+rmdir .\unofeed\uno.extensions.logging /s /q
+nuget add .\src\extensions\Uno.Extensions.Logging\bin\Release\Uno.Extensions.Logging.1.0.0.nupkg -Source .\unofeed
 
 @REM rmdir .\unofeed\uno.extensions.logging.wasm /s /q
 @REM nuget add .\src\extensions\Uno.Extensions.Logging.Wasm\bin\Release\Uno.Extensions.Logging.Wasm.1.0.0.nupkg -Source .\unofeed
