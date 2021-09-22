@@ -15,7 +15,7 @@ public class StackRegionManager<TControl> : BaseRegionManager
 
     private IList<NavigationContext> NavigationContexts { get; } = new List<NavigationContext>();
 
-    protected override NavigationContext CurrentContext => NavigationContexts.LastOrDefault();
+    public override NavigationContext CurrentContext => NavigationContexts.LastOrDefault();
 
     public StackRegionManager(ILogger<StackRegionManager<TControl>> logger, INavigationService navigation, IDialogFactory dialogFactory, TControl control) : base(logger, navigation, dialogFactory)
     {

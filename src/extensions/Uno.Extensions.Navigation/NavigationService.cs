@@ -228,9 +228,16 @@ public class NavigationService : INavigationService
     {
         try
         {
-            Logger.LazyLogDebug(() => $"Invoking region navigation");
-            await Region.NavigateAsync(context);
-            Logger.LazyLogDebug(() => $"Region Navigation complete");
+            if (Region.CurrentContext?.Path == context.Path)
+            {
+                Logger.LazyLogWarning(() => $"Attempt to log to the same path '{context.Path}");
+            }
+            else
+            {
+                Logger.LazyLogDebug(() => $"Invoking region navigation");
+                await Region.NavigateAsync(context);
+                Logger.LazyLogDebug(() => $"Region Navigation complete");
+            }
 
             var pending = PendingNavigation;
             if (pending is not null && context.Request.Sender is not null)
