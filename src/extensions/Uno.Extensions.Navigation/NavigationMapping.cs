@@ -165,6 +165,9 @@ public class NavigationMapping : INavigationMapping
             if (loadedTypes is null)
             {
                 loadedTypes = (from asb in AppDomain.CurrentDomain.GetAssemblies()
+                               where (!asb.FullName.StartsWith("_") &&
+                               !asb.FullName.StartsWith("Microsoft.") &&
+                               !asb.FullName.StartsWith("Uno."))
                                from t in asb.GetTypes()
                                where t.IsClass
                                select new { t.Name, Type = t }).ToDictionaryDistinct(x => x.Name, x => x.Type);

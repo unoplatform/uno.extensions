@@ -15,6 +15,13 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <StackPanel>
+            <CommandBar >
+                <AppBarButton Icon="Back" Label="Back" nav:Navigation.Path=".." />
+                <CommandBar.Content>
+                    <TextBlock Text="Title"
+                           Margin="12,8" />
+                </CommandBar.Content>
+            </CommandBar>
             <TextBlock Margin="20"
                        FontSize="30"><Run Text="Page 2 - " /><Run Text="{Binding Title}" /></TextBlock>
             <TextBlock x:Name="ParametersText"

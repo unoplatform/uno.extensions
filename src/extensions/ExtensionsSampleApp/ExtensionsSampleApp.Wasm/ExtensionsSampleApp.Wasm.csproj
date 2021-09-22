@@ -43,6 +43,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0-preview.7.21377.19" />
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.0-preview.7.21377.19" />
     <PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.3.0-dev.1" />
+    <PackageReference Include="Uno.UI.Toolkit" Version="255.255.255.255" />
     <PackageReference Include="Uno.UI.WebAssembly" Version="3.10.0-dev.581" />
     <PackageReference Include="Uno.UI.RemoteControl" Version="3.10.0-dev.581" Condition="'$(Configuration)'=='Debug'" />
     <PackageReference Include="Uno.Wasm.Bootstrap" Version="3.0.0-dev.138" />
@@ -55,14 +56,14 @@
     <ProjectReference Include="..\..\Uno.Extensions.Hosting.Wasm\Uno.Extensions.Hosting.Wasm.csproj">
       <Name>Uno.Extensions.Hosting.Wasm</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Uno.Extensions.Http.Firebase\Uno.Extensions.Http.Firebase.csproj">
+    <!--<ProjectReference Include="..\..\Uno.Extensions.Http.Firebase\Uno.Extensions.Http.Firebase.csproj">
       <Project>{8050e715-f905-4ff7-8e6c-262d71d5e51b}</Project>
       <Name>Uno.Extensions.Http.Firebase</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Uno.Extensions.Http.Refit\Uno.Extensions.Http.Refit.csproj">
       <Project>{63a16363-b360-4075-9ed0-911cad14e6ea}</Project>
       <Name>Uno.Extensions.Http.Refit</Name>
-    </ProjectReference>
+    </ProjectReference>-->
     <ProjectReference Include="..\..\Uno.Extensions.Http\Uno.Extensions.Http.csproj">
       <Project>{29bfc492-b537-4985-9163-649fc56ebf12}</Project>
       <Name>Uno.Extensions.Http</Name>
@@ -71,10 +72,10 @@
       <Project>{3f8f8b81-03af-48e8-a901-ab3b14f15b10}</Project>
       <Name>Uno.Extensions.Localization</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj">
+    <!--<ProjectReference Include="..\..\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj">
       <Project>{3f01a0de-4b9e-496f-ac6b-94daf315a20f}</Project>
       <Name>Uno.Extensions.Logging.Serilog</Name>
-    </ProjectReference>
+    </ProjectReference>-->
     <ProjectReference Include="..\..\Uno.Extensions.Logging.Wasm\Uno.Extensions.Logging.Wasm.csproj">
       <Name>Uno.Extensions.Logging.Wasm</Name>
     </ProjectReference>
@@ -82,14 +83,14 @@
       <Project>{ad3c0a66-450d-4355-b5c4-fdaf0d7746ad}</Project>
       <Name>Uno.Extensions.Navigation</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Uno.Extensions.Serialization.Http\Uno.Extensions.Serialization.Http.csproj">
+    <!--<ProjectReference Include="..\..\Uno.Extensions.Serialization.Http\Uno.Extensions.Serialization.Http.csproj">
       <Project>{629c0ea7-1e92-481b-993d-059cb4b51a13}</Project>
       <Name>Uno.Extensions.Serialization.Http</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Uno.Extensions.Serialization.Refit\Uno.Extensions.Serialization.Refit.csproj">
       <Project>{5b0c5424-a8a4-439a-b01e-641ef2223244}</Project>
       <Name>Uno.Extensions.Serialization.Refit</Name>
-    </ProjectReference>
+    </ProjectReference>-->
     <ProjectReference Include="..\..\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj">
       <Project>{5123670c-9756-4c9e-9844-f4a9c0aee633}</Project>
       <Name>Uno.Extensions.Serialization</Name>
