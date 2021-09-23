@@ -2,7 +2,7 @@
 
 namespace Uno.Extensions.Navigation;
 
-public interface INavigationMapping
+public interface INavigationMappings
 {
     void Register(NavigationMap map);
 

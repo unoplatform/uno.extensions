@@ -93,7 +93,7 @@ namespace ExtensionsSampleApp
                .EnableUnoLogging();
             Ioc.Default.ConfigureServices(Host.Services);
 
-            var mapping = Host.Services.GetService< INavigationMapping>();
+            var mapping = Host.Services.GetService< INavigationMappings>();
             //mapping.Register(new NavigationMap(typeof(MainPage).Name, typeof(MainPage), typeof(MainViewModel)));
             mapping.Register(new NavigationMap(typeof(SecondPage).Name, typeof(SecondPage), typeof(SecondViewModel), typeof(Widget)));
             //mapping.Register(new NavigationMap(typeof(ThirdPage).Name, typeof(ThirdPage), typeof(ThirdViewModel)));

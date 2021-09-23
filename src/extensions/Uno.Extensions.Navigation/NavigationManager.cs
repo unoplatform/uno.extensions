@@ -12,23 +12,20 @@ namespace Uno.Extensions.Navigation;
 
 public class NavigationManager : INavigationManager
 {
-    private INavigationService Root { get; }
+    public INavigationService Root { get; }
 
     private IServiceProvider Services { get; }
-
-    private INavigationMapping Mapping { get; }
 
     private IDictionary<Type, IRegionManagerFactory> Factories { get; }
 
     private ILogger Logger { get; }
 
-    public NavigationManager(ILogger<NavigationManager> logger, IServiceProvider services, IEnumerable<IRegionManagerFactory> factories, INavigationMapping mapping)
+    public NavigationManager(ILogger<NavigationManager> logger, IServiceProvider services, IEnumerable<IRegionManagerFactory> factories)
     {
         Logger = logger;
         Services = services;
-        Mapping = mapping;
         Factories = factories.ToDictionary(x => x.ControlType);
-        Root = new NavigationService(Services.GetService<ILogger<NavigationService>>(), null, Mapping, null);
+        Root = services.GetService<INavigationService>(); // new NavigationService(Services.GetService<ILogger<NavigationService>>(), null, Mapping, null);
     }
 
     public INavigationService AddRegion(INavigationService parentRegion, string regionName, object control, INavigationService existingRegion)
@@ -52,7 +49,8 @@ public class NavigationManager : INavigationManager
             // Make the control available via DI
             services.GetService<RegionControlProvider>().RegionControl = control;
 
-            ans = new NavigationService(Services.GetService<ILogger<NavigationService>>(), services, Mapping, parent);
+            ans = services.GetService<INavigationService>() as NavigationService;// new NavigationService(Services.GetService<ILogger<NavigationService>>(), services, Mapping, parent);
+            ans.Parent = parent;
 
             var factory = FindFactoryForControl(control);
             var region = factory.Create(services);
@@ -73,7 +71,7 @@ public class NavigationManager : INavigationManager
         Logger.LazyLogInformation(() => this.ToString());
     }
 
-   
+
 
     private IRegionManagerFactory FindFactoryForControl(object control)
     {
@@ -139,6 +137,4 @@ public class NavigationManager : INavigationManager
     {
         return Root.NavigateAsync(request);
     }
-
-
 }
