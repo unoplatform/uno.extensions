@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,8 +13,6 @@ namespace Uno.Extensions.Navigation;
 
 public class NavigationService : INavigationService
 {
-    public INavigationManager Navigation { get; }
-
     public INavigationMapping Mapping { get; }
 
     public IRegionManager Region { get; set; }
@@ -26,10 +25,9 @@ public class NavigationService : INavigationService
 
     private ILogger Logger { get; }
 
-    public NavigationService(ILogger<NavigationService> logger, INavigationManager manager, IServiceProvider services, INavigationMapping mapping, INavigationService parent)
+    public NavigationService(ILogger<NavigationService> logger, IServiceProvider services, INavigationMapping mapping, INavigationService parent)
     {
         Logger = logger;
-        Navigation = manager;
         ScopedServices = services;
 
         // Prevent recursion when this is the root nav service
@@ -283,7 +281,49 @@ public class NavigationService : INavigationService
         }
         finally
         {
-            Logger.LazyLogInformation(() => Navigation.ToString());
+            Logger.LazyLogInformation(() => Root.ToString());
+        }
+    }
+
+    private NavigationService Root
+    {
+        get
+        {
+            return (Parent as NavigationService) ?? this;
+        }
+    }
+
+    public override string ToString()
+    {
+        var sb = new StringBuilder();
+        PrintAllRegions(sb, this);
+        return sb.ToString();
+    }
+
+    private void PrintAllRegions(StringBuilder builder, NavigationService nav,  int indent = 0, string regionName = null)
+    {
+        if (nav.Region is null)
+        {
+            builder.AppendLine("");
+            builder.AppendLine("------------------------------------------------------------------------------------------------");
+            builder.AppendLine($"ROOT");
+            builder.AppendLine("------------------------------------------------------------------------------------------------");
+        }
+        else
+        {
+            var ans = nav as NavigationService;
+            var prefix = string.Empty;
+            if (indent > 0)
+            {
+                prefix = new string(' ', indent * 2) + "|-";
+            }
+            var reg = !string.IsNullOrWhiteSpace(regionName) ? $"({regionName}) " : null;
+            builder.AppendLine($"{prefix}{reg}{ans.Region?.ToString()}");
+        }
+
+        foreach (var nested in nav.NestedRegions)
+        {
+            PrintAllRegions(builder, nested.Value as NavigationService, indent + 1, nested.Key);
         }
     }
 

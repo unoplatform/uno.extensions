@@ -28,7 +28,7 @@ public class NavigationManager : INavigationManager
         Services = services;
         Mapping = mapping;
         Factories = factories.ToDictionary(x => x.ControlType);
-        Root = new NavigationService(Services.GetService<ILogger<NavigationService>>(), this, null, Mapping, null);
+        Root = new NavigationService(Services.GetService<ILogger<NavigationService>>(), null, Mapping, null);
     }
 
     public INavigationService AddRegion(INavigationService parentRegion, string regionName, object control, INavigationService existingRegion)
@@ -52,7 +52,7 @@ public class NavigationManager : INavigationManager
             // Make the control available via DI
             services.GetService<RegionControlProvider>().RegionControl = control;
 
-            ans = new NavigationService(Services.GetService<ILogger<NavigationService>>(), this, services, Mapping, parent);
+            ans = new NavigationService(Services.GetService<ILogger<NavigationService>>(), services, Mapping, parent);
 
             var factory = FindFactoryForControl(control);
             var region = factory.Create(services);
@@ -73,31 +73,7 @@ public class NavigationManager : INavigationManager
         Logger.LazyLogInformation(() => this.ToString());
     }
 
-    private void PrintAllRegions(StringBuilder builder, int indent = 0, string regionName = null, INavigationService nav = null)
-    {
-        if (nav is null)
-        {
-            builder.AppendLine("");
-            builder.AppendLine("------------------------------------------------------------------------------------------------");
-            PrintAllRegions(builder, 0, "ROOT", Root);
-            builder.AppendLine("------------------------------------------------------------------------------------------------");
-        }
-        else
-        {
-            var ans = nav as NavigationService;
-            var prefix = string.Empty;
-            if (indent > 0)
-            {
-                prefix = new string(' ', indent * 2) + "|-";
-            }
-            var reg = !string.IsNullOrWhiteSpace(regionName) ? $"({regionName}) " : null;
-            builder.AppendLine( $"{prefix}{reg}{ans.Region?.ToString()}");
-            foreach (var nested in ans.NestedRegions)
-            {
-                PrintAllRegions(builder, indent + 1, nested.Key, nested.Value);
-            }
-        }
-    }
+   
 
     private IRegionManagerFactory FindFactoryForControl(object control)
     {
@@ -164,10 +140,5 @@ public class NavigationManager : INavigationManager
         return Root.NavigateAsync(request);
     }
 
-    public override string ToString()
-    {
-        var sb = new StringBuilder();
-        PrintAllRegions(sb);
-        return sb.ToString();
-    }
+
 }

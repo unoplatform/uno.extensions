@@ -90,6 +90,7 @@ public abstract class Option<T> : Option
         }
         return ((Some<T>)o).Value;
     }
+
     /// <summary>
     /// Implicit conversion of T to <see cref="Some{T}"/>
     /// </summary>
