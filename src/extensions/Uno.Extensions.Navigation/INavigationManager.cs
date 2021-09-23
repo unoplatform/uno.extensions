@@ -2,9 +2,11 @@
 
 public interface INavigationManager 
 {
-    INavigationService Root { get; }
+    INavigationRegionContainer Root { get; }
 
-    INavigationService AddRegion(INavigationService parentRegion, string regionName, object control, INavigationService existingRegion);
+    INavigationRegionContainer CreateRegion(object control);
 
-    void RemoveRegion(INavigationService region);
+    //INavigationService AddRegion(INavigationService parentRegion, string regionName, object control, INavigationService existingRegion);
+
+    //void RemoveRegion(INavigationService region);
 }

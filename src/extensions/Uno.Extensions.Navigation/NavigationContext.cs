@@ -12,6 +12,7 @@ public record NavigationContext(
     bool PathIsRooted,
     int FramesToRemove,
     IDictionary<string, object> Data,
+    NavigationRequest ResidualRequest,
     CancellationTokenSource CancellationSource,
     TaskCompletionSource<Options.Option> ResultCompletion,
     NavigationMap Mapping,

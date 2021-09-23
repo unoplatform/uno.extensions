@@ -42,11 +42,29 @@ public static class ServiceCollectionExtensions
                     // navigation data and the navigation service
                     .AddSingleton<INavigationManager, NavigationManager>()
                     //.AddScoped<NavigationServiceProvider>()
-                    .AddScoped<INavigationService, NavigationService>()
                     //.AddScoped<INavigationService>(services => services.GetService<NavigationServiceProvider>().Navigation)
+
+                    .AddScoped<ScopedServiceHost<IRegionManager>>()
+                    .AddScoped<IRegionManager>(services => services.GetService<ScopedServiceHost<IRegionManager>>().Service)
+
+                    .AddScoped<ScopedServiceHost<IRegionServiceContainer>>()
+                    .AddScoped<IRegionServiceContainer>(services => services.GetService<ScopedServiceHost<IRegionServiceContainer>>().Service)
+
+
+                    //.AddScoped<IRegionServiceContainer, RegionService>()
+
                     .AddScoped<ViewModelDataProvider>()
                     .AddScoped<RegionControlProvider>()
-                    .AddScoped<IDictionary<string, object>>(services => services.GetService<ViewModelDataProvider>().Parameters);
+                    .AddScoped<IDictionary<string, object>>(services => services.GetService<ViewModelDataProvider>().Parameters)
+                    .AddScoped<INavigationRegionContainer, NavigationRegionContainer>()
+
+                    .AddScoped<ScopedServiceHost<INavigationRegionService>>()
+                    .AddScoped<INavigationRegionService>(services =>
+                            services.GetService<ScopedServiceHost<INavigationRegionService>>().Service ??
+                            services.GetService<INavigationManager>().Root.Navigation
+                            )
+
+                    .AddScoped<INavigationService>(services => services.GetService<INavigationRegionService>());
     }
 
     public static IServiceCollection AddRegion<TControl, TControlManager, TRegionManager>(this IServiceCollection services)
@@ -89,17 +107,10 @@ public class ViewModelDataProvider
     }
 }
 
-//public class NavigationServiceProvider
-//{
-//    public INavigationService Navigation { get; set; }
-
-//    public NavigationServiceProvider(INavigationManager manager)
-//    {
-//        // Set the default Navigation Service - expect this to be
-//        // overriden for scoped contexts
-//        Navigation = manager.Root;
-//    }
-//}
+public class ScopedServiceHost<T>
+{
+    public T Service { get; set; }
+}
 
 public class RegionControlProvider
 {
