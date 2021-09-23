@@ -161,10 +161,17 @@ public static class Navigation
         if (d is ButtonBase element)
         {
             var path = GetPath(element);
-            RoutedEventHandler handler = (s, e) =>
+            RoutedEventHandler handler = async (s, e) =>
                 {
-                    var nav = ScopedServiceForControl(s as DependencyObject);
-                    nav.NavigateAsync(new NavigationRequest(s, new NavigationRoute(new Uri(path, UriKind.Relative))));
+                    try
+                    {
+                        var nav = ScopedServiceForControl(s as DependencyObject);
+                        await nav.NavigateAsync(new NavigationRequest(s, new NavigationRoute(new Uri(path, UriKind.Relative))));
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.LazyLogError(() => $"Navigation failed - {ex.Message}");
+                    }
                 };
             element.Loaded += (s, e) =>
             {
