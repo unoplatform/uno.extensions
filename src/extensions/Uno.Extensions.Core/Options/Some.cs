@@ -69,7 +69,7 @@ public sealed class Some<T> : Option<T>
         unchecked
         {
             return
-                typeof(T).GetHashCode() << 16 +
+                (typeof(T).GetHashCode() << 16) +
                 (Value?.GetHashCode() ?? 0);
         }
     }

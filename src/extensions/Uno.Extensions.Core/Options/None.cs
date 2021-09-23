@@ -19,7 +19,9 @@ public sealed class None<T> : Option<T>
     /// </summary>
     public static None<T> Instance { get; } = new None<T>();
 
-    private None() : base(OptionType.None) { }
+    private None() : base(OptionType.None)
+    {
+    }
 
     protected override object GetValue() => throw new NotSupportedException("Cannot get value on a None");
 
