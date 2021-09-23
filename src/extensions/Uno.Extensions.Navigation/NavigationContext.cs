@@ -31,5 +31,5 @@ public record NavigationContext(
         }
     }
 
-    public bool IsCancelled => CancellationToken.IsCancellationRequested;
+    public bool IsCancelled => CancellationToken.IsCancellationRequested || (Request.Cancellation?.IsCancellationRequested ?? false);
 }
