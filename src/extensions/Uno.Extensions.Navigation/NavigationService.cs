@@ -13,11 +13,11 @@ namespace Uno.Extensions.Navigation;
 
 public class NavigationService : INavigationService
 {
-    public INavigationMapping Mapping { get; }
+    public INavigationMappings Mapping { get; }
 
     public IRegionManager Region { get; set; }
 
-    public INavigationService Parent { get; }
+    public INavigationService Parent { get; set; }
 
     public (TaskCompletionSource<object>, NavigationRequest)? PendingNavigation { get; set; }
 
@@ -25,18 +25,10 @@ public class NavigationService : INavigationService
 
     private ILogger Logger { get; }
 
-    public NavigationService(ILogger<NavigationService> logger, IServiceProvider services, INavigationMapping mapping, INavigationService parent)
+    public NavigationService(ILogger<NavigationService> logger, IServiceProvider services, INavigationMappings mapping)
     {
         Logger = logger;
         ScopedServices = services;
-
-        // Prevent recursion when this is the root nav service
-        if (parent is not null)
-        {
-            var navWrapper = ScopedServices.GetService<NavigationServiceProvider>();
-            navWrapper.Navigation = this;
-            Parent = parent;
-        }
 
         Mapping = mapping;
     }
@@ -193,8 +185,12 @@ public class NavigationService : INavigationService
             var services = scope.ServiceProvider;
             var dataFactor = services.GetService<ViewModelDataProvider>();
             dataFactor.Parameters = paras;
-            var navWrapper = services.GetService<NavigationServiceProvider>();
-            navWrapper.Navigation = this;
+            //var navWrapper = services.GetService<NavigationServiceProvider>();
+            //navWrapper.Navigation = this;
+
+            var ans = services.GetService<INavigationService>() as NavigationService;// new NavigationService(Services.GetService<ILogger<NavigationService>>(), services, Mapping, parent);
+            ans.Parent = this.Parent;
+            ans.Region = this.Region;
 
             var mapping = Mapping.LookupByPath(navPath);
 
@@ -209,7 +205,7 @@ public class NavigationService : INavigationService
                                     CancellationTokenSource.CreateLinkedTokenSource(request.Cancellation.Value) :
                                     new CancellationTokenSource(),
                                 new TaskCompletionSource<Options.Option>(),
-                                Mapping: mapping);
+                                mapping);
             Logger.LazyLogDebug(() => $"Invoking navigation with Navigation Context");
             var navTask = RegionNavigateAsync(context);
             Logger.LazyLogDebug(() => $"Returning NavigationResponse");
@@ -289,7 +285,7 @@ public class NavigationService : INavigationService
     {
         get
         {
-            return (Parent as NavigationService) ?? this;
+            return (Parent as NavigationService)?.Root ?? this;
         }
     }
 
@@ -300,14 +296,13 @@ public class NavigationService : INavigationService
         return sb.ToString();
     }
 
-    private void PrintAllRegions(StringBuilder builder, NavigationService nav,  int indent = 0, string regionName = null)
+    private void PrintAllRegions(StringBuilder builder, NavigationService nav, int indent = 0, string regionName = null)
     {
         if (nav.Region is null)
         {
             builder.AppendLine("");
             builder.AppendLine("------------------------------------------------------------------------------------------------");
             builder.AppendLine($"ROOT");
-            builder.AppendLine("------------------------------------------------------------------------------------------------");
         }
         else
         {
@@ -324,6 +319,11 @@ public class NavigationService : INavigationService
         foreach (var nested in nav.NestedRegions)
         {
             PrintAllRegions(builder, nested.Value as NavigationService, indent + 1, nested.Key);
+        }
+
+        if (nav.Region is null)
+        {
+            builder.AppendLine("------------------------------------------------------------------------------------------------");
         }
     }
 

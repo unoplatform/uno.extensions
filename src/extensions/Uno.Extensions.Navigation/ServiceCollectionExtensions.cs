@@ -36,13 +36,14 @@ public static class ServiceCollectionExtensions
                     .AddSingleton<IDialogFactory, DialogFactory>()
 
                     // Register the navigation mappings repository
-                    .AddSingleton<INavigationMapping, NavigationMapping>()
+                    .AddSingleton<INavigationMappings, NavigationMappings>()
 
                     // Register the navigation manager and the providers for
                     // navigation data and the navigation service
                     .AddSingleton<INavigationManager, NavigationManager>()
-                    .AddScoped<NavigationServiceProvider>()
-                    .AddScoped<INavigationService>(services => services.GetService<NavigationServiceProvider>().Navigation)
+                    //.AddScoped<NavigationServiceProvider>()
+                    .AddScoped<INavigationService, NavigationService>()
+                    //.AddScoped<INavigationService>(services => services.GetService<NavigationServiceProvider>().Navigation)
                     .AddScoped<ViewModelDataProvider>()
                     .AddScoped<RegionControlProvider>()
                     .AddScoped<IDictionary<string, object>>(services => services.GetService<ViewModelDataProvider>().Parameters);
@@ -88,17 +89,17 @@ public class ViewModelDataProvider
     }
 }
 
-public class NavigationServiceProvider
-{
-    public INavigationService Navigation { get; set; }
+//public class NavigationServiceProvider
+//{
+//    public INavigationService Navigation { get; set; }
 
-    public NavigationServiceProvider(INavigationManager manager)
-    {
-        // Set the default Navigation Service - expect this to be
-        // overriden for scoped contexts
-        Navigation = manager;
-    }
-}
+//    public NavigationServiceProvider(INavigationManager manager)
+//    {
+//        // Set the default Navigation Service - expect this to be
+//        // overriden for scoped contexts
+//        Navigation = manager.Root;
+//    }
+//}
 
 public class RegionControlProvider
 {

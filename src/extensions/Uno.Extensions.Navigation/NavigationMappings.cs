@@ -16,7 +16,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation;
 
-public class NavigationMapping : INavigationMapping
+public class NavigationMappings : INavigationMappings
 {
     public bool ReturnImplicitMapping { get; set; } = true;
 
@@ -30,7 +30,7 @@ public class NavigationMapping : INavigationMapping
 
     private ILogger Logger { get; }
 
-    public NavigationMapping(ILogger<NavigationMapping> logger)
+    public NavigationMappings(ILogger<NavigationMappings> logger)
     {
         Logger = logger;
     }

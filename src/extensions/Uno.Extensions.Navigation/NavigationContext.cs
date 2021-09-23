@@ -14,8 +14,8 @@ public record NavigationContext(
     IDictionary<string, object> Data,
     CancellationTokenSource CancellationSource,
     TaskCompletionSource<Options.Option> ResultCompletion,
-    bool CanCancel = true,
-    NavigationMap Mapping = null)
+    NavigationMap Mapping,
+    bool CanCancel = true)
 #pragma warning restore SA1313 // Parameter names should begin with lower-case letter
 {
 
