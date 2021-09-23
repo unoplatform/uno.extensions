@@ -42,10 +42,10 @@ public static class Navigation
         }
     }
 
-    public static readonly DependencyProperty RegionManagerProperty =
+    public static readonly DependencyProperty NavigationRegionContainerProperty =
    DependencyProperty.RegisterAttached(
-     "RegionManager",
-     typeof(INavigationService),
+     "NavigationRegionContainer",
+     typeof(INavigationRegionContainer),
      typeof(Navigation),
      new PropertyMetadata(null)
    );
@@ -85,40 +85,46 @@ public static class Navigation
     private static void RegisterElement(FrameworkElement element, string regionName)
     {
         Logger.LazyLogDebug(() => $"Attaching to Loaded event on element {element.GetType().Name}");
-        element.Loaded += (sLoaded, eLoaded) =>
+        element.Loaded += async (sLoaded, eLoaded) =>
         {
             Logger.LazyLogDebug(() => $"Creating region manager");
             var loadedElement = sLoaded as FrameworkElement;
-            var existingRegion = loadedElement.GetRegionManager();
-            var parent = ScopedServiceForControl(loadedElement.Parent);
-            var region = NavigationManager.AddRegion(parent, regionName, element, existingRegion);
-            loadedElement.SetRegionManager(region);
+            var parent = ScopedServiceForControl(loadedElement.Parent) ?? NavigationManager.Root;
+            var navRegion = loadedElement.GetNavigationRegionContainer() ?? NavigationManager.CreateRegion(loadedElement);
+
+            navRegion.Navigation.Parent = parent.Navigation;
+
+            loadedElement.SetNavigationRegionContainer(navRegion);
             Logger.LazyLogDebug(() => $"Region manager created");
 
             Logger.LazyLogDebug(() => $"Attaching to Unloaded event on element {element.GetType().Name}");
             loadedElement.Unloaded += (sUnloaded, eUnloaded) =>
            {
-               if (region != null)
+               if (navRegion != null)
                {
                    Logger.LazyLogDebug(() => $"Removing region manager");
-                   NavigationManager.RemoveRegion(region);
+                   parent.RegionContainer.RemoveRegion(navRegion.RegionContainer);
                }
            };
+
+            Logger.LazyLogDebug(() => $"Attaching region manager");
+            await parent.RegionContainer.AddRegion(regionName, navRegion.RegionContainer);
+
         };
     }
 
-    public static void SetRegionManager(this FrameworkElement element, INavigationService value)
+    public static void SetNavigationRegionContainer(this FrameworkElement element, INavigationRegionContainer value)
     {
-        element.SetValue(RegionManagerProperty, value);
+        element.SetValue(NavigationRegionContainerProperty, value);
     }
 
-    public static INavigationService GetRegionManager(this FrameworkElement element)
+    public static INavigationRegionContainer GetNavigationRegionContainer(this FrameworkElement element)
     {
         if (element is null)
         {
             return null;
         }
-        return (INavigationService)element.GetValue(RegionManagerProperty);
+        return (INavigationRegionContainer)element.GetValue(NavigationRegionContainerProperty);
     }
 
     public static TElement AsNavigationContainer<TElement>(this TElement element)
@@ -166,7 +172,7 @@ public static class Navigation
                     try
                     {
                         var nav = ScopedServiceForControl(s as DependencyObject);
-                        await nav.NavigateAsync(new NavigationRequest(s, new NavigationRoute(new Uri(path, UriKind.Relative))));
+                        await nav.Navigation.NavigateByPathAsync(s, path);
                     }
                     catch (Exception ex)
                     {
@@ -184,9 +190,9 @@ public static class Navigation
         }
     }
 
-    private static INavigationService ScopedServiceForControl(DependencyObject element)
+    private static INavigationRegionContainer ScopedServiceForControl(DependencyObject element)
     {
-        var service = (element as FrameworkElement).GetRegionManager();
+        var service = (element as FrameworkElement).GetNavigationRegionContainer();
         if (service is not null)
         {
             return service;
