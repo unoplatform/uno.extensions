@@ -56,7 +56,7 @@ namespace ExtensionsSampleApp
                .ConfigureLogging(logBuilder =>
                {
                    logBuilder
-                        .SetMinimumLevel(LogLevel.Debug)
+                        .SetMinimumLevel(LogLevel.Trace)
                         .XamlLogLevel(LogLevel.Information)
                         .XamlLayoutLogLevel(LogLevel.Information);
                })
@@ -155,8 +155,8 @@ namespace ExtensionsSampleApp
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
                 var nav = Ioc.Default.GetService<INavigationService>();
-                var navResult = nav.NavigateToViewAsync<MainPage>(this);
-                //var navResult = nav.NavigateByPathAsync(this, "TabbedPage/doc2/SecondPage/content/Content1");
+                //var navResult = nav.NavigateToViewAsync<MainPage>(this);
+                var navResult = nav.NavigateByPathAsync(this, "TabbedPage/doc2/SecondPage/content/Content1");
                 //var navResult = nav.NavigateByPathAsync(this, "TwitterPage/home/TweetDetailsPage?tweetid=23");
                 navResult.OnCompleted(() => Debug.WriteLine("Nav complete"));
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)

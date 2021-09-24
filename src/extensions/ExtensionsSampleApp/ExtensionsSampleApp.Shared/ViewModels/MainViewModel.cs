@@ -6,6 +6,8 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ExtensionsSampleApp.Views;
+using Microsoft.Extensions.Logging;
+using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.ViewModels;
 
@@ -33,14 +35,18 @@ namespace ExtensionsSampleApp.ViewModels
     {
         public string Title => "Second - " + Data;
         private Widget Data;
-        public SecondViewModel(INavigationService nav, Widget data)
+        private ILogger Logger { get; }
+        public SecondViewModel(ILogger<SecondViewModel> logger, INavigationService nav, Widget data)
         {
+            Logger = logger;
             Data = data;
         }
 
         public async Task Start(NavigationContext context, bool create)
         {
+            Logger.LazyLogTrace(() => "Starting view model (delay 5s)");
             await Task.Delay(5000);
+            Logger.LazyLogTrace(() => "View model started (5s delay completed)");
         }
 
         public async Task Stop(NavigationContext context, bool cleanup)
