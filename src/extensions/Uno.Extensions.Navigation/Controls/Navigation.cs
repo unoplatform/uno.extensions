@@ -82,7 +82,23 @@ public static class Navigation
         }
     }
 
-    private static void RegisterElement(FrameworkElement element, string regionName)
+    public static readonly DependencyProperty RegionContentHostProperty =
+DependencyProperty.RegisterAttached(
+  "RegionContentHost",
+  typeof(FrameworkElement),
+  typeof(Navigation),
+  new PropertyMetadata(null, RegionContentHostChanged)
+);
+
+    private static void RegionContentHostChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is FrameworkElement element)
+        {
+            RegisterElement(element, string.Empty, e.NewValue as FrameworkElement);
+        }
+    }
+
+    private static void RegisterElement(FrameworkElement element, string regionName, object regionContentHost = null)
     {
         Logger.LazyLogDebug(() => $"Attaching to Loaded event on element {element.GetType().Name}");
         element.Loaded += async (sLoaded, eLoaded) =>
@@ -90,7 +106,7 @@ public static class Navigation
             Logger.LazyLogDebug(() => $"Creating region manager");
             var loadedElement = sLoaded as FrameworkElement;
             var parent = ScopedServiceForControl(loadedElement.Parent) ?? NavigationManager.Root;
-            var navRegion = loadedElement.GetNavigationRegionContainer() ?? NavigationManager.CreateRegion(loadedElement);
+            var navRegion = loadedElement.GetNavigationRegionContainer() ?? NavigationManager.CreateRegion(loadedElement, regionContentHost);
 
             navRegion.Navigation.Parent = parent.Navigation;
 
@@ -152,6 +168,16 @@ public static class Navigation
     public static string GetRegionName(FrameworkElement element)
     {
         return (string)element.GetValue(RegionNameProperty);
+    }
+
+    public static void SetRegionContentHost(FrameworkElement element, FrameworkElement value)
+    {
+        element.SetValue(RegionContentHostProperty, value);
+    }
+
+    public static FrameworkElement GetRegionContentHost(FrameworkElement element)
+    {
+        return (FrameworkElement)element.GetValue(RegionContentHostProperty);
     }
 
     public static readonly DependencyProperty PathProperty =

@@ -19,7 +19,10 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Control.Managers\GridVisiblityManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Control.Managers\NavigationViewManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Control.Managers\PageVisualStateManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Control.Managers\RegionControlWithContentManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Control.Managers\TabBarManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MainViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\Content1.xaml.cs">
       <DependentUpon>Content1.xaml</DependentUpon>

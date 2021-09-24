@@ -19,10 +19,16 @@ public class ContentControlManager : BaseControlManager<ContentControl>
     {
     }
 
-    protected override object InternalShow(string path, Type view, object data)
+    protected override object InternalShow(string path, Type view, object data, object viewModel)
     {
         try
         {
+            if(view is null)
+            {
+                Logger.LazyLogError(() => "Missing view for navigation path '{path}'");
+                return null;
+            }
+
             Logger.LazyLogDebug(() => $"Creating instance of type '{view.Name}'");
             var content = Activator.CreateInstance(view);
             Control.Content = content;

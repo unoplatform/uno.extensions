@@ -13,7 +13,7 @@ namespace ExtensionsSampleApp.Control.Managers
         {
         }
 
-        protected override object InternalShow(string path, Type view, object data)
+        protected override object InternalShow(string path, Type view, object data, object viewModel)
         {
             VisualStateManager.GoToState(Control, path, true);
             return null;

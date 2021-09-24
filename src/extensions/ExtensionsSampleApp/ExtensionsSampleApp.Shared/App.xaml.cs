@@ -14,7 +14,9 @@ using Uno.Extensions.Hosting;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Controls;
+using Uno.Extensions.Navigation.Controls.Managers;
 using Uno.Extensions.Navigation.Regions.Managers;
+using Uno.UI.ToolkitLib;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 
@@ -65,6 +67,14 @@ namespace ExtensionsSampleApp
                    services
                    .AddRegion<Grid, GridVisiblityManager, SimpleRegionManager<GridVisiblityManager>>()
                    .AddRegion<Page, PageVisualStateManager, SimpleRegionManager<PageVisualStateManager>>()
+                   .AddRegion<TabBar, TabBarManager, SimpleRegionManager<TabBarManager>>()
+                   .AddRegion<Microsoft.UI.Xaml.Controls.NavigationView, NavigationViewManager, SimpleRegionManager<NavigationViewManager>>()
+                   //.AddRegion<(TabBar,ContentControl), TabBarContentManager<ContentControl,ContentControlManager>, SimpleRegionManager<TabBarContentManager<ContentControl, ContentControlManager>>>()
+                   .AddRegion<(TabBar, ContentControl), RegionControlWithContentManager<TabBar, TabBarManager, ContentControl, ContentControlManager>, SimpleRegionManager<RegionControlWithContentManager<TabBar, TabBarManager, ContentControl, ContentControlManager>>>()
+                   .AddRegion<
+                       (Microsoft.UI.Xaml.Controls.NavigationView, Page),
+                        RegionControlWithContentManager<Microsoft.UI.Xaml.Controls.NavigationView, NavigationViewManager, Page, PageVisualStateManager>,
+                        SimpleRegionManager<RegionControlWithContentManager<Microsoft.UI.Xaml.Controls.NavigationView, NavigationViewManager, Page, PageVisualStateManager>>>()
                    .AddScoped<MainViewModel>()
                    .AddScoped<SecondViewModel>()
                    .AddViewModelData<Widget>()
@@ -155,8 +165,8 @@ namespace ExtensionsSampleApp
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
                 var nav = Ioc.Default.GetService<INavigationService>();
-                //var navResult = nav.NavigateToViewAsync<MainPage>(this);
-                var navResult = nav.NavigateByPathAsync(this, "TabbedPage/doc2/SecondPage/content/Content1");
+                var navResult = nav.NavigateToViewAsync<MainPage>(this);
+                //var navResult = nav.NavigateByPathAsync(this, "TabbedPage/doc2/SecondPage/content/Content1");
                 //var navResult = nav.NavigateByPathAsync(this, "TwitterPage/home/TweetDetailsPage?tweetid=23");
                 navResult.OnCompleted(() => Debug.WriteLine("Nav complete"));
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
