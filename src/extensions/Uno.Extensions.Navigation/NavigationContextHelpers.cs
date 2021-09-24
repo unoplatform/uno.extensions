@@ -11,7 +11,7 @@ namespace Uno.Extensions.Navigation
 
 public static class NavigationContextHelpers
 {
-    public static NavigationContext BuildNavigationContext(this NavigationRequest request, IServiceProvider services)
+    public static NavigationContext BuildNavigationContext(this NavigationRequest request, IServiceProvider services, TaskCompletionSource<Options.Option> completion)
     {
         var path = request.Route.Uri.OriginalString;
         //Logger.LazyLogDebug(() => $"Parsing route '{path}'");
@@ -95,7 +95,7 @@ public static class NavigationContextHelpers
                             (request.Cancellation is not null) ?
                                 CancellationTokenSource.CreateLinkedTokenSource(request.Cancellation.Value) :
                                 new CancellationTokenSource(),
-                            new TaskCompletionSource<Options.Option>(),
+                            completion,
                             mapping);
         return context;
     }
