@@ -16,7 +16,7 @@ public abstract class BaseControlManager<TControl> : IViewManager
 {
     protected ILogger Logger { get; }
 
-    protected TControl Control { get; }
+    public virtual TControl Control { get; set; }
 
     protected INavigationService Navigation { get; }
 
@@ -37,7 +37,7 @@ public abstract class BaseControlManager<TControl> : IViewManager
     /// <param name="viewModel">The view model to be set as datacontext on the destination view</param>
     public void Show(string path, Type viewType, object data, object viewModel)
     {
-        var view = InternalShow(path, viewType, data);
+        var view = InternalShow(path, viewType, data, viewModel);
         InitialiseView(view, viewModel);
     }
 
@@ -48,7 +48,7 @@ public abstract class BaseControlManager<TControl> : IViewManager
     /// <param name="viewType">The type of view to navigation to (eg used by the FrameManager to navigate)</param>
     /// <param name="data">The data passed into the navigation (eg set as parameter for Navigate method in FrameManager)</param>
     /// <returns>The control that's been navigated to</returns>
-    protected abstract object InternalShow(string path, Type viewType, object data);
+    protected abstract object InternalShow(string path, Type viewType, object data, object viewModel);
 
     /// <summary>
     /// Sets the view model as the data context for the view

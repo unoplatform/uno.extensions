@@ -14,7 +14,7 @@ namespace ExtensionsSampleApp.Control.Managers
         }
 
         private FrameworkElement CurrentlyVisibleControl { get; set; }
-        protected override object InternalShow(string path, Type view, object data)
+        protected override object InternalShow(string path, Type view, object data, object viewModel)
         {
             var controlToShow = Control.FindName(path) as FrameworkElement;
             if(controlToShow is null)

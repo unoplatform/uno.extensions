@@ -68,7 +68,7 @@ public static class ServiceCollectionExtensions
     }
 
     public static IServiceCollection AddRegion<TControl, TControlManager, TRegionManager>(this IServiceCollection services)
-        where TControl : class
+        //where TControl : class
         where TControlManager : class, IViewManager
         where TRegionManager : class, IRegionManager
     {

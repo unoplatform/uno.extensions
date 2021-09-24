@@ -4,7 +4,7 @@ public interface INavigationManager
 {
     INavigationRegionContainer Root { get; }
 
-    INavigationRegionContainer CreateRegion(object control);
+    INavigationRegionContainer CreateRegion(object control, object contentControl);
 
     //INavigationService AddRegion(INavigationService parentRegion, string regionName, object control, INavigationService existingRegion);
 

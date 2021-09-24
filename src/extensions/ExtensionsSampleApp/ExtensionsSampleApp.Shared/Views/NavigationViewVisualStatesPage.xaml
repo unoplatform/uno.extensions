@@ -8,9 +8,13 @@
       mc:Ignorable="d"
       xmlns:nav="using:Uno.Extensions.Navigation.Controls"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-      nav:Navigation.IsRegion="True">
+      >
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState x:Name="showcontent1">
@@ -28,33 +32,23 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <muxc:NavigationView x:Name="NavView"
-                             ItemInvoked="NavView_ItemInvoked">
+            nav:Navigation.RegionContentHost="{x:Bind }">
             <muxc:NavigationView.MenuItems>
                 <muxc:NavigationViewItem Tag="home"
                                          Icon="Home"
                                          Content="Home"
-                                         nav:Navigation.Path="./showcontent1" />
-                <muxc:NavigationViewItemSeparator />
-                <muxc:NavigationViewItemHeader x:Name="MainPagesHeader"
-                                               Content="Main pages" />
+                                         x:Name="Content1"
+                                         nav:Navigation.Path="showcontent1" />
                 <muxc:NavigationViewItem Tag="apps"
                                          Content="Apps"
-                                         nav:Navigation.Path="./showcontent2">
+                                         x:Name="Content2"
+                                         nav:Navigation.Path="showcontent2">
                     <muxc:NavigationViewItem.Icon>
                         <FontIcon FontFamily="Segoe MDL2 Assets"
                                   Glyph="&#xEB3C;" />
                     </muxc:NavigationViewItem.Icon>
                 </muxc:NavigationViewItem>
-                <muxc:NavigationViewItem Tag="games"
-                                         Content="Games">
-                    <muxc:NavigationViewItem.Icon>
-                        <FontIcon FontFamily="Segoe MDL2 Assets"
-                                  Glyph="&#xE7FC;" />
-                    </muxc:NavigationViewItem.Icon>
-                </muxc:NavigationViewItem>
-                <muxc:NavigationViewItem Tag="music"
-                                         Icon="Audio"
-                                         Content="Music" />
+
             </muxc:NavigationView.MenuItems>
 
             <ScrollViewer>
@@ -66,6 +60,9 @@
                 </Grid>
             </ScrollViewer>
         </muxc:NavigationView>
-
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <Button Content="Home" nav:Navigation.Path="./Content1" />
+            <Button Content="Apps" nav:Navigation.Path="./Content2"  />
+        </StackPanel>
     </Grid>
 </Page>

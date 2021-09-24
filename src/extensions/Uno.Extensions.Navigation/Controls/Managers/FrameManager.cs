@@ -60,7 +60,7 @@ public class FrameManager : BaseControlManager<Frame>, IStackViewManager
         InitialiseView(Control.Content, viewModel);
     }
 
-    protected override object InternalShow(string path, Type view, object data)
+    protected override object InternalShow(string path, Type view, object data, object viewModel)
     {
         try
         {
