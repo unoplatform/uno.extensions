@@ -112,43 +112,54 @@ public static class NavigationContextHelpers
         return scopedServices;
     }
 
-    public static async Task<object> StopVieModel(this NavigationContext contextToStop, NavigationContext navigationContext)
-    {
-        object oldVm = default;
-        if (contextToStop.Mapping?.ViewModel is not null)
-        {
-            var services = contextToStop.Services;
-            oldVm = services.GetService(contextToStop.Mapping.ViewModel);
-            await ((oldVm as IViewModelStop)?.Stop(navigationContext, navigationContext.IsBackNavigation) ?? Task.CompletedTask);
-        }
-        return oldVm;
-    }
+    //public static async Task<object> StopVieModel(this NavigationContext contextToStop, NavigationContext navigationContext)
+    //{
+    //    object oldVm = default;
+    //    if (contextToStop.Mapping?.ViewModel is not null)
+    //    {
+    //        var services = contextToStop.Services;
+    //        oldVm = services.GetService(contextToStop.Mapping.ViewModel);
+    //        await ((oldVm as IViewModelStop)?.Stop(navigationContext, navigationContext.IsBackNavigation) ?? Task.CompletedTask);
+    //    }
+    //    return oldVm;
+    //}
 
-    public static async Task<object> InitializeViewModel(this NavigationContext contextToInitialize, INavigationService navigation)
+    //public static async Task<object> InitializeViewModel(this NavigationContext contextToInitialize, INavigationService navigation)
+    //{
+    //    var mapping = contextToInitialize.Mapping;
+    //    object vm = default;
+    //    if (mapping?.ViewModel is not null)
+    //    {
+    //        var services = contextToInitialize.Services;
+    //        var dataFactor = services.GetService<ViewModelDataProvider>();
+    //        dataFactor.Parameters = contextToInitialize.Data;
+
+    //        vm = services.GetService(mapping.ViewModel);
+    //        if (vm is INavigationAware navAware)
+    //        {
+    //            navAware.Navigation = navigation;
+    //        }
+    //        await ((vm as IViewModelInitialize)?.Initialize(contextToInitialize) ?? Task.CompletedTask);
+    //    }
+    //    return vm;
+    //}
+
+    //public static async Task StartViewModel(this NavigationContext contextToStart, object currentVM)
+    //{
+    //    await ((currentVM as IViewModelStart)?.Start(contextToStart, false) ?? Task.CompletedTask);
+    //}
+
+    public static object ViewModel(this NavigationContext context)
     {
-        var mapping = contextToInitialize.Mapping;
-        object vm = default;
+        var mapping = context.Mapping;
         if (mapping?.ViewModel is not null)
         {
-            var services = contextToInitialize.Services;
-            var dataFactor = services.GetService<ViewModelDataProvider>();
-            dataFactor.Parameters = contextToInitialize.Data;
-
-            vm = services.GetService(mapping.ViewModel);
-            if (vm is INavigationAware navAware)
-            {
-                navAware.Navigation = navigation;
-            }
-            await ((vm as IViewModelInitialize)?.Initialize(contextToInitialize) ?? Task.CompletedTask);
+            var services = context.Services;
+            return services.GetService(mapping.ViewModel);
         }
-        return vm;
-    }
 
-    public static async Task StartViewModel(this NavigationContext contextToStart, object currentVM)
-    {
-        await ((currentVM as IViewModelStart)?.Start(contextToStart, false) ?? Task.CompletedTask);
+        return null;
     }
-
     private static IDictionary<string, object> ParseQueryParameters(this string queryString)
     {
         return (from pair in (queryString + string.Empty).Split('&')

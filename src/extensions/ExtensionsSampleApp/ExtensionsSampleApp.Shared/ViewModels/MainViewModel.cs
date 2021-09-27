@@ -42,14 +42,14 @@ namespace ExtensionsSampleApp.ViewModels
             Data = data;
         }
 
-        public async Task Start(NavigationContext context, bool create)
+        public async Task Start(NavigationContext context)
         {
             Logger.LazyLogTrace(() => "Starting view model (delay 5s)");
             await Task.Delay(5000);
             Logger.LazyLogTrace(() => "View model started (5s delay completed)");
         }
 
-        public async Task Stop(NavigationContext context, bool cleanup)
+        public async Task Stop(NavigationContext context)
         {
             if (context.Path == typeof(ThirdPage).Name &&
                 !((context.Data as IDictionary<string, object>)?.Any() ?? false))
@@ -106,6 +106,11 @@ namespace ExtensionsSampleApp.ViewModels
 
     public class TweetsViewModel
     {
+        public TweetsViewModel()
+        {
+
+        }
+
         public IList<Tweet> Tweets { get; } = new List<Tweet>()
         {
             new Tweet() {Author= "Fred", Text="First tweet"},
@@ -143,7 +148,7 @@ namespace ExtensionsSampleApp.ViewModels
             Tweet = tweet;
         }
 
-        public async Task Start(NavigationContext context, bool create)
+        public async Task Start(NavigationContext context)
         {
             if (Tweet is null)
             {

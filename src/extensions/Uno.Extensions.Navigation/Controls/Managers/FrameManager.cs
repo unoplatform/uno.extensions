@@ -36,28 +36,45 @@ public class FrameManager : BaseControlManager<Frame>, IStackViewManager
         Logger.LazyLogDebug(() => $"Frame has navigated to page '{e.SourcePageType.Name}'");
         // This happens when the Navigate method is called directly on the Frame,
         // rather than via the navigationservice api
-        Navigation.NavigateToViewAsync(null, Control.SourcePageType, data: e.Parameter);
+        if (e.NavigationMode == NavigationMode.New)
+        {
+            Navigation.NavigateToViewAsync(null, Control.SourcePageType, data: e.Parameter);
+        }
+        else
+        {
+            Navigation.NavigateToPreviousViewAsync(null, data: e.Parameter);
+        }
     }
 
-    public void GoBack(object parameter, object viewModel)
+    public void GoBack(Type view, object parameter, object viewModel)
     {
-        if (parameter is not null)
+        try
         {
-            Logger.LazyLogDebug(() => $"Replacing last backstack item to inject parameter '{parameter.GetType().Name}'");
-            // If a parameter is being sent back, we need to replace
-            // the last frame on the backstack with one that has the correct
-            // parameter value. This value can be extracted via the OnNavigatedTo method
-            var entry = Control.BackStack.Last();
-            var newEntry = new PageStackEntry(entry.SourcePageType, parameter, entry.NavigationTransitionInfo);
-            Control.BackStack.Remove(entry);
-            Control.BackStack.Add(newEntry);
+            if (Control.Content?.GetType() != view)
+            {
+                if (parameter is not null)
+                {
+                    Logger.LazyLogDebug(() => $"Replacing last backstack item to inject parameter '{parameter.GetType().Name}'");
+                    // If a parameter is being sent back, we need to replace
+                    // the last frame on the backstack with one that has the correct
+                    // parameter value. This value can be extracted via the OnNavigatedTo method
+                    var entry = Control.BackStack.Last();
+                    var newEntry = new PageStackEntry(entry.SourcePageType, parameter, entry.NavigationTransitionInfo);
+                    Control.BackStack.Remove(entry);
+                    Control.BackStack.Add(newEntry);
+                }
+
+                Logger.LazyLogDebug(() => $"Invoking Frame.GoBack");
+                Control.GoBack();
+                Logger.LazyLogDebug(() => $"Frame.GoBack completed");
+            }
+
+            InitialiseView(Control.Content, viewModel);
         }
-
-        Logger.LazyLogDebug(() => $"Invoking Frame.GoBack");
-        Control.GoBack();
-        Logger.LazyLogDebug(() => $"Frame.GoBack completed");
-
-        InitialiseView(Control.Content, viewModel);
+        catch (Exception ex)
+        {
+            Logger.LazyLogError(() => $"Unable to go back to page - {ex.Message}");
+        }
     }
 
     protected override object InternalShow(string path, Type view, object data, object viewModel)
