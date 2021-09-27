@@ -1,22 +1,22 @@
 ﻿using System;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using Uno.Extensions.Logging;
 using Microsoft.Extensions.Logging;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Media;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Media;
 #else
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Media;
 #endif
+using Uno.Extensions.Logging;
 
 namespace Uno.Extensions.Navigation.Controls;
 

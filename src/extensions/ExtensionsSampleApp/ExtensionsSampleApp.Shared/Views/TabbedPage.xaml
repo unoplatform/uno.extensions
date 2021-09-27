@@ -79,9 +79,9 @@
                        nav:Navigation.IsRegion="true" />
                 <StackPanel Orientation="Horizontal" Grid.Row="2">
                     <Button Content="Page Two"
-                            nav:Navigation.NavigateOnClickPath="doc2/SecondPage" />
+                            nav:Navigation.NavigateOnClickPath="./SecondPage" />
                     <Button Content="Page Four"
-                            nav:Navigation.NavigateOnClickPath="doc2/FourthPage" />
+                            nav:Navigation.NavigateOnClickPath="./FourthPage" />
                 </StackPanel>
             </Grid>
         </controls:TabViewItem>

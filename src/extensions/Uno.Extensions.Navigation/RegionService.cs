@@ -82,7 +82,7 @@ public class RegionService : IRegionServiceContainer, IRegionService
                 return (true, null);
             }
             var nextRoute = request.Route.Uri.OriginalString.TrimStart($"{firstRoute}/");
-            var residualRequest = request.WithPath(nextRoute).BuildNavigationContext(Services, new TaskCompletionSource<Options.Option>()); // request with { Route = request.Route with { Uri = new Uri(nextRoute, UriKind.Relative) } };
+            var residualRequest = request.WithPath(nextRoute).BuildNavigationContext(Services, new TaskCompletionSource<Options.Option>());
             return (true, residualRequest);
         }
         else if (Region is null)
@@ -132,7 +132,7 @@ public class RegionService : IRegionServiceContainer, IRegionService
                     else
                     {
                         var nextRoute = nestedRequest.Route.Uri.OriginalString.TrimStart($"{nestedRoute}/");
-                        nestedContext = nestedContext with { Request = nestedRequest.WithPath(nextRoute) };
+                        nestedContext = nestedRequest.WithPath(nextRoute).BuildNavigationContext(nested.Services, new TaskCompletionSource<Options.Option>());
                     }
 
                     if (nested is not null)

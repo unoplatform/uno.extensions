@@ -31,5 +31,4 @@ public class SimpleRegionManager<TControl> : BaseRegionManager
     {
         return $"Simple({typeof(TControl).Name}) '{CurrentContext?.Path}'";
     }
-
 }
