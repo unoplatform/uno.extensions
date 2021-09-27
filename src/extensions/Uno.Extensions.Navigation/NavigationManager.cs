@@ -26,10 +26,10 @@ public class NavigationManager : INavigationManager
         Services = services;
         Factories = factories.ToDictionary(x => x.ControlType);
         var regionLogger = services.GetService<ILogger<RegionService>>();
-        var regionContainer = new RegionService(regionLogger, services, null);
+        var regionContainer = new RegionService(regionLogger, services);
         //services.GetService<ScopedServiceHost<IRegionServiceContainer>>().Service = regionContainer;
         var navLogger = services.GetService<ILogger<NavigationService>>();
-        var navService = new NavigationService(navLogger, services);
+        var navService = new NavigationService(navLogger, services, true);
         navService.Region = regionContainer;
         services.GetService<ScopedServiceHost<INavigationRegionService>>().Service = navService;
         Root = new NavigationRegionContainer(navService, regionContainer);//  services.GetService<INavigationRegionContainer>();
@@ -42,23 +42,28 @@ public class NavigationManager : INavigationManager
         var scope = Services.CreateScope();
         var services = scope.ServiceProvider;
 
+        // Create Navigation Service
         var navLogger = services.GetService<ILogger<NavigationService>>();
         var mappings = services.GetService<INavigationMappings>();
-        var navService = new NavigationService(navLogger, services);
+        var navService = new NavigationService(navLogger, services, false);
         services.GetService<ScopedServiceHost<INavigationRegionService>>().Service = navService;
 
-        // Make the control available via DI
-        services.GetService<RegionControlProvider>().RegionControl = contentControl is null ? control : (control, contentControl);
+        // Create Region Service Container
+        var regionLogger = services.GetService<ILogger<RegionService>>();
+        var regionContainer = new RegionService(regionLogger, services);
+        services.GetService<ScopedServiceHost<IRegionServiceContainer>>().Service = regionContainer;
 
+        // Associate Region Service Container with Navigation Service
+        navService.Region = regionContainer;
+
+        // Create Region Service
+        services.GetService<RegionControlProvider>().RegionControl = contentControl is null ? control : (control, contentControl);
         var factory = FindFactoryForControl(control, contentControl);
         var region = factory.Create(services);
         services.GetService<ScopedServiceHost<IRegionManager>>().Service = region;
 
-        var regionLogger = services.GetService<ILogger<RegionService>>();
-
-        var regionContainer = new RegionService(regionLogger, services, region);
-        services.GetService<ScopedServiceHost<IRegionServiceContainer>>().Service = regionContainer;
-        navService.Region = regionContainer;
+        // Associate region service with region service container
+        regionContainer.Region = region;
 
         // Retrieve the region container and the navigation service
         return services.GetService<INavigationRegionContainer>();
@@ -80,7 +85,7 @@ public class NavigationManager : INavigationManager
             }
         }
 
-        var baseTypes =(new Type[] { controlType }).Union (controlType.GetBaseTypes()).ToArray();
+        var baseTypes = (new Type[] { controlType }).Union(controlType.GetBaseTypes()).ToArray();
         var contentBaseTypes = contentControl is not null ? (new Type[] { contentControl.GetType() }).Union(contentControl.GetType().GetBaseTypes()).ToArray() : default;
         for (int i = 0; i < baseTypes.Length; i++)
         {

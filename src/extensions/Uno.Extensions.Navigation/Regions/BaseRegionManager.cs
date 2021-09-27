@@ -22,12 +22,19 @@ public abstract class BaseRegionManager : IRegionManager
 
     protected virtual bool CanGoBack => false;
 
+    protected IViewModelManager ViewModelManager { get; }
+
     private IDialogFactory DialogProvider { get; }
 
-    public BaseRegionManager(ILogger logger, INavigationService navigation, IDialogFactory dialogFactory)
+    public BaseRegionManager(
+        ILogger logger,
+        INavigationService navigation,
+        IViewModelManager viewModelManager,
+        IDialogFactory dialogFactory)
     {
         Logger = logger;
         Navigation = navigation;
+        ViewModelManager = viewModelManager;
         DialogProvider = dialogFactory;
     }
 
@@ -44,9 +51,9 @@ public abstract class BaseRegionManager : IRegionManager
 
         if (!navigationHandled)
         {
-            var vm = await DoNavigation(context);
+            await DoNavigation(context);
 
-            await context.StartViewModel(vm);
+            await ViewModelManager.StartViewModel(context);
         }
 
         context = context with { CanCancel = CanGoBack || OpenDialogs.Any() };
@@ -60,29 +67,29 @@ public abstract class BaseRegionManager : IRegionManager
         }
     }
 
-    protected virtual Task<object> DoNavigation(NavigationContext context)
+    protected virtual Task DoNavigation(NavigationContext context)
     {
         return DoForwardNavigation(context);
     }
 
-    protected async Task<object> DoForwardNavigation(NavigationContext context)
+    protected async Task DoForwardNavigation(NavigationContext context)
     {
-        var vm = await context.InitializeViewModel(Navigation);
+        ViewModelManager.CreateViewModel(context);
 
-        var dialog = DialogProvider.CreateDialog(Navigation, context, vm);
+        await ViewModelManager.InitializeViewModel(context);
+
+        var dialog = DialogProvider.CreateDialog(Navigation, context);
         if (dialog is not null)
         {
             OpenDialogs.Push(dialog);
         }
         else
         {
-            RegionNavigate(context, vm);
+            RegionNavigate(context);
         }
-
-        return vm;
     }
 
-    protected abstract void RegionNavigate(NavigationContext context, object viewModel);
+    protected abstract void RegionNavigate(NavigationContext context);
 
     private async Task<bool> EndCurrentNavigationContext(NavigationContext navigationContext)
     {
@@ -100,7 +107,12 @@ public abstract class BaseRegionManager : IRegionManager
         if (CurrentContext is not null)
         {
             // Stop the currently active viewmodel
-            await CurrentContext.StopVieModel(navigationContext);
+            await ViewModelManager.StopViewModel(CurrentContext);
+
+            if (!CanGoBack || navigationContext.IsBackNavigation)
+            {
+                ViewModelManager.DisposeViewModel(CurrentContext);
+            }
 
             // Check if navigation was cancelled - if it is,
             // then indicate that navigation has been handled
@@ -149,7 +161,10 @@ public abstract class BaseRegionManager : IRegionManager
         var dialog = OpenDialogs.Pop();
 
         var responseData = navigationContext.Data.TryGetValue(string.Empty, out var response) ? response : default;
-        await dialog.Context.StopVieModel(navigationContext);
+
+        await ViewModelManager.StopViewModel(navigationContext);
+
+        ViewModelManager.DisposeViewModel(navigationContext);
 
         responseData = dialog.Manager.CloseDialog(dialog, navigationContext, responseData);
 
@@ -166,9 +181,6 @@ public abstract class BaseRegionManager : IRegionManager
             }
         }
 
-        // Restart the view model for the current context
-        var currentVM = await CurrentContext.InitializeViewModel(Navigation);
-
-        await ((currentVM as IViewModelStart)?.Start(CurrentContext, false) ?? Task.CompletedTask);
+        await ViewModelManager.StartViewModel(CurrentContext);
     }
 }

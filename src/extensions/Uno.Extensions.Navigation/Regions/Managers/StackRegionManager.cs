@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Dialogs;
+using Uno.Extensions.Navigation.ViewModels;
 
 namespace Uno.Extensions.Navigation.Regions.Managers;
 
@@ -17,24 +18,24 @@ public class StackRegionManager<TControl> : BaseRegionManager
 
     public override NavigationContext CurrentContext => NavigationContexts.LastOrDefault();
 
-    public StackRegionManager(ILogger<StackRegionManager<TControl>> logger, INavigationService navigation, IDialogFactory dialogFactory, TControl control) : base(logger, navigation, dialogFactory)
+    public StackRegionManager(ILogger<SimpleRegionManager<TControl>> logger, INavigationService navigation, IViewModelManager viewModelManager, IDialogFactory dialogFactory, TControl control) : base(logger, navigation, viewModelManager, dialogFactory)
     {
         StackControl = control;
     }
 
-    protected override async Task<object> DoNavigation(NavigationContext context)
+    protected override Task DoNavigation(NavigationContext context)
     {
         if (context.IsBackNavigation)
         {
-            return await DoBackNavigation(context);
+            return DoBackNavigation(context);
         }
         else
         {
-            return await DoForwardNavigation(context);
+            return DoForwardNavigation(context);
         }
     }
 
-    protected async Task<object> DoBackNavigation(NavigationContext context)
+    protected Task DoBackNavigation(NavigationContext context)
     {
         // Remove any excess items in the back stack
         var numberOfPagesToRemove = context.FramesToRemove;
@@ -49,18 +50,15 @@ public class StackRegionManager<TControl> : BaseRegionManager
         // Now remove the current context
         NavigationContexts.RemoveAt(NavigationContexts.Count - 1);
 
-        // Initialise the view model for the previous context (which is now the current context)
-        var currentVM = await CurrentContext.InitializeViewModel(Navigation);
-
         // Invoke the navigation (which will be a back navigation)
-        StackControl.GoBack(context.Data, currentVM);
+        StackControl.GoBack(CurrentContext.Mapping?.View, context.Data, CurrentContext.ViewModel());
 
-        return currentVM;
+        return Task.CompletedTask;
     }
 
     protected override bool CanGoBack => NavigationContexts.Count > 1;
 
-    protected override void RegionNavigate(NavigationContext context, object viewModel)
+    protected override void RegionNavigate(NavigationContext context)
     {
         var numberOfPagesToRemove = context.FramesToRemove;
         // We remove 1 less here because we need to remove the current context, after the navigation is completed
@@ -73,7 +71,7 @@ public class StackRegionManager<TControl> : BaseRegionManager
 
         // Add the new context to the list of contexts and then navigate away
         NavigationContexts.Add(context);
-        StackControl.Show(context.Path, context.Mapping?.View, context.Data, viewModel);
+        StackControl.Show(context.Path, context.Mapping?.View, context.Data, context.ViewModel());
 
         // If path starts with / then remove all prior pages and corresponding contexts
         if (context.PathIsRooted)

@@ -16,10 +16,13 @@ public class NavigationService : INavigationRegionService
 
     private ILogger Logger { get; }
 
-    public NavigationService(ILogger<NavigationService> logger, IServiceProvider services)
+    private bool IsRootService { get; }
+
+    public NavigationService(ILogger<NavigationService> logger, IServiceProvider services, bool isRoot)
     {
         Logger = logger;
         ScopedServices = services;
+        IsRootService = isRoot;
     }
 
     private int isNavigating = 0;
@@ -34,6 +37,11 @@ public class NavigationService : INavigationRegionService
         try
         {
             var path = request.Route.Uri.OriginalString;
+            if (IsRootService && !path.StartsWith(NavigationConstants.RelativePath.Nested))
+            {
+                request = request.WithPath(NavigationConstants.RelativePath.Nested + path);
+            }
+
             if (path.StartsWith(NavigationConstants.RelativePath.ParentPath))
             {
                 // Routing navigation request to parent

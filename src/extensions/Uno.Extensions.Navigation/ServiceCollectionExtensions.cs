@@ -6,6 +6,7 @@ using Uno.Extensions.Navigation.Dialogs;
 using Uno.Extensions.Navigation.Dialogs.Managers;
 using Uno.Extensions.Navigation.Regions;
 using Uno.Extensions.Navigation.Regions.Managers;
+using Uno.Extensions.Navigation.ViewModels;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls;
@@ -37,6 +38,9 @@ public static class ServiceCollectionExtensions
 
                     // Register the navigation mappings repository
                     .AddSingleton<INavigationMappings, NavigationMappings>()
+
+                    // Register the view model manager
+                    .AddScoped<IViewModelManager, ViewModelManager>()
 
                     // Register the navigation manager and the providers for
                     // navigation data and the navigation service

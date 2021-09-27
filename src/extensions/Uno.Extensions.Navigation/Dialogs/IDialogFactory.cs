@@ -2,5 +2,5 @@
 
 public interface IDialogFactory
 {
-    Dialog CreateDialog(INavigationService navigation, NavigationContext context, object vm);
+    Dialog CreateDialog(INavigationService navigation, NavigationContext context);
 }

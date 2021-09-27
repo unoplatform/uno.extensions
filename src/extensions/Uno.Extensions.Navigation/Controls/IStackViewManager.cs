@@ -1,8 +1,10 @@
-﻿namespace Uno.Extensions.Navigation.Controls;
+﻿using System;
+
+namespace Uno.Extensions.Navigation.Controls;
 
 public interface IStackViewManager : IViewManager
 {
-    void GoBack(object data, object viewModel);
+    void GoBack(Type view, object data, object viewModel);
 
     void RemoveLastFromBackStack();
 
