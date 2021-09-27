@@ -22,7 +22,7 @@
                 <TextBlock Margin="20"
                            FontSize="30"><Run Text="Doc1 - " /><Run Text="{Binding Title}" /></TextBlock>
                 <Button Content="Doc0"
-                        nav:Navigation.Path="doc0" />
+                        nav:Navigation.NavigateOnClickPath="doc0" />
                 <Button Content="Doc0 - code"
                         Click="NavigateToDoc0Click" />
             </StackPanel>
@@ -36,15 +36,15 @@
                 <TextBlock Margin="20"
                            FontSize="30"><Run Text="Doc0 - " /><Run Text="{Binding Title}" /></TextBlock>
                 <Button Content="Home"
-                        nav:Navigation.Path="home" />
+                        nav:Navigation.NavigateOnClickPath="home" />
                 <Button Content="Go back"
-                        nav:Navigation.Path="//.." />
+                        nav:Navigation.NavigateOnClickPath="//.." />
                 <Button Content="Third Page"
-                        nav:Navigation.Path="//ThirdPage" />
+                        nav:Navigation.NavigateOnClickPath="//ThirdPage" />
                 <Button Content="Third Page"
                         Command="{Binding NavigateToThirdPageCommand}" />
                 <Button Content="Third Page (rooted)"
-                        nav:Navigation.Path="///ThirdPage" />
+                        nav:Navigation.NavigateOnClickPath="///ThirdPage" />
                 <Button Content="Doc1 - ViewModel"
                         Command="{Binding NavigateToDoc1Command}" />
             </StackPanel>
@@ -79,9 +79,9 @@
                        nav:Navigation.IsRegion="true" />
                 <StackPanel Orientation="Horizontal" Grid.Row="2">
                     <Button Content="Page Two"
-                            nav:Navigation.Path="doc2/SecondPage" />
+                            nav:Navigation.NavigateOnClickPath="doc2/SecondPage" />
                     <Button Content="Page Four"
-                            nav:Navigation.Path="doc2/FourthPage" />
+                            nav:Navigation.NavigateOnClickPath="doc2/FourthPage" />
                 </StackPanel>
             </Grid>
         </controls:TabViewItem>

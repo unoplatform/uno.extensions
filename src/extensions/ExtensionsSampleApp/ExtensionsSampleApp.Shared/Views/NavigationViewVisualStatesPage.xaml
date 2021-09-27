@@ -38,11 +38,11 @@
                                          Icon="Home"
                                          Content="Home"
                                          x:Name="Content1"
-                                         nav:Navigation.Path="showcontent1" />
+                                         nav:Navigation.NavigateOnClickPath="showcontent1" />
                 <muxc:NavigationViewItem Tag="apps"
                                          Content="Apps"
                                          x:Name="Content2"
-                                         nav:Navigation.Path="showcontent2">
+                                         nav:Navigation.NavigateOnClickPath="showcontent2">
                     <muxc:NavigationViewItem.Icon>
                         <FontIcon FontFamily="Segoe MDL2 Assets"
                                   Glyph="&#xEB3C;" />
@@ -54,6 +54,7 @@
             <ScrollViewer>
                 <Grid >
                     <local:Content1 Visibility="Collapsed"
+                                    Navigation ="{x:Bind Navigation}"
                                     x:Name="gridcontent1" />
                     <local:Content2 Visibility="Collapsed"
                                     x:Name="gridcontent2" />
@@ -61,8 +62,8 @@
             </ScrollViewer>
         </muxc:NavigationView>
         <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <Button Content="Home" nav:Navigation.Path="./Content1" />
-            <Button Content="Apps" nav:Navigation.Path="./Content2"  />
+            <Button Content="Home" nav:Navigation.NavigateOnClickPath="./Content1" />
+            <Button Content="Apps" nav:Navigation.NavigateOnClickPath="./Content2"  />
         </StackPanel>
     </Grid>
 </Page>

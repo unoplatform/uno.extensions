@@ -22,18 +22,18 @@
             <!--nav:Navigation.IsRegion="true" >-->
             <toolkit:TabBar.Items>
                 <toolkit:TabBarItem Content="Tab 1"
-                                    nav:Navigation.Path="./tabcontent/Content1"
+                                    nav:Navigation.Path="Content1"
                                     x:Name="Content1" />
                 <toolkit:TabBarItem Content="Tab 2"
-                                    nav:Navigation.Path="./tabcontent/Content2"
+                                    nav:Navigation.Path="Content2"
                                     x:Name="Content2" />
             </toolkit:TabBar.Items>
         </toolkit:TabBar>
         <!--<ContentControl nav:Navigation.RegionName="tabcontent" Grid.Row="1"/>-->
         <ContentControl Grid.Row="1" x:Name="ContentHost"/>
         <StackPanel Grid.Row="2" Orientation="Horizontal">
-            <Button Content="Tab 1" nav:Navigation.Path="./Content1" />
-            <Button Content="Tab 2" nav:Navigation.Path="./Content2"  />
+            <Button Content="Tab 1" nav:Navigation.NavigateOnClickPath="./Content1" />
+            <Button Content="Tab 2" nav:Navigation.NavigateOnClickPath="./Content2"  />
         </StackPanel>
     </Grid>
 </Page>

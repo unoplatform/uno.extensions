@@ -30,7 +30,11 @@ namespace ExtensionsSampleApp.Control.Managers
         private void ControlSelectionChanged(TabBar sender, TabBarSelectionChangedEventArgs args)
         {
             var tbi = args.NewItem as TabBarItem;
-            Navigation.NavigateByPathAsync(null, tbi.Name);
+            var path = Uno.Extensions.Navigation.Controls.Navigation.GetPath(tbi) ?? tbi.Name;
+            if (!string.IsNullOrEmpty(path))
+            {
+                Navigation.NavigateByPathAsync(null, path);
+            }
         }
 
         public TabBarManager(ILogger<TabBarManager> logger, INavigationService navigation, RegionControlProvider controlProvider) : base(logger, navigation, controlProvider.RegionControl as TabBar)

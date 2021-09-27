@@ -180,19 +180,30 @@ DependencyProperty.RegisterAttached(
         return (FrameworkElement)element.GetValue(RegionContentHostProperty);
     }
 
+    public static readonly DependencyProperty NavigateOnClickPathProperty =
+                DependencyProperty.RegisterAttached(
+                  "NavigateOnClickPath",
+                  typeof(string),
+                  typeof(Navigation),
+                  new PropertyMetadata(null, NavigateOnClickPathChanged)
+                );
+
     public static readonly DependencyProperty PathProperty =
                 DependencyProperty.RegisterAttached(
                   "Path",
                   typeof(string),
                   typeof(Navigation),
-                  new PropertyMetadata(null, PathChanged)
+                  new PropertyMetadata(null)
                 );
 
-    private static void PathChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    private static void NavigateOnClickPathChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
+        // Make sure we set the Path property too
+        d.SetValue(PathProperty, e.NewValue);
+
         if (d is ButtonBase element)
         {
-            var path = GetPath(element);
+            var path = GetNavigateOnClickPath(element);
             RoutedEventHandler handler = async (s, e) =>
                 {
                     try
@@ -238,5 +249,15 @@ DependencyProperty.RegisterAttached(
     public static string GetPath(FrameworkElement element)
     {
         return (string)element.GetValue(PathProperty);
+    }
+
+    public static void SetNavigateOnClickPath(FrameworkElement element, string value)
+    {
+        element.SetValue(NavigateOnClickPathProperty, value);
+    }
+
+    public static string GetNavigateOnClickPath(FrameworkElement element)
+    {
+        return (string)element.GetValue(NavigateOnClickPathProperty);
     }
 }
