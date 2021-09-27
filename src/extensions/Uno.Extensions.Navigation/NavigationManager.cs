@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
@@ -25,14 +23,19 @@ public class NavigationManager : INavigationManager
         Logger = logger;
         Services = services;
         Factories = factories.ToDictionary(x => x.ControlType);
+
+        // Create root region service
         var regionLogger = services.GetService<ILogger<RegionService>>();
         var regionContainer = new RegionService(regionLogger, services);
-        //services.GetService<ScopedServiceHost<IRegionServiceContainer>>().Service = regionContainer;
+
+        // Create root navigation service
         var navLogger = services.GetService<ILogger<NavigationService>>();
         var navService = new NavigationService(navLogger, services, true);
+
+        // Associate region and nav services and set as Root
         navService.Region = regionContainer;
         services.GetService<ScopedServiceHost<INavigationRegionService>>().Service = navService;
-        Root = new NavigationRegionContainer(navService, regionContainer);//  services.GetService<INavigationRegionContainer>();
+        Root = new NavigationRegionContainer(navService, regionContainer);
     }
 
     public INavigationRegionContainer CreateRegion(object control, object contentControl)
@@ -69,29 +72,22 @@ public class NavigationManager : INavigationManager
         return services.GetService<INavigationRegionContainer>();
     }
 
-    private void LogAllRegions()
-    {
-        Logger.LazyLogInformation(() => this.ToString());
-    }
-
     private IRegionManagerFactory FindFactoryForControl(object control, object contentControl)
     {
         var controlType = control.GetType();
-        if (contentControl is null)
+        if (contentControl is null &&
+            Factories.TryGetValue(controlType, out var factory))
         {
-            if (Factories.TryGetValue(controlType, out var factory))
-            {
-                return factory;
-            }
+            return factory;
         }
 
         var baseTypes = (new Type[] { controlType }).Union(controlType.GetBaseTypes()).ToArray();
         var contentBaseTypes = contentControl is not null ? (new Type[] { contentControl.GetType() }).Union(contentControl.GetType().GetBaseTypes()).ToArray() : default;
-        for (int i = 0; i < baseTypes.Length; i++)
+        for (var i = 0; i < baseTypes.Length; i++)
         {
             if (contentControl is not null)
             {
-                for (int j = 0; j < contentBaseTypes.Length; j++)
+                for (var j = 0; j < contentBaseTypes.Length; j++)
                 {
                     if (Factories.TryGetValue(typeof(ValueTuple<,>).MakeGenericType(baseTypes[i], contentBaseTypes[j]), out var baseFactory))
                     {
