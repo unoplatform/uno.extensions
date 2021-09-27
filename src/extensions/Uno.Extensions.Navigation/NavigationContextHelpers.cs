@@ -11,6 +11,11 @@ namespace Uno.Extensions.Navigation
 
 public static class NavigationContextHelpers
 {
+    public static PendingContext Pending(this NavigationContext context)
+    {
+        return new PendingContext(new TaskCompletionSource<object>(), context);
+    }
+
     public static NavigationContext BuildNavigationContext(this NavigationRequest request, IServiceProvider services, TaskCompletionSource<Options.Option> completion)
     {
         var path = request.Route.Uri.OriginalString;
