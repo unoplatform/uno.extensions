@@ -12,7 +12,7 @@ public class RegionService : IRegionServiceContainer, IRegionService
 {
     public IRegionManager Region { get; set; }
 
-    private (TaskCompletionSource<object>, NavigationRequest)? PendingNavigation { get; set; }
+    private (TaskCompletionSource<object>, NavigationContext)? PendingNavigation { get; set; }
 
     private IDictionary<string, RegionService> NestedRegions { get; } = new Dictionary<string, RegionService>();
 
@@ -50,37 +50,8 @@ public class RegionService : IRegionServiceContainer, IRegionService
     {
         if (PendingNavigation is null)
         {
-            PendingNavigation = (new TaskCompletionSource<object>(), context.Request);
+            PendingNavigation = (new TaskCompletionSource<object>(), context);
         }
-
-        //if (Region is null)
-        //{
-        //    if (PendingNavigation is null)
-        //    {
-        //        PendingNavigation = (new TaskCompletionSource<object>(), context.Request);
-        //    }
-
-        //    await PendingNavigation.Value.Item1.Task;
-        //    return;
-        //}
-
-        //if (context.Path == Region?.CurrentContext?.Path ||
-        //    (context.Path + "/") == NavigationConstants.RelativePath.Nested)
-        //{
-        //    Logger.LazyLogWarning(() => $"Attempt to log to the same path '{context.Path}");
-        //}
-        //else
-        //{
-        //    Logger.LazyLogDebug(() => $"Invoking region navigation");
-        //    await Region.NavigateAsync(context);
-        //    Logger.LazyLogDebug(() => $"Region Navigation complete");
-        //}
-
-        //if (context.ResidualRequest is not null &&
-        //    !string.IsNullOrWhiteSpace(context.ResidualRequest.Route.Uri.OriginalString))
-        //{
-        //    PendingNavigation = (new TaskCompletionSource<object>(), context.ResidualRequest);
-        //}
 
         await RunPendingNavigation();
     }
@@ -97,16 +68,21 @@ public class RegionService : IRegionServiceContainer, IRegionService
         return NestedRegions.TryGetValue(regionName + string.Empty, out var service) ? service : null;
     }
 
-    private async Task<(bool, NavigationRequest)> RunRegionNavigation(NavigationRequest request)
+    private async Task<(bool, NavigationContext)> RunRegionNavigation(NavigationContext context)
     {
+        var request = context.Request;
         var firstRoute = request.FirstRouteSegment;
 
         if (firstRoute == Region?.CurrentContext?.Path ||
             (firstRoute + "/") == NavigationConstants.RelativePath.Nested)
         {
             Logger.LazyLogWarning(() => $"Attempt to log to the same path '{firstRoute}");
+            if(context.Path == Region?.CurrentContext?.Path)
+            {
+                return (true, null);
+            }
             var nextRoute = request.Route.Uri.OriginalString.TrimStart($"{firstRoute}/");
-            var residualRequest = request with { Route = request.Route with { Uri = new Uri(nextRoute, UriKind.Relative) } };
+            var residualRequest = request.WithPath(nextRoute).BuildNavigationContext(Services, new TaskCompletionSource<Options.Option>()); // request with { Route = request.Route with { Uri = new Uri(nextRoute, UriKind.Relative) } };
             return (true, residualRequest);
         }
         else if (Region is null)
@@ -115,14 +91,14 @@ public class RegionService : IRegionServiceContainer, IRegionService
         }
         else
         {
-            var context = request.BuildNavigationContext(Services, new TaskCompletionSource<Options.Option>());
+            //var context = request.BuildNavigationContext(Services, new TaskCompletionSource<Options.Option>());
             Logger.LazyLogDebug(() => $"Invoking region navigation");
             await Region.NavigateAsync(context);
             Logger.LazyLogDebug(() => $"Region Navigation complete");
             if (context.ResidualRequest is not null &&
                 !string.IsNullOrWhiteSpace(context.ResidualRequest.Route.Uri.OriginalString))
             {
-                var residualRequest = context.ResidualRequest;
+                var residualRequest = context.ResidualRequest.BuildNavigationContext(Services, new TaskCompletionSource<Options.Option>());
                 return (true, residualRequest);
             }
             return (true, default);
@@ -144,7 +120,8 @@ public class RegionService : IRegionServiceContainer, IRegionService
             {
                 if (navResult.Item2 is not null)
                 {
-                    var nestedRequest = navResult.Item2;
+                    var nestedContext = navResult.Item2;
+                    var nestedRequest = nestedContext.Request;
                     var nestedRoute = nestedRequest.FirstRouteSegment;
 
                     var nested = Nested(nestedRoute);
@@ -155,20 +132,20 @@ public class RegionService : IRegionServiceContainer, IRegionService
                     else
                     {
                         var nextRoute = nestedRequest.Route.Uri.OriginalString.TrimStart($"{nestedRoute}/");
-                        nestedRequest = nestedRequest.WithPath(nextRoute);//  with { Route = nestedRequest.Route with { Uri = new Uri(nextRoute, UriKind.Relative) } };
+                        nestedContext = nestedContext with { Request = nestedRequest.WithPath(nextRoute) };//  with { Route = nestedRequest.Route with { Uri = new Uri(nextRoute, UriKind.Relative) } };
                     }
 
                     if (nested is not null)
                     {
-                        nested.PendingNavigation = (new TaskCompletionSource<object>(), nestedRequest);
+                        nested.PendingNavigation = (new TaskCompletionSource<object>(), nestedContext);
                         await nested.RunPendingNavigation();
-                       /* await nested.NavigateAsync(nestedRequest.BuildNavigationContext(nested.Services, new TaskCompletionSource<Options.Option>()))*/;
                     }
                     else
                     {
                         var pendingRoute = NavigationConstants.RelativePath.Nested + nestedRequest.Route.Uri.OriginalString;
                         var pendingRequest = nestedRequest.WithPath(pendingRoute);
-                        PendingNavigation = (new TaskCompletionSource<object>(), pendingRequest);
+                        var pendingContext = nestedContext with { Request = pendingRequest };
+                        PendingNavigation = (new TaskCompletionSource<object>(), pendingContext);
                         await PendingNavigation.Value.Item1.Task;
                     }
                 }

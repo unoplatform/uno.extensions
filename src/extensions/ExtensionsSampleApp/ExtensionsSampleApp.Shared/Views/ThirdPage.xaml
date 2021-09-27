@@ -17,15 +17,15 @@
                        Margin="20"
                        FontSize="30" Foreground="Red"/>
             <Button Content="Next Page"
-                    nav:Navigation.Path="FourthPage" />
+                    nav:Navigation.NavigateOnClickPath="FourthPage" />
             <Button Content="Go to Fourth Page and remove third page - NavigationRequest"
-                    nav:Navigation.Path="../FourthPage" />
+                    nav:Navigation.NavigateOnClickPath="../FourthPage" />
             <Button Content="Go to Fourth Page and remove second and third page - NavigationRequest"
-                    nav:Navigation.Path="../../FourthPage" />
+                    nav:Navigation.NavigateOnClickPath="../../FourthPage" />
             <Button Content="Go Back"
-                    nav:Navigation.Path=".." />
+                    nav:Navigation.NavigateOnClickPath=".." />
             <Button Content="Go Back with args"
-                    nav:Navigation.Path="..?args1=returnval1&amp;args2=returnval2" />
+                    nav:Navigation.NavigateOnClickPath="..?args1=returnval1&amp;args2=returnval2" />
             <Button Content="Go Back with data"
                     Click="NextPagePreviousViewWithDataClick"/>
             <Button Content="Go Back with args and data"

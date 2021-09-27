@@ -16,7 +16,7 @@
         </Grid.RowDefinitions>
         <StackPanel>
             <CommandBar >
-                <AppBarButton Icon="Back" Label="Back" nav:Navigation.Path=".." />
+                <AppBarButton Icon="Back" Label="Back" nav:Navigation.NavigateOnClickPath=".." />
                 <CommandBar.Content>
                     <TextBlock Text="Title"
                            Margin="12,8" />
@@ -29,9 +29,9 @@
                        FontSize="30"
                        Foreground="Red" />
             <Button Content="Next Page (cancelled - won't navigate)"
-                    nav:Navigation.Path="ThirdPage" />
+                    nav:Navigation.NavigateOnClickPath="ThirdPage" />
             <Button Content="Next Page with args"
-                    nav:Navigation.Path="ThirdPage?arg1=val1&amp;arg2=val2" />
+                    nav:Navigation.NavigateOnClickPath="ThirdPage?arg1=val1&amp;arg2=val2" />
             <Button Content="Next Page with data"
                     Click="NextPageNavigateToViewAsyncWithDataClick" />
             <Button Content="Next Page with args and data"
@@ -41,18 +41,18 @@
             <Button Content="Go Back - NavigationRequest"
                     Click="GoBackNavigationRequestClick" />
             <Button Content="Go Back - Navigation Path"
-                    nav:Navigation.Path=".." />
+                    nav:Navigation.NavigateOnClickPath=".." />
             <Button Content="Go Back - NavigateToPreviousViewAsync"
                     Click="GoBackNavigateToPreviousViewAsyncClick" />
             <Button Content="Tabbed Page - NavigationRequest"
-                    nav:Navigation.Path="TabbedPage" />
+                    nav:Navigation.NavigateOnClickPath="TabbedPage" />
         </StackPanel>
         <ContentControl Grid.Row="1" nav:Navigation.RegionName="content" />
         <StackPanel Grid.Row="2">
             <Button Content="Content Page 1"
-                    nav:Navigation.Path="./content/Content1" />
+                    nav:Navigation.NavigateOnClickPath="./content/Content1" />
             <Button Content="Content Page 2"
-                    nav:Navigation.Path="./content/Content2" />
+                    nav:Navigation.NavigateOnClickPath="./content/Content2" />
         </StackPanel>
     </Grid>
 </Page>

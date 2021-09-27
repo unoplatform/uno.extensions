@@ -14,7 +14,7 @@
             <Button Content="Next page - NavigationRequest"
                     Click="NextPageNavigationRequestClick" />
             <Button Content="Next page - Navigation Path"
-                    nav:Navigation.Path="SecondPage" />
+                    nav:Navigation.NavigateOnClickPath="SecondPage" />
             <Button Content="Next page - NavigateToViewAsync"
                     Click="NextPageNavigateToViewAsyncClick" />
             <Button Content="Next page - NavigateToViewModelAsync"
@@ -37,15 +37,15 @@
                     Click="MessageDialogClick" />
 
             <Button Content="Twitter"
-                    nav:Navigation.Path="/TwitterPage" />
+                    nav:Navigation.NavigateOnClickPath="/TwitterPage" />
             <Button Content="TabBar Page"
-                    nav:Navigation.Path="TabBarPage" />
+                    nav:Navigation.NavigateOnClickPath="TabBarPage" />
             <Button Content="NavigationView Page"
-                    nav:Navigation.Path="NavigationViewPage" />
+                    nav:Navigation.NavigateOnClickPath="NavigationViewPage" />
             <Button Content="NavigationViewGridVisibility Page"
-                    nav:Navigation.Path="NavigationViewGridVisibilityPage" />
+                    nav:Navigation.NavigateOnClickPath="NavigationViewGridVisibilityPage" />
             <Button Content="NavigationViewVisualStates Page"
-                    nav:Navigation.Path="NavigationViewVisualStatesPage" />
+                    nav:Navigation.NavigateOnClickPath="NavigationViewVisualStatesPage" />
         </StackPanel>
     </Grid>
 </Page>
