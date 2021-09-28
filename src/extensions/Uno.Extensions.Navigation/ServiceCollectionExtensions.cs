@@ -55,13 +55,12 @@ public static class ServiceCollectionExtensions
                     .AddScoped<RegionControlProvider>()
                     .AddScoped<IDictionary<string, object>>(services => services.GetService<ViewModelDataProvider>().Parameters)
 
-                    .AddScoped<ScopedServiceHost<INavigationRegionService>>()
-                    .AddScoped<INavigationRegionService>(services =>
-                            services.GetService<ScopedServiceHost<INavigationRegionService>>().Service ??
+                    .AddScoped<ScopedServiceHost<INavigationService>>()
+                    .AddScoped<INavigationService>(services =>
+                            services.GetService<ScopedServiceHost<INavigationService>>().Service ??
                             services.GetService<INavigationManager>().Root
-                            )
+                            );
 
-                    .AddScoped<INavigationService>(services => services.GetService<INavigationRegionService>());
     }
 
     public static IServiceCollection AddRegion<TControl, TRegionManager>(this IServiceCollection services)

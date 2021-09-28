@@ -6,7 +6,7 @@ using Uno.Extensions.Logging;
 
 namespace Uno.Extensions.Navigation;
 
-public class NavigationService : INavigationRegionService
+public class NavigationService : INavigationService
 {
     public INavigationService Parent { get; set; }
 
@@ -78,7 +78,7 @@ public class NavigationService : INavigationRegionService
     {
         var path = request.Route.Uri.OriginalString;
         Logger.LazyLogDebug(() => $"Redirecting navigation request to parent Navigation Service");
-        var parentService = Parent as NavigationService;
+        var parentService = Parent;
         var parentPath = path.Length > 2 ? path.Substring(2) : string.Empty;
 
         var parentRequest = request.WithPath(parentPath);
