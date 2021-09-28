@@ -2,7 +2,7 @@
 
 public interface INavigationManager 
 {
-    INavigationRegionContainer Root { get; }
+    INavigationRegionService Root { get; }
 
-    INavigationRegionContainer CreateRegion(object control, object contentControl);
+    INavigationRegionService CreateRegion(object control, object contentControl);
 }

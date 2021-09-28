@@ -42,10 +42,10 @@ public static class Navigation
         }
     }
 
-    public static readonly DependencyProperty NavigationRegionContainerProperty =
+    public static readonly DependencyProperty NavigationRegionServiceProperty =
    DependencyProperty.RegisterAttached(
-     "NavigationRegionContainer",
-     typeof(INavigationRegionContainer),
+     "NavigationRegionService",
+     typeof(INavigationRegionService),
      typeof(Navigation),
      new PropertyMetadata(null)
    );
@@ -106,11 +106,11 @@ DependencyProperty.RegisterAttached(
             Logger.LazyLogDebug(() => $"Creating region manager");
             var loadedElement = sLoaded as FrameworkElement;
             var parent = ScopedServiceForControl(loadedElement.Parent) ?? NavigationManager.Root;
-            var navRegion = loadedElement.GetNavigationRegionContainer() ?? NavigationManager.CreateRegion(loadedElement, regionContentHost);
+            var navRegion = loadedElement.GetNavigationRegionService() ?? NavigationManager.CreateRegion(loadedElement, regionContentHost);
 
-            navRegion.Navigation.Parent = parent.Navigation;
+            navRegion.Parent = parent;
 
-            loadedElement.SetNavigationRegionContainer(navRegion);
+            loadedElement.SetNavigationRegionService(navRegion);
             Logger.LazyLogDebug(() => $"Region manager created");
 
             Logger.LazyLogDebug(() => $"Attaching to Unloaded event on element {element.GetType().Name}");
@@ -119,28 +119,28 @@ DependencyProperty.RegisterAttached(
                if (navRegion != null)
                {
                    Logger.LazyLogDebug(() => $"Removing region manager");
-                   parent.RegionContainer.RemoveRegion(navRegion.RegionContainer);
+                   parent.Region.RemoveRegion(navRegion.Region);
                }
            };
 
             Logger.LazyLogDebug(() => $"Attaching region manager");
-            await parent.RegionContainer.AddRegion(regionName, navRegion.RegionContainer);
+            await parent.Region.AddRegion(regionName, navRegion.Region);
 
         };
     }
 
-    public static void SetNavigationRegionContainer(this FrameworkElement element, INavigationRegionContainer value)
+    public static void SetNavigationRegionService(this FrameworkElement element, INavigationRegionService value)
     {
-        element.SetValue(NavigationRegionContainerProperty, value);
+        element.SetValue(NavigationRegionServiceProperty, value);
     }
 
-    public static INavigationRegionContainer GetNavigationRegionContainer(this FrameworkElement element)
+    public static INavigationRegionService GetNavigationRegionService(this FrameworkElement element)
     {
         if (element is null)
         {
             return null;
         }
-        return (INavigationRegionContainer)element.GetValue(NavigationRegionContainerProperty);
+        return (INavigationRegionService)element.GetValue(NavigationRegionServiceProperty);
     }
 
     public static TElement AsNavigationContainer<TElement>(this TElement element)
@@ -209,7 +209,7 @@ DependencyProperty.RegisterAttached(
                     try
                     {
                         var nav = ScopedServiceForControl(s as DependencyObject);
-                        await nav.Navigation.NavigateByPathAsync(s, path);
+                        await nav.NavigateByPathAsync(s, path);
                     }
                     catch (Exception ex)
                     {
@@ -227,9 +227,9 @@ DependencyProperty.RegisterAttached(
         }
     }
 
-    private static INavigationRegionContainer ScopedServiceForControl(DependencyObject element)
+    private static INavigationRegionService ScopedServiceForControl(DependencyObject element)
     {
-        var service = (element as FrameworkElement).GetNavigationRegionContainer();
+        var service = (element as FrameworkElement).GetNavigationRegionService();
         if (service is not null)
         {
             return service;

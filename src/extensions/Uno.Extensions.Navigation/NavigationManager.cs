@@ -10,7 +10,7 @@ namespace Uno.Extensions.Navigation;
 
 public class NavigationManager : INavigationManager
 {
-    public INavigationRegionContainer Root { get; }
+    public INavigationRegionService Root { get; }
 
     private IServiceProvider Services { get; }
 
@@ -35,10 +35,10 @@ public class NavigationManager : INavigationManager
         // Associate region and nav services and set as Root
         navService.Region = regionContainer;
         services.GetService<ScopedServiceHost<INavigationRegionService>>().Service = navService;
-        Root = new NavigationRegionContainer(navService, regionContainer);
+        Root = navService;
     }
 
-    public INavigationRegionContainer CreateRegion(object control, object contentControl)
+    public INavigationRegionService CreateRegion(object control, object contentControl)
     {
         Logger.LazyLogDebug(() => $"Adding region with control of type '{control.GetType().Name}'");
 
@@ -54,7 +54,7 @@ public class NavigationManager : INavigationManager
         // Create Region Service Container
         var regionLogger = services.GetService<ILogger<RegionService>>();
         var regionContainer = new RegionService(regionLogger, services);
-        services.GetService<ScopedServiceHost<IRegionServiceContainer>>().Service = regionContainer;
+        services.GetService<ScopedServiceHost<IRegionService>>().Service = regionContainer;
 
         // Associate Region Service Container with Navigation Service
         navService.Region = regionContainer;
@@ -69,7 +69,7 @@ public class NavigationManager : INavigationManager
         regionContainer.Region = region;
 
         // Retrieve the region container and the navigation service
-        return services.GetService<INavigationRegionContainer>();
+        return navService;
     }
 
     private IRegionManagerFactory FindFactoryForControl(object control, object contentControl)
