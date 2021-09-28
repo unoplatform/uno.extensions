@@ -64,10 +64,7 @@ namespace ExtensionsSampleApp
                .ConfigureServices(services =>
                {
                    services
-                   .AddRegion<Grid, GridVisiblityRegionManager>()
-                   .AddRegion<Page, PageVisualStateRegionManager>()
                    .AddRegion<TabBar, TabBarRegionManager>()
-                   .AddRegion<Microsoft.UI.Xaml.Controls.NavigationView, NavigationViewRegionManager>()
                    //.AddRegion<(TabBar, ContentControl), TabBarContentManager<ContentControl, ContentControlManager>, SimpleRegionManager<TabBarContentManager<ContentControl, ContentControlManager>>>()
                    //.AddRegion<(TabBar, ContentControl), RegionControlWithContentRegionManager<TabBar, TabBarRegionManager, ContentControl, ContentControlRegionManager>>()
                    //.AddRegion<

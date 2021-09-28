@@ -30,6 +30,9 @@ public static class ServiceCollectionExtensions
                     .AddRegion<Frame, FrameRegionManager>()
                     .AddRegion<TabView, TabRegionManager>()
                     .AddRegion<ContentControl, ContentControlRegionManager>()
+                   .AddRegion<Grid, GridVisiblityRegionManager>()
+                   .AddRegion<Page, PageVisualStateRegionManager>()
+                   .AddRegion<Microsoft.UI.Xaml.Controls.NavigationView, NavigationViewRegionManager>()
 
                     // Register the different types of dialogs
                     .AddSingleton<IDialogManager, ContentDialogManager>()
