@@ -18,9 +18,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Region.Managers\GridVisiblityRegionManager.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Region.Managers\NavigationViewRegionManager.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Region.Managers\PageVisualStateRegionManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Region.Managers\TabBarRegionManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MainViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\Content1.xaml.cs">
