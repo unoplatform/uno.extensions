@@ -4,10 +4,13 @@ using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Controls;
 using Uno.UI.ToolkitLib;
+using Uno.Extensions.Navigation.ViewModels;
+using Uno.Extensions.Navigation.Dialogs;
+using Uno.Extensions.Navigation.Regions.Managers;
 
-namespace ExtensionsSampleApp.Control.Managers
+namespace ExtensionsSampleApp.Region.Managers
 {
-    public class TabBarManager : BaseControlManager<TabBar>
+    public class TabBarRegionManager : SimpleRegionManager<TabBar>
     {
         private TabBar _control;
 
@@ -37,7 +40,12 @@ namespace ExtensionsSampleApp.Control.Managers
             }
         }
 
-        public TabBarManager(ILogger<TabBarManager> logger, INavigationService navigation, RegionControlProvider controlProvider) : base(logger, navigation, controlProvider.RegionControl as TabBar)
+        public TabBarRegionManager(
+            ILogger<TabBarRegionManager> logger,
+            INavigationService navigation,
+        IViewModelManager viewModelManager,
+        IDialogFactory dialogFactory,
+        RegionControlProvider controlProvider) : base(logger, navigation, viewModelManager, dialogFactory, controlProvider.RegionControl as TabBar)
         {
         }
 

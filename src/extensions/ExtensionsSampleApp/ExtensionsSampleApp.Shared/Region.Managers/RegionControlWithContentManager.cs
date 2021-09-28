@@ -2,23 +2,29 @@
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Controls;
+using Uno.Extensions.Navigation.ViewModels;
+using Uno.Extensions.Navigation.Dialogs;
+using Uno.Extensions.Navigation.Regions.Managers;
+using Uno.Extensions.Navigation.Regions;
 
-namespace ExtensionsSampleApp.Control.Managers
+namespace ExtensionsSampleApp.Region.Managers
 {
-    public class RegionControlWithContentManager<TControl, TControlManager, TContent, TContentManager> : BaseControlManager<TControl>
+    public class RegionControlWithContentRegionManager<TControl, TControlManager, TContent, TContentManager> : SimpleRegionManager<TControl>
            where TControl : class
-           where TControlManager : BaseControlManager<TControl>
+           where TControlManager : BaseRegionManager<TControl>
            where TContent : class
-           where TContentManager : BaseControlManager<TContent>
+           where TContentManager : BaseRegionManager<TContent>
     {
         private TControlManager ControlManager { get; }
         private TContentManager ContentManager { get; }
-        public RegionControlWithContentManager(
-            ILogger<PageVisualStateManager> logger,
-            INavigationService navigation,
+        public RegionControlWithContentRegionManager(
+            ILogger<RegionControlWithContentRegionManager<TControl, TControlManager, TContent, TContentManager>> logger,
             TControlManager controlManager,
             TContentManager contentManager,
-            RegionControlProvider controlProvider) : base(logger, navigation, controlProvider.RegionControl as TControl)
+            INavigationService navigation,
+        IViewModelManager viewModelManager,
+        IDialogFactory dialogFactory,
+        RegionControlProvider controlProvider) : base(logger, navigation, viewModelManager, dialogFactory, controlProvider.RegionControl as TControl)
         {
             ControlManager = controlManager;
             ContentManager = contentManager;

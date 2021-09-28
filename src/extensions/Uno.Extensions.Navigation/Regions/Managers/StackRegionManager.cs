@@ -1,26 +1,27 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Uno.Extensions.Logging;
-using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Dialogs;
 using Uno.Extensions.Navigation.ViewModels;
 
 namespace Uno.Extensions.Navigation.Regions.Managers;
 
-public class StackRegionManager<TControl> : BaseRegionManager
-    where TControl : IStackViewManager
+public abstract class StackRegionManager<TControl> : BaseRegionManager<TControl>
+    where TControl : class
 {
-    private IStackViewManager StackControl { get; }
-
     private IList<NavigationContext> NavigationContexts { get; } = new List<NavigationContext>();
 
     public override NavigationContext CurrentContext => NavigationContexts.LastOrDefault();
 
-    public StackRegionManager(ILogger<SimpleRegionManager<TControl>> logger, INavigationService navigation, IViewModelManager viewModelManager, IDialogFactory dialogFactory, TControl control) : base(logger, navigation, viewModelManager, dialogFactory)
+    protected StackRegionManager(
+        ILogger logger,
+        INavigationService navigation,
+        IViewModelManager viewModelManager,
+        IDialogFactory dialogFactory,
+        TControl control) : base(logger, navigation, viewModelManager, dialogFactory, control)
     {
-        StackControl = control;
     }
 
     protected override Task DoNavigation(NavigationContext context)
@@ -43,7 +44,7 @@ public class StackRegionManager<TControl> : BaseRegionManager
         {
             // Don't remove the last context, as that's the current page
             NavigationContexts.RemoveAt(NavigationContexts.Count - 2);
-            StackControl.RemoveLastFromBackStack();
+            RemoveLastFromBackStack();
             numberOfPagesToRemove--;
         }
 
@@ -51,7 +52,7 @@ public class StackRegionManager<TControl> : BaseRegionManager
         NavigationContexts.RemoveAt(NavigationContexts.Count - 1);
 
         // Invoke the navigation (which will be a back navigation)
-        StackControl.GoBack(CurrentContext.Mapping?.View, context.Data, CurrentContext.ViewModel());
+        GoBack(CurrentContext.Mapping?.View, context.Data, CurrentContext.ViewModel());
 
         return Task.CompletedTask;
     }
@@ -65,13 +66,13 @@ public class StackRegionManager<TControl> : BaseRegionManager
         while (numberOfPagesToRemove > 1)
         {
             NavigationContexts.RemoveAt(NavigationContexts.Count - 2);
-            StackControl.RemoveLastFromBackStack();
+            RemoveLastFromBackStack();
             numberOfPagesToRemove--;
         }
 
         // Add the new context to the list of contexts and then navigate away
         NavigationContexts.Add(context);
-        StackControl.Show(context.Path, context.Mapping?.View, context.Data, context.ViewModel());
+        Show(context.Path, context.Mapping?.View, context.Data, context.ViewModel());
 
         // If path starts with / then remove all prior pages and corresponding contexts
         if (context.PathIsRooted)
@@ -81,7 +82,7 @@ public class StackRegionManager<TControl> : BaseRegionManager
                 NavigationContexts.RemoveAt(0);
             }
 
-            StackControl.ClearBackStack();
+            ClearBackStack();
         }
 
         // If there were pages to remove, after navigating we need to remove
@@ -89,7 +90,7 @@ public class StackRegionManager<TControl> : BaseRegionManager
         if (context.FramesToRemove > 0)
         {
             NavigationContexts.RemoveAt(NavigationContexts.Count - 2);
-            StackControl.RemoveLastFromBackStack();
+            RemoveLastFromBackStack();
         }
     }
 
@@ -97,4 +98,10 @@ public class StackRegionManager<TControl> : BaseRegionManager
     {
         return $"Stack({typeof(TControl).Name}) '{CurrentContext?.Path}'";
     }
+
+    protected abstract void GoBack(Type view, object data, object viewModel);
+
+    protected abstract void RemoveLastFromBackStack();
+
+    protected abstract void ClearBackStack();
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
+using Uno.Extensions.Navigation.ViewModels;
+using Uno.Extensions.Navigation.Dialogs;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -11,11 +13,16 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 #endif
 
-namespace Uno.Extensions.Navigation.Controls.Managers;
+namespace Uno.Extensions.Navigation.Regions.Managers;
 
-public class ContentControlManager : BaseControlManager<ContentControl>
+public class ContentControlRegionManager : SimpleRegionManager<ContentControl>
 {
-    public ContentControlManager(ILogger<ContentControlManager> logger, INavigationService navigation, RegionControlProvider controlProvider) : base(logger, navigation, controlProvider.RegionControl as ContentControl)
+    public ContentControlRegionManager(
+        ILogger<ContentControlRegionManager> logger,
+        INavigationService navigation,
+        IViewModelManager viewModelManager,
+        IDialogFactory dialogFactory,
+        RegionControlProvider controlProvider) : base(logger, navigation, viewModelManager, dialogFactory, controlProvider.RegionControl as ContentControl)
     {
     }
 
@@ -23,7 +30,7 @@ public class ContentControlManager : BaseControlManager<ContentControl>
     {
         try
         {
-            if(view is null)
+            if (view is null)
             {
                 Logger.LazyLogError(() => "Missing view for navigation path '{path}'");
                 return null;

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
+using Uno.Extensions.Navigation.ViewModels;
+using Uno.Extensions.Navigation.Dialogs;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -14,11 +16,16 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 #endif
 
-namespace Uno.Extensions.Navigation.Controls.Managers;
+namespace Uno.Extensions.Navigation.Regions.Managers;
 
-public class TabManager : BaseControlManager<TabView>
+public class TabRegionManager : SimpleRegionManager<TabView>
 {
-    public TabManager(ILogger<TabManager> logger, INavigationService navigation, RegionControlProvider controlProvider) : base(logger, navigation, controlProvider.RegionControl as TabView)
+    public TabRegionManager(
+        ILogger<TabRegionManager> logger,
+        INavigationService navigation,
+        IViewModelManager viewModelManager,
+        IDialogFactory dialogFactory,
+        RegionControlProvider controlProvider) : base(logger, navigation, viewModelManager, dialogFactory, controlProvider.RegionControl as TabView)
     {
         Control.SelectionChanged += Tabs_SelectionChanged;
     }

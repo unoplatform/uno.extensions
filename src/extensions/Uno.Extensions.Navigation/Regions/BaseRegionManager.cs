@@ -7,11 +7,20 @@ using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Dialogs;
 using Uno.Extensions.Navigation.ViewModels;
+#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+using Microsoft.UI.Xaml;
+using Windows.UI.Xaml;
+#else
+using Microsoft.UI.Xaml;
+#endif
 
 namespace Uno.Extensions.Navigation.Regions;
 
-public abstract class BaseRegionManager : IRegionManager
+public abstract class BaseRegionManager<TControl> : IRegionManager
+    where TControl : class
 {
+    public virtual TControl Control { get; set; }
+
     protected ILogger Logger { get; }
 
     public abstract NavigationContext CurrentContext { get; }
@@ -26,16 +35,18 @@ public abstract class BaseRegionManager : IRegionManager
 
     private IDialogFactory DialogProvider { get; }
 
-    public BaseRegionManager(
+    protected BaseRegionManager(
         ILogger logger,
         INavigationService navigation,
         IViewModelManager viewModelManager,
-        IDialogFactory dialogFactory)
+        IDialogFactory dialogFactory,
+        TControl control)
     {
         Logger = logger;
         Navigation = navigation;
         ViewModelManager = viewModelManager;
         DialogProvider = dialogFactory;
+        Control = control;
     }
 
     public async Task NavigateAsync(NavigationContext context)
@@ -182,5 +193,38 @@ public abstract class BaseRegionManager : IRegionManager
         }
 
         await ViewModelManager.StartViewModel(CurrentContext);
+    }
+
+    public void Show(string path, Type viewType, object data, object viewModel)
+    {
+        var view = InternalShow(path, viewType, data, viewModel);
+        InitialiseView(view, viewModel);
+    }
+
+    protected abstract object InternalShow(string path, Type viewType, object data, object viewModel);
+
+    /// <summary>
+    /// Sets the view model as the data context for the view
+    /// Also sets the Navigation property if the view implements
+    /// INavigationAware
+    /// </summary>
+    /// <param name="view">The element to set the datacontext on</param>
+    /// <param name="viewModel">The viewmodel to set as datacontext</param>
+    protected void InitialiseView(object view, object viewModel)
+    {
+        if (view is FrameworkElement fe)
+        {
+            if (viewModel is not null && fe.DataContext != viewModel)
+            {
+                Logger.LazyLogDebug(() => $"Setting DataContext with view model '{viewModel.GetType().Name}");
+                fe.DataContext = viewModel;
+            }
+        }
+
+        if (view is INavigationAware navAware)
+        {
+            Logger.LazyLogDebug(() => $"Setting Navigation on INavigationAware control");
+            navAware.Navigation = Navigation;
+        }
     }
 }
