@@ -82,15 +82,15 @@ public static class Navigation
         }
     }
 
-    public static readonly DependencyProperty RegionContentHostProperty =
+    public static readonly DependencyProperty CompositeRegionProperty =
 DependencyProperty.RegisterAttached(
-  "RegionContentHost",
+  "CompositeRegion",
   typeof(FrameworkElement),
   typeof(Navigation),
-  new PropertyMetadata(null, RegionContentHostChanged)
+  new PropertyMetadata(null, CompositeRegionChanged)
 );
 
-    private static void RegionContentHostChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    private static void CompositeRegionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         if (d is FrameworkElement element)
         {
@@ -172,14 +172,14 @@ DependencyProperty.RegisterAttached(
         return (string)element.GetValue(RegionNameProperty);
     }
 
-    public static void SetRegionContentHost(FrameworkElement element, FrameworkElement value)
+    public static void SetCompositeRegion(FrameworkElement element, FrameworkElement value)
     {
-        element.SetValue(RegionContentHostProperty, value);
+        element.SetValue(CompositeRegionProperty, value);
     }
 
-    public static FrameworkElement GetRegionContentHost(FrameworkElement element)
+    public static FrameworkElement GetCompositeRegion(FrameworkElement element)
     {
-        return (FrameworkElement)element.GetValue(RegionContentHostProperty);
+        return (FrameworkElement)element.GetValue(CompositeRegionProperty);
     }
 
     public static readonly DependencyProperty NavigateOnClickPathProperty =

@@ -18,7 +18,7 @@
 
         </Grid.RowDefinitions>
         <!--SelectionChanged="TabBar_SelectionChanged"-->
-        <toolkit:TabBar Background="Tomato" nav:Navigation.RegionContentHost="{x:Bind ContentHost}">
+        <toolkit:TabBar Background="Tomato" nav:Navigation.CompositeRegion="{x:Bind ContentHost}">
             <!--nav:Navigation.IsRegion="true" >-->
             <toolkit:TabBar.Items>
                 <toolkit:TabBarItem Content="Tab 1"

@@ -12,37 +12,27 @@
 
     <Grid>
         <muxc:NavigationView x:Name="NavView"
-                             ItemInvoked="NavView_ItemInvoked">
+            nav:Navigation.CompositeRegion="{x:Bind ContentGrid}">
             <muxc:NavigationView.MenuItems>
                 <muxc:NavigationViewItem Tag="home"
                                          Icon="Home"
                                          Content="Home"
-                                         nav:Navigation.NavigateOnClickPath="./gridcontent1" />
+                                         nav:Navigation.Path="gridcontent1" />
                 <muxc:NavigationViewItemSeparator />
                 <muxc:NavigationViewItemHeader x:Name="MainPagesHeader"
                                                Content="Main pages" />
                 <muxc:NavigationViewItem Tag="apps"
                                          Content="Apps"
-                                         nav:Navigation.NavigateOnClickPath="./gridcontent2">
+                                         nav:Navigation.Path="gridcontent2">
                     <muxc:NavigationViewItem.Icon>
                         <FontIcon FontFamily="Segoe MDL2 Assets"
                                   Glyph="&#xEB3C;" />
                     </muxc:NavigationViewItem.Icon>
                 </muxc:NavigationViewItem>
-                <muxc:NavigationViewItem Tag="games"
-                                         Content="Games">
-                    <muxc:NavigationViewItem.Icon>
-                        <FontIcon FontFamily="Segoe MDL2 Assets"
-                                  Glyph="&#xE7FC;" />
-                    </muxc:NavigationViewItem.Icon>
-                </muxc:NavigationViewItem>
-                <muxc:NavigationViewItem Tag="music"
-                                         Icon="Audio"
-                                         Content="Music" />
             </muxc:NavigationView.MenuItems>
 
             <ScrollViewer>
-                <Grid nav:Navigation.IsRegion="True">
+                <Grid x:Name="ContentGrid">
                     <local:Content1 Visibility="Collapsed"
                                     x:Name="gridcontent1" />
                     <local:Content2 Visibility="Collapsed"

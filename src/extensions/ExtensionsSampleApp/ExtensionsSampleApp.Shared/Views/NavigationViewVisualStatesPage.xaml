@@ -32,7 +32,7 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <muxc:NavigationView x:Name="NavView"
-            nav:Navigation.RegionContentHost="{x:Bind }">
+            nav:Navigation.CompositeRegion="{x:Bind }">
             <muxc:NavigationView.MenuItems>
                 <muxc:NavigationViewItem Tag="home"
                                          Icon="Home"
