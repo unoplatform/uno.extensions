@@ -22,7 +22,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Region.Managers\NavigationViewRegionManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Region.Managers\PageVisualStateRegionManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Region.Managers\TabBarRegionManager.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Region.Managers\RegionControlWithContentManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MainViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\Content1.xaml.cs">
       <DependentUpon>Content1.xaml</DependentUpon>

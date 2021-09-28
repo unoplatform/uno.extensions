@@ -4,5 +4,5 @@ public interface INavigationManager
 {
     INavigationService Root { get; }
 
-    INavigationService CreateService(INavigationService parent, object control, object contentControl);
+    INavigationService CreateService(INavigationService parent, params object[] controls);
 }

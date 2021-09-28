@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Regions;
+using Uno.Extensions.Navigation.Regions.Managers;
 
 namespace Uno.Extensions.Navigation;
 
@@ -38,9 +39,9 @@ public class NavigationManager : INavigationManager
         Root = navService;
     }
 
-    public INavigationService CreateService(INavigationService parent, object control, object contentControl)
+    public INavigationService CreateService(INavigationService parent, params object[] controls)
     {
-        Logger.LazyLogDebug(() => $"Adding region with control of type '{control.GetType().Name}'");
+        Logger.LazyLogDebug(() => $"Adding region");
 
         var scope = Services.CreateScope();
         var services = scope.ServiceProvider;
@@ -60,13 +61,31 @@ public class NavigationManager : INavigationManager
         navService.Region = regionContainer;
 
         // Create Region Service
-        services.GetService<RegionControlProvider>().RegionControl = contentControl is null ? control : (control, contentControl);
-        var factory = FindFactoryForControl(control, contentControl);
-        var region = factory.Create(services);
-        services.GetService<ScopedServiceHost<IRegionManager>>().Service = region;
+        controls = controls.Where(c => c is not null).ToArray();
+        CompositeRegionManager composite = controls.Length > 1 ? services.GetService<CompositeRegionManager>() : default;
+        foreach (var control in controls)
+        {
+            services.GetService<RegionControlProvider>().RegionControl = control;
+            var factory = FindFactoryForControl(control);
+            var region = factory.Create(services);
+            if (composite is not null)
+            {
+                composite.Regions.Add(region);
+            }
+            else
+            {
+                services.GetService<ScopedServiceHost<IRegionManager>>().Service = region;
+                // Associate region service with region service container
+                regionContainer.Region = region;
+            }
+        }
 
-        // Associate region service with region service container
-        regionContainer.Region = region;
+        if(composite is not null)
+        {
+            services.GetService<ScopedServiceHost<IRegionManager>>().Service = composite;
+            // Associate region service with region service container
+            regionContainer.Region = composite;
+        }
 
         navService.Parent = parent;
 
@@ -74,35 +93,20 @@ public class NavigationManager : INavigationManager
         return navService;
     }
 
-    private IRegionManagerFactory FindFactoryForControl(object control, object contentControl)
+    private IRegionManagerFactory FindFactoryForControl(object control)
     {
         var controlType = control.GetType();
-        if (contentControl is null &&
-            Factories.TryGetValue(controlType, out var factory))
+        if (Factories.TryGetValue(controlType, out var factory))
         {
             return factory;
         }
 
-        var baseTypes = (new Type[] { controlType }).Union(controlType.GetBaseTypes()).ToArray();
-        var contentBaseTypes = contentControl is not null ? (new Type[] { contentControl.GetType() }).Union(contentControl.GetType().GetBaseTypes()).ToArray() : default;
+        var baseTypes = controlType.GetBaseTypes().ToArray();
         for (var i = 0; i < baseTypes.Length; i++)
         {
-            if (contentControl is not null)
+            if (Factories.TryGetValue(baseTypes[i], out var baseFactory))
             {
-                for (var j = 0; j < contentBaseTypes.Length; j++)
-                {
-                    if (Factories.TryGetValue(typeof(ValueTuple<,>).MakeGenericType(baseTypes[i], contentBaseTypes[j]), out var baseFactory))
-                    {
-                        return baseFactory;
-                    }
-                }
-            }
-            else
-            {
-                if (Factories.TryGetValue(baseTypes[i], out var baseFactory))
-                {
-                    return baseFactory;
-                }
+                return baseFactory;
             }
         }
 

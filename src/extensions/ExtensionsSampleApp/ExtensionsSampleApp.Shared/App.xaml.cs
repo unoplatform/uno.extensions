@@ -69,10 +69,10 @@ namespace ExtensionsSampleApp
                    .AddRegion<TabBar, TabBarRegionManager>()
                    .AddRegion<Microsoft.UI.Xaml.Controls.NavigationView, NavigationViewRegionManager>()
                    //.AddRegion<(TabBar, ContentControl), TabBarContentManager<ContentControl, ContentControlManager>, SimpleRegionManager<TabBarContentManager<ContentControl, ContentControlManager>>>()
-                   .AddRegion<(TabBar, ContentControl), RegionControlWithContentRegionManager<TabBar, TabBarRegionManager, ContentControl, ContentControlRegionManager>>()
-                   .AddRegion<
-                       (Microsoft.UI.Xaml.Controls.NavigationView, Page),
-                        RegionControlWithContentRegionManager<Microsoft.UI.Xaml.Controls.NavigationView, NavigationViewRegionManager, Page, PageVisualStateRegionManager>>()
+                   //.AddRegion<(TabBar, ContentControl), RegionControlWithContentRegionManager<TabBar, TabBarRegionManager, ContentControl, ContentControlRegionManager>>()
+                   //.AddRegion<
+                   //    (Microsoft.UI.Xaml.Controls.NavigationView, Page),
+                   //     RegionControlWithContentRegionManager<Microsoft.UI.Xaml.Controls.NavigationView, NavigationViewRegionManager, Page, PageVisualStateRegionManager>>()
                    .AddScoped<MainViewModel>()
                    .AddScoped<SecondViewModel>()
                    .AddViewModelData<Widget>()
