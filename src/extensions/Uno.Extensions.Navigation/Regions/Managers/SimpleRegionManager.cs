@@ -24,7 +24,7 @@ public abstract class SimpleRegionManager<TControl> : BaseRegionManager<TControl
         Control = control;
     }
 
-    protected override void RegionNavigate(NavigationContext context)
+    public override void RegionNavigate(NavigationContext context)
     {
         currentContext = context;
         Logger.LazyLogDebug(() => $"Navigating to path '{context.Path}' with view '{context.Mapping?.View?.Name}'");

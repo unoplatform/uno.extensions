@@ -59,7 +59,7 @@ public abstract class StackRegionManager<TControl> : BaseRegionManager<TControl>
 
     protected override bool CanGoBack => NavigationContexts.Count > 1;
 
-    protected override void RegionNavigate(NavigationContext context)
+    public override void RegionNavigate(NavigationContext context)
     {
         var numberOfPagesToRemove = context.FramesToRemove;
         // We remove 1 less here because we need to remove the current context, after the navigation is completed

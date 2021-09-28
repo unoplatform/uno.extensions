@@ -98,7 +98,7 @@ DependencyProperty.RegisterAttached(
         }
     }
 
-    private static void RegisterElement(FrameworkElement element, string regionName, object regionContentHost = null)
+    private static void RegisterElement(FrameworkElement element, string regionName, FrameworkElement compositeRegion = null)
     {
         Logger.LazyLogDebug(() => $"Attaching to Loaded event on element {element.GetType().Name}");
         element.Loaded += async (sLoaded, eLoaded) =>
@@ -106,10 +106,13 @@ DependencyProperty.RegisterAttached(
             Logger.LazyLogDebug(() => $"Creating region manager");
             var loadedElement = sLoaded as FrameworkElement;
             var parent = ScopedServiceForControl(loadedElement.Parent) ?? NavigationManager.Root;
-            var navRegion = loadedElement.GetNavigationService() ?? NavigationManager.CreateService(parent, loadedElement, regionContentHost);
-
+            var navRegion = loadedElement.GetNavigationService() ?? NavigationManager.CreateService(parent, loadedElement, compositeRegion);
 
             loadedElement.SetNavigationService(navRegion);
+            if (compositeRegion is not null)
+            {
+                compositeRegion.SetNavigationService(navRegion);
+            }
             Logger.LazyLogDebug(() => $"Region manager created");
 
             Logger.LazyLogDebug(() => $"Attaching to Unloaded event on element {element.GetType().Name}");

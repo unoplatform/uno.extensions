@@ -16,11 +16,33 @@ using Microsoft.UI.Xaml;
 
 namespace Uno.Extensions.Navigation.Regions;
 
-public abstract class BaseRegionManager<TControl> : IRegionManager
+public abstract class BaseRegionManager<TControl> : BaseRegionManager
     where TControl : class
 {
     public virtual TControl Control { get; set; }
 
+    protected BaseRegionManager(
+        ILogger logger,
+        INavigationService navigation,
+        IViewModelManager viewModelManager,
+        IDialogFactory dialogFactory,
+        TControl control) :
+        base(logger, navigation, viewModelManager, dialogFactory)
+    {
+        Control = control;
+    }
+
+    public void Show(string path, Type viewType, object data, object viewModel)
+    {
+        var view = InternalShow(path, viewType, data, viewModel);
+        InitialiseView(view, viewModel);
+    }
+
+    protected abstract object InternalShow(string path, Type viewType, object data, object viewModel);
+}
+
+public abstract class BaseRegionManager : IRegionManager, IRegionManagerNavigate
+{
     protected ILogger Logger { get; }
 
     public abstract NavigationContext CurrentContext { get; }
@@ -39,14 +61,12 @@ public abstract class BaseRegionManager<TControl> : IRegionManager
         ILogger logger,
         INavigationService navigation,
         IViewModelManager viewModelManager,
-        IDialogFactory dialogFactory,
-        TControl control)
+        IDialogFactory dialogFactory)
     {
         Logger = logger;
         Navigation = navigation;
         ViewModelManager = viewModelManager;
         DialogProvider = dialogFactory;
-        Control = control;
     }
 
     public async Task NavigateAsync(NavigationContext context)
@@ -100,7 +120,7 @@ public abstract class BaseRegionManager<TControl> : IRegionManager
         }
     }
 
-    protected abstract void RegionNavigate(NavigationContext context);
+    public abstract void RegionNavigate(NavigationContext context);
 
     private async Task<bool> EndCurrentNavigationContext(NavigationContext navigationContext)
     {
@@ -194,14 +214,6 @@ public abstract class BaseRegionManager<TControl> : IRegionManager
 
         await ViewModelManager.StartViewModel(CurrentContext);
     }
-
-    public void Show(string path, Type viewType, object data, object viewModel)
-    {
-        var view = InternalShow(path, viewType, data, viewModel);
-        InitialiseView(view, viewModel);
-    }
-
-    protected abstract object InternalShow(string path, Type viewType, object data, object viewModel);
 
     /// <summary>
     /// Sets the view model as the data context for the view

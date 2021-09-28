@@ -26,6 +26,7 @@ public static class ServiceCollectionExtensions
 
         return services
                     // Register the region for each control type
+                    .AddScoped<CompositeRegionManager>()
                     .AddRegion<Frame, FrameRegionManager>()
                     .AddRegion<TabView, TabRegionManager>()
                     .AddRegion<ContentControl, ContentControlRegionManager>()
