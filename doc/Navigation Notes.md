@@ -18,6 +18,9 @@ This defines a region that doesn't have a name and the routing to this region is
 **RegionName = "region"**
 This defines a region that has a name and where the name needs to be included in any navigation route.
 
+**CompositeRegion = {x:Bind ControlName}**
+This creates a composite region made up of multiple regions. For example this could be a TabBar and a ContentControl, or a NavigationView and a Grid. This attribute can be applied to **either** control but should only be applied to **one** of the controls.
+
 
 ## Navigation Interfaces
 For each region there are three interfaces:  
