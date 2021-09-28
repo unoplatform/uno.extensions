@@ -8,7 +8,7 @@ using Uno.Extensions.Navigation.Regions;
 
 namespace Uno.Extensions.Navigation;
 
-public class RegionService : IRegionServiceContainer, IRegionService
+public class RegionService : IRegionService
 {
     public IRegionManager Region { get; set; }
 
@@ -26,7 +26,7 @@ public class RegionService : IRegionServiceContainer, IRegionService
         Services = services;
     }
 
-    public Task AddRegion(string regionName, IRegionServiceContainer childRegion)
+    public Task AddRegion(string regionName, IRegionService childRegion)
     {
         var childService = childRegion as RegionService;
         NestedRegions[regionName + string.Empty] = childService;
@@ -41,7 +41,7 @@ public class RegionService : IRegionServiceContainer, IRegionService
         }
     }
 
-    public void RemoveRegion(IRegionServiceContainer childRegion)
+    public void RemoveRegion(IRegionService childRegion)
     {
         NestedRegions.Remove(kvp => kvp.Value == childRegion);
     }

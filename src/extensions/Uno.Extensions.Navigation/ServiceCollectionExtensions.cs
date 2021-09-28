@@ -44,27 +44,21 @@ public static class ServiceCollectionExtensions
                     // Register the navigation manager and the providers for
                     // navigation data and the navigation service
                     .AddSingleton<INavigationManager, NavigationManager>()
-                    //.AddScoped<NavigationServiceProvider>()
-                    //.AddScoped<INavigationService>(services => services.GetService<NavigationServiceProvider>().Navigation)
 
                     .AddScoped<ScopedServiceHost<IRegionManager>>()
                     .AddScoped<IRegionManager>(services => services.GetService<ScopedServiceHost<IRegionManager>>().Service)
 
-                    .AddScoped<ScopedServiceHost<IRegionServiceContainer>>()
-                    .AddScoped<IRegionServiceContainer>(services => services.GetService<ScopedServiceHost<IRegionServiceContainer>>().Service)
-
-
-                    //.AddScoped<IRegionServiceContainer, RegionService>()
+                    .AddScoped<ScopedServiceHost<IRegionService>>()
+                    .AddScoped<IRegionService>(services => services.GetService<ScopedServiceHost<IRegionService>>().Service)
 
                     .AddScoped<ViewModelDataProvider>()
                     .AddScoped<RegionControlProvider>()
                     .AddScoped<IDictionary<string, object>>(services => services.GetService<ViewModelDataProvider>().Parameters)
-                    .AddScoped<INavigationRegionContainer, NavigationRegionContainer>()
 
                     .AddScoped<ScopedServiceHost<INavigationRegionService>>()
                     .AddScoped<INavigationRegionService>(services =>
                             services.GetService<ScopedServiceHost<INavigationRegionService>>().Service ??
-                            services.GetService<INavigationManager>().Root.Navigation
+                            services.GetService<INavigationManager>().Root
                             )
 
                     .AddScoped<INavigationService>(services => services.GetService<INavigationRegionService>());
