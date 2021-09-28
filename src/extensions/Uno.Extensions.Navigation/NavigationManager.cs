@@ -38,7 +38,7 @@ public class NavigationManager : INavigationManager
         Root = navService;
     }
 
-    public INavigationService CreateService(object control, object contentControl)
+    public INavigationService CreateService(INavigationService parent, object control, object contentControl)
     {
         Logger.LazyLogDebug(() => $"Adding region with control of type '{control.GetType().Name}'");
 
@@ -67,6 +67,8 @@ public class NavigationManager : INavigationManager
 
         // Associate region service with region service container
         regionContainer.Region = region;
+
+        navService.Parent = parent;
 
         // Retrieve the region container and the navigation service
         return navService;

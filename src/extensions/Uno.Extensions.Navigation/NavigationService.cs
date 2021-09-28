@@ -85,7 +85,7 @@ public class NavigationService : INavigationService
         return parentService.NavigateAsync(parentRequest);
     }
 
-    private NavigationService Root
+    private INavigationService Root
     {
         get
         {

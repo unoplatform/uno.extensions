@@ -106,9 +106,8 @@ DependencyProperty.RegisterAttached(
             Logger.LazyLogDebug(() => $"Creating region manager");
             var loadedElement = sLoaded as FrameworkElement;
             var parent = ScopedServiceForControl(loadedElement.Parent) ?? NavigationManager.Root;
-            var navRegion = loadedElement.GetNavigationService() ?? NavigationManager.CreateService(loadedElement, regionContentHost);
+            var navRegion = loadedElement.GetNavigationService() ?? NavigationManager.CreateService(parent, loadedElement, regionContentHost);
 
-            navRegion.Parent = parent;
 
             loadedElement.SetNavigationService(navRegion);
             Logger.LazyLogDebug(() => $"Region manager created");
