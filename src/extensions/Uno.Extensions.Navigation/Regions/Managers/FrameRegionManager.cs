@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
+using Uno.Extensions.Navigation.ViewModels;
+using Uno.Extensions.Navigation.Dialogs;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -13,11 +15,16 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 #endif
 
-namespace Uno.Extensions.Navigation.Controls.Managers;
+namespace Uno.Extensions.Navigation.Regions.Managers;
 
-public class FrameManager : BaseControlManager<Frame>, IStackViewManager
+public class FrameRegionManager : StackRegionManager<Frame>
 {
-    public FrameManager(ILogger<FrameManager> logger, INavigationService navigation, RegionControlProvider controlProvider) : base(logger, navigation, controlProvider.RegionControl as Frame)
+    public FrameRegionManager(
+        ILogger<FrameRegionManager> logger,
+        INavigationService navigation,
+        IViewModelManager viewModelManager,
+        IDialogFactory dialogFactory,
+        RegionControlProvider controlProvider) : base(logger, navigation, viewModelManager, dialogFactory, controlProvider.RegionControl as Frame)
     {
         if (Control.Content is not null)
         {
@@ -46,7 +53,7 @@ public class FrameManager : BaseControlManager<Frame>, IStackViewManager
         }
     }
 
-    public void GoBack(Type view, object parameter, object viewModel)
+    protected override void GoBack(Type view, object parameter, object viewModel)
     {
         try
         {
@@ -99,14 +106,14 @@ public class FrameManager : BaseControlManager<Frame>, IStackViewManager
         }
     }
 
-    public void RemoveLastFromBackStack()
+    protected override void RemoveLastFromBackStack()
     {
         Logger.LazyLogDebug(() => $"Removing last item from backstack (current count = {Control.BackStack.Count})");
         Control.BackStack.RemoveAt(Control.BackStack.Count - 1);
         Logger.LazyLogDebug(() => $"Item removed from backstack");
     }
 
-    public void ClearBackStack()
+    protected override void ClearBackStack()
     {
         Logger.LazyLogDebug(() => $"Clearing backstack");
         Control.BackStack.Clear();

@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using ExtensionsSampleApp.Control.Managers;
+using ExtensionsSampleApp.Region.Managers;
 using ExtensionsSampleApp.ViewModels;
 using ExtensionsSampleApp.Views;
 using ExtensionsSampleApp.Views.Twitter;
@@ -14,7 +14,6 @@ using Uno.Extensions.Hosting;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Controls;
-using Uno.Extensions.Navigation.Controls.Managers;
 using Uno.Extensions.Navigation.Regions.Managers;
 using Uno.UI.ToolkitLib;
 using Windows.ApplicationModel;
@@ -65,16 +64,15 @@ namespace ExtensionsSampleApp
                .ConfigureServices(services =>
                {
                    services
-                   .AddRegion<Grid, GridVisiblityManager, SimpleRegionManager<GridVisiblityManager>>()
-                   .AddRegion<Page, PageVisualStateManager, SimpleRegionManager<PageVisualStateManager>>()
-                   .AddRegion<TabBar, TabBarManager, SimpleRegionManager<TabBarManager>>()
-                   .AddRegion<Microsoft.UI.Xaml.Controls.NavigationView, NavigationViewManager, SimpleRegionManager<NavigationViewManager>>()
-                   //.AddRegion<(TabBar,ContentControl), TabBarContentManager<ContentControl,ContentControlManager>, SimpleRegionManager<TabBarContentManager<ContentControl, ContentControlManager>>>()
-                   .AddRegion<(TabBar, ContentControl), RegionControlWithContentManager<TabBar, TabBarManager, ContentControl, ContentControlManager>, SimpleRegionManager<RegionControlWithContentManager<TabBar, TabBarManager, ContentControl, ContentControlManager>>>()
+                   .AddRegion<Grid, GridVisiblityRegionManager>()
+                   .AddRegion<Page, PageVisualStateRegionManager>()
+                   .AddRegion<TabBar, TabBarRegionManager>()
+                   .AddRegion<Microsoft.UI.Xaml.Controls.NavigationView, NavigationViewRegionManager>()
+                   //.AddRegion<(TabBar, ContentControl), TabBarContentManager<ContentControl, ContentControlManager>, SimpleRegionManager<TabBarContentManager<ContentControl, ContentControlManager>>>()
+                   .AddRegion<(TabBar, ContentControl), RegionControlWithContentRegionManager<TabBar, TabBarRegionManager, ContentControl, ContentControlRegionManager>>()
                    .AddRegion<
                        (Microsoft.UI.Xaml.Controls.NavigationView, Page),
-                        RegionControlWithContentManager<Microsoft.UI.Xaml.Controls.NavigationView, NavigationViewManager, Page, PageVisualStateManager>,
-                        SimpleRegionManager<RegionControlWithContentManager<Microsoft.UI.Xaml.Controls.NavigationView, NavigationViewManager, Page, PageVisualStateManager>>>()
+                        RegionControlWithContentRegionManager<Microsoft.UI.Xaml.Controls.NavigationView, NavigationViewRegionManager, Page, PageVisualStateRegionManager>>()
                    .AddScoped<MainViewModel>()
                    .AddScoped<SecondViewModel>()
                    .AddViewModelData<Widget>()

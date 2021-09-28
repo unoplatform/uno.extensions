@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Controls;
-using Uno.Extensions.Navigation.Controls.Managers;
 using Uno.Extensions.Navigation.Dialogs;
 using Uno.Extensions.Navigation.Dialogs.Managers;
 using Uno.Extensions.Navigation.Regions;
@@ -27,9 +26,9 @@ public static class ServiceCollectionExtensions
 
         return services
                     // Register the region for each control type
-                    .AddRegion<Frame, FrameManager, StackRegionManager<FrameManager>>()
-                    .AddRegion<TabView, TabManager, SimpleRegionManager<TabManager>>()
-                    .AddRegion<ContentControl, ContentControlManager, SimpleRegionManager<ContentControlManager>>()
+                    .AddRegion<Frame, FrameRegionManager>()
+                    .AddRegion<TabView, TabRegionManager>()
+                    .AddRegion<ContentControl, ContentControlRegionManager>()
 
                     // Register the different types of dialogs
                     .AddSingleton<IDialogManager, ContentDialogManager>()
@@ -71,9 +70,7 @@ public static class ServiceCollectionExtensions
                     .AddScoped<INavigationService>(services => services.GetService<INavigationRegionService>());
     }
 
-    public static IServiceCollection AddRegion<TControl, TControlManager, TRegionManager>(this IServiceCollection services)
-        //where TControl : class
-        where TControlManager : class, IViewManager
+    public static IServiceCollection AddRegion<TControl, TRegionManager>(this IServiceCollection services)
         where TRegionManager : class, IRegionManager
     {
         if (services is null)
@@ -82,7 +79,6 @@ public static class ServiceCollectionExtensions
         }
 
         return services
-                    .AddScoped<TControlManager>()
                     .AddScoped<TRegionManager>()
                     .AddSingleton<IRegionManagerFactory, RegionManagerFactory<TControl, TRegionManager>>();
     }
