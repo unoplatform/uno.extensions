@@ -220,42 +220,6 @@ public class NavigationService : IRegionNavigationService
         return sb.ToString();
     }
 
-    private async Task<(bool, NavigationRequest)> RunRegionNavigation(NavigationContext context)
-    {
-        var request = context.Request;
-        var firstRoute = request.FirstRouteSegment;
-
-        if (firstRoute == Region?.CurrentContext?.Path ||
-            (firstRoute + "/") == NavigationConstants.RelativePath.Nested)
-        {
-            Logger.LazyLogWarning(() => $"Attempt to log to the same path '{firstRoute}");
-            if (context.Path == Region?.CurrentContext?.Path)
-            {
-                return (true, null);
-            }
-            var nextRoute = request.Route.Uri.OriginalString.TrimStart($"{firstRoute}/");
-            var residualRequest = request.WithPath(nextRoute);
-            return (true, residualRequest);
-        }
-        else if (Region is null)
-        {
-            return (false, default);
-        }
-        else
-        {
-            Logger.LazyLogDebug(() => $"Invoking region navigation");
-            await Region.NavigateAsync(context);
-            Logger.LazyLogDebug(() => $"Region Navigation complete");
-            if (context.ResidualRequest is not null &&
-                !string.IsNullOrWhiteSpace(context.ResidualRequest.Route.Uri.OriginalString))
-            {
-                var residualRequest = context.ResidualRequest;
-                return (true, residualRequest);
-            }
-            return (true, default);
-        }
-    }
-
     private void PrintAllRegions(StringBuilder builder, NavigationService nav, int indent = 0, string regionName = null)
     {
         if (nav.Region is null)
