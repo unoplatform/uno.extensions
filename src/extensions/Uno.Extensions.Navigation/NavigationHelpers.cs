@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Uno.Extensions.Navigation.Regions;
 
 namespace Uno.Extensions.Navigation;
 
@@ -26,9 +27,57 @@ public static class NavigationHelpers
         return null;
     }
 
+    public static bool IsParentRequest(this NavigationRequest request)
+    {
+        return request.Route.Uri.OriginalString.StartsWith(NavigationConstants.RelativePath.ParentPath);
+    }
+
+    public static bool IsNestedRequest(this NavigationRequest request)
+    {
+        return request.Route.Uri.OriginalString.StartsWith(NavigationConstants.RelativePath.Nested);
+    }
+
+    public static NavigationRequest MakeNestedRequest(this NavigationRequest request)
+    {
+        return request.WithPath(NavigationConstants.RelativePath.Nested + request.Route.Uri.OriginalString);
+    }
+
     public static NavigationRequest WithPath(this NavigationRequest request, string path, string queryParameters = "")
     {
         return string.IsNullOrWhiteSpace(path) ? null : request with { Route = request.Route with { Uri = new Uri(path + (!string.IsNullOrWhiteSpace(queryParameters) ? $"?{queryParameters}" : string.Empty), UriKind.Relative) } };
+    }
+
+    public static bool IsForCurrentPath(this NavigationContext context, IRegion region)
+    {
+        var request = context.Request;
+        var firstRoute = request.FirstRouteSegment;
+
+        if (firstRoute == region?.CurrentContext?.Path ||
+            (firstRoute + "/") == NavigationConstants.RelativePath.Nested)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static NavigationRequest TrimRequestForCurrentPath(this NavigationContext context, IRegion region)
+    {
+        var request = context.Request;
+        var firstRoute = request.FirstRouteSegment;
+        if (firstRoute == region?.CurrentContext?.Path ||
+                   (firstRoute + "/") == NavigationConstants.RelativePath.Nested)
+        {
+            if (context.Path == region?.CurrentContext?.Path)
+            {
+                return null;
+            }
+            var nextRoute = request.Route.Uri.OriginalString.TrimStart($"{firstRoute}/");
+            var residualRequest = request.WithPath(nextRoute);
+            return residualRequest;
+        }
+
+        return context.Request;
     }
 
     public static NavigationContext BuildNavigationContext(this NavigationRequest request, IServiceProvider services, TaskCompletionSource<Options.Option> completion)

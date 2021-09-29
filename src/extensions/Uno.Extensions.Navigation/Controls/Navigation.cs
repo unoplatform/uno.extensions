@@ -121,12 +121,12 @@ DependencyProperty.RegisterAttached(
                if (navRegion != null)
                {
                    Logger.LazyLogDebug(() => $"Removing region manager");
-                   parent.RemoveRegion(navRegion);
+                   parent.Detach(navRegion);
                }
            };
 
             Logger.LazyLogDebug(() => $"Attaching region manager");
-            await parent.AddRegion(regionName, navRegion);
+            await parent.Attach(regionName, navRegion);
         };
     }
 

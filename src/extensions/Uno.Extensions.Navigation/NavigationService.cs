@@ -11,7 +11,7 @@ namespace Uno.Extensions.Navigation;
 
 public class NavigationService : IRegionNavigationService
 {
-    public IRegion Manager { get; set; }
+    public IRegion Region { get; set; }
 
     private IServiceProvider ScopedServices { get; }
 
@@ -23,7 +23,9 @@ public class NavigationService : IRegionNavigationService
 
     private IRegionNavigationService Parent { get; set; }
 
-    private IDictionary<string, IRegionNavigationService> NestedRegions { get; } = new Dictionary<string, IRegionNavigationService>();
+    private IDictionary<string, IRegionNavigationService> NestedServices { get; } = new Dictionary<string, IRegionNavigationService>();
+
+    private int isNavigating = 0;
 
     public NavigationService(ILogger<NavigationService> logger, IServiceProvider services, IRegionNavigationService parent)
     {
@@ -32,7 +34,25 @@ public class NavigationService : IRegionNavigationService
         Parent = parent;
     }
 
-    private int isNavigating = 0;
+    public Task Attach(string regionName, IRegionNavigationService childRegion)
+    {
+        var childService = childRegion as NavigationService;
+        NestedServices[regionName + string.Empty] = childService;
+
+        if (PendingNavigation is not null)
+        {
+            return RunPendingNavigation();
+        }
+        else
+        {
+            return childService.RunPendingNavigation();
+        }
+    }
+
+    public void Detach(IRegionNavigationService childRegion)
+    {
+        NestedServices.Remove(kvp => kvp.Value == childRegion);
+    }
 
     public NavigationResponse NavigateAsync(NavigationRequest request)
     {
@@ -43,22 +63,29 @@ public class NavigationService : IRegionNavigationService
         }
         try
         {
-            var path = request.Route.Uri.OriginalString;
-            if (IsRootService && !path.StartsWith(NavigationConstants.RelativePath.Nested))
+            // Make sure that any navigation on the Root service is a nested request
+            // (ie redirect to nested service by adding the ./ prefix to the Uri)
+            if (IsRootService && !request.IsNestedRequest())
             {
-                request = request.WithPath(NavigationConstants.RelativePath.Nested + path);
+                request = request.MakeNestedRequest();
             }
 
-            if (path.StartsWith(NavigationConstants.RelativePath.ParentPath))
+            if (request.IsParentRequest())
             {
                 // Routing navigation request to parent
                 return NavigateWithParentAsync(request);
             }
 
-            var context = request.BuildNavigationContext(ScopedServices, new TaskCompletionSource<Options.Option>());
+            // Create new context if there isn't a pending navigation
+            if (PendingNavigation is null)
+            {
+                PendingNavigation = request.BuildNavigationContext(ScopedServices, new TaskCompletionSource<Options.Option>()).Pending();
+            }
+
+            var context = PendingNavigation.Context;
 
             Logger.LazyLogDebug(() => $"Invoking navigation with Navigation Context");
-            var navTask = NavigateInRegionAsync(context);
+            var navTask = RunPendingNavigation();
             Logger.LazyLogDebug(() => $"Returning NavigationResponse");
 
             return new NavigationResponse(request, navTask, context.ResultCompletion.Task);
@@ -66,24 +93,6 @@ public class NavigationService : IRegionNavigationService
         finally
         {
             Interlocked.Exchange(ref isNavigating, 0);
-        }
-    }
-
-    private async Task NavigateInRegionAsync(NavigationContext context)
-    {
-        try
-        {
-            //await Region.NavigateAsync(context);
-            if (PendingNavigation is null)
-            {
-                PendingNavigation = context.Pending();
-            }
-
-            await RunPendingNavigation();
-        }
-        finally
-        {
-            Logger.LazyLogInformation(() => Root.ToString());
         }
     }
 
@@ -99,58 +108,95 @@ public class NavigationService : IRegionNavigationService
         return parentService.NavigateAsync(parentRequest);
     }
 
-    public async Task RunPendingNavigation()
+    private async Task RunPendingNavigation()
     {
-        var pending = PendingNavigation;
-        if (pending is not null)
+        try
         {
-            PendingNavigation = null;
-            var navTask = pending.TaskCompletion;
-            var navContext = pending.Context;
-
-            var navResult = await RunRegionNavigation(navContext);
-
-            if (navResult.Item1)
+            var pending = PendingNavigation;
+            if (pending is not null)
             {
-                if (navResult.Item2 is not null)
+                PendingNavigation = null;
+                var navTask = pending.TaskCompletion;
+                var navContext = pending.Context;
+                var navRequest = navContext.Request;
+
+                var residualRequest = navContext.ResidualRequest;
+                if (navContext.IsForCurrentPath(Region))
                 {
-                    var nestedRequest = navResult.Item2;
-                    var nestedRoute = nestedRequest.FirstRouteSegment;
-
-                    var nested = Nested(nestedRoute) as NavigationService;
-                    if (nested is null)
+                    // Check for "./" prefix or the current path
+                    // Returned request is trimmed to remove "./" or current path
+                    residualRequest = navContext.TrimRequestForCurrentPath(Region);
+                }
+                else
+                {
+                    if (Region is null)
                     {
-                        nested = Nested() as NavigationService;
+                        // If the there is no region, then
+                        // push the context back to pending
+                        // and await it
+                        PendingNavigation = pending;
+                        await navTask.Task;
                     }
                     else
                     {
-                        var nextRoute = nestedRequest.Route.Uri.OriginalString.TrimStart($"{nestedRoute}/");
-                        nestedRequest = nestedRequest.WithPath(nextRoute);
-                    }
-
-                    if (nested is not null)
-                    {
-                        var nestedContext = nestedRequest.BuildNavigationContext(nested.ScopedServices, new TaskCompletionSource<Options.Option>());
-                        nested.PendingNavigation = nestedContext.Pending();
-                        await nested.RunPendingNavigation();
-                    }
-                    else
-                    {
-                        var pendingRoute = NavigationConstants.RelativePath.Nested + nestedRequest.Route.Uri.OriginalString;
-                        var pendingContext = nestedRequest.WithPath(pendingRoute).BuildNavigationContext(ScopedServices, new TaskCompletionSource<Options.Option>());
-
-                        PendingNavigation = pendingContext.Pending();
-                        await PendingNavigation.TaskCompletion.Task;
+                        await Region.NavigateAsync(navContext);
                     }
                 }
 
+                // At this point, any residual request needs to be handed
+                // down to the appropriate nested service
+                await RunNestedNavigation(residualRequest);
+
                 navTask.TrySetResult(null);
             }
-            else
-            {
-                PendingNavigation = pending;
-                await navTask.Task;
-            }
+        }
+        finally
+        {
+            Logger.LazyLogInformation(() => Root.ToString());
+        }
+    }
+
+    private Task RunNestedNavigation(NavigationRequest nestedRequest)
+    {
+        if (nestedRequest is null)
+        {
+            return Task.CompletedTask;
+        }
+
+        var nestedRoute = nestedRequest.FirstRouteSegment;
+
+        // Try to retrieve nested service based on route name
+        var nested = Nested(nestedRoute) as NavigationService;
+        if (nested is null)
+        {
+            // No match for named route, so grab any unnamed nested
+            nested = Nested() as NavigationService;
+        }
+        else
+        {
+            // If we've been able to retrieve the nested service
+            // we need to remove the route from the request path
+            var nextRoute = nestedRequest.Route.Uri.OriginalString.TrimStart($"{nestedRoute}/");
+            nestedRequest = nestedRequest.WithPath(nextRoute);
+        }
+
+        if (nested is not null)
+        {
+            // Send the navigation request to the nested service
+            var nestedContext = nestedRequest.BuildNavigationContext(nested.ScopedServices, new TaskCompletionSource<Options.Option>());
+            nested.PendingNavigation = nestedContext.Pending();
+            return nested.RunPendingNavigation();
+        }
+        else
+        {
+            // Unable to retrieve the nested service, so put the
+            // nested request into the pending context (we add
+            // "./" to make sure it's handled as a nested navigation
+            var pendingRoute = NavigationConstants.RelativePath.Nested + nestedRequest.Route.Uri.OriginalString;
+            var pendingContext = nestedRequest.WithPath(pendingRoute).BuildNavigationContext(ScopedServices, new TaskCompletionSource<Options.Option>());
+
+            PendingNavigation = pendingContext.Pending();
+            return PendingNavigation.TaskCompletion.Task;
         }
     }
 
@@ -162,29 +208,9 @@ public class NavigationService : IRegionNavigationService
         }
     }
 
-    public Task AddRegion(string regionName, IRegionNavigationService childRegion)
-    {
-        var childService = childRegion as NavigationService;
-        NestedRegions[regionName + string.Empty] = childService;
-
-        if (PendingNavigation is not null)
-        {
-            return RunPendingNavigation();
-        }
-        else
-        {
-            return childService.RunPendingNavigation();
-        }
-    }
-
-    public void RemoveRegion(IRegionNavigationService childRegion)
-    {
-        NestedRegions.Remove(kvp => kvp.Value == childRegion);
-    }
-
     private IRegionNavigationService Nested(string regionName = null)
     {
-        return NestedRegions.TryGetValue(regionName + string.Empty, out var service) ? service : null;
+        return NestedServices.TryGetValue(regionName + string.Empty, out var service) ? service : null;
     }
 
     public override string ToString()
@@ -199,11 +225,11 @@ public class NavigationService : IRegionNavigationService
         var request = context.Request;
         var firstRoute = request.FirstRouteSegment;
 
-        if (firstRoute == Manager?.CurrentContext?.Path ||
+        if (firstRoute == Region?.CurrentContext?.Path ||
             (firstRoute + "/") == NavigationConstants.RelativePath.Nested)
         {
             Logger.LazyLogWarning(() => $"Attempt to log to the same path '{firstRoute}");
-            if (context.Path == Manager?.CurrentContext?.Path)
+            if (context.Path == Region?.CurrentContext?.Path)
             {
                 return (true, null);
             }
@@ -211,14 +237,14 @@ public class NavigationService : IRegionNavigationService
             var residualRequest = request.WithPath(nextRoute);
             return (true, residualRequest);
         }
-        else if (Manager is null)
+        else if (Region is null)
         {
             return (false, default);
         }
         else
         {
             Logger.LazyLogDebug(() => $"Invoking region navigation");
-            await Manager.NavigateAsync(context);
+            await Region.NavigateAsync(context);
             Logger.LazyLogDebug(() => $"Region Navigation complete");
             if (context.ResidualRequest is not null &&
                 !string.IsNullOrWhiteSpace(context.ResidualRequest.Route.Uri.OriginalString))
@@ -232,7 +258,7 @@ public class NavigationService : IRegionNavigationService
 
     private void PrintAllRegions(StringBuilder builder, NavigationService nav, int indent = 0, string regionName = null)
     {
-        if (nav.Manager is null)
+        if (nav.Region is null)
         {
             builder.AppendLine(string.Empty);
             builder.AppendLine("------------------------------------------------------------------------------------------------");
@@ -247,15 +273,15 @@ public class NavigationService : IRegionNavigationService
                 prefix = new string(' ', indent * 2) + "|-";
             }
             var reg = !string.IsNullOrWhiteSpace(regionName) ? $"({regionName}) " : null;
-            builder.AppendLine($"{prefix}{reg}{ans.Manager?.ToString()}");
+            builder.AppendLine($"{prefix}{reg}{ans.Region?.ToString()}");
         }
 
-        foreach (var nested in nav.NestedRegions)
+        foreach (var nested in nav.NestedServices)
         {
             PrintAllRegions(builder, nested.Value as NavigationService, indent + 1, nested.Key);
         }
 
-        if (nav.Manager is null)
+        if (nav.Region is null)
         {
             builder.AppendLine("------------------------------------------------------------------------------------------------");
         }
