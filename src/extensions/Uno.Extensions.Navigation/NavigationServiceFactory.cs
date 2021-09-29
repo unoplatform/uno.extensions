@@ -52,16 +52,16 @@ public class NavigationServiceFactory : INavigationServiceFactory
         {
             services.GetService<RegionControlProvider>().RegionControl = control;
             var factory = FindFactoryForControl(control);
-            var manager = factory.Create(services);
+            var region = factory.Create(services);
             if (composite is not null)
             {
-                composite.Regions.Add(manager);
+                composite.Regions.Add(region);
             }
             else
             {
-                services.GetService<ScopedServiceHost<IRegion>>().Service = manager;
+                services.GetService<ScopedServiceHost<IRegion>>().Service = region;
                 // Associate region service with region service container
-                navService.Manager = manager;
+                navService.Region = region;
             }
         }
 
@@ -69,7 +69,7 @@ public class NavigationServiceFactory : INavigationServiceFactory
         {
             services.GetService<ScopedServiceHost<IRegion>>().Service = composite;
             // Associate region service with region service container
-            navService.Manager = composite;
+            navService.Region = composite;
         }
 
         // Retrieve the region container and the navigation service
