@@ -13,7 +13,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 #endif
 
-namespace Uno.Extensions.Navigation.Regions.Managers;
+namespace Uno.Extensions.Navigation.Regions;
 
 public class NavigationViewRegion : SimpleRegion<Microsoft.UI.Xaml.Controls.NavigationView>
 {

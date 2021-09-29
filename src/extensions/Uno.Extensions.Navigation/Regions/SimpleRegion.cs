@@ -3,7 +3,7 @@ using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Dialogs;
 using Uno.Extensions.Navigation.ViewModels;
 
-namespace Uno.Extensions.Navigation.Regions.Managers;
+namespace Uno.Extensions.Navigation.Regions;
 
 public abstract class SimpleRegion<TControl> : BaseRegion<TControl>
     where TControl : class
