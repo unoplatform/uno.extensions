@@ -17,10 +17,10 @@ using Microsoft.UI.Xaml.Navigation;
 
 namespace Uno.Extensions.Navigation.Regions.Managers;
 
-public class FrameRegionManager : StackRegionManager<Frame>
+public class FrameRegion : StackRegion<Frame>
 {
-    public FrameRegionManager(
-        ILogger<FrameRegionManager> logger,
+    public FrameRegion(
+        ILogger<FrameRegion> logger,
         INavigationService navigation,
         IViewModelManager viewModelManager,
         IDialogFactory dialogFactory,

@@ -2,14 +2,14 @@
 
 namespace Uno.Extensions.Navigation.Regions;
 
-public interface IRegionManager : IRegionManagerNavigate
+public interface IRegion : IRegionNavigate
 {
     NavigationContext CurrentContext { get; }
 
     Task NavigateAsync(NavigationContext context);
 }
 
-public interface IRegionManagerNavigate
+public interface IRegionNavigate
 {
     void RegionNavigate(NavigationContext context);
 }

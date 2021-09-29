@@ -15,10 +15,10 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Regions.Managers;
 
-public class ContentControlRegionManager : SimpleRegionManager<ContentControl>
+public class ContentControlRegion : SimpleRegion<ContentControl>
 {
-    public ContentControlRegionManager(
-        ILogger<ContentControlRegionManager> logger,
+    public ContentControlRegion(
+        ILogger<ContentControlRegion> logger,
         INavigationService navigation,
         IViewModelManager viewModelManager,
         IDialogFactory dialogFactory,

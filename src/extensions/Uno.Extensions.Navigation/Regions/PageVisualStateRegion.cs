@@ -17,10 +17,10 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Regions.Managers;
 
-public class PageVisualStateRegionManager : SimpleRegionManager<Page>
+public class PageVisualStateRegion : SimpleRegion<Page>
 {
-    public PageVisualStateRegionManager(
-        ILogger<PageVisualStateRegionManager> logger,
+    public PageVisualStateRegion(
+        ILogger<PageVisualStateRegion> logger,
         INavigationService navigation,
     IViewModelManager viewModelManager,
     IDialogFactory dialogFactory,

@@ -18,7 +18,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Regions.Managers;
 
-public class NavigationViewRegionManager : SimpleRegionManager<Microsoft.UI.Xaml.Controls.NavigationView>
+public class NavigationViewRegion : SimpleRegion<Microsoft.UI.Xaml.Controls.NavigationView>
 {
     private Microsoft.UI.Xaml.Controls.NavigationView _control;
 
@@ -50,8 +50,8 @@ public class NavigationViewRegionManager : SimpleRegionManager<Microsoft.UI.Xaml
         }
     }
 
-    public NavigationViewRegionManager(
-        ILogger<NavigationViewRegionManager> logger,
+    public NavigationViewRegion(
+        ILogger<NavigationViewRegion> logger,
         INavigationService navigation,
         IViewModelManager viewModelManager,
         IDialogFactory dialogFactory,

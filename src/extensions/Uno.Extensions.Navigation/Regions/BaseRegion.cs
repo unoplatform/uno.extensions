@@ -16,12 +16,12 @@ using Microsoft.UI.Xaml;
 
 namespace Uno.Extensions.Navigation.Regions;
 
-public abstract class BaseRegionManager<TControl> : BaseRegionManager
+public abstract class BaseRegion<TControl> : BaseRegion
     where TControl : class
 {
     public virtual TControl Control { get; set; }
 
-    protected BaseRegionManager(
+    protected BaseRegion(
         ILogger logger,
         INavigationService navigation,
         IViewModelManager viewModelManager,
@@ -41,7 +41,7 @@ public abstract class BaseRegionManager<TControl> : BaseRegionManager
     protected abstract object InternalShow(string path, Type viewType, object data, object viewModel);
 }
 
-public abstract class BaseRegionManager : IRegionManager, IRegionManagerNavigate
+public abstract class BaseRegion : IRegion, IRegionNavigate
 {
     protected ILogger Logger { get; }
 
@@ -57,7 +57,7 @@ public abstract class BaseRegionManager : IRegionManager, IRegionManagerNavigate
 
     private IDialogFactory DialogProvider { get; }
 
-    protected BaseRegionManager(
+    protected BaseRegion(
         ILogger logger,
         INavigationService navigation,
         IViewModelManager viewModelManager,

@@ -10,7 +10,7 @@ using Uno.Extensions.Navigation.Regions.Managers;
 
 namespace ExtensionsSampleApp.Region.Managers
 {
-    public class TabBarRegionManager : SimpleRegionManager<TabBar>
+    public class TabBarRegion : SimpleRegion<TabBar>
     {
         private TabBar _control;
 
@@ -40,8 +40,8 @@ namespace ExtensionsSampleApp.Region.Managers
             }
         }
 
-        public TabBarRegionManager(
-            ILogger<TabBarRegionManager> logger,
+        public TabBarRegion(
+            ILogger<TabBarRegion> logger,
             INavigationService navigation,
         IViewModelManager viewModelManager,
         IDialogFactory dialogFactory,

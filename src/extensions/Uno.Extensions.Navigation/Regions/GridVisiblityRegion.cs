@@ -17,10 +17,10 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Regions.Managers;
 
-public class GridVisiblityRegionManager : SimpleRegionManager<Grid>
+public class GridVisiblityRegion : SimpleRegion<Grid>
 {
-    public GridVisiblityRegionManager(
-        ILogger<GridVisiblityRegionManager> logger,
+    public GridVisiblityRegion(
+        ILogger<GridVisiblityRegion> logger,
         INavigationService navigation,
     IViewModelManager viewModelManager,
     IDialogFactory dialogFactory,
