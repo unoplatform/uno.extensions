@@ -114,8 +114,7 @@ public class NavigationService : IRegionNavigationService
             {
                 if (navResult.Item2 is not null)
                 {
-                    //var nestedContext = navResult.Item2;
-                    var nestedRequest = navResult.Item2;// nestedContext.Request;
+                    var nestedRequest = navResult.Item2;
                     var nestedRoute = nestedRequest.FirstRouteSegment;
 
                     var nested = Nested(nestedRoute) as NavigationService;
@@ -128,7 +127,6 @@ public class NavigationService : IRegionNavigationService
                         var nextRoute = nestedRequest.Route.Uri.OriginalString.TrimStart($"{nestedRoute}/");
                         nestedRequest = nestedRequest.WithPath(nextRoute);
                     }
-
 
                     if (nested is not null)
                     {
@@ -164,7 +162,6 @@ public class NavigationService : IRegionNavigationService
         }
     }
 
-
     public Task AddRegion(string regionName, IRegionNavigationService childRegion)
     {
         var childService = childRegion as NavigationService;
@@ -185,7 +182,7 @@ public class NavigationService : IRegionNavigationService
         NestedRegions.Remove(kvp => kvp.Value == childRegion);
     }
 
-    public IRegionNavigationService Nested(string regionName = null)
+    private IRegionNavigationService Nested(string regionName = null)
     {
         return NestedRegions.TryGetValue(regionName + string.Empty, out var service) ? service : null;
     }
@@ -197,8 +194,7 @@ public class NavigationService : IRegionNavigationService
         return sb.ToString();
     }
 
-
-    public async Task<(bool, NavigationRequest)> RunRegionNavigation(NavigationContext context)
+    private async Task<(bool, NavigationRequest)> RunRegionNavigation(NavigationContext context)
     {
         var request = context.Request;
         var firstRoute = request.FirstRouteSegment;
@@ -212,7 +208,7 @@ public class NavigationService : IRegionNavigationService
                 return (true, null);
             }
             var nextRoute = request.Route.Uri.OriginalString.TrimStart($"{firstRoute}/");
-            var residualRequest = request.WithPath(nextRoute);//.BuildNavigationContext(Services, new TaskCompletionSource<Options.Option>());
+            var residualRequest = request.WithPath(nextRoute);
             return (true, residualRequest);
         }
         else if (Manager is null)
@@ -221,26 +217,24 @@ public class NavigationService : IRegionNavigationService
         }
         else
         {
-            //var context = request.BuildNavigationContext(Services, new TaskCompletionSource<Options.Option>());
             Logger.LazyLogDebug(() => $"Invoking region navigation");
             await Manager.NavigateAsync(context);
             Logger.LazyLogDebug(() => $"Region Navigation complete");
             if (context.ResidualRequest is not null &&
                 !string.IsNullOrWhiteSpace(context.ResidualRequest.Route.Uri.OriginalString))
             {
-                var residualRequest = context.ResidualRequest;//.BuildNavigationContext(Services, new TaskCompletionSource<Options.Option>());
+                var residualRequest = context.ResidualRequest;
                 return (true, residualRequest);
             }
             return (true, default);
         }
     }
 
-
     private void PrintAllRegions(StringBuilder builder, NavigationService nav, int indent = 0, string regionName = null)
     {
         if (nav.Manager is null)
         {
-            builder.AppendLine("");
+            builder.AppendLine(string.Empty);
             builder.AppendLine("------------------------------------------------------------------------------------------------");
             builder.AppendLine($"ROOT");
         }

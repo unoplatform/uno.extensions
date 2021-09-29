@@ -1,10 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
-using Uno.Extensions.Navigation;
-using Uno.Extensions.Navigation.Controls;
-using Uno.Extensions.Navigation.ViewModels;
 using Uno.Extensions.Navigation.Dialogs;
-using Uno.Extensions.Navigation.Regions.Managers;
+using Uno.Extensions.Navigation.ViewModels;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -22,9 +19,9 @@ public class PageVisualStateRegion : SimpleRegion<Page>
     public PageVisualStateRegion(
         ILogger<PageVisualStateRegion> logger,
         INavigationService navigation,
-    IViewModelManager viewModelManager,
-    IDialogFactory dialogFactory,
-    RegionControlProvider controlProvider) : base(logger, navigation, viewModelManager, dialogFactory, controlProvider.RegionControl as Page)
+        IViewModelManager viewModelManager,
+        IDialogFactory dialogFactory,
+        RegionControlProvider controlProvider) : base(logger, navigation, viewModelManager, dialogFactory, controlProvider.RegionControl as Page)
     {
     }
 

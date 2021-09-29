@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.Extensions.Logging;
-using Uno.Extensions.Navigation;
-using Uno.Extensions.Navigation.Controls;
-using Uno.Extensions.Navigation.ViewModels;
 using Uno.Extensions.Navigation.Dialogs;
-using Uno.Extensions.Navigation.Regions.Managers;
+using Uno.Extensions.Navigation.ViewModels;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
