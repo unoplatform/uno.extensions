@@ -53,7 +53,6 @@ public static class ServiceCollectionExtensions
                     .AddScoped<IRegionManager>(services => services.GetService<ScopedServiceHost<IRegionManager>>().Service)
 
                     .AddScoped<ScopedServiceHost<IRegionNavigationService>>()
-                    .AddScoped<IRegionNavigationService>(services => services.GetService<ScopedServiceHost<IRegionNavigationService>>().Service)
 
                     .AddScoped<ViewModelDataProvider>()
                     .AddScoped<RegionControlProvider>()
@@ -61,8 +60,8 @@ public static class ServiceCollectionExtensions
 
                     .AddScoped<ScopedServiceHost<INavigationService>>()
                     .AddScoped<INavigationService>(services =>
-                            services.GetService<ScopedServiceHost<INavigationService>>().Service ??
-                            services.GetService<INavigationManager>().Root.Navigation
+                            services.GetService<ScopedServiceHost<IRegionNavigationService>>().Service ??
+                            services.GetService<INavigationManager>().Root
                             );
 
     }

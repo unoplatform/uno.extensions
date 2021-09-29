@@ -2,10 +2,8 @@
 
 namespace Uno.Extensions.Navigation;
 
-public interface IRegionNavigationService
+public interface IRegionNavigationService : INavigationService
 {
-    INavigationService Navigation { get; }
-
     Task AddRegion(string regionName, IRegionNavigationService childRegion);
 
     void RemoveRegion(IRegionNavigationService childRegion);
