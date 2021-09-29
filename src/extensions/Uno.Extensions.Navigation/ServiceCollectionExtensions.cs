@@ -47,7 +47,7 @@ public static class ServiceCollectionExtensions
 
                     // Register the navigation manager and the providers for
                     // navigation data and the navigation service
-                    .AddSingleton<INavigationManager, NavigationManager>()
+                    .AddSingleton<INavigationServiceFactory, NavigationServiceFactory>()
 
                     .AddScoped<ScopedServiceHost<IRegionManager>>()
                     .AddScoped<IRegionManager>(services => services.GetService<ScopedServiceHost<IRegionManager>>().Service)
@@ -61,7 +61,7 @@ public static class ServiceCollectionExtensions
                     .AddScoped<ScopedServiceHost<INavigationService>>()
                     .AddScoped<INavigationService>(services =>
                             services.GetService<ScopedServiceHost<IRegionNavigationService>>().Service ??
-                            services.GetService<INavigationManager>().Root
+                            services.GetService<INavigationServiceFactory>().Root
                             );
 
     }
