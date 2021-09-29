@@ -38,7 +38,7 @@ public static class Navigation
     {
         get
         {
-            return logger ?? (logger = Ioc.Default.GetService(typeof(ILogger<NavigationManager>)) as ILogger);
+            return logger ?? (logger = Ioc.Default.GetService<ILogger<NavigationManager>>());
         }
     }
 
@@ -211,7 +211,7 @@ DependencyProperty.RegisterAttached(
                     try
                     {
                         var nav = ScopedServiceForControl(s as DependencyObject);
-                        await nav.Navigation.NavigateByPathAsync(s, path);
+                        await nav.NavigateByPathAsync(s, path);
                     }
                     catch (Exception ex)
                     {

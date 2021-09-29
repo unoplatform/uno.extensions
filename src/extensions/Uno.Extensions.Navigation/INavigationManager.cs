@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions.Navigation;
 
-public interface INavigationManager 
+public interface INavigationManager
 {
     IRegionNavigationService Root { get; }
 

@@ -27,14 +27,10 @@ public class NavigationManager : INavigationManager
 
         // Create root navigation service
         var navLogger = services.GetService<ILogger<NavigationService>>();
-        var navService = new NavigationService(navLogger, services);
-
-        // Create root region service
-        var regionLogger = services.GetService<ILogger<Region>>();
-        var region = new Region(regionLogger, null, navService);
+        var navService = new NavigationService(navLogger, services, null);
 
         services.GetService<ScopedServiceHost<INavigationService>>().Service = navService;
-        Root = region;
+        Root = navService;
     }
 
     public IRegionNavigationService CreateService(IRegionNavigationService parent, params object[] controls)
@@ -46,13 +42,8 @@ public class NavigationManager : INavigationManager
 
         // Create Navigation Service
         var navLogger = services.GetService<ILogger<NavigationService>>();
-        var navService = new NavigationService(navLogger, services);
-        services.GetService<ScopedServiceHost<INavigationService>>().Service = navService;
-
-        // Create Region Service Container
-        var regionLogger = services.GetService<ILogger<Region>>();
-        var region = new Region(regionLogger,  parent, navService);
-        services.GetService<ScopedServiceHost<IRegionNavigationService>>().Service = region;
+        var navService = new NavigationService(navLogger, services, parent);
+        services.GetService<ScopedServiceHost<IRegionNavigationService>>().Service = navService;
 
         // Create Region Service
         controls = controls.Where(c => c is not null).ToArray();
@@ -70,19 +61,19 @@ public class NavigationManager : INavigationManager
             {
                 services.GetService<ScopedServiceHost<IRegionManager>>().Service = manager;
                 // Associate region service with region service container
-                region.Manager = manager;
+                navService.Manager = manager;
             }
         }
 
-        if(composite is not null)
+        if (composite is not null)
         {
             services.GetService<ScopedServiceHost<IRegionManager>>().Service = composite;
             // Associate region service with region service container
-            region.Manager = composite;
+            navService.Manager = composite;
         }
 
         // Retrieve the region container and the navigation service
-        return region;
+        return navService;
     }
 
     private IRegionManagerFactory FindFactoryForControl(object control)

@@ -1,27 +1,35 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
+using Uno.Extensions.Navigation.Regions;
 
 namespace Uno.Extensions.Navigation;
 
-public class NavigationService : INavigationService
+public class NavigationService : IRegionNavigationService
 {
-    public Region Region { get; set; }
+    public IRegionManager Manager { get; set; }
 
     private IServiceProvider ScopedServices { get; }
 
     private ILogger Logger { get; }
 
-    private bool IsRootService => Region.Parent is null;
+    private bool IsRootService => Parent is null;
 
-    public PendingContext PendingNavigation { get; set; }
+    private PendingContext PendingNavigation { get; set; }
 
-    public NavigationService(ILogger<NavigationService> logger, IServiceProvider services)
+    private IRegionNavigationService Parent { get; set; }
+
+    private IDictionary<string, IRegionNavigationService> NestedRegions { get; } = new Dictionary<string, IRegionNavigationService>();
+
+    public NavigationService(ILogger<NavigationService> logger, IServiceProvider services, IRegionNavigationService parent)
     {
         Logger = logger;
         ScopedServices = services;
+        Parent = parent;
     }
 
     private int isNavigating = 0;
@@ -75,7 +83,7 @@ public class NavigationService : INavigationService
         }
         finally
         {
-            Logger.LazyLogInformation(() => Root.Region.ToString());
+            Logger.LazyLogInformation(() => Root.ToString());
         }
     }
 
@@ -84,25 +92,12 @@ public class NavigationService : INavigationService
         Logger.LazyLogDebug(() => $"Redirecting navigation request to parent Navigation Service");
 
         var path = request.Route.Uri.OriginalString;
-        var parentService = Region.Parent.Navigation;
+        var parentService = Parent;
         var parentPath = path.Length > NavigationConstants.RelativePath.ParentPath.Length ? path.Substring(NavigationConstants.RelativePath.ParentPath.Length) : string.Empty;
 
         var parentRequest = request.WithPath(parentPath);
         return parentService.NavigateAsync(parentRequest);
     }
-
-    //public async Task NavigateAsync(NavigationContext context)
-    //{
-    //    if (PendingNavigation is null)
-    //    {
-    //        PendingNavigation = context.Pending();
-    //    }
-
-    //    await RunPendingNavigation();
-    //}
-
-
-
 
     public async Task RunPendingNavigation()
     {
@@ -113,7 +108,7 @@ public class NavigationService : INavigationService
             var navTask = pending.TaskCompletion;
             var navContext = pending.Context;
 
-            var navResult = await Region.RunRegionNavigation(navContext);
+            var navResult = await RunRegionNavigation(navContext);
 
             if (navResult.Item1)
             {
@@ -123,15 +118,15 @@ public class NavigationService : INavigationService
                     var nestedRequest = navResult.Item2;// nestedContext.Request;
                     var nestedRoute = nestedRequest.FirstRouteSegment;
 
-                    var nested = Region.Nested(nestedRoute)?.Navigation as NavigationService;
+                    var nested = Nested(nestedRoute) as NavigationService;
                     if (nested is null)
                     {
-                        nested = Region.Nested()?.Navigation as NavigationService;
+                        nested = Nested() as NavigationService;
                     }
                     else
                     {
                         var nextRoute = nestedRequest.Route.Uri.OriginalString.TrimStart($"{nestedRoute}/");
-                        nestedRequest = nestedRequest.WithPath(nextRoute);//.BuildNavigationContext(nested.Services, new TaskCompletionSource<Options.Option>());
+                        nestedRequest = nestedRequest.WithPath(nextRoute);
                     }
 
 
@@ -161,11 +156,120 @@ public class NavigationService : INavigationService
         }
     }
 
-    private NavigationService Root
+    private IRegionNavigationService Root
     {
         get
         {
-            return (Region.Parent?.Navigation as NavigationService)?.Root ?? this;
+            return (Parent as NavigationService)?.Root ?? this;
+        }
+    }
+
+
+    public Task AddRegion(string regionName, IRegionNavigationService childRegion)
+    {
+        var childService = childRegion as NavigationService;
+        NestedRegions[regionName + string.Empty] = childService;
+
+        if (PendingNavigation is not null)
+        {
+            return RunPendingNavigation();
+        }
+        else
+        {
+            return childService.RunPendingNavigation();
+        }
+    }
+
+    public void RemoveRegion(IRegionNavigationService childRegion)
+    {
+        NestedRegions.Remove(kvp => kvp.Value == childRegion);
+    }
+
+    public IRegionNavigationService Nested(string regionName = null)
+    {
+        return NestedRegions.TryGetValue(regionName + string.Empty, out var service) ? service : null;
+    }
+
+    public override string ToString()
+    {
+        var sb = new StringBuilder();
+        PrintAllRegions(sb, this);
+        return sb.ToString();
+    }
+
+
+    public async Task<(bool, NavigationRequest)> RunRegionNavigation(NavigationContext context)
+    {
+        var request = context.Request;
+        var firstRoute = request.FirstRouteSegment;
+
+        if (firstRoute == Manager?.CurrentContext?.Path ||
+            (firstRoute + "/") == NavigationConstants.RelativePath.Nested)
+        {
+            Logger.LazyLogWarning(() => $"Attempt to log to the same path '{firstRoute}");
+            if (context.Path == Manager?.CurrentContext?.Path)
+            {
+                return (true, null);
+            }
+            var nextRoute = request.Route.Uri.OriginalString.TrimStart($"{firstRoute}/");
+            var residualRequest = request.WithPath(nextRoute);//.BuildNavigationContext(Services, new TaskCompletionSource<Options.Option>());
+            return (true, residualRequest);
+        }
+        else if (Manager is null)
+        {
+            return (false, default);
+        }
+        else
+        {
+            //var context = request.BuildNavigationContext(Services, new TaskCompletionSource<Options.Option>());
+            Logger.LazyLogDebug(() => $"Invoking region navigation");
+            await Manager.NavigateAsync(context);
+            Logger.LazyLogDebug(() => $"Region Navigation complete");
+            if (context.ResidualRequest is not null &&
+                !string.IsNullOrWhiteSpace(context.ResidualRequest.Route.Uri.OriginalString))
+            {
+                var residualRequest = context.ResidualRequest;//.BuildNavigationContext(Services, new TaskCompletionSource<Options.Option>());
+                return (true, residualRequest);
+            }
+            return (true, default);
+        }
+    }
+
+
+    private void PrintAllRegions(StringBuilder builder, NavigationService nav, int indent = 0, string regionName = null)
+    {
+        if (nav.Manager is null)
+        {
+            builder.AppendLine("");
+            builder.AppendLine("------------------------------------------------------------------------------------------------");
+            builder.AppendLine($"ROOT");
+        }
+        else
+        {
+            var ans = nav;
+            var prefix = string.Empty;
+            if (indent > 0)
+            {
+                prefix = new string(' ', indent * 2) + "|-";
+            }
+            var reg = !string.IsNullOrWhiteSpace(regionName) ? $"({regionName}) " : null;
+            builder.AppendLine($"{prefix}{reg}{ans.Manager?.ToString()}");
+        }
+
+        foreach (var nested in nav.NestedRegions)
+        {
+            PrintAllRegions(builder, nested.Value as NavigationService, indent + 1, nested.Key);
+        }
+
+        if (nav.Manager is null)
+        {
+            builder.AppendLine("------------------------------------------------------------------------------------------------");
         }
     }
 }
+
+#pragma warning disable SA1313 // Parameter names should begin with lower-case letter
+public record PendingContext(TaskCompletionSource<object> TaskCompletion, NavigationContext Context)
+{
+}
+#pragma warning restore SA1313 // Parameter names should begin with lower-case letter
