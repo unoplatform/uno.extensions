@@ -42,10 +42,10 @@ public static class Navigation
         }
     }
 
-    public static readonly DependencyProperty RegionServiceProperty =
+    public static readonly DependencyProperty RegionProperty =
    DependencyProperty.RegisterAttached(
-     "RegionService",
-     typeof(IRegionService),
+     "Region",
+     typeof(IRegion),
      typeof(Navigation),
      new PropertyMetadata(null)
    );
@@ -106,12 +106,12 @@ DependencyProperty.RegisterAttached(
             Logger.LazyLogDebug(() => $"Creating region manager");
             var loadedElement = sLoaded as FrameworkElement;
             var parent = ScopedServiceForControl(loadedElement.Parent) ?? NavigationManager.Root;
-            var navRegion = loadedElement.GetRegionService() ?? NavigationManager.CreateService(parent, loadedElement, compositeRegion);
+            var navRegion = loadedElement.GetRegion() ?? NavigationManager.CreateService(parent, loadedElement, compositeRegion);
 
-            loadedElement.SetRegionService(navRegion);
+            loadedElement.SetRegion(navRegion);
             if (compositeRegion is not null)
             {
-                compositeRegion.SetRegionService(navRegion);
+                compositeRegion.SetRegion(navRegion);
             }
             Logger.LazyLogDebug(() => $"Region manager created");
 
@@ -131,18 +131,18 @@ DependencyProperty.RegisterAttached(
         };
     }
 
-    public static void SetRegionService(this FrameworkElement element, IRegionService value)
+    public static void SetRegion(this FrameworkElement element, IRegion value)
     {
-        element.SetValue(RegionServiceProperty, value);
+        element.SetValue(RegionProperty, value);
     }
 
-    public static IRegionService GetRegionService(this FrameworkElement element)
+    public static IRegion GetRegion(this FrameworkElement element)
     {
         if (element is null)
         {
             return null;
         }
-        return (IRegionService)element.GetValue(RegionServiceProperty);
+        return (IRegion)element.GetValue(RegionProperty);
     }
 
     public static TElement AsNavigationContainer<TElement>(this TElement element)
@@ -229,9 +229,9 @@ DependencyProperty.RegisterAttached(
         }
     }
 
-    private static IRegionService ScopedServiceForControl(DependencyObject element)
+    private static IRegion ScopedServiceForControl(DependencyObject element)
     {
-        var service = (element as FrameworkElement).GetRegionService();
+        var service = (element as FrameworkElement).GetRegion();
         if (service is not null)
         {
             return service;
