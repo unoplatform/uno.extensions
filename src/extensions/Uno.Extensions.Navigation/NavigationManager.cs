@@ -11,7 +11,7 @@ namespace Uno.Extensions.Navigation;
 
 public class NavigationManager : INavigationManager
 {
-    public INavigationService Root { get; }
+    public IRegionService Root { get; }
 
     private IServiceProvider Services { get; }
 
@@ -25,21 +25,21 @@ public class NavigationManager : INavigationManager
         Services = services;
         Factories = factories.ToDictionary(x => x.ControlType);
 
-        // Create root region service
-        var regionLogger = services.GetService<ILogger<RegionService>>();
-        var regionContainer = new RegionService(regionLogger, services);
-
         // Create root navigation service
         var navLogger = services.GetService<ILogger<NavigationService>>();
         var navService = new NavigationService(navLogger, services, true);
 
+        // Create root region service
+        var regionLogger = services.GetService<ILogger<RegionService>>();
+        var regionService = new RegionService(regionLogger, services, null, navService);
+
         // Associate region and nav services and set as Root
-        navService.Region = regionContainer;
+        navService.Region = regionService;
         services.GetService<ScopedServiceHost<INavigationService>>().Service = navService;
-        Root = navService;
+        Root = regionService;
     }
 
-    public INavigationService CreateService(INavigationService parent, params object[] controls)
+    public IRegionService CreateService(IRegionService parent, params object[] controls)
     {
         Logger.LazyLogDebug(() => $"Adding region");
 
@@ -48,17 +48,16 @@ public class NavigationManager : INavigationManager
 
         // Create Navigation Service
         var navLogger = services.GetService<ILogger<NavigationService>>();
-        var mappings = services.GetService<INavigationMappings>();
         var navService = new NavigationService(navLogger, services, false);
         services.GetService<ScopedServiceHost<INavigationService>>().Service = navService;
 
         // Create Region Service Container
         var regionLogger = services.GetService<ILogger<RegionService>>();
-        var regionContainer = new RegionService(regionLogger, services);
-        services.GetService<ScopedServiceHost<IRegionService>>().Service = regionContainer;
+        var regionService = new RegionService(regionLogger, services, parent, navService);
+        services.GetService<ScopedServiceHost<IRegionService>>().Service = regionService;
 
         // Associate Region Service Container with Navigation Service
-        navService.Region = regionContainer;
+        navService.Region = regionService;
 
         // Create Region Service
         controls = controls.Where(c => c is not null).ToArray();
@@ -76,7 +75,7 @@ public class NavigationManager : INavigationManager
             {
                 services.GetService<ScopedServiceHost<IRegionManager>>().Service = region;
                 // Associate region service with region service container
-                regionContainer.Region = region;
+                regionService.Region = region;
             }
         }
 
@@ -84,13 +83,11 @@ public class NavigationManager : INavigationManager
         {
             services.GetService<ScopedServiceHost<IRegionManager>>().Service = composite;
             // Associate region service with region service container
-            regionContainer.Region = composite;
+            regionService.Region = composite;
         }
 
-        navService.Parent = parent;
-
         // Retrieve the region container and the navigation service
-        return navService;
+        return regionService;
     }
 
     private IRegionManagerFactory FindFactoryForControl(object control)
