@@ -52,8 +52,8 @@ public static class ServiceCollectionExtensions
                     .AddScoped<ScopedServiceHost<IRegionManager>>()
                     .AddScoped<IRegionManager>(services => services.GetService<ScopedServiceHost<IRegionManager>>().Service)
 
-                    .AddScoped<ScopedServiceHost<IRegionService>>()
-                    .AddScoped<IRegionService>(services => services.GetService<ScopedServiceHost<IRegionService>>().Service)
+                    .AddScoped<ScopedServiceHost<IRegion>>()
+                    .AddScoped<IRegion>(services => services.GetService<ScopedServiceHost<IRegion>>().Service)
 
                     .AddScoped<ViewModelDataProvider>()
                     .AddScoped<RegionControlProvider>()

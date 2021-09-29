@@ -8,22 +8,22 @@ using Uno.Extensions.Navigation.Regions;
 
 namespace Uno.Extensions.Navigation;
 
-public class RegionService : IRegionService
+public class Region : IRegion
 {
-    public IRegionManager Region { get; set; }
+    public IRegionManager Manager { get; set; }
 
     private NavigationService navigation;
     public INavigationService Navigation => navigation;
 
-    public IRegionService Parent { get; private set; }
+    public IRegion Parent { get; private set; }
 
-    private IDictionary<string, IRegionService> NestedRegions { get; } = new Dictionary<string, IRegionService>();
+    private IDictionary<string, IRegion> NestedRegions { get; } = new Dictionary<string, IRegion>();
 
     private ILogger Logger { get; }
 
     private IServiceProvider Services { get; }
 
-    public RegionService(ILogger<RegionService> logger, IServiceProvider services, IRegionService parent, NavigationService navigation)
+    public Region(ILogger<Region> logger, IServiceProvider services, IRegion parent, NavigationService navigation)
     {
         Logger = logger;
         Services = services;
@@ -31,9 +31,9 @@ public class RegionService : IRegionService
         this.navigation = navigation;
     }
 
-    public Task AddRegion(string regionName, IRegionService childRegion)
+    public Task AddRegion(string regionName, IRegion childRegion)
     {
-        var childService = childRegion as RegionService;
+        var childService = childRegion as Region;
         NestedRegions[regionName + string.Empty] = childService;
 
         if (navigation.PendingNavigation is not null)
@@ -46,12 +46,12 @@ public class RegionService : IRegionService
         }
     }
 
-    public void RemoveRegion(IRegionService childRegion)
+    public void RemoveRegion(IRegion childRegion)
     {
         NestedRegions.Remove(kvp => kvp.Value == childRegion);
     }
 
-    public IRegionService Nested(string regionName = null)
+    public IRegion Nested(string regionName = null)
     {
         return NestedRegions.TryGetValue(regionName + string.Empty, out var service) ? service : null;
     }
@@ -69,11 +69,11 @@ public class RegionService : IRegionService
         var request = context.Request;
         var firstRoute = request.FirstRouteSegment;
 
-        if (firstRoute == Region?.CurrentContext?.Path ||
+        if (firstRoute == Manager?.CurrentContext?.Path ||
             (firstRoute + "/") == NavigationConstants.RelativePath.Nested)
         {
             Logger.LazyLogWarning(() => $"Attempt to log to the same path '{firstRoute}");
-            if (context.Path == Region?.CurrentContext?.Path)
+            if (context.Path == Manager?.CurrentContext?.Path)
             {
                 return (true, null);
             }
@@ -81,7 +81,7 @@ public class RegionService : IRegionService
             var residualRequest = request.WithPath(nextRoute);//.BuildNavigationContext(Services, new TaskCompletionSource<Options.Option>());
             return (true, residualRequest);
         }
-        else if (Region is null)
+        else if (Manager is null)
         {
             return (false, default);
         }
@@ -89,7 +89,7 @@ public class RegionService : IRegionService
         {
             //var context = request.BuildNavigationContext(Services, new TaskCompletionSource<Options.Option>());
             Logger.LazyLogDebug(() => $"Invoking region navigation");
-            await Region.NavigateAsync(context);
+            await Manager.NavigateAsync(context);
             Logger.LazyLogDebug(() => $"Region Navigation complete");
             if (context.ResidualRequest is not null &&
                 !string.IsNullOrWhiteSpace(context.ResidualRequest.Route.Uri.OriginalString))
@@ -102,9 +102,9 @@ public class RegionService : IRegionService
     }
 
 
-    private void PrintAllRegions(StringBuilder builder, RegionService nav, int indent = 0, string regionName = null)
+    private void PrintAllRegions(StringBuilder builder, Region nav, int indent = 0, string regionName = null)
     {
-        if (nav.Region is null)
+        if (nav.Manager is null)
         {
             builder.AppendLine("");
             builder.AppendLine("------------------------------------------------------------------------------------------------");
@@ -119,15 +119,15 @@ public class RegionService : IRegionService
                 prefix = new string(' ', indent * 2) + "|-";
             }
             var reg = !string.IsNullOrWhiteSpace(regionName) ? $"({regionName}) " : null;
-            builder.AppendLine($"{prefix}{reg}{ans.Region?.ToString()}");
+            builder.AppendLine($"{prefix}{reg}{ans.Manager?.ToString()}");
         }
 
         foreach (var nested in nav.NestedRegions)
         {
-            PrintAllRegions(builder, nested.Value as RegionService, indent + 1, nested.Key);
+            PrintAllRegions(builder, nested.Value as Region, indent + 1, nested.Key);
         }
 
-        if (nav.Region is null)
+        if (nav.Manager is null)
         {
             builder.AppendLine("------------------------------------------------------------------------------------------------");
         }

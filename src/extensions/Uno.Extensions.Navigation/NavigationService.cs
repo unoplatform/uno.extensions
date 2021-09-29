@@ -8,7 +8,7 @@ namespace Uno.Extensions.Navigation;
 
 public class NavigationService : INavigationService
 {
-    public RegionService Region { get; set; }
+    public Region Region { get; set; }
 
     private IServiceProvider ScopedServices { get; }
 
