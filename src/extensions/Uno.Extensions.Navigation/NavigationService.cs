@@ -14,15 +14,14 @@ public class NavigationService : INavigationService
 
     private ILogger Logger { get; }
 
-    private bool IsRootService { get; }
+    private bool IsRootService => Region.Parent is null;
 
     public PendingContext PendingNavigation { get; set; }
 
-    public NavigationService(ILogger<NavigationService> logger, IServiceProvider services, bool isRoot)
+    public NavigationService(ILogger<NavigationService> logger, IServiceProvider services)
     {
         Logger = logger;
         ScopedServices = services;
-        IsRootService = isRoot;
     }
 
     private int isNavigating = 0;

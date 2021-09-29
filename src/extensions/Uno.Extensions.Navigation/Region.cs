@@ -8,30 +8,28 @@ using Uno.Extensions.Navigation.Regions;
 
 namespace Uno.Extensions.Navigation;
 
-public class Region : IRegion
+public class Region : IRegionNavigationService
 {
     public IRegionManager Manager { get; set; }
 
     private NavigationService navigation;
     public INavigationService Navigation => navigation;
 
-    public IRegion Parent { get; private set; }
+    public IRegionNavigationService Parent { get; private set; }
 
-    private IDictionary<string, IRegion> NestedRegions { get; } = new Dictionary<string, IRegion>();
+    private IDictionary<string, IRegionNavigationService> NestedRegions { get; } = new Dictionary<string, IRegionNavigationService>();
 
     private ILogger Logger { get; }
 
-    private IServiceProvider Services { get; }
-
-    public Region(ILogger<Region> logger, IServiceProvider services, IRegion parent, NavigationService navigation)
+    public Region(ILogger<Region> logger, IRegionNavigationService parent, NavigationService navigation)
     {
         Logger = logger;
-        Services = services;
         Parent = parent;
         this.navigation = navigation;
+        navigation.Region = this;
     }
 
-    public Task AddRegion(string regionName, IRegion childRegion)
+    public Task AddRegion(string regionName, IRegionNavigationService childRegion)
     {
         var childService = childRegion as Region;
         NestedRegions[regionName + string.Empty] = childService;
@@ -46,12 +44,12 @@ public class Region : IRegion
         }
     }
 
-    public void RemoveRegion(IRegion childRegion)
+    public void RemoveRegion(IRegionNavigationService childRegion)
     {
         NestedRegions.Remove(kvp => kvp.Value == childRegion);
     }
 
-    public IRegion Nested(string regionName = null)
+    public IRegionNavigationService Nested(string regionName = null)
     {
         return NestedRegions.TryGetValue(regionName + string.Empty, out var service) ? service : null;
     }

@@ -11,7 +11,7 @@ namespace Uno.Extensions.Navigation;
 
 public class NavigationManager : INavigationManager
 {
-    public IRegion Root { get; }
+    public IRegionNavigationService Root { get; }
 
     private IServiceProvider Services { get; }
 
@@ -27,19 +27,17 @@ public class NavigationManager : INavigationManager
 
         // Create root navigation service
         var navLogger = services.GetService<ILogger<NavigationService>>();
-        var navService = new NavigationService(navLogger, services, true);
+        var navService = new NavigationService(navLogger, services);
 
         // Create root region service
         var regionLogger = services.GetService<ILogger<Region>>();
-        var region = new Region(regionLogger, services, null, navService);
+        var region = new Region(regionLogger, null, navService);
 
-        // Associate region and nav services and set as Root
-        navService.Region = region;
         services.GetService<ScopedServiceHost<INavigationService>>().Service = navService;
         Root = region;
     }
 
-    public IRegion CreateService(IRegion parent, params object[] controls)
+    public IRegionNavigationService CreateService(IRegionNavigationService parent, params object[] controls)
     {
         Logger.LazyLogDebug(() => $"Adding region");
 
@@ -48,16 +46,13 @@ public class NavigationManager : INavigationManager
 
         // Create Navigation Service
         var navLogger = services.GetService<ILogger<NavigationService>>();
-        var navService = new NavigationService(navLogger, services, false);
+        var navService = new NavigationService(navLogger, services);
         services.GetService<ScopedServiceHost<INavigationService>>().Service = navService;
 
         // Create Region Service Container
         var regionLogger = services.GetService<ILogger<Region>>();
-        var region = new Region(regionLogger, services, parent, navService);
-        services.GetService<ScopedServiceHost<IRegion>>().Service = region;
-
-        // Associate Region Service Container with Navigation Service
-        navService.Region = region;
+        var region = new Region(regionLogger,  parent, navService);
+        services.GetService<ScopedServiceHost<IRegionNavigationService>>().Service = region;
 
         // Create Region Service
         controls = controls.Where(c => c is not null).ToArray();
