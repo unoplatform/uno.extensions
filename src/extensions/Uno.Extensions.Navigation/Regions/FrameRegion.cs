@@ -15,7 +15,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 #endif
 
-namespace Uno.Extensions.Navigation.Regions.Managers;
+namespace Uno.Extensions.Navigation.Regions;
 
 public class FrameRegion : StackRegion<Frame>
 {
