@@ -8,15 +8,15 @@ namespace Uno.Extensions.Navigation;
 
 public class NavigationService : INavigationService
 {
-    public INavigationService Parent { get; set; }
-
-    public IRegionService Region { get; set; }
+    public RegionService Region { get; set; }
 
     private IServiceProvider ScopedServices { get; }
 
     private ILogger Logger { get; }
 
     private bool IsRootService { get; }
+
+    public PendingContext PendingNavigation { get; set; }
 
     public NavigationService(ILogger<NavigationService> logger, IServiceProvider services, bool isRoot)
     {
@@ -66,7 +66,13 @@ public class NavigationService : INavigationService
     {
         try
         {
-            await Region.NavigateAsync(context);
+            //await Region.NavigateAsync(context);
+            if (PendingNavigation is null)
+            {
+                PendingNavigation = context.Pending();
+            }
+
+            await RunPendingNavigation();
         }
         finally
         {
@@ -76,20 +82,91 @@ public class NavigationService : INavigationService
 
     private NavigationResponse NavigateWithParentAsync(NavigationRequest request)
     {
-        var path = request.Route.Uri.OriginalString;
         Logger.LazyLogDebug(() => $"Redirecting navigation request to parent Navigation Service");
-        var parentService = Parent;
-        var parentPath = path.Length > 2 ? path.Substring(2) : string.Empty;
+
+        var path = request.Route.Uri.OriginalString;
+        var parentService = Region.Parent.Navigation;
+        var parentPath = path.Length > NavigationConstants.RelativePath.ParentPath.Length ? path.Substring(NavigationConstants.RelativePath.ParentPath.Length) : string.Empty;
 
         var parentRequest = request.WithPath(parentPath);
         return parentService.NavigateAsync(parentRequest);
     }
 
-    private INavigationService Root
+    //public async Task NavigateAsync(NavigationContext context)
+    //{
+    //    if (PendingNavigation is null)
+    //    {
+    //        PendingNavigation = context.Pending();
+    //    }
+
+    //    await RunPendingNavigation();
+    //}
+
+
+
+
+    public async Task RunPendingNavigation()
+    {
+        var pending = PendingNavigation;
+        if (pending is not null)
+        {
+            PendingNavigation = null;
+            var navTask = pending.TaskCompletion;
+            var navContext = pending.Context;
+
+            var navResult = await Region.RunRegionNavigation(navContext);
+
+            if (navResult.Item1)
+            {
+                if (navResult.Item2 is not null)
+                {
+                    //var nestedContext = navResult.Item2;
+                    var nestedRequest = navResult.Item2;// nestedContext.Request;
+                    var nestedRoute = nestedRequest.FirstRouteSegment;
+
+                    var nested = Region.Nested(nestedRoute)?.Navigation as NavigationService;
+                    if (nested is null)
+                    {
+                        nested = Region.Nested()?.Navigation as NavigationService;
+                    }
+                    else
+                    {
+                        var nextRoute = nestedRequest.Route.Uri.OriginalString.TrimStart($"{nestedRoute}/");
+                        nestedRequest = nestedRequest.WithPath(nextRoute);//.BuildNavigationContext(nested.Services, new TaskCompletionSource<Options.Option>());
+                    }
+
+
+                    if (nested is not null)
+                    {
+                        var nestedContext = nestedRequest.BuildNavigationContext(nested.ScopedServices, new TaskCompletionSource<Options.Option>());
+                        nested.PendingNavigation = nestedContext.Pending();
+                        await nested.RunPendingNavigation();
+                    }
+                    else
+                    {
+                        var pendingRoute = NavigationConstants.RelativePath.Nested + nestedRequest.Route.Uri.OriginalString;
+                        var pendingContext = nestedRequest.WithPath(pendingRoute).BuildNavigationContext(ScopedServices, new TaskCompletionSource<Options.Option>());
+
+                        PendingNavigation = pendingContext.Pending();
+                        await PendingNavigation.TaskCompletion.Task;
+                    }
+                }
+
+                navTask.TrySetResult(null);
+            }
+            else
+            {
+                PendingNavigation = pending;
+                await navTask.Task;
+            }
+        }
+    }
+
+    private NavigationService Root
     {
         get
         {
-            return (Parent as NavigationService)?.Root ?? this;
+            return (Region.Parent?.Navigation as NavigationService)?.Root ?? this;
         }
     }
 }

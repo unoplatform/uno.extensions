@@ -2,7 +2,7 @@
 
 public interface INavigationManager 
 {
-    INavigationService Root { get; }
+    IRegionService Root { get; }
 
-    INavigationService CreateService(INavigationService parent, params object[] controls);
+    IRegionService CreateService(IRegionService parent, params object[] controls);
 }

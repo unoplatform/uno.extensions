@@ -4,7 +4,7 @@ namespace Uno.Extensions.Navigation;
 
 public interface IRegionService
 {
-    Task NavigateAsync(NavigationContext context);
+    INavigationService Navigation { get; }
 
     Task AddRegion(string regionName, IRegionService childRegion);
 
