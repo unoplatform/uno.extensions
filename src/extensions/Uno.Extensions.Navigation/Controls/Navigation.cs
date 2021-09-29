@@ -22,13 +22,13 @@ namespace Uno.Extensions.Navigation.Controls;
 
 public static class Navigation
 {
-    private static INavigationManager navigationManager;
+    private static INavigationServiceFactory navigationServiceFactory;
 
-    private static INavigationManager NavigationManager
+    private static INavigationServiceFactory NavigationServiceFactory
     {
         get
         {
-            return navigationManager ?? (navigationManager = Ioc.Default.GetService<INavigationManager>());
+            return navigationServiceFactory ?? (navigationServiceFactory = Ioc.Default.GetService<INavigationServiceFactory>());
         }
     }
 
@@ -38,7 +38,7 @@ public static class Navigation
     {
         get
         {
-            return logger ?? (logger = Ioc.Default.GetService<ILogger<NavigationManager>>());
+            return logger ?? (logger = Ioc.Default.GetService<ILogger<NavigationServiceFactory>>());
         }
     }
 
@@ -105,8 +105,8 @@ DependencyProperty.RegisterAttached(
         {
             Logger.LazyLogDebug(() => $"Creating region manager");
             var loadedElement = sLoaded as FrameworkElement;
-            var parent = ScopedServiceForControl(loadedElement.Parent) ?? NavigationManager.Root;
-            var navRegion = loadedElement.GetRegion() ?? NavigationManager.CreateService(parent, loadedElement, compositeRegion);
+            var parent = ScopedServiceForControl(loadedElement.Parent) ?? NavigationServiceFactory.Root;
+            var navRegion = loadedElement.GetRegion() ?? NavigationServiceFactory.CreateService(parent, loadedElement, compositeRegion);
 
             loadedElement.SetRegion(navRegion);
             if (compositeRegion is not null)
