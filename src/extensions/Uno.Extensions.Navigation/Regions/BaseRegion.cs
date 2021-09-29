@@ -26,8 +26,7 @@ public abstract class BaseRegion<TControl> : BaseRegion
         INavigationService navigation,
         IViewModelManager viewModelManager,
         IDialogFactory dialogFactory,
-        TControl control) :
-        base(logger, navigation, viewModelManager, dialogFactory)
+        TControl control) : base(logger, navigation, viewModelManager, dialogFactory)
     {
         Control = control;
     }

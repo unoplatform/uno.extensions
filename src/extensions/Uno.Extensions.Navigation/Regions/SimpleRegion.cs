@@ -1,9 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
-using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Dialogs;
 using Uno.Extensions.Navigation.ViewModels;
-
 
 namespace Uno.Extensions.Navigation.Regions.Managers;
 
@@ -35,6 +33,4 @@ public abstract class SimpleRegion<TControl> : BaseRegion<TControl>
     {
         return $"Simple({typeof(TControl).Name}) '{CurrentContext?.Path}'";
     }
-
-
 }

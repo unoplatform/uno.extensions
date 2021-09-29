@@ -127,7 +127,6 @@ DependencyProperty.RegisterAttached(
 
             Logger.LazyLogDebug(() => $"Attaching region manager");
             await parent.AddRegion(regionName, navRegion);
-
         };
     }
 

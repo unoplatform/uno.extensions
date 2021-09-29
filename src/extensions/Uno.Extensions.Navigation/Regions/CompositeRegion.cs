@@ -20,6 +20,7 @@ namespace Uno.Extensions.Navigation.Regions.Managers
             IDialogFactory dialogFactory) : base(logger, navigation, viewModelManager, dialogFactory)
         {
         }
+
         private NavigationContext currentContext;
 
         public override NavigationContext CurrentContext => currentContext;

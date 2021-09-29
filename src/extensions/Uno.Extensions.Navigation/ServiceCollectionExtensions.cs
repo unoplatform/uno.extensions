@@ -63,7 +63,6 @@ public static class ServiceCollectionExtensions
                             services.GetService<ScopedServiceHost<IRegionNavigationService>>().Service ??
                             services.GetService<INavigationServiceFactory>().Root
                             );
-
     }
 
     public static IServiceCollection AddRegion<TControl, TRegion>(this IServiceCollection services)
