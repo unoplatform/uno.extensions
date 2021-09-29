@@ -64,12 +64,12 @@ namespace ExtensionsSampleApp
                .ConfigureServices(services =>
                {
                    services
-                   .AddRegion<TabBar, TabBarRegionManager>()
-                   //.AddRegion<(TabBar, ContentControl), TabBarContentManager<ContentControl, ContentControlManager>, SimpleRegionManager<TabBarContentManager<ContentControl, ContentControlManager>>>()
-                   //.AddRegion<(TabBar, ContentControl), RegionControlWithContentRegionManager<TabBar, TabBarRegionManager, ContentControl, ContentControlRegionManager>>()
+                   .AddRegion<TabBar, TabBarRegion>()
+                   //.AddRegion<(TabBar, ContentControl), TabBarContentManager<ContentControl, ContentControlManager>, SimpleRegion<TabBarContentManager<ContentControl, ContentControlManager>>>()
+                   //.AddRegion<(TabBar, ContentControl), RegionControlWithContentRegion<TabBar, TabBarRegion, ContentControl, ContentControlRegion>>()
                    //.AddRegion<
                    //    (Microsoft.UI.Xaml.Controls.NavigationView, Page),
-                   //     RegionControlWithContentRegionManager<Microsoft.UI.Xaml.Controls.NavigationView, NavigationViewRegionManager, Page, PageVisualStateRegionManager>>()
+                   //     RegionControlWithContentRegion<Microsoft.UI.Xaml.Controls.NavigationView, NavigationViewRegion, Page, PageVisualStateRegion>>()
                    .AddScoped<MainViewModel>()
                    .AddScoped<SecondViewModel>()
                    .AddViewModelData<Widget>()

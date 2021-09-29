@@ -9,12 +9,12 @@ using Uno.Extensions.Navigation.ViewModels;
 
 namespace Uno.Extensions.Navigation.Regions.Managers
 {
-    public class CompositeRegionManager : BaseRegionManager
+    public class CompositeRegion : BaseRegion
     {
-        internal List<IRegionManagerNavigate> Regions { get; } = new List<IRegionManagerNavigate>();
+        internal List<IRegionNavigate> Regions { get; } = new List<IRegionNavigate>();
 
-        public CompositeRegionManager(
-            ILogger<CompositeRegionManager> logger,
+        public CompositeRegion(
+            ILogger<CompositeRegion> logger,
             INavigationService navigation,
             IViewModelManager viewModelManager,
             IDialogFactory dialogFactory) : base(logger, navigation, viewModelManager, dialogFactory)

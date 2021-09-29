@@ -15,11 +15,11 @@ public class NavigationServiceFactory : INavigationServiceFactory
 
     private IServiceProvider Services { get; }
 
-    private IDictionary<Type, IRegionManagerFactory> Factories { get; }
+    private IDictionary<Type, IRegionFactory> Factories { get; }
 
     private ILogger Logger { get; }
 
-    public NavigationServiceFactory(ILogger<NavigationServiceFactory> logger, IServiceProvider services, IEnumerable<IRegionManagerFactory> factories)
+    public NavigationServiceFactory(ILogger<NavigationServiceFactory> logger, IServiceProvider services, IEnumerable<IRegionFactory> factories)
     {
         Logger = logger;
         Services = services;
@@ -47,7 +47,7 @@ public class NavigationServiceFactory : INavigationServiceFactory
 
         // Create Region Service
         controls = controls.Where(c => c is not null).ToArray();
-        CompositeRegionManager composite = controls.Length > 1 ? services.GetService<CompositeRegionManager>() : default;
+        CompositeRegion composite = controls.Length > 1 ? services.GetService<CompositeRegion>() : default;
         foreach (var control in controls)
         {
             services.GetService<RegionControlProvider>().RegionControl = control;
@@ -59,7 +59,7 @@ public class NavigationServiceFactory : INavigationServiceFactory
             }
             else
             {
-                services.GetService<ScopedServiceHost<IRegionManager>>().Service = manager;
+                services.GetService<ScopedServiceHost<IRegion>>().Service = manager;
                 // Associate region service with region service container
                 navService.Manager = manager;
             }
@@ -67,7 +67,7 @@ public class NavigationServiceFactory : INavigationServiceFactory
 
         if (composite is not null)
         {
-            services.GetService<ScopedServiceHost<IRegionManager>>().Service = composite;
+            services.GetService<ScopedServiceHost<IRegion>>().Service = composite;
             // Associate region service with region service container
             navService.Manager = composite;
         }
@@ -76,7 +76,7 @@ public class NavigationServiceFactory : INavigationServiceFactory
         return navService;
     }
 
-    private IRegionManagerFactory FindFactoryForControl(object control)
+    private IRegionFactory FindFactoryForControl(object control)
     {
         var controlType = control.GetType();
         if (Factories.TryGetValue(controlType, out var factory))

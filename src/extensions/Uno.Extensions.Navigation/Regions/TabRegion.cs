@@ -18,10 +18,10 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Regions.Managers;
 
-public class TabRegionManager : SimpleRegionManager<TabView>
+public class TabRegion : SimpleRegion<TabView>
 {
-    public TabRegionManager(
-        ILogger<TabRegionManager> logger,
+    public TabRegion(
+        ILogger<TabRegion> logger,
         INavigationService navigation,
         IViewModelManager viewModelManager,
         IDialogFactory dialogFactory,

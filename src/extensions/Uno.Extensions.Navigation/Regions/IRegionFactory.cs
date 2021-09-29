@@ -2,9 +2,9 @@
 
 namespace Uno.Extensions.Navigation.Regions;
 
-public interface IRegionManagerFactory
+public interface IRegionFactory
 {
     Type ControlType { get; }
 
-    IRegionManager Create(IServiceProvider services);
+    IRegion Create(IServiceProvider services);
 }

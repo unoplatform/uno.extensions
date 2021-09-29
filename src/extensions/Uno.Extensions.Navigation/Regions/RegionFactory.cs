@@ -6,22 +6,22 @@ using Uno.Extensions.Logging;
 namespace Uno.Extensions.Navigation.Regions;
 
 #pragma warning disable SA1313 // Parameter names should begin with lower-case letter
-public record RegionManagerFactory<TControl, TRegionManager> : IRegionManagerFactory
+public record RegionFactory<TControl, TRegion> : IRegionFactory
 #pragma warning restore SA1313 // Parameter names should begin with lower-case letter
-    where TRegionManager : IRegionManager
+    where TRegion : IRegion
 {
     private ILogger Logger { get; }
 
-    public RegionManagerFactory(ILogger<RegionManagerFactory<TControl, TRegionManager>> logger)
+    public RegionFactory(ILogger<RegionFactory<TControl, TRegion>> logger)
     {
         Logger = logger;
     }
 
     public Type ControlType => typeof(TControl);
 
-    public IRegionManager Create(IServiceProvider services)
+    public IRegion Create(IServiceProvider services)
     {
-        Logger.LazyLogDebug(() => $"Creating region manager '{typeof(TRegionManager).Name}' for control '{typeof(TControl).Name}'");
-        return services.GetService<TRegionManager>();
+        Logger.LazyLogDebug(() => $"Creating region manager '{typeof(TRegion).Name}' for control '{typeof(TControl).Name}'");
+        return services.GetService<TRegion>();
     }
 }

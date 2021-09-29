@@ -11,7 +11,7 @@ namespace Uno.Extensions.Navigation;
 
 public class NavigationService : IRegionNavigationService
 {
-    public IRegionManager Manager { get; set; }
+    public IRegion Manager { get; set; }
 
     private IServiceProvider ScopedServices { get; }
 

@@ -7,14 +7,14 @@ using Uno.Extensions.Navigation.ViewModels;
 
 namespace Uno.Extensions.Navigation.Regions.Managers;
 
-public abstract class SimpleRegionManager<TControl> : BaseRegionManager<TControl>
+public abstract class SimpleRegion<TControl> : BaseRegion<TControl>
     where TControl : class
 {
     private NavigationContext currentContext;
 
     public override NavigationContext CurrentContext => currentContext;
 
-    protected SimpleRegionManager(
+    protected SimpleRegion(
         ILogger logger,
         INavigationService navigation,
         IViewModelManager viewModelManager,

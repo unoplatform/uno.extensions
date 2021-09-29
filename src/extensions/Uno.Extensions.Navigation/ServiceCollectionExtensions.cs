@@ -26,13 +26,13 @@ public static class ServiceCollectionExtensions
 
         return services
                     // Register the region for each control type
-                    .AddScoped<CompositeRegionManager>()
-                    .AddRegion<Frame, FrameRegionManager>()
-                    .AddRegion<TabView, TabRegionManager>()
-                    .AddRegion<ContentControl, ContentControlRegionManager>()
-                   .AddRegion<Grid, GridVisiblityRegionManager>()
-                   .AddRegion<Page, PageVisualStateRegionManager>()
-                   .AddRegion<Microsoft.UI.Xaml.Controls.NavigationView, NavigationViewRegionManager>()
+                    .AddScoped<CompositeRegion>()
+                    .AddRegion<Frame, FrameRegion>()
+                    .AddRegion<TabView, TabRegion>()
+                    .AddRegion<ContentControl, ContentControlRegion>()
+                   .AddRegion<Grid, GridVisiblityRegion>()
+                   .AddRegion<Page, PageVisualStateRegion>()
+                   .AddRegion<Microsoft.UI.Xaml.Controls.NavigationView, NavigationViewRegion>()
 
                     // Register the different types of dialogs
                     .AddSingleton<IDialogManager, ContentDialogManager>()
@@ -49,8 +49,8 @@ public static class ServiceCollectionExtensions
                     // navigation data and the navigation service
                     .AddSingleton<INavigationServiceFactory, NavigationServiceFactory>()
 
-                    .AddScoped<ScopedServiceHost<IRegionManager>>()
-                    .AddScoped<IRegionManager>(services => services.GetService<ScopedServiceHost<IRegionManager>>().Service)
+                    .AddScoped<ScopedServiceHost<IRegion>>()
+                    .AddScoped<IRegion>(services => services.GetService<ScopedServiceHost<IRegion>>().Service)
 
                     .AddScoped<ScopedServiceHost<IRegionNavigationService>>()
 
@@ -66,8 +66,8 @@ public static class ServiceCollectionExtensions
 
     }
 
-    public static IServiceCollection AddRegion<TControl, TRegionManager>(this IServiceCollection services)
-        where TRegionManager : class, IRegionManager
+    public static IServiceCollection AddRegion<TControl, TRegion>(this IServiceCollection services)
+        where TRegion : class, IRegion
     {
         if (services is null)
         {
@@ -75,8 +75,8 @@ public static class ServiceCollectionExtensions
         }
 
         return services
-                    .AddScoped<TRegionManager>()
-                    .AddSingleton<IRegionManagerFactory, RegionManagerFactory<TControl, TRegionManager>>();
+                    .AddScoped<TRegion>()
+                    .AddSingleton<IRegionFactory, RegionFactory<TControl, TRegion>>();
     }
 
     public static IServiceCollection AddViewModelData<TData>(this IServiceCollection services)

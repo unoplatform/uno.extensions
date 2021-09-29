@@ -8,14 +8,14 @@ using Uno.Extensions.Navigation.ViewModels;
 
 namespace Uno.Extensions.Navigation.Regions.Managers;
 
-public abstract class StackRegionManager<TControl> : BaseRegionManager<TControl>
+public abstract class StackRegion<TControl> : BaseRegion<TControl>
     where TControl : class
 {
     private IList<NavigationContext> NavigationContexts { get; } = new List<NavigationContext>();
 
     public override NavigationContext CurrentContext => NavigationContexts.LastOrDefault();
 
-    protected StackRegionManager(
+    protected StackRegion(
         ILogger logger,
         INavigationService navigation,
         IViewModelManager viewModelManager,
