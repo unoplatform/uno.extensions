@@ -45,7 +45,7 @@ public static class Navigation
     public static readonly DependencyProperty RegionProperty =
    DependencyProperty.RegisterAttached(
      "Region",
-     typeof(IRegion),
+     typeof(IRegionNavigationService),
      typeof(Navigation),
      new PropertyMetadata(null)
    );
@@ -131,18 +131,18 @@ DependencyProperty.RegisterAttached(
         };
     }
 
-    public static void SetRegion(this FrameworkElement element, IRegion value)
+    public static void SetRegion(this FrameworkElement element, IRegionNavigationService value)
     {
         element.SetValue(RegionProperty, value);
     }
 
-    public static IRegion GetRegion(this FrameworkElement element)
+    public static IRegionNavigationService GetRegion(this FrameworkElement element)
     {
         if (element is null)
         {
             return null;
         }
-        return (IRegion)element.GetValue(RegionProperty);
+        return (IRegionNavigationService)element.GetValue(RegionProperty);
     }
 
     public static TElement AsNavigationContainer<TElement>(this TElement element)
@@ -229,7 +229,7 @@ DependencyProperty.RegisterAttached(
         }
     }
 
-    private static IRegion ScopedServiceForControl(DependencyObject element)
+    private static IRegionNavigationService ScopedServiceForControl(DependencyObject element)
     {
         var service = (element as FrameworkElement).GetRegion();
         if (service is not null)
