@@ -18,10 +18,11 @@ public class PageVisualStateRegion : SimpleRegion<Page>
 {
     public PageVisualStateRegion(
         ILogger<PageVisualStateRegion> logger,
+        IServiceProvider scopedServices,
         INavigationService navigation,
         IViewModelManager viewModelManager,
         IDialogFactory dialogFactory,
-        RegionControlProvider controlProvider) : base(logger, navigation, viewModelManager, dialogFactory, controlProvider.RegionControl as Page)
+        RegionControlProvider controlProvider) : base(logger, scopedServices, navigation, viewModelManager, dialogFactory, controlProvider.RegionControl as Page)
     {
     }
 

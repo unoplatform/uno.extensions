@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System;
+using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Dialogs;
 using Uno.Extensions.Navigation.ViewModels;
@@ -14,10 +15,11 @@ public abstract class SimpleRegion<TControl> : BaseRegion<TControl>
 
     protected SimpleRegion(
         ILogger logger,
+        IServiceProvider scopedServices,
         INavigationService navigation,
         IViewModelManager viewModelManager,
         IDialogFactory dialogFactory,
-        TControl control) : base(logger, navigation, viewModelManager, dialogFactory, control)
+        TControl control) : base(logger, scopedServices, navigation, viewModelManager, dialogFactory, control)
     {
         Control = control;
     }
@@ -25,12 +27,12 @@ public abstract class SimpleRegion<TControl> : BaseRegion<TControl>
     public override void RegionNavigate(NavigationContext context)
     {
         currentContext = context;
-        Logger.LazyLogDebug(() => $"Navigating to path '{context.Path}' with view '{context.Mapping?.View?.Name}'");
-        Show(context.Path, context.Mapping?.View, context.Data, context.ViewModel());
+        Logger.LazyLogDebug(() => $"Navigating to path '{context.Components.NavigationPath}' with view '{context.Mapping?.View?.Name}'");
+        Show(context.Components.NavigationPath, context.Mapping?.View, context.Components.Parameters, context.ViewModel());
     }
 
     public override string ToString()
     {
-        return $"Simple({typeof(TControl).Name}) '{CurrentContext?.Path}'";
+        return $"Simple({typeof(TControl).Name}) '{CurrentContext?.Components.NavigationPath}'";
     }
 }

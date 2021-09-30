@@ -23,10 +23,11 @@ public abstract class BaseRegion<TControl> : BaseRegion
 
     protected BaseRegion(
         ILogger logger,
+        IServiceProvider scopedServices,
         INavigationService navigation,
         IViewModelManager viewModelManager,
         IDialogFactory dialogFactory,
-        TControl control) : base(logger, navigation, viewModelManager, dialogFactory)
+        TControl control) : base(logger, scopedServices, navigation, viewModelManager, dialogFactory)
     {
         Control = control;
     }
@@ -42,6 +43,8 @@ public abstract class BaseRegion<TControl> : BaseRegion
 
 public abstract class BaseRegion : IRegion, IRegionNavigate
 {
+    private IServiceProvider ScopedServices { get; }
+
     protected ILogger Logger { get; }
 
     protected abstract NavigationContext CurrentContext { get; }
@@ -58,21 +61,29 @@ public abstract class BaseRegion : IRegion, IRegionNavigate
 
     protected BaseRegion(
         ILogger logger,
+        IServiceProvider scopedServices,
         INavigationService navigation,
         IViewModelManager viewModelManager,
         IDialogFactory dialogFactory)
     {
         Logger = logger;
+        ScopedServices = scopedServices;
         Navigation = navigation;
         ViewModelManager = viewModelManager;
         DialogProvider = dialogFactory;
     }
 
-    public async Task NavigateAsync(NavigationContext context)
+    public Task NavigateAsync(NavigationRequest request, TaskCompletionSource<Options.Option> resultCompletion)
+    {
+        var context = request.BuildNavigationContext(ScopedServices, resultCompletion);
+        return InternalNavigateAsync(context);
+    }
+
+    private async Task InternalNavigateAsync(NavigationContext context)
     {
         var request = context.Request;
 
-        if (context.Path == CurrentContext?.Path)
+        if (context.Components.NavigationPath == CurrentContext?.Components.NavigationPath)
         {
             await Task.CompletedTask;
         }
@@ -169,7 +180,7 @@ public abstract class BaseRegion : IRegion, IRegionNavigate
             // passing data back to any caller that's waiting on it.
             if (navigationContext.IsBackNavigation)
             {
-                var responseData = navigationContext.Data.TryGetValue(string.Empty, out var response) ? response : default;
+                var responseData = navigationContext.Components.Parameters.TryGetValue(string.Empty, out var response) ? response : default;
 
                 var context = CurrentContext;
 
@@ -195,7 +206,7 @@ public abstract class BaseRegion : IRegion, IRegionNavigate
     {
         var dialog = OpenDialogs.Pop();
 
-        var responseData = navigationContext.Data.TryGetValue(string.Empty, out var response) ? response : default;
+        var responseData = navigationContext.Components.Parameters.TryGetValue(string.Empty, out var response) ? response : default;
 
         await ViewModelManager.StopViewModel(navigationContext);
 

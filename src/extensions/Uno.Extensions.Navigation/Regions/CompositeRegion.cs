@@ -15,9 +15,10 @@ namespace Uno.Extensions.Navigation.Regions.Managers
 
         public CompositeRegion(
             ILogger<CompositeRegion> logger,
+            IServiceProvider scopedServices,
             INavigationService navigation,
             IViewModelManager viewModelManager,
-            IDialogFactory dialogFactory) : base(logger, navigation, viewModelManager, dialogFactory)
+            IDialogFactory dialogFactory) : base(logger, scopedServices, navigation, viewModelManager, dialogFactory)
         {
         }
 

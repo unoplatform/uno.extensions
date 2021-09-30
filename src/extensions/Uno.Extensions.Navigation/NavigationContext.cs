@@ -8,11 +8,7 @@ namespace Uno.Extensions.Navigation;
 public record NavigationContext(
     IServiceProvider Services,
     NavigationRequest Request,
-    string Path,
-    bool PathIsRooted,
-    int FramesToRemove,
-    IDictionary<string, object> Data,
-    NavigationRequest ResidualRequest,
+    RequestComponents Components,
     CancellationTokenSource CancellationSource,
     TaskCompletionSource<Options.Option> ResultCompletion,
     NavigationMap Mapping,
@@ -20,7 +16,7 @@ public record NavigationContext(
 #pragma warning restore SA1313 // Parameter names should begin with lower-case letter
 {
 
-    public bool IsBackNavigation => Path == NavigationConstants.PreviousViewUri;
+    public bool IsBackNavigation => Components.NavigationPath == NavigationConstants.PreviousViewUri;
 
     public CancellationToken CancellationToken => CancellationSource.Token;
 

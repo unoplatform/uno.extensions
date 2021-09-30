@@ -20,10 +20,11 @@ public class TabRegion : SimpleRegion<TabView>
 {
     public TabRegion(
         ILogger<TabRegion> logger,
+        IServiceProvider scopedServices,
         INavigationService navigation,
         IViewModelManager viewModelManager,
         IDialogFactory dialogFactory,
-        RegionControlProvider controlProvider) : base(logger, navigation, viewModelManager, dialogFactory, controlProvider.RegionControl as TabView)
+        RegionControlProvider controlProvider) : base(logger, scopedServices, navigation, viewModelManager, dialogFactory, controlProvider.RegionControl as TabView)
     {
         Control.SelectionChanged += Tabs_SelectionChanged;
     }

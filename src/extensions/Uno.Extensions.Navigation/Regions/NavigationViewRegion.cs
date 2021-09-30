@@ -49,10 +49,11 @@ public class NavigationViewRegion : SimpleRegion<Microsoft.UI.Xaml.Controls.Navi
 
     public NavigationViewRegion(
         ILogger<NavigationViewRegion> logger,
+        IServiceProvider scopedServices,
         INavigationService navigation,
         IViewModelManager viewModelManager,
         IDialogFactory dialogFactory,
-        RegionControlProvider controlProvider) : base(logger, navigation, viewModelManager, dialogFactory, controlProvider.RegionControl as Microsoft.UI.Xaml.Controls.NavigationView)
+        RegionControlProvider controlProvider) : base(logger, scopedServices, navigation, viewModelManager, dialogFactory, controlProvider.RegionControl as Microsoft.UI.Xaml.Controls.NavigationView)
     {
     }
 

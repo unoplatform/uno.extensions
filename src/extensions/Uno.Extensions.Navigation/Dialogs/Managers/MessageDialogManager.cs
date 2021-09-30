@@ -23,12 +23,12 @@ public class MessageDialogManager : IDialogManager
 
     public Dialog DisplayDialog(INavigationService navigation, NavigationContext context, object vm)
     {
-        if (context.Path != NavigationConstants.MessageDialogUri)
+        if (context.Components.NavigationPath != NavigationConstants.MessageDialogUri)
         {
             return null;
         }
 
-        var data = context.Data;
+        var data = context.Components.Parameters;
         var md = new MessageDialog(data[NavigationConstants.MessageDialogParameterContent] as string, data[NavigationConstants.MessageDialogParameterTitle] as string)
         {
             Options = (MessageDialogOptions)data[NavigationConstants.MessageDialogParameterOptions],

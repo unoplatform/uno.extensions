@@ -24,7 +24,7 @@ namespace Uno.Extensions.Navigation.ViewModels
             if (mapping?.ViewModel is not null)
             {
                 var dataFactor = services.GetService<ViewModelDataProvider>();
-                dataFactor.Parameters = context.Data;
+                dataFactor.Parameters = context.Components.Parameters;
 
                 var vm = services.GetService(mapping.ViewModel);
                 if (vm is INavigationAware navAware)

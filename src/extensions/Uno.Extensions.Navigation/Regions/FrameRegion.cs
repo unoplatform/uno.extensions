@@ -21,10 +21,11 @@ public class FrameRegion : StackRegion<Frame>
 {
     public FrameRegion(
         ILogger<FrameRegion> logger,
+        IServiceProvider scopedServices,
         INavigationService navigation,
         IViewModelManager viewModelManager,
         IDialogFactory dialogFactory,
-        RegionControlProvider controlProvider) : base(logger, navigation, viewModelManager, dialogFactory, controlProvider.RegionControl as Frame)
+        RegionControlProvider controlProvider) : base(logger, scopedServices, navigation, viewModelManager, dialogFactory, controlProvider.RegionControl as Frame)
     {
         if (Control.Content is not null)
         {
