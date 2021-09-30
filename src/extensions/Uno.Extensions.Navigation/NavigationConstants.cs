@@ -10,6 +10,7 @@ public static class NavigationConstants
         public const string BackPath = "..";
         public const string Current = "";
         public const string Nested = "./";
+        public const string DialogPrefix = "__dialog__";
 
         public static string Parent(int numberOfLevels = 1) => MultipleLevels(ParentPath, string.Empty, numberOfLevels);
 

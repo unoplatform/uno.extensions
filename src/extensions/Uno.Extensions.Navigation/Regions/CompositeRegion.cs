@@ -18,7 +18,7 @@ namespace Uno.Extensions.Navigation.Regions.Managers
             IServiceProvider scopedServices,
             INavigationService navigation,
             IViewModelManager viewModelManager,
-            IDialogFactory dialogFactory) : base(logger, scopedServices, navigation, viewModelManager, dialogFactory)
+            IDialogFactory dialogFactory) : base(logger, scopedServices, navigation, viewModelManager)
         {
         }
 
@@ -26,12 +26,12 @@ namespace Uno.Extensions.Navigation.Regions.Managers
 
         protected override NavigationContext CurrentContext => currentContext;
 
-        public override void RegionNavigate(NavigationContext context)
+        public override async Task RegionNavigate(NavigationContext context)
         {
             currentContext = context;
             foreach (var region in Regions)
             {
-                region.RegionNavigate(context);
+                await region.RegionNavigate(context);
             }
         }
     }

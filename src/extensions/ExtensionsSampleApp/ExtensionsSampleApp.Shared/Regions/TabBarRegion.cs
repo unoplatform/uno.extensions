@@ -45,8 +45,8 @@ namespace ExtensionsSampleApp.Region.Managers
             IServiceProvider scopedServices,
             INavigationService navigation,
         IViewModelManager viewModelManager,
-        IDialogFactory dialogFactory,
-        RegionControlProvider controlProvider) : base(logger, scopedServices, navigation, viewModelManager, dialogFactory, controlProvider.RegionControl as TabBar)
+
+        RegionControlProvider controlProvider) : base(logger, scopedServices, navigation, viewModelManager, controlProvider.RegionControl as TabBar)
         {
         }
 
