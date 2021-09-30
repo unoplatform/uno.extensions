@@ -131,7 +131,19 @@ public class NavigationService : IRegionNavigationService
                     }
                     else
                     {
-                        await Region.NavigateAsync(navRequest, pending.ResultCompletion);
+                        var regionTask = Region.NavigateAsync(navRequest);
+                        regionTask.Result.ContinueWith((Task<Options.Option> t) =>
+                        {
+                            if (t.Status==TaskStatus.RanToCompletion)
+                            {
+                                pending.ResultCompletion.TrySetResult(t.Result);
+                            }
+                            else
+                            {
+                                pending.ResultCompletion.TrySetResult(Options.Option.None<object>());
+                            }
+                        });
+                        await regionTask;
                     }
                 }
 

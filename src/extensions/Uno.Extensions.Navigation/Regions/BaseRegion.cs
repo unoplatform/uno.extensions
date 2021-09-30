@@ -73,10 +73,11 @@ public abstract class BaseRegion : IRegion, IRegionNavigate
         DialogProvider = dialogFactory;
     }
 
-    public Task NavigateAsync(NavigationRequest request, TaskCompletionSource<Options.Option> resultCompletion)
+    public NavigationResponse NavigateAsync(NavigationRequest request)
     {
-        var context = request.BuildNavigationContext(ScopedServices, resultCompletion);
-        return InternalNavigateAsync(context);
+        var context = request.BuildNavigationContext(ScopedServices, new TaskCompletionSource<Options.Option>());
+        var navTask = InternalNavigateAsync(context);
+        return new NavigationResponse(request, navTask, context.ResultCompletion.Task);
     }
 
     private async Task InternalNavigateAsync(NavigationContext context)
