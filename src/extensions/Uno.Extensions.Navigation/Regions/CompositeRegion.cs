@@ -23,7 +23,7 @@ namespace Uno.Extensions.Navigation.Regions.Managers
 
         private NavigationContext currentContext;
 
-        public override NavigationContext CurrentContext => currentContext;
+        protected override NavigationContext CurrentContext => currentContext;
 
         public override void RegionNavigate(NavigationContext context)
         {

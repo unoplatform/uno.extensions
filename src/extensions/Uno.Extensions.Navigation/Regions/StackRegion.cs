@@ -13,7 +13,7 @@ public abstract class StackRegion<TControl> : BaseRegion<TControl>
 {
     private IList<NavigationContext> NavigationContexts { get; } = new List<NavigationContext>();
 
-    public override NavigationContext CurrentContext => NavigationContexts.LastOrDefault();
+    protected override NavigationContext CurrentContext => NavigationContexts.LastOrDefault();
 
     protected StackRegion(
         ILogger logger,
