@@ -10,7 +10,7 @@ public abstract class SimpleRegion<TControl> : BaseRegion<TControl>
 {
     private NavigationContext currentContext;
 
-    public override NavigationContext CurrentContext => currentContext;
+    protected override NavigationContext CurrentContext => currentContext;
 
     protected SimpleRegion(
         ILogger logger,

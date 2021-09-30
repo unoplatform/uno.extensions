@@ -121,13 +121,9 @@ public class NavigationService : IRegionNavigationService
                 var navRequest = navContext.Request;
 
                 var residualRequest = navContext.ResidualRequest;
-                if (navContext.IsForCurrentPath(Region))
-                {
-                    // Check for "./" prefix or the current path
-                    // Returned request is trimmed to remove "./" or current path
-                    residualRequest = navContext.TrimRequestForCurrentPath(Region);
-                }
-                else
+                // Check for "./" prefix where we can skip
+                // navigating within this region
+                if (!navRequest.IsNestedRequest())
                 {
                     if (Region is null)
                     {

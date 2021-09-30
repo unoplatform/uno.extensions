@@ -44,7 +44,7 @@ public abstract class BaseRegion : IRegion, IRegionNavigate
 {
     protected ILogger Logger { get; }
 
-    public abstract NavigationContext CurrentContext { get; }
+    protected abstract NavigationContext CurrentContext { get; }
 
     protected INavigationService Navigation { get; }
 
@@ -71,6 +71,11 @@ public abstract class BaseRegion : IRegion, IRegionNavigate
     public async Task NavigateAsync(NavigationContext context)
     {
         var request = context.Request;
+
+        if (context.Path == CurrentContext?.Path)
+        {
+            await Task.CompletedTask;
+        }
 
         var navigationHandled = await EndCurrentNavigationContext(context);
 
