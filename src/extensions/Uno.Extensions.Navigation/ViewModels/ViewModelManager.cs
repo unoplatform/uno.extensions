@@ -27,10 +27,16 @@ namespace Uno.Extensions.Navigation.ViewModels
                 dataFactor.Parameters = context.Components.Parameters;
 
                 var vm = services.GetService(mapping.ViewModel);
-                if (vm is INavigationAware navAware)
+                if (vm is IInjectable<INavigationService> navAware)
                 {
-                    navAware.Navigation = Navigation;
+                    navAware.Inject(Navigation);
                 }
+
+                if (vm is IInjectable<IServiceProvider> spAware)
+                {
+                    spAware.Inject(context.Services);
+                }
+
             }
         }
 

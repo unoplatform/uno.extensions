@@ -22,9 +22,15 @@ namespace ExtensionsSampleApp.Views.Twitter
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class NotificationsPage : Page, INavigationAware
+    public sealed partial class NotificationsPage : Page, IInjectable<INavigationService>
     {
-        public INavigationService Navigation { get; set; }
+        private INavigationService Navigation { get; set; }
+
+        public void Inject(INavigationService entity)
+        {
+            Navigation = entity;
+        }
+
         public NotificationsPage()
         {
             this.InitializeComponent();

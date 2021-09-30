@@ -13,9 +13,15 @@ namespace ExtensionsSampleApp.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainPage : INavigationAware
+    public sealed partial class MainPage : IInjectable<INavigationService>
     {
-        public INavigationService Navigation { get; set; }
+        private INavigationService Navigation { get; set; }
+
+        public void Inject(INavigationService entity)
+        {
+            Navigation = entity;
+        }
+
         public MainPage()
         {
             InitializeComponent();
@@ -50,7 +56,7 @@ namespace ExtensionsSampleApp.Views
         private async void NextPageRequestResponseWithTimeoutClick(object sender, RoutedEventArgs e)
         {
             var cancel = new CancellationTokenSource();
-            var navresult = Navigation.NavigateToViewModelAsync<SecondViewModel, Widget>(this,cancellation: cancel.Token);
+            var navresult = Navigation.NavigateToViewModelAsync<SecondViewModel, Widget>(this, cancellation: cancel.Token);
             Task.Run(() => Task.Delay(10000)).ConfigureAwait(true).GetAwaiter().OnCompleted(() => cancel.Cancel());
             var response = await navresult.Result;
         }

@@ -18,9 +18,14 @@ using Windows.UI.Xaml.Navigation;
 
 namespace ExtensionsSampleApp.Views
 {
-    public sealed partial class Content1 : UserControl, INavigationAware
+    public sealed partial class Content1 : UserControl, IInjectable<INavigationService>
     {
         public INavigationService Navigation { get; set; }
+
+        public void Inject(INavigationService entity)
+        {
+            Navigation = entity;
+        }
 
         public Content1()
         {
@@ -32,5 +37,6 @@ namespace ExtensionsSampleApp.Views
             var navresult = Navigation.NavigateToViewAsync<SimpleContentDialog, ContentDialogResult>(this);
             var response = await navresult.Result;
         }
+
     }
 }

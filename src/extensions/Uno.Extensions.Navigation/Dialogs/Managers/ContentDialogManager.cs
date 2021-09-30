@@ -61,9 +61,15 @@ public class ContentDialogManager : IDialogManager
         {
             dialog.DataContext = vm;
         }
-        if (dialog is INavigationAware navAware)
+
+        if (dialog is IInjectable<INavigationService> navAware)
         {
-            navAware.Navigation = navigation;
+            navAware.Inject( navigation);
+        }
+
+        if (dialog is IInjectable<IServiceProvider> spAware)
+        {
+            spAware.Inject(context.Services);
         }
 
         var showTask = dialog.ShowAsync();

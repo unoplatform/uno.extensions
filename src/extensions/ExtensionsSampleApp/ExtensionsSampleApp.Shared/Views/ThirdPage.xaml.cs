@@ -11,9 +11,14 @@ namespace ExtensionsSampleApp.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class ThirdPage :INavigationAware
+    public sealed partial class ThirdPage : IInjectable<INavigationService>
     {
-        public INavigationService Navigation { get; set; }
+        private INavigationService Navigation { get; set; }
+
+        public void Inject(INavigationService entity)
+        {
+            Navigation = entity;
+        }
 
         public ThirdPage()
         {
@@ -26,7 +31,7 @@ namespace ExtensionsSampleApp.Views
 
             ParametersText.Text = e.Parameter.ParseParameter();
         }
-            
+
         private void NextPagePreviousViewWithDataClick(object sender, RoutedEventArgs e)
         {
             Navigation.NavigateToPreviousViewAsync(this, data: new Widget());
@@ -45,9 +50,9 @@ namespace ExtensionsSampleApp.Views
             if (parameter is IDictionary<string, object> argsDict)
             {
                 return string.Join(Environment.NewLine, from p in argsDict
-                                                         select $"key '{p.Key}' val '{p.Value}'");
+                                                        select $"key '{p.Key}' val '{p.Value}'");
             }
-            return parameter?.ToString()??string.Empty;
+            return parameter?.ToString() ?? string.Empty;
         }
     }
 }

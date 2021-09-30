@@ -4,9 +4,14 @@ using Windows.UI.Xaml.Controls;
 
 namespace ExtensionsSampleApp.Views
 {
-    public sealed partial class SimpleContentDialog : ContentDialog, INavigationAware
+    public sealed partial class SimpleContentDialog : ContentDialog, IInjectable<INavigationService>
     {
-        public INavigationService Navigation { get; set; }
+        private INavigationService Navigation { get; set; }
+
+        public void Inject(INavigationService entity)
+        {
+            Navigation = entity;
+        }
 
         public SimpleContentDialog()
         {
