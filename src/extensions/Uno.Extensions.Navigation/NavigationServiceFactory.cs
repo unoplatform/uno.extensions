@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
+using Uno.Extensions.Navigation.Dialogs;
 using Uno.Extensions.Navigation.Regions;
 using Uno.Extensions.Navigation.Regions.Managers;
 
@@ -27,10 +28,15 @@ public class NavigationServiceFactory : INavigationServiceFactory
 
         // Create root navigation service
         var navLogger = services.GetService<ILogger<NavigationService>>();
-        var navService = new NavigationService(navLogger, null);
+        var dialogFactory = services.GetService<IDialogFactory>();
+        var navService = new NavigationService(navLogger, null, dialogFactory);
 
         services.GetService<ScopedServiceHost<INavigationService>>().Service = navService;
         Root = navService;
+
+        // Create a special nested service which is used to display dialogs
+        var dialogService = CreateService(Root);
+        Root.Attach(NavigationConstants.RelativePath.DialogPrefix, dialogService).Wait();
     }
 
     public IRegionNavigationService CreateService(IRegionNavigationService parent, params object[] controls)
@@ -42,11 +48,19 @@ public class NavigationServiceFactory : INavigationServiceFactory
 
         // Create Navigation Service
         var navLogger = services.GetService<ILogger<NavigationService>>();
-        var navService = new NavigationService(navLogger, parent);
+        var dialogFactory = services.GetService<IDialogFactory>();
+        var navService = new NavigationService(navLogger, parent, dialogFactory);
         services.GetService<ScopedServiceHost<IRegionNavigationService>>().Service = navService;
 
         // Create Region Service
         controls = controls.Where(c => c is not null).ToArray();
+
+        if (!controls.Any())
+        {
+            navService.Region = services.GetService<DialogRegion>();
+            return navService;
+        }
+
         CompositeRegion composite = controls.Length > 1 ? services.GetService<CompositeRegion>() : default;
         foreach (var control in controls)
         {

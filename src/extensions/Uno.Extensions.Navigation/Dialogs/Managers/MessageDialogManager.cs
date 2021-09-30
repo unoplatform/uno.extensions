@@ -21,12 +21,13 @@ public class MessageDialogManager : IDialogManager
         return responseData;
     }
 
+    public bool IsDialogNavigation(NavigationRequest request)
+    {
+        return request.Parse().NavigationPath == NavigationConstants.MessageDialogUri;
+    }
+
     public Dialog DisplayDialog(INavigationService navigation, NavigationContext context, object vm)
     {
-        if (context.Components.NavigationPath != NavigationConstants.MessageDialogUri)
-        {
-            return null;
-        }
 
         var data = context.Components.Parameters;
         var md = new MessageDialog(data[NavigationConstants.MessageDialogParameterContent] as string, data[NavigationConstants.MessageDialogParameterTitle] as string)

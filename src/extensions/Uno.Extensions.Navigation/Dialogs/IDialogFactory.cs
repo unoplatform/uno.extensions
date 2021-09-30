@@ -2,5 +2,6 @@
 
 public interface IDialogFactory
 {
+    bool IsDialogNavigation(NavigationRequest request);
     Dialog CreateDialog(INavigationService navigation, NavigationContext context);
 }

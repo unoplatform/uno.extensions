@@ -157,7 +157,7 @@
     <Content Include="Properties\Default.rd.xml" />
   </ItemGroup>
   <ItemGroup>
-        <ProjectReference Include="..\..\Uno.Extensions.Core\Uno.Extensions.Core.csproj">
+    <ProjectReference Include="..\..\Uno.Extensions.Core\Uno.Extensions.Core.csproj">
       <Project>{0bf9edde-e6c1-4a3a-b73d-02d867f2054c}</Project>
       <Name>Uno.Extensions.Core</Name>
     </ProjectReference>

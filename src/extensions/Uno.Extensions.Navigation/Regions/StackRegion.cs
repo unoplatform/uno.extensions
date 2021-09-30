@@ -20,8 +20,7 @@ public abstract class StackRegion<TControl> : BaseRegion<TControl>
         IServiceProvider scopedServices,
         INavigationService navigation,
         IViewModelManager viewModelManager,
-        IDialogFactory dialogFactory,
-        TControl control) : base(logger, scopedServices, navigation, viewModelManager, dialogFactory, control)
+        TControl control) : base(logger, scopedServices, navigation, viewModelManager, control)
     {
     }
 
@@ -60,7 +59,7 @@ public abstract class StackRegion<TControl> : BaseRegion<TControl>
 
     protected override bool CanGoBack => NavigationContexts.Count > 1;
 
-    public override void RegionNavigate(NavigationContext context)
+    public override Task RegionNavigate(NavigationContext context)
     {
         var numberOfPagesToRemove = context.Components.NumberOfPagesToRemove;
         // We remove 1 less here because we need to remove the current context, after the navigation is completed
@@ -93,6 +92,7 @@ public abstract class StackRegion<TControl> : BaseRegion<TControl>
             NavigationContexts.RemoveAt(NavigationContexts.Count - 2);
             RemoveLastFromBackStack();
         }
+        return Task.CompletedTask;
     }
 
     public override string ToString()

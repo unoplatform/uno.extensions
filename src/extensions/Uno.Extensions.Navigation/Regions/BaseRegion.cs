@@ -26,8 +26,7 @@ public abstract class BaseRegion<TControl> : BaseRegion
         IServiceProvider scopedServices,
         INavigationService navigation,
         IViewModelManager viewModelManager,
-        IDialogFactory dialogFactory,
-        TControl control) : base(logger, scopedServices, navigation, viewModelManager, dialogFactory)
+        TControl control) : base(logger, scopedServices, navigation, viewModelManager)
     {
         Control = control;
     }
@@ -51,26 +50,21 @@ public abstract class BaseRegion : IRegion, IRegionNavigate
 
     protected INavigationService Navigation { get; }
 
-    protected Stack<Dialog> OpenDialogs { get; } = new Stack<Dialog>();
 
     protected virtual bool CanGoBack => false;
 
     protected IViewModelManager ViewModelManager { get; }
 
-    private IDialogFactory DialogProvider { get; }
-
     protected BaseRegion(
         ILogger logger,
         IServiceProvider scopedServices,
         INavigationService navigation,
-        IViewModelManager viewModelManager,
-        IDialogFactory dialogFactory)
+        IViewModelManager viewModelManager)
     {
         Logger = logger;
         ScopedServices = scopedServices;
         Navigation = navigation;
         ViewModelManager = viewModelManager;
-        DialogProvider = dialogFactory;
     }
 
     public NavigationResponse NavigateAsync(NavigationRequest request)
@@ -103,7 +97,7 @@ public abstract class BaseRegion : IRegion, IRegionNavigate
             await ViewModelManager.StartViewModel(context);
         }
 
-        context = context with { CanCancel = CanGoBack || OpenDialogs.Any() };
+        context = context with { CanCancel = CanGoBack };
 
         if (context.CanCancel)
         {
@@ -125,29 +119,21 @@ public abstract class BaseRegion : IRegion, IRegionNavigate
 
         await ViewModelManager.InitializeViewModel(context);
 
-        var dialog = DialogProvider.CreateDialog(Navigation, context);
-        if (dialog is not null)
-        {
-            OpenDialogs.Push(dialog);
-        }
-        else
-        {
-            RegionNavigate(context);
-        }
+        //var dialog = DialogProvider.CreateDialog(Navigation, context);
+        //if (dialog is not null)
+        //{
+        //    OpenDialogs.Push(dialog);
+        //}
+        //else
+        //{
+            await RegionNavigate(context);
+        //}
     }
 
-    public abstract void RegionNavigate(NavigationContext context);
+    public abstract Task RegionNavigate(NavigationContext context);
 
     private async Task<bool> EndCurrentNavigationContext(NavigationContext navigationContext)
     {
-        // If this is back navigation, then make sure it's used to close
-        // any of the open dialogs
-        if (navigationContext.IsBackNavigation && OpenDialogs.Any())
-        {
-            await CloseDialog(navigationContext);
-            return true;
-        }
-
         // If there's a current nav context, make sure it's stopped before
         // we proceed - this could cancel the navigation, so need to know
         // before we remove anything from backstack
@@ -203,33 +189,7 @@ public abstract class BaseRegion : IRegion, IRegionNavigate
         return false;
     }
 
-    protected async Task CloseDialog(NavigationContext navigationContext)
-    {
-        var dialog = OpenDialogs.Pop();
-
-        var responseData = navigationContext.Components.Parameters.TryGetValue(string.Empty, out var response) ? response : default;
-
-        await ViewModelManager.StopViewModel(navigationContext);
-
-        ViewModelManager.DisposeViewModel(navigationContext);
-
-        responseData = dialog.Manager.CloseDialog(dialog, navigationContext, responseData);
-
-        var completion = dialog.Context.ResultCompletion;
-        if (completion is not null)
-        {
-            if (dialog.Context.Request.Result is not null && responseData is not null)
-            {
-                completion.SetResult(Options.Option.Some<object>(responseData));
-            }
-            else
-            {
-                completion.SetResult(Options.Option.None<object>());
-            }
-        }
-
-        await ViewModelManager.StartViewModel(CurrentContext);
-    }
+   
 
     /// <summary>
     /// Sets the view model as the data context for the view

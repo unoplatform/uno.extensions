@@ -23,8 +23,8 @@ public class TabRegion : SimpleRegion<TabView>
         IServiceProvider scopedServices,
         INavigationService navigation,
         IViewModelManager viewModelManager,
-        IDialogFactory dialogFactory,
-        RegionControlProvider controlProvider) : base(logger, scopedServices, navigation, viewModelManager, dialogFactory, controlProvider.RegionControl as TabView)
+
+        RegionControlProvider controlProvider) : base(logger, scopedServices, navigation, viewModelManager, controlProvider.RegionControl as TabView)
     {
         Control.SelectionChanged += Tabs_SelectionChanged;
     }

@@ -10,13 +10,28 @@ public record DialogFactory(IEnumerable<IDialogManager> Dialogs) : IDialogFactor
     {
         foreach (var dlg in Dialogs)
         {
-            var dialog = dlg.DisplayDialog(navigation, context, context.ViewModel());
-            if (dialog is not null)
+            if (dlg.IsDialogNavigation(context.Request))
             {
-                return dialog;
+                var dialog = dlg.DisplayDialog(navigation, context, context.ViewModel());
+                if (dialog is not null)
+                {
+                    return dialog;
+                }
             }
         }
         return null;
     }
 
+    public bool IsDialogNavigation(NavigationRequest request)
+    {
+        foreach (var dlg in Dialogs)
+        {
+            if (dlg.IsDialogNavigation(request))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

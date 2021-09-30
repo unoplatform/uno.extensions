@@ -9,5 +9,5 @@ public interface IRegion : IRegionNavigate
 
 public interface IRegionNavigate
 {
-    void RegionNavigate(NavigationContext context);
+    Task RegionNavigate(NavigationContext context);
 }

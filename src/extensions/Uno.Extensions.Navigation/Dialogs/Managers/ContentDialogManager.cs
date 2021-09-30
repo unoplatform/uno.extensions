@@ -15,6 +15,13 @@ namespace Uno.Extensions.Navigation.Dialogs.Managers;
 
 public class ContentDialogManager : IDialogManager
 {
+    private INavigationMappings Mappings { get; }
+
+    public ContentDialogManager(INavigationMappings mappings)
+    {
+        Mappings = mappings;
+    }
+
     public object CloseDialog(Dialog dialog, NavigationContext context, object responseData)
     {
         if (!(responseData is ContentDialogResult))
@@ -49,12 +56,14 @@ public class ContentDialogManager : IDialogManager
         return responseData;
     }
 
+    public bool IsDialogNavigation(NavigationRequest request)
+    {
+        var map = Mappings.LookupByPath(request.Parse().NavigationPath);
+        return map?.View?.IsSubclassOf(typeof(ContentDialog)) ?? false;
+    }
+
     public Dialog DisplayDialog(INavigationService navigation, NavigationContext context, object vm)
     {
-        if (!(context.Mapping?.View?.IsSubclassOf(typeof(ContentDialog)) ?? false))
-        {
-            return null;
-        }
 
         var dialog = Activator.CreateInstance(context.Mapping.View) as ContentDialog;
         if (vm is not null)

@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
+using Uno.Extensions.Navigation.Dialogs;
 using Uno.Extensions.Navigation.Regions;
 
 namespace Uno.Extensions.Navigation;
@@ -25,10 +26,13 @@ public class NavigationService : IRegionNavigationService
 
     private int isNavigating = 0;
 
-    public NavigationService(ILogger<NavigationService> logger, IRegionNavigationService parent)
+    private IDialogFactory DialogFactory { get; }
+
+    public NavigationService(ILogger<NavigationService> logger, IRegionNavigationService parent, IDialogFactory dialogFactory)
     {
         Logger = logger;
         Parent = parent;
+        DialogFactory = dialogFactory;
     }
 
     public Task Attach(string regionName, IRegionNavigationService childRegion)
@@ -67,6 +71,15 @@ public class NavigationService : IRegionNavigationService
                 request = request.MakeNestedRequest();
             }
 
+            var isDialogNavigation = DialogFactory.IsDialogNavigation(request);
+            if (isDialogNavigation)
+            {
+                // This will skip navigation in this region (ie with the "./" nested prefix)
+                // The DialogPrefix will cause the Nested method to return a new nested region specifically for this navigation
+                request = request.WithPath(NavigationConstants.RelativePath.Nested + NavigationConstants.RelativePath.DialogPrefix + "/" + request.Route.Uri.OriginalString);
+                return NavigateWithRootAsync(request);
+            }
+
             if (request.IsParentRequest())
             {
                 // Routing navigation request to parent
@@ -93,6 +106,13 @@ public class NavigationService : IRegionNavigationService
         }
     }
 
+    private NavigationResponse NavigateWithRootAsync(NavigationRequest request)
+    {
+        Logger.LazyLogDebug(() => $"Redirecting navigation request to root Navigation Service");
+
+        return Root.NavigateAsync(request);
+    }
+
     private NavigationResponse NavigateWithParentAsync(NavigationRequest request)
     {
         Logger.LazyLogDebug(() => $"Redirecting navigation request to parent Navigation Service");
@@ -117,6 +137,8 @@ public class NavigationService : IRegionNavigationService
                 var navRequest = pending.Request;
 
                 var residualRequest = navRequest.Parse().NextRequest;
+
+
                 // Check for "./" prefix where we can skip
                 // navigating within this region
                 if (!navRequest.IsNestedRequest())
@@ -132,24 +154,24 @@ public class NavigationService : IRegionNavigationService
                     else
                     {
                         var regionTask = Region.NavigateAsync(navRequest);
-                        regionTask.Result.ContinueWith((Task<Options.Option> t) =>
-                        {
-                            if (t.Status==TaskStatus.RanToCompletion)
-                            {
-                                pending.ResultCompletion.TrySetResult(t.Result);
-                            }
-                            else
-                            {
-                                pending.ResultCompletion.TrySetResult(Options.Option.None<object>());
-                            }
-                        });
+                        _ = regionTask.Result.ContinueWith((Task<Options.Option> t) =>
+                          {
+                              if (t.Status == TaskStatus.RanToCompletion)
+                              {
+                                  pending.ResultCompletion.TrySetResult(t.Result);
+                              }
+                              else
+                              {
+                                  pending.ResultCompletion.TrySetResult(Options.Option.None<object>());
+                              }
+                          });
                         await regionTask;
                     }
                 }
 
                 // At this point, any residual request needs to be handed
                 // down to the appropriate nested service
-                await RunNestedNavigation(residualRequest);
+                await RunNestedNavigation(residualRequest, pending.ResultCompletion);
 
                 navTask.TrySetResult(null);
             }
@@ -160,7 +182,7 @@ public class NavigationService : IRegionNavigationService
         }
     }
 
-    private Task RunNestedNavigation(NavigationRequest nestedRequest)
+    private Task RunNestedNavigation(NavigationRequest nestedRequest, TaskCompletionSource<Options.Option> resultCompletion)
     {
         if (nestedRequest is null)
         {
@@ -188,7 +210,7 @@ public class NavigationService : IRegionNavigationService
         {
             // Send the navigation request to the nested service
             //var nestedContext = nestedRequest.BuildNavigationContext(nested.ScopedServices, new TaskCompletionSource<Options.Option>());
-            nested.PendingNavigation = nestedRequest.Pending();
+            nested.PendingNavigation = nestedRequest.Pending(resultCompletion);
             return nested.RunPendingNavigation();
         }
         else
@@ -199,7 +221,7 @@ public class NavigationService : IRegionNavigationService
             var pendingRoute = NavigationConstants.RelativePath.Nested + nestedRequest.Route.Uri.OriginalString;
             var pendingRequest = nestedRequest.WithPath(pendingRoute);//.BuildNavigationContext(ScopedServices, new TaskCompletionSource<Options.Option>());
 
-            PendingNavigation = pendingRequest.Pending();
+            PendingNavigation = pendingRequest.Pending(resultCompletion);
             return PendingNavigation.TaskCompletion.Task;
         }
     }
