@@ -249,10 +249,15 @@ public abstract class BaseRegion : IRegion, IRegionNavigate
             }
         }
 
-        if (view is INavigationAware navAware)
+        if (view is IInjectable < INavigationService> navAware)
         {
-            Logger.LazyLogDebug(() => $"Setting Navigation on INavigationAware control");
-            navAware.Navigation = Navigation;
+            Logger.LazyLogDebug(() => $"Setting Navigation on IInjectable control");
+            navAware.Inject(Navigation);
+        }
+
+        if (view is IInjectable<IServiceProvider> spAware)
+        {
+            spAware.Inject(ScopedServices);
         }
     }
 }
