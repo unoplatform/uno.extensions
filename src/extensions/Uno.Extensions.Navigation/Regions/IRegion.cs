@@ -4,7 +4,7 @@ namespace Uno.Extensions.Navigation.Regions;
 
 public interface IRegion : IRegionNavigate
 {
-    Task NavigateAsync(NavigationContext context);
+    Task NavigateAsync(NavigationRequest context, TaskCompletionSource<Options.Option> resultCompletion);
 }
 
 public interface IRegionNavigate

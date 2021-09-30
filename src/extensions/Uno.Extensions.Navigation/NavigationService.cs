@@ -13,13 +13,11 @@ public class NavigationService : IRegionNavigationService
 {
     public IRegion Region { get; set; }
 
-    private IServiceProvider ScopedServices { get; }
-
     private ILogger Logger { get; }
 
     private bool IsRootService => Parent is null;
 
-    private PendingContext PendingNavigation { get; set; }
+    private PendingRequest PendingNavigation { get; set; }
 
     private IRegionNavigationService Parent { get; set; }
 
@@ -27,10 +25,9 @@ public class NavigationService : IRegionNavigationService
 
     private int isNavigating = 0;
 
-    public NavigationService(ILogger<NavigationService> logger, IServiceProvider services, IRegionNavigationService parent)
+    public NavigationService(ILogger<NavigationService> logger, IRegionNavigationService parent)
     {
         Logger = logger;
-        ScopedServices = services;
         Parent = parent;
     }
 
@@ -79,10 +76,10 @@ public class NavigationService : IRegionNavigationService
             // Create new context if there isn't a pending navigation
             if (PendingNavigation is null)
             {
-                PendingNavigation = request.BuildNavigationContext(ScopedServices, new TaskCompletionSource<Options.Option>()).Pending();
+                PendingNavigation = request.Pending();
             }
 
-            var context = PendingNavigation.Context;
+            var context = PendingNavigation;
 
             Logger.LazyLogDebug(() => $"Invoking navigation with Navigation Context");
             var navTask = RunPendingNavigation();
@@ -117,10 +114,9 @@ public class NavigationService : IRegionNavigationService
             {
                 PendingNavigation = null;
                 var navTask = pending.TaskCompletion;
-                var navContext = pending.Context;
-                var navRequest = navContext.Request;
+                var navRequest = pending.Request;
 
-                var residualRequest = navContext.ResidualRequest;
+                var residualRequest = navRequest.Parse().NextRequest;
                 // Check for "./" prefix where we can skip
                 // navigating within this region
                 if (!navRequest.IsNestedRequest())
@@ -135,7 +131,7 @@ public class NavigationService : IRegionNavigationService
                     }
                     else
                     {
-                        await Region.NavigateAsync(navContext);
+                        await Region.NavigateAsync(navRequest, pending.ResultCompletion);
                     }
                 }
 
@@ -179,8 +175,8 @@ public class NavigationService : IRegionNavigationService
         if (nested is not null)
         {
             // Send the navigation request to the nested service
-            var nestedContext = nestedRequest.BuildNavigationContext(nested.ScopedServices, new TaskCompletionSource<Options.Option>());
-            nested.PendingNavigation = nestedContext.Pending();
+            //var nestedContext = nestedRequest.BuildNavigationContext(nested.ScopedServices, new TaskCompletionSource<Options.Option>());
+            nested.PendingNavigation = nestedRequest.Pending();
             return nested.RunPendingNavigation();
         }
         else
@@ -189,9 +185,9 @@ public class NavigationService : IRegionNavigationService
             // nested request into the pending context (we add
             // "./" to make sure it's handled as a nested navigation
             var pendingRoute = NavigationConstants.RelativePath.Nested + nestedRequest.Route.Uri.OriginalString;
-            var pendingContext = nestedRequest.WithPath(pendingRoute).BuildNavigationContext(ScopedServices, new TaskCompletionSource<Options.Option>());
+            var pendingRequest = nestedRequest.WithPath(pendingRoute);//.BuildNavigationContext(ScopedServices, new TaskCompletionSource<Options.Option>());
 
-            PendingNavigation = pendingContext.Pending();
+            PendingNavigation = pendingRequest.Pending();
             return PendingNavigation.TaskCompletion.Task;
         }
     }
@@ -249,7 +245,7 @@ public class NavigationService : IRegionNavigationService
 }
 
 #pragma warning disable SA1313 // Parameter names should begin with lower-case letter
-public record PendingContext(TaskCompletionSource<object> TaskCompletion, NavigationContext Context)
+public record PendingRequest(NavigationRequest Request, TaskCompletionSource<object> TaskCompletion, TaskCompletionSource<Options.Option> ResultCompletion)
 {
 }
 #pragma warning restore SA1313 // Parameter names should begin with lower-case letter

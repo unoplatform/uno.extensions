@@ -51,8 +51,8 @@ namespace ExtensionsSampleApp.ViewModels
 
         public async Task Stop(NavigationContext context)
         {
-            if (context.Path == typeof(ThirdPage).Name &&
-                !((context.Data as IDictionary<string, object>)?.Any() ?? false))
+            if (context.Components.NavigationPath == typeof(ThirdPage).Name &&
+                !((context.Components.Parameters as IDictionary<string, object>)?.Any() ?? false))
             {
                 context.Cancel();
             }
@@ -152,7 +152,7 @@ namespace ExtensionsSampleApp.ViewModels
         {
             if (Tweet is null)
             {
-                Tweet = new Tweet { Id = int.Parse(context.Data["tweetid"] + ""), Author = "Ned", Text = "Tweet loaded on start" };
+                Tweet = new Tweet { Id = int.Parse(context.Components.Parameters["tweetid"] + ""), Author = "Ned", Text = "Tweet loaded on start" };
             }
         }
     }

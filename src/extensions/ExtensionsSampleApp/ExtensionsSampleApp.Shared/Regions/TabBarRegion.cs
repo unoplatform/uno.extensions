@@ -42,10 +42,11 @@ namespace ExtensionsSampleApp.Region.Managers
 
         public TabBarRegion(
             ILogger<TabBarRegion> logger,
+            IServiceProvider scopedServices,
             INavigationService navigation,
         IViewModelManager viewModelManager,
         IDialogFactory dialogFactory,
-        RegionControlProvider controlProvider) : base(logger, navigation, viewModelManager, dialogFactory, controlProvider.RegionControl as TabBar)
+        RegionControlProvider controlProvider) : base(logger, scopedServices, navigation, viewModelManager, dialogFactory, controlProvider.RegionControl as TabBar)
         {
         }
 

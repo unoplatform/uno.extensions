@@ -10,9 +10,9 @@ namespace Uno.Extensions.Navigation;
 
 public static class NavigationHelpers
 {
-    public static PendingContext Pending(this NavigationContext context)
+    public static PendingRequest Pending(this NavigationRequest request, TaskCompletionSource<Options.Option> resultCompletion = default)
     {
-        return new PendingContext(new TaskCompletionSource<object>(), context);
+        return new PendingRequest(request, new TaskCompletionSource<object>(), resultCompletion??new TaskCompletionSource<Options.Option>());
     }
 
     public static object ViewModel(this NavigationContext context)
@@ -47,8 +47,8 @@ public static class NavigationHelpers
         return string.IsNullOrWhiteSpace(path) ? null : request with { Route = request.Route with { Uri = new Uri(path + (!string.IsNullOrWhiteSpace(queryParameters) ? $"?{queryParameters}" : string.Empty), UriKind.Relative) } };
     }
 
-    public static NavigationContext BuildNavigationContext(this NavigationRequest request, IServiceProvider services, TaskCompletionSource<Options.Option> completion)
-    {
+    public static RequestComponents Parse(this NavigationRequest request) {
+
         var path = request.Route.Uri.OriginalString;
 
         var queryIdx = path.IndexOf('?');
@@ -79,7 +79,6 @@ public static class NavigationHelpers
         var numberOfPagesToRemove = 0;
         var navPath = string.Empty;
         var residualPath = path;
-        var nextPath = string.Empty;
         for (int i = 0; i < segments.Length; i++)
         {
             var navSegment = segments[i];
@@ -88,7 +87,6 @@ public static class NavigationHelpers
             {
                 residualPath = residualPath.Substring(1);
             }
-            nextPath = i < segments.Length - 1 ? segments[i + 1] : string.Empty;
 
             if (string.IsNullOrWhiteSpace(navSegment))
             {
@@ -113,20 +111,23 @@ public static class NavigationHelpers
 
         var residualRequest = request.WithPath(residualPath, query);
 
+        var components = new RequestComponents(navPath, isRooted, numberOfPagesToRemove, paras, residualRequest);
+        return components;
+    }
+    public static NavigationContext BuildNavigationContext(this NavigationRequest request, IServiceProvider services, TaskCompletionSource<Options.Option> completion)
+    {
+        var components = request.Parse();
+
         var scopedServices = services.CloneNavigationScopedServices();
         var dataFactor = scopedServices.GetService<ViewModelDataProvider>();
-        dataFactor.Parameters = paras;
+        dataFactor.Parameters = components.Parameters;
 
-        var mapping = scopedServices.GetService<INavigationMappings>().LookupByPath(navPath);
+        var mapping = scopedServices.GetService<INavigationMappings>().LookupByPath(components.NavigationPath);
 
         var context = new NavigationContext(
                             scopedServices,
                             request,
-                            navPath,
-                            isRooted,
-                            numberOfPagesToRemove,
-                            paras,
-                            residualRequest,
+                            components,
                             (request.Cancellation is not null) ?
                                 CancellationTokenSource.CreateLinkedTokenSource(request.Cancellation.Value) :
                                 new CancellationTokenSource(),
@@ -134,6 +135,8 @@ public static class NavigationHelpers
                             mapping);
         return context;
     }
+
+
 
     private static IServiceProvider CloneNavigationScopedServices(this IServiceProvider services)
     {
@@ -159,4 +162,7 @@ public static class NavigationHelpers
                 select new { key, val })
                 .ToDictionary(x => x.key, x => (object)x.val);
     }
+}
+
+public record RequestComponents(string NavigationPath ,bool IsRooted ,int NumberOfPagesToRemove ,IDictionary<string, object> Parameters ,NavigationRequest NextRequest) { 
 }

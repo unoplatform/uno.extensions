@@ -17,10 +17,11 @@ public abstract class StackRegion<TControl> : BaseRegion<TControl>
 
     protected StackRegion(
         ILogger logger,
+        IServiceProvider scopedServices,
         INavigationService navigation,
         IViewModelManager viewModelManager,
         IDialogFactory dialogFactory,
-        TControl control) : base(logger, navigation, viewModelManager, dialogFactory, control)
+        TControl control) : base(logger, scopedServices, navigation, viewModelManager, dialogFactory, control)
     {
     }
 
@@ -39,7 +40,7 @@ public abstract class StackRegion<TControl> : BaseRegion<TControl>
     protected Task DoBackNavigation(NavigationContext context)
     {
         // Remove any excess items in the back stack
-        var numberOfPagesToRemove = context.FramesToRemove;
+        var numberOfPagesToRemove = context.Components.NumberOfPagesToRemove;
         while (numberOfPagesToRemove > 0)
         {
             // Don't remove the last context, as that's the current page
@@ -52,7 +53,7 @@ public abstract class StackRegion<TControl> : BaseRegion<TControl>
         NavigationContexts.RemoveAt(NavigationContexts.Count - 1);
 
         // Invoke the navigation (which will be a back navigation)
-        GoBack(CurrentContext.Mapping?.View, context.Data, CurrentContext.ViewModel());
+        GoBack(CurrentContext.Mapping?.View, context.Components.Parameters, CurrentContext.ViewModel());
 
         return Task.CompletedTask;
     }
@@ -61,7 +62,7 @@ public abstract class StackRegion<TControl> : BaseRegion<TControl>
 
     public override void RegionNavigate(NavigationContext context)
     {
-        var numberOfPagesToRemove = context.FramesToRemove;
+        var numberOfPagesToRemove = context.Components.NumberOfPagesToRemove;
         // We remove 1 less here because we need to remove the current context, after the navigation is completed
         while (numberOfPagesToRemove > 1)
         {
@@ -72,10 +73,10 @@ public abstract class StackRegion<TControl> : BaseRegion<TControl>
 
         // Add the new context to the list of contexts and then navigate away
         NavigationContexts.Add(context);
-        Show(context.Path, context.Mapping?.View, context.Data, context.ViewModel());
+        Show(context.Components.NavigationPath, context.Mapping?.View, context.Components.Parameters, context.ViewModel());
 
         // If path starts with / then remove all prior pages and corresponding contexts
-        if (context.PathIsRooted)
+        if (context.Components.IsRooted)
         {
             while (NavigationContexts.Count > 1)
             {
@@ -87,7 +88,7 @@ public abstract class StackRegion<TControl> : BaseRegion<TControl>
 
         // If there were pages to remove, after navigating we need to remove
         // the page that we've navigated away from.
-        if (context.FramesToRemove > 0)
+        if (context.Components.NumberOfPagesToRemove > 0)
         {
             NavigationContexts.RemoveAt(NavigationContexts.Count - 2);
             RemoveLastFromBackStack();
@@ -96,7 +97,7 @@ public abstract class StackRegion<TControl> : BaseRegion<TControl>
 
     public override string ToString()
     {
-        return $"Stack({typeof(TControl).Name}) '{CurrentContext?.Path}'";
+        return $"Stack({typeof(TControl).Name}) '{CurrentContext?.Components.NavigationPath}'";
     }
 
     protected abstract void GoBack(Type view, object data, object viewModel);

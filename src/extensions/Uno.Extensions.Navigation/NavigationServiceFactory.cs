@@ -27,7 +27,7 @@ public class NavigationServiceFactory : INavigationServiceFactory
 
         // Create root navigation service
         var navLogger = services.GetService<ILogger<NavigationService>>();
-        var navService = new NavigationService(navLogger, services, null);
+        var navService = new NavigationService(navLogger, null);
 
         services.GetService<ScopedServiceHost<INavigationService>>().Service = navService;
         Root = navService;
@@ -42,7 +42,7 @@ public class NavigationServiceFactory : INavigationServiceFactory
 
         // Create Navigation Service
         var navLogger = services.GetService<ILogger<NavigationService>>();
-        var navService = new NavigationService(navLogger, services, parent);
+        var navService = new NavigationService(navLogger, parent);
         services.GetService<ScopedServiceHost<IRegionNavigationService>>().Service = navService;
 
         // Create Region Service
