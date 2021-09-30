@@ -32,7 +32,7 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <muxc:NavigationView x:Name="NavView"
-            nav:Navigation.CompositeRegion="{x:Bind }">
+            nav:Navigation.ComposeWith="{x:Bind }">
             <muxc:NavigationView.MenuItems>
                 <muxc:NavigationViewItem Tag="home"
                                          Icon="Home"
@@ -62,8 +62,8 @@
             </ScrollViewer>
         </muxc:NavigationView>
         <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <Button Content="Home" nav:Navigation.NavigateOnClickPath="./Content1" />
-            <Button Content="Apps" nav:Navigation.NavigateOnClickPath="./Content2"  />
+            <Button Content="Home" nav:Navigation.NavigateOnClickPath="showcontent1" />
+            <Button Content="Apps" nav:Navigation.NavigateOnClickPath="showcontent2"  />
         </StackPanel>
     </Grid>
 </Page>
