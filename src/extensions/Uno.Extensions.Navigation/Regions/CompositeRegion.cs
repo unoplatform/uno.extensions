@@ -24,8 +24,6 @@ namespace Uno.Extensions.Navigation.Regions.Managers
 
         private NavigationContext currentContext;
 
-        protected override NavigationContext CurrentContext => currentContext;
-
         public override async Task RegionNavigate(NavigationContext context)
         {
             currentContext = context;

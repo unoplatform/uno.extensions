@@ -19,6 +19,8 @@ public class NavigationViewRegion : SimpleRegion<Microsoft.UI.Xaml.Controls.Navi
 {
     protected override object CurrentView => Control.SelectedItem;
 
+    protected override string CurrentPath => CurrentView?.NavigationPath();
+
     private Microsoft.UI.Xaml.Controls.NavigationView _control;
 
     public override Microsoft.UI.Xaml.Controls.NavigationView Control
@@ -54,8 +56,8 @@ public class NavigationViewRegion : SimpleRegion<Microsoft.UI.Xaml.Controls.Navi
         IServiceProvider scopedServices,
         INavigationService navigation,
         IViewModelManager viewModelManager,
-
-        RegionControlProvider controlProvider) : base(logger, scopedServices, navigation, viewModelManager, controlProvider.RegionControl as Microsoft.UI.Xaml.Controls.NavigationView)
+        INavigationMappings mappings,
+        RegionControlProvider controlProvider) : base(logger, scopedServices, navigation, viewModelManager, mappings, controlProvider.RegionControl as Microsoft.UI.Xaml.Controls.NavigationView)
     {
     }
 

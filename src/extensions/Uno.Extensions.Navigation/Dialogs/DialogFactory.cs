@@ -6,13 +6,13 @@ namespace Uno.Extensions.Navigation.Dialogs;
 public record DialogFactory(IEnumerable<IDialogManager> Dialogs) : IDialogFactory
 #pragma warning restore SA1313 // Parameter names should begin with lower-case letter
 {
-    public Dialog CreateDialog(INavigationService navigation, NavigationContext context, object viewModel)
+    public Dialog CreateDialog(NavigationContext context, object viewModel)
     {
         foreach (var dlg in Dialogs)
         {
             if (dlg.IsDialogNavigation(context.Request))
             {
-                var dialog = dlg.DisplayDialog(navigation, context, viewModel);
+                var dialog = dlg.DisplayDialog(context, viewModel);
                 if (dialog is not null)
                 {
                     return dialog;

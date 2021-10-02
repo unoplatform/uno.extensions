@@ -7,6 +7,7 @@ using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Dialogs;
 using Uno.Extensions.Navigation.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml;
 using Windows.UI.Xaml;
@@ -21,17 +22,26 @@ public abstract class BaseRegion<TControl> : BaseRegion
 {
     public virtual TControl Control { get; set; }
 
+    protected INavigationMappings Mappings { get; }
+
     protected BaseRegion(
         ILogger logger,
         IServiceProvider scopedServices,
         INavigationService navigation,
         IViewModelManager viewModelManager,
+        INavigationMappings mappings,
         TControl control) : base(logger, scopedServices, navigation, viewModelManager)
     {
+        Mappings = mappings;
         Control = control;
     }
 
     protected abstract void Show(string path, Type viewType, object data);
+
+    public override string ToString()
+    {
+        return $"Region({typeof(TControl).Name}) Path='{CurrentPath}'";
+    }
 }
 
 public abstract class BaseRegion : IRegion, IRegionNavigate
@@ -40,10 +50,9 @@ public abstract class BaseRegion : IRegion, IRegionNavigate
 
     protected ILogger Logger { get; }
 
-    protected abstract NavigationContext CurrentContext { get; }
+    protected virtual string CurrentPath => string.Empty;
 
     protected INavigationService Navigation { get; }
-
 
     protected virtual bool CanGoBack => false;
 
@@ -63,16 +72,25 @@ public abstract class BaseRegion : IRegion, IRegionNavigate
 
     public NavigationResponse NavigateAsync(NavigationRequest request)
     {
-        var context = request.BuildNavigationContext(ScopedServices, new TaskCompletionSource<Options.Option>());
+        var context = request.BuildNavigationContext(ScopedServices);
+
+        TaskCompletionSource<Options.Option> resultTask = default;
+        if (request.RequiresResponse())
+        {
+            var responseNav = new ResponseNavigationService(context.Services.GetService<ScopedServiceHost<IRegionNavigationService>>().Service);
+            resultTask = responseNav.ResultCompletion;
+            context.Services.GetService<ScopedServiceHost<INavigationService>>().Service = responseNav;
+        }
+
         var navTask = InternalNavigateAsync(context);
-        return new NavigationResponse(request, navTask, context.ResultCompletion.Task);
+        return new NavigationResponse(request, navTask, resultTask?.Task);
     }
 
     private async Task InternalNavigateAsync(NavigationContext context)
     {
         var request = context.Request;
 
-        if (context.Components.NavigationPath == CurrentContext?.Components.NavigationPath)
+        if (context.Components.NavigationPath == CurrentPath)
         {
             await Task.CompletedTask;
         }
@@ -113,17 +131,14 @@ public abstract class BaseRegion : IRegion, IRegionNavigate
 
         await RegionNavigate(context);
 
-        InitialiseView(vm);
+        InitialiseView(context, vm);
     }
 
     public abstract Task RegionNavigate(NavigationContext context);
 
     private async Task<bool> EndCurrentNavigationContext(NavigationContext navigationContext)
     {
-        // If there's a current nav context, make sure it's stopped before
-        // we proceed - this could cancel the navigation, so need to know
-        // before we remove anything from backstack
-        if (CurrentContext is not null)
+        if (CurrentView is not null)
         {
             // Stop the currently active viewmodel
             await ViewModelManager.StopViewModel(navigationContext, CurrentViewModel);
@@ -137,45 +152,20 @@ public abstract class BaseRegion : IRegion, IRegionNavigate
             // then indicate that navigation has been handled
             if (navigationContext.IsCancelled)
             {
-                var completion = navigationContext.ResultCompletion;
+                var completion = navigationContext.Navigation as ResponseNavigationService;
                 if (completion is not null)
                 {
-                    completion.SetResult(Options.Option.None<object>());
+                    completion.ResultCompletion.SetResult(Options.Option.None<object>());
                 }
 
                 return true;
-            }
-
-            // If this is a back navigation then we need to pass back
-            // any data to the current context. This is done by setting
-            // the results on the ResultCompletion object
-            // Note: We note performing the back navigation here, we just
-            // passing data back to any caller that's waiting on it.
-            if (navigationContext.IsBackNavigation)
-            {
-                var responseData = navigationContext.Components.Parameters.TryGetValue(string.Empty, out var response) ? response : default;
-
-                var context = CurrentContext;
-
-                var completion = context.ResultCompletion;
-                if (completion is not null)
-                {
-                    if (context.Request.Result is not null && responseData is not null)
-                    {
-                        completion.SetResult(Options.Option.Some<object>(responseData));
-                    }
-                    else
-                    {
-                        completion.SetResult(Options.Option.None<object>());
-                    }
-                }
             }
         }
 
         return false;
     }
 
-    protected void InitialiseView(object viewModel)
+    protected void InitialiseView(NavigationContext context, object viewModel)
     {
         var view = CurrentView;
 
@@ -188,19 +178,24 @@ public abstract class BaseRegion : IRegion, IRegionNavigate
             }
         }
 
-        if (view is IInjectable < INavigationService> navAware)
+        if (view is IInjectable<INavigationService> navAware)
         {
             Logger.LazyLogDebug(() => $"Setting Navigation on IInjectable control");
-            navAware.Inject(Navigation);
+            navAware.Inject(context.Navigation);
         }
 
         if (view is IInjectable<IServiceProvider> spAware)
         {
-            spAware.Inject(ScopedServices);
+            spAware.Inject(context.Services);
         }
     }
 
     protected virtual object CurrentView => default;
 
     protected object CurrentViewModel => (CurrentView as FrameworkElement)?.DataContext;
+
+    public override string ToString()
+    {
+        return $"Region Path='{CurrentPath}'";
+    }
 }

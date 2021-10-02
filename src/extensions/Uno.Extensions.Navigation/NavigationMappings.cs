@@ -85,12 +85,14 @@ public class NavigationMappings : INavigationMappings
 
         if (view is null)
         {
-            view = TypeFromPath(path, true, ViewSuffixes, type => type.IsSubclassOf(typeof(FrameworkElement)));
+            var trimmedPath = TrimSuffices(path, ViewModelSuffixes);
+            view = TypeFromPath(trimmedPath, true, ViewSuffixes, type => type.IsSubclassOf(typeof(FrameworkElement)));
         }
 
         if (viewModel is null)
         {
-            viewModel = TypeFromPath(path, false, ViewModelSuffixes);
+            var trimmedPath = TrimSuffices(path, ViewSuffixes);
+            viewModel = TypeFromPath(trimmedPath, false, ViewModelSuffixes);
         }
 
         if (!string.IsNullOrWhiteSpace(path))
@@ -150,6 +152,11 @@ public class NavigationMappings : INavigationMappings
     private string TypeToPath(Type view, IEnumerable<string> suffixes)
     {
         var path = view?.Name + string.Empty;
+        return TrimSuffices(path, suffixes);
+    }
+
+    private string TrimSuffices(string path, IEnumerable<string> suffixes)
+    {
         foreach (var item in suffixes)
         {
             path = path.TrimEnd(item, StringComparison.InvariantCultureIgnoreCase);

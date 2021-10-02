@@ -26,8 +26,9 @@ public class MessageDialogManager : IDialogManager
         return request.Parse().NavigationPath == NavigationConstants.MessageDialogUri;
     }
 
-    public Dialog DisplayDialog(INavigationService navigation, NavigationContext context, object vm)
+    public Dialog DisplayDialog(NavigationContext context, object vm)
     {
+        var navigation = context.Navigation;
 
         var data = context.Components.Parameters;
         var md = new MessageDialog(data[NavigationConstants.MessageDialogParameterContent] as string, data[NavigationConstants.MessageDialogParameterTitle] as string)
@@ -40,11 +41,15 @@ public class MessageDialogManager : IDialogManager
         var showTask = md.ShowAsync();
         showTask.AsTask().ContinueWith(result =>
         {
-            if (result.Status != TaskStatus.Canceled &&
-            context.ResultCompletion.Task.Status != TaskStatus.Canceled &&
-            context.ResultCompletion.Task.Status != TaskStatus.RanToCompletion)
+            if (result.Status != TaskStatus.Canceled)
             {
-                navigation.NavigateAsync(new NavigationRequest(md, new NavigationRoute(new Uri(NavigationConstants.PreviousViewUri, UriKind.Relative), result.Result)));
+                var responseNav = navigation as ResponseNavigationService;
+                if (responseNav is not null &&
+                responseNav.ResultCompletion.Task.Status != TaskStatus.Canceled &&
+            responseNav.ResultCompletion.Task.Status != TaskStatus.RanToCompletion)
+                {
+                    responseNav.ResultCompletion.TrySetResult(Options.Option.Some(result.Result));
+                }
             }
         }, CancellationToken.None,
                         TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.DenyChildAttach,

@@ -62,9 +62,9 @@ public class ContentDialogManager : IDialogManager
         return map?.View?.IsSubclassOf(typeof(ContentDialog)) ?? false;
     }
 
-    public Dialog DisplayDialog(INavigationService navigation, NavigationContext context, object vm)
+    public Dialog DisplayDialog(NavigationContext context, object vm)
     {
-
+        var navigation = context.Navigation;
         var dialog = Activator.CreateInstance(context.Mapping.View) as ContentDialog;
         if (vm is not null)
         {
@@ -73,7 +73,7 @@ public class ContentDialogManager : IDialogManager
 
         if (dialog is IInjectable<INavigationService> navAware)
         {
-            navAware.Inject( navigation);
+            navAware.Inject(navigation);
         }
 
         if (dialog is IInjectable<IServiceProvider> spAware)
@@ -84,11 +84,15 @@ public class ContentDialogManager : IDialogManager
         var showTask = dialog.ShowAsync();
         showTask.AsTask().ContinueWith(result =>
         {
-            if (result.Status != TaskStatus.Canceled &&
-            context.ResultCompletion.Task.Status != TaskStatus.Canceled &&
-            context.ResultCompletion.Task.Status != TaskStatus.RanToCompletion)
+            if (result.Status != TaskStatus.Canceled)
             {
-                navigation.NavigateAsync(new NavigationRequest(dialog, new NavigationRoute(new Uri(NavigationConstants.PreviousViewUri, UriKind.Relative), result.Result)));
+                var responseNav = navigation as ResponseNavigationService;
+                if (responseNav is not null &&
+                responseNav.ResultCompletion.Task.Status != TaskStatus.Canceled &&
+            responseNav.ResultCompletion.Task.Status != TaskStatus.RanToCompletion)
+                {
+                    responseNav.ResultCompletion.TrySetResult(Options.Option.Some(result.Result));
+                }
             }
         }, CancellationToken.None,
                         TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.DenyChildAttach,

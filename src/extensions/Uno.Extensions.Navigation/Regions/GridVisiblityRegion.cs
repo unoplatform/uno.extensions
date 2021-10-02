@@ -18,13 +18,15 @@ public class GridVisiblityRegion : SimpleRegion<Grid>
 {
     protected override object CurrentView => CurrentlyVisibleControl;
 
+    protected override string CurrentPath => CurrentView?.NavigationPath();
+
     public GridVisiblityRegion(
         ILogger<GridVisiblityRegion> logger,
         IServiceProvider scopedServices,
         INavigationService navigation,
         IViewModelManager viewModelManager,
-
-        RegionControlProvider controlProvider) : base(logger, scopedServices, navigation, viewModelManager, controlProvider.RegionControl as Grid)
+        INavigationMappings mappings,
+        RegionControlProvider controlProvider) : base(logger, scopedServices, navigation, viewModelManager, mappings, controlProvider.RegionControl as Grid)
     {
     }
 

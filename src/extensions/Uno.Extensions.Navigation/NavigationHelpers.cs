@@ -5,6 +5,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Regions;
+#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+using Microsoft.UI.Xaml;
+using Windows.UI.Xaml;
+#else
+using Microsoft.UI.Xaml;
+#endif
 
 namespace Uno.Extensions.Navigation;
 
@@ -12,24 +18,44 @@ public static class NavigationHelpers
 {
     public static PendingRequest Pending(this NavigationRequest request, TaskCompletionSource<Options.Option> resultCompletion = default)
     {
-        return new PendingRequest(request, new TaskCompletionSource<object>(), resultCompletion??new TaskCompletionSource<Options.Option>());
+        return new PendingRequest(request, new TaskCompletionSource<object>(), resultCompletion ?? new TaskCompletionSource<Options.Option>());
     }
 
-    //public static object ViewModel(this NavigationContext context)
-    //{
-    //    var mapping = context.Mapping;
-    //    if (mapping?.ViewModel is not null)
-    //    {
-    //        var services = context.Services;
-    //        return services.GetService(mapping.ViewModel);
-    //    }
+    public static string NavigationPath(this object view, INavigationMappings mappings = null)
+    {
+        var map = mappings?.LookupByView(view.GetType());
+        if (map is not null)
+        {
+            return map.Path;
+        }
 
-    //    return null;
-    //}
+        if (view is FrameworkElement fe)
+        {
+            var path = Navigation.Controls.Navigation.GetPath(fe);
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                path = fe.Name;
+            }
+
+            return path;
+        }
+
+        return null;
+    }
 
     public static bool IsParentRequest(this NavigationRequest request)
     {
         return request.Route.Uri.OriginalString.StartsWith(NavigationConstants.RelativePath.ParentPath);
+    }
+
+    public static bool IsBackRequest(this NavigationRequest request)
+    {
+        return request.Route.Uri.OriginalString.StartsWith(NavigationConstants.RelativePath.BackPath);
+    }
+
+    public static bool RequiresResponse(this NavigationRequest request)
+    {
+        return request.Result is not null;
     }
 
     public static bool IsNestedRequest(this NavigationRequest request)
@@ -47,7 +73,8 @@ public static class NavigationHelpers
         return string.IsNullOrWhiteSpace(path) ? null : request with { Route = request.Route with { Uri = new Uri(path + (!string.IsNullOrWhiteSpace(queryParameters) ? $"?{queryParameters}" : string.Empty), UriKind.Relative) } };
     }
 
-    public static RequestComponents Parse(this NavigationRequest request) {
+    public static RequestComponents Parse(this NavigationRequest request)
+    {
 
         var path = request.Route.Uri.OriginalString;
 
@@ -114,7 +141,8 @@ public static class NavigationHelpers
         var components = new RequestComponents(navPath, isRooted, numberOfPagesToRemove, paras, residualRequest);
         return components;
     }
-    public static NavigationContext BuildNavigationContext(this NavigationRequest request, IServiceProvider services, TaskCompletionSource<Options.Option> completion)
+
+    public static NavigationContext BuildNavigationContext(this NavigationRequest request, IServiceProvider services)
     {
         var components = request.Parse();
 
@@ -131,7 +159,6 @@ public static class NavigationHelpers
                             (request.Cancellation is not null) ?
                                 CancellationTokenSource.CreateLinkedTokenSource(request.Cancellation.Value) :
                                 new CancellationTokenSource(),
-                            completion,
                             mapping);
         return context;
     }
@@ -164,5 +191,6 @@ public static class NavigationHelpers
     }
 }
 
-public record RequestComponents(string NavigationPath ,bool IsRooted ,int NumberOfPagesToRemove ,IDictionary<string, object> Parameters ,NavigationRequest NextRequest) { 
+public record RequestComponents(string NavigationPath, bool IsRooted, int NumberOfPagesToRemove, IDictionary<string, object> Parameters, NavigationRequest NextRequest)
+{
 }

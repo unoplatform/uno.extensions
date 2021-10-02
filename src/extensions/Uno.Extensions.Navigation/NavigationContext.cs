@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Uno.Extensions.Navigation;
 #pragma warning disable SA1313 // Parameter names should begin with lower-case letter
@@ -10,11 +11,11 @@ public record NavigationContext(
     NavigationRequest Request,
     RequestComponents Components,
     CancellationTokenSource CancellationSource,
-    TaskCompletionSource<Options.Option> ResultCompletion,
     NavigationMap Mapping,
     bool CanCancel = true)
 #pragma warning restore SA1313 // Parameter names should begin with lower-case letter
 {
+    public INavigationService Navigation => Services.GetService<INavigationService>();
 
     public bool IsBackNavigation => Components.NavigationPath == NavigationConstants.PreviousViewUri;
 
