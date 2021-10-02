@@ -45,6 +45,12 @@ namespace ExtensionsSampleApp.Views
             Navigation.NavigateToPreviousViewAsync(this, data: new Widget());
         }
 
+        private async void NextPageNavigateToViewAsyncRequestDataClick(object sender, RoutedEventArgs e)
+        {
+            var response = Navigation.NavigateToViewAsync<ThirdPage, Widget>(this);
+            await response.Result;
+        }
+
         private void NextPageNavigateToViewAsyncWithDataClick(object sender, RoutedEventArgs e)
         {
             Navigation.NavigateToViewAsync<ThirdPage>(this, data: new Widget());

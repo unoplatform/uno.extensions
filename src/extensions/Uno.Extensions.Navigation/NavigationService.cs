@@ -92,13 +92,13 @@ public class NavigationService : IRegionNavigationService
                 PendingNavigation = request.Pending();
             }
 
-            var context = PendingNavigation;
+            var pending = PendingNavigation;
 
             Logger.LazyLogDebug(() => $"Invoking navigation with Navigation Context");
             var navTask = RunPendingNavigation();
             Logger.LazyLogDebug(() => $"Returning NavigationResponse");
 
-            return new NavigationResponse(request, navTask, context.ResultCompletion.Task);
+            return new NavigationResponse(request, navTask, pending.ResultCompletion.Task);
         }
         finally
         {
@@ -138,7 +138,6 @@ public class NavigationService : IRegionNavigationService
 
                 var residualRequest = navRequest.Parse().NextRequest;
 
-
                 // Check for "./" prefix where we can skip
                 // navigating within this region
                 if (!navRequest.IsNestedRequest())
@@ -154,7 +153,7 @@ public class NavigationService : IRegionNavigationService
                     else
                     {
                         var regionTask = Region.NavigateAsync(navRequest);
-                        _ = regionTask.Result.ContinueWith((Task<Options.Option> t) =>
+                        _ = regionTask.Result?.ContinueWith((Task<Options.Option> t) =>
                           {
                               if (t.Status == TaskStatus.RanToCompletion)
                               {

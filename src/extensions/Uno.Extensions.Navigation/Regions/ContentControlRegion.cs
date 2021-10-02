@@ -19,13 +19,15 @@ public class ContentControlRegion : SimpleRegion<ContentControl>
 {
     protected override object CurrentView => Control.Content;
 
+    protected override string CurrentPath => CurrentView?.NavigationPath(Mappings);
+
     public ContentControlRegion(
         ILogger<ContentControlRegion> logger,
         IServiceProvider scopedServices,
         INavigationService navigation,
         IViewModelManager viewModelManager,
-
-        RegionControlProvider controlProvider) : base(logger, scopedServices, navigation, viewModelManager, controlProvider.RegionControl as ContentControl)
+        INavigationMappings mappings,
+        RegionControlProvider controlProvider) : base(logger, scopedServices, navigation, viewModelManager, mappings, controlProvider.RegionControl as ContentControl)
     {
     }
 

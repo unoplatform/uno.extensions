@@ -11,11 +11,8 @@ namespace Uno.Extensions.Navigation.Regions
 {
     public class DialogRegion : BaseRegion
     {
-        private NavigationContext currentContext;
-
         protected override bool CanGoBack => true;
 
-        protected override NavigationContext CurrentContext => currentContext;
         protected Stack<Dialog> OpenDialogs { get; } = new Stack<Dialog>();
 
         private IDialogFactory DialogFactory { get; }
@@ -55,7 +52,7 @@ namespace Uno.Extensions.Navigation.Regions
                 await CloseDialog(context);
             }
             var vm = ViewModelManager.CreateViewModel(context);
-            var dialog = DialogFactory.CreateDialog(Navigation, context, vm);
+            var dialog = DialogFactory.CreateDialog(context, vm);
             if (dialog is not null)
             {
                 OpenDialogs.Push(dialog);
@@ -74,20 +71,19 @@ namespace Uno.Extensions.Navigation.Regions
 
             responseData = dialog.Manager.CloseDialog(dialog, navigationContext, responseData);
 
-            var completion = dialog.Context.ResultCompletion;
-            if (completion is not null)
-            {
-                if (dialog.Context.Request.Result is not null && responseData is not null)
-                {
-                    completion.SetResult(Options.Option.Some<object>(responseData));
-                }
-                else
-                {
-                    completion.SetResult(Options.Option.None<object>());
-                }
-            }
-
-            //await ViewModelManager.StartViewModel(CurrentContext);
+            // Handle closing dialog with result
+            //var completion = dialog.Context.ResultCompletion;
+            //if (completion is not null)
+            //{
+            //    if (dialog.Context.Request.Result is not null && responseData is not null)
+            //    {
+            //        completion.SetResult(Options.Option.Some<object>(responseData));
+            //    }
+            //    else
+            //    {
+            //        completion.SetResult(Options.Option.None<object>());
+            //    }
+            //}
         }
     }
 }

@@ -21,13 +21,15 @@ public class FrameRegion : StackRegion<Frame>
 {
     protected override object CurrentView => Control.Content;
 
+    protected override string CurrentPath => CurrentView?.NavigationPath(Mappings);
+
     public FrameRegion(
         ILogger<FrameRegion> logger,
         IServiceProvider scopedServices,
         INavigationService navigation,
         IViewModelManager viewModelManager,
-
-        RegionControlProvider controlProvider) : base(logger, scopedServices, navigation, viewModelManager, controlProvider.RegionControl as Frame)
+        INavigationMappings mappings,
+        RegionControlProvider controlProvider) : base(logger, scopedServices, navigation, viewModelManager, mappings, controlProvider.RegionControl as Frame)
     {
         if (Control.Content is not null)
         {
@@ -56,12 +58,12 @@ public class FrameRegion : StackRegion<Frame>
         }
     }
 
-    protected override void GoBack(Type view, object parameter)
+    protected override void GoBack(object parameter)
     {
         try
         {
-            if (Control.Content?.GetType() != view)
-            {
+            //if (Control.Content?.GetType() != view)
+            //{
                 if (parameter is not null)
                 {
                     Logger.LazyLogDebug(() => $"Replacing last backstack item to inject parameter '{parameter.GetType().Name}'");
@@ -77,7 +79,7 @@ public class FrameRegion : StackRegion<Frame>
                 Logger.LazyLogDebug(() => $"Invoking Frame.GoBack");
                 Control.GoBack();
                 Logger.LazyLogDebug(() => $"Frame.GoBack completed");
-            }
+            //}
         }
         catch (Exception ex)
         {

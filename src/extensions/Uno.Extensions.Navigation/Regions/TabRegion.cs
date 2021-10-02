@@ -20,13 +20,15 @@ public class TabRegion : SimpleRegion<TabView>
 {
     protected override object CurrentView => (Control.SelectedItem as TabViewItem)?.Content;
 
+    protected override string CurrentPath => (Control.SelectedItem as TabViewItem)?.NavigationPath();
+
     public TabRegion(
         ILogger<TabRegion> logger,
         IServiceProvider scopedServices,
         INavigationService navigation,
         IViewModelManager viewModelManager,
-
-        RegionControlProvider controlProvider) : base(logger, scopedServices, navigation, viewModelManager, controlProvider.RegionControl as TabView)
+        INavigationMappings mappings,
+        RegionControlProvider controlProvider) : base(logger, scopedServices, navigation, viewModelManager, mappings, controlProvider.RegionControl as TabView)
     {
         Control.SelectionChanged += Tabs_SelectionChanged;
     }

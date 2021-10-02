@@ -59,7 +59,14 @@ public class BaseNavigationResponse : INotifyCompletion
     {
         if (NavigationTask is not null)
         {
-            await NavigationTask;
+            try
+            {
+                await NavigationTask;
+            }
+            catch(Exception ex)
+            {
+
+            }
             continuation?.Invoke();
         }
         IsCompleted = true;
