@@ -50,7 +50,7 @@ namespace ExtensionsSampleApp.Region.Managers
         {
         }
 
-        protected override object InternalShow(string path, Type view, object data, object viewModel)
+        protected override void Show(string path, Type view, object data)
         {
             if (int.TryParse(path, out var index))
             {
@@ -64,8 +64,6 @@ namespace ExtensionsSampleApp.Region.Managers
                 var idx = Control.IndexFromContainer(item);
                 Control.SelectedIndex = idx;
             }
-
-            return null;
         }
     }
 

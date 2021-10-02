@@ -19,6 +19,8 @@ namespace Uno.Extensions.Navigation.Regions;
 
 public class FrameRegion : StackRegion<Frame>
 {
+    protected override object CurrentView => Control.Content;
+
     public FrameRegion(
         ILogger<FrameRegion> logger,
         IServiceProvider scopedServices,
@@ -54,7 +56,7 @@ public class FrameRegion : StackRegion<Frame>
         }
     }
 
-    protected override void GoBack(Type view, object parameter, object viewModel)
+    protected override void GoBack(Type view, object parameter)
     {
         try
         {
@@ -76,8 +78,6 @@ public class FrameRegion : StackRegion<Frame>
                 Control.GoBack();
                 Logger.LazyLogDebug(() => $"Frame.GoBack completed");
             }
-
-            InitialiseView(Control.Content, viewModel);
         }
         catch (Exception ex)
         {
@@ -85,7 +85,7 @@ public class FrameRegion : StackRegion<Frame>
         }
     }
 
-    protected override object InternalShow(string path, Type view, object data, object viewModel)
+    protected override void Show(string path, Type view, object data)
     {
         try
         {
@@ -97,13 +97,10 @@ public class FrameRegion : StackRegion<Frame>
                 Control.Navigated += Frame_Navigated;
                 Logger.LazyLogDebug(() => $"Frame.Navigate completed");
             }
-
-            return Control.Content;
         }
         catch (Exception ex)
         {
             Logger.LazyLogError(() => $"Unable to navigate to page - {ex.Message}");
-            return null;
         }
     }
 

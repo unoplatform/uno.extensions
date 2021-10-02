@@ -26,9 +26,8 @@ public class PageVisualStateRegion : SimpleRegion<Page>
     {
     }
 
-    protected override object InternalShow(string path, Type view, object data, object viewModel)
+    protected override void Show(string path, Type view, object data)
     {
         VisualStateManager.GoToState(Control, path, true);
-        return null;
     }
 }

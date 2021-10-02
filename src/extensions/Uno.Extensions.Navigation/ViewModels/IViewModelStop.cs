@@ -4,5 +4,5 @@ namespace Uno.Extensions.Navigation.ViewModels;
 
 public interface IViewModelStop
 {
-    Task Stop(NavigationContext context);
+    Task<bool> Stop(NavigationRequest request);
 }

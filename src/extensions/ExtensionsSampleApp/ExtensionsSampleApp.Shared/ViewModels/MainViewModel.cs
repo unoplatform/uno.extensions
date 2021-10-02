@@ -13,7 +13,7 @@ using Uno.Extensions.Navigation.ViewModels;
 
 namespace ExtensionsSampleApp.ViewModels
 {
-    public class MainViewModel : ObservableObject
+    public class MainViewModel : ObservableObject, IViewModelStart
     {
         public string Title => "Main";
 
@@ -23,7 +23,9 @@ namespace ExtensionsSampleApp.ViewModels
             Navigation = navigation;
             NavigateToSecondPageCommand = new RelayCommand(NavigateToSecondPage);
         }
-
+        public async Task Start(NavigationRequest request)
+        {
+        }
 
         public ICommand NavigateToSecondPageCommand { get; }
 
@@ -42,20 +44,21 @@ namespace ExtensionsSampleApp.ViewModels
             Data = data;
         }
 
-        public async Task Start(NavigationContext context)
+        public async Task Start(NavigationRequest request)
         {
             Logger.LazyLogTrace(() => "Starting view model (delay 5s)");
             await Task.Delay(5000);
             Logger.LazyLogTrace(() => "View model started (5s delay completed)");
         }
 
-        public async Task Stop(NavigationContext context)
+        public async Task<bool> Stop(NavigationRequest request)
         {
-            if (context.Components.NavigationPath == typeof(ThirdPage).Name &&
-                !((context.Components.Parameters as IDictionary<string, object>)?.Any() ?? false))
+            if (request.Parse().NavigationPath == typeof(ThirdPage).Name &&
+                !((request.Parse().Parameters as IDictionary<string, object>)?.Any() ?? false))
             {
-                context.Cancel();
+                return false;
             }
+            return true;
         }
     }
 
@@ -148,11 +151,11 @@ namespace ExtensionsSampleApp.ViewModels
             Tweet = tweet;
         }
 
-        public async Task Start(NavigationContext context)
+        public async Task Start(NavigationRequest context)
         {
             if (Tweet is null)
             {
-                Tweet = new Tweet { Id = int.Parse(context.Components.Parameters["tweetid"] + ""), Author = "Ned", Text = "Tweet loaded on start" };
+                Tweet = new Tweet { Id = int.Parse(context.Parse().Parameters["tweetid"] + ""), Author = "Ned", Text = "Tweet loaded on start" };
             }
         }
     }

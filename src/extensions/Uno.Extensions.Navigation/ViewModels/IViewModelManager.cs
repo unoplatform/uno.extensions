@@ -4,14 +4,12 @@ namespace Uno.Extensions.Navigation.ViewModels
 {
     public interface IViewModelManager
     {
-        void CreateViewModel(NavigationContext context);
+        object CreateViewModel(NavigationContext context);
 
-        Task InitializeViewModel(NavigationContext context);
+        Task StartViewModel(NavigationContext context, object viewModel);
 
-        Task StartViewModel(NavigationContext context);
+        Task StopViewModel(NavigationContext context, object viewModel);
 
-        Task StopViewModel(NavigationContext context);
-
-        void DisposeViewModel(NavigationContext context);
+        void DisposeViewModel(object viewModel);
     }
 }

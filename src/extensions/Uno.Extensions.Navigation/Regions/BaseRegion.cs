@@ -31,13 +31,7 @@ public abstract class BaseRegion<TControl> : BaseRegion
         Control = control;
     }
 
-    public void Show(string path, Type viewType, object data, object viewModel)
-    {
-        var view = InternalShow(path, viewType, data, viewModel);
-        InitialiseView(view, viewModel);
-    }
-
-    protected abstract object InternalShow(string path, Type viewType, object data, object viewModel);
+    protected abstract void Show(string path, Type viewType, object data);
 }
 
 public abstract class BaseRegion : IRegion, IRegionNavigate
@@ -94,7 +88,7 @@ public abstract class BaseRegion : IRegion, IRegionNavigate
         {
             await DoNavigation(context);
 
-            await ViewModelManager.StartViewModel(context);
+            await ViewModelManager.StartViewModel(context, CurrentViewModel);
         }
 
         context = context with { CanCancel = CanGoBack };
@@ -115,19 +109,11 @@ public abstract class BaseRegion : IRegion, IRegionNavigate
 
     protected async Task DoForwardNavigation(NavigationContext context)
     {
-        ViewModelManager.CreateViewModel(context);
+        var vm = ViewModelManager.CreateViewModel(context);
 
-        await ViewModelManager.InitializeViewModel(context);
+        await RegionNavigate(context);
 
-        //var dialog = DialogProvider.CreateDialog(Navigation, context);
-        //if (dialog is not null)
-        //{
-        //    OpenDialogs.Push(dialog);
-        //}
-        //else
-        //{
-            await RegionNavigate(context);
-        //}
+        InitialiseView(vm);
     }
 
     public abstract Task RegionNavigate(NavigationContext context);
@@ -140,11 +126,11 @@ public abstract class BaseRegion : IRegion, IRegionNavigate
         if (CurrentContext is not null)
         {
             // Stop the currently active viewmodel
-            await ViewModelManager.StopViewModel(CurrentContext);
+            await ViewModelManager.StopViewModel(navigationContext, CurrentViewModel);
 
             if (!CanGoBack || navigationContext.IsBackNavigation)
             {
-                ViewModelManager.DisposeViewModel(CurrentContext);
+                ViewModelManager.DisposeViewModel(CurrentViewModel);
             }
 
             // Check if navigation was cancelled - if it is,
@@ -189,17 +175,10 @@ public abstract class BaseRegion : IRegion, IRegionNavigate
         return false;
     }
 
-   
-
-    /// <summary>
-    /// Sets the view model as the data context for the view
-    /// Also sets the Navigation property if the view implements
-    /// INavigationAware
-    /// </summary>
-    /// <param name="view">The element to set the datacontext on</param>
-    /// <param name="viewModel">The viewmodel to set as datacontext</param>
-    protected void InitialiseView(object view, object viewModel)
+    protected void InitialiseView(object viewModel)
     {
+        var view = CurrentView;
+
         if (view is FrameworkElement fe)
         {
             if (viewModel is not null && fe.DataContext != viewModel)
@@ -220,4 +199,8 @@ public abstract class BaseRegion : IRegion, IRegionNavigate
             spAware.Inject(ScopedServices);
         }
     }
+
+    protected virtual object CurrentView => default;
+
+    protected object CurrentViewModel => (CurrentView as FrameworkElement)?.DataContext;
 }

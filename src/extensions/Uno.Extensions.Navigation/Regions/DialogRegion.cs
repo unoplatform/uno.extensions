@@ -54,8 +54,8 @@ namespace Uno.Extensions.Navigation.Regions
             {
                 await CloseDialog(context);
             }
-
-            var dialog = DialogFactory.CreateDialog(Navigation, context);
+            var vm = ViewModelManager.CreateViewModel(context);
+            var dialog = DialogFactory.CreateDialog(Navigation, context, vm);
             if (dialog is not null)
             {
                 OpenDialogs.Push(dialog);
@@ -68,7 +68,7 @@ namespace Uno.Extensions.Navigation.Regions
 
             var responseData = navigationContext.Components.Parameters.TryGetValue(string.Empty, out var response) ? response : default;
 
-            await ViewModelManager.StopViewModel(navigationContext);
+            await ViewModelManager.StopViewModel(navigationContext, CurrentViewModel);
 
             ViewModelManager.DisposeViewModel(navigationContext);
 

@@ -15,17 +15,17 @@ public static class NavigationHelpers
         return new PendingRequest(request, new TaskCompletionSource<object>(), resultCompletion??new TaskCompletionSource<Options.Option>());
     }
 
-    public static object ViewModel(this NavigationContext context)
-    {
-        var mapping = context.Mapping;
-        if (mapping?.ViewModel is not null)
-        {
-            var services = context.Services;
-            return services.GetService(mapping.ViewModel);
-        }
+    //public static object ViewModel(this NavigationContext context)
+    //{
+    //    var mapping = context.Mapping;
+    //    if (mapping?.ViewModel is not null)
+    //    {
+    //        var services = context.Services;
+    //        return services.GetService(mapping.ViewModel);
+    //    }
 
-        return null;
-    }
+    //    return null;
+    //}
 
     public static bool IsParentRequest(this NavigationRequest request)
     {

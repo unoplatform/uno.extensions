@@ -52,7 +52,16 @@ public abstract class StackRegion<TControl> : BaseRegion<TControl>
         NavigationContexts.RemoveAt(NavigationContexts.Count - 1);
 
         // Invoke the navigation (which will be a back navigation)
-        GoBack(CurrentContext.Mapping?.View, context.Components.Parameters, CurrentContext.ViewModel());
+        GoBack(CurrentContext.Mapping?.View, context.Components.Parameters);
+
+        var vm = CurrentViewModel;
+        if (vm is null)
+        {
+            // This will happen if cache mode isn't set to required
+            vm = ViewModelManager.CreateViewModel(CurrentContext);
+
+            InitialiseView(vm);
+        }
 
         return Task.CompletedTask;
     }
@@ -72,7 +81,7 @@ public abstract class StackRegion<TControl> : BaseRegion<TControl>
 
         // Add the new context to the list of contexts and then navigate away
         NavigationContexts.Add(context);
-        Show(context.Components.NavigationPath, context.Mapping?.View, context.Components.Parameters, context.ViewModel());
+        Show(context.Components.NavigationPath, context.Mapping?.View, context.Components.Parameters);
 
         // If path starts with / then remove all prior pages and corresponding contexts
         if (context.Components.IsRooted)
@@ -100,7 +109,7 @@ public abstract class StackRegion<TControl> : BaseRegion<TControl>
         return $"Stack({typeof(TControl).Name}) '{CurrentContext?.Components.NavigationPath}'";
     }
 
-    protected abstract void GoBack(Type view, object data, object viewModel);
+    protected abstract void GoBack(Type view, object data);
 
     protected abstract void RemoveLastFromBackStack();
 
