@@ -17,6 +17,8 @@ namespace Uno.Extensions.Navigation.Regions;
 
 public class NavigationViewRegion : SimpleRegion<Microsoft.UI.Xaml.Controls.NavigationView>
 {
+    protected override object CurrentView => Control.SelectedItem;
+
     private Microsoft.UI.Xaml.Controls.NavigationView _control;
 
     public override Microsoft.UI.Xaml.Controls.NavigationView Control
@@ -57,7 +59,7 @@ public class NavigationViewRegion : SimpleRegion<Microsoft.UI.Xaml.Controls.Navi
     {
     }
 
-    protected override object InternalShow(string path, Type view, object data, object viewModel)
+    protected override void Show(string path, Type view, object data)
     {
         var item = (from mi in Control.MenuItems.OfType<FrameworkElement>()
                     where mi.Name == path
@@ -66,7 +68,5 @@ public class NavigationViewRegion : SimpleRegion<Microsoft.UI.Xaml.Controls.Navi
         {
             Control.SelectedItem = item;
         }
-
-        return Control.SelectedItem;
     }
 }

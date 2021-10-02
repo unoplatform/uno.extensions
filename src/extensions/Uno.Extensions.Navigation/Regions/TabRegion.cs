@@ -18,6 +18,8 @@ namespace Uno.Extensions.Navigation.Regions;
 
 public class TabRegion : SimpleRegion<TabView>
 {
+    protected override object CurrentView => (Control.SelectedItem as TabViewItem)?.Content;
+
     public TabRegion(
         ILogger<TabRegion> logger,
         IServiceProvider scopedServices,
@@ -46,7 +48,7 @@ public class TabRegion : SimpleRegion<TabView>
                 select t).FirstOrDefault();
     }
 
-    protected override object InternalShow(string path, Type view, object data, object viewModel)
+    protected override void Show(string path, Type view, object data)
     {
         try
         {
@@ -63,13 +65,10 @@ public class TabRegion : SimpleRegion<TabView>
             {
                 Logger.LazyLogWarning(() => $"Tab '{path}' not found");
             }
-
-            return tab?.Content;
         }
         catch (Exception ex)
         {
             Logger.LazyLogError(() => $"Unable to show tab - {ex.Message}");
-            return null;
         }
     }
 }

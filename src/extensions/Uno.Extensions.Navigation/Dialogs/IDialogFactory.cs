@@ -3,5 +3,5 @@
 public interface IDialogFactory
 {
     bool IsDialogNavigation(NavigationRequest request);
-    Dialog CreateDialog(INavigationService navigation, NavigationContext context);
+    Dialog CreateDialog(INavigationService navigation, NavigationContext context, object viewModel);
 }

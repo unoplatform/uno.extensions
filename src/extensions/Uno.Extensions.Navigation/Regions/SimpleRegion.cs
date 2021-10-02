@@ -28,7 +28,7 @@ public abstract class SimpleRegion<TControl> : BaseRegion<TControl>
     {
         currentContext = context;
         Logger.LazyLogDebug(() => $"Navigating to path '{context.Components.NavigationPath}' with view '{context.Mapping?.View?.Name}'");
-        Show(context.Components.NavigationPath, context.Mapping?.View, context.Components.Parameters, context.ViewModel());
+        Show(context.Components.NavigationPath, context.Mapping?.View, context.Components.Parameters);
         return Task.CompletedTask;
     }
 

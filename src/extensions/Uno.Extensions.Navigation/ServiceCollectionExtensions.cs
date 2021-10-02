@@ -88,7 +88,7 @@ public static class ServiceCollectionExtensions
         }
 
         return services
-                    .AddScoped<TData>(services => services.GetService<ViewModelDataProvider>().GetData<TData>());
+                    .AddTransient<TData>(services => services.GetService<ViewModelDataProvider>().GetData<TData>());
     }
 }
 

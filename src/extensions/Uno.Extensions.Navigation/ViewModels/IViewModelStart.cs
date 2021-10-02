@@ -4,5 +4,5 @@ namespace Uno.Extensions.Navigation.ViewModels;
 
 public interface IViewModelStart
 {
-    Task Start(NavigationContext context);
+    Task Start(NavigationRequest request);
 }

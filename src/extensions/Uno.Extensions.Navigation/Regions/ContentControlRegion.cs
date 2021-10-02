@@ -17,6 +17,8 @@ namespace Uno.Extensions.Navigation.Regions;
 
 public class ContentControlRegion : SimpleRegion<ContentControl>
 {
+    protected override object CurrentView => Control.Content;
+
     public ContentControlRegion(
         ILogger<ContentControlRegion> logger,
         IServiceProvider scopedServices,
@@ -27,27 +29,23 @@ public class ContentControlRegion : SimpleRegion<ContentControl>
     {
     }
 
-    protected override object InternalShow(string path, Type view, object data, object viewModel)
+    protected override void Show(string path, Type view, object data)
     {
         try
         {
             if (view is null)
             {
                 Logger.LazyLogError(() => "Missing view for navigation path '{path}'");
-                return null;
             }
 
             Logger.LazyLogDebug(() => $"Creating instance of type '{view.Name}'");
             var content = Activator.CreateInstance(view);
             Control.Content = content;
             Logger.LazyLogDebug(() => "Instance created");
-
-            return Control.Content;
         }
         catch (Exception ex)
         {
             Logger.LazyLogError(() => $"Unable to create instance - {ex.Message}");
-            return null;
         }
     }
 }

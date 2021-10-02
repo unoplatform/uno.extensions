@@ -16,6 +16,8 @@ namespace Uno.Extensions.Navigation.Regions;
 
 public class GridVisiblityRegion : SimpleRegion<Grid>
 {
+    protected override object CurrentView => CurrentlyVisibleControl;
+
     public GridVisiblityRegion(
         ILogger<GridVisiblityRegion> logger,
         IServiceProvider scopedServices,
@@ -28,12 +30,12 @@ public class GridVisiblityRegion : SimpleRegion<Grid>
 
     private FrameworkElement CurrentlyVisibleControl { get; set; }
 
-    protected override object InternalShow(string path, Type view, object data, object viewModel)
+    protected override void Show(string path, Type view, object data)
     {
         var controlToShow = Control.FindName(path) as FrameworkElement;
         if (controlToShow is null)
         {
-            return null;
+            return;
         }
 
         controlToShow.Visibility = Visibility.Visible;
@@ -43,6 +45,5 @@ public class GridVisiblityRegion : SimpleRegion<Grid>
             CurrentlyVisibleControl.Visibility = Visibility.Collapsed;
         }
         CurrentlyVisibleControl = controlToShow;
-        return controlToShow;
     }
 }

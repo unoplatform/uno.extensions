@@ -17,7 +17,7 @@ namespace Uno.Extensions.Navigation.ViewModels
             Navigation = navigation;
         }
 
-        public void CreateViewModel(NavigationContext context)
+        public object CreateViewModel(NavigationContext context)
         {
             var services = context.Services;
             var mapping = context.Mapping;
@@ -36,58 +36,29 @@ namespace Uno.Extensions.Navigation.ViewModels
                 {
                     spAware.Inject(context.Services);
                 }
+                return vm;
+            }
 
+            return null;
+        }
+
+        public Task StartViewModel(NavigationContext context, object viewModel)
+        {
+            return (viewModel as IViewModelStart)?.Start(context.Request) ?? Task.CompletedTask;
+        }
+
+        public async Task StopViewModel(NavigationContext context, object viewModel)
+        {
+            var proceed= await ((viewModel as IViewModelStop)?.Stop(context.Request) ?? Task.FromResult(true));
+            if (!proceed)
+            {
+                context.Cancel();
             }
         }
 
-        public Task InitializeViewModel(NavigationContext context)
+        public void DisposeViewModel(object viewModel)
         {
-            var services = context.Services;
-            var mapping = context.Mapping;
-            if (mapping?.ViewModel is not null)
-            {
-                var vm = services.GetService(mapping.ViewModel);
-                return (vm as IViewModelInitialize)?.Initialize(context) ?? Task.CompletedTask;
-            }
-
-            return Task.CompletedTask;
-        }
-
-        public Task StartViewModel(NavigationContext context)
-        {
-            var services = context.Services;
-            var mapping = context.Mapping;
-            if (mapping?.ViewModel is not null)
-            {
-                var vm = services.GetService(mapping.ViewModel);
-                return (vm as IViewModelStart)?.Start(context) ?? Task.CompletedTask;
-            }
-
-            return Task.CompletedTask;
-        }
-
-        public Task StopViewModel(NavigationContext context)
-        {
-            var services = context.Services;
-            var mapping = context.Mapping;
-            if (mapping?.ViewModel is not null)
-            {
-                var vm = services.GetService(mapping.ViewModel);
-                return (vm as IViewModelStop)?.Stop(context) ?? Task.CompletedTask;
-            }
-
-            return Task.CompletedTask;
-        }
-
-        public void DisposeViewModel(NavigationContext context)
-        {
-            var services = context.Services;
-            var mapping = context.Mapping;
-            if (mapping?.ViewModel is not null)
-            {
-                var vm = services.GetService(mapping.ViewModel);
-                (vm as IDisposable)?.Dispose();
-            }
+            (viewModel as IDisposable)?.Dispose();
         }
     }
 }
