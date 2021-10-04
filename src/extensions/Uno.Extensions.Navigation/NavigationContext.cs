@@ -9,7 +9,7 @@ namespace Uno.Extensions.Navigation;
 public record NavigationContext(
     IServiceProvider Services,
     NavigationRequest Request,
-    RequestComponents Components,
+    RouteSegments Components,
     CancellationTokenSource CancellationSource,
     RouteMap Mapping,
     bool CanCancel = true)

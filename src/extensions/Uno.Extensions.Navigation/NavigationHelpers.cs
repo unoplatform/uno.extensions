@@ -73,7 +73,7 @@ public static class NavigationHelpers
         return string.IsNullOrWhiteSpace(path) ? null : request with { Route = request.Route with { Uri = new Uri(path + (!string.IsNullOrWhiteSpace(queryParameters) ? $"?{queryParameters}" : string.Empty), UriKind.Relative) } };
     }
 
-    public static RequestComponents Parse(this NavigationRequest request)
+    public static RouteSegments Parse(this NavigationRequest request)
     {
 
         var path = request.Route.Uri.OriginalString;
@@ -138,7 +138,7 @@ public static class NavigationHelpers
 
         var residualRequest = request.WithPath(residualPath, query);
 
-        var components = new RequestComponents(navPath, isRooted, numberOfPagesToRemove, paras, residualRequest);
+        var components = new RouteSegments(navPath, isRooted, numberOfPagesToRemove, paras, residualRequest);
         return components;
     }
 
@@ -189,8 +189,4 @@ public static class NavigationHelpers
                 select new { key, val })
                 .ToDictionary(x => x.key, x => (object)x.val);
     }
-}
-
-public record RequestComponents(string NavigationPath, bool IsRooted, int NumberOfPagesToRemove, IDictionary<string, object> Parameters, NavigationRequest NextRequest)
-{
 }
