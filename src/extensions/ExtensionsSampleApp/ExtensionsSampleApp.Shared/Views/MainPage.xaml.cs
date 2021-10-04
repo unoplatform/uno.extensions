@@ -49,45 +49,45 @@ namespace ExtensionsSampleApp.Views
 
         private async void NextPageRequestResponseClick(object sender, RoutedEventArgs e)
         {
-            var navresult = Navigation.NavigateToViewModelAsync<SecondViewModel, Widget>(this);
+            var navresult = await Navigation.NavigateToViewModelAsync<SecondViewModel, Widget>(this);
             var response = await navresult.Result;
         }
 
         private async void RequestDataResponseClick(object sender, RoutedEventArgs e)
         {
-            var navresult = Navigation.NavigateForResultDataAsync<Widget>(this);
+            var navresult = await Navigation.NavigateForResultDataAsync<Widget>(this);
             var response = await navresult.Result;
         }
 
         private async void NextPageRequestResponseWithTimeoutClick(object sender, RoutedEventArgs e)
         {
             var cancel = new CancellationTokenSource();
-            var navresult = Navigation.NavigateToViewModelAsync<SecondViewModel, Widget>(this, cancellation: cancel.Token);
+            var navresult = await Navigation.NavigateToViewModelAsync<SecondViewModel, Widget>(this, cancellation: cancel.Token);
             Task.Run(() => Task.Delay(10000)).ConfigureAwait(true).GetAwaiter().OnCompleted(() => cancel.Cancel());
             var response = await navresult.Result;
         }
 
         private async void ContentDialogResponseClick(object sender, RoutedEventArgs e)
         {
-            var navresult = Navigation.NavigateToViewAsync<SimpleContentDialog, ContentDialogResult>(this);
+            var navresult = await Navigation.NavigateToViewAsync<SimpleContentDialog, ContentDialogResult>(this);
             var response = await navresult.Result;
         }
 
         private async void ContentDialogWidgetResponseClick(object sender, RoutedEventArgs e)
         {
-            var navresult = Navigation.NavigateToViewAsync<SimpleContentDialog, Widget>(this);
+            var navresult = await Navigation.NavigateToViewAsync<SimpleContentDialog, Widget>(this);
             var response = await navresult.Result;
         }
 
         private async void ContentDialogResultAndWidgetResponseClick(object sender, RoutedEventArgs e)
         {
-            var navresult = Navigation.NavigateToViewAsync<SimpleContentDialog, ContentResult>(this);
+            var navresult = await Navigation.NavigateToViewAsync<SimpleContentDialog, ContentResult>(this);
             var response = await navresult.Result;
         }
 
         private async void MessageDialogClick(object sender, RoutedEventArgs e)
         {
-            var navresult = Navigation.ShowMessageDialogAsync(this, "Basic content", "Content Title");//, commands: new Windows.UI.Popups.UICommand[] { new Windows.UI.Popups.UICommand("test", command => Debug.WriteLine("TEST")) });
+            var navresult = await Navigation.ShowMessageDialogAsync(this, "Basic content", "Content Title");//, commands: new Windows.UI.Popups.UICommand[] { new Windows.UI.Popups.UICommand("test", command => Debug.WriteLine("TEST")) });
             var response = await navresult.Result;
         }
 

@@ -1,6 +1,8 @@
-﻿namespace Uno.Extensions.Navigation;
+﻿using System.Threading.Tasks;
+
+namespace Uno.Extensions.Navigation;
 
 public interface INavigationService
 {
-    NavigationResponse NavigateAsync(NavigationRequest request);
+    Task<NavigationResponse> NavigateAsync(NavigationRequest request);
 }

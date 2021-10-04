@@ -70,7 +70,7 @@ public abstract class BaseRegion : IRegion, IRegionNavigate
         ViewModelManager = viewModelManager;
     }
 
-    public NavigationResponse NavigateAsync(NavigationRequest request)
+    public async Task<NavigationResponse> NavigateAsync(NavigationRequest request)
     {
         var context = request.BuildNavigationContext(ScopedServices);
 
@@ -82,8 +82,8 @@ public abstract class BaseRegion : IRegion, IRegionNavigate
             context.Services.GetService<ScopedServiceHost<INavigationService>>().Service = responseNav;
         }
 
-        var navTask = InternalNavigateAsync(context);
-        return new NavigationResponse(request, navTask, resultTask?.Task);
+        await InternalNavigateAsync(context);
+        return new NavigationResponse(request, resultTask?.Task);
     }
 
     private async Task InternalNavigateAsync(NavigationContext context)
