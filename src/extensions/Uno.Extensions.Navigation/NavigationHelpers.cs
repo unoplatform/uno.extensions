@@ -21,7 +21,7 @@ public static class NavigationHelpers
         return new PendingRequest(request, new TaskCompletionSource<object>(), resultCompletion ?? new TaskCompletionSource<Options.Option>());
     }
 
-    public static string NavigationPath(this object view, INavigationMappings mappings = null)
+    public static string NavigationPath(this object view, IRouteMappings mappings = null)
     {
         var map = mappings?.LookupByView(view.GetType());
         if (map is not null)
@@ -150,7 +150,7 @@ public static class NavigationHelpers
         var dataFactor = scopedServices.GetService<ViewModelDataProvider>();
         dataFactor.Parameters = components.Parameters;
 
-        var mapping = scopedServices.GetService<INavigationMappings>().LookupByPath(components.NavigationPath);
+        var mapping = scopedServices.GetService<IRouteMappings>().LookupByPath(components.NavigationPath);
 
         var context = new NavigationContext(
                             scopedServices,

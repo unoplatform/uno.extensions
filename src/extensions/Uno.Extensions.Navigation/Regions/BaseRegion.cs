@@ -22,14 +22,14 @@ public abstract class BaseRegion<TControl> : BaseRegion
 {
     public virtual TControl Control { get; set; }
 
-    protected INavigationMappings Mappings { get; }
+    protected IRouteMappings Mappings { get; }
 
     protected BaseRegion(
         ILogger logger,
         IServiceProvider scopedServices,
         INavigationService navigation,
         IViewModelManager viewModelManager,
-        INavigationMappings mappings,
+        IRouteMappings mappings,
         TControl control) : base(logger, scopedServices, navigation, viewModelManager)
     {
         Mappings = mappings;

@@ -15,9 +15,9 @@ namespace Uno.Extensions.Navigation.Dialogs.Managers;
 
 public class ContentDialogManager : IDialogManager
 {
-    private INavigationMappings Mappings { get; }
+    private IRouteMappings Mappings { get; }
 
-    public ContentDialogManager(INavigationMappings mappings)
+    public ContentDialogManager(IRouteMappings mappings)
     {
         Mappings = mappings;
     }
