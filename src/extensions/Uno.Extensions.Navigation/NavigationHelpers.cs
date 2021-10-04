@@ -142,6 +142,12 @@ public static class NavigationHelpers
         return components;
     }
 
+    public static NavigationRequest AsRequest (this RouteMap map, object sender)
+    {
+        var request = new NavigationRequest(sender, new Route(new Uri(map.Path, UriKind.Relative)));
+        return request;
+    }
+
     public static NavigationContext BuildNavigationContext(this NavigationRequest request, IServiceProvider services)
     {
         var components = request.Parse();

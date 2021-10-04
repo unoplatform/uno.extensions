@@ -53,14 +53,7 @@ public abstract class StackRegion<TControl> : BaseRegion<TControl>
         var mapping = Mappings.LookupByView(CurrentView?.GetType());
         context = context with { Mapping = mapping };
 
-        var vm = CurrentViewModel;
-        if (vm is null)
-        {
-            // This will happen if cache mode isn't set to required
-            vm = ViewModelManager.CreateViewModel(context);
-
-            InitialiseView(context, vm);
-        }
+        InitialiseView(context);
 
         return Task.CompletedTask;
     }

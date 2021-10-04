@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,11 +20,11 @@ public class NavigationService : IRegionNavigationService
 
     private bool IsRootService => Parent is null;
 
-    private PendingRequest PendingNavigation { get; set; }
-
     private IRegionNavigationService Parent { get; set; }
 
     private IDictionary<string, IRegionNavigationService> NestedServices { get; } = new Dictionary<string, IRegionNavigationService>();
+
+    private AsyncAutoResetEvent NestedServiceWaiter { get; } = new AsyncAutoResetEvent(false);
 
     private int isNavigating = 0;
 
@@ -35,19 +37,11 @@ public class NavigationService : IRegionNavigationService
         DialogFactory = dialogFactory;
     }
 
-    public Task Attach(string regionName, IRegionNavigationService childRegion)
+    public void Attach(string regionName, IRegionNavigationService childRegion)
     {
         var childService = childRegion as NavigationService;
         NestedServices[regionName + string.Empty] = childService;
-
-        if (PendingNavigation is not null)
-        {
-            return RunPendingNavigation();
-        }
-        else
-        {
-            return childService.RunPendingNavigation();
-        }
+        NestedServiceWaiter.Set();
     }
 
     public void Detach(IRegionNavigationService childRegion)
@@ -86,16 +80,17 @@ public class NavigationService : IRegionNavigationService
                 return await NavigateWithParentAsync(request);
             }
 
-            // Create new context if there isn't a pending navigation
-            if (PendingNavigation is null)
-            {
-                PendingNavigation = request.Pending();
-            }
+            //// Create new context if there isn't a pending navigation
+            //if (PendingNavigation is null)
+            //{
+            //    PendingNavigation = request.Pending();
+            //}
 
-            var pending = PendingNavigation;
+            //var pending = PendingNavigation;
 
+            var pending = request.Pending();
             Logger.LazyLogDebug(() => $"Invoking navigation with Navigation Context");
-            var navTask = RunPendingNavigation();
+            var navTask = RunPendingNavigation(pending);
             Logger.LazyLogDebug(() => $"Returning NavigationResponse");
             await navTask;
 
@@ -126,14 +121,14 @@ public class NavigationService : IRegionNavigationService
         return parentService.NavigateAsync(parentRequest);
     }
 
-    private async Task RunPendingNavigation()
+    private async Task RunPendingNavigation(PendingRequest pending)
     {
         try
         {
-            var pending = PendingNavigation;
+            //var pending = PendingNavigation;
             if (pending is not null)
             {
-                PendingNavigation = null;
+                //PendingNavigation = null;
                 var navTask = pending.TaskCompletion;
                 var navRequest = pending.Request;
 
@@ -145,26 +140,44 @@ public class NavigationService : IRegionNavigationService
                 {
                     if (Region is null)
                     {
-                        // If the there is no region, then
-                        // push the context back to pending
-                        // and await it
-                        PendingNavigation = pending;
-                        await navTask.Task;
+                        Debug.Fail("This shouldn't happen - need to check for situations where a nav service navigates before the region has been set (eg in constructor of the region)");
+                        //// If the there is no region, then
+                        //// push the context back to pending
+                        //// and await it
+                        //PendingNavigation = pending;
+                        //await navTask.Task;
                     }
                     else
                     {
+                        // Temporarily detach all nested services to prevent accidental
+                        // navigation to the wrong child
+                        // eg switching tabs, frame on tab1 won't get detached until some
+                        // time after navigating to tab2, meaning that the wrong nexted
+                        // child will be used for any subsequent navigations.
+                        var nested = NestedServices.ToArray();
+                        NestedServices.Clear();
                         var regionTask = await Region.NavigateAsync(navRequest);
-                        _ = regionTask.Result?.ContinueWith((Task<Options.Option> t) =>
-                          {
-                              if (t.Status == TaskStatus.RanToCompletion)
+                        if (regionTask is null)
+                        {
+                            // If a null result task was returned, then no
+                            // navigation took place, so just reattach the existing
+                            // nav services
+                            nested.ForEach(n => NestedServices[n.Key] = n.Value);
+                        }
+                        else
+                        {
+                            _ = regionTask.Result?.ContinueWith((Task<Options.Option> t) =>
                               {
-                                  pending.ResultCompletion.TrySetResult(t.Result);
-                              }
-                              else
-                              {
-                                  pending.ResultCompletion.TrySetResult(Options.Option.None<object>());
-                              }
-                          });
+                                  if (t.Status == TaskStatus.RanToCompletion)
+                                  {
+                                      pending.ResultCompletion.TrySetResult(t.Result);
+                                  }
+                                  else
+                                  {
+                                      pending.ResultCompletion.TrySetResult(Options.Option.None<object>());
+                                  }
+                              });
+                        }
                     }
                 }
 
@@ -181,48 +194,59 @@ public class NavigationService : IRegionNavigationService
         }
     }
 
-    private Task RunNestedNavigation(NavigationRequest nestedRequest, TaskCompletionSource<Options.Option> resultCompletion)
+    private async Task RunNestedNavigation(NavigationRequest nestedRequest, TaskCompletionSource<Options.Option> resultCompletion)
     {
         if (nestedRequest is null)
         {
-            return Task.CompletedTask;
+            await Task.CompletedTask;
+            return;
         }
 
         var nestedRoute = nestedRequest.FirstRouteSegment;
 
-        // Try to retrieve nested service based on route name
-        var nested = Nested(nestedRoute) as NavigationService;
-        if (nested is null)
+        NavigationService nested = null;
+        while (nested is null)
         {
-            // No match for named route, so grab any unnamed nested
-            nested = Nested() as NavigationService;
-        }
-        else
-        {
-            // If we've been able to retrieve the nested service
-            // we need to remove the route from the request path
-            var nextRoute = nestedRequest.Route.Uri.OriginalString.TrimStart($"{nestedRoute}/");
-            nestedRequest = nestedRequest.WithPath(nextRoute);
+            // Try to retrieve nested service based on route name
+            nested = Nested(nestedRoute) as NavigationService;
+            if (nested is null)
+            {
+                // No match for named route, so grab any unnamed nested
+                nested = Nested() as NavigationService;
+            }
+            else
+            {
+                // If we've been able to retrieve the nested service
+                // we need to remove the route from the request path
+                var nextRoute = nestedRequest.Route.Uri.OriginalString.TrimStart($"{nestedRoute}/");
+                nestedRequest = nestedRequest.WithPath(nextRoute);
+            }
+
+            if (nested is null)
+            {
+                await NestedServiceWaiter.Wait();
+            }
         }
 
-        if (nested is not null)
-        {
-            // Send the navigation request to the nested service
-            //var nestedContext = nestedRequest.BuildNavigationContext(nested.ScopedServices, new TaskCompletionSource<Options.Option>());
-            nested.PendingNavigation = nestedRequest.Pending(resultCompletion);
-            return nested.RunPendingNavigation();
-        }
-        else
-        {
-            // Unable to retrieve the nested service, so put the
-            // nested request into the pending context (we add
-            // "./" to make sure it's handled as a nested navigation
-            var pendingRoute = RouteConstants.RelativePath.Nested + nestedRequest.Route.Uri.OriginalString;
-            var pendingRequest = nestedRequest.WithPath(pendingRoute);//.BuildNavigationContext(ScopedServices, new TaskCompletionSource<Options.Option>());
+        //if (nested is not null)
+        //{
+        // Send the navigation request to the nested service
+        //var nestedContext = nestedRequest.BuildNavigationContext(nested.ScopedServices, new TaskCompletionSource<Options.Option>());
+        //nested.PendingNavigation
+        var nestedPending = nestedRequest.Pending(resultCompletion);
+        await nested.RunPendingNavigation(nestedPending);
+        //}
+        //else
+        //{
+        //    // Unable to retrieve the nested service, so put the
+        //    // nested request into the pending context (we add
+        //    // "./" to make sure it's handled as a nested navigation
+        //    var pendingRoute = RouteConstants.RelativePath.Nested + nestedRequest.Route.Uri.OriginalString;
+        //    var pendingRequest = nestedRequest.WithPath(pendingRoute);//.BuildNavigationContext(ScopedServices, new TaskCompletionSource<Options.Option>());
 
-            PendingNavigation = pendingRequest.Pending(resultCompletion);
-            return PendingNavigation.TaskCompletion.Task;
-        }
+        //    PendingNavigation = pendingRequest.Pending(resultCompletion);
+        //    return PendingNavigation.TaskCompletion.Task;
+        //}
     }
 
     private IRegionNavigationService Root
@@ -273,6 +297,33 @@ public class NavigationService : IRegionNavigationService
         if (nav.Region is null)
         {
             builder.AppendLine("------------------------------------------------------------------------------------------------");
+        }
+    }
+
+    private class AsyncAutoResetEvent
+    {
+        private readonly AutoResetEvent _event;
+
+        public AsyncAutoResetEvent(bool initialState)
+        {
+            _event = new AutoResetEvent(initialState);
+        }
+
+        public Task<bool> Wait(TimeSpan? timeout = null)
+        {
+            return Task.Run(() =>
+            {
+                if (timeout.HasValue)
+                {
+                    return _event.WaitOne(timeout.Value);
+                }
+                return _event.WaitOne();
+            });
+        }
+
+        public void Set()
+        {
+            _event.Set();
         }
     }
 }

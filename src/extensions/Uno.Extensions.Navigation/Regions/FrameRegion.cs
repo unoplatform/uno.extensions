@@ -35,9 +35,13 @@ public class FrameRegion : StackRegion<Frame>
         {
             Logger.LazyLogDebug(() => $"Navigating to type '{Control.SourcePageType.Name}' (initial Content set on Frame)");
 
-            // This happens when the SourcePageType property is set on the Frame. The
-            // page is set as the content, without actually navigating to the page
-            Navigation.NavigateToViewAsync(null, Control.SourcePageType);
+            var request = mappings.LookupByView(Control.Content.GetType()).AsRequest(this);
+            var context = request.BuildNavigationContext(ScopedServices);
+
+            //// This happens when the SourcePageType property is set on the Frame. The
+            //// page is set as the content, without actually navigating to the page
+            //Navigation.NavigateToViewAsync(null, Control.SourcePageType);
+            InitialiseView(context);
         }
 
         Control.Navigated += Frame_Navigated;

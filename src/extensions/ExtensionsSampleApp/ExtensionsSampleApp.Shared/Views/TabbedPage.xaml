@@ -25,6 +25,8 @@
                         nav:Navigation.NavigateOnClickPath="doc0" />
                 <Button Content="Doc0 - code"
                         Click="NavigateToDoc0Click" />
+                <Button Content="Doc2"
+                        nav:Navigation.NavigateOnClickPath="doc2" />
             </StackPanel>
         </controls:TabViewItem>
         <controls:TabViewItem Header="Document 0"
@@ -82,6 +84,7 @@
                             nav:Navigation.NavigateOnClickPath="./SecondPage" />
                     <Button Content="Page Four"
                             nav:Navigation.NavigateOnClickPath="./FourthPage" />
+                    <ContentControl nav:Navigation.IsRegion="True"/>
                 </StackPanel>
             </Grid>
         </controls:TabViewItem>

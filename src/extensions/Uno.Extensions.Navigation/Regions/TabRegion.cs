@@ -39,7 +39,12 @@ public class TabRegion : SimpleRegion<TabView>
         var tvi = e.AddedItems?.FirstOrDefault() as TabViewItem;
         var tabName = tvi.Name;
         Logger.LazyLogDebug(() => $"Navigating to path {tabName}");
-        Navigation.NavigateByPathAsync(null, tabName);
+        //Navigation.NavigateByPathAsync(null, tabName);
+
+        var request = Mappings.LookupByPath(tabName).AsRequest(this);
+        var context = request.BuildNavigationContext(ScopedServices);
+
+        InitialiseView(context);
     }
 
     private TabViewItem FindByName(string tabName)
