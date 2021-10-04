@@ -13,4 +13,6 @@ public interface IRouteMappings
     RouteMap LookupByView(Type viewType);
 
     RouteMap LookupByData(Type dataType);
+
+    RouteMap LookupByResultData(Type resultDataType);
 }

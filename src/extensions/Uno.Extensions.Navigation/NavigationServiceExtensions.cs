@@ -67,6 +67,13 @@ public static class NavigationServiceExtensions
         return service.NavigateAsync(new NavigationRequest(sender, new NavigationRoute(new Uri(map.FullPath(relativePathModifier), UriKind.Relative), data), cancellation));
     }
 
+    public static NavigationResponse NavigateForResultDataAsync<TResultData>(this INavigationService service, object sender, string relativePathModifier = NavigationConstants.RelativePath.Current, CancellationToken cancellation = default)
+    {
+        var mapping = Ioc.Default.GetRequiredService<IRouteMappings>();
+        var map = mapping.LookupByResultData(typeof(TResultData));
+        return service.NavigateAsync(new NavigationRequest(sender, new NavigationRoute(new Uri(map.FullPath(relativePathModifier), UriKind.Relative)), cancellation,typeof(TResultData)));
+    }
+
     public static NavigationResponse NavigateToPreviousViewAsync(this INavigationService service, object sender, string relativePathModifier = NavigationConstants.RelativePath.Current, object data = null, CancellationToken cancellation = default)
     {
         return service.NavigateAsync(new NavigationRequest(sender, new NavigationRoute(new Uri(RouteMap.CombinePathWithRelativePath(NavigationConstants.PreviousViewUri, relativePathModifier), UriKind.Relative), data), cancellation));
