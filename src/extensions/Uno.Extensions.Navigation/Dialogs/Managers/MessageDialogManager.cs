@@ -23,14 +23,14 @@ public class MessageDialogManager : IDialogManager
 
     public bool IsDialogNavigation(NavigationRequest request)
     {
-        return request.Parse().NavigationPath == RouteConstants.MessageDialogUri;
+        return request.Segments.Base == RouteConstants.MessageDialogUri;
     }
 
     public Dialog DisplayDialog(NavigationContext context, object vm)
     {
         var navigation = context.Navigation;
 
-        var data = context.Components.Parameters;
+        var data = context.Request.Segments.Parameters;
         var md = new MessageDialog(data[RouteConstants.MessageDialogParameterContent] as string, data[RouteConstants.MessageDialogParameterTitle] as string)
         {
             Options = (MessageDialogOptions)data[RouteConstants.MessageDialogParameterOptions],

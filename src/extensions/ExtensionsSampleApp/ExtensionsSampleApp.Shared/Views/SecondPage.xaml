@@ -16,7 +16,7 @@
         </Grid.RowDefinitions>
         <StackPanel>
             <CommandBar >
-                <AppBarButton Icon="Back" Label="Back" nav:Navigation.NavigateOnClickPath=".." />
+                <AppBarButton Icon="Back" Label="Back" nav:Navigation.NavigateOnClickPath="../&lt;" />
                 <CommandBar.Content>
                     <TextBlock Text="Title"
                            Margin="12,8" />
@@ -43,7 +43,7 @@
             <Button Content="Go Back - NavigationRequest"
                     Click="GoBackNavigationRequestClick" />
             <Button Content="Go Back - Navigation Path"
-                    nav:Navigation.NavigateOnClickPath=".." />
+                    nav:Navigation.NavigateOnClickPath="../&lt;" />
             <Button Content="Go Back - NavigateToPreviousViewAsync"
                     Click="GoBackNavigateToPreviousViewAsyncClick" />
             <Button Content="Tabbed Page - NavigationRequest"

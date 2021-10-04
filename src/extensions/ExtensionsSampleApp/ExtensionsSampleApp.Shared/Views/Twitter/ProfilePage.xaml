@@ -15,7 +15,7 @@
                      Height="300"
                      Width="300" />
             <TextBlock Text="Fred Bloggs" FontSize="30"/>
-            <Button Content="Back"  nav:Navigation.NavigateOnClickPath=".."/>
+            <Button Content="Back"  nav:Navigation.NavigateOnClickPath="../&lt;"/>
         </StackPanel>
     </Grid>
 </Page>

@@ -4,19 +4,23 @@ namespace Uno.Extensions.Navigation;
 
 public static class RouteConstants
 {
+    public static class Schemes
+    {
+        public const string Current = ".";
+        public const string Parent = "..";
+        public static string[] All = new string[] { Current, Parent };
+    }
+
     public static class RelativePath
     {
         public const char GoBack = '<';
         public const char GoForward = '>';
-        public const string ParentPath = "//";
-        public const string BackPath = "..";
-        public const string Current = "";
-        public const string Nested = "./";
+        public const char Root = '/';
         public const string DialogPrefix = "__dialog__";
 
-        public static string Parent(int numberOfLevels = 1) => MultipleLevels(ParentPath, string.Empty, numberOfLevels);
+        public static string Parent(int numberOfLevels = 1) => MultipleLevels(RouteConstants.Schemes.Parent + "/", string.Empty, numberOfLevels);
 
-        public static string Back(int numberOfLevels = 1) => MultipleLevels(BackPath, string.Empty, numberOfLevels);
+        public static string Back(int numberOfLevels = 1) => MultipleLevels(GoBack + string.Empty, string.Empty, numberOfLevels);
 
         private static string MultipleLevels(string pathToRepeat, string separator, int numberOfLevels)
         {
@@ -30,7 +34,6 @@ public static class RouteConstants
         }
     }
 
-    public const string PreviousViewUri = "..";
     public const string MessageDialogUri = "__md__";
     public const string MessageDialogParameterContent = MessageDialogUri + "content";
     public const string MessageDialogParameterTitle = MessageDialogUri + "title";

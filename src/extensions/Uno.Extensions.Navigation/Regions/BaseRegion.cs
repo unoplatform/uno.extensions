@@ -72,7 +72,7 @@ public abstract class BaseRegion : IRegion, IRegionNavigate
 
     public async Task<NavigationResponse> NavigateAsync(NavigationRequest request)
     {
-        if (request.Parse().NavigationPath == CurrentPath)
+        if (request.Segments.Base == CurrentPath)
         {
             return null;
         }
@@ -95,7 +95,7 @@ public abstract class BaseRegion : IRegion, IRegionNavigate
     {
         var request = context.Request;
 
-        if (context.Components.NavigationPath == CurrentPath)
+        if (request.Segments.Base == CurrentPath)
         {
             await Task.CompletedTask;
         }

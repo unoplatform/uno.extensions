@@ -24,7 +24,7 @@ namespace ExtensionsSampleApp.Views
 
         private void NavigateToDoc0Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-            Navigation.NavigateToViewModelAsync<TabDoc0ViewModel>(this,RouteConstants.RelativePath.Nested);
+            Navigation.NavigateToViewModelAsync<TabDoc0ViewModel>(this,RouteConstants.Schemes.Current);
         }
 
         private async void ContentDialogResponseClick(object sender, RoutedEventArgs e)

@@ -58,7 +58,7 @@ public class ContentDialogManager : IDialogManager
 
     public bool IsDialogNavigation(NavigationRequest request)
     {
-        var map = Mappings.LookupByPath(request.Parse().NavigationPath);
+        var map = Mappings.LookupByPath(request.Segments.Base);
         return map?.View?.IsSubclassOf(typeof(ContentDialog)) ?? false;
     }
 
