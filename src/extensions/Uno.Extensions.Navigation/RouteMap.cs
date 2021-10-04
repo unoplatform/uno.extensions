@@ -7,7 +7,8 @@ public record RouteMap(
     string Path,
     Type View = null,
     Type ViewModel = null,
-    Type Data = null)
+    Type Data = null,
+    Type ResultData = null )
 #pragma warning restore SA1313 // Parameter names should begin with lower-case letter
 {
     public string FullPath(string relativePath) => CombinePathWithRelativePath(Path, relativePath);

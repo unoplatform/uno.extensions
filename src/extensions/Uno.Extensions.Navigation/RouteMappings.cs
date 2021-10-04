@@ -67,6 +67,11 @@ public class RouteMappings : IRouteMappings
         return Mappings.First(x => x.Value.Data == dataType).Value;
     }
 
+    public RouteMap LookupByResultData(Type dataType)
+    {
+        return Mappings.First(x => x.Value.ResultData == dataType).Value;
+    }
+
     private RouteMap DefaultMapping(string path = null, Type view = null, Type viewModel = null)
     {
         if (!ReturnImplicitMapping)

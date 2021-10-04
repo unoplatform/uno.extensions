@@ -53,6 +53,12 @@ namespace ExtensionsSampleApp.Views
             var response = await navresult.Result;
         }
 
+        private async void RequestDataResponseClick(object sender, RoutedEventArgs e)
+        {
+            var navresult = Navigation.NavigateForResultDataAsync<Widget>(this);
+            var response = await navresult.Result;
+        }
+
         private async void NextPageRequestResponseWithTimeoutClick(object sender, RoutedEventArgs e)
         {
             var cancel = new CancellationTokenSource();
