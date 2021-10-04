@@ -76,7 +76,7 @@ public class NavigationService : IRegionNavigationService
             {
                 // This will skip navigation in this region (ie with the "./" nested prefix)
                 // The DialogPrefix will cause the Nested method to return a new nested region specifically for this navigation
-                request = request.WithPath(NavigationConstants.RelativePath.Nested + NavigationConstants.RelativePath.DialogPrefix + "/" + request.Route.Uri.OriginalString);
+                request = request.WithPath(RouteConstants.RelativePath.Nested + RouteConstants.RelativePath.DialogPrefix + "/" + request.Route.Uri.OriginalString);
                 return NavigateWithRootAsync(request);
             }
 
@@ -119,7 +119,7 @@ public class NavigationService : IRegionNavigationService
 
         var path = request.Route.Uri.OriginalString;
         var parentService = Parent;
-        var parentPath = path.Length > NavigationConstants.RelativePath.ParentPath.Length ? path.Substring(NavigationConstants.RelativePath.ParentPath.Length) : string.Empty;
+        var parentPath = path.Length > RouteConstants.RelativePath.ParentPath.Length ? path.Substring(RouteConstants.RelativePath.ParentPath.Length) : string.Empty;
 
         var parentRequest = request.WithPath(parentPath);
         return parentService.NavigateAsync(parentRequest);
@@ -217,7 +217,7 @@ public class NavigationService : IRegionNavigationService
             // Unable to retrieve the nested service, so put the
             // nested request into the pending context (we add
             // "./" to make sure it's handled as a nested navigation
-            var pendingRoute = NavigationConstants.RelativePath.Nested + nestedRequest.Route.Uri.OriginalString;
+            var pendingRoute = RouteConstants.RelativePath.Nested + nestedRequest.Route.Uri.OriginalString;
             var pendingRequest = nestedRequest.WithPath(pendingRoute);//.BuildNavigationContext(ScopedServices, new TaskCompletionSource<Options.Option>());
 
             PendingNavigation = pendingRequest.Pending(resultCompletion);

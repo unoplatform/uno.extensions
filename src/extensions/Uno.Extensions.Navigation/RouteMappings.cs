@@ -42,9 +42,9 @@ public class RouteMappings : IRouteMappings
 
     public RouteMap LookupByPath(string path)
     {
-        if (path == NavigationConstants.RelativePath.BackPath ||
-            path == NavigationConstants.RelativePath.Current ||
-            path == NavigationConstants.RelativePath.Nested)
+        if (path == RouteConstants.RelativePath.BackPath ||
+            path == RouteConstants.RelativePath.Current ||
+            path == RouteConstants.RelativePath.Nested)
         {
             return null;
         }

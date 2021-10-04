@@ -2,7 +2,7 @@
 
 namespace Uno.Extensions.Navigation;
 
-public static class NavigationConstants
+public static class RouteConstants
 {
     public static class RelativePath
     {

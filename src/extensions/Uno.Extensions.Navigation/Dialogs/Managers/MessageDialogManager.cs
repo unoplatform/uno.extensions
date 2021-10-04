@@ -23,7 +23,7 @@ public class MessageDialogManager : IDialogManager
 
     public bool IsDialogNavigation(NavigationRequest request)
     {
-        return request.Parse().NavigationPath == NavigationConstants.MessageDialogUri;
+        return request.Parse().NavigationPath == RouteConstants.MessageDialogUri;
     }
 
     public Dialog DisplayDialog(NavigationContext context, object vm)
@@ -31,13 +31,13 @@ public class MessageDialogManager : IDialogManager
         var navigation = context.Navigation;
 
         var data = context.Components.Parameters;
-        var md = new MessageDialog(data[NavigationConstants.MessageDialogParameterContent] as string, data[NavigationConstants.MessageDialogParameterTitle] as string)
+        var md = new MessageDialog(data[RouteConstants.MessageDialogParameterContent] as string, data[RouteConstants.MessageDialogParameterTitle] as string)
         {
-            Options = (MessageDialogOptions)data[NavigationConstants.MessageDialogParameterOptions],
-            DefaultCommandIndex = (uint)data[NavigationConstants.MessageDialogParameterDefaultCommand],
-            CancelCommandIndex = (uint)data[NavigationConstants.MessageDialogParameterCancelCommand]
+            Options = (MessageDialogOptions)data[RouteConstants.MessageDialogParameterOptions],
+            DefaultCommandIndex = (uint)data[RouteConstants.MessageDialogParameterDefaultCommand],
+            CancelCommandIndex = (uint)data[RouteConstants.MessageDialogParameterCancelCommand]
         };
-        md.Commands.AddRange((data[NavigationConstants.MessageDialogParameterCommands] as UICommand[]) ?? new UICommand[] { });
+        md.Commands.AddRange((data[RouteConstants.MessageDialogParameterCommands] as UICommand[]) ?? new UICommand[] { });
         var showTask = md.ShowAsync();
         showTask.AsTask().ContinueWith(result =>
         {
