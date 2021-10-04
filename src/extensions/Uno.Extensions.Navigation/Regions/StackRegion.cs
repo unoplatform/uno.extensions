@@ -16,7 +16,7 @@ public abstract class StackRegion<TControl> : BaseRegion<TControl>
         IServiceProvider scopedServices,
         INavigationService navigation,
         IViewModelManager viewModelManager,
-        INavigationMappings mappings,
+        IRouteMappings mappings,
         TControl control) : base(logger, scopedServices, navigation, viewModelManager, mappings, control)
     {
     }

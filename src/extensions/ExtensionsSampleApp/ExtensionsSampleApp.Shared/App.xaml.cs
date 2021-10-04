@@ -98,26 +98,26 @@ namespace ExtensionsSampleApp
                .EnableUnoLogging();
             Ioc.Default.ConfigureServices(Host.Services);
 
-            var mapping = Host.Services.GetService< INavigationMappings>();
+            var mapping = Host.Services.GetService< IRouteMappings>();
             //mapping.Register(new NavigationMap(typeof(MainPage).Name, typeof(MainPage), typeof(MainViewModel)));
-            mapping.Register(new NavigationMap(typeof(SecondPage).Name, typeof(SecondPage), typeof(SecondViewModel), typeof(Widget)));
+            mapping.Register(new RouteMap(typeof(SecondPage).Name, typeof(SecondPage), typeof(SecondViewModel), typeof(Widget)));
             //mapping.Register(new NavigationMap(typeof(ThirdPage).Name, typeof(ThirdPage), typeof(ThirdViewModel)));
             //mapping.Register(new NavigationMap(typeof(FourthPage).Name, typeof(FourthPage), typeof(FourthViewModel)));
             //mapping.Register(new NavigationMap(typeof(TabbedPage).Name, typeof(TabbedPage), typeof(TabbedViewModel)));
-            mapping.Register(new NavigationMap(typeof(TabBarPage).Name, typeof(TabBarPage)));
-            mapping.Register(new NavigationMap("doc0", ViewModel:typeof(TabDoc0ViewModel)));
-            mapping.Register(new NavigationMap("doc1", ViewModel: typeof(TabDoc1ViewModel)));
-            mapping.Register(new NavigationMap(typeof(Content1).Name, typeof(Content1)));
-            mapping.Register(new NavigationMap(typeof(Content2).Name, typeof(Content2), typeof(Content2ViewModel)));
-            mapping.Register(new NavigationMap(typeof(SimpleContentDialog).Name, typeof(SimpleContentDialog)));
-            mapping.Register(new NavigationMap(typeof(TwitterPage).Name, typeof(TwitterPage)));
-            mapping.Register(new NavigationMap(typeof(TweetsPage).Name, typeof(TweetsPage), typeof(TweetsViewModel)));
-            mapping.Register(new NavigationMap(typeof(TweetDetailsPage).Name, typeof(TweetDetailsPage), typeof(TweetDetailsViewModel), typeof(Tweet)));
-            mapping.Register(new NavigationMap(typeof(NotificationsPage).Name, typeof(NotificationsPage), typeof(NotificationsViewModel)));
-            mapping.Register(new NavigationMap(typeof(ProfilePage).Name, typeof(ProfilePage)));
-            mapping.Register(new NavigationMap(typeof(NavigationViewPage).Name, typeof(NavigationViewPage)));
-            mapping.Register(new NavigationMap(typeof(NavigationViewGridVisibilityPage).Name, typeof(NavigationViewGridVisibilityPage)));
-            mapping.Register(new NavigationMap(typeof(NavigationViewVisualStatesPage).Name, typeof(NavigationViewVisualStatesPage)));
+            mapping.Register(new RouteMap(typeof(TabBarPage).Name, typeof(TabBarPage)));
+            mapping.Register(new RouteMap("doc0", ViewModel:typeof(TabDoc0ViewModel)));
+            mapping.Register(new RouteMap("doc1", ViewModel: typeof(TabDoc1ViewModel)));
+            mapping.Register(new RouteMap(typeof(Content1).Name, typeof(Content1)));
+            mapping.Register(new RouteMap(typeof(Content2).Name, typeof(Content2), typeof(Content2ViewModel)));
+            mapping.Register(new RouteMap(typeof(SimpleContentDialog).Name, typeof(SimpleContentDialog)));
+            mapping.Register(new RouteMap(typeof(TwitterPage).Name, typeof(TwitterPage)));
+            mapping.Register(new RouteMap(typeof(TweetsPage).Name, typeof(TweetsPage), typeof(TweetsViewModel)));
+            mapping.Register(new RouteMap(typeof(TweetDetailsPage).Name, typeof(TweetDetailsPage), typeof(TweetDetailsViewModel), typeof(Tweet)));
+            mapping.Register(new RouteMap(typeof(NotificationsPage).Name, typeof(NotificationsPage), typeof(NotificationsViewModel)));
+            mapping.Register(new RouteMap(typeof(ProfilePage).Name, typeof(ProfilePage)));
+            mapping.Register(new RouteMap(typeof(NavigationViewPage).Name, typeof(NavigationViewPage)));
+            mapping.Register(new RouteMap(typeof(NavigationViewGridVisibilityPage).Name, typeof(NavigationViewGridVisibilityPage)));
+            mapping.Register(new RouteMap(typeof(NavigationViewVisualStatesPage).Name, typeof(NavigationViewVisualStatesPage)));
 
             //InitializeLogging();
 

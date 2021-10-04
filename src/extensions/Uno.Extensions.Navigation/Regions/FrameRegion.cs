@@ -28,7 +28,7 @@ public class FrameRegion : StackRegion<Frame>
         IServiceProvider scopedServices,
         INavigationService navigation,
         IViewModelManager viewModelManager,
-        INavigationMappings mappings,
+        IRouteMappings mappings,
         RegionControlProvider controlProvider) : base(logger, scopedServices, navigation, viewModelManager, mappings, controlProvider.RegionControl as Frame)
     {
         if (Control.Content is not null)

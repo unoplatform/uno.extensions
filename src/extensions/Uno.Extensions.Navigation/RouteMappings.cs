@@ -16,7 +16,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation;
 
-public class NavigationMappings : INavigationMappings
+public class RouteMappings : IRouteMappings
 {
     public bool ReturnImplicitMapping { get; set; } = true;
 
@@ -26,21 +26,21 @@ public class NavigationMappings : INavigationMappings
 
     private IDictionary<string, Type> loadedTypes;
 
-    private IDictionary<string, NavigationMap> Mappings { get; } = new Dictionary<string, NavigationMap>();
+    private IDictionary<string, RouteMap> Mappings { get; } = new Dictionary<string, RouteMap>();
 
     private ILogger Logger { get; }
 
-    public NavigationMappings(ILogger<NavigationMappings> logger)
+    public RouteMappings(ILogger<RouteMappings> logger)
     {
         Logger = logger;
     }
 
-    public void Register(NavigationMap map)
+    public void Register(RouteMap map)
     {
         Mappings[map.Path] = map;
     }
 
-    public NavigationMap LookupByPath(string path)
+    public RouteMap LookupByPath(string path)
     {
         if (path == NavigationConstants.RelativePath.BackPath ||
             path == NavigationConstants.RelativePath.Current ||
@@ -52,22 +52,22 @@ public class NavigationMappings : INavigationMappings
         return Mappings.TryGetValue(path, out var map) ? map : DefaultMapping(path: path);
     }
 
-    public NavigationMap LookupByViewModel(Type viewModelType)
+    public RouteMap LookupByViewModel(Type viewModelType)
     {
         return (Mappings.FirstOrDefault(x => x.Value.ViewModel == viewModelType).Value) ?? DefaultMapping(viewModel: viewModelType);
     }
 
-    public NavigationMap LookupByView(Type viewType)
+    public RouteMap LookupByView(Type viewType)
     {
         return (Mappings.FirstOrDefault(x => x.Value.View == viewType).Value) ?? DefaultMapping(view: viewType);
     }
 
-    public NavigationMap LookupByData(Type dataType)
+    public RouteMap LookupByData(Type dataType)
     {
         return Mappings.First(x => x.Value.Data == dataType).Value;
     }
 
-    private NavigationMap DefaultMapping(string path = null, Type view = null, Type viewModel = null)
+    private RouteMap DefaultMapping(string path = null, Type view = null, Type viewModel = null)
     {
         if (!ReturnImplicitMapping)
         {
@@ -97,7 +97,7 @@ public class NavigationMappings : INavigationMappings
 
         if (!string.IsNullOrWhiteSpace(path))
         {
-            var defaultMap = new NavigationMap(path, view, viewModel, null);
+            var defaultMap = new RouteMap(path, view, viewModel, null);
             Mappings[path] = defaultMap;
             Logger.LazyLogDebug(() => $"Created default mapping - Path '{defaultMap.Path}', View '{defaultMap.View?.Name}', View Model '{defaultMap.ViewModel?.Name}'");
             return defaultMap;

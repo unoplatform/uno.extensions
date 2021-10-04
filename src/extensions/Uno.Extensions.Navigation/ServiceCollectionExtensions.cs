@@ -41,7 +41,7 @@ public static class ServiceCollectionExtensions
                     .AddSingleton<IDialogFactory, DialogFactory>()
 
                     // Register the navigation mappings repository
-                    .AddSingleton<INavigationMappings, NavigationMappings>()
+                    .AddSingleton<IRouteMappings, RouteMappings>()
 
                     // Register the view model manager
                     .AddScoped<IViewModelManager, ViewModelManager>()

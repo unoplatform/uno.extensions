@@ -45,7 +45,7 @@ namespace ExtensionsSampleApp.Region.Managers
             IServiceProvider scopedServices,
             INavigationService navigation,
             IViewModelManager viewModelManager,
-            INavigationMappings mappings,
+            IRouteMappings mappings,
             RegionControlProvider controlProvider) : base(logger, scopedServices, navigation, viewModelManager, mappings, controlProvider.RegionControl as TabBar)
         {
         }

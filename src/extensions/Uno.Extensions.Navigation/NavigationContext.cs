@@ -11,7 +11,7 @@ public record NavigationContext(
     NavigationRequest Request,
     RequestComponents Components,
     CancellationTokenSource CancellationSource,
-    NavigationMap Mapping,
+    RouteMap Mapping,
     bool CanCancel = true)
 #pragma warning restore SA1313 // Parameter names should begin with lower-case letter
 {
