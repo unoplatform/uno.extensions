@@ -124,7 +124,7 @@ public class NavigationService : IRegionNavigationService
                 var navTask = pending.TaskCompletion;
                 var navRequest = pending.Request;
 
-                var residualRequest = navRequest.Parse().NextRequest;
+                var residualRequest = navRequest.Parse().NextRequest(navRequest.Sender);
 
                 // Check for "./" prefix where we can skip
                 // navigating within this region

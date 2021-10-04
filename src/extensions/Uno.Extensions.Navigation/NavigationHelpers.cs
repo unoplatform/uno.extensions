@@ -75,7 +75,6 @@ public static class NavigationHelpers
 
     public static RouteSegments Parse(this NavigationRequest request)
     {
-
         var path = request.Route.Uri.OriginalString;
 
         var queryIdx = path.IndexOf('?');
@@ -100,51 +99,60 @@ public static class NavigationHelpers
             }
         }
 
-        var isRooted = path.StartsWith("/");
-
         var segments = path.Split('/');
-        var numberOfPagesToRemove = 0;
-        var navPath = string.Empty;
-        var residualPath = path;
-        for (int i = 0; i < segments.Length; i++)
-        {
-            var navSegment = segments[i];
-            residualPath = residualPath.TrimStart(navSegment);
-            if (residualPath.StartsWith("/"))
-            {
-                residualPath = residualPath.Substring(1);
-            }
+        return new RouteSegments(segments, paras);
 
-            if (string.IsNullOrWhiteSpace(navSegment))
-            {
-                continue;
-            }
-            if (segments[i] == RouteConstants.PreviousViewUri)
-            {
-                numberOfPagesToRemove++;
-            }
-            else
-            {
-                navPath = segments[i];
-                break;
-            }
-        }
+        //var isRooted = path.StartsWith("/");
 
-        if (navPath == string.Empty)
-        {
-            navPath = RouteConstants.PreviousViewUri;
-            numberOfPagesToRemove--;
-        }
+        //var segments = path.Split('/');
+        //var numberOfPagesToRemove = 0;
+        //var navPath = string.Empty;
+        //var residualPath = path;
+        //for (int i = 0; i < segments.Length; i++)
+        //{
+        //    var navSegment = segments[i];
+        //    residualPath = residualPath.TrimStart(navSegment);
+        //    if (residualPath.StartsWith("/"))
+        //    {
+        //        residualPath = residualPath.Substring(1);
+        //    }
 
-        var residualRequest = request.WithPath(residualPath, query);
+        //    if (string.IsNullOrWhiteSpace(navSegment))
+        //    {
+        //        continue;
+        //    }
+        //    if (segments[i] == RouteConstants.PreviousViewUri)
+        //    {
+        //        numberOfPagesToRemove++;
+        //    }
+        //    else
+        //    {
+        //        navPath = segments[i];
+        //        break;
+        //    }
+        //}
 
-        var components = new RouteSegments(navPath, isRooted, numberOfPagesToRemove, paras, residualRequest);
-        return components;
+        //if (navPath == string.Empty)
+        //{
+        //    navPath = RouteConstants.PreviousViewUri;
+        //    numberOfPagesToRemove--;
+        //}
+
+        //var residualRequest = request.WithPath(residualPath, query);
+
+        //var components = new RouteSegments(navPath, isRooted, numberOfPagesToRemove, paras, residualRequest);
+        //return components;
     }
 
-    public static NavigationRequest AsRequest (this RouteMap map, object sender)
+    public static NavigationRequest AsRequest(this RouteMap map, object sender)
     {
         var request = new NavigationRequest(sender, new Route(new Uri(map.Path, UriKind.Relative)));
+        return request;
+    }
+
+    public static NavigationRequest AsRequest(this string uri, object sender, object data = null)
+    {
+        var request = new NavigationRequest(sender, new Route(new Uri(uri, UriKind.Relative), data));
         return request;
     }
 

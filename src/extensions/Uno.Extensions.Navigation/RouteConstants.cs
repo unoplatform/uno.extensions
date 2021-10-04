@@ -6,6 +6,8 @@ public static class RouteConstants
 {
     public static class RelativePath
     {
+        public const char GoBack = '<';
+        public const char GoForward = '>';
         public const string ParentPath = "//";
         public const string BackPath = "..";
         public const string Current = "";
