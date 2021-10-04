@@ -54,7 +54,7 @@ public class NavigationService : IRegionNavigationService
         if (Interlocked.CompareExchange(ref isNavigating, 1, 0) == 1)
         {
             Logger.LazyLogWarning(() => $"Navigation already in progress. Unable to start navigation '{request.ToString()}'");
-            return await Task.FromResult(default(NavigationResponse));// new NavigationResponse(request, Task.CompletedTask, null);
+            return await Task.FromResult(default(NavigationResponse));
         }
         try
         {
@@ -79,14 +79,6 @@ public class NavigationService : IRegionNavigationService
                 // Routing navigation request to parent
                 return await NavigateWithParentAsync(request);
             }
-
-            //// Create new context if there isn't a pending navigation
-            //if (PendingNavigation is null)
-            //{
-            //    PendingNavigation = request.Pending();
-            //}
-
-            //var pending = PendingNavigation;
 
             var pending = request.Pending();
             Logger.LazyLogDebug(() => $"Invoking navigation with Navigation Context");
