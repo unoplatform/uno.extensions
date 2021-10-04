@@ -46,7 +46,7 @@ public abstract class BaseRegion<TControl> : BaseRegion
 
 public abstract class BaseRegion : IRegion, IRegionNavigate
 {
-    private IServiceProvider ScopedServices { get; }
+    protected IServiceProvider ScopedServices { get; }
 
     protected ILogger Logger { get; }
 
@@ -72,6 +72,11 @@ public abstract class BaseRegion : IRegion, IRegionNavigate
 
     public async Task<NavigationResponse> NavigateAsync(NavigationRequest request)
     {
+        if (request.Parse().NavigationPath == CurrentPath)
+        {
+            return null;
+        }
+
         var context = request.BuildNavigationContext(ScopedServices);
 
         TaskCompletionSource<Options.Option> resultTask = default;
@@ -127,11 +132,10 @@ public abstract class BaseRegion : IRegion, IRegionNavigate
 
     protected async Task DoForwardNavigation(NavigationContext context)
     {
-        var vm = ViewModelManager.CreateViewModel(context);
 
         await RegionNavigate(context);
 
-        InitialiseView(context, vm);
+        InitialiseView(context);
     }
 
     public abstract Task RegionNavigate(NavigationContext context);
@@ -165,9 +169,18 @@ public abstract class BaseRegion : IRegion, IRegionNavigate
         return false;
     }
 
-    protected void InitialiseView(NavigationContext context, object viewModel)
+    protected void InitialiseView(NavigationContext context)
     {
         var view = CurrentView;
+
+        var viewModel = CurrentViewModel;
+        var mapping = context.Mapping;
+        if (viewModel is null || viewModel.GetType() != mapping.ViewModel)
+        {
+            // This will happen if cache mode isn't set to required
+            viewModel = ViewModelManager.CreateViewModel(context);
+        }
+
 
         if (view is FrameworkElement fe)
         {
