@@ -29,7 +29,7 @@ namespace ExtensionsSampleApp.Views
 
         private async void ContentDialogResponseClick(object sender, RoutedEventArgs e)
         {
-            var navresult = Navigation.NavigateToViewAsync<SimpleContentDialog, ContentDialogResult>(this);
+            var navresult = await Navigation.NavigateToViewAsync<SimpleContentDialog, ContentDialogResult>(this);
             var response = await navresult.Result;
         }
     }

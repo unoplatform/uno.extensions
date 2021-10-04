@@ -55,12 +55,12 @@ public class NavigationService : IRegionNavigationService
         NestedServices.Remove(kvp => kvp.Value == childRegion);
     }
 
-    public NavigationResponse NavigateAsync(NavigationRequest request)
+    public async Task<NavigationResponse> NavigateAsync(NavigationRequest request)
     {
         if (Interlocked.CompareExchange(ref isNavigating, 1, 0) == 1)
         {
             Logger.LazyLogWarning(() => $"Navigation already in progress. Unable to start navigation '{request.ToString()}'");
-            return new NavigationResponse(request, Task.CompletedTask, null);
+            return await Task.FromResult(default(NavigationResponse));// new NavigationResponse(request, Task.CompletedTask, null);
         }
         try
         {
@@ -77,13 +77,13 @@ public class NavigationService : IRegionNavigationService
                 // This will skip navigation in this region (ie with the "./" nested prefix)
                 // The DialogPrefix will cause the Nested method to return a new nested region specifically for this navigation
                 request = request.WithPath(RouteConstants.RelativePath.Nested + RouteConstants.RelativePath.DialogPrefix + "/" + request.Route.Uri.OriginalString);
-                return NavigateWithRootAsync(request);
+                return await NavigateWithRootAsync(request);
             }
 
             if (request.IsParentRequest())
             {
                 // Routing navigation request to parent
-                return NavigateWithParentAsync(request);
+                return await NavigateWithParentAsync(request);
             }
 
             // Create new context if there isn't a pending navigation
@@ -97,8 +97,9 @@ public class NavigationService : IRegionNavigationService
             Logger.LazyLogDebug(() => $"Invoking navigation with Navigation Context");
             var navTask = RunPendingNavigation();
             Logger.LazyLogDebug(() => $"Returning NavigationResponse");
+            await navTask;
 
-            return new NavigationResponse(request, navTask, pending.ResultCompletion.Task);
+            return new NavigationResponse(request, pending.ResultCompletion.Task);
         }
         finally
         {
@@ -106,14 +107,14 @@ public class NavigationService : IRegionNavigationService
         }
     }
 
-    private NavigationResponse NavigateWithRootAsync(NavigationRequest request)
+    private Task<NavigationResponse> NavigateWithRootAsync(NavigationRequest request)
     {
         Logger.LazyLogDebug(() => $"Redirecting navigation request to root Navigation Service");
 
         return Root.NavigateAsync(request);
     }
 
-    private NavigationResponse NavigateWithParentAsync(NavigationRequest request)
+    private Task<NavigationResponse> NavigateWithParentAsync(NavigationRequest request)
     {
         Logger.LazyLogDebug(() => $"Redirecting navigation request to parent Navigation Service");
 
@@ -152,7 +153,7 @@ public class NavigationService : IRegionNavigationService
                     }
                     else
                     {
-                        var regionTask = Region.NavigateAsync(navRequest);
+                        var regionTask = await Region.NavigateAsync(navRequest);
                         _ = regionTask.Result?.ContinueWith((Task<Options.Option> t) =>
                           {
                               if (t.Status == TaskStatus.RanToCompletion)
@@ -164,7 +165,6 @@ public class NavigationService : IRegionNavigationService
                                   pending.ResultCompletion.TrySetResult(Options.Option.None<object>());
                               }
                           });
-                        await regionTask;
                     }
                 }
 

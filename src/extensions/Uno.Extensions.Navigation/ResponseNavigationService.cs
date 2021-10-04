@@ -13,7 +13,7 @@ namespace Uno.Extensions.Navigation
             Navigation = internalNavigation;
         }
 
-        public NavigationResponse NavigateAsync(NavigationRequest request)
+        public Task<NavigationResponse> NavigateAsync(NavigationRequest request)
         {
             if (request.IsBackRequest())
             {
