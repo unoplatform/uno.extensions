@@ -9,7 +9,6 @@ namespace Uno.Extensions.Navigation;
 public record NavigationContext(
     IServiceProvider Services,
     NavigationRequest Request,
-    RouteSegments Components,
     CancellationTokenSource CancellationSource,
     RouteMap Mapping,
     bool CanCancel = true)
@@ -17,7 +16,7 @@ public record NavigationContext(
 {
     public INavigationService Navigation => Services.GetService<INavigationService>();
 
-    public bool IsBackNavigation => Components.NavigationPath == RouteConstants.PreviousViewUri;
+    public bool IsBackNavigation => Request.Segments.IsBackNavigation;// Components.NavigationPath == RouteConstants.PreviousViewUri;
 
     public CancellationToken CancellationToken => CancellationSource.Token;
 

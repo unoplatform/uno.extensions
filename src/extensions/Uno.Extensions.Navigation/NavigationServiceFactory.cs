@@ -27,9 +27,9 @@ public class NavigationServiceFactory : INavigationServiceFactory
         Factories = factories.ToDictionary(x => x.ControlType);
 
         // Create root navigation service
-        var navLogger = services.GetService<ILogger<NavigationService>>();
+        var navLogger = services.GetService<ILogger<RegionNavigationService>>();
         var dialogFactory = services.GetService<IDialogFactory>();
-        var navService = new NavigationService(navLogger, null, dialogFactory);
+        var navService = new RegionNavigationService(navLogger, null, dialogFactory);
 
         services.GetService<ScopedServiceHost<INavigationService>>().Service = navService;
         Root = navService;
@@ -47,9 +47,9 @@ public class NavigationServiceFactory : INavigationServiceFactory
         var services = scope.ServiceProvider;
 
         // Create Navigation Service
-        var navLogger = services.GetService<ILogger<NavigationService>>();
+        var navLogger = services.GetService<ILogger<RegionNavigationService>>();
         var dialogFactory = services.GetService<IDialogFactory>();
-        var navService = new NavigationService(navLogger, parent, dialogFactory);
+        var navService = new RegionNavigationService(navLogger, parent, dialogFactory);
         services.GetService<ScopedServiceHost<IRegionNavigationService>>().Service = navService;
 
         // Create Region Service

@@ -16,11 +16,6 @@ namespace Uno.Extensions.Navigation;
 
 public static class NavigationHelpers
 {
-    public static PendingRequest Pending(this NavigationRequest request, TaskCompletionSource<Options.Option> resultCompletion = default)
-    {
-        return new PendingRequest(request, new TaskCompletionSource<object>(), resultCompletion ?? new TaskCompletionSource<Options.Option>());
-    }
-
     public static string NavigationPath(this object view, IRouteMappings mappings = null)
     {
         var map = mappings?.LookupByView(view.GetType());
@@ -43,29 +38,29 @@ public static class NavigationHelpers
         return null;
     }
 
-    public static bool IsParentRequest(this NavigationRequest request)
-    {
-        return request.Route.Uri.OriginalString.StartsWith(RouteConstants.RelativePath.ParentPath);
-    }
+    //public static bool IsParentRequest(this NavigationRequest request)
+    //{
+    //    return request.Route.Uri.OriginalString.StartsWith(RouteConstants.RelativePath.ParentPath);
+    //}
 
-    public static bool IsBackRequest(this NavigationRequest request)
-    {
-        return request.Route.Uri.OriginalString.StartsWith(RouteConstants.RelativePath.BackPath);
-    }
+    //public static bool IsBackRequest(this NavigationRequest request)
+    //{
+    //    return request.Route.Uri.OriginalString.StartsWith(RouteConstants.RelativePath.BackPath);
+    //}
 
     public static bool RequiresResponse(this NavigationRequest request)
     {
         return request.Result is not null;
     }
 
-    public static bool IsNestedRequest(this NavigationRequest request)
-    {
-        return request.Route.Uri.OriginalString.StartsWith(RouteConstants.RelativePath.Nested);
-    }
+    //public static bool IsNestedRequest(this NavigationRequest request)
+    //{
+    //    return request.Route.Uri.OriginalString.StartsWith(RouteConstants.RelativePath.Nested);
+    //}
 
-    public static NavigationRequest MakeNestedRequest(this NavigationRequest request)
+    public static NavigationRequest MakeCurrentRequest(this NavigationRequest request)
     {
-        return request.WithPath(RouteConstants.RelativePath.Nested + request.Route.Uri.OriginalString);
+        return request.WithPath(RouteConstants.Schemes.Parent + "/" + request.Route.Uri.OriginalString);
     }
 
     public static NavigationRequest WithPath(this NavigationRequest request, string path, string queryParameters = "")
@@ -100,7 +95,22 @@ public static class NavigationHelpers
         }
 
         var segments = path.Split('/');
-        return new RouteSegments(segments, paras);
+        if (segments.Length <= 0)
+        {
+            return null;
+        }
+
+        var scheme = RouteConstants.Schemes.All.Contains(segments.First()) ? segments.First() : null;
+        if (scheme is null)
+        {
+            scheme = RouteConstants.Schemes.Current;
+        }
+        else
+        {
+            segments = segments[1..];
+        }
+
+        return new RouteSegments(scheme, segments, paras);
 
         //var isRooted = path.StartsWith("/");
 
@@ -158,18 +168,16 @@ public static class NavigationHelpers
 
     public static NavigationContext BuildNavigationContext(this NavigationRequest request, IServiceProvider services)
     {
-        var components = request.Parse();
 
         var scopedServices = services.CloneNavigationScopedServices();
         var dataFactor = scopedServices.GetService<ViewModelDataProvider>();
-        dataFactor.Parameters = components.Parameters;
+        dataFactor.Parameters = request.Segments.Parameters;
 
-        var mapping = scopedServices.GetService<IRouteMappings>().LookupByPath(components.NavigationPath);
+        var mapping = scopedServices.GetService<IRouteMappings>().LookupByPath(request.Segments.Base);
 
         var context = new NavigationContext(
                             scopedServices,
                             request,
-                            components,
                             (request.Cancellation is not null) ?
                                 CancellationTokenSource.CreateLinkedTokenSource(request.Cancellation.Value) :
                                 new CancellationTokenSource(),

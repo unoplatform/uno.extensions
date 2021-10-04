@@ -22,11 +22,11 @@
                 <TextBlock Margin="20"
                            FontSize="30"><Run Text="Doc1 - " /><Run Text="{Binding Title}" /></TextBlock>
                 <Button Content="Doc0"
-                        nav:Navigation.NavigateOnClickPath="doc0" />
+                        nav:Navigation.NavigateOnClickPath="../doc0" />
                 <Button Content="Doc0 - code"
                         Click="NavigateToDoc0Click" />
                 <Button Content="Doc2"
-                        nav:Navigation.NavigateOnClickPath="doc2" />
+                        nav:Navigation.NavigateOnClickPath="../doc2" />
             </StackPanel>
         </controls:TabViewItem>
         <controls:TabViewItem Header="Document 0"
@@ -38,15 +38,15 @@
                 <TextBlock Margin="20"
                            FontSize="30"><Run Text="Doc0 - " /><Run Text="{Binding Title}" /></TextBlock>
                 <Button Content="Home"
-                        nav:Navigation.NavigateOnClickPath="home" />
+                        nav:Navigation.NavigateOnClickPath="../home" />
                 <Button Content="Go back"
-                        nav:Navigation.NavigateOnClickPath="//.." />
+                        nav:Navigation.NavigateOnClickPath="../../&lt;" />
                 <Button Content="Third Page"
-                        nav:Navigation.NavigateOnClickPath="//ThirdPage" />
+                        nav:Navigation.NavigateOnClickPath="../../ThirdPage" />
                 <Button Content="Third Page"
                         Command="{Binding NavigateToThirdPageCommand}" />
                 <Button Content="Third Page (rooted)"
-                        nav:Navigation.NavigateOnClickPath="///ThirdPage" />
+                        nav:Navigation.NavigateOnClickPath="../../../ThirdPage" />
                 <Button Content="Doc1 - ViewModel"
                         Command="{Binding NavigateToDoc1Command}" />
             </StackPanel>
@@ -84,7 +84,7 @@
                             nav:Navigation.NavigateOnClickPath="./SecondPage" />
                     <Button Content="Page Four"
                             nav:Navigation.NavigateOnClickPath="./FourthPage" />
-                    <ContentControl nav:Navigation.IsRegion="True"/>
+                    <!--<ContentControl nav:Navigation.IsRegion="True"/>-->
                 </StackPanel>
             </Grid>
         </controls:TabViewItem>

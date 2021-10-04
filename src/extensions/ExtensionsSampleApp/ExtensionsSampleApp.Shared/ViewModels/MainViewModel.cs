@@ -53,8 +53,8 @@ namespace ExtensionsSampleApp.ViewModels
 
         public async Task<bool> Stop(NavigationRequest request)
         {
-            if ((request.Parse().NavigationPath == typeof(ThirdPage).Name ||
-                request.Parse().NavigationPath == typeof(ThirdPage).Name.Replace("Page",""))&&
+            if ((request.Segments.Base == typeof(ThirdPage).Name ||
+                request.Segments.Base == typeof(ThirdPage).Name.Replace("Page",""))&&
                 !((request.Parse().Parameters as IDictionary<string, object>)?.Any() ?? false))
             {
                 return false;

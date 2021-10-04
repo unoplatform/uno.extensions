@@ -40,15 +40,15 @@
                     Click="MessageDialogClick" />
 
             <Button Content="Twitter"
-                    nav:Navigation.NavigateOnClickPath="/TwitterPage" />
+                    nav:Navigation.NavigateOnClickPath="../TwitterPage" />
             <Button Content="TabBar Page"
-                    nav:Navigation.NavigateOnClickPath="TabBarPage" />
+                    nav:Navigation.NavigateOnClickPath="../TabBarPage" />
             <Button Content="NavigationView Page"
-                    nav:Navigation.NavigateOnClickPath="NavigationViewPage" />
+                    nav:Navigation.NavigateOnClickPath="../NavigationViewPage" />
             <Button Content="NavigationViewGridVisibility Page"
-                    nav:Navigation.NavigateOnClickPath="NavigationViewGridVisibilityPage" />
+                    nav:Navigation.NavigateOnClickPath="../NavigationViewGridVisibilityPage" />
             <Button Content="NavigationViewVisualStates Page"
-                    nav:Navigation.NavigateOnClickPath="NavigationViewVisualStatesPage" />
+                    nav:Navigation.NavigateOnClickPath="../NavigationViewVisualStatesPage" />
         </StackPanel>
     </Grid>
 </Page>
