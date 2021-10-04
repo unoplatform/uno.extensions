@@ -36,7 +36,7 @@ public class NavigationServiceFactory : INavigationServiceFactory
 
         // Create a special nested service which is used to display dialogs
         var dialogService = CreateService(Root);
-        Root.Attach(NavigationConstants.RelativePath.DialogPrefix, dialogService).Wait();
+        Root.Attach(RouteConstants.RelativePath.DialogPrefix, dialogService).Wait();
     }
 
     public IRegionNavigationService CreateService(IRegionNavigationService parent, params object[] controls)

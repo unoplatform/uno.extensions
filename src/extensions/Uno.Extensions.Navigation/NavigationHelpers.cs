@@ -45,12 +45,12 @@ public static class NavigationHelpers
 
     public static bool IsParentRequest(this NavigationRequest request)
     {
-        return request.Route.Uri.OriginalString.StartsWith(NavigationConstants.RelativePath.ParentPath);
+        return request.Route.Uri.OriginalString.StartsWith(RouteConstants.RelativePath.ParentPath);
     }
 
     public static bool IsBackRequest(this NavigationRequest request)
     {
-        return request.Route.Uri.OriginalString.StartsWith(NavigationConstants.RelativePath.BackPath);
+        return request.Route.Uri.OriginalString.StartsWith(RouteConstants.RelativePath.BackPath);
     }
 
     public static bool RequiresResponse(this NavigationRequest request)
@@ -60,12 +60,12 @@ public static class NavigationHelpers
 
     public static bool IsNestedRequest(this NavigationRequest request)
     {
-        return request.Route.Uri.OriginalString.StartsWith(NavigationConstants.RelativePath.Nested);
+        return request.Route.Uri.OriginalString.StartsWith(RouteConstants.RelativePath.Nested);
     }
 
     public static NavigationRequest MakeNestedRequest(this NavigationRequest request)
     {
-        return request.WithPath(NavigationConstants.RelativePath.Nested + request.Route.Uri.OriginalString);
+        return request.WithPath(RouteConstants.RelativePath.Nested + request.Route.Uri.OriginalString);
     }
 
     public static NavigationRequest WithPath(this NavigationRequest request, string path, string queryParameters = "")
@@ -119,7 +119,7 @@ public static class NavigationHelpers
             {
                 continue;
             }
-            if (segments[i] == NavigationConstants.PreviousViewUri)
+            if (segments[i] == RouteConstants.PreviousViewUri)
             {
                 numberOfPagesToRemove++;
             }
@@ -132,7 +132,7 @@ public static class NavigationHelpers
 
         if (navPath == string.Empty)
         {
-            navPath = NavigationConstants.PreviousViewUri;
+            navPath = RouteConstants.PreviousViewUri;
             numberOfPagesToRemove--;
         }
 

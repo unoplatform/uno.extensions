@@ -99,7 +99,7 @@ namespace ExtensionsSampleApp.ViewModels
 
         private void NavigateToDoc1() => Navigation.NavigateToViewModelAsync<TabDoc1ViewModel>(this);
 
-        private void NavigateToThirdPage() => Navigation.NavigateToViewModelAsync<ThirdViewModel>(this, NavigationConstants.RelativePath.Parent(1));
+        private void NavigateToThirdPage() => Navigation.NavigateToViewModelAsync<ThirdViewModel>(this, RouteConstants.RelativePath.Parent(1));
 
     }
 
