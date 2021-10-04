@@ -11,12 +11,12 @@ public static class NavigationServiceExtensions
 {
     public static NavigationResponse NavigateByPathAsync(this INavigationService service, object sender, string path, object data = null, CancellationToken cancellation = default)
     {
-        return service.NavigateAsync(new NavigationRequest(sender, new NavigationRoute(new Uri(path, UriKind.Relative), data), cancellation));
+        return service.NavigateAsync(new NavigationRequest(sender, new Route(new Uri(path, UriKind.Relative), data), cancellation));
     }
 
     public static NavigationResponse<TResult> NavigateByPathAsync<TResult>(this INavigationService service, object sender, string path, object data = null, CancellationToken cancellation = default)
     {
-        var result = service.NavigateAsync(new NavigationRequest(sender, new NavigationRoute(new Uri(path, UriKind.Relative), data), cancellation, typeof(TResult)));
+        var result = service.NavigateAsync(new NavigationRequest(sender, new Route(new Uri(path, UriKind.Relative), data), cancellation, typeof(TResult)));
         return new NavigationResponse<TResult>(result);
     }
 
@@ -29,14 +29,14 @@ public static class NavigationServiceExtensions
     {
         var mapping = Ioc.Default.GetRequiredService<IRouteMappings>();
         var map = mapping.LookupByView(viewType);
-        return service.NavigateAsync(new NavigationRequest(sender, new NavigationRoute(new Uri(map.FullPath(relativePathModifier), UriKind.Relative), data), cancellation));
+        return service.NavigateAsync(new NavigationRequest(sender, new Route(new Uri(map.FullPath(relativePathModifier), UriKind.Relative), data), cancellation));
     }
 
     public static NavigationResponse<TResult> NavigateToViewAsync<TView, TResult>(this INavigationService service, object sender, string relativePathModifier = NavigationConstants.RelativePath.Current, object data = null, CancellationToken cancellation = default)
     {
         var mapping = Ioc.Default.GetRequiredService<IRouteMappings>();
         var map = mapping.LookupByView(typeof(TView));
-        var result = service.NavigateAsync(new NavigationRequest(sender, new NavigationRoute(new Uri(map.FullPath(relativePathModifier), UriKind.Relative), data), cancellation, typeof(TResult)));
+        var result = service.NavigateAsync(new NavigationRequest(sender, new Route(new Uri(map.FullPath(relativePathModifier), UriKind.Relative), data), cancellation, typeof(TResult)));
         return new NavigationResponse<TResult>(result);
     }
 
@@ -49,14 +49,14 @@ public static class NavigationServiceExtensions
     {
         var mapping = Ioc.Default.GetRequiredService<IRouteMappings>();
         var map = mapping.LookupByViewModel(viewModelType);
-        return service.NavigateAsync(new NavigationRequest(sender, new NavigationRoute(new Uri(map.FullPath(relativePathModifier), UriKind.Relative), data), cancellation));
+        return service.NavigateAsync(new NavigationRequest(sender, new Route(new Uri(map.FullPath(relativePathModifier), UriKind.Relative), data), cancellation));
     }
 
     public static NavigationResponse<TResult> NavigateToViewModelAsync<TViewViewModel, TResult>(this INavigationService service, object sender, string relativePathModifier = NavigationConstants.RelativePath.Current, object data = null, CancellationToken cancellation = default)
     {
         var mapping = Ioc.Default.GetRequiredService<IRouteMappings>();
         var map = mapping.LookupByViewModel(typeof(TViewViewModel));
-        var result = service.NavigateAsync(new NavigationRequest(sender, new NavigationRoute(new Uri(map.FullPath(relativePathModifier), UriKind.Relative), data), cancellation, typeof(TResult)));
+        var result = service.NavigateAsync(new NavigationRequest(sender, new Route(new Uri(map.FullPath(relativePathModifier), UriKind.Relative), data), cancellation, typeof(TResult)));
         return new NavigationResponse<TResult>(result);
     }
 
@@ -64,19 +64,19 @@ public static class NavigationServiceExtensions
     {
         var mapping = Ioc.Default.GetRequiredService<IRouteMappings>();
         var map = mapping.LookupByData(typeof(TData));
-        return service.NavigateAsync(new NavigationRequest(sender, new NavigationRoute(new Uri(map.FullPath(relativePathModifier), UriKind.Relative), data), cancellation));
+        return service.NavigateAsync(new NavigationRequest(sender, new Route(new Uri(map.FullPath(relativePathModifier), UriKind.Relative), data), cancellation));
     }
 
     public static NavigationResponse NavigateForResultDataAsync<TResultData>(this INavigationService service, object sender, string relativePathModifier = NavigationConstants.RelativePath.Current, CancellationToken cancellation = default)
     {
         var mapping = Ioc.Default.GetRequiredService<IRouteMappings>();
         var map = mapping.LookupByResultData(typeof(TResultData));
-        return service.NavigateAsync(new NavigationRequest(sender, new NavigationRoute(new Uri(map.FullPath(relativePathModifier), UriKind.Relative)), cancellation,typeof(TResultData)));
+        return service.NavigateAsync(new NavigationRequest(sender, new Route(new Uri(map.FullPath(relativePathModifier), UriKind.Relative)), cancellation,typeof(TResultData)));
     }
 
     public static NavigationResponse NavigateToPreviousViewAsync(this INavigationService service, object sender, string relativePathModifier = NavigationConstants.RelativePath.Current, object data = null, CancellationToken cancellation = default)
     {
-        return service.NavigateAsync(new NavigationRequest(sender, new NavigationRoute(new Uri(RouteMap.CombinePathWithRelativePath(NavigationConstants.PreviousViewUri, relativePathModifier), UriKind.Relative), data), cancellation));
+        return service.NavigateAsync(new NavigationRequest(sender, new Route(new Uri(RouteMap.CombinePathWithRelativePath(NavigationConstants.PreviousViewUri, relativePathModifier), UriKind.Relative), data), cancellation));
     }
 
     public static NavigationResponse<Windows.UI.Popups.UICommand> ShowMessageDialogAsync(
@@ -100,7 +100,7 @@ public static class NavigationServiceExtensions
                 { NavigationConstants.MessageDialogParameterCommands, commands }
             };
 
-        var result = service.NavigateAsync(new NavigationRequest(sender, new NavigationRoute(new Uri(NavigationConstants.MessageDialogUri, UriKind.Relative), data), cancellation, typeof(UICommand)));
+        var result = service.NavigateAsync(new NavigationRequest(sender, new Route(new Uri(NavigationConstants.MessageDialogUri, UriKind.Relative), data), cancellation, typeof(UICommand)));
         return new NavigationResponse<UICommand>(result);
     }
 }

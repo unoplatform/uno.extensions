@@ -37,7 +37,7 @@ namespace ExtensionsSampleApp.Views
         }
         private void GoBackNavigationRequestClick(object sender, RoutedEventArgs e)
         {
-            Navigation.NavigateAsync(new NavigationRequest(sender, new NavigationRoute(new Uri("..", UriKind.Relative))));
+            Navigation.NavigateAsync(new NavigationRequest(sender, new Route(new Uri("..", UriKind.Relative))));
         }
 
         private void GoBackNavigateToPreviousViewAsyncClick(object sender, RoutedEventArgs e)
@@ -58,7 +58,7 @@ namespace ExtensionsSampleApp.Views
 
         private void NextPageNavigateToViewAsyncWithQueryAndDataClick(object sender, RoutedEventArgs e)
         {
-            Navigation.NavigateAsync(new NavigationRequest(sender, new NavigationRoute(new Uri(typeof(ThirdPage).Name + "?arg1=val1&arg2=val2", UriKind.Relative), new Widget())));
+            Navigation.NavigateAsync(new NavigationRequest(sender, new Route(new Uri(typeof(ThirdPage).Name + "?arg1=val1&arg2=val2", UriKind.Relative), new Widget())));
         }
     }
 
