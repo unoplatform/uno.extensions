@@ -60,7 +60,7 @@ public static class NavigationHelpers
 
     public static NavigationRequest MakeCurrentRequest(this NavigationRequest request)
     {
-        return request.WithPath(RouteConstants.Schemes.Parent + "/" + request.Route.Uri.OriginalString);
+        return request.WithPath(RouteConstants.Schemes.Parent + "/" + request.Route.Uri.OriginalString.TrimStart(RouteConstants.Schemes.Current + "/"));
     }
 
     public static NavigationRequest WithPath(this NavigationRequest request, string path, string queryParameters = "")
