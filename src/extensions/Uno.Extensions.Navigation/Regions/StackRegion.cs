@@ -71,7 +71,7 @@ public abstract class StackRegion<TControl> : BaseRegion<TControl>
         }
 
         // Add the new context to the list of contexts and then navigate away
-        Show(context.Request.Segments.Base, context.Mapping?.View, context.Request.Segments.Parameters);
+        Show(context.Request.Segments.FrameBase, context.Mapping?.View, context.Request.Segments.Parameters);
 
         // If path starts with / then remove all prior pages and corresponding contexts
         if (context.Request.Segments.IsRooted)

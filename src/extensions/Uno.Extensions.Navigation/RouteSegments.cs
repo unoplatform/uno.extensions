@@ -13,14 +13,20 @@ public record RouteSegments(string Scheme, string[] Segments, IDictionary<string
 
     public bool IsNested => Scheme == RouteConstants.Schemes.Nested;
 
-    public string Base => Segments.FirstOrDefault();
+    private string TrimmedFrameBase = Segments.FirstOrDefault().TrimStart(
+        RouteConstants.RelativePath.GoBack,
+        RouteConstants.RelativePath.GoForward);
 
-    public bool IsRooted => Base.TrimStart(RouteConstants.RelativePath.GoBack).StartsWith(RouteConstants.RelativePath.Root);
+    public string FrameBase => Segments.FirstOrDefault();
 
-    private int NumberOfGoBackInBase => Base.TakeWhile(x => x == RouteConstants.RelativePath.GoBack).Count();
+    public string Base => TrimmedFrameBase.TrimStart(RouteConstants.RelativePath.Root);
+
+    public bool IsRooted => TrimmedFrameBase.StartsWith(RouteConstants.RelativePath.Root);
+
+    private int NumberOfGoBackInBase => FrameBase.TakeWhile(x => x == RouteConstants.RelativePath.GoBack).Count();
     public int NumberOfPagesToRemove => IsBackNavigation ? NumberOfGoBackInBase - 1 : NumberOfGoBackInBase;
 
-    public bool IsBackNavigation => Base.TrimStart(RouteConstants.RelativePath.GoBack, RouteConstants.RelativePath.Root).Length == 0;
+    public bool IsBackNavigation => FrameBase.TrimStart(RouteConstants.RelativePath.GoBack, RouteConstants.RelativePath.Root).Length == 0;
 
     private string Query => Parameters.Where(x => x.Key != string.Empty).Any() ?
         "?" + string.Join("&", Parameters.Where(x => x.Key != string.Empty).Select(kvp => $"{kvp.Key}={kvp.Value}")) :

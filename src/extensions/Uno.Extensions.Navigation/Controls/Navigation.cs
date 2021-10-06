@@ -70,7 +70,7 @@ public static class Navigation
     {
         if (d is FrameworkElement element)
         {
-            RegisterElement(element, string.Empty);
+            RegisterElement(element, string.Empty, false);
         }
     }
 
@@ -86,42 +86,43 @@ public static class Navigation
     {
         if (d is FrameworkElement element)
         {
-            RegisterElement(element, e.NewValue as string);
+            RegisterElement(element, e.NewValue as string, false);
         }
     }
 
-    public static readonly DependencyProperty ComposeWithProperty =
+    public static readonly DependencyProperty IsCompositeRegionProperty =
 DependencyProperty.RegisterAttached(
-  "ComposeWith",
-  typeof(FrameworkElement),
+  "IsCompositeRegion",
+  typeof(bool),
   typeof(Navigation),
-  new PropertyMetadata(null, ComposeWithChanged)
+  new PropertyMetadata(false, IsCompositeRegionChanged)
 );
 
-    private static void ComposeWithChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    private static void IsCompositeRegionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         if (d is FrameworkElement element)
         {
-            RegisterElement(element, string.Empty, e.NewValue as FrameworkElement);
+            RegisterElement(element, string.Empty, true);
         }
     }
 
-    private static void RegisterElement(FrameworkElement element, string regionName, FrameworkElement composeWith = null)
+    private static void RegisterElement(FrameworkElement element, string regionName, bool isComposite)
     {
         Logger.LazyLogDebug(() => $"Attaching to Loaded event on element {element.GetType().Name}");
+
+        Logger.LazyLogDebug(() => $"Creating region manager");
+        var navRegion = element.GetRegion() ?? NavigationServiceFactory.CreateService(element, isComposite);
+        element.SetRegion(navRegion);
+        if (isComposite)
+        {
+            element.SetNavigationService(navRegion);
+        }
+        Logger.LazyLogDebug(() => $"Region manager created");
+
         element.Loaded += async (sLoaded, eLoaded) =>
         {
-            Logger.LazyLogDebug(() => $"Creating region manager");
             var loadedElement = sLoaded as FrameworkElement;
             var parent = RegionForControl(loadedElement.Parent) ?? NavigationServiceFactory.Root;
-            var navRegion = loadedElement.GetRegion() ?? NavigationServiceFactory.CreateService(parent, loadedElement, composeWith);
-
-            loadedElement.SetRegion(navRegion);
-            if (composeWith is not null)
-            {
-                composeWith.SetRegion(navRegion);
-            }
-            Logger.LazyLogDebug(() => $"Region manager created");
 
             Logger.LazyLogDebug(() => $"Attaching to Unloaded event on element {element.GetType().Name}");
             loadedElement.Unloaded += (sUnloaded, eUnloaded) =>
@@ -193,14 +194,14 @@ DependencyProperty.RegisterAttached(
         return (string)element.GetValue(RegionNameProperty);
     }
 
-    public static void SetComposeWith(FrameworkElement element, FrameworkElement value)
+    public static void SetIsCompositeRegion(FrameworkElement element, bool value)
     {
-        element.SetValue(ComposeWithProperty, value);
+        element.SetValue(IsCompositeRegionProperty, value);
     }
 
-    public static FrameworkElement GetComposeWith(FrameworkElement element)
+    public static bool GetIsCompositeRegion(FrameworkElement element)
     {
-        return (FrameworkElement)element.GetValue(ComposeWithProperty);
+        return (bool)element.GetValue(IsCompositeRegionProperty);
     }
 
     public static readonly DependencyProperty NavigateOnClickPathProperty =

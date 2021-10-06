@@ -4,5 +4,5 @@ public interface INavigationServiceFactory
 {
     IRegionNavigationService Root { get; }
 
-    IRegionNavigationService CreateService(IRegionNavigationService parent, params object[] controls);
+    IRegionNavigationService CreateService(object control, bool isComposite);
 }

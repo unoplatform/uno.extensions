@@ -14,7 +14,6 @@ using Uno.Extensions.Hosting;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Controls;
-using Uno.Extensions.Navigation.Regions.Managers;
 using Uno.UI.ToolkitLib;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;

@@ -11,14 +11,13 @@ public class NavigationService : INavigationService
 
     protected bool IsRootService => Parent is null;
 
-    private IRegionNavigationService Parent { get; set; }
+    public IRegionNavigationService Parent { get; set; }
 
     protected IDialogFactory DialogFactory { get; }
 
-    public NavigationService(ILogger logger, IRegionNavigationService parent, IDialogFactory dialogFactory)
+    public NavigationService(ILogger logger, IDialogFactory dialogFactory)
     {
         Logger = logger;
-        Parent = parent;
         DialogFactory = dialogFactory;
     }
 

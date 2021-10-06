@@ -4,7 +4,6 @@ using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Dialogs;
 using Uno.Extensions.Navigation.Dialogs.Managers;
 using Uno.Extensions.Navigation.Regions;
-using Uno.Extensions.Navigation.Regions.Managers;
 using Uno.Extensions.Navigation.ViewModels;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml.Controls;
@@ -27,7 +26,6 @@ public static class ServiceCollectionExtensions
         return services
                     // Register the region for each control type
                     .AddScoped<DialogRegion>()
-                    .AddScoped<CompositeRegion>()
                     .AddRegion<Frame, FrameRegion>()
                     .AddRegion<TabView, TabRegion>()
                     .AddRegion<ContentControl, ContentControlRegion>()

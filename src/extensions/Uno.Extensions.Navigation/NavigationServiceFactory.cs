@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Dialogs;
 using Uno.Extensions.Navigation.Regions;
-using Uno.Extensions.Navigation.Regions.Managers;
 
 namespace Uno.Extensions.Navigation;
 
@@ -29,17 +28,17 @@ public class NavigationServiceFactory : INavigationServiceFactory
         // Create root navigation service
         var navLogger = services.GetService<ILogger<RegionNavigationService>>();
         var dialogFactory = services.GetService<IDialogFactory>();
-        var navService = new RegionNavigationService(navLogger, null, dialogFactory);
+        var navService = new RegionNavigationService(navLogger, dialogFactory);
 
         services.GetService<ScopedServiceHost<INavigationService>>().Service = navService;
         Root = navService;
 
         // Create a special nested service which is used to display dialogs
-        var dialogService = CreateService(Root);
+        var dialogService = CreateService(null, false);
         Root.Attach(RouteConstants.RelativePath.DialogPrefix, dialogService);
     }
 
-    public IRegionNavigationService CreateService(IRegionNavigationService parent, params object[] controls)
+    public IRegionNavigationService CreateService(object control, bool isComposite)
     {
         Logger.LazyLogDebug(() => $"Adding region");
 
@@ -49,42 +48,30 @@ public class NavigationServiceFactory : INavigationServiceFactory
         // Create Navigation Service
         var navLogger = services.GetService<ILogger<RegionNavigationService>>();
         var dialogFactory = services.GetService<IDialogFactory>();
-        var navService = new RegionNavigationService(navLogger, parent, dialogFactory);
+
+        if (isComposite)
+        {
+            var compService = new CompositeNavigationService(navLogger, dialogFactory);
+            services.GetService<ScopedServiceHost<IRegionNavigationService>>().Service = compService;
+            return compService;
+        }
+
+        var navService = new RegionNavigationService(navLogger, dialogFactory);
         services.GetService<ScopedServiceHost<IRegionNavigationService>>().Service = navService;
 
         // Create Region Service
-        controls = controls.Where(c => c is not null).ToArray();
-
-        if (!controls.Any())
+        if (control is null)
         {
             navService.Region = services.GetService<DialogRegion>();
             return navService;
         }
 
-        CompositeRegion composite = controls.Length > 1 ? services.GetService<CompositeRegion>() : default;
-        foreach (var control in controls)
-        {
-            services.GetService<RegionControlProvider>().RegionControl = control;
-            var factory = FindFactoryForControl(control);
-            var region = factory.Create(services);
-            if (composite is not null)
-            {
-                composite.Regions.Add(region);
-            }
-            else
-            {
-                services.GetService<ScopedServiceHost<IRegion>>().Service = region;
-                // Associate region service with region service container
-                navService.Region = region;
-            }
-        }
-
-        if (composite is not null)
-        {
-            services.GetService<ScopedServiceHost<IRegion>>().Service = composite;
-            // Associate region service with region service container
-            navService.Region = composite;
-        }
+        services.GetService<RegionControlProvider>().RegionControl = control;
+        var factory = FindFactoryForControl(control);
+        var region = factory.Create(services);
+        services.GetService<ScopedServiceHost<IRegion>>().Service = region;
+        // Associate region service with region service container
+        navService.Region = region;
 
         // Retrieve the region container and the navigation service
         return navService;
