@@ -15,7 +15,7 @@
             <Button Content="Next page - NavigationRequest"
                     Click="NextPageNavigationRequestClick" />
             <Button Content="Next page - Navigation Path"
-                    nav:Navigation.NavigateOnClickPath="SecondPage" />
+                    nav:Navigation.NavigateOnClickPath="../SecondPage" />
             <Button Content="Next page - NavigateToViewAsync"
                     Click="NextPageNavigateToViewAsyncClick" />
             <Button Content="Next page - NavigateToViewModelAsync"

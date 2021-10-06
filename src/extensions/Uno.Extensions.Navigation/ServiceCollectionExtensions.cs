@@ -62,8 +62,8 @@ public static class ServiceCollectionExtensions
                     .AddScoped<ScopedServiceHost<INavigationService>>()
                     .AddScoped<INavigationService>(services =>
                             services.GetService<ScopedServiceHost<INavigationService>>().Service ??
-                            services.GetService<ScopedServiceHost<IRegionNavigationService>>().Service ??
-                            services.GetService<INavigationServiceFactory>().Root
+                            (services.GetService<ScopedServiceHost<IRegionNavigationService>>().Service as INavigationService) ??
+                            new InnerNavigationService(services.GetService<INavigationServiceFactory>().Root)
                             );
     }
 

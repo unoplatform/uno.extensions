@@ -6,9 +6,10 @@ public static class RouteConstants
 {
     public static class Schemes
     {
-        public const string Current = ".";
+        public const string Current = "";
+        public const string Nested = ".";
         public const string Parent = "..";
-        public static string[] All = new string[] { Current, Parent };
+        public static string[] All = new string[] { Parent, Current, Nested };
     }
 
     public static class RelativePath

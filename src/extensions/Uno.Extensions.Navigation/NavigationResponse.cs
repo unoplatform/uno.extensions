@@ -10,6 +10,11 @@ public record NavigationResponse<TResult>(NavigationRequest Request, Task<Option
 {
     public static NavigationResponse<TResult> FromResponse(NavigationResponse response)
     {
+        if (response is null)
+        {
+            return null;
+        }
+
         return new NavigationResponse<TResult>(response.Request, response.Result.ContinueWith(x =>
   (x.Result.MatchSome(out var val) && val is TResult tval) ?
       Options.Option.Some(tval) :

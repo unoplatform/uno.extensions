@@ -7,11 +7,11 @@ namespace Uno.Extensions.Navigation;
 public record RouteSegments(string Scheme, string[] Segments, IDictionary<string, object> Parameters)
 #pragma warning restore SA1313 // Parameter names should begin with lower-case letter
 {
-    public bool IsCurrent => (Scheme == RouteConstants.Schemes.Parent && Segments.FirstOrDefault() != RouteConstants.Schemes.Parent);
+    public bool IsCurrent => Scheme == RouteConstants.Schemes.Current;
 
-    public bool IsParent => Scheme == RouteConstants.Schemes.Parent && Segments.FirstOrDefault() == RouteConstants.Schemes.Parent;
+    public bool IsParent => Scheme == RouteConstants.Schemes.Parent;
 
-    public bool IsNested => Scheme == RouteConstants.Schemes.Current;
+    public bool IsNested => Scheme == RouteConstants.Schemes.Nested;
 
     public string Base => Segments.FirstOrDefault();
 
@@ -28,7 +28,7 @@ public record RouteSegments(string Scheme, string[] Segments, IDictionary<string
 
     public NavigationRequest NextRequest(object sender) =>
         Segments.Length > 1 ?
-        (string.Join("/", Segments[1..]) + Query)
+        (RouteConstants.Schemes.Nested + "/" + (string.Join("/", Segments[1..]) + Query))
         .AsRequest(sender, Parameters.ContainsKey(string.Empty) ? Parameters[string.Empty] : null) :
         null;
 }

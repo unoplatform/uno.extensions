@@ -82,8 +82,9 @@ public abstract class BaseRegion : IRegion, IRegionNavigate
         TaskCompletionSource<Options.Option> resultTask = default;
         if (request.RequiresResponse())
         {
-            var responseNav = new ResponseNavigationService(context.Services.GetService<ScopedServiceHost<IRegionNavigationService>>().Service);
+            var responseNav = new ResponseNavigationService(context.Services.GetService<ScopedServiceHost<INavigationService>>().Service);
             resultTask = responseNav.ResultCompletion;
+
             context.Services.GetService<ScopedServiceHost<INavigationService>>().Service = responseNav;
         }
 
@@ -181,9 +182,10 @@ public abstract class BaseRegion : IRegion, IRegionNavigate
             viewModel = ViewModelManager.CreateViewModel(context);
         }
 
-
         if (view is FrameworkElement fe)
         {
+            fe.SetNavigationService(context.Navigation);
+
             if (viewModel is not null && fe.DataContext != viewModel)
             {
                 Logger.LazyLogDebug(() => $"Setting DataContext with view model '{viewModel.GetType().Name}");
