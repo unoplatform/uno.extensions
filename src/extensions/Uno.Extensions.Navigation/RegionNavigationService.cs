@@ -16,7 +16,7 @@ public class RegionNavigationService : CompositeNavigationService
 
     private int isNavigating = 0;
 
-    public RegionNavigationService(ILogger<RegionNavigationService> logger, IRegionNavigationService parent, IDialogFactory dialogFactory) : base(logger, parent, dialogFactory)
+    public RegionNavigationService(ILogger<RegionNavigationService> logger, IDialogFactory dialogFactory) : base(logger, dialogFactory)
     {
     }
 
@@ -121,32 +121,34 @@ public class RegionNavigationService : CompositeNavigationService
         return sb.ToString();
     }
 
-    private void PrintAllRegions(StringBuilder builder, RegionNavigationService nav, int indent = 0, string regionName = null)
+    protected override void PrintAllRegions(StringBuilder builder, IRegionNavigationService nav, int indent = 0, string regionName = null)
     {
-        if (nav.Region is null)
+        if (nav is RegionNavigationService rns)
         {
-            builder.AppendLine(string.Empty);
-            builder.AppendLine("------------------------------------------------------------------------------------------------");
-            builder.AppendLine($"ROOT");
-        }
-        else
-        {
-            var ans = nav;
-            var prefix = string.Empty;
-            if (indent > 0)
+            if (rns.Region is null)
             {
-                prefix = new string(' ', indent * 2) + "|-";
+                builder.AppendLine(string.Empty);
+                builder.AppendLine("------------------------------------------------------------------------------------------------");
+                builder.AppendLine($"ROOT");
             }
-            var reg = !string.IsNullOrWhiteSpace(regionName) ? $"({regionName}) " : null;
-            builder.AppendLine($"{prefix}{reg}{ans.Region?.ToString()}");
+            else
+            {
+                var ans = nav;
+                var prefix = string.Empty;
+                if (indent > 0)
+                {
+                    prefix = new string(' ', indent * 2) + "|-";
+                }
+                var reg = !string.IsNullOrWhiteSpace(regionName) ? $"({regionName}) " : null;
+                builder.AppendLine($"{prefix}{reg}{rns.Region?.ToString()}");
+            }
         }
 
-        foreach (var nested in nav.NestedServices)
-        {
-            PrintAllRegions(builder, nested.Value as RegionNavigationService, indent + 1, nested.Key);
-        }
+        base.PrintAllRegions(builder, nav, indent, regionName);
 
-        if (nav.Region is null)
+
+        if (nav is RegionNavigationService rns2 &&
+            rns2.Region is null)
         {
             builder.AppendLine("------------------------------------------------------------------------------------------------");
         }
