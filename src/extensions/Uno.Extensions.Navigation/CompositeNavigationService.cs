@@ -64,12 +64,15 @@ public class CompositeNavigationService : NavigationService, IRegionNavigationSe
             {
                 // No match for named route, so grab any unnamed nested
                 nested = Nested() as RegionNavigationService;
+                if (nested is not null)
+                {
+                    var nextRoute = nestedRequest.Route.Uri.OriginalString.TrimStart($"{RouteConstants.Schemes.Nested}/");
+                    nestedRequest = nestedRequest.WithPath(nextRoute);
+                }
             }
             else
             {
-                // If we've been able to retrieve the nested service
-                // we need to remove the route from the request path
-                var nextRoute = nestedRequest.Route.Uri.OriginalString.TrimStart($"{RouteConstants.Schemes.Current}/{nestedRoute}/");
+                var nextRoute = nestedRequest.Route.Uri.OriginalString.TrimStart($"{RouteConstants.Schemes.Nested}/{nestedRoute}/");
                 nestedRequest = nestedRequest.WithPath(nextRoute);
             }
 
@@ -79,7 +82,7 @@ public class CompositeNavigationService : NavigationService, IRegionNavigationSe
             }
         }
 
-        var response = await nested.NavigateAsync(nestedRequest.MakeCurrentRequest());
+        var response = await nested.NavigateAsync(nestedRequest);
         return response;
     }
 }

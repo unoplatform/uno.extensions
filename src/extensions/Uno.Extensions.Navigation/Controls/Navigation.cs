@@ -42,6 +42,14 @@ public static class Navigation
         }
     }
 
+    public static readonly DependencyProperty NavigationServiceProperty =
+   DependencyProperty.RegisterAttached(
+     "NavigationService",
+     typeof(INavigationService),
+     typeof(Navigation),
+     new PropertyMetadata(null)
+   );
+
     public static readonly DependencyProperty RegionProperty =
    DependencyProperty.RegisterAttached(
      "Region",
@@ -105,7 +113,7 @@ DependencyProperty.RegisterAttached(
         {
             Logger.LazyLogDebug(() => $"Creating region manager");
             var loadedElement = sLoaded as FrameworkElement;
-            var parent = ScopedServiceForControl(loadedElement.Parent) ?? NavigationServiceFactory.Root;
+            var parent = RegionForControl(loadedElement.Parent) ?? NavigationServiceFactory.Root;
             var navRegion = loadedElement.GetRegion() ?? NavigationServiceFactory.CreateService(parent, loadedElement, composeWith);
 
             loadedElement.SetRegion(navRegion);
@@ -128,6 +136,20 @@ DependencyProperty.RegisterAttached(
             Logger.LazyLogDebug(() => $"Attaching region manager");
             parent.Attach(regionName, navRegion);
         };
+    }
+
+    public static void SetNavigationService(this FrameworkElement element, INavigationService value)
+    {
+        element.SetValue(NavigationServiceProperty, value);
+    }
+
+    public static INavigationService GetNavigationService(this FrameworkElement element)
+    {
+        if (element is null)
+        {
+            return null;
+        }
+        return (INavigationService)element.GetValue(NavigationServiceProperty);
     }
 
     public static void SetRegion(this FrameworkElement element, IRegionNavigationService value)
@@ -209,7 +231,7 @@ DependencyProperty.RegisterAttached(
                 {
                     try
                     {
-                        var nav = ScopedServiceForControl(s as DependencyObject);
+                        var nav = NavigationServiceForControl(s as DependencyObject);
                         await nav.NavigateByPathAsync(s, path);
                     }
                     catch (Exception ex)
@@ -228,9 +250,19 @@ DependencyProperty.RegisterAttached(
         }
     }
 
-    private static IRegionNavigationService ScopedServiceForControl(DependencyObject element)
+    private static IRegionNavigationService RegionForControl(DependencyObject element)
     {
-        var service = (element as FrameworkElement).GetRegion();
+        return ServiceForControl(element, GetRegion);
+    }
+
+    private static INavigationService NavigationServiceForControl(DependencyObject element)
+    {
+        return ServiceForControl(element, GetNavigationService);
+    }
+
+    private static TService ServiceForControl<TService>(DependencyObject element, Func<FrameworkElement, TService> getService)
+    {
+        var service = getService(element as FrameworkElement);
         if (service is not null)
         {
             return service;
@@ -239,8 +271,9 @@ DependencyProperty.RegisterAttached(
         var parent = VisualTreeHelper.GetParent(element);
         // If parent is null, we're at top of visual tree,
         // so just return the nav manager itself
-        return parent is not null ? ScopedServiceForControl(parent) : null;
+        return parent is not null ? ServiceForControl(parent, getService) : default;
     }
+
 
     public static void SetPath(FrameworkElement element, string value)
     {

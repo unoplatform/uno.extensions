@@ -39,7 +39,7 @@ public class NavigationService : INavigationService
 
         var path = request.Route.Uri.OriginalString;
         var parentService = Parent;
-        var parentPath = path.Length > (RouteConstants.Schemes.Parent+"/").Length ? path.Substring((RouteConstants.Schemes.Parent + "/").Length) : string.Empty;
+        var parentPath = path.TrimStartOnce(RouteConstants.Schemes.Parent + "/");// path.Length > (RouteConstants.Schemes.Parent+"/").Length ? path.Substring((RouteConstants.Schemes.Parent + "/").Length) : string.Empty;
 
         var parentRequest = request.WithPath(parentPath);
         return parentService.NavigateAsync(parentRequest);

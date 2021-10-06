@@ -60,7 +60,32 @@ public static class NavigationHelpers
 
     public static NavigationRequest MakeCurrentRequest(this NavigationRequest request)
     {
-        return request.WithPath(RouteConstants.Schemes.Parent + "/" + request.Route.Uri.OriginalString.TrimStart(RouteConstants.Schemes.Current + "/"));
+        if (request.Segments.Scheme == RouteConstants.Schemes.Parent)
+        {
+            return request.WithPath(request.Route.Uri.OriginalString.TrimStartOnce(RouteConstants.Schemes.Parent + "/"));
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Segments.Scheme))
+        {
+            return request.WithPath(RouteConstants.Schemes.Nested + "/" + request.Route.Uri.OriginalString);
+        }
+
+        return request;
+    }
+
+    public static string TrimStartOnce(this string text, string textToTrim)
+    {
+        if (text.StartsWith(textToTrim))
+        {
+            if (text.Length == textToTrim.Length)
+            {
+                return string.Empty;
+            }
+
+            return text.Substring(textToTrim.Length);
+        }
+
+        return text;
     }
 
     public static NavigationRequest WithPath(this NavigationRequest request, string path, string queryParameters = "")
@@ -185,8 +210,6 @@ public static class NavigationHelpers
         return context;
     }
 
-
-
     private static IServiceProvider CloneNavigationScopedServices(this IServiceProvider services)
     {
         var scope = services.CreateScope();
@@ -194,7 +217,9 @@ public static class NavigationHelpers
 
         scopedServices.GetService<RegionControlProvider>().RegionControl = services.GetService<RegionControlProvider>().RegionControl;
         scopedServices.GetService<ScopedServiceHost<IRegionNavigationService>>().Service = services.GetService<ScopedServiceHost<IRegionNavigationService>>().Service;
-        scopedServices.GetService<ScopedServiceHost<INavigationService>>().Service = services.GetService<ScopedServiceHost<INavigationService>>().Service;
+        //scopedServices.GetService<ScopedServiceHost<INavigationService>>().Service = services.GetService<ScopedServiceHost<INavigationService>>().Service;
+        INavigationService innerNavService = new InnerNavigationService(scopedServices.GetService<ScopedServiceHost<IRegionNavigationService>>().Service);
+        scopedServices.GetService<ScopedServiceHost<INavigationService>>().Service = innerNavService;
 
         return scopedServices;
     }
