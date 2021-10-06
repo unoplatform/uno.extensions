@@ -30,11 +30,11 @@ public class RegionNavigationService : CompositeNavigationService
         try
         {
             var isDialogNavigation = DialogFactory.IsDialogNavigation(request);
-            if (isDialogNavigation)
+            if (isDialogNavigation && Region is not DialogRegion)
             {
                 // This will skip navigation in this region (ie with the "./" nested prefix)
                 // The DialogPrefix will cause the Nested method to return a new nested region specifically for this navigation
-                request = request.WithPath(RouteConstants.Schemes.Current + "/" + RouteConstants.RelativePath.DialogPrefix + "/" + request.Route.Uri.OriginalString);
+                request = request.WithPath(RouteConstants.Schemes.Nested + "/" + RouteConstants.RelativePath.DialogPrefix + "/" + request.Route.Uri.OriginalString);
                 return await NavigateWithRootAsync(request);
             }
 

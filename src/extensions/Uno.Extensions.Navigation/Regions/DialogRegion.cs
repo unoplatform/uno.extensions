@@ -17,6 +17,8 @@ namespace Uno.Extensions.Navigation.Regions
 
         private IDialogFactory DialogFactory { get; }
 
+        protected override string CurrentPath => OpenDialogs.FirstOrDefault()?.Manager.GetType().Name ?? string.Empty;
+
         public DialogRegion(
             ILogger<DialogRegion> logger,
             IServiceProvider scopedServices,
