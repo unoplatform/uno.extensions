@@ -22,13 +22,19 @@ public class CompositeNavigationService : NavigationService, IRegionNavigationSe
         var childService = childRegion;
         NestedServices.Add((regionName + string.Empty, childService));
         NestedServiceWaiter.Set();
-        childRegion.Parent = this;
+        if (childRegion is NavigationService navService)
+        {
+            navService.Parent = this;
+        }
     }
 
     public void Detach(IRegionNavigationService childRegion)
     {
         NestedServices.Remove(kvp => kvp.Item2 == childRegion);
-        childRegion.Parent = null;
+        if (childRegion is NavigationService navService)
+        {
+            navService.Parent = null;
+        }
     }
 
     public async override Task<NavigationResponse> NavigateAsync(NavigationRequest request)
