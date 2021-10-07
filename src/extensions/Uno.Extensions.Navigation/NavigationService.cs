@@ -13,12 +13,9 @@ public class NavigationService : INavigationService
 
     public IRegionNavigationService Parent { get; set; }
 
-    protected IDialogFactory DialogFactory { get; }
-
-    public NavigationService(ILogger logger, IDialogFactory dialogFactory)
+    public NavigationService(ILogger logger)
     {
         Logger = logger;
-        DialogFactory = dialogFactory;
     }
 
     public virtual async Task<NavigationResponse> NavigateAsync(NavigationRequest request)

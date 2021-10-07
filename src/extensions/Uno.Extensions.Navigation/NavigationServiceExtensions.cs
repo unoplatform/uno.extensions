@@ -101,7 +101,7 @@ public static class NavigationServiceExtensions
                 { RouteConstants.MessageDialogParameterCommands, commands }
             };
 
-        var result = await service.NavigateAsync(new NavigationRequest(sender, new Route(new Uri(RouteConstants.Schemes.Parent + "/" + RouteConstants.MessageDialogUri, UriKind.Relative), data), cancellation, typeof(UICommand)));
+        var result = await service.NavigateAsync(new NavigationRequest(sender, new Route(new Uri(RouteConstants.Schemes.Dialog + "/" + RouteConstants.MessageDialogUri, UriKind.Relative), data), cancellation, typeof(UICommand)));
         return NavigationResponse<UICommand>.FromResponse(result);
     }
 }

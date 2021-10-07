@@ -13,7 +13,7 @@ public class CompositeNavigationService : NavigationService, IRegionNavigationSe
 
     private AsyncAutoResetEvent NestedServiceWaiter { get; } = new AsyncAutoResetEvent(false);
 
-    public CompositeNavigationService(ILogger logger, IDialogFactory dialogFactory) : base(logger, dialogFactory)
+    public CompositeNavigationService(ILogger logger) : base(logger)
     {
     }
 
