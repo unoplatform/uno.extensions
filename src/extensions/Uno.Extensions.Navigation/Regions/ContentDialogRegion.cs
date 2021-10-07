@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Uno.Extensions.Navigation.Dialogs;
+using Uno.Extensions.Navigation.ViewModels;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
@@ -11,18 +14,20 @@ using Windows.UI.Popups;
 using UICommand = Windows.UI.Popups.UICommand;
 #endif
 
-namespace Uno.Extensions.Navigation.Dialogs.Managers;
+namespace Uno.Extensions.Navigation.Regions;
 
-public class ContentDialogManager : IDialogManager
+public class ContentDialogRegion : DialogRegion
 {
-    private IRouteMappings Mappings { get; }
 
-    public ContentDialogManager(IRouteMappings mappings)
+    public ContentDialogRegion(
+        ILogger<ContentDialogRegion> logger,
+        IServiceProvider scopedServices,
+        INavigationService navigation,
+        IViewModelManager viewModelManager) : base(logger, scopedServices, navigation, viewModelManager)
     {
-        Mappings = mappings;
     }
 
-    public object CloseDialog(Dialog dialog, NavigationContext context, object responseData)
+    protected override object CloseDialog(Dialog dialog, NavigationContext context, object responseData)
     {
         if (!(responseData is ContentDialogResult))
         {
@@ -56,13 +61,7 @@ public class ContentDialogManager : IDialogManager
         return responseData;
     }
 
-    public bool IsDialogNavigation(NavigationRequest request)
-    {
-        var map = Mappings.LookupByPath(request.Segments.Base);
-        return map?.View?.IsSubclassOf(typeof(ContentDialog)) ?? false;
-    }
-
-    public Dialog DisplayDialog(NavigationContext context, object vm)
+    protected override Dialog DisplayDialog(NavigationContext context, object vm)
     {
         var navigation = context.Navigation;
         var dialog = Activator.CreateInstance(context.Mapping.View) as ContentDialog;
@@ -97,6 +96,6 @@ public class ContentDialogManager : IDialogManager
         }, CancellationToken.None,
                         TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.DenyChildAttach,
                         TaskScheduler.FromCurrentSynchronizationContext());
-        return new Dialog(this, showTask, context);
+        return new Dialog(showTask, context);
     }
 }

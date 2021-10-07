@@ -6,15 +6,13 @@ using Uno.Extensions.Navigation.ViewModels;
 
 namespace Uno.Extensions.Navigation.Regions
 {
-    public class DialogRegion : BaseRegion
+    public abstract class DialogRegion : BaseRegion
     {
         protected override bool CanGoBack => true;
 
         private Dialog OpenDialog { get; set; }
 
-        public IDialogManager DialogProvider { get; set; }
-
-        protected override string CurrentPath => OpenDialog?.Manager.GetType().Name ?? string.Empty;
+        protected override string CurrentPath => this.GetType().Name ?? string.Empty;
 
         public DialogRegion(
             ILogger<DialogRegion> logger,
@@ -33,7 +31,7 @@ namespace Uno.Extensions.Navigation.Regions
                 await CloseDialog(context);
             }
             var vm = ViewModelManager.CreateViewModel(context);
-            OpenDialog = DialogProvider.DisplayDialog(context, vm);
+            OpenDialog = DisplayDialog(context, vm);
         }
 
         protected async Task CloseDialog(NavigationContext navigationContext)
@@ -47,7 +45,12 @@ namespace Uno.Extensions.Navigation.Regions
 
             ViewModelManager.DisposeViewModel(navigationContext);
 
-            responseData = dialog.Manager.CloseDialog(dialog, navigationContext, responseData);
+            CloseDialog(dialog, navigationContext, responseData);
         }
+
+        protected abstract object CloseDialog(Dialog dialog, NavigationContext context, object responseData);
+
+        protected abstract Dialog DisplayDialog(NavigationContext context, object vm);
+
     }
 }
