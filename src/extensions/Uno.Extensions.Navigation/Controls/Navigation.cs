@@ -122,7 +122,7 @@ DependencyProperty.RegisterAttached(
         element.Loaded += async (sLoaded, eLoaded) =>
         {
             var loadedElement = sLoaded as FrameworkElement;
-            var parent = RegionForControl(loadedElement.Parent) ?? NavigationServiceFactory.Root;
+            var parent = RegionForControl(loadedElement.Parent) ?? Ioc.Default.GetService<IRegionNavigationService>();
 
             Logger.LazyLogDebug(() => $"Attaching to Unloaded event on element {element.GetType().Name}");
             loadedElement.Unloaded += (sUnloaded, eUnloaded) =>
