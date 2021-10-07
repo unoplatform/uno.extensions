@@ -11,8 +11,6 @@ namespace Uno.Extensions.Navigation;
 
 public class RegionNavigationServiceFactory : IRegionNavigationServiceFactory
 {
-    //public IRegionNavigationService Root { get; }
-
     private IServiceProvider Services { get; }
 
     private IDictionary<Type, IRegionFactory> Factories { get; }
@@ -24,18 +22,6 @@ public class RegionNavigationServiceFactory : IRegionNavigationServiceFactory
         Logger = logger;
         Services = services;
         Factories = factories.ToDictionary(x => x.ControlType);
-
-        //// Create root navigation service
-        //var navLogger = services.GetService<ILogger<RegionNavigationService>>();
-        //var dialogFactory = services.GetService<IDialogFactory>();
-        //var navService = new RegionNavigationService(navLogger, dialogFactory);
-
-        //services.GetService<ScopedServiceHost<INavigationService>>().Service = navService;
-        //Root = navService;
-
-        //// Create a special nested service which is used to display dialogs
-        //var dialogService = CreateService(null, false);
-        //Root.Attach(RouteConstants.RelativePath.DialogPrefix, dialogService);
     }
 
     public IRegionNavigationService CreateService(object control, bool isComposite)
@@ -47,7 +33,6 @@ public class RegionNavigationServiceFactory : IRegionNavigationServiceFactory
 
         // Create Navigation Service
         var navLogger = services.GetService<ILogger<RegionNavigationService>>();
-        var dialogFactory = services.GetService<IDialogFactory>();
 
         if (isComposite)
         {
@@ -67,7 +52,7 @@ public class RegionNavigationServiceFactory : IRegionNavigationServiceFactory
         }
 
         services.GetService<RegionControlProvider>().RegionControl = control;
-        var factory = FindFactoryForControl(control);
+        var factory = Factories.FindForControl(control);
         var region = factory.Create(services);
         services.GetService<ScopedServiceHost<IRegion>>().Service = region;
         // Associate region service with region service container
@@ -75,25 +60,5 @@ public class RegionNavigationServiceFactory : IRegionNavigationServiceFactory
 
         // Retrieve the region container and the navigation service
         return navService;
-    }
-
-    private IRegionFactory FindFactoryForControl(object control)
-    {
-        var controlType = control.GetType();
-        if (Factories.TryGetValue(controlType, out var factory))
-        {
-            return factory;
-        }
-
-        var baseTypes = controlType.GetBaseTypes().ToArray();
-        for (var i = 0; i < baseTypes.Length; i++)
-        {
-            if (Factories.TryGetValue(baseTypes[i], out var baseFactory))
-            {
-                return baseFactory;
-            }
-        }
-
-        return null;
     }
 }

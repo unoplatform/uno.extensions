@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
@@ -14,13 +15,20 @@ public class DialogNavigationServiceFactory : IDialogNavigationServiceFactory
 
     private ILogger Logger { get; }
 
-    private IEnumerable<IDialogManager> DialogProviders { get; }
+    private IDictionary<Type, IRegionFactory> Factories { get; }
 
-    public DialogNavigationServiceFactory(ILogger<RegionNavigationServiceFactory> logger, IServiceProvider services, IEnumerable<IDialogManager> dialogProviders)
+    private IRouteMappings Mappings { get; }
+
+    public DialogNavigationServiceFactory(
+        ILogger<RegionNavigationServiceFactory> logger,
+        IServiceProvider services,
+        IRouteMappings mappings,
+        IEnumerable<IRegionFactory> factories)
     {
         Logger = logger;
         Services = services;
-        DialogProviders = dialogProviders; 
+        Mappings = mappings;
+        Factories = factories.ToDictionary(x => x.ControlType);
     }
 
     public IRegionNavigationService CreateService(NavigationRequest request)
@@ -31,16 +39,13 @@ public class DialogNavigationServiceFactory : IDialogNavigationServiceFactory
         var services = scope.ServiceProvider;
 
         var dialogNavService = services.GetService<DialogNavigationService>();
-        var dialogRegion = services.GetService<DialogRegion>();
-        foreach (var dlg in DialogProviders)
-        {
-            if (dlg.IsDialogNavigation(request))
-            {
-                dialogRegion.DialogProvider = dlg;
-                break;
-            }
-        }
-        dialogNavService.Region = dialogRegion;
+
+        var mapping = Mappings.LookupByPath(request.Segments.Base);
+
+        var factory = Factories.FindForControlType(mapping.View);
+        var region = factory.Create(services);
+        services.GetService<ScopedServiceHost<IRegion>>().Service = region;
+        dialogNavService.Region = region;
 
         return dialogNavService;
     }

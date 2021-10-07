@@ -236,4 +236,30 @@ public static class NavigationHelpers
                 select new { key, val })
                 .ToDictionary(x => x.key, x => (object)x.val);
     }
+
+    public static IRegionFactory FindForControl(this IDictionary<Type, IRegionFactory> factories, object control)
+    {
+        var controlType = control.GetType();
+        return factories.FindForControlType(controlType);
+    }
+
+    public static IRegionFactory FindForControlType(this IDictionary<Type, IRegionFactory> factories, Type controlType)
+    {
+        if (factories.TryGetValue(controlType, out var factory))
+        {
+            return factory;
+        }
+
+        var baseTypes = controlType.GetBaseTypes().ToArray();
+        for (var i = 0; i < baseTypes.Length; i++)
+        {
+            if (factories.TryGetValue(baseTypes[i], out var baseFactory))
+            {
+                return baseFactory;
+            }
+        }
+
+        return null;
+    }
+
 }

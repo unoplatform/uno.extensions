@@ -36,7 +36,7 @@ public static class RouteConstants
         }
     }
 
-    public const string MessageDialogUri = "__md__";
+    private const string MessageDialogUri = "__md__";
     public const string MessageDialogParameterContent = MessageDialogUri + "content";
     public const string MessageDialogParameterTitle = MessageDialogUri + "title";
     public const string MessageDialogParameterOptions = MessageDialogUri + "options";
