@@ -22,13 +22,13 @@ namespace Uno.Extensions.Navigation.Controls;
 
 public static class Navigation
 {
-    private static INavigationServiceFactory navigationServiceFactory;
+    private static IRegionNavigationServiceFactory navigationServiceFactory;
 
-    private static INavigationServiceFactory NavigationServiceFactory
+    private static IRegionNavigationServiceFactory NavigationServiceFactory
     {
         get
         {
-            return navigationServiceFactory ?? (navigationServiceFactory = Ioc.Default.GetService<INavigationServiceFactory>());
+            return navigationServiceFactory ?? (navigationServiceFactory = Ioc.Default.GetService<IRegionNavigationServiceFactory>());
         }
     }
 
@@ -38,7 +38,7 @@ public static class Navigation
     {
         get
         {
-            return logger ?? (logger = Ioc.Default.GetService<ILogger<NavigationServiceFactory>>());
+            return logger ?? (logger = Ioc.Default.GetService<ILogger<RegionNavigationServiceFactory>>());
         }
     }
 

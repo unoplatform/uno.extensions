@@ -9,7 +9,7 @@ using Uno.Extensions.Navigation.Regions;
 
 namespace Uno.Extensions.Navigation;
 
-public class NavigationServiceFactory : INavigationServiceFactory
+public class RegionNavigationServiceFactory : IRegionNavigationServiceFactory
 {
     public IRegionNavigationService Root { get; }
 
@@ -19,7 +19,7 @@ public class NavigationServiceFactory : INavigationServiceFactory
 
     private ILogger Logger { get; }
 
-    public NavigationServiceFactory(ILogger<NavigationServiceFactory> logger, IServiceProvider services, IEnumerable<IRegionFactory> factories)
+    public RegionNavigationServiceFactory(ILogger<RegionNavigationServiceFactory> logger, IServiceProvider services, IEnumerable<IRegionFactory> factories)
     {
         Logger = logger;
         Services = services;
