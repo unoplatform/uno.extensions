@@ -51,6 +51,8 @@ public static class ServiceCollectionExtensions
                     .AddScoped<ScopedServiceHost<IRegion>>()
                     .AddScoped<IRegion>(services => services.GetService<ScopedServiceHost<IRegion>>().Service)
 
+                    .AddSingleton<IRegionNavigationService>(services => services.GetService<IRegionNavigationServiceFactory>().CreateService(null, false))
+
                     .AddScoped<ScopedServiceHost<IRegionNavigationService>>()
 
                     .AddScoped<ViewModelDataProvider>()
@@ -61,7 +63,7 @@ public static class ServiceCollectionExtensions
                     .AddScoped<INavigationService>(services =>
                             services.GetService<ScopedServiceHost<INavigationService>>().Service ??
                             (services.GetService<ScopedServiceHost<IRegionNavigationService>>().Service as INavigationService) ??
-                            new InnerNavigationService(services.GetService<IRegionNavigationServiceFactory>().Root)
+                            services.GetService<IRegionNavigationService>()
                             );
     }
 

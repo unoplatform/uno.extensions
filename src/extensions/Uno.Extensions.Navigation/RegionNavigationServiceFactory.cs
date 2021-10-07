@@ -11,7 +11,7 @@ namespace Uno.Extensions.Navigation;
 
 public class RegionNavigationServiceFactory : IRegionNavigationServiceFactory
 {
-    public IRegionNavigationService Root { get; }
+    //public IRegionNavigationService Root { get; }
 
     private IServiceProvider Services { get; }
 
@@ -25,17 +25,17 @@ public class RegionNavigationServiceFactory : IRegionNavigationServiceFactory
         Services = services;
         Factories = factories.ToDictionary(x => x.ControlType);
 
-        // Create root navigation service
-        var navLogger = services.GetService<ILogger<RegionNavigationService>>();
-        var dialogFactory = services.GetService<IDialogFactory>();
-        var navService = new RegionNavigationService(navLogger, dialogFactory);
+        //// Create root navigation service
+        //var navLogger = services.GetService<ILogger<RegionNavigationService>>();
+        //var dialogFactory = services.GetService<IDialogFactory>();
+        //var navService = new RegionNavigationService(navLogger, dialogFactory);
 
-        services.GetService<ScopedServiceHost<INavigationService>>().Service = navService;
-        Root = navService;
+        //services.GetService<ScopedServiceHost<INavigationService>>().Service = navService;
+        //Root = navService;
 
-        // Create a special nested service which is used to display dialogs
-        var dialogService = CreateService(null, false);
-        Root.Attach(RouteConstants.RelativePath.DialogPrefix, dialogService);
+        //// Create a special nested service which is used to display dialogs
+        //var dialogService = CreateService(null, false);
+        //Root.Attach(RouteConstants.RelativePath.DialogPrefix, dialogService);
     }
 
     public IRegionNavigationService CreateService(object control, bool isComposite)
@@ -59,10 +59,10 @@ public class RegionNavigationServiceFactory : IRegionNavigationServiceFactory
         var navService = new RegionNavigationService(navLogger, dialogFactory);
         services.GetService<ScopedServiceHost<IRegionNavigationService>>().Service = navService;
 
-        // Create Region Service
+        // This is a root navigation service
         if (control is null)
         {
-            navService.Region = services.GetService<DialogRegion>();
+            //navService.Region = services.GetService<DialogRegion>();
             return navService;
         }
 
