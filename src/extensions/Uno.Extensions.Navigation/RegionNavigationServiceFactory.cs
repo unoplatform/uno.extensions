@@ -51,12 +51,12 @@ public class RegionNavigationServiceFactory : IRegionNavigationServiceFactory
 
         if (isComposite)
         {
-            var compService = new CompositeNavigationService(navLogger, dialogFactory);
+            var compService = new CompositeNavigationService(navLogger);
             services.GetService<ScopedServiceHost<IRegionNavigationService>>().Service = compService;
             return compService;
         }
 
-        var navService = new RegionNavigationService(navLogger, dialogFactory);
+        var navService = new RegionNavigationService(navLogger, services.GetService <IDialogNavigationServiceFactory>());
         services.GetService<ScopedServiceHost<IRegionNavigationService>>().Service = navService;
 
         // This is a root navigation service

@@ -13,6 +13,8 @@ public record RouteSegments(string Scheme, string[] Segments, IDictionary<string
 
     public bool IsNested => Scheme == RouteConstants.Schemes.Nested;
 
+    public bool IsDialog => Scheme == RouteConstants.Schemes.Dialog;
+
     private string TrimmedFrameBase = Segments.FirstOrDefault().TrimStart(
         RouteConstants.RelativePath.GoBack,
         RouteConstants.RelativePath.GoForward);

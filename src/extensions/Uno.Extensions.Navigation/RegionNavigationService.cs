@@ -16,8 +16,11 @@ public class RegionNavigationService : CompositeNavigationService
 
     private int isNavigating = 0;
 
-    public RegionNavigationService(ILogger<RegionNavigationService> logger, IDialogFactory dialogFactory) : base(logger, dialogFactory)
+    private IDialogNavigationServiceFactory DialogServiceFactory { get; }
+
+    public RegionNavigationService(ILogger<RegionNavigationService> logger, IDialogNavigationServiceFactory dialogServiceFactory) : base(logger)
     {
+        DialogServiceFactory = dialogServiceFactory;
     }
 
     public async override Task<NavigationResponse> NavigateAsync(NavigationRequest request)
@@ -29,13 +32,20 @@ public class RegionNavigationService : CompositeNavigationService
         }
         try
         {
-            var isDialogNavigation = DialogFactory.IsDialogNavigation(request);
-            if (isDialogNavigation && Region is not DialogRegion)
+            if (request.Segments.IsDialog)
             {
-                // This will skip navigation in this region (ie with the "./" nested prefix)
-                // The DialogPrefix will cause the Nested method to return a new nested region specifically for this navigation
-                request = request.WithPath(RouteConstants.Schemes.Nested + "/" + RouteConstants.RelativePath.DialogPrefix + "/" + request.Route.Uri.OriginalString);
-                return await NavigateWithRootAsync(request);
+                var dialogService = DialogServiceFactory.CreateService(request);
+                this.Attach(RouteConstants.RelativePath.DialogPrefix, dialogService);
+                var dialogResponse = await dialogService.NavigateAsync(request);
+                if (dialogResponse is null || dialogResponse.Result is null)
+                {
+                    this.Detach(dialogService);
+                }
+                else
+                {
+                    dialogResponse.Result.ContinueWith(t => this.Detach(dialogService));
+                }
+                return dialogResponse;
             }
 
             var regionResponse = await RunRegionNavigation(request);
@@ -52,13 +62,6 @@ public class RegionNavigationService : CompositeNavigationService
         {
             Interlocked.Exchange(ref isNavigating, 0);
         }
-    }
-
-    private Task<NavigationResponse> NavigateWithRootAsync(NavigationRequest request)
-    {
-        Logger.LazyLogDebug(() => $"Redirecting navigation request to root Navigation Service");
-
-        return Root.NavigateAsync(request);
     }
 
     private async Task<NavigationResponse> RunRegionNavigation(NavigationRequest request)
