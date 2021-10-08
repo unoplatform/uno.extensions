@@ -6,49 +6,106 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:nav="using:Uno.Extensions.Navigation.Controls"
       NavigationCacheMode="Required"
+      			 xmlns:ios="http://uno.ui/ios"
+
       mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <StackPanel>
-            <TextBlock Margin="20"
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ScrollViewer>
+            <StackPanel>
+                <TextBlock Margin="20"
                        FontSize="30"><Run Text="Main - " /><Run Text="{Binding Title}" /></TextBlock>
-            <Button Content="Next page - NavigationRequest"
+                <Button Content="Next page - NavigationRequest"
                     Click="NextPageNavigationRequestClick" />
-            <Button Content="Next page - Navigation Path"
+                <Button Content="Next page - Navigation Path"
                     nav:Navigation.NavigateOnClickPath="../SecondPage" />
-            <Button Content="Next page - NavigateToViewAsync"
+                <Button Content="Next page - NavigateToViewAsync"
                     Click="NextPageNavigateToViewAsyncClick" />
-            <Button Content="Next page - NavigateToViewModelAsync"
+                <Button Content="Next page - NavigateToViewModelAsync"
                     Click="NextPageNavigateToViewModelAsyncClick" />
-            <Button Content="Next page - NavigateForDataAsync"
+                <Button Content="Next page - NavigateForDataAsync"
                     Click="NextPageNavigateForDataAsyncClick" />
-            <Button Content="Next page - NavigateToViewModelAsync (MainViewModel)"
+                <Button Content="Next page - NavigateToViewModelAsync (MainViewModel)"
                     Command="{Binding NavigateToSecondPageCommand}" />
-            <Button Content="Next page - NavigationRequest with response"
+                <Button Content="Next page - NavigationRequest with response"
                     Click="NextPageRequestResponseClick" />
-            <Button Content="Navigate for Result"
+                <Button Content="Navigate for Result"
                     Click="RequestDataResponseClick" />
-            <Button Content="Next page - NavigationRequest with response (10 second timeout)"
+                <Button Content="Next page - NavigationRequest with response (10 second timeout)"
                     Click="NextPageRequestResponseWithTimeoutClick" />
-            <Button Content="Content Dialog"
+                <Button Content="Content Dialog"
                     Click="ContentDialogResponseClick" />
-            <Button Content="Content Dialog - Widget Response"
+                <Button Content="Content Dialog - Widget Response"
                     Click="ContentDialogWidgetResponseClick" />
-            <Button Content="Content Dialog - Data and Widget Response"
+                <Button Content="Content Dialog - Data and Widget Response"
                     Click="ContentDialogResultAndWidgetResponseClick" />
-            <Button Content="Message Dialog"
+                <Button Content="Message Dialog"
                     Click="MessageDialogClick" />
 
-            <Button Content="Twitter"
+                <Button Content="Twitter"
                     nav:Navigation.NavigateOnClickPath="../TwitterPage" />
-            <Button Content="TabBar Page"
+                <Button Content="TabBar Page"
                     nav:Navigation.NavigateOnClickPath="../TabBarPage" />
-            <Button Content="NavigationView Page"
+                <Button Content="NavigationView Page"
                     nav:Navigation.NavigateOnClickPath="../NavigationViewPage" />
-            <Button Content="NavigationViewGridVisibility Page"
+                <Button Content="NavigationViewGridVisibility Page"
                     nav:Navigation.NavigateOnClickPath="../NavigationViewGridVisibilityPage" />
-            <Button Content="NavigationViewVisualStates Page"
+                <Button Content="NavigationViewVisualStates Page"
                     nav:Navigation.NavigateOnClickPath="../NavigationViewVisualStatesPage" />
-        </StackPanel>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <Grid Grid.Row="1">
+            <StackPanel>
+                <Button Content="Show popup"
+                    nav:Navigation.NavigateOnClickPath="./Show" />
+                <Button Content="Hide popup"
+                    nav:Navigation.NavigateOnClickPath="./Hide" />
+                <Button Content="Show popup Manual"
+                     Click="ShowPopupManualClick"/>
+            </StackPanel>
+            <Popup x:Name="MyPopup" nav:Navigation.IsRegion="True" 
+                   VerticalOffset="10" HorizontalOffset="200" 
+								   IsLightDismissEnabled="True" >
+                <Popup.Child>
+                    <Border x:Name="PopupBorder"
+											Background="Red"
+											Height="320"
+											VerticalAlignment="Bottom">
+                        <TextBlock Text="My Popup"/>
+                    </Border>
+                </Popup.Child>
+            </Popup>
+        </Grid>
+
+
+        <!--<ios:Grid>
+        <Popup x:Name="Popup" Grid.Row="1"
+								   IsLightDismissEnabled="True"
+Visibility="Collapsed"
+               >
+            <Popup.Child>
+                <Border x:Name="PopupBorder"
+											Background="Red"
+											Height="320"
+											VerticalAlignment="Bottom">
+                    <Picker Height="320"
+												VerticalAlignment="Top"
+												Placeholder="{TemplateBinding PlaceholderText}"
+												ItemTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+												DisplayMemberPath="{TemplateBinding DisplayMemberPath}"
+												ItemTemplate="{TemplateBinding ItemTemplate}"
+												ItemsSource="{TemplateBinding ItemsSource}"
+												ItemContainerStyle="{StaticResource PickerItemStyle}"
+												SelectedItem="{Binding SelectedItem, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" />
+                </Border>
+            </Popup.Child>
+        </Popup>
+        </ios:Grid>-->
     </Grid>
 </Page>

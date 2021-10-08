@@ -174,12 +174,12 @@ DependencyProperty.RegisterAttached(
         return element;
     }
 
-    public static void SetIsRegion(FrameworkElement element, bool value)
+    public static void SetIsRegion(DependencyObject element, bool value)
     {
         element.SetValue(IsRegionProperty, value);
     }
 
-    public static bool GetIsRegion(FrameworkElement element)
+    public static bool GetIsRegion(DependencyObject element)
     {
         return (bool)element.GetValue(IsRegionProperty);
     }
