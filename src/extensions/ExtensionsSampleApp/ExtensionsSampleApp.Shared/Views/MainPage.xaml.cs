@@ -7,6 +7,7 @@ using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Dialogs;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 
 namespace ExtensionsSampleApp.Views
 {
@@ -91,5 +92,9 @@ namespace ExtensionsSampleApp.Views
             var response = await navresult.Result;
         }
 
+        private void ShowPopupManualClick(object sender, RoutedEventArgs e)
+        {
+            MyPopup.IsOpen = true;
+        }
     }
 }

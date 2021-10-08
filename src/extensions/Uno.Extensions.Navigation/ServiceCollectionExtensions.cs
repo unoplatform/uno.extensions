@@ -5,9 +5,12 @@ using Uno.Extensions.Navigation.ViewModels;
 using Windows.UI.Popups;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 #else
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 #endif
 
 namespace Uno.Extensions.Navigation;
@@ -31,6 +34,7 @@ public static class ServiceCollectionExtensions
                    .AddRegion<Microsoft.UI.Xaml.Controls.NavigationView, NavigationViewRegion>()
                     .AddRegion<ContentDialog, ContentDialogRegion>()
                     .AddRegion<MessageDialog, MessageDialogRegion>()
+                    .AddRegion<Popup, PopupRegion>()
 
                     // Register the navigation mappings repository
                     .AddSingleton<IRouteMappings, RouteMappings>()

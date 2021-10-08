@@ -43,4 +43,6 @@ public static class RouteConstants
     public const string MessageDialogParameterDefaultCommand = MessageDialogUri + "default";
     public const string MessageDialogParameterCancelCommand = MessageDialogUri + "cancel";
     public const string MessageDialogParameterCommands = MessageDialogUri + "commands";
+
+    public const string PopupShow = "Show";
 }
