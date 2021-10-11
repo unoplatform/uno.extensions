@@ -11,14 +11,16 @@
     <AssemblyName>ExtensionsSampleApp</AssemblyName>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <DefineConstants>$(DefineConstants);UNO_UWP_COMPATIBILITY</DefineConstants>
     <ResourcesDirectory>..\ExtensionsSampleApp.Shared\Strings</ResourcesDirectory>
+    <ProvisioningType>automatic</ProvisioningType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\iPhoneSimulator\Debug</OutputPath>
-    <DefineConstants>DEBUG</DefineConstants>
+    <DefineConstants>$(DefineConstants);DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -43,15 +45,18 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\iPhone\Debug</OutputPath>
-    <DefineConstants>DEBUG</DefineConstants>
+    <DefineConstants>$(DefineConstants);DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <MtouchArch>ARM64</MtouchArch>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
-    <CodesignKey>iPhone Developer</CodesignKey>
+    <CodesignKey>Apple Development: Nick Randolph (UWH57C8LKA)</CodesignKey>
     <MtouchDebug>true</MtouchDebug>
     <MtouchExtraArgs>--setenv=MONO_LOG_LEVEL=debug --setenv=MONO_LOG_MASK=gc --setenv=MONO_GC_PARAMS=soft-heap-limit=512m,nursery-size=64m,evacuation-threshold=66,major=marksweep,concurrent-sweep</MtouchExtraArgs>
+    <CodesignProvision>VS: WildCard Development</CodesignProvision>
+    <MtouchInterpreter>-all</MtouchInterpreter>
+    <DeviceSpecificBuild>false</DeviceSpecificBuild>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>none</DebugType>
@@ -119,10 +124,13 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions">
       <Version>6.0.0-preview.7.21377.19</Version>
     </PackageReference>
-    <PackageReference Include="Uno.UI" Version="3.10.0-dev.376" />
-    <PackageReference Include="Uno.UI.RemoteControl" Version="3.9.7" Condition="'$(Configuration)'=='Debug'" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
-    <PackageReference Include="Uno.Extensions.Logging.OSLog " Version="1.3.0-dev.1" />
+    <PackageReference Include="Uno.UI" Version="3.11.0-dev.270" />
+    <PackageReference Include="Uno.UI.RemoteControl" Version="3.11.0-dev.270" Condition="'$(Configuration)'=='Debug'" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0-preview.7.21377.19" />
+    <PackageReference Include="Uno.Extensions.Logging.OSLog" Version="1.3.0-dev.1" />
+    <PackageReference Include="Uno.UI.Toolkit">
+      <Version>255.255.255.255</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <ImageAsset Include="Media.xcassets\AppIcons.appiconset\Contents.json">
@@ -157,7 +165,41 @@
     <None Include="Info.plist" />
     <None Include="Entitlements.plist" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj">
+      <Project>{0dde79de-181b-42ef-af00-56dc622a6afa}</Project>
+      <Name>Uno.Extensions.Configuration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Uno.Extensions.Core\Uno.Extensions.Core.csproj">
+      <Project>{0bf9edde-e6c1-4a3a-b73d-02d867f2054c}</Project>
+      <Name>Uno.Extensions.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj">
+      <Project>{ea4f9862-63ee-47d6-bd2b-2d1b83e2fd6a}</Project>
+      <Name>Uno.Extensions.Hosting</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Uno.Extensions.Http\Uno.Extensions.Http.csproj">
+      <Project>{29bfc492-b537-4985-9163-649fc56ebf12}</Project>
+      <Name>Uno.Extensions.Http</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Uno.Extensions.Localization\Uno.Extensions.Localization.csproj">
+      <Project>{3f8f8b81-03af-48e8-a901-ab3b14f15b10}</Project>
+      <Name>Uno.Extensions.Localization</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Uno.Extensions.Logging\Uno.Extensions.Logging.csproj">
+      <Project>{406a741f-fb06-482f-9037-154b55fcb2ce}</Project>
+      <Name>Uno.Extensions.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj">
+      <Project>{ad3c0a66-450d-4355-b5c4-fdaf0d7746ad}</Project>
+      <Name>Uno.Extensions.Navigation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj">
+      <Project>{5123670c-9756-4c9e-9844-f4a9c0aee633}</Project>
+      <Name>Uno.Extensions.Serialization</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="XamarinForms.targets" Condition="'$(Configuration)'=='Debug'" />
   <Import Project="..\ExtensionsSampleApp.Shared\ExtensionsSampleApp.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>
