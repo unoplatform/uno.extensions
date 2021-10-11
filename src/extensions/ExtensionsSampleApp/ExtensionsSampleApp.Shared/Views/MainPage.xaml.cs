@@ -82,11 +82,11 @@ namespace ExtensionsSampleApp.Views
             var response = await navresult.Result;
         }
 
-        private async void ContentDialogResultAndWidgetResponseClick(object sender, RoutedEventArgs e)
-        {
-            var navresult = await Navigation.NavigateToViewAsync<SimpleContentDialog, ContentResult>(this, RouteConstants.Schemes.Dialog);
-            var response = await navresult.Result;
-        }
+        //private async void ContentDialogResultAndWidgetResponseClick(object sender, RoutedEventArgs e)
+        //{
+        //    var navresult = await Navigation.NavigateToViewAsync<SimpleContentDialog, ContentResult>(this, RouteConstants.Schemes.Dialog);
+        //    var response = await navresult.Result;
+        //}
 
         private async void MessageDialogClick(object sender, RoutedEventArgs e)
         {
