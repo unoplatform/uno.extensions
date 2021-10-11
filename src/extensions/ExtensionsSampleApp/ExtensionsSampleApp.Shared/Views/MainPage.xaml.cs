@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using ExtensionsSampleApp.ViewModels;
 using Uno.Extensions.Navigation;
-using Uno.Extensions.Navigation.Dialogs;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;

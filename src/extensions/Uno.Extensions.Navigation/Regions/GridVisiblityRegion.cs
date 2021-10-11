@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
-using Uno.Extensions.Navigation.Dialogs;
 using Uno.Extensions.Navigation.ViewModels;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml;
@@ -26,7 +25,8 @@ public class GridVisiblityRegion : SimpleRegion<Grid>
         INavigationService navigation,
         IViewModelManager viewModelManager,
         IRouteMappings mappings,
-        RegionControlProvider controlProvider) : base(logger, scopedServices, navigation, viewModelManager, mappings, controlProvider.RegionControl as Grid)
+        RegionControlProvider controlProvider)
+        : base(logger, scopedServices, navigation, viewModelManager, mappings, controlProvider.RegionControl as Grid)
     {
     }
 

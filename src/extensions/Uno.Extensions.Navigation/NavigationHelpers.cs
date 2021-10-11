@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Regions;
+using Uno.Extensions.Navigation.Controls;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml;
 using Windows.UI.Xaml;
@@ -259,5 +260,29 @@ public static class NavigationHelpers
         }
 
         return null;
+    }
+
+    public static void InjectServicesAndSetDataContext(this object view, IServiceProvider services, INavigationService navigation, object viewModel)
+    {
+        if (view is FrameworkElement fe)
+        {
+            fe.SetNavigationService(navigation);
+
+            if (viewModel is not null &&
+                fe.DataContext != viewModel)
+            {
+                fe.DataContext = viewModel;
+            }
+        }
+
+        if (view is IInjectable<INavigationService> navAware)
+        {
+            navAware.Inject(navigation);
+        }
+
+        if (view is IInjectable<IServiceProvider> spAware)
+        {
+            spAware.Inject(services);
+        }
     }
 }
