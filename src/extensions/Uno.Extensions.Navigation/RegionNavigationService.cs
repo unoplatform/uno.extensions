@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
-using Uno.Extensions.Navigation.Dialogs;
 using Uno.Extensions.Navigation.Regions;
 
 namespace Uno.Extensions.Navigation;

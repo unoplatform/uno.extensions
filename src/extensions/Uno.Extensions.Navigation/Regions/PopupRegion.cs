@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
-using Uno.Extensions.Navigation.Dialogs;
 using Uno.Extensions.Navigation.ViewModels;
 #if !WINDOWS_UWP && !WINUI
 using Popup = Windows.UI.Xaml.Controls.Popup;

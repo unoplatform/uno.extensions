@@ -4,7 +4,6 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
-using Uno.Extensions.Navigation.Dialogs;
 using Uno.Extensions.Navigation.Regions;
 
 namespace Uno.Extensions.Navigation;
