@@ -31,6 +31,8 @@ namespace ExtensionsSampleApp.ViewModels
 
         private void NavigateToSecondPage() => Navigation.NavigateToViewModelAsync<SecondViewModel>(this, data: new Widget());
 
+        public List<string> PickerItems { get; } = new List<string>() { "One", "Two", "Three" };
+
     }
 
     public class SecondViewModel : IViewModelStart, IViewModelStop

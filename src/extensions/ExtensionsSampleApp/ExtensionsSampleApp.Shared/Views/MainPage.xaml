@@ -9,6 +9,11 @@
       			 xmlns:ios="http://uno.ui/ios"
 
       mc:Ignorable="d">
+    <Page.Resources>
+        <DataTemplate x:Key="PickerTemplate">
+            <TextBlock Text="{Binding}" Foreground="Green" FontSize="32"/>
+        </DataTemplate>
+    </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
@@ -69,7 +74,8 @@
                 <Button Content="Show popup Manual"
                      Click="ShowPopupManualClick"/>
             </StackPanel>
-            <Popup x:Name="MyPopup" nav:Navigation.IsRegion="True" 
+            <Popup x:Name="MyPopup"
+                   nav:Navigation.IsRegion="True" 
                    VerticalOffset="10" HorizontalOffset="200" 
 								   IsLightDismissEnabled="True" >
                 <Popup.Child>
@@ -86,23 +92,22 @@
 
         <!--<ios:Grid>
         <Popup x:Name="Popup" Grid.Row="1"
+                
 								   IsLightDismissEnabled="True"
-Visibility="Collapsed"
                >
             <Popup.Child>
                 <Border x:Name="PopupBorder"
-											Background="Red"
+											Background="Pink"
 											Height="320"
 											VerticalAlignment="Bottom">
-                    <Picker Height="320"
-												VerticalAlignment="Top"
-												Placeholder="{TemplateBinding PlaceholderText}"
-												ItemTemplateSelector="{TemplateBinding ItemTemplateSelector}"
-												DisplayMemberPath="{TemplateBinding DisplayMemberPath}"
-												ItemTemplate="{TemplateBinding ItemTemplate}"
-												ItemsSource="{TemplateBinding ItemsSource}"
-												ItemContainerStyle="{StaticResource PickerItemStyle}"
-												SelectedItem="{Binding SelectedItem, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" />
+                        <Picker Height="320"
+												VerticalAlignment="Top" ItemsSource="{Binding PickerItems}">
+                            <Picker.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}" Foreground="Blue" />
+                                </DataTemplate>
+                            </Picker.ItemTemplate>
+                        </Picker>
                 </Border>
             </Popup.Child>
         </Popup>

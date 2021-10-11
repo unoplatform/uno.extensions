@@ -1,4 +1,6 @@
 ﻿using UIKit;
+using Foundation;
+
 
 namespace ExtensionsSampleApp.iOS
 {
@@ -12,4 +14,16 @@ namespace ExtensionsSampleApp.iOS
 			UIApplication.Main(args, null, typeof(App));
 		}
 	}
+
+
+#if DEBUG
+    public class HotRestartDelegate : Xamarin.Forms.Platform.iOS.FormsApplicationDelegate
+    {
+        public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
+        {
+            Windows.UI.Xaml.Application.Start(_ => new App());
+            return base.FinishedLaunching(uiApplication, launchOptions);
+        }
+    }
+#endif
 }

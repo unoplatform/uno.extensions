@@ -29,6 +29,7 @@ nuget add .\src\extensions\Uno.Extensions.Logging\bin\Release\Uno.Extensions.Log
 @REM nuget add .\src\extensions\Uno.Extensions.Logging.Serilog\bin\Release\Uno.Extensions.Logging.Serilog.1.0.0.nupkg -Source .\unofeed
 
 rmdir .\unofeed\uno.extensions.navigation /s /q
+copy .\src\extensions\Uno.Extensions.Navigation\bin\Release\Uno.Extensions.Navigation.1.0.0.nupkg .\unofeed\
 nuget add .\src\extensions\Uno.Extensions.Navigation\bin\Release\Uno.Extensions.Navigation.1.0.0.nupkg -Source .\unofeed
 
 @REM rmdir .\unofeed\uno.extensions.serialization /s /q

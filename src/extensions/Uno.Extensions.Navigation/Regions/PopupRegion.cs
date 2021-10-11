@@ -3,6 +3,9 @@ using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Dialogs;
 using Uno.Extensions.Navigation.ViewModels;
+#if !WINDOWS_UWP
+using Popup = Windows.UI.Xaml.Controls.Popup;
+#endif
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;

@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Windows.UI.Popups;
+using Windows.UI.Xaml.Controls;
 using UICommand = Windows.UI.Popups.UICommand;
 
 namespace Uno.Extensions.Navigation;
@@ -104,4 +105,23 @@ public static class NavigationServiceExtensions
         var result = await service.NavigateAsync(new NavigationRequest(sender, new Route(new Uri(RouteConstants.Schemes.Dialog + "/" + typeof(MessageDialog).Name, UriKind.Relative), data), cancellation, typeof(UICommand)));
         return NavigationResponse<UICommand>.FromResponse(result);
     }
+
+#if __IOS__
+    public static async Task<NavigationResponse<TSource>> ShowPickerAsync<TSource>(
+       this INavigationService service,
+       object sender,
+       IEnumerable<TSource> itemsSource,
+       object itemTemplate = null,
+       CancellationToken cancellation = default)
+    {
+        var data = new Dictionary<string, object>()
+            {
+                { RouteConstants.PickerItemsSource, itemsSource},
+                { RouteConstants.PickerItemTemplate, itemTemplate}
+            };
+
+        var result = await service.NavigateAsync(new NavigationRequest(sender, new Route(new Uri(RouteConstants.Schemes.Dialog + "/" + typeof(Picker).Name, UriKind.Relative), data), cancellation, typeof(TSource)));
+        return NavigationResponse<TSource>.FromResponse(result);
+    }
+#endif
 }

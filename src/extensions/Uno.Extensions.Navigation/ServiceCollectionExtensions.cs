@@ -3,6 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Regions;
 using Uno.Extensions.Navigation.ViewModels;
 using Windows.UI.Popups;
+#if !WINDOWS_UWP
+using Popup = Windows.UI.Xaml.Controls.Popup;
+#endif
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -34,6 +37,9 @@ public static class ServiceCollectionExtensions
                    .AddRegion<Microsoft.UI.Xaml.Controls.NavigationView, NavigationViewRegion>()
                     .AddRegion<ContentDialog, ContentDialogRegion>()
                     .AddRegion<MessageDialog, MessageDialogRegion>()
+#if __IOS__
+                    .AddRegion<Picker, PickerRegion>()
+#endif
                     .AddRegion<Popup, PopupRegion>()
 
                     // Register the navigation mappings repository

@@ -44,5 +44,9 @@ public static class RouteConstants
     public const string MessageDialogParameterCancelCommand = MessageDialogUri + "cancel";
     public const string MessageDialogParameterCommands = MessageDialogUri + "commands";
 
+    private const string PickerPrefix = "__picker__";
+    public const string PickerItemsSource = PickerPrefix + "itemssource";
+    public const string PickerItemTemplate = PickerPrefix + "itemtemplate";
+
     public const string PopupShow = "Show";
 }

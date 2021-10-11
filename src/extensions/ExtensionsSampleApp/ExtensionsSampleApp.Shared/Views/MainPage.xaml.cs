@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -92,9 +93,21 @@ namespace ExtensionsSampleApp.Views
             var response = await navresult.Result;
         }
 
-        private void ShowPopupManualClick(object sender, RoutedEventArgs e)
+        private async void ShowPopupManualClick(object sender, RoutedEventArgs e)
         {
-            MyPopup.IsOpen = true;
+#if __IOS__
+            try
+            {
+                var navresult = await Navigation.ShowPickerAsync(this, new List<string> { "One", "Two", "Three", "Four" }, this.Resources["PickerTemplate"]);
+                var result = await navresult.Result;
+                var msgresult = await Navigation.ShowMessageDialogAsync(this, result, "Result");
+            }
+            catch (Exception ex)
+            {
+                var msgerror = await Navigation.ShowMessageDialogAsync(this, ex.StackTrace, "Error - " + ex.Message);
+
+            }
+#endif
         }
     }
 }
