@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Dialogs;
 using Uno.Extensions.Navigation.ViewModels;
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !WINUI
 using Popup = Windows.UI.Xaml.Controls.Popup;
 #endif
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 #else
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Controls.Primitives;
 #endif
 
 namespace Uno.Extensions.Navigation.Regions;

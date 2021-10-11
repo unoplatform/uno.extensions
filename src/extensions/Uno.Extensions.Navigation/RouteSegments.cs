@@ -23,7 +23,7 @@ public record RouteSegments(string Scheme, string[] Segments, IDictionary<string
 
     public string Base => TrimmedFrameBase.TrimStart(RouteConstants.RelativePath.Root);
 
-    public bool IsRooted => TrimmedFrameBase.StartsWith(RouteConstants.RelativePath.Root);
+    public bool IsRooted => TrimmedFrameBase.StartsWith(RouteConstants.RelativePath.Root + string.Empty);
 
     private int NumberOfGoBackInBase => FrameBase.TakeWhile(x => x == RouteConstants.RelativePath.GoBack).Count();
     public int NumberOfPagesToRemove => IsBackNavigation ? NumberOfGoBackInBase - 1 : NumberOfGoBackInBase;

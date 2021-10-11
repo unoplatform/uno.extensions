@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Regions;
 using Uno.Extensions.Navigation.ViewModels;
 using Windows.UI.Popups;
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !WINUI
 using Popup = Windows.UI.Xaml.Controls.Popup;
 #endif
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
