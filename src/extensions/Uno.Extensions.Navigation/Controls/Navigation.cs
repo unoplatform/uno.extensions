@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml;
@@ -9,11 +11,13 @@ using Microsoft.UI.Xaml.Media;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
 #else
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
 #endif
 using Uno.Extensions.Logging;
@@ -228,25 +232,29 @@ DependencyProperty.RegisterAttached(
         if (d is ButtonBase element)
         {
             var path = GetNavigateOnClickPath(element);
-            RoutedEventHandler handler = async (s, e) =>
+            var command = new AsyncRelayCommand(async () =>
+            {
+                try
                 {
-                    try
-                    {
-                        var nav = NavigationServiceForControl(s as DependencyObject);
-                        await nav.NavigateByPathAsync(s, path);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.LazyLogError(() => $"Navigation failed - {ex.Message}");
-                    }
-                };
+                    var nav = NavigationServiceForControl(element);
+                    await nav.NavigateByPathAsync(element, path);
+                }
+                catch (Exception ex)
+                {
+                    Logger.LazyLogError(() => $"Navigation failed - {ex.Message}");
+                }
+            });
+            var binding = new Binding { Source = command, Path = new PropertyPath(nameof(command.IsRunning)), Converter = new InvertConverter() };
+
             element.Loaded += (s, e) =>
             {
-                element.Click += handler;
+                element.Command = command;
+                element.SetBinding(ButtonBase.IsEnabledProperty, binding);
             };
             element.Unloaded += (s, e) =>
             {
-                element.Click -= handler;
+                element.Command = null;
+                element.ClearValue(ButtonBase.IsEnabledProperty);
             };
         }
     }
@@ -293,5 +301,18 @@ DependencyProperty.RegisterAttached(
     public static string GetNavigateOnClickPath(FrameworkElement element)
     {
         return (string)element.GetValue(NavigateOnClickPathProperty);
+    }
+
+    private class InvertConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            return !(bool)value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            return value;
+        }
     }
 }
