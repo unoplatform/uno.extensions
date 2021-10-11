@@ -17,7 +17,7 @@
                 <muxc:NavigationViewItem Tag="home"
                                          Icon="Home"
                                          Content="Home"
-nav:Navigation.NavigateOnClickPath="./Content1"
+nav:Navigation.NavigateOnClickRoute="./Content1"
                                          />
                 <muxc:NavigationViewItemSeparator />
                 <muxc:NavigationViewItemHeader x:Name="MainPagesHeader"
@@ -25,7 +25,7 @@ nav:Navigation.NavigateOnClickPath="./Content1"
                                                 />
                 <muxc:NavigationViewItem Tag="apps"
                                          Content="Apps"
-                                         nav:Navigation.NavigateOnClickPath="./Content2">
+                                         nav:Navigation.NavigateOnClickRoute="./Content2">
                     <muxc:NavigationViewItem.Icon>
                         <FontIcon FontFamily="Segoe MDL2 Assets"
                                   Glyph="&#xEB3C;" />

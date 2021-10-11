@@ -26,7 +26,7 @@ public static class NavigationHelpers
 
         if (view is FrameworkElement fe)
         {
-            var path = Navigation.Controls.Navigation.GetPath(fe);
+            var path = Navigation.Controls.Navigation.GetRoute(fe);
             if (string.IsNullOrWhiteSpace(path))
             {
                 path = fe.Name;

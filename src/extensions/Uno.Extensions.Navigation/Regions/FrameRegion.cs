@@ -34,56 +34,57 @@ public class FrameRegion : StackRegion<Frame>
         if (Control.Content is not null)
         {
             Logger.LazyLogDebug(() => $"Navigating to type '{Control.SourcePageType.Name}' (initial Content set on Frame)");
-
-            var request = mappings.LookupByView(Control.Content.GetType()).AsRequest(this);
-            var context = request.BuildNavigationContext(ScopedServices);
-
-            //// This happens when the SourcePageType property is set on the Frame. The
-            //// page is set as the content, without actually navigating to the page
-            //Navigation.NavigateToViewAsync(null, Control.SourcePageType);
-            InitialiseView(context);
+            UpdateCurrentView();
         }
 
         Control.Navigated += Frame_Navigated;
     }
 
+    private void UpdateCurrentView()
+    {
+        var request = Mappings.LookupByView(Control.Content.GetType()).AsRequest(this);
+        var context = request.BuildNavigationContext(ScopedServices);
+        InitialiseView(context);
+    }
+
     private void Frame_Navigated(object sender, NavigationEventArgs e)
     {
         Logger.LazyLogDebug(() => $"Frame has navigated to page '{e.SourcePageType.Name}'");
-        // This happens when the Navigate method is called directly on the Frame,
-        // rather than via the navigationservice api
-        if (e.NavigationMode == NavigationMode.New)
-        {
-            Navigation.NavigateToViewAsync(null, Control.SourcePageType, data: e.Parameter);
-        }
-        else
-        {
-            Navigation.NavigateToPreviousViewAsync(null, data: e.Parameter);
-        }
+
+        UpdateCurrentView();
+        //// This happens when the Navigate method is called directly on the Frame,
+        //// rather than via the navigationservice api
+        //if (e.NavigationMode == NavigationMode.New)
+        //{
+        //    Navigation.NavigateToViewAsync(null, Control.SourcePageType, data: e.Parameter);
+        //}
+        //else
+        //{
+        //    Navigation.NavigateToPreviousViewAsync(null, data: e.Parameter);
+        //}
     }
 
     protected override void GoBack(object parameter)
     {
         try
         {
-            //if (Control.Content?.GetType() != view)
-            //{
-                if (parameter is not null)
-                {
-                    Logger.LazyLogDebug(() => $"Replacing last backstack item to inject parameter '{parameter.GetType().Name}'");
-                    // If a parameter is being sent back, we need to replace
-                    // the last frame on the backstack with one that has the correct
-                    // parameter value. This value can be extracted via the OnNavigatedTo method
-                    var entry = Control.BackStack.Last();
-                    var newEntry = new PageStackEntry(entry.SourcePageType, parameter, entry.NavigationTransitionInfo);
-                    Control.BackStack.Remove(entry);
-                    Control.BackStack.Add(newEntry);
-                }
+            Control.Navigated -= Frame_Navigated;
+            if (parameter is not null)
+            {
+                Logger.LazyLogDebug(() => $"Replacing last backstack item to inject parameter '{parameter.GetType().Name}'");
+                // If a parameter is being sent back, we need to replace
+                // the last frame on the backstack with one that has the correct
+                // parameter value. This value can be extracted via the OnNavigatedTo method
+                var entry = Control.BackStack.Last();
+                var newEntry = new PageStackEntry(entry.SourcePageType, parameter, entry.NavigationTransitionInfo);
+                Control.BackStack.Remove(entry);
+                Control.BackStack.Add(newEntry);
+            }
 
-                Logger.LazyLogDebug(() => $"Invoking Frame.GoBack");
-                Control.GoBack();
-                Logger.LazyLogDebug(() => $"Frame.GoBack completed");
-            //}
+            Logger.LazyLogDebug(() => $"Invoking Frame.GoBack");
+            Control.GoBack();
+            Logger.LazyLogDebug(() => $"Frame.GoBack completed");
+            Control.Navigated += Frame_Navigated;
         }
         catch (Exception ex)
         {

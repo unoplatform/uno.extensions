@@ -208,30 +208,30 @@ DependencyProperty.RegisterAttached(
         return (bool)element.GetValue(IsCompositeRegionProperty);
     }
 
-    public static readonly DependencyProperty NavigateOnClickPathProperty =
+    public static readonly DependencyProperty NavigateOnClickRouteProperty =
                 DependencyProperty.RegisterAttached(
-                  "NavigateOnClickPath",
+                  "NavigateOnClickRoute",
                   typeof(string),
                   typeof(Navigation),
-                  new PropertyMetadata(null, NavigateOnClickPathChanged)
+                  new PropertyMetadata(null, NavigateOnClickRouteChanged)
                 );
 
-    public static readonly DependencyProperty PathProperty =
+    public static readonly DependencyProperty RouteProperty =
                 DependencyProperty.RegisterAttached(
-                  "Path",
+                  "Route",
                   typeof(string),
                   typeof(Navigation),
                   new PropertyMetadata(null)
                 );
 
-    private static void NavigateOnClickPathChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    private static void NavigateOnClickRouteChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        // Make sure we set the Path property too
-        d.SetValue(PathProperty, e.NewValue);
+        // Make sure we set the Route property too
+        d.SetValue(RouteProperty, e.NewValue);
 
         if (d is ButtonBase element)
         {
-            var path = GetNavigateOnClickPath(element);
+            var path = GetNavigateOnClickRoute(element);
             var command = new AsyncRelayCommand(async () =>
             {
                 try
@@ -283,24 +283,24 @@ DependencyProperty.RegisterAttached(
         return parent is not null ? ServiceForControl(parent, getService) : default;
     }
 
-    public static void SetPath(FrameworkElement element, string value)
+    public static void SetRoute(FrameworkElement element, string value)
     {
-        element.SetValue(PathProperty, value);
+        element.SetValue(RouteProperty, value);
     }
 
-    public static string GetPath(FrameworkElement element)
+    public static string GetRoute(FrameworkElement element)
     {
-        return (string)element.GetValue(PathProperty);
+        return (string)element.GetValue(RouteProperty);
     }
 
-    public static void SetNavigateOnClickPath(FrameworkElement element, string value)
+    public static void SetNavigateOnClickRoute(FrameworkElement element, string value)
     {
-        element.SetValue(NavigateOnClickPathProperty, value);
+        element.SetValue(NavigateOnClickRouteProperty, value);
     }
 
-    public static string GetNavigateOnClickPath(FrameworkElement element)
+    public static string GetNavigateOnClickRoute(FrameworkElement element)
     {
-        return (string)element.GetValue(NavigateOnClickPathProperty);
+        return (string)element.GetValue(NavigateOnClickRouteProperty);
     }
 
     private class InvertConverter : IValueConverter

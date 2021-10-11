@@ -37,7 +37,7 @@ namespace ExtensionsSampleApp.Views
 
         private void NavView_ItemInvoked(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs args)
         {
-            var navPath = Uno.Extensions.Navigation.Controls.Navigation.GetPath(args.InvokedItemContainer as FrameworkElement);
+            var navPath = Uno.Extensions.Navigation.Controls.Navigation.GetRoute(args.InvokedItemContainer as FrameworkElement);
             Navigation.NavigateByPathAsync(this, navPath);
         }
     }
