@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
-using Uno.Extensions.Navigation.Dialogs;
 
 namespace Uno.Extensions.Navigation;
 

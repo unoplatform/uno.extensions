@@ -5,7 +5,6 @@ using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Controls;
 using Uno.UI.ToolkitLib;
 using Uno.Extensions.Navigation.ViewModels;
-using Uno.Extensions.Navigation.Dialogs;
 using Uno.Extensions.Navigation.Regions;
 
 namespace ExtensionsSampleApp.Region.Managers
