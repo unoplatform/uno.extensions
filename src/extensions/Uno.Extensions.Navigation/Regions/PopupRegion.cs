@@ -41,7 +41,7 @@ public class PopupRegion : SimpleRegion<Popup>
     {
         try
         {
-            Control.IsOpen= path == RouteConstants.PopupShow;
+            Control.IsOpen = path == RouteConstants.PopupShow;
         }
         catch (Exception ex)
         {

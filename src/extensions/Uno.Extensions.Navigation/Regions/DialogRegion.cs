@@ -51,6 +51,5 @@ namespace Uno.Extensions.Navigation.Regions
         protected abstract object CloseDialog(Dialog dialog, NavigationContext context, object responseData);
 
         protected abstract Dialog DisplayDialog(NavigationContext context, object vm);
-
     }
 }

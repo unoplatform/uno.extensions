@@ -73,12 +73,12 @@ public static class NavigationServiceExtensions
     {
         var mapping = Ioc.Default.GetRequiredService<IRouteMappings>();
         var map = mapping.LookupByResultData(typeof(TResultData));
-        return service.NavigateAsync(new NavigationRequest(sender, new Route(new Uri(map.FullPath(relativePathModifier), UriKind.Relative)), cancellation,typeof(TResultData)));
+        return service.NavigateAsync(new NavigationRequest(sender, new Route(new Uri(map.FullPath(relativePathModifier), UriKind.Relative)), cancellation, typeof(TResultData)));
     }
 
     public static Task<NavigationResponse> NavigateToPreviousViewAsync(this INavigationService service, object sender, string relativePathModifier = RouteConstants.Schemes.Parent, object data = null, CancellationToken cancellation = default)
     {
-        return service.NavigateAsync(new NavigationRequest(sender, new Route(new Uri(RouteMap.CombinePathWithRelativePath(RouteConstants.RelativePath.GoBack+string.Empty, relativePathModifier), UriKind.Relative), data), cancellation));
+        return service.NavigateAsync(new NavigationRequest(sender, new Route(new Uri(RouteMap.CombinePathWithRelativePath(RouteConstants.RelativePath.GoBack + string.Empty, relativePathModifier), UriKind.Relative), data), cancellation));
     }
 
     public static async Task<NavigationResponse<Windows.UI.Popups.UICommand>> ShowMessageDialogAsync(
@@ -116,8 +116,8 @@ public static class NavigationServiceExtensions
     {
         var data = new Dictionary<string, object>()
             {
-                { RouteConstants.PickerItemsSource, itemsSource},
-                { RouteConstants.PickerItemTemplate, itemTemplate}
+                { RouteConstants.PickerItemsSource, itemsSource },
+                { RouteConstants.PickerItemTemplate, itemTemplate }
             };
 
         var result = await service.NavigateAsync(new NavigationRequest(sender, new Route(new Uri(RouteConstants.Schemes.Dialog + "/" + typeof(Picker).Name, UriKind.Relative), data), cancellation, typeof(TSource)));

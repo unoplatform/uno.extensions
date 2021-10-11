@@ -25,7 +25,6 @@ public class MessageDialogRegion : DialogRegion
     {
     }
 
-
     protected override object CloseDialog(Dialog dialog, NavigationContext context, object responseData)
     {
         dialog.ShowTask.Cancel();

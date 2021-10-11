@@ -39,7 +39,6 @@ public class CompositeNavigationService : NavigationService, IRegionNavigationSe
 
     public async override Task<NavigationResponse> NavigateAsync(NavigationRequest request)
     {
-
         // At this point, any residual request needs to be handed
         // down to the appropriate nested service
         var nestedNavigationResponse = await RunNestedNavigation(request);

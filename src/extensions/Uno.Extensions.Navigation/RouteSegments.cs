@@ -15,7 +15,7 @@ public record RouteSegments(string Scheme, string[] Segments, IDictionary<string
 
     public bool IsDialog => Scheme == RouteConstants.Schemes.Dialog;
 
-    private string TrimmedFrameBase = Segments.FirstOrDefault().TrimStart(
+    private string TrimmedFrameBase => Segments.FirstOrDefault().TrimStart(
         RouteConstants.RelativePath.GoBack,
         RouteConstants.RelativePath.GoForward);
 

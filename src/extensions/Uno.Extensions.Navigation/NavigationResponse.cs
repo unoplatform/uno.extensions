@@ -2,11 +2,15 @@
 
 namespace Uno.Extensions.Navigation;
 
+#pragma warning disable SA1313 // Parameter names should begin with lower-case letter
 public record NavigationResponse(NavigationRequest Request, Task<Options.Option> Result) : BaseNavigationResponse(Request)
+#pragma warning restore SA1313 // Parameter names should begin with lower-case letter
 {
 }
 
+#pragma warning disable SA1313 // Parameter names should begin with lower-case letter
 public record NavigationResponse<TResult>(NavigationRequest Request, Task<Options.Option<TResult>> Result) : BaseNavigationResponse(Request)
+#pragma warning restore SA1313 // Parameter names should begin with lower-case letter
 {
     public static NavigationResponse<TResult> FromResponse(NavigationResponse response)
     {
@@ -23,6 +27,8 @@ public record NavigationResponse<TResult>(NavigationRequest Request, Task<Option
     }
 }
 
+#pragma warning disable SA1313 // Parameter names should begin with lower-case letter
 public record BaseNavigationResponse(NavigationRequest Request)
+#pragma warning restore SA1313 // Parameter names should begin with lower-case letter
 {
 }

@@ -18,7 +18,6 @@ namespace Uno.Extensions.Navigation.Regions;
 
 public class ContentDialogRegion : DialogRegion
 {
-
     public ContentDialogRegion(
         ILogger<ContentDialogRegion> logger,
         IServiceProvider scopedServices,

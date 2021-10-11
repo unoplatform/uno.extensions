@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Controls;
-using Uno.Extensions.Navigation.Dialogs;
 using Uno.Extensions.Navigation.ViewModels;
-using Microsoft.Extensions.DependencyInjection;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
-using Microsoft.UI.Xaml;
 using Windows.UI.Xaml;
 #else
 using Microsoft.UI.Xaml;
@@ -133,7 +129,6 @@ public abstract class BaseRegion : IRegion, IRegionNavigate
 
     protected async Task DoForwardNavigation(NavigationContext context)
     {
-
         await RegionNavigate(context);
 
         InitialiseView(context);

@@ -38,7 +38,7 @@ public static class Navigation
     {
         get
         {
-            return logger ?? (logger = Ioc.Default.GetService<ILogger<RegionNavigationServiceFactory>>());
+            return logger ?? (logger = Ioc.Default.GetService<ILogger<NavigationServiceFactory>>());
         }
     }
 
@@ -274,7 +274,6 @@ DependencyProperty.RegisterAttached(
         // so just return the nav manager itself
         return parent is not null ? ServiceForControl(parent, getService) : default;
     }
-
 
     public static void SetPath(FrameworkElement element, string value)
     {

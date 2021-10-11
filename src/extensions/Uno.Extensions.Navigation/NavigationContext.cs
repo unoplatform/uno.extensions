@@ -16,7 +16,7 @@ public record NavigationContext(
 {
     public INavigationService Navigation => Services.GetService<INavigationService>();
 
-    public bool IsBackNavigation => Request.Segments.IsBackNavigation;// Components.NavigationPath == RouteConstants.PreviousViewUri;
+    public bool IsBackNavigation => Request.Segments.IsBackNavigation;
 
     public CancellationToken CancellationToken => CancellationSource.Token;
 

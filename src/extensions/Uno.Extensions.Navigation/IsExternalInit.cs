@@ -7,7 +7,6 @@ namespace System.Runtime.CompilerServices
     }
 }
 
-
 namespace System
 {
     /// <summary>Represent a type can be used to index a collection either from the start or the end.</summary>
@@ -277,4 +276,3 @@ namespace System.Runtime.CompilerServices
         }
     }
 }
-

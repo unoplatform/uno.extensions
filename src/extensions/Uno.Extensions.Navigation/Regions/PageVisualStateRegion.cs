@@ -29,6 +29,7 @@ public class PageVisualStateRegion : SimpleRegion<Page>
     }
 
     private string CurrentVisualState { get; set; }
+
     protected override void Show(string path, Type view, object data)
     {
         CurrentVisualState = path;
