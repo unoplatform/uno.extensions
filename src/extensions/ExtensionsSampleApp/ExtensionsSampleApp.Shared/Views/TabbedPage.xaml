@@ -40,7 +40,7 @@
                 <Button Content="Home"
                         nav:Navigation.NavigateOnClickPath="../home" />
                 <Button Content="Go back"
-                        nav:Navigation.NavigateOnClickPath="../../&lt;" />
+                        nav:Navigation.NavigateOnClickPath="../../-" />
                 <Button Content="Third Page"
                         nav:Navigation.NavigateOnClickPath="../../ThirdPage" />
                 <Button Content="Third Page"
