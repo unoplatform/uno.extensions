@@ -50,9 +50,10 @@ public static class ServiceCollectionExtensions
 
                     // Register the navigation manager and the providers for
                     // navigation data and the navigation service
-                    .AddSingleton<IRegionNavigationServiceFactory, RegionNavigationServiceFactory>()
-                    .AddSingleton<IDialogNavigationServiceFactory, DialogNavigationServiceFactory>()
-                    .AddTransient<DialogNavigationService>()
+                    .AddSingleton<NavigationServiceFactory>()
+                    .AddSingleton<IRegionNavigationServiceFactory>(services => services.GetService<NavigationServiceFactory>())
+                    .AddSingleton<IDynamicNavigationServiceFactory>(services => services.GetService<NavigationServiceFactory>())
+                    .AddTransient<DynamicNavigationService>()
 
                     .AddScoped<ScopedServiceHost<IRegion>>()
                     .AddScoped<IRegion>(services => services.GetService<ScopedServiceHost<IRegion>>().Service)

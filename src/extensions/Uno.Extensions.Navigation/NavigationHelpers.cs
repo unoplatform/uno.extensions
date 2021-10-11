@@ -193,7 +193,6 @@ public static class NavigationHelpers
 
     public static NavigationContext BuildNavigationContext(this NavigationRequest request, IServiceProvider services)
     {
-
         var scopedServices = services.CloneNavigationScopedServices();
         var dataFactor = scopedServices.GetService<ViewModelDataProvider>();
         dataFactor.Parameters = request.Segments.Parameters;
@@ -261,5 +260,4 @@ public static class NavigationHelpers
 
         return null;
     }
-
 }

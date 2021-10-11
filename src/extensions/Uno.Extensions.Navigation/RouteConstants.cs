@@ -10,7 +10,8 @@ public static class RouteConstants
         public const string Nested = ".";
         public const string Parent = "..";
         public const string Dialog = "!";
-        public static string[] All = new string[] { Parent, Current, Nested, Dialog };
+
+        public static string[] All { get; } = new string[] { Parent, Current, Nested, Dialog };
     }
 
     public static class RelativePath

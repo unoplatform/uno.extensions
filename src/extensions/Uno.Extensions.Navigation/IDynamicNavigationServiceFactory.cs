@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions.Navigation;
 
-public interface IDialogNavigationServiceFactory
+public interface IDynamicNavigationServiceFactory
 {
     IRegionNavigationService CreateService(NavigationRequest request);
 }

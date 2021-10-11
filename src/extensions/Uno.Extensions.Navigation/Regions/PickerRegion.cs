@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Uno.Extensions.Navigation.Dialogs;
 using Uno.Extensions.Navigation.ViewModels;
 using Windows.UI;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
-using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 #else
@@ -20,7 +16,6 @@ namespace Uno.Extensions.Navigation.Regions;
 
 public class PickerRegion : BaseRegion
 {
-
     public PickerRegion(
         ILogger<ContentDialogRegion> logger,
         IServiceProvider scopedServices,
@@ -71,7 +66,6 @@ public class PickerRegion : BaseRegion
 
         picker.SelectionChanged += (p, e) =>
         {
-
             var responseNav = context.Navigation as ResponseNavigationService;
             if (responseNav is not null)
             {
@@ -96,38 +90,6 @@ public class PickerRegion : BaseRegion
             }
             rootGrid.Children.Remove(popup);
         };
-
-        /*
-         * 
-         *  <Popup x:Name="Popup" Grid.Row="1"
-                nav:Navigation.IsRegion="True" 
-								   IsLightDismissEnabled="True"
-               >
-            <Popup.Child>
-                <Border x:Name="PopupBorder"
-											Background="Pink"
-											Height="320"
-											VerticalAlignment="Bottom">
-                        <Picker Height="320"
-												VerticalAlignment="Top" ItemsSource="{Binding PickerItems}">
-                            <Picker.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding}" Foreground="Blue" />
-                                </DataTemplate>
-                            </Picker.ItemTemplate>
-                        </Picker>
-                        <!--Placeholder="{TemplateBinding PlaceholderText}"
-												ItemTemplateSelector="{TemplateBinding ItemTemplateSelector}"
-												DisplayMemberPath="{TemplateBinding DisplayMemberPath}"
-												ItemTemplate="{TemplateBinding ItemTemplate}"
-												ItemsSource="{TemplateBinding ItemsSource}"
-												ItemContainerStyle="{StaticResource PickerItemStyle}"
-												SelectedItem="{Binding SelectedItem, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" />-->
-                </Border>
-            </Popup.Child>
-        </Popup>
-         * 
-         */
 #endif
         return Task.CompletedTask;
     }

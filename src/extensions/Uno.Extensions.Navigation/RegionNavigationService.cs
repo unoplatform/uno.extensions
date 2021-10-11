@@ -16,9 +16,9 @@ public class RegionNavigationService : CompositeNavigationService
 
     private int isNavigating = 0;
 
-    private IDialogNavigationServiceFactory DialogServiceFactory { get; }
+    private IDynamicNavigationServiceFactory DialogServiceFactory { get; }
 
-    public RegionNavigationService(ILogger<RegionNavigationService> logger, IDialogNavigationServiceFactory dialogServiceFactory) : base(logger)
+    public RegionNavigationService(ILogger<RegionNavigationService> logger, IDynamicNavigationServiceFactory dialogServiceFactory) : base(logger)
     {
         DialogServiceFactory = dialogServiceFactory;
     }
@@ -43,7 +43,7 @@ public class RegionNavigationService : CompositeNavigationService
                 }
                 else
                 {
-                    dialogResponse.Result.ContinueWith(t => this.Detach(dialogService));
+                    _ = dialogResponse.Result.ContinueWith(t => this.Detach(dialogService));
                 }
                 return dialogResponse;
             }
@@ -114,9 +114,6 @@ public class RegionNavigationService : CompositeNavigationService
         return null;
     }
 
-
-
-
     public override string ToString()
     {
         var sb = new StringBuilder();
@@ -149,15 +146,12 @@ public class RegionNavigationService : CompositeNavigationService
 
         base.PrintAllRegions(builder, nav, indent, regionName);
 
-
         if (nav is RegionNavigationService rns2 &&
             rns2.Region is null)
         {
             builder.AppendLine("------------------------------------------------------------------------------------------------");
         }
     }
-
-
 }
 
 public class AsyncAutoResetEvent

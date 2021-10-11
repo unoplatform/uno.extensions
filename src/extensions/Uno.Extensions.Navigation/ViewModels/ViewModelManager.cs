@@ -49,7 +49,7 @@ namespace Uno.Extensions.Navigation.ViewModels
 
         public async Task StopViewModel(NavigationContext context, object viewModel)
         {
-            var proceed= await ((viewModel as IViewModelStop)?.Stop(context.Request) ?? Task.FromResult(true));
+            var proceed = await ((viewModel as IViewModelStop)?.Stop(context.Request) ?? Task.FromResult(true));
             if (!proceed)
             {
                 context.Cancel();
