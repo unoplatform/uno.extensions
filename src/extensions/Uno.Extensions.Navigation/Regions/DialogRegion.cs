@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation.Dialogs;
 using Uno.Extensions.Navigation.ViewModels;
+using Windows.Foundation;
 
 namespace Uno.Extensions.Navigation.Regions
 {
@@ -10,7 +11,7 @@ namespace Uno.Extensions.Navigation.Regions
     {
         protected override bool CanGoBack => true;
 
-        private Dialog OpenDialog { get; set; }
+        private IAsyncInfo ShowTask { get; set; }
 
         protected override string CurrentPath => this.GetType().Name ?? string.Empty;
 
@@ -26,18 +27,19 @@ namespace Uno.Extensions.Navigation.Regions
         {
             // If this is back navigation, then make sure it's used to close
             // any of the open dialogs
-            if (context.IsBackNavigation && OpenDialog is not null)
+            if (context.IsBackNavigation && ShowTask is not null)
             {
                 await CloseDialog(context);
+                return;
             }
             var vm = ViewModelManager.CreateViewModel(context);
-            OpenDialog = DisplayDialog(context, vm);
+            ShowTask = DisplayDialog(context, vm);
         }
 
         protected async Task CloseDialog(NavigationContext navigationContext)
         {
-            var dialog = OpenDialog;
-            OpenDialog = null;
+            var dialog = ShowTask;
+            ShowTask = null;
 
             var responseData = navigationContext.Request.Segments.Parameters.TryGetValue(string.Empty, out var response) ? response : default;
 
@@ -45,11 +47,9 @@ namespace Uno.Extensions.Navigation.Regions
 
             ViewModelManager.DisposeViewModel(navigationContext);
 
-            CloseDialog(dialog, navigationContext, responseData);
+            dialog.Cancel();
         }
 
-        protected abstract object CloseDialog(Dialog dialog, NavigationContext context, object responseData);
-
-        protected abstract Dialog DisplayDialog(NavigationContext context, object vm);
+        protected abstract IAsyncInfo DisplayDialog(NavigationContext context, object vm);
     }
 }

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation.Dialogs;
 using Uno.Extensions.Navigation.ViewModels;
+using Windows.Foundation;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Popups;
 using UICommand = Windows.UI.Popups.UICommand;
@@ -25,13 +26,7 @@ public class MessageDialogRegion : DialogRegion
     {
     }
 
-    protected override object CloseDialog(Dialog dialog, NavigationContext context, object responseData)
-    {
-        dialog.ShowTask.Cancel();
-        return responseData;
-    }
-
-    protected override Dialog DisplayDialog(NavigationContext context, object vm)
+    protected override IAsyncInfo DisplayDialog(NavigationContext context, object vm)
     {
         var navigation = context.Navigation;
 
@@ -44,21 +39,23 @@ public class MessageDialogRegion : DialogRegion
         };
         md.Commands.AddRange((data[RouteConstants.MessageDialogParameterCommands] as UICommand[]) ?? new UICommand[] { });
         var showTask = md.ShowAsync();
-        showTask.AsTask().ContinueWith(result =>
-        {
-            if (result.Status != TaskStatus.Canceled)
-            {
-                var responseNav = navigation as ResponseNavigationService;
-                if (responseNav is not null &&
-                responseNav.ResultCompletion.Task.Status != TaskStatus.Canceled &&
-            responseNav.ResultCompletion.Task.Status != TaskStatus.RanToCompletion)
+        showTask.AsTask()
+            .ContinueWith(result =>
                 {
-                    responseNav.ResultCompletion.TrySetResult(Options.Option.Some(result.Result));
-                }
-            }
-        }, CancellationToken.None,
-                        TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.DenyChildAttach,
-                        TaskScheduler.FromCurrentSynchronizationContext());
-        return new Dialog(showTask, context);
+                    if (result.Status != TaskStatus.Canceled)
+                    {
+                        var responseNav = navigation as ResponseNavigationService;
+                        if (responseNav is not null &&
+                            responseNav.ResultCompletion.Task.Status != TaskStatus.Canceled &&
+                            responseNav.ResultCompletion.Task.Status != TaskStatus.RanToCompletion)
+                        {
+                            responseNav.ResultCompletion.TrySetResult(Options.Option.Some(result.Result));
+                        }
+                    }
+                },
+                CancellationToken.None,
+                TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.DenyChildAttach,
+                TaskScheduler.FromCurrentSynchronizationContext());
+        return showTask;
     }
 }

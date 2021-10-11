@@ -78,6 +78,10 @@ public class NavigationServiceFactory : IRegionNavigationServiceFactory, IDynami
 
         var dialogNavService = services.GetService<DynamicNavigationService>();
 
+        services.GetService<ScopedServiceHost<IRegionNavigationService>>().Service = dialogNavService;
+        var innerNavService = new InnerNavigationService(dialogNavService);
+        services.GetService<ScopedServiceHost<INavigationService>>().Service = innerNavService;
+
         var mapping = Mappings.LookupByPath(request.Segments.Base);
 
         var factory = Factories.FindForControlType(mapping.View);
