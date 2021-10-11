@@ -38,11 +38,11 @@
                                          Icon="Home"
                                          Content="Home"
                                          x:Name="Content1"
-                                         nav:Navigation.NavigateOnClickPath="../showcontent1" />
+                                         nav:Navigation.NavigateOnClickRoute="../showcontent1" />
                 <muxc:NavigationViewItem Tag="apps"
                                          Content="Apps"
                                          x:Name="Content2"
-                                         nav:Navigation.NavigateOnClickPath="../showcontent2">
+                                         nav:Navigation.NavigateOnClickRoute="../showcontent2">
                     <muxc:NavigationViewItem.Icon>
                         <FontIcon FontFamily="Segoe MDL2 Assets"
                                   Glyph="&#xEB3C;" />
@@ -62,8 +62,8 @@
             </ScrollViewer>
         </muxc:NavigationView>
         <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <Button Content="Home" nav:Navigation.NavigateOnClickPath="showcontent1" />
-            <Button Content="Apps" nav:Navigation.NavigateOnClickPath="showcontent2"  />
+            <Button Content="Home" nav:Navigation.NavigateOnClickRoute="showcontent1" />
+            <Button Content="Apps" nav:Navigation.NavigateOnClickRoute="showcontent2"  />
         </StackPanel>
     </Grid>
 </Page>
