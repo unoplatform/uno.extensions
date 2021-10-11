@@ -5,7 +5,7 @@
     <DefineConstants>$(DefineConstants);__WASM__</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\Uno.Extensions.Hosting\Content\Ext.Hosting\UnoHost.cs" Link="UnoHost.cs" />
+    <Compile Include="..\Uno.Extensions.Hosting\UnoHost.cs" Link="UnoHost.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
