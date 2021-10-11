@@ -15,8 +15,8 @@ public static class RouteConstants
 
     public static class RelativePath
     {
-        public const char GoBack = '<';
-        public const char GoForward = '>';
+        public const char GoBack = '-';
+        public const char GoForward = '+';
         public const char Root = '/';
         public const string DialogPrefix = "__dialog__";
 
@@ -28,7 +28,7 @@ public static class RouteConstants
         {
             var sb = new StringBuilder((pathToRepeat.Length * numberOfLevels) + (separator.Length * (numberOfLevels - 1)));
             sb.Append(pathToRepeat);
-            for (int i = 0; i < numberOfLevels - 1; i++)
+            for (var i = 0; i < numberOfLevels - 1; i++)
             {
                 sb.Append(separator + pathToRepeat);
             }

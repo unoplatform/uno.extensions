@@ -11,17 +11,17 @@
         <StackPanel>
             <TextBlock Margin="20" FontSize="30"><Run Text="Page 4 - " /><Run Text="{Binding Title}" /></TextBlock>
             <Button Content="Go Back - NavigateToPreviousViewAsync"
-                    nav:Navigation.NavigateOnClickPath="../&lt;" />
+                    nav:Navigation.NavigateOnClickPath="../-" />
             <Button Content="Go Back x 2- NavigationRequest"
-                    nav:Navigation.NavigateOnClickPath="../&lt;&lt;" />
+                    nav:Navigation.NavigateOnClickPath="../--" />
             <Button Content="Go To Third Page with Back x 2 - NavigationRequest"
-                    nav:Navigation.NavigateOnClickPath="../&lt;&lt;ThirdPage" />
+                    nav:Navigation.NavigateOnClickPath="../--ThirdPage" />
             <Button Content="Go To Third Page with Back x 3 - NavigationRequest"
-                    nav:Navigation.NavigateOnClickPath="../&lt;&lt;&lt;ThirdPage" />
+                    nav:Navigation.NavigateOnClickPath="../---ThirdPage" />
             <Button Content="Go To /Main - NavigationRequest"
-                    nav:Navigation.NavigateOnClickPath="../&lt;/MainPage" />
+                    nav:Navigation.NavigateOnClickPath="../-/MainPage" />
             <Button Content="Go To /Third Page- NavigationRequest"
-                    nav:Navigation.NavigateOnClickPath="../&lt;/ThirdPage" />
+                    nav:Navigation.NavigateOnClickPath="../-/ThirdPage" />
         </StackPanel>
     </Grid>
 </Page>
