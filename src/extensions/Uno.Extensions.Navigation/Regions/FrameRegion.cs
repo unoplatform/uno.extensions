@@ -52,16 +52,6 @@ public class FrameRegion : StackRegion<Frame>
         Logger.LazyLogDebug(() => $"Frame has navigated to page '{e.SourcePageType.Name}'");
 
         UpdateCurrentView();
-        //// This happens when the Navigate method is called directly on the Frame,
-        //// rather than via the navigationservice api
-        //if (e.NavigationMode == NavigationMode.New)
-        //{
-        //    Navigation.NavigateToViewAsync(null, Control.SourcePageType, data: e.Parameter);
-        //}
-        //else
-        //{
-        //    Navigation.NavigateToPreviousViewAsync(null, data: e.Parameter);
-        //}
     }
 
     protected override void GoBack(object parameter)

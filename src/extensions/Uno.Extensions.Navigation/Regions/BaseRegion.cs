@@ -177,27 +177,7 @@ public abstract class BaseRegion : IRegion, IRegionNavigate
             viewModel = ViewModelManager.CreateViewModel(context);
         }
 
-        if (view is FrameworkElement fe)
-        {
-            fe.SetNavigationService(context.Navigation);
-
-            if (viewModel is not null && fe.DataContext != viewModel)
-            {
-                Logger.LazyLogDebug(() => $"Setting DataContext with view model '{viewModel.GetType().Name}");
-                fe.DataContext = viewModel;
-            }
-        }
-
-        if (view is IInjectable<INavigationService> navAware)
-        {
-            Logger.LazyLogDebug(() => $"Setting Navigation on IInjectable control");
-            navAware.Inject(context.Navigation);
-        }
-
-        if (view is IInjectable<IServiceProvider> spAware)
-        {
-            spAware.Inject(context.Services);
-        }
+        view.InjectServicesAndSetDataContext(context.Services, context.Navigation, viewModel);
     }
 
     protected virtual object CurrentView => default;

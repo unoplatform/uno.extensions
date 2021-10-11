@@ -23,7 +23,8 @@ public class ContentDialogRegion : DialogRegion
         ILogger<ContentDialogRegion> logger,
         IServiceProvider scopedServices,
         INavigationService navigation,
-        IViewModelManager viewModelManager) : base(logger, scopedServices, navigation, viewModelManager)
+        IViewModelManager viewModelManager)
+        : base(logger, scopedServices, navigation, viewModelManager)
     {
     }
 
@@ -31,20 +32,8 @@ public class ContentDialogRegion : DialogRegion
     {
         var navigation = context.Navigation;
         var dialog = Activator.CreateInstance(context.Mapping.View) as ContentDialog;
-        if (vm is not null)
-        {
-            dialog.DataContext = vm;
-        }
 
-        if (dialog is IInjectable<INavigationService> navAware)
-        {
-            navAware.Inject(navigation);
-        }
-
-        if (dialog is IInjectable<IServiceProvider> spAware)
-        {
-            spAware.Inject(context.Services);
-        }
+        dialog.InjectServicesAndSetDataContext(context.Services, context.Navigation, vm);
 
         var showTask = dialog.ShowAsync();
         showTask.AsTask()

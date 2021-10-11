@@ -27,7 +27,8 @@ public class ContentControlRegion : SimpleRegion<ContentControl>
         INavigationService navigation,
         IViewModelManager viewModelManager,
         IRouteMappings mappings,
-        RegionControlProvider controlProvider) : base(logger, scopedServices, navigation, viewModelManager, mappings, controlProvider.RegionControl as ContentControl)
+        RegionControlProvider controlProvider)
+        : base(logger, scopedServices, navigation, viewModelManager, mappings, controlProvider.RegionControl as ContentControl)
     {
     }
 

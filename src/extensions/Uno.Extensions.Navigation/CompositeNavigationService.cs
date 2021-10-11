@@ -3,7 +3,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Uno.Extensions.Navigation.Dialogs;
 
 namespace Uno.Extensions.Navigation;
 
