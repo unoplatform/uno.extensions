@@ -68,15 +68,15 @@
       <Version>6.0.0-preview.7.21377.19</Version>
     </PackageReference>
     <PackageReference Include="Uno.Microsoft.Toolkit.Uwp.UI.Controls">
-      <Version>7.1.0-build.28.g606fbae68d</Version>
+      <Version>7.1.0-build.45.gd2e4192c8c</Version>
     </PackageReference>
-    <PackageReference Include="Uno.UI" Version="3.10.0-dev.581" />
-    <PackageReference Include="Uno.UI.RemoteControl" Version="3.10.0-dev.581" Condition="'$(Configuration)'=='Debug'" />
+    <PackageReference Include="Uno.UI" Version="3.11.0-dev.270" />
+    <PackageReference Include="Uno.UI.RemoteControl" Version="3.11.0-dev.270" Condition="'$(Configuration)'=='Debug'" />
     <PackageReference Include="Uno.UI.Toolkit">
       <Version>255.255.255.255</Version>
     </PackageReference>
     <PackageReference Include="Uno.UniversalImageLoader" Version="1.9.35" />
-    <PackageReference Include="Uno.Core" Version="2.4.0" />
+    <PackageReference Include="Uno.Core" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0-preview.7.21377.19" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0-preview.7.21377.19" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0-preview.7.21377.19" />
