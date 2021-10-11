@@ -209,7 +209,7 @@ public static class NavigationHelpers
         return context;
     }
 
-    private static IServiceProvider CloneNavigationScopedServices(this IServiceProvider services)
+    public static IServiceProvider CloneNavigationScopedServices(this IServiceProvider services)
     {
         var scope = services.CreateScope();
         var scopedServices = scope.ServiceProvider;
