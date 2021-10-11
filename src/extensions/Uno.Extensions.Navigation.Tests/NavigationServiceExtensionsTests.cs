@@ -13,32 +13,32 @@ public class NavigationServiceExtensionsTests : BaseNavigationTests
 
     protected override void InitializeServices(IServiceCollection services)
     {
-        var mockFrame = new Mock<IStackNavigation>(); 
-        mockFrame
-            .Setup(foo => foo.Navigate(typeof(PageOne), null, null))
-            .Callback(() => navigationCounter++)
-            .Returns(true);
-        mockFrame
-            .Setup(foo => foo.GoBack(null, null))
-            .Callback(() => navigationCounter--);
-        services.AddSingleton<IStackNavigation>(mockFrame.Object);
+        //var mockFrame = new Mock<IStackNavigation>(); 
+        //mockFrame
+        //    .Setup(foo => foo.Navigate(typeof(PageOne), null, null))
+        //    .Callback(() => navigationCounter++)
+        //    .Returns(true);
+        //mockFrame
+        //    .Setup(foo => foo.GoBack(null, null))
+        //    .Callback(() => navigationCounter--);
+        //services.AddSingleton<IStackNavigation>(mockFrame.Object);
     }
 
-    [TestMethod]
-    public void NavigateToViewTest()
-    {
-        var result = Navigation.NavigateToView<PageOne>(this);
-        result.Should().NotBeNull();
-        result.Request.Route.Path.OriginalString.Should().Be(typeof(PageOne).Name);
-        navigationCounter.Should().Be(1);
-    }
+    //[TestMethod]
+    //public void NavigateToViewTest()
+    //{
+    //    var result = Navigation.NavigateToView<PageOne>(this);
+    //    result.Should().NotBeNull();
+    //    result.Request.Route.Path.OriginalString.Should().Be(typeof(PageOne).Name);
+    //    navigationCounter.Should().Be(1);
+    //}
 
-    [TestMethod]
-    public void NavigateToPreviousViewTest()
-    {
-        var result = Navigation.NavigateToPreviousView(this);
-        result.Should().NotBeNull();
-        result.Request.Route.Path.OriginalString.Should().Be("..");
-        navigationCounter.Should().Be(-1);
-    }
+    //[TestMethod]
+    //public void NavigateToPreviousViewTest()
+    //{
+    //    var result = Navigation.NavigateToPreviousView(this);
+    //    result.Should().NotBeNull();
+    //    result.Request.Route.Path.OriginalString.Should().Be("..");
+    //    navigationCounter.Should().Be(-1);
+    //}
 }

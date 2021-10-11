@@ -16,27 +16,16 @@ namespace Uno.Extensions.Navigation.Tests;
 [TestClass]
 public class NavigationServiceTests : BaseNavigationTests
 {
-    private int navigationCounter;
     protected override void InitializeServices(IServiceCollection services)
     {
-        var mockFrame = new Mock<IStackNavigation>();
-        mockFrame
-            .Setup(foo => foo.Navigate(typeof(PageOne), null, null))
-                .Callback(() => navigationCounter++)
-                .Returns(true);
-        mockFrame
-            .Setup(foo => foo.GoBack(null, null))
-                .Callback(() => navigationCounter--);
-        services.AddSingleton<IStackNavigation>(mockFrame.Object);
+       
 
     }
 
     [TestMethod]
     public void NavigationTest()
     {
-        var result = Navigation.Navigate(new NavigationRequest(this, new NavigationRoute(new Uri("PageOne", UriKind.Relative))));
-        result.Should().NotBeNull();
-        navigationCounter.Should().Be(1);
+       
     }
 }
 

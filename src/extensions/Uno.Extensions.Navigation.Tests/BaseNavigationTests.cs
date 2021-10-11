@@ -17,8 +17,8 @@ public class BaseNavigationTests
 
         var sp = services.BuildServiceProvider();
         Navigation = sp.GetService<INavigationService>();
-        var mapping = sp.GetService<INavigationMapping>();
-        mapping.Register(new NavigationMap(typeof(PageOne).Name, typeof(PageOne)));
+        var mapping = sp.GetService<IRouteMappings>();
+        mapping.Register(new RouteMap(typeof(PageOne).Name, typeof(PageOne)));
     }
 
     protected virtual void InitializeServices(IServiceCollection services)

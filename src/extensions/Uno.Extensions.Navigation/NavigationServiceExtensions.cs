@@ -4,8 +4,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Windows.UI.Popups;
+#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using UICommand = Windows.UI.Popups.UICommand;
+#else
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+#endif
 
 namespace Uno.Extensions.Navigation;
 
