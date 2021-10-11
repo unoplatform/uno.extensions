@@ -6,8 +6,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:nav="using:Uno.Extensions.Navigation.Controls"
       NavigationCacheMode="Required"
-      			 xmlns:ios="http://uno.ui/ios"
-
+      			 xmlns:ios="http://uno.ui/ios" xmlns:views="using:ExtensionsSampleApp.Views"
       mc:Ignorable="d">
     <Page.Resources>
         <DataTemplate x:Key="PickerTemplate">
@@ -27,7 +26,11 @@
                 <Button Content="Next page - NavigationRequest"
                     Click="NextPageNavigationRequestClick" />
                 <Button Content="Next page - Navigation Path"
-                    nav:Navigation.NavigateOnClickPath="../SecondPage" />
+                        nav:Navigation.NavigateOnClickPath="../SecondPage"
+                        />
+                <Button Content="Next page - Navigation Path with delay"
+
+                    nav:Navigation.NavigateOnClickPath="../SecondPage?delay=5000" />
                 <Button Content="Next page - NavigateToViewAsync"
                     Click="NextPageNavigateToViewAsyncClick" />
                 <Button Content="Next page - NavigateToViewModelAsync"

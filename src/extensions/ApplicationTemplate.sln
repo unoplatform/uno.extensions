@@ -93,8 +93,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Core", "Uno.
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		ExtensionsSampleApp\ExtensionsSampleApp.Shared\ExtensionsSampleApp.Shared.projitems*{29a18719-4b7d-4256-a923-541c46c641f2}*SharedItemsImports = 13
 		ExtensionsSampleApp\ExtensionsSampleApp.Shared\ExtensionsSampleApp.Shared.projitems*{3a8e1596-ea24-4eed-8ad5-a619336b05de}*SharedItemsImports = 4
 		ExtensionsSampleApp\ExtensionsSampleApp.Shared\ExtensionsSampleApp.Shared.projitems*{bb2bc50a-94d5-466c-8521-263b8a09d3d8}*SharedItemsImports = 5
+		ExtensionsSampleApp\ExtensionsSampleApp.Shared\ExtensionsSampleApp.Shared.projitems*{d4e245ef-b070-48f9-9a3d-3acd1c8a8242}*SharedItemsImports = 4
 		ExtensionsSampleApp\ExtensionsSampleApp.Shared\ExtensionsSampleApp.Shared.projitems*{ee41362e-6928-40ba-8cc5-fedfbfaa9922}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

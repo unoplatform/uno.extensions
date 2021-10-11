@@ -37,7 +37,7 @@ namespace ExtensionsSampleApp.Views
         }
         private void GoBackNavigationRequestClick(object sender, RoutedEventArgs e)
         {
-            Navigation.NavigateAsync(new NavigationRequest(sender, new Route(new Uri("../<", UriKind.Relative))));
+            Navigation.NavigateAsync(new NavigationRequest(sender, new Route(new Uri("../-", UriKind.Relative))));
         }
 
         private void GoBackNavigateToPreviousViewAsyncClick(object sender, RoutedEventArgs e)
