@@ -27,7 +27,7 @@ public static class NavigationServiceExtensions
     public static async Task<NavigationResponse<TResult>> NavigateByPathAsync<TResult>(this INavigationService service, object sender, string path, object data = null, CancellationToken cancellation = default)
     {
         var result = await service.NavigateAsync(new NavigationRequest(sender, NavigationHelpers.BuildRoute(new Uri(path, UriKind.Relative), data), cancellation, typeof(TResult)));
-        return NavigationResponse<TResult>.FromResponse(result);
+        return result.As<TResult>();
     }
 
     public static Task<NavigationResponse> NavigateToViewAsync<TView>(this INavigationService service, object sender, string relativePathModifier = Schemes.Parent, object data = null, CancellationToken cancellation = default)
@@ -47,7 +47,7 @@ public static class NavigationServiceExtensions
         var mapping = Ioc.Default.GetRequiredService<IRouteMappings>();
         var map = mapping.LookupByView(typeof(TView));
         var result = await service.NavigateAsync(new NavigationRequest(sender, NavigationHelpers.BuildRoute(new Uri(map.FullPath(relativePathModifier), UriKind.Relative), data), cancellation, typeof(TResult)));
-        return NavigationResponse<TResult>.FromResponse(result);
+        return result.As<TResult>();
     }
 
     public static Task<NavigationResponse> NavigateToViewModelAsync<TViewViewModel>(this INavigationService service, object sender, string relativePathModifier = Schemes.Parent, object data = null, CancellationToken cancellation = default)
@@ -67,7 +67,7 @@ public static class NavigationServiceExtensions
         var mapping = Ioc.Default.GetRequiredService<IRouteMappings>();
         var map = mapping.LookupByViewModel(typeof(TViewViewModel));
         var result = await service.NavigateAsync(new NavigationRequest(sender, NavigationHelpers.BuildRoute(new Uri(map.FullPath(relativePathModifier), UriKind.Relative), data), cancellation, typeof(TResult)));
-        return NavigationResponse<TResult>.FromResponse(result);
+        return result.As<TResult>();
     }
 
     public static Task<NavigationResponse> NavigateForDataAsync<TData>(this INavigationService service, object sender, TData data, string relativePathModifier = Schemes.Parent, CancellationToken cancellation = default)
@@ -111,7 +111,7 @@ public static class NavigationServiceExtensions
             };
 
         var result = await service.NavigateAsync(new NavigationRequest(sender, NavigationHelpers.BuildRoute(new Uri(Schemes.Dialog + typeof(MessageDialog).Name, UriKind.Relative), data), cancellation, typeof(UICommand)));
-        return NavigationResponse<UICommand>.FromResponse(result);
+        return result.As<UICommand>();
     }
 
 #if __IOS__
