@@ -11,6 +11,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using System;
 #else
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -28,6 +29,7 @@ public static class ServiceCollectionExtensions
         }
 
         return services
+                    .AddScoped<IInstanceRepository, InstanceRepository>()
                     // Register the region for each control type
                     .AddRegion<Frame, FrameRegion>()
                     .AddRegion<TabView, TabRegion>()
@@ -53,23 +55,45 @@ public static class ServiceCollectionExtensions
                     .AddSingleton<NavigationServiceFactory>()
                     .AddSingleton<IRegionNavigationServiceFactory>(services => services.GetService<NavigationServiceFactory>())
 
-                    .AddScoped<ScopedServiceHost<IRegion>>()
-                    .AddScoped<IRegion>(services => services.GetService<ScopedServiceHost<IRegion>>().Service)
+                    .AddScopedInstance<IRegion>()
 
                     .AddSingleton<IRegionNavigationService>(services => services.GetService<IRegionNavigationServiceFactory>().CreateService(null, null, false))
-
-                    .AddScoped<ScopedServiceHost<IRegionNavigationService>>()
 
                     .AddScoped<ViewModelDataProvider>()
                     .AddScoped<RegionControlProvider>()
                     .AddScoped<IDictionary<string, object>>(services => services.GetService<ViewModelDataProvider>().Parameters)
 
-                    .AddScoped<ScopedServiceHost<INavigationService>>()
                     .AddScoped<INavigationService>(services =>
-                            services.GetService<ScopedServiceHost<INavigationService>>().Service ??
-                            (services.GetService<ScopedServiceHost<IRegionNavigationService>>().Service as INavigationService) ??
+                            services.GetInstance<INavigationService>() ??
+                            services.GetInstance<IRegionNavigationService>() ??
                             services.GetService<IRegionNavigationService>()
                             );
+    }
+
+    public static IServiceCollection AddScopedInstance<T>(this IServiceCollection services)
+        where T : class
+    {
+        return services.AddScoped<T>(sp => sp.GetInstance<T>());
+    }
+
+    public static void AddInstance<T>(this IServiceProvider provider, T instance)
+    {
+        provider.AddInstance(typeof(T), instance);
+    }
+
+    public static void AddInstance(this IServiceProvider provider, Type serviceType, object instance)
+    {
+        provider.GetService<IInstanceRepository>().Instances[serviceType] = instance;
+    }
+
+    public static T GetInstance<T>(this IServiceProvider provider)
+    {
+        return (provider.GetInstance(typeof(T)) is T value) ? value : default;
+    }
+
+    public static object GetInstance(this IServiceProvider provider, Type type)
+    {
+        return provider.GetService<IInstanceRepository>().Instances.TryGetValue(type, out var value) ? value : null;
     }
 
     public static IServiceCollection AddRegion<TControl, TRegion>(this IServiceCollection services)
@@ -107,11 +131,6 @@ public class ViewModelDataProvider
     {
         return Parameters.TryGetValue(string.Empty, out var data) ? data as TData : default;
     }
-}
-
-public class ScopedServiceHost<T>
-{
-    public T Service { get; set; }
 }
 
 public class RegionControlProvider

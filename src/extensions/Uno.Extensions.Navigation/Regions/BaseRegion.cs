@@ -78,10 +78,10 @@ public abstract class BaseRegion : IRegion, IRegionNavigate
         TaskCompletionSource<Options.Option> resultTask = default;
         if (request.RequiresResponse())
         {
-            var responseNav = new ResponseNavigationService(context.Services.GetService<ScopedServiceHost<INavigationService>>().Service);
+            var responseNav = new ResponseNavigationService(context.Services.GetInstance<INavigationService>());
             resultTask = responseNav.ResultCompletion;
 
-            context.Services.GetService<ScopedServiceHost<INavigationService>>().Service = responseNav;
+            context.Services.AddInstance<INavigationService>(responseNav);
         }
 
         await InternalNavigateAsync(context);
