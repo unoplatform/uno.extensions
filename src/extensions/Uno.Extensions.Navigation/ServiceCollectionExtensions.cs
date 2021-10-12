@@ -52,13 +52,11 @@ public static class ServiceCollectionExtensions
                     // navigation data and the navigation service
                     .AddSingleton<NavigationServiceFactory>()
                     .AddSingleton<IRegionNavigationServiceFactory>(services => services.GetService<NavigationServiceFactory>())
-                    .AddSingleton<IDynamicNavigationServiceFactory>(services => services.GetService<NavigationServiceFactory>())
-                    .AddTransient<DynamicNavigationService>()
 
                     .AddScoped<ScopedServiceHost<IRegion>>()
                     .AddScoped<IRegion>(services => services.GetService<ScopedServiceHost<IRegion>>().Service)
 
-                    .AddSingleton<IRegionNavigationService>(services => services.GetService<IRegionNavigationServiceFactory>().CreateService(null, false))
+                    .AddSingleton<IRegionNavigationService>(services => services.GetService<IRegionNavigationServiceFactory>().CreateService(null, null, false))
 
                     .AddScoped<ScopedServiceHost<IRegionNavigationService>>()
 

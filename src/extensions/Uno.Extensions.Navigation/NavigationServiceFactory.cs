@@ -4,11 +4,21 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
+using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Regions;
+#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+#else
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+#endif
 
 namespace Uno.Extensions.Navigation;
 
-public class NavigationServiceFactory : IRegionNavigationServiceFactory, IDynamicNavigationServiceFactory
+public class NavigationServiceFactory : IRegionNavigationServiceFactory
 {
     private IServiceProvider Services { get; }
 
@@ -30,24 +40,26 @@ public class NavigationServiceFactory : IRegionNavigationServiceFactory, IDynami
         Factories = factories.ToDictionary(x => x.ControlType);
     }
 
-    public IRegionNavigationService CreateService(object control, bool isComposite)
+    public IRegionNavigationService CreateService(IRegionNavigationService parent, object control, bool isComposite)
     {
         Logger.LazyLogDebug(() => $"Adding region");
 
         var scope = Services.CreateScope();
         var services = scope.ServiceProvider;
 
+        (control as FrameworkElement)?.SetServiceProvider(services);
+
         // Create Navigation Service
         var navLogger = services.GetService<ILogger<RegionNavigationService>>();
 
         if (isComposite)
         {
-            var compService = new CompositeNavigationService(navLogger);
+            var compService = new CompositeNavigationService(navLogger, parent);
             services.GetService<ScopedServiceHost<IRegionNavigationService>>().Service = compService;
             return compService;
         }
 
-        var navService = new RegionNavigationService(navLogger, services.GetService<IDynamicNavigationServiceFactory>());
+        var navService = new RegionNavigationService(navLogger, parent, this);
         services.GetService<ScopedServiceHost<IRegionNavigationService>>().Service = navService;
 
         // This is a root navigation service
@@ -68,14 +80,15 @@ public class NavigationServiceFactory : IRegionNavigationServiceFactory, IDynami
         return navService;
     }
 
-    public IRegionNavigationService CreateService(NavigationRequest request)
+    public IRegionNavigationService CreateService(IRegionNavigationService parent, NavigationRequest request)
     {
         Logger.LazyLogDebug(() => $"Adding region");
 
         var scope = Services.CreateScope();
         var services = scope.ServiceProvider;
 
-        var dialogNavService = services.GetService<DynamicNavigationService>();
+        var navLogger = services.GetService<ILogger<RegionNavigationService>>();
+        var dialogNavService = new RegionNavigationService(navLogger, parent, this);
 
         services.GetService<ScopedServiceHost<IRegionNavigationService>>().Service = dialogNavService;
         var innerNavService = new InnerNavigationService(dialogNavService);

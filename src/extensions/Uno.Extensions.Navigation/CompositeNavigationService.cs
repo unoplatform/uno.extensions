@@ -12,7 +12,7 @@ public class CompositeNavigationService : NavigationService, IRegionNavigationSe
 
     private AsyncAutoResetEvent NestedServiceWaiter { get; } = new AsyncAutoResetEvent(false);
 
-    public CompositeNavigationService(ILogger logger) : base(logger)
+    public CompositeNavigationService(ILogger logger, IRegionNavigationService parent) : base(logger, parent)
     {
     }
 
@@ -21,19 +21,11 @@ public class CompositeNavigationService : NavigationService, IRegionNavigationSe
         var childService = childRegion;
         NestedServices.Add((regionName + string.Empty, childService));
         NestedServiceWaiter.Set();
-        if (childRegion is NavigationService navService)
-        {
-            navService.Parent = this;
-        }
     }
 
     public void Detach(IRegionNavigationService childRegion)
     {
         NestedServices.Remove(kvp => kvp.Item2 == childRegion);
-        if (childRegion is NavigationService navService)
-        {
-            navService.Parent = null;
-        }
     }
 
     public async override Task<NavigationResponse> NavigateAsync(NavigationRequest request)

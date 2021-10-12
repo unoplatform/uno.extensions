@@ -14,7 +14,7 @@
             <TextBlock Text="{Binding Tweet.Author}"
                        FontWeight="Bold" />
             <TextBlock Text="{Binding Tweet.Text}" />
-            <Button nav:Navigation.NavigateOnClickRoute="../-"
+            <Button nav:Navigation.Request="../-"
                     Content="Back" />
         </StackPanel>
     </Grid>
