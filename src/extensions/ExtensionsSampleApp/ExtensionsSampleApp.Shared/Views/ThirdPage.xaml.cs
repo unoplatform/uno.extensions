@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using CommunityToolkit.Mvvm.DependencyInjection;
+using Uno.Extensions;
 using Uno.Extensions.Navigation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Navigation;
