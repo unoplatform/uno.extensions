@@ -36,13 +36,14 @@ public class CompositeNavigationService : NavigationService, IRegionNavigationSe
 
     protected async override Task<NavigationResponse> CoreNavigateAsync(NavigationRequest request)
     {
+        // Run the base to handle parent requests
         var coreResponse = await base.CoreNavigateAsync(request);
-
         if (coreResponse is not null)
         {
             return coreResponse;
         }
 
+        // Run dialog requests
         var dialogResponse = await DialogNavigateAsync(request);
         if (dialogResponse is not null)
         {
@@ -76,7 +77,7 @@ public class CompositeNavigationService : NavigationService, IRegionNavigationSe
             }
             else
             {
-                _ = dialogResponse.Result.ContinueWith(t => Detach(dialogService));
+                _ = dialogResponse.Result.ContinueWith(t => Detach(dialogService), TaskScheduler.Current);
             }
             return dialogResponse;
         }
@@ -93,41 +94,54 @@ public class CompositeNavigationService : NavigationService, IRegionNavigationSe
 
         var nestedRoute = request.Route.Base;
 
-        IRegionNavigationService[] nested = null;
-        while (nested is null || !nested.Any())
+        // TODO: Find a better way - this can potentially block in endless loop if no nested region is added
+        while (true)
         {
-            // Try to retrieve nested service based on route name
-            nested = Nested(nestedRoute);
-            if (nested is null || !nested.Any())
+            // Attempt to navigate using the route name
+            var response = await NestedByNameNavigateAsync(nestedRoute, request);
+            if (response is not null)
             {
-                // No match for named route, so grab any unnamed nested
-                nested = Nested();
-                if (nested is not null && nested.Any())
-                {
-                    var nextRoute = request.Route.Uri.OriginalString.TrimStart($"{Schemes.Nested}");
-                    request = request.WithPath(nextRoute);
-                }
-            }
-            else
-            {
-                var nextRoute = request.Route.Uri.OriginalString.TrimStart($"{Schemes.Nested}{nestedRoute}/");
-                request = request.WithPath(nextRoute);
+                return response;
             }
 
-            if (nested is null || !nested.Any())
+            // Attempt to navigate using empty route
+            response = await NestedByNameNavigateAsync(string.Empty, request);
+            if (response is not null)
             {
-                await NestedServiceWaiter.Wait();
+                return response;
             }
+
+            // There aren't any nested regions registered, so need
+            // to block until they are added. The Attach method will
+            // signal on the NestedServicerWaitier when a region is
+            // added
+            await NestedServiceWaiter.Wait();
+        }
+    }
+
+    private async Task<NavigationResponse> NestedByNameNavigateAsync(string name, NavigationRequest request)
+    {
+        // Try to retrieve nested service based on route name
+        var nested = Nested(name);
+        if (nested?.Any() ?? false)
+        {
+            var separator = name is { Length: > 0 } ? "/" : null;
+            var nextRoute = request.Route.Uri.OriginalString.TrimStartOnce($"{Schemes.Nested}{name}{separator}");
+            request = request.WithPath(nextRoute);
+
+            var tasks = new List<Task<NavigationResponse>>();
+            foreach (var region in nested)
+            {
+                tasks.Add(region.NavigateAsync(request));
+            }
+
+            await Task.WhenAll(tasks);
+#pragma warning disable CA1849 // We've already waited all tasks at this point (see Task.WhenAll in line above)
+            return tasks.First().Result;
+#pragma warning restore CA1849 
         }
 
-        var tasks = new List<Task<NavigationResponse>>();
-        foreach (var region in nested)
-        {
-            tasks.Add(region.NavigateAsync(request));
-        }
-        await Task.WhenAll(tasks);
-        //var response = await nested.NavigateAsync(nestedRequest);
-        return tasks.First().Result;
+        return null;
     }
 
     protected virtual void PrintAllRegions(StringBuilder builder, IRegionNavigationService nav, int indent = 0, string regionName = null)
