@@ -11,6 +11,8 @@ public record Route(string Scheme, string Base, string Path, IDictionary<string,
 
     public bool IsCurrent => Scheme == Schemes.Current || Scheme.StartsWith(Schemes.NavigateForward) || Scheme.StartsWith(Schemes.NavigateBack);
 
+    public bool IsRoot => Scheme.StartsWith(Schemes.Root);
+
     public bool IsParent => Scheme.StartsWith(Schemes.Parent);
 
     public bool IsNested => Scheme.StartsWith(Schemes.Nested);

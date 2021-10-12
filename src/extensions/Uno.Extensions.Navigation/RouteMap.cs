@@ -15,7 +15,7 @@ public record RouteMap(
     public static string CombinePathWithRelativePath(string path, string relativePath) =>
         string.IsNullOrWhiteSpace(relativePath) ?
             path :
-            (relativePath.EndsWith("/") ?
-                $"{relativePath}{path}" :
-                $"{relativePath}/{path}");
+                //(relativePath.EndsWith("/") ?
+                $"{relativePath}{path}";
+        //:                $"{relativePath}/{path}");
 }

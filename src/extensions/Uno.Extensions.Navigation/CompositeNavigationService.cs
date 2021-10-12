@@ -12,8 +12,14 @@ public class CompositeNavigationService : NavigationService, IRegionNavigationSe
 
     private AsyncAutoResetEvent NestedServiceWaiter { get; } = new AsyncAutoResetEvent(false);
 
-    public CompositeNavigationService(ILogger logger, IRegionNavigationService parent) : base(logger, parent)
+    private IRegionNavigationServiceFactory ServiceFactory { get; }
+
+    public CompositeNavigationService(
+        ILogger logger,
+        IRegionNavigationService parent,
+        IRegionNavigationServiceFactory serviceFactory) : base(logger, parent)
     {
+        ServiceFactory = serviceFactory;
     }
 
     public void Attach(string regionName, IRegionNavigationService childRegion)
@@ -28,15 +34,24 @@ public class CompositeNavigationService : NavigationService, IRegionNavigationSe
         NestedServices.Remove(kvp => kvp.Item2 == childRegion);
     }
 
-    public async override Task<NavigationResponse> NavigateAsync(NavigationRequest request)
+    protected async override Task<NavigationResponse> CoreNavigateAsync(NavigationRequest request)
     {
+        var coreResponse = await base.CoreNavigateAsync(request);
+
+        if (coreResponse is not null)
+        {
+            return coreResponse;
+        }
+
+        var dialogResponse = await DialogNavigateAsync(request);
+        if (dialogResponse is not null)
+        {
+            return dialogResponse;
+        }
+
         // At this point, any residual request needs to be handed
         // down to the appropriate nested service
-        var nestedNavigationResponse = await RunNestedNavigation(request);
-
-        var baseNavigationResponse = await base.NavigateAsync(request);
-
-        return baseNavigationResponse ?? nestedNavigationResponse;
+        return await NestedNavigateAsync(request);
     }
 
     private IRegionNavigationService[] Nested(string regionName = null)
@@ -44,16 +59,39 @@ public class CompositeNavigationService : NavigationService, IRegionNavigationSe
         return NestedServices.Where(kvp => kvp.Item1 == regionName + string.Empty).Select(x => x.Item2).ToArray();
     }
 
-    protected async Task<NavigationResponse> RunNestedNavigation(NavigationRequest request)
+    private async Task<NavigationResponse> DialogNavigateAsync(NavigationRequest request)
     {
-        var nestedRequest = request;
-        if (nestedRequest is null || nestedRequest.Route.IsParent)
+        if (request.Route.IsDialog)
         {
-            await Task.CompletedTask;
+
+            var dialogService = ServiceFactory.CreateService(this, request);
+            Attach(RouteConstants.DialogPrefix, dialogService);
+
+            request = request with { Route = request.Route.TrimScheme(Schemes.Dialog) };
+            var dialogResponse = await dialogService.NavigateAsync(request);
+
+            if (dialogResponse is null || dialogResponse.Result is null)
+            {
+                Detach(dialogService);
+            }
+            else
+            {
+                _ = dialogResponse.Result.ContinueWith(t => Detach(dialogService));
+            }
+            return dialogResponse;
+        }
+
+        return null;
+    }
+
+    protected virtual async Task<NavigationResponse> NestedNavigateAsync(NavigationRequest request)
+    {
+        if (!(request?.Route?.IsNested ?? false))
+        {
             return null;
         }
 
-        var nestedRoute = nestedRequest.Route.Base;
+        var nestedRoute = request.Route.Base;
 
         IRegionNavigationService[] nested = null;
         while (nested is null || !nested.Any())
@@ -66,14 +104,14 @@ public class CompositeNavigationService : NavigationService, IRegionNavigationSe
                 nested = Nested();
                 if (nested is not null && nested.Any())
                 {
-                    var nextRoute = nestedRequest.Route.Uri.OriginalString.TrimStart($"{Schemes.Nested}");
-                    nestedRequest = nestedRequest.WithPath(nextRoute);
+                    var nextRoute = request.Route.Uri.OriginalString.TrimStart($"{Schemes.Nested}");
+                    request = request.WithPath(nextRoute);
                 }
             }
             else
             {
-                var nextRoute = nestedRequest.Route.Uri.OriginalString.TrimStart($"{Schemes.Nested}{nestedRoute}/");
-                nestedRequest = nestedRequest.WithPath(nextRoute);
+                var nextRoute = request.Route.Uri.OriginalString.TrimStart($"{Schemes.Nested}{nestedRoute}/");
+                request = request.WithPath(nextRoute);
             }
 
             if (nested is null || !nested.Any())
@@ -85,7 +123,7 @@ public class CompositeNavigationService : NavigationService, IRegionNavigationSe
         var tasks = new List<Task<NavigationResponse>>();
         foreach (var region in nested)
         {
-            tasks.Add(region.NavigateAsync(nestedRequest));
+            tasks.Add(region.NavigateAsync(request));
         }
         await Task.WhenAll(tasks);
         //var response = await nested.NavigateAsync(nestedRequest);
