@@ -18,34 +18,26 @@ public class NavigationService : INavigationService
         Logger = logger;
     }
 
-    public virtual async Task<NavigationResponse> NavigateAsync(NavigationRequest request)
+    public Task<NavigationResponse> NavigateAsync(NavigationRequest request)
     {
-        if (request is not null && request.Route.IsParent)
-        {
-            // Routing navigation request to parent
-            return await NavigateWithParentAsync(request);
-        }
-
-        return null;
+        return CoreNavigateAsync(request);
     }
 
-    private Task<NavigationResponse> NavigateWithParentAsync(NavigationRequest request)
+    protected virtual Task<NavigationResponse> CoreNavigateAsync(NavigationRequest request)
     {
-        Logger.LazyLogDebug(() => $"Redirecting navigation request to parent Navigation Service");
-
-        var path = request.Route.Uri.OriginalString;
-        var parentService = Parent;
-        var parentPath = path.TrimStartOnce(Schemes.Parent);
-
-        var parentRequest = request.WithPath(parentPath);
-        return parentService.NavigateAsync(parentRequest);
-    }
-
-    private NavigationService Root
-    {
-        get
+        // Handle root navigations
+        if (request?.Route?.IsRoot ?? false)
         {
-            return (Parent as NavigationService)?.Root ?? this;
+            return Parent?.NavigateAsync(request);
         }
+
+        // Handle parent navigations
+        if (request?.Route?.IsParent ?? false)
+        {
+            request = request with { Route = request.Route.TrimScheme(Schemes.Parent) };
+            return Parent?.NavigateAsync(request);
+        }
+
+        return Task.FromResult(default(NavigationResponse));
     }
 }

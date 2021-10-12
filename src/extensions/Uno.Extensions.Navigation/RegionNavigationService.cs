@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
@@ -13,91 +12,65 @@ public class RegionNavigationService : CompositeNavigationService
 {
     public IRegion Region { get; set; }
 
-    private IRegionNavigationServiceFactory DialogServiceFactory { get; }
-
     public RegionNavigationService(
         ILogger<RegionNavigationService> logger,
         IRegionNavigationService parent,
-        IRegionNavigationServiceFactory dialogServiceFactory) : base(logger, parent)
+        IRegionNavigationServiceFactory serviceFactory) : base(logger, parent, serviceFactory)
     {
-        DialogServiceFactory = dialogServiceFactory;
     }
 
-    public async override Task<NavigationResponse> NavigateAsync(NavigationRequest request)
+    protected async override Task<NavigationResponse> NestedNavigateAsync(NavigationRequest request)
     {
-        if (request.Route.IsDialog)
-        {
-            var dialogService = DialogServiceFactory.CreateService(this, request);
-            this.Attach(RouteConstants.DialogPrefix, dialogService);
-            var dialogResponse = await dialogService.NavigateAsync(request);
-            if (dialogResponse is null || dialogResponse.Result is null)
-            {
-                this.Detach(dialogService);
-            }
-            else
-            {
-                _ = dialogResponse.Result.ContinueWith(t => this.Detach(dialogService));
-            }
-            return dialogResponse;
-        }
-
-        var regionResponse = await RunRegionNavigation(request);
+        var regionResponse = await RegionNavigateAsync(request);
 
         if (regionResponse is not null)
         {
             request = request.Route.NextRequest(request.Sender);
         }
 
-        var baseResponse = await base.NavigateAsync(request);
+        var baseResponse = await base.NestedNavigateAsync(request);
         return baseResponse ?? regionResponse;
 
     }
 
-    private async Task<NavigationResponse> RunRegionNavigation(NavigationRequest request)
+    private async Task<NavigationResponse> RegionNavigateAsync(NavigationRequest request)
     {
-        try
+        if (request.Route.IsCurrent)
         {
-            if (request.Route.IsCurrent)
+            if (Region is not null)
             {
-                if (Region is not null)
+                var taskCompletion = new TaskCompletionSource<Options.Option>();
+                // Temporarily detach all nested services to prevent accidental
+                // navigation to the wrong child
+                // eg switching tabs, frame on tab1 won't get detached until some
+                // time after navigating to tab2, meaning that the wrong nexted
+                // child will be used for any subsequent navigations.
+                var nested = NestedServices.ToArray();
+                NestedServices.Clear();
+                var regionTask = await Region.NavigateAsync(request);
+                if (regionTask is null)
                 {
-                    var taskCompletion = new TaskCompletionSource<Options.Option>();
-                    // Temporarily detach all nested services to prevent accidental
-                    // navigation to the wrong child
-                    // eg switching tabs, frame on tab1 won't get detached until some
-                    // time after navigating to tab2, meaning that the wrong nexted
-                    // child will be used for any subsequent navigations.
-                    var nested = NestedServices.ToArray();
-                    NestedServices.Clear();
-                    var regionTask = await Region.NavigateAsync(request);
-                    if (regionTask is null)
-                    {
-                        // If a null result task was returned, then no
-                        // navigation took place, so just reattach the existing
-                        // nav services
-                        nested.ForEach(n => NestedServices[n.Key] = n.Value);
-                    }
-                    else
-                    {
-                        _ = regionTask.Result?.ContinueWith((Task<Options.Option> t) =>
-                          {
-                              if (t.Status == TaskStatus.RanToCompletion)
-                              {
-                                  taskCompletion.TrySetResult(t.Result);
-                              }
-                              else
-                              {
-                                  taskCompletion.TrySetResult(Options.Option.None<object>());
-                              }
-                          });
-                    }
-                    return new NavigationResponse(request, taskCompletion.Task);
+                    // If a null result task was returned, then no
+                    // navigation took place, so just reattach the existing
+                    // nav services
+                    nested.ForEach(n => NestedServices[n.Key] = n.Value);
                 }
+                else
+                {
+                    _ = regionTask.Result?.ContinueWith((Task<Options.Option> t) =>
+                      {
+                          if (t.Status == TaskStatus.RanToCompletion)
+                          {
+                              taskCompletion.TrySetResult(t.Result);
+                          }
+                          else
+                          {
+                              taskCompletion.TrySetResult(Options.Option.None<object>());
+                          }
+                      });
+                }
+                return new NavigationResponse(request, taskCompletion.Task);
             }
-        }
-        finally
-        {
-            //Logger.LazyLogInformation(() => Root.ToString());
         }
 
         return null;
@@ -140,32 +113,5 @@ public class RegionNavigationService : CompositeNavigationService
         {
             builder.AppendLine("------------------------------------------------------------------------------------------------");
         }
-    }
-}
-
-public class AsyncAutoResetEvent
-{
-    private readonly AutoResetEvent _event;
-
-    public AsyncAutoResetEvent(bool initialState)
-    {
-        _event = new AutoResetEvent(initialState);
-    }
-
-    public Task<bool> Wait(TimeSpan? timeout = null)
-    {
-        return Task.Run(() =>
-        {
-            if (timeout.HasValue)
-            {
-                return _event.WaitOne(timeout.Value);
-            }
-            return _event.WaitOne();
-        });
-    }
-
-    public void Set()
-    {
-        _event.Set();
     }
 }

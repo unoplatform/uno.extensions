@@ -54,7 +54,7 @@ public class NavigationServiceFactory : IRegionNavigationServiceFactory
 
         if (isComposite)
         {
-            var compService = new CompositeNavigationService(navLogger, parent);
+            var compService = new CompositeNavigationService(navLogger, parent, this);
             services.GetService<ScopedServiceHost<IRegionNavigationService>>().Service = compService;
             return compService;
         }
