@@ -49,7 +49,7 @@ public abstract class StackRegion<TControl> : BaseRegion<TControl>
         // Back navigation doesn't have a mapping (since path is "..")
         // Now that we've completed the actual navigation we can
         // use the type of the new view to look up the mapping
-        var mapping = Mappings.LookupByView(CurrentView?.GetType());
+        var mapping = Mappings.FindByView(CurrentView?.GetType());
         context = context with { Mapping = mapping };
 
         InitialiseView(context);

@@ -6,13 +6,13 @@ public interface IRouteMappings
 {
     void Register(RouteMap map);
 
-    RouteMap LookupByPath(string path);
+    RouteMap FindByPath(string path);
 
-    RouteMap LookupByViewModel(Type viewModelType);
+    RouteMap FindByViewModel(Type viewModelType);
 
-    RouteMap LookupByView(Type viewType);
+    RouteMap FindByView(Type viewType);
 
-    RouteMap LookupByData(Type dataType);
+    RouteMap FindByData(Type dataType);
 
-    RouteMap LookupByResultData(Type resultDataType);
+    RouteMap FindByResultData(Type resultDataType);
 }

@@ -40,7 +40,7 @@ public class TabRegion : SimpleRegion<TabView>
         Logger.LazyLogDebug(() => $"Navigating to path {tabName}");
         //Navigation.NavigateByPathAsync(null, tabName);
 
-        var request = Mappings.LookupByPath(tabName).AsRequest(this);
+        var request = Mappings.FindByPath(tabName).AsRequest(this);
         var context = request.BuildNavigationContext(ScopedServices);
 
         InitialiseView(context);

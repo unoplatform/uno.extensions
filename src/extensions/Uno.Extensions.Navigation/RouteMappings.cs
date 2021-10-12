@@ -40,7 +40,7 @@ public class RouteMappings : IRouteMappings
         Mappings[map.Path] = map;
     }
 
-    public RouteMap LookupByPath(string path)
+    public RouteMap FindByPath(string path)
     {
         if (path == Schemes.Parent ||
             path == Schemes.Current)
@@ -51,22 +51,22 @@ public class RouteMappings : IRouteMappings
         return Mappings.TryGetValue(path, out var map) ? map : DefaultMapping(path: path);
     }
 
-    public RouteMap LookupByViewModel(Type viewModelType)
+    public RouteMap FindByViewModel(Type viewModelType)
     {
         return (Mappings.FirstOrDefault(x => x.Value.ViewModel == viewModelType).Value) ?? DefaultMapping(viewModel: viewModelType);
     }
 
-    public RouteMap LookupByView(Type viewType)
+    public RouteMap FindByView(Type viewType)
     {
         return (Mappings.FirstOrDefault(x => x.Value.View == viewType).Value) ?? DefaultMapping(view: viewType);
     }
 
-    public RouteMap LookupByData(Type dataType)
+    public RouteMap FindByData(Type dataType)
     {
         return Mappings.First(x => x.Value.Data == dataType).Value;
     }
 
-    public RouteMap LookupByResultData(Type dataType)
+    public RouteMap FindByResultData(Type dataType)
     {
         return Mappings.First(x => x.Value.ResultData == dataType).Value;
     }

@@ -41,7 +41,7 @@ public class FrameRegion : StackRegion<Frame>
 
     private void UpdateCurrentView()
     {
-        var request = Mappings.LookupByView(Control.Content.GetType()).AsRequest(this);
+        var request = Mappings.FindByView(Control.Content.GetType()).AsRequest(this);
         var context = request.BuildNavigationContext(ScopedServices);
         InitialiseView(context);
     }
