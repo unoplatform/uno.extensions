@@ -7,6 +7,8 @@ namespace Uno.Extensions.Navigation;
 #pragma warning disable SA1313 // Parameter names should begin with lower-case letter
 public record Route(string Scheme, string Base, string Path, IDictionary<string, object> Data)
 {
+    public bool EmptyScheme => string.IsNullOrWhiteSpace(Scheme);
+
     public bool IsCurrent => Scheme == Schemes.Current || Scheme.StartsWith(Schemes.NavigateForward) || Scheme.StartsWith(Schemes.NavigateBack);
 
     public bool IsParent => Scheme.StartsWith(Schemes.Parent);

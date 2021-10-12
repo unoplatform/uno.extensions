@@ -13,7 +13,18 @@ namespace Uno.Extensions.Navigation
 
         public virtual Task<NavigationResponse> NavigateAsync(NavigationRequest request)
         {
-            request = request.MakeCurrentRequest();
+            // ../ should be trimmed off requests so they're processed by the wrapped navigation service
+            if (request.Route.IsParent)
+            {
+                request = request with { Route = request.Route.TrimScheme(Schemes.Parent) };
+            }
+
+            // a request with no scheme should be treated as a nested request
+            // eg "./Tweets" and "Tweets" should be handled the same
+            if (request.Route.EmptyScheme)
+            {
+                request = request with { Route = request.Route.AppendScheme(Schemes.Nested) };
+            }
 
             return Navigation.NavigateAsync(request);
         }

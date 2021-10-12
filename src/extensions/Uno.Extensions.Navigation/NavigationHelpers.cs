@@ -55,26 +55,6 @@ public static class NavigationHelpers
         return request.Result is not null;
     }
 
-    //public static bool IsNestedRequest(this NavigationRequest request)
-    //{
-    //    return request.Route.Uri.OriginalString.StartsWith(RouteConstants.RelativePath.Nested);
-    //}
-
-    public static NavigationRequest MakeCurrentRequest(this NavigationRequest request)
-    {
-        if (request.Route.IsParent)
-        {
-            return request.WithPath(request.Route.Uri.OriginalString.TrimStartOnce(Schemes.Parent));
-        }
-
-        if (string.IsNullOrWhiteSpace(request.Route.Scheme))
-        {
-            return request.WithPath(Schemes.Nested + request.Route.Uri.OriginalString);
-        }
-
-        return request;
-    }
-
     public static string TrimStartOnce(this string text, string textToTrim)
     {
         if (text.StartsWith(textToTrim))
@@ -90,9 +70,22 @@ public static class NavigationHelpers
         return text;
     }
 
+
+    public static Route TrimScheme(this Route route, string schemeToTrim)
+    {
+        // TODO: Refactor to improve scheme trimming
+        return BuildRoute(route.Uri.OriginalString.TrimStartOnce(schemeToTrim), route.Data);
+    }
+
+    public static Route AppendScheme(this Route route, string schemeToAppend)
+    {
+        // TODO: Refactor to improve scheme appending
+        return BuildRoute(schemeToAppend + route.Uri.OriginalString, route.Data);
+    }
+
     public static NavigationRequest WithPath(this NavigationRequest request, string path, string queryParameters = "")
     {
-        return string.IsNullOrWhiteSpace(path) ? null : request with { Route = BuildRoute( new Uri(path + (!string.IsNullOrWhiteSpace(queryParameters) ? $"?{queryParameters}" : string.Empty), UriKind.Relative)) };
+        return string.IsNullOrWhiteSpace(path) ? null : request with { Route = BuildRoute(new Uri(path + (!string.IsNullOrWhiteSpace(queryParameters) ? $"?{queryParameters}" : string.Empty), UriKind.Relative)) };
     }
 
     //public static RouteSegments Parse(this NavigationRequest request)
@@ -181,10 +174,14 @@ public static class NavigationHelpers
     //    //return components;
     //}
 
-    public static Route BuildRoute(Uri uri, object data = null)
+    public static Route BuildRoute(this Uri uri, object data = null)
     {
         var path = uri.OriginalString;
+        return path.BuildRoute(data);
+    }
 
+    public static Route BuildRoute(this string path, object data = null)
+    {
         var queryIdx = path.IndexOf('?');
         var query = string.Empty;
         if (queryIdx >= 0)
