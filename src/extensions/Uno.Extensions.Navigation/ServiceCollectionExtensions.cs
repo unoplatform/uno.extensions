@@ -43,7 +43,7 @@ public static class ServiceCollectionExtensions
                     .AddRegion<Popup, PopupRegion>()
 
                     // Register the navigation mappings repository
-                    .AddSingleton<IRouteMappings, RouteMappings>()
+                    .AddSingleton<IRouteMappings, RouteMappingsDefault>()
 
                     // Register the view model manager
                     .AddScoped<IViewModelManager, ViewModelManager>()
