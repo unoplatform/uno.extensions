@@ -28,7 +28,7 @@ namespace ExtensionsSampleApp.Views
 
         private void NextPageNavigationRequestClick(object sender, RoutedEventArgs e)
         {
-            Navigation.NavigateAsync(new NavigationRequest(sender, new Route(new Uri("../SecondPage", UriKind.Relative))));
+            Navigation.NavigateAsync(new NavigationRequest(sender, NavigationHelpers.BuildRoute(new Uri("../SecondPage", UriKind.Relative))));
         }
 
         private async void NextPageNavigateToViewAsyncClick(object sender, RoutedEventArgs e)
@@ -68,19 +68,19 @@ namespace ExtensionsSampleApp.Views
 
         private async void ContentDialogResponseClick(object sender, RoutedEventArgs e)
         {
-            var navresult = await Navigation.NavigateToViewAsync<SimpleContentDialog, ContentDialogResult>(this, RouteConstants.Schemes.Dialog);
+            var navresult = await Navigation.NavigateToViewAsync<SimpleContentDialog, ContentDialogResult>(this, Schemes.Dialog);
             var response = await navresult.Result;
         }
 
         private async void ContentDialogWidgetResponseClick(object sender, RoutedEventArgs e)
         {
-            var navresult = await Navigation.NavigateToViewAsync<SimpleContentDialog, Widget>(this, RouteConstants.Schemes.Dialog);
+            var navresult = await Navigation.NavigateToViewAsync<SimpleContentDialog, Widget>(this, Schemes.Dialog);
             var response = await navresult.Result;
         }
 
         //private async void ContentDialogResultAndWidgetResponseClick(object sender, RoutedEventArgs e)
         //{
-        //    var navresult = await Navigation.NavigateToViewAsync<SimpleContentDialog, ContentResult>(this, RouteConstants.Schemes.Dialog);
+        //    var navresult = await Navigation.NavigateToViewAsync<SimpleContentDialog, ContentResult>(this, Schemes.Dialog);
         //    var response = await navresult.Result;
         //}
 

@@ -42,8 +42,8 @@ public class RouteMappings : IRouteMappings
 
     public RouteMap LookupByPath(string path)
     {
-        if (path == RouteConstants.Schemes.Parent ||
-            path == RouteConstants.Schemes.Current)
+        if (path == Schemes.Parent ||
+            path == Schemes.Current)
         {
             return null;
         }

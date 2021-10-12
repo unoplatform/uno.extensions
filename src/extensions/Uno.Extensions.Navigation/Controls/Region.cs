@@ -209,8 +209,6 @@ DependencyProperty.RegisterAttached(
         }
     }
 
-
-
     public static void SetRoute(FrameworkElement element, string value)
     {
         element.SetValue(RouteProperty, value);

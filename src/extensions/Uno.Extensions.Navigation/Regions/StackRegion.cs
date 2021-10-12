@@ -35,7 +35,7 @@ public abstract class StackRegion<TControl> : BaseRegion<TControl>
     protected Task DoBackNavigation(NavigationContext context)
     {
         // Remove any excess items in the back stack
-        var numberOfPagesToRemove = context.Request.Segments.NumberOfPagesToRemove;
+        var numberOfPagesToRemove = context.Request.Route.FrameNumberOfPagesToRemove;
         while (numberOfPagesToRemove > 0)
         {
             // Don't remove the last context, as that's the current page
@@ -44,7 +44,7 @@ public abstract class StackRegion<TControl> : BaseRegion<TControl>
         }
 
         // Invoke the navigation (which will be a back navigation)
-        GoBack(context.Request.Segments.Parameters);
+        GoBack(context.Request.Route.Data);
 
         // Back navigation doesn't have a mapping (since path is "..")
         // Now that we've completed the actual navigation we can
@@ -61,7 +61,7 @@ public abstract class StackRegion<TControl> : BaseRegion<TControl>
 
     public override Task RegionNavigate(NavigationContext context)
     {
-        var numberOfPagesToRemove = context.Request.Segments.NumberOfPagesToRemove;
+        var numberOfPagesToRemove = context.Request.Route.FrameNumberOfPagesToRemove;
         // We remove 1 less here because we need to remove the current context, after the navigation is completed
         while (numberOfPagesToRemove > 1)
         {
@@ -70,17 +70,17 @@ public abstract class StackRegion<TControl> : BaseRegion<TControl>
         }
 
         // Add the new context to the list of contexts and then navigate away
-        Show(context.Request.Segments.FrameBase, context.Mapping?.View, context.Request.Segments.Parameters);
+        Show(context.Request.Route.Base, context.Mapping?.View, context.Request.Route.Data);
 
         // If path starts with / then remove all prior pages and corresponding contexts
-        if (context.Request.Segments.IsRooted)
+        if (context.Request.Route.FrameIsRooted)
         {
             ClearBackStack();
         }
 
         // If there were pages to remove, after navigating we need to remove
         // the page that we've navigated away from.
-        if (context.Request.Segments.NumberOfPagesToRemove > 0)
+        if (context.Request.Route.FrameNumberOfPagesToRemove > 0)
         {
             RemoveLastFromBackStack();
         }

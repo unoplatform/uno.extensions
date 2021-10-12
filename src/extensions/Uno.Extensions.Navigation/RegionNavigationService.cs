@@ -13,8 +13,6 @@ public class RegionNavigationService : CompositeNavigationService
 {
     public IRegion Region { get; set; }
 
-    private int isNavigating = 0;
-
     private IRegionNavigationServiceFactory DialogServiceFactory { get; }
 
     public RegionNavigationService(
@@ -27,50 +25,39 @@ public class RegionNavigationService : CompositeNavigationService
 
     public async override Task<NavigationResponse> NavigateAsync(NavigationRequest request)
     {
-        if (Interlocked.CompareExchange(ref isNavigating, 1, 0) == 1)
+        if (request.Route.IsDialog)
         {
-            Logger.LazyLogWarning(() => $"Navigation already in progress. Unable to start navigation '{request.ToString()}'");
-            return await Task.FromResult(default(NavigationResponse));
-        }
-        try
-        {
-            if (request.Segments.IsDialog)
+            var dialogService = DialogServiceFactory.CreateService(this, request);
+            this.Attach(RouteConstants.DialogPrefix, dialogService);
+            var dialogResponse = await dialogService.NavigateAsync(request);
+            if (dialogResponse is null || dialogResponse.Result is null)
             {
-                var dialogService = DialogServiceFactory.CreateService(this, request);
-                this.Attach(RouteConstants.RelativePath.DialogPrefix, dialogService);
-                var dialogResponse = await dialogService.NavigateAsync(request);
-                if (dialogResponse is null || dialogResponse.Result is null)
-                {
-                    this.Detach(dialogService);
-                }
-                else
-                {
-                    _ = dialogResponse.Result.ContinueWith(t => this.Detach(dialogService));
-                }
-                return dialogResponse;
+                this.Detach(dialogService);
             }
-
-            var regionResponse = await RunRegionNavigation(request);
-
-            if (regionResponse is not null)
+            else
             {
-                request = request.Segments.NextRequest(request.Sender);
+                _ = dialogResponse.Result.ContinueWith(t => this.Detach(dialogService));
             }
+            return dialogResponse;
+        }
 
-            var baseResponse = await base.NavigateAsync(request);
-            return baseResponse ?? regionResponse;
-        }
-        finally
+        var regionResponse = await RunRegionNavigation(request);
+
+        if (regionResponse is not null)
         {
-            Interlocked.Exchange(ref isNavigating, 0);
+            request = request.Route.NextRequest(request.Sender);
         }
+
+        var baseResponse = await base.NavigateAsync(request);
+        return baseResponse ?? regionResponse;
+
     }
 
     private async Task<NavigationResponse> RunRegionNavigation(NavigationRequest request)
     {
         try
         {
-            if (request.Segments.IsCurrent)
+            if (request.Route.IsCurrent)
             {
                 if (Region is not null)
                 {

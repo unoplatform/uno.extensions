@@ -39,7 +39,7 @@ namespace ExtensionsSampleApp.Views
 
         private void NextPagePreviousViewWithArgsAndDataClick(object sender, RoutedEventArgs e)
         {
-            Navigation.NavigateAsync(new NavigationRequest(sender, new Route(new Uri("../<?arg1=val1&arg2=val2", UriKind.Relative), new Widget())));
+            Navigation.NavigateAsync(new NavigationRequest(sender, NavigationHelpers.BuildRoute(new Uri("../<?arg1=val1&arg2=val2", UriKind.Relative), new Widget())));
         }
     }
 
