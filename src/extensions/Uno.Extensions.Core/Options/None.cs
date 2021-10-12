@@ -7,6 +7,7 @@ namespace Uno.Extensions.Options;
 /// <summary>
 /// Special Option representing an absence of value.
 /// </summary>
+/// <typeparam name="T">The type of object that Option wraps</typeparam>
 /// <remarks>
 /// This is the implementation of a functional "Option Type" using F# semantic
 /// https://en.wikipedia.org/wiki/Option_type
@@ -15,7 +16,7 @@ namespace Uno.Extensions.Options;
 public sealed class None<T> : Option<T>
 {
     /// <summary>
-    /// Singleton instance of this
+    /// Gets a singleton instance of this
     /// </summary>
     public static None<T> Instance { get; } = new None<T>();
 

@@ -9,11 +9,12 @@ namespace Uno.Extensions.Options;
 /// This is the implementation of a functional "Option Type" using F# semantic
 /// https://en.wikipedia.org/wiki/Option_type
 /// </remarks>
+/// <typeparam name="T">The type of entity to wrap</typeparam>
 [DebuggerDisplay("Some({" + nameof(Value) + "})")]
 public sealed class Some<T> : Option<T>
 {
     /// <summary>
-    /// Creates an <see cref="Option{T}"/> for a given value
+    /// Initializes a new instance of the <see cref="Some{T}"/> class for a given value.
     /// </summary>
     /// <param name="value">The value hold by the option</param>
     public Some(T value)
@@ -32,7 +33,11 @@ public sealed class Some<T> : Option<T>
     /// <inheritdoc/>
     public override bool Equals(object obj) => Equals(obj as Some<T>);
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Checks whether two objects are equal
+    /// </summary>
+    /// <param name="other">The entity to compare</param>
+    /// <returns>True if both entities are equal</returns>
     private bool Equals(Some<T> other)
     {
         if (other == null)
@@ -80,5 +85,6 @@ public sealed class Some<T> : Option<T>
     /// <summary>
     /// Implicit conversion of T to <see cref="Some{T}"/>
     /// </summary>
+    /// <param name="o">The object to wrap</param>
     public static implicit operator Some<T>(T o) => Some(o);
 }

@@ -44,6 +44,7 @@ public static class OptionExtensions
     /// </summary>
     /// <typeparam name="T">Type of the option</typeparam>
     /// <param name="option">The source option from which the value have to be extracted</param>
+    /// <param name="defaultValue">The default value to use when none</param>
     /// <returns>The value of the option or default(<typeparamref name="T"/>) if none.</returns>
     public static T SomeOrDefault<T>(this Option<T> option, T defaultValue = default(T))
         => option.MatchSome(out var value)
@@ -54,6 +55,7 @@ public static class OptionExtensions
     /// Gets the value of the option or default(object) if none.
     /// </summary>
     /// <param name="option">The source option from which the value have to be extracted</param>
+    /// <param name="defaultValue">The default value to use when none</param>
     /// <returns>The value of the option or default(object) if none.</returns>
     public static object SomeOrDefault(this Option option, object defaultValue = null)
         => option.MatchSome(out var value)
