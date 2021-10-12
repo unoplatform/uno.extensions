@@ -40,7 +40,7 @@ public abstract class BaseRegion<TControl> : BaseRegion
     }
 }
 
-public abstract class BaseRegion : IRegion, IRegionNavigate
+public abstract class BaseRegion : IRegion
 {
     protected IServiceProvider ScopedServices { get; }
 
