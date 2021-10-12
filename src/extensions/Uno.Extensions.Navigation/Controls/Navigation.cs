@@ -1,47 +1,32 @@
 ﻿using System;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Media;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Media;
 #else
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Media;
 #endif
-using Uno.Extensions.Logging;
 
 namespace Uno.Extensions.Navigation.Controls;
 
 public static class Navigation
 {
     public static readonly DependencyProperty RequestProperty =
-                DependencyProperty.RegisterAttached(
-                  "Request",
-                  typeof(string),
-                  typeof(Navigation),
-                  new PropertyMetadata(null, RequestChanged)
-                );
+        DependencyProperty.RegisterAttached(
+            "Request",
+            typeof(string),
+            typeof(Navigation),
+            new PropertyMetadata(null, RequestChanged));
 
     public static readonly DependencyProperty RouteProperty =
-                DependencyProperty.RegisterAttached(
-                  "Route",
-                  typeof(string),
-                  typeof(Navigation),
-                  new PropertyMetadata(null)
-                );
+        DependencyProperty.RegisterAttached(
+            "Route",
+            typeof(string),
+            typeof(Navigation),
+            new PropertyMetadata(null));
 
     private static void RequestChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
@@ -53,15 +38,8 @@ public static class Navigation
             var path = GetRequest(element);
             var command = new AsyncRelayCommand(async () =>
             {
-                //try
-                //{
-                    var nav = element.NavigationServiceForControl(true);
-                    await nav.NavigateByPathAsync(element, path);
-                //}
-                //catch (Exception ex)
-                //{
-                //    Logger.LazyLogError(() => $"Navigation failed - {ex.Message}");
-                //}
+                var nav = element.NavigationServiceForControl(true);
+                await nav.NavigateByPathAsync(element, path);
             });
             var binding = new Binding { Source = command, Path = new PropertyPath(nameof(command.IsRunning)), Converter = new InvertConverter() };
 

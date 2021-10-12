@@ -1,20 +1,10 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Media;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
 #else
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
 #endif
 
@@ -23,12 +13,11 @@ namespace Uno.Extensions.Navigation.Controls;
 public static class Dependency
 {
     public static readonly DependencyProperty ServiceProviderProperty =
-   DependencyProperty.RegisterAttached(
-     "ServiceProvider",
-     typeof(IServiceProvider),
-     typeof(ServiceProvider),
-     new PropertyMetadata(null)
-   );
+        DependencyProperty.RegisterAttached(
+            "ServiceProvider",
+            typeof(IServiceProvider),
+            typeof(ServiceProvider),
+            new PropertyMetadata(null));
 
     public static void SetServiceProvider(this FrameworkElement element, IServiceProvider value)
     {

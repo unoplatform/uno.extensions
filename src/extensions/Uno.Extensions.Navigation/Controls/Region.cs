@@ -25,6 +25,27 @@ namespace Uno.Extensions.Navigation.Controls;
 
 public static class Region
 {
+    public static readonly DependencyProperty AttachedProperty =
+        DependencyProperty.RegisterAttached(
+            "Attached",
+            typeof(bool),
+            typeof(Navigation),
+            new PropertyMetadata(false, AttachedChanged));
+
+    public static readonly DependencyProperty NameProperty =
+        DependencyProperty.RegisterAttached(
+            "Name",
+            typeof(string),
+            typeof(Navigation),
+            new PropertyMetadata(false, NameChanged));
+
+    public static readonly DependencyProperty CompositeProperty =
+        DependencyProperty.RegisterAttached(
+            "Composite",
+            typeof(bool),
+            typeof(Navigation),
+            new PropertyMetadata(false, CompositeChanged));
+
     private static IRegionNavigationServiceFactory navigationServiceFactory;
 
     private static IRegionNavigationServiceFactory NavigationServiceFactory
@@ -45,14 +66,6 @@ public static class Region
         }
     }
 
-    public static readonly DependencyProperty AttachedProperty =
-    DependencyProperty.RegisterAttached(
-      "Attached",
-      typeof(bool),
-      typeof(Navigation),
-      new PropertyMetadata(false, AttachedChanged)
-    );
-
     private static void AttachedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         if (d is FrameworkElement element)
@@ -61,14 +74,6 @@ public static class Region
         }
     }
 
-    public static readonly DependencyProperty NameProperty =
-    DependencyProperty.RegisterAttached(
-      "Name",
-      typeof(string),
-      typeof(Navigation),
-      new PropertyMetadata(false, NameChanged)
-    );
-
     private static void NameChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         if (d is FrameworkElement element)
@@ -76,14 +81,6 @@ public static class Region
             RegisterElement(element, e.NewValue as string, false);
         }
     }
-
-    public static readonly DependencyProperty CompositeProperty =
-DependencyProperty.RegisterAttached(
-  "Composite",
-  typeof(bool),
-  typeof(Navigation),
-  new PropertyMetadata(false, CompositeChanged)
-);
 
     private static void CompositeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
@@ -156,89 +153,5 @@ DependencyProperty.RegisterAttached(
     public static bool GetComposite(FrameworkElement element)
     {
         return (bool)element.GetValue(CompositeProperty);
-    }
-
-    public static readonly DependencyProperty RequestProperty =
-                DependencyProperty.RegisterAttached(
-                  "Request",
-                  typeof(string),
-                  typeof(Navigation),
-                  new PropertyMetadata(null, RequestChanged)
-                );
-
-    public static readonly DependencyProperty RouteProperty =
-                DependencyProperty.RegisterAttached(
-                  "Route",
-                  typeof(string),
-                  typeof(Navigation),
-                  new PropertyMetadata(null)
-                );
-
-    private static void RequestChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        // Make sure we set the Route property too
-        d.SetValue(RouteProperty, e.NewValue);
-
-        if (d is ButtonBase element)
-        {
-            var path = GetRequest(element);
-            var command = new AsyncRelayCommand(async () =>
-            {
-                try
-                {
-                    var nav = element.NavigationServiceForControl(true);
-                    await nav.NavigateByPathAsync(element, path);
-                }
-                catch (Exception ex)
-                {
-                    Logger.LazyLogError(() => $"Navigation failed - {ex.Message}");
-                }
-            });
-            var binding = new Binding { Source = command, Path = new PropertyPath(nameof(command.IsRunning)), Converter = new InvertConverter() };
-
-            element.Loaded += (s, e) =>
-            {
-                element.Command = command;
-                element.SetBinding(ButtonBase.IsEnabledProperty, binding);
-            };
-            element.Unloaded += (s, e) =>
-            {
-                element.Command = null;
-                element.ClearValue(ButtonBase.IsEnabledProperty);
-            };
-        }
-    }
-
-    public static void SetRoute(FrameworkElement element, string value)
-    {
-        element.SetValue(RouteProperty, value);
-    }
-
-    public static string GetRoute(FrameworkElement element)
-    {
-        return (string)element.GetValue(RouteProperty);
-    }
-
-    public static void SetRequest(FrameworkElement element, string value)
-    {
-        element.SetValue(RequestProperty, value);
-    }
-
-    public static string GetRequest(FrameworkElement element)
-    {
-        return (string)element.GetValue(RequestProperty);
-    }
-
-    private class InvertConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            return !(bool)value;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            return value;
-        }
     }
 }
