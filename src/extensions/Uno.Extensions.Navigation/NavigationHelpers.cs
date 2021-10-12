@@ -20,7 +20,7 @@ public static class NavigationHelpers
 {
     public static string NavigationPath(this object view, IRouteMappings mappings = null)
     {
-        var map = mappings?.LookupByView(view.GetType());
+        var map = mappings?.FindByView(view.GetType());
         if (map is not null)
         {
             return map.Path;
@@ -250,7 +250,7 @@ public static class NavigationHelpers
         var dataFactor = scopedServices.GetService<ViewModelDataProvider>();
         dataFactor.Parameters = request.Route.Data;
 
-        var mapping = scopedServices.GetService<IRouteMappings>().LookupByPath(request.Route.Base);
+        var mapping = scopedServices.GetService<IRouteMappings>().FindByPath(request.Route.Base);
 
         var context = new NavigationContext(
                             scopedServices,

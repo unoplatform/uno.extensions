@@ -94,7 +94,7 @@ public class NavigationServiceFactory : IRegionNavigationServiceFactory
         var innerNavService = new InnerNavigationService(dialogNavService);
         services.GetService<ScopedServiceHost<INavigationService>>().Service = innerNavService;
 
-        var mapping = Mappings.LookupByPath(request.Route.Base);
+        var mapping = Mappings.FindByPath(request.Route.Base);
 
         var factory = Factories.FindForControlType(mapping.View);
         var region = factory.Create(services);

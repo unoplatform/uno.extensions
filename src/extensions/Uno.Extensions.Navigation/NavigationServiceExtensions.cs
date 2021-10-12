@@ -38,14 +38,14 @@ public static class NavigationServiceExtensions
     public static Task<NavigationResponse> NavigateToViewAsync(this INavigationService service, object sender, Type viewType, string relativePathModifier = Schemes.Parent, object data = null, CancellationToken cancellation = default)
     {
         var mapping = Ioc.Default.GetRequiredService<IRouteMappings>();
-        var map = mapping.LookupByView(viewType);
+        var map = mapping.FindByView(viewType);
         return service.NavigateAsync(new NavigationRequest(sender, NavigationHelpers.BuildRoute(new Uri(map.FullPath(relativePathModifier), UriKind.Relative), data), cancellation));
     }
 
     public static async Task<NavigationResponse<TResult>> NavigateToViewAsync<TView, TResult>(this INavigationService service, object sender, string relativePathModifier = Schemes.Parent, object data = null, CancellationToken cancellation = default)
     {
         var mapping = Ioc.Default.GetRequiredService<IRouteMappings>();
-        var map = mapping.LookupByView(typeof(TView));
+        var map = mapping.FindByView(typeof(TView));
         var result = await service.NavigateAsync(new NavigationRequest(sender, NavigationHelpers.BuildRoute(new Uri(map.FullPath(relativePathModifier), UriKind.Relative), data), cancellation, typeof(TResult)));
         return result.As<TResult>();
     }
@@ -58,14 +58,14 @@ public static class NavigationServiceExtensions
     public static Task<NavigationResponse> NavigateToViewModelAsync(this INavigationService service, object sender, Type viewModelType, string relativePathModifier = Schemes.Parent, object data = null, CancellationToken cancellation = default)
     {
         var mapping = Ioc.Default.GetRequiredService<IRouteMappings>();
-        var map = mapping.LookupByViewModel(viewModelType);
+        var map = mapping.FindByViewModel(viewModelType);
         return service.NavigateAsync(new NavigationRequest(sender, NavigationHelpers.BuildRoute(new Uri(map.FullPath(relativePathModifier), UriKind.Relative), data), cancellation));
     }
 
     public static async Task<NavigationResponse<TResult>> NavigateToViewModelAsync<TViewViewModel, TResult>(this INavigationService service, object sender, string relativePathModifier = Schemes.Parent, object data = null, CancellationToken cancellation = default)
     {
         var mapping = Ioc.Default.GetRequiredService<IRouteMappings>();
-        var map = mapping.LookupByViewModel(typeof(TViewViewModel));
+        var map = mapping.FindByViewModel(typeof(TViewViewModel));
         var result = await service.NavigateAsync(new NavigationRequest(sender, NavigationHelpers.BuildRoute(new Uri(map.FullPath(relativePathModifier), UriKind.Relative), data), cancellation, typeof(TResult)));
         return result.As<TResult>();
     }
@@ -73,14 +73,14 @@ public static class NavigationServiceExtensions
     public static Task<NavigationResponse> NavigateForDataAsync<TData>(this INavigationService service, object sender, TData data, string relativePathModifier = Schemes.Parent, CancellationToken cancellation = default)
     {
         var mapping = Ioc.Default.GetRequiredService<IRouteMappings>();
-        var map = mapping.LookupByData(typeof(TData));
+        var map = mapping.FindByData(typeof(TData));
         return service.NavigateAsync(new NavigationRequest(sender, NavigationHelpers.BuildRoute(new Uri(map.FullPath(relativePathModifier), UriKind.Relative), data), cancellation));
     }
 
     public static Task<NavigationResponse> NavigateForResultDataAsync<TResultData>(this INavigationService service, object sender, string relativePathModifier = Schemes.Parent, CancellationToken cancellation = default)
     {
         var mapping = Ioc.Default.GetRequiredService<IRouteMappings>();
-        var map = mapping.LookupByResultData(typeof(TResultData));
+        var map = mapping.FindByResultData(typeof(TResultData));
         return service.NavigateAsync(new NavigationRequest(sender, NavigationHelpers.BuildRoute(new Uri(map.FullPath(relativePathModifier), UriKind.Relative)), cancellation, typeof(TResultData)));
     }
 
