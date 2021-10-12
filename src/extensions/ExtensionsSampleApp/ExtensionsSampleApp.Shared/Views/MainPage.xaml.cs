@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using ExtensionsSampleApp.ViewModels;
+using Uno.Extensions;
 using Uno.Extensions.Navigation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Navigation;
 
 namespace ExtensionsSampleApp.Views
 {
