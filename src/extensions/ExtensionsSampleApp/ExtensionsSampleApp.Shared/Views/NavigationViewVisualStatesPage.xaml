@@ -10,7 +10,7 @@
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
       >
 
-    <Grid nav:Navigation.IsCompositeRegion="True">
+    <Grid nav:Region.Composite="True">
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="Auto"/>
@@ -32,17 +32,17 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <muxc:NavigationView x:Name="NavView"
-                              nav:Navigation.IsRegion="true">
+                              nav:Region.Attached="true">
             <muxc:NavigationView.MenuItems>
                 <muxc:NavigationViewItem Tag="home"
                                          Icon="Home"
                                          Content="Home"
                                          x:Name="Content1"
-                                         nav:Navigation.NavigateOnClickRoute="../showcontent1" />
+                                         nav:Navigation.Request="../showcontent1" />
                 <muxc:NavigationViewItem Tag="apps"
                                          Content="Apps"
                                          x:Name="Content2"
-                                         nav:Navigation.NavigateOnClickRoute="../showcontent2">
+                                         nav:Navigation.Request="../showcontent2">
                     <muxc:NavigationViewItem.Icon>
                         <FontIcon FontFamily="Segoe MDL2 Assets"
                                   Glyph="&#xEB3C;" />
@@ -62,8 +62,8 @@
             </ScrollViewer>
         </muxc:NavigationView>
         <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <Button Content="Home" nav:Navigation.NavigateOnClickRoute="showcontent1" />
-            <Button Content="Apps" nav:Navigation.NavigateOnClickRoute="showcontent2"  />
+            <Button Content="Home" nav:Navigation.Request="showcontent1" />
+            <Button Content="Apps" nav:Navigation.Request="showcontent2"  />
         </StackPanel>
     </Grid>
 </Page>

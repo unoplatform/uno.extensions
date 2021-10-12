@@ -266,7 +266,7 @@ public static class NavigationHelpers
     {
         if (view is FrameworkElement fe)
         {
-            fe.SetNavigationService(navigation);
+            fe.SetServiceProvider(services);
 
             if (viewModel is not null &&
                 fe.DataContext != viewModel)

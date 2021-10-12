@@ -15,9 +15,12 @@ public class RegionNavigationService : CompositeNavigationService
 
     private int isNavigating = 0;
 
-    private IDynamicNavigationServiceFactory DialogServiceFactory { get; }
+    private IRegionNavigationServiceFactory DialogServiceFactory { get; }
 
-    public RegionNavigationService(ILogger<RegionNavigationService> logger, IDynamicNavigationServiceFactory dialogServiceFactory) : base(logger)
+    public RegionNavigationService(
+        ILogger<RegionNavigationService> logger,
+        IRegionNavigationService parent,
+        IRegionNavigationServiceFactory dialogServiceFactory) : base(logger, parent)
     {
         DialogServiceFactory = dialogServiceFactory;
     }
@@ -33,7 +36,7 @@ public class RegionNavigationService : CompositeNavigationService
         {
             if (request.Segments.IsDialog)
             {
-                var dialogService = DialogServiceFactory.CreateService(request);
+                var dialogService = DialogServiceFactory.CreateService(this, request);
                 this.Attach(RouteConstants.RelativePath.DialogPrefix, dialogService);
                 var dialogResponse = await dialogService.NavigateAsync(request);
                 if (dialogResponse is null || dialogResponse.Result is null)
@@ -107,7 +110,7 @@ public class RegionNavigationService : CompositeNavigationService
         }
         finally
         {
-            Logger.LazyLogInformation(() => Root.ToString());
+            //Logger.LazyLogInformation(() => Root.ToString());
         }
 
         return null;

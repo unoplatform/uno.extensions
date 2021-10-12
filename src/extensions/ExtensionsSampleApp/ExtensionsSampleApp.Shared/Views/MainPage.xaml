@@ -26,11 +26,11 @@
                 <Button Content="Next page - NavigationRequest"
                     Click="NextPageNavigationRequestClick" />
                 <Button Content="Next page - Navigation Path"
-                        nav:Navigation.NavigateOnClickRoute="../SecondPage"
+                        nav:Navigation.Request="../SecondPage"
                         />
                 <Button Content="Next page - Navigation Path with delay"
 
-                    nav:Navigation.NavigateOnClickRoute="../SecondPage?delay=5000" />
+                    nav:Navigation.Request="../SecondPage?delay=5000" />
                 <Button Content="Next page - NavigateToViewAsync"
                     Click="NextPageNavigateToViewAsyncClick" />
                 <Button Content="Next page - NavigateToViewModelAsync"
@@ -55,15 +55,15 @@
                     Click="MessageDialogClick" />
 
                 <Button Content="Twitter"
-                    nav:Navigation.NavigateOnClickRoute="../TwitterPage" />
+                    nav:Navigation.Request="../TwitterPage" />
                 <Button Content="TabBar Page"
-                    nav:Navigation.NavigateOnClickRoute="../TabBarPage" />
+                    nav:Navigation.Request="../TabBarPage" />
                 <Button Content="NavigationView Page"
-                    nav:Navigation.NavigateOnClickRoute="../NavigationViewPage" />
+                    nav:Navigation.Request="../NavigationViewPage" />
                 <Button Content="NavigationViewGridVisibility Page"
-                    nav:Navigation.NavigateOnClickRoute="../NavigationViewGridVisibilityPage" />
+                    nav:Navigation.Request="../NavigationViewGridVisibilityPage" />
                 <Button Content="NavigationViewVisualStates Page"
-                    nav:Navigation.NavigateOnClickRoute="../NavigationViewVisualStatesPage" />
+                    nav:Navigation.Request="../NavigationViewVisualStatesPage" />
 
             </StackPanel>
         </ScrollViewer>
@@ -71,14 +71,14 @@
         <Grid Grid.Row="1">
             <StackPanel>
                 <Button Content="Show popup"
-                    nav:Navigation.NavigateOnClickRoute="./Show" />
+                    nav:Navigation.Request="./Show" />
                 <Button Content="Hide popup"
-                    nav:Navigation.NavigateOnClickRoute="./Hide" />
+                    nav:Navigation.Request="./Hide" />
                 <Button Content="Show popup Manual"
                      Click="ShowPopupManualClick"/>
             </StackPanel>
             <Popup x:Name="MyPopup"
-                   nav:Navigation.IsRegion="True" 
+                   nav:Region.Attached="True" 
                    VerticalOffset="10" HorizontalOffset="200" 
 								   IsLightDismissEnabled="True" >
                 <Popup.Child>

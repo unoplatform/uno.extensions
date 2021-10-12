@@ -10,13 +10,13 @@
       xmlns:nav="using:Uno.Extensions.Navigation.Controls"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid nav:Navigation.IsCompositeRegion="True">
+    <Grid nav:Region.Composite="True">
           <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <muxc:NavigationView x:Name="NavView"
-                              nav:Navigation.IsRegion="true">
+                              nav:Region.Attached="true">
             <muxc:NavigationView.MenuItems>
                 <muxc:NavigationViewItem Tag="home"
                                          Icon="Home"
@@ -36,7 +36,7 @@
             </muxc:NavigationView.MenuItems>
 
             <ScrollViewer>
-                <Grid x:Name="ContentGrid"  nav:Navigation.IsRegion="true">
+                <Grid x:Name="ContentGrid"  nav:Region.Attached="true">
                     <local:Content1 Visibility="Collapsed"
                                     x:Name="gridcontent1" />
                     <local:Content2 Visibility="Collapsed"
@@ -45,8 +45,8 @@
             </ScrollViewer>
         </muxc:NavigationView>
  <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <Button Content="Tab 1" nav:Navigation.NavigateOnClickRoute="./gridcontent1" />
-            <Button Content="Tab 2" nav:Navigation.NavigateOnClickRoute="./gridcontent1"  />
+            <Button Content="Tab 1" nav:Navigation.Request="./gridcontent1" />
+            <Button Content="Tab 2" nav:Navigation.Request="./gridcontent1"  />
         </StackPanel>
     </Grid>
 </Page>

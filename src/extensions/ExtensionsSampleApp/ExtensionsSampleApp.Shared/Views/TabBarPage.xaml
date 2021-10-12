@@ -10,7 +10,7 @@
       xmlns:toolkit="using:Uno.UI.ToolkitLib"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid nav:Navigation.IsCompositeRegion="True">
+    <Grid nav:Region.Composite="True">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
@@ -18,8 +18,8 @@
 
         </Grid.RowDefinitions>
         <!--SelectionChanged="TabBar_SelectionChanged"-->
-        <toolkit:TabBar Background="Tomato" nav:Navigation.IsRegion="true">
-            <!--nav:Navigation.IsRegion="true" >-->
+        <toolkit:TabBar Background="Tomato" nav:Region.Attached="true">
+            <!--nav:Region.Attached="true" >-->
             <toolkit:TabBar.Items>
                 <toolkit:TabBarItem Content="Tab 1"
                                     nav:Navigation.Route="../.././Content1"
@@ -29,11 +29,11 @@
                                     x:Name="Content2" />
             </toolkit:TabBar.Items>
         </toolkit:TabBar>
-        <!--<ContentControl nav:Navigation.RegionName="tabcontent" Grid.Row="1"/>-->
-        <ContentControl Grid.Row="1" x:Name="ContentHost"  nav:Navigation.IsRegion="true"/>
+        <!--<ContentControl nav:Region.Name="tabcontent" Grid.Row="1"/>-->
+        <ContentControl Grid.Row="1" x:Name="ContentHost"  nav:Region.Attached="true"/>
         <StackPanel Grid.Row="2" Orientation="Horizontal">
-            <Button Content="Tab 1" nav:Navigation.NavigateOnClickRoute="./Content1" />
-            <Button Content="Tab 2" nav:Navigation.NavigateOnClickRoute="./Content2"  />
+            <Button Content="Tab 1" nav:Navigation.Request="./Content1" />
+            <Button Content="Tab 2" nav:Navigation.Request="./Content2"  />
         </StackPanel>
     </Grid>
 </Page>

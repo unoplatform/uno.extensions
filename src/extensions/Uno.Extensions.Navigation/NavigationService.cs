@@ -6,14 +6,15 @@ namespace Uno.Extensions.Navigation;
 
 public class NavigationService : INavigationService
 {
-    public ILogger Logger { get; }
+    protected ILogger Logger { get; }
 
     protected bool IsRootService => Parent is null;
 
-    public IRegionNavigationService Parent { get; set; }
+    private INavigationService Parent { get; }
 
-    public NavigationService(ILogger logger)
+    public NavigationService(ILogger logger, INavigationService parent)
     {
+        Parent = parent;
         Logger = logger;
     }
 
@@ -40,7 +41,7 @@ public class NavigationService : INavigationService
         return parentService.NavigateAsync(parentRequest);
     }
 
-    protected NavigationService Root
+    private NavigationService Root
     {
         get
         {

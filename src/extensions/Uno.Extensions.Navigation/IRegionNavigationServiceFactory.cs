@@ -2,5 +2,7 @@
 
 public interface IRegionNavigationServiceFactory
 {
-    IRegionNavigationService CreateService(object control, bool isComposite);
+    IRegionNavigationService CreateService(IRegionNavigationService parent, object control, bool isComposite);
+
+    IRegionNavigationService CreateService(IRegionNavigationService parent, NavigationRequest request);
 }
