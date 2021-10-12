@@ -7,6 +7,7 @@ namespace Uno.Extensions.Options;
 /// This is an implementation of <see cref="IEqualityComparer{T}"/> which compare the
 /// <see cref="Option{T}"/> type and uses an optional inner comparer for the value.
 /// </summary>
+/// <typeparam name="T">The type of entity to compare</typeparam>
 public sealed class OptionEqualityComparer<T> : IEqualityComparer<Option<T>>
 {
     private readonly IEqualityComparer<T> _innerComparer;
