@@ -39,21 +39,40 @@ public class RouteMappings : IRouteMappings
 
     public virtual RouteMap FindByViewModel(Type viewModelType)
     {
-        return (Mappings.FirstOrDefault(x => x.Value.ViewModel == viewModelType).Value) ?? default;
+        return FindByInheritedTypes(viewModelType, map => map.ViewModel);
     }
 
     public virtual RouteMap FindByView(Type viewType)
     {
-        return (Mappings.FirstOrDefault(x => x.Value.View == viewType).Value) ?? default;
+        return FindByInheritedTypes(viewType, map => map.View);
     }
 
     public virtual RouteMap FindByData(Type dataType)
     {
-        return Mappings.FirstOrDefault(x => x.Value.Data == dataType).Value;
+        return FindByInheritedTypes(dataType, map => map.Data);
     }
 
     public virtual RouteMap FindByResultData(Type dataType)
     {
-        return Mappings.FirstOrDefault(x => x.Value.ResultData == dataType).Value;
+        return FindByInheritedTypes(dataType, map => map.ResultData);
+    }
+
+    private RouteMap FindByInheritedTypes(Type typeToFind, Func<RouteMap, Type> mapType)
+    {
+        // Handle the non-reflection check first
+        var map = (from m in Mappings
+                   where mapType(m.Value) == typeToFind
+                   select m.Value)
+                   .FirstOrDefault();
+        if (map is not null)
+        {
+            return map;
+        }
+
+        return (from baseType in typeToFind.GetBaseTypes()
+                from m in Mappings
+                where mapType(m.Value) == baseType
+                select m.Value)
+                   .FirstOrDefault();
     }
 }
