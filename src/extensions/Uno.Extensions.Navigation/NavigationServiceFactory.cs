@@ -55,12 +55,12 @@ public class NavigationServiceFactory : IRegionNavigationServiceFactory
         if (isComposite)
         {
             var compService = new CompositeNavigationService(navLogger, parent, this);
-            services.GetService<ScopedServiceHost<IRegionNavigationService>>().Service = compService;
+            services.AddInstance<IRegionNavigationService>(compService);
             return compService;
         }
 
         var navService = new RegionNavigationService(navLogger, parent, this);
-        services.GetService<ScopedServiceHost<IRegionNavigationService>>().Service = navService;
+        services.AddInstance<IRegionNavigationService>(navService);
 
         // This is a root navigation service
         if (control is null)
@@ -72,7 +72,7 @@ public class NavigationServiceFactory : IRegionNavigationServiceFactory
         services.GetService<RegionControlProvider>().RegionControl = control;
         var factory = Factories.FindForControl(control);
         var region = factory.Create(services);
-        services.GetService<ScopedServiceHost<IRegion>>().Service = region;
+        services.AddInstance<IRegion>( region);
         // Associate region service with region service container
         navService.Region = region;
 
@@ -90,15 +90,15 @@ public class NavigationServiceFactory : IRegionNavigationServiceFactory
         var navLogger = services.GetService<ILogger<RegionNavigationService>>();
         var dialogNavService = new RegionNavigationService(navLogger, parent, this);
 
-        services.GetService<ScopedServiceHost<IRegionNavigationService>>().Service = dialogNavService;
+        services.AddInstance<IRegionNavigationService>(dialogNavService);
         var innerNavService = new InnerNavigationService(dialogNavService);
-        services.GetService<ScopedServiceHost<INavigationService>>().Service = innerNavService;
+        services.AddInstance<INavigationService>(innerNavService);
 
         var mapping = Mappings.FindByPath(request.Route.Base);
 
         var factory = Factories.FindForControlType(mapping.View);
         var region = factory.Create(services);
-        services.GetService<ScopedServiceHost<IRegion>>().Service = region;
+        services.AddInstance<IRegion>(region);
         dialogNavService.Region = region;
 
         return dialogNavService;

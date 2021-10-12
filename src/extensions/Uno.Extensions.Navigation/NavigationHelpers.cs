@@ -268,10 +268,9 @@ public static class NavigationHelpers
         var scopedServices = scope.ServiceProvider;
 
         scopedServices.GetService<RegionControlProvider>().RegionControl = services.GetService<RegionControlProvider>().RegionControl;
-        scopedServices.GetService<ScopedServiceHost<IRegionNavigationService>>().Service = services.GetService<ScopedServiceHost<IRegionNavigationService>>().Service;
-        //scopedServices.GetService<ScopedServiceHost<INavigationService>>().Service = services.GetService<ScopedServiceHost<INavigationService>>().Service;
-        INavigationService innerNavService = new InnerNavigationService(scopedServices.GetService<ScopedServiceHost<IRegionNavigationService>>().Service);
-        scopedServices.GetService<ScopedServiceHost<INavigationService>>().Service = innerNavService;
+        scopedServices.AddInstance<IRegionNavigationService>(services.GetInstance<IRegionNavigationService>());
+        var innerNavService = new InnerNavigationService(scopedServices.GetInstance<IRegionNavigationService>());
+        scopedServices.AddInstance<INavigationService>(innerNavService);
 
         return scopedServices;
     }
