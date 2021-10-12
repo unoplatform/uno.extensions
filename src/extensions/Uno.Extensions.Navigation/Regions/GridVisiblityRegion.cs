@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
+using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.ViewModels;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml;
@@ -17,7 +18,7 @@ public class GridVisiblityRegion : SimpleRegion<Grid>
 {
     protected override object CurrentView => CurrentlyVisibleControl;
 
-    protected override string CurrentPath => CurrentView?.NavigationPath();
+    protected override string CurrentPath => CurrentView?.NavigationRoute();
 
     public GridVisiblityRegion(
         ILogger<GridVisiblityRegion> logger,

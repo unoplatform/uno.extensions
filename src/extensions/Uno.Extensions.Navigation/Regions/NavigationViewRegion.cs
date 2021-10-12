@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.Extensions.Logging;
+using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.ViewModels;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml;
@@ -18,7 +19,7 @@ public class NavigationViewRegion : SimpleRegion<Microsoft.UI.Xaml.Controls.Navi
 {
     protected override object CurrentView => Control.SelectedItem;
 
-    protected override string CurrentPath => CurrentView?.NavigationPath();
+    protected override string CurrentPath => CurrentView?.NavigationRoute();
 
     private Microsoft.UI.Xaml.Controls.NavigationView _control;
 

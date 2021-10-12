@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
+using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.ViewModels;
 #if !WINDOWS_UWP && !WINUI
 using Popup = Windows.UI.Xaml.Controls.Popup;
@@ -24,7 +25,7 @@ public class PopupRegion : SimpleRegion<Popup>
 {
     protected override object CurrentView => Control;
 
-    protected override string CurrentPath => CurrentView?.NavigationPath(Mappings);
+    protected override string CurrentPath => CurrentView?.NavigationRoute(Mappings);
 
     public PopupRegion(
         ILogger<ContentControlRegion> logger,

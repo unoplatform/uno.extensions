@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
+using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.ViewModels;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Xaml;
@@ -20,7 +21,7 @@ public class FrameRegion : StackRegion<Frame>
 {
     protected override object CurrentView => Control.Content;
 
-    protected override string CurrentPath => CurrentView?.NavigationPath(Mappings);
+    protected override string CurrentPath => CurrentView?.NavigationRoute(Mappings);
 
     public FrameRegion(
         ILogger<FrameRegion> logger,
