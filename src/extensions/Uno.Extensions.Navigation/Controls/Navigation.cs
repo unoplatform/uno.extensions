@@ -88,4 +88,27 @@ public static class Navigation
             return value;
         }
     }
+
+    public static string NavigationRoute(this object view, IRouteMappings mappings = null)
+    {
+        var map = mappings?.FindByView(view.GetType());
+        if (map is not null)
+        {
+            return map.Path;
+        }
+
+        if (view is FrameworkElement fe)
+        {
+            var path = GetRoute(fe);
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                path = fe.Name;
+            }
+
+            return path;
+        }
+
+        return null;
+    }
+
 }

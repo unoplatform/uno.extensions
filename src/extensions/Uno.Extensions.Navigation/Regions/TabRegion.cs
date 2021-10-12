@@ -2,6 +2,7 @@
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
+using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.ViewModels;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml;
@@ -19,7 +20,7 @@ public class TabRegion : SimpleRegion<TabView>
 {
     protected override object CurrentView => (Control.SelectedItem as TabViewItem)?.Content;
 
-    protected override string CurrentPath => (Control.SelectedItem as TabViewItem)?.NavigationPath();
+    protected override string CurrentPath => (Control.SelectedItem as TabViewItem)?.NavigationRoute();
 
     public TabRegion(
         ILogger<TabRegion> logger,
