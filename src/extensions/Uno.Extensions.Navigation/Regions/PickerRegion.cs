@@ -47,7 +47,7 @@ public class PickerRegion : BaseRegion
             VerticalAlignment = VerticalAlignment.Stretch
         };
 
-        var data = context.Request.Segments.Parameters;
+        var data = context.Request.Route.Data;
         if (data.TryGetValue(RouteConstants.PickerItemTemplate, out var template))
         {
             picker.ItemTemplate = template as DataTemplate;

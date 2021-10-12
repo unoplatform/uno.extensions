@@ -47,13 +47,13 @@ public class CompositeNavigationService : NavigationService, IRegionNavigationSe
     protected async Task<NavigationResponse> RunNestedNavigation(NavigationRequest request)
     {
         var nestedRequest = request;
-        if (nestedRequest is null || nestedRequest.Segments.IsParent)
+        if (nestedRequest is null || nestedRequest.Route.IsParent)
         {
             await Task.CompletedTask;
             return null;
         }
 
-        var nestedRoute = nestedRequest.Segments.Base;
+        var nestedRoute = nestedRequest.Route.Base;
 
         IRegionNavigationService[] nested = null;
         while (nested is null || !nested.Any())
@@ -66,13 +66,13 @@ public class CompositeNavigationService : NavigationService, IRegionNavigationSe
                 nested = Nested();
                 if (nested is not null && nested.Any())
                 {
-                    var nextRoute = nestedRequest.Route.Uri.OriginalString.TrimStart($"{RouteConstants.Schemes.Nested}/");
+                    var nextRoute = nestedRequest.Route.Uri.OriginalString.TrimStart($"{Schemes.Nested}");
                     nestedRequest = nestedRequest.WithPath(nextRoute);
                 }
             }
             else
             {
-                var nextRoute = nestedRequest.Route.Uri.OriginalString.TrimStart($"{RouteConstants.Schemes.Nested}/{nestedRoute}/");
+                var nextRoute = nestedRequest.Route.Uri.OriginalString.TrimStart($"{Schemes.Nested}{nestedRoute}/");
                 nestedRequest = nestedRequest.WithPath(nextRoute);
             }
 

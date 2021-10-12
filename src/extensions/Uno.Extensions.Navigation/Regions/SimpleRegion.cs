@@ -22,8 +22,8 @@ public abstract class SimpleRegion<TControl> : BaseRegion<TControl>
 
     public override Task RegionNavigate(NavigationContext context)
     {
-        Logger.LazyLogDebug(() => $"Navigating to path '{context.Request.Segments.Base}' with view '{context.Mapping?.View?.Name}'");
-        Show(context.Request.Segments.Base, context.Mapping?.View, context.Request.Segments.Parameters);
+        Logger.LazyLogDebug(() => $"Navigating to path '{context.Request.Route.Base}' with view '{context.Mapping?.View?.Name}'");
+        Show(context.Request.Route.Base, context.Mapping?.View, context.Request.Route.Data);
         return Task.CompletedTask;
     }
 }

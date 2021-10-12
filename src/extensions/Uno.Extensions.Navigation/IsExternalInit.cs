@@ -36,9 +36,13 @@ namespace System
             }
 
             if (fromEnd)
+            {
                 _value = ~value;
+            }
             else
+            {
                 _value = value;
+            }
         }
 
         // The following private constructors mainly created for perf reason to avoid the checks
@@ -139,7 +143,9 @@ namespace System
         public override string ToString()
         {
             if (IsFromEnd)
+            {
                 return "^" + ((uint)Value).ToString();
+            }
 
             return ((uint)Value).ToString();
         }
@@ -185,7 +191,7 @@ namespace System
         /// <summary>Returns the hash code for this instance.</summary>
         public override int GetHashCode()
         {
-            return Start.GetHashCode() * 31 + End.GetHashCode();
+            return (Start.GetHashCode() * 31) + End.GetHashCode();
         }
 
         /// <summary>Converts the value of the current Range object to its equivalent string representation.</summary>
@@ -216,16 +222,22 @@ namespace System
             int start;
             var startIndex = Start;
             if (startIndex.IsFromEnd)
-                start = length - startIndex.Value;
+            { start = length - startIndex.Value; }
             else
+            {
                 start = startIndex.Value;
+            }
 
             int end;
             var endIndex = End;
             if (endIndex.IsFromEnd)
+            {
                 end = length - endIndex.Value;
+            }
             else
+            {
                 end = endIndex.Value;
+            }
 
             if ((uint)end > (uint)length || (uint)start > (uint)end)
             {

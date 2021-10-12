@@ -33,7 +33,7 @@ namespace ExtensionsSampleApp.ViewModels
 
         public async Task<bool> Stop(NavigationRequest request)
         {
-            if(request.Segments.Parameters.TryGetValue("delay", out var delayAsString))
+            if(request.Route.Data.TryGetValue("delay", out var delayAsString))
             {
                 await Task.Delay(int.Parse(delayAsString as string));
             }
@@ -65,9 +65,9 @@ namespace ExtensionsSampleApp.ViewModels
 
         public async Task<bool> Stop(NavigationRequest request)
         {
-            if ((request.Segments.Base == typeof(ThirdPage).Name ||
-                request.Segments.Base == typeof(ThirdPage).Name.Replace("Page",""))&&
-                !((request.Parse().Parameters as IDictionary<string, object>)?.Any() ?? false))
+            if ((request.Route.Base == typeof(ThirdPage).Name ||
+                request.Route.Base == typeof(ThirdPage).Name.Replace("Page",""))&&
+                !((request.Route.Data as IDictionary<string, object>)?.Any() ?? false))
             {
                 return false;
             }
@@ -168,7 +168,7 @@ namespace ExtensionsSampleApp.ViewModels
         {
             if (Tweet is null)
             {
-                Tweet = new Tweet { Id = int.Parse(context.Parse().Parameters["tweetid"] + ""), Author = "Ned", Text = "Tweet loaded on start" };
+                Tweet = new Tweet { Id = int.Parse(context.Route.Data["tweetid"] + ""), Author = "Ned", Text = "Tweet loaded on start" };
             }
         }
     }

@@ -29,7 +29,7 @@ public class MessageDialogRegion : DialogRegion
     {
         var navigation = context.Navigation;
 
-        var data = context.Request.Segments.Parameters;
+        var data = context.Request.Route.Data;
         var md = new MessageDialog(data[RouteConstants.MessageDialogParameterContent] as string, data[RouteConstants.MessageDialogParameterTitle] as string)
         {
             Options = (MessageDialogOptions)data[RouteConstants.MessageDialogParameterOptions],

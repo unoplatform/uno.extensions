@@ -40,7 +40,7 @@ namespace Uno.Extensions.Navigation.Regions
             var dialog = ShowTask;
             ShowTask = null;
 
-            var responseData = navigationContext.Request.Segments.Parameters.TryGetValue(string.Empty, out var response) ? response : default;
+            var responseData = navigationContext.Request.Route.Data.TryGetValue(string.Empty, out var response) ? response : default;
 
             await ViewModelManager.StopViewModel(navigationContext, CurrentViewModel);
 

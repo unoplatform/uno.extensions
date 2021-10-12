@@ -20,7 +20,7 @@ public class NavigationService : INavigationService
 
     public virtual async Task<NavigationResponse> NavigateAsync(NavigationRequest request)
     {
-        if (request is not null && request.Segments.IsParent)
+        if (request is not null && request.Route.IsParent)
         {
             // Routing navigation request to parent
             return await NavigateWithParentAsync(request);
@@ -35,7 +35,7 @@ public class NavigationService : INavigationService
 
         var path = request.Route.Uri.OriginalString;
         var parentService = Parent;
-        var parentPath = path.TrimStartOnce(RouteConstants.Schemes.Parent + "/");
+        var parentPath = path.TrimStartOnce(Schemes.Parent);
 
         var parentRequest = request.WithPath(parentPath);
         return parentService.NavigateAsync(parentRequest);

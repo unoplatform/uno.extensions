@@ -15,7 +15,7 @@ namespace Uno.Extensions.Navigation
 
         public Task<NavigationResponse> NavigateAsync(NavigationRequest request)
         {
-            if (request.Segments.IsBackNavigation)
+            if (request.Route.FrameIsBackNavigation)
             {
                 ResultCompletion.TrySetResult(request.Route.Data is not null ? Options.Option.Some<object>(request.Route.Data) : Options.Option.None<object>());
             }
