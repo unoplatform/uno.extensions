@@ -28,14 +28,16 @@ public static class RouteExtensions
 
     public static Route TrimScheme(this Route route, string schemeToTrim)
     {
-        // TODO: Refactor to improve scheme trimming
-        return BuildRoute(route.Uri.OriginalString.TrimStartOnce(schemeToTrim), route.Data);
+        return route with { Scheme = route.Scheme.TrimStartOnce(schemeToTrim) };
+        //// TODO: Refactor to improve scheme trimming
+        //return BuildRoute(route.Uri.OriginalString.TrimStartOnce(schemeToTrim), route.Data);
     }
 
     public static Route AppendScheme(this Route route, string schemeToAppend)
     {
-        // TODO: Refactor to improve scheme appending
-        return BuildRoute(schemeToAppend + route.Uri.OriginalString, route.Data);
+        return route with { Scheme = schemeToAppend + route.Scheme };
+        //// TODO: Refactor to improve scheme appending
+        //return BuildRoute(schemeToAppend + route.Uri.OriginalString, route.Data);
     }
 
     public static Route BuildRoute(this Uri uri, object data = null)

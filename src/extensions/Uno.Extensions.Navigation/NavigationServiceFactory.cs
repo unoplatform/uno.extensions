@@ -80,7 +80,7 @@ public class NavigationServiceFactory : IRegionNavigationServiceFactory
         return region;
     }
 
-    public IRegionNavigationService CreateService(IRegionNavigationService parent, NavigationRequest request)
+    public IRegionNavigationService CreateService(NavigationRequest request)
     {
         Logger.LazyLogDebug(() => $"Adding region");
 
@@ -89,8 +89,11 @@ public class NavigationServiceFactory : IRegionNavigationServiceFactory
 
         var mapping = Mappings.FindByPath(request.Route.Base);
 
+        var factoryServices = Services.CreateScope().ServiceProvider;
+        factoryServices.AddInstance<IScopedServiceProvider>(new ScopedServiceProvider(services));
+
         var factory = Factories.FindForControlType(mapping.View);
-        var region = factory.Create(services);
+        var region = factory.Create(factoryServices);
         services.AddInstance<IRegionNavigationService>(region);
 
         var innerNavService = new InnerNavigationService(region);

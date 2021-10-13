@@ -4,7 +4,7 @@ using Uno.Extensions.Logging;
 
 namespace Uno.Extensions.Navigation;
 
-public class NavigationService : INavigationService
+public abstract class NavigationService : INavigationService
 {
     protected ILogger Logger { get; }
 
@@ -12,12 +12,16 @@ public class NavigationService : INavigationService
 
     private INavigationService Parent { get; }
 
+    private IRegionNavigationServiceFactory ServiceFactory { get; }
+
     protected NavigationService(
         ILogger logger,
-        INavigationService parent)
+        INavigationService parent,
+        IRegionNavigationServiceFactory serviceFactory)
     {
         Parent = parent;
         Logger = logger;
+        ServiceFactory = serviceFactory;
     }
 
     public Task<NavigationResponse> NavigateAsync(NavigationRequest request)
@@ -44,11 +48,24 @@ public class NavigationService : INavigationService
             return Parent?.NavigateAsync(request);
         }
 
+        // Run dialog requests
+        if (request.Route.IsDialog)
+        {
+            request = request with { Route = request.Route.TrimScheme(Schemes.Dialog) };
+            return DialogNavigateAsync(request);
+        }
+
         return CoreNavigateAsync(request);
     }
 
-    protected virtual Task<NavigationResponse> CoreNavigateAsync(NavigationRequest request)
+    private async Task<NavigationResponse> DialogNavigateAsync(NavigationRequest request)
     {
-        return Task.FromResult(default(NavigationResponse));
+        var dialogService = ServiceFactory.CreateService(request);
+
+        var dialogResponse = await dialogService.NavigateAsync(request);
+
+        return dialogResponse;
     }
+
+    protected abstract Task<NavigationResponse> CoreNavigateAsync(NavigationRequest request);
 }
