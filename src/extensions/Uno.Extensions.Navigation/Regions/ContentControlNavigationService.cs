@@ -33,17 +33,17 @@ public class ContentControlNavigationService : ControlNavigationService<ContentC
     {
     }
 
-    protected override void Show(string path, Type view, object data)
+    protected override void Show(string path, Type viewType, object data)
     {
         try
         {
-            if (view is null)
+            if (viewType is null)
             {
                 Logger.LazyLogError(() => "Missing view for navigation path '{path}'");
             }
 
-            Logger.LazyLogDebug(() => $"Creating instance of type '{view.Name}'");
-            var content = Activator.CreateInstance(view);
+            Logger.LazyLogDebug(() => $"Creating instance of type '{viewType.Name}'");
+            var content = Activator.CreateInstance(viewType);
             Control.Content = content;
             Logger.LazyLogDebug(() => "Instance created");
         }

@@ -6,11 +6,12 @@ namespace Uno.Extensions.Navigation
     {
         private INavigationService Navigation { get; }
 
-        public TaskCompletionSource<Options.Option> ResultCompletion { get; set; } = new TaskCompletionSource<Options.Option>();
+        public TaskCompletionSource<Options.Option> ResultCompletion { get; }
 
-        public ResponseNavigationService(INavigationService internalNavigation)
+        public ResponseNavigationService(INavigationService internalNavigation, TaskCompletionSource<Options.Option> completion)
         {
             Navigation = internalNavigation;
+            ResultCompletion = completion;
         }
 
         public Task<NavigationResponse> NavigateAsync(NavigationRequest request)

@@ -26,7 +26,7 @@ public class PickerNavigationService : ControlNavigationService
     {
     }
 
-    public override Task RegionNavigate(NavigationContext context)
+    protected override Task NavigateWithContextAsync(NavigationContext context)
     {
 #if __IOS__
         var appWindow = Windows.UI.Xaml.Window.Current;
