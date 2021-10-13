@@ -12,14 +12,12 @@ public class CompositeNavigationService : NavigationService, IRegionNavigationSe
 
     private AsyncAutoResetEvent NestedServiceWaiter { get; } = new AsyncAutoResetEvent(false);
 
-    private IRegionNavigationServiceFactory ServiceFactory { get; }
-
     public CompositeNavigationService(
         ILogger logger,
         IRegionNavigationService parent,
-        IRegionNavigationServiceFactory serviceFactory) : base(logger, parent)
+        IRegionNavigationServiceFactory serviceFactory)
+        : base(logger, parent, serviceFactory)
     {
-        ServiceFactory = serviceFactory;
     }
 
     public void Attach(string regionName, IRegionNavigationService childRegion)
@@ -36,20 +34,6 @@ public class CompositeNavigationService : NavigationService, IRegionNavigationSe
 
     protected async override Task<NavigationResponse> CoreNavigateAsync(NavigationRequest request)
     {
-        // Run the base to handle parent requests
-        var coreResponse = await base.CoreNavigateAsync(request);
-        if (coreResponse is not null)
-        {
-            return coreResponse;
-        }
-
-        // Run dialog requests
-        var dialogResponse = await DialogNavigateAsync(request);
-        if (dialogResponse is not null)
-        {
-            return dialogResponse;
-        }
-
         // At this point, any residual request needs to be handed
         // down to the appropriate nested service
         return await NestedNavigateAsync(request);
@@ -58,31 +42,6 @@ public class CompositeNavigationService : NavigationService, IRegionNavigationSe
     private IRegionNavigationService[] Nested(string regionName = null)
     {
         return NestedServices.Where(kvp => kvp.Item1 == regionName + string.Empty).Select(x => x.Item2).ToArray();
-    }
-
-    private async Task<NavigationResponse> DialogNavigateAsync(NavigationRequest request)
-    {
-        if (request.Route.IsDialog)
-        {
-
-            var dialogService = ServiceFactory.CreateService(this, request);
-            Attach(RouteConstants.DialogPrefix, dialogService);
-
-            request = request with { Route = request.Route.TrimScheme(Schemes.Dialog) };
-            var dialogResponse = await dialogService.NavigateAsync(request);
-
-            if (dialogResponse is null || dialogResponse.Result is null)
-            {
-                Detach(dialogService);
-            }
-            else
-            {
-                _ = dialogResponse.Result.ContinueWith(t => Detach(dialogService), TaskScheduler.Current);
-            }
-            return dialogResponse;
-        }
-
-        return null;
     }
 
     protected virtual async Task<NavigationResponse> NestedNavigateAsync(NavigationRequest request)
