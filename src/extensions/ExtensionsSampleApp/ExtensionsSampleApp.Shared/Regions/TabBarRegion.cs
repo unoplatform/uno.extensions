@@ -6,6 +6,7 @@ using Uno.Extensions.Navigation.Controls;
 using Uno.UI.ToolkitLib;
 using Uno.Extensions.Navigation.ViewModels;
 using Uno.Extensions.Navigation.Regions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ExtensionsSampleApp.Region.Managers
 {
@@ -35,7 +36,7 @@ namespace ExtensionsSampleApp.Region.Managers
             var path = Uno.Extensions.Navigation.Controls.Navigation.GetRoute(tbi) ?? tbi.Name;
             if (!string.IsNullOrEmpty(path))
             {
-                this.NavigateByPathAsync(null, path);
+                this.ScopedServices.GetService<INavigationService>().NavigateByPathAsync(null, path);
             }
         }
 

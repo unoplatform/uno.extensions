@@ -181,7 +181,7 @@ public abstract class ControlNavigationService : CompositeNavigationService
         {
             request.Cancellation.Value.Register(() =>
             {
-                this.NavigateToPreviousViewAsync(context.Request.Sender);
+                this.ScopedServices.GetService<INavigationService>().NavigateToPreviousViewAsync(context.Request.Sender);
             });
         }
 
