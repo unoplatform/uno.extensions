@@ -24,7 +24,7 @@ public record Route(string Scheme, string Base, string Path, IDictionary<string,
 
     private int NumberOfGoBackInScheme => Scheme.TakeWhile(x => x + string.Empty == Schemes.NavigateBack).Count();
 
-    public int FrameNumberOfPagesToRemove => FrameIsBackNavigation ? NumberOfGoBackInScheme - 1 : NumberOfGoBackInScheme;
+    public int FrameNumberOfPagesToRemove => FrameIsRooted ? 0 : (FrameIsBackNavigation ? NumberOfGoBackInScheme - 1 : NumberOfGoBackInScheme);
 
     // Only navigate back if there is no base. If a base is specified, we do a forward navigate and remove items from the backstack
     public bool FrameIsBackNavigation => Scheme.StartsWith(Schemes.NavigateBack) && Base.Length == 0;
