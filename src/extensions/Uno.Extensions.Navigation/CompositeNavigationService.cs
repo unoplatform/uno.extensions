@@ -116,14 +116,14 @@ public class CompositeNavigationService : NavigationService, IRegionNavigationSe
 #pragma warning restore CA1849
     }
 
-    protected virtual void PrintAllRegions(StringBuilder builder, IRegionNavigationService nav, int indent = 0, string regionName = null)
-    {
-        if (nav is CompositeNavigationService comp)
-        {
-            foreach (var nested in comp.Children)
-            {
-                PrintAllRegions(builder, nested.Item2 as IRegionNavigationService, indent + 1, nested.Item1);
-            }
-        }
-    }
+    //protected virtual void PrintAllRegions(StringBuilder builder, IRegionNavigationService nav, int indent = 0, string regionName = null)
+    //{
+    //    if (nav is CompositeNavigationService comp)
+    //    {
+    //        foreach (var nested in comp.Children)
+    //        {
+    //            PrintAllRegions(builder, nested.Item2 as IRegionNavigationService, indent + 1, nested.Item1);
+    //        }
+    //    }
+    //}
 }

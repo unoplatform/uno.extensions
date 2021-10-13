@@ -12,20 +12,9 @@ public static class NavigationRequestExtensions
         return request.Result is not null;
     }
 
-    public static NavigationRequest WithPath(this NavigationRequest request, string path, string queryParameters = "")
-    {
-        return string.IsNullOrWhiteSpace(path) ? null : request with { Route = new Uri(path + (!string.IsNullOrWhiteSpace(queryParameters) ? $"?{queryParameters}" : string.Empty), UriKind.Relative).BuildRoute() };
-    }
-
     public static NavigationRequest AsRequest(this RouteMap map, object sender)
     {
         var request = new NavigationRequest(sender, new Uri(map.Path, UriKind.Relative).BuildRoute());
-        return request;
-    }
-
-    public static NavigationRequest AsRequest(this string uri, object sender, object data = null)
-    {
-        var request = new NavigationRequest(sender, new Uri(uri, UriKind.Relative).BuildRoute(data));
         return request;
     }
 

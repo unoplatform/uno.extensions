@@ -63,7 +63,7 @@ public class NavigationServiceFactory : IRegionNavigationServiceFactory
         if (control is null)
         {
             //navService.Region = services.GetService<DialogRegion>();
-            var compService = new CompositeNavigationService(navLogger,parent,this);
+            var compService = new CompositeNavigationService(navLogger, parent, this);
             services.AddInstance<IRegionNavigationService>(compService);
             return compService;
         }
@@ -74,11 +74,11 @@ public class NavigationServiceFactory : IRegionNavigationServiceFactory
         factoryServices.AddInstance<IScopedServiceProvider>(new ScopedServiceProvider(services));
         var factory = Factories.FindForControl(control);
         var region = factory.Create(factoryServices);
-        services.AddInstance<IRegionNavigationService>( region);
+        services.AddInstance<IRegionNavigationService>(region);
         var innerNavService = new InnerNavigationService(region);
         services.AddInstance<INavigationService>(innerNavService);
 
-        if(region is ControlNavigationService controlService)
+        if (region is ControlNavigationService controlService)
         {
             controlService.ControlInitialize();
         }

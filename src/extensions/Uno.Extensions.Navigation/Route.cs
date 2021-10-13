@@ -9,13 +9,13 @@ public record Route(string Scheme, string Base, string Path, IDictionary<string,
 {
     public bool EmptyScheme => string.IsNullOrWhiteSpace(Scheme);
 
-    public bool IsCurrent => Scheme == Schemes.Current || Scheme.StartsWith(Schemes.NavigateForward) || Scheme.StartsWith(Schemes.NavigateBack);
+    public bool IsCurrent => (Scheme == Schemes.Current || Scheme.StartsWith(Schemes.NavigateForward) || Scheme.StartsWith(Schemes.NavigateBack));
 
     public bool IsRoot => Scheme.StartsWith(Schemes.Root);
 
     public bool IsParent => Scheme.StartsWith(Schemes.Parent);
 
-    public bool IsNested => Scheme.StartsWith(Schemes.Nested);
+    public bool IsNested => Scheme.StartsWith(Schemes.Nested) && !string.IsNullOrWhiteSpace(Base);
 
     public bool IsDialog => Scheme.StartsWith(Schemes.Dialog);
 
@@ -29,11 +29,14 @@ public record Route(string Scheme, string Base, string Path, IDictionary<string,
     // Only navigate back if there is no base. If a base is specified, we do a forward navigate and remove items from the backstack
     public bool FrameIsBackNavigation => Scheme.StartsWith(Schemes.NavigateBack) && Base.Length == 0;
 
-    public NavigationRequest NextRequest(object sender) =>
-        Path?.Length > 1 ?
-        (Schemes.Nested + Path + Query)
-        .AsRequest(sender, Data.ContainsKey(string.Empty) ? Data[string.Empty] : null) :
-        null;
+    public bool FrameIsForwardNavigation => !FrameIsBackNavigation;
+
+    public Route Next => this with
+            {
+                Scheme = Schemes.Nested,
+                Base = this.NextBase(),
+                Path = this.NextPath()
+            };
 
     private string UriPath => ((Path is { Length: > 0 }) ? "/" : string.Empty) + Path;
 

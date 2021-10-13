@@ -16,8 +16,6 @@ public record NavigationContext(
 {
     public INavigationService Navigation => Services.GetService<INavigationService>();
 
-    public bool IsBackNavigation => Request.Route.FrameIsBackNavigation;
-
     public CancellationToken CancellationToken => CancellationSource.Token;
 
     public void Cancel()
