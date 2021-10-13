@@ -16,14 +16,14 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Regions;
 
-public class TabRegion : ControlNavigationService<TabView>
+public class TabNavigationService : ControlNavigationService<TabView>
 {
     protected override object CurrentView => (Control.SelectedItem as TabViewItem)?.Content;
 
     protected override string CurrentPath => (Control.SelectedItem as TabViewItem)?.NavigationRoute();
 
-    public TabRegion(
-        ILogger<TabRegion> logger,
+    public TabNavigationService(
+        ILogger<TabNavigationService> logger,
         IRegionNavigationService parent,
         IRegionNavigationServiceFactory serviceFactory,
         IScopedServiceProvider scopedServices,

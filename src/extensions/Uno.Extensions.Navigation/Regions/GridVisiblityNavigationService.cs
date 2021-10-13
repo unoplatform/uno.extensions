@@ -14,14 +14,14 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Regions;
 
-public class GridVisiblityRegion : ControlNavigationService<Grid>
+public class GridVisiblityNavigationService : ControlNavigationService<Grid>
 {
     protected override object CurrentView => CurrentlyVisibleControl;
 
     protected override string CurrentPath => CurrentView?.NavigationRoute();
 
-    public GridVisiblityRegion(
-        ILogger<GridVisiblityRegion> logger,
+    public GridVisiblityNavigationService(
+        ILogger<GridVisiblityNavigationService> logger,
         IRegionNavigationService parent,
         IRegionNavigationServiceFactory serviceFactory,
         IScopedServiceProvider scopedServices,

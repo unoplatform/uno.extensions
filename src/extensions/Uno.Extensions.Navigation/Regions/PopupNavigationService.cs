@@ -21,14 +21,14 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 
 namespace Uno.Extensions.Navigation.Regions;
 
-public class PopupRegion : ControlNavigationService<Popup>
+public class PopupNavigationService : ControlNavigationService<Popup>
 {
     protected override object CurrentView => Control;
 
     protected override string CurrentPath => CurrentView?.NavigationRoute(Mappings);
 
-    public PopupRegion(
-        ILogger<ContentControlRegion> logger,
+    public PopupNavigationService(
+        ILogger<ContentControlNavigationService> logger,
         IRegionNavigationService parent,
         IRegionNavigationServiceFactory serviceFactory,
         IScopedServiceProvider scopedServices,

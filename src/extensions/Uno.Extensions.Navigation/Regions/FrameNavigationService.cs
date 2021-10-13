@@ -18,14 +18,14 @@ using Microsoft.UI.Xaml.Navigation;
 
 namespace Uno.Extensions.Navigation.Regions;
 
-public class FrameRegion : ControlNavigationService<Frame>
+public class FrameNavigationService : ControlNavigationService<Frame>
 {
     protected override object CurrentView => Control.Content;
 
     protected override string CurrentPath => CurrentView?.NavigationRoute(Mappings);
 
-    public FrameRegion(
-        ILogger<FrameRegion> logger,
+    public FrameNavigationService(
+        ILogger<FrameNavigationService> logger,
         IRegionNavigationService parent,
         IRegionNavigationServiceFactory serviceFactory,
         IScopedServiceProvider scopedServices,
