@@ -35,14 +35,17 @@ public abstract class ControlNavigationService<TControl> : ControlNavigationServ
         Control = control;
     }
 
-    public override Task RegionNavigate(NavigationContext context)
+    protected abstract void Show(string path, Type viewType, object data);
+
+    protected override Task NavigateWithContextAsync(NavigationContext context)
     {
         Logger.LazyLogDebug(() => $"Navigating to path '{context.Request.Route.Base}' with view '{context.Mapping?.View?.Name}'");
         Show(context.Request.Route.Base, context.Mapping?.View, context.Request.Route.Data);
+
+        InitialiseView(context);
+
         return Task.CompletedTask;
     }
-
-    protected abstract void Show(string path, Type viewType, object data);
 
     public override string ToString()
     {
@@ -54,13 +57,15 @@ public abstract class ControlNavigationService : CompositeNavigationService
 {
     protected IServiceProvider ScopedServices { get; }
 
-    protected ILogger Logger { get; }
-
     protected virtual string CurrentPath => string.Empty;
 
     protected virtual bool CanGoBack => false;
 
     protected IViewModelManager ViewModelManager { get; }
+
+    protected virtual object CurrentView => default;
+
+    protected object CurrentViewModel => (CurrentView as FrameworkElement)?.DataContext;
 
     protected ControlNavigationService(
         ILogger logger,
@@ -70,138 +75,9 @@ public abstract class ControlNavigationService : CompositeNavigationService
         IViewModelManager viewModelManager)
         : base(logger, parent, serviceFactory)
     {
-        Logger = logger;
         ScopedServices = scopedServices;
         ViewModelManager = viewModelManager;
     }
-
-    public virtual void ControlInitialize()
-    {
-    }
-
-    protected async Task<NavigationResponse> ControlNavigateAsync(NavigationRequest request)
-    {
-        if (request.Route.Base == CurrentPath)
-        {
-            return null;
-        }
-
-        var context = request.BuildNavigationContext(ScopedServices);
-
-        TaskCompletionSource<Options.Option> resultTask = default;
-        if (request.RequiresResponse())
-        {
-            var responseNav = new ResponseNavigationService(context.Services.GetInstance<INavigationService>());
-            resultTask = responseNav.ResultCompletion;
-
-            context.Services.AddInstance<INavigationService>(responseNav);
-        }
-
-        await InternalNavigateAsync(context);
-        return new NavigationResponse(request, resultTask?.Task);
-    }
-
-    private async Task InternalNavigateAsync(NavigationContext context)
-    {
-        var request = context.Request;
-
-        if (request.Route.Base == CurrentPath)
-        {
-            await Task.CompletedTask;
-        }
-
-        var navigationHandled = await EndCurrentNavigationContext(context);
-
-        if (context.CancellationToken.IsCancellationRequested)
-        {
-            await Task.FromCanceled(context.CancellationToken);
-        }
-
-        if (!navigationHandled)
-        {
-            await DoNavigation(context);
-
-            await ViewModelManager.StartViewModel(context, CurrentViewModel);
-        }
-
-        context = context with { CanCancel = CanGoBack };
-
-        if (context.CanCancel)
-        {
-            context.CancellationToken.Register(() =>
-            {
-                this.NavigateToPreviousViewAsync(context.Request.Sender);
-            });
-        }
-    }
-
-    protected virtual Task DoNavigation(NavigationContext context)
-    {
-        return DoForwardNavigation(context);
-    }
-
-    protected async Task DoForwardNavigation(NavigationContext context)
-    {
-        await RegionNavigate(context);
-
-        InitialiseView(context);
-    }
-
-    public abstract Task RegionNavigate(NavigationContext context);
-
-    private async Task<bool> EndCurrentNavigationContext(NavigationContext navigationContext)
-    {
-        if (CurrentView is not null)
-        {
-            // Stop the currently active viewmodel
-            await ViewModelManager.StopViewModel(navigationContext, CurrentViewModel);
-
-            if (!CanGoBack || navigationContext.IsBackNavigation)
-            {
-                ViewModelManager.DisposeViewModel(CurrentViewModel);
-            }
-
-            // Check if navigation was cancelled - if it is,
-            // then indicate that navigation has been handled
-            if (navigationContext.IsCancelled)
-            {
-                var completion = navigationContext.Navigation as ResponseNavigationService;
-                if (completion is not null)
-                {
-                    completion.ResultCompletion.SetResult(Options.Option.None<object>());
-                }
-
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    protected void InitialiseView(NavigationContext context)
-    {
-        var view = CurrentView;
-
-        var viewModel = CurrentViewModel;
-        var mapping = context.Mapping;
-        if (viewModel is null || viewModel.GetType() != mapping.ViewModel)
-        {
-            // This will happen if cache mode isn't set to required
-            viewModel = ViewModelManager.CreateViewModel(context);
-        }
-
-        view.InjectServicesAndSetDataContext(context.Services, context.Navigation, viewModel);
-    }
-
-    protected virtual object CurrentView => default;
-
-    protected object CurrentViewModel => (CurrentView as FrameworkElement)?.DataContext;
-
-    public override string ToString()
-    {
-        return $"Region Path='{CurrentPath}'";
-    }
-
 
     protected async override Task<NavigationResponse> CoreNavigateAsync(NavigationRequest request)
     {
@@ -259,6 +135,83 @@ public abstract class ControlNavigationService : CompositeNavigationService
         return new NavigationResponse(request, taskCompletion.Task);
     }
 
+    public virtual void ControlInitialize()
+    { }
+
+    protected async Task<NavigationResponse> ControlNavigateAsync(NavigationRequest request)
+    {
+        if (request.Route.Base == CurrentPath)
+        {
+            return null;
+        }
+
+        // Prepare the NavigationContext
+        // - scoped IServiceProvider
+        // - inner nav service (or wrapped in a response nav service)
+        // - cancellation source
+        // - mapping
+        var resultTask = request.RequiresResponse() ? new TaskCompletionSource<Options.Option>() : default;
+        var context = request.BuildNavigationContext(ScopedServices, resultTask);
+
+        // Notify current view and viewmodel that about to navigate.
+        // If either return true, cancel nav by returning null
+        // (this is safe for null view or null viewmodel)
+        if (
+            !await CurrentView.Stop(request) ||
+            !await CurrentViewModel.Stop(request)
+            )
+        {
+            var completion = context.Navigation as ResponseNavigationService;
+            if (completion is not null)
+            {
+                completion.ResultCompletion.SetResult(Options.Option.None<object>());
+            }
+
+            return null;
+        }
+
+        await NavigateWithContextAsync(context);
+
+        // Start view and viewmodels
+        // (this is safe for null view or null viewmodel)
+        await CurrentView.Start(request);
+        await CurrentViewModel.Start(request);
+
+        if (request.Cancellation.HasValue && CanGoBack)
+        {
+            request.Cancellation.Value.Register(() =>
+            {
+                this.NavigateToPreviousViewAsync(context.Request.Sender);
+            });
+        }
+
+        return new NavigationResponse(request, resultTask?.Task);
+    }
+
+    protected abstract Task NavigateWithContextAsync(NavigationContext context);
+
+    protected void InitialiseView(NavigationContext context)
+    {
+        var view = CurrentView;
+
+        var viewModel = CurrentViewModel;
+        var mapping = context.Mapping;
+        if (viewModel is null || viewModel.GetType() != mapping.ViewModel)
+        {
+            // This will happen if cache mode isn't set to required
+            viewModel = ViewModelManager.CreateViewModel(context);
+        }
+
+        view.InjectServicesAndSetDataContext(context.Services, context.Navigation, viewModel);
+    }
+
+    public override string ToString()
+    {
+        return $"Region Path='{CurrentPath}'";
+    }
+
+
+
     //public override string ToString()
     //{
     //    var sb = new StringBuilder();
@@ -266,35 +219,35 @@ public abstract class ControlNavigationService : CompositeNavigationService
     //    return sb.ToString();
     //}
 
-    protected override void PrintAllRegions(StringBuilder builder, IRegionNavigationService nav, int indent = 0, string regionName = null)
-    {
-        //    if (nav is RegionNavigationService rns)
-        //    {
-        //        if (rns.Region is null)
-        //        {
-        //            builder.AppendLine(string.Empty);
-        //            builder.AppendLine("------------------------------------------------------------------------------------------------");
-        //            builder.AppendLine($"ROOT");
-        //        }
-        //        else
-        //        {
-        //            var ans = nav;
-        //            var prefix = string.Empty;
-        //            if (indent > 0)
-        //            {
-        //                prefix = new string(' ', indent * 2) + "|-";
-        //            }
-        //            var reg = !string.IsNullOrWhiteSpace(regionName) ? $"({regionName}) " : null;
-        //            builder.AppendLine($"{prefix}{reg}{rns.Region?.ToString()}");
-        //        }
-        //    }
+    //protected override void PrintAllRegions(StringBuilder builder, IRegionNavigationService nav, int indent = 0, string regionName = null)
+    //{
+    //    if (nav is ControlNavigationService rns)
+    //    {
+    //        if (rns.Region is null)
+    //        {
+    //            builder.AppendLine(string.Empty);
+    //            builder.AppendLine("------------------------------------------------------------------------------------------------");
+    //            builder.AppendLine($"ROOT");
+    //        }
+    //        else
+    //        {
+    //            var ans = nav;
+    //            var prefix = string.Empty;
+    //            if (indent > 0)
+    //            {
+    //                prefix = new string(' ', indent * 2) + "|-";
+    //            }
+    //            var reg = !string.IsNullOrWhiteSpace(regionName) ? $"({regionName}) " : null;
+    //            builder.AppendLine($"{prefix}{reg}{rns.Region?.ToString()}");
+    //        }
+    //    }
 
-        //    base.PrintAllRegions(builder, nav, indent, regionName);
+    //    base.PrintAllRegions(builder, nav, indent, regionName);
 
-        //    if (nav is RegionNavigationService rns2 &&
-        //        rns2.Region is null)
-        //    {
-        //        builder.AppendLine("------------------------------------------------------------------------------------------------");
-        //    }
-    }
+    //    if (nav is RegionNavigationService rns2 &&
+    //        rns2.Region is null)
+    //    {
+    //        builder.AppendLine("------------------------------------------------------------------------------------------------");
+    //    }
+    //}
 }

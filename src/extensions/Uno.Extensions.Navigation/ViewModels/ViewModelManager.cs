@@ -2,6 +2,8 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Uno.Extensions.Navigation;
+using Uno.Extensions.Navigation.ViewModels;
 
 namespace Uno.Extensions.Navigation.ViewModels
 {
@@ -60,5 +62,18 @@ namespace Uno.Extensions.Navigation.ViewModels
         {
             (viewModel as IDisposable)?.Dispose();
         }
+    }
+}
+
+public static class ViewModelExtensions
+{
+    public static Task<bool> Stop(this object viewModel, NavigationRequest request)
+    {
+        return (viewModel as IViewModelStop)?.Stop(request) ?? Task.FromResult(true);
+    }
+
+    public static Task Start(this object viewModel, NavigationRequest request)
+    {
+        return (viewModel as IViewModelStart)?.Start(request) ?? Task.CompletedTask;
     }
 }

@@ -47,7 +47,7 @@ public class FrameNavigationService : ControlNavigationService<Frame>
         Control.Navigated += Frame_Navigated;
     }
 
-    protected override Task DoNavigation(NavigationContext context)
+    protected override Task NavigateWithContextAsync(NavigationContext context)
     {
         if (context.IsBackNavigation)
         {
@@ -86,7 +86,7 @@ public class FrameNavigationService : ControlNavigationService<Frame>
 
     protected override bool CanGoBack => true;
 
-    public override Task RegionNavigate(NavigationContext context)
+    protected Task DoForwardNavigation(NavigationContext context)
     {
         var numberOfPagesToRemove = context.Request.Route.FrameNumberOfPagesToRemove;
         // We remove 1 less here because we need to remove the current context, after the navigation is completed
@@ -111,6 +111,9 @@ public class FrameNavigationService : ControlNavigationService<Frame>
         {
             RemoveLastFromBackStack();
         }
+
+        InitialiseView(context);
+
         return Task.CompletedTask;
     }
 

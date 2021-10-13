@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Uno.Extensions.Navigation;
@@ -28,7 +29,7 @@ public static class NavigationRequestExtensions
         return request;
     }
 
-    public static NavigationContext BuildNavigationContext(this NavigationRequest request, IServiceProvider services)
+    public static NavigationContext BuildNavigationContext(this NavigationRequest request, IServiceProvider services, TaskCompletionSource<Options.Option> resultTask = default)
     {
         var scopedServices = services.CloneNavigationScopedServices();
         var dataFactor = scopedServices.GetService<ViewModelDataProvider>();
@@ -43,6 +44,14 @@ public static class NavigationRequestExtensions
                                 CancellationTokenSource.CreateLinkedTokenSource(request.Cancellation.Value) :
                                 new CancellationTokenSource(),
                             mapping);
+
+        if (request.RequiresResponse())
+        {
+            var innerService = context.Services.GetInstance<INavigationService>();
+            var responseNav = new ResponseNavigationService(innerService, resultTask);
+            context.Services.AddInstance<INavigationService>(responseNav);
+        }
+
         return context;
     }
 }

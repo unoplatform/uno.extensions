@@ -24,7 +24,7 @@ namespace Uno.Extensions.Navigation.Regions
         {
         }
 
-        public override async Task RegionNavigate(NavigationContext context)
+        protected override async Task NavigateWithContextAsync(NavigationContext context)
         {
             // If this is back navigation, then make sure it's used to close
             // any of the open dialogs
