@@ -88,7 +88,7 @@ public abstract class ControlNavigationService : CompositeNavigationService
 
             if (regionResponse is not null)
             {
-                request = request.Route.NextRequest(request.Sender);
+                request = request with { Route = request.Route.Next } ;
             }
         }
 

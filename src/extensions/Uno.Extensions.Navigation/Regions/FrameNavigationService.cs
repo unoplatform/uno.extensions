@@ -24,6 +24,8 @@ public class FrameNavigationService : ControlNavigationService<Frame>
 
     protected override string CurrentPath => CurrentView?.NavigationRoute(Mappings);
 
+    protected override bool CanGoBack => true;
+
     public FrameNavigationService(
         ILogger<FrameNavigationService> logger,
         IRegionNavigationService parent,
@@ -49,44 +51,12 @@ public class FrameNavigationService : ControlNavigationService<Frame>
 
     protected override Task NavigateWithContextAsync(NavigationContext context)
     {
-        if (context.IsBackNavigation)
-        {
-            return DoBackNavigation(context);
-        }
-        else
-        {
-            return DoForwardNavigation(context);
-        }
+        return context.Request.Route.FrameIsForwardNavigation ?
+                    NavigateForwardAsync(context) :
+                    NavigatedBackAsync(context);
     }
 
-    protected Task DoBackNavigation(NavigationContext context)
-    {
-        // Remove any excess items in the back stack
-        var numberOfPagesToRemove = context.Request.Route.FrameNumberOfPagesToRemove;
-        while (numberOfPagesToRemove > 0)
-        {
-            // Don't remove the last context, as that's the current page
-            RemoveLastFromBackStack();
-            numberOfPagesToRemove--;
-        }
-
-        // Invoke the navigation (which will be a back navigation)
-        GoBack(context.Request.Route.Data);
-
-        // Back navigation doesn't have a mapping (since path is "..")
-        // Now that we've completed the actual navigation we can
-        // use the type of the new view to look up the mapping
-        var mapping = Mappings.FindByView(CurrentView?.GetType());
-        context = context with { Mapping = mapping };
-
-        InitialiseView(context);
-
-        return Task.CompletedTask;
-    }
-
-    protected override bool CanGoBack => true;
-
-    protected Task DoForwardNavigation(NavigationContext context)
+    private Task NavigateForwardAsync(NavigationContext context)
     {
         var numberOfPagesToRemove = context.Request.Route.FrameNumberOfPagesToRemove;
         // We remove 1 less here because we need to remove the current context, after the navigation is completed
@@ -117,6 +87,31 @@ public class FrameNavigationService : ControlNavigationService<Frame>
         return Task.CompletedTask;
     }
 
+    private Task NavigatedBackAsync(NavigationContext context)
+    {
+        // Remove any excess items in the back stack
+        var numberOfPagesToRemove = context.Request.Route.FrameNumberOfPagesToRemove;
+        while (numberOfPagesToRemove > 0)
+        {
+            // Don't remove the last context, as that's the current page
+            RemoveLastFromBackStack();
+            numberOfPagesToRemove--;
+        }
+
+        // Invoke the navigation (which will be a back navigation)
+        FrameGoBack(context.Request.Route.Data);
+
+        // Back navigation doesn't have a mapping (since path is "..")
+        // Now that we've completed the actual navigation we can
+        // use the type of the new view to look up the mapping
+        var mapping = Mappings.FindByView(CurrentView?.GetType());
+        context = context with { Mapping = mapping };
+
+        InitialiseView(context);
+
+        return Task.CompletedTask;
+    }
+
     private void UpdateCurrentView()
     {
         var request = Mappings.FindByView(Control.Content.GetType()).AsRequest(this);
@@ -131,7 +126,7 @@ public class FrameNavigationService : ControlNavigationService<Frame>
         UpdateCurrentView();
     }
 
-    private void GoBack(object parameter)
+    private void FrameGoBack(object parameter)
     {
         try
         {
@@ -159,15 +154,15 @@ public class FrameNavigationService : ControlNavigationService<Frame>
         }
     }
 
-    protected override void Show(string path, Type view, object data)
+    protected override void Show(string path, Type viewType, object data)
     {
         try
         {
-            if (Control.Content?.GetType() != view)
+            if (Control.Content?.GetType() != viewType)
             {
-                Logger.LazyLogDebug(() => $"Invoking Frame.Navigate to type '{view.Name}'");
+                Logger.LazyLogDebug(() => $"Invoking Frame.Navigate to type '{viewType.Name}'");
                 Control.Navigated -= Frame_Navigated;
-                var nav = Control.Navigate(view, data);
+                var nav = Control.Navigate(viewType, data);
                 Control.Navigated += Frame_Navigated;
                 Logger.LazyLogDebug(() => $"Frame.Navigate completed");
             }
