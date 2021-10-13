@@ -94,13 +94,13 @@ public static class Region
     {
         Logger.LazyLogDebug(() => $"Attaching to Loaded event on element {element.GetType().Name}");
 
-        Logger.LazyLogDebug(() => $"Creating region manager");
-        var parent = element.Parent.RegionNavigationServiceForControl(true) ?? Ioc.Default.GetService<IRegionNavigationService>();
-        var navRegion = element.RegionNavigationServiceForControl(false) ?? NavigationServiceFactory.CreateService(parent, element, isComposite);
-        Logger.LazyLogDebug(() => $"Region manager created");
-
         element.Loaded += async (sLoaded, eLoaded) =>
         {
+            Logger.LazyLogDebug(() => $"Creating region manager");
+            var parent = element.Parent.RegionNavigationServiceForControl(true) ?? Ioc.Default.GetService<IRegionNavigationService>();
+            var navRegion = element.RegionNavigationServiceForControl(false) ?? NavigationServiceFactory.CreateService(parent, element, isComposite);
+            Logger.LazyLogDebug(() => $"Region manager created");
+
             var loadedElement = sLoaded as FrameworkElement;
 
             Logger.LazyLogDebug(() => $"Attaching to Unloaded event on element {element.GetType().Name}");
@@ -114,7 +114,7 @@ public static class Region
             };
 
             Logger.LazyLogDebug(() => $"Attaching region manager");
-            parent.Attach(regionName, navRegion);
+            parent.Attach(navRegion, regionName);
         };
     }
 

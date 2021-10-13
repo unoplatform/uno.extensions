@@ -40,15 +40,14 @@ public abstract class RegionNavigationService : CompositeNavigationService
             // eg switching tabs, frame on tab1 won't get detached until some
             // time after navigating to tab2, meaning that the wrong nexted
             // child will be used for any subsequent navigations.
-            var nested = NestedServices.ToArray();
-            NestedServices.Clear();
+            var children = DetachAll();
             var regionTask = await ControlNavigateAsync(request);
             if (regionTask is null)
             {
                 // If a null result task was returned, then no
                 // navigation took place, so just reattach the existing
                 // nav services
-                nested.ForEach(n => NestedServices[n.Key] = n.Value);
+                AttachAll(children);
             }
             else
             {
