@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.ViewModels;
+using Uno.Extensions.Logging;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -31,14 +32,34 @@ public class GridVisiblityNavigationService : ControlNavigationService<Grid>
     {
     }
 
-    private FrameworkElement CurrentlyVisibleControl { get; set; }
+    private UIElement CurrentlyVisibleControl { get; set; }
 
-    protected override void Show(string path, Type view, object data)
+    protected override void Show(string path, Type viewType, object data)
     {
-        var controlToShow = Control.FindName(path) as FrameworkElement;
+        var controlToShow = Control.FindName(path) as UIElement;
         if (controlToShow is null)
         {
-            return;
+            try
+            {
+                if (viewType is null)
+                {
+                    Logger.LazyLogError(() => "Missing view for navigation path '{path}'");
+                    return;
+                }
+
+                Logger.LazyLogDebug(() => $"Creating instance of type '{viewType.Name}'");
+                controlToShow = Activator.CreateInstance(viewType) as UIElement;
+                if (controlToShow is FrameworkElement fe)
+                {
+                    fe.Name = path;
+                }
+                Control.Children.Add(controlToShow);
+                Logger.LazyLogDebug(() => "Instance created");
+            }
+            catch (Exception ex)
+            {
+                Logger.LazyLogError(() => $"Unable to create instance - {ex.Message}");
+            }
         }
 
         controlToShow.Visibility = Visibility.Visible;
