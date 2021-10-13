@@ -31,10 +31,9 @@ public class FrameNavigationService : ControlNavigationService<Frame>
         IRegionNavigationService parent,
         IRegionNavigationServiceFactory serviceFactory,
         IScopedServiceProvider scopedServices,
-        IViewModelManager viewModelManager,
         IRouteMappings mappings,
         RegionControlProvider controlProvider)
-        : base(logger, parent, serviceFactory, scopedServices, viewModelManager, mappings, controlProvider.RegionControl as Frame)
+        : base(logger, parent, serviceFactory, scopedServices, mappings, controlProvider.RegionControl as Frame)
     {
     }
 

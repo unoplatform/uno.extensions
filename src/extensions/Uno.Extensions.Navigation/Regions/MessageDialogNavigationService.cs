@@ -21,9 +21,8 @@ public class MessageDialogNavigationService : DialogNavigationService
         ILogger<DialogNavigationService> logger,
         IRegionNavigationService parent,
         IRegionNavigationServiceFactory serviceFactory,
-        IScopedServiceProvider scopedServices,
-        IViewModelManager viewModelManager)
-        : base(logger, parent, serviceFactory, scopedServices, viewModelManager)
+        IScopedServiceProvider scopedServices)
+        : base(logger, parent, serviceFactory, scopedServices)
     {
     }
 

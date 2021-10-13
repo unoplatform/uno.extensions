@@ -2,13 +2,9 @@
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation.Controls;
-using Uno.Extensions.Navigation.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 #else
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -57,10 +53,9 @@ public class NavigationViewNavigationService : ControlNavigationService<Microsof
         IRegionNavigationService parent,
         IRegionNavigationServiceFactory serviceFactory,
         IScopedServiceProvider scopedServices,
-        IViewModelManager viewModelManager,
         IRouteMappings mappings,
         RegionControlProvider controlProvider)
-        : base(logger, parent, serviceFactory, scopedServices, viewModelManager, mappings, controlProvider.RegionControl as Microsoft.UI.Xaml.Controls.NavigationView)
+        : base(logger, parent, serviceFactory, scopedServices, mappings, controlProvider.RegionControl as Microsoft.UI.Xaml.Controls.NavigationView)
     {
     }
 

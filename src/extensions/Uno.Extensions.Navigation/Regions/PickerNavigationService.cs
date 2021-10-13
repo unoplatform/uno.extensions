@@ -20,9 +20,8 @@ public class PickerNavigationService : ControlNavigationService
         ILogger<ContentDialogNavigationService> logger,
         IRegionNavigationService parent,
         IRegionNavigationServiceFactory serviceFactory,
-        IScopedServiceProvider scopedServices,
-        IViewModelManager viewModelManager)
-        : base(logger, parent, serviceFactory, scopedServices, viewModelManager)
+        IScopedServiceProvider scopedServices)
+        : base(logger, parent, serviceFactory, scopedServices)
     {
     }
 
