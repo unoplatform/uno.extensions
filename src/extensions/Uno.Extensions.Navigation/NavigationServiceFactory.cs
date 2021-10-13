@@ -59,25 +59,25 @@ public class NavigationServiceFactory : IRegionNavigationServiceFactory
             return compService;
         }
 
-        var navService = new RegionNavigationService(navLogger, parent, this);
-        services.AddInstance<IRegionNavigationService>(navService);
-
         // This is a root navigation service
         if (control is null)
         {
             //navService.Region = services.GetService<DialogRegion>();
-            return navService;
+            var compService = new CompositeNavigationService(navLogger,parent,this);
+            services.AddInstance<IRegionNavigationService>(compService);
+            return compService;
         }
 
-        services.GetService<RegionControlProvider>().RegionControl = control;
+        var factoryServices = Services.CreateScope().ServiceProvider;
+        factoryServices.GetService<RegionControlProvider>().RegionControl = control;
+        factoryServices.AddInstance<IRegionNavigationService>(parent); // This will be injected as the parent of the navigation service
+        factoryServices.AddInstance<IScopedServiceProvider>(new ScopedServiceProvider(services));
         var factory = Factories.FindForControl(control);
-        var region = factory.Create(services);
-        services.AddInstance<IRegion>( region);
-        // Associate region service with region service container
-        navService.Region = region;
+        var region = factory.Create(factoryServices);
+        services.AddInstance<IRegionNavigationService>( region);
 
         // Retrieve the region container and the navigation service
-        return navService;
+        return region;
     }
 
     public IRegionNavigationService CreateService(IRegionNavigationService parent, NavigationRequest request)
@@ -87,20 +87,15 @@ public class NavigationServiceFactory : IRegionNavigationServiceFactory
         var scope = Services.CreateScope();
         var services = scope.ServiceProvider;
 
-        var navLogger = services.GetService<ILogger<RegionNavigationService>>();
-        var dialogNavService = new RegionNavigationService(navLogger, parent, this);
-
-        services.AddInstance<IRegionNavigationService>(dialogNavService);
-        var innerNavService = new InnerNavigationService(dialogNavService);
-        services.AddInstance<INavigationService>(innerNavService);
-
         var mapping = Mappings.FindByPath(request.Route.Base);
 
         var factory = Factories.FindForControlType(mapping.View);
         var region = factory.Create(services);
-        services.AddInstance<IRegion>(region);
-        dialogNavService.Region = region;
+        services.AddInstance<IRegionNavigationService>(region);
 
-        return dialogNavService;
+        var innerNavService = new InnerNavigationService(region);
+        services.AddInstance<INavigationService>(innerNavService);
+
+        return region;
     }
 }

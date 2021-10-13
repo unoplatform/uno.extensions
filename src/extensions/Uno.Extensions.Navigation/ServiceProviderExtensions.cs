@@ -9,7 +9,6 @@ namespace Uno.Extensions.Navigation;
 
 public static class ServiceProviderExtensions
 {
-
     public static IServiceProvider CloneNavigationScopedServices(this IServiceProvider services)
     {
         var scope = services.CreateScope();
@@ -22,5 +21,4 @@ public static class ServiceProviderExtensions
 
         return scopedServices;
     }
-
 }

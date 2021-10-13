@@ -16,7 +16,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Regions;
 
-public class TabRegion : SimpleRegion<TabView>
+public class TabRegion : ControlNavigationService<TabView>
 {
     protected override object CurrentView => (Control.SelectedItem as TabViewItem)?.Content;
 
@@ -24,11 +24,13 @@ public class TabRegion : SimpleRegion<TabView>
 
     public TabRegion(
         ILogger<TabRegion> logger,
-        IServiceProvider scopedServices,
-        INavigationService navigation,
+        IRegionNavigationService parent,
+        IRegionNavigationServiceFactory serviceFactory,
+        IScopedServiceProvider scopedServices,
         IViewModelManager viewModelManager,
         IRouteMappings mappings,
-        RegionControlProvider controlProvider) : base(logger, scopedServices, navigation, viewModelManager, mappings, controlProvider.RegionControl as TabView)
+        RegionControlProvider controlProvider)
+        : base(logger, parent, serviceFactory, scopedServices, viewModelManager, mappings, controlProvider.RegionControl as TabView)
     {
         Control.SelectionChanged += Tabs_SelectionChanged;
     }

@@ -15,7 +15,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Regions;
 
-public class ContentControlRegion : SimpleRegion<ContentControl>
+public class ContentControlRegion : ControlNavigationService<ContentControl>
 {
     protected override object CurrentView => Control.Content;
 
@@ -23,12 +23,13 @@ public class ContentControlRegion : SimpleRegion<ContentControl>
 
     public ContentControlRegion(
         ILogger<ContentControlRegion> logger,
-        IServiceProvider scopedServices,
-        INavigationService navigation,
+        IRegionNavigationService parent,
+        IRegionNavigationServiceFactory serviceFactory,
+        IScopedServiceProvider scopedServices,
         IViewModelManager viewModelManager,
         IRouteMappings mappings,
         RegionControlProvider controlProvider)
-        : base(logger, scopedServices, navigation, viewModelManager, mappings, controlProvider.RegionControl as ContentControl)
+        : base(logger, parent, serviceFactory, scopedServices, viewModelManager, mappings, controlProvider.RegionControl as ContentControl)
     {
     }
 

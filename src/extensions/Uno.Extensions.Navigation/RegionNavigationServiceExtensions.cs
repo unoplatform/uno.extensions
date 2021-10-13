@@ -15,7 +15,6 @@ namespace Uno.Extensions.Navigation;
 
 public static class RegionNavigationServiceExtensions
 {
-
     public static IRegionFactory FindForControl(this IDictionary<Type, IRegionFactory> factories, object control)
     {
         var controlType = control.GetType();

@@ -20,10 +20,11 @@ public class ContentDialogRegion : DialogRegion
 {
     public ContentDialogRegion(
         ILogger<ContentDialogRegion> logger,
-        IServiceProvider scopedServices,
-        INavigationService navigation,
+        IRegionNavigationService parent,
+        IRegionNavigationServiceFactory serviceFactory,
+        IScopedServiceProvider scopedServices,
         IViewModelManager viewModelManager)
-        : base(logger, scopedServices, navigation, viewModelManager)
+        : base(logger, parent, serviceFactory, scopedServices, viewModelManager)
     {
     }
 

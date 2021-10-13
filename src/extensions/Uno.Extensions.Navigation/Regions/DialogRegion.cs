@@ -6,7 +6,7 @@ using Windows.Foundation;
 
 namespace Uno.Extensions.Navigation.Regions
 {
-    public abstract class DialogRegion : BaseRegion
+    public abstract class DialogRegion : ControlNavigationService
     {
         protected override bool CanGoBack => true;
 
@@ -14,11 +14,13 @@ namespace Uno.Extensions.Navigation.Regions
 
         protected override string CurrentPath => this.GetType().Name ?? string.Empty;
 
-        public DialogRegion(
+        protected DialogRegion(
             ILogger<DialogRegion> logger,
-            IServiceProvider scopedServices,
-            INavigationService navigation,
-            IViewModelManager viewModelManager) : base(logger, scopedServices, navigation, viewModelManager)
+            IRegionNavigationService parent,
+            IRegionNavigationServiceFactory serviceFactory,
+            IScopedServiceProvider scopedServices,
+            IViewModelManager viewModelManager)
+            : base(logger, parent, serviceFactory, scopedServices, viewModelManager)
         {
         }
 

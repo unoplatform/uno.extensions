@@ -22,7 +22,7 @@
                      Width="100" />
             <TextBlock Text="Fred Bloggs" />
             <Button Content="Profile"
-                    nav:Navigation.Request="../../ProfilePage" />
+                    nav:Navigation.Request="../ProfilePage" />
         </StackPanel>
         <ListView Grid.Row="1"
                   ItemsSource="{Binding Notifications}"

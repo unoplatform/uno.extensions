@@ -14,7 +14,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Regions;
 
-public class GridVisiblityRegion : SimpleRegion<Grid>
+public class GridVisiblityRegion : ControlNavigationService<Grid>
 {
     protected override object CurrentView => CurrentlyVisibleControl;
 
@@ -22,12 +22,13 @@ public class GridVisiblityRegion : SimpleRegion<Grid>
 
     public GridVisiblityRegion(
         ILogger<GridVisiblityRegion> logger,
-        IServiceProvider scopedServices,
-        INavigationService navigation,
+        IRegionNavigationService parent,
+        IRegionNavigationServiceFactory serviceFactory,
+        IScopedServiceProvider scopedServices,
         IViewModelManager viewModelManager,
         IRouteMappings mappings,
         RegionControlProvider controlProvider)
-        : base(logger, scopedServices, navigation, viewModelManager, mappings, controlProvider.RegionControl as Grid)
+        : base(logger, parent, serviceFactory, scopedServices, viewModelManager, mappings, controlProvider.RegionControl as Grid)
     {
     }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Controls;
@@ -17,7 +18,7 @@ using Microsoft.UI.Xaml.Navigation;
 
 namespace Uno.Extensions.Navigation.Regions;
 
-public class FrameRegion : StackRegion<Frame>
+public class FrameRegion : ControlNavigationService<Frame>
 {
     protected override object CurrentView => Control.Content;
 
@@ -25,11 +26,13 @@ public class FrameRegion : StackRegion<Frame>
 
     public FrameRegion(
         ILogger<FrameRegion> logger,
-        IServiceProvider scopedServices,
-        INavigationService navigation,
+        IRegionNavigationService parent,
+        IRegionNavigationServiceFactory serviceFactory,
+        IScopedServiceProvider scopedServices,
         IViewModelManager viewModelManager,
         IRouteMappings mappings,
-        RegionControlProvider controlProvider) : base(logger, scopedServices, navigation, viewModelManager, mappings, controlProvider.RegionControl as Frame)
+        RegionControlProvider controlProvider)
+        : base(logger, parent, serviceFactory, scopedServices, viewModelManager, mappings, controlProvider.RegionControl as Frame)
     {
         if (Control.Content is not null)
         {
@@ -38,6 +41,73 @@ public class FrameRegion : StackRegion<Frame>
         }
 
         Control.Navigated += Frame_Navigated;
+    }
+
+    protected override Task DoNavigation(NavigationContext context)
+    {
+        if (context.IsBackNavigation)
+        {
+            return DoBackNavigation(context);
+        }
+        else
+        {
+            return DoForwardNavigation(context);
+        }
+    }
+
+    protected Task DoBackNavigation(NavigationContext context)
+    {
+        // Remove any excess items in the back stack
+        var numberOfPagesToRemove = context.Request.Route.FrameNumberOfPagesToRemove;
+        while (numberOfPagesToRemove > 0)
+        {
+            // Don't remove the last context, as that's the current page
+            RemoveLastFromBackStack();
+            numberOfPagesToRemove--;
+        }
+
+        // Invoke the navigation (which will be a back navigation)
+        GoBack(context.Request.Route.Data);
+
+        // Back navigation doesn't have a mapping (since path is "..")
+        // Now that we've completed the actual navigation we can
+        // use the type of the new view to look up the mapping
+        var mapping = Mappings.FindByView(CurrentView?.GetType());
+        context = context with { Mapping = mapping };
+
+        InitialiseView(context);
+
+        return Task.CompletedTask;
+    }
+
+    protected override bool CanGoBack => true;
+
+    public override Task RegionNavigate(NavigationContext context)
+    {
+        var numberOfPagesToRemove = context.Request.Route.FrameNumberOfPagesToRemove;
+        // We remove 1 less here because we need to remove the current context, after the navigation is completed
+        while (numberOfPagesToRemove > 1)
+        {
+            RemoveLastFromBackStack();
+            numberOfPagesToRemove--;
+        }
+
+        // Add the new context to the list of contexts and then navigate away
+        Show(context.Request.Route.Base, context.Mapping?.View, context.Request.Route.Data);
+
+        // If path starts with / then remove all prior pages and corresponding contexts
+        if (context.Request.Route.FrameIsRooted)
+        {
+            ClearBackStack();
+        }
+
+        // If there were pages to remove, after navigating we need to remove
+        // the page that we've navigated away from.
+        if (context.Request.Route.FrameNumberOfPagesToRemove > 0)
+        {
+            RemoveLastFromBackStack();
+        }
+        return Task.CompletedTask;
     }
 
     private void UpdateCurrentView()
@@ -54,7 +124,7 @@ public class FrameRegion : StackRegion<Frame>
         UpdateCurrentView();
     }
 
-    protected override void GoBack(object parameter)
+    private void GoBack(object parameter)
     {
         try
         {
@@ -101,14 +171,14 @@ public class FrameRegion : StackRegion<Frame>
         }
     }
 
-    protected override void RemoveLastFromBackStack()
+    private void RemoveLastFromBackStack()
     {
         Logger.LazyLogDebug(() => $"Removing last item from backstack (current count = {Control.BackStack.Count})");
         Control.BackStack.RemoveAt(Control.BackStack.Count - 1);
         Logger.LazyLogDebug(() => $"Item removed from backstack");
     }
 
-    protected override void ClearBackStack()
+    private void ClearBackStack()
     {
         Logger.LazyLogDebug(() => $"Clearing backstack");
         Control.BackStack.Clear();
