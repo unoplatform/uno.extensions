@@ -6,7 +6,7 @@ using Uno.Extensions.Logging;
 namespace Uno.Extensions.Navigation.Regions;
 
 #pragma warning disable SA1313 // Parameter names should begin with lower-case letter
-public record ControlNavigationServiceFactory<TControl, TRegion> : IRegionFactory
+public record ControlNavigationServiceFactory<TControl, TRegion> : IControlNavigationServiceFactory
 #pragma warning restore SA1313 // Parameter names should begin with lower-case letter
     where TRegion : IRegionNavigationService
 {

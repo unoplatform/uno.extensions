@@ -104,7 +104,7 @@ public static class ServiceCollectionExtensions
 
         return services
                     .AddScoped<TRegion>()
-                    .AddSingleton<IRegionFactory, ControlNavigationServiceFactory<TControl, TRegion>>();
+                    .AddSingleton<IControlNavigationServiceFactory, ControlNavigationServiceFactory<TControl, TRegion>>();
     }
 
     public static IServiceCollection AddViewModelData<TData>(this IServiceCollection services)
