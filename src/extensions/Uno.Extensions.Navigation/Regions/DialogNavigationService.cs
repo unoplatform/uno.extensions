@@ -18,9 +18,8 @@ namespace Uno.Extensions.Navigation.Regions
             ILogger<DialogNavigationService> logger,
             IRegionNavigationService parent,
             IRegionNavigationServiceFactory serviceFactory,
-            IScopedServiceProvider scopedServices,
-            IViewModelManager viewModelManager)
-            : base(logger, parent, serviceFactory, scopedServices, viewModelManager)
+            IScopedServiceProvider scopedServices)
+            : base(logger, parent, serviceFactory, scopedServices)
         {
         }
 
@@ -33,7 +32,7 @@ namespace Uno.Extensions.Navigation.Regions
                 await CloseDialog(context);
                 return;
             }
-            var vm = ViewModelManager.CreateViewModel(context);
+            var vm = context.CreateViewModel();
             ShowTask = DisplayDialog(context, vm);
         }
 
@@ -44,9 +43,7 @@ namespace Uno.Extensions.Navigation.Regions
 
             var responseData = navigationContext.Request.Route.Data.TryGetValue(string.Empty, out var response) ? response : default;
 
-            await ViewModelManager.StopViewModel(navigationContext, CurrentViewModel);
-
-            ViewModelManager.DisposeViewModel(navigationContext);
+            await CurrentViewModel.Stop(navigationContext.Request);
 
             dialog.Cancel();
         }

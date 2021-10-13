@@ -26,10 +26,9 @@ public abstract class ControlNavigationService<TControl> : ControlNavigationServ
         IRegionNavigationService parent,
         IRegionNavigationServiceFactory serviceFactory,
         IScopedServiceProvider scopedServices,
-        IViewModelManager viewModelManager,
         IRouteMappings mappings,
         TControl control)
-        : base(logger, parent, serviceFactory, scopedServices, viewModelManager)
+        : base(logger, parent, serviceFactory, scopedServices)
     {
         Mappings = mappings;
         Control = control;
@@ -61,8 +60,6 @@ public abstract class ControlNavigationService : CompositeNavigationService
 
     protected virtual bool CanGoBack => false;
 
-    protected IViewModelManager ViewModelManager { get; }
-
     protected virtual object CurrentView => default;
 
     protected object CurrentViewModel => (CurrentView as FrameworkElement)?.DataContext;
@@ -71,12 +68,10 @@ public abstract class ControlNavigationService : CompositeNavigationService
         ILogger logger,
         IRegionNavigationService parent,
         IRegionNavigationServiceFactory serviceFactory,
-        IScopedServiceProvider scopedServices,
-        IViewModelManager viewModelManager)
+        IScopedServiceProvider scopedServices)
         : base(logger, parent, serviceFactory)
     {
         ScopedServices = scopedServices;
-        ViewModelManager = viewModelManager;
     }
 
     protected async override Task<NavigationResponse> CoreNavigateAsync(NavigationRequest request)
@@ -199,7 +194,7 @@ public abstract class ControlNavigationService : CompositeNavigationService
         if (viewModel is null || viewModel.GetType() != mapping.ViewModel)
         {
             // This will happen if cache mode isn't set to required
-            viewModel = ViewModelManager.CreateViewModel(context);
+            viewModel = context.CreateViewModel();
         }
 
         view.InjectServicesAndSetDataContext(context.Services, context.Navigation, viewModel);

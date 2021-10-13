@@ -22,10 +22,9 @@ public class PageVisualStateNavigationService : ControlNavigationService<Page>
         IRegionNavigationService parent,
         IRegionNavigationServiceFactory serviceFactory,
         IScopedServiceProvider scopedServices,
-        IViewModelManager viewModelManager,
         IRouteMappings mappings,
         RegionControlProvider controlProvider)
-        : base(logger, parent, serviceFactory, scopedServices, viewModelManager, mappings, controlProvider.RegionControl as Page)
+        : base(logger, parent, serviceFactory, scopedServices, mappings, controlProvider.RegionControl as Page)
     {
     }
 

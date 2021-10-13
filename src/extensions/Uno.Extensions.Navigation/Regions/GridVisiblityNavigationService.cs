@@ -25,10 +25,9 @@ public class GridVisiblityNavigationService : ControlNavigationService<Grid>
         IRegionNavigationService parent,
         IRegionNavigationServiceFactory serviceFactory,
         IScopedServiceProvider scopedServices,
-        IViewModelManager viewModelManager,
         IRouteMappings mappings,
         RegionControlProvider controlProvider)
-        : base(logger, parent, serviceFactory, scopedServices, viewModelManager, mappings, controlProvider.RegionControl as Grid)
+        : base(logger, parent, serviceFactory, scopedServices, mappings, controlProvider.RegionControl as Grid)
     {
     }
 

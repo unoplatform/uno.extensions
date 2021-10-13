@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Uno.Extensions.Navigation.Regions;
 using Uno.Extensions.Navigation.Controls;
+using Uno.Extensions.Navigation.Regions;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
-using Microsoft.UI.Xaml;
 using Windows.UI.Xaml;
 #else
 using Microsoft.UI.Xaml;

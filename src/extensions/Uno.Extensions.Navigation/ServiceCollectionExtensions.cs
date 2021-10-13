@@ -47,9 +47,6 @@ public static class ServiceCollectionExtensions
                     // Register the navigation mappings repository
                     .AddSingleton<IRouteMappings, RouteMappingsDefault>()
 
-                    // Register the view model manager
-                    .AddScoped<IViewModelManager, ViewModelManager>()
-
                     // Register the navigation manager and the providers for
                     // navigation data and the navigation service
                     .AddSingleton<NavigationServiceFactory>()
