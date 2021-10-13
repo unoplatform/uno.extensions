@@ -21,7 +21,7 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 
 namespace Uno.Extensions.Navigation.Regions;
 
-public class PopupRegion : SimpleRegion<Popup>
+public class PopupRegion : ControlNavigationService<Popup>
 {
     protected override object CurrentView => Control;
 
@@ -29,11 +29,13 @@ public class PopupRegion : SimpleRegion<Popup>
 
     public PopupRegion(
         ILogger<ContentControlRegion> logger,
-        IServiceProvider scopedServices,
-        INavigationService navigation,
+        IRegionNavigationService parent,
+        IRegionNavigationServiceFactory serviceFactory,
+        IScopedServiceProvider scopedServices,
         IViewModelManager viewModelManager,
         IRouteMappings mappings,
-        RegionControlProvider controlProvider) : base(logger, scopedServices, navigation, viewModelManager, mappings, controlProvider.RegionControl as Popup)
+        RegionControlProvider controlProvider)
+        : base(logger, parent, serviceFactory, scopedServices, viewModelManager, mappings, controlProvider.RegionControl as Popup)
     {
     }
 

@@ -19,9 +19,11 @@ public class MessageDialogRegion : DialogRegion
 {
     public MessageDialogRegion(
         ILogger<DialogRegion> logger,
-        IServiceProvider scopedServices,
-        INavigationService navigation,
-        IViewModelManager viewModelManager) : base(logger, scopedServices, navigation, viewModelManager)
+        IRegionNavigationService parent,
+        IRegionNavigationServiceFactory serviceFactory,
+        IScopedServiceProvider scopedServices,
+        IViewModelManager viewModelManager)
+        : base(logger, parent, serviceFactory, scopedServices, viewModelManager)
     {
     }
 

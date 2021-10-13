@@ -55,9 +55,10 @@ public static class ServiceCollectionExtensions
                     .AddSingleton<NavigationServiceFactory>()
                     .AddSingleton<IRegionNavigationServiceFactory>(services => services.GetService<NavigationServiceFactory>())
 
-                    .AddScopedInstance<IRegion>()
+                    .AddScopedInstance<IRegionNavigationService>(services => services.GetService<IRegionNavigationServiceFactory>().CreateService(null, null, false))
+                    //.AddSingleton<IRegionNavigationService>(services => services.GetService<IRegionNavigationServiceFactory>().CreateService(null, null, false))
 
-                    .AddSingleton<IRegionNavigationService>(services => services.GetService<IRegionNavigationServiceFactory>().CreateService(null, null, false))
+                    .AddScopedInstance<IScopedServiceProvider>()
 
                     .AddScoped<ViewModelDataProvider>()
                     .AddScoped<RegionControlProvider>()
@@ -70,10 +71,10 @@ public static class ServiceCollectionExtensions
                             );
     }
 
-    public static IServiceCollection AddScopedInstance<T>(this IServiceCollection services)
+    public static IServiceCollection AddScopedInstance<T>(this IServiceCollection services, Func<IServiceProvider, T> defaultValue = null)
         where T : class
     {
-        return services.AddScoped<T>(sp => sp.GetInstance<T>());
+        return services.AddScoped<T>(sp => sp.GetInstance<T>() ?? defaultValue?.Invoke(sp));
     }
 
     public static void AddInstance<T>(this IServiceProvider provider, T instance)
@@ -97,7 +98,7 @@ public static class ServiceCollectionExtensions
     }
 
     public static IServiceCollection AddRegion<TControl, TRegion>(this IServiceCollection services)
-        where TRegion : class, IRegion
+        where TRegion : class, IRegionNavigationService
     {
         if (services is null)
         {

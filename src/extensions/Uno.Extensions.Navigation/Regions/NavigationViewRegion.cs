@@ -15,7 +15,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Regions;
 
-public class NavigationViewRegion : SimpleRegion<Microsoft.UI.Xaml.Controls.NavigationView>
+public class NavigationViewRegion : ControlNavigationService<Microsoft.UI.Xaml.Controls.NavigationView>
 {
     protected override object CurrentView => Control.SelectedItem;
 
@@ -47,17 +47,19 @@ public class NavigationViewRegion : SimpleRegion<Microsoft.UI.Xaml.Controls.Navi
         var path = Uno.Extensions.Navigation.Controls.Navigation.GetRoute(tbi) ?? tbi.Name;
         if (!string.IsNullOrEmpty(path))
         {
-            Navigation.NavigateByPathAsync(null, path);
+            this.NavigateByPathAsync(null, path);
         }
     }
 
     public NavigationViewRegion(
         ILogger<NavigationViewRegion> logger,
-        IServiceProvider scopedServices,
-        INavigationService navigation,
+        IRegionNavigationService parent,
+        IRegionNavigationServiceFactory serviceFactory,
+        IScopedServiceProvider scopedServices,
         IViewModelManager viewModelManager,
         IRouteMappings mappings,
-        RegionControlProvider controlProvider) : base(logger, scopedServices, navigation, viewModelManager, mappings, controlProvider.RegionControl as Microsoft.UI.Xaml.Controls.NavigationView)
+        RegionControlProvider controlProvider)
+        : base(logger, parent, serviceFactory, scopedServices, viewModelManager, mappings, controlProvider.RegionControl as Microsoft.UI.Xaml.Controls.NavigationView)
     {
     }
 

@@ -6,5 +6,5 @@ public interface IRegionFactory
 {
     Type ControlType { get; }
 
-    IRegion Create(IServiceProvider services);
+    IRegionNavigationService Create(IServiceProvider services);
 }

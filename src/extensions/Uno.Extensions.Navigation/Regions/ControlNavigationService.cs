@@ -13,23 +13,32 @@ using Microsoft.UI.Xaml;
 
 namespace Uno.Extensions.Navigation.Regions;
 
-public abstract class BaseRegion<TControl> : BaseRegion
+public abstract class ControlNavigationService<TControl> : ControlNavigationService
     where TControl : class
 {
     public virtual TControl Control { get; set; }
 
     protected IRouteMappings Mappings { get; }
 
-    protected BaseRegion(
+    protected ControlNavigationService(
         ILogger logger,
-        IServiceProvider scopedServices,
-        INavigationService navigation,
+        IRegionNavigationService parent,
+        IRegionNavigationServiceFactory serviceFactory,
+        IScopedServiceProvider scopedServices,
         IViewModelManager viewModelManager,
         IRouteMappings mappings,
-        TControl control) : base(logger, scopedServices, navigation, viewModelManager)
+        TControl control)
+        : base(logger, parent, serviceFactory, scopedServices, viewModelManager)
     {
         Mappings = mappings;
         Control = control;
+    }
+
+    public override Task RegionNavigate(NavigationContext context)
+    {
+        Logger.LazyLogDebug(() => $"Navigating to path '{context.Request.Route.Base}' with view '{context.Mapping?.View?.Name}'");
+        Show(context.Request.Route.Base, context.Mapping?.View, context.Request.Route.Data);
+        return Task.CompletedTask;
     }
 
     protected abstract void Show(string path, Type viewType, object data);
@@ -40,7 +49,7 @@ public abstract class BaseRegion<TControl> : BaseRegion
     }
 }
 
-public abstract class BaseRegion : IRegion
+public abstract class ControlNavigationService : RegionNavigationService
 {
     protected IServiceProvider ScopedServices { get; }
 
@@ -48,25 +57,24 @@ public abstract class BaseRegion : IRegion
 
     protected virtual string CurrentPath => string.Empty;
 
-    protected INavigationService Navigation { get; }
-
     protected virtual bool CanGoBack => false;
 
     protected IViewModelManager ViewModelManager { get; }
 
-    protected BaseRegion(
+    protected ControlNavigationService(
         ILogger logger,
-        IServiceProvider scopedServices,
-        INavigationService navigation,
+        IRegionNavigationService parent,
+        IRegionNavigationServiceFactory serviceFactory,
+        IScopedServiceProvider scopedServices,
         IViewModelManager viewModelManager)
+        : base(logger, parent, serviceFactory)
     {
         Logger = logger;
         ScopedServices = scopedServices;
-        Navigation = navigation;
         ViewModelManager = viewModelManager;
     }
 
-    public async Task<NavigationResponse> NavigateAsync(NavigationRequest request)
+    protected override async Task<NavigationResponse> ControlNavigateAsync(NavigationRequest request)
     {
         if (request.Route.Base == CurrentPath)
         {
@@ -117,7 +125,7 @@ public abstract class BaseRegion : IRegion
         {
             context.CancellationToken.Register(() =>
             {
-                Navigation.NavigateToPreviousViewAsync(context.Request.Sender);
+                this.NavigateToPreviousViewAsync(context.Request.Sender);
             });
         }
     }

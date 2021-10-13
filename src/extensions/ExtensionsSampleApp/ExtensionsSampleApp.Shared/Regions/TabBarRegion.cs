@@ -9,7 +9,7 @@ using Uno.Extensions.Navigation.Regions;
 
 namespace ExtensionsSampleApp.Region.Managers
 {
-    public class TabBarRegion : SimpleRegion<TabBar>
+    public class TabBarRegion : ControlNavigationService<TabBar>
     {
         private TabBar _control;
 
@@ -35,17 +35,19 @@ namespace ExtensionsSampleApp.Region.Managers
             var path = Uno.Extensions.Navigation.Controls.Navigation.GetRoute(tbi) ?? tbi.Name;
             if (!string.IsNullOrEmpty(path))
             {
-                Navigation.NavigateByPathAsync(null, path);
+                this.NavigateByPathAsync(null, path);
             }
         }
 
         public TabBarRegion(
             ILogger<TabBarRegion> logger,
-            IServiceProvider scopedServices,
-            INavigationService navigation,
+            IRegionNavigationService parent,
+            IRegionNavigationServiceFactory serviceFactory,
+            IScopedServiceProvider scopedServices,
             IViewModelManager viewModelManager,
             IRouteMappings mappings,
-            RegionControlProvider controlProvider) : base(logger, scopedServices, navigation, viewModelManager, mappings, controlProvider.RegionControl as TabBar)
+            RegionControlProvider controlProvider)
+            : base(logger, parent, serviceFactory, scopedServices, viewModelManager, mappings, controlProvider.RegionControl as TabBar)
         {
         }
 
