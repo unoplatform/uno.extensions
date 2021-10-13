@@ -56,6 +56,8 @@ public class NavigationServiceFactory : IRegionNavigationServiceFactory
         {
             var compService = new CompositeNavigationService(navLogger, parent, this);
             services.AddInstance<IRegionNavigationService>(compService);
+            var inner = new InnerNavigationService(compService);
+            services.AddInstance<INavigationService>(inner);
             return compService;
         }
 
@@ -65,6 +67,8 @@ public class NavigationServiceFactory : IRegionNavigationServiceFactory
             //navService.Region = services.GetService<DialogRegion>();
             var compService = new CompositeNavigationService(navLogger, parent, this);
             services.AddInstance<IRegionNavigationService>(compService);
+            var inner = new InnerNavigationService(compService);
+            services.AddInstance<INavigationService>(inner);
             return compService;
         }
 

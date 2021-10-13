@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -47,7 +48,7 @@ public class NavigationViewNavigationService : ControlNavigationService<Microsof
         var path = Uno.Extensions.Navigation.Controls.Navigation.GetRoute(tbi) ?? tbi.Name;
         if (!string.IsNullOrEmpty(path))
         {
-            this.NavigateByPathAsync(null, path);
+            this.ScopedServices.GetService<INavigationService>().NavigateByPathAsync(null, path);
         }
     }
 
