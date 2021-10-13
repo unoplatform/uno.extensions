@@ -30,7 +30,7 @@ public record Route(string Scheme, string Base, string Path, IDictionary<string,
     public bool FrameIsBackNavigation => Scheme.StartsWith(Schemes.NavigateBack) && Base.Length == 0;
 
     public NavigationRequest NextRequest(object sender) =>
-        Path.Length > 1 ?
+        Path?.Length > 1 ?
         (Schemes.Nested + Path + Query)
         .AsRequest(sender, Data.ContainsKey(string.Empty) ? Data[string.Empty] : null) :
         null;

@@ -34,6 +34,10 @@ public class FrameNavigationService : ControlNavigationService<Frame>
         RegionControlProvider controlProvider)
         : base(logger, parent, serviceFactory, scopedServices, viewModelManager, mappings, controlProvider.RegionControl as Frame)
     {
+    }
+
+    public override void ControlInitialize()
+    {
         if (Control.Content is not null)
         {
             Logger.LazyLogDebug(() => $"Navigating to type '{Control.SourcePageType.Name}' (initial Content set on Frame)");

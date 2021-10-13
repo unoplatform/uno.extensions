@@ -75,6 +75,13 @@ public class NavigationServiceFactory : IRegionNavigationServiceFactory
         var factory = Factories.FindForControl(control);
         var region = factory.Create(factoryServices);
         services.AddInstance<IRegionNavigationService>( region);
+        var innerNavService = new InnerNavigationService(region);
+        services.AddInstance<INavigationService>(innerNavService);
+
+        if(region is ControlNavigationService controlService)
+        {
+            controlService.ControlInitialize();
+        }
 
         // Retrieve the region container and the navigation service
         return region;

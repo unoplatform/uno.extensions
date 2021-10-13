@@ -40,6 +40,16 @@ public static class RouteExtensions
         //return BuildRoute(schemeToAppend + route.Uri.OriginalString, route.Data);
     }
 
+    public static string NextBase(this Route route)
+    {
+        return route.Path?.Split('/')?.FirstOrDefault();
+    }
+
+    public static string NextPath(this Route route)
+    {
+        return route.Path?.Split('/')?.Skip(1)?.FirstOrDefault();
+    }
+
     public static Route BuildRoute(this Uri uri, object data = null)
     {
         var path = uri.OriginalString;

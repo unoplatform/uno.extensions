@@ -8,7 +8,7 @@ namespace Uno.Extensions.Navigation;
 
 public class CompositeNavigationService : NavigationService, IRegionNavigationService
 {
-    protected IList<(string, IRegionNavigationService)> NestedServices { get; } = new List<(string, IRegionNavigationService)>();
+    private IList<(string, IRegionNavigationService)> Children { get; } = new List<(string, IRegionNavigationService)>();
 
     private AsyncAutoResetEvent NestedServiceWaiter { get; } = new AsyncAutoResetEvent(false);
 
@@ -20,16 +20,28 @@ public class CompositeNavigationService : NavigationService, IRegionNavigationSe
     {
     }
 
-    public void Attach(string regionName, IRegionNavigationService childRegion)
+    public void Attach(IRegionNavigationService childRegion, string regionName)
     {
         var childService = childRegion;
-        NestedServices.Add((regionName + string.Empty, childService));
+        Children.Add((regionName + string.Empty, childService));
         NestedServiceWaiter.Set();
     }
 
     public void Detach(IRegionNavigationService childRegion)
     {
-        NestedServices.Remove(kvp => kvp.Item2 == childRegion);
+        Children.Remove(kvp => kvp.Item2 == childRegion);
+    }
+
+    protected void AttachAll(IEnumerable<(string, IRegionNavigationService)> children)
+    {
+        children.ForEach(n => Children[n.Key] = n.Value);
+    }
+
+    protected IEnumerable<(string, IRegionNavigationService)> DetachAll()
+    {
+        var children = Children.ToArray();
+        Children.Clear();
+        return children;
     }
 
     protected async override Task<NavigationResponse> CoreNavigateAsync(NavigationRequest request)
@@ -39,11 +51,6 @@ public class CompositeNavigationService : NavigationService, IRegionNavigationSe
         return await NestedNavigateAsync(request);
     }
 
-    private IRegionNavigationService[] Nested(string regionName = null)
-    {
-        return NestedServices.Where(kvp => kvp.Item1 == regionName + string.Empty).Select(x => x.Item2).ToArray();
-    }
-
     protected virtual async Task<NavigationResponse> NestedNavigateAsync(NavigationRequest request)
     {
         if (!(request?.Route?.IsNested ?? false))
@@ -51,23 +58,40 @@ public class CompositeNavigationService : NavigationService, IRegionNavigationSe
             return null;
         }
 
-        var nestedRoute = request.Route.Base;
+        var route = request.Route.Base;
 
         // TODO: Find a better way - this can potentially block in endless loop if no nested region is added
         while (true)
         {
             // Attempt to navigate using the route name
-            var response = await NestedByNameNavigateAsync(nestedRoute, request);
-            if (response is not null)
+            var namedChildren = Children.Where(kvp => kvp.Item1 == route).Select(x => x.Item2);
+            if (namedChildren.Any())
             {
-                return response;
+                var childRequest = request with
+                {
+                    Route = request.Route with
+                    {
+                        Scheme = request.Route.Scheme.TrimStartOnce(Schemes.Nested),
+                        Base = request.Route.NextBase(),
+                        Path = request.Route.NextPath()
+                    }
+                };
+
+                return await ChildrenNavigateAsync(namedChildren, childRequest);
             }
 
             // Attempt to navigate using empty route
-            response = await NestedByNameNavigateAsync(string.Empty, request);
-            if (response is not null)
+            var unnamedChildren = Children.Where(kvp => string.IsNullOrWhiteSpace(kvp.Item1)).Select(x => x.Item2);
+            if (unnamedChildren.Any())
             {
-                return response;
+                var childRequest = request with
+                {
+                    Route = request.Route with
+                    {
+                        Scheme = request.Route.Scheme.TrimStartOnce(Schemes.Nested)
+                    }
+                };
+                return await ChildrenNavigateAsync(unnamedChildren, childRequest);
             }
 
             // There aren't any nested regions registered, so need
@@ -78,36 +102,25 @@ public class CompositeNavigationService : NavigationService, IRegionNavigationSe
         }
     }
 
-    private async Task<NavigationResponse> NestedByNameNavigateAsync(string name, NavigationRequest request)
+    private async Task<NavigationResponse> ChildrenNavigateAsync(IEnumerable<INavigationService> children, NavigationRequest request)
     {
-        // Try to retrieve nested service based on route name
-        var nested = Nested(name);
-        if (nested?.Any() ?? false)
+        var tasks = new List<Task<NavigationResponse>>();
+        foreach (var region in children)
         {
-            var separator = name is { Length: > 0 } ? "/" : null;
-            var nextRoute = request.Route.Uri.OriginalString.TrimStartOnce($"{Schemes.Nested}{name}{separator}");
-            request = request.WithPath(nextRoute);
-
-            var tasks = new List<Task<NavigationResponse>>();
-            foreach (var region in nested)
-            {
-                tasks.Add(region.NavigateAsync(request));
-            }
-
-            await Task.WhenAll(tasks);
-#pragma warning disable CA1849 // We've already waited all tasks at this point (see Task.WhenAll in line above)
-            return tasks.First().Result;
-#pragma warning restore CA1849 
+            tasks.Add(region.NavigateAsync(request));
         }
 
-        return null;
+        await Task.WhenAll(tasks);
+#pragma warning disable CA1849 // We've already waited all tasks at this point (see Task.WhenAll in line above)
+        return tasks.First().Result;
+#pragma warning restore CA1849
     }
 
     protected virtual void PrintAllRegions(StringBuilder builder, IRegionNavigationService nav, int indent = 0, string regionName = null)
     {
         if (nav is CompositeNavigationService comp)
         {
-            foreach (var nested in comp.NestedServices)
+            foreach (var nested in comp.Children)
             {
                 PrintAllRegions(builder, nested.Item2 as IRegionNavigationService, indent + 1, nested.Item1);
             }

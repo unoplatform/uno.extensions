@@ -74,6 +74,10 @@ public abstract class ControlNavigationService : RegionNavigationService
         ViewModelManager = viewModelManager;
     }
 
+    public virtual void ControlInitialize()
+    {
+    }
+
     protected override async Task<NavigationResponse> ControlNavigateAsync(NavigationRequest request)
     {
         if (request.Route.Base == CurrentPath)

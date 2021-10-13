@@ -32,6 +32,10 @@ public class TabNavigationService : ControlNavigationService<TabView>
         RegionControlProvider controlProvider)
         : base(logger, parent, serviceFactory, scopedServices, viewModelManager, mappings, controlProvider.RegionControl as TabView)
     {
+    }
+
+    public override void ControlInitialize()
+    {
         Control.SelectionChanged += Tabs_SelectionChanged;
     }
 

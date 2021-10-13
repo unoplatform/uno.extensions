@@ -4,7 +4,7 @@ namespace Uno.Extensions.Navigation;
 
 public interface IRegionNavigationService : INavigationService
 {
-    void Attach(string regionName, IRegionNavigationService childRegion);
+    void Attach(IRegionNavigationService childRegion, string regionName);
 
     void Detach(IRegionNavigationService childRegion);
 }
