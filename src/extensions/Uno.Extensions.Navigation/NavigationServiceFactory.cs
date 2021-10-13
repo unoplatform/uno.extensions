@@ -22,7 +22,7 @@ public class NavigationServiceFactory : IRegionNavigationServiceFactory
 {
     private IServiceProvider Services { get; }
 
-    private IDictionary<Type, IRegionFactory> Factories { get; }
+    private IDictionary<Type, IControlNavigationServiceFactory> Factories { get; }
 
     private ILogger Logger { get; }
 
@@ -32,7 +32,7 @@ public class NavigationServiceFactory : IRegionNavigationServiceFactory
         ILogger<NavigationServiceFactory> logger,
         IServiceProvider services,
         IRouteMappings mappings,
-        IEnumerable<IRegionFactory> factories)
+        IEnumerable<IControlNavigationServiceFactory> factories)
     {
         Logger = logger;
         Mappings = mappings;

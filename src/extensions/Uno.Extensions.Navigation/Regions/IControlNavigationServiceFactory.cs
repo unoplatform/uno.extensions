@@ -2,7 +2,7 @@
 
 namespace Uno.Extensions.Navigation.Regions;
 
-public interface IRegionFactory
+public interface IControlNavigationServiceFactory
 {
     Type ControlType { get; }
 

@@ -2,10 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
-#else
-using Microsoft.UI.Xaml;
-#endif
 
 namespace Uno.Extensions.Navigation;
 
@@ -29,15 +25,11 @@ public static class RouteExtensions
     public static Route TrimScheme(this Route route, string schemeToTrim)
     {
         return route with { Scheme = route.Scheme.TrimStartOnce(schemeToTrim) };
-        //// TODO: Refactor to improve scheme trimming
-        //return BuildRoute(route.Uri.OriginalString.TrimStartOnce(schemeToTrim), route.Data);
     }
 
     public static Route AppendScheme(this Route route, string schemeToAppend)
     {
         return route with { Scheme = schemeToAppend + route.Scheme };
-        //// TODO: Refactor to improve scheme appending
-        //return BuildRoute(schemeToAppend + route.Uri.OriginalString, route.Data);
     }
 
     public static string NextBase(this Route route)
