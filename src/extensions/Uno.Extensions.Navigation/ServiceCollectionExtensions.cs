@@ -31,18 +31,18 @@ public static class ServiceCollectionExtensions
         return services
                     .AddScoped<IInstanceRepository, InstanceRepository>()
                     // Register the region for each control type
-                    .AddRegion<Frame, FrameRegion>()
-                    .AddRegion<TabView, TabRegion>()
-                    .AddRegion<ContentControl, ContentControlRegion>()
-                   .AddRegion<Grid, GridVisiblityRegion>()
-                   .AddRegion<Page, PageVisualStateRegion>()
-                   .AddRegion<Microsoft.UI.Xaml.Controls.NavigationView, NavigationViewRegion>()
-                    .AddRegion<ContentDialog, ContentDialogRegion>()
-                    .AddRegion<MessageDialog, MessageDialogRegion>()
+                    .AddRegion<Frame, FrameNavigationService>()
+                    .AddRegion<TabView, TabNavigationService>()
+                    .AddRegion<ContentControl, ContentControlNavigationService>()
+                   .AddRegion<Grid, GridVisiblityNavigationService>()
+                   .AddRegion<Page, PageVisualStateNavigationService>()
+                   .AddRegion<Microsoft.UI.Xaml.Controls.NavigationView, NavigationViewNavigationService>()
+                    .AddRegion<ContentDialog, ContentDialogNavigationService>()
+                    .AddRegion<MessageDialog, MessageDialogNavigationService>()
 #if __IOS__
                     .AddRegion<Picker, PickerRegion>()
 #endif
-                    .AddRegion<Popup, PopupRegion>()
+                    .AddRegion<Popup, PopupNavigationService>()
 
                     // Register the navigation mappings repository
                     .AddSingleton<IRouteMappings, RouteMappingsDefault>()
@@ -107,7 +107,7 @@ public static class ServiceCollectionExtensions
 
         return services
                     .AddScoped<TRegion>()
-                    .AddSingleton<IRegionFactory, RegionFactory<TControl, TRegion>>();
+                    .AddSingleton<IRegionFactory, ControlNavigationServiceFactory<TControl, TRegion>>();
     }
 
     public static IServiceCollection AddViewModelData<TData>(this IServiceCollection services)
