@@ -48,6 +48,10 @@
                     Click="GoBackNavigateToPreviousViewAsyncClick" />
             <Button Content="Tabbed Page - NavigationRequest"
                     nav:Navigation.Request="../TabbedPage" />
+
+            <Button Content="Root - Twitter ('/-/Twitter')"
+                    nav:Navigation.Request="/-/Twitter" />
+
         </StackPanel>
         <ContentControl Grid.Row="1" nav:Region.Name="content" />
         <StackPanel Grid.Row="2">
