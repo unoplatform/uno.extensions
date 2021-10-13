@@ -48,10 +48,10 @@ public class CompositeNavigationService : NavigationService, IRegionNavigationSe
     {
         // At this point, any residual request needs to be handed
         // down to the appropriate nested service
-        return await NestedNavigateAsync(request);
+        return await ChildrenNavigateAsync(request);
     }
 
-    protected virtual async Task<NavigationResponse> NestedNavigateAsync(NavigationRequest request)
+    private async Task<NavigationResponse> ChildrenNavigateAsync(NavigationRequest request)
     {
         if (!(request?.Route?.IsNested ?? false))
         {
