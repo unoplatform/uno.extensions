@@ -50,7 +50,7 @@ public class NavigationServiceFactory : IRegionNavigationServiceFactory
         (control as FrameworkElement)?.SetServiceProvider(services);
 
         // Create Navigation Service
-        var navLogger = services.GetService<ILogger<RegionNavigationService>>();
+        var navLogger = services.GetService<ILogger<ControlNavigationService>>();
 
         if (isComposite)
         {
