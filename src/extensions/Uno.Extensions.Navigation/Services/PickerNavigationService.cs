@@ -12,7 +12,7 @@ using Microsoft.UI.Xaml.Controls;
 using Windows.UI.Popups;
 #endif
 
-namespace Uno.Extensions.Navigation.Regions;
+namespace Uno.Extensions.Navigation.Services;
 
 public class PickerNavigationService : ControlNavigationService
 {

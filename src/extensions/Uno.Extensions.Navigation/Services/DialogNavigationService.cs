@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation.ViewModels;
 using Windows.Foundation;
 
-namespace Uno.Extensions.Navigation.Regions
+namespace Uno.Extensions.Navigation.Services
 {
     public abstract class DialogNavigationService : ControlNavigationService
     {
@@ -12,7 +12,7 @@ namespace Uno.Extensions.Navigation.Regions
 
         private IAsyncInfo ShowTask { get; set; }
 
-        protected override string CurrentPath => this.GetType().Name ?? string.Empty;
+        protected override string CurrentPath => GetType().Name ?? string.Empty;
 
         protected DialogNavigationService(
             ILogger<DialogNavigationService> logger,

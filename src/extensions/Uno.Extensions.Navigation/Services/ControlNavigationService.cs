@@ -12,7 +12,7 @@ using Windows.UI.Xaml;
 using Microsoft.UI.Xaml;
 #endif
 
-namespace Uno.Extensions.Navigation.Regions;
+namespace Uno.Extensions.Navigation.Services;
 
 public abstract class ControlNavigationService<TControl> : ControlNavigationService
     where TControl : class
@@ -83,7 +83,7 @@ public abstract class ControlNavigationService : CompositeNavigationService
 
             if (regionResponse is not null)
             {
-                request = request with { Route = request.Route.Next } ;
+                request = request with { Route = request.Route.Next };
             }
         }
 
@@ -114,7 +114,7 @@ public abstract class ControlNavigationService : CompositeNavigationService
         }
         else
         {
-            _ = regionTask.Result?.ContinueWith((Task<Options.Option> t) =>
+            _ = regionTask.Result?.ContinueWith((t) =>
             {
                 if (t.Status == TaskStatus.RanToCompletion)
                 {
@@ -176,7 +176,7 @@ public abstract class ControlNavigationService : CompositeNavigationService
         {
             request.Cancellation.Value.Register(() =>
             {
-                this.ScopedServices.GetService<INavigationService>().NavigateToPreviousViewAsync(context.Request.Sender);
+                ScopedServices.GetService<INavigationService>().NavigateToPreviousViewAsync(context.Request.Sender);
             });
         }
 

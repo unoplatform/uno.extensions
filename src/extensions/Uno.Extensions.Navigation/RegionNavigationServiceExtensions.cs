@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Uno.Extensions.Navigation.Controls;
-using Uno.Extensions.Navigation.Regions;
+using Uno.Extensions.Navigation.Services;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Xaml;
 #else

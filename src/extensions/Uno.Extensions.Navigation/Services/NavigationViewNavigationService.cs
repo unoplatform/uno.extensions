@@ -10,7 +10,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 #endif
 
-namespace Uno.Extensions.Navigation.Regions;
+namespace Uno.Extensions.Navigation.Services;
 
 public class NavigationViewNavigationService : ControlNavigationService<Microsoft.UI.Xaml.Controls.NavigationView>
 {
@@ -41,10 +41,10 @@ public class NavigationViewNavigationService : ControlNavigationService<Microsof
     {
         var tbi = args.SelectedItem as FrameworkElement;
 
-        var path = Uno.Extensions.Navigation.Controls.Navigation.GetRoute(tbi) ?? tbi.Name;
+        var path = Controls.Navigation.GetRoute(tbi) ?? tbi.Name;
         if (!string.IsNullOrEmpty(path))
         {
-            this.ScopedServices.GetService<INavigationService>().NavigateByPathAsync(null, path);
+            ScopedServices.GetService<INavigationService>().NavigateByPathAsync(null, path);
         }
     }
 

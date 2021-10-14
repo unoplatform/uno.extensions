@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
-using Uno.Extensions.Navigation.Regions;
 using Uno.Extensions.Navigation.ViewModels;
 using Windows.UI.Popups;
 #if !WINDOWS_UWP && !WINUI
@@ -12,6 +11,7 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using System;
+using Uno.Extensions.Navigation.Services;
 #else
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;

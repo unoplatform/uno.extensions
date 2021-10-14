@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
 
-namespace Uno.Extensions.Navigation.Regions;
+namespace Uno.Extensions.Navigation.Services;
 
 #pragma warning disable SA1313 // Parameter names should begin with lower-case letter
 public record ControlNavigationServiceFactory<TControl, TRegion> : IControlNavigationServiceFactory

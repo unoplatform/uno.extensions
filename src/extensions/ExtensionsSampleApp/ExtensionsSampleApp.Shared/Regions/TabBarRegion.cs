@@ -5,8 +5,8 @@ using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Controls;
 using Uno.UI.ToolkitLib;
 using Uno.Extensions.Navigation.ViewModels;
-using Uno.Extensions.Navigation.Regions;
 using Microsoft.Extensions.DependencyInjection;
+using Uno.Extensions.Navigation.Services;
 
 namespace ExtensionsSampleApp.Region.Managers
 {
