@@ -16,7 +16,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 #endif
 
-namespace Uno.Extensions.Navigation.Regions;
+namespace Uno.Extensions.Navigation.Services;
 
 public class FrameNavigationService : ControlNavigationService<Frame>
 {
