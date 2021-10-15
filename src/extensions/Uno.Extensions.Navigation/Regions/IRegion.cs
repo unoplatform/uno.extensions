@@ -29,7 +29,7 @@ namespace Uno.Extensions.Navigation.Regions
     {
         public IRegion Parent { get; set; }
 
-        private IScopedServiceProvider Services { get; set; }
+        private IServiceProvider Services { get; set; }
 
         private IList<(string, IRegion)> Children { get; } = new List<(string, IRegion)>();
 
@@ -65,7 +65,7 @@ namespace Uno.Extensions.Navigation.Regions
 
         public void UpdateServiceProvider(IServiceProvider services)
         {
-            Services = new ScopedServiceProvider(services.CreateScope().ServiceProvider);
+            Services = services.CreateScope().ServiceProvider;
 
             foreach (var child in Children)
             {
