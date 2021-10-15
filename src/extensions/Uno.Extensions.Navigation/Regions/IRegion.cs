@@ -51,6 +51,11 @@ namespace Uno.Extensions.Navigation.Regions
 
         public async Task<IEnumerable<IRegion>> FindChildByRegionName(string regionName)
         {
+            if (Services is null)
+            {
+                await NestedServiceWaiter.Wait();
+            }
+
             Func<IRegion[]> find = () => Children.Where(kvp => string.IsNullOrWhiteSpace(kvp.Item1)).Select(x => x.Item2).ToArray();
 
             var matched = find();
@@ -71,6 +76,8 @@ namespace Uno.Extensions.Navigation.Regions
             {
                 child.Item2.UpdateServiceProvider(services);
             }
+
+            NestedServiceWaiter.Set();
         }
 
         public void AttachAll(IEnumerable<(string, IRegion)> children)
