@@ -48,11 +48,15 @@ public class Navigator : INavigator
             }
         }
 
-        // Handle parent navigations
         if (request?.Route?.IsParent ?? false)
         {
             request = request with { Route = request.Route.TrimScheme(Schemes.Parent) };
-            return Region.Parent?.NavigateAsync(request);
+
+            // Handle parent navigations
+            if (request?.Route?.IsParent ?? false)
+            {
+                return Region.Parent?.NavigateAsync(request);
+            }
         }
 
         // Run dialog requests

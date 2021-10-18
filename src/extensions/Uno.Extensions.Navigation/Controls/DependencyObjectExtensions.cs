@@ -14,7 +14,7 @@ public static class DependencyObjectExtensions
 {
     public static INavigator Navigator(this DependencyObject element)
     {
-        return element.FindRegion().Navigation().AsInner();
+        return element.FindRegion().Navigation();
     }
 
     public static IRegion FindRegion(this DependencyObject element)
