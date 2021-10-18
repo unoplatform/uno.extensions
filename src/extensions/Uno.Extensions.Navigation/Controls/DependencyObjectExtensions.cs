@@ -10,16 +10,16 @@ using Microsoft.UI.Xaml.Media;
 
 namespace Uno.Extensions.Navigation.Controls;
 
-public static class Dependency
+public static class DependencyObjectExtensions
 {
     public static INavigator Navigator(this DependencyObject element)
     {
-        return element.Region().Navigation().AsInner();
+        return element.FindRegion().Navigation().AsInner();
     }
 
-    public static IRegion Region(this DependencyObject element)
+    public static IRegion FindRegion(this DependencyObject element)
     {
-        return (element as FrameworkElement).ServiceForControl<IRegion>(true, element => element.GetRegion());
+        return element.ServiceForControl<IRegion>(true, element => element.GetRegion());
     }
 
     private static TService ServiceForControl<TService>(this DependencyObject element, bool searchParent, Func<DependencyObject, TService> retrieveFromElement)

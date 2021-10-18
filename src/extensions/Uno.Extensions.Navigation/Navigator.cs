@@ -134,33 +134,7 @@ public class Navigator : INavigator
             return null;
         }
 
-        var childRequest = request with { Route = request.Route.Next };
-
-        //var childRouteName = children.First().Name;
-        //var childRequest = request with
-        //{
-        //    Route = request.Route with
-        //    {
-        //        Scheme = request.Route.Scheme.TrimStartOnce(Schemes.Nested),
-        //        Base = request.Route.NextBase(),
-        //        Path = request.Route.NextPath()
-        //    }
-        //};
-
-        //if (string.IsNullOrWhiteSpace(childRouteName))
-        //{
-        //    childRequest = request with
-        //    {
-        //        Route = request.Route with
-        //        {
-        //            Scheme = request.Route.Scheme.TrimStartOnce(Schemes.Nested)
-        //        }
-        //    };
-        //}
-        var old = request.ToString();
-        var newR = childRequest.ToString();
         return await ChildrenNavigateAsync(children);
-
     }
 
     private async Task<NavigationResponse> ChildrenNavigateAsync(IEnumerable<(IRegion, NavigationRequest)> children) // IEnumerable<INavigationService> children, NavigationRequest request)
