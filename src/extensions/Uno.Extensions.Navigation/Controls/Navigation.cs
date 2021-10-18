@@ -30,9 +30,6 @@ public static class Navigation
 
     private static void RequestChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        // Make sure we set the Route property too
-        d.SetValue(RouteProperty, e.NewValue);
-
         if (d is ButtonBase element)
         {
             var path = GetRequest(element);
