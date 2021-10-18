@@ -15,7 +15,7 @@ using Windows.UI.Popups;
 
 namespace Uno.Extensions.Navigation.Services;
 
-public class PickerNavigator : RegionNavigator
+public class PickerNavigator : ControlNavigator
 {
     public PickerNavigator(
         ILogger<ContentDialogNavigator> logger,

@@ -19,7 +19,7 @@ using Microsoft.UI.Xaml.Navigation;
 
 namespace Uno.Extensions.Navigation.Services;
 
-public class FrameNavigator : RegionNavigator<Frame>
+public class FrameNavigator : ControlNavigator<Frame>
 {
     protected override object CurrentView => Control.Content;
 

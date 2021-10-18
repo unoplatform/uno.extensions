@@ -7,7 +7,7 @@ using Windows.Foundation;
 
 namespace Uno.Extensions.Navigation.Services
 {
-    public abstract class DialogNavigator : RegionNavigator
+    public abstract class DialogNavigator : ControlNavigator
     {
         protected override bool CanGoBack => true;
 

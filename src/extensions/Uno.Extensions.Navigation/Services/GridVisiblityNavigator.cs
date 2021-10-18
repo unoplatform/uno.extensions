@@ -16,7 +16,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Services;
 
-public class GridVisiblityNavigator : RegionNavigator<Grid>
+public class GridVisiblityNavigator : ControlNavigator<Grid>
 {
     protected override object CurrentView => CurrentlyVisibleControl;
 

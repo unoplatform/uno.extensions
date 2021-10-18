@@ -17,7 +17,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Services;
 
-public class TabNavigator : RegionNavigator<TabView>
+public class TabNavigator : ControlNavigator<TabView>
 {
     protected override object CurrentView => (Control.SelectedItem as TabViewItem)?.Content;
 
