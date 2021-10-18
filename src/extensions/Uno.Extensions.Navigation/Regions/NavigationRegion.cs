@@ -25,7 +25,7 @@ namespace Uno.Extensions.Navigation.Regions
         public IRegion Parent
         {
             get => _parent;
-            set
+            private set
             {
                 if (_parent is not null)
                 {
