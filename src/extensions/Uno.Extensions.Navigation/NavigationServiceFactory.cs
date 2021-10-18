@@ -78,6 +78,10 @@ public class NavigationServiceFactory : IRegionNavigationServiceFactory
             navService = services.GetService<CompositeNavigationService>();
         }
 
+        // Make sure the nav service gets added to the container before initialize
+        // is invoked to prevent reentry
+        services.AddInstance<INavigationService>(navService);
+
         if (navService is ControlNavigationService controlService)
         {
             controlService.ControlInitialize();

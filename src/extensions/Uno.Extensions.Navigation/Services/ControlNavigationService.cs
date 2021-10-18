@@ -25,11 +25,9 @@ public abstract class ControlNavigationService<TControl> : ControlNavigationServ
     protected ControlNavigationService(
         ILogger logger,
         IRegion region,
-        IRegionNavigationServiceFactory serviceFactory,
-        IServiceProvider scopedServices,
         IRouteMappings mappings,
         TControl control)
-        : base(logger, region, serviceFactory, scopedServices)
+        : base(logger, region)
     {
         Mappings = mappings;
         Control = control;
@@ -55,8 +53,6 @@ public abstract class ControlNavigationService<TControl> : ControlNavigationServ
 
 public abstract class ControlNavigationService : CompositeNavigationService
 {
-    protected IServiceProvider ScopedServices { get; }
-
     protected virtual string CurrentPath => string.Empty;
 
     protected virtual bool CanGoBack => false;
@@ -67,69 +63,58 @@ public abstract class ControlNavigationService : CompositeNavigationService
 
     protected ControlNavigationService(
         ILogger logger,
-        IRegion region,
-        IRegionNavigationServiceFactory serviceFactory,
-        IServiceProvider scopedServices)
-        : base(logger, region, serviceFactory)
+        IRegion region)
+        : base(logger, region)
     {
-        ScopedServices = scopedServices;
     }
 
     protected async override Task<NavigationResponse> CoreNavigateAsync(NavigationRequest request)
     {
-        NavigationResponse regionResponse = null;
-        var route = request.ToString();
-        if (request.Route.IsCurrent)
-        {
-            regionResponse = await RegionNavigateAsync(request);
+        var regionResponse = await RegionNavigateAsync(request);
 
-            if (regionResponse is not null)
-            {
-                request = request with { Route = request.Route.Next };
-            }
-        }
+        var coreResponse = await base.CoreNavigateAsync(request);
 
-        if (!(request?.Route?.IsNested ?? false))
-        {
-            return regionResponse;
-        }
-
-        return await base.CoreNavigateAsync(request);
+        return coreResponse ?? regionResponse;
     }
 
     private async Task<NavigationResponse> RegionNavigateAsync(NavigationRequest request)
     {
-        var taskCompletion = new TaskCompletionSource<Options.Option>();
-        // Temporarily detach all nested services to prevent accidental
-        // navigation to the wrong child
-        // eg switching tabs, frame on tab1 won't get detached until some
-        // time after navigating to tab2, meaning that the wrong nexted
-        // child will be used for any subsequent navigations.
-        var children = Region?.DetachAll();
-        var regionTask = await ControlNavigateAsync(request);
-        if (regionTask is null)
+        if (request.Route.IsCurrent)
         {
-            // If a null result task was returned, then no
-            // navigation took place, so just reattach the existing
-            // nav services
-            Region?.AttachAll(children);
-        }
-        else
-        {
-            _ = regionTask.Result?.ContinueWith((t) =>
+            var taskCompletion = new TaskCompletionSource<Options.Option>();
+            // Temporarily detach all nested services to prevent accidental
+            // navigation to the wrong child
+            // eg switching tabs, frame on tab1 won't get detached until some
+            // time after navigating to tab2, meaning that the wrong nexted
+            // child will be used for any subsequent navigations.
+            var children = Region?.DetachAll();
+            var regionTask = await ControlNavigateAsync(request);
+            if (regionTask is null)
             {
-                if (t.Status == TaskStatus.RanToCompletion)
+                // If a null result task was returned, then no
+                // navigation took place, so just reattach the existing
+                // nav services
+                Region?.AttachAll(children);
+            }
+            else
+            {
+                _ = regionTask.Result?.ContinueWith((t) =>
                 {
-                    taskCompletion.TrySetResult(t.Result);
-                }
-                else
-                {
-                    taskCompletion.TrySetResult(Options.Option.None<object>());
-                }
-            },
-              TaskScheduler.Current);
+                    if (t.Status == TaskStatus.RanToCompletion)
+                    {
+                        taskCompletion.TrySetResult(t.Result);
+                    }
+                    else
+                    {
+                        taskCompletion.TrySetResult(Options.Option.None<object>());
+                    }
+                },
+                  TaskScheduler.Current);
+            }
+            return new NavigationResponse(request, taskCompletion.Task);
         }
-        return new NavigationResponse(request, taskCompletion.Task);
+
+        return null;
     }
 
     public virtual void ControlInitialize()
@@ -148,7 +133,7 @@ public abstract class ControlNavigationService : CompositeNavigationService
         // - cancellation source
         // - mapping
         var resultTask = request.RequiresResponse() ? new TaskCompletionSource<Options.Option>() : default;
-        var context = request.BuildNavigationContext(ScopedServices, resultTask);
+        var context = request.BuildNavigationContext(Region.Services, resultTask);
 
         // Notify current view and viewmodel that about to navigate.
         // If either return true, cancel nav by returning null
@@ -167,6 +152,14 @@ public abstract class ControlNavigationService : CompositeNavigationService
             return null;
         }
 
+        //var regionCompletion = new TaskCompletionSource<object>();
+        //Region.View.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+        //{
+        //    await NavigateWithContextAsync(context);
+        //    regionCompletion.SetResult(null);
+        //});
+        //await regionCompletion.Task;
+
         await NavigateWithContextAsync(context);
 
         // Start view and viewmodels
@@ -178,7 +171,7 @@ public abstract class ControlNavigationService : CompositeNavigationService
         {
             request.Cancellation.Value.Register(() =>
             {
-                ScopedServices.GetService<INavigationService>().NavigateToPreviousViewAsync(context.Request.Sender);
+                Region.Navigation().NavigateToPreviousViewAsync(context.Request.Sender);
             });
         }
 

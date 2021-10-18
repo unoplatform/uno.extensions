@@ -45,18 +45,16 @@ public class NavigationViewNavigationService : ControlNavigationService<Microsof
         var path = Controls.Navigation.GetRoute(tbi) ?? tbi.Name;
         if (!string.IsNullOrEmpty(path))
         {
-            ScopedServices.GetService<INavigationService>().NavigateByPathAsync(null, path);
+            Region.Navigation().NavigateByPathAsync(null, path);
         }
     }
 
     public NavigationViewNavigationService(
         ILogger<NavigationViewNavigationService> logger,
         IRegion region,
-        IRegionNavigationServiceFactory serviceFactory,
-        IServiceProvider scopedServices,
         IRouteMappings mappings,
         RegionControlProvider controlProvider)
-        : base(logger, region, serviceFactory, scopedServices, mappings, controlProvider.RegionControl as Microsoft.UI.Xaml.Controls.NavigationView)
+        : base(logger, region, mappings, controlProvider.RegionControl as Microsoft.UI.Xaml.Controls.NavigationView)
     {
     }
 

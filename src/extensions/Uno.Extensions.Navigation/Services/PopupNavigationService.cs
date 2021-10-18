@@ -31,15 +31,13 @@ public class PopupNavigationService : ControlNavigationService<Popup>
     public PopupNavigationService(
         ILogger<ContentControlNavigationService> logger,
         IRegion region,
-        IRegionNavigationServiceFactory serviceFactory,
-        IServiceProvider scopedServices,
         IRouteMappings mappings,
         RegionControlProvider controlProvider)
-        : base(logger, region, serviceFactory, scopedServices, mappings, controlProvider.RegionControl as Popup)
+        : base(logger, region, mappings, controlProvider.RegionControl as Popup)
     {
     }
 
-    protected override void Show(string path, Type view, object data)
+    protected override void Show(string path, Type viewType, object data)
     {
         try
         {

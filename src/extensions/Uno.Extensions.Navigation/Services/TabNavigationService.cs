@@ -26,11 +26,9 @@ public class TabNavigationService : ControlNavigationService<TabView>
     public TabNavigationService(
         ILogger<TabNavigationService> logger,
         IRegion region,
-        IRegionNavigationServiceFactory serviceFactory,
-        IServiceProvider scopedServices,
         IRouteMappings mappings,
         RegionControlProvider controlProvider)
-        : base(logger, region, serviceFactory, scopedServices, mappings, controlProvider.RegionControl as TabView)
+        : base(logger, region, mappings, controlProvider.RegionControl as TabView)
     {
     }
 
@@ -48,7 +46,7 @@ public class TabNavigationService : ControlNavigationService<TabView>
         //Navigation.NavigateByPathAsync(null, tabName);
 
         var request = Mappings.FindByPath(tabName).AsRequest(this);
-        var context = request.BuildNavigationContext(ScopedServices);
+        var context = request.BuildNavigationContext(Region.Services);
 
         InitialiseView(context);
     }

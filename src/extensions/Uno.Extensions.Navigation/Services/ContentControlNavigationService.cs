@@ -25,11 +25,9 @@ public class ContentControlNavigationService : ControlNavigationService<ContentC
     public ContentControlNavigationService(
         ILogger<ContentControlNavigationService> logger,
         IRegion region,
-        IRegionNavigationServiceFactory serviceFactory,
-        IServiceProvider scopedServices,
         IRouteMappings mappings,
         RegionControlProvider controlProvider)
-        : base(logger, region, serviceFactory, scopedServices, mappings, controlProvider.RegionControl as ContentControl)
+        : base(logger, region, mappings, controlProvider.RegionControl as ContentControl)
     {
     }
 

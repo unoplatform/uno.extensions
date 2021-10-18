@@ -32,7 +32,7 @@ namespace Uno.Extensions.Navigation.Regions
 
         void Detach(IRegion childRegion);
 
-        Task<IEnumerable<IRegion>> GetChildren(string regionName);
+        Task<IEnumerable<(IRegion, NavigationRequest)>> GetChildren(Func<IRegion, (IRegion, NavigationRequest)> predicate, bool isBlocking);
 
         // TODO: Work out how we can remove these
         void AttachAll(IEnumerable<IRegion> children);
@@ -154,26 +154,24 @@ namespace Uno.Extensions.Navigation.Regions
             Children.Remove(kvp => kvp.Name == childRegion.Name);
         }
 
-        public async Task<IEnumerable<IRegion>> GetChildren(string regionName)
+        public async Task<IEnumerable<(IRegion, NavigationRequest)>> GetChildren(Func<IRegion, (IRegion, NavigationRequest)> predicate, bool blocking)
         {
-            if (Services is null)
-            {
-                await NestedServiceWaiter.Wait();
-            }
-
-            Func<IRegion[]> findByName = () => Children.Where(kvp => kvp.Name == regionName).ToArray();
-            Func<IRegion[]> findByNoName = () => Children.Where(kvp => string.IsNullOrWhiteSpace(kvp.Name)).ToArray();
-
-            var matched = findByName();
+            //return Children.Where(child => predicate(child)).ToArray(); 
+            Func<(IRegion, NavigationRequest)[]> find = () => (from child in Children
+                                          let match = predicate(child)
+                                          where match != default((IRegion, NavigationRequest))
+                                          select match).ToArray();
+            var matched = find();
             while (!matched.Any())
             {
-                matched = findByNoName();
-                if (matched.Any())
+                if (!blocking)
                 {
-                    break;
+                    return null;
                 }
+
                 await NestedServiceWaiter.Wait();
-                matched = findByName();
+
+                matched = find();
             }
 
             return matched;

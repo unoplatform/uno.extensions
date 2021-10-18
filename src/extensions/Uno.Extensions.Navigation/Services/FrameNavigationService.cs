@@ -30,11 +30,9 @@ public class FrameNavigationService : ControlNavigationService<Frame>
     public FrameNavigationService(
         ILogger<FrameNavigationService> logger,
         IRegion region,
-        IRegionNavigationServiceFactory serviceFactory,
-        IServiceProvider scopedServices,
         IRouteMappings mappings,
         RegionControlProvider controlProvider)
-        : base(logger, region, serviceFactory, scopedServices, mappings, controlProvider.RegionControl as Frame)
+        : base(logger, region, mappings, controlProvider.RegionControl as Frame)
     {
     }
 
@@ -115,7 +113,7 @@ public class FrameNavigationService : ControlNavigationService<Frame>
     private void UpdateCurrentView()
     {
         var request = Mappings.FindByView(Control.Content.GetType()).AsRequest(this);
-        var context = request.BuildNavigationContext(ScopedServices);
+        var context = request.BuildNavigationContext(Region.Services);
         InitialiseView(context);
     }
 

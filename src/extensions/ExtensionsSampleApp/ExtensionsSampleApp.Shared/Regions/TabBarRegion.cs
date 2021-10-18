@@ -37,18 +37,16 @@ namespace ExtensionsSampleApp.Region.Managers
             var path = Uno.Extensions.Navigation.Controls.Navigation.GetRoute(tbi) ?? tbi.Name;
             if (!string.IsNullOrEmpty(path))
             {
-                this.ScopedServices.GetService<INavigationService>().NavigateByPathAsync(null, path);
+                Region.Navigation().NavigateByPathAsync(null, path);
             }
         }
 
         public TabBarRegion(
             ILogger<TabBarRegion> logger,
             IRegion region,
-            IRegionNavigationServiceFactory serviceFactory,
-            IServiceProvider scopedServices,
             IRouteMappings mappings,
             RegionControlProvider controlProvider)
-            : base(logger, region, serviceFactory, scopedServices, mappings, controlProvider.RegionControl as TabBar)
+            : base(logger, region, mappings, controlProvider.RegionControl as TabBar)
         {
         }
 

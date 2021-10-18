@@ -20,10 +20,8 @@ public class MessageDialogNavigationService : DialogNavigationService
 {
     public MessageDialogNavigationService(
         ILogger<DialogNavigationService> logger,
-        IRegion region,
-        IRegionNavigationServiceFactory serviceFactory,
-        IServiceProvider scopedServices)
-        : base(logger, region, serviceFactory, scopedServices)
+        IRegion region)
+        : base(logger, region)
     {
     }
 

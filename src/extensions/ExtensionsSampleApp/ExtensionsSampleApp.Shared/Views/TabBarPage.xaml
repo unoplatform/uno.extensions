@@ -22,10 +22,10 @@
             <!--nav:Region.Attached="true" >-->
             <toolkit:TabBar.Items>
                 <toolkit:TabBarItem Content="Tab 1"
-                                    nav:Navigation.Route="../.././Content1"
+                                    nav:Navigation.Request="../../Content1"
                                     x:Name="Content1" />
                 <toolkit:TabBarItem Content="Tab 2"
-                                    nav:Navigation.Route="../.././Content2"
+                                    nav:Navigation.Request="../../Content2"
                                     x:Name="Content2" />
             </toolkit:TabBar.Items>
         </toolkit:TabBar>
