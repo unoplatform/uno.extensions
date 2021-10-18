@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.ViewModels;
 using Uno.Extensions.Logging;
+using Uno.Extensions.Navigation.Regions;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -23,12 +24,12 @@ public class GridVisiblityNavigationService : ControlNavigationService<Grid>
 
     public GridVisiblityNavigationService(
         ILogger<GridVisiblityNavigationService> logger,
-        IRegionNavigationService parent,
+        IRegion region,
         IRegionNavigationServiceFactory serviceFactory,
-        IScopedServiceProvider scopedServices,
+        IServiceProvider scopedServices,
         IRouteMappings mappings,
         RegionControlProvider controlProvider)
-        : base(logger, parent, serviceFactory, scopedServices, mappings, controlProvider.RegionControl as Grid)
+        : base(logger, region, serviceFactory, scopedServices, mappings, controlProvider.RegionControl as Grid)
     {
     }
 

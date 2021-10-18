@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Controls;
+using Uno.Extensions.Navigation.Regions;
 using Uno.Extensions.Navigation.ViewModels;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Xaml;
@@ -28,12 +29,12 @@ public class FrameNavigationService : ControlNavigationService<Frame>
 
     public FrameNavigationService(
         ILogger<FrameNavigationService> logger,
-        IRegionNavigationService parent,
+        IRegion region,
         IRegionNavigationServiceFactory serviceFactory,
-        IScopedServiceProvider scopedServices,
+        IServiceProvider scopedServices,
         IRouteMappings mappings,
         RegionControlProvider controlProvider)
-        : base(logger, parent, serviceFactory, scopedServices, mappings, controlProvider.RegionControl as Frame)
+        : base(logger, region, serviceFactory, scopedServices, mappings, controlProvider.RegionControl as Frame)
     {
     }
 

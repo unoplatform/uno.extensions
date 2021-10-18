@@ -19,6 +19,15 @@ namespace Uno.Extensions.Navigation;
 
 public static class NavigationServiceExtensions
 {
+    public static INavigationService AsInner(this INavigationService service)
+    {
+        if (service is InnerNavigationService)
+        {
+            return service;
+        }
+
+        return new InnerNavigationService(service);
+    }
     public static Task<NavigationResponse> NavigateByPathAsync(this INavigationService service, object sender, string path, object data = null, CancellationToken cancellation = default)
     {
         return service.NavigateAsync(new NavigationRequest(sender, new Uri(path, UriKind.Relative).BuildRoute(data), cancellation));

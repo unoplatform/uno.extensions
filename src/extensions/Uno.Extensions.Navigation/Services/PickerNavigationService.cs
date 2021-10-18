@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Uno.Extensions.Navigation.Regions;
 using Uno.Extensions.Navigation.ViewModels;
 using Windows.UI;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
@@ -18,10 +19,10 @@ public class PickerNavigationService : ControlNavigationService
 {
     public PickerNavigationService(
         ILogger<ContentDialogNavigationService> logger,
-        IRegionNavigationService parent,
+        IRegion region,
         IRegionNavigationServiceFactory serviceFactory,
-        IScopedServiceProvider scopedServices)
-        : base(logger, parent, serviceFactory, scopedServices)
+        IServiceProvider scopedServices)
+        : base(logger, region, serviceFactory, scopedServices)
     {
     }
 

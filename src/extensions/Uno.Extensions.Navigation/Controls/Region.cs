@@ -3,6 +3,8 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
+using Uno.Extensions.Navigation.Regions;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -25,6 +27,13 @@ namespace Uno.Extensions.Navigation.Controls;
 
 public static class Region
 {
+    public static readonly DependencyProperty RegionProperty =
+       DependencyProperty.RegisterAttached(
+           "Region",
+           typeof(IRegion),
+           typeof(Navigation),
+           new PropertyMetadata(null));
+
     public static readonly DependencyProperty AttachedProperty =
         DependencyProperty.RegisterAttached(
             "Attached",
@@ -45,26 +54,6 @@ public static class Region
             typeof(bool),
             typeof(Navigation),
             new PropertyMetadata(false, CompositeChanged));
-
-    private static IRegionNavigationServiceFactory navigationServiceFactory;
-
-    private static IRegionNavigationServiceFactory NavigationServiceFactory
-    {
-        get
-        {
-            return navigationServiceFactory ?? (navigationServiceFactory = Ioc.Default.GetService<IRegionNavigationServiceFactory>());
-        }
-    }
-
-    private static ILogger logger;
-
-    private static ILogger Logger
-    {
-        get
-        {
-            return logger ?? (logger = Ioc.Default.GetService<ILogger<NavigationServiceFactory>>());
-        }
-    }
 
     private static void AttachedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
@@ -92,40 +81,93 @@ public static class Region
 
     private static void RegisterElement(FrameworkElement element, string regionName, bool isComposite)
     {
-        Logger.LazyLogDebug(() => $"Attaching to Loaded event on element {element.GetType().Name}");
+        var existingRegion = element.GetRegion();
+        var region = existingRegion ?? new NavigationRegion(regionName, element);
+        element.SetRegion(region);
+        //element.Loaded += async (sLoaded, eLoaded) =>
+        //{
+        //    var loadedElement = sLoaded as FrameworkElement;
+        //    var navService = region.Navigation();
 
-        var parent = new PlaceholderRegionNavigationService();
-        var navRegion = element.RegionNavigationServiceForControl(false) ?? NavigationServiceFactory.CreateService(parent, element, isComposite);
+        //    if (navService is null)
+        //    {
+        //        var services = loadedElement.ServiceProviderForControl(); // Retrieve services from somewhere up the hierarchy
+        //        var parent = loadedElement.ParentRegion();// parentServices.GetInstance<IRegion>();
+        //        if (parent == region)
+        //        {
+        //            // This is either the root element, or Loaded has previously been run
+        //        }
+        //        else
+        //        {
+        //            parent.Attach(region);
+        //            services = services.CreateScope().ServiceProvider;
+        //            services.AddInstance<IRegion>(region);
+        //            // At this point the region should have service provider set
+        //            // We need to attach the service provider back onto the elemnt so
+        //            // we can access the iregion/navservice for this element etc at a later stage
+        //            loadedElement.SetServiceProvider(services);
+        //        }
 
-        element.Loaded += async (sLoaded, eLoaded) =>
-        {
-            Logger.LazyLogDebug(() => $"Creating region manager");
-            var loadedparent = element.Parent.RegionNavigationServiceForControl(true) ?? Ioc.Default.GetService<IRegionNavigationService>();
-            parent.NavigationService = loadedparent;
-            Logger.LazyLogDebug(() => $"Region manager created");
+        //        // At this point the region is established with both parent set and
+        //        // has a service provider. Can proceed with creating the nav service
 
-            var loadedElement = sLoaded as FrameworkElement;
+        //        navService = region.NavigationFactory().CreateService(isComposite ? null : loadedElement);
+        //        services.AddInstance<INavigationService>(navService);
 
-            Logger.LazyLogDebug(() => $"Attaching to Unloaded event on element {element.GetType().Name}");
-            loadedElement.Unloaded += (sUnloaded, eUnloaded) =>
-            {
-                if (navRegion != null)
-                {
-                    Logger.LazyLogDebug(() => $"Removing region manager");
-                    parent.Detach(navRegion);
-                }
-            };
+        //        loadedElement.Unloaded += (sUnloaded, eUnloaded) =>
+        //            {
+        //                if (parent is not null)
+        //                {
+        //                    parent.Detach(region);
+        //                }
+        //            };
+        //    }
+        //};
 
-            Logger.LazyLogDebug(() => $"Attaching region manager");
-            parent.Attach(navRegion, regionName);
-        };
+        //var parent = new PlaceholderRegionNavigationService();
+        //var navRegion = element.RegionNavigationServiceForControl(false) ?? NavigationServiceFactory.CreateService(parent, element, isComposite);
+
+        //element.Loaded += async (sLoaded, eLoaded) =>
+        //{
+        //    var loadedparent = element.Parent.RegionNavigationServiceForControl(true) ?? Ioc.Default.GetService<IRegionNavigationService>();
+        //    parent.NavigationService = loadedparent;
+
+        //    var loadedElement = sLoaded as FrameworkElement;
+
+        //    loadedElement.Unloaded += (sUnloaded, eUnloaded) =>
+        //    {
+        //        if (navRegion != null)
+        //        {
+        //            parent.Detach(navRegion);
+        //        }
+        //    };
+
+        //    parent.Attach(navRegion, regionName);
+        //};
     }
 
-    public static TElement AsNavigationContainer<TElement>(this TElement element)
+    public static TElement AsNavigationContainer<TElement>(this TElement element, IServiceProvider services)
         where TElement : FrameworkElement
     {
-        element.SetValue(AttachedProperty, true);
+        // Create the Root region
+        var rootRegion = new NavigationRegion(String.Empty, null, services);
+        services.AddInstance<INavigationService>(new InnerNavigationService(services.GetInstance<INavigationService>()));
+
+        // Create the element region
+        var elementRegion = new NavigationRegion(String.Empty, element, rootRegion);
+        element.SetRegion(elementRegion);
+
         return element;
+    }
+
+    public static void SetRegion(this DependencyObject element, IRegion value)
+    {
+        element.SetValue(RegionProperty, value);
+    }
+
+    public static IRegion GetRegion(this DependencyObject element)
+    {
+        return (IRegion)element.GetValue(RegionProperty);
     }
 
     public static void SetAttached(DependencyObject element, bool value)

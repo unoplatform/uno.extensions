@@ -38,7 +38,7 @@ public static class Navigation
             var path = GetRequest(element);
             var command = new AsyncRelayCommand(async () =>
             {
-                var nav = element.NavigationServiceForControl(true);
+                var nav = element.Navigator();
                 await nav.NavigateByPathAsync(element, path);
             });
             var binding = new Binding { Source = command, Path = new PropertyPath(nameof(command.IsRunning)), Converter = new InvertConverter() };

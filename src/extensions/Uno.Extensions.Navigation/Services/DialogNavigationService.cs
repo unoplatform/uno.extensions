@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Uno.Extensions.Navigation.Regions;
 using Uno.Extensions.Navigation.ViewModels;
 using Windows.Foundation;
 
@@ -16,10 +17,10 @@ namespace Uno.Extensions.Navigation.Services
 
         protected DialogNavigationService(
             ILogger<DialogNavigationService> logger,
-            IRegionNavigationService parent,
+            IRegion region,
             IRegionNavigationServiceFactory serviceFactory,
-            IScopedServiceProvider scopedServices)
-            : base(logger, parent, serviceFactory, scopedServices)
+            IServiceProvider scopedServices)
+            : base(logger, region, serviceFactory, scopedServices)
         {
         }
 

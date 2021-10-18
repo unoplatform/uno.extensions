@@ -1,8 +1,11 @@
-﻿namespace Uno.Extensions.Navigation;
+﻿using System;
+using Uno.Extensions.Navigation.Regions;
+
+namespace Uno.Extensions.Navigation;
 
 public interface IRegionNavigationServiceFactory
 {
-    IRegionNavigationService CreateService(IRegionNavigationService parent, object control, bool isComposite);
+    INavigationService CreateService(IRegion region);
 
-    IRegionNavigationService CreateService(NavigationRequest request);
+    INavigationService CreateService(IServiceProvider services, NavigationRequest request);
 }

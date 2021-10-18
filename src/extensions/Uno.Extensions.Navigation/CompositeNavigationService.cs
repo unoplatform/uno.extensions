@@ -3,45 +3,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Uno.Extensions.Navigation.Regions;
 
 namespace Uno.Extensions.Navigation;
 
-public class CompositeNavigationService : NavigationService, IRegionNavigationService
+public class CompositeNavigationService : NavigationService
 {
-    private IList<(string, IRegionNavigationService)> Children { get; } = new List<(string, IRegionNavigationService)>();
-
-    private AsyncAutoResetEvent NestedServiceWaiter { get; } = new AsyncAutoResetEvent(false);
+    protected CompositeNavigationService(
+        ILogger logger,
+        IRegion region,
+        IRegionNavigationServiceFactory serviceFactory)
+        : base(logger, region, serviceFactory)
+    {
+    }
 
     public CompositeNavigationService(
-        ILogger logger,
-        IRegionNavigationService parent,
-        IRegionNavigationServiceFactory serviceFactory)
-        : base(logger, parent, serviceFactory)
+    ILogger<CompositeNavigationService> logger,
+    IRegion region,
+    IRegionNavigationServiceFactory serviceFactory)
+    : base(logger, region, serviceFactory)
     {
-    }
-
-    public void Attach(IRegionNavigationService childRegion, string regionName)
-    {
-        var childService = childRegion;
-        Children.Add((regionName + string.Empty, childService));
-        NestedServiceWaiter.Set();
-    }
-
-    public void Detach(IRegionNavigationService childRegion)
-    {
-        Children.Remove(kvp => kvp.Item2 == childRegion);
-    }
-
-    protected void AttachAll(IEnumerable<(string, IRegionNavigationService)> children)
-    {
-        children.ForEach(n => Children[n.Key] = n.Value);
-    }
-
-    protected IEnumerable<(string, IRegionNavigationService)> DetachAll()
-    {
-        var children = Children.ToArray();
-        Children.Clear();
-        return children;
     }
 
     protected async override Task<NavigationResponse> CoreNavigateAsync(NavigationRequest request)
@@ -60,46 +41,37 @@ public class CompositeNavigationService : NavigationService, IRegionNavigationSe
 
         var route = request.Route.Base;
 
-        // TODO: Find a better way - this can potentially block in endless loop if no nested region is added
-        while (true)
+        var children = await Region.GetChildren(route);
+        if (!children.Any())
         {
-            // Attempt to navigate using the route name
-            var namedChildren = Children.Where(kvp => kvp.Item1 == route).Select(x => x.Item2);
-            if (namedChildren.Any())
-            {
-                var childRequest = request with
-                {
-                    Route = request.Route with
-                    {
-                        Scheme = request.Route.Scheme.TrimStartOnce(Schemes.Nested),
-                        Base = request.Route.NextBase(),
-                        Path = request.Route.NextPath()
-                    }
-                };
-
-                return await ChildrenNavigateAsync(namedChildren, childRequest);
-            }
-
-            // Attempt to navigate using empty route
-            var unnamedChildren = Children.Where(kvp => string.IsNullOrWhiteSpace(kvp.Item1)).Select(x => x.Item2);
-            if (unnamedChildren.Any())
-            {
-                var childRequest = request with
-                {
-                    Route = request.Route with
-                    {
-                        Scheme = request.Route.Scheme.TrimStartOnce(Schemes.Nested)
-                    }
-                };
-                return await ChildrenNavigateAsync(unnamedChildren, childRequest);
-            }
-
-            // There aren't any nested regions registered, so need
-            // to block until they are added. The Attach method will
-            // signal on the NestedServicerWaitier when a region is
-            // added
-            await NestedServiceWaiter.Wait();
+            return null;
         }
+
+        var childRouteName = children.First().Name;
+        var childRequest = request with
+        {
+            Route = request.Route with
+            {
+                Scheme = request.Route.Scheme.TrimStartOnce(Schemes.Nested),
+                Base = request.Route.NextBase(),
+                Path = request.Route.NextPath()
+            }
+        };
+
+        if (string.IsNullOrWhiteSpace(childRouteName))
+        {
+            childRequest = request with
+            {
+                Route = request.Route with
+                {
+                    Scheme = request.Route.Scheme.TrimStartOnce(Schemes.Nested)
+                }
+            };
+        }
+        var old = request.ToString();
+        var newR = childRequest.ToString();
+        return await ChildrenNavigateAsync(children.Select(r => r.Navigation()), childRequest);
+
     }
 
     private async Task<NavigationResponse> ChildrenNavigateAsync(IEnumerable<INavigationService> children, NavigationRequest request)
@@ -115,15 +87,4 @@ public class CompositeNavigationService : NavigationService, IRegionNavigationSe
         return tasks.First().Result;
 #pragma warning restore CA1849
     }
-
-    //protected virtual void PrintAllRegions(StringBuilder builder, IRegionNavigationService nav, int indent = 0, string regionName = null)
-    //{
-    //    if (nav is CompositeNavigationService comp)
-    //    {
-    //        foreach (var nested in comp.Children)
-    //        {
-    //            PrintAllRegions(builder, nested.Item2 as IRegionNavigationService, indent + 1, nested.Item1);
-    //        }
-    //    }
-    //}
 }

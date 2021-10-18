@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation.Controls;
 using Microsoft.Extensions.DependencyInjection;
+using Uno.Extensions.Navigation.Regions;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Xaml;
 #else
@@ -50,12 +51,12 @@ public class NavigationViewNavigationService : ControlNavigationService<Microsof
 
     public NavigationViewNavigationService(
         ILogger<NavigationViewNavigationService> logger,
-        IRegionNavigationService parent,
+        IRegion region,
         IRegionNavigationServiceFactory serviceFactory,
-        IScopedServiceProvider scopedServices,
+        IServiceProvider scopedServices,
         IRouteMappings mappings,
         RegionControlProvider controlProvider)
-        : base(logger, parent, serviceFactory, scopedServices, mappings, controlProvider.RegionControl as Microsoft.UI.Xaml.Controls.NavigationView)
+        : base(logger, region, serviceFactory, scopedServices, mappings, controlProvider.RegionControl as Microsoft.UI.Xaml.Controls.NavigationView)
     {
     }
 

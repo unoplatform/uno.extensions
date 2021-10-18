@@ -13,6 +13,7 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Uno.Extensions.Navigation.Regions;
 #else
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -29,12 +30,12 @@ public class PopupNavigationService : ControlNavigationService<Popup>
 
     public PopupNavigationService(
         ILogger<ContentControlNavigationService> logger,
-        IRegionNavigationService parent,
+        IRegion region,
         IRegionNavigationServiceFactory serviceFactory,
-        IScopedServiceProvider scopedServices,
+        IServiceProvider scopedServices,
         IRouteMappings mappings,
         RegionControlProvider controlProvider)
-        : base(logger, parent, serviceFactory, scopedServices, mappings, controlProvider.RegionControl as Popup)
+        : base(logger, region, serviceFactory, scopedServices, mappings, controlProvider.RegionControl as Popup)
     {
     }
 
