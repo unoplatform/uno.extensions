@@ -40,9 +40,22 @@ public record Route(string Scheme, string Base, string Path, IDictionary<string,
 
     private string UriPath => ((Path is { Length: > 0 }) ? "/" : string.Empty) + Path;
 
-    private string Query => Data.Where(x => x.Key != string.Empty).Any() ?
+    private string Query => (Data?.Where(x => x.Key != string.Empty)?.Any()??false) ?
         "?" + string.Join("&", Data.Where(x => x.Key != string.Empty).Select(kvp => $"{kvp.Key}={kvp.Value}")) :
         null;
 
-    public Uri Uri => new Uri($"{Scheme}{Base}{UriPath}{Query}", UriKind.Relative);
+    public Uri Uri
+    {
+        get
+        {
+            try
+            {
+                return new Uri($"{Scheme}{Base}{UriPath}{Query}", UriKind.Relative);
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
+        }
+    }
 }

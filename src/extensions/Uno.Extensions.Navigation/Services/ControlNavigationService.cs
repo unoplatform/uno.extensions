@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Controls;
+using Uno.Extensions.Navigation.Regions;
 using Uno.Extensions.Navigation.ViewModels;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Xaml;
@@ -23,12 +24,12 @@ public abstract class ControlNavigationService<TControl> : ControlNavigationServ
 
     protected ControlNavigationService(
         ILogger logger,
-        IRegionNavigationService parent,
+        IRegion region,
         IRegionNavigationServiceFactory serviceFactory,
-        IScopedServiceProvider scopedServices,
+        IServiceProvider scopedServices,
         IRouteMappings mappings,
         TControl control)
-        : base(logger, parent, serviceFactory, scopedServices)
+        : base(logger, region, serviceFactory, scopedServices)
     {
         Mappings = mappings;
         Control = control;
@@ -66,10 +67,10 @@ public abstract class ControlNavigationService : CompositeNavigationService
 
     protected ControlNavigationService(
         ILogger logger,
-        IRegionNavigationService parent,
+        IRegion region,
         IRegionNavigationServiceFactory serviceFactory,
-        IScopedServiceProvider scopedServices)
-        : base(logger, parent, serviceFactory)
+        IServiceProvider scopedServices)
+        : base(logger, region, serviceFactory)
     {
         ScopedServices = scopedServices;
     }
@@ -77,6 +78,7 @@ public abstract class ControlNavigationService : CompositeNavigationService
     protected async override Task<NavigationResponse> CoreNavigateAsync(NavigationRequest request)
     {
         NavigationResponse regionResponse = null;
+        var route = request.ToString();
         if (request.Route.IsCurrent)
         {
             regionResponse = await RegionNavigateAsync(request);
@@ -103,14 +105,14 @@ public abstract class ControlNavigationService : CompositeNavigationService
         // eg switching tabs, frame on tab1 won't get detached until some
         // time after navigating to tab2, meaning that the wrong nexted
         // child will be used for any subsequent navigations.
-        var children = DetachAll();
+        var children = Region?.DetachAll();
         var regionTask = await ControlNavigateAsync(request);
         if (regionTask is null)
         {
             // If a null result task was returned, then no
             // navigation took place, so just reattach the existing
             // nav services
-            AttachAll(children);
+            Region?.AttachAll(children);
         }
         else
         {

@@ -12,6 +12,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using System;
 using Uno.Extensions.Navigation.Services;
+using Uno.Extensions.Navigation.Regions;
 #else
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -30,6 +31,9 @@ public static class ServiceCollectionExtensions
 
         return services
                     .AddScoped<IInstanceRepository, InstanceRepository>()
+
+                    .AddScoped<CompositeNavigationService>()
+
                     // Register the region for each control type
                     .AddRegion<Frame, FrameNavigationService>()
                     .AddRegion<TabView, TabNavigationService>()
@@ -49,44 +53,66 @@ public static class ServiceCollectionExtensions
 
                     // Register the navigation manager and the providers for
                     // navigation data and the navigation service
-                    .AddSingleton<NavigationServiceFactory>()
-                    .AddSingleton<IRegionNavigationServiceFactory>(services => services.GetService<NavigationServiceFactory>())
+                    //.AddSingleton<NavigationServiceFactory>()
+                    .AddScoped<IRegionNavigationServiceFactory, NavigationServiceFactory>() // services => services.GetService<NavigationServiceFactory>())
 
-                    .AddScopedInstance<IRegionNavigationService>(services => services.GetService<IRegionNavigationServiceFactory>().CreateService(null, null, false))
+                    //.AddScopedInstance<IRegionNavigationService>(services => services.GetService<IRegionNavigationServiceFactory>().CreateService(null, null, false))
                     //.AddSingleton<IRegionNavigationService>(services => services.GetService<IRegionNavigationServiceFactory>().CreateService(null, null, false))
 
-                    .AddScopedInstance<IScopedServiceProvider>()
+                    //.AddScopedInstance<IScopedServiceProvider>()
+                    .AddScopedInstance<IRegion>()
 
                     .AddScoped<ViewModelDataProvider>()
                     .AddScoped<RegionControlProvider>()
                     .AddScoped<IDictionary<string, object>>(services => services.GetService<ViewModelDataProvider>().Parameters)
 
-                    .AddScoped<INavigationService>(services =>
-                            services.GetInstance<INavigationService>() ??
-                            services.GetInstance<IRegionNavigationService>() ??
-                            services.GetService<IRegionNavigationService>()
-                            );
+                    .AddScopedInstance<INavigationService>();
     }
 
     public static IServiceCollection AddScopedInstance<T>(this IServiceCollection services, Func<IServiceProvider, T> defaultValue = null)
         where T : class
     {
-        return services.AddScoped<T>(sp => sp.GetInstance<T>() ?? defaultValue?.Invoke(sp));
+        return services.AddTransient<T>(sp => sp.GetInstance<T>() ?? defaultValue?.Invoke(sp));
     }
 
-    public static void AddInstance<T>(this IServiceProvider provider, T instance)
+    public static void AddInstance<T>(this IServiceProvider provider, Func<T> instanceCreator)
+    {
+        provider.AddInstance(typeof(T), instanceCreator);
+    }
+
+    public static void AddInstance<T>(this IServiceProvider provider, Type serviceType, Func<T> instanceCreator)
+    {
+        provider.GetService<IInstanceRepository>().Instances[serviceType] = instanceCreator;
+    }
+
+    public static T AddInstance<T>(this IServiceProvider provider, T instance)
     {
         provider.AddInstance(typeof(T), instance);
+        return instance;
     }
 
-    public static void AddInstance(this IServiceProvider provider, Type serviceType, object instance)
+    public static object AddInstance(this IServiceProvider provider, Type serviceType, object instance)
     {
         provider.GetService<IInstanceRepository>().Instances[serviceType] = instance;
+        return instance;
     }
 
     public static T GetInstance<T>(this IServiceProvider provider)
     {
-        return (provider.GetInstance(typeof(T)) is T value) ? value : default;
+        var value = provider.GetInstance(typeof(T));
+        if (value is Func<T> valueCreator)
+        {
+            var instance = valueCreator();
+            provider.AddInstance(instance);
+            return instance;
+        }
+
+        if (value is T typedValue)
+        {
+            return typedValue;
+        }
+
+        return default;
     }
 
     public static object GetInstance(this IServiceProvider provider, Type type)
@@ -95,7 +121,7 @@ public static class ServiceCollectionExtensions
     }
 
     public static IServiceCollection AddRegion<TControl, TRegion>(this IServiceCollection services)
-        where TRegion : class, IRegionNavigationService
+        where TRegion : class, INavigationService
     {
         if (services is null)
         {

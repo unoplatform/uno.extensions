@@ -42,7 +42,7 @@ public static class RegionNavigationServiceExtensions
     {
         if (view is FrameworkElement fe)
         {
-            fe.SetServiceProvider(services);
+            //fe.SetServiceProvider(services);
 
             if (viewModel is not null &&
                 fe.DataContext != viewModel)

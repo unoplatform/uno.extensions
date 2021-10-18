@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
+using Uno.Extensions.Navigation.Regions;
 
 namespace Uno.Extensions.Navigation;
 
@@ -8,18 +9,18 @@ public abstract class NavigationService : INavigationService
 {
     protected ILogger Logger { get; }
 
-    private bool IsRoot => Parent is null;
+    private bool IsRoot => Region?.Parent is null;
 
-    private INavigationService Parent { get; }
+    protected IRegion Region { get; }
 
     private IRegionNavigationServiceFactory ServiceFactory { get; }
 
     protected NavigationService(
         ILogger logger,
-        INavigationService parent,
+        IRegion region,
         IRegionNavigationServiceFactory serviceFactory)
     {
-        Parent = parent;
+        Region = region;
         Logger = logger;
         ServiceFactory = serviceFactory;
     }
@@ -31,7 +32,7 @@ public abstract class NavigationService : INavigationService
         {
             if (!IsRoot)
             {
-                return Parent?.NavigateAsync(request);
+                return Region.Parent?.NavigateAsync(request);
             }
             else
             {
@@ -45,7 +46,7 @@ public abstract class NavigationService : INavigationService
         if (request?.Route?.IsParent ?? false)
         {
             request = request with { Route = request.Route.TrimScheme(Schemes.Parent) };
-            return Parent?.NavigateAsync(request);
+            return Region.Parent?.NavigateAsync(request);
         }
 
         // Run dialog requests
@@ -60,7 +61,7 @@ public abstract class NavigationService : INavigationService
 
     private async Task<NavigationResponse> DialogNavigateAsync(NavigationRequest request)
     {
-        var dialogService = ServiceFactory.CreateService(request);
+        var dialogService = ServiceFactory.CreateService(Region.Services, request);
 
         var dialogResponse = await dialogService.NavigateAsync(request);
 

@@ -6,5 +6,5 @@ public interface IControlNavigationServiceFactory
 {
     Type ControlType { get; }
 
-    IRegionNavigationService Create(IServiceProvider services);
+    INavigationService Create(IServiceProvider services);
 }

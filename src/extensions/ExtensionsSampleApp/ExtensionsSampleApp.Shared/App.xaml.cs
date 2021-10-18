@@ -155,7 +155,7 @@ namespace ExtensionsSampleApp
             if (rootFrame == null)
             {
                 // Create a Frame to act as the navigation context and navigate to the first page
-                rootFrame = new Frame().AsNavigationContainer();
+                rootFrame = new Frame().AsNavigationContainer(Ioc.Default);
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
                 var nav = Ioc.Default.GetService<INavigationService>();

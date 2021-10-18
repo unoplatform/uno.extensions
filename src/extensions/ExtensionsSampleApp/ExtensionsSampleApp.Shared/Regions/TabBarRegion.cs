@@ -7,6 +7,7 @@ using Uno.UI.ToolkitLib;
 using Uno.Extensions.Navigation.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Services;
+using Uno.Extensions.Navigation.Regions;
 
 namespace ExtensionsSampleApp.Region.Managers
 {
@@ -42,12 +43,12 @@ namespace ExtensionsSampleApp.Region.Managers
 
         public TabBarRegion(
             ILogger<TabBarRegion> logger,
-            IRegionNavigationService parent,
+            IRegion region,
             IRegionNavigationServiceFactory serviceFactory,
-            IScopedServiceProvider scopedServices,
+            IServiceProvider scopedServices,
             IRouteMappings mappings,
             RegionControlProvider controlProvider)
-            : base(logger, parent, serviceFactory, scopedServices, mappings, controlProvider.RegionControl as TabBar)
+            : base(logger, region, serviceFactory, scopedServices, mappings, controlProvider.RegionControl as TabBar)
         {
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation.ViewModels;
+using Uno.Extensions.Navigation.Regions;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -19,12 +20,12 @@ public class PageVisualStateNavigationService : ControlNavigationService<Page>
 
     public PageVisualStateNavigationService(
         ILogger<PageVisualStateNavigationService> logger,
-        IRegionNavigationService parent,
+        IRegion region,
         IRegionNavigationServiceFactory serviceFactory,
-        IScopedServiceProvider scopedServices,
+        IServiceProvider scopedServices,
         IRouteMappings mappings,
         RegionControlProvider controlProvider)
-        : base(logger, parent, serviceFactory, scopedServices, mappings, controlProvider.RegionControl as Page)
+        : base(logger, region, serviceFactory, scopedServices, mappings, controlProvider.RegionControl as Page)
     {
     }
 
