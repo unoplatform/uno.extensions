@@ -107,8 +107,7 @@ public class NavigatorFactory : INavigatorFactory
         var serviceType = ServiceTypes[mapping.View.Name];
         var navService = services.GetService(serviceType) as INavigator;
 
-        var innerNavService = new InnerNavigator(navService);
-        services.AddInstance<INavigator>(innerNavService);
+        services.AddInstance<INavigator>(navService);
 
         return navService;
     }
