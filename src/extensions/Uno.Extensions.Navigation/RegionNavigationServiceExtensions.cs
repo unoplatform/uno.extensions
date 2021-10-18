@@ -13,30 +13,30 @@ namespace Uno.Extensions.Navigation;
 
 public static class RegionNavigationServiceExtensions
 {
-    public static IControlNavigationServiceFactory FindForControl(this IDictionary<Type, IControlNavigationServiceFactory> factories, object control)
-    {
-        var controlType = control.GetType();
-        return factories.FindForControlType(controlType);
-    }
+    //public static IControlNavigationServiceFactory FindForControl(this IDictionary<Type, IControlNavigationServiceFactory> factories, object control)
+    //{
+    //    var controlType = control.GetType();
+    //    return factories.FindForControlType(controlType);
+    //}
 
-    public static IControlNavigationServiceFactory FindForControlType(this IDictionary<Type, IControlNavigationServiceFactory> factories, Type controlType)
-    {
-        if (factories.TryGetValue(controlType, out var factory))
-        {
-            return factory;
-        }
+    //public static IControlNavigationServiceFactory FindForControlType(this IDictionary<Type, IControlNavigationServiceFactory> factories, Type controlType)
+    //{
+    //    if (factories.TryGetValue(controlType, out var factory))
+    //    {
+    //        return factory;
+    //    }
 
-        var baseTypes = controlType.GetBaseTypes().ToArray();
-        for (var i = 0; i < baseTypes.Length; i++)
-        {
-            if (factories.TryGetValue(baseTypes[i], out var baseFactory))
-            {
-                return baseFactory;
-            }
-        }
+    //    var baseTypes = controlType.GetBaseTypes().ToArray();
+    //    for (var i = 0; i < baseTypes.Length; i++)
+    //    {
+    //        if (factories.TryGetValue(baseTypes[i], out var baseFactory))
+    //        {
+    //            return baseFactory;
+    //        }
+    //    }
 
-        return null;
-    }
+    //    return null;
+    //}
 
     public static void InjectServicesAndSetDataContext(this object view, IServiceProvider services, INavigationService navigation, object viewModel)
     {
