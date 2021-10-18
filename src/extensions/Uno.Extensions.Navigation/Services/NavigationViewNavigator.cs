@@ -13,7 +13,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Services;
 
-public class NavigationViewNavigator : RegionNavigator<Microsoft.UI.Xaml.Controls.NavigationView>
+public class NavigationViewNavigator : ControlNavigator<Microsoft.UI.Xaml.Controls.NavigationView>
 {
     protected override object CurrentView => Control.SelectedItem;
 

@@ -15,14 +15,14 @@ using Microsoft.UI.Xaml;
 
 namespace Uno.Extensions.Navigation.Services;
 
-public abstract class RegionNavigator<TControl> : RegionNavigator
+public abstract class ControlNavigator<TControl> : ControlNavigator
     where TControl : class
 {
     public virtual TControl Control { get; set; }
 
     protected IRouteMappings Mappings { get; }
 
-    protected RegionNavigator(
+    protected ControlNavigator(
         ILogger logger,
         IRegion region,
         IRouteMappings mappings,
@@ -51,7 +51,7 @@ public abstract class RegionNavigator<TControl> : RegionNavigator
     }
 }
 
-public abstract class RegionNavigator : Navigator
+public abstract class ControlNavigator : Navigator
 {
     protected virtual string CurrentPath => string.Empty;
 
@@ -61,7 +61,7 @@ public abstract class RegionNavigator : Navigator
 
     protected object CurrentViewModel => (CurrentView as FrameworkElement)?.DataContext;
 
-    protected RegionNavigator(
+    protected ControlNavigator(
         ILogger logger,
         IRegion region)
         : base(logger, region)

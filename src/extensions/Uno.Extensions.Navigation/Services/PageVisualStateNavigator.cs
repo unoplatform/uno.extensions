@@ -14,7 +14,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Services;
 
-public class PageVisualStateNavigator : RegionNavigator<Page>
+public class PageVisualStateNavigator : ControlNavigator<Page>
 {
     protected override string CurrentPath => CurrentVisualState;
 

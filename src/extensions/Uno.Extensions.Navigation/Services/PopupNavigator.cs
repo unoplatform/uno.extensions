@@ -22,7 +22,7 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 
 namespace Uno.Extensions.Navigation.Services;
 
-public class PopupNavigator : RegionNavigator<Popup>
+public class PopupNavigator : ControlNavigator<Popup>
 {
     protected override object CurrentView => Control;
 

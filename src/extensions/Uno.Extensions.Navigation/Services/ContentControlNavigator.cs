@@ -16,7 +16,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Services;
 
-public class ContentControlNavigator : RegionNavigator<ContentControl>
+public class ContentControlNavigator : ControlNavigator<ContentControl>
 {
     protected override object CurrentView => Control.Content;
 

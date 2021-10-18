@@ -60,7 +60,7 @@ public class NavigatorFactory : INavigatorFactory
         var control = region.View;
 
         // Create Navigation Service
-        var navLogger = services.GetService<ILogger<RegionNavigator>>();
+        var navLogger = services.GetService<ILogger<ControlNavigator>>();
 
         INavigator navService = null;
 
@@ -82,7 +82,7 @@ public class NavigatorFactory : INavigatorFactory
         // is invoked to prevent reentry
         services.AddInstance<INavigator>(navService);
 
-        if (navService is RegionNavigator controlService)
+        if (navService is ControlNavigator controlService)
         {
             controlService.ControlInitialize();
         }
