@@ -23,7 +23,7 @@ namespace Uno.Extensions.Navigation.Regions
 
         IServiceProvider Services { get; }
 
-        IRegion Parent { get; set; }
+        IRegion Parent { get; }
 
         void Attach(IRegion childRegion);
 
