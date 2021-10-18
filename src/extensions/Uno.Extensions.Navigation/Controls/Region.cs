@@ -48,18 +48,11 @@ public static class Region
             typeof(Navigation),
             new PropertyMetadata(false, NameChanged));
 
-    public static readonly DependencyProperty CompositeProperty =
-        DependencyProperty.RegisterAttached(
-            "Composite",
-            typeof(bool),
-            typeof(Navigation),
-            new PropertyMetadata(false, CompositeChanged));
-
     private static void AttachedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         if (d is FrameworkElement element)
         {
-            RegisterElement(element, string.Empty, false);
+            RegisterElement(element, string.Empty);
         }
     }
 
@@ -67,83 +60,15 @@ public static class Region
     {
         if (d is FrameworkElement element)
         {
-            RegisterElement(element, e.NewValue as string, false);
+            RegisterElement(element, e.NewValue as string);
         }
     }
 
-    private static void CompositeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        if (d is FrameworkElement element)
-        {
-            RegisterElement(element, string.Empty, true);
-        }
-    }
-
-    private static void RegisterElement(FrameworkElement element, string regionName, bool isComposite)
+    private static void RegisterElement(FrameworkElement element, string regionName)
     {
         var existingRegion = element.GetRegion();
         var region = existingRegion ?? new NavigationRegion(regionName, element);
         element.SetRegion(region);
-        //element.Loaded += async (sLoaded, eLoaded) =>
-        //{
-        //    var loadedElement = sLoaded as FrameworkElement;
-        //    var navService = region.Navigation();
-
-        //    if (navService is null)
-        //    {
-        //        var services = loadedElement.ServiceProviderForControl(); // Retrieve services from somewhere up the hierarchy
-        //        var parent = loadedElement.ParentRegion();// parentServices.GetInstance<IRegion>();
-        //        if (parent == region)
-        //        {
-        //            // This is either the root element, or Loaded has previously been run
-        //        }
-        //        else
-        //        {
-        //            parent.Attach(region);
-        //            services = services.CreateScope().ServiceProvider;
-        //            services.AddInstance<IRegion>(region);
-        //            // At this point the region should have service provider set
-        //            // We need to attach the service provider back onto the elemnt so
-        //            // we can access the iregion/navservice for this element etc at a later stage
-        //            loadedElement.SetServiceProvider(services);
-        //        }
-
-        //        // At this point the region is established with both parent set and
-        //        // has a service provider. Can proceed with creating the nav service
-
-        //        navService = region.NavigationFactory().CreateService(isComposite ? null : loadedElement);
-        //        services.AddInstance<INavigationService>(navService);
-
-        //        loadedElement.Unloaded += (sUnloaded, eUnloaded) =>
-        //            {
-        //                if (parent is not null)
-        //                {
-        //                    parent.Detach(region);
-        //                }
-        //            };
-        //    }
-        //};
-
-        //var parent = new PlaceholderRegionNavigationService();
-        //var navRegion = element.RegionNavigationServiceForControl(false) ?? NavigationServiceFactory.CreateService(parent, element, isComposite);
-
-        //element.Loaded += async (sLoaded, eLoaded) =>
-        //{
-        //    var loadedparent = element.Parent.RegionNavigationServiceForControl(true) ?? Ioc.Default.GetService<IRegionNavigationService>();
-        //    parent.NavigationService = loadedparent;
-
-        //    var loadedElement = sLoaded as FrameworkElement;
-
-        //    loadedElement.Unloaded += (sUnloaded, eUnloaded) =>
-        //    {
-        //        if (navRegion != null)
-        //        {
-        //            parent.Detach(navRegion);
-        //        }
-        //    };
-
-        //    parent.Attach(navRegion, regionName);
-        //};
     }
 
     public static TElement AsNavigationContainer<TElement>(this TElement element, IServiceProvider services)
@@ -188,15 +113,5 @@ public static class Region
     public static string GetName(FrameworkElement element)
     {
         return (string)element.GetValue(NameProperty);
-    }
-
-    public static void SetComposite(FrameworkElement element, bool value)
-    {
-        element.SetValue(CompositeProperty, value);
-    }
-
-    public static bool GetComposite(FrameworkElement element)
-    {
-        return (bool)element.GetValue(CompositeProperty);
     }
 }
