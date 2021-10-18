@@ -27,9 +27,9 @@ namespace Uno.Extensions.Navigation.Controls;
 
 public static class Region
 {
-    public static readonly DependencyProperty RegionProperty =
+    public static readonly DependencyProperty InstanceProperty =
        DependencyProperty.RegisterAttached(
-           "Region",
+           "Instance",
            typeof(IRegion),
            typeof(Navigation),
            new PropertyMetadata(null));
@@ -66,9 +66,9 @@ public static class Region
 
     private static void RegisterElement(FrameworkElement element, string regionName)
     {
-        var existingRegion = element.GetRegion();
+        var existingRegion = Region.GetInstance(element);
         var region = existingRegion ?? new NavigationRegion(regionName, element);
-        element.SetRegion(region);
+        element.SetInstance(region);
     }
 
     public static TElement AsNavigationContainer<TElement>(this TElement element, IServiceProvider services)
@@ -80,19 +80,19 @@ public static class Region
 
         // Create the element region
         var elementRegion = new NavigationRegion(String.Empty, element, rootRegion);
-        element.SetRegion(elementRegion);
+        element.SetInstance(elementRegion);
 
         return element;
     }
 
-    public static void SetRegion(this DependencyObject element, IRegion value)
+    public static void SetInstance(this DependencyObject element, IRegion value)
     {
-        element.SetValue(RegionProperty, value);
+        element.SetValue(InstanceProperty, value);
     }
 
-    public static IRegion GetRegion(this DependencyObject element)
+    public static IRegion GetInstance(this DependencyObject element)
     {
-        return (IRegion)element.GetValue(RegionProperty);
+        return (IRegion)element.GetValue(InstanceProperty);
     }
 
     public static void SetAttached(DependencyObject element, bool value)

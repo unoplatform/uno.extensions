@@ -19,7 +19,7 @@ public static class DependencyObjectExtensions
 
     public static IRegion FindRegion(this DependencyObject element)
     {
-        return element.ServiceForControl<IRegion>(true, element => element.GetRegion());
+        return element.ServiceForControl<IRegion>(true, element => Region.GetInstance(element));
     }
 
     private static TService ServiceForControl<TService>(this DependencyObject element, bool searchParent, Func<DependencyObject, TService> retrieveFromElement)
