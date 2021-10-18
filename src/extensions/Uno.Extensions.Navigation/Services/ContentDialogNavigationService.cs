@@ -21,10 +21,8 @@ public class ContentDialogNavigationService : DialogNavigationService
 {
     public ContentDialogNavigationService(
         ILogger<ContentDialogNavigationService> logger,
-        IRegion region,
-        IRegionNavigationServiceFactory serviceFactory,
-        IServiceProvider scopedServices)
-        : base(logger, region, serviceFactory, scopedServices)
+        IRegion region)
+        : base(logger, region)
     {
     }
 

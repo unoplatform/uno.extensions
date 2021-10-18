@@ -21,11 +21,9 @@ public class PageVisualStateNavigationService : ControlNavigationService<Page>
     public PageVisualStateNavigationService(
         ILogger<PageVisualStateNavigationService> logger,
         IRegion region,
-        IRegionNavigationServiceFactory serviceFactory,
-        IServiceProvider scopedServices,
         IRouteMappings mappings,
         RegionControlProvider controlProvider)
-        : base(logger, region, serviceFactory, scopedServices, mappings, controlProvider.RegionControl as Page)
+        : base(logger, region, mappings, controlProvider.RegionControl as Page)
     {
     }
 

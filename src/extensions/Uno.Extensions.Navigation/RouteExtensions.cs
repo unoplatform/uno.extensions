@@ -40,7 +40,7 @@ public static class RouteExtensions
     public static string NextPath(this Route route)
     {
         var idx = route.Path?.IndexOf('/') ?? -1;
-        return (idx <= 0 || (idx + 1) > route.Path.Length) ? route.Path : route.Path.Substring(idx + 1);
+        return (idx <= 0 || (idx + 1) > route.Path.Length) ? String.Empty : route.Path.Substring(idx + 1);
     }
 
     public static Route BuildRoute(this Uri uri, object data = null)

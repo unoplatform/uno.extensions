@@ -17,10 +17,8 @@ namespace Uno.Extensions.Navigation.Services
 
         protected DialogNavigationService(
             ILogger<DialogNavigationService> logger,
-            IRegion region,
-            IRegionNavigationServiceFactory serviceFactory,
-            IServiceProvider scopedServices)
-            : base(logger, region, serviceFactory, scopedServices)
+            IRegion region)
+            : base(logger, region)
         {
         }
 

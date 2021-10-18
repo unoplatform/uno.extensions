@@ -19,6 +19,8 @@ public record Route(string Scheme, string Base, string Path, IDictionary<string,
 
     public bool IsDialog => Scheme.StartsWith(Schemes.Dialog);
 
+    public bool IsLast => Path is { Length: 0 };
+
     // eg -/NextPage
     public bool FrameIsRooted => Scheme.EndsWith(Schemes.Root + string.Empty);
 
@@ -32,15 +34,22 @@ public record Route(string Scheme, string Base, string Path, IDictionary<string,
     public bool FrameIsForwardNavigation => !FrameIsBackNavigation;
 
     public Route Next => this with
-            {
-                Scheme = Schemes.Nested,
-                Base = this.NextBase(),
-                Path = this.NextPath()
-            };
+    {
+        Scheme = Schemes.Current,
+        Base = this.NextBase(),
+        Path = this.NextPath()
+    };
+
+    public Route Root => this with
+    {
+        Scheme = Schemes.Nested,
+        Base = String.Empty,
+        Path = $"{this.Base}{this.UriPath}"
+    };
 
     private string UriPath => ((Path is { Length: > 0 }) ? "/" : string.Empty) + Path;
 
-    private string Query => (Data?.Where(x => x.Key != string.Empty)?.Any()??false) ?
+    private string Query => (Data?.Where(x => x.Key != string.Empty)?.Any() ?? false) ?
         "?" + string.Join("&", Data.Where(x => x.Key != string.Empty).Select(kvp => $"{kvp.Key}={kvp.Value}")) :
         null;
 
@@ -52,7 +61,7 @@ public record Route(string Scheme, string Base, string Path, IDictionary<string,
             {
                 return new Uri($"{Scheme}{Base}{UriPath}{Query}", UriKind.Relative);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return null;
             }
