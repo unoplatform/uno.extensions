@@ -17,8 +17,8 @@ namespace ExtensionsSampleApp.ViewModels
     {
         public string Title => "Main";
 
-        private INavigationService Navigation { get; }
-        public MainViewModel(INavigationService navigation)
+        private INavigator Navigation { get; }
+        public MainViewModel(INavigator navigation)
         {
             Navigation = navigation;
             NavigateToSecondPageCommand = new RelayCommand(NavigateToSecondPage);
@@ -50,7 +50,7 @@ namespace ExtensionsSampleApp.ViewModels
         public string Title => "Second - " + Data;
         private Widget Data;
         private ILogger Logger { get; }
-        public SecondViewModel(ILogger<SecondViewModel> logger, INavigationService nav, Widget data)
+        public SecondViewModel(ILogger<SecondViewModel> logger, INavigator nav, Widget data)
         {
             Logger = logger;
             Data = data;
@@ -96,8 +96,8 @@ namespace ExtensionsSampleApp.ViewModels
         public string Title => "Doc0";
 
 
-        private INavigationService Navigation { get; }
-        public TabDoc0ViewModel(INavigationService navigation)
+        private INavigator Navigation { get; }
+        public TabDoc0ViewModel(INavigator navigation)
         {
             Navigation = navigation;
             NavigateToDoc1Command = new RelayCommand(NavigateToDoc1);

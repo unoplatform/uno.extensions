@@ -2,13 +2,13 @@
 
 namespace Uno.Extensions.Navigation
 {
-    public class ResponseNavigationService : INavigationService
+    public class ResponseNavigator : INavigator
     {
-        private INavigationService Navigation { get; }
+        private INavigator Navigation { get; }
 
         public TaskCompletionSource<Options.Option> ResultCompletion { get; }
 
-        public ResponseNavigationService(INavigationService internalNavigation, TaskCompletionSource<Options.Option> completion)
+        public ResponseNavigator(INavigator internalNavigation, TaskCompletionSource<Options.Option> completion)
         {
             Navigation = internalNavigation;
             ResultCompletion = completion;

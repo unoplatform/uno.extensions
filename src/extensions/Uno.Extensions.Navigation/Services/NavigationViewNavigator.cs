@@ -13,7 +13,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Services;
 
-public class NavigationViewNavigationService : ControlNavigationService<Microsoft.UI.Xaml.Controls.NavigationView>
+public class NavigationViewNavigator : RegionNavigator<Microsoft.UI.Xaml.Controls.NavigationView>
 {
     protected override object CurrentView => Control.SelectedItem;
 
@@ -49,8 +49,8 @@ public class NavigationViewNavigationService : ControlNavigationService<Microsof
         }
     }
 
-    public NavigationViewNavigationService(
-        ILogger<NavigationViewNavigationService> logger,
+    public NavigationViewNavigator(
+        ILogger<NavigationViewNavigator> logger,
         IRegion region,
         IRouteMappings mappings,
         RegionControlProvider controlProvider)

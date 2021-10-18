@@ -21,10 +21,10 @@ namespace Uno.Extensions.Navigation;
 
 public class NavigatorFactoryBuilder
 {
-    public Action<IRegionNavigationServiceFactory> Configure { get; set; }
+    public Action<INavigatorFactory> Configure { get; set; }
 }
 
-public class NavigationServiceFactory : IRegionNavigationServiceFactory
+public class NavigatorFactory : INavigatorFactory
 {
     private IDictionary<string, Type> ServiceTypes { get; } = new Dictionary<string, Type>();
 
@@ -32,8 +32,8 @@ public class NavigationServiceFactory : IRegionNavigationServiceFactory
 
     private IRouteMappings Mappings { get; }
 
-    public NavigationServiceFactory(
-        ILogger<NavigationServiceFactory> logger,
+    public NavigatorFactory(
+        ILogger<NavigatorFactory> logger,
         IEnumerable<NavigatorFactoryBuilder> builders,
         IRouteMappings mappings)
     {
@@ -43,7 +43,7 @@ public class NavigationServiceFactory : IRegionNavigationServiceFactory
     }
 
     public void RegisterNavigator<TNavigator>(params string[] names)
-        where TNavigator : INavigationService
+        where TNavigator : INavigator
     {
         foreach (var name in names)
         {
@@ -51,7 +51,7 @@ public class NavigationServiceFactory : IRegionNavigationServiceFactory
         }
     }
 
-    public INavigationService CreateService(IRegion region)
+    public INavigator CreateService(IRegion region)
     {
         // TODO: Review creation of scoped
         Logger.LazyLogDebug(() => $"Adding region");
@@ -60,29 +60,29 @@ public class NavigationServiceFactory : IRegionNavigationServiceFactory
         var control = region.View;
 
         // Create Navigation Service
-        var navLogger = services.GetService<ILogger<ControlNavigationService>>();
+        var navLogger = services.GetService<ILogger<RegionNavigator>>();
 
-        INavigationService navService = null;
+        INavigator navService = null;
 
         if (control is not null)
         {
             services.GetService<RegionControlProvider>().RegionControl = control;
             if (ServiceTypes.TryGetValue(control.GetType().Name, out var serviceType))
             {
-                navService = services.GetService(serviceType) as INavigationService;
+                navService = services.GetService(serviceType) as INavigator;
             }
         }
 
         if (navService is null)
         {
-            navService = services.GetService<CompositeNavigationService>();
+            navService = services.GetService<Navigator>();
         }
 
         // Make sure the nav service gets added to the container before initialize
         // is invoked to prevent reentry
-        services.AddInstance<INavigationService>(navService);
+        services.AddInstance<INavigator>(navService);
 
-        if (navService is ControlNavigationService controlService)
+        if (navService is RegionNavigator controlService)
         {
             controlService.ControlInitialize();
         }
@@ -91,7 +91,7 @@ public class NavigationServiceFactory : IRegionNavigationServiceFactory
         return navService;
     }
 
-    public INavigationService CreateService(IServiceProvider services, NavigationRequest request)
+    public INavigator CreateService(IServiceProvider services, NavigationRequest request)
     {
         Logger.LazyLogDebug(() => $"Adding region");
 
@@ -105,10 +105,10 @@ public class NavigationServiceFactory : IRegionNavigationServiceFactory
         //factoryServices.AddInstance<IScopedServiceProvider>(new ScopedServiceProvider(services));
 
         var serviceType = ServiceTypes[mapping.View.Name];
-        var navService = services.GetService(serviceType) as INavigationService;
+        var navService = services.GetService(serviceType) as INavigator;
 
-        var innerNavService = new InnerNavigationService(navService);
-        services.AddInstance<INavigationService>(innerNavService);
+        var innerNavService = new InnerNavigator(navService);
+        services.AddInstance<INavigator>(innerNavService);
 
         return navService;
     }

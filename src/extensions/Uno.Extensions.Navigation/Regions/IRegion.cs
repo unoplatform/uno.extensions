@@ -41,9 +41,9 @@ namespace Uno.Extensions.Navigation.Regions
 
     public static class RegionExtensions
     {
-        public static INavigationService Navigation(this IRegion region) => region.Services?.GetService<INavigationService>();
+        public static INavigator Navigation(this IRegion region) => region.Services?.GetService<INavigator>();
 
-        public static IRegionNavigationServiceFactory NavigationFactory(this IRegion region) => region.Services?.GetService<IRegionNavigationServiceFactory>();
+        public static INavigatorFactory NavigationFactory(this IRegion region) => region.Services?.GetService<INavigatorFactory>();
 
         public static Task<NavigationResponse> NavigateAsync(this IRegion region, NavigationRequest request) => region.Navigation()?.NavigateAsync(request);
 
@@ -83,8 +83,8 @@ namespace Uno.Extensions.Navigation.Regions
                 {
                     _services = Parent.Services.CreateScope().ServiceProvider;
                     _services.AddInstance<IRegion>(this);
-                    var serviceFactory = _services.GetService<IRegionNavigationServiceFactory>();
-                    _services.AddInstance<INavigationService>(() => serviceFactory.CreateService(this));
+                    var serviceFactory = _services.GetService<INavigatorFactory>();
+                    _services.AddInstance<INavigator>(() => serviceFactory.CreateService(this));
                 }
 
                 return _services;
@@ -108,8 +108,8 @@ namespace Uno.Extensions.Navigation.Regions
             {
                 _services = services;
                 _services.AddInstance<IRegion>(this);
-                var serviceFactory = _services.GetService<IRegionNavigationServiceFactory>();
-                _services.AddInstance<INavigationService>(() => serviceFactory.CreateService(this));
+                var serviceFactory = _services.GetService<INavigatorFactory>();
+                _services.AddInstance<INavigator>(() => serviceFactory.CreateService(this));
             }
         }
 

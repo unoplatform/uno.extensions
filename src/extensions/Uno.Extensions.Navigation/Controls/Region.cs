@@ -151,7 +151,7 @@ public static class Region
     {
         // Create the Root region
         var rootRegion = new NavigationRegion(String.Empty, null, services);
-        services.AddInstance<INavigationService>(new InnerNavigationService(services.GetInstance<INavigationService>()));
+        services.AddInstance<INavigator>(new InnerNavigator(services.GetInstance<INavigator>()));
 
         // Create the element region
         var elementRegion = new NavigationRegion(String.Empty, element, rootRegion);

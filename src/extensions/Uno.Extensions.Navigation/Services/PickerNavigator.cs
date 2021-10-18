@@ -15,10 +15,10 @@ using Windows.UI.Popups;
 
 namespace Uno.Extensions.Navigation.Services;
 
-public class PickerNavigationService : ControlNavigationService
+public class PickerNavigator : RegionNavigator
 {
-    public PickerNavigationService(
-        ILogger<ContentDialogNavigationService> logger,
+    public PickerNavigator(
+        ILogger<ContentDialogNavigator> logger,
         IRegion region)
         : base(logger, region)
     {

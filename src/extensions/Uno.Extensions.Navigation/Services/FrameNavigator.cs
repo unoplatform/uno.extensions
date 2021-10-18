@@ -19,7 +19,7 @@ using Microsoft.UI.Xaml.Navigation;
 
 namespace Uno.Extensions.Navigation.Services;
 
-public class FrameNavigationService : ControlNavigationService<Frame>
+public class FrameNavigator : RegionNavigator<Frame>
 {
     protected override object CurrentView => Control.Content;
 
@@ -27,8 +27,8 @@ public class FrameNavigationService : ControlNavigationService<Frame>
 
     protected override bool CanGoBack => true;
 
-    public FrameNavigationService(
-        ILogger<FrameNavigationService> logger,
+    public FrameNavigator(
+        ILogger<FrameNavigator> logger,
         IRegion region,
         IRouteMappings mappings,
         RegionControlProvider controlProvider)

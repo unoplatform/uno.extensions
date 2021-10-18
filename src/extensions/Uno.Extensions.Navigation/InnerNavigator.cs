@@ -2,11 +2,11 @@
 
 namespace Uno.Extensions.Navigation
 {
-    public class InnerNavigationService : INavigationService
+    public class InnerNavigator : INavigator
     {
-        private INavigationService Navigation { get; }
+        private INavigator Navigation { get; }
 
-        public InnerNavigationService(INavigationService internalNavigation)
+        public InnerNavigator(INavigator internalNavigation)
         {
             Navigation = internalNavigation;
         }

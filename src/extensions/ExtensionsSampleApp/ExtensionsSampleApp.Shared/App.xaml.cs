@@ -158,7 +158,7 @@ namespace ExtensionsSampleApp
                 rootFrame = new Frame().AsNavigationContainer(Ioc.Default);
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
-                var nav = Ioc.Default.GetService<INavigationService>();
+                var nav = Ioc.Default.GetService<INavigator>();
                 //var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Nested);
                 var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Root);
                 //var navResult = nav.NavigateByPathAsync(this, "TabbedPage/doc2/SecondPage/content/Content1", Schemes.Root);

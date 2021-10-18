@@ -16,14 +16,14 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Services;
 
-public class ContentControlNavigationService : ControlNavigationService<ContentControl>
+public class ContentControlNavigator : RegionNavigator<ContentControl>
 {
     protected override object CurrentView => Control.Content;
 
     protected override string CurrentPath => CurrentView?.NavigationRoute(Mappings);
 
-    public ContentControlNavigationService(
-        ILogger<ContentControlNavigationService> logger,
+    public ContentControlNavigator(
+        ILogger<ContentControlNavigator> logger,
         IRegion region,
         IRouteMappings mappings,
         RegionControlProvider controlProvider)
