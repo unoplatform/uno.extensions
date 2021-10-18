@@ -10,7 +10,7 @@
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
       >
 
-    <Grid nav:Region.Composite="True">
+    <Grid nav:Region.Attached="True">
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="Auto"/>
