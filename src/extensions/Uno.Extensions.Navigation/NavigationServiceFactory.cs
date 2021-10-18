@@ -19,10 +19,14 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation;
 
+public class NavigatorFactoryBuilder
+{
+    public Action<IRegionNavigationServiceFactory> Configure { get; set; }
+}
+
 public class NavigationServiceFactory : IRegionNavigationServiceFactory
 {
-
-    private IDictionary<Type, IControlNavigationServiceFactory> Factories { get; }
+    private IDictionary<string, Type> ServiceTypes { get; } = new Dictionary<string, Type>();
 
     private ILogger Logger { get; }
 
@@ -30,12 +34,21 @@ public class NavigationServiceFactory : IRegionNavigationServiceFactory
 
     public NavigationServiceFactory(
         ILogger<NavigationServiceFactory> logger,
-        IRouteMappings mappings,
-        IEnumerable<IControlNavigationServiceFactory> factories)
+        IEnumerable<NavigatorFactoryBuilder> builders,
+        IRouteMappings mappings)
     {
         Logger = logger;
         Mappings = mappings;
-        Factories = factories.ToDictionary(x => x.ControlType);
+        builders.ForEach(builder => builder.Configure(this));
+    }
+
+    public void RegisterNavigator<TNavigator>(params string[] names)
+        where TNavigator : INavigationService
+    {
+        foreach (var name in names)
+        {
+            ServiceTypes[name] = typeof(TNavigator);
+        }
     }
 
     public INavigationService CreateService(IRegion region)
@@ -49,21 +62,22 @@ public class NavigationServiceFactory : IRegionNavigationServiceFactory
         // Create Navigation Service
         var navLogger = services.GetService<ILogger<ControlNavigationService>>();
 
-        INavigationService navService;
+        INavigationService navService = null;
 
-        if (control is null)
+        if (control is not null)
+        {
+            services.GetService<RegionControlProvider>().RegionControl = control;
+            if (ServiceTypes.TryGetValue(control.GetType().Name, out var serviceType))
+            {
+                navService = services.GetService(serviceType) as INavigationService;
+            }
+        }
+
+        if (navService is null)
         {
             navService = services.GetService<CompositeNavigationService>();
         }
-        else
-        {
-            services.GetService<RegionControlProvider>().RegionControl = control;
-            var factory = Factories.FindForControl(control);
-            navService = factory.Create(services);
-        }
-        //services.AddInstance<INavigationService>(navService);
 
-        //var innerNavService = new InnerNavigationService(navService);
         if (navService is ControlNavigationService controlService)
         {
             controlService.ControlInitialize();
@@ -86,11 +100,12 @@ public class NavigationServiceFactory : IRegionNavigationServiceFactory
         //var factoryServices = Services.CreateScope().ServiceProvider;
         //factoryServices.AddInstance<IScopedServiceProvider>(new ScopedServiceProvider(services));
 
-        var factory = Factories.FindForControlType(mapping.View);
-        var region = factory.Create(services);
-        var innerNavService = new InnerNavigationService(region);
+        var serviceType = ServiceTypes[mapping.View.Name];
+        var navService = services.GetService(serviceType) as INavigationService;
+
+        var innerNavService = new InnerNavigationService(navService);
         services.AddInstance<INavigationService>(innerNavService);
 
-        return region;
+        return navService;
     }
 }

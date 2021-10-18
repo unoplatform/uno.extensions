@@ -38,7 +38,7 @@ public static class ServiceCollectionExtensions
                     .AddRegion<Frame, FrameNavigationService>()
                     .AddRegion<TabView, TabNavigationService>()
                     .AddRegion<ContentControl, ContentControlNavigationService>()
-                   .AddRegion<Grid, GridVisiblityNavigationService>()
+                   .AddRegion<Grid, GridVisiblityNavigationService>("Visibility")
                    .AddRegion<Page, PageVisualStateNavigationService>()
                    .AddRegion<Microsoft.UI.Xaml.Controls.NavigationView, NavigationViewNavigationService>()
                     .AddRegion<ContentDialog, ContentDialogNavigationService>()
@@ -67,6 +67,11 @@ public static class ServiceCollectionExtensions
                     .AddScoped<IDictionary<string, object>>(services => services.GetService<ViewModelDataProvider>().Parameters)
 
                     .AddScopedInstance<INavigationService>();
+    }
+
+    public static IServiceCollection ConfigureNavigatorFactory(this IServiceCollection services, Action<IRegionNavigationServiceFactory> register)
+    {
+        return services.AddSingleton(new NavigatorFactoryBuilder() { Configure = register });
     }
 
     public static IServiceCollection AddScopedInstance<T>(this IServiceCollection services, Func<IServiceProvider, T> defaultValue = null)
@@ -120,7 +125,7 @@ public static class ServiceCollectionExtensions
         return provider.GetService<IInstanceRepository>().Instances.TryGetValue(type, out var value) ? value : null;
     }
 
-    public static IServiceCollection AddRegion<TControl, TRegion>(this IServiceCollection services)
+    public static IServiceCollection AddRegion<TControl, TRegion>(this IServiceCollection services, string name = null)
         where TRegion : class, INavigationService
     {
         if (services is null)
@@ -130,7 +135,7 @@ public static class ServiceCollectionExtensions
 
         return services
                     .AddScoped<TRegion>()
-                    .AddSingleton<IControlNavigationServiceFactory, ControlNavigationServiceFactory<TControl, TRegion>>();
+                    .ConfigureNavigatorFactory(factory => factory.RegisterNavigator<TRegion>(name ?? typeof(TControl).Name));
     }
 
     public static IServiceCollection AddViewModelData<TData>(this IServiceCollection services)
