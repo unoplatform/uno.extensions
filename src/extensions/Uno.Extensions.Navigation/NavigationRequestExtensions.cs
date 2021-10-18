@@ -36,9 +36,9 @@ public static class NavigationRequestExtensions
 
         if (request.RequiresResponse())
         {
-            var innerService = context.Services.GetInstance<INavigationService>();
-            var responseNav = new ResponseNavigationService(innerService, resultTask);
-            context.Services.AddInstance<INavigationService>(responseNav);
+            var innerService = context.Services.GetInstance<INavigator>();
+            var responseNav = new ResponseNavigator(innerService, resultTask);
+            context.Services.AddInstance<INavigator>(responseNav);
         }
 
         return context;

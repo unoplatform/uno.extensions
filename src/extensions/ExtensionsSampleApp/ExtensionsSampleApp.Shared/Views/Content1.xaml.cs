@@ -5,11 +5,11 @@ using Windows.UI.Xaml.Controls;
 
 namespace ExtensionsSampleApp.Views
 {
-    public sealed partial class Content1 : UserControl, IInjectable<INavigationService>
+    public sealed partial class Content1 : UserControl, IInjectable<INavigator>
     {
-        public INavigationService Navigation { get; set; }
+        public INavigator Navigation { get; set; }
 
-        public void Inject(INavigationService entity)
+        public void Inject(INavigator entity)
         {
             Navigation = entity;
         }

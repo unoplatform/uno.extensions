@@ -29,7 +29,7 @@ public static class ViewModelExtensions
             dataFactor.Parameters = context.Request.Route.Data;
 
             var vm = services.GetService(mapping.ViewModel);
-            if (vm is IInjectable<INavigationService> navAware)
+            if (vm is IInjectable<INavigator> navAware)
             {
                 navAware.Inject(context.Navigation);
             }

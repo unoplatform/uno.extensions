@@ -2,7 +2,7 @@
 
 namespace Uno.Extensions.Navigation;
 
-public interface INavigationService
+public interface INavigator
 {
     Task<NavigationResponse> NavigateAsync(NavigationRequest request);
 }

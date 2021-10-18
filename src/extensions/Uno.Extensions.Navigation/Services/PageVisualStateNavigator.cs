@@ -14,12 +14,12 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Services;
 
-public class PageVisualStateNavigationService : ControlNavigationService<Page>
+public class PageVisualStateNavigator : RegionNavigator<Page>
 {
     protected override string CurrentPath => CurrentVisualState;
 
-    public PageVisualStateNavigationService(
-        ILogger<PageVisualStateNavigationService> logger,
+    public PageVisualStateNavigator(
+        ILogger<PageVisualStateNavigator> logger,
         IRegion region,
         IRouteMappings mappings,
         RegionControlProvider controlProvider)

@@ -22,14 +22,14 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 
 namespace Uno.Extensions.Navigation.Services;
 
-public class PopupNavigationService : ControlNavigationService<Popup>
+public class PopupNavigator : RegionNavigator<Popup>
 {
     protected override object CurrentView => Control;
 
     protected override string CurrentPath => CurrentView?.NavigationRoute(Mappings);
 
-    public PopupNavigationService(
-        ILogger<ContentControlNavigationService> logger,
+    public PopupNavigator(
+        ILogger<ContentControlNavigator> logger,
         IRegion region,
         IRouteMappings mappings,
         RegionControlProvider controlProvider)

@@ -14,7 +14,7 @@ public record NavigationContext(
     bool CanCancel = true)
 #pragma warning restore SA1313 // Parameter names should begin with lower-case letter
 {
-    public INavigationService Navigation => Services.GetService<INavigationService>();
+    public INavigator Navigation => Services.GetService<INavigator>();
 
     public CancellationToken CancellationToken => CancellationSource.Token;
 

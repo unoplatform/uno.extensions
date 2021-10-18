@@ -32,21 +32,21 @@ public static class ServiceCollectionExtensions
         return services
                     .AddScoped<IInstanceRepository, InstanceRepository>()
 
-                    .AddScoped<CompositeNavigationService>()
+                    .AddScoped<Navigator>()
 
                     // Register the region for each control type
-                    .AddRegion<Frame, FrameNavigationService>()
-                    .AddRegion<TabView, TabNavigationService>()
-                    .AddRegion<ContentControl, ContentControlNavigationService>()
-                   .AddRegion<Grid, GridVisiblityNavigationService>("Visibility")
-                   .AddRegion<Page, PageVisualStateNavigationService>()
-                   .AddRegion<Microsoft.UI.Xaml.Controls.NavigationView, NavigationViewNavigationService>()
-                    .AddRegion<ContentDialog, ContentDialogNavigationService>()
-                    .AddRegion<MessageDialog, MessageDialogNavigationService>()
+                    .AddRegion<Frame, FrameNavigator>()
+                    .AddRegion<TabView, TabNavigator>()
+                    .AddRegion<ContentControl, ContentControlNavigator>()
+                   .AddRegion<Grid, GridVisiblityNavigator>("Visibility")
+                   .AddRegion<Page, PageVisualStateNavigator>()
+                   .AddRegion<Microsoft.UI.Xaml.Controls.NavigationView, NavigationViewNavigator>()
+                    .AddRegion<ContentDialog, ContentDialogNavigator>()
+                    .AddRegion<MessageDialog, MessageDialogNavigator>()
 #if __IOS__
                     .AddRegion<Picker, PickerRegion>()
 #endif
-                    .AddRegion<Popup, PopupNavigationService>()
+                    .AddRegion<Popup, PopupNavigator>()
 
                     // Register the navigation mappings repository
                     .AddSingleton<IRouteMappings, RouteMappingsDefault>()
@@ -54,7 +54,7 @@ public static class ServiceCollectionExtensions
                     // Register the navigation manager and the providers for
                     // navigation data and the navigation service
                     //.AddSingleton<NavigationServiceFactory>()
-                    .AddScoped<IRegionNavigationServiceFactory, NavigationServiceFactory>() // services => services.GetService<NavigationServiceFactory>())
+                    .AddScoped<INavigatorFactory, NavigatorFactory>() // services => services.GetService<NavigationServiceFactory>())
 
                     //.AddScopedInstance<IRegionNavigationService>(services => services.GetService<IRegionNavigationServiceFactory>().CreateService(null, null, false))
                     //.AddSingleton<IRegionNavigationService>(services => services.GetService<IRegionNavigationServiceFactory>().CreateService(null, null, false))
@@ -66,10 +66,10 @@ public static class ServiceCollectionExtensions
                     .AddScoped<RegionControlProvider>()
                     .AddScoped<IDictionary<string, object>>(services => services.GetService<ViewModelDataProvider>().Parameters)
 
-                    .AddScopedInstance<INavigationService>();
+                    .AddScopedInstance<INavigator>();
     }
 
-    public static IServiceCollection ConfigureNavigatorFactory(this IServiceCollection services, Action<IRegionNavigationServiceFactory> register)
+    public static IServiceCollection ConfigureNavigatorFactory(this IServiceCollection services, Action<INavigatorFactory> register)
     {
         return services.AddSingleton(new NavigatorFactoryBuilder() { Configure = register });
     }
@@ -126,7 +126,7 @@ public static class ServiceCollectionExtensions
     }
 
     public static IServiceCollection AddRegion<TControl, TRegion>(this IServiceCollection services, string name = null)
-        where TRegion : class, INavigationService
+        where TRegion : class, INavigator
     {
         if (services is null)
         {

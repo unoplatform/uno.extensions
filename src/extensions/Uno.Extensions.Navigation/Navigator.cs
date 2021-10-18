@@ -7,7 +7,7 @@ using Uno.Extensions.Navigation.Regions;
 
 namespace Uno.Extensions.Navigation;
 
-public class CompositeNavigationService : INavigationService
+public class Navigator : INavigator
 {
     protected ILogger Logger { get; }
 
@@ -15,15 +15,15 @@ public class CompositeNavigationService : INavigationService
 
     protected IRegion Region { get; }
 
-    public CompositeNavigationService(
-        ILogger<CompositeNavigationService> logger,
+    public Navigator(
+        ILogger<Navigator> logger,
         IRegion region)
     {
         Region = region;
         Logger = logger;
     }
 
-    protected CompositeNavigationService(
+    protected Navigator(
     ILogger logger,
     IRegion region)
     {

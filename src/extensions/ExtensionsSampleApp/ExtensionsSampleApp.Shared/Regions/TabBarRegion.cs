@@ -11,7 +11,7 @@ using Uno.Extensions.Navigation.Regions;
 
 namespace ExtensionsSampleApp.Region.Managers
 {
-    public class TabBarRegion : ControlNavigationService<TabBar>
+    public class TabBarRegion : RegionNavigator<TabBar>
     {
         private TabBar _control;
 

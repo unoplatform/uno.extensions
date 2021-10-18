@@ -16,10 +16,10 @@ using UICommand = Windows.UI.Popups.UICommand;
 
 namespace Uno.Extensions.Navigation.Services;
 
-public class MessageDialogNavigationService : DialogNavigationService
+public class MessageDialogNavigator : DialogNavigator
 {
-    public MessageDialogNavigationService(
-        ILogger<DialogNavigationService> logger,
+    public MessageDialogNavigator(
+        ILogger<DialogNavigator> logger,
         IRegion region)
         : base(logger, region)
     {
@@ -43,7 +43,7 @@ public class MessageDialogNavigationService : DialogNavigationService
                 {
                     if (result.Status != TaskStatus.Canceled)
                     {
-                        var responseNav = navigation as ResponseNavigationService;
+                        var responseNav = navigation as ResponseNavigator;
                         if (responseNav is not null &&
                             responseNav.ResultCompletion.Task.Status != TaskStatus.Canceled &&
                             responseNav.ResultCompletion.Task.Status != TaskStatus.RanToCompletion)

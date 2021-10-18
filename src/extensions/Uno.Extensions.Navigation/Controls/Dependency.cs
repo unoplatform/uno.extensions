@@ -39,7 +39,7 @@ public static class Dependency
     //    return element.ServiceForControl<IRegionNavigationService>(searchParent);
     //}
 
-    public static INavigationService Navigator(this DependencyObject element)
+    public static INavigator Navigator(this DependencyObject element)
     {
         return element.Region().Navigation().AsInner();
     }

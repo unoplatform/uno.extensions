@@ -15,7 +15,7 @@ public static class ServiceProviderExtensions
         var scopedServices = scope.ServiceProvider;
 
         scopedServices.GetService<RegionControlProvider>().RegionControl = services.GetService<RegionControlProvider>().RegionControl;
-        scopedServices.AddInstance<INavigationService>(new InnerNavigationService( services.GetInstance<INavigationService>()));
+        scopedServices.AddInstance<INavigator>(new InnerNavigator( services.GetInstance<INavigator>()));
 
         return scopedServices;
     }
