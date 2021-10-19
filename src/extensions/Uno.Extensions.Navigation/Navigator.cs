@@ -44,7 +44,7 @@ public class Navigator : INavigator
             {
                 // This is the root nav service - need to pass the
                 // request down to children by making the request nested
-                request = request with { Route = request.Route.Root };
+                request = request with { Route = request.Route with { Scheme = Schemes.Nested } };
             }
         }
 
@@ -62,7 +62,7 @@ public class Navigator : INavigator
         // Run dialog requests
         if (request.Route.IsDialog)
         {
-            request = request with { Route = request.Route.TrimScheme(Schemes.Dialog) };
+            request = request with { Route = request.Route with { Scheme = Schemes.Current } };
             return DialogNavigateAsync(request);
         }
 
@@ -85,25 +85,30 @@ public class Navigator : INavigator
             return null;
         }
 
-        var route = request.Route.Base;
+        var children = (from region in Region.Children
+                        let childRoute =
+                                   // No region name - send request as it is (for composite regions)
+                                   (region.Name is not { Length: > 0 }) ? // Region.Name == ""
+                                        request :
 
-        // Scenarios:
-        // Region.Name == "" : in this case just forward the request unchanged
-        // Region.Name == request.Route.Base and scheme is  "./" : in this case trim both the scheme and base (ie Route.Next.Next)
-        // Region.Name == request.Route.Base : trim the base (ie Route.Next)
-        // Scheme is "./" : trim the scheme (ie Route.Next)
-        var children = (from child in Region.Children
-                       let childRoute =
-                                    (child.Name == request.Route.Base && request.Route.IsNested) ?
-                                       request with { Route = request.Route.Next.Next } :
-                                       ((child.Name == request.Route.Base || request.Route.IsNested) ?
-                                           request with { Route = request.Route.Next } :
-                                           request)
-                       where
-                           child.Name is not { Length: > 0 } ||
-                           child.Name == request.Route.Base
-                       select
-                           new { Child = child, Route = childRoute }).ToArray();
+                                        // Region.Name == request.Route.Base and scheme is  "./" : in this case trim both the scheme and base (ie Route.Next.Next)
+                                        (region.Name == request.Route.Base && request.Route.IsNested) ?
+                                            request with { Route = request.Route with { Scheme = Schemes.Current, Base = request.Route.NextBase(), Path = request.Route.NextPath() } } :
+
+                                            // Region.Name == request.Route.Base : trim the base (ie Route.Next)
+                                            (region.Name == request.Route.Base) ?
+                                                request with { Route = request.Route with { Base = request.Route.NextBase(), Path = request.Route.NextPath() } } :
+
+                                                    // Scheme is "./" : trim the scheme (ie Route.Next)
+                                                    (request.Route.IsNested) ?
+                                                        request with { Route = request.Route with { Scheme = Schemes.Current } } :
+
+                                                        request
+                        where
+                            region.Name is not { Length: > 0 } ||
+                            region.Name == request.Route.Base
+                        select
+                            new { Child = region, Route = childRoute }).ToArray();
 
         var tasks = new List<Task<NavigationResponse>>();
         foreach (var region in children)

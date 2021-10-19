@@ -35,18 +35,6 @@ public record Route(string Scheme, string Base, string Path, IDictionary<string,
 
     public bool FrameIsForwardNavigation => !FrameIsBackNavigation;
 
-    public Route Next => this with
-    {
-        Scheme = Schemes.Current,
-        Base = this.IsNested ? this.Base : this.NextBase(),
-        Path = this.IsNested ? Path : this.NextPath()
-    };
-
-    public Route Root => this with
-    {
-        Scheme = Schemes.Nested
-    };
-
     private string UriPath => ((Path is { Length: > 0 }) ? "/" : string.Empty) + Path;
 
     private string Query => (Data?.Where(x => x.Key != string.Empty)?.Any() ?? false) ?

@@ -27,11 +27,6 @@ public static class RouteExtensions
         return route with { Scheme = route.Scheme.TrimStartOnce(schemeToTrim) };
     }
 
-    public static Route AppendScheme(this Route route, string schemeToAppend)
-    {
-        return route with { Scheme = schemeToAppend + route.Scheme };
-    }
-
     public static string NextBase(this Route route)
     {
         return route.Path?.Split('/')?.FirstOrDefault();
@@ -43,13 +38,13 @@ public static class RouteExtensions
         return (idx <= 0 || (idx + 1) > route.Path.Length) ? String.Empty : route.Path.Substring(idx + 1);
     }
 
-    public static Route BuildRoute(this Uri uri, object data = null)
+    public static Route AsRoute(this Uri uri, object data = null)
     {
         var path = uri.OriginalString;
-        return path.BuildRoute(data);
+        return path.AsRoute(data);
     }
 
-    public static Route BuildRoute(this string path, object data = null)
+    public static Route AsRoute(this string path, object data = null)
     {
         var queryIdx = path.IndexOf('?');
         var query = string.Empty;
