@@ -19,14 +19,14 @@ namespace Uno.Extensions.Navigation;
 
 public static class NavigatorExtensions
 {
-    public static Task<NavigationResponse> NavigateByPathAsync(this INavigator service, object sender, string path, object data = null, CancellationToken cancellation = default)
+    public static Task<NavigationResponse> NavigateByPathAsync(this INavigator service, object sender, string path, string relativePathModifier = Schemes.Parent, object data = null, CancellationToken cancellation = default)
     {
-        return service.NavigateAsync(new NavigationRequest(sender, new Uri(path, UriKind.Relative).AsRoute(data), cancellation));
+        return service.NavigateAsync(new NavigationRequest(sender, new Uri(RouteMap.CombinePathWithRelativePath(path, relativePathModifier), UriKind.Relative).AsRoute(data), cancellation));
     }
 
-    public static async Task<NavigationResponse<TResult>> NavigateByPathAsync<TResult>(this INavigator service, object sender, string path, object data = null, CancellationToken cancellation = default)
+    public static async Task<NavigationResponse<TResult>> NavigateByPathAsync<TResult>(this INavigator service, object sender, string path, string relativePathModifier = Schemes.Parent, object data = null, CancellationToken cancellation = default)
     {
-        var result = await service.NavigateAsync(new NavigationRequest(sender, new Uri(path, UriKind.Relative).AsRoute(data), cancellation, typeof(TResult)));
+        var result = await service.NavigateAsync(new NavigationRequest(sender, new Uri(RouteMap.CombinePathWithRelativePath(path, relativePathModifier), UriKind.Relative).AsRoute(data), cancellation, typeof(TResult)));
         return result.As<TResult>();
     }
 

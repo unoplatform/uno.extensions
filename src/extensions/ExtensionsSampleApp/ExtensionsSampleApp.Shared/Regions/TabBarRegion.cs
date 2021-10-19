@@ -38,7 +38,7 @@ namespace ExtensionsSampleApp.Region.Managers
             var path = Uno.Extensions.Navigation.Controls.Navigation.GetRoute(tbi) ?? tbi.Name;
             if (!string.IsNullOrEmpty(path))
             {
-                Region.Navigation().NavigateByPathAsync(null, path);
+                Region.Navigator().NavigateByPathAsync(null, path);
             }
         }
 

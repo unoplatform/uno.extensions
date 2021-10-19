@@ -25,13 +25,18 @@ namespace ExtensionsSampleApp.Views
 
         private void NavigateToDoc0Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-            Navigation.NavigateToViewModelAsync<TabDoc0ViewModel>(this, Schemes.Current);
+            Navigation.NavigateToViewModelAsync<TabDoc0ViewModel>(this, Schemes.Nested);
         }
 
         private async void ContentDialogResponseClick(object sender, RoutedEventArgs e)
         {
-            var navresult = await Navigation.NavigateToViewAsync<SimpleContentDialog, ContentDialogResult>(this);
+            var navresult = await Navigation.NavigateToViewAsync<SimpleContentDialog, ContentDialogResult>(this, Schemes.Dialog);
             var response = await navresult.Result;
+        }
+
+        private void Doc2GridLoaded(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

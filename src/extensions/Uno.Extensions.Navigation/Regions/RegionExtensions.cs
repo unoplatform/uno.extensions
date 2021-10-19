@@ -12,11 +12,11 @@ namespace Uno.Extensions.Navigation.Regions
 {
     public static class RegionExtensions
     {
-        public static INavigator Navigation(this IRegion region) => region.Services?.GetService<INavigator>();
+        public static INavigator Navigator(this IRegion region) => region.Services?.GetService<INavigator>();
 
-        public static INavigatorFactory NavigationFactory(this IRegion region) => region.Services?.GetService<INavigatorFactory>();
+        public static INavigatorFactory NavigatorFactory(this IRegion region) => region.Services?.GetService<INavigatorFactory>();
 
-        public static Task<NavigationResponse> NavigateAsync(this IRegion region, NavigationRequest request) => region.Navigation()?.NavigateAsync(request);
+        public static Task<NavigationResponse> NavigateAsync(this IRegion region, NavigationRequest request) => region.Navigator()?.NavigateAsync(request);
 
         public static void Attach(this IRegion region, IRegion childRegion)
         {
