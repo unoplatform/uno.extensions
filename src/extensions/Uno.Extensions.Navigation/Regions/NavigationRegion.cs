@@ -124,17 +124,17 @@ namespace Uno.Extensions.Navigation.Regions
                                           where match != default((IRegion, NavigationRequest))
                                           select match).ToArray();
             var matched = find();
-            while (!matched.Any())
-            {
-                if (!blocking)
-                {
-                    return null;
-                }
+            //while (!matched.Any())
+            //{
+            //    if (!blocking)
+            //    {
+            //        return null;
+            //    }
 
-                await NestedServiceWaiter.Wait();
+            //    await NestedServiceWaiter.Wait();
 
-                matched = find();
-            }
+            //    matched = find();
+            //}
 
             return matched;
         }

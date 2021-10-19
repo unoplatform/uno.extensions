@@ -4,6 +4,7 @@ using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.ViewModels;
 using Uno.Extensions.Navigation.Regions;
+using System.Threading.Tasks;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -31,7 +32,7 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
     {
     }
 
-    protected override void Show(string path, Type viewType, object data)
+    protected override async Task Show(string path, Type viewType, object data)
     {
         try
         {
@@ -43,6 +44,7 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
             Logger.LazyLogDebug(() => $"Creating instance of type '{viewType.Name}'");
             var content = Activator.CreateInstance(viewType);
             Control.Content = content;
+            await (Control.Content as FrameworkElement).EnsureLoaded();
             Logger.LazyLogDebug(() => "Instance created");
         }
         catch (Exception ex)

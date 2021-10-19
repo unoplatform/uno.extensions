@@ -4,6 +4,7 @@ using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.ViewModels;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Regions;
+using System.Threading.Tasks;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -33,7 +34,7 @@ public class GridVisiblityNavigator : ControlNavigator<Grid>
 
     private UIElement CurrentlyVisibleControl { get; set; }
 
-    protected override void Show(string path, Type viewType, object data)
+    protected override async Task Show(string path, Type viewType, object data)
     {
         var controlToShow = Control.FindName(path) as UIElement;
         if (controlToShow is null)
@@ -68,5 +69,7 @@ public class GridVisiblityNavigator : ControlNavigator<Grid>
             CurrentlyVisibleControl.Visibility = Visibility.Collapsed;
         }
         CurrentlyVisibleControl = controlToShow;
+
+        await (controlToShow as FrameworkElement).EnsureLoaded();
     }
 }

@@ -33,16 +33,14 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
         Control = control;
     }
 
-    protected abstract void Show(string path, Type viewType, object data);
+    protected abstract Task Show(string path, Type viewType, object data);
 
-    protected override Task NavigateWithContextAsync(NavigationContext context)
+    protected override async Task NavigateWithContextAsync(NavigationContext context)
     {
         Logger.LazyLogDebug(() => $"Navigating to path '{context.Request.Route.Base}' with view '{context.Mapping?.View?.Name}'");
-        Show(context.Request.Route.Base, context.Mapping?.View, context.Request.Route.Data);
+        await Show(context.Request.Route.Base, context.Mapping?.View, context.Request.Route.Data);
 
         InitialiseView(context);
-
-        return Task.CompletedTask;
     }
 
     public override string ToString()

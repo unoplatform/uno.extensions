@@ -14,6 +14,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Uno.Extensions.Navigation.Regions;
+using System.Threading.Tasks;
 #else
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -37,11 +38,13 @@ public class PopupNavigator : ControlNavigator<Popup>
     {
     }
 
-    protected override void Show(string path, Type viewType, object data)
+    protected override async Task Show(string path, Type viewType, object data)
     {
         try
         {
             Control.IsOpen = path == RouteConstants.PopupShow;
+            await (Control.Child as FrameworkElement).EnsureLoaded();
+
         }
         catch (Exception ex)
         {
