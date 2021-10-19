@@ -54,9 +54,7 @@ namespace Uno.Extensions.Navigation.Regions
             }
         }
 
-        private IList<IRegion> Children { get; } = new List<IRegion>();
-
-        private AsyncAutoResetEvent NestedServiceWaiter { get; } = new AsyncAutoResetEvent(false);
+        public IList<IRegion> Children { get; } = new List<IRegion>();
 
         public NavigationRegion(FrameworkElement view, IServiceProvider services = null)
         {
@@ -102,52 +100,6 @@ namespace Uno.Extensions.Navigation.Regions
                     parent.Detach(this);
                 }
             };
-        }
-
-        public void Attach(IRegion childRegion)
-        {
-            Children.Add(childRegion);
-            NestedServiceWaiter.Set();
-        }
-
-        public void Detach(IRegion childRegion)
-        {
-            Children.Remove(kvp => kvp.Name == childRegion.Name);
-        }
-
-        public async Task<IEnumerable<(IRegion, NavigationRequest)>> GetChildren(Func<IRegion, (IRegion, NavigationRequest)> predicate, bool blocking)
-        {
-            //return Children.Where(child => predicate(child)).ToArray(); 
-            Func<(IRegion, NavigationRequest)[]> find = () => (from child in Children
-                                          let match = predicate(child)
-                                          where match != default((IRegion, NavigationRequest))
-                                          select match).ToArray();
-            var matched = find();
-            //while (!matched.Any())
-            //{
-            //    if (!blocking)
-            //    {
-            //        return null;
-            //    }
-
-            //    await NestedServiceWaiter.Wait();
-
-            //    matched = find();
-            //}
-
-            return matched;
-        }
-
-        public void AttachAll(IEnumerable<IRegion> children)
-        {
-            children.ForEach(n => Attach(n));
-        }
-
-        public IEnumerable<IRegion> DetachAll()
-        {
-            var children = Children.ToArray();
-            children.ForEach(child => Detach(child));
-            return children;
         }
     }
 }

@@ -19,7 +19,9 @@ public record Route(string Scheme, string Base, string Path, IDictionary<string,
 
     public bool IsDialog => Scheme.StartsWith(Schemes.Dialog);
 
-    public bool IsLast => Path is { Length: 0 };
+    public bool IsLast => Path is not { Length: >0 };
+
+    public bool IsEmpty => Base is not { Length: >0 };
 
     // eg -/NextPage
     public bool FrameIsRooted => Scheme.EndsWith(Schemes.Root + string.Empty);
@@ -36,15 +38,13 @@ public record Route(string Scheme, string Base, string Path, IDictionary<string,
     public Route Next => this with
     {
         Scheme = Schemes.Current,
-        Base = this.NextBase(),
-        Path = this.NextPath()
+        Base = this.IsNested ? this.Base : this.NextBase(),
+        Path = this.IsNested ? Path : this.NextPath()
     };
 
     public Route Root => this with
     {
-        Scheme = Schemes.Nested,
-        Base = String.Empty,
-        Path = $"{this.Base}{this.UriPath}"
+        Scheme = Schemes.Nested
     };
 
     private string UriPath => ((Path is { Length: > 0 }) ? "/" : string.Empty) + Path;
