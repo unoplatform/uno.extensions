@@ -55,9 +55,9 @@ public abstract class ControlNavigator : Navigator
 
     protected virtual bool CanGoBack => false;
 
-    protected virtual object CurrentView => default;
+    protected virtual FrameworkElement CurrentView => default;
 
-    protected object CurrentViewModel => (CurrentView as FrameworkElement)?.DataContext;
+    protected object CurrentViewModel => CurrentView?.DataContext;
 
     protected ControlNavigator(
         ILogger logger,
@@ -189,7 +189,7 @@ public abstract class ControlNavigator : Navigator
 
         var viewModel = CurrentViewModel;
         var mapping = context.Mapping;
-        if (viewModel is null || viewModel.GetType() != mapping.ViewModel)
+        if (viewModel is null || viewModel.GetType() != mapping?.ViewModel)
         {
             // This will happen if cache mode isn't set to required
             viewModel = context.CreateViewModel();
@@ -202,8 +202,6 @@ public abstract class ControlNavigator : Navigator
     {
         return $"Region Path='{CurrentPath}'";
     }
-
-
 
     //public override string ToString()
     //{

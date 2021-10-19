@@ -71,7 +71,7 @@ public class Navigator : INavigator
 
     private async Task<NavigationResponse> DialogNavigateAsync(NavigationRequest request)
     {
-        var dialogService = Region.NavigationFactory().CreateService(Region.Services, request);
+        var dialogService = Region.NavigationFactory().CreateService(Region, request);
 
         var dialogResponse = await dialogService.NavigateAsync(request);
 

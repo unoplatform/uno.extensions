@@ -20,7 +20,7 @@ namespace Uno.Extensions.Navigation.Services;
 
 public class TabNavigator : ControlNavigator<TabView>
 {
-    protected override object CurrentView => (Control.SelectedItem as TabViewItem)?.Content;
+    protected override FrameworkElement CurrentView => (Control.SelectedItem as TabViewItem)?.Content as FrameworkElement;
 
     protected override string CurrentPath => (Control.SelectedItem as TabViewItem)?.NavigationRoute();
 

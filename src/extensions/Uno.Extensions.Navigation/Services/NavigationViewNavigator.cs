@@ -16,7 +16,7 @@ namespace Uno.Extensions.Navigation.Services;
 
 public class NavigationViewNavigator : ControlNavigator<Microsoft.UI.Xaml.Controls.NavigationView>
 {
-    protected override object CurrentView => Control.SelectedItem;
+    protected override FrameworkElement CurrentView => Control.SelectedItem as FrameworkElement;
 
     protected override string CurrentPath => CurrentView?.NavigationRoute();
 

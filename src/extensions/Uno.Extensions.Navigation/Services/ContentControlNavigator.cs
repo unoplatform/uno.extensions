@@ -19,7 +19,7 @@ namespace Uno.Extensions.Navigation.Services;
 
 public class ContentControlNavigator : ControlNavigator<ContentControl>
 {
-    protected override object CurrentView => Control.Content;
+    protected override FrameworkElement CurrentView => Control.Content as FrameworkElement;
 
     protected override string CurrentPath => CurrentView?.NavigationRoute(Mappings);
 

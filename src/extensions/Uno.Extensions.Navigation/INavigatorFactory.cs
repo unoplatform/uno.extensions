@@ -10,5 +10,5 @@ public interface INavigatorFactory
 
     INavigator CreateService(IRegion region);
 
-    INavigator CreateService(IServiceProvider services, NavigationRequest request);
+    INavigator CreateService(IRegion region, NavigationRequest request);
 }

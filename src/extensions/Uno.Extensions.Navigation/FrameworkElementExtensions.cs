@@ -56,4 +56,26 @@ public static class FrameworkElementExtensions
 
         await completion.Task;
     }
+
+    public static void InjectServicesAndSetDataContext(this FrameworkElement view, IServiceProvider services, INavigator navigation, object viewModel)
+    {
+        if (view is not null)
+        {
+            if (viewModel is not null &&
+                view.DataContext != viewModel)
+            {
+                view.DataContext = viewModel;
+            }
+        }
+
+        if (view is IInjectable<INavigator> navAware)
+        {
+            navAware.Inject(navigation);
+        }
+
+        if (view is IInjectable<IServiceProvider> spAware)
+        {
+            spAware.Inject(services);
+        }
+    }
 }
