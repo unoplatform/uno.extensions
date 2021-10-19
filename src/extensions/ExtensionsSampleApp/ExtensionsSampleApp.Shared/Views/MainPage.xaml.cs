@@ -28,7 +28,7 @@ namespace ExtensionsSampleApp.Views
 
         private void NextPageNavigationRequestClick(object sender, RoutedEventArgs e)
         {
-            Navigation.NavigateAsync(new NavigationRequest(sender, new Uri("../SecondPage", UriKind.Relative).BuildRoute()));
+            Navigation.NavigateAsync(new NavigationRequest(sender, new Uri("../SecondPage", UriKind.Relative).AsRoute()));
         }
 
         private async void NextPageNavigateToViewAsyncClick(object sender, RoutedEventArgs e)

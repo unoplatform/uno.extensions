@@ -14,7 +14,7 @@ public static class NavigationRequestExtensions
 
     public static NavigationRequest AsRequest(this RouteMap map, object sender)
     {
-        var request = new NavigationRequest(sender, new Uri(map.Path, UriKind.Relative).BuildRoute());
+        var request = new NavigationRequest(sender, new Uri(map.Path, UriKind.Relative).AsRoute());
         return request;
     }
 
