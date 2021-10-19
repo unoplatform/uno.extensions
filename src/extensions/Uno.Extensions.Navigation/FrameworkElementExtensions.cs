@@ -9,7 +9,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 #endif
 
-namespace Uno.Extensions.Navigation.Controls;
+namespace Uno.Extensions.Navigation;
 
 public static class FrameworkElementExtensions
 {
@@ -21,6 +21,10 @@ public static class FrameworkElementExtensions
         }
 
         var completion = new TaskCompletionSource<object>();
+
+        // Note: We're attaching to three different events to
+        // a) always detect when element is loaded (sometimes Loaded is never fired)
+        // b) detect as soon as IsLoaded is true (Loading and Loaded not always in right order)
 
         RoutedEventHandler loaded = null;
         EventHandler<object> layoutChanged = null;
@@ -45,8 +49,7 @@ public static class FrameworkElementExtensions
         element.Loading += loading;
         element.LayoutUpdated += layoutChanged;
 
-
-        if (element is null || element.IsLoaded)
+        if (element.IsLoaded)
         {
             loadedAction();
         }

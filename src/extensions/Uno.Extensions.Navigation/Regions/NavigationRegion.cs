@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
-using Uno.Extensions.Navigation.Controls;
 using Windows.UI.Xaml;
 #else
 using Microsoft.UI.Xaml;
