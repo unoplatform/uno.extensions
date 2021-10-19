@@ -72,6 +72,11 @@ public abstract class ControlNavigator : Navigator
     {
         var regionResponse = await RegionNavigateAsync(request);
 
+        if (regionResponse is not null)
+        {
+            request = request with { Route = request.Route.Next };
+        }
+
         var coreResponse = await base.CoreNavigateAsync(request);
 
         return coreResponse ?? regionResponse;

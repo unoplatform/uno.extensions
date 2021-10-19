@@ -93,7 +93,7 @@ public class Navigator : INavigator
     {
         if (
             // eg  Scheme "./"  Base    ""  Path  "MainPage"  --> MainPage sent to all children
-            request.Route.Base is { Length: 0 } ||
+            request.Route.Base is not { Length: > 0 } ||
             // eg  Scheme ""    Base    "Feeds"     Path    "TweetsPage" --> TweetsPage sent to all children
             region.Name == request.Route.Base
         )
@@ -101,9 +101,9 @@ public class Navigator : INavigator
             return (region, request with { Route = request.Route.Next });
         }
         // eg  Request sent through with no changes
-        if(region.Name is { Length: 0 })
+        if (region.Name is not { Length: > 0 })
         {
-            return (region, request with { Route = request.Route with {  Scheme=Schemes.Current} });
+            return (region, request with { Route = request.Route with { Scheme = Schemes.Current } });
         }
 
         return default;
