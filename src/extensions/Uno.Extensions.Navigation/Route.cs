@@ -53,18 +53,15 @@ public record Route(string Scheme, string Base, string Path, IDictionary<string,
         "?" + string.Join("&", Data.Where(x => x.Key != string.Empty).Select(kvp => $"{kvp.Key}={kvp.Value}")) :
         null;
 
-    public Uri Uri
+    public override string ToString()
     {
-        get
+        try
         {
-            try
-            {
-                return new Uri($"{Scheme}{Base}{UriPath}{Query}", UriKind.Relative);
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
+            return $"{Scheme}{Base}{UriPath}{Query}";
+        }
+        catch (Exception ex)
+        {
+            return null;
         }
     }
 }
