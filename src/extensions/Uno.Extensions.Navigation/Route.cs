@@ -19,9 +19,13 @@ public record Route(string Scheme, string Base, string Path, IDictionary<string,
 
     public bool IsDialog => Scheme.StartsWith(Schemes.Dialog);
 
-    public bool IsLast => Path is not { Length: >0 };
+    public bool IsLast => Path is not { Length: > 0 };
 
-    public bool IsEmpty => Base is not { Length: >0 };
+    public bool IsEmpty => Base is not { Length: > 0 };
+
+    public bool IsDefault => Data.TryGetValue("IsDefault", out var isDefault) ?
+                                (isDefault is bool defaultValue) ? defaultValue : false
+                                : false;
 
     // eg -/NextPage
     public bool FrameIsRooted => Scheme.EndsWith(Schemes.Root + string.Empty);

@@ -16,7 +16,7 @@ public static class DependencyObjectExtensions
 {
     public static INavigator Navigator(this FrameworkElement element)
     {
-        return element.FindRegion().Navigation();
+        return element.FindRegion().Navigator();
     }
 
     public static IRegion FindRegion(this FrameworkElement element)

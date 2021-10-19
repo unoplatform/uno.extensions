@@ -28,6 +28,13 @@ public static class Navigation
             typeof(Navigation),
             new PropertyMetadata(null));
 
+    public static readonly DependencyProperty DefaultProperty =
+      DependencyProperty.RegisterAttached(
+          "Default",
+          typeof(string),
+          typeof(Navigation),
+          new PropertyMetadata(null));
+
     private static void RequestChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         if (d is ButtonBase element)
@@ -36,7 +43,7 @@ public static class Navigation
             var command = new AsyncRelayCommand(async () =>
             {
                 var nav = element.Navigator();
-                await nav.NavigateByPathAsync(element, path);
+                await nav.NavigateByPathAsync(element, path, Schemes.Current);
             });
             var binding = new Binding { Source = command, Path = new PropertyPath(nameof(command.IsRunning)), Converter = new InvertConverter() };
 
@@ -51,6 +58,16 @@ public static class Navigation
                 element.ClearValue(ButtonBase.IsEnabledProperty);
             };
         }
+    }
+
+    public static void SetDefault(this FrameworkElement element, string value)
+    {
+        element.SetValue(DefaultProperty, value);
+    }
+
+    public static string GetDefault(this FrameworkElement element)
+    {
+        return (string)element.GetValue(DefaultProperty);
     }
 
     public static void SetRoute(this FrameworkElement element, string value)

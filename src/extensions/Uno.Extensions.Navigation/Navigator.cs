@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation.Regions;
@@ -31,47 +32,62 @@ public class Navigator : INavigator
         Logger = logger;
     }
 
+    private ManualResetEventSlim Navigating { get; } = new ManualResetEventSlim(true);
+
+    public async Task WaitForPendingNavigation()
+    {
+        await Task.Run(() => Navigating.Wait());
+    }
+
     public Task<NavigationResponse> NavigateAsync(NavigationRequest request)
     {
-        // Handle root navigations
-        if (request?.Route?.IsRoot ?? false)
+        try
         {
-            if (!IsRoot)
+            Navigating.Reset();
+            // Handle root navigations
+            if (request?.Route?.IsRoot ?? false)
             {
-                return Region.Parent?.NavigateAsync(request);
+                if (!IsRoot)
+                {
+                    return Region.Parent?.NavigateAsync(request);
+                }
+                else
+                {
+                    // This is the root nav service - need to pass the
+                    // request down to children by making the request nested
+                    request = request with { Route = request.Route with { Scheme = Schemes.Current } };
+                }
             }
-            else
-            {
-                // This is the root nav service - need to pass the
-                // request down to children by making the request nested
-                request = request with { Route = request.Route with { Scheme = Schemes.Nested } };
-            }
-        }
 
-        if (request?.Route?.IsParent ?? false)
-        {
-            request = request with { Route = request.Route.TrimScheme(Schemes.Parent) };
-
-            // Handle parent navigations
             if (request?.Route?.IsParent ?? false)
             {
-                return Region.Parent?.NavigateAsync(request);
+                request = request with { Route = request.Route.TrimScheme(Schemes.Parent) };
+
+                // Handle parent navigations
+                if (request?.Route?.IsParent ?? false)
+                {
+                    return Region.Parent?.NavigateAsync(request);
+                }
             }
-        }
 
-        // Run dialog requests
-        if (request.Route.IsDialog)
+            // Run dialog requests
+            if (request.Route.IsDialog)
+            {
+                request = request with { Route = request.Route with { Scheme = Schemes.Current } };
+                return DialogNavigateAsync(request);
+            }
+
+            return CoreNavigateAsync(request);
+        }
+        finally
         {
-            request = request with { Route = request.Route with { Scheme = Schemes.Current } };
-            return DialogNavigateAsync(request);
+            Navigating.Set();
         }
-
-        return CoreNavigateAsync(request);
     }
 
     private async Task<NavigationResponse> DialogNavigateAsync(NavigationRequest request)
     {
-        var dialogService = Region.NavigationFactory().CreateService(Region, request);
+        var dialogService = Region.NavigatorFactory().CreateService(Region, request);
 
         var dialogResponse = await dialogService.NavigateAsync(request);
 
@@ -89,7 +105,7 @@ public class Navigator : INavigator
                         let childRoute =
                                    // No region name - send request as it is (for composite regions)
                                    (region.Name is not { Length: > 0 }) ? // Region.Name == ""
-                                        request :
+                                         request with { Route = request.Route with { Scheme = Schemes.Current } } :
 
                                         // Region.Name == request.Route.Base and scheme is  "./" : in this case trim both the scheme and base (ie Route.Next.Next)
                                         (region.Name == request.Route.Base && request.Route.IsNested) ?

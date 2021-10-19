@@ -72,7 +72,12 @@ public abstract class ControlNavigator : Navigator
 
         if (regionResponse is not null)
         {
-            request = request with { Route = request.Route.Next };
+            if (!regionResponse.Success)
+            {
+                return regionResponse;
+            }
+
+            request = request with { Route = request.Route with { Scheme = Schemes.Current, Base = request.Route.NextBase(), Path = request.Route.NextPath() } };
         }
 
         var coreResponse = await base.CoreNavigateAsync(request);
@@ -84,7 +89,6 @@ public abstract class ControlNavigator : Navigator
     {
         if (request.Route.IsCurrent)
         {
-            var taskCompletion = new TaskCompletionSource<Options.Option>();
             // Temporarily detach all nested services to prevent accidental
             // navigation to the wrong child
             // eg switching tabs, frame on tab1 won't get detached until some
@@ -92,29 +96,32 @@ public abstract class ControlNavigator : Navigator
             // child will be used for any subsequent navigations.
             var children = Region?.DetachAll();
             var regionTask = await ControlNavigateAsync(request);
-            if (regionTask is null)
+            if (!(regionTask?.Success ?? false))
             {
                 // If a null result task was returned, then no
                 // navigation took place, so just reattach the existing
                 // nav services
                 Region?.AttachAll(children);
             }
-            else
-            {
-                _ = regionTask.Result?.ContinueWith((t) =>
-                {
-                    if (t.Status == TaskStatus.RanToCompletion)
-                    {
-                        taskCompletion.TrySetResult(t.Result);
-                    }
-                    else
-                    {
-                        taskCompletion.TrySetResult(Options.Option.None<object>());
-                    }
-                },
-                  TaskScheduler.Current);
-            }
-            return new NavigationResponse(request, taskCompletion.Task);
+            return regionTask;
+
+            //else
+            //{
+            //    var taskCompletion = new TaskCompletionSource<Options.Option>();
+            //    _ = regionTask.Result?.ContinueWith((t) =>
+            //    {
+            //        if (t.Status == TaskStatus.RanToCompletion)
+            //        {
+            //            taskCompletion.TrySetResult(t.Result);
+            //        }
+            //        else
+            //        {
+            //            taskCompletion.TrySetResult(Options.Option.None<object>());
+            //        }
+            //    },
+            //      TaskScheduler.Current);
+            //    return new NavigationResponse(request, taskCompletion.Task);
+            //}
         }
 
         return null;
@@ -125,9 +132,10 @@ public abstract class ControlNavigator : Navigator
 
     protected async Task<NavigationResponse> ControlNavigateAsync(NavigationRequest request)
     {
-        if (request.Route.Base == CurrentPath)
+        var dontNavigateToDefault = !string.IsNullOrWhiteSpace(CurrentPath) && request.Route.IsDefault;
+        if (request.Route.Base == CurrentPath || dontNavigateToDefault)
         {
-            return null;
+            return new NavigationResponse(request, null, !dontNavigateToDefault);
         }
 
         // Prepare the NavigationContext
@@ -152,7 +160,7 @@ public abstract class ControlNavigator : Navigator
                 completion.ResultCompletion.SetResult(Options.Option.None<object>());
             }
 
-            return null;
+            return new NavigationResponse(request, null, false);
         }
 
         //var regionCompletion = new TaskCompletionSource<object>();
@@ -174,7 +182,7 @@ public abstract class ControlNavigator : Navigator
         {
             request.Cancellation.Value.Register(() =>
             {
-                Region.Navigation().NavigateToPreviousViewAsync(context.Request.Sender);
+                Region.Navigator().NavigateToPreviousViewAsync(context.Request.Sender);
             });
         }
 

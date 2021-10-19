@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Uno.Extensions.Navigation.Controls;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Xaml;
 #else
@@ -56,14 +57,8 @@ namespace Uno.Extensions.Navigation.Regions
 
         public IList<IRegion> Children { get; } = new List<IRegion>();
 
-        public NavigationRegion(FrameworkElement view, IServiceProvider services = null)
+        public NavigationRegion(FrameworkElement view, IServiceProvider services = null) : this(view)
         {
-            View = view;
-            if (view is not null)
-            {
-                View.Loading += ViewLoading;
-            }
-
             if (services is not null)
             {
                 _services = services;
@@ -73,33 +68,70 @@ namespace Uno.Extensions.Navigation.Regions
             }
         }
 
-        public NavigationRegion(FrameworkElement view, IRegion parent)
+
+
+        public NavigationRegion(FrameworkElement view, IRegion parent) : this(view)
+        {
+            Parent = parent;
+        }
+
+        private NavigationRegion(FrameworkElement view)
         {
             View = view;
             if (view is not null)
             {
                 View.Loading += ViewLoading;
+                View.Loaded += ViewLoaded;
             }
-
-            Parent = parent;
         }
 
-        private void ViewLoading(FrameworkElement sender, object args)
+        private async void ViewLoaded(object sender, RoutedEventArgs e)
         {
-            var parent = sender.FindParentRegion(out var routeName);
-            Name = routeName;
-            if (parent is not null)
-            {
-                Parent = parent;
-            }
+            await HandleLoading();
+        }
 
-            sender.Unloaded += (sUnloaded, eUnloaded) =>
+        private async void ViewLoading(FrameworkElement sender, object args)
+        {
+            await HandleLoading();
+        }
+
+        private void ViewUnloaded(object sender, RoutedEventArgs e)
+        {
+            View.Loading += ViewLoading;
+            View.Loaded += ViewLoaded;
+            View.Unloaded -= ViewUnloaded;
+
+            Parent = null;
+        }
+
+        private Task HandleLoading()
+        {
+            if (Parent is null)
             {
+                var parent = View.FindParentRegion(out var routeName);
+                Name = routeName;
                 if (parent is not null)
                 {
-                    parent.Detach(this);
+                    Parent = parent;
                 }
-            };
+            }
+
+            return View.IsLoaded ? HandleLoaded() : Task.CompletedTask;
+        }
+
+        private async Task HandleLoaded()
+        {
+            View.Loading -= ViewLoading;
+            View.Loaded -= ViewLoaded;
+            View.Unloaded += ViewUnloaded;
+
+            await (Parent?.Navigator()?.WaitForPendingNavigation() ?? Task.CompletedTask);
+
+            var defaultRoute = View.GetDefault();
+            if (!string.IsNullOrWhiteSpace(defaultRoute))
+            {
+                this.Navigator().NavigateByPathAsync(View, defaultRoute, data: new Dictionary<string, object> { { "IsDefault", true } });
+            }
         }
     }
 }

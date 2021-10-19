@@ -160,7 +160,8 @@ namespace ExtensionsSampleApp
 
                 var nav = Ioc.Default.GetService<INavigator>();
                 //var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Nested);
-                var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Root);
+                //var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Root);
+                var navResult = nav.NavigateByPathAsync(this, "TabbedPage/doc1", Schemes.Root);
                 //var navResult = nav.NavigateByPathAsync(this, "TabbedPage/doc2/SecondPage/content/Content1", Schemes.Root);
                 //var navResult = nav.NavigateByPathAsync(this, "TwitterPage/notifications/TweetDetailsPage?tweetid=23", Schemes.Root);
                 //navResult.OnCompleted(() => Debug.WriteLine("Nav complete"));
