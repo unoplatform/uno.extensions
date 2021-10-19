@@ -26,7 +26,7 @@ public class NavigatorFactoryBuilder
 
 public class NavigatorFactory : INavigatorFactory
 {
-    private IDictionary<string, Type> ServiceTypes { get; } = new Dictionary<string, Type>();
+    public IDictionary<string, Type> ServiceTypes { get; } = new Dictionary<string, Type>();
 
     private ILogger Logger { get; }
 
@@ -91,20 +91,24 @@ public class NavigatorFactory : INavigatorFactory
         return navService;
     }
 
-    public INavigator CreateService(IServiceProvider services, NavigationRequest request)
+    public INavigator CreateService(IRegion region, NavigationRequest request)
     {
         Logger.LazyLogDebug(() => $"Adding region");
 
         // TODO: Review creation of scoped
-        var scope = services.CreateScope();
-        services = scope.ServiceProvider;
+        var scope = region.Services.CreateScope();
+        var services = scope.ServiceProvider;
+
+        var dialogRegion = new NavigationRegion(null, services);
+        services.AddInstance<IRegion>(dialogRegion);
 
         var mapping = Mappings.FindByPath(request.Route.Base);
+        var serviceType = this.FindServiceByType(mapping.View);//  ServiceTypes[mapping.View.Name];
+        if (serviceType is null)
+        {
+            return null;
+        }
 
-        //var factoryServices = Services.CreateScope().ServiceProvider;
-        //factoryServices.AddInstance<IScopedServiceProvider>(new ScopedServiceProvider(services));
-
-        var serviceType = ServiceTypes[mapping.View.Name];
         var navService = services.GetService(serviceType) as INavigator;
 
         services.AddInstance<INavigator>(navService);

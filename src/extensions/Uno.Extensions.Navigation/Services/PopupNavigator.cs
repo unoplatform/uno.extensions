@@ -25,7 +25,7 @@ namespace Uno.Extensions.Navigation.Services;
 
 public class PopupNavigator : ControlNavigator<Popup>
 {
-    protected override object CurrentView => Control;
+    protected override FrameworkElement CurrentView => Control;
 
     protected override string CurrentPath => CurrentView?.NavigationRoute(Mappings);
 

@@ -19,7 +19,7 @@ namespace Uno.Extensions.Navigation.Services;
 
 public class GridVisiblityNavigator : ControlNavigator<Grid>
 {
-    protected override object CurrentView => CurrentlyVisibleControl;
+    protected override FrameworkElement CurrentView => CurrentlyVisibleControl;
 
     protected override string CurrentPath => CurrentView?.NavigationRoute();
 
@@ -32,11 +32,11 @@ public class GridVisiblityNavigator : ControlNavigator<Grid>
     {
     }
 
-    private UIElement CurrentlyVisibleControl { get; set; }
+    private FrameworkElement CurrentlyVisibleControl { get; set; }
 
     protected override async Task Show(string path, Type viewType, object data)
     {
-        var controlToShow = Control.FindName(path) as UIElement;
+        var controlToShow = Control.FindName(path) as FrameworkElement;
         if (controlToShow is null)
         {
             try
@@ -48,7 +48,7 @@ public class GridVisiblityNavigator : ControlNavigator<Grid>
                 }
 
                 Logger.LazyLogDebug(() => $"Creating instance of type '{viewType.Name}'");
-                controlToShow = Activator.CreateInstance(viewType) as UIElement;
+                controlToShow = Activator.CreateInstance(viewType) as FrameworkElement;
                 if (controlToShow is FrameworkElement fe)
                 {
                     fe.Name = path;
