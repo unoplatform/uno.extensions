@@ -15,7 +15,7 @@ namespace Uno.Extensions.Navigation.Regions
 {
     public sealed class NavigationRegion : IRegion
     {
-        public string Name { get; }
+        public string Name { get; private set; }
 
         public FrameworkElement View { get; }
 
@@ -59,13 +59,12 @@ namespace Uno.Extensions.Navigation.Regions
 
         private AsyncAutoResetEvent NestedServiceWaiter { get; } = new AsyncAutoResetEvent(false);
 
-        public NavigationRegion(string regionName, FrameworkElement view, IServiceProvider services = null)
+        public NavigationRegion(FrameworkElement view, IServiceProvider services = null)
         {
-            Name = regionName;
             View = view;
             if (view is not null)
             {
-                View.Loaded += ViewLoaded;
+                View.Loading += ViewLoading;
             }
 
             if (services is not null)
@@ -77,28 +76,27 @@ namespace Uno.Extensions.Navigation.Regions
             }
         }
 
-        public NavigationRegion(string regionName, FrameworkElement view, IRegion parent)
+        public NavigationRegion(FrameworkElement view, IRegion parent)
         {
-            Name = regionName;
             View = view;
             if (view is not null)
             {
-                View.Loaded += ViewLoaded;
+                View.Loading += ViewLoading;
             }
 
             Parent = parent;
         }
 
-        private void ViewLoaded(object sender, RoutedEventArgs e)
+        private void ViewLoading(FrameworkElement sender, object args)
         {
-            var loadedElement = sender as FrameworkElement;
-            var parent = loadedElement.Parent.FindRegion();
+            var parent = sender.FindParentRegion(out var routeName);
+            Name = routeName;
             if (parent is not null)
             {
                 Parent = parent;
             }
 
-            loadedElement.Unloaded += (sUnloaded, eUnloaded) =>
+            sender.Unloaded += (sUnloaded, eUnloaded) =>
             {
                 if (parent is not null)
                 {
