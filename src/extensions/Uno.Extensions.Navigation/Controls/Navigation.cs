@@ -53,22 +53,22 @@ public static class Navigation
         }
     }
 
-    public static void SetRoute(FrameworkElement element, string value)
+    public static void SetRoute(this FrameworkElement element, string value)
     {
         element.SetValue(RouteProperty, value);
     }
 
-    public static string GetRoute(FrameworkElement element)
+    public static string GetRoute(this FrameworkElement element)
     {
         return (string)element.GetValue(RouteProperty);
     }
 
-    public static void SetRequest(FrameworkElement element, string value)
+    public static void SetRequest(this FrameworkElement element, string value)
     {
         element.SetValue(RequestProperty, value);
     }
 
-    public static string GetRequest(FrameworkElement element)
+    public static string GetRequest(this FrameworkElement element)
     {
         return (string)element.GetValue(RequestProperty);
     }

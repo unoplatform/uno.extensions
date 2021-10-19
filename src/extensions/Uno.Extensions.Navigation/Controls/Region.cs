@@ -46,13 +46,13 @@ public static class Region
             "Name",
             typeof(string),
             typeof(Navigation),
-            new PropertyMetadata(false, NameChanged));
+            new PropertyMetadata(null, NameChanged));
 
     private static void AttachedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         if (d is FrameworkElement element)
         {
-            RegisterElement(element, string.Empty);
+            RegisterElement(element);
         }
     }
 
@@ -60,14 +60,14 @@ public static class Region
     {
         if (d is FrameworkElement element)
         {
-            RegisterElement(element, e.NewValue as string);
+            RegisterElement(element);
         }
     }
 
-    private static void RegisterElement(FrameworkElement element, string regionName)
+    private static void RegisterElement(FrameworkElement element)
     {
         var existingRegion = Region.GetInstance(element);
-        var region = existingRegion ?? new NavigationRegion(regionName, element);
+        var region = existingRegion ?? new NavigationRegion(element);
         element.SetInstance(region);
     }
 
@@ -75,11 +75,11 @@ public static class Region
         where TElement : FrameworkElement
     {
         // Create the Root region
-        var rootRegion = new NavigationRegion(String.Empty, null, services);
+        var rootRegion = new NavigationRegion(null, services);
         services.AddInstance<INavigator>(services.GetInstance<INavigator>());
 
         // Create the element region
-        var elementRegion = new NavigationRegion(String.Empty, element, rootRegion);
+        var elementRegion = new NavigationRegion(element, rootRegion);
         element.SetInstance(elementRegion);
 
         return element;
@@ -105,12 +105,12 @@ public static class Region
         return (bool)element.GetValue(AttachedProperty);
     }
 
-    public static void SetName(FrameworkElement element, string value)
+    public static void SetName(this FrameworkElement element, string value)
     {
         element.SetValue(NameProperty, value);
     }
 
-    public static string GetName(FrameworkElement element)
+    public static string GetName(this FrameworkElement element)
     {
         return (string)element.GetValue(NameProperty);
     }

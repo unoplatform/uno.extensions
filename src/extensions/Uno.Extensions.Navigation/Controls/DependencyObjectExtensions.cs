@@ -12,14 +12,34 @@ namespace Uno.Extensions.Navigation.Controls;
 
 public static class DependencyObjectExtensions
 {
-    public static INavigator Navigator(this DependencyObject element)
+    public static INavigator Navigator(this FrameworkElement element)
     {
         return element.FindRegion().Navigation();
     }
 
-    public static IRegion FindRegion(this DependencyObject element)
+    public static IRegion FindRegion(this FrameworkElement element)
     {
         return element.ServiceForControl<IRegion>(true, element => Region.GetInstance(element));
+    }
+
+    public static IRegion FindParentRegion(this FrameworkElement element, out string routeName)
+    {
+        string name = element?.GetName();
+        var region = element?.Parent.ServiceForControl<IRegion>(true, element =>
+        {
+            if (name is not { Length: > 0 })
+            {
+                var route = (element as FrameworkElement).GetRoute();
+                if (route is { Length: > 0 })
+                {
+                    name = route;
+                }
+            }
+            return Region.GetInstance(element);
+        });
+
+        routeName = name;
+        return region;
     }
 
     private static TService ServiceForControl<TService>(this DependencyObject element, bool searchParent, Func<DependencyObject, TService> retrieveFromElement)
