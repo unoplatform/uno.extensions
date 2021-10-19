@@ -25,14 +25,6 @@ namespace Uno.Extensions.Navigation.Regions
 
         IRegion Parent { get; }
 
-        void Attach(IRegion childRegion);
-
-        void Detach(IRegion childRegion);
-
-        Task<IEnumerable<(IRegion, NavigationRequest)>> GetChildren(Func<IRegion, (IRegion, NavigationRequest)> predicate, bool isBlocking);
-
-        // TODO: Work out how we can remove these
-        void AttachAll(IEnumerable<IRegion> children);
-        IEnumerable<IRegion> DetachAll();
+        IList<IRegion> Children { get; }
     }
 }

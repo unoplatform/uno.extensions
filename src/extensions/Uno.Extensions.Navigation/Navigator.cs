@@ -78,75 +78,37 @@ public class Navigator : INavigator
         return dialogResponse;
     }
 
-    //private bool Match(IRegion region, NavigationRequest request)
-    //{
-    //    return
-    //            // eg  Scheme "./"  Base    ""  Path  "MainPage"  --> MainPage sent to all children
-    //            request.Route.Base is { Length: 0 } ||
-    //            // eg  Request sent through with no changes
-    //            region.Name is { Length: 0 } ||
-    //            // eg  Scheme ""    Base    "Feeds"     Path    "TweetsPage" --> TweetsPage sent to all children
-    //            region.Name == request.Route.Base;
-    //}
-
-    private (IRegion, NavigationRequest) Match(IRegion region, NavigationRequest request)
+    protected virtual async Task<NavigationResponse> CoreNavigateAsync(NavigationRequest request)
     {
-        if (
-            // eg  Scheme "./"  Base    ""  Path  "MainPage"  --> MainPage sent to all children
-            request.Route.Base is not { Length: > 0 } ||
-            // eg  Scheme ""    Base    "Feeds"     Path    "TweetsPage" --> TweetsPage sent to all children
-            region.Name == request.Route.Base
-        )
-        {
-            return (region, request with { Route = request.Route.Next });
-        }
-        // eg  Request sent through with no changes
-        if (region.Name is not { Length: > 0 })
-        {
-            return (region, request with { Route = request.Route with { Scheme = Schemes.Current } });
-        }
-
-        return default;
-    }
-
-    protected virtual Task<NavigationResponse> CoreNavigateAsync(NavigationRequest request)
-    {
-        //if (Region.View is not null)
-        //{
-        //    var completion = new TaskCompletionSource<NavigationResponse>();
-        //    Region.View.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
-        //    {
-        //        var response = await ChildrenNavigateAsync(request);
-        //        completion.SetResult(response);
-        //    });
-
-        //    return completion.Task;
-        //}
-        //else
-        //{
-        return ChildrenNavigateAsync(request);
-        //}
-    }
-
-    private async Task<NavigationResponse> ChildrenNavigateAsync(NavigationRequest request)
-    {
-        var route = request.Route.Base;
-
-        var children = await Region.GetChildren(child => Match(child, request), !request.Route.IsLast);
-        if (!(children?.Any() ?? false))
+        if (request.Route.IsEmpty)
         {
             return null;
         }
 
-        return await ChildrenNavigateAsync(children);
-    }
+        var route = request.Route.Base;
 
-    private async Task<NavigationResponse> ChildrenNavigateAsync(IEnumerable<(IRegion, NavigationRequest)> children) // IEnumerable<INavigationService> children, NavigationRequest request)
-    {
+        // Scenarios:
+        // Region.Name == "" : in this case just forward the request unchanged
+        // Region.Name == request.Route.Base and scheme is  "./" : in this case trim both the scheme and base (ie Route.Next.Next)
+        // Region.Name == request.Route.Base : trim the base (ie Route.Next)
+        // Scheme is "./" : trim the scheme (ie Route.Next)
+        var children = (from child in Region.Children
+                       let childRoute =
+                                    (child.Name == request.Route.Base && request.Route.IsNested) ?
+                                       request with { Route = request.Route.Next.Next } :
+                                       ((child.Name == request.Route.Base || request.Route.IsNested) ?
+                                           request with { Route = request.Route.Next } :
+                                           request)
+                       where
+                           child.Name is not { Length: > 0 } ||
+                           child.Name == request.Route.Base
+                       select
+                           new { Child = child, Route = childRoute }).ToArray();
+
         var tasks = new List<Task<NavigationResponse>>();
         foreach (var region in children)
         {
-            tasks.Add(region.Item1.NavigateAsync(region.Item2));
+            tasks.Add(region.Child.NavigateAsync(region.Route));
         }
 
         await Task.WhenAll(tasks);

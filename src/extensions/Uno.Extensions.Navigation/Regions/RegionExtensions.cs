@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 #else
@@ -16,5 +18,26 @@ namespace Uno.Extensions.Navigation.Regions
 
         public static Task<NavigationResponse> NavigateAsync(this IRegion region, NavigationRequest request) => region.Navigation()?.NavigateAsync(request);
 
+        public static void Attach(this IRegion region, IRegion childRegion)
+        {
+            region.Children.Add(childRegion);
+        }
+
+        public static void Detach(this IRegion region, IRegion childRegion)
+        {
+            region.Children.Remove(kvp => kvp.Name == childRegion.Name);
+        }
+
+        public static void AttachAll(this IRegion region, IEnumerable<IRegion> children)
+        {
+            children.ForEach(n => region.Attach(n));
+        }
+
+        public static IEnumerable<IRegion> DetachAll(this IRegion region)
+        {
+            var children = region.Children.ToArray();
+            children.ForEach(child => region.Detach(child));
+            return children;
+        }
     }
 }
