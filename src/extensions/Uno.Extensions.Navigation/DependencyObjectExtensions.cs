@@ -1,4 +1,6 @@
 ﻿using System;
+using Uno.Extensions.Navigation;
+using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Regions;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Xaml;
@@ -8,7 +10,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 #endif
 
-namespace Uno.Extensions.Navigation.Controls;
+namespace Uno.Extensions.Navigation;
 
 public static class DependencyObjectExtensions
 {
@@ -19,13 +21,13 @@ public static class DependencyObjectExtensions
 
     public static IRegion FindRegion(this FrameworkElement element)
     {
-        return element.ServiceForControl<IRegion>(true, element => Region.GetInstance(element));
+        return element.ServiceForControl(true, element => element.GetInstance());
     }
 
     public static IRegion FindParentRegion(this FrameworkElement element, out string routeName)
     {
-        string name = element?.GetName();
-        var region = element?.Parent.ServiceForControl<IRegion>(true, element =>
+        var name = element?.GetName();
+        var region = element?.Parent.ServiceForControl(true, element =>
         {
             if (name is not { Length: > 0 })
             {
@@ -35,7 +37,7 @@ public static class DependencyObjectExtensions
                     name = route;
                 }
             }
-            return Region.GetInstance(element);
+            return element.GetInstance();
         });
 
         routeName = name;
@@ -61,6 +63,6 @@ public static class DependencyObjectExtensions
         }
 
         var parent = VisualTreeHelper.GetParent(element);
-        return parent.ServiceForControl<TService>(searchParent, retrieveFromElement);
+        return parent.ServiceForControl(searchParent, retrieveFromElement);
     }
 }
