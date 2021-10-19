@@ -8,6 +8,7 @@ using Uno.Extensions.Navigation.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Services;
 using Uno.Extensions.Navigation.Regions;
+using System.Threading.Tasks;
 
 namespace ExtensionsSampleApp.Region.Managers
 {
@@ -50,7 +51,7 @@ namespace ExtensionsSampleApp.Region.Managers
         {
         }
 
-        protected override void Show(string path, Type view, object data)
+        protected override async Task Show(string path, Type view, object data)
         {
             if (int.TryParse(path, out var index))
             {

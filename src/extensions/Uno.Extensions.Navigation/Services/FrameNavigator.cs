@@ -54,7 +54,7 @@ public class FrameNavigator : ControlNavigator<Frame>
                     NavigatedBackAsync(context);
     }
 
-    private Task NavigateForwardAsync(NavigationContext context)
+    private async Task NavigateForwardAsync(NavigationContext context)
     {
         var numberOfPagesToRemove = context.Request.Route.FrameNumberOfPagesToRemove;
         // We remove 1 less here because we need to remove the current context, after the navigation is completed
@@ -65,7 +65,7 @@ public class FrameNavigator : ControlNavigator<Frame>
         }
 
         // Add the new context to the list of contexts and then navigate away
-        Show(context.Request.Route.Base, context.Mapping?.View, context.Request.Route.Data);
+        await Show(context.Request.Route.Base, context.Mapping?.View, context.Request.Route.Data);
 
         // If path starts with / then remove all prior pages and corresponding contexts
         if (context.Request.Route.FrameIsRooted)
@@ -81,8 +81,6 @@ public class FrameNavigator : ControlNavigator<Frame>
         }
 
         InitialiseView(context);
-
-        return Task.CompletedTask;
     }
 
     private Task NavigatedBackAsync(NavigationContext context)
@@ -152,7 +150,7 @@ public class FrameNavigator : ControlNavigator<Frame>
         }
     }
 
-    protected override void Show(string path, Type viewType, object data)
+    protected override async Task Show(string path, Type viewType, object data)
     {
         try
         {
@@ -161,6 +159,7 @@ public class FrameNavigator : ControlNavigator<Frame>
                 Logger.LazyLogDebug(() => $"Invoking Frame.Navigate to type '{viewType.Name}'");
                 Control.Navigated -= Frame_Navigated;
                 var nav = Control.Navigate(viewType, data);
+                await (Control.Content as FrameworkElement).EnsureLoaded();
                 Control.Navigated += Frame_Navigated;
                 Logger.LazyLogDebug(() => $"Frame.Navigate completed");
             }

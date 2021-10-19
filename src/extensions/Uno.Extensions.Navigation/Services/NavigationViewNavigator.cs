@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Regions;
+using System.Threading.Tasks;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Xaml;
 #else
@@ -58,7 +59,7 @@ public class NavigationViewNavigator : ControlNavigator<Microsoft.UI.Xaml.Contro
     {
     }
 
-    protected override void Show(string path, Type view, object data)
+    protected override async Task Show(string path, Type view, object data)
     {
         var item = (from mi in Control.MenuItems.OfType<FrameworkElement>()
                     where mi.Name == path

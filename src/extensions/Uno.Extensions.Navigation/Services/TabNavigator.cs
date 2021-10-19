@@ -5,6 +5,7 @@ using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.ViewModels;
 using Uno.Extensions.Navigation.Regions;
+using System.Threading.Tasks;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -59,7 +60,7 @@ public class TabNavigator : ControlNavigator<TabView>
                 select t).FirstOrDefault();
     }
 
-    protected override void Show(string path, Type view, object data)
+    protected override async Task Show(string path, Type view, object data)
     {
         try
         {
@@ -69,6 +70,7 @@ public class TabNavigator : ControlNavigator<TabView>
                 Logger.LazyLogDebug(() => $"Selecting tab '{path}'");
                 Control.SelectionChanged -= Tabs_SelectionChanged;
                 Control.SelectedItem = tab;
+                await (tab.Content as FrameworkElement).EnsureLoaded();
                 Control.SelectionChanged += Tabs_SelectionChanged;
                 Logger.LazyLogDebug(() => $"Tab '{path}' selected");
             }
