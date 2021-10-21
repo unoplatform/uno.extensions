@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using ExtensionsSampleApp.Region.Managers;
 using ExtensionsSampleApp.ViewModels;
+using ExtensionsSampleApp.ViewModels.Twitter;
 using ExtensionsSampleApp.Views;
 using ExtensionsSampleApp.Views.Twitter;
 using Microsoft.Extensions.DependencyInjection;

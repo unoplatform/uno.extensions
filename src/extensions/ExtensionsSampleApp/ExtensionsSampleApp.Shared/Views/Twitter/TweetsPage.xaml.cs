@@ -1,4 +1,5 @@
 ﻿using ExtensionsSampleApp.ViewModels;
+using ExtensionsSampleApp.ViewModels.Twitter;
 using Uno.Extensions;
 using Uno.Extensions.Navigation;
 using Windows.UI.Xaml.Controls;
