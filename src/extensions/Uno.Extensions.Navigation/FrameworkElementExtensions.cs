@@ -78,10 +78,5 @@ public static class FrameworkElementExtensions
         {
             spAware.Inject(services);
         }
-
-        if (view is IInjectable<IRouteMappings> mappings)
-        {
-            mappings.Inject(services.GetService<IRouteMappings>());
-        }
     }
 }

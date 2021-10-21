@@ -25,9 +25,9 @@ namespace ExtensionsSampleApp.ViewModels
         public ICommand NavigateToDoc1Command { get; }
         public ICommand NavigateToThirdPageCommand { get; }
 
-        private void NavigateToDoc1() => Navigation.NavigateToViewModelAsync<TabDoc1ViewModel>(Mappings, this);
+        private void NavigateToDoc1() => Navigation.NavigateToViewModelAsync<TabDoc1ViewModel>(this);
 
-        private void NavigateToThirdPage() => Navigation.NavigateToViewModelAsync<ThirdViewModel>(Mappings, this, RouteConstants.RelativePath.Parent(1));
+        private void NavigateToThirdPage() => Navigation.NavigateToViewModelAsync<ThirdViewModel>(this, RouteConstants.RelativePath.Parent(1));
 
     }
 
