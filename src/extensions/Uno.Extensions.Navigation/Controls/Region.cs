@@ -46,17 +46,9 @@ public static class Region
             "Name",
             typeof(string),
             typeof(Navigation),
-            new PropertyMetadata(null, NameChanged));
+            new PropertyMetadata(null));
 
     private static void AttachedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        if (d is FrameworkElement element)
-        {
-            RegisterElement(element);
-        }
-    }
-
-    private static void NameChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         if (d is FrameworkElement element)
         {

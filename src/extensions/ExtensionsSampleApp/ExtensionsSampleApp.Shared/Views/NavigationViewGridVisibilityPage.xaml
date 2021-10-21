@@ -20,13 +20,13 @@
                 <muxc:NavigationViewItem Tag="home"
                                          Icon="Home"
                                          Content="Home"
-                                         nav:Navigation.Route="../.././gridcontent1" />
+                                         nav:Navigation.Request="../.././gridcontent1" />
                 <muxc:NavigationViewItemSeparator />
                 <muxc:NavigationViewItemHeader x:Name="MainPagesHeader"
                                                Content="Main pages" />
                 <muxc:NavigationViewItem Tag="apps"
                                          Content="Apps"
-                                         nav:Navigation.Route="../.././Content2">
+                                         nav:Navigation.Request="../.././Content2">
                     <muxc:NavigationViewItem.Icon>
                         <FontIcon FontFamily="Segoe MDL2 Assets"
                                   Glyph="&#xEB3C;" />

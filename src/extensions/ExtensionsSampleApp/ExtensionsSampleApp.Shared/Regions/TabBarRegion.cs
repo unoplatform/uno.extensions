@@ -35,7 +35,7 @@ namespace ExtensionsSampleApp.Region.Managers
         private void ControlSelectionChanged(TabBar sender, TabBarSelectionChangedEventArgs args)
         {
             var tbi = args.NewItem as TabBarItem;
-            var path = Uno.Extensions.Navigation.Controls.Navigation.GetRoute(tbi) ?? tbi.Name;
+            var path = tbi.GetName() ?? tbi.Name;
             if (!string.IsNullOrEmpty(path))
             {
                 Region.Navigator().NavigateByPathAsync(null, path);
