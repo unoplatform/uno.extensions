@@ -21,6 +21,13 @@ public static class Navigation
             typeof(Navigation),
             new PropertyMetadata(null, RequestChanged));
 
+    public static readonly DependencyProperty DataProperty =
+    DependencyProperty.RegisterAttached(
+        "Data",
+        typeof(object),
+        typeof(Navigation),
+        new PropertyMetadata(null));
+
     private static void RequestChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         if (d is ButtonBase element)
@@ -29,7 +36,7 @@ public static class Navigation
             var command = new AsyncRelayCommand(async () =>
             {
                 var nav = element.Navigator();
-                await nav.NavigateByPathAsync(element, path, Schemes.Current);
+                await nav.NavigateByPathAsync(element, path, Schemes.Current, element.GetData());
             });
             var binding = new Binding { Source = command, Path = new PropertyPath(nameof(command.IsRunning)), Converter = new InvertConverter() };
 
@@ -54,6 +61,16 @@ public static class Navigation
     public static string GetRequest(this FrameworkElement element)
     {
         return (string)element.GetValue(RequestProperty);
+    }
+
+    public static void SetData(this FrameworkElement element, object value)
+    {
+        element.SetValue(DataProperty, value);
+    }
+
+    public static object GetData(this FrameworkElement element)
+    {
+        return (object)element.GetValue(DataProperty);
     }
 
     private class InvertConverter : IValueConverter
