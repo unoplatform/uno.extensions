@@ -177,7 +177,7 @@ public abstract class ControlNavigator : Navigator
             request.Cancellation.Value.Register(() =>
             {
                 context.Cancel(); 
-                Region.Navigator().NavigateToPreviousViewAsync(context.Request.Sender);
+                context.Navigation.NavigateToPreviousViewAsync(context.Request.Sender);
             });
         }
 
