@@ -23,13 +23,13 @@ namespace Uno.Extensions.Configuration
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            Logger.LazyLogDebug(() => $"Started");
+            Logger.LogDebugMessage($"Started");
             return Reload.ReloadAllFileConfigurationProviders();
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            Logger.LazyLogDebug(() => $"Stopped");
+            Logger.LogDebugMessage($"Stopped");
             return Task.CompletedTask;
         }
     }

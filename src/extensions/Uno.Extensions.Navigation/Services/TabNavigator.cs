@@ -40,10 +40,10 @@ public class TabNavigator : ControlNavigator<TabView>
 
     private void Tabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        Logger.LazyLogDebug(() => $"Tab changed");
+        Logger.LogDebugMessage($"Tab changed");
         var tvi = e.AddedItems?.FirstOrDefault() as TabViewItem;
         var tabName = tvi.Name;
-        Logger.LazyLogDebug(() => $"Navigating to path {tabName}");
+        Logger.LogDebugMessage($"Navigating to path {tabName}");
         //Navigation.NavigateByPathAsync(null, tabName);
 
         var request = Mappings.FindByPath(tabName).AsRequest(this);
@@ -54,7 +54,7 @@ public class TabNavigator : ControlNavigator<TabView>
 
     private TabViewItem FindByName(string tabName)
     {
-        Logger.LazyLogDebug(() => $"Looking for tab with name '{tabName}'");
+        Logger.LogDebugMessage($"Looking for tab with name '{tabName}'");
         return (from t in Control.TabItems.OfType<TabViewItem>()
                 where t.Name == tabName
                 select t).FirstOrDefault();
@@ -67,21 +67,21 @@ public class TabNavigator : ControlNavigator<TabView>
             var tab = FindByName(path);
             if (tab is not null)
             {
-                Logger.LazyLogDebug(() => $"Selecting tab '{path}'");
+                Logger.LogDebugMessage($"Selecting tab '{path}'");
                 Control.SelectionChanged -= Tabs_SelectionChanged;
                 Control.SelectedItem = tab;
                 await (tab.Content as FrameworkElement).EnsureLoaded();
                 Control.SelectionChanged += Tabs_SelectionChanged;
-                Logger.LazyLogDebug(() => $"Tab '{path}' selected");
+                Logger.LogDebugMessage($"Tab '{path}' selected");
             }
             else
             {
-                Logger.LazyLogWarning(() => $"Tab '{path}' not found");
+                Logger.LogWarningMessage($"Tab '{path}' not found");
             }
         }
         catch (Exception ex)
         {
-            Logger.LazyLogError(() => $"Unable to show tab - {ex.Message}");
+            Logger.LogErrorMessage($"Unable to show tab - {ex.Message}");
         }
     }
 }

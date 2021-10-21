@@ -38,18 +38,18 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
         {
             if (viewType is null)
             {
-                Logger.LazyLogError(() => "Missing view for navigation path '{path}'");
+                Logger.LogErrorMessage("Missing view for navigation path '{path}'");
             }
 
-            Logger.LazyLogDebug(() => $"Creating instance of type '{viewType.Name}'");
+            Logger.LogDebugMessage($"Creating instance of type '{viewType.Name}'");
             var content = Activator.CreateInstance(viewType);
             Control.Content = content;
             await (Control.Content as FrameworkElement).EnsureLoaded();
-            Logger.LazyLogDebug(() => "Instance created");
+            Logger.LogDebugMessage("Instance created");
         }
         catch (Exception ex)
         {
-            Logger.LazyLogError(() => $"Unable to create instance - {ex.Message}");
+            Logger.LogErrorMessage($"Unable to create instance - {ex.Message}");
         }
     }
 }

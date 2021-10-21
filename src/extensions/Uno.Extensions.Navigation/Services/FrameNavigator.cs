@@ -40,7 +40,7 @@ public class FrameNavigator : ControlNavigator<Frame>
     {
         if (Control.Content is not null)
         {
-            Logger.LazyLogDebug(() => $"Navigating to type '{Control.SourcePageType.Name}' (initial Content set on Frame)");
+            Logger.LogDebugMessage($"Navigating to type '{Control.SourcePageType.Name}' (initial Content set on Frame)");
             UpdateCurrentView();
         }
 
@@ -117,7 +117,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 
     private void Frame_Navigated(object sender, NavigationEventArgs e)
     {
-        Logger.LazyLogDebug(() => $"Frame has navigated to page '{e.SourcePageType.Name}'");
+        Logger.LogDebugMessage($"Frame has navigated to page '{e.SourcePageType.Name}'");
 
         UpdateCurrentView();
     }
@@ -129,7 +129,7 @@ public class FrameNavigator : ControlNavigator<Frame>
             Control.Navigated -= Frame_Navigated;
             if (parameter is not null)
             {
-                Logger.LazyLogDebug(() => $"Replacing last backstack item to inject parameter '{parameter.GetType().Name}'");
+                Logger.LogDebugMessage($"Replacing last backstack item to inject parameter '{parameter.GetType().Name}'");
                 // If a parameter is being sent back, we need to replace
                 // the last frame on the backstack with one that has the correct
                 // parameter value. This value can be extracted via the OnNavigatedTo method
@@ -139,14 +139,14 @@ public class FrameNavigator : ControlNavigator<Frame>
                 Control.BackStack.Add(newEntry);
             }
 
-            Logger.LazyLogDebug(() => $"Invoking Frame.GoBack");
+            Logger.LogDebugMessage($"Invoking Frame.GoBack");
             Control.GoBack();
-            Logger.LazyLogDebug(() => $"Frame.GoBack completed");
+            Logger.LogDebugMessage($"Frame.GoBack completed");
             Control.Navigated += Frame_Navigated;
         }
         catch (Exception ex)
         {
-            Logger.LazyLogError(() => $"Unable to go back to page - {ex.Message}");
+            Logger.LogErrorMessage($"Unable to go back to page - {ex.Message}");
         }
     }
 
@@ -156,31 +156,31 @@ public class FrameNavigator : ControlNavigator<Frame>
         {
             if (Control.Content?.GetType() != viewType)
             {
-                Logger.LazyLogDebug(() => $"Invoking Frame.Navigate to type '{viewType.Name}'");
+                Logger.LogDebugMessage($"Invoking Frame.Navigate to type '{viewType.Name}'");
                 Control.Navigated -= Frame_Navigated;
                 var nav = Control.Navigate(viewType, data);
                 await (Control.Content as FrameworkElement).EnsureLoaded();
                 Control.Navigated += Frame_Navigated;
-                Logger.LazyLogDebug(() => $"Frame.Navigate completed");
+                Logger.LogDebugMessage($"Frame.Navigate completed");
             }
         }
         catch (Exception ex)
         {
-            Logger.LazyLogError(() => $"Unable to navigate to page - {ex.Message}");
+            Logger.LogErrorMessage($"Unable to navigate to page - {ex.Message}");
         }
     }
 
     private void RemoveLastFromBackStack()
     {
-        Logger.LazyLogDebug(() => $"Removing last item from backstack (current count = {Control.BackStack.Count})");
+        Logger.LogDebugMessage($"Removing last item from backstack (current count = {Control.BackStack.Count})");
         Control.BackStack.RemoveAt(Control.BackStack.Count - 1);
-        Logger.LazyLogDebug(() => $"Item removed from backstack");
+        Logger.LogDebugMessage($"Item removed from backstack");
     }
 
     private void ClearBackStack()
     {
-        Logger.LazyLogDebug(() => $"Clearing backstack");
+        Logger.LogDebugMessage($"Clearing backstack");
         Control.BackStack.Clear();
-        Logger.LazyLogDebug(() => $"Backstack cleared");
+        Logger.LogDebugMessage($"Backstack cleared");
     }
 }

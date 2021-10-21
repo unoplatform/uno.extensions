@@ -37,7 +37,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 
     protected override async Task NavigateWithContextAsync(NavigationContext context)
     {
-        Logger.LazyLogDebug(() => $"Navigating to path '{context.Request.Route.Base}' with view '{context.Mapping?.View?.Name}'");
+        Logger.LogDebugMessage($"Navigating to path '{context.Request.Route.Base}' with view '{context.Mapping?.View?.Name}'");
         await Show(context.Request.Route.Base, context.Mapping?.View, context.Request.Route.Data);
 
         InitialiseView(context);
