@@ -132,10 +132,9 @@ public abstract class ControlNavigator : Navigator
 
     protected async Task<NavigationResponse> ControlNavigateAsync(NavigationRequest request)
     {
-        var dontNavigateToDefault = !string.IsNullOrWhiteSpace(CurrentPath) && request.Route.IsDefault;
-        if (request.Route.Base == CurrentPath || dontNavigateToDefault)
+        if (request.Route.Base == CurrentPath)
         {
-            return new NavigationResponse(request, null, !dontNavigateToDefault);
+            return new NavigationResponse(request);
         }
 
         // Prepare the NavigationContext
@@ -160,7 +159,7 @@ public abstract class ControlNavigator : Navigator
                 completion.ResultCompletion.SetResult(Options.Option.None<object>());
             }
 
-            return new NavigationResponse(request, null, false);
+            return new NavigationResponse(request, false);
         }
 
         //var regionCompletion = new TaskCompletionSource<object>();
@@ -173,20 +172,21 @@ public abstract class ControlNavigator : Navigator
 
         await NavigateWithContextAsync(context);
 
+        if (request.Cancellation.HasValue && CanGoBack)
+        {
+            request.Cancellation.Value.Register(() =>
+            {
+                context.Cancel(); 
+                Region.Navigator().NavigateToPreviousViewAsync(context.Request.Sender);
+            });
+        }
+
         // Start view and viewmodels
         // (this is safe for null view or null viewmodel)
         await CurrentView.Start(request);
         await CurrentViewModel.Start(request);
 
-        if (request.Cancellation.HasValue && CanGoBack)
-        {
-            request.Cancellation.Value.Register(() =>
-            {
-                Region.Navigator().NavigateToPreviousViewAsync(context.Request.Sender);
-            });
-        }
-
-        return new NavigationResponse(request, resultTask?.Task);
+        return new NavigationResultResponse(request, resultTask?.Task);
     }
 
     protected abstract Task NavigateWithContextAsync(NavigationContext context);

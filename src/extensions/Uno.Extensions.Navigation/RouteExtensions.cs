@@ -38,6 +38,8 @@ public static class RouteExtensions
         return (idx <= 0 || (idx + 1) > route.Path.Length) ? String.Empty : route.Path.Substring(idx + 1);
     }
 
+    public static string WithScheme(this string path, string scheme) => string.IsNullOrWhiteSpace(scheme) ? path : $"{scheme}{path}";
+
     public static Route AsRoute(this Uri uri, object data = null)
     {
         var path = uri.OriginalString;

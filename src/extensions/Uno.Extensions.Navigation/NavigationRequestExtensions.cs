@@ -12,9 +12,24 @@ public static class NavigationRequestExtensions
         return request.Result is not null;
     }
 
-    public static NavigationRequest AsRequest(this RouteMap map, object sender)
+    public static NavigationRequest AsRequest<TResult>(this RouteMap map, object sender, object data = null, CancellationToken cancellationToken = default)
     {
-        var request = new NavigationRequest(sender, new Uri(map.Path, UriKind.Relative).AsRoute());
+        return map.AsRequest(sender, data, cancellationToken, typeof(TResult));
+    }
+
+    public static NavigationRequest AsRequest(this RouteMap map, object sender, object data = null, CancellationToken cancellationToken = default, Type resultType = null)
+    {
+        return map.Path.AsRequest(sender, data, cancellationToken, resultType);
+    }
+
+    public static NavigationRequest AsRequest<TResult>(this string path, object sender, object data = null, CancellationToken cancellationToken = default)
+    {
+        return path.AsRequest(sender, data, cancellationToken, typeof(TResult));
+    }
+
+    public static NavigationRequest AsRequest(this string path, object sender, object data = null, CancellationToken cancellationToken = default, Type resultType = null)
+    {
+        var request = new NavigationRequest(sender, path.AsRoute(data), cancellationToken, resultType);
         return request;
     }
 
@@ -25,13 +40,13 @@ public static class NavigationRequestExtensions
         dataFactor.Parameters = request.Route.Data;
 
         var mapping = scopedServices.GetService<IRouteMappings>().FindByPath(request.Route.Base);
-
+        var cancel = (request.Cancellation is not null) ?
+                                CancellationTokenSource.CreateLinkedTokenSource(request.Cancellation.Value) :
+                                new CancellationTokenSource();
         var context = new NavigationContext(
                             scopedServices,
-                            request,
-                            (request.Cancellation is not null) ?
-                                CancellationTokenSource.CreateLinkedTokenSource(request.Cancellation.Value) :
-                                new CancellationTokenSource(),
+                            request with { Cancellation = cancel.Token },
+                            cancel,
                             mapping);
 
         if (request.RequiresResponse())

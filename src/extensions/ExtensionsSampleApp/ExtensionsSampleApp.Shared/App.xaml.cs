@@ -159,11 +159,12 @@ namespace ExtensionsSampleApp
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
                 var nav = Ioc.Default.GetService<INavigator>();
+                var maps = Ioc.Default.GetService<IRouteMappings>();
                 //var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Nested);
-                //var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Root);
-                var navResult = nav.NavigateByPathAsync(this, "TabbedPage/doc1", Schemes.Root);
-                //var navResult = nav.NavigateByPathAsync(this, "TabbedPage/doc2/SecondPage/content/Content1", Schemes.Root);
-                //var navResult = nav.NavigateByPathAsync(this, "TwitterPage/notifications/TweetDetailsPage?tweetid=23", Schemes.Root);
+                var navResult = nav.NavigateToViewAsync<MainPage>(maps, this, Schemes.Root);
+                //var navResult = nav.NavigateToRouteAsync(this, "TabbedPage/doc1", Schemes.Root);
+                //var navResult = nav.NavigateToRouteAsync(this, "TabbedPage/doc2/SecondPage/content/Content1", Schemes.Root);
+                //var navResult = nav.NavigateToRouteAsync(this, "TwitterPage/notifications/TweetDetailsPage?tweetid=23", Schemes.Root);
                 //navResult.OnCompleted(() => Debug.WriteLine("Nav complete"));
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
                 {

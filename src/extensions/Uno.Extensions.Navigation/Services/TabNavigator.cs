@@ -44,7 +44,7 @@ public class TabNavigator : ControlNavigator<TabView>
         var tvi = e.AddedItems?.FirstOrDefault() as TabViewItem;
         var tabName = tvi.Name;
         Logger.LogDebugMessage($"Navigating to path {tabName}");
-        //Navigation.NavigateByPathAsync(null, tabName);
+        //Navigation.NavigateToRouteAsync(null, tabName);
 
         var request = Mappings.FindByPath(tabName).AsRequest(this);
         var context = request.BuildNavigationContext(Region.Services);

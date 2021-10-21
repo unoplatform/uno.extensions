@@ -9,13 +9,20 @@ namespace ExtensionsSampleApp.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class TabbedPage : IInjectable<INavigator>
+    public sealed partial class TabbedPage : IInjectable<INavigator>, IInjectable<IRouteMappings>
     {
         private INavigator Navigation { get; set; }
+
+        private IRouteMappings Mappings { get; set; }
 
         public void Inject(INavigator entity)
         {
             Navigation = entity;
+        }
+
+        public void Inject(IRouteMappings mappings)
+        {
+            Mappings = mappings;
         }
 
         public TabbedPage()
@@ -25,12 +32,12 @@ namespace ExtensionsSampleApp.Views
 
         private void NavigateToDoc0Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-            Navigation.NavigateToViewModelAsync<TabDoc0ViewModel>(this, Schemes.Nested);
+            Navigation.NavigateToViewModelAsync<TabDoc0ViewModel>(Mappings, this, Schemes.Nested);
         }
 
         private async void ContentDialogResponseClick(object sender, RoutedEventArgs e)
         {
-            var navresult = await Navigation.NavigateToViewAsync<SimpleContentDialog, ContentDialogResult>(this, Schemes.Dialog);
+            var navresult = await Navigation.NavigateToViewForResultAsync<SimpleContentDialog, ContentDialogResult>(Mappings, this, Schemes.Dialog);
             var response = await navresult.Result;
         }
 

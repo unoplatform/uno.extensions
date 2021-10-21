@@ -46,7 +46,7 @@ public class NavigationViewNavigator : ControlNavigator<Microsoft.UI.Xaml.Contro
         var path = tbi.GetName() ?? tbi.Name;
         if (!string.IsNullOrEmpty(path))
         {
-            Region.Navigator().NavigateByPathAsync(null, path);
+            Region.Navigator().NavigateToRouteAsync(null, path);
         }
     }
 

@@ -38,6 +38,12 @@ public static class ViewModelExtensions
             {
                 spAware.Inject(context.Services);
             }
+
+            if (vm is IInjectable<IRouteMappings> mappings)
+            {
+                mappings.Inject(context.Services.GetService<IRouteMappings>());
+            }
+
             return vm;
         }
 

@@ -30,7 +30,7 @@ public class PageVisualStateNavigator : ControlNavigator<Page>
 
     private string CurrentVisualState { get; set; }
 
-    protected override async Task Show(string path, Type view, object data)
+    protected override async Task Show(string path, Type viewType, object data)
     {
         CurrentVisualState = path;
         VisualStateManager.GoToState(Control, path, true);

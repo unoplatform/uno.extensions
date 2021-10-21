@@ -38,7 +38,7 @@ namespace ExtensionsSampleApp.Region.Managers
             var path = tbi.GetName() ?? tbi.Name;
             if (!string.IsNullOrEmpty(path))
             {
-                Region.Navigator().NavigateByPathAsync(null, path);
+                Region.Navigator().NavigateToRouteAsync(null, path);
             }
         }
 

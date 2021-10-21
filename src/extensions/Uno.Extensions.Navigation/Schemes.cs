@@ -3,6 +3,7 @@
 public static class Schemes
 {
     public const string Root = "/";
+    public const string None = "";
     public const string Current = "";
     public const string Nested = "./";
     public const string Parent = "../";

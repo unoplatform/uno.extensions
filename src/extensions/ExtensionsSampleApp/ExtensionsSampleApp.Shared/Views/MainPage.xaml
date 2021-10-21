@@ -6,67 +6,111 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:nav="using:Uno.Extensions.Navigation.Controls"
       NavigationCacheMode="Required"
-      			 xmlns:ios="http://uno.ui/ios" xmlns:views="using:ExtensionsSampleApp.Views"
+      xmlns:ios="http://uno.ui/ios"
+      xmlns:views="using:ExtensionsSampleApp.Views"
       mc:Ignorable="d">
     <Page.Resources>
         <DataTemplate x:Key="PickerTemplate">
-            <TextBlock Text="{Binding}" Foreground="Green" FontSize="32"/>
+            <TextBlock Text="{Binding}"
+                       Foreground="Green"
+                       FontSize="32" />
         </DataTemplate>
+        <Style TargetType="TextBlock">
+            <Setter Property="Margin"
+                    Value="0,8,0,0" />
+        </Style>
+        <Style TargetType="TextBlock" x:Key="ResultTextStyle">
+            <Setter Property="Margin"
+                    Value="0,0,0,8" />
+            <Setter Property="Foreground"
+                    Value="DarkOrange" />
+        </Style>
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <ScrollViewer>
-            <StackPanel>
+            <StackPanel Margin="8">
                 <TextBlock Margin="20"
-                       FontSize="30"><Run Text="Main - " /><Run Text="{Binding Title}" /></TextBlock>
+                           FontSize="30"><Run Text="Main - " /><Run Text="{Binding Title}" /></TextBlock>
+
+                <TextBlock Text="Navigation.NavigateAsync(&quot;../SecondPage&quot;.AsRequest(this)) - In click handler, navigate to a request created from a path"/>
                 <Button Content="Next page - NavigationRequest"
-                    Click="NextPageNavigationRequestClick" />
+                        Click="NextPageNavigationRequestClick" />
+
+                <TextBlock Text="nav:Navigation.Request=&quot;../SecondPage&quot; - On button click - navigates to route defined by the Request attacted property" />
                 <Button Content="Next page - Navigation Path"
-                        nav:Navigation.Request="../SecondPage"
-                        />
+                        nav:Navigation.Request="../SecondPage" />
+
+                <TextBlock Text="nav:Navigation.Request=&quot;../SecondPage&quot; nav:Navigation.Data=&quot;Hello World!&quot; - On button click, navigates to the route and passes data" />
                 <Button Content="Next page - Navigation Path with Data"
                         nav:Navigation.Request="../SecondPage"
-                        nav:Navigation.Data="Hello World!"/>
-                <Button Content="Next page - Navigation Path with delay"
+                        nav:Navigation.Data="Hello World!" />
 
-                    nav:Navigation.Request="../SecondPage?delay=5000" />
+                <TextBlock Text="nav:Navigation.Request=&quot;../SecondPage?delay=5000&quot; - Delay is introduced in MainViewModel" />
+                <Button Content="Next page - Navigation Path with delay"
+                        nav:Navigation.Request="../SecondPage?delay=5000" />
+
+                <TextBlock Text="Navigation.NavigateAsync&lt;SecondPage&gt;() - In click handler, navigates based on page type" />
                 <Button Content="Next page - NavigateToViewAsync"
-                    Click="NextPageNavigateToViewAsyncClick" />
+                        Click="NextPageNavigateToViewAsyncClick" />
+
+                <TextBlock Text="Navigation.NavigateToViewModelAsync&lt;SecondViewModel&gt;() - In click handler, navigates based on page type" />
                 <Button Content="Next page - NavigateToViewModelAsync"
-                    Click="NextPageNavigateToViewModelAsyncClick" />
-                <Button Content="Next page - NavigateForDataAsync"
-                    Click="NextPageNavigateForDataAsyncClick" />
+                        Click="NextPageNavigateToViewModelAsyncClick" />
+
+                <TextBlock Text="Navigation.NavigateToDataAsync(this, new Widget()) - In click handler, navigates to the page that's configured to handle the type of data" />
+                <Button Content="Next page - NavigateToDataAsync"
+                        Click="NextPageNavigateToDataAsyncClick" />
+
+                <TextBlock Text="Navigation.NavigateToViewModelAsync&lt;SecondViewModel&gt;(this, data: new Widget()) - Executed by command in MainViewModel" />
                 <Button Content="Next page - NavigateToViewModelAsync (MainViewModel)"
-                    Command="{Binding NavigateToSecondPageCommand}" />
-                <Button Content="Next page - NavigationRequest with response"
-                    Click="NextPageRequestResponseClick" />
+                        Command="{Binding NavigateToSecondPageCommand}" />
+
+                <TextBlock Text="Navigation.NavigateToViewModelForResultAsync&lt;SecondViewModel, Widget&gt;(this); - In click handler, navigate by viewmodel type and request data to be returned" />
+                <Button Content="Next page - NavigateToViewModelForResult"
+                        Click="NextPageRequestResponseClick" />
+                <TextBlock Text=""
+                           x:Name="NavigateToViewModelForResultText"
+                           Style="{StaticResource ResultTextStyle}" />
+
+                <TextBlock Text="Navigation.NavigateForResultAsync&lt;Widget&gt;(Mappings, this); - In click handler, navigate in order to retrieve data" />
                 <Button Content="Navigate for Result"
-                    Click="RequestDataResponseClick" />
-                <Button Content="Next page - NavigationRequest with response (10 second timeout)"
-                    Click="NextPageRequestResponseWithTimeoutClick" />
+                        Click="RequestDataResponseClick" />
+                <TextBlock Text=""
+                           x:Name="NavigateForResultText"
+                           Style="{StaticResource ResultTextStyle}" />
+
+                <TextBlock Text="Navigation.NavigateToViewModelForResultAsync&lt;SecondViewModel, Widget&gt;(Mappings, this, cancellation: cancel.Token); - In click handler, navigate to viewmodel in order to retrieve data; cancelled after 2 seconds" />
+                <Button Content="Next page - NavigationRequest with response (2 second timeout)"
+                        Click="NextPageRequestWithTimeoutClick" />
+
+                <TextBlock Text="Navigation.NavigateToViewModelForResultAsync&lt;SecondViewModel, Widget&gt;(Mappings, this, cancellation: cancel.Token); - In click handler, navigate to viewmodel in order to retrieve data; cancelled after 2 seconds (after first waiting for navigation to complete)" />
+                <Button Content="Next page - NavigationRequest with response (2 second timeout)"
+                        Click="NextPageResponseWithTimeoutClick" />
+
                 <Button Content="Content Dialog"
-                    Click="ContentDialogResponseClick" />
+                        Click="ContentDialogResponseClick" />
                 <Button Content="Content Dialog - Widget Response"
-                    Click="ContentDialogWidgetResponseClick" />
+                        Click="ContentDialogWidgetResponseClick" />
                 <!--<Button Content="Content Dialog - Data and Widget Response"
                     Click="ContentDialogResultAndWidgetResponseClick" />-->
                 <Button Content="Message Dialog"
-                    Click="MessageDialogClick" />
+                        Click="MessageDialogClick" />
 
                 <Button Content="Twitter"
-                    nav:Navigation.Request="../TwitterPage" />
+                        nav:Navigation.Request="../TwitterPage" />
                 <Button Content="TabBar Page"
-                    nav:Navigation.Request="../TabBarPage" />
+                        nav:Navigation.Request="../TabBarPage" />
                 <Button Content="NavigationView Page"
-                    nav:Navigation.Request="../NavigationViewPage" />
+                        nav:Navigation.Request="../NavigationViewPage" />
                 <Button Content="NavigationViewGridVisibility Page"
-                    nav:Navigation.Request="../NavigationViewGridVisibilityPage" />
+                        nav:Navigation.Request="../NavigationViewGridVisibilityPage" />
                 <Button Content="NavigationViewVisualStates Page"
-                    nav:Navigation.Request="../NavigationViewVisualStatesPage" />
+                        nav:Navigation.Request="../NavigationViewVisualStatesPage" />
 
             </StackPanel>
         </ScrollViewer>
@@ -74,22 +118,23 @@
         <Grid Grid.Row="1">
             <StackPanel>
                 <Button Content="Show popup"
-                    nav:Navigation.Request="./Show" />
+                        nav:Navigation.Request="./Show" />
                 <Button Content="Hide popup"
-                    nav:Navigation.Request="./Hide" />
+                        nav:Navigation.Request="./Hide" />
                 <Button Content="Show popup Manual"
-                     Click="ShowPopupManualClick"/>
+                        Click="ShowPopupManualClick" />
             </StackPanel>
             <Popup x:Name="MyPopup"
-                   nav:Region.Attached="True" 
-                   VerticalOffset="10" HorizontalOffset="200" 
-								   IsLightDismissEnabled="True" >
+                   nav:Region.Attached="True"
+                   VerticalOffset="10"
+                   HorizontalOffset="200"
+                   IsLightDismissEnabled="True">
                 <Popup.Child>
                     <Border x:Name="PopupBorder"
-											Background="Red"
-											Height="320"
-											VerticalAlignment="Bottom">
-                        <TextBlock Text="My Popup"/>
+                            Background="Red"
+                            Height="320"
+                            VerticalAlignment="Bottom">
+                        <TextBlock Text="My Popup" />
                     </Border>
                 </Popup.Child>
             </Popup>

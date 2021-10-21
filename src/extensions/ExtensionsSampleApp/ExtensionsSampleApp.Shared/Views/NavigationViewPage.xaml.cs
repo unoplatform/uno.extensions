@@ -26,7 +26,7 @@ namespace ExtensionsSampleApp.Views
         private void NavView_ItemInvoked(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs args)
         {
             var navPath = (args.InvokedItemContainer as FrameworkElement).GetName();
-            Navigation.NavigateByPathAsync(this, navPath);
+            Navigation.NavigateToRouteAsync(this, navPath);
         }
     }
 }
