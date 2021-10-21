@@ -28,6 +28,9 @@
                 <Button Content="Next page - Navigation Path"
                         nav:Navigation.Request="../SecondPage"
                         />
+                <Button Content="Next page - Navigation Path with Data"
+                        nav:Navigation.Request="../SecondPage"
+                        nav:Navigation.Data="Hello World!"/>
                 <Button Content="Next page - Navigation Path with delay"
 
                     nav:Navigation.Request="../SecondPage?delay=5000" />
