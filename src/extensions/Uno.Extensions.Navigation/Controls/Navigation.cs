@@ -21,13 +21,6 @@ public static class Navigation
             typeof(Navigation),
             new PropertyMetadata(null, RequestChanged));
 
-    public static readonly DependencyProperty RouteProperty =
-        DependencyProperty.RegisterAttached(
-            "Route",
-            typeof(string),
-            typeof(Navigation),
-            new PropertyMetadata(null));
-
     private static void RequestChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         if (d is ButtonBase element)
@@ -51,16 +44,6 @@ public static class Navigation
                 element.ClearValue(ButtonBase.IsEnabledProperty);
             };
         }
-    }
-
-    public static void SetRoute(this FrameworkElement element, string value)
-    {
-        element.SetValue(RouteProperty, value);
-    }
-
-    public static string GetRoute(this FrameworkElement element)
-    {
-        return (string)element.GetValue(RouteProperty);
     }
 
     public static void SetRequest(this FrameworkElement element, string value)
@@ -96,7 +79,7 @@ public static class Navigation
 
         if (view is FrameworkElement fe)
         {
-            var path = GetRoute(fe);
+            var path = fe.GetName();
             if (string.IsNullOrWhiteSpace(path))
             {
                 path = fe.Name;

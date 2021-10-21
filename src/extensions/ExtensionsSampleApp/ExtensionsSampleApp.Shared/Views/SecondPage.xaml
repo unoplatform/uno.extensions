@@ -53,7 +53,9 @@
                     nav:Navigation.Request="/-/Twitter" />
 
         </StackPanel>
-        <ContentControl Grid.Row="1" nav:Region.Name="content" />
+        <ContentControl Grid.Row="1"
+                        nav:Region.Name="content"
+                        nav:Region.Attached="True" />
         <StackPanel Grid.Row="2">
             <Button Content="Content Page 1"
                     nav:Navigation.Request="./content/Content1" />

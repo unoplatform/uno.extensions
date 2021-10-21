@@ -31,7 +31,7 @@ public static class DependencyObjectExtensions
         {
             if (name is not { Length: > 0 })
             {
-                var route = (element as FrameworkElement).GetRoute();
+                var route = (element as FrameworkElement).GetName();
                 if (route is { Length: > 0 })
                 {
                     name = route;
