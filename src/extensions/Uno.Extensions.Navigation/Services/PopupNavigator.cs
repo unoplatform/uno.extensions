@@ -48,7 +48,7 @@ public class PopupNavigator : ControlNavigator<Popup>
         }
         catch (Exception ex)
         {
-            Logger.LazyLogError(() => $"Unable to create instance - {ex.Message}");
+            Logger.LogErrorMessage($"Unable to create instance - {ex.Message}");
         }
     }
 }

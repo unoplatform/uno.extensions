@@ -53,13 +53,13 @@ public class RouteMappingsDefault : RouteMappings
     {
         if (!ReturnImplicitMapping)
         {
-            Logger.LazyLogDebug(() => "Implicit mapping disabled");
+            Logger.LogDebugMessage("Implicit mapping disabled");
             return null;
         }
 
-        Logger.LazyLogWarning(() => $"For better performance (avoid reflection), create mapping for for path '{path}', view '{view?.Name}', view model '{viewModel?.Name}'");
+        Logger.LogWarningMessage($"For better performance (avoid reflection), create mapping for for path '{path}', view '{view?.Name}', view model '{viewModel?.Name}'");
 
-        Logger.LazyLogDebug(() => $"Creating default mapping for path '{path}', view '{view?.Name}', view model '{viewModel?.Name}'");
+        Logger.LogDebugMessage($"Creating default mapping for path '{path}', view '{view?.Name}', view model '{viewModel?.Name}'");
         if (string.IsNullOrWhiteSpace(path))
         {
             path = PathFromTypes(view, viewModel);
@@ -81,11 +81,11 @@ public class RouteMappingsDefault : RouteMappings
         {
             var defaultMap = new RouteMap(path, view, viewModel, null);
             Mappings[path] = defaultMap;
-            Logger.LazyLogDebug(() => $"Created default mapping - Path '{defaultMap.Path}', View '{defaultMap.View?.Name}', View Model '{defaultMap.ViewModel?.Name}'");
+            Logger.LogDebugMessage($"Created default mapping - Path '{defaultMap.Path}', View '{defaultMap.View?.Name}', View Model '{defaultMap.ViewModel?.Name}'");
             return defaultMap;
         }
 
-        Logger.LazyLogDebug(() => $"Unable to create default mapping");
+        Logger.LogDebugMessage($"Unable to create default mapping");
         return null;
     }
 

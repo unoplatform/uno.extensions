@@ -43,22 +43,22 @@ public class GridVisiblityNavigator : ControlNavigator<Grid>
             {
                 if (viewType is null)
                 {
-                    Logger.LazyLogError(() => "Missing view for navigation path '{path}'");
+                    Logger.LogErrorMessage("Missing view for navigation path '{path}'");
                     return;
                 }
 
-                Logger.LazyLogDebug(() => $"Creating instance of type '{viewType.Name}'");
+                Logger.LogDebugMessage($"Creating instance of type '{viewType.Name}'");
                 controlToShow = Activator.CreateInstance(viewType) as FrameworkElement;
                 if (controlToShow is FrameworkElement fe)
                 {
                     fe.Name = path;
                 }
                 Control.Children.Add(controlToShow);
-                Logger.LazyLogDebug(() => "Instance created");
+                Logger.LogDebugMessage("Instance created");
             }
             catch (Exception ex)
             {
-                Logger.LazyLogError(() => $"Unable to create instance - {ex.Message}");
+                Logger.LogErrorMessage($"Unable to create instance - {ex.Message}");
             }
         }
 

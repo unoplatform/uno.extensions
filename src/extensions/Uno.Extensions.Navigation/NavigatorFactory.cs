@@ -54,7 +54,7 @@ public class NavigatorFactory : INavigatorFactory
     public INavigator CreateService(IRegion region)
     {
         // TODO: Review creation of scoped
-        Logger.LazyLogDebug(() => $"Adding region");
+        Logger.LogDebugMessage($"Adding region");
 
         var services = region.Services;
         var control = region.View;
@@ -93,7 +93,7 @@ public class NavigatorFactory : INavigatorFactory
 
     public INavigator CreateService(IRegion region, NavigationRequest request)
     {
-        Logger.LazyLogDebug(() => $"Adding region");
+        Logger.LogDebugMessage($"Adding region");
 
         // TODO: Review creation of scoped
         var scope = region.Services.CreateScope();

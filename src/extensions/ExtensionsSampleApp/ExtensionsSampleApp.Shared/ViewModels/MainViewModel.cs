@@ -58,9 +58,9 @@ namespace ExtensionsSampleApp.ViewModels
 
         public async Task Start(NavigationRequest request)
         {
-            Logger.LazyLogTrace(() => "Starting view model (delay 5s)");
+            Logger.LogTraceMessage("Starting view model (delay 5s)");
             await Task.Delay(5000);
-            Logger.LazyLogTrace(() => "View model started (5s delay completed)");
+            Logger.LogTraceMessage("View model started (5s delay completed)");
         }
 
         public async Task<bool> Stop(NavigationRequest request)
