@@ -23,10 +23,5 @@ namespace Uno.Extensions.Navigation
 
             return Navigation.NavigateAsync(request);
         }
-
-        public Task WaitForPendingNavigation()
-        {
-            return Navigation.WaitForPendingNavigation();
-        }
     }
 }

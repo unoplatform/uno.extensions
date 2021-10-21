@@ -124,14 +124,6 @@ namespace Uno.Extensions.Navigation.Regions
             View.Loading -= ViewLoading;
             View.Loaded -= ViewLoaded;
             View.Unloaded += ViewUnloaded;
-
-            await (Parent?.Navigator()?.WaitForPendingNavigation() ?? Task.CompletedTask);
-
-            var defaultRoute = View.GetDefault();
-            if (!string.IsNullOrWhiteSpace(defaultRoute))
-            {
-                this.Navigator().NavigateByPathAsync(View, defaultRoute, data: new Dictionary<string, object> { { "IsDefault", true } });
-            }
         }
     }
 }

@@ -32,57 +32,42 @@ public class Navigator : INavigator
         Logger = logger;
     }
 
-    private ManualResetEventSlim Navigating { get; } = new ManualResetEventSlim(true);
-
-    public async Task WaitForPendingNavigation()
-    {
-        await Task.Run(() => Navigating.Wait());
-    }
-
     public Task<NavigationResponse> NavigateAsync(NavigationRequest request)
     {
-        try
+        // Handle root navigations
+        if (request?.Route?.IsRoot ?? false)
         {
-            Navigating.Reset();
-            // Handle root navigations
-            if (request?.Route?.IsRoot ?? false)
+            if (!IsRoot)
             {
-                if (!IsRoot)
-                {
-                    return Region.Parent?.NavigateAsync(request);
-                }
-                else
-                {
-                    // This is the root nav service - need to pass the
-                    // request down to children by making the request nested
-                    request = request with { Route = request.Route with { Scheme = Schemes.Current } };
-                }
+                return Region.Parent?.NavigateAsync(request);
             }
+            else
+            {
+                // This is the root nav service - need to pass the
+                // request down to children by making the request nested
+                request = request with { Route = request.Route with { Scheme = Schemes.Current } };
+            }
+        }
 
+        if (request?.Route?.IsParent ?? false)
+        {
+            request = request with { Route = request.Route.TrimScheme(Schemes.Parent) };
+
+            // Handle parent navigations
             if (request?.Route?.IsParent ?? false)
             {
-                request = request with { Route = request.Route.TrimScheme(Schemes.Parent) };
-
-                // Handle parent navigations
-                if (request?.Route?.IsParent ?? false)
-                {
-                    return Region.Parent?.NavigateAsync(request);
-                }
+                return Region.Parent?.NavigateAsync(request);
             }
-
-            // Run dialog requests
-            if (request.Route.IsDialog)
-            {
-                request = request with { Route = request.Route with { Scheme = Schemes.Current } };
-                return DialogNavigateAsync(request);
-            }
-
-            return CoreNavigateAsync(request);
         }
-        finally
+
+        // Run dialog requests
+        if (request.Route.IsDialog)
         {
-            Navigating.Set();
+            request = request with { Route = request.Route with { Scheme = Schemes.Current } };
+            return DialogNavigateAsync(request);
         }
+
+        return CoreNavigateAsync(request);
     }
 
     private async Task<NavigationResponse> DialogNavigateAsync(NavigationRequest request)
