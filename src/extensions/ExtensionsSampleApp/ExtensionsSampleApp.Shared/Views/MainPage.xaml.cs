@@ -12,13 +12,19 @@ namespace ExtensionsSampleApp.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainPage : IInjectable<INavigator>
+    public sealed partial class MainPage : IInjectable<INavigator>, IInjectable<IRouteMappings>
     {
         private INavigator Navigation { get; set; }
+        private IRouteMappings Mappings { get; set; }
 
         public void Inject(INavigator entity)
         {
             Navigation = entity;
+        }
+
+        public void Inject(IRouteMappings mappings)
+        {
+            Mappings = mappings;
         }
 
         public MainPage()
@@ -28,53 +34,66 @@ namespace ExtensionsSampleApp.Views
 
         private void NextPageNavigationRequestClick(object sender, RoutedEventArgs e)
         {
-            Navigation.NavigateAsync(new NavigationRequest(sender, new Uri("../SecondPage", UriKind.Relative).AsRoute()));
+            Navigation.NavigateAsync("../SecondPage".AsRequest(this));
         }
 
         private async void NextPageNavigateToViewAsyncClick(object sender, RoutedEventArgs e)
         {
-            await Navigation.NavigateToViewAsync<SecondPage>(this);
+            await Navigation.NavigateToViewAsync<SecondPage>(Mappings, this);
         }
 
         private void NextPageNavigateToViewModelAsyncClick(object sender, RoutedEventArgs e)
         {
-            Navigation.NavigateToViewModelAsync<SecondViewModel>(this);
+            Navigation.NavigateToViewModelAsync<SecondViewModel>(Mappings, this);
         }
 
-        private void NextPageNavigateForDataAsyncClick(object sender, RoutedEventArgs e)
+        private void NextPageNavigateToDataAsyncClick(object sender, RoutedEventArgs e)
         {
-            Navigation.NavigateForDataAsync(this, new Widget());
+            Navigation.NavigateToDataAsync(Mappings, this, new Widget());
         }
 
         private async void NextPageRequestResponseClick(object sender, RoutedEventArgs e)
         {
-            var navresult = await Navigation.NavigateToViewModelAsync<SecondViewModel, Widget>(this);
-            var response = await navresult.Result;
+            var response = await Navigation.NavigateToViewModelForResultAsync<SecondViewModel, Widget>(Mappings, this);
+            var result = await response.Result;
+            NavigateToViewModelForResultText.Text = "Result:" + ((Widget)result).ToString();
         }
 
         private async void RequestDataResponseClick(object sender, RoutedEventArgs e)
         {
-            var navresult = await Navigation.NavigateForResultDataAsync<Widget>(this);
+            var response = await Navigation.NavigateForResultAsync<Widget>(Mappings, this);
+            var result = await response.Result;
+            NavigateForResultText.Text = "Result:" + ((Widget)result).ToString();
+        }
+
+        private async void NextPageRequestWithTimeoutClick(object sender, RoutedEventArgs e)
+        {
+            var cancel = new CancellationTokenSource();
+            var navresultTask = Navigation.NavigateToViewModelForResultAsync<SecondViewModel, Widget>(Mappings, this, cancellation: cancel.Token);
+            Task.Run(() => Task.Delay(2000)).ConfigureAwait(true).GetAwaiter().OnCompleted(() => cancel.Cancel());
+            var navresult = await navresultTask;
             var response = await navresult.Result;
         }
 
-        private async void NextPageRequestResponseWithTimeoutClick(object sender, RoutedEventArgs e)
+        private async void NextPageResponseWithTimeoutClick(object sender, RoutedEventArgs e)
         {
             var cancel = new CancellationTokenSource();
-            var navresult = await Navigation.NavigateToViewModelAsync<SecondViewModel, Widget>(this, cancellation: cancel.Token);
-            Task.Run(() => Task.Delay(10000)).ConfigureAwait(true).GetAwaiter().OnCompleted(() => cancel.Cancel());
+            var navresultTask = Navigation.NavigateToViewModelForResultAsync<SecondViewModel, Widget>(Mappings, this, cancellation: cancel.Token);
+            var navresult = await navresultTask;
+            Task.Run(() => Task.Delay(2000)).ConfigureAwait(true).GetAwaiter().OnCompleted(() => cancel.Cancel());
             var response = await navresult.Result;
         }
+
 
         private async void ContentDialogResponseClick(object sender, RoutedEventArgs e)
         {
-            var navresult = await Navigation.NavigateToViewAsync<SimpleContentDialog, ContentDialogResult>(this, Schemes.Dialog);
+            var navresult = await Navigation.NavigateToViewForResultAsync<SimpleContentDialog, ContentDialogResult>(Mappings, this, Schemes.Dialog);
             var response = await navresult.Result;
         }
 
         private async void ContentDialogWidgetResponseClick(object sender, RoutedEventArgs e)
         {
-            var navresult = await Navigation.NavigateToViewAsync<SimpleContentDialog, Widget>(this, Schemes.Dialog);
+            var navresult = await Navigation.NavigateToViewForResultAsync<SimpleContentDialog, Widget>(Mappings, this, Schemes.Dialog);
             var response = await navresult.Result;
         }
 

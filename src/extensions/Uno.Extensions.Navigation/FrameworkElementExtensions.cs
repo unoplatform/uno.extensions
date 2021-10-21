@@ -1,6 +1,7 @@
 ﻿#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
@@ -76,6 +77,11 @@ public static class FrameworkElementExtensions
         if (view is IInjectable<IServiceProvider> spAware)
         {
             spAware.Inject(services);
+        }
+
+        if (view is IInjectable<IRouteMappings> mappings)
+        {
+            mappings.Inject(services.GetService<IRouteMappings>());
         }
     }
 }

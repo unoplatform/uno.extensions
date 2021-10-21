@@ -18,9 +18,12 @@ namespace ExtensionsSampleApp.ViewModels
         public string Title => "Main";
 
         private INavigator Navigation { get; }
-        public MainViewModel(INavigator navigation)
+
+        private IRouteMappings Mappings { get; }
+        public MainViewModel(INavigator navigation, IRouteMappings mappings)
         {
             Navigation = navigation;
+            Mappings = mappings;
             NavigateToSecondPageCommand = new RelayCommand(NavigateToSecondPage);
         }
         public async Task Start(NavigationRequest request)
@@ -29,11 +32,11 @@ namespace ExtensionsSampleApp.ViewModels
 
         public ICommand NavigateToSecondPageCommand { get; }
 
-        private void NavigateToSecondPage() => Navigation.NavigateToViewModelAsync<SecondViewModel>(this, data: new Widget());
+        private void NavigateToSecondPage() => Navigation.NavigateToViewModelAsync<SecondViewModel>(Mappings, this, data: new Widget());
 
         public async Task<bool> Stop(NavigationRequest request)
         {
-            if(request.Route.Data.TryGetValue("delay", out var delayAsString))
+            if (request.Route.Data.TryGetValue("delay", out var delayAsString))
             {
                 await Task.Delay(int.Parse(delayAsString as string));
             }
@@ -59,14 +62,20 @@ namespace ExtensionsSampleApp.ViewModels
         public async Task Start(NavigationRequest request)
         {
             Logger.LogTraceMessage("Starting view model (delay 5s)");
-            await Task.Delay(5000);
-            Logger.LogTraceMessage("View model started (5s delay completed)");
+            try
+            {
+                await Task.Delay(5000, request.Cancellation ?? default);
+                Logger.LogTraceMessage("View model started (5s delay completed)");
+            }
+            catch (Exception ex) {
+                Logger.LogTraceMessage("View model started (5s delay interrupted - nav cancelled)");
+            }
         }
 
         public async Task<bool> Stop(NavigationRequest request)
         {
             if ((request.Route.Base == typeof(ThirdPage).Name ||
-                request.Route.Base == typeof(ThirdPage).Name.Replace("Page",""))&&
+                request.Route.Base == typeof(ThirdPage).Name.Replace("Page", "")) &&
                 !((request.Route.Data as IDictionary<string, object>)?.Any() ?? false))
             {
                 return false;
@@ -97,8 +106,11 @@ namespace ExtensionsSampleApp.ViewModels
 
 
         private INavigator Navigation { get; }
-        public TabDoc0ViewModel(INavigator navigation)
+
+        private IRouteMappings Mappings { get; }
+        public TabDoc0ViewModel(INavigator navigation, IRouteMappings mappings)
         {
+            Mappings = mappings;
             Navigation = navigation;
             NavigateToDoc1Command = new RelayCommand(NavigateToDoc1);
             NavigateToThirdPageCommand = new RelayCommand(NavigateToThirdPage);
@@ -109,9 +121,9 @@ namespace ExtensionsSampleApp.ViewModels
         public ICommand NavigateToDoc1Command { get; }
         public ICommand NavigateToThirdPageCommand { get; }
 
-        private void NavigateToDoc1() => Navigation.NavigateToViewModelAsync<TabDoc1ViewModel>(this);
+        private void NavigateToDoc1() => Navigation.NavigateToViewModelAsync<TabDoc1ViewModel>(Mappings, this);
 
-        private void NavigateToThirdPage() => Navigation.NavigateToViewModelAsync<ThirdViewModel>(this, RouteConstants.RelativePath.Parent(1));
+        private void NavigateToThirdPage() => Navigation.NavigateToViewModelAsync<ThirdViewModel>(Mappings, this, RouteConstants.RelativePath.Parent(1));
 
     }
 

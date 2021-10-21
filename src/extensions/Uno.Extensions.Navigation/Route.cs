@@ -23,10 +23,6 @@ public record Route(string Scheme, string Base, string Path, IDictionary<string,
 
     public bool IsEmpty => Base is not { Length: > 0 };
 
-    public bool IsDefault => Data.TryGetValue("IsDefault", out var isDefault) ?
-                                (isDefault is bool defaultValue) ? defaultValue : false
-                                : false;
-
     // eg -/NextPage
     public bool FrameIsRooted => Scheme.EndsWith(Schemes.Root + string.Empty);
 
@@ -56,4 +52,6 @@ public record Route(string Scheme, string Base, string Path, IDictionary<string,
             return null;
         }
     }
+
+    public object ResponseData => Data.TryGetValue(string.Empty, out var result)? result : null;
 }
