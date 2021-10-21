@@ -9,20 +9,13 @@ namespace ExtensionsSampleApp.Views.Twitter
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class TweetsPage : Page, IInjectable<INavigator>, IInjectable<IRouteMappings>
+    public sealed partial class TweetsPage : Page, IInjectable<INavigator>
     {
         private INavigator Navigation { get; set; }
-
-        private IRouteMappings Mappings { get; set; }
 
         public void Inject(INavigator entity)
         {
             Navigation = entity;
-        }
-
-        public void Inject(IRouteMappings mappings)
-        {
-            Mappings = mappings;
         }
 
         public TweetsPage()
@@ -33,7 +26,7 @@ namespace ExtensionsSampleApp.Views.Twitter
 
         public void TweetSelectionChanged(object sender, SelectionChangedEventArgs args)
         {
-            Navigation.NavigateToDataAsync(Mappings, this, (sender as ListView).SelectedItem as Tweet);
+            Navigation.NavigateToDataAsync(this, (sender as ListView).SelectedItem as Tweet);
         }
     }
 }

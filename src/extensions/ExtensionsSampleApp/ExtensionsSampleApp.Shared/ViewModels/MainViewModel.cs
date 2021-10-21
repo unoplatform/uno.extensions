@@ -28,7 +28,7 @@ namespace ExtensionsSampleApp.ViewModels
 
         public ICommand NavigateToSecondPageCommand { get; }
 
-        private void NavigateToSecondPage() => Navigation.NavigateToViewModelAsync<SecondViewModel>(Mappings, this, data: new Widget());
+        private void NavigateToSecondPage() => Navigation.NavigateToViewModelAsync<SecondViewModel>(this, data: new Widget());
 
         public async Task<bool> Stop(NavigationRequest request)
         {

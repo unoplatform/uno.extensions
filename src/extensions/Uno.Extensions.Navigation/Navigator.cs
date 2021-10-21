@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -8,13 +9,15 @@ using Uno.Extensions.Navigation.Regions;
 
 namespace Uno.Extensions.Navigation;
 
-public class Navigator : INavigator
+public class Navigator : INavigator, IInstance<IServiceProvider>
 {
     protected ILogger Logger { get; }
 
     private bool IsRoot => Region?.Parent is null;
 
     protected IRegion Region { get; }
+
+    IServiceProvider IInstance<IServiceProvider>.Instance => Region?.Services;
 
     public Navigator(
         ILogger<Navigator> logger,

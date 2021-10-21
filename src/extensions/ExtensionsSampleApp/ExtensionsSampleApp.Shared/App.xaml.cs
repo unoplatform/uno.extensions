@@ -45,6 +45,7 @@ namespace ExtensionsSampleApp
         private Windows.UI.Xaml.Window _window;
 #endif
         private IHost Host { get; }
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -96,7 +97,6 @@ namespace ExtensionsSampleApp
                .UseNavigation()
                .Build()
                .EnableUnoLogging();
-            Ioc.Default.ConfigureServices(Host.Services);
 
             var mapping = Host.Services.GetService< IRouteMappings>();
             mapping.Register(new RouteMap(typeof(MainPage).Name, typeof(MainPage), typeof(MainViewModel)));
@@ -156,13 +156,12 @@ namespace ExtensionsSampleApp
             if (rootFrame == null)
             {
                 // Create a Frame to act as the navigation context and navigate to the first page
-                rootFrame = new Frame().AsNavigationContainer(Ioc.Default);
+                rootFrame = new Frame().AsNavigationContainer(Host.Services);
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
-                var nav = Ioc.Default.GetService<INavigator>();
-                var maps = Ioc.Default.GetService<IRouteMappings>();
+                var nav = Host.Services.GetService<INavigator>();
                 //var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Nested);
-                var navResult = nav.NavigateToViewAsync<MainPage>(maps, this, Schemes.Root);
+                var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Root);
                 //var navResult = nav.NavigateToRouteAsync(this, "TabbedPage/doc1", Schemes.Root);
                 //var navResult = nav.NavigateToRouteAsync(this, "TabbedPage/doc2/SecondPage/content/Content1", Schemes.Root);
                 //var navResult = nav.NavigateToRouteAsync(this, "TwitterPage/notifications/TweetDetailsPage?tweetid=23", Schemes.Root);

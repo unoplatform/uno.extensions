@@ -2,13 +2,9 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using Windows.UI.Popups;
+using Microsoft.Extensions.DependencyInjection;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using UICommand = Windows.UI.Popups.UICommand;
 #else
 using Microsoft.UI.Xaml;
@@ -19,6 +15,11 @@ namespace Uno.Extensions.Navigation;
 
 public static class NavigatorExtensions
 {
+    internal static IRouteMappings GetMapping(this INavigator navigator)
+    {
+        return navigator.Get<IServiceProvider>().GetService<IRouteMappings>();
+    }
+
     /// <summary>
     /// Navigates to the specified route
     /// </summary>
@@ -54,57 +55,63 @@ public static class NavigatorExtensions
     }
 
     public static Task<NavigationResponse> NavigateToViewAsync<TView>(
-        this INavigator service, IRouteMappings mappings, object sender, string scheme = Schemes.None, object data = null, CancellationToken cancellation = default)
+        this INavigator service, object sender, string scheme = Schemes.None, object data = null, CancellationToken cancellation = default)
     {
-        return service.NavigateToViewAsync(mappings, sender, typeof(TView), scheme, data, cancellation);
+        return service.NavigateToViewAsync(sender, typeof(TView), scheme, data, cancellation);
     }
 
     public static Task<NavigationResponse> NavigateToViewAsync(
-        this INavigator service, IRouteMappings mappings, object sender, Type viewType, string scheme = Schemes.None, object data = null, CancellationToken cancellation = default)
+        this INavigator service, object sender, Type viewType, string scheme = Schemes.None, object data = null, CancellationToken cancellation = default)
     {
+        var mappings = service.GetMapping();
         var map = mappings.FindByView(viewType);
         return service.NavigateAsync(map.Path.WithScheme(scheme).AsRequest(sender, data, cancellation));
     }
 
     public static async Task<NavigationResultResponse<TResult>> NavigateToViewForResultAsync<TView, TResult>(
-        this INavigator service, IRouteMappings mappings, object sender, string scheme = Schemes.None, object data = null, CancellationToken cancellation = default)
+        this INavigator service, object sender, string scheme = Schemes.None, object data = null, CancellationToken cancellation = default)
     {
+        var mappings = service.GetMapping();
         var map = mappings.FindByView(typeof(TView));
         var result = await service.NavigateAsync(map.Path.WithScheme(scheme).AsRequest<TResult>(sender, data, cancellation));
         return result.As<TResult>();
     }
 
     public static Task<NavigationResponse> NavigateToViewModelAsync<TViewViewModel>(
-        this INavigator service, IRouteMappings mappings, object sender, string scheme = Schemes.None, object data = null, CancellationToken cancellation = default)
+        this INavigator service, object sender, string scheme = Schemes.None, object data = null, CancellationToken cancellation = default)
     {
-        return service.NavigateToViewModelAsync(mappings, sender, typeof(TViewViewModel), scheme, data, cancellation);
+        return service.NavigateToViewModelAsync(sender, typeof(TViewViewModel), scheme, data, cancellation);
     }
 
     public static Task<NavigationResponse> NavigateToViewModelAsync(
-        this INavigator service, IRouteMappings mappings, object sender, Type viewModelType, string scheme = Schemes.None, object data = null, CancellationToken cancellation = default)
+        this INavigator service, object sender, Type viewModelType, string scheme = Schemes.None, object data = null, CancellationToken cancellation = default)
     {
+        var mappings = service.GetMapping();
         var map = mappings.FindByViewModel(viewModelType);
         return service.NavigateAsync(map.Path.WithScheme(scheme).AsRequest(sender, data, cancellation));
     }
 
     public static async Task<NavigationResultResponse<TResult>> NavigateToViewModelForResultAsync<TViewViewModel, TResult>(
-        this INavigator service, IRouteMappings mappings, object sender, string scheme = Schemes.None, object data = null, CancellationToken cancellation = default)
+        this INavigator service, object sender, string scheme = Schemes.None, object data = null, CancellationToken cancellation = default)
     {
+        var mappings = service.GetMapping();
         var map = mappings.FindByViewModel(typeof(TViewViewModel));
         var result = await service.NavigateAsync(map.Path.WithScheme(scheme).AsRequest<TResult>(sender, data, cancellation));
         return result.As<TResult>();
     }
 
     public static Task<NavigationResponse> NavigateToDataAsync<TData>(
-        this INavigator service, IRouteMappings mappings, object sender, TData data, string scheme = Schemes.None, CancellationToken cancellation = default)
+        this INavigator service, object sender, TData data, string scheme = Schemes.None, CancellationToken cancellation = default)
     {
+        var mappings = service.GetMapping();
         var map = mappings.FindByData(typeof(TData));
         return service.NavigateAsync(map.Path.WithScheme(scheme).AsRequest(sender, data, cancellation));
     }
 
     public static async Task<NavigationResultResponse<TResultData>> NavigateForResultAsync<TResultData>(
-        this INavigator service, IRouteMappings mappings, object sender, string scheme = Schemes.None, object data = null, CancellationToken cancellation = default)
+        this INavigator service, object sender, string scheme = Schemes.None, object data = null, CancellationToken cancellation = default)
     {
+        var mappings = service.GetMapping();
         var map = mappings.FindByResultData(typeof(TResultData));
         var result = await service.NavigateAsync(map.Path.WithScheme(scheme).AsRequest<TResultData>(sender, data, cancellation));
         return result.As<TResultData>();

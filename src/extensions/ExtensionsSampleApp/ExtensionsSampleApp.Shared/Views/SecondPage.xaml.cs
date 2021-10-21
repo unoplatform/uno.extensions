@@ -9,20 +9,13 @@ namespace ExtensionsSampleApp.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class SecondPage : IInjectable<INavigator>, IInjectable<IRouteMappings>
+    public sealed partial class SecondPage : IInjectable<INavigator>
     {
         private INavigator Navigation { get; set; }
-
-        private IRouteMappings Mappings { get; set; }
 
         public void Inject(INavigator entity)
         {
             Navigation = entity;
-        }
-
-        public void Inject(IRouteMappings mappings)
-        {
-            Mappings = mappings;
         }
 
         public SecondPage()
@@ -53,7 +46,7 @@ namespace ExtensionsSampleApp.Views
 
         private async void NextPageNavigateToViewAsyncRequestDataClick(object sender, RoutedEventArgs e)
         {
-            var response = await Navigation.NavigateToViewForResultAsync<ThirdPage, Widget>(Mappings, this);
+            var response = await Navigation.NavigateToViewForResultAsync<ThirdPage, Widget>(this);
             if (response?.Result != null)
             {
                 await response.Result;
@@ -62,7 +55,7 @@ namespace ExtensionsSampleApp.Views
 
         private void NextPageNavigateToViewAsyncWithDataClick(object sender, RoutedEventArgs e)
         {
-            Navigation.NavigateToViewAsync<ThirdPage>(Mappings, this, data: new Widget());
+            Navigation.NavigateToViewAsync<ThirdPage>(this, data: new Widget());
         }
 
         private void NextPageNavigateToViewAsyncWithQueryAndDataClick(object sender, RoutedEventArgs e)
