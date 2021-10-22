@@ -98,21 +98,21 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
         var children = (from region in Region.Children
                         let childRoute =
-                                   //// No region name - send request as it is (for composite regions)
-                                   //(region.Name is not { Length: > 0 }) ? // Region.Name == ""
-                                   //      request with { Route = request.Route with { Scheme = Schemes.Current } } :
+                                            //// No region name - send request as it is (for composite regions)
+                                            //(region.Name is not { Length: > 0 }) ? // Region.Name == ""
+                                            //      request with { Route = request.Route with { Scheme = Schemes.Current } } :
 
-                                   //     // Region.Name == request.Route.Base and scheme is  "./" : in this case trim both the scheme and base (ie Route.Next.Next)
-                                   //     (region.Name == request.Route.Base && request.Route.IsNested) ?
-                                   //         request with { Route = request.Route with { Base = request.Route.NextBase(), Path = request.Route.NextPath() } } :
+                                            //     // Region.Name == request.Route.Base and scheme is  "./" : in this case trim both the scheme and base (ie Route.Next.Next)
+                                            //     (region.Name == request.Route.Base && request.Route.IsNested) ?
+                                            //         request with { Route = request.Route with { Base = request.Route.NextBase(), Path = request.Route.NextPath() } } :
 
                                             // Region.Name == request.Route.Base : trim the base (ie Route.Next)
                                             (region.Name == request.Route.Base) ?
                                                 request with { Route = request.Route with { Base = request.Route.NextBase(), Path = request.Route.NextPath() } } :
 
-                                                    //// Scheme is "./" : trim the scheme (ie Route.Next)
-                                                    //(request.Route.IsNested) ?
-                                                    //    request with { Route = request.Route with { Scheme = Schemes.Current } } :
+                                                        //// Scheme is "./" : trim the scheme (ie Route.Next)
+                                                        //(request.Route.IsNested) ?
+                                                        //    request with { Route = request.Route with { Scheme = Schemes.Current } } :
 
                                                         request
                         where
@@ -120,6 +120,11 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
                             region.Name == request.Route.Base
                         select
                             new { Child = region, Route = childRoute }).ToArray();
+
+        if (children.Length == 0)
+        {
+            return null;
+        }
 
         var tasks = new List<Task<NavigationResponse>>();
         foreach (var region in children)
