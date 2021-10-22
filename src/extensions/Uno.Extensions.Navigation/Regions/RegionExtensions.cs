@@ -37,7 +37,7 @@ namespace Uno.Extensions.Navigation.Regions
 
         public static void Detach(this IRegion region, IRegion childRegion)
         {
-            region.Children.Remove(kvp => kvp.Name == childRegion.Name);
+            region.Children.Remove(childRegion);
         }
 
         public static void AttachAll(this IRegion region, IEnumerable<IRegion> children)
