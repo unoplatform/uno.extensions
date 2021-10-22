@@ -53,6 +53,7 @@ public static class ServiceCollectionExtensions
                     .AddRegion<Popup, PopupNavigator>()
 
                     .AddSingleton<INavigationBindingHandler, ButtonBaseNavigationBindingHandler>()
+                    .AddSingleton<INavigationBindingHandler, SelectorNavigationBindingHandler>()
 
                     // Register the navigation mappings repository
                     .AddSingleton<IRouteMappings, RouteMappingsDefault>()
