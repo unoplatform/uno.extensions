@@ -16,14 +16,14 @@ public static class NavigatorFactoryExtensions
             return null;
         }
 
-        if (factory.ServiceTypes.TryGetValue(viewType.Name, out var serviceType))
+        if (factory.Navigators.TryGetValue(viewType.Name, out var serviceType))
         {
             return serviceType;
         }
         var baseTypes = viewType.GetBaseTypes();
         foreach (var type in baseTypes)
         {
-            if (factory.ServiceTypes.TryGetValue(type.Name, out var baseServiceType))
+            if (factory.Navigators.TryGetValue(type.Name, out var baseServiceType))
             {
                 return baseServiceType;
             }

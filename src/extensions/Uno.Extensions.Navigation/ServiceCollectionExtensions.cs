@@ -1,19 +1,22 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.ViewModels;
+using Uno.Extensions.Navigation.Services;
+using Uno.Extensions.Navigation.Regions;
 using Windows.UI.Popups;
 #if !WINDOWS_UWP && !WINUI
 using Popup = Windows.UI.Xaml.Controls.Popup;
 #endif
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using System;
-using Uno.Extensions.Navigation.Services;
-using Uno.Extensions.Navigation.Regions;
 #else
+using Windows.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 #endif
@@ -36,10 +39,10 @@ public static class ServiceCollectionExtensions
 
                     // Register the region for each control type
                     .AddRegion<Frame, FrameNavigator>()
-                    .AddRegion<TabView, TabNavigator>()
+                    .AddRegion<TabView, TabViewNavigator>()
                     .AddRegion<ContentControl, ContentControlNavigator>()
-                   .AddRegion<Grid, GridVisiblityNavigator>("Visibility")
-                   .AddRegion<Page, PageVisualStateNavigator>()
+                   .AddRegion<Panel, PanelVisiblityNavigator>(PanelVisiblityNavigator.NavigatorName)
+                   .AddRegion<Control, ControlVisualStateNavigator>(ControlVisualStateNavigator.NavigatorName)
                    .AddRegion<Microsoft.UI.Xaml.Controls.NavigationView, NavigationViewNavigator>()
                     .AddRegion<ContentDialog, ContentDialogNavigator>()
                     .AddRegion<MessageDialog, MessageDialogNavigator>()

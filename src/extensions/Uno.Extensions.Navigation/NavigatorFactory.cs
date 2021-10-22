@@ -1,17 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Controls;
-using Uno.Extensions.Navigation.Services;
 using Uno.Extensions.Navigation.Regions;
+using Uno.Extensions.Navigation.Services;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 #else
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -26,7 +21,7 @@ public class NavigatorFactoryBuilder
 
 public class NavigatorFactory : INavigatorFactory
 {
-    public IDictionary<string, Type> ServiceTypes { get; } = new Dictionary<string, Type>();
+    public IDictionary<string, Type> Navigators { get; } = new Dictionary<string, Type>();
 
     private ILogger Logger { get; }
 
@@ -45,10 +40,7 @@ public class NavigatorFactory : INavigatorFactory
     public void RegisterNavigator<TNavigator>(params string[] names)
         where TNavigator : INavigator
     {
-        foreach (var name in names)
-        {
-            ServiceTypes[name] = typeof(TNavigator);
-        }
+        names.ForEach(name => Navigators[name] = typeof(TNavigator));
     }
 
     public INavigator CreateService(IRegion region)
@@ -67,7 +59,9 @@ public class NavigatorFactory : INavigatorFactory
         if (control is not null)
         {
             services.GetService<RegionControlProvider>().RegionControl = control;
-            if (ServiceTypes.TryGetValue(control.GetType().Name, out var serviceType))
+
+            var navigator = control.GetNavigator() ?? control.GetType().Name;
+            if (Navigators.TryGetValue(navigator, out var serviceType))
             {
                 navService = services.GetService(serviceType) as INavigator;
             }

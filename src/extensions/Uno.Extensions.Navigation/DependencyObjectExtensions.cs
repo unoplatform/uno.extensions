@@ -44,7 +44,7 @@ public static class DependencyObjectExtensions
         return region;
     }
 
-    private static TService ServiceForControl<TService>(this DependencyObject element, bool searchParent, Func<DependencyObject, TService> retrieveFromElement)
+    public static TService ServiceForControl<TService>(this DependencyObject element, bool searchParent, Func<DependencyObject, TService> retrieveFromElement)
     {
         if (element is null)
         {

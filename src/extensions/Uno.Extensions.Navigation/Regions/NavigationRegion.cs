@@ -68,8 +68,6 @@ namespace Uno.Extensions.Navigation.Regions
             }
         }
 
-
-
         public NavigationRegion(FrameworkElement view, IRegion parent) : this(view)
         {
             Parent = parent;
@@ -124,6 +122,11 @@ namespace Uno.Extensions.Navigation.Regions
             View.Loading -= ViewLoading;
             View.Loaded -= ViewLoaded;
             View.Unloaded += ViewUnloaded;
+
+            // Force the lookup (and creation) of the navigator
+            // This is required to intercept control event such as
+            // navigating forward/backward on frame, or switching tabs
+            _ = this.Navigator();
         }
     }
 }
