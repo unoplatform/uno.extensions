@@ -35,6 +35,13 @@ public static class Region
             typeof(Navigation),
             new PropertyMetadata(null));
 
+    public static readonly DependencyProperty NavigatorProperty =
+        DependencyProperty.RegisterAttached(
+            "Navigator",
+            typeof(string),
+            typeof(Navigation),
+            new PropertyMetadata(null));
+
     private static void AttachedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         if (d is FrameworkElement element)
@@ -92,5 +99,15 @@ public static class Region
     public static string GetName(this FrameworkElement element)
     {
         return (string)element.GetValue(NameProperty);
+    }
+
+    public static void SetNavigator(this FrameworkElement element, string value)
+    {
+        element.SetValue(NavigatorProperty, value);
+    }
+
+    public static string GetNavigator(this FrameworkElement element)
+    {
+        return (string)element.GetValue(NavigatorProperty);
     }
 }

@@ -17,14 +17,16 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Services;
 
-public class GridVisiblityNavigator : ControlNavigator<Grid>
+public class PanelVisiblityNavigator : ControlNavigator<Panel>
 {
+    public const string NavigatorName = "Visibility";
+
     protected override FrameworkElement CurrentView => CurrentlyVisibleControl;
 
     protected override string CurrentPath => CurrentView?.NavigationRoute();
 
-    public GridVisiblityNavigator(
-        ILogger<GridVisiblityNavigator> logger,
+    public PanelVisiblityNavigator(
+        ILogger<PanelVisiblityNavigator> logger,
         IRegion region,
         IRouteMappings mappings,
         RegionControlProvider controlProvider)

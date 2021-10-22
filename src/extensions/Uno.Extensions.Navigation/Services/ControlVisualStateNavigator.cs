@@ -15,16 +15,18 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Services;
 
-public class PageVisualStateNavigator : ControlNavigator<Page>
+public class ControlVisualStateNavigator : ControlNavigator<Control>
 {
+    public const string NavigatorName = "VisualState";
+
     protected override string CurrentPath => CurrentVisualState;
 
-    public PageVisualStateNavigator(
-        ILogger<PageVisualStateNavigator> logger,
+    public ControlVisualStateNavigator(
+        ILogger<ControlVisualStateNavigator> logger,
         IRegion region,
         IRouteMappings mappings,
         RegionControlProvider controlProvider)
-        : base(logger, region, mappings, controlProvider.RegionControl as Page)
+        : base(logger, region, mappings, (controlProvider.RegionControl as DependencyObject).ServiceForControl(true, entity => entity as Control))
     {
     }
 
@@ -35,4 +37,5 @@ public class PageVisualStateNavigator : ControlNavigator<Page>
         CurrentVisualState = path;
         VisualStateManager.GoToState(Control, path, true);
     }
+
 }
