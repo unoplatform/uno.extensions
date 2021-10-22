@@ -30,26 +30,9 @@ public static class Navigation
 
     private static void RequestChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        if (d is ButtonBase element)
+        if (d is FrameworkElement element)
         {
-            var path = GetRequest(element);
-            var command = new AsyncRelayCommand(async () =>
-            {
-                var nav = element.Navigator();
-                await nav.NavigateToRouteAsync(element, path, Schemes.Current, element.GetData());
-            });
-            var binding = new Binding { Source = command, Path = new PropertyPath(nameof(command.IsRunning)), Converter = new InvertConverter() };
-
-            element.Loaded += (s, e) =>
-            {
-                element.Command = command;
-                element.SetBinding(ButtonBase.IsEnabledProperty, binding);
-            };
-            element.Unloaded += (s, e) =>
-            {
-                element.Command = null;
-                element.ClearValue(ButtonBase.IsEnabledProperty);
-            };
+            _ = new NavigationBinder(element);
         }
     }
 
@@ -73,18 +56,18 @@ public static class Navigation
         return (object)element.GetValue(DataProperty);
     }
 
-    private class InvertConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            return !(bool)value;
-        }
+    //private class InvertConverter : IValueConverter
+    //{
+    //    public object Convert(object value, Type targetType, object parameter, string language)
+    //    {
+    //        return !(bool)value;
+    //    }
 
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            return value;
-        }
-    }
+    //    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    //    {
+    //        return value;
+    //    }
+    //}
 
     public static string NavigationRoute(this object view, IRouteMappings mappings = null)
     {

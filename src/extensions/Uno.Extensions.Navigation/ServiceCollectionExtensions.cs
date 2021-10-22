@@ -15,6 +15,7 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Uno.Extensions.Navigation.Controls;
 #else
 using Windows.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -50,6 +51,8 @@ public static class ServiceCollectionExtensions
                     .AddRegion<Picker, PickerRegion>()
 #endif
                     .AddRegion<Popup, PopupNavigator>()
+
+                    .AddSingleton<INavigationBindingHandler, ButtonBaseNavigationBindingHandler>()
 
                     // Register the navigation mappings repository
                     .AddSingleton<IRouteMappings, RouteMappingsDefault>()

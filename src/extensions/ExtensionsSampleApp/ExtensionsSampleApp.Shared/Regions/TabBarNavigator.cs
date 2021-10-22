@@ -9,6 +9,15 @@ using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Services;
 using Uno.Extensions.Navigation.Regions;
 using System.Threading.Tasks;
+#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+#else
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+#endif
 
 namespace ExtensionsSampleApp.Region.Managers
 {
@@ -16,7 +25,8 @@ namespace ExtensionsSampleApp.Region.Managers
     {
         private TabBar _control;
 
-        public override TabBar Control {
+        public override TabBar Control
+        {
             get => _control;
             set
             {
@@ -38,7 +48,10 @@ namespace ExtensionsSampleApp.Region.Managers
             var path = tbi.GetName() ?? tbi.Name;
             if (!string.IsNullOrEmpty(path))
             {
-                Region.Navigator().NavigateToRouteAsync(null, path);
+                var request = Mappings.FindByPath(path).AsRequest(this);
+                var context = request.BuildNavigationContext(Region.Services);
+
+                InitialiseView(context);
             }
         }
 
@@ -53,6 +66,7 @@ namespace ExtensionsSampleApp.Region.Managers
 
         protected override async Task Show(string path, Type view, object data)
         {
+            Control.SelectionChanged -= ControlSelectionChanged;
             if (int.TryParse(path, out var index))
             {
                 Control.SelectedIndex = index;
@@ -64,31 +78,9 @@ namespace ExtensionsSampleApp.Region.Managers
                             select tbi).FirstOrDefault();
                 var idx = Control.IndexFromContainer(item);
                 Control.SelectedIndex = idx;
+                await (item as FrameworkElement).EnsureLoaded();
             }
+            Control.SelectionChanged += ControlSelectionChanged;
         }
     }
-
-    //public class TabBarContentManager<TContent, TContentManager> : TabBarManager
-    //    where TContent : class
-    //    where TContentManager : BaseControlManager<TContent>
-    //{
-    //    private TContentManager ContentManager { get; }
-    //    public TabBarContentManager(ILogger<PageVisualStateManager> logger, INavigationService navigation, TContentManager contentManager, RegionControlProvider controlProvider) : base(logger, navigation, controlProvider)
-    //    {
-    //        ContentManager = contentManager;
-    //        var controls = (ValueTuple<object,object>)controlProvider.RegionControl;
-    //        this.Control = controls.Item1 as TabBar;
-    //        ContentManager.Control = controls.Item2 as TContent;
-    //    }
-
-    //    protected override object InternalShow(string path, Type view, object data, object viewModel)
-    //    {
-    //        var control = base.InternalShow(path, view, data, viewModel);
-    //        ContentManager.Show(path, view, data, viewModel);
-
-    //        return control;
-    //    }
-    //}
-
-
 }

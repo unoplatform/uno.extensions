@@ -18,7 +18,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Regions\TabBarRegion.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Regions\TabBarNavigator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Content2ViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\FourthViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MainViewModel.cs" />
