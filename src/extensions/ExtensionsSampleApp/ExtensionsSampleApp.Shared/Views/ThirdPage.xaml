@@ -4,11 +4,15 @@
       xmlns:local="using:ExtensionsSampleApp"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:nav="using:Uno.Extensions.Navigation.Controls"
+      xmlns:nav="using:Uno.Extensions.Navigation.Controls" xmlns:views="using:ExtensionsSampleApp.Views"
       mc:Ignorable="d"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
         <StackPanel>
             <TextBlock Margin="20"
                        FontSize="30"><Run Text="Page 3 - " /><Run Text="{Binding Title}" /></TextBlock>
@@ -31,7 +35,16 @@
             <Button Content="Go Back with args and data"
                     Click="NextPagePreviousViewWithArgsAndDataClick"/>
 
-            
+
         </StackPanel>
+        <ListView x:Name="WidgetsList" ItemsSource="{Binding Widgets}" Grid.Row="1" nav:Navigation.Request="FourthPage" nav:Navigation.Data="{x:Bind WidgetsList.SelectedItem, Mode=OneWay}">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="views:Widget">
+                    <Border Background="LightGray" BorderBrush="Black" BorderThickness="2" CornerRadius="2" Margin="2">
+                        <TextBlock Text="{x:Bind Title}" FontSize="20" />
+                    </Border>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </Grid>
 </Page>

@@ -66,7 +66,8 @@ namespace ExtensionsSampleApp.Views
 
     public class Widget
     {
-        public string Title { get; } = "This is a widget to test sending data in navigation - " + DateTimeOffset.Now.ToString();
+        private static int widgetId = 0;
+        public string Title { get; } = widgetId++ + " This is a widget to test sending data in navigation - " + DateTimeOffset.Now.ToString();
 
         public override string ToString()
         {

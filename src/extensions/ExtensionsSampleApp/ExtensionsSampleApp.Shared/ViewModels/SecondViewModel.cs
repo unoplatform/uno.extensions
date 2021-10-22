@@ -12,6 +12,7 @@ namespace ExtensionsSampleApp.ViewModels
 {
     public class SecondViewModel : IViewModelStart, IViewModelStop
     {
+       
         public string Title => "Second - " + Data;
         private Widget Data;
         private ILogger Logger { get; }
