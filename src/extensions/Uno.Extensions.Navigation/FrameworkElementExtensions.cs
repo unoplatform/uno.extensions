@@ -1,7 +1,7 @@
-﻿#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
