@@ -97,24 +97,9 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
         }
 
         var children = (from region in Region.Children
-                        let childRoute =
-                                            //// No region name - send request as it is (for composite regions)
-                                            //(region.Name is not { Length: > 0 }) ? // Region.Name == ""
-                                            //      request with { Route = request.Route with { Scheme = Schemes.Current } } :
-
-                                            //     // Region.Name == request.Route.Base and scheme is  "./" : in this case trim both the scheme and base (ie Route.Next.Next)
-                                            //     (region.Name == request.Route.Base && request.Route.IsNested) ?
-                                            //         request with { Route = request.Route with { Base = request.Route.NextBase(), Path = request.Route.NextPath() } } :
-
-                                            // Region.Name == request.Route.Base : trim the base (ie Route.Next)
-                                            (region.Name == request.Route.Base) ?
-                                                request with { Route = request.Route with { Base = request.Route.NextBase(), Path = request.Route.NextPath() } } :
-
-                                                        //// Scheme is "./" : trim the scheme (ie Route.Next)
-                                                        //(request.Route.IsNested) ?
-                                                        //    request with { Route = request.Route with { Scheme = Schemes.Current } } :
-
-                                                        request
+                        let childRoute = (region.Name == request.Route.Base) ?
+                                            request with { Route = request.Route with { Base = request.Route.NextBase(), Path = request.Route.NextPath() } } :
+                                            request
                         where
                             region.Name is not { Length: > 0 } ||
                             region.Name == request.Route.Base
@@ -134,7 +119,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
         await Task.WhenAll(tasks);
 #pragma warning disable CA1849 // We've already waited all tasks at this point (see Task.WhenAll in line above)
-        return tasks.First().Result;
+        return tasks.FirstOrDefault(r => r.Result is not null)?.Result;
 #pragma warning restore CA1849
     }
 }
