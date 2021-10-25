@@ -70,6 +70,12 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
             return DialogNavigateAsync(request);
         }
 
+        // If the base matches the region name, than need to strip the base
+        if (request.Route.Base == Region.Name)
+        {
+            request = request with { Route = request.Route with { Base = request.Route.NextBase(), Path = request.Route.NextPath() } };
+        }
+
         return CoreNavigateAsync(request);
     }
 
@@ -96,25 +102,15 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
             return null;
         }
 
-        var children = (from region in Region.Children
-                        let childRoute = (region.Name == request.Route.Base) ?
-                                            request with { Route = request.Route with { Base = request.Route.NextBase(), Path = request.Route.NextPath() } } :
-                                            request
-                        where
-                            region.Name is not { Length: > 0 } ||
-                            region.Name == request.Route.Base
-                        select
-                            new { Child = region, Route = childRoute }).ToArray();
-
-        if (children.Length == 0)
-        {
-            return null;
-        }
+        var children = Region.Children.Where(region =>
+                                       region.Name is not { Length: > 0 } ||
+                                       region.Name == request.Route.Base
+                                    ).ToArray();
 
         var tasks = new List<Task<NavigationResponse>>();
         foreach (var region in children)
         {
-            tasks.Add(region.Child.NavigateAsync(region.Route));
+            tasks.Add(region.NavigateAsync(request));
         }
 
         await Task.WhenAll(tasks);
