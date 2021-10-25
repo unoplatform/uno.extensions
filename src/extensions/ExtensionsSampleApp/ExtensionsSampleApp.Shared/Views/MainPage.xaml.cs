@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using ExtensionsSampleApp.ViewModels;
@@ -83,27 +84,33 @@ namespace ExtensionsSampleApp.Views
         {
             var navresult = await Navigation.NavigateToViewForResultAsync<SimpleContentDialog, ContentDialogResult>(this, Schemes.Dialog);
             var response = await navresult.Result;
+            if (response != null)
+            {
+                ContentDialogForResultText.Text = response + "";
+            }
         }
 
         private async void ContentDialogWidgetResponseClick(object sender, RoutedEventArgs e)
         {
             var navresult = await Navigation.NavigateToViewForResultAsync<SimpleContentDialog, Widget>(this, Schemes.Dialog);
             var response = await navresult.Result;
+            if (response != null)
+            {
+                ContentDialogForWidgetResultText.Text = (Widget)response + "";
+            }
         }
-
-        //private async void ContentDialogResultAndWidgetResponseClick(object sender, RoutedEventArgs e)
-        //{
-        //    var navresult = await Navigation.NavigateToViewAsync<SimpleContentDialog, ContentResult>(this, Schemes.Dialog);
-        //    var response = await navresult.Result;
-        //}
 
         private async void MessageDialogClick(object sender, RoutedEventArgs e)
         {
-            var navresult = await Navigation.ShowMessageDialogAsync(this, "Basic content", "Content Title");//, commands: new Windows.UI.Popups.UICommand[] { new Windows.UI.Popups.UICommand("test", command => Debug.WriteLine("TEST")) });
+            var navresult = await Navigation.ShowMessageDialogAsync(this, "Basic content", "Content Title", commands: new Windows.UI.Popups.UICommand[] { new Windows.UI.Popups.UICommand("test", command => Debug.WriteLine("TEST")) });
             var response = await navresult.Result;
+            if(response != null)
+            {
+                MessageDialogResultText.Text = ((Windows.UI.Popups.UICommand)response).Label;
+            }
         }
 
-        private async void ShowPopupManualClick(object sender, RoutedEventArgs e)
+        private async void ShowPickerClick(object sender, RoutedEventArgs e)
         {
 #if __IOS__
             try
