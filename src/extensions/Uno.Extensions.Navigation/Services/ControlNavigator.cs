@@ -77,7 +77,14 @@ public abstract class ControlNavigator : Navigator
                 return regionResponse;
             }
 
+            var requestMap = this.Get<IServiceProvider>().GetService<IRouteMappings>().FindByPath(request.Route.Base);
+
             request = request with { Route = request.Route with { Scheme = Schemes.Current, Base = request.Route.NextBase(), Path = request.Route.NextPath() } };
+
+            if (requestMap?.RegionInitialization is not null)
+            {
+                request = requestMap.RegionInitialization(Region, request);
+            }
         }
 
         var coreResponse = await base.CoreNavigateAsync(request);
@@ -143,7 +150,7 @@ public abstract class ControlNavigator : Navigator
         {
             request.Cancellation.Value.Register(() =>
             {
-                context.Cancel(); 
+                context.Cancel();
                 context.Navigation.NavigateToPreviousViewAsync(context.Request.Sender);
             });
         }
