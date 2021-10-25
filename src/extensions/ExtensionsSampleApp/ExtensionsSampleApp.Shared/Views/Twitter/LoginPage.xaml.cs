@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Uno.Extensions;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.ViewModels;
 using Windows.Foundation;
@@ -23,18 +24,24 @@ namespace ExtensionsSampleApp.Views.Twitter
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class LoginPage : Page, IViewModelStop
+    public sealed partial class LoginPage : Page, IViewModelStop, IInjectable<INavigator>
     {
         public LoginPage()
         {
             this.InitializeComponent();
         }
 
+        private INavigator navigator;
+        public void Inject(INavigator entity)
+        {
+            navigator = entity;
+        }
+
         public async Task<bool> Stop(NavigationRequest request)
         {
-            VisualStateManager.GoToState(this, "Authenticating",true);
-            await Task.Delay(2000);
-            VisualStateManager.GoToState(this, "Default", true);
+            await navigator.NavigateToRouteAsync(this, "./Authenticating");
+            await Task.Delay(10000);
+            await navigator.NavigateToRouteAsync(this, "./Default");
             return UsernameText.Text=="User1";
         }
     }

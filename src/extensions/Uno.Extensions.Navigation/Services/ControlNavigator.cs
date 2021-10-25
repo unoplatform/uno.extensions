@@ -85,46 +85,13 @@ public abstract class ControlNavigator : Navigator
         return coreResponse ?? regionResponse;
     }
 
-    private async Task<NavigationResponse> RegionNavigateAsync(NavigationRequest request)
+    private Task<NavigationResponse> RegionNavigateAsync(NavigationRequest request)
     {
         if (request.Route.IsCurrent)
         {
-            // Temporarily detach all nested services to prevent accidental
-            // navigation to the wrong child
-            // eg switching tabs, frame on tab1 won't get detached until some
-            // time after navigating to tab2, meaning that the wrong nexted
-            // child will be used for any subsequent navigations.
-            var children = Region?.DetachAll();
-            var regionTask = await ControlNavigateAsync(request);
-            if (!(regionTask?.Success ?? false))
-            {
-                // If a null result task was returned, then no
-                // navigation took place, so just reattach the existing
-                // nav services
-                Region?.AttachAll(children);
-            }
-            return regionTask;
-
-            //else
-            //{
-            //    var taskCompletion = new TaskCompletionSource<Options.Option>();
-            //    _ = regionTask.Result?.ContinueWith((t) =>
-            //    {
-            //        if (t.Status == TaskStatus.RanToCompletion)
-            //        {
-            //            taskCompletion.TrySetResult(t.Result);
-            //        }
-            //        else
-            //        {
-            //            taskCompletion.TrySetResult(Options.Option.None<object>());
-            //        }
-            //    },
-            //      TaskScheduler.Current);
-            //    return new NavigationResponse(request, taskCompletion.Task);
-            //}
+            return ControlNavigateAsync(request);
         }
-
-        return null;
+        return Task.FromResult<NavigationResponse>(default);
     }
 
     public virtual void ControlInitialize()

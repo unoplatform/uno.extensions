@@ -8,7 +8,8 @@
       xmlns:nav="using:Uno.Extensions.Navigation.Controls"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
+    <Grid nav:Region.Attached="True"
+          nav:Region.Navigator="VisualState">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState x:Name="Authenticating">
