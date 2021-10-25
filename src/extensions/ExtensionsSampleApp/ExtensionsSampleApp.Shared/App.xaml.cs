@@ -98,14 +98,17 @@ namespace ExtensionsSampleApp
                .Build()
                .EnableUnoLogging();
 
-            var mapping = Host.Services.GetService< IRouteMappings>();
+            var mapping = Host.Services.GetService<IRouteMappings>();
             mapping.Register(new RouteMap(typeof(MainPage).Name, typeof(MainPage), typeof(MainViewModel)));
             mapping.Register(new RouteMap(typeof(SecondPage).Name, typeof(SecondPage), typeof(SecondViewModel), typeof(Widget), typeof(Widget)));
             //mapping.Register(new RouteMap(typeof(ThirdPage).Name, typeof(ThirdPage), typeof(ThirdViewModel)));
             //mapping.Register(new RouteMap(typeof(FourthPage).Name, typeof(FourthPage), typeof(FourthViewModel)));
-            //mapping.Register(new RouteMap(typeof(TabbedPage).Name, typeof(TabbedPage), typeof(TabbedViewModel)));
+            mapping.Register(new RouteMap(typeof(TabbedPage).Name, typeof(TabbedPage), typeof(TabbedViewModel),
+                RegionInitialization: (region, nav) => nav.Route.IsEmpty ?
+                                        nav with { Route = nav.Route with { Base = "doc2" } } :
+                                        nav));
             mapping.Register(new RouteMap(typeof(TabBarPage).Name, typeof(TabBarPage)));
-            mapping.Register(new RouteMap("doc0", ViewModel:typeof(TabDoc0ViewModel)));
+            mapping.Register(new RouteMap("doc0", ViewModel: typeof(TabDoc0ViewModel)));
             mapping.Register(new RouteMap("doc1", ViewModel: typeof(TabDoc1ViewModel)));
             mapping.Register(new RouteMap(typeof(Content1).Name, typeof(Content1)));
             mapping.Register(new RouteMap(typeof(Content2).Name, typeof(Content2), typeof(Content2ViewModel)));
@@ -161,9 +164,9 @@ namespace ExtensionsSampleApp
 
                 var nav = Host.Services.GetService<INavigator>();
                 //var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Nested);
-                //var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Root);
+                var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Root);
                 //var navResult = nav.NavigateToRouteAsync(this, "TabbedPage/doc1", Schemes.Root);
-                var navResult = nav.NavigateToRouteAsync(this, "TabbedPage/doc2/SecondPage/content/Content1", Schemes.Root);
+                //var navResult = nav.NavigateToRouteAsync(this, "TabbedPage/doc2/SecondPage/content/Content1", Schemes.Root);
                 //var navResult = nav.NavigateToRouteAsync(this, "TwitterPage/notifications/TweetDetailsPage?tweetid=23", Schemes.Root);
                 //navResult.OnCompleted(() => Debug.WriteLine("Nav complete"));
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
