@@ -39,17 +39,5 @@ namespace Uno.Extensions.Navigation.Regions
         {
             region.Children.Remove(childRegion);
         }
-
-        public static void AttachAll(this IRegion region, IEnumerable<IRegion> children)
-        {
-            children.ForEach(n => region.Attach(n));
-        }
-
-        public static IEnumerable<IRegion> DetachAll(this IRegion region)
-        {
-            var children = region.Children.ToArray();
-            children.ForEach(child => region.Detach(child));
-            return children;
-        }
     }
 }
