@@ -92,25 +92,37 @@
                 <Button Content="Next page - NavigationRequest with response (2 second timeout)"
                         Click="NextPageResponseWithTimeoutClick" />
 
+                <TextBlock Text="Navigation.NavigateToViewForResultAsync&lt;SimpleContentDialog, ContentDialogResult&gt;(this, Schemes.Dialog); - In click handler, display content dialog, expecting a dialog result" />
                 <Button Content="Content Dialog"
                         Click="ContentDialogResponseClick" />
+                <TextBlock Text=""
+                           x:Name="ContentDialogForResultText"
+                           Style="{StaticResource ResultTextStyle}" />
+
+                <TextBlock Text="Navigation.NavigateToViewForResultAsync&lt;SimpleContentDialog, Widget&gt;(this, Schemes.Dialog); - In click handler, display content dialog, expecting a result object" />
                 <Button Content="Content Dialog - Widget Response"
                         Click="ContentDialogWidgetResponseClick" />
-                <!--<Button Content="Content Dialog - Data and Widget Response"
-                    Click="ContentDialogResultAndWidgetResponseClick" />-->
+                <TextBlock Text=""
+                           x:Name="ContentDialogForWidgetResultText"
+                           Style="{StaticResource ResultTextStyle}" />
+
+                <TextBlock Text="Navigation.ShowMessageDialogAsync(...); - Display message dialog" />
                 <Button Content="Message Dialog"
                         Click="MessageDialogClick" />
+                <TextBlock Text=""
+                           x:Name="MessageDialogResultText"
+                           Style="{StaticResource ResultTextStyle}" />
 
-                <Button Content="Twitter"
-                        nav:Navigation.Request="../TwitterPage" />
-                <Button Content="TabBar Page"
-                        nav:Navigation.Request="../TabBarPage" />
-                <Button Content="NavigationView Page"
-                        nav:Navigation.Request="../NavigationViewPage" />
-                <Button Content="NavigationViewGridVisibility Page"
-                        nav:Navigation.Request="../NavigationViewGridVisibilityPage" />
-                <Button Content="NavigationViewVisualStates Page"
-                        nav:Navigation.Request="../NavigationViewVisualStatesPage" />
+                <Button Content="Root - Go to Twitter"
+                        nav:Navigation.Request="/TwitterPage" />
+                <Button Content="Root - Go to TabBar Page"
+                        nav:Navigation.Request="/TabBarPage" />
+                <Button Content="Root - Go to NavigationView Page"
+                        nav:Navigation.Request="/NavigationViewPage" />
+                <Button Content="Root - Go to NavigationViewGridVisibility Page"
+                        nav:Navigation.Request="/NavigationViewGridVisibilityPage" />
+                <Button Content="Root - Go to NavigationViewVisualStates Page"
+                        nav:Navigation.Request="/NavigationViewVisualStatesPage" />
 
             </StackPanel>
         </ScrollViewer>
@@ -121,8 +133,8 @@
                         nav:Navigation.Request="./Show" />
                 <Button Content="Hide popup"
                         nav:Navigation.Request="./Hide" />
-                <Button Content="Show popup Manual"
-                        Click="ShowPopupManualClick" />
+                <Button Content="Show Picker"
+                        Click="ShowPickerClick" />
             </StackPanel>
             <Popup x:Name="MyPopup"
                    nav:Region.Attached="True"
@@ -139,29 +151,5 @@
                 </Popup.Child>
             </Popup>
         </Grid>
-
-
-        <!--<ios:Grid>
-        <Popup x:Name="Popup" Grid.Row="1"
-                
-								   IsLightDismissEnabled="True"
-               >
-            <Popup.Child>
-                <Border x:Name="PopupBorder"
-											Background="Pink"
-											Height="320"
-											VerticalAlignment="Bottom">
-                        <Picker Height="320"
-												VerticalAlignment="Top" ItemsSource="{Binding PickerItems}">
-                            <Picker.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding}" Foreground="Blue" />
-                                </DataTemplate>
-                            </Picker.ItemTemplate>
-                        </Picker>
-                </Border>
-            </Popup.Child>
-        </Popup>
-        </ios:Grid>-->
     </Grid>
 </Page>
