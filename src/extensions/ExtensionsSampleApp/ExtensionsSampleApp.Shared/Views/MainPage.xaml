@@ -114,7 +114,7 @@
                            Style="{StaticResource ResultTextStyle}" />
 
                 <Button Content="Root - Go to Twitter"
-                        nav:Navigation.Request="/TwitterPage" />
+                        nav:Navigation.Request="/LoginPage" />
                 <Button Content="Root - Go to TabBar Page"
                         nav:Navigation.Request="/TabBarPage" />
                 <Button Content="Root - Go to NavigationView Page"

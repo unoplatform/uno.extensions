@@ -34,5 +34,5 @@ SelectionChanged="TweetSelectionChanged"
             </ListView.ItemTemplate>
         </ListView>
     </Grid>
-   
+
 </Page>

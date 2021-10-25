@@ -21,7 +21,7 @@ namespace ExtensionsSampleApp.Views
 
         private async void ContentDialogResponseClick(object sender, RoutedEventArgs e)
         {
-            var navresult = await Navigation.NavigateToViewForResultAsync<SimpleContentDialog, ContentDialogResult>(this);
+            var navresult = await Navigation.NavigateToViewForResultAsync<SimpleContentDialog, ContentDialogResult>(this, Schemes.Dialog);
             var response = await navresult.Result;
         }
 
