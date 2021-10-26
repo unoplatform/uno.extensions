@@ -164,7 +164,9 @@ namespace ExtensionsSampleApp
 
                 var nav = Host.Services.GetService<INavigator>();
                 //var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Nested);
-                var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Root);
+                //var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Root);
+                //var navResult = nav.NavigateToRouteAsync(this, "+MainPage", Schemes.Root);
+                var navResult = nav.NavigateToRouteAsync(this, "+MainPage+SecondPage", Schemes.Root);
                 //var navResult = nav.NavigateToRouteAsync(this, "TabbedPage/doc1", Schemes.Root);
                 //var navResult = nav.NavigateToRouteAsync(this, "TabbedPage/doc2/SecondPage/content/Content1", Schemes.Root);
                 //var navResult = nav.NavigateToRouteAsync(this, "TwitterPage/notifications/TweetDetailsPage?tweetid=23", Schemes.Root);

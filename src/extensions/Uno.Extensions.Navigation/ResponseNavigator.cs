@@ -8,6 +8,8 @@ namespace Uno.Extensions.Navigation
 
         public TaskCompletionSource<Options.Option> ResultCompletion { get; }
 
+        public Route CurrentRoute => Navigation?.CurrentRoute;
+
         public ResponseNavigator(INavigator internalNavigation, TaskCompletionSource<Options.Option> completion)
         {
             Navigation = internalNavigation;

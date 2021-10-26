@@ -157,7 +157,14 @@ public abstract class ControlNavigator : Navigator
         await CurrentView.Start(request);
         await CurrentViewModel.Start(request);
 
+        UpdateRouteFromRequest(request);
+
         return new NavigationResultResponse(request, resultTask?.Task);
+    }
+
+    protected virtual void UpdateRouteFromRequest(NavigationRequest request)
+    {
+        CurrentRoute = new Route(Schemes.Current, request.Route.Base, null, request.Route.Data);
     }
 
     protected abstract Task NavigateWithContextAsync(NavigationContext context);

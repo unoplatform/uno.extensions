@@ -8,38 +8,42 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 #endif
 
-namespace Uno.Extensions.Navigation.Regions
+namespace Uno.Extensions.Navigation.Regions;
+
+public static class RegionExtensions
 {
-    public static class RegionExtensions
+    public static INavigator Navigator(this IRegion region)
     {
-        public static INavigator Navigator(this IRegion region)
+        if (string.IsNullOrWhiteSpace(region.Name))
         {
-            if (string.IsNullOrWhiteSpace(region.Name))
+            var parentNavigator = region.Parent?.Services?.GetService<INavigator>();
+            if (parentNavigator is not null &&
+                parentNavigator.GetType() == typeof(Navigator) &&
+                region.Parent.Children.Count > 1)
             {
-                var parentNavigator = region.Parent?.Services?.GetService<INavigator>();
-                if (parentNavigator is not null &&
-                    parentNavigator.GetType() == typeof(Navigator) &&
-                    region.Parent.Children.Count > 1)
-                {
-                    return parentNavigator;
-                }
+                return parentNavigator;
             }
-
-            return region.Services?.GetService<INavigator>();
         }
 
-        public static INavigatorFactory NavigatorFactory(this IRegion region) => region.Services?.GetService<INavigatorFactory>();
+        return region.Services?.GetService<INavigator>();
+    }
 
-        public static Task<NavigationResponse> NavigateAsync(this IRegion region, NavigationRequest request) => region.Services?.GetService<INavigator>()?.NavigateAsync(request);
+    public static INavigatorFactory NavigatorFactory(this IRegion region) => region.Services?.GetService<INavigatorFactory>();
 
-        public static void Attach(this IRegion region, IRegion childRegion)
-        {
-            region.Children.Add(childRegion);
-        }
+    public static Task<NavigationResponse> NavigateAsync(this IRegion region, NavigationRequest request) => region.Services?.GetService<INavigator>()?.NavigateAsync(request);
 
-        public static void Detach(this IRegion region, IRegion childRegion)
-        {
-            region.Children.Remove(childRegion);
-        }
+    public static void Attach(this IRegion region, IRegion childRegion)
+    {
+        region.Children.Add(childRegion);
+    }
+
+    public static void Detach(this IRegion region, IRegion childRegion)
+    {
+        region.Children.Remove(childRegion);
+    }
+
+    public static IRegion Root(this IRegion region)
+    {
+        return region.Parent is not null ? region.Parent.Root() : region;
     }
 }
