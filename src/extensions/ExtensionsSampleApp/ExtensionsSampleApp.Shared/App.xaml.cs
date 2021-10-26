@@ -104,7 +104,7 @@ namespace ExtensionsSampleApp
             //mapping.Register(new RouteMap(typeof(ThirdPage).Name, typeof(ThirdPage), typeof(ThirdViewModel)));
             //mapping.Register(new RouteMap(typeof(FourthPage).Name, typeof(FourthPage), typeof(FourthViewModel)));
             mapping.Register(new RouteMap(typeof(TabbedPage).Name, typeof(TabbedPage), typeof(TabbedViewModel),
-                RegionInitialization: (region, nav) => nav.Route.IsEmpty ?
+                RegionInitialization: (region, nav) => nav.Route.IsEmpty() ?
                                         nav with { Route = nav.Route with { Base = "doc2" } } :
                                         nav));
             mapping.Register(new RouteMap(typeof(TabBarPage).Name, typeof(TabBarPage)));
@@ -166,7 +166,8 @@ namespace ExtensionsSampleApp
                 //var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Nested);
                 //var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Root);
                 //var navResult = nav.NavigateToRouteAsync(this, "+MainPage", Schemes.Root);
-                var navResult = nav.NavigateToRouteAsync(this, "+MainPage+SecondPage", Schemes.Root);
+                //var navResult = nav.NavigateToRouteAsync(this, "+MainPage+SecondPage", Schemes.Root);
+                var navResult = nav.NavigateToRouteAsync(this, "+MainPage+SecondPage/content/Content1/", Schemes.Root);
                 //var navResult = nav.NavigateToRouteAsync(this, "TabbedPage/doc1", Schemes.Root);
                 //var navResult = nav.NavigateToRouteAsync(this, "TabbedPage/doc2/SecondPage/content/Content1", Schemes.Root);
                 //var navResult = nav.NavigateToRouteAsync(this, "TwitterPage/notifications/TweetDetailsPage?tweetid=23", Schemes.Root);

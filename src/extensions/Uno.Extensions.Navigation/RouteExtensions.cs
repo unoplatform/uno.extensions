@@ -10,6 +10,58 @@ public static class RouteExtensions
     private static Regex nonAlphaRegex = new Regex(@"([^a-zA-Z0-9])+");
     private static Regex alphaRegex = new Regex(@"([a-zA-Z0-9])+");
 
+    public static bool EmptyScheme(this Route route) => string.IsNullOrWhiteSpace(route.Scheme);
+
+    public static bool IsCurrent(this Route route) =>
+        (route.Scheme == Schemes.Current ||
+        route.Scheme.StartsWith(Schemes.NavigateForward) ||
+        route.Scheme.StartsWith(Schemes.NavigateBack));
+
+    public static bool IsRoot(this Route route) => route.Scheme.StartsWith(Schemes.Root);
+
+    public static bool IsParent(this Route route) => route.Scheme.StartsWith(Schemes.Parent);
+
+    public static bool IsNested(this Route route) =>
+        route.Scheme.StartsWith(Schemes.Nested) &&
+        !string.IsNullOrWhiteSpace(route.Base);
+
+    public static bool IsDialog(this Route route) => route.Scheme.StartsWith(Schemes.Dialog);
+
+    public static bool IsLast(this Route route) => route.Path is not { Length: > 0 };
+
+    public static bool IsEmpty(this Route route) => route.Base is not { Length: > 0 };
+
+    // eg -/NextPage
+    public static bool FrameIsRooted(this Route route) => route.Scheme.EndsWith(Schemes.Root + string.Empty);
+
+    private static int NumberOfGoBackInScheme(this Route route) => route.Scheme.TakeWhile(x => x + string.Empty == Schemes.NavigateBack).Count();
+
+    public static int FrameNumberOfPagesToRemove(this Route route) =>
+        route.FrameIsRooted() ?
+            0 :
+            (route.FrameIsBackNavigation() ?
+                route.NumberOfGoBackInScheme() - 1 :
+                route.NumberOfGoBackInScheme());
+
+    // Only navigate back if there is no base. If a base is specified, we do a forward navigate and remove items from the backstack
+    public static bool FrameIsBackNavigation(this Route route) =>
+        route.Scheme.StartsWith(Schemes.NavigateBack) && route.Base.Length == 0;
+
+    public static bool FrameIsForwardNavigation(this Route route) => !route.FrameIsBackNavigation();
+
+    public static string[] ForwardNavigationSegments(this Route route) => route.Base.ForwardNavigationSegments();
+
+    public static string[] ForwardNavigationSegments(this string path) => path.Split(Schemes.NavigateForward).Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
+
+    public static string UriPath(this Route route) => ((route.Path is { Length: > 0 }) ? "/" : string.Empty) + route.Path;
+
+    public static string Query(this Route route) => (route.Data?.Where(x => x.Key != string.Empty)?.Any() ?? false) ?
+        "?" + string.Join("&", route.Data.Where(x => x.Key != string.Empty).Select(kvp => $"{kvp.Key}={kvp.Value}")) :
+        null;
+
+    public static object ResponseData(this Route route) =>
+        route.Data.TryGetValue(string.Empty, out var result) ? result : null;
+
     public static string TrimStartOnce(this string text, string textToTrim)
     {
         if (text.StartsWith(textToTrim))

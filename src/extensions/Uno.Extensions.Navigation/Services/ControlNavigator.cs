@@ -91,7 +91,7 @@ public abstract class ControlNavigator : Navigator
 
     private Task<NavigationResponse> RegionNavigateAsync(NavigationRequest request)
     {
-        if (request.Route.IsCurrent)
+        if (request.Route.IsCurrent())
         {
             return ControlNavigateAsync(request);
         }
@@ -133,13 +133,8 @@ public abstract class ControlNavigator : Navigator
             return new NavigationResponse(request, false);
         }
 
-        //var regionCompletion = new TaskCompletionSource<object>();
-        //Region.View.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
-        //{
-        //    await NavigateWithContextAsync(context);
-        //    regionCompletion.SetResult(null);
-        //});
-        //await regionCompletion.Task;
+        // Detach all nested regions as we're moving away from the current view
+        Region.DetachAll();
 
         await NavigateWithContextAsync(context);
 

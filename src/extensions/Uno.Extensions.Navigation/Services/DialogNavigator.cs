@@ -26,7 +26,7 @@ namespace Uno.Extensions.Navigation.Services
         {
             // If this is back navigation, then make sure it's used to close
             // any of the open dialogs
-            if (context.Request.Route.FrameIsBackNavigation && ShowTask is not null)
+            if (context.Request.Route.FrameIsBackNavigation() && ShowTask is not null)
             {
                 await CloseDialog(context);
                 return;
