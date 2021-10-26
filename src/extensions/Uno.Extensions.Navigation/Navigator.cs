@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation.Regions;
 
@@ -11,6 +12,8 @@ namespace Uno.Extensions.Navigation;
 
 public class Navigator : INavigator, IInstance<IServiceProvider>
 {
+    private Route _currentRoute;
+
     protected ILogger Logger { get; }
 
     private bool IsRoot => Region?.Parent is null;
@@ -18,6 +21,8 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
     protected IRegion Region { get; }
 
     IServiceProvider IInstance<IServiceProvider>.Instance => Region?.Services;
+
+    public Route CurrentRoute { get => _currentRoute.Merge(Region.Children.Select(x => x.Services?.GetService<INavigator>()?.CurrentRoute)); set => _currentRoute = value; }
 
     public Navigator(
         ILogger<Navigator> logger,
@@ -51,7 +56,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
                 {
                     // This is the root nav service - need to pass the
                     // request down to children by making the request nested
-                    request = request with { Route = request.Route with { Scheme = Schemes.Current } };
+                    request = request with { Route = request.Route.TrimScheme(Schemes.Root) };
                 }
             }
 
@@ -84,6 +89,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
         finally
         {
             Logger.LogInformation($"Post-navigation: - {Region.ToString()}");
+            Logger.LogInformation($"Post-navigation (route): {Region.Root().Navigator().CurrentRoute}");
         }
     }
 

@@ -7,6 +7,9 @@ namespace Uno.Extensions.Navigation;
 
 public static class RouteExtensions
 {
+    private static Regex nonAlphaRegex = new Regex(@"([^a-zA-Z0-9])+");
+    private static Regex alphaRegex = new Regex(@"([a-zA-Z0-9])+");
+
     public static string TrimStartOnce(this string text, string textToTrim)
     {
         if (text.StartsWith(textToTrim))
@@ -69,8 +72,7 @@ public static class RouteExtensions
                 paras[string.Empty] = data;
             }
         }
-        var schemeRegex = new Regex(@"([^a-zA-Z0-9])+");
-        var schemeMatch = schemeRegex.Match(path);
+        var schemeMatch = nonAlphaRegex.Match(path);
 
         var scheme = string.Empty;
         if (schemeMatch.Success)
@@ -109,5 +111,41 @@ public static class RouteExtensions
                 where key is not null && val is not null
                 select new { key, val })
                 .ToDictionary(x => x.key, x => (object)x.val);
+    }
+
+    public static string FullPath(this Route route)
+    {
+        if (string.IsNullOrWhiteSpace(route.Path))
+        {
+            return route.Base;
+        }
+
+        return route.Base + (!string.IsNullOrWhiteSpace(route.Base) ? "/" : "") + route.Path;
+    }
+
+    public static IDictionary<string, object> Combine(this IDictionary<string, object> data, IDictionary<string, object> childData)
+    {
+        childData.ForEach(x => data[x.Key] = x.Value);
+        return data;
+    }
+
+    public static Route Merge(this Route route, IEnumerable<Route> childRoutes)
+    {
+        var childRoute = childRoutes.FirstOrDefault();
+        if (childRoute is null)
+        {
+            return route;
+        }
+
+        if (route is null)
+        {
+            return childRoute;
+        }
+
+        return route with
+        {
+            Path = route.Path + (!string.IsNullOrWhiteSpace(route.Path) ? "/" : "") + childRoute.FullPath(),
+            Data = route.Data.Combine(childRoute.Data)
+        };
     }
 }

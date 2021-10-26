@@ -183,4 +183,21 @@ public class FrameNavigator : ControlNavigator<Frame>
         Control.BackStack.Clear();
         Logger.LogDebugMessage($"Backstack cleared");
     }
+
+    protected override void UpdateRouteFromRequest(NavigationRequest request)
+    {
+        var scheme = request.Route.Scheme;
+        if (string.IsNullOrWhiteSpace(request.Route.Scheme))
+        {
+            scheme = Schemes.NavigateForward;
+        }
+        if (CurrentRoute is null)
+        {
+            CurrentRoute = new Route(scheme, request.Route.Base, null, request.Route.Data);
+        }
+        else
+        {
+            CurrentRoute = new Route(CurrentRoute.Scheme, CurrentRoute.Base + scheme + request.Route.Base, null, request.Route.Data);
+        }
+    }
 }
