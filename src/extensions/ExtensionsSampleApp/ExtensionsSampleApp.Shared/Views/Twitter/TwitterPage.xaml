@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    NavigationCacheMode="Required"
       xmlns:controls="using:Microsoft.UI.Xaml.Controls"
       xmlns:nav="using:Uno.Extensions.Navigation.Controls"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -22,8 +23,8 @@
                     <controls:SymbolIconSource Symbol="Home" />
                 </controls:TabViewItem.IconSource>
                 <Grid>
-                    <Frame  nav:Region.Attached="true"
-                            SourcePageType="local:TweetsPage" />
+                    <Frame  nav:Region.Attached="true" />
+                    <!--SourcePageType="local:TweetsPage" />-->
                 </Grid>
             </controls:TabViewItem>
             <controls:TabViewItem Header="Notifications"
@@ -33,8 +34,8 @@
                     <controls:SymbolIconSource Symbol="Document" />
                 </controls:TabViewItem.IconSource>
                 <Grid>
-                    <Frame nav:Region.Attached="true"
-                           SourcePageType="local:NotificationsPage" />
+                    <Frame nav:Region.Attached="true" />
+                    <!--SourcePageType="local:NotificationsPage" />-->
                 </Grid>
             </controls:TabViewItem>
         </controls:TabView>

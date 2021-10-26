@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,12 +37,15 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 
     protected abstract Task Show(string path, Type viewType, object data);
 
-    protected override async Task NavigateWithContextAsync(NavigationContext context)
+    protected override async Task<NavigationRequest> NavigateWithContextAsync(NavigationContext context)
     {
         Logger.LogDebugMessage($"Navigating to path '{context.Request.Route.Base}' with view '{context.Mapping?.View?.Name}'");
         await Show(context.Request.Route.Base, context.Mapping?.View, context.Request.Route.Data);
 
         InitialiseView(context);
+
+        var responseRequest = context.Request with { Route = context.Request.Route with { Path = null } };
+        return responseRequest;
     }
 
     protected override string NavigatorToString => CurrentPath;
@@ -76,7 +81,7 @@ public abstract class ControlNavigator : Navigator
 
             var requestMap = this.Get<IServiceProvider>().GetService<IRouteMappings>().FindByPath(request.Route.Base);
 
-            request = request with { Route = request.Route with { Scheme = Schemes.Current, Base = request.Route.NextBase(), Path = request.Route.NextPath() } };
+            request = request with { Route = request.Route.Trim(regionResponse.Request.Route) };// with { Scheme = Schemes.Current, Base = request.Route.NextBase(), Path = request.Route.NextPath() } };
 
             if (requestMap?.RegionInitialization is not null)
             {
@@ -89,9 +94,11 @@ public abstract class ControlNavigator : Navigator
         return coreResponse ?? regionResponse;
     }
 
+    protected virtual bool CanNavigateToRoute(Route route) => route.IsCurrent();
+
     private Task<NavigationResponse> RegionNavigateAsync(NavigationRequest request)
     {
-        if (request.Route.IsCurrent())
+        if (CanNavigateToRoute(request.Route))
         {
             return ControlNavigateAsync(request);
         }
@@ -136,7 +143,7 @@ public abstract class ControlNavigator : Navigator
         // Detach all nested regions as we're moving away from the current view
         Region.DetachAll();
 
-        await NavigateWithContextAsync(context);
+        var responseRequest = await NavigateWithContextAsync(context);
 
         if (request.Cancellation.HasValue && CanGoBack)
         {
@@ -149,12 +156,12 @@ public abstract class ControlNavigator : Navigator
 
         // Start view and viewmodels
         // (this is safe for null view or null viewmodel)
-        await CurrentView.Start(request);
-        await CurrentViewModel.Start(request);
+        await CurrentView.Start(context.Request);
+        await CurrentViewModel.Start(context.Request);
 
-        UpdateRouteFromRequest(request);
+        UpdateRouteFromRequest(responseRequest);
 
-        return new NavigationResultResponse(request, resultTask?.Task);
+        return new NavigationResultResponse(responseRequest, resultTask?.Task);
     }
 
     protected virtual void UpdateRouteFromRequest(NavigationRequest request)
@@ -162,7 +169,7 @@ public abstract class ControlNavigator : Navigator
         CurrentRoute = new Route(Schemes.Current, request.Route.Base, null, request.Route.Data);
     }
 
-    protected abstract Task NavigateWithContextAsync(NavigationContext context);
+    protected abstract Task<NavigationRequest> NavigateWithContextAsync(NavigationContext context);
 
     protected void InitialiseView(NavigationContext context)
     {

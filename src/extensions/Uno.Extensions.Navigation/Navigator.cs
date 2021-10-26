@@ -31,7 +31,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
             if (route is not null &&
                !string.IsNullOrWhiteSpace(this.Region.Name))
             {
-                route = route with { Base = this.Region.Name, Path = route.Base + "/" + route.Path };
+                route = route with { Base = this.Region.Name, Path = Schemes.Separator + route.Base + route.Path };
             }
             _currentRoute = route;
         }
@@ -94,7 +94,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
             // If the base matches the region name, than need to strip the base
             if (request.Route.Base == Region.Name)
             {
-                request = request with { Route = request.Route with { Base = request.Route.NextBase(), Path = request.Route.NextPath() } };
+                request = request with { Route = request.Route.NextRoute()};
             }
 
             return await CoreNavigateAsync(request);

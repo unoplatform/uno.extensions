@@ -12,10 +12,11 @@ public static class RouteExtensions
 
     public static bool EmptyScheme(this Route route) => string.IsNullOrWhiteSpace(route.Scheme);
 
-    public static bool IsCurrent(this Route route) =>
-        (route.Scheme == Schemes.Current ||
+    public static bool IsCurrent(this Route route) => route.Scheme == Schemes.Current;
+
+    public static bool IsFrameNavigation(this Route route) =>
         route.Scheme.StartsWith(Schemes.NavigateForward) ||
-        route.Scheme.StartsWith(Schemes.NavigateBack));
+        route.Scheme.StartsWith(Schemes.NavigateBack);
 
     public static bool IsRoot(this Route route) => route.Scheme.StartsWith(Schemes.Root);
 
@@ -49,11 +50,23 @@ public static class RouteExtensions
 
     public static bool FrameIsForwardNavigation(this Route route) => !route.FrameIsBackNavigation();
 
-    public static string[] ForwardNavigationSegments(this Route route) => route.Base.ForwardNavigationSegments();
+    public static Route[] ForwardNavigationSegments(this Route route)
+    {
+        if (route.IsEmpty())
+        {
+            return default;
+        }
 
+        var segments = new List<Route>() { route with { Scheme=Schemes.NavigateForward, Path = null } };
+        var nextRoute = route.NextRoute();
+        while (nextRoute.Scheme == Schemes.NavigateForward)
+        {
+            segments.Add(nextRoute with { Scheme = Schemes.NavigateForward, Path = null });
+            nextRoute = nextRoute.NextRoute();
+        }
+        return segments.ToArray();
+    }
     public static string[] ForwardNavigationSegments(this string path) => path.Split(Schemes.NavigateForward).Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
-
-    public static string UriPath(this Route route) => ((route.Path is { Length: > 0 }) ? "/" : string.Empty) + route.Path;
 
     public static string Query(this Route route) => (route.Data?.Where(x => x.Key != string.Empty)?.Any() ?? false) ?
         "?" + string.Join("&", route.Data.Where(x => x.Key != string.Empty).Select(kvp => $"{kvp.Key}={kvp.Value}")) :
@@ -82,15 +95,80 @@ public static class RouteExtensions
         return route with { Scheme = route.Scheme.TrimStartOnce(schemeToTrim) };
     }
 
+    public static Route Trim(this Route route, Route handledRoute)
+    {
+        while (route.Base == handledRoute.Base && !string.IsNullOrWhiteSpace(handledRoute.Base))
+        {
+            route = route.NextRoute();
+            handledRoute = handledRoute.NextRoute();
+        }
+
+        return route;
+    }
+
+    public static Route Append(this Route route, Route routeToAppend)
+    {
+        return route with { Path = route.Path + routeToAppend.Scheme + routeToAppend.Base + routeToAppend.Path };
+    }
+
+    public static Route NextRoute(this Route route)
+    {
+        var routeBase = route.Path.ExtractBase(out var nextScheme, out var nextPath);
+        if (nextScheme == Schemes.Root)
+        {
+            nextScheme = Schemes.Current;
+        }
+        return route with { Scheme = nextScheme, Base = routeBase, Path = nextPath };
+    }
+
     public static string NextBase(this Route route)
     {
-        return route.Path?.Split('/')?.FirstOrDefault();
+        return route.Path.ExtractBase(out var nextScheme, out var nextPath);
+        //return route.Path?.Split('/')?.FirstOrDefault();
     }
 
     public static string NextPath(this Route route)
     {
-        var idx = route.Path?.IndexOf('/') ?? -1;
-        return (idx <= 0 || (idx + 1) > route.Path.Length) ? String.Empty : route.Path.Substring(idx + 1);
+        route.Path.ExtractBase(out var nextScheme, out var nextPath);
+        return nextPath;
+    }
+    public static string NextScheme(this Route route)
+    {
+        route.Path.ExtractBase(out var nextScheme, out var nextPath);
+        return nextScheme;
+    }
+
+    private static string ExtractBase(this string path, out string nextScheme, out string nextPath)
+    {
+        nextPath = path;
+        nextScheme = string.Empty;
+
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return null;
+        }
+
+        var schemeMatch = nonAlphaRegex.Match(path);
+        if (schemeMatch.Success)
+        {
+            path = path.TrimStart(schemeMatch.Value);
+            nextScheme = schemeMatch.Value;
+        }
+
+        schemeMatch = alphaRegex.Match(path);
+        var routeBase = schemeMatch.Success ? schemeMatch.Value : String.Empty;
+        if (routeBase is { Length: > 0 })
+        {
+            if (path.Length > routeBase.Length + 1)
+            {
+                nextPath = path.TrimStartOnce(routeBase);
+            }
+            else
+            {
+                nextPath = string.Empty;
+            }
+        }
+        return routeBase;
     }
 
     public static string WithScheme(this string path, string scheme) => string.IsNullOrWhiteSpace(scheme) ? path : $"{scheme}{path}";
@@ -124,28 +202,8 @@ public static class RouteExtensions
                 paras[string.Empty] = data;
             }
         }
-        var schemeMatch = nonAlphaRegex.Match(path);
 
-        var scheme = string.Empty;
-        if (schemeMatch.Success)
-        {
-            path = path.TrimStart(schemeMatch.Value);
-            scheme = schemeMatch.Value;
-        }
-
-        var segments = path.Split('/');
-        var routeBase = segments.FirstOrDefault();
-        if (routeBase is { Length: > 0 })
-        {
-            if (path.Length > routeBase.Length + 1)
-            {
-                path = path.TrimStartOnce(routeBase + "/");
-            }
-            else
-            {
-                path = string.Empty;
-            }
-        }
+        var routeBase = ExtractBase(path, out var scheme, out path);
 
         var route = new Route(scheme, routeBase, path, paras);
 
@@ -167,22 +225,18 @@ public static class RouteExtensions
 
     public static string FullPath(this Route route)
     {
-        if (string.IsNullOrWhiteSpace(route.Path))
-        {
-            return route.Base;
-        }
-
-        return route.Base + (!string.IsNullOrWhiteSpace(route.Base) ? "/" : "") + route.Path;
+        return $"{route.Scheme}{route.Base}{route.Path}";
     }
 
     public static IDictionary<string, object> Combine(this IDictionary<string, object> data, IDictionary<string, object> childData)
     {
-        childData.ForEach(x => data[x.Key] = x.Value);
+        childData.ToArray().ForEach(x => data[x.Key] = x.Value);
         return data;
     }
 
     public static Route Merge(this Route route, IEnumerable<Route> childRoutes)
     {
+        // TODO: Handle multiple children!
         var childRoute = childRoutes.FirstOrDefault();
         if (childRoute is null)
         {
@@ -194,10 +248,28 @@ public static class RouteExtensions
             return childRoute;
         }
 
+        var separator = childRoute.Scheme == Schemes.Current ? Schemes.Separator : string.Empty;
+
         return route with
         {
-            Path = route.Path + (!string.IsNullOrWhiteSpace(route.Path) ? "/" : "") + childRoute.FullPath(),
+            Path = route.Path + separator + childRoute.FullPath(),
             Data = route.Data.Combine(childRoute.Data)
         };
+    }
+
+    public static IDictionary<string, object> AsParameters(this IDictionary<string, object> data, RouteMap mapping)
+    {
+        var mapDict = data;
+        if (mapping?.BuildQueryParameters is not null)
+        {
+            // TODO: Find nicer way to clone the dictionary
+            mapDict = data.ToArray().ToDictionary(x => x.Key, x => x.Value);
+            data.ForEach((KeyValuePair<string, object> kvp) =>
+            {
+                var qdict = mapping.BuildQueryParameters(kvp.Value);
+                qdict.ForEach(qkvp => mapDict[qkvp.Key] = qkvp.Value);
+            });
+        }
+        return mapDict;
     }
 }

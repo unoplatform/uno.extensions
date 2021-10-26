@@ -22,17 +22,21 @@ namespace Uno.Extensions.Navigation.Services
         {
         }
 
-        protected override async Task NavigateWithContextAsync(NavigationContext context)
+        protected override async Task<NavigationRequest> NavigateWithContextAsync(NavigationContext context)
         {
             // If this is back navigation, then make sure it's used to close
             // any of the open dialogs
             if (context.Request.Route.FrameIsBackNavigation() && ShowTask is not null)
             {
                 await CloseDialog(context);
-                return;
             }
-            var vm = context.CreateViewModel();
-            ShowTask = DisplayDialog(context, vm);
+            else
+            {
+                var vm = context.CreateViewModel();
+                ShowTask = DisplayDialog(context, vm);
+            }
+            var responseRequest = context.Request with { Route = context.Request.Route with { Path = null } };
+            return responseRequest;
         }
 
         protected async Task CloseDialog(NavigationContext navigationContext)

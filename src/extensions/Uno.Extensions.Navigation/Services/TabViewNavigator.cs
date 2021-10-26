@@ -42,7 +42,11 @@ public class TabViewNavigator : ControlNavigator<TabView>
     {
         Logger.LogDebugMessage($"Tab changed");
         var tvi = e.AddedItems?.FirstOrDefault() as TabViewItem;
-        var tabName = tvi.Name;
+        if (tvi is null)
+        {
+            return;
+        }
+        var tabName = tvi?.Name;
         Logger.LogDebugMessage($"Navigating to path {tabName}");
         //Navigation.NavigateToRouteAsync(null, tabName);
 

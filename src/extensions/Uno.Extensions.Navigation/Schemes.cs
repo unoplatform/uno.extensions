@@ -2,6 +2,7 @@
 
 public static class Schemes
 {
+    public const string Separator = "/";
     public const string Root = "/";
     public const string None = "";
     public const string Current = "";
