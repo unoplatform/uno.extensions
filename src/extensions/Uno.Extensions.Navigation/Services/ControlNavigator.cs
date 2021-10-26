@@ -43,10 +43,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
         InitialiseView(context);
     }
 
-    public override string ToString()
-    {
-        return $"Region({typeof(TControl).Name}) Path='{CurrentPath}'";
-    }
+    protected override string NavigatorToString => CurrentPath;
 }
 
 public abstract class ControlNavigator : Navigator
@@ -179,48 +176,4 @@ public abstract class ControlNavigator : Navigator
 
         view.InjectServicesAndSetDataContext(context.Services, context.Navigation, viewModel);
     }
-
-    public override string ToString()
-    {
-        return $"Region Path='{CurrentPath}'";
-    }
-
-    //public override string ToString()
-    //{
-    //    var sb = new StringBuilder();
-    //    PrintAllRegions(sb, this);
-    //    return sb.ToString();
-    //}
-
-    //protected override void PrintAllRegions(StringBuilder builder, IRegionNavigationService nav, int indent = 0, string regionName = null)
-    //{
-    //    if (nav is ControlNavigationService rns)
-    //    {
-    //        if (rns.Region is null)
-    //        {
-    //            builder.AppendLine(string.Empty);
-    //            builder.AppendLine("------------------------------------------------------------------------------------------------");
-    //            builder.AppendLine($"ROOT");
-    //        }
-    //        else
-    //        {
-    //            var ans = nav;
-    //            var prefix = string.Empty;
-    //            if (indent > 0)
-    //            {
-    //                prefix = new string(' ', indent * 2) + "|-";
-    //            }
-    //            var reg = !string.IsNullOrWhiteSpace(regionName) ? $"({regionName}) " : null;
-    //            builder.AppendLine($"{prefix}{reg}{rns.Region?.ToString()}");
-    //        }
-    //    }
-
-    //    base.PrintAllRegions(builder, nav, indent, regionName);
-
-    //    if (nav is RegionNavigationService rns2 &&
-    //        rns2.Region is null)
-    //    {
-    //        builder.AppendLine("------------------------------------------------------------------------------------------------");
-    //    }
-    //}
 }
