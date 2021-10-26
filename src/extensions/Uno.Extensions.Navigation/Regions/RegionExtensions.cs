@@ -17,7 +17,9 @@ namespace Uno.Extensions.Navigation.Regions
             if (string.IsNullOrWhiteSpace(region.Name))
             {
                 var parentNavigator = region.Parent?.Services?.GetService<INavigator>();
-                if (parentNavigator.GetType() == typeof(Navigator) && region.Parent.Children.Count > 1)
+                if (parentNavigator is not null &&
+                    parentNavigator.GetType() == typeof(Navigator) &&
+                    region.Parent.Children.Count > 1)
                 {
                     return parentNavigator;
                 }

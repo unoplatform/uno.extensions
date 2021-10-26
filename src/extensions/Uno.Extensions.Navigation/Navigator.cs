@@ -35,48 +35,56 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
         Logger = logger;
     }
 
-    public Task<NavigationResponse> NavigateAsync(NavigationRequest request)
+    public async Task<NavigationResponse> NavigateAsync(NavigationRequest request)
     {
-        // Handle root navigations
-        if (request?.Route?.IsRoot ?? false)
+        Logger.LogInformation($"Pre-navigation: - {Region.ToString()}");
+        try
         {
-            if (!IsRoot)
+            // Handle root navigations
+            if (request?.Route?.IsRoot ?? false)
             {
-                return Region.Parent?.NavigateAsync(request);
+                if (!IsRoot)
+                {
+                    return await (Region.Parent?.NavigateAsync(request) ?? Task.FromResult<NavigationResponse>(default));
+                }
+                else
+                {
+                    // This is the root nav service - need to pass the
+                    // request down to children by making the request nested
+                    request = request with { Route = request.Route with { Scheme = Schemes.Current } };
+                }
             }
-            else
-            {
-                // This is the root nav service - need to pass the
-                // request down to children by making the request nested
-                request = request with { Route = request.Route with { Scheme = Schemes.Current } };
-            }
-        }
 
-        if (request?.Route?.IsParent ?? false)
-        {
-            request = request with { Route = request.Route.TrimScheme(Schemes.Parent) };
-
-            // Handle parent navigations
             if (request?.Route?.IsParent ?? false)
             {
-                return Region.Parent?.NavigateAsync(request);
+                request = request with { Route = request.Route.TrimScheme(Schemes.Parent) };
+
+                // Handle parent navigations
+                if (request?.Route?.IsParent ?? false)
+                {
+                    return await (Region.Parent?.NavigateAsync(request) ?? Task.FromResult<NavigationResponse>(default));
+                }
             }
-        }
 
-        // Run dialog requests
-        if (request.Route.IsDialog)
+            // Run dialog requests
+            if (request.Route.IsDialog)
+            {
+                request = request with { Route = request.Route with { Scheme = Schemes.Current } };
+                return await DialogNavigateAsync(request);
+            }
+
+            // If the base matches the region name, than need to strip the base
+            if (request.Route.Base == Region.Name)
+            {
+                request = request with { Route = request.Route with { Base = request.Route.NextBase(), Path = request.Route.NextPath() } };
+            }
+
+            return await CoreNavigateAsync(request);
+        }
+        finally
         {
-            request = request with { Route = request.Route with { Scheme = Schemes.Current } };
-            return DialogNavigateAsync(request);
+            Logger.LogInformation($"Post-navigation: - {Region.ToString()}");
         }
-
-        // If the base matches the region name, than need to strip the base
-        if (request.Route.Base == Region.Name)
-        {
-            request = request with { Route = request.Route with { Base = request.Route.NextBase(), Path = request.Route.NextPath() } };
-        }
-
-        return CoreNavigateAsync(request);
     }
 
     private async Task<NavigationResponse> DialogNavigateAsync(NavigationRequest request)
@@ -118,4 +126,16 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
         return tasks.FirstOrDefault(r => r.Result is not null)?.Result;
 #pragma warning restore CA1849
     }
+
+    public override string ToString()
+    {
+        var current = NavigatorToString;
+        if (!string.IsNullOrWhiteSpace(current))
+        {
+            current = $"({current})";
+        }
+        return $"{this.GetType().Name}{current}";
+    }
+
+    protected virtual string NavigatorToString { get; } = string.Empty;
 }
