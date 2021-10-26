@@ -22,7 +22,20 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
     IServiceProvider IInstance<IServiceProvider>.Instance => Region?.Services;
 
-    public Route CurrentRoute { get => _currentRoute.Merge(Region.Children.Select(x => x.Services?.GetService<INavigator>()?.CurrentRoute)); set => _currentRoute = value; }
+    public Route CurrentRoute
+    {
+        get => _currentRoute.Merge(Region.Children.Select(x => x.Services?.GetService<INavigator>()?.CurrentRoute));
+        set
+        {
+            var route = value;
+            if (route is not null &&
+               !string.IsNullOrWhiteSpace(this.Region.Name))
+            {
+                route = route with { Base = this.Region.Name, Path = route.Base + "/" + route.Path };
+            }
+            _currentRoute = route;
+        }
+    }
 
     public Navigator(
         ILogger<Navigator> logger,
@@ -46,7 +59,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
         try
         {
             // Handle root navigations
-            if (request?.Route?.IsRoot ?? false)
+            if (request?.Route?.IsRoot() ?? false)
             {
                 if (!IsRoot)
                 {
@@ -60,19 +73,19 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
                 }
             }
 
-            if (request?.Route?.IsParent ?? false)
+            if (request?.Route?.IsParent() ?? false)
             {
                 request = request with { Route = request.Route.TrimScheme(Schemes.Parent) };
 
                 // Handle parent navigations
-                if (request?.Route?.IsParent ?? false)
+                if (request?.Route?.IsParent() ?? false)
                 {
                     return await (Region.Parent?.NavigateAsync(request) ?? Task.FromResult<NavigationResponse>(default));
                 }
             }
 
             // Run dialog requests
-            if (request.Route.IsDialog)
+            if (request.Route.IsDialog())
             {
                 request = request with { Route = request.Route with { Scheme = Schemes.Current } };
                 return await DialogNavigateAsync(request);
@@ -88,7 +101,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
         }
         finally
         {
-            Logger.LogInformation($"Post-navigation: - {Region.ToString()}");
+            Logger.LogInformation($"Post-navigation: {Region.ToString()}");
             Logger.LogInformation($"Post-navigation (route): {Region.Root().Navigator().CurrentRoute}");
         }
     }
@@ -104,14 +117,14 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
     protected virtual async Task<NavigationResponse> CoreNavigateAsync(NavigationRequest request)
     {
-        if (request.Route.IsNested)
+        if (request.Route.IsNested())
         {
             // At this point the request should be passed to nested, so remove
             // any nested scheme (ie ./ )
             request = request with { Route = request.Route with { Scheme = Schemes.Current } };
         }
 
-        if (request.Route.IsEmpty)
+        if (request.Route.IsEmpty())
         {
             return null;
         }
