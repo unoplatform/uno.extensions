@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,19 +34,26 @@ public static class NavigationRequestExtensions
         return request;
     }
 
-    public static NavigationContext BuildNavigationContext(this NavigationRequest request, IServiceProvider services, TaskCompletionSource<Options.Option> resultTask = default)
+    public static NavigationContext BuildNavigationContext(
+        this NavigationRequest request,
+        IServiceProvider services,
+        TaskCompletionSource<Options.Option> resultTask = default)
     {
         var scopedServices = services.CloneNavigationScopedServices();
-        var dataFactor = scopedServices.GetService<ViewModelDataProvider>();
-        dataFactor.Parameters = request.Route.Data;
 
         var mapping = scopedServices.GetService<IRouteMappings>().FindByPath(request.Route.Base);
+
+        var dataFactor = scopedServices.GetService<ViewModelDataProvider>();
+        dataFactor.Parameters = request.Route.Data;
         var cancel = (request.Cancellation is not null) ?
                                 CancellationTokenSource.CreateLinkedTokenSource(request.Cancellation.Value) :
                                 new CancellationTokenSource();
         var context = new NavigationContext(
                             scopedServices,
-                            request with { Cancellation = cancel.Token },
+                            request with {
+                                Cancellation = cancel.Token,
+                                Route = request.Route with {
+                                    Data = request.Route.Data.AsParameters(mapping) } },
                             cancel,
                             mapping);
 

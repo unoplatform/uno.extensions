@@ -18,7 +18,7 @@ namespace ExtensionsSampleApp.ViewModels.Twitter
         {
             if (Tweet is null)
             {
-                Tweet = new Tweet { Id = int.Parse(context.Route.Data["tweetid"] + ""), Author = "Ned", Text = "Tweet loaded on start" };
+                Tweet = new Tweet { Id = int.Parse(context.Route.Data["TweetId"] + ""), Author = "Ned", Text = "Tweet loaded on start" };
             }
         }
     }

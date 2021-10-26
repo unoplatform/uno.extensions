@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
@@ -113,9 +114,30 @@ namespace ExtensionsSampleApp
             mapping.Register(new RouteMap(typeof(Content1).Name, typeof(Content1)));
             mapping.Register(new RouteMap(typeof(Content2).Name, typeof(Content2), typeof(Content2ViewModel)));
             mapping.Register(new RouteMap(typeof(SimpleContentDialog).Name, typeof(SimpleContentDialog)));
-            mapping.Register(new RouteMap(typeof(TwitterPage).Name, typeof(TwitterPage)));
+            mapping.Register(new RouteMap(typeof(TwitterPage).Name, typeof(TwitterPage),
+                RegionInitialization: (region, nav) => nav.Route.IsEmpty() ?
+                                        nav with { Route = nav.Route with { Base = "home" } } :
+                                        nav));
+            mapping.Register(new RouteMap("home",
+                RegionInitialization: (region, nav) => nav.Route.IsEmpty() ?
+                                        nav with { Route = nav.Route with { Base = typeof(TweetsPage).Name } } :
+                                        nav with {
+                                            Route = nav.Route with {
+                                                Base = typeof(TweetsPage).Name,
+                                                Path = nav.Route.Base + Schemes.NavigateForward + nav.Route.Path} }
+                                        ));
+            mapping.Register(new RouteMap("notifications",
+                RegionInitialization: (region, nav) => nav.Route.IsEmpty() ?
+                                        nav with { Route = nav.Route with { Base = typeof(NotificationsPage).Name } } :
+                                        nav with {
+                                            Route = nav.Route with {
+                                                Base = typeof(NotificationsPage).Name,
+                                                Path = nav.Route.Base + Schemes.NavigateForward + nav.Route.Path} }
+                                        ));
             mapping.Register(new RouteMap(typeof(TweetsPage).Name, typeof(TweetsPage), typeof(TweetsViewModel)));
-            mapping.Register(new RouteMap(typeof(TweetDetailsPage).Name, typeof(TweetDetailsPage), typeof(TweetDetailsViewModel), typeof(Tweet)));
+            mapping.Register(new RouteMap(typeof(TweetDetailsPage).Name, typeof(TweetDetailsPage),
+                typeof(TweetDetailsViewModel), typeof(Tweet),
+                BuildQueryParameters:entity=>new Dictionary<string, string> { { "TweetId",(entity as Tweet)?.Id+""} }));
             mapping.Register(new RouteMap(typeof(NotificationsPage).Name, typeof(NotificationsPage), typeof(NotificationsViewModel)));
             mapping.Register(new RouteMap(typeof(ProfilePage).Name, typeof(ProfilePage)));
             mapping.Register(new RouteMap(typeof(NavigationViewPage).Name, typeof(NavigationViewPage)));
@@ -164,13 +186,14 @@ namespace ExtensionsSampleApp
 
                 var nav = Host.Services.GetService<INavigator>();
                 //var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Nested);
-                //var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Root);
+                var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Root);
                 //var navResult = nav.NavigateToRouteAsync(this, "+MainPage", Schemes.Root);
                 //var navResult = nav.NavigateToRouteAsync(this, "+MainPage+SecondPage", Schemes.Root);
-                var navResult = nav.NavigateToRouteAsync(this, "+MainPage+SecondPage/content/Content1/", Schemes.Root);
+                //var navResult = nav.NavigateToRouteAsync(this, "+MainPage+SecondPage+ThirdPage", Schemes.Root);
+                //var navResult = nav.NavigateToRouteAsync(this, "+MainPage+SecondPage/content/Content1/", Schemes.Root);
                 //var navResult = nav.NavigateToRouteAsync(this, "TabbedPage/doc1", Schemes.Root);
                 //var navResult = nav.NavigateToRouteAsync(this, "TabbedPage/doc2/SecondPage/content/Content1", Schemes.Root);
-                //var navResult = nav.NavigateToRouteAsync(this, "TwitterPage/notifications/TweetDetailsPage?tweetid=23", Schemes.Root);
+                //var navResult = nav.NavigateToRouteAsync(this, "TwitterPage/notifications/TweetDetailsPage?TweetId=23", Schemes.Root);
                 //navResult.OnCompleted(() => Debug.WriteLine("Nav complete"));
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
                 {

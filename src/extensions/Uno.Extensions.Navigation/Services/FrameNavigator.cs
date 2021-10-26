@@ -47,14 +47,16 @@ public class FrameNavigator : ControlNavigator<Frame>
         Control.Navigated += Frame_Navigated;
     }
 
-    protected override Task NavigateWithContextAsync(NavigationContext context)
+    protected override bool CanNavigateToRoute(Route route) => base.CanNavigateToRoute(route) || route.IsFrameNavigation();
+
+    protected override Task<NavigationRequest> NavigateWithContextAsync(NavigationContext context)
     {
         return context.Request.Route.FrameIsForwardNavigation() ?
                     NavigateForwardAsync(context) :
                     NavigatedBackAsync(context);
     }
 
-    private async Task NavigateForwardAsync(NavigationContext context)
+    private async Task<NavigationRequest> NavigateForwardAsync(NavigationContext context)
     {
         var numberOfPagesToRemove = context.Request.Route.FrameNumberOfPagesToRemove();
         // We remove 1 less here because we need to remove the current context, after the navigation is completed
@@ -64,23 +66,27 @@ public class FrameNavigator : ControlNavigator<Frame>
             numberOfPagesToRemove--;
         }
 
-        var segments = (from pg in context.Request.Route.ForwardNavigationSegments()
-                        let map = Mappings.FindByPath(pg)
+        var currentRequest = context.Request;
+        var segments = (from pg in currentRequest.Route.ForwardNavigationSegments()
+                        let map = Mappings.FindByPath(pg.Base)
                         select new { Route = pg, Map = map }).ToArray();
 
+        var firstSegment = segments.First().Route;
         for (int i = 0; i < segments.Length - 1; i++)
         {
             var seg = segments[i];
             var newEntry = new PageStackEntry(seg.Map.View, null, null);
             Control.BackStack.Add(newEntry);
+            currentRequest = currentRequest with { Route = currentRequest.Route.Trim(seg.Route) };
+            firstSegment = firstSegment.Append(segments[i + 1].Route);
+            context = context with { Mapping = segments[i + 1].Map };
         }
 
         //// Add the new context to the list of contexts and then navigate away
         //await Show(context.Request.Route.Base, context.Mapping?.View, context.Request.Route.Data);
 
         // Add the new context to the list of contexts and then navigate away
-        await Show(segments.Last().Route, segments.Last().Map.View, context.Request.Route.Data);
-
+        await Show(segments.Last().Route.Base, segments.Last().Map.View, context.Request.Route.Data);
 
         // If path starts with / then remove all prior pages and corresponding contexts
         if (context.Request.Route.FrameIsRooted())
@@ -96,9 +102,12 @@ public class FrameNavigator : ControlNavigator<Frame>
         }
 
         InitialiseView(context);
+
+        var responseRequest = context.Request with { Route = firstSegment };
+        return responseRequest;
     }
 
-    private Task NavigatedBackAsync(NavigationContext context)
+    private Task<NavigationRequest> NavigatedBackAsync(NavigationContext context)
     {
         // Remove any excess items in the back stack
         var numberOfPagesToRemove = context.Request.Route.FrameNumberOfPagesToRemove();
@@ -120,7 +129,8 @@ public class FrameNavigator : ControlNavigator<Frame>
 
         InitialiseView(context);
 
-        return Task.CompletedTask;
+        var responseRequest = context.Request with { Route = context.Request.Route with { Path = null } };
+        return Task.FromResult(responseRequest);
     }
 
     private void UpdateCurrentView()
@@ -208,7 +218,7 @@ public class FrameNavigator : ControlNavigator<Frame>
         }
         if (CurrentRoute is null)
         {
-            CurrentRoute = new Route(scheme, request.Route.Base, null, request.Route.Data);
+            CurrentRoute = request.Route with { Scheme = Schemes.NavigateForward };// new Route(scheme, request.Route.Base, request.Route.Path, request.Route.Data);
         }
         else
         {
@@ -226,10 +236,17 @@ public class FrameNavigator : ControlNavigator<Frame>
             }
 
             var newSegments = request.Route.ForwardNavigationSegments();
-            segments.AddRange(newSegments);
-            var routeBase = string.Join(Schemes.NavigateForward, segments);
+            if (newSegments is not null)
+            {
+                segments.AddRange(newSegments);
+            }
 
-            CurrentRoute = new Route(Schemes.NavigateForward, routeBase, null, request.Route.Data);
+            var routeBase = segments.First().Base;
+            segments.RemoveAt(0);
+
+            var routePath = segments.Count > 0 ? string.Join("", segments) : string.Empty;
+
+            CurrentRoute = new Route(Schemes.NavigateForward, routeBase, routePath, request.Route.Data);
         }
     }
 }

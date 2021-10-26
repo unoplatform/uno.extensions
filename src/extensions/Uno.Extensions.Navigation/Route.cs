@@ -11,7 +11,7 @@ public record Route(string Scheme, string Base, string Path, IDictionary<string,
     {
         try
         {
-            return $"{Scheme}{Base}{this.UriPath()}{this.Query()}";
+            return $"{Scheme}{Base}{Path}{this.Query()}";
         }
         catch (Exception ex)
         {
