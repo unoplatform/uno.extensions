@@ -23,8 +23,6 @@ public class FrameNavigator : ControlNavigator<Frame>
 {
     protected override FrameworkElement CurrentView => Control.Content as FrameworkElement;
 
-    protected override string CurrentPath => CurrentView?.NavigationRoute(Mappings);
-
     protected override bool CanGoBack => true;
 
     public FrameNavigator(
@@ -41,7 +39,8 @@ public class FrameNavigator : ControlNavigator<Frame>
         if (Control.Content is not null)
         {
             Logger.LogDebugMessage($"Navigating to type '{Control.SourcePageType.Name}' (initial Content set on Frame)");
-            UpdateCurrentView();
+            var viewType = Control.Content.GetType();
+            Region.Navigator().NavigateToViewAsync(this, viewType);
         }
 
         Control.Navigated += Frame_Navigated;
@@ -51,6 +50,9 @@ public class FrameNavigator : ControlNavigator<Frame>
 
     protected override Task<NavigationRequest> NavigateWithContextAsync(NavigationContext context)
     {
+        // Detach all nested regions as we're moving away from the current view
+        Region.DetachAll();
+
         return context.Request.Route.FrameIsForwardNavigation() ?
                     NavigateForwardAsync(context) :
                     NavigatedBackAsync(context);
@@ -117,9 +119,14 @@ public class FrameNavigator : ControlNavigator<Frame>
             RemoveLastFromBackStack();
             numberOfPagesToRemove--;
         }
-
-        // Invoke the navigation (which will be a back navigation)
-        FrameGoBack(context.Request.Route.Data);
+        var responseRequest = context.Request with { Route = context.Request.Route with { Path = null } };
+        var previousBase = CurrentRoute.ApplyFrameRoute(responseRequest.Route).Base;
+        var currentBase = Mappings.FindByView(Control.Content.GetType())?.Path;
+        if (currentBase != previousBase)
+        {
+            // Invoke the navigation (which will be a back navigation)
+            FrameGoBack(context.Request.Route.Data);
+        }
 
         // Back navigation doesn't have a mapping (since path is "..")
         // Now that we've completed the actual navigation we can
@@ -129,22 +136,22 @@ public class FrameNavigator : ControlNavigator<Frame>
 
         InitialiseView(context);
 
-        var responseRequest = context.Request with { Route = context.Request.Route with { Path = null } };
         return Task.FromResult(responseRequest);
-    }
-
-    private void UpdateCurrentView()
-    {
-        var request = Mappings.FindByView(Control.Content.GetType()).AsRequest(this);
-        var context = request.BuildNavigationContext(Region.Services);
-        InitialiseView(context);
     }
 
     private void Frame_Navigated(object sender, NavigationEventArgs e)
     {
         Logger.LogDebugMessage($"Frame has navigated to page '{e.SourcePageType.Name}'");
 
-        UpdateCurrentView();
+        if (e.NavigationMode == NavigationMode.New)
+        {
+            var viewType = Control.Content.GetType();
+            Region.Navigator().NavigateToViewAsync(this, viewType);
+        }
+        else
+        {
+            Region.Navigator().NavigateToPreviousViewAsync(this);
+        }
     }
 
     private void FrameGoBack(object parameter)
@@ -211,42 +218,43 @@ public class FrameNavigator : ControlNavigator<Frame>
 
     protected override void UpdateRouteFromRequest(NavigationRequest request)
     {
-        var scheme = request.Route.Scheme;
-        if (string.IsNullOrWhiteSpace(request.Route.Scheme))
-        {
-            scheme = Schemes.NavigateForward;
-        }
-        if (CurrentRoute is null)
-        {
-            CurrentRoute = request.Route with { Scheme = Schemes.NavigateForward };// new Route(scheme, request.Route.Base, request.Route.Path, request.Route.Data);
-        }
-        else
-        {
-            var segments = CurrentRoute.ForwardNavigationSegments().ToList();
-            foreach (var schemeChar in scheme)
-            {
-                if (schemeChar + "" == Schemes.NavigateBack)
-                {
-                    segments.RemoveAt(segments.Count - 1);
-                }
-                else if (schemeChar + "" == Schemes.Root)
-                {
-                    segments.Clear();
-                }
-            }
+        CurrentRoute = CurrentRoute.ApplyFrameRoute(request.Route);
+        //var scheme = request.Route.Scheme;
+        //if (string.IsNullOrWhiteSpace(request.Route.Scheme))
+        //{
+        //    scheme = Schemes.NavigateForward;
+        //}
+        //if (CurrentRoute is null)
+        //{
+        //    CurrentRoute = request.Route with { Scheme = Schemes.NavigateForward };// new Route(scheme, request.Route.Base, request.Route.Path, request.Route.Data);
+        //}
+        //else
+        //{
+        //    var segments = CurrentRoute.ForwardNavigationSegments().ToList();
+        //    foreach (var schemeChar in scheme)
+        //    {
+        //        if (schemeChar + "" == Schemes.NavigateBack)
+        //        {
+        //            segments.RemoveAt(segments.Count - 1);
+        //        }
+        //        else if (schemeChar + "" == Schemes.Root)
+        //        {
+        //            segments.Clear();
+        //        }
+        //    }
 
-            var newSegments = request.Route.ForwardNavigationSegments();
-            if (newSegments is not null)
-            {
-                segments.AddRange(newSegments);
-            }
+        //    var newSegments = request.Route.ForwardNavigationSegments();
+        //    if (newSegments is not null)
+        //    {
+        //        segments.AddRange(newSegments);
+        //    }
 
-            var routeBase = segments.First().Base;
-            segments.RemoveAt(0);
+        //    var routeBase = segments.First().Base;
+        //    segments.RemoveAt(0);
 
-            var routePath = segments.Count > 0 ? string.Join("", segments) : string.Empty;
+        //    var routePath = segments.Count > 0 ? string.Join("", segments) : string.Empty;
 
-            CurrentRoute = new Route(Schemes.NavigateForward, routeBase, routePath, request.Route.Data);
-        }
+        //    CurrentRoute = new Route(Schemes.NavigateForward, routeBase, routePath, request.Route.Data);
+        //}
     }
 }

@@ -17,22 +17,22 @@
                           IsAddTabButtonVisible="False">
             <controls:TabViewItem Header="Home"
                                   IsClosable="False"
-                                  x:Name="home">
+                                  >
                 <controls:TabViewItem.IconSource>
                     <controls:SymbolIconSource Symbol="Home" />
                 </controls:TabViewItem.IconSource>
-                <Grid>
+                <Grid nav:Region.Name="home">
                     <Frame  nav:Region.Attached="true" />
                     <!--SourcePageType="local:TweetsPage" />-->
                 </Grid>
             </controls:TabViewItem>
             <controls:TabViewItem Header="Notifications"
                                   IsClosable="False"
-                                  x:Name="notifications">
+                                  >
                 <controls:TabViewItem.IconSource>
                     <controls:SymbolIconSource Symbol="Document" />
                 </controls:TabViewItem.IconSource>
-                <Grid>
+                <Grid nav:Region.Name="notifications">
                     <Frame nav:Region.Attached="true" />
                     <!--SourcePageType="local:NotificationsPage" />-->
                 </Grid>

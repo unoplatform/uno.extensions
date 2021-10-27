@@ -122,20 +122,26 @@ namespace ExtensionsSampleApp
                                         nav with { Route = nav.Route with { Base = "home" } } :
                                         nav));
             mapping.Register(new RouteMap("home",
-                RegionInitialization: (region, nav) => nav.Route.IsEmpty() ?
-                                        nav with { Route = nav.Route with { Base = typeof(TweetsPage).Name } } :
+                RegionInitialization: (region, nav) => string.IsNullOrWhiteSpace(nav.Route.Path) ?
+                                        nav with { Route = nav.Route with { Path = typeof(TweetsPage).Name } } :
                                         nav with {
                                             Route = nav.Route with {
-                                                Base = typeof(TweetsPage).Name,
-                                                Path = nav.Route.Base + Schemes.NavigateForward + nav.Route.Path} }
+                                                Path = nav.Route.Path
+                                                          .TrimStart('+')
+                                                          .StartsWith(typeof(TweetsPage).Name)?
+                                                       nav.Route.Path :
+                                                       typeof(TweetsPage).Name + Schemes.NavigateForward + nav.Route.Path} }
                                         ));
             mapping.Register(new RouteMap("notifications",
-                RegionInitialization: (region, nav) => nav.Route.IsEmpty() ?
-                                        nav with { Route = nav.Route with { Base = typeof(NotificationsPage).Name } } :
+                RegionInitialization: (region, nav) => string.IsNullOrWhiteSpace(nav.Route.Path) ?
+                                        nav with { Route = nav.Route with { Path = typeof(NotificationsPage).Name } } :
                                         nav with {
                                             Route = nav.Route with {
-                                                Base = typeof(NotificationsPage).Name,
-                                                Path = nav.Route.Base + Schemes.NavigateForward + nav.Route.Path} }
+                                                Path = nav.Route.Path
+                                                          .TrimStart('+')
+                                                          .StartsWith(typeof(NotificationsPage).Name)?
+                                                       nav.Route.Path :
+                                                       typeof(NotificationsPage).Name + Schemes.NavigateForward + nav.Route.Path} }
                                         ));
             mapping.Register(new RouteMap(typeof(TweetsPage).Name, typeof(TweetsPage), typeof(TweetsViewModel)));
             mapping.Register(new RouteMap(typeof(TweetDetailsPage).Name, typeof(TweetDetailsPage),
@@ -191,8 +197,8 @@ namespace ExtensionsSampleApp
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
                 var nav = Host.Services.GetService<INavigator>();
-                //var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Nested);
-                var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Root);
+                var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Nested);
+                //var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Root);
                 //var navResult = nav.NavigateToRouteAsync(this, "+MainPage", Schemes.Root);
                 //var navResult = nav.NavigateToRouteAsync(this, "+MainPage+SecondPage", Schemes.Root);
                 //var navResult = nav.NavigateToRouteAsync(this, "+MainPage+SecondPage+ThirdPage", Schemes.Root);

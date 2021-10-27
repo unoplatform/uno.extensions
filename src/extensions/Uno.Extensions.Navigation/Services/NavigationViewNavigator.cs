@@ -18,8 +18,6 @@ public class NavigationViewNavigator : ControlNavigator<Microsoft.UI.Xaml.Contro
 {
     protected override FrameworkElement CurrentView => Control.SelectedItem as FrameworkElement;
 
-    protected override string CurrentPath => CurrentView?.NavigationRoute();
-
     private Microsoft.UI.Xaml.Controls.NavigationView _control;
 
     public override Microsoft.UI.Xaml.Controls.NavigationView Control

@@ -21,8 +21,6 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 {
     protected override FrameworkElement CurrentView => Control.Content as FrameworkElement;
 
-    protected override string CurrentPath => CurrentView?.NavigationRoute(Mappings);
-
     public ContentControlNavigator(
         ILogger<ContentControlNavigator> logger,
         IRegion region,

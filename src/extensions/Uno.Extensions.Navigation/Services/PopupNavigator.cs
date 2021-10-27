@@ -27,8 +27,6 @@ public class PopupNavigator : ControlNavigator<Popup>
 {
     protected override FrameworkElement CurrentView => Control;
 
-    protected override string CurrentPath => CurrentView?.NavigationRoute(Mappings);
-
     public PopupNavigator(
         ILogger<ContentControlNavigator> logger,
         IRegion region,

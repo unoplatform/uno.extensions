@@ -26,16 +26,21 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
     public Route CurrentRoute
     {
-        get => _currentRoute.Merge(Region.Children.Select(x => x.Services?.GetService<INavigator>()?.CurrentRoute));
+        get => _currentRoute.Merge(Region.Children.Select(x => (x.Name, x.Services?.GetService<INavigator>()?.CurrentRoute)));
         set
         {
-            var route = value;
-            if (route is not null &&
-               !string.IsNullOrWhiteSpace(this.Region.Name))
-            {
-                route = route with { Base = this.Region.Name, Path = Schemes.Separator + route.Base + route.Path };
-            }
-            _currentRoute = route;
+            //var route = value;
+            //if (route is not null &&
+            //   !string.IsNullOrWhiteSpace(this.Region.Name))
+            //{
+            //    route = route with
+            //    {
+            //        Scheme = Schemes.Current,
+            //        Base = this.Region.Name,
+            //        Path = (string.IsNullOrWhiteSpace(route.Scheme) ? Schemes.Separator : route.Scheme) + route.Base + route.Path
+            //    };
+            //}
+            _currentRoute = value;
         }
     }
 
