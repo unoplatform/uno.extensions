@@ -145,6 +145,8 @@ public abstract class ControlNavigator : Navigator
 
         var responseRequest = await NavigateWithContextAsync(context);
 
+        UpdateRouteFromRequest(responseRequest);
+
         if (request.Cancellation.HasValue && CanGoBack)
         {
             request.Cancellation.Value.Register(() =>
@@ -159,7 +161,6 @@ public abstract class ControlNavigator : Navigator
         await CurrentView.Start(context.Request);
         await CurrentViewModel.Start(context.Request);
 
-        UpdateRouteFromRequest(responseRequest);
 
         return new NavigationResultResponse(responseRequest, resultTask?.Task);
     }

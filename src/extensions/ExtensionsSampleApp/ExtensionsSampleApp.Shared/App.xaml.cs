@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Messaging;
 using ExtensionsSampleApp.Region.Managers;
 using ExtensionsSampleApp.ViewModels;
 using ExtensionsSampleApp.ViewModels.Twitter;
@@ -16,9 +17,11 @@ using Uno.Extensions.Hosting;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Controls;
+using Uno.Extensions.Navigation.Regions;
 using Uno.UI.ToolkitLib;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.UI.ViewManagement;
 
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Xaml;
@@ -37,7 +40,7 @@ namespace ExtensionsSampleApp
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
-    public sealed partial class App : Application
+    public sealed partial class App : Application, IRecipient<RegionUpdatedMessage>
     {
 #if NET5_0 && WINDOWS
         private Window _window;
@@ -143,6 +146,9 @@ namespace ExtensionsSampleApp
             mapping.Register(new RouteMap(typeof(NavigationViewPage).Name, typeof(NavigationViewPage)));
             mapping.Register(new RouteMap(typeof(NavigationViewGridVisibilityPage).Name, typeof(NavigationViewGridVisibilityPage)));
             mapping.Register(new RouteMap(typeof(NavigationViewVisualStatesPage).Name, typeof(NavigationViewVisualStatesPage)));
+
+            var notifier = Host.Services.GetService<INavigationNotifier>();
+            notifier.Register(this);
 
             //InitializeLogging();
 
@@ -302,6 +308,14 @@ namespace ExtensionsSampleApp
             });
 
             global::Uno.Extensions.LogExtensionPoint.AmbientLoggerFactory = factory;
+        }
+
+        public void Receive(RegionUpdatedMessage message)
+        {
+            var rootRegion = message.Region.Root();
+            var route = rootRegion.Navigator().CurrentRoute;
+            var appTitle = ApplicationView.GetForCurrentView();
+            appTitle.Title = "Navigation: " + route;
         }
     }
 

@@ -50,7 +50,7 @@
                     nav:Navigation.Request="../TabbedPage" />
 
             <Button Content="Root - Twitter ('/-/Twitter')"
-                    nav:Navigation.Request="/-/Twitter" />
+                    nav:Navigation.Request="/-/TwitterPage" />
 
         </StackPanel>
         <ContentControl Grid.Row="1"

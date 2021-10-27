@@ -43,7 +43,7 @@
                               MinWidth="200" />
                 <Button Content="Login"
                         Margin="0,8"
-                        nav:Navigation.Request="/Twitter" />
+                        nav:Navigation.Request="/-/TwitterPage" />
             </StackPanel>
             <Grid x:Name="Overlay"
                   Visibility="Collapsed">
