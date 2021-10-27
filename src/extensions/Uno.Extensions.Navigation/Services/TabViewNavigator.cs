@@ -22,8 +22,6 @@ public class TabViewNavigator : ControlNavigator<TabView>
 {
     protected override FrameworkElement CurrentView => (Control.SelectedItem as TabViewItem)?.Content as FrameworkElement;
 
-    protected override string CurrentPath => (Control.SelectedItem as TabViewItem)?.NavigationRoute();
-
     public TabViewNavigator(
         ILogger<TabViewNavigator> logger,
         IRegion region,
@@ -38,7 +36,7 @@ public class TabViewNavigator : ControlNavigator<TabView>
         Control.SelectionChanged += Tabs_SelectionChanged;
     }
 
-    private void Tabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    private async void Tabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         Logger.LogDebugMessage($"Tab changed");
         var tvi = e.AddedItems?.FirstOrDefault() as TabViewItem;
@@ -46,14 +44,9 @@ public class TabViewNavigator : ControlNavigator<TabView>
         {
             return;
         }
-        var tabName = tvi?.Name;
-        Logger.LogDebugMessage($"Navigating to path {tabName}");
-        //Navigation.NavigateToRouteAsync(null, tabName);
-
-        var request = Mappings.FindByPath(tabName).AsRequest(this);
-        var context = request.BuildNavigationContext(Region.Services);
-
-        InitialiseView(context);
+        await tvi.EnsureLoaded();
+        var tabName = (tvi.Content as FrameworkElement).GetName() ?? tvi.Name;
+        await Region.Navigator().NavigateToRouteAsync(tvi, tabName);
     }
 
     private TabViewItem FindByName(string tabName)
@@ -64,7 +57,7 @@ public class TabViewNavigator : ControlNavigator<TabView>
                 select t).FirstOrDefault();
     }
 
-    protected override async Task Show(string path, Type view, object data)
+    protected override async Task Show(string path, Type viewType, object data)
     {
         try
         {

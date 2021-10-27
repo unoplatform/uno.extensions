@@ -23,8 +23,6 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 
     protected override FrameworkElement CurrentView => CurrentlyVisibleControl;
 
-    protected override string CurrentPath => CurrentView?.NavigationRoute();
-
     public PanelVisiblityNavigator(
         ILogger<PanelVisiblityNavigator> logger,
         IRegion region,

@@ -13,8 +13,6 @@ namespace Uno.Extensions.Navigation.Services
 
         private IAsyncInfo ShowTask { get; set; }
 
-        protected override string CurrentPath => GetType().Name ?? string.Empty;
-
         protected DialogNavigator(
             ILogger<DialogNavigator> logger,
             IRegion region)

@@ -19,8 +19,6 @@ public class ControlVisualStateNavigator : ControlNavigator<Control>
 {
     public const string NavigatorName = "VisualState";
 
-    protected override string CurrentPath => CurrentVisualState;
-
     public ControlVisualStateNavigator(
         ILogger<ControlVisualStateNavigator> logger,
         IRegion region,
@@ -30,12 +28,8 @@ public class ControlVisualStateNavigator : ControlNavigator<Control>
     {
     }
 
-    private string CurrentVisualState { get; set; }
-
     protected override async Task Show(string path, Type viewType, object data)
     {
-        CurrentVisualState = path;
         VisualStateManager.GoToState(Control, path, true);
     }
-
 }

@@ -57,7 +57,7 @@ public static class RouteExtensions
             return default;
         }
 
-        var segments = new List<Route>() { route with { Scheme=Schemes.NavigateForward, Path = null } };
+        var segments = new List<Route>() { route with { Scheme = Schemes.NavigateForward, Path = null } };
         var nextRoute = route.NextRoute();
         while (nextRoute.Scheme == Schemes.NavigateForward)
         {
@@ -234,26 +234,44 @@ public static class RouteExtensions
         return data;
     }
 
-    public static Route Merge(this Route route, IEnumerable<Route> childRoutes)
+    public static Route Merge(this Route route, IEnumerable<(string, Route)> childRoutes)
     {
-        // TODO: Handle multiple children!
-        var childRoute = childRoutes.FirstOrDefault();
-        if (childRoute is null)
-        {
-            return route;
-        }
-
         if (route is null)
         {
-            return childRoute;
+            return childRoutes.FirstOrDefault().Item2;
         }
 
-        var separator = childRoute.Scheme == Schemes.Current ? Schemes.Separator : string.Empty;
+        var childRoute = childRoutes.FirstOrDefault(child => child.Item1 == route.Base);
+        if (childRoute.Item2 is null)
+        {
+            childRoute = childRoutes.FirstOrDefault();
+            if (childRoute.Item2 is null)
+            {
+                return route;
+            }
+        }
+
+        var separator = childRoute.Item2.Scheme == Schemes.Current ? Schemes.Separator : string.Empty;
+
+
+        var child = childRoute.Item2;
+        if (!string.IsNullOrWhiteSpace(childRoute.Item1) && childRoute.Item1 !=route.Base)
+        {
+            child = child with
+            {
+                Scheme = Schemes.Current,
+                Base = childRoute.Item1,
+                Path = (string.IsNullOrWhiteSpace(child.Scheme) ?
+                            Schemes.Separator :
+                            child.Scheme) + child.Base + child.Path
+            };
+        }
+
 
         return route with
         {
-            Path = route.Path + separator + childRoute.FullPath(),
-            Data = route.Data.Combine(childRoute.Data)
+            Path = route.Path + separator + child.FullPath(),
+            Data = route.Data.Combine(child.Data)
         };
     }
 
@@ -271,5 +289,46 @@ public static class RouteExtensions
             });
         }
         return mapDict;
+    }
+
+    public static Route ApplyFrameRoute(this Route currentRoute, Route frameRoute)
+    {
+        var scheme = frameRoute.Scheme;
+        if (string.IsNullOrWhiteSpace(frameRoute.Scheme))
+        {
+            scheme = Schemes.NavigateForward;
+        }
+        if (currentRoute is null)
+        {
+            return frameRoute with { Scheme = Schemes.NavigateForward };
+        }
+        else
+        {
+            var segments = currentRoute.ForwardNavigationSegments().ToList();
+            foreach (var schemeChar in scheme)
+            {
+                if (schemeChar + "" == Schemes.NavigateBack)
+                {
+                    segments.RemoveAt(segments.Count - 1);
+                }
+                else if (schemeChar + "" == Schemes.Root)
+                {
+                    segments.Clear();
+                }
+            }
+
+            var newSegments = frameRoute.ForwardNavigationSegments();
+            if (newSegments is not null)
+            {
+                segments.AddRange(newSegments);
+            }
+
+            var routeBase = segments.First().Base;
+            segments.RemoveAt(0);
+
+            var routePath = segments.Count > 0 ? string.Join("", segments) : string.Empty;
+
+            return new Route(Schemes.NavigateForward, routeBase, routePath, frameRoute.Data);
+        }
     }
 }

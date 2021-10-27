@@ -48,13 +48,11 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
         return responseRequest;
     }
 
-    protected override string NavigatorToString => CurrentPath;
+    protected override string NavigatorToString => CurrentRoute?.ToString();
 }
 
 public abstract class ControlNavigator : Navigator
 {
-    protected virtual string CurrentPath => string.Empty;
-
     protected virtual bool CanGoBack => false;
 
     protected virtual FrameworkElement CurrentView => default;
@@ -81,7 +79,11 @@ public abstract class ControlNavigator : Navigator
 
             var requestMap = this.Get<IServiceProvider>().GetService<IRouteMappings>().FindByPath(request.Route.Base);
 
-            request = request with { Route = request.Route.Trim(regionResponse.Request.Route) };// with { Scheme = Schemes.Current, Base = request.Route.NextBase(), Path = request.Route.NextPath() } };
+            // Only trim, if there are no children that this request should be passed down to
+            if (!Region.Children.Any(x => x.Name == regionResponse.Request.Route.Base))
+            {
+                request = request with { Route = request.Route.Trim(regionResponse.Request.Route) };// with { Scheme = Schemes.Current, Base = request.Route.NextBase(), Path = request.Route.NextPath() } };
+            }
 
             if (requestMap?.RegionInitialization is not null)
             {
@@ -110,7 +112,7 @@ public abstract class ControlNavigator : Navigator
 
     protected async Task<NavigationResponse> ControlNavigateAsync(NavigationRequest request)
     {
-        if (request.Route.Base == CurrentPath)
+        if (request.Route.Base == CurrentRoute?.Base)
         {
             return new NavigationResponse(request);
         }
@@ -140,8 +142,8 @@ public abstract class ControlNavigator : Navigator
             return new NavigationResponse(request, false);
         }
 
-        // Detach all nested regions as we're moving away from the current view
-        Region.DetachAll();
+        //// Detach all nested regions as we're moving away from the current view
+        //Region.DetachAll();
 
         var responseRequest = await NavigateWithContextAsync(context);
 
