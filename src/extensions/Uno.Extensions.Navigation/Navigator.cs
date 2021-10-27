@@ -20,6 +20,8 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
     protected IRegion Region { get; }
 
+    private INavigationNotifier Notifier => Region?.Services.GetService<INavigationNotifier>();
+
     IServiceProvider IInstance<IServiceProvider>.Instance => Region?.Services;
 
     public Route CurrentRoute
@@ -39,10 +41,8 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
     public Navigator(
         ILogger<Navigator> logger,
-        IRegion region)
+        IRegion region) : this((ILogger)logger, region)
     {
-        Region = region;
-        Logger = logger;
     }
 
     protected Navigator(
@@ -94,7 +94,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
             // If the base matches the region name, than need to strip the base
             if (request.Route.Base == Region.Name)
             {
-                request = request with { Route = request.Route.NextRoute()};
+                request = request with { Route = request.Route.NextRoute() };
             }
 
             return await CoreNavigateAsync(request);
@@ -103,6 +103,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
         {
             Logger.LogInformation($"Post-navigation: {Region.ToString()}");
             Logger.LogInformation($"Post-navigation (route): {Region.Root().Navigator().CurrentRoute}");
+            Notifier.Update(Region);
         }
     }
 

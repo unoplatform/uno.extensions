@@ -16,6 +16,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Uno.Extensions.Navigation.Controls;
+using CommunityToolkit.Mvvm.Messaging;
 #else
 using Windows.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -36,6 +37,8 @@ public static class ServiceCollectionExtensions
         return services
                     .AddScoped<IInstanceRepository, InstanceRepository>()
 
+                    .AddSingleton<IMessenger, WeakReferenceMessenger>()
+                    .AddSingleton<INavigationNotifier, NavigationNotifier>()
                     .AddScoped<Navigator>()
 
                     // Register the region for each control type

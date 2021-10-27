@@ -114,15 +114,15 @@
                            Style="{StaticResource ResultTextStyle}" />
 
                 <Button Content="Root - Go to Twitter"
-                        nav:Navigation.Request="/LoginPage" />
+                        nav:Navigation.Request="-/LoginPage" />
                 <Button Content="Root - Go to TabBar Page"
-                        nav:Navigation.Request="/TabBarPage" />
+                        nav:Navigation.Request="-/TabBarPage" />
                 <Button Content="Root - Go to NavigationView Page"
-                        nav:Navigation.Request="/NavigationViewPage" />
+                        nav:Navigation.Request="-/NavigationViewPage" />
                 <Button Content="Root - Go to NavigationViewGridVisibility Page"
-                        nav:Navigation.Request="/NavigationViewGridVisibilityPage" />
+                        nav:Navigation.Request="-/NavigationViewGridVisibilityPage" />
                 <Button Content="Root - Go to NavigationViewVisualStates Page"
-                        nav:Navigation.Request="/NavigationViewVisualStatesPage" />
+                        nav:Navigation.Request="-/NavigationViewVisualStatesPage" />
 
             </StackPanel>
         </ScrollViewer>

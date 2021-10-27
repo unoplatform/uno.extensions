@@ -103,7 +103,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 
         InitialiseView(context);
 
-        var responseRequest = context.Request with { Route = firstSegment };
+        var responseRequest = context.Request with { Route = firstSegment with { Scheme = context.Request.Route.Scheme } };
         return responseRequest;
     }
 
