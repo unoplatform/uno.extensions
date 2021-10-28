@@ -23,7 +23,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 {
     protected override FrameworkElement CurrentView => Control.Content as FrameworkElement;
 
-    protected override bool CanGoBack => true;
+    public override bool CanGoBack => Control.BackStackDepth>0;
 
     public FrameNavigator(
         ILogger<FrameNavigator> logger,

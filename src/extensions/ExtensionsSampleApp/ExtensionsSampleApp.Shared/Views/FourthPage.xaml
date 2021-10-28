@@ -22,6 +22,8 @@
                     nav:Navigation.Request="../-/MainPage" />
             <Button Content="Go To /Third Page- NavigationRequest"
                     nav:Navigation.Request="../-/ThirdPage" />
+             <Button Content="Go Back"
+                    Click="GoBackClick"/>
         </StackPanel>
     </Grid>
 </Page>

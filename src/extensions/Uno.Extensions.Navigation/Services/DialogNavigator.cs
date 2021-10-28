@@ -9,7 +9,7 @@ namespace Uno.Extensions.Navigation.Services
 {
     public abstract class DialogNavigator : ControlNavigator
     {
-        protected override bool CanGoBack => true;
+        public override bool CanGoBack => true;
 
         private IAsyncInfo ShowTask { get; set; }
 

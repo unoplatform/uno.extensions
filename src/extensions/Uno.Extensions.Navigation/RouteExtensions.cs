@@ -66,7 +66,9 @@ public static class RouteExtensions
         }
         return segments.ToArray();
     }
-    public static string[] ForwardNavigationSegments(this string path) => path.Split(Schemes.NavigateForward).Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
+
+    public static string[] ForwardNavigationSegments(this string path) =>
+        path.Split(Schemes.NavigateForward.First()).Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
 
     public static string Query(this Route route) => (route.Data?.Where(x => x.Key != string.Empty)?.Any() ?? false) ?
         "?" + string.Join("&", route.Data.Where(x => x.Key != string.Empty).Select(kvp => $"{kvp.Key}={kvp.Value}")) :

@@ -53,7 +53,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 
 public abstract class ControlNavigator : Navigator
 {
-    protected virtual bool CanGoBack => false;
+    public virtual bool CanGoBack => false;
 
     protected virtual FrameworkElement CurrentView => default;
 
