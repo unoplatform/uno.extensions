@@ -1,4 +1,4 @@
-﻿<Page x:Class="ExtensionsSampleApp.Views.Twitter.LoginPage"
+﻿<Page x:Class="ExtensionsSampleApp.UnoCommerce.LoginPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="using:ExtensionsSampleApp.Views.Twitter"
