@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Controls;
+using Uno.Extensions.Navigation.Regions;
 using Uno.Extensions.Navigation.ViewModels;
 #if !WINDOWS_UWP && !WINUI
 using Popup = Windows.UI.Xaml.Controls.Popup;
@@ -13,8 +15,6 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Uno.Extensions.Navigation.Regions;
-using System.Threading.Tasks;
 #else
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;

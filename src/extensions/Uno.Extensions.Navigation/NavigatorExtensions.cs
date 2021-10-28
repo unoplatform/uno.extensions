@@ -4,11 +4,17 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.UI.Popups;
 using Microsoft.Extensions.DependencyInjection;
+using Uno.Extensions.Navigation.Regions;
+using Uno.Extensions.Navigation.Services;
+using System.Linq;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using UICommand = Windows.UI.Popups.UICommand;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 #else
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Windows.UI.Popups;
 #endif
 
 namespace Uno.Extensions.Navigation;
@@ -149,8 +155,8 @@ public static class NavigatorExtensions
     }
 
 #if __IOS__
-    public static async Task<NavigationResponse<TSource>> ShowPickerAsync<TSource>(
-       this INavigationService service,
+    public static async Task<NavigationResultResponse<TSource>> ShowPickerAsync<TSource>(
+       this INavigator service,
        object sender,
        IEnumerable<TSource> itemsSource,
        object itemTemplate = null,
@@ -162,8 +168,19 @@ public static class NavigatorExtensions
                 { RouteConstants.PickerItemTemplate, itemTemplate }
             };
 
-        var result = await service.NavigateAsync(new NavigationRequest(sender, new Uri(Schemes.Dialog + typeof(Picker).Name, UriKind.Relative).BuildRoute(data), cancellation, typeof(TSource)));
-        return NavigationResponse<TSource>.FromResponse(result);
+        var result = await service.NavigateAsync((Schemes.Dialog + typeof(Picker).Name).AsRequest(sender,data, cancellation, typeof(TSource)));
+        return result.As<TSource>();
     }
 #endif
+
+    public static Task<NavigationResponse> GoBack(this INavigator navigator, object sender)
+    {
+        var region = navigator.Get<IServiceProvider>().GetService<IRegion>();
+        region = region.Root();
+        var gobackNavigator = region.FindChildren(
+            child=>child.Services.GetService<INavigator>() is ControlNavigator controlNavigator &&
+                controlNavigator.CanGoBack).Last()?.Navigator();
+        return gobackNavigator?.NavigateToPreviousViewAsync(sender);
+    }
+
 }

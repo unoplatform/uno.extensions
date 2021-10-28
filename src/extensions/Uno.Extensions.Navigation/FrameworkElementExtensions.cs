@@ -8,6 +8,7 @@ using Windows.UI.Xaml.Media;
 #else
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
+using Windows.Foundation;
 #endif
 
 namespace Uno.Extensions.Navigation;
@@ -29,7 +30,13 @@ public static class FrameworkElementExtensions
 
         RoutedEventHandler loaded = null;
         EventHandler<object> layoutChanged = null;
+#if WINDOWS_UWP || WINUI
         TypedEventHandler<FrameworkElement, object> loading = null;
+#elif NETSTANDARD
+        RoutedEventHandler loading = null;
+#else
+        TypedEventHandler<DependencyObject, object> loading = null;
+#endif
 
         Action loadedAction = () =>
         {

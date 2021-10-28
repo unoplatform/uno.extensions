@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Uno.Extensions.Navigation.Services;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 #else
 using Microsoft.UI.Xaml;
@@ -57,5 +59,20 @@ public static class RegionExtensions
     public static IRegion Root(this IRegion region)
     {
         return region.Parent is not null ? region.Parent.Root() : region;
+    }
+
+    public static IEnumerable<IRegion> FindChildren(this IRegion region, Func<IRegion, bool> predicate)
+    {
+        var list = new List<IRegion>();
+        foreach (var child in region.Children)
+        {
+            if (predicate(child))
+            {
+                list.Add(child);
+            }
+
+            list.AddRange(child.FindChildren(predicate));
+        }
+        return list;
     }
 }

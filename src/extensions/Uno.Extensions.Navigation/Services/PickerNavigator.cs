@@ -31,7 +31,7 @@ public class PickerNavigator : ControlNavigator
         var rootGrid = ((appWindow.Content is Frame frame) ? (frame.Content as Page).Content : appWindow.Content) as Grid;
         if (rootGrid is null)
         {
-            return Task.CompletedTask;
+            return Task.FromResult<NavigationRequest>(default);
         }
 
         var popup = new Popup() { IsLightDismissEnabled = true, VerticalAlignment = VerticalAlignment.Stretch, HorizontalAlignment = HorizontalAlignment.Stretch };
@@ -66,7 +66,7 @@ public class PickerNavigator : ControlNavigator
 
         picker.SelectionChanged += (p, e) =>
         {
-            var responseNav = context.Navigation as ResponseNavigationService;
+            var responseNav = context.Navigation as ResponseNavigator;
             if (responseNav is not null)
             {
                 if (e.AddedItems.Any())
@@ -83,7 +83,7 @@ public class PickerNavigator : ControlNavigator
 
         popup.Closed += (pops, pope) =>
         {
-            var responseNav = context.Navigation as ResponseNavigationService;
+            var responseNav = context.Navigation as ResponseNavigator;
             if (responseNav is not null)
             {
                 responseNav.ResultCompletion.TrySetResult(Options.Option.None<object>());

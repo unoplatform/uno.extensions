@@ -13,14 +13,19 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Controls;
+using Uno.Extensions;
 using Uno.Extensions.Hosting;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Regions;
+#if !WINDOWS_UWP
+using Uno.Foundation;
+#endif
 using Uno.UI.ToolkitLib;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
@@ -197,6 +202,32 @@ namespace ExtensionsSampleApp
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
                 var nav = Host.Services.GetService<INavigator>();
+
+#if NET5_0
+                var href = WebAssemblyRuntime.InvokeJS("window.location.href");
+                var url = new UriBuilder(href);
+                var query = url.Query;
+                var path = (url.Path + (!string.IsNullOrWhiteSpace(query)?"?":"") + query +"").TrimStart('/');
+                if(!string.IsNullOrWhiteSpace(path))
+                {
+                    var navResult = nav.NavigateToRouteAsync(this, path, Schemes.Root);
+                }
+                else
+                {
+                    var navResult = nav.NavigateToRouteAsync(this, "+MainPage" + path, Schemes.Root);
+
+                }
+
+
+                Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+                Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested += (s, a) =>
+                {
+                    var appTitle = ApplicationView.GetForCurrentView();
+                    appTitle.Title = "Back pressed - " + DateTime.Now.ToString("HH:mm:ss");
+                    nav.GoBack(this);
+                };
+#else
+
                 var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Nested);
                 //var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Root);
                 //var navResult = nav.NavigateToRouteAsync(this, "+MainPage", Schemes.Root);
@@ -206,6 +237,7 @@ namespace ExtensionsSampleApp
                 //var navResult = nav.NavigateToRouteAsync(this, "TabbedPage/doc1", Schemes.Root);
                 //var navResult = nav.NavigateToRouteAsync(this, "TabbedPage/doc2/SecondPage/content/Content1", Schemes.Root);
                 //var navResult = nav.NavigateToRouteAsync(this, "TwitterPage/notifications/TweetDetailsPage?TweetId=23", Schemes.Root);
+#endif
                 //navResult.OnCompleted(() => Debug.WriteLine("Nav complete"));
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
                 {
@@ -319,9 +351,13 @@ namespace ExtensionsSampleApp
         public void Receive(RegionUpdatedMessage message)
         {
             var rootRegion = message.Region.Root();
-            var route = rootRegion.Navigator().CurrentRoute;
+            var route = rootRegion.Navigator().CurrentRoute+"";
             var appTitle = ApplicationView.GetForCurrentView();
             appTitle.Title = "Navigation: " + route;
+
+#if NET5_0
+            WebAssemblyRuntime.InvokeJS($"window.history.pushState(\"{ route}\",\"ExtensionsApp\", \"{ route}\");");
+#endif
         }
     }
 

@@ -5,20 +5,19 @@ namespace Uno.Extensions.Navigation.Tests;
 
 public class BaseNavigationTests
 {
-    protected INavigationService Navigation { get; private set; }
 
     [TestInitialize]
     public void InitializeTests()
     {
-        ServiceCollection services = new();
-        services.AddNavigation();
+        //ServiceCollection services = new();
+        //services.AddNavigation();
 
-        InitializeServices(services);
+        //InitializeServices(services);
 
-        var sp = services.BuildServiceProvider();
-        Navigation = sp.GetService<INavigationService>();
-        var mapping = sp.GetService<IRouteMappings>();
-        mapping.Register(new RouteMap(typeof(PageOne).Name, typeof(PageOne)));
+        //var sp = services.BuildServiceProvider();
+        //Navigation = sp.GetService<INavigationService>();
+        //var mapping = sp.GetService<IRouteMappings>();
+        //mapping.Register(new RouteMap(typeof(PageOne).Name, typeof(PageOne)));
     }
 
     protected virtual void InitializeServices(IServiceCollection services)

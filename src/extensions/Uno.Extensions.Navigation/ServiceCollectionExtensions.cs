@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
-using Uno.Extensions.Navigation.ViewModels;
-using Uno.Extensions.Navigation.Services;
+using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Regions;
+using Uno.Extensions.Navigation.Services;
+using Uno.Extensions.Navigation.ViewModels;
 using Windows.UI.Popups;
 #if !WINDOWS_UWP && !WINUI
 using Popup = Windows.UI.Xaml.Controls.Popup;
@@ -15,8 +17,6 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Uno.Extensions.Navigation.Controls;
-using CommunityToolkit.Mvvm.Messaging;
 #else
 using Windows.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -51,7 +51,7 @@ public static class ServiceCollectionExtensions
                     .AddRegion<ContentDialog, ContentDialogNavigator>()
                     .AddRegion<MessageDialog, MessageDialogNavigator>()
 #if __IOS__
-                    .AddRegion<Picker, PickerRegion>()
+                    .AddRegion<Picker, PickerNavigator>()
 #endif
                     .AddRegion<Popup, PopupNavigator>()
 
