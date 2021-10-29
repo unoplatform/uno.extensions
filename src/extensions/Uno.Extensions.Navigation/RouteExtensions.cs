@@ -328,7 +328,7 @@ public static class RouteExtensions
             var routeBase = segments.First().Base;
             segments.RemoveAt(0);
 
-            var routePath = segments.Count > 0 ? string.Join("", segments) : string.Empty;
+            var routePath = segments.Count > 0 ? string.Join("", segments.Select(x=>$"{x.Scheme}{x.Base}")) : string.Empty;
 
             return new Route(Schemes.NavigateForward, routeBase, routePath, frameRoute.Data);
         }
