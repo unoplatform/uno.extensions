@@ -14,7 +14,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Services;
 
-public class NavigationViewNavigator : ControlNavigator<Microsoft.UI.Xaml.Controls.NavigationView>
+public class NavigationViewNavigator : ControlNavigator<Microsoft.UI.Xaml.Controls.NavigationView>, ICompositeNavigator
 {
     protected override FrameworkElement CurrentView => Control.SelectedItem as FrameworkElement;
 

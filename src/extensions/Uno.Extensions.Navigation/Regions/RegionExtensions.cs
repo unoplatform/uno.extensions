@@ -20,7 +20,8 @@ public static class RegionExtensions
         {
             var parentNavigator = region.Parent?.Services?.GetService<INavigator>();
             if (parentNavigator is not null &&
-                parentNavigator.GetType() == typeof(Navigator) &&
+                (parentNavigator.GetType() == typeof(Navigator) ||
+                parentNavigator is ICompositeNavigator ) &&
                 region.Parent.Children.Count > 1)
             {
                 return parentNavigator;

@@ -80,7 +80,8 @@ public abstract class ControlNavigator : Navigator
             var requestMap = this.Get<IServiceProvider>().GetService<IRouteMappings>().FindByPath(request.Route.Base);
 
             // Only trim, if there are no children that this request should be passed down to
-            if (!Region.Children.Any(x => x.Name == regionResponse.Request.Route.Base))
+            if (!Region.Children.Any(x => x.Name == regionResponse.Request.Route.Base) &&
+                this is not ICompositeNavigator)
             {
                 request = request with { Route = request.Route.Trim(regionResponse.Request.Route) };// with { Scheme = Schemes.Current, Base = request.Route.NextBase(), Path = request.Route.NextPath() } };
             }
