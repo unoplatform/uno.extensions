@@ -27,8 +27,10 @@ public static class RegionExtensions
             }
         }
 
-        return region.Services?.GetService<INavigator>();
+        return region.LocalNavigator();
     }
+
+    public static INavigator LocalNavigator(this IRegion region)=> region.Services?.GetService<INavigator>();
 
     public static INavigatorFactory NavigatorFactory(this IRegion region) => region.Services?.GetService<INavigatorFactory>();
 

@@ -120,7 +120,7 @@ public class FrameNavigator : ControlNavigator<Frame>
             numberOfPagesToRemove--;
         }
         var responseRequest = context.Request with { Route = context.Request.Route with { Path = null } };
-        var previousBase = CurrentRoute.ApplyFrameRoute(responseRequest.Route).Base;
+        var previousBase = Route.ApplyFrameRoute(responseRequest.Route).Base;
         var currentBase = Mappings.FindByView(Control.Content.GetType())?.Path;
         if (currentBase != previousBase)
         {
@@ -218,7 +218,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 
     protected override void UpdateRouteFromRequest(NavigationRequest request)
     {
-        CurrentRoute = CurrentRoute.ApplyFrameRoute(request.Route);
+        Route = Route.ApplyFrameRoute(request.Route);
         //var scheme = request.Route.Scheme;
         //if (string.IsNullOrWhiteSpace(request.Route.Scheme))
         //{

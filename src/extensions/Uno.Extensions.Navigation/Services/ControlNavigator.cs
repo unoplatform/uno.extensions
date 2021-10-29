@@ -48,7 +48,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
         return responseRequest;
     }
 
-    protected override string NavigatorToString => CurrentRoute?.ToString();
+    protected override string NavigatorToString => Region.Route?.ToString();
 }
 
 public abstract class ControlNavigator : Navigator
@@ -112,7 +112,7 @@ public abstract class ControlNavigator : Navigator
 
     protected async Task<NavigationResponse> ControlNavigateAsync(NavigationRequest request)
     {
-        if (request.Route.Base == CurrentRoute?.Base)
+        if (request.Route.Base == Route?.Base)
         {
             return new NavigationResponse(request);
         }
@@ -169,7 +169,7 @@ public abstract class ControlNavigator : Navigator
 
     protected virtual void UpdateRouteFromRequest(NavigationRequest request)
     {
-        CurrentRoute = new Route(Schemes.Current, request.Route.Base, null, request.Route.Data);
+        Route = new Route(Schemes.Current, request.Route.Base, null, request.Route.Data);
     }
 
     protected abstract Task<NavigationRequest> NavigateWithContextAsync(NavigationContext context);

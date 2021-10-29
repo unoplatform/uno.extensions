@@ -351,7 +351,7 @@ namespace ExtensionsSampleApp
         public void Receive(RegionUpdatedMessage message)
         {
             var rootRegion = message.Region.Root();
-            var route = rootRegion.Navigator().CurrentRoute+"";
+            var route = rootRegion.Route+"";
             var appTitle = ApplicationView.GetForCurrentView();
             appTitle.Title = "Navigation: " + route;
 

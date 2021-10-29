@@ -12,8 +12,6 @@ namespace Uno.Extensions.Navigation;
 
 public class Navigator : INavigator, IInstance<IServiceProvider>
 {
-    private Route _currentRoute;
-
     protected ILogger Logger { get; }
 
     private bool IsRoot => Region?.Parent is null;
@@ -24,25 +22,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
     IServiceProvider IInstance<IServiceProvider>.Instance => Region?.Services;
 
-    public Route CurrentRoute
-    {
-        get => _currentRoute.Merge(Region.Children.Select(x => (x.Name, x.Services?.GetService<INavigator>()?.CurrentRoute)));
-        set
-        {
-            //var route = value;
-            //if (route is not null &&
-            //   !string.IsNullOrWhiteSpace(this.Region.Name))
-            //{
-            //    route = route with
-            //    {
-            //        Scheme = Schemes.Current,
-            //        Base = this.Region.Name,
-            //        Path = (string.IsNullOrWhiteSpace(route.Scheme) ? Schemes.Separator : route.Scheme) + route.Base + route.Path
-            //    };
-            //}
-            _currentRoute = value;
-        }
-    }
+    public Route Route { get; protected set; }
 
     public Navigator(
         ILogger<Navigator> logger,
@@ -107,7 +87,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
         finally
         {
             Logger.LogInformation($"Post-navigation: {Region.ToString()}");
-            Logger.LogInformation($"Post-navigation (route): {Region.Root().Navigator().CurrentRoute}");
+            Logger.LogInformation($"Post-navigation (route): {Region.Root().Route}");
             Notifier.Update(Region);
         }
     }
