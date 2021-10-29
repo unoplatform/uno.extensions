@@ -9,7 +9,7 @@
       mc:Ignorable="d"
       xmlns:toolkit="using:Uno.UI.ToolkitLib"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-    <Grid nav:Region.Attached="True"
+    <Grid
           x:Name="NavRoot">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
@@ -44,8 +44,7 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <muxc:NavigationView x:Name="NavView"
-                             nav:Region.Attached="true"
-                             nav:Region.Parent="{x:Bind NavRoot}">
+                             nav:Region.Attached="true">
             <muxc:NavigationView.MenuItems>
                 <muxc:NavigationViewItem Icon="Home"
                                          Content="Products"
@@ -65,13 +64,11 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid nav:Region.Attached="true"
-                      nav:Region.Parent="{x:Bind NavRoot}"
                       nav:Region.Navigator="Visibility" />
                 <toolkit:TabBar
                    x:Name="Tabs"
                     Visibility="Collapsed"
                     Background="DarkGray"
-                                nav:Region.Parent="{x:Bind NavRoot}"
                                 nav:Region.Attached="true"
                                 Grid.Row="1">
                     <toolkit:TabBar.Items>
