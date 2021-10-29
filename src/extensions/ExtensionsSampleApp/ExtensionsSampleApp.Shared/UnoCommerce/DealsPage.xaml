@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="ExtensionsSampleApp.UnoCommerce.ProductDetailsPage"
+    x:Class="ExtensionsSampleApp.UnoCommerce.DealsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:ExtensionsSampleApp.UnoCommerce"
@@ -9,10 +9,9 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <StackPanel>
-        <TextBlock Text="Product Details" />
-
-            <TextBlock Text="{Binding Product.Name}" />
-        </StackPanel>
+        <TextBlock Text="Deals"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   FontSize="32" />
     </Grid>
 </Page>

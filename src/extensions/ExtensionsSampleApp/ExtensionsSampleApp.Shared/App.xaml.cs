@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using ExtensionsSampleApp.Region.Managers;
+using ExtensionsSampleApp.UnoCommerce;
+using ExtensionsSampleApp.UnoCommerce.Services;
+using ExtensionsSampleApp.UnoCommerce.ViewModels;
 using ExtensionsSampleApp.ViewModels;
 using ExtensionsSampleApp.ViewModels.Twitter;
 using ExtensionsSampleApp.Views;
@@ -92,7 +95,11 @@ namespace ExtensionsSampleApp
                    .AddTransient<TweetDetailsViewModel>()
                    .AddTransient<NotificationsViewModel>()
                    .AddTransient<Content2ViewModel>()
-                   .AddViewModelData<Tweet>();
+                   .AddViewModelData<Tweet>()
+                   .AddTransient<ProductsViewModel>()
+                   .AddTransient<ProductDetailsViewModel>()
+                   .AddViewModelData<Product>()
+                   .AddSingleton<IProductService, ProductService>();
                })
                /*
                 * .ConfigureNavigationMapping(mapping=>{
@@ -116,6 +123,19 @@ namespace ExtensionsSampleApp
                 RegionInitialization: (region, nav) => nav.Route.IsEmpty() ?
                                         nav with { Route = nav.Route with { Base = "doc2" } } :
                                         nav));
+            mapping.Register(new RouteMap(typeof(CommerceHomePage).Name, typeof(CommerceHomePage),
+                RegionInitialization: (region, nav) => nav.Route.IsEmpty() ?
+                                        nav with { Route = nav.Route with { Base = "Products" } } :
+                                        nav));
+            mapping.Register(new RouteMap("Products", typeof(FrameView),
+                RegionInitialization: (region, nav) => nav.Route.IsEmpty() ?
+                                        nav with { Route = nav.Route with { Base = "+ProductsPage" } } :
+                                        nav with { Route = nav.Route with {  Path = "+ProductsPage" } }));
+            //mapping.Register(new RouteMap(typeof(ProductsPage).Name, typeof(ProductsPage), typeof(ProductsViewModel));
+            mapping.Register(new RouteMap("Deals", typeof(FrameView),
+                RegionInitialization: (region, nav) => nav.Route.IsEmpty() ?
+                                        nav with { Route = nav.Route with { Base = "+DealsPage" } } :
+                                        nav with { Route = nav.Route with { Path = "+DealsPage" } }));
             mapping.Register(new RouteMap(typeof(TabBarPage).Name, typeof(TabBarPage)));
             mapping.Register(new RouteMap("doc0", ViewModel: typeof(TabDoc0ViewModel)));
             mapping.Register(new RouteMap("doc1", ViewModel: typeof(TabDoc1ViewModel)));
@@ -153,7 +173,7 @@ namespace ExtensionsSampleApp
                 typeof(TweetDetailsViewModel), typeof(Tweet),
                 BuildQueryParameters:entity=>new Dictionary<string, string> { { "TweetId",(entity as Tweet)?.Id+""} }));
             mapping.Register(new RouteMap(typeof(NotificationsPage).Name, typeof(NotificationsPage), typeof(NotificationsViewModel)));
-            mapping.Register(new RouteMap(typeof(ProfilePage).Name, typeof(ProfilePage)));
+            mapping.Register(new RouteMap(typeof(TwitterProfilePage).Name, typeof(TwitterProfilePage)));
             mapping.Register(new RouteMap(typeof(NavigationViewPage).Name, typeof(NavigationViewPage)));
             mapping.Register(new RouteMap(typeof(NavigationViewGridVisibilityPage).Name, typeof(NavigationViewGridVisibilityPage)));
             mapping.Register(new RouteMap(typeof(NavigationViewVisualStatesPage).Name, typeof(NavigationViewVisualStatesPage)));

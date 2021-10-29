@@ -42,17 +42,16 @@ namespace ExtensionsSampleApp.Region.Managers
             }
         }
 
-        private void ControlSelectionChanged(TabBar sender, TabBarSelectionChangedEventArgs args)
+        private async void ControlSelectionChanged(TabBar sender, TabBarSelectionChangedEventArgs args)
         {
             var tbi = args.NewItem as TabBarItem;
-            var path = tbi.GetName() ?? tbi.Name;
-            if (!string.IsNullOrEmpty(path))
+            if (tbi is null)
             {
-                var request = Mappings.FindByPath(path).AsRequest(this);
-                var context = request.BuildNavigationContext(Region.Services);
-
-                InitialiseView(context);
+                return;
             }
+            await tbi.EnsureLoaded();
+            var tabName = tbi.GetName() ?? tbi.Name;
+            await Region.Navigator().NavigateToRouteAsync(tbi, tabName);
         }
 
         public TabBarRegion(
@@ -74,11 +73,14 @@ namespace ExtensionsSampleApp.Region.Managers
             else
             {
                 var item = (from tbi in Control.ItemsPanelRoot?.Children.OfType<TabBarItem>()
-                            where tbi.Name == path
+                            where tbi.GetName()==path || tbi.Name == path
                             select tbi).FirstOrDefault();
-                var idx = Control.IndexFromContainer(item);
-                Control.SelectedIndex = idx;
-                await (item as FrameworkElement).EnsureLoaded();
+                if (item is not null)
+                {
+                    var idx = Control.IndexFromContainer(item);
+                    Control.SelectedIndex = idx;
+                    await (item as FrameworkElement).EnsureLoaded();
+                }
             }
             Control.SelectionChanged += ControlSelectionChanged;
         }

@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
-using Uno.Extensions;
-using Uno.Extensions.Navigation;
-using Uno.Extensions.Navigation.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -24,25 +20,11 @@ namespace ExtensionsSampleApp.UnoCommerce
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class LoginPage : Page, IViewModelStop, IInjectable<INavigator>
+    public sealed partial class DealsPage : Page
     {
-        public LoginPage()
+        public DealsPage()
         {
             this.InitializeComponent();
-        }
-
-        private INavigator navigator;
-        public void Inject(INavigator entity)
-        {
-            navigator = entity;
-        }
-
-        public async Task<bool> Stop(NavigationRequest request)
-        {
-            VisualStateManager.GoToState(this, "Authenticating", true);
-            await Task.Delay(2000);
-            VisualStateManager.GoToState(this, "Default", true);
-            return !string.IsNullOrWhiteSpace(UsernameText.Text);
         }
     }
 }
