@@ -4,7 +4,7 @@ namespace Uno.Extensions.Navigation;
 
 public interface INavigator
 {
-    Route CurrentRoute { get; }
+    Route Route { get; }
 
     Task<NavigationResponse> NavigateAsync(NavigationRequest request);
 }

@@ -26,5 +26,7 @@ namespace Uno.Extensions.Navigation.Regions
         IRegion Parent { get; }
 
         IList<IRegion> Children { get; }
+
+        Route Route { get; }
     }
 }
