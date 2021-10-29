@@ -38,9 +38,9 @@ public static class FrameworkElementExtensions
         TypedEventHandler<DependencyObject, object> loading = null;
 #endif
 
-        Action loadedAction = () =>
+        Action<bool> loadedAction = (overrideLoaded) =>
         {
-            if (element.IsLoaded)
+            if (element.IsLoaded || overrideLoaded)
             {
                 completion.SetResult(null);
                 element.Loaded -= loaded;
@@ -49,9 +49,9 @@ public static class FrameworkElementExtensions
             }
         };
 
-        loaded = (s, e) => loadedAction();
-        loading = (s, e) => loadedAction();
-        layoutChanged = (s, e) => loadedAction();
+        loaded = (s, e) => loadedAction(false);
+        loading = (s, e) => loadedAction(false);
+        layoutChanged = (s, e) => loadedAction(true);
 
         element.Loaded += loaded;
         element.Loading += loading;
@@ -59,7 +59,7 @@ public static class FrameworkElementExtensions
 
         if (element.IsLoaded)
         {
-            loadedAction();
+            loadedAction(false);
         }
 
         await completion.Task;

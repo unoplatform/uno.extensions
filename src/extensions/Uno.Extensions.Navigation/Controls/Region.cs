@@ -28,6 +28,14 @@ public static class Region
             typeof(Navigation),
             new PropertyMetadata(false, AttachedChanged));
 
+    public static readonly DependencyProperty ParentProperty =
+        DependencyProperty.RegisterAttached(
+            "Parent",
+            typeof(FrameworkElement),
+            typeof(Navigation),
+            new PropertyMetadata(null));
+
+
     public static readonly DependencyProperty NameProperty =
         DependencyProperty.RegisterAttached(
             "Name",
@@ -89,6 +97,16 @@ public static class Region
     public static bool GetAttached(DependencyObject element)
     {
         return (bool)element.GetValue(AttachedProperty);
+    }
+
+    public static void SetParent(DependencyObject element, FrameworkElement value)
+    {
+        element.SetValue(ParentProperty, value);
+    }
+
+    public static FrameworkElement GetParent(this DependencyObject element)
+    {
+        return (FrameworkElement)element.GetValue(ParentProperty);
     }
 
     public static void SetName(this FrameworkElement element, string value)
