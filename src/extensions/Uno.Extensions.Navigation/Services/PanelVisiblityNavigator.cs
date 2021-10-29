@@ -5,6 +5,7 @@ using Uno.Extensions.Navigation.ViewModels;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Regions;
 using System.Threading.Tasks;
+using System.Linq;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -36,7 +37,10 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 
     protected override async Task Show(string path, Type viewType, object data)
     {
-        var controlToShow = Control.FindName(path) as FrameworkElement;
+        var controlToShow =
+            Control.Children.OfType<FrameworkElement>().FirstOrDefault(x => x.GetName() == path) ??
+            Control.FindName(path) as FrameworkElement;
+
         if (controlToShow is null)
         {
             try
@@ -51,7 +55,7 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
                 controlToShow = Activator.CreateInstance(viewType) as FrameworkElement;
                 if (controlToShow is FrameworkElement fe)
                 {
-                    fe.Name = path;
+                    fe.SetName(path);
                 }
                 Control.Children.Add(controlToShow);
                 Logger.LogDebugMessage("Instance created");
@@ -70,6 +74,6 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
         }
         CurrentlyVisibleControl = controlToShow;
 
-        await (controlToShow as FrameworkElement).EnsureLoaded();
+        await controlToShow.EnsureLoaded();
     }
 }

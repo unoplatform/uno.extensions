@@ -27,21 +27,26 @@ public static class DependencyObjectExtensions
     public static IRegion FindParentRegion(this FrameworkElement element, out string routeName)
     {
         var name = element?.GetName();
-        var region = element?.Parent.ServiceForControl(true, element =>
+
+        var parent = element?.GetParent()?.GetInstance();
+        if (parent is null)
         {
-            if (name is not { Length: > 0 })
+            parent = element?.Parent.ServiceForControl(true, element =>
             {
-                var route = (element as FrameworkElement).GetName();
-                if (route is { Length: > 0 })
+                if (name is not { Length: > 0 })
                 {
-                    name = route;
+                    var route = (element as FrameworkElement).GetName();
+                    if (route is { Length: > 0 })
+                    {
+                        name = route;
+                    }
                 }
-            }
-            return element.GetInstance();
-        });
+                return element.GetInstance();
+            });
+        }
 
         routeName = name;
-        return region;
+        return parent;
     }
 
     public static TService ServiceForControl<TService>(this DependencyObject element, bool searchParent, Func<DependencyObject, TService> retrieveFromElement)
