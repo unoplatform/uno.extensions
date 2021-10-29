@@ -1,14 +1,35 @@
-﻿<Page
-    x:Class="ExtensionsSampleApp.UnoCommerce.ProductsPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:ExtensionsSampleApp.UnoCommerce"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+﻿<Page x:Class="ExtensionsSampleApp.UnoCommerce.ProductsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:ExtensionsSampleApp.UnoCommerce"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:services="using:ExtensionsSampleApp.UnoCommerce.Services"
+      xmlns:nav="using:Uno.Extensions.Navigation.Controls"
+      mc:Ignorable="d"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <TextBlock Text="Products"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   FontSize="32" />
+        <ListView ItemsSource="{Binding Products}"
+                  Grid.Row="1"
+                  nav:Navigation.Request="ProductDetails"
+                  >
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="services:Product">
+                    <StackPanel>
+                        <TextBlock Text="{x:Bind ProductId}" />
+                        <TextBlock Text="{x:Bind Name}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </Grid>
 </Page>

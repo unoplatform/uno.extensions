@@ -8,8 +8,7 @@
       xmlns:nav="using:Uno.Extensions.Navigation.Controls"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid nav:Region.Attached="True"
-          nav:Region.Navigator="VisualState">
+    <Grid >
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState x:Name="Authenticating">
@@ -43,7 +42,7 @@
                               MinWidth="200" />
                 <Button Content="Login"
                         Margin="0,8"
-                        nav:Navigation.Request="/-/TwitterPage" />
+                        nav:Navigation.Request="/-/CommerceHomePage" />
             </StackPanel>
             <Grid x:Name="Overlay"
                   Visibility="Collapsed">

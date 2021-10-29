@@ -31,6 +31,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)UnoCommerce\CommerceHomePage.xaml.cs">
       <DependentUpon>CommerceHomePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)UnoCommerce\DealsPage.xaml.cs">
+      <DependentUpon>DealsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)UnoCommerce\FrameView.xaml.cs">
+      <DependentUpon>FrameView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)UnoCommerce\LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
     </Compile>
@@ -43,6 +49,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)UnoCommerce\ProfilePage.xaml.cs">
       <DependentUpon>ProfilePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)UnoCommerce\Services\ProductServices.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UnoCommerce\ViewModels\ProductsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Content2ViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\FourthViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MainViewModel.cs" />
@@ -97,8 +105,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Views\Twitter\NotificationsPage.xaml.cs">
       <DependentUpon>NotificationsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Views\Twitter\ProfilePage.xaml.cs">
-      <DependentUpon>ProfilePage.xaml</DependentUpon>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Twitter\TwitterProfilePage.xaml.cs">
+      <DependentUpon>TwitterProfilePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\Twitter\TweetDetailsPage.xaml.cs">
       <DependentUpon>TweetDetailsPage.xaml</DependentUpon>
@@ -124,6 +132,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)UnoCommerce\CommerceHomePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)UnoCommerce\DealsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)UnoCommerce\FrameView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -199,7 +215,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="$(MSBuildThisFileDirectory)Views\Twitter\ProfilePage.xaml">
+    <Page Include="$(MSBuildThisFileDirectory)Views\Twitter\TwitterProfilePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

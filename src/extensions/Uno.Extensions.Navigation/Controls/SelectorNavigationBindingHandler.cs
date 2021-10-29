@@ -32,7 +32,7 @@ namespace Uno.Extensions.Navigation.Controls
                 var path = list.GetRequest();
                 var nav = list.Navigator();
                 var data = list.GetData() ?? list.SelectedItem;
-                await nav.NavigateToRouteAsync(list, path, Schemes.Current, list.GetData());
+                await nav.NavigateToRouteAsync(list, path, Schemes.Current, data);
             };
 
             if (viewList.IsLoaded)
