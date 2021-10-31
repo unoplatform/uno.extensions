@@ -2,6 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
+#else
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
+#endif
 
 namespace Uno.Extensions.Navigation;
 
@@ -50,7 +59,7 @@ public static class RouteExtensions
 
     public static bool FrameIsForwardNavigation(this Route route) => !route.FrameIsBackNavigation();
 
-    public static Route[] ForwardNavigationSegments(this Route route)
+    public static Route[] ForwardNavigationSegments(this Route route, IRouteMappings mappings)
     {
         if (route.IsEmpty())
         {
@@ -59,7 +68,10 @@ public static class RouteExtensions
 
         var segments = new List<Route>() { route with { Scheme = Schemes.NavigateForward, Path = null } };
         var nextRoute = route.NextRoute();
-        while (nextRoute.Scheme == Schemes.NavigateForward)
+        while (
+            !nextRoute.IsEmpty() && (
+            nextRoute.Scheme == Schemes.NavigateForward ||
+            ((mappings.FindByPath(nextRoute.Base))?.View?.IsSubclassOf(typeof(Page)) ?? false)))
         {
             segments.Add(nextRoute with { Scheme = Schemes.NavigateForward, Path = null });
             nextRoute = nextRoute.NextRoute();
@@ -257,7 +269,7 @@ public static class RouteExtensions
 
 
         var child = childRoute.Item2;
-        if (!string.IsNullOrWhiteSpace(childRoute.Item1) && childRoute.Item1 !=route.Base)
+        if (!string.IsNullOrWhiteSpace(childRoute.Item1) && childRoute.Item1 != route.Base)
         {
             child = child with
             {
@@ -293,7 +305,7 @@ public static class RouteExtensions
         return mapDict;
     }
 
-    public static Route ApplyFrameRoute(this Route currentRoute, Route frameRoute)
+    public static Route ApplyFrameRoute(this Route currentRoute, IRouteMappings mappings, Route frameRoute)
     {
         var scheme = frameRoute.Scheme;
         if (string.IsNullOrWhiteSpace(frameRoute.Scheme))
@@ -306,7 +318,7 @@ public static class RouteExtensions
         }
         else
         {
-            var segments = currentRoute.ForwardNavigationSegments().ToList();
+            var segments = currentRoute.ForwardNavigationSegments(mappings).ToList();
             foreach (var schemeChar in scheme)
             {
                 if (schemeChar + "" == Schemes.NavigateBack)
@@ -319,7 +331,7 @@ public static class RouteExtensions
                 }
             }
 
-            var newSegments = frameRoute.ForwardNavigationSegments();
+            var newSegments = frameRoute.ForwardNavigationSegments(mappings);
             if (newSegments is not null)
             {
                 segments.AddRange(newSegments);
@@ -328,7 +340,7 @@ public static class RouteExtensions
             var routeBase = segments.First().Base;
             segments.RemoveAt(0);
 
-            var routePath = segments.Count > 0 ? string.Join("", segments.Select(x=>$"{x.Scheme}{x.Base}")) : string.Empty;
+            var routePath = segments.Count > 0 ? string.Join("", segments.Select(x => $"{x.Scheme}{x.Base}")) : string.Empty;
 
             return new Route(Schemes.NavigateForward, routeBase, routePath, frameRoute.Data);
         }

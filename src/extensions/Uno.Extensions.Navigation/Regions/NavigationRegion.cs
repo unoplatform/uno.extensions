@@ -161,7 +161,7 @@ public sealed class NavigationRegion : IRegion
         }
 
         var nav = region.Navigator();
-        if(nav is not null)
+        if (nav is not null)
         {
             builder.Append($"{nav.ToString()}");
         }

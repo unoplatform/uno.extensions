@@ -69,7 +69,7 @@ public class FrameNavigator : ControlNavigator<Frame>
         }
 
         var currentRequest = context.Request;
-        var segments = (from pg in currentRequest.Route.ForwardNavigationSegments()
+        var segments = (from pg in currentRequest.Route.ForwardNavigationSegments(Mappings)
                         let map = Mappings.FindByPath(pg.Base)
                         select new { Route = pg, Map = map }).ToArray();
 
@@ -120,7 +120,7 @@ public class FrameNavigator : ControlNavigator<Frame>
             numberOfPagesToRemove--;
         }
         var responseRequest = context.Request with { Route = context.Request.Route with { Path = null } };
-        var previousBase = Route.ApplyFrameRoute(responseRequest.Route).Base;
+        var previousBase = Route.ApplyFrameRoute(Mappings, responseRequest.Route).Base;
         var currentBase = Mappings.FindByView(Control.Content.GetType())?.Path;
         if (currentBase != previousBase)
         {
@@ -218,43 +218,6 @@ public class FrameNavigator : ControlNavigator<Frame>
 
     protected override void UpdateRouteFromRequest(NavigationRequest request)
     {
-        Route = Route.ApplyFrameRoute(request.Route);
-        //var scheme = request.Route.Scheme;
-        //if (string.IsNullOrWhiteSpace(request.Route.Scheme))
-        //{
-        //    scheme = Schemes.NavigateForward;
-        //}
-        //if (CurrentRoute is null)
-        //{
-        //    CurrentRoute = request.Route with { Scheme = Schemes.NavigateForward };// new Route(scheme, request.Route.Base, request.Route.Path, request.Route.Data);
-        //}
-        //else
-        //{
-        //    var segments = CurrentRoute.ForwardNavigationSegments().ToList();
-        //    foreach (var schemeChar in scheme)
-        //    {
-        //        if (schemeChar + "" == Schemes.NavigateBack)
-        //        {
-        //            segments.RemoveAt(segments.Count - 1);
-        //        }
-        //        else if (schemeChar + "" == Schemes.Root)
-        //        {
-        //            segments.Clear();
-        //        }
-        //    }
-
-        //    var newSegments = request.Route.ForwardNavigationSegments();
-        //    if (newSegments is not null)
-        //    {
-        //        segments.AddRange(newSegments);
-        //    }
-
-        //    var routeBase = segments.First().Base;
-        //    segments.RemoveAt(0);
-
-        //    var routePath = segments.Count > 0 ? string.Join("", segments) : string.Empty;
-
-        //    CurrentRoute = new Route(Schemes.NavigateForward, routeBase, routePath, request.Route.Data);
-        //}
+        Route = Route.ApplyFrameRoute(Mappings, request.Route);
     }
 }
