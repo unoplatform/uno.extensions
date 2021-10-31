@@ -152,7 +152,12 @@ public sealed class NavigationRegion : IRegion
     {
         if (!string.IsNullOrWhiteSpace(region.Name))
         {
-            builder.Append($@"{region.Name}-");
+            builder.Append($@"{region.Name}");
+        }
+
+        if (region.View is not null)
+        {
+            builder.Append($@"({region.View.GetType().Name})-");
         }
 
         var nav = region.Navigator();
