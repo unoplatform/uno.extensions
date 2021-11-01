@@ -103,11 +103,13 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
     protected virtual async Task<NavigationResponse> CoreNavigateAsync(NavigationRequest request)
     {
+        var checkCurrentRoute = false;
         if (request.Route.IsNested())
         {
             // At this point the request should be passed to nested, so remove
             // any nested scheme (ie ./ )
-            request = request with { Route = request.Route with { Scheme = Schemes.Current } };
+            request = request with { Route = request.Route.TrimScheme(Schemes.Nested) };// with { Scheme = Schemes.Current } };
+            checkCurrentRoute = true;
         }
 
         if (request.Route.IsEmpty())
@@ -117,7 +119,8 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
         var children = Region.Children.Where(region =>
                                        region.Name is not { Length: > 0 } ||
-                                       region.Name == request.Route.Base
+                                       region.Name == request.Route.Base ||
+                                       (checkCurrentRoute && region.Name == Route?.Base)
                                     ).ToArray();
 
         var tasks = new List<Task<NavigationResponse>>();

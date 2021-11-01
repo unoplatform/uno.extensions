@@ -32,14 +32,15 @@ public static class RouteExtensions
     public static bool IsParent(this Route route) => route.Scheme.StartsWith(Schemes.Parent);
 
     public static bool IsNested(this Route route) =>
-        route.Scheme.StartsWith(Schemes.Nested) &&
-        !string.IsNullOrWhiteSpace(route.Base);
+        route.Scheme.StartsWith(Schemes.Nested);
+    //&&
+    //    !string.IsNullOrWhiteSpace(route.Base);
 
     public static bool IsDialog(this Route route) => route.Scheme.StartsWith(Schemes.Dialog);
 
     public static bool IsLast(this Route route) => route.Path is not { Length: > 0 };
 
-    public static bool IsEmpty(this Route route) => route.Base is not { Length: > 0 };
+    public static bool IsEmpty(this Route route) => (route.Scheme==Schemes.Current || route.Scheme == Schemes.Nested) && route.Base is not { Length: > 0 };
 
     // eg -/NextPage
     public static bool FrameIsRooted(this Route route) => route.Scheme.EndsWith(Schemes.Root + string.Empty);
@@ -181,6 +182,10 @@ public static class RouteExtensions
             {
                 nextPath = string.Empty;
             }
+        }
+        else
+        {
+            nextPath = path;
         }
         return routeBase;
     }
