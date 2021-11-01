@@ -62,7 +62,7 @@
 
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
+                    <!--<RowDefinition Height="Auto" />-->
                     <RowDefinition />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
@@ -73,23 +73,22 @@
                                           VerticalAlignment="Bottom"
                                           HorizontalAlignment="Left"
                                           IsMasked="True">-->
-                    <Grid Padding="8"
+                    <!--<Grid Padding="8"
                           Background="DarkGray">
                         <TextBlock Text="Uno Commerce"
                                    Foreground="White"/>
                         <Button HorizontalAlignment="Right">
                             <SymbolIcon Symbol="Shop" />
                         </Button>
-                    </Grid>
+                    </Grid>-->
                 <!--</controls:DropShadowPanel>-->
                 <Grid nav:Region.Attached="true"
-                      Grid.Row="1"
                       nav:Region.Navigator="Visibility" />
                 <toolkit:TabBar x:Name="Tabs"
                                 Visibility="Collapsed"
                                 Background="DarkGray"
                                 nav:Region.Attached="true"
-                                Grid.Row="2">
+                                Grid.Row="1">
                     <toolkit:TabBar.Items>
                         <toolkit:TabBarItem Content="Products"
                                             nav:Region.Name="Products" />
