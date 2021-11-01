@@ -30,6 +30,11 @@ public static class Navigation
 
     private static void RequestChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
+        if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
+        {
+            return;
+        }
+
         if (d is FrameworkElement element)
         {
             _ = new NavigationBinder(element);
@@ -55,19 +60,6 @@ public static class Navigation
     {
         return (object)element.GetValue(DataProperty);
     }
-
-    //private class InvertConverter : IValueConverter
-    //{
-    //    public object Convert(object value, Type targetType, object parameter, string language)
-    //    {
-    //        return !(bool)value;
-    //    }
-
-    //    public object ConvertBack(object value, Type targetType, object parameter, string language)
-    //    {
-    //        return value;
-    //    }
-    //}
 
     public static string NavigationRoute(this object view, IRouteMappings mappings = null)
     {

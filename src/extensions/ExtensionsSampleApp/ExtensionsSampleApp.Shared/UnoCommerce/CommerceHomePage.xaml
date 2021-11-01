@@ -9,8 +9,7 @@
       mc:Ignorable="d"
       xmlns:toolkit="using:Uno.UI.ToolkitLib"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-    <Grid
-          x:Name="NavRoot">
+    <Grid x:Name="NavRoot">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState x:Name="Narrow">
@@ -56,26 +55,48 @@
                                   Glyph="&#xEB3C;" />
                     </muxc:NavigationViewItem.Icon>
                 </muxc:NavigationViewItem>
+                <muxc:NavigationViewItem Icon="Contact"
+                                         Content="Profile"
+                                         nav:Region.Name="Profile" />
             </muxc:NavigationView.MenuItems>
 
             <Grid>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
                     <RowDefinition />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
+                <!--<controls:DropShadowPanel BlurRadius="10"
+                                          ShadowOpacity="1"
+                                          Color="{ThemeResource ApplicationForegroundThemeColor}"
+                                          Margin="50"
+                                          VerticalAlignment="Bottom"
+                                          HorizontalAlignment="Left"
+                                          IsMasked="True">-->
+                    <Grid Padding="8"
+                          Background="DarkGray">
+                        <TextBlock Text="Uno Commerce"
+                                   Foreground="White"/>
+                        <Button HorizontalAlignment="Right">
+                            <SymbolIcon Symbol="Shop" />
+                        </Button>
+                    </Grid>
+                <!--</controls:DropShadowPanel>-->
                 <Grid nav:Region.Attached="true"
+                      Grid.Row="1"
                       nav:Region.Navigator="Visibility" />
-                <toolkit:TabBar
-                   x:Name="Tabs"
-                    Visibility="Collapsed"
-                    Background="DarkGray"
+                <toolkit:TabBar x:Name="Tabs"
+                                Visibility="Collapsed"
+                                Background="DarkGray"
                                 nav:Region.Attached="true"
-                                Grid.Row="1">
+                                Grid.Row="2">
                     <toolkit:TabBar.Items>
                         <toolkit:TabBarItem Content="Products"
                                             nav:Region.Name="Products" />
                         <toolkit:TabBarItem Content="Deals"
                                             nav:Region.Name="Deals" />
+                        <toolkit:TabBarItem Content="Profile"
+                                            nav:Region.Name="Profile" />
                     </toolkit:TabBar.Items>
                 </toolkit:TabBar>
 

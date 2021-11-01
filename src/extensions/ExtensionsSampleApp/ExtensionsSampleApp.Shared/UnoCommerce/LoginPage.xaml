@@ -29,20 +29,26 @@
               MinWidth="300"
               MinHeight="300">
             <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
-            <StackPanel HorizontalAlignment="Center">
-                <TextBlock Text="Login"
-                           Margin="0,24,0,12"
-                           FontSize="32"
-                           HorizontalAlignment="Center" />
-                <TextBox PlaceholderText="Username"
+            <StackPanel HorizontalAlignment="Center"
+                        VerticalAlignment="Top"
+                        Margin="0,24,0,12">
+                <TextBlock Text="Welcome."
+                           FontSize="34"/>
+                <TextBlock Text="Log in to your account"
+                           />
+                <TextBox PlaceholderText="Email"
                          Margin="0,8"
                          MinWidth="200"
                          Name="UsernameText" />
                 <PasswordBox  Margin="0,8"
+                              PlaceholderText="Password"
                               MinWidth="200" />
-                <Button Content="Login"
+                <HyperlinkButton Content="Forgot password?" />
+                <Button Content="LOGIN"
+                        HorizontalAlignment="Stretch"
                         Margin="0,8"
                         nav:Navigation.Request="/-/CommerceHomePage" />
+                <TextBlock Text="Legal mentions" HorizontalAlignment="Center" />
             </StackPanel>
             <Grid x:Name="Overlay"
                   Visibility="Collapsed">
