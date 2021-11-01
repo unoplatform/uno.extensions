@@ -72,6 +72,11 @@ namespace ExtensionsSampleApp.Region.Managers
             }
             else
             {
+                if(Control.ItemsPanelRoot is null)
+                {
+                    return;
+                }
+
                 var item = (from tbi in Control.ItemsPanelRoot?.Children.OfType<TabBarItem>()
                             where tbi.GetName()==path || tbi.Name == path
                             select tbi).FirstOrDefault();

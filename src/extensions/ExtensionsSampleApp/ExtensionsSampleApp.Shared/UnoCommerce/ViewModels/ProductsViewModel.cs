@@ -20,14 +20,4 @@ public class ProductsViewModel
 
 }
 
-public class ProductDetailsViewModel : ObservableObject
-{
-    private Product _product;
 
-    public Product Product { get => _product; set => SetProperty(ref _product, value); }
-
-    public ProductDetailsViewModel(Product p)
-    {
-        Product = p;
-    }
-}

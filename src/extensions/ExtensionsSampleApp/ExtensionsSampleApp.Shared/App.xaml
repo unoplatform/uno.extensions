@@ -9,6 +9,11 @@
             <ResourceDictionary.MergedDictionaries>
                 <!-- Load WinUI resources -->
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+                <!-- Load Material Color Palette -->
+                <MaterialColors xmlns="using:Uno.Material" />
+
+                <!-- Load the Material control resources -->
+                <MaterialResources xmlns="using:Uno.Material" />
                 <ToolkitResources xmlns="using:Uno.UI.ToolkitLib" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

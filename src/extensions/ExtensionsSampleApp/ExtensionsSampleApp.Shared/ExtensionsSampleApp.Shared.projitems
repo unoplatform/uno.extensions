@@ -14,6 +14,9 @@
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
   </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)'=='Debug'">
+    <Compile Include="$(MSBuildThisFileDirectory)DesignTime\*.cs" />
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -34,6 +37,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)UnoCommerce\DealsPage.xaml.cs">
       <DependentUpon>DealsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)UnoCommerce\FilterPopup.xaml.cs">
+      <DependentUpon>FilterPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)UnoCommerce\FrameView.xaml.cs">
       <DependentUpon>FrameView.xaml</DependentUpon>
     </Compile>
@@ -50,6 +56,8 @@
       <DependentUpon>ProfilePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)UnoCommerce\Services\ProductServices.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UnoCommerce\ViewModels\DealsViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UnoCommerce\ViewModels\ProductDetailsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UnoCommerce\ViewModels\ProductsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Content2ViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\FourthViewModel.cs" />
@@ -136,6 +144,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)UnoCommerce\DealsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)UnoCommerce\FilterPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -240,5 +252,19 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)ViewModels\Twitter\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Photos\stockphoto1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Photos\stockphoto2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Photos\stockphoto3.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Photos\stockphoto4.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>

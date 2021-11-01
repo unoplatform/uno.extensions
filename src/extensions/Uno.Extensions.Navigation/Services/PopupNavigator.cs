@@ -36,11 +36,24 @@ public class PopupNavigator : ControlNavigator<Popup>
     {
     }
 
+
+    public override void ControlInitialize()
+    {
+        base.ControlInitialize();
+
+        Control.Closed += Control_Closed;
+    }
+
+    private void Control_Closed(object sender, object e)
+    {
+        this.Region.Navigator().NavigateToRouteAsync(sender, "hide");
+    }
+
     protected override async Task Show(string path, Type viewType, object data)
     {
         try
         {
-            Control.IsOpen = path == RouteConstants.PopupShow;
+            Control.IsOpen = string.Compare(path, RouteConstants.PopupShow, true) == 0;
             await (Control.Child as FrameworkElement).EnsureLoaded();
 
         }

@@ -1,18 +1,67 @@
-﻿<Page
-    x:Class="ExtensionsSampleApp.UnoCommerce.ProductDetailsPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:ExtensionsSampleApp.UnoCommerce"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+﻿<Page x:Class="ExtensionsSampleApp.UnoCommerce.ProductDetailsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:ExtensionsSampleApp.UnoCommerce"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:fake="using:ExtensionsSampleApp.DesignTime"
+      xmlns:controls="using:Microsoft.UI.Xaml.Controls"
+      mc:Ignorable="d fake"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
-        <StackPanel>
-        <TextBlock Text="Product Details" />
+    <Grid d:DataContext="{d:DesignInstance fake:FakeProducts, IsDesignTimeCreatable=True}">
+        <ScrollViewer d:DataContext="{Binding Products[2]}"
+                      DataContext="{Binding Product}">
+            <StackPanel Margin="12">
+                <Border Height="300">
+                    <Image Source="{Binding Photo}" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="UniformToFill" />
+                </Border>
+                    
+                <TextBlock Text="{Binding Name}" FontSize="32" FontWeight="Bold" Margin="12"/>
+                <Grid>
+                    <TextBlock Text="{Binding Category}" />
+                    <TextBlock Text="{Binding Price}" HorizontalAlignment="Right" Foreground="Red" />
+                </Grid>
 
-            <TextBlock Text="{Binding Product.Name}" />
-        </StackPanel>
+                <Border Height="1"
+                        Background="DarkGray" />
+
+                <Button Content="ADD TO CART"
+                        HorizontalAlignment="Stretch" />
+
+                <Button Content="SAVE TO FAVORITES"
+                        HorizontalAlignment="Stretch" />
+
+                <Border Height="1"
+                        Background="DarkGray" />
+
+                <TextBlock Text="Product details"
+                           FontWeight="Bold" />
+                <TextBlock Text="{Binding Description}" />
+
+                <TextBlock Text="Reviews"
+                           FontWeight="Bold" />
+
+                <controls:ItemsRepeater ItemsSource="{Binding Reviews}">
+                    <controls:ItemsRepeater.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="4" Height="50">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="50" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Ellipse Margin="4" Fill="DarkGray" HorizontalAlignment="Left" VerticalAlignment="Center" Height="40" Width="40"/>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding Name}" FontWeight="Bold" />
+                                    <TextBlock Text="{Binding Message}" />
+                                </StackPanel>
+                            </Grid>
+                            
+                        </DataTemplate>
+                    </controls:ItemsRepeater.ItemTemplate>
+                </controls:ItemsRepeater>
+
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Page>

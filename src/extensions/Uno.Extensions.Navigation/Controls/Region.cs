@@ -35,7 +35,6 @@ public static class Region
             typeof(Navigation),
             new PropertyMetadata(null));
 
-
     public static readonly DependencyProperty NameProperty =
         DependencyProperty.RegisterAttached(
             "Name",
@@ -52,6 +51,11 @@ public static class Region
 
     private static void AttachedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
+        if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
+        {
+            return;
+        }
+
         if (d is FrameworkElement element)
         {
             RegisterElement(element);
