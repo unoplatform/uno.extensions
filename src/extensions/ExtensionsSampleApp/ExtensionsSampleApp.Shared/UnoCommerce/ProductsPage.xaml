@@ -40,6 +40,7 @@
         </StackPanel>
         <ListView ItemsSource="{Binding Products}"
                   Grid.Row="2"
+                  IsItemClickEnabled="True"
                   nav:Navigation.Request="ProductDetails">
             <ListView.ItemTemplate>
                 <DataTemplate>
