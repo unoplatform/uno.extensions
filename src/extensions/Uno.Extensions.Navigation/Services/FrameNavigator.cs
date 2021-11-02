@@ -51,7 +51,7 @@ public class FrameNavigator : ControlNavigator<Frame>
     protected override Task<NavigationRequest> NavigateWithContextAsync(NavigationContext context)
     {
         // Detach all nested regions as we're moving away from the current view
-        Region.DetachAll();
+        Region.Children.Clear();
 
         return context.Request.Route.FrameIsForwardNavigation() ?
                     NavigateForwardAsync(context) :
