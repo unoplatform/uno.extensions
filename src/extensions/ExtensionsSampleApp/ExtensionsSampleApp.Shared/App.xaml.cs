@@ -131,12 +131,16 @@ namespace ExtensionsSampleApp
             mapping.Register(new RouteMap("Products", typeof(FrameView),
                 RegionInitialization: (region, nav) => nav.Route.IsEmpty() ?
                                         nav with { Route = nav.Route with { Base = "+ProductsPage" } } :
-                                        nav with { Route = nav.Route with {  Path = "+ProductsPage" } }));
+                                        nav with { Route = nav.Route with { Path = "+ProductsPage+"+nav.Route.Path } }));
             //mapping.Register(new RouteMap(typeof(ProductsPage).Name, typeof(ProductsPage), typeof(ProductsViewModel));
             mapping.Register(new RouteMap("Deals", typeof(FrameView),
                 RegionInitialization: (region, nav) => nav.Route.IsEmpty() ?
                                         nav with { Route = nav.Route with { Base = "+DealsPage/HotDeals" } } :
                                         nav with { Route = nav.Route with { Path = "+DealsPage/HotDeals" } }));
+            mapping.Register(new RouteMap("ProductDetails",
+                typeof(ProductDetailsPage),
+                typeof(ProductDetailsViewModel), typeof(Product),
+                BuildQueryParameters: entity => new Dictionary<string, string> { { "ProductId", (entity as Product)?.ProductId + "" } }));
             mapping.Register(new RouteMap(typeof(TabBarPage).Name, typeof(TabBarPage)));
             mapping.Register(new RouteMap("doc0", ViewModel: typeof(TabDoc0ViewModel)));
             mapping.Register(new RouteMap("doc1", ViewModel: typeof(TabDoc1ViewModel)));
@@ -249,7 +253,7 @@ namespace ExtensionsSampleApp
                 };
 #else
 
-                //var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Nested);
+                var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Nested);
                 //var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Root);
                 //var navResult = nav.NavigateToRouteAsync(this, "+MainPage", Schemes.Root);
                 //var navResult = nav.NavigateToRouteAsync(this, "+MainPage+SecondPage", Schemes.Root);
@@ -259,7 +263,8 @@ namespace ExtensionsSampleApp
                 //var navResult = nav.NavigateToRouteAsync(this, "TabbedPage/doc1", Schemes.Root);
                 //var navResult = nav.NavigateToRouteAsync(this, "TabbedPage/doc2/SecondPage/content/Content1", Schemes.Root);
                 //var navResult = nav.NavigateToRouteAsync(this, "TwitterPage/notifications/TweetDetailsPage?TweetId=23", Schemes.Root);
-                var navResult = nav.NavigateToViewAsync<LoginPage>(this);
+                //var navResult = nav.NavigateToViewAsync<LoginPage>(this);
+                //var navResult = nav.NavigateToRouteAsync(this, "/CommerceHomePage/Products/ProductDetails?ProductId=3");
 #endif
                 //navResult.OnCompleted(() => Debug.WriteLine("Nav complete"));
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)

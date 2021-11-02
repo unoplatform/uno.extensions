@@ -40,7 +40,7 @@ public static class RouteExtensions
 
     public static bool IsLast(this Route route) => route.Path is not { Length: > 0 };
 
-    public static bool IsEmpty(this Route route) => (route.Scheme==Schemes.Current || route.Scheme == Schemes.Nested) && route.Base is not { Length: > 0 };
+    public static bool IsEmpty(this Route route) => (route.Scheme == Schemes.Current || route.Scheme == Schemes.Nested) && route.Base is not { Length: > 0 };
 
     // eg -/NextPage
     public static bool FrameIsRooted(this Route route) => route.Scheme.EndsWith(Schemes.Root + string.Empty);
@@ -62,7 +62,7 @@ public static class RouteExtensions
 
     public static Route[] ForwardNavigationSegments(this Route route, IRouteMappings mappings)
     {
-        if (route.IsEmpty())
+        if (route.IsEmpty() || route.FrameIsBackNavigation())
         {
             return default;
         }
@@ -260,26 +260,38 @@ public static class RouteExtensions
             return childRoutes.FirstOrDefault().Item2;
         }
 
-        var childRoute = childRoutes.FirstOrDefault(child => child.Item1 == route.Base);
-        if (childRoute.Item2 is null)
+        var next = childRoutes.FirstOrDefault(child => child.Item1 == route.Base);
+        var nextRoute = next.Item2;
+        if (nextRoute is null)
         {
-            childRoute = childRoutes.FirstOrDefault();
-            if (childRoute.Item2 is null)
+            next = childRoutes.FirstOrDefault();
+            nextRoute = next.Item2;
+            if (nextRoute is null)
             {
                 return route;
             }
         }
 
-        var separator = childRoute.Item2.Scheme == Schemes.Current ? Schemes.Separator : string.Empty;
+        if (nextRoute.Base == route.Base)
+        {
+            nextRoute = nextRoute.NextRoute();
+        }
+
+        if (nextRoute.IsEmpty())
+        {
+            return route;
+        }
+
+        var separator = nextRoute.Scheme == Schemes.Current ? Schemes.Separator : string.Empty;
 
 
-        var child = childRoute.Item2;
-        if (!string.IsNullOrWhiteSpace(childRoute.Item1) && childRoute.Item1 != route.Base)
+        var child = nextRoute;
+        if (!string.IsNullOrWhiteSpace(next.Item1) && next.Item1 != route.Base)
         {
             child = child with
             {
                 Scheme = Schemes.Current,
-                Base = childRoute.Item1,
+                Base = next.Item1,
                 Path = (string.IsNullOrWhiteSpace(child.Scheme) ?
                             Schemes.Separator :
                             child.Scheme) + child.Base + child.Path
