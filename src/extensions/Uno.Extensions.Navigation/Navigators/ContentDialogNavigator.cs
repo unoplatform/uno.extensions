@@ -3,19 +3,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation.Regions;
-
 using Windows.Foundation;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
-using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
-using UICommand = Windows.UI.Popups.UICommand;
 #else
 using Microsoft.UI.Xaml.Controls;
 using Windows.UI.Popups;
 using UICommand = Windows.UI.Popups.UICommand;
 #endif
 
-namespace Uno.Extensions.Navigation.Services;
+namespace Uno.Extensions.Navigation.Navigators;
 
 public class ContentDialogNavigator : DialogNavigator
 {

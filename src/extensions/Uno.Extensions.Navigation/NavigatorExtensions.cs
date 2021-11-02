@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Windows.UI.Popups;
 using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Regions;
-using Uno.Extensions.Navigation.Services;
 using System.Linq;
+using Uno.Extensions.Navigation.Navigators;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using UICommand = Windows.UI.Popups.UICommand;
 using Windows.UI.Xaml;

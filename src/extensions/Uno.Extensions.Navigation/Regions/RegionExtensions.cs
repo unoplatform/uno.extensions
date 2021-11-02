@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Uno.Extensions.Navigation.Services;
+using Uno.Extensions.Navigation.Navigators;
 
 namespace Uno.Extensions.Navigation.Regions;
 

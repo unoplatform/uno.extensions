@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
-using Microsoft.Extensions.Logging;
-using Uno.Extensions.Navigation.Controls;
-using Microsoft.Extensions.DependencyInjection;
-using Uno.Extensions.Navigation.Regions;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Uno.Extensions.Navigation;
+using Uno.Extensions.Navigation.Controls;
+using Uno.Extensions.Navigation.Regions;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Xaml;
 #else
@@ -12,7 +12,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 #endif
 
-namespace Uno.Extensions.Navigation.Services;
+namespace Uno.Extensions.Navigation.Navigators;
 
 public class NavigationViewNavigator : ControlNavigator<Microsoft.UI.Xaml.Controls.NavigationView>, ICompositeNavigator
 {

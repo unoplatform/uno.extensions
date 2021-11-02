@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
-using Uno.Extensions.Navigation.Controls;
+using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Regions;
-
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -17,13 +15,13 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 #endif
 
-namespace Uno.Extensions.Navigation.Services;
+namespace Uno.Extensions.Navigation.Navigators;
 
 public class FrameNavigator : ControlNavigator<Frame>
 {
     protected override FrameworkElement CurrentView => Control.Content as FrameworkElement;
 
-    public override bool CanGoBack => Control.BackStackDepth>0;
+    public override bool CanGoBack => Control.BackStackDepth > 0;
 
     public FrameNavigator(
         ILogger<FrameNavigator> logger,
@@ -74,7 +72,7 @@ public class FrameNavigator : ControlNavigator<Frame>
                         select new { Route = pg, Map = map }).ToArray();
 
         var firstSegment = segments.First().Route;
-        for (int i = 0; i < segments.Length - 1; i++)
+        for (var i = 0; i < segments.Length - 1; i++)
         {
             var seg = segments[i];
             var newEntry = new PageStackEntry(seg.Map.View, null, null);
