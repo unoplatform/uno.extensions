@@ -143,9 +143,6 @@ public abstract class ControlNavigator : Navigator
             return new NavigationResponse(request, false);
         }
 
-        //// Detach all nested regions as we're moving away from the current view
-        //Region.DetachAll();
-
         var responseRequest = await NavigateWithContextAsync(context);
 
         UpdateRouteFromRequest(responseRequest);

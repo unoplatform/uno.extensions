@@ -30,12 +30,12 @@ public sealed class NavigationRegion : IRegion
         {
             if (_parent is not null)
             {
-                Parent.Detach(this);
+                Parent.Children.Remove(this);
             }
             _parent = value;
             if (_parent is not null)
             {
-                Parent.Attach(this);
+                Parent.Children.Add(this);
             }
         }
     }
@@ -56,7 +56,7 @@ public sealed class NavigationRegion : IRegion
         }
     }
 
-    public IList<IRegion> Children { get; } = new List<IRegion>();
+    public ICollection<IRegion> Children { get; } = new List<IRegion>();
 
     public Route Route
     {
