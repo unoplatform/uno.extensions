@@ -1,4 +1,6 @@
 ﻿#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+using System;
+using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -21,44 +23,64 @@ namespace Uno.Extensions.Navigation.Controls
                 return;
             }
 
-            SelectionChangedEventHandler action = async (actionSender, actionArgs) =>
+            Func<FrameworkElement, object, Task> action = async (sender, data) =>
             {
-                var list = actionSender as Selector;
-                if (list is null)
+                var navdata = sender.GetData() ?? data;
+                var path = sender.GetRequest();
+                var nav = sender.Navigator();
+                await nav.NavigateToRouteAsync(sender, path, Schemes.Current, navdata);
+            };
+
+            SelectionChangedEventHandler selectionAction = async (actionSender, actionArgs) =>
+            {
+                var sender = actionSender as Selector;
+                if (sender is null)
                 {
                     return;
                 }
+                var data = sender.GetData() ?? sender.SelectedItem;
 
-                var path = list.GetRequest();
-                var nav = list.Navigator();
-                var data = list.GetData() ?? list.SelectedItem;
-                await nav.NavigateToRouteAsync(list, path, Schemes.Current, data);
+                await action(sender, data);
             };
+
+            ItemClickEventHandler clickAction = async (actionSender, actionArgs) =>
+            {
+                var sender = actionSender as ListViewBase;
+                if (sender is null)
+                {
+                    return;
+                }
+                var data = sender.GetData() ?? actionArgs.ClickedItem;
+
+                await action(sender, data);
+            };
+
+            Action connect = null;
+            Action disconnect = null;
+            if (viewList is ListViewBase lv
+                    && lv.IsItemClickEnabled)
+            {
+                connect = () => lv.ItemClick += clickAction;
+                disconnect = () => lv.ItemClick -= clickAction;
+            }
+            else
+            {
+                connect = () => viewList.SelectionChanged += selectionAction;
+                disconnect = () => viewList.SelectionChanged -= selectionAction;
+            }
 
             if (viewList.IsLoaded)
             {
-                viewList.SelectionChanged += action;
+                connect();
             }
 
             viewList.Loaded += (s, e) =>
             {
-                var button = s as Selector;
-                if (button is null)
-                {
-                    return;
-                }
-
-                button.SelectionChanged += action;
+                connect();
             };
             viewList.Unloaded += (s, e) =>
             {
-                var button = s as Selector;
-                if (button is null)
-                {
-                    return;
-                }
-
-                button.SelectionChanged -= action;
+                disconnect();
             };
         }
     }
