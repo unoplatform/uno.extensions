@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Uno.Extensions.Navigation;
-using Uno.Extensions.Navigation.ViewModels;
+
 
 namespace ExtensionsSampleApp.ViewModels.Twitter
 {
-    public class TweetDetailsViewModel : ObservableObject, IViewModelStart
+    public class TweetDetailsViewModel : ObservableObject
     {
         private Tweet tweet;
         public Tweet Tweet { get => tweet; set => SetProperty(ref tweet, value); }

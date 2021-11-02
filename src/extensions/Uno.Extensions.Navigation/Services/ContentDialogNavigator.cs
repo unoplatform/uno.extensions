@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation.Regions;
-using Uno.Extensions.Navigation.ViewModels;
+
 using Windows.Foundation;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Popups;

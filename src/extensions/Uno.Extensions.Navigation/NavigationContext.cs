@@ -27,4 +27,31 @@ public record NavigationContext(
     }
 
     public bool IsCancelled => CancellationToken.IsCancellationRequested || (Request.Cancellation?.IsCancellationRequested ?? false);
+
+    public object CreateViewModel()
+    {
+        var context = this;
+        var services = context.Services;
+        var mapping = context.Mapping;
+        if (mapping?.ViewModel is not null)
+        {
+            var dataFactor = services.GetService<ViewModelDataProvider>();
+            dataFactor.Parameters = context.Request.Route.Data;
+
+            var vm = services.GetService(mapping.ViewModel);
+            if (vm is IInjectable<INavigator> navAware)
+            {
+                navAware.Inject(context.Navigation);
+            }
+
+            if (vm is IInjectable<IServiceProvider> spAware)
+            {
+                spAware.Inject(context.Services);
+            }
+
+            return vm;
+        }
+
+        return null;
+    }
 }

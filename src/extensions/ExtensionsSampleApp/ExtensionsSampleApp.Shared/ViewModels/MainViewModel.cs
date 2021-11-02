@@ -5,11 +5,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ExtensionsSampleApp.Views;
 using Uno.Extensions.Navigation;
-using Uno.Extensions.Navigation.ViewModels;
+
 
 namespace ExtensionsSampleApp.ViewModels
 {
-    public class MainViewModel : ObservableObject, IViewModelStart, IViewModelStop
+    public class MainViewModel : ObservableObject
     {
         public string Title => "Main";
 
