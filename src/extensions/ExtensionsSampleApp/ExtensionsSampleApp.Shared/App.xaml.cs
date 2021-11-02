@@ -374,7 +374,7 @@ namespace ExtensionsSampleApp
         public void Receive(RegionUpdatedMessage message)
         {
             var rootRegion = message.Region.Root();
-            var route = (rootRegion.Route+"").Replace("+","/");
+            var route = (rootRegion.GetRoute() + "").Replace("+","/");
             var appTitle = ApplicationView.GetForCurrentView();
             appTitle.Title = "Navigation: " + route;
 
