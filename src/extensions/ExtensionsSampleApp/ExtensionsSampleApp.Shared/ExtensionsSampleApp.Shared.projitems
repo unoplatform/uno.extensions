@@ -21,7 +21,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Regions\TabBarNavigator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Navigators\ControlVisualStateNavigator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Navigators\PickerNavigator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Navigators\TabBarNavigator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Navigators\TabViewNavigator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UnoCommerce\CartDialog.xaml.cs">
       <DependentUpon>CartDialog.xaml</DependentUpon>
     </Compile>

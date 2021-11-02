@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
-using ExtensionsSampleApp.Region.Managers;
+using ExtensionsSampleApp.Navigators;
 using ExtensionsSampleApp.UnoCommerce;
 using ExtensionsSampleApp.UnoCommerce.Services;
 using ExtensionsSampleApp.UnoCommerce.ViewModels;
@@ -77,12 +77,12 @@ namespace ExtensionsSampleApp
                .ConfigureServices(services =>
                {
                    services
+//                    .AddRegion<TabView, TabViewNavigator>()
+//                   .AddRegion<Control, ControlVisualStateNavigator>(ControlVisualStateNavigator.NavigatorName)
+//#if __IOS__
+//                    .AddRegion<Picker, PickerNavigator>()
+//#endif
                    .AddRegion<TabBar, TabBarRegion>()
-                   //.AddRegion<(TabBar, ContentControl), TabBarContentManager<ContentControl, ContentControlManager>, SimpleRegion<TabBarContentManager<ContentControl, ContentControlManager>>>()
-                   //.AddRegion<(TabBar, ContentControl), RegionControlWithContentRegion<TabBar, TabBarRegion, ContentControl, ContentControlRegion>>()
-                   //.AddRegion<
-                   //    (Microsoft.UI.Xaml.Controls.NavigationView, Page),
-                   //     RegionControlWithContentRegion<Microsoft.UI.Xaml.Controls.NavigationView, NavigationViewRegion, Page, PageVisualStateRegion>>()
                    .AddTransient<MainViewModel>()
                    .AddTransient<SecondViewModel>()
                    .AddViewModelData<Widget>()
