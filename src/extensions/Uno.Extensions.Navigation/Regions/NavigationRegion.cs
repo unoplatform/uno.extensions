@@ -63,29 +63,21 @@ public sealed class NavigationRegion : IRegion
         get => this.LocalNavigator().Route.Merge(Children.Select(x => (x.Name, CurrentRoute: x.Route)));
     }
 
-    public NavigationRegion(FrameworkElement view, IServiceProvider services = null) : this(view)
-    {
-        if (services is not null)
-        {
-            _services = services;
-            _services.AddInstance<IRegion>(this);
-            var serviceFactory = _services.GetService<INavigatorFactory>();
-            _services.AddInstance<INavigator>(() => serviceFactory.CreateService(this));
-        }
-    }
-
-    public NavigationRegion(FrameworkElement view, IRegion parent) : this(view)
-    {
-        Parent = parent;
-    }
-
-    private NavigationRegion(FrameworkElement view)
+    public NavigationRegion(FrameworkElement view, IServiceProvider services = null)
     {
         View = view;
         if (view is not null)
         {
             View.Loading += ViewLoading;
             View.Loaded += ViewLoaded;
+        }
+
+        if (services is not null)
+        {
+            _services = services;
+            _services.AddInstance<IRegion>(this);
+            var serviceFactory = _services.GetService<INavigatorFactory>();
+            _services.AddInstance<INavigator>(() => serviceFactory.CreateService(this));
         }
     }
 
