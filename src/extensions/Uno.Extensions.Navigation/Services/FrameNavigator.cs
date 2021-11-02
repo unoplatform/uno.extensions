@@ -120,7 +120,7 @@ public class FrameNavigator : ControlNavigator<Frame>
             numberOfPagesToRemove--;
         }
         var responseRequest = context.Request with { Route = context.Request.Route with { Path = null } };
-        var previousBase = Route.ApplyFrameRoute(Mappings, responseRequest.Route).Base;
+        var previousBase = FullRoute.ApplyFrameRoute(Mappings, responseRequest.Route).Base;
         var currentBase = Mappings.FindByView(Control.Content.GetType())?.Path;
         if (currentBase != previousBase)
         {
@@ -216,8 +216,15 @@ public class FrameNavigator : ControlNavigator<Frame>
         Logger.LogDebugMessage($"Backstack cleared");
     }
 
+    private Route FullRoute { get; set; }
     protected override void UpdateRouteFromRequest(NavigationRequest request)
     {
-        Route = Route.ApplyFrameRoute(Mappings, request.Route);
+        FullRoute = FullRoute.ApplyFrameRoute(Mappings, request.Route);
+        var lastRoute = FullRoute;
+        while (!lastRoute.IsLast())
+        {
+            lastRoute = lastRoute.NextRoute();
+        }
+        Route = lastRoute;
     }
 }

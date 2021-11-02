@@ -147,7 +147,7 @@ public sealed class NavigationRegion : IRegion
             builder.Append($@"({region.View.GetType().Name})-");
         }
 
-        var nav = region.Navigator();
+        var nav = region.LocalNavigator();
         if (nav is not null)
         {
             builder.Append($"{nav.ToString()}");

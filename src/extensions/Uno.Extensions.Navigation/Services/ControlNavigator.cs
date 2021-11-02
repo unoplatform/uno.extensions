@@ -48,7 +48,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
         return responseRequest;
     }
 
-    protected override string NavigatorToString => Region.GetRoute()?.ToString();
+    protected override string NavigatorToString => Route?.ToString();
 }
 
 public abstract class ControlNavigator : Navigator
@@ -163,7 +163,6 @@ public abstract class ControlNavigator : Navigator
         // (this is safe for null view or null viewmodel)
         await CurrentView.Start(context.Request);
         await CurrentViewModel.Start(context.Request);
-
 
         return new NavigationResultResponse(responseRequest, resultTask?.Task);
     }
