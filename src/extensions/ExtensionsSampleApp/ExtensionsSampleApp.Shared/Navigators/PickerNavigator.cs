@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation;
+using Uno.Extensions.Navigation.Navigators;
 using Uno.Extensions.Navigation.Regions;
-using Uno.Extensions.Navigation.Services;
 
 using Windows.UI;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY

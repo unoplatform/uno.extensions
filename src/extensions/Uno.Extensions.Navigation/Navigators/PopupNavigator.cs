@@ -2,26 +2,21 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
-using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Regions;
-
 #if !WINDOWS_UWP && !WINUI
 using Popup = Windows.UI.Xaml.Controls.Popup;
 #endif
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Uno.Extensions.Navigation;
 #else
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 #endif
 
-namespace Uno.Extensions.Navigation.Services;
+namespace Uno.Extensions.Navigation.Navigators;
 
 public class PopupNavigator : ControlNavigator<Popup>
 {
@@ -46,7 +41,7 @@ public class PopupNavigator : ControlNavigator<Popup>
 
     private void Control_Closed(object sender, object e)
     {
-        this.Region.Navigator().NavigateToRouteAsync(sender, "hide");
+        Region.Navigator().NavigateToRouteAsync(sender, "hide");
     }
 
     protected override async Task Show(string path, Type viewType, object data)

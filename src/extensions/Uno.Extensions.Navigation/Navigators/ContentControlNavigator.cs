@@ -11,7 +11,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 #endif
 
-namespace Uno.Extensions.Navigation.Services;
+namespace Uno.Extensions.Navigation.Navigators;
 
 public class ContentControlNavigator : ControlNavigator<ContentControl>
 {

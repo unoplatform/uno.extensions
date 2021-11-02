@@ -6,9 +6,9 @@ using Uno.Extensions.Navigation.Controls;
 using Uno.UI.ToolkitLib;
 
 using Microsoft.Extensions.DependencyInjection;
-using Uno.Extensions.Navigation.Services;
 using Uno.Extensions.Navigation.Regions;
 using System.Threading.Tasks;
+using Uno.Extensions.Navigation.Navigators;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
