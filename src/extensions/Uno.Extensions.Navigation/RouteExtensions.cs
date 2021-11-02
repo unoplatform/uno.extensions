@@ -67,14 +67,14 @@ public static class RouteExtensions
             return default;
         }
 
-        var segments = new List<Route>() { route with { Scheme = Schemes.NavigateForward, Path = null } };
+        var segments = new List<Route>() { route with { Scheme = Schemes.NavigateForward, Path = null, Data = (route.IsLastFrameRoute(mappings) ? route.Data : null) } };
         var nextRoute = route.NextRoute();
         while (
             !nextRoute.IsEmpty() && (
             nextRoute.Scheme == Schemes.NavigateForward ||
-            ((mappings.FindByPath(nextRoute.Base))?.View?.IsSubclassOf(typeof(Page)) ?? false)))
+            nextRoute.IsPageRoute(mappings)))
         {
-            segments.Add(nextRoute with { Scheme = Schemes.NavigateForward, Path = null });
+            segments.Add(nextRoute with { Scheme = Schemes.NavigateForward, Path = null, Data = (nextRoute.IsLastFrameRoute(mappings) ? nextRoute.Data : null) });
             nextRoute = nextRoute.NextRoute();
         }
         return segments.ToArray();
@@ -134,6 +134,16 @@ public static class RouteExtensions
             nextScheme = Schemes.Current;
         }
         return route with { Scheme = nextScheme, Base = routeBase, Path = nextPath };
+    }
+
+    public static bool IsPageRoute(this Route route, IRouteMappings mappings)
+    {
+        return ((mappings.FindByPath(route.Base))?.View?.IsSubclassOf(typeof(Page)) ?? false);
+    }
+
+    public static bool IsLastFrameRoute(this Route route, IRouteMappings mappings)
+    {
+        return route.IsLast() || !route.NextRoute().IsPageRoute(mappings);
     }
 
     public static string NextBase(this Route route)
@@ -249,7 +259,10 @@ public static class RouteExtensions
 
     public static IDictionary<string, object> Combine(this IDictionary<string, object> data, IDictionary<string, object> childData)
     {
-        childData.ToArray().ForEach(x => data[x.Key] = x.Value);
+        if (childData is not null)
+        {
+            childData.ToArray().ForEach(x => data[x.Key] = x.Value);
+        }
         return data;
     }
 
