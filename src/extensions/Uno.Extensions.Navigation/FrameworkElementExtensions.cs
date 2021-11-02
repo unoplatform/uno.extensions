@@ -40,7 +40,9 @@ public static class FrameworkElementExtensions
 
         Action<bool> loadedAction = (overrideLoaded) =>
         {
-            if (element.IsLoaded || overrideLoaded)
+            if (element.IsLoaded ||
+                overrideLoaded ||
+                (element.ActualHeight>0 && element.ActualWidth>0))
             {
                 completion.SetResult(null);
                 element.Loaded -= loaded;
@@ -57,7 +59,8 @@ public static class FrameworkElementExtensions
         element.Loading += loading;
         element.LayoutUpdated += layoutChanged;
 
-        if (element.IsLoaded)
+        if (element.IsLoaded ||
+            (element.ActualHeight > 0 && element.ActualWidth > 0))
         {
             loadedAction(false);
         }

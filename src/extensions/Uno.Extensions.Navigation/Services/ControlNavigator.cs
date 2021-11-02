@@ -99,13 +99,16 @@ public abstract class ControlNavigator : Navigator
 
     protected virtual bool CanNavigateToRoute(Route route) => route.IsCurrent();
 
-    private Task<NavigationResponse> RegionNavigateAsync(NavigationRequest request)
+    private async Task<NavigationResponse> RegionNavigateAsync(NavigationRequest request)
     {
+        // Make sure the view has completely loaded before trying to process the nav request
+        await Region.View.EnsureLoaded();
+
         if (CanNavigateToRoute(request.Route))
         {
-            return ControlNavigateAsync(request);
+            return await ControlNavigateAsync(request);
         }
-        return Task.FromResult<NavigationResponse>(default);
+        return await Task.FromResult<NavigationResponse>(default);
     }
 
     public virtual void ControlInitialize()

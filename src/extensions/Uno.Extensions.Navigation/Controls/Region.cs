@@ -69,15 +69,12 @@ public static class Region
         element.SetInstance(region);
     }
 
-    public static TElement AsNavigationContainer<TElement>(this TElement element, IServiceProvider services)
+    public static TElement WithNavigation<TElement>(this TElement element, IServiceProvider services)
         where TElement : FrameworkElement
     {
         // Create the Root region
-        var rootRegion = new NavigationRegion(null, services);
+        var elementRegion = new NavigationRegion(element, services);
         services.AddInstance<INavigator>(services.GetInstance<INavigator>());
-
-        // Create the element region
-        var elementRegion = new NavigationRegion(element, rootRegion);
         element.SetInstance(elementRegion);
 
         return element;
