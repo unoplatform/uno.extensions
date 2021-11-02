@@ -87,7 +87,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
         finally
         {
             Logger.LogInformation($"Post-navigation: {Region.ToString()}");
-            Logger.LogInformation($"Post-navigation (route): {Region.Root().Route}");
+            Logger.LogInformation($"Post-navigation (route): {Region.Root().GetRoute()}");
             Notifier.Update(Region);
         }
     }

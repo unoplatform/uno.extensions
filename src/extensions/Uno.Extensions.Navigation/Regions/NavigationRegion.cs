@@ -58,11 +58,6 @@ public sealed class NavigationRegion : IRegion
 
     public ICollection<IRegion> Children { get; } = new List<IRegion>();
 
-    public Route Route
-    {
-        get => this.LocalNavigator().Route.Merge(Children.Select(x => (x.Name, CurrentRoute: x.Route)));
-    }
-
     public NavigationRegion(FrameworkElement view, IServiceProvider services = null)
     {
         View = view;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Services;
@@ -28,6 +29,11 @@ public static class RegionExtensions
     public static IRegion Root(this IRegion region)
     {
         return region.Parent is not null ? region.Parent.Root() : region;
+    }
+
+    public static Route GetRoute(this IRegion region)
+    {
+        return region.LocalNavigator().Route.Merge(region.Children.Select(x => (x.Name, CurrentRoute: x.GetRoute())));
     }
 
     public static IEnumerable<IRegion> FindChildren(this IRegion region, Func<IRegion, bool> predicate)

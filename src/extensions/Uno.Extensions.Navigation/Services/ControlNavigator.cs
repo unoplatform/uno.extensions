@@ -48,7 +48,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
         return responseRequest;
     }
 
-    protected override string NavigatorToString => Region.Route?.ToString();
+    protected override string NavigatorToString => Region.GetRoute()?.ToString();
 }
 
 public abstract class ControlNavigator : Navigator
