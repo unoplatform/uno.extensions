@@ -32,16 +32,17 @@ public static class RegionExtensions
 
     public static IEnumerable<IRegion> FindChildren(this IRegion region, Func<IRegion, bool> predicate)
     {
-        var list = new List<IRegion>();
         foreach (var child in region.Children)
         {
             if (predicate(child))
             {
-                list.Add(child);
+                yield return child;
             }
 
-            list.AddRange(child.FindChildren(predicate));
+            foreach (var nested in child.FindChildren(predicate))
+            {
+                yield return nested;
+            }
         }
-        return list;
     }
 }
