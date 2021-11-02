@@ -6,11 +6,11 @@ using ExtensionsSampleApp.Views;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation;
-using Uno.Extensions.Navigation.ViewModels;
+
 
 namespace ExtensionsSampleApp.ViewModels
 {
-    public class SecondViewModel : IViewModelStart, IViewModelStop
+    public class SecondViewModel 
     {
        
         public string Title => "Second - " + Data;

@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Regions;
-using Uno.Extensions.Navigation.ViewModels;
+
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Xaml;
 #else
@@ -129,23 +129,6 @@ public abstract class ControlNavigator : Navigator
         var resultTask = request.RequiresResponse() ? new TaskCompletionSource<Options.Option>() : default;
         var context = request.BuildNavigationContext(Region.Services, resultTask);
 
-        // Notify current view and viewmodel that about to navigate.
-        // If either return true, cancel nav by returning null
-        // (this is safe for null view or null viewmodel)
-        if (
-            !await CurrentView.Stop(request) ||
-            !await CurrentViewModel.Stop(request)
-            )
-        {
-            var completion = context.Navigation as ResponseNavigator;
-            if (completion is not null)
-            {
-                completion.ResultCompletion.SetResult(Options.Option.None<object>());
-            }
-
-            return new NavigationResponse(request, false);
-        }
-
         var responseRequest = await NavigateWithContextAsync(context);
 
         UpdateRouteFromRequest(responseRequest);
@@ -158,11 +141,6 @@ public abstract class ControlNavigator : Navigator
                 context.Navigation.NavigateToPreviousViewAsync(context.Request.Sender);
             });
         }
-
-        // Start view and viewmodels
-        // (this is safe for null view or null viewmodel)
-        await CurrentView.Start(context.Request);
-        await CurrentViewModel.Start(context.Request);
 
         return new NavigationResultResponse(responseRequest, resultTask?.Task);
     }

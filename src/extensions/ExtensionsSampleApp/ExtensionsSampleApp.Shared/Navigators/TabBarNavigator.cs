@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Controls;
 using Uno.UI.ToolkitLib;
-using Uno.Extensions.Navigation.ViewModels;
+
 using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Services;
 using Uno.Extensions.Navigation.Regions;

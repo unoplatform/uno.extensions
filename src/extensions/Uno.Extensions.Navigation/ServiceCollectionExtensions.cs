@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Regions;
 using Uno.Extensions.Navigation.Services;
-using Uno.Extensions.Navigation.ViewModels;
+
 using Windows.UI.Popups;
 #if !WINDOWS_UWP && !WINUI
 using Popup = Windows.UI.Xaml.Controls.Popup;

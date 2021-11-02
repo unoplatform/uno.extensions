@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation.Controls;
-using Uno.Extensions.Navigation.ViewModels;
+
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Regions;
 using System.Threading.Tasks;

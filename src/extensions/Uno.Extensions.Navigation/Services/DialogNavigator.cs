@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation.Regions;
-using Uno.Extensions.Navigation.ViewModels;
+
 using Windows.Foundation;
 
 namespace Uno.Extensions.Navigation.Services
@@ -43,8 +43,6 @@ namespace Uno.Extensions.Navigation.Services
             ShowTask = null;
 
             var responseData = navigationContext.Request.Route.Data.TryGetValue(string.Empty, out var response) ? response : default;
-
-            await CurrentViewModel.Stop(navigationContext.Request);
 
             dialog.Cancel();
         }
