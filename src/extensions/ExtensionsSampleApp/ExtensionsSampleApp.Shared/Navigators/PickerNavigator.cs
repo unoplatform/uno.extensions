@@ -2,7 +2,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Regions;
+using Uno.Extensions.Navigation.Services;
 using Uno.Extensions.Navigation.ViewModels;
 using Windows.UI;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
@@ -13,7 +15,7 @@ using Microsoft.UI.Xaml.Controls;
 using Windows.UI.Popups;
 #endif
 
-namespace Uno.Extensions.Navigation.Services;
+namespace ExtensionsSampleApp.Navigators;
 
 public class PickerNavigator : ControlNavigator
 {

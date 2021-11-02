@@ -19,7 +19,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 #endif
 
-namespace ExtensionsSampleApp.Region.Managers
+namespace ExtensionsSampleApp.Navigators
 {
     public class TabBarRegion : ControlNavigator<TabBar>
     {
@@ -72,13 +72,13 @@ namespace ExtensionsSampleApp.Region.Managers
             }
             else
             {
-                if(Control.ItemsPanelRoot is null)
+                if (Control.ItemsPanelRoot is null)
                 {
                     return;
                 }
 
                 var item = (from tbi in Control.ItemsPanelRoot?.Children.OfType<TabBarItem>()
-                            where tbi.GetName()==path || tbi.Name == path
+                            where tbi.GetName() == path || tbi.Name == path
                             select tbi).FirstOrDefault();
                 if (item is not null)
                 {

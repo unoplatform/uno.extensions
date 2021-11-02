@@ -43,16 +43,11 @@ public static class ServiceCollectionExtensions
 
                     // Register the region for each control type
                     .AddRegion<Frame, FrameNavigator>()
-                    .AddRegion<TabView, TabViewNavigator>()
                     .AddRegion<ContentControl, ContentControlNavigator>()
                    .AddRegion<Panel, PanelVisiblityNavigator>(PanelVisiblityNavigator.NavigatorName)
-                   .AddRegion<Control, ControlVisualStateNavigator>(ControlVisualStateNavigator.NavigatorName)
                    .AddRegion<Microsoft.UI.Xaml.Controls.NavigationView, NavigationViewNavigator>()
                     .AddRegion<ContentDialog, ContentDialogNavigator>()
                     .AddRegion<MessageDialog, MessageDialogNavigator>()
-#if __IOS__
-                    .AddRegion<Picker, PickerNavigator>()
-#endif
                     .AddRegion<Popup, PopupNavigator>()
 
                     .AddSingleton<INavigationBindingHandler, ButtonBaseNavigationBindingHandler>()

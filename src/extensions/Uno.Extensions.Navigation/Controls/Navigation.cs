@@ -61,25 +61,25 @@ public static class Navigation
         return (object)element.GetValue(DataProperty);
     }
 
-    public static string NavigationRoute(this object view, IRouteMappings mappings = null)
-    {
-        var map = mappings?.FindByView(view.GetType());
-        if (map is not null)
-        {
-            return map.Path;
-        }
+    //public static string NavigationRoute(this object view, IRouteMappings mappings = null)
+    //{
+    //    var map = mappings?.FindByView(view.GetType());
+    //    if (map is not null)
+    //    {
+    //        return map.Path;
+    //    }
 
-        if (view is FrameworkElement fe)
-        {
-            var path = fe.GetName();
-            if (string.IsNullOrWhiteSpace(path))
-            {
-                path = fe.Name;
-            }
+    //    if (view is FrameworkElement fe)
+    //    {
+    //        var path = fe.GetName();
+    //        if (string.IsNullOrWhiteSpace(path))
+    //        {
+    //            path = fe.Name;
+    //        }
 
-            return path;
-        }
+    //        return path;
+    //    }
 
-        return null;
-    }
+    //    return null;
+    //}
 }
