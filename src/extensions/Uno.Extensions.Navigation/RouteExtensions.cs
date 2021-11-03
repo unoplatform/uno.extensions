@@ -138,7 +138,7 @@ public static class RouteExtensions
 
     public static bool IsPageRoute(this Route route, IRouteMappings mappings)
     {
-        return ((mappings.FindByPath(route.Base))?.View?.IsSubclassOf(typeof(Page)) ?? false);
+        return ((mappings.Find(route))?.View?.IsSubclassOf(typeof(Page)) ?? false);
     }
 
     public static bool IsLastFrameRoute(this Route route, IRouteMappings mappings)

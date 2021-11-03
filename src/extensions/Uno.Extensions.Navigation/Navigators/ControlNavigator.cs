@@ -18,16 +18,13 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 {
     public virtual TControl Control { get; set; }
 
-    protected IRouteMappings Mappings { get; }
-
     protected ControlNavigator(
         ILogger logger,
         IRegion region,
         IRouteMappings mappings,
         TControl control)
-        : base(logger, region)
+        : base(logger, mappings, region)
     {
-        Mappings = mappings;
         Control = control;
     }
 
@@ -35,35 +32,41 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 
     protected abstract Task<string> Show(string path, Type viewType, object data);
 
-    protected override async Task<Route> NavigateWithContextAsync(NavigationContext context)
+    protected override async Task<Route> RouteNavigateAsync(Route route)
     {
-        Logger.LogDebugMessage($"Navigating to path '{context.Request.Route.Base}' with view '{context.Mapping?.View?.Name}'");
-        var executedPath = await Show(context.Request.Route.Base, context.Mapping?.View, context.Request.Route.Data);
+        var mapping = Mappings.Find(route);
+        Logger.LogDebugMessage($"Navigating to path '{route.Base}' with view '{mapping?.View?.Name}'");
+        var executedPath = await Show(route.Base, mapping?.View, route.Data);
 
-        InitialiseView(context);
+        InitialiseCurrentView(route, mapping);
 
         if (string.IsNullOrEmpty(executedPath))
         {
             return Route.Empty;
         }
 
-        return context.Request.Route with { Base = executedPath, Path = null };
+        return route with { Base = executedPath, Path = null };
     }
 
-    protected void InitialiseView(NavigationContext context)
+    protected object InitialiseCurrentView(Route route, RouteMap mapping)
     {
         var view = CurrentView;
 
+        var navigator = Region.Navigator();
+        var services = this.Get<IServiceProvider>();
         var viewModel = view?.DataContext;
-        var mapping = context.Mapping;
-        if (viewModel is null || viewModel.GetType() != mapping?.ViewModel)
+        if (viewModel is null ||
+            viewModel.GetType() != mapping?.ViewModel)
         {
             // This will happen if cache mode isn't set to required
-            viewModel = context.CreateViewModel();
+            viewModel = CreateViewModel(services, navigator, route, mapping);
         }
 
-        view.InjectServicesAndSetDataContext(context.Services, context.Navigation, viewModel);
+        view.InjectServicesAndSetDataContext(services, navigator, viewModel);
+
+        return viewModel;
     }
+
 
     protected override string NavigatorToString => Route?.ToString();
 }
@@ -72,11 +75,15 @@ public abstract class ControlNavigator : Navigator
 {
     public virtual bool CanGoBack => false;
 
+    protected IRouteMappings Mappings { get; }
+
     protected ControlNavigator(
         ILogger logger,
+        IRouteMappings mappings,
         IRegion region)
         : base(logger, region)
     {
+        Mappings = mappings;
     }
 
     protected async override Task<NavigationResponse> CoreNavigateAsync(NavigationRequest request)
@@ -122,11 +129,22 @@ public abstract class ControlNavigator : Navigator
             return new NavigationResponse(request.Route);
         }
 
-        // Prepare the NavigationContext
-        var resultTask = request.RequiresResponse() ? new TaskCompletionSource<Options.Option>() : default;
-        var context = request.BuildNavigationContext(Region.Services, resultTask);
+        var services = Region.Services;
 
-        var executedRoute = await NavigateWithContextAsync(context);
+        // Setup the navigation data (eg parameters to be injected into viewmodel)
+        var dataFactor = services.GetService<NavigationDataProvider>();
+        dataFactor.Parameters = request.Route.Data;
+
+        // Create ResponseNavigator if result is requested
+        TaskCompletionSource<Options.Option> resultTask = null;
+        INavigator navigator = this;
+        if (request.Result is not null)
+        {
+            resultTask = new TaskCompletionSource<Options.Option>();
+            navigator = new ResponseNavigator(navigator, request.Result, resultTask);
+        }
+
+        var executedRoute = await RouteNavigateAsync(request.Route);
 
         UpdateRoute(executedRoute);
 
@@ -134,12 +152,18 @@ public abstract class ControlNavigator : Navigator
         {
             request.Cancellation.Value.Register(() =>
             {
-                context.Cancel();
-                context.Navigation.NavigateToPreviousViewAsync(context.Request.Sender);
+                navigator.NavigateToPreviousViewAsync(request.Sender);
             });
         }
 
-        return new NavigationResultResponse(executedRoute, resultTask?.Task);
+        if (resultTask is not null)
+        {
+            return new NavigationResultResponse(executedRoute, resultTask.Task);
+        }
+        else
+        {
+            return new NavigationResponse(executedRoute);
+        }
     }
 
     protected virtual void UpdateRoute(Route route)
@@ -147,5 +171,30 @@ public abstract class ControlNavigator : Navigator
         Route = new Route(Schemes.Current, route.Base, null, route.Data);
     }
 
-    protected abstract Task<Route> NavigateWithContextAsync(NavigationContext context);
+    protected object CreateViewModel(IServiceProvider services, INavigator navigator, Route route, RouteMap mapping)
+    {
+        if (mapping?.ViewModel is not null)
+        {
+            var dataFactor = services.GetService<NavigationDataProvider>();
+            dataFactor.Parameters = route.Data;
+
+            var vm = services.GetService(mapping.ViewModel);
+            if (vm is IInjectable<INavigator> navAware)
+            {
+                navAware.Inject(navigator);
+            }
+
+            if (vm is IInjectable<IServiceProvider> spAware)
+            {
+                spAware.Inject(this.Get<IServiceProvider>());
+            }
+
+            return vm;
+        }
+
+        return null;
+    }
+
+
+    protected abstract Task<Route> RouteNavigateAsync(Route route);
 }

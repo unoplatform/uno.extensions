@@ -21,12 +21,13 @@ public class PickerNavigator : ControlNavigator
 {
     public PickerNavigator(
         ILogger<ContentDialogNavigator> logger,
+        IRouteMappings mappings,
         IRegion region)
-        : base(logger, region)
+        : base(logger, mappings, region)
     {
     }
 
-    protected override Task<Route> NavigateWithContextAsync(NavigationContext context)
+    protected override Task<Route> RouteNavigateAsync(Route route)
     {
 #if __IOS__
         var appWindow = Windows.UI.Xaml.Window.Current;
@@ -93,7 +94,7 @@ public class PickerNavigator : ControlNavigator
             rootGrid.Children.Remove(popup);
         };
 #endif
-        var responseRequest = context.Request.Route with { Path = null };
-        return Task.FromResult(responseRequest);
+        var responseRoute = route with { Path = null };
+        return Task.FromResult(responseRoute);
     }
 }
