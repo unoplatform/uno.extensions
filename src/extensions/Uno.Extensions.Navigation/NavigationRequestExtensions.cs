@@ -39,7 +39,7 @@ public static class NavigationRequestExtensions
         IServiceProvider services,
         TaskCompletionSource<Options.Option> resultTask = default)
     {
-        var scopedServices = services.CloneNavigationScopedServices();
+        var scopedServices = services;//.CloneNavigationScopedServices();
 
         var mapping = scopedServices.GetService<IRouteMappings>().FindByPath(request.Route.Base);
 
@@ -50,18 +50,21 @@ public static class NavigationRequestExtensions
                                 new CancellationTokenSource();
         var context = new NavigationContext(
                             scopedServices,
-                            request with {
+                            request with
+                            {
                                 Cancellation = cancel.Token,
-                                Route = request.Route with {
-                                    Data = request.Route.Data.AsParameters(mapping) } },
+                                Route = request.Route with
+                                {
+                                    Data = request.Route.Data.AsParameters(mapping)
+                                }
+                            },
                             cancel,
                             mapping);
 
         if (request.RequiresResponse())
         {
             var innerService = context.Services.GetInstance<INavigator>();
-            var responseNav = new ResponseNavigator(innerService, resultTask);
-            context.Services.AddInstance<INavigator>(responseNav);
+            _ = new ResponseNavigator(innerService, request.Result, resultTask);
         }
 
         return context;

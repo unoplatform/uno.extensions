@@ -124,7 +124,13 @@ public static class NavigatorExtensions
     }
 
     public static Task<NavigationResponse> NavigateToPreviousViewAsync(
-        this INavigator service, object sender, string scheme = Schemes.None, object data = null, CancellationToken cancellation = default)
+        this INavigator service, object sender, string scheme = Schemes.None, CancellationToken cancellation = default)
+    {
+        return service.NavigateAsync((Schemes.NavigateBack + string.Empty).WithScheme(scheme).AsRequest(sender, cancellationToken: cancellation));
+    }
+
+    public static Task<NavigationResponse> NavigateToPreviousViewAsync<TResult>(
+    this INavigator service, object sender, string scheme = Schemes.None, Options.Option<TResult> data = null, CancellationToken cancellation = default)
     {
         return service.NavigateAsync((Schemes.NavigateBack + string.Empty).WithScheme(scheme).AsRequest(sender, data, cancellation));
     }

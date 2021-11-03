@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Options;
+﻿using System;
+
+namespace Uno.Extensions.Options;
 
 /// <summary>
 /// Static method to create an <see cref="Option{T}"/>
@@ -57,7 +59,9 @@ public abstract class Option
         return Type == OptionType.Some;
     }
 
-    protected abstract object GetValue();
+    public abstract object GetValue();
+
+    public abstract Type GetValueType(); 
 }
 
 /// <summary>
@@ -111,4 +115,6 @@ public abstract class Option<T> : Option
     {
         return Some(o);
     }
+
+    public override Type GetValueType() => typeof(T);
 }

@@ -254,7 +254,7 @@ namespace ExtensionsSampleApp
 #else
 
                 //var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Nested);
-                //var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Root);
+                var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Root);
                 //var navResult = nav.NavigateToRouteAsync(this, "+MainPage", Schemes.Root);
                 //var navResult = nav.NavigateToRouteAsync(this, "+MainPage+SecondPage", Schemes.Root);
                 //var navResult = nav.NavigateToRouteAsync(this, "+MainPage+SecondPage+ThirdPage", Schemes.Root);
@@ -263,7 +263,7 @@ namespace ExtensionsSampleApp
                 //var navResult = nav.NavigateToRouteAsync(this, "TabbedPage/doc1", Schemes.Root);
                 //var navResult = nav.NavigateToRouteAsync(this, "TabbedPage/doc2/SecondPage/content/Content1", Schemes.Root);
                 //var navResult = nav.NavigateToRouteAsync(this, "TwitterPage/notifications/TweetDetailsPage?TweetId=23", Schemes.Root);
-                var navResult = nav.NavigateToViewAsync<LoginPage>(this);
+                //var navResult = nav.NavigateToViewAsync<LoginPage>(this);
                 //var navResult = nav.NavigateToRouteAsync(this, "/CommerceHomePage/Products/ProductDetails?ProductId=3");
 #endif
                 //navResult.OnCompleted(() => Debug.WriteLine("Nav complete"));
