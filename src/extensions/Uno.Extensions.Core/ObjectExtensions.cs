@@ -1,15 +1,14 @@
-﻿namespace Uno.Extensions
-{
-    public static class ObjectExtensions
-    {
-        public static TInstance? Get<TInstance>(this object entity)
-        {
-            if (entity is IInstance<TInstance> instanceEntity)
-            {
-                return instanceEntity.Instance;
-            }
+﻿namespace Uno.Extensions;
 
-            return default;
+public static class ObjectExtensions
+{
+    public static TInstance? Get<TInstance>(this object entity)
+    {
+        if (entity is IInstance<TInstance> instanceEntity)
+        {
+            return instanceEntity.Instance;
         }
+
+        return default;
     }
 }
