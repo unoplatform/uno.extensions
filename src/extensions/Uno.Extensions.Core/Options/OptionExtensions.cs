@@ -1,4 +1,5 @@
 ﻿using System;
+using static Uno.Extensions.GenericExtensions;
 
 namespace Uno.Extensions.Options;
 
@@ -33,6 +34,8 @@ public static class OptionExtensions
     /// <returns>The converted option</returns>
     public static Option<T2> Map<T1, T2>(this Option<T1> option, Func<T1?, T2> func)
     {
+        AssertNotNull(option, nameof(option));
+
         T1? value1;
         return option.MatchSome(out value1)
             ? Option.Some(func(value1))
