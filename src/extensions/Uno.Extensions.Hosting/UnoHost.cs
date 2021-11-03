@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging.Console;
 using Microsoft.Extensions.Logging.EventLog;
 
 namespace Uno.Extensions.Hosting;
@@ -67,3 +68,4 @@ public static class UnoHost
     }
 #endif
 }
+#endif
