@@ -5,13 +5,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging.EventLog;
 
-namespace Uno.Extensions.Hosting
-{
+namespace Uno.Extensions.Hosting;
+
 #if !NETSTANDARD || WINUI || __WASM__
-    public static class UnoHost
-    {
-        public static IHostBuilder CreateDefaultBuilder(bool custom = true) =>
-            (custom ? CustomHost.CreateDefaultBuilder() : Host.CreateDefaultBuilder())
+public static class UnoHost
+{
+    public static IHostBuilder CreateDefaultBuilder(bool custom = true) =>
+        (custom ? CustomHost.CreateDefaultBuilder() : Host.CreateDefaultBuilder())
 #if WINUI || WINDOWS_UWP || __IOS__ || __ANDROID__ || NETSTANDARD
             .UseContentRoot(PlatformSpecificContentRootPath())
 #endif
@@ -55,16 +55,14 @@ namespace Uno.Extensions.Hosting
             ;
 
 #if WINUI || WINDOWS_UWP || __IOS__ || __ANDROID__ || NETSTANDARD
-        private static string PlatformSpecificContentRootPath()
-        {
+    private static string PlatformSpecificContentRootPath()
+    {
 #if WINUI || WINDOWS_UWP || NETSTANDARD
             return Windows.Storage.ApplicationData.Current.LocalFolder.Path;
 #elif __ANDROID__ || __IOS__
-            return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 #else
             return string.Empty;
-#endif
-        }
 #endif
     }
 #endif
