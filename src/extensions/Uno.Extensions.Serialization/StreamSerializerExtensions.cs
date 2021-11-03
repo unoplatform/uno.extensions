@@ -5,14 +5,16 @@ namespace Uno.Extensions.Serialization
 {
     public static class StreamSerializerExtensions
     {
-        public static T ReadFromStream<T>(this ISerializer serializer, Stream stream)
+        public static T? ReadFromStream<T>(this ISerializer serializer, Stream stream)
         {
             return serializer is not null ?
-                (T)serializer.ReadFromStream(stream, typeof(T)) :
+                (serializer.ReadFromStream(stream, typeof(T)) is T tvalue) ?
+                    tvalue :
+                    default :
                 default;
         }
 
-        public static T FromStream<T>(this ISerializer serializer, Stream stream)
+        public static T? FromStream<T>(this ISerializer serializer, Stream stream)
         {
             if (stream == null)
             {
@@ -21,7 +23,9 @@ namespace Uno.Extensions.Serialization
 
             var pos = stream.Position;
             var value = serializer is not null ?
-                (T)serializer.ReadFromStream<T>(stream) :
+                (serializer.ReadFromStream(stream, typeof(T)) is T tvalue) ?
+                    tvalue :
+                    default :
                 default;
             stream.Seek(pos, SeekOrigin.Begin);
             return value;
@@ -29,24 +33,27 @@ namespace Uno.Extensions.Serialization
 
         public static ISerializer WriteToStream<T>(this ISerializer serializer, Stream stream, T value)
         {
-            serializer?.WriteToStream(stream, value, typeof(T));
+            if (value is not null)
+            {
+                serializer.WriteToStream(stream, value, typeof(T));
+            }
             return serializer;
         }
 
         public static ISerializer WriteToStream(this ISerializer serializer, Stream stream, object value)
         {
-            if (value is null)
-            {
-                return serializer;
-            }
-
-            serializer?.WriteToStream(stream, value, value.GetType());
+            serializer.WriteToStream(stream, value, value.GetType());
             return serializer;
         }
 
-        public static Stream ToStream<T>(this ISerializer serializer, T value)
+        public static Stream? ToStream<T>(this ISerializer serializer, T value)
         {
-            return serializer?.ToStream(value, typeof(T));
+            if (value is not null)
+            {
+                return serializer.ToStream(value, typeof(T));
+            }
+
+            return default;
         }
 
         public static Stream ToStream(this ISerializer serializer, object value, Type valueType)
@@ -61,13 +68,20 @@ namespace Uno.Extensions.Serialization
 
         public static string ToString<T>(this ISerializer serializer, T value)
         {
-            return serializer?.ToString(value, typeof(T));
+            if (value is not null)
+            {
+                return serializer.ToString(value, typeof(T));
+            }
+
+            return string.Empty;
         }
 
-        public static T FromString<T>(this ISerializer serializer, string valueAsString)
+        public static T? FromString<T>(this ISerializer serializer, string valueAsString)
         {
             return serializer is not null ?
-                (T)serializer.FromString(valueAsString, typeof(T)) :
+            (serializer.FromString(valueAsString, typeof(T)) is T tvalue) ?
+                    tvalue :
+                    default :
                 default;
         }
     }

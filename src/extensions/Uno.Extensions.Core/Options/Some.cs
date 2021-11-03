@@ -26,19 +26,21 @@ public sealed class Some<T> : Option<T>
     /// <summary>
     /// Gets the value
     /// </summary>
+#pragma warning disable CA1721 // Property names should not match get methods
     public T Value { get; }
+#pragma warning restore CA1721 // Property names should not match get methods
 
-    public override object GetValue() => Value;
+    public override object? GetValue() => Value;
 
     /// <inheritdoc/>
-    public override bool Equals(object obj) => Equals(obj as Some<T>);
+    public override bool Equals(object? obj) => Equals((obj is Some<T> tobj) ? tobj : default(Some<T>));
 
     /// <summary>
     /// Checks whether two objects are equal
     /// </summary>
     /// <param name="other">The entity to compare</param>
     /// <returns>True if both entities are equal</returns>
-    private bool Equals(Some<T> other)
+    private bool Equals(Some<T>? other)
     {
         if (other == null)
         {
@@ -86,5 +88,7 @@ public sealed class Some<T> : Option<T>
     /// Implicit conversion of T to <see cref="Some{T}"/>
     /// </summary>
     /// <param name="o">The object to wrap</param>
+#pragma warning disable CA2225 // Operator overloads have named alternates
     public static implicit operator Some<T>(T o) => Some(o);
+#pragma warning restore CA2225 // Operator overloads have named alternates
 }

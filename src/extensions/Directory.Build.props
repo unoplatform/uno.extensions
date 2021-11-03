@@ -8,6 +8,7 @@
     <UnoCompatibility>UWP</UnoCompatibility>
     <IsNet6>false</IsNet6>
     <IsAndroid>false</IsAndroid>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -71,16 +72,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0-preview.7.21377.19" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0-preview.7.21377.19" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0-preview.7.21377.19" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0-rc.2.21480.5" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0-rc.2.21480.5" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0-rc.2.21480.5" />
     <PackageReference Include="Uno.Core" Version="3.0.0" />
   </ItemGroup>
 
 
-  <ItemGroup Condition="'$(IsUWP)' == 'true'" >
+  <!--<ItemGroup Condition="'$(IsUWP)' == 'true'" >
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform" Version="6.2.12" />
-  </ItemGroup>
+  </ItemGroup>-->
 
   <ItemGroup>
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
@@ -101,17 +102,17 @@
   </ItemGroup>
 
   <PropertyGroup Condition="'$(IsWinUI)' == 'true'">
-    <!--<Platforms>x86;x64;arm64</Platforms>-->
+    <Platforms>x86;x64;arm64</Platforms>
     <RuntimeIdentifiers>win10-x86;win10-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(IsWinUI)' != 'true' and '$(IsUWP)' != 'true' and '$(UnoCompatibility)' != 'UWP'">
-    <PackageReference Include="Uno.WinUI" Version="3.11.0-dev.270" >
+    <PackageReference Include="Uno.WinUI" Version="4.0.0-dev.5441" >
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
   <ItemGroup Condition="'$(IsWinUI)' != 'true' and '$(IsUWP)' != 'true' and '$(UnoCompatibility)' == 'UWP'">
-    <PackageReference Include="Uno.UI" Version="3.11.0-dev.270">
+    <PackageReference Include="Uno.UI" Version="4.0.0-dev.5441">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
@@ -119,45 +120,11 @@
     <DefineConstants>$(DefineConstants);UNO_UWP_COMPATIBILITY</DefineConstants>
   </PropertyGroup>
   <ItemGroup Condition="'$(IsWinUI)' == 'true'">
-    <PackageReference Include="Microsoft.ProjectReunion" Version="0.8.2" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.0.0-preview3" />
   </ItemGroup>
-
-  <!--<ItemGroup>
-    <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.19041.16" />
-    <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.19041.16" />
-  </ItemGroup>-->
 
   <PropertyGroup>
     <!-- Forces Uno's XamlFileGenerator to write error when XAML is invalid-->
     <ShouldWriteErrorOnInvalidXaml>True</ShouldWriteErrorOnInvalidXaml>
   </PropertyGroup>
-
-  <!--<Content Include="build\xamarinios\uno.targets">
-    <Pack>true</Pack>
-    <PackagePath>build\xamarinios10</PackagePath>
-  </Content>
-  <Content Include="build\xamarinios\uno.targets">
-    <Pack>true</Pack>
-    <PackagePath>build\xamarinmac20</PackagePath>
-  </Content>
-  <Content Include="build\monoandroid\uno.targets">
-    <Pack>true</Pack>
-    <PackagePath>build\monoandroid10.0</PackagePath>
-  </Content>
-  <Content Include="build\monoandroid\uno.targets">
-    <Pack>true</Pack>
-    <PackagePath>build\monoandroid11.0</PackagePath>
-  </Content>
-  <Content Include="build\uap\uno.targets">
-    <Pack>true</Pack>
-    <PackagePath>build\uap10.0.16299</PackagePath>
-  </Content>
-  <Content Include="build\net-windows\uno.targets">
-    <Pack>true</Pack>
-    <PackagePath>build\net5.0-windows10.0.19041.0</PackagePath>
-  </Content>
-  <Content Include="build\netstandard\uno.targets">
-    <Pack>true</Pack>
-    <PackagePath>build\netstandard2.0</PackagePath>
-  </Content>-->
 </Project>

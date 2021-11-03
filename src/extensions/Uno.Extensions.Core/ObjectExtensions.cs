@@ -2,7 +2,7 @@
 {
     public static class ObjectExtensions
     {
-        public static TInstance Get<TInstance>(this object entity)
+        public static TInstance? Get<TInstance>(this object entity)
         {
             if (entity is IInstance<TInstance> instanceEntity)
             {
