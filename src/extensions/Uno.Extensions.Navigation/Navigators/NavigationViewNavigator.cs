@@ -57,7 +57,7 @@ public class NavigationViewNavigator : ControlNavigator<Microsoft.UI.Xaml.Contro
     {
     }
 
-    protected override async Task Show(string path, Type view, object data)
+    protected override async Task<string> Show(string path, Type viewType, object data)
     {
         var item = (from mi in Control.MenuItems.OfType<FrameworkElement>()
                     where mi.Name == path
@@ -66,5 +66,8 @@ public class NavigationViewNavigator : ControlNavigator<Microsoft.UI.Xaml.Contro
         {
             Control.SelectedItem = item;
         }
+
+        // Don't return path, as we need for path to be passed down to children
+        return default;
     }
 }

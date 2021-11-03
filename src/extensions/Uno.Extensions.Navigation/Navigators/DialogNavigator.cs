@@ -18,7 +18,7 @@ public abstract class DialogNavigator : ControlNavigator
     {
     }
 
-    protected override async Task<NavigationRequest> NavigateWithContextAsync(NavigationContext context)
+    protected override async Task<Route> NavigateWithContextAsync(NavigationContext context)
     {
         // If this is back navigation, then make sure it's used to close
         // any of the open dialogs
@@ -31,7 +31,7 @@ public abstract class DialogNavigator : ControlNavigator
             var vm = context.CreateViewModel();
             ShowTask = DisplayDialog(context, vm);
         }
-        var responseRequest = context.Request with { Route = context.Request.Route with { Path = null } };
+        var responseRequest = context.Request.Route with { Path = null };
         return responseRequest;
     }
 

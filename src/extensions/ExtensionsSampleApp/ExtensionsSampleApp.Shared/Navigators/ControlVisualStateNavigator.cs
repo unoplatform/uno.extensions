@@ -30,8 +30,9 @@ public class ControlVisualStateNavigator : ControlNavigator<Control>
     {
     }
 
-    protected override async Task Show(string path, Type viewType, object data)
+    protected override async Task<string> Show(string path, Type viewType, object data)
     {
         VisualStateManager.GoToState(Control, path, true);
+        return path;
     }
 }

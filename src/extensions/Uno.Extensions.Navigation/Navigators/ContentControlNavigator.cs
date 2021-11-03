@@ -26,7 +26,7 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
     {
     }
 
-    protected override async Task Show(string path, Type viewType, object data)
+    protected override async Task<string> Show(string path, Type viewType, object data)
     {
         try
         {
@@ -40,10 +40,13 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
             Control.Content = content;
             await (Control.Content as FrameworkElement).EnsureLoaded();
             Logger.LogDebugMessage("Instance created");
+            return path;
         }
         catch (Exception ex)
         {
             Logger.LogErrorMessage($"Unable to create instance - {ex.Message}");
         }
+
+        return default;
     }
 }

@@ -14,8 +14,6 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 {
     protected ILogger Logger { get; }
 
-    private bool IsRoot => Region?.Parent is null;
-
     protected IRegion Region { get; }
 
     private INavigationNotifier Notifier => Region?.Services.GetService<INavigationNotifier>();
@@ -44,11 +42,14 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
         try
         {
             // Handle root navigations
-            if (request?.Route?.IsRoot() ?? false)
+            if (request.Route.IsRoot())
             {
-                if (!IsRoot)
+                // Either
+                // - forward to parent (if parent is not null)
+                // - trim the Root scheme ready for handling
+                if (Region?.Parent is not null)
                 {
-                    return await (Region.Parent?.NavigateAsync(request) ?? Task.FromResult<NavigationResponse>(default));
+                    return await (Region.Parent.NavigateAsync(request) ?? Task.FromResult<NavigationResponse>(default));
                 }
                 else
                 {
@@ -58,12 +59,13 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
                 }
             }
 
-            if (request?.Route?.IsParent() ?? false)
+            // Request for parent (ignore the first layer of parent scheme)
+            if (request.Route.IsParent())
             {
                 request = request with { Route = request.Route.TrimScheme(Schemes.Parent) };
 
                 // Handle parent navigations
-                if (request?.Route?.IsParent() ?? false)
+                if (request.Route.IsParent())
                 {
                     return await (Region.Parent?.NavigateAsync(request) ?? Task.FromResult<NavigationResponse>(default));
                 }
@@ -79,7 +81,14 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
             // If the base matches the region name, than need to strip the base
             if (request.Route.Base == Region.Name)
             {
-                request = request with { Route = request.Route.NextRoute() };
+                request = request with { Route = request.Route.Next() };
+            }
+
+            // Initialise the region
+            var requestMap = this.Get<IServiceProvider>().GetService<IRouteMappings>().FindByPath(request.Route.Base);
+            if (requestMap?.RegionInitialization is not null)
+            {
+                request = requestMap.RegionInitialization(Region, request);
             }
 
             return await CoreNavigateAsync(request);
@@ -103,13 +112,11 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
     protected virtual async Task<NavigationResponse> CoreNavigateAsync(NavigationRequest request)
     {
-        var checkCurrentRoute = false;
         if (request.Route.IsNested())
         {
             // At this point the request should be passed to nested, so remove
             // any nested scheme (ie ./ )
             request = request with { Route = request.Route.TrimScheme(Schemes.Nested) };// with { Scheme = Schemes.Current } };
-            checkCurrentRoute = true;
         }
 
         if (request.Route.IsEmpty())
@@ -118,9 +125,13 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
         }
 
         var children = Region.Children.Where(region =>
-                                       region.Name is not { Length: > 0 } ||
-                                       region.Name == request.Route.Base ||
-                                       (checkCurrentRoute && region.Name == Route?.Base)
+                                        // Unnamed child regions
+                                        string.IsNullOrWhiteSpace(region.Name) ||
+                                        // Regions whose name matches the next route segment
+                                        region.Name == request.Route.Base ||
+                                        // Regions whose name matches the current route
+                                        // eg currently selected tab
+                                        region.Name == Route?.Base
                                     ).ToArray();
 
         var tasks = new List<Task<NavigationResponse>>();

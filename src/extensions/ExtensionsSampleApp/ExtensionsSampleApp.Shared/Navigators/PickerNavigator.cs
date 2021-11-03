@@ -26,7 +26,7 @@ public class PickerNavigator : ControlNavigator
     {
     }
 
-    protected override Task<NavigationRequest> NavigateWithContextAsync(NavigationContext context)
+    protected override Task<Route> NavigateWithContextAsync(NavigationContext context)
     {
 #if __IOS__
         var appWindow = Windows.UI.Xaml.Window.Current;
@@ -93,7 +93,7 @@ public class PickerNavigator : ControlNavigator
             rootGrid.Children.Remove(popup);
         };
 #endif
-        var responseRequest = context.Request with { Route = context.Request.Route with { Path = null } };
+        var responseRequest = context.Request.Route with { Path = null };
         return Task.FromResult(responseRequest);
     }
 }

@@ -13,7 +13,7 @@ public static class NavigationResponseExtensions
 
         if (response is NavigationResultResponse genericResultResponse)
         {
-            return new NavigationResultResponse<TResult>(response.Request,
+            return new NavigationResultResponse<TResult>(response.Route,
                 genericResultResponse.Result.ContinueWith(x =>
                     (x.Result.MatchSome(out var val) && val is TResult tval) ?
                         Options.Option.Some(tval) :

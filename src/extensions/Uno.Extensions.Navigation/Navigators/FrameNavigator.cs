@@ -46,7 +46,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 
     protected override bool CanNavigateToRoute(Route route) => base.CanNavigateToRoute(route) || route.IsFrameNavigation();
 
-    protected override Task<NavigationRequest> NavigateWithContextAsync(NavigationContext context)
+    protected override Task<Route> NavigateWithContextAsync(NavigationContext context)
     {
         // Detach all nested regions as we're moving away from the current view
         Region.Children.Clear();
@@ -56,7 +56,7 @@ public class FrameNavigator : ControlNavigator<Frame>
                     NavigatedBackAsync(context);
     }
 
-    private async Task<NavigationRequest> NavigateForwardAsync(NavigationContext context)
+    private async Task<Route> NavigateForwardAsync(NavigationContext context)
     {
         var numberOfPagesToRemove = context.Request.Route.FrameNumberOfPagesToRemove();
         // We remove 1 less here because we need to remove the current context, after the navigation is completed
@@ -103,11 +103,11 @@ public class FrameNavigator : ControlNavigator<Frame>
 
         InitialiseView(context);
 
-        var responseRequest = context.Request with { Route = firstSegment with { Scheme = context.Request.Route.Scheme } };
+        var responseRequest = firstSegment with { Scheme = context.Request.Route.Scheme } ;
         return responseRequest;
     }
 
-    private Task<NavigationRequest> NavigatedBackAsync(NavigationContext context)
+    private Task<Route> NavigatedBackAsync(NavigationContext context)
     {
         // Remove any excess items in the back stack
         var numberOfPagesToRemove = context.Request.Route.FrameNumberOfPagesToRemove();
@@ -134,7 +134,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 
         InitialiseView(context);
 
-        return Task.FromResult(responseRequest);
+        return Task.FromResult(responseRequest.Route);
     }
 
     private void Frame_Navigated(object sender, NavigationEventArgs e)
@@ -180,24 +180,31 @@ public class FrameNavigator : ControlNavigator<Frame>
         }
     }
 
-    protected override async Task Show(string path, Type viewType, object data)
+    protected override async Task<string> Show(string path, Type viewType, object data)
     {
+        Control.Navigated -= Frame_Navigated;
         try
         {
             if (Control.Content?.GetType() != viewType)
             {
                 Logger.LogDebugMessage($"Invoking Frame.Navigate to type '{viewType.Name}'");
-                Control.Navigated -= Frame_Navigated;
                 var nav = Control.Navigate(viewType, data);
                 await (Control.Content as FrameworkElement).EnsureLoaded();
-                Control.Navigated += Frame_Navigated;
                 Logger.LogDebugMessage($"Frame.Navigate completed");
             }
+
+            return path;
         }
         catch (Exception ex)
         {
             Logger.LogErrorMessage($"Unable to navigate to page - {ex.Message}");
         }
+        finally
+        {
+            Control.Navigated += Frame_Navigated;
+        }
+
+        return default;
     }
 
     private void RemoveLastFromBackStack()
@@ -215,13 +222,14 @@ public class FrameNavigator : ControlNavigator<Frame>
     }
 
     private Route FullRoute { get; set; }
-    protected override void UpdateRouteFromRequest(NavigationRequest request)
+
+    protected override void UpdateRoute(Route route)
     {
-        FullRoute = FullRoute.ApplyFrameRoute(Mappings, request.Route);
+        FullRoute = FullRoute.ApplyFrameRoute(Mappings, route);
         var lastRoute = FullRoute;
         while (!lastRoute.IsLast())
         {
-            lastRoute = lastRoute.NextRoute();
+            lastRoute = lastRoute.Next();
         }
         Route = lastRoute;
     }
