@@ -18,7 +18,9 @@ public sealed class None<T> : Option<T>
     /// <summary>
     /// Gets a singleton instance of this
     /// </summary>
+#pragma warning disable CA1000 // Do not declare static members on generic types
     public static None<T> Instance { get; } = new None<T>();
+#pragma warning restore CA1000 // Do not declare static members on generic types
 
     private None() : base(OptionType.None)
     {
@@ -27,7 +29,7 @@ public sealed class None<T> : Option<T>
     public override object GetValue() => throw new NotSupportedException("Cannot get value on a None");
 
     /// <inheritdoc/>
-    public override bool Equals(object obj) => obj is None<T>;
+    public override bool Equals(object? obj) => obj is None<T>;
 
     /// <inheritdoc/>
     public override int GetHashCode() => typeof(T).GetHashCode();

@@ -4,9 +4,10 @@ using System.Threading.Tasks;
 
 namespace Uno.Extensions;
 
-public class AsyncAutoResetEvent
+public class AsyncAutoResetEvent : IDisposable
 {
     private readonly AutoResetEvent _event;
+    private bool isDisposed;
 
     public AsyncAutoResetEvent(bool initialState)
     {
@@ -28,5 +29,27 @@ public class AsyncAutoResetEvent
     public void Set()
     {
         _event.Set();
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (isDisposed)
+        {
+            return;
+        }
+
+        if (disposing)
+        {
+            // free managed resources
+            _event?.Dispose();
+        }
+
+        isDisposed = true;
     }
 }
