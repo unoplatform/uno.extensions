@@ -13,37 +13,38 @@ public abstract class DialogNavigator : ControlNavigator
 
     protected DialogNavigator(
         ILogger<DialogNavigator> logger,
+        IRouteMappings mappings,
         IRegion region)
-        : base(logger, region)
+        : base(logger, mappings, region)
     {
     }
 
-    protected override async Task<Route> NavigateWithContextAsync(NavigationContext context)
+    protected override async Task<Route> RouteNavigateAsync(Route route)
     {
         // If this is back navigation, then make sure it's used to close
         // any of the open dialogs
-        if (context.Request.Route.FrameIsBackNavigation() && ShowTask is not null)
+        if (route.FrameIsBackNavigation() && ShowTask is not null)
         {
-            await CloseDialog(context);
+            await CloseDialog(route);
         }
         else
         {
-            var vm = context.CreateViewModel();
-            ShowTask = DisplayDialog(context, vm);
+            var viewModel = CreateViewModel(Region.Services, this, route, Mappings.Find(route));
+            ShowTask = DisplayDialog(route, viewModel);
         }
-        var responseRequest = context.Request.Route with { Path = null };
+        var responseRequest = route with { Path = null };
         return responseRequest;
     }
 
-    protected async Task CloseDialog(NavigationContext navigationContext)
+    protected async Task CloseDialog(Route route)
     {
         var dialog = ShowTask;
         ShowTask = null;
 
-        var responseData = navigationContext.Request.Route.Data.TryGetValue(string.Empty, out var response) ? response : default;
+        var responseData = route.Data.TryGetValue(string.Empty, out var response) ? response : default;
 
         dialog.Cancel();
     }
 
-    protected abstract IAsyncInfo DisplayDialog(NavigationContext context, object vm);
+    protected abstract IAsyncInfo DisplayDialog(Route route, object vm);
 }

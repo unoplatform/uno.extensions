@@ -67,9 +67,9 @@ public static class ServiceCollectionExtensions
                     //.AddScopedInstance<IScopedServiceProvider>()
                     .AddScopedInstance<IRegion>()
 
-                    .AddScoped<ViewModelDataProvider>()
+                    .AddScoped<NavigationDataProvider>()
                     .AddScoped<RegionControlProvider>()
-                    .AddScoped<IDictionary<string, object>>(services => services.GetService<ViewModelDataProvider>().Parameters)
+                    .AddScoped<IDictionary<string, object>>(services => services.GetService<NavigationDataProvider>().Parameters)
 
                     .AddScopedInstance<INavigator>();
     }
@@ -152,11 +152,11 @@ public static class ServiceCollectionExtensions
         }
 
         return services
-                    .AddTransient<TData>(services => services.GetService<ViewModelDataProvider>().GetData<TData>());
+                    .AddTransient<TData>(services => services.GetService<NavigationDataProvider>().GetData<TData>());
     }
 }
 
-public class ViewModelDataProvider
+public class NavigationDataProvider
 {
     public IDictionary<string, object> Parameters { get; set; }
 

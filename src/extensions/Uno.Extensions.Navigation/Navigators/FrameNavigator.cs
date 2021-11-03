@@ -46,19 +46,19 @@ public class FrameNavigator : ControlNavigator<Frame>
 
     protected override bool CanNavigateToRoute(Route route) => base.CanNavigateToRoute(route) || route.IsFrameNavigation();
 
-    protected override Task<Route> NavigateWithContextAsync(NavigationContext context)
+    protected override Task<Route> RouteNavigateAsync(Route route)
     {
         // Detach all nested regions as we're moving away from the current view
         Region.Children.Clear();
 
-        return context.Request.Route.FrameIsForwardNavigation() ?
-                    NavigateForwardAsync(context) :
-                    NavigatedBackAsync(context);
+        return route.FrameIsForwardNavigation() ?
+                    NavigateForwardAsync(route) :
+                    NavigatedBackAsync(route);
     }
 
-    private async Task<Route> NavigateForwardAsync(NavigationContext context)
+    private async Task<Route> NavigateForwardAsync(Route route)
     {
-        var numberOfPagesToRemove = context.Request.Route.FrameNumberOfPagesToRemove();
+        var numberOfPagesToRemove = route.FrameNumberOfPagesToRemove();
         // We remove 1 less here because we need to remove the current context, after the navigation is completed
         while (numberOfPagesToRemove > 1)
         {
@@ -66,8 +66,7 @@ public class FrameNavigator : ControlNavigator<Frame>
             numberOfPagesToRemove--;
         }
 
-        var currentRequest = context.Request;
-        var segments = (from pg in currentRequest.Route.ForwardNavigationSegments(Mappings)
+        var segments = (from pg in route.ForwardNavigationSegments(Mappings)
                         let map = Mappings.FindByPath(pg.Base)
                         select new { Route = pg, Map = map }).ToArray();
 
@@ -77,64 +76,64 @@ public class FrameNavigator : ControlNavigator<Frame>
             var seg = segments[i];
             var newEntry = new PageStackEntry(seg.Map.View, null, null);
             Control.BackStack.Add(newEntry);
-            currentRequest = currentRequest with { Route = currentRequest.Route.Trim(seg.Route) };
+            route = route.Trim(seg.Route);
             firstSegment = firstSegment.Append(segments[i + 1].Route);
-            context = context with { Mapping = segments[i + 1].Map };
         }
 
         //// Add the new context to the list of contexts and then navigate away
         //await Show(context.Request.Route.Base, context.Mapping?.View, context.Request.Route.Data);
 
         // Add the new context to the list of contexts and then navigate away
-        await Show(segments.Last().Route.Base, segments.Last().Map.View, context.Request.Route.Data);
+        await Show(segments.Last().Route.Base, segments.Last().Map.View, route.Data);
 
         // If path starts with / then remove all prior pages and corresponding contexts
-        if (context.Request.Route.FrameIsRooted())
+        if (route.FrameIsRooted())
         {
             ClearBackStack();
         }
 
         // If there were pages to remove, after navigating we need to remove
         // the page that we've navigated away from.
-        if (context.Request.Route.FrameNumberOfPagesToRemove() > 0)
+        if (route.FrameNumberOfPagesToRemove() > 0)
         {
             RemoveLastFromBackStack();
         }
 
-        InitialiseView(context);
+        InitialiseCurrentView(route,Mappings.Find(route));
 
-        var responseRequest = firstSegment with { Scheme = context.Request.Route.Scheme } ;
+        var responseRequest = firstSegment with { Scheme = route.Scheme } ;
         return responseRequest;
     }
 
-    private Task<Route> NavigatedBackAsync(NavigationContext context)
+    private Task<Route> NavigatedBackAsync(Route route)
     {
         // Remove any excess items in the back stack
-        var numberOfPagesToRemove = context.Request.Route.FrameNumberOfPagesToRemove();
+        var numberOfPagesToRemove = route.FrameNumberOfPagesToRemove();
         while (numberOfPagesToRemove > 0)
         {
             // Don't remove the last context, as that's the current page
             RemoveLastFromBackStack();
             numberOfPagesToRemove--;
         }
-        var responseRequest = context.Request with { Route = context.Request.Route with { Path = null } };
-        var previousBase = FullRoute.ApplyFrameRoute(Mappings, responseRequest.Route).Base;
+        var responseRoute = route with { Path = null };
+        var previousRoute = FullRoute.ApplyFrameRoute(Mappings, responseRoute);
+        var previousBase = previousRoute.Base;
         var currentBase = Mappings.FindByView(Control.Content.GetType())?.Path;
         if (currentBase != previousBase)
         {
             // Invoke the navigation (which will be a back navigation)
-            FrameGoBack(context.Request.Route.Data);
+            FrameGoBack(route.Data);
         }
 
         // Back navigation doesn't have a mapping (since path is "..")
         // Now that we've completed the actual navigation we can
         // use the type of the new view to look up the mapping
         var mapping = Mappings.FindByView(CurrentView?.GetType());
-        context = context with { Mapping = mapping };
+        //context = context with { Mapping = mapping };
+        
+        InitialiseCurrentView(previousRoute, mapping);
 
-        InitialiseView(context);
-
-        return Task.FromResult(responseRequest.Route);
+        return Task.FromResult(responseRoute);
     }
 
     private void Frame_Navigated(object sender, NavigationEventArgs e)

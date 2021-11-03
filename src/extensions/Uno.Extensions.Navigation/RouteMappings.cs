@@ -26,6 +26,8 @@ public class RouteMappings : IRouteMappings
         Mappings[map.Path] = map;
     }
 
+    public RouteMap Find(Route route) => FindByPath(route.Base);
+
     public virtual RouteMap FindByPath(string path)
     {
         if (path == Schemes.Parent ||

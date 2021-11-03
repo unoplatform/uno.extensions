@@ -18,17 +18,20 @@ public class ContentDialogNavigator : DialogNavigator
 {
     public ContentDialogNavigator(
         ILogger<ContentDialogNavigator> logger,
+        IRouteMappings mappings,
         IRegion region)
-        : base(logger, region)
+        : base(logger, mappings, region)
     {
     }
 
-    protected override IAsyncInfo DisplayDialog(NavigationContext context, object vm)
+    protected override IAsyncInfo DisplayDialog(Route route, object viewModel)
     {
-        var navigation = context.Navigation;
-        var dialog = Activator.CreateInstance(context.Mapping.View) as ContentDialog;
+        var navigation = Region.Navigator();
+        var services = this.Get<IServiceProvider>();
+        var mapping = Mappings.Find(route);
+        var dialog = Activator.CreateInstance(mapping?.View) as ContentDialog;
 
-        dialog.InjectServicesAndSetDataContext(context.Services, context.Navigation, vm);
+        dialog.InjectServicesAndSetDataContext(services, navigation, viewModel);
 
         var showTask = dialog.ShowAsync();
         showTask.AsTask()

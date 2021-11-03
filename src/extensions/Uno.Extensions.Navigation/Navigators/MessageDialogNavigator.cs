@@ -19,16 +19,19 @@ public class MessageDialogNavigator : DialogNavigator
 {
     public MessageDialogNavigator(
         ILogger<DialogNavigator> logger,
+        IRouteMappings mappings,
         IRegion region)
-        : base(logger, region)
+        : base(logger, mappings, region)
     {
     }
 
-    protected override IAsyncInfo DisplayDialog(NavigationContext context, object vm)
+    protected override IAsyncInfo DisplayDialog(Route route, object viewModel)
     {
-        var navigation = context.Navigation;
+        var navigation = Region.Navigator();
+        var services = this.Get<IServiceProvider>();
+        var mapping = Mappings.Find(route);
 
-        var data = context.Request.Route.Data;
+        var data = route.Data;
         var md = new MessageDialog(data[RouteConstants.MessageDialogParameterContent] as string, data[RouteConstants.MessageDialogParameterTitle] as string)
         {
             Options = (MessageDialogOptions)data[RouteConstants.MessageDialogParameterOptions],

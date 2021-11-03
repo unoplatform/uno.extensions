@@ -68,7 +68,11 @@ public static class FrameworkElementExtensions
         await completion.Task;
     }
 
-    public static void InjectServicesAndSetDataContext(this FrameworkElement view, IServiceProvider services, INavigator navigation, object viewModel)
+    public static void InjectServicesAndSetDataContext(
+        this FrameworkElement view,
+        IServiceProvider services,
+        INavigator navigation,
+        object viewModel)
     {
         if (view is not null)
         {
