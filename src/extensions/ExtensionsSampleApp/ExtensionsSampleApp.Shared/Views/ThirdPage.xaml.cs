@@ -34,7 +34,7 @@ namespace ExtensionsSampleApp.Views
 
         private void NextPagePreviousViewWithDataClick(object sender, RoutedEventArgs e)
         {
-            Navigation.NavigateToPreviousViewAsync(this, data: new Widget());
+            Navigation.NavigateToPreviousViewAsync<Widget>(this, data: new Widget());
         }
 
         private void NextPagePreviousViewWithArgsAndDataClick(object sender, RoutedEventArgs e)

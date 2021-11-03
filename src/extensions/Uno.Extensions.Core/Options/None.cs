@@ -24,7 +24,7 @@ public sealed class None<T> : Option<T>
     {
     }
 
-    protected override object GetValue() => throw new NotSupportedException("Cannot get value on a None");
+    public override object GetValue() => throw new NotSupportedException("Cannot get value on a None");
 
     /// <inheritdoc/>
     public override bool Equals(object obj) => obj is None<T>;

@@ -28,7 +28,7 @@ public sealed class Some<T> : Option<T>
     /// </summary>
     public T Value { get; }
 
-    protected override object GetValue() => Value;
+    public override object GetValue() => Value;
 
     /// <inheritdoc/>
     public override bool Equals(object obj) => Equals(obj as Some<T>);

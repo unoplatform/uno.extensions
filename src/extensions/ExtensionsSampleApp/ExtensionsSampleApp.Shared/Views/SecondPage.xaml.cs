@@ -41,7 +41,7 @@ namespace ExtensionsSampleApp.Views
 
         private void GoBackNavigateToPreviousViewAsyncClick(object sender, RoutedEventArgs e)
         {
-            Navigation.NavigateToPreviousViewAsync(this, data: new Widget());
+            Navigation.NavigateToPreviousViewAsync<Widget>(this, data: new Widget());
         }
 
         private async void NextPageNavigateToViewAsyncRequestDataClick(object sender, RoutedEventArgs e)
