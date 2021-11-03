@@ -59,19 +59,19 @@ public class TabViewNavigator : ControlNavigator<TabView>
                 select t).FirstOrDefault();
     }
 
-    protected override async Task Show(string path, Type viewType, object data)
+    protected override async Task<string> Show(string path, Type viewType, object data)
     {
+        Control.SelectionChanged -= Tabs_SelectionChanged;
         try
         {
             var tab = FindByName(path);
             if (tab is not null)
             {
                 Logger.LogDebugMessage($"Selecting tab '{path}'");
-                Control.SelectionChanged -= Tabs_SelectionChanged;
                 Control.SelectedItem = tab;
                 await (tab.Content as FrameworkElement).EnsureLoaded();
-                Control.SelectionChanged += Tabs_SelectionChanged;
                 Logger.LogDebugMessage($"Tab '{path}' selected");
+                return path;
             }
             else
             {
@@ -82,5 +82,11 @@ public class TabViewNavigator : ControlNavigator<TabView>
         {
             Logger.LogErrorMessage($"Unable to show tab - {ex.Message}");
         }
+        finally
+        {
+            Control.SelectionChanged += Tabs_SelectionChanged;
+        }
+
+        return default;
     }
 }

@@ -63,31 +63,41 @@ namespace ExtensionsSampleApp.Navigators
         {
         }
 
-        protected override async Task Show(string path, Type view, object data)
+        protected override async Task<string> Show(string path, Type view, object data)
         {
             Control.SelectionChanged -= ControlSelectionChanged;
-            if (int.TryParse(path, out var index))
+            try
             {
-                Control.SelectedIndex = index;
-            }
-            else
-            {
-                if (Control.ItemsPanelRoot is null)
+                if (int.TryParse(path, out var index))
                 {
-                    return;
+                    Control.SelectedIndex = index;
+                    return path;
                 }
+                else
+                {
+                    if (Control.ItemsPanelRoot is null)
+                    {
+                        return default;
+                    }
 
-                var item = (from tbi in Control.ItemsPanelRoot?.Children.OfType<TabBarItem>()
-                            where tbi.GetName() == path || tbi.Name == path
-                            select tbi).FirstOrDefault();
-                if (item is not null)
-                {
-                    var idx = Control.IndexFromContainer(item);
-                    Control.SelectedIndex = idx;
-                    await (item as FrameworkElement).EnsureLoaded();
+                    var item = (from tbi in Control.ItemsPanelRoot?.Children.OfType<TabBarItem>()
+                                where tbi.GetName() == path || tbi.Name == path
+                                select tbi).FirstOrDefault();
+                    if (item is not null)
+                    {
+                        var idx = Control.IndexFromContainer(item);
+                        Control.SelectedIndex = idx;
+                        await (item as FrameworkElement).EnsureLoaded();
+                        return path;
+                    }
+
+                    return default;
                 }
             }
-            Control.SelectionChanged += ControlSelectionChanged;
+            finally
+            {
+                Control.SelectionChanged += ControlSelectionChanged;
+            }
         }
     }
 }

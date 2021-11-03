@@ -125,8 +125,8 @@ namespace ExtensionsSampleApp
                                         nav with { Route = nav.Route with { Base = "doc2" } } :
                                         nav));
             mapping.Register(new RouteMap(typeof(CommerceHomePage).Name, typeof(CommerceHomePage),
-                RegionInitialization: (region, nav) => nav.Route.IsEmpty() ?
-                                        nav with { Route = nav.Route with { Base = "Products" } } :
+                RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
+                                        nav with { Route = nav.Route.Append(Route.NestedRoute("Products")) } :
                                         nav));
             mapping.Register(new RouteMap("Products", typeof(FrameView),
                 RegionInitialization: (region, nav) => nav.Route.IsEmpty() ?

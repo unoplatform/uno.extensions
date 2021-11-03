@@ -31,17 +31,38 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
         Control = control;
     }
 
-    protected abstract Task Show(string path, Type viewType, object data);
+    protected virtual FrameworkElement CurrentView => default;
 
-    protected override async Task<NavigationRequest> NavigateWithContextAsync(NavigationContext context)
+    protected abstract Task<string> Show(string path, Type viewType, object data);
+
+    protected override async Task<Route> NavigateWithContextAsync(NavigationContext context)
     {
         Logger.LogDebugMessage($"Navigating to path '{context.Request.Route.Base}' with view '{context.Mapping?.View?.Name}'");
-        await Show(context.Request.Route.Base, context.Mapping?.View, context.Request.Route.Data);
+        var executedPath = await Show(context.Request.Route.Base, context.Mapping?.View, context.Request.Route.Data);
 
         InitialiseView(context);
 
-        var responseRequest = context.Request with { Route = context.Request.Route with { Path = null } };
-        return responseRequest;
+        if (string.IsNullOrEmpty(executedPath))
+        {
+            return Route.Empty;
+        }
+
+        return context.Request.Route with { Base = executedPath, Path = null };
+    }
+
+    protected void InitialiseView(NavigationContext context)
+    {
+        var view = CurrentView;
+
+        var viewModel = view?.DataContext;
+        var mapping = context.Mapping;
+        if (viewModel is null || viewModel.GetType() != mapping?.ViewModel)
+        {
+            // This will happen if cache mode isn't set to required
+            viewModel = context.CreateViewModel();
+        }
+
+        view.InjectServicesAndSetDataContext(context.Services, context.Navigation, viewModel);
     }
 
     protected override string NavigatorToString => Route?.ToString();
@@ -50,10 +71,6 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 public abstract class ControlNavigator : Navigator
 {
     public virtual bool CanGoBack => false;
-
-    protected virtual FrameworkElement CurrentView => default;
-
-    protected object CurrentViewModel => CurrentView?.DataContext;
 
     protected ControlNavigator(
         ILogger logger,
@@ -73,19 +90,7 @@ public abstract class ControlNavigator : Navigator
                 return regionResponse;
             }
 
-            var requestMap = this.Get<IServiceProvider>().GetService<IRouteMappings>().FindByPath(request.Route.Base);
-
-            // Only trim, if there are no children that this request should be passed down to
-            if (!Region.Children.Any(x => x.Name == regionResponse.Request.Route.Base) &&
-                this is not ICompositeNavigator)
-            {
-                request = request with { Route = request.Route.Trim(regionResponse.Request.Route) };// with { Scheme = Schemes.Current, Base = request.Route.NextBase(), Path = request.Route.NextPath() } };
-            }
-
-            if (requestMap?.RegionInitialization is not null)
-            {
-                request = requestMap.RegionInitialization(Region, request);
-            }
+            request = request with { Route = request.Route.Trim(regionResponse.Route) };
         }
 
         var coreResponse = await base.CoreNavigateAsync(request);
@@ -114,20 +119,16 @@ public abstract class ControlNavigator : Navigator
     {
         if (request.Route.Base == Route?.Base)
         {
-            return new NavigationResponse(request);
+            return new NavigationResponse(request.Route);
         }
 
         // Prepare the NavigationContext
-        // - scoped IServiceProvider
-        // - inner nav service (or wrapped in a response nav service)
-        // - cancellation source
-        // - mapping
         var resultTask = request.RequiresResponse() ? new TaskCompletionSource<Options.Option>() : default;
         var context = request.BuildNavigationContext(Region.Services, resultTask);
 
-        var responseRequest = await NavigateWithContextAsync(context);
+        var executedRoute = await NavigateWithContextAsync(context);
 
-        UpdateRouteFromRequest(responseRequest);
+        UpdateRoute(executedRoute);
 
         if (request.Cancellation.HasValue && CanGoBack)
         {
@@ -138,28 +139,13 @@ public abstract class ControlNavigator : Navigator
             });
         }
 
-        return new NavigationResultResponse(responseRequest, resultTask?.Task);
+        return new NavigationResultResponse(executedRoute, resultTask?.Task);
     }
 
-    protected virtual void UpdateRouteFromRequest(NavigationRequest request)
+    protected virtual void UpdateRoute(Route route)
     {
-        Route = new Route(Schemes.Current, request.Route.Base, null, request.Route.Data);
+        Route = new Route(Schemes.Current, route.Base, null, route.Data);
     }
 
-    protected abstract Task<NavigationRequest> NavigateWithContextAsync(NavigationContext context);
-
-    protected void InitialiseView(NavigationContext context)
-    {
-        var view = CurrentView;
-
-        var viewModel = CurrentViewModel;
-        var mapping = context.Mapping;
-        if (viewModel is null || viewModel.GetType() != mapping?.ViewModel)
-        {
-            // This will happen if cache mode isn't set to required
-            viewModel = context.CreateViewModel();
-        }
-
-        view.InjectServicesAndSetDataContext(context.Services, context.Navigation, viewModel);
-    }
+    protected abstract Task<Route> NavigateWithContextAsync(NavigationContext context);
 }

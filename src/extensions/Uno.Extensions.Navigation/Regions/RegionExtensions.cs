@@ -33,7 +33,13 @@ public static class RegionExtensions
 
     public static Route GetRoute(this IRegion region)
     {
-        return region.LocalNavigator().Route.Merge(region.Children.Select(x => (x.Name, CurrentRoute: x.GetRoute())));
+        var regionRoute = region.LocalNavigator().Route;
+        return regionRoute.Merge(
+                        region.Children
+                                .Where(
+                                    child => string.IsNullOrWhiteSpace(child.Name) ||
+                                    child.Name == regionRoute?.Base)
+                                .Select(x => (x.Name, CurrentRoute: x.GetRoute())));
     }
 
     public static IEnumerable<IRegion> FindChildren(this IRegion region, Func<IRegion, bool> predicate)

@@ -44,17 +44,19 @@ public class PopupNavigator : ControlNavigator<Popup>
         Region.Navigator().NavigateToRouteAsync(sender, "hide");
     }
 
-    protected override async Task Show(string path, Type viewType, object data)
+    protected override async Task<string> Show(string path, Type viewType, object data)
     {
         try
         {
             Control.IsOpen = string.Compare(path, RouteConstants.PopupShow, true) == 0;
             await (Control.Child as FrameworkElement).EnsureLoaded();
-
+            return path;
         }
         catch (Exception ex)
         {
             Logger.LogErrorMessage($"Unable to create instance - {ex.Message}");
         }
+
+        return default;
     }
 }
