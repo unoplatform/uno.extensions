@@ -3,6 +3,7 @@ using System.IO;
 using System.Reflection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using Uno.Extensions.Hosting;
 
 namespace Uno.Extensions.Logging.Serilog
 {
@@ -63,13 +64,15 @@ namespace Uno.Extensions.Logging.Serilog
         private static LoggerConfiguration AddFileLogging(LoggerConfiguration configuration, string logFilePath)
         {
             //-:cnd:noEmit
-#if __ANDROID__ || __IOS__
+#if __ANDROID__ || __IOS__ || NETSTANDARD
             return configuration
                 .WriteTo.File(logFilePath, outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fffzzz} [{Platform}] {Level:u1}/{SourceContext}: {Message:lj} {Exception}{NewLine}", fileSizeLimitBytes: 10485760) // 10mb
 #if __ANDROID__
                 .Enrich.WithProperty("Platform", "Android");
 #elif __IOS__
                 .Enrich.WithProperty("Platform", "iOS");
+#else
+                .Enrich.WithProperty("Platform", "WASM");
 #endif
 #else
             return configuration;
@@ -79,7 +82,7 @@ namespace Uno.Extensions.Logging.Serilog
 
         private static string GetLogFilePath(HostBuilderContext hostBuilderContext)
         {
-            var logDirectory = hostBuilderContext.HostingEnvironment.ContentRootPath;
+            var logDirectory = (hostBuilderContext.HostingEnvironment as IAppHostEnvironment).AppDataPath;
             if (string.IsNullOrWhiteSpace(logDirectory))
             {
                 return null;

@@ -10,7 +10,7 @@ namespace Uno.Extensions.Localization
 {
     public class LocalizationService : IHostedService
     {
-        private ThreadCultureOverrideService _cultureOverrideService;
+        private ThreadCultureOverrideService? _cultureOverrideService;
 
         public LocalizationService(IWritableOptions<LocalizationSettings> settings)
         {
