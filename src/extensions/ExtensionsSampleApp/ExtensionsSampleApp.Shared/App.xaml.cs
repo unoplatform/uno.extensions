@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -29,6 +30,7 @@ using Uno.Foundation;
 using Uno.UI.ToolkitLib;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 
@@ -129,6 +131,8 @@ namespace ExtensionsSampleApp
             logger.LogError("App Error");
             logger.LogCritical("App Critical");
             var mapping = Host.Services.GetService<IRouteMappings>();
+
+
             mapping.Register(new RouteMap(typeof(MainPage).Name, typeof(MainPage), typeof(MainViewModel)));
             mapping.Register(new RouteMap(typeof(SecondPage).Name, typeof(SecondPage), typeof(SecondViewModel), typeof(Widget), typeof(Widget)));
             //mapping.Register(new RouteMap(typeof(ThirdPage).Name, typeof(ThirdPage), typeof(ThirdViewModel)));
@@ -310,6 +314,13 @@ namespace ExtensionsSampleApp
                 //Host.Run();
                 await Host.StartAsync();
             });
+
+//            var logger = Host.Services.GetService<ILogger<App>>();
+//            var storageFile = await StorageFile.GetFileFromApplicationUriAsync(
+//new Uri("ms-appx:///appsettings.json"));
+//            logger.LogInformation("Setting Path:" + storageFile.Path);
+//            var settings = File.ReadAllText(storageFile.Path);
+//            logger.LogInformation("Setting:" + settings);
 
             var nav2 = Host.Services.GetService<INavigator>();
             var navResult2 = nav2.NavigateToViewAsync<MainPage>(this, Schemes.Root);
