@@ -66,15 +66,16 @@ namespace Uno.Extensions.Configuration
 
             var physicalPath = _file;
             var jObject = File.Exists(physicalPath) ? JsonSerializer.Deserialize<Dictionary<string, object>>(File.ReadAllText(physicalPath)) : new Dictionary<string, object>();
+            jObject = jObject ?? new Dictionary<string, object>();
             var sectionObject = Value ?? new T();
 
-            sectionObject = applyChanges?.Invoke(sectionObject);
+            sectionObject = applyChanges?.Invoke(sectionObject) ?? new T();
 
             jObject[_section] = sectionObject;
 
             var json = JsonSerializer.Serialize(jObject);
             var dir = Path.GetDirectoryName(physicalPath);
-            if (!Directory.Exists(dir))
+            if (dir is not null && !Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);
             }

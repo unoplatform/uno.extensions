@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.Extensions.Logging.Console;
 using Microsoft.Extensions.Logging.EventLog;
 
@@ -12,10 +13,21 @@ namespace Uno.Extensions.Hosting;
 public static class UnoHost
 {
     public static IHostBuilder CreateDefaultBuilder(bool custom = true) =>
-        (custom ? CustomHost.CreateDefaultBuilder() : Host.CreateDefaultBuilder())
-#if WINUI || WINDOWS_UWP || __IOS__ || __ANDROID__ || NETSTANDARD
-            .UseContentRoot(PlatformSpecificContentRootPath())
-#endif
+        (custom ? CustomHost.CreateDefaultBuilder() : Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder())
+        .ConfigureAppConfiguration((ctx, appConfig) =>
+        {
+            var appHost = AppHostingEnvironment.FromHostEnvironment(ctx.HostingEnvironment, PlatformSpecificContentRootPath());
+            ctx.HostingEnvironment = appHost;
+        })
+        .ConfigureServices((ctx, services) =>
+        {
+            var appHost = ctx.HostingEnvironment as IAppHostEnvironment;
+            //var appHost = AppHostingEnvironment.FromHostEnvironment(ctx.HostingEnvironment, PlatformSpecificContentRootPath());
+            services.AddSingleton<IAppHostEnvironment>(appHost);
+        })
+            //#if WINUI || WINDOWS_UWP || __IOS__ || __ANDROID__ || NETSTANDARD
+            //            .UseContentRoot(PlatformSpecificContentRootPath())
+            //#endif
 #if __IOS__ || NETSTANDARD
             .ConfigureHostConfiguration(config =>
             {
@@ -55,7 +67,6 @@ public static class UnoHost
 #endif
             ;
 
-#if WINUI || WINDOWS_UWP || __IOS__ || __ANDROID__ || NETSTANDARD
     private static string PlatformSpecificContentRootPath()
     {
 #if WINUI || WINDOWS_UWP || NETSTANDARD
@@ -63,9 +74,9 @@ public static class UnoHost
 #elif __ANDROID__ || __IOS__
         return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 #else
-            return string.Empty;
+            return null;
 #endif
     }
-#endif
 }
+
 #endif

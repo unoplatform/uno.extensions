@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ExtensionsSampleApp.Views;
 using Microsoft.Extensions.Logging;
+using Uno.Extensions.Configuration;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation;
 
@@ -12,12 +13,15 @@ namespace ExtensionsSampleApp.ViewModels
 {
     public class SecondViewModel 
     {
-       
-        public string Title => "Second - " + Data;
+
+        public string Title { get; set; } = "Second - ";// + Data;
         private Widget Data;
         private ILogger Logger { get; }
-        public SecondViewModel(ILogger<SecondViewModel> logger, INavigator nav, Widget data)
+        public SecondViewModel(ILogger<SecondViewModel> logger, INavigator nav, Widget data,
+            IWritableOptions<CommerceSettings> settings)
         {
+            Title = settings.Value.AppTitle;
+            
             Logger = logger;
             Data = data;
         }

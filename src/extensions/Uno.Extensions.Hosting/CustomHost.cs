@@ -883,30 +883,30 @@ namespace Microsoft.Extensions.Hosting
             //    }
             //});
 
-            //builder.ConfigureAppConfiguration((hostingContext, config) =>
-            //{
-            //    IHostEnvironment env = hostingContext.HostingEnvironment;
-            //    bool reloadOnChange = GetReloadConfigOnChangeValue(hostingContext);
+            builder.ConfigureAppConfiguration((hostingContext, config) =>
+            {
+                IHostEnvironment env = hostingContext.HostingEnvironment;
+            //bool reloadOnChange = GetReloadConfigOnChangeValue(hostingContext);
 
-            //    config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: reloadOnChange)
-            //            .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: reloadOnChange);
+            config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)// reloadOnChange)
+                        .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: false);// reloadOnChange);
 
-            //    if (env.IsDevelopment() && env.ApplicationName is { Length: > 0 })
-            //    {
-            //        var appAssembly = Assembly.Load(new AssemblyName(env.ApplicationName));
-            //        if (appAssembly is not null)
-            //        {
-            //            config.AddUserSecrets(appAssembly, optional: true, reloadOnChange: reloadOnChange);
-            //        }
-            //    }
+                if (env.IsDevelopment() && env.ApplicationName is { Length: > 0 })
+                {
+                    var appAssembly = Assembly.Load(new AssemblyName(env.ApplicationName));
+                    if (appAssembly is not null)
+                    {
+                        config.AddUserSecrets(appAssembly, optional: true, reloadOnChange: false);// reloadOnChange);
+                    }
+                }
 
-            //    config.AddEnvironmentVariables();
+                config.AddEnvironmentVariables();
 
-            //    if (args is { Length: > 0 })
-            //    {
-            //        config.AddCommandLine(args);
-            //    }
-            //});
+                if (args is { Length: > 0 })
+                {
+                    config.AddCommandLine(args);
+                }
+            });
 
             builder.ConfigureLogging((hostingContext, logging) =>
             {

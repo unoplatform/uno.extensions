@@ -21,6 +21,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)CommerceSettings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Navigators\ControlVisualStateNavigator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Navigators\PickerNavigator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Navigators\TabBarNavigator.cs" />
@@ -269,5 +270,10 @@
     <Content Include="$(MSBuildThisFileDirectory)Assets\Photos\stockphoto4.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

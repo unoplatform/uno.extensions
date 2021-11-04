@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Regions;
-#if !WINDOWS_UWP && !WINUI
-using Popup = Windows.UI.Xaml.Controls.Popup;
-#endif
+//#if !WINDOWS_UWP && !WINUI
+////using Popup = Windows.UI.Xaml.Controls.Primitives;
+//#endif
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls.Primitives;

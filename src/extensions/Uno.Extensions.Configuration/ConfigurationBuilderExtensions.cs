@@ -10,7 +10,7 @@ namespace Uno.Extensions.Configuration
 {
     public static class ConfigurationBuilderExtensions
     {
-        public static IConfigurationBuilder AddAppSettings<TApplicationRoot>(this IConfigurationBuilder configurationBuilder)
+        public static IConfigurationBuilder AddEmbeddedAppSettings<TApplicationRoot>(this IConfigurationBuilder configurationBuilder)
             where TApplicationRoot : class
         {
             var generalAppSettingsFileName = $"{AppSettings.AppSettingsFileName}.json";
@@ -26,7 +26,7 @@ namespace Uno.Extensions.Configuration
             return configurationBuilder;
         }
 
-        public static IConfigurationBuilder AddEnvironmentAppSettings<TApplicationRoot>(
+        public static IConfigurationBuilder AddEmbeddedEnvironmentAppSettings<TApplicationRoot>(
             this IConfigurationBuilder configurationBuilder,
             string environmentName)
                 where TApplicationRoot : class
@@ -47,7 +47,7 @@ namespace Uno.Extensions.Configuration
         public static IConfigurationBuilder AddSectionFromEntity<TEntity>(
             this IConfigurationBuilder configurationBuilder,
             TEntity entity,
-            string sectionName = null)
+            string? sectionName = null)
         {
             return configurationBuilder
                 .AddJsonStream(

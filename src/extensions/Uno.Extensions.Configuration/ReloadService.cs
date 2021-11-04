@@ -13,6 +13,7 @@ namespace Uno.Extensions.Configuration
     {
         public ReloadService(ILogger<ReloadService> logger, Reloader reload)
         {
+            Logger.LogDebugMessage($"Created");
             Logger = logger;
             Reload = reload;
         }
