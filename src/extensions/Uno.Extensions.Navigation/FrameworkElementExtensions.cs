@@ -30,13 +30,11 @@ public static class FrameworkElementExtensions
 
         RoutedEventHandler loaded = null;
         EventHandler<object> layoutChanged = null;
-#if WINDOWS_UWP || WINUI
+//#if WINDOWS_UWP || WINUI || NETSTANDARD
         TypedEventHandler<FrameworkElement, object> loading = null;
-#elif NETSTANDARD
-        RoutedEventHandler loading = null;
-#else
-        TypedEventHandler<DependencyObject, object> loading = null;
-#endif
+//#else
+//        TypedEventHandler<DependencyObject, object> loading = null;
+//#endif
 
         Action<bool> loadedAction = (overrideLoaded) =>
         {

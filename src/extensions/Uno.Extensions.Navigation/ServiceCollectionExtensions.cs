@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using CommunityToolkit.Mvvm.Messaging;
+//using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Regions;
+using Uno.Extensions.Navigation.Navigators;
 
 using Windows.UI.Popups;
-#if !WINDOWS_UWP && !WINUI
-using Popup = Windows.UI.Xaml.Controls.Popup;
-#endif
+//#if !WINDOWS_UWP && !WINUI
+//using Popup = Windows.UI.Xaml.Controls.Popup;
+//#endif
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -16,7 +17,6 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Uno.Extensions.Navigation.Navigators;
 #else
 using Windows.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -37,7 +37,7 @@ public static class ServiceCollectionExtensions
         return services
                     .AddScoped<IInstanceRepository, InstanceRepository>()
 
-                    .AddSingleton<IMessenger, WeakReferenceMessenger>()
+                    //.AddSingleton<IMessenger, WeakReferenceMessenger>()
                     .AddSingleton<INavigationNotifier, NavigationNotifier>()
                     .AddScoped<Navigator>()
 

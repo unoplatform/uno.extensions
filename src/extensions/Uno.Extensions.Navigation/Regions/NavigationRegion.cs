@@ -81,10 +81,8 @@ public sealed class NavigationRegion : IRegion
         await HandleLoading();
     }
 
-#if WINDOWS_UWP || WINUI
+#if WINDOWS_UWP || WINUI || NETSTANDARD
     private async void ViewLoading(FrameworkElement sender, object args)
-#elif NETSTANDARD
-    private async void ViewLoading(object sender, RoutedEventArgs e)
 #else
     private async void ViewLoading(DependencyObject sender, object args)
 #endif

@@ -9,6 +9,7 @@
     <IsNet6>false</IsNet6>
     <IsAndroid>false</IsAndroid>
     <Nullable>enable</Nullable>
+    <GenerateLibraryLayout>true</GenerateLibraryLayout>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -62,7 +63,7 @@
     <IsWinUI>true</IsWinUI>
     <UseWinUI>true</UseWinUI>
   </PropertyGroup>
-   <PropertyGroup Condition="$(TargetFramework.StartsWith('net5'))">
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('net5'))">
     <DefineConstants>$(DefineConstants);__NET5__</DefineConstants>
     <IsNet5>true</IsNet5>
   </PropertyGroup>
@@ -101,10 +102,10 @@
     <AdditionalFiles Include="..\..\..\stylecop.json" />
   </ItemGroup>
 
-  <PropertyGroup Condition="'$(IsWinUI)' == 'true'">
+  <!--<PropertyGroup Condition="'$(IsWinUI)' == 'true'">
     <Platforms>x86;x64;arm64</Platforms>
     <RuntimeIdentifiers>win10-x86;win10-x64</RuntimeIdentifiers>
-  </PropertyGroup>
+  </PropertyGroup>-->
 
   <ItemGroup Condition="'$(IsWinUI)' != 'true' and '$(IsUWP)' != 'true' and '$(UnoCompatibility)' != 'UWP'">
     <PackageReference Include="Uno.WinUI" Version="4.0.0-dev.5441" >
@@ -119,9 +120,9 @@
   <PropertyGroup Condition="'$(IsWinUI)' != 'true' and '$(IsUWP)' != 'true' and '$(UnoCompatibility)' == 'UWP'">
     <DefineConstants>$(DefineConstants);UNO_UWP_COMPATIBILITY</DefineConstants>
   </PropertyGroup>
-  <ItemGroup Condition="'$(IsWinUI)' == 'true'">
+  <!--<ItemGroup Condition="'$(IsWinUI)' == 'true'">
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.0.0-preview3" />
-  </ItemGroup>
+  </ItemGroup>-->
 
   <PropertyGroup>
     <!-- Forces Uno's XamlFileGenerator to write error when XAML is invalid-->

@@ -10,7 +10,7 @@
       xmlns:toolkit="using:Uno.UI.ToolkitLib"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Page.Resources>
-        <DataTemplate x:Name="ProductDealsTemplate">
+        <DataTemplate x:Key="ProductDealsTemplate">
             <Grid Margin="8">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="400" />

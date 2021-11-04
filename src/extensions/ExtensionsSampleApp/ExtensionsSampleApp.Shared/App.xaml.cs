@@ -17,6 +17,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Controls;
 using Uno.Extensions;
+using Uno.Extensions.Configuration;
 using Uno.Extensions.Hosting;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation;
@@ -65,7 +66,7 @@ namespace ExtensionsSampleApp
         public App()
         {
             Host = UnoHost
-               .CreateDefaultBuilder(true)
+               .CreateDefaultBuilder(false)
                .UsePlatformLoggerProvider()
                .ConfigureLogging(logBuilder =>
                {
@@ -74,6 +75,10 @@ namespace ExtensionsSampleApp
                         .XamlLogLevel(LogLevel.Information)
                         .XamlLayoutLogLevel(LogLevel.Information);
                })
+               //.UseHostConfigurationForApp()
+               .UseEmbeddedAppSettings<App>()
+               .UseConfigurationSectionInApp<CommerceSettings>(nameof(CommerceSettings))
+                //.UseWritableSettings<CommerceSettings>(ctx => ctx.Configuration.GetSection(nameof(CommerceSettings)))
                .ConfigureServices(services =>
                {
                    services
@@ -114,7 +119,15 @@ namespace ExtensionsSampleApp
                .UseNavigation()
                .Build()
                .EnableUnoLogging();
-
+            var logger = Host.Services.GetService<ILogger<App>>();
+            var env = Host.Services.GetService<IAppHostEnvironment>();
+            logger.LogInformation("Host:" + env.ContentRootPath + " - " + env.AppDataPath);
+            logger.LogTrace("App Trace");
+            logger.LogDebug("App Debug");
+            logger.LogInformation("App Info");
+            logger.LogWarning("App Warning");
+            logger.LogError("App Error");
+            logger.LogCritical("App Critical");
             var mapping = Host.Services.GetService<IRouteMappings>();
             mapping.Register(new RouteMap(typeof(MainPage).Name, typeof(MainPage), typeof(MainViewModel)));
             mapping.Register(new RouteMap(typeof(SecondPage).Name, typeof(SecondPage), typeof(SecondViewModel), typeof(Widget), typeof(Widget)));
@@ -200,7 +213,7 @@ namespace ExtensionsSampleApp
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        protected async override void OnLaunched(LaunchActivatedEventArgs e)
         {
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
@@ -225,23 +238,24 @@ namespace ExtensionsSampleApp
                 // Create a Frame to act as the navigation context and navigate to the first page
                 rootFrame = new Frame().WithNavigation(Host.Services);
                 rootFrame.NavigationFailed += OnNavigationFailed;
-
                 var nav = Host.Services.GetService<INavigator>();
 
-#if NET5_0
-                var href = WebAssemblyRuntime.InvokeJS("window.location.href");
-                var url = new UriBuilder(href);
-                var query = url.Query;
-                var path = (url.Path + (!string.IsNullOrWhiteSpace(query)?"?":"") + query +"").TrimStart('/');
-                if(!string.IsNullOrWhiteSpace(path))
-                {
-                    var navResult = nav.NavigateToRouteAsync(this, path, Schemes.Root);
-                }
-                else
-                {
-                    var navResult = nav.NavigateToRouteAsync(this, "+MainPage" + path, Schemes.Root);
 
-                }
+#if NET5_0
+
+                //var href = WebAssemblyRuntime.InvokeJS("window.location.href");
+                //var url = new UriBuilder(href);
+                //var query = url.Query;
+                //var path = (url.Path + (!string.IsNullOrWhiteSpace(query)?"?":"") + query +"").TrimStart('/');
+                //if(!string.IsNullOrWhiteSpace(path))
+                //{
+                //    var navResult = nav.NavigateToRouteAsync(this, path, Schemes.Root);
+                //}
+                //else
+                //{
+                //    var navResult = nav.NavigateToRouteAsync(this, "+MainPage" + path, Schemes.Root);
+
+                //}
 
 
                 Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
@@ -252,9 +266,9 @@ namespace ExtensionsSampleApp
                     nav.GoBack(this);
                 };
 #else
-
+                //var nav = Host.Services.GetService<INavigator>();
                 //var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Nested);
-                var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Root);
+                //var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Root);
                 //var navResult = nav.NavigateToRouteAsync(this, "+MainPage", Schemes.Root);
                 //var navResult = nav.NavigateToRouteAsync(this, "+MainPage+SecondPage", Schemes.Root);
                 //var navResult = nav.NavigateToRouteAsync(this, "+MainPage+SecondPage+ThirdPage", Schemes.Root);
@@ -290,11 +304,16 @@ namespace ExtensionsSampleApp
                 _window.Activate();
             }
 
-            _ = Task.Run(() =>
+            await Task.Run(async () =>
             {
                 //Startup.Start();
-                Host.Run();
+                //Host.Run();
+                await Host.StartAsync();
             });
+
+            var nav2 = Host.Services.GetService<INavigator>();
+            var navResult2 = nav2.NavigateToViewAsync<MainPage>(this, Schemes.Root);
+
         }
 
         /// <summary>
