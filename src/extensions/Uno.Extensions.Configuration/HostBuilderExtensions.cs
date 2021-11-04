@@ -27,15 +27,6 @@ namespace Uno.Extensions.Configuration
                             .AddSingleton<IConfigurationRoot>(a => ctx.Configuration as IConfigurationRoot);
                     }
             );
-//                    .ConfigureServices((ctx, services) =>
-//                                 {
-//                services.TryAddSingleton<Reloader>();
-//#if NETSTANDARD || __WASM__
-//                                     _ = services
-//                                             .AddHostedService<ReloadService>();
-//#endif
-//            });
-            //;
         }
 
         public static IHostBuilder UseEmbeddedAppSettings<TApplicationRoot>(this IHostBuilder hostBuilder)

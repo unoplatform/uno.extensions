@@ -4,7 +4,6 @@ using System.Net.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Uno.Extensions.Http.Handlers;
 
 namespace Uno.Extensions.Http
 {
@@ -88,19 +87,7 @@ namespace Uno.Extensions.Http
                 .ConfigureHttpClient((serviceProvider, client) =>
                 {
                     client.BaseAddress = new Uri(options.Url);
-                    client.Conditional(
-                        options.UseDefaultHeaders,
-                        c => c.AddDefaultHeaders(serviceProvider));
-                })
-                .Conditional(
-                    options.UseExceptionHubHandler,
-                    builder => builder.AddHttpMessageHandler<ExceptionHubHandler>())
-                .Conditional(
-                    configure is not null,
-                    builder => configure(builder, options))
-                .Conditional(
-                    options.UseNetworkExceptionHandler,
-                    builder => builder.AddHttpMessageHandler<NetworkExceptionHandler>());
+                });
             return services;
         }
 
@@ -127,39 +114,6 @@ namespace Uno.Extensions.Http
                 new HttpClientHandler()
 #endif
             );
-        }
-
-        public static IServiceCollection AddNetworkExceptionHandler(this IServiceCollection services)
-        {
-            return services
-                .AddSingleton<INetworkAvailabilityChecker, NetworkAvailabilityChecker>()
-                .AddTransient<NetworkExceptionHandler>();
-        }
-
-        public static IServiceCollection AddExceptionHubHandler(this IServiceCollection services)
-        {
-            return services
-                .AddSingleton<IExceptionHub>(new ExceptionHub())
-                .AddTransient<ExceptionHubHandler>();
-        }
-
-        public static IServiceCollection AddAuthenticationTokenHandler(this IServiceCollection services)
-        {
-            return services
-                .AddSingleton<IAuthenticationTokenProvider<AuthenticationData>>(s => s.GetRequiredService<IAuthenticationService>() as AuthenticationService)
-                .AddTransient<AuthenticationTokenHandler<AuthenticationData>>();
-        }
-
-#pragma warning disable CA1801, IDE0060, IDE0079 // Review unused parameters - keeping serviceProvider parameter so that the useragent issue can be fixed
-        public static HttpClient AddDefaultHeaders(this HttpClient client, IServiceProvider serviceProvider)
-#pragma warning restore CA1801, IDE0060, IDE0079 // Review unused parameters
-        {
-            client?.DefaultRequestHeaders?.Add("Accept-Language", CultureInfo.CurrentCulture.Name);
-
-            // TODO #172779: Looks like our UserAgent is not of a valid format.
-            // TODO #183437: Find alternative for UserAgent.
-            // client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", serviceProvider.GetRequiredService<IEnvironmentService>().UserAgent);
-            return client;
         }
     }
 }
