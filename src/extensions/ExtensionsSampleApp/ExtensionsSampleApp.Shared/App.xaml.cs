@@ -21,6 +21,7 @@ using Uno.Extensions;
 using Uno.Extensions.Configuration;
 using Uno.Extensions.Hosting;
 using Uno.Extensions.Logging;
+using Uno.Extensions.Logging.Serilog;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Regions;
@@ -77,6 +78,7 @@ namespace ExtensionsSampleApp
                         .XamlLogLevel(LogLevel.Information)
                         .XamlLayoutLogLevel(LogLevel.Information);
                })
+               .UseSerilog(true,true)
                //.UseHostConfigurationForApp()
                .UseEmbeddedAppSettings<App>()
                .UseConfigurationSectionInApp<CommerceSettings>(nameof(CommerceSettings))
