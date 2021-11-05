@@ -703,43 +703,43 @@ namespace Microsoft.Extensions.Hosting
 {
     public static class HostingHostBuilderExtensions
     {
-        /////// <summary>
-        /////// Specify the environment to be used by the host. To avoid the environment being overwritten by a default
-        /////// value, ensure this is called after defaults are configured.
-        /////// </summary>
-        /////// <param name="hostBuilder">The <see cref="IHostBuilder"/> to configure.</param>
-        /////// <param name="environment">The environment to host the application in.</param>
-        /////// <returns>The <see cref="IHostBuilder"/>.</returns>
-        ////public static IHostBuilder UseEnvironment(this IHostBuilder hostBuilder, string environment)
-        ////{
-        ////    return hostBuilder.ConfigureHostConfiguration(configBuilder =>
-        ////    {
-        ////        configBuilder.AddInMemoryCollection(new[]
-        ////        {
-        ////            new KeyValuePair<string, string>(HostDefaults.EnvironmentKey,
-        ////                environment ?? throw new ArgumentNullException(nameof(environment)))
-        ////        });
-        ////    });
-        ////}
+        ///// <summary>
+        ///// Specify the environment to be used by the host. To avoid the environment being overwritten by a default
+        ///// value, ensure this is called after defaults are configured.
+        ///// </summary>
+        ///// <param name="hostBuilder">The <see cref="IHostBuilder"/> to configure.</param>
+        ///// <param name="environment">The environment to host the application in.</param>
+        ///// <returns>The <see cref="IHostBuilder"/>.</returns>
+        //public static IHostBuilder UseEnvironment(this IHostBuilder hostBuilder, string environment)
+        //{
+        //    return hostBuilder.ConfigureHostConfiguration(configBuilder =>
+        //    {
+        //        configBuilder.AddInMemoryCollection(new[]
+        //        {
+        //            new KeyValuePair<string, string>(HostDefaults.EnvironmentKey,
+        //                environment ?? throw new ArgumentNullException(nameof(environment)))
+        //        });
+        //    });
+        //}
 
-        /////// <summary>
-        /////// Specify the content root directory to be used by the host. To avoid the content root directory being
-        /////// overwritten by a default value, ensure this is called after defaults are configured.
-        /////// </summary>
-        /////// <param name="hostBuilder">The <see cref="IHostBuilder"/> to configure.</param>
-        /////// <param name="contentRoot">Path to root directory of the application.</param>
-        /////// <returns>The <see cref="IHostBuilder"/>.</returns>
-        ////public static IHostBuilder UseContentRoot(this IHostBuilder hostBuilder, string contentRoot)
-        ////{
-        ////    return hostBuilder.ConfigureHostConfiguration(configBuilder =>
-        ////    {
-        ////        configBuilder.AddInMemoryCollection(new[]
-        ////        {
-        ////            new KeyValuePair<string, string>(HostDefaults.ContentRootKey,
-        ////                contentRoot ?? throw new ArgumentNullException(nameof(contentRoot)))
-        ////        });
-        ////    });
-        ////}
+        /// <summary>
+        /// Specify the content root directory to be used by the host. To avoid the content root directory being
+        /// overwritten by a default value, ensure this is called after defaults are configured.
+        /// </summary>
+        /// <param name="hostBuilder">The <see cref="IHostBuilder"/> to configure.</param>
+        /// <param name="contentRoot">Path to root directory of the application.</param>
+        /// <returns>The <see cref="IHostBuilder"/>.</returns>
+        public static IHostBuilder UseContentRoot(this IHostBuilder hostBuilder, string contentRoot)
+        {
+            return hostBuilder.ConfigureHostConfiguration(configBuilder =>
+            {
+                configBuilder.AddInMemoryCollection(new[]
+                {
+                    new KeyValuePair<string, string>(HostDefaults.ContentRootKey,
+                        contentRoot ?? throw new ArgumentNullException(nameof(contentRoot)))
+                });
+            });
+        }
 
         ///// <summary>
         ///// Specify the <see cref="IServiceProvider"/> to be the default one.
@@ -873,32 +873,35 @@ namespace Microsoft.Extensions.Hosting
         /// <returns>The same instance of the <see cref="IHostBuilder"/> for chaining.</returns>
         public static IHostBuilder ConfigureCustomDefaults(this IHostBuilder builder, string[] args)
         {
-            //UseContentRoot(builder, Directory.GetCurrentDirectory());
-            //builder.ConfigureHostConfiguration(config =>
-            //{
-            //    config.AddEnvironmentVariables(prefix: "DOTNET_");
-            //    if (args is { Length: > 0 })
-            //    {
-            //        config.AddCommandLine(args);
-            //    }
-            //});
+            UseContentRoot(builder, Directory.GetCurrentDirectory());
+            builder.ConfigureHostConfiguration(config =>
+            {
+                config.AddEnvironmentVariables(prefix: "DOTNET_");
+                if (args is { Length: > 0 })
+                {
+                    config.AddCommandLine(args);
+                }
+            });
+
 
             builder.ConfigureAppConfiguration((hostingContext, config) =>
             {
                 IHostEnvironment env = hostingContext.HostingEnvironment;
-            //bool reloadOnChange = GetReloadConfigOnChangeValue(hostingContext);
+                //bool reloadOnChange = GetReloadConfigOnChangeValue(hostingContext);
 
-            config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)// reloadOnChange)
-                        .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: false);// reloadOnChange);
+                var prefix = hostingContext.Configuration.GetValue("appsettings:prefix", defaultValue: string.Empty);
+                prefix = !string.IsNullOrWhiteSpace(prefix) ? $"{prefix}/" : prefix;
+                config.AddJsonFile($"{prefix}appsettings.json", optional: true, reloadOnChange: false)// reloadOnChange)
+                      .AddJsonFile($"{prefix}appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: false);// reloadOnChange);
 
-                if (env.IsDevelopment() && env.ApplicationName is { Length: > 0 })
-                {
-                    var appAssembly = Assembly.Load(new AssemblyName(env.ApplicationName));
-                    if (appAssembly is not null)
-                    {
-                        config.AddUserSecrets(appAssembly, optional: true, reloadOnChange: false);// reloadOnChange);
-                    }
-                }
+                //if (env.IsDevelopment() && env.ApplicationName is { Length: > 0 })
+                //{
+                //    var appAssembly = Assembly.Load(new AssemblyName(env.ApplicationName));
+                //    if (appAssembly is not null)
+                //    {
+                //        config.AddUserSecrets(appAssembly, optional: true, reloadOnChange: false);// reloadOnChange);
+                //    }
+                //}
 
                 config.AddEnvironmentVariables();
 
@@ -943,9 +946,9 @@ namespace Microsoft.Extensions.Hosting
 
             builder.UseDefaultServiceProvider((context, options) =>
             {
-                bool isDevelopment = context.HostingEnvironment.IsDevelopment();
-                options.ValidateScopes = isDevelopment;
-                options.ValidateOnBuild = isDevelopment;
+                //bool isDevelopment = context.HostingEnvironment.IsDevelopment();
+                options.ValidateScopes = false; // isDevelopment;
+                options.ValidateOnBuild = false;// isDevelopment;
             });
 
             return builder;

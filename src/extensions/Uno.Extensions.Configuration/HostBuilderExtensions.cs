@@ -18,21 +18,25 @@ namespace Uno.Extensions.Configuration
         /// </summary>
         /// <param name="hostBuilder"></param>
         /// <returns></returns>
-        public static IHostBuilder UseHostConfigurationForApp(this IHostBuilder hostBuilder)
+        public static IHostBuilder UseConfiguration(this IHostBuilder hostBuilder)
         {
             return hostBuilder?
                     .ConfigureServices((ctx, s) =>
                     {
-                        _ = s.AddSingleton<IConfiguration>(a => ctx.Configuration)
-                            .AddSingleton<IConfigurationRoot>(a => ctx.Configuration as IConfigurationRoot);
-                    }
-            );
+                        s.TryAddSingleton<IConfiguration>(a => ctx.Configuration);
+                        s.TryAddSingleton<IConfigurationRoot>(a => ctx.Configuration as IConfigurationRoot);
+                        s.TryAddSingleton<Reloader>();
+#if NETSTANDARD || __WASM__
+                        _ = s.AddHostedService<ReloadService>();
+#endif
+                    });
         }
 
         public static IHostBuilder UseEmbeddedAppSettings<TApplicationRoot>(this IHostBuilder hostBuilder)
             where TApplicationRoot : class
         {
             return hostBuilder
+                    .UseConfiguration()
                     .ConfigureAppConfiguration(b =>
                         b.AddEmbeddedAppSettings<TApplicationRoot>()
                     );
@@ -42,7 +46,8 @@ namespace Uno.Extensions.Configuration
             where TApplicationRoot : class
         {
             // This is consistent with HostBuilder, which defaults to Production
-            return hostBuilder?
+            return hostBuilder
+                    .UseConfiguration()
                     .ConfigureAppConfiguration((ctx, b) =>
                         b.AddEmbeddedEnvironmentAppSettings<TApplicationRoot>(ctx.HostingEnvironment?.EnvironmentName ?? Environments.Production));
         }
@@ -65,6 +70,7 @@ namespace Uno.Extensions.Configuration
 
             // This is consistent with HostBuilder, which defaults to Production
             return hostBuilder?
+                .UseConfiguration()
                 .ConfigureAppConfiguration((ctx, b) =>
                     {
                         var path = FilePath(ctx);
@@ -74,12 +80,7 @@ namespace Uno.Extensions.Configuration
                     .ConfigureServices((ctx, services) =>
                     {
                         var section = configSection(ctx);
-                        services.TryAddSingleton<Reloader>();
-                        _ = services
-#if NETSTANDARD || __WASM__
-                                .AddHostedService<ReloadService>()
-#endif
-                                .ConfigureAsWritable<TSettingsOptions>(section, FilePath(ctx));
+                        services.ConfigureAsWritable<TSettingsOptions>(section, FilePath(ctx));
                     }
 
                 );
@@ -90,6 +91,7 @@ namespace Uno.Extensions.Configuration
             where TOptions : class
         {
             return hostBuilder?
+                .UseConfiguration()
                 .ConfigureServices((ctx, services) => services.Configure<TOptions>(ctx.Configuration.GetSection(configurationSection)));
         }
 

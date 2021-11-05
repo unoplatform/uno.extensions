@@ -10,6 +10,9 @@
     <assembly fullname="Uno.Extensions.Logging.Serilog" />
     <assembly fullname="Uno.Extensions.Navigation" />
     <assembly fullname="Uno.Extensions.Serialization" />
+    <assembly fullname="Serilog.Sinks.Console" />
+    <assembly fullname="Serilog.Sinks.Debug" />
+    <assembly fullname="Serilog.Sinks.File" />
     <assembly fullname="Microsoft.Extensions.Options" />
     <assembly fullname="Microsoft.Extensions.Hosting" />
     <assembly fullname="Microsoft.Extensions.Logging" />

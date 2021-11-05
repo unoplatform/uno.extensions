@@ -52,12 +52,13 @@ namespace Uno.Extensions.Logging.Serilog
             return configuration
                 //-:cnd:noEmit
 #if __ANDROID__
-                .WriteTo.AndroidLog(outputTemplate: "{Message:lj} {Exception}{NewLine}");
+                .WriteTo.AndroidLog(outputTemplate: "{Message:lj} {Exception}{NewLine}")
 #elif __IOS__
-                .WriteTo.NSLog(outputTemplate: "{Level:u1}/{SourceContext}: {Message:lj} {Exception}");
+                .WriteTo.NSLog(outputTemplate: "{Level:u1}/{SourceContext}: {Message:lj} {Exception}")
 #else
-                .WriteTo.Debug(outputTemplate: "{Timestamp:MM-dd HH:mm:ss.fffzzz} {Level:u1}/{SourceContext}: {Message:lj} {Exception}{NewLine}");
+                .WriteTo.Console(outputTemplate: "{Timestamp:MM-dd HH:mm:ss.fffzzz} {Level:u1}/{SourceContext}: {Message:lj} {Exception}{NewLine}")
 #endif
+                .WriteTo.Debug(outputTemplate: "{Timestamp:MM-dd HH:mm:ss.fffzzz} {Level:u1}/{SourceContext}: {Message:lj} {Exception}{NewLine}");
             //+:cnd:noEmit
         }
 

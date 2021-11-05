@@ -24,9 +24,6 @@ namespace Uno.Extensions.Configuration
         {
             Logger.LogDebugMessage($"Reloading config");
 
-            var localFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
-            var folder = await localFolder.CreateFolderAsync(HostBuilderExtensions.ConfigurationFolderName, CreationCollisionOption.OpenIfExists);
-            Logger.LogDebugMessage($@"Folder path should be '{folder.Path}'");
 
             var fileProviders = Config.Providers;
             foreach (var fp in fileProviders)

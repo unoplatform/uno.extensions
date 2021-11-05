@@ -69,8 +69,9 @@ namespace ExtensionsSampleApp
         public App()
         {
             Host = UnoHost
-               .CreateDefaultBuilder(false)
-               .UsePlatformLoggerProvider()
+               .CreateDefaultBuilder(true)
+               .UseEnvironment(Environments.Development)
+               .UseLogging()
                .ConfigureLogging(logBuilder =>
                {
                    logBuilder
@@ -78,19 +79,18 @@ namespace ExtensionsSampleApp
                         .XamlLogLevel(LogLevel.Information)
                         .XamlLayoutLogLevel(LogLevel.Information);
                })
-               .UseSerilog(true,true)
-               //.UseHostConfigurationForApp()
-               .UseEmbeddedAppSettings<App>()
+               .UseSerilog(true, true)
+               //.UseEmbeddedAppSettings<App>() 
                .UseConfigurationSectionInApp<CommerceSettings>(nameof(CommerceSettings))
-                //.UseWritableSettings<CommerceSettings>(ctx => ctx.Configuration.GetSection(nameof(CommerceSettings)))
+               .UseWritableSettings<CommerceSettings>(ctx => ctx.Configuration.GetSection(nameof(CommerceSettings)))
                .ConfigureServices(services =>
                {
                    services
-//                    .AddRegion<TabView, TabViewNavigator>()
-//                   .AddRegion<Control, ControlVisualStateNavigator>(ControlVisualStateNavigator.NavigatorName)
-//#if __IOS__
-//                    .AddRegion<Picker, PickerNavigator>()
-//#endif
+                   //                    .AddRegion<TabView, TabViewNavigator>()
+                   //                   .AddRegion<Control, ControlVisualStateNavigator>(ControlVisualStateNavigator.NavigatorName)
+                   //#if __IOS__
+                   //                    .AddRegion<Picker, PickerNavigator>()
+                   //#endif
                    .AddRegion<TabBar, TabBarRegion>()
                    .AddTransient<MainViewModel>()
                    .AddTransient<SecondViewModel>()
@@ -150,7 +150,7 @@ namespace ExtensionsSampleApp
             mapping.Register(new RouteMap("Products", typeof(FrameView),
                 RegionInitialization: (region, nav) => nav.Route.IsEmpty() ?
                                         nav with { Route = nav.Route with { Base = "+ProductsPage" } } :
-                                        nav with { Route = nav.Route with { Path = (!nav.Route.Path.Contains("ProductsPage")? "+ProductsPage+":"")+nav.Route.Path } }));
+                                        nav with { Route = nav.Route with { Path = (!nav.Route.Path.Contains("ProductsPage") ? "+ProductsPage+" : "") + nav.Route.Path } }));
             //mapping.Register(new RouteMap(typeof(ProductsPage).Name, typeof(ProductsPage), typeof(ProductsViewModel));
             mapping.Register(new RouteMap("Deals", typeof(FrameView),
                 RegionInitialization: (region, nav) => nav.Route.IsEmpty() ?
@@ -173,29 +173,37 @@ namespace ExtensionsSampleApp
             mapping.Register(new RouteMap("home",
                 RegionInitialization: (region, nav) => string.IsNullOrWhiteSpace(nav.Route.Path) ?
                                         nav with { Route = nav.Route with { Path = typeof(TweetsPage).Name } } :
-                                        nav with {
-                                            Route = nav.Route with {
+                                        nav with
+                                        {
+                                            Route = nav.Route with
+                                            {
                                                 Path = nav.Route.Path
                                                           .TrimStart('+')
-                                                          .StartsWith(typeof(TweetsPage).Name)?
+                                                          .StartsWith(typeof(TweetsPage).Name) ?
                                                        nav.Route.Path :
-                                                       typeof(TweetsPage).Name + Schemes.NavigateForward + nav.Route.Path} }
+                                                       typeof(TweetsPage).Name + Schemes.NavigateForward + nav.Route.Path
+                                            }
+                                        }
                                         ));
             mapping.Register(new RouteMap("notifications",
                 RegionInitialization: (region, nav) => string.IsNullOrWhiteSpace(nav.Route.Path) ?
                                         nav with { Route = nav.Route with { Path = typeof(NotificationsPage).Name } } :
-                                        nav with {
-                                            Route = nav.Route with {
+                                        nav with
+                                        {
+                                            Route = nav.Route with
+                                            {
                                                 Path = nav.Route.Path
                                                           .TrimStart('+')
-                                                          .StartsWith(typeof(NotificationsPage).Name)?
+                                                          .StartsWith(typeof(NotificationsPage).Name) ?
                                                        nav.Route.Path :
-                                                       typeof(NotificationsPage).Name + Schemes.NavigateForward + nav.Route.Path} }
+                                                       typeof(NotificationsPage).Name + Schemes.NavigateForward + nav.Route.Path
+                                            }
+                                        }
                                         ));
             mapping.Register(new RouteMap(typeof(TweetsPage).Name, typeof(TweetsPage), typeof(TweetsViewModel)));
             mapping.Register(new RouteMap(typeof(TweetDetailsPage).Name, typeof(TweetDetailsPage),
                 typeof(TweetDetailsViewModel), typeof(Tweet),
-                BuildQueryParameters:entity=>new Dictionary<string, string> { { "TweetId",(entity as Tweet)?.Id+""} }));
+                BuildQueryParameters: entity => new Dictionary<string, string> { { "TweetId", (entity as Tweet)?.Id + "" } }));
             mapping.Register(new RouteMap(typeof(NotificationsPage).Name, typeof(NotificationsPage), typeof(NotificationsViewModel)));
             mapping.Register(new RouteMap(typeof(TwitterProfilePage).Name, typeof(TwitterProfilePage)));
             mapping.Register(new RouteMap(typeof(NavigationViewPage).Name, typeof(NavigationViewPage)));
@@ -317,12 +325,12 @@ namespace ExtensionsSampleApp
                 await Host.StartAsync();
             });
 
-//            var logger = Host.Services.GetService<ILogger<App>>();
-//            var storageFile = await StorageFile.GetFileFromApplicationUriAsync(
-//new Uri("ms-appx:///appsettings.json"));
-//            logger.LogInformation("Setting Path:" + storageFile.Path);
-//            var settings = File.ReadAllText(storageFile.Path);
-//            logger.LogInformation("Setting:" + settings);
+            //            var logger = Host.Services.GetService<ILogger<App>>();
+            //            var storageFile = await StorageFile.GetFileFromApplicationUriAsync(
+            //new Uri("ms-appx:///appsettings.json"));
+            //            logger.LogInformation("Setting Path:" + storageFile.Path);
+            //            var settings = File.ReadAllText(storageFile.Path);
+            //            logger.LogInformation("Setting:" + settings);
 
             var nav2 = Host.Services.GetService<INavigator>();
             var navResult2 = nav2.NavigateToViewAsync<MainPage>(this, Schemes.Root);
@@ -411,7 +419,7 @@ namespace ExtensionsSampleApp
         public void Receive(RegionUpdatedMessage message)
         {
             var rootRegion = message.Region.Root();
-            var route = (rootRegion.GetRoute() + "").Replace("+","/");
+            var route = (rootRegion.GetRoute() + "").Replace("+", "/");
             var appTitle = ApplicationView.GetForCurrentView();
             appTitle.Title = "Navigation: " + route;
 
