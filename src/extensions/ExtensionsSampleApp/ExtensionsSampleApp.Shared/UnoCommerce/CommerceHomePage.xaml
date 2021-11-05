@@ -43,7 +43,9 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <muxc:NavigationView x:Name="NavView"
-                             nav:Region.Attached="true">
+                             nav:Region.Name="CommerceHomePage"
+                             nav:Region.Attached="true"
+                             >
             <muxc:NavigationView.MenuItems>
                 <muxc:NavigationViewItem Icon="Home"
                                          Content="Products"

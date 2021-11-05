@@ -27,13 +27,16 @@ public static class RouteExtensions
         route.Scheme.StartsWith(Schemes.NavigateForward) ||
         route.Scheme.StartsWith(Schemes.NavigateBack);
 
-    public static bool IsRoot(this Route route) => route?.Scheme.StartsWith(Schemes.Root) ?? false;
+    public static bool IsRoot(this Route route) => route.Scheme.StartsWith(Schemes.Root);
 
-    public static bool IsParent(this Route route) => route?.Scheme.StartsWith(Schemes.Parent) ?? false;
+    public static bool IsParent(this Route route) => route.Scheme.StartsWith(Schemes.Parent);
 
-    public static bool IsNested(this Route route) => route?.Scheme.StartsWith(Schemes.Nested) ?? false;
+    public static bool IsNested(this Route route, bool checkIfLastScheme = false) => checkIfLastScheme ?
+        route.Scheme == Schemes.Nested :
+        route.Scheme.StartsWith(Schemes.Nested);
 
-    public static bool IsDialog(this Route route) => route?.Scheme.StartsWith(Schemes.Dialog) ?? false;
+    public static bool IsDialog(this Route route) => route.Scheme.StartsWith(Schemes.Dialog);
+
 
     public static bool IsLast(this Route route) => string.IsNullOrWhiteSpace(route?.Path);
 
@@ -110,6 +113,11 @@ public static class RouteExtensions
         return route with { Scheme = route.Scheme.TrimStartOnce(schemeToTrim) };
     }
 
+    public static Route AppendScheme(this Route route, string scheme)
+    {
+        return route with { Scheme = $"{scheme}{route.Scheme}" };
+    }
+
     public static Route Trim(this Route route, Route handledRoute)
     {
         while (route.Base == handledRoute.Base && !string.IsNullOrWhiteSpace(handledRoute.Base))
@@ -126,9 +134,55 @@ public static class RouteExtensions
         return route with { Path = route.Path + (routeToAppend.Scheme == Schemes.Nested ? Schemes.Separator : routeToAppend.Scheme) + routeToAppend.Base + routeToAppend.Path };
     }
 
+    public static Route AppendPage<TPage>(this Route route)
+    {
+        return route.Append(Route.PageRoute<TPage>());
+    }
+
+    public static Route Insert(this Route route, Route routeToAppend)
+    {
+        return route with
+        {
+            Path = (routeToAppend.Scheme == Schemes.Nested ? Schemes.Separator : routeToAppend.Scheme) +
+                    routeToAppend.Base +
+                    routeToAppend.Path +
+                    ((route.Path.StartsWith(Schemes.Separator) || route.Path.StartsWith(Schemes.NavigateForward)) ?
+                        string.Empty :
+                        Schemes.Separator) +
+                    route.Path
+        };
+        //return route with
+        //{
+        //    Scheme = routeToAppend.Scheme,
+        //    Base = routeToAppend.Base,
+        //    Path = routeToAppend.Path + (route.Scheme == Schemes.Nested ? Schemes.Separator : route.Scheme) + route.Base + route.Path
+        //};
+    }
+
+    public static Route InsertPage<TPage>(this Route route)
+    {
+        return route.Insert(Route.PageRoute<TPage>());
+    }
+
+    public static bool ContainsView<TView>(this Route route)
+    {
+        return route.ContainsView(typeof(TView));
+    }
+
+    public static bool ContainsView(this Route route, Type viewType)
+    {
+        return route.Contains(viewType.Name);
+    }
+
+    public static bool Contains(this Route route, string path)
+    {
+        return route.Base == path || (route.Path?.Contains(path, StringComparison.InvariantCultureIgnoreCase) ?? false);
+    }
+
     public static Route Next(this Route route)
     {
-        var routeBase = route.Path.ExtractBase(out var nextScheme, out var nextPath);
+        var path = route.Path ?? string.Empty;
+        var routeBase = path.ExtractBase(out var nextScheme, out var nextPath);
         if (nextScheme == Schemes.Root)
         {
             nextScheme = Schemes.Current;

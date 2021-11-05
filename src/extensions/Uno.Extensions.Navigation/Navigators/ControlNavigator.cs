@@ -28,9 +28,9 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
         Control = control;
     }
 
-    protected virtual FrameworkElement CurrentView => default;
+    protected virtual FrameworkElement? CurrentView => default;
 
-    protected abstract Task<string> Show(string path, Type viewType, object data);
+    protected abstract Task<string> Show(string path, Type? viewType, object data);
 
     protected override async Task<Route> RouteNavigateAsync(Route route)
     {
@@ -48,7 +48,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
         return route with { Base = executedPath, Path = null };
     }
 
-    protected object InitialiseCurrentView(Route route, RouteMap mapping)
+    protected object InitialiseCurrentView(Route route, RouteMap? mapping)
     {
         var view = CurrentView;
 
@@ -86,7 +86,7 @@ public abstract class ControlNavigator : Navigator
         Mappings = mappings;
     }
 
-    protected async override Task<NavigationResponse> CoreNavigateAsync(NavigationRequest request)
+    protected async override Task<NavigationResponse?> CoreNavigateAsync(NavigationRequest request)
     {
         var regionResponse = await RegionNavigateAsync(request);
 
@@ -107,16 +107,32 @@ public abstract class ControlNavigator : Navigator
 
     protected virtual bool CanNavigateToRoute(Route route) => route.IsCurrent();
 
-    private async Task<NavigationResponse> RegionNavigateAsync(NavigationRequest request)
+    private async Task<NavigationResponse?> RegionNavigateAsync(NavigationRequest request)
     {
         // Make sure the view has completely loaded before trying to process the nav request
         await Region.View.EnsureLoaded();
+
+        if (request.Route.IsNested() &&
+            Region.Children.Any(child => child.Name == request.Route.Base))
+        {
+            // If the base is the name of a child, just pass the request on
+            return await Task.FromResult<NavigationResponse?>(default);
+        }
+
+        // If the request has come down from parent it
+        // will still have the ./ prefix, so need to trim
+        // it before processing it
+        if (request.Route.IsNested())
+        {
+            request = request with { Route = request.Route.TrimScheme(Schemes.Nested) };
+        }
 
         if (CanNavigateToRoute(request.Route))
         {
             return await ControlNavigateAsync(request);
         }
-        return await Task.FromResult<NavigationResponse>(default);
+
+        return await Task.FromResult<NavigationResponse?>(default);
     }
 
     public virtual void ControlInitialize()
@@ -132,11 +148,11 @@ public abstract class ControlNavigator : Navigator
         var services = Region.Services;
 
         // Setup the navigation data (eg parameters to be injected into viewmodel)
-        var dataFactor = services.GetService<NavigationDataProvider>();
+        var dataFactor = services.GetRequiredService<NavigationDataProvider>();
         dataFactor.Parameters = request.Route.Data;
 
         // Create ResponseNavigator if result is requested
-        TaskCompletionSource<Options.Option> resultTask = null;
+        TaskCompletionSource<Options.Option>? resultTask = null;
         INavigator navigator = this;
         if (request.Result is not null)
         {
@@ -171,11 +187,11 @@ public abstract class ControlNavigator : Navigator
         Route = new Route(Schemes.Current, route.Base, null, route.Data);
     }
 
-    protected object CreateViewModel(IServiceProvider services, INavigator navigator, Route route, RouteMap mapping)
+    protected object? CreateViewModel(IServiceProvider services, INavigator navigator, Route route, RouteMap? mapping)
     {
         if (mapping?.ViewModel is not null)
         {
-            var dataFactor = services.GetService<NavigationDataProvider>();
+            var dataFactor = services.GetRequiredService<NavigationDataProvider>();
             dataFactor.Parameters = route.Data;
 
             var vm = services.GetService(mapping.ViewModel);
@@ -186,7 +202,7 @@ public abstract class ControlNavigator : Navigator
 
             if (vm is IInjectable<IServiceProvider> spAware)
             {
-                spAware.Inject(this.Get<IServiceProvider>());
+                spAware.Inject(Region.Services);
             }
 
             return vm;
@@ -194,7 +210,6 @@ public abstract class ControlNavigator : Navigator
 
         return null;
     }
-
 
     protected abstract Task<Route> RouteNavigateAsync(Route route);
 }

@@ -9,22 +9,11 @@ namespace Uno.Extensions.Navigation.Regions;
 
 public static class RegionExtensions
 {
-    public static INavigator Navigator(this IRegion region)
-    {
-        var parentNavigator = region.Parent?.Services?.GetService<INavigator>();
-        if (parentNavigator is not null &&
-            (parentNavigator.GetType() == typeof(Navigator) ||
-            parentNavigator is ICompositeNavigator))
-        {
-            return parentNavigator;
-        }
+    public static INavigator Navigator(this IRegion region) => region.Services.GetRequiredService<INavigator>();
 
-        return region.LocalNavigator();
-    }
+    public static Task<NavigationResponse> NavigateAsync(this IRegion region, NavigationRequest request) => region.Navigator().NavigateAsync(request);
 
-    public static INavigator LocalNavigator(this IRegion region) => region.Services?.GetService<INavigator>();
-
-    public static Task<NavigationResponse> NavigateAsync(this IRegion region, NavigationRequest request) => region.Services?.GetService<INavigator>()?.NavigateAsync(request);
+    public static bool IsNamed(this IRegion region) => !string.IsNullOrWhiteSpace(region.Name);
 
     public static IRegion Root(this IRegion region)
     {
@@ -33,7 +22,7 @@ public static class RegionExtensions
 
     public static Route GetRoute(this IRegion region)
     {
-        var regionRoute = region.LocalNavigator().Route;
+        var regionRoute = region.Navigator().Route;
         return regionRoute.Merge(
                         region.Children
                                 .Where(

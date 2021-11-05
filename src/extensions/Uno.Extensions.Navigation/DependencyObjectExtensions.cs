@@ -24,24 +24,26 @@ public static class DependencyObjectExtensions
         return element.ServiceForControl(true, element => element.GetInstance());
     }
 
-    public static IRegion FindParentRegion(this FrameworkElement element, out string routeName)
+    public static IRegion? FindParentRegion(this FrameworkElement element, out string routeName)
     {
-        var name = element?.GetName();
+        var name = element?.GetName() ?? string.Empty;
 
         var parent = element?.GetParent()?.GetInstance();
         if (parent is null)
         {
             parent = element?.Parent.ServiceForControl(true, element =>
             {
-                if (name is not { Length: > 0 })
+                var instance = element.GetInstance();
+                if (instance is null &&
+                    name is not { Length: > 0 })
                 {
-                    var route = (element as FrameworkElement).GetName();
+                    var route = (element as FrameworkElement)?.GetName();
                     if (route is { Length: > 0 })
                     {
                         name = route;
                     }
                 }
-                return element.GetInstance();
+                return instance;
             });
         }
 

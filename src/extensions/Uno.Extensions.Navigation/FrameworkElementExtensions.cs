@@ -15,7 +15,7 @@ namespace Uno.Extensions.Navigation;
 
 public static class FrameworkElementExtensions
 {
-    public static async Task EnsureLoaded(this FrameworkElement element)
+    public static async Task EnsureLoaded(this FrameworkElement? element)
     {
         if (element == null)
         {
