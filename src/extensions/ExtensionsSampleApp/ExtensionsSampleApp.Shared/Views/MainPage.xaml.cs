@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -102,7 +103,7 @@ namespace ExtensionsSampleApp.Views
 
         private async void MessageDialogClick(object sender, RoutedEventArgs e)
         {
-            var navresult = await Navigation.ShowMessageDialogAsync(this, "Basic content", "Content Title", commands: new Windows.UI.Popups.UICommand[] { new Windows.UI.Popups.UICommand("test", command => Debug.WriteLine("TEST")) });
+            var navresult = await Navigation.ShowMessageDialogAsync(this, "Basic content", "Content Title", commands: new Windows.UI.Popups.UICommand[] { new Windows.UI.Popups.UICommand("test", command => System.Diagnostics.Debug.WriteLine("TEST")) });
             var response = await navresult.Result;
             if(response != null)
             {
