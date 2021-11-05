@@ -82,7 +82,7 @@ namespace ExtensionsSampleApp
                .UseSerilog(true, true)
                //.UseEmbeddedAppSettings<App>() 
                .UseConfigurationSectionInApp<CommerceSettings>(nameof(CommerceSettings))
-               .UseWritableSettings<CommerceSettings>(ctx => ctx.Configuration.GetSection(nameof(CommerceSettings)))
+               //.UseWritableSettings<CommerceSettings>(ctx => ctx.Configuration.GetSection(nameof(CommerceSettings)))
                .ConfigureServices(services =>
                {
                    services
