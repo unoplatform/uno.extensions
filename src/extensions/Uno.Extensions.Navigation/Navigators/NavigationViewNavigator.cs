@@ -59,15 +59,24 @@ public class NavigationViewNavigator : ControlNavigator<Microsoft.UI.Xaml.Contro
 
     protected override async Task<string> Show(string path, Type viewType, object data)
     {
-        var item = (from mi in Control.MenuItems.OfType<FrameworkElement>()
-                    where mi.Name == path
-                    select mi).FirstOrDefault();
-        if (item != null)
+        _control.SelectionChanged -= ControlSelectionChanged;
+        try
         {
-            Control.SelectedItem = item;
-        }
+            var item = (from mi in Control.MenuItems.OfType<FrameworkElement>()
+                        where (mi.GetName() ?? mi.Name) == path
+                        select mi).FirstOrDefault();
+            if (item != null)
+            {
+                Control.SelectedItem = item;
+            }
 
-        // Don't return path, as we need for path to be passed down to children
-        return default;
+            // Don't return path, as we need for path to be passed down to children
+            return default;
+        }
+        finally
+        {
+            await CurrentView.EnsureLoaded();
+            _control.SelectionChanged += ControlSelectionChanged;
+        }
     }
 }

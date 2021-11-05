@@ -17,7 +17,7 @@
         <CommandBar>
             <AppBarButton Icon="Back"
                           Label="Back"
-                          nav:Navigation.Request="././-" />
+                          nav:Navigation.Request="./-" />
             <CommandBar.Content>
                 <TextBlock Text="Title"
                            Margin="12,8" />

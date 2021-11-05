@@ -82,7 +82,7 @@ namespace ExtensionsSampleApp
                .UseSerilog(true, true)
                //.UseEmbeddedAppSettings<App>() 
                .UseConfigurationSectionInApp<CommerceSettings>(nameof(CommerceSettings))
-               //.UseWritableSettings<CommerceSettings>(ctx => ctx.Configuration.GetSection(nameof(CommerceSettings)))
+               .UseWritableSettings<CommerceSettings>(ctx => ctx.Configuration.GetSection(nameof(CommerceSettings)))
                .ConfigureServices(services =>
                {
                    services
@@ -148,9 +148,13 @@ namespace ExtensionsSampleApp
                                         nav with { Route = nav.Route.Append(Route.NestedRoute("Products")) } :
                                         nav));
             mapping.Register(new RouteMap("Products", typeof(FrameView),
-                RegionInitialization: (region, nav) => nav.Route.IsEmpty() ?
-                                        nav with { Route = nav.Route with { Base = "+ProductsPage" } } :
-                                        nav with { Route = nav.Route with { Path = (!nav.Route.Path.Contains("ProductsPage") ? "+ProductsPage+" : "") + nav.Route.Path } }));
+                RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
+                                        nav with { Route = nav.Route.AppendPage<ProductsPage>() } :                                        nav with
+                                        {
+                                            Route = nav.Route.ContainsView<ProductsPage>() ?
+                                                            nav.Route :
+                                                            nav.Route.InsertPage<ProductsPage>()
+                                        }));
             //mapping.Register(new RouteMap(typeof(ProductsPage).Name, typeof(ProductsPage), typeof(ProductsViewModel));
             mapping.Register(new RouteMap("Deals", typeof(FrameView),
                 RegionInitialization: (region, nav) => nav.Route.IsEmpty() ?
@@ -252,48 +256,20 @@ namespace ExtensionsSampleApp
                 // Create a Frame to act as the navigation context and navigate to the first page
                 rootFrame = new Frame().WithNavigation(Host.Services);
                 rootFrame.NavigationFailed += OnNavigationFailed;
-                var nav = Host.Services.GetService<INavigator>();
 
 
 #if NET5_0
 
-                //var href = WebAssemblyRuntime.InvokeJS("window.location.href");
-                //var url = new UriBuilder(href);
-                //var query = url.Query;
-                //var path = (url.Path + (!string.IsNullOrWhiteSpace(query)?"?":"") + query +"").TrimStart('/');
-                //if(!string.IsNullOrWhiteSpace(path))
-                //{
-                //    var navResult = nav.NavigateToRouteAsync(this, path, Schemes.Root);
-                //}
-                //else
-                //{
-                //    var navResult = nav.NavigateToRouteAsync(this, "+MainPage" + path, Schemes.Root);
-
-                //}
-
-
+                var backnav = Host.Services.GetService<INavigator>();
                 Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
                 Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested += (s, a) =>
                 {
                     var appTitle = ApplicationView.GetForCurrentView();
                     appTitle.Title = "Back pressed - " + DateTime.Now.ToString("HH:mm:ss");
-                    nav.GoBack(this);
+                    backnav.GoBack(this);
                 };
-#else
-                //var nav = Host.Services.GetService<INavigator>();
-                //var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Nested);
-                //var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Root);
-                //var navResult = nav.NavigateToRouteAsync(this, "+MainPage", Schemes.Root);
-                //var navResult = nav.NavigateToRouteAsync(this, "+MainPage+SecondPage", Schemes.Root);
-                //var navResult = nav.NavigateToRouteAsync(this, "+MainPage+SecondPage+ThirdPage", Schemes.Root);
-                //var navResult = nav.NavigateToRouteAsync(this, "+MainPage+SecondPage/content/Content1/", Schemes.Root);
-                //var navResult = nav.NavigateToRouteAsync(this, "/MainPage/SecondPage/content/Content1/", Schemes.Root);
-                //var navResult = nav.NavigateToRouteAsync(this, "TabbedPage/doc1", Schemes.Root);
-                //var navResult = nav.NavigateToRouteAsync(this, "TabbedPage/doc2/SecondPage/content/Content1", Schemes.Root);
-                //var navResult = nav.NavigateToRouteAsync(this, "TwitterPage/notifications/TweetDetailsPage?TweetId=23", Schemes.Root);
-                //var navResult = nav.NavigateToViewAsync<LoginPage>(this);
-                //var navResult = nav.NavigateToRouteAsync(this, "/CommerceHomePage/Products/ProductDetails?ProductId=3");
 #endif
+
                 //navResult.OnCompleted(() => Debug.WriteLine("Nav complete"));
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
                 {
@@ -333,7 +309,37 @@ namespace ExtensionsSampleApp
             //            logger.LogInformation("Setting:" + settings);
 
             var nav2 = Host.Services.GetService<INavigator>();
-            var navResult2 = nav2.NavigateToViewAsync<MainPage>(this, Schemes.Root);
+
+#if NET5_0
+                var href = WebAssemblyRuntime.InvokeJS("window.location.href");
+                var url = new UriBuilder(href);
+                var query = url.Query;
+                var path = (url.Path + (!string.IsNullOrWhiteSpace(query)?"?":"") + query +"").TrimStart('/');
+                if(!string.IsNullOrWhiteSpace(path))
+                {
+                    var navResult = nav.NavigateToRouteAsync(this, path, Schemes.Root);
+                }
+                else
+                {
+                    var navResult = nav.NavigateToRouteAsync(this, "+MainPage" + path, Schemes.Root);
+
+                }
+#else
+            var nav = Host.Services.GetService<INavigator>();
+            //var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Nested);
+            //var navResult = nav.NavigateToViewAsync<MainPage>(this, Schemes.Root);
+            //var navResult = nav.NavigateToRouteAsync(this, "+MainPage", Schemes.Root);
+            //var navResult = nav.NavigateToRouteAsync(this, "+MainPage+SecondPage", Schemes.Root);
+            //var navResult = nav.NavigateToRouteAsync(this, "+MainPage+SecondPage+ThirdPage", Schemes.Root);
+            //var navResult = nav.NavigateToRouteAsync(this, "+MainPage+SecondPage/content/Content1/", Schemes.Root);
+            //var navResult = nav.NavigateToRouteAsync(this, "/MainPage/SecondPage/content/Content1/", Schemes.Root);
+            //var navResult = nav.NavigateToRouteAsync(this, "TabbedPage/doc1", Schemes.Root);
+            //var navResult = nav.NavigateToRouteAsync(this, "TabbedPage/doc2/SecondPage/content/Content1", Schemes.Root);
+            //var navResult = nav.NavigateToRouteAsync(this, "TwitterPage/notifications/TweetDetailsPage?TweetId=23", Schemes.Root);
+            //var navResult = nav.NavigateToViewAsync<LoginPage>(this);
+            var navResult = nav.NavigateToRouteAsync(this, "/CommerceHomePage/Products/ProductDetails?ProductId=3");
+
+#endif
 
         }
 

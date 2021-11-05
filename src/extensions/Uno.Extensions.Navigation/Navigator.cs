@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation.Regions;
+using static Uno.Extensions.GenericExtensions;
 
 namespace Uno.Extensions.Navigation;
 
@@ -16,21 +17,17 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
     protected IRegion Region { get; }
 
-    private INavigationNotifier Notifier => Region?.Services.GetService<INavigationNotifier>();
+    private INavigationNotifier Notifier => Region.Services.GetRequiredService<INavigationNotifier>();
 
-    IServiceProvider IInstance<IServiceProvider>.Instance => Region?.Services;
+    IServiceProvider IInstance<IServiceProvider>.Instance => Region.Services;
 
-    public Route Route { get; protected set; }
+    public Route? Route { get; protected set; }
 
-    public Navigator(
-        ILogger<Navigator> logger,
-        IRegion region) : this((ILogger)logger, region)
+    public Navigator(ILogger<Navigator> logger, IRegion region) : this((ILogger)logger, region)
     {
     }
 
-    protected Navigator(
-    ILogger logger,
-    IRegion region)
+    protected Navigator(ILogger logger, IRegion region)
     {
         Region = region;
         Logger = logger;
@@ -47,9 +44,9 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
                 // Either
                 // - forward to parent (if parent is not null)
                 // - trim the Root scheme ready for handling
-                if (Region?.Parent is not null)
+                if (Region.Parent is not null)
                 {
-                    return await (Region.Parent.NavigateAsync(request) ?? Task.FromResult<NavigationResponse>(default));
+                    return await (Region.Parent?.NavigateAsync(request) ?? Task.FromResult<NavigationResponse>(default));
                 }
                 else
                 {
@@ -71,6 +68,16 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
                 }
             }
 
+            // Is this region is an unnamed child of a composite,
+            // send request to parent if the route has no scheme
+            if (request.Route.IsCurrent() &&
+                !Region.IsNamed() &&
+                Region.Parent is not null)
+            {
+                return await Region.Parent.NavigateAsync(request);
+            }
+
+
             // Run dialog requests
             if (request.Route.IsDialog())
             {
@@ -79,16 +86,18 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
             }
 
             // If the base matches the region name, than need to strip the base
-            if (request.Route.Base == Region.Name)
+            if (!string.IsNullOrWhiteSpace(request.Route.Base) &&
+                request.Route.Base == Region.Name)
             {
                 request = request with { Route = request.Route.Next() };
             }
 
             // Initialise the region
-            var requestMap = this.Get<IServiceProvider>().GetService<IRouteMappings>().FindByPath(request.Route.Base);
+            var requestMap = Region.Services.GetRequiredService<IRouteMappings>().FindByPath(request.Route.Base);
             if (requestMap?.RegionInitialization is not null)
             {
-                request = requestMap.RegionInitialization(Region, request);
+                var newRequest = requestMap.RegionInitialization(Region, request);
+                request = newRequest;
             }
 
             return await CoreNavigateAsync(request);
@@ -110,13 +119,18 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
         return dialogResponse;
     }
 
-    protected virtual async Task<NavigationResponse> CoreNavigateAsync(NavigationRequest request)
+    protected virtual async Task<NavigationResponse?> CoreNavigateAsync(NavigationRequest request)
     {
-        if (request.Route.IsNested())
+        //if (request.Route.IsNested())
+        //{
+        //    // At this point the request should be passed to nested, so remove
+        //    // any nested scheme (ie ./ )
+        //    request = request with { Route = request.Route.TrimScheme(Schemes.Nested) };// with { Scheme = Schemes.Current } };
+        //}
+
+        if (request.Route.IsCurrent())
         {
-            // At this point the request should be passed to nested, so remove
-            // any nested scheme (ie ./ )
-            request = request with { Route = request.Route.TrimScheme(Schemes.Nested) };// with { Scheme = Schemes.Current } };
+            request = request with { Route = request.Route.AppendScheme(Schemes.Nested) };
         }
 
         if (request.Route.IsEmpty())

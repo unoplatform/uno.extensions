@@ -123,7 +123,7 @@ public sealed class NavigationRegion : IRegion
         // Force the lookup (and creation) of the navigator
         // This is required to intercept control event such as
         // navigating forward/backward on frame, or switching tabs
-        _ = this.LocalNavigator();
+        _ = this.Navigator();
     }
 
     public override string ToString()
@@ -145,7 +145,7 @@ public sealed class NavigationRegion : IRegion
             builder.Append($@"({region.View.GetType().Name})-");
         }
 
-        var nav = region.LocalNavigator();
+        var nav = region.Navigator();
         if (nav is not null)
         {
             builder.Append($"{nav.ToString()}");

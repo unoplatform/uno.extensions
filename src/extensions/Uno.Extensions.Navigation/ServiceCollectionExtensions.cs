@@ -158,16 +158,16 @@ public static class ServiceCollectionExtensions
 
 public class NavigationDataProvider
 {
-    public IDictionary<string, object> Parameters { get; set; }
+    public IDictionary<string, object>? Parameters { get; set; }
 
-    public TData GetData<TData>()
+    public TData? GetData<TData>()
         where TData : class
     {
-        return Parameters.TryGetValue(string.Empty, out var data) ? data as TData : default;
+        return (Parameters?.TryGetValue(string.Empty, out var data) ?? false) ? data as TData : default;
     }
 }
 
 public class RegionControlProvider
 {
-    public object RegionControl { get; set; }
+    public object? RegionControl { get; set; }
 }
