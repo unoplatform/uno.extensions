@@ -9,14 +9,14 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(IsUWP)' == 'true' or '$(IsWinUI)' == 'true'">
-    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="6.0.0-preview.7.21377.19" />
+    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="6.0.0-rc.2.21480.5" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
-    <PackageReference Include="System.Text.Json" Version="6.0.0-preview.7.21377.19" />
+    <PackageReference Include="System.Text.Json" Version="6.0.0-rc.2.21480.5" />
     <PackageReference Include="System.Reflection.TypeExtensions" Version="4.7.0" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0-preview.7.21377.19" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0-rc.2.21480.5" />
     <PackageReference Include="Refit" Version="6.0.94" />
   </ItemGroup>
 

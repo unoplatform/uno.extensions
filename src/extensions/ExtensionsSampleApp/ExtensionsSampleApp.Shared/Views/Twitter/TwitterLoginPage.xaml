@@ -14,7 +14,7 @@
             <VisualStateGroup>
                 <VisualState x:Name="Authenticating">
                     <VisualState.Setters>
-                        <Setter Target="Overlay.Visibility"
+                        <Setter Target="ProgressOverlay.Visibility"
                                 Value="Visible" />
                         <Setter Target="Progress.IsActive"
                                 Value="True" />
@@ -45,7 +45,7 @@
                         Margin="0,8"
                         nav:Navigation.Request="/-/TwitterPage" />
             </StackPanel>
-            <Grid x:Name="Overlay"
+            <Grid x:Name="ProgressOverlay"
                   Visibility="Collapsed">
                 <Border Background="White"
                         Opacity="0.7"/>

@@ -5,11 +5,12 @@ using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Navigators;
 using Uno.Extensions.Navigation.Regions;
-
+using Uno.Extensions.Options;
 using Windows.UI;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 #else
 using Microsoft.UI.Xaml.Controls;
 using Windows.UI.Popups;
@@ -34,7 +35,7 @@ public class PickerNavigator : ControlNavigator
         var rootGrid = ((appWindow.Content is Frame frame) ? (frame.Content as Page).Content : appWindow.Content) as Grid;
         if (rootGrid is null)
         {
-            return Task.FromResult<NavigationRequest>(default);
+            return Task.FromResult<Route>(default);
         }
 
         var popup = new Popup() { IsLightDismissEnabled = true, VerticalAlignment = VerticalAlignment.Stretch, HorizontalAlignment = HorizontalAlignment.Stretch };
@@ -50,7 +51,7 @@ public class PickerNavigator : ControlNavigator
             VerticalAlignment = VerticalAlignment.Stretch
         };
 
-        var data = context.Request.Route.Data;
+        var data = route.Data;
         if (data.TryGetValue(RouteConstants.PickerItemTemplate, out var template))
         {
             picker.ItemTemplate = template as DataTemplate;
@@ -69,16 +70,17 @@ public class PickerNavigator : ControlNavigator
 
         picker.SelectionChanged += (p, e) =>
         {
-            var responseNav = context.Navigation as ResponseNavigator;
+            var navigation = Region.Navigator();
+            var responseNav = navigation as ResponseNavigator;
             if (responseNav is not null)
             {
                 if (e.AddedItems.Any())
                 {
-                    responseNav.ResultCompletion.TrySetResult(Options.Option.Some(e.AddedItems.FirstOrDefault()));
+                    responseNav.ResultCompletion.TrySetResult(Option.Some(e.AddedItems.FirstOrDefault()));
                 }
                 else
                 {
-                    responseNav.ResultCompletion.TrySetResult(Options.Option.None<object>());
+                    responseNav.ResultCompletion.TrySetResult(Option.None<object>());
                 }
             }
             rootGrid.Children.Remove(popup);
@@ -86,10 +88,12 @@ public class PickerNavigator : ControlNavigator
 
         popup.Closed += (pops, pope) =>
         {
-            var responseNav = context.Navigation as ResponseNavigator;
+            var navigation = Region.Navigator();
+            var responseNav = navigation as ResponseNavigator;
+
             if (responseNav is not null)
             {
-                responseNav.ResultCompletion.TrySetResult(Options.Option.None<object>());
+                responseNav.ResultCompletion.TrySetResult(Option.None<object>());
             }
             rootGrid.Children.Remove(popup);
         };

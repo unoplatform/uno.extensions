@@ -73,10 +73,10 @@
       <Version>7.0.3</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions">
-      <Version>6.0.0-preview.7.21377.19</Version>
+      <Version>6.0.0-rc.2.21480.5</Version>
     </PackageReference>
-    <PackageReference Include="Uno.UI" Version="3.10.0-dev.376" />
-    <PackageReference Include="Uno.UI.RemoteControl" Version="3.9.7" Condition="'$(Configuration)'=='Debug'" />
+    <PackageReference Include="Uno.UI" Version="4.0.0-dev.5441" />
+    <PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5441" Condition="'$(Configuration)'=='Debug'" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
   </ItemGroup>

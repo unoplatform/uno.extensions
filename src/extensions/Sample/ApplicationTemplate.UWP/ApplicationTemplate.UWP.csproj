@@ -135,7 +135,7 @@
     <PackageReference Include="Refit" Version="6.0.38" />
     <!--<PackageReference Include="GeneratedSerializers.Json" Version="0.2.0-dev.10" />-->
     <!--<PackageReference Include="Reactive.Annex.Uno" Version="0.3.0-dev.18" />-->
-    <PackageReference Include="Uno.UI" Version="3.8.6" />
+    <PackageReference Include="Uno.UI" Version="4.0.0-dev.5441" />
     <!--<PackageReference Include="Uno.Injectable" Version="1.34.0-dev.175" />
     <PackageReference Include="Uno.CodeGen" Version="1.34.0-dev.175" />
     <PackageReference Include="Chinook.DynamicMvvm" Version="0.4.0-dev.41" />

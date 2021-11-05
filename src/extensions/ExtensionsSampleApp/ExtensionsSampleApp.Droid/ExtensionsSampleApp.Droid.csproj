@@ -22,6 +22,7 @@
     <AndroidUseIntermediateDesignerFile>True</AndroidUseIntermediateDesignerFile>
     <ResourcesDirectory>..\ExtensionsSampleApp.Shared\Strings</ResourcesDirectory>
     <DefineConstants>UNO_UWP_COMPATIBILITY</DefineConstants>
+    <LangVersion>10.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -65,21 +66,22 @@
       <Version>7.0.3</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions">
-      <Version>6.0.0-preview.7.21377.19</Version>
+      <Version>6.0.0-rc.2.21480.5</Version>
     </PackageReference>
     <PackageReference Include="Uno.Microsoft.Toolkit.Uwp.UI.Controls">
-      <Version>7.1.0-build.45.gd2e4192c8c</Version>
+      <Version>7.1.10-dev.2.g5a2a008e5d</Version>
     </PackageReference>
-    <PackageReference Include="Uno.UI" Version="3.11.0-dev.270" />
-    <PackageReference Include="Uno.UI.RemoteControl" Version="3.11.0-dev.270" Condition="'$(Configuration)'=='Debug'" />
+    <PackageReference Include="Uno.UI" Version="4.0.0-dev.5441" />
+    <PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5441" Condition="'$(Configuration)'=='Debug'" />
     <PackageReference Include="Uno.UI.Toolkit">
       <Version>255.255.255.255</Version>
     </PackageReference>
+    <PackageReference Include="Uno.Material" Version="1.1.0-dev.5" />
     <PackageReference Include="Uno.UniversalImageLoader" Version="1.9.35" />
     <PackageReference Include="Uno.Core" Version="3.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0-preview.7.21377.19" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0-preview.7.21377.19" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0-preview.7.21377.19" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0-rc.2.21480.5" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0-rc.2.21480.5" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0-rc.2.21480.5" />
     <ProjectReference Include="..\..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj">
       <Project>{0dde79de-181b-42ef-af00-56dc622a6afa}</Project>
       <Name>Uno.Extensions.Configuration</Name>
@@ -108,6 +110,10 @@
       <Project>{3f8f8b81-03af-48e8-a901-ab3b14f15b10}</Project>
       <Name>Uno.Extensions.Localization</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj">
+      <Project>{3f01a0de-4b9e-496f-ac6b-94daf315a20f}</Project>
+      <Name>Uno.Extensions.Logging.Serilog</Name>
+    </ProjectReference>
     <!--<ProjectReference Include="..\..\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj">
       <Project>{3f01a0de-4b9e-496f-ac6b-94daf315a20f}</Project>
       <Name>Uno.Extensions.Logging.Serilog</Name>
@@ -132,6 +138,12 @@
       <Project>{5123670c-9756-4c9e-9844-f4a9c0aee633}</Project>
       <Name>Uno.Extensions.Serialization</Name>
     </ProjectReference>
+    <PackageReference Include="Xamarin.AndroidX.AppCompat.AppCompatResources">
+      <Version>1.2.0.5</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData">
+      <Version>2.3.1.1</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />
