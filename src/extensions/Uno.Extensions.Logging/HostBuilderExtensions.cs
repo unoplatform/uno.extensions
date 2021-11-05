@@ -13,7 +13,7 @@ namespace Uno.Extensions.Logging
     public static class HostBuilderExtensions
     {
 #if !NETSTANDARD || WINUI
-        public static IHostBuilder UsePlatformLoggerProvider(this IHostBuilder hostBuilder,
+        public static IHostBuilder UseLogging(this IHostBuilder hostBuilder,
             Action<ILoggingBuilder> configure = null)
         {
             return hostBuilder
@@ -30,7 +30,7 @@ namespace Uno.Extensions.Logging
                     });
         }
 #elif __WASM__
-        public static IHostBuilder UsePlatformLoggerProvider(this IHostBuilder hostBuilder,
+        public static IHostBuilder UseLogging(this IHostBuilder hostBuilder,
             Action<ILoggingBuilder> configure = null)
         {
             return hostBuilder

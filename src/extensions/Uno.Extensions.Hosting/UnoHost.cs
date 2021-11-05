@@ -43,6 +43,11 @@ public static class UnoHost
             {
                 // Note that this environment variable is being set so that in .net6 we can leverage polling file watcher
                 Environment.SetEnvironmentVariable("DOTNET_USE_POLLING_FILE_WATCHER", "true");
+                var appsettingsPrefix = new Dictionary<string, string>
+                        {
+                            { "appsettings:prefix", "local" },
+                        };
+                config.AddInMemoryCollection(appsettingsPrefix);
             })
 #endif
             .ConfigureLogging((_, factory) =>
