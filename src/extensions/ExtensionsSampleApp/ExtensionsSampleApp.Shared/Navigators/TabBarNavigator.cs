@@ -23,22 +23,11 @@ namespace ExtensionsSampleApp.Navigators
 {
     public class TabBarRegion : ControlNavigator<TabBar>
     {
-        private TabBar _control;
-
-        public override TabBar Control
+        public override void ControlInitialize()
         {
-            get => _control;
-            set
+            if(Control is not null)
             {
-                if (_control != null)
-                {
-                    _control.SelectionChanged -= ControlSelectionChanged;
-                }
-                _control = value;
-                if (_control != null)
-                {
-                    _control.SelectionChanged += ControlSelectionChanged;
-                }
+                Control.SelectionChanged += ControlSelectionChanged;
             }
         }
 
@@ -65,6 +54,11 @@ namespace ExtensionsSampleApp.Navigators
 
         protected override async Task<string> Show(string path, Type view, object data)
         {
+            if(Control is null)
+            {
+                return null;
+            }
+
             Control.SelectionChanged -= ControlSelectionChanged;
             try
             {

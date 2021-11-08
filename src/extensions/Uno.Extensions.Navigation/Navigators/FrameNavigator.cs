@@ -19,7 +19,7 @@ namespace Uno.Extensions.Navigation.Navigators;
 
 public class FrameNavigator : ControlNavigator<Frame>
 {
-    protected override FrameworkElement CurrentView => Control.Content as FrameworkElement;
+    protected override FrameworkElement? CurrentView => Control.Content as FrameworkElement;
 
     public override bool CanGoBack => Control.BackStackDepth > 0;
 
@@ -46,18 +46,20 @@ public class FrameNavigator : ControlNavigator<Frame>
 
     protected override bool CanNavigateToRoute(Route route) => base.CanNavigateToRoute(route) || route.IsFrameNavigation();
 
-    protected override Task<Route> RouteNavigateAsync(Route route)
+    protected override Task<Route> ExecuteRequestAsync(NavigationRequest request)
     {
+        var route = request.Route;
         // Detach all nested regions as we're moving away from the current view
         Region.Children.Clear();
 
         return route.FrameIsForwardNavigation() ?
-                    NavigateForwardAsync(route) :
-                    NavigatedBackAsync(route);
+                    NavigateForwardAsync(request) :
+                    NavigatedBackAsync(request);
     }
 
-    private async Task<Route> NavigateForwardAsync(Route route)
+    private async Task<Route> NavigateForwardAsync(NavigationRequest request)
     {
+        var route = request.Route;
         var numberOfPagesToRemove = route.FrameNumberOfPagesToRemove();
         // We remove 1 less here because we need to remove the current context, after the navigation is completed
         while (numberOfPagesToRemove > 1)
@@ -99,14 +101,15 @@ public class FrameNavigator : ControlNavigator<Frame>
             RemoveLastFromBackStack();
         }
 
-        InitialiseCurrentView(route,Mappings.Find(route));
+        InitialiseCurrentView(route, Mappings.Find(route));
 
-        var responseRequest = firstSegment with { Scheme = route.Scheme } ;
+        var responseRequest = firstSegment with { Scheme = route.Scheme };
         return responseRequest;
     }
 
-    private Task<Route> NavigatedBackAsync(Route route)
+    private Task<Route> NavigatedBackAsync(NavigationRequest request)
     {
+        var route = request.Route;
         // Remove any excess items in the back stack
         var numberOfPagesToRemove = route.FrameNumberOfPagesToRemove();
         while (numberOfPagesToRemove > 0)
@@ -130,7 +133,7 @@ public class FrameNavigator : ControlNavigator<Frame>
         // use the type of the new view to look up the mapping
         var mapping = Mappings.FindByView(CurrentView?.GetType());
         //context = context with { Mapping = mapping };
-        
+
         InitialiseCurrentView(previousRoute, mapping);
 
         return Task.FromResult(responseRoute);
@@ -179,7 +182,7 @@ public class FrameNavigator : ControlNavigator<Frame>
         }
     }
 
-    protected override async Task<string> Show(string path, Type viewType, object data)
+    protected override async Task<string?> Show(string? path, Type? viewType, object? data)
     {
         Control.Navigated -= Frame_Navigated;
         try

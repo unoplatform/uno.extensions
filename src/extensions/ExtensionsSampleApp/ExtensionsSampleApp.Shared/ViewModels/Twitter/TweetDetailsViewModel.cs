@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Uno.Extensions.Navigation;
 
@@ -9,17 +10,14 @@ namespace ExtensionsSampleApp.ViewModels.Twitter
     {
         private Tweet tweet;
         public Tweet Tweet { get => tweet; set => SetProperty(ref tweet, value); }
-        public TweetDetailsViewModel(Tweet tweet)
+        public TweetDetailsViewModel(Tweet tweet, IDictionary<string, object> data)
         {
             Tweet = tweet;
-        }
-
-        public async Task Start(NavigationRequest context)
-        {
             if (Tweet is null)
             {
-                Tweet = new Tweet { Id = int.Parse(context.Route.Data["TweetId"] + ""), Author = "Ned", Text = "Tweet loaded on start" };
+                Tweet = new Tweet { Id = int.Parse(data["TweetId"] + ""), Author = "Ned", Text = "Tweet loaded on start" };
             }
         }
+
     }
 }

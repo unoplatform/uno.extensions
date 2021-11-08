@@ -22,7 +22,7 @@ namespace ExtensionsSampleApp.Navigators;
 
 public class TabViewNavigator : ControlNavigator<TabView>
 {
-    protected override FrameworkElement CurrentView => (Control.SelectedItem as TabViewItem)?.Content as FrameworkElement;
+    protected override FrameworkElement? CurrentView => (Control.SelectedItem as TabViewItem)?.Content as FrameworkElement;
 
     public TabViewNavigator(
         ILogger<TabViewNavigator> logger,
@@ -55,7 +55,7 @@ public class TabViewNavigator : ControlNavigator<TabView>
     {
         Logger.LogDebugMessage($"Looking for tab with name '{tabName}'");
         return (from t in Control.TabItems.OfType<TabViewItem>()
-                where t.Name == tabName
+                where t.GetName()==tabName || t.Name == tabName || (t.Content as FrameworkElement)?.GetName()==tabName
                 select t).FirstOrDefault();
     }
 

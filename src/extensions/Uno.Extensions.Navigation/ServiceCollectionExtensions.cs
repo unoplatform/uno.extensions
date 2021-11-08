@@ -48,6 +48,7 @@ public static class ServiceCollectionExtensions
                    .AddRegion<Microsoft.UI.Xaml.Controls.NavigationView, NavigationViewNavigator>()
                     .AddRegion<ContentDialog, ContentDialogNavigator>()
                     .AddRegion<MessageDialog, MessageDialogNavigator>()
+                    .AddRegion<Flyout, FlyoutNavigator>()
                     .AddRegion<Popup, PopupNavigator>()
 
                     .AddSingleton<INavigationBindingHandler, ButtonBaseNavigationBindingHandler>()

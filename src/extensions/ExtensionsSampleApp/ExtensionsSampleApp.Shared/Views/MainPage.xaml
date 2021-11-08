@@ -25,6 +25,7 @@
             <Setter Property="Foreground"
                     Value="DarkOrange" />
         </Style>
+
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -112,6 +113,28 @@
                 <TextBlock Text=""
                            x:Name="MessageDialogResultText"
                            Style="{StaticResource ResultTextStyle}" />
+
+                <TextBlock Text="nav:Navigation.Request=&quot;CustomFlyout&quot; - Flyout" />
+                <Button Content="Flyout - CustomFlyout"
+                        nav:Navigation.Request="!CustomFlyout">
+                    <!--nav:Region.Navigator="FlyoutNavigator">
+                    <FlyoutBase.AttachedFlyout>
+                        <Flyout>
+                            <TextBlock Text="This is some text in a flyout." />
+                        </Flyout>
+                    </FlyoutBase.AttachedFlyout>-->
+                </Button>
+
+                <TextBlock Text="nav:Navigation.Request=&quot;CustomFlyoutResource&quot; - Flyout" />
+                <Button Content="Flyout - CustomFlyoutResource"
+                        nav:Navigation.Request="!CustomFlyoutResource">
+                </Button>
+
+                <TextBlock Text="Flyout launched from viewmodel" />
+                <Button Content="Flyout - from ViewModel"
+                        Command="{Binding NavigateToFlyoutCommand}" />
+
+
 
                 <Button Content="Root - Go to Uno Commerce Sample"
                         nav:Navigation.Request="-/LoginPage" />

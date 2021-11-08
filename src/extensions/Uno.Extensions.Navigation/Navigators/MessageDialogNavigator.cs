@@ -25,8 +25,9 @@ public class MessageDialogNavigator : DialogNavigator
     {
     }
 
-    protected override IAsyncInfo DisplayDialog(Route route, object viewModel)
+    protected override IAsyncInfo DisplayDialog(NavigationRequest request, Type? viewType, object? viewModel)
     {
+        var route = request.Route;
         var navigation = Region.Navigator();
         var services = this.Get<IServiceProvider>();
         var mapping = Mappings.Find(route);

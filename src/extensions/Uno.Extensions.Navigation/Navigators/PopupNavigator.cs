@@ -20,7 +20,7 @@ namespace Uno.Extensions.Navigation.Navigators;
 
 public class PopupNavigator : ControlNavigator<Popup>
 {
-    protected override FrameworkElement CurrentView => Control;
+    protected override FrameworkElement? CurrentView => Control;
 
     public PopupNavigator(
         ILogger<ContentControlNavigator> logger,
@@ -44,7 +44,7 @@ public class PopupNavigator : ControlNavigator<Popup>
         Region.Navigator().NavigateToRouteAsync(sender, "hide");
     }
 
-    protected override async Task<string> Show(string path, Type viewType, object data)
+    protected override async Task<string?> Show(string? path, Type? viewType, object? data)
     {
         try
         {

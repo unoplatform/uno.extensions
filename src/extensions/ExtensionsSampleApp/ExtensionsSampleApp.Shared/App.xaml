@@ -2,7 +2,8 @@
     x:Class="ExtensionsSampleApp.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:ExtensionsSampleApp">
+             xmlns:nav="using:Uno.Extensions.Navigation.Controls"
+             xmlns:local="using:ExtensionsSampleApp">
 	
 	<Application.Resources>
         <ResourceDictionary>
@@ -15,7 +16,25 @@
                 <!-- Load the Material control resources -->
                 <MaterialResources xmlns="using:Uno.Material" />
                 <ToolkitResources xmlns="using:Uno.UI.ToolkitLib" />
+                
             </ResourceDictionary.MergedDictionaries>
+            <Flyout x:Key="CustomFlyoutResource"
+                    Placement="Full">
+                <Flyout.FlyoutPresenterStyle>
+                    <Style TargetType="FlyoutPresenter">
+                        <Setter Property="HorizontalAlignment"
+                                Value="Center" />
+                        <Setter Property="MaxWidth"
+                                Value="NaN" />
+                    </Style>
+                </Flyout.FlyoutPresenterStyle>
+                <Grid Width="900">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="Flyout as resource" />
+                        <Button Content="Close" nav:Navigation.Request="../-" />
+                    </StackPanel>
+                </Grid>
+            </Flyout>
         </ResourceDictionary>
     </Application.Resources>
 

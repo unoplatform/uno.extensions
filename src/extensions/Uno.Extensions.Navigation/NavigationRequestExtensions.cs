@@ -3,6 +3,13 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Uno.Extensions.Navigation.Regions;
+#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+using Windows.UI.Xaml;
+#else
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+#endif
 
 namespace Uno.Extensions.Navigation;
 
@@ -27,5 +34,23 @@ public static class NavigationRequestExtensions
     {
         var request = new NavigationRequest(sender, path.AsRoute(data), cancellationToken, resultType);
         return request;
+    }
+
+    public static object? RouteResourceView(this NavigationRequest request, IRegion region)
+    {
+        object resource;
+        if ((request.Sender is FrameworkElement senderElement &&
+            senderElement.Resources.TryGetValue(request.Route.Base, out resource)) ||
+
+            (region.View is FrameworkElement regionElement &&
+            regionElement.Resources.TryGetValue(request.Route.Base, out resource)) ||
+
+            (Application.Current.Resources.TryGetValue(request.Route.Base, out resource)))
+        {
+            return resource;
+
+        }
+
+        return null;
     }
 }

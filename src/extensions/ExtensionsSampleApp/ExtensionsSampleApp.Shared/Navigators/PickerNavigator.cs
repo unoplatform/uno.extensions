@@ -28,8 +28,9 @@ public class PickerNavigator : ControlNavigator
     {
     }
 
-    protected override Task<Route> RouteNavigateAsync(Route route)
+    protected override Task<Route> ExecuteRequestAsync(NavigationRequest request)
     {
+        var route = request.Route;
 #if __IOS__
         var appWindow = Windows.UI.Xaml.Window.Current;
         var rootGrid = ((appWindow.Content is Frame frame) ? (frame.Content as Page).Content : appWindow.Content) as Grid;

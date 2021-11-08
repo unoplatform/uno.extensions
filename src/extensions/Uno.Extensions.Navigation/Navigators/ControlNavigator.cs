@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,13 +17,13 @@ namespace Uno.Extensions.Navigation.Navigators;
 public abstract class ControlNavigator<TControl> : ControlNavigator
     where TControl : class
 {
-    public virtual TControl Control { get; set; }
+    public virtual TControl? Control { get; }
 
     protected ControlNavigator(
         ILogger logger,
         IRegion region,
         IRouteMappings mappings,
-        TControl control)
+        TControl? control)
         : base(logger, mappings, region)
     {
         Control = control;
@@ -30,10 +31,11 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 
     protected virtual FrameworkElement? CurrentView => default;
 
-    protected abstract Task<string> Show(string path, Type? viewType, object data);
+    protected abstract Task<string?> Show(string? path, Type? viewType, object? data);
 
-    protected override async Task<Route> RouteNavigateAsync(Route route)
+    protected override async Task<Route> ExecuteRequestAsync(NavigationRequest request)
     {
+        var route = request.Route;
         var mapping = Mappings.Find(route);
         Logger.LogDebugMessage($"Navigating to path '{route.Base}' with view '{mapping?.View?.Name}'");
         var executedPath = await Show(route.Base, mapping?.View, route.Data);
@@ -110,6 +112,8 @@ public abstract class ControlNavigator : Navigator
     private async Task<NavigationResponse?> RegionNavigateAsync(NavigationRequest request)
     {
         // Make sure the view has completely loaded before trying to process the nav request
+        // Typically this might happen with the first navigation of the application where the
+        // window hasn't been activated yet, so the root region may not have loaded
         await Region.View.EnsureLoaded();
 
         if (request.Route.IsNested() &&
@@ -136,7 +140,8 @@ public abstract class ControlNavigator : Navigator
     }
 
     public virtual void ControlInitialize()
-    { }
+    {
+    }
 
     protected async Task<NavigationResponse> ControlNavigateAsync(NavigationRequest request)
     {
@@ -160,7 +165,7 @@ public abstract class ControlNavigator : Navigator
             navigator = new ResponseNavigator(navigator, request.Result, resultTask);
         }
 
-        var executedRoute = await RouteNavigateAsync(request.Route);
+        var executedRoute = await ExecuteRequestAsync(request);
 
         UpdateRoute(executedRoute);
 
@@ -211,5 +216,5 @@ public abstract class ControlNavigator : Navigator
         return null;
     }
 
-    protected abstract Task<Route> RouteNavigateAsync(Route route);
+    protected abstract Task<Route> ExecuteRequestAsync(NavigationRequest request);
 }

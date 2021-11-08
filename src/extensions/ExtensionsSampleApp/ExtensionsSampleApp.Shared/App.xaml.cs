@@ -40,6 +40,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Controls.Primitives;
 #else
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -86,11 +87,11 @@ namespace ExtensionsSampleApp
                .ConfigureServices(services =>
                {
                    services
-                   //                    .AddRegion<TabView, TabViewNavigator>()
-                   //                   .AddRegion<Control, ControlVisualStateNavigator>(ControlVisualStateNavigator.NavigatorName)
-                   //#if __IOS__
-                   //                    .AddRegion<Picker, PickerNavigator>()
-                   //#endif
+                                       .AddRegion<TabView, TabViewNavigator>()
+                                      .AddRegion<Control, ControlVisualStateNavigator>(ControlVisualStateNavigator.NavigatorName)
+#if __IOS__
+                                       .AddRegion<Picker, PickerNavigator>()
+#endif
                    .AddRegion<TabBar, TabBarRegion>()
                    .AddTransient<MainViewModel>()
                    .AddTransient<SecondViewModel>()
@@ -175,35 +176,49 @@ namespace ExtensionsSampleApp
                                         nav with { Route = nav.Route with { Base = "home" } } :
                                         nav));
             mapping.Register(new RouteMap("home",
-                RegionInitialization: (region, nav) => string.IsNullOrWhiteSpace(nav.Route.Path) ?
-                                        nav with { Route = nav.Route with { Path = typeof(TweetsPage).Name } } :
-                                        nav with
-                                        {
-                                            Route = nav.Route with
-                                            {
-                                                Path = nav.Route.Path
-                                                          .TrimStart('+')
-                                                          .StartsWith(typeof(TweetsPage).Name) ?
-                                                       nav.Route.Path :
-                                                       typeof(TweetsPage).Name + Schemes.NavigateForward + nav.Route.Path
-                                            }
-                                        }
-                                        ));
+                RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
+                                          nav with { Route = nav.Route.AppendPage<TweetsPage>() } : nav with
+                                          {
+                                              Route = nav.Route.ContainsView<TweetsPage>() ?
+                                                              nav.Route :
+                                                              nav.Route.InsertPage<TweetsPage>()
+                                          }));
+            //(region, nav) => string.IsNullOrWhiteSpace(nav.Route.Path) ?
+            //                        nav with { Route = nav.Route with { Path = typeof(TweetsPage).Name } } :
+            //                        nav with
+            //                        {
+            //                            Route = nav.Route with
+            //                            {
+            //                                Path = nav.Route.Path
+            //                                          .TrimStart('+')
+            //                                          .StartsWith(typeof(TweetsPage).Name) ?
+            //                                       nav.Route.Path :
+            //                                       typeof(TweetsPage).Name + Schemes.NavigateForward + nav.Route.Path
+            //                            }
+            //                        }
+            //                        ));
             mapping.Register(new RouteMap("notifications",
-                RegionInitialization: (region, nav) => string.IsNullOrWhiteSpace(nav.Route.Path) ?
-                                        nav with { Route = nav.Route with { Path = typeof(NotificationsPage).Name } } :
-                                        nav with
-                                        {
-                                            Route = nav.Route with
-                                            {
-                                                Path = nav.Route.Path
-                                                          .TrimStart('+')
-                                                          .StartsWith(typeof(NotificationsPage).Name) ?
-                                                       nav.Route.Path :
-                                                       typeof(NotificationsPage).Name + Schemes.NavigateForward + nav.Route.Path
-                                            }
-                                        }
-                                        ));
+                RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
+                                         nav with { Route = nav.Route.AppendPage<NotificationsPage>() } : nav with
+                                         {
+                                             Route = nav.Route.ContainsView<NotificationsPage>() ?
+                                                             nav.Route :
+                                                             nav.Route.InsertPage<NotificationsPage>()
+                                         }));
+            //(region, nav) => string.IsNullOrWhiteSpace(nav.Route.Path) ?
+            //                        nav with { Route = nav.Route with { Path = typeof(NotificationsPage).Name } } :
+            //                        nav with
+            //                        {
+            //                            Route = nav.Route with
+            //                            {
+            //                                Path = nav.Route.Path
+            //                                          .TrimStart('+')
+            //                                          .StartsWith(typeof(NotificationsPage).Name) ?
+            //                                       nav.Route.Path :
+            //                                       typeof(NotificationsPage).Name + Schemes.NavigateForward + nav.Route.Path
+            //                            }
+            //                        }
+            //                        ));
             mapping.Register(new RouteMap(typeof(TweetsPage).Name, typeof(TweetsPage), typeof(TweetsViewModel)));
             mapping.Register(new RouteMap(typeof(TweetDetailsPage).Name, typeof(TweetDetailsPage),
                 typeof(TweetDetailsViewModel), typeof(Tweet),
@@ -213,6 +228,7 @@ namespace ExtensionsSampleApp
             mapping.Register(new RouteMap(typeof(NavigationViewPage).Name, typeof(NavigationViewPage)));
             mapping.Register(new RouteMap(typeof(NavigationViewGridVisibilityPage).Name, typeof(NavigationViewGridVisibilityPage)));
             mapping.Register(new RouteMap(typeof(NavigationViewVisualStatesPage).Name, typeof(NavigationViewVisualStatesPage)));
+            mapping.Register(new RouteMap(typeof(CustomFlyout).Name, typeof(CustomFlyout), typeof(CustomViewModel)));
 
             var notifier = Host.Services.GetService<INavigationNotifier>();
             notifier.Register(this);
@@ -336,8 +352,8 @@ namespace ExtensionsSampleApp
             //var navResult = nav.NavigateToRouteAsync(this, "TabbedPage/doc1", Schemes.Root);
             //var navResult = nav.NavigateToRouteAsync(this, "TabbedPage/doc2/SecondPage/content/Content1", Schemes.Root);
             //var navResult = nav.NavigateToRouteAsync(this, "TwitterPage/notifications/TweetDetailsPage?TweetId=23", Schemes.Root);
-            //var navResult = nav.NavigateToViewAsync<LoginPage>(this);
-            var navResult = nav.NavigateToRouteAsync(this, "/CommerceHomePage/Products/ProductDetails?ProductId=3");
+            var navResult = nav.NavigateToViewAsync<LoginPage>(this);
+            //var navResult = nav.NavigateToRouteAsync(this, "/CommerceHomePage/Products/ProductDetails?ProductId=3");
 
 #endif
 
@@ -433,6 +449,7 @@ namespace ExtensionsSampleApp
             WebAssemblyRuntime.InvokeJS($"window.history.pushState(\"{ route}\",\"ExtensionsApp\", \"{ route}\");");
 #endif
         }
+
     }
 
     public static class VisualTreeUtils

@@ -7,6 +7,7 @@ using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Navigators;
 using Uno.Extensions.Navigation.Regions;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+using Windows.UI.Xaml;
 #else
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -91,11 +92,17 @@ public class NavigatorFactory : INavigatorFactory
         var scope = region.Services.CreateScope();
         var services = scope.ServiceProvider;
 
-        var dialogRegion = new NavigationRegion(null, services);
+        var dialogRegion = new NavigationRegion(region.View, services);
         services.AddInstance<IRegion>(dialogRegion);
 
         var mapping = Mappings.FindByPath(request.Route.Base);
-        var serviceType = this.FindServiceByType(mapping.View);//  ServiceTypes[mapping.View.Name];
+        var serviceLookupType = mapping?.View;
+        if (serviceLookupType is null)
+        {
+            object? resource = request.RouteResourceView(region);
+            serviceLookupType = resource?.GetType();
+        }
+        var serviceType = this.FindServiceByType(serviceLookupType);//  ServiceTypes[mapping.View.Name];
         if (serviceType is null)
         {
             return null;

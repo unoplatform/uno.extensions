@@ -15,7 +15,7 @@ namespace Uno.Extensions.Navigation.Navigators;
 
 public class ContentControlNavigator : ControlNavigator<ContentControl>
 {
-    protected override FrameworkElement CurrentView => Control.Content as FrameworkElement;
+    protected override FrameworkElement? CurrentView => Control.Content as FrameworkElement;
 
     public ContentControlNavigator(
         ILogger<ContentControlNavigator> logger,
@@ -26,7 +26,7 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
     {
     }
 
-    protected override async Task<string> Show(string path, Type viewType, object data)
+    protected override async Task<string?> Show(string? path, Type? viewType, object? data)
     {
         try
         {

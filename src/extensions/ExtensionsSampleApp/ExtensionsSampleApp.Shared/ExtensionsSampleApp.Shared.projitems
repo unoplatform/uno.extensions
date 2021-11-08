@@ -64,6 +64,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UnoCommerce\ViewModels\ProductDetailsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UnoCommerce\ViewModels\ProductsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Content2ViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\CustomViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\FourthViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MainViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Twitter\NotificationsViewModel.cs" />
@@ -80,6 +81,9 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\Content2.xaml.cs">
       <DependentUpon>Content2.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\CustomFlyout.xaml.cs">
+      <DependentUpon>CustomFlyout.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\FourthPage.xaml.cs">
       <DependentUpon>FourthPage.xaml</DependentUpon>
@@ -180,6 +184,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\Content2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\CustomFlyout.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

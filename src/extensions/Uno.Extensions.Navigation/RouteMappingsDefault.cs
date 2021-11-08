@@ -16,7 +16,7 @@ public class RouteMappingsDefault : RouteMappings
 {
     public bool ReturnImplicitMapping { get; set; } = true;
 
-    public string[] ViewSuffixes { get; set; } = new[] { "View", "Page", "Control" };
+    public string[] ViewSuffixes { get; set; } = new[] { "View", "Page", "Control", "Flyout", "Dialog" };
 
     public string[] ViewModelSuffixes { get; set; } = new[] { "ViewModel", "VM" };
 

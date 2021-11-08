@@ -6,15 +6,15 @@ public interface IRouteMappings
 {
     void Register(RouteMap map);
 
-    RouteMap Find(Route route);
+    RouteMap? Find(Route route);
 
-    RouteMap FindByPath(string path);
+    RouteMap? FindByPath(string? path);
 
-    RouteMap FindByViewModel(Type viewModelType);
+    RouteMap? FindByViewModel(Type? viewModelType);
 
-    RouteMap FindByView(Type viewType);
+    RouteMap? FindByView(Type? viewType);
 
-    RouteMap FindByData(Type dataType);
+    RouteMap? FindByData(Type? dataType);
 
-    RouteMap FindByResultData(Type resultDataType);
+    RouteMap? FindByResultData(Type? resultDataType);
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation.Regions;
 using Windows.Foundation;
@@ -19,8 +20,11 @@ public abstract class DialogNavigator : ControlNavigator
     {
     }
 
-    protected override async Task<Route> RouteNavigateAsync(Route route)
+    protected override bool CanNavigateToRoute(Route route) => base.CanNavigateToRoute(route) || route.IsBackOrCloseNavigation();
+
+    protected override async Task<Route> ExecuteRequestAsync(NavigationRequest request)
     {
+        var route = request.Route;
         // If this is back navigation, then make sure it's used to close
         // any of the open dialogs
         if (route.FrameIsBackNavigation() && ShowTask is not null)
@@ -29,8 +33,9 @@ public abstract class DialogNavigator : ControlNavigator
         }
         else
         {
-            var viewModel = CreateViewModel(Region.Services, this, route, Mappings.Find(route));
-            ShowTask = DisplayDialog(route, viewModel);
+            var mapping = Mappings.Find(route);
+            var viewModel = CreateViewModel(Region.Services, this, route, mapping);
+            ShowTask = DisplayDialog(request, mapping?.View, viewModel);
         }
         var responseRequest = route with { Path = null };
         return responseRequest;
@@ -46,5 +51,5 @@ public abstract class DialogNavigator : ControlNavigator
         dialog.Cancel();
     }
 
-    protected abstract IAsyncInfo DisplayDialog(Route route, object vm);
+    protected abstract IAsyncInfo DisplayDialog(NavigationRequest request, Type? viewType, object? viewModel);
 }

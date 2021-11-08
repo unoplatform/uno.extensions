@@ -16,24 +16,13 @@ namespace Uno.Extensions.Navigation.Navigators;
 
 public class NavigationViewNavigator : ControlNavigator<Microsoft.UI.Xaml.Controls.NavigationView>, ICompositeNavigator
 {
-    protected override FrameworkElement CurrentView => Control.SelectedItem as FrameworkElement;
+    protected override FrameworkElement? CurrentView => Control?.SelectedItem as FrameworkElement;
 
-    private Microsoft.UI.Xaml.Controls.NavigationView _control;
-
-    public override Microsoft.UI.Xaml.Controls.NavigationView Control
+    public override void ControlInitialize()
     {
-        get => _control;
-        set
+        if (Control is not null)
         {
-            if (_control != null)
-            {
-                _control.SelectionChanged -= ControlSelectionChanged;
-            }
-            _control = value;
-            if (_control != null)
-            {
-                _control.SelectionChanged += ControlSelectionChanged;
-            }
+            Control.SelectionChanged += ControlSelectionChanged;
         }
     }
 
@@ -41,7 +30,7 @@ public class NavigationViewNavigator : ControlNavigator<Microsoft.UI.Xaml.Contro
     {
         var tbi = args.SelectedItem as FrameworkElement;
 
-        var path = tbi.GetName() ?? tbi.Name;
+        var path = tbi?.GetName() ?? tbi?.Name;
         if (!string.IsNullOrEmpty(path))
         {
             Region.Navigator().NavigateToRouteAsync(sender, path);
@@ -57,9 +46,14 @@ public class NavigationViewNavigator : ControlNavigator<Microsoft.UI.Xaml.Contro
     {
     }
 
-    protected override async Task<string> Show(string path, Type viewType, object data)
+    protected override async Task<string?> Show(string? path, Type? viewType, object? data)
     {
-        _control.SelectionChanged -= ControlSelectionChanged;
+        if (Control is null)
+        {
+            return null;
+        }
+
+        Control.SelectionChanged -= ControlSelectionChanged;
         try
         {
             var item = (from mi in Control.MenuItems.OfType<FrameworkElement>()
@@ -76,7 +70,7 @@ public class NavigationViewNavigator : ControlNavigator<Microsoft.UI.Xaml.Contro
         finally
         {
             await CurrentView.EnsureLoaded();
-            _control.SelectionChanged += ControlSelectionChanged;
+            Control.SelectionChanged += ControlSelectionChanged;
         }
     }
 }

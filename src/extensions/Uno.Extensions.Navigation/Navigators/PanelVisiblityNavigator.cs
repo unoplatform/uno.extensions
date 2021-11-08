@@ -19,7 +19,7 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 {
     public const string NavigatorName = "Visibility";
 
-    protected override FrameworkElement CurrentView => CurrentlyVisibleControl;
+    protected override FrameworkElement? CurrentView => CurrentlyVisibleControl;
 
     public PanelVisiblityNavigator(
         ILogger<PanelVisiblityNavigator> logger,
@@ -32,7 +32,7 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 
     private FrameworkElement CurrentlyVisibleControl { get; set; }
 
-    protected override async Task<string> Show(string path, Type viewType, object data)
+    protected override async Task<string?> Show(string? path, Type? viewType, object? data)
     {
         var controlToShow =
             Control.Children.OfType<FrameworkElement>().FirstOrDefault(x => x.GetName() == path) ??

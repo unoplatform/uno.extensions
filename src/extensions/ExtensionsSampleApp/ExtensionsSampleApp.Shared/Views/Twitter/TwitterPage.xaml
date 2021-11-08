@@ -12,6 +12,7 @@
 
     <Grid>
         <controls:TabView nav:Region.Attached="true"
+                          nav:Region.Name="TwitterPage"
                           HorizontalAlignment="Stretch"
                           VerticalAlignment="Stretch"
                           IsAddTabButtonVisible="False">

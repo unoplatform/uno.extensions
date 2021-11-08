@@ -23,6 +23,9 @@ public static class RouteExtensions
 
     public static bool IsCurrent(this Route route) => route.Scheme == Schemes.Current;
 
+    public static bool IsBackOrCloseNavigation(this Route route) =>
+    route.Scheme.StartsWith(Schemes.NavigateBack);
+
     public static bool IsFrameNavigation(this Route route) =>
         route.Scheme.StartsWith(Schemes.NavigateForward) ||
         route.Scheme.StartsWith(Schemes.NavigateBack);

@@ -70,7 +70,7 @@ public static class FrameworkElementExtensions
         this FrameworkElement view,
         IServiceProvider services,
         INavigator navigation,
-        object viewModel)
+        object? viewModel)
     {
         if (view is not null)
         {

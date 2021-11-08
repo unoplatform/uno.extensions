@@ -26,9 +26,9 @@ public class RouteMappings : IRouteMappings
         Mappings[map.Path] = map;
     }
 
-    public RouteMap Find(Route route) => FindByPath(route.Base);
+    public RouteMap? Find(Route route) => FindByPath(route.Base);
 
-    public virtual RouteMap FindByPath(string path)
+    public virtual RouteMap? FindByPath(string? path)
     {
         if (path == Schemes.Parent ||
             path == Schemes.Current)
@@ -39,27 +39,27 @@ public class RouteMappings : IRouteMappings
         return Mappings.TryGetValue(path, out var map) ? map : default;
     }
 
-    public virtual RouteMap FindByViewModel(Type viewModelType)
+    public virtual RouteMap? FindByViewModel(Type? viewModelType)
     {
         return FindByInheritedTypes(viewModelType, map => map.ViewModel);
     }
 
-    public virtual RouteMap FindByView(Type viewType)
+    public virtual RouteMap? FindByView(Type? viewType)
     {
         return FindByInheritedTypes(viewType, map => map.View);
     }
 
-    public virtual RouteMap FindByData(Type dataType)
+    public virtual RouteMap? FindByData(Type? dataType)
     {
         return FindByInheritedTypes(dataType, map => map.Data);
     }
 
-    public virtual RouteMap FindByResultData(Type dataType)
+    public virtual RouteMap? FindByResultData(Type? dataType)
     {
         return FindByInheritedTypes(dataType, map => map.ResultData);
     }
 
-    private RouteMap FindByInheritedTypes(Type typeToFind, Func<RouteMap, Type> mapType)
+    private RouteMap? FindByInheritedTypes(Type? typeToFind, Func<RouteMap, Type> mapType)
     {
         // Handle the non-reflection check first
         var map = (from m in Mappings

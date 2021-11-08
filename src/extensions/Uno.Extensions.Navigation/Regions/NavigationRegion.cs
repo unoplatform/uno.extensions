@@ -58,7 +58,7 @@ public sealed class NavigationRegion : IRegion
 
     public ICollection<IRegion> Children { get; } = new List<IRegion>();
 
-    public NavigationRegion(FrameworkElement view, IServiceProvider services = null)
+    public NavigationRegion(FrameworkElement? view = null, IServiceProvider? services = null)
     {
         View = view;
         if (view is not null)
