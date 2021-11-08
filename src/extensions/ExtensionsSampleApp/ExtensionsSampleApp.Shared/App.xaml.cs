@@ -41,6 +41,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Controls.Primitives;
+using ExtensionsSampleApp.Controls;
 #else
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -93,6 +94,9 @@ namespace ExtensionsSampleApp
                                        .AddRegion<Picker, PickerNavigator>()
 #endif
                    .AddRegion<TabBar, TabBarRegion>()
+                    .AddSingleton<INavigationBindingHandler, TabBarItemNavigationBindingHandler>()
+                    .AddSingleton<INavigationBindingHandler, NavigationViewItemNavigationBindingHandler>()
+
                    .AddTransient<MainViewModel>()
                    .AddTransient<SecondViewModel>()
                    .AddViewModelData<Widget>()

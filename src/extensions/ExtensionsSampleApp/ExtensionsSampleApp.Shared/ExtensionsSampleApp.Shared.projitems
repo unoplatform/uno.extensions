@@ -22,6 +22,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)CommerceSettings.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\TabBarItemNavigationBindingHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Navigators\ControlVisualStateNavigator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Navigators\PickerNavigator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Navigators\TabBarNavigator.cs" />

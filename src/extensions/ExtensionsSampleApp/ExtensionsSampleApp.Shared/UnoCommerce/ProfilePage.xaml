@@ -9,6 +9,6 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-
+        <TextBlock Text="Profile" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="48"/>
     </Grid>
 </Page>

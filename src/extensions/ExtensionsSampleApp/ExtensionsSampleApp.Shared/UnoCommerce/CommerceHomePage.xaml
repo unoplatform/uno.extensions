@@ -59,7 +59,7 @@
                 </muxc:NavigationViewItem>
                 <muxc:NavigationViewItem Icon="Contact"
                                          Content="Profile"
-                                         nav:Region.Name="Profile" />
+                                         nav:Navigation.Request="../../Profile" />
             </muxc:NavigationView.MenuItems>
 
             <Grid>
@@ -90,6 +90,7 @@
                                 Visibility="Collapsed"
                                 Background="DarkGray"
                                 nav:Region.Attached="true"
+                                
                                 Grid.Row="1">
                     <toolkit:TabBar.Items>
                         <toolkit:TabBarItem Content="Products"
@@ -97,7 +98,8 @@
                         <toolkit:TabBarItem Content="Deals"
                                             nav:Region.Name="Deals" />
                         <toolkit:TabBarItem Content="Profile"
-                                            nav:Region.Name="Profile" />
+                                            IsSelectable="False"
+                                            nav:Navigation.Request="../../../Profile" />
                     </toolkit:TabBar.Items>
                 </toolkit:TabBar>
 

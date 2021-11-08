@@ -1,4 +1,5 @@
 ﻿#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls.Primitives;
 #else
@@ -9,7 +10,7 @@ using Microsoft.UI.Xaml.Data;
 
 namespace Uno.Extensions.Navigation.Controls
 {
-    public class ButtonBaseNavigationBindingHandler : ControlNavigationBindingHandler<ButtonBase>
+    public class ButtonBaseNavigationBindingHandler : ActionNavigationBindingHandlerBase<ButtonBase>
     {
         public override void Bind(FrameworkElement view)
         {
@@ -19,44 +20,10 @@ namespace Uno.Extensions.Navigation.Controls
                 return;
             }
 
-            RoutedEventHandler clickAction = async (actionSender, actionArgs) =>
-            {
-                var button = actionSender as ButtonBase;
-                if (button is null)
-                {
-                    return;
-                }
-
-                var path = button.GetRequest();
-                var nav = button.Navigator();
-                await nav.NavigateToRouteAsync(button, path, Schemes.Current, button.GetData());
-            };
-
-            if (viewButton.IsLoaded)
-            {
-                viewButton.Click += clickAction;
-            }
-
-            viewButton.Loaded += (s, e) =>
-            {
-                var button = s as ButtonBase;
-                if (button is null)
-                {
-                    return;
-                }
-
-                button.Click += clickAction;
-            };
-            viewButton.Unloaded += (s, e) =>
-            {
-                var button = s as ButtonBase;
-                if (button is null)
-                {
-                    return;
-                }
-
-                button.Click -= clickAction;
-            };
+            BindAction(viewButton,
+                action => new RoutedEventHandler((sender, args) => action((ButtonBase)sender)),
+                (element, handler) => element.Click += handler,
+                (element, handler) => element.Click -= handler);
         }
     }
 }
