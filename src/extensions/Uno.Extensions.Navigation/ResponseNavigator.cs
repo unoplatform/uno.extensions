@@ -28,7 +28,8 @@ namespace Uno.Extensions.Navigation
             if (request.Route.FrameIsBackNavigation())
             {
                 var responseData = request.Route.ResponseData() as Options.Option;
-                if (responseData?.GetValueType() == ResultType)
+                var value = responseData?.GetValue();
+                if (value?.GetType() == ResultType)
                 {
                     ResultCompletion.TrySetResult(responseData);
                 }

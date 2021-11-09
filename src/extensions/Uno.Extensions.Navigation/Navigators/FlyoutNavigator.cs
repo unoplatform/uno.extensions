@@ -40,6 +40,24 @@ public class FlyoutNavigator : ControlNavigator
         // any of the open dialogs
         if (route.FrameIsBackNavigation() && Flyout is not null)
         {
+            //var navigation = Region.Navigator();
+            //var responseNav = navigation as ResponseNavigator;
+            //var data = request.Route.Data;
+            
+            //if (responseNav is not null &&
+            //        responseNav.ResultCompletion.Task.Status != TaskStatus.Canceled &&
+            //        responseNav.ResultCompletion.Task.Status != TaskStatus.RanToCompletion)
+            //{
+            //    if (data.TryGetValue(string.Empty, out var responseData))
+            //    {
+            //        responseNav.ResultCompletion.TrySetResult(Options.Option.Some(responseData));
+            //    }
+            //    else
+            //    {
+            //        responseNav.ResultCompletion.TrySetResult(Options.Option.None<object>());
+            //    }
+            //}
+
             await CloseFlyout(route);
         }
         else
@@ -54,6 +72,7 @@ public class FlyoutNavigator : ControlNavigator
 
     private async Task CloseFlyout(Route route)
     {
+
         Flyout.Hide();
     }
 

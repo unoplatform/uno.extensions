@@ -58,10 +58,10 @@ public sealed class NavigationRegion : IRegion
 
     public ICollection<IRegion> Children { get; } = new List<IRegion>();
 
-    public NavigationRegion(FrameworkElement? view = null, IServiceProvider? services = null)
+    public NavigationRegion(FrameworkElement? view = null, IServiceProvider? services = null, bool attachToHierarchy = true)
     {
         View = view;
-        if (view is not null)
+        if (view is not null && attachToHierarchy)
         {
             View.Loading += ViewLoading;
             View.Loaded += ViewLoaded;

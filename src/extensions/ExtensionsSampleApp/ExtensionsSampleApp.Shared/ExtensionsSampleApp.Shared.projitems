@@ -62,6 +62,7 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)UnoCommerce\Services\ProductServices.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UnoCommerce\ViewModels\DealsViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UnoCommerce\ViewModels\FilterViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UnoCommerce\ViewModels\ProductDetailsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UnoCommerce\ViewModels\ProductsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Content2ViewModel.cs" />

@@ -24,7 +24,9 @@ public static class RouteExtensions
     public static bool IsCurrent(this Route route) => route.Scheme == Schemes.Current;
 
     public static bool IsBackOrCloseNavigation(this Route route) =>
-    route.Scheme.StartsWith(Schemes.NavigateBack);
+    route.Scheme
+        .TrimStart(Schemes.Parent) // Handle eg ../-  which is still a back navigation
+        .StartsWith(Schemes.NavigateBack);
 
     public static bool IsFrameNavigation(this Route route) =>
         route.Scheme.StartsWith(Schemes.NavigateForward) ||
@@ -292,7 +294,14 @@ public static class RouteExtensions
         var routeBase = ExtractBase(path, out var scheme, out path);
 
         var route = new Route(scheme, routeBase, path, paras);
-
+        if (route.IsBackOrCloseNavigation() &&
+            data is not null &&
+            data is not Options.Option)
+        {
+            data = Options.Option.Some<object>(data);
+            paras[string.Empty] = data;
+            route = route with { Data = paras };
+        }
         return route;
     }
 

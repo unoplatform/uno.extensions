@@ -33,9 +33,14 @@
                            HorizontalAlignment="Left"
                            VerticalAlignment="Center"
                            FontSize="32" />
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Right">
+                <TextBlock Text="{Binding FilterQuery}" />
                 <HyperlinkButton Content="Filter"
-                                 HorizontalAlignment="Right"
-                                 nav:Navigation.Request="!FilterPopup" />
+                                 nav:Navigation.Request="!FilterPopup"
+nav:Navigation.Data="{Binding FilterQuery, Mode=TwoWay}"
+                                 />
+                </StackPanel>
                 <!--<Popup nav:Region.Name="filter"
                        nav:Region.Attached="True"
                        IsLightDismissEnabled="True"

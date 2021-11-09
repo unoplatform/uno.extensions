@@ -111,6 +111,7 @@ namespace ExtensionsSampleApp
                    .AddTransient<Content2ViewModel>()
                    .AddViewModelData<Tweet>()
                    .AddTransient<ProductsViewModel>()
+                   .AddTransient<FilterViewModel>()
                    .AddTransient<ProductDetailsViewModel>()
                    .AddViewModelData<Product>()
                    .AddTransient<DealsViewModel>()

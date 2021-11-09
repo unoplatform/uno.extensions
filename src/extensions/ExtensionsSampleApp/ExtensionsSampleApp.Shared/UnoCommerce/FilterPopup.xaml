@@ -67,6 +67,7 @@
         </StackPanel>
         <Border BorderThickness="1"
                 BorderBrush="Black" />
+        <TextBox Text="{Binding Query, Mode=TwoWay}" PlaceholderText="Keywords" x:Name="QueryText" />
         <TextBlock Text="Categories" />
         <StackPanel Orientation="Horizontal">
             <controls:Chip Content="Shoes"
@@ -101,6 +102,8 @@
                        HorizontalAlignment="Right" />
         </Grid>
         <Button HorizontalAlignment="Stretch"
-                Content="Apply" />
+                Content="Apply"
+                nav:Navigation.Request="-"
+                nav:Navigation.Data="{Binding Query}" />
     </StackPanel>
 </Flyout>

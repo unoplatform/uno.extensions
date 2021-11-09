@@ -26,7 +26,28 @@ namespace Uno.Extensions.Navigation.Controls
             {
                 var path = element.GetRequest();
                 var nav = element.Navigator();
-                await nav.NavigateToRouteAsync(element, path, Schemes.Current, element.GetData());
+
+                var data = element.GetData();
+                if (data is not null)
+                {
+                    var binding = element.GetBindingExpression(Navigation.DataProperty);
+                    if (binding is not null && binding.ParentBinding.Mode == Windows.UI.Xaml.Data.BindingMode.TwoWay)
+                    {
+                        var response = await nav.NavigateToRouteForResultAsync(element, path, Schemes.Current, data, resultType: data.GetType());
+                        var result = await response.Result;
+                        element.SetData(result.GetValue() +"");
+                        binding.UpdateSource();
+                    }
+                    else
+                    {
+                        await nav.NavigateToRouteAsync(element, path, Schemes.Current, data);
+
+                    }
+                }
+                else
+                {
+                    await nav.NavigateToRouteAsync(element, path, Schemes.Current);
+                }
             };
 
             var handler = eventHandler(action);
