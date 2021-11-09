@@ -1,3 +1,0 @@
-namespace ApplicationTemplate.Skia.Gtk
-{
-}
