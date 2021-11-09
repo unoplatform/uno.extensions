@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="ExtensionsSampleApp.UnoCommerce.FilterPopup"
+﻿<Flyout x:Class="ExtensionsSampleApp.UnoCommerce.FilterPopup"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:ExtensionsSampleApp.UnoCommerce"
@@ -8,10 +8,58 @@
              mc:Ignorable="d"
              d:DesignHeight="300"
              d:DesignWidth="400"
-             >
+        Placement="Full"
+        xmlns:nav="using:Uno.Extensions.Navigation.Controls">
+    <Flyout.FlyoutPresenterStyle>
+        <Style TargetType="FlyoutPresenter">
+            <Setter Property="HorizontalContentAlignment"
+                    Value="Center" />
+            <Setter Property="VerticalContentAlignment"
+                    Value="Bottom" />
+            <Setter Property="VerticalAlignment"
+                    Value="Bottom" />
+            <Setter Property="HorizontalAlignment"
+                    Value="Center" />
+            <Setter Property="MaxWidth"
+                    Value="NaN" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="FlyoutPresenter">
+                        <Border Background="{TemplateBinding Background}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Bottom"
+                                BackgroundSizing="OuterBorderEdge"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{TemplateBinding CornerRadius}">
+                            <Border.Transitions>
+                                <TransitionCollection>
+                                    <PaneThemeTransition Edge="Bottom" />
+                                </TransitionCollection>
+                            </Border.Transitions>
+                            <ScrollViewer x:Name="ScrollViewer"
+                                          ZoomMode="{TemplateBinding ScrollViewer.ZoomMode}"
+                                          HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
+                                          HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                          VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
+                                          VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                                          AutomationProperties.AccessibilityView="Raw">
+                                <ContentPresenter Content="{TemplateBinding Content}"
+                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                  ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            </ScrollViewer>
+                        </Border>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Flyout.FlyoutPresenterStyle>
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="12">
         <StackPanel Orientation="Horizontal">
-            <Button>
+            <Button nav:Navigation.Request="-">
                 <SymbolIcon Symbol="Cancel" />
             </Button>
             <TextBlock Text="Filter"
@@ -55,4 +103,4 @@
         <Button HorizontalAlignment="Stretch"
                 Content="Apply" />
     </StackPanel>
-</UserControl>
+</Flyout>

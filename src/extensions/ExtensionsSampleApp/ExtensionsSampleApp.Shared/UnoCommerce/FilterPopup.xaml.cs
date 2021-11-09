@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace ExtensionsSampleApp.UnoCommerce
 {
-    public sealed partial class FilterPopup : UserControl
+    public sealed partial class FilterPopup : Flyout
     {
         public FilterPopup()
         {

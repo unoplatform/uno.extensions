@@ -35,8 +35,8 @@
                            FontSize="32" />
                 <HyperlinkButton Content="Filter"
                                  HorizontalAlignment="Right"
-                                 nav:Navigation.Request="./filter/show" />
-                <Popup nav:Region.Name="filter"
+                                 nav:Navigation.Request="!FilterPopup" />
+                <!--<Popup nav:Region.Name="filter"
                        nav:Region.Attached="True"
                        IsLightDismissEnabled="True"
                        HorizontalAlignment="Right"
@@ -44,7 +44,7 @@
                     <Popup.Child>
                         <local:FilterPopup />
                     </Popup.Child>
-                </Popup>
+                </Popup>-->
             </Grid>
         </StackPanel>
         <ListView ItemsSource="{Binding Products}"
