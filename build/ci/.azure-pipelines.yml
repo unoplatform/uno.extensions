@@ -46,7 +46,7 @@ steps:
       msbuildLocationMethod: location
       msbuildLocation: $(MSBUILDPREVIEWPATH)
       msbuildArchitecture: x86
-      msbuildArguments: /r /p:Configuration=Release "/p:PackageOutputPath=$(build.artifactstagingdirectory)\nuget" "/p:PackageVersion=%GITVERSION_FullSemVer%" "/p:InformationalVersion=%GITVERSION_InformationalVersion%" /detailedsummary /bl:(build.artifactstagingdirectory)/uno-extensions.binlog
+      msbuildArguments: /r /p:Configuration=Release "/p:PackageOutputPath=$(build.artifactstagingdirectory)\nuget" "/p:PackageVersion=%GITVERSION_FullSemVer%" "/p:InformationalVersion=%GITVERSION_InformationalVersion%" /detailedsummary /bl:$(build.artifactstagingdirectory)/uno-extensions.binlog
       clean: false
       maximumCpuCount: true
       restoreNugetPackages: false
