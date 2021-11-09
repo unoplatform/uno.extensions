@@ -1,0 +1,45 @@
+<Project ToolsVersion="15.0">
+
+	<PropertyGroup>
+    <Authors>nventive</Authors>
+    <PackageProjectUrl>https://github.com/unoplatform/uno.extensions</PackageProjectUrl>
+    <PackageIconUrl>https://nv-assets.azurewebsites.net/logos/uno.png</PackageIconUrl>
+    <RepositoryUrl>https://github.com/unoplatform/uno.core</RepositoryUrl>
+		<RepositoryUrl>$(BUILD_REPOSITORY_URI)</RepositoryUrl>
+		<Copyright>Copyright (C) 2015-$([System.DateTime]::Now.ToString(`yyyy`)) Uno Platform - all rights reserved</Copyright>
+		<Product>$(AssemblyName) ($(TargetFramework))</Product>
+		<DefaultLanguage>en-US</DefaultLanguage>
+		<LangVersion>10.0</LangVersion>
+		<Nullable>enable</Nullable>
+		<WarningsAsErrors>enable</WarningsAsErrors>
+		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+		<PackageIcon>uno-logo.png</PackageIcon>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<IsTestProject>$(MSBuildProjectName.Contains('Test'))</IsTestProject>
+		<IsSampleProject>$(MSBuildProjectName.Contains('Sample'))</IsSampleProject>
+	</PropertyGroup>
+	
+	<ItemGroup>
+		<None Include="$(MSBuildThisFileDirectory)..\build\uno-logo.png" Pack="true" Visible="false" PackagePath="\"/>
+	</ItemGroup>
+	
+	<Choose>
+		<When Condition="'$(IsTestProject)' != 'true' and '$(SourceLinkEnabled)' != 'false' and '$(IsSampleProject)' != 'true'">
+			<PropertyGroup>
+				<!-- Optional: Declare that the Repository URL can be published to NuSpec -->
+				<PublishRepositoryUrl>true</PublishRepositoryUrl>
+				<!-- Optional: Embed source files that are not tracked by the source control manager to the PDB -->
+				<EmbedUntrackedSources>true</EmbedUntrackedSources>
+				<!-- Optional: Include PDB in the built .nupkg -->
+				<AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+			</PropertyGroup>
+			<ItemGroup>
+				<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
+				<PackageReference Include="DotNet.ReproducibleBuilds" Version="0.1.66" PrivateAssets="All" />
+			</ItemGroup>
+		</When>
+	</Choose>
+
+</Project>
