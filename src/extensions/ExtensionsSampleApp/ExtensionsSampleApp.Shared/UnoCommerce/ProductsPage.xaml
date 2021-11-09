@@ -7,6 +7,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:services="using:ExtensionsSampleApp.UnoCommerce.Services"
       xmlns:nav="using:Uno.Extensions.Navigation.Controls"
+      xmlns:toolkit="using:Uno.UI.ToolkitLib"
       mc:Ignorable="d fake"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -17,8 +18,16 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <StackPanel>
-            <TextBox PlaceholderText="Search" />
+        <toolkit:NavigationBar 
+                               Content="Products">
+            <!--<toolkit:NavigationBar.SecondaryCommands>
+                <AppBarButton Style="{StaticResource MaterialAppBarButton}"
+                              Label="Back"
+                              nav:Navigation.Request="../-"/>
+            </toolkit:NavigationBar.SecondaryCommands>-->
+        </toolkit:NavigationBar>
+        <StackPanel Grid.Row="1">
+            <TextBox PlaceholderText="Search"/>
             <Grid>
                 <TextBlock Text="5254 Products"
                            HorizontalAlignment="Left"

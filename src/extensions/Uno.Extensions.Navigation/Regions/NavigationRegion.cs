@@ -20,35 +20,35 @@ public sealed class NavigationRegion : IRegion
 
     public FrameworkElement View { get; }
 
-    private IServiceProvider _services;
-    private IRegion _parent;
+    private IServiceProvider? _services;
+    private IRegion? _parent;
 
-    public IRegion Parent
+    public IRegion? Parent
     {
         get => _parent;
         private set
         {
             if (_parent is not null)
             {
-                Parent.Children.Remove(this);
+                _parent.Children.Remove(this);
             }
             _parent = value;
             if (_parent is not null)
             {
-                Parent.Children.Add(this);
+                _parent.Children.Add(this);
             }
         }
     }
 
-    public IServiceProvider Services
+    public IServiceProvider? Services
     {
         get
         {
-            if (_services is null)
+            if (_services is null && Parent is not null)
             {
                 _services = Parent.Services.CreateScope().ServiceProvider;
                 _services.AddInstance<IRegion>(this);
-                var serviceFactory = _services.GetService<INavigatorFactory>();
+                var serviceFactory = _services.GetRequiredService<INavigatorFactory>();
                 _services.AddInstance<INavigator>(() => serviceFactory.CreateService(this));
             }
 
@@ -101,6 +101,13 @@ public sealed class NavigationRegion : IRegion
 
     private Task HandleLoading()
     {
+        AssignParent();
+
+        return View.IsLoaded ? HandleLoaded() : Task.CompletedTask;
+    }
+
+    private void AssignParent()
+    {
         if (Parent is null)
         {
             var parent = View.FindParentRegion(out var routeName);
@@ -110,8 +117,11 @@ public sealed class NavigationRegion : IRegion
                 Parent = parent;
             }
         }
+    }
 
-        return View.IsLoaded ? HandleLoaded() : Task.CompletedTask;
+    public void ReassignParent()
+    {
+        Parent = null;
     }
 
     private async Task HandleLoaded()

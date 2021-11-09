@@ -10,19 +10,6 @@
              d:DesignWidth="400">
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
-        <CommandBar>
-            <AppBarButton Icon="Back"
-                          Label="Back"
-                          nav:Navigation.Request="./-" />
-            <CommandBar.Content>
-                <TextBlock Text="Title"
-                           Margin="12,8" />
-            </CommandBar.Content>
-        </CommandBar>
         <Frame nav:Region.Attached="True" Grid.Row="1" />
     </Grid>
 </UserControl>

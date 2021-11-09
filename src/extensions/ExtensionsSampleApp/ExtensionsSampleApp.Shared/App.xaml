@@ -16,6 +16,7 @@
                 <!-- Load the Material control resources -->
                 <MaterialResources xmlns="using:Uno.Material" />
                 <ToolkitResources xmlns="using:Uno.UI.ToolkitLib" />
+                <!--<MaterialToolkitResources xmlns="using:Uno.Toolkit.Material" />-->
                 
             </ResourceDictionary.MergedDictionaries>
             <Flyout x:Key="CustomFlyoutResource"

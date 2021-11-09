@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation;
+using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Regions;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Xaml;
@@ -107,6 +108,13 @@ public class FrameNavigator : ControlNavigator<Frame>
         return responseRequest;
     }
 
+    protected override object InitialiseCurrentView(Route route, RouteMap? mapping)
+    {
+
+
+        return base.InitialiseCurrentView(route, mapping);
+    }
+
     private Task<Route> NavigatedBackAsync(NavigationRequest request)
     {
         var route = request.Route;
@@ -191,6 +199,13 @@ public class FrameNavigator : ControlNavigator<Frame>
             {
                 Logger.LogDebugMessage($"Invoking Frame.Navigate to type '{viewType.Name}'");
                 var nav = Control.Navigate(viewType, data);
+
+                var currentPage = CurrentView as Page;
+                if (currentPage is not null)
+                {
+                    currentPage.SetName(path);
+                }
+
                 await (Control.Content as FrameworkElement).EnsureLoaded();
                 Logger.LogDebugMessage($"Frame.Navigate completed");
             }

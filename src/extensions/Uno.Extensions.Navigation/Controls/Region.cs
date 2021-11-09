@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using Uno.Extensions.Navigation.Regions;
 #if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media;
 #else
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -113,6 +115,29 @@ public static class Region
     public static void SetName(this FrameworkElement element, string value)
     {
         element.SetValue(NameProperty, value);
+        //SetNameOnChildRegions(element, value);
+    }
+
+    private static void SetNameOnChildRegions(this FrameworkElement element, string value)
+    {
+
+        var childrenCount = VisualTreeHelper.GetChildrenCount(element);
+        for (int i = 0; i < childrenCount; i++)
+        {
+            var child = VisualTreeHelper.GetChild(element, i);
+            if (child.GetInstance() is IRegion region)
+            {
+                Debug.Assert(false);
+                //region.Name
+            }
+            else
+            {
+                if (child is FrameworkElement childElement)
+                {
+                    SetNameOnChildRegions(childElement, value);
+                }
+            }
+        }
     }
 
     public static string GetName(this FrameworkElement element)

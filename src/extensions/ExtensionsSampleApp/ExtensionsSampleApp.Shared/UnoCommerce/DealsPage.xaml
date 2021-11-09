@@ -40,8 +40,7 @@
             </Grid>
         </DataTemplate>
     </Page.Resources>
-    <Grid nav:Region.Attached="true"
-          nav:Region.Name="DealsPage">
+    <Grid nav:Region.Attached="true">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />

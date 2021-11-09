@@ -50,7 +50,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
         return route with { Base = executedPath, Path = null };
     }
 
-    protected object InitialiseCurrentView(Route route, RouteMap? mapping)
+    protected virtual object InitialiseCurrentView(Route route, RouteMap? mapping)
     {
         var view = CurrentView;
 

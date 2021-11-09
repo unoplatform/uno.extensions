@@ -6,12 +6,26 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:fake="using:ExtensionsSampleApp.DesignTime"
       xmlns:controls="using:Microsoft.UI.Xaml.Controls"
+      xmlns:nav="using:Uno.Extensions.Navigation.Controls"
+      xmlns:toolkit="using:Uno.UI.ToolkitLib"
       mc:Ignorable="d fake"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid d:DataContext="{d:DesignInstance fake:FakeProducts, IsDesignTimeCreatable=True}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <toolkit:NavigationBar 
+                               Content="Products">
+            <toolkit:NavigationBar.PrimaryCommands>
+                <AppBarButton Label="Back"
+                              nav:Navigation.Request="../-" />
+            </toolkit:NavigationBar.PrimaryCommands>
+        </toolkit:NavigationBar>
+
         <ScrollViewer d:DataContext="{Binding Products[2]}"
-                      DataContext="{Binding Product}">
+                      DataContext="{Binding Product}" Grid.Row="1">
             <StackPanel Margin="12">
                 <Border Height="300">
                     <Image Source="{Binding Photo}" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="UniformToFill" />
