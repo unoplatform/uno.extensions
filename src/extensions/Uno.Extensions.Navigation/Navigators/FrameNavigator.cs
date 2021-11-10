@@ -275,7 +275,7 @@ public class FrameNavigator : ControlNavigator<Frame>
             return;
         }
 
-        FullRoute = FullRoute?.ApplyFrameRoute(Mappings, route);
+        FullRoute = FullRoute.ApplyFrameRoute(Mappings, route);
         var lastRoute = FullRoute;
         while (lastRoute is not null &&
             !lastRoute.IsLast())

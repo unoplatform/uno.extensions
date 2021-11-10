@@ -36,7 +36,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 
     protected override async Task<Route?> ExecuteRequestAsync(NavigationRequest request)
     {
-        if (Control is not null)
+        if (Control is null)
         {
             return default;
         }
@@ -202,7 +202,7 @@ public abstract class ControlNavigator : Navigator
 
         if (resultTask is not null)
         {
-            return new NavigationResultResponse(executedRoute??Route.Empty, resultTask.Task);
+            return new NavigationResultResponse(executedRoute ?? Route.Empty, resultTask.Task);
         }
         else
         {
@@ -212,7 +212,7 @@ public abstract class ControlNavigator : Navigator
 
     protected virtual void UpdateRoute(Route? route)
     {
-        Route = route is not null?new Route(Schemes.Current, route.Base, null, route.Data):null;
+        Route = route is not null ? new Route(Schemes.Current, route.Base, null, route.Data) : null;
     }
 
     protected object? CreateViewModel(IServiceProvider services, INavigator navigator, Route route, RouteMap? mapping)
