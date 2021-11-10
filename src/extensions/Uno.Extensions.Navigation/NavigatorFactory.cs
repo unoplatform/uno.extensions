@@ -6,7 +6,7 @@ using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Navigators;
 using Uno.Extensions.Navigation.Regions;
-#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+#if !WINUI
 using Windows.UI.Xaml;
 #else
 using Microsoft.UI.Xaml;
@@ -17,7 +17,7 @@ namespace Uno.Extensions.Navigation;
 
 public class NavigatorFactoryBuilder
 {
-    public Action<INavigatorFactory> Configure { get; set; }
+    public Action<INavigatorFactory>? Configure { get; set; }
 }
 
 public class NavigatorFactory : INavigatorFactory
@@ -35,7 +35,7 @@ public class NavigatorFactory : INavigatorFactory
     {
         Logger = logger;
         Mappings = mappings;
-        builders.ForEach(builder => builder.Configure(this));
+        builders.ForEach(builder => builder.Configure?.Invoke(this));
     }
 
     public void RegisterNavigator<TNavigator>(params string[] names)
@@ -44,21 +44,26 @@ public class NavigatorFactory : INavigatorFactory
         names.ForEach(name => Navigators[name] = typeof(TNavigator));
     }
 
-    public INavigator CreateService(IRegion region)
+    public INavigator? CreateService(IRegion region)
     {
         Logger.LogDebugMessage($"Adding region");
 
         var services = region.Services;
         var control = region.View;
 
-        // Create Navigation Service
-        var navLogger = services.GetService<ILogger<ControlNavigator>>();
+        if(services is null)
+        {
+            return default;
+        }
 
-        INavigator navService = null;
+        //// Create Navigation Service
+        //var navLogger = services.GetService<ILogger<ControlNavigator>>();
+
+        INavigator? navService = null;
 
         if (control is not null)
         {
-            services.GetService<RegionControlProvider>().RegionControl = control;
+            services.GetRequiredService<RegionControlProvider>().RegionControl = control;
 
             var navigator = control.GetNavigator() ?? control.GetType().Name;
             if (Navigators.TryGetValue(navigator, out var serviceType))
@@ -69,7 +74,7 @@ public class NavigatorFactory : INavigatorFactory
 
         if (navService is null)
         {
-            navService = services.GetService<Navigator>();
+            navService = services.GetRequiredService<Navigator>();
         }
 
         // Make sure the nav service gets added to the container before initialize
@@ -85,9 +90,14 @@ public class NavigatorFactory : INavigatorFactory
         return navService;
     }
 
-    public INavigator CreateService(IRegion region, NavigationRequest request)
+    public INavigator? CreateService(IRegion region, NavigationRequest request)
     {
         Logger.LogDebugMessage($"Adding region");
+
+        if(region.Services is null)
+        {
+            return null;
+        }
 
         var scope = region.Services.CreateScope();
         var services = scope.ServiceProvider;
@@ -102,13 +112,23 @@ public class NavigatorFactory : INavigatorFactory
             object? resource = request.RouteResourceView(region);
             serviceLookupType = resource?.GetType();
         }
+
+        if(serviceLookupType is null)
+        {
+            return null;
+        }
+
         var serviceType = this.FindServiceByType(serviceLookupType);//  ServiceTypes[mapping.View.Name];
         if (serviceType is null)
         {
             return null;
         }
 
-        var navService = services.GetService(serviceType) as INavigator;
+        var navService = services.GetRequiredService(serviceType) as INavigator;
+        if(navService is null)
+        {
+            return null;
+        }
 
         services.AddInstance<INavigator>(navService);
 

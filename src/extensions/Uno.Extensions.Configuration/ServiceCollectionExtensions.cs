@@ -23,16 +23,16 @@ namespace Uno.Extensions.Configuration
         public static IServiceCollection ConfigureAsWritable<T>(
             this IServiceCollection services,
             IConfigurationSection section,
-            string file = null)
+            string file)
                 where T : class, new()
         {
             return services
                 .Configure<T>(section)
                 .AddTransient<IWritableOptions<T>>(provider =>
                 {
-                    var logger = provider.GetService<ILogger<IWritableOptions<T>>>();
-                    var root = provider.GetService<Reloader>();
-                    var options = provider.GetService<IOptionsMonitor<T>>();
+                    var logger = provider.GetRequiredService<ILogger<IWritableOptions<T>>>();
+                    var root = provider.GetRequiredService<Reloader>();
+                    var options = provider.GetRequiredService<IOptionsMonitor<T>>();
                     return new WritableOptions<T>(logger, root, options, section.Key, file);
                 });
         }

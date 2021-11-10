@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation.Regions;
 using Windows.Foundation;
-#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+#if !WINUI
 using Windows.UI.Xaml.Controls;
 #else
 using Microsoft.UI.Xaml.Controls;
@@ -24,13 +24,25 @@ public class ContentDialogNavigator : DialogNavigator
     {
     }
 
-    protected override IAsyncInfo DisplayDialog(NavigationRequest request, Type? viewType, object? viewModel)
+    protected override IAsyncInfo? DisplayDialog(NavigationRequest request, Type? viewType, object? viewModel)
     {
         var route = request.Route;
         var navigation = Region.Navigator();
         var services = this.Get<IServiceProvider>();
         var mapping = Mappings.Find(route);
-        var dialog = Activator.CreateInstance(mapping?.View) as ContentDialog;
+        if (
+            navigation is null ||
+            services is null ||
+            mapping?.View is null)
+        {
+            return null;
+        }
+
+        var dialog = Activator.CreateInstance(mapping.View) as ContentDialog;
+        if(dialog is null)
+        {
+            return null;
+        }
 
         dialog.InjectServicesAndSetDataContext(services, navigation, viewModel);
 

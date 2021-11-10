@@ -3,7 +3,6 @@ using Microsoft.Extensions.Hosting.Internal;
 
 namespace Uno.Extensions.Hosting;
 
-
 public class AppHostingEnvironment : HostingEnvironment, IAppHostEnvironment
 {
     public string? AppDataPath { get; set; }

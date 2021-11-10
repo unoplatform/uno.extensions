@@ -17,10 +17,10 @@ namespace Uno.Extensions.Configuration
             Reloader reload,
             IHostEnvironment hostEnvironment)
         {
-            Logger.LogDebugMessage($"Created");
             Logger = logger;
             Reload = reload;
             HostEnvironment = hostEnvironment;
+            Logger.LogDebugMessage($"Created");
         }
 
         private ILogger Logger { get; }
@@ -57,7 +57,7 @@ namespace Uno.Extensions.Configuration
                     File.WriteAllText(settingsFile.Path, settings);
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 Logger.LogTrace($"{file} not included as content");
             }

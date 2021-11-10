@@ -1,4 +1,4 @@
-﻿#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+﻿#if !WINUI
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls.Primitives;

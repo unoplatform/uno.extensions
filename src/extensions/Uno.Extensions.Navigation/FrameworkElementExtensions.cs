@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+#if !WINUI
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
@@ -28,10 +28,10 @@ public static class FrameworkElementExtensions
         // a) always detect when element is loaded (sometimes Loaded is never fired)
         // b) detect as soon as IsLoaded is true (Loading and Loaded not always in right order)
 
-        RoutedEventHandler loaded = null;
-        EventHandler<object> layoutChanged = null;
+        RoutedEventHandler? loaded = null;
+        EventHandler<object>? layoutChanged = null;
 //#if WINDOWS_UWP || WINUI || NETSTANDARD
-        TypedEventHandler<FrameworkElement, object> loading = null;
+        TypedEventHandler<FrameworkElement, object>? loading = null;
 //#else
 //        TypedEventHandler<DependencyObject, object> loading = null;
 //#endif
@@ -42,7 +42,9 @@ public static class FrameworkElementExtensions
                 overrideLoaded ||
                 (element.ActualHeight>0 && element.ActualWidth>0))
             {
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                 completion.SetResult(null);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
                 element.Loaded -= loaded;
                 element.Loading -= loading;
                 element.LayoutUpdated -= layoutChanged;

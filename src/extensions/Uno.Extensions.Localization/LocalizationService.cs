@@ -25,7 +25,7 @@ namespace Uno.Extensions.Localization
 
         private CultureInfo CurrentCulture => (Settings?.Value?.CurrentCulture is not null) ?
             new CultureInfo(Settings.Value.CurrentCulture) :
-            null;
+            SupportedCultures.First();
 
         public Task StartAsync(CancellationToken cancellationToken)
         {

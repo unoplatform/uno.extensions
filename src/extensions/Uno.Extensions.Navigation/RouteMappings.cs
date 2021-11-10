@@ -30,7 +30,10 @@ public class RouteMappings : IRouteMappings
 
     public virtual RouteMap? FindByPath(string? path)
     {
-        if (path == Schemes.Parent ||
+        if (
+            path is null ||
+            string.IsNullOrWhiteSpace(path) ||
+            path == Schemes.Parent ||
             path == Schemes.Current)
         {
             return null;
@@ -59,7 +62,7 @@ public class RouteMappings : IRouteMappings
         return FindByInheritedTypes(dataType, map => map.ResultData);
     }
 
-    private RouteMap? FindByInheritedTypes(Type? typeToFind, Func<RouteMap, Type> mapType)
+    private RouteMap? FindByInheritedTypes(Type? typeToFind, Func<RouteMap, Type?> mapType)
     {
         // Handle the non-reflection check first
         var map = (from m in Mappings

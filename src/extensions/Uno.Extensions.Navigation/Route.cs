@@ -24,7 +24,7 @@ public record Route(string Scheme, string? Base, string? Path, IDictionary<strin
         }
         catch
         {
-            return base.ToString();
+            return base.ToString() ?? string.Empty;
         }
     }
 }

@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Regions;
-#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+#if !WINUI
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 #else
@@ -30,10 +30,15 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
     {
     }
 
-    private FrameworkElement CurrentlyVisibleControl { get; set; }
+    private FrameworkElement? CurrentlyVisibleControl { get; set; }
 
     protected override async Task<string?> Show(string? path, Type? viewType, object? data)
     {
+        if(Control is null)
+        {
+            return string.Empty;
+        }
+
         var controlToShow =
             Control.Children.OfType<FrameworkElement>().FirstOrDefault(x => x.GetName() == path) ??
             Control.FindName(path) as FrameworkElement;
@@ -52,7 +57,7 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
                 controlToShow = Activator.CreateInstance(viewType) as FrameworkElement;
                 if (controlToShow is FrameworkElement fe)
                 {
-                    fe.SetName(path);
+                    fe.SetName(path??string.Empty);
                 }
                 Control.Children.Add(controlToShow);
                 Logger.LogDebugMessage("Instance created");
@@ -63,7 +68,10 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
             }
         }
 
-        controlToShow.Visibility = Visibility.Visible;
+        if (controlToShow is not null)
+        {
+            controlToShow.Visibility = Visibility.Visible;
+        }
 
         if (CurrentlyVisibleControl != null)
         {

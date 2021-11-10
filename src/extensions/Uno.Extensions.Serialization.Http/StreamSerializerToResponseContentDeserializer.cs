@@ -2,30 +2,29 @@
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Uno.Extensions.Http.Handlers;
+using Uno.Extensions.Http;
 
-namespace Uno.Extensions.Serialization.Http
+namespace Uno.Extensions.Serialization.Http;
+
+public class StreamSerializerToResponseContentDeserializer : IResponseContentDeserializer
 {
-    public class StreamSerializerToResponseContentDeserializer : IResponseContentDeserializer
-    {
-        private readonly ISerializer _objectSerializer;
+    private readonly IStreamSerializer _objectSerializer;
 
-        public StreamSerializerToResponseContentDeserializer(ISerializer objectSerializer)
+    public StreamSerializerToResponseContentDeserializer(IStreamSerializer objectSerializer)
+    {
+        _objectSerializer = objectSerializer ?? throw new ArgumentNullException(nameof(objectSerializer));
+    }
+
+    public async Task<TResponse?> Deserialize<TResponse>(CancellationToken ct, HttpContent content)
+    {
+        if (content is null)
         {
-            _objectSerializer = objectSerializer ?? throw new ArgumentNullException(nameof(objectSerializer));
+            throw new ArgumentNullException(nameof(content));
         }
 
-        public async Task<TResponse> Deserialize<TResponse>(CancellationToken ct, HttpContent content)
+        using (var stream = await content.ReadAsStreamAsync())
         {
-            if (content is null)
-            {
-                throw new ArgumentNullException(nameof(content));
-            }
-
-            using (var stream = await content.ReadAsStreamAsync())
-            {
-                return _objectSerializer.FromStream<TResponse>(stream);
-            }
+            return _objectSerializer.FromStream<TResponse>(stream);
         }
     }
 }

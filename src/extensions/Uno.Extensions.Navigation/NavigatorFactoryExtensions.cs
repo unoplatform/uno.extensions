@@ -1,5 +1,5 @@
 ﻿using System;
-#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+#if !WINUI
 #else
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -9,13 +9,8 @@ namespace Uno.Extensions.Navigation;
 
 public static class NavigatorFactoryExtensions
 {
-    public static Type FindServiceByType(this NavigatorFactory factory, Type viewType)
+    public static Type? FindServiceByType(this NavigatorFactory factory, Type viewType)
     {
-        if (viewType is null)
-        {
-            return null;
-        }
-
         if (factory.Navigators.TryGetValue(viewType.Name, out var serviceType))
         {
             return serviceType;

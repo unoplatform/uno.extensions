@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Regions;
 using System.Linq;
 using Uno.Extensions.Navigation.Navigators;
-#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+#if !WINUI
 using UICommand = Windows.UI.Popups.UICommand;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -21,9 +21,9 @@ namespace Uno.Extensions.Navigation;
 
 public static class NavigatorExtensions
 {
-    internal static IRouteMappings GetMapping(this INavigator navigator)
+    internal static IRouteMappings? GetMapping(this INavigator navigator)
     {
-        return navigator.Get<IServiceProvider>().GetService<IRouteMappings>();
+        return navigator.Get<IServiceProvider>()?.GetRequiredService<IRouteMappings>() ?? default;
     }
 
     /// <summary>
@@ -36,8 +36,8 @@ public static class NavigatorExtensions
     /// <param name="data">Data object to be passed with navigation</param>
     /// <param name="cancellation">Cancellation token to allow for cancellation of navigation</param>
     /// <returns>NavigationResponse that indicates success</returns>
-    public static Task<NavigationResponse> NavigateToRouteAsync(
-        this INavigator service, object sender, string route, string scheme = Schemes.None, object data = null, CancellationToken cancellation = default)
+    public static Task<NavigationResponse?> NavigateToRouteAsync(
+        this INavigator service, object sender, string route, string scheme = Schemes.None, object? data = null, CancellationToken cancellation = default)
     {
         return service.NavigateAsync(route.WithScheme(scheme).AsRequest(sender, data, cancellation));
     }
@@ -53,106 +53,131 @@ public static class NavigatorExtensions
     /// <param name="data">Data object to be passed with navigation</param>
     /// <param name="cancellation">Cancellation token to allow for cancellation of navigation</param>
     /// <returns>NavigationResultResponse that indicates success and contains an awaitable result</returns>
-    public static async Task<NavigationResultResponse<TResult>> NavigateToRouteForResultAsync<TResult>(
-        this INavigator service, object sender, string route, string scheme = Schemes.None, object data = null, CancellationToken cancellation = default)
+    public static async Task<NavigationResultResponse<TResult>?> NavigateToRouteForResultAsync<TResult>(
+        this INavigator service, object sender, string route, string scheme = Schemes.None, object? data = null, CancellationToken cancellation = default)
     {
         var result = await service.NavigateAsync(route.WithScheme(scheme).AsRequest<TResult>(sender, data, cancellation));
-        return result.AsResult<TResult>();
+        return result?.AsResult<TResult>();
     }
 
-    public static async Task<NavigationResultResponse> NavigateToRouteForResultAsync(
-    this INavigator service, object sender, string route, string scheme = Schemes.None, object data = null, CancellationToken cancellation = default, Type resultType = null)
+    public static async Task<NavigationResultResponse?> NavigateToRouteForResultAsync(
+    this INavigator service, object sender, string route, string scheme = Schemes.None, object? data = null, CancellationToken cancellation = default, Type? resultType = null)
     {
         var result = await service.NavigateAsync(route.WithScheme(scheme).AsRequest(sender, data, cancellation, resultType));
-        return result.AsResult();
+        return result?.AsResult();
     }
 
-    public static Task<NavigationResponse> NavigateToViewAsync<TView>(
-        this INavigator service, object sender, string scheme = Schemes.None, object data = null, CancellationToken cancellation = default)
+    public static Task<NavigationResponse?> NavigateToViewAsync<TView>(
+        this INavigator service, object sender, string scheme = Schemes.None, object? data = null, CancellationToken cancellation = default)
     {
         return service.NavigateToViewAsync(sender, typeof(TView), scheme, data, cancellation);
     }
 
-    public static Task<NavigationResponse> NavigateToViewAsync(
-        this INavigator service, object sender, Type viewType, string scheme = Schemes.None, object data = null, CancellationToken cancellation = default)
+    public static Task<NavigationResponse?> NavigateToViewAsync(
+        this INavigator service, object sender, Type viewType, string scheme = Schemes.None, object? data = null, CancellationToken cancellation = default)
     {
         var mappings = service.GetMapping();
-        var map = mappings.FindByView(viewType);
+        var map = mappings?.FindByView(viewType);
+        if (map is null)
+        {
+            return Task.FromResult<NavigationResponse?>(null);
+        }
         return service.NavigateAsync(map.Path.WithScheme(scheme).AsRequest(sender, data, cancellation));
     }
 
-    public static async Task<NavigationResultResponse<TResult>> NavigateToViewForResultAsync<TView, TResult>(
-        this INavigator service, object sender, string scheme = Schemes.None, object data = null, CancellationToken cancellation = default)
+    public static async Task<NavigationResultResponse<TResult>?> NavigateToViewForResultAsync<TView, TResult>(
+        this INavigator service, object sender, string scheme = Schemes.None, object? data = null, CancellationToken cancellation = default)
     {
         var mappings = service.GetMapping();
-        var map = mappings.FindByView(typeof(TView));
+        var map = mappings?.FindByView(typeof(TView));
+        if (map is null)
+        {
+            return default;
+        }
         var result = await service.NavigateAsync(map.Path.WithScheme(scheme).AsRequest<TResult>(sender, data, cancellation));
-        return result.AsResult<TResult>();
+        return result?.AsResult<TResult>();
     }
 
-    public static Task<NavigationResponse> NavigateToViewModelAsync<TViewViewModel>(
-        this INavigator service, object sender, string scheme = Schemes.None, object data = null, CancellationToken cancellation = default)
+    public static Task<NavigationResponse?> NavigateToViewModelAsync<TViewViewModel>(
+        this INavigator service, object sender, string scheme = Schemes.None, object? data = null, CancellationToken cancellation = default)
     {
         return service.NavigateToViewModelAsync(sender, typeof(TViewViewModel), scheme, data, cancellation);
     }
 
-    public static Task<NavigationResponse> NavigateToViewModelAsync(
-        this INavigator service, object sender, Type viewModelType, string scheme = Schemes.None, object data = null, CancellationToken cancellation = default)
+    public static Task<NavigationResponse?> NavigateToViewModelAsync(
+        this INavigator service, object sender, Type viewModelType, string scheme = Schemes.None, object? data = null, CancellationToken cancellation = default)
     {
         var mappings = service.GetMapping();
-        var map = mappings.FindByViewModel(viewModelType);
+        var map = mappings?.FindByViewModel(viewModelType);
+        if (map is null)
+        {
+            return Task.FromResult<NavigationResponse?>(null);
+        }
         return service.NavigateAsync(map.Path.WithScheme(scheme).AsRequest(sender, data, cancellation));
     }
 
-    public static async Task<NavigationResultResponse<TResult>> NavigateToViewModelForResultAsync<TViewViewModel, TResult>(
-        this INavigator service, object sender, string scheme = Schemes.None, object data = null, CancellationToken cancellation = default)
+    public static async Task<NavigationResultResponse<TResult>?> NavigateToViewModelForResultAsync<TViewViewModel, TResult>(
+        this INavigator service, object sender, string scheme = Schemes.None, object? data = null, CancellationToken cancellation = default)
     {
         var mappings = service.GetMapping();
-        var map = mappings.FindByViewModel(typeof(TViewViewModel));
+        var map = mappings?.FindByViewModel(typeof(TViewViewModel));
+        if (map is null)
+        {
+            return default;
+        }
         var result = await service.NavigateAsync(map.Path.WithScheme(scheme).AsRequest<TResult>(sender, data, cancellation));
-        return result.AsResult<TResult>();
+        return result?.AsResult<TResult>();
     }
 
-    public static Task<NavigationResponse> NavigateToDataAsync<TData>(
+    public static Task<NavigationResponse?> NavigateToDataAsync<TData>(
         this INavigator service, object sender, TData data, string scheme = Schemes.None, CancellationToken cancellation = default)
     {
         var mappings = service.GetMapping();
-        var map = mappings.FindByData(typeof(TData));
+        var map = mappings?.FindByData(typeof(TData));
+        if (map is null)
+        {
+            return Task.FromResult<NavigationResponse?>(null);
+        }
         return service.NavigateAsync(map.Path.WithScheme(scheme).AsRequest(sender, data, cancellation));
     }
 
-    public static async Task<NavigationResultResponse<TResultData>> NavigateForResultAsync<TResultData>(
-        this INavigator service, object sender, string scheme = Schemes.None, object data = null, CancellationToken cancellation = default)
+    public static async Task<NavigationResultResponse<TResultData>?> NavigateForResultAsync<TResultData>(
+        this INavigator service, object sender, string scheme = Schemes.None, object? data = null, CancellationToken cancellation = default)
     {
         var mappings = service.GetMapping();
-        var map = mappings.FindByResultData(typeof(TResultData));
+        var map = mappings?.FindByResultData(typeof(TResultData));
+        if (map is null)
+        {
+            return default;
+        }
         var result = await service.NavigateAsync(map.Path.WithScheme(scheme).AsRequest<TResultData>(sender, data, cancellation));
-        return result.AsResult<TResultData>();
+        return result?.AsResult<TResultData>();
     }
 
-    public static Task<NavigationResponse> NavigateToPreviousViewAsync(
+    public static Task<NavigationResponse?> NavigateToPreviousViewAsync(
         this INavigator service, object sender, string scheme = Schemes.None, CancellationToken cancellation = default)
     {
         return service.NavigateAsync((Schemes.NavigateBack + string.Empty).WithScheme(scheme).AsRequest(sender, cancellationToken: cancellation));
     }
 
-    public static Task<NavigationResponse> NavigateToPreviousViewAsync<TResult>(
-    this INavigator service, object sender, string scheme = Schemes.None, Options.Option<TResult> data = null, CancellationToken cancellation = default)
+    public static Task<NavigationResponse?> NavigateToPreviousViewAsync<TResult>(
+    this INavigator service, object sender, string scheme = Schemes.None, Options.Option<TResult>? data = null, CancellationToken cancellation = default)
     {
         return service.NavigateAsync((Schemes.NavigateBack + string.Empty).WithScheme(scheme).AsRequest(sender, data, cancellation));
     }
 
-    public static async Task<NavigationResultResponse<Windows.UI.Popups.UICommand>> ShowMessageDialogAsync(
+    public static async Task<NavigationResultResponse<Windows.UI.Popups.UICommand>?> ShowMessageDialogAsync(
         this INavigator service,
         object sender,
         string content,
-        string title = null,
+        string? title = null,
         MessageDialogOptions options = MessageDialogOptions.None,
         uint defaultCommandIndex = 0,
         uint cancelCommandIndex = 0,
-        Windows.UI.Popups.UICommand[] commands = null,
+        Windows.UI.Popups.UICommand[]? commands = null,
         CancellationToken cancellation = default)
     {
+#pragma warning disable CS8604 // Possible null reference argument.
         var data = new Dictionary<string, object>()
             {
                 { RouteConstants.MessageDialogParameterTitle, title },
@@ -162,38 +187,41 @@ public static class NavigatorExtensions
                 { RouteConstants.MessageDialogParameterCancelCommand, cancelCommandIndex },
                 { RouteConstants.MessageDialogParameterCommands, commands }
             };
+#pragma warning restore CS8604 // Possible null reference argument.
 
         var result = await service.NavigateAsync((Schemes.Dialog + typeof(MessageDialog).Name).AsRequest<UICommand>(sender, data, cancellation));
-        return result.AsResult<UICommand>();
+        return result?.AsResult<UICommand>();
     }
 
 #if __IOS__
-    public static async Task<NavigationResultResponse<TSource>> ShowPickerAsync<TSource>(
+    public static async Task<NavigationResultResponse<TSource>?> ShowPickerAsync<TSource>(
        this INavigator service,
        object sender,
        IEnumerable<TSource> itemsSource,
-       object itemTemplate = null,
+       object? itemTemplate = null,
        CancellationToken cancellation = default)
     {
+#pragma warning disable CS8604 // Possible null reference argument.
         var data = new Dictionary<string, object>()
             {
                 { RouteConstants.PickerItemsSource, itemsSource },
                 { RouteConstants.PickerItemTemplate, itemTemplate }
             };
+#pragma warning restore CS8604 // Possible null reference argument.
 
-        var result = await service.NavigateAsync((Schemes.Dialog + typeof(Picker).Name).AsRequest(sender,data, cancellation, typeof(TSource)));
-        return result.As<TSource>();
+        var result = await service.NavigateAsync((Schemes.Dialog + typeof(Picker).Name).AsRequest(sender, data, cancellation, typeof(TSource)));
+        return result?.AsResult<TSource>();
     }
 #endif
 
-    public static Task<NavigationResponse> GoBack(this INavigator navigator, object sender)
+    public static Task<NavigationResponse?> GoBack(this INavigator navigator, object sender)
     {
-        var region = navigator.Get<IServiceProvider>().GetService<IRegion>();
-        region = region.Root();
-        var gobackNavigator = region.FindChildren(
-            child => child.Services.GetService<INavigator>() is ControlNavigator controlNavigator &&
+        var region = navigator.Get<IServiceProvider>()?.GetService<IRegion>();
+        region = region?.Root();
+        var gobackNavigator = region?.FindChildren(
+            child => child.Services?.GetService<INavigator>() is ControlNavigator controlNavigator &&
                 controlNavigator.CanGoBack).Last()?.Navigator();
-        return gobackNavigator?.NavigateToPreviousViewAsync(sender);
+        return (gobackNavigator?.NavigateToPreviousViewAsync(sender)) ?? Task.FromResult<NavigationResponse?>(default);
     }
 
 }

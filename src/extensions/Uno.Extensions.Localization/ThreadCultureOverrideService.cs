@@ -28,7 +28,7 @@ namespace Uno.Extensions.Localization
             string[] supportedLanguages,
             CultureInfo settingsCulture,
             CultureInfo fallbackCulture,
-            ILogger<ThreadCultureOverrideService> logger = null
+            ILogger<ThreadCultureOverrideService>? logger = null
         )
         {
             _uiThread = uiThread ?? throw new ArgumentNullException(nameof(uiThread));
@@ -39,7 +39,7 @@ namespace Uno.Extensions.Localization
         }
 
         /// <summary>
-        /// If there was a culture override set using the <see cref="SetCulture"/> method,
+        /// If there was a culture override set using the <see cref="PickSupportedLanguage"/> method,
         /// then this method will apply the culture override on top of the system culture.
         /// </summary>
         /// <returns>True if the culture was overwritten; false otherwise.</returns>
@@ -78,7 +78,7 @@ namespace Uno.Extensions.Localization
             }
         }
 
-        private string PickSupportedLanguage(CultureInfo culture)
+        private string? PickSupportedLanguage(CultureInfo culture)
             => _supportedLanguages.FirstOrDefault(l => l.StartsWith(culture.TwoLetterISOLanguageName, StringComparison.InvariantCultureIgnoreCase));
     }
 }

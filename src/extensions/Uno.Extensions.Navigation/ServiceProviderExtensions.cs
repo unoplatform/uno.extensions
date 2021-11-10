@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
-#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+#if !WINUI
 #else
 using Microsoft.UI.Xaml;
 #endif
@@ -14,8 +14,12 @@ public static class ServiceProviderExtensions
         var scope = services.CreateScope();
         var scopedServices = scope.ServiceProvider;
 
-        scopedServices.GetService<RegionControlProvider>().RegionControl = services.GetService<RegionControlProvider>().RegionControl;
-        scopedServices.AddInstance<INavigator>(services.GetInstance<INavigator>());
+        scopedServices.GetRequiredService<RegionControlProvider>().RegionControl = services.GetRequiredService<RegionControlProvider>().RegionControl;
+        var instance = services.GetInstance<INavigator>();
+        if (instance is not null)
+        {
+            scopedServices.AddInstance<INavigator>(instance);
+        }
 
         return scopedServices;
     }

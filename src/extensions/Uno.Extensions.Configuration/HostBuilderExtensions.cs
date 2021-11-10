@@ -20,15 +20,13 @@ namespace Uno.Extensions.Configuration
         /// <returns></returns>
         public static IHostBuilder UseConfiguration(this IHostBuilder hostBuilder)
         {
-            return hostBuilder?
+            return hostBuilder
                     .ConfigureServices((ctx, s) =>
                     {
                         s.TryAddSingleton<IConfiguration>(a => ctx.Configuration);
-                        s.TryAddSingleton<IConfigurationRoot>(a => ctx.Configuration as IConfigurationRoot);
+                        s.TryAddSingleton<IConfigurationRoot>(a => (IConfigurationRoot)ctx.Configuration);
                         s.TryAddSingleton<Reloader>();
-#if NETSTANDARD || __WASM__
                         _ = s.AddHostedService<ReloadService>();
-#endif
                     });
         }
 
@@ -60,7 +58,7 @@ namespace Uno.Extensions.Configuration
             static string FilePath(HostBuilderContext hctx)
             {
                 var file = $"{ConfigurationFolderName}/{AppSettings.AppSettingsFileName}.{typeof(TSettingsOptions).Name}.json";
-                var appData = (hctx.HostingEnvironment as IAppHostEnvironment).AppDataPath;
+                var appData = (hctx.HostingEnvironment as IAppHostEnvironment)?.AppDataPath ?? string.Empty;
                 var path = Path.Combine(appData, file);
                 //var fileProvider = hctx.HostingEnvironment.ContentRootFileProvider;
                 //var fileInfo = fileProvider.GetFileInfo(file);
@@ -69,7 +67,7 @@ namespace Uno.Extensions.Configuration
             }
 
             // This is consistent with HostBuilder, which defaults to Production
-            return hostBuilder?
+            return hostBuilder
                 .UseConfiguration()
                 .ConfigureAppConfiguration((ctx, b) =>
                     {
@@ -90,7 +88,7 @@ namespace Uno.Extensions.Configuration
         public static IHostBuilder UseConfigurationSectionInApp<TOptions>(this IHostBuilder hostBuilder, string configurationSection)
             where TOptions : class
         {
-            return hostBuilder?
+            return hostBuilder
                 .UseConfiguration()
                 .ConfigureServices((ctx, services) => services.Configure<TOptions>(ctx.Configuration.GetSection(configurationSection)));
         }
@@ -98,9 +96,9 @@ namespace Uno.Extensions.Configuration
         public static IHostBuilder AddConfigurationSectionFromEntity<TEntity>(
             this IHostBuilder hostBuilder,
             TEntity entity,
-            string sectionName = null)
+            string? sectionName = default)
         {
-            return hostBuilder?
+            return hostBuilder
                     .ConfigureHostConfiguration(
                         configurationBuilder => configurationBuilder.AddSectionFromEntity(entity, sectionName));
         }

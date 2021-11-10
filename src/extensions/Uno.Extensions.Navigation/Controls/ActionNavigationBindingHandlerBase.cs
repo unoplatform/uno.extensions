@@ -1,5 +1,5 @@
 ﻿using System;
-#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+#if !WINUI
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -27,6 +27,11 @@ namespace Uno.Extensions.Navigation.Controls
                 var path = element.GetRequest();
                 var nav = element.Navigator();
 
+                if(nav is null)
+                {
+                    return;
+                }
+
                 var data = element.GetData();
                 if (data is not null)
                 {
@@ -34,9 +39,12 @@ namespace Uno.Extensions.Navigation.Controls
                     if (binding is not null && binding.ParentBinding.Mode == Windows.UI.Xaml.Data.BindingMode.TwoWay)
                     {
                         var response = await nav.NavigateToRouteForResultAsync(element, path, Schemes.Current, data, resultType: data.GetType());
-                        var result = await response.Result;
-                        element.SetData(result.GetValue() +"");
-                        binding.UpdateSource();
+                        if (response is not null)
+                        {
+                            var result = await response.Result;
+                            element.SetData(result.GetValue() + "");
+                            binding.UpdateSource();
+                        }
                     }
                     else
                     {

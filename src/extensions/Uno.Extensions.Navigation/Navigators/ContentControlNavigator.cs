@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Regions;
-#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+#if !WINUI
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 #else
@@ -15,7 +15,7 @@ namespace Uno.Extensions.Navigation.Navigators;
 
 public class ContentControlNavigator : ControlNavigator<ContentControl>
 {
-    protected override FrameworkElement? CurrentView => Control.Content as FrameworkElement;
+    protected override FrameworkElement? CurrentView => Control?.Content as FrameworkElement;
 
     public ContentControlNavigator(
         ILogger<ContentControlNavigator> logger,
@@ -28,12 +28,19 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 
     protected override async Task<string?> Show(string? path, Type? viewType, object? data)
     {
+        if (viewType is null)
+        {
+            Logger.LogErrorMessage("Missing view for navigation path '{path}'");
+            return string.Empty;
+        }
+
+        if(Control is null)
+        {
+            return string.Empty;
+        }
+
         try
         {
-            if (viewType is null)
-            {
-                Logger.LogErrorMessage("Missing view for navigation path '{path}'");
-            }
 
             Logger.LogDebugMessage($"Creating instance of type '{viewType.Name}'");
             var content = Activator.CreateInstance(viewType);

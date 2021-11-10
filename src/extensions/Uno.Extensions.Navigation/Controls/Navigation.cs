@@ -1,6 +1,6 @@
 ﻿using System;
 //using CommunityToolkit.Mvvm.Input;
-#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+#if !WINUI
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;

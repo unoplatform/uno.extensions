@@ -20,7 +20,7 @@ namespace Uno.Extensions.Configuration
             Config = configRoot;
         }
 
-        public async Task ReloadAllFileConfigurationProviders(string configFile = null)
+        public async Task ReloadAllFileConfigurationProviders(string? configFile = default)
         {
             Logger.LogDebugMessage($"Reloading config");
 

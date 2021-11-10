@@ -12,7 +12,7 @@ namespace Uno.Extensions.Serialization.Tests
     [TestClass]
     public class StreamSerializerExtensionsTests
     {
-        private ISerializer Serializer { get; set; }
+        private SystemTextJsonStreamSerializer Serializer { get; set; }
 
         [TestInitialize]
         public void InitializeTests()

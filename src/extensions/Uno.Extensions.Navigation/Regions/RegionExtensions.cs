@@ -9,9 +9,9 @@ namespace Uno.Extensions.Navigation.Regions;
 
 public static class RegionExtensions
 {
-    public static INavigator Navigator(this IRegion region) => region.Services.GetRequiredService<INavigator>();
+    public static INavigator? Navigator(this IRegion region) => region.Services?.GetRequiredService<INavigator>();
 
-    public static Task<NavigationResponse> NavigateAsync(this IRegion region, NavigationRequest request) => region.Navigator().NavigateAsync(request);
+    public static Task<NavigationResponse?> NavigateAsync(this IRegion region, NavigationRequest request) => (region.Navigator()?.NavigateAsync(request)) ?? Task.FromResult<NavigationResponse?>(default);
 
     public static bool IsNamed(this IRegion region) => !string.IsNullOrWhiteSpace(region.Name);
 
@@ -20,11 +20,11 @@ public static class RegionExtensions
         return region.Parent is not null ? region.Parent.Root() : region;
     }
 
-    public static Route GetRoute(this IRegion region)
+    public static Route? GetRoute(this IRegion region)
     {
-        var regionRoute = region.Navigator().Route;
-        return regionRoute.Merge(
-                        region.Children
+        var regionRoute = region.Navigator()?.Route;
+        return regionRoute?.Merge(
+                        region?.Children
                                 .Where(
                                     child => string.IsNullOrWhiteSpace(child.Name) ||
                                     child.Name == regionRoute?.Base)

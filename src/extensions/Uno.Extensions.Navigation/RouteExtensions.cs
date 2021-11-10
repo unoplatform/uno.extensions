@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+#if !WINUI
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -64,7 +64,7 @@ public static class RouteExtensions
 
     // Only navigate back if there is no base. If a base is specified, we do a forward navigate and remove items from the backstack
     public static bool FrameIsBackNavigation(this Route route) =>
-        route.Scheme.StartsWith(Schemes.NavigateBack) && route.Base.Length == 0;
+        route.Scheme.StartsWith(Schemes.NavigateBack) && route.Base?.Length == 0;
 
     public static bool FrameIsForwardNavigation(this Route route) => !route.FrameIsBackNavigation();
 
@@ -72,7 +72,7 @@ public static class RouteExtensions
     {
         if (route.IsEmpty() || route.FrameIsBackNavigation())
         {
-            return default;
+            return new Route[] { };
         }
 
         var segments = new List<Route>() { route with { Scheme = Schemes.NavigateForward, Path = null, Data = (route.IsLastFrameRoute(mappings) ? route.Data : null) } };
@@ -91,12 +91,13 @@ public static class RouteExtensions
     public static string[] ForwardNavigationSegments(this string path) =>
         path.Split(Schemes.NavigateForward.First()).Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
 
-    public static string Query(this Route route) => (route.Data?.Where(x => x.Key != string.Empty)?.Any() ?? false) ?
+    public static string? Query(this Route route) =>
+        ((route?.Data?.Where(x => x.Key != string.Empty)?.Any()) ?? false) ?
         "?" + string.Join("&", route.Data.Where(x => x.Key != string.Empty).Select(kvp => $"{kvp.Key}={kvp.Value}")) :
         null;
 
-    public static object ResponseData(this Route route) =>
-        route.Data.TryGetValue(string.Empty, out var result) ? result : null;
+    public static object? ResponseData(this Route route) =>
+        (route?.Data?.TryGetValue(string.Empty, out var result)??false) ? result : null;
 
     public static string TrimStartOnce(this string text, string textToTrim)
     {
@@ -151,7 +152,7 @@ public static class RouteExtensions
             Path = (routeToAppend.Scheme == Schemes.Nested ? Schemes.Separator : routeToAppend.Scheme) +
                     routeToAppend.Base +
                     routeToAppend.Path +
-                    ((route.Path.StartsWith(Schemes.Separator) || route.Path.StartsWith(Schemes.NavigateForward)) ?
+                    (((route.Path?.StartsWith(Schemes.Separator)??false) || (route.Path?.StartsWith(Schemes.NavigateForward)??false)) ?
                         string.Empty :
                         Schemes.Separator) +
                     route.Path
@@ -205,9 +206,9 @@ public static class RouteExtensions
         return route.IsLast() || !route.Next().IsPageRoute(mappings);
     }
 
-    public static string NextBase(this Route route)
+    public static string? NextBase(this Route route)
     {
-        return route.Path.ExtractBase(out var nextScheme, out var nextPath);
+        return route.Path?.ExtractBase(out var nextScheme, out var nextPath);
         //return route.Path?.Split('/')?.FirstOrDefault();
     }
 
@@ -222,14 +223,15 @@ public static class RouteExtensions
         return nextScheme;
     }
 
-    private static string ExtractBase(this string path, out string nextScheme, out string nextPath)
+    private static string? ExtractBase(this string? path, out string nextScheme, out string nextPath)
     {
-        nextPath = path;
+        nextPath = path ?? string.Empty;
         nextScheme = string.Empty;
 
-        if (string.IsNullOrWhiteSpace(path))
+        if (path is null ||
+            string.IsNullOrWhiteSpace(path))
         {
-            return null;
+            return default;
         }
 
         var schemeMatch = nonAlphaRegex.Match(path);
@@ -261,13 +263,13 @@ public static class RouteExtensions
 
     public static string WithScheme(this string path, string scheme) => string.IsNullOrWhiteSpace(scheme) ? path : $"{scheme}{path}";
 
-    public static Route AsRoute(this Uri uri, object data = null)
+    public static Route AsRoute(this Uri uri, object? data = null)
     {
         var path = uri.OriginalString;
         return path.AsRoute(data);
     }
 
-    public static Route AsRoute(this string path, object data = null)
+    public static Route AsRoute(this string path, object? data = null)
     {
         var queryIdx = path.IndexOf('?');
         var query = string.Empty;
@@ -323,17 +325,28 @@ public static class RouteExtensions
         return $"{route.Scheme}{route.Base}{route.Path}";
     }
 
-    public static IDictionary<string, object> Combine(this IDictionary<string, object> data, IDictionary<string, object> childData)
+    public static IDictionary<string, object> Combine(this IDictionary<string, object>? data, IDictionary<string, object>? childData)
     {
+        if (data is null)
+        {
+            return childData ?? new Dictionary<string, object>();
+        }
+
         if (childData is not null)
         {
             childData.ToArray().ForEach(x => data[x.Key] = x.Value);
         }
+
         return data;
     }
 
-    public static Route Merge(this Route route, IEnumerable<(string, Route)> childRoutes)
+    public static Route? Merge(this Route? route, IEnumerable<(string?, Route?)>? childRoutes)
     {
+        if (childRoutes is null)
+        {
+            return route;
+        }
+
         var deepestChild = childRoutes.ToArray().OrderByDescending(x => x.Item2?.ToString().Length ?? 0).FirstOrDefault();
 
         if (route is null || route.IsEmpty())
@@ -391,7 +404,7 @@ public static class RouteExtensions
         return mapDict;
     }
 
-    public static Route ApplyFrameRoute(this Route currentRoute, IRouteMappings mappings, Route frameRoute)
+    public static Route? ApplyFrameRoute(this Route? currentRoute, IRouteMappings mappings, Route frameRoute)
     {
         var scheme = frameRoute.Scheme;
         if (string.IsNullOrWhiteSpace(frameRoute.Scheme))

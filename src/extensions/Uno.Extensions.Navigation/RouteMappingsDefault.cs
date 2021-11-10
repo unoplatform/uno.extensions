@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
-#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+#if !WINUI
 using Windows.UI.Xaml;
 #else
 using Microsoft.UI.Xaml;
@@ -20,7 +20,7 @@ public class RouteMappingsDefault : RouteMappings
 
     public string[] ViewModelSuffixes { get; set; } = new[] { "ViewModel", "VM" };
 
-    private IDictionary<string, Type> loadedTypes;
+    private IDictionary<string, Type>? loadedTypes;
 
     private IDictionary<string, RouteMap> Mappings { get; } = new Dictionary<string, RouteMap>();
 
@@ -31,25 +31,25 @@ public class RouteMappingsDefault : RouteMappings
         Logger = logger;
     }
 
-    public override RouteMap FindByPath(string path)
+    public override RouteMap? FindByPath(string? path)
     {
         var map = base.FindByPath(path);
         return map ?? DefaultMapping(path: path);
     }
 
-    public override RouteMap FindByViewModel(Type viewModelType)
+    public override RouteMap? FindByViewModel(Type? viewModelType)
     {
         var map = base.FindByViewModel(viewModelType);
         return map ?? DefaultMapping(viewModel: viewModelType);
     }
 
-    public override RouteMap FindByView(Type viewType)
+    public override RouteMap? FindByView(Type? viewType)
     {
         var map = base.FindByView(viewType);
         return map ?? DefaultMapping(view: viewType);
     }
 
-    private RouteMap DefaultMapping(string path = null, Type view = null, Type viewModel = null)
+    private RouteMap? DefaultMapping(string? path = null, Type? view = null, Type? viewModel = null)
     {
         if (!ReturnImplicitMapping)
         {
@@ -77,7 +77,8 @@ public class RouteMappingsDefault : RouteMappings
             viewModel = TypeFromPath(trimmedPath, false, ViewModelSuffixes);
         }
 
-        if (!string.IsNullOrWhiteSpace(path))
+        if (path is not null &&
+            !string.IsNullOrWhiteSpace(path))
         {
             var defaultMap = new RouteMap(path, view, viewModel, null);
             Mappings[path] = defaultMap;
@@ -89,7 +90,7 @@ public class RouteMappingsDefault : RouteMappings
         return null;
     }
 
-    private Type TypeFromPath(string path, bool allowMatchExact, IEnumerable<string> suffixes, Func<Type, bool> condition = null)
+    private Type? TypeFromPath(string path, bool allowMatchExact, IEnumerable<string> suffixes, Func<Type, bool>? condition = null)
     {
         if (allowMatchExact && LoadedTypes.TryGetValue(path, out var type))
         {
@@ -110,7 +111,7 @@ public class RouteMappingsDefault : RouteMappings
         return null;
     }
 
-    private string PathFromTypes(Type view, Type viewModel)
+    private string PathFromTypes(Type? view, Type? viewModel)
     {
         var path = ViewTypeToPath(view);
         if (!string.IsNullOrWhiteSpace(path))
@@ -121,24 +122,29 @@ public class RouteMappingsDefault : RouteMappings
         return ViewModelTypeToPath(viewModel);
     }
 
-    private string ViewTypeToPath(Type view)
+    private string ViewTypeToPath(Type? view)
     {
         return TypeToPath(view, ViewSuffixes);
     }
 
-    private string ViewModelTypeToPath(Type view)
+    private string ViewModelTypeToPath(Type? view)
     {
         return TypeToPath(view, ViewModelSuffixes);
     }
 
-    private string TypeToPath(Type view, IEnumerable<string> suffixes)
+    private string TypeToPath(Type? view, IEnumerable<string> suffixes)
     {
         var path = view?.Name + string.Empty;
         return TrimSuffices(path, suffixes);
     }
 
-    private string TrimSuffices(string path, IEnumerable<string> suffixes)
+    private string TrimSuffices(string? path, IEnumerable<string> suffixes)
     {
+        if (path is null)
+        {
+            return string.Empty;
+        }
+
         foreach (var item in suffixes)
         {
             path = path.TrimEnd(item, StringComparison.InvariantCultureIgnoreCase);
@@ -154,7 +160,7 @@ public class RouteMappingsDefault : RouteMappings
             if (loadedTypes is null)
             {
                 loadedTypes = (from asb in AppDomain.CurrentDomain.GetAssemblies()
-                               where (!asb.FullName.StartsWith("_"))
+                               where (!(asb.FullName ?? string.Empty).StartsWith("_"))
                                from t in asb.GetTypes()
                                where t.IsClass
                                select new { t.Name, Type = t }).ToDictionaryDistinct(x => x.Name, x => x.Type);

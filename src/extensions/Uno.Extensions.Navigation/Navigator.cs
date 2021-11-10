@@ -17,9 +17,9 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
     protected IRegion Region { get; }
 
-    private INavigationNotifier Notifier => Region.Services.GetRequiredService<INavigationNotifier>();
+    private INavigationNotifier? Notifier => Region.Services?.GetRequiredService<INavigationNotifier>();
 
-    IServiceProvider IInstance<IServiceProvider>.Instance => Region.Services;
+    IServiceProvider? IInstance<IServiceProvider>.Instance => Region.Services;
 
     public Route? Route { get; protected set; }
 
@@ -33,7 +33,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
         Logger = logger;
     }
 
-    public async Task<NavigationResponse> NavigateAsync(NavigationRequest request)
+    public async Task<NavigationResponse?> NavigateAsync(NavigationRequest request)
     {
         Logger.LogInformation($"Pre-navigation: - {Region.ToString()}");
         try
@@ -46,7 +46,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
                 // - trim the Root scheme ready for handling
                 if (Region.Parent is not null)
                 {
-                    return await (Region.Parent?.NavigateAsync(request) ?? Task.FromResult<NavigationResponse>(default));
+                    return await (Region.Parent?.NavigateAsync(request) ?? Task.FromResult<NavigationResponse?>(default));
                 }
                 else
                 {
@@ -64,7 +64,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
                 // Handle parent navigations
                 if (request.Route.IsParent())
                 {
-                    return await (Region.Parent?.NavigateAsync(request) ?? Task.FromResult<NavigationResponse>(default));
+                    return await (Region.Parent?.NavigateAsync(request) ?? Task.FromResult<NavigationResponse?>(default));
                 }
             }
 
@@ -93,7 +93,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
             }
 
             // Initialise the region
-            var requestMap = Region.Services.GetRequiredService<IRouteMappings>().FindByPath(request.Route.Base);
+            var requestMap = Region.Services?.GetRequiredService<IRouteMappings>().FindByPath(request.Route.Base);
             if (requestMap?.RegionInitialization is not null)
             {
                 var newRequest = requestMap.RegionInitialization(Region, request);
@@ -106,15 +106,15 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
         {
             Logger.LogInformation($"Post-navigation: {Region.ToString()}");
             Logger.LogInformation($"Post-navigation (route): {Region.Root().GetRoute()}");
-            Notifier.Update(Region);
+            Notifier?.Update(Region);
         }
     }
 
-    private async Task<NavigationResponse> DialogNavigateAsync(NavigationRequest request)
+    private async Task<NavigationResponse?> DialogNavigateAsync(NavigationRequest request)
     {
-        var dialogService = Region.Services.GetService<INavigatorFactory>().CreateService(Region, request);
+        var dialogService = Region.Services?.GetService<INavigatorFactory>()?.CreateService(Region, request);
 
-        var dialogResponse = await dialogService.NavigateAsync(request);
+        var dialogResponse = await (dialogService?.NavigateAsync(request)??Task.FromResult<NavigationResponse?>(default));
 
         return dialogResponse;
     }
@@ -148,7 +148,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
                                         region.Name == Route?.Base
                                     ).ToArray();
 
-        var tasks = new List<Task<NavigationResponse>>();
+        var tasks = new List<Task<NavigationResponse?>>();
         foreach (var region in children)
         {
             tasks.Add(region.NavigateAsync(request));

@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
-#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+#if !WINUI
 using Windows.UI.Xaml;
 #else
 using Microsoft.UI.Xaml;
@@ -24,7 +24,7 @@ namespace Uno.Extensions.Navigation.Controls
         {
             View.Loaded -= LoadedHandler;
 
-            var binder = View.FindRegion().Services.GetServices<INavigationBindingHandler>().FirstOrDefault(x => x.CanBind(View));
+            var binder = View.FindRegion()?.Services?.GetServices<INavigationBindingHandler>().FirstOrDefault(x => x.CanBind(View));
             if (binder is not null)
             {
                 binder.Bind(View);

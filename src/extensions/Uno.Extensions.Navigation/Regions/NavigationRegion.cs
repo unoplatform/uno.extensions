@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Controls;
-#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+#if !WINUI
 using Windows.UI.Xaml;
 #else
 using Microsoft.UI.Xaml;
@@ -16,9 +16,9 @@ namespace Uno.Extensions.Navigation.Regions;
 
 public sealed class NavigationRegion : IRegion
 {
-    public string Name { get; private set; }
+    public string? Name { get; private set; }
 
-    public FrameworkElement View { get; }
+    public FrameworkElement? View { get; }
 
     private IServiceProvider? _services;
     private IRegion? _parent;
@@ -46,10 +46,17 @@ public sealed class NavigationRegion : IRegion
         {
             if (_services is null && Parent is not null)
             {
-                _services = Parent.Services.CreateScope().ServiceProvider;
+                _services = Parent?.Services?.CreateScope()?.ServiceProvider;
+                if (_services is null)
+                {
+                    return null;
+                }
+
                 _services.AddInstance<IRegion>(this);
                 var serviceFactory = _services.GetRequiredService<INavigatorFactory>();
+#pragma warning disable CS8603 // Possible null reference return.
                 _services.AddInstance<INavigator>(() => serviceFactory.CreateService(this));
+#pragma warning restore CS8603 // Possible null reference return.
             }
 
             return _services;
@@ -61,7 +68,8 @@ public sealed class NavigationRegion : IRegion
     public NavigationRegion(FrameworkElement? view = null, IServiceProvider? services = null, bool attachToHierarchy = true)
     {
         View = view;
-        if (view is not null && attachToHierarchy)
+        if (View is not null &&
+            attachToHierarchy)
         {
             View.Loading += ViewLoading;
             View.Loaded += ViewLoaded;
@@ -71,8 +79,10 @@ public sealed class NavigationRegion : IRegion
         {
             _services = services;
             _services.AddInstance<IRegion>(this);
-            var serviceFactory = _services.GetService<INavigatorFactory>();
+            var serviceFactory = _services.GetRequiredService<INavigatorFactory>();
+#pragma warning disable CS8603 // Possible null reference return.
             _services.AddInstance<INavigator>(() => serviceFactory.CreateService(this));
+#pragma warning restore CS8603 // Possible null reference return.
         }
     }
 
@@ -92,6 +102,11 @@ public sealed class NavigationRegion : IRegion
 
     private void ViewUnloaded(object sender, RoutedEventArgs e)
     {
+        if (View is null)
+        {
+            return;
+        }
+
         View.Loading += ViewLoading;
         View.Loaded += ViewLoaded;
         View.Unloaded -= ViewUnloaded;
@@ -101,6 +116,11 @@ public sealed class NavigationRegion : IRegion
 
     private Task HandleLoading()
     {
+        if (View is null)
+        {
+            return Task.CompletedTask;
+        }
+
         AssignParent();
 
         return View.IsLoaded ? HandleLoaded() : Task.CompletedTask;
@@ -108,6 +128,11 @@ public sealed class NavigationRegion : IRegion
 
     private void AssignParent()
     {
+        if (View is null)
+        {
+            return;
+        }
+
         if (Parent is null)
         {
             var parent = View.FindParentRegion(out var routeName);
@@ -126,6 +151,11 @@ public sealed class NavigationRegion : IRegion
 
     private async Task HandleLoaded()
     {
+        if (View is null)
+        {
+            return;
+        }
+
         View.Loading -= ViewLoading;
         View.Loaded -= ViewLoaded;
         View.Unloaded += ViewUnloaded;

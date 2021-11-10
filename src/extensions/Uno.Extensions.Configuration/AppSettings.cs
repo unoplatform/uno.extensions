@@ -9,7 +9,7 @@ namespace Uno.Extensions.Configuration
     {
         public const string AppSettingsFileName = "appsettings";
 
-        private static AppSettings[] _appSettings;
+        private static AppSettings[]? _appSettings;
 
         private readonly Assembly _assembly;
 
@@ -21,7 +21,7 @@ namespace Uno.Extensions.Configuration
 
         public string FileName { get; }
 
-        public Stream GetContent()
+        public Stream? GetContent()
         {
             using (var resourceFileStream = _assembly.GetManifestResourceStream(FileName))
             {
@@ -43,7 +43,7 @@ namespace Uno.Extensions.Configuration
         public static AppSettings[] AllAppSettings<TApplicationRoot>()
              where TApplicationRoot : class
         {
-            if (_appSettings == null)
+            if (_appSettings is null)
             {
                 var executingAssembly = typeof(TApplicationRoot).Assembly;
 

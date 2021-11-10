@@ -2,5 +2,5 @@
 
 public interface IInstance<T>
 {
-    T Instance { get; }
+    T? Instance { get; }
 }

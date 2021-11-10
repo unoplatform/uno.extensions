@@ -20,7 +20,7 @@ public class SystemTextJsonStreamSerializer : ISerializer, IStreamSerializer
 
     public void WriteToStream(Stream stream, object value, Type valueType)
     {
-        JsonSerializer.Serialize(stream, valueType, _serializerOptions);
+        JsonSerializer.Serialize(stream, value, valueType, _serializerOptions);
     }
 
     public string ToString(object value, Type valueType)

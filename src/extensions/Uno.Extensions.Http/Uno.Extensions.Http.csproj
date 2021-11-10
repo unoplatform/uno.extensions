@@ -1,23 +1,28 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="MSBuild.Sdk.Extras">
+﻿<Project Sdk="MSBuild.Sdk.Extras"  ToolsVersion="15.0">
   <PropertyGroup>
-    <TargetFrameworks>uap10.0.16299;</TargetFrameworks> <!-- <TargetFrameworks>uap10.0.16299;netstandard2.0;net5.0;net6.0;xamarinios10;xamarinmac20;monoandroid10.0;monoandroid11.0;net6.0-ios;net6.0-android</TargetFrameworks> -->
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net5.0;net6.0;uap10.0.16299;xamarinios10;monoandroid10.0;monoandroid11.0;net6.0-ios;net6.0-android</TargetFrameworks>
   </PropertyGroup>
   
-  <ItemGroup Condition="'$(IsXamarin)' == 'true' or '$(IsUWP)' == 'true'">
+  <!--<ItemGroup Condition="'$(IsIOS)' == 'true' or '$(IsAndroid)' == 'true'">
     <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
-  </ItemGroup>
+  </ItemGroup>-->
 
   <ItemGroup Condition="'$(IsUWP)' == 'true' or '$(IsWinUI)' == 'true'">
-    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="6.0.0-rc.2.21480.5" />
+    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="6.0.0" />
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
-    <PackageReference Include="System.Text.Json" Version="6.0.0-rc.2.21480.5" />
+    <!--<PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
+    <PackageReference Include="System.Text.Json" Version="6.0.0" />
     <PackageReference Include="System.Reflection.TypeExtensions" Version="4.7.0" />
-    <PackageReference Include="System.Reactive" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0-rc.2.21480.5" />
-    <ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
+    <PackageReference Include="System.Reactive" Version="5.0.0" />-->
+    <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+    <!--<ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />-->
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
+  </ItemGroup>
+
 </Project>

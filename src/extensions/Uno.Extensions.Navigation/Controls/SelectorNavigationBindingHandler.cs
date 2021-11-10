@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+#if !WINUI
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -28,6 +28,11 @@ namespace Uno.Extensions.Navigation.Controls
                 var navdata = sender.GetData() ?? data;
                 var path = sender.GetRequest();
                 var nav = sender.Navigator();
+                if(nav is null)
+                {
+                    return;
+                }
+
                 await nav.NavigateToRouteAsync(sender, path, Schemes.Current, navdata);
             };
 
@@ -55,8 +60,8 @@ namespace Uno.Extensions.Navigation.Controls
                 await action(sender, data);
             };
 
-            Action connect = null;
-            Action disconnect = null;
+            Action? connect = null;
+            Action? disconnect = null;
             if (viewList is ListViewBase lv
                     && lv.IsItemClickEnabled)
             {

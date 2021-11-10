@@ -9,6 +9,8 @@ namespace Uno.Extensions.Http
 {
     public static class ServiceCollectionExtensions
     {
+        private static char[] InterfaceNamePrefix = new[] { 'i', 'I' };
+
         public static T Conditional<T>(
             this T builder,
             bool predicate,
@@ -20,8 +22,8 @@ namespace Uno.Extensions.Http
         public static IServiceCollection AddClient<TClient, TImplementation>(
              this IServiceCollection services,
              HostBuilderContext context,
-             string name = null,
-             Func<IHttpClientBuilder, EndpointOptions, IHttpClientBuilder> configure = null
+             string? name = null,
+             Func<IHttpClientBuilder, EndpointOptions, IHttpClientBuilder>? configure = null
          )
             where TClient : class
             where TImplementation : class, TClient
@@ -35,8 +37,8 @@ namespace Uno.Extensions.Http
              this IServiceCollection services,
              HostBuilderContext context,
              EndpointOptions options,
-             string name = null,
-             Func<IHttpClientBuilder, EndpointOptions, IHttpClientBuilder> configure = null
+             string? name = null,
+             Func<IHttpClientBuilder, EndpointOptions, IHttpClientBuilder>? configure = null
          )
             where TClient : class
             where TImplementation : class, TClient
@@ -49,14 +51,14 @@ namespace Uno.Extensions.Http
         public static IServiceCollection AddClient<TInterface>(
              this IServiceCollection services,
              HostBuilderContext context,
-             string name = null,
-             Func<IServiceCollection, HostBuilderContext, IHttpClientBuilder> httpClientFactory = null,
-             Func<IHttpClientBuilder, EndpointOptions, IHttpClientBuilder> configure = null
+             string? name = null,
+             Func<IServiceCollection, HostBuilderContext, IHttpClientBuilder>? httpClientFactory = null,
+             Func<IHttpClientBuilder, EndpointOptions, IHttpClientBuilder>? configure = null
          )
              where TInterface : class
         {
-            name ??= typeof(TInterface).IsInterface ? typeof(TInterface).Name.TrimStart("I") : typeof(TInterface).Name;
-            var options = context?.Configuration?.GetSection(name)?.Get<EndpointOptions>();
+            name ??= typeof(TInterface).IsInterface ? typeof(TInterface).Name.TrimStart(InterfaceNamePrefix) : typeof(TInterface).Name;
+            var options = context.Configuration.GetSection(name).Get<EndpointOptions>();
 
             return services.AddClient<TInterface>(context, options, name, httpClientFactory, configure);
         }
@@ -65,13 +67,13 @@ namespace Uno.Extensions.Http
               this IServiceCollection services,
               HostBuilderContext context,
               EndpointOptions options,
-              string name = null,
-              Func<IServiceCollection, HostBuilderContext, IHttpClientBuilder> httpClientFactory = null,
-              Func<IHttpClientBuilder, EndpointOptions, IHttpClientBuilder> configure = null
+              string? name = null,
+              Func<IServiceCollection, HostBuilderContext, IHttpClientBuilder>? httpClientFactory = null,
+              Func<IHttpClientBuilder, EndpointOptions, IHttpClientBuilder>? configure = null
           )
               where TInterface : class
         {
-            name ??= typeof(TInterface).IsInterface ? typeof(TInterface).Name.TrimStart("I") : typeof(TInterface).Name;
+            name ??= typeof(TInterface).IsInterface ? typeof(TInterface).Name.TrimStart(InterfaceNamePrefix) : typeof(TInterface).Name;
 
             if (httpClientFactory is null)
             {
@@ -86,8 +88,14 @@ namespace Uno.Extensions.Http
                     builder => builder.ConfigurePrimaryHttpMessageHandler<HttpMessageHandler>())
                 .ConfigureHttpClient((serviceProvider, client) =>
                 {
-                    client.BaseAddress = new Uri(options.Url);
-                });
+                    if (options.Url is not null)
+                    {
+                        client.BaseAddress = new Uri(options.Url);
+                    }
+                })
+                .Conditional(
+                    configure is not null,
+                    builder => configure?.Invoke(builder, options) ?? builder);
             return services;
         }
 
@@ -97,7 +105,7 @@ namespace Uno.Extensions.Http
            where TClient : class
         {
             return services
-                .AddHttpClient(typeof(TClient).FullName)
+                .AddHttpClient(typeof(TClient).FullName ?? string.Empty)
                 .AddTypedClient(factory);
         }
 

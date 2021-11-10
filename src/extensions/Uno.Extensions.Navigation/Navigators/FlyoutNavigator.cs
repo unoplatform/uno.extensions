@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Regions;
 using Windows.Foundation;
-#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+#if !WINUI
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 #else
@@ -21,7 +21,7 @@ public class FlyoutNavigator : ControlNavigator
 {
     public override bool CanGoBack => true;
 
-    private Flyout Flyout { get; set; }
+    private Flyout? Flyout { get; set; }
 
     public FlyoutNavigator(
         ILogger<ContentDialogNavigator> logger,
@@ -33,32 +33,19 @@ public class FlyoutNavigator : ControlNavigator
 
     protected override bool CanNavigateToRoute(Route route) => base.CanNavigateToRoute(route) || route.IsBackOrCloseNavigation();
 
-    protected override async Task<Route> ExecuteRequestAsync(NavigationRequest request)
+    protected override async Task<Route?> ExecuteRequestAsync(NavigationRequest request)
     {
+        if(Region.Services is null)
+        {
+            return default;
+        }
+
         var route = request.Route;
         // If this is back navigation, then make sure it's used to close
         // any of the open dialogs
         if (route.FrameIsBackNavigation() && Flyout is not null)
         {
-            //var navigation = Region.Navigator();
-            //var responseNav = navigation as ResponseNavigator;
-            //var data = request.Route.Data;
-            
-            //if (responseNav is not null &&
-            //        responseNav.ResultCompletion.Task.Status != TaskStatus.Canceled &&
-            //        responseNav.ResultCompletion.Task.Status != TaskStatus.RanToCompletion)
-            //{
-            //    if (data.TryGetValue(string.Empty, out var responseData))
-            //    {
-            //        responseNav.ResultCompletion.TrySetResult(Options.Option.Some(responseData));
-            //    }
-            //    else
-            //    {
-            //        responseNav.ResultCompletion.TrySetResult(Options.Option.None<object>());
-            //    }
-            //}
-
-            await CloseFlyout(route);
+            CloseFlyout();
         }
         else
         {
@@ -70,10 +57,9 @@ public class FlyoutNavigator : ControlNavigator
         return responseRequest;
     }
 
-    private async Task CloseFlyout(Route route)
+    private void CloseFlyout()
     {
-
-        Flyout.Hide();
+        Flyout?.Hide();
     }
 
     private Flyout? DisplayFlyout(NavigationRequest request, Type? viewType, object? viewModel)
@@ -82,19 +68,22 @@ public class FlyoutNavigator : ControlNavigator
         var navigation = Region.Navigator();
         var services = Region.Services;
         var mapping = Mappings.Find(route);
+
+        if(navigation is null ||
+            services is null)
+        {
+            return null;
+        }
+
         Flyout? flyout = null;
         if (mapping?.View is not null)
         {
-            flyout = Activator.CreateInstance(mapping?.View) as Flyout;
+            flyout = Activator.CreateInstance(mapping.View) as Flyout;
         }
         else
         {
-            var serviceLookupType = mapping?.View;
-            if (serviceLookupType is null)
-            {
-                object? resource = request.RouteResourceView(Region);
-                flyout = resource as Flyout;
-            }
+            object? resource = request.RouteResourceView(Region);
+            flyout = resource as Flyout;
         }
 
         var flyoutElement = flyout?.Content as FrameworkElement;

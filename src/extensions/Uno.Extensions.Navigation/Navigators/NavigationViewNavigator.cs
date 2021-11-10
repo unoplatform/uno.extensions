@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Regions;
-#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+#if !WINUI
 using Windows.UI.Xaml;
 #else
 using Microsoft.UI.Xaml;
@@ -31,9 +31,10 @@ public class NavigationViewNavigator : ControlNavigator<Microsoft.UI.Xaml.Contro
         var tbi = args.SelectedItem as FrameworkElement;
 
         var path = tbi?.GetName() ?? tbi?.Name;
-        if (!string.IsNullOrEmpty(path))
+        if (path is not null &&
+            !string.IsNullOrEmpty(path))
         {
-            Region.Navigator().NavigateToRouteAsync(sender, path);
+            Region.Navigator()?.NavigateToRouteAsync(sender, path);
         }
     }
 

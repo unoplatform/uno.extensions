@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Regions;
-#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+#if !WINUI
 using Windows.UI.Xaml;
 #else
 using Microsoft.UI.Xaml;
@@ -33,8 +34,13 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 
     protected abstract Task<string?> Show(string? path, Type? viewType, object? data);
 
-    protected override async Task<Route> ExecuteRequestAsync(NavigationRequest request)
+    protected override async Task<Route?> ExecuteRequestAsync(NavigationRequest request)
     {
+        if (Control is not null)
+        {
+            return default;
+        }
+
         var route = request.Route;
         var mapping = Mappings.Find(route);
         Logger.LogDebugMessage($"Navigating to path '{route.Base}' with view '{mapping?.View?.Name}'");
@@ -50,13 +56,25 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
         return route with { Base = executedPath, Path = null };
     }
 
-    protected virtual object InitialiseCurrentView(Route route, RouteMap? mapping)
+    protected object? InitialiseCurrentView(Route route, RouteMap? mapping)
     {
         var view = CurrentView;
 
+        if (view is null)
+        {
+            return null;
+        }
+
         var navigator = Region.Navigator();
         var services = this.Get<IServiceProvider>();
-        var viewModel = view?.DataContext;
+
+        if (navigator is null ||
+            services is null)
+        {
+            return null;
+        }
+
+        var viewModel = view.DataContext;
         if (viewModel is null ||
             viewModel.GetType() != mapping?.ViewModel)
         {
@@ -70,7 +88,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
     }
 
 
-    protected override string NavigatorToString => Route?.ToString();
+    protected override string NavigatorToString => (Route?.ToString()) ?? string.Empty;
 }
 
 public abstract class ControlNavigator : Navigator
@@ -143,7 +161,7 @@ public abstract class ControlNavigator : Navigator
     {
     }
 
-    protected async Task<NavigationResponse> ControlNavigateAsync(NavigationRequest request)
+    protected async Task<NavigationResponse?> ControlNavigateAsync(NavigationRequest request)
     {
         if (request.Route.Base == Route?.Base)
         {
@@ -151,10 +169,15 @@ public abstract class ControlNavigator : Navigator
         }
 
         var services = Region.Services;
+        if (services is null)
+        {
+            return default;
+        }
+
 
         // Setup the navigation data (eg parameters to be injected into viewmodel)
         var dataFactor = services.GetRequiredService<NavigationDataProvider>();
-        dataFactor.Parameters = request.Route.Data;
+        dataFactor.Parameters = (request.Route?.Data) ?? new Dictionary<string, object>();
 
         // Create ResponseNavigator if result is requested
         TaskCompletionSource<Options.Option>? resultTask = null;
@@ -179,17 +202,17 @@ public abstract class ControlNavigator : Navigator
 
         if (resultTask is not null)
         {
-            return new NavigationResultResponse(executedRoute, resultTask.Task);
+            return new NavigationResultResponse(executedRoute??Route.Empty, resultTask.Task);
         }
         else
         {
-            return new NavigationResponse(executedRoute);
+            return new NavigationResponse(executedRoute ?? Route.Empty);
         }
     }
 
-    protected virtual void UpdateRoute(Route route)
+    protected virtual void UpdateRoute(Route? route)
     {
-        Route = new Route(Schemes.Current, route.Base, null, route.Data);
+        Route = route is not null?new Route(Schemes.Current, route.Base, null, route.Data):null;
     }
 
     protected object? CreateViewModel(IServiceProvider services, INavigator navigator, Route route, RouteMap? mapping)
@@ -197,7 +220,7 @@ public abstract class ControlNavigator : Navigator
         if (mapping?.ViewModel is not null)
         {
             var dataFactor = services.GetRequiredService<NavigationDataProvider>();
-            dataFactor.Parameters = route.Data;
+            dataFactor.Parameters = route.Data ?? new Dictionary<string, object>();
 
             var vm = services.GetService(mapping.ViewModel);
             if (vm is IInjectable<INavigator> navAware)
@@ -205,7 +228,7 @@ public abstract class ControlNavigator : Navigator
                 navAware.Inject(navigator);
             }
 
-            if (vm is IInjectable<IServiceProvider> spAware)
+            if (vm is IInjectable<IServiceProvider> spAware && Region.Services is not null)
             {
                 spAware.Inject(Region.Services);
             }
@@ -216,5 +239,5 @@ public abstract class ControlNavigator : Navigator
         return null;
     }
 
-    protected abstract Task<Route> ExecuteRequestAsync(NavigationRequest request);
+    protected abstract Task<Route?> ExecuteRequestAsync(NavigationRequest request);
 }

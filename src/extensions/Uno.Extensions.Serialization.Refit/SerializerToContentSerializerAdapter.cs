@@ -15,16 +15,16 @@ namespace Uno.Extensions.Serialization.Refit
     /// </summary>
     public class SerializerToContentSerializerAdapter : IHttpContentSerializer
     {
-        private static readonly MediaTypeHeaderValue _jsonMediaType = new ("application/json") { CharSet = Encoding.UTF8.WebName };
+        private static readonly MediaTypeHeaderValue _jsonMediaType = new("application/json") { CharSet = Encoding.UTF8.WebName };
 
-        private readonly ISerializer _serializer;
+        private readonly IStreamSerializer _serializer;
 
-        public SerializerToContentSerializerAdapter(ISerializer serializer)
+        public SerializerToContentSerializerAdapter(IStreamSerializer serializer)
         {
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
         }
 
-        public async Task<T> DeserializeAsync<T>(HttpContent content)
+        public async Task<T?> DeserializeAsync<T>(HttpContent content)
         {
             if (content is null)
             {
@@ -35,7 +35,7 @@ namespace Uno.Extensions.Serialization.Refit
             return _serializer.FromStream<T>(stream);
         }
 
-        public async Task<T> FromHttpContentAsync<T>(HttpContent content, CancellationToken cancellationToken = default)
+        public async Task<T?> FromHttpContentAsync<T>(HttpContent content, CancellationToken cancellationToken = default)
         {
             if (content is null)
             {
@@ -52,12 +52,16 @@ namespace Uno.Extensions.Serialization.Refit
 
         public string GetFieldNameForProperty(PropertyInfo propertyInfo)
         {
-            return propertyInfo?.Name;
+            return propertyInfo.Name;
         }
 
         public HttpContent ToHttpContent<T>(T item)
         {
-            var stream = _serializer.ToStream(item, item?.GetType());
+            if (item is null)
+            {
+                return new StringContent(string.Empty);
+            }
+            var stream = _serializer.ToStream(item, item.GetType());
             var content = new StreamContent(stream);
             content.Headers.ContentType = _jsonMediaType;
 

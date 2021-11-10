@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using Uno.Extensions.Navigation.Regions;
-#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+#if !WINUI
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 #else
@@ -76,7 +76,11 @@ public static class Region
     {
         // Create the Root region
         var elementRegion = new NavigationRegion(element, services);
-        services.AddInstance<INavigator>(services.GetInstance<INavigator>());
+        var nav = services.GetInstance<INavigator>();
+        if (nav is not null)
+        {
+            services.AddInstance<INavigator>(nav);
+        }
         element.SetInstance(elementRegion);
 
         return element;

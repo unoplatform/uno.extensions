@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation.Regions;
 using Windows.Foundation;
-#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+#if !WINUI
 using Windows.UI.Popups;
 using UICommand = Windows.UI.Popups.UICommand;
 #else
@@ -25,7 +25,7 @@ public class MessageDialogNavigator : DialogNavigator
     {
     }
 
-    protected override IAsyncInfo DisplayDialog(NavigationRequest request, Type? viewType, object? viewModel)
+    protected override IAsyncInfo? DisplayDialog(NavigationRequest request, Type? viewType, object? viewModel)
     {
         var route = request.Route;
         var navigation = Region.Navigator();
@@ -33,6 +33,11 @@ public class MessageDialogNavigator : DialogNavigator
         var mapping = Mappings.Find(route);
 
         var data = route.Data;
+        if(data is null)
+        {
+            return null;
+        }
+
         var md = new MessageDialog(data[RouteConstants.MessageDialogParameterContent] as string, data[RouteConstants.MessageDialogParameterTitle] as string)
         {
             Options = (MessageDialogOptions)data[RouteConstants.MessageDialogParameterOptions],

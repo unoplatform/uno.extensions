@@ -12,7 +12,7 @@ namespace Uno.Extensions.Logging.Serilog
         public static IHostBuilder UseSerilog(this IHostBuilder hostBuilder,
             bool consoleLoggingEnabled = false,
             bool fileLoggingEnabled = false,
-            Action<LoggerConfiguration> configureLogger = null)
+            Action<LoggerConfiguration>? configureLogger = null)
         {
             return hostBuilder.UseSerilog(() => consoleLoggingEnabled, () => fileLoggingEnabled, configureLogger);
         }
@@ -20,7 +20,7 @@ namespace Uno.Extensions.Logging.Serilog
         public static IHostBuilder UseSerilog(this IHostBuilder hostBuilder,
             Func<bool> consoleLoggingEnabled,
             Func<bool> fileLoggingEnabled,
-            Action<LoggerConfiguration> configureLogger = null)
+            Action<LoggerConfiguration>? configureLogger = null)
         {
             return hostBuilder
                     .ConfigureLogging((context, loggingBuilder) =>
@@ -36,7 +36,11 @@ namespace Uno.Extensions.Logging.Serilog
 
                         if (fileLoggingEnabled?.Invoke() ?? false)
                         {
-                            AddFileLogging(loggerConfiguration, GetLogFilePath(context));
+                            var logPath = GetLogFilePath(context);
+                            if (logPath is not null)
+                            {
+                                AddFileLogging(loggerConfiguration, logPath);
+                            }
                         }
 
                         configureLogger?.Invoke(loggerConfiguration);
@@ -81,9 +85,9 @@ namespace Uno.Extensions.Logging.Serilog
             //+:cnd:noEmit
         }
 
-        private static string GetLogFilePath(HostBuilderContext hostBuilderContext)
+        private static string? GetLogFilePath(HostBuilderContext hostBuilderContext)
         {
-            var logDirectory = (hostBuilderContext.HostingEnvironment as IAppHostEnvironment).AppDataPath;
+            var logDirectory = (hostBuilderContext.HostingEnvironment as IAppHostEnvironment)?.AppDataPath ?? string.Empty;
             if (string.IsNullOrWhiteSpace(logDirectory))
             {
                 return null;

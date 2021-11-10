@@ -12,9 +12,9 @@ namespace Uno.Extensions.Logging
 {
     public static class HostBuilderExtensions
     {
-#if !NETSTANDARD || WINUI
+#if !__WASM__
         public static IHostBuilder UseLogging(this IHostBuilder hostBuilder,
-            Action<ILoggingBuilder> configure = null)
+            Action<ILoggingBuilder>? configure = default)
         {
             return hostBuilder
                     .ConfigureLogging(builder =>
@@ -31,7 +31,7 @@ namespace Uno.Extensions.Logging
         }
 #elif __WASM__
         public static IHostBuilder UseLogging(this IHostBuilder hostBuilder,
-            Action<ILoggingBuilder> configure = null)
+            Action<ILoggingBuilder>? configure = default)
         {
             return hostBuilder
                     .ConfigureLogging(builder =>
@@ -42,29 +42,5 @@ namespace Uno.Extensions.Logging
         }
 
 #endif
-//        public static IHostBuilder UseUnoLogging(this IHostBuilder hostBuilder,
-//            Action<ILoggingBuilder> configure = null,
-//            ILoggerProvider consoleProvider = null)
-//        {
-//            return hostBuilder
-//                    .ConfigureLogging(builder =>
-//                        {
-//                            if (consoleProvider == null)
-//                            {
-//#if __IOS__
-//                                builder.AddProvider(new global::Uno.Extensions.Logging.OSLogLoggerProvider());
-//#elif NETFX_CORE
-//                                builder.AddDebug();
-//#else
-//                                builder.AddConsole();
-//#endif
-//                            }
-//                            else
-//                            {
-//                                builder.AddProvider(consoleProvider);
-//                            }
-//                            configure?.Invoke(builder);
-//                        });
-//        }
     }
 }

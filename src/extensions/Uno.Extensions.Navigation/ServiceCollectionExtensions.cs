@@ -10,7 +10,7 @@ using Windows.UI.Popups;
 //#if !WINDOWS_UWP && !WINUI
 //using Popup = Windows.UI.Xaml.Controls.Popup;
 //#endif
-#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+#if !WINUI
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -29,11 +29,6 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddNavigation(this IServiceCollection services)
     {
-        if (services is null)
-        {
-            return services;
-        }
-
         return services
                     .AddScoped<IInstanceRepository, InstanceRepository>()
 
@@ -70,7 +65,7 @@ public static class ServiceCollectionExtensions
 
                     .AddScoped<NavigationDataProvider>()
                     .AddScoped<RegionControlProvider>()
-                    .AddScoped<IDictionary<string, object>>(services => services.GetService<NavigationDataProvider>().Parameters)
+                    .AddTransient<IDictionary<string, object>>(services => services.GetRequiredService<NavigationDataProvider>().Parameters)
 
                     .AddScopedInstance<INavigator>();
     }
@@ -80,10 +75,12 @@ public static class ServiceCollectionExtensions
         return services.AddSingleton(new NavigatorFactoryBuilder() { Configure = register });
     }
 
-    public static IServiceCollection AddScopedInstance<T>(this IServiceCollection services, Func<IServiceProvider, T> defaultValue = null)
+    public static IServiceCollection AddScopedInstance<T>(this IServiceCollection services)
         where T : class
     {
-        return services.AddTransient<T>(sp => sp.GetInstance<T>() ?? defaultValue?.Invoke(sp));
+#pragma warning disable CS8603 // Possible null reference return.
+        return services.AddTransient<T>(sp => sp.GetInstance<T>());
+#pragma warning restore CS8603 // Possible null reference return.
     }
 
     public static void AddInstance<T>(this IServiceProvider provider, Func<T> instanceCreator)
@@ -93,22 +90,24 @@ public static class ServiceCollectionExtensions
 
     public static void AddInstance<T>(this IServiceProvider provider, Type serviceType, Func<T> instanceCreator)
     {
-        provider.GetService<IInstanceRepository>().Instances[serviceType] = instanceCreator;
+        provider.GetRequiredService<IInstanceRepository>().Instances[serviceType] = instanceCreator;
     }
 
     public static T AddInstance<T>(this IServiceProvider provider, T instance)
     {
+#pragma warning disable CS8604 // Possible null reference argument.
         provider.AddInstance(typeof(T), instance);
+#pragma warning restore CS8604 // Possible null reference argument.
         return instance;
     }
 
     public static object AddInstance(this IServiceProvider provider, Type serviceType, object instance)
     {
-        provider.GetService<IInstanceRepository>().Instances[serviceType] = instance;
+        provider.GetRequiredService<IInstanceRepository>().Instances[serviceType] = instance;
         return instance;
     }
 
-    public static T GetInstance<T>(this IServiceProvider provider)
+    public static T? GetInstance<T>(this IServiceProvider provider)
     {
         var value = provider.GetInstance(typeof(T));
         if (value is Func<T> valueCreator)
@@ -126,40 +125,32 @@ public static class ServiceCollectionExtensions
         return default;
     }
 
-    public static object GetInstance(this IServiceProvider provider, Type type)
+    public static object? GetInstance(this IServiceProvider provider, Type type)
     {
-        return provider.GetService<IInstanceRepository>().Instances.TryGetValue(type, out var value) ? value : null;
+        return provider.GetRequiredService<IInstanceRepository>().Instances.TryGetValue(type, out var value) ? value : null;
     }
 
-    public static IServiceCollection AddRegion<TControl, TRegion>(this IServiceCollection services, string name = null)
+    public static IServiceCollection AddRegion<TControl, TRegion>(this IServiceCollection services, string? name = null)
         where TRegion : class, INavigator
     {
-        if (services is null)
-        {
-            return services;
-        }
-
         return services
-                    .AddScoped<TRegion>()
-                    .ConfigureNavigatorFactory(factory => factory.RegisterNavigator<TRegion>(name ?? typeof(TControl).Name));
+                   .AddScoped<TRegion>()
+                   .ConfigureNavigatorFactory(factory => factory.RegisterNavigator<TRegion>(name ?? typeof(TControl).Name));
     }
 
     public static IServiceCollection AddViewModelData<TData>(this IServiceCollection services)
         where TData : class
     {
-        if (services is null)
-        {
-            return services;
-        }
-
+#pragma warning disable CS8603 // Possible null reference return - null data is possible
         return services
-                    .AddTransient<TData>(services => services.GetService<NavigationDataProvider>().GetData<TData>());
+                    .AddTransient<TData>(services => services.GetRequiredService<NavigationDataProvider>().GetData<TData>());
+#pragma warning restore CS8603 // Possible null reference return.
     }
 }
 
 public class NavigationDataProvider
 {
-    public IDictionary<string, object>? Parameters { get; set; }
+    public IDictionary<string, object> Parameters { get; set; } = new Dictionary<string, object>();
 
     public TData? GetData<TData>()
         where TData : class

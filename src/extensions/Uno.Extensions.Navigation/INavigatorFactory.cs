@@ -8,7 +8,7 @@ public interface INavigatorFactory
     void RegisterNavigator<TNavigator>(params string[] names)
         where TNavigator : INavigator;
 
-    INavigator CreateService(IRegion region);
+    INavigator? CreateService(IRegion region);
 
-    INavigator CreateService(IRegion region, NavigationRequest request);
+    INavigator? CreateService(IRegion region, NavigationRequest request);
 }

@@ -11,7 +11,7 @@ namespace Uno.Extensions.Navigation
 
         public TaskCompletionSource<Options.Option> ResultCompletion { get; }
 
-        public Route Route => Navigation?.Route;
+        public Route? Route => Navigation.Route;
 
         public ResponseNavigator(INavigator internalNavigation, Type resultType, TaskCompletionSource<Options.Option> completion)
         {
@@ -20,10 +20,10 @@ namespace Uno.Extensions.Navigation
             ResultCompletion = completion;
 
             // Replace the navigator
-            Navigation.Get<IServiceProvider>().AddInstance<INavigator>(this);
+            Navigation.Get<IServiceProvider>()?.AddInstance<INavigator>(this);
         }
 
-        public Task<NavigationResponse> NavigateAsync(NavigationRequest request)
+        public Task<NavigationResponse?> NavigateAsync(NavigationRequest request)
         {
             if (request.Route.FrameIsBackNavigation())
             {
@@ -31,11 +31,13 @@ namespace Uno.Extensions.Navigation
                 var value = responseData?.GetValue();
                 if (value?.GetType() == ResultType)
                 {
+#pragma warning disable CS8604 // Possible null reference argument.
                     ResultCompletion.TrySetResult(responseData);
+#pragma warning restore CS8604 // Possible null reference argument.
                 }
 
                 // Restore the navigator
-                Navigation.Get<IServiceProvider>().AddInstance<INavigator>(this.Navigation);
+                Navigation.Get<IServiceProvider>()?.AddInstance<INavigator>(this.Navigation);
             }
 
             return Navigation.NavigateAsync(request);

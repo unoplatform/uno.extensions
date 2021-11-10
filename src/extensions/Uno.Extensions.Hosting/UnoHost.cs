@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.Extensions.Logging.Console;
 using Microsoft.Extensions.Logging.EventLog;
 
@@ -22,8 +21,10 @@ public static class UnoHost
         .ConfigureServices((ctx, services) =>
         {
             var appHost = ctx.HostingEnvironment as IAppHostEnvironment;
-            //var appHost = AppHostingEnvironment.FromHostEnvironment(ctx.HostingEnvironment, PlatformSpecificContentRootPath());
-            services.AddSingleton<IAppHostEnvironment>(appHost);
+            if (appHost is not null)
+            {
+                services.AddSingleton<IAppHostEnvironment>(appHost);
+            }
         })
             //#if WINUI || WINDOWS_UWP || __IOS__ || __ANDROID__ || NETSTANDARD
             //            .UseContentRoot(PlatformSpecificContentRootPath())
@@ -72,7 +73,7 @@ public static class UnoHost
 #endif
             ;
 
-    private static string PlatformSpecificContentRootPath()
+    private static string? PlatformSpecificContentRootPath()
     {
 #if WINUI || WINDOWS_UWP || NETSTANDARD
             return Windows.Storage.ApplicationData.Current.LocalFolder.Path;

@@ -6,7 +6,7 @@ using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Regions;
-#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+#if !WINUI
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -20,9 +20,9 @@ namespace Uno.Extensions.Navigation.Navigators;
 
 public class FrameNavigator : ControlNavigator<Frame>
 {
-    protected override FrameworkElement? CurrentView => Control.Content as FrameworkElement;
+    protected override FrameworkElement? CurrentView => Control?.Content as FrameworkElement;
 
-    public override bool CanGoBack => Control.BackStackDepth > 0;
+    public override bool CanGoBack => Control?.BackStackDepth > 0;
 
     public FrameNavigator(
         ILogger<FrameNavigator> logger,
@@ -35,19 +35,22 @@ public class FrameNavigator : ControlNavigator<Frame>
 
     public override void ControlInitialize()
     {
-        if (Control.Content is not null)
+        if (Control?.Content is not null)
         {
             Logger.LogDebugMessage($"Navigating to type '{Control.SourcePageType.Name}' (initial Content set on Frame)");
             var viewType = Control.Content.GetType();
-            Region.Navigator().NavigateToViewAsync(this, viewType);
+            Region.Navigator()?.NavigateToViewAsync(this, viewType);
         }
 
-        Control.Navigated += Frame_Navigated;
+        if (Control is not null)
+        {
+            Control.Navigated += Frame_Navigated;
+        }
     }
 
     protected override bool CanNavigateToRoute(Route route) => base.CanNavigateToRoute(route) || route.IsFrameNavigation();
 
-    protected override Task<Route> ExecuteRequestAsync(NavigationRequest request)
+    protected override Task<Route?> ExecuteRequestAsync(NavigationRequest request)
     {
         var route = request.Route;
         // Detach all nested regions as we're moving away from the current view
@@ -58,8 +61,13 @@ public class FrameNavigator : ControlNavigator<Frame>
                     NavigatedBackAsync(request);
     }
 
-    private async Task<Route> NavigateForwardAsync(NavigationRequest request)
+    private async Task<Route?> NavigateForwardAsync(NavigationRequest request)
     {
+        if (Control is null)
+        {
+            return default;
+        }
+
         var route = request.Route;
         var numberOfPagesToRemove = route.FrameNumberOfPagesToRemove();
         // We remove 1 less here because we need to remove the current context, after the navigation is completed
@@ -78,7 +86,7 @@ public class FrameNavigator : ControlNavigator<Frame>
         {
             var seg = segments[i];
             var newEntry = new PageStackEntry(seg.Map.View, null, null);
-            Control.BackStack.Add(newEntry);
+            Control?.BackStack.Add(newEntry);
             route = route.Trim(seg.Route);
             firstSegment = firstSegment.Append(segments[i + 1].Route);
         }
@@ -108,15 +116,13 @@ public class FrameNavigator : ControlNavigator<Frame>
         return responseRequest;
     }
 
-    protected override object InitialiseCurrentView(Route route, RouteMap? mapping)
+    private Task<Route?> NavigatedBackAsync(NavigationRequest request)
     {
+        if (Control is null)
+        {
+            return Task.FromResult<Route?>(default);
+        }
 
-
-        return base.InitialiseCurrentView(route, mapping);
-    }
-
-    private Task<Route> NavigatedBackAsync(NavigationRequest request)
-    {
         var route = request.Route;
         // Remove any excess items in the back stack
         var numberOfPagesToRemove = route.FrameNumberOfPagesToRemove();
@@ -128,7 +134,7 @@ public class FrameNavigator : ControlNavigator<Frame>
         }
         var responseRoute = route with { Path = null };
         var previousRoute = FullRoute.ApplyFrameRoute(Mappings, responseRoute);
-        var previousBase = previousRoute.Base;
+        var previousBase = previousRoute?.Base;
         var currentBase = Mappings.FindByView(Control.Content.GetType())?.Path;
         if (currentBase != previousBase)
         {
@@ -142,9 +148,9 @@ public class FrameNavigator : ControlNavigator<Frame>
         var mapping = Mappings.FindByView(CurrentView?.GetType());
         //context = context with { Mapping = mapping };
 
-        InitialiseCurrentView(previousRoute, mapping);
+        InitialiseCurrentView(previousRoute ?? Route.Empty, mapping);
 
-        return Task.FromResult(responseRoute);
+        return Task.FromResult<Route?>(responseRoute);
     }
 
     private void Frame_Navigated(object sender, NavigationEventArgs e)
@@ -153,17 +159,25 @@ public class FrameNavigator : ControlNavigator<Frame>
 
         if (e.NavigationMode == NavigationMode.New)
         {
-            var viewType = Control.Content.GetType();
-            Region.Navigator().NavigateToViewAsync(this, viewType);
+            var viewType = Control?.Content.GetType();
+            if (viewType is not null)
+            {
+                Region.Navigator()?.NavigateToViewAsync(this, viewType);
+            }
         }
         else
         {
-            Region.Navigator().NavigateToPreviousViewAsync(this);
+            Region.Navigator()?.NavigateToPreviousViewAsync(this);
         }
     }
 
-    private void FrameGoBack(object parameter)
+    private void FrameGoBack(object? parameter)
     {
+        if (Control is null)
+        {
+            return;
+        }
+
         try
         {
             Control.Navigated -= Frame_Navigated;
@@ -192,6 +206,11 @@ public class FrameNavigator : ControlNavigator<Frame>
 
     protected override async Task<string?> Show(string? path, Type? viewType, object? data)
     {
+        if (Control is null || viewType is null)
+        {
+            return string.Empty;
+        }
+
         Control.Navigated -= Frame_Navigated;
         try
         {
@@ -203,7 +222,7 @@ public class FrameNavigator : ControlNavigator<Frame>
                 var currentPage = CurrentView as Page;
                 if (currentPage is not null)
                 {
-                    currentPage.SetName(path);
+                    currentPage.SetName(path ?? string.Empty);
                 }
 
                 await (Control.Content as FrameworkElement).EnsureLoaded();
@@ -226,6 +245,10 @@ public class FrameNavigator : ControlNavigator<Frame>
 
     private void RemoveLastFromBackStack()
     {
+        if (Control is null)
+        {
+            return;
+        }
         Logger.LogDebugMessage($"Removing last item from backstack (current count = {Control.BackStack.Count})");
         Control.BackStack.RemoveAt(Control.BackStack.Count - 1);
         Logger.LogDebugMessage($"Item removed from backstack");
@@ -233,18 +256,29 @@ public class FrameNavigator : ControlNavigator<Frame>
 
     private void ClearBackStack()
     {
+        if (Control is null)
+        {
+            return;
+        }
+
         Logger.LogDebugMessage($"Clearing backstack");
         Control.BackStack.Clear();
         Logger.LogDebugMessage($"Backstack cleared");
     }
 
-    private Route FullRoute { get; set; }
+    private Route? FullRoute { get; set; }
 
-    protected override void UpdateRoute(Route route)
+    protected override void UpdateRoute(Route? route)
     {
-        FullRoute = FullRoute.ApplyFrameRoute(Mappings, route);
+        if (route is null)
+        {
+            return;
+        }
+
+        FullRoute = FullRoute?.ApplyFrameRoute(Mappings, route);
         var lastRoute = FullRoute;
-        while (!lastRoute.IsLast())
+        while (lastRoute is not null &&
+            !lastRoute.IsLast())
         {
             lastRoute = lastRoute.Next();
         }

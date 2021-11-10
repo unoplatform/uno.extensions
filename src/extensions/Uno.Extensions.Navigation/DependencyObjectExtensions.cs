@@ -2,7 +2,7 @@
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Regions;
-#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+#if !WINUI
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 #else
@@ -14,12 +14,12 @@ namespace Uno.Extensions.Navigation;
 
 public static class DependencyObjectExtensions
 {
-    public static INavigator Navigator(this FrameworkElement element)
+    public static INavigator? Navigator(this FrameworkElement element)
     {
-        return element.FindRegion().Navigator();
+        return element.FindRegion()?.Navigator();
     }
 
-    public static IRegion FindRegion(this FrameworkElement element)
+    public static IRegion? FindRegion(this FrameworkElement element)
     {
         return element.ServiceForControl(true, element => element.GetInstance());
     }
@@ -51,7 +51,7 @@ public static class DependencyObjectExtensions
         return parent;
     }
 
-    public static TService ServiceForControl<TService>(this DependencyObject element, bool searchParent, Func<DependencyObject, TService> retrieveFromElement)
+    public static TService? ServiceForControl<TService>(this DependencyObject element, bool searchParent, Func<DependencyObject, TService> retrieveFromElement)
     {
         if (element is null)
         {

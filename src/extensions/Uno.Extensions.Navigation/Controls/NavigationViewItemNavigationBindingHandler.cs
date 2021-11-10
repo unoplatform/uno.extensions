@@ -1,4 +1,4 @@
-﻿#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+﻿#if !WINUI
 using Microsoft.UI.Xaml.Controls;
 using Windows.Foundation;
 using Windows.UI.Xaml;
