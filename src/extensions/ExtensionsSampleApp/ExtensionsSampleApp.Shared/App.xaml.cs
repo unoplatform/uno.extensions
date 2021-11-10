@@ -357,8 +357,8 @@ namespace ExtensionsSampleApp
             //var navResult = nav.NavigateToRouteAsync(this, "TabbedPage/doc1", Schemes.Root);
             //var navResult = nav.NavigateToRouteAsync(this, "TabbedPage/doc2/SecondPage/content/Content1", Schemes.Root);
             //var navResult = nav.NavigateToRouteAsync(this, "TwitterPage/notifications/TweetDetailsPage?TweetId=23", Schemes.Root);
-            //var navResult = nav.NavigateToViewAsync<LoginPage>(this);
-            var navResult = nav.NavigateToRouteAsync(this, "/CommerceHomePage/Products/ProductDetails?ProductId=3");
+            var navResult = nav.NavigateToViewAsync<LoginPage>(this);
+            //var navResult = nav.NavigateToRouteAsync(this, "/CommerceHomePage/Products/ProductDetails?ProductId=3");
 
 #endif
 
