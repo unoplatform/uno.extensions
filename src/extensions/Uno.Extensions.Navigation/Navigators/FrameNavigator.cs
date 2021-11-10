@@ -136,7 +136,7 @@ public class FrameNavigator : ControlNavigator<Frame>
         var previousRoute = FullRoute.ApplyFrameRoute(Mappings, responseRoute);
         var previousBase = previousRoute?.Base;
         var currentBase = Mappings.FindByView(Control.Content.GetType())?.Path;
-        if (currentBase != previousBase)
+        if (currentBase != previousBase && previousBase != Control.Content.GetType().Name)
         {
             // Invoke the navigation (which will be a back navigation)
             FrameGoBack(route.Data);
