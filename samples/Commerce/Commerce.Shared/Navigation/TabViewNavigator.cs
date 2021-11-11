@@ -8,7 +8,7 @@ using Uno.Extensions.Navigation.Regions;
 using System.Threading.Tasks;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Navigators;
-#if WINDOWS_UWP || UNO_UWP_COMPATIBILITY
+#if !WINUI
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Windows.UI.Xaml;

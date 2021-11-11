@@ -134,12 +134,12 @@ public abstract class ControlNavigator : Navigator
         // window hasn't been activated yet, so the root region may not have loaded
         await Region.View.EnsureLoaded();
 
-        if (request.Route.IsNested() &&
-            Region.Children.Any(child => child.Name == request.Route.Base))
-        {
-            // If the base is the name of a child, just pass the request on
-            return await Task.FromResult<NavigationResponse?>(default);
-        }
+        //if (request.Route.IsNested() &&
+        //    Region.Children.Any(child => child.Name == request.Route.Base))
+        //{
+        //    // If the base is the name of a child, just pass the request on
+        //    return await Task.FromResult<NavigationResponse?>(default);
+        //}
 
         // If the request has come down from parent it
         // will still have the ./ prefix, so need to trim

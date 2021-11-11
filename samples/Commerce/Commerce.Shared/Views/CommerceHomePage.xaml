@@ -10,7 +10,7 @@
       xmlns:toolkit="using:Uno.UI.ToolkitLib"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Grid x:Name="NavRoot">
-        <VisualStateManager.VisualStateGroups>
+        <!--<VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState x:Name="Narrow">
                     <VisualState.StateTriggers>
@@ -41,8 +41,10 @@
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
-        <muxc:NavigationView x:Name="NavView"
+        </VisualStateManager.VisualStateGroups>-->
+        <Grid                              nav:Region.Attached="true">
+
+            <!--<muxc:NavigationView x:Name="NavView"
                              nav:Region.Attached="true"
                              >
             <muxc:NavigationView.MenuItems>
@@ -59,7 +61,7 @@
                 <muxc:NavigationViewItem Icon="Contact"
                                          Content="Profile"
                                          nav:Navigation.Request="../../Profile" />
-            </muxc:NavigationView.MenuItems>
+            </muxc:NavigationView.MenuItems>-->
 
             <Grid>
                 <Grid.RowDefinitions>
@@ -74,7 +76,7 @@
                                           VerticalAlignment="Bottom"
                                           HorizontalAlignment="Left"
                                           IsMasked="True">-->
-                    <!--<Grid Padding="8"
+                <!--<Grid Padding="8"
                           Background="DarkGray">
                         <TextBlock Text="Uno Commerce"
                                    Foreground="White"/>
@@ -86,23 +88,25 @@
                 <Grid nav:Region.Attached="true"
                       nav:Region.Navigator="Visibility" />
                 <toolkit:TabBar x:Name="Tabs"
-                                Visibility="Collapsed"
                                 Background="DarkGray"
                                 nav:Region.Attached="true"
-                                
                                 Grid.Row="1">
+                   <!-- Visibility="Collapsed"-->
                     <toolkit:TabBar.Items>
                         <toolkit:TabBarItem Content="Products"
                                             nav:Region.Name="Products" />
                         <toolkit:TabBarItem Content="Deals"
                                             nav:Region.Name="Deals" />
                         <toolkit:TabBarItem Content="Profile"
+                                            nav:Region.Name="Profile" />
+                        <!--<toolkit:TabBarItem Content="Profile"
                                             IsSelectable="False"
-                                            nav:Navigation.Request="../../../Profile" />
+                                            nav:Navigation.Request="../../../Profile" />-->
                     </toolkit:TabBar.Items>
                 </toolkit:TabBar>
 
             </Grid>
-        </muxc:NavigationView>
+        </Grid>
+        <!--</muxc:NavigationView>-->
     </Grid>
 </Page>
