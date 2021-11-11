@@ -10,7 +10,7 @@ namespace Uno.Extensions.Localization
         public static IHostBuilder UseLocalization(this IHostBuilder builder)
         {
             return builder
-                .UseWritableSettings<LocalizationSettings>(ctx => ctx.Configuration.GetSection(nameof(LocalizationSettings)))
+                .UseSettings<LocalizationSettings>(ctx => ctx.Configuration.GetSection(nameof(LocalizationSettings)))
 
                 .ConfigureServices((ctx, services) =>
             {

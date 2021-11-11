@@ -50,19 +50,21 @@ namespace Uno.Extensions.Configuration
                         b.AddEmbeddedEnvironmentAppSettings<TApplicationRoot>(ctx.HostingEnvironment?.EnvironmentName ?? Environments.Production));
         }
 
-        public static IHostBuilder UseWritableSettings<TSettingsOptions>(
+        public static IHostBuilder UseSettings<TSettingsOptions>(
             this IHostBuilder hostBuilder,
-            Func<HostBuilderContext, IConfigurationSection> configSection)
+            Func<HostBuilderContext, IConfigurationSection>? configSection = null)
                 where TSettingsOptions : class, new()
         {
+            if (configSection is null)
+            {
+                configSection = ctx => ctx.Configuration.GetSection(typeof(TSettingsOptions).Name);
+            }
+
             static string FilePath(HostBuilderContext hctx)
             {
                 var file = $"{ConfigurationFolderName}/{AppSettings.AppSettingsFileName}.{typeof(TSettingsOptions).Name}.json";
                 var appData = (hctx.HostingEnvironment as IAppHostEnvironment)?.AppDataPath ?? string.Empty;
                 var path = Path.Combine(appData, file);
-                //var fileProvider = hctx.HostingEnvironment.ContentRootFileProvider;
-                //var fileInfo = fileProvider.GetFileInfo(file);
-                //return fileInfo.PhysicalPath;
                 return path;
             }
 
@@ -85,9 +87,14 @@ namespace Uno.Extensions.Configuration
         }
 
 
-        public static IHostBuilder UseConfigurationSectionInApp<TOptions>(this IHostBuilder hostBuilder, string configurationSection)
+        public static IHostBuilder UseConfigurationSectionInApp<TOptions>(this IHostBuilder hostBuilder, string? configurationSection = null)
             where TOptions : class
         {
+            if (configurationSection is null)
+            {
+                configurationSection = typeof(TOptions).Name;
+            }
+
             return hostBuilder
                 .UseConfiguration()
                 .ConfigureServices((ctx, services) => services.Configure<TOptions>(ctx.Configuration.GetSection(configurationSection)));

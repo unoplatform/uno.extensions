@@ -62,16 +62,16 @@ namespace Commerce
                      .XamlLayoutLogLevel(LogLevel.Information);
             })
             .UseSerilog(true, true)
-            //.UseEmbeddedAppSettings<App>() 
-            .UseConfigurationSectionInApp<CommerceSettings>(nameof(CommerceSettings))
-            .UseWritableSettings<CommerceSettings>(ctx => ctx.Configuration.GetSection(nameof(CommerceSettings)))
+            //.UseEmbeddedAppSettings<App>()
+            .UseConfigurationSectionInApp<CommerceSettings>()
+            .UseSettings<CommerceSettings>()
             .ConfigureServices(services =>
             {
                 services
-                                    .AddRegion<TabView, TabViewNavigator>()
-                   .AddRegion<TabBar, TabBarRegion>()
-                 .AddSingleton<INavigationBindingHandler, TabBarItemNavigationBindingHandler>()
-                 .AddSingleton<INavigationBindingHandler, NavigationViewItemNavigationBindingHandler>()
+                .AddRegion<TabView, TabViewNavigator>()
+                .AddRegion<TabBar, TabBarRegion>()
+                .AddSingleton<INavigationBindingHandler, TabBarItemNavigationBindingHandler>()
+                .AddSingleton<INavigationBindingHandler, NavigationViewItemNavigationBindingHandler>()
 
                 .AddTransient<ProductsViewModel>()
                 .AddTransient<FilterViewModel>()
@@ -133,7 +133,7 @@ namespace Commerce
             _window = new Window();
             _window.Activate();
 #else
-			_window = Windows.UI.Xaml.Window.Current;
+            _window = Windows.UI.Xaml.Window.Current;
 #endif
 
             var rootFrame = _window.Content as Frame;
