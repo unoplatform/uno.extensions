@@ -119,7 +119,7 @@ public static class Region
     public static void SetName(this FrameworkElement element, string value)
     {
         element.SetValue(NameProperty, value);
-        //SetNameOnChildRegions(element, value);
+        SetNameOnChildRegions(element, value);
     }
 
     private static void SetNameOnChildRegions(this FrameworkElement element, string value)
@@ -129,10 +129,10 @@ public static class Region
         for (int i = 0; i < childrenCount; i++)
         {
             var child = VisualTreeHelper.GetChild(element, i);
-            if (child.GetInstance() is IRegion region)
+            if (child.GetInstance() is IRegion region &&
+                string.IsNullOrWhiteSpace(region.Name))
             {
-                Debug.Assert(false);
-                //region.Name
+                region.ReassignParent();
             }
             else
             {

@@ -102,7 +102,7 @@ public class NavigatorFactory : INavigatorFactory
         var scope = region.Services.CreateScope();
         var services = scope.ServiceProvider;
 
-        var dialogRegion = new NavigationRegion(region.View, services, attachToHierarchy: false);
+        var dialogRegion = new NavigationRegion(services: services);
         services.AddInstance<IRegion>(dialogRegion);
 
         var mapping = Mappings.FindByPath(request.Route.Base);

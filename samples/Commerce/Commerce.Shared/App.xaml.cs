@@ -105,6 +105,10 @@ namespace Commerce
                 typeof(ProductDetailsPage),
                 typeof(ProductDetailsViewModel), typeof(Product),
                 BuildQueryParameters: entity => new Dictionary<string, string> { { "ProductId", (entity as Product)?.ProductId + "" } }));
+            mapping.Register(new RouteMap(typeof(CartDialog).Name, typeof(CartDialog),
+                RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
+                                        nav with { Route = nav.Route.AppendPage<CartPage>() } :
+                                        nav));
 
             //InitializeLogging();
 

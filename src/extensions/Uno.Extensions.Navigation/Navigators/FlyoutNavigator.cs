@@ -51,7 +51,7 @@ public class FlyoutNavigator : ControlNavigator
         {
             var mapping = Mappings.Find(route);
             var viewModel = CreateViewModel(Region.Services, this, route, mapping);
-            Flyout = DisplayFlyout(request, mapping?.View, viewModel);
+            Flyout = await DisplayFlyout(request, mapping?.View, viewModel);
         }
         var responseRequest = route with { Path = null };
         return responseRequest;
@@ -62,7 +62,7 @@ public class FlyoutNavigator : ControlNavigator
         Flyout?.Hide();
     }
 
-    private Flyout? DisplayFlyout(NavigationRequest request, Type? viewType, object? viewModel)
+    private async Task<Flyout?> DisplayFlyout(NavigationRequest request, Type? viewType, object? viewModel)
     {
         var route = request.Route;
         var navigation = Region.Navigator();
@@ -89,7 +89,6 @@ public class FlyoutNavigator : ControlNavigator
         var flyoutElement = flyout?.Content as FrameworkElement;
         if (flyoutElement is not null)
         {
-            flyoutElement.SetInstance(Region);
             flyoutElement.InjectServicesAndSetDataContext(services, navigation, viewModel);
         }
 
@@ -100,6 +99,16 @@ public class FlyoutNavigator : ControlNavigator
         }
 
         flyout?.ShowAt(flyoutHost);
+
+        await flyoutElement.EnsureLoaded();
+
+        flyoutElement.Parent.SetInstance(Region);
+
+        if (route.Base is not null)
+        {
+            flyoutElement.SetName(route.Base);
+        }
+
         return flyout;
     }
 }

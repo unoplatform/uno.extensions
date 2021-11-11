@@ -5,10 +5,20 @@
     xmlns:local="using:Commerce"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+      mc:Ignorable="d"
+      xmlns:nav="using:Uno.Extensions.Navigation.Controls"
+      xmlns:toolkit="using:Uno.UI.ToolkitLib"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
-
+    <Grid MinHeight="300" MinWidth="300">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <toolkit:NavigationBar Content="Cart" />
+        <StackPanel Grid.Row="1">
+        <TextBlock Text="Cart" FontSize="32" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Button Content="Next" nav:Navigation.Request="../CheckoutPage" />
+        </StackPanel>
     </Grid>
 </Page>

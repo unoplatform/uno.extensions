@@ -10,6 +10,6 @@
              d:DesignWidth="400">
 
     <Grid>
-        <Frame nav:Region.Attached="True" Grid.Row="1" />
+        <Frame nav:Region.Attached="True"/>
     </Grid>
 </UserControl>

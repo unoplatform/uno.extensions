@@ -65,11 +65,10 @@ public sealed class NavigationRegion : IRegion
 
     public ICollection<IRegion> Children { get; } = new List<IRegion>();
 
-    public NavigationRegion(FrameworkElement? view = null, IServiceProvider? services = null, bool attachToHierarchy = true)
+    public NavigationRegion(FrameworkElement? view = null, IServiceProvider? services = null)
     {
         View = view;
-        if (View is not null &&
-            attachToHierarchy)
+        if (View is not null)
         {
             View.Loading += ViewLoading;
             View.Loaded += ViewLoaded;
@@ -147,6 +146,7 @@ public sealed class NavigationRegion : IRegion
     public void ReassignParent()
     {
         Parent = null;
+        AssignParent();
     }
 
     private async Task HandleLoaded()

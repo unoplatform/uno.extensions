@@ -99,9 +99,9 @@
                                             nav:Region.Name="Deals" />
                         <toolkit:TabBarItem Content="Profile"
                                             nav:Region.Name="Profile" />
-                        <!--<toolkit:TabBarItem Content="Profile"
+                        <toolkit:TabBarItem Content="Cart"
                                             IsSelectable="False"
-                                            nav:Navigation.Request="../../../Profile" />-->
+                                            nav:Navigation.Request="!CartDialog" />
                     </toolkit:TabBar.Items>
                 </toolkit:TabBar>
 

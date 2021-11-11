@@ -26,5 +26,7 @@ namespace Uno.Extensions.Navigation.Regions
         IRegion? Parent { get; }
 
         ICollection<IRegion> Children { get; }
+
+        void ReassignParent();
     }
 }

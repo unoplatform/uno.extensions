@@ -15,19 +15,12 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Commerce
 {
-	public sealed partial class CartDialog : ContentDialog
+	public sealed partial class CartDialog : Flyout
 	{
 		public CartDialog()
 		{
 			this.InitializeComponent();
 		}
 
-		private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-		{
-		}
-
-		private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-		{
-		}
 	}
 }
