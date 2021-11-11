@@ -40,6 +40,14 @@ steps:
       packageType: sdk
       version: 6.0.100
 
+  - powershell: |
+      & dotnet tool update --global uno.check --version ${{ parameters.UnoCheck_Version }} --add-source https://api.nuget.org/v3/index.json
+      & uno-check -v --ci --non-interactive --fix --skip xcode --skip gtk3 --skip vswin --skip vsmac --manifest ${{ parameters.UnoCheck_Manifest }}
+    displayName: Install .NET Workloads
+    errorActionPreference: continue
+    ignoreLASTEXITCODE: true
+
+
   - task: MSBuild@1
     inputs:
       solution: src/Uno.Extensions.sln
