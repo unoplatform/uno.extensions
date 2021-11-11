@@ -53,15 +53,15 @@ namespace Commerce
             Host = UnoHost
             .CreateDefaultBuilder(true)
             .UseEnvironment(Environments.Development)
-            .UseLogging()
-            .ConfigureLogging(logBuilder =>
-            {
-                logBuilder
-                     .SetMinimumLevel(LogLevel.Trace)
-                     .XamlLogLevel(LogLevel.Information)
-                     .XamlLayoutLogLevel(LogLevel.Information);
-            })
-            .UseSerilog(true, true)
+            //.UseLogging()
+            //.ConfigureLogging(logBuilder =>
+            //{
+            //    logBuilder
+            //         .SetMinimumLevel(LogLevel.Trace)
+            //         .XamlLogLevel(LogLevel.Information)
+            //         .XamlLayoutLogLevel(LogLevel.Information);
+            //})
+            //.UseSerilog(true, true)
             //.UseEmbeddedAppSettings<App>()
             .UseConfigurationSectionInApp<CommerceSettings>()
             .UseSettings<CommerceSettings>()

@@ -35,10 +35,11 @@
                 </StackPanel>
             </Grid>
         </StackPanel>
-        <ListView ItemsSource="{Binding Products}"
+        <ListView nav:Navigation.Request="ProductDetails"
+                  ItemsSource="{Binding Products}"
                   Grid.Row="2"
                   IsItemClickEnabled="True"
-                  nav:Navigation.Request="ProductDetails">
+                  >
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="8"
