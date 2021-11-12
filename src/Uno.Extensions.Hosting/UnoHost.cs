@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging.EventLog;
 
 namespace Uno.Extensions.Hosting;
 
-#if !NETSTANDARD || WINUI || __WASM__
+#if !((NETSTANDARD || NET5_0 || NET6_0) && !__IOS__ && !__ANDROID__) || WINUI || __WASM__
 public static class UnoHost
 {
     public static IHostBuilder CreateDefaultBuilder(bool custom = true) =>
