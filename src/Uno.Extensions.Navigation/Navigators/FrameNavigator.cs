@@ -223,6 +223,7 @@ public class FrameNavigator : ControlNavigator<Frame>
                 if (currentPage is not null)
                 {
                     currentPage.SetName(path ?? string.Empty);
+                    currentPage.ReassignRegionParent();
                 }
 
                 await (Control.Content as FrameworkElement).EnsureLoaded();

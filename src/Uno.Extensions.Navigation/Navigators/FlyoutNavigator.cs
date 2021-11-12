@@ -35,7 +35,7 @@ public class FlyoutNavigator : ControlNavigator
 
     protected override async Task<Route?> ExecuteRequestAsync(NavigationRequest request)
     {
-        if(Region.Services is null)
+        if (Region.Services is null)
         {
             return default;
         }
@@ -69,7 +69,7 @@ public class FlyoutNavigator : ControlNavigator
         var services = Region.Services;
         var mapping = Mappings.Find(route);
 
-        if(navigation is null ||
+        if (navigation is null ||
             services is null)
         {
             return null;
@@ -90,24 +90,25 @@ public class FlyoutNavigator : ControlNavigator
         if (flyoutElement is not null)
         {
             flyoutElement.InjectServicesAndSetDataContext(services, navigation, viewModel);
+            flyoutElement.SetInstance(Region);
+            flyoutElement.SetName(route.Base); // Set the name on the flyout element
         }
 
         var flyoutHost = request.Sender as FrameworkElement;
-        if(flyoutHost is null)
+        if (flyoutHost is null)
         {
             flyoutHost = Region.View;
         }
 
         flyout?.ShowAt(flyoutHost);
 
+
         await flyoutElement.EnsureLoaded();
 
-        flyoutElement.Parent.SetInstance(Region);
 
-        if (route.Base is not null)
-        {
-            flyoutElement.SetName(route.Base);
-        }
+        flyoutElement.SetInstance(null); // Clear region off the flyout element
+        flyoutElement.Parent.SetInstance(Region); // Set region on parent (now that it will be not null)
+        flyoutElement.ReassignRegionParent(); // Update any sub-regions to correct their relationship with the parent (ie set the name)
 
         return flyout;
     }

@@ -886,13 +886,13 @@ namespace Microsoft.Extensions.Hosting
 
             builder.ConfigureAppConfiguration((hostingContext, config) =>
             {
-                IHostEnvironment env = hostingContext.HostingEnvironment;
-                //bool reloadOnChange = GetReloadConfigOnChangeValue(hostingContext);
+                //IHostEnvironment env = hostingContext.HostingEnvironment;
+                ////bool reloadOnChange = GetReloadConfigOnChangeValue(hostingContext);
 
-                var prefix = hostingContext.Configuration.GetValue("appsettings:prefix", defaultValue: string.Empty);
-                prefix = !string.IsNullOrWhiteSpace(prefix) ? $"{prefix}/" : prefix;
-                config.AddJsonFile($"{prefix}appsettings.json", optional: true, reloadOnChange: false)// reloadOnChange)
-                      .AddJsonFile($"{prefix}appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: false);// reloadOnChange);
+                //var prefix = hostingContext.Configuration.GetValue("appsettings:prefix", defaultValue: string.Empty);
+                //prefix = !string.IsNullOrWhiteSpace(prefix) ? $"{prefix}/" : prefix;
+                //config.AddJsonFile($"{prefix}appsettings.json", optional: true, reloadOnChange: false)// reloadOnChange)
+                //      .AddJsonFile($"{prefix}appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: false);// reloadOnChange);
 
                 //if (env.IsDevelopment() && env.ApplicationName is { Length: > 0 })
                 //{

@@ -145,6 +145,11 @@ public static class RouteExtensions
         return route.Append(Route.PageRoute<TPage>());
     }
 
+    public static Route AppendNested<TView>(this Route route)
+    {
+        return route.Append(Route.NestedRoute<TView>());
+    }
+
     public static Route Insert(this Route route, Route routeToAppend)
     {
         return route with

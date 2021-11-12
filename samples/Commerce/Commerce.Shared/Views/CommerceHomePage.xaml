@@ -63,7 +63,7 @@
                                          nav:Navigation.Request="../../Profile" />
             </muxc:NavigationView.MenuItems>-->
 
-            <Grid>
+            <!--<Grid>-->
                 <Grid.RowDefinitions>
                     <!--<RowDefinition Height="Auto" />-->
                     <RowDefinition />
@@ -99,14 +99,15 @@
                                             nav:Region.Name="Deals" />
                         <toolkit:TabBarItem Content="Profile"
                                             nav:Region.Name="Profile" />
-                        <toolkit:TabBarItem Content="Cart"
-                                            IsSelectable="False"
-                                            nav:Navigation.Request="!CartDialog" />
+                    <toolkit:TabBarItem Content="Cart"
+                                        IsSelectable="False"
+                                        nav:Navigation.Request="!CartDialog" />
+
                     </toolkit:TabBar.Items>
                 </toolkit:TabBar>
 
             </Grid>
-        </Grid>
+        <!--</Grid>-->
         <!--</muxc:NavigationView>-->
     </Grid>
 </Page>
