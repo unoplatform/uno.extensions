@@ -35,9 +35,9 @@ steps:
 
   - powershell: |
       dotnet tool update -g dotnet-vs
-      $MSBUILDPREVIEWPATH="$(vs where preview --prop=InstallationPath)\MSBuild\Current\Bin"
-      Write-Host "##vso[task.setvariable variable=MSBUILDPREVIEWPATH;]$MSBUILDPREVIEWPATH"
-      echo MSBUILDPREVIEWPATH: $MSBUILDPREVIEWPATH
+      $MSBUILDPATH="$(vs where release --prop=InstallationPath)\MSBuild\Current\Bin"
+      Write-Host "##vso[task.setvariable variable=MSBUILDPATH;]$MSBUILDPATH"
+      echo MSBUILDPATH: $MSBUILDPATH
     displayName: Setup VS17 Path
 
   - task: UseDotNet@2
@@ -58,7 +58,7 @@ steps:
     inputs:
       solution: src/Uno.Extensions.sln
       msbuildLocationMethod: location
-      msbuildLocation: $(MSBUILDPREVIEWPATH)
+      msbuildLocation: $(MSBUILDPATH)
       msbuildArchitecture: x86
       msbuildArguments: /r /p:Configuration=Release "/p:PackageOutputPath=$(build.artifactstagingdirectory)\nuget" "/p:PackageVersion=%GITVERSION_FullSemVer%" "/p:InformationalVersion=%GITVERSION_InformationalVersion%" /detailedsummary /bl:$(build.artifactstagingdirectory)/uno-extensions.binlog
       clean: false
