@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Commerce.Services;
+using System.Threading.Tasks;
 
 namespace Commerce.ViewModels;
 
@@ -15,16 +16,22 @@ public class ProductDetailsViewModel : ObservableObject
 
     public ProductDetailsViewModel(IProductService products, Product p, IDictionary<string, object> parameters)
     {
-        if (p is not null)
-        {
-            Product = p;
-        }
-        else
-        {
-            if(parameters.TryGetValue("ProductId", out var id))
-            {
-                Product = products.GetProducts().FirstOrDefault(x => x.ProductId +""== id.ToString());
-            }
-        }
+		Load(products, p, parameters);
     }
+
+	private async Task Load(IProductService products, Product p, IDictionary<string, object> parameters)
+	{
+
+		if (p is not null)
+		{
+			Product = p;
+		}
+		else
+		{
+			if (parameters.TryGetValue("ProductId", out var id))
+			{
+				Product = (await products.GetProducts()).FirstOrDefault(x => x.ProductId + "" == id.ToString());
+			}
+		}
+	}
 }

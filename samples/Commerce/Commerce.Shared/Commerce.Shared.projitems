@@ -29,6 +29,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\ProductServices.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\DealsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\FilterViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\LoginViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ProductDetailsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ProductsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\CartDialog.xaml.cs">
@@ -120,5 +121,8 @@
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\Resources.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)products.json" />
   </ItemGroup>
 </Project>
