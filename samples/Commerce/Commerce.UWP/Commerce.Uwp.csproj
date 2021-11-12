@@ -27,6 +27,7 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Localization" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="6.0.0" />
+    <PackageReference Include="System.Linq.Async" Version="4.0.0" />
     <PackageReference Include="Uno.UI.Toolkit" Version="0.1.0-dev.71" />
   </ItemGroup>
   <PropertyGroup>
@@ -177,6 +178,14 @@
       <Project>{5123670c-9756-4c9e-9844-f4a9c0aee633}</Project>
       <Name>Uno.Extensions.Serialization</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj">
+      <Project>{74D93A0B-42F9-45A6-8AC3-684DAE9659A8}</Project>
+      <Name>Uno.Extensions.Reactive</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Uno.Extensions.Reactive.View\Uno.Extensions.Reactive.View.csproj">
+      <Project>{7516C1F2-6CCB-4B59-91B7-E6D4B4EA5835}</Project>
+      <Name>Uno.Extensions.Reactive.View</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -196,6 +205,7 @@
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
     <Content Include="Properties\Default.rd.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

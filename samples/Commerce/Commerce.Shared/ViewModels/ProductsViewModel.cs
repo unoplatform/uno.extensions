@@ -1,35 +1,43 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text;
-using CommunityToolkit.Mvvm.ComponentModel;
-using Commerce.Services;
-using Uno.Extensions;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Commerce.Services;
+using Uno.Extensions.Reactive;
 
 namespace Commerce.ViewModels;
 
-public class ProductsViewModel : ObservableObject
+public partial class ProductsViewModel
 {
-    private string _filterQuery;
+	private readonly IProductService _products;
+	private readonly IFeed<string> _searchTerm;
+	private readonly IState<string> _filterQuery;
 
-    public string FilterQuery { get => _filterQuery; set => SetProperty(ref _filterQuery,value); }
-    public ObservableCollection<Product> Products { get; } = new ObservableCollection<Product>();
-
-    public ProductsViewModel(IProductService products)
-    {
-		Load(products);
-    }
-
-	private async Task Load(IProductService products)
+	private ProductsViewModel(
+		IProductService products,
+		[DefaultValue("")] IFeed<string> searchTerm,
+		[DefaultValue("")] IState<string> filterQuery)
 	{
-		var productItems = await products.GetProducts();
-		productItems.ForEach(p => Products.Add(p));
-
-		FilterQuery = "Query-" + DateTime.Now.ToString("HH:mm:ss:ffff");
-
+		_products = products;
+		_searchTerm = searchTerm;
+		_filterQuery = filterQuery;
 	}
 
+	public IFeed<Product[]> Items => Feed
+		.Combine(_searchTerm.SelectAsync(Load), _filterQuery)
+		.Select(FilterProducts);
+
+	private async ValueTask<Product[]> Load(string searchTerm, CancellationToken ct)
+	{
+		var products = await _products.GetProducts(searchTerm, ct);
+
+		return products.ToArray();
+	}
+
+	private Product[] FilterProducts((Product[] products, string filterQuery) inputs)
+	{
+		// TODO: Apply filter here
+		return inputs.products;
+	}
 }
-
-

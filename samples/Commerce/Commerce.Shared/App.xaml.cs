@@ -74,9 +74,9 @@ namespace Commerce
 				.AddSingleton<INavigationBindingHandler, NavigationViewItemNavigationBindingHandler>()
 
 				.AddTransient<LoginViewModel>()
-				.AddTransient<ProductsViewModel>()
+				.AddTransient<ProductsViewModel.BindableProductsViewModel>()
 				.AddTransient<FilterViewModel>()
-				.AddTransient<ProductDetailsViewModel>()
+				.AddTransient<ProductDetailsViewModel.BindableProductDetailsViewModel>()
 				.AddViewModelData<Product>()
 				.AddTransient<DealsViewModel>()
 				.AddSingleton<IProductService>(sp => new ProductService("products.json"));
@@ -86,11 +86,13 @@ namespace Commerce
 			.EnableUnoLogging();
 
 			var mapping = Host.Services.GetService<IRouteMappings>();
+			mapping.Register(new RouteMap("Login", typeof(LoginPage), typeof(LoginViewModel.BindableLoginViewModel)));
 			mapping.Register(new RouteMap(typeof(CommerceHomePage).Name, typeof(CommerceHomePage),
 				RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
 										nav with { Route = nav.Route.Append(Route.NestedRoute("Products")) } :
 										nav));
 			mapping.Register(new RouteMap("Products", typeof(FrameView),
+				ViewModel: typeof(ProductsViewModel.BindableProductsViewModel),
 				RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
 										nav with { Route = nav.Route.AppendPage<ProductsPage>() } : nav with
 										{
@@ -104,7 +106,8 @@ namespace Commerce
 										nav with { Route = nav.Route with { Path = "+DealsPage/HotDeals" } }));
 			mapping.Register(new RouteMap("ProductDetails",
 				typeof(ProductDetailsPage),
-				typeof(ProductDetailsViewModel), typeof(Product),
+				typeof(ProductDetailsViewModel.BindableProductDetailsViewModel),
+				typeof(Product),
 				BuildQueryParameters: entity => new Dictionary<string, string> { { "ProductId", (entity as Product)?.ProductId + "" } }));
 			mapping.Register(new RouteMap(typeof(CartDialog).Name, typeof(CartDialog),
 				RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
@@ -183,7 +186,7 @@ namespace Commerce
 			});
 
 			var nav = Host.Services.GetService<INavigator>();
-			var navResult = nav.NavigateToViewAsync<LoginPage>(this);
+			var navResult = nav.NavigateToRouteAsync(this, "Login");
 			//var navResult = nav.NavigateToRouteAsync(this, "/CommerceHomePage/Products/ProductDetails?ProductId=3");
 		}
 

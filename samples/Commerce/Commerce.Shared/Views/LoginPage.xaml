@@ -39,25 +39,28 @@
                 <TextBox PlaceholderText="Email"
                          Margin="0,8"
                          MinWidth="200"
-                         Name="UsernameText" />
+                         Name="UsernameText"
+						 Text="{x:Bind VM.UserName, Mode=TwoWay}"/>
                 <PasswordBox  Margin="0,8"
                               PlaceholderText="Password"
-                              MinWidth="200" />
+                              MinWidth="200"
+							  Password="{x:Bind VM.Password, Mode=TwoWay}" />
                 <HyperlinkButton Content="Forgot password?" />
-                <Button Content="LOGIN"
+				<TextBlock Text="{Binding Error}" Foreground="DarkRed" HorizontalAlignment="Center" />
+				<Button Content="LOGIN"
                         HorizontalAlignment="Stretch"
                         Margin="0,8"
-                        nav:Navigation.Request="/-/CommerceHomePage" />
-                <TextBlock Text="Legal mentions" HorizontalAlignment="Center" />
-            </StackPanel>
+                        Command="{Binding Login}" />
+				<TextBlock Text="Legal mentions" HorizontalAlignment="Center" />
+			</StackPanel>
             <Grid x:Name="ProgressOverlay"
-                  Visibility="Collapsed">
+                  Visibility="{Binding Login.IsExecuting}">
                 <Border Background="White"
                         Opacity="0.7"/>
                 <ProgressRing x:Name="Progress"
                               HorizontalAlignment="Center"
                               VerticalAlignment="Center"
-                              IsActive="False" />
+                              IsActive="{Binding Login.IsExecuting}" />
             </Grid>
 
         </Grid>

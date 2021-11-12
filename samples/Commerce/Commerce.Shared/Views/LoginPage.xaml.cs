@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Commerce.ViewModels;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -29,13 +30,16 @@ namespace Commerce
         public LoginPage()
         {
             this.InitializeComponent();
-        }
+		}
 
         private INavigator navigator;
         public void Inject(INavigator entity)
         {
             navigator = entity;
-        }
+			DataContext = VM = new LoginViewModel.BindableLoginViewModel(navigator);
+		}
+
+		public LoginViewModel.BindableLoginViewModel VM { get; private set; }
 
         public async Task<bool> Stop(NavigationRequest request)
         {

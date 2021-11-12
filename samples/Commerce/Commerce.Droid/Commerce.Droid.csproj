@@ -71,6 +71,7 @@
     <PackageReference Include="Uno.UniversalImageLoader" Version="1.9.33" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+    <PackageReference Include="System.Linq.Async" Version="4.0.0" />
     <PackageReference Include="Xamarin.AndroidX.AppCompat.AppCompatResources">
       <Version>1.2.0.5</Version>
     </PackageReference>
@@ -142,6 +143,14 @@
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj">
       <Project>{5123670c-9756-4c9e-9844-f4a9c0aee633}</Project>
       <Name>Uno.Extensions.Serialization</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj">
+      <Project>{74D93A0B-42F9-45A6-8AC3-684DAE9659A8}</Project>
+      <Name>Uno.Extensions.Reactive</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Uno.Extensions.Reactive.View\Uno.Extensions.Reactive.View.csproj">
+      <Project>{7516C1F2-6CCB-4B59-91B7-E6D4B4EA5835}</Project>
+      <Name>Uno.Extensions.Reactive.View</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" />
