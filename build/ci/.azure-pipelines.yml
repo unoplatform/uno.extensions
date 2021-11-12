@@ -70,7 +70,7 @@ steps:
   - task: MSBuild@1
     displayName: Build Samples
     inputs:
-      solution: src/samples/**/*.sln
+      solution: samples/**/*.sln
       msbuildLocationMethod: location
       msbuildLocation: $(MSBUILDPATH)
       msbuildArchitecture: x86
