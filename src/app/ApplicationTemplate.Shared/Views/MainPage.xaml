@@ -1,0 +1,19 @@
+﻿<Page
+    x:Class="ApplicationTemplate.Views.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ApplicationTemplate"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <StackPanel>
+            <TextBlock Text="Hello, world!" Margin="20" FontSize="30" />
+            <TextBlock Text="{Binding Introduction}" Margin="20" FontSize="20" />
+            <TextBlock Text="{Binding ResourcedIntroduction}" Margin="20" FontSize="20" />
+            <Button Content="Toggle Localization" Command="{Binding ToggleLocalizationCommand}"/>
+            <Button Content="Second" Command="{Binding GoSecondCommand}"/>
+        </StackPanel>
+    </Grid>
+</Page>

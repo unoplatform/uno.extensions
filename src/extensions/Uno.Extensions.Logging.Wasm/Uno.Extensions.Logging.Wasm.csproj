@@ -1,0 +1,16 @@
+﻿<Project Sdk="MSBuild.Sdk.Extras"  ToolsVersion="15.0">
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net5.0;net6.0</TargetFrameworks>
+    <DefineConstants>$(DefineConstants);__WASM__</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\Uno.Extensions.Logging\HostBuilderExtensions.cs" Link="HostBuilderExtensions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.3.0-dev.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Uno.Extensions.Logging\Uno.Extensions.Logging.csproj" />
+  </ItemGroup>
+  </Project>

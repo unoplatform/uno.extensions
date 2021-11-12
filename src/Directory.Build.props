@@ -16,6 +16,48 @@
 		<PackageIcon>uno-logo.png</PackageIcon>
 	</PropertyGroup>
 
+		<PropertyGroup>
+		<DebugType>portable</DebugType>
+		<DebugSymbols>True</DebugSymbols>
+		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+		<GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+		
+		<GeneratePackageOnBuild Condition="'$(Configuration)'=='Release'">true</GeneratePackageOnBuild>
+
+		<!-- Version management is now done through NuGet, this avoids issues related version mismatch -->
+		<Version>255.255.255.255</Version>
+
+		<Product>$(AssemblyName) ($(TargetFramework))</Product>
+		<DefaultLanguage>en-US</DefaultLanguage>
+	</PropertyGroup>
+
+
+	<PropertyGroup Condition="$(TargetFramework.StartsWith('xamarinios')) or $(TargetFramework.EndsWith('ios'))">
+    <IsXamarin>true</IsXamarin>
+    <IsIOS>true</IsIOS>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('net5.0'))">
+    <DefineConstants>$(DefineConstants);NET5_0</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('net6.0'))">
+    <DefineConstants>$(DefineConstants);NET6_0</DefineConstants>
+  </PropertyGroup>
+
+    <PropertyGroup Condition="$(TargetFramework.StartsWith('monoandroid')) or $(TargetFramework.EndsWith('android'))">
+    <IsAndroid>true</IsAndroid>
+  </PropertyGroup>
+
+	<PropertyGroup Condition="$(TargetFramework.Contains('windows10'))">
+		<IsWinUI>true</IsWinUI>
+	</PropertyGroup>
+
+	 <PropertyGroup Condition="$(TargetFramework.StartsWith('uap'))">
+    <IsUWP>true</IsUWP>
+    <TargetPlatformVersion>10.0.19041.0</TargetPlatformVersion>
+  </PropertyGroup>
+
 	<PropertyGroup>
 		<IsTestProject>$(MSBuildProjectName.Contains('Test'))</IsTestProject>
 		<IsSampleProject>$(MSBuildProjectName.Contains('Sample'))</IsSampleProject>
@@ -41,5 +83,19 @@
 			</ItemGroup>
 		</When>
 	</Choose>
+
+	<!--
+  Adjust the output paths for runtime project in order for those
+  projects to stay in the same folder as the original reference one.
+  -->
+	<PropertyGroup>
+		<_AdjustedOutputProjects>$(_AdjustedOutputProjects);Uno.Extensions.Core.csproj</_AdjustedOutputProjects>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="$(_AdjustedOutputProjects.Contains('$(MSBuildProjectFile)'))">
+		<BaseOutputPath>bin\$(MSBuildProjectName)</BaseOutputPath>
+		<BaseIntermediateOutputPath>obj\$(MSBuildProjectName)</BaseIntermediateOutputPath>
+		<DefaultItemExcludes>$(DefaultItemExcludes);obj/**;bin/**</DefaultItemExcludes>
+	</PropertyGroup>
 
 </Project>

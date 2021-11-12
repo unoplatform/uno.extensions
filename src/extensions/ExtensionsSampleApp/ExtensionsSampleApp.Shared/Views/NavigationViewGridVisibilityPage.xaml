@@ -1,0 +1,58 @@
+﻿<Page x:Class="ExtensionsSampleApp.Views.NavigationViewGridVisibilityPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:ExtensionsSampleApp.Views"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+      mc:Ignorable="d"
+      xmlns:nav="using:Uno.Extensions.Navigation.Controls"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid nav:Region.Attached="True" x:Name="NavRoot">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <muxc:NavigationView x:Name="NavView"
+                             nav:Region.Attached="true"
+                             nav:Region.Parent="{x:Bind NavRoot}">
+            <muxc:NavigationView.MenuItems>
+                <muxc:NavigationViewItem Tag="home"
+                                         Icon="Home"
+                                         Content="Home"
+                                         nav:Region.Name="navhome"/>
+                <muxc:NavigationViewItemSeparator />
+                <muxc:NavigationViewItemHeader x:Name="MainPagesHeader"
+                                               Content="Main pages" />
+                <muxc:NavigationViewItem Tag="apps"
+                                         Content="Apps"
+                                         nav:Region.Name="navapps">
+                    <muxc:NavigationViewItem.Icon>
+                        <FontIcon FontFamily="Segoe MDL2 Assets"
+                                  Glyph="&#xEB3C;" />
+                    </muxc:NavigationViewItem.Icon>
+                </muxc:NavigationViewItem>
+            </muxc:NavigationView.MenuItems>
+
+            <ScrollViewer>
+                <Grid x:Name="ContentGrid"
+                      nav:Region.Attached="true"
+                      nav:Region.Parent="{x:Bind NavRoot}"
+                      nav:Region.Navigator="Visibility">
+                    <local:Content1 Visibility="Collapsed"
+                                    nav:Region.Name="navhome"/>
+                    <local:Content2 Visibility="Collapsed"
+                                    nav:Region.Name="navapps" />
+                </Grid>
+            </ScrollViewer>
+        </muxc:NavigationView>
+        <StackPanel Grid.Row="1"
+                    Orientation="Horizontal">
+            <Button Content="Tab 1"
+                    nav:Navigation.Request="navhome" />
+            <Button Content="Tab 2"
+                    nav:Navigation.Request="navapps" />
+        </StackPanel>
+    </Grid>
+</Page>

@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Uno.WinUI.Skia.Wpf" Version="3.8.6" />
+  </ItemGroup>
+
+  <Import Project="..\uno.extensions.targets" />
+  <Import Project="..\app.targets" />
+  <Import Project="..\uno.winui.targets" />
+
+  <ItemGroup>
+    <UpToDateCheckInput Include="..\ApplicationTemplate.Shared\**\*.xaml" />
+  </ItemGroup>
+  <Import Project="..\ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems" Label="Shared" />
+</Project>

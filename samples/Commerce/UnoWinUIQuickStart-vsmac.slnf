@@ -1,0 +1,18 @@
+{
+  "solution": {
+    "path": "UnoWinUIQuickStart.sln",
+    "projects": [
+		"UnoWinUIQuickStart.Shared\\UnoWinUIQuickStart.Shared.shproj",
+
+		"UnoWinUIQuickStart.Droid\\UnoWinUIQuickStart.Droid.csproj",
+
+		"UnoWinUIQuickStart.iOS\\UnoWinUIQuickStart.iOS.csproj",
+
+		"UnoWinUIQuickStart.Wasm\\UnoWinUIQuickStart.Wasm.csproj",
+
+		"UnoWinUIQuickStart.macOS\\UnoWinUIQuickStart.macOS.csproj",
+
+		"UnoWinUIQuickStart.Skia.Gtk\\UnoWinUIQuickStart.Skia.Gtk.csproj",
+    ]
+  }
+}

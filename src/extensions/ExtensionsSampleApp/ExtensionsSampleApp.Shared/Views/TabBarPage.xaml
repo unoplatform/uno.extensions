@@ -1,0 +1,39 @@
+﻿<Page
+    x:Class="ExtensionsSampleApp.Views.TabBarPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ExtensionsSampleApp.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:nav="using:Uno.Extensions.Navigation.Controls"
+    mc:Ignorable="d"
+      xmlns:toolkit="using:Uno.UI.ToolkitLib"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid nav:Region.Attached="True">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+
+        </Grid.RowDefinitions>
+        <!--SelectionChanged="TabBar_SelectionChanged"-->
+        <toolkit:TabBar Background="Tomato" nav:Region.Attached="true">
+            <!--nav:Region.Attached="true" >-->
+            <toolkit:TabBar.Items>
+                <toolkit:TabBarItem Content="Tab 1"
+                                    nav:Navigation.Request="Content1"
+                                    x:Name="Content1" />
+                <toolkit:TabBarItem Content="Tab 2"
+                                    nav:Navigation.Request="Content2"
+                                    x:Name="Content2" />
+            </toolkit:TabBar.Items>
+        </toolkit:TabBar>
+        <!--<ContentControl nav:Region.Name="tabcontent" Grid.Row="1"/>-->
+        <ContentControl Grid.Row="1" x:Name="ContentHost"  nav:Region.Attached="true"/>
+        <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <Button Content="Tab 1" nav:Navigation.Request="Content1" />
+            <Button Content="Tab 2" nav:Navigation.Request="Content2"  />
+        </StackPanel>
+    </Grid>
+</Page>

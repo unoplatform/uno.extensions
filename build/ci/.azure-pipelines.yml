@@ -13,6 +13,12 @@ pr:
       - main
       - release/*
 
+variables:
+  - name: UnoCheck_Version
+    value: '0.2.0-dev.361'
+  - name: UnoCheck_Manifest
+    value: 'https://raw.githubusercontent.com/unoplatform/uno.check/bf3684e2ad725baa66da3573759129d6bb1d8817/manifests/uno.ui.manifest.json'
+
 steps:
   - checkout: self
     clean: 'true'
@@ -29,9 +35,9 @@ steps:
 
   - powershell: |
       dotnet tool update -g dotnet-vs
-      $MSBUILDPREVIEWPATH="$(vs where preview --prop=InstallationPath)\MSBuild\Current\Bin"
-      Write-Host "##vso[task.setvariable variable=MSBUILDPREVIEWPATH;]$MSBUILDPREVIEWPATH"
-      echo MSBUILDPREVIEWPATH: $MSBUILDPREVIEWPATH
+      $MSBUILDPATH="$(vs where release --prop=InstallationPath)\MSBuild\Current\Bin"
+      Write-Host "##vso[task.setvariable variable=MSBUILDPATH;]$MSBUILDPATH"
+      echo MSBUILDPATH: $MSBUILDPATH
     displayName: Setup VS17 Path
 
   - task: UseDotNet@2
@@ -40,11 +46,19 @@ steps:
       packageType: sdk
       version: 6.0.100
 
+  - powershell: |
+      & dotnet tool update --global uno.check --version $(UnoCheck_Version) --add-source https://api.nuget.org/v3/index.json
+      & uno-check -v --ci --non-interactive --fix --skip xcode --skip gtk3 --skip vswin --skip vsmac --manifest $(UnoCheck_Manifest)
+    displayName: Install .NET Workloads
+    errorActionPreference: continue
+    ignoreLASTEXITCODE: true
+
+
   - task: MSBuild@1
     inputs:
       solution: src/Uno.Extensions.sln
       msbuildLocationMethod: location
-      msbuildLocation: $(MSBUILDPREVIEWPATH)
+      msbuildLocation: $(MSBUILDPATH)
       msbuildArchitecture: x86
       msbuildArguments: /r /p:Configuration=Release "/p:PackageOutputPath=$(build.artifactstagingdirectory)\nuget" "/p:PackageVersion=%GITVERSION_FullSemVer%" "/p:InformationalVersion=%GITVERSION_InformationalVersion%" /detailedsummary /bl:$(build.artifactstagingdirectory)/uno-extensions.binlog
       clean: false

@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="7.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0-rc.2.21480.5" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
+    <PackageReference Include="Uno.UI.Skia.Wpf" Version="3.9.7" />
+    <PackageReference Include="Uno.UI.RemoteControl" Version="3.9.7" Condition="'$(Configuration)'=='Debug'" />
+  </ItemGroup>
+  <ItemGroup>
+    <UpToDateCheckInput Include="..\ExtensionsSampleApp.Shared\**\*.xaml" />
+  </ItemGroup>
+  <Import Project="..\ExtensionsSampleApp.Shared\ExtensionsSampleApp.Shared.projitems" Label="Shared" />
+</Project>

@@ -1,0 +1,18 @@
+﻿{
+  "$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
+  "settings": {
+    "documentationRules": {
+      "companyName": "Uno Platform",
+      "documentationCulture": "en",
+      "documentPrivateElements": false,
+      "documentPrivateFields": false
+    },
+    "indentation": {
+      "useTabs": false,
+      "indentationSize": 4
+    },
+    "orderingRules": {
+      "usingDirectivesPlacement": "outsideNamespace"
+    }
+  }
+}

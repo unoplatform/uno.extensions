@@ -1,0 +1,101 @@
+﻿<Page x:Class="ExtensionsSampleApp.Views.TabbedPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:ExtensionsSampleApp"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:controls="using:Microsoft.UI.Xaml.Controls"
+      xmlns:nav="using:Uno.Extensions.Navigation.Controls"
+      mc:Ignorable="d"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <controls:TabView nav:Region.Attached="true"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      IsAddTabButtonVisible="False">
+        <controls:TabViewItem Header="Home"
+                              IsClosable="False"
+                              x:Name="home">
+            <controls:TabViewItem.IconSource>
+                <controls:SymbolIconSource Symbol="Home" />
+            </controls:TabViewItem.IconSource>
+            <StackPanel>
+                <TextBlock Margin="20"
+                           FontSize="30"><Run Text="Doc1 - " /><Run Text="{Binding Title}" /></TextBlock>
+                <Button Content="Doc0"
+                        nav:Navigation.Request="../doc0" />
+                <Button Content="Doc0 - code"
+                        Click="NavigateToDoc0Click" />
+                <Button Content="Doc2"
+                        nav:Navigation.Request="../doc2" />
+            </StackPanel>
+        </controls:TabViewItem>
+        <controls:TabViewItem Header="Document 0"
+                              x:Name="doc0">
+            <controls:TabViewItem.IconSource>
+                <controls:SymbolIconSource Symbol="Document" />
+            </controls:TabViewItem.IconSource>
+            <StackPanel>
+                <TextBlock Margin="20"
+                           FontSize="30"><Run Text="Doc0 - " /><Run Text="{Binding Title}" /></TextBlock>
+                <Button Content="Home"
+                        nav:Navigation.Request="../home" />
+                <Button Content="Go back"
+                        nav:Navigation.Request="../../-" />
+                <Button Content="Third Page"
+                        nav:Navigation.Request="../../ThirdPage" />
+                <Button Content="Third Page"
+                        Command="{Binding NavigateToThirdPageCommand}" />
+                <Button Content="Third Page (rooted)"
+                        nav:Navigation.Request="../../../ThirdPage" />
+                <Button Content="Doc1 - ViewModel"
+                        Command="{Binding NavigateToDoc1Command}" />
+            </StackPanel>
+        </controls:TabViewItem>
+        <controls:TabViewItem Header="Document 1"
+                              x:Name="doc1">
+            <controls:TabViewItem.IconSource>
+                <controls:SymbolIconSource Symbol="Document" />
+            </controls:TabViewItem.IconSource>
+            <StackPanel>
+                <TextBlock Margin="20"
+                           FontSize="30"><Run Text="Doc1 - " /><Run Text="{Binding Title}" /></TextBlock>
+                <Button Content="Content Dialog"
+                        Click="ContentDialogResponseClick" />
+            </StackPanel>
+        </controls:TabViewItem>
+        <controls:TabViewItem Header="Document 2"
+                              x:Name="doc2">
+            <controls:TabViewItem.IconSource>
+                <controls:SymbolIconSource Symbol="Document" />
+            </controls:TabViewItem.IconSource>
+            <Grid Loaded="Doc2GridLoaded">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock Margin="20"
+                           FontSize="30"><Run Text="Doc2 - " /><Run Text="{Binding Title}" /></TextBlock>
+                <Frame x:Name="InnerFrame"
+                       Grid.Row="1"
+                       nav:Region.Attached="true" />
+                <StackPanel Orientation="Horizontal" Grid.Row="2">
+                    <Button Content="Page Two"
+                            nav:Navigation.Request="./SecondPage" />
+                    <Button Content="Page Four"
+                            nav:Navigation.Request="./FourthPage" />
+                    <!--<ContentControl nav:Region.Attached="True"/>-->
+                </StackPanel>
+            </Grid>
+        </controls:TabViewItem>
+
+        <controls:TabView.TabStripHeader>
+            <Grid x:Name="ShellTitlebarInset"
+                  Background="Transparent" />
+        </controls:TabView.TabStripHeader>
+        <controls:TabView.TabStripFooter>
+            <Grid x:Name="CustomDragRegion"
+                  Background="Transparent" />
+        </controls:TabView.TabStripFooter>
+    </controls:TabView>
+</Page>

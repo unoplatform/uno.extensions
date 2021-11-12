@@ -1,0 +1,180 @@
+﻿<Page x:Class="ExtensionsSampleApp.Views.MainPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:ExtensionsSampleApp"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:nav="using:Uno.Extensions.Navigation.Controls"
+      NavigationCacheMode="Required"
+      xmlns:ios="http://uno.ui/ios"
+      xmlns:views="using:ExtensionsSampleApp.Views"
+      mc:Ignorable="d">
+    <Page.Resources>
+        <DataTemplate x:Key="PickerTemplate">
+            <TextBlock Text="{Binding}"
+                       Foreground="Green"
+                       FontSize="32" />
+        </DataTemplate>
+        <Style TargetType="TextBlock">
+            <Setter Property="Margin"
+                    Value="0,8,0,0" />
+        </Style>
+        <Style TargetType="TextBlock" x:Key="ResultTextStyle">
+            <Setter Property="Margin"
+                    Value="0,0,0,8" />
+            <Setter Property="Foreground"
+                    Value="DarkOrange" />
+        </Style>
+
+    </Page.Resources>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ScrollViewer>
+            <StackPanel Margin="8">
+                <TextBlock Margin="20"
+                           FontSize="30"><Run Text="Main - " /><Run Text="{Binding Title}" /></TextBlock>
+
+                <TextBlock Text="Navigation.NavigateAsync(&quot;../SecondPage&quot;.AsRequest(this)) - In click handler, navigate to a request created from a path"/>
+                <Button Content="Next page - NavigationRequest"
+                        Click="NextPageNavigationRequestClick" />
+
+                <TextBlock Text="nav:Navigation.Request=&quot;../SecondPage&quot; - On button click - navigates to route defined by the Request attacted property" />
+                <Button Content="Next page - Navigation Path"
+                        nav:Navigation.Request="../SecondPage" />
+
+                <TextBlock Text="nav:Navigation.Request=&quot;../SecondPage&quot; nav:Navigation.Data=&quot;Hello World!&quot; - On button click, navigates to the route and passes data" />
+                <Button Content="Next page - Navigation Path with Data"
+                        nav:Navigation.Request="../SecondPage"
+                        nav:Navigation.Data="Hello World!" />
+
+                <TextBlock Text="nav:Navigation.Request=&quot;../SecondPage?delay=5000&quot; - Delay is introduced in MainViewModel" />
+                <Button Content="Next page - Navigation Path with delay"
+                        nav:Navigation.Request="../SecondPage?delay=5000" />
+
+                <TextBlock Text="Navigation.NavigateAsync&lt;SecondPage&gt;() - In click handler, navigates based on page type" />
+                <Button Content="Next page - NavigateToViewAsync"
+                        Click="NextPageNavigateToViewAsyncClick" />
+
+                <TextBlock Text="Navigation.NavigateToViewModelAsync&lt;SecondViewModel&gt;() - In click handler, navigates based on page type" />
+                <Button Content="Next page - NavigateToViewModelAsync"
+                        Click="NextPageNavigateToViewModelAsyncClick" />
+
+                <TextBlock Text="Navigation.NavigateToDataAsync(this, new Widget()) - In click handler, navigates to the page that's configured to handle the type of data" />
+                <Button Content="Next page - NavigateToDataAsync"
+                        Click="NextPageNavigateToDataAsyncClick" />
+
+                <TextBlock Text="Navigation.NavigateToViewModelAsync&lt;SecondViewModel&gt;(this, data: new Widget()) - Executed by command in MainViewModel" />
+                <Button Content="Next page - NavigateToViewModelAsync (MainViewModel)"
+                        Command="{Binding NavigateToSecondPageCommand}" />
+
+                <TextBlock Text="Navigation.NavigateToViewModelForResultAsync&lt;SecondViewModel, Widget&gt;(this); - In click handler, navigate by viewmodel type and request data to be returned" />
+                <Button Content="Next page - NavigateToViewModelForResult"
+                        Click="NextPageRequestResponseClick" />
+                <TextBlock Text=""
+                           x:Name="NavigateToViewModelForResultText"
+                           Style="{StaticResource ResultTextStyle}" />
+
+                <TextBlock Text="Navigation.NavigateForResultAsync&lt;Widget&gt;(Mappings, this); - In click handler, navigate in order to retrieve data" />
+                <Button Content="Navigate for Result"
+                        Click="RequestDataResponseClick" />
+                <TextBlock Text=""
+                           x:Name="NavigateForResultText"
+                           Style="{StaticResource ResultTextStyle}" />
+
+                <TextBlock Text="Navigation.NavigateToViewModelForResultAsync&lt;SecondViewModel, Widget&gt;(Mappings, this, cancellation: cancel.Token); - In click handler, navigate to viewmodel in order to retrieve data; cancelled after 2 seconds" />
+                <Button Content="Next page - NavigationRequest with response (2 second timeout)"
+                        Click="NextPageRequestWithTimeoutClick" />
+
+                <TextBlock Text="Navigation.NavigateToViewModelForResultAsync&lt;SecondViewModel, Widget&gt;(Mappings, this, cancellation: cancel.Token); - In click handler, navigate to viewmodel in order to retrieve data; cancelled after 2 seconds (after first waiting for navigation to complete)" />
+                <Button Content="Next page - NavigationRequest with response (2 second timeout)"
+                        Click="NextPageResponseWithTimeoutClick" />
+
+                <TextBlock Text="Navigation.NavigateToViewForResultAsync&lt;SimpleContentDialog, ContentDialogResult&gt;(this, Schemes.Dialog); - In click handler, display content dialog, expecting a dialog result" />
+                <Button Content="Content Dialog"
+                        Click="ContentDialogResponseClick" />
+                <TextBlock Text=""
+                           x:Name="ContentDialogForResultText"
+                           Style="{StaticResource ResultTextStyle}" />
+
+                <TextBlock Text="Navigation.NavigateToViewForResultAsync&lt;SimpleContentDialog, Widget&gt;(this, Schemes.Dialog); - In click handler, display content dialog, expecting a result object" />
+                <Button Content="Content Dialog - Widget Response"
+                        Click="ContentDialogWidgetResponseClick" />
+                <TextBlock Text=""
+                           x:Name="ContentDialogForWidgetResultText"
+                           Style="{StaticResource ResultTextStyle}" />
+
+                <TextBlock Text="Navigation.ShowMessageDialogAsync(...); - Display message dialog" />
+                <Button Content="Message Dialog"
+                        Click="MessageDialogClick" />
+                <TextBlock Text=""
+                           x:Name="MessageDialogResultText"
+                           Style="{StaticResource ResultTextStyle}" />
+
+                <TextBlock Text="nav:Navigation.Request=&quot;CustomFlyout&quot; - Flyout" />
+                <Button Content="Flyout - CustomFlyout"
+                        nav:Navigation.Request="!CustomFlyout">
+                    <!--nav:Region.Navigator="FlyoutNavigator">
+                    <FlyoutBase.AttachedFlyout>
+                        <Flyout>
+                            <TextBlock Text="This is some text in a flyout." />
+                        </Flyout>
+                    </FlyoutBase.AttachedFlyout>-->
+                </Button>
+
+                <TextBlock Text="nav:Navigation.Request=&quot;CustomFlyoutResource&quot; - Flyout" />
+                <Button Content="Flyout - CustomFlyoutResource"
+                        nav:Navigation.Request="!CustomFlyoutResource">
+                </Button>
+
+                <TextBlock Text="Flyout launched from viewmodel" />
+                <Button Content="Flyout - from ViewModel"
+                        Command="{Binding NavigateToFlyoutCommand}" />
+
+
+
+                <Button Content="Root - Go to Uno Commerce Sample"
+                        nav:Navigation.Request="-/LoginPage" />
+                <Button Content="Root - Go to Twitter"
+                        nav:Navigation.Request="-/TwitterLoginPage" />
+                <Button Content="Root - Go to TabBar Page"
+                        nav:Navigation.Request="-/TabBarPage" />
+                <Button Content="Root - Go to NavigationView Page"
+                        nav:Navigation.Request="-/NavigationViewPage" />
+                <Button Content="Root - Go to NavigationViewGridVisibility Page"
+                        nav:Navigation.Request="-/NavigationViewGridVisibilityPage" />
+                <Button Content="Root - Go to NavigationViewVisualStates Page"
+                        nav:Navigation.Request="-/NavigationViewVisualStatesPage" />
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <Grid Grid.Row="1">
+            <StackPanel>
+                <Button Content="Show popup"
+                        nav:Navigation.Request="./Show" />
+                <Button Content="Hide popup"
+                        nav:Navigation.Request="./Hide" />
+                <Button Content="Show Picker"
+                        Click="ShowPickerClick" />
+            </StackPanel>
+            <Popup x:Name="MyPopup"
+                   nav:Region.Attached="True"
+                   VerticalOffset="10"
+                   HorizontalOffset="200"
+                   IsLightDismissEnabled="True">
+                <Popup.Child>
+                    <Border x:Name="PopupBorder"
+                            Background="Red"
+                            Height="320"
+                            VerticalAlignment="Bottom">
+                        <TextBlock Text="My Popup" />
+                    </Border>
+                </Popup.Child>
+            </Popup>
+        </Grid>
+    </Grid>
+</Page>
