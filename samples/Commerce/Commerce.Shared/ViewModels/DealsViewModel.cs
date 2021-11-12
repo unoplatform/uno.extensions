@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Commerce.Services;
 using Uno.Extensions;
@@ -21,7 +22,7 @@ public class DealsViewModel
 
 	private async Task Load(IProductService products)
 	{
-		var productItems = await products.GetProducts();
+		var productItems = await products.GetProducts(null, CancellationToken.None);
 		productItems.ForEach(p =>
 		{
 			HotDeals.Add(p);

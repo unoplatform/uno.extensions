@@ -55,6 +55,7 @@
 		<PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5489" Condition="'$(Configuration)'=='Debug'" />
 		<PackageReference Include="Uno.Wasm.Bootstrap" Version="3.0.0" />
 		<PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="3.0.0" />
+		<PackageReference Include="System.Linq.Async" Version="4.0.0" />
 		<PackageReference Include="Uno.UI.Toolkit">
 			<Version>0.1.0-dev.71</Version>
 		</PackageReference>
@@ -74,6 +75,14 @@
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Logging.Wasm\Uno.Extensions.Logging.Wasm.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj">
+			<Project>{74D93A0B-42F9-45A6-8AC3-684DAE9659A8}</Project>
+			<Name>Uno.Extensions.Reactive</Name>
+		</ProjectReference>
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Reactive.View\Uno.Extensions.Reactive.View.csproj">
+			<Project>{7516C1F2-6CCB-4B59-91B7-E6D4B4EA5835}</Project>
+			<Name>Uno.Extensions.Reactive.View</Name>
+		</ProjectReference>
 	</ItemGroup>
 	<Import Project="..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" Condition="Exists('..\Commerce.Shared\Commerce.Shared.projitems')" />
 </Project>

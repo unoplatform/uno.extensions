@@ -232,3 +232,9 @@ dotnet_diagnostic.IDE0022.severity = none
 
 # CS1998: This async method lacks 'await' operators and will run synchronously.
 dotnet_diagnostic.CS1998.severity = none
+
+# SA1101: Prefix local calls with this
+dotnet_diagnostic.SA1101.severity = none
+
+# SA1309: Field names should not begin with underscore
+dotnet_diagnostic.SA1309.severity = none

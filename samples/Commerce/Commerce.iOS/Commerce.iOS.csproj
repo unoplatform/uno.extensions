@@ -127,6 +127,7 @@
     <!--<PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5441" Condition="'$(Configuration)'=='Debug'" />-->
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="Uno.Extensions.Logging.OSLog " Version="1.3.0-dev.1" />
+    <PackageReference Include="System.Linq.Async" Version="4.0.0" />
     <PackageReference Include="Uno.UI.Toolkit" Version="0.1.0-dev.71" />
     <PackageReference Include="Uno.Material" Version="1.1.0-dev.5" />
   </ItemGroup>
@@ -218,6 +219,14 @@
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj">
       <Project>{5123670c-9756-4c9e-9844-f4a9c0aee633}</Project>
       <Name>Uno.Extensions.Serialization</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj">
+      <Project>{74D93A0B-42F9-45A6-8AC3-684DAE9659A8}</Project>
+      <Name>Uno.Extensions.Reactive</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Uno.Extensions.Reactive.View\Uno.Extensions.Reactive.View.csproj">
+      <Project>{7516C1F2-6CCB-4B59-91B7-E6D4B4EA5835}</Project>
+      <Name>Uno.Extensions.Reactive.View</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="XamarinForms.targets" Condition="'$(Configuration)'=='Debug'" />

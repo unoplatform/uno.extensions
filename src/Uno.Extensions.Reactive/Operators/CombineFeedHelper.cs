@@ -109,7 +109,7 @@ internal sealed class CombineFeedHelper<TResult>
 
 	private (bool hasNull, bool hasUndefined, bool hasNone) InspectParents()
 	{
-		bool hasNull = true, hasUndefined = false, hasNone = false;
+		bool hasNull = false, hasUndefined = false, hasNone = false;
 		foreach (var parent in _parents)
 		{
 			if (parent is null)

@@ -30,8 +30,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\DealsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\FilterViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\LoginViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\LoginViewModel.g.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ProductDetailsViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ProductDetailsViewModel.g.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ProductsViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ProductsViewModel.g.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\CartDialog.xaml.cs">
       <DependentUpon>CartDialog.xaml</DependentUpon>
     </Compile>
@@ -68,6 +71,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="$(MSBuildThisFileDirectory)MainPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Styles\FeedView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
