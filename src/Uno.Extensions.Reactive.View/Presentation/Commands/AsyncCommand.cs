@@ -203,6 +203,8 @@ internal sealed class AsyncCommand : IAsyncCommand, IDisposable
 			}
 
 			_externalParameter = (null, false);
+			_command.UpdateCanExecute();
+
 			var parameters = _config
 				.Parameter(context)
 				.Where(message => message.Changes.Contains(MessageAxis.Data))

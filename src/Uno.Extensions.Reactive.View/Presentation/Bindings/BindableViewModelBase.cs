@@ -76,7 +76,7 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 	}
 
 	protected ICommandBuilder CreateCommand(string propertyName)
-		=> throw new NotImplementedException();
+		=> new CommandBuilder<object?>(propertyName);
 
 	void IBindable.OnPropertyChanged(string propertyName) 
 		=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

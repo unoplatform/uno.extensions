@@ -129,6 +129,11 @@ internal class State<T> : IState<T>, IFeed<T>, IAsyncDisposable
 
 			yield return current;
 		}
+
+		if (isFirstMessage)
+		{
+			yield return Message<T>.Initial;
+		}
 	}
 
 	/// <inheritdoc />
@@ -155,7 +160,7 @@ internal class State<T> : IState<T>, IFeed<T>, IAsyncDisposable
 					+ "You must use the Message.With() or Message.OverrideBy() to create a new version.");
 			}
 
-			if (updated is { Changes.Count: 0 })
+			if (_hasCurrent && updated is { Changes.Count: 0 })
 			{
 				return;
 			}
