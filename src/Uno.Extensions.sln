@@ -5,41 +5,53 @@ VisualStudioVersion = 17.1.31903.286
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions", "Uno.Extensions\Uno.Extensions.csproj", "{B7F5884C-5604-4044-B414-D924DC0E0F01}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", "{E72C27A4-2A18-479D-8A8B-7A083ADCCD65}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Core", "Uno.Extensions.Core\Uno.Extensions.Core.csproj", "{793208E1-158C-4218-A453-E8256947E2ED}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Core", "extensions\Uno.Extensions.Core\Uno.Extensions.Core.csproj", "{793208E1-158C-4218-A453-E8256947E2ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Hosting", "Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj", "{D5CAEE0E-E43F-4432-92C5-FE3B2181897D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Hosting", "extensions\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj", "{D5CAEE0E-E43F-4432-92C5-FE3B2181897D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Hosting.Wasm", "Uno.Extensions.Hosting.Wasm\Uno.Extensions.Hosting.Wasm.csproj", "{8045333C-8522-4966-8A96-87C622ED7CE7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Hosting.Wasm", "extensions\Uno.Extensions.Hosting.Wasm\Uno.Extensions.Hosting.Wasm.csproj", "{8045333C-8522-4966-8A96-87C622ED7CE7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Localization", "Uno.Extensions.Localization\Uno.Extensions.Localization.csproj", "{ECCF3E50-2D4A-43A7-B16D-88EFC06017AD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Localization", "extensions\Uno.Extensions.Localization\Uno.Extensions.Localization.csproj", "{ECCF3E50-2D4A-43A7-B16D-88EFC06017AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Configuration", "Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj", "{D8703D0A-D1C9-4C6B-AE18-507FBC1C5823}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Configuration", "extensions\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj", "{D8703D0A-D1C9-4C6B-AE18-507FBC1C5823}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Logging", "Uno.Extensions.Logging\Uno.Extensions.Logging.csproj", "{40184FA9-25F7-498C-B4E4-661842630E6C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Logging", "extensions\Uno.Extensions.Logging\Uno.Extensions.Logging.csproj", "{40184FA9-25F7-498C-B4E4-661842630E6C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Logging.Wasm", "Uno.Extensions.Logging.Wasm\Uno.Extensions.Logging.Wasm.csproj", "{4A7F5748-C875-44CF-B363-6912736601B6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Logging.Wasm", "extensions\Uno.Extensions.Logging.Wasm\Uno.Extensions.Logging.Wasm.csproj", "{4A7F5748-C875-44CF-B363-6912736601B6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Serialization", "Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj", "{247E0202-11F8-428A-B6F2-6AABCD222475}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Serialization", "extensions\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj", "{247E0202-11F8-428A-B6F2-6AABCD222475}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Http", "Uno.Extensions.Http\Uno.Extensions.Http.csproj", "{F6921B06-3F17-442B-B245-786DEFFE60A2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Http", "extensions\Uno.Extensions.Http\Uno.Extensions.Http.csproj", "{F6921B06-3F17-442B-B245-786DEFFE60A2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Http.Refit", "Uno.Extensions.Http.Refit\Uno.Extensions.Http.Refit.csproj", "{571B4368-E13C-4ECA-B342-5838E2020310}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Http.Refit", "extensions\Uno.Extensions.Http.Refit\Uno.Extensions.Http.Refit.csproj", "{571B4368-E13C-4ECA-B342-5838E2020310}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Http.Tests", "Uno.Extensions.Http.Tests\Uno.Extensions.Http.Tests.csproj", "{E77A884B-B845-46CC-A507-F070C4FB4D0A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Http.Tests", "extensions\Uno.Extensions.Http.Tests\Uno.Extensions.Http.Tests.csproj", "{E77A884B-B845-46CC-A507-F070C4FB4D0A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Serialization.Http", "Uno.Extensions.Serialization.Http\Uno.Extensions.Serialization.Http.csproj", "{A04C2FDC-34A0-4619-8C80-BFDED66B72CD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Serialization.Http", "extensions\Uno.Extensions.Serialization.Http\Uno.Extensions.Serialization.Http.csproj", "{A04C2FDC-34A0-4619-8C80-BFDED66B72CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Serialization.Refit", "Uno.Extensions.Serialization.Refit\Uno.Extensions.Serialization.Refit.csproj", "{F03CE17C-F19D-4057-983E-5A260624B888}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Serialization.Refit", "extensions\Uno.Extensions.Serialization.Refit\Uno.Extensions.Serialization.Refit.csproj", "{F03CE17C-F19D-4057-983E-5A260624B888}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Serialization.Tests", "Uno.Extensions.Serialization.Tests\Uno.Extensions.Serialization.Tests.csproj", "{811AEBB3-BCE1-4B53-8F93-ACFAA3328C14}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Serialization.Tests", "extensions\Uno.Extensions.Serialization.Tests\Uno.Extensions.Serialization.Tests.csproj", "{811AEBB3-BCE1-4B53-8F93-ACFAA3328C14}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Logging.Serilog", "Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj", "{CE4D658B-DC36-46CB-85C0-F8DA140E92BA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Logging.Serilog", "extensions\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj", "{CE4D658B-DC36-46CB-85C0-F8DA140E92BA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation", "Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj", "{0271AD7C-E7FD-4BB0-BDE5-3EE834AF2199}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation", "extensions\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj", "{0271AD7C-E7FD-4BB0-BDE5-3EE834AF2199}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation.UI", "Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UI.csproj", "{8FA7386F-7144-4D51-BD66-28F5779579A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Navigation.UI", "extensions\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UI.csproj", "{8FA7386F-7144-4D51-BD66-28F5779579A9}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Serialization", "Serialization", "{D3FBC1A0-E7E5-431A-BAC6-BCE8DB1AD4FB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Navigation", "Navigation", "{2B4C9E46-EA70-4ADE-B301-E2BB8CC31365}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Logging", "Logging", "{DFA5C025-922C-4408-8489-D45786D0C5AA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Hosting", "Hosting", "{4A89D580-232A-4BC6-8B69-0849CE5DEA18}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Http", "Http", "{45179294-70DC-47E8-AD22-1296F897B594}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Localization", "Localization", "{6F8C83E2-8CD7-42AC-B993-208351F2304E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configuration", "Configuration", "{D24D6A6D-A506-42AA-B980-505D2F919A26}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -124,23 +136,22 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{793208E1-158C-4218-A453-E8256947E2ED} = {E72C27A4-2A18-479D-8A8B-7A083ADCCD65}
-		{D5CAEE0E-E43F-4432-92C5-FE3B2181897D} = {E72C27A4-2A18-479D-8A8B-7A083ADCCD65}
-		{8045333C-8522-4966-8A96-87C622ED7CE7} = {E72C27A4-2A18-479D-8A8B-7A083ADCCD65}
-		{ECCF3E50-2D4A-43A7-B16D-88EFC06017AD} = {E72C27A4-2A18-479D-8A8B-7A083ADCCD65}
-		{D8703D0A-D1C9-4C6B-AE18-507FBC1C5823} = {E72C27A4-2A18-479D-8A8B-7A083ADCCD65}
-		{40184FA9-25F7-498C-B4E4-661842630E6C} = {E72C27A4-2A18-479D-8A8B-7A083ADCCD65}
-		{4A7F5748-C875-44CF-B363-6912736601B6} = {E72C27A4-2A18-479D-8A8B-7A083ADCCD65}
-		{247E0202-11F8-428A-B6F2-6AABCD222475} = {E72C27A4-2A18-479D-8A8B-7A083ADCCD65}
-		{F6921B06-3F17-442B-B245-786DEFFE60A2} = {E72C27A4-2A18-479D-8A8B-7A083ADCCD65}
-		{571B4368-E13C-4ECA-B342-5838E2020310} = {E72C27A4-2A18-479D-8A8B-7A083ADCCD65}
-		{E77A884B-B845-46CC-A507-F070C4FB4D0A} = {E72C27A4-2A18-479D-8A8B-7A083ADCCD65}
-		{A04C2FDC-34A0-4619-8C80-BFDED66B72CD} = {E72C27A4-2A18-479D-8A8B-7A083ADCCD65}
-		{F03CE17C-F19D-4057-983E-5A260624B888} = {E72C27A4-2A18-479D-8A8B-7A083ADCCD65}
-		{811AEBB3-BCE1-4B53-8F93-ACFAA3328C14} = {E72C27A4-2A18-479D-8A8B-7A083ADCCD65}
-		{CE4D658B-DC36-46CB-85C0-F8DA140E92BA} = {E72C27A4-2A18-479D-8A8B-7A083ADCCD65}
-		{0271AD7C-E7FD-4BB0-BDE5-3EE834AF2199} = {E72C27A4-2A18-479D-8A8B-7A083ADCCD65}
-		{8FA7386F-7144-4D51-BD66-28F5779579A9} = {E72C27A4-2A18-479D-8A8B-7A083ADCCD65}
+		{D5CAEE0E-E43F-4432-92C5-FE3B2181897D} = {4A89D580-232A-4BC6-8B69-0849CE5DEA18}
+		{8045333C-8522-4966-8A96-87C622ED7CE7} = {4A89D580-232A-4BC6-8B69-0849CE5DEA18}
+		{ECCF3E50-2D4A-43A7-B16D-88EFC06017AD} = {6F8C83E2-8CD7-42AC-B993-208351F2304E}
+		{D8703D0A-D1C9-4C6B-AE18-507FBC1C5823} = {D24D6A6D-A506-42AA-B980-505D2F919A26}
+		{40184FA9-25F7-498C-B4E4-661842630E6C} = {DFA5C025-922C-4408-8489-D45786D0C5AA}
+		{4A7F5748-C875-44CF-B363-6912736601B6} = {DFA5C025-922C-4408-8489-D45786D0C5AA}
+		{247E0202-11F8-428A-B6F2-6AABCD222475} = {D3FBC1A0-E7E5-431A-BAC6-BCE8DB1AD4FB}
+		{F6921B06-3F17-442B-B245-786DEFFE60A2} = {45179294-70DC-47E8-AD22-1296F897B594}
+		{571B4368-E13C-4ECA-B342-5838E2020310} = {45179294-70DC-47E8-AD22-1296F897B594}
+		{E77A884B-B845-46CC-A507-F070C4FB4D0A} = {45179294-70DC-47E8-AD22-1296F897B594}
+		{A04C2FDC-34A0-4619-8C80-BFDED66B72CD} = {D3FBC1A0-E7E5-431A-BAC6-BCE8DB1AD4FB}
+		{F03CE17C-F19D-4057-983E-5A260624B888} = {D3FBC1A0-E7E5-431A-BAC6-BCE8DB1AD4FB}
+		{811AEBB3-BCE1-4B53-8F93-ACFAA3328C14} = {D3FBC1A0-E7E5-431A-BAC6-BCE8DB1AD4FB}
+		{CE4D658B-DC36-46CB-85C0-F8DA140E92BA} = {DFA5C025-922C-4408-8489-D45786D0C5AA}
+		{0271AD7C-E7FD-4BB0-BDE5-3EE834AF2199} = {2B4C9E46-EA70-4ADE-B301-E2BB8CC31365}
+		{8FA7386F-7144-4D51-BD66-28F5779579A9} = {2B4C9E46-EA70-4ADE-B301-E2BB8CC31365}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6E7B035D-9A64-4D95-89AA-9D4653F17C42}

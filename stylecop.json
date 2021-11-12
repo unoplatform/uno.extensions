@@ -8,7 +8,7 @@
       "documentPrivateFields": false
     },
     "indentation": {
-      "useTabs": false,
+      "useTabs": true,
       "indentationSize": 4
     },
     "orderingRules": {
