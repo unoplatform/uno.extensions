@@ -30,13 +30,23 @@ namespace Uno.Extensions.Configuration
                     });
         }
 
-        public static IHostBuilder UseEmbeddedAppSettings<TApplicationRoot>(this IHostBuilder hostBuilder)
+        public static IHostBuilder UseAppSettings<TApplicationRoot>(this IHostBuilder hostBuilder)
             where TApplicationRoot : class
         {
             return hostBuilder
                     .UseConfiguration()
-                    .ConfigureAppConfiguration(b =>
-                        b.AddEmbeddedAppSettings<TApplicationRoot>()
+                    .ConfigureAppConfiguration((ctx,b) =>
+                        b.AddAppSettings(ctx)
+                    );
+        }
+
+        public static IHostBuilder UseEnvironmentAppSettings<TApplicationRoot>(this IHostBuilder hostBuilder)
+            where TApplicationRoot : class
+        {
+            return hostBuilder
+                    .UseConfiguration()
+                    .ConfigureAppConfiguration((ctx, b) =>
+                        b.AddEnvironmentAppSettings(ctx)
                     );
         }
 
@@ -47,7 +57,7 @@ namespace Uno.Extensions.Configuration
             return hostBuilder
                     .UseConfiguration()
                     .ConfigureAppConfiguration((ctx, b) =>
-                        b.AddEmbeddedEnvironmentAppSettings<TApplicationRoot>(ctx.HostingEnvironment?.EnvironmentName ?? Environments.Production));
+                        b.AddEmbeddedEnvironmentAppSettings<TApplicationRoot>(ctx));
         }
 
         public static IHostBuilder UseSettings<TSettingsOptions>(

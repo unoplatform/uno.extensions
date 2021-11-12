@@ -4,9 +4,59 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Commerce"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:nav="using:Uno.Extensions.Navigation.Controls">
+        xmlns:nav="using:Uno.Extensions.Navigation.Controls"
+        Placement="Full">
+    <Flyout.FlyoutPresenterStyle>
+        <Style TargetType="FlyoutPresenter">
+            <Setter Property="HorizontalContentAlignment"
+                    Value="Center" />
+            <Setter Property="VerticalContentAlignment"
+                    Value="Bottom" />
+            <Setter Property="VerticalAlignment"
+                    Value="Bottom" />
+            <Setter Property="HorizontalAlignment"
+                    Value="Center" />
+            <Setter Property="MaxWidth"
+                    Value="NaN" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="FlyoutPresenter">
+                        <Border Background="{TemplateBinding Background}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Bottom"
+                                BackgroundSizing="OuterBorderEdge"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{TemplateBinding CornerRadius}">
+                            <Border.Transitions>
+                                <TransitionCollection>
+                                    <PaneThemeTransition Edge="Bottom" />
+                                </TransitionCollection>
+                            </Border.Transitions>
+                            <ScrollViewer x:Name="ScrollViewer"
+                                          ZoomMode="{TemplateBinding ScrollViewer.ZoomMode}"
+                                          HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
+                                          HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                          VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
+                                          VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                                          AutomationProperties.AccessibilityView="Raw">
+                                <ContentPresenter Content="{TemplateBinding Content}"
+                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                  ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            </ScrollViewer>
+                        </Border>
 
-    <Grid>
-        <Frame nav:Region.Attached="True" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Flyout.FlyoutPresenterStyle>
+
+    <Grid MinHeight="200" MinWidth="200">
+        <TextBlock Text="Test" />
+        <ContentControl nav:Region.Attached="True" />
+        <!--<Frame nav:Region.Attached="True" />-->
     </Grid>
 </Flyout>

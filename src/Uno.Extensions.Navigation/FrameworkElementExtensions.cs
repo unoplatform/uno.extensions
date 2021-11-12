@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Uno.Extensions.Navigation.Regions;
 #if !WINUI
 using Windows.Foundation;
 using Windows.UI.Xaml;
@@ -15,6 +16,28 @@ namespace Uno.Extensions.Navigation;
 
 public static class FrameworkElementExtensions
 {
+    public static async Task EnsureLoaded(this IRegion region)
+    {
+        if(region.Services is not null)
+        {
+            return;
+        }
+
+        if(region?.View is null)
+        {
+            return;
+        }
+
+        await region.View.EnsureLoaded();
+
+        if(region.Parent is null)
+        {
+            return;
+        }
+
+        await region.Parent.EnsureLoaded();
+    }
+
     public static async Task EnsureLoaded(this FrameworkElement? element)
     {
         if (element == null)

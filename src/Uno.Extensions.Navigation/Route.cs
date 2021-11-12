@@ -14,6 +14,10 @@ public record Route(string Scheme, string? Base, string? Path, IDictionary<strin
 
     public static Route PageRoute(string path) => new Route(Schemes.NavigateForward, path, null, null);
 
+    public static Route NestedRoute<TView>() => NestedRoute(typeof(TView));
+
+    public static Route NestedRoute(Type viewType) => NestedRoute(viewType.Name);
+
     public static Route NestedRoute(string path) => new Route(Schemes.Nested, path, null, null);
 
     public override string ToString()

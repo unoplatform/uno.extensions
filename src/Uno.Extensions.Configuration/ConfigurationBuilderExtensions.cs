@@ -5,11 +5,18 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 
 namespace Uno.Extensions.Configuration
 {
     public static class ConfigurationBuilderExtensions
     {
+        public static IConfigurationBuilder AddAppSettings(this IConfigurationBuilder configurationBuilder, HostBuilderContext hostingContext)
+        {
+            var prefix = hostingContext.Configuration.GetValue("appsettings:prefix", defaultValue: string.Empty);
+            prefix = !string.IsNullOrWhiteSpace(prefix) ? $"{prefix}/" : prefix;
+            return configurationBuilder.AddJsonFile($"{prefix}appsettings.json", optional: true, reloadOnChange: false);
+        }
         public static IConfigurationBuilder AddEmbeddedAppSettings<TApplicationRoot>(this IConfigurationBuilder configurationBuilder)
             where TApplicationRoot : class
         {
@@ -26,12 +33,22 @@ namespace Uno.Extensions.Configuration
             return configurationBuilder;
         }
 
+        public static IConfigurationBuilder AddEnvironmentAppSettings(this IConfigurationBuilder configurationBuilder, HostBuilderContext hostingContext)
+        {
+            var env = hostingContext.HostingEnvironment;
+
+            var prefix = hostingContext.Configuration.GetValue("appsettings:prefix", defaultValue: string.Empty);
+            prefix = !string.IsNullOrWhiteSpace(prefix) ? $"{prefix}/" : prefix;
+            return configurationBuilder.AddJsonFile($"{prefix}appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: false);
+        }
+
         public static IConfigurationBuilder AddEmbeddedEnvironmentAppSettings<TApplicationRoot>(
-            this IConfigurationBuilder configurationBuilder,
-            string environmentName)
+            this IConfigurationBuilder configurationBuilder, HostBuilderContext hostingContext)
                 where TApplicationRoot : class
         {
-            var environmentAppSettingsFileName = $"{AppSettings.AppSettingsFileName}.{environmentName}.json";
+            var env = hostingContext.HostingEnvironment;
+
+            var environmentAppSettingsFileName = $"{AppSettings.AppSettingsFileName}.{env.EnvironmentName}.json";
             var environmentAppSettings =
                 AppSettings.AllAppSettings<TApplicationRoot>()
                 .FirstOrDefault(s => s.FileName.EndsWith(environmentAppSettingsFileName, StringComparison.OrdinalIgnoreCase));

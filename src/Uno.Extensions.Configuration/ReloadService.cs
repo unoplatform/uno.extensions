@@ -15,13 +15,17 @@ namespace Uno.Extensions.Configuration
         public ReloadService(
             ILogger<ReloadService> logger,
             Reloader reload,
-            IHostEnvironment hostEnvironment)
+            IHostEnvironment hostEnvironment,
+            IConfigurationRoot configRoot)
         {
             Logger = logger;
             Reload = reload;
+            Config = configRoot;
             HostEnvironment = hostEnvironment;
             Logger.LogDebugMessage($"Created");
         }
+
+        private IConfigurationRoot Config { get; }
 
         private ILogger Logger { get; }
 
@@ -35,11 +39,46 @@ namespace Uno.Extensions.Configuration
             var folder = await localFolder.CreateFolderAsync(HostBuilderExtensions.ConfigurationFolderName, CreationCollisionOption.OpenIfExists);
             Logger.LogDebugMessage($@"Folder path should be '{folder.Path}'");
 
-            await CopyApplicationFileToLocal(localFolder, "appsettings.json");
-            await CopyApplicationFileToLocal(localFolder, $"appsettings.{HostEnvironment.EnvironmentName}.json");
+            var fileProviders = Config.Providers;
+            var reloadEnabled = false;
+            var appSettings = false;
+            var envAppSettings = false;
+            var appSettingsFileName = $"{AppSettings.AppSettingsFileName}..json";
+            var environmentAppSettingsFileName = $"{AppSettings.AppSettingsFileName}.{HostEnvironment.EnvironmentName}.json";
+            foreach (var fp in fileProviders)
+            {
+                reloadEnabled = true;
+                if (fp is FileConfigurationProvider fcp)
+                {
+                    if (fcp.Source.Path.Contains(appSettingsFileName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        appSettings = true;
+                    }
+
+
+                    if (fcp.Source.Path.Contains(environmentAppSettingsFileName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        envAppSettings = true;
+                    }
+                }
+
+            }
+            if (appSettings)
+            {
+                await CopyApplicationFileToLocal(localFolder, "appsettings.json");
+            }
+
+            if (envAppSettings)
+            {
+                await CopyApplicationFileToLocal(localFolder, $"appsettings.{HostEnvironment.EnvironmentName}.json");
+            }
 
             Logger.LogDebugMessage($"Started");
-            await Reload.ReloadAllFileConfigurationProviders();
+
+            if (reloadEnabled)
+            {
+                await Reload.ReloadAllFileConfigurationProviders();
+            }
         }
 
         private async Task CopyApplicationFileToLocal(IStorageFolder localFolder, string file)

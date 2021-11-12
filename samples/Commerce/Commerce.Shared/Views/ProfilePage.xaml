@@ -6,9 +6,14 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+      xmlns:nav="using:Uno.Extensions.Navigation.Controls"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
+        <StackPanel>
         <TextBlock Text="Profile" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="48"/>
+            <Button Content="Log out"
+                    nav:Navigation.Request="/-/LoginPage" />
+        </StackPanel>
     </Grid>
 </Page>

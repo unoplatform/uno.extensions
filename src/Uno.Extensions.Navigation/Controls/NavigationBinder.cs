@@ -20,14 +20,20 @@ namespace Uno.Extensions.Navigation.Controls
             View.Loaded += LoadedHandler;
         }
 
-        private void LoadedHandler(object sender, RoutedEventArgs args)
+        private async void LoadedHandler(object sender, RoutedEventArgs args)
         {
             View.Loaded -= LoadedHandler;
 
-            var binder = View.FindRegion()?.Services?.GetServices<INavigationBindingHandler>().FirstOrDefault(x => x.CanBind(View));
-            if (binder is not null)
-            {
-                binder.Bind(View);
+            var region = View.FindRegion();
+
+            if (region is not null) {
+                await region.EnsureLoaded();
+
+                var binder = region.Services?.GetServices<INavigationBindingHandler>().FirstOrDefault(x => x.CanBind(View));
+                if (binder is not null)
+                {
+                    binder.Bind(View);
+                }
             }
         }
     }
