@@ -14,8 +14,10 @@ pr:
       - release/*
 
 variables:
-  - UnoCheck_Version: '0.2.0-dev.361'
-  - UnoCheck_Manifest: 'https://raw.githubusercontent.com/unoplatform/uno.check/bf3684e2ad725baa66da3573759129d6bb1d8817/manifests/uno.ui.manifest.json'
+  - name: UnoCheck_Version
+    value: '0.2.0-dev.361'
+  - name: UnoCheck_Manifest
+    value: 'https://raw.githubusercontent.com/unoplatform/uno.check/bf3684e2ad725baa66da3573759129d6bb1d8817/manifests/uno.ui.manifest.json'
 
 steps:
   - checkout: self
