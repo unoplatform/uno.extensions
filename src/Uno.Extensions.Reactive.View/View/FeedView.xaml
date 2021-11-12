@@ -1,0 +1,39 @@
+﻿<ResourceDictionary
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:feed="using:Uno.Extensions.Reactive.View"
+	xmlns:reactive="using:Uno.Extensions.Reactive">
+
+	<Style TargetType="reactive:FeedView">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="reactive:FeedView">
+					<Grid>
+						<VisualStateManager.VisualStateGroups>
+							<VisualStateGroup x:Name="Data">
+								<VisualState  x:Name="Undefined" />
+								<VisualState  x:Name="None">
+
+								</VisualState>
+								<VisualState  x:Name="Some">
+
+								</VisualState>
+							</VisualStateGroup>
+						</VisualStateManager.VisualStateGroups>
+
+
+						<Canvas x:Name="PART_ShadowHost" />
+						
+						<Border x:Name="PART_Border"
+								Background="{TemplateBinding Background}"
+								BorderBrush="{TemplateBinding BorderBrush}"
+								BorderThickness="{TemplateBinding BorderThickness}"
+								CornerRadius="{TemplateBinding CornerRadius}"
+								Child="{TemplateBinding ElevatedContent}" />
+					</Grid>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+</ResourceDictionary>

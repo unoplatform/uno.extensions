@@ -1,0 +1,101 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
+using Uno.Extensions.Reactive.Utils;
+
+namespace Uno.Extensions.Reactive;
+
+<#
+
+	for (var typeArgsCount = 2; typeArgsCount <= 12; typeArgsCount++)
+	{
+		string Repeat(string format)
+			=> string.Join(", ", Enumerable.Range(1, typeArgsCount).Select(i => string.Format(format, i)));
+
+		var types = Repeat("T{0}");
+
+#>
+
+/// <summary>
+/// An <see cref="IFeed{T}"/> that combines data of <#= typeArgsCount #> parents feeds.
+/// </summary>
+<# for (var i = 1; i <= typeArgsCount; i++) { #>
+/// <typeparam name="T<#= i #>">Type of the feed #<#= i #>.</typeparam>
+<# } #>
+internal sealed class CombineFeed<<#= types #>> : IFeed<(<#= types #>)>
+{
+<# for (var i = 1; i <= typeArgsCount; i++) { #>
+	private readonly IFeed<T<#= i #>> _feed<#= i #>;
+<# } #>
+
+	public CombineFeed(<#= Repeat("IFeed<T{0}> feed{0}") #>)
+	{
+<# for (var i = 1; i <= typeArgsCount; i++) { #>
+		_feed<#= i #> = feed<#= i #>;
+<# } #>
+	}
+
+	/// <inheritdoc />
+	public async IAsyncEnumerable<Message<(<#= types #>)>> GetSource(SourceContext context, [EnumeratorCancellation] CancellationToken ct = default)
+	{
+		var dataSet = (<#= Repeat("Option<T{0}>.Undefined()") #>);
+		var helper = new CombineFeedHelper<(<#= types #>)>(<#= typeArgsCount #>, GetData);
+
+<# for (var i = 1; i <= typeArgsCount; i++) { #>
+		//_feed<#= i #>
+		//	.GetSource(context, ct)
+		//	.ForEachAsync(msg => helper.ApplyUpdate(<#= i-1 #>, msg, ref dataSet.Item<#= i #>), ct);
+<# } #>
+
+		var messages = AsyncEnumerableExtensions.Merge(
+<# for (var i = 1; i <= typeArgsCount; i++) { #>
+			_feed<#= i #>.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(<#= i-1 #>, msg, ref dataSet.Item<#= i #>))<#= i < typeArgsCount ? ",":"" #>
+<# } #>
+		);
+
+		await foreach (var messageProvider in messages.WithCancellation(ct).ConfigureAwait(false))
+		{
+			if (messageProvider() is { } message)
+			{
+				yield return message;
+			}
+		}
+
+		Option<(<#= types #>)> GetData()
+		{
+			var type = (short)dataSet.Item1.Type;
+<# for (var i = 2; i <= typeArgsCount; i++) { #>
+			type = Math.Min(type, (short)dataSet.Item<#= i #>.Type);
+<# } #>
+
+			return (OptionType)type switch
+			{
+				OptionType.Undefined => Option.Undefined<(<#= types #>)>(),
+				OptionType.None => Option.None<(<#= types #>)>(),
+				OptionType.Some => Option.Some(
+					(<#= Repeat("\r\n\t\t\t\t\t\tdataSet.Item{0}.SomeOrDefault()!") #>
+					)),
+				_ => throw new NotSupportedException($"Unsupported option type '{(OptionType)type}'."),
+			};
+		}
+
+		//return helper;
+	}
+}
+
+partial class Feed
+{
+	public static IFeed<(<#= types #>)> Combine<<#= types #>>(<#= Repeat("IFeed<T{0}> feed{0}") #>)
+		=> AttachedProperty.GetOrCreate(feed1, (<#= Repeat("feed{0}") #>), (_, feeds) => new CombineFeed<<#= types #>>(<#= Repeat("feeds.feed{0}") #>));
+}
+
+<# } #>
