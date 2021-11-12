@@ -27,9 +27,7 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Localization" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="6.0.0" />
-		<PackageReference Include="Uno.UI.Toolkit">
-			<Version>0.1.0-dev.71</Version>
-		</PackageReference>
+    <PackageReference Include="Uno.UI.Toolkit" Version="0.1.0-dev.71" />
   </ItemGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
