@@ -53,14 +53,28 @@ steps:
     errorActionPreference: continue
     ignoreLASTEXITCODE: true
 
-
   - task: MSBuild@1
+    displayName: Build Extensions Packages
     inputs:
       solution: src/Uno.Extensions.sln
       msbuildLocationMethod: location
       msbuildLocation: $(MSBUILDPATH)
       msbuildArchitecture: x86
       msbuildArguments: /r /p:Configuration=Release "/p:PackageOutputPath=$(build.artifactstagingdirectory)\nuget" "/p:PackageVersion=%GITVERSION_FullSemVer%" "/p:InformationalVersion=%GITVERSION_InformationalVersion%" /detailedsummary /bl:$(build.artifactstagingdirectory)/uno-extensions.binlog
+      clean: false
+      maximumCpuCount: true
+      restoreNugetPackages: false
+      logProjectEvents: false
+      createLogFile: false
+
+  - task: MSBuild@1
+    displayName: Build Samples
+    inputs:
+      solution: src/samples/**/*.sln
+      msbuildLocationMethod: location
+      msbuildLocation: $(MSBUILDPATH)
+      msbuildArchitecture: x86
+      msbuildArguments: /r /p:Configuration=Release "/p:InformationalVersion=%GITVERSION_InformationalVersion%" /detailedsummary /bl:$(build.artifactstagingdirectory)/samples.binlog
       clean: false
       maximumCpuCount: true
       restoreNugetPackages: false
