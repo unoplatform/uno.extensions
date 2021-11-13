@@ -1,4 +1,4 @@
-﻿<Project Sdk="MSBuild.Sdk.Extras"  ToolsVersion="15.0">
+﻿<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netstandard2.1;net5.0;net6.0</TargetFrameworks>
     <DefineConstants>$(DefineConstants);__WASM__</DefineConstants>
@@ -11,6 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Uno.UI" Version="4.0.0-dev.5441" />
+    <PackageReference Include="Uno.UI" Version="4.0.0-dev.5526" />
   </ItemGroup>
 </Project>

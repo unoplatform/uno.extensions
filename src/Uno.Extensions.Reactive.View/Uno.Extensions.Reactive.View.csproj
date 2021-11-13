@@ -15,7 +15,7 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="1.1.1" />
-		<PackageReference Include="Uno.UI" Version="3.10.11" />
+		<PackageReference Include="Uno.UI" Version="4.0.0-dev.5526" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj" />
