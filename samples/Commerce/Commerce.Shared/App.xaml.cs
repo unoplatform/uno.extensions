@@ -16,6 +16,7 @@ using Uno.Extensions.Logging.Serilog;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Regions;
+using Uno.Extensions.Navigation.Toolkit.Navigators;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
@@ -32,6 +33,8 @@ using Uno.Toolkit.UI;
 using Commerce.ViewModels;
 using Commerce.Services;
 using System.Threading.Tasks;
+using Uno.Extensions.Navigation.Toolkit.Controls;
+using Uno.Extensions.Navigation.Toolkit.Navigators;
 using Uno.Toolkit.UI.Controls;
 
 namespace Commerce
@@ -69,7 +72,6 @@ namespace Commerce
 			.ConfigureServices(services =>
 			{
 				services
-				.AddRegion<TabView, TabViewNavigator>()
 				.AddRegion<TabBar, TabBarRegion>()
 				.AddSingleton<INavigationBindingHandler, TabBarItemNavigationBindingHandler>()
 				.AddSingleton<INavigationBindingHandler, NavigationViewItemNavigationBindingHandler>()
