@@ -1,0 +1,12 @@
+<Project ToolsVersion="15.0">
+	<PropertyGroup>
+		<LangVersion>10.0</LangVersion>
+		<Nullable>enable</Nullable>
+		<WarningsAsErrors>enable</WarningsAsErrors>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<DebugType>portable</DebugType>
+		<DebugSymbols>True</DebugSymbols>
+	</PropertyGroup>
+</Project>
