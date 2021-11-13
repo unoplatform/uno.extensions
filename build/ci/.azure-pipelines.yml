@@ -41,6 +41,12 @@ steps:
     displayName: Setup VS17 Path
 
   - task: UseDotNet@2
+    displayName: 'Use .NET 5.0.x'
+    inputs:
+      packageType: sdk
+      version: 5.0.x
+
+  - task: UseDotNet@2
     displayName: 'Use .NET 6.0.100'
     inputs:
       packageType: sdk
