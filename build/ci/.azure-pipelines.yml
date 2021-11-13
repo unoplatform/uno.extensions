@@ -87,6 +87,26 @@ steps:
       logProjectEvents: false
       createLogFile: false
 
+  - task: CopyFiles@2
+    displayName: 'Publish Wasm Binaries'
+    inputs:
+      SourceFolder: $(build.sourcesdirectory)/samples/Commerce/Commerce.Wasm/bin/Release/net5.0/dist
+      Contents: '**/*.*'
+      TargetFolder: $(build.artifactstagingdirectory)/Wasm
+      CleanTargetFolder: false
+      OverWrite: false
+      flattenFolders: false
+
+  - task: CopyFiles@2
+    displayName: 'Publish Android Binaries'
+    inputs:
+      SourceFolder: $(build.sourcesdirectory)/samples/Commerce/Commerce.Droid/bin/Release
+      Contents: '**/*.apk'
+      TargetFolder: $(build.artifactstagingdirectory)/Wasm
+      CleanTargetFolder: false
+      OverWrite: false
+      flattenFolders: false
+
   - task: VisualStudioTestPlatformInstaller@1
 
   - task: VSTest@2
