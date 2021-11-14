@@ -34,6 +34,18 @@ jobs:
       mono '/Applications/Visual Studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/msbuild.dll' '$(build.sourcesdirectory)/samples/Commerce/Commerce.Droid/Commerce.Droid.csproj' /r /p:Configuration=Release /bl:$(build.artifactstagingdirectory)/build.binlog  "/p:InformationalVersion=$GITVERSION_INFORMATIONALVERSION" /p:UnoExtensionsDisableNet6=true /p:AotAssemblies=false
 
     displayName: Build Android App
+    
+  - task: CopyFiles@2
+    displayName: 'Publish Android Binaries'
+    inputs:
+      SourceFolder: $(build.sourcesdirectory)/samples/Commerce/Commerce.Droid/bin/Release
+      Contents: |
+        **/*.aab
+        **/*.apk
+      TargetFolder: $(build.artifactstagingdirectory)/Android
+      CleanTargetFolder: false
+      OverWrite: false
+      flattenFolders: false
 
   - script: |
       mono '/Applications/Visual Studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/msbuild.dll' '$(build.sourcesdirectory)/samples/Commerce/Commerce.Droid/Commerce.Droid.csproj' /r /p:Configuration=Release /bl:$(build.artifactstagingdirectory)/build.binlog  "/p:InformationalVersion=$GITVERSION_INFORMATIONALVERSION" /p:UnoExtensionsDisableNet6=true /p:AotAssemblies=false /p:BuildForPlayStore=true
@@ -45,9 +57,9 @@ jobs:
     inputs:
       SourceFolder: $(build.sourcesdirectory)/samples/Commerce/Commerce.Droid/bin/Release
       Contents: |
-        **/*.aab
-        **/*.apk
-      TargetFolder: $(build.artifactstagingdirectory)/Wasm
+        **/*-Signed.aab
+        **/*-Signed.apk
+      TargetFolder: $(build.artifactstagingdirectory)/Android
       CleanTargetFolder: false
       OverWrite: false
       flattenFolders: false
