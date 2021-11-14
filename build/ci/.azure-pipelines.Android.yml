@@ -31,12 +31,12 @@ jobs:
   - template: templates/dotnet6-install-mac.yml
 
   - script: |
-      mono '/Applications/Visual Studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/msbuild.dll' '$(build.sourcesdirectory)/samples/Commerce/Commerce.Droid/Commerce.Droid.csproj' /r /p:Configuration=Release /bl:$(build.artifactstagingdirectory)/build.binlog  "/p:InformationalVersion=$GITVERSION_INFORMATIONALVERSION" /p:UnoExtensionsDisableNet6=true
+      mono '/Applications/Visual Studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/msbuild.dll' '$(build.sourcesdirectory)/samples/Commerce/Commerce.Droid/Commerce.Droid.csproj' /r /p:Configuration=Release /bl:$(build.artifactstagingdirectory)/build.binlog  "/p:InformationalVersion=$GITVERSION_INFORMATIONALVERSION" /p:UnoExtensionsDisableNet6=true /p:AotAssemblies=false
 
     displayName: Build Android App
 
   - script: |
-      mono '/Applications/Visual Studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/msbuild.dll' '$(build.sourcesdirectory)/samples/Commerce/Commerce.Droid/Commerce.Droid.csproj' /r /p:Configuration=Release /bl:$(build.artifactstagingdirectory)/build.binlog  "/p:InformationalVersion=$GITVERSION_INFORMATIONALVERSION" /p:UnoExtensionsDisableNet6=true /p:BuildForPlayStore=true
+      mono '/Applications/Visual Studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/msbuild.dll' '$(build.sourcesdirectory)/samples/Commerce/Commerce.Droid/Commerce.Droid.csproj' /r /p:Configuration=Release /bl:$(build.artifactstagingdirectory)/build.binlog  "/p:InformationalVersion=$GITVERSION_INFORMATIONALVERSION" /p:UnoExtensionsDisableNet6=true /p:AotAssemblies=false /p:BuildForPlayStore=true
 
     displayName: Build Android PlayStore App
     
