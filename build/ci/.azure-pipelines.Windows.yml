@@ -71,7 +71,7 @@ jobs:
       msbuildLocationMethod: location
       msbuildLocation: $(MSBUILDPATH)
       msbuildArchitecture: x86
-      msbuildArguments: /r /p:Configuration=Release "/p:InformationalVersion=%GITVERSION_InformationalVersion%" /p:GeneratePackageOnBuild=false /detailedsummary /bl:$(build.artifactstagingdirectory)/samples.binlog
+      msbuildArguments: /r /p:Configuration=Release "/p:InformationalVersion=%GITVERSION_InformationalVersion%" /p:GeneratePackageOnBuild=false /p:AotAssemblies=false /detailedsummary /bl:$(build.artifactstagingdirectory)/samples.binlog
       clean: false
       maximumCpuCount: true
       restoreNugetPackages: false
