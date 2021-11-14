@@ -19,17 +19,17 @@ public record Filter
 			return true;
 		}
 
-		if (Shoes && product.Category.Contains("Shoes", StringComparison.OrdinalIgnoreCase))
+		if (Shoes && product.Category.IndexOf("Shoes", StringComparison.OrdinalIgnoreCase) != - 1)
 		{
 			return true;
 		}
 
-		if (Accessories && product.Category.Contains("Accessories", StringComparison.OrdinalIgnoreCase))
+		if (Accessories && product.Category.IndexOf("Accessories", StringComparison.OrdinalIgnoreCase) != -1)
 		{
 			return true;
 		}
 
-		if (Headwear && product.Category.Contains("Headwear", StringComparison.OrdinalIgnoreCase))
+		if (Headwear && product.Category.IndexOf("Headwear", StringComparison.OrdinalIgnoreCase) != -1)
 		{
 			return true;
 		}

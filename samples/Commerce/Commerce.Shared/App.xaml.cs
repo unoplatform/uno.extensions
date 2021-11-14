@@ -28,10 +28,11 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Commerce.Navigation;
-using Uno.UI.ToolkitLib;
+using Uno.Toolkit.UI;
 using Commerce.ViewModels;
 using Commerce.Services;
 using System.Threading.Tasks;
+using Uno.Toolkit.UI.Controls;
 
 namespace Commerce
 {

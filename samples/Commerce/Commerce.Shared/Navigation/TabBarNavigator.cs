@@ -3,7 +3,8 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Controls;
-using Uno.UI.ToolkitLib;
+using Uno.Toolkit.UI;
+using Uno.Toolkit.UI.Controls;
 
 using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Regions;

@@ -7,7 +7,7 @@
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	  xmlns:services="using:Commerce.Services"
 	  xmlns:nav="using:Uno.Extensions.Navigation.Controls"
-	  xmlns:toolkit="using:Uno.UI.ToolkitLib"
+	  xmlns:toolkit="using:Uno.Toolkit.UI.Controls"
 	  xmlns:reactive="using:Uno.Extensions.Reactive"
 	  mc:Ignorable="d fake"
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
