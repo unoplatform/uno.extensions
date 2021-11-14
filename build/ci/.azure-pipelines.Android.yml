@@ -51,3 +51,7 @@ jobs:
       CleanTargetFolder: false
       OverWrite: false
       flattenFolders: false
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+        ArtifactName: $(Build.DefinitionName)
