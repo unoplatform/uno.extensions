@@ -1,0 +1,53 @@
+jobs:
+- job: Android
+
+  pool:
+    vmImage: macOS-10.15
+
+  variables:
+    - name: NUGET_PACKAGES
+      value: $(build.sourcesdirectory)/.nuget
+
+  workspace:
+    clean: all
+
+  steps:
+  - task: gitversion/setup@0
+    inputs:
+        versionSpec: '5.6.8'
+
+  - task: gitversion/execute@0
+    inputs:
+      useConfigFile: true
+      configFilePath: build/ci/gitversion.yml
+    displayName: Use GitVersion
+
+  - task: UseDotNet@2
+    displayName: 'Use .NET 5.0.x'
+    inputs:
+        packageType: sdk
+        version: 5.0.x
+
+  - template: templates/dotnet6-install-mac.yml
+
+  - script: |
+      mono '/Applications/Visual Studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/msbuild.dll' '$(build.sourcesdirectory)/samples/Commerce/Commerce.Droid/Commerce.Droid.csproj' /r /p:Configuration=Release /p:Platform=iPhone /bl:$(build.artifactstagingdirectory)/build.binlog  "/p:InformationalVersion=$GITVERSION_INFORMATIONALVERSION" /p:UnoExtensionsDisableNet6=true
+
+    displayName: Build Android App
+
+  - script: |
+      mono '/Applications/Visual Studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/msbuild.dll' '$(build.sourcesdirectory)/samples/Commerce/Commerce.Droid/Commerce.Droid.csproj' /r /p:Configuration=Release /p:Platform=iPhone /bl:$(build.artifactstagingdirectory)/build.binlog  "/p:InformationalVersion=$GITVERSION_INFORMATIONALVERSION" /p:UnoExtensionsDisableNet6=true
+
+    displayName: Build Android PlayStore App
+    
+  - task: CopyFiles@2
+    displayName: 'Publish Android Binaries'
+    inputs:
+      SourceFolder: $(build.sourcesdirectory)/samples/Commerce/Commerce.Droid/bin/Release
+      Contents: |
+        **/*.aab
+        **/*.apk
+      TargetFolder: $(build.artifactstagingdirectory)/Wasm
+      CleanTargetFolder: false
+      OverWrite: false
+      flattenFolders: false

@@ -22,6 +22,8 @@
 		<AndroidUseIntermediateDesignerFile>True</AndroidUseIntermediateDesignerFile>
 		<ResourcesDirectory>..\Commerce.Shared\Strings</ResourcesDirectory>
 		<LangVersion>10.0</LangVersion>
+		<AndroidPackageFormat>apk</AndroidPackageFormat>
+		<AndroidPackageFormat Condition="'$(BuildForPlayStore)'=='true'">aab</AndroidPackageFormat>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 		<DebugSymbols>true</DebugSymbols>
