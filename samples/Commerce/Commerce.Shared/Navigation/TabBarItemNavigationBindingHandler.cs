@@ -1,5 +1,6 @@
 ﻿using Uno.Extensions.Navigation.Controls;
-using Uno.UI.ToolkitLib;
+using Uno.Toolkit.UI;
+using Uno.Toolkit.UI.Controls;
 #if !WINUI
 using Windows.UI.Xaml;
 #else

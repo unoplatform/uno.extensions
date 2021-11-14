@@ -55,7 +55,7 @@
 		<PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="3.0.0" />
 		<PackageReference Include="System.Linq.Async" Version="4.0.0" />
 		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
-		<PackageReference Include="Uno.UI.Toolkit" Version="0.1.0-dev.71" />
+		<PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.91" />
 		<PackageReference Include="Uno.Core" Version="3.0.0" />
 		<PackageReference Include="Uno.Material" Version="1.1.0-dev.7" />
 	</ItemGroup>

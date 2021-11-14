@@ -78,7 +78,7 @@
     </PackageReference>
     <PackageReference Include="Uno.UI" Version="4.0.0-dev.5441" />
     <PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5441" Condition="'$(Configuration)'=='Debug'" />
-    <PackageReference Include="Uno.UI.Toolkit">
+    <PackageReference Include="Uno.Toolkit.UI">
       <Version>255.255.255.255</Version>
     </PackageReference>
     <PackageReference Include="Uno.Material" Version="1.1.0-dev.5" />

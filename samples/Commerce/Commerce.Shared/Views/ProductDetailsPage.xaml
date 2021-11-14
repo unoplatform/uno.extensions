@@ -7,7 +7,7 @@
 	  xmlns:fake="using:Commerce.DesignTime"
 	  xmlns:controls="using:Microsoft.UI.Xaml.Controls"
 	  xmlns:nav="using:Uno.Extensions.Navigation.Controls"
-	  xmlns:toolkit="using:Uno.UI.ToolkitLib"
+	  xmlns:toolkit="using:Uno.Toolkit.UI.Controls"
 	  xmlns:reactive="using:Uno.Extensions.Reactive"
 	  mc:Ignorable="d fake"
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">

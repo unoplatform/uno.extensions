@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       mc:Ignorable="d"
       xmlns:nav="using:Uno.Extensions.Navigation.Controls"
-      xmlns:toolkit="using:Uno.UI.ToolkitLib"
+      xmlns:toolkit="using:Uno.Toolkit.UI.Controls"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid MinHeight="300" MinWidth="300">
