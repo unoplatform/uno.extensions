@@ -11,23 +11,20 @@ public partial class LoginViewModel : IAsyncDisposable
 {
 	public class BindableLoginViewModel : BindableViewModelBase
 	{
-		private readonly Bindable<string> _userName;
-		private readonly Bindable<string> _password;
+		private readonly BindableCredentials _credentials;
 		private readonly Bindable<string> _error;
 
 		public BindableLoginViewModel(
 			INavigator navigator,
-			string? defaultUserName = default,
-			string? defaultPassword = default,
+			Credentials? defaultCredentials = default,
 			string? defaultError = default)
 		{
-			_userName = new Bindable<string>(Property<string>(nameof(UserName), defaultUserName, out var userNameSubject));
-			_password = new Bindable<string>(Property<string>(nameof(Password), defaultPassword, out var passwordSubject));
+			_credentials = new BindableCredentials(Property<Credentials>(nameof(Credentials), defaultCredentials, out var credentialsSubject));
 			_error = new Bindable<string>(Property<string>(nameof(Error), defaultError, out var errorSubject));
 
 			var login = new CommandBuilder<object?>(nameof(Login));
 
-			var vm = new LoginViewModel(navigator, userNameSubject, passwordSubject, errorSubject, login);
+			var vm = new LoginViewModel(navigator, credentialsSubject, errorSubject, login);
 			var ctx = SourceContext.GetOrCreate(vm);
 			SourceContext.Set(this, ctx);
 			RegisterDisposable(vm);
@@ -38,17 +35,7 @@ public partial class LoginViewModel : IAsyncDisposable
 
 		public LoginViewModel Model { get; }
 
-		public string UserName
-		{
-			get => _userName.GetValue();
-			set => _userName.SetValue(value);
-		}
-
-		public string Password
-		{
-			get => _password.GetValue();
-			set => _password.SetValue(value);
-		}
+		public BindableCredentials Credentials => _credentials;
 
 		public string Error
 		{
@@ -57,6 +44,31 @@ public partial class LoginViewModel : IAsyncDisposable
 		}
 
 		public IAsyncCommand Login { get; }
+	}
+
+	public class BindableCredentials : Bindable<Credentials>
+	{
+		private readonly Bindable<string> _username;
+		private readonly Bindable<string> _password;
+
+		public BindableCredentials(BindablePropertyInfo<Credentials> property)
+			: base(property)
+		{
+			_username = new Bindable<string>(Property(nameof(UserName), c => c?.UserName, (c, userName) => (c ?? new()) with { UserName = userName }));
+			_password = new Bindable<string>(Property(nameof(Password), c => c?.Password, (c, password) => (c ?? new()) with { Password = password }));
+		}
+
+		public string? UserName
+		{
+			get => _username.GetValue();
+			set => _username.SetValue(value);
+		}
+
+		public string? Password
+		{
+			get => _password.GetValue();
+			set => _password.SetValue(value);
+		}
 	}
 
 	/// <inheritdoc />

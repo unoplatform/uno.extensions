@@ -21,14 +21,14 @@
     <PackageReference Include="Uno.Material">
       <Version>1.1.0-dev.7</Version>
     </PackageReference>
-    <PackageReference Include="Uno.UI" Version="4.0.0-dev.5526" />
+    <PackageReference Include="Uno.UI" Version="4.0.0-dev.5531" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Localization" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="6.0.0" />
     <PackageReference Include="System.Linq.Async" Version="4.0.0" />
-    <PackageReference Include="Uno.UI.Toolkit" Version="0.1.0-dev.71" />
+    <PackageReference Include="Uno.UI.Toolkit" Version="255.255.255.255" />
   </ItemGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>

@@ -21,7 +21,7 @@ public class FeedViewVisualStateSelector
 			MessageAxises.Error => "NoError",
 
 			MessageAxises.Progress when MessageAxis.Progress.FromMessageValue(value) => "Indeterminate",
-			MessageAxises.Progress => "Final",
+			MessageAxises.Progress => "NoProgress",
 
 			_ => value.IsSet ? axis.Identifier + "_" + value.Value! : axis.Identifier
 		};

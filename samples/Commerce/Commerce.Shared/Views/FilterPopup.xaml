@@ -1,15 +1,17 @@
-﻿<Flyout x:Class="Commerce.FilterPopup"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="using:Commerce"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:controls="using:Uno.Material.Controls"
-             mc:Ignorable="d"
-             d:DesignHeight="300"
-             d:DesignWidth="400"
-        Placement="Full"
-        xmlns:nav="using:Uno.Extensions.Navigation.Controls">
+﻿<Flyout
+	x:Class="Commerce.FilterPopup"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:local="using:Commerce"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:controls="using:Uno.Material.Controls"
+	mc:Ignorable="d"
+	d:DesignHeight="300"
+	d:DesignWidth="400"
+	Placement="Full"
+	xmlns:nav="using:Uno.Extensions.Navigation.Controls">
+	
     <Flyout.FlyoutPresenterStyle>
         <Style TargetType="FlyoutPresenter">
             <Setter Property="HorizontalContentAlignment"
@@ -57,7 +59,7 @@
             </Setter>
         </Style>
     </Flyout.FlyoutPresenterStyle>
-    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="12">
+    <StackPanel DataContext="{Binding Parent}" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="12">
         <StackPanel Orientation="Horizontal">
             <Button nav:Navigation.Request="-">
                 <SymbolIcon Symbol="Cancel" />
@@ -67,23 +69,29 @@
         </StackPanel>
         <Border BorderThickness="1"
                 BorderBrush="Black" />
-        <TextBox Text="{Binding Query, Mode=TwoWay}" PlaceholderText="Keywords" x:Name="QueryText" />
+		<TextBox Text="{Binding Keywords, Mode=TwoWay}" PlaceholderText="Keywords" x:Name="QueryText" />
         <TextBlock Text="Categories" />
-        <StackPanel Orientation="Horizontal">
-            <controls:Chip Content="Shoes"
+		<StackPanel Orientation="Horizontal">
+			<controls:Chip Content="Shoes"
                            CornerRadius="10" />
-            <controls:Chip Content="Accessories"
+			<controls:Chip Content="Accessories"
                            CornerRadius="10" />
-            <controls:Chip Content="Headwear"
+			<controls:Chip Content="Headwear"
                            CornerRadius="10" />
-        </StackPanel>
-        <Grid>
+		</StackPanel>
+		<StackPanel Orientation="Horizontal">
+			<CheckBox Content="Shoes" IsChecked="{Binding Filter.Shoes, Mode=TwoWay}" />
+			<CheckBox Content="Accessories" IsChecked="{Binding Filter.Accessories, Mode=TwoWay}" />
+			<CheckBox Content="Headwear" IsChecked="{Binding Filter.Headwear, Mode=TwoWay}" />
+		</StackPanel>
+		<Grid>
             <TextBlock Text="In stock only"
                        VerticalAlignment="Center"
                        FontWeight="SemiBold" />
             <ToggleSwitch HorizontalAlignment="Right"
                           OffContent=""
-                          OnContent="" />
+                          OnContent=""
+						/>
         </Grid>
         <Grid>
             <TextBlock Text="Price"
@@ -104,6 +112,6 @@
         <Button HorizontalAlignment="Stretch"
                 Content="Apply"
                 nav:Navigation.Request="-"
-                nav:Navigation.Data="{Binding Query}" />
+                nav:Navigation.Data="{Binding Filter.Value}" />
     </StackPanel>
 </Flyout>

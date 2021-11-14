@@ -14,8 +14,7 @@ public partial class LoginViewModel
 
 	private LoginViewModel(
 		INavigator navigator,
-		IFeed<string> userName,
-		IFeed<string> password,
+		IFeed<Credentials> credentials,
 		IState<string> error,
 		ICommandBuilder login)
 	{
@@ -23,17 +22,17 @@ public partial class LoginViewModel
 		_error = error;
 
 		login
-			.Given(Feed.Combine(userName, password))
+			.Given(credentials)
 			.When(CanLogin)
 			.Then(Login);
 	}
 
-	private bool CanLogin((string userName, string password) values)
-		=> values is { userName.Length: > 0 } and { password.Length: > 0 };
+	private bool CanLogin(Credentials credentials)
+		=> credentials is { UserName.Length: > 0 } and { Password.Length: > 0 };
 
-	private async ValueTask Login((string userName, string password) values, CancellationToken ct)
+	private async ValueTask Login(Credentials credentials, CancellationToken ct)
 	{
-		if (values is { userName.Length: >= 3 } and { password.Length: >= 3 })
+		if (credentials is { UserName.Length: >= 3 } and { Password.Length: >= 3 })
 		{
 			await _error.Set(default, ct);
 			await Task.Delay(1000, ct);

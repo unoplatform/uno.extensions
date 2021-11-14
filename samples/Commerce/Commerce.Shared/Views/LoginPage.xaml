@@ -40,11 +40,11 @@
                          Margin="0,8"
                          MinWidth="200"
                          Name="UsernameText"
-						 Text="{x:Bind VM.UserName, Mode=TwoWay}"/>
+						 Text="{Binding Credentials.UserName, Mode=TwoWay}"/>
                 <PasswordBox  Margin="0,8"
                               PlaceholderText="Password"
                               MinWidth="200"
-							  Password="{x:Bind VM.Password, Mode=TwoWay}" />
+							  Password="{Binding Credentials.Password, Mode=TwoWay}" />
                 <HyperlinkButton Content="Forgot password?" />
 				<TextBlock Text="{Binding Error}" Foreground="DarkRed" HorizontalAlignment="Center" />
 				<Button Content="LOGIN"

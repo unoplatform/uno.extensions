@@ -1,17 +1,12 @@
 ﻿using System;
-using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Dynamic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Markup;
-using Uno.Extensions;
-using Uno.Extensions.Reactive.View;
 using Uno.Logging;
 
 namespace Uno.Extensions.Reactive;
@@ -107,6 +102,28 @@ public partial class FeedView : Control
 	{
 		get => (DataTemplate)GetValue(NoneTemplateProperty);
 		set => SetValue(NoneTemplateProperty, value);
+	}
+	#endregion
+
+	#region ProgressTemplate (DP)
+	public static readonly DependencyProperty ProgressTemplateProperty = DependencyProperty.Register(
+		"ProgressTemplate", typeof(DataTemplate), typeof(FeedView), new PropertyMetadata(default(DataTemplate)));
+
+	public DataTemplate ProgressTemplate
+	{
+		get => (DataTemplate)GetValue(ProgressTemplateProperty);
+		set => SetValue(ProgressTemplateProperty, value);
+	}
+	#endregion
+
+	#region ErrorTemplate (DP)
+	public static readonly DependencyProperty ErrorTemplateProperty = DependencyProperty.Register(
+	"ErrorTemplate", typeof(DataTemplate), typeof(FeedView), new PropertyMetadata(default(DataTemplate)));
+
+	public DataTemplate ErrorTemplate
+	{
+		get => (DataTemplate)GetValue(ErrorTemplateProperty);
+		set => SetValue(ErrorTemplateProperty, value);
 	} 
 	#endregion
 
@@ -120,21 +137,25 @@ public partial class FeedView : Control
 			ViewDebugger.SetIsEnabled(this, true);
 		}
 
-		State = new FeedViewState(); // Create a State instance specific for this FeedView
+		State = new FeedViewState { Parent = DataContext }; // Create a State instance specific for this FeedView
 
-		RegisterPropertyChangedCallback(
-			DataContextProperty,
-			(obj, _) =>
-			{
-				if (obj is FeedView that)
-				{
-					that.State.Parent = that.DataContext;
-				}
-			});
+		//RegisterPropertyChangedCallback(
+		//	DataContextProperty,
+		//	(obj, _) =>
+		//	{
+		//		if (obj is FeedView that)
+		//		{
+		//			that.State.Parent = that.DataContext;
+		//		}
+		//	});
+		SetBinding(ReroutedDataContextProperty, new Binding());
 
 		Loaded += Enable;
 		Unloaded += Disable;
 	}
+
+	private static readonly DependencyProperty ReroutedDataContextProperty = DependencyProperty.Register(
+		"ReroutedDataContext", typeof(object), typeof(FeedView), new PropertyMetadata(default(object), (snd, e) => ((FeedView)snd).State.Parent = e.NewValue));
 
 	private static void Enable(object snd, RoutedEventArgs _)
 	{

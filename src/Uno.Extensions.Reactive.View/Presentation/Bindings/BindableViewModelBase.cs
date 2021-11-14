@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.System;
-using Windows.UI.Core;
-using Uno.Extensions;
 using Uno.Extensions.Reactive.Utils;
 using Uno.Extensions.Reactive.View.Utils;
 using Uno.Logging;
@@ -26,12 +23,9 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 	protected void RegisterDisposable(IAsyncDisposable disposable) 
 		=> _disposables.Add(disposable);
 
-	protected BindablePropertyInfo<TProperty> Property<TProperty>(string propertyName, out IState<TProperty> state, DispatcherQueue? dispatcher = null)
-		=> Property(propertyName, default, out state, dispatcher);
-
-	protected BindablePropertyInfo<TProperty> Property<TProperty>(string propertyName, TProperty? defaultValue, out IState<TProperty> state, DispatcherQueue? dispatcher = null)
+	protected BindablePropertyInfo<TProperty> Property<TProperty>(string propertyName, TProperty defaultValue, out IState<TProperty> state, DispatcherQueue? dispatcher = null)
 	{
-		var stateImpl = new State<TProperty>(defaultValue is null ? Option.Undefined<TProperty>() : defaultValue);
+		var stateImpl = new State<TProperty>(defaultValue);
 		var info = new BindablePropertyInfo<TProperty>(this, propertyName, ViewModelToView, ViewToViewModel);
 
 		_disposables.Add(stateImpl);

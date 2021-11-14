@@ -75,7 +75,7 @@ namespace Commerce
 
 				.AddTransient<LoginViewModel>()
 				.AddTransient<ProductsViewModel.BindableProductsViewModel>()
-				.AddTransient<FilterViewModel>()
+				.AddTransient<FilterViewModel.BindableFilterViewModel>()
 				.AddTransient<ProductDetailsViewModel.BindableProductDetailsViewModel>()
 				.AddViewModelData<Product>()
 				.AddTransient<DealsViewModel>()

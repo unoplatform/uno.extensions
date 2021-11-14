@@ -1,52 +1,33 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Commerce.Services;
+using Windows.UI.Composition;
 using Uno.Extensions.Reactive;
 
 namespace Commerce.ViewModels;
 
-public partial class ProductsViewModel : IAsyncDisposable
+partial class FilterViewModel : IAsyncDisposable
 {
-	public class BindableProductsViewModel : BindableViewModelBase
+	public class BindableFilterViewModel : BindableViewModelBase
 	{
-		private readonly Bindable<string> _searchTerm;
-		//private readonly Bindable<Filter> _filter;
 		private readonly BindableFilter _filter;
 
-		public BindableProductsViewModel(
-			IProductService products,
-			string? defaultSearchTerm = default,
+		public BindableFilterViewModel(
 			Filter? defaultFilter = default)
 		{
-			_searchTerm = new Bindable<string>(Property(nameof(SearchTerm), defaultSearchTerm, out var searchTermSubject));
-			//_filter = new Bindable<Filter>(Property(nameof(Filter), defaultFilter ?? new(), out var filterSubject));
 			_filter = new BindableFilter(Property(nameof(Filter), defaultFilter, out var filterSubject));
 
-			var vm = new ProductsViewModel(products, searchTermSubject, filterSubject);
+			var vm = new FilterViewModel(filterSubject);
 			var ctx = SourceContext.GetOrCreate(vm);
 			SourceContext.Set(this, ctx);
 			RegisterDisposable(vm);
 
 			Model = vm;
-			Items = ctx.GetOrCreateState(vm.Items);
 		}
 
-		public ProductsViewModel Model { get; }
-
-		public IFeed<Product[]> Items { get; }
-
-		public string SearchTerm
-		{
-			get => _searchTerm.GetValue();
-			set => _searchTerm.SetValue(value);
-		}
-
-		//public Filter Filter
-		//{
-		//	get => _filterQuery.GetValue();
-		//	set => _filterQuery.SetValue(value);
-		//}
+		public FilterViewModel Model { get; }
 
 		public BindableFilter Filter => _filter;
 	}
@@ -63,7 +44,17 @@ public partial class ProductsViewModel : IAsyncDisposable
 			_shoes = new Bindable<bool?>(Property<bool?>(nameof(Shoes), p => p?.Shoes, (p, shoes) => (p ?? new()) with { Shoes = shoes ?? default(bool) }));
 			_accessories = new Bindable<bool?>(Property<bool?>(nameof(Accessories), p => p?.Accessories, (p, accessories) => (p ?? new()) with { Accessories = accessories ?? default(bool) }));
 			_headwear = new Bindable<bool?>(Property<bool?>(nameof(Headwear), p => p?.Headwear, (p, headwear) => (p ?? new()) with { Headwear = headwear ?? default(bool) }));
+
+			PropertyChanged += (snd, e) =>
+			{
+				if (e.PropertyName != "Value")
+				{
+					this.GetType().GetEvent(nameof(PropertyChanged)).RaiseMethod.Invoke(this, new object[] { this, new PropertyChangedEventArgs(nameof(Value)) });
+				}
+			};
 		}
+
+		public Filter Value => GetValue();
 
 		public bool? Shoes
 		{

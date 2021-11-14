@@ -12,18 +12,15 @@ namespace Commerce.ViewModels;
 
 public partial class ProductDetailsViewModel
 {
-	private readonly IProductService _products;
+	private readonly IProductService _productService;
 	private readonly Product _product;
-	private readonly IDictionary<string, object> _parameters;
 
 	public ProductDetailsViewModel(
-		IProductService products,
-		Product product,
-		IDictionary<string, object> parameters)
+		IProductService productService,
+		Product product)
 	{
-		_products = products;
+		_productService = productService;
 		_product = product;
-		_parameters = parameters;
 	}
 
 	public IFeed<Product> Product => Feed.Async(Load);
@@ -35,10 +32,6 @@ public partial class ProductDetailsViewModel
 		if (_product is not null)
 		{
 			return _product;
-		}
-		else if(_parameters.TryGetValue("ProductId", out var id))
-		{
-			return (await _products.GetProducts(null, CancellationToken.None)).FirstOrDefault(x => x.ProductId + "" == id.ToString());
 		}
 		else
 		{

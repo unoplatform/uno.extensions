@@ -15,7 +15,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
-    <PackageReference Include="Uno.UI.Skia.Gtk" Version="4.0.0-dev.5526" />
+    <PackageReference Include="Uno.UI.Skia.Gtk" Version="4.0.0-dev.5531" />
     <PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5489" Condition="'$(Configuration)'=='Debug'" />
 		<PackageReference Include="Uno.UI.Toolkit">
 			<Version>0.1.0-dev.71</Version>

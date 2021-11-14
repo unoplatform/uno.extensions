@@ -19,9 +19,10 @@
 		</Grid.RowDefinitions>
 		<toolkit:NavigationBar Content="Products" />
 
+		<!--Style="{StaticResource SingleStateFeedView}"-->
 		<reactive:FeedView
 			Source="{Binding Product}"
-			Style="{StaticResource SingleStateFeedView}"
+			
 			Grid.Row="1">
 			<DataTemplate>
 				<ScrollViewer
