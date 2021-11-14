@@ -17,7 +17,7 @@ public sealed class FeedViewState : INotifyPropertyChanged
 
 	private object? _data;
 	private Exception? _error;
-	private bool _isTransient;
+	private bool _progress;
 
 	internal FeedViewState()
 	{
@@ -41,7 +41,7 @@ public sealed class FeedViewState : INotifyPropertyChanged
 		
 		Data = message.Current.Data.SomeOrDefault();
 		Error = message.Current.Error;
-		IsTransient = message.Current.IsTransient;
+		Progress = message.Current.IsTransient;
 	}
 
 	/// <summary>
@@ -77,12 +77,12 @@ public sealed class FeedViewState : INotifyPropertyChanged
 		}
 	}
 
-	public bool IsTransient
+	public bool Progress
 	{
-		get => _isTransient;
+		get => _progress;
 		private set
 		{
-			_isTransient = value;
+			_progress = value;
 			OnPropertyChanged();
 		}
 	}

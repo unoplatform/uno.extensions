@@ -69,8 +69,8 @@
     <Reference Include="System.Memory" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Uno.UI" Version="4.0.0-dev.5526" />
-    <PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5526" Condition="'$(Configuration)'=='Debug'" />
+    <PackageReference Include="Uno.UI" Version="4.0.0-dev.5531" />
+    <PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5531" Condition="'$(Configuration)'=='Debug'" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
     <PackageReference Include="Uno.UI.Toolkit">

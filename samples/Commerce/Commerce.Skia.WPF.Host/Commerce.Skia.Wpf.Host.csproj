@@ -1,18 +1,20 @@
-<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
-  <PropertyGroup>
-    <OutputType Condition="'$(Configuration)'=='Release'">WinExe</OutputType>
-    <OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <UseWPF>true</UseWPF>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="Uno.UI.Skia.Wpf" Version="4.0.0-dev.5526" />
-    <PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5489" Condition="'$(Configuration)'=='Debug'" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Assets\Fonts\uno-fluentui-assets.ttf" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Commerce.Skia.WPF\Commerce.Skia.WPF.csproj" />
-  </ItemGroup>
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+	<PropertyGroup>
+		<OutputType Condition="'$(Configuration)'=='Release'">WinExe</OutputType>
+		<OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<UseWPF>true</UseWPF>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Uno.UI.Skia.Wpf" Version="4.0.0-dev.5531" />
+		<PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5531" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="System.Linq.Async" Version="4.0.0" />
+		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<Content Include="Assets\Fonts\uno-fluentui-assets.ttf" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Commerce.Skia.WPF\Commerce.Skia.WPF.csproj" />
+	</ItemGroup>
 </Project>

@@ -10,7 +10,7 @@ public partial class ViewDebugger : DependencyObject
 {
 	private static readonly ConditionalWeakTable<UIElement, ViewDebugger> _debuggers = new();
 
-	public static readonly DependencyProperty IsEnabledProperty = DependencyProperty.Register(
+	public static readonly DependencyProperty IsEnabledProperty = DependencyProperty.RegisterAttached(
 		"IsEnabled", typeof(bool), typeof(ViewDebugger), new PropertyMetadata(default(bool), (snd, e) => GetDebugger(snd)?.Enable((bool)e.NewValue)));
 
 	public static bool GetIsEnabled(UIElement element)

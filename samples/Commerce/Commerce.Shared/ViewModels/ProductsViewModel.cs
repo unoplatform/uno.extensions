@@ -12,20 +12,20 @@ public partial class ProductsViewModel
 {
 	private readonly IProductService _products;
 	private readonly IFeed<string> _searchTerm;
-	private readonly IState<string> _filterQuery;
+	private readonly IFeed<Filter> _filter;
 
 	private ProductsViewModel(
 		IProductService products,
-		[DefaultValue("")] IFeed<string> searchTerm,
-		[DefaultValue("")] IState<string> filterQuery)
+		IFeed<string> searchTerm,
+		[Edit] IFeed<Filter> filter)
 	{
 		_products = products;
 		_searchTerm = searchTerm;
-		_filterQuery = filterQuery;
+		_filter = filter;
 	}
 
 	public IFeed<Product[]> Items => Feed
-		.Combine(_searchTerm.SelectAsync(Load), _filterQuery)
+		.Combine(_searchTerm.SelectAsync(Load), _filter)
 		.Select(FilterProducts);
 
 	private async ValueTask<Product[]> Load(string searchTerm, CancellationToken ct)
@@ -35,9 +35,8 @@ public partial class ProductsViewModel
 		return products.ToArray();
 	}
 
-	private Product[] FilterProducts((Product[] products, string filterQuery) inputs)
+	private Product[] FilterProducts((Product[] products, Filter? filter) inputs)
 	{
-		// TODO: Apply filter here
-		return inputs.products;
+		return inputs.products.Where(p => inputs.filter?.Match(p) ?? true).ToArray();
 	}
 }

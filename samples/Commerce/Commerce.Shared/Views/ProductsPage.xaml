@@ -20,80 +20,75 @@
 		</Grid.RowDefinitions>
 
 		<toolkit:NavigationBar Content="Products" />
-		<Grid Grid.Row="1">
-			<Grid.RowDefinitions>
-				<RowDefinition  Height="Auto"/>
-				<RowDefinition />
-			</Grid.RowDefinitions>
-			<TextBox
-				Grid.Row="0"
-				PlaceholderText="Search"
-				Text="{Binding SearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-			<reactive:FeedView
-				Grid.Row="1"
-				Undefined="Type some text to search products."
-				None="No products found."
-				Source="{Binding Items}">
-				<DataTemplate>
-					<ListView
-						nav:Navigation.Request="ProductDetails"
-						ItemsSource="{Binding Data}"
-						Grid.Row="2"
-						IsItemClickEnabled="True">
-						<ListView.Header>
-							<Grid>
-								<TextBlock
-									HorizontalAlignment="Left"
-									VerticalAlignment="Center"
-									FontSize="32" >
-									<Run Text="{Binding Data.Length}" />
-									<Run Text=" Products" />
-								</TextBlock>
+		<TextBox
+			Grid.Row="1"
+			PlaceholderText="Search"
+			Text="{Binding SearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+		<reactive:FeedView
+			Grid.Row="2"
+			Undefined="Type some text to search products."
+			None="No products found."
+			Source="{Binding Items}">
+			<DataTemplate>
+				<ListView
+					nav:Navigation.Request="ProductDetails"
+					ItemsSource="{Binding Data}"
+					Grid.Row="2"
+					IsItemClickEnabled="True">
+					<ListView.Header>
+						<Grid>
+							<TextBlock
+								HorizontalAlignment="Left"
+								VerticalAlignment="Center"
+								FontSize="32" >
+								<Run Text="{Binding Data.Length}" />
+								<Run Text=" Products" />
+							</TextBlock>
+							<StackPanel
+								Orientation="Horizontal"
+								HorizontalAlignment="Right">
+								<TextBlock Text="{Binding Parent.Filter}" />
+								<HyperlinkButton
+									Content="Filter"
+									nav:Navigation.Request="!FilterPopup"
+									nav:Navigation.Data="{Binding Parent.Filter, Mode=TwoWay}" />
+							</StackPanel>
+						</Grid>
+					</ListView.Header>
+					<ListView.ItemTemplate>
+						<DataTemplate>
+							<Grid
+								Margin="8"
+								Height="100">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="100" />
+									<ColumnDefinition />
+								</Grid.ColumnDefinitions>
+								<Border>
+									<Image
+										Source="{Binding Photo}"
+										HorizontalAlignment="Center"
+										VerticalAlignment="Center"
+										Stretch="UniformToFill" />
+								</Border>
 								<StackPanel
-									Orientation="Horizontal"
-									HorizontalAlignment="Right">
-									<TextBlock Text="{Binding Parent.FilterQuery}" />
-									<HyperlinkButton
-										Content="Filter"
-										nav:Navigation.Request="!FilterPopup"
-										nav:Navigation.Data="{Binding Parent.FilterQuery, Mode=TwoWay}" />
+									Grid.Column="1"
+									Margin="8">
+									<TextBlock
+										Text="{Binding Name}"
+										FontSize="24"
+										FontWeight="Bold" />
+									<TextBlock
+										Text="{Binding Price}"
+										FontSize="18" />
 								</StackPanel>
 							</Grid>
-						</ListView.Header>
-						<ListView.ItemTemplate>
-							<DataTemplate>
-								<Grid
-									Margin="8"
-									Height="100">
-									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="100" />
-										<ColumnDefinition />
-									</Grid.ColumnDefinitions>
-									<Border>
-										<Image
-											Source="{Binding Photo}"
-											HorizontalAlignment="Center"
-											VerticalAlignment="Center"
-											Stretch="UniformToFill" />
-									</Border>
-									<StackPanel
-										Grid.Column="1"
-										Margin="8">
-										<TextBlock
-											Text="{Binding Name}"
-											FontSize="24"
-											FontWeight="Bold" />
-										<TextBlock
-											Text="{Binding Price}"
-											FontSize="18" />
-									</StackPanel>
-								</Grid>
-							</DataTemplate>
-						</ListView.ItemTemplate>
-					</ListView>
-				</DataTemplate>
-			</reactive:FeedView>
-		</Grid>
+						</DataTemplate>
+					</ListView.ItemTemplate>
+				</ListView>
+			</DataTemplate>
+		</reactive:FeedView>
 	</Grid>
 </Page>

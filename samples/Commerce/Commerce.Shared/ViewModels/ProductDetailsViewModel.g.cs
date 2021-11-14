@@ -12,11 +12,10 @@ partial class ProductDetailsViewModel : IAsyncDisposable
 	public class BindableProductDetailsViewModel : BindableViewModelBase
 	{
 		public BindableProductDetailsViewModel(
-			IProductService service,
-			Product product,
-			IDictionary<string, object> parameters)
+			IProductService productService,
+			Product product)
 		{
-			var vm = new ProductDetailsViewModel(service, product, parameters);
+			var vm = new ProductDetailsViewModel(productService, product);
 			var ctx = SourceContext.GetOrCreate(vm);
 			SourceContext.Set(this, ctx);
 			RegisterDisposable(vm);
