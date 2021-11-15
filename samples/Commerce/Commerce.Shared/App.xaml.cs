@@ -76,11 +76,13 @@ namespace Commerce
 
 				.AddTransient<LoginViewModel>()
 				.AddTransient<ProductsViewModel.BindableProductsViewModel>()
+				.AddTransient<CartViewModel>()
 				.AddTransient<FilterViewModel.BindableFilterViewModel>()
 				.AddTransient<ProductDetailsViewModel.BindableProductDetailsViewModel>()
 				.AddViewModelData<Product>()
 				.AddTransient<DealsViewModel>()
-				.AddSingleton<IProductService>(sp => new ProductService("products.json"));
+				.AddSingleton<IProductService>(sp => new ProductService("products.json"))
+				.AddSingleton<ICartService>(sp => new CartService("products.json"));
 			})
 			.UseNavigation()
 			.Build()
@@ -114,6 +116,7 @@ namespace Commerce
 				RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
 										nav with { Route = nav.Route.AppendNested<CartPage>() } :
 										nav));
+			mapping.Register(new RouteMap(typeof(CartPage).Name, typeof(CartPage), typeof(CartViewModel)));
 
 			//InitializeLogging();
 
