@@ -71,40 +71,9 @@ namespace Commerce
 			.ConfigureServices(services =>
 			{
 				services
-				.AddSingleton<IProductService>(sp => new ProductService("products.json"));
+				.AddSingleton((Func<IServiceProvider, IProductService>)(sp => new ProductService("products.json")));
 			})
-			.UseNavigation(
-				builder =>
-				{
-					builder.Register(new RouteMap("Login", typeof(LoginPage), typeof(LoginViewModel.BindableLoginViewModel)))
-							.Register(new RouteMap(typeof(CommerceHomePage).Name, typeof(CommerceHomePage),
-								RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
-														nav with { Route = nav.Route.Append(Route.NestedRoute("Products")) } :
-														nav))
-							.Register(new RouteMap("Products", typeof(FrameView),
-								ViewModel: typeof(ProductsViewModel.BindableProductsViewModel),
-								RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
-														nav with { Route = nav.Route.AppendPage<ProductsPage>() } : nav with
-														{
-															Route = nav.Route.ContainsView<ProductsPage>() ?
-																			nav.Route :
-																			nav.Route.InsertPage<ProductsPage>()
-														}))
-							.Register(new RouteMap("Deals", typeof(FrameView),
-								RegionInitialization: (region, nav) => nav.Route.IsEmpty() ?
-														nav with { Route = nav.Route with { Base = "+DealsPage/HotDeals" } } :
-														nav with { Route = nav.Route with { Path = "+DealsPage/HotDeals" } }))
-							.Register(new RouteMap<Product>("ProductDetails",
-								typeof(ProductDetailsPage),
-								typeof(ProductDetailsViewModel.BindableProductDetailsViewModel),
-								BuildQueryParameters: entity => new Dictionary<string, string> { { "ProductId", (entity as Product)?.ProductId + "" } }))
-							.Register(new RouteMap(typeof(CartDialog).Name, typeof(CartDialog),
-								RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
-														nav with { Route = nav.Route.AppendNested<CartPage>() } :
-														nav))
-							.Register(new RouteMap("Filter", typeof(FilterPopup), typeof(FilterViewModel.BindableFilterViewModel)))
-							.Register(new RouteMap("Profile", typeof(ProfilePage), typeof(ProfileViewModel)));
-				})
+			.UseNavigation(RegisterRoutes)
 			.UseToolkitNavigation()
 			.Build()
 			.EnableUnoLogging();
@@ -261,6 +230,38 @@ namespace Commerce
 			});
 
 			global::Uno.Extensions.LogExtensionPoint.AmbientLoggerFactory = factory;
+		}
+
+		private static void RegisterRoutes(IRouteBuilder builder)
+		{
+			builder.Register(new RouteMap("Login", typeof(LoginPage), typeof(LoginViewModel.BindableLoginViewModel)))
+					.Register(new RouteMap(typeof(CommerceHomePage).Name, typeof(CommerceHomePage),
+						RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
+												nav with { Route = nav.Route.Append(Route.NestedRoute("Products")) } :
+												nav))
+					.Register(new RouteMap("Products", typeof(FrameView),
+						ViewModel: typeof(ProductsViewModel.BindableProductsViewModel),
+						RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
+												nav with { Route = nav.Route.AppendPage<ProductsPage>() } : nav with
+												{
+													Route = nav.Route.ContainsView<ProductsPage>() ?
+																	nav.Route :
+																	nav.Route.InsertPage<ProductsPage>()
+												}))
+					.Register(new RouteMap("Deals", typeof(FrameView),
+						RegionInitialization: (region, nav) => nav.Route.IsEmpty() ?
+												nav with { Route = nav.Route with { Base = "+DealsPage/HotDeals" } } :
+												nav with { Route = nav.Route with { Path = "+DealsPage/HotDeals" } }))
+					.Register(new RouteMap<Product>("ProductDetails",
+						typeof(ProductDetailsPage),
+						typeof(ProductDetailsViewModel.BindableProductDetailsViewModel),
+						BuildQueryParameters: entity => new Dictionary<string, string> { { "ProductId", (entity as Product)?.ProductId + "" } }))
+					.Register(new RouteMap(typeof(CartDialog).Name, typeof(CartDialog),
+						RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
+												nav with { Route = nav.Route.AppendNested<CartPage>() } :
+												nav))
+					.Register(new RouteMap("Filter", typeof(FilterPopup), typeof(FilterViewModel.BindableFilterViewModel)))
+					.Register(new RouteMap("Profile", typeof(ProfilePage), typeof(ProfileViewModel)));
 		}
 	}
 }

@@ -15,7 +15,7 @@
 
 			<TextBlock Text="{Binding FullName}" FontSize="24"/>
 			<Button Content="Log out"
-                    nav:Navigation.Request="/-/LoginPage" />
+                    nav:Navigation.Request="/-/Login" />
         </StackPanel>
     </Grid>
 </Page>
