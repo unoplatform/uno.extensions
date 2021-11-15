@@ -31,6 +31,7 @@ using Windows.UI.Xaml.Navigation;
 using Commerce.ViewModels;
 using Commerce.Services;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 
 namespace Commerce
 {
@@ -51,7 +52,15 @@ namespace Commerce
 		{
 			Host = UnoHost
 			.CreateDefaultBuilder(true)
+#if DEBUG
 			.UseEnvironment(Environments.Development)
+#endif
+
+			// Load configuration information from appsettings.json
+			// Also load configuration from environment specific files if they exist eg appsettings.development.json
+			// UseEmbeddedAppSettings<App>() if you want to include appsettings files as Embedded Resources instead of Content
+			.UseAppSettings(includeEnvironmentSettings: true)
+
 			//.UseLogging()
 			//.ConfigureLogging(logBuilder =>
 			//{
@@ -61,13 +70,13 @@ namespace Commerce
 			//         .XamlLayoutLogLevel(LogLevel.Information);
 			//})
 			//.UseSerilog(true, true)
-			//.UseEmbeddedAppSettings<App>()
-			.UseConfigurationSectionInApp<CommerceSettings>()
+
+			.UseConfigurationSectionInApp<AppInfo>()
 			.UseSettings<CommerceSettings>()
 			.ConfigureServices(services =>
 			{
 				services
-				.AddTransient<LoginViewModel>()
+				.AddTransient<LoginViewModel.BindableLoginViewModel>()
 				.AddTransient<ProductsViewModel.BindableProductsViewModel>()
 				.AddTransient<FilterViewModel.BindableFilterViewModel>()
 				.AddTransient<ProductDetailsViewModel.BindableProductDetailsViewModel>()
@@ -78,6 +87,9 @@ namespace Commerce
 			.UseNavigation()
 			.Build()
 			.EnableUnoLogging();
+
+
+			var info = Host.Services.GetService<IOptions<AppInfo>>();
 
 			var mapping = Host.Services.GetService<IRouteMappings>();
 			mapping.Register(new RouteMap("Login", typeof(LoginPage), typeof(LoginViewModel.BindableLoginViewModel)));

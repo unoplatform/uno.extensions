@@ -18,6 +18,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)AppInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommerceSettings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DesignTime\FakeProducts.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MainPage.xaml.cs">
@@ -124,12 +125,18 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="$(MSBuildThisFileDirectory)Assets\SharedAssets.md" />
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)appsettings.development.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="$(MSBuildThisFileDirectory)products.json" />
   </ItemGroup>
   <ItemGroup>

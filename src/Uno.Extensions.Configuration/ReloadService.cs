@@ -43,7 +43,7 @@ namespace Uno.Extensions.Configuration
             var reloadEnabled = false;
             var appSettings = false;
             var envAppSettings = false;
-            var appSettingsFileName = $"{AppSettings.AppSettingsFileName}..json";
+            var appSettingsFileName = $"{AppSettings.AppSettingsFileName}.json";
             var environmentAppSettingsFileName = $"{AppSettings.AppSettingsFileName}.{HostEnvironment.EnvironmentName}.json";
             foreach (var fp in fileProviders)
             {
