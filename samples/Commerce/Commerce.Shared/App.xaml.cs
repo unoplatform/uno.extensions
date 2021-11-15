@@ -32,6 +32,7 @@ using Commerce.ViewModels;
 using Commerce.Services;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
+using Commerce.Models;
 
 namespace Commerce
 {

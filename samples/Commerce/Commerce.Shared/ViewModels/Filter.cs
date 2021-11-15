@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Commerce.Models;
 using Commerce.Services;
 
 namespace Commerce.ViewModels;
