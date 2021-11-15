@@ -1,0 +1,115 @@
+jobs:
+- job: Windows
+
+  pool:
+    vmImage: 'windows-2022'
+
+  variables:
+    - name: UnoCheck_Version
+      value: '0.2.0-dev.361'
+    - name: UnoCheck_Manifest
+      value: 'https://raw.githubusercontent.com/unoplatform/uno.check/bf3684e2ad725baa66da3573759129d6bb1d8817/manifests/uno.ui.manifest.json'
+
+  steps:
+  - checkout: self
+    clean: 'true'
+
+  - task: gitversion/setup@0
+    inputs:
+      versionSpec: '5.6.8'
+
+  - task: gitversion/execute@0
+    inputs:
+      useConfigFile: true
+      configFilePath: build/ci/gitversion.yml
+    displayName: Use GitVersion
+
+  - powershell: |
+      dotnet tool update -g dotnet-vs
+      $MSBUILDPATH="$(vs where release --prop=InstallationPath)\MSBuild\Current\Bin"
+      Write-Host "##vso[task.setvariable variable=MSBUILDPATH;]$MSBUILDPATH"
+      echo MSBUILDPATH: $MSBUILDPATH
+    displayName: Setup VS17 Path
+
+  - task: UseDotNet@2
+    displayName: 'Use .NET 5.0.x'
+    inputs:
+      packageType: sdk
+      version: 5.0.x
+
+  - task: UseDotNet@2
+    displayName: 'Use .NET 6.0.100'
+    inputs:
+      packageType: sdk
+      version: 6.0.100
+
+  - powershell: |
+        & dotnet tool update --global uno.check --version $(UnoCheck_Version) --add-source https://api.nuget.org/v3/index.json
+        & uno-check -v --ci --non-interactive --fix --skip xcode --skip gtk3 --skip vswin --skip vsmac --manifest $(UnoCheck_Manifest)
+    displayName: Install .NET Workloads
+    errorActionPreference: continue
+    ignoreLASTEXITCODE: true
+
+  - task: MSBuild@1
+    displayName: Build Extensions Packages
+    inputs:
+      solution: src/Uno.Extensions.sln
+      msbuildLocationMethod: location
+      msbuildLocation: $(MSBUILDPATH)
+      msbuildArchitecture: x86
+      msbuildArguments: /r /p:Configuration=Release "/p:PackageOutputPath=$(build.artifactstagingdirectory)\nuget" "/p:PackageVersion=%GITVERSION_FullSemVer%" "/p:InformationalVersion=%GITVERSION_InformationalVersion%" /detailedsummary /bl:$(build.artifactstagingdirectory)/uno-extensions.binlog
+      clean: false
+      maximumCpuCount: true
+      restoreNugetPackages: false
+      logProjectEvents: false
+      createLogFile: false
+
+  - task: MSBuild@1
+    displayName: Build Samples
+    inputs:
+      solution: samples/**/*.sln
+      msbuildLocationMethod: location
+      msbuildLocation: $(MSBUILDPATH)
+      msbuildArchitecture: x86
+      msbuildArguments: /r /p:Configuration=Release "/p:InformationalVersion=%GITVERSION_InformationalVersion%" /p:GeneratePackageOnBuild=false /p:AotAssemblies=false /detailedsummary /bl:$(build.artifactstagingdirectory)/samples.binlog
+      clean: false
+      maximumCpuCount: true
+      restoreNugetPackages: false
+      logProjectEvents: false
+      createLogFile: false
+
+  - task: CopyFiles@2
+    displayName: 'Publish Wasm Binaries'
+    inputs:
+      SourceFolder: $(build.sourcesdirectory)/samples/Commerce/Commerce.Wasm/bin/Release/net5.0/dist
+      Contents: '**/*.*'
+      TargetFolder: $(build.artifactstagingdirectory)/Wasm
+      CleanTargetFolder: false
+      OverWrite: false
+      flattenFolders: false
+
+  - task: VisualStudioTestPlatformInstaller@1
+
+  - task: VSTest@2
+    inputs:
+      testAssemblyVer2: |
+        **\*test*.dll
+        !**\obj\**
+      vsTestVersion: toolsInstaller
+      testSelector: testAssemblies
+
+  - task: PowerShell@2
+    displayName: Authenticode Sign Packages
+    inputs:
+      filePath: build/Sign-Package.ps1
+    env:
+      SignClientUser: $(SignClientUser)
+      SignClientSecret: $(SignClientSecret)
+      SignPackageName: "Uno.PackageDiff"
+      SignPackageDescription: "Uno.PackageDiff"
+      ArtifactDirectory: $(build.artifactstagingdirectory)
+    condition: and(succeeded(), not(eq(variables['build.reason'], 'PullRequest')), not(eq(variables['SignClientSecret'], '')), not(eq(variables['SignClientUser'], '')))
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+        ArtifactName: $(Build.DefinitionName)
