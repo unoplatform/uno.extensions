@@ -28,14 +28,9 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using Commerce.Navigation;
-using Uno.Toolkit.UI;
 using Commerce.ViewModels;
 using Commerce.Services;
 using System.Threading.Tasks;
-using Uno.Extensions.Navigation.Toolkit.Controls;
-using Uno.Extensions.Navigation.Toolkit.Navigators;
-using Uno.Toolkit.UI.Controls;
 
 namespace Commerce
 {
@@ -116,7 +111,7 @@ namespace Commerce
 				RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
 										nav with { Route = nav.Route.AppendNested<CartPage>() } :
 										nav));
-
+			mapping.Register(new RouteMap("Filter", typeof(FilterPopup), typeof(FilterViewModel.BindableFilterViewModel)));
 			//InitializeLogging();
 
 			this.InitializeComponent();

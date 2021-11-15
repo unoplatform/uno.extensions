@@ -59,7 +59,7 @@
             </Setter>
         </Style>
     </Flyout.FlyoutPresenterStyle>
-    <StackPanel DataContext="{Binding Parent}" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="12">
+    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="12">
         <StackPanel Orientation="Horizontal">
             <Button nav:Navigation.Request="-">
                 <SymbolIcon Symbol="Cancel" />
@@ -112,6 +112,6 @@
         <Button HorizontalAlignment="Stretch"
                 Content="Apply"
                 nav:Navigation.Request="-"
-                nav:Navigation.Data="{Binding Filter.Value}" />
+                nav:Navigation.Data="{Binding Filter}" />
     </StackPanel>
 </Flyout>

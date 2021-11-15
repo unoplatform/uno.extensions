@@ -37,6 +37,6 @@ public partial class ProductsViewModel
 
 	private Product[] FilterProducts((Product[] products, Filter? filter) inputs)
 	{
-		return inputs.products.Where(p => inputs.filter?.Match(p) ?? true).ToArray();
+		return inputs.products.ToArray();//.Where(p => inputs.filter?.Match(p) ?? true).ToArray();
 	}
 }

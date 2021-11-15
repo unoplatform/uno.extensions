@@ -42,7 +42,7 @@ namespace Uno.Extensions.Navigation.Controls
                         if (response is not null)
                         {
                             var result = await response.Result;
-                            element.SetData(result.GetValue() + "");
+                            element.SetData(result.GetValue());
                             binding.UpdateSource();
                         }
                     }

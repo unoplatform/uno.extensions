@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using CommunityToolkit.Mvvm.ComponentModel;
-using Commerce.Services;
+﻿using System.Threading;
 using System.Threading.Tasks;
+using Commerce.Services;
 using Uno.Extensions.Reactive;
 
 namespace Commerce.ViewModels;
