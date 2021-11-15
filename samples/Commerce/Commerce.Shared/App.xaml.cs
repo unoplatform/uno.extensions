@@ -33,6 +33,7 @@ using Commerce.Services;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Commerce.Models;
+using Uno.Extensions.Navigation.Toolkit;
 
 namespace Commerce
 {
@@ -101,8 +102,10 @@ namespace Commerce
 								RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
 														nav with { Route = nav.Route.AppendNested<CartPage>() } :
 														nav))
-							.Register(new RouteMap("Filter", typeof(FilterPopup), typeof(FilterViewModel.BindableFilterViewModel)));
+							.Register(new RouteMap("Filter", typeof(FilterPopup), typeof(FilterViewModel.BindableFilterViewModel)))
+							.Register(new RouteMap("Profile", typeof(ProfilePage), typeof(ProfileViewModel)));
 				})
+			.UseToolkitNavigation()
 			.Build()
 			.EnableUnoLogging();
 

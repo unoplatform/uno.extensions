@@ -28,7 +28,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\JsonDataService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Product.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\ProductServices.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Models\Profile.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Person.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Review.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Credentials.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\DealsViewModel.cs" />

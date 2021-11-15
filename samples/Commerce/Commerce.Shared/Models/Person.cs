@@ -1,6 +1,6 @@
 namespace Commerce.Models;
 
-public class Profile
+public class Person
 {
 	public string FirstName { get; set; }
 	public string LastName { get; set; }

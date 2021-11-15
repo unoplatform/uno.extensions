@@ -3,7 +3,7 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Controls;
-using Uno.UI.ToolkitLib;
+using Uno.Toolkit.UI.Controls;
 
 using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Regions;
@@ -22,7 +22,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation.Toolkit.Navigators;
 
-public class TabBarRegion : ControlNavigator<TabBar>
+public class TabBarNavigator: ControlNavigator<TabBar>
 {
 	public override void ControlInitialize()
 	{
@@ -50,8 +50,8 @@ public class TabBarRegion : ControlNavigator<TabBar>
 		await nav.NavigateToRouteAsync(tbi, tabName);
 	}
 
-	public TabBarRegion(
-		ILogger<TabBarRegion> logger,
+	public TabBarNavigator(
+		ILogger<TabBarNavigator> logger,
 		IRegion region,
 		IRouteMappings mappings,
 		RegionControlProvider controlProvider)

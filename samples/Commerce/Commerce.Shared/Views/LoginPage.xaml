@@ -32,9 +32,8 @@
             <StackPanel HorizontalAlignment="Center"
                         VerticalAlignment="Top"
                         Margin="0,24,0,12">
-				<TextBlock FontSize="34">
-					<Run Text="Welcome - " /><Run Text="{Binding Model.Title}" />
-				</TextBlock>
+				<TextBlock FontSize="34" Text="Welcome" />
+				<TextBlock Text="{Binding Model.Title}" FontSize="8" />
                 <TextBlock Text="Log in to your account"
                            />
                 <TextBox PlaceholderText="Email"
