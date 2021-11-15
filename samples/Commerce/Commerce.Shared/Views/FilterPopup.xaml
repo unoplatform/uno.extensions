@@ -112,6 +112,6 @@
         <Button HorizontalAlignment="Stretch"
                 Content="Apply"
                 nav:Navigation.Request="-"
-                nav:Navigation.Data="{Binding Filter}" />
+                nav:Navigation.Data="{Binding Filter.Value}" />
     </StackPanel>
 </Flyout>

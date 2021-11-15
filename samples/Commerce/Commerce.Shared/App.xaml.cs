@@ -67,10 +67,6 @@ namespace Commerce
 			.ConfigureServices(services =>
 			{
 				services
-				.AddRegion<TabBar, TabBarRegion>()
-				.AddSingleton<INavigationBindingHandler, TabBarItemNavigationBindingHandler>()
-				.AddSingleton<INavigationBindingHandler, NavigationViewItemNavigationBindingHandler>()
-
 				.AddTransient<LoginViewModel>()
 				.AddTransient<ProductsViewModel.BindableProductsViewModel>()
 				.AddTransient<FilterViewModel.BindableFilterViewModel>()

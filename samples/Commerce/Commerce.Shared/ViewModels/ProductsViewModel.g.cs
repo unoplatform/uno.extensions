@@ -49,10 +49,10 @@ public partial class ProductsViewModel : IAsyncDisposable
 		//	set => _filterQuery.SetValue(value);
 		//}
 
-		public BindableFilter Filter
+		public Filter Filter
 		{
-			get => _filter;
-			set => _filter = value;
+			get => _filter.GetValue();
+			set => _filter.SetValue(value);
 		}
 	}
 
