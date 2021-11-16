@@ -14,13 +14,11 @@
 
                 <!-- Load the Material control resources -->
                 <MaterialResources xmlns="using:Uno.Material" />
-                <!--<ToolkitResources xmlns="using:Uno.Toolkit.UI" />-->
+                <ToolkitResources xmlns="using:Uno.Toolkit.UI" />
                 <!--<MaterialToolkitResources xmlns="using:Uno.Toolkit.Material" />-->
 
 				<ResourceDictionary Source="ms-appx:///Styles/FeedView.xaml" />
-				<ResourceDictionary Source="ms-appx:///Uno.Toolkit.UI/Controls/TabBar/TabBar.xaml" />
-
-            </ResourceDictionary.MergedDictionaries>
+			</ResourceDictionary.MergedDictionaries>
            
         </ResourceDictionary>
     </Application.Resources>

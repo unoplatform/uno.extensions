@@ -16,6 +16,7 @@ using Uno.Extensions.Logging.Serilog;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Regions;
+using Uno.Extensions.Navigation.Toolkit.Navigators;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
@@ -27,33 +28,34 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using Commerce.Navigation;
-using Uno.Toolkit.UI;
 using Commerce.ViewModels;
 using Commerce.Services;
 using System.Threading.Tasks;
-using Uno.Toolkit.UI.Controls;
+using Microsoft.Extensions.Options;
+using Commerce.Models;
+using Uno.Extensions.Navigation.Toolkit;
 
 namespace Commerce
 {
-	/// <summary>
-	/// Provides application-specific behavior to supplement the default Application class.
-	/// </summary>
 	public sealed partial class App : Application
 	{
 		private Window _window;
 
 		private IHost Host { get; }
 
-		/// <summary>
-		/// Initializes the singleton application object.  This is the first line of authored code
-		/// executed, and as such is the logical equivalent of main() or WinMain().
-		/// </summary>
 		public App()
 		{
 			Host = UnoHost
 			.CreateDefaultBuilder(true)
+#if DEBUG
 			.UseEnvironment(Environments.Development)
+#endif
+
+			// Load configuration information from appsettings.json
+			// Also load configuration from environment specific files if they exist eg appsettings.development.json
+			// UseEmbeddedAppSettings<App>() if you want to include appsettings files as Embedded Resources instead of Content
+			.UseAppSettings(includeEnvironmentSettings: true)
+
 			//.UseLogging()
 			//.ConfigureLogging(logBuilder =>
 			//{
@@ -63,59 +65,18 @@ namespace Commerce
 			//         .XamlLayoutLogLevel(LogLevel.Information);
 			//})
 			//.UseSerilog(true, true)
-			//.UseEmbeddedAppSettings<App>()
-			.UseConfigurationSectionInApp<CommerceSettings>()
+
+			.UseConfigurationSectionInApp<AppInfo>()
 			.UseSettings<CommerceSettings>()
 			.ConfigureServices(services =>
 			{
 				services
-				.AddRegion<TabView, TabViewNavigator>()
-				.AddRegion<TabBar, TabBarRegion>()
-				.AddSingleton<INavigationBindingHandler, TabBarItemNavigationBindingHandler>()
-				.AddSingleton<INavigationBindingHandler, NavigationViewItemNavigationBindingHandler>()
-
-				.AddTransient<LoginViewModel>()
-				.AddTransient<ProductsViewModel.BindableProductsViewModel>()
-				.AddTransient<FilterViewModel.BindableFilterViewModel>()
-				.AddTransient<ProductDetailsViewModel.BindableProductDetailsViewModel>()
-				.AddViewModelData<Product>()
-				.AddTransient<DealsViewModel>()
-				.AddSingleton<IProductService>(sp => new ProductService("products.json"));
+				.AddSingleton((Func<IServiceProvider, IProductService>)(sp => new ProductService("products.json")));
 			})
-			.UseNavigation()
+			.UseNavigation(RegisterRoutes)
+			.UseToolkitNavigation()
 			.Build()
 			.EnableUnoLogging();
-
-			var mapping = Host.Services.GetService<IRouteMappings>();
-			mapping.Register(new RouteMap("Login", typeof(LoginPage), typeof(LoginViewModel.BindableLoginViewModel)));
-			mapping.Register(new RouteMap(typeof(CommerceHomePage).Name, typeof(CommerceHomePage),
-				RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
-										nav with { Route = nav.Route.Append(Route.NestedRoute("Products")) } :
-										nav));
-			mapping.Register(new RouteMap("Products", typeof(FrameView),
-				ViewModel: typeof(ProductsViewModel.BindableProductsViewModel),
-				RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
-										nav with { Route = nav.Route.AppendPage<ProductsPage>() } : nav with
-										{
-											Route = nav.Route.ContainsView<ProductsPage>() ?
-															nav.Route :
-															nav.Route.InsertPage<ProductsPage>()
-										}));
-			mapping.Register(new RouteMap("Deals", typeof(FrameView),
-				RegionInitialization: (region, nav) => nav.Route.IsEmpty() ?
-										nav with { Route = nav.Route with { Base = "+DealsPage/HotDeals" } } :
-										nav with { Route = nav.Route with { Path = "+DealsPage/HotDeals" } }));
-			mapping.Register(new RouteMap("ProductDetails",
-				typeof(ProductDetailsPage),
-				typeof(ProductDetailsViewModel.BindableProductDetailsViewModel),
-				typeof(Product),
-				BuildQueryParameters: entity => new Dictionary<string, string> { { "ProductId", (entity as Product)?.ProductId + "" } }));
-			mapping.Register(new RouteMap(typeof(CartDialog).Name, typeof(CartDialog),
-				RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
-										nav with { Route = nav.Route.AppendNested<CartPage>() } :
-										nav));
-
-			//InitializeLogging();
 
 			this.InitializeComponent();
 
@@ -269,6 +230,38 @@ namespace Commerce
 			});
 
 			global::Uno.Extensions.LogExtensionPoint.AmbientLoggerFactory = factory;
+		}
+
+		private static void RegisterRoutes(IRouteBuilder builder)
+		{
+			builder.Register(new RouteMap("Login", typeof(LoginPage), typeof(LoginViewModel.BindableLoginViewModel)))
+					.Register(new RouteMap(typeof(CommerceHomePage).Name, typeof(CommerceHomePage),
+						RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
+												nav with { Route = nav.Route.Append(Route.NestedRoute("Products")) } :
+												nav))
+					.Register(new RouteMap("Products", typeof(FrameView),
+						ViewModel: typeof(ProductsViewModel.BindableProductsViewModel),
+						RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
+												nav with { Route = nav.Route.AppendPage<ProductsPage>() } : nav with
+												{
+													Route = nav.Route.ContainsView<ProductsPage>() ?
+																	nav.Route :
+																	nav.Route.InsertPage<ProductsPage>()
+												}))
+					.Register(new RouteMap("Deals", typeof(FrameView),
+						RegionInitialization: (region, nav) => nav.Route.IsEmpty() ?
+												nav with { Route = nav.Route with { Base = "+DealsPage/HotDeals" } } :
+												nav with { Route = nav.Route with { Path = "+DealsPage/HotDeals" } }))
+					.Register(new RouteMap<Product>("ProductDetails",
+						typeof(ProductDetailsPage),
+						typeof(ProductDetailsViewModel.BindableProductDetailsViewModel),
+						BuildQueryParameters: entity => new Dictionary<string, string> { { "ProductId", (entity as Product)?.ProductId + "" } }))
+					.Register(new RouteMap(typeof(CartDialog).Name, typeof(CartDialog),
+						RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
+												nav with { Route = nav.Route.AppendNested<CartPage>() } :
+												nav))
+					.Register(new RouteMap("Filter", typeof(FilterPopup), typeof(FilterViewModel.BindableFilterViewModel)))
+					.Register(new RouteMap("Profile", typeof(ProfilePage), typeof(ProfileViewModel)));
 		}
 	}
 }

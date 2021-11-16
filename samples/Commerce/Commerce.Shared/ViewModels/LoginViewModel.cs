@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Reactive;
 using Windows.ApplicationModel.Core;
@@ -14,10 +15,12 @@ public partial class LoginViewModel
 
 	private LoginViewModel(
 		INavigator navigator,
+		IOptions<AppInfo> appInfo,
 		IFeed<Credentials> credentials,
 		IState<string> error,
 		ICommandBuilder login)
 	{
+		Title = appInfo.Value.Title;
 		_navigator = navigator;
 		_error = error;
 
@@ -26,6 +29,8 @@ public partial class LoginViewModel
 			.When(CanLogin)
 			.Then(Login);
 	}
+
+	public string Title { get;  }
 
 	private bool CanLogin(Credentials credentials)
 		=> credentials is { UserName.Length: > 0 } and { Password.Length: > 0 };

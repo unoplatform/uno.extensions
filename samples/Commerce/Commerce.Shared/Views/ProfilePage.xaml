@@ -12,8 +12,10 @@
     <Grid>
         <StackPanel>
         <TextBlock Text="Profile" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="48"/>
-            <Button Content="Log out"
-                    nav:Navigation.Request="/-/LoginPage" />
+
+			<TextBlock Text="{Binding FullName}" FontSize="24"/>
+			<Button Content="Log out"
+                    nav:Navigation.Request="/-/Login" />
         </StackPanel>
     </Grid>
 </Page>

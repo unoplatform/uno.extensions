@@ -51,7 +51,7 @@ public static class Navigation
         return (string)element.GetValue(RequestProperty);
     }
 
-    public static void SetData(this FrameworkElement element, object value)
+    public static void SetData(this FrameworkElement element, object? value)
     {
         element.SetValue(DataProperty, value);
     }

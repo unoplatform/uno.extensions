@@ -1,49 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using Windows.Storage;
+using Commerce.Models;
+
 
 namespace Commerce.Services;
-
-public class JsonDataService<TData>
-{
-	private string DataFile { get; }
-
-	private TData[] Entities { get; set; }
-
-	public JsonDataService(string dataFile)
-	{
-		DataFile = dataFile;
-	}
-
-	private async Task Load()
-	{
-		if (Entities is not null)
-		{
-			return;
-		}
-
-		var storageFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///{DataFile}"));
-		using var stream = await storageFile.OpenStreamForReadAsync();
-
-		Entities = JsonSerializer.Deserialize<TData[]>(stream, new JsonSerializerOptions
-		{
-			NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString,
-			AllowTrailingCommas = true
-		});
-	}
-
-	public async Task<TData[]> GetEntities()
-	{
-		await Load();
-		return Entities;
-	}
-}
 
 public class ProductService : JsonDataService<Product>, IProductService
 {
@@ -64,31 +27,4 @@ public class ProductService : JsonDataService<Product>, IProductService
 
 		return products;
 	}
-}
-
-public interface IProductService
-{
-	Task<IEnumerable<Product>> GetProducts(string? term, CancellationToken ct);
-}
-
-public class Product
-{
-	public int ProductId { get; set; }
-	public string Name { get; set; }
-	public string Description { get; set; }
-	public string Category { get; set; }
-	public string FullPrice { get; set; }
-	public string Price { get; set; }
-	public string Discount { get; set; }
-	public string Photo { get; set; }
-
-	public Review[] Reviews { get; set; }
-
-}
-
-public class Review
-{
-	public string Photo { get; set; }
-	public string Name { get; set; }
-	public string Message { get; set; }
 }

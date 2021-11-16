@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Commerce.Models;
 using Commerce.Services;
 using Uno.Extensions.Reactive;
+using static Commerce.ViewModels.FilterViewModel;
 
 namespace Commerce.ViewModels;
 
@@ -12,7 +14,7 @@ public partial class ProductsViewModel : IAsyncDisposable
 	{
 		private readonly Bindable<string> _searchTerm;
 		//private readonly Bindable<Filter> _filter;
-		private readonly BindableFilter _filter;
+		private  BindableFilter _filter;
 
 		public BindableProductsViewModel(
 			IProductService products,
@@ -48,41 +50,45 @@ public partial class ProductsViewModel : IAsyncDisposable
 		//	set => _filterQuery.SetValue(value);
 		//}
 
-		public BindableFilter Filter => _filter;
-	}
-
-	public class BindableFilter : Bindable<Filter>
-	{
-		private readonly Bindable<bool?> _shoes;
-		private readonly Bindable<bool?> _accessories;
-		private readonly Bindable<bool?> _headwear;
-
-		public BindableFilter(BindablePropertyInfo<Filter> property)
-			: base(property)
+		public Filter Filter
 		{
-			_shoes = new Bindable<bool?>(Property<bool?>(nameof(Shoes), p => p?.Shoes, (p, shoes) => (p ?? new()) with { Shoes = shoes ?? default(bool) }));
-			_accessories = new Bindable<bool?>(Property<bool?>(nameof(Accessories), p => p?.Accessories, (p, accessories) => (p ?? new()) with { Accessories = accessories ?? default(bool) }));
-			_headwear = new Bindable<bool?>(Property<bool?>(nameof(Headwear), p => p?.Headwear, (p, headwear) => (p ?? new()) with { Headwear = headwear ?? default(bool) }));
-		}
-
-		public bool? Shoes
-		{
-			get => _shoes.GetValue();
-			set => _shoes.SetValue(value);
-		}
-
-		public bool? Accessories
-		{
-			get => _accessories.GetValue();
-			set => _accessories.SetValue(value);
-		}
-
-		public bool? Headwear
-		{
-			get => _headwear.GetValue();
-			set => _headwear.SetValue(value);
+			get => _filter.GetValue();
+			set => _filter.SetValue(value);
 		}
 	}
+
+	//public class BindableFilter : Bindable<Filter>
+	//{
+	//	private readonly Bindable<bool?> _shoes;
+	//	private readonly Bindable<bool?> _accessories;
+	//	private readonly Bindable<bool?> _headwear;
+
+	//	public BindableFilter(BindablePropertyInfo<Filter> property)
+	//		: base(property)
+	//	{
+	//		_shoes = new Bindable<bool?>(Property<bool?>(nameof(Shoes), p => p?.Shoes, (p, shoes) => (p ?? new()) with { Shoes = shoes ?? default(bool) }));
+	//		_accessories = new Bindable<bool?>(Property<bool?>(nameof(Accessories), p => p?.Accessories, (p, accessories) => (p ?? new()) with { Accessories = accessories ?? default(bool) }));
+	//		_headwear = new Bindable<bool?>(Property<bool?>(nameof(Headwear), p => p?.Headwear, (p, headwear) => (p ?? new()) with { Headwear = headwear ?? default(bool) }));
+	//	}
+
+	//	public bool? Shoes
+	//	{
+	//		get => _shoes.GetValue();
+	//		set => _shoes.SetValue(value);
+	//	}
+
+	//	public bool? Accessories
+	//	{
+	//		get => _accessories.GetValue();
+	//		set => _accessories.SetValue(value);
+	//	}
+
+	//	public bool? Headwear
+	//	{
+	//		get => _headwear.GetValue();
+	//		set => _headwear.SetValue(value);
+	//	}
+	//}
 
 	/// <inheritdoc />
 	public ValueTask DisposeAsync()

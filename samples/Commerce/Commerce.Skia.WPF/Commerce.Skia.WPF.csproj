@@ -8,10 +8,10 @@
 		<PackageReference Include="Uno.UI.Skia.Wpf" Version="4.0.0-dev.5531" />
 		<PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5531" Condition="'$(Configuration)'=='Debug'" />
 		<PackageReference Include="System.Linq.Async" Version="4.0.0" />
-		<PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.91"/>
+		<PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.91" />
 		<PackageReference Include="Uno.Core" Version="3.0.0" />
 		<PackageReference Include="Uno.Material" Version="1.1.0-dev.7" />
-		<PackageReference Include="CommunityToolkit.Mvvm" Version="7.0.3"/>
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="7.0.3" />
 	</ItemGroup>
 	<ItemGroup>
 		<UpToDateCheckInput Include="..\Commerce.Shared\**\*.xaml" />
@@ -24,6 +24,8 @@
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Localization\Uno.Extensions.Localization.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Logging.Wasm\Uno.Extensions.Logging.Wasm.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj">
