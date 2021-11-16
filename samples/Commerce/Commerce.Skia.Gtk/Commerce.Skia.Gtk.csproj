@@ -17,10 +17,10 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
     <PackageReference Include="Uno.UI.Skia.Gtk" Version="4.0.0-dev.5594" />
     <PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5594" Condition="'$(Configuration)'=='Debug'" />
-		<PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.102" />
+		<PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.116" />
 		<PackageReference Include="Uno.Core" Version="4.0.0-dev.7" />
 		<PackageReference Include="Uno.Material">
-			<Version>1.1.0-dev.7</Version>
+			<Version>1.1.0-dev.13</Version>
 		</PackageReference>
 		<PackageReference Include="CommunityToolkit.Mvvm">
 			<Version>7.0.3</Version>
