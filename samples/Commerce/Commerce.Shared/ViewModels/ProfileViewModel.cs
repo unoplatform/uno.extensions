@@ -4,10 +4,10 @@ namespace Commerce.ViewModels
 {
 	public class ProfileViewModel
     {
-		private Person _person;
+		private Profile _person;
 		public ProfileViewModel()
 		{
-			_person = new Person { FirstName = "Fred", LastName = "Jobs" };
+			_person = new Profile { FirstName = "Fred", LastName = "Jobs" };
 		}
 
 		public string FullName => $"{_person.FirstName} {_person.LastName}";

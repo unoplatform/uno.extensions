@@ -5,7 +5,7 @@ using Commerce.Services;
 
 namespace Commerce.ViewModels;
 
-public record Filter
+public record Filters
 {
 	public bool Shoes { get; set; }
 

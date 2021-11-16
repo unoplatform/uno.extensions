@@ -64,7 +64,7 @@
 				<TextBox Text="{Binding Term, Mode=TwoWay}" um:ControlExtensions.Icon="{StaticResource Icon_search}" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialOutlinedTextBoxStyle}" />
 				<utu:AutoLayout Spacing="10" Justify="SpaceBetween" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryLength="20">
 					<TextBlock Foreground="{StaticResource MaterialOnBackgroundBrush}" x:Uid="Page_5254 products found!" Text="5254 products found!" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialBody2}" />
-					<HyperlinkButton Content="Filters" x:Uid="Page_Filters" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialHyperlinkButtonStyle}" />
+						<HyperlinkButton Content="Filters" x:Uid="Page_Filters" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialHyperlinkButtonStyle}" nav:Navigation.Request="!FilterPopup" nav:Navigation.Data="{Binding Filter, Mode=TwoWay}"/>
 				</utu:AutoLayout>
 			</utu:AutoLayout>
 			<uer:FeedView Source="{Binding Items}" utu:AutoLayout.CounterAlignment="Stretch">

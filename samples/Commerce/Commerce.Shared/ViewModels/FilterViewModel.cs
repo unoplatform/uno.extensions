@@ -2,10 +2,10 @@
 
 namespace Commerce.ViewModels;
 
-public partial class FilterViewModel
+public partial class FiltersViewModel
 {
-	public FilterViewModel(
-		IState<Filter> filter)
+	public FiltersViewModel(
+		IState<Filters> filter)
 	{
 	}
 }

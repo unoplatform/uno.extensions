@@ -13,12 +13,12 @@ public partial class ProductsViewModel
 {
 	private readonly IProductService _products;
 	private readonly IFeed<string> _searchTerm;
-	private readonly IFeed<Filter> _filter;
+	private readonly IFeed<Filters> _filter;
 
 	private ProductsViewModel(
 		IProductService products,
 		IFeed<string> searchTerm,
-		[Edit] IFeed<Filter> filter)
+		[Edit] IFeed<Filters> filter)
 	{
 		_products = products;
 		_searchTerm = searchTerm;
@@ -36,7 +36,7 @@ public partial class ProductsViewModel
 		return products.ToArray();
 	}
 
-	private Product[] FilterProducts((Product[] products, Filter? filter) inputs)
+	private Product[] FilterProducts((Product[] products, Filters? filter) inputs)
 	{
 		return inputs.products.ToArray();//.Where(p => inputs.filter?.Match(p) ?? true).ToArray();
 	}

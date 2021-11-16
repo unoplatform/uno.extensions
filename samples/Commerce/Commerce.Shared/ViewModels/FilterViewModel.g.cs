@@ -8,18 +8,18 @@ using Uno.Extensions.Reactive;
 
 namespace Commerce.ViewModels;
 
-partial class FilterViewModel : IAsyncDisposable
+partial class FiltersViewModel : IAsyncDisposable
 {
 	public class BindableFilterViewModel : BindableViewModelBase
 	{
 		private readonly BindableFilter _filter;
 
 		public BindableFilterViewModel(
-			Filter? defaultFilter = default)
+			Filters? defaultFilter = default)
 		{
 			_filter = new BindableFilter(Property(nameof(Filter), defaultFilter, out var filterSubject));
 
-			var vm = new FilterViewModel(filterSubject);
+			var vm = new FiltersViewModel(filterSubject);
 			var ctx = SourceContext.GetOrCreate(vm);
 			SourceContext.Set(this, ctx);
 			RegisterDisposable(vm);
@@ -27,18 +27,18 @@ partial class FilterViewModel : IAsyncDisposable
 			Model = vm;
 		}
 
-		public FilterViewModel Model { get; }
+		public FiltersViewModel Model { get; }
 
 		public BindableFilter Filter => _filter;
 	}
 
-	public class BindableFilter : Bindable<Filter>
+	public class BindableFilter : Bindable<Filters>
 	{
 		private readonly Bindable<bool?> _shoes;
 		private readonly Bindable<bool?> _accessories;
 		private readonly Bindable<bool?> _headwear;
 
-		public BindableFilter(BindablePropertyInfo<Filter> property)
+		public BindableFilter(BindablePropertyInfo<Filters> property)
 			: base(property)
 		{
 			_shoes = new Bindable<bool?>(Property<bool?>(nameof(Shoes), p => p?.Shoes, (p, shoes) => (p ?? new()) with { Shoes = shoes ?? default(bool) }));
@@ -54,7 +54,7 @@ partial class FilterViewModel : IAsyncDisposable
 			};
 		}
 
-		public Filter Value => GetValue();
+		public Filters Value => GetValue();
 
 		public bool? Shoes
 		{
