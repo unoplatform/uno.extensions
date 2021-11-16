@@ -93,6 +93,14 @@
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj" />
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Logging.Wasm\Uno.Extensions.Logging.Wasm.csproj" />
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.csproj" />
+    <ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.csproj">
+      <Project>{1aabcd2d-80a3-4083-b7c4-e6013ab998e1}</Project>
+      <Name>Uno.Extensions.Navigation.Toolkit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UI.csproj">
+      <Project>{078b7148-820b-4441-85b1-800ad8c869ce}</Project>
+      <Name>Uno.Extensions.Navigation.UI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj">

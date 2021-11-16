@@ -62,7 +62,7 @@ public static class FrameworkElementExtensions
         Action<bool> loadedAction = (overrideLoaded) =>
         {
             if (element.IsLoaded ||
-                overrideLoaded ||
+                //overrideLoaded ||
                 (element.ActualHeight>0 && element.ActualWidth>0))
             {
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.

@@ -18,17 +18,20 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)AppInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommerceSettings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DesignTime\FakeProducts.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Navigation\TabBarItemNavigationBindingHandler.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Navigation\TabBarNavigator.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Navigation\TabViewNavigator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\CartService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\ProductServices.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\CartViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IProductService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\JsonDataService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Product.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Person.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Review.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Credentials.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\DealsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Filter.cs" />
@@ -40,6 +43,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ProductDetailsViewModel.g.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ProductsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ProductsViewModel.g.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ProfileViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\CartDialog.xaml.cs">
       <DependentUpon>CartDialog.xaml</DependentUpon>
     </Compile>
@@ -129,12 +133,22 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="$(MSBuildThisFileDirectory)Assets\SharedAssets.md" />
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)appsettings.development.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="$(MSBuildThisFileDirectory)products.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Navigation\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Models\" />
   </ItemGroup>
 </Project>

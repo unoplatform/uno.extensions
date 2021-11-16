@@ -106,9 +106,12 @@ public class FlyoutNavigator : ControlNavigator
         await flyoutElement.EnsureLoaded();
 
 
-        flyoutElement.SetInstance(null); // Clear region off the flyout element
-        flyoutElement.Parent.SetInstance(Region); // Set region on parent (now that it will be not null)
-        flyoutElement.ReassignRegionParent(); // Update any sub-regions to correct their relationship with the parent (ie set the name)
+		if (flyoutElement is not null)
+		{
+			flyoutElement.SetInstance(null); // Clear region off the flyout element
+			flyoutElement.Parent.SetInstance(Region); // Set region on parent (now that it will be not null)
+			flyoutElement.ReassignRegionParent(); // Update any sub-regions to correct their relationship with the parent (ie set the name)
+		}
 
         return flyout;
     }

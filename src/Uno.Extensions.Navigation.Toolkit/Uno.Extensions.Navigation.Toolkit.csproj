@@ -1,0 +1,27 @@
+<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
+	<PropertyGroup>
+		<TargetFrameworks>netstandard2.0;netstandard2.1;xamarinios10;monoandroid10.0;monoandroid11.0</TargetFrameworks>
+		<TargetFrameworks Condition="'$(UnoExtensionsDisableNet6)'==''">$(TargetFrameworks);net5.0;net6.0;uap10.0.18362;net6.0-ios;net6.0-android</TargetFrameworks>
+	</PropertyGroup>
+
+	<ItemGroup Condition="'$(IsUWP)' == 'true'">
+		<PackageReference Include="Microsoft.UI.Xaml" Version="2.7.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Logging\Uno.Extensions.Logging.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Uno.UI" Version="4.0.0-dev.5531" />
+		<PackageReference Include="Uno.Core" Version="3.0.0" />
+		<PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.91" />
+	</ItemGroup>
+</Project>

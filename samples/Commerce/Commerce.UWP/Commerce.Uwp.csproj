@@ -174,6 +174,10 @@
       <Project>{ad3c0a66-450d-4355-b5c4-fdaf0d7746ad}</Project>
       <Name>Uno.Extensions.Navigation</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.csproj">
+      <Project>{1aabcd2d-80a3-4083-b7c4-e6013ab998e1}</Project>
+      <Name>Uno.Extensions.Navigation.Toolkit</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj">
       <Project>{5123670c-9756-4c9e-9844-f4a9c0aee633}</Project>
       <Name>Uno.Extensions.Serialization</Name>

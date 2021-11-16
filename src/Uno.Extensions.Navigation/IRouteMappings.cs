@@ -4,8 +4,6 @@ namespace Uno.Extensions.Navigation;
 
 public interface IRouteMappings
 {
-    void Register(RouteMap map);
-
     RouteMap? Find(Route route);
 
     RouteMap? FindByPath(string? path);

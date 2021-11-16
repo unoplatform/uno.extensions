@@ -1,4 +1,5 @@
-﻿using Commerce.Services;
+﻿using Commerce.Models;
+using Commerce.Services;
 
 namespace Commerce.DesignTime
 {

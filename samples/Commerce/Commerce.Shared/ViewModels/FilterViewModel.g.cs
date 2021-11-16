@@ -49,7 +49,7 @@ partial class FilterViewModel : IAsyncDisposable
 			{
 				if (e.PropertyName != "Value")
 				{
-					this.GetType().GetEvent(nameof(PropertyChanged)).RaiseMethod.Invoke(this, new object[] { this, new PropertyChangedEventArgs(nameof(Value)) });
+					this.GetType().GetEvent(nameof(PropertyChanged)).RaiseMethod?.Invoke(this, new object[] { this, new PropertyChangedEventArgs(nameof(Value)) });
 				}
 			};
 		}

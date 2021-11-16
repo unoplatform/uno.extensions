@@ -24,11 +24,8 @@ public class RouteMappingsDefault : RouteMappings
 
     private IDictionary<string, RouteMap> Mappings { get; } = new Dictionary<string, RouteMap>();
 
-    private ILogger Logger { get; }
-
-    public RouteMappingsDefault(ILogger<RouteMappingsDefault> logger) : base(logger)
+    public RouteMappingsDefault(ILogger<RouteMappingsDefault> logger, IEnumerable<RouteMap> maps) : base(logger, maps)
     {
-        Logger = logger;
     }
 
     public override RouteMap? FindByPath(string? path)
