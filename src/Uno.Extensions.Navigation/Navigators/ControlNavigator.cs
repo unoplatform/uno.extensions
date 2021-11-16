@@ -163,11 +163,6 @@ public abstract class ControlNavigator : Navigator
 
     protected async Task<NavigationResponse?> ControlNavigateAsync(NavigationRequest request)
     {
-		//if (request.Route.Base == Route?.Base)
-		//{
-		//	return new NavigationResponse(request.Route);
-		//}
-
 		var services = Region.Services;
         if (services is null)
         {
