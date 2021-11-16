@@ -16,7 +16,43 @@
 	  mc:Ignorable="d fake"
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-	<utu:AutoLayout>
+	
+	<Grid d:DataContext="{d:DesignInstance fake:FakeProducts, IsDesignTimeCreatable=True}">
+		<VisualStateManager.VisualStateGroups>
+			<VisualStateGroup>
+				<VisualState x:Name="Narrow" />
+				<!--<VisualState.StateTriggers>
+					<AdaptiveTrigger MinWindowWidth="0"
+									 MinWindowHeight="0" />
+				</VisualState.StateTriggers>
+				<VisualState.Setters>
+					<Setter Target="Tabs.Visibility"
+							Value="Visible" />
+				</VisualState.Setters>-->
+
+				<VisualState x:Name="Wide">
+					<VisualState.StateTriggers>
+						<AdaptiveTrigger MinWindowWidth="800" />
+					</VisualState.StateTriggers>
+					<VisualState.Setters>
+						<Setter Target="ProductsColumn.Width"
+								Value="300" />
+						<Setter Target="DetailsColumn.Width"
+								Value="*" />
+						<Setter Target="DetailsGrid.Visibility"
+								Value="Visible" />
+					</VisualState.Setters>
+				</VisualState>
+			</VisualStateGroup>
+		</VisualStateManager.VisualStateGroups>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*"
+							  x:Name="ProductsColumn" />
+			<ColumnDefinition Width="0"
+							  x:Name="DetailsColumn" />
+		</Grid.ColumnDefinitions>
+		<Grid>
+            <utu:AutoLayout>
 		<utu:NavigationBar Content="Uno commerce" x:Uid="Page_NavigationBar" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialNavigationBarStyle}">
 			<utu:NavigationBar.PrimaryCommands>
 				<AppBarButton Foreground="{StaticResource MaterialOnPrimaryMediumBrush}" Icon="{StaticResource Icon_notifications}" />
@@ -82,4 +118,16 @@
 		</utu:AutoLayout.Resources>
 	</utu:AutoLayout>
 
+		<Grid Grid.Column="1"
+			  x:Name="DetailsGrid"
+			  Visibility="Collapsed">
+			<ContentControl nav:Region.Name="Details"
+							nav:Region.Attached="true"
+							Grid.Column="1"
+							HorizontalAlignment="Stretch"
+							VerticalAlignment="Stretch"
+							HorizontalContentAlignment="Stretch"
+							VerticalContentAlignment="Stretch" />
+		</Grid>
+	</Grid>
 </Page>

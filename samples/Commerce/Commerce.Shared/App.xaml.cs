@@ -238,16 +238,8 @@ namespace Commerce
 		private static void RegisterRoutes(IRouteBuilder builder)
 		{
 			builder.Register(new RouteMap("Login", typeof(LoginPage), typeof(LoginViewModel.BindableLoginViewModel)))
-					.Register(new RouteMap("Home", 
-						RegionInitialization: (region, nav) => (App.Current as App).Window.Content.ActualSize.X > 800 ?
-												nav with { Route = nav.Route with { Base = nameof(LandscapeHomePage) } } :
-												nav with { Route = nav.Route with { Base = nameof(CommerceHomePage) } }))
-					.Register(new RouteMap(nameof(CommerceHomePage), typeof(CommerceHomePage),
+					.Register(new RouteMap("Home", typeof(CommerceHomePage),
 						RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
-													nav with { Route = nav.Route.Append(Route.NestedRoute("Products")) } :
-													nav))
-					.Register(new RouteMap(nameof(LandscapeHomePage), typeof(LandscapeHomePage),
-					RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
 													nav with { Route = nav.Route.Append(Route.NestedRoute("Products")) } :
 													nav))
 					.Register(new RouteMap("Products", typeof(FrameView),
@@ -265,7 +257,7 @@ namespace Commerce
 												nav with { Route = nav.Route with { Path = "+DealsPage/HotDeals" } }))
 					.Register(new RouteMap<Product>("ProductDetails",
 						RegionInitialization: (region, nav) => (App.Current as App).Window.Content.ActualSize.X > 800 ?
-												nav with { Route = nav.Route with { Scheme="../../../", Base="Details", Path = nameof(ProductDetailsPage) } } :
+												nav with { Route = nav.Route with { Scheme="./", Base="Details", Path = nameof(ProductDetailsPage) } } :
 												nav with { Route = nav.Route with { Base = nameof(ProductDetailsPage) } }))
 					.Register(new RouteMap<Product>(nameof(ProductDetailsPage),
 						typeof(ProductDetailsPage),
