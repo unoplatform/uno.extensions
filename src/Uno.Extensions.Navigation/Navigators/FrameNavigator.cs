@@ -48,7 +48,17 @@ public class FrameNavigator : ControlNavigator<Frame>
         }
     }
 
-    protected override bool CanNavigateToRoute(Route route) => base.CanNavigateToRoute(route) || route.IsFrameNavigation();
+	protected override bool CanNavigateToRoute(Route route)
+	{
+		bool baseCanNavigate = base.CanNavigateToRoute(route) || route.IsFrameNavigation();
+		if (baseCanNavigate)
+		{
+			var viewType = Mappings.FindByPath(route.Base)?.View;
+			baseCanNavigate = viewType is not null &&
+				viewType.IsSubclassOf(typeof(Page));
+		}
+		return baseCanNavigate; 
+	}
 
     protected override Task<Route?> ExecuteRequestAsync(NavigationRequest request)
     {
@@ -68,7 +78,17 @@ public class FrameNavigator : ControlNavigator<Frame>
             return default;
         }
 
-        var route = request.Route;
+		var route = request.Route;
+		var segments = (from pg in route.ForwardNavigationSegments(Mappings)
+						let map = Mappings.FindByPath(pg.Base)
+						where map?.View is not null &&
+								map.View.IsSubclassOf(typeof(Page))
+						select new { Route = pg, Map = map }).ToArray();
+		if (segments.Length == 0)
+		{
+			return default;
+		}
+
         var numberOfPagesToRemove = route.FrameNumberOfPagesToRemove();
         // We remove 1 less here because we need to remove the current context, after the navigation is completed
         while (numberOfPagesToRemove > 1)
@@ -76,10 +96,6 @@ public class FrameNavigator : ControlNavigator<Frame>
             RemoveLastFromBackStack();
             numberOfPagesToRemove--;
         }
-
-        var segments = (from pg in route.ForwardNavigationSegments(Mappings)
-                        let map = Mappings.FindByPath(pg.Base)
-                        select new { Route = pg, Map = map }).ToArray();
 
         var firstSegment = segments.First().Route;
         for (var i = 0; i < segments.Length - 1; i++)

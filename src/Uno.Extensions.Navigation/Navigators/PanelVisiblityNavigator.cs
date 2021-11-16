@@ -68,18 +68,21 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
             }
         }
 
-        if (controlToShow is not null)
-        {
-            controlToShow.Visibility = Visibility.Visible;
-        }
+		if (controlToShow != CurrentlyVisibleControl)
+		{
+			if (controlToShow is not null)
+			{
+				controlToShow.Visibility = Visibility.Visible;
+			}
 
-        if (CurrentlyVisibleControl != null)
-        {
-            CurrentlyVisibleControl.Visibility = Visibility.Collapsed;
-        }
-        CurrentlyVisibleControl = controlToShow;
+			if (CurrentlyVisibleControl != null)
+			{
+				CurrentlyVisibleControl.Visibility = Visibility.Collapsed;
+			}
+			CurrentlyVisibleControl = controlToShow;
 
-        await controlToShow.EnsureLoaded();
+			await controlToShow.EnsureLoaded();
+		}
 
         return path;
     }

@@ -87,8 +87,11 @@ public class TabBarNavigator: ControlNavigator<TabBar>
 				if (item is not null)
 				{
 					var idx = Control.IndexFromContainer(item);
-					Control.SelectedIndex = idx;
-					await (item as FrameworkElement).EnsureLoaded();
+					if (Control.SelectedIndex != idx)
+					{
+						Control.SelectedIndex = idx;
+						await (item as FrameworkElement).EnsureLoaded();
+					}
 					return path;
 				}
 

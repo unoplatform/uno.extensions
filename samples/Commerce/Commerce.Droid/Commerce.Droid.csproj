@@ -64,9 +64,9 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="7.0.3" />
-    <PackageReference Include="Uno.UI" Version="4.0.0-dev.5531" />
-    <PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5531" Condition="'$(Configuration)'=='Debug'" />
-    <PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.91" />
+    <PackageReference Include="Uno.UI" Version="4.0.0-dev.5594" />
+    <PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5594" Condition="'$(Configuration)'=='Debug'" />
+    <PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.102" />
     <PackageReference Include="Uno.Toolkit.UI.Material" Version="0.1.0-dev.91" />
     <PackageReference Include="Uno.UniversalImageLoader" Version="1.9.33" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
@@ -160,7 +160,7 @@
   <Import Project="..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- This will force the generation of the APK when not building inside visual studio -->
-  <Target Name="GenerateBuild" DependsOnTargets="SignAndroidPackage" AfterTargets="Build" Condition="'$(BuildingInsideVisualStudio)'=='' or '$(MSBuildVersion)'&lt;'17.0' " />
+  <!--<Target Name="GenerateBuild" DependsOnTargets="SignAndroidPackage" AfterTargets="Build" Condition="'$(BuildingInsideVisualStudio)'=='' or '$(MSBuildVersion)'&lt;'17.0' " />-->
   <Target Name="Issue3897Workaround" Condition=" '$(ManagedDesignTimeBuild)' == 'True' " AfterTargets="_RemoveLegacyDesigner">
     <!-- See https://github.com/unoplatform/uno/issues/3897 and https://github.com/xamarin/xamarin-android/issues/5069 for more details -->
     <ItemGroup>

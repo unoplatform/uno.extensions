@@ -53,4 +53,15 @@ public static class NavigationRequestExtensions
 
         return null;
     }
+
+	public static bool SameRouteBase(this NavigationRequest request, NavigationRequest newRequest)
+	{
+		if(request?.Route is null || newRequest?.Route is null)
+		{
+			return false;
+		}
+
+		return request.Route.Scheme == newRequest.Route.Scheme &&
+			request.Route.Base == newRequest.Route.Base;
+	}
 }

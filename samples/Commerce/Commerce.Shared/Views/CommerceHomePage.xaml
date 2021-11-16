@@ -12,12 +12,63 @@
       mc:Ignorable="d"
       xmlns:toolkit="using:Uno.Toolkit.UI.Controls"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-	<utu:AutoLayout uen:Region.Attached="True">
+    <Grid x:Name="NavRoot">
+		<VisualStateManager.VisualStateGroups>
+			<VisualStateGroup>
+				<VisualState x:Name="Narrow">
+					<VisualState.StateTriggers>
+						<AdaptiveTrigger MinWindowWidth="0"
+										 MinWindowHeight="0" />
+					</VisualState.StateTriggers>
+					<VisualState.Setters>
+						<Setter Target="Tabs.Visibility"
+								Value="Visible" />
+						
+<!--Hiding NavView Pane doesn't work on UWP and will crash, as reported https://github.com/microsoft/microsoft-ui-xaml/issues/5971-->
+						<Setter Target="NavView.IsPaneVisible"
+								Value="False" />
+					</VisualState.Setters>
+				</VisualState>
+				<VisualState x:Name="Normal">
+					<VisualState.StateTriggers>
+						<AdaptiveTrigger MinWindowWidth="700" />
+					</VisualState.StateTriggers>
+					<VisualState.Setters>
+						<Setter Target="Tabs.Visibility"
+								Value="Collapsed" />
+					</VisualState.Setters>
+				</VisualState>
+				<VisualState x:Name="Wide">
+					<VisualState.StateTriggers>
+						<AdaptiveTrigger MinWindowWidth="1000" />
+					</VisualState.StateTriggers>
+					<VisualState.Setters>
+						<Setter Target="Tabs.Visibility"
+								Value="Collapsed" />
+					</VisualState.Setters>
+				</VisualState>
+			</VisualStateGroup>
+		</VisualStateManager.VisualStateGroups>
+
+		<muxc:NavigationView x:Name="NavView"
+							 nav:Region.Attached="true">
+			<muxc:NavigationView.MenuItems>
+				<muxc:NavigationViewItem Icon="Home"
+										 Content="Products"
+										 nav:Region.Name="Products" />
+				<muxc:NavigationViewItem Content="Deals"
+										 nav:Region.Name="Deals"/>
+				<muxc:NavigationViewItem Content="Profile"
+										 nav:Region.Name="Profile" />
+				<muxc:NavigationViewItem Content="Cart"
+										 nav:Navigation.Request="!CartDialog" />
+			</muxc:NavigationView.MenuItems>
+	<utu:AutoLayout >
 		<Grid uen:Region.Attached="True" uen:Region.Navigator="Visibility" utu:AutoLayout.PrimaryAlignment="Stretch" utu:AutoLayout.CounterAlignment="Stretch" />
 		<utu:TabBar uen:Region.Attached="True" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialBottomTabBarStyle}">
-			<utu:TabBarItem IsSelectable="True" AutomationProperties.Name="Products" Icon="{StaticResource Icon_storefront}" utu:AutoLayout.PrimaryAlignment="Stretch" utu:AutoLayout.CounterLength="56" Style="{StaticResource MaterialBottomTabBarItemStyle}" />
-			<utu:TabBarItem IsSelectable="True" AutomationProperties.Name="Deals" Icon="{StaticResource Icon_bolt}" utu:AutoLayout.PrimaryAlignment="Stretch" utu:AutoLayout.CounterLength="56" Style="{StaticResource MaterialBottomTabBarItemStyle}" />
-			<utu:TabBarItem IsSelectable="True" AutomationProperties.Name="Profile" Icon="{StaticResource Icon_person}" utu:AutoLayout.PrimaryAlignment="Stretch" utu:AutoLayout.CounterLength="56" Style="{StaticResource MaterialBottomTabBarItemStyle}" />
+					<utu:TabBarItem uen:Region.Name="Products"  IsSelectable="True" AutomationProperties.Name="Products" Icon="{StaticResource Icon_storefront}" utu:AutoLayout.PrimaryAlignment="Stretch" utu:AutoLayout.CounterLength="56" Style="{StaticResource MaterialBottomTabBarItemStyle}" />
+			<utu:TabBarItem uen:Region.Name="Deals" IsSelectable="True" AutomationProperties.Name="Deals" Icon="{StaticResource Icon_bolt}" utu:AutoLayout.PrimaryAlignment="Stretch" utu:AutoLayout.CounterLength="56" Style="{StaticResource MaterialBottomTabBarItemStyle}" />
+			<utu:TabBarItem uen:Region.Name="Profile" IsSelectable="True" AutomationProperties.Name="Profile" Icon="{StaticResource Icon_person}" utu:AutoLayout.PrimaryAlignment="Stretch" utu:AutoLayout.CounterLength="56" Style="{StaticResource MaterialBottomTabBarItemStyle}" />
 			<utu:TabBarItem IsSelectable="False" AutomationProperties.Name="Cart" Icon="{StaticResource Icon_shopping_cart}" utu:AutoLayout.PrimaryAlignment="Stretch" utu:AutoLayout.CounterLength="56" Style="{StaticResource MaterialBottomFabTabBarItemStyle}" nav:Navigation.Request="!CartDialog"/>
 		</utu:TabBar>
 		<utu:AutoLayout.Resources>
@@ -28,4 +79,6 @@
 		</utu:AutoLayout.Resources>
 	</utu:AutoLayout>
 
+</muxc:NavigationView>
+	</Grid>
 </Page>
