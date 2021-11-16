@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Commerce.Models;
 using Commerce.Services;
 using Uno.Extensions.Reactive;
-using static Commerce.ViewModels.FilterViewModel;
+using static Commerce.ViewModels.FiltersViewModel;
 
 namespace Commerce.ViewModels;
 
@@ -19,7 +19,7 @@ public partial class ProductsViewModel : IAsyncDisposable
 		public BindableProductsViewModel(
 			IProductService products,
 			string? defaultSearchTerm = default,
-			Filter? defaultFilter = default)
+			Filters? defaultFilter = default)
 		{
 			_searchTerm = new Bindable<string>(Property(nameof(SearchTerm), defaultSearchTerm, out var searchTermSubject));
 			//_filter = new Bindable<Filter>(Property(nameof(Filter), defaultFilter ?? new(), out var filterSubject));
@@ -50,7 +50,7 @@ public partial class ProductsViewModel : IAsyncDisposable
 		//	set => _filterQuery.SetValue(value);
 		//}
 
-		public Filter Filter
+		public Filters Filter
 		{
 			get => _filter.GetValue();
 			set => _filter.SetValue(value);
