@@ -10,6 +10,7 @@
 	d:DesignHeight="300"
 	d:DesignWidth="400"
 	Placement="Full"
+	  xmlns:utu="using:Uno.Toolkit.UI.Controls"
 	xmlns:nav="using:Uno.Extensions.Navigation.Controls">
 	
     <Flyout.FlyoutPresenterStyle>
@@ -59,59 +60,38 @@
             </Setter>
         </Style>
     </Flyout.FlyoutPresenterStyle>
-    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="12">
-        <StackPanel Orientation="Horizontal">
-            <Button nav:Navigation.Request="-">
-                <SymbolIcon Symbol="Cancel" />
-            </Button>
-            <TextBlock Text="Filter"
-                       VerticalAlignment="Center" />
-        </StackPanel>
-        <Border BorderThickness="1"
-                BorderBrush="Black" />
-		<TextBox Text="{Binding Keywords, Mode=TwoWay}" PlaceholderText="Keywords" x:Name="QueryText" />
-        <TextBlock Text="Categories" />
-		<StackPanel Orientation="Horizontal">
-			<controls:Chip Content="Shoes"
-                           CornerRadius="10" />
-			<controls:Chip Content="Accessories"
-                           CornerRadius="10" />
-			<controls:Chip Content="Headwear"
-                           CornerRadius="10" />
-		</StackPanel>
-		<StackPanel Orientation="Horizontal">
-			<CheckBox Content="Shoes" IsChecked="{Binding Filter.Shoes, Mode=TwoWay}" />
-			<CheckBox Content="Accessories" IsChecked="{Binding Filter.Accessories, Mode=TwoWay}" />
-			<CheckBox Content="Headwear" IsChecked="{Binding Filter.Headwear, Mode=TwoWay}" />
-		</StackPanel>
-		<Grid>
-            <TextBlock Text="In stock only"
-                       VerticalAlignment="Center"
-                       FontWeight="SemiBold" />
-            <ToggleSwitch HorizontalAlignment="Right"
-                          OffContent=""
-                          OnContent=""
-						/>
-        </Grid>
-        <Grid>
-            <TextBlock Text="Price"
-                       VerticalAlignment="Center"
-                       FontWeight="SemiBold" />
-            <TextBlock Text="Low to high"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Right" />
-        </Grid>
-        <Grid>
-            <TextBlock Text="Currency"
-                       VerticalAlignment="Center"
-                       FontWeight="SemiBold" />
-            <TextBlock Text="USD"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Right" />
-        </Grid>
-        <Button HorizontalAlignment="Stretch"
-                Content="Apply"
-                nav:Navigation.Request="-"
-                nav:Navigation.Data="{Binding Filter.Value}" />
-    </StackPanel>
+	<utu:AutoLayout>
+		<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch">
+			<utu:NavigationBar Content="Filters" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialNavigationBarStyle}">
+			</utu:NavigationBar>
+			<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch">
+				<utu:AutoLayout Spacing="10" Background="{StaticResource MaterialSurfaceBrush}" utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryLength="1">
+					<utu:AutoLayout Spacing="10" Padding="10,10,10,10" Background="{StaticResource MaterialOnSurfacePressedBrush}" utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryLength="411" />
+				</utu:AutoLayout>
+				<utu:AutoLayout Spacing="16" Padding="16,16,16,16" utu:AutoLayout.CounterAlignment="Stretch">
+					<TextBlock Foreground="{StaticResource MaterialOnBackgroundBrush}" Text="Categories" Style="{StaticResource MaterialSubtitle2}" />
+					<utu:AutoLayout Spacing="8" Orientation="Horizontal">
+						<utu:Chip Content="Shoes" IsChecked="{Binding Filter.Shoes, Mode=TwoWay}" Style="{StaticResource MaterialOutlinedFilterChipStyle}" />
+						<utu:Chip Content="Accessories" IsChecked="{Binding Filter.Accessories, Mode=TwoWay}" Style="{StaticResource MaterialOutlinedFilterChipStyle}" />
+						<utu:Chip Content="Headwear" IsChecked="{Binding Filter.Headwear, Mode=TwoWay}" Style="{StaticResource MaterialOutlinedFilterChipStyle}" />
+					</utu:AutoLayout>
+					<utu:AutoLayout Spacing="16" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
+						<TextBlock Foreground="{StaticResource MaterialOnBackgroundBrush}" TextWrapping="Wrap" Text="In stock only" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialSubtitle2}" />
+						<ToggleSwitch utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialToggleSwitchStyle}" />
+					</utu:AutoLayout>
+					<utu:AutoLayout Spacing="16" Padding="0,8,8,8" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
+						<TextBlock Foreground="{StaticResource MaterialOnBackgroundBrush}" TextWrapping="Wrap" Text="Order" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialSubtitle2}" />
+						<TextBlock Foreground="{StaticResource MaterialOnBackgroundMediumBrush}" TextAlignment="End" TextWrapping="Wrap" Text="Relevance" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialBody2}" />
+					</utu:AutoLayout>
+					<utu:AutoLayout Spacing="16" Padding="0,8,8,8" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
+						<TextBlock Foreground="{StaticResource MaterialOnBackgroundBrush}" TextWrapping="Wrap" Text="Currency" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialSubtitle2}" />
+						<TextBlock Foreground="{StaticResource MaterialOnBackgroundMediumBrush}" TextAlignment="End" TextWrapping="Wrap" Text="CAD" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialBody2}" />
+					</utu:AutoLayout>
+				</utu:AutoLayout>
+			</utu:AutoLayout>
+			<utu:AutoLayout Spacing="8" Padding="16,16,16,16" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
+				<Button Content="Apply" utu:AutoLayout.PrimaryAlignment="Stretch" Style="{StaticResource MaterialContainedButtonStyle}" nav:Navigation.Request="-" nav:Navigation.Data="{Binding Filter.Value}"/>
+			</utu:AutoLayout>
+		</utu:AutoLayout>
+	</utu:AutoLayout>
 </Flyout>
