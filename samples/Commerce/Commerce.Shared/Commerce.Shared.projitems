@@ -148,7 +148,6 @@
     <Content Include="$(MSBuildThisFileDirectory)products.json" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Navigation\" />
     <Folder Include="$(MSBuildThisFileDirectory)Models\" />
   </ItemGroup>
 </Project>
