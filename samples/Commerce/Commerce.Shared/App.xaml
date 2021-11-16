@@ -21,8 +21,8 @@
 
 				<ResourceDictionary Source="ms-appx:///Styles/FeedView.xaml" />
 			</ResourceDictionary.MergedDictionaries>
-           
-        </ResourceDictionary>
-    </Application.Resources>
+			<x:Double x:Key="LandscapeMaxPageWidth">500</x:Double>
+		</ResourceDictionary>
+	</Application.Resources>
 
 </Application>

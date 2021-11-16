@@ -9,7 +9,7 @@
 	  xmlns:utu="using:Uno.Toolkit.UI.Controls"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-	<utu:AutoLayout>
+	<utu:AutoLayout MaxWidth="{StaticResource LandscapeMaxPageWidth}">
 		<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryAlignment="Stretch">
 			<utu:AutoLayout Spacing="16" Padding="32,48,32,8" utu:AutoLayout.CounterAlignment="Stretch">
 				<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Body_Welcome" Text="Welcome." Style="{StaticResource MaterialHeadline4}" />
