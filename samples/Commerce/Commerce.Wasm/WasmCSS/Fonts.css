@@ -29,6 +29,16 @@ body::before {
   position: absolute;
 }
 
+/* Workaround for uno issue https://github.com/unoplatform/uno/issues/693 */
+body::after {
+  font-family: 'Roboto';
+  background: transparent;
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
 /* https://github.com/unoplatform/uno/issues/4304 */
 @font-face {
   font-family: 'Segoe UI';
