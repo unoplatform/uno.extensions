@@ -15,7 +15,9 @@
                 <!-- Load the Material control resources -->
                 <MaterialResources xmlns="using:Uno.Material" />
                 <ToolkitResources xmlns="using:Uno.Toolkit.UI" />
-                <!--<MaterialToolkitResources xmlns="using:Uno.Toolkit.Material" />-->
+
+				<MaterialToolkitColors xmlns="using:Uno.Toolkit.UI.Material" />
+				<MaterialToolkitResources xmlns="using:Uno.Toolkit.UI.Material" />
 
 				<ResourceDictionary Source="ms-appx:///Styles/FeedView.xaml" />
 			</ResourceDictionary.MergedDictionaries>

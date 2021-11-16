@@ -70,7 +70,10 @@ public class NavigationViewNavigator : ControlNavigator<Microsoft.UI.Xaml.Contro
         }
         finally
         {
-            await CurrentView.EnsureLoaded();
+			if (Control.IsPaneVisible)
+			{
+				await CurrentView.EnsureLoaded();
+			}
             Control.SelectionChanged += ControlSelectionChanged;
         }
     }

@@ -40,6 +40,7 @@ namespace Commerce
 	public sealed partial class App : Application
 	{
 		private Window _window;
+		public Window Window => _window;
 
 		private IHost Host { get; }
 
@@ -236,10 +237,10 @@ namespace Commerce
 		private static void RegisterRoutes(IRouteBuilder builder)
 		{
 			builder.Register(new RouteMap("Login", typeof(LoginPage), typeof(LoginViewModel.BindableLoginViewModel)))
-					.Register(new RouteMap(typeof(CommerceHomePage).Name, typeof(CommerceHomePage),
+					.Register(new RouteMap("Home", typeof(CommerceHomePage),
 						RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
-												nav with { Route = nav.Route.Append(Route.NestedRoute("Products")) } :
-												nav))
+													nav with { Route = nav.Route.Append(Route.NestedRoute("Products")) } :
+													nav))
 					.Register(new RouteMap("Products", typeof(FrameView),
 						ViewModel: typeof(ProductsViewModel.BindableProductsViewModel),
 						RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
@@ -254,6 +255,10 @@ namespace Commerce
 												nav with { Route = nav.Route with { Base = "+DealsPage/HotDeals" } } :
 												nav with { Route = nav.Route with { Path = "+DealsPage/HotDeals" } }))
 					.Register(new RouteMap<Product>("ProductDetails",
+						RegionInitialization: (region, nav) => (App.Current as App).Window.Content.ActualSize.X > 800 ?
+												nav with { Route = nav.Route with { Scheme="./", Base="Details", Path = nameof(ProductDetailsPage) } } :
+												nav with { Route = nav.Route with { Base = nameof(ProductDetailsPage) } }))
+					.Register(new RouteMap<Product>(nameof(ProductDetailsPage),
 						typeof(ProductDetailsPage),
 						typeof(ProductDetailsViewModel.BindableProductDetailsViewModel),
 						BuildQueryParameters: entity => new Dictionary<string, string> { { "ProductId", (entity as Product)?.ProductId + "" } }))

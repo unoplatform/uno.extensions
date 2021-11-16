@@ -50,13 +50,13 @@ namespace Uno.Extensions.Configuration
                 reloadEnabled = true;
                 if (fp is FileConfigurationProvider fcp)
                 {
-                    if (fcp.Source.Path.Contains(appSettingsFileName, StringComparison.OrdinalIgnoreCase))
+                    if (fcp.Source.Path.Contains(appSettingsFileName))
                     {
                         appSettings = true;
                     }
 
 
-                    if (fcp.Source.Path.Contains(environmentAppSettingsFileName, StringComparison.OrdinalIgnoreCase))
+                    if (fcp.Source.Path.Contains(environmentAppSettingsFileName))
                     {
                         envAppSettings = true;
                     }
