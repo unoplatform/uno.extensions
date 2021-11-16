@@ -71,7 +71,8 @@ namespace Commerce
 			.ConfigureServices(services =>
 			{
 				services
-				.AddSingleton((Func<IServiceProvider, IProductService>)(sp => new ProductService("products.json")));
+				.AddSingleton<IProductService>(sp => new ProductService("products.json"))
+				.AddSingleton<ICartService>(sp => new CartService("products.json"));
 			})
 			.UseNavigation(RegisterRoutes)
 			.UseToolkitNavigation()
@@ -261,7 +262,12 @@ namespace Commerce
 												nav with { Route = nav.Route.AppendNested<CartPage>() } :
 												nav))
 					.Register(new RouteMap("Filter", typeof(FilterPopup), typeof(FilterViewModel.BindableFilterViewModel)))
-					.Register(new RouteMap("Profile", typeof(ProfilePage), typeof(ProfileViewModel)));
+					.Register(new RouteMap("Profile", typeof(ProfilePage), typeof(ProfileViewModel)))
+          .Register(new RouteMap(typeof(CartDialog).Name, typeof(CartDialog),
+				    RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
+										nav with { Route = nav.Route.AppendNested<CartPage>() } :
+										nav))
+			    .Register(new RouteMap(typeof(CartPage).Name, typeof(CartPage), typeof(CartViewModel)));
 		}
 	}
 }

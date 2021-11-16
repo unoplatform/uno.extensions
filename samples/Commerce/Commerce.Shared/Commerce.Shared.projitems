@@ -24,10 +24,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Services\CartService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\ProductServices.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\CartViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\IProductService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\JsonDataService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Product.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\ProductServices.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Person.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Review.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Credentials.cs" />
@@ -146,7 +148,6 @@
     <Content Include="$(MSBuildThisFileDirectory)products.json" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Navigation\" />
     <Folder Include="$(MSBuildThisFileDirectory)Models\" />
   </ItemGroup>
 </Project>
