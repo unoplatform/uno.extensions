@@ -1,0 +1,47 @@
+﻿<Page x:Class="Commerce.Views.LandscapeHomePage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:local="using:Commerce.Views"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  xmlns:nav="using:Uno.Extensions.Navigation.Controls"
+	  xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+	  mc:Ignorable="d"
+	  xmlns:toolkit="using:Uno.Toolkit.UI.Controls"
+	  xmlns:commerce="using:Commerce"
+	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+	<Grid nav:Region.Attached="true">
+		<muxc:NavigationView x:Name="NavView"
+							 nav:Region.Attached="true">
+			<muxc:NavigationView.MenuItems>
+				<muxc:NavigationViewItem Icon="Home"
+										 Content="Products"
+										 nav:Region.Name="Products" />
+				<muxc:NavigationViewItem Content="Deals"
+										 nav:Region.Name="Deals" />
+				<muxc:NavigationViewItem Content="Profile"
+										 nav:Region.Name="Profile" />
+				<muxc:NavigationViewItem Content="Cart"
+										 nav:Navigation.Request="!CartDialog" />
+			</muxc:NavigationView.MenuItems>
+
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition />
+					<ColumnDefinition />
+				</Grid.ColumnDefinitions>
+				<Grid nav:Region.Attached="true"
+					  nav:Region.Navigator="Visibility" />
+
+				<ContentControl nav:Region.Name="Details"
+								nav:Region.Attached="true"
+								Grid.Column="1"
+								HorizontalAlignment="Stretch"
+								VerticalAlignment="Stretch"
+								HorizontalContentAlignment="Stretch"
+								VerticalContentAlignment="Stretch" />
+			</Grid>
+
+		</muxc:NavigationView>
+	</Grid>
+</Page>

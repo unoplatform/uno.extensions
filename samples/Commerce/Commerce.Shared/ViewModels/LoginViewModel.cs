@@ -42,7 +42,7 @@ public partial class LoginViewModel
 			await _error.Set(default, ct);
 			await Task.Delay(1000, ct);
 
-			CoreApplication.MainView?.DispatcherQueue.TryEnqueue(() => _navigator.NavigateToRouteAsync(this, "/-/CommerceHomePage", cancellation: ct));
+			CoreApplication.MainView?.DispatcherQueue.TryEnqueue(() => _navigator.NavigateToRouteAsync(this, "/-/Home", cancellation: ct));
 		}
 		else
 		{
