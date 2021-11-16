@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Microsoft.Extensions.Options;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Reactive;
 
@@ -16,6 +17,7 @@ public partial class LoginViewModel : IAsyncDisposable
 
 		public BindableLoginViewModel(
 			INavigator navigator,
+			IOptions<AppInfo> appInfo,
 			Credentials? defaultCredentials = default,
 			string? defaultError = default)
 		{
@@ -24,7 +26,7 @@ public partial class LoginViewModel : IAsyncDisposable
 
 			var login = new CommandBuilder<object?>(nameof(Login));
 
-			var vm = new LoginViewModel(navigator, credentialsSubject, errorSubject, login);
+			var vm = new LoginViewModel(navigator, appInfo, credentialsSubject, errorSubject, login);
 			var ctx = SourceContext.GetOrCreate(vm);
 			SourceContext.Set(this, ctx);
 			RegisterDisposable(vm);

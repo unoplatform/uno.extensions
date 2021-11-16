@@ -30,35 +30,34 @@ namespace Uno.Extensions.Configuration
                     });
         }
 
-        public static IHostBuilder UseAppSettings<TApplicationRoot>(this IHostBuilder hostBuilder)
-            where TApplicationRoot : class
-        {
-            return hostBuilder
-                    .UseConfiguration()
-                    .ConfigureAppConfiguration((ctx,b) =>
-                        b.AddAppSettings(ctx)
-                    );
-        }
+		public static IHostBuilder UseAppSettings(this IHostBuilder hostBuilder, bool includeEnvironmentSettings = true)
+		{
+			return hostBuilder
+					.UseConfiguration()
+					.ConfigureAppConfiguration((ctx, b) =>
+					{
+						b.AddAppSettings(ctx);
+						if (includeEnvironmentSettings)
+						{
+							b.AddEnvironmentAppSettings(ctx);
+						}
+					});
+		}
 
-        public static IHostBuilder UseEnvironmentAppSettings<TApplicationRoot>(this IHostBuilder hostBuilder)
-            where TApplicationRoot : class
-        {
-            return hostBuilder
-                    .UseConfiguration()
-                    .ConfigureAppConfiguration((ctx, b) =>
-                        b.AddEnvironmentAppSettings(ctx)
-                    );
-        }
-
-        public static IHostBuilder UseEmbeddedEnvironmentAppSettings<TApplicationRoot>(this IHostBuilder hostBuilder)
-            where TApplicationRoot : class
-        {
-            // This is consistent with HostBuilder, which defaults to Production
-            return hostBuilder
-                    .UseConfiguration()
-                    .ConfigureAppConfiguration((ctx, b) =>
-                        b.AddEmbeddedEnvironmentAppSettings<TApplicationRoot>(ctx));
-        }
+		public static IHostBuilder UseEmbeddedAppSettings<TApplicationRoot>(this IHostBuilder hostBuilder, bool includeEnvironmentSettings = true)
+			where TApplicationRoot : class
+		{
+			return hostBuilder
+					.UseConfiguration()
+					.ConfigureAppConfiguration((ctx, b) =>
+					{
+						b.AddEmbeddedAppSettings<TApplicationRoot>();
+						if (includeEnvironmentSettings)
+						{
+							b.AddEmbeddedEnvironmentAppSettings<TApplicationRoot>(ctx);
+						}
+					});
+		}
 
         public static IHostBuilder UseSettings<TSettingsOptions>(
             this IHostBuilder hostBuilder,

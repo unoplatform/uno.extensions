@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Commerce.Models;
 using Commerce.Services;
 using Uno.Extensions.Reactive;
 
@@ -37,6 +38,6 @@ public partial class ProductsViewModel
 
 	private Product[] FilterProducts((Product[] products, Filter? filter) inputs)
 	{
-		return inputs.products.Where(p => inputs.filter?.Match(p) ?? true).ToArray();
+		return inputs.products.ToArray();//.Where(p => inputs.filter?.Match(p) ?? true).ToArray();
 	}
 }

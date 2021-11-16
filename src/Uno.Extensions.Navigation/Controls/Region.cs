@@ -86,7 +86,7 @@ public static class Region
         return element;
     }
 
-    public static void SetInstance(this DependencyObject element, IRegion value)
+    public static void SetInstance(this DependencyObject element, IRegion? value)
     {
         element.SetValue(InstanceProperty, value);
     }
@@ -116,7 +116,7 @@ public static class Region
         return (FrameworkElement)element.GetValue(ParentProperty);
     }
 
-    public static void SetName(this FrameworkElement element, string value)
+    public static void SetName(this FrameworkElement element, string? value)
     {
         element.SetValue(NameProperty, value);
     }

@@ -18,7 +18,6 @@
                 <!--<MaterialToolkitResources xmlns="using:Uno.Toolkit.Material" />-->
 
 				<ResourceDictionary Source="ms-appx:///Styles/FeedView.xaml" />
-
 			</ResourceDictionary.MergedDictionaries>
            
         </ResourceDictionary>

@@ -132,6 +132,14 @@
       <Project>{406a741f-fb06-482f-9037-154b55fcb2ce}</Project>
       <Name>Uno.Extensions.Logging</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.csproj">
+      <Project>{1aabcd2d-80a3-4083-b7c4-e6013ab998e1}</Project>
+      <Name>Uno.Extensions.Navigation.Toolkit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UI.csproj">
+      <Project>{078b7148-820b-4441-85b1-800ad8c869ce}</Project>
+      <Name>Uno.Extensions.Navigation.UI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj">
       <Project>{ad3c0a66-450d-4355-b5c4-fdaf0d7746ad}</Project>
       <Name>Uno.Extensions.Navigation</Name>
@@ -152,11 +160,7 @@
   <Import Project="..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- This will force the generation of the APK when not building inside visual studio -->
-   <Target Name="GenerateBuild"
-					 DependsOnTargets="SignAndroidPackage"
-					 AfterTargets="Build"
-					 Condition="'$(BuildingInsideVisualStudio)'=='' or '$(MSBuildVersion)'&lt;'17.0' " />
-	
+  <Target Name="GenerateBuild" DependsOnTargets="SignAndroidPackage" AfterTargets="Build" Condition="'$(BuildingInsideVisualStudio)'=='' or '$(MSBuildVersion)'&lt;'17.0' " />
   <Target Name="Issue3897Workaround" Condition=" '$(ManagedDesignTimeBuild)' == 'True' " AfterTargets="_RemoveLegacyDesigner">
     <!-- See https://github.com/unoplatform/uno/issues/3897 and https://github.com/xamarin/xamarin-android/issues/5069 for more details -->
     <ItemGroup>

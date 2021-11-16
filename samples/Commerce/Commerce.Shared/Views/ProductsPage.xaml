@@ -52,8 +52,9 @@
 								<TextBlock Text="{Binding Parent.Filter}" />
 								<HyperlinkButton
 									Content="Filter"
-									nav:Navigation.Request="!FilterPopup"
-									nav:Navigation.Data="{Binding Parent.Filter, Mode=TwoWay}" />
+									DataContext="{Binding }"
+									nav:Navigation.Request="!Filter"
+												 nav:Navigation.Data="{Binding Parent.Filter, Mode=TwoWay}" />
 							</StackPanel>
 						</Grid>
 					</ListView.Header>

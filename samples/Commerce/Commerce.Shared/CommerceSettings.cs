@@ -6,6 +6,6 @@ namespace Commerce
 {
     public record CommerceSettings
     {
-        public string AppTitle { get; init; }
+        public string LastSearch { get; init; }
     }
 }
