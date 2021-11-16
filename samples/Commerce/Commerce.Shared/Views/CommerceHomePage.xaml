@@ -23,10 +23,10 @@
 					<VisualState.Setters>
 						<Setter Target="Tabs.Visibility"
 								Value="Visible" />
-						<!--
-Hiding NavView Pane doesn't work, as reported https://github.com/microsoft/microsoft-ui-xaml/issues/5971
+						
+<!--Hiding NavView Pane doesn't work on UWP and will crash, as reported https://github.com/microsoft/microsoft-ui-xaml/issues/5971-->
 						<Setter Target="NavView.IsPaneVisible"
-								Value="False" />-->
+								Value="False" />
 					</VisualState.Setters>
 				</VisualState>
 				<VisualState x:Name="Normal">
@@ -57,22 +57,18 @@ Hiding NavView Pane doesn't work, as reported https://github.com/microsoft/micro
 										 Content="Products"
 										 nav:Region.Name="Products" />
 				<muxc:NavigationViewItem Content="Deals"
-										 nav:Region.Name="Deals">
-					<muxc:NavigationViewItem.Icon>
-						<FontIcon FontFamily="Segoe MDL2 Assets"
-								  Glyph="&#xEB3C;" />
-					</muxc:NavigationViewItem.Icon>
-				</muxc:NavigationViewItem>
-				<muxc:NavigationViewItem Icon="Contact"
-										 Content="Profile"
-										 nav:Navigation.Request="../../Profile" />
+										 nav:Region.Name="Deals"/>
+				<muxc:NavigationViewItem Content="Profile"
+										 nav:Region.Name="Profile" />
+				<muxc:NavigationViewItem Content="Cart"
+										 nav:Navigation.Request="!CartDialog" />
 			</muxc:NavigationView.MenuItems>
 	<utu:AutoLayout >
 		<Grid uen:Region.Attached="True" uen:Region.Navigator="Visibility" utu:AutoLayout.PrimaryAlignment="Stretch" utu:AutoLayout.CounterAlignment="Stretch" />
 		<utu:TabBar uen:Region.Attached="True" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialBottomTabBarStyle}">
-			<utu:TabBarItem IsSelectable="True" AutomationProperties.Name="Products" Icon="{StaticResource Icon_storefront}" utu:AutoLayout.PrimaryAlignment="Stretch" utu:AutoLayout.CounterLength="56" Style="{StaticResource MaterialBottomTabBarItemStyle}" />
-			<utu:TabBarItem IsSelectable="True" AutomationProperties.Name="Deals" Icon="{StaticResource Icon_bolt}" utu:AutoLayout.PrimaryAlignment="Stretch" utu:AutoLayout.CounterLength="56" Style="{StaticResource MaterialBottomTabBarItemStyle}" />
-			<utu:TabBarItem IsSelectable="True" AutomationProperties.Name="Profile" Icon="{StaticResource Icon_person}" utu:AutoLayout.PrimaryAlignment="Stretch" utu:AutoLayout.CounterLength="56" Style="{StaticResource MaterialBottomTabBarItemStyle}" />
+					<utu:TabBarItem uen:Region.Name="Products"  IsSelectable="True" AutomationProperties.Name="Products" Icon="{StaticResource Icon_storefront}" utu:AutoLayout.PrimaryAlignment="Stretch" utu:AutoLayout.CounterLength="56" Style="{StaticResource MaterialBottomTabBarItemStyle}" />
+			<utu:TabBarItem uen:Region.Name="Deals" IsSelectable="True" AutomationProperties.Name="Deals" Icon="{StaticResource Icon_bolt}" utu:AutoLayout.PrimaryAlignment="Stretch" utu:AutoLayout.CounterLength="56" Style="{StaticResource MaterialBottomTabBarItemStyle}" />
+			<utu:TabBarItem uen:Region.Name="Profile" IsSelectable="True" AutomationProperties.Name="Profile" Icon="{StaticResource Icon_person}" utu:AutoLayout.PrimaryAlignment="Stretch" utu:AutoLayout.CounterLength="56" Style="{StaticResource MaterialBottomTabBarItemStyle}" />
 			<utu:TabBarItem IsSelectable="False" AutomationProperties.Name="Cart" Icon="{StaticResource Icon_shopping_cart}" utu:AutoLayout.PrimaryAlignment="Stretch" utu:AutoLayout.CounterLength="56" Style="{StaticResource MaterialBottomFabTabBarItemStyle}" nav:Navigation.Request="!CartDialog"/>
 		</utu:TabBar>
 		<utu:AutoLayout.Resources>

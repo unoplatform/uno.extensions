@@ -90,8 +90,8 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			// send request to parent if the route has no scheme
 			if (request.Route.IsCurrent() &&
 				!Region.IsNamed() &&
-				Region.Parent is not null &&
-				!(Region.Children.Any(x=>x.Name==request.Route.Base))
+				Region.Parent is not null
+				&& !(Region.Children.Any(x=>x.Name==request.Route.Base))
 				)
 			{
 				return await Region.Parent.NavigateAsync(request);
