@@ -34,7 +34,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Commerce.Models;
 using Uno.Extensions.Navigation.Toolkit;
-using Commerce.Views;
 
 namespace Commerce
 {

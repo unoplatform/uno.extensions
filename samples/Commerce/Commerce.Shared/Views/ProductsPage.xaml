@@ -51,7 +51,7 @@
 			<ColumnDefinition Width="0"
 							  x:Name="DetailsColumn" />
 		</Grid.ColumnDefinitions>
-		<Grid>
+		
             <utu:AutoLayout>
 		<utu:NavigationBar Content="Uno commerce" x:Uid="Page_NavigationBar" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialNavigationBarStyle}">
 			<utu:NavigationBar.PrimaryCommands>

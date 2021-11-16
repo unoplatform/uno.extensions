@@ -64,7 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="7.0.3" />
-    <PackageReference Include="Uno.UI" Version="4.0.0-dev.5531" />
+    <PackageReference Include="Uno.UI" Version="4.0.0-dev.5594" />
     <PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5531" Condition="'$(Configuration)'=='Debug'" />
     <PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.91" />
     <PackageReference Include="Uno.Toolkit.UI.Material" Version="0.1.0-dev.91" />

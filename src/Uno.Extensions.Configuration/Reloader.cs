@@ -29,7 +29,7 @@ namespace Uno.Extensions.Configuration
             foreach (var fp in fileProviders)
             {
                 Logger.LogDebugMessage($@"Config provider of type '{fp.GetType().Name}'");
-                if (fp is FileConfigurationProvider fcp && (configFile is null || configFile.Contains(fcp.Source.Path, StringComparison.InvariantCultureIgnoreCase)))
+                if (fp is FileConfigurationProvider fcp && (configFile is null || configFile.Contains(fcp.Source.Path)))
                 {
                     Logger.LogDebugMessage($@"Loading from file '{fcp.Source.Path}'");
                     var provider = fcp.Source.FileProvider;
