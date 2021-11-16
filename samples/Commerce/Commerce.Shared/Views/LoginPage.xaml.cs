@@ -46,7 +46,8 @@ namespace Commerce
             VisualStateManager.GoToState(this, "Authenticating", true);
             await Task.Delay(2000);
             VisualStateManager.GoToState(this, "Default", true);
-            return !string.IsNullOrWhiteSpace(UsernameText.Text);
+			return false;
+            //return !string.IsNullOrWhiteSpace(UsernameText.Text);
         }
     }
 }

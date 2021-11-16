@@ -6,63 +6,24 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       mc:Ignorable="d"
       xmlns:nav="using:Uno.Extensions.Navigation.Controls"
+	  xmlns:utu="using:Uno.Toolkit.UI.Controls"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid >
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup>
-                <VisualState x:Name="Authenticating">
-                    <VisualState.Setters>
-                        <Setter Target="ProgressOverlay.Visibility"
-                                Value="Visible" />
-                        <Setter Target="Progress.IsActive"
-                                Value="True" />
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState x:Name="Default" />
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
-        <Border Background="Black"
-                Opacity="0.1" />
-        <Grid HorizontalAlignment="Center"
-              VerticalAlignment="Center"
-              MinWidth="300"
-              MinHeight="300">
-            <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
-            <StackPanel HorizontalAlignment="Center"
-                        VerticalAlignment="Top"
-                        Margin="0,24,0,12">
-                <TextBlock Text="Welcome."
-                           FontSize="34"/>
-                <TextBlock Text="Log in to your account"
-                           />
-                <TextBox PlaceholderText="Email"
-                         Margin="0,8"
-                         MinWidth="200"
-                         Name="UsernameText"
-						 Text="{Binding Credentials.UserName, Mode=TwoWay}"/>
-                <PasswordBox  Margin="0,8"
-                              PlaceholderText="Password"
-                              MinWidth="200"
-							  Password="{Binding Credentials.Password, Mode=TwoWay}" />
-                <HyperlinkButton Content="Forgot password?" />
-				<TextBlock Text="{Binding Error}" Foreground="DarkRed" HorizontalAlignment="Center" />
-				<Button Content="LOGIN"
-                        HorizontalAlignment="Stretch"
-                        Margin="0,8"
-                        Command="{Binding Login}" />
-				<TextBlock Text="Legal mentions" HorizontalAlignment="Center" />
-			</StackPanel>
-            <Grid x:Name="ProgressOverlay"
-                  Visibility="{Binding Login.IsExecuting}">
-                <Border Background="White"
-                        Opacity="0.7"/>
-                <ProgressRing x:Name="Progress"
-                              HorizontalAlignment="Center"
-                              VerticalAlignment="Center"
-                              IsActive="{Binding Login.IsExecuting}" />
-            </Grid>
-
-        </Grid>
-    </Grid>
+	<utu:AutoLayout>
+		<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryAlignment="Stretch">
+			<utu:AutoLayout Spacing="16" Padding="32,48,32,8" utu:AutoLayout.CounterAlignment="Stretch">
+				<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Body_Welcome" Text="Welcome." Style="{StaticResource MaterialHeadline4}" />
+				<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Body_Log in to your account" Text="Log in to your account" Style="{StaticResource MaterialSubtitle2}" />
+			</utu:AutoLayout>
+			<utu:AutoLayout Spacing="16" Padding="32,8,32,32" utu:AutoLayout.CounterAlignment="Stretch">
+				<TextBox Text="{Binding Credentials.UserName, Mode=TwoWay}" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialFilledTextBoxStyle}" />
+				<PasswordBox Password="{Binding Credentials.Password, Mode=TwoWay}" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialFilledPasswordBoxStyle}" />
+				<HyperlinkButton Content="Forgot password?" x:Uid="Body_HyperlinkButton" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialHyperlinkButtonStyle}" />
+				<Button Content="Login" x:Uid="Body_Login" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialContainedButtonStyle}" Command="{Binding Login}"/>
+			</utu:AutoLayout>
+			<utu:AutoLayout Spacing="16" Padding="32,32,32,32" utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryAlignment="Stretch">
+				<TextBlock Foreground="{StaticResource MaterialOnBackgroundBrush}" TextAlignment="Center" TextWrapping="Wrap" x:Uid="Body_Legal mentions" Text="Legal mentions" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialCaption}" />
+			</utu:AutoLayout>
+		</utu:AutoLayout>
+	</utu:AutoLayout>
 </Page>
