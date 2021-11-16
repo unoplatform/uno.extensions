@@ -8,9 +8,12 @@
       mc:Ignorable="d"
       xmlns:nav="using:Uno.Extensions.Navigation.Controls"
       xmlns:toolkit="using:Uno.Toolkit.UI.Controls"
-      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+HorizontalAlignment="Stretch"
+	VerticalAlignment="Stretch"
+	>
 
-    <Grid MinHeight="300" MinWidth="300">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
