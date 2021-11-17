@@ -36,7 +36,8 @@ namespace Uno.Extensions.Navigation.Controls
 				var data = element.GetData();
 				var resultType = data?.GetType();
 				var binding = element.GetBindingExpression(Navigation.DataProperty);
-				if (binding is not null)
+				if (binding is not null &&
+					binding.DataItem is not null)
 				{
 					var dataObject = binding.DataItem;
 					var bindingPathSegments = binding.ParentBinding.Path.Path.Split('.').ToArray();
@@ -50,6 +51,11 @@ namespace Uno.Extensions.Navigation.Controls
 						else
 						{
 							dataObject = prop.GetValue(dataObject);
+						}
+
+						if (dataObject is null)
+						{
+							break;
 						}
 					}
 				}
