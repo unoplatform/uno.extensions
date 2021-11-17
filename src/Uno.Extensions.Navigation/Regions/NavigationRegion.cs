@@ -79,8 +79,9 @@ public sealed class NavigationRegion : IRegion
             _services = services;
             _services.AddInstance<IRegion>(this);
             var serviceFactory = _services.GetRequiredService<INavigatorFactory>();
+			var navigator = serviceFactory.CreateService(this);
 #pragma warning disable CS8603 // Possible null reference return.
-            _services.AddInstance<INavigator>(() => serviceFactory.CreateService(this));
+			_services.AddInstance<INavigator>(() => navigator);
 #pragma warning restore CS8603 // Possible null reference return.
         }
     }

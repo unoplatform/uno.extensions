@@ -76,11 +76,6 @@ public static class Region
     {
         // Create the Root region
         var elementRegion = new NavigationRegion(element, services);
-        var nav = services.GetInstance<INavigator>();
-        if (nav is not null)
-        {
-            services.AddInstance<INavigator>(nav);
-        }
         element.SetInstance(elementRegion);
 
         return element;

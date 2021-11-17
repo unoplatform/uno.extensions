@@ -23,14 +23,23 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 	public Route? Route { get; protected set; }
 
-	public Navigator(ILogger<Navigator> logger, IRegion region) : this((ILogger)logger, region)
+	protected IRouteMappings Mappings { get; }
+
+	public Navigator(ILogger<Navigator> logger, IRegion region, IRouteMappings mappings) : this((ILogger)logger, region, mappings)
 	{
+		if (region.Parent is null &&
+			region.View is not null)
+		{
+			var vm = CreateDefaultViewModel();
+			region.View.DataContext = vm; 
+		}
 	}
 
-	protected Navigator(ILogger logger, IRegion region)
+	protected Navigator(ILogger logger, IRegion region, IRouteMappings mappings)
 	{
 		Region = region;
 		Logger = logger;
+		Mappings = mappings;
 	}
 
 	public async Task<NavigationResponse?> NavigateAsync(NavigationRequest request)
@@ -113,6 +122,10 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 				request = request with { Route = request.Route.Next() };
 			}
 
+			// Make sure the view has completely loaded before trying to process the nav request
+			// Typically this might happen with the first navigation of the application where the
+			// window hasn't been activated yet, so the root region may not have loaded
+			await Region.View.EnsureLoaded();
 
 			return await CoreNavigateAsync(request);
 		}
@@ -185,4 +198,37 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 	}
 
 	protected virtual string NavigatorToString { get; } = string.Empty;
+
+	private object? CreateDefaultViewModel()
+	{
+		if(Region.View is null)
+		{
+			return null;
+		}
+
+		var services = Region.Services;
+
+		// Make sure the navigator is in the services so it can be used
+		// when creating the view model
+		services.AddInstance<INavigator>(this);
+
+		var mapping = Mappings.FindByView(Region.View.GetType());
+		if (mapping?.ViewModel is not null)
+		{
+			var vm = services.GetService(mapping.ViewModel);
+			if (vm is IInjectable<INavigator> navAware)
+			{
+				navAware.Inject(this);
+			}
+
+			if (vm is IInjectable<IServiceProvider> spAware && Region.Services is not null)
+			{
+				spAware.Inject(Region.Services);
+			}
+
+			return vm;
+		}
+
+		return null;
+	}
 }
