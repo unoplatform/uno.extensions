@@ -40,7 +40,7 @@ public partial class LoginViewModel
 		if (credentials is { UserName.Length: >= 3 } and { Password.Length: >= 3 })
 		{
 			await _error.Set(default, ct);
-			await Task.Delay(1000, ct);
+			await Task.Delay(500, ct);
 
 			CoreApplication.MainView?.DispatcherQueue.TryEnqueue(() => _navigator.NavigateRouteAsync(this, "-/Home", cancellation: ct));
 		}
