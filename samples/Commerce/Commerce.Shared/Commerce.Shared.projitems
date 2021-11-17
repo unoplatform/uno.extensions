@@ -136,6 +136,16 @@
     <Content Include="$(MSBuildThisFileDirectory)appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="$(MSBuildThisFileDirectory)Assets\BitmapIcons\help_outline.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\BitmapIcons\notifications.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Products\bondi-7-running-shoes.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Products\fresh-foam-hierro-v6.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Products\gel-nimbus-23-running-shoes.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Products\gocap-century.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Products\gt-1000-10-gs-running-shoes.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Products\isochill-armourvent-hat.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Products\profile-michael-scott.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Products\the-absolute-freedom.png" />
     <None Include="$(MSBuildThisFileDirectory)Assets\SharedAssets.md" />
   </ItemGroup>
   <ItemGroup>
