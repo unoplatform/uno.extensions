@@ -101,6 +101,10 @@ namespace Commerce
 			_window = Windows.UI.Xaml.Window.Current;
 #endif
 
+			var notif = Host.Services.GetService<IRouteNotifier>();
+			notif.RouteChanged += RouteUpdated;
+
+
 			_window.Content = new ShellView().WithNavigation(Host.Services);
 			_window.Activate();
 
@@ -115,8 +119,6 @@ namespace Commerce
 			Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested += AppGoBack;
 
 #endif
-			var notif = Host.Services.GetService<IRouteNotifier>();
-			notif.RouteChanged += RouteUpdated;
 
 			// TODO: Work out how to reapply deeplink now that we're using a ShellView
 //#if __WASM__
