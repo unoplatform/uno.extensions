@@ -47,7 +47,7 @@ public class TabBarNavigator: ControlNavigator<TabBar>
 			return;
 		}
 
-		await nav.NavigateToRouteAsync(tbi, tabName);
+		await nav.NavigateRouteAsync(tbi, tabName);
 	}
 
 	public TabBarNavigator(

@@ -150,8 +150,8 @@ namespace Commerce
 			});
 
 			var nav = Host.Services.GetService<INavigator>();
-			var navResult = nav.NavigateToRouteAsync(this, "Login");
-			//var navResult = nav.NavigateToRouteAsync(this, "/CommerceHomePage/Products/ProductDetails?ProductId=3");
+			var navResult = nav.NavigateRouteAsync(this, "Login");
+			//var navResult = nav.NavigateRouteAsync(this, "/CommerceHomePage/Products/ProductDetails?ProductId=3");
 		}
 
 		/// <summary>

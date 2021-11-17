@@ -39,7 +39,7 @@ public class FrameNavigator : ControlNavigator<Frame>
         {
             Logger.LogDebugMessage($"Navigating to type '{Control.SourcePageType.Name}' (initial Content set on Frame)");
             var viewType = Control.Content.GetType();
-            Region.Navigator()?.NavigateToViewAsync(this, viewType);
+            Region.Navigator()?.NavigateViewAsync(this, viewType);
         }
 
         if (Control is not null)
@@ -178,12 +178,12 @@ public class FrameNavigator : ControlNavigator<Frame>
             var viewType = Control?.Content.GetType();
             if (viewType is not null)
             {
-                Region.Navigator()?.NavigateToViewAsync(this, viewType);
+                Region.Navigator()?.NavigateViewAsync(this, viewType);
             }
         }
         else
         {
-            Region.Navigator()?.NavigateToPreviousViewAsync(this);
+            Region.Navigator()?.NavigatePreviousAsync(this);
         }
     }
 

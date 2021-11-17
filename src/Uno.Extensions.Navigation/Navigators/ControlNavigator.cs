@@ -191,7 +191,7 @@ public abstract class ControlNavigator : Navigator
         {
             request.Cancellation.Value.Register(() =>
             {
-                navigator.NavigateToPreviousViewAsync(request.Sender);
+                navigator.NavigatePreviousAsync(request.Sender);
             });
         }
 

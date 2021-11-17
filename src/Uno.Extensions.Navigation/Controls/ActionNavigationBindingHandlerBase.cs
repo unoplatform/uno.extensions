@@ -61,7 +61,7 @@ namespace Uno.Extensions.Navigation.Controls
 
 					if (binding is not null && binding.ParentBinding.Mode == Windows.UI.Xaml.Data.BindingMode.TwoWay)
 					{
-						var response = await nav.NavigateToRouteForResultAsync(element, path, Schemes.Current, data, resultType: resultType);
+						var response = await nav.NavigateRouteForResultAsync(element, path, Schemes.Current, data, resultType: resultType);
 						if (response is not null)
 						{
 							var result = await response.Result;
@@ -71,13 +71,13 @@ namespace Uno.Extensions.Navigation.Controls
 					}
 					else
 					{
-						await nav.NavigateToRouteAsync(element, path, Schemes.Current, data);
+						await nav.NavigateRouteAsync(element, path, Schemes.Current, data);
 
 					}
 				}
 				else
 				{
-					await nav.NavigateToRouteAsync(element, path, Schemes.Current);
+					await nav.NavigateRouteAsync(element, path, Schemes.Current);
 				}
 			};
 

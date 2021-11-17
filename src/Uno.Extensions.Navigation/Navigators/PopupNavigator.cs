@@ -44,7 +44,7 @@ public class PopupNavigator : ControlNavigator<Popup>
 
     private void Control_Closed(object? sender, object e)
     {
-        Region.Navigator()?.NavigateToRouteAsync((sender ?? Control) ?? this, "hide");
+        Region.Navigator()?.NavigateRouteAsync((sender ?? Control) ?? this, "hide");
     }
 
     protected override async Task<string?> Show(string? path, Type? viewType, object? data)
