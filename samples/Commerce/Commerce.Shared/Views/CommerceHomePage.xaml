@@ -128,7 +128,7 @@
 									AutomationProperties.Name="Cart"
 									utu:AutoLayout.PrimaryAlignment="Stretch"
 									utu:AutoLayout.CounterLength="56"
-									Style="{StaticResource MaterialBottomFabTabBarItemStyle}"
+									Style="{StaticResource MaterialBottomTabBarItemFabStyle}"
 									nav:Navigation.Request="!CartDialog">
 						<utu:TabBarItem.Icon>
 							<PathIcon Data="{StaticResource Icon_shopping_cart}" />
@@ -136,7 +136,7 @@
 					</utu:TabBarItem>
 				</utu:TabBar>
 			</utu:AutoLayout>
-
+			
 		</muxc:NavigationView>
 	</Grid>
 </Page>
