@@ -58,6 +58,7 @@
 							 IsPaneVisible="false"
 							 IsSettingsVisible="False"
 							 IsBackButtonVisible="Collapsed"
+							 OpenPaneLength="200"
 							 nav:Region.Attached="true">
 			<muxc:NavigationView.MenuItems>
 				<muxc:NavigationViewItem Content="Products"
