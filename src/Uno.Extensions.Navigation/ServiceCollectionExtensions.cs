@@ -53,6 +53,7 @@ public static class ServiceCollectionExtensions
 
 					.AddSingleton<INavigationBindingHandler, ButtonBaseNavigationBindingHandler>()
 					.AddSingleton<INavigationBindingHandler, SelectorNavigationBindingHandler>()
+					.AddSingleton<INavigationBindingHandler, NavigationViewItemNavigationBindingHandler>()
 
 					// Register the navigation mappings repository
 					.AddSingleton<IRouteMappings, RouteMappingsDefault>()
