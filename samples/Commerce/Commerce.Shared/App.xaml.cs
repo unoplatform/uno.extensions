@@ -1,39 +1,31 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
+using Commerce.Models;
+using Commerce.Services;
+using Commerce.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.UI.Xaml.Controls;
 using Uno.Extensions;
 using Uno.Extensions.Configuration;
 using Uno.Extensions.Hosting;
 using Uno.Extensions.Logging;
-using Uno.Extensions.Logging.Serilog;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Regions;
-using Uno.Extensions.Navigation.Toolkit.Navigators;
+using Uno.Extensions.Navigation.Toolkit;
+using Uno.Foundation;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using Windows.UI.Core;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using Commerce.ViewModels;
-using Commerce.Services;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
-using Commerce.Models;
-using Uno.Extensions.Navigation.Toolkit;
+using Windows.ApplicationModel.Core;
+using Commerce.Views;
 
 namespace Commerce
 {
@@ -108,41 +100,8 @@ namespace Commerce
 			_window = Windows.UI.Xaml.Window.Current;
 #endif
 
-			var rootFrame = _window.Content as Frame;
-
-			// Do not repeat app initialization when the Window already has content,
-			// just ensure that the window is active
-			if (rootFrame == null)
-			{
-				// Create a Frame to act as the navigation context and navigate to the first page
-				//rootFrame = new Frame();
-				rootFrame = new Frame().WithNavigation(Host.Services);
-
-				rootFrame.NavigationFailed += OnNavigationFailed;
-
-				if (args.PreviousExecutionState == ApplicationExecutionState.Terminated)
-				{
-					// TODO: Load state from previously suspended application
-				}
-
-				// Place the frame in the current Window
-				_window.Content = rootFrame;
-			}
-
-#if !(NET5_0 && WINDOWS)
-			if (args.PrelaunchActivated == false)
-#endif
-			{
-				if (rootFrame.Content == null)
-				{
-					//// When the navigation stack isn't restored navigate to the first page,
-					//// configuring the new page by passing required information as a navigation
-					//// parameter
-					//rootFrame.Navigate(typeof(MainPage), args.Arguments);
-				}
-				// Ensure the current window is active
-				_window.Activate();
-			}
+			_window.Content = new ShellView().WithNavigation(Host.Services);
+			_window.Activate();
 
 			await Task.Run(async () =>
 			{
@@ -150,9 +109,47 @@ namespace Commerce
 			});
 
 			var nav = Host.Services.GetService<INavigator>();
-			var navResult = nav.NavigateRouteAsync(this, "Login");
-			//var navResult = nav.NavigateRouteAsync(this, "/CommerceHomePage/Products/ProductDetails?ProductId=3");
+#if __WASM__
+			Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+			Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested += AppGoBack;
+
+#endif
+			var notif = Host.Services.GetService<IRouteNotifier>();
+			notif.RouteChanged += RouteUpdated;
+
+			// TODO: Work out how to reapply deeplink now that we're using a ShellView
+//#if __WASM__
+//			var href = WebAssemblyRuntime.InvokeJS("window.location.href");
+//			var url = new UriBuilder(href);
+//			var query = url.Query;
+//			var path = (url.Path + (!string.IsNullOrWhiteSpace(query) ? "?" : "") + query + "").TrimStart('/');
+
+//			if (!string.IsNullOrWhiteSpace(path))
+//			{
+//				var navResult = nav.NavigateRouteAsync(this, path);
+//			}
+//			else
+//			{
+//				var navResult = nav.NavigateRouteAsync(this, "Login");
+
+//			}
+//#else
+
+//			var navResult = nav.NavigateRouteAsync(this, "Login");
+//			//var navResult = nav.NavigateRouteAsync(this, "Home/Products/ProductsPage/Details/ProductDetailsPage?ProductId=2");
+//#endif
 		}
+
+		public async void AppGoBack(object? sender, BackRequestedEventArgs e)
+		{
+			var backnav = Host.Services.GetService<INavigator>();
+			var appTitle = ApplicationView.GetForCurrentView();
+			appTitle.Title = "Back pressed - " + DateTime.Now.ToString("HH:mm:ss");
+			var response = await backnav.GoBack(this);
+			//e.Handled = response.Success;
+
+		}
+
 
 		/// <summary>
 		/// Invoked when Navigation to a certain page fails
@@ -186,7 +183,7 @@ namespace Commerce
 			var factory = LoggerFactory.Create(builder =>
 			{
 #if __WASM__
-                builder.AddProvider(new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider());
+				builder.AddProvider(new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider());
 #elif __IOS__
                 builder.AddProvider(new global::Uno.Extensions.Logging.OSLogLoggerProvider());
 #elif NETFX_CORE
@@ -236,7 +233,9 @@ namespace Commerce
 
 		private static void RegisterRoutes(IRouteBuilder builder)
 		{
-			builder.Register(new RouteMap("Login", typeof(LoginPage), typeof(LoginViewModel.BindableLoginViewModel)))
+			builder
+				.Register(new RouteMap(nameof(ShellView), typeof(ShellView),typeof(ShellViewModel)))
+				.Register(new RouteMap("Login", typeof(LoginPage), typeof(LoginViewModel.BindableLoginViewModel)))
 					.Register(new RouteMap("Home", typeof(CommerceHomePage),
 						RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
 													nav with { Route = nav.Route.Append(Route.NestedRoute("Products")) } :
@@ -256,7 +255,7 @@ namespace Commerce
 												nav with { Route = nav.Route with { Path = "+DealsPage/HotDeals" } }))
 					.Register(new RouteMap<Product>("ProductDetails",
 						RegionInitialization: (region, nav) => (App.Current as App).Window.Content.ActualSize.X > 800 ?
-												nav with { Route = nav.Route with { Scheme="./", Base="Details", Path = nameof(ProductDetailsPage) } } :
+												nav with { Route = nav.Route with { Scheme = "./", Base = "Details", Path = nameof(ProductDetailsPage) } } :
 												nav with { Route = nav.Route with { Base = nameof(ProductDetailsPage) } }))
 					.Register(new RouteMap<Product>(nameof(ProductDetailsPage),
 						typeof(ProductDetailsPage),
@@ -268,11 +267,46 @@ namespace Commerce
 												nav))
 					.Register(new RouteMap("Filter", typeof(FilterPopup), typeof(FiltersViewModel.BindableFilterViewModel)))
 					.Register(new RouteMap("Profile", typeof(ProfilePage), typeof(ProfileViewModel)))
-          .Register(new RouteMap(typeof(CartDialog).Name, typeof(CartDialog),
-				    RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
+		  .Register(new RouteMap(typeof(CartDialog).Name, typeof(CartDialog),
+					RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
 										nav with { Route = nav.Route.AppendNested<CartPage>() } :
 										nav))
-			    .Register(new RouteMap(typeof(CartPage).Name, typeof(CartPage), typeof(CartViewModel)));
+				.Register(new RouteMap(typeof(CartPage).Name, typeof(CartPage), typeof(CartViewModel)));
+		}
+
+		public async void RouteUpdated(object sender, EventArgs e)
+		{
+			try
+			{
+				var reg = Host.Services.GetService<IRegion>();
+				var rootRegion = reg.Root();
+				var route = rootRegion.GetRoute();
+
+
+#if !__WASM__
+				var appTitle = ApplicationView.GetForCurrentView();
+				appTitle.Title = "Commerce: " + (route + "").Replace("+", "/");
+
+#else
+				// Note: This is a hack to avoid error being thrown when loading products async
+				await Task.Delay(1000).ConfigureAwait(false);
+				CoreApplication.MainView?.DispatcherQueue.TryEnqueue(() =>
+				{
+					var href = WebAssemblyRuntime.InvokeJS("window.location.href");
+					var url = new UriBuilder(href);
+					url.Query = route.Query();
+					url.Path = route.FullPath()?.Replace("+", "/");
+					var webUri = url.Uri.OriginalString;
+					var js = $"window.history.pushState(\"{webUri}\",\"\", \"{webUri}\");";
+					Console.WriteLine($"JS:{js}");
+					var result = WebAssemblyRuntime.InvokeJS(js);
+				});
+#endif
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine("Error: " + ex.Message);
+			}
 		}
 	}
 }

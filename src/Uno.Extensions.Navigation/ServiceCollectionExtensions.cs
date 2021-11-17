@@ -38,7 +38,9 @@ public static class ServiceCollectionExtensions
 					.AddScoped<IInstanceRepository, InstanceRepository>()
 
 					//.AddSingleton<IMessenger, WeakReferenceMessenger>()
-					.AddSingleton<INavigationNotifier, NavigationNotifier>()
+					.AddSingleton<RouteNotifier>()
+					.AddSingleton<IRouteNotifier>(sp => sp.GetRequiredService<RouteNotifier>())
+					.AddSingleton<IRouteUpdater>(sp => sp.GetRequiredService<RouteNotifier>())
 					.AddScoped<Navigator>()
 
 					// Register the region for each control type

@@ -12,7 +12,7 @@ public record NavigationResultResponse<TResult>(Route Route, Task<Options.Option
 {
 }
 
-public record NavigationResponse(Route Route, bool Success = true)
+public record NavigationResponse(Route? Route = null, bool Success = true)
 {
 }
 

@@ -95,15 +95,12 @@ public abstract class ControlNavigator : Navigator
 {
     public virtual bool CanGoBack => false;
 
-    protected IRouteMappings Mappings { get; }
-
     protected ControlNavigator(
         ILogger logger,
         IRouteMappings mappings,
         IRegion region)
-        : base(logger, region)
+        : base(logger, region, mappings)
     {
-        Mappings = mappings;
     }
 
     protected async override Task<NavigationResponse?> CoreNavigateAsync(NavigationRequest request)
@@ -129,18 +126,6 @@ public abstract class ControlNavigator : Navigator
 
     private async Task<NavigationResponse?> RegionNavigateAsync(NavigationRequest request)
     {
-        // Make sure the view has completely loaded before trying to process the nav request
-        // Typically this might happen with the first navigation of the application where the
-        // window hasn't been activated yet, so the root region may not have loaded
-        await Region.View.EnsureLoaded();
-
-        //if (request.Route.IsNested() &&
-        //    Region.Children.Any(child => child.Name == request.Route.Base))
-        //{
-        //    // If the base is the name of a child, just pass the request on
-        //    return await Task.FromResult<NavigationResponse?>(default);
-        //}
-
         // If the request has come down from parent it
         // will still have the ./ prefix, so need to trim
         // it before processing it
@@ -169,9 +154,14 @@ public abstract class ControlNavigator : Navigator
             return default;
         }
 
+		var mapping = Mappings.Find(request.Route);
+		if (mapping?.BuildQueryParameters is not null)
+		{
+			request = request with { Route = request.Route with { Data = request.Route.Data?.AsParameters(mapping) } };
+		}
 
-        // Setup the navigation data (eg parameters to be injected into viewmodel)
-        var dataFactor = services.GetRequiredService<NavigationDataProvider>();
+		// Setup the navigation data (eg parameters to be injected into viewmodel)
+		var dataFactor = services.GetRequiredService<NavigationDataProvider>();
         dataFactor.Parameters = (request.Route?.Data) ?? new Dictionary<string, object>();
 
         // Create ResponseNavigator if result is requested

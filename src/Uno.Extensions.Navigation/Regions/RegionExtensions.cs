@@ -27,7 +27,8 @@ public static class RegionExtensions
                         region?.Children
                                 .Where(
                                     child => string.IsNullOrWhiteSpace(child.Name) ||
-                                    child.Name == regionRoute?.Base)
+                                    child.Name == regionRoute?.Base ||
+									(child.View is not null && child.Name == Uno.Extensions.Navigation.Controls.Region.GetName(child.View)))
                                 .Select(x => (x.Name, CurrentRoute: x.GetRoute())));
     }
 
