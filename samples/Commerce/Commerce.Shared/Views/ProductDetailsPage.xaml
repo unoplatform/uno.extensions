@@ -44,7 +44,7 @@
 					</utu:AutoLayout>
 					<utu:AutoLayout Spacing="8" Padding="16,32,16,16" utu:AutoLayout.CounterAlignment="Stretch">
 						<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" Text="Product details" Style="{StaticResource MaterialHeadline6}" />
-						<TextBlock Foreground="{StaticResource MaterialOnBackgroundMediumBrush}" TextWrapping="Wrap" Text="{Binding Description}" Style="{StaticResource MaterialBody2}" />
+							<TextBlock Foreground="{StaticResource MaterialOnBackgroundBrush}" TextWrapping="Wrap" Text="{Binding Description}" Style="{StaticResource MaterialBody2}" />
 					</utu:AutoLayout>
 					<utu:AutoLayout Spacing="8" Padding="16,32,16,8" utu:AutoLayout.CounterAlignment="Stretch">
 						<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" Text="Reviews" Style="{StaticResource MaterialHeadline6}" />
@@ -89,7 +89,8 @@
 								</utu:AutoLayout>
 								<utu:AutoLayout Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
 									<utu:AutoLayout Padding="16,0,0,16" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
-										<ToggleButton utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialToggleButtonIconStyle}">
+											<ToggleButton utu:AutoLayout.CounterAlignment="Center">
+												<!--Style="{StaticResource MaterialToggleButtonIconStyle}">-->
 											<ToggleButton.Content>
 												<PathIcon Data="{StaticResource Icon_visibility_off}" />
 											</ToggleButton.Content>
@@ -118,7 +119,8 @@
 								</utu:AutoLayout>
 								<utu:AutoLayout Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
 									<utu:AutoLayout Padding="16,0,0,16" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
-										<ToggleButton utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialToggleButtonIconStyle}">
+											<ToggleButton utu:AutoLayout.CounterAlignment="Center">
+												<!--Style="{StaticResource MaterialToggleButtonIconStyle}">-->
 											<ToggleButton.Content>
 												<PathIcon Data="{StaticResource Icon_visibility_off}" />
 											</ToggleButton.Content>
@@ -147,7 +149,8 @@
 								</utu:AutoLayout>
 								<utu:AutoLayout Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
 									<utu:AutoLayout Padding="16,0,0,16" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
-										<ToggleButton utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialToggleButtonIconStyle}">
+											<ToggleButton utu:AutoLayout.CounterAlignment="Center">
+												<!--Style="{StaticResource MaterialToggleButtonIconStyle}">-->
 											<ToggleButton.Content>
 												<PathIcon Data="{StaticResource Icon_visibility_off}" />
 											</ToggleButton.Content>
