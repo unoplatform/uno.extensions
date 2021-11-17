@@ -82,11 +82,11 @@
 					</utu:AutoLayout>
 					<utu:AutoLayout Spacing="16" Padding="0,8,8,8" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
 						<TextBlock Foreground="{StaticResource MaterialOnBackgroundBrush}" TextWrapping="Wrap" Text="Order" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialSubtitle2}" />
-						<TextBlock Foreground="{StaticResource MaterialOnBackgroundMediumBrush}" TextAlignment="End" TextWrapping="Wrap" Text="Relevance" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialBody2}" />
+						<TextBlock TextAlignment="End" TextWrapping="Wrap" Text="Relevance" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialBody2}" />
 					</utu:AutoLayout>
 					<utu:AutoLayout Spacing="16" Padding="0,8,8,8" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
 						<TextBlock Foreground="{StaticResource MaterialOnBackgroundBrush}" TextWrapping="Wrap" Text="Currency" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialSubtitle2}" />
-						<TextBlock Foreground="{StaticResource MaterialOnBackgroundMediumBrush}" TextAlignment="End" TextWrapping="Wrap" Text="CAD" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialBody2}" />
+						<TextBlock TextAlignment="End" TextWrapping="Wrap" Text="CAD" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialBody2}" />
 					</utu:AutoLayout>
 				</utu:AutoLayout>
 			</utu:AutoLayout>
