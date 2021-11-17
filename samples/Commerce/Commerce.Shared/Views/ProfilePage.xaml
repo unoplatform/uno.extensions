@@ -8,69 +8,69 @@
     mc:Ignorable="d"
       xmlns:nav="using:Uno.Extensions.Navigation.Controls"
 	  xmlns:utu="using:Uno.Toolkit.UI.Controls"
-      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+      Background="{StaticResource MaterialSurfaceBrush}">
 
-      <utu:AutoLayout Background="{StaticResource MaterialSurfaceBrush}">
-    <utu:AutoLayout Spacing="16" Padding="32,48,32,8" utu:AutoLayout.CounterAlignment="Stretch" MaxWidth="{StaticResource LandscapeMaxPageWidth}">
-      <PersonPicture ProfilePicture="https://loremflickr.com/360/360/face" />
-      <TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" Text="Michael Scott" Style="{StaticResource MaterialHeadline5}" />
-    </utu:AutoLayout>
-    <utu:AutoLayout Spacing="8" Padding="24,24,24,24" utu:AutoLayout.CounterAlignment="Stretch">
-      <utu:AutoLayout Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
-        <utu:AutoLayout Padding="8,8,8,8" Justify="SpaceBetween" Orientation="Horizontal" utu:AutoLayout.PrimaryAlignment="Stretch">
-          <utu:AutoLayout Spacing="10" Padding="0,0,16,0" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Center">
-            <utu:AutoLayout utu:AutoLayout.PrimaryLength="24" utu:AutoLayout.CounterLength="24" />
-          </utu:AutoLayout>
-          <utu:AutoLayout Spacing="10" Padding="0,2,0,2" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Center" utu:AutoLayout.PrimaryAlignment="Stretch">
-            <TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" Text="Account" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialBody2}" />
-          </utu:AutoLayout>
-          <utu:AutoLayout Spacing="10" Padding="16,0,0,0" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Center">
-            <utu:AutoLayout utu:AutoLayout.PrimaryLength="24" utu:AutoLayout.CounterLength="24" />
-          </utu:AutoLayout>
-        </utu:AutoLayout>
-      </utu:AutoLayout>
-      <utu:AutoLayout Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
-        <utu:AutoLayout Padding="8,8,8,8" Justify="SpaceBetween" Orientation="Horizontal" utu:AutoLayout.PrimaryAlignment="Stretch">
-          <utu:AutoLayout Spacing="10" Padding="0,0,16,0" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Center">
-            <utu:AutoLayout utu:AutoLayout.PrimaryLength="24" utu:AutoLayout.CounterLength="24" />
-          </utu:AutoLayout>
-          <utu:AutoLayout Spacing="10" Padding="0,2,0,2" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Center" utu:AutoLayout.PrimaryAlignment="Stretch">
-            <TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" Text="Settings" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialBody2}" />
-          </utu:AutoLayout>
-          <utu:AutoLayout Spacing="10" Padding="16,0,0,0" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Center">
-            <utu:AutoLayout utu:AutoLayout.PrimaryLength="24" utu:AutoLayout.CounterLength="24" />
-          </utu:AutoLayout>
-        </utu:AutoLayout>
-      </utu:AutoLayout>
-      <utu:AutoLayout Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
-        <utu:AutoLayout Padding="8,8,8,8" Justify="SpaceBetween" Orientation="Horizontal" utu:AutoLayout.PrimaryAlignment="Stretch">
-          <utu:AutoLayout Spacing="10" Padding="0,0,16,0" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Center">
-            <utu:AutoLayout utu:AutoLayout.PrimaryLength="24" utu:AutoLayout.CounterLength="24" />
-          </utu:AutoLayout>
-          <utu:AutoLayout Spacing="10" Padding="0,2,0,2" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Center" utu:AutoLayout.PrimaryAlignment="Stretch">
-            <TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" Text="Orders" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialBody2}" />
-          </utu:AutoLayout>
-          <utu:AutoLayout Spacing="10" Padding="16,0,0,0" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Center">
-            <utu:AutoLayout utu:AutoLayout.PrimaryLength="24" utu:AutoLayout.CounterLength="24" />
-          </utu:AutoLayout>
-        </utu:AutoLayout>
-      </utu:AutoLayout>
-      <utu:AutoLayout Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
-        <utu:AutoLayout Padding="8,8,8,8" Justify="SpaceBetween" Orientation="Horizontal" utu:AutoLayout.PrimaryAlignment="Stretch">
-          <utu:AutoLayout Spacing="10" Padding="0,0,16,0" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Center">
-            <utu:AutoLayout utu:AutoLayout.PrimaryLength="24" utu:AutoLayout.CounterLength="24" />
-          </utu:AutoLayout>
-          <utu:AutoLayout Spacing="10" Padding="0,2,0,2" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Center" utu:AutoLayout.PrimaryAlignment="Stretch">
-            <TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" Text="Help" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialBody2}" />
-          </utu:AutoLayout>
-          <utu:AutoLayout Spacing="10" Padding="16,0,0,0" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Center">
-            <utu:AutoLayout utu:AutoLayout.PrimaryLength="24" utu:AutoLayout.CounterLength="24" />
-          </utu:AutoLayout>
-        </utu:AutoLayout>
-      </utu:AutoLayout>
-    </utu:AutoLayout>
-    <utu:AutoLayout Spacing="10" Padding="24,24,24,24" utu:AutoLayout.CounterAlignment="Stretch">
-			<Button Content="log out" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialOutlinedButtonStyle}" nav:Navigation.Request="/-/Login"/>
-    </utu:AutoLayout>
-  </utu:AutoLayout>
+	<utu:AutoLayout Background="{StaticResource MaterialSurfaceBrush}" MaxWidth="{StaticResource LandscapeMaxPageWidth}">
+		<utu:AutoLayout Spacing="16" Padding="32,48,32,8" utu:AutoLayout.CounterAlignment="Stretch" >
+		  <PersonPicture ProfilePicture="https://loremflickr.com/360/360/face" />
+		  <TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" Text="Michael Scott" Style="{StaticResource MaterialHeadline5}" />
+		</utu:AutoLayout>
+		<utu:AutoLayout Spacing="8" Padding="24,24,24,24" utu:AutoLayout.CounterAlignment="Stretch">
+		  <utu:AutoLayout Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
+			<utu:AutoLayout Padding="8,8,8,8" Justify="SpaceBetween" Orientation="Horizontal" utu:AutoLayout.PrimaryAlignment="Stretch">
+			  <utu:AutoLayout Spacing="10" Padding="0,0,16,0" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Center">
+				<utu:AutoLayout utu:AutoLayout.PrimaryLength="24" utu:AutoLayout.CounterLength="24" />
+			  </utu:AutoLayout>
+			  <utu:AutoLayout Spacing="10" Padding="0,2,0,2" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Center" utu:AutoLayout.PrimaryAlignment="Stretch">
+				<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" Text="Account" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialBody2}" />
+			  </utu:AutoLayout>
+			  <utu:AutoLayout Spacing="10" Padding="16,0,0,0" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Center">
+				<utu:AutoLayout utu:AutoLayout.PrimaryLength="24" utu:AutoLayout.CounterLength="24" />
+			  </utu:AutoLayout>
+			</utu:AutoLayout>
+		  </utu:AutoLayout>
+		  <utu:AutoLayout Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
+			<utu:AutoLayout Padding="8,8,8,8" Justify="SpaceBetween" Orientation="Horizontal" utu:AutoLayout.PrimaryAlignment="Stretch">
+			  <utu:AutoLayout Spacing="10" Padding="0,0,16,0" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Center">
+				<utu:AutoLayout utu:AutoLayout.PrimaryLength="24" utu:AutoLayout.CounterLength="24" />
+			  </utu:AutoLayout>
+			  <utu:AutoLayout Spacing="10" Padding="0,2,0,2" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Center" utu:AutoLayout.PrimaryAlignment="Stretch">
+				<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" Text="Settings" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialBody2}" />
+			  </utu:AutoLayout>
+			  <utu:AutoLayout Spacing="10" Padding="16,0,0,0" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Center">
+				<utu:AutoLayout utu:AutoLayout.PrimaryLength="24" utu:AutoLayout.CounterLength="24" />
+			  </utu:AutoLayout>
+			</utu:AutoLayout>
+		  </utu:AutoLayout>
+		  <utu:AutoLayout Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
+			<utu:AutoLayout Padding="8,8,8,8" Justify="SpaceBetween" Orientation="Horizontal" utu:AutoLayout.PrimaryAlignment="Stretch">
+			  <utu:AutoLayout Spacing="10" Padding="0,0,16,0" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Center">
+				<utu:AutoLayout utu:AutoLayout.PrimaryLength="24" utu:AutoLayout.CounterLength="24" />
+			  </utu:AutoLayout>
+			  <utu:AutoLayout Spacing="10" Padding="0,2,0,2" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Center" utu:AutoLayout.PrimaryAlignment="Stretch">
+				<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" Text="Orders" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialBody2}" />
+			  </utu:AutoLayout>
+			  <utu:AutoLayout Spacing="10" Padding="16,0,0,0" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Center">
+				<utu:AutoLayout utu:AutoLayout.PrimaryLength="24" utu:AutoLayout.CounterLength="24" />
+			  </utu:AutoLayout>
+			</utu:AutoLayout>
+		  </utu:AutoLayout>
+		  <utu:AutoLayout Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
+			<utu:AutoLayout Padding="8,8,8,8" Justify="SpaceBetween" Orientation="Horizontal" utu:AutoLayout.PrimaryAlignment="Stretch">
+			  <utu:AutoLayout Spacing="10" Padding="0,0,16,0" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Center">
+				<utu:AutoLayout utu:AutoLayout.PrimaryLength="24" utu:AutoLayout.CounterLength="24" />
+			  </utu:AutoLayout>
+			  <utu:AutoLayout Spacing="10" Padding="0,2,0,2" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Center" utu:AutoLayout.PrimaryAlignment="Stretch">
+				<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" Text="Help" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialBody2}" />
+			  </utu:AutoLayout>
+			  <utu:AutoLayout Spacing="10" Padding="16,0,0,0" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Center">
+				<utu:AutoLayout utu:AutoLayout.PrimaryLength="24" utu:AutoLayout.CounterLength="24" />
+			  </utu:AutoLayout>
+			</utu:AutoLayout>
+		  </utu:AutoLayout>
+		</utu:AutoLayout>
+		<utu:AutoLayout Spacing="10" Padding="24,24,24,24" utu:AutoLayout.CounterAlignment="Stretch">
+				<Button Content="log out" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialOutlinedButtonStyle}" nav:Navigation.Request="/-/Login"/>
+		</utu:AutoLayout>
+</utu:AutoLayout>
 </Page>
