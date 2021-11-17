@@ -16,7 +16,7 @@ HorizontalAlignment="Stretch"
 	VerticalAlignment="Stretch"
 	>
 
-	<utu:AutoLayout>
+	<utu:AutoLayout MaxWidth="{StaticResource LandscapeMaxPageWidth}">
 		<utu:NavigationBar Content="Your cart" x:Uid="Page_NavigationBar" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialModalNavigationBarStyle}" />
 		<ScrollViewer>
 			<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryAlignment="Stretch">
