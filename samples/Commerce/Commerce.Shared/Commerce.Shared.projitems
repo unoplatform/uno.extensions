@@ -93,6 +93,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Styles\NavigationBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\CartDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -147,6 +151,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="$(MSBuildThisFileDirectory)Assets\BitmapIcons\help_outline.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\BitmapIcons\close.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\BitmapIcons\notifications.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Products\bondi-7-running-shoes.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Products\fresh-foam-hierro-v6.png" />
