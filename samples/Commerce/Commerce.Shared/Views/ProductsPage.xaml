@@ -36,9 +36,11 @@
 					</VisualState.StateTriggers>
 					<VisualState.Setters>
 						<Setter Target="ProductsColumn.Width"
+								Value="*" />
+						<Setter Target="ProductsColumn.MinWidth"
 								Value="300" />
 						<Setter Target="DetailsColumn.Width"
-								Value="*" />
+								Value="2*" />
 						<Setter Target="DetailsGrid.Visibility"
 								Value="Visible" />
 					</VisualState.Setters>
