@@ -33,7 +33,7 @@ namespace Uno.Extensions.Navigation.Controls
                     return;
                 }
 
-                await nav.NavigateToRouteAsync(sender, path, Schemes.Current, navdata);
+                await nav.NavigateRouteAsync(sender, path, Schemes.Current, navdata);
             };
 
             SelectionChangedEventHandler selectionAction = async (actionSender, actionArgs) =>

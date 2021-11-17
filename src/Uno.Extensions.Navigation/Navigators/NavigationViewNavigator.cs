@@ -34,7 +34,7 @@ public class NavigationViewNavigator : ControlNavigator<Microsoft.UI.Xaml.Contro
         if (path is not null &&
             !string.IsNullOrEmpty(path))
         {
-            Region.Navigator()?.NavigateToRouteAsync(sender, path);
+            Region.Navigator()?.NavigateRouteAsync(sender, path);
         }
     }
 
