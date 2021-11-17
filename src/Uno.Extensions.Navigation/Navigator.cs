@@ -17,7 +17,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 	protected IRegion Region { get; }
 
-	private INavigationNotifier? Notifier => Region.Services?.GetRequiredService<INavigationNotifier>();
+	private IRouteUpdater? RouteUpdater => Region.Services?.GetRequiredService<IRouteUpdater>();
 
 	IServiceProvider? IInstance<IServiceProvider>.Instance => Region.Services;
 
@@ -38,6 +38,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		Logger.LogInformation($"Pre-navigation: - {Region.ToString()}");
 		try
 		{
+			RouteUpdater?.StartNavigation();
 
 			// Initialise the region
 			var requestMap = Region.Services?.GetRequiredService<IRouteMappings>().FindByPath(request.Route.Base);
@@ -119,7 +120,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		{
 			Logger.LogInformation($"Post-navigation: {Region.ToString()}");
 			Logger.LogInformation($"Post-navigation (route): {Region.Root().GetRoute()}");
-			Notifier?.Update(Region);
+			RouteUpdater?.EndNavigation();
 		}
 	}
 

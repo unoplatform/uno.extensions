@@ -23,7 +23,7 @@ public partial class ProductDetailsViewModel
 
 	private async ValueTask<Option<Product>> Load(CancellationToken ct)
 	{
-		await Task.Delay(5000);
+		await Task.Delay(1000);
 
 		if (_product is not null)
 		{

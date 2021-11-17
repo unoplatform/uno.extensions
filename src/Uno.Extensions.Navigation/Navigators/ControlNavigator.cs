@@ -169,9 +169,14 @@ public abstract class ControlNavigator : Navigator
             return default;
         }
 
+		var mapping = Mappings.Find(request.Route);
+		if (mapping?.BuildQueryParameters is not null)
+		{
+			request = request with { Route = request.Route with { Data = request.Route.Data?.AsParameters(mapping) } };
+		}
 
-        // Setup the navigation data (eg parameters to be injected into viewmodel)
-        var dataFactor = services.GetRequiredService<NavigationDataProvider>();
+		// Setup the navigation data (eg parameters to be injected into viewmodel)
+		var dataFactor = services.GetRequiredService<NavigationDataProvider>();
         dataFactor.Parameters = (request.Route?.Data) ?? new Dictionary<string, object>();
 
         // Create ResponseNavigator if result is requested

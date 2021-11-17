@@ -27,5 +27,9 @@ namespace Commerce
             this.InitializeComponent();
         }
 
-    }
+		private void GoBack(object sender, RoutedEventArgs e)
+		{
+			//(App.Current as App).AppGoBack();
+		}
+	}
 }
