@@ -23,7 +23,7 @@ public static class RegionExtensions
     public static Route? GetRoute(this IRegion region)
     {
         var regionRoute = region.Navigator()?.Route;
-        return regionRoute?.Merge(
+        return regionRoute.Merge(
                         region?.Children
                                 .Where(
                                     child => string.IsNullOrWhiteSpace(child.Name) ||
