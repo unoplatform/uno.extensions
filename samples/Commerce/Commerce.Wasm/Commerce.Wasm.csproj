@@ -11,10 +11,10 @@
 		<DebugType>portable</DebugType>
 		<DebugSymbols>true</DebugSymbols>
 		<!--
-		IL Linking is disabled in Debug configuration.
-		When building in Release, see https://platform.uno/docs/articles/features/using-il-linker-webassembly.html
+		Enable linking during debug for parity with Release
+		 https://platform.uno/docs/articles/features/using-il-linker-webassembly.html
 		-->
-		<WasmShellILLinkerEnabled>false</WasmShellILLinkerEnabled>
+		<WasmShellILLinkerEnabled>true</WasmShellILLinkerEnabled>
 	</PropertyGroup>
 	<ItemGroup>
 		<Content Include="Assets\SplashScreen.png" />
