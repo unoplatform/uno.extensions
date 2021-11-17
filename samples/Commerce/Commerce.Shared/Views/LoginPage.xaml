@@ -7,9 +7,9 @@
       mc:Ignorable="d"
       xmlns:nav="using:Uno.Extensions.Navigation.Controls"
 	  xmlns:utu="using:Uno.Toolkit.UI.Controls"
-      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+      Background="{ThemeResource MaterialBackgroundBrush}">
 
-	<utu:AutoLayout MaxWidth="{StaticResource LandscapeMaxPageWidth}">
+	<utu:AutoLayout Background="{StaticResource MaterialBackgroundBrush}" MaxWidth="{StaticResource LandscapeMaxPageWidth}">
 		<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryAlignment="Stretch">
 			<utu:AutoLayout Spacing="16" Padding="32,48,32,8" utu:AutoLayout.CounterAlignment="Stretch">
 				<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Body_Welcome" Text="Welcome." Style="{StaticResource MaterialHeadline4}" />
@@ -18,7 +18,7 @@
 			<utu:AutoLayout Spacing="16" Padding="32,8,32,32" utu:AutoLayout.CounterAlignment="Stretch">
 				<TextBox Text="{Binding Credentials.UserName, Mode=TwoWay}" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialFilledTextBoxStyle}" />
 				<PasswordBox Password="{Binding Credentials.Password, Mode=TwoWay}" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialFilledPasswordBoxStyle}" />
-				<HyperlinkButton Content="Forgot password?" x:Uid="Body_HyperlinkButton" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialHyperlinkButtonStyle}" />
+				<HyperlinkButton Content="Forgot password?" x:Uid="Body_HyperlinkButton" Style="{StaticResource MaterialHyperlinkButtonStyle}" />
 				<Button Content="Login" x:Uid="Body_Login" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialContainedButtonStyle}" Command="{Binding Login}"/>
 			</utu:AutoLayout>
 			<utu:AutoLayout Spacing="16" Padding="32,32,32,32" utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryAlignment="Stretch">
