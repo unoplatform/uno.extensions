@@ -11,7 +11,7 @@ namespace Commerce.Services
 	{
 		public async ValueTask<Profile> GetProfile(CancellationToken ct)
 		{
-			await Task.Delay(500, ct);
+			await Task.Delay(1, ct);
 			return new Profile
 			{
 				FirstName = "Michael",
