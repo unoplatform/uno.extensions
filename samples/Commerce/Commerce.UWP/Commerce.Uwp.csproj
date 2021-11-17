@@ -23,7 +23,7 @@
       <Version>1.1.0-dev.13</Version>
     </PackageReference>
     <PackageReference Include="Uno.Toolkit.UI.Material">
-      <Version>0.1.0-dev.120</Version>
+      <Version>0.1.0-dev.124</Version>
     </PackageReference>
     <PackageReference Include="Uno.UI" Version="4.0.0-dev.5594" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
@@ -32,7 +32,7 @@
     <PackageReference Include="Microsoft.Extensions.Localization" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="6.0.0" />
     <PackageReference Include="System.Linq.Async" Version="4.0.0" />
-    <PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.120" />
+    <PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.124" />
   </ItemGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>

@@ -23,6 +23,7 @@
 				<MaterialToolkitResources xmlns="using:Uno.Toolkit.UI.Material" />
 
 				<ResourceDictionary Source="ms-appx:///Styles/FeedView.xaml" />
+				<ResourceDictionary Source="ms-appx:///Styles/NavigationBar.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 			<x:Double x:Key="LandscapeMaxPageWidth">500</x:Double>
 			<!-- Workaround for https://github.com/unoplatform/uno/issues/5372 -->
