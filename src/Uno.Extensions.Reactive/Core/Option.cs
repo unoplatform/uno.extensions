@@ -9,6 +9,8 @@ namespace Uno.Extensions.Reactive;
 
 public static class Option
 {
+	internal static Option<T> SomeOrNone<T>(T? value) => value is null ? Option<T>.None() : Option<T>.Some(value);
+
 	public static Option<T> Some<T>(T? value) => Option<T>.Some(value);
 
 	public static Option<T> None<T>() => Option<T>.None();

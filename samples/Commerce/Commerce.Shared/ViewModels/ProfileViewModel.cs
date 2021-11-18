@@ -12,6 +12,6 @@ namespace Commerce.ViewModels
 			_profileService = profileService;
 		}
 
-		public IFeed<ProfileModel> Profile => Feed.Async<ProfileModel>(async ct => new ProfileModel(await _profileService.GetProfile(ct)));
+		public IFeed<ProfileModel> Profile => Feed.Async(async ct => new ProfileModel(await _profileService.GetProfile(ct)));
 	}
 }
