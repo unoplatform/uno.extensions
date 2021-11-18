@@ -79,7 +79,7 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Value"));
 		}
 		// Support for `{x:Bind GetValue()}`
-		PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("GetValue"));
+		PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(GetValue)));
 
 		return true;
 	}
