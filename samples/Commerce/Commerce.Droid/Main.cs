@@ -15,7 +15,7 @@ namespace Commerce.Droid
 {
 	[global::Android.App.ApplicationAttribute(
 		Label = "@string/ApplicationName",
-		Icon = "@mipmap/icon",
+		Icon = "@mipmap/ic_launcher",
 		LargeHeap = true,
 		HardwareAccelerated = true,
 		Theme = "@style/AppTheme"

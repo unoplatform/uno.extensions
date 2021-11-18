@@ -20,19 +20,19 @@
     <PackageReference Include="Microsoft.UI.Xaml" Version="2.7.1-prerelease.211026002" />
     <PackageReference Include="Uno.Core" Version="4.0.0-dev.7" />
     <PackageReference Include="Uno.Material">
-      <Version>1.1.0-dev.13</Version>
+      <Version>1.1.0-dev.17</Version>
     </PackageReference>
     <PackageReference Include="Uno.Toolkit.UI.Material">
-      <Version>0.1.0-dev.124</Version>
+      <Version>0.1.0-dev.130</Version>
     </PackageReference>
-    <PackageReference Include="Uno.UI" Version="4.0.0-dev.5594" />
+    <PackageReference Include="Uno.UI" Version="4.0.0-dev.5616" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Localization" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="6.0.0" />
     <PackageReference Include="System.Linq.Async" Version="4.0.0" />
-    <PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.124" />
+    <PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.130" />
   </ItemGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -206,7 +206,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
+    <Content Include="Assets\SplashScreen.scale-100.png" />
+    <Content Include="Assets\SplashScreen.scale-125.png" />
+    <Content Include="Assets\SplashScreen.scale-150.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
+    <Content Include="Assets\SplashScreen.scale-400.png" />
     <Content Include="Assets\Square150x150Logo.scale-200.png" />
     <Content Include="Assets\Square44x44Logo.scale-200.png" />
     <Content Include="Assets\StoreLogo.png" />
