@@ -26,22 +26,6 @@ namespace Commerce
 		public ProfilePage()
 		{
 			this.InitializeComponent();
-
-			this.Loaded += (s, e) =>
-			{
-				// Initialize the toggle to the current theme.
-				darkModeToggle.IsEnabled = false;
-				darkModeToggle.IsOn = SystemThemeHelper.IsAppInDarkMode();
-				darkModeToggle.IsEnabled = true;
-			};
-		}
-
-		private void ToggleDarkMode()
-		{
-			if (darkModeToggle.IsEnabled)
-			{
-				SystemThemeHelper.SetApplicationTheme(darkModeToggle.IsOn);
-			}
 		}
 	}
 }

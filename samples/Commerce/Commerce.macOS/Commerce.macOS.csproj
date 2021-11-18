@@ -69,16 +69,16 @@
     <Reference Include="System.Memory" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Uno.UI" Version="4.0.0-dev.5594" />
-    <PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5594" Condition="'$(Configuration)'=='Debug'" />
+    <PackageReference Include="Uno.UI" Version="4.0.0-dev.5616" />
+    <PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5616" Condition="'$(Configuration)'=='Debug'" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
     <PackageReference Include="Uno.Toolkit.UI">
-      <Version>0.1.0-dev.124</Version>
+      <Version>0.1.0-dev.132</Version>
     </PackageReference>
     <PackageReference Include="Uno.Core" Version="4.0.0-dev.7" />
     <PackageReference Include="Uno.Material">
-      <Version>1.1.0-dev.13</Version>
+      <Version>1.1.0-dev.17</Version>
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Mvvm">
       <Version>7.0.3</Version>

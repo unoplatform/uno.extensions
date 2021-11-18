@@ -106,7 +106,7 @@
 								</utu:AutoLayout>
 							</utu:AutoLayout>
 							<ToggleSwitch x:Name="darkModeToggle"
-										  Toggled="{x:Bind ToggleDarkMode}"
+										  IsOn="{Binding IsDarkMode, Mode=TwoWay}"
 										  HorizontalAlignment="Right"
 										  VerticalAlignment="Center"
 										  Style="{StaticResource MaterialToggleSwitchStyle}" />
