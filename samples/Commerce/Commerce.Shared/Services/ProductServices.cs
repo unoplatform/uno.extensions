@@ -17,7 +17,7 @@ public class ProductService : JsonDataService<Product>, IProductService
 
 	public async Task<IEnumerable<Product>> GetProducts(string? term, CancellationToken ct)
 	{
-		await Task.Delay(new Random(DateTime.Now.Millisecond).Next(100, 1000), ct);
+		await Task.Delay(new Random(DateTime.Now.Millisecond).Next(100, 500), ct);
 
 		var products = (await GetEntities()).AsEnumerable();
 		if (term is not null)

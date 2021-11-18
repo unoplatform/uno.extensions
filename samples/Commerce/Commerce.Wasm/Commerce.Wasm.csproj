@@ -11,13 +11,13 @@
 		<DebugType>portable</DebugType>
 		<DebugSymbols>true</DebugSymbols>
 		<!--
-		IL Linking is disabled in Debug configuration.
-		When building in Release, see https://platform.uno/docs/articles/features/using-il-linker-webassembly.html
+		Enable linking during debug for parity with Release
+		 https://platform.uno/docs/articles/features/using-il-linker-webassembly.html
 		-->
-		<WasmShellILLinkerEnabled>false</WasmShellILLinkerEnabled>
+		<WasmShellILLinkerEnabled>true</WasmShellILLinkerEnabled>
 	</PropertyGroup>
 	<ItemGroup>
-		<Content Include="Assets\SplashScreen.png" />
+		<Content Include="Assets\SplashScreen.scale-200.png" />
 	</ItemGroup>
 	<ItemGroup>
 		<UpToDateCheckInput Include="..\Commerce.Shared\**\*.xaml" />
@@ -49,16 +49,16 @@
 		<PackageReference Include="Microsoft.Extensions.Localization" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="6.0.0" />
 		<PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.3.0-dev.1" />
-		<PackageReference Include="Uno.UI.WebAssembly" Version="4.0.0-dev.5594" />
-		<PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5594" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.UI.WebAssembly" Version="4.0.0-dev.5616" />
+		<PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5616" Condition="'$(Configuration)'=='Debug'" />
 		<PackageReference Include="Uno.Wasm.Bootstrap" Version="3.0.0" />
 		<PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="3.0.0" />
 		<PackageReference Include="System.Linq.Async" Version="4.0.0" />
 		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
-		<PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.120" />
-    <PackageReference Include="Uno.Toolkit.UI.Material" Version="0.1.0-dev.120" />
+		<PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.130" />
+    <PackageReference Include="Uno.Toolkit.UI.Material" Version="0.1.0-dev.130" />
 		<PackageReference Include="Uno.Core" Version="4.0.0-dev.7" />
-		<PackageReference Include="Uno.Material" Version="1.1.0-dev.13" />
+		<PackageReference Include="Uno.Material" Version="1.1.0-dev.17" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />

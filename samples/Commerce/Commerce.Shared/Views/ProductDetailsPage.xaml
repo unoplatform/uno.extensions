@@ -23,9 +23,9 @@
 		<utu:NavigationBar Content="Fresh Foam Hierro v6..." utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialNavigationBarStyle}">
 
 		</utu:NavigationBar>
-		<ScrollViewer>
-			<reactive:FeedView
-			Source="{Binding Product}">
+		<ScrollViewer utu:AutoLayout.CounterAlignment="Stretch"
+					  utu:AutoLayout.PrimaryAlignment="Stretch">
+			<reactive:FeedView Source="{Binding Product}">
 				<DataTemplate>
 					<utu:AutoLayout DataContext="{Binding Data}" Background="{StaticResource MaterialSurfaceBrush}" utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryAlignment="Stretch">
 				<utu:AutoLayout Spacing="10" Padding="16,16,16,16" utu:AutoLayout.CounterAlignment="Stretch">
