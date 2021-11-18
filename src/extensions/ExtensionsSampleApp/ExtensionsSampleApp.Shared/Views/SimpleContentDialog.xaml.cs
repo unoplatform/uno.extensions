@@ -37,7 +37,7 @@ namespace ExtensionsSampleApp.Views
 
         private void CloseWithResponseClick(object sender, RoutedEventArgs e)
         {
-            Navigation.NavigateToPreviousViewAsync<Widget>(this, data: new Widget());
+            Navigation.NavigatePreviousWithResultAsync<Widget>(this, data: new Widget());
         }
     }
 }

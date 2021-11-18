@@ -7,8 +7,8 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:services="using:ExtensionsSampleApp.UnoCommerce.Services"
       xmlns:nav="using:Uno.Extensions.Navigation.Controls"
-      xmlns:toolkit="using:Uno.UI.ToolkitLib"
-      mc:Ignorable="d fake"
+	  xmlns:toolkit="using:Uno.Toolkit.UI.Controls"
+	  mc:Ignorable="d fake"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid d:DataContext="{d:DesignInstance fake:FakeProducts, IsDesignTimeCreatable=True}">

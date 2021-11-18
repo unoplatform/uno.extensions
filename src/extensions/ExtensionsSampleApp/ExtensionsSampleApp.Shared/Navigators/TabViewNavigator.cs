@@ -48,7 +48,7 @@ public class TabViewNavigator : ControlNavigator<TabView>
         }
         await tvi.EnsureLoaded();
         var tabName = (tvi.Content as FrameworkElement).GetName() ?? tvi.Name;
-        await Region.Navigator().NavigateToRouteAsync(tvi, tabName);
+        await Region.Navigator().NavigateRouteAsync(tvi, tabName);
     }
 
     private TabViewItem FindByName(string tabName)

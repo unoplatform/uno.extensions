@@ -39,26 +39,26 @@ namespace ExtensionsSampleApp.Views
             Navigation.NavigateAsync(new NavigationRequest(sender, new Uri("../-", UriKind.Relative).AsRoute()));
         }
 
-        private void GoBackNavigateToPreviousViewAsyncClick(object sender, RoutedEventArgs e)
+        private void GoBackNavigatePreviousViewAsyncClick(object sender, RoutedEventArgs e)
         {
-            Navigation.NavigateToPreviousViewAsync<Widget>(this, data: new Widget());
+            Navigation.NavigatePreviousWithResultAsync<Widget>(this, data: new Widget());
         }
 
-        private async void NextPageNavigateToViewAsyncRequestDataClick(object sender, RoutedEventArgs e)
+        private async void NextPageNavigateViewAsyncRequestDataClick(object sender, RoutedEventArgs e)
         {
-            var response = await Navigation.NavigateToViewForResultAsync<ThirdPage, Widget>(this);
+            var response = await Navigation.NavigateViewForResultAsync<ThirdPage, Widget>(this);
             if (response?.Result != null)
             {
                 await response.Result;
             }
         }
 
-        private void NextPageNavigateToViewAsyncWithDataClick(object sender, RoutedEventArgs e)
+        private void NextPageNavigateViewAsyncWithDataClick(object sender, RoutedEventArgs e)
         {
-            Navigation.NavigateToViewAsync<ThirdPage>(this, data: new Widget());
+            Navigation.NavigateViewAsync<ThirdPage>(this, data: new Widget());
         }
 
-        private void NextPageNavigateToViewAsyncWithQueryAndDataClick(object sender, RoutedEventArgs e)
+        private void NextPageNavigateViewAsyncWithQueryAndDataClick(object sender, RoutedEventArgs e)
         {
             Navigation.NavigateAsync(new NavigationRequest(sender, new Uri(typeof(ThirdPage).Name + "?arg1=val1&arg2=val2", UriKind.Relative).AsRoute(new Widget())));
         }

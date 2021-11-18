@@ -31,21 +31,21 @@
             <Button Content="Next Page (cancelled - won't navigate)"
                     nav:Navigation.Request="../ThirdPage" />
             <Button Content="Next Page Request Data (cancelled - won't navigate)"
-                    Click="NextPageNavigateToViewAsyncRequestDataClick"/>
+                    Click="NextPageNavigateViewAsyncRequestDataClick"/>
             <Button Content="Next Page with args"
                     nav:Navigation.Request="../ThirdPage?arg1=val1&amp;arg2=val2" />
             <Button Content="Next Page with data"
-                    Click="NextPageNavigateToViewAsyncWithDataClick" />
+                    Click="NextPageNavigateViewAsyncWithDataClick" />
             <Button Content="Next Page with args and data"
-                    Click="NextPageNavigateToViewAsyncWithQueryAndDataClick" />
+                    Click="NextPageNavigateViewAsyncWithQueryAndDataClick" />
             <Button Content="Go Back - Frame"
                     Click="GoBackFrameClick" />
             <Button Content="Go Back - NavigationRequest"
                     Click="GoBackNavigationRequestClick" />
             <Button Content="Go Back - Navigation Path"
                     nav:Navigation.Request="../-" />
-            <Button Content="Go Back - NavigateToPreviousViewAsync"
-                    Click="GoBackNavigateToPreviousViewAsyncClick" />
+            <Button Content="Go Back - NavigatePreviousViewAsync"
+                    Click="GoBackNavigatePreviousViewAsyncClick" />
             <Button Content="Tabbed Page - NavigationRequest"
                     nav:Navigation.Request="../TabbedPage" />
 

@@ -23,14 +23,17 @@
       <Version>7.1.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml" Version="2.7.0" />
-    <PackageReference Include="Uno.Core" Version="3.0.0" />
+    <PackageReference Include="Uno.Core" Version="4.0.0-dev.7" />
     <PackageReference Include="Uno.Material">
-      <Version>1.1.0-dev.5</Version>
+      <Version>1.1.0-dev.13</Version>
     </PackageReference>
-    <PackageReference Include="Uno.UI" Version="4.0.0-dev.5441" />
+    <PackageReference Include="Uno.Toolkit.UI.Material">
+      <Version>0.1.0-dev.124</Version>
+    </PackageReference>
+    <PackageReference Include="Uno.UI" Version="4.0.0-dev.5594" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
-    <PackageReference Include="Uno.UI.Toolkit" Version="0.1.0-dev.91" />
+    <PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.124" />
     <PackageReference Include="Serilog.Extensions.Hosting" Version="4.1.2" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="3.3.0" />
     <PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0" />
@@ -149,6 +152,54 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <ProjectReference Include="..\..\..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj">
+      <Project>{e2b51dbb-b8d6-4f14-a9f4-e5c7f7dff7e0}</Project>
+      <Name>Uno.Extensions.Configuration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Uno.Extensions.Core\Uno.Extensions.Core.csproj">
+      <Project>{3d08f2c8-c94d-4efd-98cf-e45b2c7bc91f}</Project>
+      <Name>Uno.Extensions.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj">
+      <Project>{b7959025-6b16-468d-8141-e4ecc99af1aa}</Project>
+      <Name>Uno.Extensions.Hosting</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Uno.Extensions.Http\Uno.Extensions.Http.csproj">
+      <Project>{8d2dac29-cf34-42ad-af4c-e723fd3c136e}</Project>
+      <Name>Uno.Extensions.Http</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Uno.Extensions.Localization\Uno.Extensions.Localization.csproj">
+      <Project>{99c2b6eb-7a79-4d93-a0b7-a7a52ef72331}</Project>
+      <Name>Uno.Extensions.Localization</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj">
+      <Project>{76f10ade-52b7-4716-ab0c-a1acd5d364fd}</Project>
+      <Name>Uno.Extensions.Logging.Serilog</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Uno.Extensions.Logging\Uno.Extensions.Logging.csproj">
+      <Project>{4dfc5b5f-49fd-43db-a769-32850cc2662a}</Project>
+      <Name>Uno.Extensions.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.csproj">
+      <Project>{fd0b7d57-6a17-44d9-b9e4-0f7a4fda23dd}</Project>
+      <Name>Uno.Extensions.Navigation.Toolkit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UI.csproj">
+      <Project>{2900cb1a-a212-49b4-9a65-5026bfd2264c}</Project>
+      <Name>Uno.Extensions.Navigation.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj">
+      <Project>{20fa80ed-bb89-4ced-9423-8520a489ee31}</Project>
+      <Name>Uno.Extensions.Navigation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Uno.Extensions.Serialization.Http\Uno.Extensions.Serialization.Http.csproj">
+      <Project>{c0d4d61c-5722-4593-819d-d91933168a03}</Project>
+      <Name>Uno.Extensions.Serialization.Http</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj">
+      <Project>{449a39d4-ff54-46ca-83ef-ff0952263db7}</Project>
+      <Name>Uno.Extensions.Serialization</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -167,52 +218,6 @@
     <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
     <Content Include="Properties\Default.rd.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Uno.Extensions.Core\Uno.Extensions.Core.csproj">
-      <Project>{0bf9edde-e6c1-4a3a-b73d-02d867f2054c}</Project>
-      <Name>Uno.Extensions.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj">
-      <Project>{0dde79de-181b-42ef-af00-56dc622a6afa}</Project>
-      <Name>Uno.Extensions.Configuration</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj">
-      <Project>{ea4f9862-63ee-47d6-bd2b-2d1b83e2fd6a}</Project>
-      <Name>Uno.Extensions.Hosting</Name>
-    </ProjectReference>
-    <!--<ProjectReference Include="..\..\Uno.Extensions.Http.Firebase\Uno.Extensions.Http.Firebase.csproj">
-      <Project>{8050e715-f905-4ff7-8e6c-262d71d5e51b}</Project>
-      <Name>Uno.Extensions.Http.Firebase</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Uno.Extensions.Http.Refit\Uno.Extensions.Http.Refit.csproj">
-      <Project>{63a16363-b360-4075-9ed0-911cad14e6ea}</Project>
-      <Name>Uno.Extensions.Http.Refit</Name>
-    </ProjectReference>-->
-    <ProjectReference Include="..\..\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj">
-      <Project>{3f01a0de-4b9e-496f-ac6b-94daf315a20f}</Project>
-      <Name>Uno.Extensions.Logging.Serilog</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Uno.Extensions.Logging\Uno.Extensions.Logging.csproj">
-      <Project>{406a741f-fb06-482f-9037-154b55fcb2ce}</Project>
-      <Name>Uno.Extensions.Logging</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj">
-      <Project>{ad3c0a66-450d-4355-b5c4-fdaf0d7746ad}</Project>
-      <Name>Uno.Extensions.Navigation</Name>
-    </ProjectReference>
-    <!--<ProjectReference Include="..\..\Uno.Extensions.Serialization.Http\Uno.Extensions.Serialization.Http.csproj">
-      <Project>{629c0ea7-1e92-481b-993d-059cb4b51a13}</Project>
-      <Name>Uno.Extensions.Serialization.Http</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Uno.Extensions.Serialization.Refit\Uno.Extensions.Serialization.Refit.csproj">
-      <Project>{5b0c5424-a8a4-439a-b01e-641ef2223244}</Project>
-      <Name>Uno.Extensions.Serialization.Refit</Name>
-    </ProjectReference>-->
-    <ProjectReference Include="..\..\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj">
-      <Project>{5123670c-9756-4c9e-9844-f4a9c0aee633}</Project>
-      <Name>Uno.Extensions.Serialization</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="..\ExtensionsSampleApp.Shared\ExtensionsSampleApp.Shared.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

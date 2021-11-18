@@ -39,9 +39,9 @@ namespace ExtensionsSampleApp.Views.Twitter
 
         public async Task<bool> Stop(NavigationRequest request)
         {
-            await navigator.NavigateToRouteAsync(this, "./Authenticating");
+            await navigator.NavigateRouteAsync(this, "./Authenticating");
             await Task.Delay(2000);
-            await navigator.NavigateToRouteAsync(this, "./Default");
+            await navigator.NavigateRouteAsync(this, "./Default");
             return !string.IsNullOrWhiteSpace(UsernameText.Text);
         }
     }

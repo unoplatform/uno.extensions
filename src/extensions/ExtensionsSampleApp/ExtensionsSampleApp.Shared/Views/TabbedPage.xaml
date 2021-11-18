@@ -24,7 +24,7 @@
                 <Button Content="Doc0"
                         nav:Navigation.Request="../doc0" />
                 <Button Content="Doc0 - code"
-                        Click="NavigateToDoc0Click" />
+                        Click="NavigateDoc0Click" />
                 <Button Content="Doc2"
                         nav:Navigation.Request="../doc2" />
             </StackPanel>
@@ -44,11 +44,11 @@
                 <Button Content="Third Page"
                         nav:Navigation.Request="../../ThirdPage" />
                 <Button Content="Third Page"
-                        Command="{Binding NavigateToThirdPageCommand}" />
+                        Command="{Binding NavigateThirdPageCommand}" />
                 <Button Content="Third Page (rooted)"
                         nav:Navigation.Request="../../../ThirdPage" />
                 <Button Content="Doc1 - ViewModel"
-                        Command="{Binding NavigateToDoc1Command}" />
+                        Command="{Binding NavigateDoc1Command}" />
             </StackPanel>
         </controls:TabViewItem>
         <controls:TabViewItem Header="Document 1"

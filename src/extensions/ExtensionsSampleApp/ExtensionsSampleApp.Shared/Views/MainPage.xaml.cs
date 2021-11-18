@@ -33,26 +33,26 @@ namespace ExtensionsSampleApp.Views
             Navigation.NavigateAsync("../SecondPage".AsRequest(this));
         }
 
-        private async void NextPageNavigateToViewAsyncClick(object sender, RoutedEventArgs e)
+        private async void NextPageNavigateViewAsyncClick(object sender, RoutedEventArgs e)
         {
-            await Navigation.NavigateToViewAsync<SecondPage>(this);
+            await Navigation.NavigateViewAsync<SecondPage>(this);
         }
 
-        private void NextPageNavigateToViewModelAsyncClick(object sender, RoutedEventArgs e)
+        private void NextPageNavigateViewModelAsyncClick(object sender, RoutedEventArgs e)
         {
-            Navigation.NavigateToViewModelAsync<SecondViewModel>(this);
+            Navigation.NavigateViewModelAsync<SecondViewModel>(this);
         }
 
-        private void NextPageNavigateToDataAsyncClick(object sender, RoutedEventArgs e)
+        private void NextPageNavigateDataAsyncClick(object sender, RoutedEventArgs e)
         {
-            Navigation.NavigateToDataAsync(this, new Widget());
+            Navigation.NavigateDataAsync(this, new Widget());
         }
 
         private async void NextPageRequestResponseClick(object sender, RoutedEventArgs e)
         {
-            var response = await Navigation.NavigateToViewModelForResultAsync<SecondViewModel, Widget>(this);
+            var response = await Navigation.NavigateViewModelForResultAsync<SecondViewModel, Widget>(this);
             var result = await response.Result;
-            NavigateToViewModelForResultText.Text = "Result:" + ((Widget)result).ToString();
+            NavigateViewModelForResultText.Text = "Result:" + ((Widget)result).ToString();
         }
 
         private async void RequestDataResponseClick(object sender, RoutedEventArgs e)
@@ -65,7 +65,7 @@ namespace ExtensionsSampleApp.Views
         private async void NextPageRequestWithTimeoutClick(object sender, RoutedEventArgs e)
         {
             var cancel = new CancellationTokenSource();
-            var navresultTask = Navigation.NavigateToViewModelForResultAsync<SecondViewModel, Widget>(this, cancellation: cancel.Token);
+            var navresultTask = Navigation.NavigateViewModelForResultAsync<SecondViewModel, Widget>(this, cancellation: cancel.Token);
             Task.Run(() => Task.Delay(2000)).ConfigureAwait(true).GetAwaiter().OnCompleted(() => cancel.Cancel());
             var navresult = await navresultTask;
             var response = await navresult.Result;
@@ -74,7 +74,7 @@ namespace ExtensionsSampleApp.Views
         private async void NextPageResponseWithTimeoutClick(object sender, RoutedEventArgs e)
         {
             var cancel = new CancellationTokenSource();
-            var navresultTask = Navigation.NavigateToViewModelForResultAsync<SecondViewModel, Widget>(this, cancellation: cancel.Token);
+            var navresultTask = Navigation.NavigateViewModelForResultAsync<SecondViewModel, Widget>(this, cancellation: cancel.Token);
             var navresult = await navresultTask;
             Task.Run(() => Task.Delay(2000)).ConfigureAwait(true).GetAwaiter().OnCompleted(() => cancel.Cancel());
             var response = await navresult.Result;
@@ -83,7 +83,7 @@ namespace ExtensionsSampleApp.Views
 
         private async void ContentDialogResponseClick(object sender, RoutedEventArgs e)
         {
-            var navresult = await Navigation.NavigateToViewForResultAsync<SimpleContentDialog, ContentDialogResult>(this, Schemes.Dialog);
+            var navresult = await Navigation.NavigateViewForResultAsync<SimpleContentDialog, ContentDialogResult>(this, Schemes.Dialog);
             var response = await navresult.Result;
             if (response != null)
             {
@@ -93,7 +93,7 @@ namespace ExtensionsSampleApp.Views
 
         private async void ContentDialogWidgetResponseClick(object sender, RoutedEventArgs e)
         {
-            var navresult = await Navigation.NavigateToViewForResultAsync<SimpleContentDialog, Widget>(this, Schemes.Dialog);
+            var navresult = await Navigation.NavigateViewForResultAsync<SimpleContentDialog, Widget>(this, Schemes.Dialog);
             var response = await navresult.Result;
             if (response != null)
             {

@@ -29,8 +29,8 @@ namespace ExtensionsSampleApp.ViewModels
             Title = settings.Value.AppTitle;
             Navigation = navigation;
             Mappings = mappings;
-            NavigateToSecondPageCommand = new RelayCommand(NavigateToSecondPage);
-            NavigateToFlyoutCommand = new RelayCommand(NavigateToFlyout);
+            NavigateSecondPageCommand = new RelayCommand(NavigateSecondPage);
+            NavigateFlyoutCommand = new RelayCommand(NavigateFlyout);
 
             //Task.Run(async () =>
             //{
@@ -41,12 +41,12 @@ namespace ExtensionsSampleApp.ViewModels
         {
         }
 
-        public ICommand NavigateToSecondPageCommand { get; }
-        public ICommand NavigateToFlyoutCommand { get; }
+        public ICommand NavigateSecondPageCommand { get; }
+        public ICommand NavigateFlyoutCommand { get; }
 
-        private void NavigateToSecondPage() => Navigation.NavigateToViewModelAsync<SecondViewModel>(this, data: new Widget());
+        private void NavigateSecondPage() => Navigation.NavigateViewModelAsync<SecondViewModel>(this, data: new Widget());
 
-        private void NavigateToFlyout() => Navigation.NavigateToViewModelAsync<CustomViewModel>(this, Schemes.Dialog);
+        private void NavigateFlyout() => Navigation.NavigateViewModelAsync<CustomViewModel>(this, Schemes.Dialog);
 
 
         public async Task<bool> Stop(NavigationRequest request)

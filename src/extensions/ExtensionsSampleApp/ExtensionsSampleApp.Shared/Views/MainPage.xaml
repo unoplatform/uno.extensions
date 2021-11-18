@@ -56,26 +56,26 @@
                         nav:Navigation.Request="../SecondPage?delay=5000" />
 
                 <TextBlock Text="Navigation.NavigateAsync&lt;SecondPage&gt;() - In click handler, navigates based on page type" />
-                <Button Content="Next page - NavigateToViewAsync"
-                        Click="NextPageNavigateToViewAsyncClick" />
+                <Button Content="Next page - NavigateViewAsync"
+                        Click="NextPageNavigateViewAsyncClick" />
 
-                <TextBlock Text="Navigation.NavigateToViewModelAsync&lt;SecondViewModel&gt;() - In click handler, navigates based on page type" />
-                <Button Content="Next page - NavigateToViewModelAsync"
-                        Click="NextPageNavigateToViewModelAsyncClick" />
+                <TextBlock Text="Navigation.NavigateViewModelAsync&lt;SecondViewModel&gt;() - In click handler, navigates based on page type" />
+                <Button Content="Next page - NavigateViewModelAsync"
+                        Click="NextPageNavigateViewModelAsyncClick" />
 
-                <TextBlock Text="Navigation.NavigateToDataAsync(this, new Widget()) - In click handler, navigates to the page that's configured to handle the type of data" />
-                <Button Content="Next page - NavigateToDataAsync"
-                        Click="NextPageNavigateToDataAsyncClick" />
+                <TextBlock Text="Navigation.NavigateDataAsync(this, new Widget()) - In click handler, navigates to the page that's configured to handle the type of data" />
+                <Button Content="Next page - NavigateDataAsync"
+                        Click="NextPageNavigateDataAsyncClick" />
 
-                <TextBlock Text="Navigation.NavigateToViewModelAsync&lt;SecondViewModel&gt;(this, data: new Widget()) - Executed by command in MainViewModel" />
-                <Button Content="Next page - NavigateToViewModelAsync (MainViewModel)"
-                        Command="{Binding NavigateToSecondPageCommand}" />
+                <TextBlock Text="Navigation.NavigateViewModelAsync&lt;SecondViewModel&gt;(this, data: new Widget()) - Executed by command in MainViewModel" />
+                <Button Content="Next page - NavigateViewModelAsync (MainViewModel)"
+                        Command="{Binding NavigateSecondPageCommand}" />
 
-                <TextBlock Text="Navigation.NavigateToViewModelForResultAsync&lt;SecondViewModel, Widget&gt;(this); - In click handler, navigate by viewmodel type and request data to be returned" />
-                <Button Content="Next page - NavigateToViewModelForResult"
+                <TextBlock Text="Navigation.NavigateViewModelForResultAsync&lt;SecondViewModel, Widget&gt;(this); - In click handler, navigate by viewmodel type and request data to be returned" />
+                <Button Content="Next page - NavigateViewModelForResult"
                         Click="NextPageRequestResponseClick" />
                 <TextBlock Text=""
-                           x:Name="NavigateToViewModelForResultText"
+                           x:Name="NavigateViewModelForResultText"
                            Style="{StaticResource ResultTextStyle}" />
 
                 <TextBlock Text="Navigation.NavigateForResultAsync&lt;Widget&gt;(Mappings, this); - In click handler, navigate in order to retrieve data" />
@@ -85,22 +85,22 @@
                            x:Name="NavigateForResultText"
                            Style="{StaticResource ResultTextStyle}" />
 
-                <TextBlock Text="Navigation.NavigateToViewModelForResultAsync&lt;SecondViewModel, Widget&gt;(Mappings, this, cancellation: cancel.Token); - In click handler, navigate to viewmodel in order to retrieve data; cancelled after 2 seconds" />
+                <TextBlock Text="Navigation.NavigateViewModelForResultAsync&lt;SecondViewModel, Widget&gt;(Mappings, this, cancellation: cancel.Token); - In click handler, navigate to viewmodel in order to retrieve data; cancelled after 2 seconds" />
                 <Button Content="Next page - NavigationRequest with response (2 second timeout)"
                         Click="NextPageRequestWithTimeoutClick" />
 
-                <TextBlock Text="Navigation.NavigateToViewModelForResultAsync&lt;SecondViewModel, Widget&gt;(Mappings, this, cancellation: cancel.Token); - In click handler, navigate to viewmodel in order to retrieve data; cancelled after 2 seconds (after first waiting for navigation to complete)" />
+                <TextBlock Text="Navigation.NavigateViewModelForResultAsync&lt;SecondViewModel, Widget&gt;(Mappings, this, cancellation: cancel.Token); - In click handler, navigate to viewmodel in order to retrieve data; cancelled after 2 seconds (after first waiting for navigation to complete)" />
                 <Button Content="Next page - NavigationRequest with response (2 second timeout)"
                         Click="NextPageResponseWithTimeoutClick" />
 
-                <TextBlock Text="Navigation.NavigateToViewForResultAsync&lt;SimpleContentDialog, ContentDialogResult&gt;(this, Schemes.Dialog); - In click handler, display content dialog, expecting a dialog result" />
+                <TextBlock Text="Navigation.NavigateViewForResultAsync&lt;SimpleContentDialog, ContentDialogResult&gt;(this, Schemes.Dialog); - In click handler, display content dialog, expecting a dialog result" />
                 <Button Content="Content Dialog"
                         Click="ContentDialogResponseClick" />
                 <TextBlock Text=""
                            x:Name="ContentDialogForResultText"
                            Style="{StaticResource ResultTextStyle}" />
 
-                <TextBlock Text="Navigation.NavigateToViewForResultAsync&lt;SimpleContentDialog, Widget&gt;(this, Schemes.Dialog); - In click handler, display content dialog, expecting a result object" />
+                <TextBlock Text="Navigation.NavigateViewForResultAsync&lt;SimpleContentDialog, Widget&gt;(this, Schemes.Dialog); - In click handler, display content dialog, expecting a result object" />
                 <Button Content="Content Dialog - Widget Response"
                         Click="ContentDialogWidgetResponseClick" />
                 <TextBlock Text=""
@@ -132,7 +132,7 @@
 
                 <TextBlock Text="Flyout launched from viewmodel" />
                 <Button Content="Flyout - from ViewModel"
-                        Command="{Binding NavigateToFlyoutCommand}" />
+                        Command="{Binding NavigateFlyoutCommand}" />
 
 
 

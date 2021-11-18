@@ -28,7 +28,7 @@ namespace ExtensionsSampleApp.Views.Twitter
 
         public void TweetSelectionChanged(object sender, SelectionChangedEventArgs args)
         {
-            Navigation.NavigateToDataAsync(this, (sender as ListView).SelectedItem as Tweet);
+            Navigation.NavigateDataAsync(this, (sender as ListView).SelectedItem as Tweet);
         }
 
     }
