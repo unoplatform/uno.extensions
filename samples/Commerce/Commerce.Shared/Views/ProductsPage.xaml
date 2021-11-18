@@ -53,13 +53,13 @@
 			<ColumnDefinition Width="0"
 							  x:Name="DetailsColumn" />
 		</Grid.ColumnDefinitions>
-		
-            <utu:AutoLayout>
-						<utu:AutoLayout.Resources>
-		</utu:AutoLayout.Resources>
 
-		<utu:NavigationBar Content="Uno commerce" x:Uid="Page_NavigationBar" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialNavigationBarStyle}">
-			<utu:NavigationBar.PrimaryCommands>
+		<utu:AutoLayout>
+			<utu:AutoLayout.Resources>
+				<x:String x:Key="Icon_search">M 12.5 11 L 11.710000038146973 11 L 11.430000305175781 10.729999542236328 C 12.410000324249268 9.589999556541443 13 8.110000014305115 13 6.5 C 13 2.9100000858306885 10.089999914169312 0 6.5 0 C 2.9100000858306885 0 0 2.9100000858306885 0 6.5 C 0 10.089999914169312 2.9100000858306885 13 6.5 13 C 8.110000014305115 13 9.589999556541443 12.410000324249268 10.729999542236328 11.430000305175781 L 11 11.710000038146973 L 11 12.5 L 16 17.489999771118164 L 17.489999771118164 16 L 12.5 11 L 12.5 11 Z M 6.5 11 C 4.009999990463257 11 2 8.990000009536743 2 6.5 C 2 4.009999990463257 4.009999990463257 2 6.5 2 C 8.990000009536743 2 11 4.009999990463257 11 6.5 C 11 8.990000009536743 8.990000009536743 11 6.5 11 Z</x:String>
+			</utu:AutoLayout.Resources>
+			<utu:NavigationBar Content="Uno commerce" x:Uid="Page_NavigationBar" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialNavigationBarStyle}">
+				<utu:NavigationBar.PrimaryCommands>
 					<AppBarButton Foreground="{StaticResource MaterialOnPrimaryMediumBrush}">
 						<AppBarButton.Icon>
 							<BitmapIcon UriSource="ms-appx:///Assets/BitmapIcons/notifications.png"
@@ -72,67 +72,65 @@
 										ShowAsMonochrome="false" />
 						</AppBarButton.Icon>
 					</AppBarButton>
-			</utu:NavigationBar.PrimaryCommands>
-		</utu:NavigationBar>
-		<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryAlignment="Stretch">
-			<utu:AutoLayout Spacing="16" Padding="16,16,16,16" utu:AutoLayout.CounterAlignment="Stretch">
-					<TextBox Text="{Binding Term, Mode=TwoWay}"
-							 utu:AutoLayout.CounterAlignment="Stretch"
-							 Style="{StaticResource MaterialOutlinedTextBoxStyle}">
+				</utu:NavigationBar.PrimaryCommands>
+			</utu:NavigationBar>
+			<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryAlignment="Stretch">
+				<utu:AutoLayout Spacing="16" Padding="16,16,16,16" utu:AutoLayout.CounterAlignment="Stretch">
+					<TextBox Text="{Binding Term, Mode=TwoWay}" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialOutlinedTextBoxStyle}">
 						<um:ControlExtensions.Icon>
-							<PathIcon Data="M 12.5 11 L 11.710000038146973 11 L 11.430000305175781 10.729999542236328 C 12.410000324249268 9.589999556541443 13 8.110000014305115 13 6.5 C 13 2.9100000858306885 10.089999914169312 0 6.5 0 C 2.9100000858306885 0 0 2.9100000858306885 0 6.5 C 0 10.089999914169312 2.9100000858306885 13 6.5 13 C 8.110000014305115 13 9.589999556541443 12.410000324249268 10.729999542236328 11.430000305175781 L 11 11.710000038146973 L 11 12.5 L 16 17.489999771118164 L 17.489999771118164 16 L 12.5 11 L 12.5 11 Z M 6.5 11 C 4.009999990463257 11 2 8.990000009536743 2 6.5 C 2 4.009999990463257 4.009999990463257 2 6.5 2 C 8.990000009536743 2 11 4.009999990463257 11 6.5 C 11 8.990000009536743 8.990000009536743 11 6.5 11 Z" />
+							<PathIcon Data="{StaticResource Icon_search}" />
 						</um:ControlExtensions.Icon>
 					</TextBox>
-				<utu:AutoLayout Spacing="10" Justify="SpaceBetween" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryLength="20">
-					<TextBlock Foreground="{StaticResource MaterialOnBackgroundBrush}" x:Uid="Page_5254 products found!" Text="5254 products found!" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialBody2}" />
+					<utu:AutoLayout Spacing="10" Justify="SpaceBetween" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryLength="20">
+						<TextBlock Foreground="{StaticResource MaterialOnBackgroundBrush}" x:Uid="Page_5254 products found!" Text="5254 products found!" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialBody2}" />
 						<HyperlinkButton Content="Filters" x:Uid="Page_Filters" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialHyperlinkButtonStyle}" nav:Navigation.Request="!FilterPopup" nav:Navigation.Data="{Binding Filter, Mode=TwoWay}"/>
+					</utu:AutoLayout>
 				</utu:AutoLayout>
-			</utu:AutoLayout>
-			<uer:FeedView Source="{Binding Items}" utu:AutoLayout.CounterAlignment="Stretch">
-				<DataTemplate>
-					<ListView ItemsSource="{Binding Data}" uen:Navigation.Request="ProductDetails">
-						<ListView.ItemsPanel>
-							<ItemsPanelTemplate>
-								<ItemsStackPanel Orientation="Vertical" />
-							</ItemsPanelTemplate>
-						</ListView.ItemsPanel>
-						<ListView.ItemTemplate>
-							<DataTemplate>
-								<utu:AutoLayout>
-									<utu:AutoLayout Padding="16,8,16,0" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
-										<utu:AutoLayout>
-											<utu:AutoLayout Spacing="10" Padding="0,0,16,8">
-												<Image Source="{Binding Photo}" Stretch="UniformToFill" utu:AutoLayout.PrimaryLength="56" utu:AutoLayout.CounterLength="56" />
-											</utu:AutoLayout>
-										</utu:AutoLayout>
-										<utu:AutoLayout Padding="0,0,0,8" utu:AutoLayout.PrimaryAlignment="Stretch">
-											<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch">
-												<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryAlignment="Stretch">
-													<TextBlock Foreground="{StaticResource MaterialOnSurfaceLowBrush}" TextWrapping="Wrap" x:Uid="Page_Subtitle" Text="{Binding Brand}" Style="{StaticResource MaterialOverline}" />
-													<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" TextWrapping="Wrap" x:Uid="Page_Secondary text" Text="{Binding Name}" Style="{StaticResource MaterialSubtitle1}" />
+				<uer:FeedView Source="{Binding Items}" utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryAlignment="Stretch">
+					<DataTemplate>
+						<ListView Background="{StaticResource MaterialSurfaceBrush}" ItemsSource="{Binding Data}" uen:Navigation.Request="ProductDetails">
+							<ListView.ItemsPanel>
+								<ItemsPanelTemplate>
+									<ItemsStackPanel Orientation="Vertical" />
+								</ItemsPanelTemplate>
+							</ListView.ItemsPanel>
+							<ListView.ItemTemplate>
+								<DataTemplate>
+									<utu:AutoLayout>
+										<utu:AutoLayout Padding="16,8,16,0" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
+											<utu:AutoLayout>
+												<utu:AutoLayout Spacing="10" Padding="0,0,16,8">
+													<Image Source="{Binding Photo}" Stretch="UniformToFill" utu:AutoLayout.PrimaryLength="56" utu:AutoLayout.CounterLength="56" />
 												</utu:AutoLayout>
 											</utu:AutoLayout>
-										</utu:AutoLayout>
-										<utu:AutoLayout Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
-											<utu:AutoLayout Padding="16,0,0,8" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
-												<utu:AutoLayout utu:AutoLayout.CounterAlignment="Center">
-													<utu:AutoLayout Spacing="4" utu:AutoLayout.CounterAlignment="End">
-														<utu:AutoLayout Spacing="10" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="End">
-															<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" TextAlignment="End" x:Uid="Page_Label" Text="{Binding Price}" Style="{StaticResource MaterialBody1}" />
+											<utu:AutoLayout Padding="0,0,0,8" utu:AutoLayout.PrimaryAlignment="Stretch">
+												<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch">
+													<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryAlignment="Stretch">
+														<TextBlock Foreground="{StaticResource MaterialOnSurfaceLowBrush}" TextWrapping="Wrap" x:Uid="Page_Subtitle" Text="{Binding Brand}" Style="{StaticResource MaterialOverline}" />
+														<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" TextWrapping="Wrap" x:Uid="Page_Secondary text" Text="{Binding Name}" Style="{StaticResource MaterialSubtitle1}" />
+													</utu:AutoLayout>
+												</utu:AutoLayout>
+											</utu:AutoLayout>
+											<utu:AutoLayout Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
+												<utu:AutoLayout Padding="16,0,0,8" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
+													<utu:AutoLayout utu:AutoLayout.CounterAlignment="Center">
+														<utu:AutoLayout Spacing="4" utu:AutoLayout.CounterAlignment="End">
+															<utu:AutoLayout Spacing="10" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="End">
+																<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" TextAlignment="End" Text="{Binding Price}" Style="{StaticResource MaterialBody1}" />
+															</utu:AutoLayout>
 														</utu:AutoLayout>
 													</utu:AutoLayout>
 												</utu:AutoLayout>
 											</utu:AutoLayout>
 										</utu:AutoLayout>
 									</utu:AutoLayout>
-								</utu:AutoLayout>
-							</DataTemplate>
-						</ListView.ItemTemplate>
-					</ListView>
-				</DataTemplate>
-			</uer:FeedView>
+								</DataTemplate>
+							</ListView.ItemTemplate>
+						</ListView>
+					</DataTemplate>
+				</uer:FeedView>
+			</utu:AutoLayout>
 		</utu:AutoLayout>
-	</utu:AutoLayout>
 
 		<Grid Grid.Column="1"
 			  x:Name="DetailsGrid"

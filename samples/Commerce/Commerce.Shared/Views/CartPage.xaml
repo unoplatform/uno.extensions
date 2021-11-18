@@ -11,21 +11,21 @@
 	  xmlns:utu="using:Uno.Toolkit.UI.Controls"
 	  xmlns:uer="using:Uno.Extensions.Reactive"
       xmlns:uen="using:Uno.Extensions.Navigation.Controls"
-      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+      Background="{ThemeResource MaterialBackgroundBrush}"
 HorizontalAlignment="Stretch"
 	VerticalAlignment="Stretch"
 	>
 
-	<utu:AutoLayout MaxWidth="{StaticResource LandscapeMaxPageWidth}">
-		<utu:NavigationBar Content="Your cart" x:Uid="Page_NavigationBar" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialModalNavigationBarStyle}" />
-		<ScrollViewer>
-			<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryAlignment="Stretch">
+	<utu:AutoLayout MaxWidth="{StaticResource LandscapeMaxPageWidth}" Background="{StaticResource MaterialBackgroundBrush}">
+		<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryAlignment="Stretch">
+			<utu:NavigationBar Content="Your cart" x:Uid="Body_NavigationBar" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialRootModalNavigationBarStyle}" />
+			<utu:AutoLayout Background="{StaticResource MaterialSurfaceBrush}" utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryAlignment="Stretch">
 				<utu:AutoLayout Spacing="16" Padding="16,16,16,8" utu:AutoLayout.CounterAlignment="Stretch">
-					<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Page_3 Items" Text="3 Items" Style="{StaticResource MaterialSubtitle2}" />
+					<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Body_3 Items" Text="3 Items" Style="{StaticResource MaterialSubtitle2}" />
 				</utu:AutoLayout>
 				<uer:FeedView Source="{Binding Cart}" utu:AutoLayout.CounterAlignment="Stretch">
 					<DataTemplate>
-						<ListView ItemsSource="{Binding Data.Items}" uen:Navigation.Request="Products">
+						<ListView DataContext="{Binding Data}" ItemsSource="{Binding Items}" uen:Navigation.Request="ProductDetails">
 							<ListView.ItemsPanel>
 								<ItemsPanelTemplate>
 									<ItemsStackPanel Orientation="Vertical" />
@@ -33,18 +33,18 @@ HorizontalAlignment="Stretch"
 							</ListView.ItemsPanel>
 							<ListView.ItemTemplate>
 								<DataTemplate>
-									<SwipeControl>
+									<SwipeControl DataContext="{Binding Product}">
 										<utu:AutoLayout Padding="16,16,16,0" Orientation="Horizontal">
-											<utu:AutoLayout utu:AutoLayout.CounterLength="72">
-												<utu:AutoLayout Spacing="10" Padding="0,0,16,16" utu:AutoLayout.PrimaryAlignment="Stretch">
-													<Image Source="https://loremflickr.com/360/360/flower" Stretch="UniformToFill" utu:AutoLayout.PrimaryLength="56" utu:AutoLayout.CounterLength="56" />
+											<utu:AutoLayout>
+												<utu:AutoLayout Spacing="10" Padding="0,0,16,16">
+													<Image Source="{Binding Photo}" Stretch="UniformToFill" utu:AutoLayout.PrimaryLength="56" utu:AutoLayout.CounterLength="56" />
 												</utu:AutoLayout>
 											</utu:AutoLayout>
 											<utu:AutoLayout Padding="0,0,0,16" utu:AutoLayout.PrimaryAlignment="Stretch">
 												<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch">
 													<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch">
-														<TextBlock Foreground="{StaticResource MaterialOnSurfaceLowBrush}" TextWrapping="Wrap" x:Uid="Page_Subtitle" Text="Pit Viper" Style="{StaticResource MaterialOverline}" />
-														<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" TextWrapping="Wrap" x:Uid="Page_Secondary text" Text="The Absolute Freedom" Style="{StaticResource MaterialSubtitle1}" />
+														<TextBlock Foreground="{StaticResource MaterialOnSurfaceLowBrush}" TextWrapping="Wrap" Text="{Binding Brand}" Style="{StaticResource MaterialOverline}" />
+														<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" TextWrapping="Wrap" Text="{Binding Name}" Style="{StaticResource MaterialSubtitle1}" />
 													</utu:AutoLayout>
 												</utu:AutoLayout>
 											</utu:AutoLayout>
@@ -53,7 +53,7 @@ HorizontalAlignment="Stretch"
 													<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch">
 														<utu:AutoLayout Spacing="4" utu:AutoLayout.CounterAlignment="End" utu:AutoLayout.PrimaryAlignment="Stretch">
 															<utu:AutoLayout Spacing="10" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="End">
-																<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" TextAlignment="End" x:Uid="Page_Label" Text="$125,99" Style="{StaticResource MaterialBody1}" />
+																<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" TextAlignment="End" x:Uid="Body_Label" Text="{Binding Price}" Style="{StaticResource MaterialBody1}" />
 															</utu:AutoLayout>
 														</utu:AutoLayout>
 													</utu:AutoLayout>
@@ -85,32 +85,32 @@ HorizontalAlignment="Stretch"
 				</uer:FeedView>
 				<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch">
 					<utu:AutoLayout Spacing="16" Padding="16,32,16,8" utu:AutoLayout.CounterAlignment="Stretch">
-						<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Page_Order summary" Text="Order summary" Style="{StaticResource MaterialHeadline6}" />
+						<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Body_Order summary" Text="Order summary" Style="{StaticResource MaterialHeadline6}" />
 					</utu:AutoLayout>
 					<utu:AutoLayout Spacing="8" Padding="16,8,16,16" utu:AutoLayout.CounterAlignment="Stretch">
 						<utu:AutoLayout Justify="SpaceBetween" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
-							<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Page_Sub-total" Text="Sub-total" Style="{StaticResource MaterialBody2}" />
-							<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Page_$350,97" Text="$350,97" Style="{StaticResource MaterialBody2}" />
+							<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Body_Sub-total" Text="Sub-total" Style="{StaticResource MaterialBody2}" />
+							<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Body_$350,97" Text="$350,97" Style="{StaticResource MaterialBody2}" />
 						</utu:AutoLayout>
 						<utu:AutoLayout Justify="SpaceBetween" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
-							<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Page_TPS (4,49%)" Text="TPS (4,49%)" Style="{StaticResource MaterialBody2}" />
-							<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Page_$15,75" Text="$15,75" Style="{StaticResource MaterialBody2}" />
+							<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Body_TPS (4,49%)" Text="TPS (4,49%)" Style="{StaticResource MaterialBody2}" />
+							<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Body_$15,75" Text="$15,75" Style="{StaticResource MaterialBody2}" />
 						</utu:AutoLayout>
 						<utu:AutoLayout Justify="SpaceBetween" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
-							<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Page_TVQ (1099%)" Text="TVQ (10.99%)" Style="{StaticResource MaterialBody2}" />
-							<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Page_$38,57" Text="$38,57" Style="{StaticResource MaterialBody2}" />
+							<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Body_TVQ (1099%)" Text="TVQ (10.99%)" Style="{StaticResource MaterialBody2}" />
+							<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Body_$38,57" Text="$38,57" Style="{StaticResource MaterialBody2}" />
 						</utu:AutoLayout>
 						<utu:AutoLayout Justify="SpaceBetween" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
-							<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Page_Total" Text="Total" Style="{StaticResource MaterialBody2}" />
-							<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Page_$405,29" Text="$405,29" Style="{StaticResource MaterialHeadline6}" />
+							<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Body_Total" Text="Total" Style="{StaticResource MaterialBody2}" />
+							<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Body_$405,29" Text="$405,29" Style="{StaticResource MaterialHeadline6}" />
 						</utu:AutoLayout>
 					</utu:AutoLayout>
 					<utu:AutoLayout Spacing="10" Padding="16,16,16,16" utu:AutoLayout.CounterAlignment="Stretch">
-						<Button Content="checkout" nav:Navigation.Request="../CheckoutPage" x:Uid="Page_Checkout" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialContainedButtonStyle}" />
+						<Button Content="checkout" nav:Navigation.Request="../CheckoutPage" x:Uid="Body_Checkout" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialContainedButtonStyle}" />
 					</utu:AutoLayout>
 				</utu:AutoLayout>
 			</utu:AutoLayout>
-		</ScrollViewer>
+		</utu:AutoLayout>
 	</utu:AutoLayout>
 
 </Page>
