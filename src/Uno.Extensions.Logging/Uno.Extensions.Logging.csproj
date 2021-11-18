@@ -12,11 +12,11 @@
 		<!--<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />-->
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
-		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.0.0-dev.5594"/>
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.0.0-dev.5616"/>
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Uno.UI" Version="4.0.0-dev.5594" />
+		<PackageReference Include="Uno.UI" Version="4.0.0-dev.5616" />
 	</ItemGroup>
 
 </Project>
