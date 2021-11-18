@@ -14,7 +14,7 @@
 	  xmlns:toolkit="using:Uno.Toolkit.UI.Controls"
 	  xmlns:reactive="using:Uno.Extensions.Reactive"
 	  mc:Ignorable="d fake"
-	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+	  Background="{ThemeResource MaterialBackgroundBrush}">
 
 	<utu:AutoLayout>
 		<utu:AutoLayout.Resources>
@@ -25,12 +25,12 @@
 			<utu:NavigationBar.PrimaryCommands>
 				<AppBarButton Foreground="{StaticResource MaterialOnPrimaryMediumBrush}">
 					<AppBarButton.Icon>
-						<BitmapIcon UriSource="ms-appx:///Assets/BitmapIcons/notifications.png" ShowAsMonochrome="false" />
+						<BitmapIcon UriSource="ms-appx:///Assets/Icons/notifications.png" ShowAsMonochrome="false" />
 					</AppBarButton.Icon>
 				</AppBarButton>
 				<AppBarButton Foreground="{StaticResource MaterialOnPrimaryMediumBrush}">
 					<AppBarButton.Icon>
-						<BitmapIcon UriSource="ms-appx:///Assets/BitmapIcons/help_outline.png" ShowAsMonochrome="false" />
+						<BitmapIcon UriSource="ms-appx:///Assets/Icons/help_outline.png" ShowAsMonochrome="false" />
 					</AppBarButton.Icon>
 				</AppBarButton>
 			</utu:NavigationBar.PrimaryCommands>

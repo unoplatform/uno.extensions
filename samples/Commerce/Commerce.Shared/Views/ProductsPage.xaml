@@ -14,9 +14,8 @@
 	  xmlns:uer="using:Uno.Extensions.Reactive"
       xmlns:uen="using:Uno.Extensions.Navigation.Controls"
 	  mc:Ignorable="d fake"
-	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+	  Background="{ThemeResource MaterialBackgroundBrush}">
 
-	
 	<Grid d:DataContext="{d:DesignInstance fake:FakeProducts, IsDesignTimeCreatable=True}">
 		<VisualStateManager.VisualStateGroups>
 			<VisualStateGroup>
@@ -62,13 +61,13 @@
 				<utu:NavigationBar.PrimaryCommands>
 					<AppBarButton Foreground="{StaticResource MaterialOnPrimaryMediumBrush}">
 						<AppBarButton.Icon>
-							<BitmapIcon UriSource="ms-appx:///Assets/BitmapIcons/notifications.png"
+							<BitmapIcon UriSource="ms-appx:///Assets/Icons/notifications.png"
 										ShowAsMonochrome="false" />
 						</AppBarButton.Icon>
 					</AppBarButton>
 					<AppBarButton Foreground="{StaticResource MaterialOnPrimaryMediumBrush}">
 						<AppBarButton.Icon>
-							<BitmapIcon UriSource="ms-appx:///Assets/BitmapIcons/help_outline.png"
+							<BitmapIcon UriSource="ms-appx:///Assets/Icons/help_outline.png"
 										ShowAsMonochrome="false" />
 						</AppBarButton.Icon>
 					</AppBarButton>
