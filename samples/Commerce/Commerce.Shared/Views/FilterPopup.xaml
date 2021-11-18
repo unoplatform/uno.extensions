@@ -22,14 +22,17 @@
                     Value="Bottom" />
             <Setter Property="VerticalAlignment"
                     Value="Bottom" />
-            <Setter Property="HorizontalAlignment"
-                    Value="Center" />
-            <Setter Property="MaxWidth"
+			<Setter Property="HorizontalAlignment"
+					Value="Center" />
+			<Setter Property="MinWidth"
+					Value="345" />
+			<Setter Property="MaxWidth"
                     Value="NaN" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="FlyoutPresenter">
-                        <Border Background="{TemplateBinding Background}"
+                        <Border MinWidth="{TemplateBinding MinWidth}"
+								Background="{TemplateBinding Background}"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Bottom"
                                 BackgroundSizing="OuterBorderEdge"
@@ -42,13 +45,15 @@
                                 </TransitionCollection>
                             </Border.Transitions>
                             <ScrollViewer x:Name="ScrollViewer"
+										  MinWidth="{TemplateBinding MinWidth}"
                                           ZoomMode="{TemplateBinding ScrollViewer.ZoomMode}"
                                           HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
                                           HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
                                           VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
                                           VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
                                           AutomationProperties.AccessibilityView="Raw">
-                                <ContentPresenter Content="{TemplateBinding Content}"
+								<ContentPresenter MinWidth="{TemplateBinding MinWidth}"
+												  Content="{TemplateBinding Content}"
                                                   ContentTemplate="{TemplateBinding ContentTemplate}"
                                                   ContentTransitions="{TemplateBinding ContentTransitions}"
                                                   HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
