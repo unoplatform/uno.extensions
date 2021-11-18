@@ -1,10 +1,10 @@
 <Project ToolsVersion="15.0">
 
 	<PropertyGroup>
-    <Authors>nventive</Authors>
-    <PackageProjectUrl>https://github.com/unoplatform/uno.extensions</PackageProjectUrl>
-    <PackageIconUrl>https://nv-assets.azurewebsites.net/logos/uno.png</PackageIconUrl>
-    <RepositoryUrl>https://github.com/unoplatform/uno.core</RepositoryUrl>
+		<Authors>nventive</Authors>
+		<PackageProjectUrl>https://github.com/unoplatform/uno.extensions</PackageProjectUrl>
+		<PackageIconUrl>https://nv-assets.azurewebsites.net/logos/uno.png</PackageIconUrl>
+		<RepositoryUrl>https://github.com/unoplatform/uno.core</RepositoryUrl>
 		<RepositoryUrl>$(BUILD_REPOSITORY_URI)</RepositoryUrl>
 		<Copyright>Copyright (C) 2015-$([System.DateTime]::Now.ToString(`yyyy`)) Uno Platform - all rights reserved</Copyright>
 		<Product>$(AssemblyName) ($(TargetFramework))</Product>
@@ -14,15 +14,15 @@
 		<WarningsAsErrors>enable</WarningsAsErrors>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageIcon>uno-logo.png</PackageIcon>
-	  <NoWarn>$(NoWarn);NU5104</NoWarn>
+		<NoWarn>$(NoWarn);NU5104</NoWarn>
 	</PropertyGroup>
 
-		<PropertyGroup>
+	<PropertyGroup>
 		<DebugType>portable</DebugType>
 		<DebugSymbols>True</DebugSymbols>
 		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
 		<GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
-		
+
 		<GeneratePackageOnBuild Condition="'$(Configuration)'=='Release'">true</GeneratePackageOnBuild>
 
 		<!-- Version management is now done through NuGet, this avoids issues related version mismatch -->
@@ -32,42 +32,41 @@
 		<DefaultLanguage>en-US</DefaultLanguage>
 	</PropertyGroup>
 
-
 	<PropertyGroup Condition="$(TargetFramework.StartsWith('xamarinios')) or $(TargetFramework.EndsWith('ios'))">
-    <IsXamarin>true</IsXamarin>
-    <IsIOS>true</IsIOS>
-  </PropertyGroup>
+		<IsXamarin>true</IsXamarin>
+		<IsIOS>true</IsIOS>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="$(TargetFramework.StartsWith('net5.0'))">
-    <DefineConstants>$(DefineConstants);NET5_0</DefineConstants>
-  </PropertyGroup>
+	<PropertyGroup Condition="$(TargetFramework.StartsWith('net5.0'))">
+		<DefineConstants>$(DefineConstants);NET5_0</DefineConstants>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="$(TargetFramework.StartsWith('net6.0'))">
-    <DefineConstants>$(DefineConstants);NET6_0</DefineConstants>
-  </PropertyGroup>
+	<PropertyGroup Condition="$(TargetFramework.StartsWith('net6.0'))">
+		<DefineConstants>$(DefineConstants);NET6_0</DefineConstants>
+	</PropertyGroup>
 
-    <PropertyGroup Condition="$(TargetFramework.StartsWith('monoandroid')) or $(TargetFramework.EndsWith('android'))">
-    <IsAndroid>true</IsAndroid>
-  </PropertyGroup>
+	<PropertyGroup Condition="$(TargetFramework.StartsWith('monoandroid')) or $(TargetFramework.EndsWith('android'))">
+		<IsAndroid>true</IsAndroid>
+	</PropertyGroup>
 
 	<PropertyGroup Condition="$(TargetFramework.Contains('windows10'))">
 		<IsWinUI>true</IsWinUI>
 	</PropertyGroup>
 
-	 <PropertyGroup Condition="$(TargetFramework.StartsWith('uap'))">
-    <IsUWP>true</IsUWP>
-    <TargetPlatformVersion>10.0.19041.0</TargetPlatformVersion>
-  </PropertyGroup>
+	<PropertyGroup Condition="$(TargetFramework.StartsWith('uap'))">
+		<IsUWP>true</IsUWP>
+		<TargetPlatformVersion>10.0.19041.0</TargetPlatformVersion>
+	</PropertyGroup>
 
 	<PropertyGroup>
 		<IsTestProject>$(MSBuildProjectName.Contains('Test'))</IsTestProject>
 		<IsSampleProject>$(MSBuildProjectName.Contains('Sample'))</IsSampleProject>
 	</PropertyGroup>
-	
+
 	<ItemGroup>
 		<None Include="$(MSBuildThisFileDirectory)..\build\uno-logo.png" Pack="true" Visible="false" PackagePath="\"/>
 	</ItemGroup>
-	
+
 	<Choose>
 		<When Condition="'$(IsTestProject)' != 'true' and '$(SourceLinkEnabled)' != 'false' and '$(IsSampleProject)' != 'true'">
 			<PropertyGroup>
@@ -99,4 +98,7 @@
 		<DefaultItemExcludes>$(DefaultItemExcludes);obj/**;bin/**</DefaultItemExcludes>
 	</PropertyGroup>
 
+	<!-- <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+		<UnoExtensionsOnlyUAP>true</UnoExtensionsOnlyUAP>
+	</PropertyGroup> -->
 </Project>

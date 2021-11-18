@@ -23,14 +23,14 @@ namespace ExtensionsSampleApp.Views
             InitializeComponent();
         }
 
-        private void NavigateToDoc0Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void NavigateDoc0Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-            Navigation.NavigateToViewModelAsync<TabDoc0ViewModel>(this, Schemes.Nested);
+            Navigation.NavigateViewModelAsync<TabDoc0ViewModel>(this, Schemes.Nested);
         }
 
         private async void ContentDialogResponseClick(object sender, RoutedEventArgs e)
         {
-            var navresult = await Navigation.NavigateToViewForResultAsync<SimpleContentDialog, ContentDialogResult>(this, Schemes.Dialog);
+            var navresult = await Navigation.NavigateViewForResultAsync<SimpleContentDialog, ContentDialogResult>(this, Schemes.Dialog);
             var response = await navresult.Result;
         }
 

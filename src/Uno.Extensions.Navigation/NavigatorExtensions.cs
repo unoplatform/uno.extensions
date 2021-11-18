@@ -21,6 +21,16 @@ namespace Uno.Extensions.Navigation;
 
 public static class NavigatorExtensions
 {
+	internal static INavigator? GetParent(this INavigator navigator)
+	{
+		var services = navigator.Get<IServiceProvider>();
+		var region = services?.GetService<IRegion>();
+		var parentRegion = region?.Parent;
+		var parentNav = parentRegion?.Navigator();
+
+		return parentNav;
+	}
+
 	internal static IRouteMappings? GetMapping(this INavigator navigator)
 	{
 		return navigator.Get<IServiceProvider>()?.GetRequiredService<IRouteMappings>() ?? default;
@@ -162,6 +172,12 @@ public static class NavigatorExtensions
 
 	public static Task<NavigationResponse?> NavigatePreviousWithResultAsync<TResult>(
 	this INavigator service, object sender, string scheme = Schemes.None, Options.Option<TResult>? data = null, CancellationToken cancellation = default)
+	{
+		return service.NavigateAsync((Schemes.NavigateBack + string.Empty).WithScheme(scheme).AsRequest(sender, data, cancellation));
+	}
+
+	public static Task<NavigationResponse?> NavigatePreviousWithResultAsync(
+	this INavigator service, object sender, string scheme = Schemes.None, object? data = null, CancellationToken cancellation = default)
 	{
 		return service.NavigateAsync((Schemes.NavigateBack + string.Empty).WithScheme(scheme).AsRequest(sender, data, cancellation));
 	}

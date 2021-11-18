@@ -154,46 +154,12 @@ public abstract class ControlNavigator : Navigator
             return default;
         }
 
-		var mapping = Mappings.Find(request.Route);
-		if (mapping?.BuildQueryParameters is not null)
-		{
-			request = request with { Route = request.Route with { Data = request.Route.Data?.AsParameters(mapping) } };
-		}
-
-		// Setup the navigation data (eg parameters to be injected into viewmodel)
-		var dataFactor = services.GetRequiredService<NavigationDataProvider>();
-        dataFactor.Parameters = (request.Route?.Data) ?? new Dictionary<string, object>();
-
-        // Create ResponseNavigator if result is requested
-        TaskCompletionSource<Options.Option>? resultTask = null;
-        INavigator navigator = this;
-        if (request.Result is not null)
-        {
-            resultTask = new TaskCompletionSource<Options.Option>();
-            navigator = new ResponseNavigator(navigator, request.Result, resultTask);
-        }
-
         var executedRoute = await ExecuteRequestAsync(request);
 
         UpdateRoute(executedRoute);
 
-        if (request.Cancellation.HasValue && CanGoBack)
-        {
-            request.Cancellation.Value.Register(() =>
-            {
-                navigator.NavigatePreviousAsync(request.Sender);
-            });
-        }
-
-        if (resultTask is not null)
-        {
-            return new NavigationResultResponse(executedRoute ?? Route.Empty, resultTask.Task);
-        }
-        else
-        {
-            return new NavigationResponse(executedRoute ?? Route.Empty);
-        }
-    }
+		return new NavigationResponse(executedRoute ?? Route.Empty);
+	}
 
     protected virtual void UpdateRoute(Route? route)
     {

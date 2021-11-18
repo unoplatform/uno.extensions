@@ -42,7 +42,7 @@ public partial class LoginViewModel
 			await _error.Set(default, ct);
 			await Task.Delay(1, ct);
 
-			CoreApplication.MainView?.DispatcherQueue.TryEnqueue(() => _navigator.NavigateRouteAsync(this, "-/Home", cancellation: ct));
+			CoreApplication.MainView?.DispatcherQueue.TryEnqueue(() => _navigator.NavigatePreviousWithResultAsync(this, data: Uno.Extensions.Options.Option.Some(credentials)));
 		}
 		else
 		{

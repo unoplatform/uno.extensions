@@ -22,10 +22,8 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)CommerceSettings.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Controls\TabBarItemNavigationBindingHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Navigators\ControlVisualStateNavigator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Navigators\PickerNavigator.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Navigators\TabBarNavigator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Navigators\TabViewNavigator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UnoCommerce\CartDialog.xaml.cs">
       <DependentUpon>CartDialog.xaml</DependentUpon>
@@ -265,6 +263,7 @@
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Controls\" />
     <Folder Include="$(MSBuildThisFileDirectory)ViewModels\Twitter\" />
   </ItemGroup>
   <ItemGroup>

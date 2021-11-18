@@ -10,7 +10,7 @@
     <Grid>
         <StackPanel>
             <TextBlock Margin="20" FontSize="30"><Run Text="Page 4 - " /><Run Text="{Binding Title}" /></TextBlock>
-            <Button Content="Go Back - NavigateToPreviousViewAsync"
+            <Button Content="Go Back - NavigatePreviousViewAsync"
                     nav:Navigation.Request="../-" />
             <Button Content="Go Back x 2- NavigationRequest"
                     nav:Navigation.Request="../--" />

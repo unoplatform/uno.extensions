@@ -16,18 +16,18 @@ namespace ExtensionsSampleApp.ViewModels
         {
             Mappings = mappings;
             Navigation = navigation;
-            NavigateToDoc1Command = new RelayCommand(NavigateToDoc1);
-            NavigateToThirdPageCommand = new RelayCommand(NavigateToThirdPage);
+            NavigateDoc1Command = new RelayCommand(NavigateDoc1);
+            NavigateThirdPageCommand = new RelayCommand(NavigateThirdPage);
         }
 
 
 
-        public ICommand NavigateToDoc1Command { get; }
-        public ICommand NavigateToThirdPageCommand { get; }
+        public ICommand NavigateDoc1Command { get; }
+        public ICommand NavigateThirdPageCommand { get; }
 
-        private void NavigateToDoc1() => Navigation.NavigateToViewModelAsync<TabDoc1ViewModel>(this);
+        private void NavigateDoc1() => Navigation.NavigateViewModelAsync<TabDoc1ViewModel>(this);
 
-        private void NavigateToThirdPage() => Navigation.NavigateToViewModelAsync<ThirdViewModel>(this, RouteConstants.RelativePath.Parent(1));
+        private void NavigateThirdPage() => Navigation.NavigateViewModelAsync<ThirdViewModel>(this, RouteConstants.RelativePath.Parent(1));
 
     }
 

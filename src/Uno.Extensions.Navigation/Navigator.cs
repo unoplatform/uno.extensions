@@ -31,7 +31,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			region.View is not null)
 		{
 			var vm = CreateDefaultViewModel();
-			region.View.DataContext = vm; 
+			region.View.DataContext = vm;
 		}
 	}
 
@@ -98,10 +98,10 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 			// Is this region is an unnamed child of a composite,
 			// send request to parent if the route has no scheme
-			if (request.Route.IsCurrent() &&
+			if ((request.Route.IsCurrent() || request.Route.IsBackOrCloseNavigation()) &&
 				!Region.IsNamed() &&
 				Region.Parent is not null
-				&& !(Region.Children.Any(x=>x.Name==request.Route.Base))
+				&& !(Region.Children.Any(x => x.Name == request.Route.Base))
 				)
 			{
 				return await Region.Parent.NavigateAsync(request);
@@ -127,7 +127,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			// window hasn't been activated yet, so the root region may not have loaded
 			await Region.View.EnsureLoaded();
 
-			return await CoreNavigateAsync(request);
+			return await ResponseNavigateAsync(request);
 		}
 		finally
 		{
@@ -146,6 +146,39 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		return dialogResponse;
 	}
 
+	private async Task<NavigationResponse?> ResponseNavigateAsync(NavigationRequest request)
+	{
+		var services = Region.Services;
+		if (services is null)
+		{
+			return default;
+		}
+
+		var mapping = Mappings.Find(request.Route);
+		if (mapping?.BuildQueryParameters is not null)
+		{
+			request = request with { Route = request.Route with { Data = request.Route.Data?.AsParameters(mapping) } };
+		}
+
+		// Setup the navigation data (eg parameters to be injected into viewmodel)
+		var dataFactor = services.GetRequiredService<NavigationDataProvider>();
+		dataFactor.Parameters = (request.Route?.Data) ?? new Dictionary<string, object>();
+
+		// Create ResponseNavigator if result is requested
+		var navigator = request.GetResponseNavigator(this);
+
+		var executedRoute = await CoreNavigateAsync(request);
+
+
+		if (navigator is not null)
+		{
+			return navigator.AsResponseWithResult(executedRoute);
+		}
+
+		return executedRoute;
+
+	}
+
 	protected virtual async Task<NavigationResponse?> CoreNavigateAsync(NavigationRequest request)
 	{
 		//if (request.Route.IsNested())
@@ -155,7 +188,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		//    request = request with { Route = request.Route.TrimScheme(Schemes.Nested) };// with { Scheme = Schemes.Current } };
 		//}
 
-		if (request.Route.IsCurrent())
+		if (request.Route.IsCurrent() || request.Route.IsBackOrCloseNavigation())
 		{
 			request = request with { Route = request.Route.AppendScheme(Schemes.Nested) };
 		}
@@ -201,7 +234,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 	private object? CreateDefaultViewModel()
 	{
-		if(Region.View is null)
+		if (Region.View is null)
 		{
 			return null;
 		}
