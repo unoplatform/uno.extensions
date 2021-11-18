@@ -18,54 +18,48 @@
 
 	<utu:AutoLayout>
 		<utu:AutoLayout.Resources>
-			<x:String x:Key="BitmapIcon_help_outline">M 9 16 L 11 16 L 11 14 L 9 14 L 9 16 Z M 10 0 C 4.480000019073486 0 0 4.480000019073486 0 10 C 0 15.519999980926514 4.480000019073486 20 10 20 C 15.519999980926514 20 20 15.519999980926514 20 10 C 20 4.480000019073486 15.519999980926514 0 10 0 Z M 10 18 C 5.590000152587891 18 2 14.40999984741211 2 10 C 2 5.590000152587891 5.590000152587891 2 10 2 C 14.40999984741211 2 18 5.590000152587891 18 10 C 18 14.40999984741211 14.40999984741211 18 10 18 Z M 10 4 C 7.789999961853027 4 6 5.789999961853027 6 8 L 8 8 C 8 6.899999976158142 8.899999976158142 6 10 6 C 11.100000023841858 6 12 6.899999976158142 12 8 C 12 10 9 9.75 9 13 L 11 13 C 11 10.75 14 10.5 14 8 C 14 5.789999961853027 12.210000038146973 4 10 4 Z</x:String>
+			<x:String x:Key="Icon_more_horiz">M 2 0 C 0.8999999761581421 0 0 0.8999999761581421 0 2 C 0 3.100000023841858 0.8999999761581421 4 2 4 C 3.100000023841858 4 4 3.100000023841858 4 2 C 4 0.8999999761581421 3.100000023841858 0 2 0 Z M 14 0 C 12.899999976158142 0 12 0.8999999761581421 12 2 C 12 3.100000023841858 12.899999976158142 4 14 4 C 15.100000023841858 4 16 3.100000023841858 16 2 C 16 0.8999999761581421 15.100000023841858 0 14 0 Z M 8 0 C 6.899999976158142 0 6 0.8999999761581421 6 2 C 6 3.100000023841858 6.899999976158142 4 8 4 C 9.100000023841858 4 10 3.100000023841858 10 2 C 10 0.8999999761581421 9.100000023841858 0 8 0 Z</x:String>
 			<x:String x:Key="Icon_more_vert">M 2 4 C 3.100000023841858 4 4 3.100000023841858 4 2 C 4 0.8999999761581421 3.100000023841858 0 2 0 C 0.8999999761581421 0 0 0.8999999761581421 0 2 C 0 3.100000023841858 0.8999999761581421 4 2 4 Z M 2 6 C 0.8999999761581421 6 0 6.899999976158142 0 8 C 0 9.100000023841858 0.8999999761581421 10 2 10 C 3.100000023841858 10 4 9.100000023841858 4 8 C 4 6.899999976158142 3.100000023841858 6 2 6 Z M 2 12 C 0.8999999761581421 12 0 12.899999976158142 0 14 C 0 15.100000023841858 0.8999999761581421 16 2 16 C 3.100000023841858 16 4 15.100000023841858 4 14 C 4 12.899999976158142 3.100000023841858 12 2 12 Z</x:String>
-			<x:String x:Key="BitmapIcon_notifications">M 8 19.5 C 9.100000023841858 19.5 10 18.600000023841858 10 17.5 L 6 17.5 C 6 18.600000023841858 6.889999985694885 19.5 8 19.5 Z M 14 13.5 L 14 8.5 C 14 5.430000066757202 12.359999895095825 2.8599998354911804 9.5 2.179999828338623 L 9.5 1.5 C 9.5 0.6700000166893005 8.8299999833107 0 8 0 C 7.1700000166893005 0 6.5 0.6700000166893005 6.5 1.5 L 6.5 2.179999828338623 C 3.630000114440918 2.8599998354911804 2 5.420000076293945 2 8.5 L 2 13.5 L 0 15.5 L 0 16.5 L 16 16.5 L 16 15.5 L 14 13.5 Z</x:String>
-			<x:String x:Key="Icon_visibility_off">M 11 4 C 13.759999990463257 4 16 6.240000009536743 16 9 C 16 9.649999976158142 15.869999393820763 10.259999930858612 15.639999389648438 10.829999923706055 L 18.559999465942383 13.75 C 20.06999945640564 12.490000009536743 21.259999752044678 10.860000014305115 21.989999771118164 9 C 20.259999752044678 4.610000133514404 15.989999771118164 1.5 10.989999771118164 1.5 C 9.589999794960022 1.5 8.250000238418579 1.7499998211860657 7.010000228881836 2.1999998092651367 L 9.170000076293945 4.360000133514404 C 9.740000069141388 4.130000129342079 10.350000023841858 4 11 4 Z M 1 1.2699999809265137 L 3.2800002098083496 3.5500001907348633 L 3.739999771118164 4.010000228881836 C 2.079999804496765 5.300000190734863 0.7799999713897705 7.019999980926514 0 9 C 1.7300000190734863 13.389999866485596 6 16.5 11 16.5 C 12.549999952316284 16.5 14.029999136924744 16.19999986886978 15.379999160766602 15.65999984741211 L 15.799999237060547 16.079999923706055 L 18.729999542236328 19 L 20 17.729999542236328 L 2.2699999809265137 0 L 1 1.2699999809265137 Z M 6.53000020980835 6.800000190734863 L 8.079999923706055 8.350000381469727 C 8.029999922960997 8.560000374913216 8 8.780000001192093 8 9 C 8 10.659999966621399 9.340000033378601 12 11 12 C 11.219999998807907 12 11.439999625086784 11.970000077039003 11.649999618530273 11.920000076293945 L 13.199999809265137 13.469999313354492 C 12.529999792575836 13.799999326467514 11.790000021457672 14 11 14 C 8.240000009536743 14 6 11.759999990463257 6 9 C 6 8.209999978542328 6.200000196695328 7.470000207424164 6.53000020980835 6.800000190734863 L 6.53000020980835 6.800000190734863 Z M 10.84000015258789 6.020000457763672 L 13.989999771118164 9.170000076293945 L 14.010000228881836 9.010000228881836 C 14.010000228881836 7.350000262260437 12.670000195503235 6.010000228881836 11.010000228881836 6.010000228881836 L 10.84000015258789 6.020000457763672 Z</x:String>
 		</utu:AutoLayout.Resources>
 		<utu:NavigationBar Content="Fresh Foam Hierro v6..." x:Uid="Page_NavigationBar" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialNavigationBarStyle}">
 			<utu:NavigationBar.PrimaryCommands>
 				<AppBarButton Foreground="{StaticResource MaterialOnPrimaryMediumBrush}">
 					<AppBarButton.Icon>
-						<PathIcon Data="{StaticResource BitmapIcon_notifications}" />
+						<BitmapIcon UriSource="ms-appx:///Assets/BitmapIcons/notifications.png" ShowAsMonochrome="false" />
 					</AppBarButton.Icon>
 				</AppBarButton>
 				<AppBarButton Foreground="{StaticResource MaterialOnPrimaryMediumBrush}">
 					<AppBarButton.Icon>
-						<PathIcon Data="{StaticResource BitmapIcon_help_outline}" />
+						<BitmapIcon UriSource="ms-appx:///Assets/BitmapIcons/help_outline.png" ShowAsMonochrome="false" />
 					</AppBarButton.Icon>
 				</AppBarButton>
 			</utu:NavigationBar.PrimaryCommands>
 		</utu:NavigationBar>
-		<uer:FeedView Source="{Binding Product}" utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryAlignment="Stretch">
-			<DataTemplate>
-				<ScrollViewer DataContext="{Binding Data}">
-					<utu:AutoLayout>
+		<ScrollViewer utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryAlignment="Stretch">
+			<uer:FeedView Source="{Binding Product}">
+				<DataTemplate>
+					<utu:AutoLayout Background="{StaticResource MaterialSurfaceBrush}" DataContext="{Binding Data}">
 						<utu:AutoLayout Spacing="10" Padding="16,16,16,16" utu:AutoLayout.CounterAlignment="Stretch">
 							<Image Source="{Binding Photo}" Stretch="UniformToFill" utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryLength="379" />
 						</utu:AutoLayout>
 						<utu:AutoLayout Spacing="8" Padding="16,16,16,16" utu:AutoLayout.CounterAlignment="Stretch">
 							<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" TextWrapping="Wrap" Text="{Binding Name}" Style="{StaticResource MaterialHeadline4}" />
-							<utu:AutoLayout Justify="SpaceBetween" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
+							<utu:AutoLayout Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
 								<TextBlock Foreground="{StaticResource MaterialOnSurfaceLowBrush}" Text="{Binding Brand}" Style="{StaticResource MaterialSubtitle1}" />
 								<TextBlock Foreground="{StaticResource MaterialPrimaryBrush}" Text="{Binding Price}" Style="{StaticResource MaterialSubtitle1}" />
 							</utu:AutoLayout>
 						</utu:AutoLayout>
 						<utu:AutoLayout Spacing="10" Padding="16,32,16,32" utu:AutoLayout.CounterAlignment="Stretch">
-							<Button Content="add to cart" x:Uid="Page_AddToCart" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialContainedButtonStyle}" />
-							<Button Content="save for later" x:Uid="Page_SaveForLater" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialOutlinedButtonStyle}" />
+							<Button Content="add to cart" x:Uid="_AddToCart" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialContainedButtonStyle}" />
+							<Button Content="save for later" x:Uid="_SaveForLater" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialOutlinedButtonStyle}" />
 						</utu:AutoLayout>
 						<utu:AutoLayout Spacing="8" Padding="16,32,16,16" utu:AutoLayout.CounterAlignment="Stretch">
-							<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Page_Product details" Text="Product details" Style="{StaticResource MaterialHeadline6}" />
-							<TextBlock Foreground="{StaticResource MaterialOnBackgroundBrush}" TextWrapping="Wrap" Text="{Binding Description}" Style="{StaticResource MaterialBody2}" />
+							<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="_Product details" Text="Product details" Style="{StaticResource MaterialHeadline6}" />
+							<TextBlock Foreground="{StaticResource MaterialOnSurfaceMediumBrush}" TextWrapping="Wrap" Text="{Binding Description?}" Style="{StaticResource MaterialBody2}" />
 						</utu:AutoLayout>
 						<utu:AutoLayout Spacing="8" Padding="16,32,16,8" utu:AutoLayout.CounterAlignment="Stretch">
-							<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Page_Reviews" Text="Reviews" Style="{StaticResource MaterialHeadline6}" />
-							<uer:FeedView Source="{Binding Rating}">
-								<DataTemplate>
-									<utu:AutoLayout />
-								</DataTemplate>
-							</uer:FeedView>
+							<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="_Reviews" Text="Reviews" Style="{StaticResource MaterialHeadline6}" />
+							<RatingControl MaxRating="5" Value="{Binding Rating, Mode=TwoWay}" />
 						</utu:AutoLayout>
 						<uer:FeedView Source="{Binding Reviews}" utu:AutoLayout.CounterAlignment="Stretch">
 							<DataTemplate>
@@ -81,14 +75,14 @@
 												<utu:AutoLayout Padding="16,16,16,0" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
 													<utu:AutoLayout>
 														<utu:AutoLayout Spacing="10" Padding="0,0,16,16">
-															<Image Source="https://loremflickr.com/360/360/flower" Stretch="UniformToFill" utu:AutoLayout.PrimaryLength="56" utu:AutoLayout.CounterLength="56" />
+															<Image Source="{Binding Photo}" Stretch="UniformToFill" utu:AutoLayout.PrimaryLength="56" utu:AutoLayout.CounterLength="56" />
 														</utu:AutoLayout>
 													</utu:AutoLayout>
 													<utu:AutoLayout Padding="0,0,0,16" utu:AutoLayout.PrimaryAlignment="Stretch">
 														<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch">
 															<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch">
 																<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" TextWrapping="Wrap" Text="{Binding Name}" Style="{StaticResource MaterialBody2}" />
-																<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" TextWrapping="Wrap" Text="{Binding Message}" Style="{StaticResource MaterialBody2}" />
+																<TextBlock Foreground="{StaticResource MaterialOnSurfaceMediumBrush}" TextWrapping="Wrap" Text="{Binding Message}" Style="{StaticResource MaterialBody2}" />
 															</utu:AutoLayout>
 														</utu:AutoLayout>
 													</utu:AutoLayout>
@@ -97,7 +91,7 @@
 															<ToggleButton utu:AutoLayout.CounterAlignment="Center">
 																<!--Style="{StaticResource MaterialToggleButtonIconStyle}">-->
 																<ToggleButton.Content>
-																	<PathIcon Data="{StaticResource Icon_visibility_off}" />
+																	<PathIcon Data="{StaticResource Icon_more_horiz}" />
 																</ToggleButton.Content>
 																<!--<um:ControlExtensions.AlternateContent>
 																	<PathIcon Data="{StaticResource Icon_more_vert}" />
@@ -113,9 +107,9 @@
 							</DataTemplate>
 						</uer:FeedView>
 					</utu:AutoLayout>
-				</ScrollViewer>
-			</DataTemplate>
-		</uer:FeedView>
+				</DataTemplate>
+			</uer:FeedView>
+		</ScrollViewer>
 	</utu:AutoLayout>
 
 </Page>
