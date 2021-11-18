@@ -17,7 +17,7 @@
 		<WasmShellILLinkerEnabled>true</WasmShellILLinkerEnabled>
 	</PropertyGroup>
 	<ItemGroup>
-		<Content Include="Assets\SplashScreen.png" />
+		<Content Include="Assets\SplashScreen.scale-200.png" />
 	</ItemGroup>
 	<ItemGroup>
 		<UpToDateCheckInput Include="..\Commerce.Shared\**\*.xaml" />
