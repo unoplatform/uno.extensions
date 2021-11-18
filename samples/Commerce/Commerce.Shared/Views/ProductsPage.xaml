@@ -75,14 +75,14 @@
 			</utu:NavigationBar>
 			<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryAlignment="Stretch">
 				<utu:AutoLayout Spacing="16" Padding="16,16,16,16" utu:AutoLayout.CounterAlignment="Stretch">
-					<TextBox Text="{Binding Term, Mode=TwoWay}" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialOutlinedTextBoxStyle}">
+					<TextBox Text="{Binding Term, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialOutlinedTextBoxStyle}">
 						<um:ControlExtensions.Icon>
 							<PathIcon Data="{StaticResource Icon_search}" />
 						</um:ControlExtensions.Icon>
 					</TextBox>
 					<utu:AutoLayout Spacing="10" Justify="SpaceBetween" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryLength="20">
 						<TextBlock Foreground="{StaticResource MaterialOnBackgroundBrush}" x:Uid="Page_5254 products found!" Text="5254 products found!" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialBody2}" />
-						<HyperlinkButton Content="Filters" x:Uid="Page_Filters" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialHyperlinkButtonStyle}" nav:Navigation.Request="!FilterPopup" nav:Navigation.Data="{Binding Filter, Mode=TwoWay}"/>
+						<HyperlinkButton Content="Filters" x:Uid="Page_Filters" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialHyperlinkButtonStyle}" nav:Navigation.Request="!Filter" nav:Navigation.Data="{Binding Filter, Mode=TwoWay}"/>
 					</utu:AutoLayout>
 				</utu:AutoLayout>
 				<uer:FeedView Source="{Binding Items}" utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryAlignment="Stretch">
