@@ -18,7 +18,7 @@ HorizontalAlignment="Stretch"
 
 	<utu:AutoLayout MaxWidth="{StaticResource LandscapeMaxPageWidth}" Background="{StaticResource MaterialBackgroundBrush}">
 		<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryAlignment="Stretch">
-			<utu:NavigationBar Content="Your cart" x:Uid="Body_NavigationBar" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialModalNavigationBarStyle}" />
+			<utu:NavigationBar Content="Your cart" x:Uid="Body_NavigationBar" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialRootModalNavigationBarStyle}" />
 			<utu:AutoLayout Background="{StaticResource MaterialSurfaceBrush}" utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryAlignment="Stretch">
 				<utu:AutoLayout Spacing="16" Padding="16,16,16,8" utu:AutoLayout.CounterAlignment="Stretch">
 					<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Body_3 Items" Text="3 Items" Style="{StaticResource MaterialSubtitle2}" />
