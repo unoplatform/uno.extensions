@@ -52,13 +52,7 @@ public class ContentDialogNavigator : DialogNavigator
                 {
                     if (result.Status != TaskStatus.Canceled)
                     {
-                        var responseNav = navigation as ResponseNavigator;
-                        if (responseNav is not null &&
-                                responseNav.ResultCompletion.Task.Status != TaskStatus.Canceled &&
-                                responseNav.ResultCompletion.Task.Status != TaskStatus.RanToCompletion)
-                        {
-                            responseNav.ResultCompletion.TrySetResult(Options.Option.Some(result.Result));
-                        }
+						navigation.NavigatePreviousWithResultAsync(Options.Option.Some(result.Result));
                     }
                 },
                 CancellationToken.None,

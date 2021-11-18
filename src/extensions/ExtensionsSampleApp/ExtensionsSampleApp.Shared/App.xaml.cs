@@ -154,7 +154,7 @@ namespace ExtensionsSampleApp
 		{
 			builder
 			.Register(new RouteMap(typeof(MainPage).Name, typeof(MainPage), typeof(MainViewModel)))
-			.Register(new RouteMap(typeof(SecondPage).Name, typeof(SecondPage), typeof(SecondViewModel), typeof(Widget), typeof(Widget)))
+			.Register(new RouteMap<Widget>(typeof(SecondPage).Name, typeof(SecondPage), typeof(SecondViewModel), typeof(Widget)))
 			//.Register(new RouteMap(typeof(ThirdPage).Name, typeof(ThirdPage), typeof(ThirdViewModel)))
 			//.Register(new RouteMap(typeof(FourthPage).Name, typeof(FourthPage), typeof(FourthViewModel)))
 			.Register(new RouteMap(typeof(TabbedPage).Name, typeof(TabbedPage), typeof(TabbedViewModel),
@@ -178,15 +178,15 @@ namespace ExtensionsSampleApp
 				RegionInitialization: (region, nav) => nav.Route.IsEmpty() ?
 										nav with { Route = nav.Route with { Base = "+DealsPage/HotDeals" } } :
 										nav with { Route = nav.Route with { Path = "+DealsPage/HotDeals" } }))
-			.Register(new RouteMap("ProductDetails",
+			.Register(new RouteMap<Product>("ProductDetails",
 				typeof(ProductDetailsPage),
-				typeof(ProductDetailsViewModel), typeof(Product),
+				typeof(ProductDetailsViewModel),
 				BuildQueryParameters: entity => new Dictionary<string, string> { { "ProductId", (entity as Product)?.ProductId + "" } }))
 			.Register(new RouteMap(typeof(TabBarPage).Name, typeof(TabBarPage)))
 			.Register(new RouteMap("doc0", ViewModel: typeof(TabDoc0ViewModel)))
 			.Register(new RouteMap("doc1", ViewModel: typeof(TabDoc1ViewModel)))
 			.Register(new RouteMap(typeof(Content1).Name, typeof(Content1)))
-			.Register(new RouteMap(typeof(Content2).Name, typeof(Content2), typeof(Content2ViewModel)))
+			.Register(new RouteMap<Tweet>(typeof(Content2).Name, typeof(Content2), typeof(Content2ViewModel)))
 			.Register(new RouteMap(typeof(SimpleContentDialog).Name, typeof(SimpleContentDialog)))
 			.Register(new RouteMap(typeof(TwitterPage).Name, typeof(TwitterPage),
 				RegionInitialization: (region, nav) => nav.Route.IsEmpty() ?
@@ -349,7 +349,7 @@ namespace ExtensionsSampleApp
 #else
 			var nav = Host.Services.GetService<INavigator>();
 			//var navResult = nav.NavigateViewAsync<MainPage>(this, Schemes.Nested);
-			//var navResult = nav.NavigateViewAsync<MainPage>(this, Schemes.Root);
+			var navResult = nav.NavigateViewAsync<MainPage>(this, Schemes.Root);
 			//var navResult = nav.NavigateRouteAsync(this, "+MainPage", Schemes.Root);
 			//var navResult = nav.NavigateRouteAsync(this, "+MainPage+SecondPage", Schemes.Root);
 			//var navResult = nav.NavigateRouteAsync(this, "+MainPage+SecondPage+ThirdPage", Schemes.Root);
@@ -358,7 +358,7 @@ namespace ExtensionsSampleApp
 			//var navResult = nav.NavigateRouteAsync(this, "TabbedPage/doc1", Schemes.Root);
 			//var navResult = nav.NavigateRouteAsync(this, "TabbedPage/doc2/SecondPage/content/Content1", Schemes.Root);
 			//var navResult = nav.NavigateRouteAsync(this, "TwitterPage/notifications/TweetDetailsPage?TweetId=23", Schemes.Root);
-			var navResult = nav.NavigateViewAsync<LoginPage>(this);
+			//var navResult = nav.NavigateViewAsync<LoginPage>(this);
 			//var navResult = nav.NavigateRouteAsync(this, "/CommerceHomePage/Products/ProductDetails?ProductId=3");
 
 #endif

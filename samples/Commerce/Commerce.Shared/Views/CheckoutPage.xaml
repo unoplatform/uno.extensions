@@ -22,7 +22,9 @@
                        FontSize="32"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center" />
-        </StackPanel>
+			<Button Content="Done"
+					nav:Navigation.Request="../../-" />
+		</StackPanel>
 
     </Grid>
 </Page>

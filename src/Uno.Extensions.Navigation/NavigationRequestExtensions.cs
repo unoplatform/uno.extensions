@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,24 +16,32 @@ namespace Uno.Extensions.Navigation;
 
 public static class NavigationRequestExtensions
 {
-    public static NavigationRequest AsRequest<TResult>(this RouteMap map, object sender, object? data = null, CancellationToken cancellationToken = default)
-    {
-        return map.AsRequest(sender, data, cancellationToken, typeof(TResult));
-    }
+	public static NavigationRequest AsRequest(this string path, object sender, object? data, CancellationToken cancellationToken, Type? resultType = null)
+	{
+		if(resultType is null)
+		{
+			return AsRequest(path, sender, data, cancellationToken);
+		}
 
-    public static NavigationRequest AsRequest(this RouteMap map, object sender, object? data = null, CancellationToken cancellationToken = default, Type? resultType = null)
-    {
-        return map.Path.AsRequest(sender, data, cancellationToken, resultType);
-    }
+		var navMethods = typeof(NavigationRequestExtensions)
+					.GetMethods(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public)
+					.Where(m => m.Name == nameof(AsRequest) &&
+								m.IsGenericMethodDefinition).ToArray();
+		var navMethod = navMethods.First();
+		var constructedNavMethod = navMethod.MakeGenericMethod(resultType);
+		var nav = constructedNavMethod.Invoke(null, new object[] { path, sender, data, cancellationToken }) as NavigationRequest;
+		return nav;
+	}
 
-    public static NavigationRequest AsRequest<TResult>(this string path, object sender, object? data = null, CancellationToken cancellationToken = default)
+	public static NavigationRequest AsRequest<TResult>(this string path, object sender, object? data = null, CancellationToken cancellationToken = default)
     {
-        return path.AsRequest(sender, data, cancellationToken, typeof(TResult));
-    }
+		var request = new NavigationRequest<TResult>(sender, path.AsRoute(data), cancellationToken);
+		return request;
+	}
 
-    public static NavigationRequest AsRequest(this string path, object sender, object? data = null, CancellationToken cancellationToken = default, Type? resultType = null)
+	public static NavigationRequest AsRequest(this string path, object sender, object? data = null, CancellationToken cancellationToken = default)
     {
-        var request = new NavigationRequest(sender, path.AsRoute(data), cancellationToken, resultType);
+        var request = new NavigationRequest(sender, path.AsRoute(data), cancellationToken);
         return request;
     }
 

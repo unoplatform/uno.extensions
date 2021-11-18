@@ -70,7 +70,7 @@ namespace Uno.Extensions.Navigation.Controls
 						var response = await nav.NavigateRouteForResultAsync(element, path, Schemes.Current, data, resultType: resultType);
 						if (response is not null)
 						{
-							var result = await response.Result;
+							var result = await response.UntypedResult;
 							element.SetData(result.GetValue());
 							binding.UpdateSource();
 						}

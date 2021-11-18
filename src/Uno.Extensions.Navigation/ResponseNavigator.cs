@@ -3,44 +3,88 @@ using System.Threading.Tasks;
 
 namespace Uno.Extensions.Navigation
 {
-    public class ResponseNavigator : INavigator
-    {
-        private INavigator Navigation { get; }
+	internal interface IResponseNavigator : INavigator
+	{
+		NavigationResponse AsResponseWithResult(NavigationResponse? response);
+	}
 
-        private Type ResultType { get; }
+	public class ResponseNavigator<TResult> : IResponseNavigator
+	{
+		private INavigator Navigation { get; }
 
-        public TaskCompletionSource<Options.Option> ResultCompletion { get; }
+		private TaskCompletionSource<Options.Option<TResult>> ResultCompletion { get; }
 
-        public Route? Route => Navigation.Route;
+		public Route? Route => Navigation.Route;
 
-        public ResponseNavigator(INavigator internalNavigation, Type resultType, TaskCompletionSource<Options.Option> completion)
-        {
-            Navigation = internalNavigation;
-            ResultType = resultType;
-            ResultCompletion = completion;
+		public ResponseNavigator(INavigator internalNavigation, NavigationRequest request)
+		{
+			Navigation = internalNavigation;
+			ResultCompletion = new TaskCompletionSource<Options.Option<TResult>>();
 
-            // Replace the navigator
-            Navigation.Get<IServiceProvider>()?.AddInstance<INavigator>(this);
-        }
 
-        public Task<NavigationResponse?> NavigateAsync(NavigationRequest request)
-        {
-            if (request.Route.FrameIsBackNavigation())
-            {
-                var responseData = request.Route.ResponseData() as Options.Option;
-                var value = responseData?.GetValue();
-                if (value?.GetType() == ResultType)
-                {
-#pragma warning disable CS8604 // Possible null reference argument.
-                    ResultCompletion.TrySetResult(responseData);
-#pragma warning restore CS8604 // Possible null reference argument.
-                }
+			if (request.Cancellation.HasValue)
+			{
+				request.Cancellation.Value.Register(() =>
+				{
+					ApplyResult(Options.Option.None<TResult>());
+				});
+			}
 
-                // Restore the navigator
-                Navigation.Get<IServiceProvider>()?.AddInstance<INavigator>(this.Navigation);
-            }
 
-            return Navigation.NavigateAsync(request);
-        }
-    }
+			// Replace the navigator
+			Navigation.Get<IServiceProvider>()?.AddInstance<INavigator>(this);
+		}
+
+		public async Task<NavigationResponse?> NavigateAsync(NavigationRequest request)
+		{
+			var navResponse = await Navigation.NavigateAsync(request);
+
+			if (request.Route.FrameIsBackNavigation() ||
+				(request.Route.IsRoot() && request.Route.TrimScheme(Schemes.Root).FrameIsBackNavigation() && this.Navigation.GetParent() == null))
+			{
+				var responseData = request.Route.ResponseData();
+				var result = responseData as Options.Option<TResult>;
+				if (result is null)
+				{
+					if (responseData is TResult data)
+					{
+						result = Options.Option.Some(data);
+					}
+					else
+					{
+						result = Options.Option.None<TResult>();
+					}
+				}
+				ApplyResult(result);
+			}
+
+
+			if (navResponse is NavigationResultResponse<TResult> typedResponse &&
+				typedResponse.Result is not null)
+			{
+				typedResponse.Result.ContinueWith(x => ApplyResult(x.Result));
+
+				return typedResponse with { Result = ResultCompletion.Task };
+			}
+
+			return new NavigationResultResponse<TResult>(navResponse?.Route ?? Route.Empty, ResultCompletion.Task);
+		}
+
+		private void ApplyResult(Options.Option<TResult> responseData)
+		{
+			if (ResultCompletion.Task.Status == TaskStatus.Canceled ||
+				ResultCompletion.Task.Status == TaskStatus.RanToCompletion)
+			{
+				return;
+			}
+
+			// Restore the navigator
+			Navigation.Get<IServiceProvider>()?.AddInstance<INavigator>(this.Navigation);
+
+			ResultCompletion.TrySetResult(responseData);
+		}
+
+		public NavigationResponse AsResponseWithResult(NavigationResponse? response)
+			=> new NavigationResultResponse<TResult>(response?.Route ?? Route.Empty, ResultCompletion.Task, response?.Success ?? false);
+	}
 }

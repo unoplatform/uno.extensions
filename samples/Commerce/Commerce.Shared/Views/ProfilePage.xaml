@@ -73,7 +73,7 @@
 				  </utu:AutoLayout>
 				</utu:AutoLayout>
 				<utu:AutoLayout Spacing="10" Padding="24,24,24,24" utu:AutoLayout.CounterAlignment="Stretch">
-						<Button Content="log out" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialOutlinedButtonStyle}" nav:Navigation.Request="/-/Login"/>
+						<Button Content="log out" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialOutlinedButtonStyle}" nav:Navigation.Request="/-"/>
 				</utu:AutoLayout>
 			</utu:AutoLayout>
 		</DataTemplate>
