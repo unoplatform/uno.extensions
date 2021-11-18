@@ -5,99 +5,73 @@
 		<!-- Light Theme -->
 		<ResourceDictionary x:Key="Light">
 			<!-- Primary -->
-			<Color x:Key="PrimaryColor">#086AD1</Color>
-			<Color x:Key="PrimaryVariantDarkColor">#04488C</Color>
-			<Color x:Key="PrimaryVariantLightColor">#E3EFFB</Color>
-			<Color x:Key="PrimaryHoverBrush">#0A086AD1</Color>
-			<Color x:Key="PrimaryFocusedBrush">#1F086AD1</Color>
-			<Color x:Key="PrimaryPressedBrush">#1A086AD1</Color>
-			<Color x:Key="PrimaryDraggedBrush">#40086AD1</Color>
-			<Color x:Key="PrimarySelectedBrush">#14086AD1</Color>
-			<Color x:Key="OnPrimaryBrush">#FFFFFF</Color>
-			<Color x:Key="OnPrimaryMediumBrush">#BDFFFFFF</Color>
-			<Color x:Key="OnPrimaryLowBrush">#61FFFFFF</Color>
-			<Color x:Key="OnPrimaryHoverBrush">#0AFFFFFF</Color>
-			<Color x:Key="OnPrimaryFocusedBrush">#1FFFFFFF</Color>
-			<Color x:Key="OnPrimaryPressedBrush">#1AFFFFFF</Color>
-			<Color x:Key="OnPrimaryDraggedBrush">#14FFFFFF</Color>
-			<Color x:Key="OnPrimarySelectedBrush">#14FFFFFF</Color>
+			<Color x:Key="MaterialPrimaryColor">#086AD1</Color>
+			<Color x:Key="MaterialPrimaryVariantDarkColor">#04488C</Color>
+			<Color x:Key="MaterialPrimaryVariantLightColor">#E3EFFB</Color>
+
+			<!-- OnPrimary -->
+			<Color x:Key="MaterialOnPrimaryColor">#FFFFFF</Color>
+
 			<!-- Secondary -->
-			<Color x:Key="SecondaryColor">#FEB839</Color>
-			<Color x:Key="SecondaryVariantDarkColor">#FFA502</Color>
-			<Color x:Key="SecondaryVariantLightColor">#FFD487</Color>
-			<Color x:Key="OnSecondaryBrush">#000000</Color>
-			<Color x:Key="OnSecondaryMediumBrush">#BD000000</Color>
-			<Color x:Key="OnSecondaryLowBrush">#61000000</Color>
-			<Color x:Key="OnSecondaryHoverBrush">#0A000000</Color>
-			<Color x:Key="OnSecondaryFocusedBrush">#1F000000</Color>
-			<Color x:Key="OnSecondaryPressedBrush">#1A000000</Color>
-			<Color x:Key="OnSecondaryDraggedBrush">#14000000</Color>
-			<Color x:Key="OnSecondarySelectedBrush">#14000000</Color>
+			<Color x:Key="MaterialSecondaryColor">#FEB839</Color>
+			<Color x:Key="MaterialSecondaryVariantDarkColor">#FFA502</Color>
+			<Color x:Key="MaterialSecondaryVariantLightColor">#FFD487</Color>
+
+			<!-- OnSecondary -->
+			<Color x:Key="MaterialOnSecondaryColor">#000000</Color>
+
 			<!-- Background -->
-			<Color x:Key="BackgroundColor">#F0F0F0</Color>
-			<Color x:Key="OnBackgroundBrush">#000000</Color>
+			<Color x:Key="MaterialBackgroundColor">#F0F0F0</Color>
+
+			<!-- OnBackground -->
+			<Color x:Key="MaterialOnBackgroundColor">#000000</Color>
+
 			<!-- Surface -->
-			<Color x:Key="SurfaceColor">#FFFFFF</Color>
-			<Color x:Key="OnSurfaceBrush">#000000</Color>
-			<Color x:Key="OnSurfaceMediumBrush">#99000000</Color>
-			<Color x:Key="OnSurfaceLowBrush">#31000000</Color>
-			<Color x:Key="OnSurfaceHoverBrush">#0A000000</Color>
-			<Color x:Key="OnSurfaceFocusedBrush">#1F000000</Color>
-			<Color x:Key="OnSurfacePressedBrush">#1A000000</Color>
-			<Color x:Key="OnSurfaceDraggedBrush">#52000000</Color>
-			<Color x:Key="OnSurfaceSelectedBrush">#14000000</Color>
+			<Color x:Key="MaterialSurfaceColor">#FFFFFF</Color>
+
+			<!-- OnSurface -->
+			<Color x:Key="MaterialOnSurfaceColor">#000000</Color>
 			<!-- Error -->
-			<Color x:Key="ErrorColor">#B00020</Color>
-			<Color x:Key="OnErrorBrush">#FFFFFF</Color>
+			<Color x:Key="MaterialErrorColor">#B00020</Color>
+
+			<!-- OnError -->
+			<Color x:Key="MaterialOnErrorColor">#FFFFFF</Color>
 		</ResourceDictionary>
 
 		<!-- Dark Theme -->
 		<ResourceDictionary x:Key="Dark">
 			<!-- Primary -->
-			<Color x:Key="PrimaryColor">#2F81D8</Color>
-			<Color x:Key="PrimaryVariantDarkColor">#04488C</Color>
-			<Color x:Key="PrimaryVariantLightColor">#E3EFFB</Color>
-			<Color x:Key="PrimaryHoverBrush">#0A2F81D8</Color>
-			<Color x:Key="PrimaryFocusedBrush">#1F2F81D8</Color>
-			<Color x:Key="PrimaryPressedBrush">#1A2F81D8</Color>
-			<Color x:Key="PrimaryDraggedBrush">#402F81D8</Color>
-			<Color x:Key="PrimarySelectedBrush">#142F81D8</Color>
-			<Color x:Key="OnPrimaryBrush">#FFFFFF</Color>
-			<Color x:Key="OnPrimaryMediumBrush">#BDFFFFFF</Color>
-			<Color x:Key="OnPrimaryLowBrush">#61FFFFFF</Color>
-			<Color x:Key="OnPrimaryHoverBrush">#0AFFFFFF</Color>
-			<Color x:Key="OnPrimaryFocusedBrush">#1FFFFFFF</Color>
-			<Color x:Key="OnPrimaryPressedBrush">#1AFFFFFF</Color>
-			<Color x:Key="OnPrimaryDraggedBrush">#14FFFFFF</Color>
-			<Color x:Key="OnPrimarySelectedBrush">#14FFFFFF</Color>
+			<Color x:Key="MaterialPrimaryColor">#2F81D8</Color>
+			<Color x:Key="MaterialPrimaryVariantDarkColor">#04488C</Color>
+			<Color x:Key="MaterialPrimaryVariantLightColor">#E3EFFB</Color>
+
+			<!-- OnPrimary -->
+			<Color x:Key="MaterialOnPrimaryColor">#FFFFFF</Color>
+
 			<!-- Secondary -->
-			<Color x:Key="SecondaryColor">#FEB839</Color>
-			<Color x:Key="SecondaryVariantDarkColor">#FFA502</Color>
-			<Color x:Key="SecondaryVariantLightColor">#FFD487</Color>
-			<Color x:Key="OnSecondaryBrush">#000000</Color>
-			<Color x:Key="OnSecondaryMediumBrush">#BD000000</Color>
-			<Color x:Key="OnSecondaryLowBrush">#61000000</Color>
-			<Color x:Key="OnSecondaryHoverBrush">#0A000000</Color>
-			<Color x:Key="OnSecondaryFocusedBrush">#1F000000</Color>
-			<Color x:Key="OnSecondaryPressedBrush">#1A000000</Color>
-			<Color x:Key="OnSecondaryDraggedBrush">#14000000</Color>
-			<Color x:Key="OnSecondarySelectedBrush">#14000000</Color>
+			<Color x:Key="MaterialSecondaryColor">#FEB839</Color>
+			<Color x:Key="MaterialSecondaryVariantDarkColor">#FFA502</Color>
+			<Color x:Key="MaterialSecondaryVariantLightColor">#FFD487</Color>
+
+			<!-- OnSecondary -->
+			<Color x:Key="MaterialOnSecondaryColor">#000000</Color>
+
 			<!-- Background -->
-			<Color x:Key="BackgroundColor">#000000</Color>
-			<Color x:Key="OnBackgroundBrush">#FFFFFF</Color>
+			<Color x:Key="MaterialBackgroundColor">#000000</Color>
+
+			<!-- OnBackground -->
+			<Color x:Key="MaterialOnBackgroundColor">#FFFFFF</Color>
+
 			<!-- Surface -->
-			<Color x:Key="SurfaceColor">#0F0F0F</Color>
-			<Color x:Key="OnSurfaceBrush">#FFFFFF</Color>
-			<Color x:Key="OnSurfaceMediumBrush">#99FFFFFF</Color>
-			<Color x:Key="OnSurfaceLowBrush">#31FFFFFF</Color>
-			<Color x:Key="OnSurfaceHoverBrush">#0AFFFFFF</Color>
-			<Color x:Key="OnSurfaceFocusedBrush">#1FFFFFFF</Color>
-			<Color x:Key="OnSurfacePressedBrush">#1AFFFFFF</Color>
-			<Color x:Key="OnSurfaceDraggedBrush">#52FFFFFF</Color>
-			<Color x:Key="OnSurfaceSelectedBrush">#14FFFFFF</Color>
+			<Color x:Key="MaterialSurfaceColor">#0F0F0F</Color>
+
+			<!-- OnSurface -->
+			<Color x:Key="MaterialOnSurfaceColor">#FFFFFF</Color>
 			<!-- Error -->
-			<Color x:Key="ErrorColor">#B2213C</Color>
-			<Color x:Key="OnErrorBrush">#FFFFFF</Color>
+			<Color x:Key="MaterialErrorColor">#B2213C</Color>
+
+			<!-- OnError -->
+			<Color x:Key="MaterialOnErrorColor">#FFFFFF</Color>
 		</ResourceDictionary>
 
 	</ResourceDictionary.ThemeDictionaries>

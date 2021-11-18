@@ -39,13 +39,13 @@
 		<ios:Setter Property="Icon">
 			<Setter.Value>
 				<BitmapIcon ShowAsMonochrome="False"
-						UriSource="ms-appx:///Assets/BitmapIcons/close.png" />
+						UriSource="ms-appx:///Assets/Icons/close.png" />
 			</Setter.Value>
 		</ios:Setter>
 		<android:Setter Property="Icon">
 			<Setter.Value>
 				<BitmapIcon ShowAsMonochrome="False"
-						UriSource="ms-appx:///Assets/BitmapIcons/close.png" />
+						UriSource="ms-appx:///Assets/Icons/close.png" />
 			</Setter.Value>
 		</android:Setter>
 	</Style>

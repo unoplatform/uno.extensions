@@ -25,7 +25,7 @@
 			<Setter Property="HorizontalAlignment"
 					Value="Center" />
 			<Setter Property="MinWidth"
-					Value="345" />
+					Value="370" />
 			<Setter Property="MaxWidth"
                     Value="NaN" />
             <Setter Property="Template">
@@ -72,12 +72,12 @@
 				<utu:NavigationBar.PrimaryCommands>
 					<AppBarButton Foreground="{StaticResource MaterialOnSurfaceBrush}">
 						<AppBarButton.Icon>
-							<BitmapIcon UriSource="ms-appx:///Assets/BitmapIcons/notifications.png" ShowAsMonochrome="false" />
+							<BitmapIcon UriSource="ms-appx:///Assets/Icons/notifications.png" ShowAsMonochrome="false" />
 						</AppBarButton.Icon>
 					</AppBarButton>
 					<AppBarButton Foreground="{StaticResource MaterialOnSurfaceBrush}">
 						<AppBarButton.Icon>
-							<BitmapIcon UriSource="ms-appx:///Assets/BitmapIcons/share.png" ShowAsMonochrome="false" />
+							<BitmapIcon UriSource="ms-appx:///Assets/Icons/share.png" ShowAsMonochrome="false" />
 						</AppBarButton.Icon>
 					</AppBarButton>
 				</utu:NavigationBar.PrimaryCommands>

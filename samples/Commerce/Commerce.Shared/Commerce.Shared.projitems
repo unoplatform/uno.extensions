@@ -154,9 +154,10 @@
     <Content Include="$(MSBuildThisFileDirectory)appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="$(MSBuildThisFileDirectory)Assets\BitmapIcons\help_outline.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\BitmapIcons\close.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\BitmapIcons\notifications.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\help_outline.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\close.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\notifications.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\share.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Products\bondi-7-running-shoes.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Products\fresh-foam-hierro-v6.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Products\gel-nimbus-23-running-shoes.png" />
