@@ -27,6 +27,12 @@
 					<VisualState.Setters>
 						<Setter Target="Tabs.Visibility"
 								Value="Visible" />
+						<Setter Target="NavView.IsPaneToggleButtonVisible"
+								Value="false" />
+						<Setter Target="NavView.PaneDisplayMode"
+								Value="LeftMinimal" />
+						<Setter Target="NavView.IsPaneOpen"
+								Value="False" />
 					</VisualState.Setters>
 				</VisualState>
 				<VisualState x:Name="Normal">
@@ -36,8 +42,10 @@
 					<VisualState.Setters>
 						<Setter Target="Tabs.Visibility"
 								Value="Collapsed" />
-						<Setter Target="NavView.IsPaneVisible"
+						<Setter Target="NavView.IsPaneToggleButtonVisible"
 								Value="true" />
+						<Setter Target="NavView.PaneDisplayMode"
+								Value="Auto" />
 					</VisualState.Setters>
 				</VisualState>
 				<VisualState x:Name="Wide">
@@ -47,16 +55,20 @@
 					<VisualState.Setters>
 						<Setter Target="Tabs.Visibility"
 								Value="Collapsed" />
-						<Setter Target="NavView.IsPaneVisible"
+						<Setter Target="NavView.IsPaneToggleButtonVisible"
 								Value="true" />
+						<Setter Target="NavView.PaneDisplayMode"
+								Value="Auto" />
 					</VisualState.Setters>
 				</VisualState>
 			</VisualStateGroup>
 		</VisualStateManager.VisualStateGroups>
 
 		<muxc:NavigationView x:Name="NavView"
-							 IsPaneVisible="false"
 							 IsSettingsVisible="False"
+							 IsPaneToggleButtonVisible="False"
+							 PaneDisplayMode="LeftMinimal"
+							 IsPaneOpen="False"
 							 IsBackButtonVisible="Collapsed"
 							 OpenPaneLength="200"
 							 nav:Region.Attached="true">
