@@ -28,4 +28,7 @@ public static class Feed<T> // We set the T on the class to it greatly helps typ
 
 	public static IFeed<T> AsyncEnumerable(Func<IAsyncEnumerable<Option<T>>> enumerableProvider)
 		=> AttachedProperty.GetOrCreate(enumerableProvider, ep => new AsyncEnumerableFeed<T>(ep));
+
+	public static IFeed<T> AsyncEnumerable(Func<IAsyncEnumerable<T>> enumerableProvider)
+		=> AttachedProperty.GetOrCreate(enumerableProvider, ep => new AsyncEnumerableFeed<T>(ep));
 }

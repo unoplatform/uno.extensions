@@ -76,7 +76,7 @@ namespace Uno.Extensions.Reactive.Tests.Sources
 		[TestMethod]
 		public async Task When_ProviderThrowsSync_Then_GetError()
 		{
-			var sut = new AsyncEnumerableFeed<int>(() => throw new TestException());
+			var sut = new AsyncEnumerableFeed<int>(factory: () => throw new TestException());
 			using var result = await sut.Record();
 
 			result.Should().Be(r => r
