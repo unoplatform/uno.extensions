@@ -36,10 +36,11 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 		void ViewModelToView(Action<TProperty?> updated)
 			=> DispatcherHelper.GetDispatcher(dispatcher).TryEnqueue(async () =>
 			{
-				// Note: No needs to use .WithCancellation() here as we are enumerating the stateImp which is going to be disposed anyway.
 				try
 				{
 					updated(defaultValue);
+
+					// Note: No needs to use .WithCancellation() here as we are enumerating the stateImp which is going to be disposed anyway.
 					await foreach (var msg in stateImpl.GetSource().ConfigureAwait(true))
 					{
 						if (msg.Current.Get(BindingSource) != this)
@@ -57,23 +58,33 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 				}
 			});
 
-		ValueTask ViewToViewModel(Func<TProperty?, TProperty?> updater, CancellationToken ct)
-			=> stateImpl.Update(
-				msg =>
-				{
-					var current = msg.Current.Data.SomeOrDefault();
-					var updated = updater(current);
+		async ValueTask ViewToViewModel(Func<TProperty?, TProperty?> updater, bool isLeafPropertyChanged, CancellationToken ct)
+		{
+			// 1. Notify the View that the property has been updated
+			if (isLeafPropertyChanged)
+			{
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+			}
 
-					return msg.With().Data(Option.Some(updated)).Set(BindingSource, this);
-				},
-				ct);
+			// 2. Asynchronously update the backing state, specifying the BindingSource, so we avoid re-entrancy with the ViewModelToView
+			// Here we also make sure to leave the UI thread so no matter the implementation of the State,
+			// we won't raise the State updated callbacks on the UI Thread.
+			await Task
+				.Run(async () => await stateImpl.Update(DoUpdate, ct).ConfigureAwait(false), ct)
+				.ConfigureAwait(false);
+
+			MessageBuilder<TProperty> DoUpdate(Message<TProperty> msg)
+			{
+				var current = msg.Current.Data.SomeOrDefault();
+				var updated = updater(current);
+
+				return msg.With().Data(Option.Some(updated)).Set(BindingSource, this);
+			}
+		}
 	}
 
 	protected ICommandBuilder CreateCommand(string propertyName)
 		=> new CommandBuilder<object?>(propertyName);
-
-	void IBindable.OnPropertyChanged(string propertyName) 
-		=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
 	/// <inheritdoc />
 	public ValueTask DisposeAsync()
