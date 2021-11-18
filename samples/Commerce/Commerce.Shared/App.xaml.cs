@@ -268,7 +268,7 @@ namespace Commerce
 						RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
 												nav with { Route = nav.Route.AppendNested<CartPage>() } :
 												nav))
-					.Register(new RouteMap("Filter", typeof(FilterPopup), typeof(FiltersViewModel.BindableFiltersViewModel)))
+					.Register(new RouteMap<Filters>("Filter", typeof(FilterPopup), typeof(FiltersViewModel.BindableFiltersViewModel)))
 					.Register(new RouteMap("Profile", typeof(ProfilePage), typeof(ProfileViewModel)))
 		  .Register(new RouteMap(typeof(CartDialog).Name, typeof(CartDialog),
 					RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
