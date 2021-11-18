@@ -31,6 +31,7 @@
 
 			<!-- OnSurface -->
 			<Color x:Key="MaterialOnSurfaceColor">#000000</Color>
+			
 			<!-- Error -->
 			<Color x:Key="MaterialErrorColor">#B00020</Color>
 
@@ -67,6 +68,7 @@
 
 			<!-- OnSurface -->
 			<Color x:Key="MaterialOnSurfaceColor">#FFFFFF</Color>
+			
 			<!-- Error -->
 			<Color x:Key="MaterialErrorColor">#B2213C</Color>
 

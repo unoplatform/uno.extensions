@@ -18,10 +18,10 @@
                         <color key="backgroundColor" colorSpace="custom" customColorSpace="sRGB" red="0.0314" green="0.4157" blue="0.8196" alpha="1"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="56" translatesAutoresizingMaskIntoConstraints="NO" image="SplashScreen.png">
-                                <rect key="frame" x="58" y="120" width="177" height="31"/>
+                                <rect key="frame" x="58" y="120" width="175" height="172"/>
                                 <constraints>
-                                    <constraint id="91" firstItem="56" firstAttribute="width" constant="177"/>
-                                    <constraint id="92" firstItem="56" firstAttribute="height" constant="31"/>
+                                    <constraint id="91" firstItem="56" firstAttribute="width" constant="175"/>
+                                    <constraint id="92" firstItem="56" firstAttribute="height" constant="172"/>
                                 </constraints>
                             </imageView>
                         </subviews>
@@ -37,7 +37,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="SplashScreen.png" width="177" height="31"/>
+        <image name="SplashScreen.png" width="175" height="172"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>

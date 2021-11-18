@@ -1,20 +1,19 @@
-﻿<Flyout
-	x:Class="Commerce.FilterPopup"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:local="using:Commerce"
-	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	xmlns:controls="using:Uno.Material.Controls"
-	mc:Ignorable="d"
-	d:DesignHeight="300"
-	d:DesignWidth="400"
-	Placement="Full"
-	LightDismissOverlayMode="On"
-	  xmlns:utu="using:Uno.Toolkit.UI.Controls"
-	xmlns:nav="using:Uno.Extensions.Navigation.Controls">
-	
-    <Flyout.FlyoutPresenterStyle>
+﻿<Flyout x:Class="Commerce.FilterPopup"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:local="using:Commerce"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:controls="using:Uno.Material.Controls"
+		mc:Ignorable="d"
+		d:DesignHeight="300"
+		d:DesignWidth="400"
+		Placement="Full"
+		LightDismissOverlayMode="On"
+		xmlns:utu="using:Uno.Toolkit.UI.Controls"
+		xmlns:nav="using:Uno.Extensions.Navigation.Controls">
+
+	<Flyout.FlyoutPresenterStyle>
         <Style TargetType="FlyoutPresenter">
             <Setter Property="HorizontalContentAlignment"
                     Value="Center" />
@@ -28,7 +27,9 @@
 					Value="370" />
 			<Setter Property="MaxWidth"
                     Value="NaN" />
-            <Setter Property="Template">
+			<Setter Property="Background"
+					Value="{StaticResource MaterialSurfaceBrush}" />
+			<Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="FlyoutPresenter">
                         <Border MinWidth="{TemplateBinding MinWidth}"
