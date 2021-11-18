@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Microsoft.UI.Xaml.Controls;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Regions;
@@ -70,7 +71,8 @@ public class NavigationViewNavigator : ControlNavigator<Microsoft.UI.Xaml.Contro
         }
         finally
         {
-			if (Control.IsPaneVisible)
+			if (Control.IsPaneVisible &&
+				!(Control.PaneDisplayMode == NavigationViewPaneDisplayMode.LeftMinimal && !Control.IsPaneOpen))
 			{
 				await CurrentView.EnsureLoaded();
 			}

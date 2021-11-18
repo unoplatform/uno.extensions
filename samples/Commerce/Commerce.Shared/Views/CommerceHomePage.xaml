@@ -43,6 +43,8 @@
 						<Setter Target="Tabs.Visibility"
 								Value="Collapsed" />
 						<Setter Target="NavView.IsPaneToggleButtonVisible"
+								Value="True" />
+						<Setter Target="NavView.IsPaneVisible"
 								Value="true" />
 						<Setter Target="NavView.PaneDisplayMode"
 								Value="Auto" />
@@ -56,6 +58,8 @@
 						<Setter Target="Tabs.Visibility"
 								Value="Collapsed" />
 						<Setter Target="NavView.IsPaneToggleButtonVisible"
+								Value="True" />
+						<Setter Target="NavView.IsPaneVisible"
 								Value="true" />
 						<Setter Target="NavView.PaneDisplayMode"
 								Value="Auto" />
