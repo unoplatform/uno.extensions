@@ -1,8 +1,8 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras"  ToolsVersion="15.0">
-  <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1;xamarinios10;monoandroid10.0;monoandroid11.0</TargetFrameworks>
-		<TargetFrameworks Condition="'$(UnoExtensionsDisableNet6)'==''">$(TargetFrameworks);net5.0;net6.0;uap10.0.18362;net6.0-ios;net6.0-android</TargetFrameworks>
-
+	<PropertyGroup>
+		<TargetFrameworks Condition="'$(UnoExtensionsOnlyUAP)'=='true'">uap10.0.18362</TargetFrameworks>
+		<TargetFrameworks Condition="'$(UnoExtensionsOnlyUAP)'==''">netstandard2.0;netstandard2.1;xamarinios10;monoandroid10.0;monoandroid11.0</TargetFrameworks>
+		<TargetFrameworks Condition="'$(UnoExtensionsDisableNet6)'=='' and '$(UnoExtensionsOnlyUAP)'==''">$(TargetFrameworks);net5.0;net6.0;uap10.0.18362;net6.0-ios;net6.0-android</TargetFrameworks>
 	</PropertyGroup>
 
   <ItemGroup>
