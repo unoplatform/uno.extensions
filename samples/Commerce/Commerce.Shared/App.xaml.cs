@@ -120,27 +120,6 @@ namespace Commerce
 
 #endif
 
-			// TODO: Work out how to reapply deeplink now that we're using a ShellView
-			//#if __WASM__
-			var href = WebAssemblyRuntime.InvokeJS("window.location.href");
-			//			var url = new UriBuilder(href);
-			//			var query = url.Query;
-			//			var path = (url.Path + (!string.IsNullOrWhiteSpace(query) ? "?" : "") + query + "").TrimStart('/');
-
-			//			if (!string.IsNullOrWhiteSpace(path))
-			//			{
-			//				var navResult = nav.NavigateRouteAsync(this, path);
-			//			}
-			//			else
-			//			{
-			//				var navResult = nav.NavigateRouteAsync(this, "Login");
-
-			//			}
-			//#else
-
-			//			var navResult = nav.NavigateRouteAsync(this, "Login");
-			//			//var navResult = nav.NavigateRouteAsync(this, "Home/Products/ProductsPage/Details/ProductDetailsPage?ProductId=2");
-			//#endif
 		}
 
 		public async void AppGoBack(object? sender, BackRequestedEventArgs e)
