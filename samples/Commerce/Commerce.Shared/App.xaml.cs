@@ -120,27 +120,6 @@ namespace Commerce
 
 #endif
 
-			// TODO: Work out how to reapply deeplink now that we're using a ShellView
-//#if __WASM__
-//			var href = WebAssemblyRuntime.InvokeJS("window.location.href");
-//			var url = new UriBuilder(href);
-//			var query = url.Query;
-//			var path = (url.Path + (!string.IsNullOrWhiteSpace(query) ? "?" : "") + query + "").TrimStart('/');
-
-//			if (!string.IsNullOrWhiteSpace(path))
-//			{
-//				var navResult = nav.NavigateRouteAsync(this, path);
-//			}
-//			else
-//			{
-//				var navResult = nav.NavigateRouteAsync(this, "Login");
-
-//			}
-//#else
-
-//			var navResult = nav.NavigateRouteAsync(this, "Login");
-//			//var navResult = nav.NavigateRouteAsync(this, "Home/Products/ProductsPage/Details/ProductDetailsPage?ProductId=2");
-//#endif
 		}
 
 		public async void AppGoBack(object? sender, BackRequestedEventArgs e)
@@ -237,9 +216,9 @@ namespace Commerce
 		private static void RegisterRoutes(IRouteBuilder builder)
 		{
 			builder
-				.Register(new RouteMap(nameof(ShellView), typeof(ShellView),typeof(ShellViewModel)))
+				.Register(new RouteMap(nameof(ShellView), typeof(ShellView), typeof(ShellViewModel)))
 				.Register(new RouteMap("Login", typeof(LoginPage), typeof(LoginViewModel.BindableLoginViewModel)))
-					.Register(new RouteMap("Home", typeof(CommerceHomePage),
+					.Register(new RouteMap("Home", typeof(HomePage), typeof(HomeViewModel),
 						RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
 													nav with { Route = nav.Route.Append(Route.NestedRoute("Products")) } :
 													nav))

@@ -16,104 +16,109 @@ namespace Uno.Extensions.Navigation;
 
 public static class FrameworkElementExtensions
 {
-    public static async Task EnsureLoaded(this IRegion region)
-    {
-        if(region.Services is not null)
-        {
-            return;
-        }
+	public static async Task EnsureLoaded(this IRegion region)
+	{
+		if (region.Services is not null)
+		{
+			return;
+		}
 
-        if(region?.View is null)
-        {
-            return;
-        }
+		if (region?.View is null)
+		{
+			return;
+		}
 
-        await region.View.EnsureLoaded();
+		await region.View.EnsureLoaded();
 
-        if(region.Parent is null)
-        {
-            return;
-        }
+		if (region.Parent is null)
+		{
+			return;
+		}
 
-        await region.Parent.EnsureLoaded();
-    }
+		await region.Parent.EnsureLoaded();
+	}
+	public static async Task EnsureLoaded(this FrameworkElement? element)
+	{
+		await EnsureElementLoaded(element);
 
-    public static async Task EnsureLoaded(this FrameworkElement? element)
-    {
-        if (element == null)
-        {
-            return;
-        }
+		var count = VisualTreeHelper.GetChildrenCount(element);
+		for (int i = 0; i < count; i++)
+		{
+			await EnsureLoaded(VisualTreeHelper.GetChild(element, i) as FrameworkElement);
+		}
 
-        var completion = new TaskCompletionSource<object>();
+	}
+	private static async Task EnsureElementLoaded(this FrameworkElement? element)
+	{
+		if (element == null)
+		{
+			return;
+		}
 
-        // Note: We're attaching to three different events to
-        // a) always detect when element is loaded (sometimes Loaded is never fired)
-        // b) detect as soon as IsLoaded is true (Loading and Loaded not always in right order)
+		var completion = new TaskCompletionSource<object>();
 
-        RoutedEventHandler? loaded = null;
-        EventHandler<object>? layoutChanged = null;
-//#if WINDOWS_UWP || WINUI || NETSTANDARD
-        TypedEventHandler<FrameworkElement, object>? loading = null;
-//#else
-//        TypedEventHandler<DependencyObject, object> loading = null;
-//#endif
+		// Note: We're attaching to three different events to
+		// a) always detect when element is loaded (sometimes Loaded is never fired)
+		// b) detect as soon as IsLoaded is true (Loading and Loaded not always in right order)
 
-        Action<bool> loadedAction = (overrideLoaded) =>
-        {
-            if (element.IsLoaded ||
-                //overrideLoaded ||
-                (element.ActualHeight>0 && element.ActualWidth>0))
-            {
+		RoutedEventHandler? loaded = null;
+		EventHandler<object>? layoutChanged = null;
+		TypedEventHandler<FrameworkElement, object>? loading = null;
+
+		Action<bool> loadedAction = (overrideLoaded) =>
+		{
+			if (element.IsLoaded ||
+				(element.ActualHeight > 0 && element.ActualWidth > 0))
+			{
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-                completion.SetResult(null);
+				completion.SetResult(null);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
-                element.Loaded -= loaded;
-                element.Loading -= loading;
-                element.LayoutUpdated -= layoutChanged;
-            }
-        };
+				element.Loaded -= loaded;
+				element.Loading -= loading;
+				element.LayoutUpdated -= layoutChanged;
+			}
+		};
 
-        loaded = (s, e) => loadedAction(false);
-        loading = (s, e) => loadedAction(false);
-        layoutChanged = (s, e) => loadedAction(true);
+		loaded = (s, e) => loadedAction(false);
+		loading = (s, e) => loadedAction(false);
+		layoutChanged = (s, e) => loadedAction(true);
 
-        element.Loaded += loaded;
-        element.Loading += loading;
-        element.LayoutUpdated += layoutChanged;
+		element.Loaded += loaded;
+		element.Loading += loading;
+		element.LayoutUpdated += layoutChanged;
 
-        if (element.IsLoaded ||
-            (element.ActualHeight > 0 && element.ActualWidth > 0))
-        {
-            loadedAction(false);
-        }
+		if (element.IsLoaded ||
+			(element.ActualHeight > 0 && element.ActualWidth > 0))
+		{
+			loadedAction(false);
+		}
 
-        await completion.Task;
-    }
+		await completion.Task;
+	}
 
-    public static void InjectServicesAndSetDataContext(
-        this FrameworkElement view,
-        IServiceProvider services,
-        INavigator navigation,
-        object? viewModel)
-    {
-        if (view is not null)
-        {
-            if (viewModel is not null &&
-                view.DataContext != viewModel)
-            {
-                view.DataContext = viewModel;
-            }
-        }
+	public static void InjectServicesAndSetDataContext(
+		this FrameworkElement view,
+		IServiceProvider services,
+		INavigator navigation,
+		object? viewModel)
+	{
+		if (view is not null)
+		{
+			if (viewModel is not null &&
+				view.DataContext != viewModel)
+			{
+				view.DataContext = viewModel;
+			}
+		}
 
-        if (view is IInjectable<INavigator> navAware)
-        {
-            navAware.Inject(navigation);
-        }
+		if (view is IInjectable<INavigator> navAware)
+		{
+			navAware.Inject(navigation);
+		}
 
-        if (view is IInjectable<IServiceProvider> spAware)
-        {
-            spAware.Inject(services);
-        }
-    }
+		if (view is IInjectable<IServiceProvider> spAware)
+		{
+			spAware.Inject(services);
+		}
+	}
 }

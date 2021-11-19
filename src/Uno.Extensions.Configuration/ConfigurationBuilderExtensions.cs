@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Uno.Extensions.Hosting;
 
 namespace Uno.Extensions.Configuration
 {
@@ -13,7 +14,7 @@ namespace Uno.Extensions.Configuration
     {
         public static IConfigurationBuilder AddAppSettings(this IConfigurationBuilder configurationBuilder, HostBuilderContext hostingContext)
         {
-            var prefix = hostingContext.Configuration.GetValue("appsettings:prefix", defaultValue: string.Empty);
+            var prefix = hostingContext.Configuration.GetValue(HostingConstants.AppSettingsPrefixKey, defaultValue: string.Empty);
             prefix = !string.IsNullOrWhiteSpace(prefix) ? $"{prefix}/" : prefix;
             return configurationBuilder.AddJsonFile($"{prefix}appsettings.json", optional: true, reloadOnChange: false);
         }
@@ -37,7 +38,7 @@ namespace Uno.Extensions.Configuration
         {
             var env = hostingContext.HostingEnvironment;
 
-            var prefix = hostingContext.Configuration.GetValue("appsettings:prefix", defaultValue: string.Empty);
+            var prefix = hostingContext.Configuration.GetValue(HostingConstants.AppSettingsPrefixKey, defaultValue: string.Empty);
             prefix = !string.IsNullOrWhiteSpace(prefix) ? $"{prefix}/" : prefix;
             return configurationBuilder.AddJsonFile($"{prefix}appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: false);
         }

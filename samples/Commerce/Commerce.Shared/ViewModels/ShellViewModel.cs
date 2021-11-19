@@ -1,22 +1,32 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Uno.Extensions.Navigation;
+using Uno.Extensions.Hosting;
+using System;
 
 namespace Commerce.ViewModels
 {
 	public class ShellViewModel
 	{
-		public static ShellViewModel Instance { get; private set; }
-
 		private INavigator Navigator { get; }
 
-		private IServiceProvider Services { get; }
-		public ShellViewModel(INavigator navigator, IServiceProvider services)
+		public ShellViewModel(INavigator navigator, IConfiguration configuration)
 		{
 			Navigator = navigator;
-			Instance = this;
-			Services = services;
+
+			var launchUrl = configuration.GetValue(HostingConstants.WasmLaunchUrlKey, defaultValue: string.Empty);
+
+			if (!string.IsNullOrWhiteSpace(launchUrl))
+			{
+				var url = new UriBuilder(launchUrl);
+				var query = url.Query;
+				var path = (url.Path + (!string.IsNullOrWhiteSpace(query) ? "?" : "") + query + "").TrimStart('/');
+				if (!string.IsNullOrWhiteSpace(path))
+				{
+					Navigator.NavigateRouteAsync(this, path);
+					return;
+				}
+			}
 
 			// Go to the login page on app startup
 			Login();
@@ -25,7 +35,7 @@ namespace Commerce.ViewModels
 		public async Task Login()
 		{
 			// Navigate to Login page, requesting Credentials
-			var response = await Navigator.NavigateViewModelForResultAsync<LoginViewModel.BindableLoginViewModel, Credentials>(this,"-/");
+			var response = await Navigator.NavigateViewModelForResultAsync<LoginViewModel.BindableLoginViewModel, Credentials>(this, Schemes.ClearBackStack);
 			
 
 			var loginResult = await response.Result;
@@ -33,7 +43,7 @@ namespace Commerce.ViewModels
 			{
 				// Login successful, so navigate to Home
 				// Wait for a credentials object to be returned 
-				var homeResponse = await Navigator.NavigateRouteForResultAsync<Credentials>(this, "-/Home");
+				var homeResponse = await Navigator.NavigateViewModelForResultAsync<HomeViewModel, Credentials>(this, Schemes.ClearBackStack);
 				_= await homeResponse.Result;
 			}
 
