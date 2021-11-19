@@ -10,6 +10,7 @@ using Uno.Extensions;
 
 namespace Uno.Extensions.Logging
 {
+#if !((NETSTANDARD || NET5_0 || NET6_0) && !__IOS__ && !__ANDROID__) || WINUI || __WASM__
     public static class HostBuilderExtensions
     {
 #if !__WASM__
@@ -43,4 +44,5 @@ namespace Uno.Extensions.Logging
 
 #endif
     }
+#endif
 }

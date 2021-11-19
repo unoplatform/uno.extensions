@@ -26,7 +26,9 @@ namespace Uno.Extensions.Configuration
                         s.TryAddSingleton<IConfiguration>(a => ctx.Configuration);
                         s.TryAddSingleton<IConfigurationRoot>(a => (IConfigurationRoot)ctx.Configuration);
                         s.TryAddSingleton<Reloader>();
-                        _ = s.AddHostedService<ReloadService>();
+						s.TryAddSingleton<ReloadService>();
+                        _ = s.AddHostedService<ReloadService>(sp => sp.GetRequiredService<ReloadService>());
+						s.AddSingleton<IStartupService>(sp => sp.GetRequiredService<ReloadService>());
                     });
         }
 

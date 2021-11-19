@@ -5,107 +5,117 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Uno.Extensions.Hosting;
 using Uno.Extensions.Logging;
 using Windows.Storage;
 
-namespace Uno.Extensions.Configuration
+namespace Uno.Extensions.Configuration;
+
+public class ReloadService : IHostedService, IStartupService
 {
-    public class ReloadService : IHostedService
-    {
-        public ReloadService(
-            ILogger<ReloadService> logger,
-            Reloader reload,
-            IHostEnvironment hostEnvironment,
-            IConfigurationRoot configRoot)
-        {
-            Logger = logger;
-            Reload = reload;
-            Config = configRoot;
-            HostEnvironment = hostEnvironment;
-            Logger.LogDebugMessage($"Created");
-        }
+	public ReloadService(
+		ILogger<ReloadService> logger,
+		Reloader reload,
+		IHostEnvironment hostEnvironment,
+		IConfigurationRoot configRoot)
+	{
+		Logger = logger;
+		Reload = reload;
+		Config = configRoot;
+		HostEnvironment = hostEnvironment;
+		Logger.LogDebugMessage($"Created");
+	}
 
-        private IConfigurationRoot Config { get; }
+	private TaskCompletionSource<bool> StartupCompletion { get; } = new TaskCompletionSource<bool>();
 
-        private ILogger Logger { get; }
+	private IConfigurationRoot Config { get; }
 
-        private Reloader Reload { get; }
+	private ILogger Logger { get; }
 
-        private IHostEnvironment HostEnvironment { get; }
+	private Reloader Reload { get; }
 
-        public async Task StartAsync(CancellationToken cancellationToken)
-        {
-            var localFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
-            var folder = await localFolder.CreateFolderAsync(HostBuilderExtensions.ConfigurationFolderName, CreationCollisionOption.OpenIfExists);
-            Logger.LogDebugMessage($@"Folder path should be '{folder.Path}'");
+	private IHostEnvironment HostEnvironment { get; }
 
-            var fileProviders = Config.Providers;
-            var reloadEnabled = false;
-            var appSettings = false;
-            var envAppSettings = false;
-            var appSettingsFileName = $"{AppSettings.AppSettingsFileName}.json";
-            var environmentAppSettingsFileName = $"{AppSettings.AppSettingsFileName}.{HostEnvironment.EnvironmentName}.json";
-            foreach (var fp in fileProviders)
-            {
-                reloadEnabled = true;
-                if (fp is FileConfigurationProvider fcp)
-                {
-                    if (fcp.Source.Path.Contains(appSettingsFileName))
-                    {
-                        appSettings = true;
-                    }
+	public async Task StartAsync(CancellationToken cancellationToken)
+	{
+		var localFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
+		var folder = await localFolder.CreateFolderAsync(HostBuilderExtensions.ConfigurationFolderName, CreationCollisionOption.OpenIfExists);
+		Logger.LogDebugMessage($@"Folder path should be '{folder.Path}'");
+
+		var fileProviders = Config.Providers;
+		var reloadEnabled = false;
+		var appSettings = false;
+		var envAppSettings = false;
+		var appSettingsFileName = $"{AppSettings.AppSettingsFileName}.json";
+		var environmentAppSettingsFileName = $"{AppSettings.AppSettingsFileName}.{HostEnvironment.EnvironmentName}.json";
+		foreach (var fp in fileProviders)
+		{
+			reloadEnabled = true;
+			if (fp is FileConfigurationProvider fcp)
+			{
+				if (fcp.Source.Path.Contains(appSettingsFileName))
+				{
+					appSettings = true;
+				}
 
 
-                    if (fcp.Source.Path.Contains(environmentAppSettingsFileName))
-                    {
-                        envAppSettings = true;
-                    }
-                }
+				if (fcp.Source.Path.Contains(environmentAppSettingsFileName))
+				{
+					envAppSettings = true;
+				}
+			}
 
-            }
-            if (appSettings)
-            {
-                await CopyApplicationFileToLocal(localFolder, "appsettings.json");
-            }
+		}
+		if (appSettings)
+		{
+			await CopyApplicationFileToLocal(localFolder, "appsettings.json");
+		}
 
-            if (envAppSettings)
-            {
-                await CopyApplicationFileToLocal(localFolder, $"appsettings.{HostEnvironment.EnvironmentName}.json");
-            }
+		if (envAppSettings)
+		{
+			await CopyApplicationFileToLocal(localFolder, $"appsettings.{HostEnvironment.EnvironmentName}.json");
+		}
 
-            Logger.LogDebugMessage($"Started");
+		Logger.LogDebugMessage($"Started");
 
-            if (reloadEnabled)
-            {
-                await Reload.ReloadAllFileConfigurationProviders();
-            }
-        }
+		if (reloadEnabled)
+		{
+			await Reload.ReloadAllFileConfigurationProviders();
+		}
 
-        private async Task CopyApplicationFileToLocal(IStorageFolder localFolder, string file)
-        {
-            try
-            {
-                var storageFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///{file}"));
-                if (File.Exists(storageFile.Path))
-                {
-                    Logger.LogDebugMessage($@"Copying settings from '{storageFile.Path}'");
-                    var settings = File.ReadAllText(storageFile.Path);
-                    Logger.LogDebugMessage($@"Settings '{settings}'");
-                    var settingsFile = await localFolder.CreateFileAsync($"{file}", CreationCollisionOption.OpenIfExists);
-                    Logger.LogDebugMessage($@"Copying settings to '{settingsFile.Path}'");
-                    File.WriteAllText(settingsFile.Path, settings);
-                }
-            }
-            catch
-            {
-                Logger.LogTrace($"{file} not included as content");
-            }
-        }
+		StartupCompletion.TrySetResult(true);
+	}
 
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            Logger.LogDebugMessage($"Stopped");
-            return Task.CompletedTask;
-        }
-    }
+	private async Task CopyApplicationFileToLocal(IStorageFolder localFolder, string file)
+	{
+		try
+		{
+			var storageFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///{file}"));
+			if (File.Exists(storageFile.Path))
+			{
+				Logger.LogDebugMessage($@"Copying settings from '{storageFile.Path}'");
+				var settings = File.ReadAllText(storageFile.Path);
+				Logger.LogDebugMessage($@"Settings '{settings}'");
+				var settingsFile = await localFolder.CreateFileAsync($"{file}", CreationCollisionOption.OpenIfExists);
+				Logger.LogDebugMessage($@"Copying settings to '{settingsFile.Path}'");
+				File.WriteAllText(settingsFile.Path, settings);
+			}
+		}
+		catch
+		{
+			Logger.LogTrace($"{file} not included as content");
+		}
+	}
+
+	public Task StopAsync(CancellationToken cancellationToken)
+	{
+		Logger.LogDebugMessage($"Stopped");
+		return Task.CompletedTask;
+	}
+
+	public Task StartupComplete()
+	{
+		return StartupCompletion.Task;
+	}
 }
+

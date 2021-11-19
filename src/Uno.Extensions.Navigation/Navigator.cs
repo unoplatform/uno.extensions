@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Uno.Extensions.Hosting;
 using Uno.Extensions.Navigation.Regions;
 using static Uno.Extensions.GenericExtensions;
 
@@ -25,13 +26,13 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 	protected IRouteMappings Mappings { get; }
 
-	public Navigator(ILogger<Navigator> logger, IRegion region, IRouteMappings mappings) : this((ILogger)logger, region, mappings)
+	public Navigator(ILogger<Navigator> logger, IRegion region, IRouteMappings mappings)
+		: this((ILogger)logger, region, mappings)
 	{
 		if (region.Parent is null &&
 			region.View is not null)
 		{
-			var vm = CreateDefaultViewModel();
-			region.View.DataContext = vm;
+			InitializeRootNavigator();
 		}
 	}
 
@@ -40,6 +41,17 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		Region = region;
 		Logger = logger;
 		Mappings = mappings;
+	}
+
+	private async Task InitializeRootNavigator()
+	{
+		var startup = Region.Services.GetService<IStartupService>();
+
+		// Make sure startup has completed
+		await (startup?.StartupComplete() ?? Task.CompletedTask);
+
+		var vm = CreateDefaultViewModel();
+		Region.View.DataContext = vm;
 	}
 
 	public async Task<NavigationResponse?> NavigateAsync(NavigationRequest request)
