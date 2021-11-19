@@ -4,8 +4,6 @@ jobs:
   pool:
     vmImage: 'ubuntu-latest'
 
-  variables:
-
   steps:
   - checkout: self
     clean: 'true'
