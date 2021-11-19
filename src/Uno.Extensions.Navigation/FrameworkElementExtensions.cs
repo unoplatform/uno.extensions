@@ -105,8 +105,6 @@ public static class FrameworkElementExtensions
 			loadedAction(false);
 		}
 
-		System.Diagnostics.Debug.WriteLine($">>> waiting for >>> { element.GetType().Name} [loaded={element.IsLoaded}]");
-
 		await completion.Task;
 	}
 
