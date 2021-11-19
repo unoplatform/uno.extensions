@@ -88,6 +88,18 @@
 				<uer:FeedView Source="{Binding Items}" utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryAlignment="Stretch">
 					<DataTemplate>
 						<ListView Background="{StaticResource MaterialSurfaceBrush}" ItemsSource="{Binding Data}" uen:Navigation.Request="ProductDetails">
+							<ListView.Resources>
+								<StaticResource x:Key="ListViewItemBackgroundSelected"
+												ResourceKey="MaterialPrimarySelectedBrush"/>
+								<StaticResource x:Key="ListViewItemBackgroundSelectedPointerOver"
+												ResourceKey="MaterialPrimaryHoverBrush" />
+								<StaticResource x:Key="ListViewItemBackgroundPointerOver"
+												ResourceKey="MaterialPrimaryHoverBrush" />
+								<StaticResource x:Key="ListViewItemBackgroundPressed"
+												ResourceKey="MaterialPrimaryPressedBrush" />
+								<StaticResource x:Key="ListViewItemBackgroundSelectedPressed"
+												ResourceKey="MaterialPrimaryPressedBrush" />
+							</ListView.Resources>
 							<ListView.ItemsPanel>
 								<ItemsPanelTemplate>
 									<ItemsStackPanel Orientation="Vertical" />
