@@ -18,7 +18,7 @@ public class ProductService : JsonDataService<Product>, IProductService
 		var products = (await GetEntities()).AsEnumerable();
 		if (term is not null)
 		{
-			products = products.Where(p => p.Name.Contains(term, StringComparison.OrdinalIgnoreCase));
+			products = products.Where(p => p.Name.IndexOf(term, StringComparison.OrdinalIgnoreCase) != -1);
 		}
 
 		return products;
