@@ -47,6 +47,7 @@ public static class FrameworkElementExtensions
 			return;
 		}
 
+#if !WINDOWS_UWP
 		var count = VisualTreeHelper.GetChildrenCount(element);
 		for (int i = 0; i < count; i++)
 		{
@@ -57,7 +58,7 @@ public static class FrameworkElementExtensions
 			}
 			await EnsureLoaded(nextElement);
 		}
-
+#endif
 	}
 	private static async Task EnsureElementLoaded(this FrameworkElement? element)
 	{
@@ -103,6 +104,8 @@ public static class FrameworkElementExtensions
 		{
 			loadedAction(false);
 		}
+
+		System.Diagnostics.Debug.WriteLine($">>> waiting for >>> { element.GetType().Name} [loaded={element.IsLoaded}]");
 
 		await completion.Task;
 	}

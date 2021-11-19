@@ -71,8 +71,11 @@ namespace Uno.Extensions.Navigation.Controls
 						if (response is not null)
 						{
 							var result = await response.UntypedResult;
-							element.SetData(result.GetValue());
-							binding.UpdateSource();
+							if (result.MatchSome(out var resultValue))
+							{
+								element.SetData(resultValue);
+								binding.UpdateSource();
+							}
 						}
 					}
 					else

@@ -53,11 +53,12 @@ public static class UnoHost
 				var appsettingsPrefix = new Dictionary<string, string>
 						{
 							{ HostingConstants.AppSettingsPrefixKey, "local" },
-							{ HostingConstants.WasmLaunchUrlKey, href }
+							{ HostingConstants.LaunchUrlKey, href }
 						};
 				config.AddInMemoryCollection(appsettingsPrefix);
 			})
 #endif
+		.ConfigureServices((ctx, services) => services.Configure<HostConfiguration>(ctx.Configuration.GetSection(nameof(HostConfiguration))))
 			.ConfigureLogging((_, factory) =>
 			{
 #if WINDOWS_UWP || NETSTANDARD // We only need to do this on Windows for UWP because of an assumption dotnet makes that every Windows app can access eventlog

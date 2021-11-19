@@ -61,6 +61,7 @@ namespace Commerce
 
 			.UseConfigurationSectionInApp<AppInfo>()
 			.UseSettings<CommerceSettings>()
+			.UseSettings<Credentials>()
 			.ConfigureServices(services =>
 			{
 				services

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Uno.Extensions.Logging;
+using Windows.Storage;
 
 namespace Uno.Extensions.Configuration
 {
@@ -77,7 +78,19 @@ namespace Uno.Extensions.Configuration
             var dir = Path.GetDirectoryName(physicalPath);
             if (dir is not null && !Directory.Exists(dir))
             {
-                Directory.CreateDirectory(dir);
+				// Make sure the local holder has been created
+				var localFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
+
+				if (dir.StartsWith(localFolder.Path))
+				{
+					dir = dir.Replace(localFolder.Path,"");
+
+					await localFolder.CreateFolderAsync(dir, CreationCollisionOption.OpenIfExists);
+				}
+				else
+				{
+					Directory.CreateDirectory(dir);
+				}
             }
             File.WriteAllText(physicalPath, json);
 

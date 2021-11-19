@@ -1,7 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Hosting;
+using Uno.Extensions.Configuration;
 using System;
 
 namespace Commerce.ViewModels
@@ -10,41 +12,68 @@ namespace Commerce.ViewModels
 	{
 		private INavigator Navigator { get; }
 
-		public ShellViewModel(INavigator navigator, IConfiguration configuration)
+		private IWritableOptions<Credentials> CredentialsSettings { get; }
+
+		public ShellViewModel(
+			INavigator navigator,
+			IOptions<HostConfiguration> configuration,
+			IWritableOptions<Credentials> credentials)
 		{
 			Navigator = navigator;
+			CredentialsSettings = credentials;
 
-			var launchUrl = configuration.GetValue(HostingConstants.WasmLaunchUrlKey, defaultValue: string.Empty);
+			var launchUrl = configuration.Value?.LaunchUrl;// configuration.GetValue(HostingConstants.WasmLaunchUrlKey, defaultValue: string.Empty);
 
-			if (!string.IsNullOrWhiteSpace(launchUrl))
+			string? initialRoute = null;
+			if (!string.IsNullOrWhiteSpace(launchUrl) && launchUrl.StartsWith("http"))
 			{
 				var url = new UriBuilder(launchUrl);
 				var query = url.Query;
 				var path = (url.Path + (!string.IsNullOrWhiteSpace(query) ? "?" : "") + query + "").TrimStart('/');
 				if (!string.IsNullOrWhiteSpace(path))
 				{
-					Navigator.NavigateRouteAsync(this, path);
-					return;
+					initialRoute = path;
 				}
+			}
+			else
+			{
+				initialRoute = launchUrl;
 			}
 
 			// Go to the login page on app startup
-			Login();
+			Login(initialRoute);
 		}
 
-		public async Task Login()
+		public async Task Login(string? initialRoute = null)
 		{
-			// Navigate to Login page, requesting Credentials
-			var response = await Navigator.NavigateViewModelForResultAsync<LoginViewModel.BindableLoginViewModel, Credentials>(this, Schemes.ClearBackStack);
-			
+			var currentCredentials = CredentialsSettings.Value;
 
-			var loginResult = await response.Result;
-			if (loginResult.MatchSome(out var creds) && creds?.UserName is { Length: > 0 })
+			if (currentCredentials?.UserName is { Length: > 0 })
 			{
-				// Login successful, so navigate to Home
-				// Wait for a credentials object to be returned 
-				var homeResponse = await Navigator.NavigateViewModelForResultAsync<HomeViewModel, Credentials>(this, Schemes.ClearBackStack);
-				_= await homeResponse.Result;
+				if (!string.IsNullOrWhiteSpace(initialRoute))
+				{
+					var initialResponse = await Navigator.NavigateRouteForResultAsync<Credentials>(this, initialRoute);
+					_ = await initialResponse.Result;
+				}
+				else
+				{
+					var homeResponse = await Navigator.NavigateViewModelForResultAsync<HomeViewModel, Credentials>(this, Schemes.ClearBackStack);
+					_ = await homeResponse.Result;
+				}
+
+				await CredentialsSettings.Update(c => new Credentials());
+			}
+			else
+			{
+				// Navigate to Login page, requesting Credentials
+				var response = await Navigator.NavigateViewModelForResultAsync<LoginViewModel.BindableLoginViewModel, Credentials>(this, Schemes.ClearBackStack);
+
+
+				var loginResult = await response.Result;
+				if (loginResult.MatchSome(out var creds) && creds?.UserName is { Length: > 0 })
+				{
+					await CredentialsSettings.Update(c => creds);
+				}
 			}
 
 			// At this point we assume that either the login failed, or that the navigation to home
