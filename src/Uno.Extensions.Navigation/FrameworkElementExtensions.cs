@@ -47,7 +47,7 @@ public static class FrameworkElementExtensions
 			return;
 		}
 
-#if !WINDOWS_UWP
+#if !WINDOWS_UWP && !WINUI
 		var count = VisualTreeHelper.GetChildrenCount(element);
 		for (int i = 0; i < count; i++)
 		{
