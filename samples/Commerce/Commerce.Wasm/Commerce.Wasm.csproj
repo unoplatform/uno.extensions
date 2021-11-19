@@ -20,8 +20,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<!--<UseWebAssemblyAOT Condition="'$(Configuration)'=='Release' and '$(BUILD_REASON)'!='PullRequest'">true</UseWebAssemblyAOT>-->
-		<UseWebAssemblyAOT>true</UseWebAssemblyAOT>
+		<UseWebAssemblyAOT Condition="'$(Configuration)'=='Release' and '$(BUILD_REASON)'!='PullRequest'">true</UseWebAssemblyAOT>
 
 		<!-- Disable Emscripten on windows because of long command lines -->
 		<WasmShellEnableEmscriptenWindows Condition="'$(Configuration)'=='Release' and $([MSBuild]::IsOSPlatform('Windows'))">false</WasmShellEnableEmscriptenWindows>
