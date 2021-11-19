@@ -12,7 +12,11 @@ namespace Uno.Extensions.Logging
             if (factory is not null)
             {
                 global::Uno.Extensions.LogExtensionPoint.AmbientLoggerFactory = factory;
-            }
+
+#if HAS_UNO
+				Uno.UI.Adapter.Microsoft.Extensions.Logging.LoggingAdapter.Initialize();
+#endif
+			}
             return host;
         }
     }
