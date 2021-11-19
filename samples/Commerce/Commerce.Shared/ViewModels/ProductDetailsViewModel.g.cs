@@ -25,11 +25,13 @@ partial class ProductDetailsViewModel : IAsyncDisposable
 
 			Model = vm;
 			Product = ctx.GetOrCreateState(vm.Product);
+			Reviews = ctx.GetOrCreateState(vm.Reviews);
 		}
 
 		public ProductDetailsViewModel Model { get; }
 
 		public IFeed<Product> Product { get; }
+		public IFeed<Review[]> Reviews { get; }
 	}
 
 	/// <inheritdoc />
