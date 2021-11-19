@@ -17,99 +17,110 @@ HorizontalAlignment="Stretch"
 	>
 
 	<utu:AutoLayout MaxWidth="{StaticResource LandscapeMaxPageWidth}" Background="{StaticResource MaterialBackgroundBrush}">
+		<utu:AutoLayout.Resources>
+			<x:String x:Key="IconSource_delete">M 1 16 C 1 17.100000023841858 1.899999976158142 18 3 18 L 11 18 C 12.100000023841858 18 13 17.100000023841858 13 16 L 13 4 L 1 4 L 1 16 Z M 14 1 L 10.5 1 L 9.5 0 L 4.5 0 L 3.5 1 L 0 1 L 0 3 L 14 3 L 14 1 Z</x:String>
+			<x:String x:Key="IconSource_favorite">M 10 18.350000381469727 L 8.550000190734863 17.030000686645508 C 3.4000000953674316 12.360000610351562 0 9.27999997138977 0 5.5 C 0 2.4200000762939453 2.4200000762939453 0 5.5 0 C 7.240000009536743 0 8.909999966621399 0.8100001811981201 10 2.0900001525878906 C 11.090000033378601 0.8100001811981201 12.759999990463257 0 14.5 0 C 17.579999923706055 0 20 2.4200000762939453 20 5.5 C 20 9.27999997138977 16.59999990463257 12.36000108718872 11.449999809265137 17.040000915527344 L 10 18.350000381469727 Z</x:String>
+			<x:String x:Key="IconSource_favorite_border">M 14.5 0 C 12.759999990463257 0 11.090000033378601 0.8100001811981201 10 2.0900001525878906 C 8.909999966621399 0.8100001811981201 7.240000009536743 0 5.5 0 C 2.4200000762939453 0 0 2.4200000762939453 0 5.5 C 0 9.27999997138977 3.4000000953674316 12.36000108718872 8.550000190734863 17.040000915527344 L 10 18.350000381469727 L 11.449999809265137 17.030000686645508 C 16.59999990463257 12.360000610351562 20 9.27999997138977 20 5.5 C 20 2.4200000762939453 17.579999923706055 0 14.5 0 Z M 10.100000381469727 15.549999237060547 L 10 15.649999618530273 L 9.899999618530273 15.549999237060547 C 5.1399993896484375 11.239999294281006 2 8.390000104904175 2 5.5 C 2 3.5 3.5 2 5.5 2 C 7.039999961853027 2 8.539999723434448 2.9900001287460327 9.069999694824219 4.360000133514404 L 10.9399995803833 4.360000133514404 C 11.459999561309814 2.9900001287460327 12.960000038146973 2 14.5 2 C 16.5 2 18 3.5 18 5.5 C 18 8.390000104904175 14.860000610351562 11.239999294281006 10.100000381469727 15.549999237060547 Z</x:String>
+		</utu:AutoLayout.Resources>
 		<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryAlignment="Stretch">
 			<utu:NavigationBar Content="Your cart" x:Uid="Body_NavigationBar" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialRootModalNavigationBarStyle}" />
-			<utu:AutoLayout Background="{StaticResource MaterialSurfaceBrush}" utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryAlignment="Stretch">
-				<utu:AutoLayout Spacing="16" Padding="16,16,16,8" utu:AutoLayout.CounterAlignment="Stretch">
-					<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Body_3 Items" Text="3 Items" Style="{StaticResource MaterialSubtitle2}" />
-				</utu:AutoLayout>
-				<uer:FeedView Source="{Binding Cart}" utu:AutoLayout.CounterAlignment="Stretch">
-					<DataTemplate>
-						<ListView DataContext="{Binding Data}" ItemsSource="{Binding Items}" uen:Navigation.Request="ProductDetails">
-							<ListView.ItemsPanel>
-								<ItemsPanelTemplate>
-									<ItemsStackPanel Orientation="Vertical" />
-								</ItemsPanelTemplate>
-							</ListView.ItemsPanel>
-							<ListView.ItemTemplate>
-								<DataTemplate>
-									<SwipeControl DataContext="{Binding Product}">
-										<utu:AutoLayout Padding="16,16,16,0" Orientation="Horizontal">
-											<utu:AutoLayout>
-												<utu:AutoLayout Spacing="10" Padding="0,0,16,16">
-													<Image Source="{Binding Photo}" Stretch="UniformToFill" utu:AutoLayout.PrimaryLength="56" utu:AutoLayout.CounterLength="56" />
-												</utu:AutoLayout>
-											</utu:AutoLayout>
-											<utu:AutoLayout Padding="0,0,0,16" utu:AutoLayout.PrimaryAlignment="Stretch">
-												<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch">
-													<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch">
-														<TextBlock Foreground="{StaticResource MaterialOnSurfaceLowBrush}" TextWrapping="Wrap" Text="{Binding Brand}" Style="{StaticResource MaterialOverline}" />
-														<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" TextWrapping="Wrap" Text="{Binding Name}" Style="{StaticResource MaterialSubtitle1}" />
+			<ScrollViewer utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryAlignment="Stretch">
+				<utu:AutoLayout Spacing="10" Padding="10,10,10,10">
+					<uer:FeedView Source="{Binding Cart}" utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryAlignment="Stretch">
+						<DataTemplate>
+							<utu:AutoLayout Background="{StaticResource MaterialSurfaceBrush}" DataContext="{Binding Data}">
+								<utu:AutoLayout Spacing="16" Padding="16,16,16,8" utu:AutoLayout.CounterAlignment="Stretch">
+									<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="_3 Items" Text="3 Items" Style="{StaticResource MaterialSubtitle2}" />
+								</utu:AutoLayout>
+								<ListView ItemsSource="{Binding Items}" uen:Navigation.Request="ProductDetails" utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryAlignment="Stretch">
+									<ListView.ItemsPanel>
+										<ItemsPanelTemplate>
+											<ItemsStackPanel Orientation="Vertical" />
+										</ItemsPanelTemplate>
+									</ListView.ItemsPanel>
+									<ListView.ItemTemplate>
+										<DataTemplate>
+											<SwipeControl>
+												<utu:AutoLayout Padding="16,16,16,0" Orientation="Horizontal">
+													<utu:AutoLayout>
+														<utu:AutoLayout Spacing="10" Padding="0,0,16,16">
+															<Image Source="{Binding Product.Photo}" Stretch="UniformToFill" utu:AutoLayout.PrimaryLength="56" utu:AutoLayout.CounterLength="56" />
+														</utu:AutoLayout>
 													</utu:AutoLayout>
-												</utu:AutoLayout>
-											</utu:AutoLayout>
-											<utu:AutoLayout Orientation="Horizontal" utu:AutoLayout.CounterLength="56">
-												<utu:AutoLayout Padding="16,0,0,16" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
-													<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch">
-														<utu:AutoLayout Spacing="4" utu:AutoLayout.CounterAlignment="End" utu:AutoLayout.PrimaryAlignment="Stretch">
-															<utu:AutoLayout Spacing="10" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="End">
-																<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" TextAlignment="End" x:Uid="Body_Label" Text="{Binding Price}" Style="{StaticResource MaterialBody1}" />
+													<utu:AutoLayout Padding="0,0,0,16" utu:AutoLayout.PrimaryAlignment="Stretch">
+														<utu:AutoLayout PrimaryAxisAlignment="Center" utu:AutoLayout.CounterAlignment="Stretch">
+															<utu:AutoLayout PrimaryAxisAlignment="Center" utu:AutoLayout.CounterAlignment="Stretch">
+																<TextBlock Foreground="{StaticResource MaterialOnSurfaceLowBrush}" TextWrapping="Wrap" Text="{Binding Product.Brand}" Style="{StaticResource MaterialOverline}" />
+																<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" TextWrapping="Wrap" Text="{Binding Product.Name}" Style="{StaticResource MaterialSubtitle1}" />
+															</utu:AutoLayout>
+														</utu:AutoLayout>
+													</utu:AutoLayout>
+													<utu:AutoLayout Orientation="Horizontal" utu:AutoLayout.CounterLength="56">
+														<utu:AutoLayout Padding="16,0,0,16" PrimaryAxisAlignment="End" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
+															<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch">
+																<utu:AutoLayout Spacing="4" PrimaryAxisAlignment="Center" utu:AutoLayout.CounterAlignment="End" utu:AutoLayout.PrimaryAlignment="Stretch">
+																	<utu:AutoLayout Spacing="10" PrimaryAxisAlignment="End" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="End">
+																		<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" TextAlignment="End" Text="{Binding Product.Price}" Style="{StaticResource MaterialBody1}" />
+																	</utu:AutoLayout>
+																</utu:AutoLayout>
 															</utu:AutoLayout>
 														</utu:AutoLayout>
 													</utu:AutoLayout>
 												</utu:AutoLayout>
-											</utu:AutoLayout>
+												<SwipeControl.LeftItems>
+													<SwipeItems Mode="Reveal">
+														<SwipeItem Foreground="{StaticResource MaterialOnPrimaryBrush}" Text="Item" x:Uid="ProductDetails_Template">
+															<SwipeItem.IconSource>
+																<PathIconSource Data="{StaticResource IconSource_favorite}" />
+															</SwipeItem.IconSource>
+														</SwipeItem>
+													</SwipeItems>
+												</SwipeControl.LeftItems>
+												<SwipeControl.RightItems>
+													<SwipeItems Mode="Reveal">
+														<SwipeItem>
+															<SwipeItem.IconSource>
+																<PathIconSource Data="{StaticResource IconSource_delete}" />
+															</SwipeItem.IconSource>
+														</SwipeItem>
+														<SwipeItem>
+															<SwipeItem.IconSource>
+																<PathIconSource Data="{StaticResource IconSource_favorite_border}" />
+															</SwipeItem.IconSource>
+														</SwipeItem>
+													</SwipeItems>
+												</SwipeControl.RightItems>
+											</SwipeControl>
+										</DataTemplate>
+									</ListView.ItemTemplate>
+								</ListView>
+								<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch">
+									<utu:AutoLayout Spacing="16" Padding="16,32,16,8" utu:AutoLayout.CounterAlignment="Stretch">
+										<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="_Order summary" Text="Order summary" Style="{StaticResource MaterialHeadline6}" />
+									</utu:AutoLayout>
+									<utu:AutoLayout Spacing="8" Padding="16,8,16,16" utu:AutoLayout.CounterAlignment="Stretch">
+										<utu:AutoLayout Justify="SpaceBetween" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
+											<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="_Sub-total" Text="Sub-total" Style="{StaticResource MaterialBody2}" />
+											<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" Text="{Binding SubTotal}" Style="{StaticResource MaterialBody2}" />
 										</utu:AutoLayout>
-										<SwipeControl.LeftItems>
-											<SwipeItems Mode="Reveal" />
-										</SwipeControl.LeftItems>
-										<SwipeControl.RightItems>
-											<SwipeItems Mode="Reveal">
-												<SwipeItem>
-													<SwipeItem.IconSource>
-														<PathIconSource Data="M 1 16 C 1 17.100000023841858 1.899999976158142 18 3 18 L 11 18 C 12.100000023841858 18 13 17.100000023841858 13 16 L 13 4 L 1 4 L 1 16 Z M 14 1 L 10.5 1 L 9.5 0 L 4.5 0 L 3.5 1 L 0 1 L 0 3 L 14 3 L 14 1 Z" />
-													</SwipeItem.IconSource>
-												</SwipeItem>
-												<SwipeItem>
-													<SwipeItem.IconSource>
-														<PathIconSource Data="M 14.5 0 C 12.759999990463257 0 11.090000033378601 0.8100001811981201 10 2.0900001525878906 C 8.909999966621399 0.8100001811981201 7.240000009536743 0 5.5 0 C 2.4200000762939453 0 0 2.4200000762939453 0 5.5 C 0 9.27999997138977 3.4000000953674316 12.36000108718872 8.550000190734863 17.040000915527344 L 10 18.350000381469727 L 11.449999809265137 17.030000686645508 C 16.59999990463257 12.360000610351562 20 9.27999997138977 20 5.5 C 20 2.4200000762939453 17.579999923706055 0 14.5 0 Z M 10.100000381469727 15.549999237060547 L 10 15.649999618530273 L 9.899999618530273 15.549999237060547 C 5.1399993896484375 11.239999294281006 2 8.390000104904175 2 5.5 C 2 3.5 3.5 2 5.5 2 C 7.039999961853027 2 8.539999723434448 2.9900001287460327 9.069999694824219 4.360000133514404 L 10.9399995803833 4.360000133514404 C 11.459999561309814 2.9900001287460327 12.960000038146973 2 14.5 2 C 16.5 2 18 3.5 18 5.5 C 18 8.390000104904175 14.860000610351562 11.239999294281006 10.100000381469727 15.549999237060547 Z" />
-													</SwipeItem.IconSource>
-												</SwipeItem>
-											</SwipeItems>
-										</SwipeControl.RightItems>
-									</SwipeControl>
-								</DataTemplate>
-							</ListView.ItemTemplate>
-						</ListView>
-					</DataTemplate>
-				</uer:FeedView>
-				<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch">
-					<utu:AutoLayout Spacing="16" Padding="16,32,16,8" utu:AutoLayout.CounterAlignment="Stretch">
-						<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Body_Order summary" Text="Order summary" Style="{StaticResource MaterialHeadline6}" />
-					</utu:AutoLayout>
-					<utu:AutoLayout Spacing="8" Padding="16,8,16,16" utu:AutoLayout.CounterAlignment="Stretch">
-						<utu:AutoLayout Justify="SpaceBetween" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
-							<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Body_Sub-total" Text="Sub-total" Style="{StaticResource MaterialBody2}" />
-							<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Body_$350,97" Text="$350,97" Style="{StaticResource MaterialBody2}" />
-						</utu:AutoLayout>
-						<utu:AutoLayout Justify="SpaceBetween" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
-							<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Body_TPS (4,49%)" Text="TPS (4,49%)" Style="{StaticResource MaterialBody2}" />
-							<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Body_$15,75" Text="$15,75" Style="{StaticResource MaterialBody2}" />
-						</utu:AutoLayout>
-						<utu:AutoLayout Justify="SpaceBetween" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
-							<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Body_TVQ (1099%)" Text="TVQ (10.99%)" Style="{StaticResource MaterialBody2}" />
-							<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Body_$38,57" Text="$38,57" Style="{StaticResource MaterialBody2}" />
-						</utu:AutoLayout>
-						<utu:AutoLayout Justify="SpaceBetween" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
-							<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Body_Total" Text="Total" Style="{StaticResource MaterialBody2}" />
-							<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="Body_$405,29" Text="$405,29" Style="{StaticResource MaterialHeadline6}" />
-						</utu:AutoLayout>
-					</utu:AutoLayout>
-					<utu:AutoLayout Spacing="10" Padding="16,16,16,16" utu:AutoLayout.CounterAlignment="Stretch">
-						<Button Content="checkout" nav:Navigation.Request="../CheckoutPage" x:Uid="Body_Checkout" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialContainedButtonStyle}" />
-					</utu:AutoLayout>
+										<utu:AutoLayout Justify="SpaceBetween" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
+											<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="_Tax" Text="Tax (4,49%)" Style="{StaticResource MaterialBody2}" />
+											<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" Text="{Binding Tax}" Style="{StaticResource MaterialBody2}" />
+										</utu:AutoLayout>
+										<utu:AutoLayout Justify="SpaceBetween" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
+											<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" x:Uid="_Total" Text="Total" Style="{StaticResource MaterialBody2}" />
+											<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" Text="{Binding Total}" Style="{StaticResource MaterialHeadline6}" />
+										</utu:AutoLayout>
+									</utu:AutoLayout>
+									<utu:AutoLayout Spacing="10" Padding="16,16,16,16" utu:AutoLayout.CounterAlignment="Stretch">
+										<Button Content="checkout" x:Uid="_Checkout" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialContainedButtonStyle}" />
+									</utu:AutoLayout>
+								</utu:AutoLayout>
+							</utu:AutoLayout>
+						</DataTemplate>
+					</uer:FeedView>
 				</utu:AutoLayout>
-			</utu:AutoLayout>
+			</ScrollViewer>
 		</utu:AutoLayout>
 	</utu:AutoLayout>
 

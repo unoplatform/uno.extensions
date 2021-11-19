@@ -91,17 +91,17 @@
 						<utu:Chip Content="Accessories" x:Uid="Body_Accessproes" IsChecked="{Binding Filter.Accessories, Mode=TwoWay}" Style="{StaticResource MaterialOutlinedFilterChipStyle}" />
 						<utu:Chip Content="Headwear" x:Uid="Body_Headwear" IsChecked="{Binding Filter.Headwear, Mode=TwoWay}" Style="{StaticResource MaterialOutlinedFilterChipStyle}" />
 					</utu:AutoLayout>
-					<utu:AutoLayout Spacing="16" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
-						<TextBlock Foreground="{StaticResource MaterialOnBackgroundBrush}" TextWrapping="Wrap" x:Uid="Body_Body" Text="In stock only" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialSubtitle2}" />
+					<utu:AutoLayout Spacing="16" Justify="SpaceBetween" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
+						<TextBlock Foreground="{StaticResource MaterialOnBackgroundBrush}" x:Uid="Body_Body" Text="In stock only" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialSubtitle2}" />
 						<ToggleSwitch utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialToggleSwitchStyle}" />
 					</utu:AutoLayout>
-					<utu:AutoLayout Spacing="16" Padding="0,8,8,8" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
-						<TextBlock Foreground="{StaticResource MaterialOnBackgroundBrush}" TextWrapping="Wrap" x:Uid="Body_Body" Text="Order" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialSubtitle2}" />
-						<TextBlock Foreground="{StaticResource MaterialOnSurfaceMediumBrush}" TextAlignment="End" TextWrapping="Wrap" x:Uid="Body_Body" Text="Relevance" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialBody2}" />
+					<utu:AutoLayout Spacing="16" Padding="0,8,8,8" Justify="SpaceBetween" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
+						<TextBlock Foreground="{StaticResource MaterialOnBackgroundBrush}" x:Uid="Body_Body" Text="Order" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialSubtitle2}" />
+						<TextBlock Foreground="{StaticResource MaterialOnSurfaceMediumBrush}" TextAlignment="End" x:Uid="Body_Body" Text="Relevance" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialBody2}" />
 					</utu:AutoLayout>
-					<utu:AutoLayout Spacing="16" Padding="0,8,8,8" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
-						<TextBlock Foreground="{StaticResource MaterialOnBackgroundBrush}" TextWrapping="Wrap" x:Uid="Body_Body" Text="Currency" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialSubtitle2}" />
-						<TextBlock Foreground="{StaticResource MaterialOnSurfaceMediumBrush}" TextAlignment="End" TextWrapping="Wrap" x:Uid="Body_Body" Text="CAD" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialBody2}" />
+					<utu:AutoLayout Spacing="16" Padding="0,8,8,8" Justify="SpaceBetween" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
+						<TextBlock Foreground="{StaticResource MaterialOnBackgroundBrush}" x:Uid="Body_Body" Text="Currency" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialSubtitle2}" />
+						<TextBlock Foreground="{StaticResource MaterialOnSurfaceMediumBrush}" TextAlignment="End" x:Uid="Body_Body" Text="CAD" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialBody2}" />
 					</utu:AutoLayout>
 				</utu:AutoLayout>
 			</utu:AutoLayout>

@@ -103,18 +103,18 @@
 												</utu:AutoLayout>
 											</utu:AutoLayout>
 											<utu:AutoLayout Padding="0,0,0,8" utu:AutoLayout.PrimaryAlignment="Stretch">
-												<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch">
-													<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryAlignment="Stretch">
-														<TextBlock Foreground="{StaticResource MaterialOnSurfaceLowBrush}" TextWrapping="Wrap" x:Uid="Page_Subtitle" Text="{Binding Brand}" Style="{StaticResource MaterialOverline}" />
-														<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" TextWrapping="Wrap" x:Uid="Page_Secondary text" Text="{Binding Name}" Style="{StaticResource MaterialSubtitle1}" />
+												<utu:AutoLayout PrimaryAxisAlignment="Center" utu:AutoLayout.CounterAlignment="Stretch">
+													<utu:AutoLayout PrimaryAxisAlignment="Center" utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryAlignment="Stretch">
+														<TextBlock Foreground="{StaticResource MaterialOnSurfaceLowBrush}" TextWrapping="Wrap" Text="{Binding Brand}" Style="{StaticResource MaterialOverline}" />
+														<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" TextWrapping="Wrap" Text="{Binding Name}" Style="{StaticResource MaterialSubtitle1}" />
 													</utu:AutoLayout>
 												</utu:AutoLayout>
 											</utu:AutoLayout>
 											<utu:AutoLayout Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
-												<utu:AutoLayout Padding="16,0,0,8" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
+												<utu:AutoLayout Padding="16,0,0,8" PrimaryAxisAlignment="End" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="Stretch">
 													<utu:AutoLayout utu:AutoLayout.CounterAlignment="Center">
 														<utu:AutoLayout Spacing="4" utu:AutoLayout.CounterAlignment="End">
-															<utu:AutoLayout Spacing="10" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="End">
+															<utu:AutoLayout Spacing="10" PrimaryAxisAlignment="End" Orientation="Horizontal" utu:AutoLayout.CounterAlignment="End">
 																<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}" TextAlignment="End" Text="{Binding Price}" Style="{StaticResource MaterialBody1}" />
 															</utu:AutoLayout>
 														</utu:AutoLayout>

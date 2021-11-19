@@ -21,7 +21,7 @@
 				<HyperlinkButton Content="Forgot password?" x:Uid="Body_HyperlinkButton" Style="{StaticResource MaterialHyperlinkButtonStyle}" />
 				<Button Content="Login" x:Uid="Body_Login" utu:AutoLayout.CounterAlignment="Stretch" Style="{StaticResource MaterialContainedButtonStyle}" Command="{Binding Login}"/>
 			</utu:AutoLayout>
-			<utu:AutoLayout Spacing="16" Padding="32,32,32,32" utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryAlignment="Stretch">
+			<utu:AutoLayout Spacing="16" Padding="32,32,32,32" PrimaryAxisAlignment="End" utu:AutoLayout.CounterAlignment="Stretch" utu:AutoLayout.PrimaryAlignment="Stretch">
 				<TextBlock Foreground="{StaticResource MaterialOnBackgroundBrush}" TextAlignment="Center" TextWrapping="Wrap" x:Uid="Body_Legal mentions" Text="Legal mentions" utu:AutoLayout.CounterAlignment="Center" Style="{StaticResource MaterialCaption}" />
 			</utu:AutoLayout>
 		</utu:AutoLayout>
