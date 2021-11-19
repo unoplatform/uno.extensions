@@ -13,7 +13,7 @@
 		<!--<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />-->
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
-		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.0.0-dev.5616"/>
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.0.0-dev.5642"/>
 	</ItemGroup>
 
 	<ItemGroup>
