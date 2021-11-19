@@ -122,7 +122,7 @@ namespace Commerce
 
 			// TODO: Work out how to reapply deeplink now that we're using a ShellView
 			//#if __WASM__
-			//			var href = WebAssemblyRuntime.InvokeJS("window.location.href");
+			var href = WebAssemblyRuntime.InvokeJS("window.location.href");
 			//			var url = new UriBuilder(href);
 			//			var query = url.Query;
 			//			var path = (url.Path + (!string.IsNullOrWhiteSpace(query) ? "?" : "") + query + "").TrimStart('/');

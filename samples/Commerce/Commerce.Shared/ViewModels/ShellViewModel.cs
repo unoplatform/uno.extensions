@@ -1,5 +1,8 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Uno.Extensions.Navigation;
+using Uno.Extensions.Hosting;
+using System;
 
 namespace Commerce.ViewModels
 {
@@ -7,9 +10,23 @@ namespace Commerce.ViewModels
 	{
 		private INavigator Navigator { get; }
 
-		public ShellViewModel(INavigator navigator)
+		public ShellViewModel(INavigator navigator, IConfiguration configuration)
 		{
 			Navigator = navigator;
+
+			var launchUrl = configuration.GetValue(HostingConstants.WasmLaunchUrlKey, defaultValue: string.Empty);
+
+			if (!string.IsNullOrWhiteSpace(launchUrl))
+			{
+				var url = new UriBuilder(launchUrl);
+				var query = url.Query;
+				var path = (url.Path + (!string.IsNullOrWhiteSpace(query) ? "?" : "") + query + "").TrimStart('/');
+				if (!string.IsNullOrWhiteSpace(path))
+				{
+					Navigator.NavigateRouteAsync(this, path);
+					return;
+				}
+			}
 
 			// Go to the login page on app startup
 			Login();
