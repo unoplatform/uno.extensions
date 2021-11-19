@@ -31,7 +31,7 @@ jobs:
       version: 6.0.100
 
   - script: |
-      dotnet build samples/Commerce/Commerce.Wasm/Commerce.Wasm.csproj /p:Configuration=Release "/p:InformationalVersion=%GITVERSION_InformationalVersion%" /p:GeneratePackageOnBuild=false /detailedsummary /bl:$(build.artifactstagingdirectory)/samples-wasm.binlog
+      dotnet build samples/Commerce/Commerce.Wasm/Commerce.Wasm.csproj /p:Configuration=Release "/p:InformationalVersion=%GITVERSION_InformationalVersion%" /p:UnoExtensionsDisableNet6=true /p:GeneratePackageOnBuild=false /detailedsummary /bl:$(build.artifactstagingdirectory)/samples-wasm.binlog
 
   - task: CopyFiles@2
     displayName: 'Publish Wasm Binaries'
