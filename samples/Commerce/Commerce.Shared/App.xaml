@@ -11,6 +11,7 @@
 			<ResourceDictionary.MergedDictionaries>
 				<!-- Load WinUI resources -->
 				<XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+
 				<!-- Load Material Color Palette -->
 				<MaterialColors xmlns="using:Uno.Material"
 								OverrideSource="ms-appx:///ColorPaletteOverride.xaml" />
@@ -26,10 +27,15 @@
 				<ResourceDictionary Source="ms-appx:///Styles/NavigationBar.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 			<x:Double x:Key="LandscapeMaxPageWidth">500</x:Double>
+
 			<!-- Workaround for https://github.com/unoplatform/uno/issues/5372 -->
 			<wasm:Style x:Key="MaterialToggleSwitchStyle"
 						TargetType="ToggleSwitch"
 						BasedOn="{StaticResource DefaultMaterialToggleSwitchStyle}" />
+
+			<!-- To override the default FlyoutLightDismissOverlayBackground resource -->
+			<SolidColorBrush x:Key="FlyoutLightDismissOverlayBackground"
+							 Color="{StaticResource MaterialOverlayColor}" />
 		</ResourceDictionary>
 	</Application.Resources>
 
