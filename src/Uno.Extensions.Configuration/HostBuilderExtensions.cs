@@ -26,7 +26,9 @@ namespace Uno.Extensions.Configuration
                         s.TryAddSingleton<IConfiguration>(a => ctx.Configuration);
                         s.TryAddSingleton<IConfigurationRoot>(a => (IConfigurationRoot)ctx.Configuration);
                         s.TryAddSingleton<Reloader>();
-                        _ = s.AddHostedService<ReloadService>();
+						s.TryAddSingleton<ReloadService>();
+                        _ = s.AddHostedService<ReloadService>(sp => sp.GetRequiredService<ReloadService>());
+						s.AddSingleton<IStartupService>(sp => sp.GetRequiredService<ReloadService>());
                     });
         }
 
@@ -71,7 +73,9 @@ namespace Uno.Extensions.Configuration
 
             static string FilePath(HostBuilderContext hctx)
             {
-                var file = $"{ConfigurationFolderName}/{AppSettings.AppSettingsFileName}.{typeof(TSettingsOptions).Name}.json";
+				var prefix = hctx.Configuration.GetValue(HostingConstants.AppSettingsPrefixKey, defaultValue: string.Empty);
+				prefix = !string.IsNullOrWhiteSpace(prefix) ? $"{prefix}/" : prefix;
+				var file = $"{prefix}{ConfigurationFolderName}/{AppSettings.AppSettingsFileName}.{typeof(TSettingsOptions).Name}.json";
                 var appData = (hctx.HostingEnvironment as IAppHostEnvironment)?.AppDataPath ?? string.Empty;
                 var path = Path.Combine(appData, file);
                 return path;

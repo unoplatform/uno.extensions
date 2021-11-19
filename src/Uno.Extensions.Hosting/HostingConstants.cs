@@ -2,7 +2,13 @@
 {
 	public class HostingConstants
 	{
-		public static string AppSettingsPrefixKey = "appsettings:prefix";
-		public static string WasmLaunchUrlKey = "wasm:launchurl";
+		public static string AppSettingsPrefixKey = "hostConfiguration:appSettingsPrefix";
+		public static string LaunchUrlKey = "hostConfiguration:launchUrl";
+	}
+
+	public class HostConfiguration
+	{
+		public string AppSettingsPrefix { get; set; }
+		public string LaunchUrl { get; set; }
 	}
 }

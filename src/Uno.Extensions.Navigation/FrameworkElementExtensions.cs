@@ -5,6 +5,7 @@ using Uno.Extensions.Navigation.Regions;
 #if !WINUI
 using Windows.Foundation;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 #else
 using Microsoft.UI.Xaml;
@@ -41,12 +42,23 @@ public static class FrameworkElementExtensions
 	{
 		await EnsureElementLoaded(element);
 
+		if(element is null)
+		{
+			return;
+		}
+
+#if !WINDOWS_UWP
 		var count = VisualTreeHelper.GetChildrenCount(element);
 		for (int i = 0; i < count; i++)
 		{
-			await EnsureLoaded(VisualTreeHelper.GetChild(element, i) as FrameworkElement);
+			var nextElement = VisualTreeHelper.GetChild(element, i) as FrameworkElement;
+			if(nextElement is ContentPresenter)
+			{
+				continue;
+			}
+			await EnsureLoaded(nextElement);
 		}
-
+#endif
 	}
 	private static async Task EnsureElementLoaded(this FrameworkElement? element)
 	{

@@ -34,8 +34,16 @@ namespace Uno.Extensions.Configuration
                     Logger.LogDebugMessage($@"Loading from file '{fcp.Source.Path}'");
                     var provider = fcp.Source.FileProvider;
                     var info = provider.GetFileInfo(fcp.Source.Path);
-                    Logger.LogDebugMessage($@"Loading from full path '{info.PhysicalPath}'");
-                    fp.Load();
+					if (!File.Exists(info.PhysicalPath))
+					{
+						Logger.LogDebugMessage($@"File doesn't exist '{info.PhysicalPath}'");
+					}
+					else { 
+						var contents = File.ReadAllText(info.PhysicalPath);
+						Logger.LogDebugMessage($@"Contents '{contents}'");
+						Logger.LogDebugMessage($@"Loading from full path '{info.PhysicalPath}'");
+						fp.Load();
+					}
                 }
             }
             Logger.LogDebugMessage($"Reloading configuration complete");

@@ -52,15 +52,16 @@ namespace Commerce
 			//.UseLogging()
 			//.ConfigureLogging(logBuilder =>
 			//{
-			//    logBuilder
-			//         .SetMinimumLevel(LogLevel.Trace)
-			//         .XamlLogLevel(LogLevel.Information)
-			//         .XamlLayoutLogLevel(LogLevel.Information);
+			//	logBuilder
+			//		 .SetMinimumLevel(LogLevel.Trace)
+			//		 .XamlLogLevel(LogLevel.Information)
+			//		 .XamlLayoutLogLevel(LogLevel.Information);
 			//})
 			//.UseSerilog(true, true)
 
 			.UseConfigurationSectionInApp<AppInfo>()
 			.UseSettings<CommerceSettings>()
+			.UseSettings<Credentials>()
 			.ConfigureServices(services =>
 			{
 				services
