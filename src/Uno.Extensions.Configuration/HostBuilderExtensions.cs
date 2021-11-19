@@ -71,7 +71,9 @@ namespace Uno.Extensions.Configuration
 
             static string FilePath(HostBuilderContext hctx)
             {
-                var file = $"{ConfigurationFolderName}/{AppSettings.AppSettingsFileName}.{typeof(TSettingsOptions).Name}.json";
+				var prefix = hctx.Configuration.GetValue(HostingConstants.AppSettingsPrefixKey, defaultValue: string.Empty);
+				prefix = !string.IsNullOrWhiteSpace(prefix) ? $"{prefix}/" : prefix;
+				var file = $"{prefix}{ConfigurationFolderName}/{AppSettings.AppSettingsFileName}.{typeof(TSettingsOptions).Name}.json";
                 var appData = (hctx.HostingEnvironment as IAppHostEnvironment)?.AppDataPath ?? string.Empty;
                 var path = Path.Combine(appData, file);
                 return path;
