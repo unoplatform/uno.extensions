@@ -31,6 +31,11 @@ jobs:
       version: 6.0.100
 
   - script: |
+      sudo apt-get update
+      sudo apt-get install -y ninja-build
+    displayName: Install Ninja build
+
+  - script: |
       dotnet build samples/Commerce/Commerce.Wasm/Commerce.Wasm.csproj /p:Configuration=Release "/p:InformationalVersion=%GITVERSION_InformationalVersion%" /p:UnoExtensionsDisableNet6=true /p:GeneratePackageOnBuild=false /detailedsummary /bl:$(build.artifactstagingdirectory)/samples-wasm.binlog
 
   - task: CopyFiles@2
