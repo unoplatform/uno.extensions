@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
@@ -33,7 +35,13 @@ public partial class LoginViewModel
 	public string Title { get;  }
 
 	private bool CanLogin(Credentials credentials)
-		=> credentials is { UserName.Length: > 0 } and { Password.Length: > 0 };
+		=> Test.CanLogin(credentials);
+
+	private class Test
+	{
+		public static bool CanLogin(Credentials credentials)
+			=> credentials is { UserName.Length: > 10 } and { Password.Length: > 0 };
+	}
 
 	private async ValueTask Login(Credentials credentials, CancellationToken ct)
 	{
