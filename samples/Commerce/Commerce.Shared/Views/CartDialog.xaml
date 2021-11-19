@@ -34,21 +34,13 @@
 									<PaneThemeTransition Edge="Bottom" />
 								</TransitionCollection>
 							</Border.Transitions>
-							<ScrollViewer x:Name="ScrollViewer"
-										  ZoomMode="{TemplateBinding ScrollViewer.ZoomMode}"
-										  HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
-										  HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
-										  VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
-										  VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
-										  AutomationProperties.AccessibilityView="Raw">
-								<ContentPresenter Content="{TemplateBinding Content}"
+							<ContentPresenter Content="{TemplateBinding Content}"
 												  HorizontalAlignment="Stretch"
 												  VerticalAlignment="Stretch"
 												  ContentTemplate="{TemplateBinding ContentTemplate}"
 												  ContentTransitions="{TemplateBinding ContentTransitions}"
 												  HorizontalContentAlignment="Stretch"
 												  VerticalContentAlignment="Stretch" />
-							</ScrollViewer>
 						</Border>
 
 					</ControlTemplate>
