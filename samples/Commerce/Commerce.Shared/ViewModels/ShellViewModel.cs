@@ -8,7 +8,7 @@ namespace Commerce.ViewModels
 	{
 		private INavigator Navigator { get; }
 
-		public ShellViewModel(INavigator navigator, IServiceProvider services)
+		public ShellViewModel(INavigator navigator)
 		{
 			Navigator = navigator;
 
