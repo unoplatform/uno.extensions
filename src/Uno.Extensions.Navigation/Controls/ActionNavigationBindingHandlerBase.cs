@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Uno.Extensions.Options;
 #if !WINUI
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
@@ -46,11 +47,11 @@ namespace Uno.Extensions.Navigation.Controls
 						var prop = dataObject.GetType().GetProperty(bindingPathSegments[i]);
 						if (i == bindingPathSegments.Length - 1)
 						{
-							resultType = prop.PropertyType;
+							resultType = prop?.PropertyType;
 						}
 						else
 						{
-							dataObject = prop.GetValue(dataObject);
+							dataObject = prop?.GetValue(dataObject);
 						}
 
 						if (dataObject is null)
