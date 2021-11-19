@@ -10,6 +10,19 @@ internal sealed class AsyncEnumerableFeed<T> : IFeed<T>
 {
 	private readonly Func<IAsyncEnumerable<Option<T>>> _factory;
 
+	public AsyncEnumerableFeed(Func<IAsyncEnumerable<T>> factoryWithoutOptions)
+	{
+		_factory = Factory;
+
+		async IAsyncEnumerable<Option<T>> Factory()
+		{
+			await foreach (var item in factoryWithoutOptions())
+			{
+				yield return Option.SomeOrNone(item);
+			}
+		}
+	}
+
 	public AsyncEnumerableFeed(Func<IAsyncEnumerable<Option<T>>> factory)
 	{
 		_factory = factory;

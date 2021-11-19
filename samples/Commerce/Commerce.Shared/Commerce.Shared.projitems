@@ -36,9 +36,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\Review.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Credentials.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\DealsViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Filter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\FilterViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\FilterViewModel.g.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Filters.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\FiltersViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\FiltersViewModel.g.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\LoginViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\LoginViewModel.g.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ProductDetailsViewModel.cs" />

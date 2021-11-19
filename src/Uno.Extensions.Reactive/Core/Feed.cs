@@ -15,10 +15,10 @@ public static partial class Feed
 	public static IFeed<T> Create<T>(Func<CancellationToken, IAsyncEnumerable<Message<T>>> sourceProvider)
 		=> Feed<T>.Create(sourceProvider);
 
-	public static IFeed<T> Async<T>(FuncAsync<Option<T>> valueProvider, Signal? refresh = null)
+	public static IFeed<T> Async<T>(FuncAsync<T> valueProvider, Signal? refresh = null)
 		=> Feed<T>.Async(valueProvider, refresh);
 
-	public static IFeed<T> AsyncEnumerable<T>(Func<IAsyncEnumerable<Option<T>>> enumerableProvider)
+	public static IFeed<T> AsyncEnumerable<T>(Func<IAsyncEnumerable<T>> enumerableProvider)
 		=> Feed<T>.AsyncEnumerable(enumerableProvider);
 	#endregion
 

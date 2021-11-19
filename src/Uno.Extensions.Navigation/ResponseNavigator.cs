@@ -46,6 +46,11 @@ namespace Uno.Extensions.Navigation
 				var result = responseData as Options.Option<TResult>;
 				if (result is null)
 				{
+					if(responseData is Options.Option<object> objectResponse)
+					{
+						responseData = objectResponse.GetValue();
+					}
+
 					if (responseData is TResult data)
 					{
 						result = Options.Option.Some(data);
@@ -67,7 +72,8 @@ namespace Uno.Extensions.Navigation
 				return typedResponse with { Result = ResultCompletion.Task };
 			}
 
-			return new NavigationResultResponse<TResult>(navResponse?.Route ?? Route.Empty, ResultCompletion.Task);
+			return navResponse;
+			//return new NavigationResultResponse<TResult>(navResponse?.Route ?? Route.Empty, ResultCompletion.Task);
 		}
 
 		private void ApplyResult(Options.Option<TResult> responseData)

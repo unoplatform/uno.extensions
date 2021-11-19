@@ -13,9 +13,15 @@ public record NavigationResultResponse(Route Route, Task<Options.Option> Untyped
 public record NavigationResultResponse<TResult>(Route Route, Task<Options.Option<TResult>> Result, bool Success = true)
 	: NavigationResultResponse(
 		Route,
-		Result.ContinueWith((Task<Options.Option<TResult>> untyped)=> (Options.Option)untyped.Result),
+		AsOption(Result),
 		Success)
 {
+
+	private static async Task<Options.Option> AsOption(Task<Options.Option<TResult>> result)
+	{
+		var resultData =  await result;
+		return (Options.Option)resultData;
+	}
 }
 
 public record NavigationResponse(Route? Route = null, bool Success = true)

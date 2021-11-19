@@ -14,6 +14,12 @@ internal class AsyncFeed<T> : IFeed<T>
 	private readonly ISignal? _refresh;
 	private readonly FuncAsync<Option<T>> _dataProvider;
 
+	public AsyncFeed(FuncAsync<T> dataProvider, ISignal? refresh = null)
+	{
+		_dataProvider = async ct => Option.SomeOrNone(await dataProvider(ct));
+		_refresh = refresh;
+	}
+
 	public AsyncFeed(FuncAsync<Option<T>> dataProvider, ISignal? refresh = null)
 	{
 		_dataProvider = dataProvider;
@@ -23,29 +29,6 @@ internal class AsyncFeed<T> : IFeed<T>
 	/// <inheritdoc />
 	public IAsyncEnumerable<Message<T>> GetSource(SourceContext context, CancellationToken ct = default)
 	{
-		//var current = Message<T>.Initial;
-
-		//// Initial loading of the value
-		//await foreach (var message in FeedHelper.InvokeAsync(current, _dataProvider, _dataComparer, context, ct).WithCancellation(ct).ConfigureAwait(false))
-		//{
-		//	yield return current = message;
-		//}
-
-		//// Then subscribe to refresh
-		//if (_refresh is not null)
-		//{
-		//	await foreach (var _ in _refresh.GetSource(context, ct).WithCancellation(ct).ConfigureAwait(false))
-		//	{
-		//		await foreach (var message in FeedHelper.InvokeAsync(current, _dataProvider, _dataComparer, context, ct).WithCancellation(ct).ConfigureAwait(false))
-		//		{
-		//			if (message.Changes != default)
-		//			{
-		//				yield return current = message;
-		//			}
-		//		}
-		//	}
-		//}
-
 		async IAsyncEnumerable<Unit> Triggers([EnumeratorCancellation] CancellationToken token = default)
 		{
 			// Initial loading of teh value

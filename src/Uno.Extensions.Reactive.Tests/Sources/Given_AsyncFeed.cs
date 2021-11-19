@@ -42,7 +42,7 @@ namespace Uno.Extensions.Reactive.Tests.Sources
 		[TestMethod]
 		public async Task When_ProviderReturnsDefaultSync_Then_GetNone()
 		{
-			var sut = new AsyncFeed<int>(async _ => default);
+			var sut = new AsyncFeed<int>(async _ => Option.None<int>());
 			using var result = await sut.Record();
 
 			result.Should().Be(r => r
@@ -56,7 +56,7 @@ namespace Uno.Extensions.Reactive.Tests.Sources
 			using var result = await F<int>.Record(r => new AsyncFeed<int>(async ct =>
 			{
 				await r.WaitForMessages(1, ct);
-				return default;
+				return Option.None<int>();
 			}));
 
 			result.Should().Be(r => r
@@ -147,7 +147,7 @@ namespace Uno.Extensions.Reactive.Tests.Sources
 		public async Task When_ProviderReturnsDefaultSyncAndRefresh_Then_GetNone()
 		{
 			var refresh = new Signal();
-			var sut = new AsyncFeed<int>(async _ => default);
+			var sut = new AsyncFeed<int>(async _ => Option.None<int>());
 			using var result = sut.Record();
 
 			refresh.Raise();
@@ -169,7 +169,7 @@ namespace Uno.Extensions.Reactive.Tests.Sources
 				async _ =>
 				{
 					await gate.Task;
-					return default;
+					return Option.None<int>();
 				},
 				refresh);
 			using var result = sut.Record();
@@ -295,7 +295,7 @@ namespace Uno.Extensions.Reactive.Tests.Sources
 			var sut = new AsyncFeed<int>(async _ =>
 			{
 				invokeCount++;
-				return default;
+				return Option.None<int>();
 			});
 
 			await sut;
@@ -312,7 +312,7 @@ namespace Uno.Extensions.Reactive.Tests.Sources
 			var sut = new AsyncFeed<int>(async _ =>
 			{
 				SourceContext.Current.Should().Be(Context.SourceContext);
-				return default;
+				return Option.None<int>();
 			});
 			using var result = await sut.Record(Context.SourceContext);
 

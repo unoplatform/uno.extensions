@@ -5,5 +5,4 @@ namespace Uno.Extensions.Reactive;
 
 internal interface IBindable
 {
-	void OnPropertyChanged(string propertyName);
 }

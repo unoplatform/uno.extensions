@@ -21,17 +21,6 @@ public partial class ProductDetailsViewModel
 
 	public IFeed<Product> Product => Feed.Async(Load);
 
-	private async ValueTask<Option<Product>> Load(CancellationToken ct)
-	{
-		await Task.Delay(1);
-
-		if (_product is not null)
-		{
-			return _product;
-		}
-		else
-		{
-			return default;
-		}
-	}
+	private async ValueTask<Product> Load(CancellationToken ct)
+		=> _product;
 }

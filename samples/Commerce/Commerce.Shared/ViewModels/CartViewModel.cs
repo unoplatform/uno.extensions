@@ -14,6 +14,6 @@ namespace Commerce.ViewModels
 			_cartService = cartService;
 		}
 
-		public IFeed<Cart> Cart => Feed.Async<Cart>(async ct => await _cartService.Get(ct));
+		public IFeed<Cart> Cart => Feed.Async(_cartService.Get);
 	}
 }
