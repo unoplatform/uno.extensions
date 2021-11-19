@@ -28,10 +28,10 @@
 			<utu:AutoLayout Spacing="16"
 							Padding="32,8,32,32"
 							utu:AutoLayout.CounterAlignment="Stretch">
-				<TextBox Text="{Binding Credentials.UserName, Mode=TwoWay}"
+				<TextBox Text="{Binding Credentials.UserName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 						 utu:AutoLayout.CounterAlignment="Stretch"
 						 Style="{StaticResource MaterialFilledTextBoxStyle}" />
-				<PasswordBox Password="{Binding Credentials.Password, Mode=TwoWay}"
+				<PasswordBox Password="{Binding Credentials.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 							 utu:AutoLayout.CounterAlignment="Stretch"
 							 Style="{StaticResource MaterialFilledPasswordBoxStyle}" />
 				<HyperlinkButton Content="Forgot password?"
