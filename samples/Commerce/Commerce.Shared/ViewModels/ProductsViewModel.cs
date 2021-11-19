@@ -27,7 +27,8 @@ public partial class ProductsViewModel
 
 	public IFeed<Product[]> Items => Feed
 		.Combine(_term.SelectAsync(Load), _filter)
-		.Select(FilterProducts);
+		.Select(FilterProducts)
+		.Where(products => products.Any());
 
 	private async ValueTask<Product[]> Load(string searchTerm, CancellationToken ct)
 	{
