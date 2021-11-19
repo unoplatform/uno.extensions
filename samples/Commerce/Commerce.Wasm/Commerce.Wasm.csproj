@@ -33,7 +33,7 @@
 				<WasmShellMonoRuntimeExecutionMode>InterpreterAndAOT</WasmShellMonoRuntimeExecutionMode>
 				<WasmShellEmccLinkOptimization>true</WasmShellEmccLinkOptimization>
 				<WasmShellEnableEmccProfiling>true</WasmShellEnableEmccProfiling>
-				<WasmShellGenerateAOTProfile>true</WasmShellGenerateAOTProfile>
+				<!--<WasmShellGenerateAOTProfile>true</WasmShellGenerateAOTProfile>-->
 			</PropertyGroup>
 
 			<ItemGroup>
