@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Uno.Extensions.Navigation;
 
 namespace Commerce.ViewModels
@@ -19,7 +18,7 @@ namespace Commerce.ViewModels
 		public async Task Login()
 		{
 			// Navigate to Login page, requesting Credentials
-			var response = await Navigator.NavigateViewModelForResultAsync<LoginViewModel.BindableLoginViewModel, Credentials>(this,"-/");
+			var response = await Navigator.NavigateViewModelForResultAsync<LoginViewModel.BindableLoginViewModel, Credentials>(this, Schemes.ClearBackStack);
 			
 
 			var loginResult = await response.Result;
@@ -27,7 +26,7 @@ namespace Commerce.ViewModels
 			{
 				// Login successful, so navigate to Home
 				// Wait for a credentials object to be returned 
-				var homeResponse = await Navigator.NavigateRouteForResultAsync<Credentials>(this, "-/Home");
+				var homeResponse = await Navigator.NavigateViewModelForResultAsync<HomeViewModel, Credentials>(this, Schemes.ClearBackStack);
 				_= await homeResponse.Result;
 			}
 
