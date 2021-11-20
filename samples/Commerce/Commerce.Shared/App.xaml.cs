@@ -224,7 +224,6 @@ namespace Commerce
 													nav with { Route = nav.Route.Append(Route.NestedRoute("Products")) } :
 													nav))
 					.Register(new RouteMap("Products", typeof(FrameView),
-						ViewModel: typeof(ProductsViewModel.BindableProductsViewModel),
 						RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
 												nav with { Route = nav.Route.AppendPage<ProductsPage>() } : nav with
 												{
@@ -232,6 +231,8 @@ namespace Commerce
 																	nav.Route :
 																	nav.Route.InsertPage<ProductsPage>()
 												}))
+					.Register(new RouteMap(nameof(ProductsPage), typeof(ProductsPage),
+						ViewModel: typeof(ProductsViewModel.BindableProductsViewModel)))
 					.Register(new RouteMap("Deals", typeof(FrameView),
 						RegionInitialization: (region, nav) => nav.Route.IsEmpty() ?
 												nav with { Route = nav.Route with { Base = "+DealsPage/HotDeals" } } :
