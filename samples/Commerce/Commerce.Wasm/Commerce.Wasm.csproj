@@ -42,12 +42,12 @@
 	</Choose>
 
 	<PropertyGroup>
-		<UnoExtensionsNuGetVersion>0.1.0-dev.586</UnoExtensionsNuGetVersion>
+		<UnoExtensionsNuGetVersion>0.1.0-dev.625</UnoExtensionsNuGetVersion>
 
 		<!-- Disable for Hot Reload -->
 		<WasmShellILLinkerEnabled>false</WasmShellILLinkerEnabled>
 
-		<MonoRuntimeDebuggerEnabled>false</MonoRuntimeDebuggerEnabled>
+		<!-- <MonoRuntimeDebuggerEnabled>false</MonoRuntimeDebuggerEnabled> -->
 	</PropertyGroup>
 
 	<ItemGroup>

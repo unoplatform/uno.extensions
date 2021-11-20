@@ -74,6 +74,8 @@ namespace Commerce
 			.Build()
 			.EnableUnoLogging();
 
+			InitializeLogging();
+
 			this.InitializeComponent();
 
 #if HAS_UNO || NETFX_CORE
@@ -176,7 +178,7 @@ namespace Commerce
 #endif
 
 				// Exclude logs below this level
-				builder.SetMinimumLevel(LogLevel.Information);
+				builder.SetMinimumLevel(LogLevel.Trace);
 
 				// Default filters for Uno Platform namespaces
 				builder.AddFilter("Uno", LogLevel.Warning);
@@ -205,13 +207,15 @@ namespace Commerce
 				// builder.AddFilter("Uno.UI.DataBinding.BinderReferenceHolder", LogLevel.Debug );
 
 				// RemoteControl and HotReload related
-				// builder.AddFilter("Uno.UI.RemoteControl", LogLevel.Information);
+				builder.AddFilter("Uno.UI.RemoteControl", LogLevel.Trace);
 
 				// Debug JS interop
 				// builder.AddFilter("Uno.Foundation.WebAssemblyRuntime", LogLevel.Debug );
 			});
 
 			global::Uno.Extensions.LogExtensionPoint.AmbientLoggerFactory = factory;
+
+			Uno.UI.Adapter.Microsoft.Extensions.Logging.LoggingAdapter.Initialize();
 		}
 
 		private static void RegisterRoutes(IRouteBuilder builder)
