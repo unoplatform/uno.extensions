@@ -42,7 +42,7 @@
 	</Choose>
 
 	<PropertyGroup>
-		<UnoExtensionsNuGetVersion>0.1.0-dev.625</UnoExtensionsNuGetVersion>
+		<UnoExtensionsNuGetVersion>0.1.0-dev.636</UnoExtensionsNuGetVersion>
 
 		<!-- Disable for Hot Reload -->
 		<WasmShellILLinkerEnabled>false</WasmShellILLinkerEnabled>
