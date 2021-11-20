@@ -26,6 +26,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Windows.ApplicationModel.Core;
 using Commerce.Views;
+using Uno.Extensions.Logging.Serilog;
 
 namespace Commerce
 {
@@ -49,15 +50,15 @@ namespace Commerce
 			// UseEmbeddedAppSettings<App>() if you want to include appsettings files as Embedded Resources instead of Content
 			.UseAppSettings(includeEnvironmentSettings: true)
 
-			//.UseLogging()
-			//.ConfigureLogging(logBuilder =>
-			//{
-			//	logBuilder
-			//		 .SetMinimumLevel(LogLevel.Trace)
-			//		 .XamlLogLevel(LogLevel.Information)
-			//		 .XamlLayoutLogLevel(LogLevel.Information);
-			//})
-			//.UseSerilog(true, true)
+			.UseLogging()
+			.ConfigureLogging(logBuilder =>
+			{
+				logBuilder
+					 .SetMinimumLevel(LogLevel.Trace)
+					 .XamlLogLevel(LogLevel.Information)
+					 .XamlLayoutLogLevel(LogLevel.Information);
+			})
+			.UseSerilog(true, true)
 
 			.UseConfigurationSectionInApp<AppInfo>()
 			.UseSettings<CommerceSettings>()
