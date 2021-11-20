@@ -31,7 +31,7 @@
 
 				<VisualState x:Name="Wide">
 					<VisualState.StateTriggers>
-						<AdaptiveTrigger MinWindowWidth="800" />
+						<AdaptiveTrigger MinWindowWidth="{StaticResource WideMinWindowWidthh}" />
 					</VisualState.StateTriggers>
 					<VisualState.Setters>
 						<Setter Target="ProductsColumn.Width"
@@ -114,23 +114,38 @@
 								<Grid>
 									<VisualStateManager.VisualStateGroups>
 										<VisualStateGroup>
-											<VisualState x:Name="Narrow" />
-											<VisualState x:Name="Wide">
+										<VisualState x:Name="Narrow">
+											<VisualState.StateTriggers>
+												<AdaptiveTrigger MinWindowWidth="0"
+																 MinWindowHeight="0" />
+											</VisualState.StateTriggers>
+											<VisualState.Setters>
+												<Setter Target="ProductsListView.SelectionMode"
+															Value="None" />
+												<Setter Target="ProductsListView.IsItemClickEnabled"
+															Value="True" />
+											</VisualState.Setters>
+										</VisualState>
+										<VisualState x:Name="Wide">
 												<VisualState.StateTriggers>
-													<AdaptiveTrigger MinWindowWidth="800" />
+												<AdaptiveTrigger MinWindowWidth="{StaticResource WideMinWindowWidthh}" />
 												</VisualState.StateTriggers>
 												<VisualState.Setters>
 													<Setter Target="ProductsListView.SelectionMode"
 															Value="Single" />
+													<Setter Target="ProductsListView.IsItemClickEnabled"
+															Value="False" />
 												</VisualState.Setters>
 											</VisualState>
 										</VisualStateGroup>
 									</VisualStateManager.VisualStateGroups>
 
 								<ListView Background="{StaticResource MaterialSurfaceBrush}"
-									  x:Name="ProductsListView"
-									  ItemsSource="{Binding Data}"
-									  uen:Navigation.Request="ProductDetails">
+										x:Name="ProductsListView"
+										ItemsSource="{Binding Data}"
+										 SelectionMode="None"
+										 IsItemClickEnabled="True"
+										uen:Navigation.Request="ProductDetails">
 									<ListView.ItemsPanel>
 										<ItemsPanelTemplate>
 											<ItemsStackPanel Orientation="Vertical" />
