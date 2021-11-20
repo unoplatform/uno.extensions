@@ -35,12 +35,12 @@
 								</TransitionCollection>
 							</Border.Transitions>
 							<ContentPresenter Content="{TemplateBinding Content}"
-												  HorizontalAlignment="Stretch"
-												  VerticalAlignment="Stretch"
-												  ContentTemplate="{TemplateBinding ContentTemplate}"
-												  ContentTransitions="{TemplateBinding ContentTransitions}"
-												  HorizontalContentAlignment="Stretch"
-												  VerticalContentAlignment="Stretch" />
+											  HorizontalAlignment="Stretch"
+											  VerticalAlignment="Stretch"
+											  ContentTemplate="{TemplateBinding ContentTemplate}"
+											  ContentTransitions="{TemplateBinding ContentTransitions}"
+											  HorizontalContentAlignment="Stretch"
+											  VerticalContentAlignment="Stretch" />
 						</Border>
 
 					</ControlTemplate>
@@ -49,7 +49,7 @@
 		</Style>
 	</Flyout.FlyoutPresenterStyle>
 
-	<Grid >
+	<Grid>
 		<ContentControl nav:Region.Attached="True"
 						HorizontalAlignment="Stretch"
 						VerticalAlignment="Stretch"
