@@ -5,7 +5,7 @@
 		<!-- Light Theme -->
 		<ResourceDictionary x:Key="Light">
 			<!-- Primary -->
-			<Color x:Key="MaterialPrimaryColor">#086AD1</Color>
+			<Color x:Key="MaterialPrimaryColor">#FF0000</Color>
 			<Color x:Key="MaterialPrimaryVariantDarkColor">#04488C</Color>
 			<Color x:Key="MaterialPrimaryVariantLightColor">#E3EFFB</Color>
 
