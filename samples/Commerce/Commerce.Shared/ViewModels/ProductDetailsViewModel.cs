@@ -21,6 +21,8 @@ public partial class ProductDetailsViewModel
 
 	public IFeed<Product> Product => Feed.Async(Load);
 
+	public IFeed<Review[]> Reviews => Product.SelectAsync(async (p, ct) => await _productService.GetReviews(p.ProductId, ct));
+
 	private async ValueTask<Product> Load(CancellationToken ct)
 		=> _product;
 }

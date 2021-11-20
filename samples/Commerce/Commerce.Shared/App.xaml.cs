@@ -65,7 +65,7 @@ namespace Commerce
 			.ConfigureServices(services =>
 			{
 				services
-				.AddSingleton<IProductService>(sp => new ProductService("products.json"))
+				.AddSingleton<IProductService>(sp => new ProductService("products.json", "reviews.json"))
 				.AddSingleton<ICartService>(sp => new CartService("products.json"))
 				.AddSingleton<IProfileService>(sp => new ProfileService());
 			})

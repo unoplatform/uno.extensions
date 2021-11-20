@@ -167,6 +167,7 @@
     <Content Include="$(MSBuildThisFileDirectory)Assets\Products\isochill-armourvent-hat.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Products\profile-michael-scott.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Products\the-absolute-freedom.png" />
+    <Content Include="$(MSBuildThisFileDirectory)reviews.json" />
     <None Include="$(MSBuildThisFileDirectory)Assets\SharedAssets.md" />
   </ItemGroup>
   <ItemGroup>
