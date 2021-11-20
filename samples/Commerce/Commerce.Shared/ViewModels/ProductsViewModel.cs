@@ -32,8 +32,8 @@ public partial class ProductsViewModel
 
 	private async ValueTask<Product[]> Load(string searchTerm, CancellationToken ct)
 	{
-		var products = await _products.GetProducts(searchTerm, ct);
-
+		var products = await _products.GetProducts(searchTerm+"", ct);
+		
 		return products.ToArray();
 	}
 

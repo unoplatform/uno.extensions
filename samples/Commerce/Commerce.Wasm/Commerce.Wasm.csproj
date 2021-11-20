@@ -4,7 +4,7 @@
 		<TargetFramework>net5.0</TargetFramework>
 		<NoWarn>NU1701</NoWarn>
 		<LangVersion>10.0</LangVersion>
-    <WasmShellWebAppBasePath>/</WasmShellWebAppBasePath>
+ 	   	<WasmShellWebAppBasePath>/</WasmShellWebAppBasePath>
 	</PropertyGroup>
 	
 	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -41,6 +41,15 @@
 		</When>
 	</Choose>
 
+	<PropertyGroup>
+		<UnoExtensionsNuGetVersion>0.1.0-dev.586</UnoExtensionsNuGetVersion>
+
+		<!-- Disable for Hot Reload -->
+		<WasmShellILLinkerEnabled>false</WasmShellILLinkerEnabled>
+
+		<MonoRuntimeDebuggerEnabled>false</MonoRuntimeDebuggerEnabled>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<Content Include="Assets\SplashScreen.scale-200.png" />
 	</ItemGroup>
@@ -74,8 +83,8 @@
 		<PackageReference Include="Microsoft.Extensions.Localization" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="6.0.0" />
 		<PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.3.0-dev.1" />
-		<PackageReference Include="Uno.UI.WebAssembly" Version="4.0.0-dev.5616" />
-		<PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5616" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.UI.WebAssembly" Version="4.0.0-PullRequest-53-37042-0053" />
+		<PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-PullRequest-53-37042-0053" Condition="'$(Configuration)'=='Debug'" />
 		<PackageReference Include="Uno.Wasm.Bootstrap" Version="3.1.0-dev.28" />
 		<PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="3.1.0-dev.28" />
 		<PackageReference Include="System.Linq.Async" Version="4.0.0" />
@@ -85,7 +94,7 @@
 		<PackageReference Include="Uno.Core" Version="4.0.0-dev.7" />
 		<PackageReference Include="Uno.Material" Version="1.1.0-dev.31" />
 	</ItemGroup>
-	<ItemGroup>
+	<ItemGroup Condition="'$(UnoExtensionsNuGetVersion)'==''">
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting.Wasm\Uno.Extensions.Hosting.Wasm.csproj" />
@@ -105,6 +114,21 @@
 			<Project>{7516C1F2-6CCB-4B59-91B7-E6D4B4EA5835}</Project>
 			<Name>Uno.Extensions.Reactive.View</Name>
 		</ProjectReference>
+	</ItemGroup>
+	<ItemGroup Condition="'$(UnoExtensionsNuGetVersion)'!=''">
+		<PackageReference Include="Uno.Extensions.Configuration" Version="$(UnoExtensionsNuGetVersion)" />
+		<PackageReference Include="Uno.Extensions.Core" Version="$(UnoExtensionsNuGetVersion)" />
+		<PackageReference Include="Uno.Extensions.Hosting.Wasm" Version="$(UnoExtensionsNuGetVersion)" />
+		<PackageReference Include="Uno.Extensions.Http" Version="$(UnoExtensionsNuGetVersion)" />
+		<PackageReference Include="Uno.Extensions.Localization" Version="$(UnoExtensionsNuGetVersion)" />
+		<PackageReference Include="Uno.Extensions.Logging.Serilog" Version="$(UnoExtensionsNuGetVersion)" />
+		<PackageReference Include="Uno.Extensions.Logging.Wasm" Version="$(UnoExtensionsNuGetVersion)" />
+		<PackageReference Include="Uno.Extensions.Navigation.UI" Version="$(UnoExtensionsNuGetVersion)" />
+		<PackageReference Include="Uno.Extensions.Navigation" Version="$(UnoExtensionsNuGetVersion)" />
+		<PackageReference Include="Uno.Extensions.Navigation.Toolkit" Version="$(UnoExtensionsNuGetVersion)" />
+		<PackageReference Include="Uno.Extensions.Serialization" Version="$(UnoExtensionsNuGetVersion)" />
+		<PackageReference Include="Uno.Extensions.Reactive" Version="$(UnoExtensionsNuGetVersion)" />
+		<PackageReference Include="Uno.Extensions.Reactive.View" Version="$(UnoExtensionsNuGetVersion)" />
 	</ItemGroup>
 	<Import Project="..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" Condition="Exists('..\Commerce.Shared\Commerce.Shared.projitems')" />
 </Project>
