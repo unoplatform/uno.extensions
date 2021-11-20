@@ -40,7 +40,7 @@ namespace Commerce
 		{
 			Host = UnoHost
 			.CreateDefaultBuilder(true)
-#if DEBUG
+#if false //DEBUG
 			.UseEnvironment(Environments.Development)
 #endif
 
@@ -77,6 +77,8 @@ namespace Commerce
 			InitializeLogging();
 
 			this.InitializeComponent();
+			
+			InitializeLogging();
 
 #if HAS_UNO || NETFX_CORE
 			this.Suspending += OnSuspending;

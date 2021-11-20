@@ -152,8 +152,8 @@
 									AutomationProperties.Name="Cart"
 									utu:AutoLayout.PrimaryAlignment="Stretch"
 									utu:AutoLayout.CounterLength="56"
-									Style="{StaticResource MaterialBottomTabBarItemFabStyle}"
 									nav:Navigation.Request="!CartDialog">
+									<!-- Style="{StaticResource MaterialBottomTabBarItemFabStyle}" -->
 						<utu:TabBarItem.Icon>
 							<PathIcon Data="{StaticResource Icon_shopping_cart}" />
 						</utu:TabBarItem.Icon>

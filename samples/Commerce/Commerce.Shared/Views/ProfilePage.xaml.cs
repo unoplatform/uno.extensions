@@ -40,7 +40,7 @@ namespace Commerce
 		{
 			if (darkModeToggle.IsEnabled)
 			{
-				SystemThemeHelper.SetApplicationTheme(darkModeToggle.IsOn);
+				// SystemThemeHelper.SetApplicationTheme(darkModeToggle.IsOn);
 			}
 		}
 	}

@@ -209,11 +209,12 @@
 											utu:AutoLayout.CounterLength="24" />
 						</utu:AutoLayout>
 					</utu:AutoLayout>
-					<ToggleSwitch x:Name="darkModeToggle"
-								  Toggled="{x:Bind ToggleDarkMode}"
+					<!-- <ToggleSwitch x:Name="darkModeToggle"
 								  HorizontalAlignment="Right"
 								  VerticalAlignment="Center"
-								  Style="{StaticResource MaterialToggleSwitchStyle}" />
+								  Style="{StaticResource MaterialToggleSwitchStyle}" /> -->
+								  
+								  <!-- Toggled="{x:Bind ToggleDarkMode}" -->
 				</Grid>
 			</utu:AutoLayout>
 		</utu:AutoLayout>
