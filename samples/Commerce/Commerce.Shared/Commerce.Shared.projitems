@@ -155,6 +155,7 @@
     <Content Include="$(MSBuildThisFileDirectory)appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\back.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\help_outline.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\close.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\notifications.png" />
