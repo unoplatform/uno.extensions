@@ -19,7 +19,7 @@
 	<Grid d:DataContext="{d:DesignInstance fake:FakeProducts, IsDesignTimeCreatable=True}">
 		<VisualStateManager.VisualStateGroups>
 			<VisualStateGroup>
-				<VisualState x:Name="Narrow" />
+				<VisualState x:Name="Narrow" /> 
 				<!--<VisualState.StateTriggers>
 					<AdaptiveTrigger MinWindowWidth="0"
 									 MinWindowHeight="0" />
@@ -31,7 +31,7 @@
 
 				<VisualState x:Name="Wide">
 					<VisualState.StateTriggers>
-						<AdaptiveTrigger MinWindowWidth="800" />
+						<AdaptiveTrigger MinWindowWidth="{StaticResource WideMinWindowWidthh}" />
 					</VisualState.StateTriggers>
 					<VisualState.Setters>
 						<Setter Target="ProductsColumn.Width"
@@ -110,74 +110,109 @@
 							  utu:AutoLayout.CounterAlignment="Stretch"
 							  utu:AutoLayout.PrimaryAlignment="Stretch">
 					<DataTemplate>
-						<ListView Background="{StaticResource MaterialSurfaceBrush}"
-								  ItemsSource="{Binding Data}"
-								  uen:Navigation.Request="ProductDetails">
-							<ListView.ItemsPanel>
-								<ItemsPanelTemplate>
-									<ItemsStackPanel Orientation="Vertical" />
-								</ItemsPanelTemplate>
-							</ListView.ItemsPanel>
-							<ListView.ItemTemplate>
-								<DataTemplate>
-									<utu:AutoLayout>
-										<utu:AutoLayout Padding="16,8,16,0"
-														Orientation="Horizontal"
-														utu:AutoLayout.CounterAlignment="Stretch">
+						<UserControl>
+								<Grid>
+									<VisualStateManager.VisualStateGroups>
+										<VisualStateGroup>
+										<VisualState x:Name="Narrow">
+											<VisualState.StateTriggers>
+												<AdaptiveTrigger MinWindowWidth="0"
+																 MinWindowHeight="0" />
+											</VisualState.StateTriggers>
+											<VisualState.Setters>
+												<Setter Target="ProductsListView.SelectionMode"
+															Value="None" />
+												<Setter Target="ProductsListView.IsItemClickEnabled"
+															Value="True" />
+											</VisualState.Setters>
+										</VisualState>
+										<VisualState x:Name="Wide">
+												<VisualState.StateTriggers>
+												<AdaptiveTrigger MinWindowWidth="{StaticResource WideMinWindowWidthh}" />
+												</VisualState.StateTriggers>
+												<VisualState.Setters>
+													<Setter Target="ProductsListView.SelectionMode"
+															Value="Single" />
+													<Setter Target="ProductsListView.IsItemClickEnabled"
+															Value="False" />
+												</VisualState.Setters>
+											</VisualState>
+										</VisualStateGroup>
+									</VisualStateManager.VisualStateGroups>
+
+								<ListView Background="{StaticResource MaterialSurfaceBrush}"
+										x:Name="ProductsListView"
+										ItemsSource="{Binding Data}"
+										 SelectionMode="None"
+										 IsItemClickEnabled="True"
+										uen:Navigation.Request="ProductDetails">
+									<ListView.ItemsPanel>
+										<ItemsPanelTemplate>
+											<ItemsStackPanel Orientation="Vertical" />
+										</ItemsPanelTemplate>
+									</ListView.ItemsPanel>
+									<ListView.ItemTemplate>
+										<DataTemplate>
 											<utu:AutoLayout>
-												<utu:AutoLayout Spacing="10"
-																Padding="0,0,16,8">
-													<Image Source="{Binding Photo}"
-														   Stretch="UniformToFill"
-														   utu:AutoLayout.PrimaryLength="56"
-														   utu:AutoLayout.CounterLength="56" />
-												</utu:AutoLayout>
-											</utu:AutoLayout>
-											<utu:AutoLayout Padding="0,0,0,8"
-															utu:AutoLayout.PrimaryAlignment="Stretch">
-												<utu:AutoLayout PrimaryAxisAlignment="Center"
-																utu:AutoLayout.CounterAlignment="Stretch">
-													<utu:AutoLayout PrimaryAxisAlignment="Center"
-																	utu:AutoLayout.CounterAlignment="Stretch"
-																	utu:AutoLayout.PrimaryAlignment="Stretch">
-														<TextBlock Foreground="{StaticResource MaterialOnSurfaceLowBrush}"
-																   TextWrapping="Wrap"
-																   Text="{Binding Brand}"
-																   Style="{StaticResource MaterialOverline}" />
-														<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}"
-																   TextWrapping="Wrap"
-																   Text="{Binding Name}"
-																   Style="{StaticResource MaterialSubtitle1}" />
-													</utu:AutoLayout>
-												</utu:AutoLayout>
-											</utu:AutoLayout>
-											<utu:AutoLayout Orientation="Horizontal"
+												<utu:AutoLayout Padding="16,8,16,0"
+															Orientation="Horizontal"
 															utu:AutoLayout.CounterAlignment="Stretch">
-												<utu:AutoLayout Padding="16,0,0,8"
-																PrimaryAxisAlignment="End"
-																Orientation="Horizontal"
-																utu:AutoLayout.CounterAlignment="Stretch">
-													<utu:AutoLayout utu:AutoLayout.CounterAlignment="Center">
-														<utu:AutoLayout Spacing="4"
-																		utu:AutoLayout.CounterAlignment="End">
-															<utu:AutoLayout Spacing="10"
-																			PrimaryAxisAlignment="End"
-																			Orientation="Horizontal"
-																			utu:AutoLayout.CounterAlignment="End">
+													<utu:AutoLayout>
+														<utu:AutoLayout Spacing="10"
+																	Padding="0,0,16,8">
+															<Image Source="{Binding Photo}"
+															   Stretch="UniformToFill"
+															   utu:AutoLayout.PrimaryLength="56"
+															   utu:AutoLayout.CounterLength="56" />
+														</utu:AutoLayout>
+													</utu:AutoLayout>
+													<utu:AutoLayout Padding="0,0,0,8"
+																utu:AutoLayout.PrimaryAlignment="Stretch">
+														<utu:AutoLayout PrimaryAxisAlignment="Center"
+																	utu:AutoLayout.CounterAlignment="Stretch">
+															<utu:AutoLayout PrimaryAxisAlignment="Center"
+																		utu:AutoLayout.CounterAlignment="Stretch"
+																		utu:AutoLayout.PrimaryAlignment="Stretch">
+																<TextBlock Foreground="{StaticResource MaterialOnSurfaceLowBrush}"
+																	   TextWrapping="Wrap"
+																	   Text="{Binding Brand}"
+																	   Style="{StaticResource MaterialOverline}" />
 																<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}"
-																		   TextAlignment="End"
-																		   Text="{Binding Price}"
-																		   Style="{StaticResource MaterialBody1}" />
+																	   TextWrapping="Wrap"
+																	   Text="{Binding Name}"
+																	   Style="{StaticResource MaterialSubtitle1}" />
+															</utu:AutoLayout>
+														</utu:AutoLayout>
+													</utu:AutoLayout>
+													<utu:AutoLayout Orientation="Horizontal"
+																utu:AutoLayout.CounterAlignment="Stretch">
+														<utu:AutoLayout Padding="16,0,0,8"
+																	PrimaryAxisAlignment="End"
+																	Orientation="Horizontal"
+																	utu:AutoLayout.CounterAlignment="Stretch">
+															<utu:AutoLayout utu:AutoLayout.CounterAlignment="Center">
+																<utu:AutoLayout Spacing="4"
+																			utu:AutoLayout.CounterAlignment="End">
+																	<utu:AutoLayout Spacing="10"
+																				PrimaryAxisAlignment="End"
+																				Orientation="Horizontal"
+																				utu:AutoLayout.CounterAlignment="End">
+																		<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}"
+																			   TextAlignment="End"
+																			   Text="{Binding Price}"
+																			   Style="{StaticResource MaterialBody1}" />
+																	</utu:AutoLayout>
+																</utu:AutoLayout>
 															</utu:AutoLayout>
 														</utu:AutoLayout>
 													</utu:AutoLayout>
 												</utu:AutoLayout>
 											</utu:AutoLayout>
-										</utu:AutoLayout>
-									</utu:AutoLayout>
-								</DataTemplate>
-							</ListView.ItemTemplate>
-						</ListView>
+										</DataTemplate>
+									</ListView.ItemTemplate>
+								</ListView>
+							</Grid>
+						</UserControl>
 					</DataTemplate>
 				</uer:FeedView>
 			</utu:AutoLayout>
