@@ -118,7 +118,7 @@
 										   x:Uid="_Reviews"
 										   Text="Reviews"
 										   Style="{StaticResource MaterialHeadline6}" />
-								<RatingControl MaxRating="5"
+								<controls:RatingControl MaxRating="5"
 											   Value="{Binding Rating, Mode=TwoWay}" />
 							</utu:AutoLayout>
 						</utu:AutoLayout>

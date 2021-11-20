@@ -12,6 +12,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Uno.UI.WebAssembly" Version="4.0.0-dev.5616" />
+		<PackageReference Include="Uno.UI.WebAssembly" Version="4.0.0-dev.5645" />
 	</ItemGroup>
 </Project>
