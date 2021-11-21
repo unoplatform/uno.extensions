@@ -46,16 +46,19 @@ public static class UnoHost
 #if __WASM__
 			.ConfigureHostConfiguration(config =>
 			{
-				// Note that this environment variable is being set so that in .net6 we can leverage polling file watcher
-				Environment.SetEnvironmentVariable("DOTNET_USE_POLLING_FILE_WATCHER", "true");
+				if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("UNO_BOOTSTRAP_MONO_RUNTIME_MODE")))
+				{
+					// Note that this environment variable is being set so that in .net6 we can leverage polling file watcher
+					Environment.SetEnvironmentVariable("DOTNET_USE_POLLING_FILE_WATCHER", "true");
 
-				var href = WebAssemblyRuntime.InvokeJS("window.location.href");
-				var appsettingsPrefix = new Dictionary<string, string>
+					var href = WebAssemblyRuntime.InvokeJS("window.location.href");
+					var appsettingsPrefix = new Dictionary<string, string>
 						{
 							{ HostingConstants.AppSettingsPrefixKey, "local" },
 							{ HostingConstants.LaunchUrlKey, href }
 						};
-				config.AddInMemoryCollection(appsettingsPrefix);
+					config.AddInMemoryCollection(appsettingsPrefix);
+				}
 			})
 #endif
 		.ConfigureServices((ctx, services) => services.Configure<HostConfiguration>(ctx.Configuration.GetSection(nameof(HostConfiguration))))
