@@ -13,9 +13,9 @@
 
 	<x:String x:Key="BitmapIcon_close">M 14 1.4099998474121094 L 12.59000015258789 0 L 7 5.590000152587891 L 1.4099998474121094 0 L 0 1.4099998474121094 L 5.590000152587891 7 L 0 12.59000015258789 L 1.4099998474121094 14 L 7 8.40999984741211 L 12.59000015258789 14 L 14 12.59000015258789 L 8.40999984741211 7 L 14 1.4099998474121094 Z</x:String>
 	
-	<Style x:Key="MaterialRootModalLeftCommandStyle"
+	<Style x:Key="MaterialRootModalMainCommandStyle"
            TargetType="AppBarButton"
-           BasedOn="{StaticResource MaterialModalLeftCommandStyle}">
+           BasedOn="{StaticResource MaterialModalMainCommandStyle}">
 		<win:Setter Property="Icon">
 			<Setter.Value>
 				<PathIcon Data="{StaticResource BitmapIcon_close}" />
@@ -53,9 +53,9 @@
 	<Style x:Key="MaterialRootModalNavigationBarStyle"
            TargetType="toolkit:NavigationBar"
            BasedOn="{StaticResource MaterialModalNavigationBarStyle}">
-		<Setter Property="LeftCommandStyle"
-                Value="{StaticResource MaterialRootModalLeftCommandStyle}" />
-		<Setter Property="LeftCommandMode"
+		<Setter Property="MainCommandStyle"
+                Value="{StaticResource MaterialRootModalMainCommandStyle}" />
+		<Setter Property="MainCommandMode"
                 Value="Action" />
 	</Style>
 </ResourceDictionary>

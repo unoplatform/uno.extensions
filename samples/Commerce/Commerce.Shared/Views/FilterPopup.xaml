@@ -73,9 +73,9 @@
 							   x:Uid="Body_NavigationBar"
 							   utu:AutoLayout.CounterAlignment="Stretch"
 							   Style="{StaticResource MaterialRootModalNavigationBarStyle}">
-				<utu:NavigationBar.LeftCommand>
+				<utu:NavigationBar.MainCommand>
 					<AppBarButton nav:Navigation.Request="-" />
-				</utu:NavigationBar.LeftCommand>
+				</utu:NavigationBar.MainCommand>
 				<utu:NavigationBar.PrimaryCommands>
 					<AppBarButton Foreground="{StaticResource MaterialOnSurfaceBrush}">
 						<AppBarButton.Icon>
