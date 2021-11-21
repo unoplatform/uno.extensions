@@ -8,10 +8,10 @@
 		<Compile Include="..\Uno.Extensions.Hosting\UnoHost.cs" Link="UnoHost.cs" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
+		<PackageReference Include="Uno.Foundation.Runtime.WebAssembly" Version="4.0.0-dev.5645" />
+		<PackageReference Include="Uno.UI" Version="4.0.0-dev.5645" />
 	</ItemGroup>
-
 	<ItemGroup>
-		<PackageReference Include="Uno.UI.WebAssembly" Version="4.0.0-dev.5645" />
+		<ProjectReference Include="..\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
 	</ItemGroup>
 </Project>
