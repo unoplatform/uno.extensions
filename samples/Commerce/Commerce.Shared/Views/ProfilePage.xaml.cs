@@ -30,9 +30,9 @@ namespace Commerce
 			this.Loaded += (s, e) =>
 			{
 				// Initialize the toggle to the current theme.
-				darkModeToggle.IsEnabled = false;
-				darkModeToggle.IsOn = SystemThemeHelper.IsAppInDarkMode();
-				darkModeToggle.IsEnabled = true;
+				// darkModeToggle.IsEnabled = false;
+				// darkModeToggle.IsOn = SystemThemeHelper.IsAppInDarkMode();
+				// darkModeToggle.IsEnabled = true;
 			};
 		}
 

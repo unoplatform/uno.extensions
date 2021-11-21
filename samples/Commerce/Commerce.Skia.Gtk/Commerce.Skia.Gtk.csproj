@@ -12,7 +12,10 @@
   <ItemGroup>
     <UpToDateCheckInput Include="..\Commerce.Shared\**\*.xaml" />
   </ItemGroup>
-  <ItemGroup>
+  <PropertyGroup>
+	<UnoExtensionsNuGetVersion>0.1.0-dev.636</UnoExtensionsNuGetVersion>
+  </PropertyGroup>
+	<ItemGroup Condition="'$(UnoExtensionsNuGetVersion)'==''">
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
     <PackageReference Include="Uno.UI.Skia.Gtk" Version="4.0.0-dev.5645" />
@@ -46,6 +49,21 @@
 			<Project>{7516C1F2-6CCB-4B59-91B7-E6D4B4EA5835}</Project>
 			<Name>Uno.Extensions.Reactive.View</Name>
 		</ProjectReference>
+	</ItemGroup>
+	<ItemGroup Condition="'$(UnoExtensionsNuGetVersion)'!=''">
+		<PackageReference Include="Uno.Extensions.Configuration" Version="$(UnoExtensionsNuGetVersion)" />
+		<PackageReference Include="Uno.Extensions.Core" Version="$(UnoExtensionsNuGetVersion)" />
+		<PackageReference Include="Uno.Extensions.Hosting.Wasm" Version="$(UnoExtensionsNuGetVersion)" />
+		<PackageReference Include="Uno.Extensions.Http" Version="$(UnoExtensionsNuGetVersion)" />
+		<PackageReference Include="Uno.Extensions.Localization" Version="$(UnoExtensionsNuGetVersion)" />
+		<PackageReference Include="Uno.Extensions.Logging.Serilog" Version="$(UnoExtensionsNuGetVersion)" />
+		<PackageReference Include="Uno.Extensions.Logging.Wasm" Version="$(UnoExtensionsNuGetVersion)" />
+		<PackageReference Include="Uno.Extensions.Navigation.UI" Version="$(UnoExtensionsNuGetVersion)" />
+		<PackageReference Include="Uno.Extensions.Navigation" Version="$(UnoExtensionsNuGetVersion)" />
+		<PackageReference Include="Uno.Extensions.Navigation.Toolkit" Version="$(UnoExtensionsNuGetVersion)" />
+		<PackageReference Include="Uno.Extensions.Serialization" Version="$(UnoExtensionsNuGetVersion)" />
+		<PackageReference Include="Uno.Extensions.Reactive" Version="$(UnoExtensionsNuGetVersion)" />
+		<PackageReference Include="Uno.Extensions.Reactive.View" Version="$(UnoExtensionsNuGetVersion)" />
 	</ItemGroup>
 	<Import Project="..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" />
 </Project>
