@@ -25,7 +25,7 @@
             "name": "Skia.GTK (Debug)",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build",
+            "preLaunchTask": "build-skia-gtk",
             // If you have changed target frameworks, make sure to update the program path.
             "program": "${workspaceFolder}/Commerce.Skia.Gtk/bin/Debug/net6.0/Commerce.Skia.Gtk.dll",
             "args": [],
