@@ -37,6 +37,18 @@
                 "/consoleloggerparameters:NoSummary"
             ],
             "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "build-skia-gtk",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/Commerce.Skia.Gtk/Commerce.Skia.Gtk.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
         }
     ]
 }

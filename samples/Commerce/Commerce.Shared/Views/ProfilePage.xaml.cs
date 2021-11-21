@@ -38,10 +38,10 @@ namespace Commerce
 
 		private void ToggleDarkMode()
 		{
-			if (darkModeToggle.IsEnabled)
-			{
-				// SystemThemeHelper.SetApplicationTheme(darkModeToggle.IsOn);
-			}
+			// if (darkModeToggle.IsEnabled)
+			// {
+			// 	SystemThemeHelper.SetApplicationTheme(darkModeToggle.IsOn);
+			// }
 		}
 	}
 }

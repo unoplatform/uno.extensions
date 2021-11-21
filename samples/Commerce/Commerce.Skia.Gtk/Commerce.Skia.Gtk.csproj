@@ -2,7 +2,7 @@
   <PropertyGroup>
     <OutputType Condition="'$(Configuration)'=='Release'">WinExe</OutputType>
     <OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup Condition="exists('..\Commerce.UWP')">
     <EmbeddedResource Include="..\Commerce.UWP\Package.appxmanifest" LogicalName="Package.appxmanifest" />
@@ -13,13 +13,13 @@
     <UpToDateCheckInput Include="..\Commerce.Shared\**\*.xaml" />
   </ItemGroup>
   <PropertyGroup>
-	<UnoExtensionsNuGetVersion>0.1.0-dev.636</UnoExtensionsNuGetVersion>
+	<UnoExtensionsNuGetVersion>0.1.0-dev.640</UnoExtensionsNuGetVersion>
   </PropertyGroup>
-	<ItemGroup Condition="'$(UnoExtensionsNuGetVersion)'==''">
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
-    <PackageReference Include="Uno.UI.Skia.Gtk" Version="4.0.0-dev.5645" />
-    <PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5645" Condition="'$(Configuration)'=='Debug'" />
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
+		<PackageReference Include="Uno.UI.Skia.Gtk" Version="4.0.0-dev.5645" />
+		<PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5645" Condition="'$(Configuration)'=='Debug'" />
 		<PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.148" />
 		<PackageReference Include="Uno.Core" Version="4.0.0-dev.7" />
 		<PackageReference Include="Uno.Material">
@@ -29,7 +29,7 @@
 			<Version>7.0.3</Version>
 		</PackageReference>
 	</ItemGroup>
-	<ItemGroup>
+	<ItemGroup Condition="'$(UnoExtensionsNuGetVersion)'==''">
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting.Wasm\Uno.Extensions.Hosting.Wasm.csproj" />

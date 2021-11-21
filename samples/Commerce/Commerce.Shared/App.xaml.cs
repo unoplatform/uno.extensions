@@ -40,7 +40,7 @@ namespace Commerce
 		{
 			Host = UnoHost
 			.CreateDefaultBuilder(true)
-#if false //DEBUG
+#if false
 			.UseEnvironment(Environments.Development)
 #endif
 
@@ -72,7 +72,7 @@ namespace Commerce
 			.UseNavigation(RegisterRoutes)
 			.UseToolkitNavigation()
 			.Build()
-			.EnableUnoLogging();
+			.EnableUnoLogging()!;
 
 			InitializeLogging();
 
@@ -176,7 +176,7 @@ namespace Commerce
 #elif NETFX_CORE
 				builder.AddDebug();
 #else
-                builder.AddConsole();
+                // builder.AddConsole();
 #endif
 
 				// Exclude logs below this level
