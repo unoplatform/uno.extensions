@@ -74,7 +74,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
     <PackageReference Include="Uno.Toolkit.UI">
-      <Version>0.1.0-dev.148</Version>
+      <Version>0.1.0-dev.152</Version>
     </PackageReference>
     <PackageReference Include="Uno.Core" Version="4.0.0-dev.7" />
     <PackageReference Include="Uno.Material">
