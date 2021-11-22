@@ -30,7 +30,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\ProfileService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\CartViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\IProductService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\JsonDataService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Product.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Profile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Review.cs" />

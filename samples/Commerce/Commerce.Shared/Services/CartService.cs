@@ -2,19 +2,22 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Commerce.Models;
+using Uno.Extensions.Serialization;
 
 namespace Commerce.Services
 {
-	class CartService : JsonDataService<Product>, ICartService
+	class CartService : ICartService
 	{
-		public CartService(string dataFile) : base(dataFile)
+		private IJsonDataService<Product> _productDataService;
+		public CartService(IJsonDataService<Product> products) 
 		{
-
+			_productDataService = products;
+			_productDataService.DataFile = ProductService.ProductDataFile;
 		}
 
 		public async ValueTask<Cart> Get(CancellationToken ct)
 		{
-			var entities = await GetEntities();
+			var entities = await _productDataService.GetEntities();
 			var cart = new Cart(entities.Select(e => new CartItem(e, 1)).ToArray());
 			return cart;
 		}

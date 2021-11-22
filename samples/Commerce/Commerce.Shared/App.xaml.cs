@@ -27,6 +27,7 @@ using Windows.UI.Xaml.Navigation;
 using Windows.ApplicationModel.Core;
 using Commerce.Views;
 using Uno.Extensions.Logging.Serilog;
+using Uno.Extensions.Serialization;
 
 namespace Commerce
 {
@@ -63,12 +64,15 @@ namespace Commerce
 			.UseConfigurationSectionInApp<AppInfo>()
 			.UseSettings<CommerceSettings>()
 			.UseSettings<Credentials>()
+
+			.UseSerialization()
+
 			.ConfigureServices(services =>
 			{
 				services
-				.AddSingleton<IProductService>(sp => new ProductService("products.json", "reviews.json"))
-				.AddSingleton<ICartService>(sp => new CartService("products.json"))
-				.AddSingleton<IProfileService>(sp => new ProfileService());
+				.AddSingleton<IProductService, ProductService>()
+				.AddSingleton<ICartService, CartService>()
+				.AddSingleton<IProfileService, ProfileService>();
 			})
 			.UseNavigation(RegisterRoutes)
 			.UseToolkitNavigation()

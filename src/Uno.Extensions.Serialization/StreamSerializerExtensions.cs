@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
+using Windows.Storage;
 
 namespace Uno.Extensions.Serialization;
 
@@ -65,4 +67,12 @@ public static class StreamSerializerExtensions
 
         return memoryStream;
     }
+
+	public static async Task<TData?> ReadFromFile<TData>(this IStreamSerializer serializer, string dataFile)
+	{
+		var storageFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///{dataFile}"));
+		using var stream = await storageFile.OpenStreamForReadAsync();
+
+		return serializer.FromStream<TData>(stream);
+	}
 }
