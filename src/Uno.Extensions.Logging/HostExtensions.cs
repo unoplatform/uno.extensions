@@ -6,9 +6,14 @@ namespace Uno.Extensions.Logging
 {
     public static class HostExtensions
     {
-        public static IHost? EnableUnoLogging(this IHost host)
+        public static IHost ConnectUnoLogging(this IHost host, bool enableUnoLogging = true)
         {
-            var factory = host?.Services?.GetService<ILoggerFactory>();
+			if (!enableUnoLogging)
+			{
+				return host;
+			}
+
+            var factory = host.Services.GetRequiredService<ILoggerFactory>();
             if (factory is not null)
             {
                 global::Uno.Extensions.LogExtensionPoint.AmbientLoggerFactory = factory;

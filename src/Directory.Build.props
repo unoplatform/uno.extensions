@@ -49,6 +49,10 @@
 		<IsAndroid>true</IsAndroid>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="$(TargetFramework.StartsWith('xamarinmac'))">
+		<IsMacOS>true</IsMacOS>
+	</PropertyGroup>
+
 	<PropertyGroup Condition="$(TargetFramework.Contains('windows10'))">
 		<IsWinUI>true</IsWinUI>
 	</PropertyGroup>

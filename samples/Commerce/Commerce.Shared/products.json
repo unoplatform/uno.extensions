@@ -1,6 +1,6 @@
 ﻿[
   {
-    "ProductId": "1",
+    "ProductId": 1,
     "Brand": "Ciele",
     "Name": "GoCap Century",
     "Category": "Accessories",
@@ -10,7 +10,7 @@
     "Photo": "ms-appx:///Assets/Products/gocap-century.png"
   },
   {
-    "ProductId": "2",
+    "ProductId": 2,
     "Brand": "New Balance",
     "Name": "Fresh Foam Hierro v6",
     "LongName": "Fresh Foam Hierro v6 Trail Running Shoes - Men's",
@@ -37,7 +37,7 @@
     ]
   },
   {
-    "ProductId": "3",
+    "ProductId": 3,
     "Brand": "Pit Viper",
     "Name": "The Absolute Freedom",
     "Category": "Men's shoes",
@@ -47,7 +47,7 @@
     "Photo": "ms-appx:///Assets/Products/the-absolute-freedom.png"
   },
   {
-    "ProductId": "4",
+    "ProductId": 4,
     "Brand": "Under Armour",
     "Name": "Isochill Armourvent Hat",
     "Category": "Accessories",
@@ -57,7 +57,7 @@
     "Photo": "ms-appx:///Assets/Products/isochill-armourvent-hat.png"
   },
   {
-    "ProductId": "5",
+    "ProductId": 5,
     "Brand": "ASICS",
     "Name": "Gel-Nimbus 23 Running Shoes",
     "Category": "Accessories",
@@ -67,7 +67,7 @@
     "Photo": "ms-appx:///Assets/Products/gel-nimbus-23-running-shoes.png"
   },
   {
-    "ProductId": "6",
+    "ProductId": 6,
     "Brand": "ASICS",
     "Name": "GT-1000 10 GS Running Shoes",
     "Category": "Men's shoes",
@@ -77,7 +77,7 @@
     "Photo": "ms-appx:///Assets/Products/gt-1000-10-gs-running-shoes.png"
   },
   {
-    "ProductId": "7",
+    "ProductId": 7,
     "Brand": "Hoka",
     "Name": "Bondi 7 Running Shoes",
     "Category": "Men's shoes",

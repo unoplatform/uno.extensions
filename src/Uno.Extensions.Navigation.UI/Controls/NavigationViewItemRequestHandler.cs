@@ -2,7 +2,7 @@
 
 namespace Uno.Extensions.Navigation.Controls
 {
-    public class NavigationViewItemNavigationBindingHandler : ActionNavigationBindingHandlerBase<NavigationViewItem>
+    public class NavigationViewItemRequestHandler : ActionRequestHandlerBase<NavigationViewItem>
     {
         public override void Bind(FrameworkElement view)
         {

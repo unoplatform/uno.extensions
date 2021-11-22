@@ -10,11 +10,11 @@ using Microsoft.UI.Xaml.Data;
 
 namespace Uno.Extensions.Navigation.Controls
 {
-    public class NavigationBinder
+    public class NavigationRequestBinder
     {
         private FrameworkElement View { get; }
 
-        public NavigationBinder(FrameworkElement view)
+        public NavigationRequestBinder(FrameworkElement view)
         {
             View = view;
             View.Loaded += LoadedHandler;
@@ -29,7 +29,7 @@ namespace Uno.Extensions.Navigation.Controls
             if (region is not null) {
                 await region.EnsureLoaded();
 
-                var binder = region.Services?.GetServices<INavigationBindingHandler>().FirstOrDefault(x => x.CanBind(View));
+                var binder = region.Services?.GetServices<IRequestHandler>().FirstOrDefault(x => x.CanBind(View));
                 if (binder is not null)
                 {
                     binder.Bind(View);

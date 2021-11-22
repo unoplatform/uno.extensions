@@ -39,7 +39,7 @@ internal sealed class AsyncCommand : IAsyncCommand, IDisposable
 		DispatcherQueue? dispatcher = null)
 	{
 		_name = name;
-		_children = new List<SubCommand>(1){new (config, this)};
+		_children = new List<SubCommand>(1) { new(config, this) };
 		_errorHandler = errorHandler ?? throw new ArgumentNullException(nameof(errorHandler));
 		_context = context ?? throw new ArgumentNullException(nameof(context));
 		_dispatcher = DispatcherHelper.GetDispatcher(dispatcher);
@@ -261,7 +261,7 @@ internal sealed class AsyncCommand : IAsyncCommand, IDisposable
 				parameter = externalParameter.value;
 			}
 
-			if (!(_config.CanExecute?.Invoke(parameter)?? true))
+			if (!(_config.CanExecute?.Invoke(parameter) ?? true))
 			{
 				return false;
 			}

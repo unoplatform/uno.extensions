@@ -6,13 +6,13 @@
 
 	<Import Project="common.props"/>
 	
-	<ItemGroup>
-		<PackageReference Include="Uno.WinUI" Version="4.0.0-dev.5645" />
-	</ItemGroup>
-
 	<PropertyGroup>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
 	</PropertyGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)'!='net5.0-windows10.0.18362.0'">
+		<PackageReference Include="Uno.WinUI" Version="4.0.0-dev.5645" />
+	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)'=='net5.0-windows10.0.18362.0'">
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.0.0" />

@@ -100,7 +100,7 @@ namespace Uno.Extensions.Configuration
         }
 
 
-        public static IHostBuilder UseConfigurationSectionInApp<TOptions>(this IHostBuilder hostBuilder, string? configurationSection = null)
+        public static IHostBuilder UseConfiguration<TOptions>(this IHostBuilder hostBuilder, string? configurationSection = null)
             where TOptions : class
         {
             if (configurationSection is null)

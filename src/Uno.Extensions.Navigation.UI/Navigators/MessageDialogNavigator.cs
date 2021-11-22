@@ -19,7 +19,7 @@ public class MessageDialogNavigator : DialogNavigator
 {
     public MessageDialogNavigator(
         ILogger<DialogNavigator> logger,
-        IRouteMappings mappings,
+        IMappings mappings,
         IRegion region)
         : base(logger, mappings, region)
     {
@@ -51,7 +51,7 @@ public class MessageDialogNavigator : DialogNavigator
                 {
                     if (result.Status != TaskStatus.Canceled)
                     {
-						navigation?.NavigatePreviousWithResultAsync(Options.Option.Some(result.Result));
+						navigation?.NavigatePreviousWithResultAsync(Option.Some(result.Result));
 
                     }
                 },

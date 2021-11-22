@@ -26,12 +26,12 @@ public class NavigatorFactory : INavigatorFactory
 
     private ILogger Logger { get; }
 
-    private IRouteMappings Mappings { get; }
+    private IMappings Mappings { get; }
 
     public NavigatorFactory(
         ILogger<NavigatorFactory> logger,
         IEnumerable<NavigatorFactoryBuilder> builders,
-        IRouteMappings mappings)
+        IMappings mappings)
     {
         Logger = logger;
         Mappings = mappings;
@@ -105,8 +105,8 @@ public class NavigatorFactory : INavigatorFactory
         var dialogRegion = new NavigationRegion(services: services);
         services.AddInstance<IRegion>(dialogRegion);
 
-        var mapping = Mappings.FindByPath(request.Route.Base);
-        var serviceLookupType = mapping?.View;
+        var mapping = Mappings.FindViewByPath(request.Route.Base);
+        var serviceLookupType = mapping?.ViewType;
         if (serviceLookupType is null)
         {
             object? resource = request.RouteResourceView(region);

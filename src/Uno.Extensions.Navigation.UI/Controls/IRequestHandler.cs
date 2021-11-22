@@ -8,7 +8,7 @@ using Microsoft.UI.Xaml.Data;
 
 namespace Uno.Extensions.Navigation.Controls
 {
-    public interface INavigationBindingHandler
+    public interface IRequestHandler
     {
         bool CanBind(FrameworkElement view);
 

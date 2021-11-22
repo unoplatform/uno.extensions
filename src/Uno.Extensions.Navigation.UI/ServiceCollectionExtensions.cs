@@ -53,12 +53,12 @@ public static class ServiceCollectionExtensions
 					.AddRegion<Flyout, FlyoutNavigator>()
 					.AddRegion<Popup, PopupNavigator>()
 
-					.AddSingleton<INavigationBindingHandler, ButtonBaseNavigationBindingHandler>()
-					.AddSingleton<INavigationBindingHandler, SelectorNavigationBindingHandler>()
-					.AddSingleton<INavigationBindingHandler, NavigationViewItemNavigationBindingHandler>()
+					.AddSingleton<IRequestHandler, ButtonBaseRequestHandler>()
+					.AddSingleton<IRequestHandler, SelectorRequestHandler>()
+					.AddSingleton<IRequestHandler, NavigationViewItemRequestHandler>()
 
 					// Register the navigation mappings repository
-					.AddSingleton<IRouteMappings, RouteMappingsDefault>()
+					.AddSingleton<IMappings, RouteMappingsDefault>()
 
 					.AddScoped<INavigatorFactory, NavigatorFactory>()
 

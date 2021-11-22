@@ -1,0 +1,51 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType Condition="'$(Configuration)'=='Release'">WinExe</OutputType>
+    <OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup Condition="exists('..\Commerce.UWP')">
+    <EmbeddedResource Include="..\Commerce.UWP\Package.appxmanifest" LogicalName="Package.appxmanifest" />
+    <Content Include="..\Commerce.UWP\Assets\StoreLogo.png" Link="Assets\StoreLogo.png" />
+    <Content Include="Assets\Fonts\uno-fluentui-assets.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <UpToDateCheckInput Include="..\Commerce.Shared\**\*.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
+    <PackageReference Include="Uno.UI.Skia.Gtk" Version="4.0.0-dev.5688" />
+    <PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5688" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.154" />
+		<PackageReference Include="Uno.Core" Version="4.0.0-dev.7" />
+		<PackageReference Include="Uno.Material">
+			<Version>1.1.0-dev.39</Version>
+		</PackageReference>
+		<PackageReference Include="CommunityToolkit.Mvvm">
+			<Version>7.0.3</Version>
+		</PackageReference>
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting.Wasm\Uno.Extensions.Hosting.Wasm.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Localization\Uno.Extensions.Localization.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Logging.Wasm\Uno.Extensions.Logging.Wasm.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UI.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj">
+			<Project>{74D93A0B-42F9-45A6-8AC3-684DAE9659A8}</Project>
+			<Name>Uno.Extensions.Reactive</Name>
+		</ProjectReference>
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Reactive.View\Uno.Extensions.Reactive.View.csproj">
+			<Project>{7516C1F2-6CCB-4B59-91B7-E6D4B4EA5835}</Project>
+			<Name>Uno.Extensions.Reactive.View</Name>
+		</ProjectReference>
+	</ItemGroup>
+	<Import Project="..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" />
+</Project>

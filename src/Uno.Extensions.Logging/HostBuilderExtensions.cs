@@ -22,12 +22,10 @@ namespace Uno.Extensions.Logging
                     {
 #if __IOS__
                         builder.AddProvider(new global::Uno.Extensions.Logging.OSLogLoggerProvider());
-#elif NETFX_CORE
-                        builder.AddDebug();
 #else
-                        builder.AddConsole();
+                        builder.AddDebug();
 #endif
-                        configure?.Invoke(builder);
+						configure?.Invoke(builder);
                     });
         }
 #elif __WASM__
@@ -43,6 +41,15 @@ namespace Uno.Extensions.Logging
         }
 
 #endif
+
+		public static IHost Build(
+			this IHostBuilder hostBuilder,
+			bool enableUnoLogging)
+		{
+			return hostBuilder
+				.Build()
+				.ConnectUnoLogging(enableUnoLogging);
+		}
     }
 #endif
 }

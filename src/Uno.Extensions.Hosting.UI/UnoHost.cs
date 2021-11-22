@@ -14,7 +14,7 @@ public static class UnoHost
 		(custom ? CustomHost.CreateDefaultBuilder() : Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder())
 		.ConfigureAppConfiguration((ctx, appConfig) =>
 		{
-			var appHost = AppHostingEnvironment.FromHostEnvironment(ctx.HostingEnvironment, PlatformSpecificContentRootPath());
+			var appHost = AppHostingEnvironment.FromHostEnvironment(ctx.HostingEnvironment, PlatformSpecificLocalPath());
 			ctx.HostingEnvironment = appHost;
 		})
 		.ConfigureServices((ctx, services) =>
@@ -79,7 +79,7 @@ public static class UnoHost
 #endif
 			;
 
-	private static string? PlatformSpecificContentRootPath()
+	private static string? PlatformSpecificLocalPath()
 	{
 #if WINUI || WINDOWS_UWP || NETSTANDARD
 		return Windows.Storage.ApplicationData.Current.LocalFolder.Path;

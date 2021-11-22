@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Uno.Extensions;
 using Uno.Extensions.Reactive;
 using Uno.Extensions.Reactive.Testing;
 using Uno.Extensions.Reactive.Tests.Sources;

@@ -20,7 +20,7 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
     public ContentControlNavigator(
         ILogger<ContentControlNavigator> logger,
         IRegion region,
-        IRouteMappings mappings,
+        IMappings mappings,
         RegionControlProvider controlProvider)
         : base(logger, region, mappings, controlProvider.RegionControl as ContentControl)
     {

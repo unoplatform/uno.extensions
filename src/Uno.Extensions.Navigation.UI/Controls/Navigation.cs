@@ -27,7 +27,7 @@ public static class Navigation
 
         if (d is FrameworkElement element)
         {
-            _ = new NavigationBinder(element);
+            _ = new NavigationRequestBinder(element);
         }
     }
 

@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Linq;
-using Uno.Extensions.Options;
 
 namespace Uno.Extensions.Navigation.Controls
 {
-	public abstract class ActionNavigationBindingHandlerBase<TView> : ControlNavigationBindingHandler<TView>
+	public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBase<TView>
 		where TView : FrameworkElement
 	{
 		protected void BindAction<TElement, TEventHandler>(
@@ -63,7 +62,7 @@ namespace Uno.Extensions.Navigation.Controls
 						if (response is not null)
 						{
 							var result = await response.UntypedResult;
-							if (result.MatchSome(out var resultValue))
+							if (result.IsSome(out var resultValue))
 							{
 								element.SetData(resultValue);
 								binding.UpdateSource();

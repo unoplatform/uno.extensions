@@ -1,26 +1,28 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions;
+using Uno.Extensions;
 
 namespace Uno.Extensions.Navigation;
 
 #pragma warning disable SA1313 // Parameter names should begin with lower-case letter
 
-public record NavigationResultResponse(Route Route, Task<Options.Option> UntypedResult, bool Success = true) : NavigationResponse(Route, Success)
+public record NavigationResultResponse(Route Route, Task<IOption> UntypedResult, bool Success = true) : NavigationResponse(Route, Success)
 {
 }
 
-public record NavigationResultResponse<TResult>(Route Route, Task<Options.Option<TResult>> Result, bool Success = true)
+public record NavigationResultResponse<TResult>(Route Route, Task<Option<TResult>> Result, bool Success = true)
 	: NavigationResultResponse(
 		Route,
 		AsOption(Result),
 		Success)
 {
 
-	private static async Task<Options.Option> AsOption(Task<Options.Option<TResult>> result)
+	private static async Task<IOption> AsOption(Task<Option<TResult>> result)
 	{
 		var resultData =  await result;
-		return (Options.Option)resultData;
+		return resultData;
 	}
 }
 

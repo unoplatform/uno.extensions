@@ -40,7 +40,7 @@ namespace Uno.Extensions.Configuration
 
             var prefix = hostingContext.Configuration.GetValue(HostingConstants.AppSettingsPrefixKey, defaultValue: string.Empty);
             prefix = !string.IsNullOrWhiteSpace(prefix) ? $"{prefix}/" : prefix;
-            return configurationBuilder.AddJsonFile($"{prefix}appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: false);
+            return configurationBuilder.AddJsonFile($"{prefix}{AppSettings.AppSettingsFileName}.{env.EnvironmentName}.json".ToLower(), optional: true, reloadOnChange: false);
         }
 
         public static IConfigurationBuilder AddEmbeddedEnvironmentAppSettings<TApplicationRoot>(
@@ -49,7 +49,7 @@ namespace Uno.Extensions.Configuration
         {
             var env = hostingContext.HostingEnvironment;
 
-            var environmentAppSettingsFileName = $"{AppSettings.AppSettingsFileName}.{env.EnvironmentName}.json";
+            var environmentAppSettingsFileName = $"{AppSettings.AppSettingsFileName}.{env.EnvironmentName}.json".ToLower();
             var environmentAppSettings =
                 AppSettings.AllAppSettings<TApplicationRoot>()
                 .FirstOrDefault(s => s.FileName.EndsWith(environmentAppSettingsFileName, StringComparison.OrdinalIgnoreCase));

@@ -22,9 +22,7 @@ public class RouteMappingsDefault : RouteMappings
 
     private IDictionary<string, Type>? loadedTypes;
 
-    private IDictionary<string, RouteMap> Mappings { get; } = new Dictionary<string, RouteMap>();
-
-    public RouteMappingsDefault(ILogger<RouteMappingsDefault> logger, IEnumerable<RouteMap> maps) : base(logger, maps)
+    public RouteMappingsDefault(ILogger<RouteMappingsDefault> logger, IEnumerable<RouteMap> maps, IEnumerable<ViewMap> viewMaps) : base(logger, maps, viewMaps)
     {
     }
 
@@ -34,19 +32,26 @@ public class RouteMappingsDefault : RouteMappings
         return map ?? DefaultMapping(path: path);
     }
 
-    public override RouteMap? FindByViewModel(Type? viewModelType)
-    {
-        var map = base.FindByViewModel(viewModelType);
-        return map ?? DefaultMapping(viewModel: viewModelType);
-    }
+	public override ViewMap? FindViewByPath(string? path)
+	{
+		var map = base.FindViewByPath(path);
+		return map ?? DefaultViewMapping(path: path);
+	}
 
-    public override RouteMap? FindByView(Type? viewType)
-    {
-        var map = base.FindByView(viewType);
-        return map ?? DefaultMapping(view: viewType);
-    }
+	public override ViewMap? FindViewByViewModel(Type? viewModelType)
+	{
+		var map = base.FindViewByViewModel(viewModelType);
+		return map ?? DefaultViewMapping(viewModel: viewModelType);
+	}
 
-    private RouteMap? DefaultMapping(string? path = null, Type? view = null, Type? viewModel = null)
+	public override ViewMap? FindViewByView(Type? viewType)
+	{
+		var map = base.FindViewByView(viewType);
+		return map ?? DefaultViewMapping(view: viewType);
+	}
+
+
+	private RouteMap? DefaultMapping(string? path = null)
     {
         if (!ReturnImplicitMapping)
         {
@@ -54,32 +59,12 @@ public class RouteMappingsDefault : RouteMappings
             return null;
         }
 
-        Logger.LogWarningMessage($"For better performance (avoid reflection), create mapping for for path '{path}', view '{view?.Name}', view model '{viewModel?.Name}'");
-
-        Logger.LogDebugMessage($"Creating default mapping for path '{path}', view '{view?.Name}', view model '{viewModel?.Name}'");
-        if (string.IsNullOrWhiteSpace(path))
-        {
-            path = PathFromTypes(view, viewModel);
-        }
-
-        if (view is null)
-        {
-            var trimmedPath = TrimSuffices(path, ViewModelSuffixes);
-            view = TypeFromPath(trimmedPath, true, ViewSuffixes, type => type.IsSubclassOf(typeof(FrameworkElement)));
-        }
-
-        if (viewModel is null)
-        {
-            var trimmedPath = TrimSuffices(path, ViewSuffixes);
-            viewModel = TypeFromPath(trimmedPath, false, ViewModelSuffixes);
-        }
-
         if (path is not null &&
             !string.IsNullOrWhiteSpace(path))
         {
-            var defaultMap = new RouteMap(path, view, viewModel, null);
+            var defaultMap = new RouteMap(path);
             Mappings[path] = defaultMap;
-            Logger.LogDebugMessage($"Created default mapping - Path '{defaultMap.Path}', View '{defaultMap.View?.Name}', View Model '{defaultMap.ViewModel?.Name}'");
+            Logger.LogDebugMessage($"Created default mapping - Path '{defaultMap.Path}'");
             return defaultMap;
         }
 
@@ -87,7 +72,49 @@ public class RouteMappingsDefault : RouteMappings
         return null;
     }
 
-    private Type? TypeFromPath(string path, bool allowMatchExact, IEnumerable<string> suffixes, Func<Type, bool>? condition = null)
+
+	private ViewMap? DefaultViewMapping(string? path = null, Type? view = null, Type? viewModel = null)
+	{
+		if (!ReturnImplicitMapping)
+		{
+			Logger.LogDebugMessage("Implicit mapping disabled");
+			return null;
+		}
+
+		Logger.LogWarningMessage($"For better performance (avoid reflection), create mapping for for path '{path}', view '{view?.Name}', view model '{viewModel?.Name}'");
+
+		Logger.LogDebugMessage($"Creating default mapping for path '{path}', view '{view?.Name}', view model '{viewModel?.Name}'");
+		if (string.IsNullOrWhiteSpace(path))
+		{
+			path = PathFromTypes(view, viewModel);
+		}
+
+		if (view is null)
+		{
+			var trimmedPath = TrimSuffices(path, ViewModelSuffixes);
+			view = TypeFromPath(trimmedPath, true, ViewSuffixes, type => type.IsSubclassOf(typeof(FrameworkElement)));
+		}
+
+		if (viewModel is null)
+		{
+			var trimmedPath = TrimSuffices(path, ViewSuffixes);
+			viewModel = TypeFromPath(trimmedPath, false, ViewModelSuffixes);
+		}
+
+		if (path is not null &&
+			!string.IsNullOrWhiteSpace(path))
+		{
+			var defaultMap = new ViewMap(path, view, viewModel, null);
+			ViewMappings[path] = defaultMap;
+			Logger.LogDebugMessage($"Created default mapping - Path '{defaultMap.Path}', View '{defaultMap.ViewType?.Name}', View Model '{defaultMap.ViewModelType?.Name}'");
+			return defaultMap;
+		}
+
+		Logger.LogDebugMessage($"Unable to create default mapping");
+		return null;
+	}
+
+	private Type? TypeFromPath(string path, bool allowMatchExact, IEnumerable<string> suffixes, Func<Type, bool>? condition = null)
     {
         if (allowMatchExact && LoadedTypes.TryGetValue(path, out var type))
         {

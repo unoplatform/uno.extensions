@@ -13,10 +13,6 @@ public class RouteBuilder : IRouteBuilder
 	public IRouteBuilder Register(RouteMap route)
 	{
 		Services.AddSingleton(route);
-		if (route.ViewModel is not null)
-		{
-			Services.AddTransient(route.ViewModel);
-		}
 		return this;
 	}
 
@@ -36,6 +32,17 @@ public class RouteBuilder : IRouteBuilder
 		Register((RouteMap<TData>)route);
 
 		Services.AddViewModelData<TResultData>();
+		return this;
+	}
+
+	public IRouteBuilder Register(ViewMap view)
+	{
+		Services.AddSingleton(view);
+		if (view.ViewModelType is not null)
+		{
+			Services.AddTransient(view.ViewModelType);
+		}
+
 		return this;
 	}
 }

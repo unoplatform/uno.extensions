@@ -11,7 +11,7 @@ public class AppHostingEnvironment : HostingEnvironment, IAppHostEnvironment
     {
         return new AppHostingEnvironment
         {
-            AppDataPath = appDataPath ?? host.ContentRootPath,
+            AppDataPath = appDataPath,
             ApplicationName = host.ApplicationName,
             ContentRootFileProvider = host.ContentRootFileProvider,
             ContentRootPath = host.ContentRootPath,

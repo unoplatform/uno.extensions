@@ -59,7 +59,7 @@ public static class RouteExtensions
 
 	public static bool FrameIsForwardNavigation(this Route route) => !route.FrameIsBackNavigation();
 
-	public static Route[] ForwardNavigationSegments(this Route route, IRouteMappings mappings)
+	public static Route[] ForwardNavigationSegments(this Route route, IMappings mappings)
 	{
 		if (route.IsEmpty() || route.FrameIsBackNavigation())
 		{
@@ -126,6 +126,11 @@ public static class RouteExtensions
 		return route;
 	}
 
+	public static Route Append(this Route route, string nestedPath)
+	{
+		return route.Append(Route.NestedRoute(nestedPath));
+	}
+
 	public static Route Append(this Route route, Route routeToAppend)
 	{
 		return route with { Path = route.Path + (routeToAppend.Scheme == Schemes.Nested ? Schemes.Separator : routeToAppend.Scheme) + routeToAppend.Base + routeToAppend.Path };
@@ -139,6 +144,11 @@ public static class RouteExtensions
 	public static Route AppendNested<TView>(this Route route)
 	{
 		return route.Append(Route.NestedRoute<TView>());
+	}
+
+	public static Route Insert(this Route route, string pathToInsert)
+	{
+		return route.Insert(Route.NestedRoute(pathToInsert));
 	}
 
 	public static Route Insert(this Route route, Route routeToAppend)
@@ -192,12 +202,12 @@ public static class RouteExtensions
 		return route with { Scheme = nextScheme, Base = routeBase, Path = nextPath };
 	}
 
-	public static bool IsPageRoute(this Route route, IRouteMappings mappings)
+	public static bool IsPageRoute(this Route route, IMappings mappings)
 	{
-		return ((mappings.Find(route))?.View?.IsSubclassOf(typeof(Page)) ?? false);
+		return ((mappings.FindView(route))?.ViewType?.IsSubclassOf(typeof(Page)) ?? false);
 	}
 
-	public static bool IsLastFrameRoute(this Route route, IRouteMappings mappings)
+	public static bool IsLastFrameRoute(this Route route, IMappings mappings)
 	{
 		return route.IsLast() || !route.Next().IsPageRoute(mappings);
 	}
@@ -267,6 +277,11 @@ public static class RouteExtensions
 
 	public static Route AsRoute(this string path, object? data = null)
 	{
+		if (string.IsNullOrWhiteSpace(path))
+		{
+			return Route.Empty;
+		}
+
 		var queryIdx = path.IndexOf('?');
 		var query = string.Empty;
 		if (queryIdx >= 0)
@@ -294,9 +309,9 @@ public static class RouteExtensions
 		var route = new Route(scheme, routeBase, path, paras);
 		if (route.IsBackOrCloseNavigation() &&
 			data is not null &&
-			data is not Options.Option)
+			data is not IOption)
 		{
-			data = Options.Option.Some<object>(data);
+			data = Option.Some<object>(data);
 			paras[string.Empty] = data;
 			route = route with { Data = paras };
 		}
@@ -386,26 +401,26 @@ public static class RouteExtensions
 
 	public static IDictionary<string, object> AsParameters(this IDictionary<string, object> data, RouteMap mapping)
 	{
-		if(data is null || mapping is null)
+		if (data is null || mapping is null)
 		{
 			return new Dictionary<string, object>();
 		}
 
 		var mapDict = data;
-		if (mapping?.BuildQueryParameters is not null)
+		if (mapping?.UntypedBuildQuery is not null)
 		{
 			// TODO: Find nicer way to clone the dictionary
 			mapDict = data.ToArray().ToDictionary(x => x.Key, x => x.Value);
 			if (data.TryGetValue(string.Empty, out var paramData))
 			{
-				var qdict = mapping.BuildQueryParameters(paramData);
+				var qdict = mapping.UntypedBuildQuery(paramData);
 				qdict.ForEach(qkvp => mapDict[qkvp.Key] = qkvp.Value);
 			}
 		}
 		return mapDict;
 	}
 
-	public static Route? ApplyFrameRoute(this Route? currentRoute, IRouteMappings mappings, Route frameRoute)
+	public static Route? ApplyFrameRoute(this Route? currentRoute, IMappings mappings, Route frameRoute)
 	{
 		var scheme = frameRoute.Scheme;
 		if (string.IsNullOrWhiteSpace(frameRoute.Scheme))
@@ -437,8 +452,11 @@ public static class RouteExtensions
 				segments.AddRange(newSegments);
 			}
 
-			var routeBase = segments.First().Base;
-			segments.RemoveAt(0);
+			var routeBase = segments.FirstOrDefault()?.Base;
+			if (segments.Count > 0)
+			{
+				segments.RemoveAt(0);
+			}
 
 			var routePath = segments.Count > 0 ? string.Join("", segments.Select(x => $"{x.Scheme}{x.Base}")) : string.Empty;
 

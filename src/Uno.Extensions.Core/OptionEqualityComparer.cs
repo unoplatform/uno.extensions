@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Uno.Extensions.Reactive;
+namespace Uno.Extensions;
 
 public sealed class OptionEqualityComparer<T> : IEqualityComparer<Option<T>>
 {

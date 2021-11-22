@@ -19,14 +19,6 @@
 		<VisualStateManager.VisualStateGroups>
 			<VisualStateGroup>
 				<VisualState x:Name="Narrow" /> 
-				<!--<VisualState.StateTriggers>
-					<AdaptiveTrigger MinWindowWidth="0"
-									 MinWindowHeight="0" />
-				</VisualState.StateTriggers>
-				<VisualState.Setters>
-					<Setter Target="Tabs.Visibility"
-							Value="Visible" />
-				</VisualState.Setters>-->
 
 				<VisualState x:Name="Wide">
 					<VisualState.StateTriggers>

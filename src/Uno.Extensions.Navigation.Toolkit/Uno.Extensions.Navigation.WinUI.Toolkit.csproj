@@ -4,14 +4,16 @@
 		<TargetFrameworks Condition="'$(UnoExtensionsDisableNet6)'=='' and '$(UnoExtensionsOnlyUAP)'==''">$(TargetFrameworks);net5.0;net6.0;net5.0-windows10.0.18362.0;net6.0-ios;net6.0-android</TargetFrameworks>
 	</PropertyGroup>
 
+	<Import Project="common.props" />
+
 	<PropertyGroup>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
 	</PropertyGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj" />
+	<ItemGroup Condition="'$(TargetFramework)'!='net5.0-windows10.0.18362.0'">
+		<PackageReference Include="Uno.WinUI" Version="4.0.0-dev.5645" />
 	</ItemGroup>
-	
+
 	<ItemGroup Condition="'$(TargetFramework)'=='net5.0-windows10.0.18362.0'">
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.0.0" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22000.196"/>
@@ -21,9 +23,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Uno.WinUI" Version="4.0.0-dev.5645" />
+		<ProjectReference Include="..\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Uno.Toolkit.WinUI" Version="0.1.0-dev.152" />
 	</ItemGroup>
 	
-	<Import Project="common.props" />
 </Project>

@@ -18,7 +18,7 @@ public class ContentDialogNavigator : DialogNavigator
 {
     public ContentDialogNavigator(
         ILogger<ContentDialogNavigator> logger,
-        IRouteMappings mappings,
+        IMappings mappings,
         IRegion region)
         : base(logger, mappings, region)
     {
@@ -29,16 +29,16 @@ public class ContentDialogNavigator : DialogNavigator
         var route = request.Route;
         var navigation = Region.Navigator();
         var services = this.Get<IServiceProvider>();
-        var mapping = Mappings.Find(route);
+        var mapping = Mappings.FindView(route);
         if (
             navigation is null ||
             services is null ||
-            mapping?.View is null)
+            mapping?.ViewType is null)
         {
             return null;
         }
 
-        var dialog = Activator.CreateInstance(mapping.View) as ContentDialog;
+        var dialog = Activator.CreateInstance(mapping.ViewType) as ContentDialog;
         if(dialog is null)
         {
             return null;
@@ -52,7 +52,7 @@ public class ContentDialogNavigator : DialogNavigator
                 {
                     if (result.Status != TaskStatus.Canceled)
                     {
-						navigation.NavigatePreviousWithResultAsync(Options.Option.Some(result.Result));
+						navigation.NavigatePreviousWithResultAsync(Option.Some(result.Result));
                     }
                 },
                 CancellationToken.None,

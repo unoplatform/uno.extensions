@@ -3,7 +3,7 @@ using Uno.Toolkit.UI.Controls;
 
 namespace Uno.Extensions.Navigation.Toolkit.Controls;
 
-public class TabBarItemNavigationBindingHandler : ActionNavigationBindingHandlerBase<TabBarItem>
+public class TabBarItemRequestHandler : ActionRequestHandlerBase<TabBarItem>
 {
 	public override void Bind(FrameworkElement view)
 	{

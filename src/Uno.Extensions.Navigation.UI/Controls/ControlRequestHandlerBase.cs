@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Uno.Extensions.Navigation.Controls
 {
-    public abstract class ControlNavigationBindingHandler<TControl> : INavigationBindingHandler
+    public abstract class ControlRequestHandlerBase<TControl> : IRequestHandler
     {
         public abstract void Bind(FrameworkElement view);
 

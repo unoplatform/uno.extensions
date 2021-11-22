@@ -8,7 +8,7 @@
 
 	public class HostConfiguration
 	{
-		public string AppSettingsPrefix { get; set; }
-		public string LaunchUrl { get; set; }
+		public string? AppSettingsPrefix { get; set; }
+		public string? LaunchUrl { get; set; }
 	}
 }

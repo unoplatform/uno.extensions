@@ -13,7 +13,7 @@ public class PopupNavigator : ControlNavigator<Popup>
     public PopupNavigator(
         ILogger<ContentControlNavigator> logger,
         IRegion region,
-        IRouteMappings mappings,
+        IMappings mappings,
         RegionControlProvider controlProvider)
         : base(logger, region, mappings, controlProvider.RegionControl as Popup)
     {

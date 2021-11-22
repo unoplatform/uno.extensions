@@ -7,8 +7,9 @@
 
 	<Import Project="common.props"/>
 
-	<ItemGroup>
-    <ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
-  </ItemGroup>
 
+
+	<ItemGroup>
+		<PackageReference Include="Uno.UI" Version="4.0.0-dev.5688" />
+	</ItemGroup>
 </Project>

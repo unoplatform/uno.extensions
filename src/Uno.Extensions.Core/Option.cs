@@ -7,11 +7,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Uno.Extensions.Reactive;
+namespace Uno.Extensions;
 
 public static class Option
 {
-	internal static Option<T> SomeOrNone<T>(T? value) => value is null ? Option<T>.None() : Option<T>.Some(value);
+	public static Option<T> SomeOrNone<T>(T? value) => value is null ? Option<T>.None() : Option<T>.Some(value);
 
 	public static Option<T> Some<T>(T? value) => Option<T>.Some(value);
 
@@ -20,7 +20,7 @@ public static class Option
 	public static Option<T> Undefined<T>() => Option<T>.Undefined();
 }
 
-public readonly struct Option<T> : IEquatable<Option<T>>
+	public readonly struct Option<T> : IOption, IEquatable<Option<T>>
 {
 	public static Option<T> Some(T? value)
 		=> new(OptionType.Some, value);
@@ -54,7 +54,16 @@ public readonly struct Option<T> : IEquatable<Option<T>>
 		return _type is OptionType.Some;
 	}
 
+	bool IOption.IsSome([NotNullWhen(true)] out object? value)
+	{
+		value = _value;
+		return _type is OptionType.Some;
+	}
+
 	public T? SomeOrDefault()
+		=> _value;
+
+	object IOption.SomeOrDefault()
 		=> _value;
 
 	public T? SomeOrDefault(T defaultValue)
@@ -118,10 +127,41 @@ public readonly struct Option<T> : IEquatable<Option<T>>
 		};
 }
 
-public static class OptionExtensions
-{
-	public static async ValueTask<Option<TResult>> MapAsync<T, TResult>(this Option<T> option, AsyncFunc<T?, TResult?> projection, CancellationToken ct)
-		=> option.IsSome(out var value) ? await projection(value, ct)
-			: option.IsNone() ? Option<TResult>.None()
-			: Option<TResult>.Undefined();
-}
+//public static class OptionExtensions
+//{
+//	public static async ValueTask<Option<TResult>> MapAsync<T, TResult>(this Option<T> option, FuncAsync<T?, TResult?> projection, CancellationToken ct)
+//		=> option.IsSome(out var value) ? await projection(value, ct)
+//			: option.IsNone() ? Option<TResult>.None()
+//			: Option<TResult>.Undefined();
+//}
+
+//internal class ReferenceEqualityComparer<T> : IEqualityComparer<T>
+//{
+//	private ReferenceEqualityComparer()
+//	{
+//	}
+
+//	/// <inheritdoc />
+//	public bool Equals(T x, T y)
+//		=> object.ReferenceEquals(x, y);
+
+//	/// <inheritdoc />
+//	public int GetHashCode(T obj)
+//		=> obj?.GetHashCode() ?? 0;
+//}
+//	/// <inheritdoc />
+//	public bool Equals(T x, T y)
+//		=> object.ReferenceEquals(x, y);
+
+//	/// <inheritdoc />
+//	public int GetHashCode(T obj)
+//		=> obj?.GetHashCode() ?? 0;
+//}
+//	/// <inheritdoc />
+//	public bool Equals(T x, T y)
+//		=> object.ReferenceEquals(x, y);
+
+//	/// <inheritdoc />
+//	public int GetHashCode(T obj)
+//		=> obj?.GetHashCode() ?? 0;
+//}
