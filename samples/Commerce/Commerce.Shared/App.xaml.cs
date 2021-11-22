@@ -36,47 +36,9 @@ namespace Commerce
 		private Window _window;
 		public Window Window => _window;
 
-		private IHost Host { get; }
-
 		public App()
 		{
-			Host = UnoHost
-			.CreateDefaultBuilder(true)
-#if DEBUG
-			.UseEnvironment(Environments.Development)
-#endif
-
-			// Load configuration information from appsettings.json
-			// Also load configuration from environment specific files if they exist eg appsettings.development.json
-			// UseEmbeddedAppSettings<App>() if you want to include appsettings files as Embedded Resources instead of Content
-			.UseAppSettings(includeEnvironmentSettings: true)
-
-			.UseLogging()
-			.ConfigureLogging(logBuilder =>
-			{
-				logBuilder
-					 .SetMinimumLevel(LogLevel.Trace)
-					 .XamlLogLevel(LogLevel.Information)
-					 .XamlLayoutLogLevel(LogLevel.Information);
-			})
-			.UseSerilog(true, true)
-
-			.UseConfigurationSectionInApp<AppInfo>()
-			.UseSettings<CommerceSettings>()
-			.UseSettings<Credentials>()
-
-			.UseSerialization()
-
-			.ConfigureServices(services =>
-			{
-				services
-				.AddSingleton<IProductService, ProductService>()
-				.AddSingleton<ICartService, CartService>()
-				.AddSingleton<IProfileService, ProfileService>();
-			})
-			.UseNavigation(RegisterRoutes)
-			.UseToolkitNavigation()
-			.Build(enableUnoLogging: true);
+			
 
 			this.InitializeComponent();
 
@@ -92,12 +54,6 @@ namespace Commerce
 		/// <param name="args">Details about the launch request and process.</param>
 		protected async override void OnLaunched(LaunchActivatedEventArgs args)
 		{
-#if DEBUG
-			if (System.Diagnostics.Debugger.IsAttached)
-			{
-				// this.DebugSettings.EnableFrameRateCounter = true;
-			}
-#endif
 
 #if NET5_0 && WINDOWS
             _window = new Window();
@@ -106,35 +62,12 @@ namespace Commerce
 			_window = Windows.UI.Xaml.Window.Current;
 #endif
 
-			var notif = Host.Services.GetService<IRouteNotifier>();
-			notif.RouteChanged += RouteUpdated;
+			var rootFrame = new Frame();
+			_window.Content = rootFrame;
 
+			rootFrame.Navigate(typeof(LoginPage));
 
-			_window.Content = new ShellView().WithNavigation(Host.Services);
 			_window.Activate();
-
-			await Task.Run(async () =>
-			{
-				await Host.StartAsync();
-			});
-
-			var nav = Host.Services.GetService<INavigator>();
-#if __WASM__
-			Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-			Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested += AppGoBack;
-
-#endif
-
-		}
-
-		public async void AppGoBack(object? sender, BackRequestedEventArgs e)
-		{
-			var backnav = Host.Services.GetService<INavigator>();
-			var appTitle = ApplicationView.GetForCurrentView();
-			appTitle.Title = "Back pressed - " + DateTime.Now.ToString("HH:mm:ss");
-			var response = await backnav.GoBack(this);
-			//e.Handled = response.Success;
-
 		}
 
 
@@ -160,62 +93,6 @@ namespace Commerce
 			var deferral = e.SuspendingOperation.GetDeferral();
 			// TODO: Save application state and stop any background activity
 			deferral.Complete();
-		}
-
-		/// <summary>
-		/// Configures global Uno Platform logging
-		/// </summary>
-		private static void InitializeLogging()
-		{
-			var factory = LoggerFactory.Create(builder =>
-			{
-#if __WASM__
-				builder.AddProvider(new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider());
-#elif __IOS__
-                builder.AddProvider(new global::Uno.Extensions.Logging.OSLogLoggerProvider());
-#elif NETFX_CORE
-				builder.AddDebug();
-#else
-                builder.AddConsole();
-#endif
-
-				// Exclude logs below this level
-				builder.SetMinimumLevel(LogLevel.Information);
-
-				// Default filters for Uno Platform namespaces
-				builder.AddFilter("Uno", LogLevel.Warning);
-				builder.AddFilter("Windows", LogLevel.Warning);
-				builder.AddFilter("Microsoft", LogLevel.Warning);
-
-				// Generic Xaml events
-				// builder.AddFilter("Windows.UI.Xaml", LogLevel.Debug );
-				// builder.AddFilter("Windows.UI.Xaml.VisualStateGroup", LogLevel.Debug );
-				// builder.AddFilter("Windows.UI.Xaml.StateTriggerBase", LogLevel.Debug );
-				// builder.AddFilter("Windows.UI.Xaml.UIElement", LogLevel.Debug );
-				// builder.AddFilter("Windows.UI.Xaml.FrameworkElement", LogLevel.Trace );
-
-				// Layouter specific messages
-				// builder.AddFilter("Windows.UI.Xaml.Controls", LogLevel.Debug );
-				// builder.AddFilter("Windows.UI.Xaml.Controls.Layouter", LogLevel.Debug );
-				// builder.AddFilter("Windows.UI.Xaml.Controls.Panel", LogLevel.Debug );
-
-				// builder.AddFilter("Windows.Storage", LogLevel.Debug );
-
-				// Binding related messages
-				// builder.AddFilter("Windows.UI.Xaml.Data", LogLevel.Debug );
-				// builder.AddFilter("Windows.UI.Xaml.Data", LogLevel.Debug );
-
-				// Binder memory references tracking
-				// builder.AddFilter("Uno.UI.DataBinding.BinderReferenceHolder", LogLevel.Debug );
-
-				// RemoteControl and HotReload related
-				// builder.AddFilter("Uno.UI.RemoteControl", LogLevel.Information);
-
-				// Debug JS interop
-				// builder.AddFilter("Uno.Foundation.WebAssemblyRuntime", LogLevel.Debug );
-			});
-
-			global::Uno.Extensions.LogExtensionPoint.AmbientLoggerFactory = factory;
 		}
 
 		private static void RegisterRoutes(IRouteBuilder builder)
@@ -260,41 +137,6 @@ namespace Commerce
 										nav with { Route = nav.Route.AppendNested<CartPage>() } :
 										nav))
 				.Register(new RouteMap(typeof(CartPage).Name, typeof(CartPage), typeof(CartViewModel)));
-		}
-
-		public async void RouteUpdated(object sender, EventArgs e)
-		{
-			try
-			{
-				var reg = Host.Services.GetService<IRegion>();
-				var rootRegion = reg.Root();
-				var route = rootRegion.GetRoute();
-
-
-#if !__WASM__
-				var appTitle = ApplicationView.GetForCurrentView();
-				appTitle.Title = "Commerce: " + (route + "").Replace("+", "/");
-
-#else
-				// Note: This is a hack to avoid error being thrown when loading products async
-				await Task.Delay(1000).ConfigureAwait(false);
-				CoreApplication.MainView?.DispatcherQueue.TryEnqueue(() =>
-				{
-					var href = WebAssemblyRuntime.InvokeJS("window.location.href");
-					var url = new UriBuilder(href);
-					url.Query = route.Query();
-					url.Path = route.FullPath()?.Replace("+", "/");
-					var webUri = url.Uri.OriginalString;
-					var js = $"window.history.pushState(\"{webUri}\",\"\", \"{webUri}\");";
-					Console.WriteLine($"JS:{js}");
-					var result = WebAssemblyRuntime.InvokeJS(js);
-				});
-#endif
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine("Error: " + ex.Message);
-			}
 		}
 	}
 }
