@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType Condition="'$(Configuration)'=='Release'">WinExe</OutputType>
+		<OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<UseWPF>true</UseWPF>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Uno.UI.Skia.Wpf" Version="4.0.0-dev.5645" />
+		<PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5645" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="System.Linq.Async" Version="4.0.0" />
+		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<Content Include="Assets\Fonts\uno-fluentui-assets.ttf" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\ReactiveSample.Skia.WPF\ReactiveSample.Skia.WPF.csproj" />
+	</ItemGroup>
+</Project>

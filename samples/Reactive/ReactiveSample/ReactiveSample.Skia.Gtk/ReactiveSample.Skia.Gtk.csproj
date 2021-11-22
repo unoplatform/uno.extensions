@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType Condition="'$(Configuration)'=='Release'">WinExe</OutputType>
+		<OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
+		<TargetFramework>net6.0</TargetFramework>
+	</PropertyGroup>
+	<ItemGroup Condition="exists('..\ReactiveSample.UWP')">
+		<EmbeddedResource Include="..\ReactiveSample.UWP\Package.appxmanifest" LogicalName="Package.appxmanifest" />
+		<Content Include="..\ReactiveSample.UWP\Assets\StoreLogo.png" Link="Assets\StoreLogo.png" />
+		<Content Include="Assets\Fonts\uno-fluentui-assets.ttf" />
+	</ItemGroup>
+	<ItemGroup>
+		<UpToDateCheckInput Include="..\ReactiveSample.Shared\**\*.xaml" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
+		<PackageReference Include="Uno.UI.Skia.Gtk" Version="4.0.0-dev.5645" />
+		<PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5645" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="System.Linq.Async" Version="4.0.0" />
+		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Reactive.View\Uno.Extensions.Reactive.View.csproj" />
+		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj" />
+	</ItemGroup>
+	<Import Project="..\ReactiveSample.Shared\ReactiveSample.Shared.projitems" Label="Shared" />
+</Project>
