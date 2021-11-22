@@ -43,6 +43,15 @@ namespace Uno.Extensions.Logging
         }
 
 #endif
+
+		public static IHost Build(
+			this IHostBuilder hostBuilder,
+			bool enableUnoLogging)
+		{
+			return hostBuilder
+				.Build()
+				.ConnectUnoLogging(enableUnoLogging);
+		}
     }
 #endif
 }

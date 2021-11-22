@@ -76,8 +76,7 @@ namespace Commerce
 			})
 			.UseNavigation(RegisterRoutes)
 			.UseToolkitNavigation()
-			.Build()
-			.EnableUnoLogging();
+			.Build(enableUnoLogging: true);
 
 			this.InitializeComponent();
 
