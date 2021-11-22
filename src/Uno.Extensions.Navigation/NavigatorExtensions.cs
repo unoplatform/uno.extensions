@@ -36,6 +36,14 @@ public static class NavigatorExtensions
 		return navigator.Get<IServiceProvider>()?.GetRequiredService<IRouteMappings>() ?? default;
 	}
 
+	public static async Task<NavigationResultResponse<TResult>?> NavigateRouteForResultAsync<TResult>(
+	this INavigator service, object sender, Route route, CancellationToken cancellation = default)
+	{
+		var request = new NavigationRequest<TResult>(sender, route, cancellation);
+		var result = await service.NavigateAsync(request);
+		return result?.AsResult<TResult>();
+	}
+
 	/// <summary>
 	/// Navigates to the specified route
 	/// </summary>

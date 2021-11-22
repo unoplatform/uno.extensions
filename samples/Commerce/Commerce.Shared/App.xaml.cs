@@ -50,6 +50,7 @@ namespace Commerce
 					.UseEnvironment(Environments.Development)
 #endif
 
+
 					// Add platform specific log providers
 					.UseLogging()
 
@@ -70,6 +71,13 @@ namespace Commerce
 					// Load AppInfo section
 					.UseConfiguration<AppInfo>()
 
+					// Register entities for saving settings
+					.UseSettings<CommerceSettings>()
+					.UseSettings<Credentials>()
+
+
+					// Register Json serializers (ISerializer and IStreamSerializer)
+					.UseSerialization()
 
 					// Register services for the application
 					.ConfigureServices(services =>
@@ -80,7 +88,20 @@ namespace Commerce
 							.AddSingleton<IProfileService, ProfileService>();
 					})
 
+
+					// Enable navigation, including registering views and viewmodels
+					.UseNavigation(RegisterRoutes)
+
+					// Add navigation support for toolkit controls such as TabBar and NavigationView
+					.UseToolkitNavigation()
+
+
 					.Build(enableUnoLogging: true);
+
+
+
+
+
 
 			var hostEnvironment = Host.Services.GetRequiredService<IHostEnvironment>();
 			var logger = Host.Services.GetRequiredService<ILogger<App>>();
@@ -111,7 +132,11 @@ namespace Commerce
 			var shoes = (await productService.GetProducts("Shoes")).ToArray();
 			Debug.WriteLine($"Shoes {shoes.Length}");
 
+			var commerceSettings = Host.Services.GetService<IWritableOptions<CommerceSettings>>();
+			await commerceSettings.Update(commerce => commerce with { LastSearch = "Shoes" });
 
+			var readOnlySetting = Host.Services.GetService<IOptions<CommerceSettings>>();
+			Debug.WriteLine($"Last Search - {readOnlySetting.Value.LastSearch}");
 
 #if NET5_0 && WINDOWS
             _window = new Window();
@@ -120,12 +145,21 @@ namespace Commerce
 			_window = Windows.UI.Xaml.Window.Current;
 #endif
 
-			var rootFrame = new Frame();
-			_window.Content = rootFrame;
+			//var rootFrame = new Frame();
+			//_window.Content = rootFrame;
 
-			rootFrame.Navigate(typeof(LoginPage));
+			//rootFrame.Navigate(typeof(LoginPage));
 
+			//_window.Activate();
+
+
+			_window.Content = new ShellView().WithNavigation(Host.Services);
 			_window.Activate();
+
+			await Task.Run(async () =>
+			{
+				await Host.StartAsync();
+			});
 		}
 
 

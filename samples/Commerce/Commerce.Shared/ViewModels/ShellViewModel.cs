@@ -24,37 +24,21 @@ namespace Commerce.ViewModels
 			Navigator = navigator;
 			CredentialsSettings = credentials;
 
-			var launchUrl = configuration.Value?.LaunchUrl;// configuration.GetValue(HostingConstants.WasmLaunchUrlKey, defaultValue: string.Empty);
+			logger.LogInformation($"Launch url '{configuration.Value?.LaunchUrl}'");
+			var initialRoute = configuration.Value?.LaunchRoute();
 
-			logger.LogInformation($"Launch url '{launchUrl}'");
-
-			string? initialRoute = null;
-			if (!string.IsNullOrWhiteSpace(launchUrl) && launchUrl.StartsWith("http"))
-			{
-				var url = new UriBuilder(launchUrl);
-				var query = url.Query;
-				var path = (url.Path + (!string.IsNullOrWhiteSpace(query) ? "?" : "") + query + "").TrimStart('/');
-				if (!string.IsNullOrWhiteSpace(path))
-				{
-					initialRoute = path;
-				}
-			}
-			else
-			{
-				initialRoute = launchUrl;
-			}
 
 			// Go to the login page on app startup
 			Login(initialRoute);
 		}
 
-		public async Task Login(string? initialRoute = null)
+		public async Task Login(Route? initialRoute = null)
 		{
 			var currentCredentials = CredentialsSettings.Value;
 
 			if (currentCredentials?.UserName is { Length: > 0 })
 			{
-				if (!string.IsNullOrWhiteSpace(initialRoute))
+				if (initialRoute is not null)
 				{
 					var initialResponse = await Navigator.NavigateRouteForResultAsync<Credentials>(this, initialRoute);
 					_ = await initialResponse.Result;
