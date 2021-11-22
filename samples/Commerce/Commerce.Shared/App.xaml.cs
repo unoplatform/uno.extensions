@@ -68,6 +68,7 @@ namespace Commerce
 				services
 				.AddSingleton<IProductService>(sp => new ProductService("products.json", "reviews.json"))
 				.AddSingleton<ICartService>(sp => new CartService("products.json"))
+				.AddSingleton<IDealService>(sp => new DealService("products.json"))
 				.AddSingleton<IProfileService>(sp => new ProfileService());
 			})
 			.UseNavigation(RegisterRoutes)
@@ -234,7 +235,9 @@ namespace Commerce
 												}))
 					.Register(new RouteMap(nameof(ProductsPage), typeof(ProductsPage),
 						ViewModel: typeof(ProductsViewModel.BindableProductsViewModel)))
-					.Register(new RouteMap("Deals", typeof(FrameView),
+					.Register(new RouteMap("Deals",
+						typeof(FrameView),
+						ViewModel: typeof(DealsViewModel),
 						RegionInitialization: (region, nav) => nav.Route.IsEmpty() ?
 												nav with { Route = nav.Route with { Base = "+DealsPage/HotDeals" } } :
 												nav with { Route = nav.Route with { Path = "+DealsPage/HotDeals" } }))

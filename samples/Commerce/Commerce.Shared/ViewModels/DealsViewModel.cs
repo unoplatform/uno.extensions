@@ -7,28 +7,19 @@ using System.Threading.Tasks;
 using Commerce.Models;
 using Commerce.Services;
 using Uno.Extensions;
+using Uno.Extensions.Reactive;
 
 namespace Commerce.ViewModels;
 
 public class DealsViewModel
 {
+	private readonly IDealService _dealService;
 
-    public ObservableCollection<Product> HotDeals { get; } = new ObservableCollection<Product>();
-    public ObservableCollection<Product> SuperDeals { get; } = new ObservableCollection<Product>();
 
-    public DealsViewModel(IProductService products)
+    public DealsViewModel(IDealService dealService)
     {
-		Load(products);
-    }
-
-	private async Task Load(IProductService products)
-	{
-		var productItems = await products.GetProducts(null, CancellationToken.None);
-		productItems.ForEach(p =>
-		{
-			HotDeals.Add(p);
-			SuperDeals.Add(p);
-		}
-		);
+		_dealService = dealService;
 	}
+
+	public IFeed<Product[]> Items => Feed.Async(_dealService.GetDeals);
 }

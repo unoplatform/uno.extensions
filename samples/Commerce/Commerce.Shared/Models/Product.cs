@@ -14,6 +14,8 @@ public class Product
 	public string Photo { get; set; }
 	public double? Rating { get; set; }
 
+	public string DiscountedPrice => Price;
+
 	public Review[] Reviews { get; set; }
 
 }
