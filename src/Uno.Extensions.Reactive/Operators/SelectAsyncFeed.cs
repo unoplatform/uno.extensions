@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Uno.Extensions.Reactive.Utils;
 using static Uno.Extensions.Reactive.FeedHelper;
 using Exception = System.Exception;
@@ -97,6 +98,7 @@ internal sealed class SelectAsyncFeed<TArg, TResult> : IFeed<TResult>
 		var subject = new AsyncEnumerableSubject<Message<TResult>>(ReplayMode.EnabledForFirstEnumeratorOnly);
 		var message = new MessageManager<TArg, TResult>(subject.SetNext);
 		var projectionToken = default(CancellationTokenSource);
+		var projection = default(Task);
 
 		BeginEnumeration();
 
@@ -128,7 +130,7 @@ internal sealed class SelectAsyncFeed<TArg, TResult> : IFeed<TResult>
 							case OptionType.Some:
 								var previousProjection = projectionToken;
 								projectionToken = CancellationTokenSource.CreateLinkedTokenSource(ct);
-								_ = InvokeAsync(message, async ct2 => await _projection((TArg?)data, ct2), context, projectionToken.Token);
+								projection = InvokeAsync(message, async ct2 => await _projection((TArg?)data, ct2), context, projectionToken.Token);
 
 								// We prefer to cancel the previous projection only AFTER so we are able to keep existing transient axises (cf. message.BeginTransaction)
 								// This will not cause any concurrency issue since a transaction cannot push message updates as soon it's not the current.
@@ -145,6 +147,11 @@ internal sealed class SelectAsyncFeed<TArg, TResult> : IFeed<TResult>
 					}
 				}
 
+				if (projection is not null)
+				{
+					// Make sure to await the end of the last projection before completing the subject!
+					await projection;
+				}
 				subject.Complete();
 			}
 			catch (Exception error)
