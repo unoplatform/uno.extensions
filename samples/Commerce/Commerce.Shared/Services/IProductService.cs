@@ -7,7 +7,7 @@ namespace Commerce.Services;
 
 public interface IProductService
 {
-	Task<IEnumerable<Product>> GetProducts(string? term, CancellationToken ct);
+	Task<IEnumerable<Product>> GetProducts(string? term, CancellationToken? ct = default);
 
-	Task<Review[]> GetReviews(int productId, CancellationToken ct);
+	Task<Review[]> GetReviews(int productId, CancellationToken? ct = default);
 }

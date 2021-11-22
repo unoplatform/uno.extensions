@@ -24,7 +24,7 @@ public class ProductService : IProductService
 		_reviewDataService.DataFile= ReviewDataFile;
 	}
 
-	public async Task<IEnumerable<Product>> GetProducts(string? term, CancellationToken ct)
+	public async Task<IEnumerable<Product>> GetProducts(string? term, CancellationToken? ct = default)
 	{
 		var products = (await _productDataService.GetEntities()).AsEnumerable();
 		if (term is not null)
@@ -35,7 +35,7 @@ public class ProductService : IProductService
 		return products;
 	}
 
-	public async Task<Review[]> GetReviews(int productId, CancellationToken ct)
+	public async Task<Review[]> GetReviews(int productId, CancellationToken? ct = default)
 	{
 		var reviews = await _reviewDataService.GetEntities();
 		return reviews;

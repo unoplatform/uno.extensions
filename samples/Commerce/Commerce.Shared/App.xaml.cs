@@ -28,6 +28,8 @@ using Windows.ApplicationModel.Core;
 using Commerce.Views;
 using Uno.Extensions.Logging.Serilog;
 using Uno.Extensions.Serialization;
+using System.Diagnostics;
+using Microsoft.Extensions.Options;
 
 namespace Commerce
 {
@@ -36,9 +38,55 @@ namespace Commerce
 		private Window _window;
 		public Window Window => _window;
 
+		private IHost Host { get; }
+
 		public App()
 		{
-			
+			Host = UnoHost
+					.CreateDefaultBuilder(true)
+
+#if DEBUG
+					// Switch to Development environment when running in DEBUG
+					.UseEnvironment(Environments.Development)
+#endif
+
+					// Add platform specific log providers
+					.UseLogging()
+
+					// Configure log levels for different categories of logging
+					.ConfigureLogging(logBuilder =>
+					{
+						logBuilder
+								.SetMinimumLevel(LogLevel.Information)
+								.XamlLogLevel(LogLevel.Information)
+								.XamlLayoutLogLevel(LogLevel.Information);
+					})
+
+
+
+					// Load configuration information from appsettings.json
+					.UseAppSettings()
+
+					// Load AppInfo section
+					.UseConfiguration<AppInfo>()
+
+
+					// Register services for the application
+					.ConfigureServices(services =>
+					{
+						services
+							.AddSingleton<IProductService, ProductService>()
+							.AddSingleton<ICartService, CartService>()
+							.AddSingleton<IProfileService, ProfileService>();
+					})
+
+					.Build(enableUnoLogging: true);
+
+			var hostEnvironment = Host.Services.GetRequiredService<IHostEnvironment>();
+			var logger = Host.Services.GetRequiredService<ILogger<App>>();
+			logger.LogInformationMessage($"Environment: {hostEnvironment.EnvironmentName}");
+
+
 
 			this.InitializeComponent();
 
@@ -54,6 +102,16 @@ namespace Commerce
 		/// <param name="args">Details about the launch request and process.</param>
 		protected async override void OnLaunched(LaunchActivatedEventArgs args)
 		{
+			var appInfo = Host.Services.GetService<IOptions<AppInfo>>();
+			var appView = ApplicationView.GetForCurrentView();
+			appView.Title = appInfo.Value.Title;
+
+
+			var productService = Host.Services.GetRequiredService<IProductService>();
+			var shoes = (await productService.GetProducts("Shoes")).ToArray();
+			Debug.WriteLine($"Shoes {shoes.Length}");
+
+
 
 #if NET5_0 && WINDOWS
             _window = new Window();

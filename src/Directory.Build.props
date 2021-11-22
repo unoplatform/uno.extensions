@@ -98,7 +98,7 @@
 		<DefaultItemExcludes>$(DefaultItemExcludes);obj/**;bin/**</DefaultItemExcludes>
 	</PropertyGroup>
 
-	<!-- <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
 		<UnoExtensionsOnlyUAP>true</UnoExtensionsOnlyUAP>
-	</PropertyGroup> -->
+	</PropertyGroup>
 </Project>
