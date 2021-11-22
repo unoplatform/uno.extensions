@@ -103,9 +103,6 @@ namespace Commerce
 
 
 
-			var hostEnvironment = Host.Services.GetRequiredService<IHostEnvironment>();
-			var logger = Host.Services.GetRequiredService<ILogger<App>>();
-			logger.LogInformationMessage($"Environment: {hostEnvironment.EnvironmentName}");
 
 
 
@@ -137,6 +134,11 @@ namespace Commerce
 
 			var readOnlySetting = Host.Services.GetService<IOptions<CommerceSettings>>();
 			Debug.WriteLine($"Last Search - {readOnlySetting.Value.LastSearch}");
+
+			var hostEnvironment = Host.Services.GetRequiredService<IHostEnvironment>();
+			var logger = Host.Services.GetRequiredService<ILogger<App>>();
+			logger.LogInformationMessage($"Environment: {hostEnvironment.EnvironmentName}");
+
 
 #if NET5_0 && WINDOWS
             _window = new Window();

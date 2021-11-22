@@ -29,10 +29,10 @@ namespace Commerce.ViewModels
 
 
 			// Go to the login page on app startup
-			Login(initialRoute);
+			Start(initialRoute);
 		}
 
-		public async Task Login(Route? initialRoute = null)
+		public async Task Start(Route? initialRoute = null)
 		{
 			var currentCredentials = CredentialsSettings.Value;
 
@@ -67,7 +67,7 @@ namespace Commerce.ViewModels
 			// At this point we assume that either the login failed, or that the navigation to home
 			// was completed by a response being sent back. We don't actually care about the response,
 			// since we only care that the navigation has completed and that we should again show the login 
-			Login();
+			Start();
 		}
 	}
 }
