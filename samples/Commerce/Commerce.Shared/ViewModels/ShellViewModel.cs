@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Hosting;
@@ -15,6 +16,7 @@ namespace Commerce.ViewModels
 		private IWritableOptions<Credentials> CredentialsSettings { get; }
 
 		public ShellViewModel(
+			ILogger<ShellViewModel> logger,
 			INavigator navigator,
 			IOptions<HostConfiguration> configuration,
 			IWritableOptions<Credentials> credentials)
@@ -23,6 +25,8 @@ namespace Commerce.ViewModels
 			CredentialsSettings = credentials;
 
 			var launchUrl = configuration.Value?.LaunchUrl;// configuration.GetValue(HostingConstants.WasmLaunchUrlKey, defaultValue: string.Empty);
+
+			logger.LogInformation($"Launch url '{launchUrl}'");
 
 			string? initialRoute = null;
 			if (!string.IsNullOrWhiteSpace(launchUrl) && launchUrl.StartsWith("http"))
