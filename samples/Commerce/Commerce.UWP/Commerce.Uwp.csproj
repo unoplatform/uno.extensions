@@ -20,19 +20,19 @@
     <PackageReference Include="Microsoft.UI.Xaml" Version="2.7.1-prerelease.211026002" />
     <PackageReference Include="Uno.Core" Version="4.0.0-dev.7" />
     <PackageReference Include="Uno.Material">
-      <Version>1.1.0-dev.31</Version>
+      <Version>1.1.0-dev.39</Version>
     </PackageReference>
     <PackageReference Include="Uno.Toolkit.UI.Material">
-      <Version>0.1.0-dev.152</Version>
+      <Version>0.1.0-dev.154</Version>
     </PackageReference>
-    <PackageReference Include="Uno.UI" Version="4.0.0-dev.5645" />
+    <PackageReference Include="Uno.UI" Version="4.0.0-dev.5650" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Localization" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="6.0.0" />
     <PackageReference Include="System.Linq.Async" Version="4.0.0" />
-    <PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.152" />
+    <PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.154" />
   </ItemGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
