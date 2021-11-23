@@ -8,7 +8,6 @@
 	  xmlns:utu="using:Uno.Toolkit.UI.Controls"
 	  xmlns:uer="using:Uno.Extensions.Reactive"
 	  xmlns:uen="using:Uno.Extensions.Navigation.Controls"
-	  xmlns:cc="using:Uno.UI.ToolkitLib"
 	  mc:Ignorable="d"
 	  xmlns:toolkit="using:Uno.Toolkit.UI.Controls"
 	  Background="{ThemeResource MaterialBackgroundBrush}">
@@ -57,9 +56,9 @@
 					</ListView.ItemsPanel>
 					<ListView.ItemTemplate>
 						<DataTemplate>
-							<cc:CardContentControl x:Uid="Page_DealDetails"
+							<utu:CardContentControl x:Uid="Page_DealDetails"
 												   Style="{StaticResource MaterialOutlinedCardContentControlStyle}">
-								<cc:CardContentControl.ContentTemplate>
+								<utu:CardContentControl.ContentTemplate>
 									<DataTemplate>
 										<utu:AutoLayout Background="{StaticResource MaterialSurfaceBrush}">
 											<Image Source="{Binding Photo}"
@@ -123,8 +122,8 @@
 											</utu:AutoLayout>
 										</utu:AutoLayout>
 									</DataTemplate>
-								</cc:CardContentControl.ContentTemplate>
-							</cc:CardContentControl>
+								</utu:CardContentControl.ContentTemplate>
+							</utu:CardContentControl>
 						</DataTemplate>
 					</ListView.ItemTemplate>
 				</ListView>
