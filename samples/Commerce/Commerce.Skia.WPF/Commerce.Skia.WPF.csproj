@@ -5,12 +5,12 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
-		<PackageReference Include="Uno.UI.Skia.Wpf" Version="4.0.0-dev.5645" />
-		<PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5645" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.UI.Skia.Wpf" Version="4.0.0-dev.5650" />
+		<PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5650" Condition="'$(Configuration)'=='Debug'" />
 		<PackageReference Include="System.Linq.Async" Version="4.0.0" />
-		<PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.152" />
+		<PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.154" />
 		<PackageReference Include="Uno.Core" Version="4.0.0-dev.7" />
-		<PackageReference Include="Uno.Material" Version="1.1.0-dev.31" />
+		<PackageReference Include="Uno.Material" Version="1.1.0-dev.39" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="7.0.3" />
 	</ItemGroup>
 	<ItemGroup>
