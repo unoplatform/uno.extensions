@@ -26,6 +26,7 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Models\ProfileModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\CartService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\DealService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\ProductServices.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\ProfileService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\CartViewModel.cs" />
