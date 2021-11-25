@@ -30,12 +30,12 @@
 		<PackageReference Include="Uno.WinUI" Version="4.0.0-dev.5678" />
 		<PackageReference Include="Uno.Core" Version="4.0.0-dev.7" />
 		<PackageReference Include="Uno.Material.WinUI">
-			<Version>1.1.0-dev.39</Version>
+			<Version>1.1.0-dev.57</Version>
 		</PackageReference>
 		<PackageReference Include="Uno.Toolkit.WinUI.Material">
-			<Version>0.1.0-dev.154</Version>
+			<Version>0.1.0-dev.165</Version>
 		</PackageReference>
-		<PackageReference Include="Uno.Toolkit.WinUI" Version="0.1.0-dev.154" />
+		<PackageReference Include="Uno.Toolkit.WinUI" Version="0.1.0-dev.165" />
 	</ItemGroup>
 	
 	<ItemGroup>
