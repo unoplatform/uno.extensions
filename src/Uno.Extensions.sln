@@ -75,6 +75,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Localization
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Configuration.WinUI", "Uno.Extensions.Configuration\Uno.Extensions.Configuration.WinUI.csproj", "{4FBE702D-09C9-4DE4-A129-6061AE7C0A26}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Reactive.Generator", "Uno.Extensions.Reactive.Generator\Uno.Extensions.Reactive.Generator.csproj", "{4CAB68E2-8ABC-489E-9F6A-3BE6A91A0DC3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -193,6 +195,10 @@ Global
 		{4FBE702D-09C9-4DE4-A129-6061AE7C0A26}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4FBE702D-09C9-4DE4-A129-6061AE7C0A26}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4FBE702D-09C9-4DE4-A129-6061AE7C0A26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CAB68E2-8ABC-489E-9F6A-3BE6A91A0DC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CAB68E2-8ABC-489E-9F6A-3BE6A91A0DC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CAB68E2-8ABC-489E-9F6A-3BE6A91A0DC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CAB68E2-8ABC-489E-9F6A-3BE6A91A0DC3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -224,6 +230,7 @@ Global
 		{86FF8750-CA94-41C2-AF65-D35DBE429B0C} = {2B4C9E46-EA70-4ADE-B301-E2BB8CC31365}
 		{ED24D8A7-F009-46EB-B848-1CFAA34487D5} = {6F8C83E2-8CD7-42AC-B993-208351F2304E}
 		{4FBE702D-09C9-4DE4-A129-6061AE7C0A26} = {D24D6A6D-A506-42AA-B980-505D2F919A26}
+		{4CAB68E2-8ABC-489E-9F6A-3BE6A91A0DC3} = {6B956AB1-06A6-4BEC-9467-E7B593A89E34}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6E7B035D-9A64-4D95-89AA-9D4653F17C42}

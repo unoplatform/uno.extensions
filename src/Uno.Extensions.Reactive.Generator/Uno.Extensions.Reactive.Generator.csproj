@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net461</TargetFramework>
+		<LangVersion>10.0</LangVersion>
+		<Nullable>enable</Nullable>
+		<NoWarn>1701;1702</NoWarn>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<WarningsAsErrors />
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Content Include="build\Uno.Extensions.Reactive.Generator.props" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Uno.SourceGeneration" Version="4.0.0-dev.15" />
+		<PackageReference Include="Uno.Roslyn" Version="1.3.0-dev.12" />
+		<PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.0.1" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.0.1" />
+		<PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Include="..\Uno.Extensions.Reactive\**\*Attribute.cs" Link="Attributes\%(RecursiveDir)%(Filename)%(Extension)" />
+		<Compile Include="..\Uno.Extensions.Reactive.View\**\*Attribute.cs" Link="Attributes\%(RecursiveDir)%(Filename)%(Extension)" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Remove="_Bla\**" />
+	  <EmbeddedResource Remove="_Bla\**" />
+	  <None Remove="_Bla\**" />
+	</ItemGroup>
+
+</Project>

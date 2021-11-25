@@ -23,7 +23,7 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 	protected void RegisterDisposable(IAsyncDisposable disposable) 
 		=> _disposables.Add(disposable);
 
-	protected BindablePropertyInfo<TProperty> Property<TProperty>(string propertyName, TProperty defaultValue, out IState<TProperty> state, DispatcherQueue? dispatcher = null)
+	protected BindablePropertyInfo<TProperty> Property<TProperty>(string propertyName, TProperty? defaultValue, out IState<TProperty> state, DispatcherQueue? dispatcher = null)
 	{
 		var stateImpl = new State<TProperty>(defaultValue);
 		var info = new BindablePropertyInfo<TProperty>(this, propertyName, ViewModelToView, ViewToViewModel);
@@ -85,6 +85,9 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 
 	protected ICommandBuilder CreateCommand(string propertyName)
 		=> new CommandBuilder<object?>(propertyName);
+
+	protected ICommandBuilder<T> CreateCommand<T>(string propertyName)
+		=> new CommandBuilder<T>(propertyName);
 
 	/// <inheritdoc />
 	public ValueTask DisposeAsync()
