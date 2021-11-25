@@ -33,7 +33,7 @@ jobs:
   - template: templates/dotnet6-install-mac.yml
 
   - script: |
-      mono '$(VS_MSBUILD)' '$(build.sourcesdirectory)/samples/Commerce/Commerce.Droid/Commerce.Droid.csproj' /r /p:Configuration=Release /bl:$(build.artifactstagingdirectory)/build.binlog "/p:InformationalVersion=$GITVERSION_INFORMATIONALVERSION" /p:UnoExtensionsDisableNet6=true /p:AotAssemblies=false /p:AndroidBuildApplicationPackage=True
+      mono '$(VS_MSBUILD)' '$(build.sourcesdirectory)/samples/Commerce/UWP/Commerce.Droid/Commerce.Droid.csproj' /r /p:Configuration=Release /bl:$(build.artifactstagingdirectory)/build.binlog "/p:InformationalVersion=$GITVERSION_INFORMATIONALVERSION" /p:UnoExtensionsDisableNet6=true /p:AotAssemblies=false /p:AndroidBuildApplicationPackage=True
 
     displayName: Build Android App
     
@@ -50,7 +50,7 @@ jobs:
       flattenFolders: false
 
   - script: |
-      mono '$(VS_MSBUILD)' '$(build.sourcesdirectory)/samples/Commerce/Commerce.Droid/Commerce.Droid.csproj' /r /p:Configuration=Release /bl:$(build.artifactstagingdirectory)/build.binlog "/p:InformationalVersion=$GITVERSION_INFORMATIONALVERSION" /p:UnoExtensionsDisableNet6=true /p:AotAssemblies=false /p:BuildForPlayStore=true /p:AndroidBuildApplicationPackage=True
+      mono '$(VS_MSBUILD)' '$(build.sourcesdirectory)/samples/Commerce/UWP/Commerce.Droid/Commerce.Droid.csproj' /r /p:Configuration=Release /bl:$(build.artifactstagingdirectory)/build.binlog "/p:InformationalVersion=$GITVERSION_INFORMATIONALVERSION" /p:UnoExtensionsDisableNet6=true /p:AotAssemblies=false /p:BuildForPlayStore=true /p:AndroidBuildApplicationPackage=True
 
     displayName: Build Android PlayStore App
     

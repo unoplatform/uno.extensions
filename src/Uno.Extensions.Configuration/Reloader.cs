@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
-using Windows.Storage;
 
 namespace Uno.Extensions.Configuration
 {
