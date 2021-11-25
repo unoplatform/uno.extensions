@@ -1,12 +1,4 @@
-﻿#if !WINUI
-using System.Threading.Tasks;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls.Primitives;
-#else
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-#endif
+﻿using System.Threading.Tasks;
 
 namespace Uno.Extensions.Navigation.Controls
 {

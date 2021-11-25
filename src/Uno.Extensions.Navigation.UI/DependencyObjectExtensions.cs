@@ -2,13 +2,6 @@
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Regions;
-#if !WINUI
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
-#else
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Media;
-#endif
 
 namespace Uno.Extensions.Navigation;
 

@@ -1,13 +1,4 @@
-﻿#if !WINUI
-using Microsoft.UI.Xaml.Controls;
-using Windows.Foundation;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
-#else
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-#endif
+﻿using Windows.Foundation;
 
 namespace Uno.Extensions.Navigation.Controls
 {

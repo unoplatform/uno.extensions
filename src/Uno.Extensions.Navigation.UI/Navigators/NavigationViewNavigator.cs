@@ -72,7 +72,7 @@ public class NavigationViewNavigator : ControlNavigator<Microsoft.UI.Xaml.Contro
         finally
         {
 			if (Control.IsPaneVisible &&
-				!(Control.PaneDisplayMode == NavigationViewPaneDisplayMode.LeftMinimal && !Control.IsPaneOpen))
+				!(Control.PaneDisplayMode == Microsoft.UI.Xaml.Controls.NavigationViewPaneDisplayMode.LeftMinimal && !Control.IsPaneOpen))
 			{
 				await CurrentView.EnsureLoaded();
 			}

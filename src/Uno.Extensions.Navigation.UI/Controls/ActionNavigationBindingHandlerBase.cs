@@ -1,15 +1,6 @@
 ﻿using System;
 using System.Linq;
 using Uno.Extensions.Options;
-#if !WINUI
-using System.Threading.Tasks;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls.Primitives;
-#else
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-#endif
 
 namespace Uno.Extensions.Navigation.Controls
 {
@@ -66,7 +57,7 @@ namespace Uno.Extensions.Navigation.Controls
 					resultType is not null)
 				{
 
-					if (binding is not null && binding.ParentBinding.Mode == Windows.UI.Xaml.Data.BindingMode.TwoWay)
+					if (binding is not null && binding.ParentBinding.Mode == BindingMode.TwoWay)
 					{
 						var response = await nav.NavigateRouteForResultAsync(element, path, Schemes.Current, data, resultType: resultType);
 						if (response is not null)

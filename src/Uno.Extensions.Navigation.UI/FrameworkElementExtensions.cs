@@ -1,17 +1,8 @@
-﻿using System;
+﻿using Windows.Foundation;
+using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Regions;
-#if !WINUI
-using Windows.Foundation;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
-#else
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Media;
-using Windows.Foundation;
-#endif
 
 namespace Uno.Extensions.Navigation;
 

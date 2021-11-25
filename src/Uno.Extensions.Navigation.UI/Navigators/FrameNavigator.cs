@@ -6,15 +6,6 @@ using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Regions;
-#if !WINUI
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
-#else
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Navigation;
-#endif
 
 namespace Uno.Extensions.Navigation.Navigators;
 
