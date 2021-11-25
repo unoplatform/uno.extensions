@@ -45,7 +45,7 @@
 		<Content Include="Assets\SplashScreen.scale-200.png" />
 	</ItemGroup>
 	<ItemGroup>
-		<UpToDateCheckInput Include="..\Commerce.Shared\**\*.xaml" />
+		<UpToDateCheckInput Include="..\..\..\Commerce.Shared\**\*.xaml" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="WasmCSS\Fonts.css" />
@@ -86,25 +86,25 @@
 		<PackageReference Include="Uno.Material" Version="1.1.0-dev.39" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting.Wasm\Uno.Extensions.Hosting.Wasm.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Localization\Uno.Extensions.Localization.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Logging.Wasm\Uno.Extensions.Logging.Wasm.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UI.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj">
+		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
+		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
+		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Hosting.Wasm\Uno.Extensions.Hosting.Wasm.csproj" />
+		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
+		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Localization\Uno.Extensions.Localization.csproj" />
+		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj" />
+		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Logging.Wasm\Uno.Extensions.Logging.Wasm.csproj" />
+		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UI.csproj" />
+		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
+		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.csproj" />
+		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
+		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj">
 			<Project>{74D93A0B-42F9-45A6-8AC3-684DAE9659A8}</Project>
 			<Name>Uno.Extensions.Reactive</Name>
 		</ProjectReference>
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Reactive.View\Uno.Extensions.Reactive.View.csproj">
+		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Reactive.View\Uno.Extensions.Reactive.View.csproj">
 			<Project>{7516C1F2-6CCB-4B59-91B7-E6D4B4EA5835}</Project>
 			<Name>Uno.Extensions.Reactive.View</Name>
 		</ProjectReference>
 	</ItemGroup>
-	<Import Project="..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" Condition="Exists('..\Commerce.Shared\Commerce.Shared.projitems')" />
+	<Import Project="..\..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" Condition="Exists('..\..\..\Commerce.Shared\Commerce.Shared.projitems')" />
 </Project>

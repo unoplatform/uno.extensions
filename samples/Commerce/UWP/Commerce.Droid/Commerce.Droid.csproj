@@ -98,55 +98,51 @@
     <AndroidResource Include="Resources\values\Styles.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj">
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj">
       <Project>{0dde79de-181b-42ef-af00-56dc622a6afa}</Project>
       <Name>Uno.Extensions.Configuration</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\src\Uno.Extensions.Core\Uno.Extensions.Core.csproj">
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Core\Uno.Extensions.Core.csproj">
       <Project>{0bf9edde-e6c1-4a3a-b73d-02d867f2054c}</Project>
       <Name>Uno.Extensions.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj">
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj">
       <Project>{ea4f9862-63ee-47d6-bd2b-2d1b83e2fd6a}</Project>
       <Name>Uno.Extensions.Hosting</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\src\Uno.Extensions.Http\Uno.Extensions.Http.csproj">
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Http\Uno.Extensions.Http.csproj">
       <Project>{29bfc492-b537-4985-9163-649fc56ebf12}</Project>
       <Name>Uno.Extensions.Http</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\src\Uno.Extensions.Localization\Uno.Extensions.Localization.csproj">
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Localization\Uno.Extensions.Localization.csproj">
       <Project>{3f8f8b81-03af-48e8-a901-ab3b14f15b10}</Project>
       <Name>Uno.Extensions.Localization</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\src\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj">
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj">
       <Project>{3f01a0de-4b9e-496f-ac6b-94daf315a20f}</Project>
       <Name>Uno.Extensions.Logging.Serilog</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.csproj">
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.csproj">
       <Project>{406a741f-fb06-482f-9037-154b55fcb2ce}</Project>
       <Name>Uno.Extensions.Logging</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.csproj">
-      <Project>{1aabcd2d-80a3-4083-b7c4-e6013ab998e1}</Project>
-      <Name>Uno.Extensions.Navigation.Toolkit</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UI.csproj">
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UI.csproj">
       <Project>{078b7148-820b-4441-85b1-800ad8c869ce}</Project>
       <Name>Uno.Extensions.Navigation.UI</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj">
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj">
       <Project>{ad3c0a66-450d-4355-b5c4-fdaf0d7746ad}</Project>
       <Name>Uno.Extensions.Navigation</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj">
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj">
       <Project>{5123670c-9756-4c9e-9844-f4a9c0aee633}</Project>
       <Name>Uno.Extensions.Serialization</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\src\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj">
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj">
       <Project>{74D93A0B-42F9-45A6-8AC3-684DAE9659A8}</Project>
       <Name>Uno.Extensions.Reactive</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\src\Uno.Extensions.Reactive.View\Uno.Extensions.Reactive.View.csproj">
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Reactive.View\Uno.Extensions.Reactive.View.csproj">
       <Project>{7516C1F2-6CCB-4B59-91B7-E6D4B4EA5835}</Project>
       <Name>Uno.Extensions.Reactive.View</Name>
     </ProjectReference>
@@ -218,7 +214,7 @@
     <AndroidResource Include="Resources\mipmap-anydpi-v26\ic_launcher.xml" />
   </ItemGroup>
   <ItemGroup />
-  <Import Project="..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" />
+  <Import Project="..\..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- This will force the generation of the APK when not building inside visual studio -->
   <Target Name="Issue3897Workaround" Condition=" '$(ManagedDesignTimeBuild)' == 'True' " AfterTargets="_RemoveLegacyDesigner">
