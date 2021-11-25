@@ -97,6 +97,7 @@ Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Commerce.Shared\Commerce.Shared.projitems*{16449065-b68e-4c0f-86f3-90f2e46129c8}*SharedItemsImports = 5
 		Commerce.Shared\Commerce.Shared.projitems*{3630e6a4-dda3-4510-a7fb-eda9d33545f2}*SharedItemsImports = 4
+		Commerce.Shared\Commerce.Shared.projitems*{40ea03f7-8a22-4143-b251-79bac3eb13d2}*SharedItemsImports = 5
 		Commerce.Shared\Commerce.Shared.projitems*{6279c845-92f8-4333-ab99-3d213163593c}*SharedItemsImports = 13
 		Commerce.Shared\Commerce.Shared.projitems*{a5b8155a-118f-4794-b551-c6f3cf7e5411}*SharedItemsImports = 5
 		Commerce.Shared\Commerce.Shared.projitems*{b10538d8-3a21-4cff-a5c9-405d5293584d}*SharedItemsImports = 4

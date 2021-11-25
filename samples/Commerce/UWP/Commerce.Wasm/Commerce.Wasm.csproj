@@ -106,5 +106,5 @@
 			<Name>Uno.Extensions.Reactive.View</Name>
 		</ProjectReference>
 	</ItemGroup>
-	<Import Project="..\..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" Condition="Exists('..\..\..\Commerce.Shared\Commerce.Shared.projitems')" />
+	<Import Project="..\..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" Condition="Exists('..\..\Commerce.Shared\Commerce.Shared.projitems')" />
 </Project>

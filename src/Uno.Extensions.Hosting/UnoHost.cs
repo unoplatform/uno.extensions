@@ -86,7 +86,7 @@ public static class UnoHost
 
 	private static string? PlatformSpecificContentRootPath()
 	{
-#if WINUI || WINDOWS_UWP || NETSTANDARD
+#if false //!HAS_UNO
             return Windows.Storage.ApplicationData.Current.LocalFolder.Path;
 #elif __ANDROID__ || __IOS__
         return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
