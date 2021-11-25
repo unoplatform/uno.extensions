@@ -89,10 +89,6 @@
   projects to stay in the same folder as the original reference one.
   -->
 	<PropertyGroup>
-		<_AdjustedOutputProjects>$(_AdjustedOutputProjects);Uno.Extensions.Core.csproj</_AdjustedOutputProjects>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="$(_AdjustedOutputProjects.Contains('$(MSBuildProjectFile)'))">
 		<BaseOutputPath>bin\$(MSBuildProjectName)</BaseOutputPath>
 		<BaseIntermediateOutputPath>obj\$(MSBuildProjectName)</BaseIntermediateOutputPath>
 		<DefaultItemExcludes>$(DefaultItemExcludes);obj/**;bin/**</DefaultItemExcludes>

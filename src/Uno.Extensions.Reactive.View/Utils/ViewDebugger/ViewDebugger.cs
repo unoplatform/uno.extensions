@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Reactive;
 

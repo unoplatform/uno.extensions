@@ -1,0 +1,17 @@
+﻿<Project Sdk="MSBuild.Sdk.Extras/3.0.38">
+	<!--
+	Adding project references to this project requires some manual adjustments.
+	Please see https://github.com/unoplatform/uno/issues/3909 for more details.
+	-->
+	<PropertyGroup>
+		<!--<TargetFrameworks>netstandard2.0;xamarinios10;xamarinmac20;MonoAndroid11.0;monoandroid10.0</TargetFrameworks>
+		<TargetFrameworks Condition="'$(UnoExtensionsDisableNet6)'==''">$(TargetFrameworks);net5.0-windows10.0.19041.0</TargetFrameworks>-->
+		<TargetFrameworks>netstandard2.0</TargetFrameworks>
+	</PropertyGroup>
+
+	<Import Project="common.props" />
+
+	<ItemGroup>
+		<PackageReference Include="Uno.WinUI" Version="4.0.0-dev.5678" />
+	</ItemGroup>
+</Project>

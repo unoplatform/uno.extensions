@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace Uno.Extensions.Reactive;
 
-[Windows.UI.Xaml.Data.Bindable]
-public sealed class FeedViewState : INotifyPropertyChanged
+[Bindable]
+public sealed class FeedViewState : System.ComponentModel.INotifyPropertyChanged
 {
-	public event PropertyChangedEventHandler? PropertyChanged;
+	public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
 
 	private readonly Dictionary<string, object?> _values = new();
 
@@ -90,5 +89,5 @@ public sealed class FeedViewState : INotifyPropertyChanged
 	public object? this[string axis] => _values.TryGetValue(axis, out var value) ? value : default;
 
 	private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-		=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		=> PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
 }
