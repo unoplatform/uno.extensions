@@ -4,9 +4,10 @@
 	Please see https://github.com/unoplatform/uno/issues/3909 for more details.
 	-->
 	<PropertyGroup>
-		<!--<TargetFrameworks>netstandard2.0;xamarinios10;xamarinmac20;MonoAndroid11.0;monoandroid10.0</TargetFrameworks>
-		<TargetFrameworks Condition="'$(UnoExtensionsDisableNet6)'==''">$(TargetFrameworks);net5.0-windows10.0.19041.0</TargetFrameworks>-->
-		<TargetFrameworks>netstandard2.0</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;xamarinios10;xamarinmac20;MonoAndroid11.0;monoandroid10.0</TargetFrameworks>
+		<TargetFrameworks Condition="'$(UnoExtensionsDisableNet6)'==''">$(TargetFrameworks);net5.0-windows10.0.18362.0</TargetFrameworks>
+		<EnableDefaultPageItems>false</EnableDefaultPageItems>
+		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
 	</PropertyGroup>
 
 	<Import Project="common.props" />
@@ -14,4 +15,13 @@
 	<ItemGroup>
 		<PackageReference Include="Uno.WinUI" Version="4.0.0-dev.5678" />
 	</ItemGroup>
+	
+	<ItemGroup Condition="'$(TargetFramework)'=='net5.0-windows10.0.18362.0'">
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.0.0" />
+		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22000.196"/>
+
+		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.18362.21" />
+		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.18362.21" />
+	</ItemGroup>
+
 </Project>

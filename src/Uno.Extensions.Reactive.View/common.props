@@ -1,4 +1,4 @@
-<Project Sdk="MSBuild.Sdk.Extras/3.0.23">
+<Project>
 	<PropertyGroup>
 		<!-- Ensures the .xr.xml files are generated in a proper layout folder -->
 		<GenerateLibraryLayout>true</GenerateLibraryLayout>

@@ -1,4 +1,4 @@
-﻿<Project Sdk="MSBuild.Sdk.Extras"  ToolsVersion="15.0">
+﻿<Project ToolsVersion="15.0">
 	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.Logging\Uno.Extensions.Logging.csproj" />

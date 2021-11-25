@@ -1,4 +1,4 @@
-<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
+<Project ToolsVersion="15.0">
 	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
 	</ItemGroup>

@@ -41,7 +41,7 @@ jobs:
   - task: CopyFiles@2
     displayName: 'Publish Wasm Binaries'
     inputs:
-      SourceFolder: $(build.sourcesdirectory)/samples/Commerce/Commerce.Wasm/bin/Release/net5.0/dist
+      SourceFolder: $(build.sourcesdirectory)/samples/Commerce/UWP/Commerce.Wasm/bin/Release/net5.0/dist
       Contents: '**/*.*'
       TargetFolder: $(build.artifactstagingdirectory)/Wasm
       CleanTargetFolder: false

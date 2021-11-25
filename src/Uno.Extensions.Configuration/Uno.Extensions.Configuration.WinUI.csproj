@@ -7,7 +7,7 @@
 	<Import Project="common.props"/>
 
 	<ItemGroup Condition="'$(TargetFramework)'!='net5.0-windows10.0.18362.0'">
-		<PackageReference Include="Uno.UI" Version="4.0.0-dev.5645" />
+		<PackageReference Include="Uno.WinUI" Version="4.0.0-dev.5645" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)'=='net5.0-windows10.0.18362.0'">

@@ -1,4 +1,4 @@
-<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
+<Project ToolsVersion="15.0">
 	<ItemGroup Condition="'$(IsUWP)' == 'true'">
 		<PackageReference Include="Microsoft.UI.Xaml" Version="2.7.0" />
 	</ItemGroup>
