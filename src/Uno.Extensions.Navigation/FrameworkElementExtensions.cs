@@ -59,6 +59,14 @@ public static class FrameworkElementExtensions
 			await EnsureLoaded(nextElement);
 		}
 #endif
+
+#if __ANDROID__
+		// EnsureLoaded can return from LayoutUpdated causing the remaining task to continue from the measure pass.
+		// This is problematic as modifying the visual tree during that moment
+		// could potentially leave the visual tree in a broken state.
+		// By yielding here, we avoid such situation from happening.
+		await Task.Yield();
+#endif
 	}
 	private static async Task EnsureElementLoaded(this FrameworkElement? element)
 	{
