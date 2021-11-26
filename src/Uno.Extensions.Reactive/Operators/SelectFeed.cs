@@ -34,20 +34,37 @@ internal sealed class SelectFeed<TArg, TResult> : IFeed<TResult>
 			{
 				var updated = current.With(parentMsg!);
 
-				if (parentMsg!.Changes.Contains(MessageAxis.Data)
-					&& parentMsg.Current.Data.IsSome(out var value))
+				if (parentMsg!.Changes.Contains(MessageAxis.Data))
 				{
-					try
+					var data = parentMsg.Current.Data;
+					switch (data.Type)
 					{
-						updated
-							.Data(Option.Some(_projection(value)))
-							.Error(null);
-					}
-					catch (Exception error)
-					{
-						updated
-							.Data(Option.Undefined<TResult>())
-							.Error(error);
+						case OptionType.Undefined:
+							updated
+								.Data(Option.Undefined<TResult>())
+								.Error(null);
+							break;
+
+						case OptionType.None:
+							updated
+								.Data(Option.None<TResult>())
+								.Error(null);
+							break;
+
+						case OptionType.Some:
+							try
+							{
+								updated
+									.Data(Option.Some(_projection(data.SomeOrDefault()!)))
+									.Error(null);
+							}
+							catch (Exception error)
+							{
+								updated
+									.Data(Option.Undefined<TResult>())
+									.Error(error);
+							}
+							break;
 					}
 				}
 
