@@ -40,7 +40,7 @@ jobs:
   - task: CopyFiles@2
     displayName: 'Publish Android Binaries'
     inputs:
-      SourceFolder: $(build.sourcesdirectory)/samples/Commerce/Commerce.Droid/bin/Release
+      SourceFolder: $(build.sourcesdirectory)/samples/Commerce/UWP/Commerce.Droid/bin/Release
       Contents: |
         **/*.aab
         **/*.apk
