@@ -126,6 +126,10 @@
       <Project>{406a741f-fb06-482f-9037-154b55fcb2ce}</Project>
       <Name>Uno.Extensions.Logging</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.UI.Toolkit.csproj">
+      <Project>{b6f69943-2161-437a-b491-3ebca7c78927}</Project>
+      <Name>Uno.Extensions.Navigation.UI.Toolkit</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UI.csproj">
       <Project>{078b7148-820b-4441-85b1-800ad8c869ce}</Project>
       <Name>Uno.Extensions.Navigation.UI</Name>
