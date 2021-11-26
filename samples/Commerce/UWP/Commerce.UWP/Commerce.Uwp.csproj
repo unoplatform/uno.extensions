@@ -18,7 +18,7 @@
       <Version>6.2.11</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml" Version="2.7.1-prerelease.211026002" />
-    <PackageReference Include="Uno.Core" Version="4.0.0-dev.7" />
+    <PackageReference Include="Uno.Core" Version="4.0.1" />
     <PackageReference Include="Uno.Material">
       <Version>1.1.0-dev.57</Version>
     </PackageReference>

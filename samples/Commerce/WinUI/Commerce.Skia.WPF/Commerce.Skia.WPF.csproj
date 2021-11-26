@@ -11,7 +11,7 @@
     <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.0.0-dev.5688" />
 		<PackageReference Include="Uno.Toolkit.WinUI" Version="0.1.0-dev.169" />
 		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="0.1.0-dev.169" />
-		<PackageReference Include="Uno.Core" Version="4.0.0-dev.7" />
+		<PackageReference Include="Uno.Core" Version="4.0.1" />
 		<PackageReference Include="Uno.Material.WinUI" Version="1.1.0-dev.57" />
 	</ItemGroup>
   <ItemGroup>

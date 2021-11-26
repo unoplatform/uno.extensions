@@ -18,7 +18,7 @@
     <PackageReference Include="Uno.UI.Skia.Gtk" Version="4.0.0-dev.5650" />
     <PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5650" Condition="'$(Configuration)'=='Debug'" />
 		<PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.169" />
-		<PackageReference Include="Uno.Core" Version="4.0.0-dev.7" />
+		<PackageReference Include="Uno.Core" Version="4.0.1" />
 		<PackageReference Include="Uno.Material">
 			<Version>1.1.0-dev.57</Version>
 		</PackageReference>
