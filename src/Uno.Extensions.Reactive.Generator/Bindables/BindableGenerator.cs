@@ -81,6 +81,7 @@ internal class BindableGenerator
 				);
 			})
 			.ToList();
+		var hasDeclaredValueProperty = properties.Any(prop => prop.name == "Value");
 
 		var code = @$"#nullable enable
 #pragma warning disable
@@ -96,7 +97,7 @@ namespace {record.ContainingNamespace};
 	{properties.Select(prop => $"private readonly {prop.bindable} _{prop.symbol.GetCamelCaseName()};").Align(1)}
 
 	public Bindable{record.GetPascalCaseName()}({NS.Reactive}.BindablePropertyInfo<{record}> property)
-		: base(property)
+		: base(property, hasValueProperty: {(!hasDeclaredValueProperty).ToString().ToLowerInvariant()})
 	{{
 		{properties
 			.Select(prop => $@"
@@ -109,6 +110,8 @@ namespace {record.ContainingNamespace};
 
 	private static {record} CreateDefault()
 		=> new({GetDefaultCtor(record)!.Parameters.Select(p => $"default({p.Type})!").JoinBy(", ")});
+
+	{(hasDeclaredValueProperty ? "" : $"public {record} Value => base.GetValue();")}
 
 	{properties.Select(prop => prop.property).Align(1)}
 }}";

@@ -124,6 +124,7 @@
     <PackageReference Include="System.Linq.Async" Version="4.0.0" />
     <PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.152" />
     <PackageReference Include="Uno.Material" Version="1.1.0-dev.57" />
+	<PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.0-dev.15" />
   </ItemGroup>
   <ItemGroup>
     <ImageAsset Include="Media.xcassets\AppIcons.appiconset\Contents.json">
@@ -305,6 +306,7 @@
   <Import Project="XamarinForms.targets" Condition="'$(Configuration)'=='Debug'" />
   <Import Project="..\..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
+  <Import Project="..\..\..\..\src\Uno.Extensions.Reactive.Generator\build\Uno.Extensions.Reactive.Generator.props" />
   <ProjectExtensions>
     <VisualStudio>
       <UserProperties XamarinHotReloadDebuggerTimeoutExceptionCommerceiOSHideInfoBar="True" />

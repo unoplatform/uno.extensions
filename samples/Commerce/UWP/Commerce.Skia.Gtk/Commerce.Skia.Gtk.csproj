@@ -19,12 +19,9 @@
     <PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5650" Condition="'$(Configuration)'=='Debug'" />
 		<PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.169" />
 		<PackageReference Include="Uno.Core" Version="4.0.1" />
-		<PackageReference Include="Uno.Material">
-			<Version>1.1.0-dev.57</Version>
-		</PackageReference>
-		<PackageReference Include="CommunityToolkit.Mvvm">
-			<Version>7.0.3</Version>
-		</PackageReference>
+		<PackageReference Include="Uno.Material" Version="1.1.0-dev.57" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="7.0.3" />
+		<PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.0-dev.15" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
@@ -34,7 +31,6 @@
 		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Localization\Uno.Extensions.Localization.csproj" />
 		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj" />
 		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Logging.Wasm\Uno.Extensions.Logging.Wasm.csproj" />
-		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.csproj" />
 		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.UI.Toolkit.csproj" />
 		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UI.csproj" />
 		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
@@ -49,4 +45,5 @@
 		</ProjectReference>
 	</ItemGroup>
 	<Import Project="..\..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" />
+	<Import Project="..\..\..\..\src\Uno.Extensions.Reactive.Generator\build\Uno.Extensions.Reactive.Generator.props" />
 </Project>

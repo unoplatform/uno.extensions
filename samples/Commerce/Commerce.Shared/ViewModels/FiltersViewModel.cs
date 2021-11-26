@@ -4,8 +4,7 @@ namespace Commerce.ViewModels;
 
 public partial class FiltersViewModel
 {
-	public FiltersViewModel(
-		IState<Filters> filter)
+	public FiltersViewModel(IInput<Filters> filter)
 	{
 	}
 }

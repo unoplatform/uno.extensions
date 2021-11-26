@@ -33,6 +33,7 @@
     <PackageReference Include="Microsoft.Extensions.Localization" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="6.0.0" />
     <PackageReference Include="System.Linq.Async" Version="4.0.0" />
+	<PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.0-dev.15" />
   </ItemGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -227,6 +228,7 @@
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
+  <Import Project="..\..\..\..\src\Uno.Extensions.Reactive.Generator\build\Uno.Extensions.Reactive.Generator.props" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
 			 Other similar extension points exist, see Microsoft.Common.targets.
 	<Target Name="BeforeBuild">

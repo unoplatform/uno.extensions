@@ -3,8 +3,10 @@
     "path": "Uno.Extensions.sln",
     "projects": [
       "Uno.Extensions.Core\\Uno.Extensions.Core.csproj",
+      "Uno.Extensions.Reactive.Generator\\Uno.Extensions.Reactive.Generator.csproj",
       "Uno.Extensions.Reactive.Testing\\Uno.Extensions.Reactive.Testing.csproj",
       "Uno.Extensions.Reactive.Tests\\Uno.Extensions.Reactive.Tests.csproj",
+      "Uno.Extensions.Reactive.View\\Uno.Extensions.Reactive.View.WinUI.csproj",
       "Uno.Extensions.Reactive.View\\Uno.Extensions.Reactive.View.csproj",
       "Uno.Extensions.Reactive\\Uno.Extensions.Reactive.csproj"
     ]

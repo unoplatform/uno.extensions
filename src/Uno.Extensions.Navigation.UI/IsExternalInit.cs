@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 
 namespace System.Runtime.CompilerServices
 {
-    public class IsExternalInit
+    internal static class IsExternalInit
     {
     }
 }
