@@ -1,4 +1,4 @@
-﻿<Project Sdk="MSBuild.Sdk.Extras/3.0.23">
+﻿<Project Sdk="MSBuild.Sdk.Extras">
 	<!--
 	Adding project references to this project requires some manual adjustments.
 	Please see https://github.com/unoplatform/uno/issues/3909 for more details.
@@ -6,50 +6,11 @@
 	<PropertyGroup>
 		<TargetFrameworks>netstandard2.0;xamarinios10;xamarinmac20;MonoAndroid11.0;monoandroid10.0</TargetFrameworks>
 		<TargetFrameworks Condition="'$(UnoExtensionsDisableNet6)'==''">$(TargetFrameworks);uap10.0.18362</TargetFrameworks>
-		<!-- Ensures the .xr.xml files are generated in a proper layout folder -->
-		<GenerateLibraryLayout>true</GenerateLibraryLayout>
-		<LangVersion>10.0</LangVersion>
-		<Nullable>enable</Nullable>
-		<NoWarn>1701;1702;1998</NoWarn>
-		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-		<WarningsAsErrors />
 	</PropertyGroup>
+	
+	<Import Project="common.props" />
+
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="1.1.1" />
 		<PackageReference Include="Uno.UI" Version="4.0.0-dev.5645" />
-		<PackageReference Include="Uno.Foundation.Logging" Version="4.0.0-dev.5645" />
-		<PackageReference Include="Uno.Core.Extensions.Logging.Singleton" Version="4.0.0-dev.7" />
-		<PackageReference Include="Uno.Core.Extensions.Logging" Version="4.0.0-dev.7" />
-	</ItemGroup>
-	<ItemGroup>
-		<ProjectReference Include="..\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj" />
-	</ItemGroup>
-	<ItemGroup>
-		<Page Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
-		<Compile Update="**\*.xaml.cs">
-			<DependentUpon>%(Filename)</DependentUpon>
-		</Compile>
-		<UpToDateCheckInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
-	</ItemGroup>
-	<ItemGroup>
-	  <SourceGeneratorInput Remove="View\FeedViewVisualStateSelector.cs" />
-	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Themes\" />
-	</ItemGroup>
-	<ItemGroup>
-	  <SourceGeneratorInput Remove="Utils\SmoothVisualState\SmoothStateRuleResult.cs" />
-	</ItemGroup>
-	<ItemGroup>
-	  <SourceGeneratorInput Remove="Utils\SmoothVisualState\SmoothVisualStateRuleCollection.cs" />
-	</ItemGroup>
-	<ItemGroup>
-	  <SourceGeneratorInput Remove="View\VisualStateHelper.cs" />
-	</ItemGroup>
-	<ItemGroup>
-	  <SourceGeneratorInput Remove="View\ViewDebugger.cs" />
-	</ItemGroup>
-	<ItemGroup>
-	  <SourceGeneratorInput Remove="View\ViewDebugger.VisualStates.cs" />
 	</ItemGroup>
 </Project>

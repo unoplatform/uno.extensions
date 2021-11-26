@@ -17,6 +17,21 @@ using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Regions;
 using Uno.Extensions.Navigation.Toolkit;
 using Uno.Foundation;
+using Commerce.Views;
+using Uno.Extensions.Logging.Serilog;
+
+#if WINUI
+using Windows.ApplicationModel;
+using Windows.ApplicationModel.Activation;
+using Windows.UI.Core;
+using Windows.UI.ViewManagement;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
+using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
+using Window = Microsoft.UI.Xaml.Window;
+using CoreApplication = Windows.ApplicationModel.Core.CoreApplication;
+#else
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Core;
@@ -24,9 +39,10 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using Windows.ApplicationModel.Core;
-using Commerce.Views;
-using Uno.Extensions.Logging.Serilog;
+using LaunchActivatedEventArgs = Windows.ApplicationModel.Activation.LaunchActivatedEventArgs;
+using Window = Windows.UI.Xaml.Window;
+using CoreApplication = Windows.ApplicationModel.Core.CoreApplication;
+#endif
 
 namespace Commerce
 {
@@ -107,7 +123,7 @@ namespace Commerce
             _window = new Window();
             _window.Activate();
 #else
-			_window = Windows.UI.Xaml.Window.Current;
+			_window = Window.Current;
 #endif
 
 			var notif = Host.Services.GetService<IRouteNotifier>();

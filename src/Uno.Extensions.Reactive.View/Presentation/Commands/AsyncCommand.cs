@@ -285,7 +285,7 @@ internal sealed class AsyncCommand : IAsyncCommand, IDisposable
 					{
 						try
 						{
-							var (command, arg) = ((AsyncCommand, object?))state;
+							var (command, arg) = ((AsyncCommand, object?))state!;
 							command.ReportExecutionEnded(arg);
 						}
 						catch (Exception) { } // Almost impossible, but an error here would crash the app

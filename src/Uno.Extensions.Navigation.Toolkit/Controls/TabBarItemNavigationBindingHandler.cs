@@ -1,11 +1,5 @@
 ﻿using Uno.Extensions.Navigation.Controls;
 using Uno.Toolkit.UI.Controls;
-#if !WINUI
-using Windows.UI.Xaml;
-#else
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-#endif
 
 namespace Uno.Extensions.Navigation.Toolkit.Controls;
 
