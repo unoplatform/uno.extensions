@@ -109,32 +109,90 @@
     <Reference Include="System.Core" />
     <Reference Include="Xamarin.iOS" />
   </ItemGroup>
-  <ItemGroup>
+	<PropertyGroup>
+		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+	</PropertyGroup>
+	<ItemGroup>
     <BundleResource Include="Resources\Fonts\uno-fluentui-assets.ttf" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Uno.WinUI" Version="4.0.0-dev.5688" />
     <PackageReference Include="Uno.WinUI.RemoteControl" Version="4.0.0-dev.5688" Condition="'$(Configuration)'=='Debug'" />
     <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.0.0-dev.5688" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="Uno.Extensions.Logging.OSLog " Version="1.0.1" />
+    <PackageReference Include="Uno.Toolkit.WinUI">
+      <Version>0.1.0-dev.169</Version>
+    </PackageReference>
+    <PackageReference Include="Uno.Core" Version="4.0.1" />
+    <PackageReference Include="Uno.Material.WinUI">
+      <Version>1.1.0-dev.57</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ImageAsset Include="Media.xcassets\AppIcons.appiconset\Contents.json" />
-    <ImageAsset Include="Media.xcassets\AppIcons.appiconset\Icon20.png" />
-    <ImageAsset Include="Media.xcassets\AppIcons.appiconset\Icon29.png" />
-    <ImageAsset Include="Media.xcassets\AppIcons.appiconset\Icon40.png" />
-    <ImageAsset Include="Media.xcassets\AppIcons.appiconset\Icon58.png" />
-    <ImageAsset Include="Media.xcassets\AppIcons.appiconset\Icon60.png" />
-    <ImageAsset Include="Media.xcassets\AppIcons.appiconset\Icon76.png" />
-    <ImageAsset Include="Media.xcassets\AppIcons.appiconset\Icon80.png" />
-    <ImageAsset Include="Media.xcassets\AppIcons.appiconset\Icon87.png" />
-    <ImageAsset Include="Media.xcassets\AppIcons.appiconset\Icon120.png" />
-    <ImageAsset Include="Media.xcassets\AppIcons.appiconset\Icon152.png" />
-    <ImageAsset Include="Media.xcassets\AppIcons.appiconset\Icon167.png" />
-    <ImageAsset Include="Media.xcassets\AppIcons.appiconset\Icon180.png" />
-    <ImageAsset Include="Media.xcassets\AppIcons.appiconset\Icon1024.png" />
-    <ImageAsset Include="Media.xcassets\LaunchImages.launchimage\Contents.json" />
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.WinUI.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj">
+      <Project>{975ff5ca-c780-4c30-9d48-e6a8258aba9e}</Project>
+      <Name>Uno.Extensions.Hosting</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Localization\Uno.Extensions.Localization.WinUI.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.WinUI.Toolkit.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Reactive.View\Uno.Extensions.Reactive.View.WinUI.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ImageAsset Include="Media.xcassets\AppIcons.appiconset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Media.xcassets\AppIcons.appiconset\Icon20.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Media.xcassets\AppIcons.appiconset\Icon29.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Media.xcassets\AppIcons.appiconset\Icon40.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Media.xcassets\AppIcons.appiconset\Icon58.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Media.xcassets\AppIcons.appiconset\Icon60.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Media.xcassets\AppIcons.appiconset\Icon76.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Media.xcassets\AppIcons.appiconset\Icon80.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Media.xcassets\AppIcons.appiconset\Icon87.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Media.xcassets\AppIcons.appiconset\Icon120.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Media.xcassets\AppIcons.appiconset\Icon152.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Media.xcassets\AppIcons.appiconset\Icon167.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Media.xcassets\AppIcons.appiconset\Icon180.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Media.xcassets\AppIcons.appiconset\Icon1024.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Media.xcassets\LaunchImages.launchimage\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />

@@ -31,6 +31,9 @@ jobs:
       echo MSBUILDPATH: $MSBUILDPATH
     displayName: Setup VS17 Path
 
+  - powershell: .\build\Install-WindowsSdkISO.ps1 18362
+    displayName: Install Windows SDK 18362
+
   - task: UseDotNet@2
     displayName: 'Use .NET 5.0.x'
     inputs:
@@ -101,5 +104,6 @@ jobs:
     condition: and(succeeded(), not(eq(variables['build.reason'], 'PullRequest')), not(eq(variables['SignClientSecret'], '')), not(eq(variables['SignClientUser'], '')))
 
   - task: PublishBuildArtifacts@1
+    condition: always()
     inputs:
         ArtifactName: $(Build.DefinitionName)

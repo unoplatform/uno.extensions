@@ -14,6 +14,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Uno.Core" Version="4.0.0-dev.7" />
+		<PackageReference Include="Uno.Core" Version="4.0.1" />
 	</ItemGroup>
 </Project>
