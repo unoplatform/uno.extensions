@@ -18,7 +18,11 @@ internal class BindableViewModelGenerator
 	}
 
 	private bool IsSupported(INamedTypeSymbol type)
-		=> _ctx.IsGenerationEnabled(type) ?? type.Name.EndsWith("ViewModel", StringComparison.Ordinal);
+		=> _ctx.IsGenerationEnabled(type)
+			?? type
+				.Constructors
+				.SelectMany(ctor => ctor.Parameters)
+				.Any(parameter => _ctx.IsInputOrCommand(parameter.Type));
 
 	public IEnumerable<(INamedTypeSymbol type, string code)> Generate(IAssemblySymbol assembly)
 	{
@@ -85,7 +89,7 @@ partial class {vm.Name} : global::System.IAsyncDisposable
 				var bindableVmParameters = parameters
 					.Select(param => param.GetCtorParameter())
 					.Where(param => param.code is not null)
-					.OrderBy(param => !param.isOptional)
+					.OrderBy(param => param.isOptional ? 1 : 0)
 					.Select(param => param.code)
 					.JoinBy(", ");
 				var vmParameters = parameters
@@ -139,15 +143,22 @@ partial class {vm.Name} : global::System.IAsyncDisposable
 
 		foreach (var parameter in parameters)
 		{
-			if (_ctx.IsFeed(parameter.Type, out var valueType))
+			if (_ctx.IsFeed(parameter, out var valueType, out var kind))
 			{
-				if (_bindables.GetBindableType(valueType) is { } bindableType)
+				switch (kind)
 				{
-					yield return new BindableInput(parameter, valueType, bindableType);
-				}
-				else
-				{
-					yield return new FeedInput(parameter, valueType);
+					case InputKind.External:
+						yield return new ParameterInput(parameter);
+						break;
+
+					case InputKind.Edit when _bindables.GetBindableType(valueType) is { } bindableType:
+						yield return new BindableInput(parameter, valueType, bindableType);
+						break;
+
+					case InputKind.Value:
+					default:
+						yield return new FeedInput(parameter, valueType);
+						break;
 				}
 			}
 			else if (_ctx.IsCommand(parameter.Type, out var commandParameterType))

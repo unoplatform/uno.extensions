@@ -4,18 +4,15 @@ using Microsoft.CodeAnalysis;
 
 namespace Uno.Extensions.Reactive.Generator;
 
-internal class CommandInput : IInputInfo
+/// <summary>
+/// A VM trigger parameter that can be converted into a Command.
+/// </summary>
+internal record CommandInput(IParameterSymbol Parameter, ITypeSymbol? _commandParameterType) : IInputInfo
 {
-	private readonly ITypeSymbol? _commandParameterType;
-
-	public CommandInput(IParameterSymbol parameter, ITypeSymbol? commandParameterType)
-	{
-		Parameter = parameter;
-		_commandParameterType = commandParameterType;
-	}
+	private readonly ITypeSymbol? _commandParameterType = _commandParameterType;
 
 	/// <inheritdoc />
-	public IParameterSymbol Parameter { get; }
+	public IParameterSymbol Parameter { get; } = Parameter;
 
 	/// <inheritdoc />
 	public string? GetBackingField()
@@ -35,7 +32,7 @@ internal class CommandInput : IInputInfo
 
 	/// <inheritdoc />
 	public string? GetPropertyInit()
-		=> $"{Parameter.GetPascalCaseName()} = {Parameter.Name}Builder.Build(ctx);";
+		=> $"{Parameter.GetPascalCaseName()} = {Parameter.Name}Builder.Build({N.Ctor.Ctx});";
 
 	/// <inheritdoc />
 	public string? GetProperty()

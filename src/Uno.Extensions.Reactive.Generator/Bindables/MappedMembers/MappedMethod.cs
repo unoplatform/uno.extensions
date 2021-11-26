@@ -4,14 +4,9 @@ using Microsoft.CodeAnalysis;
 
 namespace Uno.Extensions.Reactive.Generator;
 
-internal class MappedMethod : IMappedMember
+internal record MappedMethod(IMethodSymbol _method) : IMappedMember
 {
-	private readonly IMethodSymbol _method;
-
-	public MappedMethod(IMethodSymbol method)
-	{
-		_method = method;
-	}
+	private readonly IMethodSymbol _method = _method;
 
 	/// <inheritdoc />
 	public string GetDeclaration()

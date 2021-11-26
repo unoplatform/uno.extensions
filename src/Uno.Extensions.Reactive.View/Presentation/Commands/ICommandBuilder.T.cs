@@ -9,5 +9,7 @@ public interface ICommandBuilder<out T>
 
 	public void Then(ActionAsync<T> execute);
 
+	public void Execute(ActionAsync<T> execute);
+
 	//public void Then(Signal execute);
 }

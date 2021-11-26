@@ -4,16 +4,10 @@ using Microsoft.CodeAnalysis;
 
 namespace Uno.Extensions.Reactive.Generator;
 
-internal class MappedFeedField : IMappedMember
+internal record MappedFeedField(IFieldSymbol _field, ITypeSymbol _valueType) : IMappedMember
 {
-	private readonly IFieldSymbol _field;
-	private readonly ITypeSymbol _valueType;
-
-	public MappedFeedField(IFieldSymbol field, ITypeSymbol valueType)
-	{
-		_field = field;
-		_valueType = valueType;
-	}
+	private readonly IFieldSymbol _field = _field;
+	private readonly ITypeSymbol _valueType = _valueType;
 
 	/// <inheritdoc />
 	public string GetDeclaration()

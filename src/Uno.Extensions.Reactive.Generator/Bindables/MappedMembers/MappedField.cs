@@ -4,14 +4,9 @@ using Microsoft.CodeAnalysis;
 
 namespace Uno.Extensions.Reactive.Generator;
 
-internal class MappedField : IMappedMember
+internal record MappedField(IFieldSymbol _field) : IMappedMember
 {
-	private readonly IFieldSymbol _field;
-
-	public MappedField(IFieldSymbol field)
-	{
-		_field = field;
-	}
+	private readonly IFieldSymbol _field = _field;
 
 	/// <inheritdoc />
 	public string GetDeclaration()

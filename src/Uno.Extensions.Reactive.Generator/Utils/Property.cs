@@ -7,6 +7,14 @@ namespace Uno.Extensions.Reactive.Generator;
 
 public record Property(Accessibility Accessibility, string Type, string Name)
 {
+	public static Property FromProperty(IPropertySymbol property)
+		=> new(property.Type, property.Name)
+		{
+			Accessibility = property.DeclaredAccessibility,
+			HasGetter = property.GetMethod?.IsAccessible() ?? false,
+			HasSetter = property.SetMethod?.IsAccessible() ?? false
+		};
+
 	public Property(Accessibility accessibility, ITypeSymbol type, string name)
 		: this(accessibility, type.ToString(), name)
 	{
@@ -24,50 +32,6 @@ public record Property(Accessibility Accessibility, string Type, string Name)
 	public Accessibility? SetterAccessibility { get; init; }
 	public string? Setter { get; init; }
 	public bool IsInit { get; init; }
-
-	public static string Generate(IPropertySymbol property, string? getter, string? setter)
-	{
-		var sb = new IndentedStringBuilder();
-
-		sb.AppendLine($"{property.GetAccessibilityAsCSharpCodeString()} {property.Type} {property.Name}");
-		sb.AppendLine();
-		using (sb.Block())
-		{
-			if (getter is not null && (property.GetMethod?.IsAccessible() ?? false))
-			{
-				if (property.GetMethod?.DeclaredAccessibility != property.DeclaredAccessibility)
-				{
-					sb.Append(property.GetMethod?.GetAccessibilityAsCSharpCodeString());
-					sb.Append(" ");
-				}
-
-				sb.AppendLine($"get => {getter};");
-				sb.AppendLine();
-			}
-
-			if (setter is not null && (property.SetMethod?.IsAccessible() ?? false))
-			{
-				if (property.SetMethod?.DeclaredAccessibility != property.DeclaredAccessibility)
-				{
-					sb.Append(property.GetMethod?.GetAccessibilityAsCSharpCodeString());
-					sb.Append(" ");
-				}
-
-				sb.AppendLine($"set => {setter};");
-				sb.AppendLine();
-			}
-		}
-
-		return sb.ToString();
-	}
-
-	public static Property FromProperty(IPropertySymbol property)
-		=> new(property.Type, property.Name)
-		{
-			Accessibility = property.DeclaredAccessibility,
-			HasGetter = property.GetMethod?.IsAccessible() ?? false,
-			HasSetter = property.SetMethod?.IsAccessible() ?? false
-		};
 
 	public string Generate()
 		=> Generate(Accessibility, Type, Name, HasGetter, GetterAccessibility, Getter, HasSetter, SetterAccessibility, Setter, IsInit);

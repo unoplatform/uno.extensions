@@ -4,6 +4,9 @@ using Microsoft.CodeAnalysis;
 
 namespace Uno.Extensions.Reactive.Generator;
 
+/// <summary>
+/// An unknown VM parameter that will be re-exposed in the BindableVM ctor
+/// </summary>
 internal record ParameterInput(IParameterSymbol Parameter) : IInputInfo
 {
 	/// <inheritdoc />

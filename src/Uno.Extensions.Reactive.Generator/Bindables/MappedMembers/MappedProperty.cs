@@ -4,14 +4,9 @@ using Microsoft.CodeAnalysis;
 
 namespace Uno.Extensions.Reactive.Generator;
 
-internal class MappedProperty : IMappedMember
+internal record MappedProperty(IPropertySymbol _property) : IMappedMember
 {
-	private readonly IPropertySymbol _property;
-
-	public MappedProperty(IPropertySymbol property)
-	{
-		_property = property;
-	}
+	private readonly IPropertySymbol _property = _property;
 
 	/// <inheritdoc />
 	public string GetDeclaration()

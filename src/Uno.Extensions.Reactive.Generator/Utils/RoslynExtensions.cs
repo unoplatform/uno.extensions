@@ -109,36 +109,4 @@ internal static class RoslynExtensions
 
 		throw new ArgumentOutOfRangeException($"{accessibility} is not supported.");
 	}
-
-	///// <summary>
-	///// Determines if the symbol inherits from the specified type.
-	///// </summary>
-	///// <param name="symbol">The current symbol</param>
-	///// <param name="other">A potential base class.</param>
-	//public static bool Is(this INamedTypeSymbol symbol, INamedTypeSymbol other)
-	//{
-	//	do
-	//	{
-	//		//if (SymbolEqualityComparer.Default.Equals(symbol, other))
-	//		//{
-	//		//	return true;
-	//		//}
-
-	//		symbol = symbol.BaseType;
-
-	//		if (symbol == null)
-	//		{
-	//			break;
-	//		}
-
-	//	} while (symbol.Name != "Object");
-
-	//	return false;
-	//}
-
-	//public static AttributeData FindAttribute(this ISymbol property, INamedTypeSymbol attributeClassSymbol)
-	//{
-	//	return default!;
-	//	//return property.GetAttributes().FirstOrDefault(a => SymbolEqualityComparer.Default.Equals(a.AttributeClass, attributeClassSymbol));
-	//}
 }
