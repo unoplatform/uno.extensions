@@ -62,7 +62,7 @@
 											Padding="16,16,16,16"
 											utu:AutoLayout.CounterAlignment="Stretch">
 								<Image Source="{Binding Photo}"
-									   Stretch="UniformToFill"
+									   Stretch="Uniform"
 									   utu:AutoLayout.CounterAlignment="Stretch"
 									   utu:AutoLayout.PrimaryLength="379" />
 							</utu:AutoLayout>
