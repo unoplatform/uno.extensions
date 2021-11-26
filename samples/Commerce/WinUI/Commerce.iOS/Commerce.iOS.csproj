@@ -128,6 +128,7 @@
     <PackageReference Include="Uno.Material.WinUI">
       <Version>1.1.0-dev.57</Version>
     </PackageReference>
+	<PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.WinUI.csproj" />
@@ -205,4 +206,5 @@
   </ItemGroup>
   <Import Project="..\..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
+  <Import Project="..\..\..\..\src\Uno.Extensions.Reactive.Generator\build\Uno.Extensions.Reactive.props" />
 </Project>

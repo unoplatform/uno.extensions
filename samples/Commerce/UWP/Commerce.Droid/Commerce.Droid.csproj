@@ -69,15 +69,15 @@
     </PackageReference>
     <PackageReference Include="Uno.UI" Version="4.0.0-dev.5650" />
     <PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5650" Condition="'$(Configuration)'=='Debug'" />
-    <PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.169" />
-    <PackageReference Include="Uno.Toolkit.UI.Material" Version="0.1.0-dev.169" />
+    <PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.165" />
+    <PackageReference Include="Uno.Toolkit.UI.Material" Version="0.1.0-dev.165" />
     <PackageReference Include="Uno.UniversalImageLoader" Version="1.9.33" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="System.Linq.Async" Version="4.0.0" />
     <PackageReference Include="Xamarin.AndroidX.AppCompat.AppCompatResources" Version="1.2.0.5" />
     <PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData" Version="2.3.1.1" />
-    <PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.0-dev.15" />
+    <PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />
@@ -221,7 +221,7 @@
   <ItemGroup />
   <Import Project="..\..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
-  <Import Project="..\..\..\..\src\Uno.Extensions.Reactive.Generator\build\Uno.Extensions.Reactive.Generator.props" />
+  <Import Project="..\..\..\..\src\Uno.Extensions.Reactive.Generator\build\Uno.Extensions.Reactive.props" />
   <!-- This will force the generation of the APK when not building inside visual studio -->
   <Target Name="Issue3897Workaround" Condition=" '$(ManagedDesignTimeBuild)' == 'True' " AfterTargets="_RemoveLegacyDesigner">
     <!-- See https://github.com/unoplatform/uno/issues/3897 and https://github.com/xamarin/xamarin-android/issues/5069 for more details -->

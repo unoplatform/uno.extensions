@@ -1,0 +1,14 @@
+<Project>
+	<Target Name="_InjectReactiveGenerator" BeforeTargets="BeforeCompile;_UnoSourceGenerator">
+		<ItemGroup>
+			<SourceGenerator 
+				Include="$(MSBuildThisFileDirectory)..\bin\Uno.Extensions.Reactive.Generator\$(Configuration)\net461\Uno.Extensions.Reactive.Generator.dll"
+				Condition="Exists('$(MSBuildThisFileDirectory)..\bin')" />
+		</ItemGroup>
+	</Target>
+	<ItemGroup>
+		<SourceGenerator 
+			Include="$(MSBuildThisFileDirectory)..\tools\Uno.Extensions.Reactive.Generator.dll"
+			Condition="Exists('$(MSBuildThisFileDirectory)..\tools')" />
+	</ItemGroup>
+</Project>
