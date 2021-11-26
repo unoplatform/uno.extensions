@@ -101,5 +101,6 @@ jobs:
     condition: and(succeeded(), not(eq(variables['build.reason'], 'PullRequest')), not(eq(variables['SignClientSecret'], '')), not(eq(variables['SignClientUser'], '')))
 
   - task: PublishBuildArtifacts@1
+    condition: always()
     inputs:
         ArtifactName: $(Build.DefinitionName)
