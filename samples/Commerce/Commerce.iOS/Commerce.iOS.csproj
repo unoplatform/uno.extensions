@@ -168,9 +168,6 @@
     <ImageAsset Include="Media.xcassets\AppIcons.appiconset\Icon1024.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Media.xcassets\LaunchImages.launchimage\Contents.json">
-      <Visible>false</Visible>
-    </ImageAsset>
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
