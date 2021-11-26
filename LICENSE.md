@@ -1,6 +1,6 @@
-# Uno Platform
+# Uno Extensions
 
-Copyright (c) nventive
+Copyright (c) Uno Platform
 
 All rights reserved. 
 
