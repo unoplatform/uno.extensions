@@ -8,7 +8,7 @@
 
   <Identity
     Name="E46D78E8-8D5C-4377-9F00-355F839C1BFC"
-    Publisher="O=MyCompany"
+    Publisher="CN=uno platform"
     Version="1.0.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="FA9B063A-926A-4119-916F-09D0B7AB7BA6" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
