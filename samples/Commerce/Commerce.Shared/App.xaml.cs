@@ -39,7 +39,7 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using LaunchActivatedEventArgs = LaunchActivatedEventArgs;
+using LaunchActivatedEventArgs = Windows.ApplicationModel.Activation.LaunchActivatedEventArgs;
 using Window = Windows.UI.Xaml.Window;
 using CoreApplication = Windows.ApplicationModel.Core.CoreApplication;
 #endif
