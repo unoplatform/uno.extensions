@@ -65,14 +65,14 @@ namespace Commerce
 			// Also load configuration from environment specific files if they exist eg appsettings.development.json
 			// UseEmbeddedAppSettings<App>() if you want to include appsettings files as Embedded Resources instead of Content
 			.UseAppSettings(includeEnvironmentSettings: true)
-#if !HAS_UNO || __WASM__
-			.UseLogging()
-#else
-			.UseLogging(b => b.AddSimpleConsole(options =>
-			{
-				options.ColorBehavior = Microsoft.Extensions.Logging.Console.LoggerColorBehavior.Disabled;
-			}))
-#endif
+//#if (!HAS_UNO || __WASM__) && !WINUI
+//			.UseLogging()
+//#else
+//			.UseLogging(b => b.AddSimpleConsole(options =>
+//			{
+//				options.ColorBehavior = Microsoft.Extensions.Logging.Console.LoggerColorBehavior.Disabled;
+//			}))
+//#endif
 			.ConfigureLogging(logBuilder =>
 			{
 				logBuilder

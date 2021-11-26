@@ -74,7 +74,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
     <PackageReference Include="Uno.Toolkit.UI">
-      <Version>0.1.0-dev.165</Version>
+      <Version>0.1.0-dev.169</Version>
     </PackageReference>
     <PackageReference Include="Uno.Core" Version="4.0.0-dev.7" />
     <PackageReference Include="Uno.Material">
@@ -96,6 +96,10 @@
     <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Hosting.Wasm\Uno.Extensions.Hosting.Wasm.csproj">
       <Project>{71C08233-DC84-4142-9A20-8C06B08D7C39}</Project>
       <Name>Uno.Extensions.Hosting.Wasm</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj">
+      <Project>{975ff5ca-c780-4c30-9d48-e6a8258aba9e}</Project>
+      <Name>Uno.Extensions.Hosting</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Http\Uno.Extensions.Http.csproj">
       <Project>{FEC47512-AC91-4046-8866-89FD512873DB}</Project>
