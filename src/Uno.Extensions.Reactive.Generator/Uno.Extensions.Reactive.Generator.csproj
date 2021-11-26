@@ -27,4 +27,8 @@
 		<Compile Include="..\Uno.Extensions.Reactive.UI\**\*Attribute.cs" Link="Attributes\%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
+	</ItemGroup>
+
 </Project>
