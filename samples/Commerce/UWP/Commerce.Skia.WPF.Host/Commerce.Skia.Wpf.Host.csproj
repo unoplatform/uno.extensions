@@ -15,6 +15,6 @@
 		<Content Include="Assets\Fonts\uno-fluentui-assets.ttf" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\Commerce.Skia.WPF\Commerce.Skia.WPF.csproj" />
+		<ProjectReference Include="..\Commerce.Skia.WPF\Commerce.Skia.WPF.csproj" />
 	</ItemGroup>
 </Project>
