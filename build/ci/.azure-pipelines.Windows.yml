@@ -31,6 +31,9 @@ jobs:
       echo MSBUILDPATH: $MSBUILDPATH
     displayName: Setup VS17 Path
 
+  - powershell: .\build\Install-WindowsSdkISO.ps1 18362
+    displayName: Install Windows SDK 18362
+
   - task: UseDotNet@2
     displayName: 'Use .NET 5.0.x'
     inputs:
