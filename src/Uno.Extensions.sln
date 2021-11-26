@@ -56,6 +56,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Reactive", "Reactive", "{6B956AB1-06A6-4BEC-9467-E7B593A89E34}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive", "Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj", "{4CFBA6CE-2C70-4241-8085-B40D6DD36D1F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4CAB68E2-8ABC-489E-9F6A-3BE6A91A0DC3} = {4CAB68E2-8ABC-489E-9F6A-3BE6A91A0DC3}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.Testing", "Uno.Extensions.Reactive.Testing\Uno.Extensions.Reactive.Testing.csproj", "{FEA65A36-C4FB-4A4D-9F6B-A6E0778BB363}"
 EndProject
@@ -75,7 +78,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Localization
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Configuration.WinUI", "Uno.Extensions.Configuration\Uno.Extensions.Configuration.WinUI.csproj", "{4FBE702D-09C9-4DE4-A129-6061AE7C0A26}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Reactive.Generator", "Uno.Extensions.Reactive.Generator\Uno.Extensions.Reactive.Generator.csproj", "{4CAB68E2-8ABC-489E-9F6A-3BE6A91A0DC3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.Generator", "Uno.Extensions.Reactive.Generator\Uno.Extensions.Reactive.Generator.csproj", "{4CAB68E2-8ABC-489E-9F6A-3BE6A91A0DC3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

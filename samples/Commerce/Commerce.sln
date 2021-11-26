@@ -26,6 +26,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Reactive", "Reactive", "{26719ED6-1423-4110-8784-0052E96FDD7B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive", "..\..\src\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj", "{74D93A0B-42F9-45A6-8AC3-684DAE9659A8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{881F8FE1-B33D-4533-890C-BB5141BA00FA} = {881F8FE1-B33D-4533-890C-BB5141BA00FA}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.View", "..\..\src\Uno.Extensions.Reactive.View\Uno.Extensions.Reactive.View.csproj", "{7516C1F2-6CCB-4B59-91B7-E6D4B4EA5835}"
 EndProject
