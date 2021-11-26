@@ -37,7 +37,13 @@ public readonly struct CommandBuilder<T> : ICommandBuilder, ICommandBuilder<T>, 
 	void ICommandBuilder.Then(ActionAsync execute)
 		=> _configs.Add(_current with { Execute = (_, ct) => execute(ct) });
 
+	void ICommandBuilder.Execute(ActionAsync execute)
+		=> _configs.Add(_current with { Execute = (_, ct) => execute(ct) });
+
 	void ICommandBuilder<T>.Then(ActionAsync<T> execute)
+		=> _configs.Add(_current with { Execute = (arg, ct) => execute((T)arg!, ct) });
+
+	void ICommandBuilder<T>.Execute(ActionAsync<T> execute)
 		=> _configs.Add(_current with { Execute = (arg, ct) => execute((T)arg!, ct) });
 
 	void IConditionalCommandBuilder<T>.Then(ActionAsync<T> execute)

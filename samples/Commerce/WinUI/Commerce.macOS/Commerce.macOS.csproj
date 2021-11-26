@@ -84,6 +84,7 @@
     <PackageReference Include="Uno.Material.WinUI">
       <Version>1.1.0-dev.57</Version>
     </PackageReference>
+	<PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.WinUI.csproj" />
@@ -136,6 +137,7 @@
     </BundleResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets" />
+  <Import Project="..\..\..\..\src\Uno.Extensions.Reactive.Generator\build\Uno.Extensions.Reactive.props" />
   <Target Name="VS16Mac_RemoveSystemMemory" BeforeTargets="ResolveAssemblyReferences">
     <!--
 				VS4Mac seems to process System.Memory differently, and removes

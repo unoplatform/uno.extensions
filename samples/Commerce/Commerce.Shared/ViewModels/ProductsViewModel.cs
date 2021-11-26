@@ -17,8 +17,8 @@ public partial class ProductsViewModel
 
 	private ProductsViewModel(
 		IProductService products,
-		IFeed<string> term,
-		[Edit] IFeed<Filters> filter)
+		IInput<string> term,
+		[Value] IInput<Filters> filter)
 	{
 		_products = products;
 		_term = term;

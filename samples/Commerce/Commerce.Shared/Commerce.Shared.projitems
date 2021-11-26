@@ -40,13 +40,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\HomeViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Filters.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\FiltersViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\FiltersViewModel.g.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\LoginViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\LoginViewModel.g.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ProductDetailsViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ProductDetailsViewModel.g.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ProductsViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ProductsViewModel.g.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ProfileViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ShellViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\CartDialog.xaml.cs">
@@ -85,6 +81,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Views\ShellView.xaml.cs">
       <DependentUpon>ShellView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)_Compat\IsExternalInit.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="$(MSBuildThisFileDirectory)ColorPaletteOverride.xaml">

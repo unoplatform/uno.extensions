@@ -12,6 +12,7 @@
 		<PackageReference Include="Uno.Core" Version="4.0.1" />
 		<PackageReference Include="Uno.Material" Version="1.1.0-dev.57" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="7.0.3" />
+		<PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<UpToDateCheckInput Include="..\..\Commerce.Shared\**\*.xaml" />
@@ -38,4 +39,5 @@
 		</ProjectReference>
 	</ItemGroup>
 	<Import Project="..\..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" />
+	<Import Project="..\..\..\..\src\Uno.Extensions.Reactive.Generator\build\Uno.Extensions.Reactive.props" />
 </Project>

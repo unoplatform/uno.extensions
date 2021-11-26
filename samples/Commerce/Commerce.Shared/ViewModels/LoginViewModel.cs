@@ -18,8 +18,8 @@ public partial class LoginViewModel
 	private LoginViewModel(
 		INavigator navigator,
 		IOptions<AppInfo> appInfo,
-		IFeed<Credentials> credentials,
-		IState<string> error,
+		IInput<Credentials> credentials,
+		IInput<string> error,
 		ICommandBuilder login)
 	{
 		Title = appInfo.Value.Title;

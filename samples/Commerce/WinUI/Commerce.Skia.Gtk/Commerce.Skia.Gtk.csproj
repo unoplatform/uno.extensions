@@ -23,6 +23,7 @@
 		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="0.1.0-dev.169" />
 		<PackageReference Include="Uno.Core" Version="4.0.1" />
 		<PackageReference Include="Uno.Material.WinUI" Version="1.1.0-dev.57" />
+		<PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.WinUI.csproj" />
@@ -40,4 +41,5 @@
 		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Reactive.View\Uno.Extensions.Reactive.View.WinUI.csproj" />
 	</ItemGroup>
 	<Import Project="..\..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" />
+	<Import Project="..\..\..\..\src\Uno.Extensions.Reactive.Generator\build\Uno.Extensions.Reactive.props" />
 </Project>

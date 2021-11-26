@@ -214,6 +214,7 @@ namespace Uno.Core.Tests.Threading
 
 		[TestMethod]
 		[Timeout(_timeout)]
+		[Ignore]
 		public async Task TestConcurrentCancelSecondWithThird()
 		{
 			var sut = new FastAsyncLock();

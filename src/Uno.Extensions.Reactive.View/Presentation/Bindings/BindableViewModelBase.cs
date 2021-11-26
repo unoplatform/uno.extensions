@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
@@ -23,7 +22,7 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 	protected void RegisterDisposable(IAsyncDisposable disposable) 
 		=> _disposables.Add(disposable);
 
-	protected BindablePropertyInfo<TProperty> Property<TProperty>(string propertyName, TProperty defaultValue, out IState<TProperty> state, DispatcherQueue? dispatcher = null)
+	protected BindablePropertyInfo<TProperty> Property<TProperty>(string propertyName, TProperty? defaultValue, out IInput<TProperty> state, DispatcherQueue? dispatcher = null)
 	{
 		var stateImpl = new State<TProperty>(defaultValue);
 		var info = new BindablePropertyInfo<TProperty>(this, propertyName, ViewModelToView, ViewToViewModel);
@@ -34,7 +33,7 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 		return info;
 
 		void ViewModelToView(Action<TProperty?> updated)
-			=> DispatcherHelper.GetDispatcher(dispatcher).TryEnqueue(async () =>
+			=> DispatcherHelper.TryEnqueue(dispatcher, async () =>
 			{
 				try
 				{
@@ -86,32 +85,10 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 	protected ICommandBuilder CreateCommand(string propertyName)
 		=> new CommandBuilder<object?>(propertyName);
 
+	protected ICommandBuilder<T> CreateCommand<T>(string propertyName)
+		=> new CommandBuilder<T>(propertyName);
+
 	/// <inheritdoc />
 	public ValueTask DisposeAsync()
 		=> _disposables.DisposeAsync();
-}
-
-internal class Input<T> : IState<T>
-{
-	private readonly IState<T> _state;
-
-	public string PropertyName { get; }
-
-	public Input(string propertyName, IState<T> state)
-	{
-		_state = state;
-		PropertyName = propertyName;
-	}
-
-	/// <inheritdoc />
-	public IAsyncEnumerable<Message<T>> GetSource(SourceContext context, CancellationToken ct = default)
-		=> _state.GetSource(context, ct);
-
-	/// <inheritdoc />
-	public ValueTask Update(Func<Message<T>, MessageBuilder<T>> updater, CancellationToken ct)
-		=> _state.Update(msg => updater(msg).Set(BindableViewModelBase.BindingSource, this), ct);
-
-	/// <inheritdoc />
-	public ValueTask DisposeAsync()
-		=> _state.DisposeAsync();
 }

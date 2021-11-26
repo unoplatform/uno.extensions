@@ -12,6 +12,26 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="1.1.0" />
 		<PackageReference Include="System.Linq.Async" Version="4.0.0" />
+		<PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.0" PrivateAssets="None" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Reactive.Generator\Uno.Extensions.Reactive.Generator.csproj">
+			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+			<SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+			<UndefineProperties>TargetFramework</UndefineProperties>
+		</ProjectReference>
+	</ItemGroup>
+	
+	<ItemGroup>
+		<Content Include="..\Uno.Extensions.Reactive.Generator\build\**\*.*" Link="build\%(RecursiveDir)%(Filename)%(Extension)">
+			<Pack>true</Pack>
+			<PackagePath>build</PackagePath>
+		</Content>
+		<Content Include="..\Uno.Extensions.Reactive.Generator\bin\Uno.Extensions.Reactive.Generator\$(Configuration)\net461\**\*.dll" Link="tools\%(RecursiveDir)%(Filename)%(Extension)">
+			<Pack>true</Pack>
+			<PackagePath>tools</PackagePath>
+		</Content>
 	</ItemGroup>
 
 	<ItemGroup>

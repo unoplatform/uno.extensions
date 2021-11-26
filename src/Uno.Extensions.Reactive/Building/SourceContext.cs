@@ -25,8 +25,13 @@ public sealed class SourceContext : IAsyncDisposable
 	public static SourceContext Current => _current.Value ?? _none;
 
 	[Pure]
-	public static SourceContext? Find(object owner)
+	public static SourceContext? Find(object? owner)
 	{
+		if (owner is null)
+		{
+			return default;
+		}
+
 		_contexts.TryGetValue(owner, out var ctx);
 		return ctx;
 	}
@@ -160,7 +165,7 @@ public sealed class SourceContext : IAsyncDisposable
 		_ct!.Cancel();
 
 		var states = Interlocked.Exchange(ref _states, null);
-		if (states is null or {Count: 0})
+		if (states is null or { Count: 0 })
 		{
 			return; // already disposed
 		}
