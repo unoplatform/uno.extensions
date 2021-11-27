@@ -1,0 +1,35 @@
+﻿<Project Sdk="MSBuild.Sdk.Extras"  ToolsVersion="15.0">
+  <PropertyGroup>
+    <TargetFrameworks>uap10.0.18362;netstandard2.0;xamarinios10;xamarinmac20;monoandroid11.0</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
+		<UnoRuntimeProjectReference Include="Uno.Extensions.Hosting.UWP.Wasm.csproj" />
+		<UnoRuntimeProjectReference Include="Uno.Extensions.Hosting.UWP.Skia.csproj" />
+	</ItemGroup>
+  <ItemGroup>
+    <Content Include="buildTransitive\**">
+      <PackagePath>buildTransitive</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Uno.UI" Version="4.0.0-dev.5678" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="Uno.Extensions.Hosting.UWP.Wasm.csproj">
+			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+			<SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+			<UndefineProperties>TargetFramework</UndefineProperties>
+		</ProjectReference>
+		<ProjectReference Include="Uno.Extensions.Hosting.UWP.Skia.csproj">
+			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+			<SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+			<UndefineProperties>TargetFramework</UndefineProperties>
+		</ProjectReference>
+	</ItemGroup>
+	
+</Project>

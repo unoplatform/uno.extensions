@@ -1,0 +1,43 @@
+﻿<Project Sdk="MSBuild.Sdk.Extras"  ToolsVersion="15.0">
+  <PropertyGroup>
+    <TargetFrameworks>net5.0-windows10.0.18362;netstandard2.0;xamarinios10;xamarinmac20;monoandroid11.0</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
+		<UnoRuntimeProjectReference Include="Uno.Extensions.Hosting.WinUI.Wasm.csproj" />
+		<UnoRuntimeProjectReference Include="Uno.Extensions.Hosting.WinUI.Skia.csproj" />
+	</ItemGroup>
+  <ItemGroup>
+    <Content Include="buildTransitive\**">
+      <PackagePath>buildTransitive</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Uno.WinUI" Version="4.0.0-dev.5678" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
+	</ItemGroup>
+	
+	<ItemGroup Condition="'$(TargetFramework)'=='net5.0-windows10.0.18362'">
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.0.0" />
+		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22000.196"/>
+
+		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.18362.21" />
+		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.18362.21" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="Uno.Extensions.Hosting.WinUI.Wasm.csproj">
+			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+			<SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+			<UndefineProperties>TargetFramework</UndefineProperties>
+		</ProjectReference>
+		<ProjectReference Include="Uno.Extensions.Hosting.WinUI.Skia.csproj">
+			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+			<SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+			<UndefineProperties>TargetFramework</UndefineProperties>
+		</ProjectReference>
+	</ItemGroup>
+
+</Project>
