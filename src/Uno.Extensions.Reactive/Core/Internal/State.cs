@@ -5,32 +5,11 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Uno.Extensions.Reactive.Core;
+using Uno.Extensions.Reactive.Utils;
 using Uno.Threading;
 
 namespace Uno.Extensions.Reactive;
-
-internal enum StateSubscriptionMode
-{
-	/// <summary>
-	/// Underlying feed is enumerated only once the state is being enumerated.
-	/// </summary>
-	Lazy = 0,
-
-	/// <summary>
-	/// Underlying feed is enumerated at the creation of the state.
-	/// </summary>
-	Eager = 1,
-
-	/// <summary>
-	/// The enumeration of the underlying feed is stopped as soon as this state is no longer enumerated.
-	/// </summary>
-	RefCounted = 2,
-
-	/// <summary>
-	/// The default is Lazy, not ref counted.
-	/// </summary>
-	Default = Lazy,
-}
 
 internal class State<T> : IState<T>, IFeed<T>, IAsyncDisposable
 {

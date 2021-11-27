@@ -2,6 +2,7 @@
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Reactive;
+using Uno.Extensions.Reactive.Core;
 
 namespace Uno.Extensions.Reactive.Testing;
 

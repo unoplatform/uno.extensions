@@ -7,9 +7,9 @@ public interface ICommandBuilder<out T>
 {
 	public IConditionalCommandBuilder<T> When(Predicate<T> canExecute);
 
-	public void Then(ActionAsync<T> execute);
+	public void Then(AsyncAction<T> execute);
 
-	public void Execute(ActionAsync<T> execute);
+	public void Execute(AsyncAction<T> execute);
 
 	//public void Then(Signal execute);
 }

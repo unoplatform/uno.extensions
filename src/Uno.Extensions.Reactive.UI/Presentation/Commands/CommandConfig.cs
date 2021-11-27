@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Uno.Extensions.Reactive.Core;
 
 namespace Uno.Extensions.Reactive;
 
@@ -10,5 +11,5 @@ internal record struct CommandConfig
 
 	public Predicate<object?>? CanExecute { get; set; }
 
-	public ActionAsync<object?> Execute { get; set; }
+	public AsyncAction<object?> Execute { get; set; }
 }

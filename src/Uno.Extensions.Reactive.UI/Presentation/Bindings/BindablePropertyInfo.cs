@@ -10,13 +10,13 @@ public readonly struct BindablePropertyInfo<T>
 	private readonly IBindable _owner;
 	private readonly string _name;
 	private readonly Action<Action<T?>> _subscribeOwnerUpdated;
-	private readonly ActionAsync<Func<T?, T?>, bool> _update;
+	private readonly AsyncAction<Func<T?, T?>, bool> _update;
 
 	internal BindablePropertyInfo(
 		IBindable owner,
 		string name, 
 		Action<Action<T?>> subscribeOwnerUpdated,
-		ActionAsync<Func<T?, T?>, bool> updateOwner)
+		AsyncAction<Func<T?, T?>, bool> updateOwner)
 	{
 		_owner = owner;
 		_name = name;

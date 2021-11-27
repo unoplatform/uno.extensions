@@ -18,10 +18,10 @@ internal static class AsyncEnumerableExtensions
 		return defaultValue;
 	}
 
-	public static Task ForEachAwaitWithCancellationAsync<TSource>(this IAsyncEnumerable<TSource> source, ActionAsync<TSource> action, ConcurrencyMode mode, CancellationToken ct)
-		=> ForEachAwaitWithCancellationAsync(source, action, mode, continueOnError: false, ct);
+	public static Task ForEachAwaitWithCancellationAsync<TSource>(this IAsyncEnumerable<TSource> source, AsyncAction<TSource> asyncAction, ConcurrencyMode mode, CancellationToken ct)
+		=> ForEachAwaitWithCancellationAsync(source, asyncAction, mode, continueOnError: false, ct);
 
-	public static Task ForEachAwaitWithCancellationAsync<TSource>(this IAsyncEnumerable<TSource> source, ActionAsync<TSource> action, ConcurrencyMode mode, bool continueOnError, CancellationToken ct)
+	public static Task ForEachAwaitWithCancellationAsync<TSource>(this IAsyncEnumerable<TSource> source, AsyncAction<TSource> asyncAction, ConcurrencyMode mode, bool continueOnError, CancellationToken ct)
 	{
 		var manager = AsyncOperationManager.Create(mode, continueOnError);
 		ct.Register(manager.Dispose);
@@ -32,7 +32,7 @@ internal static class AsyncEnumerableExtensions
 			{
 				await foreach (var item in source.WithCancellation(ct).ConfigureAwait(false))
 				{
-					manager.OnNext(token => action(item, token));
+					manager.OnNext(token => asyncAction(item, token));
 				}
 			}
 			catch (Exception error)

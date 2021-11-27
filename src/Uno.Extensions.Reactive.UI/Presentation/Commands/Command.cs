@@ -3,6 +3,8 @@ using System.ComponentModel.Design;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Uno.Extensions;
+using Uno.Extensions.Reactive.Core;
+using Uno.Extensions.Reactive.Utils;
 using Uno.Logging;
 
 namespace Uno.Extensions.Reactive;
@@ -11,7 +13,7 @@ public static class Command
 {
 	internal static Action<Exception> _defaultErrorHandler = e => typeof(AsyncCommand).Log().Error("Failed execute command.", e);
 
-	public static IAsyncCommand Async(ActionAsync execute, [CallerMemberName] string? name = null)
+	public static IAsyncCommand Async(AsyncAction execute, [CallerMemberName] string? name = null)
 	{
 		if (execute.Target is null)
 		{

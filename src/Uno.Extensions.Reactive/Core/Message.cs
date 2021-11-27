@@ -4,8 +4,15 @@ using System.Linq;
 
 namespace Uno.Extensions.Reactive;
 
+/// <summary>
+/// A message of an <see cref="IFeed{T}"/>.
+/// </summary>
+/// <typeparam name="T">The value type of the message.</typeparam>
 public sealed class Message<T> : IMessage
 {
+	/// <summary>
+	/// The initial message of <see cref="IFeed{T}"/>.
+	/// </summary>
 	public static Message<T> Initial { get; } = new(MessageEntry<T>.Empty, MessageEntry<T>.Empty, Array.Empty<MessageAxis>());
 
 	internal Message(MessageEntry<T> previous, MessageEntry<T> current, IReadOnlyCollection<MessageAxis> changes)
@@ -15,14 +22,27 @@ public sealed class Message<T> : IMessage
 		Changes = changes;
 	}
 
-	IMessageEntry IMessage.Previous => Previous;
+	/// <summary>
+	/// The previous entry.
+	/// </summary>
 	public MessageEntry<T> Previous { get; }
+	IMessageEntry IMessage.Previous => Previous;
 
-	IMessageEntry IMessage.Current => Current;
+	/// <summary>
+	/// The current entry.
+	/// </summary>
 	public MessageEntry<T> Current { get; }
+	IMessageEntry IMessage.Current => Current;
 
+	/// <summary>
+	/// The axes that has been modified in <see cref="Current"/> compared to <see cref="Previous"/>.
+	/// </summary>
 	public IReadOnlyCollection<MessageAxis> Changes { get; }
 
+	/// <summary>
+	/// Begins creation of a new message based on this current message.
+	/// </summary>
+	/// <returns>A builder to configure the updated message to build.</returns>
 	public MessageBuilder<T> With()
 		=> new(Current);
 

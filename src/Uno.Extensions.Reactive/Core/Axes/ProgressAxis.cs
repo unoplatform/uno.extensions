@@ -7,21 +7,34 @@ using System.Runtime.CompilerServices;
 
 namespace Uno.Extensions.Reactive;
 
+/// <summary>
+/// The <see cref="MessageAxis"/> of the <see cref="MessageEntry{T}.IsTransient"/>.
+/// </summary>
 public sealed class ProgressAxis : MessageAxis
 {
 	internal static ProgressAxis Instance { get; } = new();
 
 	private ProgressAxis()
-		: base(MessageAxises.Progress)
+		: base(MessageAxes.Progress)
 	{
 	}
 
+	/// <summary>
+	/// Get the progress from the raw axis value.
+	/// </summary>
+	/// <param name="value">The raw axis value.</param>
+	/// <returns>The progress.</returns>
 	[Pure]
 	[EditorBrowsable(EditorBrowsableState.Advanced)]
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public bool FromMessageValue(MessageAxisValue progress)
-		=> progress is { IsSet: true } and { Value: bool and true };
+	public bool FromMessageValue(MessageAxisValue value)
+		=> value is { IsSet: true } and { Value: bool and true };
 
+	/// <summary>
+	/// Encapsulates a progress into a raw axis value.
+	/// </summary>
+	/// <param name="progress">The progress to encapsulate.</param>
+	/// <returns>The raw axis value.</returns>
 	[Pure]
 	[EditorBrowsable(EditorBrowsableState.Advanced)]
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]

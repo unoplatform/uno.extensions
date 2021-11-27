@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Windows.System;
+using Uno.Extensions.Reactive.Core;
 
 namespace Uno.Extensions.Reactive;
 
@@ -34,18 +35,18 @@ public readonly struct CommandBuilder<T> : ICommandBuilder, ICommandBuilder<T>, 
 	IConditionalCommandBuilder<T> ICommandBuilder<T>.When(Predicate<T> canExecute)
 		=> new CommandBuilder<T>(_name, _configs, _current with { CanExecute = arg => canExecute((T)arg!)});
 
-	void ICommandBuilder.Then(ActionAsync execute)
+	void ICommandBuilder.Then(AsyncAction execute)
 		=> _configs.Add(_current with { Execute = (_, ct) => execute(ct) });
 
-	void ICommandBuilder.Execute(ActionAsync execute)
+	void ICommandBuilder.Execute(AsyncAction execute)
 		=> _configs.Add(_current with { Execute = (_, ct) => execute(ct) });
 
-	void ICommandBuilder<T>.Then(ActionAsync<T> execute)
+	void ICommandBuilder<T>.Then(AsyncAction<T> execute)
 		=> _configs.Add(_current with { Execute = (arg, ct) => execute((T)arg!, ct) });
 
-	void ICommandBuilder<T>.Execute(ActionAsync<T> execute)
+	void ICommandBuilder<T>.Execute(AsyncAction<T> execute)
 		=> _configs.Add(_current with { Execute = (arg, ct) => execute((T)arg!, ct) });
 
-	void IConditionalCommandBuilder<T>.Then(ActionAsync<T> execute)
+	void IConditionalCommandBuilder<T>.Then(AsyncAction<T> execute)
 		=> _configs.Add(_current with { Execute = (arg, ct) => execute((T)arg!, ct) });
 }

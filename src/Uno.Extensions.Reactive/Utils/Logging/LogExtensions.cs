@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace Uno.Extensions.Reactive.Utils.Logging;
+namespace Uno.Extensions.Reactive.Logging;
 
 internal static class LogExtensions
 {

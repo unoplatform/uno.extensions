@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using _ChangeSet = System.Collections.Generic.IReadOnlyDictionary<Uno.Extensions.Reactive.MessageAxis, Uno.Extensions.Reactive.MessageAxisUpdate>;
+using Uno.Extensions.Reactive.Utils;
+using _ChangeSet = System.Collections.Generic.IReadOnlyDictionary<Uno.Extensions.Reactive.MessageAxis, Uno.Extensions.Reactive.Core.MessageAxisUpdate>;
 
-namespace Uno.Extensions.Reactive.Utils;
+namespace Uno.Extensions.Reactive.Core;
 
 internal sealed partial class MessageManager<TParent, TResult>
 {
@@ -32,27 +33,7 @@ internal sealed partial class MessageManager<TParent, TResult>
 		_local = (initialUpdates, initialUpdates, initialMessage);
 	}
 
-	public struct ParentedMessage
-	{
-		private readonly MessageManager<TParent, TResult> _owner;
-
-		internal ParentedMessage(MessageManager<TParent, TResult> owner)
-		{
-			_owner = owner;
-		}
-
-		public Message<TParent>? Parent => _owner._parent;
-
-		public Message<TResult> Local => _owner.Current;
-
-		public MessageBuilder<TParent, TResult> With() 
-			=> new(Parent, (_owner._local.defined, _owner._local.result));
-
-		public MessageBuilder<TParent, TResult> With(Message<TParent> updatedParent)
-			=> new(updatedParent, (_owner._local.defined, _owner._local.result));
-	}
-
-	public bool Update(Func<ParentedMessage, MessageBuilder<TParent, TResult>> updater, CancellationToken ct = default)
+	public bool Update(Func<CurrentMessage, MessageBuilder<TParent, TResult>> updater, CancellationToken ct = default)
 	{
 		// Even if this method is sync, we force the caller to provide a ct to make sure that we don't send an update if cancelled
 		if (ct.IsCancellationRequested)
@@ -62,7 +43,7 @@ internal sealed partial class MessageManager<TParent, TResult>
 
 		lock (_gate)
 		{
-			var (parent, locallyDefinedChangeSet) = updater(new ParentedMessage(this)).GetResult();
+			var (parent, locallyDefinedChangeSet) = updater(new CurrentMessage(this)).GetResult();
 
 			if (ct.IsCancellationRequested)
 			{
@@ -180,7 +161,7 @@ internal sealed partial class MessageManager<TParent, TResult>
 		}
 	}
 
-	private void EndUpdate(UpdateTransaction transaction, Func<ParentedMessage, MessageBuilder<TParent, TResult>> result)
+	private void EndUpdate(UpdateTransaction transaction, Func<CurrentMessage, MessageBuilder<TParent, TResult>> result)
 	{
 		lock (_gate)
 		{

@@ -13,7 +13,7 @@ namespace Uno.Extensions.Reactive;
 [EditorBrowsable(EditorBrowsableState.Advanced)]
 public abstract partial class BindableViewModelBase : IBindable, INotifyPropertyChanged, IAsyncDisposable
 {
-	internal static MessageAxis<object?> BindingSource { get; } = new(MessageAxises.BindingSource, _ => null);
+	internal static MessageAxis<object?> BindingSource { get; } = new(MessageAxes.BindingSource, _ => null);
 
 	public event PropertyChangedEventHandler? PropertyChanged;
 

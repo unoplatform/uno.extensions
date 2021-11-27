@@ -2,23 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Uno.Extensions.Reactive.Utils.Logging;
+using Uno.Extensions.Reactive.Logging;
 
-namespace Uno.Extensions.Reactive;
+namespace Uno.Extensions.Reactive.Utils;
 
 internal sealed class ForEachRunner<T> : IForEachRunner
 {
 	private readonly Func<IAsyncEnumerable<T>> _enumeratorProvider;
-	private readonly ActionAsync<T> _action;
+	private readonly AsyncAction<T> _asyncAction;
 
 	private CancellationTokenSource? _enumerationToken;
 
 	public ForEachRunner(
 		Func<IAsyncEnumerable<T>> enumeratorProvider,
-		ActionAsync<T> action)
+		AsyncAction<T> asyncAction)
 	{
 		_enumeratorProvider = enumeratorProvider;
-		_action = action;
+		_asyncAction = asyncAction;
 	}
 
 	/// <inheritdoc />
@@ -42,7 +42,7 @@ internal sealed class ForEachRunner<T> : IForEachRunner
 
 		try
 		{
-			await _enumeratorProvider().ForEachAwaitAsync(async item => await _action(item, _enumerationToken.Token), _enumerationToken.Token);
+			await _enumeratorProvider().ForEachAwaitAsync(async item => await _asyncAction(item, _enumerationToken.Token), _enumerationToken.Token);
 		}
 		catch (OperationCanceledException)
 		{

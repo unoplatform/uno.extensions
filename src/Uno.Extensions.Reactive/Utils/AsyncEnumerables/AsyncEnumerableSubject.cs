@@ -5,7 +5,7 @@ using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Uno.Extensions.Reactive;
+namespace Uno.Extensions.Reactive.Utils;
 
 internal class AsyncEnumerableSubject<T> : IAsyncEnumerable<T>
 {

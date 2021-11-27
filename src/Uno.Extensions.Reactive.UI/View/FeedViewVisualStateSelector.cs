@@ -15,13 +15,13 @@ public class FeedViewVisualStateSelector
 	protected virtual string? GetVisualState(MessageAxis axis, MessageAxisValue value)
 		=> axis.Identifier switch
 		{
-			MessageAxises.Data => MessageAxis.Data.FromMessageValue(value).Type.ToString(),
+			MessageAxes.Data => MessageAxis.Data.FromMessageValue(value).Type.ToString(),
 
-			MessageAxises.Error when value.IsSet => "Error",
-			MessageAxises.Error => "NoError",
+			MessageAxes.Error when value.IsSet => "Error",
+			MessageAxes.Error => "NoError",
 
-			MessageAxises.Progress when MessageAxis.Progress.FromMessageValue(value) => "Indeterminate",
-			MessageAxises.Progress => "NoProgress",
+			MessageAxes.Progress when MessageAxis.Progress.FromMessageValue(value) => "Indeterminate",
+			MessageAxes.Progress => "NoProgress",
 
 			_ => value.IsSet ? axis.Identifier + "_" + value.Value! : axis.Identifier
 		};

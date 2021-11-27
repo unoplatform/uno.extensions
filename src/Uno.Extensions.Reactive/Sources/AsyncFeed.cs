@@ -4,23 +4,24 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Utils;
-using static Uno.Extensions.Reactive.FeedHelper;
+using static Uno.Extensions.Reactive.Core.FeedHelper;
 
-namespace Uno.Extensions.Reactive;
+namespace Uno.Extensions.Reactive.Sources;
 
-internal class AsyncFeed<T> : IFeed<T>
+internal sealed class AsyncFeed<T> : IFeed<T>
 {
 	private readonly ISignal? _refresh;
-	private readonly FuncAsync<Option<T>> _dataProvider;
+	private readonly AsyncFunc<Option<T>> _dataProvider;
 
-	public AsyncFeed(FuncAsync<T> dataProvider, ISignal? refresh = null)
+	public AsyncFeed(AsyncFunc<T> dataProvider, ISignal? refresh = null)
 	{
 		_dataProvider = async ct => Option.SomeOrNone(await dataProvider(ct));
 		_refresh = refresh;
 	}
 
-	public AsyncFeed(FuncAsync<Option<T>> dataProvider, ISignal? refresh = null)
+	public AsyncFeed(AsyncFunc<Option<T>> dataProvider, ISignal? refresh = null)
 	{
 		_dataProvider = dataProvider;
 		_refresh = refresh;

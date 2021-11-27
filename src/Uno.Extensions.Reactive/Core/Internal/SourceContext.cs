@@ -6,24 +6,30 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Uno.Extensions.Reactive.Logging;
 using Uno.Extensions.Reactive.Utils;
-using Uno.Extensions.Reactive.Utils.Logging;
 
-namespace Uno.Extensions.Reactive;
+namespace Uno.Extensions.Reactive.Core;
 
-[EditorBrowsable(EditorBrowsableState.Advanced)]
-public interface ISourceContextAware
-{
-}
-
+/// <summary>
+/// A context used to cache subscriptions to <see cref="IFeed{T}"/> for a given owner.
+/// </summary>
 public sealed class SourceContext : IAsyncDisposable
 {
 	private static readonly SourceContext _none = new(isNone: true);
 	private static readonly AsyncLocal<SourceContext> _current = new();
 	private static readonly ConditionalWeakTable<object, SourceContext> _contexts = new();
 
+	/// <summary>
+	/// Gets the current context.
+	/// </summary>
 	public static SourceContext Current => _current.Value ?? _none;
 
+	/// <summary>
+	/// Try to get the context of a given owner.
+	/// </summary>
+	/// <param name="owner">The owner.</param>
+	/// <returns>The context of the owner, or null if none created yet.</returns>
 	[Pure]
 	public static SourceContext? Find(object? owner)
 	{
@@ -36,6 +42,12 @@ public sealed class SourceContext : IAsyncDisposable
 		return ctx;
 	}
 
+	/// <summary>
+	/// Gets or create the context of a given owner.
+	/// </summary>
+	/// <param name="owner">The owner.</param>
+	/// <returns>The context of the owner.</returns>
+	/// <exception cref="ArgumentNullException"><paramref name="owner"/> is null</exception>
 	public static SourceContext GetOrCreate(object owner)
 	{
 		owner = owner ?? throw new ArgumentNullException(nameof(owner));
@@ -59,6 +71,12 @@ public sealed class SourceContext : IAsyncDisposable
 		return ctx;
 	}
 
+	/// <summary>
+	/// Explicitly set the context to a given owner.
+	/// </summary>
+	/// <param name="owner">The owner.</param>
+	/// <param name="ctx">The context to set.</param>
+	/// <exception cref="InvalidOperationException">The <paramref name="owner"/> already has a context attached.</exception>
 	[EditorBrowsable(EditorBrowsableState.Advanced)]
 	public static void Set(object owner, SourceContext ctx)
 	{
@@ -87,8 +105,16 @@ public sealed class SourceContext : IAsyncDisposable
 		}
 	}
 
+	/// <summary>
+	/// A <see cref="CancellationToken"/> associated to the owner.
+	/// </summary>
 	public CancellationToken Token { get; }
 
+	/// <summary>
+	/// Sets the context as <see cref="Current"/>.
+	/// </summary>
+	/// <returns>A disposable that can be used to resign current.</returns>
+	/// <exception cref="ObjectDisposedException">The context has already been disposed.</exception>
 	public CurrentSubscription AsCurrent()
 	{
 		if (_isNone)
@@ -104,6 +130,12 @@ public sealed class SourceContext : IAsyncDisposable
 		return new(this);
 	}
 
+	/// <summary>
+	/// Get or create a cached with replay async enumeration of messages produced by the given feed.
+	/// </summary>
+	/// <typeparam name="T">Type of the value of feed.</typeparam>
+	/// <param name="feed">The feed to get source from.</param>
+	/// <returns>The cached with replay async enumeration of messages produced by the given feed</returns>
 	public IAsyncEnumerable<Message<T>> GetOrCreateSource<T>(IFeed<T> feed)
 	{
 		if (_isNone)
@@ -121,6 +153,12 @@ public sealed class SourceContext : IAsyncDisposable
 		}
 	}
 
+	/// <summary>
+	/// Get or create a <see cref="IState{T}"/> for a given feed.
+	/// </summary>
+	/// <typeparam name="T">Type of the value of feed.</typeparam>
+	/// <param name="feed">The feed to get source from.</param>
+	/// <returns>The state wrapping the given feed</returns>
 	public IState<T> GetOrCreateState<T>(IFeed<T> feed)
 		=> GetOrCreateStateCore(feed);
 
@@ -179,12 +217,15 @@ public sealed class SourceContext : IAsyncDisposable
 		await disposeAsync.ConfigureAwait(false);
 	}
 
+	/// <summary>
+	/// A disposable that can be used to resign current.
+	/// </summary>
 	public readonly struct CurrentSubscription : IDisposable
 	{
 		private readonly SourceContext _ctx;
 		private readonly SourceContext _previous;
 
-		public CurrentSubscription(SourceContext ctx)
+		internal CurrentSubscription(SourceContext ctx)
 		{
 			_ctx = ctx;
 

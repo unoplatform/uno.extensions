@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
 using Windows.System;
+using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.View.Utils;
 
 namespace Uno.Extensions.Reactive;

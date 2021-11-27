@@ -1,10 +1,10 @@
 ﻿using System;
 
-#if !NET50
+#if !NET5_0
 namespace System.Diagnostics.CodeAnalysis;
 
 [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
-public class NotNullWhenAttribute : Attribute
+internal class NotNullWhenAttribute : Attribute
 {
 	public bool ReturnValue { get; }
 

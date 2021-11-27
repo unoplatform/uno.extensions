@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Uno.Extensions.Reactive.Utils;
 
-namespace Uno.Extensions.Reactive.Utils;
+namespace Uno.Extensions.Reactive.Core;
 
 internal partial class MessageManager<TParent, TResult>
 {
@@ -60,7 +61,7 @@ internal partial class MessageManager<TParent, TResult>
 				_ct);
 		}
 
-		public void Commit(Func<ParentedMessage, MessageBuilder<TParent, TResult>> resultUpdater)
+		public void Commit(Func<MessageManager<TParent, TResult>.CurrentMessage, MessageBuilder<TParent, TResult>> resultUpdater)
 		{
 			if (Interlocked.CompareExchange(ref _state, State.Committed, State.Active) == State.Active)
 			{

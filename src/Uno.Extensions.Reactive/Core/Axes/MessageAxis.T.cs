@@ -5,6 +5,9 @@ using System.Linq;
 
 namespace Uno.Extensions.Reactive;
 
+/// <summary>
+/// Defines a metadata axis of a <see cref="MessageEntry{T}"/>
+/// </summary>
 public sealed class MessageAxis<T> : MessageAxis
 {
 	internal delegate T Aggregator(IReadOnlyCollection<T> values);
@@ -17,10 +20,20 @@ public sealed class MessageAxis<T> : MessageAxis
 		_aggregate = aggregate;
 	}
 
+	/// <summary>
+	/// Get the metadata from the raw axis value.
+	/// </summary>
+	/// <param name="value">The raw axis value.</param>
+	/// <returns>The metadata.</returns>
 	[Pure]
 	public T? FromMessageValue(MessageAxisValue value)
 		=> value is { IsSet: true } and { Value: T raw } ? raw : default;
 
+	/// <summary>
+	/// Encapsulates a metadata into a raw axis value..
+	/// </summary>
+	/// <param name="value">The metadata to encapsulate..</param>
+	/// <returns>The raw axis value.</returns>
 	[Pure]
 	public MessageAxisValue ToMessageValue(T? value)
 		=> value is null ? default : new(value);

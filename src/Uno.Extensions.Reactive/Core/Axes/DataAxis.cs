@@ -7,38 +7,61 @@ using System.Runtime.CompilerServices;
 
 namespace Uno.Extensions.Reactive;
 
+/// <summary>
+/// The <see cref="MessageAxis"/> of the <see cref="MessageEntry{T}.Data"/>.
+/// </summary>
 public sealed class DataAxis : MessageAxis
 {
 	internal static DataAxis Instance { get; } = new();
 
 	private DataAxis()
-		: base(MessageAxises.Data)
+		: base(MessageAxes.Data)
 	{
 	}
 
+	/// <summary>
+	/// Get the untyped data from the raw axis value.
+	/// </summary>
+	/// <param name="value">The raw axis value.</param>
+	/// <returns>The untyped data.</returns>
 	[Pure]
 	[EditorBrowsable(EditorBrowsableState.Advanced)]
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public Option<object> FromMessageValue(MessageAxisValue value)
 		=> value is { IsSet: true } and { Value: Option<object> opt } ? opt : Option<object>.Undefined();
 
+	/// <summary>
+	/// Get the data from the raw axis value.
+	/// </summary>
+	/// <param name="value">The raw axis value.</param>
+	/// <returns>The data.</returns>
 	[Pure]
 	[EditorBrowsable(EditorBrowsableState.Advanced)]
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
 	public Option<T> FromMessageValue<T>(MessageAxisValue value)
 		=> value is { IsSet: true } and { Value: Option<object> opt } ? (Option<T>)opt : Option<T>.Undefined();
 
+	/// <summary>
+	/// Encapsulates a untyped data into a raw axis value.
+	/// </summary>
+	/// <param name="data">The data to encapsulate.</param>
+	/// <returns>The raw axis value.</returns>
 	[Pure]
 	[EditorBrowsable(EditorBrowsableState.Advanced)]
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public MessageAxisValue ToMessageValue(Option<object> value)
-		=> new(value);
+	public MessageAxisValue ToMessageValue(Option<object> data)
+		=> new(data);
 
+	/// <summary>
+	/// Encapsulates a data into a raw axis value.
+	/// </summary>
+	/// <param name="data">The data to encapsulate.</param>
+	/// <returns>The raw axis value.</returns>
 	[Pure]
 	[EditorBrowsable(EditorBrowsableState.Advanced)]
 	[MethodImpl(MethodImplOptions.AggressiveInlining)]
-	public MessageAxisValue ToMessageValue<T>(Option<T> value)
-		=> new((Option<object>)value);
+	public MessageAxisValue ToMessageValue<T>(Option<T> data)
+		=> new((Option<object>)data);
 
 	/// <inheritdoc />
 	[Pure]
