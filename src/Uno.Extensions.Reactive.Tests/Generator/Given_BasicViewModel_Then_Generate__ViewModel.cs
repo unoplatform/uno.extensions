@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Uno.Extensions.Reactive.Core;
 
 namespace Uno.Extensions.Reactive.Tests.Generator;
 

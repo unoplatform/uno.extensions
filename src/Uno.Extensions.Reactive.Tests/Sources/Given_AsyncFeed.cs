@@ -7,6 +7,8 @@ using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Reactive.Testing;
 using Uno.Extensions.Reactive;
+using Uno.Extensions.Reactive.Core;
+using Uno.Extensions.Reactive.Sources;
 
 namespace Uno.Extensions.Reactive.Tests.Sources
 {
