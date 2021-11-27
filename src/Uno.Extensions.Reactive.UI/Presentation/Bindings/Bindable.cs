@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Uno.Extensions;
 using Uno.Logging;
 
-namespace Uno.Extensions.Reactive;
+namespace Uno.Extensions.Reactive.Bindings;
 
+/// <summary>
+/// An helper class use to data-bind a value.
+/// </summary>
+/// <typeparam name="T">The type of the value</typeparam>
 public class Bindable<T> : IBindable, INotifyPropertyChanged
 {
 	/// <inheritdoc />
@@ -22,6 +24,15 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged
 	private readonly BindablePropertyInfo<T> _property;
 	private readonly bool _hasValueProperty;
 
+	/// <summary>
+	/// Creates a new instance.
+	/// </summary>
+	/// <param name="property">Info of the property that is backed by this instance.</param>
+	/// <param name="hasValueProperty">
+	/// Indicates if this instance has a property name Value which can be data bind directly instead of <see cref="GetValue"/> and <see cref="SetValue"/>.
+	/// Is so, the <see cref="PropertyChanged"/> will be raise accordingly.
+	/// </param>
+	/// <exception cref="ArgumentException">If the property is invalid</exception>
 	public Bindable(BindablePropertyInfo<T> property, bool hasValueProperty = false)
 	{
 		if (!property.IsValid)
@@ -35,6 +46,14 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged
 		property.Subscribe(OnOwnerUpdated);
 	}
 
+	/// <summary>
+	/// Get info for a bindable sub-property.
+	/// </summary>
+	/// <typeparam name="TProperty">The type of the sub-property.</typeparam>
+	/// <param name="propertyName">The name of the sub-property.</param>
+	/// <param name="get">The getter.</param>
+	/// <param name="set">The setter.</param>
+	/// <returns>Info that can be used to create a sub-bindable object.</returns>
 	protected BindablePropertyInfo<TProperty> Property<TProperty>(
 		string propertyName,
 		Func<T?, TProperty?> get,
@@ -49,9 +68,17 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged
 			},
 			(update, isLeafPropertyChanged, ct) => OnSubPropertyUpdated(propertyName, get, set, update, isLeafPropertyChanged, ct));
 
+	/// <summary>
+	/// Gets the current value.
+	/// </summary>
+	/// <returns>The current value.</returns>
 	public T? GetValue()
 		=> _value;
 
+	/// <summary>
+	/// Sets the current value.
+	/// </summary>
+	/// <param name="value">The current value.</param>
 	public void SetValue(T? value)
 	{
 		if (SetValueCore(value))

@@ -15,7 +15,7 @@ namespace Uno.Extensions;
 /// <summary>
 /// Encapsulates an asynchronous method that has no parameters and does not return a value.
 /// </summary>
-/// <param name="ct"></param>
+/// <param name="ct">A cancellation to cancel the async operation.</param>
 public delegate ValueTask AsyncAction(CancellationToken ct);
 
 /// <summary>
@@ -26,7 +26,7 @@ public delegate ValueTask AsyncAction(CancellationToken ct);
 /// This type parameter is contravariant. That is, you can use either the type you specified or any type that is less derived.
 /// </typeparam>
 /// <param name="arg">The parameter of the method that this delegate encapsulates.</param>
-/// <param name="ct"></param>
+/// <param name="ct">A cancellation to cancel the async operation.</param>
 public delegate ValueTask AsyncAction<in T>(T arg, CancellationToken ct);
 <#
 
@@ -52,6 +52,6 @@ for (var typeArgsCount = 2; typeArgsCount <= 16; typeArgsCount++)
 <#= RepeatLine(@"
 /// <param name=""arg{0}"">The parameter #{0} of the method that this delegate encapsulates.</param>
 ") #>
-/// <param name="ct"></param>
+/// <param name="ct">A cancellation to cancel the async operation.</param>
 public delegate ValueTask AsyncAction<<#= Repeat("in T{0}") #>>(<#= Repeat("T{0} arg{0}") #>, CancellationToken ct);
 <# } #>

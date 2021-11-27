@@ -5,23 +5,40 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.System;
 using Uno.Extensions.Reactive.Utils;
-using Uno.Extensions.Reactive.View.Utils;
 using Uno.Logging;
 
-namespace Uno.Extensions.Reactive;
+namespace Uno.Extensions.Reactive.Bindings;
 
+/// <summary>
+/// Base class for binding friendly view models.
+/// </summary>
+/// <remarks>This is not expected to be used by application directly, but by generated code.</remarks>
 [EditorBrowsable(EditorBrowsableState.Advanced)]
 public abstract partial class BindableViewModelBase : IBindable, INotifyPropertyChanged, IAsyncDisposable
 {
 	internal static MessageAxis<object?> BindingSource { get; } = new(MessageAxes.BindingSource, _ => null);
 
+	/// <inheritdoc />
 	public event PropertyChangedEventHandler? PropertyChanged;
 
 	private readonly CompositeAsyncDisposable _disposables = new();
 
+	/// <summary>
+	/// Adds a disposable that is going to be disposed with this instance.
+	/// </summary>
+	/// <param name="disposable">The disposable.</param>
 	protected void RegisterDisposable(IAsyncDisposable disposable) 
 		=> _disposables.Add(disposable);
 
+	/// <summary>
+	/// Get info for a bindable property.
+	/// </summary>
+	/// <typeparam name="TProperty">The type of the sub-property.</typeparam>
+	/// <param name="propertyName">The name of the sub-property.</param>
+	/// <param name="defaultValue">The default value of the property.</param>
+	/// <param name="state">The backing state of the property.</param>
+	/// <param name="dispatcher">The dispatcher to use to raise property changes.</param>
+	/// <returns>Info that can be used to create a bindable object.</returns>
 	protected BindablePropertyInfo<TProperty> Property<TProperty>(string propertyName, TProperty? defaultValue, out IInput<TProperty> state, DispatcherQueue? dispatcher = null)
 	{
 		var stateImpl = new State<TProperty>(defaultValue);
@@ -81,12 +98,6 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 			}
 		}
 	}
-
-	protected ICommandBuilder CreateCommand(string propertyName)
-		=> new CommandBuilder<object?>(propertyName);
-
-	protected ICommandBuilder<T> CreateCommand<T>(string propertyName)
-		=> new CommandBuilder<T>(propertyName);
 
 	/// <inheritdoc />
 	public ValueTask DisposeAsync()

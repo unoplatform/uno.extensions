@@ -71,7 +71,7 @@ namespace {vm.ContainingNamespace};
 
 partial class {vm.Name} : global::System.IAsyncDisposable
 {{
-	public class Bindable{vm.Name} : {NS.Reactive}.BindableViewModelBase
+	public class Bindable{vm.Name} : {NS.Bindings}.BindableViewModelBase
 	{{
 		{inputsErrors.Align(2)}
 		{inputs.Select(input => input.GetBackingField()).Align(2)}
@@ -102,8 +102,8 @@ partial class {vm.Name} : global::System.IAsyncDisposable
 						{inputs.Select(input => input.GetCtorInit(parameters.Contains(input))).Align(6)}
 
 						var {N.Ctor.Model} = new {vm}({vmParameters});
-						var {N.Ctor.Ctx} = {NS.Reactive}.SourceContext.GetOrCreate({N.Ctor.Model});
-						{NS.Reactive}.SourceContext.Set(this, {N.Ctor.Ctx});
+						var {N.Ctor.Ctx} = {NS.Core}.SourceContext.GetOrCreate({N.Ctor.Model});
+						{NS.Core}.SourceContext.Set(this, {N.Ctor.Ctx});
 						base.RegisterDisposable({N.Ctor.Model});
 
 						{N.Model} = {N.Ctor.Model};
@@ -122,7 +122,7 @@ partial class {vm.Name} : global::System.IAsyncDisposable
 
 	/// <inheritdoc />
 	public global::System.Threading.Tasks.ValueTask DisposeAsync()
-		=> {NS.Reactive}.SourceContext.Find(this)?.DisposeAsync() ?? default;
+		=> {NS.Core}.SourceContext.Find(this)?.DisposeAsync() ?? default;
 }}
 ";
 

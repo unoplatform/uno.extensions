@@ -4,20 +4,30 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Uno.Extensions.Reactive.Core;
+using Uno.Extensions.Reactive.Utils;
 using Uno.Logging;
 
 namespace Uno.Extensions.Reactive;
 
+/// <summary>
+/// A control to render <see cref="IFeed{T}"/>
+/// </summary>
 [ContentProperty(Name = nameof(ValueTemplate))]
 public partial class FeedView : Control
 {
 	#region Source DP
+	/// <summary>
+	/// Backing dependency property for <see cref="Source"/>.
+	/// </summary>
 	public static readonly DependencyProperty SourceProperty = DependencyProperty.Register(
 		"Source", typeof(object), typeof(FeedView), new PropertyMetadata(default(object), OnSourceChanged));
 
 	private static void OnSourceChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
 		=> (obj as FeedView)?.Subscribe(args.NewValue as ISignal<IMessage>);
 
+	/// <summary>
+	/// Gets or sets the <see cref="IFeed{T}"/> displayed by this control.
+	/// </summary>
 	public object? Source
 	{
 		get => GetValue(SourceProperty);
@@ -26,9 +36,15 @@ public partial class FeedView : Control
 	#endregion
 
 	#region VisualStateSelector DP
+	/// <summary>
+	/// Backing dependency property for <see cref="VisualStateSelector"/>.
+	/// </summary>
 	public static readonly DependencyProperty VisualStateSelectorProperty = DependencyProperty.Register(
 		"VisualStateSelector", typeof(FeedViewVisualStateSelector), typeof(FeedView), new PropertyMetadata(new FeedViewVisualStateSelector()));
 
+	/// <summary>
+	/// The selector to use to select visual state.
+	/// </summary>
 	public FeedViewVisualStateSelector? VisualStateSelector
 	{
 		get => (FeedViewVisualStateSelector)GetValue(VisualStateSelectorProperty);
@@ -37,9 +53,15 @@ public partial class FeedView : Control
 	#endregion
 
 	#region State DP (read only)
+	/// <summary>
+	/// Backing dependency property for <see cref="State"/>.
+	/// </summary>
 	public static readonly DependencyProperty StateProperty = DependencyProperty.Register(
 		"State", typeof(FeedViewState), typeof(FeedView), new PropertyMetadata(new FeedViewState()));
 
+	/// <summary>
+	/// The state object that expose the values to template bindings.
+	/// </summary>
 	public FeedViewState State
 	{
 		get => (FeedViewState)GetValue(StateProperty);
@@ -48,9 +70,15 @@ public partial class FeedView : Control
 	#endregion
 
 	#region ValueTemplate (DP)
+	/// <summary>
+	/// Backing dependency property for <see cref="ValueTemplate"/>.
+	/// </summary>
 	public static readonly DependencyProperty ValueTemplateProperty = DependencyProperty.Register(
 		"ValueTemplate", typeof(DataTemplate), typeof(FeedView), new PropertyMetadata(default(DataTemplate)));
 
+	/// <summary>
+	/// The template to use to render the value of a feed.
+	/// </summary>
 	public DataTemplate? ValueTemplate
 	{
 		get => (DataTemplate)GetValue(ValueTemplateProperty);
@@ -59,9 +87,15 @@ public partial class FeedView : Control
 	#endregion
 
 	#region Undefined (DP)
+	/// <summary>
+	/// Backing dependency property for <see cref="Undefined"/>.
+	/// </summary>
 	public static readonly DependencyProperty UndefinedProperty = DependencyProperty.Register(
 		"Undefined", typeof(object), typeof(FeedView), new PropertyMetadata(default(object)));
 
+	/// <summary>
+	/// The content to display when feed has <see cref="Option.Undefined{T}"/> data.
+	/// </summary>
 	public object? Undefined
 	{
 		get => GetValue(UndefinedProperty);
@@ -70,9 +104,15 @@ public partial class FeedView : Control
 	#endregion
 
 	#region UndefinedTemplate (DP)
+	/// <summary>
+	/// Backing dependency property for <see cref="UndefinedTemplate"/>.
+	/// </summary>
 	public static readonly DependencyProperty UndefinedTemplateProperty = DependencyProperty.Register(
 		"UndefinedTemplate", typeof(DataTemplate), typeof(FeedView), new PropertyMetadata(default(DataTemplate)));
 
+	/// <summary>
+	/// The template to use to render <see cref="Undefined"/> content.
+	/// </summary>
 	public DataTemplate? UndefinedTemplate
 	{
 		get => (DataTemplate)GetValue(UndefinedTemplateProperty);
@@ -81,9 +121,15 @@ public partial class FeedView : Control
 	#endregion
 
 	#region None (DP)
+	/// <summary>
+	/// Backing dependency property for <see cref="None"/>.
+	/// </summary>
 	public static readonly DependencyProperty NoneProperty = DependencyProperty.Register(
 		"None", typeof(object), typeof(FeedView), new PropertyMetadata(default(object)));
 
+	/// <summary>
+	/// The content to display when feed has <see cref="Option.None{T}"/> data.
+	/// </summary>
 	public object? None
 	{
 		get => GetValue(NoneProperty);
@@ -92,9 +138,15 @@ public partial class FeedView : Control
 	#endregion
 
 	#region NoneTemplate (DP)
+	/// <summary>
+	/// Backing dependency property for <see cref="ErrorTemplate"/>.
+	/// </summary>
 	public static readonly DependencyProperty NoneTemplateProperty = DependencyProperty.Register(
 		"NoneTemplate", typeof(DataTemplate), typeof(FeedView), new PropertyMetadata(default(DataTemplate)));
 
+	/// <summary>
+	/// The template to use to render <see cref="None"/> content.
+	/// </summary>
 	public DataTemplate? NoneTemplate
 	{
 		get => (DataTemplate)GetValue(NoneTemplateProperty);
@@ -103,9 +155,15 @@ public partial class FeedView : Control
 	#endregion
 
 	#region ProgressTemplate (DP)
+	/// <summary>
+	/// Backing dependency property for <see cref="ProgressTemplate"/>.
+	/// </summary>
 	public static readonly DependencyProperty ProgressTemplateProperty = DependencyProperty.Register(
 		"ProgressTemplate", typeof(DataTemplate), typeof(FeedView), new PropertyMetadata(default(DataTemplate)));
 
+	/// <summary>
+	/// The template to use to render feed's progress.
+	/// </summary>
 	public DataTemplate ProgressTemplate
 	{
 		get => (DataTemplate)GetValue(ProgressTemplateProperty);
@@ -114,9 +172,15 @@ public partial class FeedView : Control
 	#endregion
 
 	#region ErrorTemplate (DP)
+	/// <summary>
+	/// Backing dependency property for <see cref="ErrorTemplate"/>.
+	/// </summary>
 	public static readonly DependencyProperty ErrorTemplateProperty = DependencyProperty.Register(
-	"ErrorTemplate", typeof(DataTemplate), typeof(FeedView), new PropertyMetadata(default(DataTemplate)));
+		"ErrorTemplate", typeof(DataTemplate), typeof(FeedView), new PropertyMetadata(default(DataTemplate)));
 
+	/// <summary>
+	/// The template to use to render feed's error.
+	/// </summary>
 	public DataTemplate ErrorTemplate
 	{
 		get => (DataTemplate)GetValue(ErrorTemplateProperty);
@@ -127,6 +191,9 @@ public partial class FeedView : Control
 	private bool _isReady;
 	private Subscription? _subscription;
 
+	/// <summary>
+	/// Creates a new instance.
+	/// </summary>
 	public FeedView()
 	{
 		if (Debugger.IsAttached)
@@ -136,15 +203,6 @@ public partial class FeedView : Control
 
 		State = new FeedViewState { Parent = DataContext }; // Create a State instance specific for this FeedView
 
-		//RegisterPropertyChangedCallback(
-		//	DataContextProperty,
-		//	(obj, _) =>
-		//	{
-		//		if (obj is FeedView that)
-		//		{
-		//			that.State.Parent = that.DataContext;
-		//		}
-		//	});
 		SetBinding(ReroutedDataContextProperty, new Binding());
 
 		Loaded += Enable;

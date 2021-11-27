@@ -5,9 +5,13 @@ using System.Runtime.CompilerServices;
 
 namespace Uno.Extensions.Reactive;
 
+/// <summary>
+/// Expose the current state of a <see cref="FeedView"/> for template's bindings.
+/// </summary>
 [Bindable]
 public sealed class FeedViewState : System.ComponentModel.INotifyPropertyChanged
 {
+	/// <inheritdoc />
 	public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
 
 	private readonly Dictionary<string, object?> _values = new();
@@ -56,6 +60,9 @@ public sealed class FeedViewState : System.ComponentModel.INotifyPropertyChanged
 		}
 	}
 
+	/// <summary>
+	/// The value reported by the last message received from the source feed.
+	/// </summary>
 	public object? Data
 	{
 		get => _data;
@@ -66,6 +73,9 @@ public sealed class FeedViewState : System.ComponentModel.INotifyPropertyChanged
 		}
 	}
 
+	/// <summary>
+	/// The error reported by the last message received from the source feed.
+	/// </summary>
 	public Exception? Error
 	{
 		get => _error;
@@ -76,6 +86,9 @@ public sealed class FeedViewState : System.ComponentModel.INotifyPropertyChanged
 		}
 	}
 
+	/// <summary>
+	/// The progress reported by the last message received from the source feed.
+	/// </summary>
 	public bool Progress
 	{
 		get => _progress;
@@ -86,6 +99,11 @@ public sealed class FeedViewState : System.ComponentModel.INotifyPropertyChanged
 		}
 	}
 
+	/// <summary>
+	/// Gets the last metadata of a given axis identifier received from the source feed.
+	/// </summary>
+	/// <param name="axis">The <see cref="MessageAxis.Identifier"/> of the axis to get.</param>
+	/// <returns>The value of the metadata.</returns>
 	public object? this[string axis] => _values.TryGetValue(axis, out var value) ? value : default;
 
 	private void OnPropertyChanged([CallerMemberName] string? propertyName = null)

@@ -46,5 +46,5 @@ internal record FeedInput(IParameterSymbol Parameter, ITypeSymbol _valueType) : 
 			// && _isEditable.Equals(otherState._isEditable); // Not needs to check for that, both are compatible
 
 	private string GetBackingType()
-		=> $"{NS.Reactive}.Bindable<{_valueType}>";
+		=> $"{NS.Bindings}.Bindable<{_valueType}>";
 }

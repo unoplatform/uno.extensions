@@ -1,17 +1,26 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Input;
 using Windows.System;
 using Uno.Extensions.Reactive.Core;
 
 namespace Uno.Extensions.Reactive;
 
+/// <summary>
+/// A builder of <see cref="IAsyncCommand"/>.
+/// </summary>
+/// <typeparam name="T"></typeparam>
 public readonly struct CommandBuilder<T> : ICommandBuilder, ICommandBuilder<T>, IConditionalCommandBuilder<T>
 {
 	private readonly string _name;
 	private readonly IList<CommandConfig> _configs;
 	private readonly CommandConfig _current;
 
+	/// <summary>
+	/// Creates a new builder.
+	/// </summary>
+	/// <param name="name">The name of the command.</param>
 	public CommandBuilder(string name)
 	{
 		_name = name;
@@ -26,6 +35,13 @@ public readonly struct CommandBuilder<T> : ICommandBuilder, ICommandBuilder<T>, 
 		_current = current;
 	}
 
+	/// <summary>
+	/// Builds a command.
+	/// </summary>
+	/// <param name="context">The source context to use in the command.</param>
+	/// <param name="errorHandler">An exception handler.</param>
+	/// <param name="dispatcher">The dispatcher to use to raise <see cref="ICommand.CanExecute"/>.</param>
+	/// <returns>The command.</returns>
 	public IAsyncCommand Build(SourceContext context, Action<Exception>? errorHandler = null, DispatcherQueue? dispatcher = null)
 		=> new AsyncCommand(_name, _configs, errorHandler ?? Command._defaultErrorHandler, context, dispatcher);
 

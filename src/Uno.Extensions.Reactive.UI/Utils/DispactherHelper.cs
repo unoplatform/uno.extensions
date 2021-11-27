@@ -3,7 +3,7 @@ using System.Linq;
 using Windows.ApplicationModel.Core;
 using Windows.System;
 
-namespace Uno.Extensions.Reactive.View.Utils;
+namespace Uno.Extensions.Reactive.Utils;
 
 internal class DispatcherHelper
 {

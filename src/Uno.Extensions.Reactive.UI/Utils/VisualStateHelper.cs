@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Uno.Extensions.Reactive;
+namespace Uno.Extensions.Reactive.Utils;
 
 /// <summary>
 /// An helper class that makes sure to not re-request the same visual state again and again.

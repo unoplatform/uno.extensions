@@ -5,21 +5,10 @@ using System.Linq;
 namespace Uno.Extensions.Reactive;
 
 /// <summary>
-/// Indicates that the input should be considered as a complex type which should be de-normalized,
-/// so each field can be edit independently through bindings.
-/// <remarks>This is the default behavior for records, unless <see cref="ValueAttribute"/> is set on parameter</remarks>
+/// Enumeration of the possible modes for an input
 /// </summary>
-[AttributeUsage(AttributeTargets.Parameter)]
 [EditorBrowsable(EditorBrowsableState.Never)]
-public class InputAttribute : Attribute
-{
-	public InputAttribute(InputKind type)
-	{
-	}
-}
-
-[EditorBrowsable(EditorBrowsableState.Never)]
-public enum InputKind
+internal enum InputKind
 {
 	/// <summary>
 	/// Indicates that the input has to be considered as external which is going to be injected, so it won't be accessible through bindings.
@@ -37,4 +26,20 @@ public enum InputKind
 	/// </summary>
 	/// <remarks>This is the default behavior except for records.</remarks>
 	Value
+}
+
+/// <summary>
+/// Flag the parameter of a constructor to be considered an input for bindings.
+/// </summary>
+[AttributeUsage(AttributeTargets.Parameter)]
+[EditorBrowsable(EditorBrowsableState.Never)]
+internal class InputAttribute : Attribute
+{
+	/// <summary>
+	/// Flag the parameter of a constructor to be considered an input for bindings.
+	/// </summary>
+	/// <param name="type">The type of input</param>
+	public InputAttribute(InputKind type)
+	{
+	}
 }
