@@ -56,7 +56,7 @@
       <Project>{0dde79de-181b-42ef-af00-56dc622a6afa}</Project>
       <Name>Uno.Extensions.Configuration</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Uno.Extensions.Hosting.Wasm\Uno.Extensions.Hosting.Wasm.csproj">
+    <ProjectReference Include="..\..\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.Wasm.csproj">
       <Name>Uno.Extensions.Hosting.Wasm</Name>
     </ProjectReference>
     <!--<ProjectReference Include="..\..\Uno.Extensions.Http.Firebase\Uno.Extensions.Http.Firebase.csproj">
