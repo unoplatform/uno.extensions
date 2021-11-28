@@ -59,4 +59,12 @@
 
 	<Import Project="..\..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" />
 	<Import Project="..\..\..\..\src\Uno.Extensions.Reactive.Generator\build\Uno.Extensions.Reactive.props" />
+
+	<Target Name="WorkaroundSkiaWasmTargets" AfterTargets="ResolveProjectReferences">
+		<ItemGroup>
+			<_ResolvedProjectReferencePathsToRemove Include="@(_ResolvedProjectReferencePaths)" Condition="'%(_ResolvedProjectReferencePaths.OriginalItemSpec)'=='Uno.Extensions.Hosting.WinUI.Skia.csproj' or '%(_ResolvedProjectReferencePaths.OriginalItemSpec)'=='Uno.Extensions.Hosting.WinUI.Wasm.csproj'" />
+			<_ResolvedProjectReferencePaths Remove="@(_ResolvedProjectReferencePathsToRemove)" />
+		</ItemGroup>
+		<Message Importance="high" Text="Removed incorrect references: @(_ResolvedProjectReferencePathsToRemove)"/>
+	</Target>
 </Project>
