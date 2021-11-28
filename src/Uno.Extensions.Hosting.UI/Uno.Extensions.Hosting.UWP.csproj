@@ -19,17 +19,22 @@
 		<ProjectReference Include="..\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
 	</ItemGroup>
 
+
 	<ItemGroup>
-		<ProjectReference Include="Uno.Extensions.Hosting.UWP.Wasm.csproj">
-			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-			<SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
-			<UndefineProperties>TargetFramework</UndefineProperties>
-		</ProjectReference>
-		<ProjectReference Include="Uno.Extensions.Hosting.UWP.Skia.csproj">
-			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-			<SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
-			<UndefineProperties>TargetFramework</UndefineProperties>
-		</ProjectReference>
+		<ProjectReference Include="Uno.Extensions.Hosting.UWP.Wasm.csproj"
+			ReferenceOutputAssembly="false"
+			LinkLibraryDependencies="false"
+			CopyLocal="false"
+			SkipGetTargetFrameworkProperties="true"
+			GlobalPropertiesToRemove="TargetFramework"
+    />
+		<ProjectReference Include="Uno.Extensions.Hosting.UWP.Skia.csproj"
+			ReferenceOutputAssembly="false"
+			LinkLibraryDependencies="false"
+			CopyLocal="false"
+			SkipGetTargetFrameworkProperties="true"
+			GlobalPropertiesToRemove="TargetFramework"
+    />
 	</ItemGroup>
-	
+
 </Project>
