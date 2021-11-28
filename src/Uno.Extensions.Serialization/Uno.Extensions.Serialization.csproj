@@ -11,6 +11,10 @@
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
 	</ItemGroup>
 
+	<ItemGroup Condition="'$(IsMacOS)'=='true'">
+		<Reference Include="netstandard" />
+	</ItemGroup>
+
 	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
 	</ItemGroup>
