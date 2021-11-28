@@ -59,14 +59,6 @@ namespace Commerce
 		{
 			Host = UnoHost
 					.CreateDefaultBuilder(true)
-					.ConfigureAppConfiguration((ctx, appConfig) =>
-					{
-						if(!(ctx.HostingEnvironment is AppHostingEnvironment appHost && !string.IsNullOrWhiteSpace(appHost.AppDataPath)))
-						{
-							var appHosting = AppHostingEnvironment.FromHostEnvironment(ctx.HostingEnvironment, Windows.Storage.ApplicationData.Current.LocalFolder.Path);
-							ctx.HostingEnvironment = appHosting;
-						}
-					})
 #if DEBUG
 					// Switch to Development environment when running in DEBUG
 					.UseEnvironment(Environments.Development)
@@ -112,7 +104,6 @@ namespace Commerce
 					.ConfigureServices(services =>
 					{
 						services
-							.AddSingleton<IStorageProxy, StorageProxy>()
 
 							.AddSingleton<IProductService, ProductService>()
 							.AddSingleton<ICartService, CartService>()

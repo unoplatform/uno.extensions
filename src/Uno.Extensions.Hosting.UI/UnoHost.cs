@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging.Console;
 using Microsoft.Extensions.Logging.EventLog;
+using Uno.Extensions.Storage;
 
 namespace Uno.Extensions.Hosting;
 
@@ -14,7 +15,7 @@ public static class UnoHost
 		(custom ? CustomHost.CreateDefaultBuilder() : Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder())
 		.ConfigureAppConfiguration((ctx, appConfig) =>
 		{
-			var appHost = AppHostingEnvironment.FromHostEnvironment(ctx.HostingEnvironment, PlatformSpecificLocalPath());
+			var appHost = AppHostingEnvironment.FromHostEnvironment(ctx.HostingEnvironment, Windows.Storage.ApplicationData.Current.LocalFolder.Path);
 			ctx.HostingEnvironment = appHost;
 		})
 		.ConfigureServices((ctx, services) =>
@@ -24,6 +25,7 @@ public static class UnoHost
 			{
 				services.AddSingleton<IAppHostEnvironment>(appHost);
 			}
+			services.AddSingleton<IStorageProxy, StorageProxy>();
 		})
 			//#if WINUI || WINDOWS_UWP || __IOS__ || __ANDROID__ || NETSTANDARD
 			//            .UseContentRoot(PlatformSpecificContentRootPath())
@@ -78,15 +80,4 @@ public static class UnoHost
             })
 #endif
 			;
-
-	private static string? PlatformSpecificLocalPath()
-	{
-#if WINUI || WINDOWS_UWP || NETSTANDARD
-		return Windows.Storage.ApplicationData.Current.LocalFolder.Path;
-#elif __ANDROID__ || __IOS__
-		return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-#else
-		return null;
-#endif
-	}
 }
