@@ -186,7 +186,8 @@
       <Project>{0dde79de-181b-42ef-af00-56dc622a6afa}</Project>
       <Name>Uno.Extensions.Configuration</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Core\Uno.Extensions.Core.csproj">
+		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.UWP.csproj" />
+		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Core\Uno.Extensions.Core.csproj">
       <Project>{0bf9edde-e6c1-4a3a-b73d-02d867f2054c}</Project>
       <Name>Uno.Extensions.Core</Name>
     </ProjectReference>

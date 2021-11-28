@@ -5,14 +5,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging.Console;
 using Microsoft.Extensions.Logging.EventLog;
-#if __WASM__
-using Uno.Foundation;
-#endif
-
 
 namespace Uno.Extensions.Hosting;
 
-#if !((NETSTANDARD || NET5_0 || NET6_0) && !__IOS__ && !__ANDROID__) || WINUI || __WASM__
 public static class UnoHost
 {
 	public static IHostBuilder CreateDefaultBuilder(bool custom = true) =>
@@ -51,7 +46,7 @@ public static class UnoHost
 					// Note that this environment variable is being set so that in .net6 we can leverage polling file watcher
 					Environment.SetEnvironmentVariable("DOTNET_USE_POLLING_FILE_WATCHER", "true");
 
-					var href = WebAssemblyRuntime.InvokeJS("window.location.href");
+					var href = Foundation.WebAssemblyRuntime.InvokeJS("window.location.href");
 					var appsettingsPrefix = new Dictionary<string, string>
 						{
 							{ HostingConstants.AppSettingsPrefixKey, "local" },
@@ -86,14 +81,12 @@ public static class UnoHost
 
 	private static string? PlatformSpecificContentRootPath()
 	{
-#if false //!HAS_UNO
-            return Windows.Storage.ApplicationData.Current.LocalFolder.Path;
+#if WINUI || WINDOWS_UWP || NETSTANDARD
+		return Windows.Storage.ApplicationData.Current.LocalFolder.Path;
 #elif __ANDROID__ || __IOS__
-        return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+		return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 #else
 		return null;
 #endif
 	}
 }
-
-#endif

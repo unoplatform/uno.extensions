@@ -77,7 +77,7 @@
     <PackageReference Include="Uno.Core" Version="4.0.1" />
     <PackageReference Include="Uno.Material" Version="1.1.0-dev.57" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="7.0.3" />
-	<PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.0" />
+    <PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj">
@@ -88,10 +88,7 @@
       <Project>{4B596C8D-65B8-473E-AC77-60182F95321E}</Project>
       <Name>Uno.Extensions.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Hosting.Wasm\Uno.Extensions.Hosting.Wasm.csproj">
-      <Project>{71C08233-DC84-4142-9A20-8C06B08D7C39}</Project>
-      <Name>Uno.Extensions.Hosting.Wasm</Name>
-    </ProjectReference>
+ 		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.UWP.csproj" />
     <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj">
       <Project>{975ff5ca-c780-4c30-9d48-e6a8258aba9e}</Project>
       <Name>Uno.Extensions.Hosting</Name>
