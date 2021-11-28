@@ -6,7 +6,7 @@ public interface IOption
 {
 	OptionType Type { get; }
 
-	object SomeOrDefault();
+	object? SomeOrDefault();
 
 	bool IsUndefined();
 

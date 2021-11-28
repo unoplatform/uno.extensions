@@ -135,6 +135,7 @@ Global
 		Commerce.Shared\Commerce.Shared.projitems*{a5b8155a-118f-4794-b551-c6f3cf7e5411}*SharedItemsImports = 5
 		Commerce.Shared\Commerce.Shared.projitems*{b10538d8-3a21-4cff-a5c9-405d5293584d}*SharedItemsImports = 4
 		Commerce.Shared\Commerce.Shared.projitems*{e46d78e8-8d5c-4377-9f00-355f839c1bfc}*SharedItemsImports = 4
+		Commerce.Shared\Commerce.Shared.projitems*{ec120f62-ba08-40dc-9760-6774b6a956a6}*SharedItemsImports = 5
 		Commerce.Shared\Commerce.Shared.projitems*{fa9b063a-926a-4119-916f-09d0b7ab7ba6}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1965,7 +1966,6 @@ Global
 		{8BE7C718-5C74-4116-9751-4B7F78662DA9}.Release|x64.Build.0 = Release|Any CPU
 		{8BE7C718-5C74-4116-9751-4B7F78662DA9}.Release|x86.ActiveCfg = Release|Any CPU
 		{8BE7C718-5C74-4116-9751-4B7F78662DA9}.Release|x86.Build.0 = Release|Any CPU
-		
 		{71DF306F-217E-4BB5-A6C1-107F80AD8630}.Ad-Hoc|Any CPU.ActiveCfg = Debug|Any CPU
 		{71DF306F-217E-4BB5-A6C1-107F80AD8630}.Ad-Hoc|Any CPU.Build.0 = Debug|Any CPU
 		{71DF306F-217E-4BB5-A6C1-107F80AD8630}.Ad-Hoc|Any CPU.Deploy.0 = Debug|Any CPU

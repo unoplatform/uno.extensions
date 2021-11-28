@@ -99,6 +99,6 @@
 	</PropertyGroup>
 
 	<!-- <PropertyGroup Condition="'$(Configuration)'=='Debug'">
-		<UnoExtensionsOnlyUAP>true</UnoExtensionsOnlyUAP>
+		<UnoTargetFrameworkOverride>uap10.0.18362</UnoTargetFrameworkOverride>
 	</PropertyGroup> -->
 </Project>
