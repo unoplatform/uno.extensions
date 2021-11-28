@@ -1,24 +1,28 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras"  ToolsVersion="15.0">
-  <PropertyGroup>
-    <TargetFrameworks>net5.0-windows10.0.18362;netstandard2.0;xamarinios10;xamarinmac20;monoandroid11.0</TargetFrameworks>
-  </PropertyGroup>
-  <ItemGroup>
+	<PropertyGroup>
+		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'!=''">$(UnoTargetFrameworkOverride)</TargetFrameworks>
+		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'==''">netstandard2.0;netstandard2.1;net5.0;uap10.0.18362;xamarinios10;xamarinmac20;monoandroid10.0;monoandroid11.0</TargetFrameworks>
+		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'=='' and '$(UnoExtensionsDisableNet6)'==''">$(TargetFrameworks);net6.0;net6.0-ios;net6.0-android</TargetFrameworks>
+	</PropertyGroup>
+	<ItemGroup>
 		<UnoRuntimeProjectReference Include="Uno.Extensions.Hosting.WinUI.Wasm.csproj" />
 		<UnoRuntimeProjectReference Include="Uno.Extensions.Hosting.WinUI.Skia.csproj" />
 	</ItemGroup>
-  <ItemGroup>
-    <Content Include="buildTransitive\**">
-      <PackagePath>buildTransitive</PackagePath>
-      <Pack>true</Pack>
-    </Content>
-  </ItemGroup>
+	<ItemGroup>
+		<Content Include="buildTransitive\**">
+			<PackagePath>buildTransitive</PackagePath>
+			<Pack>true</Pack>
+		</Content>
+	</ItemGroup>
+
 	<ItemGroup>
 		<PackageReference Include="Uno.WinUI" Version="4.0.0-dev.5678" />
 	</ItemGroup>
+
 	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
 	</ItemGroup>
-	
+
 	<ItemGroup Condition="'$(TargetFramework)'=='net5.0-windows10.0.18362'">
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.0.0" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22000.196"/>

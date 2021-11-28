@@ -1,17 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk"  ToolsVersion="15.0">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
 		<IsPackable>false</IsPackable>
 		<RootNamespace>Uno.Extensions.Hosting.UWP</RootNamespace>
 		<UnoRuntimeIdentifier>skia</UnoRuntimeIdentifier>
 		<DefineConstants>$(DefineConstants);__SKIA__</DefineConstants>
-  </PropertyGroup>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Uno.WinUI" Version="4.0.0-dev.5678" />
-  </ItemGroup>
-	
+	<ItemGroup>
+		<PackageReference Include="Uno.WinUI" Version="4.0.0-dev.5678" />
+	</ItemGroup>
+
 	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
 	</ItemGroup>

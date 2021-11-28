@@ -1,14 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk"  ToolsVersion="15.0">
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <IsPackable>false</IsPackable>
-    <RootNamespace>Uno.Extensions.Hosting.UWP</RootNamespace>
-  </PropertyGroup>
-	
-  <ItemGroup>
-    <PackageReference Include="Uno.WinUI.Runtime.WebAssembly" Version="4.0.0-dev.5678" />
-  </ItemGroup>
-	
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<IsPackable>false</IsPackable>
+		<RootNamespace>Uno.Extensions.Hosting.UWP</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Uno.WinUI.Runtime.WebAssembly" Version="4.0.0-dev.5678" />
+	</ItemGroup>
+
 	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
 	</ItemGroup>
