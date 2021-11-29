@@ -175,7 +175,11 @@ public sealed class SourceContext : IAsyncDisposable
 			throw new ObjectDisposedException(nameof(SourceContext));
 		}
 
-		State<T> state;
+		if (feed is State<T> state && state.Context == this)
+		{
+			return state;
+		}
+
 		lock (states)
 		{
 			state = states.TryGetValue(feed, out var existing)

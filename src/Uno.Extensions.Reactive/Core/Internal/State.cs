@@ -20,6 +20,11 @@ internal class State<T> : IState<T>, IFeed<T>, IAsyncDisposable
 	private Message<T> _current = Message<T>.Initial;
 	private TaskCompletionSource<Node>? _next = new(TaskCreationOptions.AttachedToParent);
 
+	/// <summary>
+	/// Gets the context to which this state belongs.
+	/// </summary>
+	internal SourceContext Context { get; }
+
 	private readonly struct Node
 	{
 		private readonly Message<T> _value;
@@ -40,6 +45,7 @@ internal class State<T> : IState<T>, IFeed<T>, IAsyncDisposable
 
 	public State(SourceContext context, IFeed<T> feed, StateSubscriptionMode mode = StateSubscriptionMode.Default)
 	{
+		Context = context;
 		_innerEnumeration = mode.HasFlag(StateSubscriptionMode.RefCounted)
 			? new RefCountedForEachRunner<Message<T>>(GetSource, UpdateState)
 			: new ForEachRunner<Message<T>>(GetSource, UpdateState);
@@ -56,8 +62,9 @@ internal class State<T> : IState<T>, IFeed<T>, IAsyncDisposable
 			=> UpdateCore(currentStateMsg => currentStateMsg.OverrideBy(newSrcMsg), ct);
 	}
 
-	public State(Option<T> defaultValue)
+	public State(SourceContext context, Option<T> defaultValue)
 	{
+		Context = context;
 		_hasCurrent = true; // Even if undefined, we consider that we do have a value in order to produce an initial state
 
 		if (!defaultValue.IsUndefined())

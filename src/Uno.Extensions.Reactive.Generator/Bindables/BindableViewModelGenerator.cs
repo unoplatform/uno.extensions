@@ -69,7 +69,7 @@ using System.Threading.Tasks;
 
 namespace {vm.ContainingNamespace};
 
-partial class {vm.Name} : global::System.IAsyncDisposable
+partial {(vm.IsRecord ? "record" : "class")} {vm.Name} : global::System.IAsyncDisposable
 {{
 	public class Bindable{vm.Name} : {NS.Bindings}.BindableViewModelBase
 	{{

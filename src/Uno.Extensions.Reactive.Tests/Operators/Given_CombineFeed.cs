@@ -17,8 +17,8 @@ namespace Uno.Reactive.Tests.Operators
 		[TestMethod]
 		public async Task When_Combine2()
 		{
-			var feed1 = new State<int>(Option<int>.Undefined());
-			var feed2 = new State<int>(Option<int>.Undefined());
+			var feed1 = new State<int>(Context, Option<int>.Undefined());
+			var feed2 = new State<int>(Context, Option<int>.Undefined());
 
 			var sut = Feed.Combine(feed1, feed2).Record();
 
