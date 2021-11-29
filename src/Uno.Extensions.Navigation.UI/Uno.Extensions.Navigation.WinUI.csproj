@@ -4,20 +4,8 @@
 		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'==''">netstandard2.0;netstandard2.1;net5.0;xamarinios10;xamarinmac20;monoandroid10.0;monoandroid11.0</TargetFrameworks>
 		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'=='' and '$(UnoExtensionsDisableNet6)'==''">$(TargetFrameworks);net6.0;net5.0-windows10.0.18362.0;net6.0-windows10.0.18362.0;net6.0-ios;net6.0-android</TargetFrameworks>
 	</PropertyGroup>
-	
-	<ItemGroup>
-		<UnoRuntimeProjectReference Include="Uno.Extensions.Navigation.WinUI.Wasm.csproj" />
-		<UnoRuntimeProjectReference Include="Uno.Extensions.Navigation.WinUI.Skia.csproj" />
-	</ItemGroup>
-	
-	<ItemGroup>
-		<Content Include="buildTransitive\**">
-			<PackagePath>buildTransitive</PackagePath>
-			<Pack>true</Pack>
-		</Content>
-	</ItemGroup>
 
-	<Import Project="common.props"/>
+	<Import Project="common.props" />
 	
 	<PropertyGroup>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
@@ -29,27 +17,9 @@
 
 	<ItemGroup Condition="'$(TargetFramework)'=='net5.0-windows10.0.18362.0' or '$(TargetFramework)'=='net6.0-windows10.0.18362.0'">
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.0.0" />
-		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22000.196"/>
+		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22000.196" />
 
 		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.18362.21" />
 		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.18362.21" />
-	</ItemGroup>
-
-	
-	<ItemGroup>
-		<ProjectReference Include="Uno.Extensions.Navigation.WinUI.Wasm.csproj"
-			ReferenceOutputAssembly="false"
-			LinkLibraryDependencies="false"
-			CopyLocal="false"
-			SkipGetTargetFrameworkProperties="true"
-			GlobalPropertiesToRemove="TargetFramework"
-    />
-		<ProjectReference Include="Uno.Extensions.Navigation.WinUI.Skia.csproj"
-			ReferenceOutputAssembly="false"
-			LinkLibraryDependencies="false"
-			CopyLocal="false"
-			SkipGetTargetFrameworkProperties="true"
-			GlobalPropertiesToRemove="TargetFramework"
-    />
 	</ItemGroup>
 </Project>
