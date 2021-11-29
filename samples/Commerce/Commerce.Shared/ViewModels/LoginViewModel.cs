@@ -10,7 +10,7 @@ using Windows.ApplicationModel.Core;
 
 namespace Commerce.ViewModels;
 
-public partial class LoginViewModel
+public partial record LoginViewModel
 {
 	private readonly INavigator _navigator;
 	private readonly IState<string> _error;

@@ -2,7 +2,6 @@
 	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	  xmlns:local="using:Commerce"
-	  xmlns:fake="using:Commerce.DesignTime"
 	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	  xmlns:services="using:Commerce.Services"
@@ -13,10 +12,10 @@
 	  xmlns:um="using:Uno.Material.Extensions"
 	  xmlns:uer="using:Uno.Extensions.Reactive"
 	  xmlns:uen="using:Uno.Extensions.Navigation.Controls"
-	  mc:Ignorable="d fake"
+	  mc:Ignorable="d"
 	  Background="{ThemeResource MaterialBackgroundBrush}">
 
-	<Grid d:DataContext="{d:DesignInstance fake:FakeProducts, IsDesignTimeCreatable=True}">
+	<Grid>
 		<VisualStateManager.VisualStateGroups>
 			<VisualStateGroup>
 				<VisualState x:Name="Narrow" /> 

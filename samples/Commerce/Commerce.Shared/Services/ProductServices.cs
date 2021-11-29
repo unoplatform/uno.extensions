@@ -15,7 +15,7 @@ public class ProductService : JsonDataService<Product>, IProductService
 		_reviewDataService = new JsonDataService<Review>(reviewDataFile);
 	}
 
-	public async Task<IEnumerable<Product>> GetProducts(string? term, CancellationToken ct)
+	public async ValueTask<Product[]> GetProducts(string? term, CancellationToken ct)
 	{
 		var products = (await GetEntities()).AsEnumerable();
 		if (term is not null)
@@ -23,10 +23,10 @@ public class ProductService : JsonDataService<Product>, IProductService
 			products = products.Where(p => p.Name.IndexOf(term, StringComparison.OrdinalIgnoreCase) != -1);
 		}
 
-		return products;
+		return products.ToArray();
 	}
 
-	public async Task<Review[]> GetReviews(int productId, CancellationToken ct)
+	public async ValueTask<Review[]> GetReviews(int productId, CancellationToken ct)
 	{
 		var reviews = await _reviewDataService.GetEntities();
 		return reviews;
