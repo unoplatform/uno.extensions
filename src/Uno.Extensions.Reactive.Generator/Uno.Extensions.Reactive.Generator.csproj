@@ -28,6 +28,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Include="..\Uno.Extensions.Core\Compat\NotNullWhenAttribute.cs" Link="Utils\NotNullWhenAttribute.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <ProjectReference Include="..\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
 	</ItemGroup>
 

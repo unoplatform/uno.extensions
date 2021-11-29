@@ -38,6 +38,10 @@
 			<PackagePath>tools</PackagePath>
 		</Content>
 	</ItemGroup>
+	
+	<ItemGroup>
+	  <Compile Include="..\Uno.Extensions.Core\Compat\NotNullWhenAttribute.cs" Link="Utils\NotNullWhenAttribute.cs" />
+	</ItemGroup>
 
 	<ItemGroup>
 	  <None Update="AsyncAction.tt">

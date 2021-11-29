@@ -1,6 +1,6 @@
 ﻿using System;
 
-#if !NET5_0
+#if NETSTANDARD2_0 || WINDOWS_UWP || NET461
 namespace System.Diagnostics.CodeAnalysis;
 
 [AttributeUsage(AttributeTargets.Parameter, Inherited = false)]
