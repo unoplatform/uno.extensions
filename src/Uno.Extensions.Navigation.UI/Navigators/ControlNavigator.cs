@@ -8,9 +8,9 @@ using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Regions;
 #if !WINUI
-using Windows.UI.Xaml;
+using Windows.System;
 #else
-using Microsoft.UI.Xaml;
+using Microsoft.UI.Dispatching;
 #endif
 
 namespace Uno.Extensions.Navigation.Navigators;
@@ -30,7 +30,15 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
         Control = control;
     }
 
-    protected virtual FrameworkElement? CurrentView => default;
+	protected override DispatcherQueue GetDispatcher() =>
+#if WINUI
+		(Control as FrameworkElement)?.DispatcherQueue
+#else
+		Windows.ApplicationModel.Core.CoreApplication.MainView.DispatcherQueue
+#endif
+		?? base.GetDispatcher();
+
+	protected virtual FrameworkElement? CurrentView => default;
 
     protected abstract Task<string?> Show(string? path, Type? viewType, object? data);
 
@@ -134,19 +142,31 @@ public abstract class ControlNavigator : Navigator
             request = request with { Route = request.Route.TrimScheme(Schemes.Nested) };
         }
 
-        if (CanNavigateToRoute(request.Route))
-        {
-            return await ControlNavigateAsync(request);
-        }
+		var completion = new TaskCompletionSource<NavigationResponse?>();
+		GetDispatcher().TryEnqueue(async () =>
+		{
+			if (CanNavigateToRoute(request.Route))
+			{
+				var response =  await ControlNavigateAsync(request);
+				completion.SetResult(response);
+				return;
+			}
+			completion.SetResult(default);
+		});
 
-        return await Task.FromResult<NavigationResponse?>(default);
+		return await completion.Task;
+		
+
+        //return await Task.FromResult<NavigationResponse?>(default);
     }
 
     public virtual void ControlInitialize()
     {
     }
 
-    protected async Task<NavigationResponse?> ControlNavigateAsync(NavigationRequest request)
+	protected virtual DispatcherQueue GetDispatcher() => DispatcherQueue.GetForCurrentThread();
+
+	protected async Task<NavigationResponse?> ControlNavigateAsync(NavigationRequest request)
     {
 		var services = Region.Services;
         if (services is null)
@@ -154,9 +174,9 @@ public abstract class ControlNavigator : Navigator
             return default;
         }
 
-        var executedRoute = await ExecuteRequestAsync(request);
+		var executedRoute = await ExecuteRequestAsync(request);
 
-        UpdateRoute(executedRoute);
+		UpdateRoute(executedRoute);
 
 		return new NavigationResponse(executedRoute ?? Route.Empty);
 	}

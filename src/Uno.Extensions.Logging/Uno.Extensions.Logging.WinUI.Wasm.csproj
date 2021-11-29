@@ -1,0 +1,21 @@
+﻿<Project Sdk="MSBuild.Sdk.Extras"  ToolsVersion="15.0">
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<IsPackable>false</IsPackable>
+		<RootNamespace>Uno.Extensions.Logging</RootNamespace>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+	</PropertyGroup>
+	
+	<ItemGroup>
+		<PackageReference Include="Uno.WinUI.Runtime.WebAssembly" Version="4.0.0-dev.5678" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.3.0-dev.1" />
+	</ItemGroup>
+
+	<Import Project="common.props"/>
+</Project>

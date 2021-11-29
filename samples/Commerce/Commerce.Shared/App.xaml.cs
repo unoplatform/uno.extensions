@@ -20,7 +20,6 @@ using Uno.Extensions.Serialization;
 using Uno.Foundation;
 using Commerce.Views;
 using Uno.Extensions.Logging.Serilog;
-using Uno.Extensions.Storage;
 
 #if WINUI
 using Windows.ApplicationModel;
@@ -282,11 +281,16 @@ namespace Commerce
 				var route = rootRegion.GetRoute();
 
 
-#if !__WASM__
-				var appTitle = ApplicationView.GetForCurrentView();
-				appTitle.Title = "Commerce: " + (route + "").Replace("+", "/");
+#if !__WASM__ && !WINUI
+				CoreApplication.MainView?.DispatcherQueue.TryEnqueue(() =>
+				{
+					var appTitle = ApplicationView.GetForCurrentView();
+					appTitle.Title = "Commerce: " + (route + "").Replace("+", "/");
+				});
+#endif
 
-#else
+
+#if __WASM__
 				// Note: This is a hack to avoid error being thrown when loading products async
 				await Task.Delay(1000).ConfigureAwait(false);
 				CoreApplication.MainView?.DispatcherQueue.TryEnqueue(() =>

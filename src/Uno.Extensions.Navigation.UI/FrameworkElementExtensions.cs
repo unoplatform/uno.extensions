@@ -3,6 +3,11 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Regions;
+#if !WINUI
+using Windows.System;
+#else
+using Microsoft.UI.Dispatching;
+#endif
 
 namespace Uno.Extensions.Navigation;
 
@@ -29,27 +34,42 @@ public static class FrameworkElementExtensions
 
 		await region.Parent.EnsureLoaded();
 	}
+
+	private static DispatcherQueue? GetDispatcher(this FrameworkElement? element) =>
+#if WINUI
+		element?.DispatcherQueue;
+#else
+		Windows.ApplicationModel.Core.CoreApplication.MainView.DispatcherQueue;
+#endif
+
 	public static async Task EnsureLoaded(this FrameworkElement? element)
 	{
-		await EnsureElementLoaded(element);
-
-		if(element is null)
+		if (element is null)
 		{
 			return;
 		}
 
-#if !WINDOWS_UWP && !WINUI
-		var count = VisualTreeHelper.GetChildrenCount(element);
-		for (int i = 0; i < count; i++)
+		var completion = new TaskCompletionSource<bool>();
+		element.GetDispatcher().TryEnqueue(async () =>
 		{
-			var nextElement = VisualTreeHelper.GetChild(element, i) as FrameworkElement;
-			if(nextElement is ContentPresenter)
-			{
-				continue;
-			}
-			await EnsureLoaded(nextElement);
-		}
-#endif
+			await EnsureElementLoaded(element);
+			completion.SetResult(true);
+		});
+		await completion.Task;
+
+
+//#if !WINDOWS_UWP && !WINUI
+//		var count = VisualTreeHelper.GetChildrenCount(element);
+//		for (int i = 0; i < count; i++)
+//		{
+//			var nextElement = VisualTreeHelper.GetChild(element, i) as FrameworkElement;
+//			if(nextElement is ContentPresenter)
+//			{
+//				continue;
+//			}
+//			await EnsureLoaded(nextElement);
+//		}
+//#endif
 
 #if __ANDROID__
 		// EnsureLoaded can return from LayoutUpdated causing the remaining task to continue from the measure pass.
@@ -81,9 +101,11 @@ public static class FrameworkElementExtensions
 			if (element.IsLoaded ||
 				(element.ActualHeight > 0 && element.ActualWidth > 0))
 			{
+
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
 				completion.SetResult(null);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+
 				element.Loaded -= loaded;
 				element.Loading -= loading;
 				element.LayoutUpdated -= layoutChanged;
