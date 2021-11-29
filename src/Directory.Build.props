@@ -14,7 +14,7 @@
 		<WarningsAsErrors>enable</WarningsAsErrors>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageIcon>uno-logo.png</PackageIcon>
-		<NoWarn>$(NoWarn);NU5104</NoWarn>
+		<NoWarn>$(NoWarn);NU5104;NU1603</NoWarn>
 	</PropertyGroup>
 
 	<PropertyGroup>
