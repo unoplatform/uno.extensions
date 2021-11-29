@@ -6,7 +6,7 @@
 	<assembly fullname="Uno.Extensions.Hosting" />
 	<assembly fullname="Uno.Extensions.Hosting.Wasm" />
 	<assembly fullname="Uno.Extensions.Http" />
-	<assembly fullname="Uno.Extensions.Http.Refit" />
+	<!--<assembly fullname="Uno.Extensions.Http.Refit" />-->
 	<assembly fullname="Uno.Extensions.Localization" />
 	<assembly fullname="Uno.Extensions.Logging" />
 	<assembly fullname="Uno.Extensions.Logging.Serilog" />
