@@ -3,94 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Utils;
-using static Uno.Extensions.Reactive.FeedHelper;
-using Exception = System.Exception;
+using static Uno.Extensions.Reactive.Core.FeedHelper;
 
-namespace Uno.Extensions.Reactive.Impl.Operators;
+namespace Uno.Extensions.Reactive.Operators;
 
 internal sealed class SelectAsyncFeed<TArg, TResult> : IFeed<TResult>
 {
 	private readonly IFeed<TArg> _parent;
-	private readonly FuncAsync<TArg?, TResult?> _projection;
+	private readonly AsyncFunc<TArg?, TResult?> _projection;
 
-	public SelectAsyncFeed(IFeed<TArg> parent, FuncAsync<TArg?, TResult?> projection)
+	public SelectAsyncFeed(IFeed<TArg> parent, AsyncFunc<TArg?, TResult?> projection)
 	{
 		_parent = parent;
 		_projection = projection;
 	}
-
-	///// <inheritdoc />
-	//public async IAsyncEnumerable<Message<TResult>> GetSource(SourceContext context, [EnumeratorCancellation] CancellationToken ct = default)
-	//{
-	//	var current = Message<TResult>.Initial;
-	//	var token = default(CancellationTokenSource);
-
-	//	await foreach (var parentMsg in _parent.GetSource(context, ct).WithCancellation(ct).ConfigureAwait(false))
-	//	{
-	//		if (parentMsg.Changes.HasFlag(MessageAxis.Data))
-	//		{
-	//			// For SelectAsync we are in "last wins" mode, i.e. we cancel the previous request to get the updated value
-	//			token?.Cancel();
-
-	//			var data = parentMsg.Current.Data;
-	//			switch (data.Type)
-	//			{
-	//				case OptionType.Undefined:
-	//					yield return current = current.With(parentMsg).Data(Option<TResult>.Undefined());
-	//					break;
-
-	//				case OptionType.None:
-	//					yield return current = current.With(parentMsg).Data(Option<TResult>.None());
-	//					break;
-
-	//				case OptionType.Some:
-	//					token = CancellationTokenSource.CreateLinkedTokenSource(ct);
-	//					await foreach (var invokeMsg in FeedHelper
-	//						.InvokeAsync(parentMsg, current, async ct2 => await _projection((TArg?)data, ct2), _dataComparer, context, token.Token)
-	//						.WithCancellation(token.Token)
-	//						.ConfigureAwait(false))
-	//					{
-	//						yield return current = invokeMsg;
-	//					}
-
-	//					break;
-	//			}
-	//		}
-	//		else
-	//		{
-	//			yield return current = current.With(parentMsg);
-	//		}
-	//	}
-	//}
-
-	//private class AsyncEnumerator<T> : IAsyncEnumerator<T>
-	//{
-			
-
-	//	/// <inheritdoc />
-	//	public ValueTask DisposeAsync()
-	//		=> throw new NotImplementedException();
-
-	//	/// <inheritdoc />
-	//	public ValueTask<bool> MoveNextAsync()
-	//	{
-
-	//	}
-
-	//	/// <inheritdoc />
-	//	public T Current { get; }
-
-	//	public void SetCurrent(T current)
-	//	{
-
-	//	}
-
-	//	public void Complete()
-	//	{
-
-	//	}
-	//}
 
 	/// <inheritdoc />
 	public IAsyncEnumerable<Message<TResult>> GetSource(SourceContext context, CancellationToken ct)

@@ -62,11 +62,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.Tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.Tests", "Uno.Extensions.Reactive.Tests\Uno.Extensions.Reactive.Tests.csproj", "{2125E823-0EAF-44D0-A9AF-85B2F0E50C14}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.View", "Uno.Extensions.Reactive.View\Uno.Extensions.Reactive.View.csproj", "{42CF5A41-1853-447E-A083-5DDB05B4B177}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.UI", "Uno.Extensions.Reactive.UI\Uno.Extensions.Reactive.UI.csproj", "{42CF5A41-1853-447E-A083-5DDB05B4B177}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation.UI.Toolkit", "Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.UI.Toolkit.csproj", "{67EF37C9-D754-4A19-BDC2-4DB7C0E99077}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.View.WinUI", "Uno.Extensions.Reactive.View\Uno.Extensions.Reactive.View.WinUI.csproj", "{4B8A62E2-96DE-47E8-9DF4-BF8B13A5BE50}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.UI.WinUI", "Uno.Extensions.Reactive.UI\Uno.Extensions.Reactive.UI.WinUI.csproj", "{4B8A62E2-96DE-47E8-9DF4-BF8B13A5BE50}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation.WinUI", "Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj", "{7AB8EDEC-D027-428D-A59E-2C3AAC4BF904}"
 EndProject

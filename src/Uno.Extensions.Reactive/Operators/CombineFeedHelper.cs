@@ -3,56 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Uno.Extensions.Reactive;
-
-//internal sealed class CombineFeedHelper<TResult> : IAsyncEnumerable<Message<TResult>>
-//{
-//	private readonly AsyncEnumerableSubject<Message<TResult>> _subject = new(ReplayMode.EnabledForFirstEnumeratorOnly);
-//	private readonly Func<Option<TResult>> _getData;
-//	private readonly IMessageEntry[] _parents;
-
-//	private Message<TResult> _message = Message<TResult>.Initial;
-
-//	public CombineFeedHelper(int arity, Func<Option<TResult>> getData)
-//	{
-//		_getData = getData;
-//		_parents = new IMessageEntry[arity];
-//	}
-
-//	public void ApplyUpdate<T>(int index, Message<T> parent, ref Option<T> data)
-//	{
-//		lock (_subject)
-//		{
-//			_parents[index] = parent.Current;
-
-//			var builder = _message.With();
-//			foreach (var changedAxis in parent.Changes)
-//			{
-//				if (changedAxis == MessageAxis.Data)
-//				{
-//					data = parent.Current.Data;
-//					builder.Data(_getData());
-//				}
-//				else
-//				{
-//					var currentValue = builder[changedAxis];
-//					var updatedValue = changedAxis.Aggregate(_parents.Select(parent => parent?[changedAxis] ?? default));
-
-//					if (!changedAxis.AreEquals(currentValue, updatedValue))
-//					{
-//						builder[changedAxis] = updatedValue;
-//					}
-//				}
-//			}
-
-//			_subject.SetNext(_message = builder);
-//		}
-//	}
-
-//	/// <inheritdoc />
-//	public IAsyncEnumerator<Message<TResult>> GetAsyncEnumerator(CancellationToken cancellationToken = default)
-//		=> _subject.GetAsyncEnumerator(cancellationToken);
-//}
+namespace Uno.Extensions.Reactive.Operators;
 
 internal sealed class CombineFeedHelper<TResult>
 {

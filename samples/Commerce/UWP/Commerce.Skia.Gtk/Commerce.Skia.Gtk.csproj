@@ -39,9 +39,9 @@
 			<Project>{74D93A0B-42F9-45A6-8AC3-684DAE9659A8}</Project>
 			<Name>Uno.Extensions.Reactive</Name>
 		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Reactive.View\Uno.Extensions.Reactive.View.csproj">
+		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Reactive.UI\Uno.Extensions.Reactive.UI.csproj">
 			<Project>{7516C1F2-6CCB-4B59-91B7-E6D4B4EA5835}</Project>
-			<Name>Uno.Extensions.Reactive.View</Name>
+			<Name>Uno.Extensions.Reactive.UI</Name>
 		</ProjectReference>
 	</ItemGroup>
 	<Import Project="..\..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" />

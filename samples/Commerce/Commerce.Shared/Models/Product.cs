@@ -1,6 +1,6 @@
 namespace Commerce.Models;
 
-public class Product
+public record Product
 {
 	public int ProductId { get; set; }
 	public string Brand { get; set; }

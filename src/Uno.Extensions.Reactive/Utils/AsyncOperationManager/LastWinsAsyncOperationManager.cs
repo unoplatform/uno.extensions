@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Uno.Extensions.Reactive.Utils.Logging;
+using Uno.Extensions.Reactive.Logging;
 
 namespace Uno.Extensions.Reactive.Utils;
 
@@ -23,7 +23,7 @@ internal sealed class LastWinsAsyncOperationManager : IAsyncOperationsManager
 	public Task Task => _task.Task;
 
 	/// <inheritdoc />
-	public void OnNext(ActionAsync asyncOperation)
+	public void OnNext(AsyncAction operation)
 	{
 		// Note: To avoid concurrency issue with Dispose, we must set the new CT prior to check the _task.Task.IsCancel
 		var ct = new CancellationTokenSource();
@@ -44,7 +44,7 @@ internal sealed class LastWinsAsyncOperationManager : IAsyncOperationsManager
 			return;
 		}
 
-		Run(asyncOperation, ct.Token);
+		Run(operation, ct.Token);
 	}
 
 	/// <inheritdoc />
@@ -72,7 +72,7 @@ internal sealed class LastWinsAsyncOperationManager : IAsyncOperationsManager
 		}
 	}
 
-	private async void Run(ActionAsync operation, CancellationToken ct)
+	private async void Run(AsyncAction operation, CancellationToken ct)
 	{
 		try
 		{

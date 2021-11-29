@@ -76,7 +76,7 @@ internal class BindableGenerator
 					canRead: prop.GetMethod is not null,
 					canWrite: prop.SetMethod is not null,
 					hasBindable: subBindable is not null,
-					bindable: subBindable ?? $"{NS.Reactive}.Bindable<{prop.Type}>",
+					bindable: subBindable ?? $"{NS.Bindings}.Bindable<{prop.Type}>",
 					property: property.ToString()
 				);
 			})
@@ -92,11 +92,11 @@ using System.Threading.Tasks;
 
 namespace {record.ContainingNamespace};
 
-{record.GetAccessibilityAsCSharpCodeString()} sealed class Bindable{record.GetPascalCaseName()} : {NS.Reactive}.Bindable<{record}>
+{record.GetAccessibilityAsCSharpCodeString()} sealed class Bindable{record.GetPascalCaseName()} : {NS.Bindings}.Bindable<{record}>
 {{
 	{properties.Select(prop => $"private readonly {prop.bindable} _{prop.symbol.GetCamelCaseName()};").Align(1)}
 
-	public Bindable{record.GetPascalCaseName()}({NS.Reactive}.BindablePropertyInfo<{record}> property)
+	public Bindable{record.GetPascalCaseName()}({NS.Bindings}.BindablePropertyInfo<{record}> property)
 		: base(property, hasValueProperty: {(!hasDeclaredValueProperty).ToString().ToLowerInvariant()})
 	{{
 		{properties

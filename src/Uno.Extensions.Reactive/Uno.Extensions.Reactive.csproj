@@ -7,6 +7,7 @@
 		<NoWarn>1701;1702</NoWarn>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<WarningsAsErrors />
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -35,6 +36,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Update="AsyncAction.tt">
+	    <Generator>TextTemplatingFileGenerator</Generator>
+	    <LastGenOutput>AsyncAction.cs</LastGenOutput>
+	  </None>
+	  <None Update="AsyncFunc.tt">
+	    <Generator>TextTemplatingFileGenerator</Generator>
+	    <LastGenOutput>AsyncFunc.cs</LastGenOutput>
+	  </None>
 	  <None Update="Operators\CombineFeed.tt">
 	    <Generator>TextTemplatingFileGenerator</Generator>
 	    <LastGenOutput>CombineFeed.cs</LastGenOutput>
@@ -46,6 +55,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="AsyncAction.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>AsyncAction.tt</DependentUpon>
+	  </Compile>
+	  <Compile Update="AsyncFunc.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>AsyncFunc.tt</DependentUpon>
+	  </Compile>
 	  <Compile Update="Operators\CombineFeed.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>

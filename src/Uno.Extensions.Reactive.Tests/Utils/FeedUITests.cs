@@ -2,7 +2,7 @@
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Reactive.Testing;
-using Uno.Extensions.Reactive.View.Utils;
+using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive.Tests;
 

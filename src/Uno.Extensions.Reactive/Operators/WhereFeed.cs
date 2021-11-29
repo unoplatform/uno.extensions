@@ -4,9 +4,10 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Utils;
 
-namespace Uno.Extensions.Reactive.Impl.Operators;
+namespace Uno.Extensions.Reactive.Operators;
 
 internal sealed class WhereFeed<T> : IFeed<T>
 {
@@ -30,7 +31,7 @@ internal sealed class WhereFeed<T> : IFeed<T>
 				yield return localMsg.Current;
 			}
 
-			MessageBuilder<T, T> DoUpdate(MessageManager<T, T>.ParentedMessage message)
+			MessageBuilder<T, T> DoUpdate(MessageManager<T, T>.CurrentMessage message)
 			{
 				var updated = message.With(updatedParent: parentMsg);
 				if (parentMsg.Changes.Contains(MessageAxis.Data)

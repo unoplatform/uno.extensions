@@ -20,13 +20,14 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)AppInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CommerceSettings.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DesignTime\FakeProducts.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)MainPage.xaml.cs">
-      <DependentUpon>MainPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Models\ProfileModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Cart.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\CartItem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\CartService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\DealService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\ICartService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IDealService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IProfileService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\ProductServices.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\ProfileService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\CartViewModel.cs" />
@@ -85,14 +86,6 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="$(MSBuildThisFileDirectory)ColorPaletteOverride.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="$(MSBuildThisFileDirectory)MainPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="$(MSBuildThisFileDirectory)MaterialFontsOverride.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -181,5 +174,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="$(MSBuildThisFileDirectory)products.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)DesignTime\" />
   </ItemGroup>
 </Project>

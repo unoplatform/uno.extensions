@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace Uno.Extensions.Reactive;
+namespace Uno.Extensions.Reactive.Core;
 
 internal class MessageAxisUpdate
 {

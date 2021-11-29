@@ -5,6 +5,10 @@ using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive;
 
+/// <summary>
+/// A builder of <see cref="Message{T}"/>.
+/// </summary>
+/// <typeparam name="T">The type of the value of the message to build.</typeparam>
 public readonly struct MessageBuilder<T> : IMessageEntry, IMessageBuilder, IMessageBuilder<T>
 {
 	private readonly MessageEntry<T> _previous;
@@ -59,9 +63,16 @@ public readonly struct MessageBuilder<T> : IMessageEntry, IMessageBuilder, IMess
 		}
 	}
 
-	internal Message<T> Build()
+	/// <summary>
+	/// Builds the resulting message.
+	/// </summary>
+	public Message<T> Build()
 		=> new(_previous, new MessageEntry<T>(_values), _changes);
 
+	/// <summary>
+	/// Builds the resulting message.
+	/// </summary>
+	/// <param name="builder">The builder to build.</param>
 	public static implicit operator Message<T>(MessageBuilder<T> builder)
 		=> builder.Build();
 }

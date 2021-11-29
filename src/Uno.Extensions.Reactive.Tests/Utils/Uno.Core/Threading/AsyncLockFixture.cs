@@ -24,6 +24,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Core.Tests.TestUtils;
+using Uno.Extensions;
 using Uno.Extensions.Reactive;
 using Uno.Threading;
 
@@ -515,7 +516,7 @@ namespace Uno.Core.Tests.Threading
 		}
 
 
-		private static ActionAsync<AsyncTestRunner> CommonTwoStepsLock(FastAsyncLock @lock) => async (r, ct) =>
+		private static AsyncAction<AsyncTestRunner> CommonTwoStepsLock(FastAsyncLock @lock) => async (r, ct) =>
 		{
 			using (await @lock.LockAsync(ct))
 			{

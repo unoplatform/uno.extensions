@@ -26,19 +26,13 @@ public partial class ProductsViewModel
 	}
 
 	public IFeed<Product[]> Items => Feed
-		.Combine(_term.SelectAsync(Load), _filter)
+		.Combine(Results, _filter)
 		.Select(FilterProducts)
 		.Where(products => products.Any());
 
-	private async ValueTask<Product[]> Load(string searchTerm, CancellationToken ct)
-	{
-		var products = await _products.GetProducts(searchTerm, ct);
-
-		return products.ToArray();
-	}
+	private IFeed<Product[]> Results => _term
+		.SelectAsync(_products.GetProducts);
 
 	private Product[] FilterProducts((Product[] products, Filters? filter) inputs)
-	{
-		return inputs.products.Where(p => inputs.filter?.Match(p) ?? true).ToArray();
-	}
+		=> inputs.products.Where(p => inputs.filter?.Match(p) ?? true).ToArray();
 }

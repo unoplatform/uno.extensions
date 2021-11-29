@@ -103,7 +103,7 @@
     <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.WinUI.Toolkit.csproj" />
     <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
     <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj" />
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Reactive.View\Uno.Extensions.Reactive.View.WinUI.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Reactive.UI\Uno.Extensions.Reactive.UI.WinUI.csproj" />
   </ItemGroup>
   <Import Project="..\..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" />
   <ItemGroup>

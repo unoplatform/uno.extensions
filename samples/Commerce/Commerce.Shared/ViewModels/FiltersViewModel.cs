@@ -2,11 +2,4 @@
 
 namespace Commerce.ViewModels;
 
-public partial class FiltersViewModel
-{
-	public FiltersViewModel(IInput<Filters> filter)
-	{
-	}
-}
-
-
+public partial record FiltersViewModel(IInput<Filters> filter);

@@ -1,10 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive;
 
+/// <summary>
+/// A builder of <see cref="Message{T}"/> based on a parent message of <typeparamref name="TParent"/>.
+/// </summary>
+/// <typeparam name="TParent">Type of the value of the parrent message.</typeparam>
+/// <typeparam name="TResult">The type of the value of the message to build.</typeparam>
 public readonly struct MessageBuilder<TParent, TResult> : IMessageEntry, IMessageBuilder, IMessageBuilder<TResult>
 {
 	private readonly Dictionary<MessageAxis, MessageAxisUpdate> _updates;

@@ -1,19 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Commerce.Models;
 using Commerce.Services;
 using Uno.Extensions.Reactive;
 
-namespace Commerce.ViewModels
-{
-	class CartViewModel
-	{
-		private readonly ICartService _cartService;
-		public CartViewModel(ICartService cartService)
-		{
-			_cartService = cartService;
-		}
+namespace Commerce.ViewModels;
 
-		public IFeed<Cart> Cart => Feed.Async(_cartService.Get);
-	}
+public partial record CartViewModel(ICartService CartService)
+{
+	public IFeed<Cart> Cart => Feed.Async(CartService.Get);
 }

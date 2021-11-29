@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Uno.Extensions.Reactive.Utils.Logging;
+using Uno.Extensions.Reactive.Logging;
 
-namespace Uno.Extensions.Reactive;
+namespace Uno.Extensions.Reactive.Utils;
 
 /// <summary>
-/// An enumerator which execute an <see cref="ActionAsync{T}"/> for each items of an <see cref="IAsyncEnumerable{T}"/>.
+/// An enumerator which execute an <see cref="AsyncAction{T}"/> for each items of an <see cref="IAsyncEnumerable{T}"/>.
 /// </summary>
 /// <typeparam name="T">The type of items</typeparam>
 internal sealed class RefCountedForEachRunner<T> : IForEachRunner
 {
 	private readonly Func<IAsyncEnumerable<T>> _enumeratorProvider;
-	private readonly ActionAsync<T> _action;
+	private readonly AsyncAction<T> _asyncAction;
 
 	private readonly object _enumerationGate = new();
 	private CancellationTokenSource? _enumerationToken;
@@ -33,10 +33,10 @@ internal sealed class RefCountedForEachRunner<T> : IForEachRunner
 
 	public RefCountedForEachRunner(
 		Func<IAsyncEnumerable<T>> enumeratorProvider, 
-		ActionAsync<T> action)
+		AsyncAction<T> asyncAction)
 	{
 		_enumeratorProvider = enumeratorProvider;
-		_action = action;
+		_asyncAction = asyncAction;
 	}
 
 	/// <summary>
@@ -112,7 +112,7 @@ internal sealed class RefCountedForEachRunner<T> : IForEachRunner
 
 		try
 		{
-			await _enumeratorProvider().ForEachAwaitAsync(async item => await _action(item, ct), ct);
+			await _enumeratorProvider().ForEachAwaitAsync(async item => await _asyncAction(item, ct), ct);
 		}
 		catch (OperationCanceledException)
 		{

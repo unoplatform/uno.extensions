@@ -26,6 +26,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Uno.Extensions;
 using Uno.Extensions.Reactive;
 using Uno.Threading;
 
@@ -57,7 +58,7 @@ namespace Uno.Core.Tests.TestUtils
 		private int _syncPosition;
 		private ImmutableDictionary<string , object> _interopValues = ImmutableDictionary<string, object>.Empty;
 
-		public AsyncTestRunner(ActionAsync<AsyncTestRunner> method = null, [CallerMemberName] string name = null, [CallerLineNumber] int line = -1, bool loop = false)
+		public AsyncTestRunner(AsyncAction<AsyncTestRunner> method = null, [CallerMemberName] string name = null, [CallerLineNumber] int line = -1, bool loop = false)
 		{
 			_loop = loop;
 			_identifier = $"{name}@{line}";
@@ -75,7 +76,7 @@ namespace Uno.Core.Tests.TestUtils
 
 		public void Set<T>(string key, T value) => ImmutableInterlocked.Update(ref _interopValues, values => values.SetItem(key, value));
 
-		public Task Run(ActionAsync<AsyncTestRunner> method)
+		public Task Run(AsyncAction<AsyncTestRunner> method)
 		{
 			var item = new QueueItem(method);
 			ImmutableInterlocked.Enqueue(ref _queue, item);
@@ -285,12 +286,12 @@ namespace Uno.Core.Tests.TestUtils
 
 		private class QueueItem
 		{
-			private readonly ActionAsync<AsyncTestRunner> _method;
+			private readonly AsyncAction<AsyncTestRunner> _method;
 			private readonly TaskCompletionSource<Unit> _task = new TaskCompletionSource<Unit>();
 
 			private DateTime _lastBeat = DateTime.Now;
 
-			public QueueItem(ActionAsync<AsyncTestRunner> method)
+			public QueueItem(AsyncAction<AsyncTestRunner> method)
 			{
 				_method = method;
 			}

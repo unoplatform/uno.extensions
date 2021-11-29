@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Uno.Extensions.Reactive.Utils.Logging;
+using Uno.Extensions.Reactive.Logging;
 
 namespace Uno.Extensions.Reactive.Utils;
 
@@ -24,7 +24,7 @@ internal sealed class FirstWinsAsyncOperationManager : IAsyncOperationsManager
 	public Task Task => _task.Task;
 
 	/// <inheritdoc />
-	public void OnNext(ActionAsync asyncOperation)
+	public void OnNext(AsyncAction operation)
 	{
 		if (_isCompleted)
 		{
@@ -43,7 +43,7 @@ internal sealed class FirstWinsAsyncOperationManager : IAsyncOperationsManager
 
 		if (Interlocked.CompareExchange(ref _isRunning, 1, 0) == 0)
 		{
-			_ = asyncOperation(_ct.Token).AsTask().ContinueWith(
+			_ = operation(_ct.Token).AsTask().ContinueWith(
 				t =>
 				{
 					if (t.IsFaulted)

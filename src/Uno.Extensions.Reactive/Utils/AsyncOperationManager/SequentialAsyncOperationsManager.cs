@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Uno.Extensions.Reactive.Utils.Logging;
+using Uno.Extensions.Reactive.Logging;
 
 namespace Uno.Extensions.Reactive.Utils;
 
 internal sealed class SequentialAsyncOperationsManager : IAsyncOperationsManager
 {
-	private readonly Queue<ActionAsync> _queue = new();
+	private readonly Queue<AsyncAction> _queue = new();
 	private readonly CancellationTokenSource _ct = new();
 	private readonly TaskCompletionSource<object?> _task = new();
 	private readonly bool _silentErrors;
@@ -24,7 +24,7 @@ internal sealed class SequentialAsyncOperationsManager : IAsyncOperationsManager
 		_silentErrors = silentErrors;
 	}
 
-	public void OnNext(ActionAsync asyncOperation)
+	public void OnNext(AsyncAction operation)
 	{
 		lock (_queue)
 		{
@@ -43,7 +43,7 @@ internal sealed class SequentialAsyncOperationsManager : IAsyncOperationsManager
 				return;
 			}
 
-			_queue.Enqueue(asyncOperation);
+			_queue.Enqueue(operation);
 			if (!_isRunning)
 			{
 				_ = Dequeue();
@@ -87,7 +87,7 @@ internal sealed class SequentialAsyncOperationsManager : IAsyncOperationsManager
 	{
 		while (!_task.Task.IsCompleted)
 		{
-			ActionAsync? operation;
+			AsyncAction? operation;
 			bool isCompleted;
 			lock (_queue)
 			{

@@ -7,23 +7,17 @@ using System.Threading.Tasks;
 using Commerce.Models;
 using Uno.Extensions;
 
-namespace Commerce.Services
+namespace Commerce.Services;
+
+class DealService : JsonDataService<Product>, IDealService
 {
-	class DealService : JsonDataService<Product>, IDealService
+
+	public DealService(string dataFile) : base(dataFile) { }
+
+	public async ValueTask<Product[]> GetDeals(CancellationToken ct)
 	{
+		var products = await GetEntities();
 
-		public DealService(string dataFile) : base(dataFile) { }
-
-		public async ValueTask<Product[]> GetDeals(CancellationToken ct)
-		{
-			var products = await GetEntities();
-
-			return products.Where(p => !p.Discount.IsNullOrEmpty()).ToArray();
-		}
-	}
-
-	public interface IDealService
-	{
-		ValueTask<Product[]> GetDeals(CancellationToken ct);
+		return products.Where(p => !p.Discount.IsNullOrEmpty()).ToArray();
 	}
 }

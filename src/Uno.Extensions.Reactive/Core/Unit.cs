@@ -3,7 +3,13 @@ using System.Linq;
 
 namespace Uno.Extensions.Reactive;
 
-public struct Unit
+/// <summary>
+/// Nothing
+/// </summary>
+public readonly struct Unit
 {
+	/// <summary>
+	/// Default of nothing
+	/// </summary>
 	public static Unit Default => default;
 }

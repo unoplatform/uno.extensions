@@ -3,32 +3,66 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Uno.Extensions.Reactive.Sources;
-using Uno.Reactive.Sources;
+using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive;
 
+/// <summary>
+/// Provides a set of static methods to create and manipulate <see cref="IFeed{T}"/>.
+/// </summary>
 public static class Feed<T> // We set the T on the class to it greatly helps type inference of factory delegates
 {
+	/// <summary>
+	/// Creates a custom feed from a raw <see cref="IAsyncEnumerable{T}"/> sequence of <see cref="Message{T}"/>.
+	/// </summary>
+	/// <param name="sourceProvider">The provider of the message enumerable sequence.</param>
+	/// <returns>A feed that encapsulate the source.</returns>
 	public static IFeed<T> Create(Func<CancellationToken, IAsyncEnumerable<Message<T>>> sourceProvider)
 		=> AttachedProperty.GetOrCreate(sourceProvider, sp => new CustomFeed<T>(sp));
 
+	/// <summary>
+	/// Creates a custom feed from a raw <see cref="IAsyncEnumerable{T}"/> sequence of <see cref="Message{T}"/>.
+	/// </summary>
+	/// <param name="sourceProvider">The provider of the message enumerable sequence.</param>
+	/// <returns>A feed that encapsulate the source.</returns>
 	public static IFeed<T> Create(Func<IAsyncEnumerable<Message<T>>> sourceProvider)
 		=> AttachedProperty.GetOrCreate(sourceProvider, sp => new CustomFeed<T>(_ => sp()));
 
-
-	public static IFeed<T> Async(FuncAsync<Option<T>> valueProvider, Signal? refresh = null)
+	/// <summary>
+	/// Creates a custom feed from an async method.
+	/// </summary>
+	/// <param name="valueProvider">The async method to use to load the value of the resulting feed.</param>
+	/// <param name="refresh">A refresh trigger to reload the <paramref name="valueProvider"/>.</param>
+	/// <returns>A feed that encapsulate the source.</returns>
+	public static IFeed<T> Async(AsyncFunc<Option<T>> valueProvider, Signal? refresh = null)
 		=> refresh is null
 			? AttachedProperty.GetOrCreate(valueProvider, vp => new AsyncFeed<T>(vp))
 			: AttachedProperty.GetOrCreate(refresh, valueProvider, (r, vp) => new AsyncFeed<T>(vp, r));
 
-	public static IFeed<T> Async(FuncAsync<T> valueProvider, Signal? refresh = null)
+	/// <summary>
+	/// Creates a custom feed from an async method.
+	/// </summary>
+	/// <param name="valueProvider">The async method to use to load the value of the resulting feed.</param>
+	/// <param name="refresh">A refresh trigger to reload the <paramref name="valueProvider"/>.</param>
+	/// <returns>A feed that encapsulate the source.</returns>
+	public static IFeed<T> Async(AsyncFunc<T> valueProvider, Signal? refresh = null)
 		=> refresh is null
 			? AttachedProperty.GetOrCreate(valueProvider, vp => new AsyncFeed<T>(vp))
 			: AttachedProperty.GetOrCreate(refresh, valueProvider, (r, vp) => new AsyncFeed<T>(vp, r));
 
+	/// <summary>
+	/// Creates a custom feed from an async enumerable sequence of value.
+	/// </summary>
+	/// <param name="enumerableProvider">The async enumerable sequence of value of the resulting feed.</param>
+	/// <returns>A feed that encapsulate the source.</returns>
 	public static IFeed<T> AsyncEnumerable(Func<IAsyncEnumerable<Option<T>>> enumerableProvider)
 		=> AttachedProperty.GetOrCreate(enumerableProvider, ep => new AsyncEnumerableFeed<T>(ep));
 
+	/// <summary>
+	/// Creates a custom feed from an async enumerable sequence of value.
+	/// </summary>
+	/// <param name="enumerableProvider">The async enumerable sequence of value of the resulting feed.</param>
+	/// <returns>A feed that encapsulate the source.</returns>
 	public static IFeed<T> AsyncEnumerable(Func<IAsyncEnumerable<T>> enumerableProvider)
 		=> AttachedProperty.GetOrCreate(enumerableProvider, ep => new AsyncEnumerableFeed<T>(ep));
 }

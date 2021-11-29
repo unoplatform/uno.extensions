@@ -2,22 +2,45 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Uno.Extensions.Reactive.Impl.Operators;
+using Uno.Extensions.Reactive.Operators;
+using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive;
 
+/// <summary>
+/// Provides a set of static methods to create and manipulate <see cref="IFeed{T}"/>.
+/// </summary>
 public static partial class Feed
 {
 	#region Sources
 	// Note: Those are helpers for which the T is set by type inference on provider.
 	//		 We must have only one overload per method.
 
+	/// <summary>
+	/// Creates a custom feed from a raw <see cref="IAsyncEnumerable{T}"/> sequence of <see cref="Uno.Extensions.Reactive.Message{T}"/>.
+	/// </summary>
+	/// <typeparam name="T">The type of the value of the resulting feed.</typeparam>
+	/// <param name="sourceProvider">The provider of the message enumerable sequence.</param>
+	/// <returns>A feed that encapsulate the source.</returns>
 	public static IFeed<T> Create<T>(Func<CancellationToken, IAsyncEnumerable<Message<T>>> sourceProvider)
 		=> Feed<T>.Create(sourceProvider);
 
-	public static IFeed<T> Async<T>(FuncAsync<T> valueProvider, Signal? refresh = null)
+	/// <summary>
+	/// Creates a custom feed from an async method.
+	/// </summary>
+	/// <typeparam name="T">The type of the value of the resulting feed.</typeparam>
+	/// <param name="valueProvider">The async method to use to load the value of the resulting feed.</param>
+	/// <param name="refresh">A refresh trigger to reload the <paramref name="valueProvider"/>.</param>
+	/// <returns>A feed that encapsulate the source.</returns>
+	public static IFeed<T> Async<T>(AsyncFunc<T> valueProvider, Signal? refresh = null)
 		=> Feed<T>.Async(valueProvider, refresh);
 
+	/// <summary>
+	/// Creates a custom feed from an async enumerable sequence of value.
+	/// </summary>
+	/// <typeparam name="T">The type of the data of the resulting feed.</typeparam>
+	/// <param name="enumerableProvider">The async enumerable sequence of value of the resulting feed.</param>
+	/// <returns>A feed that encapsulate the source.</returns>
 	public static IFeed<T> AsyncEnumerable<T>(Func<IAsyncEnumerable<T>> enumerableProvider)
 		=> Feed<T>.AsyncEnumerable(enumerableProvider);
 	#endregion
@@ -26,19 +49,46 @@ public static partial class Feed
 	// Note: The operators are only dealing with values.
 	//		 To deal with Message<T> or Option<T>, we will request to user to enumerate themselves the source
 
+	/// <summary>
+	/// Creates a feed that filters out some values of a source feed.
+	/// </summary>
+	/// <typeparam name="TSource">Type of the value of the feed.</typeparam>
+	/// <param name="source">The source feed to filter.</param>
+	/// <param name="predicate">The predicate to apply to values.</param>
+	/// <returns>A feed that filters out some values of the source feed</returns>
+	/// <remarks>
+	/// Unlike <see cref="IEnumerable{T}"/>, <see cref="IAsyncEnumerable{T}"/> or <see cref="IObservable{T}"/>,
+	/// a filtered out value from source feed **will produce a message** with its data set to None.
+	/// </remarks>
 	public static IFeed<TSource> Where<TSource>(
 		this IFeed<TSource> source,
 		Predicate<TSource?> predicate)
 		=> AttachedProperty.GetOrCreate(source, predicate, (src, p) => new WhereFeed<TSource>(src, p));
 
+	/// <summary>
+	/// Creates a feed that projects each value of a source feed.
+	/// </summary>
+	/// <typeparam name="TSource">Type of the value of the source feed.</typeparam>
+	/// <typeparam name="TResult">Type of the value of the resulting feed.</typeparam>
+	/// <param name="source">The source feed to project.</param>
+	/// <param name="selector">The projection method.</param>
+	/// <returns>A feed that projects each value of the source feed.</returns>
 	public static IFeed<TResult> Select<TSource, TResult>(
 		this IFeed<TSource> source,
 		Func<TSource?, TResult?> selector)
 		=> AttachedProperty.GetOrCreate(source, selector, (src, s) => new SelectFeed<TSource, TResult>(src, s));
 
+	/// <summary>
+	/// Creates a feed that asynchronously projects each value of a source feed.
+	/// </summary>
+	/// <typeparam name="TSource">Type of the value of the source feed.</typeparam>
+	/// <typeparam name="TResult">Type of the value of the resulting feed.</typeparam>
+	/// <param name="source">The source feed to project.</param>
+	/// <param name="selector">The asynchronous projection method.</param>
+	/// <returns>A feed that projects each value of the source feed.</returns>
 	public static IFeed<TResult> SelectAsync<TSource, TResult>(
 		this IFeed<TSource> source,
-		FuncAsync<TSource?, TResult?> selector)
+		AsyncFunc<TSource?, TResult?> selector)
 		=> AttachedProperty.GetOrCreate(source, selector, (src, s) => new SelectAsyncFeed<TSource, TResult>(src, s));
 	#endregion
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿#pragma warning disable CS1591 // XML Doc, will be moved elsewhere
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -118,23 +120,8 @@ public readonly struct Option<T> : IEquatable<Option<T>>
 
 public static class OptionExtensions
 {
-	public static async ValueTask<Option<TResult>> MapAsync<T, TResult>(this Option<T> option, FuncAsync<T?, TResult?> projection, CancellationToken ct)
+	public static async ValueTask<Option<TResult>> MapAsync<T, TResult>(this Option<T> option, AsyncFunc<T?, TResult?> projection, CancellationToken ct)
 		=> option.IsSome(out var value) ? await projection(value, ct)
 			: option.IsNone() ? Option<TResult>.None()
 			: Option<TResult>.Undefined();
-}
-
-internal class ReferenceEqualityComparer<T> : IEqualityComparer<T>
-{
-	private ReferenceEqualityComparer()
-	{
-	}
-
-	/// <inheritdoc />
-	public bool Equals(T x, T y)
-		=> object.ReferenceEquals(x, y);
-
-	/// <inheritdoc />
-	public int GetHashCode(T obj)
-		=> obj?.GetHashCode() ?? 0;
 }
