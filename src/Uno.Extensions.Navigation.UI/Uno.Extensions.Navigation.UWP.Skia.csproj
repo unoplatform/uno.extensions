@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<IsPackable>false</IsPackable>
-		<RootNamespace>Uno.Extensions.Hosting.UWP</RootNamespace>
+		<RootNamespace>Uno.Extensions.Navigation</RootNamespace>
 		<UnoRuntimeIdentifier>skia</UnoRuntimeIdentifier>
 		<DefineConstants>$(DefineConstants);__SKIA__</DefineConstants>
 	</PropertyGroup>

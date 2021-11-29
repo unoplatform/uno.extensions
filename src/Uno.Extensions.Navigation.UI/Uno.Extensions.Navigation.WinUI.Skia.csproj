@@ -3,14 +3,20 @@
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<IsPackable>false</IsPackable>
-		<RootNamespace>Uno.Extensions.Hosting.UWP</RootNamespace>
+		<RootNamespace>Uno.Extensions.Navigation</RootNamespace>
 		<UnoRuntimeIdentifier>skia</UnoRuntimeIdentifier>
 		<DefineConstants>$(DefineConstants);__SKIA__</DefineConstants>
 	</PropertyGroup>
 
+	<PropertyGroup>
+		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+	</PropertyGroup>
+
+
 	<ItemGroup>
-		<PackageReference Include="Uno.UI" Version="4.0.0-dev.5726" />
+		<PackageReference Include="Uno.WinUI" Version="4.0.0-dev.5690" />
 	</ItemGroup>
 
 	<Import Project="common.props"/>
+
 </Project>

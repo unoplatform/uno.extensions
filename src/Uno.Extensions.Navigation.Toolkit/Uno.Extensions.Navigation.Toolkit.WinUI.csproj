@@ -4,7 +4,17 @@
 		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'==''">netstandard2.0;netstandard2.1;net5.0;net5.0-windows10.0.18362.0;xamarinios10;xamarinmac20;monoandroid10.0;monoandroid11.0</TargetFrameworks>
 		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'=='' and '$(UnoExtensionsDisableNet6)'==''">$(TargetFrameworks);net6.0;net6.0-windows10.0.18362.0;net6.0-ios;net6.0-android</TargetFrameworks>
 	</PropertyGroup>
-
+<ItemGroup>
+		<UnoRuntimeProjectReference Include="Uno.Extensions.Navigation.Toolkit.WinUI.Wasm.csproj" />
+		<UnoRuntimeProjectReference Include="Uno.Extensions.Navigation.Toolkit.WinUI.Skia.csproj" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<Content Include="buildTransitive\**">
+			<PackagePath>buildTransitive</PackagePath>
+			<Pack>true</Pack>
+		</Content>
+	</ItemGroup>
 	<Import Project="common.props" />
 
 	<PropertyGroup>
@@ -12,8 +22,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Uno.WinUI" Version="4.0.0-dev.5645" />
+		<PackageReference Include="Uno.WinUI" Version="4.0.0-dev.5690" />
 		<PackageReference Include="Uno.Toolkit.WinUI" Version="0.1.0-dev.152" />
+		<ProjectReference Include="..\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)'=='net5.0-windows10.0.18362.0' or '$(TargetFramework)'=='net6.0-windows10.0.18362.0'">
@@ -24,8 +35,21 @@
 		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.18362.21" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj" />
-	</ItemGroup>
 
+<ItemGroup>
+		<ProjectReference Include="Uno.Extensions.Navigation.Toolkit.WinUI.Wasm.csproj"
+			ReferenceOutputAssembly="false"
+			LinkLibraryDependencies="false"
+			CopyLocal="false"
+			SkipGetTargetFrameworkProperties="true"
+			GlobalPropertiesToRemove="TargetFramework"
+    />
+		<ProjectReference Include="Uno.Extensions.Navigation.Toolkit.WinUI.Skia.csproj"
+			ReferenceOutputAssembly="false"
+			LinkLibraryDependencies="false"
+			CopyLocal="false"
+			SkipGetTargetFrameworkProperties="true"
+			GlobalPropertiesToRemove="TargetFramework"
+    />
+	</ItemGroup>
 </Project>

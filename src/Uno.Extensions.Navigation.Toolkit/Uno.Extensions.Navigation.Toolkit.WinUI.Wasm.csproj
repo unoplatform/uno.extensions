@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk"  ToolsVersion="15.0">
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<IsPackable>false</IsPackable>
+		<RootNamespace>Uno.Extensions.Navigation.Toolkit</RootNamespace>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+	</PropertyGroup>
+
+
+	<ItemGroup>
+		<PackageReference Include="Uno.WinUI.Runtime.WebAssembly" Version="4.0.0-dev.5678" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Uno.Toolkit.WinUI" Version="0.1.0-dev.152" />
+		<ProjectReference Include="..\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.Wasm.csproj" />
+	</ItemGroup>
+
+	<Import Project="common.props"/>
+
+</Project>

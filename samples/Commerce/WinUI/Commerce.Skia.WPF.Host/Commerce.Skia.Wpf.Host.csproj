@@ -7,7 +7,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Uno.WinUI.Skia.Wpf" Version="4.0.0-dev.5688" />
-    <PackageReference Include="Uno.WinUI.RemoteControl" Version="4.0.0-dev.5688" Condition="'$(Configuration)'=='Debug'" />
+    <PackageReference Include="Uno.WinUI.RemoteControl" Version="4.0.0-dev.5690" Condition="'$(Configuration)'=='Debug'" />
     <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.0.0-dev.5688" />
   </ItemGroup>
   <ItemGroup>

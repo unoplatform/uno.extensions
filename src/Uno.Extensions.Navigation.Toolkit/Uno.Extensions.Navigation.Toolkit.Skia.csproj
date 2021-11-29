@@ -3,13 +3,15 @@
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<IsPackable>false</IsPackable>
-		<RootNamespace>Uno.Extensions.Hosting.UWP</RootNamespace>
+		<RootNamespace>Uno.Extensions.Navigation.Toolkit</RootNamespace>
 		<UnoRuntimeIdentifier>skia</UnoRuntimeIdentifier>
 		<DefineConstants>$(DefineConstants);__SKIA__</DefineConstants>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Uno.UI" Version="4.0.0-dev.5726" />
+		<PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.152" />
+		<ProjectReference Include="..\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UWP.Skia.csproj" />
 	</ItemGroup>
 
 	<Import Project="common.props"/>
