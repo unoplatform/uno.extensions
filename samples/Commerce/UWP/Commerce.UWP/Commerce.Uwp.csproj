@@ -25,8 +25,8 @@
     <PackageReference Include="Uno.Toolkit.UI.Material">
       <Version>0.1.0-dev.165</Version>
     </PackageReference>
-    <PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.165" />
-    <PackageReference Include="Uno.UI" Version="4.0.0-dev.5650" />
+    <PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.169" />
+    <PackageReference Include="Uno.UI" Version="4.0.0-dev.5688" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
@@ -208,6 +208,9 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <Content Include="Assets\Fonts\Material\Roboto-Light.ttf" />
+    <Content Include="Assets\Fonts\Material\Roboto-Medium.ttf" />
+    <Content Include="Assets\Fonts\Material\Roboto-Regular.ttf" />
     <None Include="Commerce_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
