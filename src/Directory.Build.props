@@ -53,6 +53,10 @@
 		<IsMacOS>true</IsMacOS>
 	</PropertyGroup>
 
+	<ItemGroup Condition="'$(IsMacOS)'=='true'">
+		<Reference Include="netstandard" />
+	</ItemGroup>
+
 	<PropertyGroup Condition="$(TargetFramework.Contains('windows10'))">
 		<IsWinUI>true</IsWinUI>
 	</PropertyGroup>

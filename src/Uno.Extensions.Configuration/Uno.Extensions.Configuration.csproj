@@ -8,7 +8,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
-		<ProjectReference Include="..\Uno.Extensions.Logging\Uno.Extensions.Logging.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
 	</ItemGroup>
 
