@@ -95,6 +95,10 @@
     <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
     <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Localization\Uno.Extensions.Localization.WinUI.csproj" />
     <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.WinUI.csproj">
+      <Project>{cd0b283b-ac4d-4b56-b8df-fcfbc07f82b0}</Project>
+      <Name>Uno.Extensions.Logging.WinUI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.WinUI.csproj">
       <Project>{698345ce-70bb-4fc0-ae48-0fba83e6cadc}</Project>
       <Name>Uno.Extensions.Navigation.Toolkit.WinUI</Name>
