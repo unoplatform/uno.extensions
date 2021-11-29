@@ -5,6 +5,11 @@
 		<RootNamespace>Uno.Extensions.Hosting.UWP</RootNamespace>
 	</PropertyGroup>
 
+	<PropertyGroup>
+		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+	</PropertyGroup>
+
+
 	<ItemGroup>
 		<PackageReference Include="Uno.WinUI.Runtime.WebAssembly" Version="4.0.0-dev.5678" />
 	</ItemGroup>

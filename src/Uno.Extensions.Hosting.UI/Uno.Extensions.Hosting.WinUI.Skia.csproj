@@ -8,6 +8,11 @@
 		<DefineConstants>$(DefineConstants);__SKIA__</DefineConstants>
 	</PropertyGroup>
 
+	<PropertyGroup>
+		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+	</PropertyGroup>
+
+
 	<ItemGroup>
 		<PackageReference Include="Uno.WinUI" Version="4.0.0-dev.5678" />
 	</ItemGroup>
