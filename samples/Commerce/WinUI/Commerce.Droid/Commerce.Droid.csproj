@@ -59,10 +59,10 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
   </ItemGroup>
-	<PropertyGroup>
-		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
-	</PropertyGroup>
-	<ItemGroup>
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
     <PackageReference Include="Uno.UniversalImageLoader" Version="1.9.33" />
 		<PackageReference Include="Xamarin.AndroidX.AppCompat.AppCompatResources" Version="1.2.0.5" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
@@ -108,6 +108,9 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\Fonts\uno-fluentui-assets.ttf" />
+    <AndroidAsset Include="Assets\Fonts\Material\Roboto-Light.ttf" />
+    <AndroidAsset Include="Assets\Fonts\Material\Roboto-Medium.ttf" />
+    <AndroidAsset Include="Assets\Fonts\Material\Roboto-Regular.ttf" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
   </ItemGroup>
