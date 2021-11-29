@@ -2,13 +2,13 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
 	</ItemGroup>
-  
-  <ItemGroup Condition="'$(IsUWP)' == 'true'">
-	  <PackageReference Include="Microsoft.UI.Xaml" Version="2.7.0" />
-  </ItemGroup>
 
-  <ItemGroup>
-	  <PackageReference Include="Uno.Core" Version="4.0.1" />
-  </ItemGroup>
+	<ItemGroup Condition="'$(IsUWP)' == 'true'">
+		<PackageReference Include="Microsoft.UI.Xaml" Version="2.7.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Uno.Core" Version="4.0.1" />
+	</ItemGroup>
 
 </Project>
