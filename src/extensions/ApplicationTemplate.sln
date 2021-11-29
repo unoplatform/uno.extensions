@@ -55,8 +55,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Serializatio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Configuration", "..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj", "{E2B51DBB-B8D6-4F14-A9F4-E5C7F7DFF7E0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Logging", "..\Uno.Extensions.Logging\Uno.Extensions.Logging.csproj", "{4DFC5B5F-49FD-43DB-A769-32850CC2662A}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Localization", "..\Uno.Extensions.Localization\Uno.Extensions.Localization.csproj", "{99C2B6EB-7A79-4D93-A0B7-A7A52EF72331}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Http", "..\Uno.Extensions.Http\Uno.Extensions.Http.csproj", "{8D2DAC29-CF34-42AD-AF4C-E723FD3C136E}"

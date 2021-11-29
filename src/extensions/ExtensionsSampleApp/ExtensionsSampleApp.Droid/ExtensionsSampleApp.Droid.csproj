@@ -121,10 +121,6 @@
       <Project>{3f01a0de-4b9e-496f-ac6b-94daf315a20f}</Project>
       <Name>Uno.Extensions.Logging.Serilog</Name>
     </ProjectReference>-->
-    <ProjectReference Include="..\..\Uno.Extensions.Logging\Uno.Extensions.Logging.csproj">
-      <Project>{406a741f-fb06-482f-9037-154b55fcb2ce}</Project>
-      <Name>Uno.Extensions.Logging</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj">
       <Project>{ad3c0a66-450d-4355-b5c4-fdaf0d7746ad}</Project>
       <Name>Uno.Extensions.Navigation</Name>

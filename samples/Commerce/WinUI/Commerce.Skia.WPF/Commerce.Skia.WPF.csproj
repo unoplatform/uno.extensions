@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
 		<DefineConstants>$(DefinedConstants);WINUI</DefineConstants>
@@ -19,13 +19,15 @@
     <UpToDateCheckInput Include="..\..\Commerce.Shared\**\*.xaml" />
   </ItemGroup>
 	<ItemGroup>
+		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
 		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
 		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.Skia.csproj" />
 		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
 		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Localization\Uno.Extensions.Localization.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj" />
-		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.csproj" />
+		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.WinUI.Skia.csproj" />
+		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
 		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.WinUI.Toolkit.csproj" />
