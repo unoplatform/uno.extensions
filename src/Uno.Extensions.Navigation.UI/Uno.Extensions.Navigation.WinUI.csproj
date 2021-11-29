@@ -7,7 +7,7 @@
 	
 	<ItemGroup>
 		<UnoRuntimeProjectReference Include="Uno.Extensions.Navigation.WinUI.Wasm.csproj" />
-		<UnoRuntimeProjectReference Include="Uno.Extensions.Navigation.WinUI.Skia.csproj" />
+		<!--<UnoRuntimeProjectReference Include="Uno.Extensions.Navigation.WinUI.Skia.csproj" />-->
 	</ItemGroup>
 	
 	<ItemGroup>
@@ -44,12 +44,12 @@
 			SkipGetTargetFrameworkProperties="true"
 			GlobalPropertiesToRemove="TargetFramework"
     />
-		<ProjectReference Include="Uno.Extensions.Navigation.WinUI.Skia.csproj"
+		<!--<ProjectReference Include="Uno.Extensions.Navigation.WinUI.Skia.csproj"
 			ReferenceOutputAssembly="false"
 			LinkLibraryDependencies="false"
 			CopyLocal="false"
 			SkipGetTargetFrameworkProperties="true"
 			GlobalPropertiesToRemove="TargetFramework"
-    />
+    />-->
 	</ItemGroup>
 </Project>
