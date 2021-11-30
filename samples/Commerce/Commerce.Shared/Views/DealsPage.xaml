@@ -5,11 +5,10 @@
 	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	  xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
-	  xmlns:utu="using:Uno.Toolkit.UI.Controls"
+	  xmlns:utu="using:Uno.Toolkit.UI"
 	  xmlns:uer="using:Uno.Extensions.Reactive.UI"
 	  xmlns:uen="using:Uno.Extensions.Navigation.Controls"
 	  mc:Ignorable="d"
-	  xmlns:toolkit="using:Uno.Toolkit.UI.Controls"
 	  Background="{ThemeResource MaterialBackgroundBrush}">
 	<utu:AutoLayout>
 		<utu:NavigationBar Content="Deals"

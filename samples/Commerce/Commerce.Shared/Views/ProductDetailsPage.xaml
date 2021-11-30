@@ -6,11 +6,10 @@
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	  xmlns:controls="using:Microsoft.UI.Xaml.Controls"
 	  xmlns:nav="using:Uno.Extensions.Navigation.Controls"
-	  xmlns:utu="using:Uno.Toolkit.UI.Controls"
+	  xmlns:utu="using:Uno.Toolkit.UI"
 	  xmlns:uen="using:Uno.Extensions.Navigation.Controls"
 	  xmlns:uer="using:Uno.Extensions.Reactive.UI"
 	  xmlns:um="using:Uno.Material.Extensions"
-	  xmlns:toolkit="using:Uno.Toolkit.UI.Controls"
 	  xmlns:reactive="using:Uno.Extensions.Reactive.UI"
 	  mc:Ignorable="d"
 	  Background="{ThemeResource MaterialBackgroundBrush}">

@@ -6,7 +6,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:nav="using:Uno.Extensions.Navigation.Controls"
       xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
-	  xmlns:toolkit="using:Uno.Toolkit.UI.Controls"
+	  xmlns:utu="using:Uno.Toolkit.UI"
 	  mc:Ignorable="d"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Page.Resources>
@@ -45,15 +45,15 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <toolkit:TabBar 
+        <utu:TabBar 
                         nav:Region.Attached="true">
-            <toolkit:TabBar.Items>
-                <toolkit:TabBarItem Content="Hot Deals"
+            <utu:TabBar.Items>
+                <utu:TabBarItem Content="Hot Deals"
                                     nav:Region.Name="HotDeals" />
-                <toolkit:TabBarItem Content="Super Deals"
+                <utu:TabBarItem Content="Super Deals"
                                     nav:Region.Name="SuperDeals" />
-            </toolkit:TabBar.Items>
-        </toolkit:TabBar>
+            </utu:TabBar.Items>
+        </utu:TabBar>
         <Grid nav:Region.Attached="true"
               nav:Region.Navigator="Visibility" Grid.Row="1">
             <ListView nav:Region.Name="HotDeals"

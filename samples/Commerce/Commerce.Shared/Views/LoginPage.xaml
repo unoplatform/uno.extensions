@@ -6,7 +6,7 @@
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	  mc:Ignorable="d"
 	  xmlns:nav="using:Uno.Extensions.Navigation.Controls"
-	  xmlns:utu="using:Uno.Toolkit.UI.Controls"
+	  xmlns:utu="using:Uno.Toolkit.UI"
 	  Background="{ThemeResource MaterialBackgroundBrush}">
 
 	<utu:AutoLayout Background="{StaticResource MaterialBackgroundBrush}"

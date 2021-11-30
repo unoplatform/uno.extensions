@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:nav="using:Uno.Extensions.Navigation.Controls"
-	  xmlns:toolkit="using:Uno.Toolkit.UI.Controls"
+	  xmlns:utu="using:Uno.Toolkit.UI"
 	  mc:Ignorable="d"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -18,17 +18,17 @@
 
         </Grid.RowDefinitions>
         <!--SelectionChanged="TabBar_SelectionChanged"-->
-        <toolkit:TabBar Background="Tomato" nav:Region.Attached="true">
+        <utu:TabBar Background="Tomato" nav:Region.Attached="true">
             <!--nav:Region.Attached="true" >-->
-            <toolkit:TabBar.Items>
-                <toolkit:TabBarItem Content="Tab 1"
+            <utu:TabBar.Items>
+                <utu:TabBarItem Content="Tab 1"
                                     nav:Navigation.Request="Content1"
                                     x:Name="Content1" />
-                <toolkit:TabBarItem Content="Tab 2"
+                <utu:TabBarItem Content="Tab 2"
                                     nav:Navigation.Request="Content2"
                                     x:Name="Content2" />
-            </toolkit:TabBar.Items>
-        </toolkit:TabBar>
+            </utu:TabBar.Items>
+        </utu:TabBar>
         <!--<ContentControl nav:Region.Name="tabcontent" Grid.Row="1"/>-->
         <ContentControl Grid.Row="1" x:Name="ContentHost"  nav:Region.Attached="true"/>
         <StackPanel Grid.Row="2" Orientation="Horizontal">

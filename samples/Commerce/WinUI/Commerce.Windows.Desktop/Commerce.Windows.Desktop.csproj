@@ -34,9 +34,9 @@
 			<Version>1.1.0-dev.64</Version>
 		</PackageReference>
 		<PackageReference Include="Uno.Toolkit.WinUI.Material">
-			<Version>0.1.0-dev.169</Version>
+			<Version>0.1.0-dev.183</Version>
 		</PackageReference>
-		<PackageReference Include="Uno.Toolkit.WinUI" Version="0.1.0-dev.169" />
+		<PackageReference Include="Uno.Toolkit.WinUI" Version="0.1.0-dev.183" />
 		<PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.0" />
 	</ItemGroup>
 	
