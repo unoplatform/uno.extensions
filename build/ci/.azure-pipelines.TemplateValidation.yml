@@ -53,11 +53,12 @@ jobs:
     displayName: Install Project Templates
 
   - powershell: |
+        dotnet nuget add source -n nuget_local $(Build.SourcesDirectory)\src\PackageCache
         Set-PSDebug -Trace 1
         $ErrorActionPreference = 'Stop'
-        & dotnet new unoapp-extensions --material -o UnoApp01
+        dotnet new unoapp-extensions --material -o UnoApp01
         cd UnoApp01
-        & dotnet build
+        dotnet build
     displayName: Build template app
     errorActionPreference: continue
     ignoreLASTEXITCODE: true
