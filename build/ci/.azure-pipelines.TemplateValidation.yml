@@ -1,5 +1,5 @@
 jobs:
-- job: Windows
+- job: Packages_Validation
   dependsOn: Packages
 
   pool:
