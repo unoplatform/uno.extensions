@@ -85,31 +85,61 @@
       <Project>{f049b72c-c09e-4040-8461-eccedec44d33}</Project>
       <Name>Uno.Extensions.Configuration</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.csproj">
+      <Project>{74EB3641-1F20-4708-9DCF-579C48AEA5D1}</Project>
+      <Name>Uno.Extensions.Hosting.WinUI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.WinUI.csproj" />
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Core\Uno.Extensions.Core.csproj">
+      <Project>{4B596C8D-65B8-473E-AC77-60182F95321E}</Project>
+      <Name>Uno.Extensions.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj">
       <Project>{975ff5ca-c780-4c30-9d48-e6a8258aba9e}</Project>
       <Name>Uno.Extensions.Hosting</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Localization\Uno.Extensions.Localization.WinUI.csproj" />
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Http\Uno.Extensions.Http.csproj">
+      <Project>{FEC47512-AC91-4046-8866-89FD512873DB}</Project>
+      <Name>Uno.Extensions.Http</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Localization\Uno.Extensions.Localization.WinUI.csproj">
+      <Project>{8BE7C718-5C74-4116-9751-4B7F78662DA9}</Project>
+      <Name>Uno.Extensions.Localization.WinUI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj">
+      <Project>{A2D5DFFB-484B-4365-AAAC-13217A76150E}</Project>
+      <Name>Uno.Extensions.Logging.Serilog</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.csproj" />
     <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.WinUI.csproj">
       <Project>{cd0b283b-ac4d-4b56-b8df-fcfbc07f82b0}</Project>
       <Name>Uno.Extensions.Logging.WinUI</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.WinUI.csproj">
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.UI.WinUI.csproj">
       <Project>{698345ce-70bb-4fc0-ae48-0fba83e6cadc}</Project>
-      <Name>Uno.Extensions.Navigation.Toolkit.WinUI</Name>
+      <Name>Uno.Extensions.Navigation.Toolkit.UI.WinUI</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj" />
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UI.WinUI.csproj">
+      <Project>{8BBD5B8E-0E3B-483B-9BE2-E08FE432593A}</Project>
+      <Name>Uno.Extensions.Navigation.UI.WinUI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj">
+      <Project>{E11A43D8-9383-467C-924A-00CA6794EE04}</Project>
+      <Name>Uno.Extensions.Navigation</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.WinUI.Toolkit.csproj" />
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj" />
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Reactive.UI\Uno.Extensions.Reactive.UI.WinUI.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj">
+      <Project>{609DEE51-CE35-4A3A-A35E-62005F746BD6}</Project>
+      <Name>Uno.Extensions.Serialization</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj">
+      <Project>{74D93A0B-42F9-45A6-8AC3-684DAE9659A8}</Project>
+      <Name>Uno.Extensions.Reactive</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Reactive.UI\Uno.Extensions.Reactive.UI.WinUI.csproj">
+      <Project>{6F411667-CBBA-4B84-A752-F27796A90705}</Project>
+      <Name>Uno.Extensions.Reactive.UI.WinUI</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />

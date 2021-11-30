@@ -8,18 +8,19 @@
 	<Import Project="common.props" />
 
 	<PropertyGroup>
+		<PackageId>Uno.Extensions.Navigation.Toolkit.WinUI</PackageId>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Uno.WinUI" Version="4.0.0-dev.5690" />
 		<PackageReference Include="Uno.Toolkit.WinUI" Version="0.1.0-dev.152" />
-		<ProjectReference Include="..\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UI.WinUI.csproj" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)'=='net5.0-windows10.0.18362.0' or '$(TargetFramework)'=='net6.0-windows10.0.18362.0'">
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.0.0" />
-		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22000.196"/>
+		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22000.196" />
 
 		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.18362.21" />
 		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.18362.21" />
