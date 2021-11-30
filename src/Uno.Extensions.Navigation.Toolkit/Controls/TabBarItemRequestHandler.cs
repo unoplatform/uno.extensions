@@ -1,4 +1,4 @@
-﻿using Uno.Extensions.Navigation.Controls;
+﻿using Uno.Extensions.Navigation.UI;
 using Uno.Toolkit.UI;
 
 namespace Uno.Extensions.Navigation.Toolkit.Controls;

@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using Uno.Extensions.Navigation.Regions;
 
-namespace Uno.Extensions.Navigation.Controls;
+namespace Uno.Extensions.Navigation.UI;
 
 public static class Region
 {

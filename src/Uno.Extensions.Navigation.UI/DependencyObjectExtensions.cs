@@ -1,6 +1,6 @@
 ﻿using System;
 using Uno.Extensions.Navigation;
-using Uno.Extensions.Navigation.Controls;
+using Uno.Extensions.Navigation.UI;
 using Uno.Extensions.Navigation.Regions;
 
 namespace Uno.Extensions.Navigation;

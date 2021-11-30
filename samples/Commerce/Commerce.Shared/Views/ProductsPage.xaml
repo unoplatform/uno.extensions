@@ -5,12 +5,12 @@
 	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	  xmlns:services="using:Commerce.Services"
-	  xmlns:nav="using:Uno.Extensions.Navigation.Controls"
+	  xmlns:nav="using:Uno.Extensions.Navigation.UI"
 	  xmlns:reactive="using:Uno.Extensions.Reactive.UI"
 	  xmlns:utu="using:Uno.Toolkit.UI"
 	  xmlns:um="using:Uno.Material.Extensions"
 	  xmlns:uer="using:Uno.Extensions.Reactive.UI"
-	  xmlns:uen="using:Uno.Extensions.Navigation.Controls"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  mc:Ignorable="d"
 	  Background="{ThemeResource MaterialBackgroundBrush}">
 

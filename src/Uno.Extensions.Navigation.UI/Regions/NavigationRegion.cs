@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Uno.Extensions.Navigation.Controls;
+using Uno.Extensions.Navigation.UI;
 #if !WINUI
 using Windows.UI.Xaml;
 #else
