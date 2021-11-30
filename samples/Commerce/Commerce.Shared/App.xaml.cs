@@ -213,13 +213,15 @@ namespace Commerce
 
 				.Register(RouteMap.For("Deals")
 					.Process((region, nav) => nav.Route.Next().IsEmpty() ?
-												nav with { Route = nav.Route.AppendPage<ProductsPage>() } : nav with
+												nav with { Route = nav.Route.AppendPage<DealsPage>() } : nav with
 												{
-													Route = nav.Route.ContainsView<ProductsPage>() ?
+													Route = nav.Route.ContainsView<DealsPage>() ?
 																	nav.Route :
-																	nav.Route.InsertPage<ProductsPage>()
+																	nav.Route.InsertPage<DealsPage>()
 												}))
 				.Register(ViewMap.For("Deals").Show<FrameView>())
+
+				.Register(ViewMap.For("Deals").Show<DealsPage>().With<DealsViewModel>())
 
 				.Register(RouteMap<Product>.For("ProductDetails")
 					.Process((region, nav) => (App.Current as App).Window.Content.ActualSize.X > 800 ?
