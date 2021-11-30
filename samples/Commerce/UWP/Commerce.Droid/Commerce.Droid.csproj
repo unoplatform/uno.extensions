@@ -67,8 +67,8 @@
     <PackageReference Include="Uno.Material">
       <Version>1.1.0-dev.57</Version>
     </PackageReference>
-    <PackageReference Include="Uno.UI" Version="4.0.0-dev.5688" />
-    <PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5688" Condition="'$(Configuration)'=='Debug'" />
+    <PackageReference Include="Uno.UI" Version="4.0.0-dev.5726" />
+    <PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5726" Condition="'$(Configuration)'=='Debug'" />
     <PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.169" />
     <PackageReference Include="Uno.Toolkit.UI.Material" Version="0.1.0-dev.169" />
     <PackageReference Include="Uno.UniversalImageLoader" Version="1.9.33" />

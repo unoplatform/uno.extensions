@@ -26,7 +26,7 @@
       <Version>0.1.0-dev.165</Version>
     </PackageReference>
     <PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.169" />
-    <PackageReference Include="Uno.UI" Version="4.0.0-dev.5688" />
+    <PackageReference Include="Uno.UI" Version="4.0.0-dev.5726" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
