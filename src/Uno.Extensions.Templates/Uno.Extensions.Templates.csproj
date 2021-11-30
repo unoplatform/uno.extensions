@@ -46,7 +46,7 @@
 	  <UpToDateCheckInput Remove="content\unoapp-extensions\MyExtensionsApp.Shared\MyExtensionsAppSettings.cs" />
 	</ItemGroup>
 
-	<Target Name="ReplaceVersions" BeforeTargets="BeforeBuild"> <!--Condition="'$(PackageVersion)'!='255.255.255.255'">-->
+	<Target Name="ReplaceVersions" BeforeTargets="BeforeBuild" Condition="'$(PackageVersion)'!='255.255.255.255'">
 		
 		<PropertyGroup>
 			<MSBuildDeveloperNamespace>
