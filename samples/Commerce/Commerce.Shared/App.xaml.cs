@@ -119,14 +119,6 @@ namespace Commerce
 
 					.Build(enableUnoLogging: true);
 
-
-
-
-
-
-
-
-
 			this.InitializeComponent();
 
 #if HAS_UNO || NETFX_CORE
@@ -167,25 +159,7 @@ namespace Commerce
 				await Host.StartAsync();
 			});
 
-
-			var nav = Host.Services.GetService<INavigator>();
-#if __WASM__
-			Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-			Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested += AppGoBack;
-
-#endif
-
 		}
-
-		public async void AppGoBack(object? sender, BackRequestedEventArgs e)
-		{
-			var backnav = Host.Services.GetService<INavigator>();
-			var appTitle = ApplicationView.GetForCurrentView();
-			appTitle.Title = "Back pressed - " + DateTime.Now.ToString("HH:mm:ss");
-			var response = await backnav.GoBack(this);
-			//e.Handled = response.Success;
-		}
-
 
 		/// <summary>
 		/// Invoked when Navigation to a certain page fails
