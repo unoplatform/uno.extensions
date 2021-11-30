@@ -2,26 +2,30 @@
 					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 					xmlns:reactive="using:Uno.Extensions.Reactive.UI"
 					xmlns:winui="using:Microsoft.UI.Xaml.Controls"
-					xmlns:not_skia="using:Microsoft.UI.Xaml.Controls"
-					xmlns:skia="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-
+					xmlns:skia="http://platform.uno/skia"
+					xmlns:not_skia="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+					xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+					mc:Ignorable="skia">
+	
 	<Style TargetType="reactive:FeedView" BasedOn="{StaticResource DefaultFeedViewStyle}">
 		<Setter Property="ProgressTemplate">
 			<Setter.Value>
 				<DataTemplate>
-					<Grid>
-						<not_skia:ProgressRing
+					<not_skia:Grid>
+						<winui:ProgressRing
 							Style="{StaticResource MaterialProgressRingStyle}"
 							IsActive="{Binding}"
 							Width="50"
 							Height="50"
 							VerticalAlignment="Center"
 							HorizontalAlignment="Center" />
-						<skia:TextBlock
+					</not_skia:Grid>
+					<skia:Grid>
+						<TextBlock
 							Text="Loading"
 							VerticalAlignment="Center"
 							HorizontalAlignment="Center"/>
-					</Grid>
+					</skia:Grid>
 				</DataTemplate>
 			</Setter.Value>
 		</Setter>
@@ -31,19 +35,21 @@
 		<Setter Property="ProgressTemplate">
 			<Setter.Value>
 				<DataTemplate>
-					<Grid>
-						<not_skia:ProgressRing
+					<not_skia:Grid>
+						<winui:ProgressRing
 							Style="{StaticResource MaterialProgressRingStyle}"
 							IsActive="{Binding}"
 							Width="50"
 							Height="50"
 							VerticalAlignment="Center"
 							HorizontalAlignment="Center" />
-						<skia:TextBlock
+					</not_skia:Grid>
+					<skia:Grid>
+						<TextBlock
 							Text="Loading"
 							VerticalAlignment="Center"
 							HorizontalAlignment="Center"/>
-					</Grid>
+					</skia:Grid>
 				</DataTemplate>
 			</Setter.Value>
 		</Setter>
