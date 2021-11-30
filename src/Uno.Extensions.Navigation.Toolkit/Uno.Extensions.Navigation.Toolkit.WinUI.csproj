@@ -13,7 +13,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Uno.WinUI" Version="4.0.0-dev.5690" />
-		<PackageReference Include="Uno.Toolkit.WinUI" Version="0.1.0-dev.183" />
+		<PackageReference Include="Uno.Toolkit.WinUI" Version="0.1.0-dev.96" />
 		<ProjectReference Include="..\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj" />
 	</ItemGroup>
 
