@@ -118,12 +118,6 @@
       "defaultValue": "true",
       "description": "Enables the Skia/GTK platform support project"
     },
-    "skia-linux-fb": {
-      "type": "parameter",
-      "dataType": "bool",
-      "defaultValue": "true",
-      "description": "Enables the Skia/Linux Framebuffer platform support project"
-    },
     "material": {
       "type": "parameter",
       "dataType": "bool",
@@ -174,10 +168,6 @@
     {
       "condition": "skia-wpf",
       "path": "MyExtensionsApp.Skia.WPF.Host\\MyExtensionsApp.Skia.Wpf.Host.csproj"
-    },
-    {
-      "condition": "skia-linux-fb",
-      "path": "MyExtensionsApp.Skia.Linux.FrameBuffer\\MyExtensionsApp.Skia.Linux.FrameBuffer.csproj"
     }
   ],
   "sources": [
@@ -227,12 +217,6 @@
           "exclude": [
             "MyExtensionsApp.Skia.WPF/**/*",
             "MyExtensionsApp.Skia.WPF.Host/**/*"
-          ]
-        },
-        {
-          "condition": "(!skia-linux-fb)",
-          "exclude": [
-            "MyExtensionsApp.Skia.Linux.FrameBuffer/**/*"
           ]
         },
         {
