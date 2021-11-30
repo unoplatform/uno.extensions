@@ -46,7 +46,9 @@ jobs:
     inputs:
       artifactName: $(Build.DefinitionName)
 
-  - script: copy $(System.ArtifactsDirectory)\$(Build.DefinitionName)\nuget\*.nupkg $(Build.SourcesDirectory)\src\PackageCache
+  - script: |
+        md $(Build.SourcesDirectory)\src\PackageCache
+        copy $(System.ArtifactsDirectory)\$(Build.DefinitionName)\nuget\*.nupkg $(Build.SourcesDirectory)\src\PackageCache
     displayName: Copy Artifacts to PackageCache
 
   - script: dotnet new -i $(System.ArtifactsDirectory)\$(Build.DefinitionName)\nuget\Uno.Extensions.Templates*.nupkg
@@ -60,5 +62,3 @@ jobs:
         cd UnoApp01
         dotnet build
     displayName: Build template app
-    errorActionPreference: continue
-    ignoreLASTEXITCODE: true
