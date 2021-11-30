@@ -8,6 +8,7 @@
 		<TargetFrameworks Condition="'$(UnoExtensionsDisableNet6)'==''">$(TargetFrameworks);net5.0-windows10.0.18362.0</TargetFrameworks>
 		<EnableDefaultPageItems>false</EnableDefaultPageItems>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+		<PackageId>Uno.Extensions.Reactive.WinUI</PackageId>
 	</PropertyGroup>
 
 	<Import Project="common.props" />

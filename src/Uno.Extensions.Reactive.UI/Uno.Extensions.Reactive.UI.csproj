@@ -7,6 +7,7 @@
 		<TargetFrameworks>netstandard2.0;xamarinios10;xamarinmac20;MonoAndroid11.0;monoandroid10.0</TargetFrameworks>
 		<TargetFrameworks Condition="'$(UnoExtensionsDisableNet6)'==''">$(TargetFrameworks);uap10.0.18362</TargetFrameworks>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<PackageId>Uno.Extensions.Reactive.UI</PackageId>
 	</PropertyGroup>
 	
 	<Import Project="common.props" />
