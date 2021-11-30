@@ -49,8 +49,8 @@
     <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.0.0-dev.5726" />
     <PackageReference Include="Uno.Wasm.Bootstrap" Version="3.1.0" />
     <PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="3.1.0" />
-		<PackageReference Include="Uno.Toolkit.WinUI" Version="0.1.0-dev.169" />
-		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="0.1.0-dev.169" />
+		<PackageReference Include="Uno.Toolkit.WinUI" Version="1.0.0" />
+		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="1.0.0" />
 		<PackageReference Include="Uno.Core" Version="4.0.1" />
 		<PackageReference Include="Uno.Material.WinUI" Version="1.1.0-dev.64" />
 		<PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.0" />
