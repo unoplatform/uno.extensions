@@ -1,0 +1,17 @@
+﻿<Flyout x:Class="MyExtensionsApp.CartFlyout"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:local="using:MyExtensionsApp"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:nav="using:Uno.Extensions.Navigation.Controls"
+		Placement="Full"
+		FlyoutPresenterStyle="{StaticResource MaterialFlyoutPresenterStyle}">
+	
+	<Grid>
+		<ContentControl nav:Region.Attached="True"
+						HorizontalAlignment="Stretch"
+						VerticalAlignment="Stretch"
+						HorizontalContentAlignment="Stretch"
+						VerticalContentAlignment="Stretch" />
+	</Grid>
+</Flyout>

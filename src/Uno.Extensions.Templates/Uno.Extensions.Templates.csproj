@@ -1,0 +1,49 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<IsTool>true</IsTool>
+		<IncludeBuildOutput>false</IncludeBuildOutput>
+		<PackageType>Template</PackageType>
+		<ContentTargetFolders>content</ContentTargetFolders>
+
+		<!-- required for .vsconfig -->
+		<NoDefaultExcludes>true</NoDefaultExcludes>
+
+		<!-- Disable package generation for WinUI converted build -->
+		<IsPackable Condition="'$(UNO_UWP_BUILD)'=='false'">false</IsPackable>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<PackageTags>dotnet-new;templates;uno-platform;uno-extensions</PackageTags>
+		<Authors>nventive</Authors>
+		<PackageProjectUrl>https://github.com/unoplatform/uno.extensions</PackageProjectUrl>
+		<PackageIconUrl>https://nv-assets.azurewebsites.net/logos/uno.png</PackageIconUrl>
+		<RepositoryUrl>https://github.com/unoplatform/uno.extensions</RepositoryUrl>
+		<Description></Description>
+		<Copyright>Copyright (C) 2015-2021 nventive inc. - all rights reserved</Copyright>
+		<GeneratePackageOnBuild Condition="'$(Configuration)'=='Release'">true</GeneratePackageOnBuild>
+		<PackageTags>dotnet-new;templates;uno-platform;webassembly;ios;android;uwp;winui;uno-extensions</PackageTags>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<UpToDateCheckInput Include="content\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Remove="content/**/*.cs" />
+		<None Include="content/**/*.cs" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<Content Include="content\unoapp-extensions\**" KeepDuplicates="False">
+			<PackagePath>content\unoapp-extensions</PackagePath>
+			<Pack>true</Pack>
+		</Content>
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <UpToDateCheckInput Remove="content\unoapp-extensions\MyExtensionsApp.Shared\MyExtensionsAppSettings.cs" />
+	</ItemGroup>
+
+</Project>

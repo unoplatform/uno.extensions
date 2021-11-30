@@ -1,0 +1,63 @@
+jobs:
+- job: Windows
+  dependsOn: Packages
+
+  pool:
+    vmImage: 'windows-2022'
+
+  variables:
+    - name: UnoCheck_Version
+      value: '0.2.0-dev.361'
+    - name: UnoCheck_Manifest
+      value: 'https://raw.githubusercontent.com/unoplatform/uno.check/bf3684e2ad725baa66da3573759129d6bb1d8817/manifests/uno.ui.manifest.json'
+    - name: UseDotNetNativeToolchain
+      value: false
+
+  steps:
+  - checkout: self
+    clean: 'true'
+
+  - task: gitversion/setup@0
+    inputs:
+      versionSpec: '5.6.8'
+
+  - task: gitversion/execute@0
+    inputs:
+      useConfigFile: true
+      configFilePath: build/ci/gitversion.yml
+    displayName: Use GitVersion
+
+  - powershell: .\build\Install-WindowsSdkISO.ps1 18362
+    displayName: Install Windows SDK 18362
+
+  - task: UseDotNet@2
+    displayName: 'Use .NET 5.0.x'
+    inputs:
+      packageType: sdk
+      version: 5.0.x
+
+  - task: UseDotNet@2
+    displayName: 'Use .NET 6.0.100'
+    inputs:
+      packageType: sdk
+      version: 6.0.100
+
+  - task: DownloadBuildArtifacts@0
+    inputs:
+      artifactName: $(Build.DefinitionName)
+
+  - script: copy $(System.ArtifactsDirectory)\$(Build.DefinitionName)\nuget\*.nupkg $(Build.SourcesDirectory)\src\PackageCache
+    displayName: Copy Artifacts to PackageCache
+
+  - script: dotnet new -i $(System.ArtifactsDirectory)\NugetPackages\vslatest\Uno.Extensions.Templates*.nupkg
+    displayName: Install Project Templates
+
+  - powershell: |
+        Set-PSDebug -Trace 1
+        $ErrorActionPreference = 'Stop'
+        & dotnet new unoapp-extensions --material -o UnoApp01
+        cd UnoApp01
+        & dotnet build
+    displayName: Build template app
+    errorActionPreference: continue
+    ignoreLASTEXITCODE: true
