@@ -119,7 +119,7 @@
 										   Text="Reviews"
 										   Style="{StaticResource MaterialHeadline6}" />
 								<controls:RatingControl MaxRating="5"
-											   Value="{Binding Rating, Mode=TwoWay}" />
+														Value="{Binding Rating, Mode=TwoWay}" />
 							</utu:AutoLayout>
 						</utu:AutoLayout>
 					</DataTemplate>
@@ -175,14 +175,14 @@
 												<utu:AutoLayout Padding="16,0,0,16"
 																Orientation="Horizontal"
 																utu:AutoLayout.CounterAlignment="Stretch">
-													<ToggleButton utu:AutoLayout.CounterAlignment="Center">
-														<!--Style="{StaticResource MaterialToggleButtonIconStyle}">-->
+													<ToggleButton utu:AutoLayout.CounterAlignment="Center"
+																  Style="{StaticResource MaterialToggleButtonIconStyle}">
 														<ToggleButton.Content>
-															<PathIcon Data="{StaticResource Icon_more_horiz}" />
+															<PathIcon Data="{StaticResource Icon_more_vert}" />
 														</ToggleButton.Content>
-														<!--<um:ControlExtensions.AlternateContent>
-                                <PathIcon Data="{StaticResource Icon_more_vert}" />
-														</um:ControlExtensions.AlternateContent>-->
+														<um:ControlExtensions.AlternateContent>
+															<PathIcon Data="{StaticResource Icon_more_horiz}" />
+														</um:ControlExtensions.AlternateContent>
 													</ToggleButton>
 												</utu:AutoLayout>
 											</utu:AutoLayout>
