@@ -12,6 +12,6 @@
 	<Import Project="common.props" />
 
 	<ItemGroup>
-		<PackageReference Include="Uno.UI" Version="4.0.0-dev.5645" />
+		<PackageReference Include="Uno.UI" Version="4.0.0-dev.5726" />
 	</ItemGroup>
 </Project>

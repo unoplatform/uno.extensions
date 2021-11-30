@@ -14,7 +14,7 @@
 		<WarningsAsErrors>enable</WarningsAsErrors>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageIcon>uno-logo.png</PackageIcon>
-		<NoWarn>$(NoWarn);NU5104</NoWarn>
+		<NoWarn>$(NoWarn);NU5104;NU1603</NoWarn>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -48,6 +48,14 @@
 	<PropertyGroup Condition="$(TargetFramework.StartsWith('monoandroid')) or $(TargetFramework.EndsWith('android'))">
 		<IsAndroid>true</IsAndroid>
 	</PropertyGroup>
+
+	<PropertyGroup Condition="$(TargetFramework.StartsWith('xamarinmac'))">
+		<IsMacOS>true</IsMacOS>
+	</PropertyGroup>
+
+	<ItemGroup Condition="'$(IsMacOS)'=='true'">
+		<Reference Include="netstandard" />
+	</ItemGroup>
 
 	<PropertyGroup Condition="$(TargetFramework.Contains('windows10'))">
 		<IsWinUI>true</IsWinUI>
@@ -95,6 +103,6 @@
 	</PropertyGroup>
 
 	<!-- <PropertyGroup Condition="'$(Configuration)'=='Debug'">
-		<UnoExtensionsOnlyUAP>true</UnoExtensionsOnlyUAP>
+		<UnoTargetFrameworkOverride>uap10.0.18362</UnoTargetFrameworkOverride>
 	</PropertyGroup> -->
 </Project>

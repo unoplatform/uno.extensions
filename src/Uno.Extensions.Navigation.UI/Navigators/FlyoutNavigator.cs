@@ -25,7 +25,7 @@ public class FlyoutNavigator : ControlNavigator
 
     public FlyoutNavigator(
         ILogger<ContentDialogNavigator> logger,
-        IRouteMappings mappings,
+        IMappings mappings,
         IRegion region)
         : base(logger, mappings, region)
     {
@@ -49,9 +49,9 @@ public class FlyoutNavigator : ControlNavigator
         }
         else
         {
-            var mapping = Mappings.Find(route);
+            var mapping = Mappings.FindView(route);
             var viewModel = CreateViewModel(Region.Services, this, route, mapping);
-            Flyout = await DisplayFlyout(request, mapping?.View, viewModel);
+            Flyout = await DisplayFlyout(request, mapping?.ViewType, viewModel);
         }
         var responseRequest = route with { Path = null };
         return responseRequest;
@@ -67,7 +67,7 @@ public class FlyoutNavigator : ControlNavigator
         var route = request.Route;
         var navigation = Region.Navigator();
         var services = Region.Services;
-        var mapping = Mappings.Find(route);
+        var mapping = Mappings.FindView(route);
 
         if (navigation is null ||
             services is null)
@@ -76,9 +76,9 @@ public class FlyoutNavigator : ControlNavigator
         }
 
         Flyout? flyout = null;
-        if (mapping?.View is not null)
+        if (mapping?.ViewType is not null)
         {
-            flyout = Activator.CreateInstance(mapping.View) as Flyout;
+            flyout = Activator.CreateInstance(mapping.ViewType) as Flyout;
         }
         else
         {

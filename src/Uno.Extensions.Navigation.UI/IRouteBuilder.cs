@@ -10,4 +10,6 @@ public interface IRouteBuilder
 	IRouteBuilder Register<TData, TResultData>(RouteMap<TData, TResultData> route)
 		where TData : class
 		where TResultData : class;
+
+	IRouteBuilder Register(ViewMap view);
 }

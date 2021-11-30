@@ -30,7 +30,7 @@
     <PackageReference Include="Uno.Toolkit.UI.Material">
       <Version>0.1.0-dev.124</Version>
     </PackageReference>
-    <PackageReference Include="Uno.UI" Version="4.0.0-dev.5594" />
+    <PackageReference Include="Uno.UI" Version="4.0.0-dev.5726" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
     <PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.124" />
@@ -175,10 +175,6 @@
     <ProjectReference Include="..\..\..\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj">
       <Project>{76f10ade-52b7-4716-ab0c-a1acd5d364fd}</Project>
       <Name>Uno.Extensions.Logging.Serilog</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Uno.Extensions.Logging\Uno.Extensions.Logging.csproj">
-      <Project>{4dfc5b5f-49fd-43db-a769-32850cc2662a}</Project>
-      <Name>Uno.Extensions.Logging</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.csproj">
       <Project>{fd0b7d57-6a17-44d9-b9e4-0f7a4fda23dd}</Project>

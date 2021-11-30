@@ -53,7 +53,7 @@ public class TabBarNavigator: ControlNavigator<TabBar>
 	public TabBarNavigator(
 		ILogger<TabBarNavigator> logger,
 		IRegion region,
-		IRouteMappings mappings,
+		IMappings mappings,
 		RegionControlProvider controlProvider)
 		: base(logger, region, mappings, controlProvider.RegionControl as TabBar)
 	{

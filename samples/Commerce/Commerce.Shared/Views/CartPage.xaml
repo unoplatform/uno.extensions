@@ -190,6 +190,7 @@
 													utu:AutoLayout.CounterAlignment="Stretch">
 										<Button Content="checkout"
 												x:Uid="_Checkout"
+												uen:Navigation.Request="Checkout"
 												utu:AutoLayout.CounterAlignment="Stretch"
 												Style="{StaticResource MaterialContainedButtonStyle}" />
 									</utu:AutoLayout>

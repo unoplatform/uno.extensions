@@ -4,6 +4,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
+using Uno.Extensions;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Reactive;
 using Windows.ApplicationModel.Core;
@@ -44,7 +45,7 @@ public partial record LoginViewModel
 			await _error.Set(default, ct);
 			await Task.Delay(1, ct);
 
-			CoreApplication.MainView?.DispatcherQueue.TryEnqueue(() => _navigator.NavigatePreviousWithResultAsync(this, data: Uno.Extensions.Options.Option.Some(credentials)));
+			await _navigator.NavigatePreviousWithResultAsync(this, data: Option.Some(credentials));
 		}
 		else
 		{

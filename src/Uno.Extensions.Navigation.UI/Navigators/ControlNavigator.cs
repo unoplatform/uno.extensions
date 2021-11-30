@@ -8,9 +8,9 @@ using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Regions;
 #if !WINUI
-using Windows.UI.Xaml;
+using Windows.System;
 #else
-using Microsoft.UI.Xaml;
+using Microsoft.UI.Dispatching;
 #endif
 
 namespace Uno.Extensions.Navigation.Navigators;
@@ -23,14 +23,22 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
     protected ControlNavigator(
         ILogger logger,
         IRegion region,
-        IRouteMappings mappings,
+        IMappings mappings,
         TControl? control)
         : base(logger, mappings, region)
     {
         Control = control;
     }
 
-    protected virtual FrameworkElement? CurrentView => default;
+	protected override DispatcherQueue GetDispatcher() =>
+#if WINUI
+		(Control as FrameworkElement)?.DispatcherQueue
+#else
+		Windows.ApplicationModel.Core.CoreApplication.MainView.DispatcherQueue
+#endif
+		?? base.GetDispatcher();
+
+	protected virtual FrameworkElement? CurrentView => default;
 
     protected abstract Task<string?> Show(string? path, Type? viewType, object? data);
 
@@ -42,9 +50,9 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
         }
 
         var route = request.Route;
-        var mapping = Mappings.Find(route);
-        Logger.LogDebugMessage($"Navigating to path '{route.Base}' with view '{mapping?.View?.Name}'");
-        var executedPath = await Show(route.Base, mapping?.View, route.Data);
+        var mapping = Mappings.FindView(route);
+        Logger.LogDebugMessage($"Navigating to path '{route.Base}' with view '{mapping?.ViewType?.Name}'");
+        var executedPath = await Show(route.Base, mapping?.ViewType, route.Data);
 
         InitialiseCurrentView(route, mapping);
 
@@ -56,7 +64,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
         return route with { Base = executedPath, Path = null };
     }
 
-    protected object? InitialiseCurrentView(Route route, RouteMap? mapping)
+    protected object? InitialiseCurrentView(Route route, ViewMap? mapping)
     {
         var view = CurrentView;
 
@@ -76,7 +84,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 
         var viewModel = view.DataContext;
         if (viewModel is null ||
-            viewModel.GetType() != mapping?.ViewModel)
+            viewModel.GetType() != mapping?.ViewModelType)
         {
             // This will happen if cache mode isn't set to required
             viewModel = CreateViewModel(services, navigator, route, mapping);
@@ -97,7 +105,7 @@ public abstract class ControlNavigator : Navigator
 
     protected ControlNavigator(
         ILogger logger,
-        IRouteMappings mappings,
+        IMappings mappings,
         IRegion region)
         : base(logger, region, mappings)
     {
@@ -134,19 +142,31 @@ public abstract class ControlNavigator : Navigator
             request = request with { Route = request.Route.TrimScheme(Schemes.Nested) };
         }
 
-        if (CanNavigateToRoute(request.Route))
-        {
-            return await ControlNavigateAsync(request);
-        }
+		var completion = new TaskCompletionSource<NavigationResponse?>();
+		GetDispatcher().TryEnqueue(async () =>
+		{
+			if (CanNavigateToRoute(request.Route))
+			{
+				var response =  await ControlNavigateAsync(request);
+				completion.SetResult(response);
+				return;
+			}
+			completion.SetResult(default);
+		});
 
-        return await Task.FromResult<NavigationResponse?>(default);
+		return await completion.Task;
+		
+
+        //return await Task.FromResult<NavigationResponse?>(default);
     }
 
     public virtual void ControlInitialize()
     {
     }
 
-    protected async Task<NavigationResponse?> ControlNavigateAsync(NavigationRequest request)
+	protected virtual DispatcherQueue GetDispatcher() => DispatcherQueue.GetForCurrentThread();
+
+	protected async Task<NavigationResponse?> ControlNavigateAsync(NavigationRequest request)
     {
 		var services = Region.Services;
         if (services is null)
@@ -154,9 +174,9 @@ public abstract class ControlNavigator : Navigator
             return default;
         }
 
-        var executedRoute = await ExecuteRequestAsync(request);
+		var executedRoute = await ExecuteRequestAsync(request);
 
-        UpdateRoute(executedRoute);
+		UpdateRoute(executedRoute);
 
 		return new NavigationResponse(executedRoute ?? Route.Empty);
 	}
@@ -166,14 +186,14 @@ public abstract class ControlNavigator : Navigator
         Route = route is not null ? new Route(Schemes.Current, route.Base, null, route.Data) : null;
     }
 
-    protected object? CreateViewModel(IServiceProvider services, INavigator navigator, Route route, RouteMap? mapping)
+    protected object? CreateViewModel(IServiceProvider services, INavigator navigator, Route route, ViewMap? mapping)
     {
-        if (mapping?.ViewModel is not null)
+        if (mapping?.ViewModelType is not null)
         {
             var dataFactor = services.GetRequiredService<NavigationDataProvider>();
             dataFactor.Parameters = route.Data ?? new Dictionary<string, object>();
 
-            var vm = services.GetService(mapping.ViewModel);
+            var vm = services.GetService(mapping.ViewModelType);
             if (vm is IInjectable<INavigator> navAware)
             {
                 navAware.Inject(navigator);

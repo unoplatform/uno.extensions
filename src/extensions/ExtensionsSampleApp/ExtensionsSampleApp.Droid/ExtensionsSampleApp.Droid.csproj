@@ -76,12 +76,12 @@
     <PackageReference Include="Uno.Microsoft.Toolkit.Uwp.UI.Controls">
       <Version>7.1.10-dev.2.g5a2a008e5d</Version>
     </PackageReference>
-    <PackageReference Include="Uno.UI" Version="4.0.0-dev.5441" />
-    <PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5441" Condition="'$(Configuration)'=='Debug'" />
+    <PackageReference Include="Uno.UI" Version="4.0.0-dev.5726" />
+    <PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5690" Condition="'$(Configuration)'=='Debug'" />
     <PackageReference Include="Uno.UI.Toolkit" Version="0.1.0-dev.91" />
     <PackageReference Include="Uno.Material" Version="1.1.0-dev.5" />
     <PackageReference Include="Uno.UniversalImageLoader" Version="1.9.35" />
-    <PackageReference Include="Uno.Core" Version="3.0.0" />
+    <PackageReference Include="Uno.Core" Version="4.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
@@ -121,10 +121,6 @@
       <Project>{3f01a0de-4b9e-496f-ac6b-94daf315a20f}</Project>
       <Name>Uno.Extensions.Logging.Serilog</Name>
     </ProjectReference>-->
-    <ProjectReference Include="..\..\Uno.Extensions.Logging\Uno.Extensions.Logging.csproj">
-      <Project>{406a741f-fb06-482f-9037-154b55fcb2ce}</Project>
-      <Name>Uno.Extensions.Logging</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj">
       <Project>{ad3c0a66-450d-4355-b5c4-fdaf0d7746ad}</Project>
       <Name>Uno.Extensions.Navigation</Name>

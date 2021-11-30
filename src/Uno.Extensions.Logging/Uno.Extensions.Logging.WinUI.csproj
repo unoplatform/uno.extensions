@@ -1,0 +1,47 @@
+﻿<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
+	<PropertyGroup>
+		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'!=''">$(UnoTargetFrameworkOverride)</TargetFrameworks>
+		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'==''">netstandard2.0;netstandard2.1;net5.0;xamarinios10;xamarinmac20;monoandroid10.0;monoandroid11.0</TargetFrameworks>
+		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'=='' and '$(UnoExtensionsDisableNet6)'==''">$(TargetFrameworks);uap10.0.18362;net6.0;net6.0-windows10.0.18362.0;net6.0-ios;net6.0-android</TargetFrameworks>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<UnoRuntimeProjectReference Include="Uno.Extensions.Logging.WinUI.Wasm.csproj" />
+		<UnoRuntimeProjectReference Include="Uno.Extensions.Logging.WinUI.Skia.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="buildTransitive\**">
+			<PackagePath>buildTransitive</PackagePath>
+			<Pack>true</Pack>
+		</Content>
+	</ItemGroup>
+
+	<PropertyGroup>
+		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+	</PropertyGroup>
+
+	<ItemGroup Condition="'$(IsIOS)' == 'true'">
+		<PackageReference Include="uno.extensions.logging.oslog" Version="1.3.0-dev.1" />
+	</ItemGroup>
+
+
+	<Import Project="common.props"/>
+
+	<ItemGroup>
+		<ProjectReference Include="Uno.Extensions.Logging.WinUI.Wasm.csproj"
+			ReferenceOutputAssembly="false"
+			LinkLibraryDependencies="false"
+			CopyLocal="false"
+			SkipGetTargetFrameworkProperties="true"
+			GlobalPropertiesToRemove="TargetFramework"
+    />
+		<ProjectReference Include="Uno.Extensions.Logging.WinUI.Skia.csproj"
+			ReferenceOutputAssembly="false"
+			LinkLibraryDependencies="false"
+			CopyLocal="false"
+			SkipGetTargetFrameworkProperties="true"
+			GlobalPropertiesToRemove="TargetFramework"
+    />
+	</ItemGroup>
+</Project>

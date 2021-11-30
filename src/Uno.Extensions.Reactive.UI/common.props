@@ -11,8 +11,8 @@
 	</PropertyGroup>
   
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="1.1.1" />
-		<PackageReference Include="Uno.Foundation.Logging" Version="4.0.0-dev.5688" />
+		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
+		<PackageReference Include="Uno.Foundation.Logging" Version="4.0.0-dev.5726" />
 		<PackageReference Include="Uno.Core.Extensions.Logging.Singleton" Version="4.0.1" />
 		<PackageReference Include="Uno.Core.Extensions.Logging" Version="4.0.1" />
 	</ItemGroup>

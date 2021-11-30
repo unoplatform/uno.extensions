@@ -67,14 +67,14 @@
     <PackageReference Include="Uno.Material">
       <Version>1.1.0-dev.64</Version>
     </PackageReference>
-    <PackageReference Include="Uno.UI" Version="4.0.0-dev.5688" />
-    <PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5688" Condition="'$(Configuration)'=='Debug'" />
+    <PackageReference Include="Uno.UI" Version="4.0.0-dev.5726" />
+    <PackageReference Include="Uno.UI.RemoteControl" Version="4.0.0-dev.5726" Condition="'$(Configuration)'=='Debug'" />
     <PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.169" />
     <PackageReference Include="Uno.Toolkit.UI.Material" Version="0.1.0-dev.169" />
     <PackageReference Include="Uno.UniversalImageLoader" Version="1.9.33" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
-    <PackageReference Include="System.Linq.Async" Version="4.0.0" />
+    <PackageReference Include="System.Linq.Async" Version="5.0.0" />
     <PackageReference Include="Xamarin.AndroidX.AppCompat.AppCompatResources" Version="1.2.0.5" />
     <PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData" Version="2.3.1.1" />
     <PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.0" />
@@ -102,8 +102,8 @@
     <AndroidResource Include="Resources\values\Styles.xml" />
   </ItemGroup>
   <ItemGroup>
-		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.UWP.csproj" />
-		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj">
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.UWP.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj">
       <Project>{0dde79de-181b-42ef-af00-56dc622a6afa}</Project>
       <Name>Uno.Extensions.Configuration</Name>
     </ProjectReference>
@@ -127,9 +127,13 @@
       <Project>{3f01a0de-4b9e-496f-ac6b-94daf315a20f}</Project>
       <Name>Uno.Extensions.Logging.Serilog</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.csproj">
-      <Project>{406a741f-fb06-482f-9037-154b55fcb2ce}</Project>
-      <Name>Uno.Extensions.Logging</Name>
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.UWP.csproj">
+      <Project>{c57652d8-e0df-4108-9ccd-023f91038aee}</Project>
+      <Name>Uno.Extensions.Logging.UWP</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.csproj">
+      <Project>{96429923-5d3a-4509-992a-ff5f7d621b7f}</Project>
+      <Name>Uno.Extensions.Navigation.Toolkit</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.UI.Toolkit.csproj">
       <Project>{b6f69943-2161-437a-b491-3ebca7c78927}</Project>
@@ -138,6 +142,10 @@
     <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UI.csproj">
       <Project>{078b7148-820b-4441-85b1-800ad8c869ce}</Project>
       <Name>Uno.Extensions.Navigation.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UWP.csproj">
+      <Project>{eff028a3-ae9d-4a78-8c83-4711386e748b}</Project>
+      <Name>Uno.Extensions.Navigation.UWP</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj">
       <Project>{ad3c0a66-450d-4355-b5c4-fdaf0d7746ad}</Project>

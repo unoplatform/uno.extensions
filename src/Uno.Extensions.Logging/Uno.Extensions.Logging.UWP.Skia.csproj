@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk"  ToolsVersion="15.0">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<IsPackable>false</IsPackable>
+		<RootNamespace>Uno.Extensions.Logging</RootNamespace>
+		<UnoRuntimeIdentifier>skia</UnoRuntimeIdentifier>
+		<DefineConstants>$(DefineConstants);__SKIA__</DefineConstants>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Uno.UI" Version="4.0.0-dev.5726" />
+	</ItemGroup>
+
+	<Import Project="common.props"/>
+</Project>

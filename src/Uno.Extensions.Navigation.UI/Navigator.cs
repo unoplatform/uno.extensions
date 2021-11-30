@@ -24,9 +24,9 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 	public Route? Route { get; protected set; }
 
-	protected IRouteMappings Mappings { get; }
+	protected IMappings Mappings { get; }
 
-	public Navigator(ILogger<Navigator> logger, IRegion region, IRouteMappings mappings)
+	public Navigator(ILogger<Navigator> logger, IRegion region, IMappings mappings)
 		: this((ILogger)logger, region, mappings)
 	{
 		if (region.Parent is null &&
@@ -36,7 +36,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		}
 	}
 
-	protected Navigator(ILogger logger, IRegion region, IRouteMappings mappings)
+	protected Navigator(ILogger logger, IRegion region, IMappings mappings)
 	{
 		Region = region;
 		Logger = logger;
@@ -62,17 +62,17 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			RouteUpdater?.StartNavigation();
 
 			// Initialise the region
-			var requestMap = Region.Services?.GetRequiredService<IRouteMappings>().FindByPath(request.Route.Base);
-			if (requestMap?.RegionInitialization is not null)
+			var requestMap = Region.Services?.GetRequiredService<IMappings>().FindByPath(request.Route.Base);
+			if (requestMap?.ProcessRequest is not null)
 			{
-				var newRequest = requestMap.RegionInitialization(Region, request);
+				var newRequest = requestMap.ProcessRequest(Region, request);
 				while (!request.SameRouteBase(newRequest))
 				{
 					request = newRequest;
-					requestMap = Region.Services?.GetRequiredService<IRouteMappings>().FindByPath(request.Route.Base);
-					if (requestMap?.RegionInitialization is not null)
+					requestMap = Region.Services?.GetRequiredService<IMappings>().FindByPath(request.Route.Base);
+					if (requestMap?.ProcessRequest is not null)
 					{
-						newRequest = requestMap.RegionInitialization(Region, request);
+						newRequest = requestMap.ProcessRequest(Region, request);
 					}
 				}
 				request = newRequest;
@@ -167,7 +167,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		}
 
 		var mapping = Mappings.Find(request.Route);
-		if (mapping?.BuildQueryParameters is not null)
+		if (mapping?.UntypedBuildQuery is not null)
 		{
 			request = request with { Route = request.Route with { Data = request.Route.Data?.AsParameters(mapping) } };
 		}
@@ -257,10 +257,10 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		// when creating the view model
 		services.AddInstance<INavigator>(this);
 
-		var mapping = Mappings.FindByView(Region.View.GetType());
-		if (mapping?.ViewModel is not null)
+		var mapping = Mappings.FindViewByView(Region.View.GetType());
+		if (mapping?.ViewModelType is not null)
 		{
-			var vm = services.GetService(mapping.ViewModel);
+			var vm = services.GetService(mapping.ViewModelType);
 			if (vm is IInjectable<INavigator> navAware)
 			{
 				navAware.Inject(this);

@@ -16,6 +16,7 @@ using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Controls;
 using Uno.Extensions.Navigation.Regions;
 using Uno.Extensions.Navigation.Toolkit;
+using Uno.Extensions.Serialization;
 using Uno.Foundation;
 using Commerce.Views;
 using Uno.Extensions.Logging.Serilog;
@@ -56,47 +57,76 @@ namespace Commerce
 		public App()
 		{
 			Host = UnoHost
-			.CreateDefaultBuilder(true)
+					.CreateDefaultBuilder(true)
 #if DEBUG
-			.UseEnvironment(Environments.Development)
+					// Switch to Development environment when running in DEBUG
+					.UseEnvironment(Environments.Development)
 #endif
 
-			// Load configuration information from appsettings.json
-			// Also load configuration from environment specific files if they exist eg appsettings.development.json
-			// UseEmbeddedAppSettings<App>() if you want to include appsettings files as Embedded Resources instead of Content
-			.UseAppSettings(includeEnvironmentSettings: true)
-//#if (!HAS_UNO || __WASM__) && !WINUI
-//			.UseLogging()
-//#else
-//			.UseLogging(b => b.AddSimpleConsole(options =>
-//			{
-//				options.ColorBehavior = Microsoft.Extensions.Logging.Console.LoggerColorBehavior.Disabled;
-//			}))
-//#endif
-			.ConfigureLogging(logBuilder =>
-			{
-				logBuilder
-					 .SetMinimumLevel(LogLevel.Trace)
-					 .XamlLogLevel(LogLevel.Information)
-					 .XamlLayoutLogLevel(LogLevel.Information);
-			})
-			.UseSerilog(true, true)
 
-			.UseConfigurationSectionInApp<AppInfo>()
-			.UseSettings<CommerceSettings>()
-			.UseSettings<Credentials>()
-			.ConfigureServices(services =>
+			// Add platform specific log providers
+#if !HAS_UNO || __WASM__
+			.UseLogging()
+#else
+			.UseLogging(b => b.AddSimpleConsole(options =>
 			{
-				services
-				.AddSingleton<IProductService>(sp => new ProductService("products.json", "reviews.json"))
-				.AddSingleton<ICartService>(sp => new CartService("products.json"))
-				.AddSingleton<IDealService>(sp => new DealService("products.json"))
-				.AddSingleton<IProfileService>(sp => new ProfileService());
-			})
-			.UseNavigation(RegisterRoutes)
-			.UseToolkitNavigation()
-			.Build()
-			.EnableUnoLogging();
+				options.ColorBehavior = Microsoft.Extensions.Logging.Console.LoggerColorBehavior.Disabled;
+			}))
+#endif
+
+					// Configure log levels for different categories of logging
+					.ConfigureLogging(logBuilder =>
+					{
+						logBuilder
+								.SetMinimumLevel(LogLevel.Information)
+								.XamlLogLevel(LogLevel.Information)
+								.XamlLayoutLogLevel(LogLevel.Information);
+					})
+
+
+
+					// Load configuration information from appsettings.json
+					.UseAppSettings()
+
+					// Load AppInfo section
+					.UseConfiguration<AppInfo>()
+
+					// Register entities for saving settings
+					.UseSettings<CommerceSettings>()
+					.UseSettings<Credentials>()
+
+
+					// Register Json serializers (ISerializer and IStreamSerializer)
+					.UseSerialization()
+
+					// Register services for the application
+					.ConfigureServices(services =>
+					{
+						services
+
+							.AddSingleton<IProductService, ProductService>()
+							.AddSingleton<ICartService, CartService>()
+							.AddSingleton<IDealService, DealService>()
+							.AddSingleton<IProfileService, ProfileService>();
+					})
+
+
+					// Enable navigation, including registering views and viewmodels
+					.UseNavigation(RegisterRoutes)
+
+					// Add navigation support for toolkit controls such as TabBar and NavigationView
+					.UseToolkitNavigation()
+
+
+					.Build(enableUnoLogging: true);
+
+
+
+
+
+
+
+
 
 			this.InitializeComponent();
 
@@ -138,6 +168,7 @@ namespace Commerce
 				await Host.StartAsync();
 			});
 
+
 			var nav = Host.Services.GetService<INavigator>();
 #if __WASM__
 			Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
@@ -154,7 +185,6 @@ namespace Commerce
 			appTitle.Title = "Back pressed - " + DateTime.Now.ToString("HH:mm:ss");
 			var response = await backnav.GoBack(this);
 			//e.Handled = response.Success;
-
 		}
 
 
@@ -182,106 +212,64 @@ namespace Commerce
 			deferral.Complete();
 		}
 
-		/// <summary>
-		/// Configures global Uno Platform logging
-		/// </summary>
-		private static void InitializeLogging()
-		{
-			var factory = LoggerFactory.Create(builder =>
-			{
-#if __WASM__
-				builder.AddProvider(new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider());
-#elif __IOS__
-                builder.AddProvider(new global::Uno.Extensions.Logging.OSLogLoggerProvider());
-#elif NETFX_CORE
-				builder.AddDebug();
-#else
-                builder.AddConsole();
-#endif
-
-				// Exclude logs below this level
-				builder.SetMinimumLevel(LogLevel.Information);
-
-				// Default filters for Uno Platform namespaces
-				builder.AddFilter("Uno", LogLevel.Warning);
-				builder.AddFilter("Windows", LogLevel.Warning);
-				builder.AddFilter("Microsoft", LogLevel.Warning);
-
-				// Generic Xaml events
-				// builder.AddFilter("Windows.UI.Xaml", LogLevel.Debug );
-				// builder.AddFilter("Windows.UI.Xaml.VisualStateGroup", LogLevel.Debug );
-				// builder.AddFilter("Windows.UI.Xaml.StateTriggerBase", LogLevel.Debug );
-				// builder.AddFilter("Windows.UI.Xaml.UIElement", LogLevel.Debug );
-				// builder.AddFilter("Windows.UI.Xaml.FrameworkElement", LogLevel.Trace );
-
-				// Layouter specific messages
-				// builder.AddFilter("Windows.UI.Xaml.Controls", LogLevel.Debug );
-				// builder.AddFilter("Windows.UI.Xaml.Controls.Layouter", LogLevel.Debug );
-				// builder.AddFilter("Windows.UI.Xaml.Controls.Panel", LogLevel.Debug );
-
-				// builder.AddFilter("Windows.Storage", LogLevel.Debug );
-
-				// Binding related messages
-				// builder.AddFilter("Windows.UI.Xaml.Data", LogLevel.Debug );
-				// builder.AddFilter("Windows.UI.Xaml.Data", LogLevel.Debug );
-
-				// Binder memory references tracking
-				// builder.AddFilter("Uno.UI.DataBinding.BinderReferenceHolder", LogLevel.Debug );
-
-				// RemoteControl and HotReload related
-				// builder.AddFilter("Uno.UI.RemoteControl", LogLevel.Information);
-
-				// Debug JS interop
-				// builder.AddFilter("Uno.Foundation.WebAssemblyRuntime", LogLevel.Debug );
-			});
-
-			global::Uno.Extensions.LogExtensionPoint.AmbientLoggerFactory = factory;
-		}
-
 		private static void RegisterRoutes(IRouteBuilder builder)
 		{
 			builder
-				.Register(new RouteMap(nameof(ShellView), typeof(ShellView), typeof(ShellViewModel)))
-				.Register(new RouteMap("Login", typeof(LoginPage), typeof(LoginViewModel.BindableLoginViewModel)))
-					.Register(new RouteMap("Home", typeof(HomePage), typeof(HomeViewModel),
-						RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
-													nav with { Route = nav.Route.Append(Route.NestedRoute("Products")) } :
-													nav))
-					.Register(new RouteMap("Products", typeof(FrameView),
-						RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
+				.Register(RouteMap.For(nameof(ShellView)))
+				.Register(ViewMap.For(nameof(ShellView)).Show<ShellView>().With<ShellViewModel>())
+
+				.Register(ViewMap.For("Login").Show<LoginPage>().With<LoginViewModel.BindableLoginViewModel>())
+
+				.Register(RouteMap.For("Home")
+					.Process((region, nav) => nav.Route.Next().IsEmpty() ?
+												nav with { Route = nav.Route.Append(Route.NestedRoute("Products")) } :
+												nav))
+				.Register(ViewMap.For("Home").Show<HomePage>().With<HomeViewModel>())
+
+				.Register(RouteMap.For("Products")
+					.Process((region, nav) => nav.Route.Next().IsEmpty() ?
 												nav with { Route = nav.Route.AppendPage<ProductsPage>() } : nav with
 												{
 													Route = nav.Route.ContainsView<ProductsPage>() ?
 																	nav.Route :
 																	nav.Route.InsertPage<ProductsPage>()
 												}))
-					.Register(new RouteMap(nameof(ProductsPage), typeof(ProductsPage),
-						ViewModel: typeof(ProductsViewModel.BindableProductsViewModel)))
-					.Register(new RouteMap("Deals",
-						typeof(FrameView),
-						ViewModel: typeof(DealsViewModel),
-						RegionInitialization: (region, nav) => nav.Route.IsEmpty() ?
-												nav with { Route = nav.Route with { Base = "+DealsPage/HotDeals" } } :
-												nav with { Route = nav.Route with { Path = "+DealsPage/HotDeals" } }))
-					.Register(new RouteMap<Product>("ProductDetails",
-						RegionInitialization: (region, nav) => (App.Current as App).Window.Content.ActualSize.X > 800 ?
+				.Register(ViewMap.For("Products").Show<FrameView>())
+
+				.Register(ViewMap.For(nameof(ProductsPage)).Show<ProductsPage>().With<ProductsViewModel.BindableProductsViewModel>())
+
+				.Register(RouteMap.For("Deals")
+					.Process((region, nav) => nav.Route.Next().IsEmpty() ?
+												nav with { Route = nav.Route.AppendPage<ProductsPage>() } : nav with
+												{
+													Route = nav.Route.ContainsView<ProductsPage>() ?
+																	nav.Route :
+																	nav.Route.InsertPage<ProductsPage>()
+												}))
+				.Register(ViewMap.For("Deals").Show<FrameView>())
+
+				.Register(RouteMap<Product>.For("ProductDetails")
+					.Process((region, nav) => (App.Current as App).Window.Content.ActualSize.X > 800 ?
 												nav with { Route = nav.Route with { Scheme = "./", Base = "Details", Path = nameof(ProductDetailsPage) } } :
 												nav with { Route = nav.Route with { Base = nameof(ProductDetailsPage) } }))
-					.Register(new RouteMap<Product>(nameof(ProductDetailsPage),
-						typeof(ProductDetailsPage),
-						typeof(ProductDetailsViewModel.BindableProductDetailsViewModel),
-						BuildQueryParameters: entity => new Dictionary<string, string> { { "ProductId", (entity as Product)?.ProductId + "" } }))
-					.Register(new RouteMap(typeof(CartDialog).Name, typeof(CartDialog),
-						RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
-												nav with { Route = nav.Route.AppendNested<CartPage>() } :
-												nav))
-					.Register(new RouteMap<Filters>("Filter", typeof(FilterPopup), typeof(FiltersViewModel.BindableFiltersViewModel)))
-					.Register(new RouteMap("Profile", typeof(ProfilePage), typeof(ProfileViewModel)))
-		  .Register(new RouteMap(typeof(CartDialog).Name, typeof(CartDialog),
-					RegionInitialization: (region, nav) => nav.Route.Next().IsEmpty() ?
-										nav with { Route = nav.Route.AppendNested<CartPage>() } :
-										nav))
-				.Register(new RouteMap(typeof(CartPage).Name, typeof(CartPage), typeof(CartViewModel)));
+
+				.Register(RouteMap<Product>.For(nameof(ProductDetailsPage))
+					.ConvertDataToQuery(product => new Dictionary<string, string> { { nameof(Product.ProductId), product.ProductId + "" } }))
+
+				.Register(ViewMap.For(nameof(ProductDetailsPage)).Show<ProductDetailsPage>().With<ProductDetailsViewModel.BindableProductDetailsViewModel>())
+
+				.Register(RouteMap.For(nameof(CartDialog))
+					.Process((region, nav) => nav.Route.Next().IsEmpty() ?
+													nav with { Route = nav.Route.AppendNested<CartPage>() } :
+													nav))
+				.Register(ViewMap.For(nameof(CartDialog)).Show<CartDialog>())
+
+				.Register(RouteMap<Filters>.For(nameof(Filters)))
+				.Register(ViewMap.For("Filter").Show<FilterPopup>().With<FiltersViewModel.BindableFiltersViewModel>())
+
+				.Register(ViewMap.For("Profile").Show<ProfilePage>().With<ProfileViewModel>())
+
+				.Register(ViewMap.For(nameof(CartPage)).Show<CartPage>().With<CartViewModel>());
 		}
 
 		public async void RouteUpdated(object sender, EventArgs e)
@@ -293,11 +281,16 @@ namespace Commerce
 				var route = rootRegion.GetRoute();
 
 
-#if !__WASM__
-				var appTitle = ApplicationView.GetForCurrentView();
-				appTitle.Title = "Commerce: " + (route + "").Replace("+", "/");
+#if !__WASM__ && !WINUI
+				CoreApplication.MainView?.DispatcherQueue.TryEnqueue(() =>
+				{
+					var appTitle = ApplicationView.GetForCurrentView();
+					appTitle.Title = "Commerce: " + (route + "").Replace("+", "/");
+				});
+#endif
 
-#else
+
+#if __WASM__
 				// Note: This is a hack to avoid error being thrown when loading products async
 				await Task.Delay(1000).ConfigureAwait(false);
 				CoreApplication.MainView?.DispatcherQueue.TryEnqueue(() =>

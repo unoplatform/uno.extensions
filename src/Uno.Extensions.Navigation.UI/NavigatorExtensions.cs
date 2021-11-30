@@ -31,9 +31,17 @@ public static class NavigatorExtensions
 		return parentNav;
 	}
 
-	internal static IRouteMappings? GetMapping(this INavigator navigator)
+	internal static IMappings? GetMapping(this INavigator navigator)
 	{
-		return navigator.Get<IServiceProvider>()?.GetRequiredService<IRouteMappings>() ?? default;
+		return navigator.Get<IServiceProvider>()?.GetRequiredService<IMappings>() ?? default;
+	}
+
+	public static async Task<NavigationResultResponse<TResult>?> NavigateRouteForResultAsync<TResult>(
+	this INavigator service, object sender, Route route, CancellationToken cancellation = default)
+	{
+		var request = new NavigationRequest<TResult>(sender, route, cancellation);
+		var result = await service.NavigateAsync(request);
+		return result?.AsResult<TResult>();
 	}
 
 	/// <summary>
@@ -171,7 +179,7 @@ public static class NavigatorExtensions
 	}
 
 	public static Task<NavigationResponse?> NavigatePreviousWithResultAsync<TResult>(
-	this INavigator service, object sender, string scheme = Schemes.None, Options.Option<TResult>? data = null, CancellationToken cancellation = default)
+	this INavigator service, object sender, string scheme = Schemes.None, Option<TResult>? data = null, CancellationToken cancellation = default)
 	{
 		return service.NavigateAsync((Schemes.NavigateBack + string.Empty).WithScheme(scheme).AsRequest(sender, data, cancellation));
 	}

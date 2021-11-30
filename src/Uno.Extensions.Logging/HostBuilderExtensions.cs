@@ -10,7 +10,6 @@ using Uno.Extensions;
 
 namespace Uno.Extensions.Logging
 {
-#if !((NETSTANDARD || NET5_0 || NET6_0) && !__IOS__ && !__ANDROID__) || WINUI || __WASM__
     public static class HostBuilderExtensions
     {
 #if !__WASM__
@@ -22,12 +21,10 @@ namespace Uno.Extensions.Logging
                     {
 #if __IOS__
                         builder.AddProvider(new global::Uno.Extensions.Logging.OSLogLoggerProvider());
-#elif NETFX_CORE
-                        builder.AddDebug();
 #else
-                        builder.AddConsole();
+                        builder.AddDebug();
 #endif
-                        configure?.Invoke(builder);
+						configure?.Invoke(builder);
                     });
         }
 #elif __WASM__
@@ -43,6 +40,14 @@ namespace Uno.Extensions.Logging
         }
 
 #endif
+
+		public static IHost Build(
+			this IHostBuilder hostBuilder,
+			bool enableUnoLogging)
+		{
+			return hostBuilder
+				.Build()
+				.ConnectUnoLogging(enableUnoLogging);
+		}
     }
-#endif
 }

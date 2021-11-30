@@ -12,21 +12,21 @@ namespace Uno.Extensions.Navigation
 	{
 		private INavigator Navigation { get; }
 
-		private TaskCompletionSource<Options.Option<TResult>> ResultCompletion { get; }
+		private TaskCompletionSource<Option<TResult>> ResultCompletion { get; }
 
 		public Route? Route => Navigation.Route;
 
 		public ResponseNavigator(INavigator internalNavigation, NavigationRequest request)
 		{
 			Navigation = internalNavigation;
-			ResultCompletion = new TaskCompletionSource<Options.Option<TResult>>();
+			ResultCompletion = new TaskCompletionSource<Option<TResult>>();
 
 
 			if (request.Cancellation.HasValue)
 			{
 				request.Cancellation.Value.Register(() =>
 				{
-					ApplyResult(Options.Option.None<TResult>());
+					ApplyResult(Option.None<TResult>());
 				});
 			}
 
@@ -43,21 +43,21 @@ namespace Uno.Extensions.Navigation
 				(request.Route.IsRoot() && request.Route.TrimScheme(Schemes.Root).FrameIsBackNavigation() && this.Navigation.GetParent() == null))
 			{
 				var responseData = request.Route.ResponseData();
-				var result = responseData as Options.Option<TResult>;
-				if (result is null)
+				var result = responseData is Option<TResult> res ? res : default;
+				if (result.Type != OptionType.Some)
 				{
-					if(responseData is Options.Option<object> objectResponse)
+					if (responseData is Option<object> objectResponse)
 					{
-						responseData = objectResponse.GetValue();
+						responseData = objectResponse.SomeOrDefault();
 					}
 
 					if (responseData is TResult data)
 					{
-						result = Options.Option.Some(data);
+						result = Option.Some(data);
 					}
 					else
 					{
-						result = Options.Option.None<TResult>();
+						result = Option.None<TResult>();
 					}
 				}
 				ApplyResult(result);
@@ -76,7 +76,7 @@ namespace Uno.Extensions.Navigation
 			//return new NavigationResultResponse<TResult>(navResponse?.Route ?? Route.Empty, ResultCompletion.Task);
 		}
 
-		private void ApplyResult(Options.Option<TResult> responseData)
+		private void ApplyResult(Option<TResult> responseData)
 		{
 			if (ResultCompletion.Task.Status == TaskStatus.Canceled ||
 				ResultCompletion.Task.Status == TaskStatus.RanToCompletion)
