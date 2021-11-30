@@ -13,7 +13,7 @@ using Uno.Extensions.Configuration;
 using Uno.Extensions.Hosting;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation;
-using Uno.Extensions.Navigation.Controls;
+using Uno.Extensions.Navigation.UI;
 using Uno.Extensions.Navigation.Regions;
 using Uno.Extensions.Navigation.Toolkit;
 using Uno.Extensions.Serialization;
@@ -200,13 +200,15 @@ namespace MyExtensionsApp
 
 				.Register(RouteMap.For("Deals")
 					.Process((region, nav) => nav.Route.Next().IsEmpty() ?
-												nav with { Route = nav.Route.AppendPage<ProductsPage>() } : nav with
+												nav with { Route = nav.Route.AppendPage<DealsPage>() } : nav with
 												{
-													Route = nav.Route.ContainsView<ProductsPage>() ?
+													Route = nav.Route.ContainsView<DealsPage>() ?
 																	nav.Route :
-																	nav.Route.InsertPage<ProductsPage>()
+																	nav.Route.InsertPage<DealsPage>()
 												}))
 				.Register(ViewMap.For("Deals").Show<FrameView>())
+
+				.Register(ViewMap.For("Deals").Show<DealsPage>().With<DealsViewModel>())
 
 				.Register(RouteMap<Product>.For("ProductDetails")
 					.Process((region, nav) => (App.Current as App).Window.Content.ActualSize.X > 800 ?

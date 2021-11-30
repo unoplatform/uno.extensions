@@ -5,12 +5,10 @@
 	  xmlns:local="using:MyExtensionsApp"
 	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	  xmlns:nav="using:Uno.Extensions.Navigation.Controls"
-	  xmlns:utu="using:Uno.Toolkit.UI.Controls"
-	  xmlns:uen="using:Uno.Extensions.Navigation.Controls"
+	  xmlns:utu="using:Uno.Toolkit.UI"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
 	  mc:Ignorable="d"
-	  xmlns:toolkit="using:Uno.Toolkit.UI.Controls"
 	  Background="{ThemeResource MaterialBackgroundBrush}">
 	<Grid x:Name="NavRoot">
 		<Grid.Resources>
@@ -75,28 +73,28 @@
 							 IsPaneOpen="False"
 							 IsBackButtonVisible="Collapsed"
 							 OpenPaneLength="200"
-							 nav:Region.Attached="true">
+							 uen:Region.Attached="true">
 			<muxc:NavigationView.MenuItems>
 				<muxc:NavigationViewItem Content="Products"
-										 nav:Region.Name="Products">
+										 uen:Region.Name="Products">
 					<muxc:NavigationViewItem.Icon>
 						<PathIcon Data="{StaticResource Icon_storefront}" />
 					</muxc:NavigationViewItem.Icon>
 				</muxc:NavigationViewItem>
 				<muxc:NavigationViewItem Content="Deals"
-										 nav:Region.Name="Deals">
+										 uen:Region.Name="Deals">
 					<muxc:NavigationViewItem.Icon>
 						<PathIcon Data="{StaticResource Icon_bolt}" />
 					</muxc:NavigationViewItem.Icon>
 				</muxc:NavigationViewItem>
 				<muxc:NavigationViewItem Content="Profile"
-										 nav:Region.Name="Profile">
+										 uen:Region.Name="Profile">
 					<muxc:NavigationViewItem.Icon>
 						<PathIcon Data="{StaticResource Icon_person}" />
 					</muxc:NavigationViewItem.Icon>
 				</muxc:NavigationViewItem>
 				<muxc:NavigationViewItem Content="Cart"
-										 nav:Navigation.Request="!CartFlyout">
+										 uen:Navigation.Request="!CartFlyout">
 					<muxc:NavigationViewItem.Icon>
 						<PathIcon Data="{StaticResource Icon_shopping_cart}" />
 					</muxc:NavigationViewItem.Icon>
@@ -154,7 +152,7 @@
 									utu:AutoLayout.PrimaryAlignment="Stretch"
 									utu:AutoLayout.CounterLength="56"
 									Style="{StaticResource MaterialBottomTabBarItemFabStyle}"
-									nav:Navigation.Request="!CartFlyout">
+									uen:Navigation.Request="!CartFlyout">
 						<utu:TabBarItem.Icon>
 							<PathIcon Data="{StaticResource Icon_shopping_cart}" />
 						</utu:TabBarItem.Icon>

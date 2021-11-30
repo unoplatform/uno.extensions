@@ -5,11 +5,9 @@
 	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	  mc:Ignorable="d"
-	  xmlns:nav="using:Uno.Extensions.Navigation.Controls"
-	  xmlns:toolkit="using:Uno.Toolkit.UI.Controls"
-	  xmlns:utu="using:Uno.Toolkit.UI.Controls"
+	  xmlns:utu="using:Uno.Toolkit.UI"
 	  xmlns:uer="using:Uno.Extensions.Reactive.UI"
-	  xmlns:uen="using:Uno.Extensions.Navigation.Controls"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  Background="{ThemeResource MaterialBackgroundBrush}"
 	  HorizontalAlignment="Stretch"
 	  VerticalAlignment="Stretch">

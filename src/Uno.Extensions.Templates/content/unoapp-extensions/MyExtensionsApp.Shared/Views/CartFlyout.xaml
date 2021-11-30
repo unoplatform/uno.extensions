@@ -3,7 +3,7 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:local="using:MyExtensionsApp"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:nav="using:Uno.Extensions.Navigation.Controls"
+		xmlns:nav="using:Uno.Extensions.Navigation.UI"
 		Placement="Full"
 		FlyoutPresenterStyle="{StaticResource MaterialFlyoutPresenterStyle}">
 	
