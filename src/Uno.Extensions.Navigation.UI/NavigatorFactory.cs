@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Logging;
-using Uno.Extensions.Navigation.Controls;
+using Uno.Extensions.Navigation.UI;
 using Uno.Extensions.Navigation.Navigators;
 using Uno.Extensions.Navigation.Regions;
 #if !WINUI

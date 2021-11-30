@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Controls;
 using Uno.Extensions.Navigation;
-using Uno.Extensions.Navigation.Controls;
+using Uno.Extensions.Navigation.UI;
 using Uno.Extensions.Navigation.Regions;
 #if !WINUI
 using Windows.UI.Xaml;

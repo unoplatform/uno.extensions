@@ -2,7 +2,7 @@
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation;
-using Uno.Extensions.Navigation.Controls;
+using Uno.Extensions.Navigation.UI;
 using Uno.Toolkit.UI;
 
 using Microsoft.Extensions.DependencyInjection;

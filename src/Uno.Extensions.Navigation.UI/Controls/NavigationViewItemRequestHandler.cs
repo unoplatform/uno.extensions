@@ -1,6 +1,6 @@
 ﻿using Windows.Foundation;
 
-namespace Uno.Extensions.Navigation.Controls
+namespace Uno.Extensions.Navigation.UI
 {
     public class NavigationViewItemRequestHandler : ActionRequestHandlerBase<NavigationViewItem>
     {

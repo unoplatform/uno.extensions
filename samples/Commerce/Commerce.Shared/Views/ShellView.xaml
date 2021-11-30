@@ -1,6 +1,6 @@
 ﻿<UserControl x:Class="Commerce.Views.ShellView"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:uen="using:Uno.Extensions.Navigation.Controls">
+			 xmlns:uen="using:Uno.Extensions.Navigation.UI">
 	<Frame uen:Region.Attached="true" />
 </UserControl>

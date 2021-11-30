@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Uno.Extensions.Navigation.Controls
+namespace Uno.Extensions.Navigation.UI
 {
     public abstract class ControlRequestHandlerBase<TControl> : IRequestHandler
     {

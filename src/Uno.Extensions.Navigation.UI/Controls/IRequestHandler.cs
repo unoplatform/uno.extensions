@@ -1,4 +1,4 @@
-﻿namespace Uno.Extensions.Navigation.Controls;
+﻿namespace Uno.Extensions.Navigation.UI;
 
 public interface IRequestHandler
 {

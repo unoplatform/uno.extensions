@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Uno.Extensions.Navigation.Controls
+namespace Uno.Extensions.Navigation.UI
 {
     public class NavigationRequestBinder
     {

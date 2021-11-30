@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 
 
-namespace Uno.Extensions.Navigation.Controls
+namespace Uno.Extensions.Navigation.UI
 {
 	public class SelectorRequestHandler : ControlRequestHandlerBase<Selector>
 	{

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Uno.Extensions.Navigation.Controls;
+namespace Uno.Extensions.Navigation.UI;
 
 public static class Navigation
 {

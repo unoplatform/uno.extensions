@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 //using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
-using Uno.Extensions.Navigation.Controls;
+using Uno.Extensions.Navigation.UI;
 using Uno.Extensions.Navigation.Regions;
 using Uno.Extensions.Navigation.Navigators;
 

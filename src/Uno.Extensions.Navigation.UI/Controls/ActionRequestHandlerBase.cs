@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace Uno.Extensions.Navigation.Controls
+namespace Uno.Extensions.Navigation.UI
 {
 	public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBase<TView>
 		where TView : FrameworkElement
