@@ -6,5 +6,6 @@
 	<PropertyGroup>
 		<DebugType>portable</DebugType>
 		<DebugSymbols>True</DebugSymbols>
+	  <NoWarn>Uno0001</NoWarn>
 	</PropertyGroup>
 </Project>
