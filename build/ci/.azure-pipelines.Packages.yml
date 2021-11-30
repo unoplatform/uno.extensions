@@ -1,5 +1,5 @@
 jobs:
-- job: Windows
+- job: Packages
 
   pool:
     vmImage: 'windows-2022'
@@ -54,13 +54,13 @@ jobs:
     ignoreLASTEXITCODE: true
 
   - task: MSBuild@1
-    displayName: Build Samples
+    displayName: Build Extensions Packages
     inputs:
-      solution: samples/**/*.sln
+      solution: src/Uno.Extensions.sln
       msbuildLocationMethod: location
       msbuildLocation: $(MSBUILDPATH)
       msbuildArchitecture: x86
-      msbuildArguments: /m /r /p:Configuration=Release "/p:InformationalVersion=%GITVERSION_InformationalVersion%" /p:GeneratePackageOnBuild=false /p:AotAssemblies=false /p:UseWebAssemblyAOT=false /detailedsummary /bl:$(build.artifactstagingdirectory)/samples.binlog
+      msbuildArguments: /r /m /p:Configuration=Release "/p:PackageOutputPath=$(build.artifactstagingdirectory)\nuget" "/p:PackageVersion=%GITVERSION_FullSemVer%" "/p:InformationalVersion=%GITVERSION_InformationalVersion%" /detailedsummary /bl:$(build.artifactstagingdirectory)/uno-extensions.binlog
       clean: false
       maximumCpuCount: true
       restoreNugetPackages: false
