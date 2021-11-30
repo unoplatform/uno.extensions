@@ -11,6 +11,7 @@ pr:
       - release/*
 
 jobs:
+- template: .azure-pipelines.Packages.yml
 - template: .azure-pipelines.Windows.yml
 - template: .azure-pipelines.Android.yml
 - template: .azure-pipelines.Wasm.yml

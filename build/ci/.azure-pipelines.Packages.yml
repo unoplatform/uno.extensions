@@ -1,6 +1,5 @@
 jobs:
-- job: Windows
-  timeoutInMinutes: 90
+- job: Packages
 
   pool:
     vmImage: 'windows-2022'
@@ -49,19 +48,19 @@ jobs:
 
   - powershell: |
         & dotnet tool update --global uno.check --version $(UnoCheck_Version) --add-source https://api.nuget.org/v3/index.json
-        & uno-check -v --ci --non-interactive --fix --skip xcode --skip androidemulator --skip gtk3 --skip vswin --skip vsmac --manifest $(UnoCheck_Manifest)
+        & uno-check -v --ci --non-interactive --fix --skip xcode --skip gtk3 --skip androidemulator --skip vswin --skip vsmac --manifest $(UnoCheck_Manifest)
     displayName: Install .NET Workloads
     errorActionPreference: continue
     ignoreLASTEXITCODE: true
 
   - task: MSBuild@1
-    displayName: Build Samples
+    displayName: Build Extensions Packages
     inputs:
-      solution: samples/**/*.sln
+      solution: src/Uno.Extensions.sln
       msbuildLocationMethod: location
       msbuildLocation: $(MSBUILDPATH)
       msbuildArchitecture: x86
-      msbuildArguments: /m /r /p:Configuration=Release "/p:InformationalVersion=%GITVERSION_InformationalVersion%" /p:GeneratePackageOnBuild=false /p:AotAssemblies=false /p:UseWebAssemblyAOT=false /detailedsummary /bl:$(build.artifactstagingdirectory)/samples.binlog
+      msbuildArguments: /r /m /p:Configuration=Release "/p:PackageOutputPath=$(build.artifactstagingdirectory)\nuget" "/p:PackageVersion=%GITVERSION_FullSemVer%" "/p:InformationalVersion=%GITVERSION_InformationalVersion%" /detailedsummary /bl:$(build.artifactstagingdirectory)/uno-extensions.binlog
       clean: false
       maximumCpuCount: true
       restoreNugetPackages: false
