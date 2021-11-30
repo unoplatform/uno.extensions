@@ -8,10 +8,10 @@
 	  xmlns:nav="using:Uno.Extensions.Navigation.Controls"
 	  xmlns:utu="using:Uno.Toolkit.UI.Controls"
 	  xmlns:uen="using:Uno.Extensions.Navigation.Controls"
-	  xmlns:uer="using:Uno.Extensions.Reactive"
+	  xmlns:uer="using:Uno.Extensions.Reactive.UI"
 	  xmlns:um="using:Uno.Material.Extensions"
 	  xmlns:toolkit="using:Uno.Toolkit.UI.Controls"
-	  xmlns:reactive="using:Uno.Extensions.Reactive"
+	  xmlns:reactive="using:Uno.Extensions.Reactive.UI"
 	  mc:Ignorable="d"
 	  Background="{ThemeResource MaterialBackgroundBrush}">
 

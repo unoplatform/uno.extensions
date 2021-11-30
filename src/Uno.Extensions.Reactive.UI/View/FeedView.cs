@@ -7,7 +7,7 @@ using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Utils;
 using Uno.Logging;
 
-namespace Uno.Extensions.Reactive;
+namespace Uno.Extensions.Reactive.UI;
 
 /// <summary>
 /// A control to render <see cref="IFeed{T}"/>

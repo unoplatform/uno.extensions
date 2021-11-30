@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Uno.Extensions.Reactive;
+namespace Uno.Extensions.Reactive.UI;
 
 public class SmoothVisualStateRuleCollection : List<SmoothVisualStateRule>
 {

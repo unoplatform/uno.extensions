@@ -7,7 +7,7 @@
 	  mc:Ignorable="d"
 	  xmlns:nav="using:Uno.Extensions.Navigation.Controls"
 	  xmlns:utu="using:Uno.Toolkit.UI.Controls"
-	  xmlns:uer="using:Uno.Extensions.Reactive"
+	  xmlns:uer="using:Uno.Extensions.Reactive.UI"
 	  Background="{StaticResource MaterialSurfaceBrush}">
 
 	<utu:AutoLayout Background="{StaticResource MaterialSurfaceBrush}"

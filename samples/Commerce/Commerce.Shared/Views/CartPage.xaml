@@ -8,7 +8,7 @@
 	  xmlns:nav="using:Uno.Extensions.Navigation.Controls"
 	  xmlns:toolkit="using:Uno.Toolkit.UI.Controls"
 	  xmlns:utu="using:Uno.Toolkit.UI.Controls"
-	  xmlns:uer="using:Uno.Extensions.Reactive"
+	  xmlns:uer="using:Uno.Extensions.Reactive.UI"
 	  xmlns:uen="using:Uno.Extensions.Navigation.Controls"
 	  Background="{ThemeResource MaterialBackgroundBrush}"
 	  HorizontalAlignment="Stretch"

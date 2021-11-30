@@ -3,7 +3,7 @@
 using System;
 using System.Linq;
 
-namespace Uno.Extensions.Reactive;
+namespace Uno.Extensions.Reactive.UI;
 
 public class SmoothVisualStateRule
 {
