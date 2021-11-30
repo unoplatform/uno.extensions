@@ -90,31 +90,33 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace {record.ContainingNamespace};
-
-{record.GetAccessibilityAsCSharpCodeString()} sealed class Bindable{record.GetPascalCaseName()} : {NS.Bindings}.Bindable<{record}>
+namespace {record.ContainingNamespace}
 {{
-	{properties.Select(prop => $"private readonly {prop.bindable} _{prop.symbol.GetCamelCaseName()};").Align(1)}
-
-	public Bindable{record.GetPascalCaseName()}({NS.Bindings}.BindablePropertyInfo<{record}> property)
-		: base(property, hasValueProperty: {(!hasDeclaredValueProperty).ToString().ToLowerInvariant()})
+	{record.GetAccessibilityAsCSharpCodeString()} sealed class Bindable{record.GetPascalCaseName()} : {NS.Bindings}.Bindable<{record}>
 	{{
-		{properties
-			.Select(prop => $@"
-				_{prop.camelName} = new {prop.bindable}(base.Property<{prop.symbol.Type}>(
-					nameof({prop.name}),
-					{record.GetCamelCaseName()} => {(prop.canRead ? $"{record.GetCamelCaseName()}?.{prop.name} ?? default" : $"default({prop.symbol.Type})")},
-					({record.GetCamelCaseName()}, {prop.camelName}) => {(prop.canWrite ? $"({record.GetCamelCaseName()} ?? CreateDefault()) with {{{prop.name} = {prop.camelName}}}" : record.GetCamelCaseName())}));")
-			.Align(2)}
+		{properties.Select(prop => $"private readonly {prop.bindable} _{prop.symbol.GetCamelCaseName()};").Align(2)}
+
+		public Bindable{record.GetPascalCaseName()}({NS.Bindings}.BindablePropertyInfo<{record}> property)
+			: base(property, hasValueProperty: {(!hasDeclaredValueProperty).ToString().ToLowerInvariant()})
+		{{
+			{properties
+				.Select(prop => $@"
+					_{prop.camelName} = new {prop.bindable}(base.Property<{prop.symbol.Type}>(
+						nameof({prop.name}),
+						{record.GetCamelCaseName()} => {(prop.canRead ? $"{record.GetCamelCaseName()}?.{prop.name} ?? default" : $"default({prop.symbol.Type})")},
+						({record.GetCamelCaseName()}, {prop.camelName}) => {(prop.canWrite ? $"({record.GetCamelCaseName()} ?? CreateDefault()) with {{{prop.name} = {prop.camelName}}}" : record.GetCamelCaseName())}));")
+				.Align(3)}
+		}}
+
+		private static {record} CreateDefault()
+			=> new({GetDefaultCtor(record)!.Parameters.Select(p => $"default({p.Type})!").JoinBy(", ")});
+
+		{(hasDeclaredValueProperty ? "" : $"public {record} Value => base.GetValue();")}
+
+		{properties.Select(prop => prop.property).Align(2)}
 	}}
-
-	private static {record} CreateDefault()
-		=> new({GetDefaultCtor(record)!.Parameters.Select(p => $"default({p.Type})!").JoinBy(", ")});
-
-	{(hasDeclaredValueProperty ? "" : $"public {record} Value => base.GetValue();")}
-
-	{properties.Select(prop => prop.property).Align(1)}
-}}";
+}}
+";
 
 return code;
 	}

@@ -67,62 +67,63 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace {vm.ContainingNamespace};
-
-partial {(vm.IsRecord ? "record" : "class")} {vm.Name} : global::System.IAsyncDisposable
+namespace {vm.ContainingNamespace}
 {{
-	public class Bindable{vm.Name} : {NS.Bindings}.BindableViewModelBase
+	partial {(vm.IsRecord ? "record" : "class")} {vm.Name} : global::System.IAsyncDisposable
 	{{
-		{inputsErrors.Align(2)}
-		{inputs.Select(input => input.GetBackingField()).Align(2)}
+		public class Bindable{vm.Name} : {NS.Bindings}.BindableViewModelBase
+		{{
+			{inputsErrors.Align(3)}
+			{inputs.Select(input => input.GetBackingField()).Align(3)}
 
-		{vm
-			.Constructors
-			.Where(_ctx.IsGenerationNotDisable)
-			.Select(ctor =>
-			{
-				var parameters = ctor
-					.Parameters
-					.Select(parameter => inputs.First(input => input.Parameter.Name.Equals(parameter.Name, StringComparison.OrdinalIgnoreCase)))
-					.ToArray();
+			{vm
+				.Constructors
+				.Where(_ctx.IsGenerationNotDisable)
+				.Select(ctor =>
+				{
+					var parameters = ctor
+						.Parameters
+						.Select(parameter => inputs.First(input => input.Parameter.Name.Equals(parameter.Name, StringComparison.OrdinalIgnoreCase)))
+						.ToArray();
 
-				var bindableVmParameters = parameters
-					.Select(param => param.GetCtorParameter())
-					.Where(param => param.code is not null)
-					.OrderBy(param => param.isOptional ? 1 : 0)
-					.Select(param => param.code)
-					.JoinBy(", ");
-				var vmParameters = parameters
-					.Select(param => param.GetVMCtorParameter())
-					.JoinBy(", ");
+					var bindableVmParameters = parameters
+						.Select(param => param.GetCtorParameter())
+						.Where(param => param.code is not null)
+						.OrderBy(param => param.isOptional ? 1 : 0)
+						.Select(param => param.code)
+						.JoinBy(", ");
+					var vmParameters = parameters
+						.Select(param => param.GetVMCtorParameter())
+						.JoinBy(", ");
 
-				return $@"
-					{GetCtorAccessibility(ctor)} Bindable{vm.Name}({bindableVmParameters})
-					{{
-						{inputs.Select(input => input.GetCtorInit(parameters.Contains(input))).Align(6)}
+					return $@"
+						{GetCtorAccessibility(ctor)} Bindable{vm.Name}({bindableVmParameters})
+						{{
+							{inputs.Select(input => input.GetCtorInit(parameters.Contains(input))).Align(7)}
 
-						var {N.Ctor.Model} = new {vm}({vmParameters});
-						var {N.Ctor.Ctx} = {NS.Core}.SourceContext.GetOrCreate({N.Ctor.Model});
-						{NS.Core}.SourceContext.Set(this, {N.Ctor.Ctx});
-						base.RegisterDisposable({N.Ctor.Model});
+							var {N.Ctor.Model} = new {vm}({vmParameters});
+							var {N.Ctor.Ctx} = {NS.Core}.SourceContext.GetOrCreate({N.Ctor.Model});
+							{NS.Core}.SourceContext.Set(this, {N.Ctor.Ctx});
+							base.RegisterDisposable({N.Ctor.Model});
 
-						{N.Model} = {N.Ctor.Model};
-						{inputs.Select(input => input.GetPropertyInit()).Align(6)}
-						{mappedMembers.Select(member => member.GetInitialization()).Align(6)}
-					}}";
-			})
-			.Align(2)}
+							{N.Model} = {N.Ctor.Model};
+							{inputs.Select(input => input.GetPropertyInit()).Align(7)}
+							{mappedMembers.Select(member => member.GetInitialization()).Align(7)}
+						}}";
+				})
+				.Align(3)}
 
-		public {vm} {N.Model} {{ get; }}
+			public {vm} {N.Model} {{ get; }}
 
-		{inputs.Select(input => input.GetProperty()).Align(2)}
+			{inputs.Select(input => input.GetProperty()).Align(3)}
 
-		{mappedMembers.Select(member => member.GetDeclaration()).Align(2)}
+			{mappedMembers.Select(member => member.GetDeclaration()).Align(3)}
+		}}
+
+		/// <inheritdoc />
+		public global::System.Threading.Tasks.ValueTask DisposeAsync()
+			=> {NS.Core}.SourceContext.Find(this)?.DisposeAsync() ?? default;
 	}}
-
-	/// <inheritdoc />
-	public global::System.Threading.Tasks.ValueTask DisposeAsync()
-		=> {NS.Core}.SourceContext.Find(this)?.DisposeAsync() ?? default;
 }}
 ";
 
