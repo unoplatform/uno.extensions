@@ -61,7 +61,25 @@ internal partial class MessageManager<TParent, TResult>
 				_ct);
 		}
 
-		public void Commit(Func<MessageManager<TParent, TResult>.CurrentMessage, MessageBuilder<TParent, TResult>> resultUpdater)
+		public void TransientSetWithFinalParentUpdate(MessageAxis axis, object value, Message<TParent>? parentMsg)
+		{
+			if (_state != State.Active)
+			{
+				return;
+			}
+
+			_owner.Update(
+				m =>
+				{
+					// We alter the _transientUpdates in the 'updater' delegate so we are thread safe thanks to the _owner._gate
+					_transientUpdates[axis] = new MessageAxisUpdate(axis, new MessageAxisValue(value));
+
+					return m.With(parentMsg);
+				},
+				_ct);
+		}
+
+		public void Commit(Func<CurrentMessage, MessageBuilder<TParent, TResult>> resultUpdater)
 		{
 			if (Interlocked.CompareExchange(ref _state, State.Committed, State.Active) == State.Active)
 			{
