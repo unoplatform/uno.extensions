@@ -13,13 +13,14 @@ In addition to referencing Uno, the Guidance Template also references the follow
 | Package                      |                                                                                                           |
 |------------------------------|-----------------------------------------------------------------------------------------------------------|
 | CommunityToolkit.Mvvm        | Provides base implementations for INotifyPropertyChanged, INotifyDataErrorInfo and other helper utilities |
-| Uno.Extensions.Configuration | Loads configuration information from various sources                                                                                                          |
-| Uno.Extensions.Hosting       | Initializes the hosting environment, including initialising the dependency container                                                                                                           |
-| Uno.Extensions.Http          | Configures HttpClient to use native http handlers                                                                                                          |
-| Uno.Extensions.Localization  | Provides access to localizable resources                                                                                                          |
-| Uno.Extensions.Logging       | Configures application logging                                                                                                          |
-| Uno.Extensions.Navigation    | Routing framework for frame based navigation                                                                                                          |
-| Uno.Extensions.Serialization | Helpers for json serialization                                                                                                          |
+| Uno.Extensions.Configuration | Loads configuration information from various sources                                                      |
+| Uno.Extensions.Hosting       | Initializes the hosting environment, including initialising the dependency container                      |
+| Uno.Extensions.Http          | Configures HttpClient to use native http handlers                                                         |
+| Uno.Extensions.Localization  | Provides access to localizable resources                                                                  |
+| Uno.Extensions.Logging       | Configures application logging                                                                            |
+| Uno.Extensions.Navigation    | Routing framework for frame based navigation                                                              |
+| Uno.Extensions.Reactive      | Developement framework for reactive applications                                                          |
+| Uno.Extensions.Serialization | Helpers for json serialization                                                                            |
 
 ## Uno.Extensions
 
