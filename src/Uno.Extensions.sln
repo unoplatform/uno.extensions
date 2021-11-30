@@ -84,9 +84,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Logging.WinU
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Logging.WinUI.Wasm", "Uno.Extensions.Logging\Uno.Extensions.Logging.WinUI.Wasm.csproj", "{3875AA02-B5BF-42B6-B593-9D3DEC50C0EA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation.UWP", "Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UWP.csproj", "{1352EBF6-EAEC-420A-A86D-8FAA663C3C14}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation.UI", "Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UI.csproj", "{1352EBF6-EAEC-420A-A86D-8FAA663C3C14}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation.Toolkit", "Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.csproj", "{5A7CF237-8024-4702-BE2F-388A10745224}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation.Toolkit", "Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.UI.csproj", "{5A7CF237-8024-4702-BE2F-388A10745224}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation.Toolkit.WinUI", "Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.WinUI.csproj", "{54E67E51-B1D0-4A3F-9EE9-A58329074CC3}"
 EndProject

@@ -179,13 +179,13 @@
       <Project>{c57652d8-e0df-4108-9ccd-023f91038aee}</Project>
       <Name>Uno.Extensions.Logging.UWP</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.csproj">
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.UI.csproj">
       <Project>{96429923-5d3a-4509-992a-ff5f7d621b7f}</Project>
       <Name>Uno.Extensions.Navigation.Toolkit</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UWP.csproj">
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UI.csproj">
       <Project>{eff028a3-ae9d-4a78-8c83-4711386e748b}</Project>
-      <Name>Uno.Extensions.Navigation.UWP</Name>
+      <Name>Uno.Extensions.Navigation.UI</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj">
       <Project>{ad3c0a66-450d-4355-b5c4-fdaf0d7746ad}</Project>

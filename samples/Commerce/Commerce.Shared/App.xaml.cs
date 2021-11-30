@@ -92,7 +92,6 @@ namespace Commerce
 					.UseConfiguration<AppInfo>()
 
 					// Register entities for saving settings
-					.UseSettings<CommerceSettings>()
 					.UseSettings<Credentials>()
 
 
@@ -119,14 +118,6 @@ namespace Commerce
 
 
 					.Build(enableUnoLogging: true);
-
-
-
-
-
-
-
-
 
 			this.InitializeComponent();
 
@@ -168,25 +159,7 @@ namespace Commerce
 				await Host.StartAsync();
 			});
 
-
-			var nav = Host.Services.GetService<INavigator>();
-#if __WASM__
-			Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-			Windows.UI.Core.SystemNavigationManager.GetForCurrentView().BackRequested += AppGoBack;
-
-#endif
-
 		}
-
-		public async void AppGoBack(object? sender, BackRequestedEventArgs e)
-		{
-			var backnav = Host.Services.GetService<INavigator>();
-			var appTitle = ApplicationView.GetForCurrentView();
-			appTitle.Title = "Back pressed - " + DateTime.Now.ToString("HH:mm:ss");
-			var response = await backnav.GoBack(this);
-			//e.Handled = response.Success;
-		}
-
 
 		/// <summary>
 		/// Invoked when Navigation to a certain page fails
@@ -258,14 +231,14 @@ namespace Commerce
 
 				.Register(ViewMap.For(nameof(ProductDetailsPage)).Show<ProductDetailsPage>().With<ProductDetailsViewModel.BindableProductDetailsViewModel>())
 
-				.Register(RouteMap.For(nameof(CartDialog))
+				.Register(RouteMap.For(nameof(CartFlyout))
 					.Process((region, nav) => nav.Route.Next().IsEmpty() ?
 													nav with { Route = nav.Route.AppendNested<CartPage>() } :
 													nav))
-				.Register(ViewMap.For(nameof(CartDialog)).Show<CartDialog>())
+				.Register(ViewMap.For(nameof(CartFlyout)).Show<CartFlyout>())
 
 				.Register(RouteMap<Filters>.For(nameof(Filters)))
-				.Register(ViewMap.For("Filter").Show<FilterPopup>().With<FiltersViewModel.BindableFiltersViewModel>())
+				.Register(ViewMap.For("Filter").Show<FilterFlyout>().With<FiltersViewModel.BindableFiltersViewModel>())
 
 				.Register(ViewMap.For("Profile").Show<ProfilePage>().With<ProfileViewModel>())
 

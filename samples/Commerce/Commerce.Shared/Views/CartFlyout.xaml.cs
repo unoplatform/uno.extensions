@@ -26,9 +26,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Commerce
 {
-	public sealed partial class CartDialog : Flyout
+	public sealed partial class CartFlyout : Flyout
 	{
-		public CartDialog()
+		public CartFlyout()
 		{
 			this.InitializeComponent();
 		}

@@ -105,29 +105,18 @@
       <Project>{A2D5DFFB-484B-4365-AAAC-13217A76150E}</Project>
       <Name>Uno.Extensions.Logging.Serilog</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Logging.Wasm\Uno.Extensions.Logging.Wasm.csproj">
-      <Project>{445751FB-9528-47A3-8DCA-D1B1438C3D2D}</Project>
-      <Name>Uno.Extensions.Logging.Wasm</Name>
-    </ProjectReference>
+
 		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.UWP.csproj">
 			<Project>{c57652d8-e0df-4108-9ccd-023f91038aee}</Project>
 			<Name>Uno.Extensions.Logging.UWP</Name>
 		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.csproj">
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.UI.csproj">
       <Project>{96429923-5d3a-4509-992a-ff5f7d621b7f}</Project>
       <Name>Uno.Extensions.Navigation.Toolkit</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.UI.Toolkit.csproj">
-      <Project>{b6f69943-2161-437a-b491-3ebca7c78927}</Project>
-      <Name>Uno.Extensions.Navigation.UI.Toolkit</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UI.csproj">
-      <Project>{078b7148-820b-4441-85b1-800ad8c869ce}</Project>
-      <Name>Uno.Extensions.Navigation.UI</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UWP.csproj">
       <Project>{eff028a3-ae9d-4a78-8c83-4711386e748b}</Project>
-      <Name>Uno.Extensions.Navigation.UWP</Name>
+      <Name>Uno.Extensions.Navigation.UI</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj">
       <Project>{E11A43D8-9383-467C-924A-00CA6794EE04}</Project>
