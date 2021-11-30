@@ -46,7 +46,7 @@
 	  <UpToDateCheckInput Remove="content\unoapp-extensions\MyExtensionsApp.Shared\MyExtensionsAppSettings.cs" />
 	</ItemGroup>
 
-	<Target Name="ReplaceVersions" Condition="'$(PackageVersion)'!='255.255.255.255'">
+	<Target Name="ReplaceVersions" BeforeTargets="BeforeBuild"> <!--Condition="'$(PackageVersion)'!='255.255.255.255'">-->
 		
 		<PropertyGroup>
 			<MSBuildDeveloperNamespace>
@@ -58,7 +58,7 @@
 			<_AllCSProjFiles Include="content/**/*.csproj" />
 		</ItemGroup>
 		
-		<XmlPoke XmlInputPath="@(_AllCSProjFiles)"
+		<XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)"
 					 Query="//x:PackageReference[@Version='255.255.255.255']/@Version"
 					 Value="$(PackageVersion)"
 					 Namespaces="$(MSBuildDeveloperNamespace)"
