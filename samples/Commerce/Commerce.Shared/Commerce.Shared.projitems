@@ -19,7 +19,6 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)AppInfo.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CommerceSettings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\ProfileModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Cart.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\CartItem.cs" />

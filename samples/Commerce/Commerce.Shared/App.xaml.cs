@@ -92,7 +92,6 @@ namespace Commerce
 					.UseConfiguration<AppInfo>()
 
 					// Register entities for saving settings
-					.UseSettings<CommerceSettings>()
 					.UseSettings<Credentials>()
 
 
