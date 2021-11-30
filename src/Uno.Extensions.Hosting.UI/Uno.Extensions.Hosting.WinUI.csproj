@@ -10,10 +10,10 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-		<Content Include="buildTransitive\**">
+		<None Include="buildTransitive\**">
 			<PackagePath>buildTransitive</PackagePath>
 			<Pack>true</Pack>
-		</Content>
+		</None>
 	</ItemGroup>
 
 	<PropertyGroup>
@@ -21,7 +21,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Uno.WinUI" Version="4.0.0-dev.5690" />
+		<PackageReference Include="Uno.WinUI" Version="4.0.7" />
 	</ItemGroup>
 
 	<Import Project="common.props"/>

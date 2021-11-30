@@ -94,6 +94,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.UI"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.UI.WinUI", "Uno.Extensions.Reactive.UI\Uno.Extensions.Reactive.UI.WinUI.csproj", "{0F3C7D7A-C57C-41C0-86B9-34C9B5A1643A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Templates", "Uno.Extensions.Templates\Uno.Extensions.Templates.csproj", "{EA4B5A09-CF0C-4B0F-9328-A3223D7A2BB2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -244,6 +246,10 @@ Global
 		{0F3C7D7A-C57C-41C0-86B9-34C9B5A1643A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F3C7D7A-C57C-41C0-86B9-34C9B5A1643A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F3C7D7A-C57C-41C0-86B9-34C9B5A1643A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA4B5A09-CF0C-4B0F-9328-A3223D7A2BB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA4B5A09-CF0C-4B0F-9328-A3223D7A2BB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA4B5A09-CF0C-4B0F-9328-A3223D7A2BB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA4B5A09-CF0C-4B0F-9328-A3223D7A2BB2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

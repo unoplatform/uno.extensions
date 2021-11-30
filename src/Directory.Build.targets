@@ -33,4 +33,5 @@
 	</When>
   </Choose>
 
+  <Import Project="winappsdk-workaround.targets" />
 </Project>
