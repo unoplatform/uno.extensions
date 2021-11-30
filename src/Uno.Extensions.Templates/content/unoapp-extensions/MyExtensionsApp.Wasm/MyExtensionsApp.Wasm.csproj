@@ -56,18 +56,18 @@
 		<PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.0" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Uno.Extensions.Configuration" Version="0.1.0-PullRequest0166.754" />
-		<PackageReference Include="Uno.Extensions.Core" Version="0.1.0-PullRequest0166.754" />
-		<PackageReference Include="Uno.Extensions.Hosting.WinUI" Version="0.1.0-PullRequest0166.754" />
-		<PackageReference Include="Uno.Extensions.Http" Version="0.1.0-PullRequest0166.754" />
-		<PackageReference Include="Uno.Extensions.Localization.WinUI" Version="0.1.0-PullRequest0166.754" />
-		<PackageReference Include="Uno.Extensions.Logging.Serilog" Version="0.1.0-PullRequest0166.754" />
-		<PackageReference Include="Uno.Extensions.Logging.WinUI" Version="0.1.0-PullRequest0166.754" />
-		<PackageReference Include="Uno.Extensions.Navigation.Toolkit.WinUI" Version="0.1.0-PullRequest0166.754" />
-		<PackageReference Include="Uno.Extensions.Navigation.Toolkit.WinUI" Version="0.1.0-PullRequest0166.754" />
-		<PackageReference Include="Uno.Extensions.Serialization" Version="0.1.0-PullRequest0166.754" />
-		<PackageReference Include="Uno.Extensions.Reactive" Version="0.1.0-PullRequest0166.754" />
-		<PackageReference Include="Uno.Extensions.Reactive.WinUI" Version="0.1.0-PullRequest0166.754" />
+		<PackageReference Include="Uno.Extensions.Configuration" Version="255.255.255.255" />
+		<PackageReference Include="Uno.Extensions.Core" Version="255.255.255.255" />
+		<PackageReference Include="Uno.Extensions.Hosting.WinUI" Version="255.255.255.255" />
+		<PackageReference Include="Uno.Extensions.Http" Version="255.255.255.255" />
+		<PackageReference Include="Uno.Extensions.Localization.WinUI" Version="255.255.255.255" />
+		<PackageReference Include="Uno.Extensions.Logging.Serilog" Version="255.255.255.255" />
+		<PackageReference Include="Uno.Extensions.Logging.WinUI" Version="255.255.255.255" />
+		<PackageReference Include="Uno.Extensions.Navigation.Toolkit.WinUI" Version="255.255.255.255" />
+		<PackageReference Include="Uno.Extensions.Navigation.Toolkit.WinUI" Version="255.255.255.255" />
+		<PackageReference Include="Uno.Extensions.Serialization" Version="255.255.255.255" />
+		<PackageReference Include="Uno.Extensions.Reactive" Version="255.255.255.255" />
+		<PackageReference Include="Uno.Extensions.Reactive.WinUI" Version="255.255.255.255" />
 	</ItemGroup>
 	<Import Project="..\MyExtensionsApp.Shared\MyExtensionsApp.Shared.projitems" Label="Shared" Condition="Exists('..\MyExtensionsApp.Shared\MyExtensionsApp.Shared.projitems')" />
 </Project>
