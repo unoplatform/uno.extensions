@@ -49,7 +49,7 @@ jobs:
   - script: copy $(System.ArtifactsDirectory)\$(Build.DefinitionName)\nuget\*.nupkg $(Build.SourcesDirectory)\src\PackageCache
     displayName: Copy Artifacts to PackageCache
 
-  - script: dotnet new -i $(System.ArtifactsDirectory)\NugetPackages\vslatest\Uno.Extensions.Templates*.nupkg
+  - script: dotnet new -i $(System.ArtifactsDirectory)\$(Build.DefinitionName)\nuget\Uno.Extensions.Templates*.nupkg
     displayName: Install Project Templates
 
   - powershell: |
