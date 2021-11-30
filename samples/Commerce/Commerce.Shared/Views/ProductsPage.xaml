@@ -97,7 +97,7 @@
 										 nav:Navigation.Data="{Binding Filter, Mode=TwoWay}" />
 					</utu:AutoLayout>
 				</utu:AutoLayout>
-				<uer:FeedView Style="{StaticResource CompositeFeedViewStyle}"
+				<uer:FeedView Style="{StaticResource MaterialCompositeFeedViewStyle}"
 							  Source="{Binding Items}"
 							  utu:AutoLayout.CounterAlignment="Stretch"
 							  utu:AutoLayout.PrimaryAlignment="Stretch">

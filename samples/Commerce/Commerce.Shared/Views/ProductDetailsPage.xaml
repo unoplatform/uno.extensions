@@ -4,7 +4,6 @@
 	  xmlns:local="using:Commerce"
 	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	  xmlns:fake="using:Commerce.DesignTime"
 	  xmlns:controls="using:Microsoft.UI.Xaml.Controls"
 	  xmlns:nav="using:Uno.Extensions.Navigation.Controls"
 	  xmlns:utu="using:Uno.Toolkit.UI.Controls"
@@ -13,7 +12,7 @@
 	  xmlns:um="using:Uno.Material.Extensions"
 	  xmlns:toolkit="using:Uno.Toolkit.UI.Controls"
 	  xmlns:reactive="using:Uno.Extensions.Reactive"
-	  mc:Ignorable="d fake"
+	  mc:Ignorable="d"
 	  Background="{ThemeResource MaterialBackgroundBrush}">
 
 	<utu:AutoLayout>

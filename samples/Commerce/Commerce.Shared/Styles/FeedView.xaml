@@ -3,7 +3,7 @@
 					xmlns:reactive="using:Uno.Extensions.Reactive"
 					xmlns:winui="using:Microsoft.UI.Xaml.Controls">
 
-	<Style TargetType="reactive:FeedView">
+	<Style TargetType="reactive:FeedView" BasedOn="{StaticResource DefaultFeedViewStyle}">
 		<Setter Property="ProgressTemplate">
 			<Setter.Value>
 				<DataTemplate>
@@ -33,6 +33,185 @@
 											HorizontalAlignment="Center" />
 					</Grid>
 				</DataTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style TargetType="reactive:FeedView" x:Key="DefaultFeedViewStyle">
+		<Setter Property="VerticalAlignment" Value="Stretch" />
+		<Setter Property="HorizontalAlignment" Value="Stretch" />
+		<Setter Property="VerticalContentAlignment" Value="Stretch" />
+		<Setter Property="HorizontalContentAlignment" Value="Stretch" />
+		<Setter Property="ProgressTemplate">
+			<Setter.Value>
+				<DataTemplate>
+					<Grid>
+						<ProgressRing
+							IsActive="{Binding}"
+							Width="50"
+							Height="50"
+							VerticalAlignment="Center"
+							HorizontalAlignment="Center" />
+					</Grid>
+				</DataTemplate>
+			</Setter.Value>
+		</Setter>
+		<Setter Property="ErrorTemplate">
+			<Setter.Value>
+				<DataTemplate>
+					<Grid>
+						<TextBlock
+							Text="An error occurred."
+							VerticalAlignment="Center"
+							HorizontalAlignment="Center" />
+					</Grid>
+				</DataTemplate>
+			</Setter.Value>
+		</Setter>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="reactive:FeedView">
+					<Grid VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+						  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}">
+						<VisualStateManager.CustomVisualStateManager>
+							<reactive:SmoothVisualStateManager>
+								<reactive:SmoothVisualStateRule MinDuration="0:0:0.500" />
+								<reactive:SmoothVisualStateRule Group="ProgressGroup" To="Indeterminate" Delay="0:0:0.250" />
+							</reactive:SmoothVisualStateManager>
+						</VisualStateManager.CustomVisualStateManager>
+						<VisualStateManager.VisualStateGroups>
+							<VisualStateGroup x:Name="DataGroup">
+								<VisualState x:Name="Undefined" />
+								<VisualState x:Name="None">
+									<VisualState.Setters>
+										<Setter Target="UndefinedPresenter.Visibility" Value="Collapsed" />
+										<Setter Target="NonePresenter.Visibility" Value="Visible" />
+										<Setter Target="SomePresenter.Visibility" Value="Collapsed" />
+									</VisualState.Setters>
+								</VisualState>
+								<VisualState x:Name="Some">
+									<VisualState.Setters>
+										<Setter Target="UndefinedPresenter.Visibility" Value="Collapsed" />
+										<Setter Target="NonePresenter.Visibility" Value="Collapsed" />
+										<Setter Target="SomePresenter.Visibility" Value="Visible" />
+									</VisualState.Setters>
+								</VisualState>
+							</VisualStateGroup>
+							<VisualStateGroup x:Name="ErrorGroup">
+								<VisualState x:Name="NoError" />
+								<VisualState x:Name="Error">
+									<VisualState.Setters>
+										<Setter Target="DataRoot.Visibility" Value="Collapsed" />
+										<Setter Target="ErrorRoot.Visibility" Value="Visible" />
+									</VisualState.Setters>
+								</VisualState>
+							</VisualStateGroup>
+							<VisualStateGroup x:Name="ProgressGroup">
+								<VisualStateGroup.Transitions>
+									<VisualTransition To="Indeterminate">
+										<Storyboard>
+											<ObjectAnimationUsingKeyFrames
+												Storyboard.TargetName="ProgressRoot"
+												Storyboard.TargetProperty="Visibility">
+												<DiscreteObjectKeyFrame KeyTime="0:0:0" Value="Visible" />
+											</ObjectAnimationUsingKeyFrames>
+											<DoubleAnimation
+												Storyboard.TargetName="ProgressPresenter"
+												Storyboard.TargetProperty="Opacity"
+												From="0"
+												To="1"
+												Duration="0:0:0.100" />
+											<DoubleAnimation
+												Storyboard.TargetName="DataRoot"
+												Storyboard.TargetProperty="Opacity"
+												To="0"
+												Duration="0:0:0.100" />
+											<DoubleAnimation
+												Storyboard.TargetName="ErrorRoot"
+												Storyboard.TargetProperty="Opacity"
+												To="0"
+												Duration="0:0:0.100" />
+										</Storyboard>
+									</VisualTransition>
+									<VisualTransition From="Indeterminate">
+										<Storyboard>
+											<DoubleAnimation
+												Storyboard.TargetName="ProgressPresenter"
+												Storyboard.TargetProperty="Opacity"
+												From="1"
+												To="0"
+												Duration="0:0:0.100" />
+										</Storyboard>
+									</VisualTransition>
+								</VisualStateGroup.Transitions>
+								<VisualState x:Name="NoProgress" />
+								<VisualState x:Name="Indeterminate">
+									<VisualState.Setters>
+										<Setter Target="DataRoot.Visibility" Value="Collapsed" />
+										<Setter Target="ErrorRoot.Visibility" Value="Collapsed" />
+										<Setter Target="ProgressRoot.Visibility" Value="Visible" />
+									</VisualState.Setters>
+								</VisualState>
+							</VisualStateGroup>
+						</VisualStateManager.VisualStateGroups>
+
+						<Grid x:Name="DataRoot">
+							<ContentPresenter
+								x:Name="UndefinedPresenter"
+								Content="{TemplateBinding Undefined}"
+								ContentTemplate="{TemplateBinding UndefinedTemplate}"
+								VerticalAlignment="Stretch"
+								HorizontalAlignment="Stretch"
+								VerticalContentAlignment="Stretch"
+								HorizontalContentAlignment="Stretch"
+								Visibility="Visible" />
+							<ContentPresenter
+								x:Name="NonePresenter"
+								Content="{TemplateBinding None}"
+								ContentTemplate="{TemplateBinding NoneTemplate}"
+								VerticalAlignment="Stretch"
+								HorizontalAlignment="Stretch"
+								VerticalContentAlignment="Stretch"
+								HorizontalContentAlignment="Stretch"
+								Visibility="Collapsed" />
+							<ContentPresenter
+								x:Name="SomePresenter"
+								Content="{TemplateBinding State}"
+								ContentTemplate="{TemplateBinding ValueTemplate}"
+								VerticalAlignment="Stretch"
+								HorizontalAlignment="Stretch"
+								VerticalContentAlignment="Stretch"
+								HorizontalContentAlignment="Stretch"
+								Visibility="Collapsed" />
+						</Grid>
+
+						<Grid
+							x:Name="ErrorRoot"
+							Visibility="Collapsed">
+							<ContentPresenter
+								x:Name="ErrorPresenter"
+								Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=State.Error}"
+								ContentTemplate="{TemplateBinding ErrorTemplate}"
+								HorizontalAlignment="Stretch"
+								VerticalAlignment="Stretch"
+								VerticalContentAlignment="Stretch"
+								HorizontalContentAlignment="Stretch" />
+						</Grid>
+
+						<Grid
+							x:Name="ProgressRoot"
+							Visibility="Visible">
+							<ContentPresenter
+								x:Name="ProgressPresenter"
+								Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=State.Progress}"
+								ContentTemplate="{TemplateBinding ProgressTemplate}"
+								HorizontalAlignment="Stretch"
+								VerticalAlignment="Stretch"
+								VerticalContentAlignment="Stretch"
+								HorizontalContentAlignment="Stretch" />
+						</Grid>
+					</Grid>
+				</ControlTemplate>
 			</Setter.Value>
 		</Setter>
 	</Style>

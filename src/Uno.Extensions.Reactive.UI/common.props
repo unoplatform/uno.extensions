@@ -7,7 +7,7 @@
 		<NoWarn>1701;1702;1998</NoWarn>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<WarningsAsErrors />
-	  <AssemblyName>Uno.Extensions.Reactive.View</AssemblyName>
+	  <AssemblyName>Uno.Extensions.Reactive.UI</AssemblyName>
 	</PropertyGroup>
   
 	<ItemGroup>
