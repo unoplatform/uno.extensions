@@ -81,7 +81,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Commerce.Wasm", "..\..\samp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Logging.Wasm", "..\Uno.Extensions.Logging.Wasm\Uno.Extensions.Logging.Wasm.csproj", "{39DA6619-A07D-4AD2-9950-35E2B91610A7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation.Toolkit", "..\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.csproj", "{FD0B7D57-6A17-44D9-B9E4-0F7A4FDA23DD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation.Toolkit", "..\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.UI.csproj", "{FD0B7D57-6A17-44D9-B9E4-0F7A4FDA23DD}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution

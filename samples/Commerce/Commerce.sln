@@ -114,11 +114,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Hosting.WinU
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Hosting.WinUI.Wasm", "..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.Wasm.csproj", "{6EE956A6-EA12-4BF6-9044-557546ED6B07}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation.UWP", "..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UWP.csproj", "{EFF028A3-AE9D-4A78-8C83-4711386E748B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation.UI", "..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UI.csproj", "{EFF028A3-AE9D-4A78-8C83-4711386E748B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Localization", "..\..\src\Uno.Extensions.Localization\Uno.Extensions.Localization.csproj", "{A42F2496-55D4-45DF-99AC-94D04F715DFC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation.Toolkit", "..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.csproj", "{96429923-5D3A-4509-992A-FF5F7D621B7F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation.Toolkit.UI", "..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.UI.csproj", "{96429923-5D3A-4509-992A-FF5F7D621B7F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Logging.UWP.Wasm", "..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.UWP.Wasm.csproj", "{A2A720F3-5B57-4434-AA18-05185E66AB12}"
 EndProject
