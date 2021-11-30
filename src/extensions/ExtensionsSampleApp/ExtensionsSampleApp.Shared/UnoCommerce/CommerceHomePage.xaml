@@ -6,7 +6,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:nav="using:Uno.Extensions.Navigation.Controls"
       xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
-	  xmlns:toolkit="using:Uno.Toolkit.UI.Controls"
+	  xmlns:utu="using:Uno.Toolkit.UI"
 	  mc:Ignorable="d"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Grid x:Name="NavRoot">
@@ -85,22 +85,22 @@
                 <!--</controls:DropShadowPanel>-->
                 <Grid nav:Region.Attached="true"
                       nav:Region.Navigator="Visibility" />
-                <toolkit:TabBar x:Name="Tabs"
+                <utu:TabBar x:Name="Tabs"
                                 Visibility="Collapsed"
                                 Background="DarkGray"
                                 nav:Region.Attached="true"
                                 
                                 Grid.Row="1">
-                    <toolkit:TabBar.Items>
-                        <toolkit:TabBarItem Content="Products"
+                    <utu:TabBar.Items>
+                        <utu:TabBarItem Content="Products"
                                             nav:Region.Name="Products" />
-                        <toolkit:TabBarItem Content="Deals"
+                        <utu:TabBarItem Content="Deals"
                                             nav:Region.Name="Deals" />
-                        <toolkit:TabBarItem Content="Profile"
+                        <utu:TabBarItem Content="Profile"
                                             IsSelectable="False"
                                             nav:Navigation.Request="../../../Profile" />
-                    </toolkit:TabBar.Items>
-                </toolkit:TabBar>
+                    </utu:TabBar.Items>
+                </utu:TabBar>
 
             </Grid>
         </muxc:NavigationView>

@@ -6,7 +6,7 @@
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	  mc:Ignorable="d"
 	  xmlns:nav="using:Uno.Extensions.Navigation.Controls"
-	  xmlns:toolkit="using:Uno.Toolkit.UI.Controls"
+	  xmlns:utu="using:Uno.Toolkit.UI"
 	  Background="{ThemeResource MaterialBackgroundBrush}">
 
 	<Grid  MinHeight="300"
@@ -15,7 +15,7 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
 		</Grid.RowDefinitions>
-		<toolkit:NavigationBar Content="Checkout" />
+		<utu:NavigationBar Content="Checkout" />
 		<StackPanel Grid.Row="1">
 			<TextBlock Text="Checkout"
 					   FontSize="32"

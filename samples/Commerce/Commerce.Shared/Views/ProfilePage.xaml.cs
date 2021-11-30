@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Uno.Toolkit.UI.Helpers;
+using Uno.Toolkit.UI;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 

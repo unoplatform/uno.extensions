@@ -1,5 +1,5 @@
 ﻿using Uno.Extensions.Navigation.Controls;
-using Uno.Toolkit.UI.Controls;
+using Uno.Toolkit.UI;
 
 namespace Uno.Extensions.Navigation.Toolkit.Controls;
 

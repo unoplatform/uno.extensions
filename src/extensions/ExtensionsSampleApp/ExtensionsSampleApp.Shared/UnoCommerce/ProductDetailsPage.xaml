@@ -7,7 +7,7 @@
       xmlns:fake="using:ExtensionsSampleApp.DesignTime"
       xmlns:controls="using:Microsoft.UI.Xaml.Controls"
       xmlns:nav="using:Uno.Extensions.Navigation.Controls"
-	  xmlns:toolkit="using:Uno.Toolkit.UI.Controls"
+	  xmlns:utu="using:Uno.Toolkit.UI"
 	  mc:Ignorable="d fake"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -16,13 +16,13 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <toolkit:NavigationBar 
+        <utu:NavigationBar 
                                Content="Products">
-            <toolkit:NavigationBar.PrimaryCommands>
+            <utu:NavigationBar.PrimaryCommands>
                 <AppBarButton Label="Back"
                               nav:Navigation.Request="../-" />
-            </toolkit:NavigationBar.PrimaryCommands>
-        </toolkit:NavigationBar>
+            </utu:NavigationBar.PrimaryCommands>
+        </utu:NavigationBar>
 
         <ScrollViewer d:DataContext="{Binding Products[2]}"
                       DataContext="{Binding Product}" Grid.Row="1">

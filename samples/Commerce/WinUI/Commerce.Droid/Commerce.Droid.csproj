@@ -71,7 +71,7 @@
     <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.0.0-dev.5688" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="Uno.Toolkit.WinUI">
-      <Version>0.1.0-dev.169</Version>
+      <Version>0.1.0-dev.183</Version>
     </PackageReference>
     <PackageReference Include="Uno.Core" Version="4.0.1" />
     <PackageReference Include="Uno.Material.WinUI">
