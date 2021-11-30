@@ -5,7 +5,7 @@
 	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	  xmlns:controls="using:Microsoft.UI.Xaml.Controls"
-	  xmlns:utu="using:Uno.Toolkit.UI"
+	  xmlns:utu="using:Uno.Toolkit.UI.Controls"
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  xmlns:uer="using:Uno.Extensions.Reactive.UI"
 	  xmlns:um="using:Uno.Material.Extensions"

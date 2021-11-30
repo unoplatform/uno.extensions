@@ -3,7 +3,7 @@ using Uno.Extensions;
 using Uno.Extensions.Navigation.UI;
 using Uno.Extensions.Navigation.Toolkit.Controls;
 using Uno.Extensions.Navigation.Toolkit.Navigators;
-using Uno.Toolkit.UI;
+using Uno.Toolkit.UI.Controls;
 
 namespace Uno.Extensions.Navigation.Toolkit;
 
