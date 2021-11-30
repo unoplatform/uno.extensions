@@ -27,18 +27,20 @@
 			<UndefineProperties>TargetFramework</UndefineProperties>
 		</ProjectReference>
 	</ItemGroup>
-	
-	<ItemGroup>
-		<Content Include="..\Uno.Extensions.Reactive.Generator\build\**\*.*" Link="build\%(RecursiveDir)%(Filename)%(Extension)">
-			<Pack>true</Pack>
-			<PackagePath>build</PackagePath>
-		</Content>
-		<Content Include="..\Uno.Extensions.Reactive.Generator\bin\Uno.Extensions.Reactive.Generator\$(Configuration)\net461\**\*.dll" Link="tools\%(RecursiveDir)%(Filename)%(Extension)">
-			<Pack>true</Pack>
-			<PackagePath>tools</PackagePath>
-		</Content>
-	</ItemGroup>
-	
+
+	<Target Name="_IncludeGenerator" BeforeTargets="Build;Pack">
+		<ItemGroup>
+			<Content Include="..\Uno.Extensions.Reactive.Generator\build\**\*.*" Link="build\%(RecursiveDir)%(Filename)%(Extension)">
+				<Pack>true</Pack>
+				<PackagePath>build</PackagePath>
+			</Content>
+			<Content Include="..\Uno.Extensions.Reactive.Generator\bin\Uno.Extensions.Reactive.Generator\$(Configuration)\net461\**\*.dll" Link="tools\%(RecursiveDir)%(Filename)%(Extension)">
+				<Pack>true</Pack>
+				<PackagePath>tools</PackagePath>
+			</Content>
+		</ItemGroup>
+	</Target>
+
 	<ItemGroup>
 	  <Compile Include="..\Uno.Extensions.Core\Compat\NotNullWhenAttribute.cs" Link="Utils\NotNullWhenAttribute.cs" />
 	</ItemGroup>

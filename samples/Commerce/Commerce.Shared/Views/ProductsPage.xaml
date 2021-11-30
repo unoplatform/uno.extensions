@@ -7,10 +7,10 @@
 	  xmlns:services="using:Commerce.Services"
 	  xmlns:nav="using:Uno.Extensions.Navigation.Controls"
 	  xmlns:toolkit="using:Uno.Toolkit.UI.Controls"
-	  xmlns:reactive="using:Uno.Extensions.Reactive"
+	  xmlns:reactive="using:Uno.Extensions.Reactive.UI"
 	  xmlns:utu="using:Uno.Toolkit.UI.Controls"
 	  xmlns:um="using:Uno.Material.Extensions"
-	  xmlns:uer="using:Uno.Extensions.Reactive"
+	  xmlns:uer="using:Uno.Extensions.Reactive.UI"
 	  xmlns:uen="using:Uno.Extensions.Navigation.Controls"
 	  mc:Ignorable="d"
 	  Background="{ThemeResource MaterialBackgroundBrush}">
@@ -97,7 +97,8 @@
 										 nav:Navigation.Data="{Binding Filter, Mode=TwoWay}" />
 					</utu:AutoLayout>
 				</utu:AutoLayout>
-				<uer:FeedView Source="{Binding Items}"
+				<uer:FeedView Style="{StaticResource MaterialCompositeFeedViewStyle}"
+							  Source="{Binding Items}"
 							  utu:AutoLayout.CounterAlignment="Stretch"
 							  utu:AutoLayout.PrimaryAlignment="Stretch">
 					<DataTemplate>

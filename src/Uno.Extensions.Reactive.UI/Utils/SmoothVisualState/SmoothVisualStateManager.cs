@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Windows.UI.Core;
 using Uno.Logging;
 
-namespace Uno.Extensions.Reactive;
+namespace Uno.Extensions.Reactive.UI;
 
 [ContentProperty(Name = nameof(Rules))]
 public class SmoothVisualStateManager : VisualStateManager

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
-namespace Uno.Extensions.Reactive;
+namespace Uno.Extensions.Reactive.UI;
 
 /// <summary>
 /// Expose the current state of a <see cref="FeedView"/> for template's bindings.

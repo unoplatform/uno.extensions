@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Uno.Extensions.Reactive;
+namespace Uno.Extensions.Reactive.UI;
 
 /// <summary>
 /// Selector to customize the visual states applied for each message received by <see cref="FeedView"/>.

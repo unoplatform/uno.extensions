@@ -23,7 +23,7 @@ internal class State<T> : IState<T>, IFeed<T>, IAsyncDisposable
 	/// <summary>
 	/// Gets the context to which this state belongs.
 	/// </summary>
-	internal SourceContext Context { get; }
+	internal SourceContext? Context { get; }
 
 	private readonly struct Node
 	{
@@ -62,9 +62,8 @@ internal class State<T> : IState<T>, IFeed<T>, IAsyncDisposable
 			=> UpdateCore(currentStateMsg => currentStateMsg.OverrideBy(newSrcMsg), ct);
 	}
 
-	public State(SourceContext context, Option<T> defaultValue)
+	public State(Option<T> defaultValue)
 	{
-		Context = context;
 		_hasCurrent = true; // Even if undefined, we consider that we do have a value in order to produce an initial state
 
 		if (!defaultValue.IsUndefined())
