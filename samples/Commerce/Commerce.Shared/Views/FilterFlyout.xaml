@@ -1,4 +1,4 @@
-﻿<Flyout x:Class="Commerce.FilterPopup"
+﻿<Flyout x:Class="Commerce.FilterFlyout"
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:local="using:Commerce"

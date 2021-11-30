@@ -231,14 +231,14 @@ namespace Commerce
 
 				.Register(ViewMap.For(nameof(ProductDetailsPage)).Show<ProductDetailsPage>().With<ProductDetailsViewModel.BindableProductDetailsViewModel>())
 
-				.Register(RouteMap.For(nameof(CartDialog))
+				.Register(RouteMap.For(nameof(CartFlyout))
 					.Process((region, nav) => nav.Route.Next().IsEmpty() ?
 													nav with { Route = nav.Route.AppendNested<CartPage>() } :
 													nav))
-				.Register(ViewMap.For(nameof(CartDialog)).Show<CartDialog>())
+				.Register(ViewMap.For(nameof(CartFlyout)).Show<CartFlyout>())
 
 				.Register(RouteMap<Filters>.For(nameof(Filters)))
-				.Register(ViewMap.For("Filter").Show<FilterPopup>().With<FiltersViewModel.BindableFiltersViewModel>())
+				.Register(ViewMap.For("Filter").Show<FilterFlyout>().With<FiltersViewModel.BindableFiltersViewModel>())
 
 				.Register(ViewMap.For("Profile").Show<ProfilePage>().With<ProfileViewModel>())
 

@@ -96,7 +96,7 @@
 					</muxc:NavigationViewItem.Icon>
 				</muxc:NavigationViewItem>
 				<muxc:NavigationViewItem Content="Cart"
-										 nav:Navigation.Request="!CartDialog">
+										 nav:Navigation.Request="!CartFlyout">
 					<muxc:NavigationViewItem.Icon>
 						<PathIcon Data="{StaticResource Icon_shopping_cart}" />
 					</muxc:NavigationViewItem.Icon>
@@ -154,7 +154,7 @@
 									utu:AutoLayout.PrimaryAlignment="Stretch"
 									utu:AutoLayout.CounterLength="56"
 									Style="{StaticResource MaterialBottomTabBarItemFabStyle}"
-									nav:Navigation.Request="!CartDialog">
+									nav:Navigation.Request="!CartFlyout">
 						<utu:TabBarItem.Icon>
 							<PathIcon Data="{StaticResource Icon_shopping_cart}" />
 						</utu:TabBarItem.Icon>

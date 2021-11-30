@@ -44,8 +44,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ProductsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ProfileViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ShellViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Views\CartDialog.xaml.cs">
-      <DependentUpon>CartDialog.xaml</DependentUpon>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\CartFlyout.xaml.cs">
+      <DependentUpon>CartFlyout.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\CartPage.xaml.cs">
       <DependentUpon>CartPage.xaml</DependentUpon>
@@ -59,8 +59,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Views\DealsPage.xaml.cs">
       <DependentUpon>DealsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Views\FilterPopup.xaml.cs">
-      <DependentUpon>FilterPopup.xaml</DependentUpon>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\FilterFlyout.xaml.cs">
+      <DependentUpon>FilterFlyout.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\FrameView.xaml.cs">
       <DependentUpon>FrameView.xaml</DependentUpon>
@@ -99,7 +99,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="$(MSBuildThisFileDirectory)Views\CartDialog.xaml">
+    <Page Include="$(MSBuildThisFileDirectory)Views\CartFlyout.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -119,7 +119,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="$(MSBuildThisFileDirectory)Views\FilterPopup.xaml">
+    <Page Include="$(MSBuildThisFileDirectory)Views\FilterFlyout.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

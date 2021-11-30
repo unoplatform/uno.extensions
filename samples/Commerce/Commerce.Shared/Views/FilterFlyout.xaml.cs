@@ -28,9 +28,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Commerce
 {
-    public sealed partial class FilterPopup : Flyout
+    public sealed partial class FilterFlyout : Flyout
     {
-        public FilterPopup()
+        public FilterFlyout()
         {
             this.InitializeComponent();
         }
