@@ -1,4 +1,6 @@
-﻿using Windows.Foundation;
+﻿using NavigationViewItem = Microsoft.UI.Xaml.Controls.NavigationViewItem;
+using NavigationView = Microsoft.UI.Xaml.Controls.NavigationView;
+using Windows.Foundation;
 
 namespace Uno.Extensions.Navigation.UI
 {
@@ -21,8 +23,8 @@ namespace Uno.Extensions.Navigation.UI
             {
                 return;
             }
-            BindAction<NavigationView, TypedEventHandler<NavigationView, NavigationViewItemInvokedEventArgs>>((NavigationView)parent,
-                action => new TypedEventHandler<NavigationView, NavigationViewItemInvokedEventArgs>((sender, args) =>
+			BindAction((NavigationView)parent,
+                action => new TypedEventHandler<NavigationView, Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs>((sender, args) =>
                 {
                     if ((args.InvokedItemContainer is FrameworkElement navItem && navItem == viewButton))
                     {

@@ -5,7 +5,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
+#if !WINUI
 using Windows.System;
+#else
+using Microsoft.UI.Dispatching;
+#endif
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Utils;
 

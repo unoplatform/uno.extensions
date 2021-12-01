@@ -3,10 +3,14 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Windows.System;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Utils;
 using Uno.Logging;
+#if !WINUI
+using Windows.System;
+#else
+using Microsoft.UI.Dispatching;
+#endif
 
 namespace Uno.Extensions.Reactive.Bindings;
 
@@ -28,7 +32,7 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 	/// Adds a disposable that is going to be disposed with this instance.
 	/// </summary>
 	/// <param name="disposable">The disposable.</param>
-	protected void RegisterDisposable(IAsyncDisposable disposable) 
+	protected void RegisterDisposable(IAsyncDisposable disposable)
 		=> _disposables.Add(disposable);
 
 	/// <summary>
@@ -52,28 +56,28 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 
 		void ViewModelToView(Action<TProperty?> updated)
 			=> DispatcherHelper.TryEnqueue(dispatcher, async () =>
-			{
-				try
-				{
-					updated(defaultValue);
+			 {
+				 try
+				 {
+					 updated(defaultValue);
 
 					// Note: No needs to use .WithCancellation() here as we are enumerating the stateImp which is going to be disposed anyway.
 					await foreach (var msg in stateImpl.GetSource().ConfigureAwait(true))
-					{
-						if (msg.Current.Get(BindingSource) != this)
-						{
-							updated(msg.Current.Data.SomeOrDefault());
-						}
-					}
-				}
-				catch (Exception error)
-				{
-					this.Log().Error(
-						$"Synchronization from ViewModel to View of '{propertyName}' failed."
-						+ "(This is a final error, changes made in the VM are no longer propagated to the View.)", 
-						error);
-				}
-			});
+					 {
+						 if (msg.Current.Get(BindingSource) != this)
+						 {
+							 updated(msg.Current.Data.SomeOrDefault());
+						 }
+					 }
+				 }
+				 catch (Exception error)
+				 {
+					 this.Log().Error(
+						 $"Synchronization from ViewModel to View of '{propertyName}' failed."
+						 + "(This is a final error, changes made in the VM are no longer propagated to the View.)",
+						 error);
+				 }
+			 });
 
 		async ValueTask ViewToViewModel(Func<TProperty?, TProperty?> updater, bool isLeafPropertyChanged, CancellationToken ct)
 		{

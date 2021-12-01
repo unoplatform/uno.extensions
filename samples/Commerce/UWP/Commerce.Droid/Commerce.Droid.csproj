@@ -69,7 +69,7 @@
     </PackageReference>
     <PackageReference Include="Uno.UI" Version="4.0.7" />
     <PackageReference Include="Uno.UI.RemoteControl" Version="4.0.7" Condition="'$(Configuration)'=='Debug'" />
-    <PackageReference Include="Uno.Toolkit.UI" Version="0.1.0-dev.185" />
+    <PackageReference Include="Uno.Toolkit.UI" Version="1.0.0" />
     <PackageReference Include="Uno.Toolkit.UI.Material" Version="0.1.0-dev.185" />
     <PackageReference Include="Uno.UniversalImageLoader" Version="1.9.33" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
