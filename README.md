@@ -1,4 +1,4 @@
-﻿# Uno Application Platform Template
+﻿# Uno.Extensions
 
 This is a multi-platform app project template using [Uno](https://github.com/unoplatform/uno) and the latest .NET practices.
 
