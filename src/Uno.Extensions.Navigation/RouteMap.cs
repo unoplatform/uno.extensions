@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Uno.Extensions.Navigation.Regions;
 
 namespace Uno.Extensions.Navigation;
 
@@ -10,7 +9,7 @@ public record RouteMap(
 	string Path,
 	Type? Data = null,
 	Type? ResultData = null,
-	Func<IRegion, NavigationRequest, NavigationRequest>? ProcessRequest = null,
+	Func<NavigationRequest, NavigationRequest>? ProcessRequest = null,
 	Func<object, IDictionary<string, string>>? UntypedBuildQuery = null,
 	Func<IDictionary<string, string>, Task<object?>>? UntypedLoadData = null)
 #pragma warning restore SA1313 // Parameter names should begin with lower-case letter
@@ -23,7 +22,7 @@ public record RouteMap(
 public record RouteMap<TData>(
 	string Path,
 	Type? ResultData = null,
-	Func<IRegion, NavigationRequest, NavigationRequest>? ProcessRequest = null,
+	Func<NavigationRequest, NavigationRequest>? ProcessRequest = null,
 	Func<TData, IDictionary<string, string>>? BuildQuery = null,
 	Func<IDictionary<string, string>, Task<TData?>>? LoadData = null)
 	: RouteMap(
@@ -42,7 +41,7 @@ public record RouteMap<TData>(
 #pragma warning disable SA1313 // Parameter names should begin with lower-case letter
 public record RouteMap<TData, TResultData>(
 	string Path,
-	Func<IRegion, NavigationRequest, NavigationRequest>? ProcessRequest = null,
+	Func<NavigationRequest, NavigationRequest>? ProcessRequest = null,
 	Func<TData, IDictionary<string, string>>? BuildQuery = null,
 	Func<IDictionary<string, string>, Task<TData?>>? LoadData = null)
 	: RouteMap<TData>(
@@ -62,10 +61,7 @@ public record RouteMap<TData, TResultData>(
 public record ViewMap(
 	string Path,
 	Type? ViewType = null,
-	Type? ViewModelType = null,
-	Func<IRegion, NavigationRequest, object>? CreateViewModel = null,
-	Func<IRegion, object, NavigationRequest, NavigationRequest>? ViewModelInitialization = null,
-	Func<IRegion, object, NavigationRequest, NavigationRequest>? ViewInitialization = null)
+	Type? ViewModelType = null)
 #pragma warning restore SA1313 // Parameter names should begin with lower-case letter
 {
 	public static ViewMap For(string path) => new ViewMap(path);
@@ -99,33 +95,18 @@ public static class RouteAndViewMapExtensions
 		return map.With(typeof(TViewModel));
 	}
 
-	public static ViewMap CreateViewModel<TViewModel>(this ViewMap map, Func<IRegion, NavigationRequest, TViewModel> creator)
-	{
-		return map with { CreateViewModel = (IRegion reg, NavigationRequest req) => creator(reg, req) };
-	}
-
-	public static ViewMap InitializeViewModel(this ViewMap map, Func<IRegion, object, NavigationRequest, NavigationRequest> initialize)
-	{
-		return map with { ViewModelInitialization = initialize };
-	}
-
-	public static ViewMap InitializeView(this ViewMap map, Func<IRegion, object, NavigationRequest, NavigationRequest> initialize)
-	{
-		return map with { ViewInitialization = initialize };
-	}
-
 	public static RouteMap For(this RouteMap map, string path)
 	{
 		return map with { Path = path };
 	}
 
 
-	public static RouteMap Process(this RouteMap map, Func<IRegion, NavigationRequest, NavigationRequest> processRequest)
+	public static RouteMap Process(this RouteMap map, Func<NavigationRequest, NavigationRequest> processRequest)
 	{
 		return map with { ProcessRequest = processRequest };
 	}
 
-	public static RouteMap<TData> Process<TData>(this RouteMap<TData> map, Func<IRegion, NavigationRequest, NavigationRequest> processRequest)
+	public static RouteMap<TData> Process<TData>(this RouteMap<TData> map, Func<NavigationRequest, NavigationRequest> processRequest)
 		where TData : class
 	{
 		return map with { ProcessRequest = processRequest };

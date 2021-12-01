@@ -82,11 +82,6 @@ public static class RouteExtensions
 	public static string[] ForwardNavigationSegments(this string path) =>
 		path.Split(Schemes.NavigateForward.First()).Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
 
-	public static string? Query(this Route route) =>
-		((route?.Data?.Where(x => x.Key != string.Empty)?.Any()) ?? false) ?
-		"?" + string.Join("&", route.Data.Where(x => x.Key != string.Empty).Select(kvp => $"{kvp.Key}={kvp.Value}")) :
-		null;
-
 	public static object? ResponseData(this Route route) =>
 		(route?.Data?.TryGetValue(string.Empty, out var result) ?? false) ? result : null;
 
@@ -115,8 +110,13 @@ public static class RouteExtensions
 		return route with { Scheme = $"{scheme}{route.Scheme}" };
 	}
 
-	public static Route Trim(this Route route, Route handledRoute)
+	public static Route Trim(this Route route, Route? handledRoute)
 	{
+		if (handledRoute is null)
+		{
+			return route;
+		}
+
 		while (route.Base == handledRoute.Base && !string.IsNullOrWhiteSpace(handledRoute.Base))
 		{
 			route = route.Next();

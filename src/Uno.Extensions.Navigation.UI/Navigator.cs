@@ -65,14 +65,14 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			var requestMap = Region.Services?.GetRequiredService<IMappings>().FindByPath(request.Route.Base);
 			if (requestMap?.ProcessRequest is not null)
 			{
-				var newRequest = requestMap.ProcessRequest(Region, request);
+				var newRequest = requestMap.ProcessRequest(request);
 				while (!request.SameRouteBase(newRequest))
 				{
 					request = newRequest;
 					requestMap = Region.Services?.GetRequiredService<IMappings>().FindByPath(request.Route.Base);
 					if (requestMap?.ProcessRequest is not null)
 					{
-						newRequest = requestMap.ProcessRequest(Region, request);
+						newRequest = requestMap.ProcessRequest(request);
 					}
 				}
 				request = newRequest;
@@ -176,8 +176,9 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		var dataFactor = services.GetRequiredService<NavigationDataProvider>();
 		dataFactor.Parameters = (request.Route?.Data) ?? new Dictionary<string, object>();
 
+		var responseFactory = services.GetRequiredService<IResponseNavigatorFactory>();
 		// Create ResponseNavigator if result is requested
-		var navigator = request.GetResponseNavigator(this);
+		var navigator = request.GetResponseNavigator(responseFactory, this);
 
 		var executedRoute = await CoreNavigateAsync(request);
 
@@ -255,12 +256,12 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 		// Make sure the navigator is in the services so it can be used
 		// when creating the view model
-		services.AddInstance<INavigator>(this);
+		services?.AddInstance<INavigator>(this);
 
 		var mapping = Mappings.FindViewByView(Region.View.GetType());
 		if (mapping?.ViewModelType is not null)
 		{
-			var vm = services.GetService(mapping.ViewModelType);
+			var vm = services?.GetService(mapping.ViewModelType);
 			if (vm is IInjectable<INavigator> navAware)
 			{
 				navAware.Inject(this);
