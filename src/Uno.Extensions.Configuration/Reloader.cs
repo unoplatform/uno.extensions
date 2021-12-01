@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -28,7 +29,7 @@ namespace Uno.Extensions.Configuration
             foreach (var fp in fileProviders)
             {
                 Logger.LogDebugMessage($@"Config provider of type '{fp.GetType().Name}'");
-                if (fp is FileConfigurationProvider fcp && (configFile is null || configFile.Contains(fcp.Source.Path)))
+                if (fp is FileConfigurationProvider fcp && (configFile is null || configFile.ToLower().Contains(fcp.Source.Path.Split('/','\\').Last().ToLower())))
                 {
                     Logger.LogDebugMessage($@"Loading from file '{fcp.Source.Path}'");
                     var provider = fcp.Source.FileProvider;
