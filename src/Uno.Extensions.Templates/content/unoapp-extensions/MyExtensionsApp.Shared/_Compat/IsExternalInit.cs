@@ -1,4 +1,6 @@
-﻿using System;
+﻿//-:cnd:noEmit
+
+using System;
 using System.Linq;
 
 #if !NET5_0
