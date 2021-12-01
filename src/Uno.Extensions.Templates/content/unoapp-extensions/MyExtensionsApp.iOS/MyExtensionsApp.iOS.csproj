@@ -128,6 +128,7 @@
     <PackageReference Include="Uno.Material.WinUI">
       <Version>1.1.0-dev.64</Version>
     </PackageReference>
+    <PackageReference Include="Uno.Toolkit.WinUI.Material" Version="1.0.0" />
     <PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.0" />
   </ItemGroup>
   <ItemGroup>
