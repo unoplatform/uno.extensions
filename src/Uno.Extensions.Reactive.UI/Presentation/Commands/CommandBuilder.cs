@@ -2,7 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
+#if !WINUI
 using Windows.System;
+#else
+using Microsoft.UI.Dispatching;
+#endif
 using Uno.Extensions.Reactive.Core;
 
 namespace Uno.Extensions.Reactive;
