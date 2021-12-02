@@ -16,25 +16,6 @@ public class RouteBuilder : IRouteBuilder
 		return this;
 	}
 
-	public IRouteBuilder Register<TData>(RouteMap<TData> route)
-		where TData : class
-	{
-		Register((RouteMap)route);
-
-		Services.AddViewModelData<TData>();
-		return this;
-	}
-
-	public IRouteBuilder Register<TData, TResultData>(RouteMap<TData, TResultData> route)
-		where TData : class
-		where TResultData : class
-	{
-		Register((RouteMap<TData>)route);
-
-		Services.AddViewModelData<TResultData>();
-		return this;
-	}
-
 	public IRouteBuilder Register(ViewMap view)
 	{
 		Services.AddSingleton(view);
@@ -43,6 +24,25 @@ public class RouteBuilder : IRouteBuilder
 			Services.AddTransient(view.ViewModelType);
 		}
 
+		return this;
+	}
+
+	public IRouteBuilder Register<TData>(ViewMap<TData> route)
+	where TData : class
+	{
+		Register((ViewMap)route);
+
+		Services.AddViewModelData<TData>();
+		return this;
+	}
+
+	public IRouteBuilder Register<TData, TResultData>(ViewMap<TData, TResultData> route)
+		where TData : class
+		where TResultData : class
+	{
+		Register((ViewMap<TData>)route);
+
+		Services.AddViewModelData<TResultData>();
 		return this;
 	}
 }

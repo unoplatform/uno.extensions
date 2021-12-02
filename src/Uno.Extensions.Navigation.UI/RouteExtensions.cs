@@ -399,7 +399,7 @@ public static class RouteExtensions
 		};
 	}
 
-	public static IDictionary<string, object> AsParameters(this IDictionary<string, object> data, RouteMap mapping)
+	public static IDictionary<string, object> AsParameters(this IDictionary<string, object> data, ViewMap mapping)
 	{
 		if (data is null || mapping is null)
 		{
