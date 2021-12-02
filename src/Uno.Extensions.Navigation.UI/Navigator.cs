@@ -63,16 +63,16 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 			// Initialise the region
 			var requestMap = Region.Services?.GetRequiredService<IMappings>().FindByPath(request.Route.Base);
-			if (requestMap?.ProcessRequest is not null)
+			if (requestMap?.Init is not null)
 			{
-				var newRequest = requestMap.ProcessRequest(request);
+				var newRequest = requestMap.Init(request);
 				while (!request.SameRouteBase(newRequest))
 				{
 					request = newRequest;
 					requestMap = Region.Services?.GetRequiredService<IMappings>().FindByPath(request.Route.Base);
-					if (requestMap?.ProcessRequest is not null)
+					if (requestMap?.Init is not null)
 					{
-						newRequest = requestMap.ProcessRequest(request);
+						newRequest = requestMap.Init(request);
 					}
 				}
 				request = newRequest;
@@ -166,7 +166,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			return default;
 		}
 
-		var mapping = Mappings.Find(request.Route);
+		var mapping = Mappings.FindView(request.Route);
 		if (mapping?.UntypedBuildQuery is not null)
 		{
 			request = request with { Route = request.Route with { Data = request.Route.Data?.AsParameters(mapping) } };
