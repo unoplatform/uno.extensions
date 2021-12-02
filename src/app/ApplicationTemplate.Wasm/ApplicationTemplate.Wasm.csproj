@@ -50,6 +50,6 @@
   <Import Project="..\ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems" Label="Shared" Condition="Exists('..\ApplicationTemplate.Shared\ApplicationTemplate.Shared.projitems')" />
   <ItemGroup>
     <PackageReference Update="Microsoft.Extensions.Localization.Abstractions" Version="5.0.7" />
-    <PackageReference Update="Uno.Core" Version="4.0.1 />
+    <PackageReference Update="Uno.Core" Version="4.0.1" />
   </ItemGroup>
 </Project>
