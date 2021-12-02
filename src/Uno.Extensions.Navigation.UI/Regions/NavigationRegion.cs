@@ -22,7 +22,7 @@ public sealed class NavigationRegion : IRegion
 
     private IServiceProvider? _services;
     private IRegion? _parent;
-
+	private bool _isRoot;
     public IRegion? Parent
     {
         get => _parent;
@@ -76,7 +76,8 @@ public sealed class NavigationRegion : IRegion
 
         if (services is not null)
         {
-            _services = services;
+			_isRoot = true;
+			_services = services;
             _services.AddInstance<IRegion>(this);
             var serviceFactory = _services.GetRequiredService<INavigatorFactory>();
 			var navigator = serviceFactory.CreateService(this);
@@ -128,7 +129,7 @@ public sealed class NavigationRegion : IRegion
 
     private void AssignParent()
     {
-        if (View is null)
+        if (View is null || _isRoot)
         {
             return;
         }

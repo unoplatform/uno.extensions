@@ -104,7 +104,7 @@ public class RouteMappingsDefault : RouteMappings
 		if (path is not null &&
 			!string.IsNullOrWhiteSpace(path))
 		{
-			var defaultMap = new ViewMap(path, view, viewModel, null);
+			var defaultMap = new ViewMap(path, view, viewModel);
 			ViewMappings[path] = defaultMap;
 			Logger.LogDebugMessage($"Created default mapping - Path '{defaultMap.Path}', View '{defaultMap.ViewType?.Name}', View Model '{defaultMap.ViewModelType?.Name}'");
 			return defaultMap;

@@ -194,13 +194,13 @@ namespace Commerce
 				.Register(ViewMap.For("Login").Show<LoginPage>().With<LoginViewModel.BindableLoginViewModel>())
 
 				.Register(RouteMap.For("Home")
-					.Process((region, nav) => nav.Route.Next().IsEmpty() ?
+					.Process(nav => nav.Route.Next().IsEmpty() ?
 												nav with { Route = nav.Route.Append(Route.NestedRoute("Products")) } :
 												nav))
 				.Register(ViewMap.For("Home").Show<HomePage>().With<HomeViewModel>())
 
 				.Register(RouteMap.For("Products")
-					.Process((region, nav) => nav.Route.Next().IsEmpty() ?
+					.Process(nav => nav.Route.Next().IsEmpty() ?
 												nav with { Route = nav.Route.AppendPage<ProductsPage>() } : nav with
 												{
 													Route = nav.Route.ContainsView<ProductsPage>() ?
@@ -212,7 +212,7 @@ namespace Commerce
 				.Register(ViewMap.For(nameof(ProductsPage)).Show<ProductsPage>().With<ProductsViewModel.BindableProductsViewModel>())
 
 				.Register(RouteMap.For("Deals")
-					.Process((region, nav) => nav.Route.Next().IsEmpty() ?
+					.Process(nav => nav.Route.Next().IsEmpty() ?
 												nav with { Route = nav.Route.AppendPage<DealsPage>() } : nav with
 												{
 													Route = nav.Route.ContainsView<DealsPage>() ?
@@ -224,7 +224,7 @@ namespace Commerce
 				.Register(ViewMap.For("Deals").Show<DealsPage>().With<DealsViewModel>())
 
 				.Register(RouteMap<Product>.For("ProductDetails")
-					.Process((region, nav) => (App.Current as App).Window.Content.ActualSize.X > 800 ?
+					.Process(nav => (App.Current as App).Window.Content.ActualSize.X > 800 ?
 												nav with { Route = nav.Route with { Scheme = "./", Base = "Details", Path = nameof(ProductDetailsPage) } } :
 												nav with { Route = nav.Route with { Base = nameof(ProductDetailsPage) } }))
 
@@ -234,7 +234,7 @@ namespace Commerce
 				.Register(ViewMap.For(nameof(ProductDetailsPage)).Show<ProductDetailsPage>().With<ProductDetailsViewModel.BindableProductDetailsViewModel>())
 
 				.Register(RouteMap.For(nameof(CartFlyout))
-					.Process((region, nav) => nav.Route.Next().IsEmpty() ?
+					.Process(nav => nav.Route.Next().IsEmpty() ?
 													nav with { Route = nav.Route.AppendNested<CartPage>() } :
 													nav))
 				.Register(ViewMap.For(nameof(CartFlyout)).Show<CartFlyout>())

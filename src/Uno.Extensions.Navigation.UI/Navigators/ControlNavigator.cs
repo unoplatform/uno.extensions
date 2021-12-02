@@ -122,7 +122,7 @@ public abstract class ControlNavigator : Navigator
                 return regionResponse;
             }
 
-            request = request with { Route = request.Route.Trim(regionResponse.Route) };
+            request = request with { Route = request.Route.Trim(regionResponse?.Route) };
         }
 
         var coreResponse = await base.CoreNavigateAsync(request);

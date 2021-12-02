@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Threading;
-using System.Threading.Tasks;
-using Uno.Extensions;
 
 namespace Uno.Extensions.Navigation;
 
@@ -11,10 +9,10 @@ public record NavigationRequest(object Sender, Route Route, CancellationToken? C
 {
     public override string ToString() => $"Request [Sender: {Sender.GetType().Name}, Route:{Route}, Result: {Result?.Name ?? "N/A"}]";
 
-	internal virtual IResponseNavigator? GetResponseNavigator(INavigator navigator)=> default;
+	internal virtual IResponseNavigator? GetResponseNavigator(IResponseNavigatorFactory responseFactory, INavigator navigator)=> default;
 }
 
 public record NavigationRequest<TResult>(object Sender, Route Route, CancellationToken? Cancellation = default) : NavigationRequest(Sender, Route, Cancellation, typeof(TResult))
 {
-    internal override IResponseNavigator? GetResponseNavigator(INavigator navigator)=> new ResponseNavigator<TResult>(navigator, this);
+    internal override IResponseNavigator? GetResponseNavigator(IResponseNavigatorFactory responseFactory, INavigator navigator)=> responseFactory.CreateForResultType<TResult>(navigator, this);
 }

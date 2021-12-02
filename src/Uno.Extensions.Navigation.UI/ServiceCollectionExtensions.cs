@@ -36,6 +36,7 @@ public static class ServiceCollectionExtensions
 
 		return services
 					.AddScoped<IInstanceRepository, InstanceRepository>()
+					.AddSingleton<IResponseNavigatorFactory, ResponseNavigatorFactory>()
 
 					//.AddSingleton<IMessenger, WeakReferenceMessenger>()
 					.AddSingleton<RouteNotifier>()

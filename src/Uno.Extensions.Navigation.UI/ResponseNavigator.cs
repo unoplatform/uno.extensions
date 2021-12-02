@@ -3,11 +3,6 @@ using System.Threading.Tasks;
 
 namespace Uno.Extensions.Navigation;
 
-internal interface IResponseNavigator : INavigator
-{
-	NavigationResponse AsResponseWithResult(NavigationResponse? response);
-}
-
 public class ResponseNavigator<TResult> : IResponseNavigator
 {
 	private INavigator Navigation { get; }

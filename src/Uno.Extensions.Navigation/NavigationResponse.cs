@@ -1,8 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions;
-using Uno.Extensions;
+﻿using System.Threading.Tasks;
 
 namespace Uno.Extensions.Navigation;
 
