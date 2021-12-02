@@ -53,25 +53,25 @@
 							   Style="{StaticResource MaterialNavigationBarStyle}">
 			<!--Workaround for crash on UWP when using MaterialNavigationBarStyle-->
 			<utu:NavigationBar.MainCommand>
-				<AppBarButton Foreground="{StaticResource MaterialOnPrimaryMediumBrush}">
+				<AppBarButton Foreground="{ThemeResource MaterialOnPrimaryMediumBrush}">
 					<AppBarButton.Icon>
 						<BitmapIcon UriSource="ms-appx:///Assets/Icons/back.png"
-									ShowAsMonochrome="false" />
+									 />
 					</AppBarButton.Icon>
 				</AppBarButton>
 			</utu:NavigationBar.MainCommand>
 
 				<utu:NavigationBar.PrimaryCommands>
-					<AppBarButton Foreground="{StaticResource MaterialOnPrimaryMediumBrush}">
+					<AppBarButton Foreground="{ThemeResource MaterialOnPrimaryMediumBrush}">
 						<AppBarButton.Icon>
 							<BitmapIcon UriSource="ms-appx:///Assets/Icons/notifications.png"
-										ShowAsMonochrome="false" />
+										 />
 						</AppBarButton.Icon>
 					</AppBarButton>
-					<AppBarButton Foreground="{StaticResource MaterialOnPrimaryMediumBrush}">
+					<AppBarButton Foreground="{ThemeResource MaterialOnPrimaryMediumBrush}">
 						<AppBarButton.Icon>
 							<BitmapIcon UriSource="ms-appx:///Assets/Icons/help_outline.png"
-										ShowAsMonochrome="false" />
+										 />
 						</AppBarButton.Icon>
 					</AppBarButton>
 				</utu:NavigationBar.PrimaryCommands>

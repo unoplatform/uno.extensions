@@ -42,19 +42,17 @@
 									   Style="{StaticResource MaterialRootModalNavigationBarStyle}">
 						<utu:NavigationBar.MainCommand>
 							<AppBarButton nav:Navigation.Request="-"
-										  Foreground="{StaticResource MaterialOnSurfaceBrush}" />
+										  Foreground="{ThemeResource MaterialOnSurfaceBrush}" />
 						</utu:NavigationBar.MainCommand>
 						<utu:NavigationBar.PrimaryCommands>
-							<AppBarButton Foreground="{StaticResource MaterialOnSurfaceBrush}">
+							<AppBarButton Foreground="{ThemeResource MaterialOnSurfaceBrush}">
 								<AppBarButton.Icon>
-									<BitmapIcon UriSource="ms-appx:///Assets/Icons/notifications.png"
-												ShowAsMonochrome="false" />
+									<BitmapIcon UriSource="ms-appx:///Assets/Icons/notifications.png" />
 								</AppBarButton.Icon>
 							</AppBarButton>
-							<AppBarButton Foreground="{StaticResource MaterialOnSurfaceBrush}">
+							<AppBarButton Foreground="{ThemeResource MaterialOnSurfaceBrush}">
 								<AppBarButton.Icon>
-									<BitmapIcon UriSource="ms-appx:///Assets/Icons/share.png"
-												ShowAsMonochrome="false" />
+									<BitmapIcon UriSource="ms-appx:///Assets/Icons/share.png" />
 								</AppBarButton.Icon>
 							</AppBarButton>
 						</utu:NavigationBar.PrimaryCommands>
