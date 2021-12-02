@@ -8,7 +8,7 @@ namespace Uno.Extensions.Navigation;
 public class RouteMappings : IMappings
 {
 	protected IDictionary<string, RouteMap> Mappings { get; } = new Dictionary<string, RouteMap>();
-	protected IDictionary<string, ViewMap> ViewMappings { get; } = new Dictionary<string, ViewMap>();
+	protected IDictionary<Type, ViewMap> ViewMappings { get; } = new Dictionary<Type, ViewMap>();
 
 	protected ILogger Logger { get; }
 
@@ -21,7 +21,7 @@ public class RouteMappings : IMappings
 		}
 		if (viewMaps is not null)
 		{
-			viewMaps.ForEach(map=> ViewMappings[map.Path] = map);
+			viewMaps.ForEach(map=> ViewMappings[map.ViewType] = map);
 		}
 	}
 
@@ -52,30 +52,29 @@ public class RouteMappings : IMappings
 
 	public RouteMap? FindByView(Type? viewType)
 	{
-		return FindRouteByViewMapType(viewType, map => map.ViewType);
+		return FindRouteByType(viewType, map => map.ViewType);
 	}
 
 	public virtual RouteMap? FindByData(Type? dataType)
 	{
-		return FindRouteByType(dataType, map => map.Data);
+		return FindRouteByViewMapType(dataType, map => map.Data);
 	}
 
 	public virtual RouteMap? FindByResultData(Type? dataType)
 	{
-		return FindRouteByType(dataType, map => map.ResultData);
+		return FindRouteByViewMapType(dataType, map => map.ResultData);
 	}
 
 	private RouteMap? FindRouteByViewMapType(Type? typeToFind, Func<ViewMap, Type?> mapType)
 	{
 		var viewMap = FindByInheritedTypes(ViewMappings, typeToFind, mapType);
-		return FindByPath(viewMap?.Path);
+		return FindByView(viewMap?.ViewType);
 	}
 
 	private RouteMap? FindRouteByType(Type? typeToFind, Func<RouteMap, Type?> mapType)
 	{
 		return FindByInheritedTypes(Mappings, typeToFind, mapType);
 	}
-
 
 	private ViewMap? FindViewByRouteMapType(Type? typeToFind, Func<RouteMap, Type?> mapType)
 	{
@@ -88,8 +87,13 @@ public class RouteMappings : IMappings
 		return FindByInheritedTypes(ViewMappings, typeToFind, mapType);
 	}
 
-	private TMap? FindByInheritedTypes<TMap>(IDictionary<string, TMap> mappings, Type? typeToFind, Func<TMap, Type?> mapType)
+	private TMap? FindByInheritedTypes<TKey,TMap>(IDictionary<TKey, TMap> mappings, Type? typeToFind, Func<TMap, Type?> mapType)
 	{
+		if(typeToFind is null)
+		{
+			return default;
+		}
+
 		// Handle the non-reflection check first
 		var map = (from m in mappings
 				   where mapType(m.Value) == typeToFind
@@ -119,7 +123,8 @@ public class RouteMappings : IMappings
 			return null;
 		}
 
-		return ViewMappings.TryGetValue(path, out var map) ? map : default;
+		var routeMap = FindByPath(path);
+		return FindViewByView(routeMap?.ViewType);
 	}
 
 	public virtual ViewMap? FindViewByViewModel(Type? viewModelType)
@@ -133,11 +138,11 @@ public class RouteMappings : IMappings
 
 	public ViewMap? FindViewByData(Type? dataType)
 	{
-		return FindViewByRouteMapType(dataType, map => map.Data);
+		return FindViewByType(dataType, map => map.Data);
 	}
 
 	public ViewMap? FindViewByResultData(Type? resultDataType)
 	{
-		return FindViewByRouteMapType(resultDataType, map => map.ResultData);
+		return FindViewByType(resultDataType, map => map.ResultData);
 	}
 }
