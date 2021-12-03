@@ -45,7 +45,7 @@ jobs:
 
       - run: |
           cd samples/Commerce/WinUI/Commerce.Wasm
-          dotnet build -c Release "/p:Version=${{ steps.gitversion.outputs.fullSemVer }}"
+          dotnet build -c Release "/p:Version=${{ steps.gitversion.outputs.fullSemVer }}" /p:UnoExtensionsDisableNet6=true /p:GeneratePackageOnBuild=false /detailedsummary
       - uses: actions/upload-artifact@v2
         with:
           name: wasm-site
