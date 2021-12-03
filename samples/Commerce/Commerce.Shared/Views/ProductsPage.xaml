@@ -5,19 +5,17 @@
 	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	  xmlns:services="using:Commerce.Services"
-	  xmlns:nav="using:Uno.Extensions.Navigation.UI"
-	  xmlns:reactive="using:Uno.Extensions.Reactive.UI"
-	  xmlns:utu="using:Uno.Toolkit.UI"
-	  xmlns:um="using:Uno.Material.Extensions"
-	  xmlns:uer="using:Uno.Extensions.Reactive.UI"
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	  xmlns:uer="using:Uno.Extensions.Reactive.UI"
+	  xmlns:utu="using:Uno.Toolkit.UI"
+	  xmlns:um="using:Uno.Material"
 	  mc:Ignorable="d"
 	  Background="{ThemeResource MaterialBackgroundBrush}">
 
 	<Grid>
 		<VisualStateManager.VisualStateGroups>
 			<VisualStateGroup>
-				<VisualState x:Name="Narrow" /> 
+				<VisualState x:Name="Narrow" />
 
 				<VisualState x:Name="Wide">
 					<VisualState.StateTriggers>
@@ -102,8 +100,8 @@
 										 x:Uid="Page_Filters"
 										 utu:AutoLayout.CounterAlignment="Center"
 										 Style="{StaticResource MaterialHyperlinkButtonStyle}"
-										 nav:Navigation.Request="!Filter"
-										 nav:Navigation.Data="{Binding Filter, Mode=TwoWay}" />
+										 uen:Navigation.Request="!Filter"
+										 uen:Navigation.Data="{Binding Filter, Mode=TwoWay}" />
 					</utu:AutoLayout>
 				</utu:AutoLayout>
 				<uer:FeedView Style="{StaticResource MaterialCompositeFeedViewStyle}"
@@ -112,9 +110,9 @@
 							  utu:AutoLayout.PrimaryAlignment="Stretch">
 					<DataTemplate>
 						<UserControl>
-								<Grid>
-									<VisualStateManager.VisualStateGroups>
-										<VisualStateGroup>
+							<Grid>
+								<VisualStateManager.VisualStateGroups>
+									<VisualStateGroup>
 										<VisualState x:Name="Narrow">
 											<VisualState.StateTriggers>
 												<AdaptiveTrigger MinWindowWidth="0"
@@ -122,31 +120,31 @@
 											</VisualState.StateTriggers>
 											<VisualState.Setters>
 												<Setter Target="ProductsListView.SelectionMode"
-															Value="None" />
+														Value="None" />
 												<Setter Target="ProductsListView.IsItemClickEnabled"
-															Value="True" />
+														Value="True" />
 											</VisualState.Setters>
 										</VisualState>
 										<VisualState x:Name="Wide">
-												<VisualState.StateTriggers>
+											<VisualState.StateTriggers>
 												<AdaptiveTrigger MinWindowWidth="{StaticResource WideMinWindowWidthh}" />
-												</VisualState.StateTriggers>
-												<VisualState.Setters>
-													<Setter Target="ProductsListView.SelectionMode"
-															Value="Single" />
-													<Setter Target="ProductsListView.IsItemClickEnabled"
-															Value="False" />
-												</VisualState.Setters>
-											</VisualState>
-										</VisualStateGroup>
-									</VisualStateManager.VisualStateGroups>
+											</VisualState.StateTriggers>
+											<VisualState.Setters>
+												<Setter Target="ProductsListView.SelectionMode"
+														Value="Single" />
+												<Setter Target="ProductsListView.IsItemClickEnabled"
+														Value="False" />
+											</VisualState.Setters>
+										</VisualState>
+									</VisualStateGroup>
+								</VisualStateManager.VisualStateGroups>
 
 								<ListView Background="{StaticResource MaterialSurfaceBrush}"
-										x:Name="ProductsListView"
-										ItemsSource="{Binding Data}"
-										 SelectionMode="None"
-										 IsItemClickEnabled="True"
-										uen:Navigation.Request="ProductDetails">
+										  x:Name="ProductsListView"
+										  ItemsSource="{Binding Data}"
+										  SelectionMode="None"
+										  IsItemClickEnabled="True"
+										  uen:Navigation.Request="ProductDetails">
 									<ListView.ItemsPanel>
 										<ItemsPanelTemplate>
 											<ItemsStackPanel Orientation="Vertical" />
@@ -156,52 +154,52 @@
 										<DataTemplate>
 											<utu:AutoLayout>
 												<utu:AutoLayout Padding="16,8,16,0"
-															Orientation="Horizontal"
-															utu:AutoLayout.CounterAlignment="Stretch">
+																Orientation="Horizontal"
+																utu:AutoLayout.CounterAlignment="Stretch">
 													<utu:AutoLayout>
 														<utu:AutoLayout Spacing="10"
-																	Padding="0,0,16,8">
+																		Padding="0,0,16,8">
 															<Image Source="{Binding Photo}"
-															   Stretch="UniformToFill"
-															   utu:AutoLayout.PrimaryLength="56"
-															   utu:AutoLayout.CounterLength="56" />
+																   Stretch="UniformToFill"
+																   utu:AutoLayout.PrimaryLength="56"
+																   utu:AutoLayout.CounterLength="56" />
 														</utu:AutoLayout>
 													</utu:AutoLayout>
 													<utu:AutoLayout Padding="0,0,0,8"
-																utu:AutoLayout.PrimaryAlignment="Stretch">
+																	utu:AutoLayout.PrimaryAlignment="Stretch">
 														<utu:AutoLayout PrimaryAxisAlignment="Center"
-																	utu:AutoLayout.CounterAlignment="Stretch">
+																		utu:AutoLayout.CounterAlignment="Stretch">
 															<utu:AutoLayout PrimaryAxisAlignment="Center"
-																		utu:AutoLayout.CounterAlignment="Stretch"
-																		utu:AutoLayout.PrimaryAlignment="Stretch">
+																			utu:AutoLayout.CounterAlignment="Stretch"
+																			utu:AutoLayout.PrimaryAlignment="Stretch">
 																<TextBlock Foreground="{StaticResource MaterialOnSurfaceLowBrush}"
-																	   TextWrapping="Wrap"
-																	   Text="{Binding Brand}"
-																	   Style="{StaticResource MaterialOverline}" />
+																		   TextWrapping="Wrap"
+																		   Text="{Binding Brand}"
+																		   Style="{StaticResource MaterialOverline}" />
 																<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}"
-																	   TextWrapping="Wrap"
-																	   Text="{Binding Name}"
-																	   Style="{StaticResource MaterialSubtitle1}" />
+																		   TextWrapping="Wrap"
+																		   Text="{Binding Name}"
+																		   Style="{StaticResource MaterialSubtitle1}" />
 															</utu:AutoLayout>
 														</utu:AutoLayout>
 													</utu:AutoLayout>
 													<utu:AutoLayout Orientation="Horizontal"
-																utu:AutoLayout.CounterAlignment="Stretch">
-														<utu:AutoLayout Padding="16,0,0,8"
-																	PrimaryAxisAlignment="End"
-																	Orientation="Horizontal"
 																	utu:AutoLayout.CounterAlignment="Stretch">
+														<utu:AutoLayout Padding="16,0,0,8"
+																		PrimaryAxisAlignment="End"
+																		Orientation="Horizontal"
+																		utu:AutoLayout.CounterAlignment="Stretch">
 															<utu:AutoLayout utu:AutoLayout.CounterAlignment="Center">
 																<utu:AutoLayout Spacing="4"
-																			utu:AutoLayout.CounterAlignment="End">
-																	<utu:AutoLayout Spacing="10"
-																				PrimaryAxisAlignment="End"
-																				Orientation="Horizontal"
 																				utu:AutoLayout.CounterAlignment="End">
+																	<utu:AutoLayout Spacing="10"
+																					PrimaryAxisAlignment="End"
+																					Orientation="Horizontal"
+																					utu:AutoLayout.CounterAlignment="End">
 																		<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}"
-																			   TextAlignment="End"
-																			   Text="{Binding Price}"
-																			   Style="{StaticResource MaterialBody1}" />
+																				   TextAlignment="End"
+																				   Text="{Binding Price}"
+																				   Style="{StaticResource MaterialBody1}" />
 																	</utu:AutoLayout>
 																</utu:AutoLayout>
 															</utu:AutoLayout>
@@ -222,8 +220,8 @@
 		<Grid Grid.Column="1"
 			  x:Name="DetailsGrid"
 			  Visibility="Collapsed">
-			<ContentControl nav:Region.Name="Details"
-							nav:Region.Attached="true"
+			<ContentControl uen:Region.Name="Details"
+							uen:Region.Attached="true"
 							Grid.Column="1"
 							HorizontalAlignment="Stretch"
 							VerticalAlignment="Stretch"

@@ -4,12 +4,10 @@
              xmlns:local="using:MyExtensionsApp"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d"
-             xmlns:nav="using:Uno.Extensions.Navigation.UI"
-             d:DesignHeight="300"
-             d:DesignWidth="400">
+             xmlns:uen="using:Uno.Extensions.Navigation.UI"
+             mc:Ignorable="d">
 
     <Grid>
-        <Frame nav:Region.Attached="True"/>
+        <Frame uen:Region.Attached="True"/>
     </Grid>
 </UserControl>

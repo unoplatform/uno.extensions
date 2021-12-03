@@ -1,9 +1,8 @@
-﻿<ResourceDictionary
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:reactive="using:Uno.Extensions.Reactive.UI">
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					xmlns:uer="using:Uno.Extensions.Reactive.UI">
 
-	<Style TargetType="reactive:FeedView">
+	<Style TargetType="uer:FeedView">
 		<Setter Property="VerticalAlignment" Value="Stretch" />
 		<Setter Property="HorizontalAlignment" Value="Stretch" />
 		<Setter Property="VerticalContentAlignment" Value="Stretch" />
@@ -36,14 +35,14 @@
 		</Setter>
 		<Setter Property="Template">
 			<Setter.Value>
-				<ControlTemplate TargetType="reactive:FeedView">
+				<ControlTemplate TargetType="uer:FeedView">
 					<Grid VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
 						  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}">
 						<VisualStateManager.CustomVisualStateManager>
-							<reactive:SmoothVisualStateManager>
-								<reactive:SmoothVisualStateRule MinDuration="0:0:0.500" />
-								<reactive:SmoothVisualStateRule Group="ProgressGroup" To="Indeterminate" Delay="0:0:0.250" />
-							</reactive:SmoothVisualStateManager>
+							<uer:SmoothVisualStateManager>
+								<uer:SmoothVisualStateRule MinDuration="0:0:0.500" />
+								<uer:SmoothVisualStateRule Group="ProgressGroup" To="Indeterminate" Delay="0:0:0.250" />
+							</uer:SmoothVisualStateManager>
 						</VisualStateManager.CustomVisualStateManager>
 						<VisualStateManager.VisualStateGroups>
 							<VisualStateGroup x:Name="DataGroup">
@@ -182,7 +181,7 @@
 		</Setter>
 	</Style>
 
-	<Style TargetType="reactive:FeedView" x:Key="CompositeFeedViewStyle">
+	<Style TargetType="uer:FeedView" x:Key="CompositeFeedViewStyle">
 		<Setter Property="VerticalAlignment" Value="Stretch" />
 		<Setter Property="HorizontalAlignment" Value="Stretch" />
 		<Setter Property="VerticalContentAlignment" Value="Stretch" />
@@ -220,15 +219,15 @@
 		</Setter>
 		<Setter Property="Template">
 			<Setter.Value>
-				<ControlTemplate TargetType="reactive:FeedView">
+				<ControlTemplate TargetType="uer:FeedView">
 					<Grid
 						VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
 						HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}">
 						<VisualStateManager.CustomVisualStateManager>
-							<reactive:SmoothVisualStateManager>
-								<reactive:SmoothVisualStateRule MinDuration="0:0:0.500" />
-								<reactive:SmoothVisualStateRule Group="ProgressGroup" To="Indeterminate" Delay="0:0:0.250" />
-							</reactive:SmoothVisualStateManager>
+							<uer:SmoothVisualStateManager>
+								<uer:SmoothVisualStateRule MinDuration="0:0:0.500" />
+								<uer:SmoothVisualStateRule Group="ProgressGroup" To="Indeterminate" Delay="0:0:0.250" />
+							</uer:SmoothVisualStateManager>
 						</VisualStateManager.CustomVisualStateManager>
 						<VisualStateManager.VisualStateGroups>
 							<VisualStateGroup x:Name="DataGroup">

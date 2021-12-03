@@ -4,10 +4,10 @@
 	  xmlns:local="using:MyExtensionsApp"
 	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	  mc:Ignorable="d"
-	  xmlns:nav="using:Uno.Extensions.Navigation.UI"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  xmlns:utu="using:Uno.Toolkit.UI"
 	  xmlns:uer="using:Uno.Extensions.Reactive.UI"
+	  mc:Ignorable="d"
 	  Background="{StaticResource MaterialSurfaceBrush}">
 
 	<utu:AutoLayout Background="{StaticResource MaterialSurfaceBrush}"
@@ -224,7 +224,7 @@
 					x:Uid="Page_Logout"
 					utu:AutoLayout.CounterAlignment="Stretch"
 					Style="{StaticResource MaterialOutlinedButtonStyle}"
-					nav:Navigation.Request="/-" />
+					uen:Navigation.Request="/-" />
 		</utu:AutoLayout>
 	</utu:AutoLayout>
 </Page>

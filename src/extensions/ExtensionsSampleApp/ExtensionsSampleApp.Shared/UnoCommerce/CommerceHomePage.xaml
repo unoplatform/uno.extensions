@@ -4,11 +4,12 @@
       xmlns:local="using:ExtensionsSampleApp.UnoCommerce"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:nav="using:Uno.Extensions.Navigation.Controls"
+      xmlns:uen="using:Uno.Extensions.Navigation.UI"
       xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
 	  xmlns:utu="using:Uno.Toolkit.UI"
 	  mc:Ignorable="d"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+	
     <Grid x:Name="NavRoot">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
@@ -43,14 +44,13 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <muxc:NavigationView x:Name="NavView"
-                             nav:Region.Attached="true"
-                             >
+                             uen:Region.Attached="true">
             <muxc:NavigationView.MenuItems>
                 <muxc:NavigationViewItem Icon="Home"
                                          Content="Products"
-                                         nav:Region.Name="Products" />
+                                         uen:Region.Name="Products" />
                 <muxc:NavigationViewItem Content="Deals"
-                                         nav:Region.Name="Deals">
+                                         uen:Region.Name="Deals">
                     <muxc:NavigationViewItem.Icon>
                         <FontIcon FontFamily="Segoe MDL2 Assets"
                                   Glyph="&#xEB3C;" />
@@ -58,7 +58,7 @@
                 </muxc:NavigationViewItem>
                 <muxc:NavigationViewItem Icon="Contact"
                                          Content="Profile"
-                                         nav:Navigation.Request="../../Profile" />
+                                         uen:Navigation.Request="../../Profile" />
             </muxc:NavigationView.MenuItems>
 
             <Grid>
@@ -83,22 +83,21 @@
                         </Button>
                     </Grid>-->
                 <!--</controls:DropShadowPanel>-->
-                <Grid nav:Region.Attached="true"
-                      nav:Region.Navigator="Visibility" />
+                <Grid uen:Region.Attached="true"
+                      uen:Region.Navigator="Visibility" />
                 <utu:TabBar x:Name="Tabs"
-                                Visibility="Collapsed"
-                                Background="DarkGray"
-                                nav:Region.Attached="true"
-                                
-                                Grid.Row="1">
+                            Visibility="Collapsed"
+                            Background="DarkGray"
+                            uen:Region.Attached="true"
+                            Grid.Row="1">
                     <utu:TabBar.Items>
                         <utu:TabBarItem Content="Products"
-                                            nav:Region.Name="Products" />
+                                        uen:Region.Name="Products" />
                         <utu:TabBarItem Content="Deals"
-                                            nav:Region.Name="Deals" />
+                                        uen:Region.Name="Deals" />
                         <utu:TabBarItem Content="Profile"
-                                            IsSelectable="False"
-                                            nav:Navigation.Request="../../../Profile" />
+                                        IsSelectable="False"
+                                        uen:Navigation.Request="../../../Profile" />
                     </utu:TabBar.Items>
                 </utu:TabBar>
 

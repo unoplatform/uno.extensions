@@ -5,12 +5,13 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+      xmlns:uen="using:Uno.Extensions.Navigation.UI"
       mc:Ignorable="d"
-      xmlns:nav="using:Uno.Extensions.Navigation.Controls"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
       >
 
-    <Grid nav:Region.Attached="True" nav:Region.Navigator="VisualState">
+    <Grid uen:Region.Attached="True"
+          uen:Region.Navigator="VisualState">
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="Auto"/>
@@ -32,17 +33,17 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <muxc:NavigationView x:Name="NavView"
-                              nav:Region.Attached="true">
+                             uen:Region.Attached="true">
             <muxc:NavigationView.MenuItems>
                 <muxc:NavigationViewItem Tag="home"
                                          Icon="Home"
                                          Content="Home"
                                          x:Name="Content1"
-                                         nav:Navigation.Request="../showcontent1" />
+                                         uen:Navigation.Request="../showcontent1" />
                 <muxc:NavigationViewItem Tag="apps"
                                          Content="Apps"
                                          x:Name="Content2"
-                                         nav:Navigation.Request="../showcontent2">
+                                         uen:Navigation.Request="../showcontent2">
                     <muxc:NavigationViewItem.Icon>
                         <FontIcon FontFamily="Segoe MDL2 Assets"
                                   Glyph="&#xEB3C;" />
@@ -62,8 +63,10 @@
             </ScrollViewer>
         </muxc:NavigationView>
         <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <Button Content="Home" nav:Navigation.Request="showcontent1" />
-            <Button Content="Apps" nav:Navigation.Request="showcontent2"  />
+            <Button Content="Home"
+                    uen:Navigation.Request="showcontent1" />
+            <Button Content="Apps"
+                    uen:Navigation.Request="showcontent2"  />
         </StackPanel>
     </Grid>
 </Page>

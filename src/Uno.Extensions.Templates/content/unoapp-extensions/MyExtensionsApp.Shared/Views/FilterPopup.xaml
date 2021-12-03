@@ -4,14 +4,11 @@
 		xmlns:local="using:MyExtensionsApp"
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:controls="using:Uno.Material.Controls"
 		mc:Ignorable="d"
-		d:DesignHeight="300"
-		d:DesignWidth="400"
 		Placement="Full"
 		LightDismissOverlayMode="On"
-		xmlns:utu="using:Uno.Toolkit.UI.Controls"
-		xmlns:nav="using:Uno.Extensions.Navigation.Controls">
+		xmlns:utu="using:Uno.Toolkit.UI"
+		xmlns:uen="using:Uno.Extensions.Navigation.UI">
 
 	<Flyout.FlyoutPresenterStyle>
 		<Style TargetType="FlyoutPresenter">
@@ -74,7 +71,7 @@
 							   utu:AutoLayout.CounterAlignment="Stretch"
 							   Style="{StaticResource MaterialRootModalNavigationBarStyle}">
 				<utu:NavigationBar.MainCommand>
-					<AppBarButton nav:Navigation.Request="-" />
+					<AppBarButton uen:Navigation.Request="-" />
 				</utu:NavigationBar.MainCommand>
 				<utu:NavigationBar.PrimaryCommands>
 					<AppBarButton Foreground="{StaticResource MaterialOnSurfaceBrush}">
@@ -170,8 +167,8 @@
 						x:Uid="Body_Apply"
 						utu:AutoLayout.PrimaryAlignment="Stretch"
 						Style="{StaticResource MaterialContainedButtonStyle}"
-						nav:Navigation.Request="-"
-						nav:Navigation.Data="{Binding Filter.Value}" />
+						uen:Navigation.Request="-"
+						uen:Navigation.Data="{Binding Filter.Value}" />
 			</utu:AutoLayout>
 		</utu:AutoLayout>
 	</utu:AutoLayout>

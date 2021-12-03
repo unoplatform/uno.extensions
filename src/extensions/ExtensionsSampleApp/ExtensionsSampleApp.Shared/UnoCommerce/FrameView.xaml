@@ -4,12 +4,10 @@
              xmlns:local="using:ExtensionsSampleApp.UnoCommerce"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d"
-             xmlns:nav="using:Uno.Extensions.Navigation.Controls"
-             d:DesignHeight="300"
-             d:DesignWidth="400">
+             xmlns:uen="using:Uno.Extensions.Navigation.UI"
+             mc:Ignorable="d">
 
     <Grid>
-        <Frame nav:Region.Attached="True" Grid.Row="1" />
+        <Frame uen:Region.Attached="True" Grid.Row="1" />
     </Grid>
 </UserControl>
