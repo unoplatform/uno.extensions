@@ -238,8 +238,17 @@ namespace Commerce
 													nav with { Route = nav.Route.AppendNested<CartPage>() } :
 													nav))
 
-				.Register(new RouteMap("Filter", typeof(FilterFlyout)))
-				.Register(new ViewMap<Filters>(typeof(FilterFlyout), typeof(FiltersViewModel.BindableFiltersViewModel)))
+				.Register(new RouteMap("Filter", typeof(FilterFlyout),
+					nav => nav.Route.Next().IsEmpty() ?
+												nav with { Route = nav.Route.AppendPage<FilterPage>() } : nav with
+												{
+													Route = nav.Route.ContainsView<FilterPage>() ?
+																	nav.Route :
+																	nav.Route.InsertPage<FilterPage>()
+												}))
+				.Register(new RouteMap(nameof(FilterPage), typeof(FilterPage)))
+
+				.Register(new ViewMap<Filters>(typeof(FilterPage), typeof(FiltersViewModel.BindableFiltersViewModel)))
 				.Register(new RouteMap("Profile", typeof(ProfilePage)))
 
 				.Register(new ViewMap(typeof(ProfilePage), typeof(ProfileViewModel)))
