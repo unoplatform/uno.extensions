@@ -54,19 +54,19 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 
 		return info;
 
-		void ViewModelToView(Action<TProperty?> updated)
+		void ViewModelToView(Action<TProperty?, bool> updated)
 			=> DispatcherHelper.TryEnqueue(dispatcher, async () =>
 			 {
 				 try
 				 {
-					 updated(defaultValue);
+					 updated(defaultValue, true);
 
 					// Note: No needs to use .WithCancellation() here as we are enumerating the stateImp which is going to be disposed anyway.
 					await foreach (var msg in stateImpl.GetSource().ConfigureAwait(true))
 					 {
 						 if (msg.Current.Get(BindingSource) != this)
 						 {
-							 updated(msg.Current.Data.SomeOrDefault());
+							 updated(msg.Current.Data.SomeOrDefault(), true);
 						 }
 					 }
 				 }

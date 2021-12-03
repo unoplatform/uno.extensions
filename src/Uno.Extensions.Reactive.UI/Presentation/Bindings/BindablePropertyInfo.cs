@@ -13,13 +13,13 @@ public readonly struct BindablePropertyInfo<T>
 {
 	private readonly IBindable _owner;
 	private readonly string _name;
-	private readonly Action<Action<T?>> _subscribeOwnerUpdated;
+	private readonly Action<Action<T?, bool>> _subscribeOwnerUpdated;
 	private readonly AsyncAction<Func<T?, T?>, bool> _update;
 
 	internal BindablePropertyInfo(
 		IBindable owner,
 		string name, 
-		Action<Action<T?>> subscribeOwnerUpdated,
+		Action<Action<T?, bool>> subscribeOwnerUpdated,
 		AsyncAction<Func<T?, T?>, bool> updateOwner)
 	{
 		_owner = owner;
@@ -34,7 +34,7 @@ public readonly struct BindablePropertyInfo<T>
 	/// Adds a callback which is invoked when the value of the property changed.
 	/// </summary>
 	/// <param name="onPropertyChanged"></param>
-	public void Subscribe(Action<T?> onPropertyChanged)
+	public void Subscribe(Action<T?, bool> onPropertyChanged)
 		=> _subscribeOwnerUpdated(onPropertyChanged);
 
 	/// <summary>
