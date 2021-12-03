@@ -16,4 +16,5 @@ jobs:
 - template: .azure-pipelines.Android.yml
 - template: .azure-pipelines.Wasm.yml
 - template: .azure-pipelines.TemplateValidation.yml
+- template: .azure-pipelines.UITests.Wasm.yml
 
