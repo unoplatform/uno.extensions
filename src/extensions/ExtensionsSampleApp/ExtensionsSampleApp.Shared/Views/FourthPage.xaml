@@ -4,24 +4,24 @@
       xmlns:local="using:ExtensionsSampleApp"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:uen="using:Uno.Extensions.Navigation.UI"
       mc:Ignorable="d"
-      xmlns:nav="using:Uno.Extensions.Navigation.Controls"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Grid>
         <StackPanel>
             <TextBlock Margin="20" FontSize="30"><Run Text="Page 4 - " /><Run Text="{Binding Title}" /></TextBlock>
             <Button Content="Go Back - NavigatePreviousViewAsync"
-                    nav:Navigation.Request="../-" />
+                    uen:Navigation.Request="../-" />
             <Button Content="Go Back x 2- NavigationRequest"
-                    nav:Navigation.Request="../--" />
+                    uen:Navigation.Request="../--" />
             <Button Content="Go To Third Page with Back x 2 - NavigationRequest"
-                    nav:Navigation.Request="../--ThirdPage" />
+                    uen:Navigation.Request="../--ThirdPage" />
             <Button Content="Go To Third Page with Back x 3 - NavigationRequest"
-                    nav:Navigation.Request="../---ThirdPage" />
+                    uen:Navigation.Request="../---ThirdPage" />
             <Button Content="Go To /Main - NavigationRequest"
-                    nav:Navigation.Request="../-/MainPage" />
+                    uen:Navigation.Request="../-/MainPage" />
             <Button Content="Go To /Third Page- NavigationRequest"
-                    nav:Navigation.Request="../-/ThirdPage" />
+                    uen:Navigation.Request="../-/ThirdPage" />
              <Button Content="Go Back"
                     Click="GoBackClick"/>
         </StackPanel>

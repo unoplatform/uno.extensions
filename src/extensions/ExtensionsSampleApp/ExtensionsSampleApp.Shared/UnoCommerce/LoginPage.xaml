@@ -4,8 +4,8 @@
       xmlns:local="using:ExtensionsSampleApp.Views.Twitter"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:uen="using:Uno.Extensions.Navigation.UI"
       mc:Ignorable="d"
-      xmlns:nav="using:Uno.Extensions.Navigation.Controls"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid >
@@ -47,7 +47,7 @@
                 <Button Content="LOGIN"
                         HorizontalAlignment="Stretch"
                         Margin="0,8"
-                        nav:Navigation.Request="/-/CommerceHomePage" />
+                        uen:Navigation.Request="/-/CommerceHomePage" />
                 <TextBlock Text="Legal mentions" HorizontalAlignment="Center" />
             </StackPanel>
             <Grid x:Name="ProgressOverlay"

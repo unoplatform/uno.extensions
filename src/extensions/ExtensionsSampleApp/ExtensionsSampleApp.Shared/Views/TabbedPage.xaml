@@ -4,70 +4,71 @@
       xmlns:local="using:ExtensionsSampleApp"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:controls="using:Microsoft.UI.Xaml.Controls"
-      xmlns:nav="using:Uno.Extensions.Navigation.Controls"
+      xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+      xmlns:uen="using:Uno.Extensions.Navigation.UI"
       mc:Ignorable="d"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-    <controls:TabView nav:Region.Attached="true"
-                      HorizontalAlignment="Stretch"
-                      VerticalAlignment="Stretch"
-                      IsAddTabButtonVisible="False">
-        <controls:TabViewItem Header="Home"
-                              IsClosable="False"
-                              x:Name="home">
-            <controls:TabViewItem.IconSource>
-                <controls:SymbolIconSource Symbol="Home" />
-            </controls:TabViewItem.IconSource>
+
+    <muxc:TabView uen:Region.Attached="true"
+                  HorizontalAlignment="Stretch"
+                  VerticalAlignment="Stretch"
+                  IsAddTabButtonVisible="False">
+        <muxc:TabViewItem Header="Home"
+                          IsClosable="False"
+                          x:Name="home">
+            <muxc:TabViewItem.IconSource>
+                <muxc:SymbolIconSource Symbol="Home" />
+            </muxc:TabViewItem.IconSource>
             <StackPanel>
                 <TextBlock Margin="20"
                            FontSize="30"><Run Text="Doc1 - " /><Run Text="{Binding Title}" /></TextBlock>
                 <Button Content="Doc0"
-                        nav:Navigation.Request="../doc0" />
+                        uen:Navigation.Request="../doc0" />
                 <Button Content="Doc0 - code"
                         Click="NavigateDoc0Click" />
                 <Button Content="Doc2"
-                        nav:Navigation.Request="../doc2" />
+                        uen:Navigation.Request="../doc2" />
             </StackPanel>
-        </controls:TabViewItem>
-        <controls:TabViewItem Header="Document 0"
-                              x:Name="doc0">
-            <controls:TabViewItem.IconSource>
-                <controls:SymbolIconSource Symbol="Document" />
-            </controls:TabViewItem.IconSource>
+        </muxc:TabViewItem>
+        <muxc:TabViewItem Header="Document 0"
+                          x:Name="doc0">
+            <muxc:TabViewItem.IconSource>
+                <muxc:SymbolIconSource Symbol="Document" />
+            </muxc:TabViewItem.IconSource>
             <StackPanel>
                 <TextBlock Margin="20"
                            FontSize="30"><Run Text="Doc0 - " /><Run Text="{Binding Title}" /></TextBlock>
                 <Button Content="Home"
-                        nav:Navigation.Request="../home" />
+                        uen:Navigation.Request="../home" />
                 <Button Content="Go back"
-                        nav:Navigation.Request="../../-" />
+                        uen:Navigation.Request="../../-" />
                 <Button Content="Third Page"
-                        nav:Navigation.Request="../../ThirdPage" />
+                        uen:Navigation.Request="../../ThirdPage" />
                 <Button Content="Third Page"
                         Command="{Binding NavigateThirdPageCommand}" />
                 <Button Content="Third Page (rooted)"
-                        nav:Navigation.Request="../../../ThirdPage" />
+                        uen:Navigation.Request="../../../ThirdPage" />
                 <Button Content="Doc1 - ViewModel"
                         Command="{Binding NavigateDoc1Command}" />
             </StackPanel>
-        </controls:TabViewItem>
-        <controls:TabViewItem Header="Document 1"
-                              x:Name="doc1">
-            <controls:TabViewItem.IconSource>
-                <controls:SymbolIconSource Symbol="Document" />
-            </controls:TabViewItem.IconSource>
+        </muxc:TabViewItem>
+        <muxc:TabViewItem Header="Document 1"
+                          x:Name="doc1">
+            <muxc:TabViewItem.IconSource>
+                <muxc:SymbolIconSource Symbol="Document" />
+            </muxc:TabViewItem.IconSource>
             <StackPanel>
                 <TextBlock Margin="20"
                            FontSize="30"><Run Text="Doc1 - " /><Run Text="{Binding Title}" /></TextBlock>
                 <Button Content="Content Dialog"
                         Click="ContentDialogResponseClick" />
             </StackPanel>
-        </controls:TabViewItem>
-        <controls:TabViewItem Header="Document 2"
-                              x:Name="doc2">
-            <controls:TabViewItem.IconSource>
-                <controls:SymbolIconSource Symbol="Document" />
-            </controls:TabViewItem.IconSource>
+        </muxc:TabViewItem>
+        <muxc:TabViewItem Header="Document 2"
+                          x:Name="doc2">
+            <muxc:TabViewItem.IconSource>
+                <muxc:SymbolIconSource Symbol="Document" />
+            </muxc:TabViewItem.IconSource>
             <Grid Loaded="Doc2GridLoaded">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -78,24 +79,24 @@
                            FontSize="30"><Run Text="Doc2 - " /><Run Text="{Binding Title}" /></TextBlock>
                 <Frame x:Name="InnerFrame"
                        Grid.Row="1"
-                       nav:Region.Attached="true" />
+                       uen:Region.Attached="true" />
                 <StackPanel Orientation="Horizontal" Grid.Row="2">
                     <Button Content="Page Two"
-                            nav:Navigation.Request="./SecondPage" />
+                            uen:Navigation.Request="./SecondPage" />
                     <Button Content="Page Four"
-                            nav:Navigation.Request="./FourthPage" />
-                    <!--<ContentControl nav:Region.Attached="True"/>-->
+                            uen:Navigation.Request="./FourthPage" />
+                    <!--<ContentControl uen:Region.Attached="True"/>-->
                 </StackPanel>
             </Grid>
-        </controls:TabViewItem>
+        </muxc:TabViewItem>
 
-        <controls:TabView.TabStripHeader>
+        <muxc:TabView.TabStripHeader>
             <Grid x:Name="ShellTitlebarInset"
                   Background="Transparent" />
-        </controls:TabView.TabStripHeader>
-        <controls:TabView.TabStripFooter>
+        </muxc:TabView.TabStripHeader>
+        <muxc:TabView.TabStripFooter>
             <Grid x:Name="CustomDragRegion"
                   Background="Transparent" />
-        </controls:TabView.TabStripFooter>
-    </controls:TabView>
+        </muxc:TabView.TabStripFooter>
+    </muxc:TabView>
 </Page>

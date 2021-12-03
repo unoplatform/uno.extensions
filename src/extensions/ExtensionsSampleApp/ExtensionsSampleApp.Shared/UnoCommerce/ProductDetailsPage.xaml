@@ -5,8 +5,8 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:fake="using:ExtensionsSampleApp.DesignTime"
-      xmlns:controls="using:Microsoft.UI.Xaml.Controls"
-      xmlns:nav="using:Uno.Extensions.Navigation.Controls"
+      xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+      xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  xmlns:utu="using:Uno.Toolkit.UI"
 	  mc:Ignorable="d fake"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -20,7 +20,7 @@
                                Content="Products">
             <utu:NavigationBar.PrimaryCommands>
                 <AppBarButton Label="Back"
-                              nav:Navigation.Request="../-" />
+                              uen:Navigation.Request="../-" />
             </utu:NavigationBar.PrimaryCommands>
         </utu:NavigationBar>
 
@@ -56,8 +56,8 @@
                 <TextBlock Text="Reviews"
                            FontWeight="Bold" />
 
-                <controls:ItemsRepeater ItemsSource="{Binding Reviews}">
-                    <controls:ItemsRepeater.ItemTemplate>
+                <muxc:ItemsRepeater ItemsSource="{Binding Reviews}">
+                    <muxc:ItemsRepeater.ItemTemplate>
                         <DataTemplate>
                             <Grid Margin="4" Height="50">
                                 <Grid.ColumnDefinitions>
@@ -72,8 +72,8 @@
                             </Grid>
                             
                         </DataTemplate>
-                    </controls:ItemsRepeater.ItemTemplate>
-                </controls:ItemsRepeater>
+                    </muxc:ItemsRepeater.ItemTemplate>
+                </muxc:ItemsRepeater>
 
             </StackPanel>
         </ScrollViewer>

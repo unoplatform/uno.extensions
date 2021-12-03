@@ -4,12 +4,11 @@
 	  xmlns:local="using:MyExtensionsApp"
 	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	  xmlns:controls="using:Microsoft.UI.Xaml.Controls"
+	  xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
 	  xmlns:utu="using:Uno.Toolkit.UI"
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  xmlns:uer="using:Uno.Extensions.Reactive.UI"
-	  xmlns:um="using:Uno.Material.Extensions"
-	  xmlns:reactive="using:Uno.Extensions.Reactive.UI"
+	  xmlns:um="using:Uno.Material"
 	  mc:Ignorable="d"
 	  Background="{ThemeResource MaterialBackgroundBrush}">
 
@@ -115,8 +114,8 @@
 										   x:Uid="_Reviews"
 										   Text="Reviews"
 										   Style="{StaticResource MaterialHeadline6}" />
-								<controls:RatingControl MaxRating="5"
-														Value="{Binding Rating, Mode=TwoWay}" />
+								<muxc:RatingControl MaxRating="5"
+													Value="{Binding Rating, Mode=TwoWay}" />
 							</utu:AutoLayout>
 						</utu:AutoLayout>
 					</DataTemplate>

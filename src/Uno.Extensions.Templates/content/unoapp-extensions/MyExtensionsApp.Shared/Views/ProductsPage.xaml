@@ -5,12 +5,10 @@
 	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	  xmlns:services="using:MyExtensionsApp.Services"
-	  xmlns:nav="using:Uno.Extensions.Navigation.UI"
-	  xmlns:reactive="using:Uno.Extensions.Reactive.UI"
-	  xmlns:utu="using:Uno.Toolkit.UI"
-	  xmlns:um="using:Uno.Material.Extensions"
-	  xmlns:uer="using:Uno.Extensions.Reactive.UI"
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	  xmlns:uer="using:Uno.Extensions.Reactive.UI"
+	  xmlns:utu="using:Uno.Toolkit.UI"
+	  xmlns:um="using:Uno.Material"
 	  mc:Ignorable="d"
 	  Background="{ThemeResource MaterialBackgroundBrush}">
 
@@ -102,8 +100,8 @@
 										 x:Uid="Page_Filters"
 										 utu:AutoLayout.CounterAlignment="Center"
 										 Style="{StaticResource MaterialHyperlinkButtonStyle}"
-										 nav:Navigation.Request="!Filter"
-										 nav:Navigation.Data="{Binding Filter, Mode=TwoWay}" />
+										 uen:Navigation.Request="!Filter"
+										 uen:Navigation.Data="{Binding Filter, Mode=TwoWay}" />
 					</utu:AutoLayout>
 				</utu:AutoLayout>
 				<uer:FeedView Style="{StaticResource MaterialCompositeFeedViewStyle}"
@@ -222,8 +220,8 @@
 		<Grid Grid.Column="1"
 			  x:Name="DetailsGrid"
 			  Visibility="Collapsed">
-			<ContentControl nav:Region.Name="Details"
-							nav:Region.Attached="true"
+			<ContentControl uen:Region.Name="Details"
+							uen:Region.Attached="true"
 							Grid.Column="1"
 							HorizontalAlignment="Stretch"
 							VerticalAlignment="Stretch"

@@ -3,12 +3,12 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:local="using:MyExtensionsApp"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:nav="using:Uno.Extensions.Navigation.UI"
+		xmlns:uen="using:Uno.Extensions.Navigation.UI"
 		Placement="Full"
 		FlyoutPresenterStyle="{StaticResource MaterialFlyoutPresenterStyle}">
 	
 	<Grid>
-		<ContentControl nav:Region.Attached="True"
+		<ContentControl uen:Region.Attached="True"
 						HorizontalAlignment="Stretch"
 						VerticalAlignment="Stretch"
 						HorizontalContentAlignment="Stretch"

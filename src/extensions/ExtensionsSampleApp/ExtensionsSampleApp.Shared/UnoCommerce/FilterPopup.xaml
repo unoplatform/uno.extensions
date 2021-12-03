@@ -4,12 +4,11 @@
              xmlns:local="using:ExtensionsSampleApp.UnoCommerce"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:controls="using:Uno.Material.Controls"
+             xmlns:uen="using:Uno.Extensions.Navigation.UI"
+             xmlns:um="using:Uno.Material"
              mc:Ignorable="d"
-             d:DesignHeight="300"
-             d:DesignWidth="400"
-        Placement="Full"
-        xmlns:nav="using:Uno.Extensions.Navigation.Controls">
+             Placement="Full">
+
     <Flyout.FlyoutPresenterStyle>
         <Style TargetType="FlyoutPresenter">
             <Setter Property="HorizontalContentAlignment"
@@ -59,7 +58,7 @@
     </Flyout.FlyoutPresenterStyle>
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="12">
         <StackPanel Orientation="Horizontal">
-            <Button nav:Navigation.Request="-">
+            <Button uen:Navigation.Request="-">
                 <SymbolIcon Symbol="Cancel" />
             </Button>
             <TextBlock Text="Filter"
@@ -70,12 +69,12 @@
         <TextBox Text="{Binding Query, Mode=TwoWay}" PlaceholderText="Keywords" x:Name="QueryText" />
         <TextBlock Text="Categories" />
         <StackPanel Orientation="Horizontal">
-            <controls:Chip Content="Shoes"
-                           CornerRadius="10" />
-            <controls:Chip Content="Accessories"
-                           CornerRadius="10" />
-            <controls:Chip Content="Headwear"
-                           CornerRadius="10" />
+            <um:Chip Content="Shoes"
+                     CornerRadius="10" />
+            <um:Chip Content="Accessories"
+                     CornerRadius="10" />
+            <um:Chip Content="Headwear"
+                     CornerRadius="10" />
         </StackPanel>
         <Grid>
             <TextBlock Text="In stock only"
@@ -103,7 +102,7 @@
         </Grid>
         <Button HorizontalAlignment="Stretch"
                 Content="Apply"
-                nav:Navigation.Request="-"
-                nav:Navigation.Data="{Binding Query}" />
+                uen:Navigation.Request="-"
+                uen:Navigation.Data="{Binding Query}" />
     </StackPanel>
 </Flyout>

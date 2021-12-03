@@ -4,9 +4,9 @@
 	  xmlns:local="using:Commerce"
 	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	  mc:Ignorable="d"
-	  xmlns:nav="using:Uno.Extensions.Navigation.UI"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  xmlns:utu="using:Uno.Toolkit.UI"
+	  mc:Ignorable="d"
 	  Background="{ThemeResource MaterialBackgroundBrush}">
 
 	<Grid  MinHeight="300"
@@ -22,7 +22,7 @@
 					   HorizontalAlignment="Center"
 					   VerticalAlignment="Center" />
 			<Button Content="Done"
-					nav:Navigation.Request="../../-" />
+					uen:Navigation.Request="../../-" />
 		</StackPanel>
 
 	</Grid>

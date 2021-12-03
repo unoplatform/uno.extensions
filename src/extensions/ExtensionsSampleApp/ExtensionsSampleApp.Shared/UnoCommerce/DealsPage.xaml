@@ -4,7 +4,7 @@
       xmlns:local="using:ExtensionsSampleApp.UnoCommerce"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:nav="using:Uno.Extensions.Navigation.Controls"
+      xmlns:uen="using:Uno.Extensions.Navigation.UI"
       xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
 	  xmlns:utu="using:Uno.Toolkit.UI"
 	  mc:Ignorable="d"
@@ -40,27 +40,26 @@
             </Grid>
         </DataTemplate>
     </Page.Resources>
-    <Grid nav:Region.Attached="true">
+    <Grid uen:Region.Attached="true">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <utu:TabBar 
-                        nav:Region.Attached="true">
+        <utu:TabBar uen:Region.Attached="true">
             <utu:TabBar.Items>
                 <utu:TabBarItem Content="Hot Deals"
-                                    nav:Region.Name="HotDeals" />
+                                uen:Region.Name="HotDeals" />
                 <utu:TabBarItem Content="Super Deals"
-                                    nav:Region.Name="SuperDeals" />
+                                uen:Region.Name="SuperDeals" />
             </utu:TabBar.Items>
         </utu:TabBar>
-        <Grid nav:Region.Attached="true"
-              nav:Region.Navigator="Visibility" Grid.Row="1">
-            <ListView nav:Region.Name="HotDeals"
+        <Grid uen:Region.Attached="true"
+              uen:Region.Navigator="Visibility" Grid.Row="1">
+            <ListView uen:Region.Name="HotDeals"
                       ItemsSource="{Binding HotDeals}"
                       ItemTemplate="{StaticResource ProductDealsTemplate}"
                       Visibility="Collapsed"/>
-            <ListView nav:Region.Name="SuperDeals"
+            <ListView uen:Region.Name="SuperDeals"
                       ItemTemplate="{StaticResource ProductDealsTemplate}"
                       ItemsSource="{Binding SuperDeals}"
                       Visibility="Collapsed" />

@@ -4,7 +4,7 @@
       xmlns:local="using:ExtensionsSampleApp"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:nav="using:Uno.Extensions.Navigation.Controls"
+      xmlns:uen="using:Uno.Extensions.Navigation.UI"
       NavigationCacheMode="Required"
       xmlns:ios="http://uno.ui/ios"
       xmlns:views="using:ExtensionsSampleApp.Views"
@@ -42,18 +42,18 @@
                 <Button Content="Next page - NavigationRequest"
                         Click="NextPageNavigationRequestClick" />
 
-                <TextBlock Text="nav:Navigation.Request=&quot;../SecondPage&quot; - On button click - navigates to route defined by the Request attacted property" />
+                <TextBlock Text="uen:Navigation.Request=&quot;../SecondPage&quot; - On button click - navigates to route defined by the Request attacted property" />
                 <Button Content="Next page - Navigation Path"
-                        nav:Navigation.Request="../SecondPage" />
+                        uen:Navigation.Request="../SecondPage" />
 
-                <TextBlock Text="nav:Navigation.Request=&quot;../SecondPage&quot; nav:Navigation.Data=&quot;Hello World!&quot; - On button click, navigates to the route and passes data" />
+                <TextBlock Text="uen:Navigation.Request=&quot;../SecondPage&quot; uen:Navigation.Data=&quot;Hello World!&quot; - On button click, navigates to the route and passes data" />
                 <Button Content="Next page - Navigation Path with Data"
-                        nav:Navigation.Request="../SecondPage"
-                        nav:Navigation.Data="Hello World!" />
+                        uen:Navigation.Request="../SecondPage"
+                        uen:Navigation.Data="Hello World!" />
 
-                <TextBlock Text="nav:Navigation.Request=&quot;../SecondPage?delay=5000&quot; - Delay is introduced in MainViewModel" />
+                <TextBlock Text="uen:Navigation.Request=&quot;../SecondPage?delay=5000&quot; - Delay is introduced in MainViewModel" />
                 <Button Content="Next page - Navigation Path with delay"
-                        nav:Navigation.Request="../SecondPage?delay=5000" />
+                        uen:Navigation.Request="../SecondPage?delay=5000" />
 
                 <TextBlock Text="Navigation.NavigateAsync&lt;SecondPage&gt;() - In click handler, navigates based on page type" />
                 <Button Content="Next page - NavigateViewAsync"
@@ -114,10 +114,10 @@
                            x:Name="MessageDialogResultText"
                            Style="{StaticResource ResultTextStyle}" />
 
-                <TextBlock Text="nav:Navigation.Request=&quot;CustomFlyout&quot; - Flyout" />
+                <TextBlock Text="uen:Navigation.Request=&quot;CustomFlyout&quot; - Flyout" />
                 <Button Content="Flyout - CustomFlyout"
-                        nav:Navigation.Request="!CustomFlyout">
-                    <!--nav:Region.Navigator="FlyoutNavigator">
+                        uen:Navigation.Request="!CustomFlyout">
+                    <!--uen:Region.Navigator="FlyoutNavigator">
                     <FlyoutBase.AttachedFlyout>
                         <Flyout>
                             <TextBlock Text="This is some text in a flyout." />
@@ -125,9 +125,9 @@
                     </FlyoutBase.AttachedFlyout>-->
                 </Button>
 
-                <TextBlock Text="nav:Navigation.Request=&quot;CustomFlyoutResource&quot; - Flyout" />
+                <TextBlock Text="uen:Navigation.Request=&quot;CustomFlyoutResource&quot; - Flyout" />
                 <Button Content="Flyout - CustomFlyoutResource"
-                        nav:Navigation.Request="!CustomFlyoutResource">
+                        uen:Navigation.Request="!CustomFlyoutResource">
                 </Button>
 
                 <TextBlock Text="Flyout launched from viewmodel" />
@@ -137,17 +137,17 @@
 
 
                 <Button Content="Root - Go to Uno Commerce Sample"
-                        nav:Navigation.Request="-/LoginPage" />
+                        uen:Navigation.Request="-/LoginPage" />
                 <Button Content="Root - Go to Twitter"
-                        nav:Navigation.Request="-/TwitterLoginPage" />
+                        uen:Navigation.Request="-/TwitterLoginPage" />
                 <Button Content="Root - Go to TabBar Page"
-                        nav:Navigation.Request="-/TabBarPage" />
+                        uen:Navigation.Request="-/TabBarPage" />
                 <Button Content="Root - Go to NavigationView Page"
-                        nav:Navigation.Request="-/NavigationViewPage" />
+                        uen:Navigation.Request="-/NavigationViewPage" />
                 <Button Content="Root - Go to NavigationViewGridVisibility Page"
-                        nav:Navigation.Request="-/NavigationViewGridVisibilityPage" />
+                        uen:Navigation.Request="-/NavigationViewGridVisibilityPage" />
                 <Button Content="Root - Go to NavigationViewVisualStates Page"
-                        nav:Navigation.Request="-/NavigationViewVisualStatesPage" />
+                        uen:Navigation.Request="-/NavigationViewVisualStatesPage" />
 
             </StackPanel>
         </ScrollViewer>
@@ -155,14 +155,14 @@
         <Grid Grid.Row="1">
             <StackPanel>
                 <Button Content="Show popup"
-                        nav:Navigation.Request="./Show" />
+                        uen:Navigation.Request="./Show" />
                 <Button Content="Hide popup"
-                        nav:Navigation.Request="./Hide" />
+                        uen:Navigation.Request="./Hide" />
                 <Button Content="Show Picker"
                         Click="ShowPickerClick" />
             </StackPanel>
             <Popup x:Name="MyPopup"
-                   nav:Region.Attached="True"
+                   uen:Region.Attached="True"
                    VerticalOffset="10"
                    HorizontalOffset="200"
                    IsLightDismissEnabled="True">

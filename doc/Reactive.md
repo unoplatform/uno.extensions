@@ -68,7 +68,7 @@ Then in your page, you can add a `FeedView`:
 	x:Class="MyProject.MyPage"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:reactive="using:Uno.Extensions.Reactive.UI">
+	xmlns:uer="using:Uno.Extensions.Reactive.UI">
 
 <reactive:FeedView Source="{Binding Products}">
 	<DataTemplate>

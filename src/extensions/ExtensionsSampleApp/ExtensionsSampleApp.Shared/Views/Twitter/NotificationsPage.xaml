@@ -1,12 +1,11 @@
-﻿<Page
-    x:Class="ExtensionsSampleApp.Views.Twitter.NotificationsPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:ExtensionsSampleApp.Views.Twitter"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-      xmlns:nav="using:Uno.Extensions.Navigation.Controls"
+﻿<Page x:Class="ExtensionsSampleApp.Views.Twitter.NotificationsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:ExtensionsSampleApp.Views.Twitter"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:uen="using:Uno.Extensions.Navigation.UI"
+      mc:Ignorable="d"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
@@ -22,7 +21,7 @@
                      Width="100" />
             <TextBlock Text="Fred Bloggs" />
             <Button Content="Profile"
-                    nav:Navigation.Request="../../../ProfilePage" />
+                    uen:Navigation.Request="../../../ProfilePage" />
         </StackPanel>
         <ListView Grid.Row="1"
                   ItemsSource="{Binding Notifications}"

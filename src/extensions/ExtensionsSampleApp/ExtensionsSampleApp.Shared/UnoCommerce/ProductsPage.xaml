@@ -6,7 +6,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:services="using:ExtensionsSampleApp.UnoCommerce.Services"
-      xmlns:nav="using:Uno.Extensions.Navigation.Controls"
+      xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  xmlns:utu="using:Uno.Toolkit.UI"
 	  mc:Ignorable="d fake"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -23,7 +23,7 @@
             <!--<utu:NavigationBar.SecondaryCommands>
                 <AppBarButton Style="{StaticResource MaterialAppBarButton}"
                               Label="Back"
-                              nav:Navigation.Request="../-"/>
+                              uen:Navigation.Request="../-"/>
             </utu:NavigationBar.SecondaryCommands>-->
         </utu:NavigationBar>
         <StackPanel Grid.Row="1">
@@ -37,12 +37,11 @@
                             HorizontalAlignment="Right">
                 <TextBlock Text="{Binding FilterQuery}" />
                 <HyperlinkButton Content="Filter"
-                                 nav:Navigation.Request="!FilterPopup"
-nav:Navigation.Data="{Binding FilterQuery, Mode=TwoWay}"
-                                 />
+                                 uen:Navigation.Request="!FilterPopup"
+                                 uen:Navigation.Data="{Binding FilterQuery, Mode=TwoWay}" />
                 </StackPanel>
-                <!--<Popup nav:Region.Name="filter"
-                       nav:Region.Attached="True"
+                <!--<Popup uen:Region.Name="filter"
+                       uen:Region.Attached="True"
                        IsLightDismissEnabled="True"
                        HorizontalAlignment="Right"
                        HorizontalOffset="-270">
@@ -55,7 +54,7 @@ nav:Navigation.Data="{Binding FilterQuery, Mode=TwoWay}"
         <ListView ItemsSource="{Binding Products}"
                   Grid.Row="2"
                   IsItemClickEnabled="True"
-                  nav:Navigation.Request="ProductDetails">
+                  uen:Navigation.Request="ProductDetails">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="8" Height="100">

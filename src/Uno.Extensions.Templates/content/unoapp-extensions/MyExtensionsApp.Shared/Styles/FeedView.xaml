@@ -1,13 +1,13 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-					xmlns:reactive="using:Uno.Extensions.Reactive.UI"
+					xmlns:uer="using:Uno.Extensions.Reactive.UI"
 					xmlns:winui="using:Microsoft.UI.Xaml.Controls"
 					xmlns:skia="http://platform.uno/skia"
 					xmlns:not_skia="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 					xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 					mc:Ignorable="skia">
 	
-	<Style TargetType="reactive:FeedView" BasedOn="{StaticResource DefaultFeedViewStyle}">
+	<Style TargetType="uer:FeedView" BasedOn="{StaticResource DefaultFeedViewStyle}">
 		<Setter Property="ProgressTemplate">
 			<Setter.Value>
 				<DataTemplate>
@@ -31,7 +31,7 @@
 		</Setter>
 	</Style>
 
-	<Style TargetType="reactive:FeedView" x:Key="MaterialCompositeFeedViewStyle" BasedOn="{StaticResource CompositeFeedViewStyle}">
+	<Style TargetType="uer:FeedView" x:Key="MaterialCompositeFeedViewStyle" BasedOn="{StaticResource CompositeFeedViewStyle}">
 		<Setter Property="ProgressTemplate">
 			<Setter.Value>
 				<DataTemplate>
@@ -55,7 +55,7 @@
 		</Setter>
 	</Style>
 
-	<Style TargetType="reactive:FeedView" x:Key="DefaultFeedViewStyle">
+	<Style TargetType="uer:FeedView" x:Key="DefaultFeedViewStyle">
 		<Setter Property="VerticalAlignment" Value="Stretch" />
 		<Setter Property="HorizontalAlignment" Value="Stretch" />
 		<Setter Property="VerticalContentAlignment" Value="Stretch" />
@@ -88,14 +88,14 @@
 		</Setter>
 		<Setter Property="Template">
 			<Setter.Value>
-				<ControlTemplate TargetType="reactive:FeedView">
+				<ControlTemplate TargetType="uer:FeedView">
 					<Grid VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
 						  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}">
 						<VisualStateManager.CustomVisualStateManager>
-							<reactive:SmoothVisualStateManager>
-								<reactive:SmoothVisualStateRule MinDuration="0:0:0.500" />
-								<reactive:SmoothVisualStateRule Group="ProgressGroup" To="Indeterminate" Delay="0:0:0.250" />
-							</reactive:SmoothVisualStateManager>
+							<uer:SmoothVisualStateManager>
+								<uer:SmoothVisualStateRule MinDuration="0:0:0.500" />
+								<uer:SmoothVisualStateRule Group="ProgressGroup" To="Indeterminate" Delay="0:0:0.250" />
+							</uer:SmoothVisualStateManager>
 						</VisualStateManager.CustomVisualStateManager>
 						<VisualStateManager.VisualStateGroups>
 							<VisualStateGroup x:Name="DataGroup">
@@ -236,7 +236,7 @@
 
 	<!-- We need to redefine this as packages cannot ship multiple styles at once by default.
 	We need to take a similar approach to what we did for material to pack multiple styles.-->
-	<Style TargetType="reactive:FeedView" x:Key="CompositeFeedViewStyle">
+	<Style TargetType="uer:FeedView" x:Key="CompositeFeedViewStyle">
 		<Setter Property="VerticalAlignment" Value="Stretch" />
 		<Setter Property="HorizontalAlignment" Value="Stretch" />
 		<Setter Property="VerticalContentAlignment" Value="Stretch" />
@@ -274,15 +274,15 @@
 		</Setter>
 		<Setter Property="Template">
 			<Setter.Value>
-				<ControlTemplate TargetType="reactive:FeedView">
+				<ControlTemplate TargetType="uer:FeedView">
 					<Grid
 						VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
 						HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}">
 						<VisualStateManager.CustomVisualStateManager>
-							<reactive:SmoothVisualStateManager>
-								<reactive:SmoothVisualStateRule MinDuration="0:0:0.500" />
-								<reactive:SmoothVisualStateRule Group="ProgressGroup" To="Indeterminate" Delay="0:0:0.250" />
-							</reactive:SmoothVisualStateManager>
+							<uer:SmoothVisualStateManager>
+								<uer:SmoothVisualStateRule MinDuration="0:0:0.500" />
+								<uer:SmoothVisualStateRule Group="ProgressGroup" To="Indeterminate" Delay="0:0:0.250" />
+							</uer:SmoothVisualStateManager>
 						</VisualStateManager.CustomVisualStateManager>
 						<VisualStateManager.VisualStateGroups>
 							<VisualStateGroup x:Name="DataGroup">

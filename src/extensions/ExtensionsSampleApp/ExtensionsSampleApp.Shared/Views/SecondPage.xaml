@@ -4,7 +4,7 @@
       xmlns:local="using:ExtensionsSampleApp"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:nav="using:Uno.Extensions.Navigation.Controls"
+      xmlns:uen="using:Uno.Extensions.Navigation.UI"
       mc:Ignorable="d"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -16,7 +16,9 @@
         </Grid.RowDefinitions>
         <StackPanel>
             <CommandBar >
-                <AppBarButton Icon="Back" Label="Back" nav:Navigation.Request="../-" />
+                <AppBarButton Icon="Back"
+                              Label="Back"
+                              uen:Navigation.Request="../-" />
                 <CommandBar.Content>
                     <TextBlock Text="Title"
                            Margin="12,8" />
@@ -29,11 +31,11 @@
                        FontSize="30"
                        Foreground="Red" />
             <Button Content="Next Page (cancelled - won't navigate)"
-                    nav:Navigation.Request="../ThirdPage" />
+                    uen:Navigation.Request="../ThirdPage" />
             <Button Content="Next Page Request Data (cancelled - won't navigate)"
                     Click="NextPageNavigateViewAsyncRequestDataClick"/>
             <Button Content="Next Page with args"
-                    nav:Navigation.Request="../ThirdPage?arg1=val1&amp;arg2=val2" />
+                    uen:Navigation.Request="../ThirdPage?arg1=val1&amp;arg2=val2" />
             <Button Content="Next Page with data"
                     Click="NextPageNavigateViewAsyncWithDataClick" />
             <Button Content="Next Page with args and data"
@@ -43,24 +45,24 @@
             <Button Content="Go Back - NavigationRequest"
                     Click="GoBackNavigationRequestClick" />
             <Button Content="Go Back - Navigation Path"
-                    nav:Navigation.Request="../-" />
+                    uen:Navigation.Request="../-" />
             <Button Content="Go Back - NavigatePreviousViewAsync"
                     Click="GoBackNavigatePreviousViewAsyncClick" />
             <Button Content="Tabbed Page - NavigationRequest"
-                    nav:Navigation.Request="../TabbedPage" />
+                    uen:Navigation.Request="../TabbedPage" />
 
             <Button Content="Root - Twitter ('/-/Twitter')"
-                    nav:Navigation.Request="/-/TwitterPage" />
+                    uen:Navigation.Request="/-/TwitterPage" />
 
         </StackPanel>
         <ContentControl Grid.Row="1"
-                        nav:Region.Name="content"
-                        nav:Region.Attached="True" />
+                        uen:Region.Name="content"
+                        uen:Region.Attached="True" />
         <StackPanel Grid.Row="2">
             <Button Content="Content Page 1"
-                    nav:Navigation.Request="./content/Content1" />
+                    uen:Navigation.Request="./content/Content1" />
             <Button Content="Content Page 2"
-                    nav:Navigation.Request="./content/Content2" />
+                    uen:Navigation.Request="./content/Content2" />
         </StackPanel>
     </Grid>
 </Page>
