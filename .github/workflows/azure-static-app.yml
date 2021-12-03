@@ -43,6 +43,11 @@ jobs:
         with:
           dotnet-version: '5.0.x'
 
+      - name: Setup dotnet 6.0.x
+        uses: actions/setup-dotnet@v1.7.2
+        with:
+          dotnet-version: '6.0.x'
+
       - run: |
           cd samples/Commerce/WinUI/Commerce.Wasm
           dotnet build -c Release "/p:Version=${{ steps.gitversion.outputs.fullSemVer }}" /p:UnoExtensionsDisableNet6=true /p:GeneratePackageOnBuild=false /detailedsummary
