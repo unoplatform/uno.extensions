@@ -20,8 +20,8 @@ jobs:
       version: 6.0.100
 
   - bash: |
-      chmod +x build/scripts/wasm-uitest-run.sh
-      build/scripts/wasm-uitest-run.sh
+      chmod +x build/ci/scripts/wasm-uitest-run.sh
+      build/scripts/ci/wasm-uitest-run.sh
     env:
       BUILD_SOURCESDIRECTORY: "$(build.sourcesdirectory)"
       BUILD_ARTIFACTSTAGINGDIRECTORY: "$(build.artifactstagingdirectory)"
@@ -32,7 +32,7 @@ jobs:
     inputs:
       testRunTitle: 'WebAssembly Test Run'
       testResultsFormat: 'NUnit'
-      testResultsFiles: '$(build.sourcesdirectory)/build/TestResult.xml'
+      testResultsFiles: '$(build.sourcesdirectory)/build/ci/TestResult.xml'
       failTaskOnFailedTests: true
 
   - task: PublishBuildArtifacts@1
