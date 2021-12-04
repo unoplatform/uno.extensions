@@ -1,0 +1,5 @@
+﻿<linker>
+  <assembly fullname="Uno.Extensions.Navigation.UI">
+	  <type fullname="Uno.Extensions.Navigation.Navigators.*" />
+  </assembly>
+</linker>

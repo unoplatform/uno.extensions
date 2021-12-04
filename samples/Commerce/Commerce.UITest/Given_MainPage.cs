@@ -13,13 +13,14 @@ namespace Uno.Gallery.UITests
 		[Test]
 		public void When_SmokeTest()
 		{
-			NavigateToSample("Overview", "Material");
+			App.WaitForElement(q => q.Marked("UserName"));
 
-			TakeScreenshot("Start");
+			App.EnterText("UserName", "test@test.com");
+			App.EnterText("Password", "passwordpassword");
 
-			App.WaitThenTap("MaterialContainedButton");
+			App.Tap("Login");
 
-			TakeScreenshot("Finish");
+			App.WaitForElement(q => q.Marked("Filters"));
 		}
 	}
 }
