@@ -32,7 +32,7 @@ jobs:
     inputs:
       testRunTitle: 'WebAssembly Test Run'
       testResultsFormat: 'NUnit'
-      testResultsFiles: '$(build.sourcesdirectory)/build/ci/TestResult.xml'
+      testResultsFiles: '$(build.sourcesdirectory)/build/TestResult.xml'
       failTaskOnFailedTests: true
 
   - task: PublishBuildArtifacts@1
