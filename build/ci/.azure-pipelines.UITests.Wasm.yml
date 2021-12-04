@@ -21,7 +21,7 @@ jobs:
 
   - bash: |
       chmod +x build/ci/scripts/wasm-uitest-run.sh
-      build/scripts/ci/wasm-uitest-run.sh
+      build/ci/scripts/wasm-uitest-run.sh
     env:
       BUILD_SOURCESDIRECTORY: "$(build.sourcesdirectory)"
       BUILD_ARTIFACTSTAGINGDIRECTORY: "$(build.artifactstagingdirectory)"
