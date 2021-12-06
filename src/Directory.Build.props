@@ -102,7 +102,4 @@
 		<DefaultItemExcludes>$(DefaultItemExcludes);obj/**;bin/**</DefaultItemExcludes>
 	</PropertyGroup>
 
-	<!-- <PropertyGroup Condition="'$(Configuration)'=='Debug'">
-		<UnoTargetFrameworkOverride>uap10.0.18362</UnoTargetFrameworkOverride>
-	</PropertyGroup> -->
 </Project>
