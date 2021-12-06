@@ -20,9 +20,9 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
     public ContentControlNavigator(
         ILogger<ContentControlNavigator> logger,
         IRegion region,
-        IMappings mappings,
+        IRouteResolver routeResolver, IViewResolver viewResolver,
         RegionControlProvider controlProvider)
-        : base(logger, region, mappings, controlProvider.RegionControl as ContentControl)
+        : base(logger, region, routeResolver, viewResolver, controlProvider.RegionControl as ContentControl)
     {
     }
 

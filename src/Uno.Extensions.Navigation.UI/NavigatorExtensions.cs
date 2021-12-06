@@ -31,9 +31,9 @@ public static class NavigatorExtensions
 		return parentNav;
 	}
 
-	internal static IMappings? GetMapping(this INavigator navigator)
+	internal static IRouteResolver? GetMapping(this INavigator navigator)
 	{
-		return navigator.Get<IServiceProvider>()?.GetRequiredService<IMappings>() ?? default;
+		return navigator.Get<IServiceProvider>()?.GetRequiredService<IRouteResolver>() ?? default;
 	}
 
 	public static async Task<NavigationResultResponse<TResult>?> NavigateRouteForResultAsync<TResult>(

@@ -42,9 +42,9 @@ public class NavigationViewNavigator : ControlNavigator<Microsoft.UI.Xaml.Contro
 	public NavigationViewNavigator(
 		ILogger<NavigationViewNavigator> logger,
 		IRegion region,
-		IMappings mappings,
+		IRouteResolver routeResolver, IViewResolver viewResolver,
 		RegionControlProvider controlProvider)
-		: base(logger, region, mappings, controlProvider.RegionControl as Microsoft.UI.Xaml.Controls.NavigationView)
+		: base(logger, region, routeResolver, viewResolver, controlProvider.RegionControl as Microsoft.UI.Xaml.Controls.NavigationView)
 	{
 	}
 

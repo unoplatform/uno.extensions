@@ -23,9 +23,9 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
     protected ControlNavigator(
         ILogger logger,
         IRegion region,
-        IMappings mappings,
+        IRouteResolver routeResolver, IViewResolver viewResolver,
         TControl? control)
-        : base(logger, mappings, region)
+        : base(logger, routeResolver, viewResolver, region)
     {
         Control = control;
     }
@@ -50,9 +50,9 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
         }
 
         var route = request.Route;
-        var mapping = Mappings.FindView(route);
-        Logger.LogDebugMessage($"Navigating to path '{route.Base}' with view '{mapping?.ViewType?.Name}'");
-        var executedPath = await Show(route.Base, mapping?.ViewType, route.Data);
+        var mapping = ViewResolver.FindView(route);
+        Logger.LogDebugMessage($"Navigating to path '{route.Base}' with view '{mapping?.View?.Name}'");
+        var executedPath = await Show(route.Base, mapping?.View, route.Data);
 
         InitialiseCurrentView(route, mapping);
 
@@ -84,7 +84,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 
         var viewModel = view.DataContext;
         if (viewModel is null ||
-            viewModel.GetType() != mapping?.ViewModelType)
+            viewModel.GetType() != mapping?.ViewModel)
         {
             // This will happen if cache mode isn't set to required
             viewModel = CreateViewModel(services, navigator, route, mapping);
@@ -105,9 +105,9 @@ public abstract class ControlNavigator : Navigator
 
     protected ControlNavigator(
         ILogger logger,
-        IMappings mappings,
+        IRouteResolver routeResolver, IViewResolver viewResolver,
         IRegion region)
-        : base(logger, region, mappings)
+        : base(logger, region, routeResolver, viewResolver)
     {
     }
 
@@ -188,12 +188,12 @@ public abstract class ControlNavigator : Navigator
 
     protected object? CreateViewModel(IServiceProvider services, INavigator navigator, Route route, ViewMap? mapping)
     {
-        if (mapping?.ViewModelType is not null)
+        if (mapping?.ViewModel is not null)
         {
             var dataFactor = services.GetRequiredService<NavigationDataProvider>();
             dataFactor.Parameters = route.Data ?? new Dictionary<string, object>();
 
-            var vm = services.GetService(mapping.ViewModelType);
+            var vm = services.GetService(mapping.ViewModel);
             if (vm is IInjectable<INavigator> navAware)
             {
                 navAware.Inject(navigator);

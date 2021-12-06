@@ -2,20 +2,26 @@
 
 namespace Uno.Extensions.Navigation;
 
-public interface IMappings
+public interface IResolver : IRouteResolver, IViewResolver
+{ }
+
+public interface IRouteResolver
 {
-    RouteMap? Find(Route route);
+	RouteMap? Find(Route route);
 
-    RouteMap? FindByPath(string? path);
+	RouteMap? FindByPath(string? path);
 
-    RouteMap? FindByViewModel(Type? viewModelType);
+	RouteMap? FindByViewModel(Type? viewModelType);
 
-    RouteMap? FindByView(Type? viewType);
+	RouteMap? FindByView(Type? viewType);
 
-    RouteMap? FindByData(Type? dataType);
+	RouteMap? FindByData(Type? dataType);
 
-    RouteMap? FindByResultData(Type? resultDataType);
+	RouteMap? FindByResultData(Type? resultDataType);
+}
 
+public interface IViewResolver
+{ 
 	ViewMap? FindView(Route route);
 
 	ViewMap? FindViewByPath(string? path);

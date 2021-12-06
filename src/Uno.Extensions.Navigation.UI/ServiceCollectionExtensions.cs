@@ -29,10 +29,10 @@ public static class ServiceCollectionExtensions
 {
 	public static IServiceCollection AddNavigation(
 		this IServiceCollection services,
-		Action<IRouteBuilder>? routeBuilder = null)
+		Action<IRouteRegistry, IViewRegistry>? routeBuilder = null)
 	{
 		var builder = new RouteBuilder(services);
-		routeBuilder?.Invoke(builder);
+		routeBuilder?.Invoke(builder, builder);
 
 		return services
 					.AddScoped<IInstanceRepository, InstanceRepository>()
@@ -59,7 +59,9 @@ public static class ServiceCollectionExtensions
 					.AddSingleton<IRequestHandler, NavigationViewItemRequestHandler>()
 
 					// Register the navigation mappings repository
-					.AddSingleton<IMappings, RouteMappingsDefault>()
+					.AddSingleton<RouteMappingsDefault>()
+					.AddSingleton<IRouteResolver>(sp => sp.GetRequiredService<RouteMappingsDefault>())
+					.AddSingleton<IViewResolver>(sp => sp.GetRequiredService<RouteMappingsDefault>())
 
 					.AddScoped<INavigatorFactory, NavigatorFactory>()
 

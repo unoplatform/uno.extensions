@@ -24,10 +24,12 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 	public Route? Route { get; protected set; }
 
-	protected IMappings Mappings { get; }
+	protected IRouteResolver RouteResolver { get; }
 
-	public Navigator(ILogger<Navigator> logger, IRegion region, IMappings mappings)
-		: this((ILogger)logger, region, mappings)
+	protected IViewResolver ViewResolver { get; }
+
+	public Navigator(ILogger<Navigator> logger, IRegion region, IRouteResolver routeResolver, IViewResolver viewResolver)
+		: this((ILogger)logger, region,  routeResolver,  viewResolver)
 	{
 		if (region.Parent is null &&
 			region.View is not null)
@@ -36,11 +38,12 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		}
 	}
 
-	protected Navigator(ILogger logger, IRegion region, IMappings mappings)
+	protected Navigator(ILogger logger, IRegion region, IRouteResolver routeResolver, IViewResolver viewResolver)
 	{
 		Region = region;
 		Logger = logger;
-		Mappings = mappings;
+		RouteResolver = routeResolver;
+		ViewResolver = viewResolver;
 	}
 
 	private async Task InitializeRootNavigator()
@@ -62,14 +65,14 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			RouteUpdater?.StartNavigation();
 
 			// Initialise the region
-			var requestMap = Region.Services?.GetRequiredService<IMappings>().FindByPath(request.Route.Base);
+			var requestMap = Region.Services?.GetRequiredService<IRouteResolver>().FindByPath(request.Route.Base);
 			if (requestMap?.Init is not null)
 			{
 				var newRequest = requestMap.Init(request);
 				while (!request.SameRouteBase(newRequest))
 				{
 					request = newRequest;
-					requestMap = Region.Services?.GetRequiredService<IMappings>().FindByPath(request.Route.Base);
+					requestMap = Region.Services?.GetRequiredService<IRouteResolver>().FindByPath(request.Route.Base);
 					if (requestMap?.Init is not null)
 					{
 						newRequest = requestMap.Init(request);
@@ -166,7 +169,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			return default;
 		}
 
-		var mapping = Mappings.FindView(request.Route);
+		var mapping = ViewResolver.FindView(request.Route);
 		if (mapping?.UntypedBuildQuery is not null)
 		{
 			request = request with { Route = request.Route with { Data = request.Route.Data?.AsParameters(mapping) } };
@@ -258,10 +261,10 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		// when creating the view model
 		services?.AddInstance<INavigator>(this);
 
-		var mapping = Mappings.FindViewByView(Region.View.GetType());
-		if (mapping?.ViewModelType is not null)
+		var mapping = ViewResolver.FindViewByView(Region.View.GetType());
+		if (mapping?.ViewModel is not null)
 		{
-			var vm = services?.GetService(mapping.ViewModelType);
+			var vm = services?.GetService(mapping.ViewModel);
 			if (vm is IInjectable<INavigator> navAware)
 			{
 				navAware.Inject(this);

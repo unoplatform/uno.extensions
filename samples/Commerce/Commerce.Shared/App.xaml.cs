@@ -185,21 +185,15 @@ namespace Commerce
 			deferral.Complete();
 		}
 
-		private static void RegisterRoutes(IRouteBuilder builder)
+		private static void RegisterRoutes(IRouteRegistry routes, IViewRegistry views)
 		{
-			builder
+			routes
 				.Register(new RouteMap(nameof(ShellView), typeof(ShellView)))
-				.Register(new ViewMap(typeof(ShellView), typeof(ShellViewModel)))
-
 				.Register(new RouteMap("Login", typeof(LoginPage)))
-				.Register(new ViewMap(typeof(LoginPage), typeof(LoginViewModel.BindableLoginViewModel)))
-
 				.Register(new RouteMap("Home", typeof(HomePage),
 					nav => nav.Route.Next().IsEmpty() ?
 												nav with { Route = nav.Route.Append(Route.NestedRoute("Products")) } :
 												nav))
-				.Register(new ViewMap(typeof(HomePage), typeof(HomeViewModel)))
-
 				.Register(new RouteMap("Products", typeof(FrameView),
 					nav => nav.Route.Next().IsEmpty() ?
 												nav with { Route = nav.Route.AppendPage<ProductsPage>() } : nav with
@@ -208,10 +202,7 @@ namespace Commerce
 																	nav.Route :
 																	nav.Route.InsertPage<ProductsPage>()
 												}))
-				.Register(new RouteMap(nameof(ProductsPage),typeof(ProductsPage)))
-
-				.Register(new ViewMap(typeof(ProductsPage), typeof(ProductsViewModel.BindableProductsViewModel)))
-
+				.Register(new RouteMap(nameof(ProductsPage), typeof(ProductsPage)))
 				.Register(new RouteMap("Deals", typeof(DealsPage),
 					nav => nav.Route.Next().IsEmpty() ?
 												nav with { Route = nav.Route.AppendPage<DealsPage>() } : nav with
@@ -220,24 +211,15 @@ namespace Commerce
 																	nav.Route :
 																	nav.Route.InsertPage<DealsPage>()
 												}))
-
-				.Register(new ViewMap(typeof(DealsPage), typeof(DealsViewModel)))
-
 				.Register(new RouteMap("ProductDetails", typeof(ProductDetailsPage),
 					nav => (App.Current as App).Window.Content.ActualSize.X > 800 ?
 												nav with { Route = nav.Route with { Scheme = "./", Base = "Details", Path = nameof(ProductDetailsPage) } } :
 												nav with { Route = nav.Route with { Base = nameof(ProductDetailsPage) } }))
-
 				.Register(new RouteMap(nameof(ProductDetailsPage), typeof(ProductDetailsPage)))
-
-				.Register(new ViewMap<Product>(typeof(ProductDetailsPage), typeof(ProductDetailsViewModel.BindableProductDetailsViewModel),
-					BuildQuery: product => new Dictionary<string, string> { { nameof(Product.ProductId), product.ProductId + "" } }))
-
-				.Register(new RouteMap(nameof(CartFlyout),typeof(CartFlyout),
+				.Register(new RouteMap(nameof(CartFlyout), typeof(CartFlyout),
 					nav => nav.Route.Next().IsEmpty() ?
 													nav with { Route = nav.Route.AppendNested<CartPage>() } :
 													nav))
-
 				.Register(new RouteMap("Filter", typeof(FilterFlyout),
 					nav => nav.Route.Next().IsEmpty() ?
 												nav with { Route = nav.Route.AppendPage<FilterPage>() } : nav with
@@ -247,13 +229,22 @@ namespace Commerce
 																	nav.Route.InsertPage<FilterPage>()
 												}))
 				.Register(new RouteMap(nameof(FilterPage), typeof(FilterPage)))
+				.Register(new RouteMap("Profile", typeof(ProfilePage)));
 
+			views
+				.Register(new ViewMap(typeof(ShellView), typeof(ShellViewModel)))
+				.Register(new ViewMap(typeof(LoginPage), typeof(LoginViewModel.BindableLoginViewModel)))
+				.Register(new ViewMap(typeof(HomePage), typeof(HomeViewModel)))
+				.Register(new ViewMap(typeof(ProductsPage), typeof(ProductsViewModel.BindableProductsViewModel)))
+				.Register(new ViewMap(typeof(DealsPage), typeof(DealsViewModel)))
+				.Register(new ViewMap<Product>(typeof(ProductDetailsPage), typeof(ProductDetailsViewModel.BindableProductDetailsViewModel),
+					BuildQuery: product => new Dictionary<string, string> { { nameof(Product.ProductId), product.ProductId + "" } }))
 				.Register(new ViewMap<Filters>(typeof(FilterPage), typeof(FiltersViewModel.BindableFiltersViewModel)))
-				.Register(new RouteMap("Profile", typeof(ProfilePage)))
-
 				.Register(new ViewMap(typeof(ProfilePage), typeof(ProfileViewModel)))
-
 				.Register(new ViewMap(typeof(CartPage), typeof(CartViewModel)));
+
+
+
 		}
 
 		public async void RouteUpdated(object sender, EventArgs e)
