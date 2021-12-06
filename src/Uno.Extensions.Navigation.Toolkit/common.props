@@ -2,8 +2,12 @@
 	<ItemGroup Condition="'$(IsUWP)' == 'true'">
 		<PackageReference Include="Microsoft.UI.Xaml" Version="2.7.0" />
 	</ItemGroup>
+  
+  <PropertyGroup>
+	<AssemblyName>Uno.Extensions.Navigation.Toolkit.UI</AssemblyName>
+  </PropertyGroup>
 
-	<ItemGroup>
+  <ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
 	</ItemGroup>
 
@@ -15,4 +19,11 @@
 	<ItemGroup>
 		<PackageReference Include="Uno.Core" Version="4.0.1" />
 	</ItemGroup>
+
+  <ItemGroup>
+	<EmbeddedResource Include="LinkerDefinition.xml">
+	  <LogicalName>$(AssemblyName).xml</LogicalName>
+	</EmbeddedResource>
+  </ItemGroup>
+
 </Project>

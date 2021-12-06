@@ -10,4 +10,5 @@
 	<ItemGroup>
 		<PackageReference Include="Uno.UI" Version="4.0.9" />
 	</ItemGroup>
+	
 </Project>

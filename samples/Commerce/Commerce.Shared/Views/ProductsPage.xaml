@@ -97,6 +97,7 @@
 								   utu:AutoLayout.CounterAlignment="Center"
 								   Style="{StaticResource MaterialBody2}" />
 						<HyperlinkButton Content="Filters"
+										 AutomationProperties.AutomationId="Filters"
 										 x:Uid="Page_Filters"
 										 utu:AutoLayout.CounterAlignment="Center"
 										 Style="{StaticResource MaterialHyperlinkButtonStyle}"

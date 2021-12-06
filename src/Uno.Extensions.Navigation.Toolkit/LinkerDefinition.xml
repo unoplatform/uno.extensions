@@ -1,0 +1,5 @@
+﻿<linker>
+  <assembly fullname="Uno.Extensions.Navigation.Toolkit.UI">
+	  <type fullname="Uno.Extensions.Navigation.Toolkit.Navigators.TabBarNavigator" />
+  </assembly>
+</linker>
