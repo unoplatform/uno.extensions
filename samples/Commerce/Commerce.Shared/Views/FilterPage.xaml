@@ -5,7 +5,7 @@
 	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	  xmlns:utu="using:Uno.Toolkit.UI"
-	  xmlns:nav="using:Uno.Extensions.Navigation.UI"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  mc:Ignorable="d"
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -36,7 +36,7 @@
 								   utu:AutoLayout.CounterAlignment="Stretch"
 								   Style="{StaticResource MaterialRootModalNavigationBarStyle}">
 					<utu:NavigationBar.MainCommand>
-						<AppBarButton nav:Navigation.Request="../../-"
+						<AppBarButton uen:Navigation.Request="../../-"
 									  Foreground="{ThemeResource MaterialOnSurfaceBrush}" />
 					</utu:NavigationBar.MainCommand>
 					<utu:NavigationBar.PrimaryCommands>
@@ -131,8 +131,8 @@
 							x:Uid="Body_Apply"
 							utu:AutoLayout.PrimaryAlignment="Stretch"
 							Style="{StaticResource MaterialContainedButtonStyle}"
-							nav:Navigation.Request="../../-"
-							nav:Navigation.Data="{Binding Filter.Value}" />
+							uen:Navigation.Request="../../-"
+							uen:Navigation.Data="{Binding Filter.Value}" />
 				</utu:AutoLayout>
 			</utu:AutoLayout>
 		</utu:AutoLayout>
