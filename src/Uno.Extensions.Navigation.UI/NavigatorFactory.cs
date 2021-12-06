@@ -26,15 +26,19 @@ public class NavigatorFactory : INavigatorFactory
 
     private ILogger Logger { get; }
 
-    private IMappings Mappings { get; }
+    private IRouteResolver RouteResolver { get; }
 
-    public NavigatorFactory(
+	private IViewResolver ViewResolver { get; }
+
+	public NavigatorFactory(
         ILogger<NavigatorFactory> logger,
         IEnumerable<NavigatorFactoryBuilder> builders,
-        IMappings mappings)
+		IRouteResolver routeResolver,
+		IViewResolver viewResolver)
     {
         Logger = logger;
-        Mappings = mappings;
+		RouteResolver = routeResolver;
+		ViewResolver = viewResolver;
         builders.ForEach(builder => builder.Configure?.Invoke(this));
     }
 
@@ -56,8 +60,6 @@ public class NavigatorFactory : INavigatorFactory
             return default;
         }
 
-        //// Create Navigation Service
-        //var navLogger = services.GetService<ILogger<ControlNavigator>>();
 
         INavigator? navService = null;
 
@@ -105,8 +107,8 @@ public class NavigatorFactory : INavigatorFactory
         var dialogRegion = new NavigationRegion(services: services);
         services.AddInstance<IRegion>(dialogRegion);
 
-        var mapping = Mappings.FindViewByPath(request.Route.Base);
-        var serviceLookupType = mapping?.ViewType;
+        var mapping = ViewResolver.FindViewByPath(request.Route.Base);
+        var serviceLookupType = mapping?.View;
         if (serviceLookupType is null)
         {
             object? resource = request.RouteResourceView(region);

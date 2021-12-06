@@ -18,9 +18,9 @@ public class ContentDialogNavigator : DialogNavigator
 {
     public ContentDialogNavigator(
         ILogger<ContentDialogNavigator> logger,
-        IMappings mappings,
+        IRouteResolver routeResolver, IViewResolver viewResolver,
         IRegion region)
-        : base(logger, mappings, region)
+        : base(logger, routeResolver, viewResolver, region)
     {
     }
 
@@ -29,16 +29,16 @@ public class ContentDialogNavigator : DialogNavigator
         var route = request.Route;
         var navigation = Region.Navigator();
         var services = this.Get<IServiceProvider>();
-        var mapping = Mappings.FindView(route);
+        var mapping = ViewResolver.FindView(route);
         if (
             navigation is null ||
             services is null ||
-            mapping?.ViewType is null)
+            mapping?.View is null)
         {
             return null;
         }
 
-        var dialog = Activator.CreateInstance(mapping.ViewType) as ContentDialog;
+        var dialog = Activator.CreateInstance(mapping.View) as ContentDialog;
         if(dialog is null)
         {
             return null;

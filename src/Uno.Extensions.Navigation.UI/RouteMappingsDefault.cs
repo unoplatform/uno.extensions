@@ -107,7 +107,7 @@ public class RouteMappingsDefault : RouteMappings
 		{
 			var defaultMap = new ViewMap(view, viewModel);
 			ViewMappings[view] = defaultMap;
-			Logger.LogDebugMessage($"Created default mapping - Path '{path}', View '{defaultMap.ViewType?.Name}', View Model '{defaultMap.ViewModelType?.Name}'");
+			Logger.LogDebugMessage($"Created default mapping - Path '{path}', View '{defaultMap.View?.Name}', View Model '{defaultMap.ViewModel?.Name}'");
 			return defaultMap;
 		}
 

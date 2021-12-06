@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Uno.Extensions.Navigation;
 
-public class RouteMappings : IMappings
+public class RouteMappings : IRouteResolver, IViewResolver
 {
 	protected IDictionary<string, RouteMap> Mappings { get; } = new Dictionary<string, RouteMap>();
 	protected IDictionary<Type, ViewMap> ViewMappings { get; } = new Dictionary<Type, ViewMap>();
@@ -21,7 +21,7 @@ public class RouteMappings : IMappings
 		}
 		if (viewMaps is not null)
 		{
-			viewMaps.ForEach(map=> ViewMappings[map.ViewType] = map);
+			viewMaps.ForEach(map=> ViewMappings[map.View] = map);
 		}
 	}
 
@@ -47,12 +47,12 @@ public class RouteMappings : IMappings
 
 	public RouteMap? FindByViewModel(Type? viewModelType)
 	{
-		return FindRouteByViewMapType(viewModelType, map => map.ViewModelType);
+		return FindRouteByViewMapType(viewModelType, map => map.ViewModel);
 	}
 
 	public RouteMap? FindByView(Type? viewType)
 	{
-		return FindRouteByType(viewType, map => map.ViewType);
+		return FindRouteByType(viewType, map => map.View);
 	}
 
 	public virtual RouteMap? FindByData(Type? dataType)
@@ -68,7 +68,7 @@ public class RouteMappings : IMappings
 	private RouteMap? FindRouteByViewMapType(Type? typeToFind, Func<ViewMap, Type?> mapType)
 	{
 		var viewMap = FindByInheritedTypes(ViewMappings, typeToFind, mapType);
-		return FindByView(viewMap?.ViewType);
+		return FindByView(viewMap?.View);
 	}
 
 	private RouteMap? FindRouteByType(Type? typeToFind, Func<RouteMap, Type?> mapType)
@@ -124,16 +124,16 @@ public class RouteMappings : IMappings
 		}
 
 		var routeMap = FindByPath(path);
-		return FindViewByView(routeMap?.ViewType);
+		return FindViewByView(routeMap?.View);
 	}
 
 	public virtual ViewMap? FindViewByViewModel(Type? viewModelType)
 	{
-		return FindViewByType(viewModelType, map => map.ViewModelType);
+		return FindViewByType(viewModelType, map => map.ViewModel);
 	}
 	public virtual ViewMap? FindViewByView(Type? viewType)
 	{
-		return FindViewByType(viewType, map => map.ViewType);
+		return FindViewByType(viewType, map => map.View);
 	}
 
 	public ViewMap? FindViewByData(Type? dataType)

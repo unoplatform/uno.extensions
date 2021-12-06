@@ -2,7 +2,7 @@
 
 namespace Uno.Extensions.Navigation;
 
-public class RouteBuilder : IRouteBuilder
+public class RouteBuilder : IViewRegistry, IRouteRegistry
 {
 	private IServiceCollection Services { get; }
 	public RouteBuilder(IServiceCollection services)
@@ -10,24 +10,24 @@ public class RouteBuilder : IRouteBuilder
 		Services = services;
 	}
 
-	public IRouteBuilder Register(RouteMap route)
+	public IRouteRegistry Register(RouteMap route)
 	{
 		Services.AddSingleton(route);
 		return this;
 	}
 
-	public IRouteBuilder Register(ViewMap view)
+	public IViewRegistry Register(ViewMap view)
 	{
 		Services.AddSingleton(view);
-		if (view.ViewModelType is not null)
+		if (view.ViewModel is not null)
 		{
-			Services.AddTransient(view.ViewModelType);
+			Services.AddTransient(view.ViewModel);
 		}
 
 		return this;
 	}
 
-	public IRouteBuilder Register<TData>(ViewMap<TData> route)
+	public IViewRegistry Register<TData>(ViewMap<TData> route)
 	where TData : class
 	{
 		Register((ViewMap)route);
@@ -36,7 +36,7 @@ public class RouteBuilder : IRouteBuilder
 		return this;
 	}
 
-	public IRouteBuilder Register<TData, TResultData>(ViewMap<TData, TResultData> route)
+	public IViewRegistry Register<TData, TResultData>(ViewMap<TData, TResultData> route)
 		where TData : class
 		where TResultData : class
 	{

@@ -24,9 +24,9 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
     public PanelVisiblityNavigator(
         ILogger<PanelVisiblityNavigator> logger,
         IRegion region,
-        IMappings mappings,
+        IRouteResolver routeResolver, IViewResolver viewResolver,
         RegionControlProvider controlProvider)
-        : base(logger, region, mappings, controlProvider.RegionControl as Grid)
+        : base(logger, region, routeResolver, viewResolver, controlProvider.RegionControl as Grid)
     {
     }
 

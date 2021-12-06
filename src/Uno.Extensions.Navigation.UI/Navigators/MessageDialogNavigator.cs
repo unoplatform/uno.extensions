@@ -19,9 +19,9 @@ public class MessageDialogNavigator : DialogNavigator
 {
     public MessageDialogNavigator(
         ILogger<DialogNavigator> logger,
-        IMappings mappings,
+        IRouteResolver routeResolver, IViewResolver viewResolver,
         IRegion region)
-        : base(logger, mappings, region)
+        : base(logger, routeResolver, viewResolver, region)
     {
     }
 
@@ -29,8 +29,6 @@ public class MessageDialogNavigator : DialogNavigator
     {
         var route = request.Route;
         var navigation = Region.Navigator();
-        var services = this.Get<IServiceProvider>();
-        var mapping = Mappings.Find(route);
 
         var data = route.Data;
         if(data is null)

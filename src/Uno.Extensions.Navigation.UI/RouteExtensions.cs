@@ -59,7 +59,7 @@ public static class RouteExtensions
 
 	public static bool FrameIsForwardNavigation(this Route route) => !route.FrameIsBackNavigation();
 
-	public static Route[] ForwardNavigationSegments(this Route route, IMappings mappings)
+	public static Route[] ForwardNavigationSegments(this Route route, IViewResolver mappings)
 	{
 		if (route.IsEmpty() || route.FrameIsBackNavigation())
 		{
@@ -202,12 +202,12 @@ public static class RouteExtensions
 		return route with { Scheme = nextScheme, Base = routeBase, Path = nextPath };
 	}
 
-	public static bool IsPageRoute(this Route route, IMappings mappings)
+	public static bool IsPageRoute(this Route route, IViewResolver mappings)
 	{
-		return ((mappings.FindView(route))?.ViewType?.IsSubclassOf(typeof(Page)) ?? false);
+		return ((mappings.FindView(route))?.View?.IsSubclassOf(typeof(Page)) ?? false);
 	}
 
-	public static bool IsLastFrameRoute(this Route route, IMappings mappings)
+	public static bool IsLastFrameRoute(this Route route, IViewResolver mappings)
 	{
 		return route.IsLast() || !route.Next().IsPageRoute(mappings);
 	}
@@ -420,7 +420,7 @@ public static class RouteExtensions
 		return mapDict;
 	}
 
-	public static Route? ApplyFrameRoute(this Route? currentRoute, IMappings mappings, Route frameRoute)
+	public static Route? ApplyFrameRoute(this Route? currentRoute, IViewResolver viewResolver, Route frameRoute)
 	{
 		var scheme = frameRoute.Scheme;
 		if (string.IsNullOrWhiteSpace(frameRoute.Scheme))
@@ -433,7 +433,7 @@ public static class RouteExtensions
 		}
 		else
 		{
-			var segments = currentRoute.ForwardNavigationSegments(mappings).ToList();
+			var segments = currentRoute.ForwardNavigationSegments(viewResolver).ToList();
 			foreach (var schemeChar in scheme)
 			{
 				if (schemeChar + "" == Schemes.NavigateBack)
@@ -446,7 +446,7 @@ public static class RouteExtensions
 				}
 			}
 
-			var newSegments = frameRoute.ForwardNavigationSegments(mappings);
+			var newSegments = frameRoute.ForwardNavigationSegments(viewResolver);
 			if (newSegments is not null)
 			{
 				segments.AddRange(newSegments);
