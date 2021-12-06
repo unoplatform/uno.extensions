@@ -15,11 +15,6 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace Uno.Extensions.Navigation;
 
-public class NavigatorFactoryBuilder
-{
-    public Action<INavigatorFactory>? Configure { get; set; }
-}
-
 public class NavigatorFactory : INavigatorFactory
 {
     public IDictionary<string, Type> Navigators { get; } = new Dictionary<string, Type>();

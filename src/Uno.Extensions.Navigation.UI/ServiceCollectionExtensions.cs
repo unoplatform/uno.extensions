@@ -151,19 +151,3 @@ public static class ServiceCollectionExtensions
 #pragma warning restore CS8603 // Possible null reference return.
 	}
 }
-
-public class NavigationDataProvider
-{
-	public IDictionary<string, object> Parameters { get; set; } = new Dictionary<string, object>();
-
-	public TData? GetData<TData>()
-		where TData : class
-	{
-		return (Parameters?.TryGetValue(string.Empty, out var data) ?? false) ? data as TData : default;
-	}
-}
-
-public class RegionControlProvider
-{
-	public object? RegionControl { get; set; }
-}
