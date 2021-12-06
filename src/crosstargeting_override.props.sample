@@ -9,5 +9,7 @@
 		
     -->
     <!--<UnoNugetOverrideVersion>2.23.2-dev.667</UnoNugetOverrideVersion>-->
+
+    <-- <UnoTargetFrameworkOverride>netstandard2.0</UnoTargetFrameworkOverride> -->
   </PropertyGroup>
 </Project>
