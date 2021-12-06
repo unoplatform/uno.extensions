@@ -59,7 +59,7 @@ public static class RouteExtensions
 
 	public static bool FrameIsForwardNavigation(this Route route) => !route.FrameIsBackNavigation();
 
-	public static Route[] ForwardNavigationSegments(this Route route, IViewResolver mappings)
+	public static Route[] ForwardNavigationSegments(this Route route, IRouteResolver mappings)
 	{
 		if (route.IsEmpty() || route.FrameIsBackNavigation())
 		{
@@ -202,12 +202,12 @@ public static class RouteExtensions
 		return route with { Scheme = nextScheme, Base = routeBase, Path = nextPath };
 	}
 
-	public static bool IsPageRoute(this Route route, IViewResolver mappings)
+	public static bool IsPageRoute(this Route route, IRouteResolver mappings)
 	{
-		return ((mappings.FindView(route))?.View?.IsSubclassOf(typeof(Page)) ?? false);
+		return ((mappings.Find(route))?.View?.IsSubclassOf(typeof(Page)) ?? false);
 	}
 
-	public static bool IsLastFrameRoute(this Route route, IViewResolver mappings)
+	public static bool IsLastFrameRoute(this Route route, IRouteResolver mappings)
 	{
 		return route.IsLast() || !route.Next().IsPageRoute(mappings);
 	}
@@ -420,7 +420,7 @@ public static class RouteExtensions
 		return mapDict;
 	}
 
-	public static Route? ApplyFrameRoute(this Route? currentRoute, IViewResolver viewResolver, Route frameRoute)
+	public static Route? ApplyFrameRoute(this Route? currentRoute, IRouteResolver routeResolver, Route frameRoute)
 	{
 		var scheme = frameRoute.Scheme;
 		if (string.IsNullOrWhiteSpace(frameRoute.Scheme))
@@ -433,7 +433,7 @@ public static class RouteExtensions
 		}
 		else
 		{
-			var segments = currentRoute.ForwardNavigationSegments(viewResolver).ToList();
+			var segments = currentRoute.ForwardNavigationSegments(routeResolver).ToList();
 			foreach (var schemeChar in scheme)
 			{
 				if (schemeChar + "" == Schemes.NavigateBack)
@@ -446,7 +446,7 @@ public static class RouteExtensions
 				}
 			}
 
-			var newSegments = frameRoute.ForwardNavigationSegments(viewResolver);
+			var newSegments = frameRoute.ForwardNavigationSegments(routeResolver);
 			if (newSegments is not null)
 			{
 				segments.AddRange(newSegments);
