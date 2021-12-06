@@ -56,7 +56,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 		{
 			// If navigation is triggered externally on the Frame (eg back button)
 			// the current page should match the view associated with the previous route
-			var previousRoute = FullRoute.ApplyFrameRoute(ViewResolver, route);
+			var previousRoute = FullRoute.ApplyFrameRoute(RouteResolver, route);
 			if(previousRoute is null)
 			{
 				return false;
@@ -93,7 +93,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 		}
 
 		var route = request.Route;
-		var segments = (from pg in route.ForwardNavigationSegments(ViewResolver)
+		var segments = (from pg in route.ForwardNavigationSegments(RouteResolver)
 						let map = ViewResolver.FindViewByPath(pg.Base)
 						where map?.View is not null &&
 								map.View.IsSubclassOf(typeof(Page))
@@ -163,7 +163,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 			numberOfPagesToRemove--;
 		}
 		var responseRoute = route with { Path = null };
-		var previousRoute = FullRoute.ApplyFrameRoute(ViewResolver, responseRoute);
+		var previousRoute = FullRoute.ApplyFrameRoute(RouteResolver, responseRoute);
 		var previousBase = previousRoute?.Base;
 		var currentBase = RouteResolver.FindByView(Control.Content.GetType())?.Path;
 		if (currentBase != previousBase && previousBase != Control.Content.GetType().Name)
@@ -316,7 +316,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 			return;
 		}
 
-		FullRoute = FullRoute.ApplyFrameRoute(ViewResolver, route);
+		FullRoute = FullRoute.ApplyFrameRoute(RouteResolver, route);
 		var lastRoute = FullRoute;
 		while (lastRoute is not null &&
 			!lastRoute.IsLast())

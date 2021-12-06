@@ -35,19 +35,19 @@ public class RouteMappingsDefault : RouteMappings
 	public override ViewMap? FindViewByPath(string? path)
 	{
 		var map = base.FindViewByPath(path);
-		return map ?? DefaultViewMapping(path: path);
+		return map ?? DefaultViewMapping(FindByPath(path));
 	}
 
 	public override ViewMap? FindViewByViewModel(Type? viewModelType)
 	{
 		var map = base.FindViewByViewModel(viewModelType);
-		return map ?? DefaultViewMapping(viewModel: viewModelType);
+		return map ?? DefaultViewMapping(FindByViewModel(viewModelType), viewModel: viewModelType);
 	}
 
 	public override ViewMap? FindViewByView(Type? viewType)
 	{
 		var map = base.FindViewByView(viewType);
-		return map ?? DefaultViewMapping(view: viewType);
+		return map ?? DefaultViewMapping(FindByView(viewType));
 	}
 
 
@@ -62,7 +62,10 @@ public class RouteMappingsDefault : RouteMappings
         if (path is not null &&
             !string.IsNullOrWhiteSpace(path))
         {
-            var defaultMap = new RouteMap(path);
+			var trimmedPath = TrimSuffices(path, ViewModelSuffixes.Union(ViewSuffixes).ToArray());
+			var view = TypeFromPath(trimmedPath, true, ViewSuffixes, type => type.IsSubclassOf(typeof(FrameworkElement)));
+			
+			var defaultMap = new RouteMap(path, view);
             Mappings[path] = defaultMap;
             Logger.LogDebugMessage($"Created default mapping - Path '{defaultMap.Path}'");
             return defaultMap;
@@ -73,7 +76,7 @@ public class RouteMappingsDefault : RouteMappings
     }
 
 
-	private ViewMap? DefaultViewMapping(string? path = null, Type? view = null, Type? viewModel = null)
+	private ViewMap? DefaultViewMapping(RouteMap? route, Type? viewModel = null)
 	{
 		if (!ReturnImplicitMapping)
 		{
@@ -81,33 +84,37 @@ public class RouteMappingsDefault : RouteMappings
 			return null;
 		}
 
-		Logger.LogWarningMessage($"For better performance (avoid reflection), create mapping for for path '{path}', view '{view?.Name}', view model '{viewModel?.Name}'");
-
-		Logger.LogDebugMessage($"Creating default mapping for path '{path}', view '{view?.Name}', view model '{viewModel?.Name}'");
-		if (string.IsNullOrWhiteSpace(path))
+		if(route?.View is null)
 		{
-			path = PathFromTypes(view, viewModel);
+			return default;
 		}
 
-		if (view is null)
-		{
-			var trimmedPath = TrimSuffices(path, ViewModelSuffixes);
-			view = TypeFromPath(trimmedPath, true, ViewSuffixes, type => type.IsSubclassOf(typeof(FrameworkElement)));
-		}
+		Logger.LogWarningMessage($"For better performance (avoid reflection), create mapping for for path '{route.Path}', view '{route.View.Name}', view model '{viewModel?.Name}'");
+
+		Logger.LogDebugMessage($"Creating default mapping for path '{route.Path}', view '{route.View.Name}', view model '{viewModel?.Name}'");
+		//if (string.IsNullOrWhiteSpace(route.Path))
+		//{
+		//	route.Path = PathFromTypes(view, viewModel);
+		//}
+
+		//if (view is null)
+		//{
+		//	var trimmedPath = TrimSuffices(route.Path, ViewModelSuffixes);
+		//	view = TypeFromPath(trimmedPath, true, ViewSuffixes, type => type.IsSubclassOf(typeof(FrameworkElement)));
+		//}
 
 		if (viewModel is null)
 		{
-			var trimmedPath = TrimSuffices(path, ViewSuffixes);
+			var trimmedPath = TrimSuffices(route.Path, ViewSuffixes);
 			viewModel = TypeFromPath(trimmedPath, false, ViewModelSuffixes);
 		}
 
-		if (path is not null &&
-			!string.IsNullOrWhiteSpace(path) &&
-			view is not null)
+		if (route.Path is not null &&
+			!string.IsNullOrWhiteSpace(route.Path))
 		{
-			var defaultMap = new ViewMap(view, viewModel);
-			ViewMappings[view] = defaultMap;
-			Logger.LogDebugMessage($"Created default mapping - Path '{path}', View '{defaultMap.View?.Name}', View Model '{defaultMap.ViewModel?.Name}'");
+			var defaultMap = new ViewMap(route.View, viewModel);
+			ViewMappings[route.View] = defaultMap;
+			Logger.LogDebugMessage($"Created default mapping - Path '{route.Path}', View '{defaultMap.View?.Name}', View Model '{defaultMap.ViewModel?.Name}'");
 			return defaultMap;
 		}
 
@@ -117,6 +124,11 @@ public class RouteMappingsDefault : RouteMappings
 
 	private Type? TypeFromPath(string path, bool allowMatchExact, IEnumerable<string> suffixes, Func<Type, bool>? condition = null)
     {
+		if (string.IsNullOrWhiteSpace(path))
+		{
+			return default;
+		}
+
         if (allowMatchExact && LoadedTypes.TryGetValue(path, out var type))
         {
             return type;
