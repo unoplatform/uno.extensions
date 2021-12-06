@@ -60,7 +60,7 @@ internal sealed class SelectAsyncFeed<TArg, TResult> : IFeed<TResult>
 								projectionToken = CancellationTokenSource.CreateLinkedTokenSource(ct);
 								projection = InvokeAsync(message, parentMsg, async ct2 => await _projection((TArg?)data, ct2), context, projectionToken.Token);
 
-								// We prefer to cancel the previous projection only AFTER so we are able to keep existing transient axises (cf. message.BeginTransaction)
+								// We prefer to cancel the previous projection only AFTER so we are able to keep existing transient axes (cf. message.BeginTransaction)
 								// This will not cause any concurrency issue since a transaction cannot push message updates as soon it's not the current.
 								previousProjection?.Cancel(); 
 								break;

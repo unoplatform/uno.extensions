@@ -49,12 +49,12 @@ internal sealed class CombineFeedHelper<TResult>
 				return null;
 			}
 
-			var allParentsDefinedAxises = _parents
+			var allParentsDefinedAxes = _parents
 				.Where(p => p is not null)
 				.SelectMany(p => p!.Keys)
 				.Distinct();
 
-			return _local = Build(allParentsDefinedAxises);
+			return _local = Build(allParentsDefinedAxes);
 		}
 	}
 

@@ -57,17 +57,17 @@ internal sealed partial class MessageManager<TParent, TResult>
 
 			// Finally apply the updates in order to get the new Local
 			// Note: We append the _local.applied.Keys as if a transaction was removed, it's possible that some changes was removed
-			var possiblyChangedAxises = changeSetToApply.Keys.Concat(_local.applied.Keys);
+			var possiblyChangedAxes = changeSetToApply.Keys.Concat(_local.applied.Keys);
 			if (parent is not null && parent != _parent) // Note: parent should not be null if updated !!!
 			{
-				possiblyChangedAxises = possiblyChangedAxises.Concat(parent.Changes);
+				possiblyChangedAxes = possiblyChangedAxes.Concat(parent.Changes);
 			}
 
 			var parentEntry = parent?.Current ?? MessageEntry<TParent>.Empty;
 			var localEntry = _local.result.Current;
 			var values = localEntry.Values.ToDictionary();
 			var changes = new List<MessageAxis>();
-			foreach (var axis in possiblyChangedAxises.Distinct())
+			foreach (var axis in possiblyChangedAxes.Distinct())
 			{
 				var parentValue = parentEntry[axis];
 				var currentValue = localEntry[axis];
@@ -133,7 +133,7 @@ internal sealed partial class MessageManager<TParent, TResult>
 		}
 	}
 
-	public UpdateTransaction BeginUpdate(CancellationToken ct, params MessageAxis[] preservePendingAxises)
+	public UpdateTransaction BeginUpdate(CancellationToken ct, params MessageAxis[] preservePendingAxes)
 	{
 		lock (_gate)
 		{
@@ -141,7 +141,7 @@ internal sealed partial class MessageManager<TParent, TResult>
 			var existingTransientUpdates = previousTransaction
 					?.TransientUpdates
 					.Values
-					.Where(u => preservePendingAxises.Contains(u.Axis))
+					.Where(u => preservePendingAxes.Contains(u.Axis))
 					.ToDictionary(u => u.Axis)
 				?? new();
 			var transaction = new UpdateTransaction(this, existingTransientUpdates, ct);

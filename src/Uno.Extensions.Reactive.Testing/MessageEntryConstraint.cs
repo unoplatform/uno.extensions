@@ -16,8 +16,8 @@ public class MessageEntryConstraint<T>// : IEnumerable<MessageAxisConstraint<T>>
 
 	public static MessageEntryConstraint<T> Initial { get; } = new(ImmutableList.Create<MessageAxisConstraint>(Data.Undefined, Error.No, Progress.Final));
 
-	public MessageEntryConstraint(EntryAxisConstraint<T>[] axises)
-		=> _parts = axises.Select(c => c.Value).ToImmutableList();
+	public MessageEntryConstraint(EntryAxisConstraint<T>[] axes)
+		=> _parts = axes.Select(c => c.Value).ToImmutableList();
 
 	public MessageEntryConstraint(IImmutableList<MessageAxisConstraint> parts)
 		=> _parts = parts;
@@ -77,7 +77,7 @@ public class MessageEntryConstraint<T>// : IEnumerable<MessageAxisConstraint<T>>
 
 	///// <inheritdoc />
 	//public IEnumerator<ConstraintPart<IMessageEntry>> GetEnumerator()
-	//	=> _axisesConstraints.GetEnumerator();
+	//	=> _axesConstraints.GetEnumerator();
 
 	///// <inheritdoc />
 	//IEnumerator IEnumerable.GetEnumerator()
