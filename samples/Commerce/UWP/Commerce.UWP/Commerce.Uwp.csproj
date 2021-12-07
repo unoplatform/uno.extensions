@@ -3,6 +3,13 @@
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <LangVersion>10.0</LangVersion>
+    <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+    <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+    <GenerateTestArtifacts>True</GenerateTestArtifacts>
+    <AppxBundle>Always</AppxBundle>
+    <AppxBundlePlatforms>x64</AppxBundlePlatforms>
+    <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
     <!--<DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_BREAK_ON_UNHANDLED_EXCEPTION</DefineConstants>-->
   </PropertyGroup>
   <ItemGroup>
@@ -17,7 +24,7 @@
 			-->
       <Version>6.2.11</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.UI.Xaml" Version="2.7.1-prerelease.211026002" />
+    <PackageReference Include="Microsoft.UI.Xaml" Version="2.7.0" />
     <PackageReference Include="Uno.Core" Version="4.0.1" />
     <PackageReference Include="Uno.Material">
       <Version>1.2.0</Version>
@@ -30,7 +37,7 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Localization" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="6.0.0" />
-    <PackageReference Include="System.Linq.Async" Version="5.0.0" />
+    <PackageReference Include="System.Linq.Async" Version="5.1.0" />
     <PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.0" />
   </ItemGroup>
   <PropertyGroup>
