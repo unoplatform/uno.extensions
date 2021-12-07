@@ -60,6 +60,11 @@ public record Property(Accessibility Accessibility, string Type, string Name)
 				sb.AppendLine($"get => {getter};");
 				sb.AppendLine();
 			}
+			else if (hasGetter is true)
+			{
+				sb.AppendLine("get;");
+				sb.AppendLine();
+			}
 
 			if (hasSetter is null or true && setter is not null)
 			{
@@ -71,6 +76,11 @@ public record Property(Accessibility Accessibility, string Type, string Name)
 
 				sb.AppendLine(init ? "init" : "set");
 				sb.AppendLine($" => {setter};");
+				sb.AppendLine();
+			}
+			else if (hasSetter is true)
+			{
+				sb.AppendLine("set;");
 				sb.AppendLine();
 			}
 		}

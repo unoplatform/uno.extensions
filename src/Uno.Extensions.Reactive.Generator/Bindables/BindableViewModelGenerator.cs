@@ -44,7 +44,6 @@ internal class BindableViewModelGenerator
 
 	private string Generate(INamedTypeSymbol vm)
 	{
-		var mappedMembers = GetMembers(vm).ToList();
 		var inputs = GetInputs(vm).ToList();
 		var inputsErrors  = inputs
 			.GroupBy(input => input.Parameter.Name)
@@ -59,6 +58,15 @@ internal class BindableViewModelGenerator
 				return $"#error The input named '{conflictingInput.Key}' does not have the same type in all declared constructors (found types {conflictingDeclarations}).";
 			});
 		inputs = inputs.Distinct().ToList();
+
+		var mappedMembers = GetMembers(vm).ToList();
+		var mappedMembersConflictingWithInputs = mappedMembers
+			.Where(member => inputs.Any(input => input.Property?.Name.Equals(member.Name, StringComparison.Ordinal) ?? false))
+			.ToList();
+		var mappedMembersErrors = mappedMembersConflictingWithInputs
+			.Select(member => $"// {member.Name} is not mapped from the Model as it would conflict with another member.")
+			.ToList();
+		mappedMembers = mappedMembers.Except(mappedMembersConflictingWithInputs).ToList();
 
 		var code = $@"#nullable enable
 #pragma warning disable
@@ -115,8 +123,9 @@ namespace {vm.ContainingNamespace}
 
 			public {vm} {N.Model} {{ get; }}
 
-			{inputs.Select(input => input.GetProperty()).Align(3)}
+			{inputs.Select(input => input.Property?.ToString()).Align(3)}
 
+			{mappedMembersErrors.Align(3)}
 			{mappedMembers.Select(member => member.GetDeclaration()).Align(3)}
 		}}
 

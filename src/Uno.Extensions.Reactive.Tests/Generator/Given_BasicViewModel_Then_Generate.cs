@@ -27,7 +27,9 @@ public class Given_BasicViewModel_Then_Generate : FeedUITests
 			defaultAnInput: default(string)!,
 			defaultAReadWriteInput: default(string)!,
 			defaultARecordInput: default(MyRecord)!,
-			defaultAWeirdRecordInput: default(MyWeirdRecord)!);
+			defaultAWeirdRecordInput: default(MyWeirdRecord)!,
+			defaultARecordWithAValuePropertyInput: default(MyRecordWithAValueProperty)!,
+			defaultAnInputConflictingWithAProperty: (int)42);
 
 		var bindableCtor5 = new Given_BasicViewModel_Then_Generate__ViewModel.BindableGiven_BasicViewModel_Then_Generate__ViewModel(
 			aParameterToNotBeAParameterLessCtor2: (int)0);
@@ -39,13 +41,16 @@ public class Given_BasicViewModel_Then_Generate : FeedUITests
 		var mysSubRecord = new MySubRecord("prop1", 42);
 		var myWeirdRecord = new MyWeirdRecord();
 		var myRecord = new MyRecord("prop1", 42, mysSubRecord, myWeirdRecord);
+		var myRecordWithAValueProperty = new MyRecordWithAValueProperty("42");
 
 		var bindable = new Given_BasicViewModel_Then_Generate__ViewModel.BindableGiven_BasicViewModel_Then_Generate__ViewModel(
 			aParameterToNotBeAParameterLessCtor1: (short)42,
 			defaultAnInput: "anInput",
 			defaultAReadWriteInput: "aReadWriteInput",
 			defaultARecordInput: myRecord,
-			defaultAWeirdRecordInput: myWeirdRecord);
+			defaultAWeirdRecordInput: myWeirdRecord,
+			defaultARecordWithAValuePropertyInput: myRecordWithAValueProperty,
+			defaultAnInputConflictingWithAProperty: (int)42);
 
 		Assert.IsNotNull(bindable.Model as Given_BasicViewModel_Then_Generate__ViewModel);
 
@@ -56,6 +61,30 @@ public class Given_BasicViewModel_Then_Generate : FeedUITests
 		bindable.AReadWriteInput = "hasSetter";
 
 		Assert.AreEqual<MyRecord>(myRecord, bindable.ARecordInput.GetValue()!);
+
+		// De normalized properties
+		((string)bindable.ARecordInput.Property1).ToString();
+		((int)bindable.ARecordInput.Property2).ToString();
+		((BindableMySubRecord)bindable.ARecordInput.Property3).ToString();
+		((BindableMyWeirdRecord)bindable.ARecordInput.Property4).ToString();
+		((string)bindable.ARecordInput.Property3.Prop1).ToString();
+		((int)bindable.ARecordInput.Property3.Prop2).ToString();
+		((string)bindable.ARecordInput.Property4.ReadWriteProperty).ToString();
+		((string)bindable.ARecordInput.Property4.ReadInitProperty ).ToString();
+		((string)bindable.ARecordInput.Property4.ReadOnlyProperty ).ToString();
+		bindable.ARecordInput.Property4.WriteOnlyProperty = "";
+		bindable.ARecordInput.Property4.InitOnlyProperty = "";
+		((string?)bindable.ARecordInput.Property4.ANullableProperty)?.ToString();
+
+		// Value properties
+		((MySubRecord)bindable.ARecordInput.Property3.Value).ToString();
+		((MyWeirdRecord)bindable.ARecordInput.Property4.Value).ToString();
+
+		((BindableMyWeirdRecord)bindable.AWeirdRecordInput).ToString();
+		((MyWeirdRecord)bindable.AWeirdRecordInput.Value).ToString();
+
+		((BindableMyRecordWithAValueProperty)bindable.ARecordWithAValuePropertyInput).ToString();
+		((string)bindable.ARecordWithAValuePropertyInput.Value).ToString();
 
 		Assert.AreEqual<MyWeirdRecord>(myWeirdRecord, bindable.AWeirdRecordInput.GetValue()!);
 
@@ -77,6 +106,9 @@ public class Given_BasicViewModel_Then_Generate : FeedUITests
 		Assert.AreEqual("AProtectedInternalField_SetFromVM", bindable.AProtectedInternalField);
 		bindable.AProtectedInternalField = "AProtectedInternalField_SetFromBindable";
 		Assert.AreEqual("AProtectedInternalField_SetFromBindable", bindable.Model.AProtectedInternalField);
+
+		Assert.AreEqual(bindable.Model.AnInputConflictingWithAProperty, "AnInputConflictingWithAProperty");
+		bindable.AnInputConflictingWithAProperty = 42; // This should be of type 'int'
 
 		Assert.IsNotNull(bindable.AFeedField as IState<string>);
 		Assert.IsNotNull(bindable.AStateField as IState<string>);

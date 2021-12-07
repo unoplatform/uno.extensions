@@ -31,12 +31,16 @@ public partial class Given_BasicViewModel_Then_Generate__ViewModel
 		IInput<string> anInput,
 		IInput<string> aReadWriteInput,
 		IInput<MyRecord> aRecordInput,
-		IInput<MyWeirdRecord> aWeirdRecordInput)
+		IInput<MyWeirdRecord> aWeirdRecordInput,
+		IInput<MyRecordWithAValueProperty> aRecordWithAValuePropertyInput,
+		IInput<int> anInputConflictingWithAProperty)
 	{
 		Assert.IsNotNull(anInput);
 		Assert.IsNotNull(aReadWriteInput);
 		Assert.IsNotNull(aRecordInput);
 		Assert.IsNotNull(aWeirdRecordInput);
+		Assert.IsNotNull(aRecordWithAValuePropertyInput);
+		Assert.IsNotNull(anInputConflictingWithAProperty);
 	}
 
 	public Given_BasicViewModel_Then_Generate__ViewModel(
@@ -47,6 +51,8 @@ public partial class Given_BasicViewModel_Then_Generate__ViewModel
 		Assert.IsNotNull(aTriggerInput);
 		Assert.IsNotNull(aTypedTriggerInput);
 	}
+
+	public string AnInputConflictingWithAProperty { get; } = "AnInputConflictingWithAProperty";
 
 	public string AField = "AField";
 
@@ -103,6 +109,8 @@ public record MyWeirdRecord
 
 	public string? ANullableProperty { get; }
 }
+
+public record MyRecordWithAValueProperty(string Value);
 
 public class CustomFeed : IFeed<string>
 {
