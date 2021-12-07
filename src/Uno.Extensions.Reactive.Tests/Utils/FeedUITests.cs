@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Uno.Extensions.Reactive.Dispatching;
 using Uno.Extensions.Reactive.Testing;
-using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive.Tests;
 

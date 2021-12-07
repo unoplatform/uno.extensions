@@ -20,7 +20,7 @@ public static class Option
 	public static Option<T> Undefined<T>() => Option<T>.Undefined();
 }
 
-	public readonly struct Option<T> : IOption, IEquatable<Option<T>>
+public readonly struct Option<T> : IOption, IEquatable<Option<T>>
 {
 	public static Option<T> Some(T? value)
 		=> new(OptionType.Some, value);

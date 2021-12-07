@@ -35,8 +35,8 @@ namespace Uno.Extensions.Reactive.Operators
 			var helper = new CombineFeedHelper<(T1, T2)>(2, GetData);
 
 			var messages = AsyncEnumerableExtensions.Merge(
-				_feed1.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(0, msg, ref dataSet.Item1)),
-				_feed2.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(1, msg, ref dataSet.Item2))
+				_feed1.GetSource(context, ct).Select<Message<T1>, Func<Message<(T1, T2)>?>>(msg => () => helper.ApplyUpdate(0, msg, ref dataSet.Item1)),
+				_feed2.GetSource(context, ct).Select<Message<T2>, Func<Message<(T1, T2)>?>>(msg => () => helper.ApplyUpdate(1, msg, ref dataSet.Item2))
 			);
 
 			await foreach (var messageProvider in messages.WithCancellation(ct).ConfigureAwait(false))
@@ -114,9 +114,9 @@ namespace Uno.Extensions.Reactive.Operators
 			var helper = new CombineFeedHelper<(T1, T2, T3)>(3, GetData);
 
 			var messages = AsyncEnumerableExtensions.Merge(
-				_feed1.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(0, msg, ref dataSet.Item1)),
-				_feed2.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(1, msg, ref dataSet.Item2)),
-				_feed3.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(2, msg, ref dataSet.Item3))
+				_feed1.GetSource(context, ct).Select<Message<T1>, Func<Message<(T1, T2, T3)>?>>(msg => () => helper.ApplyUpdate(0, msg, ref dataSet.Item1)),
+				_feed2.GetSource(context, ct).Select<Message<T2>, Func<Message<(T1, T2, T3)>?>>(msg => () => helper.ApplyUpdate(1, msg, ref dataSet.Item2)),
+				_feed3.GetSource(context, ct).Select<Message<T3>, Func<Message<(T1, T2, T3)>?>>(msg => () => helper.ApplyUpdate(2, msg, ref dataSet.Item3))
 			);
 
 			await foreach (var messageProvider in messages.WithCancellation(ct).ConfigureAwait(false))
@@ -201,10 +201,10 @@ namespace Uno.Extensions.Reactive.Operators
 			var helper = new CombineFeedHelper<(T1, T2, T3, T4)>(4, GetData);
 
 			var messages = AsyncEnumerableExtensions.Merge(
-				_feed1.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(0, msg, ref dataSet.Item1)),
-				_feed2.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(1, msg, ref dataSet.Item2)),
-				_feed3.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(2, msg, ref dataSet.Item3)),
-				_feed4.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(3, msg, ref dataSet.Item4))
+				_feed1.GetSource(context, ct).Select<Message<T1>, Func<Message<(T1, T2, T3, T4)>?>>(msg => () => helper.ApplyUpdate(0, msg, ref dataSet.Item1)),
+				_feed2.GetSource(context, ct).Select<Message<T2>, Func<Message<(T1, T2, T3, T4)>?>>(msg => () => helper.ApplyUpdate(1, msg, ref dataSet.Item2)),
+				_feed3.GetSource(context, ct).Select<Message<T3>, Func<Message<(T1, T2, T3, T4)>?>>(msg => () => helper.ApplyUpdate(2, msg, ref dataSet.Item3)),
+				_feed4.GetSource(context, ct).Select<Message<T4>, Func<Message<(T1, T2, T3, T4)>?>>(msg => () => helper.ApplyUpdate(3, msg, ref dataSet.Item4))
 			);
 
 			await foreach (var messageProvider in messages.WithCancellation(ct).ConfigureAwait(false))
@@ -296,11 +296,11 @@ namespace Uno.Extensions.Reactive.Operators
 			var helper = new CombineFeedHelper<(T1, T2, T3, T4, T5)>(5, GetData);
 
 			var messages = AsyncEnumerableExtensions.Merge(
-				_feed1.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(0, msg, ref dataSet.Item1)),
-				_feed2.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(1, msg, ref dataSet.Item2)),
-				_feed3.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(2, msg, ref dataSet.Item3)),
-				_feed4.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(3, msg, ref dataSet.Item4)),
-				_feed5.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(4, msg, ref dataSet.Item5))
+				_feed1.GetSource(context, ct).Select<Message<T1>, Func<Message<(T1, T2, T3, T4, T5)>?>>(msg => () => helper.ApplyUpdate(0, msg, ref dataSet.Item1)),
+				_feed2.GetSource(context, ct).Select<Message<T2>, Func<Message<(T1, T2, T3, T4, T5)>?>>(msg => () => helper.ApplyUpdate(1, msg, ref dataSet.Item2)),
+				_feed3.GetSource(context, ct).Select<Message<T3>, Func<Message<(T1, T2, T3, T4, T5)>?>>(msg => () => helper.ApplyUpdate(2, msg, ref dataSet.Item3)),
+				_feed4.GetSource(context, ct).Select<Message<T4>, Func<Message<(T1, T2, T3, T4, T5)>?>>(msg => () => helper.ApplyUpdate(3, msg, ref dataSet.Item4)),
+				_feed5.GetSource(context, ct).Select<Message<T5>, Func<Message<(T1, T2, T3, T4, T5)>?>>(msg => () => helper.ApplyUpdate(4, msg, ref dataSet.Item5))
 			);
 
 			await foreach (var messageProvider in messages.WithCancellation(ct).ConfigureAwait(false))
@@ -399,12 +399,12 @@ namespace Uno.Extensions.Reactive.Operators
 			var helper = new CombineFeedHelper<(T1, T2, T3, T4, T5, T6)>(6, GetData);
 
 			var messages = AsyncEnumerableExtensions.Merge(
-				_feed1.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(0, msg, ref dataSet.Item1)),
-				_feed2.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(1, msg, ref dataSet.Item2)),
-				_feed3.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(2, msg, ref dataSet.Item3)),
-				_feed4.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(3, msg, ref dataSet.Item4)),
-				_feed5.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(4, msg, ref dataSet.Item5)),
-				_feed6.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(5, msg, ref dataSet.Item6))
+				_feed1.GetSource(context, ct).Select<Message<T1>, Func<Message<(T1, T2, T3, T4, T5, T6)>?>>(msg => () => helper.ApplyUpdate(0, msg, ref dataSet.Item1)),
+				_feed2.GetSource(context, ct).Select<Message<T2>, Func<Message<(T1, T2, T3, T4, T5, T6)>?>>(msg => () => helper.ApplyUpdate(1, msg, ref dataSet.Item2)),
+				_feed3.GetSource(context, ct).Select<Message<T3>, Func<Message<(T1, T2, T3, T4, T5, T6)>?>>(msg => () => helper.ApplyUpdate(2, msg, ref dataSet.Item3)),
+				_feed4.GetSource(context, ct).Select<Message<T4>, Func<Message<(T1, T2, T3, T4, T5, T6)>?>>(msg => () => helper.ApplyUpdate(3, msg, ref dataSet.Item4)),
+				_feed5.GetSource(context, ct).Select<Message<T5>, Func<Message<(T1, T2, T3, T4, T5, T6)>?>>(msg => () => helper.ApplyUpdate(4, msg, ref dataSet.Item5)),
+				_feed6.GetSource(context, ct).Select<Message<T6>, Func<Message<(T1, T2, T3, T4, T5, T6)>?>>(msg => () => helper.ApplyUpdate(5, msg, ref dataSet.Item6))
 			);
 
 			await foreach (var messageProvider in messages.WithCancellation(ct).ConfigureAwait(false))
@@ -510,13 +510,13 @@ namespace Uno.Extensions.Reactive.Operators
 			var helper = new CombineFeedHelper<(T1, T2, T3, T4, T5, T6, T7)>(7, GetData);
 
 			var messages = AsyncEnumerableExtensions.Merge(
-				_feed1.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(0, msg, ref dataSet.Item1)),
-				_feed2.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(1, msg, ref dataSet.Item2)),
-				_feed3.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(2, msg, ref dataSet.Item3)),
-				_feed4.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(3, msg, ref dataSet.Item4)),
-				_feed5.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(4, msg, ref dataSet.Item5)),
-				_feed6.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(5, msg, ref dataSet.Item6)),
-				_feed7.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(6, msg, ref dataSet.Item7))
+				_feed1.GetSource(context, ct).Select<Message<T1>, Func<Message<(T1, T2, T3, T4, T5, T6, T7)>?>>(msg => () => helper.ApplyUpdate(0, msg, ref dataSet.Item1)),
+				_feed2.GetSource(context, ct).Select<Message<T2>, Func<Message<(T1, T2, T3, T4, T5, T6, T7)>?>>(msg => () => helper.ApplyUpdate(1, msg, ref dataSet.Item2)),
+				_feed3.GetSource(context, ct).Select<Message<T3>, Func<Message<(T1, T2, T3, T4, T5, T6, T7)>?>>(msg => () => helper.ApplyUpdate(2, msg, ref dataSet.Item3)),
+				_feed4.GetSource(context, ct).Select<Message<T4>, Func<Message<(T1, T2, T3, T4, T5, T6, T7)>?>>(msg => () => helper.ApplyUpdate(3, msg, ref dataSet.Item4)),
+				_feed5.GetSource(context, ct).Select<Message<T5>, Func<Message<(T1, T2, T3, T4, T5, T6, T7)>?>>(msg => () => helper.ApplyUpdate(4, msg, ref dataSet.Item5)),
+				_feed6.GetSource(context, ct).Select<Message<T6>, Func<Message<(T1, T2, T3, T4, T5, T6, T7)>?>>(msg => () => helper.ApplyUpdate(5, msg, ref dataSet.Item6)),
+				_feed7.GetSource(context, ct).Select<Message<T7>, Func<Message<(T1, T2, T3, T4, T5, T6, T7)>?>>(msg => () => helper.ApplyUpdate(6, msg, ref dataSet.Item7))
 			);
 
 			await foreach (var messageProvider in messages.WithCancellation(ct).ConfigureAwait(false))
@@ -629,14 +629,14 @@ namespace Uno.Extensions.Reactive.Operators
 			var helper = new CombineFeedHelper<(T1, T2, T3, T4, T5, T6, T7, T8)>(8, GetData);
 
 			var messages = AsyncEnumerableExtensions.Merge(
-				_feed1.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(0, msg, ref dataSet.Item1)),
-				_feed2.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(1, msg, ref dataSet.Item2)),
-				_feed3.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(2, msg, ref dataSet.Item3)),
-				_feed4.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(3, msg, ref dataSet.Item4)),
-				_feed5.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(4, msg, ref dataSet.Item5)),
-				_feed6.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(5, msg, ref dataSet.Item6)),
-				_feed7.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(6, msg, ref dataSet.Item7)),
-				_feed8.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(7, msg, ref dataSet.Item8))
+				_feed1.GetSource(context, ct).Select<Message<T1>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8)>?>>(msg => () => helper.ApplyUpdate(0, msg, ref dataSet.Item1)),
+				_feed2.GetSource(context, ct).Select<Message<T2>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8)>?>>(msg => () => helper.ApplyUpdate(1, msg, ref dataSet.Item2)),
+				_feed3.GetSource(context, ct).Select<Message<T3>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8)>?>>(msg => () => helper.ApplyUpdate(2, msg, ref dataSet.Item3)),
+				_feed4.GetSource(context, ct).Select<Message<T4>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8)>?>>(msg => () => helper.ApplyUpdate(3, msg, ref dataSet.Item4)),
+				_feed5.GetSource(context, ct).Select<Message<T5>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8)>?>>(msg => () => helper.ApplyUpdate(4, msg, ref dataSet.Item5)),
+				_feed6.GetSource(context, ct).Select<Message<T6>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8)>?>>(msg => () => helper.ApplyUpdate(5, msg, ref dataSet.Item6)),
+				_feed7.GetSource(context, ct).Select<Message<T7>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8)>?>>(msg => () => helper.ApplyUpdate(6, msg, ref dataSet.Item7)),
+				_feed8.GetSource(context, ct).Select<Message<T8>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8)>?>>(msg => () => helper.ApplyUpdate(7, msg, ref dataSet.Item8))
 			);
 
 			await foreach (var messageProvider in messages.WithCancellation(ct).ConfigureAwait(false))
@@ -756,15 +756,15 @@ namespace Uno.Extensions.Reactive.Operators
 			var helper = new CombineFeedHelper<(T1, T2, T3, T4, T5, T6, T7, T8, T9)>(9, GetData);
 
 			var messages = AsyncEnumerableExtensions.Merge(
-				_feed1.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(0, msg, ref dataSet.Item1)),
-				_feed2.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(1, msg, ref dataSet.Item2)),
-				_feed3.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(2, msg, ref dataSet.Item3)),
-				_feed4.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(3, msg, ref dataSet.Item4)),
-				_feed5.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(4, msg, ref dataSet.Item5)),
-				_feed6.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(5, msg, ref dataSet.Item6)),
-				_feed7.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(6, msg, ref dataSet.Item7)),
-				_feed8.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(7, msg, ref dataSet.Item8)),
-				_feed9.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(8, msg, ref dataSet.Item9))
+				_feed1.GetSource(context, ct).Select<Message<T1>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9)>?>>(msg => () => helper.ApplyUpdate(0, msg, ref dataSet.Item1)),
+				_feed2.GetSource(context, ct).Select<Message<T2>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9)>?>>(msg => () => helper.ApplyUpdate(1, msg, ref dataSet.Item2)),
+				_feed3.GetSource(context, ct).Select<Message<T3>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9)>?>>(msg => () => helper.ApplyUpdate(2, msg, ref dataSet.Item3)),
+				_feed4.GetSource(context, ct).Select<Message<T4>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9)>?>>(msg => () => helper.ApplyUpdate(3, msg, ref dataSet.Item4)),
+				_feed5.GetSource(context, ct).Select<Message<T5>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9)>?>>(msg => () => helper.ApplyUpdate(4, msg, ref dataSet.Item5)),
+				_feed6.GetSource(context, ct).Select<Message<T6>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9)>?>>(msg => () => helper.ApplyUpdate(5, msg, ref dataSet.Item6)),
+				_feed7.GetSource(context, ct).Select<Message<T7>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9)>?>>(msg => () => helper.ApplyUpdate(6, msg, ref dataSet.Item7)),
+				_feed8.GetSource(context, ct).Select<Message<T8>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9)>?>>(msg => () => helper.ApplyUpdate(7, msg, ref dataSet.Item8)),
+				_feed9.GetSource(context, ct).Select<Message<T9>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9)>?>>(msg => () => helper.ApplyUpdate(8, msg, ref dataSet.Item9))
 			);
 
 			await foreach (var messageProvider in messages.WithCancellation(ct).ConfigureAwait(false))
@@ -891,16 +891,16 @@ namespace Uno.Extensions.Reactive.Operators
 			var helper = new CombineFeedHelper<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)>(10, GetData);
 
 			var messages = AsyncEnumerableExtensions.Merge(
-				_feed1.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(0, msg, ref dataSet.Item1)),
-				_feed2.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(1, msg, ref dataSet.Item2)),
-				_feed3.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(2, msg, ref dataSet.Item3)),
-				_feed4.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(3, msg, ref dataSet.Item4)),
-				_feed5.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(4, msg, ref dataSet.Item5)),
-				_feed6.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(5, msg, ref dataSet.Item6)),
-				_feed7.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(6, msg, ref dataSet.Item7)),
-				_feed8.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(7, msg, ref dataSet.Item8)),
-				_feed9.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(8, msg, ref dataSet.Item9)),
-				_feed10.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(9, msg, ref dataSet.Item10))
+				_feed1.GetSource(context, ct).Select<Message<T1>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)>?>>(msg => () => helper.ApplyUpdate(0, msg, ref dataSet.Item1)),
+				_feed2.GetSource(context, ct).Select<Message<T2>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)>?>>(msg => () => helper.ApplyUpdate(1, msg, ref dataSet.Item2)),
+				_feed3.GetSource(context, ct).Select<Message<T3>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)>?>>(msg => () => helper.ApplyUpdate(2, msg, ref dataSet.Item3)),
+				_feed4.GetSource(context, ct).Select<Message<T4>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)>?>>(msg => () => helper.ApplyUpdate(3, msg, ref dataSet.Item4)),
+				_feed5.GetSource(context, ct).Select<Message<T5>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)>?>>(msg => () => helper.ApplyUpdate(4, msg, ref dataSet.Item5)),
+				_feed6.GetSource(context, ct).Select<Message<T6>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)>?>>(msg => () => helper.ApplyUpdate(5, msg, ref dataSet.Item6)),
+				_feed7.GetSource(context, ct).Select<Message<T7>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)>?>>(msg => () => helper.ApplyUpdate(6, msg, ref dataSet.Item7)),
+				_feed8.GetSource(context, ct).Select<Message<T8>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)>?>>(msg => () => helper.ApplyUpdate(7, msg, ref dataSet.Item8)),
+				_feed9.GetSource(context, ct).Select<Message<T9>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)>?>>(msg => () => helper.ApplyUpdate(8, msg, ref dataSet.Item9)),
+				_feed10.GetSource(context, ct).Select<Message<T10>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)>?>>(msg => () => helper.ApplyUpdate(9, msg, ref dataSet.Item10))
 			);
 
 			await foreach (var messageProvider in messages.WithCancellation(ct).ConfigureAwait(false))
@@ -1034,17 +1034,17 @@ namespace Uno.Extensions.Reactive.Operators
 			var helper = new CombineFeedHelper<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)>(11, GetData);
 
 			var messages = AsyncEnumerableExtensions.Merge(
-				_feed1.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(0, msg, ref dataSet.Item1)),
-				_feed2.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(1, msg, ref dataSet.Item2)),
-				_feed3.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(2, msg, ref dataSet.Item3)),
-				_feed4.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(3, msg, ref dataSet.Item4)),
-				_feed5.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(4, msg, ref dataSet.Item5)),
-				_feed6.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(5, msg, ref dataSet.Item6)),
-				_feed7.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(6, msg, ref dataSet.Item7)),
-				_feed8.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(7, msg, ref dataSet.Item8)),
-				_feed9.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(8, msg, ref dataSet.Item9)),
-				_feed10.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(9, msg, ref dataSet.Item10)),
-				_feed11.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(10, msg, ref dataSet.Item11))
+				_feed1.GetSource(context, ct).Select<Message<T1>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)>?>>(msg => () => helper.ApplyUpdate(0, msg, ref dataSet.Item1)),
+				_feed2.GetSource(context, ct).Select<Message<T2>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)>?>>(msg => () => helper.ApplyUpdate(1, msg, ref dataSet.Item2)),
+				_feed3.GetSource(context, ct).Select<Message<T3>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)>?>>(msg => () => helper.ApplyUpdate(2, msg, ref dataSet.Item3)),
+				_feed4.GetSource(context, ct).Select<Message<T4>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)>?>>(msg => () => helper.ApplyUpdate(3, msg, ref dataSet.Item4)),
+				_feed5.GetSource(context, ct).Select<Message<T5>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)>?>>(msg => () => helper.ApplyUpdate(4, msg, ref dataSet.Item5)),
+				_feed6.GetSource(context, ct).Select<Message<T6>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)>?>>(msg => () => helper.ApplyUpdate(5, msg, ref dataSet.Item6)),
+				_feed7.GetSource(context, ct).Select<Message<T7>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)>?>>(msg => () => helper.ApplyUpdate(6, msg, ref dataSet.Item7)),
+				_feed8.GetSource(context, ct).Select<Message<T8>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)>?>>(msg => () => helper.ApplyUpdate(7, msg, ref dataSet.Item8)),
+				_feed9.GetSource(context, ct).Select<Message<T9>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)>?>>(msg => () => helper.ApplyUpdate(8, msg, ref dataSet.Item9)),
+				_feed10.GetSource(context, ct).Select<Message<T10>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)>?>>(msg => () => helper.ApplyUpdate(9, msg, ref dataSet.Item10)),
+				_feed11.GetSource(context, ct).Select<Message<T11>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)>?>>(msg => () => helper.ApplyUpdate(10, msg, ref dataSet.Item11))
 			);
 
 			await foreach (var messageProvider in messages.WithCancellation(ct).ConfigureAwait(false))
@@ -1185,18 +1185,18 @@ namespace Uno.Extensions.Reactive.Operators
 			var helper = new CombineFeedHelper<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)>(12, GetData);
 
 			var messages = AsyncEnumerableExtensions.Merge(
-				_feed1.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(0, msg, ref dataSet.Item1)),
-				_feed2.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(1, msg, ref dataSet.Item2)),
-				_feed3.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(2, msg, ref dataSet.Item3)),
-				_feed4.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(3, msg, ref dataSet.Item4)),
-				_feed5.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(4, msg, ref dataSet.Item5)),
-				_feed6.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(5, msg, ref dataSet.Item6)),
-				_feed7.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(6, msg, ref dataSet.Item7)),
-				_feed8.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(7, msg, ref dataSet.Item8)),
-				_feed9.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(8, msg, ref dataSet.Item9)),
-				_feed10.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(9, msg, ref dataSet.Item10)),
-				_feed11.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(10, msg, ref dataSet.Item11)),
-				_feed12.GetSource(context, ct).Select(msg => () => helper.ApplyUpdate(11, msg, ref dataSet.Item12))
+				_feed1.GetSource(context, ct).Select<Message<T1>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)>?>>(msg => () => helper.ApplyUpdate(0, msg, ref dataSet.Item1)),
+				_feed2.GetSource(context, ct).Select<Message<T2>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)>?>>(msg => () => helper.ApplyUpdate(1, msg, ref dataSet.Item2)),
+				_feed3.GetSource(context, ct).Select<Message<T3>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)>?>>(msg => () => helper.ApplyUpdate(2, msg, ref dataSet.Item3)),
+				_feed4.GetSource(context, ct).Select<Message<T4>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)>?>>(msg => () => helper.ApplyUpdate(3, msg, ref dataSet.Item4)),
+				_feed5.GetSource(context, ct).Select<Message<T5>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)>?>>(msg => () => helper.ApplyUpdate(4, msg, ref dataSet.Item5)),
+				_feed6.GetSource(context, ct).Select<Message<T6>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)>?>>(msg => () => helper.ApplyUpdate(5, msg, ref dataSet.Item6)),
+				_feed7.GetSource(context, ct).Select<Message<T7>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)>?>>(msg => () => helper.ApplyUpdate(6, msg, ref dataSet.Item7)),
+				_feed8.GetSource(context, ct).Select<Message<T8>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)>?>>(msg => () => helper.ApplyUpdate(7, msg, ref dataSet.Item8)),
+				_feed9.GetSource(context, ct).Select<Message<T9>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)>?>>(msg => () => helper.ApplyUpdate(8, msg, ref dataSet.Item9)),
+				_feed10.GetSource(context, ct).Select<Message<T10>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)>?>>(msg => () => helper.ApplyUpdate(9, msg, ref dataSet.Item10)),
+				_feed11.GetSource(context, ct).Select<Message<T11>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)>?>>(msg => () => helper.ApplyUpdate(10, msg, ref dataSet.Item11)),
+				_feed12.GetSource(context, ct).Select<Message<T12>, Func<Message<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)>?>>(msg => () => helper.ApplyUpdate(11, msg, ref dataSet.Item12))
 			);
 
 			await foreach (var messageProvider in messages.WithCancellation(ct).ConfigureAwait(false))
