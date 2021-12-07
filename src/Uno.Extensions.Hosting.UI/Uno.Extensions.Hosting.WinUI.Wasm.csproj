@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk"  ToolsVersion="15.0">
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<IsPackable>false</IsPackable>
@@ -11,9 +11,9 @@
 
 
 	<ItemGroup>
-		<PackageReference Include="Uno.WinUI.Runtime.WebAssembly" Version="4.0.9" />
+		<PackageReference Include="Uno.WinUI.Runtime.WebAssembly" Version="4.1.0-dev.32" />
 	</ItemGroup>
 
-	<Import Project="common.props"/>
+	<Import Project="common.props" />
 
 </Project>
