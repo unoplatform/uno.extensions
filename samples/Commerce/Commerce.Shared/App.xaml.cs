@@ -20,6 +20,7 @@ using Uno.Extensions.Serialization;
 using Uno.Foundation;
 using Commerce.Views;
 using Uno.Extensions.Logging.Serilog;
+using Uno.Extensions.Navigation.UI.Controls;
 
 #if WINUI
 using Windows.ApplicationModel;
@@ -179,51 +180,92 @@ namespace Commerce
 		private static void RegisterRoutes(IRouteRegistry routes, IViewRegistry views)
 		{
 			routes
-				.Register(new RouteMap(nameof(ShellView), typeof(ShellView)))
-				.Register(new RouteMap("Login", typeof(LoginPage)))
-				.Register(new RouteMap("Home", typeof(HomePage),
-					nav => nav.Route.Next().IsEmpty() ?
+				.Register(new(nameof(ShellView), typeof(ShellView)))
+				.Register(new("Login", typeof(LoginPage)))
+				.Register(new("Home", typeof(HomePage),
+					Init: nav => nav.Route.Next().IsEmpty() ?
 												nav with { Route = nav.Route.Append(Route.NestedRoute("Products")) } :
 												nav))
-				.Register(new RouteMap("Products", typeof(FrameView),
-					nav => nav.Route.Next().IsEmpty() ?
+				.Register(new("Products", typeof(FrameView),
+					Init: nav => nav.Route.Next().IsEmpty() ?
 												nav with { Route = nav.Route.AppendPage<ProductsPage>() } : nav with
 												{
 													Route = nav.Route.ContainsView<ProductsPage>() ?
 																	nav.Route :
 																	nav.Route.InsertPage<ProductsPage>()
 												}))
-				.Register(new RouteMap(nameof(ProductsPage), typeof(ProductsPage)))
-				.Register(new RouteMap("Deals", typeof(DealsPage),
-					nav => nav.Route.Next().IsEmpty() ?
+				.Register(new(nameof(ProductsPage), typeof(ProductsPage)))
+				.Register(new("Deals", typeof(DealsPage),
+					Init: nav => nav.Route.Next().IsEmpty() ?
 												nav with { Route = nav.Route.AppendPage<DealsPage>() } : nav with
 												{
 													Route = nav.Route.ContainsView<DealsPage>() ?
 																	nav.Route :
 																	nav.Route.InsertPage<DealsPage>()
 												}))
-				.Register(new RouteMap("ProductDetails", typeof(ProductDetailsPage),
-					nav => (App.Current as App).Window.Content.ActualSize.X > 800 ?
+				.Register(new("ProductDetails", typeof(ProductDetailsPage),
+					Init: nav => (App.Current as App).Window.Content.ActualSize.X > 800 ?
 												nav with { Route = nav.Route with { Scheme = "./", Base = "Details", Path = nameof(ProductDetailsPage) } } :
 												nav with { Route = nav.Route with { Base = nameof(ProductDetailsPage) } }))
-				.Register(new RouteMap("Details"))
-				.Register(new RouteMap(nameof(ProductDetailsPage), typeof(ProductDetailsPage)))
-				.Register(new RouteMap(nameof(CartFlyout), typeof(CartFlyout),
-					nav => nav.Route.Next().IsEmpty() ?
+				.Register(new("Details"))
+				.Register(new(nameof(ProductDetailsPage), typeof(ProductDetailsPage)))
+				.Register(new(nameof(CartFlyout), typeof(CartFlyout),
+					Init: nav => nav.Route.Next().IsEmpty() ?
 													nav with { Route = nav.Route.AppendNested<CartPage>() } :
 													nav))
-				.Register(new RouteMap(nameof(CartPage), typeof(CartPage)))
-				.Register(new RouteMap("Checkout", typeof(CheckoutPage)))
-				.Register(new RouteMap("Filter", typeof(FilterFlyout),
-					nav => nav.Route.Next().IsEmpty() ?
+				.Register(new(nameof(CartPage), typeof(CartPage)))
+				.Register(new("Checkout", typeof(CheckoutPage)))
+				.Register(new("Filter", typeof(FilterFlyout),
+					Init: nav => nav.Route.Next().IsEmpty() ?
 												nav with { Route = nav.Route.AppendPage<FilterPage>() } : nav with
 												{
 													Route = nav.Route.ContainsView<FilterPage>() ?
 																	nav.Route :
 																	nav.Route.InsertPage<FilterPage>()
 												}))
-				.Register(new RouteMap(nameof(FilterPage), typeof(FilterPage)))
-				.Register(new RouteMap("Profile", typeof(ProfilePage)));
+				.Register(new(nameof(FilterPage), typeof(FilterPage)))
+				.Register(new("Profile", typeof(ProfilePage)))
+
+				//////////////////////////////////// POC ////////////////////////////////////
+				/*
+				.Register(
+					new(nameof(ShellView), typeof(ShellView),
+							Nested: new RouteMap[]
+							{
+								new("Login", typeof(LoginPage)),
+								new("Home", typeof(HomePage),
+										Nested: new RouteMap[]{
+											new("Products", typeof(FrameView),
+													IsDefault: true,
+													Nested: new RouteMap(nameof(ProductsPage), typeof(ProductsPage),
+															Nested: new  RouteMap[]{
+																new("ProductDetails", typeof(ProductDetailsPage),
+																		Init: nav => (App.Current as App).Window.Content.ActualSize.X > 800 ?
+																				nav with { Route = nav.Route with { Scheme = "./", Base = "Details", Path = nameof(ProductDetailsPage) } } :
+																				nav with { Route = nav.Route with { Base = nameof(ProductDetailsPage) } },
+																		Nested: new RouteMap[]{
+																			new("Details",
+																					Nested: new RouteMap(nameof(ProductDetailsPage), typeof(ProductDetailsPage))),
+																			new(nameof(ProductDetailsPage), typeof(ProductDetailsPage))
+																		}),
+																new("Filter", typeof(FilterFlyout),
+																		Nested: new RouteMap(nameof(FilterPage), typeof(FilterPage)))
+															})),
+
+											new("Deals", typeof(FrameView),
+													Nested: new RouteMap(nameof(DealsPage), typeof(DealsPage))),
+
+											new("Profile", typeof(ProfilePage)),
+
+											new(nameof(CartFlyout), typeof(CartFlyout),
+													Nested: new RouteMap[]{
+														new(nameof(CartPage), typeof(CartPage)),
+														new("Checkout", typeof(CheckoutPage))
+													})
+											})
+							}));
+				*/
+			;
 
 			views
 				.Register(new ViewMap(typeof(FrameView)))

@@ -26,7 +26,7 @@ using Windows.UI.Xaml.Navigation;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
-namespace Commerce
+namespace Uno.Extensions.Navigation.UI.Controls
 {
     public sealed partial class FrameView : UserControl
     {
