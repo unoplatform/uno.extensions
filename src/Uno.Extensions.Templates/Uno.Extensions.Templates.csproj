@@ -41,19 +41,15 @@
 			<Pack>true</Pack>
 		</Content>
 	</ItemGroup>
-	
-	<ItemGroup>
-	  <UpToDateCheckInput Remove="content\unoapp-extensions\MyExtensionsApp.Shared\MyExtensionsAppSettings.cs" />
-	</ItemGroup>
 
 	<Target Name="ReplaceVersions" BeforeTargets="BeforeBuild" Condition="'$(PackageVersion)'!='255.255.255.255'">
-		
+
 		<PropertyGroup>
 			<MSBuildDeveloperNamespace>
 				<Namespace Prefix="x" Uri="http://schemas.microsoft.com/developer/msbuild/2003"/>
 			</MSBuildDeveloperNamespace>
 		</PropertyGroup>
-		
+
 		<ItemGroup>
 			<_AllCSProjFiles Include="content/**/*.csproj" />
 		</ItemGroup>
@@ -64,13 +60,84 @@
 					 Value="$(PackageVersion)"
 					 Namespaces="$(MSBuildDeveloperNamespace)"
 							 />
-		
+
 		<!-- SDK Style projects -->
 		<XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)"
 					 Query="//PackageReference[@Version='255.255.255.255']/@Version"
 					 Value="$(PackageVersion)"
 					 Namespaces=""
 							 />
+
+		<ItemGroup>
+			<MySourceFiles Include="..\..\samples\Commerce\Commerce.Shared\**\*"/>
+		</ItemGroup>
+
+		<Copy
+			SourceFiles="@(MySourceFiles)"
+			DestinationFiles="@(MySourceFiles->'content\unoapp-extensions\MyExtensionsApp.Shared\%(RecursiveDir)%(Filename)%(Extension)')"
+			/>
+
+		<RenameFiles
+			SourcePath="content\unoapp-extensions\MyExtensionsApp.Shared"
+			SourceName="Commerce"
+			TargetName="MyExtensionsApp"
+			/>
 	</Target>
+
+	<UsingTask TaskName="RenameFiles" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+		<ParameterGroup>
+			<SourcePath ParameterType="System.String" Required="True" Output="False" />
+			<SourceName ParameterType="System.String" Required="True" Output="False" />
+			<TargetName ParameterType="System.String" Required="True" Output="False" />
+		</ParameterGroup>
+		<Task>
+			<Reference Include="System.Xml" />
+			<Using Namespace="System" />
+			<Using Namespace="System.Linq" />
+			<Using Namespace="System.IO" />
+			<Code Type="Fragment" Language="cs">
+				<![CDATA[
+					string[] filters = new[] { "*.cs", "*.xml", "*.xaml", "*.plist", "*.js", "*.config", "*.appxmanifest", "*.projitems", "*.shproj", "*.csproj", "*.sln" };
+					foreach (var file in filters.SelectMany(f => Directory.EnumerateFiles(SourcePath, f, SearchOption.AllDirectories)))
+					{
+						Log.LogMessage("Converting file: " + file);
+						var s = File.ReadAllText(file);
+						s = s
+							.Replace(SourceName, TargetName)
+							;
+						var fileName = Path.GetFileName(file);
+						var filePath = Path.GetDirectoryName(file);
+						var updatedFileName = fileName.Replace(SourceName, TargetName);
+						
+						File.WriteAllText(file, s);
+						if(updatedFileName != fileName)
+						{
+							File.Delete(Path.Combine(filePath, updatedFileName));
+							Log.LogMessage("Move file: " + file + " to " + Path.Combine(filePath, updatedFileName));
+							File.Move(file, Path.Combine(filePath, updatedFileName));
+						}
+					}
+					Func<string[]> getFolders = () => Directory.GetDirectories(SourcePath, "*.*", SearchOption.AllDirectories);
+					var folders = getFolders();
+					for (int i = 0; i < folders.Length; i++)
+					{
+						var dir = folders[i];
+						if(!Directory.Exists(dir)) continue;
+						var dirName = Path.GetFileName(dir);
+						var path = Path.GetDirectoryName(dir);
+						var updatedDirName = dirName.Replace(SourceName, TargetName);
+						if(updatedDirName != dirName)
+						{
+							i = 0;
+							folders = getFolders();
+							var target = Path.Combine(path, updatedDirName);
+							Log.LogMessage("Moving: " + dir + " to " + target);
+							Directory.Move(dir, target);
+						}
+					}
+				]]>
+			</Code>
+		</Task>
+	</UsingTask>
 
 </Project>
