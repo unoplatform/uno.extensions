@@ -31,11 +31,6 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 	public Navigator(ILogger<Navigator> logger, IRegion region, IRouteResolver routeResolver, IViewResolver viewResolver)
 		: this((ILogger)logger, region,  routeResolver,  viewResolver)
 	{
-		if (region.Parent is null &&
-			region.View is not null)
-		{
-			InitializeRootNavigator();
-		}
 	}
 
 	protected Navigator(ILogger logger, IRegion region, IRouteResolver routeResolver, IViewResolver viewResolver)
@@ -44,17 +39,6 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		Logger = logger;
 		RouteResolver = routeResolver;
 		ViewResolver = viewResolver;
-	}
-
-	private async Task InitializeRootNavigator()
-	{
-		var startup = Region.Services.GetService<IStartupService>();
-
-		// Make sure startup has completed
-		await (startup?.StartupComplete() ?? Task.CompletedTask);
-
-		var vm = CreateDefaultViewModel();
-		Region.View.DataContext = vm;
 	}
 
 	public async Task<NavigationResponse?> NavigateAsync(NavigationRequest request)
