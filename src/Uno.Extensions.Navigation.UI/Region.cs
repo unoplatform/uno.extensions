@@ -61,16 +61,6 @@ public static class Region
         element.SetInstance(region);
     }
 
-    public static TElement WithNavigation<TElement>(this TElement element, IServiceProvider services)
-        where TElement : FrameworkElement
-    {
-        // Create the Root region
-        var elementRegion = new NavigationRegion(element, services);
-        element.SetInstance(elementRegion);
-
-        return element;
-    }
-
     public static void SetInstance(this DependencyObject element, IRegion? value)
     {
         element.SetValue(InstanceProperty, value);

@@ -142,7 +142,7 @@ namespace Commerce
 			notif.RouteChanged += RouteUpdated;
 
 
-			_window.Content = new ShellView().WithNavigation(Host.Services);
+			_window.Content = Host.Services.NavigationHost<ShellView>();
 			_window.Activate();
 
 			await Task.Run(async () =>
