@@ -6,7 +6,9 @@ namespace Uno.Extensions.Navigation;
 public record RouteMap(
 	string Path,
 	Type? View = null,
-	Func<NavigationRequest, NavigationRequest>? Init = null)
+	bool IsDefault = false,
+	Func<NavigationRequest, NavigationRequest>? Init = null,
+	params RouteMap[] Nested)
 {
 }
 #pragma warning restore SA1313 // Parameter names should begin with lower-case letter

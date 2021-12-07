@@ -12,7 +12,24 @@
 	</PropertyGroup>
 	
 	<ItemGroup>
+	  <None Remove="Controls\FrameView.xaml" />
+	</ItemGroup>
+	
+	<ItemGroup>
 		<PackageReference Include="Uno.UI" Version="4.1.0-dev.32" />
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <Page Include="Controls\FrameView.xaml">
+	    <SubType>Designer</SubType>
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <Compile Update="Controls\FrameView.xaml.cs">
+	    <DependentUpon>FrameView.xaml</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 	
 </Project>
