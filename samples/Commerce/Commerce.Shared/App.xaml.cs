@@ -64,15 +64,8 @@ namespace Commerce
 #endif
 
 
-			// Add platform specific log providers
-#if !HAS_UNO || __WASM__
-			.UseLogging()
-#else
-			.UseLogging(b => b.AddSimpleConsole(options =>
-			{
-				options.ColorBehavior = Microsoft.Extensions.Logging.Console.LoggerColorBehavior.Disabled;
-			}))
-#endif
+					// Add platform specific log providers
+					.UseLogging()
 
 					// Configure log levels for different categories of logging
 					.ConfigureLogging(logBuilder =>
@@ -82,8 +75,6 @@ namespace Commerce
 								.XamlLogLevel(LogLevel.Information)
 								.XamlLayoutLogLevel(LogLevel.Information);
 					})
-
-
 
 					// Load configuration information from appsettings.json
 					.UseAppSettings()
