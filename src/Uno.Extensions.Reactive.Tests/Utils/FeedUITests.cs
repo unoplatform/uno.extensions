@@ -14,6 +14,6 @@ public class FeedUITests : FeedTests
 	{
 		base.Initialize();
 
-		DispatcherHelper.TryEnqueue = (_, callback) => callback();
+		DispatcherHelper.GetForCurrentThread = () => default;
 	}
 }

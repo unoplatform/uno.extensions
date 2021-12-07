@@ -2,11 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
-#if !WINUI
-using Windows.System;
-#else
-using Microsoft.UI.Dispatching;
-#endif
 using Uno.Extensions.Reactive.Core;
 
 namespace Uno.Extensions.Reactive;
@@ -44,10 +39,9 @@ public readonly struct CommandBuilder<T> : ICommandBuilder, ICommandBuilder<T>, 
 	/// </summary>
 	/// <param name="context">The source context to use in the command.</param>
 	/// <param name="errorHandler">An exception handler.</param>
-	/// <param name="dispatcher">The dispatcher to use to raise <see cref="ICommand.CanExecute"/>.</param>
 	/// <returns>The command.</returns>
-	public IAsyncCommand Build(SourceContext context, Action<Exception>? errorHandler = null, DispatcherQueue? dispatcher = null)
-		=> new AsyncCommand(_name, _configs, errorHandler ?? Command._defaultErrorHandler, context, dispatcher);
+	public IAsyncCommand Build(SourceContext context, Action<Exception>? errorHandler = null)
+		=> new AsyncCommand(_name, _configs, errorHandler ?? Command._defaultErrorHandler, context);
 
 	ICommandBuilder<TArg> ICommandBuilder.Given<TArg>(IFeed<TArg> parameter)
 		=> new CommandBuilder<TArg>(_name, _configs, _current with { Parameter = ctx => ctx.GetOrCreateSource(parameter) });
