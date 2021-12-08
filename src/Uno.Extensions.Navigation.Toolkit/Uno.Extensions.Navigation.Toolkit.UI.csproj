@@ -1,4 +1,4 @@
-<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
+﻿<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
 	<PropertyGroup>
 		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'!=''">$(UnoTargetFrameworkOverride)</TargetFrameworks>
 		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'==''">netstandard2.0;netstandard2.1;net5.0;xamarinios10;xamarinmac20;monoandroid10.0;monoandroid11.0</TargetFrameworks>
@@ -14,5 +14,9 @@
 		<PackageReference Include="Uno.Toolkit.UI" Version="1.1.0-dev.5" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Page Include="Controls\ModalFlyout.xaml" />
+	</ItemGroup>
+	
 	<Import Project="common.props" />
 </Project>
