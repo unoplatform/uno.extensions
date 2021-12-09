@@ -17,7 +17,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Uno.WinUI" Version="4.0.9" />
-		<PackageReference Include="Uno.Toolkit.WinUI" Version="1.2.0-dev.1" />
+		<PackageReference Include="Uno.Toolkit.WinUI" Version="1.2.0-dev.2" />
 		<ProjectReference Include="..\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj" />
 	</ItemGroup>
 
