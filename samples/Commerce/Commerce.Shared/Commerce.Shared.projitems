@@ -152,11 +152,31 @@
     <Content Include="$(MSBuildThisFileDirectory)appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\back.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\help_outline.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\close.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\notifications.png" />
-    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\share.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\back.scale-100.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\back.scale-150.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\back.scale-200.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\back.scale-300.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\back.scale-400.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\close.scale-100.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\close.scale-150.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\close.scale-200.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\close.scale-300.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\close.scale-400.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\help_outline.scale-100.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\help_outline.scale-150.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\help_outline.scale-200.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\help_outline.scale-300.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\help_outline.scale-400.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\notifications.scale-100.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\notifications.scale-150.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\notifications.scale-200.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\notifications.scale-300.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\notifications.scale-400.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\share.scale-100.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\share.scale-150.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\share.scale-200.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\share.scale-300.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\share.scale-400.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Products\bondi-7-running-shoes.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Products\fresh-foam-hierro-v6.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Products\gel-nimbus-23-running-shoes.png" />
