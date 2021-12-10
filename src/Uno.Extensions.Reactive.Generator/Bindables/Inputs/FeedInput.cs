@@ -31,12 +31,11 @@ internal record FeedInput(IParameterSymbol Parameter, ITypeSymbol _valueType) : 
 	public string? GetPropertyInit()
 		=> null;
 
-	public string? GetProperty()
-		=> $@"{_valueType.GetAccessibilityAsCSharpCodeString()} {_valueType} {Parameter.GetPascalCaseName()}
-			{{
-				get => _{Parameter.Name}.GetValue();
-				set => _{Parameter.Name}.SetValue(value);
-			}}";
+	public Property Property => new(_valueType, Parameter.GetPascalCaseName())
+	{
+		Getter = $"_{Parameter.Name}.GetValue()",
+		Setter = $"_{Parameter.Name}.SetValue(value)",
+	};
 
 	/// <inheritdoc />
 	public virtual bool Equals(IInputInfo other)

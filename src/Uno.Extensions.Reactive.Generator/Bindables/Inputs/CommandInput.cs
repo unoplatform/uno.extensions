@@ -34,9 +34,8 @@ internal record CommandInput(IParameterSymbol Parameter, ITypeSymbol? _commandPa
 	public string? GetPropertyInit()
 		=> $"{Parameter.GetPascalCaseName()} = {Parameter.Name}Builder.Build({N.Ctor.Ctx});";
 
-	/// <inheritdoc />
-	public string? GetProperty()
-		=> $"public {NS.Reactive}.IAsyncCommand {Parameter.GetPascalCaseName()} {{ get; }}";
+	// <inheritdoc />
+	public Property Property => new(Accessibility.Public, $"{NS.Reactive}.IAsyncCommand", Parameter.GetPascalCaseName()) { HasGetter = true };
 
 	/// <inheritdoc />
 	public virtual bool Equals(IInputInfo other)

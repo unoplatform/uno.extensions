@@ -11,21 +11,21 @@ public class MessageConstraintBuilder<T>
 	private MessageEntryConstraint<T>? _current;
 	private MessageAxis[]? _changes;
 
-	public MessageConstraintBuilder<T> Changed(params MessageAxis[] axises)
+	public MessageConstraintBuilder<T> Changed(params MessageAxis[] axes)
 	{
-		_changes = axises;
+		_changes = axes;
 		return this;
 	}
 
-	public MessageConstraintBuilder<T> Previous(params EntryAxisConstraint<T>[] axisesConstraints)
+	public MessageConstraintBuilder<T> Previous(params EntryAxisConstraint<T>[] axesConstraints)
 	{
-		_previous = new MessageEntryConstraint<T>(axisesConstraints);
+		_previous = new MessageEntryConstraint<T>(axesConstraints);
 		return this;
 	}
 
-	public MessageConstraintBuilder<T> Current(params EntryAxisConstraint<T>[] axisesConstraints)
+	public MessageConstraintBuilder<T> Current(params EntryAxisConstraint<T>[] axesConstraints)
 	{
-		_current = new MessageEntryConstraint<T>(axisesConstraints);
+		_current = new MessageEntryConstraint<T>(axesConstraints);
 		return this;
 	}
 

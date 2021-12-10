@@ -11,6 +11,8 @@ internal interface IInputInfo : IEquatable<IInputInfo>
 {
 	public IParameterSymbol Parameter { get; }
 
+	Property? Property { get; }
+
 	string? GetBackingField();
 
 	(string? code, bool isOptional) GetCtorParameter();
@@ -20,6 +22,4 @@ internal interface IInputInfo : IEquatable<IInputInfo>
 	string? GetCtorInit(bool isInVmCtorParameters);
 
 	string? GetPropertyInit();
-
-	string? GetProperty();
 }

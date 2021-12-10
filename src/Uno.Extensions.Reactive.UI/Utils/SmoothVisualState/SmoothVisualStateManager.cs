@@ -111,32 +111,30 @@ public class SmoothVisualStateManager : VisualStateManager
 			if (targetDelay > 0)
 			{
 				var ct = _nextCt = new CancellationTokenSource();
-				_ = _owner
-					.Dispatcher
-					.RunAsync(
-						CoreDispatcherPriority.Normal,
-						async () =>
+				var timer = DispatcherQueue.GetForCurrentThread().CreateTimer();
+				timer.Interval = TimeSpan.FromMilliseconds(targetDelay);
+				timer.Tick += (_,_) =>
+				{
+					try
+					{
+						if (ct.IsCancellationRequested)
 						{
-							try
-							{
-								await Task.Delay(targetDelay, ct.Token);
-								if (ct.IsCancellationRequested)
-								{
-									return;
-								}
+							return;
+						}
 
-								_currentTimestamp = DateTimeOffset.UtcNow;
-								_current = stateName;
-								_currentMinDuration = minDuration;
-								_owner.BaseGoToStateCore(control, templateRoot, stateName, group, state, useTransitions);
-							}
-							catch (OperationCanceledException) { }
-							catch (Exception error)
-							{
-								_owner.Log().Error("Failed to defer go-to-state", error);
-							}
-						})
-					.AsTask(ct.Token);
+						_currentTimestamp = DateTimeOffset.UtcNow;
+						_current = stateName;
+						_currentMinDuration = minDuration;
+						_owner.BaseGoToStateCore(control, templateRoot, stateName, group, state, useTransitions);
+					}
+					catch (OperationCanceledException) { }
+					catch (Exception error)
+					{
+						_owner.Log().Error("Failed to defer go-to-state", error);
+					}
+				};
+				timer.Start();
+				_nextCt.Token.Register(() => timer.Stop());
 			}
 			else
 			{

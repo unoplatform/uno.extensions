@@ -9,6 +9,9 @@ internal record MappedField(IFieldSymbol _field) : IMappedMember
 	private readonly IFieldSymbol _field = _field;
 
 	/// <inheritdoc />
+	public string Name => _field.Name;
+
+	/// <inheritdoc />
 	public string GetDeclaration()
 		=> $@"{_field.GetAccessibilityAsCSharpCodeString()} {_field.Type} {_field.Name}
 			{{

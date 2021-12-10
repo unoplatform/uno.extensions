@@ -32,8 +32,7 @@ internal record BindableInput(IParameterSymbol Parameter, ITypeSymbol _valueType
 	public string? GetPropertyInit()
 		=> null;
 
-	public string? GetProperty()
-		=> $@"{_valueType.GetAccessibilityAsCSharpCodeString()} {_bindableType} {Parameter.GetPascalCaseName()} {{ get; }}";
+	public Property Property => new(_valueType.DeclaredAccessibility, _bindableType, Parameter.GetPascalCaseName()) { HasGetter = true };
 
 	/// <inheritdoc />
 	public virtual bool Equals(IInputInfo other)

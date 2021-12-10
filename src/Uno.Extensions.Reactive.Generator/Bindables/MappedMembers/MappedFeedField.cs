@@ -10,6 +10,9 @@ internal record MappedFeedField(IFieldSymbol _field, ITypeSymbol _valueType) : I
 	private readonly ITypeSymbol _valueType = _valueType;
 
 	/// <inheritdoc />
+	public string Name => _field.Name;
+
+	/// <inheritdoc />
 	public string GetDeclaration()
 		=> $"{_field.GetAccessibilityAsCSharpCodeString()} {NS.Reactive}.IState<{_valueType}> {_field.Name};";
 

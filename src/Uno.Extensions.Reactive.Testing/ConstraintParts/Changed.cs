@@ -16,8 +16,8 @@ public class Changed : ConstraintPart<IMessage>
 
 	public static Changed Progress { get; } = new(MessageAxis.Progress);
 
-	public static Changed Axises(params MessageAxis[] axises) 
-		=> new(axises);
+	public static Changed Axes(params MessageAxis[] axes) 
+		=> new(axes);
 
 	public readonly MessageAxis[] Expected;
 

@@ -5,7 +5,7 @@ using System.Linq;
 namespace Uno.Extensions.Reactive;
 
 /// <summary>
-/// Names of common axises
+/// Names of common axes
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Advanced)]
 public static class MessageAxes

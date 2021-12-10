@@ -3,21 +3,16 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
-using Windows.Devices.Bluetooth.GenericAttributeProfile;
-#if !WINUI
-using Windows.System;
-#else
-using Microsoft.UI.Dispatching;
-#endif
 using Uno.Extensions.Reactive.Core;
-using Uno.Extensions.Reactive.Utils;
+using Uno.Extensions.Reactive.Dispatching;
+using Uno.Extensions.Reactive.Events;
 
 namespace Uno.Extensions.Reactive;
 
-internal sealed class AsyncCommand : IAsyncCommand, IDisposable
+internal sealed partial class AsyncCommand : IAsyncCommand, IDisposable
 {
 	private static readonly object _null = new();
+	private static readonly PropertyChangedEventArgs _isExecutingChanged = new(nameof(IsExecuting));
 
 	private readonly CancellationTokenSource _ct = new();
 	private readonly Dictionary<object, int> _executions = new();
@@ -25,46 +20,63 @@ internal sealed class AsyncCommand : IAsyncCommand, IDisposable
 	private readonly string? _name;
 	private readonly Action<Exception> _errorHandler;
 	private readonly SourceContext _context;
-	private readonly DispatcherQueue _dispatcher;
 
 	private readonly ICollection<SubCommand> _children;
+	private readonly LazyDispatcherProvider _dispatcher;
+	private readonly EventManager<EventHandler, EventArgs> _canExecuteChanged;
+	private readonly EventManager<PropertyChangedEventHandler, PropertyChangedEventArgs> _propertyChanged;
 
 	/// <inheritdoc />
-	public event EventHandler? CanExecuteChanged;
+	public event EventHandler? CanExecuteChanged
+	{
+		add => _canExecuteChanged.Add(value);
+		remove => _canExecuteChanged.Remove(value);
+	}
 
 	/// <inheritdoc />
-	public event PropertyChangedEventHandler? PropertyChanged;
+	public event PropertyChangedEventHandler? PropertyChanged
+	{
+		add => _propertyChanged.Add(value);
+		remove => _propertyChanged.Remove(value);
+	}
+
+#pragma warning disable CS8618 // This is a private base ctor which is invoked only by all other public ctors which are initializing missing fields.
+	private AsyncCommand()
+#pragma warning restore CS8618
+	{
+		_dispatcher = new(onFirstResolved: SubscribeToExternalParameters);
+		_canExecuteChanged = new(this, h => h.Invoke, isCoalescable: true, _dispatcher.FindDispatcher);
+		_propertyChanged = new(this, h => h.Invoke, isCoalescable: false, _dispatcher.FindDispatcher);
+	}
 
 	public AsyncCommand(
 		string? name,
 		CommandConfig config,
 		Action<Exception> errorHandler,
-		SourceContext context,
-		DispatcherQueue? dispatcher = null)
+		SourceContext context)
+		: this()
 	{
 		_name = name;
 		_children = new List<SubCommand>(1) { new(config, this) };
 		_errorHandler = errorHandler ?? throw new ArgumentNullException(nameof(errorHandler));
 		_context = context ?? throw new ArgumentNullException(nameof(context));
-		_dispatcher = DispatcherHelper.GetDispatcher(dispatcher);
 
-		SubscribeToExternalParameters();
+		_dispatcher.TryRunCallback();
 	}
 
 	public AsyncCommand(
 		string? name,
 		IEnumerable<CommandConfig> configs,
 		Action<Exception> errorHandler,
-		SourceContext context,
-		DispatcherQueue? dispatcher = null)
+		SourceContext context)
+		: this()
 	{
 		_name = name;
 		_children = configs.Select(config => new SubCommand(config, this)).ToList();
 		_errorHandler = errorHandler ?? throw new ArgumentNullException(nameof(errorHandler));
 		_context = context ?? throw new ArgumentNullException(nameof(context));
-		_dispatcher = DispatcherHelper.GetDispatcher(dispatcher);
 
-		SubscribeToExternalParameters();
+		_dispatcher.TryRunCallback();
 	}
 
 	/// <inheritdoc />
@@ -72,24 +84,37 @@ internal sealed class AsyncCommand : IAsyncCommand, IDisposable
 
 	/// <inheritdoc />
 	public bool CanExecute(object? parameter)
-		=> _children.Any(child => child.CanExecute(parameter));
+	{
+		_dispatcher.RunCallback();
+
+		return _children.Any(child => child.CanExecute(parameter));
+	}
 
 	/// <inheritdoc />
 	public void Execute(object? parameter)
 	{
+		_dispatcher.RunCallback();
+
 		if (_children.Aggregate(false, (isExecuting, child) => isExecuting | child.TryExecute(parameter, _context, _ct.Token)))
 		{
 			UpdateIsExecuting();
 		}
 	}
 
-	private void ReportError(Exception error, string when)
+	private void UpdateCanExecute()
 	{
-		try
+		_canExecuteChanged.Raise(EventArgs.Empty);
+	}
+
+	private void UpdateIsExecuting()
+	{
+		lock (_executions)
 		{
-			_errorHandler(new InvalidOperationException($"Command '{_name}' failed when {when}.", error));
+			IsExecuting = _executions.Count > 0;
 		}
-		catch { }
+
+		_propertyChanged.Raise(_isExecutingChanged);
+		_canExecuteChanged.Raise(EventArgs.Empty);
 	}
 
 	private bool IsExecutingFor(object? parameter)
@@ -142,167 +167,28 @@ internal sealed class AsyncCommand : IAsyncCommand, IDisposable
 		}
 	}
 
-	private void SubscribeToExternalParameters()
+	private void ReportError(Exception error, string when)
 	{
-		if (_dispatcher.HasThreadAccess)
+		try
 		{
-			foreach (var child in _children)
-			{
-				_ = child.SubscribeToParameter(_context, _ct.Token);
-			}
+			_errorHandler(new InvalidOperationException($"Command '{_name}' failed when {when}.", error));
 		}
-		else if (_children.Any())
-		{
-			_dispatcher.TryEnqueue(SubscribeToExternalParameters);
-		}
+		catch { }
 	}
 
-	private void UpdateCanExecute()
+	private async void SubscribeToExternalParameters()
 	{
-		if (_dispatcher.HasThreadAccess)
+		foreach (var child in _children)
 		{
-			CanExecuteChanged?.Invoke(this, EventArgs.Empty);
-		}
-		else
-		{
-			_dispatcher.TryEnqueue(UpdateCanExecute);
-		}
-	}
-
-	private void UpdateIsExecuting()
-	{
-		if (_dispatcher.HasThreadAccess)
-		{
-			lock (_executions)
-			{
-				IsExecuting = _executions.Count > 0;
-			}
-
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsExecuting)));
-			CanExecuteChanged?.Invoke(this, EventArgs.Empty);
-		}
-		else
-		{
-			_dispatcher.TryEnqueue(UpdateIsExecuting);
-		}
-	}
-
-	private sealed class SubCommand
-	{
-		private readonly CommandConfig _config;
-		private readonly AsyncCommand _command;
-
-		private (object? value, bool isValid)? _externalParameter;
-
-		public SubCommand(CommandConfig config, AsyncCommand command)
-		{
-			_config = config;
-			_command = command;
-		}
-
-		public async Task SubscribeToParameter(SourceContext context, CancellationToken ct)
-		{
-			if (_config.Parameter is null)
-			{
-				return;
-			}
-
-			_externalParameter = (null, false);
-			_command.UpdateCanExecute();
-
-			var parameters = _config
-				.Parameter(context)
-				.Where(message => message.Changes.Contains(MessageAxis.Data))
-				.WithCancellation(ct)
-				.ConfigureAwait(true);
-			await foreach (var parameter in parameters)
-			{
-				bool isValid, wasValid = _externalParameter is { isValid: true };
-				try
-				{
-					isValid = parameter.Current.Data.IsSome(out var value)
-						&& (_config.CanExecute?.Invoke(value) ?? true);
-
-					_externalParameter = (value, isValid);
-				}
-				catch (Exception error)
-				{
-					_command.ReportError(error, when: "validating can execute of external parameter");
-					_externalParameter = (null, isValid = false);
-				}
-
-				if (wasValid != isValid)
-				{
-					_command.UpdateCanExecute();
-				}
-			}
-		}
-
-		public bool CanExecute(object? parameter)
-		{
-			if (_externalParameter is { } externalParameter)
-			{
-				if (!externalParameter.isValid)
-				{
-					return false;
-				}
-
-				parameter = externalParameter.value;
-			}
-
-			return !_command.IsExecutingFor(parameter) && (_config.CanExecute?.Invoke(parameter) ?? true);
-		}
-
-		public bool TryExecute(object? parameter, SourceContext context, CancellationToken ct)
-		{
-			if (_externalParameter is { } externalParameter)
-			{
-				if (!externalParameter.isValid)
-				{
-					return false;
-				}
-
-				parameter = externalParameter.value;
-			}
-
-			if (!(_config.CanExecute?.Invoke(parameter) ?? true))
-			{
-				return false;
-			}
-
-			_command.ReportExecutionStarting(parameter);
-
-			Task.Run(
-					async () =>
-					{
-						try
-						{
-							using var _ = _command._context.AsCurrent();
-							await _config.Execute(parameter, _command._ct.Token);
-						}
-						catch (Exception error)
-						{
-							_command.ReportError(error, when: $"executing command with '{parameter ?? "-null-"}'");
-						}
-					},
-					_command._ct.Token)
-				.ContinueWith((_, state) =>
-					{
-						try
-						{
-							var (command, arg) = ((AsyncCommand, object?))state!;
-							command.ReportExecutionEnded(arg);
-						}
-						catch (Exception) { } // Almost impossible, but an error here would crash the app
-					},
-					(_command, parameter),
-					TaskContinuationOptions.AttachedToParent | TaskContinuationOptions.ExecuteSynchronously);
-
-			return true;
+			_ = child.SubscribeToParameter(_context, _ct.Token);
 		}
 	}
 
 	/// <inheritdoc />
 	public void Dispose()
-		=> _ct.Cancel();
+	{
+		_ct.Cancel();
+		_canExecuteChanged.Dispose();
+		_propertyChanged.Dispose();
+	}
 }

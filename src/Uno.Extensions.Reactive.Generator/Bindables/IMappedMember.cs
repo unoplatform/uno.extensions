@@ -8,6 +8,8 @@ namespace Uno.Extensions.Reactive.Generator;
 /// </summary>
 internal interface IMappedMember
 {
+	public string Name { get; }
+
 	public string GetDeclaration();
 
 	public string? GetInitialization();

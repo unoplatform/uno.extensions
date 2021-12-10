@@ -9,6 +9,9 @@ internal record MappedProperty(IPropertySymbol _property) : IMappedMember
 	private readonly IPropertySymbol _property = _property;
 
 	/// <inheritdoc />
+	public string Name => _property.Name;
+
+	/// <inheritdoc />
 	public string GetDeclaration()
 		=> Property.FromProperty(_property) with
 		{

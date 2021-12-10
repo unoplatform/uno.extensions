@@ -40,7 +40,7 @@ internal static class FeedHelper
 	{
 		// Note: We DO NOT register the 'message' update transaction into ct.Register, so in case of a "Last wins" usage of this,
 		//		 we allow the next updater to really preserver the pending progress axis.
-		using var message = msgManager.BeginUpdate(ct, preservePendingAxises: MessageAxis.Progress);
+		using var message = msgManager.BeginUpdate(ct, preservePendingAxes: MessageAxis.Progress);
 		using var _ = context.AsCurrent();
 
 		ValueTask<Option<TResult>> dataTask = default;
