@@ -81,6 +81,8 @@ internal class BindableGenerator
 				);
 			})
 			.ToList();
+
+		// Skip generating Value property if one is already defined in authored code
 		var valueProperty = properties.Any(prop => prop.name == "Value")
 			? null
 			: new Property(record, "Value")

@@ -29,7 +29,6 @@ internal record ParameterInput(IParameterSymbol Parameter) : IInputInfo
 	public string? GetPropertyInit() => null;
 
 	public Property? Property => null;
-	//public string? GetProperty() => null;
 
 	/// <inheritdoc />
 	public virtual bool Equals(IInputInfo other)
