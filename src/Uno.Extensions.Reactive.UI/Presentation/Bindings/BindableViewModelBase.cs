@@ -129,6 +129,9 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 	}
 
 	/// <inheritdoc />
-	public ValueTask DisposeAsync()
-		=> _disposables.DisposeAsync();
+	public async ValueTask DisposeAsync()
+	{
+		await _disposables.DisposeAsync();
+		_propertyChanged.Dispose();
+	}
 }

@@ -14,6 +14,17 @@ internal class LazyDispatcherProvider
 		_onFirstResolved = onFirstResolved;
 	}
 
+	/// <summary>
+	/// Try to run the callback if not yet ran and **if current thread is a UI thread**.
+	/// </summary>
+	public void TryRunCallback()
+	{
+		FindDispatcher();
+	}
+
+	/// <summary>
+	/// Force to run the callback if not ran yet, **no matter if the current thread is a UI thread or not**.
+	/// </summary>
 	public void RunCallback()
 	{
 		if (Interlocked.Exchange(ref _onFirstResolved, null) is { } onFirstResolved)

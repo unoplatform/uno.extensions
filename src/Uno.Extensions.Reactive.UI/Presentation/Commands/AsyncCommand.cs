@@ -40,20 +40,28 @@ internal sealed partial class AsyncCommand : IAsyncCommand, IDisposable
 		remove => _propertyChanged.Remove(value);
 	}
 
+#pragma warning disable CS8618 // This is a private base ctor which is invoked only by all other public ctors which are initializing missing fields.
+	private AsyncCommand()
+#pragma warning restore CS8618
+	{
+		_dispatcher = new(onFirstResolved: SubscribeToExternalParameters);
+		_canExecuteChanged = new(this, h => h.Invoke, isCoalescable: true, _dispatcher.FindDispatcher);
+		_propertyChanged = new(this, h => h.Invoke, isCoalescable: false, _dispatcher.FindDispatcher);
+	}
+
 	public AsyncCommand(
 		string? name,
 		CommandConfig config,
 		Action<Exception> errorHandler,
 		SourceContext context)
+		: this()
 	{
 		_name = name;
 		_children = new List<SubCommand>(1) { new(config, this) };
 		_errorHandler = errorHandler ?? throw new ArgumentNullException(nameof(errorHandler));
 		_context = context ?? throw new ArgumentNullException(nameof(context));
 
-		_dispatcher = new(onFirstResolved: SubscribeToExternalParameters);
-		_canExecuteChanged = new (this, h => h.Invoke, isCoalescable: true, _dispatcher.FindDispatcher);
-		_propertyChanged = new (this, h => h.Invoke, isCoalescable: false, _dispatcher.FindDispatcher);
+		_dispatcher.TryRunCallback();
 	}
 
 	public AsyncCommand(
@@ -61,15 +69,14 @@ internal sealed partial class AsyncCommand : IAsyncCommand, IDisposable
 		IEnumerable<CommandConfig> configs,
 		Action<Exception> errorHandler,
 		SourceContext context)
+		: this()
 	{
 		_name = name;
 		_children = configs.Select(config => new SubCommand(config, this)).ToList();
 		_errorHandler = errorHandler ?? throw new ArgumentNullException(nameof(errorHandler));
 		_context = context ?? throw new ArgumentNullException(nameof(context));
 
-		_dispatcher = new(onFirstResolved: SubscribeToExternalParameters);
-		_canExecuteChanged = new (this, h => h.Invoke, isCoalescable: true, _dispatcher.FindDispatcher);
-		_propertyChanged = new (this, h => h.Invoke, isCoalescable: false, _dispatcher.FindDispatcher);
+		_dispatcher.TryRunCallback();
 	}
 
 	/// <inheritdoc />
@@ -179,5 +186,9 @@ internal sealed partial class AsyncCommand : IAsyncCommand, IDisposable
 
 	/// <inheritdoc />
 	public void Dispose()
-		=> _ct.Cancel();
+	{
+		_ct.Cancel();
+		_canExecuteChanged.Dispose();
+		_propertyChanged.Dispose();
+	}
 }
