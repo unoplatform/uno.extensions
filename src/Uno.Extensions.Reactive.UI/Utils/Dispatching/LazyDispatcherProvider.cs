@@ -48,9 +48,12 @@ internal class LazyDispatcherProvider
 	}
 }
 
-internal class AsyncLazyDispatcherProvider
+internal class AsyncLazyDispatcherProvider : IDisposable
 {
 	private readonly TaskCompletionSource<DispatcherQueue> _first = new();
+
+	public void TryResolve()
+		=> FindDispatcher();
 
 	public Task<DispatcherQueue> GetFirstResolved(CancellationToken ct)
 		=> _first.Task;
@@ -68,4 +71,8 @@ internal class AsyncLazyDispatcherProvider
 			return null;
 		}
 	}
+
+	/// <inheritdoc />
+	public void Dispose()
+		=> _first.TrySetCanceled();
 }

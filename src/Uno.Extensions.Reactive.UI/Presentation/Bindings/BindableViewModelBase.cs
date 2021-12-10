@@ -36,6 +36,8 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 	public BindableViewModelBase()
 	{
 		_propertyChanged = new(this, h => h.Invoke, isCoalescable: false, schedulersProvider: _dispatcher.FindDispatcher);
+
+		_dispatcher.TryResolve();
 	}
 
 	/// <summary>
@@ -133,5 +135,6 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 	{
 		await _disposables.DisposeAsync();
 		_propertyChanged.Dispose();
+		_dispatcher.Dispose();
 	}
 }
