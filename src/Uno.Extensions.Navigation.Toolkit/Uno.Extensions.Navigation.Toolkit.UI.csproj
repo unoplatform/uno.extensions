@@ -5,6 +5,10 @@
 		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'=='' and '$(UnoExtensionsDisableNet6)'==''">$(TargetFrameworks);uap10.0.18362;net6.0;net6.0-ios;net6.0-android</TargetFrameworks>
 	</PropertyGroup>
 
+	<PropertyGroup>
+		<PackageId>Uno.Extensions.Navigation.Toolkit.UI</PackageId>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UI.csproj" />
 	</ItemGroup>

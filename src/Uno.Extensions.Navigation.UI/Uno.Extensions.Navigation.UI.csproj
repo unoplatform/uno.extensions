@@ -6,6 +6,10 @@
 	</PropertyGroup>
 
 	<Import Project="common.props" />
+
+	<PropertyGroup>
+		<PackageId>Uno.Extensions.Navigation.WinUI</PackageId>
+	</PropertyGroup>
 	
 	<ItemGroup>
 		<PackageReference Include="Uno.UI" Version="4.0.9" />
