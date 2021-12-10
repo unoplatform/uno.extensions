@@ -25,14 +25,23 @@ internal class QueueingDispatcherInvocationList<THandler, TArgs> : DispatcherInv
 	/// <inheritdoc />
 	protected override void Dequeue()
 	{
-		var node = Interlocked.Exchange(ref _head, _tail);
-		while ((node = node?.Next) is not null) // The first node has already been raise or is the empty initial node
+		var tail = _tail;
+		var node = Interlocked.Exchange(ref _head, tail);
+		while (node != tail // The 'node' is the one we set as '_tail', so we should stop here (we will recurse 'Dequeue()' if tail has been updated anyway)
+			&& (node = node?.Next) is not null) // The first node has already been raise or is the empty initial node
 		{
 			var args = node.Value;
 			if (!RaiseCore(args))
 			{
 				return;
 			}
+		}
+
+		if (_tail != tail)
+		{
+			// The '_tail' has been updated since we started to 'Dequeue',
+			// recurse to complete the dequeuing while we have access to the dispatcher.
+			Dequeue();
 		}
 	}
 
