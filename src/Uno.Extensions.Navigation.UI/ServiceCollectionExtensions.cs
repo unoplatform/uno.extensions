@@ -29,10 +29,10 @@ public static class ServiceCollectionExtensions
 {
 	public static IServiceCollection AddNavigation(
 		this IServiceCollection services,
-		Action<IRouteRegistry, IViewRegistry>? routeBuilder = null)
+		Action<IRouteRegistry>? routeBuilder = null)
 	{
 		var builder = new RouteBuilder(services);
-		routeBuilder?.Invoke(builder, builder);
+		routeBuilder?.Invoke(builder);
 
 		return services
 					.AddScoped<IInstanceRepository, InstanceRepository>()
@@ -61,7 +61,7 @@ public static class ServiceCollectionExtensions
 					// Register the navigation mappings repository
 					.AddSingleton<RouteMappingsDefault>()
 					.AddSingleton<IRouteResolver>(sp => sp.GetRequiredService<RouteMappingsDefault>())
-					.AddSingleton<IViewResolver>(sp => sp.GetRequiredService<RouteMappingsDefault>())
+					//.AddSingleton<IViewResolver>(sp => sp.GetRequiredService<RouteMappingsDefault>())
 
 					.AddScoped<INavigatorFactory, NavigatorFactory>()
 
@@ -93,15 +93,6 @@ public static class ServiceCollectionExtensions
 		return services
 				   .AddScoped<TRegion>()
 				   .ConfigureNavigatorFactory(factory => factory.RegisterNavigator<TRegion>(name ?? typeof(TControl).Name));
-	}
-
-	public static IServiceCollection AddViewModelData<TData>(this IServiceCollection services)
-		where TData : class
-	{
-#pragma warning disable CS8603 // Possible null reference return - null data is possible
-		return services
-					.AddTransient<TData>(services => services.GetRequiredService<NavigationDataProvider>().GetData<TData>());
-#pragma warning restore CS8603 // Possible null reference return.
 	}
 
 }

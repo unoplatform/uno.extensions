@@ -24,6 +24,8 @@ namespace Uno.Extensions.Navigation.Toolkit.Navigators;
 
 public class TabBarNavigator: ControlNavigator<TabBar>
 {
+	protected override bool RequiresDefaultView => true;
+
 	public override void ControlInitialize()
 	{
 		if (Control is not null)
@@ -53,9 +55,9 @@ public class TabBarNavigator: ControlNavigator<TabBar>
 	public TabBarNavigator(
 		ILogger<TabBarNavigator> logger,
 		IRegion region,
-		IRouteResolver routeResolver, IViewResolver viewResolver,
+		IRouteResolver routeResolver, //IViewResolver viewResolver,
 		RegionControlProvider controlProvider)
-		: base(logger, region, routeResolver, viewResolver, controlProvider.RegionControl as TabBar)
+		: base(logger, region, routeResolver, controlProvider.RegionControl as TabBar)
 	{
 	}
 

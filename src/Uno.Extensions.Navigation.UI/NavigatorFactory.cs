@@ -23,17 +23,18 @@ public class NavigatorFactory : INavigatorFactory
 
     private IRouteResolver RouteResolver { get; }
 
-	private IViewResolver ViewResolver { get; }
+	//private IViewResolver ViewResolver { get; }
 
 	public NavigatorFactory(
         ILogger<NavigatorFactory> logger,
         IEnumerable<NavigatorFactoryBuilder> builders,
-		IRouteResolver routeResolver,
-		IViewResolver viewResolver)
+		IRouteResolver routeResolver)
+		//,
+		//IViewResolver viewResolver)
     {
         Logger = logger;
 		RouteResolver = routeResolver;
-		ViewResolver = viewResolver;
+		//ViewResolver = viewResolver;
         builders.ForEach(builder => builder.Configure?.Invoke(this));
     }
 
@@ -102,7 +103,7 @@ public class NavigatorFactory : INavigatorFactory
         var dialogRegion = new NavigationRegion(services: services);
         services.AddInstance<IRegion>(dialogRegion);
 
-        var mapping = ViewResolver.FindViewByPath(request.Route.Base);
+        var mapping = RouteResolver.FindByPath(request.Route.Base);
         var serviceLookupType = mapping?.View;
         if (serviceLookupType is null)
         {

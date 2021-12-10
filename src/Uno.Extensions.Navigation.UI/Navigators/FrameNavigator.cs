@@ -15,12 +15,14 @@ public class FrameNavigator : ControlNavigator<Frame>
 
 	public override bool CanGoBack => Control?.BackStackDepth > 0;
 
+	protected override bool RequiresDefaultView => true;
+
 	public FrameNavigator(
 		ILogger<FrameNavigator> logger,
 		IRegion region,
-		IRouteResolver routeResolver, IViewResolver viewResolver,
+		IRouteResolver routeResolver, //IViewResolver viewResolver,
 		RegionControlProvider controlProvider)
-		: base(logger, region, routeResolver, viewResolver, controlProvider.RegionControl as Frame)
+		: base(logger, region, routeResolver,  controlProvider.RegionControl as Frame)
 	{
 	}
 
@@ -62,13 +64,13 @@ public class FrameNavigator : ControlNavigator<Frame>
 				return false;
 			}
 
-			var previousMapping = ViewResolver.FindView(previousRoute);
+			var previousMapping = RouteResolver.Find(previousRoute);
 			return CanGoBack ||
 					(previousMapping?.View == Control.Content.GetType());
 		}
 		else
 		{
-			var viewType = ViewResolver.FindViewByPath(route.Base)?.View;
+			var viewType = RouteResolver.FindByPath(route.Base)?.View;
 			return viewType is not null &&
 				viewType.IsSubclassOf(typeof(Page));
 		}
@@ -94,7 +96,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 
 		var route = request.Route;
 		var segments = (from pg in route.ForwardNavigationSegments(RouteResolver)
-						let map = ViewResolver.FindViewByPath(pg.Base)
+						let map = RouteResolver.FindByPath(pg.Base)
 						where map?.View is not null &&
 								map.View.IsSubclassOf(typeof(Page))
 						select new { Route = pg, Map = map }).ToArray();
@@ -140,7 +142,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 			RemoveLastFromBackStack();
 		}
 
-		InitialiseCurrentView(route, ViewResolver.FindView(route));
+		InitialiseCurrentView(route, RouteResolver.Find(route));
 
 		var responseRequest = firstSegment with { Scheme = route.Scheme };
 		return responseRequest;
@@ -173,7 +175,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 			FrameGoBack(route.Data, previousMapping);
 		}
 
-		var mapping = ViewResolver.FindViewByView(Control.Content.GetType());
+		var mapping = RouteResolver.FindByView(Control.Content.GetType());
 
 		InitialiseCurrentView(previousRoute ?? Route.Empty, mapping);
 

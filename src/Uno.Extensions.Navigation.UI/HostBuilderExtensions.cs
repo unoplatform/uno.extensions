@@ -7,7 +7,7 @@ public static class HostBuilderExtensions
 {
 	public static IHostBuilder UseNavigation(
 			this IHostBuilder builder,
-			Action<IRouteRegistry, IViewRegistry>? routeBuilder = null)
+			Action<IRouteRegistry>? routeBuilder = null)
 	{
 		return builder
 			.ConfigureServices(sp =>

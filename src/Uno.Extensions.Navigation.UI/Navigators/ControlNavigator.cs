@@ -23,9 +23,9 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
     protected ControlNavigator(
         ILogger logger,
         IRegion region,
-        IRouteResolver routeResolver, IViewResolver viewResolver,
+        IRouteResolver routeResolver, //IViewResolver viewResolver,
         TControl? control)
-        : base(logger, routeResolver, viewResolver, region)
+        : base(logger, routeResolver, region)
     {
         Control = control;
     }
@@ -50,7 +50,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
         }
 
         var route = request.Route;
-        var mapping = ViewResolver.FindView(route);
+        var mapping = RouteResolver.Find(route);
         Logger.LogDebugMessage($"Navigating to path '{route.Base}' with view '{mapping?.View?.Name}'");
         var executedPath = await Show(route.Base, mapping?.View, route.Data);
 
@@ -64,7 +64,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
         return route with { Base = executedPath, Path = null };
     }
 
-    protected object? InitialiseCurrentView(Route route, ViewMap? mapping)
+    protected object? InitialiseCurrentView(Route route, RouteMap? mapping)
     {
         var view = CurrentView;
 
@@ -105,9 +105,9 @@ public abstract class ControlNavigator : Navigator
 
     protected ControlNavigator(
         ILogger logger,
-        IRouteResolver routeResolver, IViewResolver viewResolver,
+        IRouteResolver routeResolver, //IViewResolver viewResolver,
         IRegion region)
-        : base(logger, region, routeResolver, viewResolver)
+        : base(logger, region, routeResolver)
     {
     }
 
@@ -186,7 +186,7 @@ public abstract class ControlNavigator : Navigator
         Route = route is not null ? new Route(Schemes.Current, route.Base, null, route.Data) : null;
     }
 
-    protected object? CreateViewModel(IServiceProvider services, INavigator navigator, Route route, ViewMap? mapping)
+    protected object? CreateViewModel(IServiceProvider services, INavigator navigator, Route route, RouteMap? mapping)
     {
         if (mapping?.ViewModel is not null)
         {

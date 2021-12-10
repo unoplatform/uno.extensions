@@ -17,5 +17,4 @@ public static class ServiceCollectionExtensions
 
 					.AddSingleton<IRequestHandler, TabBarItemRequestHandler>();
 	}
-
 }

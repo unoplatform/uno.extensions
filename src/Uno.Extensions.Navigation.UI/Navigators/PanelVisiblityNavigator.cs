@@ -24,9 +24,9 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
     public PanelVisiblityNavigator(
         ILogger<PanelVisiblityNavigator> logger,
         IRegion region,
-        IRouteResolver routeResolver, IViewResolver viewResolver,
+        IRouteResolver routeResolver, //IViewResolver viewResolver,
         RegionControlProvider controlProvider)
-        : base(logger, region, routeResolver, viewResolver, controlProvider.RegionControl as Grid)
+        : base(logger, region, routeResolver, controlProvider.RegionControl as Grid)
     {
     }
 
@@ -47,15 +47,18 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
         {
             try
             {
-                if (viewType is null)
-                {
-                    Logger.LogErrorMessage("Missing view for navigation path '{path}'");
-                    return default;
-                }
+				if (viewType is null ||
+					viewType.IsSubclassOf(typeof(Page)))
+				{
+					viewType = typeof(UI.Controls.FrameView);
+					path = default;
+					Logger.LogErrorMessage("Missing view for navigation path '{path}'");
+				}
 
-                Logger.LogDebugMessage($"Creating instance of type '{viewType.Name}'");
+				Logger.LogDebugMessage($"Creating instance of type '{viewType.Name}'");
                 controlToShow = Activator.CreateInstance(viewType) as FrameworkElement;
-                if (controlToShow is FrameworkElement fe)
+                if (!string.IsNullOrWhiteSpace(path) &&
+					controlToShow is FrameworkElement fe)
                 {
                     fe.SetName(path??string.Empty);
                 }

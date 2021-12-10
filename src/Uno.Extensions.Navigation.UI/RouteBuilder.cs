@@ -1,8 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Uno.Extensions.Navigation;
 
-public class RouteBuilder : IViewRegistry, IRouteRegistry
+public class RouteBuilder : //IViewRegistry,
+							IRouteRegistry
 {
 	private IServiceCollection Services { get; }
 	public RouteBuilder(IServiceCollection services)
@@ -13,36 +15,57 @@ public class RouteBuilder : IViewRegistry, IRouteRegistry
 	public IRouteRegistry Register(RouteMap route)
 	{
 		Services.AddSingleton(route);
+
+		(new RouteMap[] { route }).Flatten().ForEach(r => r.RegisterTypes(Services));
 		return this;
 	}
 
-	public IViewRegistry Register(ViewMap view)
-	{
-		Services.AddSingleton(view);
-		if (view.ViewModel is not null)
-		{
-			Services.AddTransient(view.ViewModel);
-		}
+//	public IRouteRegistry Register<TData>(RouteMap<TData> route)
+//where TData : class
+//	{
+//		Register((RouteMap)route);
 
-		return this;
-	}
+//		Services.AddViewModelData<TData>();
+//		return this;
+//	}
 
-	public IViewRegistry Register<TData>(ViewMap<TData> route)
-	where TData : class
-	{
-		Register((ViewMap)route);
+//	public IRouteRegistry Register<TData, TResultData>(RouteMap<TData, TResultData> route)
+//		where TData : class
+//		where TResultData : class
+//	{
+//		Register((RouteMap<TData>)route);
 
-		Services.AddViewModelData<TData>();
-		return this;
-	}
+//		Services.AddViewModelData<TResultData>();
+//		return this;
+//	}
 
-	public IViewRegistry Register<TData, TResultData>(ViewMap<TData, TResultData> route)
-		where TData : class
-		where TResultData : class
-	{
-		Register((ViewMap<TData>)route);
+	//public IViewRegistry Register(ViewMap view)
+	//{
+	//	Services.AddSingleton(view);
+	//	if (view.ViewModel is not null)
+	//	{
+	//		Services.AddTransient(view.ViewModel);
+	//	}
 
-		Services.AddViewModelData<TResultData>();
-		return this;
-	}
+	//	return this;
+	//}
+
+	//public IViewRegistry Register<TData>(ViewMap<TData> route)
+	//where TData : class
+	//{
+	//	Register((ViewMap)route);
+
+	//	Services.AddViewModelData<TData>();
+	//	return this;
+	//}
+
+	//public IViewRegistry Register<TData, TResultData>(ViewMap<TData, TResultData> route)
+	//	where TData : class
+	//	where TResultData : class
+	//{
+	//	Register((ViewMap<TData>)route);
+
+	//	Services.AddViewModelData<TResultData>();
+	//	return this;
+	//}
 }

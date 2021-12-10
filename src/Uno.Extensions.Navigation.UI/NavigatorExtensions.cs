@@ -57,6 +57,20 @@ public static class NavigatorExtensions
 	public static Task<NavigationResponse?> NavigateRouteAsync(
 		this INavigator service, object sender, string route, string scheme = Schemes.None, object? data = null, CancellationToken cancellation = default)
 	{
+		if (string.IsNullOrWhiteSpace(route))
+		{
+			var mappings = service.GetMapping();
+			var map = (data is not null)?
+							mappings?.FindByData(data.GetType()) :
+							mappings?.Find(default!);
+			if (map is null)
+			{
+				return Task.FromResult<NavigationResponse?>(null);
+			}
+
+			route = map.Path;
+		}
+
 		return service.NavigateAsync(route.WithScheme(scheme).AsRequest(sender, data, cancellation));
 	}
 
@@ -157,6 +171,19 @@ public static class NavigatorExtensions
 			return Task.FromResult<NavigationResponse?>(null);
 		}
 		return service.NavigateAsync(map.Path.WithScheme(scheme).AsRequest(sender, data, cancellation));
+	}
+
+	public static async Task<NavigationResultResponse<TResultData>?> NavigateDataForResultAsync<TData, TResultData>(
+		this INavigator service, object sender, TData data, string scheme = Schemes.None, CancellationToken cancellation = default)
+	{
+		var mappings = service.GetMapping();
+		var map = mappings?.FindByData(typeof(TData));
+		if (map is null)
+		{
+			return default;
+		}
+		var result = await service.NavigateAsync(map.Path.WithScheme(scheme).AsRequest<TResultData>(sender, data, cancellation));
+		return result?.AsResult<TResultData>();
 	}
 
 	public static async Task<NavigationResultResponse<TResultData>?> NavigateForResultAsync<TResultData>(

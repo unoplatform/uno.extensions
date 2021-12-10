@@ -26,19 +26,21 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 	protected IRouteResolver RouteResolver { get; }
 
-	protected IViewResolver ViewResolver { get; }
+	//protected IViewResolver ViewResolver { get; }
 
-	public Navigator(ILogger<Navigator> logger, IRegion region, IRouteResolver routeResolver, IViewResolver viewResolver)
-		: this((ILogger)logger, region,  routeResolver,  viewResolver)
+	protected virtual bool RequiresDefaultView => false;
+
+	public Navigator(ILogger<Navigator> logger, IRegion region, IRouteResolver routeResolver)//, IViewResolver viewResolver)
+		: this((ILogger)logger, region, routeResolver)//,  viewResolver)
 	{
 	}
 
-	protected Navigator(ILogger logger, IRegion region, IRouteResolver routeResolver, IViewResolver viewResolver)
+	protected Navigator(ILogger logger, IRegion region, IRouteResolver routeResolver) //, IViewResolver viewResolver)
 	{
 		Region = region;
 		Logger = logger;
 		RouteResolver = routeResolver;
-		ViewResolver = viewResolver;
+		//ViewResolver = viewResolver;
 	}
 
 	public async Task<NavigationResponse?> NavigateAsync(NavigationRequest request)
@@ -153,8 +155,8 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			return default;
 		}
 
-		var mapping = ViewResolver.FindView(request.Route);
-		if (mapping?.UntypedBuildQuery is not null)
+		var mapping = RouteResolver.Find(request.Route);
+		if (mapping?.UntypedToQuery is not null)
 		{
 			request = request with { Route = request.Route with { Data = request.Route.Data?.AsParameters(mapping) } };
 		}
@@ -195,7 +197,21 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 		if (request.Route.IsEmpty())
 		{
-			return null;
+			var route = RouteResolver.FindByPath(this.Route?.Base);
+			if (route is not null)
+			{
+				var defaultRoute = route.Nested?.FirstOrDefault(x => x.IsDefault);
+				if(defaultRoute is not null)
+				{
+					request = request with { Route = request.Route.Append(defaultRoute.Path) };
+
+				}
+			}
+
+			if (request.Route.IsEmpty())
+			{
+				return null;
+			}
 		}
 
 		var children = Region.Children.Where(region =>
@@ -245,7 +261,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		// when creating the view model
 		services?.AddInstance<INavigator>(this);
 
-		var mapping = ViewResolver.FindViewByView(Region.View.GetType());
+		var mapping = RouteResolver.FindByView(Region.View.GetType());
 		if (mapping?.ViewModel is not null)
 		{
 			var vm = services?.GetService(mapping.ViewModel);

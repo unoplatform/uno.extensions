@@ -13,9 +13,9 @@ public class PopupNavigator : ControlNavigator<Popup>
     public PopupNavigator(
         ILogger<ContentControlNavigator> logger,
         IRegion region,
-        IRouteResolver routeResolver, IViewResolver viewResolver,
+        IRouteResolver routeResolver, //IViewResolver viewResolver,
         RegionControlProvider controlProvider)
-        : base(logger, region, routeResolver, viewResolver, controlProvider.RegionControl as Popup)
+        : base(logger, region, routeResolver, controlProvider.RegionControl as Popup)
     {
     }
 

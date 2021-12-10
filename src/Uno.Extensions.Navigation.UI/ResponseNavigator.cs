@@ -1,15 +1,26 @@
 ﻿using System;
 using System.Threading.Tasks;
+#if !WINUI
+using Windows.System;
+#else
+using Microsoft.UI.Dispatching;
+#endif
+
+
 
 namespace Uno.Extensions.Navigation;
 
-public class ResponseNavigator<TResult> : IResponseNavigator
+public class ResponseNavigator<TResult> : IResponseNavigator, IInstance<IServiceProvider>
 {
 	private INavigator Navigation { get; }
 
 	private TaskCompletionSource<Option<TResult>> ResultCompletion { get; }
 
 	public Route? Route => Navigation.Route;
+
+	private DispatcherQueue Dispatcher { get; } = DispatcherQueue.GetForCurrentThread();
+
+	public IServiceProvider? Instance => Navigation.Get<IServiceProvider>();
 
 	public ResponseNavigator(INavigator internalNavigation, NavigationRequest request)
 	{
@@ -83,7 +94,10 @@ public class ResponseNavigator<TResult> : IResponseNavigator
 		// Restore the navigator
 		Navigation.Get<IServiceProvider>()?.AddInstance<INavigator>(this.Navigation);
 
-		ResultCompletion.TrySetResult(responseData);
+		Dispatcher.TryEnqueue(() =>
+		{
+			ResultCompletion.TrySetResult(responseData);
+		});
 	}
 
 	public NavigationResponse AsResponseWithResult(NavigationResponse? response)

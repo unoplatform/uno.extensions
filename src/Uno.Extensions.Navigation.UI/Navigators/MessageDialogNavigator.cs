@@ -19,9 +19,9 @@ public class MessageDialogNavigator : DialogNavigator
 {
     public MessageDialogNavigator(
         ILogger<DialogNavigator> logger,
-        IRouteResolver routeResolver, IViewResolver viewResolver,
+        IRouteResolver routeResolver, //IViewResolver viewResolver,
         IRegion region)
-        : base(logger, routeResolver, viewResolver, region)
+        : base(logger, routeResolver, region)
     {
     }
 

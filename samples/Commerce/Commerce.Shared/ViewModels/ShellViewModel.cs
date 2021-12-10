@@ -41,12 +41,12 @@ namespace Commerce.ViewModels
 				if (initialRoute is not null &&
 					!initialRoute.IsEmpty())
 				{
-					var initialResponse = await Navigator.NavigateRouteForResultAsync<Credentials>(this, initialRoute);
+					var initialResponse = await Navigator.NavigateRouteForResultAsync<object>(this, initialRoute);
 					_ = await initialResponse.Result;
 				}
 				else
 				{
-					var homeResponse = await Navigator.NavigateViewModelForResultAsync<HomeViewModel, Credentials>(this, Schemes.ClearBackStack);
+					var homeResponse = await Navigator.NavigateDataForResultAsync<Credentials, object>(this, currentCredentials, Schemes.ClearBackStack);
 					_ = await homeResponse.Result;
 				}
 
@@ -55,7 +55,7 @@ namespace Commerce.ViewModels
 			else
 			{
 				// Navigate to Login page, requesting Credentials
-				var response = await Navigator.NavigateViewModelForResultAsync<LoginViewModel.BindableLoginViewModel, Credentials>(this, Schemes.ClearBackStack);
+				var response = await Navigator.NavigateForResultAsync<Credentials>(this, Schemes.ClearBackStack);
 
 
 				var loginResult = await response.Result;

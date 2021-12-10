@@ -133,6 +133,10 @@ public static class RouteExtensions
 
 	public static Route Append(this Route route, Route routeToAppend)
 	{
+		if (route.IsEmpty())
+		{
+			return route with { Base = routeToAppend.Base };
+		}
 		return route with { Path = route.Path + (routeToAppend.Scheme == Schemes.Nested ? Schemes.Separator : routeToAppend.Scheme) + routeToAppend.Base + routeToAppend.Path };
 	}
 
@@ -399,7 +403,7 @@ public static class RouteExtensions
 		};
 	}
 
-	public static IDictionary<string, object> AsParameters(this IDictionary<string, object> data, ViewMap mapping)
+	public static IDictionary<string, object> AsParameters(this IDictionary<string, object> data, RouteMap mapping)
 	{
 		if (data is null || mapping is null)
 		{
@@ -407,13 +411,13 @@ public static class RouteExtensions
 		}
 
 		var mapDict = data;
-		if (mapping?.UntypedBuildQuery is not null)
+		if (mapping?.UntypedToQuery is not null)
 		{
 			// TODO: Find nicer way to clone the dictionary
 			mapDict = data.ToArray().ToDictionary(x => x.Key, x => x.Value);
 			if (data.TryGetValue(string.Empty, out var paramData))
 			{
-				var qdict = mapping.UntypedBuildQuery(paramData);
+				var qdict = mapping.UntypedToQuery(paramData);
 				qdict.ForEach(qkvp => mapDict[qkvp.Key] = qkvp.Value);
 			}
 		}

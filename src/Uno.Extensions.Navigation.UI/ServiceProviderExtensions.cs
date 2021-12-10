@@ -73,8 +73,7 @@ public static class ServiceProviderExtensions
         return scopedServices;
     }
 
-	public static FrameworkElement NavigationHost<TRootView>(this IServiceProvider services)
-		where TRootView : FrameworkElement
+	public static FrameworkElement NavigationHost(this IServiceProvider services)
 	{
 		var cc = new ContentControl();
 		cc.HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -85,7 +84,7 @@ public static class ServiceProviderExtensions
 		var elementRegion = new NavigationRegion(cc, services);
 		cc.SetInstance(elementRegion);
 
-		elementRegion.Navigator()?.NavigateViewAsync<TRootView>(cc);
+		elementRegion.Navigator()?.NavigateRouteAsync(cc, "") ;
 
 		return cc;
 	}
