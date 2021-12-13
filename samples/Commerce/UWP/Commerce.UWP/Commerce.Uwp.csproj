@@ -20,10 +20,10 @@
     <PackageReference Include="Microsoft.UI.Xaml" Version="2.7.1-prerelease.211026002" />
     <PackageReference Include="Uno.Core" Version="4.0.1" />
     <PackageReference Include="Uno.Material">
-      <Version>1.2.0-dev.6</Version>
+      <Version>1.2.0-dev.8</Version>
     </PackageReference>
-    <PackageReference Include="Uno.Toolkit.UI" Version="1.2.0-dev.1" />
-    <PackageReference Include="Uno.Toolkit.UI.Material" Version="1.2.0-dev.1" />
+    <PackageReference Include="Uno.Toolkit.UI" Version="1.2.0-dev.2" />
+    <PackageReference Include="Uno.Toolkit.UI.Material" Version="1.2.0-dev.2" />
     <PackageReference Include="Uno.UI" Version="4.0.9" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />

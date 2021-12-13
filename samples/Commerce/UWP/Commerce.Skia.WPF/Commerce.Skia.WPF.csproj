@@ -8,10 +8,10 @@
 		<PackageReference Include="Uno.UI.Skia.Wpf" Version="4.0.9" />
 		<PackageReference Include="Uno.UI.RemoteControl" Version="4.0.9" Condition="'$(Configuration)'=='Debug'" />
 		<PackageReference Include="System.Linq.Async" Version="5.0.0" />
-		<PackageReference Include="Uno.Toolkit.UI" Version="1.2.0-dev.1" />
-		<PackageReference Include="Uno.Toolkit.UI.Material" Version="1.2.0-dev.1" />
+		<PackageReference Include="Uno.Toolkit.UI" Version="1.2.0-dev.2" />
+		<PackageReference Include="Uno.Toolkit.UI.Material" Version="1.2.0-dev.2" />
 		<PackageReference Include="Uno.Core" Version="4.0.1" />
-		<PackageReference Include="Uno.Material" Version="1.2.0-dev.6" />
+		<PackageReference Include="Uno.Material" Version="1.2.0-dev.8" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="7.0.3" />
 		<PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.0" />
 	</ItemGroup>
