@@ -62,6 +62,8 @@ jobs:
         dotnet new unoapp-extensions --material -o UnoApp01
         cd UnoApp01
         & $msbuild /r /m UnoApp01.sln
+        if ($LASTEXITCODE -ne 0)
+        {
+            throw "Exit code must be zero."
+        }
     displayName: Build template app
-    errorActionPreference: continue
-    ignoreLASTEXITCODE: true
