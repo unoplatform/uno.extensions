@@ -26,10 +26,12 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Uno.Extensions.Navigation.UI.Controls;
 
-public sealed partial class FrameView : UserControl
+public sealed partial class NavigationFlyout : Flyout
 {
-	public FrameView()
+	public NavigationFlyout()
 	{
 		this.InitializeComponent();
 	}
+
 }
+

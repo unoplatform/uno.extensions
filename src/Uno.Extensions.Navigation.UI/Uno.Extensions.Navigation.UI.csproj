@@ -13,6 +13,7 @@
 	
 	<ItemGroup>
 	  <None Remove="Controls\FrameView.xaml" />
+	  <None Remove="Controls\NavigationFlyout.xaml" />
 	</ItemGroup>
 	
 	<ItemGroup>
@@ -20,6 +21,10 @@
 	</ItemGroup>
 	
 	<ItemGroup>
+	  <Page Include="Controls\NavigationFlyout.xaml">
+	    <SubType>Designer</SubType>
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	  <Page Include="Controls\FrameView.xaml">
 	    <SubType>Designer</SubType>
 	    <Generator>MSBuild:Compile</Generator>

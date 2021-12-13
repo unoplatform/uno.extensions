@@ -246,7 +246,7 @@ namespace Commerce
 																							var products = await ps.GetProducts(default, default);
 																							return products.FirstOrDefault(p=>p.ProductId==id);
 																						}),
-																new("Filter", View: typeof(FilterPage), ViewModel: typeof(FiltersViewModel), Data: typeof(Filters))
+																new RouteMap<Filters, Filters>("Filter", View: typeof(FilterPage), ViewModel: typeof(FiltersViewModel.BindableFiltersViewModel))
 															}),
 
 											new("Deals", View: typeof(DealsPage), ViewModel: typeof(DealsViewModel)),

@@ -123,6 +123,11 @@ public static class RouteExtensions
 			handledRoute = handledRoute.Next();
 		}
 
+		if(route.Scheme==Schemes.NavigateBack && route.Scheme == handledRoute.Scheme)
+		{
+			route = route with { Scheme = Schemes.None };
+		}
+
 		return route;
 	}
 

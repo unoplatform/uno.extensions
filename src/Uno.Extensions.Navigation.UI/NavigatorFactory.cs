@@ -119,7 +119,15 @@ public class NavigatorFactory : INavigatorFactory
         var serviceType = this.FindServiceByType(serviceLookupType);//  ServiceTypes[mapping.View.Name];
         if (serviceType is null)
         {
-            return null;
+			if (request.Route.IsDialog())
+			{
+				serviceType = this.FindServiceByType(typeof(Flyout));
+			}
+
+			if (serviceType is null)
+			{
+				return null;
+			}
         }
 
         var navService = services.GetRequiredService(serviceType) as INavigator;

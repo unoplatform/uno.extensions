@@ -112,7 +112,6 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			// Run dialog requests
 			if (request.Route.IsDialog())
 			{
-				request = request with { Route = request.Route with { Scheme = Schemes.Current } };
 				return await DialogNavigateAsync(request);
 			}
 
@@ -141,6 +140,9 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 	private async Task<NavigationResponse?> DialogNavigateAsync(NavigationRequest request)
 	{
 		var dialogService = Region.Services?.GetService<INavigatorFactory>()?.CreateService(Region, request);
+
+		// Trim dialog scheme to prevent recursion when we call Navigate
+		request = request with { Route = request.Route with { Scheme = Schemes.Current } };
 
 		var dialogResponse = await (dialogService?.NavigateAsync(request) ?? Task.FromResult<NavigationResponse?>(default));
 

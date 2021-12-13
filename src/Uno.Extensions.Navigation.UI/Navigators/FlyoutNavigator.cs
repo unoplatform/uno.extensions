@@ -19,91 +19,106 @@ namespace Uno.Extensions.Navigation.Navigators;
 
 public class FlyoutNavigator : ControlNavigator
 {
-    public override bool CanGoBack => true;
+	public override bool CanGoBack => true;
 
-    private Flyout? Flyout { get; set; }
+	private Flyout? Flyout { get; set; }
 
-    public FlyoutNavigator(
-        ILogger<ContentDialogNavigator> logger,
-        IRouteResolver routeResolver, //IViewResolver viewResolver,
-        IRegion region)
-        : base(logger, routeResolver, region)
-    {
-    }
+	public FlyoutNavigator(
+		ILogger<ContentDialogNavigator> logger,
+		IRouteResolver routeResolver, //IViewResolver viewResolver,
+		IRegion region)
+		: base(logger, routeResolver, region)
+	{
+	}
 
-    protected override bool CanNavigateToRoute(Route route) => base.CanNavigateToRoute(route) || route.IsBackOrCloseNavigation();
+	protected override bool CanNavigateToRoute(Route route) => base.CanNavigateToRoute(route) || route.IsBackOrCloseNavigation();
 
-    protected override async Task<Route?> ExecuteRequestAsync(NavigationRequest request)
-    {
-        if (Region.Services is null)
-        {
-            return default;
-        }
+	protected override async Task<Route?> ExecuteRequestAsync(NavigationRequest request)
+	{
+		if (Region.Services is null)
+		{
+			return default;
+		}
 
-        var route = request.Route;
-        // If this is back navigation, then make sure it's used to close
-        // any of the open dialogs
-        if (route.FrameIsBackNavigation() && Flyout is not null)
-        {
-            CloseFlyout();
-        }
-        else
-        {
-            var mapping = RouteResolver.Find(route);
-            var viewModel = CreateViewModel(Region.Services, this, route, mapping);
-            Flyout = await DisplayFlyout(request, mapping?.View, viewModel);
-        }
-        var responseRequest = route with { Path = null };
-        return responseRequest;
-    }
+		var route = request.Route;
+		// If this is back navigation, then make sure it's used to close
+		// any of the open dialogs
+		var injectedFlyout = false;
+		if (route.FrameIsBackNavigation() && Flyout is not null)
+		{
+			CloseFlyout();
+		}
+		else
+		{
+			var mapping = RouteResolver.Find(route);
+			injectedFlyout = !(mapping?.View?.IsSubclassOf(typeof(Flyout))??false);
+			var viewModel = CreateViewModel(Region.Services, this, route, mapping);
+			Flyout = await DisplayFlyout(request, mapping?.View, viewModel, injectedFlyout);
+		}
+		var responseRequest = injectedFlyout ? Route.Empty : route with { Path = null };
+		return responseRequest;
+	}
 
-    private void CloseFlyout()
-    {
-        Flyout?.Hide();
-    }
+	private void CloseFlyout()
+	{
+		Flyout?.Hide();
+	}
 
-    private async Task<Flyout?> DisplayFlyout(NavigationRequest request, Type? viewType, object? viewModel)
-    {
-        var route = request.Route;
-        var navigation = Region.Navigator();
-        var services = Region.Services;
-        var mapping = RouteResolver.Find(route);
+	private async Task<Flyout?> DisplayFlyout(NavigationRequest request, Type? viewType, object? viewModel, bool injectedFlyout)
+	{
+		var route = request.Route;
+		var navigation = Region.Navigator();
+		var services = Region.Services;
 
-        if (navigation is null ||
-            services is null)
-        {
-            return null;
-        }
+		if (navigation is null ||
+			services is null)
+		{
+			return null;
+		}
 
-        Flyout? flyout = null;
-        if (mapping?.View is not null)
-        {
-            flyout = Activator.CreateInstance(mapping.View) as Flyout;
-        }
-        else
-        {
-            object? resource = request.RouteResourceView(Region);
-            flyout = resource as Flyout;
-        }
+		Flyout? flyout = null;
+		if (viewType is not null)
+		{
+			if (!injectedFlyout)
+			{
+				flyout = Activator.CreateInstance(viewType) as Flyout;
+			}
+			else
+			{
+				flyout = new UI.Controls.NavigationFlyout();
+			}
+		}
+		else
+		{
+			object? resource = request.RouteResourceView(Region);
+			flyout = resource as Flyout;
+		}
 
-        var flyoutElement = flyout?.Content as FrameworkElement;
-        if (flyoutElement is not null)
-        {
-            flyoutElement.InjectServicesAndSetDataContext(services, navigation, viewModel);
-            flyoutElement.SetInstance(Region);
-            flyoutElement.SetName(route.Base); // Set the name on the flyout element
-        }
+		var flyoutElement = flyout?.Content as FrameworkElement;
+		if (flyoutElement is not null)
+		{
+			if (!injectedFlyout)
+			{
+				flyoutElement.InjectServicesAndSetDataContext(services, navigation, viewModel);
+			}
 
-        var flyoutHost = request.Sender as FrameworkElement;
-        if (flyoutHost is null)
-        {
-            flyoutHost = Region.View;
-        }
+			flyoutElement.SetInstance(Region);
+			if (!injectedFlyout)
+			{
+				flyoutElement.SetName(route.Base); // Set the name on the flyout element
+			}
+		}
 
-        flyout?.ShowAt(flyoutHost);
+		var flyoutHost = request.Sender as FrameworkElement;
+		if (flyoutHost is null)
+		{
+			flyoutHost = Region.View;
+		}
+
+		flyout?.ShowAt(flyoutHost);
 
 
-        await flyoutElement.EnsureLoaded();
+		await flyoutElement.EnsureLoaded();
 
 
 		if (flyoutElement is not null)
@@ -113,6 +128,6 @@ public class FlyoutNavigator : ControlNavigator
 			flyoutElement.ReassignRegionParent(); // Update any sub-regions to correct their relationship with the parent (ie set the name)
 		}
 
-        return flyout;
-    }
+		return flyout;
+	}
 }
