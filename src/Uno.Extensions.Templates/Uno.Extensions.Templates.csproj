@@ -42,8 +42,7 @@
 		</Content>
 	</ItemGroup>
 
-	<Target Name="ReplaceVersions" BeforeTargets="BeforeBuild">
-		<!--Condition="'$(PackageVersion)'!='255.255.255.255'"-->
+	<Target Name="ReplaceVersions" BeforeTargets="BeforeBuild" Condition="'$(PackageVersion)'!='255.255.255.255'">
 		<ItemGroup>
 			<MySourceFiles Include="..\..\samples\Commerce\Commerce.Shared\**\*" />
 		</ItemGroup>

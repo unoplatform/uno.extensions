@@ -1,6 +1,4 @@
 //-:cnd:noEmit
-//-:cnd:noEmit
-//-:cnd:noEmit
 using MyExtensionsApp.Models;
 using MyExtensionsApp.Services;
 
