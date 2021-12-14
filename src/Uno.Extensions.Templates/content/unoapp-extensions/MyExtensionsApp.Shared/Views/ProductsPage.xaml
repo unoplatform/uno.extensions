@@ -1,4 +1,4 @@
-﻿<Page x:Class="MyExtensionsApp.ProductsPage"
+<Page x:Class="MyExtensionsApp.ProductsPage"
 	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	  xmlns:local="using:MyExtensionsApp"
@@ -15,7 +15,7 @@
 	<Grid>
 		<VisualStateManager.VisualStateGroups>
 			<VisualStateGroup>
-				<VisualState x:Name="Narrow" /> 
+				<VisualState x:Name="Narrow" />
 
 				<VisualState x:Name="Wide">
 					<VisualState.StateTriggers>
@@ -45,31 +45,31 @@
 			<utu:AutoLayout.Resources>
 				<x:String x:Key="Icon_search">M 12.5 11 L 11.710000038146973 11 L 11.430000305175781 10.729999542236328 C 12.410000324249268 9.589999556541443 13 8.110000014305115 13 6.5 C 13 2.9100000858306885 10.089999914169312 0 6.5 0 C 2.9100000858306885 0 0 2.9100000858306885 0 6.5 C 0 10.089999914169312 2.9100000858306885 13 6.5 13 C 8.110000014305115 13 9.589999556541443 12.410000324249268 10.729999542236328 11.430000305175781 L 11 11.710000038146973 L 11 12.5 L 16 17.489999771118164 L 17.489999771118164 16 L 12.5 11 L 12.5 11 Z M 6.5 11 C 4.009999990463257 11 2 8.990000009536743 2 6.5 C 2 4.009999990463257 4.009999990463257 2 6.5 2 C 8.990000009536743 2 11 4.009999990463257 11 6.5 C 11 8.990000009536743 8.990000009536743 11 6.5 11 Z</x:String>
 			</utu:AutoLayout.Resources>
-			<utu:NavigationBar Content="Uno MyExtensionsApp"
+			<utu:NavigationBar Content="Uno commerce"
 							   x:Uid="Page_NavigationBar"
 							   utu:AutoLayout.CounterAlignment="Stretch"
 							   Style="{StaticResource MaterialNavigationBarStyle}">
 			<!--Workaround for crash on UWP when using MaterialNavigationBarStyle-->
 			<utu:NavigationBar.MainCommand>
-				<AppBarButton Foreground="{StaticResource MaterialOnPrimaryMediumBrush}">
+				<AppBarButton Foreground="{ThemeResource MaterialOnPrimaryMediumBrush}">
 					<AppBarButton.Icon>
 						<BitmapIcon UriSource="ms-appx:///Assets/Icons/back.png"
-									ShowAsMonochrome="false" />
+									 />
 					</AppBarButton.Icon>
 				</AppBarButton>
 			</utu:NavigationBar.MainCommand>
 
 				<utu:NavigationBar.PrimaryCommands>
-					<AppBarButton Foreground="{StaticResource MaterialOnPrimaryMediumBrush}">
+					<AppBarButton Foreground="{ThemeResource MaterialOnPrimaryMediumBrush}">
 						<AppBarButton.Icon>
 							<BitmapIcon UriSource="ms-appx:///Assets/Icons/notifications.png"
-										ShowAsMonochrome="false" />
+										 />
 						</AppBarButton.Icon>
 					</AppBarButton>
-					<AppBarButton Foreground="{StaticResource MaterialOnPrimaryMediumBrush}">
+					<AppBarButton Foreground="{ThemeResource MaterialOnPrimaryMediumBrush}">
 						<AppBarButton.Icon>
 							<BitmapIcon UriSource="ms-appx:///Assets/Icons/help_outline.png"
-										ShowAsMonochrome="false" />
+										 />
 						</AppBarButton.Icon>
 					</AppBarButton>
 				</utu:NavigationBar.PrimaryCommands>
@@ -97,6 +97,7 @@
 								   utu:AutoLayout.CounterAlignment="Center"
 								   Style="{StaticResource MaterialBody2}" />
 						<HyperlinkButton Content="Filters"
+										 AutomationProperties.AutomationId="Filters"
 										 x:Uid="Page_Filters"
 										 utu:AutoLayout.CounterAlignment="Center"
 										 Style="{StaticResource MaterialHyperlinkButtonStyle}"
@@ -110,9 +111,9 @@
 							  utu:AutoLayout.PrimaryAlignment="Stretch">
 					<DataTemplate>
 						<UserControl>
-								<Grid>
-									<VisualStateManager.VisualStateGroups>
-										<VisualStateGroup>
+							<Grid>
+								<VisualStateManager.VisualStateGroups>
+									<VisualStateGroup>
 										<VisualState x:Name="Narrow">
 											<VisualState.StateTriggers>
 												<AdaptiveTrigger MinWindowWidth="0"
@@ -120,31 +121,31 @@
 											</VisualState.StateTriggers>
 											<VisualState.Setters>
 												<Setter Target="ProductsListView.SelectionMode"
-															Value="None" />
+														Value="None" />
 												<Setter Target="ProductsListView.IsItemClickEnabled"
-															Value="True" />
+														Value="True" />
 											</VisualState.Setters>
 										</VisualState>
 										<VisualState x:Name="Wide">
-												<VisualState.StateTriggers>
+											<VisualState.StateTriggers>
 												<AdaptiveTrigger MinWindowWidth="{StaticResource WideMinWindowWidthh}" />
-												</VisualState.StateTriggers>
-												<VisualState.Setters>
-													<Setter Target="ProductsListView.SelectionMode"
-															Value="Single" />
-													<Setter Target="ProductsListView.IsItemClickEnabled"
-															Value="False" />
-												</VisualState.Setters>
-											</VisualState>
-										</VisualStateGroup>
-									</VisualStateManager.VisualStateGroups>
+											</VisualState.StateTriggers>
+											<VisualState.Setters>
+												<Setter Target="ProductsListView.SelectionMode"
+														Value="Single" />
+												<Setter Target="ProductsListView.IsItemClickEnabled"
+														Value="False" />
+											</VisualState.Setters>
+										</VisualState>
+									</VisualStateGroup>
+								</VisualStateManager.VisualStateGroups>
 
 								<ListView Background="{StaticResource MaterialSurfaceBrush}"
-										x:Name="ProductsListView"
-										ItemsSource="{Binding Data}"
-										 SelectionMode="None"
-										 IsItemClickEnabled="True"
-										uen:Navigation.Request="ProductDetails">
+										  x:Name="ProductsListView"
+										  ItemsSource="{Binding Data}"
+										  SelectionMode="None"
+										  IsItemClickEnabled="True"
+										  uen:Navigation.Request="ProductDetails">
 									<ListView.ItemsPanel>
 										<ItemsPanelTemplate>
 											<ItemsStackPanel Orientation="Vertical" />
@@ -154,52 +155,52 @@
 										<DataTemplate>
 											<utu:AutoLayout>
 												<utu:AutoLayout Padding="16,8,16,0"
-															Orientation="Horizontal"
-															utu:AutoLayout.CounterAlignment="Stretch">
+																Orientation="Horizontal"
+																utu:AutoLayout.CounterAlignment="Stretch">
 													<utu:AutoLayout>
 														<utu:AutoLayout Spacing="10"
-																	Padding="0,0,16,8">
+																		Padding="0,0,16,8">
 															<Image Source="{Binding Photo}"
-															   Stretch="UniformToFill"
-															   utu:AutoLayout.PrimaryLength="56"
-															   utu:AutoLayout.CounterLength="56" />
+																   Stretch="UniformToFill"
+																   utu:AutoLayout.PrimaryLength="56"
+																   utu:AutoLayout.CounterLength="56" />
 														</utu:AutoLayout>
 													</utu:AutoLayout>
 													<utu:AutoLayout Padding="0,0,0,8"
-																utu:AutoLayout.PrimaryAlignment="Stretch">
+																	utu:AutoLayout.PrimaryAlignment="Stretch">
 														<utu:AutoLayout PrimaryAxisAlignment="Center"
-																	utu:AutoLayout.CounterAlignment="Stretch">
+																		utu:AutoLayout.CounterAlignment="Stretch">
 															<utu:AutoLayout PrimaryAxisAlignment="Center"
-																		utu:AutoLayout.CounterAlignment="Stretch"
-																		utu:AutoLayout.PrimaryAlignment="Stretch">
+																			utu:AutoLayout.CounterAlignment="Stretch"
+																			utu:AutoLayout.PrimaryAlignment="Stretch">
 																<TextBlock Foreground="{StaticResource MaterialOnSurfaceLowBrush}"
-																	   TextWrapping="Wrap"
-																	   Text="{Binding Brand}"
-																	   Style="{StaticResource MaterialOverline}" />
+																		   TextWrapping="Wrap"
+																		   Text="{Binding Brand}"
+																		   Style="{StaticResource MaterialOverline}" />
 																<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}"
-																	   TextWrapping="Wrap"
-																	   Text="{Binding Name}"
-																	   Style="{StaticResource MaterialSubtitle1}" />
+																		   TextWrapping="Wrap"
+																		   Text="{Binding Name}"
+																		   Style="{StaticResource MaterialSubtitle1}" />
 															</utu:AutoLayout>
 														</utu:AutoLayout>
 													</utu:AutoLayout>
 													<utu:AutoLayout Orientation="Horizontal"
-																utu:AutoLayout.CounterAlignment="Stretch">
-														<utu:AutoLayout Padding="16,0,0,8"
-																	PrimaryAxisAlignment="End"
-																	Orientation="Horizontal"
 																	utu:AutoLayout.CounterAlignment="Stretch">
+														<utu:AutoLayout Padding="16,0,0,8"
+																		PrimaryAxisAlignment="End"
+																		Orientation="Horizontal"
+																		utu:AutoLayout.CounterAlignment="Stretch">
 															<utu:AutoLayout utu:AutoLayout.CounterAlignment="Center">
 																<utu:AutoLayout Spacing="4"
-																			utu:AutoLayout.CounterAlignment="End">
-																	<utu:AutoLayout Spacing="10"
-																				PrimaryAxisAlignment="End"
-																				Orientation="Horizontal"
 																				utu:AutoLayout.CounterAlignment="End">
+																	<utu:AutoLayout Spacing="10"
+																					PrimaryAxisAlignment="End"
+																					Orientation="Horizontal"
+																					utu:AutoLayout.CounterAlignment="End">
 																		<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}"
-																			   TextAlignment="End"
-																			   Text="{Binding Price}"
-																			   Style="{StaticResource MaterialBody1}" />
+																				   TextAlignment="End"
+																				   Text="{Binding Price}"
+																				   Style="{StaticResource MaterialBody1}" />
 																	</utu:AutoLayout>
 																</utu:AutoLayout>
 															</utu:AutoLayout>

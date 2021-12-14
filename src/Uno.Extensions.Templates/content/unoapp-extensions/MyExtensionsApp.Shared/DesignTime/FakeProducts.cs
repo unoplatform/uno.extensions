@@ -1,4 +1,7 @@
-﻿using MyExtensionsApp.Models;
+//-:cnd:noEmit
+//-:cnd:noEmit
+//-:cnd:noEmit
+using MyExtensionsApp.Models;
 using MyExtensionsApp.Services;
 
 namespace MyExtensionsApp.DesignTime

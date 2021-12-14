@@ -1,5 +1,4 @@
-﻿//-:cnd:noEmit
-
+//-:cnd:noEmit
 using System;
 using System.Linq;
 

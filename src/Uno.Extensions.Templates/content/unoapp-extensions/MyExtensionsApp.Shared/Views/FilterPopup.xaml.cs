@@ -1,4 +1,7 @@
-﻿using System;
+//-:cnd:noEmit
+//-:cnd:noEmit
+//-:cnd:noEmit
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;

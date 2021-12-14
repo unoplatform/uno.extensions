@@ -1,4 +1,5 @@
-﻿using System.Linq;
+//-:cnd:noEmit
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MyExtensionsApp.Models;

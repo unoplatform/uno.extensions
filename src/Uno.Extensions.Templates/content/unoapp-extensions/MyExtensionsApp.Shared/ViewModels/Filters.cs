@@ -1,4 +1,5 @@
-﻿using System;
+//-:cnd:noEmit
+using System;
 using System.Linq;
 using MyExtensionsApp.Models;
 using MyExtensionsApp.Services;
