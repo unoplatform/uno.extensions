@@ -33,10 +33,11 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
         {
 			viewType = typeof(UI.Controls.FrameView);
             Logger.LogErrorMessage("Missing view for navigation path '{path}'");
-            //return string.Empty;
-        }
+			//return string.Empty;
+			path = default;
+		}
 
-        if(Control is null)
+		if (Control is null)
         {
             return string.Empty;
         }

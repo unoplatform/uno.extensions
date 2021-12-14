@@ -135,6 +135,8 @@
 														Value="Single" />
 												<Setter Target="ProductsListView.IsItemClickEnabled"
 														Value="False" />
+												<Setter Target="ProductsListView.(uen:Navigation.Request)"
+														Value="./LandscapeDetails/Details" />
 											</VisualState.Setters>
 										</VisualState>
 									</VisualStateGroup>
@@ -145,7 +147,7 @@
 										  ItemsSource="{Binding Data}"
 										  SelectionMode="None"
 										  IsItemClickEnabled="True"
-										  uen:Navigation.Request="">
+										  uen:Navigation.Request="./Details">
 									<ListView.ItemsPanel>
 										<ItemsPanelTemplate>
 											<ItemsStackPanel Orientation="Vertical" />
@@ -221,7 +223,7 @@
 		<Grid Grid.Column="1"
 			  x:Name="DetailsGrid"
 			  Visibility="Collapsed">
-			<ContentControl uen:Region.Name="Details"
+			<ContentControl uen:Region.Name="LandscapeDetails"
 							uen:Region.Attached="true"
 							Grid.Column="1"
 							HorizontalAlignment="Stretch"

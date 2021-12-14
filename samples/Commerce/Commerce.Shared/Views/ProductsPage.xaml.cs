@@ -37,6 +37,5 @@ namespace Commerce
         {
             this.InitializeComponent();
         }
-
-    }
+	}
 }
