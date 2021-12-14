@@ -6,8 +6,8 @@
 		<UseWPF>true</UseWPF>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Uno.UI.Skia.Wpf" Version="4.1.0-dev.32" />
-		<PackageReference Include="Uno.UI.RemoteControl" Version="4.1.0-dev.32" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.UI.Skia.Wpf" Version="4.0.9" />
+		<PackageReference Include="Uno.UI.RemoteControl" Version="4.0.9" Condition="'$(Configuration)'=='Debug'" />
 		<PackageReference Include="System.Linq.Async" Version="5.1.0" />
 		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
 	</ItemGroup>

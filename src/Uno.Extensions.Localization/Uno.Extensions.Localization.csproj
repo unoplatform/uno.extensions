@@ -8,6 +8,6 @@
 	<Import Project="common.props" />
 
 	<ItemGroup>
-		<PackageReference Include="Uno.UI" Version="4.1.0-dev.32" />
+		<PackageReference Include="Uno.UI" Version="4.0.9" />
 	</ItemGroup>
 </Project>
