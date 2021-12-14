@@ -25,6 +25,9 @@
       <Version>6.2.11</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml" Version="2.7.0" />
+    <PackageReference Include="System.Threading.Tasks.Extensions">
+      <Version>4.5.4</Version>
+    </PackageReference>
     <PackageReference Include="Uno.Core" Version="4.0.1" />
     <PackageReference Include="Uno.Material">
       <Version>1.2.0</Version>

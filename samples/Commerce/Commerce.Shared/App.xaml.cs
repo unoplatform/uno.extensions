@@ -233,7 +233,7 @@ namespace Commerce
 							Nested: new RouteMap[]
 							{
 								new("Login", View: typeof(LoginPage), ViewModel: typeof(LoginViewModel.BindableLoginViewModel), ResultData: typeof(Credentials)),
-								new RouteMap<Credentials>("Home", View: typeof(HomePage), 
+								new RouteMap<Credentials>("Home", View: typeof(HomePage),
 										Nested: new RouteMap[]{
 											new ("Products", View: typeof(ProductsPage), ViewModel: typeof(ProductsViewModel.BindableProductsViewModel),
 															IsDefault: true,
@@ -255,6 +255,18 @@ namespace Commerce
 
 											new("Cart", View: typeof(CartPage), ViewModel: typeof(CartViewModel),
 													Nested: new []{
+														new RouteMap<CartItem>("CartDetails", View: typeof(ProductDetailsPage), ViewModel: typeof(CartProductDetailsViewModel.BindableCartProductDetailsViewModel),
+																						ToQuery: cartItem => new Dictionary<string, string> {
+																							{ nameof(Product.ProductId), cartItem.Product.ProductId.ToString() },
+																							{ nameof(CartItem.Quantity),cartItem.Quantity.ToString() } },
+																						FromQuery: async (sp, query) => {
+																							var id = int.Parse(query[nameof(Product.ProductId)]);
+																							var quantity = int.Parse(query[nameof(CartItem.Quantity)]);
+																							var ps = sp.GetRequiredService<IProductService>();
+																							var products = await ps.GetProducts(default, default);
+																							var p = products.FirstOrDefault(p=>p.ProductId==id);
+																							return new CartItem(p,quantity);
+																						}),
 														new RouteMap("Checkout", View: typeof(CheckoutPage))
 													})
 											})

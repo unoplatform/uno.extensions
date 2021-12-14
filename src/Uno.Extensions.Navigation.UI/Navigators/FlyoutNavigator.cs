@@ -50,6 +50,11 @@ public class FlyoutNavigator : ControlNavigator
 		}
 		else
 		{
+			if(Flyout is not null)
+			{
+				return Route.Empty;
+			}
+
 			var mapping = RouteResolver.Find(route);
 			injectedFlyout = !(mapping?.View?.IsSubclassOf(typeof(Flyout))??false);
 			var viewModel = CreateViewModel(Region.Services, this, route, mapping);

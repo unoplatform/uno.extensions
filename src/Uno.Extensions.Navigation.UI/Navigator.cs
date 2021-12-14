@@ -99,7 +99,9 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 			// Is this region is an unnamed child of a composite,
 			// send request to parent if the route has no scheme
-			if ((request.Route.IsCurrent() || request.Route.IsBackOrCloseNavigation()) &&
+			if ((request.Route.IsCurrent()
+				//|| request.Route.IsBackOrCloseNavigation()
+				) &&
 				!Region.IsNamed() &&
 				Region.Parent is not null
 				&& !(Region.Children.Any(x => x.Name == request.Route.Base))
@@ -169,7 +171,12 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 		var responseFactory = services.GetRequiredService<IResponseNavigatorFactory>();
 		// Create ResponseNavigator if result is requested
-		var navigator = request.GetResponseNavigator(responseFactory, this);
+		var navigator = request.Result is not null ? request.GetResponseNavigator(responseFactory, this) : default;
+
+		//if(navigator is not null)
+		//{
+		//	request = request with { Result = null };
+		//}
 
 		var executedRoute = await CoreNavigateAsync(request);
 
@@ -203,7 +210,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			if (route is not null)
 			{
 				var defaultRoute = route.Nested?.FirstOrDefault(x => x.IsDefault);
-				if(defaultRoute is not null)
+				if (defaultRoute is not null)
 				{
 					request = request with { Route = request.Route.Append(defaultRoute.Path) };
 
@@ -215,6 +222,12 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 				return null;
 			}
 		}
+
+		if (!string.IsNullOrWhiteSpace(Region.Name) && request.Result is not null)
+		{
+			request = request with { Result = null };
+		}
+
 
 		var children = Region.Children.Where(region =>
 										// Unnamed child regions

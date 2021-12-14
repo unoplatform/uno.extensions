@@ -71,13 +71,13 @@ public class ResponseNavigator<TResult> : IResponseNavigator, IInstance<IService
 		}
 
 
-		if (navResponse is NavigationResultResponse<TResult> typedResponse &&
-			typedResponse.Result is not null)
-		{
-			typedResponse.Result.ContinueWith(x => ApplyResult(x.Result));
+		//if (navResponse is NavigationResultResponse<TResult> typedResponse &&
+		//	typedResponse.Result is not null)
+		//{
+		//	typedResponse.Result.ContinueWith(x => ApplyResult(x.Result));
 
-			return typedResponse with { Result = ResultCompletion.Task };
-		}
+		//	return typedResponse with { Result = ResultCompletion.Task };
+		//}
 
 		return navResponse;
 		//return new NavigationResultResponse<TResult>(navResponse?.Route ?? Route.Empty, ResultCompletion.Task);
@@ -101,5 +101,11 @@ public class ResponseNavigator<TResult> : IResponseNavigator, IInstance<IService
 	}
 
 	public NavigationResponse AsResponseWithResult(NavigationResponse? response)
-		=> new NavigationResultResponse<TResult>(response?.Route ?? Route.Empty, ResultCompletion.Task, response?.Success ?? false);
+	{
+		if(response is NavigationResultResponse<TResult> navResponse)
+		{
+			navResponse.Result.ContinueWith(x => ApplyResult(x.Result));
+		}
+		return new NavigationResultResponse<TResult>(response?.Route ?? Route.Empty, ResultCompletion.Task, response?.Success ?? false);
+	}
 }
