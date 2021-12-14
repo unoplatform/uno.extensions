@@ -19,7 +19,7 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged
 
 	private T? _value;
 	private CancellationTokenSource? _asyncSetCt;
-	private List<Action<T?, bool>>? _onUpdated;
+	private List<Action<T?>>? _onUpdated;
 
 	private readonly BindablePropertyInfo<T> _property;
 	private readonly bool _hasValueProperty;
@@ -63,8 +63,8 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged
 			propertyName,
 			updated =>
 			{
-				(_onUpdated ??= new()).Add((value, _) => updated(get(value), false));
-				updated(get(_value), false); // Make sure to propagate the default value
+				(_onUpdated ??= new()).Add(value => updated(get(value)));
+				updated(get(_value)); // Make sure to propagate the default value
 			},
 			(update, isLeafPropertyChanged, ct) => OnSubPropertyUpdated(propertyName, get, set, update, isLeafPropertyChanged, ct));
 
@@ -87,14 +87,9 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged
 		}
 	}
 
-	private static readonly bool _isRefType = typeof(T) is null;
-	private bool SetValueCore(T? value, bool raiseChanged = true)
+	private bool SetValueCore(T? value)
 	{
-		// We try to avoid to invoke costly Equals that might validate the whole object tree as we are already doing the same.
-		// We however need to use teh Equals for value types in order to not compare boxed instance ref.
-		if (_value is null || _isRefType
-			? object.ReferenceEquals(_value, value)
-			: _value.Equals(value))
+		if (object.ReferenceEquals(_value, value))
 		{
 			return false;
 		}
@@ -105,26 +100,20 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged
 		UpdateSubProperties(value);
 
 		// 2. Notify UI that the local value has changed
-		if (raiseChanged)
+		if (_hasValueProperty)
 		{
-			if (_hasValueProperty)
-			{
-				// The Value property is generated only if the de-normalized entity does not already have a Value property.
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Value"));
-			}
-			// Support for `{x:Bind GetValue()}`
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(GetValue)));
+			// The Value property is generated only if the de-normalized entity does not already have a Value property.
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Value"));
 		}
+		// Support for `{x:Bind GetValue()}`
+		PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(GetValue)));
 
 		return true;
 	}
 
-	private void OnOwnerUpdated(T? value, bool isRootPropertyChanged)
+	private void OnOwnerUpdated(T? value)
 	{
-		if (SetValueCore(value) && isRootPropertyChanged)
-		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(""));
-		}
+		SetValueCore(value);
 	}
 
 	private async void UpdateOwner(T? value)
@@ -181,7 +170,7 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged
 		{
 			foreach (var callback in _onUpdated)
 			{
-				callback(value, false);
+				callback(value);
 			}
 		}
 	}
