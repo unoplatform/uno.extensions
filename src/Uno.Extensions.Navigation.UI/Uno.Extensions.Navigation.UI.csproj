@@ -10,17 +10,12 @@
 	<PropertyGroup>
 		<PackageId>Uno.Extensions.Navigation.UI</PackageId>
 	</PropertyGroup>
-	
-	<ItemGroup>
-	  <None Remove="Controls\FrameView.xaml" />
-	  <None Remove="Controls\NavigationFlyout.xaml" />
-	</ItemGroup>
-	
+
 	<ItemGroup>
 		<PackageReference Include="Uno.UI" Version="4.0.9" />
 	</ItemGroup>
 	
-	<ItemGroup>
+	<!--<ItemGroup>
 	  <Page Include="Controls\NavigationFlyout.xaml">
 	    <SubType>Designer</SubType>
 	    <Generator>MSBuild:Compile</Generator>
@@ -35,6 +30,6 @@
 	  <Compile Update="Controls\FrameView.xaml.cs">
 	    <DependentUpon>FrameView.xaml</DependentUpon>
 	  </Compile>
-	</ItemGroup>
+	</ItemGroup>-->
 	
 </Project>

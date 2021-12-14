@@ -1,6 +1,6 @@
 <Project ToolsVersion="15.0">
   <PropertyGroup>
-	  <AssemblyName>Uno.Extensions.Navigation.UI</AssemblyName>
+	  <GenerateLibraryLayout>true</GenerateLibraryLayout>
   </PropertyGroup>
   
 	<ItemGroup>
@@ -20,5 +20,13 @@
 	  <LogicalName>$(AssemblyName).xml</LogicalName>
 	</EmbeddedResource>
   </ItemGroup>
-  
+
+
+	<ItemGroup>
+		<Page Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
+		<Compile Update="**\*.xaml.cs">
+			<DependentUpon>%(Filename)</DependentUpon>
+		</Compile>
+		<UpToDateCheckInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
+	</ItemGroup>
 </Project>
