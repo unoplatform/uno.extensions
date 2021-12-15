@@ -62,6 +62,7 @@ public static class ServiceCollectionExtensions
 					.AddSingleton<IRequestHandler, NavigationViewItemRequestHandler>()
 
 					// Register the navigation mappings repository
+					.AddSingleton<IRouteRegistry>(builder)
 					.AddSingleton<RouteMappingsDefault>()
 					.AddSingleton<IRouteResolver>(sp => sp.GetRequiredService<RouteMappingsDefault>())
 					//.AddSingleton<IViewResolver>(sp => sp.GetRequiredService<RouteMappingsDefault>())

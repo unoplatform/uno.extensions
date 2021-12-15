@@ -22,9 +22,9 @@ public class RouteMappingsDefault : RouteMappings
 
     private IDictionary<string, Type>? loadedTypes;
 
-    public RouteMappingsDefault(ILogger<RouteMappingsDefault> logger, IEnumerable<RouteMap> maps
+    public RouteMappingsDefault(ILogger<RouteMappingsDefault> logger, IRouteRegistry routes
 		//, IEnumerable<ViewMap> viewMaps
-		) : base(logger, maps)//, viewMaps)
+		) : base(logger, routes)//, viewMaps)
     {
     }
 

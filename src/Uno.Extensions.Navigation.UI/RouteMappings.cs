@@ -12,30 +12,29 @@ public class RouteMappings : IRouteResolver //, IViewResolver
 
 	protected ILogger Logger { get; }
 
-	protected RouteMappings(ILogger logger, IEnumerable<RouteMap> maps)//, IEnumerable<ViewMap> viewMaps)
+	protected RouteMappings(ILogger logger, IRouteRegistry routes)//, IEnumerable<ViewMap> viewMaps)
 	{
 		Logger = logger;
+
+		var maps = routes.Routes;
+
 		if (maps is not null)
 		{
 			Mappings.AddRange(maps.Flatten());
 		}
-		//if (viewMaps is not null)
-		//{
-		//	viewMaps.ForEach(map=> ViewMappings[map.View] = map);
-		//}
 	}
 
 	public RouteMappings(
 		ILogger<RouteMappings> logger,
-		IEnumerable<RouteMap> maps
+		IRouteRegistry routes
 		//, IEnumerable<ViewMap> viewMaps
-		) : this((ILogger)logger, maps
+		) : this((ILogger)logger, routes
 			//, viewMaps
 			)
 	{
 	}
 
-	public RouteMap? Find(Route? route) => route is not null? FindByPath(route.Base): Mappings.FirstOrDefault();
+	public RouteMap? Find(Route? route) => route is not null ? FindByPath(route.Base) : Mappings.FirstOrDefault();
 
 	public virtual RouteMap? FindByPath(string? path)
 	{
@@ -48,7 +47,7 @@ public class RouteMappings : IRouteResolver //, IViewResolver
 			return null;
 		}
 
-		return Mappings.FirstOrDefault(map=> map.Path == path);
+		return Mappings.FirstOrDefault(map => map.Path == path);
 	}
 
 	public RouteMap? FindByViewModel(Type? viewModelType)
@@ -95,7 +94,7 @@ public class RouteMappings : IRouteResolver //, IViewResolver
 
 	private TMap? FindByInheritedTypes<TMap>(IList<TMap> mappings, Type? typeToFind, Func<TMap, Type?> mapType)
 	{
-		if(typeToFind is null)
+		if (typeToFind is null)
 		{
 			return default;
 		}
@@ -151,26 +150,4 @@ public class RouteMappings : IRouteResolver //, IViewResolver
 	//{
 	//	return FindViewByType(resultDataType, map => map.ResultData);
 	//}
-}
-
-public static class RouteMappingsExtensions
-{
-
-	public static IEnumerable<RouteMap> Flatten(this IEnumerable<RouteMap> routes)
-	{
-		if (routes is null)
-		{
-			yield break;
-		}
-
-		foreach (var routeMap in routes)
-		{
-			yield return routeMap;
-
-			foreach (var subMap in routeMap.Nested.Flatten())
-			{
-				yield return subMap;
-			}
-		}
-	}
 }
