@@ -181,54 +181,6 @@ namespace Commerce
 		private static void RegisterRoutes(IRouteRegistry routes)//, IViewRegistry views)
 		{
 			routes
-				//.Register(new(nameof(ShellView), typeof(ShellView)))
-				//.Register(new("Login", typeof(LoginPage)))
-				//.Register(new("Home", typeof(HomePage),
-				//	Init: nav => nav.Route.Next().IsEmpty() ?
-				//								nav with { Route = nav.Route.Append(Route.NestedRoute("Products")) } :
-				//								nav))
-				//.Register(new("Products", typeof(FrameView),
-				//	Init: nav => nav.Route.Next().IsEmpty() ?
-				//								nav with { Route = nav.Route.AppendPage<ProductsPage>() } : nav with
-				//								{
-				//									Route = nav.Route.ContainsView<ProductsPage>() ?
-				//													nav.Route :
-				//													nav.Route.InsertPage<ProductsPage>()
-				//								}))
-				//.Register(new(nameof(ProductsPage), typeof(ProductsPage)))
-				//.Register(new("Deals", typeof(DealsPage),
-				//	Init: nav => nav.Route.Next().IsEmpty() ?
-				//								nav with { Route = nav.Route.AppendPage<DealsPage>() } : nav with
-				//								{
-				//									Route = nav.Route.ContainsView<DealsPage>() ?
-				//													nav.Route :
-				//													nav.Route.InsertPage<DealsPage>()
-				//								}))
-				//.Register(new("ProductDetails", typeof(ProductDetailsPage),
-				//	Init: nav => (App.Current as App).Window.Content.ActualSize.X > 800 ?
-				//								nav with { Route = nav.Route with { Scheme = "./", Base = "Details", Path = nameof(ProductDetailsPage) } } :
-				//								nav with { Route = nav.Route with { Base = nameof(ProductDetailsPage) } }))
-				//.Register(new("Details"))
-				//.Register(new(nameof(ProductDetailsPage), typeof(ProductDetailsPage)))
-				//.Register(new(nameof(CartFlyout), typeof(CartFlyout),
-				//	Init: nav => nav.Route.Next().IsEmpty() ?
-				//									nav with { Route = nav.Route.AppendNested<CartPage>() } :
-				//									nav))
-				//.Register(new(nameof(CartPage), typeof(CartPage)))
-				//.Register(new("Checkout", typeof(CheckoutPage)))
-				//.Register(new("Filter", typeof(ModalFlyout),
-				//	Init: nav => nav.Route.Next().IsEmpty() ?
-				//								nav with { Route = nav.Route.AppendPage<FilterPage>() } : nav with
-				//								{
-				//									Route = nav.Route.ContainsView<FilterPage>() ?
-				//													nav.Route :
-				//													nav.Route.InsertPage<FilterPage>()
-				//								}))
-				//.Register(new(nameof(FilterPage), typeof(FilterPage)))
-				//.Register(new("Profile", typeof(ProfilePage)))
-
-				//////////////////////////////////// POC ////////////////////////////////////
-
 				.Register(
 					new("Shell", ViewModel: typeof(ShellViewModel),
 							Nested: new RouteMap[]
@@ -274,25 +226,6 @@ namespace Commerce
 							}));
 
 			;
-
-			//views
-			//	.Register(new ViewMap(typeof(FrameView)))
-			//	.Register(new ViewMap(typeof(ModalFlyout)))
-			//	.Register(new ViewMap(typeof(CartFlyout)))
-			//	.Register(new ViewMap(typeof(ShellView), typeof(ShellViewModel)))
-			//	.Register(new ViewMap(typeof(LoginPage), typeof(LoginViewModel.BindableLoginViewModel)))
-			//	.Register(new ViewMap(typeof(HomePage)))
-			//	.Register(new ViewMap(typeof(ProductsPage), typeof(ProductsViewModel.BindableProductsViewModel)))
-			//	.Register(new ViewMap(typeof(DealsPage), typeof(DealsViewModel)))
-			//	.Register(new ViewMap<Product>(typeof(ProductDetailsPage), typeof(ProductDetailsViewModel.BindableProductDetailsViewModel),
-			//		BuildQuery: product => new Dictionary<string, string> { { nameof(Product.ProductId), product.ProductId + "" } }))
-			//	.Register(new ViewMap<Filters>(typeof(FilterPage), typeof(FiltersViewModel.BindableFiltersViewModel)))
-			//	.Register(new ViewMap(typeof(ProfilePage), typeof(ProfileViewModel)))
-			//	.Register(new ViewMap(typeof(CartPage), typeof(CartViewModel)))
-			//	.Register(new ViewMap(typeof(CheckoutPage)));
-
-
-
 		}
 
 		public async void RouteUpdated(object sender, EventArgs e)

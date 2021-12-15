@@ -19,7 +19,6 @@ public static class ServiceCollectionExtensions
 					.AddScoped<IInstanceRepository, InstanceRepository>()
 					.AddSingleton<IResponseNavigatorFactory, ResponseNavigatorFactory>()
 
-					//.AddSingleton<IMessenger, WeakReferenceMessenger>()
 					.AddSingleton<RouteNotifier>()
 					.AddSingleton<IRouteNotifier>(sp => sp.GetRequiredService<RouteNotifier>())
 					.AddSingleton<IRouteUpdater>(sp => sp.GetRequiredService<RouteNotifier>())
