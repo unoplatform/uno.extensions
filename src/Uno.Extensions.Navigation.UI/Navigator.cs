@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Uno.Extensions.Hosting;
-using Uno.Extensions.Navigation.Regions;
-using static Uno.Extensions.GenericExtensions;
+﻿using Uno.Extensions.Navigation.Regions;
 
 namespace Uno.Extensions.Navigation;
 

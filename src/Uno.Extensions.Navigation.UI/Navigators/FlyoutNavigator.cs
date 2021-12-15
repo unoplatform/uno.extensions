@@ -1,20 +1,5 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Uno.Extensions.Navigation.UI;
+﻿using Uno.Extensions.Navigation.UI;
 using Uno.Extensions.Navigation.Regions;
-using Windows.Foundation;
-using Microsoft.Extensions.DependencyInjection;
-#if !WINUI
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-#else
-using Windows.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Windows.UI.Popups;
-using UICommand = Windows.UI.Popups.UICommand;
-#endif
 
 namespace Uno.Extensions.Navigation.Navigators;
 

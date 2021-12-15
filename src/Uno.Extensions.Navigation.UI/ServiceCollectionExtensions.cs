@@ -8,21 +8,6 @@ using Uno.Extensions.Navigation.Navigators;
 
 using Windows.UI.Popups;
 using Uno.Extensions.Navigation.UI.Controls;
-//#if !WINDOWS_UWP && !WINUI
-//using Popup = Windows.UI.Xaml.Controls.Popup;
-//#endif
-#if !WINUI
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-#else
-using Windows.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-#endif
 
 namespace Uno.Extensions.Navigation;
 
@@ -65,7 +50,6 @@ public static class ServiceCollectionExtensions
 					.AddSingleton<IRouteRegistry>(builder)
 					.AddSingleton<RouteMappingsDefault>()
 					.AddSingleton<IRouteResolver>(sp => sp.GetRequiredService<RouteMappingsDefault>())
-					//.AddSingleton<IViewResolver>(sp => sp.GetRequiredService<RouteMappingsDefault>())
 
 					.AddScoped<INavigatorFactory, NavigatorFactory>()
 

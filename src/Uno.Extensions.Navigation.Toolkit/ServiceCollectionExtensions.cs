@@ -1,8 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Uno.Extensions;
-using Uno.Extensions.Navigation.UI;
-using Uno.Extensions.Navigation.Toolkit.Controls;
+﻿using Uno.Extensions.Navigation.Toolkit.Controls;
 using Uno.Extensions.Navigation.Toolkit.Navigators;
+using Uno.Extensions.Navigation.UI;
 using Uno.Toolkit.UI;
 
 namespace Uno.Extensions.Navigation.Toolkit;

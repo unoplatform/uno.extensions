@@ -1,4 +1,11 @@
-﻿#if WINUI
+﻿global using System;
+global using System.Linq;
+global using System.Threading.Tasks;
+global using Microsoft.Extensions.DependencyInjection;
+global using Microsoft.Extensions.Hosting;
+global using Microsoft.Extensions.Logging;
+
+#if WINUI
 global using Microsoft.UI.Xaml;
 global using Microsoft.UI.Xaml.Controls;
 global using Microsoft.UI.Xaml.Controls.Primitives;

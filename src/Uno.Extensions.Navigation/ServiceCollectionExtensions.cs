@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
-namespace Uno.Extensions.Navigation;
+﻿namespace Uno.Extensions.Navigation;
 
 public static class ServiceCollectionExtensions
 {

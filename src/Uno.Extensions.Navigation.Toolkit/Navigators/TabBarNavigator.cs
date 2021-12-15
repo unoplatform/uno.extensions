@@ -1,24 +1,9 @@
-﻿using System;
-using System.Linq;
-using Microsoft.Extensions.Logging;
-using Uno.Extensions.Navigation;
+﻿using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.UI;
 using Uno.Toolkit.UI;
-
-using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Regions;
-using System.Threading.Tasks;
 using Uno.Extensions.Navigation.Navigators;
 
-#if !WINUI
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-#else
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-#endif
 
 namespace Uno.Extensions.Navigation.Toolkit.Navigators;
 

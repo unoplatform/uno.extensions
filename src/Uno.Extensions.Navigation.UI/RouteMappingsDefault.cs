@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Extensions.Logging;
-using Uno.Extensions.Logging;
-#if !WINUI
-using Windows.UI.Xaml;
-#else
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-#endif
+﻿using Uno.Extensions.Logging;
 
 namespace Uno.Extensions.Navigation;
 

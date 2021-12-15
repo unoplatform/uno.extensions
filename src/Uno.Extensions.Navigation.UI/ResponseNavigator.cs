@@ -1,14 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-#if !WINUI
-using Windows.System;
-#else
-using Microsoft.UI.Dispatching;
-#endif
-
-
-
-namespace Uno.Extensions.Navigation;
+﻿namespace Uno.Extensions.Navigation;
 
 public class ResponseNavigator<TResult> : IResponseNavigator, IInstance<IServiceProvider>
 {

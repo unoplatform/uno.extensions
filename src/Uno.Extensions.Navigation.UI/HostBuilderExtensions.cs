@@ -1,7 +1,4 @@
-﻿using System;
-using Microsoft.Extensions.Hosting;
-
-namespace Uno.Extensions.Navigation;
+﻿namespace Uno.Extensions.Navigation;
 
 public static class HostBuilderExtensions
 {

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using Uno.Extensions.Navigation.Regions;
+﻿using Uno.Extensions.Navigation.Regions;
 
 namespace Uno.Extensions.Navigation.UI;
 

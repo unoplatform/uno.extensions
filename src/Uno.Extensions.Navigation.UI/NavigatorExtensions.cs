@@ -1,21 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Windows.UI.Popups;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Windows.UI.Popups;
 using Uno.Extensions.Navigation.Regions;
-using System.Linq;
 using Uno.Extensions.Navigation.Navigators;
-#if !WINUI
-using UICommand = Windows.UI.Popups.UICommand;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-#else
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Windows.UI.Popups;
-#endif
 
 namespace Uno.Extensions.Navigation;
 

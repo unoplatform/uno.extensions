@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-namespace Uno.Extensions.Navigation;
+﻿namespace Uno.Extensions.Navigation;
 
 public static class RouteConstants
 {

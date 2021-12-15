@@ -1,9 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Uno.Extensions.Navigation.Regions;
-using Windows.Foundation;
+﻿using Uno.Extensions.Navigation.Regions;
 #if !WINUI
 using Windows.UI.Popups;
 using UICommand = Windows.UI.Popups.UICommand;

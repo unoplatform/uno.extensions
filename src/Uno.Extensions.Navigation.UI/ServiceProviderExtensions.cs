@@ -1,11 +1,5 @@
-﻿using System;
-using Microsoft.Extensions.DependencyInjection;
-using Uno.Extensions.Navigation.Regions;
+﻿using Uno.Extensions.Navigation.Regions;
 using Uno.Extensions.Navigation.UI;
-#if !WINUI
-#else
-using Microsoft.UI.Xaml;
-#endif
 
 namespace Uno.Extensions.Navigation;
 

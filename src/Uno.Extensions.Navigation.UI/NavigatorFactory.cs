@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Uno.Extensions.Logging;
+﻿using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.UI;
 using Uno.Extensions.Navigation.Navigators;
 using Uno.Extensions.Navigation.Regions;
-#if !WINUI
-using Windows.UI.Xaml;
-#else
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-#endif
 
 namespace Uno.Extensions.Navigation;
 

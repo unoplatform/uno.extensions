@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace Uno.Extensions.Navigation;
+﻿namespace Uno.Extensions.Navigation;
 
 public class RouteBuilder : IRouteRegistry
 {

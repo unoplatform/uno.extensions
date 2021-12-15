@@ -33,7 +33,5 @@
 	</When>
   </Choose>
 
-  <Import Project="Uno.CrossTargeting.props" />
-
   <Import Project="winappsdk-workaround.targets" />
 </Project>

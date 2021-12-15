@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Uno.Extensions.Navigation;
+﻿namespace Uno.Extensions.Navigation;
 
 public static class RouteMappingsExtensions
 {

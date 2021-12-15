@@ -1,8 +1,4 @@
-﻿//using CommunityToolkit.Mvvm.Messaging;
-using System;
-using Uno.Extensions.Navigation.Regions;
-
-namespace Uno.Extensions.Navigation;
+﻿namespace Uno.Extensions.Navigation;
 
 internal interface IRouteUpdater
 {

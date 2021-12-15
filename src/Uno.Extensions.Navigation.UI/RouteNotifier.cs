@@ -1,6 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using Microsoft.Extensions.Logging;
+﻿using System.Diagnostics;
 using Uno.Extensions.Logging;
 
 namespace Uno.Extensions.Navigation;

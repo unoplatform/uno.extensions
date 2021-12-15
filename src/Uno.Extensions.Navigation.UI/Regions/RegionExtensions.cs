@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Uno.Extensions.Navigation.Navigators;
-
-namespace Uno.Extensions.Navigation.Regions;
+﻿namespace Uno.Extensions.Navigation.Regions;
 
 public static class RegionExtensions
 {
