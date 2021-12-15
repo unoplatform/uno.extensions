@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions.Navigation;
 
-public class RouteBuilder : IRouteRegistry
+public class RouteRegistry : IRouteRegistry
 {
 	private IServiceCollection Services { get; }
 
@@ -8,7 +8,7 @@ public class RouteBuilder : IRouteRegistry
 
 	public IEnumerable<RouteMap> Routes => _routes;
 
-	public RouteBuilder(IServiceCollection services)
+	public RouteRegistry(IServiceCollection services)
 	{
 		Services = services;
 	}

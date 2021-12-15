@@ -1,11 +1,4 @@
-﻿#if !WINUI
-using Windows.UI.Xaml;
-#else
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-#endif
-
-namespace Uno.Extensions.Navigation.Regions;
+﻿namespace Uno.Extensions.Navigation.Regions;
 
 public sealed class NavigationRegion : IRegion
 {

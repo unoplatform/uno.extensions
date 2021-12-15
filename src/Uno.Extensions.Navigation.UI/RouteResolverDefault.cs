@@ -2,7 +2,7 @@
 
 namespace Uno.Extensions.Navigation;
 
-public class RouteMappingsDefault : RouteMappings
+public class RouteResolverDefault : RouteResolver
 {
     public bool ReturnImplicitMapping { get; set; } = true;
 
@@ -12,7 +12,7 @@ public class RouteMappingsDefault : RouteMappings
 
     private IDictionary<string, Type>? loadedTypes;
 
-    public RouteMappingsDefault(ILogger<RouteMappingsDefault> logger, IRouteRegistry routes
+    public RouteResolverDefault(ILogger<RouteResolverDefault> logger, IRouteRegistry routes
 		//, IEnumerable<ViewMap> viewMaps
 		) : base(logger, routes)//, viewMaps)
     {

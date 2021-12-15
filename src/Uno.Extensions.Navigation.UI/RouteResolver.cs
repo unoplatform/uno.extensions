@@ -1,13 +1,12 @@
 ﻿namespace Uno.Extensions.Navigation;
 
-public class RouteMappings : IRouteResolver //, IViewResolver
+public class RouteResolver : IRouteResolver
 {
 	protected IList<RouteMap> Mappings { get; } = new List<RouteMap>();
-	//protected IDictionary<Type, ViewMap> ViewMappings { get; } = new Dictionary<Type, ViewMap>();
 
 	protected ILogger Logger { get; }
 
-	protected RouteMappings(ILogger logger, IRouteRegistry routes)//, IEnumerable<ViewMap> viewMaps)
+	protected RouteResolver(ILogger logger, IRouteRegistry routes)//, IEnumerable<ViewMap> viewMaps)
 	{
 		Logger = logger;
 
@@ -19,8 +18,8 @@ public class RouteMappings : IRouteResolver //, IViewResolver
 		}
 	}
 
-	public RouteMappings(
-		ILogger<RouteMappings> logger,
+	public RouteResolver(
+		ILogger<RouteResolver> logger,
 		IRouteRegistry routes
 		//, IEnumerable<ViewMap> viewMaps
 		) : this((ILogger)logger, routes

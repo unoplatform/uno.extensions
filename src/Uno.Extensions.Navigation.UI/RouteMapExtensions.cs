@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions.Navigation;
 
-public static class RouteMappingsExtensions
+public static class RouteMapExtensions
 {
 
 	public static IEnumerable<RouteMap> Flatten(this RouteMap route)

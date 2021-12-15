@@ -16,12 +16,10 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 	protected IRouteResolver RouteResolver { get; }
 
-	//protected IViewResolver ViewResolver { get; }
-
 	protected virtual bool RequiresDefaultView => false;
 
-	public Navigator(ILogger<Navigator> logger, IRegion region, IRouteResolver routeResolver)//, IViewResolver viewResolver)
-		: this((ILogger)logger, region, routeResolver)//,  viewResolver)
+	public Navigator(ILogger<Navigator> logger, IRegion region, IRouteResolver routeResolver)
+		: this((ILogger)logger, region, routeResolver)
 	{
 	}
 

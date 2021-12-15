@@ -1,10 +1,5 @@
 ﻿using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Regions;
-#if !WINUI
-using Windows.System;
-#else
-using Microsoft.UI.Dispatching;
-#endif
 
 namespace Uno.Extensions.Navigation.Navigators;
 

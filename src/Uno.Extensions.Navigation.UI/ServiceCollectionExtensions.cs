@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-//using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.Extensions.DependencyInjection;
-using Uno.Extensions.Navigation.UI;
+﻿using Uno.Extensions.Navigation.Navigators;
 using Uno.Extensions.Navigation.Regions;
-using Uno.Extensions.Navigation.Navigators;
-
-using Windows.UI.Popups;
+using Uno.Extensions.Navigation.UI;
 using Uno.Extensions.Navigation.UI.Controls;
+using Windows.UI.Popups;
 
 namespace Uno.Extensions.Navigation;
 
@@ -17,7 +12,7 @@ public static class ServiceCollectionExtensions
 		this IServiceCollection services,
 		Action<IRouteRegistry>? routeBuilder = null)
 	{
-		var builder = new RouteBuilder(services);
+		var builder = new RouteRegistry(services);
 		routeBuilder?.Invoke(builder);
 
 		return services
@@ -48,8 +43,8 @@ public static class ServiceCollectionExtensions
 
 					// Register the navigation mappings repository
 					.AddSingleton<IRouteRegistry>(builder)
-					.AddSingleton<RouteMappingsDefault>()
-					.AddSingleton<IRouteResolver>(sp => sp.GetRequiredService<RouteMappingsDefault>())
+					.AddSingleton<RouteResolverDefault>()
+					.AddSingleton<IRouteResolver>(sp => sp.GetRequiredService<RouteResolverDefault>())
 
 					.AddScoped<INavigatorFactory, NavigatorFactory>()
 
