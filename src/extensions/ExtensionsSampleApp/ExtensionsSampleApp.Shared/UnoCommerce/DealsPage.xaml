@@ -20,7 +20,7 @@
                     <Image Source="{Binding Photo}"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
-                           Stretch="UniformToFill" />
+                           Stretch="Uniform" />
                 </Grid>
                 <StackPanel Grid.Row="1"
                             Margin="12">
