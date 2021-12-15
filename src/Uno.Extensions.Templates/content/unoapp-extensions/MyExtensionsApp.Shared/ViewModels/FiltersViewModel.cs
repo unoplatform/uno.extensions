@@ -1,4 +1,5 @@
-﻿using Uno.Extensions.Reactive;
+//-:cnd:noEmit
+using Uno.Extensions.Reactive;
 
 namespace MyExtensionsApp.ViewModels;
 

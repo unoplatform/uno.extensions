@@ -1,4 +1,5 @@
-﻿#nullable enable
+//-:cnd:noEmit
+#nullable enable
 
 using System;
 using System.Threading;

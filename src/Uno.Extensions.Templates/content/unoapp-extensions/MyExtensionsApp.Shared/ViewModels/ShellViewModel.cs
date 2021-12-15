@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+//-:cnd:noEmit
+using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

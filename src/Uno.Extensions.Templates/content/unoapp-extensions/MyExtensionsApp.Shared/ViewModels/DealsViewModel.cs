@@ -1,4 +1,5 @@
-﻿using System;
+//-:cnd:noEmit
+using System;
 using MyExtensionsApp.Models;
 using MyExtensionsApp.Services;
 using Uno.Extensions.Reactive;

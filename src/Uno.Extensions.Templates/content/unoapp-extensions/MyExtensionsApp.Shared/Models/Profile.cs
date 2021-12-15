@@ -1,3 +1,4 @@
+//-:cnd:noEmit
 namespace MyExtensionsApp.Models;
 
 public record Profile
