@@ -64,27 +64,10 @@ public class RouteResolver : IRouteResolver
 		return FindRouteByType(dataType, map => map.ResultData);
 	}
 
-	//private RouteMap? FindRouteByViewMapType(Type? typeToFind, Func<ViewMap, Type?> mapType)
-	//{
-	//	var viewMap = FindByInheritedTypes(ViewMappings, typeToFind, mapType);
-	//	return FindByView(viewMap?.View);
-	//}
-
 	private RouteMap? FindRouteByType(Type? typeToFind, Func<RouteMap, Type?> mapType)
 	{
 		return FindByInheritedTypes(Mappings, typeToFind, mapType);
 	}
-
-	//private ViewMap? FindViewByRouteMapType(Type? typeToFind, Func<RouteMap, Type?> mapType)
-	//{
-	//	var routeMap = FindByInheritedTypes(Mappings, typeToFind, mapType);
-	//	return FindViewByPath(routeMap?.Path);
-	//}
-
-	//private ViewMap? FindViewByType(Type? typeToFind, Func<ViewMap, Type?> mapType)
-	//{
-	//	return FindByInheritedTypes(ViewMappings, typeToFind, mapType);
-	//}
 
 	private TMap? FindByInheritedTypes<TMap>(IList<TMap> mappings, Type? typeToFind, Func<TMap, Type?> mapType)
 	{
@@ -109,39 +92,4 @@ public class RouteResolver : IRouteResolver
 				select m)
 				   .FirstOrDefault();
 	}
-
-	//public ViewMap? FindView(Route route) => FindViewByPath(route.Base);
-	//public virtual ViewMap? FindViewByPath(string? path)
-	//{
-	//	if (
-	//		path is null ||
-	//		string.IsNullOrWhiteSpace(path) ||
-	//		path == Schemes.Parent ||
-	//		path == Schemes.Current)
-	//	{
-	//		return null;
-	//	}
-
-	//	var routeMap = FindByPath(path);
-	//	return FindViewByView(routeMap?.View);
-	//}
-
-	//public virtual ViewMap? FindViewByViewModel(Type? viewModelType)
-	//{
-	//	return FindViewByType(viewModelType, map => map.ViewModel);
-	//}
-	//public virtual ViewMap? FindViewByView(Type? viewType)
-	//{
-	//	return FindViewByType(viewType, map => map.View);
-	//}
-
-	//public ViewMap? FindViewByData(Type? dataType)
-	//{
-	//	return FindViewByType(dataType, map => map.Data);
-	//}
-
-	//public ViewMap? FindViewByResultData(Type? resultDataType)
-	//{
-	//	return FindViewByType(resultDataType, map => map.ResultData);
-	//}
 }
