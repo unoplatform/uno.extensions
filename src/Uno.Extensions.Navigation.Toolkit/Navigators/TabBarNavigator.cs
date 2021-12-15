@@ -7,7 +7,7 @@ using Uno.Extensions.Navigation.Navigators;
 
 namespace Uno.Extensions.Navigation.Toolkit.Navigators;
 
-public class TabBarNavigator: ControlNavigator<TabBar>
+public class TabBarNavigator : ControlNavigator<TabBar>
 {
 	protected override bool RequiresDefaultView => true;
 
@@ -29,7 +29,7 @@ public class TabBarNavigator: ControlNavigator<TabBar>
 		await tbi.EnsureLoaded();
 		var tabName = tbi.GetName() ?? tbi.Name;
 		var nav = Region.Navigator();
-		if(nav is null)
+		if (nav is null)
 		{
 			return;
 		}
@@ -40,7 +40,7 @@ public class TabBarNavigator: ControlNavigator<TabBar>
 	public TabBarNavigator(
 		ILogger<TabBarNavigator> logger,
 		IRegion region,
-		IRouteResolver routeResolver, //IViewResolver viewResolver,
+		IRouteResolver routeResolver,
 		RegionControlProvider controlProvider)
 		: base(logger, region, routeResolver, controlProvider.RegionControl as TabBar)
 	{

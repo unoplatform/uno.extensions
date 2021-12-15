@@ -13,18 +13,13 @@ public class NavigatorFactory : INavigatorFactory
 
     private IRouteResolver RouteResolver { get; }
 
-	//private IViewResolver ViewResolver { get; }
-
 	public NavigatorFactory(
         ILogger<NavigatorFactory> logger,
         IEnumerable<NavigatorFactoryBuilder> builders,
 		IRouteResolver routeResolver)
-		//,
-		//IViewResolver viewResolver)
     {
         Logger = logger;
 		RouteResolver = routeResolver;
-		//ViewResolver = viewResolver;
         builders.ForEach(builder => builder.Configure?.Invoke(this));
     }
 

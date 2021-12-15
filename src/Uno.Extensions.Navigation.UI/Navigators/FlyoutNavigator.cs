@@ -11,7 +11,7 @@ public class FlyoutNavigator : ControlNavigator
 
 	public FlyoutNavigator(
 		ILogger<ContentDialogNavigator> logger,
-		IRouteResolver routeResolver, //IViewResolver viewResolver,
+		IRouteResolver routeResolver,
 		IRegion region)
 		: base(logger, routeResolver, region)
 	{

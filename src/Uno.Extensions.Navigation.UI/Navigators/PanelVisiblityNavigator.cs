@@ -13,7 +13,7 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
     public PanelVisiblityNavigator(
         ILogger<PanelVisiblityNavigator> logger,
         IRegion region,
-        IRouteResolver routeResolver, //IViewResolver viewResolver,
+        IRouteResolver routeResolver,
         RegionControlProvider controlProvider)
         : base(logger, region, routeResolver, controlProvider.RegionControl as Grid)
     {

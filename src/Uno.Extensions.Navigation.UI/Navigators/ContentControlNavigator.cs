@@ -10,7 +10,7 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
     public ContentControlNavigator(
         ILogger<ContentControlNavigator> logger,
         IRegion region,
-        IRouteResolver routeResolver, //IViewResolver viewResolver,
+        IRouteResolver routeResolver,
         RegionControlProvider controlProvider)
         : base(logger, region, routeResolver, controlProvider.RegionControl as ContentControl)
     {
@@ -23,7 +23,6 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
         {
 			viewType = typeof(UI.Controls.FrameView);
             Logger.LogErrorMessage("Missing view for navigation path '{path}'");
-			//return string.Empty;
 			path = default;
 		}
 

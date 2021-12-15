@@ -16,7 +16,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
     protected ControlNavigator(
         ILogger logger,
         IRegion region,
-        IRouteResolver routeResolver, //IViewResolver viewResolver,
+        IRouteResolver routeResolver,
         TControl? control)
         : base(logger, routeResolver, region)
     {
@@ -98,7 +98,7 @@ public abstract class ControlNavigator : Navigator
 
     protected ControlNavigator(
         ILogger logger,
-        IRouteResolver routeResolver, //IViewResolver viewResolver,
+        IRouteResolver routeResolver,
         IRegion region)
         : base(logger, region, routeResolver)
     {

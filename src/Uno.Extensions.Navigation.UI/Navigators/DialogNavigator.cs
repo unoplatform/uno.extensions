@@ -10,7 +10,7 @@ public abstract class DialogNavigator : ControlNavigator
 
     protected DialogNavigator(
         ILogger<DialogNavigator> logger,
-        IRouteResolver routeResolver, //IViewResolver viewResolver,
+        IRouteResolver routeResolver,
         IRegion region)
         : base(logger, routeResolver,  region)
     {

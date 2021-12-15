@@ -1,12 +1,5 @@
 ﻿using Uno.Extensions.Navigation.Regions;
-#if !WINUI
 using Windows.UI.Popups;
-using UICommand = Windows.UI.Popups.UICommand;
-#else
-using Microsoft.UI.Xaml.Controls;
-using Windows.UI.Popups;
-using UICommand = Windows.UI.Popups.UICommand;
-#endif
 
 namespace Uno.Extensions.Navigation.Navigators;
 
@@ -14,7 +7,7 @@ public class MessageDialogNavigator : DialogNavigator
 {
     public MessageDialogNavigator(
         ILogger<DialogNavigator> logger,
-        IRouteResolver routeResolver, //IViewResolver viewResolver,
+        IRouteResolver routeResolver,
         IRegion region)
         : base(logger, routeResolver, region)
     {
