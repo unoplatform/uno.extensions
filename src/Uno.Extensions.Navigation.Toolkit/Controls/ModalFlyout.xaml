@@ -3,19 +3,16 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:android="http:///umbrella/ui/android"
-	xmlns:netstdref="http://uno.ui/netstdref"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:ios="http:///umbrella/ui/ios"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:not_ios="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:not_android="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:not_mobile="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:mobile="http://uno.ui/mobile"
     xmlns:uen="using:Uno.Extensions.Navigation.UI"
     xmlns:utu="using:Uno.Toolkit.UI"
-	xmlns:nfpnotpresent="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsTypeNotPresent(Uno.Toolkit.UI.NativeFramePresenter)"
-	xmlns:nfppresent="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsTypePresent(Uno.Toolkit.UI.NativeFramePresenter)"
     LightDismissOverlayMode="On"
     Placement="Full"
-    mc:Ignorable="d ios android netstdref">
+    mc:Ignorable="d ios android mobile">
 
 	<UserControl>
 		<UserControl.Resources>
@@ -99,6 +96,6 @@
 				</Grid>
 			</android:ControlTemplate>
 		</UserControl.Resources>
-		<Frame uen:Region.Attached="True" nfpnotpresent:Template="{StaticResource FrameTemplate}" nfppresent:Template="{StaticResource MobileFrameTemplate}" />
+		<Frame uen:Region.Attached="True" not_mobile:Template="{StaticResource FrameTemplate}" mobile:Template="{StaticResource MobileFrameTemplate}" />
 	</UserControl>
 </Flyout>

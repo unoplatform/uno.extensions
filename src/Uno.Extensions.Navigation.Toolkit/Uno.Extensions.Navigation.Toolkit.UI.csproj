@@ -19,4 +19,20 @@
 	</ItemGroup>
 	
 	<Import Project="common.props" />
+	
+	<Choose>
+		<When Condition="'$(TargetFramework)'=='xamarinios10' or '$(TargetFramework)'=='monoandroid10.0' or '$(TargetFramework)'=='monoandroid11.0'">
+			<ItemGroup>
+				<IncludeXamlNamespaces Include="mobile" />
+				<ExcludeXamlNamespaces Include="not_mobile" />
+			</ItemGroup>
+		</When>
+		<Otherwise>
+			<ItemGroup>
+				<IncludeXamlNamespaces Include="not_mobile" />
+				<ExcludeXamlNamespaces Include="mobile" />
+			</ItemGroup>
+		</Otherwise>
+	</Choose>
+	
 </Project>
