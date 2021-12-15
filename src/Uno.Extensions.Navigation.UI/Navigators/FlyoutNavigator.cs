@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation.UI;
 using Uno.Extensions.Navigation.Regions;
 using Windows.Foundation;
+using Microsoft.Extensions.DependencyInjection;
 #if !WINUI
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -90,7 +91,8 @@ public class FlyoutNavigator : ControlNavigator
 			}
 			else
 			{
-				flyout = new UI.Controls.NavigationFlyout();
+				flyout = services.GetService<Flyout>();
+				//flyout = new UI.Controls.NavigationFlyout();
 			}
 		}
 		else

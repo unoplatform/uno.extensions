@@ -13,6 +13,8 @@ public static class ServiceCollectionExtensions
 		this IServiceCollection services)
 	{
 		return services
+					.AddTransient<Flyout, ModalFlyout>()
+
 					.AddRegion<TabBar, TabBarNavigator>()
 
 					.AddSingleton<IRequestHandler, TabBarItemRequestHandler>();

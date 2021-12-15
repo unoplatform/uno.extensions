@@ -21,6 +21,7 @@ using Uno.Foundation;
 using Commerce.Views;
 using Uno.Extensions.Logging.Serilog;
 using Uno.Extensions.Navigation.UI.Controls;
+using Uno.Extensions.Navigation.Toolkit.Controls;
 
 #if WINUI
 using Windows.ApplicationModel;
@@ -215,7 +216,7 @@ namespace Commerce
 				//									nav))
 				//.Register(new(nameof(CartPage), typeof(CartPage)))
 				//.Register(new("Checkout", typeof(CheckoutPage)))
-				//.Register(new("Filter", typeof(FilterFlyout),
+				//.Register(new("Filter", typeof(ModalFlyout),
 				//	Init: nav => nav.Route.Next().IsEmpty() ?
 				//								nav with { Route = nav.Route.AppendPage<FilterPage>() } : nav with
 				//								{
@@ -276,7 +277,7 @@ namespace Commerce
 
 			//views
 			//	.Register(new ViewMap(typeof(FrameView)))
-			//	.Register(new ViewMap(typeof(FilterFlyout)))
+			//	.Register(new ViewMap(typeof(ModalFlyout)))
 			//	.Register(new ViewMap(typeof(CartFlyout)))
 			//	.Register(new ViewMap(typeof(ShellView), typeof(ShellViewModel)))
 			//	.Register(new ViewMap(typeof(LoginPage), typeof(LoginViewModel.BindableLoginViewModel)))

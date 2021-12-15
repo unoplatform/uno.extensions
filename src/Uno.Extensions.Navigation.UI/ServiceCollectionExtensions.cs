@@ -7,6 +7,7 @@ using Uno.Extensions.Navigation.Regions;
 using Uno.Extensions.Navigation.Navigators;
 
 using Windows.UI.Popups;
+using Uno.Extensions.Navigation.UI.Controls;
 //#if !WINDOWS_UWP && !WINUI
 //using Popup = Windows.UI.Xaml.Controls.Popup;
 //#endif
@@ -43,6 +44,8 @@ public static class ServiceCollectionExtensions
 					.AddSingleton<IRouteNotifier>(sp => sp.GetRequiredService<RouteNotifier>())
 					.AddSingleton<IRouteUpdater>(sp => sp.GetRequiredService<RouteNotifier>())
 					.AddScoped<Navigator>()
+
+					.AddTransient<Flyout, NavigationFlyout>()
 
 					// Register the region for each control type
 					.AddRegion<Frame, FrameNavigator>()

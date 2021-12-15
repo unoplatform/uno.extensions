@@ -24,16 +24,14 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 #endif
 
-// The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
-namespace Commerce
+namespace Uno.Extensions.Navigation.Toolkit.Controls
 {
-    public sealed partial class FilterFlyout : Flyout
-    {
-        public FilterFlyout()
-        {
-            this.InitializeComponent();
-        }
-
-    }
+	public sealed partial class ModalFlyout : Flyout
+	{
+		public ModalFlyout()
+		{
+			this.InitializeComponent();
+		}
+	}
 }
