@@ -23,12 +23,11 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 	{
 	}
 
-	protected Navigator(ILogger logger, IRegion region, IRouteResolver routeResolver) //, IViewResolver viewResolver)
+	protected Navigator(ILogger logger, IRegion region, IRouteResolver routeResolver)
 	{
 		Region = region;
 		Logger = logger;
 		RouteResolver = routeResolver;
-		//ViewResolver = viewResolver;
 	}
 
 	public async Task<NavigationResponse?> NavigateAsync(NavigationRequest request)

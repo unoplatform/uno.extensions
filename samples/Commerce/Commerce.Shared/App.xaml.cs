@@ -178,7 +178,7 @@ namespace Commerce
 			deferral.Complete();
 		}
 
-		private static void RegisterRoutes(IRouteRegistry routes)//, IViewRegistry views)
+		private static void RegisterRoutes(IRouteRegistry routes)
 		{
 			routes
 				.Register(
