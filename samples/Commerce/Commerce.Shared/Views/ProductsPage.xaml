@@ -161,7 +161,7 @@
 														<utu:AutoLayout Spacing="10"
 																		Padding="0,0,16,8">
 															<Image Source="{Binding Photo}"
-																   Stretch="UniformToFill"
+																   Stretch="Uniform"
 																   utu:AutoLayout.PrimaryLength="56"
 																   utu:AutoLayout.CounterLength="56" />
 														</utu:AutoLayout>

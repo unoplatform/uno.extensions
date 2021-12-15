@@ -28,7 +28,7 @@
                       DataContext="{Binding Product}" Grid.Row="1">
             <StackPanel Margin="12">
                 <Border Height="300">
-                    <Image Source="{Binding Photo}" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="UniformToFill" />
+                    <Image Source="{Binding Photo}" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform" />
                 </Border>
                     
                 <TextBlock Text="{Binding Name}" FontSize="32" FontWeight="Bold" Margin="12"/>
