@@ -44,22 +44,22 @@ public class RouteResolver : IRouteResolver
 		return Mappings.FirstOrDefault(map => map.Path == path);
 	}
 
-	public RouteMap? FindByViewModel(Type? viewModelType)
+	public virtual RouteMap? FindByViewModel(Type? viewModelType)
 	{
 		return FindRouteByType(viewModelType, map => map.ViewModel);
 	}
 
-	public RouteMap? FindByView(Type? viewType)
+	public virtual RouteMap? FindByView(Type? viewType)
 	{
 		return FindRouteByType(viewType, map => map.View);
 	}
 
-	public virtual RouteMap? FindByData(Type? dataType)
+	public RouteMap? FindByData(Type? dataType)
 	{
 		return FindRouteByType(dataType, map => map.Data);
 	}
 
-	public virtual RouteMap? FindByResultData(Type? dataType)
+	public RouteMap? FindByResultData(Type? dataType)
 	{
 		return FindRouteByType(dataType, map => map.ResultData);
 	}
