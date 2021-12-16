@@ -2,7 +2,8 @@
 
 public class RouteResolver : IRouteResolver
 {
-	protected IList<RouteMap> Mappings { get; } = new List<RouteMap>();
+	private RouteMap First { get; }
+	protected IDictionary<string, RouteMap> Mappings { get; } = new Dictionary<string, RouteMap>();
 
 	protected ILogger Logger { get; }
 
@@ -14,7 +15,8 @@ public class RouteResolver : IRouteResolver
 
 		if (maps is not null)
 		{
-			Mappings.AddRange(maps.Flatten());
+			First = maps.FirstOrDefault();
+			maps.Flatten().ForEach(route => Mappings[route.Path] = route);
 		}
 	}
 
@@ -26,7 +28,7 @@ public class RouteResolver : IRouteResolver
 	{
 	}
 
-	public RouteMap? Find(Route? route) => route is not null ? FindByPath(route.Base) : Mappings.FirstOrDefault();
+	public RouteMap? Find(Route? route) => route is not null ? FindByPath(route.Base) : First;
 
 	public virtual RouteMap? FindByPath(string? path)
 	{
@@ -39,7 +41,7 @@ public class RouteResolver : IRouteResolver
 			return null;
 		}
 
-		return Mappings.FirstOrDefault(map => map.Path == path);
+		return Mappings.TryGetValue(path, out var map) ? map : default;
 	}
 
 	public virtual RouteMap? FindByViewModel(Type? viewModelType)
@@ -67,7 +69,7 @@ public class RouteResolver : IRouteResolver
 		return FindByInheritedTypes(Mappings, typeToFind, mapType);
 	}
 
-	private TMap? FindByInheritedTypes<TMap>(IList<TMap> mappings, Type? typeToFind, Func<TMap, Type?> mapType)
+	private TMap? FindByInheritedTypes<TMap>(IDictionary<string,TMap> mappings, Type? typeToFind, Func<TMap, Type?> mapType)
 	{
 		if (typeToFind is null)
 		{
@@ -75,7 +77,7 @@ public class RouteResolver : IRouteResolver
 		}
 
 		// Handle the non-reflection check first
-		var map = (from m in mappings
+		var map = (from m in mappings.Values
 				   where mapType(m) == typeToFind
 				   select m)
 				   .FirstOrDefault();
@@ -85,7 +87,7 @@ public class RouteResolver : IRouteResolver
 		}
 
 		return (from baseType in typeToFind.GetBaseTypes()
-				from m in mappings
+				from m in mappings.Values
 				where mapType(m) == baseType
 				select m)
 				   .FirstOrDefault();

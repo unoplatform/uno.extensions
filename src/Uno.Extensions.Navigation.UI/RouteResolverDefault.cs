@@ -67,8 +67,8 @@ public class RouteResolverDefault : RouteResolver
 			!string.IsNullOrWhiteSpace(path))
 		{
 			var defaultMap = new RouteMap(path, view, viewModel);
-			Mappings.Add(defaultMap);
-			if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Created default mapping - Path '{defaultMap.Path}'");
+			Mappings[defaultMap.Path] = defaultMap;
+			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Created default mapping - Path '{defaultMap.Path}'");
 			return defaultMap;
 		}
 
