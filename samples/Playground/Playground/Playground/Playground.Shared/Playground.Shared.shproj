@@ -11,12 +11,18 @@
   <Import Project="Playground.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeSharing\Microsoft.CodeSharing.CSharp.targets" />
   <ItemGroup>
+    <_Globbed_Compile Remove="ViewModels\FifthViewModel.cs" />
+    <_Globbed_Compile Remove="ViewModels\FourthViewModel.cs" />
     <_Globbed_Compile Remove="ViewModels\ShellViewModel.cs" />
+    <_Globbed_Compile Remove="Views\FifthPage.xaml.cs" />
+    <_Globbed_Compile Remove="Views\FourthPage.xaml.cs" />
     <_Globbed_Compile Remove="Views\HomePage.xaml.cs" />
     <_Globbed_Compile Remove="Views\SecondPage.xaml.cs" />
     <_Globbed_Compile Remove="Views\ThirdPage.xaml.cs" />
   </ItemGroup>
   <ItemGroup>
+    <_Globbled_Page Remove="Views\FifthPage.xaml" />
+    <_Globbled_Page Remove="Views\FourthPage.xaml" />
     <_Globbled_Page Remove="Views\HomePage.xaml" />
     <_Globbled_Page Remove="Views\SecondPage.xaml" />
     <_Globbled_Page Remove="Views\ThirdPage.xaml" />

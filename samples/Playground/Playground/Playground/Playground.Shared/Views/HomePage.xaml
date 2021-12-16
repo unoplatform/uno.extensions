@@ -19,14 +19,13 @@
 				   FontSize="48" />
 
 		<StackPanel Grid.Row="1">
-			<TextBlock Text="Navigate to Second Page as root (replaces the FrameView created for home page)" />
 			<Button uen:Navigation.Request="Second"
 					Content="Second Page as root of application" />
-			<TextBlock Text="Navigate to Second Page on frame" />
 			<Button uen:Navigation.Request="./Second" Content="Second Page" />
-			<TextBlock Text="Navigate to Second Page on frame (clearing backstack)" />
 			<Button uen:Navigation.Request="./-/Second"
 					Content="Second Page with clear backstack" />
+			<Button uen:Navigation.Request="./Fourth"
+					Content="Fourth page" />
 		</StackPanel>
 	</Grid>
 </Page>
