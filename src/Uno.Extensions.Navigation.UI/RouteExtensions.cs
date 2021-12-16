@@ -33,6 +33,18 @@ public static class RouteExtensions
 
 	public static bool IsLast(this Route route) => string.IsNullOrWhiteSpace(route?.Path);
 
+	public static Route Last(this Route route)
+	{
+		var next = route.Next();
+		while (!next.IsEmpty())
+		{
+			route = next;
+			next = route.Next();
+		}
+
+		return route;
+	}
+
 	public static bool IsEmpty(this Route route) => route is not null ?
 		(route.Scheme == Schemes.Current || route.Scheme == Schemes.Nested) &&
 		string.IsNullOrWhiteSpace(route.Base) :

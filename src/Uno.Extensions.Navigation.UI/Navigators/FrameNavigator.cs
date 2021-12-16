@@ -157,7 +157,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 		}
 		var responseRoute = route with { Path = null };
 		var previousRoute = FullRoute.ApplyFrameRoute(RouteResolver, responseRoute);
-		var previousBase = previousRoute?.Base;
+		var previousBase = previousRoute?.Last()?.Base;
 		var currentBase = RouteResolver.FindByView(Control.Content.GetType())?.Path;
 		if (currentBase != previousBase && previousBase != Control.Content.GetType().Name)
 		{
