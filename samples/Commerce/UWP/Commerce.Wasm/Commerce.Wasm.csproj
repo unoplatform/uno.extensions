@@ -80,8 +80,8 @@
 		<PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="3.1.2" />
 		<PackageReference Include="System.Linq.Async" Version="5.0.0" />
 		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
-		<PackageReference Include="Uno.Toolkit.UI" Version="1.2.0" />
-		<PackageReference Include="Uno.Toolkit.UI.Material" Version="1.2.0" />
+		<PackageReference Include="Uno.Toolkit.UI" Version="1.2.1" />
+		<PackageReference Include="Uno.Toolkit.UI.Material" Version="1.2.1" />
 		<PackageReference Include="Uno.Core" Version="4.0.1" />
 		<PackageReference Include="Uno.Material" Version="1.2.0" />
 		<PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.0" />
