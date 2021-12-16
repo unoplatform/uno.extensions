@@ -77,7 +77,7 @@
     <PackageReference Include="Uno.Material.WinUI">
       <Version>1.2.0-dev.6</Version>
     </PackageReference>
-    <PackageReference Include="Uno.Toolkit.WinUI.Material" Version="1.2.0-dev.1" />
+    <PackageReference Include="Uno.Toolkit.WinUI.Material" Version="1.2.0" />
     <PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData" Version="2.1.0" />
     <PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.0" />
   </ItemGroup>

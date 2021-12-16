@@ -61,7 +61,7 @@
 									<DataTemplate>
 										<utu:AutoLayout Background="{StaticResource MaterialSurfaceBrush}">
 											<Image Source="{Binding Photo}"
-												   Stretch="UniformToFill"
+												   Stretch="Uniform"
 												   utu:AutoLayout.CounterAlignment="Stretch"
 												   utu:AutoLayout.PrimaryAlignment="Stretch" />
 											<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch">
