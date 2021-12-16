@@ -5,7 +5,7 @@
 using System.Runtime.CompilerServices;
 
 #if !NET5_0 && !NET6_0
-#pragma warning disable CS0436 
+#pragma warning disable CS0436
 
 namespace System.Runtime.CompilerServices
 {
@@ -256,6 +256,8 @@ namespace System
     }
 }
 
+#if !WINDOWS_UWP
+
 namespace System.Runtime.CompilerServices
 {
     internal static class RuntimeHelpers
@@ -295,5 +297,6 @@ namespace System.Runtime.CompilerServices
         }
     }
 }
+#endif
 #endif
 

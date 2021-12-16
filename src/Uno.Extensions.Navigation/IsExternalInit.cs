@@ -256,6 +256,7 @@ namespace System
     }
 }
 
+#if !WINDOWS_UWP
 namespace System.Runtime.CompilerServices
 {
     internal static class RuntimeHelpers
@@ -295,5 +296,6 @@ namespace System.Runtime.CompilerServices
         }
     }
 }
+#endif
 #endif
 
