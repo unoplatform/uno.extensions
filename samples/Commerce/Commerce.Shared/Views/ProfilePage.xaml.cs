@@ -42,7 +42,7 @@ namespace Commerce
 			{
 				// Initialize the toggle to the current theme.
 				darkModeToggle.IsEnabled = false;
-				darkModeToggle.IsOn = SystemThemeHelper.IsAppInDarkMode();
+				darkModeToggle.IsOn = SystemThemeHelper.IsRootInDarkMode(XamlRoot);
 				darkModeToggle.IsEnabled = true;
 			};
 		}
@@ -51,7 +51,7 @@ namespace Commerce
 		{
 			if (darkModeToggle.IsEnabled)
 			{
-				SystemThemeHelper.SetApplicationTheme(darkModeToggle.IsOn);
+				SystemThemeHelper.SetRootTheme(XamlRoot, darkModeToggle.IsOn);
 			}
 		}
 	}

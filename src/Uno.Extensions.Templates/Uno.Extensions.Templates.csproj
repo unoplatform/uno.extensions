@@ -131,7 +131,7 @@
 							.Replace(SourceName, TargetName)
 							;
 							
-						if(Path.GetExtension(file).ToLower() == ".cs")
+						if(Path.GetExtension(file).ToLower() == ".cs" && !s.StartsWith("//-:cnd:noEmit"))
 						{
 							// Disable conditionals for all imported files
 							s = "//-:cnd:noEmit\r\n" + s;
