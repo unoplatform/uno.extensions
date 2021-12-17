@@ -1,4 +1,0 @@
-﻿
-namespace ExtensionsSampleApp.Skia.Gtk
-{
-}
