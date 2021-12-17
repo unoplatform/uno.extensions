@@ -9,8 +9,6 @@ namespace Uno.Extensions.Navigation.Toolkit.Navigators;
 
 public class TabBarNavigator : ControlNavigator<TabBar>
 {
-	protected override bool RequiresDefaultView => true;
-
 	public override void ControlInitialize()
 	{
 		if (Control is not null)

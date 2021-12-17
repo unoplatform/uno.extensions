@@ -11,8 +11,6 @@ public class FrameNavigator : ControlNavigator<Frame>
 
 	public override bool CanGoBack => Control?.BackStackDepth > 0;
 
-	protected override bool RequiresDefaultView => true;
-
 	public FrameNavigator(
 		ILogger<FrameNavigator> logger,
 		IRegion region,

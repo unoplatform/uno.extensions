@@ -16,8 +16,6 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 	protected IRouteResolver RouteResolver { get; }
 
-	protected virtual bool RequiresDefaultView => false;
-
 	public Navigator(ILogger<Navigator> logger, IRegion region, IRouteResolver routeResolver)
 		: this((ILogger)logger, region, routeResolver)
 	{
@@ -86,9 +84,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 			// Is this region is an unnamed child of a composite,
 			// send request to parent if the route has no scheme
-			if ((request.Route.IsCurrent()
-				//|| request.Route.IsBackOrCloseNavigation()
-				) &&
+			if (request.Route.IsCurrent() &&
 				!Region.IsNamed() &&
 				Region.Parent is not null
 				&& !(Region.Children.Any(x => x.Name == request.Route.Base))
@@ -160,11 +156,6 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		// Create ResponseNavigator if result is requested
 		var navigator = request.Result is not null ? request.GetResponseNavigator(responseFactory, this) : default;
 
-		//if(navigator is not null)
-		//{
-		//	request = request with { Result = null };
-		//}
-
 		var executedRoute = await CoreNavigateAsync(request);
 
 
@@ -179,13 +170,6 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 	protected virtual async Task<NavigationResponse?> CoreNavigateAsync(NavigationRequest request)
 	{
-		//if (request.Route.IsNested())
-		//{
-		//    // At this point the request should be passed to nested, so remove
-		//    // any nested scheme (ie ./ )
-		//    request = request with { Route = request.Route.TrimScheme(Schemes.Nested) };// with { Scheme = Schemes.Current } };
-		//}
-
 		if (request.Route.IsCurrent() || request.Route.IsBackOrCloseNavigation())
 		{
 			request = request with { Route = request.Route.AppendScheme(Schemes.Nested) };

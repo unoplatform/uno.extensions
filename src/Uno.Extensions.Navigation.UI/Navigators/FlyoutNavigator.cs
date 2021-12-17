@@ -77,7 +77,6 @@ public class FlyoutNavigator : ControlNavigator
 			else
 			{
 				flyout = services.GetService<Flyout>();
-				//flyout = new UI.Controls.NavigationFlyout();
 			}
 		}
 		else
