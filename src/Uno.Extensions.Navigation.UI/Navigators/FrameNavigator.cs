@@ -117,9 +117,6 @@ public class FrameNavigator : ControlNavigator<Frame>
 			firstSegment = firstSegment.Append(segments[i + 1].Route);
 		}
 
-		//// Add the new context to the list of contexts and then navigate away
-		//await Show(context.Request.Route.Base, context.Mapping?.View, context.Request.Route.Data);
-
 		// Add the new context to the list of contexts and then navigate away
 		await Show(segments.Last().Route.Base, segments.Last().Map.View, route.Data);
 
