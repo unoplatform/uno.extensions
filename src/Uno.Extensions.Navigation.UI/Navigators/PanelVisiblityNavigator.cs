@@ -41,7 +41,7 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 				{
 					viewType = typeof(UI.Controls.FrameView);
 					path = default;
-					Logger.LogErrorMessage("Missing view for navigation path '{path}'");
+					Logger.LogErrorMessage($"Missing view for navigation path '{path}'");
 				}
 
 				Logger.LogDebugMessage($"Creating instance of type '{viewType.Name}'");

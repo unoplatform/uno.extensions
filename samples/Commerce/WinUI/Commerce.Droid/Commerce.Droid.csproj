@@ -105,7 +105,6 @@
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj" />
     <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.WinUI.Toolkit.csproj" />
     <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
     <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj" />
     <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Reactive.UI\Uno.Extensions.Reactive.UI.WinUI.csproj" />

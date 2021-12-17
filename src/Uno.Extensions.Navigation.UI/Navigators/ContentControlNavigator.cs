@@ -22,7 +22,7 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 			viewType.IsSubclassOf(typeof(Page)))
         {
 			viewType = typeof(UI.Controls.FrameView);
-            Logger.LogErrorMessage("Missing view for navigation path '{path}'");
+            Logger.LogErrorMessage($"Missing view for navigation path '{path}'");
 			path = default;
 		}
 

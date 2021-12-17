@@ -17,11 +17,37 @@
 		-->
     <WasmShellILLinkerEnabled>true</WasmShellILLinkerEnabled>
   </PropertyGroup>
+
+	<PropertyGroup>
+		<UseWebAssemblyAOT Condition="'$(Configuration)'=='Release' and '$(BUILD_REASON)'!='PullRequest'">true</UseWebAssemblyAOT>
+
+		<!-- Disable Emscripten on windows because of long command lines -->
+		<WasmShellEnableEmscriptenWindows Condition="'$(Configuration)'=='Release' and $([MSBuild]::IsOSPlatform('Windows'))">false</WasmShellEnableEmscriptenWindows>
+	</PropertyGroup>
+
+		<Choose>
+		<When Condition="'$(UseWebAssemblyAOT)'=='true'">
+			<PropertyGroup>
+				<WasmShellMonoRuntimeExecutionMode>InterpreterAndAOT</WasmShellMonoRuntimeExecutionMode>
+				<WasmShellEmccLinkOptimization>true</WasmShellEmccLinkOptimization>
+				<WasmShellEnableEmccProfiling>true</WasmShellEnableEmccProfiling>
+				<!--<WasmShellGenerateAOTProfile>true</WasmShellGenerateAOTProfile>-->
+			</PropertyGroup>
+
+			<ItemGroup>
+				<WasmShellEnableAotProfile Condition="'$(UseWebAssemblyAOT)'=='true' and '$(WasmShellGenerateAOTProfile)'==''" Include="aot.profile" />
+			</ItemGroup>
+		</When>
+	</Choose>
+	
   <ItemGroup>
     <Content Include="Assets\SplashScreen.png" />
   </ItemGroup>
   <ItemGroup>
     <UpToDateCheckInput Include="..\..\Commerce.Shared\**\*.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="wwwroot\web.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="WasmCSS\Fonts.css" />
@@ -45,7 +71,6 @@
 		-->
     <None Include="Program.cs" />
     <None Include="LinkerConfig.xml" />
-    <None Include="wwwroot\web.config" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.0" />
