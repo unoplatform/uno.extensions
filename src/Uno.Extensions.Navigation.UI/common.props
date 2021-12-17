@@ -2,7 +2,12 @@
   <PropertyGroup>
 	  <GenerateLibraryLayout>true</GenerateLibraryLayout>
   </PropertyGroup>
-  
+
+	<PropertyGroup>
+		<AssemblyName>Uno.Extensions.Navigation.UI</AssemblyName>
+	</PropertyGroup>
+
+
 	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
 	</ItemGroup>
