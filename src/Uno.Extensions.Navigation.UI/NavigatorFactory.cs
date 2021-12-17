@@ -7,7 +7,7 @@ namespace Uno.Extensions.Navigation;
 
 public class NavigatorFactory : INavigatorFactory
 {
-    public IDictionary<string, Type> Navigators { get; } = new Dictionary<string, Type>();
+    public IDictionary<string, (Type, bool)> Navigators { get; } = new Dictionary<string, (Type, bool)>();
 
     private ILogger Logger { get; }
 
@@ -23,10 +23,10 @@ public class NavigatorFactory : INavigatorFactory
         builders.ForEach(builder => builder.Configure?.Invoke(this));
     }
 
-    public void RegisterNavigator<TNavigator>(params string[] names)
+    public void RegisterNavigator<TNavigator>(bool requestRegion, params string[] names)
         where TNavigator : INavigator
     {
-        names.ForEach(name => Navigators[name] = typeof(TNavigator));
+        names.ForEach(name => Navigators[name] = (typeof(TNavigator), requestRegion));
     }
 
     public INavigator? CreateService(IRegion region)
@@ -51,7 +51,7 @@ public class NavigatorFactory : INavigatorFactory
             var navigator = control.GetNavigator() ?? control.GetType().Name;
             if (Navigators.TryGetValue(navigator, out var serviceType))
             {
-                navService = services.GetService(serviceType) as INavigator;
+                navService = services.GetService(serviceType.Item1) as INavigator;
             }
         }
 
@@ -101,12 +101,12 @@ public class NavigatorFactory : INavigatorFactory
             return null;
         }
 
-        var serviceType = this.FindServiceByType(serviceLookupType);//  ServiceTypes[mapping.View.Name];
+        var serviceType = this.FindRequestServiceByType(serviceLookupType);//  ServiceTypes[mapping.View.Name];
         if (serviceType is null)
         {
 			if (request.Route.IsDialog())
 			{
-				serviceType = this.FindServiceByType(typeof(Flyout));
+				serviceType = this.FindRequestServiceByType(typeof(Flyout));
 			}
 
 			if (serviceType is null)

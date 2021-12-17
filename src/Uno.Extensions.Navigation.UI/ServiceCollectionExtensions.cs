@@ -29,12 +29,12 @@ public static class ServiceCollectionExtensions
 					// Register the region for each control type
 					.AddRegion<Frame, FrameNavigator>()
 					.AddRegion<ContentControl, ContentControlNavigator>()
-				   .AddRegion<Panel, PanelVisiblityNavigator>(PanelVisiblityNavigator.NavigatorName)
+				   .AddRegion<Panel, PanelVisiblityNavigator>(name: PanelVisiblityNavigator.NavigatorName)
 				   .AddRegion<Microsoft.UI.Xaml.Controls.NavigationView, NavigationViewNavigator>()
-					.AddRegion<ContentDialog, ContentDialogNavigator>()
-					.AddRegion<MessageDialog, MessageDialogNavigator>()
-					.AddRegion<Flyout, FlyoutNavigator>()
-					.AddRegion<Popup, PopupNavigator>()
+					.AddRegion<ContentDialog, ContentDialogNavigator>(true)
+					.AddRegion<MessageDialog, MessageDialogNavigator>(true)
+					.AddRegion<Flyout, FlyoutNavigator>(true)
+					.AddRegion<Popup, PopupNavigator>(true)
 
 					.AddSingleton<IRequestHandler, ButtonBaseRequestHandler>()
 					.AddSingleton<IRequestHandler, SelectorRequestHandler>()
@@ -69,12 +69,12 @@ public static class ServiceCollectionExtensions
 #pragma warning restore CS8603 // Possible null reference return.
 	}
 
-	public static IServiceCollection AddRegion<TControl, TRegion>(this IServiceCollection services, string? name = null)
+	public static IServiceCollection AddRegion<TControl, TRegion>(this IServiceCollection services, bool isRequestRegion = false, string? name = null)
 		where TRegion : class, INavigator
 	{
 		return services
 				   .AddScoped<TRegion>()
-				   .ConfigureNavigatorFactory(factory => factory.RegisterNavigator<TRegion>(name ?? typeof(TControl).Name));
+				   .ConfigureNavigatorFactory(factory => factory.RegisterNavigator<TRegion>(isRequestRegion, name ?? typeof(TControl).Name));
 	}
 
 }
