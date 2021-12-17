@@ -213,17 +213,15 @@ public static class NavigatorExtensions
 		Windows.UI.Popups.UICommand[]? commands = null,
 		CancellationToken cancellation = default)
 	{
-#pragma warning disable CS8604 // Possible null reference argument.
 		var data = new Dictionary<string, object>()
 			{
-				{ RouteConstants.MessageDialogParameterTitle, title },
+				{ RouteConstants.MessageDialogParameterTitle, title! },
 				{ RouteConstants.MessageDialogParameterContent, content },
 				{ RouteConstants.MessageDialogParameterOptions, options },
 				{ RouteConstants.MessageDialogParameterDefaultCommand, defaultCommandIndex },
 				{ RouteConstants.MessageDialogParameterCancelCommand, cancelCommandIndex },
-				{ RouteConstants.MessageDialogParameterCommands, commands }
+				{ RouteConstants.MessageDialogParameterCommands, commands! }
 			};
-#pragma warning restore CS8604 // Possible null reference argument.
 
 		var result = await service.NavigateAsync((Schemes.Dialog + typeof(MessageDialog).Name).AsRequest<UICommand>(sender, data, cancellation));
 		return result?.AsResult<UICommand>();
@@ -237,13 +235,11 @@ public static class NavigatorExtensions
        object? itemTemplate = null,
        CancellationToken cancellation = default)
     {
-#pragma warning disable CS8604 // Possible null reference argument.
         var data = new Dictionary<string, object>()
             {
                 { RouteConstants.PickerItemsSource, itemsSource },
                 { RouteConstants.PickerItemTemplate, itemTemplate }
             };
-#pragma warning restore CS8604 // Possible null reference argument.
 
         var result = await service.NavigateAsync((Schemes.Dialog + typeof(Picker).Name).AsRequest(sender, data, cancellation, typeof(TSource)));
         return result?.AsResult<TSource>();

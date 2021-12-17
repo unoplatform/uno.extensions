@@ -17,9 +17,7 @@ public static class ServiceProviderExtensions
 
 	public static T AddInstance<T>(this IServiceProvider provider, T instance)
 	{
-#pragma warning disable CS8604 // Possible null reference argument.
-		provider.AddInstance(typeof(T), instance);
-#pragma warning restore CS8604 // Possible null reference argument.
+		provider.AddInstance(typeof(T), instance!);
 		return instance;
 	}
 
