@@ -21,9 +21,7 @@ public class RouteResolver : IRouteResolver
 	public RouteResolver(
 		ILogger<RouteResolver> logger,
 		IRouteRegistry routes
-		//, IEnumerable<ViewMap> viewMaps
 		) : this((ILogger)logger, routes
-			//, viewMaps
 			)
 	{
 	}
