@@ -60,17 +60,7 @@ public class ResponseNavigator<TResult> : IResponseNavigator, IInstance<IService
 			ApplyResult(result);
 		}
 
-
-		//if (navResponse is NavigationResultResponse<TResult> typedResponse &&
-		//	typedResponse.Result is not null)
-		//{
-		//	typedResponse.Result.ContinueWith(x => ApplyResult(x.Result));
-
-		//	return typedResponse with { Result = ResultCompletion.Task };
-		//}
-
 		return navResponse;
-		//return new NavigationResultResponse<TResult>(navResponse?.Route ?? Route.Empty, ResultCompletion.Task);
 	}
 
 	private void ApplyResult(Option<TResult> responseData)

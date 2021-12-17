@@ -6,7 +6,7 @@ public class RouteResolver : IRouteResolver
 
 	protected ILogger Logger { get; }
 
-	protected RouteResolver(ILogger logger, IRouteRegistry routes)//, IEnumerable<ViewMap> viewMaps)
+	protected RouteResolver(ILogger logger, IRouteRegistry routes)
 	{
 		Logger = logger;
 
