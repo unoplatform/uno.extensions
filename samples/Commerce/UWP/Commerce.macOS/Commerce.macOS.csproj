@@ -89,7 +89,10 @@
       <Project>{4B596C8D-65B8-473E-AC77-60182F95321E}</Project>
       <Name>Uno.Extensions.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.UWP.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.UWP.csproj">
+      <Project>{fb855301-211a-4716-8162-e2888824b445}</Project>
+      <Name>Uno.Extensions.Hosting.UWP</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj">
       <Project>{975ff5ca-c780-4c30-9d48-e6a8258aba9e}</Project>
       <Name>Uno.Extensions.Hosting</Name>
