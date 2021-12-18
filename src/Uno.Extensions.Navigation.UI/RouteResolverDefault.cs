@@ -40,11 +40,11 @@ public class RouteResolverDefault : RouteResolver
 	{
 		if (!ReturnImplicitMapping)
 		{
-			Logger.LogDebugMessage("Implicit mapping disabled");
+			if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage("Implicit mapping disabled");
 			return null;
 		}
 
-		Logger.LogWarningMessage($"For better performance (avoid reflection), create mapping for for path '{path}', view '{view?.Name}', view model '{viewModel?.Name}'");
+		if (Logger.IsEnabled(LogLevel.Warning)) Logger.LogWarningMessage($"For better performance (avoid reflection), create mapping for for path '{path}', view '{view?.Name}', view model '{viewModel?.Name}'");
 
 		if (string.IsNullOrWhiteSpace(path))
 		{
@@ -68,11 +68,11 @@ public class RouteResolverDefault : RouteResolver
 		{
 			var defaultMap = new RouteMap(path, view, viewModel);
 			Mappings.Add(defaultMap);
-			Logger.LogDebugMessage($"Created default mapping - Path '{defaultMap.Path}'");
+			if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Created default mapping - Path '{defaultMap.Path}'");
 			return defaultMap;
 		}
 
-		Logger.LogDebugMessage($"Unable to create default mapping");
+		if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Unable to create default mapping");
 		return null;
 	}
 

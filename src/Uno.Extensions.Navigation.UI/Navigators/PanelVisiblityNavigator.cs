@@ -41,10 +41,10 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 				{
 					viewType = typeof(UI.Controls.FrameView);
 					path = default;
-					Logger.LogErrorMessage($"Missing view for navigation path '{path}'");
+					if (Logger.IsEnabled(LogLevel.Error)) Logger.LogErrorMessage($"Missing view for navigation path '{path}'");
 				}
 
-				Logger.LogDebugMessage($"Creating instance of type '{viewType.Name}'");
+				if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Creating instance of type '{viewType.Name}'");
                 controlToShow = Activator.CreateInstance(viewType) as FrameworkElement;
                 if (!string.IsNullOrWhiteSpace(path) &&
 					controlToShow is FrameworkElement fe)
@@ -52,11 +52,11 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
                     fe.SetName(path??string.Empty);
                 }
                 Control.Children.Add(controlToShow);
-                Logger.LogDebugMessage("Instance created");
+                if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage("Instance created");
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage($"Unable to create instance - {ex.Message}");
+                if (Logger.IsEnabled(LogLevel.Error)) Logger.LogErrorMessage($"Unable to create instance - {ex.Message}");
             }
         }
 

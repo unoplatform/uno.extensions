@@ -32,7 +32,7 @@ public class RouteNotifier : IRouteNotifier, IRouteUpdater
 		if (runningNavigations == 0)
 		{
 			Timer.Stop();
-			Logger.LogTraceMessage($"Elapsed navigation: {Timer.ElapsedMilliseconds}");
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Elapsed navigation: {Timer.ElapsedMilliseconds}");
 			RouteChanged?.Invoke(this, EventArgs.Empty);
 		}
 	}

@@ -25,7 +25,7 @@ public class ReloadService : IHostedService, IStartupService
 		Config = configRoot;
 		HostEnvironment = hostEnvironment;
 		Storage = storage;
-		Logger.LogDebugMessage($"Created");
+		if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Created");
 	}
 
 	private IStorageProxy Storage { get; }
@@ -45,7 +45,7 @@ public class ReloadService : IHostedService, IStartupService
 		//var localFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
 		//var folder = await localFolder.CreateFolderAsync(HostBuilderExtensions.ConfigurationFolderName, CreationCollisionOption.OpenIfExists);
 		var folderPath = await Storage.CreateLocalFolder(HostBuilderExtensions.ConfigurationFolderName);
-		Logger.LogDebugMessage($@"Folder path should be '{folderPath}'");
+		if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($@"Folder path should be '{folderPath}'");
 
 		var fileProviders = Config.Providers;
 		var reloadEnabled = false;
@@ -81,7 +81,7 @@ public class ReloadService : IHostedService, IStartupService
 			await CopyApplicationFileToLocal(folderPath, $"{AppSettings.AppSettingsFileName}.{HostEnvironment.EnvironmentName}.json".ToLower());
 		}
 
-		Logger.LogDebugMessage($"Started");
+		if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Started");
 
 		if (reloadEnabled)
 		{
@@ -98,7 +98,7 @@ public class ReloadService : IHostedService, IStartupService
 			var settings = await Storage.ReadFromApplicationFile(file);
 			if (!string.IsNullOrWhiteSpace(settings))
 			{
-				Logger.LogDebugMessage($@"Settings '{settings}'");
+				if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($@"Settings '{settings}'");
 				var fullPath = Path.Combine(localFolderPath, file);
 				await Storage.WriteToFile(fullPath, settings);
 			}
@@ -111,7 +111,7 @@ public class ReloadService : IHostedService, IStartupService
 
 	public Task StopAsync(CancellationToken cancellationToken)
 	{
-		Logger.LogDebugMessage($"Stopped");
+		if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Stopped");
 		return Task.CompletedTask;
 	}
 

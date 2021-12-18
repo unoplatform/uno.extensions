@@ -31,7 +31,7 @@ public class NavigatorFactory : INavigatorFactory
 
     public INavigator? CreateService(IRegion region)
     {
-        Logger.LogDebugMessage($"Adding region");
+        if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Adding region");
 
         var services = region.Services;
         var control = region.View;
@@ -75,7 +75,7 @@ public class NavigatorFactory : INavigatorFactory
 
     public INavigator? CreateService(IRegion region, NavigationRequest request)
     {
-        Logger.LogDebugMessage($"Adding region");
+        if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Adding region");
 
         if(region.Services is null)
         {

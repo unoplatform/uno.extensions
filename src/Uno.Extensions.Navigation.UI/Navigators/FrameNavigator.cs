@@ -24,7 +24,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 	{
 		if (Control?.Content is not null)
 		{
-			Logger.LogDebugMessage($"Navigating to type '{Control.SourcePageType.Name}' (initial Content set on Frame)");
+			if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Navigating to type '{Control.SourcePageType.Name}' (initial Content set on Frame)");
 			var viewType = Control.Content.GetType();
 			Region.Navigator()?.NavigateViewAsync(this, viewType);
 		}
@@ -175,7 +175,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 
 	private void Frame_Navigated(object sender, NavigationEventArgs e)
 	{
-		Logger.LogDebugMessage($"Frame has navigated to page '{e.SourcePageType.Name}'");
+		if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Frame has navigated to page '{e.SourcePageType.Name}'");
 
 		if (e.NavigationMode == NavigationMode.New)
 		{
@@ -203,7 +203,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 			Control.Navigated -= Frame_Navigated;
 			if (parameter is not null)
 			{
-				Logger.LogDebugMessage($"Replacing last backstack item to inject parameter '{parameter.GetType().Name}'");
+				if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Replacing last backstack item to inject parameter '{parameter.GetType().Name}'");
 				// If a parameter is being sent back, we need to replace
 				// the last frame on the backstack with one that has the correct
 				// parameter value. This value can be extracted via the OnNavigatedTo method
@@ -213,17 +213,17 @@ public class FrameNavigator : ControlNavigator<Frame>
 				Control.BackStack.Add(newEntry);
 			}
 
-			Logger.LogDebugMessage($"Invoking Frame.GoBack");
+			if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Invoking Frame.GoBack");
 			Control.GoBack();
 
 			await EnsurePageLoaded(previousMapping?.Path);
 
-			Logger.LogDebugMessage($"Frame.GoBack completed");
+			if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Frame.GoBack completed");
 			Control.Navigated += Frame_Navigated;
 		}
 		catch (Exception ex)
 		{
-			Logger.LogErrorMessage($"Unable to go back to page - {ex.Message}");
+			if (Logger.IsEnabled(LogLevel.Error)) Logger.LogErrorMessage($"Unable to go back to page - {ex.Message}");
 		}
 	}
 
@@ -239,18 +239,18 @@ public class FrameNavigator : ControlNavigator<Frame>
 		{
 			if (Control.Content?.GetType() != viewType)
 			{
-				Logger.LogDebugMessage($"Invoking Frame.Navigate to type '{viewType.Name}'");
+				if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Invoking Frame.Navigate to type '{viewType.Name}'");
 				var nav = Control.Navigate(viewType, data);
 
 				await EnsurePageLoaded(path);
-				Logger.LogDebugMessage($"Frame.Navigate completed");
+				if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Frame.Navigate completed");
 			}
 
 			return path;
 		}
 		catch (Exception ex)
 		{
-			Logger.LogErrorMessage($"Unable to navigate to page - {ex.Message}");
+			if (Logger.IsEnabled(LogLevel.Error)) Logger.LogErrorMessage($"Unable to navigate to page - {ex.Message}");
 		}
 		finally
 		{
@@ -283,9 +283,9 @@ public class FrameNavigator : ControlNavigator<Frame>
 		{
 			return;
 		}
-		Logger.LogDebugMessage($"Removing last item from backstack (current count = {Control.BackStack.Count})");
+		if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Removing last item from backstack (current count = {Control.BackStack.Count})");
 		Control.BackStack.RemoveAt(Control.BackStack.Count - 1);
-		Logger.LogDebugMessage($"Item removed from backstack");
+		if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Item removed from backstack");
 	}
 
 	private void ClearBackStack()
@@ -295,9 +295,9 @@ public class FrameNavigator : ControlNavigator<Frame>
 			return;
 		}
 
-		Logger.LogDebugMessage($"Clearing backstack");
+		if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Clearing backstack");
 		Control.BackStack.Clear();
-		Logger.LogDebugMessage($"Backstack cleared");
+		if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Backstack cleared");
 	}
 
 	private Route? FullRoute { get; set; }

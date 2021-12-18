@@ -47,7 +47,7 @@ public class PopupNavigator : ControlNavigator<Popup>
         }
         catch (Exception ex)
         {
-            Logger.LogErrorMessage($"Unable to create instance - {ex.Message}");
+            if (Logger.IsEnabled(LogLevel.Error)) Logger.LogErrorMessage($"Unable to create instance - {ex.Message}");
         }
 
         return default;

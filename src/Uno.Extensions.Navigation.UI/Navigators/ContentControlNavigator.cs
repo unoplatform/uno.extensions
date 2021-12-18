@@ -22,7 +22,7 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 			viewType.IsSubclassOf(typeof(Page)))
         {
 			viewType = typeof(UI.Controls.FrameView);
-            Logger.LogErrorMessage($"Missing view for navigation path '{path}'");
+			if (Logger.IsEnabled(LogLevel.Error)) Logger.LogErrorMessage($"Missing view for navigation path '{path}'");
 			path = default;
 		}
 
@@ -34,16 +34,16 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
         try
         {
 
-            Logger.LogDebugMessage($"Creating instance of type '{viewType.Name}'");
+            if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Creating instance of type '{viewType.Name}'");
             var content = Activator.CreateInstance(viewType);
             Control.Content = content;
             await (Control.Content as FrameworkElement).EnsureLoaded();
-            Logger.LogDebugMessage("Instance created");
+            if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage("Instance created");
             return path;
         }
         catch (Exception ex)
         {
-            Logger.LogErrorMessage($"Unable to create instance - {ex.Message}");
+            if (Logger.IsEnabled(LogLevel.Error)) Logger.LogErrorMessage($"Unable to create instance - {ex.Message}");
         }
 
         return default;

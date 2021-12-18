@@ -39,7 +39,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 
         var route = request.Route;
         var mapping = RouteResolver.Find(route);
-        Logger.LogDebugMessage($"Navigating to path '{route.Base}' with view '{mapping?.View?.Name}'");
+		if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Navigating to path '{route.Base}' with view '{mapping?.View?.Name}'");
         var executedPath = await Show(route.Base, mapping?.View, route.Data);
 
         InitialiseCurrentView(route, mapping);
