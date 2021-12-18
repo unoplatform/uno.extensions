@@ -12,7 +12,7 @@ export UNO_UITEST_PROJECT=$BUILD_SOURCESDIRECTORY/samples/Commerce/Commerce.UITe
 export UNO_UITEST_BINARY=$BUILD_SOURCESDIRECTORY/samples/Commerce/Commerce.UITest/bin/Release/net48/Commerce.UITest.dll
 export UNO_UITEST_LOGFILE=$BUILD_ARTIFACTSTAGINGDIRECTORY/screenshots/wasm/nunit-log.txt
 export UNO_UITEST_WASM_PROJECT=$BUILD_SOURCESDIRECTORY/samples/Commerce/WinUI/Commerce.Wasm/Commerce.Wasm.csproj
-export UNO_UITEST_WASM_OUTPUT_PATH=$BUILD_SOURCESDIRECTORY/samples/Commerce/WinUI/Commerce.Wasm/bin/Release/net5.0/dist/
+export UNO_UITEST_WASM_OUTPUT_PATH=$BUILD_SOURCESDIRECTORY/samples/Commerce/WinUI/Commerce.Wasm/bin/Release/net6.0/dist/
 export UNO_UITEST_NUNIT_VERSION=3.11.1
 export UNO_UITEST_NUGET_URL=https://dist.nuget.org/win-x86-commandline/v5.7.0/nuget.exe
 export UNO_UITEST_WASM_PROJECT_BUILD_OPTIONS="/p:UnoExtensionsDisableNet6=true /p:GeneratePackageOnBuild=false"
