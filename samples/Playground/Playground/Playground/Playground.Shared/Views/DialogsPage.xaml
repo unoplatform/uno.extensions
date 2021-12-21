@@ -5,6 +5,7 @@
 	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	  mc:Ignorable="d"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
 	<Grid>
@@ -12,6 +13,11 @@
 			<Button Content="MessageDialog Codebehind"
 					Click="MessageDialogCodebehindClick" />
 			<TextBlock x:Name="MessageDialogResultText" />
+			<Button uen:Navigation.Request="!Simple"
+					Content="SimpleDialog Nav Request" />
+			<Button Content="SimpleDialog Codebehind"
+					Click="SimpleDialogCodebehindClick" />
+			<TextBlock x:Name="SimpleDialogResultText" />
 		</StackPanel>
 	</Grid>
 </Page>

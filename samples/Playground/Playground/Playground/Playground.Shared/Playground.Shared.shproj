@@ -18,6 +18,7 @@
     <_Globbed_Compile Remove="Views\FourthPage.xaml.cs" />
     <_Globbed_Compile Remove="Views\HomePage.xaml.cs" />
     <_Globbed_Compile Remove="Views\SecondPage.xaml.cs" />
+    <_Globbed_Compile Remove="Views\SimpleDialog.xaml.cs" />
     <_Globbed_Compile Remove="Views\ThirdPage.xaml.cs" />
     <_Globbed_Compile Remove="Views\VisualStatePage.xaml.cs" />
   </ItemGroup>
@@ -26,6 +27,7 @@
     <_Globbled_Page Remove="Views\FourthPage.xaml" />
     <_Globbled_Page Remove="Views\HomePage.xaml" />
     <_Globbled_Page Remove="Views\SecondPage.xaml" />
+    <_Globbled_Page Remove="Views\SimpleDialog.xaml" />
     <_Globbled_Page Remove="Views\ThirdPage.xaml" />
   </ItemGroup>
 </Project>

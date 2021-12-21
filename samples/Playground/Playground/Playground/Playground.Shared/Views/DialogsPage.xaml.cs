@@ -26,6 +26,12 @@ namespace Playground.Views
 			var messageDialogResult = await showDialog.Result;
 			MessageDialogResultText.Text = $"Message dialog result: {messageDialogResult.SomeOrDefault()?.Label}";
 		}
+		private async void SimpleDialogCodebehindClick(object sender, RoutedEventArgs args)
+		{
+			var showDialog = await Navigator.NavigateViewForResultAsync<SimpleDialog,object>(this, Schemes.Dialog);
+			var dialogResult = await showDialog.Result;
+			SimpleDialogResultText.Text = $"Dialog result: {dialogResult.SomeOrDefault()?.ToString()}";
+		}
 
 		public void Inject(INavigator entity) => Navigator = entity;
 	}
