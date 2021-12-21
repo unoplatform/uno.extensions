@@ -28,6 +28,8 @@
 					Content="Fourth page" />
 			<Button uen:Navigation.Request="./Dialogs"
 					Content="Dialogs page" />
+			<Button uen:Navigation.Request="./VisualStates"
+					Content="Visual States page" />
 		</StackPanel>
 	</Grid>
 </Page>

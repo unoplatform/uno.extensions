@@ -19,6 +19,7 @@
     <_Globbed_Compile Remove="Views\HomePage.xaml.cs" />
     <_Globbed_Compile Remove="Views\SecondPage.xaml.cs" />
     <_Globbed_Compile Remove="Views\ThirdPage.xaml.cs" />
+    <_Globbed_Compile Remove="Views\VisualStatePage.xaml.cs" />
   </ItemGroup>
   <ItemGroup>
     <_Globbled_Page Remove="Views\FifthPage.xaml" />
