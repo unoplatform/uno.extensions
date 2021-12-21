@@ -21,6 +21,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\FifthViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\FourthViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ShellViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\DialogsPage.xaml.cs">
+      <DependentUpon>DialogsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\FifthPage.xaml.cs">
       <DependentUpon>FifthPage.xaml</DependentUpon>
     </Compile>
@@ -38,6 +41,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="$(MSBuildThisFileDirectory)Views\DialogsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\FifthPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

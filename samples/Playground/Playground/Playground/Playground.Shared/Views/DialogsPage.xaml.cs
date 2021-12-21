@@ -1,0 +1,32 @@
+﻿using Uno.Extensions;
+using Uno.Extensions.Navigation;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+
+// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
+
+namespace Playground.Views
+{
+	/// <summary>
+	/// An empty page that can be used on its own or navigated to within a Frame.
+	/// </summary>
+	public sealed partial class DialogsPage : Page, IInjectable<INavigator>
+	{
+
+		private INavigator Navigator { get; set; }
+
+		public DialogsPage()
+        {
+            this.InitializeComponent();
+        }
+		
+		private async void MessageDialogCodebehindClick(object sender, RoutedEventArgs args)
+		{
+			var showDialog = await Navigator.ShowMessageDialogAsync(this, "This is Content", "This is title");
+			var messageDialogResult = await showDialog.Result;
+			MessageDialogResultText.Text = $"Message dialog result: {messageDialogResult.SomeOrDefault()?.Label}";
+		}
+
+		public void Inject(INavigator entity) => Navigator = entity;
+	}
+}

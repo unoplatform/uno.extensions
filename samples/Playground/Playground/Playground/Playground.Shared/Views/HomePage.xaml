@@ -26,6 +26,8 @@
 					Content="Second Page with clear backstack" />
 			<Button uen:Navigation.Request="./Fourth"
 					Content="Fourth page" />
+			<Button uen:Navigation.Request="./Dialogs"
+					Content="Dialogs page" />
 		</StackPanel>
 	</Grid>
 </Page>
