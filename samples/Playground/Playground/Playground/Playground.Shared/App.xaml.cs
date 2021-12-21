@@ -1,12 +1,8 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Playground.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
 using Uno.Extensions.Hosting;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation;
@@ -14,14 +10,7 @@ using Uno.Extensions.Navigation.Toolkit;
 using Uno.Extensions.Serialization;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 namespace Playground
@@ -103,48 +92,6 @@ namespace Playground
 			}
 #endif
 
-			//#if NET5_0 && WINDOWS
-			//            _window = new Window();
-			//            _window.Activate();
-			//#else
-			//            _window = Windows.UI.Xaml.Window.Current;
-			//#endif
-
-			//            var rootFrame = _window.Content as Frame;
-
-			//            // Do not repeat app initialization when the Window already has content,
-			//            // just ensure that the window is active
-			//            if (rootFrame == null)
-			//            {
-			//                // Create a Frame to act as the navigation context and navigate to the first page
-			//                rootFrame = new Frame();
-
-			//                rootFrame.NavigationFailed += OnNavigationFailed;
-
-			//                if (args.PreviousExecutionState == ApplicationExecutionState.Terminated)
-			//                {
-			//                    // TODO: Load state from previously suspended application
-			//                }
-
-			//                // Place the frame in the current Window
-			//                _window.Content = rootFrame;
-			//            }
-
-			//#if !(NET5_0 && WINDOWS)
-			//            if (args.PrelaunchActivated == false)
-			//#endif
-			//            {
-			//                if (rootFrame.Content == null)
-			//                {
-			//                    // When the navigation stack isn't restored navigate to the first page,
-			//                    // configuring the new page by passing required information as a navigation
-			//                    // parameter
-			//                    rootFrame.Navigate(typeof(MainPage), args.Arguments);
-			//                }
-			//                // Ensure the current window is active
-			//                _window.Activate();
-			//            }
-
 #if NET5_0 && WINDOWS
             _window = new Window();
             _window.Activate();
@@ -152,7 +99,14 @@ namespace Playground
 			_window = Window.Current;
 #endif
 
-			_window.Content = Host.Services.NavigationHost();
+			_window.Content = Host.Services.NavigationHost(
+				// Option 1: This requires Shell to be the first RouteMap - best for perf as no reflection required
+				// initialRoute: ""
+				// Option 2: Specify route name
+				// initialRoute: "Shell"
+				// Option 3: Specify the view model. To avoid reflection, you can still define a routemap
+				initialViewModel: typeof(ShellViewModel)
+				);
 			_window.Activate();
 
 			await Task.Run(async () =>
@@ -248,7 +202,8 @@ namespace Playground
 
 		private static void RegisterRoutes(IRouteRegistry routes)
 		{
-			routes.Register(new RouteMap("Shell", ViewModel: typeof(ShellViewModel)));
+			// RouteMap required for Shell if initialRoute or initialViewModel isn't specified when calling NavigationHost
+			// routes.Register(new RouteMap("Shell", ViewModel: typeof(ShellViewModel)));
 		}
 	}
 }
