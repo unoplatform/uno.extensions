@@ -2,29 +2,51 @@
 
 public class NavigationRequestBinder
 {
-	private FrameworkElement View { get; }
-
 	public NavigationRequestBinder(FrameworkElement view)
 	{
-		View = view;
-		View.Loaded += LoadedHandler;
+		if (view.IsLoaded)
+		{
+			BindRequestHandler(view);
+		}
+		else
+		{
+			view.Loaded += (s, e) => BindRequestHandler(s as FrameworkElement);
+		}
 	}
 
-	private async void LoadedHandler(object sender, RoutedEventArgs args)
+	private async void BindRequestHandler(FrameworkElement? element)
 	{
-		View.Loaded -= LoadedHandler;
 
-		var region = View.FindRegion();
-
-		if (region is not null)
+		try
 		{
-			await region.EnsureLoaded();
-
-			var binder = region.Services?.GetServices<IRequestHandler>().FirstOrDefault(x => x.CanBind(View));
-			if (binder is not null)
+			if (element is null)
 			{
-				binder.Bind(View);
+				return;
 			}
+
+			var existingHandler = element.GetHandler();
+			if(existingHandler is not null)
+			{
+				existingHandler.Unbind();
+			}
+
+			var region = element.FindRegion();
+
+			if (region is not null)
+			{
+				await region.EnsureLoaded();
+
+				var binder = region.Services?.GetServices<IRequestHandler>().FirstOrDefault(x => x.CanBind(element));
+				if (binder is not null)
+				{
+					binder.Bind(element);
+					element.SetHandler(binder);
+				}
+			}
+		}
+		catch
+		{
+			// Ensuring no bleeding of exceptions that could tear down app
 		}
 	}
 }

@@ -4,6 +4,7 @@ public class SelectorRequestHandler : ControlRequestHandlerBase<Selector>
 {
 	public override void Bind(FrameworkElement view)
 	{
+		_view = view;
 		var viewList = view as Selector;
 		if (viewList is null)
 		{
@@ -74,13 +75,15 @@ public class SelectorRequestHandler : ControlRequestHandlerBase<Selector>
 			connect();
 		}
 
-		viewList.Loaded += (s, e) =>
+		_loadedHandler =  (s, e) =>
 		{
 			connect();
 		};
-		viewList.Unloaded += (s, e) =>
+		viewList.Loaded += _loadedHandler;
+		_unloadedHandler = (s, e) =>
 		{
 			disconnect();
 		};
+		viewList.Unloaded += _unloadedHandler;
 	}
 }
