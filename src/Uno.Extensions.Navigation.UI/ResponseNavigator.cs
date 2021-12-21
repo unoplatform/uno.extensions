@@ -43,7 +43,7 @@ public class ResponseNavigator<TResult> : IResponseNavigator, IInstance<IService
 			var result = responseData is Option<TResult> res ? res : default;
 			if (result.Type != OptionType.Some)
 			{
-				if (responseData is Option<object> objectResponse)
+				if (responseData is IOption objectResponse)
 				{
 					responseData = objectResponse.SomeOrDefault();
 				}
