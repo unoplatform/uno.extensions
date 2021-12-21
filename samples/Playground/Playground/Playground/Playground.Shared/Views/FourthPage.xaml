@@ -29,8 +29,10 @@
 		<StackPanel Grid.Row="1">
 			<Button uen:Navigation.Request="../-"
 					Content="Back" />
-			<Button Content="Fifth Page"
+			<Button Content="Fifth Page via ViewModel method"
 					Click="{x:Bind ViewModel.NavigateToFifth, Mode=OneWay}" />
+			<Button Content="Fifth Page via code behind"
+					Click="FifthPageClick" />
 		</StackPanel>
 	</Grid>
 </Page>

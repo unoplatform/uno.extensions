@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Playground.ViewModels;
+using Uno.Extensions;
+using Uno.Extensions.Navigation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -21,9 +23,11 @@ namespace Playground.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class FourthPage : Page
+    public sealed partial class FourthPage : Page, IInjectable<INavigator>
     {
-		public FourthViewModel ViewModel { get; set; }
+		public FourthViewModel ViewModel { get; private set; }
+
+		private INavigator Navigator { get; set; }
         public FourthPage()
         {
             this.InitializeComponent();
@@ -34,6 +38,16 @@ namespace Playground.Views
 		private void FourthPage_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
 		{
 			ViewModel = args.NewValue as FourthViewModel;	
+		}
+
+		private void FifthPageClick(object sender, RoutedEventArgs args)
+		{
+			Navigator.NavigateViewAsync<FifthPage>(this, Schemes.Nested);
+		}
+
+		public void Inject(INavigator entity)
+		{
+			Navigator = entity;
 		}
 	}
 }
