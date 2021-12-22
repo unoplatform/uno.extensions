@@ -18,7 +18,7 @@ public readonly struct BindablePropertyInfo<T>
 
 	internal BindablePropertyInfo(
 		IBindable owner,
-		string name, 
+		string name,
 		Action<Action<T?>> subscribeOwnerUpdated,
 		AsyncAction<Func<T?, T?>, bool> updateOwner)
 	{

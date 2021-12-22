@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Uno.Extensions.Logging;
+﻿using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Regions;
 
 namespace Uno.Extensions.Navigation.Navigators;
@@ -13,9 +10,9 @@ public class PopupNavigator : ControlNavigator<Popup>
     public PopupNavigator(
         ILogger<ContentControlNavigator> logger,
         IRegion region,
-        IMappings mappings,
+        IRouteResolver routeResolver,
         RegionControlProvider controlProvider)
-        : base(logger, region, mappings, controlProvider.RegionControl as Popup)
+        : base(logger, region, routeResolver, controlProvider.RegionControl as Popup)
     {
     }
 
@@ -50,7 +47,7 @@ public class PopupNavigator : ControlNavigator<Popup>
         }
         catch (Exception ex)
         {
-            Logger.LogErrorMessage($"Unable to create instance - {ex.Message}");
+            if (Logger.IsEnabled(LogLevel.Error)) Logger.LogErrorMessage($"Unable to create instance - {ex.Message}");
         }
 
         return default;

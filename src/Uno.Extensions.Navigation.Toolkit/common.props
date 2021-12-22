@@ -26,4 +26,26 @@
 	</EmbeddedResource>
   </ItemGroup>
 
+	<ItemGroup>
+		<Page Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
+		<Compile Update="**\*.xaml.cs">
+			<DependentUpon>%(Filename)</DependentUpon>
+		</Compile>
+		<UpToDateCheckInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
+	</ItemGroup>
+
+	<Choose>
+		<When Condition="'$(TargetFramework)'=='xamarinios10' or '$(TargetFramework)'=='monoandroid10.0' or '$(TargetFramework)'=='monoandroid11.0' or '$(TargetFramework)'=='net6.0-ios' or '$(TargetFramework)'=='net6.0-android'">
+			<ItemGroup>
+				<IncludeXamlNamespaces Include="mobile" />
+				<ExcludeXamlNamespaces Include="not_mobile" />
+			</ItemGroup>
+		</When>
+		<Otherwise>
+			<ItemGroup>
+				<IncludeXamlNamespaces Include="not_mobile" />
+				<ExcludeXamlNamespaces Include="mobile" />
+			</ItemGroup>
+		</Otherwise>
+	</Choose>
 </Project>

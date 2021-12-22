@@ -1,5 +1,4 @@
-﻿using System;
-using Uno.Extensions.Hosting;
+﻿using Uno.Extensions.Hosting;
 
 namespace Uno.Extensions.Navigation;
 

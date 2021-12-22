@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Uno.Extensions.Navigation;
+﻿namespace Uno.Extensions.Navigation;
 
 #pragma warning disable SA1313 // Parameter names should begin with lower-case letter
 public record Route(string Scheme, string? Base = null, string? Path = null, IDictionary<string, object>? Data = null)

@@ -1,11 +1,10 @@
-﻿using System;
-using Uno.Extensions.Navigation.Regions;
+﻿using Uno.Extensions.Navigation.Regions;
 
 namespace Uno.Extensions.Navigation;
 
 public interface INavigatorFactory
 {
-    void RegisterNavigator<TNavigator>(params string[] names)
+    void RegisterNavigator<TNavigator>(bool isRequestRegion, params string[] names)
         where TNavigator : INavigator;
 
     INavigator? CreateService(IRegion region);

@@ -1,21 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Windows.UI.Popups;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Windows.UI.Popups;
 using Uno.Extensions.Navigation.Regions;
-using System.Linq;
 using Uno.Extensions.Navigation.Navigators;
-#if !WINUI
-using UICommand = Windows.UI.Popups.UICommand;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-#else
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Windows.UI.Popups;
-#endif
 
 namespace Uno.Extensions.Navigation;
 
@@ -31,9 +16,9 @@ public static class NavigatorExtensions
 		return parentNav;
 	}
 
-	internal static IMappings? GetMapping(this INavigator navigator)
+	internal static IRouteResolver? GetMapping(this INavigator navigator)
 	{
-		return navigator.Get<IServiceProvider>()?.GetRequiredService<IMappings>() ?? default;
+		return navigator.Get<IServiceProvider>()?.GetRequiredService<IRouteResolver>() ?? default;
 	}
 
 	public static async Task<NavigationResultResponse<TResult>?> NavigateRouteForResultAsync<TResult>(
@@ -57,6 +42,20 @@ public static class NavigatorExtensions
 	public static Task<NavigationResponse?> NavigateRouteAsync(
 		this INavigator service, object sender, string route, string scheme = Schemes.None, object? data = null, CancellationToken cancellation = default)
 	{
+		if (string.IsNullOrWhiteSpace(route))
+		{
+			var mappings = service.GetMapping();
+			var map = (data is not null)?
+							mappings?.FindByData(data.GetType()) :
+							mappings?.Find(default!);
+			if (map is null)
+			{
+				return Task.FromResult<NavigationResponse?>(null);
+			}
+
+			route = map.Path;
+		}
+
 		return service.NavigateAsync(route.WithScheme(scheme).AsRequest(sender, data, cancellation));
 	}
 
@@ -159,6 +158,19 @@ public static class NavigatorExtensions
 		return service.NavigateAsync(map.Path.WithScheme(scheme).AsRequest(sender, data, cancellation));
 	}
 
+	public static async Task<NavigationResultResponse<TResultData>?> NavigateDataForResultAsync<TData, TResultData>(
+		this INavigator service, object sender, TData data, string scheme = Schemes.None, CancellationToken cancellation = default)
+	{
+		var mappings = service.GetMapping();
+		var map = mappings?.FindByData(typeof(TData));
+		if (map is null)
+		{
+			return default;
+		}
+		var result = await service.NavigateAsync(map.Path.WithScheme(scheme).AsRequest<TResultData>(sender, data, cancellation));
+		return result?.AsResult<TResultData>();
+	}
+
 	public static async Task<NavigationResultResponse<TResultData>?> NavigateForResultAsync<TResultData>(
 		this INavigator service, object sender, string scheme = Schemes.None, object? data = null, CancellationToken cancellation = default)
 	{
@@ -201,17 +213,15 @@ public static class NavigatorExtensions
 		Windows.UI.Popups.UICommand[]? commands = null,
 		CancellationToken cancellation = default)
 	{
-#pragma warning disable CS8604 // Possible null reference argument.
 		var data = new Dictionary<string, object>()
 			{
-				{ RouteConstants.MessageDialogParameterTitle, title },
+				{ RouteConstants.MessageDialogParameterTitle, title! },
 				{ RouteConstants.MessageDialogParameterContent, content },
 				{ RouteConstants.MessageDialogParameterOptions, options },
 				{ RouteConstants.MessageDialogParameterDefaultCommand, defaultCommandIndex },
 				{ RouteConstants.MessageDialogParameterCancelCommand, cancelCommandIndex },
-				{ RouteConstants.MessageDialogParameterCommands, commands }
+				{ RouteConstants.MessageDialogParameterCommands, commands! }
 			};
-#pragma warning restore CS8604 // Possible null reference argument.
 
 		var result = await service.NavigateAsync((Schemes.Dialog + typeof(MessageDialog).Name).AsRequest<UICommand>(sender, data, cancellation));
 		return result?.AsResult<UICommand>();
@@ -225,13 +235,11 @@ public static class NavigatorExtensions
        object? itemTemplate = null,
        CancellationToken cancellation = default)
     {
-#pragma warning disable CS8604 // Possible null reference argument.
         var data = new Dictionary<string, object>()
             {
                 { RouteConstants.PickerItemsSource, itemsSource },
                 { RouteConstants.PickerItemTemplate, itemTemplate }
             };
-#pragma warning restore CS8604 // Possible null reference argument.
 
         var result = await service.NavigateAsync((Schemes.Dialog + typeof(Picker).Name).AsRequest(sender, data, cancellation, typeof(TSource)));
         return result?.AsResult<TSource>();

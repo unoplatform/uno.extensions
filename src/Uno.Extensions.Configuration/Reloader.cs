@@ -22,31 +22,31 @@ namespace Uno.Extensions.Configuration
 
         public async Task ReloadAllFileConfigurationProviders(string? configFile = default)
         {
-            Logger.LogDebugMessage($"Reloading config");
+            if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Reloading config");
 
 
             var fileProviders = Config.Providers;
             foreach (var fp in fileProviders)
             {
-                Logger.LogDebugMessage($@"Config provider of type '{fp.GetType().Name}'");
+                if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($@"Config provider of type '{fp.GetType().Name}'");
                 if (fp is FileConfigurationProvider fcp && (configFile is null || configFile.ToLower().Contains(fcp.Source.Path.Split('/','\\').Last().ToLower())))
                 {
-                    Logger.LogDebugMessage($@"Loading from file '{fcp.Source.Path}'");
+                    if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($@"Loading from file '{fcp.Source.Path}'");
                     var provider = fcp.Source.FileProvider;
                     var info = provider.GetFileInfo(fcp.Source.Path);
 					if (!File.Exists(info.PhysicalPath))
 					{
-						Logger.LogDebugMessage($@"File doesn't exist '{info.PhysicalPath}'");
+						if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($@"File doesn't exist '{info.PhysicalPath}'");
 					}
 					else { 
 						var contents = File.ReadAllText(info.PhysicalPath);
-						Logger.LogDebugMessage($@"Contents '{contents}'");
-						Logger.LogDebugMessage($@"Loading from full path '{info.PhysicalPath}'");
+						if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($@"Contents '{contents}'");
+						if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($@"Loading from full path '{info.PhysicalPath}'");
 						fp.Load();
 					}
                 }
             }
-            Logger.LogDebugMessage($"Reloading configuration complete");
+            if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Reloading configuration complete");
         }
     }
 }

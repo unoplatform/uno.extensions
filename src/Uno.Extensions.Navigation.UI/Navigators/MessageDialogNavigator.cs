@@ -1,17 +1,5 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Uno.Extensions.Navigation.Regions;
-using Windows.Foundation;
-#if !WINUI
+﻿using Uno.Extensions.Navigation.Regions;
 using Windows.UI.Popups;
-using UICommand = Windows.UI.Popups.UICommand;
-#else
-using Microsoft.UI.Xaml.Controls;
-using Windows.UI.Popups;
-using UICommand = Windows.UI.Popups.UICommand;
-#endif
 
 namespace Uno.Extensions.Navigation.Navigators;
 
@@ -19,9 +7,9 @@ public class MessageDialogNavigator : DialogNavigator
 {
     public MessageDialogNavigator(
         ILogger<DialogNavigator> logger,
-        IMappings mappings,
+        IRouteResolver routeResolver,
         IRegion region)
-        : base(logger, mappings, region)
+        : base(logger, routeResolver, region)
     {
     }
 
@@ -29,8 +17,6 @@ public class MessageDialogNavigator : DialogNavigator
     {
         var route = request.Route;
         var navigation = Region.Navigator();
-        var services = this.Get<IServiceProvider>();
-        var mapping = Mappings.Find(route);
 
         var data = route.Data;
         if(data is null)

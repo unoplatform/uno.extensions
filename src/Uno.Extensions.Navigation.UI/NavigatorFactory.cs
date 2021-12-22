@@ -1,52 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Uno.Extensions.Logging;
+﻿using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.UI;
 using Uno.Extensions.Navigation.Navigators;
 using Uno.Extensions.Navigation.Regions;
-#if !WINUI
-using Windows.UI.Xaml;
-#else
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-#endif
 
 namespace Uno.Extensions.Navigation;
 
-public class NavigatorFactoryBuilder
-{
-    public Action<INavigatorFactory>? Configure { get; set; }
-}
-
 public class NavigatorFactory : INavigatorFactory
 {
-    public IDictionary<string, Type> Navigators { get; } = new Dictionary<string, Type>();
+    public IDictionary<string, (Type, bool)> Navigators { get; } = new Dictionary<string, (Type, bool)>();
 
     private ILogger Logger { get; }
 
-    private IMappings Mappings { get; }
+    private IRouteResolver RouteResolver { get; }
 
-    public NavigatorFactory(
+	public NavigatorFactory(
         ILogger<NavigatorFactory> logger,
         IEnumerable<NavigatorFactoryBuilder> builders,
-        IMappings mappings)
+		IRouteResolver routeResolver)
     {
         Logger = logger;
-        Mappings = mappings;
+		RouteResolver = routeResolver;
         builders.ForEach(builder => builder.Configure?.Invoke(this));
     }
 
-    public void RegisterNavigator<TNavigator>(params string[] names)
+    public void RegisterNavigator<TNavigator>(bool requestRegion, params string[] names)
         where TNavigator : INavigator
     {
-        names.ForEach(name => Navigators[name] = typeof(TNavigator));
+        names.ForEach(name => Navigators[name] = (typeof(TNavigator), requestRegion));
     }
 
     public INavigator? CreateService(IRegion region)
     {
-        Logger.LogDebugMessage($"Adding region");
+        if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Adding region");
 
         var services = region.Services;
         var control = region.View;
@@ -56,8 +41,6 @@ public class NavigatorFactory : INavigatorFactory
             return default;
         }
 
-        //// Create Navigation Service
-        //var navLogger = services.GetService<ILogger<ControlNavigator>>();
 
         INavigator? navService = null;
 
@@ -68,7 +51,7 @@ public class NavigatorFactory : INavigatorFactory
             var navigator = control.GetNavigator() ?? control.GetType().Name;
             if (Navigators.TryGetValue(navigator, out var serviceType))
             {
-                navService = services.GetService(serviceType) as INavigator;
+                navService = services.GetService(serviceType.Item1) as INavigator;
             }
         }
 
@@ -92,7 +75,7 @@ public class NavigatorFactory : INavigatorFactory
 
     public INavigator? CreateService(IRegion region, NavigationRequest request)
     {
-        Logger.LogDebugMessage($"Adding region");
+        if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Adding region");
 
         if(region.Services is null)
         {
@@ -105,8 +88,8 @@ public class NavigatorFactory : INavigatorFactory
         var dialogRegion = new NavigationRegion(services: services);
         services.AddInstance<IRegion>(dialogRegion);
 
-        var mapping = Mappings.FindViewByPath(request.Route.Base);
-        var serviceLookupType = mapping?.ViewType;
+        var mapping = RouteResolver.FindByPath(request.Route.Base);
+        var serviceLookupType = mapping?.View;
         if (serviceLookupType is null)
         {
             object? resource = request.RouteResourceView(region);
@@ -118,10 +101,18 @@ public class NavigatorFactory : INavigatorFactory
             return null;
         }
 
-        var serviceType = this.FindServiceByType(serviceLookupType);//  ServiceTypes[mapping.View.Name];
+        var serviceType = this.FindRequestServiceByType(serviceLookupType);//  ServiceTypes[mapping.View.Name];
         if (serviceType is null)
         {
-            return null;
+			if (request.Route.IsDialog())
+			{
+				serviceType = this.FindRequestServiceByType(typeof(Flyout));
+			}
+
+			if (serviceType is null)
+			{
+				return null;
+			}
         }
 
         var navService = services.GetRequiredService(serviceType) as INavigator;

@@ -1,17 +1,6 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Uno.Extensions.Logging;
+﻿using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.UI;
 using Uno.Extensions.Navigation.Regions;
-#if !WINUI
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-#else
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-#endif
 
 namespace Uno.Extensions.Navigation.Navigators;
 
@@ -24,9 +13,9 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
     public PanelVisiblityNavigator(
         ILogger<PanelVisiblityNavigator> logger,
         IRegion region,
-        IMappings mappings,
+        IRouteResolver routeResolver,
         RegionControlProvider controlProvider)
-        : base(logger, region, mappings, controlProvider.RegionControl as Grid)
+        : base(logger, region, routeResolver, controlProvider.RegionControl as Grid)
     {
     }
 
@@ -47,24 +36,27 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
         {
             try
             {
-                if (viewType is null)
-                {
-                    Logger.LogErrorMessage("Missing view for navigation path '{path}'");
-                    return default;
-                }
+				if (viewType is null ||
+					viewType.IsSubclassOf(typeof(Page)))
+				{
+					viewType = typeof(UI.Controls.FrameView);
+					path = default;
+					if (Logger.IsEnabled(LogLevel.Error)) Logger.LogErrorMessage($"Missing view for navigation path '{path}'");
+				}
 
-                Logger.LogDebugMessage($"Creating instance of type '{viewType.Name}'");
+				if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Creating instance of type '{viewType.Name}'");
                 controlToShow = Activator.CreateInstance(viewType) as FrameworkElement;
-                if (controlToShow is FrameworkElement fe)
+                if (!string.IsNullOrWhiteSpace(path) &&
+					controlToShow is FrameworkElement fe)
                 {
                     fe.SetName(path??string.Empty);
                 }
                 Control.Children.Add(controlToShow);
-                Logger.LogDebugMessage("Instance created");
+                if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage("Instance created");
             }
             catch (Exception ex)
             {
-                Logger.LogErrorMessage($"Unable to create instance - {ex.Message}");
+                if (Logger.IsEnabled(LogLevel.Error)) Logger.LogErrorMessage($"Unable to create instance - {ex.Message}");
             }
         }
 

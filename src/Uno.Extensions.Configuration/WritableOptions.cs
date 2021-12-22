@@ -40,14 +40,14 @@ namespace Uno.Extensions.Configuration
 		{
 			get
 			{
-				_logger.LogDebugMessage("Get current value");
+				if (_logger.IsEnabled(LogLevel.Debug)) _logger.LogDebugMessage("Get current value");
 				return _options.CurrentValue;
 			}
 		}
 
 		public T Get(string name)
 		{
-			_logger.LogDebugMessage($@"Get options with name '{name}'");
+			if (_logger.IsEnabled(LogLevel.Debug)) _logger.LogDebugMessage($@"Get options with name '{name}'");
 			return _options.Get(name);
 		}
 
@@ -62,7 +62,7 @@ namespace Uno.Extensions.Configuration
 
 		public async Task Update(Func<T, T> applyChanges)
 		{
-			_logger.LogDebugMessage($@"Updating options, saving to file '{_file}'");
+			if (_logger.IsEnabled(LogLevel.Debug)) _logger.LogDebugMessage($@"Updating options, saving to file '{_file}'");
 
 			var physicalPath = _file;
 			var jObject = File.Exists(physicalPath) ? JsonSerializer.Deserialize<Dictionary<string, object>>(File.ReadAllText(physicalPath)) : new Dictionary<string, object>();

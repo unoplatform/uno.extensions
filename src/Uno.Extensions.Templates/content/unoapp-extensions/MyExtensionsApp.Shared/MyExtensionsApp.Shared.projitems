@@ -29,6 +29,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\IProfileService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\ProductServices.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\ProfileService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\CartProductDetailsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\CartViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\IProductService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Product.cs" />
@@ -53,14 +54,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)Views\CheckoutPage.xaml.cs">
       <DependentUpon>CheckoutPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\FilterPage.xaml.cs">
+      <DependentUpon>FilterPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\DealsPage.xaml.cs">
       <DependentUpon>DealsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Views\FilterFlyout.xaml.cs">
-      <DependentUpon>FilterFlyout.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\FrameView.xaml.cs">
       <DependentUpon>FrameView.xaml</DependentUpon>
@@ -111,15 +112,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\FilterPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\HomePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\DealsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="$(MSBuildThisFileDirectory)Views\FilterFlyout.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -47,7 +47,9 @@
 											   Style="{StaticResource MaterialSubtitle2}" />
 								</utu:AutoLayout>
 								<ListView ItemsSource="{Binding Items}"
-										  uen:Navigation.Request="ProductDetails"
+										  uen:Navigation.Request=""
+										  SelectionMode="None"
+										  IsItemClickEnabled="True"
 										  utu:AutoLayout.CounterAlignment="Stretch"
 										  utu:AutoLayout.PrimaryAlignment="Stretch">
 									<ListView.ItemsPanel>

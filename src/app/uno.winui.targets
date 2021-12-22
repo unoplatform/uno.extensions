@@ -1,6 +1,0 @@
-﻿<Project>
-  <ItemGroup>
-    <PackageReference Include="Uno.WinUI" Version="4.0.9" />
-    <PackageReference Include="Uno.WinUI.RemoteControl" Version="4.0.9" Condition="'$(Configuration)'=='Debug'" />
-  </ItemGroup>
-</Project>

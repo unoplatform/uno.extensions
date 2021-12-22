@@ -1,18 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Uno.Extensions.Navigation.UI;
-#if !WINUI
-using Windows.UI.Xaml;
-#else
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-#endif
-
-namespace Uno.Extensions.Navigation.Regions;
+﻿namespace Uno.Extensions.Navigation.Regions;
 
 public sealed class NavigationRegion : IRegion
 {

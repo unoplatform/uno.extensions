@@ -117,11 +117,11 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="7.0.3" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
-    <PackageReference Include="Uno.UI" Version="4.0.9" />
-    <!--<PackageReference Include="Uno.UI.RemoteControl" Version="4.0.9" Condition="'$(Configuration)'=='Debug'" />-->
+    <PackageReference Include="Uno.UI" Version="4.0.11" />
+    <!--<PackageReference Include="Uno.UI.RemoteControl" Version="4.0.11" Condition="'$(Configuration)'=='Debug'" />-->
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
-    <PackageReference Include="Uno.Extensions.Logging.OSLog " Version="1.3.0-dev.1" />
-    <PackageReference Include="System.Linq.Async" Version="5.0.0" />
+    <PackageReference Include="Uno.Extensions.Logging.OSLog" Version="1.3.0-dev.1" />
+    <PackageReference Include="System.Linq.Async" Version="5.1.0" />
     <PackageReference Include="Uno.Toolkit.UI" Version="1.2.1" />
     <PackageReference Include="Uno.Toolkit.UI.Material" Version="1.2.1" />
     <PackageReference Include="Uno.Material" Version="1.2.0" />
@@ -190,10 +190,13 @@
       <Project>{0dde79de-181b-42ef-af00-56dc622a6afa}</Project>
       <Name>Uno.Extensions.Configuration</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.UWP.csproj" />
     <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Core\Uno.Extensions.Core.csproj">
       <Project>{0bf9edde-e6c1-4a3a-b73d-02d867f2054c}</Project>
       <Name>Uno.Extensions.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.UWP.csproj">
+      <Project>{fb855301-211a-4716-8162-e2888824b445}</Project>
+      <Name>Uno.Extensions.Hosting.UWP</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj">
       <Project>{ea4f9862-63ee-47d6-bd2b-2d1b83e2fd6a}</Project>

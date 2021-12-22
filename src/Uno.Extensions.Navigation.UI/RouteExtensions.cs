@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 namespace Uno.Extensions.Navigation;
 
@@ -36,6 +33,18 @@ public static class RouteExtensions
 
 	public static bool IsLast(this Route route) => string.IsNullOrWhiteSpace(route?.Path);
 
+	public static Route Last(this Route route)
+	{
+		var next = route.Next();
+		while (!next.IsEmpty())
+		{
+			route = next;
+			next = route.Next();
+		}
+
+		return route;
+	}
+
 	public static bool IsEmpty(this Route route) => route is not null ?
 		(route.Scheme == Schemes.Current || route.Scheme == Schemes.Nested) &&
 		string.IsNullOrWhiteSpace(route.Base) :
@@ -59,7 +68,7 @@ public static class RouteExtensions
 
 	public static bool FrameIsForwardNavigation(this Route route) => !route.FrameIsBackNavigation();
 
-	public static Route[] ForwardNavigationSegments(this Route route, IMappings mappings)
+	public static Route[] ForwardNavigationSegments(this Route route, IRouteResolver mappings)
 	{
 		if (route.IsEmpty() || route.FrameIsBackNavigation())
 		{
@@ -123,6 +132,11 @@ public static class RouteExtensions
 			handledRoute = handledRoute.Next();
 		}
 
+		if(route.Scheme==Schemes.NavigateBack && route.Scheme == handledRoute.Scheme)
+		{
+			route = route with { Scheme = Schemes.None };
+		}
+
 		return route;
 	}
 
@@ -133,6 +147,10 @@ public static class RouteExtensions
 
 	public static Route Append(this Route route, Route routeToAppend)
 	{
+		if (route.IsEmpty())
+		{
+			return route with { Base = routeToAppend.Base };
+		}
 		return route with { Path = route.Path + (routeToAppend.Scheme == Schemes.Nested ? Schemes.Separator : routeToAppend.Scheme) + routeToAppend.Base + routeToAppend.Path };
 	}
 
@@ -202,12 +220,12 @@ public static class RouteExtensions
 		return route with { Scheme = nextScheme, Base = routeBase, Path = nextPath };
 	}
 
-	public static bool IsPageRoute(this Route route, IMappings mappings)
+	public static bool IsPageRoute(this Route route, IRouteResolver mappings)
 	{
-		return ((mappings.FindView(route))?.ViewType?.IsSubclassOf(typeof(Page)) ?? false);
+		return ((mappings.Find(route))?.View?.IsSubclassOf(typeof(Page)) ?? false);
 	}
 
-	public static bool IsLastFrameRoute(this Route route, IMappings mappings)
+	public static bool IsLastFrameRoute(this Route route, IRouteResolver mappings)
 	{
 		return route.IsLast() || !route.Next().IsPageRoute(mappings);
 	}
@@ -407,20 +425,20 @@ public static class RouteExtensions
 		}
 
 		var mapDict = data;
-		if (mapping?.UntypedBuildQuery is not null)
+		if (mapping?.UntypedToQuery is not null)
 		{
 			// TODO: Find nicer way to clone the dictionary
 			mapDict = data.ToArray().ToDictionary(x => x.Key, x => x.Value);
 			if (data.TryGetValue(string.Empty, out var paramData))
 			{
-				var qdict = mapping.UntypedBuildQuery(paramData);
+				var qdict = mapping.UntypedToQuery(paramData);
 				qdict.ForEach(qkvp => mapDict[qkvp.Key] = qkvp.Value);
 			}
 		}
 		return mapDict;
 	}
 
-	public static Route? ApplyFrameRoute(this Route? currentRoute, IMappings mappings, Route frameRoute)
+	public static Route? ApplyFrameRoute(this Route? currentRoute, IRouteResolver routeResolver, Route frameRoute)
 	{
 		var scheme = frameRoute.Scheme;
 		if (string.IsNullOrWhiteSpace(frameRoute.Scheme))
@@ -433,7 +451,7 @@ public static class RouteExtensions
 		}
 		else
 		{
-			var segments = currentRoute.ForwardNavigationSegments(mappings).ToList();
+			var segments = currentRoute.ForwardNavigationSegments(routeResolver).ToList();
 			foreach (var schemeChar in scheme)
 			{
 				if (schemeChar + "" == Schemes.NavigateBack)
@@ -446,7 +464,7 @@ public static class RouteExtensions
 				}
 			}
 
-			var newSegments = frameRoute.ForwardNavigationSegments(mappings);
+			var newSegments = frameRoute.ForwardNavigationSegments(routeResolver);
 			if (newSegments is not null)
 			{
 				segments.AddRange(newSegments);

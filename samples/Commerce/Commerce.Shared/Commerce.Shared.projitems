@@ -29,6 +29,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\IProfileService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\ProductServices.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\ProfileService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\CartProductDetailsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\CartViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\IProductService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Product.cs" />
@@ -36,7 +37,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\Review.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Credentials.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\DealsViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\HomeViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Filters.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\FiltersViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\LoginViewModel.cs" />
@@ -53,17 +53,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)Views\CheckoutPage.xaml.cs">
       <DependentUpon>CheckoutPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\FilterPage.xaml.cs">
+      <DependentUpon>FilterPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\DealsPage.xaml.cs">
       <DependentUpon>DealsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Views\FilterFlyout.xaml.cs">
-      <DependentUpon>FilterFlyout.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Views\FrameView.xaml.cs">
-      <DependentUpon>FrameView.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
@@ -76,9 +73,6 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\ProfilePage.xaml.cs">
       <DependentUpon>ProfilePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Views\ShellView.xaml.cs">
-      <DependentUpon>ShellView.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)_Compat\IsExternalInit.cs" />
   </ItemGroup>
@@ -111,19 +105,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\FilterPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\HomePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\DealsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="$(MSBuildThisFileDirectory)Views\FilterFlyout.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="$(MSBuildThisFileDirectory)Views\FrameView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -140,10 +130,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\ProfilePage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="$(MSBuildThisFileDirectory)Views\ShellView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

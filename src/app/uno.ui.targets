@@ -1,6 +1,0 @@
-﻿<Project>
-  <ItemGroup>
-    <PackageReference Include="Uno.UI" Version="4.0.9" />
-    <PackageReference Include="Uno.UI.RemoteControl" Version="4.0.9" Condition="'$(Configuration)'=='Debug'" />
-  </ItemGroup>
-</Project>

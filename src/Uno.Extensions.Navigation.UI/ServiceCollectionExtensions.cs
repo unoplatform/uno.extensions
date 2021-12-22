@@ -1,27 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-//using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.Extensions.DependencyInjection;
-using Uno.Extensions.Navigation.UI;
+﻿using Uno.Extensions.Navigation.Navigators;
 using Uno.Extensions.Navigation.Regions;
-using Uno.Extensions.Navigation.Navigators;
-
+using Uno.Extensions.Navigation.UI;
+using Uno.Extensions.Navigation.UI.Controls;
 using Windows.UI.Popups;
-//#if !WINDOWS_UWP && !WINUI
-//using Popup = Windows.UI.Xaml.Controls.Popup;
-//#endif
-#if !WINUI
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-#else
-using Windows.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-#endif
 
 namespace Uno.Extensions.Navigation;
 
@@ -29,37 +10,40 @@ public static class ServiceCollectionExtensions
 {
 	public static IServiceCollection AddNavigation(
 		this IServiceCollection services,
-		Action<IRouteBuilder>? routeBuilder = null)
+		Action<IRouteRegistry>? routeBuilder = null)
 	{
-		var builder = new RouteBuilder(services);
+		var builder = new RouteRegistry(services);
 		routeBuilder?.Invoke(builder);
 
 		return services
 					.AddScoped<IInstanceRepository, InstanceRepository>()
 					.AddSingleton<IResponseNavigatorFactory, ResponseNavigatorFactory>()
 
-					//.AddSingleton<IMessenger, WeakReferenceMessenger>()
 					.AddSingleton<RouteNotifier>()
 					.AddSingleton<IRouteNotifier>(sp => sp.GetRequiredService<RouteNotifier>())
 					.AddSingleton<IRouteUpdater>(sp => sp.GetRequiredService<RouteNotifier>())
 					.AddScoped<Navigator>()
 
+					.AddTransient<Flyout, NavigationFlyout>()
+
 					// Register the region for each control type
 					.AddRegion<Frame, FrameNavigator>()
 					.AddRegion<ContentControl, ContentControlNavigator>()
-				   .AddRegion<Panel, PanelVisiblityNavigator>(PanelVisiblityNavigator.NavigatorName)
+				   .AddRegion<Panel, PanelVisiblityNavigator>(name: PanelVisiblityNavigator.NavigatorName)
 				   .AddRegion<Microsoft.UI.Xaml.Controls.NavigationView, NavigationViewNavigator>()
-					.AddRegion<ContentDialog, ContentDialogNavigator>()
-					.AddRegion<MessageDialog, MessageDialogNavigator>()
-					.AddRegion<Flyout, FlyoutNavigator>()
-					.AddRegion<Popup, PopupNavigator>()
+					.AddRegion<ContentDialog, ContentDialogNavigator>(true)
+					.AddRegion<MessageDialog, MessageDialogNavigator>(true)
+					.AddRegion<Flyout, FlyoutNavigator>(true)
+					.AddRegion<Popup, PopupNavigator>(true)
 
 					.AddSingleton<IRequestHandler, ButtonBaseRequestHandler>()
 					.AddSingleton<IRequestHandler, SelectorRequestHandler>()
 					.AddSingleton<IRequestHandler, NavigationViewItemRequestHandler>()
 
 					// Register the navigation mappings repository
-					.AddSingleton<IMappings, RouteMappingsDefault>()
+					.AddSingleton<IRouteRegistry>(builder)
+					.AddSingleton<RouteResolverDefault>()
+					.AddSingleton<IRouteResolver>(sp => sp.GetRequiredService<RouteResolverDefault>())
 
 					.AddScoped<INavigatorFactory, NavigatorFactory>()
 
@@ -85,83 +69,12 @@ public static class ServiceCollectionExtensions
 #pragma warning restore CS8603 // Possible null reference return.
 	}
 
-	public static void AddInstance<T>(this IServiceProvider provider, Func<T> instanceCreator)
-	{
-		provider.AddInstance(typeof(T), instanceCreator);
-	}
-
-	public static void AddInstance<T>(this IServiceProvider provider, Type serviceType, Func<T> instanceCreator)
-	{
-		provider.GetRequiredService<IInstanceRepository>().Instances[serviceType] = instanceCreator;
-	}
-
-	public static T AddInstance<T>(this IServiceProvider provider, T instance)
-	{
-#pragma warning disable CS8604 // Possible null reference argument.
-		provider.AddInstance(typeof(T), instance);
-#pragma warning restore CS8604 // Possible null reference argument.
-		return instance;
-	}
-
-	public static object AddInstance(this IServiceProvider provider, Type serviceType, object instance)
-	{
-		provider.GetRequiredService<IInstanceRepository>().Instances[serviceType] = instance;
-		return instance;
-	}
-
-	public static T? GetInstance<T>(this IServiceProvider provider)
-	{
-		var value = provider.GetInstance(typeof(T));
-		if (value is Func<T> valueCreator)
-		{
-			var instance = valueCreator();
-			provider.AddInstance(instance);
-			return instance;
-		}
-
-		if (value is T typedValue)
-		{
-			return typedValue;
-		}
-
-		return default;
-	}
-
-	public static object? GetInstance(this IServiceProvider provider, Type type)
-	{
-		return provider.GetRequiredService<IInstanceRepository>().Instances.TryGetValue(type, out var value) ? value : null;
-	}
-
-	public static IServiceCollection AddRegion<TControl, TRegion>(this IServiceCollection services, string? name = null)
+	public static IServiceCollection AddRegion<TControl, TRegion>(this IServiceCollection services, bool isRequestRegion = false, string? name = null)
 		where TRegion : class, INavigator
 	{
 		return services
 				   .AddScoped<TRegion>()
-				   .ConfigureNavigatorFactory(factory => factory.RegisterNavigator<TRegion>(name ?? typeof(TControl).Name));
+				   .ConfigureNavigatorFactory(factory => factory.RegisterNavigator<TRegion>(isRequestRegion, name ?? typeof(TControl).Name));
 	}
 
-	public static IServiceCollection AddViewModelData<TData>(this IServiceCollection services)
-		where TData : class
-	{
-#pragma warning disable CS8603 // Possible null reference return - null data is possible
-		return services
-					.AddTransient<TData>(services => services.GetRequiredService<NavigationDataProvider>().GetData<TData>());
-#pragma warning restore CS8603 // Possible null reference return.
-	}
-}
-
-public class NavigationDataProvider
-{
-	public IDictionary<string, object> Parameters { get; set; } = new Dictionary<string, object>();
-
-	public TData? GetData<TData>()
-		where TData : class
-	{
-		return (Parameters?.TryGetValue(string.Empty, out var data) ?? false) ? data as TData : default;
-	}
-}
-
-public class RegionControlProvider
-{
-	public object? RegionControl { get; set; }
 }

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using Uno.Extensions.Navigation.Regions;
+﻿using Uno.Extensions.Navigation.Regions;
 
 namespace Uno.Extensions.Navigation.UI;
 
@@ -59,16 +57,6 @@ public static class Region
         var existingRegion = Region.GetInstance(element);
         var region = existingRegion ?? new NavigationRegion(element);
         element.SetInstance(region);
-    }
-
-    public static TElement WithNavigation<TElement>(this TElement element, IServiceProvider services)
-        where TElement : FrameworkElement
-    {
-        // Create the Root region
-        var elementRegion = new NavigationRegion(element, services);
-        element.SetInstance(elementRegion);
-
-        return element;
     }
 
     public static void SetInstance(this DependencyObject element, IRegion? value)

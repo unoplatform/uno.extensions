@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Uno.Extensions.Hosting;
-using Uno.Extensions.Navigation.Regions;
-using static Uno.Extensions.GenericExtensions;
+﻿using Uno.Extensions.Navigation.Regions;
 
 namespace Uno.Extensions.Navigation;
 
@@ -24,34 +14,18 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 	public Route? Route { get; protected set; }
 
-	protected IMappings Mappings { get; }
+	protected IRouteResolver RouteResolver { get; }
 
-	public Navigator(ILogger<Navigator> logger, IRegion region, IMappings mappings)
-		: this((ILogger)logger, region, mappings)
+	public Navigator(ILogger<Navigator> logger, IRegion region, IRouteResolver routeResolver)
+		: this((ILogger)logger, region, routeResolver)
 	{
-		if (region.Parent is null &&
-			region.View is not null)
-		{
-			InitializeRootNavigator();
-		}
 	}
 
-	protected Navigator(ILogger logger, IRegion region, IMappings mappings)
+	protected Navigator(ILogger logger, IRegion region, IRouteResolver routeResolver)
 	{
 		Region = region;
 		Logger = logger;
-		Mappings = mappings;
-	}
-
-	private async Task InitializeRootNavigator()
-	{
-		var startup = Region.Services.GetService<IStartupService>();
-
-		// Make sure startup has completed
-		await (startup?.StartupComplete() ?? Task.CompletedTask);
-
-		var vm = CreateDefaultViewModel();
-		Region.View.DataContext = vm;
+		RouteResolver = routeResolver;
 	}
 
 	public async Task<NavigationResponse?> NavigateAsync(NavigationRequest request)
@@ -62,17 +36,17 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			RouteUpdater?.StartNavigation();
 
 			// Initialise the region
-			var requestMap = Region.Services?.GetRequiredService<IMappings>().FindByPath(request.Route.Base);
-			if (requestMap?.ProcessRequest is not null)
+			var requestMap = Region.Services?.GetRequiredService<IRouteResolver>().FindByPath(request.Route.Base);
+			if (requestMap?.Init is not null)
 			{
-				var newRequest = requestMap.ProcessRequest(request);
+				var newRequest = requestMap.Init(request);
 				while (!request.SameRouteBase(newRequest))
 				{
 					request = newRequest;
-					requestMap = Region.Services?.GetRequiredService<IMappings>().FindByPath(request.Route.Base);
-					if (requestMap?.ProcessRequest is not null)
+					requestMap = Region.Services?.GetRequiredService<IRouteResolver>().FindByPath(request.Route.Base);
+					if (requestMap?.Init is not null)
 					{
-						newRequest = requestMap.ProcessRequest(request);
+						newRequest = requestMap.Init(request);
 					}
 				}
 				request = newRequest;
@@ -110,7 +84,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 			// Is this region is an unnamed child of a composite,
 			// send request to parent if the route has no scheme
-			if ((request.Route.IsCurrent() || request.Route.IsBackOrCloseNavigation()) &&
+			if (request.Route.IsCurrent() &&
 				!Region.IsNamed() &&
 				Region.Parent is not null
 				&& !(Region.Children.Any(x => x.Name == request.Route.Base))
@@ -123,7 +97,6 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			// Run dialog requests
 			if (request.Route.IsDialog())
 			{
-				request = request with { Route = request.Route with { Scheme = Schemes.Current } };
 				return await DialogNavigateAsync(request);
 			}
 
@@ -153,6 +126,9 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 	{
 		var dialogService = Region.Services?.GetService<INavigatorFactory>()?.CreateService(Region, request);
 
+		// Trim dialog scheme to prevent recursion when we call Navigate
+		request = request with { Route = request.Route with { Scheme = Schemes.Current } };
+
 		var dialogResponse = await (dialogService?.NavigateAsync(request) ?? Task.FromResult<NavigationResponse?>(default));
 
 		return dialogResponse;
@@ -166,8 +142,8 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			return default;
 		}
 
-		var mapping = Mappings.Find(request.Route);
-		if (mapping?.UntypedBuildQuery is not null)
+		var mapping = RouteResolver.Find(request.Route);
+		if (mapping?.UntypedToQuery is not null)
 		{
 			request = request with { Route = request.Route with { Data = request.Route.Data?.AsParameters(mapping) } };
 		}
@@ -178,7 +154,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 		var responseFactory = services.GetRequiredService<IResponseNavigatorFactory>();
 		// Create ResponseNavigator if result is requested
-		var navigator = request.GetResponseNavigator(responseFactory, this);
+		var navigator = request.Result is not null ? request.GetResponseNavigator(responseFactory, this) : default;
 
 		var executedRoute = await CoreNavigateAsync(request);
 
@@ -194,13 +170,6 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 	protected virtual async Task<NavigationResponse?> CoreNavigateAsync(NavigationRequest request)
 	{
-		//if (request.Route.IsNested())
-		//{
-		//    // At this point the request should be passed to nested, so remove
-		//    // any nested scheme (ie ./ )
-		//    request = request with { Route = request.Route.TrimScheme(Schemes.Nested) };// with { Scheme = Schemes.Current } };
-		//}
-
 		if (request.Route.IsCurrent() || request.Route.IsBackOrCloseNavigation())
 		{
 			request = request with { Route = request.Route.AppendScheme(Schemes.Nested) };
@@ -208,8 +177,28 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 		if (request.Route.IsEmpty())
 		{
-			return null;
+			var route = RouteResolver.FindByPath(this.Route?.Base);
+			if (route is not null)
+			{
+				var defaultRoute = route.Nested?.FirstOrDefault(x => x.IsDefault);
+				if (defaultRoute is not null)
+				{
+					request = request with { Route = request.Route.Append(defaultRoute.Path) };
+
+				}
+			}
+
+			if (request.Route.IsEmpty())
+			{
+				return null;
+			}
 		}
+
+		if (!string.IsNullOrWhiteSpace(Region.Name) && request.Result is not null)
+		{
+			request = request with { Result = null };
+		}
+
 
 		var children = Region.Children.Where(region =>
 										// Unnamed child regions
@@ -258,10 +247,10 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		// when creating the view model
 		services?.AddInstance<INavigator>(this);
 
-		var mapping = Mappings.FindViewByView(Region.View.GetType());
-		if (mapping?.ViewModelType is not null)
+		var mapping = RouteResolver.FindByView(Region.View.GetType());
+		if (mapping?.ViewModel is not null)
 		{
-			var vm = services?.GetService(mapping.ViewModelType);
+			var vm = services?.GetService(mapping.ViewModel);
 			if (vm is IInjectable<INavigator> navAware)
 			{
 				navAware.Inject(this);

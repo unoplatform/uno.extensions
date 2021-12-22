@@ -10,9 +10,9 @@
 	<PropertyGroup>
 		<PackageId>Uno.Extensions.Navigation.UI</PackageId>
 	</PropertyGroup>
-	
+
 	<ItemGroup>
-		<PackageReference Include="Uno.UI" Version="4.0.9" />
+		<PackageReference Include="Uno.UI" Version="4.0.11" />
 	</ItemGroup>
 	
 </Project>

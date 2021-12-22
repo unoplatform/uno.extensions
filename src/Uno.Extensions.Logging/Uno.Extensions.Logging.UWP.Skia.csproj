@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk"  ToolsVersion="15.0">
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
 
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
@@ -9,8 +9,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Uno.UI" Version="4.0.9" />
+		<PackageReference Include="Uno.UI" Version="4.0.11" />
 	</ItemGroup>
 
-	<Import Project="common.props"/>
+	<Import Project="common.props" />
 </Project>

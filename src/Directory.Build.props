@@ -86,8 +86,8 @@
 				<AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
 			</PropertyGroup>
 			<ItemGroup>
-				<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
-				<PackageReference Include="DotNet.ReproducibleBuilds" Version="0.1.66" PrivateAssets="All" />
+				<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
+				<PackageReference Include="DotNet.ReproducibleBuilds" Version="1.1.1" PrivateAssets="All" />
 			</ItemGroup>
 		</When>
 	</Choose>
@@ -101,5 +101,7 @@
 		<BaseIntermediateOutputPath>obj\$(MSBuildProjectName)</BaseIntermediateOutputPath>
 		<DefaultItemExcludes>$(DefaultItemExcludes);obj/**;bin/**</DefaultItemExcludes>
 	</PropertyGroup>
+
+  <Import Project="Uno.CrossTargeting.props" />
 
 </Project>

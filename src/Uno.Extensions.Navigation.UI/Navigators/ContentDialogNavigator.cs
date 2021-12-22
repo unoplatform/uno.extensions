@@ -1,16 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Uno.Extensions.Navigation.Regions;
-using Windows.Foundation;
-#if !WINUI
-using Windows.UI.Xaml.Controls;
-#else
-using Microsoft.UI.Xaml.Controls;
-using Windows.UI.Popups;
-using UICommand = Windows.UI.Popups.UICommand;
-#endif
+﻿using Uno.Extensions.Navigation.Regions;
 
 namespace Uno.Extensions.Navigation.Navigators;
 
@@ -18,9 +6,9 @@ public class ContentDialogNavigator : DialogNavigator
 {
     public ContentDialogNavigator(
         ILogger<ContentDialogNavigator> logger,
-        IMappings mappings,
+        IRouteResolver routeResolver,
         IRegion region)
-        : base(logger, mappings, region)
+        : base(logger, routeResolver, region)
     {
     }
 
@@ -29,16 +17,16 @@ public class ContentDialogNavigator : DialogNavigator
         var route = request.Route;
         var navigation = Region.Navigator();
         var services = this.Get<IServiceProvider>();
-        var mapping = Mappings.FindView(route);
+        var mapping = RouteResolver.Find(route);
         if (
             navigation is null ||
             services is null ||
-            mapping?.ViewType is null)
+            mapping?.View is null)
         {
             return null;
         }
 
-        var dialog = Activator.CreateInstance(mapping.ViewType) as ContentDialog;
+        var dialog = Activator.CreateInstance(mapping.View) as ContentDialog;
         if(dialog is null)
         {
             return null;

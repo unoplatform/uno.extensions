@@ -1,13 +1,5 @@
-﻿using Windows.Foundation;
-using System;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Uno.Extensions.Navigation.Regions;
-#if !WINUI
-using Windows.System;
-#else
-using Microsoft.UI.Dispatching;
-#endif
+﻿using Uno.Extensions.Navigation.Regions;
+
 
 namespace Uno.Extensions.Navigation;
 

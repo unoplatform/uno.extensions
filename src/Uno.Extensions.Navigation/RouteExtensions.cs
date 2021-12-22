@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace Uno.Extensions.Navigation;
+﻿namespace Uno.Extensions.Navigation;
 
 public static class RouteExtensions
 {
@@ -8,6 +6,4 @@ public static class RouteExtensions
 	((route?.Data?.Where(x => x.Key != string.Empty)?.Any()) ?? false) ?
 	"?" + string.Join("&", route.Data.Where(x => x.Key != string.Empty).Select(kvp => $"{kvp.Key}={kvp.Value}")) :
 	null;
-
-
 }

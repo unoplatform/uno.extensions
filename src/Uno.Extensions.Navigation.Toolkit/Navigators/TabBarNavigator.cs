@@ -1,28 +1,13 @@
-﻿using System;
-using System.Linq;
-using Microsoft.Extensions.Logging;
-using Uno.Extensions.Navigation;
+﻿using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.UI;
 using Uno.Toolkit.UI;
-
-using Microsoft.Extensions.DependencyInjection;
 using Uno.Extensions.Navigation.Regions;
-using System.Threading.Tasks;
 using Uno.Extensions.Navigation.Navigators;
 
-#if !WINUI
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-#else
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-#endif
 
 namespace Uno.Extensions.Navigation.Toolkit.Navigators;
 
-public class TabBarNavigator: ControlNavigator<TabBar>
+public class TabBarNavigator : ControlNavigator<TabBar>
 {
 	public override void ControlInitialize()
 	{
@@ -42,7 +27,7 @@ public class TabBarNavigator: ControlNavigator<TabBar>
 		await tbi.EnsureLoaded();
 		var tabName = tbi.GetName() ?? tbi.Name;
 		var nav = Region.Navigator();
-		if(nav is null)
+		if (nav is null)
 		{
 			return;
 		}
@@ -53,9 +38,9 @@ public class TabBarNavigator: ControlNavigator<TabBar>
 	public TabBarNavigator(
 		ILogger<TabBarNavigator> logger,
 		IRegion region,
-		IMappings mappings,
+		IRouteResolver routeResolver,
 		RegionControlProvider controlProvider)
-		: base(logger, region, mappings, controlProvider.RegionControl as TabBar)
+		: base(logger, region, routeResolver, controlProvider.RegionControl as TabBar)
 	{
 	}
 
