@@ -1,4 +1,5 @@
 ﻿using Uno.Extensions.Navigation.Regions;
+using Uno.Extensions.Navigation.UI;
 
 namespace Uno.Extensions.Navigation.Navigators;
 
@@ -12,7 +13,7 @@ public class ContentDialogNavigator : DialogNavigator
 	{
 	}
 
-	protected override IAsyncInfo? DisplayDialog(NavigationRequest request, Type? viewType, object? viewModel)
+	protected override async Task<IAsyncInfo?> DisplayDialog(NavigationRequest request, Type? viewType, object? viewModel)
 	{
 		var route = request.Route;
 		var navigation = Region.Navigator();
@@ -32,6 +33,8 @@ public class ContentDialogNavigator : DialogNavigator
 			return null;
 		}
 
+		dialog.SetInstance(Region);
+
 		dialog.InjectServicesAndSetDataContext(services, navigation, viewModel);
 
 		var showTask = dialog.ShowAsync();
@@ -46,6 +49,16 @@ public class ContentDialogNavigator : DialogNavigator
 				CancellationToken.None,
 				TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.DenyChildAttach,
 				TaskScheduler.FromCurrentSynchronizationContext());
+
+		await dialog.EnsureLoaded();
+
+		if (dialog.Content is FrameworkElement dialogElement)
+		{
+			dialogElement.SetName(route.Base);
+			dialogElement.ReassignRegionParent();
+		}
+
+
 		return showTask;
 	}
 }

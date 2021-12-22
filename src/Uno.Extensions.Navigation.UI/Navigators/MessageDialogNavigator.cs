@@ -13,7 +13,7 @@ public class MessageDialogNavigator : DialogNavigator
 	{
 	}
 
-	protected override IAsyncInfo? DisplayDialog(NavigationRequest request, Type? viewType, object? viewModel)
+	protected override async Task<IAsyncInfo?> DisplayDialog(NavigationRequest request, Type? viewType, object? viewModel)
 	{
 		var route = request.Route;
 		var navigation = Region.Navigator();
