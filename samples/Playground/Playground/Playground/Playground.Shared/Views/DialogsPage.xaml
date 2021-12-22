@@ -18,6 +18,8 @@
 			<Button Content="SimpleDialog Codebehind"
 					Click="SimpleDialogCodebehindClick" />
 			<TextBlock x:Name="SimpleDialogResultText" />
+			<Button uen:Navigation.Request="!Complex/ComplexDialogFirst"
+					Content="Complex Dialog Nav Request" />
 		</StackPanel>
 	</Grid>
 </Page>

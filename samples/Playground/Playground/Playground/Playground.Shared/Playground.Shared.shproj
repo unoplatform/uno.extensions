@@ -14,6 +14,9 @@
     <_Globbed_Compile Remove="ViewModels\FifthViewModel.cs" />
     <_Globbed_Compile Remove="ViewModels\FourthViewModel.cs" />
     <_Globbed_Compile Remove="ViewModels\ShellViewModel.cs" />
+    <_Globbed_Compile Remove="Views\ComplexDialog.xaml.cs" />
+    <_Globbed_Compile Remove="Views\ComplexDialogFirstPage.xaml.cs" />
+    <_Globbed_Compile Remove="Views\ComplexDialogSecondPage.xaml.cs" />
     <_Globbed_Compile Remove="Views\FifthPage.xaml.cs" />
     <_Globbed_Compile Remove="Views\FourthPage.xaml.cs" />
     <_Globbed_Compile Remove="Views\HomePage.xaml.cs" />
@@ -23,6 +26,9 @@
     <_Globbed_Compile Remove="Views\VisualStatePage.xaml.cs" />
   </ItemGroup>
   <ItemGroup>
+    <_Globbled_Page Remove="Views\ComplexDialog.xaml" />
+    <_Globbled_Page Remove="Views\ComplexDialogFirstPage.xaml" />
+    <_Globbled_Page Remove="Views\ComplexDialogSecondPage.xaml" />
     <_Globbled_Page Remove="Views\FifthPage.xaml" />
     <_Globbled_Page Remove="Views\FourthPage.xaml" />
     <_Globbled_Page Remove="Views\HomePage.xaml" />
