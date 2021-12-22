@@ -14,12 +14,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <!--<PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
-    <PackageReference Include="System.Text.Json" Version="6.0.0" />
-    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.7.0" />
-    <PackageReference Include="System.Reactive" Version="5.0.0" />-->
     <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
-    <!--<ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />-->
   </ItemGroup>
 
   <ItemGroup>
