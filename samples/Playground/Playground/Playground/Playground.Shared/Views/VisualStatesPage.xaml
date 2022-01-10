@@ -35,10 +35,10 @@
 			</VisualStateGroup>
 		</VisualStateManager.VisualStateGroups>
 		<StackPanel Grid.Row="1">
-			<Button uen:Navigation.Request="../-"
+			<Button uen:Navigation.Request="-"
 					Content="Back" />
 			<Button x:Name="NextButton"
-					uen:Navigation.Request="./Fourth"
+					uen:Navigation.Request="Fourth"
 					Content="Third page" />
 		</StackPanel>
 	</Grid>

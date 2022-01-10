@@ -5,11 +5,26 @@
 	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	  mc:Ignorable="d"
+	  xmlns:ui="using:Uno.Toolkit.UI"
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
 	<Grid>
-		<StackPanel>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+		<ui:NavigationBar Content="Dialogs"
+						  Style="{StaticResource MaterialNavigationBarStyle}">
+			<ui:NavigationBar.MainCommand>
+				<AppBarButton Foreground="{ThemeResource MaterialOnPrimaryMediumBrush}">
+					<AppBarButton.Icon>
+						<BitmapIcon UriSource="ms-appx:///Assets/Icons/back.png" />
+					</AppBarButton.Icon>
+				</AppBarButton>
+			</ui:NavigationBar.MainCommand>
+		</ui:NavigationBar>
+		<StackPanel Grid.Row="1">
 			<Button Content="MessageDialog Codebehind"
 					Click="MessageDialogCodebehindClick" />
 			<TextBlock x:Name="MessageDialogResultText" />
