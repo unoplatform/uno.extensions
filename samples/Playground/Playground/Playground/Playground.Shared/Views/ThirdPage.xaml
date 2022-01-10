@@ -29,8 +29,8 @@
 		<StackPanel Grid.Row="1">
 			<Button uen:Navigation.Request="-"
 					Content="Back" />
-			<Button uen:Navigation.Request="-/Second"
-					Content="Second page, clear backstack" />
+			<Button uen:Navigation.Request="-/Fourth"
+					Content="Fourth page, clear backstack" />
 		</StackPanel>
 
 	</Grid>

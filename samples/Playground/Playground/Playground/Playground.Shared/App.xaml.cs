@@ -63,7 +63,8 @@ namespace Playground
 
 
 					// Enable navigation, including registering views and viewmodels
-					.UseNavigation(RegisterRoutes)
+					.UseNavigation()
+					//.UseNavigation(RegisterRoutes)
 
 					// Add navigation support for toolkit controls such as TabBar and NavigationView
 					.UseToolkitNavigation()

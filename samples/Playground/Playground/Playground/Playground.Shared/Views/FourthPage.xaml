@@ -33,6 +33,8 @@
 					Click="{x:Bind ViewModel.NavigateToFifth, Mode=OneWay}" />
 			<Button Content="Fifth Page via code behind"
 					Click="FifthPageClick" />
+			<Button uen:Navigation.Request="-/Home"
+					Content="Home (clear backstack)" />
 		</StackPanel>
 	</Grid>
 </Page>
