@@ -27,7 +27,7 @@
 		</ui:NavigationBar>
 
 		<StackPanel Grid.Row="1">
-			<Button uen:Navigation.Request="../-"
+			<Button uen:Navigation.Request="-"
 					Content="Back" />
 		</StackPanel>
 	</Grid>

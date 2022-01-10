@@ -6,5 +6,5 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:uen="using:Uno.Extensions.Navigation.UI"
 			 mc:Ignorable="d">
-		<Frame uen:Region.Attached="True" />
+		<Frame uen:Region.Attached="True" x:Name="NavigationFrame" />
 </UserControl>

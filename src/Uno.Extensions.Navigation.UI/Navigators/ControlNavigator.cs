@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Regions;
+using Uno.Extensions.Navigation.UI.Controls;
 
 namespace Uno.Extensions.Navigation.Navigators;
 
@@ -43,14 +44,16 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 		if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Navigating to path '{route.Base}' with view '{mapping?.View?.Name}'");
         var executedPath = await Show(route.Base, mapping?.View, route.Data);
 
-		InitialiseCurrentView(route, mapping);
-
 		if (string.IsNullOrEmpty(executedPath))
 		{
 			return Route.Empty;
 		}
 
-		return route with { Base = executedPath, Path = null };
+		var executedRoute = route with { Base = executedPath, Path = null };
+
+		InitialiseCurrentView(executedRoute, mapping);
+
+		return executedRoute;
 	}
 
 	protected object? InitialiseCurrentView(Route route, RouteMap? mapping)
@@ -63,6 +66,13 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 		}
 
 		var navigator = Region.Navigator();
+
+		if (view is FrameView fv )
+		{
+			navigator = fv.Navigator;
+		}
+
+
 		var services = this.Get<IServiceProvider>();
 
 		if (navigator is null ||

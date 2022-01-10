@@ -27,7 +27,7 @@
 		</ui:NavigationBar>
 
 		<StackPanel Grid.Row="1">
-			<Button uen:Navigation.Request="../-"
+			<Button uen:Navigation.Request="-"
 					Content="Back" />
 			<Button Content="Fifth Page via ViewModel method"
 					Click="{x:Bind ViewModel.NavigateToFifth, Mode=OneWay}" />
