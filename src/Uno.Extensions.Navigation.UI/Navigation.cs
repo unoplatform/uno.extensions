@@ -16,10 +16,10 @@ public static class Navigation
         typeof(Navigation),
         new PropertyMetadata(null));
 
-	internal static readonly DependencyProperty HandlerProperty =
+	internal static readonly DependencyProperty RequestBindingProperty =
 	DependencyProperty.RegisterAttached(
-		"Handler",
-		typeof(IRequestHandler),
+		"Binding",
+		typeof(IRequestBinding),
 		typeof(Navigation),
 		new PropertyMetadata(null));
 
@@ -57,13 +57,13 @@ public static class Navigation
     }
 
 
-	public static void SetHandler(this FrameworkElement element, IRequestHandler value)
+	public static void SetRequestBinding(this FrameworkElement element, IRequestBinding value)
 	{
-		element.SetValue(HandlerProperty, value);
+		element.SetValue(RequestBindingProperty, value);
 	}
 
-	public static IRequestHandler GetHandler(this FrameworkElement element)
+	public static IRequestBinding GetRequestBinding(this FrameworkElement element)
 	{
-		return (IRequestHandler)element.GetValue(HandlerProperty);
+		return (IRequestBinding)element.GetValue(RequestBindingProperty);
 	}
 }

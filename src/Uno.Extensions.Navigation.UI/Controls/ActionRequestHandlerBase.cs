@@ -5,7 +5,7 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 {
 
 
-	protected void BindAction<TElement, TEventHandler>(
+	protected IRequestBinding BindAction<TElement, TEventHandler>(
 		TElement view,
 		Func<Action<FrameworkElement>, TEventHandler> eventHandler,
 		Action<TElement, TEventHandler> subscribe,
@@ -13,7 +13,7 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 		)
 		where TElement : FrameworkElement
 	{
-		_view = view;
+		var _view = view;
 		Action<FrameworkElement> action = async (element) =>
 		{
 			var path = element.GetRequest();
@@ -90,7 +90,7 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 			subscribe(view, handler);
 		}
 
-		_loadedHandler= (s, e) =>
+		RoutedEventHandler _loadedHandler = (s, e) =>
 		{
 			if (!subscribed)
 			{
@@ -99,7 +99,7 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 			}
 		};
 		view.Loaded += _loadedHandler;
-		_unloadedHandler = (s, e) =>
+		RoutedEventHandler _unloadedHandler = (s, e) =>
 		{
 			if (subscribed)
 			{
@@ -108,5 +108,7 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 			}
 		};
 		view.Unloaded += _unloadedHandler;
+
+		return new RequestBinding(_view, _loadedHandler, _unloadedHandler);
 	}
 }

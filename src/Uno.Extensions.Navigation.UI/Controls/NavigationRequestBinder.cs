@@ -24,10 +24,10 @@ public class NavigationRequestBinder
 				return;
 			}
 
-			var existingHandler = element.GetHandler();
-			if(existingHandler is not null)
+			var existingBinding = element.GetRequestBinding();
+			if(existingBinding is not null)
 			{
-				existingHandler.Unbind();
+				existingBinding.Unbind();
 			}
 
 			var region = element.FindRegion();
@@ -36,11 +36,14 @@ public class NavigationRequestBinder
 			{
 				await region.EnsureLoaded();
 
-				var binder = region.Services?.GetServices<IRequestHandler>().FirstOrDefault(x => x.CanBind(element));
-				if (binder is not null)
+				var handler = region.Services?.GetServices<IRequestHandler>().FirstOrDefault(x => x.CanBind(element));
+				if (handler is not null)
 				{
-					binder.Bind(element);
-					element.SetHandler(binder);
+					var binding = handler.Bind(element);
+					if (binding is not null)
+					{
+						element.SetRequestBinding(binding);
+					}
 				}
 			}
 		}

@@ -2,13 +2,13 @@
 
 public class SelectorRequestHandler : ControlRequestHandlerBase<Selector>
 {
-	public override void Bind(FrameworkElement view)
+	public override IRequestBinding? Bind(FrameworkElement view)
 	{
-		_view = view;
+		var _view = view;
 		var viewList = view as Selector;
 		if (viewList is null)
 		{
-			return;
+			return default;
 		}
 
 		Func<FrameworkElement, object, Task> action = async (sender, data) =>
@@ -75,15 +75,16 @@ public class SelectorRequestHandler : ControlRequestHandlerBase<Selector>
 			connect();
 		}
 
-		_loadedHandler =  (s, e) =>
+		RoutedEventHandler _loadedHandler =  (s, e) =>
 		{
 			connect();
 		};
 		viewList.Loaded += _loadedHandler;
-		_unloadedHandler = (s, e) =>
+		RoutedEventHandler _unloadedHandler = (s, e) =>
 		{
 			disconnect();
 		};
 		viewList.Unloaded += _unloadedHandler;
+		return new RequestBinding(_view, _loadedHandler, _unloadedHandler);
 	}
 }

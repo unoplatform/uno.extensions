@@ -5,12 +5,12 @@ namespace Uno.Extensions.Navigation.UI;
 
 public class NavigationViewItemRequestHandler : ActionRequestHandlerBase<NavigationViewItem>
 {
-	public override void Bind(FrameworkElement view)
+	public override IRequestBinding Bind(FrameworkElement view)
 	{
 		var viewButton = view as NavigationViewItem;
 		if (viewButton is null)
 		{
-			return;
+			return default;
 		}
 
 		var parent = VisualTreeHelper.GetParent(view);
@@ -20,9 +20,9 @@ public class NavigationViewItemRequestHandler : ActionRequestHandlerBase<Navigat
 		}
 		if (parent is null)
 		{
-			return;
+			return default;
 		}
-		BindAction((NavigationView)parent,
+		return BindAction((NavigationView)parent,
 			action => new TypedEventHandler<NavigationView, Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs>((sender, args) =>
 			{
 				if ((args.InvokedItemContainer is FrameworkElement navItem && navItem == viewButton))

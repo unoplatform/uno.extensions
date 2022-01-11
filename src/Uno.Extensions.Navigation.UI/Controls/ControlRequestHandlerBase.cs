@@ -2,11 +2,7 @@
 
 public abstract class ControlRequestHandlerBase<TControl> : IRequestHandler
 {
-	protected RoutedEventHandler? _loadedHandler;
-	protected RoutedEventHandler? _unloadedHandler;
-	protected FrameworkElement? _view;
-
-	public abstract void Bind(FrameworkElement view);
+	public abstract IRequestBinding? Bind(FrameworkElement view);
 
 	public bool CanBind(FrameworkElement view)
 	{
@@ -19,26 +15,26 @@ public abstract class ControlRequestHandlerBase<TControl> : IRequestHandler
 		var baseTypes = viewType.GetBaseTypes();
 		return baseTypes.Any(baseType => baseType == typeof(TControl));
 	}
+}
 
+public record RequestBinding (FrameworkElement View, RoutedEventHandler LoadedHandler, RoutedEventHandler UnloadedHandler) : IRequestBinding
+{
 	public void Unbind()
 	{
-		if (_loadedHandler is not null)
+		if (LoadedHandler is not null)
 		{
-			_loadedHandler = null;
-			if (_view is not null)
+			if (View is not null)
 			{
-				_view.Loaded -= _loadedHandler;
+				View.Loaded -= LoadedHandler;
 			}
 		}
-		if (_unloadedHandler is not null)
+		if (UnloadedHandler is not null)
 		{
-			_unloadedHandler(_view, null);
-			_unloadedHandler = null;
-			if (_view is not null)
+			UnloadedHandler(View, null);
+			if (View is not null)
 			{
-				_view.Unloaded -= _unloadedHandler;
+				View.Unloaded -= UnloadedHandler;
 			}
 		}
-		_view = null;
 	}
 }
