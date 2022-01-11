@@ -5,7 +5,7 @@ namespace Uno.Extensions.Navigation.UI;
 
 public class NavigationViewItemRequestHandler : ActionRequestHandlerBase<NavigationViewItem>
 {
-	public override IRequestBinding Bind(FrameworkElement view)
+	public override IRequestBinding? Bind(FrameworkElement view)
 	{
 		var viewButton = view as NavigationViewItem;
 		if (viewButton is null)

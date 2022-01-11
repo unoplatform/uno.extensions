@@ -2,7 +2,7 @@
 
 public class ButtonBaseRequestHandler : ActionRequestHandlerBase<ButtonBase>
 {
-	public override IRequestBinding Bind(FrameworkElement view)
+	public override IRequestBinding? Bind(FrameworkElement view)
 	{
 		var viewButton = view as ButtonBase;
 		if (viewButton is null)

@@ -5,7 +5,7 @@ namespace Uno.Extensions.Navigation.Toolkit.Controls;
 
 public class TabBarItemRequestHandler : ActionRequestHandlerBase<TabBarItem>
 {
-	public override IRequestBinding Bind(FrameworkElement view)
+	public override IRequestBinding? Bind(FrameworkElement view)
 	{
 		var viewButton = view as TabBarItem;
 		if (viewButton is null)

@@ -5,7 +5,7 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 {
 
 
-	protected IRequestBinding BindAction<TElement, TEventHandler>(
+	protected IRequestBinding? BindAction<TElement, TEventHandler>(
 		TElement view,
 		Func<Action<FrameworkElement>, TEventHandler> eventHandler,
 		Action<TElement, TEventHandler> subscribe,
