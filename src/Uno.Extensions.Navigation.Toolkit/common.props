@@ -2,10 +2,11 @@
 	<ItemGroup Condition="'$(IsUWP)' == 'true'">
 		<PackageReference Include="Microsoft.UI.Xaml" Version="2.7.0" />
 	</ItemGroup>
-  
-  <PropertyGroup>
-	  <AssemblyName>Uno.Extensions.Navigation.Toolkit.UI</AssemblyName>
-  </PropertyGroup>
+
+	<PropertyGroup>
+		<AssemblyName>Uno.Extensions.Navigation.Toolkit.UI</AssemblyName>
+		<GenerateLibraryLayout>true</GenerateLibraryLayout>
+	</PropertyGroup>
 
   <ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />

@@ -1,10 +1,7 @@
 <Project ToolsVersion="15.0">
-  <PropertyGroup>
-	  <GenerateLibraryLayout>true</GenerateLibraryLayout>
-  </PropertyGroup>
-
 	<PropertyGroup>
 		<AssemblyName>Uno.Extensions.Navigation.UI</AssemblyName>
+	  <GenerateLibraryLayout>true</GenerateLibraryLayout>
 	</PropertyGroup>
 
 
