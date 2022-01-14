@@ -247,7 +247,7 @@ public static class RouteExtensions
 		return nextScheme;
 	}
 
-	private static string? ExtractBase(this string? path, out string nextScheme, out string nextPath)
+	public static string? ExtractBase(this string? path, out string nextScheme, out string nextPath)
 	{
 		nextPath = path ?? string.Empty;
 		nextScheme = string.Empty;

@@ -135,6 +135,8 @@ public class FrameNavigator : ControlNavigator<Frame>
 
 		InitialiseCurrentView(route, RouteResolver.Find(route));
 
+		CurrentView?.SetNavigatorInstance(Region.Navigator()!);
+
 		var responseRequest = firstSegment with { Scheme = route.Scheme };
 		return responseRequest;
 	}
@@ -169,6 +171,13 @@ public class FrameNavigator : ControlNavigator<Frame>
 		var mapping = RouteResolver.FindByView(Control.Content.GetType());
 
 		InitialiseCurrentView(previousRoute ?? Route.Empty, mapping);
+
+		// Restore the INavigator instance
+		var navigator = CurrentView?.GetNavigatorInstance();
+		if(navigator is not null)
+		{
+			Region.Services?.AddInstance<INavigator>(navigator);
+		}
 
 		return Task.FromResult<Route?>(responseRoute);
 	}
@@ -317,5 +326,25 @@ public class FrameNavigator : ControlNavigator<Frame>
 			lastRoute = lastRoute.Next();
 		}
 		Route = lastRoute;
+	}
+}
+
+public static class FrameNavigatorExtensions
+{
+	public static readonly DependencyProperty NavigatorInstanceProperty =
+		DependencyProperty.RegisterAttached(
+			"NavigatorInstance",
+			typeof(INavigator),
+			typeof(FrameNavigatorExtensions),
+			new PropertyMetadata(null));
+
+	public static void SetNavigatorInstance(this FrameworkElement element, INavigator value)
+	{
+		element.SetValue(NavigatorInstanceProperty, value);
+	}
+
+	public static INavigator GetNavigatorInstance(this FrameworkElement element)
+	{
+		return (INavigator)element.GetValue(NavigatorInstanceProperty);
 	}
 }

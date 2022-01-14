@@ -5,6 +5,10 @@ namespace Uno.Extensions.Navigation.UI;
 
 public class NavigationViewItemRequestHandler : ActionRequestHandlerBase<NavigationViewItem>
 {
+	public NavigationViewItemRequestHandler(IRouteResolver routes) : base(routes)
+	{
+	}
+
 	public override IRequestBinding? Bind(FrameworkElement view)
 	{
 		var viewButton = view as NavigationViewItem;

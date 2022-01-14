@@ -2,6 +2,10 @@
 
 public class ButtonBaseRequestHandler : ActionRequestHandlerBase<ButtonBase>
 {
+	public ButtonBaseRequestHandler(IRouteResolver routes) : base(routes)
+	{
+	}
+
 	public override IRequestBinding? Bind(FrameworkElement view)
 	{
 		var viewButton = view as ButtonBase;

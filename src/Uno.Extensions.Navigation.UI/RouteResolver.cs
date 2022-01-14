@@ -41,7 +41,9 @@ public class RouteResolver : IRouteResolver
 			return null;
 		}
 
-		return Mappings.TryGetValue(path, out var map) ? map : default;
+		path = path.ExtractBase(out var nextScheme, out var nextPath);
+
+		return Mappings.TryGetValue(path!, out var map) ? map : default;
 	}
 
 	public virtual RouteMap? FindByViewModel(Type? viewModelType)

@@ -156,6 +156,15 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		// Create ResponseNavigator if result is requested
 		var navigator = request.Result is not null ? request.GetResponseNavigator(responseFactory, this) : default;
 
+		if (navigator is null)
+		{
+			// Since this navigation isn't requesting a response, make sure
+			// the current INavigator is this navigator. This will have override
+			// any responsenavigator that has been registered and avoid incorrectly
+			// sending a response when simply navigating back
+			services.AddInstance<INavigator>(this);
+		}
+
 		var executedRoute = await CoreNavigateAsync(request);
 
 
@@ -163,6 +172,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		{
 			return navigator.AsResponseWithResult(executedRoute);
 		}
+
 
 		return executedRoute;
 

@@ -3,6 +3,11 @@
 public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBase<TView>
 	where TView : FrameworkElement
 {
+	private IRouteResolver RouteResolver { get; }
+	protected ActionRequestHandlerBase(IRouteResolver routes)
+	{
+		RouteResolver = routes;
+	}
 
 
 	protected IRequestBinding? BindAction<TElement, TEventHandler>(
@@ -26,6 +31,7 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 
 			var data = element.GetData();
 			var resultType = data?.GetType();
+
 			var binding = element.GetBindingExpression(Navigation.DataProperty);
 			if (binding is not null &&
 				binding.DataItem is not null)
@@ -51,21 +57,31 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 				}
 			}
 
+			if (resultType is null && !string.IsNullOrWhiteSpace(path))
+			{
+				var routeMap = RouteResolver.FindByPath(path);
+				resultType = routeMap?.ResultData;
+			}
+
 
 			if (data is not null ||
 				resultType is not null)
 			{
 
-				if (binding is not null && binding.ParentBinding.Mode == BindingMode.TwoWay)
+				if (resultType is not null)
 				{
 					var response = await nav.NavigateRouteForResultAsync(element, path, Schemes.Current, data, resultType: resultType);
-					if (response is not null)
+					if (binding is not null &&
+					binding.ParentBinding.Mode == BindingMode.TwoWay)
 					{
-						var result = await response.UntypedResult;
-						if (result.IsSome(out var resultValue))
+						if (response is not null)
 						{
-							element.SetData(resultValue);
-							binding.UpdateSource();
+							var result = await response.UntypedResult;
+							if (result.IsSome(out var resultValue))
+							{
+								element.SetData(resultValue);
+								binding.UpdateSource();
+							}
 						}
 					}
 				}
