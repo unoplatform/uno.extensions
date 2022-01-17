@@ -1,8 +1,11 @@
-﻿using System;
+﻿#define NO_REFLECTION // MessageDialog currently doesn't work with no-reflection set
+using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Playground.ViewModels;
+using Playground.Views;
 using Uno.Extensions.Hosting;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation;
@@ -63,13 +66,21 @@ namespace Playground
 
 
 					// Enable navigation, including registering views and viewmodels
+#if NO_REFLECTION
+					.UseNavigation(RegisterRoutes)
+#else
 					.UseNavigation()
-					//.UseNavigation(RegisterRoutes)
-
+#endif
 					// Add navigation support for toolkit controls such as TabBar and NavigationView
 					.UseToolkitNavigation()
 
-
+#if NO_REFLECTION // Force the use of RouteResolver instead of RouteResolverDefault 
+					.ConfigureServices(services =>
+					{
+						// Force the route resolver that doesn't use reflection
+						services.AddSingleton<IRouteResolver, RouteResolver>();
+					})
+#endif
 					.Build(enableUnoLogging: true);
 
 			this.InitializeComponent();
@@ -204,7 +215,27 @@ namespace Playground
 		private static void RegisterRoutes(IRouteRegistry routes)
 		{
 			// RouteMap required for Shell if initialRoute or initialViewModel isn't specified when calling NavigationHost
-			// routes.Register(new RouteMap("Shell", ViewModel: typeof(ShellViewModel)));
+			routes.Register(new RouteMap("Shell", ViewModel: typeof(ShellViewModel),
+				Nested: new[]
+				{
+					new RouteMap("Home", View: typeof(HomePage)),
+					new RouteMap("Second", View: typeof(SecondPage)),
+					new RouteMap("Third", View: typeof(ThirdPage)),
+					new RouteMap("Fourth", View: typeof(FourthPage), ViewModel: typeof(FourthViewModel)),
+					new RouteMap("Fifth", View: typeof(FifthPage), ViewModel: typeof(FifthViewModel)),
+					new RouteMap("Dialogs", View: typeof(DialogsPage),
+					Nested: new[]
+					{
+						new RouteMap("Simple", View:typeof(SimpleDialog)),
+						new RouteMap("Complex", View:typeof(ComplexDialog),
+						Nested: new[]
+						{
+							new RouteMap("ComplexDialogFirst", View:typeof(ComplexDialogFirstPage)),
+							new RouteMap("ComplexDialogSecond", View:typeof(ComplexDialogSecondPage))
+						})
+					}),
+					new RouteMap("VisualStates", View: typeof(VisualStatesPage)),
+				}));
 		}
 	}
 }
