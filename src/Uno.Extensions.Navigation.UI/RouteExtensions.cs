@@ -126,6 +126,11 @@ public static class RouteExtensions
 			return route;
 		}
 
+		if(route.IsNested() && !handledRoute.IsNested())
+		{
+			route = route.TrimScheme(Schemes.Nested);
+		}
+
 		while (route.Base == handledRoute.Base && !string.IsNullOrWhiteSpace(handledRoute.Base))
 		{
 			route = route.Next();

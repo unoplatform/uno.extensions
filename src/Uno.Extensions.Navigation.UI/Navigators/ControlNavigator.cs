@@ -73,7 +73,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 		}
 
 
-		var services = this.Get<IServiceProvider>();
+		var services = navigator?.Get<IServiceProvider>();
 
 		if (navigator is null ||
 			services is null)
@@ -86,7 +86,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 			viewModel.GetType() != mapping?.ViewModel)
 		{
 			// This will happen if cache mode isn't set to required
-			viewModel = CreateViewModel(services, navigator, route, mapping);
+			viewModel = CreateViewModel(services, route, mapping);
 		}
 
 		view.InjectServicesAndSetDataContext(services, navigator, viewModel);
@@ -182,19 +182,21 @@ public abstract class ControlNavigator : Navigator
 		Route = route is not null ? new Route(Schemes.Current, route.Base, null, route.Data) : null;
 	}
 
-	protected object? CreateViewModel(IServiceProvider services, INavigator navigator, Route route, RouteMap? mapping)
+	protected object? CreateViewModel(IServiceProvider services, Route route, RouteMap? mapping)
 	{
+		var navigator = services.GetInstance<INavigator>();
 		if (mapping?.ViewModel is not null)
 		{
 			var dataFactor = services.GetRequiredService<NavigationDataProvider>();
 			dataFactor.Parameters = route.Data ?? new Dictionary<string, object>();
 
 			var vm = services.GetService(mapping.ViewModel);
+
 			if (vm is null)
 			{
 				try
 				{
-					var ctr = mapping.ViewModel.GetNavigationConstructor(navigator, Region.Services!, out var args);
+					var ctr = mapping.ViewModel.GetNavigationConstructor(navigator!, Region.Services!, out var args);
 					if (ctr is not null)
 					{
 						vm = ctr.Invoke(args);
@@ -208,7 +210,7 @@ public abstract class ControlNavigator : Navigator
 
 			if (vm is IInjectable<INavigator> navAware)
 			{
-				navAware.Inject(navigator);
+				navAware.Inject(navigator!);
 			}
 
 			if (vm is IInjectable<IServiceProvider> spAware && Region.Services is not null)

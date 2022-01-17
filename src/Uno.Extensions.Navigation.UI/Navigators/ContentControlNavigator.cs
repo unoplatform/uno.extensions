@@ -34,7 +34,6 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 
 		try
 		{
-
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Creating instance of type '{viewType.Name}'");
 			var content = Activator.CreateInstance(viewType);
 			if (!string.IsNullOrWhiteSpace(path) &&

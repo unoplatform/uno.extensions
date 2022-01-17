@@ -18,6 +18,16 @@ public class RouteResolver : IRouteResolver
 			First = maps.FirstOrDefault();
 			maps.Flatten().ForEach(route => Mappings[route.Path] = route);
 		}
+
+
+		var messageDialogRoute = new RouteMap(
+			Path: typeof(MessageDialog).Name,
+			View: typeof(MessageDialog),
+			ResultData: typeof(MessageDialog)
+		);
+
+		// Make sure the message dialog is the last route to be listed
+		Mappings[messageDialogRoute.Path] = messageDialogRoute;
 	}
 
 	public RouteResolver(

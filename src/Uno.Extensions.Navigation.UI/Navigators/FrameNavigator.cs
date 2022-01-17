@@ -50,17 +50,9 @@ public class FrameNavigator : ControlNavigator<Frame>
 
 		if (route.FrameIsBackNavigation())
 		{
-			// If navigation is triggered externally on the Frame (eg back button)
-			// the current page should match the view associated with the previous route
-			var previousRoute = FullRoute.ApplyFrameRoute(RouteResolver, route);
-			if(previousRoute is null)
-			{
-				return false;
-			}
-
-			var previousMapping = RouteResolver.Find(previousRoute);
-			return CanGoBack ||
-					(previousMapping?.View == Control.Content.GetType());
+			// Back navigation code should swallow any excess back navigations (ie when
+			// there is nothing on the back stack)
+			return true;
 		}
 		else
 		{
@@ -149,6 +141,8 @@ public class FrameNavigator : ControlNavigator<Frame>
 		}
 
 		var route = request.Route;
+
+
 		// Remove any excess items in the back stack
 		var numberOfPagesToRemove = route.FrameNumberOfPagesToRemove();
 		while (numberOfPagesToRemove > 0)
@@ -161,7 +155,10 @@ public class FrameNavigator : ControlNavigator<Frame>
 		var previousRoute = FullRoute.ApplyFrameRoute(RouteResolver, responseRoute);
 		var previousBase = previousRoute?.Last()?.Base;
 		var currentBase = RouteResolver.FindByView(Control.Content.GetType())?.Path;
-		if (currentBase != previousBase && previousBase != Control.Content.GetType().Name)
+		if (previousBase is not null &&
+			Control.BackStack.Count > 0 &&
+			currentBase != previousBase &&
+			previousBase != Control.Content.GetType().Name)
 		{
 			var previousMapping = RouteResolver.FindByView(Control.BackStack.Last().SourcePageType);
 			// Invoke the navigation (which will be a back navigation)

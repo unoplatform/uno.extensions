@@ -37,6 +37,7 @@ public class ResponseNavigator<TResult> : IResponseNavigator, IInstance<IService
 
 		if (request.Route.FrameIsBackNavigation() ||
 			request.Route.TrimScheme(Schemes.Parent).FrameIsBackNavigation() || // Handles ../- 
+			request.Route.TrimScheme(Schemes.Nested).FrameIsBackNavigation() || // Handles ./- 
 			(request.Route.IsRoot() && request.Route.TrimScheme(Schemes.Root).FrameIsBackNavigation() && this.Navigation.GetParent() == null))
 		{
 			var responseData = request.Route.ResponseData();
