@@ -16,7 +16,14 @@ public static class Navigation
         typeof(Navigation),
         new PropertyMetadata(null));
 
-    private static void RequestChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+	internal static readonly DependencyProperty RequestBindingProperty =
+	DependencyProperty.RegisterAttached(
+		"Binding",
+		typeof(IRequestBinding),
+		typeof(Navigation),
+		new PropertyMetadata(null));
+
+	private static void RequestChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
         {
@@ -49,25 +56,14 @@ public static class Navigation
         return (object)element.GetValue(DataProperty);
     }
 
-    //public static string NavigationRoute(this object view, IRouteMappings mappings = null)
-    //{
-    //    var map = mappings?.FindByView(view.GetType());
-    //    if (map is not null)
-    //    {
-    //        return map.Path;
-    //    }
 
-    //    if (view is FrameworkElement fe)
-    //    {
-    //        var path = fe.GetName();
-    //        if (string.IsNullOrWhiteSpace(path))
-    //        {
-    //            path = fe.Name;
-    //        }
+	public static void SetRequestBinding(this FrameworkElement element, IRequestBinding value)
+	{
+		element.SetValue(RequestBindingProperty, value);
+	}
 
-    //        return path;
-    //    }
-
-    //    return null;
-    //}
+	public static IRequestBinding GetRequestBinding(this FrameworkElement element)
+	{
+		return (IRequestBinding)element.GetValue(RequestBindingProperty);
+	}
 }
