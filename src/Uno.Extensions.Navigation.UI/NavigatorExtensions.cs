@@ -202,7 +202,7 @@ public static class NavigatorExtensions
 		return service.NavigateAsync((Schemes.NavigateBack + string.Empty).WithScheme(scheme).AsRequest(sender, data, cancellation));
 	}
 
-	public static async Task<NavigationResultResponse<Windows.UI.Popups.UICommand>?> ShowMessageDialogAsync(
+	public static async Task<NavigationResultResponse<Windows.UI.Popups.IUICommand>?> ShowMessageDialogAsync(
 		this INavigator service,
 		object sender,
 		string content,
@@ -223,8 +223,8 @@ public static class NavigatorExtensions
 				{ RouteConstants.MessageDialogParameterCommands, commands! }
 			};
 
-		var result = await service.NavigateAsync((Schemes.Dialog + typeof(MessageDialog).Name).AsRequest<UICommand>(sender, data, cancellation));
-		return result?.AsResult<UICommand>();
+		var result = await service.NavigateAsync((Schemes.Dialog + typeof(MessageDialog).Name).AsRequest<IUICommand>(sender, data, cancellation));
+		return result?.AsResult<IUICommand>();
 	}
 
 #if __IOS__

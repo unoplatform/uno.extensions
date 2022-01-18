@@ -30,8 +30,8 @@ public abstract class DialogNavigator : ControlNavigator
         else
         {
             var mapping = RouteResolver.Find(route);
-            var viewModel = (Region.Services is not null && mapping?.ViewModel is not null) ? CreateViewModel(Region.Services, this, route, mapping) : default(object);
-            ShowTask = DisplayDialog(request, mapping?.View, viewModel);
+            var viewModel = (Region.Services is not null && mapping?.ViewModel is not null) ? CreateViewModel(Region.Services, route, mapping) : default(object);
+            ShowTask = await DisplayDialog(request, mapping?.View, viewModel);
         }
         var responseRequest = route with { Path = null };
         return responseRequest;
@@ -45,5 +45,5 @@ public abstract class DialogNavigator : ControlNavigator
         dialog?.Cancel();
     }
 
-    protected abstract IAsyncInfo? DisplayDialog(NavigationRequest request, Type? viewType, object? viewModel);
+    protected abstract Task<IAsyncInfo?> DisplayDialog(NavigationRequest request, Type? viewType, object? viewModel);
 }

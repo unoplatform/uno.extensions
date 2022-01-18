@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.Regions;
+using Uno.Extensions.Navigation.UI.Controls;
 
 namespace Uno.Extensions.Navigation.Navigators;
 
@@ -43,14 +44,16 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 		if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Navigating to path '{route.Base}' with view '{mapping?.View?.Name}'");
         var executedPath = await Show(route.Base, mapping?.View, route.Data);
 
-		InitialiseCurrentView(route, mapping);
-
 		if (string.IsNullOrEmpty(executedPath))
 		{
 			return Route.Empty;
 		}
 
-		return route with { Base = executedPath, Path = null };
+		var executedRoute = route with { Base = executedPath, Path = null };
+
+		InitialiseCurrentView(executedRoute, mapping);
+
+		return executedRoute;
 	}
 
 	protected object? InitialiseCurrentView(Route route, RouteMap? mapping)
@@ -63,7 +66,14 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 		}
 
 		var navigator = Region.Navigator();
-		var services = this.Get<IServiceProvider>();
+
+		if (view is FrameView fv )
+		{
+			navigator = fv.Navigator;
+		}
+
+
+		var services = navigator?.Get<IServiceProvider>();
 
 		if (navigator is null ||
 			services is null)
@@ -76,7 +86,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 			viewModel.GetType() != mapping?.ViewModel)
 		{
 			// This will happen if cache mode isn't set to required
-			viewModel = CreateViewModel(services, navigator, route, mapping);
+			viewModel = CreateViewModel(services, route, mapping);
 		}
 
 		view.InjectServicesAndSetDataContext(services, navigator, viewModel);
@@ -172,19 +182,21 @@ public abstract class ControlNavigator : Navigator
 		Route = route is not null ? new Route(Schemes.Current, route.Base, null, route.Data) : null;
 	}
 
-	protected object? CreateViewModel(IServiceProvider services, INavigator navigator, Route route, RouteMap? mapping)
+	protected object? CreateViewModel(IServiceProvider services, Route route, RouteMap? mapping)
 	{
+		var navigator = services.GetInstance<INavigator>();
 		if (mapping?.ViewModel is not null)
 		{
 			var dataFactor = services.GetRequiredService<NavigationDataProvider>();
 			dataFactor.Parameters = route.Data ?? new Dictionary<string, object>();
 
 			var vm = services.GetService(mapping.ViewModel);
+
 			if (vm is null)
 			{
 				try
 				{
-					var ctr = mapping.ViewModel.GetNavigationConstructor(navigator, Region.Services!, out var args);
+					var ctr = mapping.ViewModel.GetNavigationConstructor(navigator!, Region.Services!, out var args);
 					if (ctr is not null)
 					{
 						vm = ctr.Invoke(args);
@@ -198,7 +210,7 @@ public abstract class ControlNavigator : Navigator
 
 			if (vm is IInjectable<INavigator> navAware)
 			{
-				navAware.Inject(navigator);
+				navAware.Inject(navigator!);
 			}
 
 			if (vm is IInjectable<IServiceProvider> spAware && Region.Services is not null)
