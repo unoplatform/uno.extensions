@@ -28,6 +28,8 @@
 					Content="Dialogs page" />
 			<Button uen:Navigation.Request="VisualStates"
 					Content="Visual States page" />
+			<Button uen:Navigation.Request="PanelVisibility"
+					Content="Visibility page" />
 		</StackPanel>
 	</Grid>
 </Page>

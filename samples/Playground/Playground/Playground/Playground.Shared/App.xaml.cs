@@ -234,6 +234,7 @@ namespace Playground
 							new RouteMap("ComplexDialogSecond", View:typeof(ComplexDialogSecondPage))
 						})
 					}),
+					new RouteMap("PanelVisibility", View: typeof(PanelVisibilityPage)),
 					new RouteMap("VisualStates", View: typeof(VisualStatesPage)),
 				}));
 		}
