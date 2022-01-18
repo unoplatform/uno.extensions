@@ -5,15 +5,19 @@ namespace Uno.Extensions.Navigation.Toolkit.Controls;
 
 public class TabBarItemRequestHandler : ActionRequestHandlerBase<TabBarItem>
 {
-	public override void Bind(FrameworkElement view)
+	public TabBarItemRequestHandler(IRouteResolver routes) : base(routes)
+	{
+	}
+
+	public override IRequestBinding? Bind(FrameworkElement view)
 	{
 		var viewButton = view as TabBarItem;
 		if (viewButton is null)
 		{
-			return;
+			return default;
 		}
 
-		BindAction(viewButton,
+		return BindAction(viewButton,
 			action => new RoutedEventHandler((sender, args) => action((TabBarItem)sender)),
 			(element, handler) => element.Click += handler,
 			(element, handler) => element.Click -= handler);
