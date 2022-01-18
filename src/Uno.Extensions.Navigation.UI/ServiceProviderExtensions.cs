@@ -1,4 +1,5 @@
-﻿using Uno.Extensions.Navigation.Regions;
+﻿using Uno.Extensions.Hosting;
+using Uno.Extensions.Navigation.Regions;
 using Uno.Extensions.Navigation.UI;
 
 namespace Uno.Extensions.Navigation;
@@ -79,19 +80,35 @@ public static class ServiceProviderExtensions
 		var elementRegion = new NavigationRegion(cc, services);
 		cc.SetInstance(elementRegion);
 
-		if (initialView is not null)
+		var nav = elementRegion.Navigator();
+		if (nav is not null)
 		{
-			elementRegion.Navigator()?.NavigateViewAsync(cc, initialView);
-		}
-		else if (initialViewModel is not null)
-		{
-			elementRegion.Navigator()?.NavigateViewModelAsync(cc, initialViewModel);
-		}
-		else
-		{
-			elementRegion.Navigator()?.NavigateRouteAsync(cc, initialRoute ?? string.Empty);
+			var start = () => Task.CompletedTask;
+			if (initialView is not null)
+			{
+				start = () => nav.NavigateViewAsync(cc, initialView);
+			}
+			else if (initialViewModel is not null)
+			{
+				start = () => nav.NavigateViewModelAsync(cc, initialViewModel);
+			}
+			else
+			{
+				start = () => nav.NavigateRouteAsync(cc, initialRoute ?? string.Empty);
+			}
+			services.Startup(start);
 		}
 
 		return cc;
+	}
+
+	private static async Task Startup(this IServiceProvider services, Func<Task> afterStartup)
+	{
+		var startServices = services.GetServices<IStartupService>()?.Select(x => x.StartupComplete()).ToArray();
+		if (startServices?.Any() ?? false)
+		{
+			await Task.WhenAll(startServices);
+		}
+		await afterStartup();
 	}
 }
