@@ -129,8 +129,6 @@ public abstract class ControlNavigator : Navigator
 		return coreResponse ?? regionResponse;
 	}
 
-	protected virtual bool CanNavigateToRoute(Route route) => route.IsCurrent();
-
 	private async Task<NavigationResponse?> RegionNavigateAsync(NavigationRequest request)
 	{
 		// If the request has come down from parent it

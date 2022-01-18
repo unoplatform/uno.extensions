@@ -30,7 +30,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 	public async Task<NavigationResponse?> NavigateAsync(NavigationRequest request)
 	{
-		Logger.LogInformation($"Pre-navigation: - {Region.ToString()}");
+		if (Logger.IsEnabled(LogLevel.Information)) Logger.LogInformation($"Pre-navigation: - {Region.Root().ToString()}");
 		try
 		{
 			RouteUpdater?.StartNavigation();
@@ -102,7 +102,8 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 			// If the base matches the region name, than need to strip the base
 			if (!string.IsNullOrWhiteSpace(request.Route.Base) &&
-				request.Route.Base == Region.Name)
+				request.Route.Base == Region.Name &&
+				!CanNavigateToRoute(request.Route.TrimScheme(Schemes.Nested)))
 			{
 				request = request with { Route = request.Route.Next() };
 			}
@@ -116,11 +117,13 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		}
 		finally
 		{
-			Logger.LogInformation($"Post-navigation: {Region.ToString()}");
-			Logger.LogInformation($"Post-navigation (route): {Region.Root().GetRoute()}");
+			if (Logger.IsEnabled(LogLevel.Information)) Logger.LogInformation($"Post-navigation: {Region.Root().ToString()}");
+			if (Logger.IsEnabled(LogLevel.Information)) Logger.LogInformation($"Post-navigation (route): {Region.Root().GetRoute()}");
 			RouteUpdater?.EndNavigation();
 		}
 	}
+
+	protected virtual bool CanNavigateToRoute(Route route) => route.IsCurrent();
 
 	private async Task<NavigationResponse?> DialogNavigateAsync(NavigationRequest request)
 	{

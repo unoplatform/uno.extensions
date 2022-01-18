@@ -24,7 +24,7 @@ namespace Commerce.ViewModels
 			Navigator = navigator;
 			CredentialsSettings = credentials;
 
-			logger.LogInformation($"Launch url '{configuration.Value?.LaunchUrl}'");
+			if (logger.IsEnabled(LogLevel.Information)) logger.LogInformation($"Launch url '{configuration.Value?.LaunchUrl}'");
 			var initialRoute = configuration.Value?.LaunchRoute();
 
 
