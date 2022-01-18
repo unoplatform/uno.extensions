@@ -1,0 +1,33 @@
+﻿<Page
+    x:Class="Playground.Views.HomePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Playground.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+	xmlns:uen="using:Uno.Extensions.Navigation.UI"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+		<TextBlock Text="Home"
+				   HorizontalAlignment="Center"
+				   FontSize="48" />
+
+		<StackPanel Grid.Row="1">
+			<Button uen:Navigation.Request="Second" Content="Second Page" />
+			<Button uen:Navigation.Request="-/Second"
+					Content="Second Page with clear backstack" />
+			<Button uen:Navigation.Request="Fourth"
+					Content="Fourth page" />
+			<Button uen:Navigation.Request="Dialogs"
+					Content="Dialogs page" />
+			<Button uen:Navigation.Request="VisualStates"
+					Content="Visual States page" />
+		</StackPanel>
+	</Grid>
+</Page>

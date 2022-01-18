@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>6279c845-92f8-4333-ab99-3d213163593c</ProjectGuid>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeSharing\Microsoft.CodeSharing.Common.Default.props" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeSharing\Microsoft.CodeSharing.Common.props" />
+  <PropertyGroup />
+  <Import Project="Playground.Shared.projitems" Label="Shared" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeSharing\Microsoft.CodeSharing.CSharp.targets" />
+  <ItemGroup>
+    <_Globbed_Compile Remove="ViewModels\FifthViewModel.cs" />
+    <_Globbed_Compile Remove="ViewModels\FourthViewModel.cs" />
+    <_Globbed_Compile Remove="ViewModels\ShellViewModel.cs" />
+    <_Globbed_Compile Remove="Views\ComplexDialog.xaml.cs" />
+    <_Globbed_Compile Remove="Views\ComplexDialogFirstPage.xaml.cs" />
+    <_Globbed_Compile Remove="Views\ComplexDialogSecondPage.xaml.cs" />
+    <_Globbed_Compile Remove="Views\FifthPage.xaml.cs" />
+    <_Globbed_Compile Remove="Views\FourthPage.xaml.cs" />
+    <_Globbed_Compile Remove="Views\HomePage.xaml.cs" />
+    <_Globbed_Compile Remove="Views\SecondPage.xaml.cs" />
+    <_Globbed_Compile Remove="Views\SimpleDialog.xaml.cs" />
+    <_Globbed_Compile Remove="Views\ThirdPage.xaml.cs" />
+    <_Globbed_Compile Remove="Views\VisualStatePage.xaml.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <_Globbled_Page Remove="Views\ComplexDialog.xaml" />
+    <_Globbled_Page Remove="Views\ComplexDialogFirstPage.xaml" />
+    <_Globbled_Page Remove="Views\ComplexDialogSecondPage.xaml" />
+    <_Globbled_Page Remove="Views\FifthPage.xaml" />
+    <_Globbled_Page Remove="Views\FourthPage.xaml" />
+    <_Globbled_Page Remove="Views\HomePage.xaml" />
+    <_Globbled_Page Remove="Views\SecondPage.xaml" />
+    <_Globbled_Page Remove="Views\SimpleDialog.xaml" />
+    <_Globbled_Page Remove="Views\ThirdPage.xaml" />
+  </ItemGroup>
+</Project>
