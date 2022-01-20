@@ -1,6 +1,4 @@
 # Logging
-_[TBD - Review and update this guidance]_
-
 Uno.Extensions.Logging use [Microsoft.Extensions.Logging](https://www.nuget.org/packages/Microsoft.Extensions.Logging) for logging abstractions.
 
 For more documentation on logging, read the references listed at the bottom.
@@ -17,7 +15,7 @@ public App()
 {
     Host = UnoHost
         .CreateDefaultBuilder()
-        .UsePlatformLoggerProvider()
+        .UseLogging()
         .Build();
     // ........ //
 }
@@ -41,7 +39,7 @@ public App()
 {
     Host = UnoHost
         .CreateDefaultBuilder()
-        .UsePlatformLoggerProvider()
+        .UseLogging()
         .ConfigureLogging(logBuilder =>
                 {
                     logBuilder
@@ -63,7 +61,7 @@ public App()
 {
     Host = UnoHost
         .CreateDefaultBuilder()
-        .UsePlatformLoggerProvider()
+        .UseLogging()
         .UseSerilog()
         .Build();
     // ........ //
@@ -85,7 +83,7 @@ Alternatively you can add `ILogger` as a constructor parameter for any type that
 
 ## Uno Internal Logging
 
-To use the same logging for Uno internal messages
+To use the same logging for Uno internal messages call EnableUnoLogging after the Build method on the IHost instance. 
 
 ```csharp
 private IHost Host { get; }
@@ -94,7 +92,7 @@ public App()
 {
     Host = UnoHost
         .CreateDefaultBuilder()
-        .UsePlatformLoggerProvider()
+        .UseLogging()
         .Build()
         .EnableUnoLogging();
     // ........ //

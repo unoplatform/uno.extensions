@@ -35,7 +35,6 @@
 					uen:Navigation.Request="./Three" />
 		</StackPanel>
 		<Grid uen:Region.Attached="True"
-			  uen:Region.Navigator="Visibility"
 			  Grid.Row="2">
 			<Grid uen:Region.Name="One"
 				  Visibility="Collapsed">

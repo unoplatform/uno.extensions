@@ -1,6 +1,6 @@
 # Navigation
 
-Register routes which provide mapping between view model and page
+Enable navigation and support navigation using controls from the Uno.Toolkit
 
 ```csharp
 private IHost Host { get; }
@@ -9,61 +9,78 @@ public App()
 {
     Host = UnoHost
         .CreateDefaultBuilder()
-        .UseRouting<RouterConfiguration, LaunchMessage>(() => _frame)
+        .UseNavigation(RegisterRoutes)
+        .UseToolkitNavigation()
         .Build();
     // ........ //
 }
 
-
-public class RouterConfiguration : IRouteDefinitions
+private static void RegisterRoutes(IRouteRegistry routes)
 {
-    public IReadOnlyDictionary<string, (Type, Type)> Routes { get; } = new Dictionary<string, (Type, Type)>()
-        .RegisterPage<MainPageViewModel, MainPage>(string.Empty)
-        .RegisterPage<SecondPageViewModel, SecondPage>();
+    routes.Register(new RouteMap("Shell", ViewModel: typeof(ShellViewModel),
+		Nested: new[]
+		{
+			new RouteMap("Main", View: typeof(MainPage), ViewModel: typeof(MainPageViewModel)),
+			new RouteMap("Second", View: typeof(SecondPage), ViewModel: typeof(SecondPageViewModel))
+		}));
 }
-```
 
-The LaunchMessage will navigate to the page that's registered with `string.Empty` in the Routes dictionary.
+protected async override void OnLaunched(LaunchActivatedEventArgs args)
+{
+#if NET5_0 && WINDOWS
+    _window = new Window();
+    _window.Activate();
+#else
+	_window = Window.Current;
+#endif
+
+	_window.Content = Host.Services.NavigationHost();
+	_window.Activate();
+
+	await Task.Run(()=>Host.StartAsync());
+}
+
+```
+Calling the NavigationHost method will create the root element for the application and navigate to the first route defined in the RegisterRoutes method. You can override this by specifying the initialRoute (ie route name), initialView (Type of view) or initialViewModel (Type of view model) to navigate to. 
 
 ## Navigation
 
-Navigate by raising a RoutingMessage, specifying the view model you want to navigate to.
+Navigate by calling one of the navigation extension methods on an INavigator instance. The INavigator instance can be injected into the view model constructor, or can be set via the IInstance < INavigator > interface. 
 
 ```csharp
 public class MainPageViewModel : ObservableValidator
 {
-    public MainPageViewModel(IRouteMessenger messenger)
+    public MainPageViewModel(INavigator navigator)
     {
-        Messenger = messenger;
+        Navigator = navigator;
     }
 
-    private IRouteMessenger Messenger { get; }
+    private INavigator Navigator { get; }
 
     public void GoSecond()
     {
-        Messenger.Send(new RoutingMessage(this, typeof(SecondPageViewModel).AsRoute()));
+        Navigator.NavigateViewModelAsync<TSecondViewModel>(this);
     }
 }
 ``` 
 
 ## Go Back 
 
-Close the current page and navigate to previous page by raising the CloseMessage
+Go back to previous page
 
 ```csharp
 public class SecondPageViewModel : ObservableObject
 {
-    public SecondPageViewModel(
-        IRouteMessenger messenger)
+    public SecondPageViewModel(INavigator navigator)
     {
-        Messenger = messenger;
+        Navigator = navigator;
     }
 
-    private IRouteMessenger Messenger { get; }
+    private INavigator Navigator { get; }
 
     public void GoBack()
     {
-        Messenger.Send(new CloseMessage(this));
+        Navigator.NavigatePreviousAsync(this);
     }
 }
 ```
