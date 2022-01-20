@@ -1,4 +1,4 @@
-# Navigation
+# Navigation - Getting Started
 
 Enable navigation and support navigation using controls from the Uno.Toolkit
 
@@ -82,5 +82,85 @@ public class SecondPageViewModel : ObservableObject
     {
         Navigator.NavigatePreviousAsync(this);
     }
+}
+```
+
+
+
+
+# Navigation - Details
+Application is made up of a series of containers, such as a Frame, that support navigation. These are referred to as Regions
+
+There are some containers that are currently supported by default, with others able to be supported by either implementing INavigator or extending the ControlNavigator base class:  
+**ContentControlNavigator** - ContentControl - Supports forward navigation to show new content  
+**PanelVisibilityNavigator** - Panel - Supports forward navigation to make children of the panel visible 
+**FrameNavigator** - Frame - Supports forward and backward navigation between pages  
+**NavigationViewNavigator** - NavigationView - Supports forward navigation between selected items in the NavigationView    
+**TabBarNavigator** - TabBar (Toolkit) - Supports forward navigation between selected items in the TabBar
+**ContentDialogNavigator** - ContentDialog - Supports forward navigation between tabs    
+**MessageDialogNavigator** - MessageDialog - Supports forward navigation between tabs  
+**PopupNavigator** - Popup - Supports forward navigation between tabs  
+
+
+
+## Attributes
+A region needs to be defined in XAML using one of these attached properties
+
+**Region.Attached = true/false**
+Indicates that a region should be attached to the specified FrameworkElement. 
+
+**Region.Name = "region"**
+This defines the name of any region that gets created below the FrameworkElement where the Region.Name attribute is set.
+
+**Region.Navigator = "Visibility"**
+Setting the Region.Navigator attribute controls what navigator type is used for a region. This may be required if two different navigators are registered for the same control type.
+
+**Navigation.Request = "route"**
+Specifies what route should be navigated to. The trigger for the navigation is specific to the type of control. For example a Button will navigate when the Click event is raised. There are handlers for Button (Click), NavigationView (ItemInvoked) and Selector (SelectionChanged or ItemClick for ListView)
+
+**Navigation.Data = "{Binding MyDataProperty}"**
+The data that should be attached to the navigation request. For Selector (including ListView) the selected item will automatically be attached to the navigation request.
+
+
+
+
+## Navigation Interfaces and Extension methods
+
+**INavigator**
+```csharp
+public interface INavigator
+{
+    Task<NavigationResponse?> NavigateAsync(NavigationRequest request);
+}
+```
+
+**Navigator Extensions**
+```csharp
+public static class NavigatorExtensions
+{
+    // Navigate to a route eg Home
+    NavigateRouteAsync(...);
+    // Navigate to a route and expect a result of type TResult
+    NavigateRouteForResultAsync<TResult>(...);
+    // Navigate to a view of type TView
+    NavigateViewAsync<TView>(...);
+    // Navigate to a view of type TView and expect a result of type TResult
+    NavigateViewForResultAsync<TView, TResult>(...);
+    // Navigate to a view model of type TViewModel
+    NavigateViewModelAsync<TViewModel>(...);
+    // Navigate to a view model of type TViewModel and expect a result of type TResult
+    NavigateViewModelForResultAsync<TViewModel, TResult>(...);
+    // Navigate to the route that handles data of type TData
+    NavigateDataAsync<TData>(...);
+    // Navigate to the route that handles data of type TData and expect a result of type TResult
+     NavigateDataForResultAsync<TData, TResultData>(...);
+    // Navigate to the route that will return data of type TResultData
+    NavigateForResultAsync<TResultData>(...);
+    // Navigate to previous view (goback on frame or close dialog/popup)
+    NavigatePreviousAsync(...);
+    // Navigate to previous view (goback on frame or close dialog/popup) and provide response data
+    NavigatePreviousWithResultAsync<TResult>(...);
+    // Show MessageDialog
+    ShowMessageDialogAsync(...);
 }
 ```
