@@ -4,8 +4,10 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Playground.Services;
 using Playground.ViewModels;
 using Playground.Views;
+using Uno.Extensions.Configuration;
 using Uno.Extensions.Hosting;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation;
@@ -37,6 +39,7 @@ namespace Playground
 					.UseEnvironment(Environments.Development)
 #endif
 
+					.UseAppSettings()
 
 					// Add platform specific log providers
 					.UseLogging()
@@ -56,6 +59,8 @@ namespace Playground
 					// Register services for the application
 					.ConfigureServices(services =>
 					{
+						services
+							.AddHostedService<SimpleStartupService>();
 						//services
 
 						//	.AddSingleton<IProductService, ProductService>()
@@ -121,11 +126,7 @@ namespace Playground
 				);
 			_window.Activate();
 
-			await Task.Run(async () =>
-			{
-				await Host.StartAsync();
-			});
-
+			await Task.Run(()=>Host.StartAsync());
 		}
 
 		/// <summary>

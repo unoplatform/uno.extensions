@@ -58,9 +58,9 @@ In order for hosted services to be run, it is necessary to run the IHost impleme
 protected override void OnLaunched(LaunchActivatedEventArgs e)
 {
     // ........ //
-    _ = Task.Run(() =>
+    await Task.Run(async () =>
     {
-        Host.Run();
+    	await Host.StartAsync();
     });
 }
 ```
