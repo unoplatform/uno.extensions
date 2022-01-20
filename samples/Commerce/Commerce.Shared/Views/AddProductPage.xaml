@@ -11,6 +11,7 @@
 	  xmlns:uer="using:Uno.Extensions.Reactive.UI"
 	  xmlns:um="using:Uno.Material"
 	  xmlns:reactive="using:Uno.Extensions.Reactive.UI"
+	  NavigationCacheMode="Required"
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
 	<Grid>

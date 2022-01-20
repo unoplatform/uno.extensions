@@ -218,8 +218,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 				Control.BackStack.Remove(entry);
 				Control.BackStack.Add(newEntry);
 			}
-
-			if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Invoking Frame.GoBack");
+			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Invoking Frame.GoBack");
 			Control.GoBack();
 
 			await EnsurePageLoaded(previousMapping?.Path);
@@ -248,7 +247,15 @@ public class FrameNavigator : ControlNavigator<Frame>
 				if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Invoking Frame.Navigate to type '{viewType.Name}'");
 				var nav = Control.Navigate(viewType, data);
 
+				var currentPage = Control.Content as Page;
+				if (currentPage is not null)
+				{
+					// Force new view model to be created, just in case nav cache mode is set to required
+					currentPage.DataContext = null;
+				}
+
 				await EnsurePageLoaded(path);
+
 				if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Frame.Navigate completed");
 			}
 

@@ -11,5 +11,8 @@ namespace Commerce.ViewModels;
 
 public partial class AddProductViewModel
 {
-	
+	public AddProductViewModel()
+	{
+	}
+
 }
