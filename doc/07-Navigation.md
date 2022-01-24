@@ -164,3 +164,40 @@ public static class NavigatorExtensions
     ShowMessageDialogAsync(...);
 }
 ```
+
+## Route Schemes
+
+The route takes on a number of attributes of a typical Uri. 
+
+eg: ..
+
+**None eg. Home or ProductDetails**
+**../ eg. ../Home or ../ProductDetails**
+
+Navigates the current region to the desired route. If the region is a Frame, this correlates to navigating to a new page. For selector based regions, such as NavigationView or TabBar, this correlates to selecting the item that is annotated with a Region.Name that matches the route. For other regions, the route is used to determine the type of view to load.
+A single ../ scheme is
+
+**../../ eg. ../../Home**
+Navigates the parent region to the desired route
+
+**./ eg. ./Details/ProductDetails**
+
+Navigates a nested region to the desired route. The example navigates the nested named region, Details, to the route ProductDetails.
+Note: If the name of the nested region, eg Details, correlates to a RouteMap, the current region will attempt to navigate to the View defined by the RouteMap
+
+**-**
+
+Navigates back or provides a response back. If the frame is a region with a backstack >0, the frame will be navigated back to previous page (as if GoBack was called on the frame). For all regions, if the last navigation requested a response, the - scheme will respond with either None or Some (if the navigation request had an associated Data).
+
+**- eg. -Deals**
+
+Navigates back to previous page, before navigating forward to the desired route
+
+**- eg. -/Deals**
+
+Navigates to the desired route and clears the back stack
+
+**! eg. !MessageDialog  or  !CustomDialog
+
+Navigates to the desired route as a dialog. MessageDialog is a predefined route used to display a MessageDialog. CustomDialog is the dialog that inherits from ContentDialog.
+
