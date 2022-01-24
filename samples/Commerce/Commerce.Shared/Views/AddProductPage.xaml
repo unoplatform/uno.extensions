@@ -21,7 +21,6 @@
 		</Grid.RowDefinitions>
 		<utu:NavigationBar Content="Add Product"
 						   x:Uid="Page_NavigationBar"
-						   utu:AutoLayout.CounterAlignment="Stretch"
 						   Style="{StaticResource MaterialNavigationBarStyle}">
 			<utu:NavigationBar.MainCommand>
 				<AppBarButton Foreground="{StaticResource MaterialOnPrimaryMediumBrush}">

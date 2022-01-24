@@ -18,7 +18,7 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 		)
 		where TElement : FrameworkElement
 	{
-		var _view = view;
+		var viewToBind = view;
 		Action<FrameworkElement> action = async (element) =>
 		{
 			var path = element.GetRequest();
@@ -103,28 +103,28 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 		if (view.IsLoaded)
 		{
 			subscribed = true;
-			subscribe(view, handler);
+			subscribe(viewToBind, handler);
 		}
 
-		RoutedEventHandler _loadedHandler = (s, e) =>
+		RoutedEventHandler loadedHandler = (s, e) =>
 		{
 			if (!subscribed)
 			{
 				subscribed = true;
-				subscribe(view, handler);
+				subscribe(viewToBind, handler);
 			}
 		};
-		view.Loaded += _loadedHandler;
-		RoutedEventHandler _unloadedHandler = (s, e) =>
+		view.Loaded += loadedHandler;
+		RoutedEventHandler unloadedHandler = (s, e) =>
 		{
 			if (subscribed)
 			{
 				subscribed = false;
-				unsubscribe(view, handler);
+				unsubscribe(viewToBind, handler);
 			}
 		};
-		view.Unloaded += _unloadedHandler;
+		view.Unloaded += unloadedHandler;
 
-		return new RequestBinding(_view, _loadedHandler, _unloadedHandler);
+		return new RequestBinding(viewToBind, loadedHandler, unloadedHandler);
 	}
 }

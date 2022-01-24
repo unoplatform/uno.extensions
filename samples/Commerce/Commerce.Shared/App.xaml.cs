@@ -223,7 +223,7 @@ namespace Commerce
 														new RouteMap("Checkout", View: typeof(CheckoutPage))
 													})
 											}),
-								new("AddProduct", View: typeof(AddProductPage), ViewModel: typeof(AddProductViewModel)), //, ResultData: typeof(Product)),
+								new("AddProduct", View: typeof(AddProductPage), ViewModel: typeof(AddProductViewModel)), 
 							}));
 
 			;
