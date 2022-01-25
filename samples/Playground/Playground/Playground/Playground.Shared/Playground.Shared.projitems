@@ -19,9 +19,11 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)GlobalUsings.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\AppInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\SimpleStartupService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\FifthViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\FourthViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\HomeViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ShellViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\ComplexDialog.xaml.cs">
       <DependentUpon>ComplexDialog.xaml</DependentUpon>
@@ -59,6 +61,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Views\VisualStatesPage.xaml.cs">
       <DependentUpon>VisualStatesPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)_Compat\IsExternalInit.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="$(MSBuildThisFileDirectory)Views\ComplexDialog.xaml">
@@ -122,6 +125,12 @@
 		 explicitly included in the projitem, so files can be added from vscode
 		 without manipulating the projitem file.
 	-->
+    <Content Include="$(MSBuildThisFileDirectory)appsettings.development.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(MSBuildThisFileDirectory)appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\back.scale-100.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\back.scale-150.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\back.scale-200.png" />

@@ -39,8 +39,6 @@ namespace Playground
 					.UseEnvironment(Environments.Development)
 #endif
 
-					.UseAppSettings()
-
 					// Add platform specific log providers
 					.UseLogging()
 
@@ -52,6 +50,14 @@ namespace Playground
 								.XamlLogLevel(LogLevel.Information)
 								.XamlLayoutLogLevel(LogLevel.Information);
 					})
+
+
+					.UseAppSettings()
+
+					.UseCustomSettings("appsettings.platform.json")
+
+					.UseConfiguration<Playground.Models.AppInfo>()
+
 
 					// Register Json serializers (ISerializer and IStreamSerializer)
 					.UseSerialization()
@@ -219,7 +225,7 @@ namespace Playground
 			routes.Register(new RouteMap("Shell", ViewModel: typeof(ShellViewModel),
 				Nested: new[]
 				{
-					new RouteMap("Home", View: typeof(HomePage)),
+					new RouteMap("Home", View: typeof(HomePage), ViewModel: typeof(HomeViewModel)),
 					new RouteMap("Second", View: typeof(SecondPage)),
 					new RouteMap("Third", View: typeof(ThirdPage)),
 					new RouteMap("Fourth", View: typeof(FourthPage), ViewModel: typeof(FourthViewModel)),

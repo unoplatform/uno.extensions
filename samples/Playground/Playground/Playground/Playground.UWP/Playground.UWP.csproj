@@ -215,6 +215,9 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <Content Include="appsettings.platform.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Playground.UWP_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>

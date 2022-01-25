@@ -19,6 +19,9 @@
 				   FontSize="48" />
 
 		<StackPanel Grid.Row="1">
+			<TextBlock Text="{Binding Platform}"
+					   HorizontalAlignment="Center"
+					   FontSize="24" />
 			<Button uen:Navigation.Request="Second" Content="Second Page" />
 			<Button uen:Navigation.Request="-/Second"
 					Content="Second Page with clear backstack" />

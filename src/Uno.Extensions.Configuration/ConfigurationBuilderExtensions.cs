@@ -12,36 +12,45 @@ namespace Uno.Extensions.Configuration
 {
     public static class ConfigurationBuilderExtensions
     {
-        public static IConfigurationBuilder AddAppSettings(this IConfigurationBuilder configurationBuilder, HostBuilderContext hostingContext)
-        {
-            var prefix = hostingContext.Configuration.GetValue(HostingConstants.AppSettingsPrefixKey, defaultValue: string.Empty);
-            prefix = !string.IsNullOrWhiteSpace(prefix) ? $"{prefix}/" : prefix;
-            return configurationBuilder.AddJsonFile($"{prefix}appsettings.json", optional: true, reloadOnChange: false);
-        }
-        public static IConfigurationBuilder AddEmbeddedAppSettings<TApplicationRoot>(this IConfigurationBuilder configurationBuilder)
-            where TApplicationRoot : class
-        {
-            var generalAppSettingsFileName = $"{AppSettings.AppSettingsFileName}.json";
-            var generalAppSettings =
-                AppSettings.AllAppSettings<TApplicationRoot>()
-                .FirstOrDefault(s => s.FileName.EndsWith(generalAppSettingsFileName, StringComparison.OrdinalIgnoreCase));
+		public static IConfigurationBuilder AddSettings(this IConfigurationBuilder configurationBuilder, HostBuilderContext hostingContext, string settingsFileName)
+		{
+			var prefix = hostingContext.Configuration.GetValue(HostingConstants.AppSettingsPrefixKey, defaultValue: string.Empty);
+			prefix = !string.IsNullOrWhiteSpace(prefix) ? $"{prefix}/" : prefix;
+			return configurationBuilder.AddJsonFile($"{prefix}{settingsFileName}", optional: true, reloadOnChange: false);
+		}
 
-            if (generalAppSettings != null)
-            {
-                configurationBuilder.AddJsonStream(generalAppSettings.GetContent());
-            }
-
-            return configurationBuilder;
+		public static IConfigurationBuilder AddAppSettings(this IConfigurationBuilder configurationBuilder, HostBuilderContext hostingContext)
+        {
+			return configurationBuilder.AddSettings(hostingContext, $"{AppSettings.AppSettingsFileName}.json");
         }
 
-        public static IConfigurationBuilder AddEnvironmentAppSettings(this IConfigurationBuilder configurationBuilder, HostBuilderContext hostingContext)
-        {
-            var env = hostingContext.HostingEnvironment;
+		public static IConfigurationBuilder AddEnvironmentAppSettings(this IConfigurationBuilder configurationBuilder, HostBuilderContext hostingContext)
+		{
+			var env = hostingContext.HostingEnvironment;
+			return configurationBuilder.AddSettings(hostingContext, $"{AppSettings.AppSettingsFileName}.{env.EnvironmentName}.json".ToLower());
+		}
 
-            var prefix = hostingContext.Configuration.GetValue(HostingConstants.AppSettingsPrefixKey, defaultValue: string.Empty);
-            prefix = !string.IsNullOrWhiteSpace(prefix) ? $"{prefix}/" : prefix;
-            return configurationBuilder.AddJsonFile($"{prefix}{AppSettings.AppSettingsFileName}.{env.EnvironmentName}.json".ToLower(), optional: true, reloadOnChange: false);
-        }
+		public static IConfigurationBuilder AddEmbeddedSettings<TApplicationRoot>(this IConfigurationBuilder configurationBuilder, string settingsFileName)
+			where TApplicationRoot : class
+		{
+			var generalAppSettings =
+				AppSettings.AllAppSettings<TApplicationRoot>()
+				.FirstOrDefault(s => s.FileName.EndsWith(settingsFileName, StringComparison.OrdinalIgnoreCase));
+
+			if (generalAppSettings != null)
+			{
+				configurationBuilder.AddJsonStream(generalAppSettings.GetContent());
+			}
+
+			return configurationBuilder;
+		}
+
+		public static IConfigurationBuilder AddEmbeddedAppSettings<TApplicationRoot>(this IConfigurationBuilder configurationBuilder)
+			where TApplicationRoot : class
+		{
+			var generalAppSettingsFileName = $"{AppSettings.AppSettingsFileName}.json";
+			return configurationBuilder.AddEmbeddedSettings<TApplicationRoot>(generalAppSettingsFileName);
+		}
 
         public static IConfigurationBuilder AddEmbeddedEnvironmentAppSettings<TApplicationRoot>(
             this IConfigurationBuilder configurationBuilder, HostBuilderContext hostingContext)
@@ -50,16 +59,7 @@ namespace Uno.Extensions.Configuration
             var env = hostingContext.HostingEnvironment;
 
             var environmentAppSettingsFileName = $"{AppSettings.AppSettingsFileName}.{env.EnvironmentName}.json".ToLower();
-            var environmentAppSettings =
-                AppSettings.AllAppSettings<TApplicationRoot>()
-                .FirstOrDefault(s => s.FileName.EndsWith(environmentAppSettingsFileName, StringComparison.OrdinalIgnoreCase));
-
-            if (environmentAppSettings != null)
-            {
-                configurationBuilder.AddJsonStream(environmentAppSettings.GetContent());
-            }
-
-            return configurationBuilder;
+			return configurationBuilder.AddEmbeddedSettings<TApplicationRoot>(environmentAppSettingsFileName);
         }
 
         public static IConfigurationBuilder AddSectionFromEntity<TEntity>(
