@@ -14,9 +14,10 @@ namespace Uno.Extensions.Configuration
     {
 		public static IConfigurationBuilder AddSettings(this IConfigurationBuilder configurationBuilder, HostBuilderContext hostingContext, string settingsFileName)
 		{
-			var prefix = hostingContext.Configuration.GetValue(HostingConstants.AppSettingsPrefixKey, defaultValue: string.Empty);
-			prefix = !string.IsNullOrWhiteSpace(prefix) ? $"{prefix}/" : prefix;
-			return configurationBuilder.AddJsonFile($"{prefix}{settingsFileName}", optional: true, reloadOnChange: false);
+			var relativePath = $"{HostBuilderExtensions.ConfigurationFolderName}/{settingsFileName}";
+			var rootFolder = (hostingContext.HostingEnvironment as IAppHostEnvironment)?.AppDataPath??String.Empty;
+			var fullPath = Path.Combine(rootFolder, relativePath);
+			return configurationBuilder.AddJsonFile(fullPath, optional: true, reloadOnChange: false);
 		}
 
 		public static IConfigurationBuilder AddAppSettings(this IConfigurationBuilder configurationBuilder, HostBuilderContext hostingContext)
