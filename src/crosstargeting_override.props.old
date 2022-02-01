@@ -1,0 +1,16 @@
+<Project ToolsVersion="15.0">
+  <PropertyGroup>
+    <!-- 
+    This property allows the override of the nuget local cache.
+    Set it to the version you want to override, used in another app.
+		
+		Rename the crosstargeting_override.props.sample to crosstargeting_override.props
+		and uncomment the line below.
+		
+    -->
+    <!--<UnoNugetOverrideVersion>2.23.2-dev.667</UnoNugetOverrideVersion>-->
+
+    <!-- Include netstandard2.0 to make sure all projects build -->
+    <UnoTargetFrameworkOverride>netstandard2.0;uap10.0.18362</UnoTargetFrameworkOverride>
+  </PropertyGroup>
+</Project>
