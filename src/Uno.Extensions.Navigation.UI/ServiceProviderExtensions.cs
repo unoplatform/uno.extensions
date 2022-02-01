@@ -1,4 +1,5 @@
-﻿using Uno.Extensions.Navigation.Regions;
+﻿using Uno.Extensions.Hosting;
+using Uno.Extensions.Navigation.Regions;
 using Uno.Extensions.Navigation.UI;
 
 namespace Uno.Extensions.Navigation;
@@ -51,33 +52,66 @@ public static class ServiceProviderExtensions
 	}
 
 	public static IServiceProvider CloneNavigationScopedServices(this IServiceProvider services)
-    {
-        var scope = services.CreateScope();
-        var scopedServices = scope.ServiceProvider;
-
-        scopedServices.GetRequiredService<RegionControlProvider>().RegionControl = services.GetRequiredService<RegionControlProvider>().RegionControl;
-        var instance = services.GetInstance<INavigator>();
-        if (instance is not null)
-        {
-            scopedServices.AddInstance<INavigator>(instance);
-        }
-
-        return scopedServices;
-    }
-
-	public static FrameworkElement NavigationHost(this IServiceProvider services)
 	{
-		var cc = new ContentControl();
-		cc.HorizontalAlignment = HorizontalAlignment.Stretch;
-		cc.VerticalAlignment = VerticalAlignment.Stretch;
-		cc.HorizontalContentAlignment = HorizontalAlignment.Stretch;
-		cc.VerticalContentAlignment = VerticalAlignment.Stretch;
+		var scope = services.CreateScope();
+		var scopedServices = scope.ServiceProvider;
+
+		scopedServices.GetRequiredService<RegionControlProvider>().RegionControl = services.GetRequiredService<RegionControlProvider>().RegionControl;
+		var instance = services.GetInstance<INavigator>();
+		if (instance is not null)
+		{
+			scopedServices.AddInstance<INavigator>(instance);
+		}
+
+		return scopedServices;
+	}
+
+	public static FrameworkElement NavigationHost(this IServiceProvider services, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
+	{
+		var cc = new ContentControl
+		{
+			HorizontalAlignment = HorizontalAlignment.Stretch,
+			VerticalAlignment = VerticalAlignment.Stretch,
+			HorizontalContentAlignment = HorizontalAlignment.Stretch,
+			VerticalContentAlignment = VerticalAlignment.Stretch
+		};
+
 		// Create the Root region
 		var elementRegion = new NavigationRegion(cc, services);
 		cc.SetInstance(elementRegion);
 
-		elementRegion.Navigator()?.NavigateRouteAsync(cc, "") ;
+		var nav = elementRegion.Navigator();
+		if (nav is not null)
+		{
+			var start = () => Task.CompletedTask;
+			if (initialView is not null)
+			{
+				start = () => nav.NavigateViewAsync(cc, initialView);
+			}
+			else if (initialViewModel is not null)
+			{
+				start = () => nav.NavigateViewModelAsync(cc, initialViewModel);
+			}
+			else
+			{
+				start = () => nav.NavigateRouteAsync(cc, initialRoute ?? string.Empty);
+			}
+			services.Startup(start);
+		}
 
 		return cc;
+	}
+
+	private static async Task Startup(this IServiceProvider services, Func<Task> afterStartup)
+	{
+		var startupServices = services.GetServices<IHostedService>().Select(x => x as IStartupService).Where(x=>x is not null)
+								.Union(services.GetServices<IStartupService>()).ToArray();
+
+		var startServices = startupServices.Select(x => x.StartupComplete()).ToArray();
+		if (startServices?.Any() ?? false)
+		{
+			await Task.WhenAll(startServices);
+		}
+		await afterStartup();
 	}
 }

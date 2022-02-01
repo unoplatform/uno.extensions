@@ -105,7 +105,7 @@ public class ReloadService : IHostedService, IStartupService
 		}
 		catch
 		{
-			Logger.LogTrace($"{file} not included as content");
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTrace($"{file} not included as content");
 		}
 	}
 

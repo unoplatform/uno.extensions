@@ -3,7 +3,14 @@
 public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBase<TView>
 	where TView : FrameworkElement
 {
-	protected void BindAction<TElement, TEventHandler>(
+	private IRouteResolver RouteResolver { get; }
+	protected ActionRequestHandlerBase(IRouteResolver routes)
+	{
+		RouteResolver = routes;
+	}
+
+
+	protected IRequestBinding? BindAction<TElement, TEventHandler>(
 		TElement view,
 		Func<Action<FrameworkElement>, TEventHandler> eventHandler,
 		Action<TElement, TEventHandler> subscribe,
@@ -11,6 +18,7 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 		)
 		where TElement : FrameworkElement
 	{
+		var viewToBind = view;
 		Action<FrameworkElement> action = async (element) =>
 		{
 			var path = element.GetRequest();
@@ -23,6 +31,7 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 
 			var data = element.GetData();
 			var resultType = data?.GetType();
+
 			var binding = element.GetBindingExpression(Navigation.DataProperty);
 			if (binding is not null &&
 				binding.DataItem is not null)
@@ -48,21 +57,31 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 				}
 			}
 
+			if (resultType is null && !string.IsNullOrWhiteSpace(path))
+			{
+				var routeMap = RouteResolver.FindByPath(path);
+				resultType = routeMap?.ResultData;
+			}
+
 
 			if (data is not null ||
 				resultType is not null)
 			{
 
-				if (binding is not null && binding.ParentBinding.Mode == BindingMode.TwoWay)
+				if (resultType is not null)
 				{
 					var response = await nav.NavigateRouteForResultAsync(element, path, Schemes.Current, data, resultType: resultType);
-					if (response is not null)
+					if (binding is not null &&
+					binding.ParentBinding.Mode == BindingMode.TwoWay)
 					{
-						var result = await response.UntypedResult;
-						if (result.IsSome(out var resultValue))
+						if (response is not null)
 						{
-							element.SetData(resultValue);
-							binding.UpdateSource();
+							var result = await response.UntypedResult;
+							if (result.IsSome(out var resultValue))
+							{
+								element.SetData(resultValue);
+								binding.UpdateSource();
+							}
 						}
 					}
 				}
@@ -84,25 +103,28 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 		if (view.IsLoaded)
 		{
 			subscribed = true;
-			subscribe(view, handler);
+			subscribe(viewToBind, handler);
 		}
 
-		view.Loaded += (s, e) =>
+		RoutedEventHandler loadedHandler = (s, e) =>
 		{
 			if (!subscribed)
 			{
 				subscribed = true;
-				subscribe(view, handler);
+				subscribe(viewToBind, handler);
 			}
 		};
-		view.Unloaded += (s, e) =>
+		view.Loaded += loadedHandler;
+		RoutedEventHandler unloadedHandler = (s, e) =>
 		{
 			if (subscribed)
 			{
 				subscribed = false;
-				unsubscribe(view, handler);
+				unsubscribe(viewToBind, handler);
 			}
 		};
-	}
+		view.Unloaded += unloadedHandler;
 
+		return new RequestBinding(viewToBind, loadedHandler, unloadedHandler);
+	}
 }

@@ -50,17 +50,9 @@ public class FrameNavigator : ControlNavigator<Frame>
 
 		if (route.FrameIsBackNavigation())
 		{
-			// If navigation is triggered externally on the Frame (eg back button)
-			// the current page should match the view associated with the previous route
-			var previousRoute = FullRoute.ApplyFrameRoute(RouteResolver, route);
-			if(previousRoute is null)
-			{
-				return false;
-			}
-
-			var previousMapping = RouteResolver.Find(previousRoute);
-			return CanGoBack ||
-					(previousMapping?.View == Control.Content.GetType());
+			// Back navigation code should swallow any excess back navigations (ie when
+			// there is nothing on the back stack)
+			return true;
 		}
 		else
 		{
@@ -135,6 +127,8 @@ public class FrameNavigator : ControlNavigator<Frame>
 
 		InitialiseCurrentView(route, RouteResolver.Find(route));
 
+		CurrentView?.SetNavigatorInstance(Region.Navigator()!);
+
 		var responseRequest = firstSegment with { Scheme = route.Scheme };
 		return responseRequest;
 	}
@@ -147,6 +141,8 @@ public class FrameNavigator : ControlNavigator<Frame>
 		}
 
 		var route = request.Route;
+
+
 		// Remove any excess items in the back stack
 		var numberOfPagesToRemove = route.FrameNumberOfPagesToRemove();
 		while (numberOfPagesToRemove > 0)
@@ -159,7 +155,10 @@ public class FrameNavigator : ControlNavigator<Frame>
 		var previousRoute = FullRoute.ApplyFrameRoute(RouteResolver, responseRoute);
 		var previousBase = previousRoute?.Last()?.Base;
 		var currentBase = RouteResolver.FindByView(Control.Content.GetType())?.Path;
-		if (currentBase != previousBase && previousBase != Control.Content.GetType().Name)
+		if (previousBase is not null &&
+			Control.BackStack.Count > 0 &&
+			currentBase != previousBase &&
+			previousBase != Control.Content.GetType().Name)
 		{
 			var previousMapping = RouteResolver.FindByView(Control.BackStack.Last().SourcePageType);
 			// Invoke the navigation (which will be a back navigation)
@@ -169,6 +168,13 @@ public class FrameNavigator : ControlNavigator<Frame>
 		var mapping = RouteResolver.FindByView(Control.Content.GetType());
 
 		InitialiseCurrentView(previousRoute ?? Route.Empty, mapping);
+
+		// Restore the INavigator instance
+		var navigator = CurrentView?.GetNavigatorInstance();
+		if(navigator is not null)
+		{
+			Region.Services?.AddInstance<INavigator>(navigator);
+		}
 
 		return Task.FromResult<Route?>(responseRoute);
 	}
@@ -212,8 +218,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 				Control.BackStack.Remove(entry);
 				Control.BackStack.Add(newEntry);
 			}
-
-			if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Invoking Frame.GoBack");
+			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Invoking Frame.GoBack");
 			Control.GoBack();
 
 			await EnsurePageLoaded(previousMapping?.Path);
@@ -242,7 +247,15 @@ public class FrameNavigator : ControlNavigator<Frame>
 				if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Invoking Frame.Navigate to type '{viewType.Name}'");
 				var nav = Control.Navigate(viewType, data);
 
+				var currentPage = Control.Content as Page;
+				if (currentPage is not null)
+				{
+					// Force new view model to be created, just in case nav cache mode is set to required
+					currentPage.DataContext = null;
+				}
+
 				await EnsurePageLoaded(path);
+
 				if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Frame.Navigate completed");
 			}
 
@@ -317,5 +330,25 @@ public class FrameNavigator : ControlNavigator<Frame>
 			lastRoute = lastRoute.Next();
 		}
 		Route = lastRoute;
+	}
+}
+
+public static class FrameNavigatorExtensions
+{
+	public static readonly DependencyProperty NavigatorInstanceProperty =
+		DependencyProperty.RegisterAttached(
+			"NavigatorInstance",
+			typeof(INavigator),
+			typeof(FrameNavigatorExtensions),
+			new PropertyMetadata(null));
+
+	public static void SetNavigatorInstance(this FrameworkElement element, INavigator value)
+	{
+		element.SetValue(NavigatorInstanceProperty, value);
+	}
+
+	public static INavigator GetNavigatorInstance(this FrameworkElement element)
+	{
+		return (INavigator)element.GetValue(NavigatorInstanceProperty);
 	}
 }

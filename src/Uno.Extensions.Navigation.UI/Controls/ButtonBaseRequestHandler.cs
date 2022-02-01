@@ -2,15 +2,19 @@
 
 public class ButtonBaseRequestHandler : ActionRequestHandlerBase<ButtonBase>
 {
-	public override void Bind(FrameworkElement view)
+	public ButtonBaseRequestHandler(IRouteResolver routes) : base(routes)
+	{
+	}
+
+	public override IRequestBinding? Bind(FrameworkElement view)
 	{
 		var viewButton = view as ButtonBase;
 		if (viewButton is null)
 		{
-			return;
+			return null;
 		}
 
-		BindAction(viewButton,
+		return BindAction(viewButton,
 			action => new RoutedEventHandler((sender, args) => action((ButtonBase)sender)),
 			(element, handler) => element.Click += handler,
 			(element, handler) => element.Click -= handler);
