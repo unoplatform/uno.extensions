@@ -36,14 +36,14 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			RouteUpdater?.StartNavigation();
 
 			// Initialise the region
-			var requestMap = Region.Services?.GetRequiredService<IRouteResolver>().FindByPath(request.Route.Base);
+			var requestMap = RouteResolver.FindByPath(request.Route.Base);
 			if (requestMap?.Init is not null)
 			{
 				var newRequest = requestMap.Init(request);
 				while (!request.SameRouteBase(newRequest))
 				{
 					request = newRequest;
-					requestMap = Region.Services?.GetRequiredService<IRouteResolver>().FindByPath(request.Route.Base);
+					requestMap = RouteResolver.FindByPath(request.Route.Base);
 					if (requestMap?.Init is not null)
 					{
 						newRequest = requestMap.Init(request);
