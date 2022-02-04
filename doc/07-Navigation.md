@@ -119,7 +119,7 @@ Setting the Region.Navigator attribute controls what navigator type is used for 
 Specifies what route should be navigated to. The trigger for the navigation is specific to the type of control. For example a Button will navigate when the `Click` event is raised. There are handlers for `Button` (`Click`), `NavigationView` (`ItemInvoked`) and `Selector` (`SelectionChanged` or `ItemClick` for `ListView`)
 
 **Navigation.Data = "{Binding MyDataProperty}"**
-The data that should be attached to the navigation request. For Selector (including ListView) the selected item will automatically be attached to the navigation request.
+The data that should be attached to the navigation request. For `Selector` (including `ListView`) the selected item will automatically be attached to the navigation request.
 
 
 
