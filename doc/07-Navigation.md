@@ -116,7 +116,7 @@ This defines the name of any region that gets created below the `FrameworkElemen
 Setting the Region.Navigator attribute controls what navigator type is used for a region. This may be required if two different navigators are registered for the same control type.
 
 **Navigation.Request = "route"**
-Specifies what route should be navigated to. The trigger for the navigation is specific to the type of control. For example a Button will navigate when the Click event is raised. There are handlers for Button (Click), NavigationView (ItemInvoked) and Selector (SelectionChanged or ItemClick for ListView)
+Specifies what route should be navigated to. The trigger for the navigation is specific to the type of control. For example a Button will navigate when the `Click` event is raised. There are handlers for `Button` (`Click`), `NavigationView` (`ItemInvoked`) and `Selector` (`SelectionChanged` or `ItemClick` for `ListView`)
 
 **Navigation.Data = "{Binding MyDataProperty}"**
 The data that should be attached to the navigation request. For Selector (including ListView) the selected item will automatically be attached to the navigation request.
