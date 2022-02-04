@@ -6,7 +6,7 @@ Hosting is provided by [Microsoft.Extensions.Hosting.UWP](https://www.nuget.org/
 
 ## Getting started
 
-The IHost instance for the application should be created as soon as the application instance is created. The following snippet uses the UnoHost static class to create the IHost implementation using the generic host builder. 
+The `IHost` instance for the application should be created as soon as the application instance is created. The following snippet uses the UnoHost static class to create the IHost implementation using the generic host builder. 
 
 ```csharp
 private IHost Host { get; }
