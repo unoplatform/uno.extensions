@@ -64,7 +64,7 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
 }
 ```
 
-If you require your hosted service to start prior to the first navigation (if using [Navigation](./07-Navigation.md)) you can implement the IStartupService interface, returning a task that can be awaited in the StartupComplete method. This might be useful for pre-loading data in order to work out which view to navigate to eg:
+If you require your hosted service to start prior to the first navigation (if using [Navigation](./07-Navigation.md)) you can implement the `IStartupService` interface, returning a task that can be awaited in the `StartupComplete` method. This might be useful for pre-loading data in order to work out which view to navigate to eg:
 
 ```csharp
 public class SimpleStartupService:IHostedService, IStartupService
