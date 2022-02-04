@@ -110,7 +110,7 @@ A region needs to be defined in XAML using one of these attached properties
 Indicates that a region should be attached to the specified `FrameworkElement`. 
 
 **Region.Name = "region"**
-This defines the name of any region that gets created below the FrameworkElement where the Region.Name attribute is set.
+This defines the name of any region that gets created below the `FrameworkElement` where the `Region.Name` attribute is set.
 
 **Region.Navigator = "Visibility"**
 Setting the Region.Navigator attribute controls what navigator type is used for a region. This may be required if two different navigators are registered for the same control type.
