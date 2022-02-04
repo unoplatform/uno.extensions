@@ -1,7 +1,5 @@
 # Hosting
 
-Move this somewhere else >> The unoapp-extensions template uses Uno.Extensions.Hosting to configure the hosting environment for the application. This includes loading configuration information, setting up a dependency container and configure logging for the application. The template is already preconfigured so all you need to do is add your project dependencies, such as services for loading data, and register the routes for your application. 
-
 Hosting is provided by [Microsoft.Extensions.Hosting.UWP](https://www.nuget.org/packages/Uno.Extensions.Hosting.UWP) or [Microsoft.Extensions.Hosting.WinUI](https://www.nuget.org/packages/Uno.Extensions.Hosting.WinUI).
 
 ## Getting started

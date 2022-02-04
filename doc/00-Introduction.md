@@ -2,11 +2,9 @@
 
 ## Overview
 
-**TODO: Need to confirm what the name of the template is. It's referred to here as the Guidance Template but the final name will need to be defined.**
+The unoapp-extensions template uses Uno.Extensions.Hosting to configure the hosting environment for the application. This includes loading configuration information, setting up a dependency container and configure logging for the application. The template is already preconfigured so all you need to do is add your project dependencies, such as services for loading data, and register the routes for your application. 
 
-The Uno.Platform Guidance template is a typical Uno application that makes used of a Shared project for all the application logic and corresponding platform specific projects for each supported platform. The purpose of this template is to provide a starting point for real world applications, making it easy to generate production ready applications. 
-
-The Guidance Template is based on WinUI 3 / Project Reunion. It also includes a UWP project which uses WinUI 2.x for compatibility. 
+The template is a typical Uno application that makes used of a Shared project for all the application logic and corresponding platform specific projects for each supported platform. The purpose of this template is to provide a starting point for real world applications, making it easy to generate production ready applications. 
 
 In addition to referencing Uno, the Guidance Template also references the following packages.
 
