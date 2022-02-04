@@ -21,7 +21,7 @@ public App()
 }
 ```
 
-To use appsettings.json file packaged as embedded resources in the application
+To use appsettings.json file packaged as embedded resources in the application:
 ```csharp
 private IHost Host { get; }
 
