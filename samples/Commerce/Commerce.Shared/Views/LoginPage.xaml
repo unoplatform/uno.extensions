@@ -20,6 +20,10 @@
 						   Text="Welcome."
 						   Style="{StaticResource MaterialHeadline4}" />
 				<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}"
+						   x:Uid="Body_Title"
+						   Text="{Binding Title}"
+						   Style="{StaticResource MaterialSubtitle2}" />
+				<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}"
 						   x:Uid="Body_Log in to your account"
 						   Text="Log in to your account"
 						   Style="{StaticResource MaterialSubtitle2}" />

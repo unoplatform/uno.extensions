@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,14 +17,12 @@ public class ReloadService : IHostedService, IStartupService
 	public ReloadService(
 		ILogger<ReloadService> logger,
 		Reloader reload,
-		IHostEnvironment hostEnvironment,
 		IConfigurationRoot configRoot,
 		IStorageProxy storage)
 	{
 		Logger = logger;
 		Reload = reload;
 		Config = configRoot;
-		HostEnvironment = hostEnvironment;
 		Storage = storage;
 		if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Created");
 	}
@@ -38,47 +37,28 @@ public class ReloadService : IHostedService, IStartupService
 
 	private Reloader Reload { get; }
 
-	private IHostEnvironment HostEnvironment { get; }
-
 	public async Task StartAsync(CancellationToken cancellationToken)
 	{
-		//var localFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
-		//var folder = await localFolder.CreateFolderAsync(HostBuilderExtensions.ConfigurationFolderName, CreationCollisionOption.OpenIfExists);
 		var folderPath = await Storage.CreateLocalFolder(HostBuilderExtensions.ConfigurationFolderName);
 		if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($@"Folder path should be '{folderPath}'");
 
 		var fileProviders = Config.Providers;
 		var reloadEnabled = false;
-		var appSettings = false;
-		var envAppSettings = false;
-		var appSettingsFileName = $"{AppSettings.AppSettingsFileName}.json";
-		var environmentAppSettingsFileName = $"{AppSettings.AppSettingsFileName}.{HostEnvironment.EnvironmentName}.json".ToLower();
+		var configSourceFiles = new List<string>();
 		foreach (var fp in fileProviders)
 		{
-			reloadEnabled = true;
 			if (fp is FileConfigurationProvider fcp)
 			{
-				if (fcp.Source.Path.Contains(appSettingsFileName))
-				{
-					appSettings = true;
-				}
-
-
-				if (fcp.Source.Path.Contains(environmentAppSettingsFileName))
-				{
-					envAppSettings = true;
-				}
+				reloadEnabled = true;
+				// Sometimes fcp.Source.Path returns just filename, sometime config/filename
+				configSourceFiles.Add(Path.GetFileName(fcp.Source.Path));
 			}
 
 		}
-		if (appSettings)
-		{
-			await CopyApplicationFileToLocal(folderPath, $"{AppSettings.AppSettingsFileName}.json".ToLower());
-		}
 
-		if (envAppSettings)
+		foreach (var configSource in configSourceFiles)
 		{
-			await CopyApplicationFileToLocal(folderPath, $"{AppSettings.AppSettingsFileName}.{HostEnvironment.EnvironmentName}.json".ToLower());
+			await CopyApplicationFileToLocal(folderPath, configSource.ToLower());
 		}
 
 		if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Started");

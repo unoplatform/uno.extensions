@@ -8,7 +8,7 @@ For more documentation on dependency injection, read the references listed at th
 
 - You can register a singleton service using `services.AddSingleton<IService, ServiceImplementation>()`. This service will be shared by every user.
 
-  - You don't need to specify any constructor parameters if all dependencies can be resolved automatically. Otherwise, you can use `services.AddSingleton<IService>(s => new ServiceImplementation(..))`.
+  - You don't need to specify any constructor parameters if all dependencies can be resolved automatically (ie from other services that have been registered). Otherwise, you can use `services.AddSingleton<IService>(s => new ServiceImplementation(..))`.
 
 - You can register a service that will be created everytime you request it by using `services.AddTransient<IService, ServiceImplementation>()`. 
 
@@ -36,9 +36,6 @@ You can also use `IServiceProvider.GetService<IService>()` which will return `de
 
 - Circular dependencies will not work with this container. If you do have them, you will get the following exception `A circular dependency was detected for the service of type`.
 
-- You can access the service provider **statically** using `App.Instance.Startup.ServiceProvider`.
-
-- You can access your services from a **view model** using `this.GetService<MyService>`.
 
 ## CommunityToolkit.Mvvm
 
@@ -56,8 +53,6 @@ public App()
     // ........ //
 }
 ```
-
-
 
 ## References
 

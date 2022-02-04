@@ -46,6 +46,16 @@ namespace Uno.Extensions.Configuration
 					});
 		}
 
+		public static IHostBuilder UseCustomSettings(this IHostBuilder hostBuilder, string customSettingsFileName)
+		{
+			return hostBuilder
+					.UseConfiguration()
+					.ConfigureAppConfiguration((ctx, b) =>
+					{
+						b.AddSettings(ctx, customSettingsFileName);
+					});
+		}
+
 		public static IHostBuilder UseEmbeddedAppSettings<TApplicationRoot>(this IHostBuilder hostBuilder, bool includeEnvironmentSettings = true)
 			where TApplicationRoot : class
 		{
@@ -61,7 +71,18 @@ namespace Uno.Extensions.Configuration
 					});
 		}
 
-        public static IHostBuilder UseSettings<TSettingsOptions>(
+		public static IHostBuilder UseCustomEmbeddedSettings<TApplicationRoot>(this IHostBuilder hostBuilder, string customSettingsFileName)
+			where TApplicationRoot : class
+		{
+			return hostBuilder
+					.UseConfiguration()
+					.ConfigureAppConfiguration((ctx, b) =>
+					{
+						b.AddEmbeddedSettings<TApplicationRoot>(customSettingsFileName);
+					});
+		}
+
+		public static IHostBuilder UseSettings<TSettingsOptions>(
             this IHostBuilder hostBuilder,
             Func<HostBuilderContext, IConfigurationSection>? configSection = null)
                 where TSettingsOptions : class, new()
@@ -85,7 +106,6 @@ namespace Uno.Extensions.Configuration
                 .ConfigureAppConfiguration((ctx, b) =>
                     {
                         var path = FilePath(ctx);
-                        Console.WriteLine($"iwrit Config path {path}");
                         b.AddJsonFile(path, optional: true, reloadOnChange: false); // In .NET6 we can enable this again because we can use polling
                     })
                     .ConfigureServices((ctx, services) =>
