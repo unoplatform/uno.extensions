@@ -6,7 +6,7 @@ For more documentation on configuration, read the references listed at the botto
 
 ## AppSettings
 
-To use appsettings.json file packaged as content in the application By default this will also look for settings files that are specific to the current environment, appsettings.<hostenvironment>.json (eg appsettings.development.json). This can be disabled by setting the includeEnvironmentSettings argument to false (default value is true).
+To use `appsettings.json` file packaged as content in the application By default this will also look for settings files that are specific to the current environment, `appsettings.<hostenvironment>.json` (eg `appsettings.development.json`). This can be disabled by setting the `includeEnvironmentSettings` argument to false (default value is true).
 
 ```csharp
 private IHost Host { get; }
