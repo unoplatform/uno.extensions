@@ -107,7 +107,7 @@ There are some containers that are currently supported by default, with others a
 A region needs to be defined in XAML using one of these attached properties
 
 **Region.Attached = true/false**
-Indicates that a region should be attached to the specified FrameworkElement. 
+Indicates that a region should be attached to the specified `FrameworkElement`. 
 
 **Region.Name = "region"**
 This defines the name of any region that gets created below the FrameworkElement where the Region.Name attribute is set.
