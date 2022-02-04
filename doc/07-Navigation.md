@@ -199,5 +199,5 @@ Navigates to the desired route and clears the back stack
 
 **! eg. !MessageDialog  or  !CustomDialog
 
-Navigates to the desired route as a dialog. MessageDialog is a predefined route used to display a MessageDialog. CustomDialog is the dialog that inherits from ContentDialog.
+Navigates to the desired route as a dialog. `MessageDialog` is a predefined route used to display a `MessageDialog`. `CustomDialog` is the dialog that inherits from `ContentDialog`.
 
