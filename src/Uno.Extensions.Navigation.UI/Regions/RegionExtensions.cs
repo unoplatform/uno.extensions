@@ -15,17 +15,13 @@ public static class RegionExtensions
 
     public static Route? GetRoute(this IRegion region)
     {
-        var regionRoute = region.Navigator()?.Route;
-        return regionRoute.Merge(
-                        region?.Children
-                                .Where(
-                                    child => string.IsNullOrWhiteSpace(child.Name) ||
-                                    child.Name == regionRoute?.Base ||
-									(child.View is not null && child.Name == Uno.Extensions.Navigation.UI.Region.GetName(child.View)))
-                                .Select(x => (x.Name, CurrentRoute: x.GetRoute())));
+		var regionRoute = region.Navigator()?.Route;
+		return regionRoute.Merge(
+							region?.Children
+								.Select(x => (x.Name, CurrentRoute: x.GetRoute())));
     }
 
-    public static IEnumerable<IRegion> FindChildren(this IRegion region, Func<IRegion, bool> predicate)
+	public static IEnumerable<IRegion> FindChildren(this IRegion region, Func<IRegion, bool> predicate)
     {
         foreach (var child in region.Children)
         {
