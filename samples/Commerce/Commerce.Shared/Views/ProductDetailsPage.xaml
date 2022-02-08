@@ -17,33 +17,35 @@
 			<x:String x:Key="Icon_more_horiz">M 2 0 C 0.8999999761581421 0 0 0.8999999761581421 0 2 C 0 3.100000023841858 0.8999999761581421 4 2 4 C 3.100000023841858 4 4 3.100000023841858 4 2 C 4 0.8999999761581421 3.100000023841858 0 2 0 Z M 14 0 C 12.899999976158142 0 12 0.8999999761581421 12 2 C 12 3.100000023841858 12.899999976158142 4 14 4 C 15.100000023841858 4 16 3.100000023841858 16 2 C 16 0.8999999761581421 15.100000023841858 0 14 0 Z M 8 0 C 6.899999976158142 0 6 0.8999999761581421 6 2 C 6 3.100000023841858 6.899999976158142 4 8 4 C 9.100000023841858 4 10 3.100000023841858 10 2 C 10 0.8999999761581421 9.100000023841858 0 8 0 Z</x:String>
 			<x:String x:Key="Icon_more_vert">M 2 4 C 3.100000023841858 4 4 3.100000023841858 4 2 C 4 0.8999999761581421 3.100000023841858 0 2 0 C 0.8999999761581421 0 0 0.8999999761581421 0 2 C 0 3.100000023841858 0.8999999761581421 4 2 4 Z M 2 6 C 0.8999999761581421 6 0 6.899999976158142 0 8 C 0 9.100000023841858 0.8999999761581421 10 2 10 C 3.100000023841858 10 4 9.100000023841858 4 8 C 4 6.899999976158142 3.100000023841858 6 2 6 Z M 2 12 C 0.8999999761581421 12 0 12.899999976158142 0 14 C 0 15.100000023841858 0.8999999761581421 16 2 16 C 3.100000023841858 16 4 15.100000023841858 4 14 C 4 12.899999976158142 3.100000023841858 12 2 12 Z</x:String>
 		</utu:AutoLayout.Resources>
-		<utu:NavigationBar Content="Fresh Foam Hierro v6..."
-						   x:Uid="Page_NavigationBar"
-						   utu:AutoLayout.CounterAlignment="Stretch"
-						   Style="{StaticResource MaterialNavigationBarStyle}">
-			<utu:NavigationBar.MainCommand>
-				<AppBarButton Foreground="{StaticResource MaterialOnPrimaryMediumBrush}">
-					<AppBarButton.Icon>
-						<BitmapIcon UriSource="ms-appx:///Assets/Icons/back.png"
-									 />
-					</AppBarButton.Icon>
-				</AppBarButton>
-			</utu:NavigationBar.MainCommand>
-			<utu:NavigationBar.PrimaryCommands>
-				<AppBarButton Foreground="{StaticResource MaterialOnPrimaryMediumBrush}">
-					<AppBarButton.Icon>
-						<BitmapIcon UriSource="ms-appx:///Assets/Icons/notifications.png"
-									 />
-					</AppBarButton.Icon>
-				</AppBarButton>
-				<AppBarButton Foreground="{StaticResource MaterialOnPrimaryMediumBrush}">
-					<AppBarButton.Icon>
-						<BitmapIcon UriSource="ms-appx:///Assets/Icons/help_outline.png"
-									 />
-					</AppBarButton.Icon>
-				</AppBarButton>
-			</utu:NavigationBar.PrimaryCommands>
-		</utu:NavigationBar>
+		<uer:FeedView Source="{Binding Product}">
+			<DataTemplate>
+				<utu:NavigationBar DataContext="{Binding Data}"
+								   Content="{Binding Name}"
+								   x:Uid="Page_NavigationBar"
+								   utu:AutoLayout.CounterAlignment="Stretch"
+								   Style="{StaticResource MaterialNavigationBarStyle}">
+					<utu:NavigationBar.MainCommand>
+						<AppBarButton Foreground="{StaticResource MaterialOnPrimaryMediumBrush}">
+							<AppBarButton.Icon>
+								<BitmapIcon UriSource="ms-appx:///Assets/Icons/back.png" />
+							</AppBarButton.Icon>
+						</AppBarButton>
+					</utu:NavigationBar.MainCommand>
+					<utu:NavigationBar.PrimaryCommands>
+						<AppBarButton Foreground="{StaticResource MaterialOnPrimaryMediumBrush}">
+							<AppBarButton.Icon>
+								<BitmapIcon UriSource="ms-appx:///Assets/Icons/notifications.png" />
+							</AppBarButton.Icon>
+						</AppBarButton>
+						<AppBarButton Foreground="{StaticResource MaterialOnPrimaryMediumBrush}">
+							<AppBarButton.Icon>
+								<BitmapIcon UriSource="ms-appx:///Assets/Icons/help_outline.png" />
+							</AppBarButton.Icon>
+						</AppBarButton>
+					</utu:NavigationBar.PrimaryCommands>
+				</utu:NavigationBar>
+			</DataTemplate>
+		</uer:FeedView>
 		<ScrollViewer utu:AutoLayout.CounterAlignment="Stretch"
 					  utu:AutoLayout.PrimaryAlignment="Stretch">
 			<utu:AutoLayout Background="{StaticResource MaterialSurfaceBrush}">

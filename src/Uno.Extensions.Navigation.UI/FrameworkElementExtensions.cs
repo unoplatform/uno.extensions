@@ -41,27 +41,33 @@ public static class FrameworkElementExtensions
 			return;
 		}
 
-		var completion = new TaskCompletionSource<bool>();
-		element.GetDispatcher().TryEnqueue(async () =>
+		var dispatcher = element.GetDispatcher();
+		if (dispatcher is not null)
 		{
-			await EnsureElementLoaded(element);
-			completion.SetResult(true);
-		});
-		await completion.Task;
+			var completion = new TaskCompletionSource<bool>();
+			var timeoutToken = new CancellationTokenSource(TimeSpan.FromSeconds(1)).Token;
+			dispatcher.TryEnqueue(async () =>
+					{
+						try
+						{
+							await EnsureElementLoaded(element, timeoutToken);
+							completion.SetResult(true);
+						}
+						catch (Exception ex)
+						{
+							if (timeoutToken.IsCancellationRequested)
+							{
+								completion.TrySetCanceled(timeoutToken);
+							}
+							else
+							{
+								completion.SetException(ex);
+							}
+						}
+					});
+			await completion.Task;
+		}
 
-
-//#if !WINDOWS_UWP && !WINUI
-//		var count = VisualTreeHelper.GetChildrenCount(element);
-//		for (int i = 0; i < count; i++)
-//		{
-//			var nextElement = VisualTreeHelper.GetChild(element, i) as FrameworkElement;
-//			if(nextElement is ContentPresenter)
-//			{
-//				continue;
-//			}
-//			await EnsureLoaded(nextElement);
-//		}
-//#endif
 
 #if __ANDROID__
 		// EnsureLoaded can return from LayoutUpdated causing the remaining task to continue from the measure pass.
@@ -71,11 +77,11 @@ public static class FrameworkElementExtensions
 		await Task.Yield();
 #endif
 	}
-	private static async Task EnsureElementLoaded(this FrameworkElement? element)
+	private static Task EnsureElementLoaded(this FrameworkElement? element, CancellationToken? timeoutToken = null)
 	{
 		if (element == null)
 		{
-			return;
+			return Task.CompletedTask;
 		}
 
 		var completion = new TaskCompletionSource<object>();
@@ -88,14 +94,28 @@ public static class FrameworkElementExtensions
 		EventHandler<object>? layoutChanged = null;
 		TypedEventHandler<FrameworkElement, object>? loading = null;
 
+		CancellationTokenRegistration? rego = null;
+		Action timeoutAction = () =>
+		{
+			rego?.Dispose();
+
+			if (timeoutToken is not null)
+			{
+				completion.TrySetCanceled(timeoutToken.Value);
+			}
+		};
+
+		rego = timeoutToken?.Register(timeoutAction);
+
 		Action<bool> loadedAction = (overrideLoaded) =>
 		{
 			if (element.IsLoaded ||
 				(element.ActualHeight > 0 && element.ActualWidth > 0))
 			{
+				rego?.Dispose();
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-				completion.SetResult(null);
+				completion.TrySetResult(null);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
 				element.Loaded -= loaded;
@@ -118,7 +138,7 @@ public static class FrameworkElementExtensions
 			loadedAction(false);
 		}
 
-		await completion.Task;
+		return completion.Task;
 	}
 
 	public static void InjectServicesAndSetDataContext(

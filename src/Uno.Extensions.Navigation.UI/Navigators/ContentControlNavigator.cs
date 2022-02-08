@@ -34,6 +34,9 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 
 		try
 		{
+			// Clear all child navigation regions
+			Region.Children.Clear();
+
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Creating instance of type '{viewType.Name}'");
 			var content = Activator.CreateInstance(viewType);
 			if (!string.IsNullOrWhiteSpace(path) &&
@@ -42,6 +45,8 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 				fe.SetName(path ?? string.Empty);
 			}
 			Control.Content = content;
+
+
 			await (Control.Content as FrameworkElement).EnsureLoaded();
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage("Instance created");
 			return path;
@@ -49,6 +54,8 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 		catch (Exception ex)
 		{
 			if (Logger.IsEnabled(LogLevel.Error)) Logger.LogErrorMessage($"Unable to create instance - {ex.Message}");
+			Control.Content = null;
+			Region.Children.Clear();
 		}
 
 		return default;

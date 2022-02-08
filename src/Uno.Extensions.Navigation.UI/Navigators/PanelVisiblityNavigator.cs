@@ -28,7 +28,10 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
             return string.Empty;
         }
 
-        var controlToShow =
+		// Clear all child navigation regions
+		Region.Children.Clear();
+
+		var controlToShow =
             Control.Children.OfType<FrameworkElement>().FirstOrDefault(x => x.GetName() == path) ??
             Control.FindName(path) as FrameworkElement;
 
@@ -75,6 +78,8 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 			CurrentlyVisibleControl = controlToShow;
 
 			await controlToShow.EnsureLoaded();
+
+			controlToShow?.ReassignRegionParent();
 		}
 
         return path;
