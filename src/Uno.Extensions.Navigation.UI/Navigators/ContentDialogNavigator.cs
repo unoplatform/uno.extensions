@@ -59,6 +59,14 @@ public class ContentDialogNavigator : DialogNavigator
 		}
 
 
+		if (request.Cancellation.HasValue)
+		{
+			request.Cancellation.Value.Register(() =>
+			{
+				showTask.Cancel();
+			});
+		}
+
 		return showTask;
 	}
 }

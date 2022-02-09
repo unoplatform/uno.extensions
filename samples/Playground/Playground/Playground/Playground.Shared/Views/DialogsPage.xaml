@@ -28,10 +28,15 @@
 			<Button Content="MessageDialog Codebehind"
 					Click="MessageDialogCodebehindClick" />
 			<TextBlock x:Name="MessageDialogResultText" />
+			<Button Content="MessageDialog Codebehind (cancel after 2s)"
+					Click="MessageDialogCodebehindCancelClick" />
+			<TextBlock x:Name="MessageDialogCancelResultText" />
 			<Button uen:Navigation.Request="!Simple"
 					Content="SimpleDialog Nav Request" />
 			<Button Content="SimpleDialog Codebehind"
 					Click="SimpleDialogCodebehindClick" />
+			<Button Content="SimpleDialog Codebehind (cancel after 2s)"
+					Click="SimpleDialogCodebehindCancelClick" />
 			<TextBlock x:Name="SimpleDialogResultText" />
 			<Button uen:Navigation.Request="!Complex/ComplexDialogFirst"
 					Content="Complex Dialog Nav Request" />

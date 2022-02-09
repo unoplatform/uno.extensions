@@ -44,6 +44,15 @@ public class MessageDialogNavigator : DialogNavigator
 				CancellationToken.None,
 				TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.DenyChildAttach,
 				TaskScheduler.FromCurrentSynchronizationContext());
+
+		if (request.Cancellation.HasValue)
+		{
+			request.Cancellation.Value.Register(() =>
+			{
+				showTask.Cancel();
+			});
+		}
+
 		return showTask;
 	}
 }

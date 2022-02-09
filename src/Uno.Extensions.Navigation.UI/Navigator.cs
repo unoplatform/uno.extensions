@@ -35,24 +35,9 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		{
 			RouteUpdater?.StartNavigation();
 
-			// Initialise the region
-			var requestMap = RouteResolver.FindByPath(request.Route.Base);
-			if (requestMap?.Init is not null)
-			{
-				var newRequest = requestMap.Init(request);
-				while (!request.SameRouteBase(newRequest))
-				{
-					request = newRequest;
-					requestMap = RouteResolver.FindByPath(request.Route.Base);
-					if (requestMap?.Init is not null)
-					{
-						newRequest = requestMap.Init(request);
-					}
-				}
-				request = newRequest;
-			}
+			request = InitialiseRequest(request);
 
-			// Handle root navigations
+			// Handle root navigations i.e. Scheme starts with /
 			if (request.Route.IsRoot())
 			{
 				// Either
@@ -60,25 +45,30 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 				// - trim the Root scheme ready for handling
 				if (Region.Parent is not null)
 				{
-					return await (Region.Parent?.NavigateAsync(request) ?? Task.FromResult<NavigationResponse?>(default));
+					return await Region.Parent.NavigateAsync(request);
 				}
 				else
 				{
-					// This is the root nav service - need to pass the
-					// request down to children by making the request nested
+					// This is the root nav service - need to trim the root scheme
+					// so that the request can be handled by this navigator
 					request = request with { Route = request.Route.TrimScheme(Schemes.Root) };
 				}
 			}
 
-			// Request for parent (ignore the first layer of parent scheme)
+			// Trim initial ../ scheme
 			if (request.Route.IsParent())
 			{
 				request = request with { Route = request.Route.TrimScheme(Schemes.Parent) };
 
-				// Handle parent navigations
+				// Handle parent navigations i.e. where Scheme starts ../../
 				if (request.Route.IsParent())
 				{
-					return await (Region.Parent?.NavigateAsync(request) ?? Task.FromResult<NavigationResponse?>(default));
+					if (Region.Parent is not null)
+					{
+						return await Region.Parent.NavigateAsync(request);
+					}
+
+					if (Logger.IsEnabled(LogLevel.Error)) Logger.LogError($"No parent to forward request to {request}");
 				}
 			}
 
@@ -87,12 +77,10 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			if (request.Route.IsCurrent() &&
 				!Region.IsNamed() &&
 				Region.Parent is not null
-				&& !(Region.Children.Any(x => x.Name == request.Route.Base))
 				)
 			{
 				return await Region.Parent.NavigateAsync(request);
 			}
-
 
 			// Run dialog requests
 			if (request.Route.IsDialog())
@@ -100,18 +88,12 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 				return await DialogNavigateAsync(request);
 			}
 
-			// If the base matches the region name, than need to strip the base
-			if (!string.IsNullOrWhiteSpace(request.Route.Base) &&
-				request.Route.Base == Region.Name &&
-				!CanNavigateToRoute(request.Route.TrimScheme(Schemes.Nested)))
-			{
-				request = request with { Route = request.Route.Next() };
-			}
-
 			// Make sure the view has completely loaded before trying to process the nav request
 			// Typically this might happen with the first navigation of the application where the
 			// window hasn't been activated yet, so the root region may not have loaded
+			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebug("Ensuring region has loaded - start");
 			await Region.View.EnsureLoaded();
+			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebug("Ensuring region has loaded - end");
 
 			return await ResponseNavigateAsync(request);
 		}
@@ -121,6 +103,26 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			if (Logger.IsEnabled(LogLevel.Information)) Logger.LogInformation($"Post-navigation (route): {Region.Root().GetRoute()}");
 			RouteUpdater?.EndNavigation();
 		}
+	}
+
+	private NavigationRequest InitialiseRequest(NavigationRequest request)
+	{
+		var requestMap = RouteResolver.FindByPath(request.Route.Base);
+		if (requestMap?.Init is not null)
+		{
+			var newRequest = requestMap.Init(request);
+			while (!request.SameRouteBase(newRequest))
+			{
+				request = newRequest;
+				requestMap = RouteResolver.FindByPath(request.Route.Base);
+				if (requestMap?.Init is not null)
+				{
+					newRequest = requestMap.Init(request);
+				}
+			}
+			request = newRequest;
+		}
+		return request;
 	}
 
 	protected virtual bool CanNavigateToRoute(Route route) => route.IsCurrent();
@@ -246,37 +248,4 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 	}
 
 	protected virtual string NavigatorToString { get; } = string.Empty;
-
-	private object? CreateDefaultViewModel()
-	{
-		if (Region.View is null)
-		{
-			return null;
-		}
-
-		var services = Region.Services;
-
-		// Make sure the navigator is in the services so it can be used
-		// when creating the view model
-		services?.AddInstance<INavigator>(this);
-
-		var mapping = RouteResolver.FindByView(Region.View.GetType());
-		if (mapping?.ViewModel is not null)
-		{
-			var vm = services?.GetService(mapping.ViewModel);
-			if (vm is IInjectable<INavigator> navAware)
-			{
-				navAware.Inject(this);
-			}
-
-			if (vm is IInjectable<IServiceProvider> spAware && Region.Services is not null)
-			{
-				spAware.Inject(Region.Services);
-			}
-
-			return vm;
-		}
-
-		return null;
-	}
 }
