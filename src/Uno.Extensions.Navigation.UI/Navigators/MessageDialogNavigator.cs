@@ -45,7 +45,8 @@ public class MessageDialogNavigator : DialogNavigator
 				TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.DenyChildAttach,
 				TaskScheduler.FromCurrentSynchronizationContext());
 
-		if (request.Cancellation.HasValue)
+		if (request.Cancellation.HasValue &&
+			request.Cancellation.Value.CanBeCanceled)
 		{
 			request.Cancellation.Value.Register(() =>
 			{

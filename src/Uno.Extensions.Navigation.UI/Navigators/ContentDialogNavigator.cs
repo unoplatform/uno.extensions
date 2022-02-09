@@ -59,7 +59,8 @@ public class ContentDialogNavigator : DialogNavigator
 		}
 
 
-		if (request.Cancellation.HasValue && request.Cancellation.CanBeCanceled)
+		if (request.Cancellation.HasValue &&
+			request.Cancellation.Value.CanBeCanceled)
 		{
 			request.Cancellation.Value.Register(() =>
 			{
