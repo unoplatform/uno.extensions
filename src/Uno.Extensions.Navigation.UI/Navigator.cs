@@ -172,9 +172,6 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 	{
 		var dialogService = Region.Services?.GetService<INavigatorFactory>()?.CreateService(Region, request);
 
-		//// Trim dialog scheme to prevent recursion when we call Navigate
-		//request = request with { Route = request.Route with { Scheme = Schemes.None } };
-
 		var dialogResponse = await (dialogService?.NavigateAsync(request) ?? Task.FromResult<NavigationResponse?>(default));
 
 		return dialogResponse;
