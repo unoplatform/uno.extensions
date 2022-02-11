@@ -18,7 +18,7 @@
 					</VisualState.StateTriggers>
 					<VisualState.Setters>
 						<Setter Target="NextButton.(uen:Navigation.Request)"
-								Value="./Fifth" />
+								Value="Fifth" />
 						<Setter Target="NextButton.Content"
 								Value="Next - Fifth" />
 					</VisualState.Setters>

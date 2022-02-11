@@ -17,6 +17,15 @@ public class TabBarNavigator : ControlNavigator<TabBar>
 		}
 	}
 
+	protected override bool SchemeIsSupported(Route route) =>
+		base.SchemeIsSupported(route) ||
+		// "../" (change content) Add support for changing current content
+		route.IsChangeContent();
+
+	protected override bool CanNavigateToRoute(Route route) =>
+		base.CanNavigateToRoute(route) &&
+		(FindByPath(RouteResolver.Find(route)?.Path) is not null);
+
 	private async void ControlSelectionChanged(TabBar sender, TabBarSelectionChangedEventArgs args)
 	{
 		var tbi = args.NewItem as TabBarItem;
@@ -32,7 +41,7 @@ public class TabBarNavigator : ControlNavigator<TabBar>
 			return;
 		}
 
-		await nav.NavigateRouteAsync(tbi, tabName);
+		await nav.NavigateRouteAsync(tbi, tabName, scheme: Schemes.ChangeContent);
 	}
 
 	public TabBarNavigator(
@@ -66,9 +75,7 @@ public class TabBarNavigator : ControlNavigator<TabBar>
 					return default;
 				}
 
-				var item = (from tbi in Control.ItemsPanelRoot?.Children.OfType<TabBarItem>()
-							where tbi.GetName() == path || tbi.Name == path
-							select tbi).FirstOrDefault();
+				var item = FindByPath(path);
 				if (item is not null)
 				{
 					var idx = Control.IndexFromContainer(item);
@@ -87,5 +94,18 @@ public class TabBarNavigator : ControlNavigator<TabBar>
 		{
 			Control.SelectionChanged += ControlSelectionChanged;
 		}
+	}
+
+	private TabBarItem? FindByPath(string? path)
+	{
+		if (string.IsNullOrWhiteSpace(path) || Control is null)
+		{
+			return default;
+		}
+
+		var item = (from tbi in Control.Items.OfType<TabBarItem>()
+					where tbi.GetName() == path || tbi.Name == path
+					select tbi).FirstOrDefault();
+		return item;
 	}
 }

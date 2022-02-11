@@ -13,6 +13,10 @@ public class ContentDialogNavigator : DialogNavigator
 	{
 	}
 
+	protected override bool CanNavigateToRoute(Route route) =>
+			base.CanNavigateToRoute(route) &&
+			(RouteResolver.Find(route)?.View?.IsSubclassOf(typeof(ContentDialog)) ?? false);
+
 	protected override async Task<IAsyncInfo?> DisplayDialog(NavigationRequest request, Type? viewType, object? viewModel)
 	{
 		var route = request.Route;

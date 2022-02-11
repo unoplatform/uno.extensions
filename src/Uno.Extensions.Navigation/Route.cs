@@ -3,6 +3,8 @@
 #pragma warning disable SA1313 // Parameter names should begin with lower-case letter
 public record Route(string Scheme, string? Base = null, string? Path = null, IDictionary<string, object>? Data = null)
 {
+	internal  bool IsInternal { get; set; }
+
 	public static Route Empty => new Route(Schemes.None, null, null, null);
 
 	public static Route PageRoute<TPage>() => PageRoute(typeof(TPage));

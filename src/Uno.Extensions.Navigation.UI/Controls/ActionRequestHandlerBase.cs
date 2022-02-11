@@ -9,6 +9,7 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 		RouteResolver = routes;
 	}
 
+	protected string DefaultScheme { get; init; } = Schemes.None;
 
 	protected IRequestBinding? BindAction<TElement, TEventHandler>(
 		TElement view,
@@ -63,6 +64,7 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 				resultType = routeMap?.ResultData;
 			}
 
+			var scheme = path.HasScheme() ? Schemes.None: DefaultScheme;
 
 			if (data is not null ||
 				resultType is not null)
@@ -70,7 +72,8 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 
 				if (resultType is not null)
 				{
-					var response = await nav.NavigateRouteForResultAsync(element, path, Schemes.Current, data, resultType: resultType);
+					
+					var response = await nav.NavigateRouteForResultAsync(element, path, scheme, data, resultType: resultType);
 					if (binding is not null &&
 					binding.ParentBinding.Mode == BindingMode.TwoWay)
 					{
@@ -87,13 +90,13 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 				}
 				else
 				{
-					await nav.NavigateRouteAsync(element, path, Schemes.Current, data);
+					await nav.NavigateRouteAsync(element, path, scheme, data);
 
 				}
 			}
 			else
 			{
-				await nav.NavigateRouteAsync(element, path, Schemes.Current);
+				await nav.NavigateRouteAsync(element, path, scheme);
 			}
 		};
 

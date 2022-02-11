@@ -16,6 +16,15 @@ public class NavigationViewNavigator : ControlNavigator<Microsoft.UI.Xaml.Contro
 		}
 	}
 
+	protected override bool SchemeIsSupported(Route route) =>
+		base.SchemeIsSupported(route) ||
+		// "../" (change content) Add support for changing current content
+		route.IsChangeContent();
+
+	protected override bool CanNavigateToRoute(Route route) =>
+		base.CanNavigateToRoute(route) &&
+		(FindByPath(RouteResolver.Find(route)?.Path) is not null);
+
 	private void ControlSelectionChanged(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewSelectionChangedEventArgs args)
 	{
 		var tbi = args.SelectedItem as FrameworkElement;
@@ -24,7 +33,7 @@ public class NavigationViewNavigator : ControlNavigator<Microsoft.UI.Xaml.Contro
 		if (path is not null &&
 			!string.IsNullOrEmpty(path))
 		{
-			Region.Navigator()?.NavigateRouteAsync(sender, path);
+			Region.Navigator()?.NavigateRouteAsync(sender, path, scheme: Schemes.ChangeContent);
 		}
 	}
 
@@ -47,9 +56,7 @@ public class NavigationViewNavigator : ControlNavigator<Microsoft.UI.Xaml.Contro
 		Control.SelectionChanged -= ControlSelectionChanged;
 		try
 		{
-			var item = (from mi in Control.MenuItems.OfType<FrameworkElement>()
-						where (mi.GetName() ?? mi.Name) == path
-						select mi).FirstOrDefault();
+			var item = FindByPath(path);
 			if (item != null)
 			{
 				Control.SelectedItem = item;
@@ -63,5 +70,18 @@ public class NavigationViewNavigator : ControlNavigator<Microsoft.UI.Xaml.Contro
 			await (Control.Content as FrameworkElement).EnsureLoaded();
 			Control.SelectionChanged += ControlSelectionChanged;
 		}
+	}
+
+	private FrameworkElement? FindByPath(string? path)
+	{
+		if(string.IsNullOrWhiteSpace(path) || Control is null)
+		{
+			return default;
+		}
+
+		var item = (from mi in Control.MenuItems.OfType<FrameworkElement>()
+					where (mi.GetName() ?? mi.Name) == path
+					select mi).FirstOrDefault();
+		return item;
 	}
 }

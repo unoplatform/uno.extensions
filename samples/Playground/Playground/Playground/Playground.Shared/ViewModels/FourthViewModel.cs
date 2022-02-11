@@ -15,7 +15,7 @@ namespace Playground.ViewModels
 
 		public async Task NavigateToFifth()
 		{
-			await _navigator.NavigateViewModelAsync<FifthViewModel>(this, Schemes.Nested);
+			await _navigator.NavigateViewModelAsync<FifthViewModel>(this);
 		}
 	}
 }

@@ -17,7 +17,13 @@ public class FlyoutNavigator : ControlNavigator
 	{
 	}
 
-	protected override bool CanNavigateToRoute(Route route) => base.CanNavigateToRoute(route) || route.IsBackOrCloseNavigation();
+	protected override bool SchemeIsSupported(Route route) =>
+			base.SchemeIsSupported(route) ||
+			// "-" (back or close) Add closing 
+			route.IsBackOrCloseNavigation();
+
+	protected override bool CanNavigateToRoute(Route route) =>
+		base.CanNavigateToRoute(route);
 
 	protected override async Task<Route?> ExecuteRequestAsync(NavigationRequest request)
 	{
@@ -112,7 +118,7 @@ public class FlyoutNavigator : ControlNavigator
 		await flyoutElement.EnsureLoaded();
 
 
-		if (flyoutElement is not null)
+		if (flyoutElement is not null && flyoutElement.Parent is not null)
 		{
 			flyoutElement.SetInstance(null); // Clear region off the flyout element
 			flyoutElement.Parent.SetInstance(Region); // Set region on parent (now that it will be not null)

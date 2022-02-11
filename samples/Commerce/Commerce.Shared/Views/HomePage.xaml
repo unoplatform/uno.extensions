@@ -95,13 +95,15 @@
 					</muxc:NavigationViewItem.Icon>
 				</muxc:NavigationViewItem>
 				<muxc:NavigationViewItem Content="Cart"
-										 uen:Navigation.Request="!Cart">
+										 uen:Navigation.Request="!Cart"
+										 SelectsOnInvoked="False">
 					<muxc:NavigationViewItem.Icon>
 						<PathIcon Data="{StaticResource Icon_shopping_cart}" />
 					</muxc:NavigationViewItem.Icon>
 				</muxc:NavigationViewItem>
 				<muxc:NavigationViewItem Content="Add"
-										 uen:Navigation.Request="../../AddProduct">
+										 uen:Navigation.Request="../../AddProduct"
+										 SelectsOnInvoked="False">
 					<muxc:NavigationViewItem.Icon>
 						<PathIcon Data="{StaticResource Icon_shopping_cart}" />
 					</muxc:NavigationViewItem.Icon>

@@ -177,7 +177,7 @@ public abstract class ControlNavigator : Navigator
 
 	protected virtual void UpdateRoute(Route? route)
 	{
-		Route = route is not null ? new Route(Schemes.Current, route.Base, null, route.Data) : null;
+		Route = route is not null ? new Route(Schemes.None, route.Base, null, route.Data) : null;
 	}
 
 	protected object? CreateViewModel(IServiceProvider services, Route route, RouteMap? mapping)

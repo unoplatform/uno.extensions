@@ -16,7 +16,10 @@ public abstract class DialogNavigator : ControlNavigator
     {
     }
 
-    protected override bool CanNavigateToRoute(Route route) => base.CanNavigateToRoute(route) || route.IsBackOrCloseNavigation();
+	protected override bool SchemeIsSupported(Route route) =>
+			base.SchemeIsSupported(route) ||
+			// "-" (back or close) Add closing 
+			route.IsBackOrCloseNavigation();
 
     protected override async Task<Route?> ExecuteRequestAsync(NavigationRequest request)
     {
