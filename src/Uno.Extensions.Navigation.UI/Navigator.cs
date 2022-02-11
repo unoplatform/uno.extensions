@@ -144,9 +144,6 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 	}
 
 	protected virtual bool SchemeIsSupported(Route route) =>
-		// "" (current) Has been removed to force navigation to be explicit (eg either ../ or ./)
-		// route.IsCurrent() ||					
-
 		// "./" (nested) by default all navigators should be able to forward requests
 		// to child if the Base matches a named child
 		(

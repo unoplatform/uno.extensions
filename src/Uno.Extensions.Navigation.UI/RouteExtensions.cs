@@ -12,7 +12,8 @@ public static class RouteExtensions
 			.StartsWith(Schemes.NavigateBack);
 
 	public static bool IsFrameNavigation(this Route route) =>
-		route.Scheme == Schemes.None || // We want to make forward navigation between frames simple, so don't require +
+		// We want to make forward navigation between frames simple, so don't require +
+		route.Scheme == Schemes.None || 
 		route.Scheme.StartsWith(Schemes.NavigateForward) ||
 		route.Scheme.StartsWith(Schemes.NavigateBack);
 
@@ -31,7 +32,6 @@ public static class RouteExtensions
 	public static bool IsDialog(this Route route) => route.Scheme.StartsWith(Schemes.Dialog);
 
 	public static bool IsLast(this Route route) => route.Next().IsEmpty();
-		//string.IsNullOrWhiteSpace(route?.Path);
 
 	public static Route Last(this Route route)
 	{
