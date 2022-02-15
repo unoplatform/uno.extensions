@@ -147,7 +147,7 @@
 										  ItemsSource="{Binding Data}"
 										  SelectionMode="None"
 										  IsItemClickEnabled="True"
-										  uen:Navigation.Request="+Details">
+										  uen:Navigation.Request="Details">
 									<ListView.ItemsPanel>
 										<ItemsPanelTemplate>
 											<ItemsStackPanel Orientation="Vertical" />
