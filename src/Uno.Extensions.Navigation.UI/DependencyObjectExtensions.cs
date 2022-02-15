@@ -16,7 +16,12 @@ public static class DependencyObjectExtensions
         return element.ServiceForControl(true, element => element.GetInstance());
     }
 
-    public static IRegion? FindParentRegion(this FrameworkElement element, out string routeName)
+	public static IServiceProvider? FindServiceProvider(this FrameworkElement element)
+	{
+		return element.ServiceForControl(true, element => element.GetServiceProvider());
+	}
+
+	public static IRegion? FindParentRegion(this FrameworkElement element, out string routeName)
     {
         var name = element?.GetName() ?? string.Empty;
 

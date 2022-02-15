@@ -1,10 +1,67 @@
-﻿using Uno.Extensions.Navigation.Regions;
-
+﻿using Uno.Extensions.Hosting;
+using Uno.Extensions.Navigation.Regions;
+using Uno.Extensions.Navigation.UI;
 
 namespace Uno.Extensions.Navigation;
 
 public static class FrameworkElementExtensions
 {
+	public static void AttachServices(this FrameworkElement element, IServiceProvider services)
+	{
+		element.SetServiceProvider(services);
+	}
+
+	public static async Task HostAsync(this FrameworkElement root, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
+	{
+		// Make sure the element has loaded and is attached to the visual tree
+		await root.EnsureLoaded();
+
+		Host(root, initialRoute, initialView, initialViewModel);
+	}
+
+	public static void Host(this FrameworkElement root, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
+	{
+
+		var sp = root.FindServiceProvider();
+		var services = sp.CreateScope().ServiceProvider;
+
+		// Create the Root region
+		var elementRegion = new NavigationRegion(root, services);
+		root.SetInstance(elementRegion);
+
+		var nav = elementRegion.Navigator();
+		if (nav is not null)
+		{
+			var start = () => Task.CompletedTask;
+			if (initialView is not null)
+			{
+				start = () => nav.NavigateViewAsync(root, initialView, scheme: Schemes.ChangeContent);
+			}
+			else if (initialViewModel is not null)
+			{
+				start = () => nav.NavigateViewModelAsync(root, initialViewModel, scheme: Schemes.ChangeContent);
+			}
+			else
+			{
+				start = () => nav.NavigateRouteAsync(root, initialRoute ?? string.Empty, scheme: Schemes.ChangeContent);
+			}
+			elementRegion.Services?.Startup(start);
+		}
+	}
+
+	private static async Task Startup(this IServiceProvider services, Func<Task> afterStartup)
+	{
+		var startupServices = services.GetServices<IHostedService>().Select(x => x as IStartupService).Where(x => x is not null)
+								.Union(services.GetServices<IStartupService>()).ToArray();
+
+		var startServices = startupServices.Select(x => x.StartupComplete()).ToArray();
+		if (startServices?.Any() ?? false)
+		{
+			await Task.WhenAll(startServices);
+		}
+		await afterStartup();
+	}
+
 	public static async Task EnsureLoaded(this IRegion region)
 	{
 		if (region.Services is not null)

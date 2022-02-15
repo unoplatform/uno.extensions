@@ -14,5 +14,11 @@
     <_Globbed_Compile Remove="Models\AppInfo.cs" />
     <_Globbed_Compile Remove="Services\SimpleStartupService.cs" />
     <_Globbed_Compile Remove="ViewModels\HomeViewModel.cs" />
+    <_Globbed_Compile Remove="Views\AlternatePage.xaml.cs" />
+    <_Globbed_Compile Remove="Views\MainPage.xaml.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <_Globbled_Page Remove="Views\AlternatePage.xaml" />
+    <_Globbled_Page Remove="Views\MainPage.xaml" />
   </ItemGroup>
 </Project>

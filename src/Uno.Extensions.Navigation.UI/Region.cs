@@ -8,36 +8,52 @@ public static class Region
 	   DependencyProperty.RegisterAttached(
 		   "Instance",
 		   typeof(IRegion),
-		   typeof(Navigation),
+		   typeof(Region),
 		   new PropertyMetadata(null));
 
 	public static readonly DependencyProperty AttachedProperty =
 		DependencyProperty.RegisterAttached(
 			"Attached",
 			typeof(bool),
-			typeof(Navigation),
+			typeof(Region),
 			new PropertyMetadata(false, AttachedChanged));
 
 	public static readonly DependencyProperty ParentProperty =
 		DependencyProperty.RegisterAttached(
 			"Parent",
 			typeof(FrameworkElement),
-			typeof(Navigation),
+			typeof(Region),
 			new PropertyMetadata(null));
 
 	public static readonly DependencyProperty NameProperty =
 		DependencyProperty.RegisterAttached(
 			"Name",
 			typeof(string),
-			typeof(Navigation),
+			typeof(Region),
 			new PropertyMetadata(null));
 
 	public static readonly DependencyProperty NavigatorProperty =
 		DependencyProperty.RegisterAttached(
 			"Navigator",
 			typeof(string),
-			typeof(Navigation),
+			typeof(Region),
 			new PropertyMetadata(null));
+
+	public static readonly DependencyProperty ServiceProviderProperty =
+		DependencyProperty.RegisterAttached(
+			"ServiceProvider",
+			typeof(IServiceProvider),
+			typeof(Region),
+			new PropertyMetadata(null));
+
+	public static readonly DependencyProperty HostProperty =
+	   DependencyProperty.RegisterAttached(
+		   "Host",
+		   typeof(string),
+		   typeof(FrameworkElementExtensions),
+		   new PropertyMetadata(null, HostPropertyChanged));
+
+	
 
 	private static void AttachedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 	{
@@ -131,5 +147,33 @@ public static class Region
 	public static string GetNavigator(this FrameworkElement element)
 	{
 		return (string)element.GetValue(NavigatorProperty);
+	}
+
+	public static void SetServiceProvider(this DependencyObject element, IServiceProvider value)
+	{
+		element.SetValue(ServiceProviderProperty, value);
+	}
+
+	public static IServiceProvider GetServiceProvider(this DependencyObject element)
+	{
+		return (IServiceProvider)element.GetValue(ServiceProviderProperty);
+	}
+
+	private static async void HostPropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
+	{
+		if (dependencyObject is FrameworkElement element)
+		{
+			await element.HostAsync(initialRoute: args.NewValue as string);
+		}
+	}
+
+	public static void SetHost(this DependencyObject element, string value)
+	{
+		element.SetValue(HostProperty, value);
+	}
+
+	public static string GetHost(this DependencyObject element)
+	{
+		return (string)element.GetValue(HostProperty);
 	}
 }

@@ -12,6 +12,7 @@ using Uno.Extensions.Hosting;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Toolkit;
+using Uno.Extensions.Navigation.UI;
 using Uno.Extensions.Serialization;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -122,14 +123,35 @@ namespace Playground
 			_window = Window.Current;
 #endif
 
-			_window.Content = Host.Services.NavigationHost(
-				// Option 1: This requires Shell to be the first RouteMap - best for perf as no reflection required
-				// initialRoute: ""
-				// Option 2: Specify route name
-				// initialRoute: "Shell"
-				// Option 3: Specify the view model. To avoid reflection, you can still define a routemap
-				initialViewModel: typeof(ShellViewModel)
-				);
+			// Option 1: Ad-hoc hosting of Navigation
+			var f = new Frame();
+			f.AttachServices(Host.Services);
+			_window.Content = f;
+			f.Navigate(typeof(MainPage));
+
+			// Option 2: Ad-hoc hosting using root content control
+			//var root = new ContentControl
+			//{
+			//	HorizontalAlignment = HorizontalAlignment.Stretch,
+			//	VerticalAlignment = VerticalAlignment.Stretch,
+			//	HorizontalContentAlignment = HorizontalAlignment.Stretch,
+			//	VerticalContentAlignment = VerticalAlignment.Stretch
+			//};
+			//root.AttachServices(Host.Services);
+			//_window.Content = root;
+			//root.Host(initialRoute: "Shell");
+
+			// Option 3: Default hosting
+			//_window.Content = Host.Services.NavigationHost(
+			//	// Option 1: This requires Shell to be the first RouteMap - best for perf as no reflection required
+			//	// initialRoute: ""
+			//	// Option 2: Specify route name
+			//	// initialRoute: "Shell"
+			//	// Option 3: Specify the view model. To avoid reflection, you can still define a routemap
+			//	initialViewModel: typeof(ShellViewModel)
+			//	);
+
+
 			_window.Activate();
 
 			await Task.Run(()=>Host.StartAsync());

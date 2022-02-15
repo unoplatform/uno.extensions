@@ -68,7 +68,7 @@ public static class ServiceProviderExtensions
 
 	public static FrameworkElement NavigationHost(this IServiceProvider services, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
 	{
-		var cc = new ContentControl
+		var root = new ContentControl
 		{
 			HorizontalAlignment = HorizontalAlignment.Stretch,
 			VerticalAlignment = VerticalAlignment.Stretch,
@@ -76,42 +76,10 @@ public static class ServiceProviderExtensions
 			VerticalContentAlignment = VerticalAlignment.Stretch
 		};
 
-		// Create the Root region
-		var elementRegion = new NavigationRegion(cc, services);
-		cc.SetInstance(elementRegion);
+		root.SetServiceProvider(services);
 
-		var nav = elementRegion.Navigator();
-		if (nav is not null)
-		{
-			var start = () => Task.CompletedTask;
-			if (initialView is not null)
-			{
-				start = () => nav.NavigateViewAsync(cc, initialView, qualifier:Qualifiers.ChangeContent);
-			}
-			else if (initialViewModel is not null)
-			{
-				start = () => nav.NavigateViewModelAsync(cc, initialViewModel, qualifier: Qualifiers.ChangeContent);
-			}
-			else
-			{
-				start = () => nav.NavigateRouteAsync(cc, initialRoute ?? string.Empty, qualifier: Qualifiers.ChangeContent);
-			}
-			services.Startup(start);
-		}
+		root.Host(initialRoute, initialView, initialViewModel);
 
-		return cc;
-	}
-
-	private static async Task Startup(this IServiceProvider services, Func<Task> afterStartup)
-	{
-		var startupServices = services.GetServices<IHostedService>().Select(x => x as IStartupService).Where(x=>x is not null)
-								.Union(services.GetServices<IStartupService>()).ToArray();
-
-		var startServices = startupServices.Select(x => x.StartupComplete()).ToArray();
-		if (startServices?.Any() ?? false)
-		{
-			await Task.WhenAll(startServices);
-		}
-		await afterStartup();
+		return root;
 	}
 }
