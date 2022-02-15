@@ -18,7 +18,7 @@
 						VerticalAlignment="Stretch"
 						HorizontalContentAlignment="Stretch"
 						VerticalContentAlignment="Stretch"
-						uen:Region.Host="Shell" />
+						uen:Region.Attached="true" />
 		<StackPanel Orientation="Horizontal"
 					Grid.Row="1">
 			<Button Content="Back to Main"

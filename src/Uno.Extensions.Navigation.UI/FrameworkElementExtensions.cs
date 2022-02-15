@@ -27,7 +27,6 @@ public static class FrameworkElementExtensions
 
 		// Create the Root region
 		var elementRegion = new NavigationRegion(root, services);
-		root.SetInstance(elementRegion);
 
 		var nav = elementRegion.Navigator();
 		if (nav is not null)
@@ -49,7 +48,7 @@ public static class FrameworkElementExtensions
 		}
 	}
 
-	private static async Task Startup(this IServiceProvider services, Func<Task> afterStartup)
+	public static async Task Startup(this IServiceProvider services, Func<Task> afterStartup)
 	{
 		var startupServices = services.GetServices<IHostedService>().Select(x => x as IStartupService).Where(x => x is not null)
 								.Union(services.GetServices<IStartupService>()).ToArray();

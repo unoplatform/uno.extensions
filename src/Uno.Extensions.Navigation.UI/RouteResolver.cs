@@ -15,7 +15,9 @@ public class RouteResolver : IRouteResolver
 
 		if (maps is not null)
 		{
-			First = maps.FirstOrDefault();
+			// Set the first routemap to be either the first with IsDefault, if
+			// if none have IsDefault then just return the first
+			First = maps.FirstOrDefault(x=>x.IsDefault)?? maps.FirstOrDefault();
 			maps.Flatten().ForEach(route => Mappings[route.Path] = route);
 		}
 

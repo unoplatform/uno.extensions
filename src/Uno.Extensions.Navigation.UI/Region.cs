@@ -46,15 +46,6 @@ public static class Region
 			typeof(Region),
 			new PropertyMetadata(null));
 
-	public static readonly DependencyProperty HostProperty =
-	   DependencyProperty.RegisterAttached(
-		   "Host",
-		   typeof(string),
-		   typeof(FrameworkElementExtensions),
-		   new PropertyMetadata(null, HostPropertyChanged));
-
-	
-
 	private static void AttachedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 	{
 		if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
@@ -72,7 +63,6 @@ public static class Region
 	{
 		var existingRegion = Region.GetInstance(element);
 		var region = existingRegion ?? new NavigationRegion(element);
-		element.SetInstance(region);
 	}
 
 	public static void SetInstance(this DependencyObject element, IRegion? value)
@@ -157,23 +147,5 @@ public static class Region
 	public static IServiceProvider GetServiceProvider(this DependencyObject element)
 	{
 		return (IServiceProvider)element.GetValue(ServiceProviderProperty);
-	}
-
-	private static async void HostPropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
-	{
-		if (dependencyObject is FrameworkElement element)
-		{
-			await element.HostAsync(initialRoute: args.NewValue as string);
-		}
-	}
-
-	public static void SetHost(this DependencyObject element, string value)
-	{
-		element.SetValue(HostProperty, value);
-	}
-
-	public static string GetHost(this DependencyObject element)
-	{
-		return (string)element.GetValue(HostProperty);
 	}
 }

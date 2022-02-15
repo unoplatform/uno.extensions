@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Navigation.Regions;
+﻿using Uno.Extensions.Navigation.UI;
+
+namespace Uno.Extensions.Navigation.Regions;
 
 public sealed class NavigationRegion : IRegion
 {
@@ -58,22 +60,28 @@ public sealed class NavigationRegion : IRegion
         {
             View.Loading += ViewLoading;
             View.Loaded += ViewLoaded;
-        }
+			View.SetInstance(this);
+		}
 
-        if (services is not null)
+		if (services is not null)
         {
-			_isRoot = true;
-			_services = services;
-            _services.AddInstance<IRegion>(this);
-            var serviceFactory = _services.GetRequiredService<INavigatorFactory>();
-			var navigator = serviceFactory.CreateService(this);
-#pragma warning disable CS8603 // Possible null reference return.
-			_services.AddInstance<INavigator>(() => navigator);
-#pragma warning restore CS8603 // Possible null reference return.
+			InitialiseRootRegion(services);
         }
     }
 
-    private async void ViewLoaded(object sender, RoutedEventArgs e)
+	private void InitialiseRootRegion(IServiceProvider services)
+	{
+		_isRoot = true;
+		_services = services;
+		_services.AddInstance<IRegion>(this);
+		var serviceFactory = _services.GetRequiredService<INavigatorFactory>();
+		var navigator = serviceFactory.CreateService(this);
+#pragma warning disable CS8603 // Possible null reference return.
+		_services.AddInstance<INavigator>(() => navigator);
+#pragma warning restore CS8603 // Possible null reference return.
+	}
+
+	private async void ViewLoaded(object sender, RoutedEventArgs e)
     {
         await HandleLoading();
     }
@@ -129,6 +137,25 @@ public sealed class NavigationRegion : IRegion
                 Parent = parent;
             }
         }
+
+		if(Parent is null && !_isRoot && _services is null)
+		{
+			var sp = View.FindServiceProvider();
+			var services = sp?.CreateScope().ServiceProvider;
+			if (services is null)
+			{
+				return;
+			}
+
+			InitialiseRootRegion(services);
+
+			var nav = this.Navigator();
+			if (nav is not null)
+			{
+				var start = () => nav.NavigateRouteAsync(this, route: string.Empty, qualifier: Qualifiers.ChangeContent);
+				services.Startup(start);
+			}
+		}
     }
 
     public void ReassignParent()
