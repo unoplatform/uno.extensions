@@ -16,9 +16,9 @@ public class PopupNavigator : ControlNavigator<Popup>
     {
     }
 
-	protected override bool SchemeIsSupported(Route route) =>
-			base.SchemeIsSupported(route) ||
-			route.Scheme == Schemes.None ||
+	protected override bool QualifierIsSupported(Route route) =>
+			base.QualifierIsSupported(route) ||
+			route.Qualifier == Qualifiers.None ||
 			// "-" (back or close) Add closing 
 			route.IsBackOrCloseNavigation();
 

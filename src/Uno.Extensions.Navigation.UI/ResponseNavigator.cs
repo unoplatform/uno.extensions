@@ -36,9 +36,9 @@ public class ResponseNavigator<TResult> : IResponseNavigator, IInstance<IService
 		var navResponse = await Navigation.NavigateAsync(request);
 
 		if (request.Route.FrameIsBackNavigation() ||
-			request.Route.TrimScheme(Schemes.Parent).FrameIsBackNavigation() || // Handles ../- 
-			request.Route.TrimScheme(Schemes.Nested).FrameIsBackNavigation() || // Handles ./- 
-			(request.Route.IsRoot() && request.Route.TrimScheme(Schemes.Root).FrameIsBackNavigation() && this.Navigation.GetParent() == null))
+			request.Route.TrimQualifier(Qualifiers.Parent).FrameIsBackNavigation() || // Handles ../- 
+			request.Route.TrimQualifier(Qualifiers.Nested).FrameIsBackNavigation() || // Handles ./- 
+			(request.Route.IsRoot() && request.Route.TrimQualifier(Qualifiers.Root).FrameIsBackNavigation() && this.Navigation.GetParent() == null))
 		{
 			var responseData = request.Route.ResponseData();
 			var result = responseData is Option<TResult> res ? res : default;

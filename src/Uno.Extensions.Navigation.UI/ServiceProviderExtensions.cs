@@ -86,15 +86,15 @@ public static class ServiceProviderExtensions
 			var start = () => Task.CompletedTask;
 			if (initialView is not null)
 			{
-				start = () => nav.NavigateViewAsync(cc, initialView, scheme:Schemes.ChangeContent);
+				start = () => nav.NavigateViewAsync(cc, initialView, qualifier:Qualifiers.ChangeContent);
 			}
 			else if (initialViewModel is not null)
 			{
-				start = () => nav.NavigateViewModelAsync(cc, initialViewModel, scheme: Schemes.ChangeContent);
+				start = () => nav.NavigateViewModelAsync(cc, initialViewModel, qualifier: Qualifiers.ChangeContent);
 			}
 			else
 			{
-				start = () => nav.NavigateRouteAsync(cc, initialRoute ?? string.Empty, scheme: Schemes.ChangeContent);
+				start = () => nav.NavigateRouteAsync(cc, initialRoute ?? string.Empty, qualifier: Qualifiers.ChangeContent);
 			}
 			services.Startup(start);
 		}
