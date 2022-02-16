@@ -11,11 +11,14 @@ using Uno.Extensions.Configuration;
 using Uno.Extensions.Hosting;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation;
+using Uno.Extensions.Navigation.Regions;
 using Uno.Extensions.Navigation.Toolkit;
 using Uno.Extensions.Navigation.UI;
 using Uno.Extensions.Serialization;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.Core;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Navigation;
 
@@ -123,6 +126,9 @@ namespace Playground
 			_window = Window.Current;
 #endif
 
+			var notif = Host.Services.GetService<IRouteNotifier>();
+			notif.RouteChanged += RouteUpdated;
+
 			// Option 1: Ad-hoc hosting of Navigation
 			var f = new Frame();
 			f.AttachServices(Host.Services);
@@ -155,6 +161,30 @@ namespace Playground
 			_window.Activate();
 
 			await Task.Run(()=>Host.StartAsync());
+		}
+
+
+		public async void RouteUpdated(object sender, RouteChangedEventArgs e)
+		{
+			try
+			{
+				var rootRegion = e.Region.Root();
+				var route = rootRegion.GetRoute();
+
+
+#if !__WASM__ && !WINUI
+				CoreApplication.MainView?.DispatcherQueue.TryEnqueue(() =>
+				{
+					var appTitle = ApplicationView.GetForCurrentView();
+					appTitle.Title = "Commerce: " + (route + "").Replace("+", "/");
+				});
+#endif
+
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine("Error: " + ex.Message);
+			}
 		}
 
 		/// <summary>

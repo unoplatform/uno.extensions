@@ -2,8 +2,8 @@
 
 internal interface IRouteUpdater
 {
-	void StartNavigation();
+	void StartNavigation(IRegion region);
 
-	void EndNavigation();
+	void EndNavigation(IRegion region);
 }
 

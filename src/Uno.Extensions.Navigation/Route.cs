@@ -11,7 +11,7 @@ public record Route(string Qualifier, string? Base = null, string? Path = null, 
 
 	public static Route PageRoute(Type pageType) => PageRoute(pageType.Name);
 
-	public static Route PageRoute(string path) => new Route(Qualifiers.NavigateForward, path, null, null);
+	public static Route PageRoute(string path) => new Route(Qualifiers.None, path, null, null);
 
 	public static Route NestedRoute<TView>() => NestedRoute(typeof(TView));
 

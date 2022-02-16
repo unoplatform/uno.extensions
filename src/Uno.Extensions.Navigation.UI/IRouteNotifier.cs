@@ -2,6 +2,6 @@
 
 public interface IRouteNotifier
 {
-	event EventHandler RouteChanged;
+	event EventHandler<RouteChangedEventArgs> RouteChanged;
 }
 

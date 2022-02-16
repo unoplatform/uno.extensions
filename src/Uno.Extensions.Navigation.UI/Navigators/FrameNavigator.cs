@@ -16,7 +16,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 		IRegion region,
 		IRouteResolver routeResolver,
 		RegionControlProvider controlProvider)
-		: base(logger, region, routeResolver,  controlProvider.RegionControl as Frame)
+		: base(logger, region, routeResolver, controlProvider.RegionControl as Frame)
 	{
 	}
 
@@ -24,7 +24,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 	{
 		if (Control?.Content is not null)
 		{
-			if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Navigating to type '{Control.SourcePageType.Name}' (initial Content set on Frame)");
+			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Navigating to type '{Control.SourcePageType.Name}' (initial Content set on Frame)");
 			var viewType = Control.Content.GetType();
 			Region.Navigator()?.NavigateViewAsync(this, viewType);
 		}
@@ -46,11 +46,11 @@ public class FrameNavigator : ControlNavigator<Frame>
 					// Where a FrameView is injected, a dialog route can flow to the framenavigator
 					route.IsDialog()
 				)
-		); 
+		);
 
 	protected override bool CanNavigateToRoute(Route route)
 	{
-		if(Control is null)
+		if (Control is null)
 		{
 			return false;
 		}
@@ -167,14 +167,22 @@ public class FrameNavigator : ControlNavigator<Frame>
 		var previousRoute = FullRoute.ApplyFrameRoute(RouteResolver, responseRoute);
 		var previousBase = previousRoute?.Last()?.Base;
 		var currentBase = RouteResolver.FindByView(Control.Content.GetType())?.Path;
-		if (previousBase is not null &&
+		if (previousBase is not null)
+		{
+			if (
 			Control.BackStack.Count > 0 &&
 			currentBase != previousBase &&
 			previousBase != Control.Content.GetType().Name)
+			{
+				var previousMapping = RouteResolver.FindByView(Control.BackStack.Last().SourcePageType);
+				// Invoke the navigation (which will be a back navigation)
+				FrameGoBack(route.Data, previousMapping);
+			}
+		}
+		else
 		{
-			var previousMapping = RouteResolver.FindByView(Control.BackStack.Last().SourcePageType);
-			// Invoke the navigation (which will be a back navigation)
-			FrameGoBack(route.Data, previousMapping);
+			// Attempting to navigate back when there's no previous page
+			responseRoute = Route.Empty;
 		}
 
 		var mapping = RouteResolver.FindByView(Control.Content.GetType());
@@ -183,7 +191,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 
 		// Restore the INavigator instance
 		var navigator = CurrentView?.GetNavigatorInstance();
-		if(navigator is not null)
+		if (navigator is not null)
 		{
 			Region.Services?.AddInstance<INavigator>(navigator);
 		}
@@ -193,7 +201,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 
 	private void Frame_Navigated(object sender, NavigationEventArgs e)
 	{
-		if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Frame has navigated to page '{e.SourcePageType.Name}'");
+		if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Frame has navigated to page '{e.SourcePageType.Name}'");
 
 		if (e.NavigationMode == NavigationMode.New)
 		{
@@ -221,7 +229,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 			Control.Navigated -= Frame_Navigated;
 			if (parameter is not null)
 			{
-				if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Replacing last backstack item to inject parameter '{parameter.GetType().Name}'");
+				if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Replacing last backstack item to inject parameter '{parameter.GetType().Name}'");
 				// If a parameter is being sent back, we need to replace
 				// the last frame on the backstack with one that has the correct
 				// parameter value. This value can be extracted via the OnNavigatedTo method
@@ -235,7 +243,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 
 			await EnsurePageLoaded(previousMapping?.Path);
 
-			if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Frame.GoBack completed");
+			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Frame.GoBack completed");
 			Control.Navigated += Frame_Navigated;
 		}
 		catch (Exception ex)
@@ -256,7 +264,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 		{
 			if (Control.Content?.GetType() != viewType)
 			{
-				if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Invoking Frame.Navigate to type '{viewType.Name}'");
+				if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Invoking Frame.Navigate to type '{viewType.Name}'");
 				var nav = Control.Navigate(viewType, data);
 
 				var currentPage = Control.Content as Page;
@@ -268,7 +276,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 
 				await EnsurePageLoaded(path);
 
-				if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Frame.Navigate completed");
+				if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Frame.Navigate completed");
 			}
 
 			return path;
@@ -308,9 +316,9 @@ public class FrameNavigator : ControlNavigator<Frame>
 		{
 			return;
 		}
-		if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Removing last item from backstack (current count = {Control.BackStack.Count})");
+		if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Removing last item from backstack (current count = {Control.BackStack.Count})");
 		Control.BackStack.RemoveAt(Control.BackStack.Count - 1);
-		if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Item removed from backstack");
+		if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Item removed from backstack");
 	}
 
 	private void ClearBackStack()
@@ -320,9 +328,9 @@ public class FrameNavigator : ControlNavigator<Frame>
 			return;
 		}
 
-		if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Clearing backstack");
+		if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Clearing backstack");
 		Control.BackStack.Clear();
-		if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Backstack cleared");
+		if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Backstack cleared");
 	}
 
 	private Route? FullRoute { get; set; }

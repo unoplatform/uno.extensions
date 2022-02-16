@@ -14,7 +14,6 @@ public static class RouteExtensions
 	public static bool IsFrameNavigation(this Route route) =>
 		// We want to make forward navigation between frames simple, so don't require +
 		route.Qualifier == Qualifiers.None || 
-		route.Qualifier.StartsWith(Qualifiers.NavigateForward) ||
 		route.Qualifier.StartsWith(Qualifiers.NavigateBack);
 
 	public static bool IsInternal(this Route route) => route.IsInternal;
@@ -75,21 +74,20 @@ public static class RouteExtensions
 			return new Route[] { };
 		}
 
-		var segments = new List<Route>() { route with { Qualifier = Qualifiers.NavigateForward, Path = null, Data = (route.IsLastFrameRoute(mappings) ? route.Data : null) } };
+		var segments = new List<Route>() { route with { Qualifier = Qualifiers.None, Path = null, Data = (route.IsLastFrameRoute(mappings) ? route.Data : null) } };
 		var nextRoute = route.Next();
 		while (
-			!nextRoute.IsEmpty() && (
-			nextRoute.Qualifier == Qualifiers.NavigateForward ||
-			nextRoute.IsPageRoute(mappings)))
+			!nextRoute.IsEmpty() && 
+			nextRoute.IsPageRoute(mappings))
 		{
-			segments.Add(nextRoute with { Qualifier = Qualifiers.NavigateForward, Path = null, Data = (nextRoute.IsLastFrameRoute(mappings) ? nextRoute.Data : null) });
+			segments.Add(nextRoute with { Qualifier = Qualifiers.None, Path = null, Data = (nextRoute.IsLastFrameRoute(mappings) ? nextRoute.Data : null) });
 			nextRoute = nextRoute.Next();
 		}
 		return segments.ToArray();
 	}
 
 	public static string[] ForwardNavigationSegments(this string path) =>
-		path.Split(Qualifiers.NavigateForward.First()).Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
+		path.Split(Qualifiers.Separator.First()).Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
 
 	public static object? ResponseData(this Route route) =>
 		(route?.Data?.TryGetValue(string.Empty, out var result) ?? false) ? result : null;
@@ -181,7 +179,7 @@ public static class RouteExtensions
 			Path = (routeToAppend.Qualifier == Qualifiers.Nested ? Qualifiers.Separator : routeToAppend.Qualifier) +
 					routeToAppend.Base +
 					routeToAppend.Path +
-					(((route.Path?.StartsWith(Qualifiers.Separator) ?? false) || (route.Path?.StartsWith(Qualifiers.NavigateForward) ?? false)) ?
+					(((route.Path?.StartsWith(Qualifiers.Separator) ?? false) ) ?
 						string.Empty :
 						Qualifiers.Separator) +
 					route.Path
@@ -451,13 +449,9 @@ public static class RouteExtensions
 	public static Route? ApplyFrameRoute(this Route? currentRoute, IRouteResolver routeResolver, Route frameRoute)
 	{
 		var qualifier = frameRoute.Qualifier;
-		if (string.IsNullOrWhiteSpace(frameRoute.Qualifier))
-		{
-			qualifier = Qualifiers.NavigateForward;
-		}
 		if (currentRoute is null)
 		{
-			return frameRoute with { Qualifier = Qualifiers.NavigateForward };
+			return frameRoute with { Qualifier = Qualifiers.None };
 		}
 		else
 		{
@@ -486,9 +480,9 @@ public static class RouteExtensions
 				segments.RemoveAt(0);
 			}
 
-			var routePath = segments.Count > 0 ? string.Join("", segments.Select(x => $"{x.Qualifier}{x.Base}")) : string.Empty;
+			var routePath = segments.Count > 0 ? string.Join(Qualifiers.Separator, segments.Select(x => $"{x.Base}")) : string.Empty;
 
-			return new Route(Qualifiers.NavigateForward, routeBase, routePath, frameRoute.Data);
+			return new Route(Qualifiers.None, routeBase, routePath, frameRoute.Data);
 		}
 	}
 }
