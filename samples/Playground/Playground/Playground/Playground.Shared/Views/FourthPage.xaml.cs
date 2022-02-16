@@ -42,7 +42,7 @@ namespace Playground.Views
 
 		private void FifthPageClick(object sender, RoutedEventArgs args)
 		{
-			Navigator.NavigateViewAsync<FifthPage>(this, Schemes.Nested);
+			Navigator.NavigateViewAsync<FifthPage>(this);
 		}
 
 		public void Inject(INavigator entity)

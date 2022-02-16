@@ -21,7 +21,7 @@ public class SelectorRequestHandler : ControlRequestHandlerBase<Selector>
 				return;
 			}
 
-			await nav.NavigateRouteAsync(sender, path, Schemes.Current, navdata);
+			await nav.NavigateRouteAsync(sender, path, Schemes.None, navdata);
 		};
 
 		SelectionChangedEventHandler selectionAction = async (actionSender, actionArgs) =>

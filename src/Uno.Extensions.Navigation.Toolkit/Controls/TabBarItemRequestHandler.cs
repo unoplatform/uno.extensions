@@ -1,12 +1,10 @@
-﻿using Uno.Extensions.Navigation.UI;
-using Uno.Toolkit.UI;
-
-namespace Uno.Extensions.Navigation.Toolkit.Controls;
+﻿namespace Uno.Extensions.Navigation.Toolkit.Controls;
 
 public class TabBarItemRequestHandler : ActionRequestHandlerBase<TabBarItem>
 {
 	public TabBarItemRequestHandler(IRouteResolver routes) : base(routes)
 	{
+		DefaultScheme = Schemes.ChangeContent;
 	}
 
 	public override IRequestBinding? Bind(FrameworkElement view)

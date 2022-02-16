@@ -6,20 +6,32 @@ namespace Uno.Extensions.Navigation.Navigators;
 
 public class PanelVisiblityNavigator : ControlNavigator<Panel>
 {
-    public const string NavigatorName = "Visibility";
+	public const string NavigatorName = "Visibility";
 
-    protected override FrameworkElement? CurrentView => CurrentlyVisibleControl;
+	protected override FrameworkElement? CurrentView => CurrentlyVisibleControl;
 
-    public PanelVisiblityNavigator(
-        ILogger<PanelVisiblityNavigator> logger,
-        IRegion region,
-        IRouteResolver routeResolver,
-        RegionControlProvider controlProvider)
-        : base(logger, region, routeResolver, controlProvider.RegionControl as Grid)
-    {
-    }
+	public PanelVisiblityNavigator(
+		ILogger<PanelVisiblityNavigator> logger,
+		IRegion region,
+		IRouteResolver routeResolver,
+		RegionControlProvider controlProvider)
+		: base(logger, region, routeResolver, controlProvider.RegionControl as Grid)
+	{
+	}
 
-    private FrameworkElement? CurrentlyVisibleControl { get; set; }
+	protected override bool SchemeIsSupported(Route route) =>
+		base.SchemeIsSupported(route) ||
+		// "../" (change content) Add support for changing current content
+		route.IsChangeContent();
+
+	protected override bool CanNavigateToRoute(Route route) =>
+		base.CanNavigateToRoute(route) &&
+		(
+			(FindByPath(RouteResolver.Find(route)?.Path ?? route.Base) is not null) ||
+			(RouteResolver.Find(route)?.View?.IsSubclassOf(typeof(FrameworkElement)) ?? false)		
+		);
+
+	private FrameworkElement? CurrentlyVisibleControl { get; set; }
 
     protected override async Task<string?> Show(string? path, Type? viewType, object? data)
     {
@@ -31,10 +43,7 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 		// Clear all child navigation regions
 		Region.Children.Clear();
 
-		var controlToShow =
-            Control.Children.OfType<FrameworkElement>().FirstOrDefault(x => x.GetName() == path) ??
-            Control.FindName(path) as FrameworkElement;
-
+		var controlToShow = FindByPath(path);
         if (controlToShow is null)
         {
             try
@@ -84,4 +93,17 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 
         return path;
     }
+
+	private FrameworkElement? FindByPath(string? path)
+	{
+		if (string.IsNullOrWhiteSpace(path))
+		{
+			return default;
+		}
+
+		var controlToShow =
+			Control.Children.OfType<FrameworkElement>().FirstOrDefault(x => x.GetName() == path) ??
+			Control.FindName(path) as FrameworkElement;
+		return controlToShow;
+	}
 }

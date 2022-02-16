@@ -1,9 +1,4 @@
-﻿using Uno.Extensions.Navigation.Toolkit.Controls;
-using Uno.Extensions.Navigation.Toolkit.Navigators;
-using Uno.Extensions.Navigation.UI;
-using Uno.Toolkit.UI;
-
-namespace Uno.Extensions.Navigation.Toolkit;
+﻿namespace Uno.Extensions.Navigation.Toolkit;
 
 public static class ServiceCollectionExtensions
 {

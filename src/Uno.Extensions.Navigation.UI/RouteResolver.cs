@@ -44,9 +44,7 @@ public class RouteResolver : IRouteResolver
 	{
 		if (
 			path is null ||
-			string.IsNullOrWhiteSpace(path) ||
-			path == Schemes.Parent ||
-			path == Schemes.Current)
+			string.IsNullOrWhiteSpace(path))
 		{
 			return null;
 		}

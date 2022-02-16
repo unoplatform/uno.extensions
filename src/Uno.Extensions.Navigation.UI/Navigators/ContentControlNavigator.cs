@@ -17,6 +17,15 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 	{
 	}
 
+	protected override bool SchemeIsSupported(Route route) =>
+		base.SchemeIsSupported(route) ||
+		// "../" (change content) Add support for changing current content
+		route.IsChangeContent();
+
+	protected override bool CanNavigateToRoute(Route route) =>
+			base.CanNavigateToRoute(route) &&
+			(RouteResolver.Find(route)?.View?.IsSubclassOf(typeof(FrameworkElement)) ?? true); // Inject a FrameView if no View specified
+
 	protected override async Task<string?> Show(string? path, Type? viewType, object? data)
 	{
 		if (viewType is null ||
@@ -47,16 +56,20 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 			Control.Content = content;
 
 
-			await (Control.Content as FrameworkElement).EnsureLoaded();
-			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage("Instance created");
-			return path;
+			if (await (Control.Content as FrameworkElement).EnsureLoaded())
+			{
+				if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage("Instance created");
+				return path;
+			}
 		}
 		catch (Exception ex)
 		{
 			if (Logger.IsEnabled(LogLevel.Error)) Logger.LogErrorMessage($"Unable to create instance - {ex.Message}");
-			Control.Content = null;
-			Region.Children.Clear();
 		}
+
+		// Content not loaded, so dispose of content and remove all children
+		Control.Content = null;
+		Region.Children.Clear();
 
 		return default;
 	}

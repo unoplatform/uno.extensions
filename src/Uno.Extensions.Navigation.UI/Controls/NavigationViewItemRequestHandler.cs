@@ -7,6 +7,7 @@ public class NavigationViewItemRequestHandler : ActionRequestHandlerBase<Navigat
 {
 	public NavigationViewItemRequestHandler(IRouteResolver routes) : base(routes)
 	{
+		DefaultScheme = Schemes.ChangeContent;
 	}
 
 	public override IRequestBinding? Bind(FrameworkElement view)

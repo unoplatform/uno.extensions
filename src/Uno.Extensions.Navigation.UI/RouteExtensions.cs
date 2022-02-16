@@ -7,31 +7,31 @@ public static class RouteExtensions
 	private static Regex nonAlphaRegex = new Regex(@"([^a-zA-Z0-9])+");
 	private static Regex alphaRegex = new Regex(@"([a-zA-Z0-9])+");
 
-	public static bool EmptyScheme(this Route route) => string.IsNullOrWhiteSpace(route.Scheme);
-
-	public static bool IsCurrent(this Route route) => route.Scheme == Schemes.Current;
-
 	public static bool IsBackOrCloseNavigation(this Route route) =>
-	route.Scheme
-		.TrimStart(Schemes.Parent) // Handle eg ../-  which is still a back navigation
-		.StartsWith(Schemes.NavigateBack);
+		route.Scheme
+			.StartsWith(Schemes.NavigateBack);
 
 	public static bool IsFrameNavigation(this Route route) =>
+		// We want to make forward navigation between frames simple, so don't require +
+		route.Scheme == Schemes.None || 
 		route.Scheme.StartsWith(Schemes.NavigateForward) ||
 		route.Scheme.StartsWith(Schemes.NavigateBack);
 
+	public static bool IsInternal(this Route route) => route.IsInternal;
+
 	public static bool IsRoot(this Route route) => route.Scheme.StartsWith(Schemes.Root);
+
+	public static bool IsChangeContent(this Route route) =>
+		(route.Scheme.StartsWith(Schemes.ChangeContent) && !route.IsParent()) ||
+		(route.Scheme==Schemes.None && route.IsInternal);
 
 	public static bool IsParent(this Route route) => route.Scheme.StartsWith(Schemes.Parent);
 
-	public static bool IsNested(this Route route, bool checkIfLastScheme = false) => checkIfLastScheme ?
-		route.Scheme == Schemes.Nested :
-		route.Scheme.StartsWith(Schemes.Nested);
+	public static bool IsNested(this Route route) => route.Scheme.StartsWith(Schemes.Nested);
 
 	public static bool IsDialog(this Route route) => route.Scheme.StartsWith(Schemes.Dialog);
 
-
-	public static bool IsLast(this Route route) => string.IsNullOrWhiteSpace(route?.Path);
+	public static bool IsLast(this Route route) => route.Next().IsEmpty();
 
 	public static Route Last(this Route route)
 	{
@@ -46,9 +46,9 @@ public static class RouteExtensions
 	}
 
 	public static bool IsEmpty(this Route route) => route is not null ?
-		(route.Scheme == Schemes.Current || route.Scheme == Schemes.Nested) &&
+		(route.Scheme == Schemes.None || route.Scheme == Schemes.ChangeContent || route.Scheme == Schemes.Nested) &&
 		string.IsNullOrWhiteSpace(route.Base) :
-		false;
+		true;
 
 	// eg -/NextPage
 	public static bool FrameIsRooted(this Route route) => route?.Scheme.EndsWith(Schemes.Root + string.Empty) ?? false;
@@ -220,7 +220,7 @@ public static class RouteExtensions
 		var routeBase = path.ExtractBase(out var nextScheme, out var nextPath);
 		if (nextScheme == Schemes.Root)
 		{
-			nextScheme = Schemes.Current;
+			nextScheme = Schemes.None;
 		}
 		return route with { Scheme = nextScheme, Base = routeBase, Path = nextPath };
 	}
@@ -243,15 +243,20 @@ public static class RouteExtensions
 
 	public static string NextPath(this Route route)
 	{
-		route.Path.ExtractBase(out var nextScheme, out var nextPath);
+		route.Path.ExtractBase(out var _, out var nextPath);
 		return nextPath;
 	}
 	public static string NextScheme(this Route route)
 	{
-		route.Path.ExtractBase(out var nextScheme, out var nextPath);
+		route.Path.ExtractBase(out var nextScheme, out var _);
 		return nextScheme;
 	}
 
+	public static bool HasScheme(this string path)
+	{
+		var _ = ExtractBase(path, out var scheme, out var _);
+		return !string.IsNullOrWhiteSpace(scheme);
+	}
 	public static string? ExtractBase(this string? path, out string nextScheme, out string nextPath)
 	{
 		nextPath = path ?? string.Empty;
@@ -399,7 +404,7 @@ public static class RouteExtensions
 			return route;
 		}
 
-		var separator = nextRoute.Scheme == Schemes.Current ? Schemes.Separator : string.Empty;
+		var separator = nextRoute.Scheme == Schemes.None ? Schemes.Separator : string.Empty;
 
 
 		var child = nextRoute;
@@ -407,7 +412,7 @@ public static class RouteExtensions
 		{
 			child = child with
 			{
-				Scheme = Schemes.Current,
+				Scheme = Schemes.None,
 				Base = regionName,
 				Path = (string.IsNullOrWhiteSpace(child.Scheme) ?
 							Schemes.Separator :

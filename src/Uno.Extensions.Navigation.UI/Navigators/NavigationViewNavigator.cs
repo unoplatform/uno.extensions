@@ -1,67 +1,43 @@
-﻿using Uno.Extensions.Navigation;
-using Uno.Extensions.Navigation.UI;
-using Uno.Extensions.Navigation.Regions;
+﻿namespace Uno.Extensions.Navigation.Navigators;
 
-namespace Uno.Extensions.Navigation.Navigators;
-
-public class NavigationViewNavigator : ControlNavigator<Microsoft.UI.Xaml.Controls.NavigationView>
+public class NavigationViewNavigator : SelectorNavigator<Microsoft.UI.Xaml.Controls.NavigationView>
 {
-	protected override FrameworkElement? CurrentView => Control?.SelectedItem as FrameworkElement;
-
-	public override void ControlInitialize()
-	{
-		if (Control is not null)
-		{
-			Control.SelectionChanged += ControlSelectionChanged;
-		}
-	}
-
-	private void ControlSelectionChanged(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewSelectionChangedEventArgs args)
-	{
-		var tbi = args.SelectedItem as FrameworkElement;
-
-		var path = tbi?.GetName() ?? tbi?.Name;
-		if (path is not null &&
-			!string.IsNullOrEmpty(path))
-		{
-			Region.Navigator()?.NavigateRouteAsync(sender, path);
-		}
-	}
-
 	public NavigationViewNavigator(
-		ILogger<NavigationViewNavigator> logger,
-		IRegion region,
-		IRouteResolver routeResolver,
-		RegionControlProvider controlProvider)
-		: base(logger, region, routeResolver, controlProvider.RegionControl as Microsoft.UI.Xaml.Controls.NavigationView)
+	ILogger<NavigationViewNavigator> logger,
+	IRegion region,
+	IRouteResolver routeResolver,
+	RegionControlProvider controlProvider)
+	: base(logger, region, routeResolver, controlProvider)
 	{
 	}
 
-	protected override async Task<string?> Show(string? path, Type? viewType, object? data)
+	protected override FrameworkElement? SelectedItem
 	{
-		if (Control is null)
+		get => Control?.SelectedItem as FrameworkElement;
+		set
 		{
-			return null;
-		}
-
-		Control.SelectionChanged -= ControlSelectionChanged;
-		try
-		{
-			var item = (from mi in Control.MenuItems.OfType<FrameworkElement>()
-						where (mi.GetName() ?? mi.Name) == path
-						select mi).FirstOrDefault();
-			if (item != null)
+			if (Control is not null)
 			{
-				Control.SelectedItem = item;
+				Control.SelectedItem = value;
 			}
+		}
+	}
 
-			// Don't return path, as we need for path to be passed down to children
+	protected override IEnumerable<FrameworkElement>? Items => Control?.MenuItems.OfType<FrameworkElement>();
+
+	protected override Action? AttachSelectionChanged(Action<FrameworkElement, FrameworkElement?> selectionChanged)
+	{
+		var control = Control;
+		if(control is null)
+		{
 			return default;
 		}
-		finally
-		{
-			await (Control.Content as FrameworkElement).EnsureLoaded();
-			Control.SelectionChanged += ControlSelectionChanged;
-		}
+
+		TypedEventHandler<Microsoft.UI.Xaml.Controls.NavigationView, Microsoft.UI.Xaml.Controls.NavigationViewSelectionChangedEventArgs> handler =
+			(nv, args) => selectionChanged(nv, args.SelectedItem as FrameworkElement);
+
+		control.SelectionChanged += handler;
+		return () => control.SelectionChanged -= handler;
+
 	}
 }

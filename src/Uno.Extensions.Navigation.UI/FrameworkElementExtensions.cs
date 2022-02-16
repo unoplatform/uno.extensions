@@ -34,14 +34,15 @@ public static class FrameworkElementExtensions
 		Windows.ApplicationModel.Core.CoreApplication.MainView.DispatcherQueue;
 #endif
 
-	public static async Task EnsureLoaded(this FrameworkElement? element)
+	public static async Task<bool> EnsureLoaded(this FrameworkElement? element)
 	{
 		if (element is null)
 		{
-			return;
+			return false;
 		}
 
 		var dispatcher = element.GetDispatcher();
+		var success = true;
 		if (dispatcher is not null)
 		{
 			var completion = new TaskCompletionSource<bool>();
@@ -57,7 +58,7 @@ public static class FrameworkElementExtensions
 						{
 							if (timeoutToken.IsCancellationRequested)
 							{
-								completion.TrySetCanceled(timeoutToken);
+								completion.SetResult(false);
 							}
 							else
 							{
@@ -65,7 +66,7 @@ public static class FrameworkElementExtensions
 							}
 						}
 					});
-			await completion.Task;
+			success = await completion.Task;
 		}
 
 
@@ -76,6 +77,8 @@ public static class FrameworkElementExtensions
 		// By yielding here, we avoid such situation from happening.
 		await Task.Yield();
 #endif
+
+		return success;
 	}
 	private static Task EnsureElementLoaded(this FrameworkElement? element, CancellationToken? timeoutToken = null)
 	{

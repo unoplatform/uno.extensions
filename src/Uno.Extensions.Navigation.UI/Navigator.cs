@@ -35,83 +35,83 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		{
 			RouteUpdater?.StartNavigation();
 
-			// Initialise the region
-			var requestMap = RouteResolver.FindByPath(request.Route.Base);
-			if (requestMap?.Init is not null)
+			request = InitialiseRequest(request);
+
+			if (!request.Route.IsInternal)
 			{
-				var newRequest = requestMap.Init(request);
-				while (!request.SameRouteBase(newRequest))
+
+				if (!SchemeIsSupported(request.Route))
 				{
-					request = newRequest;
-					requestMap = RouteResolver.FindByPath(request.Route.Base);
-					if (requestMap?.Init is not null)
+					// Trim ../../ before routing request to parent
+					if (request.Route.IsParent())
 					{
-						newRequest = requestMap.Init(request);
+						request = request with { Route = request.Route.TrimScheme(Schemes.Parent) };
+					}
+
+					if (request.Route.IsEmpty())
+					{
+						return default;
+					}
+
+					if (Region.Parent is not null)
+					{
+						return await Region.Parent.NavigateAsync(request);
+					}
+					else
+					{
+						if (Logger.IsEnabled(LogLevel.Error)) Logger.LogError($"No parent to forward request to {request}");
+						return default;
 					}
 				}
-				request = newRequest;
-			}
 
-			// Handle root navigations
-			if (request.Route.IsRoot())
-			{
-				// Either
-				// - forward to parent (if parent is not null)
-				// - trim the Root scheme ready for handling
-				if (Region.Parent is not null)
+				// Handle root navigations i.e. Scheme starts with /
+				if (request.Route.IsRoot())
 				{
-					return await (Region.Parent?.NavigateAsync(request) ?? Task.FromResult<NavigationResponse?>(default));
+					// Either
+					// - this is the root Region, so trim Root scheme
+					// - Or, this is an invalid navigation
+					if (Region.Parent is null)
+					{
+						// This is the root nav service - need to trim the root scheme
+						// so that the request can be handled by this navigator
+						request = request with { Route = request.Route.TrimScheme(Schemes.Root) };
+					}
+					else
+					{
+						if (Logger.IsEnabled(LogLevel.Error)) Logger.LogError($"Attempting to handle Root scheme by non-root navigator");
+						return default;
+					}
 				}
-				else
-				{
-					// This is the root nav service - need to pass the
-					// request down to children by making the request nested
-					request = request with { Route = request.Route.TrimScheme(Schemes.Root) };
-				}
-			}
 
-			// Request for parent (ignore the first layer of parent scheme)
-			if (request.Route.IsParent())
-			{
-				request = request with { Route = request.Route.TrimScheme(Schemes.Parent) };
-
-				// Handle parent navigations
-				if (request.Route.IsParent())
+				// Is this region is an unnamed child of a composite,
+				// send request to parent if the route has no scheme
+				if (request.Route.IsChangeContent() &&
+					!Region.IsNamed() &&
+					Region.Parent is not null
+					)
 				{
-					return await (Region.Parent?.NavigateAsync(request) ?? Task.FromResult<NavigationResponse?>(default));
+					return await Region.Parent.NavigateAsync(request);
 				}
 			}
 
-			// Is this region is an unnamed child of a composite,
-			// send request to parent if the route has no scheme
-			if (request.Route.IsCurrent() &&
-				!Region.IsNamed() &&
-				Region.Parent is not null
-				&& !(Region.Children.Any(x => x.Name == request.Route.Base))
-				)
+			if (!request.Route.IsInternal)
 			{
-				return await Region.Parent.NavigateAsync(request);
-			}
+				// Append Internal scheme to avoid requests being sent back to parent
+				request = request with { Route = request.Route with { IsInternal = true } };
 
-
-			// Run dialog requests
-			if (request.Route.IsDialog())
-			{
-				return await DialogNavigateAsync(request);
-			}
-
-			// If the base matches the region name, than need to strip the base
-			if (!string.IsNullOrWhiteSpace(request.Route.Base) &&
-				request.Route.Base == Region.Name &&
-				!CanNavigateToRoute(request.Route.TrimScheme(Schemes.Nested)))
-			{
-				request = request with { Route = request.Route.Next() };
+				// Run dialog requests
+				if (request.Route.IsDialog())
+				{
+					return await DialogNavigateAsync(request);
+				}
 			}
 
 			// Make sure the view has completely loaded before trying to process the nav request
 			// Typically this might happen with the first navigation of the application where the
 			// window hasn't been activated yet, so the root region may not have loaded
+			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebug("Ensuring region has loaded - start");
 			await Region.View.EnsureLoaded();
+			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebug("Ensuring region has loaded - end");
 
 			return await ResponseNavigateAsync(request);
 		}
@@ -123,14 +123,51 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		}
 	}
 
-	protected virtual bool CanNavigateToRoute(Route route) => route.IsCurrent();
+	private NavigationRequest InitialiseRequest(NavigationRequest request)
+	{
+		var requestMap = RouteResolver.FindByPath(request.Route.Base);
+		if (requestMap?.Init is not null)
+		{
+			var newRequest = requestMap.Init(request);
+			while (!request.SameRouteBase(newRequest))
+			{
+				request = newRequest;
+				requestMap = RouteResolver.FindByPath(request.Route.Base);
+				if (requestMap?.Init is not null)
+				{
+					newRequest = requestMap.Init(request);
+				}
+			}
+			request = newRequest;
+		}
+		return request;
+	}
+
+	protected virtual bool SchemeIsSupported(Route route) =>
+		// "./" (nested) by default all navigators should be able to forward requests
+		// to child if the Base matches a named child
+		(
+			route.IsNested() &&
+			this.Region.Children.Any(
+				x => string.IsNullOrWhiteSpace(x.Name) ||
+				x.Name == route.Base ||
+				x.Name == this.Route?.Base)
+		)
+		||
+		(
+			// If this is root navigator, need to support / (root) and ! (dialog) requests
+			(this.Region.Parent is null) &&
+				(
+					route.IsRoot() ||
+					route.IsDialog()
+				)
+		);
+
+	protected virtual bool CanNavigateToRoute(Route route) => SchemeIsSupported(route);
 
 	private async Task<NavigationResponse?> DialogNavigateAsync(NavigationRequest request)
 	{
 		var dialogService = Region.Services?.GetService<INavigatorFactory>()?.CreateService(Region, request);
-
-		// Trim dialog scheme to prevent recursion when we call Navigate
-		request = request with { Route = request.Route with { Scheme = Schemes.Current } };
 
 		var dialogResponse = await (dialogService?.NavigateAsync(request) ?? Task.FromResult<NavigationResponse?>(default));
 
@@ -183,11 +220,6 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 	protected virtual async Task<NavigationResponse?> CoreNavigateAsync(NavigationRequest request)
 	{
-		if (request.Route.IsCurrent() || request.Route.IsBackOrCloseNavigation())
-		{
-			request = request with { Route = request.Route.AppendScheme(Schemes.Nested) };
-		}
-
 		if (request.Route.IsEmpty())
 		{
 			var route = RouteResolver.FindByPath(this.Route?.Base);
@@ -207,11 +239,14 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			}
 		}
 
+		// Don't propagate the response request further than a named region
 		if (!string.IsNullOrWhiteSpace(Region.Name) && request.Result is not null)
 		{
 			request = request with { Result = null };
 		}
 
+		// The "./" prefix is no longer required as we pass the request down the hierarchy
+		request = request with { Route = request.Route.TrimScheme(Schemes.Nested) };
 
 		var children = Region.Children.Where(region =>
 										// Unnamed child regions
@@ -246,37 +281,4 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 	}
 
 	protected virtual string NavigatorToString { get; } = string.Empty;
-
-	private object? CreateDefaultViewModel()
-	{
-		if (Region.View is null)
-		{
-			return null;
-		}
-
-		var services = Region.Services;
-
-		// Make sure the navigator is in the services so it can be used
-		// when creating the view model
-		services?.AddInstance<INavigator>(this);
-
-		var mapping = RouteResolver.FindByView(Region.View.GetType());
-		if (mapping?.ViewModel is not null)
-		{
-			var vm = services?.GetService(mapping.ViewModel);
-			if (vm is IInjectable<INavigator> navAware)
-			{
-				navAware.Inject(this);
-			}
-
-			if (vm is IInjectable<IServiceProvider> spAware && Region.Services is not null)
-			{
-				spAware.Inject(Region.Services);
-			}
-
-			return vm;
-		}
-
-		return null;
-	}
 }

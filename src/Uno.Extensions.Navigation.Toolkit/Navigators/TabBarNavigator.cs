@@ -1,91 +1,43 @@
-﻿using Uno.Extensions.Navigation;
-using Uno.Extensions.Navigation.UI;
-using Uno.Toolkit.UI;
-using Uno.Extensions.Navigation.Regions;
-using Uno.Extensions.Navigation.Navigators;
+﻿namespace Uno.Extensions.Navigation.Toolkit.Navigators;
 
-
-namespace Uno.Extensions.Navigation.Toolkit.Navigators;
-
-public class TabBarNavigator : ControlNavigator<TabBar>
+public class TabBarNavigator : SelectorNavigator<TabBar>
 {
-	public override void ControlInitialize()
-	{
-		if (Control is not null)
-		{
-			Control.SelectionChanged += ControlSelectionChanged;
-		}
-	}
-
-	private async void ControlSelectionChanged(TabBar sender, TabBarSelectionChangedEventArgs args)
-	{
-		var tbi = args.NewItem as TabBarItem;
-		if (tbi is null)
-		{
-			return;
-		}
-		await tbi.EnsureLoaded();
-		var tabName = tbi.GetName() ?? tbi.Name;
-		var nav = Region.Navigator();
-		if (nav is null)
-		{
-			return;
-		}
-
-		await nav.NavigateRouteAsync(tbi, tabName);
-	}
-
 	public TabBarNavigator(
-		ILogger<TabBarNavigator> logger,
-		IRegion region,
-		IRouteResolver routeResolver,
-		RegionControlProvider controlProvider)
-		: base(logger, region, routeResolver, controlProvider.RegionControl as TabBar)
+	ILogger<TabBarNavigator> logger,
+	IRegion region,
+	IRouteResolver routeResolver,
+	RegionControlProvider controlProvider)
+	: base(logger, region, routeResolver, controlProvider)
 	{
 	}
 
-	protected override async Task<string?> Show(string? path, Type? viewType, object? data)
+	protected override FrameworkElement? SelectedItem
 	{
-		if (Control is null)
+		get => Control?.SelectedItem as FrameworkElement;
+		set
 		{
-			return null;
-		}
-
-		Control.SelectionChanged -= ControlSelectionChanged;
-		try
-		{
-			if (int.TryParse(path, out var index))
+			if (Control is not null)
 			{
-				Control.SelectedIndex = index;
-				return path;
-			}
-			else
-			{
-				if (Control.ItemsPanelRoot is null)
-				{
-					return default;
-				}
-
-				var item = (from tbi in Control.ItemsPanelRoot?.Children.OfType<TabBarItem>()
-							where tbi.GetName() == path || tbi.Name == path
-							select tbi).FirstOrDefault();
-				if (item is not null)
-				{
-					var idx = Control.IndexFromContainer(item);
-					if (Control.SelectedIndex != idx)
-					{
-						Control.SelectedIndex = idx;
-						await (item as FrameworkElement).EnsureLoaded();
-					}
-					return path;
-				}
-
-				return default;
+				Control.SelectedItem = value;
 			}
 		}
-		finally
+	}
+
+	protected override IEnumerable<FrameworkElement>? Items => Control?.Items.OfType<FrameworkElement>();
+
+	protected override Action? AttachSelectionChanged(Action<FrameworkElement, FrameworkElement?> selectionChanged)
+	{
+		var control = Control;
+		if (control is null)
 		{
-			Control.SelectionChanged += ControlSelectionChanged;
+			return default;
 		}
+
+		TypedEventHandler<TabBar, TabBarSelectionChangedEventArgs> handler =
+			(nv, args) => selectionChanged(nv, args.NewItem as FrameworkElement);
+
+		control.SelectionChanged += handler;
+		return () => control.SelectionChanged -= handler;
+
 	}
 }
