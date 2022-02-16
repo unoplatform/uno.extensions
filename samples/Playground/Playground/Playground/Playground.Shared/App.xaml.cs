@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Playground.Models;
 using Playground.Services;
 using Playground.ViewModels;
 using Playground.Views;
@@ -278,7 +279,8 @@ namespace Playground
 				Nested: new[]
 				{
 					new RouteMap("Home", View: typeof(HomePage), ViewModel: typeof(HomeViewModel)),
-					new RouteMap("Second", View: typeof(SecondPage)),
+					new RouteMap("CodeBehind", View: typeof(CodeBehindPage)),
+					new RouteMap("Second", View: typeof(SecondPage), ViewModel: typeof(SecondViewModel), Data: typeof(Widget),ResultData: typeof(Widget)),
 					new RouteMap("Third", View: typeof(ThirdPage)),
 					new RouteMap("Fourth", View: typeof(FourthPage), ViewModel: typeof(FourthViewModel)),
 					new RouteMap("Fifth", View: typeof(FifthPage), ViewModel: typeof(FifthViewModel)),

@@ -1,0 +1,38 @@
+﻿<Page x:Class="Playground.Views.CodeBehindPage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:local="using:Playground.Views"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  mc:Ignorable="d"
+	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+	<Grid>
+		<StackPanel>
+			<Button Content="NavigateRouteAsync(...);"
+					Click="NavigateRouteAsyncClick" />
+			<Button Content="NavigateRouteForResultAsync&lt;TResult&gt;(...);"
+					Click="NavigateRouteForResultAsyncClick" />
+			<Button Content="NavigateViewAsync&lt;TView&gt;(...);"
+					Click="NavigateViewAsyncClick" />
+			<Button Content="NavigateViewForResultAsync&lt;TView, TResult&gt;(...);"
+					Click="NavigateViewForResultAsyncClick" />
+			<Button Content="NavigateViewModelAsync&lt;TViewModel&gt;(...);"
+					Click="NavigateViewModelAsyncClick" />
+			<Button Content="NavigateViewModelForResultAsync&lt;TViewModel, TResult&gt;(...);"
+					Click="NavigateViewModelForResultAsyncClick" />
+			<Button Content="NavigateDataAsync&lt;TData&gt;(...);"
+					Click="NavigateDataAsyncClick" />
+			<Button Content="NavigateDataForResultAsync&lt;TData, TResultData&gt;(...);"
+					Click="NavigateDataForResultAsyncClick" />
+			<Button Content="NavigateForResultAsync&lt;TResultData&gt;(...);"
+					Click="NavigateForResultAsyncClick" />
+			<Button Content="NavigatePreviousAsync(...);"
+					Click="NavigatePreviousAsyncClick" />
+			<Button Content="NavigatePreviousWithResultAsync&lt;TResult&gt;(...);"
+					Click="NavigatePreviousWithResultAsyncClick" />
+			<Button Content="ShowMessageDialogAsync(...);"
+					Click="ShowMessageDialogAsyncClick" />
+		</StackPanel>
+	</Grid>
+</Page>
