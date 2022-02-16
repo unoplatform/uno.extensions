@@ -40,12 +40,12 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			if (!request.Route.IsInternal)
 			{
 
-				if (!SchemeIsSupported(request.Route))
+				if (!QualifierIsSupported(request.Route))
 				{
 					// Trim ../../ before routing request to parent
 					if (request.Route.IsParent())
 					{
-						request = request with { Route = request.Route.TrimScheme(Schemes.Parent) };
+						request = request with { Route = request.Route.TrimQualifier(Qualifiers.Parent) };
 					}
 
 					if (request.Route.IsEmpty())
@@ -64,27 +64,27 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 					}
 				}
 
-				// Handle root navigations i.e. Scheme starts with /
+				// Handle root navigations i.e. Qualifier starts with /
 				if (request.Route.IsRoot())
 				{
 					// Either
-					// - this is the root Region, so trim Root scheme
+					// - this is the root Region, so trim Root qualifier
 					// - Or, this is an invalid navigation
 					if (Region.Parent is null)
 					{
-						// This is the root nav service - need to trim the root scheme
+						// This is the root nav service - need to trim the root qualifier
 						// so that the request can be handled by this navigator
-						request = request with { Route = request.Route.TrimScheme(Schemes.Root) };
+						request = request with { Route = request.Route.TrimQualifier(Qualifiers.Root) };
 					}
 					else
 					{
-						if (Logger.IsEnabled(LogLevel.Error)) Logger.LogError($"Attempting to handle Root scheme by non-root navigator");
+						if (Logger.IsEnabled(LogLevel.Error)) Logger.LogError($"Attempting to handle Root qualifier by non-root navigator");
 						return default;
 					}
 				}
 
 				// Is this region is an unnamed child of a composite,
-				// send request to parent if the route has no scheme
+				// send request to parent if the route has no qualifier
 				if (request.Route.IsChangeContent() &&
 					!Region.IsNamed() &&
 					Region.Parent is not null
@@ -96,7 +96,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 			if (!request.Route.IsInternal)
 			{
-				// Append Internal scheme to avoid requests being sent back to parent
+				// Append Internal qualifier to avoid requests being sent back to parent
 				request = request with { Route = request.Route with { IsInternal = true } };
 
 				// Run dialog requests
@@ -143,7 +143,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		return request;
 	}
 
-	protected virtual bool SchemeIsSupported(Route route) =>
+	protected virtual bool QualifierIsSupported(Route route) =>
 		// "./" (nested) by default all navigators should be able to forward requests
 		// to child if the Base matches a named child
 		(
@@ -163,7 +163,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 				)
 		);
 
-	protected virtual bool CanNavigateToRoute(Route route) => SchemeIsSupported(route);
+	protected virtual bool CanNavigateToRoute(Route route) => QualifierIsSupported(route);
 
 	private async Task<NavigationResponse?> DialogNavigateAsync(NavigationRequest request)
 	{
@@ -246,7 +246,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		}
 
 		// The "./" prefix is no longer required as we pass the request down the hierarchy
-		request = request with { Route = request.Route.TrimScheme(Schemes.Nested) };
+		request = request with { Route = request.Route.TrimQualifier(Qualifiers.Nested) };
 
 		var children = Region.Children.Where(region =>
 										// Unnamed child regions

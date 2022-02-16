@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions.Navigation;
 
-public static class Schemes
+public static class Qualifiers
 {
 	public const string Separator = "/";
 	public const string Root = "/";

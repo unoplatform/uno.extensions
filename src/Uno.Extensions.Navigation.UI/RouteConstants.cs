@@ -4,9 +4,9 @@ public static class RouteConstants
 {
     public static class RelativePath
     {
-        public static string Parent(int numberOfLevels = 1) => MultipleLevels(Schemes.Parent, string.Empty, numberOfLevels);
+        public static string Parent(int numberOfLevels = 1) => MultipleLevels(Qualifiers.Parent, string.Empty, numberOfLevels);
 
-        public static string Back(int numberOfLevels = 1) => MultipleLevels(Schemes.NavigateBack + string.Empty, string.Empty, numberOfLevels);
+        public static string Back(int numberOfLevels = 1) => MultipleLevels(Qualifiers.NavigateBack + string.Empty, string.Empty, numberOfLevels);
 
         private static string MultipleLevels(string pathToRepeat, string separator, int numberOfLevels)
         {

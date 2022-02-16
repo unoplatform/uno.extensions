@@ -58,7 +58,7 @@ public static class NavigationRequestExtensions
 			return false;
 		}
 
-		return request.Route.Scheme == newRequest.Route.Scheme &&
+		return request.Route.Qualifier == newRequest.Route.Qualifier &&
 			request.Route.Base == newRequest.Route.Base;
 	}
 }

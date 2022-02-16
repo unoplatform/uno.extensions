@@ -46,7 +46,7 @@ namespace Commerce.ViewModels
 				}
 				else
 				{
-					var homeResponse = await Navigator.NavigateDataForResultAsync<Credentials, object>(this, currentCredentials, Schemes.ClearBackStack);
+					var homeResponse = await Navigator.NavigateDataForResultAsync<Credentials, object>(this, currentCredentials, Qualifiers.ClearBackStack);
 					_ = await homeResponse.Result;
 				}
 
@@ -55,7 +55,7 @@ namespace Commerce.ViewModels
 			else
 			{
 				// Navigate to Login page, requesting Credentials
-				var response = await Navigator.NavigateForResultAsync<Credentials>(this, Schemes.ClearBackStack);
+				var response = await Navigator.NavigateForResultAsync<Credentials>(this, Qualifiers.ClearBackStack);
 
 
 				var loginResult = await response.Result;

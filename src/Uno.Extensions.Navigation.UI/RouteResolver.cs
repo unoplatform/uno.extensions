@@ -49,7 +49,7 @@ public class RouteResolver : IRouteResolver
 			return null;
 		}
 
-		path = path.ExtractBase(out var nextScheme, out var nextPath);
+		path = path.ExtractBase(out var nextQualifier, out var nextPath);
 
 		return Mappings.TryGetValue(path!, out var map) ? map : default;
 	}

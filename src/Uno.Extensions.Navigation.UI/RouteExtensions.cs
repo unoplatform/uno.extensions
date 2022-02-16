@@ -8,28 +8,28 @@ public static class RouteExtensions
 	private static Regex alphaRegex = new Regex(@"([a-zA-Z0-9])+");
 
 	public static bool IsBackOrCloseNavigation(this Route route) =>
-		route.Scheme
-			.StartsWith(Schemes.NavigateBack);
+		route.Qualifier
+			.StartsWith(Qualifiers.NavigateBack);
 
 	public static bool IsFrameNavigation(this Route route) =>
 		// We want to make forward navigation between frames simple, so don't require +
-		route.Scheme == Schemes.None || 
-		route.Scheme.StartsWith(Schemes.NavigateForward) ||
-		route.Scheme.StartsWith(Schemes.NavigateBack);
+		route.Qualifier == Qualifiers.None || 
+		route.Qualifier.StartsWith(Qualifiers.NavigateForward) ||
+		route.Qualifier.StartsWith(Qualifiers.NavigateBack);
 
 	public static bool IsInternal(this Route route) => route.IsInternal;
 
-	public static bool IsRoot(this Route route) => route.Scheme.StartsWith(Schemes.Root);
+	public static bool IsRoot(this Route route) => route.Qualifier.StartsWith(Qualifiers.Root);
 
 	public static bool IsChangeContent(this Route route) =>
-		(route.Scheme.StartsWith(Schemes.ChangeContent) && !route.IsParent()) ||
-		(route.Scheme==Schemes.None && route.IsInternal);
+		(route.Qualifier.StartsWith(Qualifiers.ChangeContent) && !route.IsParent()) ||
+		(route.Qualifier==Qualifiers.None && route.IsInternal);
 
-	public static bool IsParent(this Route route) => route.Scheme.StartsWith(Schemes.Parent);
+	public static bool IsParent(this Route route) => route.Qualifier.StartsWith(Qualifiers.Parent);
 
-	public static bool IsNested(this Route route) => route.Scheme.StartsWith(Schemes.Nested);
+	public static bool IsNested(this Route route) => route.Qualifier.StartsWith(Qualifiers.Nested);
 
-	public static bool IsDialog(this Route route) => route.Scheme.StartsWith(Schemes.Dialog);
+	public static bool IsDialog(this Route route) => route.Qualifier.StartsWith(Qualifiers.Dialog);
 
 	public static bool IsLast(this Route route) => route.Next().IsEmpty();
 
@@ -46,25 +46,25 @@ public static class RouteExtensions
 	}
 
 	public static bool IsEmpty(this Route route) => route is not null ?
-		(route.Scheme == Schemes.None || route.Scheme == Schemes.ChangeContent || route.Scheme == Schemes.Nested) &&
+		(route.Qualifier == Qualifiers.None || route.Qualifier == Qualifiers.ChangeContent || route.Qualifier == Qualifiers.Nested) &&
 		string.IsNullOrWhiteSpace(route.Base) :
 		true;
 
 	// eg -/NextPage
-	public static bool FrameIsRooted(this Route route) => route?.Scheme.EndsWith(Schemes.Root + string.Empty) ?? false;
+	public static bool FrameIsRooted(this Route route) => route?.Qualifier.EndsWith(Qualifiers.Root + string.Empty) ?? false;
 
-	private static int NumberOfGoBackInScheme(this Route route) => route.Scheme.TakeWhile(x => x + string.Empty == Schemes.NavigateBack).Count();
+	private static int NumberOfGoBackInQualifier(this Route route) => route.Qualifier.TakeWhile(x => x + string.Empty == Qualifiers.NavigateBack).Count();
 
 	public static int FrameNumberOfPagesToRemove(this Route route) =>
 		route.FrameIsRooted() ?
 			0 :
 			(route.FrameIsBackNavigation() ?
-				route.NumberOfGoBackInScheme() - 1 :
-				route.NumberOfGoBackInScheme());
+				route.NumberOfGoBackInQualifier() - 1 :
+				route.NumberOfGoBackInQualifier());
 
 	// Only navigate back if there is no base. If a base is specified, we do a forward navigate and remove items from the backstack
 	public static bool FrameIsBackNavigation(this Route route) =>
-		route.Scheme.StartsWith(Schemes.NavigateBack) && route.Base?.Length == 0;
+		route.Qualifier.StartsWith(Qualifiers.NavigateBack) && route.Base?.Length == 0;
 
 	public static bool FrameIsForwardNavigation(this Route route) => !route.FrameIsBackNavigation();
 
@@ -75,21 +75,21 @@ public static class RouteExtensions
 			return new Route[] { };
 		}
 
-		var segments = new List<Route>() { route with { Scheme = Schemes.NavigateForward, Path = null, Data = (route.IsLastFrameRoute(mappings) ? route.Data : null) } };
+		var segments = new List<Route>() { route with { Qualifier = Qualifiers.NavigateForward, Path = null, Data = (route.IsLastFrameRoute(mappings) ? route.Data : null) } };
 		var nextRoute = route.Next();
 		while (
 			!nextRoute.IsEmpty() && (
-			nextRoute.Scheme == Schemes.NavigateForward ||
+			nextRoute.Qualifier == Qualifiers.NavigateForward ||
 			nextRoute.IsPageRoute(mappings)))
 		{
-			segments.Add(nextRoute with { Scheme = Schemes.NavigateForward, Path = null, Data = (nextRoute.IsLastFrameRoute(mappings) ? nextRoute.Data : null) });
+			segments.Add(nextRoute with { Qualifier = Qualifiers.NavigateForward, Path = null, Data = (nextRoute.IsLastFrameRoute(mappings) ? nextRoute.Data : null) });
 			nextRoute = nextRoute.Next();
 		}
 		return segments.ToArray();
 	}
 
 	public static string[] ForwardNavigationSegments(this string path) =>
-		path.Split(Schemes.NavigateForward.First()).Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
+		path.Split(Qualifiers.NavigateForward.First()).Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
 
 	public static object? ResponseData(this Route route) =>
 		(route?.Data?.TryGetValue(string.Empty, out var result) ?? false) ? result : null;
@@ -109,14 +109,14 @@ public static class RouteExtensions
 		return text;
 	}
 
-	public static Route TrimScheme(this Route route, string schemeToTrim)
+	public static Route TrimQualifier(this Route route, string qualifierToTrim)
 	{
-		return route with { Scheme = route.Scheme.TrimStartOnce(schemeToTrim) };
+		return route with { Qualifier = route.Qualifier.TrimStartOnce(qualifierToTrim) };
 	}
 
-	public static Route AppendScheme(this Route route, string scheme)
+	public static Route AppendQualifier(this Route route, string qualifier)
 	{
-		return route with { Scheme = $"{scheme}{route.Scheme}" };
+		return route with { Qualifier = $"{qualifier}{route.Qualifier}" };
 	}
 
 	public static Route Trim(this Route route, Route? handledRoute)
@@ -128,7 +128,7 @@ public static class RouteExtensions
 
 		if(route.IsNested() && !handledRoute.IsNested())
 		{
-			route = route.TrimScheme(Schemes.Nested);
+			route = route.TrimQualifier(Qualifiers.Nested);
 		}
 
 		while (route.Base == handledRoute.Base && !string.IsNullOrWhiteSpace(handledRoute.Base))
@@ -137,9 +137,9 @@ public static class RouteExtensions
 			handledRoute = handledRoute.Next();
 		}
 
-		if(route.Scheme==Schemes.NavigateBack && route.Scheme == handledRoute.Scheme)
+		if(route.Qualifier==Qualifiers.NavigateBack && route.Qualifier == handledRoute.Qualifier)
 		{
-			route = route with { Scheme = Schemes.None };
+			route = route with { Qualifier = Qualifiers.None };
 		}
 
 		return route;
@@ -156,7 +156,7 @@ public static class RouteExtensions
 		{
 			return route with { Base = routeToAppend.Base };
 		}
-		return route with { Path = route.Path + (routeToAppend.Scheme == Schemes.Nested ? Schemes.Separator : routeToAppend.Scheme) + routeToAppend.Base + routeToAppend.Path };
+		return route with { Path = route.Path + (routeToAppend.Qualifier == Qualifiers.Nested ? Qualifiers.Separator : routeToAppend.Qualifier) + routeToAppend.Base + routeToAppend.Path };
 	}
 
 	public static Route AppendPage<TPage>(this Route route)
@@ -178,19 +178,19 @@ public static class RouteExtensions
 	{
 		return route with
 		{
-			Path = (routeToAppend.Scheme == Schemes.Nested ? Schemes.Separator : routeToAppend.Scheme) +
+			Path = (routeToAppend.Qualifier == Qualifiers.Nested ? Qualifiers.Separator : routeToAppend.Qualifier) +
 					routeToAppend.Base +
 					routeToAppend.Path +
-					(((route.Path?.StartsWith(Schemes.Separator) ?? false) || (route.Path?.StartsWith(Schemes.NavigateForward) ?? false)) ?
+					(((route.Path?.StartsWith(Qualifiers.Separator) ?? false) || (route.Path?.StartsWith(Qualifiers.NavigateForward) ?? false)) ?
 						string.Empty :
-						Schemes.Separator) +
+						Qualifiers.Separator) +
 					route.Path
 		};
 		//return route with
 		//{
-		//    Scheme = routeToAppend.Scheme,
+		//    Qualifier = routeToAppend.Qualifier,
 		//    Base = routeToAppend.Base,
-		//    Path = routeToAppend.Path + (route.Scheme == Schemes.Nested ? Schemes.Separator : route.Scheme) + route.Base + route.Path
+		//    Path = routeToAppend.Path + (route.Qualifier == Qualifiers.Nested ? Qualifiers.Separator : route.Qualifier) + route.Base + route.Path
 		//};
 	}
 
@@ -217,12 +217,12 @@ public static class RouteExtensions
 	public static Route Next(this Route route)
 	{
 		var path = route.Path ?? string.Empty;
-		var routeBase = path.ExtractBase(out var nextScheme, out var nextPath);
-		if (nextScheme == Schemes.Root)
+		var routeBase = path.ExtractBase(out var nextQualifier, out var nextPath);
+		if (nextQualifier == Qualifiers.Root)
 		{
-			nextScheme = Schemes.None;
+			nextQualifier = Qualifiers.None;
 		}
-		return route with { Scheme = nextScheme, Base = routeBase, Path = nextPath };
+		return route with { Qualifier = nextQualifier, Base = routeBase, Path = nextPath };
 	}
 
 	public static bool IsPageRoute(this Route route, IRouteResolver mappings)
@@ -237,7 +237,7 @@ public static class RouteExtensions
 
 	public static string? NextBase(this Route route)
 	{
-		return route.Path?.ExtractBase(out var nextScheme, out var nextPath);
+		return route.Path?.ExtractBase(out var nextQualifier, out var nextPath);
 		//return route.Path?.Split('/')?.FirstOrDefault();
 	}
 
@@ -246,21 +246,21 @@ public static class RouteExtensions
 		route.Path.ExtractBase(out var _, out var nextPath);
 		return nextPath;
 	}
-	public static string NextScheme(this Route route)
+	public static string NextQualifier(this Route route)
 	{
-		route.Path.ExtractBase(out var nextScheme, out var _);
-		return nextScheme;
+		route.Path.ExtractBase(out var nextQualifier, out var _);
+		return nextQualifier;
 	}
 
-	public static bool HasScheme(this string path)
+	public static bool HasQualifier(this string path)
 	{
-		var _ = ExtractBase(path, out var scheme, out var _);
-		return !string.IsNullOrWhiteSpace(scheme);
+		var _ = ExtractBase(path, out var qualifier, out var _);
+		return !string.IsNullOrWhiteSpace(qualifier);
 	}
-	public static string? ExtractBase(this string? path, out string nextScheme, out string nextPath)
+	public static string? ExtractBase(this string? path, out string nextQualifier, out string nextPath)
 	{
 		nextPath = path ?? string.Empty;
-		nextScheme = string.Empty;
+		nextQualifier = string.Empty;
 
 		if (path is null ||
 			string.IsNullOrWhiteSpace(path))
@@ -268,15 +268,15 @@ public static class RouteExtensions
 			return default;
 		}
 
-		var schemeMatch = nonAlphaRegex.Match(path);
-		if (schemeMatch.Success)
+		var qualifierMatch = nonAlphaRegex.Match(path);
+		if (qualifierMatch.Success)
 		{
-			path = path.TrimStart(schemeMatch.Value);
-			nextScheme = schemeMatch.Value;
+			path = path.TrimStart(qualifierMatch.Value);
+			nextQualifier = qualifierMatch.Value;
 		}
 
-		schemeMatch = alphaRegex.Match(path);
-		var routeBase = schemeMatch.Success ? schemeMatch.Value : String.Empty;
+		qualifierMatch = alphaRegex.Match(path);
+		var routeBase = qualifierMatch.Success ? qualifierMatch.Value : String.Empty;
 		if (routeBase is { Length: > 0 })
 		{
 			if (path.Length > routeBase.Length + 1)
@@ -295,7 +295,7 @@ public static class RouteExtensions
 		return routeBase;
 	}
 
-	public static string WithScheme(this string path, string scheme) => string.IsNullOrWhiteSpace(scheme) ? path : $"{scheme}{path}";
+	public static string WithQualifier(this string path, string qualifier) => string.IsNullOrWhiteSpace(qualifier) ? path : $"{qualifier}{path}";
 
 	public static Route AsRoute(this Uri uri, object? data = null)
 	{
@@ -332,9 +332,9 @@ public static class RouteExtensions
 			}
 		}
 
-		var routeBase = ExtractBase(path, out var scheme, out path);
+		var routeBase = ExtractBase(path, out var qualifier, out path);
 
-		var route = new Route(scheme, routeBase, path, paras);
+		var route = new Route(qualifier, routeBase, path, paras);
 		if (route.IsBackOrCloseNavigation() &&
 			data is not null &&
 			data is not IOption)
@@ -361,7 +361,7 @@ public static class RouteExtensions
 
 	public static string FullPath(this Route route)
 	{
-		return $"{route.Scheme}{route.Base}{route.Path}";
+		return $"{route.Qualifier}{route.Base}{route.Path}";
 	}
 
 	public static IDictionary<string, object> Combine(this IDictionary<string, object>? data, IDictionary<string, object>? childData)
@@ -404,7 +404,7 @@ public static class RouteExtensions
 			return route;
 		}
 
-		var separator = nextRoute.Scheme == Schemes.None ? Schemes.Separator : string.Empty;
+		var separator = nextRoute.Qualifier == Qualifiers.None ? Qualifiers.Separator : string.Empty;
 
 
 		var child = nextRoute;
@@ -412,11 +412,11 @@ public static class RouteExtensions
 		{
 			child = child with
 			{
-				Scheme = Schemes.None,
+				Qualifier = Qualifiers.None,
 				Base = regionName,
-				Path = (string.IsNullOrWhiteSpace(child.Scheme) ?
-							Schemes.Separator :
-							child.Scheme) + child.Base + child.Path
+				Path = (string.IsNullOrWhiteSpace(child.Qualifier) ?
+							Qualifiers.Separator :
+							child.Qualifier) + child.Base + child.Path
 			};
 		}
 
@@ -450,25 +450,25 @@ public static class RouteExtensions
 
 	public static Route? ApplyFrameRoute(this Route? currentRoute, IRouteResolver routeResolver, Route frameRoute)
 	{
-		var scheme = frameRoute.Scheme;
-		if (string.IsNullOrWhiteSpace(frameRoute.Scheme))
+		var qualifier = frameRoute.Qualifier;
+		if (string.IsNullOrWhiteSpace(frameRoute.Qualifier))
 		{
-			scheme = Schemes.NavigateForward;
+			qualifier = Qualifiers.NavigateForward;
 		}
 		if (currentRoute is null)
 		{
-			return frameRoute with { Scheme = Schemes.NavigateForward };
+			return frameRoute with { Qualifier = Qualifiers.NavigateForward };
 		}
 		else
 		{
 			var segments = currentRoute.ForwardNavigationSegments(routeResolver).ToList();
-			foreach (var schemeChar in scheme)
+			foreach (var qualifierChar in qualifier)
 			{
-				if (schemeChar + "" == Schemes.NavigateBack)
+				if (qualifierChar + "" == Qualifiers.NavigateBack)
 				{
 					segments.RemoveAt(segments.Count - 1);
 				}
-				else if (schemeChar + "" == Schemes.Root)
+				else if (qualifierChar + "" == Qualifiers.Root)
 				{
 					segments.Clear();
 				}
@@ -486,9 +486,9 @@ public static class RouteExtensions
 				segments.RemoveAt(0);
 			}
 
-			var routePath = segments.Count > 0 ? string.Join("", segments.Select(x => $"{x.Scheme}{x.Base}")) : string.Empty;
+			var routePath = segments.Count > 0 ? string.Join("", segments.Select(x => $"{x.Qualifier}{x.Base}")) : string.Empty;
 
-			return new Route(Schemes.NavigateForward, routeBase, routePath, frameRoute.Data);
+			return new Route(Qualifiers.NavigateForward, routeBase, routePath, frameRoute.Data);
 		}
 	}
 }

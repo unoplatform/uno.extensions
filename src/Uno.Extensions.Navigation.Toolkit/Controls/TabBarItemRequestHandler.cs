@@ -4,7 +4,7 @@ public class TabBarItemRequestHandler : ActionRequestHandlerBase<TabBarItem>
 {
 	public TabBarItemRequestHandler(IRouteResolver routes) : base(routes)
 	{
-		DefaultScheme = Schemes.ChangeContent;
+		DefaultQualifier = Qualifiers.ChangeContent;
 	}
 
 	public override IRequestBinding? Bind(FrameworkElement view)

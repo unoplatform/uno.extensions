@@ -17,8 +17,8 @@ public class FlyoutNavigator : ControlNavigator
 	{
 	}
 
-	protected override bool SchemeIsSupported(Route route) =>
-			base.SchemeIsSupported(route) ||
+	protected override bool QualifierIsSupported(Route route) =>
+			base.QualifierIsSupported(route) ||
 			// "-" (back or close) Add closing 
 			route.IsBackOrCloseNavigation();
 

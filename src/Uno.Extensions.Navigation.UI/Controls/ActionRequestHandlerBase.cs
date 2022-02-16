@@ -9,7 +9,7 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 		RouteResolver = routes;
 	}
 
-	protected string DefaultScheme { get; init; } = Schemes.None;
+	protected string DefaultQualifier { get; init; } = Qualifiers.None;
 
 	protected IRequestBinding? BindAction<TElement, TEventHandler>(
 		TElement view,
@@ -64,7 +64,7 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 				resultType = routeMap?.ResultData;
 			}
 
-			var scheme = path.HasScheme() ? Schemes.None: DefaultScheme;
+			var qualifier = path.HasQualifier() ? Qualifiers.None: DefaultQualifier;
 
 			if (data is not null ||
 				resultType is not null)
@@ -73,7 +73,7 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 				if (resultType is not null)
 				{
 					
-					var response = await nav.NavigateRouteForResultAsync(element, path, scheme, data, resultType: resultType);
+					var response = await nav.NavigateRouteForResultAsync(element, path, qualifier, data, resultType: resultType);
 					if (binding is not null &&
 					binding.ParentBinding.Mode == BindingMode.TwoWay)
 					{
@@ -90,13 +90,13 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 				}
 				else
 				{
-					await nav.NavigateRouteAsync(element, path, scheme, data);
+					await nav.NavigateRouteAsync(element, path, qualifier, data);
 
 				}
 			}
 			else
 			{
-				await nav.NavigateRouteAsync(element, path, scheme);
+				await nav.NavigateRouteAsync(element, path, qualifier);
 			}
 		};
 

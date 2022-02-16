@@ -35,8 +35,8 @@ public class FrameNavigator : ControlNavigator<Frame>
 		}
 	}
 
-	protected override bool SchemeIsSupported(Route route) =>
-		base.SchemeIsSupported(route) ||
+	protected override bool QualifierIsSupported(Route route) =>
+		base.QualifierIsSupported(route) ||
 		route.IsFrameNavigation() ||
 		(
 			route.IsInternal &&
@@ -141,7 +141,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 
 		CurrentView?.SetNavigatorInstance(Region.Navigator()!);
 
-		var responseRequest = firstSegment with { Scheme = route.Scheme };
+		var responseRequest = firstSegment with { Qualifier = route.Qualifier };
 		return responseRequest;
 	}
 

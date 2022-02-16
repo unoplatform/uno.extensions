@@ -21,8 +21,8 @@ where TControl : class
 		}
 	}
 
-	protected override bool SchemeIsSupported(Route route) =>
-		base.SchemeIsSupported(route) ||
+	protected override bool QualifierIsSupported(Route route) =>
+		base.QualifierIsSupported(route) ||
 		// "../" (change content) Add support for changing current content
 		route.IsChangeContent();
 
@@ -38,7 +38,7 @@ where TControl : class
 	//	if (path is not null &&
 	//		!string.IsNullOrEmpty(path))
 	//	{
-	//		Region.Navigator()?.NavigateRouteAsync(sender, path, scheme: Schemes.ChangeContent);
+	//		Region.Navigator()?.NavigateRouteAsync(sender, path, qualifier: Qualifiers.ChangeContent);
 	//	}
 	//}
 
@@ -59,7 +59,7 @@ where TControl : class
 			return;
 		}
 
-		await nav.NavigateRouteAsync(sender, path, scheme: Schemes.ChangeContent);
+		await nav.NavigateRouteAsync(sender, path, qualifier: Qualifiers.ChangeContent);
 	}
 
 
