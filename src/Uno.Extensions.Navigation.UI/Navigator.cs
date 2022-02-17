@@ -175,7 +175,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 				)
 		);
 
-	protected virtual bool CanNavigateToRoute(Route route) => QualifierIsSupported(route);
+	protected virtual bool CanNavigateToRoute(Route route) => QualifierIsSupported(route) && !route.IsNested();
 
 	private async Task<NavigationResponse?> DialogNavigateAsync(NavigationRequest request)
 	{

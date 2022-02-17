@@ -131,14 +131,6 @@ public abstract class ControlNavigator : Navigator
 
 	private async Task<NavigationResponse?> RegionNavigateAsync(NavigationRequest request)
 	{
-		// If the request has come down from parent it
-		// will still have the ./ prefix, so need to trim
-		// it before processing it
-		if (request.Route.IsNested())
-		{
-			request = request with { Route = request.Route.TrimQualifier(Qualifiers.Nested) };
-		}
-
 		var completion = new TaskCompletionSource<NavigationResponse?>();
 		GetDispatcher().TryEnqueue(async () =>
 		{

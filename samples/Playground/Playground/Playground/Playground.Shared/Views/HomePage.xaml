@@ -32,6 +32,8 @@
 					Content="NavigationView" />
 			<Button uen:Navigation.Request="TabBar"
 					Content="TabBar" />
+			<Button uen:Navigation.Request="ContentControl"
+					Content="ContentControl" />
 			<Button uen:Navigation.Request="Second" Content="Second Page" />
 			<Button Click="{x:Bind GoToSecondPageClick}"
 					Content="Second Page Code behind" />

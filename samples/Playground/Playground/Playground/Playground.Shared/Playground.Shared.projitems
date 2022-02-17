@@ -45,6 +45,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Views\ComplexDialogSecondPage.xaml.cs">
       <DependentUpon>ComplexDialogSecondPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\ContentControlPage.xaml.cs">
+      <DependentUpon>ContentControlPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\DialogsPage.xaml.cs">
       <DependentUpon>DialogsPage.xaml</DependentUpon>
     </Compile>
@@ -107,6 +110,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\ComplexDialogSecondPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\ContentControlPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
