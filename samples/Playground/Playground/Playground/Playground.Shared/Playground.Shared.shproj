@@ -12,17 +12,23 @@
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeSharing\Microsoft.CodeSharing.CSharp.targets" />
   <ItemGroup>
     <_Globbed_Compile Remove="Models\AppInfo.cs" />
+    <_Globbed_Compile Remove="Models\Country.cs" />
     <_Globbed_Compile Remove="Models\Widget.cs" />
     <_Globbed_Compile Remove="Services\SimpleStartupService.cs" />
     <_Globbed_Compile Remove="ViewModels\HomeViewModel.cs" />
     <_Globbed_Compile Remove="ViewModels\SecondViewModel.cs" />
+    <_Globbed_Compile Remove="ViewModels\VMViewModel.cs" />
+    <_Globbed_Compile Remove="ViewModels\XamlViewModel.cs" />
     <_Globbed_Compile Remove="Views\AlternatePage.xaml.cs" />
     <_Globbed_Compile Remove="Views\CodeBehindPage.xaml.cs" />
     <_Globbed_Compile Remove="Views\MainPage.xaml.cs" />
+    <_Globbed_Compile Remove="Views\ViewModelPage.xaml.cs" />
+    <_Globbed_Compile Remove="Views\XamlPage.xaml.cs" />
   </ItemGroup>
   <ItemGroup>
     <_Globbled_Page Remove="Views\AlternatePage.xaml" />
     <_Globbled_Page Remove="Views\CodeBehindPage.xaml" />
     <_Globbled_Page Remove="Views\MainPage.xaml" />
+    <_Globbled_Page Remove="Views\XamlPage.xaml" />
   </ItemGroup>
 </Project>

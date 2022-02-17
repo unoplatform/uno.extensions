@@ -280,7 +280,9 @@ namespace Playground
 				{
 					new RouteMap("Home", View: typeof(HomePage), ViewModel: typeof(HomeViewModel)),
 					new RouteMap("CodeBehind", View: typeof(CodeBehindPage)),
-					new RouteMap("Second", View: typeof(SecondPage), ViewModel: typeof(SecondViewModel), Data: typeof(Widget),ResultData: typeof(Widget)),
+					new RouteMap("VM", View: typeof(VMPage), ViewModel: typeof(VMViewModel)),
+					new RouteMap("Xaml", View: typeof(XamlPage), ViewModel: typeof(XamlViewModel)),
+					new RouteMap("Second", View: typeof(SecondPage), ViewModel: typeof(SecondViewModel), Data: typeof(Widget),ResultData: typeof(Country)),
 					new RouteMap("Third", View: typeof(ThirdPage)),
 					new RouteMap("Fourth", View: typeof(FourthPage), ViewModel: typeof(FourthViewModel)),
 					new RouteMap("Fifth", View: typeof(FifthPage), ViewModel: typeof(FifthViewModel)),
