@@ -33,6 +33,8 @@
 			<Button uen:Navigation.Request="TabBar"
 					Content="TabBar" />
 			<Button uen:Navigation.Request="Second" Content="Second Page" />
+			<Button Click="{x:Bind GoToSecondPageClick}"
+					Content="Second Page Code behind" />
 			<Button uen:Navigation.Request="-/Second"
 					Content="Second Page with clear backstack" />
 			<Button uen:Navigation.Request="Fourth"
