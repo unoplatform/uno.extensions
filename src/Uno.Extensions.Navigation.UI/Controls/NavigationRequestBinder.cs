@@ -25,9 +25,11 @@ public class NavigationRequestBinder
 			}
 
 			var existingBinding = element.GetRequestBinding();
-			if(existingBinding is not null)
+
+			if (existingBinding is not null)
 			{
-				existingBinding.Unbind();
+				// just exit, since we're already bound?
+				return;
 			}
 
 			var region = element.FindRegion();
