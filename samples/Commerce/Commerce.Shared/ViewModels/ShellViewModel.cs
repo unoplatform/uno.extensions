@@ -59,6 +59,8 @@ namespace Commerce.ViewModels
 				if (loginResult.IsSome(out var creds) && creds?.UserName is { Length: > 0 })
 				{
 					await CredentialsSettings.Update(c => creds);
+
+					Start();
 				}
 			}
 		}
