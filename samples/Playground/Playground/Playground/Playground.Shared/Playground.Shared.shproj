@@ -22,6 +22,8 @@
     <_Globbed_Compile Remove="Views\AlternatePage.xaml.cs" />
     <_Globbed_Compile Remove="Views\CodeBehindPage.xaml.cs" />
     <_Globbed_Compile Remove="Views\MainPage.xaml.cs" />
+    <_Globbed_Compile Remove="Views\NavigationViewPage.xaml.cs" />
+    <_Globbed_Compile Remove="Views\TabBarPage.xaml.cs" />
     <_Globbed_Compile Remove="Views\ViewModelPage.xaml.cs" />
     <_Globbed_Compile Remove="Views\XamlPage.xaml.cs" />
   </ItemGroup>
@@ -29,6 +31,8 @@
     <_Globbled_Page Remove="Views\AlternatePage.xaml" />
     <_Globbled_Page Remove="Views\CodeBehindPage.xaml" />
     <_Globbled_Page Remove="Views\MainPage.xaml" />
+    <_Globbled_Page Remove="Views\NavigationViewPage.xaml" />
+    <_Globbled_Page Remove="Views\TabBarPage.xaml" />
     <_Globbled_Page Remove="Views\XamlPage.xaml" />
   </ItemGroup>
 </Project>

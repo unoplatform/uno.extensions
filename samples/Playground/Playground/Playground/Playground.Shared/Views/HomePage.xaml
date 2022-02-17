@@ -28,6 +28,10 @@
 					Content="View Model samples" />
 			<Button uen:Navigation.Request="Xaml"
 					Content="Xaml samples" />
+			<Button uen:Navigation.Request="NavigationView"
+					Content="NavigationView" />
+			<Button uen:Navigation.Request="TabBar"
+					Content="TabBar" />
 			<Button uen:Navigation.Request="Second" Content="Second Page" />
 			<Button uen:Navigation.Request="-/Second"
 					Content="Second Page with clear backstack" />
