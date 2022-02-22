@@ -33,7 +33,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		if (Logger.IsEnabled(LogLevel.Information)) Logger.LogInformation($"Pre-navigation: - {Region.Root().ToString()}");
 		try
 		{
-			RouteUpdater?.StartNavigation();
+			RouteUpdater?.StartNavigation(Region);
 
 			request = InitialiseRequest(request);
 
@@ -119,7 +119,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		{
 			if (Logger.IsEnabled(LogLevel.Information)) Logger.LogInformation($"Post-navigation: {Region.Root().ToString()}");
 			if (Logger.IsEnabled(LogLevel.Information)) Logger.LogInformation($"Post-navigation (route): {Region.Root().GetRoute()}");
-			RouteUpdater?.EndNavigation();
+			RouteUpdater?.EndNavigation(Region);
 		}
 	}
 

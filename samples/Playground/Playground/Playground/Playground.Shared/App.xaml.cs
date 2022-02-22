@@ -11,10 +11,14 @@ using Uno.Extensions.Configuration;
 using Uno.Extensions.Hosting;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation;
+using Uno.Extensions.Navigation.Regions;
 using Uno.Extensions.Navigation.Toolkit;
+using Uno.Extensions.Navigation.UI;
 using Uno.Extensions.Serialization;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.Core;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Navigation;
 
@@ -122,17 +126,65 @@ namespace Playground
 			_window = Window.Current;
 #endif
 
-			_window.Content = Host.Services.NavigationHost(
-				// Option 1: This requires Shell to be the first RouteMap - best for perf as no reflection required
-				// initialRoute: ""
-				// Option 2: Specify route name
-				// initialRoute: "Shell"
-				// Option 3: Specify the view model. To avoid reflection, you can still define a routemap
-				initialViewModel: typeof(ShellViewModel)
-				);
+			var notif = Host.Services.GetService<IRouteNotifier>();
+			notif.RouteChanged += RouteUpdated;
+
+			// Option 1: Ad-hoc hosting of Navigation
+			var f = new Frame();
+			f.AttachServiceProvider(Host.Services);
+			_window.Content = f;
+			f.Navigate(typeof(MainPage));
+
+			// Option 2: Ad-hoc hosting using root content control
+			//var root = new ContentControl
+			//{
+			//	HorizontalAlignment = HorizontalAlignment.Stretch,
+			//	VerticalAlignment = VerticalAlignment.Stretch,
+			//	HorizontalContentAlignment = HorizontalAlignment.Stretch,
+			//	VerticalContentAlignment = VerticalAlignment.Stretch
+			//};
+			//root.AttachServiceProvider(Host.Services);
+			//_window.Content = root;
+			//root.Host(initialRoute: "Shell");
+
+			// Option 3: Default hosting
+			//_window.Content = Host.Services.NavigationHost(
+			//	// Option 1: This requires Shell to be the first RouteMap - best for perf as no reflection required
+			//	// initialRoute: ""
+			//	// Option 2: Specify route name
+			//	// initialRoute: "Shell"
+			//	// Option 3: Specify the view model. To avoid reflection, you can still define a routemap
+			//	initialViewModel: typeof(ShellViewModel)
+			//	);
+
+
 			_window.Activate();
 
 			await Task.Run(()=>Host.StartAsync());
+		}
+
+
+		public async void RouteUpdated(object sender, RouteChangedEventArgs e)
+		{
+			try
+			{
+				var rootRegion = e.Region.Root();
+				var route = rootRegion.GetRoute();
+
+
+#if !__WASM__ && !WINUI
+				CoreApplication.MainView?.DispatcherQueue.TryEnqueue(() =>
+				{
+					var appTitle = ApplicationView.GetForCurrentView();
+					appTitle.Title = "Commerce: " + (route + "").Replace("+", "/");
+				});
+#endif
+
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine("Error: " + ex.Message);
+			}
 		}
 
 		/// <summary>

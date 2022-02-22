@@ -10,6 +10,5 @@ public static class Qualifiers
 	public const string Parent = "../../";
 	public const string Dialog = "!";
 	public const string NavigateBack = "-";
-	public const string NavigateForward = "+";
 	public const string ClearBackStack = "-/";
 }

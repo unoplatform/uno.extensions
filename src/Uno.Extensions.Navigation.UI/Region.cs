@@ -8,35 +8,42 @@ public static class Region
 	   DependencyProperty.RegisterAttached(
 		   "Instance",
 		   typeof(IRegion),
-		   typeof(Navigation),
+		   typeof(Region),
 		   new PropertyMetadata(null));
 
 	public static readonly DependencyProperty AttachedProperty =
 		DependencyProperty.RegisterAttached(
 			"Attached",
 			typeof(bool),
-			typeof(Navigation),
+			typeof(Region),
 			new PropertyMetadata(false, AttachedChanged));
 
 	public static readonly DependencyProperty ParentProperty =
 		DependencyProperty.RegisterAttached(
 			"Parent",
 			typeof(FrameworkElement),
-			typeof(Navigation),
+			typeof(Region),
 			new PropertyMetadata(null));
 
 	public static readonly DependencyProperty NameProperty =
 		DependencyProperty.RegisterAttached(
 			"Name",
 			typeof(string),
-			typeof(Navigation),
+			typeof(Region),
 			new PropertyMetadata(null));
 
 	public static readonly DependencyProperty NavigatorProperty =
 		DependencyProperty.RegisterAttached(
 			"Navigator",
 			typeof(string),
-			typeof(Navigation),
+			typeof(Region),
+			new PropertyMetadata(null));
+
+	public static readonly DependencyProperty ServiceProviderProperty =
+		DependencyProperty.RegisterAttached(
+			"ServiceProvider",
+			typeof(IServiceProvider),
+			typeof(Region),
 			new PropertyMetadata(null));
 
 	private static void AttachedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -56,7 +63,6 @@ public static class Region
 	{
 		var existingRegion = Region.GetInstance(element);
 		var region = existingRegion ?? new NavigationRegion(element);
-		element.SetInstance(region);
 	}
 
 	public static void SetInstance(this DependencyObject element, IRegion? value)
@@ -131,5 +137,15 @@ public static class Region
 	public static string GetNavigator(this FrameworkElement element)
 	{
 		return (string)element.GetValue(NavigatorProperty);
+	}
+
+	public static void SetServiceProvider(this DependencyObject element, IServiceProvider value)
+	{
+		element.SetValue(ServiceProviderProperty, value);
+	}
+
+	public static IServiceProvider GetServiceProvider(this DependencyObject element)
+	{
+		return (IServiceProvider)element.GetValue(ServiceProviderProperty);
 	}
 }
