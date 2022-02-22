@@ -45,7 +45,7 @@ public partial record LoginViewModel
 			await _error.Set(default, ct);
 			await Task.Delay(1, ct);
 
-			await _navigator.NavigatePreviousWithResultAsync(this, data: Option.Some(credentials));
+			await _navigator.NavigateBackWithResultAsync(this, data: Option.Some(credentials));
 		}
 		else
 		{

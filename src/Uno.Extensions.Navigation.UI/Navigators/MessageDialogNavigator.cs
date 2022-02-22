@@ -46,7 +46,7 @@ public class MessageDialogNavigator : DialogNavigator
 				{
 					if (result.Status != TaskStatus.Canceled)
 					{
-						navigation?.NavigatePreviousWithResultAsync(request.Sender, data: Option.Some(result.Result));
+						navigation?.NavigateBackWithResultAsync(request.Sender, data: Option.Some(result.Result));
 
 					}
 				},

@@ -184,19 +184,19 @@ public static class NavigatorExtensions
 		return result?.AsResult<TResultData>();
 	}
 
-	public static Task<NavigationResponse?> NavigatePreviousAsync(
+	public static Task<NavigationResponse?> NavigateBackAsync(
 		this INavigator service, object sender, string qualifier = Qualifiers.None, CancellationToken cancellation = default)
 	{
 		return service.NavigateAsync((Qualifiers.NavigateBack + string.Empty).WithQualifier(qualifier).AsRequest(sender, cancellationToken: cancellation));
 	}
 
-	public static Task<NavigationResponse?> NavigatePreviousWithResultAsync<TResult>(
+	public static Task<NavigationResponse?> NavigateBackWithResultAsync<TResult>(
 	this INavigator service, object sender, string qualifier = Qualifiers.None, Option<TResult>? data = null, CancellationToken cancellation = default)
 	{
 		return service.NavigateAsync((Qualifiers.NavigateBack + string.Empty).WithQualifier(qualifier).AsRequest(sender, data, cancellation));
 	}
 
-	public static Task<NavigationResponse?> NavigatePreviousWithResultAsync(
+	public static Task<NavigationResponse?> NavigateBackWithResultAsync(
 	this INavigator service, object sender, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
 	{
 		return service.NavigateAsync((Qualifiers.NavigateBack + string.Empty).WithQualifier(qualifier).AsRequest(sender, data, cancellation));
@@ -253,7 +253,7 @@ public static class NavigatorExtensions
 		var gobackNavigator = region?.FindChildren(
 			child => child.Services?.GetService<INavigator>() is ControlNavigator controlNavigator &&
 				controlNavigator.CanGoBack).LastOrDefault()?.Navigator();
-		return (gobackNavigator?.NavigatePreviousAsync(sender)) ?? Task.FromResult<NavigationResponse?>(new NavigationResponse(Success: false));
+		return (gobackNavigator?.NavigateBackAsync(sender)) ?? Task.FromResult<NavigationResponse?>(new NavigationResponse(Success: false));
 	}
 
 }

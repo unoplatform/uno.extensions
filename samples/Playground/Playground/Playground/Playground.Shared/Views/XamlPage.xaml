@@ -40,10 +40,10 @@
 					Click="{x:Bind ViewModel.NavigateDataForResultAsyncClick}" />
 			<Button Content="NavigateForResultAsync&lt;TResultData&gt;(...);"
 					Click="{x:Bind ViewModel.NavigateForResultAsyncClick}" />
-			<Button Content="NavigatePreviousAsync(...);"
-					Click="{x:Bind ViewModel.NavigatePreviousAsyncClick}" />
-			<Button Content="NavigatePreviousWithResultAsync&lt;TResult&gt;(...);"
-					Click="{x:Bind ViewModel.NavigatePreviousWithResultAsyncClick}" />
+			<Button Content="NavigateBackAsync(...);"
+					Click="{x:Bind ViewModel.NavigateBackAsyncClick}" />
+			<Button Content="NavigateBackWithResultAsync&lt;TResult&gt;(...);"
+					Click="{x:Bind ViewModel.NavigateBackWithResultAsyncClick}" />
 			<Button Content="ShowMessageDialogAsync(...);"
 					Click="{x:Bind ViewModel.ShowMessageDialogAsyncClick}" />-->
 			<StackPanel x:Name="CountryStackPanel" >

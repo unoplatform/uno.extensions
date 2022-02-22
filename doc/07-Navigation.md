@@ -140,8 +140,8 @@ There are INavigator extension methods that accept a variety of parameters, depe
 | NavigateRouteAsync(this, "../Deals")                                                                                 | Navigates to the Deals tab<br>(assuming this is executed from the Details page, inside a Products tab on the HomePage)                                                                                                                          |
 | NavigateViewAsync<HomePage>(this)                                                                                    | Navigates to the HomePage<br>The HomePage type is used to find the RouteMap with a View of HomePage where the Path is used to set the Base of the Route                                                                                         |
 | NavigateViewModelAsync<HomeViewModel>(this)                                                                          | Navigates to the HomePage<br>The HomeViewModel type is used to fine the RouteMap with a ViewModel of HomeViewModel where the Path is used to set the Base of the Route                                                                          |
-| NavigateRouteAsync(this, "-") or NavigatePreviousAsync(this)                                                         | This navigates to previous page in a frame, or closes a dialog                                                                                                                                                                                  |
-| NavigateRouteAsync(this, "-", data: selectedProduct) or NavigatePreviousWithResultAsync(this, data: selectedProduct) | This navigation passes data as result of a prior navigation request (it will also navigate to previous page on a frame, or close a dialog). The selectedProduct object is passed into the ToQuery function in order to extract query parameters |
+| NavigateRouteAsync(this, "-") or NavigateBackAsync(this)                                                         | This navigates to previous page in a frame, or closes a dialog                                                                                                                                                                                  |
+| NavigateRouteAsync(this, "-", data: selectedProduct) or NavigateBackWithResultAsync(this, data: selectedProduct) | This navigation passes data as result of a prior navigation request (it will also navigate to previous page on a frame, or close a dialog). The selectedProduct object is passed into the ToQuery function in order to extract query parameters |
 | NavigateRouteAsync(this, "/Login") or NavigateRouteAsync(this, "Login", scheme: Schemes.Root)                        | Navigates to the Login page from the root NavigationRegion. Irrespective of which INavigator instance you call NavigateAsync on, the Root scheme will cause the hierarchy to be traversed up to the first NavigationRegion                      |
 | ShowMessageDialogAsync(this,"Warning about something","Alert")                                                       | Displays a MessageDialog with title "Alert" and content of "Warning about something"                                                                                                                                                            |
 
@@ -191,7 +191,7 @@ public sealed partial class HomePage : Page
 	}
 }
 ```
-Navigate back to the previous page by calling NavigatePreviousAsync
+Navigate back to the previous page by calling NavigateBackAsync
 
 **XAML**
 ```xml
@@ -208,7 +208,7 @@ public sealed partial class SecondPage : Page
 	public async void GoBackClick()
 	{
 		var nav = this.Navigator();
-		await nav.NavigatePreviousAsync(this);
+		await nav.NavigateBackAsync(this);
 	}
 }
 ```
@@ -243,7 +243,7 @@ public sealed partial class HomeViewModel
 ```
 
 
-Navigate back to the previous page by calling NavigatePreviousAsync
+Navigate back to the previous page by calling NavigateBackAsync
 
 **XAML**
 ```xml
@@ -267,7 +267,7 @@ public sealed partial class SecondViewModel
 	
 	public async void GoBackClick()
 	{
-		await _navigator.NavigatePreviousAsync(this);
+		await _navigator.NavigateBackAsync(this);
 	}
 }
 ```
@@ -483,7 +483,7 @@ public class SecondPageViewModel : ObservableObject
 
     public void GoBack()
     {
-        Navigator.NavigatePreviousAsync(this);
+        Navigator.NavigateBackAsync(this);
     }
 }
 ```
