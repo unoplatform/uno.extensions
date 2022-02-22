@@ -131,7 +131,7 @@ namespace Playground
 
 			// Option 1: Ad-hoc hosting of Navigation
 			var f = new Frame();
-			f.AttachServices(Host.Services);
+			f.AttachServiceProvider(Host.Services);
 			_window.Content = f;
 			f.Navigate(typeof(MainPage));
 
@@ -143,7 +143,7 @@ namespace Playground
 			//	HorizontalContentAlignment = HorizontalAlignment.Stretch,
 			//	VerticalContentAlignment = VerticalAlignment.Stretch
 			//};
-			//root.AttachServices(Host.Services);
+			//root.AttachServiceProvider(Host.Services);
 			//_window.Content = root;
 			//root.Host(initialRoute: "Shell");
 

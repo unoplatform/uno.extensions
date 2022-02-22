@@ -6,7 +6,7 @@ namespace Uno.Extensions.Navigation;
 
 public static class FrameworkElementExtensions
 {
-	public static void AttachServices(this FrameworkElement element, IServiceProvider services)
+	public static void AttachServiceProvider(this FrameworkElement element, IServiceProvider services)
 	{
 		element.SetServiceProvider(services);
 	}
