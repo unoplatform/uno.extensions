@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Playground.Views;
-using Uno.Extensions.Navigation;
+﻿namespace Playground.ViewModels;
 
-namespace Playground.ViewModels
+public class ShellViewModel
 {
-    public class ShellViewModel
-    {
-		public ShellViewModel(INavigator navigator)
-		{
-			navigator.NavigateViewAsync<HomePage>(this);
-		}
+	public ShellViewModel(INavigator navigator)
+	{
+		navigator.NavigateViewAsync<HomePage>(this);
 	}
 }

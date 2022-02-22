@@ -229,12 +229,11 @@ namespace Commerce
 			;
 		}
 
-		public async void RouteUpdated(object sender, EventArgs e)
+		public async void RouteUpdated(object sender, RouteChangedEventArgs e)
 		{
 			try
 			{
-				var reg = Host.Services.GetService<IRegion>();
-				var rootRegion = reg.Root();
+				var rootRegion = e.Region.Root();
 				var route = rootRegion.GetRoute();
 
 

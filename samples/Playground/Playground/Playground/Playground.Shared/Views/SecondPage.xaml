@@ -29,6 +29,9 @@
 		<StackPanel Grid.Row="1">
 			<Button uen:Navigation.Request="-"
 					Content="Back" />
+			<Button uen:Navigation.Request="-"
+					uen:Navigation.Data="{x:Bind SelectedCountry}"
+					Content="Back with Country" />
 			<Button uen:Navigation.Request="Third"
 					Content="Third page" />
 		</StackPanel>

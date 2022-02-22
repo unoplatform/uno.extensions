@@ -64,6 +64,19 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 				resultType = routeMap?.ResultData;
 			}
 
+			if(string.IsNullOrWhiteSpace(path) && data is not null)
+			{
+				var rm = RouteResolver.FindByData(data.GetType());
+				path = rm?.Path;
+			}
+
+			if (string.IsNullOrWhiteSpace(path) && resultType is not null)
+			{
+				var rm = RouteResolver.FindByResultData(resultType);
+				path = rm?.Path;
+			}
+
+
 			var qualifier = path.HasQualifier() ? Qualifiers.None: DefaultQualifier;
 
 			if (data is not null ||

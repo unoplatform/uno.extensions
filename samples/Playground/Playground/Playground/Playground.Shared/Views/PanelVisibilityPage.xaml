@@ -14,6 +14,8 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
 		</Grid.RowDefinitions>
 		<ui:NavigationBar Content="Visibility Page"
 						  x:Uid="Page_NavigationBar"
@@ -36,6 +38,30 @@
 		</StackPanel>
 		<Grid uen:Region.Attached="True"
 			  Grid.Row="2">
+			<Grid uen:Region.Name="One"
+				  Visibility="Collapsed">
+				<TextBlock Text="One" />
+			</Grid>
+			<Grid uen:Region.Name="Two"
+				  Visibility="Collapsed">
+				<TextBlock Text="Two" />
+			</Grid>
+			<Grid uen:Region.Name="Three"
+				  Visibility="Collapsed">
+				<TextBlock Text="Three" />
+			</Grid>
+		</Grid>
+		<StackPanel Grid.Row="3">
+			<Button Content="One"
+					uen:Navigation.Request="./Nested/One" />
+			<Button Content="Two"
+					uen:Navigation.Request="./Nested/Two" />
+			<Button Content="Three"
+					uen:Navigation.Request="./Nested/Three" />
+		</StackPanel>
+		<Grid uen:Region.Attached="True"
+			  uen:Region.Name="Nested"
+			  Grid.Row="4">
 			<Grid uen:Region.Name="One"
 				  Visibility="Collapsed">
 				<TextBlock Text="One" />

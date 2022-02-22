@@ -22,10 +22,19 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 		// "../" (change content) Add support for changing current content
 		route.IsChangeContent();
 
-	protected override bool CanNavigateToRoute(Route route) =>
-			base.CanNavigateToRoute(route) &&
-			(RouteResolver.Find(route)?.View?.IsSubclassOf(typeof(FrameworkElement)) ?? true); // Inject a FrameView if no View specified
-
+	protected override bool CanNavigateToRoute(Route route)
+	{
+		if (!base.CanNavigateToRoute(route))
+		{
+			return false;
+		}
+		var rm = RouteResolver.Find(route);
+		if(rm is null )
+		{
+			return false;
+		}
+		return rm?.View?.IsSubclassOf(typeof(FrameworkElement)) ?? true; // Inject a FrameView if no View specified
+	}
 	protected override async Task<string?> Show(string? path, Type? viewType, object? data)
 	{
 		if (viewType is null ||

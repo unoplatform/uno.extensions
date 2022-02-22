@@ -46,11 +46,8 @@ namespace Commerce.ViewModels
 				}
 				else
 				{
-					var homeResponse = await Navigator.NavigateDataForResultAsync<Credentials, object>(this, currentCredentials, Qualifiers.ClearBackStack);
-					_ = await homeResponse.Result;
+					var homeResponse = await Navigator.NavigateDataAsync(this, currentCredentials, Qualifiers.ClearBackStack);
 				}
-
-				await CredentialsSettings.Update(c => new Credentials());
 			}
 			else
 			{
@@ -62,13 +59,10 @@ namespace Commerce.ViewModels
 				if (loginResult.IsSome(out var creds) && creds?.UserName is { Length: > 0 })
 				{
 					await CredentialsSettings.Update(c => creds);
+
+					Start();
 				}
 			}
-
-			// At this point we assume that either the login failed, or that the navigation to home
-			// was completed by a response being sent back. We don't actually care about the response,
-			// since we only care that the navigation has completed and that we should again show the login 
-			Start();
 		}
 	}
 }

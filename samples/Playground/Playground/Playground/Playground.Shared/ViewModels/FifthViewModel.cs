@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace Playground.ViewModels;
 
-namespace Playground.ViewModels
+class FifthViewModel
 {
-    class FifthViewModel
-    {
-		public string Title => "Fifth page with View Model";
-	}
+	public string Title => "Fifth page with View Model";
 }

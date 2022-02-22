@@ -13,38 +13,44 @@ public class RouteNotifier : IRouteNotifier, IRouteUpdater
 		Logger = logger;
 	}
 
+	private IDictionary<Guid, IRegion> regionRoots= new Dictionary<Guid, IRegion>();
 	private IDictionary<IRegion, int> runningNavigations = new Dictionary<IRegion, int>();
 	private IDictionary<IRegion, Stopwatch> timers = new Dictionary<IRegion, Stopwatch>();
 
-	public void StartNavigation(IRegion region)
+	public Guid StartNavigation(IRegion region)
 	{
-		region = region.Root();
+		var regionUpdateId = Guid.NewGuid();
+		var root = region.Root();
+		regionRoots[regionUpdateId] = root;
 
-		if (!runningNavigations.TryGetValue(region, out var count) ||
+		if (!runningNavigations.TryGetValue(root, out var count) ||
 			count == 0)
 		{
-			runningNavigations[region] = 1;
+			runningNavigations[root] = 1;
 			var timer = new Stopwatch();
-			timers[region] = timer;
+			timers[root] = timer;
 			timer.Start();
 		}
 		else
 		{
-			runningNavigations[region] = runningNavigations[region] + 1;
-			timers[region].Restart();
+			runningNavigations[root] = runningNavigations[root] + 1;
+			timers[root].Restart();
 		}
+
+		return regionUpdateId;
 	}
 
-	public void EndNavigation(IRegion region)
+	public void EndNavigation(Guid regionUpdateId)
 	{
-		region = region.Root();
-		runningNavigations[region] = runningNavigations[region] - 1;
+		var root= regionRoots[regionUpdateId];
+		regionRoots.Remove(regionUpdateId);
+		runningNavigations[root] = runningNavigations[root] - 1;
 
-		if (runningNavigations[region] == 0)
+		if (runningNavigations[root] == 0)
 		{
-			timers[region].Stop();
-			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Elapsed navigation: {timers[region].ElapsedMilliseconds}");
-			RouteChanged?.Invoke(this, new RouteChangedEventArgs(region));
+			timers[root].Stop();
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Elapsed navigation: {timers[root].ElapsedMilliseconds}");
+			RouteChanged?.Invoke(this, new RouteChangedEventArgs(root));
 		}
 	}
 }

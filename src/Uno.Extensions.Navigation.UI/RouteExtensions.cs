@@ -250,7 +250,7 @@ public static class RouteExtensions
 		return nextQualifier;
 	}
 
-	public static bool HasQualifier(this string path)
+	public static bool HasQualifier(this string? path)
 	{
 		var _ = ExtractBase(path, out var qualifier, out var _);
 		return !string.IsNullOrWhiteSpace(qualifier);

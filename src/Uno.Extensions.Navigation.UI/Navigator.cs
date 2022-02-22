@@ -31,9 +31,9 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 	public async Task<NavigationResponse?> NavigateAsync(NavigationRequest request)
 	{
 		if (Logger.IsEnabled(LogLevel.Information)) Logger.LogInformation($"Pre-navigation: - {Region.Root().ToString()}");
+		var regionUpdateId = RouteUpdater?.StartNavigation(Region) ?? Guid.Empty;
 		try
 		{
-			RouteUpdater?.StartNavigation(Region);
 
 			request = InitialiseRequest(request);
 
@@ -75,6 +75,18 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 						// This is the root nav service - need to trim the root qualifier
 						// so that the request can be handled by this navigator
 						request = request with { Route = request.Route.TrimQualifier(Qualifiers.Root) };
+
+						if (request.Route.IsEmpty())
+						{
+							this.Route = Route.Empty;
+
+							// Get the first route map
+							var map = RouteResolver.Find(null);
+							if (map is not null)
+							{
+								request = request with { Route = request.Route.Append(map.Path) };
+							}
+						}
 					}
 					else
 					{
@@ -119,7 +131,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		{
 			if (Logger.IsEnabled(LogLevel.Information)) Logger.LogInformation($"Post-navigation: {Region.Root().ToString()}");
 			if (Logger.IsEnabled(LogLevel.Information)) Logger.LogInformation($"Post-navigation (route): {Region.Root().GetRoute()}");
-			RouteUpdater?.EndNavigation(Region);
+			RouteUpdater?.EndNavigation(regionUpdateId);
 		}
 	}
 
@@ -163,7 +175,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 				)
 		);
 
-	protected virtual bool CanNavigateToRoute(Route route) => QualifierIsSupported(route);
+	protected virtual bool CanNavigateToRoute(Route route) => QualifierIsSupported(route) && !route.IsNested();
 
 	private async Task<NavigationResponse?> DialogNavigateAsync(NavigationRequest request)
 	{
@@ -204,6 +216,14 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			// sending a response when simply navigating back
 			services.AddInstance<INavigator>(this);
 		}
+
+		if(!string.IsNullOrWhiteSpace(this.Region.Name) &&
+			this.Region.Name == request.Route?.Base &&
+			this.CanNavigateToRoute(request.Route.Next()))
+		{
+			request = request with { Route = request.Route.Next() };
+		}
+
 
 		var executedRoute = await CoreNavigateAsync(request);
 

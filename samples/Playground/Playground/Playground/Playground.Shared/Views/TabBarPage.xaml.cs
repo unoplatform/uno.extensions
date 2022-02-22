@@ -20,17 +20,11 @@ namespace Playground.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class HomePage : Page
+    public sealed partial class TabBarPage : Page
     {
-        public HomePage()
+        public TabBarPage()
         {
             this.InitializeComponent();
         }
-
-		public async void GoToSecondPageClick()
-		{
-			var nav = this.Navigator();
-			await nav.NavigateRouteAsync(this, "Second");
-		}
-	}
+    }
 }
