@@ -81,16 +81,16 @@ namespace Playground.Views
 		}
 
 		// Navigate to previous view (goback on frame or close dialog/popup)
-		public async void NavigatePreviousAsyncClick(object sender, RoutedEventArgs args)
+		public async void NavigateBackAsyncClick(object sender, RoutedEventArgs args)
 		{
-			var response = await Navigator.NavigatePreviousAsync(this);
+			var response = await Navigator.NavigateBackAsync(this);
 
 		}
 
 		// Navigate to previous view (goback on frame or close dialog/popup) and provide response data
-		public async void NavigatePreviousWithResultAsyncClick(object sender, RoutedEventArgs args)
+		public async void NavigateBackWithResultAsyncClick(object sender, RoutedEventArgs args)
 		{
-			var response = await Navigator.NavigatePreviousWithResultAsync(this, data: new Widget("Result", 80.0));
+			var response = await Navigator.NavigateBackWithResultAsync(this, data: new Widget("Result", 80.0));
 
 		}
 

@@ -213,7 +213,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 		}
 		else
 		{
-			Region.Navigator()?.NavigatePreviousAsync(this);
+			Region.Navigator()?.NavigateBackAsync(this);
 		}
 	}
 

@@ -4,13 +4,6 @@ namespace Uno.Extensions.Navigation;
 
 public static class RouteExtensions
 {
-	private static Regex nonAlphaRegex = new Regex(@"([^a-zA-Z0-9])+");
-	private static Regex alphaRegex = new Regex(@"([a-zA-Z0-9])+");
-
-	public static bool IsBackOrCloseNavigation(this Route route) =>
-		route.Qualifier
-			.StartsWith(Qualifiers.NavigateBack);
-
 	public static bool IsFrameNavigation(this Route route) =>
 		// We want to make forward navigation between frames simple, so don't require +
 		route.Qualifier == Qualifiers.None || 
@@ -92,24 +85,10 @@ public static class RouteExtensions
 	public static object? ResponseData(this Route route) =>
 		(route?.Data?.TryGetValue(string.Empty, out var result) ?? false) ? result : null;
 
-	public static string TrimStartOnce(this string text, string textToTrim)
-	{
-		if (text.StartsWith(textToTrim))
-		{
-			if (text.Length == textToTrim.Length)
-			{
-				return string.Empty;
-			}
-
-			return text.Substring(textToTrim.Length);
-		}
-
-		return text;
-	}
 
 	public static Route TrimQualifier(this Route route, string qualifierToTrim)
 	{
-		return route with { Qualifier = route.Qualifier.TrimStartOnce(qualifierToTrim) };
+		return route with { Qualifier = route.Qualifier.TrimStart(qualifierToTrim) };
 	}
 
 	public static Route AppendQualifier(this Route route, string qualifier)
@@ -252,110 +231,10 @@ public static class RouteExtensions
 
 	public static bool HasQualifier(this string? path)
 	{
-		var _ = ExtractBase(path, out var qualifier, out var _);
+		var _ = path.ExtractBase(out var qualifier, out var _);
 		return !string.IsNullOrWhiteSpace(qualifier);
 	}
-	public static string? ExtractBase(this string? path, out string nextQualifier, out string nextPath)
-	{
-		nextPath = path ?? string.Empty;
-		nextQualifier = string.Empty;
-
-		if (path is null ||
-			string.IsNullOrWhiteSpace(path))
-		{
-			return default;
-		}
-
-		var qualifierMatch = nonAlphaRegex.Match(path);
-		if (qualifierMatch.Success)
-		{
-			path = path.TrimStart(qualifierMatch.Value);
-			nextQualifier = qualifierMatch.Value;
-		}
-
-		qualifierMatch = alphaRegex.Match(path);
-		var routeBase = qualifierMatch.Success ? qualifierMatch.Value : String.Empty;
-		if (routeBase is { Length: > 0 })
-		{
-			if (path.Length > routeBase.Length + 1)
-			{
-				nextPath = path.TrimStartOnce(routeBase);
-			}
-			else
-			{
-				nextPath = string.Empty;
-			}
-		}
-		else
-		{
-			nextPath = path;
-		}
-		return routeBase;
-	}
-
-	public static string WithQualifier(this string path, string qualifier) => string.IsNullOrWhiteSpace(qualifier) ? path : $"{qualifier}{path}";
-
-	public static Route AsRoute(this Uri uri, object? data = null)
-	{
-		var path = uri.OriginalString;
-		return path.AsRoute(data);
-	}
-
-	public static Route AsRoute(this string path, object? data = null)
-	{
-		if (string.IsNullOrWhiteSpace(path))
-		{
-			return Route.Empty;
-		}
-
-		var queryIdx = path.IndexOf('?');
-		var query = string.Empty;
-		if (queryIdx >= 0)
-		{
-			queryIdx++; // Step over the ?
-			query = queryIdx < path.Length ? path.Substring(queryIdx) : string.Empty;
-			path = path.Substring(0, queryIdx - 1);
-		}
-
-		var paras = ParseQueryParameters(query);
-		if (data is not null)
-		{
-			if (data is IDictionary<string, object> paraDict)
-			{
-				paras.AddRange(paraDict);
-			}
-			else
-			{
-				paras[string.Empty] = data;
-			}
-		}
-
-		var routeBase = ExtractBase(path, out var qualifier, out path);
-
-		var route = new Route(qualifier, routeBase, path, paras);
-		if (route.IsBackOrCloseNavigation() &&
-			data is not null &&
-			data is not IOption)
-		{
-			data = Option.Some<object>(data);
-			paras[string.Empty] = data;
-			route = route with { Data = paras };
-		}
-		return route;
-	}
-
-	private static IDictionary<string, object> ParseQueryParameters(this string queryString)
-	{
-		return (from pair in (queryString + string.Empty).Split('&')
-				where pair is not null
-				let bits = pair.Split('=')
-				where bits.Length == 2
-				let key = bits[0]
-				let val = bits[1]
-				where key is not null && val is not null
-				select new { key, val })
-				.ToDictionary(x => x.key, x => (object)x.val);
-	}
+	
 
 	public static string FullPath(this Route route)
 	{

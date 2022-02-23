@@ -45,10 +45,10 @@
 					Click="NavigateDataForResultAsyncClick" />
 			<Button Content="NavigateForResultAsync&lt;TResultData&gt;(...);"
 					Click="NavigateForResultAsyncClick" />
-			<Button Content="NavigatePreviousAsync(...);"
-					Click="NavigatePreviousAsyncClick" />
-			<Button Content="NavigatePreviousWithResultAsync&lt;TResult&gt;(...);"
-					Click="NavigatePreviousWithResultAsyncClick" />
+			<Button Content="NavigateBackAsync(...);"
+					Click="NavigateBackAsyncClick" />
+			<Button Content="NavigateBackWithResultAsync&lt;TResult&gt;(...);"
+					Click="NavigateBackWithResultAsyncClick" />
 			<Button Content="ShowMessageDialogAsync(...);"
 					Click="ShowMessageDialogAsyncClick" />
 		</StackPanel>
