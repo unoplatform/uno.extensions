@@ -195,7 +195,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		}
 
 		var mapping = Resolver.Routes.Find(request.Route);
-		if (mapping?.ViewMap?.Data?.UntypedToQuery is not null)
+		if (mapping?.View?.Data?.UntypedToQuery is not null)
 		{
 			request = request with { Route = request.Route with { Data = request.Route.Data?.AsParameters(mapping) } };
 		}

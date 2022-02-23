@@ -187,7 +187,8 @@ namespace Commerce
 				new ViewMap(View: typeof(ProductsPage), ViewModel: typeof(ProductsViewModel.BindableProductsViewModel)),
 				new ViewMap(View: typeof(ProductDetailsPage), ViewModel: typeof(ProductDetailsViewModel.BindableProductDetailsViewModel), Data: new DataMap<Product>(
 																						ToQuery: product => new Dictionary<string, string> { { nameof(Product.ProductId), product.ProductId.ToString() } },
-																						FromQuery: async (sp, query) => {
+																						FromQuery: async (sp, query) =>
+																						{
 																							var id = int.Parse(query[nameof(Product.ProductId)]);
 																							var ps = sp.GetRequiredService<IProductService>();
 																							var products = await ps.GetProducts(default, default);
@@ -201,13 +202,14 @@ namespace Commerce
 																						ToQuery: cartItem => new Dictionary<string, string> {
 																							{ nameof(Product.ProductId), cartItem.Product.ProductId.ToString() },
 																							{ nameof(CartItem.Quantity),cartItem.Quantity.ToString() } },
-																						FromQuery: async (sp, query) => {
+																						FromQuery: async (sp, query) =>
+																						{
 																							var id = int.Parse(query[nameof(Product.ProductId)]);
 																							var quantity = int.Parse(query[nameof(CartItem.Quantity)]);
 																							var ps = sp.GetRequiredService<IProductService>();
 																							var products = await ps.GetProducts(default, default);
-																							var p = products.FirstOrDefault(p=>p.ProductId==id);
-																							return new CartItem(p,quantity);
+																							var p = products.FirstOrDefault(p => p.ProductId == id);
+																							return new CartItem(p, quantity);
 																						})),
 				new ViewMap(View: typeof(CheckoutPage)),
 				new ViewMap(View: typeof(AddProductPage), ViewModel: typeof(AddProductViewModel))
@@ -215,31 +217,31 @@ namespace Commerce
 
 			routes
 				.Register(
-				views=>
-					new("Shell", ViewMap: views.FindByViewModel<ShellViewModel>(),
+				views =>
+					new("Shell", View: views.FindByViewModel<ShellViewModel>(),
 							Nested: new RouteMap[]
 							{
-								new("Login", ViewMap: views.FindByResultData<Credentials>()),
-								new RouteMap("Home", ViewMap: views.FindByData<Credentials>(),
+								new("Login", View: views.FindByResultData<Credentials>()),
+								new RouteMap("Home", View: views.FindByData<Credentials>(),
 										Nested: new RouteMap[]{
-											new ("Products", ViewMap: views.FindByViewModel<ProductsViewModel.BindableProductsViewModel>(),
+											new ("Products", View: views.FindByViewModel<ProductsViewModel.BindableProductsViewModel>(),
 															IsDefault: true,
 															Nested: new  RouteMap[]{
-																new RouteMap("Details", ViewMap: views.FindByViewModel<ProductDetailsViewModel.BindableProductDetailsViewModel>()),
-																new RouteMap("Filter",  ViewMap: views.FindByViewModel<FiltersViewModel.BindableFiltersViewModel>())
+																new RouteMap("Details", View: views.FindByViewModel<ProductDetailsViewModel.BindableProductDetailsViewModel>()),
+																new RouteMap("Filter",  View: views.FindByViewModel<FiltersViewModel.BindableFiltersViewModel>())
 															}),
 
-											new("Deals", ViewMap:views.FindByViewModel<DealsViewModel>()),
+											new("Deals", View:views.FindByViewModel<DealsViewModel>()),
 
-											new("Profile", ViewMap:views.FindByViewModel<ProfileViewModel>()),
+											new("Profile", View:views.FindByViewModel<ProfileViewModel>()),
 
-											new("Cart", ViewMap: views.FindByViewModel<CartViewModel>(),
+											new("Cart", View: views.FindByViewModel<CartViewModel>(),
 													Nested: new []{
-														new RouteMap("CartDetails",ViewMap: views.FindByViewModel<CartProductDetailsViewModel.BindableCartProductDetailsViewModel>()),
-														new RouteMap("Checkout", ViewMap: views.FindByView<CheckoutPage>())
+														new RouteMap("CartDetails",View: views.FindByViewModel<CartProductDetailsViewModel.BindableCartProductDetailsViewModel>()),
+														new RouteMap("Checkout", View: views.FindByView<CheckoutPage>())
 													})
 											}),
-								new("AddProduct", ViewMap: views.FindByViewModel<AddProductViewModel>()), 
+								new("AddProduct", View: views.FindByViewModel<AddProductViewModel>()),
 							}));
 
 			;

@@ -204,7 +204,7 @@ public static class RouteExtensions
 
 	public static bool IsPageRoute(this Route route, IRouteResolver mappings)
 	{
-		return ((mappings.Find(route))?.ViewMap?.View?.IsSubclassOf(typeof(Page)) ?? false);
+		return ((mappings.Find(route))?.View?.View?.IsSubclassOf(typeof(Page)) ?? false);
 	}
 
 	public static bool IsLastFrameRoute(this Route route, IRouteResolver mappings)
@@ -312,13 +312,13 @@ public static class RouteExtensions
 		}
 
 		var mapDict = data;
-		if (mapping?.ViewMap?.Data?.UntypedToQuery is not null)
+		if (mapping?.View?.Data?.UntypedToQuery is not null)
 		{
 			// TODO: Find nicer way to clone the dictionary
 			mapDict = data.ToArray().ToDictionary(x => x.Key, x => x.Value);
 			if (data.TryGetValue(string.Empty, out var paramData))
 			{
-				var qdict = mapping.ViewMap.Data.UntypedToQuery(paramData);
+				var qdict = mapping.View.Data.UntypedToQuery(paramData);
 				qdict.ForEach(qkvp => mapDict[qkvp.Key] = qkvp.Value);
 			}
 		}

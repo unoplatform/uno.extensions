@@ -28,7 +28,7 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 		base.CanNavigateToRoute(route) &&
 		(
 			(FindByPath(Resolver.Routes.Find(route)?.Path ?? route.Base) is not null) ||
-			(Resolver.Routes.Find(route)?.ViewMap?.View?.IsSubclassOf(typeof(FrameworkElement)) ?? false)		
+			(Resolver.Routes.Find(route)?.View?.View?.IsSubclassOf(typeof(FrameworkElement)) ?? false)		
 		);
 
 	private FrameworkElement? CurrentlyVisibleControl { get; set; }

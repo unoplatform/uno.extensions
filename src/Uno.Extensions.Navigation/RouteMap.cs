@@ -3,14 +3,14 @@
 #pragma warning disable SA1313 // Parameter names should begin with lower-case letter
 public record RouteMap(
 	string Path,
-	ViewMap? ViewMap = null,
+	ViewMap? View = null,
 	bool IsDefault = false,
 	Func<NavigationRequest, NavigationRequest>? Init = null,
 	params RouteMap[] Nested)
 {
 	internal void RegisterTypes(IServiceCollection services)
 	{
-		ViewMap?.RegisterTypes(services);
+		View?.RegisterTypes(services);
 	}
 }
 

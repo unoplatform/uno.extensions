@@ -41,8 +41,8 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 
         var route = request.Route;
         var mapping = Resolver.Routes.Find(route);
-		if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Navigating to path '{route.Base}' with view '{mapping?.ViewMap?.View?.Name}'");
-        var executedPath = await Show(route.Base, mapping?.ViewMap?.View, route.Data);
+		if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Navigating to path '{route.Base}' with view '{mapping?.View?.View?.Name}'");
+        var executedPath = await Show(route.Base, mapping?.View?.View, route.Data);
 
 		if (string.IsNullOrEmpty(executedPath))
 		{
@@ -83,7 +83,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 
 		var viewModel = view.DataContext;
 		if (viewModel is null ||
-			viewModel.GetType() != mapping?.ViewMap?.ViewModel)
+			viewModel.GetType() != mapping?.View?.ViewModel)
 		{
 			// This will happen if cache mode isn't set to required
 			viewModel = CreateViewModel(services, route, mapping);
@@ -175,18 +175,18 @@ public abstract class ControlNavigator : Navigator
 	protected object? CreateViewModel(IServiceProvider services, Route route, RouteMap? mapping)
 	{
 		var navigator = services.GetInstance<INavigator>();
-		if (mapping?.ViewMap?.ViewModel is not null)
+		if (mapping?.View?.ViewModel is not null)
 		{
 			var dataFactor = services.GetRequiredService<NavigationDataProvider>();
 			dataFactor.Parameters = route.Data ?? new Dictionary<string, object>();
 
-			var vm = services.GetService(mapping.ViewMap.ViewModel);
+			var vm = services.GetService(mapping.View.ViewModel);
 
 			if (vm is null)
 			{
 				try
 				{
-					var ctr = mapping.ViewMap.ViewModel.GetNavigationConstructor(navigator!, Region.Services!, out var args);
+					var ctr = mapping.View.ViewModel.GetNavigationConstructor(navigator!, Region.Services!, out var args);
 					if (ctr is not null)
 					{
 						vm = ctr.Invoke(args);

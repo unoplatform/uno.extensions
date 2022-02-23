@@ -68,7 +68,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 		}
 		else
 		{
-			var viewType = Resolver.Routes.FindByPath(route.Base)?.ViewMap?.View;
+			var viewType = Resolver.Routes.FindByPath(route.Base)?.View?.View;
 			return viewType is not null &&
 				viewType.IsSubclassOf(typeof(Page));
 		}
@@ -95,8 +95,8 @@ public class FrameNavigator : ControlNavigator<Frame>
 		var route = request.Route;
 		var segments = (from pg in route.ForwardNavigationSegments(Resolver.Routes)
 						let map = Resolver.Routes.FindByPath(pg.Base)
-						where map?.ViewMap?.View is not null &&
-								map.ViewMap.View.IsSubclassOf(typeof(Page))
+						where map?.View?.View is not null &&
+								map.View.View.IsSubclassOf(typeof(Page))
 						select new { Route = pg, Map = map }).ToArray();
 		if (segments.Length == 0)
 		{
@@ -115,14 +115,14 @@ public class FrameNavigator : ControlNavigator<Frame>
 		for (var i = 0; i < segments.Length - 1; i++)
 		{
 			var seg = segments[i];
-			var newEntry = new PageStackEntry(seg.Map.ViewMap?.View, null, null);
+			var newEntry = new PageStackEntry(seg.Map.View?.View, null, null);
 			Control?.BackStack.Add(newEntry);
 			route = route.Trim(seg.Route);
 			firstSegment = firstSegment.Append(segments[i + 1].Route);
 		}
 
 		// Add the new context to the list of contexts and then navigate away
-		await Show(segments.Last().Route.Base, segments.Last().Map.ViewMap?.View, route.Data);
+		await Show(segments.Last().Route.Base, segments.Last().Map.View?.View, route.Data);
 
 		// If path starts with / then remove all prior pages and corresponding contexts
 		if (route.FrameIsRooted())

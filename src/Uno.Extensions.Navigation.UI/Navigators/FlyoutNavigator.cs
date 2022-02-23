@@ -48,9 +48,9 @@ public class FlyoutNavigator : ControlNavigator
 			}
 
 			var mapping = Resolver.Routes.Find(route);
-			injectedFlyout = !(mapping?.ViewMap?.View?.IsSubclassOf(typeof(Flyout))??false);
+			injectedFlyout = !(mapping?.View?.View?.IsSubclassOf(typeof(Flyout))??false);
 			var viewModel = CreateViewModel(Region.Services, route, mapping);
-			Flyout = await DisplayFlyout(request, mapping?.ViewMap?.View, viewModel, injectedFlyout);
+			Flyout = await DisplayFlyout(request, mapping?.View?.View, viewModel, injectedFlyout);
 		}
 		var responseRequest = injectedFlyout ? Route.Empty : route with { Path = null };
 		return responseRequest;

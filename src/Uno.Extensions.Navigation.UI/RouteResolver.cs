@@ -24,7 +24,7 @@ public class RouteResolver : IRouteResolver
 
 		var messageDialogRoute = new RouteMap(
 			Path: typeof(MessageDialog).Name,
-			ViewMap: new ViewMap(
+			View: new ViewMap(
 			View: typeof(MessageDialog),
 			ResultData: typeof(MessageDialog))
 		);
@@ -61,7 +61,7 @@ public class RouteResolver : IRouteResolver
 	{
 		foreach (var rm in Mappings.Values)
 		{
-			if (rm.ViewMap == viewMap)
+			if (rm.View == viewMap)
 			{
 				return rm;
 			}
@@ -72,22 +72,22 @@ public class RouteResolver : IRouteResolver
 
 	public virtual RouteMap? FindByViewModel(Type? viewModelType)
 	{
-		return FindRouteByType(viewModelType, map => map.ViewMap?.ViewModel);
+		return FindRouteByType(viewModelType, map => map.View?.ViewModel);
 	}
 
 	public virtual RouteMap? FindByView(Type? viewType)
 	{
-		return FindRouteByType(viewType, map => map.ViewMap?.View);
+		return FindRouteByType(viewType, map => map.View?.View);
 	}
 
 	public RouteMap? FindByData(Type? dataType)
 	{
-		return FindRouteByType(dataType, map => map.ViewMap?.Data?.Data);
+		return FindRouteByType(dataType, map => map.View?.Data?.Data);
 	}
 
 	public RouteMap? FindByResultData(Type? dataType)
 	{
-		return FindRouteByType(dataType, map => map.ViewMap?.ResultData);
+		return FindRouteByType(dataType, map => map.View?.ResultData);
 	}
 
 	private RouteMap? FindRouteByType(Type? typeToFind, Func<RouteMap, Type?> mapType)

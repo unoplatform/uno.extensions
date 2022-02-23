@@ -299,33 +299,33 @@ namespace Playground
 			// RouteMap required for Shell if initialRoute or initialViewModel isn't specified when calling NavigationHost
 			routes.Register(
 				views=>
-				new RouteMap("Shell",ViewMap: views.FindByViewModel<ShellViewModel>(),
+				new RouteMap("Shell",View: views.FindByViewModel<ShellViewModel>(),
 				Nested: new[]
 				{
-					new RouteMap("Home",ViewMap: views.FindByView<HomePage>()),
-					new RouteMap("CodeBehind",ViewMap: views.FindByView<CodeBehindPage>()),
-					new RouteMap("VM",ViewMap: views.FindByView<VMPage>()),
-					new RouteMap("Xaml",ViewMap: views.FindByView<XamlPage>()),
-					new RouteMap("NavigationView",ViewMap: views.FindByView<NavigationViewPage>()),
-					new RouteMap("TabBar",ViewMap: views.FindByView<TabBarPage>()),
-					new RouteMap("ContentControl",ViewMap: views.FindByView<ContentControlPage>()),
-					new RouteMap("Second",ViewMap: views.FindByView<SecondPage>()),
-					new RouteMap("Third",ViewMap: views.FindByView<ThirdPage>()),
-					new RouteMap("Fourth",ViewMap: views.FindByView<FourthPage>()),
-					new RouteMap("Fifth",ViewMap: views.FindByView<FifthPage>()),
-					new RouteMap("Dialogs",ViewMap: views.FindByView<DialogsPage>(),
+					new RouteMap("Home",View: views.FindByView<HomePage>()),
+					new RouteMap("CodeBehind",View: views.FindByView<CodeBehindPage>()),
+					new RouteMap("VM",View: views.FindByView<VMPage>()),
+					new RouteMap("Xaml",View: views.FindByView<XamlPage>()),
+					new RouteMap("NavigationView",View: views.FindByView<NavigationViewPage>()),
+					new RouteMap("TabBar",View: views.FindByView<TabBarPage>()),
+					new RouteMap("ContentControl",View: views.FindByView<ContentControlPage>()),
+					new RouteMap("Second",View: views.FindByView<SecondPage>()),
+					new RouteMap("Third",View: views.FindByView<ThirdPage>()),
+					new RouteMap("Fourth",View: views.FindByView<FourthPage>()),
+					new RouteMap("Fifth",View: views.FindByView<FifthPage>()),
+					new RouteMap("Dialogs",View: views.FindByView<DialogsPage>(),
 					Nested: new[]
 					{
-						new RouteMap("Simple",ViewMap: views.FindByView<SimpleDialog>()),
-						new RouteMap("Complex",ViewMap: views.FindByView<ComplexDialog>(),
+						new RouteMap("Simple",View: views.FindByView<SimpleDialog>()),
+						new RouteMap("Complex",View: views.FindByView<ComplexDialog>(),
 						Nested: new[]
 						{
-							new RouteMap("ComplexDialogFirst",ViewMap: views.FindByView<ComplexDialogFirstPage>()),
-							new RouteMap("ComplexDialogSecond",ViewMap: views.FindByView<ComplexDialogSecondPage>())
+							new RouteMap("ComplexDialogFirst",View: views.FindByView<ComplexDialogFirstPage>()),
+							new RouteMap("ComplexDialogSecond",View: views.FindByView<ComplexDialogSecondPage>())
 						})
 					}),
-					new RouteMap("PanelVisibility",ViewMap: views.FindByView<PanelVisibilityPage>()),
-					new RouteMap("VisualStates",ViewMap: views.FindByView<VisualStatesPage>()),
+					new RouteMap("PanelVisibility",View: views.FindByView<PanelVisibilityPage>()),
+					new RouteMap("VisualStates",View: views.FindByView<VisualStatesPage>()),
 				}));
 		}
 	}

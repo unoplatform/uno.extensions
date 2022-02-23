@@ -66,7 +66,7 @@ public class RouteResolverDefault : RouteResolver
 		if (path is not null &&
 			!string.IsNullOrWhiteSpace(path))
 		{
-			var defaultMap = new RouteMap(path, ViewMap: new ViewMap(View: view, ViewModel: viewModel));
+			var defaultMap = new RouteMap(path, View: new ViewMap(View: view, ViewModel: viewModel));
 			Mappings[defaultMap.Path] = defaultMap;
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Created default mapping - Path '{defaultMap.Path}'");
 			return defaultMap;

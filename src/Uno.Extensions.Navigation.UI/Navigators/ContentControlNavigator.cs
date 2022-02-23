@@ -33,7 +33,7 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 		{
 			return false;
 		}
-		return rm?.ViewMap?.View?.IsSubclassOf(typeof(FrameworkElement)) ?? true; // Inject a FrameView if no View specified
+		return rm?.View?.View?.IsSubclassOf(typeof(FrameworkElement)) ?? true; // Inject a FrameView if no View specified
 	}
 	protected override async Task<string?> Show(string? path, Type? viewType, object? data)
 	{
