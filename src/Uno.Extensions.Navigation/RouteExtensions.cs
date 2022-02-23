@@ -72,9 +72,10 @@ public static class RouteExtensions
 		return path.AsRoute(data);
 	}
 
-	public static Route AsRoute(this string path, object? data = null)
+	public static Route AsRoute(this string? path, object? data = null)
 	{
-		if (string.IsNullOrWhiteSpace(path))
+		if (path is null ||
+			string.IsNullOrWhiteSpace(path))
 		{
 			return Route.Empty;
 		}

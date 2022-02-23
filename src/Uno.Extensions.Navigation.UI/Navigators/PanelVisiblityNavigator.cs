@@ -13,9 +13,9 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 	public PanelVisiblityNavigator(
 		ILogger<PanelVisiblityNavigator> logger,
 		IRegion region,
-		IRouteResolver routeResolver,
+		IResolver resolver,
 		RegionControlProvider controlProvider)
-		: base(logger, region, routeResolver, controlProvider.RegionControl as Grid)
+		: base(logger, region, resolver, controlProvider.RegionControl as Grid)
 	{
 	}
 
@@ -27,8 +27,8 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 	protected override bool CanNavigateToRoute(Route route) =>
 		base.CanNavigateToRoute(route) &&
 		(
-			(FindByPath(RouteResolver.Find(route)?.Path ?? route.Base) is not null) ||
-			(RouteResolver.Find(route)?.View?.IsSubclassOf(typeof(FrameworkElement)) ?? false)		
+			(FindByPath(Resolver.Routes.Find(route)?.Path ?? route.Base) is not null) ||
+			(Resolver.Routes.Find(route)?.ViewMap?.View?.IsSubclassOf(typeof(FrameworkElement)) ?? false)		
 		);
 
 	private FrameworkElement? CurrentlyVisibleControl { get; set; }

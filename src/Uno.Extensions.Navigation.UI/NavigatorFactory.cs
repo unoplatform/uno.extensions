@@ -11,15 +11,15 @@ public class NavigatorFactory : INavigatorFactory
 
 	private ILogger Logger { get; }
 
-	private IRouteResolver RouteResolver { get; }
+	private IResolver Resolver { get; }
 
 	public NavigatorFactory(
 		ILogger<NavigatorFactory> logger,
 		IEnumerable<NavigatorFactoryBuilder> builders,
-		IRouteResolver routeResolver)
+		IResolver resolver)
 	{
 		Logger = logger;
-		RouteResolver = routeResolver;
+		Resolver = resolver;
 		builders.ForEach(builder => builder.Configure?.Invoke(this));
 	}
 
@@ -106,8 +106,8 @@ public class NavigatorFactory : INavigatorFactory
 		var dialogRegion = new NavigationRegion(services: services);
 		services.AddInstance<IRegion>(dialogRegion);
 
-		var mapping = RouteResolver.FindByPath(request.Route.Base);
-		var serviceLookupType = mapping?.View;
+		var mapping = Resolver.Routes.FindByPath(request.Route.Base);
+		var serviceLookupType = mapping?.ViewMap?.View;
 		if (serviceLookupType is null)
 		{
 			object? resource = request.RouteResourceView(region);

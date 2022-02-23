@@ -14,9 +14,9 @@ public class FrameNavigator : ControlNavigator<Frame>
 	public FrameNavigator(
 		ILogger<FrameNavigator> logger,
 		IRegion region,
-		IRouteResolver routeResolver,
+		IResolver resolver,
 		RegionControlProvider controlProvider)
-		: base(logger, region, routeResolver, controlProvider.RegionControl as Frame)
+		: base(logger, region, resolver, controlProvider.RegionControl as Frame)
 	{
 	}
 
@@ -68,7 +68,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 		}
 		else
 		{
-			var viewType = RouteResolver.FindByPath(route.Base)?.View;
+			var viewType = Resolver.Routes.FindByPath(route.Base)?.ViewMap?.View;
 			return viewType is not null &&
 				viewType.IsSubclassOf(typeof(Page));
 		}
@@ -93,10 +93,10 @@ public class FrameNavigator : ControlNavigator<Frame>
 		}
 
 		var route = request.Route;
-		var segments = (from pg in route.ForwardNavigationSegments(RouteResolver)
-						let map = RouteResolver.FindByPath(pg.Base)
-						where map?.View is not null &&
-								map.View.IsSubclassOf(typeof(Page))
+		var segments = (from pg in route.ForwardNavigationSegments(Resolver.Routes)
+						let map = Resolver.Routes.FindByPath(pg.Base)
+						where map?.ViewMap?.View is not null &&
+								map.ViewMap.View.IsSubclassOf(typeof(Page))
 						select new { Route = pg, Map = map }).ToArray();
 		if (segments.Length == 0)
 		{
@@ -115,14 +115,14 @@ public class FrameNavigator : ControlNavigator<Frame>
 		for (var i = 0; i < segments.Length - 1; i++)
 		{
 			var seg = segments[i];
-			var newEntry = new PageStackEntry(seg.Map.View, null, null);
+			var newEntry = new PageStackEntry(seg.Map.ViewMap?.View, null, null);
 			Control?.BackStack.Add(newEntry);
 			route = route.Trim(seg.Route);
 			firstSegment = firstSegment.Append(segments[i + 1].Route);
 		}
 
 		// Add the new context to the list of contexts and then navigate away
-		await Show(segments.Last().Route.Base, segments.Last().Map.View, route.Data);
+		await Show(segments.Last().Route.Base, segments.Last().Map.ViewMap?.View, route.Data);
 
 		// If path starts with / then remove all prior pages and corresponding contexts
 		if (route.FrameIsRooted())
@@ -137,7 +137,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 			RemoveLastFromBackStack();
 		}
 
-		InitialiseCurrentView(route, RouteResolver.Find(route));
+		InitialiseCurrentView(route, Resolver.Routes.Find(route));
 
 		CurrentView?.SetNavigatorInstance(Region.Navigator()!);
 
@@ -164,9 +164,9 @@ public class FrameNavigator : ControlNavigator<Frame>
 			numberOfPagesToRemove--;
 		}
 		var responseRoute = route with { Path = null };
-		var previousRoute = FullRoute.ApplyFrameRoute(RouteResolver, responseRoute);
+		var previousRoute = FullRoute.ApplyFrameRoute(Resolver, responseRoute);
 		var previousBase = previousRoute?.Last()?.Base;
-		var currentBase = RouteResolver.FindByView(Control.Content.GetType())?.Path;
+		var currentBase = Resolver.Routes.FindByView(Control.Content.GetType())?.Path;
 		if (previousBase is not null)
 		{
 			if (
@@ -174,7 +174,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 			currentBase != previousBase &&
 			previousBase != Control.Content.GetType().Name)
 			{
-				var previousMapping = RouteResolver.FindByView(Control.BackStack.Last().SourcePageType);
+				var previousMapping = Resolver.Routes.FindByView(Control.BackStack.Last().SourcePageType);
 				// Invoke the navigation (which will be a back navigation)
 				FrameGoBack(route.Data, previousMapping);
 			}
@@ -185,7 +185,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 			responseRoute = Route.Empty;
 		}
 
-		var mapping = RouteResolver.FindByView(Control.Content.GetType());
+		var mapping = Resolver.Routes.FindByView(Control.Content.GetType());
 
 		InitialiseCurrentView(previousRoute ?? Route.Empty, mapping);
 
@@ -342,7 +342,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 			return;
 		}
 
-		FullRoute = FullRoute.ApplyFrameRoute(RouteResolver, route);
+		FullRoute = FullRoute.ApplyFrameRoute(Resolver, route);
 		var lastRoute = FullRoute;
 		while (lastRoute is not null &&
 			!lastRoute.IsLast())

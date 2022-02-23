@@ -7,9 +7,9 @@ public class MessageDialogNavigator : DialogNavigator
 {
 	public MessageDialogNavigator(
 		ILogger<DialogNavigator> logger,
-		IRouteResolver routeResolver,
+		IResolver resolver,
 		IRegion region)
-		: base(logger, routeResolver, region)
+		: base(logger, resolver, region)
 	{
 	}
 
@@ -20,7 +20,7 @@ public class MessageDialogNavigator : DialogNavigator
 
 	protected override bool CanNavigateToRoute(Route route) =>
 		base.CanNavigateToRoute(route) &&
-		(RouteResolver.Find(route)?.View == typeof(MessageDialog));
+		(Resolver.Routes.Find(route)?.ViewMap?.View == typeof(MessageDialog));
 
 	protected override async Task<IAsyncInfo?> DisplayDialog(NavigationRequest request, Type? viewType, object? viewModel)
 	{

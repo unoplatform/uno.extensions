@@ -7,31 +7,31 @@ public class ContentDialogNavigator : DialogNavigator
 {
 	public ContentDialogNavigator(
 		ILogger<ContentDialogNavigator> logger,
-		IRouteResolver routeResolver,
+		IResolver resolver,
 		IRegion region)
-		: base(logger, routeResolver, region)
+		: base(logger, resolver, region)
 	{
 	}
 
 	protected override bool CanNavigateToRoute(Route route) =>
 			base.CanNavigateToRoute(route) &&
-			(RouteResolver.Find(route)?.View?.IsSubclassOf(typeof(ContentDialog)) ?? false);
+			(Resolver.Routes.Find(route)?.ViewMap?.View?.IsSubclassOf(typeof(ContentDialog)) ?? false);
 
 	protected override async Task<IAsyncInfo?> DisplayDialog(NavigationRequest request, Type? viewType, object? viewModel)
 	{
 		var route = request.Route;
 		var navigation = Region.Navigator();
 		var services = this.Get<IServiceProvider>();
-		var mapping = RouteResolver.Find(route);
+		var mapping = Resolver.Routes.Find(route);
 		if (
 			navigation is null ||
 			services is null ||
-			mapping?.View is null)
+			mapping?.ViewMap?.View is null)
 		{
 			return null;
 		}
 
-		var dialog = Activator.CreateInstance(mapping.View) as ContentDialog;
+		var dialog = Activator.CreateInstance(mapping.ViewMap.View) as ContentDialog;
 		if (dialog is null)
 		{
 			return null;

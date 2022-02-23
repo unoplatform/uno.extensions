@@ -44,10 +44,14 @@ public static class ServiceCollectionExtensions
 					// Register the navigation mappings repository
 
 					.AddSingleton<IViewRegistry>(views)
+					.AddSingleton<IViewResolver, ViewResolver>()
 
 					.AddSingleton<IRouteRegistry>(routes)
 					.AddSingleton<RouteResolverDefault>()
 					.AddSingleton<IRouteResolver>(sp => sp.GetRequiredService<RouteResolverDefault>())
+
+					.AddSingleton<IResolver, Resolver>()
+
 
 					.AddScoped<INavigatorFactory, NavigatorFactory>()
 

@@ -3,10 +3,10 @@
 public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBase<TView>
 	where TView : FrameworkElement
 {
-	private IRouteResolver RouteResolver { get; }
+	private readonly IRouteResolver _resolver;
 	protected ActionRequestHandlerBase(IRouteResolver routes)
 	{
-		RouteResolver = routes;
+		_resolver = routes;
 	}
 
 	protected string DefaultQualifier { get; init; } = Qualifiers.None;
@@ -60,19 +60,19 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 
 			if (resultType is null && !string.IsNullOrWhiteSpace(path))
 			{
-				var routeMap = RouteResolver.FindByPath(path);
-				resultType = routeMap?.ResultData;
+				var routeMap = _resolver.FindByPath(path);
+				resultType = routeMap?.ViewMap?.ResultData;
 			}
 
 			if(string.IsNullOrWhiteSpace(path) && data is not null)
 			{
-				var rm = RouteResolver.FindByData(data.GetType());
+				var rm = _resolver.FindByData(data.GetType());
 				path = rm?.Path;
 			}
 
 			if (string.IsNullOrWhiteSpace(path) && resultType is not null)
 			{
-				var rm = RouteResolver.FindByResultData(resultType);
+				var rm = _resolver.FindByResultData(resultType);
 				path = rm?.Path;
 			}
 

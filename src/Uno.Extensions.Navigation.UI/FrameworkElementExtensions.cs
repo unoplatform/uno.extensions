@@ -23,7 +23,7 @@ public static class FrameworkElementExtensions
 	{
 
 		var sp = root.FindServiceProvider();
-		var services = sp.CreateScope().ServiceProvider;
+		var services = sp?.CreateScope().ServiceProvider;
 
 		// Create the Root region
 		var elementRegion = new NavigationRegion(root, services);
