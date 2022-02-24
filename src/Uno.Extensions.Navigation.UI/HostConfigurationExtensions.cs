@@ -8,7 +8,7 @@ public static class HostConfigurationExtensions
 	{
 		var launchUrl = configuration.LaunchUrl;
 
-		if (!string.IsNullOrWhiteSpace(launchUrl) && launchUrl.StartsWith("http"))
+		if (!string.IsNullOrWhiteSpace(launchUrl) && (launchUrl?.StartsWith("http") ?? false))
 		{
 			var url = new UriBuilder(launchUrl);
 			var query = url.Query;

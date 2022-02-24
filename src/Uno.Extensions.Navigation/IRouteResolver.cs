@@ -2,9 +2,11 @@
 
 public interface IRouteResolver
 {
-	RouteMap? Find(Route route);
+	RouteMap? Find(Route? route);
 
 	RouteMap? FindByPath(string? path);
+
+	RouteMap? FindByViewMap(ViewMap viewMap);
 
 	RouteMap? FindByViewModel(Type? viewModelType);
 

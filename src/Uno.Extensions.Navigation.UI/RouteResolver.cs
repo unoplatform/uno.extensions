@@ -2,7 +2,7 @@
 
 public class RouteResolver : IRouteResolver
 {
-	private RouteMap First { get; }
+	private RouteMap? First { get; }
 	protected IDictionary<string, RouteMap> Mappings { get; } = new Dictionary<string, RouteMap>();
 
 	protected ILogger Logger { get; }
@@ -17,15 +17,16 @@ public class RouteResolver : IRouteResolver
 		{
 			// Set the first routemap to be either the first with IsDefault, if
 			// if none have IsDefault then just return the first
-			First = maps.FirstOrDefault(x=>x.IsDefault)?? maps.FirstOrDefault();
+			First = maps.FirstOrDefault(x => x.IsDefault) ?? maps.FirstOrDefault();
 			maps.Flatten().ForEach(route => Mappings[route.Path] = route);
 		}
 
 
 		var messageDialogRoute = new RouteMap(
 			Path: typeof(MessageDialog).Name,
+			View: new ViewMap(
 			View: typeof(MessageDialog),
-			ResultData: typeof(MessageDialog)
+			ResultData: typeof(MessageDialog))
 		);
 
 		// Make sure the message dialog is the last route to be listed
@@ -56,24 +57,37 @@ public class RouteResolver : IRouteResolver
 		return Mappings.TryGetValue(path!, out var map) ? map : default;
 	}
 
+	public RouteMap? FindByViewMap(ViewMap viewMap)
+	{
+		foreach (var rm in Mappings.Values)
+		{
+			if (rm.View == viewMap)
+			{
+				return rm;
+			}
+		}
+
+		return default;
+	}
+
 	public virtual RouteMap? FindByViewModel(Type? viewModelType)
 	{
-		return FindRouteByType(viewModelType, map => map.ViewModel);
+		return FindRouteByType(viewModelType, map => map.View?.ViewModel);
 	}
 
 	public virtual RouteMap? FindByView(Type? viewType)
 	{
-		return FindRouteByType(viewType, map => map.View);
+		return FindRouteByType(viewType, map => map.View?.View);
 	}
 
 	public RouteMap? FindByData(Type? dataType)
 	{
-		return FindRouteByType(dataType, map => map.Data);
+		return FindRouteByType(dataType, map => map.View?.Data?.Data);
 	}
 
 	public RouteMap? FindByResultData(Type? dataType)
 	{
-		return FindRouteByType(dataType, map => map.ResultData);
+		return FindRouteByType(dataType, map => map.View?.ResultData);
 	}
 
 	private RouteMap? FindRouteByType(Type? typeToFind, Func<RouteMap, Type?> mapType)
@@ -81,7 +95,12 @@ public class RouteResolver : IRouteResolver
 		return FindByInheritedTypes(Mappings, typeToFind, mapType);
 	}
 
-	private TMap? FindByInheritedTypes<TMap>(IDictionary<string,TMap> mappings, Type? typeToFind, Func<TMap, Type?> mapType)
+	private TMap? FindByInheritedTypes<TMap>(IDictionary<string, TMap> mappings, Type? typeToFind, Func<TMap, Type?> mapType)
+	{
+		return FindByInheritedTypes(mappings.Values, typeToFind, mapType);
+	}
+
+	private TMap? FindByInheritedTypes<TMap>(IEnumerable<TMap> mappings, Type? typeToFind, Func<TMap, Type?> mapType)
 	{
 		if (typeToFind is null)
 		{
@@ -89,7 +108,7 @@ public class RouteResolver : IRouteResolver
 		}
 
 		// Handle the non-reflection check first
-		var map = (from m in mappings.Values
+		var map = (from m in mappings
 				   where mapType(m) == typeToFind
 				   select m)
 				   .FirstOrDefault();
@@ -99,7 +118,7 @@ public class RouteResolver : IRouteResolver
 		}
 
 		return (from baseType in typeToFind.GetBaseTypes()
-				from m in mappings.Values
+				from m in mappings
 				where mapType(m) == baseType
 				select m)
 				   .FirstOrDefault();

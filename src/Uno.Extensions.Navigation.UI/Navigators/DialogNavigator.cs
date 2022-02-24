@@ -10,9 +10,9 @@ public abstract class DialogNavigator : ControlNavigator
 
     protected DialogNavigator(
         ILogger<DialogNavigator> logger,
-        IRouteResolver routeResolver,
+        IResolver resolver,
         IRegion region)
-        : base(logger, routeResolver,  region)
+        : base(logger, resolver,  region)
     {
     }
 
@@ -32,9 +32,9 @@ public abstract class DialogNavigator : ControlNavigator
         }
         else
         {
-            var mapping = RouteResolver.Find(route);
-            var viewModel = (Region.Services is not null && mapping?.ViewModel is not null) ? CreateViewModel(Region.Services, route, mapping) : default(object);
-            ShowTask = await DisplayDialog(request, mapping?.View, viewModel);
+            var mapping = Resolver.Routes.Find(route);
+            var viewModel = (Region.Services is not null && mapping?.View?.ViewModel is not null) ? CreateViewModel(Region.Services, route, mapping) : default(object);
+            ShowTask = await DisplayDialog(request, mapping?.View?.View, viewModel);
         }
         var responseRequest = route with { Path = null };
         return responseRequest;

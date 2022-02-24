@@ -4,7 +4,7 @@ namespace Uno.Extensions.Navigation.Navigators;
 public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 where TControl : class
 {
-	protected abstract FrameworkElement SelectedItem { get; set; }
+	protected abstract FrameworkElement? SelectedItem { get; set; }
 
 	protected abstract Action? AttachSelectionChanged(Action<FrameworkElement, FrameworkElement?> selectionChanged);
 
@@ -28,7 +28,7 @@ where TControl : class
 
 	protected override bool CanNavigateToRoute(Route route) =>
 		base.CanNavigateToRoute(route) &&
-		(FindByPath(RouteResolver.Find(route)?.Path) is not null);
+		(FindByPath(Resolver.Routes.Find(route)?.Path) is not null);
 
 	//private void ControlSelectionChanged(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewSelectionChangedEventArgs args)
 	//{
@@ -66,9 +66,9 @@ where TControl : class
 	protected SelectorNavigator(
 		ILogger logger,
 		IRegion region,
-		IRouteResolver routeResolver,
+		IResolver resolver,
 		RegionControlProvider controlProvider)
-		: base(logger, region, routeResolver, controlProvider.RegionControl as TControl)
+		: base(logger, region, resolver, controlProvider.RegionControl as TControl)
 	{
 	}
 

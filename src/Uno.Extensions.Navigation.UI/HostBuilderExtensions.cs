@@ -4,12 +4,12 @@ public static class HostBuilderExtensions
 {
 	public static IHostBuilder UseNavigation(
 			this IHostBuilder builder,
-			Action<IRouteRegistry>? routeBuilder = null)
+			Action<IViewRegistry, IRouteRegistry>? viewRouteBuilder = null)
 	{
 		return builder
 			.ConfigureServices(sp =>
 			{
-				_ = sp.AddNavigation(routeBuilder);
+				_ = sp.AddNavigation(viewRouteBuilder);
 			});
 	}
 }

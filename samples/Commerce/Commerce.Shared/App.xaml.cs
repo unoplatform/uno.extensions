@@ -178,52 +178,70 @@ namespace Commerce
 			deferral.Complete();
 		}
 
-		private static void RegisterRoutes(IRouteRegistry routes)
+		private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 		{
-			routes
-				.Register(
-					new("Shell", ViewModel: typeof(ShellViewModel),
-							Nested: new RouteMap[]
-							{
-								new("Login", View: typeof(LoginPage), ViewModel: typeof(LoginViewModel.BindableLoginViewModel), ResultData: typeof(Credentials)),
-								new RouteMap<Credentials>("Home", View: typeof(HomePage),
-										Nested: new RouteMap[]{
-											new ("Products", View: typeof(ProductsPage), ViewModel: typeof(ProductsViewModel.BindableProductsViewModel),
-															IsDefault: true,
-															Nested: new  RouteMap[]{
-																new RouteMap<Product>("Details", View: typeof(ProductDetailsPage), ViewModel: typeof(ProductDetailsViewModel.BindableProductDetailsViewModel),
+			views.Register(
+				new ViewMap(ViewModel: typeof(ShellViewModel)),
+				new ViewMap(View: typeof(LoginPage), ViewModel: typeof(LoginViewModel.BindableLoginViewModel), ResultData: typeof(Credentials)),
+				new ViewMap(View: typeof(HomePage), Data: new DataMap<Credentials>()),
+				new ViewMap(View: typeof(ProductsPage), ViewModel: typeof(ProductsViewModel.BindableProductsViewModel)),
+				new ViewMap(View: typeof(ProductDetailsPage), ViewModel: typeof(ProductDetailsViewModel.BindableProductDetailsViewModel), Data: new DataMap<Product>(
 																						ToQuery: product => new Dictionary<string, string> { { nameof(Product.ProductId), product.ProductId.ToString() } },
-																						FromQuery: async (sp, query) => {
+																						FromQuery: async (sp, query) =>
+																						{
 																							var id = int.Parse(query[nameof(Product.ProductId)]);
 																							var ps = sp.GetRequiredService<IProductService>();
 																							var products = await ps.GetProducts(default, default);
-																							return products.FirstOrDefault(p=>p.ProductId==id);
-																						}),
-																new RouteMap<Filters, Filters>("Filter", View: typeof(FilterPage), ViewModel: typeof(FiltersViewModel.BindableFiltersViewModel))
-															}),
-
-											new("Deals", View: typeof(DealsPage), ViewModel: typeof(DealsViewModel)),
-
-											new("Profile", View: typeof(ProfilePage), ViewModel: typeof(ProfileViewModel)),
-
-											new("Cart", View: typeof(CartPage), ViewModel: typeof(CartViewModel),
-													Nested: new []{
-														new RouteMap<CartItem>("CartDetails", View: typeof(ProductDetailsPage), ViewModel: typeof(CartProductDetailsViewModel.BindableCartProductDetailsViewModel),
+																							return products.FirstOrDefault(p => p.ProductId == id);
+																						})),
+				new ViewMap(View: typeof(FilterPage), ViewModel: typeof(FiltersViewModel.BindableFiltersViewModel), Data: new DataMap<Filters>()),
+				new ViewMap(View: typeof(DealsPage), ViewModel: typeof(DealsViewModel)),
+				new ViewMap(View: typeof(ProfilePage), ViewModel: typeof(ProfileViewModel)),
+				new ViewMap(View: typeof(CartPage), ViewModel: typeof(CartViewModel)),
+				new ViewMap(View: typeof(ProductDetailsPage), ViewModel: typeof(CartProductDetailsViewModel.BindableCartProductDetailsViewModel), Data: new DataMap<CartItem>(
 																						ToQuery: cartItem => new Dictionary<string, string> {
 																							{ nameof(Product.ProductId), cartItem.Product.ProductId.ToString() },
 																							{ nameof(CartItem.Quantity),cartItem.Quantity.ToString() } },
-																						FromQuery: async (sp, query) => {
+																						FromQuery: async (sp, query) =>
+																						{
 																							var id = int.Parse(query[nameof(Product.ProductId)]);
 																							var quantity = int.Parse(query[nameof(CartItem.Quantity)]);
 																							var ps = sp.GetRequiredService<IProductService>();
 																							var products = await ps.GetProducts(default, default);
-																							var p = products.FirstOrDefault(p=>p.ProductId==id);
-																							return new CartItem(p,quantity);
-																						}),
-														new RouteMap("Checkout", View: typeof(CheckoutPage))
+																							var p = products.FirstOrDefault(p => p.ProductId == id);
+																							return new CartItem(p, quantity);
+																						})),
+				new ViewMap(View: typeof(CheckoutPage)),
+				new ViewMap(View: typeof(AddProductPage), ViewModel: typeof(AddProductViewModel))
+				);
+
+			routes
+				.Register(
+				views =>
+					new("Shell", View: views.FindByViewModel<ShellViewModel>(),
+							Nested: new RouteMap[]
+							{
+								new("Login", View: views.FindByResultData<Credentials>()),
+								new RouteMap("Home", View: views.FindByData<Credentials>(),
+										Nested: new RouteMap[]{
+											new ("Products", View: views.FindByViewModel<ProductsViewModel.BindableProductsViewModel>(),
+															IsDefault: true,
+															Nested: new  RouteMap[]{
+																new RouteMap("Details", View: views.FindByViewModel<ProductDetailsViewModel.BindableProductDetailsViewModel>()),
+																new RouteMap("Filter",  View: views.FindByViewModel<FiltersViewModel.BindableFiltersViewModel>())
+															}),
+
+											new("Deals", View:views.FindByViewModel<DealsViewModel>()),
+
+											new("Profile", View:views.FindByViewModel<ProfileViewModel>()),
+
+											new("Cart", View: views.FindByViewModel<CartViewModel>(),
+													Nested: new []{
+														new RouteMap("CartDetails",View: views.FindByViewModel<CartProductDetailsViewModel.BindableCartProductDetailsViewModel>()),
+														new RouteMap("Checkout", View: views.FindByView<CheckoutPage>())
 													})
 											}),
-								new("AddProduct", View: typeof(AddProductPage), ViewModel: typeof(AddProductViewModel)), 
+								new("AddProduct", View: views.FindByViewModel<AddProductViewModel>()),
 							}));
 
 			;

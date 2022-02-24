@@ -14,18 +14,18 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 	public Route? Route { get; protected set; }
 
-	protected IRouteResolver RouteResolver { get; }
+	protected IResolver Resolver { get; }
 
-	public Navigator(ILogger<Navigator> logger, IRegion region, IRouteResolver routeResolver)
-		: this((ILogger)logger, region, routeResolver)
+	public Navigator(ILogger<Navigator> logger, IRegion region, IResolver resolver)
+		: this((ILogger)logger, region, resolver)
 	{
 	}
 
-	protected Navigator(ILogger logger, IRegion region, IRouteResolver routeResolver)
+	protected Navigator(ILogger logger, IRegion region, IResolver resolver)
 	{
 		Region = region;
 		Logger = logger;
-		RouteResolver = routeResolver;
+		Resolver = resolver;
 	}
 
 	public async Task<NavigationResponse?> NavigateAsync(NavigationRequest request)
@@ -81,7 +81,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 							this.Route = Route.Empty;
 
 							// Get the first route map
-							var map = RouteResolver.Find(null);
+							var map = Resolver.Routes.Find(null);
 							if (map is not null)
 							{
 								request = request with { Route = request.Route.Append(map.Path) };
@@ -137,14 +137,14 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 	private NavigationRequest InitialiseRequest(NavigationRequest request)
 	{
-		var requestMap = RouteResolver.FindByPath(request.Route.Base);
+		var requestMap = Resolver.Routes.FindByPath(request.Route.Base);
 		if (requestMap?.Init is not null)
 		{
 			var newRequest = requestMap.Init(request);
 			while (!request.SameRouteBase(newRequest))
 			{
 				request = newRequest;
-				requestMap = RouteResolver.FindByPath(request.Route.Base);
+				requestMap = Resolver.Routes.FindByPath(request.Route.Base);
 				if (requestMap?.Init is not null)
 				{
 					newRequest = requestMap.Init(request);
@@ -194,8 +194,8 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			return default;
 		}
 
-		var mapping = RouteResolver.Find(request.Route);
-		if (mapping?.UntypedToQuery is not null)
+		var mapping = Resolver.Routes.Find(request.Route);
+		if (mapping?.View?.Data?.UntypedToQuery is not null)
 		{
 			request = request with { Route = request.Route with { Data = request.Route.Data?.AsParameters(mapping) } };
 		}
@@ -219,7 +219,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 		if(!string.IsNullOrWhiteSpace(this.Region.Name) &&
 			this.Region.Name == request.Route?.Base &&
-			this.CanNavigateToRoute(request.Route.Next()))
+			this.CanNavigateToRoute(request.Route?.Next()))
 		{
 			request = request with { Route = request.Route.Next() };
 		}
@@ -242,7 +242,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 	{
 		if (request.Route.IsEmpty())
 		{
-			var route = RouteResolver.FindByPath(this.Route?.Base);
+			var route = Resolver.Routes.FindByPath(this.Route?.Base);
 			if (route is not null)
 			{
 				var defaultRoute = route.Nested?.FirstOrDefault(x => x.IsDefault);

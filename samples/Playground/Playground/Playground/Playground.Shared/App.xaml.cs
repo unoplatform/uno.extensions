@@ -161,7 +161,7 @@ namespace Playground
 
 			_window.Activate();
 
-			await Task.Run(()=>Host.StartAsync());
+			await Task.Run(() => Host.StartAsync());
 		}
 
 
@@ -272,36 +272,60 @@ namespace Playground
 		//#endif
 		//        }
 
-		private static void RegisterRoutes(IRouteRegistry routes)
+		private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 		{
+			views.Register(new ViewMap(ViewModel: typeof(ShellViewModel)),
+					new ViewMap<HomePage, HomeViewModel>(),
+					new ViewMap<CodeBehindPage>(),
+					new ViewMap<VMPage, VMViewModel>(),
+					new ViewMap<XamlPage, XamlViewModel>(),
+					new ViewMap<NavigationViewPage>(),
+					new ViewMap<TabBarPage>(),
+					new ViewMap<ContentControlPage>(),
+					new ViewMap<SecondPage, SecondViewModel>(Data: new DataMap<Widget>(), ResultData: typeof(Country)),
+					new ViewMap<ThirdPage>(),
+					new ViewMap<FourthPage, FourthViewModel>(),
+					new ViewMap<FifthPage, FifthViewModel>(),
+					new ViewMap<DialogsPage>(),
+						new ViewMap<SimpleDialog>(),
+						new ViewMap<ComplexDialog>(),
+							new ViewMap<ComplexDialogFirstPage>(),
+							new ViewMap<ComplexDialogSecondPage>(),
+					new ViewMap<PanelVisibilityPage>(),
+					new ViewMap<VisualStatesPage>()
+				);
+
+
 			// RouteMap required for Shell if initialRoute or initialViewModel isn't specified when calling NavigationHost
-			routes.Register(new RouteMap("Shell", ViewModel: typeof(ShellViewModel),
+			routes.Register(
+				views=>
+				new RouteMap("Shell",View: views.FindByViewModel<ShellViewModel>(),
 				Nested: new[]
 				{
-					new RouteMap("Home", View: typeof(HomePage), ViewModel: typeof(HomeViewModel)),
-					new RouteMap("CodeBehind", View: typeof(CodeBehindPage)),
-					new RouteMap("VM", View: typeof(VMPage), ViewModel: typeof(VMViewModel)),
-					new RouteMap("Xaml", View: typeof(XamlPage), ViewModel: typeof(XamlViewModel)),
-					new RouteMap("NavigationView", View: typeof(NavigationViewPage)),
-					new RouteMap("TabBar", View: typeof(TabBarPage)),
-					new RouteMap("ContentControl", View: typeof(ContentControlPage)),
-					new RouteMap("Second", View: typeof(SecondPage), ViewModel: typeof(SecondViewModel), Data: typeof(Widget),ResultData: typeof(Country)),
-					new RouteMap("Third", View: typeof(ThirdPage)),
-					new RouteMap("Fourth", View: typeof(FourthPage), ViewModel: typeof(FourthViewModel)),
-					new RouteMap("Fifth", View: typeof(FifthPage), ViewModel: typeof(FifthViewModel)),
-					new RouteMap("Dialogs", View: typeof(DialogsPage),
+					new RouteMap("Home",View: views.FindByView<HomePage>()),
+					new RouteMap("CodeBehind",View: views.FindByView<CodeBehindPage>()),
+					new RouteMap("VM",View: views.FindByView<VMPage>()),
+					new RouteMap("Xaml",View: views.FindByView<XamlPage>()),
+					new RouteMap("NavigationView",View: views.FindByView<NavigationViewPage>()),
+					new RouteMap("TabBar",View: views.FindByView<TabBarPage>()),
+					new RouteMap("ContentControl",View: views.FindByView<ContentControlPage>()),
+					new RouteMap("Second",View: views.FindByView<SecondPage>()),
+					new RouteMap("Third",View: views.FindByView<ThirdPage>()),
+					new RouteMap("Fourth",View: views.FindByView<FourthPage>()),
+					new RouteMap("Fifth",View: views.FindByView<FifthPage>()),
+					new RouteMap("Dialogs",View: views.FindByView<DialogsPage>(),
 					Nested: new[]
 					{
-						new RouteMap("Simple", View:typeof(SimpleDialog)),
-						new RouteMap("Complex", View:typeof(ComplexDialog),
+						new RouteMap("Simple",View: views.FindByView<SimpleDialog>()),
+						new RouteMap("Complex",View: views.FindByView<ComplexDialog>(),
 						Nested: new[]
 						{
-							new RouteMap("ComplexDialogFirst", View:typeof(ComplexDialogFirstPage)),
-							new RouteMap("ComplexDialogSecond", View:typeof(ComplexDialogSecondPage))
+							new RouteMap("ComplexDialogFirst",View: views.FindByView<ComplexDialogFirstPage>()),
+							new RouteMap("ComplexDialogSecond",View: views.FindByView<ComplexDialogSecondPage>())
 						})
 					}),
-					new RouteMap("PanelVisibility", View: typeof(PanelVisibilityPage)),
-					new RouteMap("VisualStates", View: typeof(VisualStatesPage)),
+					new RouteMap("PanelVisibility",View: views.FindByView<PanelVisibilityPage>()),
+					new RouteMap("VisualStates",View: views.FindByView<VisualStatesPage>()),
 				}));
 		}
 	}

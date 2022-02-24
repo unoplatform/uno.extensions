@@ -204,7 +204,7 @@ public static class RouteExtensions
 
 	public static bool IsPageRoute(this Route route, IRouteResolver mappings)
 	{
-		return ((mappings.Find(route))?.View?.IsSubclassOf(typeof(Page)) ?? false);
+		return ((mappings.Find(route))?.View?.View?.IsSubclassOf(typeof(Page)) ?? false);
 	}
 
 	public static bool IsLastFrameRoute(this Route route, IRouteResolver mappings)
@@ -312,20 +312,20 @@ public static class RouteExtensions
 		}
 
 		var mapDict = data;
-		if (mapping?.UntypedToQuery is not null)
+		if (mapping?.View?.Data?.UntypedToQuery is not null)
 		{
 			// TODO: Find nicer way to clone the dictionary
 			mapDict = data.ToArray().ToDictionary(x => x.Key, x => x.Value);
 			if (data.TryGetValue(string.Empty, out var paramData))
 			{
-				var qdict = mapping.UntypedToQuery(paramData);
+				var qdict = mapping.View.Data.UntypedToQuery(paramData);
 				qdict.ForEach(qkvp => mapDict[qkvp.Key] = qkvp.Value);
 			}
 		}
 		return mapDict;
 	}
 
-	public static Route? ApplyFrameRoute(this Route? currentRoute, IRouteResolver routeResolver, Route frameRoute)
+	public static Route? ApplyFrameRoute(this Route? currentRoute, IResolver resolver, Route frameRoute)
 	{
 		var qualifier = frameRoute.Qualifier;
 		if (currentRoute is null)
@@ -334,7 +334,7 @@ public static class RouteExtensions
 		}
 		else
 		{
-			var segments = currentRoute.ForwardNavigationSegments(routeResolver).ToList();
+			var segments = currentRoute.ForwardNavigationSegments(resolver.Routes).ToList();
 			foreach (var qualifierChar in qualifier)
 			{
 				if (qualifierChar + "" == Qualifiers.NavigateBack)
@@ -347,7 +347,7 @@ public static class RouteExtensions
 				}
 			}
 
-			var newSegments = frameRoute.ForwardNavigationSegments(routeResolver);
+			var newSegments = frameRoute.ForwardNavigationSegments(resolver.Routes);
 			if (newSegments is not null)
 			{
 				segments.AddRange(newSegments);

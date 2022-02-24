@@ -11,9 +11,9 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 	public ContentControlNavigator(
 		ILogger<ContentControlNavigator> logger,
 		IRegion region,
-		IRouteResolver routeResolver,
+		IResolver resolver,
 		RegionControlProvider controlProvider)
-		: base(logger, region, routeResolver, controlProvider.RegionControl as ContentControl)
+		: base(logger, region, resolver, controlProvider.RegionControl as ContentControl)
 	{
 	}
 
@@ -28,12 +28,12 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 		{
 			return false;
 		}
-		var rm = RouteResolver.Find(route);
+		var rm = Resolver.Routes.Find(route);
 		if(rm is null )
 		{
 			return false;
 		}
-		return rm?.View?.IsSubclassOf(typeof(FrameworkElement)) ?? true; // Inject a FrameView if no View specified
+		return rm?.View?.View?.IsSubclassOf(typeof(FrameworkElement)) ?? true; // Inject a FrameView if no View specified
 	}
 	protected override async Task<string?> Show(string? path, Type? viewType, object? data)
 	{
