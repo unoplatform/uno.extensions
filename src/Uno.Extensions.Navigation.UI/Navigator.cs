@@ -56,23 +56,20 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 			// If this is an empty request on the root region
 			// then look up the default route (ie for startup logic)
-			if(Region.Parent is null)
+			if (Region.Parent is null &&
+				request.Route.IsEmpty())
 			{
-				if (request.Route.IsEmpty())
-				{
-					// Clear any existing route information to make
-					// sure the navigation is restarted
-					this.Route = Route.Empty;
+				// Clear any existing route information to make
+				// sure the navigation is restarted
+				this.Route = Route.Empty;
 
-					// Get the first route map
-					var map = Resolver.Routes.Find(null);
-					if (map is not null)
-					{
-						request = request with { Route = request.Route.Append(map.Path) };
-					}
+				// Get the first route map
+				var map = Resolver.Routes.Find(null);
+				if (map is not null)
+				{
+					request = request with { Route = request.Route.Append(map.Path) };
 				}
 			}
-
 
 			// Run dialog requests
 			if (request.Route.IsDialog())
@@ -122,7 +119,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			// First, deal with any named children that match the first segment of the request
 			// In this case, the request should be trimmed
 			var nested = Region.FindChildren(x => x.Name == request.Route.Base).ToArray();
-			if (!nested.Any())
+			if (nested.Any())
 			{
 				request = request with { Route = request.Route.Next() };
 				return NavigateChildRegions(nested, request);
@@ -130,8 +127,8 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 			// Now, deal with any unnamed children - send the request without
 			// trimming the request
-			nested = Region.FindChildren(x => string.IsNullOrWhiteSpace(x.Name)).ToArray();
-			if (!nested.Any())
+			nested = Region.FindChildren(x => string.IsNullOrWhiteSpace(x.Name) || x.Name==this.Route?.Base).ToArray();
+			if (nested.Any())
 			{
 				return NavigateChildRegions(nested, request);
 			}
