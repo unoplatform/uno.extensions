@@ -19,11 +19,6 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 	{
 	}
 
-	protected override bool QualifierIsSupported(Route route) =>
-		base.QualifierIsSupported(route) ||
-		// "../" (change content) Add support for changing current content
-		route.IsChangeContent();
-
 	protected override bool CanNavigateToRoute(Route route) =>
 		!route.IsDialog() && 
 		(

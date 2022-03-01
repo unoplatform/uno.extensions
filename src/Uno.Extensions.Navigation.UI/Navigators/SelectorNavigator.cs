@@ -21,26 +21,9 @@ where TControl : class
 		}
 	}
 
-	protected override bool QualifierIsSupported(Route route) =>
-		base.QualifierIsSupported(route) ||
-		// "../" (change content) Add support for changing current content
-		route.IsChangeContent();
-
 	protected override bool CanNavigateToRoute(Route route) =>
 		!route.IsDialog() &&
 		(FindByPath(Resolver.Routes.Find(route)?.Path) is not null);
-
-	//private void ControlSelectionChanged(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewSelectionChangedEventArgs args)
-	//{
-	//	var tbi = args.SelectedItem as FrameworkElement;
-
-	//	var path = tbi?.GetName() ?? tbi?.Name;
-	//	if (path is not null &&
-	//		!string.IsNullOrEmpty(path))
-	//	{
-	//		Region.Navigator()?.NavigateRouteAsync(sender, path, qualifier: Qualifiers.ChangeContent);
-	//	}
-	//}
 
 	private async void SelectionChanged(FrameworkElement sender, FrameworkElement? selectedItem)
 	{
@@ -59,7 +42,7 @@ where TControl : class
 			return;
 		}
 
-		await nav.NavigateRouteAsync(sender, path, qualifier: Qualifiers.ChangeContent);
+		await nav.NavigateRouteAsync(sender, path);
 	}
 
 

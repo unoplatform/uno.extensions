@@ -152,7 +152,7 @@ public sealed class NavigationRegion : IRegion
 			var nav = this.Navigator();
 			if (nav is not null)
 			{
-				var start = () => nav.NavigateRouteAsync(this, route: string.Empty, qualifier: Qualifiers.ChangeContent);
+				var start = () => nav.NavigateRouteAsync(this, route: string.Empty);
 				services.Startup(start);
 			}
 		}

@@ -96,21 +96,6 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 	private Task<NavigationResponse?>? RedirectRequest(NavigationRequest request)
 	{
-		// If the current navigator can handle this route,
-		// then simply return without redirecting the request
-		if(CanNavigateToRoute(request.Route))
-		{
-			// Exception: If this region is an unnamed child of a composite,
-			// send request to parent
-			if (!Region.IsNamed() &&
-				Region.Parent is not null)
-			{
-				return Region.Parent.NavigateAsync(request);
-			}
-
-			return default;
-		}
-
 		// ./ route request to nested region (named or unnamed)
 		if(request.Route.IsNested())
 		{
@@ -167,7 +152,24 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			return region.NavigateAsync(request);
 		}
 
-		return default;
+		// Exception: If this region is an unnamed child of a composite,
+		// send request to parent
+		if (!Region.IsNamed() &&
+			Region.Parent is not null)
+		{
+			return Region.Parent.NavigateAsync(request);
+		}
+
+		// If the current navigator can handle this route,
+		// then simply return without redirecting the request
+		if (CanNavigateToRoute(request.Route))
+		{
+			return default;
+		}
+
+		// If the request can't be handled (or redirect), then
+		// default to sending the request to the parent
+		return Region.Parent?.NavigateAsync(request);
 	}
 
 	private NavigationRequest InitialiseRequest(NavigationRequest request)
@@ -190,31 +192,10 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		return request;
 	}
 
-	protected virtual bool QualifierIsSupported(Route route) =>
-		// "./" (nested) by default all navigators should be able to forward requests
-		// to child if the Base matches a named child
-		(
-			route.IsNested() &&
-			this.Region.Children.Any(
-				x => string.IsNullOrWhiteSpace(x.Name) ||
-				x.Name == route.Base ||
-				x.Name == this.Route?.Base)
-		)
-		||
-		(
-			// If this is root navigator, need to support / (root) and ! (dialog) requests
-			(this.Region.Parent is null) &&
-				(
-					route.IsRoot() ||
-					route.IsDialog()
-				)
-		);
-
-
 	// The base navigator can't handle navigating to any routes
 	// This doesn't reflect whether there are any parent or child
 	// regions that can process this request
-	protected virtual bool CanNavigateToRoute(Route route) => false; // QualifierIsSupported(route) && !route.IsNested();
+	protected virtual bool CanNavigateToRoute(Route route) => false; 
 
 	private async Task<NavigationResponse?> DialogNavigateAsync(NavigationRequest request)
 	{

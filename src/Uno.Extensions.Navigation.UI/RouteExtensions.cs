@@ -13,10 +13,6 @@ public static class RouteExtensions
 
 	public static bool IsRoot(this Route route) => route.Qualifier.StartsWith(Qualifiers.Root);
 
-	public static bool IsChangeContent(this Route route) =>
-		(route.Qualifier.StartsWith(Qualifiers.ChangeContent) && !route.IsParent()) ||
-		(route.Qualifier==Qualifiers.None && route.IsInternal);
-
 	public static bool IsParent(this Route route) => route.Qualifier.StartsWith(Qualifiers.Parent);
 
 	public static bool IsNested(this Route route) => route.Qualifier.StartsWith(Qualifiers.Nested);
@@ -38,7 +34,7 @@ public static class RouteExtensions
 	}
 
 	public static bool IsEmpty(this Route route) => route is not null ?
-		(route.Qualifier == Qualifiers.None || route.Qualifier == Qualifiers.ChangeContent || route.Qualifier == Qualifiers.Nested) &&
+		(route.Qualifier == Qualifiers.None || route.Qualifier == Qualifiers.Nested) &&
 		string.IsNullOrWhiteSpace(route.Base) :
 		true;
 

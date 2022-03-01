@@ -35,19 +35,6 @@ public class FrameNavigator : ControlNavigator<Frame>
 		}
 	}
 
-	protected override bool QualifierIsSupported(Route route) =>
-		base.QualifierIsSupported(route) ||
-		route.IsFrameNavigation() ||
-		(
-			route.IsInternal &&
-				(
-					// Where a FrameView is injected, a changecontent route can flow to the framenavigator
-					route.IsChangeContent() ||
-					// Where a FrameView is injected, a dialog route can flow to the framenavigator
-					route.IsDialog()
-				)
-		);
-
 	protected override bool CanNavigateToRoute(Route route)
 	{
 		if (Control is null)

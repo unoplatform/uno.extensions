@@ -13,11 +13,6 @@ public class MessageDialogNavigator : DialogNavigator
 	{
 	}
 
-	protected override bool QualifierIsSupported(Route route) =>
-			base.QualifierIsSupported(route) ||
-			// "-" (back or close) Add closing 
-			route.IsBackOrCloseNavigation();
-
 	protected override bool CanNavigateToRoute(Route route) =>
 		!route.IsDialog() &&
 		(Resolver.Routes.Find(route)?.View?.View == typeof(MessageDialog));
