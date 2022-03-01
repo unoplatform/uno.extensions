@@ -55,7 +55,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 			return false;
 		}
 
-		if (!base.CanNavigateToRoute(route))
+		if (route.IsDialog())
 		{
 			return false;
 		}

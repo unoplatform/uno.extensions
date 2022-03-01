@@ -27,7 +27,7 @@ where TControl : class
 		route.IsChangeContent();
 
 	protected override bool CanNavigateToRoute(Route route) =>
-		base.CanNavigateToRoute(route) &&
+		!route.IsDialog() &&
 		(FindByPath(Resolver.Routes.Find(route)?.Path) is not null);
 
 	//private void ControlSelectionChanged(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewSelectionChangedEventArgs args)

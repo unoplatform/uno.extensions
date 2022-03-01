@@ -19,7 +19,7 @@ public class MessageDialogNavigator : DialogNavigator
 			route.IsBackOrCloseNavigation();
 
 	protected override bool CanNavigateToRoute(Route route) =>
-		base.CanNavigateToRoute(route) &&
+		!route.IsDialog() &&
 		(Resolver.Routes.Find(route)?.View?.View == typeof(MessageDialog));
 
 	protected override async Task<IAsyncInfo?> DisplayDialog(NavigationRequest request, Type? viewType, object? viewModel)

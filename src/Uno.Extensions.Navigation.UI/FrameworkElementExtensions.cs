@@ -34,15 +34,15 @@ public static class FrameworkElementExtensions
 			var start = () => Task.CompletedTask;
 			if (initialView is not null)
 			{
-				start = () => nav.NavigateViewAsync(root, initialView, qualifier: Qualifiers.ChangeContent);
+				start = () => nav.NavigateViewAsync(root, initialView);
 			}
 			else if (initialViewModel is not null)
 			{
-				start = () => nav.NavigateViewModelAsync(root, initialViewModel, qualifier: Qualifiers.ChangeContent);
+				start = () => nav.NavigateViewModelAsync(root, initialViewModel);
 			}
 			else
 			{
-				start = () => nav.NavigateRouteAsync(root, initialRoute ?? string.Empty, qualifier: Qualifiers.ChangeContent);
+				start = () => nav.NavigateRouteAsync(root, initialRoute ?? string.Empty);
 			}
 			elementRegion.Services?.Startup(start);
 		}

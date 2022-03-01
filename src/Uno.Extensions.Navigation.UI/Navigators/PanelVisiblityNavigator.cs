@@ -25,7 +25,7 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 		route.IsChangeContent();
 
 	protected override bool CanNavigateToRoute(Route route) =>
-		base.CanNavigateToRoute(route) &&
+		!route.IsDialog() && 
 		(
 			(FindByPath(Resolver.Routes.Find(route)?.Path ?? route.Base) is not null) ||
 			(Resolver.Routes.Find(route)?.View?.View?.IsSubclassOf(typeof(FrameworkElement)) ?? false)		
