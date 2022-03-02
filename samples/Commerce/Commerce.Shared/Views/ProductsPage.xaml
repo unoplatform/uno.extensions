@@ -124,7 +124,7 @@
 												<Setter Target="ProductsListView.IsItemClickEnabled"
 														Value="False" />
 												<Setter Target="ProductsListView.(uen:Navigation.Request)"
-														Value="./LandscapeDetails/Details" />
+														Value="./LandscapeDetails/Product" />
 											</VisualState.Setters>
 										</VisualState>
 										<VisualState x:Name="Narrow">
@@ -147,7 +147,7 @@
 										  ItemsSource="{Binding Data}"
 										  SelectionMode="None"
 										  IsItemClickEnabled="True"
-										  uen:Navigation.Request="Details">
+										  uen:Navigation.Request="Product">
 									<ListView.ItemsPanel>
 										<ItemsPanelTemplate>
 											<ItemsStackPanel Orientation="Vertical" />

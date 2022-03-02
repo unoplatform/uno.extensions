@@ -227,9 +227,9 @@ namespace Commerce
 											new ("Products", View: views.FindByViewModel<ProductsViewModel.BindableProductsViewModel>(),
 															IsDefault: true,
 															Nested: new  RouteMap[]{
-																new RouteMap("Details", View: views.FindByViewModel<ProductDetailsViewModel.BindableProductDetailsViewModel>()),
 																new RouteMap("Filter",  View: views.FindByViewModel<FiltersViewModel.BindableFiltersViewModel>())
 															}),
+											new("Product", DependsOn:"Products", View: views.FindByViewModel<ProductDetailsViewModel.BindableProductDetailsViewModel>()),
 
 											new("Deals", View:views.FindByViewModel<DealsViewModel>()),
 

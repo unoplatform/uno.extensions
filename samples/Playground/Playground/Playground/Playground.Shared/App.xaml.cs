@@ -274,32 +274,33 @@ namespace Playground
 
 		private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 		{
-			views.Register(new ViewMap(ViewModel: typeof(ShellViewModel)),
-					new ViewMap<HomePage, HomeViewModel>(),
-					new ViewMap<CodeBehindPage>(),
-					new ViewMap<VMPage, VMViewModel>(),
-					new ViewMap<XamlPage, XamlViewModel>(),
-					new ViewMap<NavigationViewPage>(),
-					new ViewMap<TabBarPage>(),
-					new ViewMap<ContentControlPage>(),
-					new ViewMap<SecondPage, SecondViewModel>(Data: new DataMap<Widget>(), ResultData: typeof(Country)),
-					new ViewMap<ThirdPage>(),
-					new ViewMap<FourthPage, FourthViewModel>(),
-					new ViewMap<FifthPage, FifthViewModel>(),
-					new ViewMap<DialogsPage>(),
+			views.Register(
+						new ViewMap(ViewModel: typeof(ShellViewModel)),
+						new ViewMap<HomePage, HomeViewModel>(),
+						new ViewMap<CodeBehindPage>(),
+						new ViewMap<VMPage, VMViewModel>(),
+						new ViewMap<XamlPage, XamlViewModel>(),
+						new ViewMap<NavigationViewPage>(),
+						new ViewMap<TabBarPage>(),
+						new ViewMap<ContentControlPage>(),
+						new ViewMap<SecondPage, SecondViewModel>(Data: new DataMap<Widget>(), ResultData: typeof(Country)),
+						new ViewMap<ThirdPage>(),
+						new ViewMap<FourthPage, FourthViewModel>(),
+						new ViewMap<FifthPage, FifthViewModel>(),
+						new ViewMap<DialogsPage>(),
 						new ViewMap<SimpleDialog>(),
 						new ViewMap<ComplexDialog>(),
-							new ViewMap<ComplexDialogFirstPage>(),
-							new ViewMap<ComplexDialogSecondPage>(),
-					new ViewMap<PanelVisibilityPage>(),
-					new ViewMap<VisualStatesPage>()
+						new ViewMap<ComplexDialogFirstPage>(),
+						new ViewMap<ComplexDialogSecondPage>(),
+						new ViewMap<PanelVisibilityPage>(),
+						new ViewMap<VisualStatesPage>()
 				);
 
 
 			// RouteMap required for Shell if initialRoute or initialViewModel isn't specified when calling NavigationHost
 			routes.Register(
-				views=>
-				new RouteMap("Shell",View: views.FindByViewModel<ShellViewModel>(),
+				views =>
+				new RouteMap("Shell", View: views.FindByViewModel<ShellViewModel>(),
 				Nested: new[]
 				{
 					new RouteMap("Home",View: views.FindByView<HomePage>()),

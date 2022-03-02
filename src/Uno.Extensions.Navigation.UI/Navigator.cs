@@ -96,19 +96,20 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 	private Task<NavigationResponse?>? RedirectRequest(NavigationRequest request)
 	{
+		// Deal with any named children that match the first segment of the request
+		// In this case, the request should be trimmed
+		var nested = Region.FindChildren(x => !string.IsNullOrWhiteSpace(request.Route.Base) && x.Name == request.Route.Base).ToArray();
+		if (nested.Any())
+		{
+			request = request with { Route = request.Route.Next() };
+			return NavigateChildRegions(nested, request);
+		}
+
+
 		// ./ route request to nested region (named or unnamed)
-		if(request.Route.IsNested())
+		if (request.Route.IsNested())
 		{
 			request = request with { Route = request.Route.TrimQualifier(Qualifiers.Nested) };
-
-			// First, deal with any named children that match the first segment of the request
-			// In this case, the request should be trimmed
-			var nested = Region.FindChildren(x => x.Name == request.Route.Base).ToArray();
-			if (nested.Any())
-			{
-				request = request with { Route = request.Route.Next() };
-				return NavigateChildRegions(nested, request);
-			}
 
 			// Now, deal with any unnamed children - send the request without
 			// trimming the request
