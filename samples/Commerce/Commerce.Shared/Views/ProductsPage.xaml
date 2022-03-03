@@ -15,6 +15,7 @@
 	<Grid>
 		<VisualStateManager.VisualStateGroups>
 			<VisualStateGroup>
+				<VisualState x:Name="Narrow" />
 				<VisualState x:Name="Wide">
 					<VisualState.StateTriggers>
 						<AdaptiveTrigger MinWindowWidth="{StaticResource WideMinWindowWidthh}" />
@@ -31,11 +32,6 @@
 						<Setter Target="Details.(uen:Region.Attached)"
 								Value="true" />
 					</VisualState.Setters>
-				</VisualState>
-				<VisualState x:Name="Narrow">
-					<VisualState.StateTriggers>
-						<AdaptiveTrigger MinWindowWidth="0" />
-					</VisualState.StateTriggers>
 				</VisualState>
 			</VisualStateGroup>
 		</VisualStateManager.VisualStateGroups>
@@ -128,8 +124,6 @@
 														Value="Single" />
 												<Setter Target="ProductsListView.IsItemClickEnabled"
 														Value="False" />
-												<!--<Setter Target="ProductsListView.(uen:Navigation.Request)"
-														Value="./LandscapeDetails/Product" />-->
 											</VisualState.Setters>
 										</VisualState>
 										<VisualState x:Name="Narrow">
