@@ -101,11 +101,6 @@
 								   Text="5254 products found!"
 								   utu:AutoLayout.CounterAlignment="Center"
 								   Style="{StaticResource MaterialBody2}" />
-						<HyperlinkButton Content="Deals"
-										 AutomationProperties.AutomationId="Deals"
-										 utu:AutoLayout.CounterAlignment="Center"
-										 Style="{StaticResource MaterialHyperlinkButtonStyle}"
-										 uen:Navigation.Request="Deals" />
 						<HyperlinkButton Content="Filters"
 										 AutomationProperties.AutomationId="Filters"
 										 x:Uid="Page_Filters"
