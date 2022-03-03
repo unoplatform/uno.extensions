@@ -25,7 +25,7 @@ public class RouteResolver : IRouteResolver
 		var messageDialogRoute = new RouteMap(
 			Path: typeof(MessageDialog).Name,
 			View: new ViewMap(
-			View: typeof(MessageDialog),
+			DynamicView: ()=>typeof(MessageDialog),
 			ResultData: typeof(MessageDialog))
 		);
 

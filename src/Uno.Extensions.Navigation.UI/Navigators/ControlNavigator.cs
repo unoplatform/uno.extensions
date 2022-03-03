@@ -56,7 +56,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 		return executedRoute;
 	}
 
-	protected object? InitialiseCurrentView(Route route, RouteMap? mapping)
+	protected object? InitialiseCurrentView(Route route, RouteMap? mapping, bool refresh = false)
 	{
 		var view = CurrentView;
 
@@ -82,7 +82,8 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 		}
 
 		var viewModel = view.DataContext;
-		if (viewModel is null ||
+		if (refresh ||
+			viewModel is null ||
 			viewModel.GetType() != mapping?.View?.ViewModel)
 		{
 			// This will happen if cache mode isn't set to required
