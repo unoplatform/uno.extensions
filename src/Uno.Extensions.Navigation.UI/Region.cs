@@ -55,14 +55,25 @@ public static class Region
 
 		if (d is FrameworkElement element)
 		{
-			RegisterElement(element);
+			RegisterElement(element, e.NewValue is bool active ? active : false);
 		}
 	}
 
-	private static void RegisterElement(FrameworkElement element)
+	private static void RegisterElement(FrameworkElement element, bool active)
 	{
 		var existingRegion = Region.GetInstance(element);
-		var region = existingRegion ?? new NavigationRegion(element);
+		if (existingRegion is not null)
+		{
+			if (active)
+			{
+				existingRegion.ReassignParent();
+			}
+			else
+			{
+				existingRegion.Detach();
+			}
+		}
+		var region = existingRegion ?? (active ? new NavigationRegion(element) : default);
 	}
 
 	public static void SetInstance(this DependencyObject element, IRegion? value)

@@ -69,6 +69,11 @@ public sealed class NavigationRegion : IRegion
         }
     }
 
+	public void Detach()
+	{
+		this.Parent = null;
+	}
+
 	private void InitialiseRootRegion(IServiceProvider services)
 	{
 		_isRoot = true;

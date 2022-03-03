@@ -168,6 +168,13 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			return default;
 		}
 
+
+		var rm = Resolver.Routes.FindByPath(request.Route.Base);
+		if (!string.IsNullOrWhiteSpace(rm?.DependsOn))
+		{
+			request = request with { Route = (request.Route with { Base = rm.DependsOn, Path = null }).Append(request.Route) };
+		}
+
 		// If the request can't be handled (or redirect), then
 		// default to sending the request to the parent
 		return Region.Parent?.NavigateAsync(request);
@@ -241,12 +248,12 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			services.AddInstance<INavigator>(this);
 		}
 
-		if(!string.IsNullOrWhiteSpace(this.Region.Name) &&
-			this.Region.Name == request.Route?.Base &&
-			this.CanNavigateToRoute(request.Route?.Next()))
-		{
-			request = request with { Route = request.Route.Next() };
-		}
+		//if(!string.IsNullOrWhiteSpace(this.Region.Name) &&
+		//	this.Region.Name == request.Route?.Base &&
+		//	this.CanNavigateToRoute(request.Route?.Next()))
+		//{
+		//	request = request with { Route = request.Route.Next() };
+		//}
 
 
 		var executedRoute = await CoreNavigateAsync(request);
@@ -266,14 +273,22 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 	{
 		if (request.Route.IsEmpty())
 		{
-			var route = Resolver.Routes.FindByPath(this.Route?.Base);
-			if (route is not null)
+			var dataRoute = Resolver.Routes.Find(request.Route);
+			if (dataRoute is not null)
 			{
-				var defaultRoute = route.Nested?.FirstOrDefault(x => x.IsDefault);
-				if (defaultRoute is not null)
+				request = request with { Route = request.Route with { Base = dataRoute.Path } };
+			}
+			else
+			{
+				var route = Resolver.Routes.FindByPath(this.Route?.Base);
+				if (route is not null)
 				{
-					request = request with { Route = request.Route.Append(defaultRoute.Path) };
+					var defaultRoute = route.Nested?.FirstOrDefault(x => x.IsDefault);
+					if (defaultRoute is not null)
+					{
+						request = request with { Route = request.Route.Append(defaultRoute.Path) };
 
+					}
 				}
 			}
 
@@ -308,6 +323,9 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		{
 			return default;
 		}
+
+		// Append Internal qualifier to avoid requests being sent back to parent
+		request = request with { Route = request.Route with { IsInternal = true } };
 
 		var tasks = new List<Task<NavigationResponse?>>();
 		foreach (var region in children)

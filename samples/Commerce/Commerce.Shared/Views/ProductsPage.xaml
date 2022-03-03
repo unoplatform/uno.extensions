@@ -15,8 +15,6 @@
 	<Grid>
 		<VisualStateManager.VisualStateGroups>
 			<VisualStateGroup>
-				<VisualState x:Name="Narrow" />
-
 				<VisualState x:Name="Wide">
 					<VisualState.StateTriggers>
 						<AdaptiveTrigger MinWindowWidth="{StaticResource WideMinWindowWidthh}" />
@@ -30,7 +28,14 @@
 								Value="2*" />
 						<Setter Target="DetailsGrid.Visibility"
 								Value="Visible" />
+						<Setter Target="Details.(uen:Region.Attached)"
+								Value="true" />
 					</VisualState.Setters>
+				</VisualState>
+				<VisualState x:Name="Narrow">
+					<VisualState.StateTriggers>
+						<AdaptiveTrigger MinWindowWidth="0" />
+					</VisualState.StateTriggers>
 				</VisualState>
 			</VisualStateGroup>
 		</VisualStateManager.VisualStateGroups>
@@ -96,6 +101,11 @@
 								   Text="5254 products found!"
 								   utu:AutoLayout.CounterAlignment="Center"
 								   Style="{StaticResource MaterialBody2}" />
+						<HyperlinkButton Content="Deals"
+										 AutomationProperties.AutomationId="Deals"
+										 utu:AutoLayout.CounterAlignment="Center"
+										 Style="{StaticResource MaterialHyperlinkButtonStyle}"
+										 uen:Navigation.Request="Deals" />
 						<HyperlinkButton Content="Filters"
 										 AutomationProperties.AutomationId="Filters"
 										 x:Uid="Page_Filters"
@@ -123,8 +133,8 @@
 														Value="Single" />
 												<Setter Target="ProductsListView.IsItemClickEnabled"
 														Value="False" />
-												<Setter Target="ProductsListView.(uen:Navigation.Request)"
-														Value="./LandscapeDetails/Product" />
+												<!--<Setter Target="ProductsListView.(uen:Navigation.Request)"
+														Value="./LandscapeDetails/Product" />-->
 											</VisualState.Setters>
 										</VisualState>
 										<VisualState x:Name="Narrow">
@@ -223,8 +233,10 @@
 		<Grid Grid.Column="1"
 			  x:Name="DetailsGrid"
 			  Visibility="Collapsed">
-			<ContentControl uen:Region.Name="LandscapeDetails"
-							uen:Region.Attached="true"
+			<ContentControl
+							x:Name="Details"
+							uen:Region.Name="Product"
+							uen:Region.Attached="false"
 							Grid.Column="1"
 							HorizontalAlignment="Stretch"
 							VerticalAlignment="Stretch"

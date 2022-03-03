@@ -225,13 +225,13 @@ namespace Commerce
 								new RouteMap("Home", View: views.FindByData<Credentials>(),
 										Nested: new RouteMap[]{
 											new ("Products", View: views.FindByViewModel<ProductsViewModel.BindableProductsViewModel>(),
-															IsDefault: true,
+															
 															Nested: new  RouteMap[]{
 																new RouteMap("Filter",  View: views.FindByViewModel<FiltersViewModel.BindableFiltersViewModel>())
 															}),
 											new("Product", DependsOn:"Products", View: views.FindByViewModel<ProductDetailsViewModel.BindableProductDetailsViewModel>()),
 
-											new("Deals", View:views.FindByViewModel<DealsViewModel>()),
+											new("Deals", IsDefault: true,View:views.FindByViewModel<DealsViewModel>()),
 
 											new("Profile", View:views.FindByViewModel<ProfileViewModel>()),
 

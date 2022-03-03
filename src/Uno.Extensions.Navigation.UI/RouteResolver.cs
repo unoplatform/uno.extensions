@@ -41,7 +41,15 @@ public class RouteResolver : IRouteResolver
 	{
 	}
 
-	public RouteMap? Find(Route? route) => route is not null ? FindByPath(route.Base) : First;
+	public RouteMap? Find(Route? route) =>
+		route is not null ?
+			FindByPath(route.Base) ??
+				(
+					(route.Data?.TryGetValue(String.Empty, out var data) ?? false) ?
+						FindByData(data.GetType()) :
+						default
+				):
+			First;
 
 	public virtual RouteMap? FindByPath(string? path)
 	{
