@@ -58,22 +58,6 @@ public static class RouteExtensions
 
 	public static Route[] ForwardNavigationSegments(this Route route, IRouteResolver mappings)
 	{
-		//if (route.IsEmpty() || route.FrameIsBackNavigation())
-		//{
-		//	return new Route[] { };
-		//}
-
-		//var segments = new List<Route>() { route with { Qualifier = Qualifiers.None, Path = null, Data = (route.IsLastFrameRoute(mappings) ? route.Data : null) } };
-		//var nextRoute = route.Next();
-		//while (
-		//	!nextRoute.IsEmpty() && 
-		//	nextRoute.IsPageRoute(mappings))
-		//{
-		//	segments.Add(nextRoute with { Qualifier = Qualifiers.None, Path = null, Data = (nextRoute.IsLastFrameRoute(mappings) ? nextRoute.Data : null) });
-		//	nextRoute = nextRoute.Next();
-		//}
-		//return segments.ToArray();
-
 		if (route.IsEmpty() || route.FrameIsBackNavigation())
 		{
 			return new Route[] { };

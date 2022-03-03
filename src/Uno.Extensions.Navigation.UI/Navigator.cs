@@ -248,14 +248,6 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			services.AddInstance<INavigator>(this);
 		}
 
-		//if(!string.IsNullOrWhiteSpace(this.Region.Name) &&
-		//	this.Region.Name == request.Route?.Base &&
-		//	this.CanNavigateToRoute(request.Route?.Next()))
-		//{
-		//	request = request with { Route = request.Route.Next() };
-		//}
-
-
 		var executedRoute = await CoreNavigateAsync(request);
 
 
