@@ -182,10 +182,12 @@ namespace Commerce
 		{
 			views.Register(
 				new ViewMap(ViewModel: typeof(ShellViewModel)),
-				new ViewMap(View: typeof(LoginPage), ViewModel: typeof(LoginViewModel.BindableLoginViewModel), ResultData: typeof(Credentials)),
-				new ViewMap(View: typeof(HomePage), Data: new DataMap<Credentials>()),
-				new ViewMap(View: typeof(ProductsPage), ViewModel: typeof(ProductsViewModel.BindableProductsViewModel)),
-				new ViewMap(View: typeof(ProductDetailsPage), ViewModel: typeof(ProductDetailsViewModel.BindableProductDetailsViewModel), Data: new DataMap<Product>(
+				new ViewMap(DynamicView: () => typeof(LoginPage), ViewModel: typeof(LoginViewModel.BindableLoginViewModel), ResultData: typeof(Credentials)),
+				new ViewMap(DynamicView: () => typeof(HomePage), Data: new DataMap<Credentials>()),
+				new ViewMap(DynamicView: () => typeof(ProductsPage), ViewModel: typeof(ProductsViewModel.BindableProductsViewModel)),
+				new ViewMap(DynamicView: () =>
+						   (App.Current as App)?.Window?.Content?.ActualSize.X > 800 ? typeof(ProductControl) : typeof(ProductDetailsPage),
+							ViewModel: typeof(ProductDetailsViewModel.BindableProductDetailsViewModel), Data: new DataMap<Product>(
 																						ToQuery: product => new Dictionary<string, string> { { nameof(Product.ProductId), product.ProductId.ToString() } },
 																						FromQuery: async (sp, query) =>
 																						{
@@ -194,11 +196,11 @@ namespace Commerce
 																							var products = await ps.GetProducts(default, default);
 																							return products.FirstOrDefault(p => p.ProductId == id);
 																						})),
-				new ViewMap(View: typeof(FilterPage), ViewModel: typeof(FiltersViewModel.BindableFiltersViewModel), Data: new DataMap<Filters>()),
-				new ViewMap(View: typeof(DealsPage), ViewModel: typeof(DealsViewModel)),
-				new ViewMap(View: typeof(ProfilePage), ViewModel: typeof(ProfileViewModel)),
-				new ViewMap(View: typeof(CartPage), ViewModel: typeof(CartViewModel)),
-				new ViewMap(View: typeof(ProductDetailsPage), ViewModel: typeof(CartProductDetailsViewModel.BindableCartProductDetailsViewModel), Data: new DataMap<CartItem>(
+				new ViewMap(DynamicView: () => typeof(FilterPage), ViewModel: typeof(FiltersViewModel.BindableFiltersViewModel), Data: new DataMap<Filters>()),
+				new ViewMap(DynamicView: () => typeof(DealsPage), ViewModel: typeof(DealsViewModel)),
+				new ViewMap(DynamicView: () => typeof(ProfilePage), ViewModel: typeof(ProfileViewModel)),
+				new ViewMap(DynamicView: () => typeof(CartPage), ViewModel: typeof(CartViewModel)),
+				new ViewMap(DynamicView: () => typeof(ProductDetailsPage), ViewModel: typeof(CartProductDetailsViewModel.BindableCartProductDetailsViewModel), Data: new DataMap<CartItem>(
 																						ToQuery: cartItem => new Dictionary<string, string> {
 																							{ nameof(Product.ProductId), cartItem.Product.ProductId.ToString() },
 																							{ nameof(CartItem.Quantity),cartItem.Quantity.ToString() } },
@@ -211,7 +213,7 @@ namespace Commerce
 																							var p = products.FirstOrDefault(p => p.ProductId == id);
 																							return new CartItem(p, quantity);
 																						})),
-				new ViewMap(View: typeof(CheckoutPage))
+				new ViewMap(DynamicView: () => typeof(CheckoutPage))
 				);
 
 			routes
@@ -223,12 +225,18 @@ namespace Commerce
 								new("Login", View: views.FindByResultData<Credentials>()),
 								new RouteMap("Home", View: views.FindByData<Credentials>(),
 										Nested: new RouteMap[]{
-											new ("Products", View: views.FindByViewModel<ProductsViewModel.BindableProductsViewModel>(),
-															IsDefault: true,
-															Nested: new  RouteMap[]{
-																new RouteMap("Filter",  View: views.FindByViewModel<FiltersViewModel.BindableFiltersViewModel>())
-															}),
-											new("Product", DependsOn:"Products", View: views.FindByViewModel<ProductDetailsViewModel.BindableProductDetailsViewModel>()),
+											new ("Products",
+													View: views.FindByViewModel<ProductsViewModel.BindableProductsViewModel>(),
+													IsDefault: true,
+													Nested: new  RouteMap[]{
+														new RouteMap("Filter",  View: views.FindByViewModel<FiltersViewModel.BindableFiltersViewModel>())
+													}),
+											new("Product",
+													View: views.FindByViewModel<ProductDetailsViewModel.BindableProductDetailsViewModel>(),
+													DependsOn:"Products"),
+												//	Init: req => (App.Current as App).Window.Content.ActualSize.X > 800 ?
+												//req with { Route = req.Route with {Base = "Details",Path="Products"} } :
+												//req),
 
 											new("Deals", View:views.FindByViewModel<DealsViewModel>()),
 

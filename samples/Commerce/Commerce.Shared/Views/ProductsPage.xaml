@@ -224,7 +224,6 @@
 			  Visibility="Collapsed">
 			<ContentControl
 							x:Name="Details"
-							uen:Region.Name="Product"
 							uen:Region.Attached="false"
 							Grid.Column="1"
 							HorizontalAlignment="Stretch"

@@ -114,6 +114,8 @@ public class FrameNavigator : ControlNavigator<Frame>
 
 		var firstSegment = segments.First().Route;
 
+		var refreshViewModel = false;
+
 		// If the first segment doesn't have a dependency, then
 		// need to treat the path as if it were absolute
 		if (string.IsNullOrWhiteSpace(segments[0].Map.DependsOn))
@@ -125,6 +127,12 @@ public class FrameNavigator : ControlNavigator<Frame>
 			if (Control.SourcePageType != navSegment.Map.View?.View)
 			{
 				await Show(navSegment.Route.Base, navSegment.Map.View?.View, navSegment.Route.Data);
+			}
+			else
+			{
+				// Rebuild the nested region hierarchy
+				Control.ReassignRegionParent();
+				refreshViewModel = true;
 			}
 
 			// Now iterate through the other segments and make
@@ -184,7 +192,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 			}
 		}
 
-		InitialiseCurrentView(route, Resolver.Routes.Find(route));
+		InitialiseCurrentView(route, Resolver.Routes.Find(route), refreshViewModel);
 
 		CurrentView?.SetNavigatorInstance(Region.Navigator()!);
 

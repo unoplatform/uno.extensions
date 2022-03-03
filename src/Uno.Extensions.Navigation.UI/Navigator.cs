@@ -98,7 +98,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 	{
 		// Deal with any named children that match the first segment of the request
 		// In this case, the request should be trimmed
-		var nested = Region.FindChildren(x => !string.IsNullOrWhiteSpace(request.Route.Base) && x.Name == request.Route.Base).ToArray();
+		var nested = Region.Children.Where(x => !string.IsNullOrWhiteSpace(request.Route.Base) && x.Name == request.Route.Base).ToArray();
 		if (nested.Any())
 		{
 			request = request with { Route = request.Route.Next() };
@@ -113,7 +113,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 			// Now, deal with any unnamed children - send the request without
 			// trimming the request
-			nested = Region.FindChildren(x => string.IsNullOrWhiteSpace(x.Name) || x.Name==this.Route?.Base).ToArray();
+			nested = Region.Children.Where(x => string.IsNullOrWhiteSpace(x.Name) || x.Name==this.Route?.Base).ToArray();
 			if (nested.Any())
 			{
 				return NavigateChildRegions(nested, request);
