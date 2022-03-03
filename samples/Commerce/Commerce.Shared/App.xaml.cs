@@ -211,8 +211,7 @@ namespace Commerce
 																							var p = products.FirstOrDefault(p => p.ProductId == id);
 																							return new CartItem(p, quantity);
 																						})),
-				new ViewMap(View: typeof(CheckoutPage)),
-				new ViewMap(View: typeof(AddProductPage), ViewModel: typeof(AddProductViewModel))
+				new ViewMap(View: typeof(CheckoutPage))
 				);
 
 			routes
@@ -225,13 +224,13 @@ namespace Commerce
 								new RouteMap("Home", View: views.FindByData<Credentials>(),
 										Nested: new RouteMap[]{
 											new ("Products", View: views.FindByViewModel<ProductsViewModel.BindableProductsViewModel>(),
-															
+															IsDefault: true,
 															Nested: new  RouteMap[]{
 																new RouteMap("Filter",  View: views.FindByViewModel<FiltersViewModel.BindableFiltersViewModel>())
 															}),
 											new("Product", DependsOn:"Products", View: views.FindByViewModel<ProductDetailsViewModel.BindableProductDetailsViewModel>()),
 
-											new("Deals", IsDefault: true,View:views.FindByViewModel<DealsViewModel>()),
+											new("Deals", View:views.FindByViewModel<DealsViewModel>()),
 
 											new("Profile", View:views.FindByViewModel<ProfileViewModel>()),
 
@@ -240,8 +239,7 @@ namespace Commerce
 														new RouteMap("CartDetails",View: views.FindByViewModel<CartProductDetailsViewModel.BindableCartProductDetailsViewModel>()),
 														new RouteMap("Checkout", View: views.FindByView<CheckoutPage>())
 													})
-											}),
-								new("AddProduct", View: views.FindByViewModel<AddProductViewModel>()),
+											})
 							}));
 
 			;
