@@ -2,6 +2,8 @@
 
 public interface IRouteResolver
 {
+	RouteMap? Parent(RouteMap? routeMap);
+
 	RouteMap? Find(Route? route);
 
 	RouteMap? FindByPath(string? path);
