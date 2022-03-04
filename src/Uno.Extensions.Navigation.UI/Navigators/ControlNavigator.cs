@@ -39,10 +39,10 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 			return default;
 		}
 
-        var route = request.Route;
-        var mapping = Resolver.Routes.Find(route);
-		if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Navigating to path '{route.Base}' with view '{mapping?.View?.View?.Name}'");
-        var executedPath = await Show(mapping.Path, mapping?.View?.View, route.Data);
+		var route = request.Route;
+		var mapping = Resolver.Routes.Find(route);
+		if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Navigating to path '{route.Base}' with view '{mapping?.View?.View?.Name}'");
+		var executedPath = await Show(mapping.Path, mapping?.View?.View, route.Data);
 
 		if (string.IsNullOrEmpty(executedPath))
 		{
@@ -51,12 +51,12 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 
 		var executedRoute = route with { Base = executedPath, Path = null };
 
-		InitialiseCurrentView(executedRoute, mapping);
+		InitialiseCurrentView(request, executedRoute, mapping);
 
 		return executedRoute;
 	}
 
-	protected object? InitialiseCurrentView(Route route, RouteMap? mapping, bool refresh = false)
+	protected async Task<object?> InitialiseCurrentView(NavigationRequest request, Route route, RouteMap? mapping, bool refresh = false)
 	{
 		var view = CurrentView;
 
@@ -67,7 +67,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 
 		var navigator = Region.Navigator();
 
-		if (view is FrameView fv )
+		if (view is FrameView fv)
 		{
 			navigator = fv.Navigator;
 		}
@@ -87,7 +87,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 			viewModel.GetType() != mapping?.View?.ViewModel)
 		{
 			// This will happen if cache mode isn't set to required
-			viewModel = CreateViewModel(services, route, mapping);
+			viewModel = await CreateViewModel(services, request, route, mapping);
 		}
 
 		view.InjectServicesAndSetDataContext(services, navigator, viewModel);
@@ -123,6 +123,16 @@ public abstract class ControlNavigator : Navigator
 			}
 
 			request = request with { Route = request.Route.Trim(regionResponse?.Route) };
+		}
+		else if (Region.Parent is not null)
+		{
+			var rm = Resolver.Routes.FindByPath(request.Route.Base);
+			if (!string.IsNullOrWhiteSpace(rm?.DependsOn))
+			{
+				request = request with { Route = (request.Route with { Base = rm?.DependsOn, Path = null }).Append(request.Route) };
+			}
+
+			return await Region.NavigateAsync(request);
 		}
 
 		var coreResponse = await base.CoreNavigateAsync(request);
@@ -173,13 +183,27 @@ public abstract class ControlNavigator : Navigator
 		Route = route is not null ? new Route(Qualifiers.None, route.Base, null, route.Data) : null;
 	}
 
-	protected object? CreateViewModel(IServiceProvider services, Route route, RouteMap? mapping)
+	protected async Task<object?> CreateViewModel(IServiceProvider services, NavigationRequest request, Route route, RouteMap? mapping)
 	{
 		var navigator = services.GetInstance<INavigator>();
 		if (mapping?.View?.ViewModel is not null)
 		{
+			var parameters = route.Data ?? new Dictionary<string, object>();
+			if(parameters.Any() &&
+				!parameters.ContainsKey(String.Empty) &&
+				mapping.View?.Data?.UntypedFromQuery is not null)
+			{
+				var data = await mapping.View.Data.UntypedFromQuery(services, parameters.ToDictionary(x=>x.Key,x=>x.Value+""));
+				if(data is not null)
+				{
+					parameters[string.Empty] = data;
+				}
+			}
+
 			var dataFactor = services.GetRequiredService<NavigationDataProvider>();
 			dataFactor.Parameters = route.Data ?? new Dictionary<string, object>();
+
+			services.AddInstance(request);
 
 			var vm = services.GetService(mapping.View.ViewModel);
 

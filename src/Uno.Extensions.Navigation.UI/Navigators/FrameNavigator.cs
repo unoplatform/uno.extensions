@@ -102,7 +102,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 		}
 
 		var route = request.Route;
-		var segments = (from pg in route.ForwardNavigationSegments(Resolver.Routes)
+		var segments = (from pg in route.ForwardNavigationSegments(FullRoute, Resolver.Routes)
 						let map = Resolver.Routes.FindByPath(pg.Base)
 						where map?.View?.View is not null &&
 								map.View.View.IsSubclassOf(typeof(Page))
@@ -192,7 +192,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 			}
 		}
 
-		InitialiseCurrentView(route, Resolver.Routes.Find(route), refreshViewModel);
+		InitialiseCurrentView(request, route, Resolver.Routes.Find(route), refreshViewModel);
 
 		CurrentView?.SetNavigatorInstance(Region.Navigator()!);
 
@@ -242,7 +242,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 
 		var mapping = Resolver.Routes.FindByView(Control.Content.GetType());
 
-		InitialiseCurrentView(previousRoute ?? Route.Empty, mapping);
+		InitialiseCurrentView(request, previousRoute ?? Route.Empty, mapping);
 
 		// Restore the INavigator instance
 		var navigator = CurrentView?.GetNavigatorInstance();

@@ -50,7 +50,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 					return await redirection;
 				}
 			}
-			
+
 			// Append Internal qualifier to avoid requests being sent back to parent
 			request = request with { Route = request.Route with { IsInternal = true } };
 
@@ -113,7 +113,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 			// Now, deal with any unnamed children - send the request without
 			// trimming the request
-			nested = Region.Children.Where(x => string.IsNullOrWhiteSpace(x.Name) || x.Name==this.Route?.Base).ToArray();
+			nested = Region.Children.Where(x => string.IsNullOrWhiteSpace(x.Name) || x.Name == this.Route?.Base).ToArray();
 			if (nested.Any())
 			{
 				return NavigateChildRegions(nested, request);
@@ -168,17 +168,57 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			return default;
 		}
 
-
 		var rm = Resolver.Routes.FindByPath(request.Route.Base);
-		if (!string.IsNullOrWhiteSpace(rm?.DependsOn))
+		if (rm is null)
 		{
-			request = request with { Route = (request.Route with { Base = rm.DependsOn, Path = null }).Append(request.Route) };
+			return default;
 		}
 
+		if (Region.Parent is not null)
+		{
+			while (!string.IsNullOrWhiteSpace(rm?.DependsOn))
+			{
+				request = request with { Route = (request.Route with { Base = rm.DependsOn, Path = null }).Append(request.Route) };
+			}
+		}
+		else
+		{
+			var routeMaps = new List<RouteMap> { rm };
+			var parent = Resolver.Routes.Parent(rm);
+			while (parent is not null)
+			{
+				routeMaps.Insert(0, parent);
+				parent = Resolver.Routes.Parent(parent);
+			}
+			var route = new Route(Qualifiers.None, Data: request.Route.Data);
+			route = BuildFullRoute(route, routeMaps);
+			route = route with { Qualifier = Qualifiers.Root };
+			request = request with { Route = route };
+		}
 		// If the request can't be handled (or redirect), then
 		// default to sending the request to the parent
-		return Region.Parent?.NavigateAsync(request);
+		return (Region.Parent?? Region).NavigateAsync(request);
+
 	}
+
+
+	private static Route BuildFullRoute(Route route, IEnumerable<RouteMap> maps)
+	{
+		foreach (var map in maps)
+		{
+			if (route.IsEmpty())
+			{
+				route = route with { Base = map.Path };
+			}
+			else
+			{
+				route = route.Append(map.Path);
+			}
+		}
+
+		return route;
+	}
+
 
 	private NavigationRequest InitialiseRequest(NavigationRequest request)
 	{
@@ -203,7 +243,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 	// The base navigator can't handle navigating to any routes
 	// This doesn't reflect whether there are any parent or child
 	// regions that can process this request
-	protected virtual bool CanNavigateToRoute(Route route) => false; 
+	protected virtual bool CanNavigateToRoute(Route route) => false;
 
 	private async Task<NavigationResponse?> DialogNavigateAsync(NavigationRequest request)
 	{
@@ -306,12 +346,12 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 										region.Name == Route?.Base
 									).ToArray();
 		return await NavigateChildRegions(children, request);
-		
+
 	}
 
 	private async Task<NavigationResponse?> NavigateChildRegions(IEnumerable<IRegion>? children, NavigationRequest request)
 	{
-		if(children is null)
+		if (children is null)
 		{
 			return default;
 		}

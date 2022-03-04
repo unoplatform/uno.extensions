@@ -57,6 +57,8 @@ public static class ServiceCollectionExtensions
 
 					.AddScopedInstance<IRegion>()
 
+					.AddScopedInstance<NavigationRequest>()
+
 					.AddScoped<NavigationDataProvider>()
 					.AddScoped<RegionControlProvider>()
 					.AddTransient<IDictionary<string, object>>(services => services.GetRequiredService<NavigationDataProvider>().Parameters)

@@ -56,7 +56,7 @@ public static class RouteExtensions
 
 	public static bool FrameIsForwardNavigation(this Route route) => !route.FrameIsBackNavigation();
 
-	public static Route[] ForwardNavigationSegments(this Route route, IRouteResolver mappings)
+	public static Route[] ForwardNavigationSegments(this Route route, Route? currentRoute, IRouteResolver mappings)
 	{
 		if (route.IsEmpty() || route.FrameIsBackNavigation())
 		{
@@ -76,7 +76,7 @@ public static class RouteExtensions
 					rm.IsPageRouteMap() &&
 					// Either this is the first segment (dependson should be "" as should be first in sequence) OR
 					// this is not the first segment (so dependson should be set)
-					(string.IsNullOrWhiteSpace(rm.DependsOn) ^ segments.Count > 0)
+					((string.IsNullOrWhiteSpace(rm.DependsOn) && segments.Count==0) ^ ((segments.Count > 0 && segments[0].Base==rm.DependsOn) || (currentRoute?.Base == rm.DependsOn)))
 				)
 			)
 		)
@@ -355,7 +355,7 @@ public static class RouteExtensions
 		}
 		else
 		{
-			var segments = currentRoute.ForwardNavigationSegments(resolver.Routes).ToList();
+			var segments = currentRoute.ForwardNavigationSegments(currentRoute, resolver.Routes).ToList();
 			foreach (var qualifierChar in qualifier)
 			{
 				if (qualifierChar + "" == Qualifiers.NavigateBack)
@@ -368,7 +368,7 @@ public static class RouteExtensions
 				}
 			}
 
-			var newSegments = frameRoute.ForwardNavigationSegments(resolver.Routes);
+			var newSegments = frameRoute.ForwardNavigationSegments(currentRoute, resolver.Routes);
 			if (newSegments is not null)
 			{
 				segments.AddRange(newSegments);

@@ -25,7 +25,7 @@ public class RouteResolver : IRouteResolver
 		var messageDialogRoute = new RouteMap(
 			Path: typeof(MessageDialog).Name,
 			View: new ViewMap(
-			DynamicView: ()=>typeof(MessageDialog),
+			DynamicView: () => typeof(MessageDialog),
 			ResultData: typeof(MessageDialog))
 		);
 
@@ -41,6 +41,22 @@ public class RouteResolver : IRouteResolver
 	{
 	}
 
+	public RouteMap? Parent(RouteMap? routeMap)
+	{
+		if(routeMap is null)
+		{
+			return default;
+		}
+
+		return Mappings
+			.Where(
+				x => x.Value.Nested is not null &&
+					x.Value.Nested.Contains(routeMap))
+			.Select(x=>x.Value)
+			.FirstOrDefault();
+	}
+
+
 	public RouteMap? Find(Route? route) =>
 		route is not null ?
 			FindByPath(route.Base) ??
@@ -48,7 +64,7 @@ public class RouteResolver : IRouteResolver
 					(route.Data?.TryGetValue(String.Empty, out var data) ?? false) ?
 						FindByData(data.GetType()) :
 						default
-				):
+				) :
 			First;
 
 	public virtual RouteMap? FindByPath(string? path)
