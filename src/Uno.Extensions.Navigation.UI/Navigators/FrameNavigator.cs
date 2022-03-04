@@ -47,7 +47,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 			return false;
 		}
 
-		if (route.FrameIsBackNavigation())
+		if (route.IsBackOrCloseNavigation())
 		{
 			// Back navigation code should swallow any excess back navigations (ie when
 			// there is nothing on the back stack)
