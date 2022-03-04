@@ -13,4 +13,6 @@ public interface IRegion
 	ICollection<IRegion> Children { get; }
 
 	void ReassignParent();
+
+	void Detach();
 }

@@ -16,12 +16,6 @@ public class PopupNavigator : ControlNavigator<Popup>
     {
     }
 
-	protected override bool QualifierIsSupported(Route route) =>
-			base.QualifierIsSupported(route) ||
-			route.Qualifier == Qualifiers.None ||
-			// "-" (back or close) Add closing 
-			route.IsBackOrCloseNavigation();
-
 	public override void ControlInitialize()
     {
         base.ControlInitialize();

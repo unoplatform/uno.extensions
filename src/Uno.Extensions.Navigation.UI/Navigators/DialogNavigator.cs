@@ -16,11 +16,6 @@ public abstract class DialogNavigator : ControlNavigator
     {
     }
 
-	protected override bool QualifierIsSupported(Route route) =>
-			base.QualifierIsSupported(route) ||
-			// "-" (back or close) Add closing 
-			route.IsBackOrCloseNavigation();
-
     protected override async Task<Route?> ExecuteRequestAsync(NavigationRequest request)
     {
         var route = request.Route;

@@ -25,25 +25,25 @@
 					  Visibility="Collapsed">
 					<TextBlock Text="Products" />
 					<Button Content="Deals"
-							uen:Navigation.Request="../Deals" />
+							uen:Navigation.Request="Deals" />
 					<Button Content="Profile"
-							uen:Navigation.Request="../Profile" />
+							uen:Navigation.Request="Profile" />
 				</StackPanel>
 				<StackPanel uen:Region.Name="Deals"
 					  Visibility="Collapsed">
 					<TextBlock Text="Deals" />
 					<Button Content="Products"
-							uen:Navigation.Request="../Products" />
+							uen:Navigation.Request="Products" />
 					<Button Content="Profile"
-							uen:Navigation.Request="../Profile" />
+							uen:Navigation.Request="Profile" />
 				</StackPanel>
 				<StackPanel uen:Region.Name="Profile"
 					  Visibility="Collapsed">
 					<TextBlock Text="Profile" />
 					<Button Content="Products"
-							uen:Navigation.Request="../Products" />
+							uen:Navigation.Request="Products" />
 					<Button Content="Deals"
-							uen:Navigation.Request="../Deals" />
+							uen:Navigation.Request="Deals" />
 				</StackPanel>
 			</Grid>
 		</muxc:NavigationView>

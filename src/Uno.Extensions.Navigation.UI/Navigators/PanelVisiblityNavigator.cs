@@ -19,13 +19,8 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 	{
 	}
 
-	protected override bool QualifierIsSupported(Route route) =>
-		base.QualifierIsSupported(route) ||
-		// "../" (change content) Add support for changing current content
-		route.IsChangeContent();
-
 	protected override bool CanNavigateToRoute(Route route) =>
-		base.CanNavigateToRoute(route) &&
+		!route.IsDialog() && 
 		(
 			(FindByPath(Resolver.Routes.Find(route)?.Path ?? route.Base) is not null) ||
 			(Resolver.Routes.Find(route)?.View?.View?.IsSubclassOf(typeof(FrameworkElement)) ?? false)		
@@ -53,8 +48,6 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 					viewType.IsSubclassOf(typeof(Page)))
 				{
 					viewType = typeof(UI.Controls.FrameView);
-					path = default;
-					if (Logger.IsEnabled(LogLevel.Error)) Logger.LogErrorMessage($"Missing view for navigation path '{path}'");
 				}
 
 				if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Creating instance of type '{viewType.Name}'");
@@ -72,6 +65,11 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
                 if (Logger.IsEnabled(LogLevel.Error)) Logger.LogErrorMessage($"Unable to create instance - {ex.Message}");
             }
         }
+
+		if(controlToShow is UI.Controls.FrameView)
+		{
+			path = default;
+		}
 
 		if (controlToShow != CurrentlyVisibleControl)
 		{

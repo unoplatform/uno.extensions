@@ -7,7 +7,6 @@ public class NavigationViewItemRequestHandler : ActionRequestHandlerBase<Navigat
 {
 	public NavigationViewItemRequestHandler(IRouteResolver routes) : base(routes)
 	{
-		DefaultQualifier = Qualifiers.ChangeContent;
 	}
 
 	public override IRequestBinding? Bind(FrameworkElement view)

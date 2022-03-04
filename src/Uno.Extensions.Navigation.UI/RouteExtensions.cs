@@ -13,10 +13,6 @@ public static class RouteExtensions
 
 	public static bool IsRoot(this Route route) => route.Qualifier.StartsWith(Qualifiers.Root);
 
-	public static bool IsChangeContent(this Route route) =>
-		(route.Qualifier.StartsWith(Qualifiers.ChangeContent) && !route.IsParent()) ||
-		(route.Qualifier==Qualifiers.None && route.IsInternal);
-
 	public static bool IsParent(this Route route) => route.Qualifier.StartsWith(Qualifiers.Parent);
 
 	public static bool IsNested(this Route route) => route.Qualifier.StartsWith(Qualifiers.Nested);
@@ -38,7 +34,7 @@ public static class RouteExtensions
 	}
 
 	public static bool IsEmpty(this Route route) => route is not null ?
-		(route.Qualifier == Qualifiers.None || route.Qualifier == Qualifiers.ChangeContent || route.Qualifier == Qualifiers.Nested) &&
+		(route.Qualifier == Qualifiers.None || route.Qualifier == Qualifiers.Nested) &&
 		string.IsNullOrWhiteSpace(route.Base) :
 		true;
 
@@ -69,12 +65,32 @@ public static class RouteExtensions
 
 		var segments = new List<Route>() { route with { Qualifier = Qualifiers.None, Path = null, Data = (route.IsLastFrameRoute(mappings) ? route.Data : null) } };
 		var nextRoute = route.Next();
+		var rm = mappings.Find(nextRoute);
 		while (
-			!nextRoute.IsEmpty() && 
-			nextRoute.IsPageRoute(mappings))
+			!nextRoute.IsEmpty() &&
+			(
+				nextRoute.IsBackOrCloseNavigation() ||
+				(
+					rm is not null &&
+					// Checks that there is a View specified and that it inherits from Page
+					rm.IsPageRouteMap() &&
+					// Either this is the first segment (dependson should be "" as should be first in sequence) OR
+					// this is not the first segment (so dependson should be set)
+					(string.IsNullOrWhiteSpace(rm.DependsOn) ^ segments.Count > 0)
+				)
+			)
+		)
 		{
-			segments.Add(nextRoute with { Qualifier = Qualifiers.None, Path = null, Data = (nextRoute.IsLastFrameRoute(mappings) ? nextRoute.Data : null) });
+			if (nextRoute.IsBackOrCloseNavigation())
+			{
+				segments.Add(nextRoute with { Path = null, Data = null });
+			}
+			else
+			{
+				segments.Add(nextRoute with { Qualifier = Qualifiers.None, Path = null, Data = (nextRoute.IsLastFrameRoute(mappings) ? nextRoute.Data : null) });
+			}
 			nextRoute = nextRoute.Next();
+			rm = mappings.Find(nextRoute);
 		}
 		return segments.ToArray();
 	}
@@ -204,7 +220,12 @@ public static class RouteExtensions
 
 	public static bool IsPageRoute(this Route route, IRouteResolver mappings)
 	{
-		return ((mappings.Find(route))?.View?.View?.IsSubclassOf(typeof(Page)) ?? false);
+		return mappings.Find(route).IsPageRouteMap();
+	}
+
+	public static bool IsPageRouteMap(this RouteMap? rm)
+	{
+		return (rm?.View?.View?.IsSubclassOf(typeof(Page)) ?? false);
 	}
 
 	public static bool IsLastFrameRoute(this Route route, IRouteResolver mappings)

@@ -37,95 +37,54 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 			request = InitialiseRequest(request);
 
+			// If this isn't an internal request, then check to
+			// see if the request needs to be redirected to a
+			// different navigator.
+			// eg route that matches a child, should be routed to that child
+			// eg route that doesn't match a page for frame nav should be sent to parent
 			if (!request.Route.IsInternal)
 			{
-
-				if (!QualifierIsSupported(request.Route))
+				var redirection = RedirectRequest(request);
+				if (redirection is not null)
 				{
-					// Trim ../../ before routing request to parent
-					if (request.Route.IsParent())
-					{
-						request = request with { Route = request.Route.TrimQualifier(Qualifiers.Parent) };
-					}
-
-					if (request.Route.IsEmpty())
-					{
-						return default;
-					}
-
-					if (Region.Parent is not null)
-					{
-						return await Region.Parent.NavigateAsync(request);
-					}
-					else
-					{
-						if (Logger.IsEnabled(LogLevel.Error)) Logger.LogError($"No parent to forward request to {request}");
-						return default;
-					}
+					return await redirection;
 				}
+			}
+			
+			// Append Internal qualifier to avoid requests being sent back to parent
+			request = request with { Route = request.Route with { IsInternal = true } };
 
-				// Handle root navigations i.e. Qualifier starts with /
-				if (request.Route.IsRoot())
+			// If this is an empty request on the root region
+			// then look up the default route (ie for startup logic)
+			if (Region.Parent is null &&
+				request.Route.IsEmpty())
+			{
+				// Clear any existing route information to make
+				// sure the navigation is restarted
+				this.Route = Route.Empty;
+
+				// Get the first route map
+				var map = Resolver.Routes.Find(null);
+				if (map is not null)
 				{
-					// Either
-					// - this is the root Region, so trim Root qualifier
-					// - Or, this is an invalid navigation
-					if (Region.Parent is null)
-					{
-						// This is the root nav service - need to trim the root qualifier
-						// so that the request can be handled by this navigator
-						request = request with { Route = request.Route.TrimQualifier(Qualifiers.Root) };
-
-						if (request.Route.IsEmpty())
-						{
-							this.Route = Route.Empty;
-
-							// Get the first route map
-							var map = Resolver.Routes.Find(null);
-							if (map is not null)
-							{
-								request = request with { Route = request.Route.Append(map.Path) };
-							}
-						}
-					}
-					else
-					{
-						if (Logger.IsEnabled(LogLevel.Error)) Logger.LogError($"Attempting to handle Root qualifier by non-root navigator");
-						return default;
-					}
-				}
-
-				// Is this region is an unnamed child of a composite,
-				// send request to parent if the route has no qualifier
-				if (request.Route.IsChangeContent() &&
-					!Region.IsNamed() &&
-					Region.Parent is not null
-					)
-				{
-					return await Region.Parent.NavigateAsync(request);
+					request = request with { Route = request.Route.Append(map.Path) };
 				}
 			}
 
-			if (!request.Route.IsInternal)
+			// Run dialog requests
+			if (request.Route.IsDialog())
 			{
-				// Append Internal qualifier to avoid requests being sent back to parent
-				request = request with { Route = request.Route with { IsInternal = true } };
-
-				// Run dialog requests
-				if (request.Route.IsDialog())
-				{
-					return await DialogNavigateAsync(request);
-				}
+				return await DialogNavigateAsync(request);
 			}
+			else
+			{
+				// Make sure the view has completely loaded before trying to process the nav request
+				// Typically this might happen with the first navigation of the application where the
+				// window hasn't been activated yet, so the root region may not have loaded
+				await Region.View.EnsureLoaded();
 
-			// Make sure the view has completely loaded before trying to process the nav request
-			// Typically this might happen with the first navigation of the application where the
-			// window hasn't been activated yet, so the root region may not have loaded
-			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebug("Ensuring region has loaded - start");
-			await Region.View.EnsureLoaded();
-			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebug("Ensuring region has loaded - end");
-
-			return await ResponseNavigateAsync(request);
+				return await ResponseNavigateAsync(request);
+			}
 		}
 		finally
 		{
@@ -133,6 +92,92 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			if (Logger.IsEnabled(LogLevel.Information)) Logger.LogInformation($"Post-navigation (route): {Region.Root().GetRoute()}");
 			RouteUpdater?.EndNavigation(regionUpdateId);
 		}
+	}
+
+	private Task<NavigationResponse?>? RedirectRequest(NavigationRequest request)
+	{
+		// Deal with any named children that match the first segment of the request
+		// In this case, the request should be trimmed
+		var nested = Region.FindChildren(x => !string.IsNullOrWhiteSpace(request.Route.Base) && x.Name == request.Route.Base).ToArray();
+		if (nested.Any())
+		{
+			request = request with { Route = request.Route.Next() };
+			return NavigateChildRegions(nested, request);
+		}
+
+
+		// ./ route request to nested region (named or unnamed)
+		if (request.Route.IsNested())
+		{
+			request = request with { Route = request.Route.TrimQualifier(Qualifiers.Nested) };
+
+			// Now, deal with any unnamed children - send the request without
+			// trimming the request
+			nested = Region.FindChildren(x => string.IsNullOrWhiteSpace(x.Name) || x.Name==this.Route?.Base).ToArray();
+			if (nested.Any())
+			{
+				return NavigateChildRegions(nested, request);
+			}
+
+			return Task.FromResult(default(NavigationResponse?));
+		}
+
+
+		// ../ or ! route request to parent
+		if ((request.Route.IsParent() ||
+			request.Route.IsDialog()) &&
+			Region.Parent is not null)
+		{
+			// Only trim ../ since ! will be handled by the root navigator
+			request = request with { Route = request.Route.TrimQualifier(Qualifiers.Parent) };
+
+			return Region.Parent.NavigateAsync(request);
+		}
+
+
+
+		// / route request to root (via parent)
+		if (request.Route.IsRoot())
+		{
+			if (Region.Parent?.Parent is null)
+			{
+				// If parent's Parent is null, then parent is the root
+				// so trim the root qualifier.
+				request = request with { Route = request.Route.TrimQualifier(Qualifiers.Root) };
+			}
+
+			// If the original request came into the root navigator, then
+			// need to redirect request to the same navigator with the
+			// root qualifier stripped
+			var region = Region.Parent is not null ? Region.Parent : Region;
+			return region.NavigateAsync(request);
+		}
+
+		// Exception: If this region is an unnamed child of a composite,
+		// send request to parent
+		if (!Region.IsNamed() &&
+			Region.Parent is not null)
+		{
+			return Region.Parent.NavigateAsync(request);
+		}
+
+		// If the current navigator can handle this route,
+		// then simply return without redirecting the request
+		if (CanNavigateToRoute(request.Route))
+		{
+			return default;
+		}
+
+
+		var rm = Resolver.Routes.FindByPath(request.Route.Base);
+		if (!string.IsNullOrWhiteSpace(rm?.DependsOn))
+		{
+			request = request with { Route = (request.Route with { Base = rm.DependsOn, Path = null }).Append(request.Route) };
+		}
+
+		// If the request can't be handled (or redirect), then
+		// default to sending the request to the parent
+		return Region.Parent?.NavigateAsync(request);
 	}
 
 	private NavigationRequest InitialiseRequest(NavigationRequest request)
@@ -155,31 +200,17 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		return request;
 	}
 
-	protected virtual bool QualifierIsSupported(Route route) =>
-		// "./" (nested) by default all navigators should be able to forward requests
-		// to child if the Base matches a named child
-		(
-			route.IsNested() &&
-			this.Region.Children.Any(
-				x => string.IsNullOrWhiteSpace(x.Name) ||
-				x.Name == route.Base ||
-				x.Name == this.Route?.Base)
-		)
-		||
-		(
-			// If this is root navigator, need to support / (root) and ! (dialog) requests
-			(this.Region.Parent is null) &&
-				(
-					route.IsRoot() ||
-					route.IsDialog()
-				)
-		);
-
-	protected virtual bool CanNavigateToRoute(Route route) => QualifierIsSupported(route) && !route.IsNested();
+	// The base navigator can't handle navigating to any routes
+	// This doesn't reflect whether there are any parent or child
+	// regions that can process this request
+	protected virtual bool CanNavigateToRoute(Route route) => false; 
 
 	private async Task<NavigationResponse?> DialogNavigateAsync(NavigationRequest request)
 	{
 		var dialogService = Region.Services?.GetService<INavigatorFactory>()?.CreateService(Region, request);
+
+		// The "!" prefix is no longer required
+		request = request with { Route = request.Route.TrimQualifier(Qualifiers.Dialog) };
 
 		var dialogResponse = await (dialogService?.NavigateAsync(request) ?? Task.FromResult<NavigationResponse?>(default));
 
@@ -217,14 +248,6 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			services.AddInstance<INavigator>(this);
 		}
 
-		if(!string.IsNullOrWhiteSpace(this.Region.Name) &&
-			this.Region.Name == request.Route?.Base &&
-			this.CanNavigateToRoute(request.Route?.Next()))
-		{
-			request = request with { Route = request.Route.Next() };
-		}
-
-
 		var executedRoute = await CoreNavigateAsync(request);
 
 
@@ -242,14 +265,22 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 	{
 		if (request.Route.IsEmpty())
 		{
-			var route = Resolver.Routes.FindByPath(this.Route?.Base);
-			if (route is not null)
+			var dataRoute = Resolver.Routes.Find(request.Route);
+			if (dataRoute is not null)
 			{
-				var defaultRoute = route.Nested?.FirstOrDefault(x => x.IsDefault);
-				if (defaultRoute is not null)
+				request = request with { Route = request.Route with { Base = dataRoute.Path } };
+			}
+			else
+			{
+				var route = Resolver.Routes.FindByPath(this.Route?.Base);
+				if (route is not null)
 				{
-					request = request with { Route = request.Route.Append(defaultRoute.Path) };
+					var defaultRoute = route.Nested?.FirstOrDefault(x => x.IsDefault);
+					if (defaultRoute is not null)
+					{
+						request = request with { Route = request.Route.Append(defaultRoute.Path) };
 
+					}
 				}
 			}
 
@@ -265,9 +296,6 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			request = request with { Result = null };
 		}
 
-		// The "./" prefix is no longer required as we pass the request down the hierarchy
-		request = request with { Route = request.Route.TrimQualifier(Qualifiers.Nested) };
-
 		var children = Region.Children.Where(region =>
 										// Unnamed child regions
 										string.IsNullOrWhiteSpace(region.Name) ||
@@ -277,6 +305,19 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 										// eg currently selected tab
 										region.Name == Route?.Base
 									).ToArray();
+		return await NavigateChildRegions(children, request);
+		
+	}
+
+	private async Task<NavigationResponse?> NavigateChildRegions(IEnumerable<IRegion>? children, NavigationRequest request)
+	{
+		if(children is null)
+		{
+			return default;
+		}
+
+		// Append Internal qualifier to avoid requests being sent back to parent
+		request = request with { Route = request.Route with { IsInternal = true } };
 
 		var tasks = new List<Task<NavigationResponse?>>();
 		foreach (var region in children)

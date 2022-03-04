@@ -41,13 +41,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\FiltersViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\LoginViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ProductDetailsViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\AddProductViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ProductsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ProfileViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ShellViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Views\AddProductPage.xaml.cs">
-      <DependentUpon>AddProductPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\CartFlyout.xaml.cs">
       <DependentUpon>CartFlyout.xaml</DependentUpon>
     </Compile>
@@ -94,10 +90,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Styles\NavigationBar.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="$(MSBuildThisFileDirectory)Views\AddProductPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

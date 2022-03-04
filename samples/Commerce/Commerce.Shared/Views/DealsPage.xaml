@@ -47,7 +47,7 @@
 			<DataTemplate>
 				<ListView Background="{StaticResource MaterialSurfaceBrush}"
 						  ItemsSource="{Binding Data}"
-						  uen:Navigation.Request="DealDetails">
+						  uen:Navigation.Request="Product">
 					<ListView.ItemsPanel>
 						<ItemsPanelTemplate>
 							<ItemsStackPanel Orientation="Vertical" />

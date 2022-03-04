@@ -69,6 +69,11 @@ public sealed class NavigationRegion : IRegion
         }
     }
 
+	public void Detach()
+	{
+		this.Parent = null;
+	}
+
 	private void InitialiseRootRegion(IServiceProvider services)
 	{
 		_isRoot = true;
@@ -152,7 +157,7 @@ public sealed class NavigationRegion : IRegion
 			var nav = this.Navigator();
 			if (nav is not null)
 			{
-				var start = () => nav.NavigateRouteAsync(this, route: string.Empty, qualifier: Qualifiers.ChangeContent);
+				var start = () => nav.NavigateRouteAsync(this, route: string.Empty);
 				services.Startup(start);
 			}
 		}

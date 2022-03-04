@@ -35,19 +35,6 @@ public class FrameNavigator : ControlNavigator<Frame>
 		}
 	}
 
-	protected override bool QualifierIsSupported(Route route) =>
-		base.QualifierIsSupported(route) ||
-		route.IsFrameNavigation() ||
-		(
-			route.IsInternal &&
-				(
-					// Where a FrameView is injected, a changecontent route can flow to the framenavigator
-					route.IsChangeContent() ||
-					// Where a FrameView is injected, a dialog route can flow to the framenavigator
-					route.IsDialog()
-				)
-		);
-
 	protected override bool CanNavigateToRoute(Route route)
 	{
 		if (Control is null)
@@ -55,12 +42,12 @@ public class FrameNavigator : ControlNavigator<Frame>
 			return false;
 		}
 
-		if (!base.CanNavigateToRoute(route))
+		if (route.IsDialog())
 		{
 			return false;
 		}
 
-		if (route.FrameIsBackNavigation())
+		if (route.IsBackOrCloseNavigation())
 		{
 			// Back navigation code should swallow any excess back navigations (ie when
 			// there is nothing on the back stack)
@@ -68,7 +55,29 @@ public class FrameNavigator : ControlNavigator<Frame>
 		}
 		else
 		{
-			var viewType = Resolver.Routes.FindByPath(route.Base)?.View?.View;
+			var rm = Resolver.Routes.FindByPath(route.Base);
+			if (!route.IsInternal)
+			{
+				if (string.IsNullOrWhiteSpace(rm?.DependsOn))
+				{
+					return false;
+				}
+				else
+				{
+					var dependsRM = Resolver.Routes.FindByPath(rm?.DependsOn);
+					if (
+						(dependsRM is not null) &&
+						!(
+							Control?.SourcePageType == rm?.View?.View ||
+							((Control?.BackStack.Any() ?? false) && Control.BackStack[0].SourcePageType == rm?.View?.View)
+						)
+						)
+					{
+						return false;
+					}
+				}
+			}
+			var viewType = rm?.View?.View;
 			return viewType is not null &&
 				viewType.IsSubclassOf(typeof(Page));
 		}
@@ -103,38 +112,76 @@ public class FrameNavigator : ControlNavigator<Frame>
 			return default;
 		}
 
-		var numberOfPagesToRemove = route.FrameNumberOfPagesToRemove();
-		// We remove 1 less here because we need to remove the current context, after the navigation is completed
-		while (numberOfPagesToRemove > 1)
-		{
-			RemoveLastFromBackStack();
-			numberOfPagesToRemove--;
-		}
-
 		var firstSegment = segments.First().Route;
-		for (var i = 0; i < segments.Length - 1; i++)
+
+		// If the first segment doesn't have a dependency, then
+		// need to treat the path as if it were absolute
+		if (string.IsNullOrWhiteSpace(segments[0].Map.DependsOn))
 		{
-			var seg = segments[i];
-			var newEntry = new PageStackEntry(seg.Map.View?.View, null, null);
-			Control?.BackStack.Add(newEntry);
-			route = route.Trim(seg.Route);
-			firstSegment = firstSegment.Append(segments[i + 1].Route);
+			var navSegment = segments.Last();
+
+			// Need to navigate the underlying frame if it's not already
+			// displaying the correct page
+			if (Control.SourcePageType != navSegment.Map.View?.View)
+			{
+				await Show(navSegment.Route.Base, navSegment.Map.View?.View, navSegment.Route.Data);
+			}
+
+			// Now iterate through the other segments and make
+			// sure the back stack is correct
+			for (var i = 0; i < segments.Length - 1; i++)
+			{
+				var seg = segments[i];
+				var entry = i < (Control?.BackStack.Count ?? 0) ? Control?.BackStack[i] : default;
+				if (entry is null ||
+					entry.SourcePageType != seg.Map.View?.View)
+				{
+						var newEntry = new PageStackEntry(seg.Map.View?.View, null, null);
+						Control?.BackStack.Add(newEntry);
+				}
+				firstSegment = firstSegment.Append(segments[i + 1].Route);
+				route = route.Trim(seg.Route);
+			}
+
+			// Trim any excess backstack values
+			while (Control?.BackStack.Count > segments.Length - 1)
+			{
+				Control.BackStack.RemoveAt(Control.BackStack.Count - 1);
+			}
 		}
-
-		// Add the new context to the list of contexts and then navigate away
-		await Show(segments.Last().Route.Base, segments.Last().Map.View?.View, route.Data);
-
-		// If path starts with / then remove all prior pages and corresponding contexts
-		if (route.FrameIsRooted())
+		else
 		{
-			ClearBackStack();
-		}
+			var numberOfPagesToRemove = route.FrameNumberOfPagesToRemove();
+			// We remove 1 less here because we need to remove the current context, after the navigation is completed
+			while (numberOfPagesToRemove > 1)
+			{
+				RemoveLastFromBackStack();
+				numberOfPagesToRemove--;
+			}
 
-		// If there were pages to remove, after navigating we need to remove
-		// the page that we've navigated away from.
-		if (route.FrameNumberOfPagesToRemove() > 0)
-		{
-			RemoveLastFromBackStack();
+			for (var i = 0; i < segments.Length - 1; i++)
+			{
+				var seg = segments[i];
+				var newEntry = new PageStackEntry(seg.Map.View?.View, null, null);
+				Control?.BackStack.Add(newEntry);
+				route = route.Trim(seg.Route);
+				firstSegment = firstSegment.Append(segments[i + 1].Route);
+			}
+
+			await Show(segments.Last().Route.Base, segments.Last().Map.View?.View, route.Data);
+
+			// If path starts with / then remove all prior pages and corresponding contexts
+			if (route.FrameIsRooted())
+			{
+				ClearBackStack();
+			}
+
+			// If there were pages to remove, after navigating we need to remove
+			// the page that we've navigated away from.
+			if (route.FrameNumberOfPagesToRemove() > 0)
+			{
+				RemoveLastFromBackStack();
+			}
 		}
 
 		InitialiseCurrentView(route, Resolver.Routes.Find(route));

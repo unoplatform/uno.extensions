@@ -101,13 +101,6 @@
 						<PathIcon Data="{StaticResource Icon_shopping_cart}" />
 					</muxc:NavigationViewItem.Icon>
 				</muxc:NavigationViewItem>
-				<muxc:NavigationViewItem Content="Add"
-										 uen:Navigation.Request="../../AddProduct"
-										 SelectsOnInvoked="False">
-					<muxc:NavigationViewItem.Icon>
-						<PathIcon Data="{StaticResource Icon_shopping_cart}" />
-					</muxc:NavigationViewItem.Icon>
-				</muxc:NavigationViewItem>
 			</muxc:NavigationView.MenuItems>
 			<utu:AutoLayout 
 							Background="{StaticResource MaterialBackgroundBrush}">

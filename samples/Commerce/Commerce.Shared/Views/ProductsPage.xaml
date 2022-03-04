@@ -16,7 +16,6 @@
 		<VisualStateManager.VisualStateGroups>
 			<VisualStateGroup>
 				<VisualState x:Name="Narrow" />
-
 				<VisualState x:Name="Wide">
 					<VisualState.StateTriggers>
 						<AdaptiveTrigger MinWindowWidth="{StaticResource WideMinWindowWidthh}" />
@@ -30,6 +29,8 @@
 								Value="2*" />
 						<Setter Target="DetailsGrid.Visibility"
 								Value="Visible" />
+						<Setter Target="Details.(uen:Region.Attached)"
+								Value="true" />
 					</VisualState.Setters>
 				</VisualState>
 			</VisualStateGroup>
@@ -123,8 +124,6 @@
 														Value="Single" />
 												<Setter Target="ProductsListView.IsItemClickEnabled"
 														Value="False" />
-												<Setter Target="ProductsListView.(uen:Navigation.Request)"
-														Value="./LandscapeDetails/Details" />
 											</VisualState.Setters>
 										</VisualState>
 										<VisualState x:Name="Narrow">
@@ -147,7 +146,7 @@
 										  ItemsSource="{Binding Data}"
 										  SelectionMode="None"
 										  IsItemClickEnabled="True"
-										  uen:Navigation.Request="Details">
+										  uen:Navigation.Request="Product">
 									<ListView.ItemsPanel>
 										<ItemsPanelTemplate>
 											<ItemsStackPanel Orientation="Vertical" />
@@ -223,8 +222,10 @@
 		<Grid Grid.Column="1"
 			  x:Name="DetailsGrid"
 			  Visibility="Collapsed">
-			<ContentControl uen:Region.Name="LandscapeDetails"
-							uen:Region.Attached="true"
+			<ContentControl
+							x:Name="Details"
+							uen:Region.Name="Product"
+							uen:Region.Attached="false"
 							Grid.Column="1"
 							HorizontalAlignment="Stretch"
 							VerticalAlignment="Stretch"
