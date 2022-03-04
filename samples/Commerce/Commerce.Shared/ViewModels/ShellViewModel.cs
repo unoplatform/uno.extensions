@@ -28,11 +28,11 @@ namespace Commerce.ViewModels
 			if (logger.IsEnabled(LogLevel.Information)) logger.LogInformation($"Launch url '{configuration.Value?.LaunchUrl}'");
 			var initialRoute = configuration.Value?.LaunchRoute();
 
-			if (launchRequest?.Route.IsEmpty() ?? true)
-			{
+			//if (launchRequest?.Route.IsEmpty() ?? true)
+			//{
 				// Go to the login page on app startup
 				Start(initialRoute);
-			}
+			//}
 		}
 
 		public async Task Start(Route? initialRoute = null)

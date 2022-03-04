@@ -29,7 +29,11 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 		{
 			return false;
 		}
-		return string.IsNullOrWhiteSpace( rm?.DependsOn) && (rm?.View?.View?.IsSubclassOf(typeof(FrameworkElement)) ?? true); // Inject a FrameView if no View specified
+
+		var view = rm?.View?.View;
+
+		return ((view?.IsSubclassOf(typeof(Page))??false) && string.IsNullOrWhiteSpace( rm?.DependsOn))
+			|| (view?.IsSubclassOf(typeof(FrameworkElement)) ?? true); // Inject a FrameView if no View specified
 	}
 	protected override async Task<string?> Show(string? path, Type? viewType, object? data)
 	{
