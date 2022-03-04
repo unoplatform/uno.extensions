@@ -12,7 +12,7 @@ public static class HostConfigurationExtensions
 		{
 			var url = new UriBuilder(launchUrl);
 			var query = url.Query;
-			var path = (url.Path + (!string.IsNullOrWhiteSpace(query) ? "?" : "") + query + "").TrimStart('/');
+			var path = (url.Path + (!string.IsNullOrWhiteSpace(query) ? "?" : "") + query.Trim('?') + "").TrimStart('/');
 			if (!string.IsNullOrWhiteSpace(path))
 			{
 				return path.AsRoute();

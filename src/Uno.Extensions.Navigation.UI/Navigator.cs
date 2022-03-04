@@ -124,14 +124,20 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 
 		// ../ or ! route request to parent
-		if ((request.Route.IsParent() ||
-			request.Route.IsDialog()) &&
-			Region.Parent is not null)
+		if (request.Route.IsParent() ||
+			request.Route.IsDialog()
+			)
 		{
-			// Only trim ../ since ! will be handled by the root navigator
-			request = request with { Route = request.Route.TrimQualifier(Qualifiers.Parent) };
+			if (Region.Parent is not null)
+			{
+				// Only trim ../ since ! will be handled by the root navigator
+				request = request with { Route = request.Route.TrimQualifier(Qualifiers.Parent) };
 
-			return Region.Parent.NavigateAsync(request);
+				return Region.Parent.NavigateAsync(request);
+			}
+			else{
+				return default;
+			}
 		}
 
 
@@ -176,7 +182,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 		if (Region.Parent is not null)
 		{
-			while (!string.IsNullOrWhiteSpace(rm?.DependsOn))
+			if (!string.IsNullOrWhiteSpace(rm?.DependsOn))
 			{
 				request = request with { Route = (request.Route with { Base = rm.DependsOn, Path = null }).Append(request.Route) };
 			}

@@ -68,7 +68,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 					if (
 						(dependsRM is not null) &&
 						!(
-							Control?.SourcePageType == rm?.View?.View ||
+							Control?.SourcePageType == dependsRM?.View?.View ||
 							((Control?.BackStack.Any() ?? false) && Control.BackStack[0].SourcePageType == rm?.View?.View)
 						)
 						)
@@ -132,7 +132,11 @@ public class FrameNavigator : ControlNavigator<Frame>
 			{
 				// Rebuild the nested region hierarchy
 				Control.ReassignRegionParent();
-				refreshViewModel = true;
+				if (segments.Length >1 ||
+					string.IsNullOrWhiteSpace(request.Route.Path))
+				{
+					refreshViewModel = true;
+				}
 			}
 
 			// Now iterate through the other segments and make
