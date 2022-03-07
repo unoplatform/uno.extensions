@@ -3,11 +3,11 @@
 public class TabBarNavigator : SelectorNavigator<TabBar>
 {
 	public TabBarNavigator(
-	ILogger<TabBarNavigator> logger,
-	IRegion region,
-	IResolver resolver,
-	RegionControlProvider controlProvider)
-	: base(logger, region, resolver, controlProvider)
+		ILogger<TabBarNavigator> logger,
+		IRegion region,
+		IResolver resolver,
+		RegionControlProvider controlProvider)
+		: base(logger, region, resolver, controlProvider)
 	{
 	}
 
@@ -23,7 +23,7 @@ public class TabBarNavigator : SelectorNavigator<TabBar>
 		}
 	}
 
-	protected override IEnumerable<FrameworkElement>? Items => Control?.Items.OfType<FrameworkElement>();
+	protected override IEnumerable<FrameworkElement> Items => Control?.Items.OfType<FrameworkElement>() ?? new FrameworkElement[] { };
 
 	protected override Action? AttachSelectionChanged(Action<FrameworkElement, FrameworkElement?> selectionChanged)
 	{
@@ -38,6 +38,5 @@ public class TabBarNavigator : SelectorNavigator<TabBar>
 
 		control.SelectionChanged += handler;
 		return () => control.SelectionChanged -= handler;
-
 	}
 }

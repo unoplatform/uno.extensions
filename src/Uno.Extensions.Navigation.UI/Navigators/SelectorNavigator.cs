@@ -17,7 +17,7 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 
 	protected abstract Action? AttachSelectionChanged(Action<FrameworkElement, FrameworkElement?> selectionChanged);
 
-	protected abstract IEnumerable<FrameworkElement>? Items { get; }
+	protected abstract IEnumerable<FrameworkElement> Items { get; }
 
 	protected override FrameworkElement? CurrentView => SelectedItem;
 
@@ -99,15 +99,8 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 			return default;
 		}
 
-		var items = Items;
-
-		if (items == null)
-		{
-			return null;
-		}
-
 		var item = (from mi in Items
-					where (mi.GetRegionOrElementName() == path
+					where (mi.GetRegionOrElementName() == path)
 					select mi).FirstOrDefault();
 		return item;
 	}
