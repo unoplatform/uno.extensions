@@ -50,10 +50,13 @@ public static class FrameworkElementExtensions
 
 	public static async Task Startup(this IServiceProvider services, Func<Task> afterStartup)
 	{
-		var startupServices = services.GetServices<IHostedService>().Select(x => x as IStartupService).Where(x => x is not null)
+		var startupServices = services
+								.GetServices<IHostedService>()
+									.Select(x => x as IStartupService)
+									.Where(x => x is not null)
 								.Union(services.GetServices<IStartupService>()).ToArray();
 
-		var startServices = startupServices.Select(x => x.StartupComplete()).ToArray();
+		var startServices = startupServices.Select(x => x?.StartupComplete()).ToArray();
 		if (startServices?.Any() ?? false)
 		{
 			await Task.WhenAll(startServices);

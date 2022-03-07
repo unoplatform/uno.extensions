@@ -206,7 +206,7 @@ public abstract class ControlNavigator : Navigator
 
 			services.AddInstance(request);
 
-			var vm = services.GetService(mapping.View.ViewModel);
+			var vm = services.GetService(mapping!.View!.ViewModel);
 
 			if (vm is null)
 			{

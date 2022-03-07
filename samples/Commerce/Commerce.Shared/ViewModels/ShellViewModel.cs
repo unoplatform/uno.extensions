@@ -17,7 +17,6 @@ namespace Commerce.ViewModels
 
 		public ShellViewModel(
 			ILogger<ShellViewModel> logger,
-			NavigationRequest launchRequest,
 			INavigator navigator,
 			IOptions<HostConfiguration> configuration,
 			IWritableOptions<Credentials> credentials)
@@ -28,11 +27,10 @@ namespace Commerce.ViewModels
 			if (logger.IsEnabled(LogLevel.Information)) logger.LogInformation($"Launch url '{configuration.Value?.LaunchUrl}'");
 			var initialRoute = configuration.Value?.LaunchRoute();
 
-			//if (launchRequest?.Route.IsEmpty() ?? true)
-			//{
-				// Go to the login page on app startup
-				Start(initialRoute);
-			//}
+			// Go to the login page on app startup
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+			Start(initialRoute);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 		}
 
 		public async Task Start(Route? initialRoute = null)
@@ -45,7 +43,10 @@ namespace Commerce.ViewModels
 					!initialRoute.IsEmpty())
 				{
 					var initialResponse = await Navigator.NavigateRouteForResultAsync<object>(this, initialRoute);
-					_ = await initialResponse.Result;
+					if (initialResponse is not null)
+					{
+						_ = await initialResponse.Result;
+					}
 				}
 				else
 				{
