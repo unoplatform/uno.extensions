@@ -179,6 +179,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			{
 				request = request with { Route = (request.Route with { Base = rm?.DependsOn, Path = null }).Append(request.Route) };
 			}
+			return Region.Parent.NavigateAsync(request);
 		}
 		else
 		{
@@ -193,11 +194,9 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			route = BuildFullRoute(route, routeMaps);
 			route = route with { Qualifier = Qualifiers.Root };
 			request = request with { Route = route };
-		}
-		// If the request can't be handled (or redirect), then
-		// default to sending the request to the parent
-		return (Region.Parent ?? Region).NavigateAsync(request);
 
+			return Region.NavigateAsync(request);
+		}
 	}
 
 
