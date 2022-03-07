@@ -10,6 +10,7 @@
 	  xmlns:utu="using:Uno.Toolkit.UI"
 	  xmlns:um="using:Uno.Material"
 	  mc:Ignorable="d"
+	  NavigationCacheMode="Required"
 	  Background="{ThemeResource MaterialBackgroundBrush}">
 
 	<Grid>
