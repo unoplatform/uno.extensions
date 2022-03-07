@@ -16,7 +16,7 @@
 							   utu:AutoLayout.CounterAlignment="Stretch"
 							   Style="{StaticResource MaterialRootModalNavigationBarStyle}">
 				<utu:NavigationBar.MainCommand>
-					<AppBarButton uen:Navigation.Request="../../-"
+					<AppBarButton uen:Navigation.Request="-"
 								  Foreground="{ThemeResource MaterialOnSurfaceBrush}" />
 				</utu:NavigationBar.MainCommand>
 				<utu:NavigationBar.PrimaryCommands>
@@ -111,7 +111,7 @@
 						x:Uid="Body_Apply"
 						utu:AutoLayout.PrimaryAlignment="Stretch"
 						Style="{StaticResource MaterialContainedButtonStyle}"
-						uen:Navigation.Request="../../-"
+						uen:Navigation.Request="-"
 						uen:Navigation.Data="{Binding Filter.Value}" />
 			</utu:AutoLayout>
 		</utu:AutoLayout>
