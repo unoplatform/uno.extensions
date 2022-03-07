@@ -24,7 +24,7 @@
 							   utu:AutoLayout.CounterAlignment="Stretch"
 							   Style="{StaticResource MaterialRootModalNavigationBarStyle}">
 				<utu:NavigationBar.MainCommand>
-					<AppBarButton uen:Navigation.Request="../../-"
+					<AppBarButton uen:Navigation.Request="-"
 								  Foreground="{StaticResource MaterialOnSurfaceBrush}" />
 				</utu:NavigationBar.MainCommand>
 			</utu:NavigationBar>
