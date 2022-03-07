@@ -3,12 +3,12 @@
 
 ## What is Navigation?
 Navigation needs to encompass a range of UI concepts:  
-* Navigation between pages in a Frame (forward and backwards)  
-* Switching between menu items in a NavigationView, or between tab items in a TabBar  
-* Loading content into a ContentControl  
-* Loading and toggling visibility of child elements in a Grid  
-* Displaying a popup or flyout
-* Prompt a content dialog or message dialog
+* Navigation between pages in a <a href="https://docs.microsoft.com/en-us/uwp/api/windows.ui.xaml.controls.frame" target="_blank">Frame</a> (forward and backwards)  
+* Switching between menu items in a <a href="https://docs.microsoft.com/en-us/windows/winui/api/microsoft.ui.xaml.controls.navigationview?view=winui-3.0" target="_blank">NavigationView</a>, or between tab items in a <a href="https://platform.uno/uno-toolkit/" target="_blank">TabBar</a>  
+* Loading content into a <a href="https://docs.microsoft.com/en-us/uwp/api/windows.ui.xaml.controls.contentcontrol" target="_blank">ContentControl</a>  
+* Loading and toggling visibility of child elements in a <a href="https://docs.microsoft.com/en-us/uwp/api/windows.ui.xaml.controls.grid" target="_blank">Grid</a>  
+* Displaying a <a href="https://docs.microsoft.com/en-us/uwp/api/windows.ui.xaml.controls.primitives.popup" target="_blank">Popup</a> or <a href="https://docs.microsoft.com/en-us/windows/apps/design/controls/dialogs-and-flyouts/flyouts" target="_blank">Flyout</a>
+* Prompt a <a href="https://docs.microsoft.com/en-us/uwp/api/windows.ui.xaml.controls.contentdialoghttps://docs.microsoft.com/en-us/uwp/api/windows.ui.xaml.controls.contentdialog" target="_blank">ContentDialog</a> or <a href="https://docs.microsoft.com/en-us/uwp/api/windows.ui.popups.messagedialog" target="_blank">MessageDialog</a>
 
 ## What triggers Navigation?
 Navigation can be triggered for a number of reasons:
@@ -33,8 +33,8 @@ i.e. using attached properties
 i.e. in a context that doesn't have access to the UI layer  
 
 Navigation needs to make use of available data  
-* Uri (eg deeplink)  
-Used to share links to the app  
+* Uri  
+Used to share links to the app (eg deeplink)
 * DTO  
 If an instance of an entity is already in memory, navigation should support passing the existing entity between views  
 * ViewModel  
@@ -109,7 +109,7 @@ For selection-based regions, the selectable items (NavigationViewItem, TabBarIte
 ```
 
 Switching selected item:  
-	`naviator.NavigateRouteAsync(this,"../Deals");`
+	`naviator.NavigateRouteAsync(this,"Deals");`
 
 
 
@@ -150,7 +150,7 @@ There is a Frame located at the root of the application which is used to navigat
 | NavigateRouteAsync(this, "Home/Products")                                                                            | Navigates to the HomePage and then the Products tab                                                                                                                                                                                             |
 | NavigateRouteAsync(this, "Home/Products/Details?id=5")                                                               | Navigates to the HomePage, then the Products tab, and then to the Details page and displays product with id=5                                                                                                                                   |
 | NavigateRouteAsync(this, data: selectedProduct )                                                                     | Navigates to the Details page<br>The type of the selecteProduct is used to determine which view to navigate to<br>The selectedProduct object is passed into the ToQuery function in order to extract query paramters                            |
-| NavigateRouteAsync(this, "../Deals")                                                                                 | Navigates to the Deals tab<br>(assuming this is executed from the Details page, inside a Products tab on the HomePage)                                                                                                                          |
+| NavigateRouteAsync(this, "Deals")                                                                                 | Navigates to the Deals tab<br>(assuming this is executed from the Details page, inside a Products tab on the HomePage)                                                                                                                          |
 | NavigateViewAsync< HomePage >(this)                                                                                    | Navigates to the HomePage<br>The HomePage type is used to find the RouteMap with a View of HomePage where the Path is used to set the Base of the Route                                                                                         |
 | NavigateViewModelAsync< HomeViewModel >(this)                                                                          | Navigates to the HomePage<br>The HomeViewModel type is used to fine the RouteMap with a ViewModel of HomeViewModel where the Path is used to set the Base of the Route                                                                          |
 | NavigateRouteAsync(this, "-") or NavigateBackAsync(this)                                                         | This navigates to previous page in a frame, or closes a dialog                                                                                                                                                                                  |
@@ -400,15 +400,13 @@ Specify the Region.Name of the nested control and the route of the UserControl t
 
 ## Qualifiers
 
-| Qualifier |                                                                                                  | Example            |                                                                |
-|-----------|--------------------------------------------------------------------------------------------------|--------------------|----------------------------------------------------------------|
-| ""        | Navigate to page in frame, or open popup                                                         | "Home"             | Navigate to the HomePage                                       |
-| /         | Forward request to the root region                                                               | "/"<br>"/Login"    | Navigate to the default route at the root of navigation<br>Navigate to LoginPage at the root of navigation |
-| ../       | Change content (Container regions) or selection (Selector regions). Not handled by Frame regions | "../Deals"         | Navigate to the Deals tab (when invoked from the Products tab) |
-| ../../    | Forward request to ancestor region                                                               | "../../AddProduct" | Navigates to the AddProduct page in the ancestor Frame         |
-| ./        | Forward request to child region                                                                  | "./Info/Profile"   | Navigates to the Profile view in the child region named Info   |
-| !         | Open a dialog or flyout                                                                          | "!Cart"            | Shows the Cart flyout                                          |
-| -         | Back (Frame), Close (Dialog/Flyout) or respond to navigation                                     | "-"<br>"--Profile"<br>"-/Login" | Navigate back one page (in a frame)<br>Navigate to Profile page and remove two pages from backstack<br>Navigate to Login page and clear backstack |
+| Qualifier |                                                              | Example          |                                                              |
+|-----------|--------------------------------------------------------------|------------------|--------------------------------------------------------------|
+| ""        | Navigate to page in frame, or open popup                     | "Home"           | Navigate to the HomePage                                     |
+| /         | Forward request to the root region                           | "/"<br>"/Login"  | Navigate to the default route at the root of navigation<br>Navigate to LoginPage at the root of navigation |
+| ./        | Forward request to child region                              | "./Info/Profile" | Navigates to the Profile view in the child region named Info |
+| !         | Open a dialog or flyout                                      | "!Cart"          | Shows the Cart flyout                                        |
+| -         | Back (Frame), Close (Dialog/Flyout) or respond to navigation | "-"<br>"--Profile"<br>"-/Login" | Navigate back one page (in a frame)<br>Navigate to Profile page and remove two pages from backstack<br>Navigate to Login page and clear backstack |
 
 
 
