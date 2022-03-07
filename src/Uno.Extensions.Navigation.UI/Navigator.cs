@@ -34,56 +34,39 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		var regionUpdateId = RouteUpdater?.StartNavigation(Region) ?? Guid.Empty;
 		try
 		{
+			// Do any initialisation logic that may be
+			// defined for the route - allows for
+			// routes to be redirected
+			request = InitializeRequest(request);
 
-			request = InitialiseRequest(request);
-
-			// If this isn't an internal request, then check to
-			// see if the request needs to be redirected to a
-			// different navigator.
+			// Redirect navigation if required
 			// eg route that matches a child, should be routed to that child
 			// eg route that doesn't match a page for frame nav should be sent to parent
-			if (!request.Route.IsInternal)
+			var redirection = RedirectNavigateAsync(request);
+			if (redirection is not null)
 			{
-				var redirection = RedirectRequest(request);
-				if (redirection is not null)
-				{
-					return await redirection;
-				}
+				return await redirection;
 			}
 
 			// Append Internal qualifier to avoid requests being sent back to parent
 			request = request with { Route = request.Route with { IsInternal = true } };
 
-			// If this is an empty request on the root region
-			// then look up the default route (ie for startup logic)
-			if (Region.Parent is null &&
-				request.Route.IsEmpty())
-			{
-				// Clear any existing route information to make
-				// sure the navigation is restarted
-				this.Route = Route.Empty;
 
-				// Get the first route map
-				var map = Resolver.Routes.Find(null);
-				if (map is not null)
-				{
-					request = request with { Route = request.Route.Append(map.Path) };
-				}
-			}
+			// Make sure the view has completely loaded before trying to process the nav request
+			// Typically this might happen with the first navigation of the application where the
+			// window hasn't been activated yet, so the root region may not have loaded
+			await Region.View.EnsureLoaded();
 
-			// Run dialog requests
 			if (request.Route.IsDialog())
 			{
+				// Dialogs will load a separate navigation hierarchy
+				// so there's no need to route the request to child regions
 				return await DialogNavigateAsync(request);
 			}
 			else
 			{
-				// Make sure the view has completely loaded before trying to process the nav request
-				// Typically this might happen with the first navigation of the application where the
-				// window hasn't been activated yet, so the root region may not have loaded
-				await Region.View.EnsureLoaded();
-
-				return await ResponseNavigateAsync(request);
+				// Invoke the region specific navigation
+				return await RegionNavigateAsync(request);
 			}
 		}
 		finally
@@ -94,8 +77,14 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		}
 	}
 
-	private Task<NavigationResponse?>? RedirectRequest(NavigationRequest request)
+	private Task<NavigationResponse?>? RedirectNavigateAsync(NavigationRequest request)
 	{
+		if (request.Route.IsInternal)
+		{
+			return default;
+		}
+
+
 		// Deal with any named children that match the first segment of the request
 		// In this case, the request should be trimmed
 		var nested = Region.Children.Where(x => !string.IsNullOrWhiteSpace(request.Route.Base) && x.Name == request.Route.Base).ToArray();
@@ -138,7 +127,8 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 				return Region.Parent.NavigateAsync(request);
 			}
-			else{
+			else
+			{
 				return default;
 			}
 		}
@@ -206,7 +196,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		}
 		// If the request can't be handled (or redirect), then
 		// default to sending the request to the parent
-		return (Region.Parent?? Region).NavigateAsync(request);
+		return (Region.Parent ?? Region).NavigateAsync(request);
 
 	}
 
@@ -229,8 +219,28 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 	}
 
 
-	private NavigationRequest InitialiseRequest(NavigationRequest request)
+	private NavigationRequest InitializeRequest(NavigationRequest request)
 	{
+		// If this is an empty request on the root region
+		// then look up the default route (ie for startup logic)
+		if (Region.Parent is null &&
+			request.Route.IsEmpty())
+		{
+			// Clear any existing route information to make
+			// sure the navigation is restarted
+			this.Route = Route.Empty;
+
+			// Get the first route map
+			var map = Resolver.Routes.Find(null);
+			if (map is not null)
+			{
+				request = request with { Route = request.Route.Append(map.Path) };
+			}
+
+			// Append Internal qualifier to avoid requests being sent back to parent
+			request = request with { Route = request.Route with { IsInternal = true } };
+		}
+
 		var requestMap = Resolver.Routes.FindByPath(request.Route.Base);
 		if (requestMap?.Init is not null)
 		{
@@ -246,6 +256,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			}
 			request = newRequest;
 		}
+
 		return request;
 	}
 
@@ -266,7 +277,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		return dialogResponse;
 	}
 
-	private async Task<NavigationResponse?> ResponseNavigateAsync(NavigationRequest request)
+	private async Task<NavigationResponse?> RegionNavigateAsync(NavigationRequest request)
 	{
 		var services = Region.Services;
 		if (services is null)

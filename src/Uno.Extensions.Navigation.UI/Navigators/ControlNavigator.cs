@@ -51,12 +51,12 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 
 		var executedRoute = route with { Base = executedPath, Path = null };
 
-		await InitialiseCurrentView(request, executedRoute, mapping);
+		await InitializeCurrentView(request, executedRoute, mapping);
 
 		return executedRoute;
 	}
 
-	protected async Task<object?> InitialiseCurrentView(NavigationRequest request, Route route, RouteMap? mapping, bool refresh = false)
+	protected async Task<object?> InitializeCurrentView(NavigationRequest request, Route route, RouteMap? mapping, bool refresh = false)
 	{
 		var view = CurrentView;
 
@@ -113,7 +113,7 @@ public abstract class ControlNavigator : Navigator
 
 	protected async override Task<NavigationResponse?> CoreNavigateAsync(NavigationRequest request)
 	{
-		var regionResponse = await RegionNavigateAsync(request);
+		var regionResponse = await ControlCoreNavigateAsync(request);
 
 		if (regionResponse is not null)
 		{
@@ -140,7 +140,7 @@ public abstract class ControlNavigator : Navigator
 		return coreResponse ?? regionResponse;
 	}
 
-	private async Task<NavigationResponse?> RegionNavigateAsync(NavigationRequest request)
+	private async Task<NavigationResponse?> ControlCoreNavigateAsync(NavigationRequest request)
 	{
 		var completion = new TaskCompletionSource<NavigationResponse?>();
 		GetDispatcher().TryEnqueue(async () =>

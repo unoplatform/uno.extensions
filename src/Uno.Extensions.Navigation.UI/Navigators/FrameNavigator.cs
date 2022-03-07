@@ -192,7 +192,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 			}
 		}
 
-		await InitialiseCurrentView(request, route, Resolver.Routes.Find(route), refreshViewModel);
+		await InitializeCurrentView(request, route, Resolver.Routes.Find(route), refreshViewModel);
 
 		CurrentView?.SetNavigatorInstance(Region.Navigator()!);
 
@@ -242,7 +242,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 
 		var mapping = Resolver.Routes.FindByView(Control.Content.GetType());
 
-		await InitialiseCurrentView(request, previousRoute ?? Route.Empty, mapping);
+		await InitializeCurrentView(request, previousRoute ?? Route.Empty, mapping);
 
 		// Restore the INavigator instance
 		var navigator = CurrentView?.GetNavigatorInstance();
