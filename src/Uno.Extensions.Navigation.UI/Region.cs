@@ -140,6 +140,11 @@ public static class Region
 		return (string)element.GetValue(NameProperty);
 	}
 
+	public static string? GetRegionOrElementName(this FrameworkElement? element)
+	{
+		return element is not null ? element.GetName() ?? element.Name : null;
+	}
+
 	public static void SetNavigator(this FrameworkElement element, string value)
 	{
 		element.SetValue(NavigatorProperty, value);
