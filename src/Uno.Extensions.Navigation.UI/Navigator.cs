@@ -124,14 +124,17 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 
 		// ../ or ! route request to parent
-		if (request.Route.IsParent() ||
+		if (
+			// Note: Disabling parent routing - leaving this code in case parent routing is required
+			// request.Route.IsParent() ||
 			request.Route.IsDialog()
 			)
 		{
 			if (Region.Parent is not null)
 			{
-				// Only trim ../ since ! will be handled by the root navigator
-				request = request with { Route = request.Route.TrimQualifier(Qualifiers.Parent) };
+				// Note: Disabling parent routing - leaving this code in case parent routing is required
+				// // Only trim ../ since ! will be handled by the root navigator
+				// request = request with { Route = request.Route.TrimQualifier(Qualifiers.Parent) };
 
 				return Region.Parent.NavigateAsync(request);
 			}
