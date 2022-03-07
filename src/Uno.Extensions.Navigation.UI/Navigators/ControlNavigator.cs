@@ -180,7 +180,8 @@ public abstract class ControlNavigator : Navigator
 
 	protected virtual void UpdateRoute(Route? route)
 	{
-		Route = route is not null ? new Route(Qualifiers.None, route.Base, null, route.Data) : null;
+		var rm = Resolver.Routes.Find(route);
+		Route = route is not null && !(rm?.IsPrivate ?? false) ? new Route(Qualifiers.None, route.Base, null, route.Data) : null;
 	}
 
 	protected async Task<object?> CreateViewModel(IServiceProvider services, NavigationRequest request, Route route, RouteMap? mapping)
@@ -189,12 +190,12 @@ public abstract class ControlNavigator : Navigator
 		if (mapping?.View?.ViewModel is not null)
 		{
 			var parameters = route.Data ?? new Dictionary<string, object>();
-			if(parameters.Any() &&
+			if (parameters.Any() &&
 				!parameters.ContainsKey(String.Empty) &&
 				mapping.View?.Data?.UntypedFromQuery is not null)
 			{
-				var data = await mapping.View.Data.UntypedFromQuery(services, parameters.ToDictionary(x=>x.Key,x=>x.Value+""));
-				if(data is not null)
+				var data = await mapping.View.Data.UntypedFromQuery(services, parameters.ToDictionary(x => x.Key, x => x.Value + ""));
+				if (data is not null)
 				{
 					parameters[string.Empty] = data;
 				}
