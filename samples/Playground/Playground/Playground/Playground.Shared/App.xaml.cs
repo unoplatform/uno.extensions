@@ -304,29 +304,29 @@ namespace Playground
 				Nested: new[]
 				{
 					new RouteMap("Home",View: views.FindByView<HomePage>()),
-					new RouteMap("CodeBehind",View: views.FindByView<CodeBehindPage>()),
-					new RouteMap("VM",View: views.FindByView<VMPage>()),
-					new RouteMap("Xaml",View: views.FindByView<XamlPage>()),
-					new RouteMap("NavigationView",View: views.FindByView<NavigationViewPage>()),
-					new RouteMap("TabBar",View: views.FindByView<TabBarPage>()),
-					new RouteMap("ContentControl",View: views.FindByView<ContentControlPage>()),
-					new RouteMap("Second",View: views.FindByView<SecondPage>()),
-					new RouteMap("Third",View: views.FindByView<ThirdPage>()),
-					new RouteMap("Fourth",View: views.FindByView<FourthPage>()),
-					new RouteMap("Fifth",View: views.FindByView<FifthPage>()),
-					new RouteMap("Dialogs",View: views.FindByView<DialogsPage>(),
+					new RouteMap("CodeBehind",View: views.FindByView<CodeBehindPage>(), DependsOn: "Home"),
+					new RouteMap("VM",View: views.FindByView<VMPage>(), DependsOn: "Home"),
+					new RouteMap("Xaml",View: views.FindByView<XamlPage>(), DependsOn: "Home"),
+					new RouteMap("NavigationView",View: views.FindByView<NavigationViewPage>(), DependsOn: "Home"),
+					new RouteMap("TabBar",View: views.FindByView<TabBarPage>(), DependsOn: "Home"),
+					new RouteMap("ContentControl",View: views.FindByView<ContentControlPage>(), DependsOn: "Home"),
+					new RouteMap("Second",View: views.FindByView<SecondPage>(), DependsOn: "Home"),
+					new RouteMap("Third",View: views.FindByView<ThirdPage>(), DependsOn: "Home"),
+					new RouteMap("Fourth",View: views.FindByView<FourthPage>(), DependsOn: "Home"),
+					new RouteMap("Fifth",View: views.FindByView<FifthPage>(), DependsOn: "Home"),
+					new RouteMap("Dialogs",View: views.FindByView<DialogsPage>(), DependsOn: "Home",
 					Nested: new[]
 					{
 						new RouteMap("Simple",View: views.FindByView<SimpleDialog>()),
-						new RouteMap("Complex",View: views.FindByView<ComplexDialog>(),
+						new RouteMap("Complex",View: views.FindByView<ComplexDialog>(), DependsOn: "Simple",
 						Nested: new[]
 						{
 							new RouteMap("ComplexDialogFirst",View: views.FindByView<ComplexDialogFirstPage>()),
-							new RouteMap("ComplexDialogSecond",View: views.FindByView<ComplexDialogSecondPage>())
+							new RouteMap("ComplexDialogSecond",View: views.FindByView<ComplexDialogSecondPage>(), DependsOn: "ComplexDialogFirst")
 						})
 					}),
-					new RouteMap("PanelVisibility",View: views.FindByView<PanelVisibilityPage>()),
-					new RouteMap("VisualStates",View: views.FindByView<VisualStatesPage>()),
+					new RouteMap("PanelVisibility",View: views.FindByView<PanelVisibilityPage>(), DependsOn: "Home"),
+					new RouteMap("VisualStates",View: views.FindByView<VisualStatesPage>(), DependsOn: "Home"),
 				}));
 		}
 	}

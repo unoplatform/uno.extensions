@@ -58,18 +58,14 @@ public class FrameNavigator : ControlNavigator<Frame>
 			var rm = Resolver.Routes.FindByPath(route.Base);
 			if (!route.IsInternal)
 			{
-				if (string.IsNullOrWhiteSpace(rm?.DependsOn))
-				{
-					return false;
-				}
-				else
+				if (!string.IsNullOrWhiteSpace(rm?.DependsOn))
 				{
 					var dependsRM = Resolver.Routes.FindByPath(rm?.DependsOn);
 					if (
 						(dependsRM is not null) &&
 						!(
 							Control?.SourcePageType == dependsRM?.View?.View ||
-							((Control?.BackStack.Any() ?? false) && Control.BackStack[0].SourcePageType == rm?.View?.View)
+							((Control?.BackStack.Any() ?? false) && Control.BackStack[0].SourcePageType == dependsRM?.View?.View)
 						)
 						)
 					{
