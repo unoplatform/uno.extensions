@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-using Uno.Extensions.Logging;
-using Uno.Extensions.Navigation.Regions;
+﻿using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation.UI.Controls;
 
 namespace Uno.Extensions.Navigation.Navigators;
@@ -41,7 +39,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 
 		var route = request.Route;
 		var mapping = Resolver.Routes.Find(route);
-		if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Navigating to path '{route.Base}' with view '{mapping?.View?.View?.Name}'");
+
 		var executedPath = await Show(mapping?.Path ?? route.Base, mapping?.View?.View, route.Data);
 
 		if (string.IsNullOrEmpty(executedPath))
