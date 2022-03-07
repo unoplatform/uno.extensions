@@ -260,10 +260,10 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		return request;
 	}
 
-	// The base navigator can't handle navigating to any routes
-	// This doesn't reflect whether there are any parent or child
-	// regions that can process this request
-	protected virtual bool CanNavigateToRoute(Route route) => false;
+	// By default, all navigators can handle all routes
+	// except where it's dialog - these should only be
+	// handled by the root (ie Region.Parent is null)
+	protected virtual bool CanNavigateToRoute(Route route) => Region.Parent is null || !route.IsDialog();
 
 	private async Task<NavigationResponse?> DialogNavigateAsync(NavigationRequest request)
 	{
