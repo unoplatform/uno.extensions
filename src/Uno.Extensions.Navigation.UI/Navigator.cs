@@ -184,7 +184,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		{
 			if (!string.IsNullOrWhiteSpace(rm?.DependsOn))
 			{
-				request = request with { Route = (request.Route with { Base = rm.DependsOn, Path = null }).Append(request.Route) };
+				request = request with { Route = (request.Route with { Base = rm?.DependsOn, Path = null }).Append(request.Route) };
 			}
 		}
 		else
