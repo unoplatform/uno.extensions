@@ -1,6 +1,4 @@
 ﻿using Uno.Extensions.Logging;
-using Uno.Extensions.Navigation.Regions;
-using Uno.Extensions.Navigation.UI;
 
 namespace Uno.Extensions.Navigation.Navigators;
 
