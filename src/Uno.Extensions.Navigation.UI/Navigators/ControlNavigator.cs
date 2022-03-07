@@ -51,7 +51,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 
 		var executedRoute = route with { Base = executedPath, Path = null };
 
-		InitialiseCurrentView(request, executedRoute, mapping);
+		await InitialiseCurrentView(request, executedRoute, mapping);
 
 		return executedRoute;
 	}

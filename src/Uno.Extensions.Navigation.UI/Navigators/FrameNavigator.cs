@@ -192,7 +192,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 			}
 		}
 
-		InitialiseCurrentView(request, route, Resolver.Routes.Find(route), refreshViewModel);
+		await InitialiseCurrentView(request, route, Resolver.Routes.Find(route), refreshViewModel);
 
 		CurrentView?.SetNavigatorInstance(Region.Navigator()!);
 
@@ -200,11 +200,11 @@ public class FrameNavigator : ControlNavigator<Frame>
 		return responseRequest;
 	}
 
-	private Task<Route?> NavigatedBackAsync(NavigationRequest request)
+	private async  Task<Route?> NavigatedBackAsync(NavigationRequest request)
 	{
 		if (Control is null)
 		{
-			return Task.FromResult<Route?>(default);
+			return default;
 		}
 
 		var route = request.Route;
@@ -242,7 +242,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 
 		var mapping = Resolver.Routes.FindByView(Control.Content.GetType());
 
-		InitialiseCurrentView(request, previousRoute ?? Route.Empty, mapping);
+		await InitialiseCurrentView(request, previousRoute ?? Route.Empty, mapping);
 
 		// Restore the INavigator instance
 		var navigator = CurrentView?.GetNavigatorInstance();
@@ -251,7 +251,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 			Region.Services?.AddInstance<INavigator>(navigator);
 		}
 
-		return Task.FromResult<Route?>(responseRoute);
+		return responseRoute;
 	}
 
 	private void Frame_Navigated(object sender, NavigationEventArgs e)
