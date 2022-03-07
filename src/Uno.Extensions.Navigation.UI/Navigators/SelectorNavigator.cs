@@ -22,7 +22,7 @@ where TControl : class
 	}
 
 	protected override bool CanNavigateToRoute(Route route) =>
-		!route.IsDialog() &&
+		base.CanNavigateToRoute(route) &&
 		(FindByPath(Resolver.Routes.Find(route)?.Path) is not null);
 
 	private async void SelectionChanged(FrameworkElement sender, FrameworkElement? selectedItem)
@@ -36,7 +36,7 @@ where TControl : class
 			return;
 		}
 
-			var nav = Region.Navigator();
+		var nav = Region.Navigator();
 		if (nav is null)
 		{
 			return;

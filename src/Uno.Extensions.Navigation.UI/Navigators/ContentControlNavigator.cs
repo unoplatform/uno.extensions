@@ -19,7 +19,7 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 
 	protected override bool CanNavigateToRoute(Route route)
 	{
-		if (route.IsDialog())
+		if (!base.CanNavigateToRoute(route))
 		{
 			return false;
 		}

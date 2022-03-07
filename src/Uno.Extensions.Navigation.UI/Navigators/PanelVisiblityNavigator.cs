@@ -20,7 +20,7 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 	}
 
 	protected override bool CanNavigateToRoute(Route route) =>
-		!route.IsDialog() && 
+		base.CanNavigateToRoute(route) && 
 		(
 			(FindByPath(Resolver.Routes.Find(route)?.Path ?? route.Base) is not null) ||
 			(Resolver.Routes.Find(route)?.View?.View?.IsSubclassOf(typeof(FrameworkElement)) ?? false)		
