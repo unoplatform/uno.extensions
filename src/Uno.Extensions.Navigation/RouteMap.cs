@@ -6,7 +6,7 @@ public record RouteMap(
 	ViewMap? View = null,
 	bool IsDefault = false,
 	string DependsOn = "",
-	bool IsPrivate = false,
+	//bool IsPrivate = false,
 	Func<NavigationRequest, NavigationRequest>? Init = null,
 	params RouteMap[] Nested)
 {
