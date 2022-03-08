@@ -9,6 +9,7 @@
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
 	  mc:Ignorable="d"
+	  NavigationCacheMode="Required"
 	  Background="{ThemeResource MaterialBackgroundBrush}">
 	<Grid x:Name="NavRoot">
 		<Grid.Resources>
@@ -94,7 +95,8 @@
 					</muxc:NavigationViewItem.Icon>
 				</muxc:NavigationViewItem>
 				<muxc:NavigationViewItem Content="Cart"
-										 uen:Navigation.Request="!CartFlyout">
+										 uen:Navigation.Request="!Cart"
+										 SelectsOnInvoked="False">
 					<muxc:NavigationViewItem.Icon>
 						<PathIcon Data="{StaticResource Icon_shopping_cart}" />
 					</muxc:NavigationViewItem.Icon>
@@ -152,7 +154,7 @@
 									utu:AutoLayout.PrimaryAlignment="Stretch"
 									utu:AutoLayout.CounterLength="56"
 									Style="{StaticResource MaterialBottomTabBarItemFabStyle}"
-									uen:Navigation.Request="!CartFlyout">
+									uen:Navigation.Request="!Cart">
 						<utu:TabBarItem.Icon>
 							<PathIcon Data="{StaticResource Icon_shopping_cart}" />
 						</utu:TabBarItem.Icon>

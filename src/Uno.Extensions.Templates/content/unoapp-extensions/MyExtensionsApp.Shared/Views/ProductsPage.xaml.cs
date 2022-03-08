@@ -38,6 +38,5 @@ namespace MyExtensionsApp
         {
             this.InitializeComponent();
         }
-
-    }
+	}
 }

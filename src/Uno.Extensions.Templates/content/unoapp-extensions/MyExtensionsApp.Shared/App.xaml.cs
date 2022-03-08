@@ -21,6 +21,8 @@ using Uno.Extensions.Serialization;
 using Uno.Foundation;
 using MyExtensionsApp.Views;
 using Uno.Extensions.Logging.Serilog;
+using Uno.Extensions.Navigation.UI.Controls;
+using Uno.Extensions.Navigation.Toolkit.Controls;
 
 #if WINUI
 using Windows.ApplicationModel;
@@ -65,15 +67,8 @@ namespace MyExtensionsApp
 #endif
 
 
-			// Add platform specific log providers
-#if !HAS_UNO || __WASM__
-			.UseLogging()
-#else
-			.UseLogging(b => b.AddSimpleConsole(options =>
-			{
-				options.ColorBehavior = Microsoft.Extensions.Logging.Console.LoggerColorBehavior.Disabled;
-			}))
-#endif
+					// Add platform specific log providers
+					.UseLogging()
 
 					// Configure log levels for different categories of logging
 					.ConfigureLogging(logBuilder =>
@@ -83,8 +78,6 @@ namespace MyExtensionsApp
 								.XamlLogLevel(LogLevel.Information)
 								.XamlLayoutLogLevel(LogLevel.Information);
 					})
-
-
 
 					// Load configuration information from appsettings.json
 					.UseAppSettings()
@@ -152,7 +145,7 @@ namespace MyExtensionsApp
 			notif.RouteChanged += RouteUpdated;
 
 
-			_window.Content = new ShellView().WithNavigation(Host.Services);
+			_window.Content = Host.Services.NavigationHost();
 			_window.Activate();
 
 			await Task.Run(async () =>
@@ -186,74 +179,86 @@ namespace MyExtensionsApp
 			deferral.Complete();
 		}
 
-		private static void RegisterRoutes(IRouteBuilder builder)
+		private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 		{
-			builder
-				.Register(RouteMap.For(nameof(ShellView)))
-				.Register(ViewMap.For(nameof(ShellView)).Show<ShellView>().With<ShellViewModel>())
+			views.Register(
+				new ViewMap(ViewModel: typeof(ShellViewModel)),
+				new ViewMap(DynamicView: () => typeof(LoginPage), ViewModel: typeof(LoginViewModel.BindableLoginViewModel), ResultData: typeof(Credentials)),
+				new ViewMap(DynamicView: () => typeof(HomePage), Data: new DataMap<Credentials>()),
+				new ViewMap(DynamicView: () => typeof(ProductsPage), ViewModel: typeof(ProductsViewModel.BindableProductsViewModel)),
+				new ViewMap(DynamicView: () =>
+						   (App.Current as App)?.Window?.Content?.ActualSize.X > 800 ? typeof(ProductControl) : typeof(ProductDetailsPage),
+							ViewModel: typeof(ProductDetailsViewModel.BindableProductDetailsViewModel), Data: new DataMap<Product>(
+																						ToQuery: product => new Dictionary<string, string> { { nameof(Product.ProductId), product.ProductId.ToString() } },
+																						FromQuery: async (sp, query) =>
+																						{
+																							var id = int.Parse(query[nameof(Product.ProductId)]);
+																							var ps = sp.GetRequiredService<IProductService>();
+																							var products = await ps.GetProducts(default, default);
+																							return products.FirstOrDefault(p => p.ProductId == id);
+																						})),
+				new ViewMap(DynamicView: () => typeof(FilterPage), ViewModel: typeof(FiltersViewModel.BindableFiltersViewModel), Data: new DataMap<Filters>()),
+				new ViewMap(DynamicView: () => typeof(DealsPage), ViewModel: typeof(DealsViewModel)),
+				new ViewMap(DynamicView: () => typeof(ProfilePage), ViewModel: typeof(ProfileViewModel)),
+				new ViewMap(DynamicView: () => typeof(CartPage), ViewModel: typeof(CartViewModel)),
+				new ViewMap(DynamicView: () => typeof(ProductDetailsPage), ViewModel: typeof(CartProductDetailsViewModel.BindableCartProductDetailsViewModel), Data: new DataMap<CartItem>(
+																						ToQuery: cartItem => new Dictionary<string, string> {
+																							{ nameof(Product.ProductId), cartItem.Product.ProductId.ToString() },
+																							{ nameof(CartItem.Quantity),cartItem.Quantity.ToString() } },
+																						FromQuery: async (sp, query) =>
+																						{
+																							var id = int.Parse(query[nameof(Product.ProductId)]);
+																							var quantity = int.Parse(query[nameof(CartItem.Quantity)]);
+																							var ps = sp.GetRequiredService<IProductService>();
+																							var products = await ps.GetProducts(default, default);
+																							var p = products.FirstOrDefault(p => p.ProductId == id);
+																							return new CartItem(p, quantity);
+																						})),
+				new ViewMap(DynamicView: () => typeof(CheckoutPage))
+				);
 
-				.Register(ViewMap.For("Login").Show<LoginPage>().With<LoginViewModel.BindableLoginViewModel>())
+			routes
+				.Register(
+				views =>
+					new("", View: views.FindByViewModel<ShellViewModel>(), // IsPrivate: true,
+							Nested: new RouteMap[]
+							{
+								new("Login", View: views.FindByResultData<Credentials>()),
+								new RouteMap("Home", View: views.FindByData<Credentials>(),
+										Nested: new RouteMap[]{
+											new ("Products",
+													View: views.FindByViewModel<ProductsViewModel.BindableProductsViewModel>(),
+													IsDefault: true,
+													Nested: new  RouteMap[]{
+														new RouteMap("Filter",  View: views.FindByViewModel<FiltersViewModel.BindableFiltersViewModel>())
+													}),
+											new("Product",
+													View: views.FindByViewModel<ProductDetailsViewModel.BindableProductDetailsViewModel>(),
+													DependsOn:"Products"),
+												//	Init: req => (App.Current as App).Window.Content.ActualSize.X > 800 ?
+												//req with { Route = req.Route with {Base = "Details",Path="Products"} } :
+												//req),
 
-				.Register(RouteMap.For("Home")
-					.Process(nav => nav.Route.Next().IsEmpty() ?
-												nav with { Route = nav.Route.Append(Route.NestedRoute("Products")) } :
-												nav))
-				.Register(ViewMap.For("Home").Show<HomePage>().With<HomeViewModel>())
+											new("Deals", View:views.FindByViewModel<DealsViewModel>()),
 
-				.Register(RouteMap.For("Products")
-					.Process(nav => nav.Route.Next().IsEmpty() ?
-												nav with { Route = nav.Route.AppendPage<ProductsPage>() } : nav with
-												{
-													Route = nav.Route.ContainsView<ProductsPage>() ?
-																	nav.Route :
-																	nav.Route.InsertPage<ProductsPage>()
-												}))
-				.Register(ViewMap.For("Products").Show<FrameView>())
+											new("Profile", View:views.FindByViewModel<ProfileViewModel>()),
 
-				.Register(ViewMap.For(nameof(ProductsPage)).Show<ProductsPage>().With<ProductsViewModel.BindableProductsViewModel>())
+											new("Cart", View: views.FindByViewModel<CartViewModel>(),
+													Nested: new []{
+														new RouteMap("CartDetails",View: views.FindByViewModel<CartProductDetailsViewModel.BindableCartProductDetailsViewModel>()),
+														new RouteMap("Checkout", View: views.FindByView<CheckoutPage>())
+													})
+											})
+							}));
 
-				.Register(RouteMap.For("Deals")
-					.Process(nav => nav.Route.Next().IsEmpty() ?
-												nav with { Route = nav.Route.AppendPage<DealsPage>() } : nav with
-												{
-													Route = nav.Route.ContainsView<DealsPage>() ?
-																	nav.Route :
-																	nav.Route.InsertPage<DealsPage>()
-												}))
-				.Register(ViewMap.For("Deals").Show<FrameView>())
-
-				.Register(ViewMap.For("Deals").Show<DealsPage>().With<DealsViewModel>())
-
-				.Register(RouteMap<Product>.For("ProductDetails")
-					.Process(nav => (App.Current as App).Window.Content.ActualSize.X > 800 ?
-												nav with { Route = nav.Route with { Scheme = "./", Base = "Details", Path = nameof(ProductDetailsPage) } } :
-												nav with { Route = nav.Route with { Base = nameof(ProductDetailsPage) } }))
-
-				.Register(RouteMap<Product>.For(nameof(ProductDetailsPage))
-					.ConvertDataToQuery(product => new Dictionary<string, string> { { nameof(Product.ProductId), product.ProductId + "" } }))
-
-				.Register(ViewMap.For(nameof(ProductDetailsPage)).Show<ProductDetailsPage>().With<ProductDetailsViewModel.BindableProductDetailsViewModel>())
-
-				.Register(RouteMap.For(nameof(CartFlyout))
-					.Process(nav => nav.Route.Next().IsEmpty() ?
-													nav with { Route = nav.Route.AppendNested<CartPage>() } :
-													nav))
-				.Register(ViewMap.For(nameof(CartFlyout)).Show<CartFlyout>())
-
-				.Register(RouteMap<Filters>.For(nameof(Filters)))
-				.Register(ViewMap.For("Filter").Show<FilterFlyout>().With<FiltersViewModel.BindableFiltersViewModel>())
-
-				.Register(ViewMap.For("Profile").Show<ProfilePage>().With<ProfileViewModel>())
-
-				.Register(ViewMap.For(nameof(CartPage)).Show<CartPage>().With<CartViewModel>());
+			;
 		}
 
-		public async void RouteUpdated(object sender, EventArgs e)
+		public async void RouteUpdated(object sender, RouteChangedEventArgs e)
 		{
 			try
 			{
-				var reg = Host.Services.GetService<IRegion>();
-				var rootRegion = reg.Root();
+				var rootRegion = e.Region.Root();
 				var route = rootRegion.GetRoute();
 
 

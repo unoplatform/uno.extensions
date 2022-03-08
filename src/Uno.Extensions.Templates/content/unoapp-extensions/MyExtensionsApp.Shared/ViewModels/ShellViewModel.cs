@@ -25,12 +25,13 @@ namespace MyExtensionsApp.ViewModels
 			Navigator = navigator;
 			CredentialsSettings = credentials;
 
-			logger.LogInformation($"Launch url '{configuration.Value?.LaunchUrl}'");
+			if (logger.IsEnabled(LogLevel.Information)) logger.LogInformation($"Launch url '{configuration.Value?.LaunchUrl}'");
 			var initialRoute = configuration.Value?.LaunchRoute();
 
-
 			// Go to the login page on app startup
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 			Start(initialRoute);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 		}
 
 		public async Task Start(Route? initialRoute = null)
@@ -42,34 +43,31 @@ namespace MyExtensionsApp.ViewModels
 				if (initialRoute is not null &&
 					!initialRoute.IsEmpty())
 				{
-					var initialResponse = await Navigator.NavigateRouteForResultAsync<Credentials>(this, initialRoute);
-					_ = await initialResponse.Result;
+					var initialResponse = await Navigator.NavigateRouteForResultAsync<object>(this, initialRoute);
+					if (initialResponse is not null)
+					{
+						_ = await initialResponse.Result;
+					}
 				}
 				else
 				{
-					var homeResponse = await Navigator.NavigateViewModelForResultAsync<HomeViewModel, Credentials>(this, Schemes.ClearBackStack);
-					_ = await homeResponse.Result;
+					var homeResponse = await Navigator.NavigateDataAsync(this, currentCredentials, Qualifiers.ClearBackStack);
 				}
-
-				await CredentialsSettings.Update(c => new Credentials());
 			}
 			else
 			{
 				// Navigate to Login page, requesting Credentials
-				var response = await Navigator.NavigateViewModelForResultAsync<LoginViewModel.BindableLoginViewModel, Credentials>(this, Schemes.ClearBackStack);
+				var response = await Navigator.NavigateForResultAsync<Credentials>(this, Qualifiers.ClearBackStack);
 
 
 				var loginResult = await response.Result;
 				if (loginResult.IsSome(out var creds) && creds?.UserName is { Length: > 0 })
 				{
 					await CredentialsSettings.Update(c => creds);
+
+					Start();
 				}
 			}
-
-			// At this point we assume that either the login failed, or that the navigation to home
-			// was completed by a response being sent back. We don't actually care about the response,
-			// since we only care that the navigation has completed and that we should again show the login 
-			Start();
 		}
 	}
 }

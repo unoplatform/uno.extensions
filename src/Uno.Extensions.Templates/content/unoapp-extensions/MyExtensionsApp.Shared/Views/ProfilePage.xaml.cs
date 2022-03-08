@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using MyExtensionsApp.ViewModels;
 using Uno.Toolkit.UI;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -35,6 +36,8 @@ namespace MyExtensionsApp
 	/// </summary>
 	public sealed partial class ProfilePage : Page
 	{
+		public ProfileViewModel? ViewModel { get; set; }
+
 		public ProfilePage()
 		{
 			this.InitializeComponent();
@@ -46,6 +49,13 @@ namespace MyExtensionsApp
 				darkModeToggle.IsOn = SystemThemeHelper.IsRootInDarkMode(XamlRoot);
 				darkModeToggle.IsEnabled = true;
 			};
+
+			DataContextChanged += ProfilePage_DataContextChanged;
+		}
+
+		private void ProfilePage_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+		{
+			ViewModel = args.NewValue as ProfileViewModel;
 		}
 
 		private void ToggleDarkMode()
