@@ -86,7 +86,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 				}
 
 				// Check next in a line of dependsOn
-				dependsRM = Resolver.Routes.FindByPath(dependsRM?.DependsOn);
+				dependsRM = string.IsNullOrWhiteSpace( dependsRM?.DependsOn)? null: Resolver.Routes.FindByPath(dependsRM?.DependsOn);
 			}
 		}
 
