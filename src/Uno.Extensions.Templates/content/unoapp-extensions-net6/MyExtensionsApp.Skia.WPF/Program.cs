@@ -1,0 +1,3 @@
+namespace MyExtensionsApp.Skia.Gtk
+{
+}

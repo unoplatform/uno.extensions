@@ -40,6 +40,10 @@
 			<PackagePath>content\unoapp-extensions</PackagePath>
 			<Pack>true</Pack>
 		</Content>
+		<Content Include="content\unoapp-extensions-net6\**" KeepDuplicates="False">
+			<PackagePath>content\unoapp-extensions-net6</PackagePath>
+			<Pack>true</Pack>
+		</Content>
 	</ItemGroup>
 
 	<Target Name="ReplaceVersions" BeforeTargets="BeforeBuild" Condition="'$(PackageVersion)'!='255.255.255.255'">
