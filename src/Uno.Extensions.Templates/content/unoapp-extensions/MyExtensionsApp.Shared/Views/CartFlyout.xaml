@@ -8,7 +8,7 @@
 		FlyoutPresenterStyle="{StaticResource MaterialFlyoutPresenterStyle}">
 
 	<Grid>
-		<ContentControl uen:Region.Attached="True"
+		<Frame uen:Region.Attached="True"
 						HorizontalAlignment="Stretch"
 						VerticalAlignment="Stretch"
 						HorizontalContentAlignment="Stretch"
