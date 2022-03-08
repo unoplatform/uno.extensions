@@ -37,11 +37,6 @@ public class FrameNavigator : ControlNavigator<Frame>
 
 	protected override bool CanNavigateToRoute(Route route)
 	{
-		if (Control is null)
-		{
-			return false;
-		}
-
 		if (!base.CanNavigateToRoute(route))
 		{
 			return false;
@@ -56,26 +51,47 @@ public class FrameNavigator : ControlNavigator<Frame>
 		else
 		{
 			var rm = Resolver.Routes.FindByPath(route.Base);
-			if (!route.IsInternal)
+
+			// Can only navigate the frame to a page
+			var viewType = rm?.View?.View;
+			if (
+				viewType is null ||
+				!viewType.IsSubclassOf(typeof(Page))
+			)
 			{
-				if (!string.IsNullOrWhiteSpace(rm?.DependsOn))
+				return false;
+			}
+
+			// If the route is dependent on another page, make sure
+			// that page is already navigated to, or is in the backstack
+			if (
+				!string.IsNullOrWhiteSpace(rm?.DependsOn) &&
+				Control is not null &&
+				Control.BackStack.Any() // We only need to check dependson if there's already a backstack!
+				)
+			{
+				var dependsRM = Resolver.Routes.FindByPath(rm?.DependsOn);
+				while(dependsRM is not null)
 				{
-					var dependsRM = Resolver.Routes.FindByPath(rm?.DependsOn);
-					if (
-						(dependsRM is not null) &&
+					// Check if the dependsOn is either the current page (soon to be on backstack)
+					// or elsewhere on the backstack
+					if(
 						!(
-							Control?.SourcePageType == dependsRM?.View?.View ||
-							((Control?.BackStack.Any() ?? false) && Control.BackStack[0].SourcePageType == dependsRM?.View?.View)
+							Control.SourcePageType == dependsRM?.View?.View ||
+							Control.BackStack.Any(entry => entry.SourcePageType == dependsRM?.View?.View)
 						)
-						)
+					)
 					{
 						return false;
 					}
+
+					// Check next in a line of dependsOn
+					dependsRM = Resolver.Routes.FindByPath(dependsRM?.DependsOn);
 				}
 			}
-			var viewType = rm?.View?.View;
-			return viewType is not null &&
-				viewType.IsSubclassOf(typeof(Page));
+
+			return true;
+
 		}
 	}
 
@@ -128,7 +144,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 			{
 				// Rebuild the nested region hierarchy
 				Control.ReassignRegionParent();
-				if (segments.Length >1 ||
+				if (segments.Length > 1 ||
 					string.IsNullOrWhiteSpace(request.Route.Path))
 				{
 					refreshViewModel = true;
@@ -144,8 +160,8 @@ public class FrameNavigator : ControlNavigator<Frame>
 				if (entry is null ||
 					entry.SourcePageType != seg.Map.View?.View)
 				{
-						var newEntry = new PageStackEntry(seg.Map.View?.View, null, null);
-						Control?.BackStack.Add(newEntry);
+					var newEntry = new PageStackEntry(seg.Map.View?.View, null, null);
+					Control?.BackStack.Add(newEntry);
 				}
 				firstSegment = firstSegment.Append(segments[i + 1].Route);
 				route = route.Trim(seg.Route);
@@ -200,7 +216,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 		return responseRequest;
 	}
 
-	private async  Task<Route?> NavigatedBackAsync(NavigationRequest request)
+	private async Task<Route?> NavigatedBackAsync(NavigationRequest request)
 	{
 		if (Control is null)
 		{

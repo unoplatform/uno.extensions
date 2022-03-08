@@ -18,6 +18,8 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 		Control = control;
 	}
 
+	protected override bool CanNavigateToRoute(Route route) => base.CanNavigateToRoute(route) && Control is not null;
+
 	protected override DispatcherQueue GetDispatcher() =>
 #if WINUI
 		(Control as FrameworkElement)?.DispatcherQueue
