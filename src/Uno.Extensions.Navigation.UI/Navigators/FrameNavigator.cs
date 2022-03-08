@@ -37,62 +37,61 @@ public class FrameNavigator : ControlNavigator<Frame>
 
 	protected override bool CanNavigateToRoute(Route route)
 	{
-		if (!base.CanNavigateToRoute(route))
-		{
-			return false;
-		}
-
 		if (route.IsBackOrCloseNavigation())
 		{
 			// Back navigation code should swallow any excess back navigations (ie when
 			// there is nothing on the back stack)
 			return true;
 		}
-		else
+
+		if (!base.CanNavigateToRoute(route))
 		{
-			var rm = Resolver.Routes.FindByPath(route.Base);
-
-			// Can only navigate the frame to a page
-			var viewType = rm?.View?.View;
-			if (
-				viewType is null ||
-				!viewType.IsSubclassOf(typeof(Page))
-			)
-			{
-				return false;
-			}
-
-			// If the route is dependent on another page, make sure
-			// that page is already navigated to, or is in the backstack
-			if (
-				!string.IsNullOrWhiteSpace(rm?.DependsOn) &&
-				Control is not null &&
-				Control.BackStack.Any() // We only need to check dependson if there's already a backstack!
-				)
-			{
-				var dependsRM = Resolver.Routes.FindByPath(rm?.DependsOn);
-				while(dependsRM is not null)
-				{
-					// Check if the dependsOn is either the current page (soon to be on backstack)
-					// or elsewhere on the backstack
-					if(
-						!(
-							Control.SourcePageType == dependsRM?.View?.View ||
-							Control.BackStack.Any(entry => entry.SourcePageType == dependsRM?.View?.View)
-						)
-					)
-					{
-						return false;
-					}
-
-					// Check next in a line of dependsOn
-					dependsRM = Resolver.Routes.FindByPath(dependsRM?.DependsOn);
-				}
-			}
-
-			return true;
-
+			return false;
 		}
+
+
+		var rm = Resolver.Routes.FindByPath(route.Base);
+
+		// Can only navigate the frame to a page
+		var viewType = rm?.View?.View;
+		if (
+			viewType is null ||
+			!viewType.IsSubclassOf(typeof(Page))
+		)
+		{
+			return false;
+		}
+
+		// If the route is dependent on another page, make sure
+		// that page is already navigated to, or is in the backstack
+		if (
+			!string.IsNullOrWhiteSpace(rm?.DependsOn) &&
+			Control is not null &&
+			Control.BackStack.Any() // We only need to check dependson if there's already a backstack!
+			)
+		{
+			var dependsRM = Resolver.Routes.FindByPath(rm?.DependsOn);
+			while (dependsRM is not null)
+			{
+				// Check if the dependsOn is either the current page (soon to be on backstack)
+				// or elsewhere on the backstack
+				if (
+					!(
+						Control.SourcePageType == dependsRM?.View?.View ||
+						Control.BackStack.Any(entry => entry.SourcePageType == dependsRM?.View?.View)
+					)
+				)
+				{
+					return false;
+				}
+
+				// Check next in a line of dependsOn
+				dependsRM = Resolver.Routes.FindByPath(dependsRM?.DependsOn);
+			}
+		}
+
+		return true;
+
 	}
 
 	protected override Task<Route?> ExecuteRequestAsync(NavigationRequest request)

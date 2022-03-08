@@ -167,6 +167,14 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			return default;
 		}
 
+		// If this is a back/close with no other path, then return
+		// as if this navigator can handl it - it can't, so the request
+		// will effetively be terminated
+		if(request.Route.IsBackOrCloseNavigation())
+		{
+			return default;
+		}
+
 		var rm = Resolver.Routes.FindByPath(request.Route.Base);
 		if (rm is null)
 		{
@@ -262,7 +270,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 	// By default, all navigators can handle all routes
 	// except where it's dialog - these should only be
 	// handled by the root (ie Region.Parent is null)
-	protected virtual bool CanNavigateToRoute(Route route) => Region.Parent is null || !route.IsDialog();
+	protected virtual bool CanNavigateToRoute(Route route) => (Region.Parent is null || !route.IsDialog() ) && !route.IsBackOrCloseNavigation();
 
 	private async Task<NavigationResponse?> DialogNavigateAsync(NavigationRequest request)
 	{

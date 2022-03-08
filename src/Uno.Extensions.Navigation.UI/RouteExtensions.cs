@@ -6,7 +6,7 @@ public static class RouteExtensions
 {
 	public static bool IsFrameNavigation(this Route route) =>
 		// We want to make forward navigation between frames simple, so don't require +
-		route.Qualifier == Qualifiers.None || 
+		route.Qualifier == Qualifiers.None ||
 		route.Qualifier.StartsWith(Qualifiers.NavigateBack);
 
 	public static bool IsInternal(this Route route) => route.IsInternal;
@@ -77,7 +77,7 @@ public static class RouteExtensions
 					rm.IsPageRouteMap() &&
 					// Either this is the first segment (dependson should be "" as should be first in sequence) OR
 					// this is not the first segment (so dependson should be set)
-					((string.IsNullOrWhiteSpace(rm.DependsOn) && segments.Count==0) ^ ((segments.Count > 0 && segments[0].Base==rm.DependsOn) || (currentRoute?.Base == rm.DependsOn)))
+					((string.IsNullOrWhiteSpace(rm.DependsOn) && segments.Count == 0) ^ ((segments.Count > 0 && segments[0].Base == rm.DependsOn) || (currentRoute?.Base == rm.DependsOn)))
 				)
 			)
 		)
@@ -120,7 +120,7 @@ public static class RouteExtensions
 			return route;
 		}
 
-		if(route.IsNested() && !handledRoute.IsNested())
+		if (route.IsNested() && !handledRoute.IsNested())
 		{
 			route = route.TrimQualifier(Qualifiers.Nested);
 		}
@@ -131,10 +131,16 @@ public static class RouteExtensions
 			handledRoute = handledRoute.Next();
 		}
 
-		if(route.Qualifier==Qualifiers.NavigateBack && route.Qualifier == handledRoute.Qualifier)
+		if (route.Qualifier == Qualifiers.NavigateBack && route.Qualifier == handledRoute.Qualifier)
 		{
 			route = route with { Qualifier = Qualifiers.None };
 		}
+
+		route = route with
+		{
+			Base = string.IsNullOrWhiteSpace(route.Base) ? null : route.Base,
+			Path = string.IsNullOrWhiteSpace(route.Path) ? null : route.Path
+		};
 
 		return route;
 	}
@@ -175,7 +181,7 @@ public static class RouteExtensions
 			Path = (routeToAppend.Qualifier == Qualifiers.Nested ? Qualifiers.Separator : routeToAppend.Qualifier) +
 					routeToAppend.Base +
 					routeToAppend.Path +
-					(((route.Path?.StartsWith(Qualifiers.Separator) ?? false) ) ?
+					(((route.Path?.StartsWith(Qualifiers.Separator) ?? false)) ?
 						string.Empty :
 						Qualifiers.Separator) +
 					route.Path
@@ -256,7 +262,7 @@ public static class RouteExtensions
 		var _ = path.ExtractBase(out var qualifier, out var _);
 		return !string.IsNullOrWhiteSpace(qualifier);
 	}
-	
+
 
 	public static string FullPath(this Route route)
 	{
