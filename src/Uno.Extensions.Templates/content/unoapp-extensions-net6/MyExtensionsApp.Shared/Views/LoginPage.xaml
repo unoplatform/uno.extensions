@@ -1,0 +1,67 @@
+<Page x:Class="MyExtensionsApp.LoginPage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:local="using:ExtensionsSampleApp.Views.Twitter"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  xmlns:utu="using:Uno.Toolkit.UI"
+	  mc:Ignorable="d"
+	  Background="{ThemeResource MaterialBackgroundBrush}">
+
+	<utu:AutoLayout Background="{StaticResource MaterialBackgroundBrush}"
+					MaxWidth="{StaticResource LandscapeMaxPageWidth}">
+		<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch"
+						utu:AutoLayout.PrimaryAlignment="Stretch">
+			<utu:AutoLayout Spacing="16"
+							Padding="32,48,32,8"
+							utu:AutoLayout.CounterAlignment="Stretch">
+				<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}"
+						   x:Uid="Body_Welcome"
+						   Text="Welcome."
+						   Style="{StaticResource MaterialHeadline4}" />
+				<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}"
+						   x:Uid="Body_Title"
+						   Text="{Binding Title}"
+						   Style="{StaticResource MaterialSubtitle2}" />
+				<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}"
+						   x:Uid="Body_Log in to your account"
+						   Text="Log in to your account"
+						   Style="{StaticResource MaterialSubtitle2}" />
+			</utu:AutoLayout>
+			<utu:AutoLayout Spacing="16"
+							Padding="32,8,32,32"
+							utu:AutoLayout.CounterAlignment="Stretch">
+				<TextBox AutomationProperties.AutomationId="UserName"
+						 Text="{Binding Credentials.UserName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						 utu:AutoLayout.CounterAlignment="Stretch"
+						 Style="{StaticResource MaterialFilledTextBoxStyle}" />
+				<PasswordBox AutomationProperties.AutomationId="Password"
+							 Password="{Binding Credentials.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+							 utu:AutoLayout.CounterAlignment="Stretch"
+							 Style="{StaticResource MaterialFilledPasswordBoxStyle}" />
+				<HyperlinkButton Content="Forgot password?"
+								 x:Uid="Body_HyperlinkButton"
+								 Style="{StaticResource MaterialHyperlinkButtonStyle}" />
+				<Button Content="Login"
+						AutomationProperties.AutomationId="Login"
+						x:Uid="Body_Login"
+						utu:AutoLayout.CounterAlignment="Stretch"
+						Style="{StaticResource MaterialContainedButtonStyle}"
+						Command="{Binding Login}" />
+			</utu:AutoLayout>
+			<utu:AutoLayout Spacing="16"
+							Padding="32,32,32,32"
+							PrimaryAxisAlignment="End"
+							utu:AutoLayout.CounterAlignment="Stretch"
+							utu:AutoLayout.PrimaryAlignment="Stretch">
+				<TextBlock Foreground="{StaticResource MaterialOnBackgroundBrush}"
+						   TextAlignment="Center"
+						   TextWrapping="Wrap"
+						   x:Uid="Body_Legal mentions"
+						   Text="Legal mentions"
+						   utu:AutoLayout.CounterAlignment="Center"
+						   Style="{StaticResource MaterialCaption}" />
+			</utu:AutoLayout>
+		</utu:AutoLayout>
+	</utu:AutoLayout>
+</Page>

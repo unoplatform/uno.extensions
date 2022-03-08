@@ -1,0 +1,11 @@
+<Project ToolsVersion="15.0">
+	<PropertyGroup>
+		<LangVersion>10.0</LangVersion>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<DebugType>portable</DebugType>
+		<DebugSymbols>True</DebugSymbols>
+	  <NoWarn>Uno0001</NoWarn>
+	</PropertyGroup>
+</Project>
