@@ -27,11 +27,14 @@ Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "MyExtensionsApp.Windows.Pac
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		MyExtensionsApp.Shared\MyExtensionsApp.Shared.projitems*{1b50af32-455b-4903-8539-9fd7c5c5d86d}*SharedItemsImports = 5
 		MyExtensionsApp.Shared\MyExtensionsApp.Shared.projitems*{6279c845-92f8-4333-ab99-3d213163593c}*SharedItemsImports = 13
 		MyExtensionsApp.Shared\MyExtensionsApp.Shared.projitems*{71df306f-217e-4bb5-a6c1-107f80ad8630}*SharedItemsImports = 4
 		MyExtensionsApp.Shared\MyExtensionsApp.Shared.projitems*{72b60771-626b-4cb4-b494-c8a00b7b3e11}*SharedItemsImports = 4
+		MyExtensionsApp.Shared\MyExtensionsApp.Shared.projitems*{c37ab4bc-83ef-408d-bb63-fb8bfeca173c}*SharedItemsImports = 5
 		MyExtensionsApp.Shared\MyExtensionsApp.Shared.projitems*{ccc6e41d-443c-4cbf-b7cd-a8daeb015831}*SharedItemsImports = 4
 		MyExtensionsApp.Shared\MyExtensionsApp.Shared.projitems*{e05db577-91a2-438f-9f53-5efa29da9d8d}*SharedItemsImports = 5
+		MyExtensionsApp.Shared\MyExtensionsApp.Shared.projitems*{ec120f62-ba08-40dc-9760-6774b6a956a6}*SharedItemsImports = 5
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Ad-Hoc|Any CPU = Ad-Hoc|Any CPU

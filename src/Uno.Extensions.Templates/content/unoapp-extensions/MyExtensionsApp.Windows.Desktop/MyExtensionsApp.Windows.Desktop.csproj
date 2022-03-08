@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows10.0.19041.0</TargetFramework>
@@ -27,8 +27,8 @@
     <PackageReference Include="Uno.WinUI" Version="4.1.8" />
     <PackageReference Include="Uno.Core" Version="4.0.1" />
     <PackageReference Include="Uno.Material.WinUI" Version="1.2.0" />
-    <PackageReference Include="Uno.Toolkit.WinUI.Material" Version="1.2.0" />
-    <PackageReference Include="Uno.Toolkit.WinUI" Version="1.2.0" />
+    <PackageReference Include="Uno.Toolkit.WinUI.Material" Version="1.2.1" />
+    <PackageReference Include="Uno.Toolkit.WinUI" Version="1.2.1" />
     <PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.0" />
   </ItemGroup>
   <ItemGroup>
