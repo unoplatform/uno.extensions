@@ -6,7 +6,7 @@ public static class RegionExtensions
 
     public static Task<NavigationResponse?> NavigateAsync(this IRegion region, NavigationRequest request) => (region.Navigator()?.NavigateAsync(request)) ?? Task.FromResult<NavigationResponse?>(default);
 
-    public static bool IsNamed(this IRegion region) => !string.IsNullOrWhiteSpace(region.Name);
+    public static bool IsNamed(this IRegion region) => region.Name is not null;
 
     public static IRegion Root(this IRegion region)
     {

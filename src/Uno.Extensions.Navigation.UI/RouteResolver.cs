@@ -69,11 +69,14 @@ public class RouteResolver : IRouteResolver
 
 	public virtual RouteMap? FindByPath(string? path)
 	{
-		if (
-			path is null ||
-			string.IsNullOrWhiteSpace(path))
+		if (path is null)
 		{
 			return null;
+		}
+
+		if(path== string.Empty)
+		{
+			return First;
 		}
 
 		path = path.ExtractBase(out var nextQualifier, out var nextPath);

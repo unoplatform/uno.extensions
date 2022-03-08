@@ -219,7 +219,7 @@ namespace Commerce
 			routes
 				.Register(
 				views =>
-					new("Shell", View: views.FindByViewModel<ShellViewModel>(), // IsPrivate: true,
+					new("", View: views.FindByViewModel<ShellViewModel>(), // IsPrivate: true,
 							Nested: new RouteMap[]
 							{
 								new("Login", View: views.FindByResultData<Credentials>()),

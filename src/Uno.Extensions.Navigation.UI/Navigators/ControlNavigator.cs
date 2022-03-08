@@ -44,7 +44,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 
 		var executedPath = await Show(mapping?.Path ?? route.Base, mapping?.View?.View, route.Data);
 
-		if (string.IsNullOrEmpty(executedPath))
+		if (executedPath is null)
 		{
 			return Route.Empty;
 		}
@@ -122,7 +122,10 @@ public abstract class ControlNavigator : Navigator
 				return regionResponse;
 			}
 
-			request = request with { Route = request.Route.Trim(regionResponse?.Route) };
+			//if (!(regionResponse?.Route?.IsEmpty() ?? true))
+			//{
+				request = request with { Route = request.Route.Trim(regionResponse?.Route) };
+			//}
 		}
 		else if (Region.Parent is not null)
 		{
