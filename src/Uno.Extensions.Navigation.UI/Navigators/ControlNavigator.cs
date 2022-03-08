@@ -180,8 +180,10 @@ public abstract class ControlNavigator : Navigator
 
 	protected virtual void UpdateRoute(Route? route)
 	{
-		var rm = Resolver.Routes.Find(route);
-		Route = route is not null && !(rm?.IsPrivate ?? false) ? new Route(Qualifiers.None, route.Base, null, route.Data) : null;
+		//var rm = Resolver.Routes.Find(route);
+		Route = route is not null
+			// && !(rm?.IsPrivate ?? false)
+			? new Route(Qualifiers.None, route.Base, null, route.Data) : null;
 	}
 
 	protected async Task<object?> CreateViewModel(IServiceProvider services, NavigationRequest request, Route route, RouteMap? mapping)
