@@ -51,6 +51,7 @@ jobs:
         & dotnet tool update --global uno.check --version $(UnoCheck_Version) --add-source https://api.nuget.org/v3/index.json
         & uno-check -v --ci --non-interactive --fix --skip xcode --skip androidsdk --skip androidemulator --skip gtk3 --skip vswin --skip vsmac --manifest $(UnoCheck_Manifest)
     displayName: Install .NET Workloads
+    retryCountOnTaskFailure: 3
     errorActionPreference: continue
     ignoreLASTEXITCODE: true
 
