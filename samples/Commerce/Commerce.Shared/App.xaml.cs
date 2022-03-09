@@ -180,6 +180,12 @@ namespace Commerce
 
 		private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 		{
+			var forgotPasswordDialog = new MessageDialogViewMap(
+					Content: "Click OK, or Cancel",
+					Title: "Forgot your password!",
+					DelayUserInput: true
+				);
+
 			views.Register(
 				new ViewMap(ViewModel: typeof(ShellViewModel)),
 				new ViewMap(DynamicView: () => typeof(LoginPage), ViewModel: typeof(LoginViewModel.BindableLoginViewModel), ResultData: typeof(Credentials)),
@@ -213,7 +219,8 @@ namespace Commerce
 																							var p = products.FirstOrDefault(p => p.ProductId == id);
 																							return new CartItem(p, quantity);
 																						})),
-				new ViewMap(DynamicView: () => typeof(CheckoutPage))
+				new ViewMap(DynamicView: () => typeof(CheckoutPage)),
+				forgotPasswordDialog
 				);
 
 			routes
@@ -222,7 +229,11 @@ namespace Commerce
 					new("", View: views.FindByViewModel<ShellViewModel>(), // IsPrivate: true,
 							Nested: new RouteMap[]
 							{
-								new("Login", View: views.FindByResultData<Credentials>()),
+								new("Login", View: views.FindByResultData<Credentials>(),
+										Nested: new RouteMap[]
+										{
+											new ("Forgot", forgotPasswordDialog)
+										}),
 								new RouteMap("Home", View: views.FindByData<Credentials>(),
 										Nested: new RouteMap[]{
 											new ("Products",

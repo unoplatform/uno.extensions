@@ -2,7 +2,7 @@
 
 #pragma warning disable SA1313 // Parameter names should begin with lower-case letter
 public record ViewMap(
-		Func<Type?>? DynamicView = null,
+	Func<Type?>? DynamicView = null,
 	Type? ViewModel = null,
 	DataMap? Data = null,
 	Type? ResultData = null
@@ -25,7 +25,7 @@ public record ViewMap<TView>(
 	Type? ViewModel = null,
 	DataMap? Data = null,
 	Type? ResultData = null
-) : ViewMap(()=>typeof(TView), ViewModel, Data, ResultData)
+) : ViewMap(() => typeof(TView), ViewModel, Data, ResultData)
 {
 }
 
