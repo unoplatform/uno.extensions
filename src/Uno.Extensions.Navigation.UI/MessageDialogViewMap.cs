@@ -31,7 +31,6 @@ public record MessageDialogViewMap<TViewModel>(
 {
 }
 
-public record DialogAction(string? Label = "", Action? Action = null, object? Id = null) { }
 
 #pragma warning restore SA1313 // Parameter names should begin with lower-case letter
 

@@ -38,19 +38,30 @@ public class MessageDialogNavigator : DialogNavigator
 						messageView?.Title;
 		var options = data.TryGetValue(RouteConstants.MessageDialogParameterOptions, out var optionsValue) ?
 						(optionsValue is MessageDialogOptions opt)?opt:MessageDialogOptions.None :
-						(messageView?.DelayUserInput??false)? MessageDialogOptions.None: MessageDialogOptions.AcceptUserInputAfterDelay;
+						(messageView?.DelayUserInput??false)? MessageDialogOptions.AcceptUserInputAfterDelay : MessageDialogOptions.None;
+		var defaultIndex = (uint)(data.TryGetValue(RouteConstants.MessageDialogParameterDefaultCommand, out var defaultValue) ?
+						(defaultValue is int defIdx) ? defIdx: 0 :
+						messageView?.DefaultButtonIndex ?? 0);
+		var cancelIndex = (uint)(data.TryGetValue(RouteConstants.MessageDialogParameterCancelCommand, out var cancelValue) ?
+						(cancelValue is int cancel) ? cancel : 0 :
+						messageView?.CancelButtonIndex ?? 0);
+		var buttons = data.TryGetValue(RouteConstants.MessageDialogParameterCommands, out var buttonValues) ?
+						buttonValues as DialogAction[] :
+						messageView?.Buttons;
 
+		var commands = (from b in buttons
+						select new UICommand(b.Label,new UICommandInvokedHandler(cmd => b.Action?.Invoke()), b.Id));;
 
 		var md = new MessageDialog(
 			content,
 			title
 			)
 		{
-			Options = options
-			//DefaultCommandIndex = (uint)data[RouteConstants.MessageDialogParameterDefaultCommand],
-			//CancelCommandIndex = (uint)data[RouteConstants.MessageDialogParameterCancelCommand]
+			Options = options,
+			DefaultCommandIndex = defaultIndex,
+			CancelCommandIndex = cancelIndex
 		};
-		//md.Commands.AddRange(data[RouteConstants.MessageDialogParameterCommands] as UICommand[] ?? new UICommand[] { });
+		md.Commands.AddRange(commands);
 		var showTask = md.ShowAsync();
 		showTask.AsTask()
 			.ContinueWith(result =>

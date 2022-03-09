@@ -183,7 +183,13 @@ namespace Commerce
 			var forgotPasswordDialog = new MessageDialogViewMap(
 					Content: "Click OK, or Cancel",
 					Title: "Forgot your password!",
-					DelayUserInput: true
+					DelayUserInput: true,
+					DefaultButtonIndex: 1,
+					Buttons:new DialogAction[]
+					{
+						new(Label: "Yeh!",Id:"Y"),
+						new(Label: "Nah", Id:"N")
+					}
 				);
 
 			views.Register(
