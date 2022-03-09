@@ -1,5 +1,4 @@
-﻿<Project Sdk="MSBuild.Sdk.Extras"
-				 ToolsVersion="15.0">
+﻿<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
 	<PropertyGroup>
 		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'!=''">$(UnoTargetFrameworkOverride)</TargetFrameworks>
 		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'==''">netstandard2.0;netstandard2.1;net5.0;xamarinios10;xamarinmac20;monoandroid10.0;monoandroid11.0</TargetFrameworks>
@@ -17,24 +16,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Uno.UI" Version="4.0.13" />
+		<PackageReference Include="Uno.UI" Version="4.1.8" />
 	</ItemGroup>
 
 	<Import Project="common.props" />
 
 	<ItemGroup>
-		<ProjectReference Include="Uno.Extensions.Hosting.UWP.Wasm.csproj"
-											ReferenceOutputAssembly="false"
-											LinkLibraryDependencies="false"
-											CopyLocal="false"
-											SkipGetTargetFrameworkProperties="true"
-											GlobalPropertiesToRemove="TargetFramework" />
-		<ProjectReference Include="Uno.Extensions.Hosting.UWP.Skia.csproj"
-											ReferenceOutputAssembly="false"
-											LinkLibraryDependencies="false"
-											CopyLocal="false"
-											SkipGetTargetFrameworkProperties="true"
-											GlobalPropertiesToRemove="TargetFramework" />
+		<ProjectReference Include="Uno.Extensions.Hosting.UWP.Wasm.csproj" ReferenceOutputAssembly="false" LinkLibraryDependencies="false" CopyLocal="false" SkipGetTargetFrameworkProperties="true" GlobalPropertiesToRemove="TargetFramework" />
+		<ProjectReference Include="Uno.Extensions.Hosting.UWP.Skia.csproj" ReferenceOutputAssembly="false" LinkLibraryDependencies="false" CopyLocal="false" SkipGetTargetFrameworkProperties="true" GlobalPropertiesToRemove="TargetFramework" />
 	</ItemGroup>
 
 </Project>
