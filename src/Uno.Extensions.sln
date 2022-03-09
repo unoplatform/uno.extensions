@@ -86,7 +86,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Logging.WinU
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation.UI", "Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UI.csproj", "{1352EBF6-EAEC-420A-A86D-8FAA663C3C14}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation.Toolkit", "Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.UI.csproj", "{5A7CF237-8024-4702-BE2F-388A10745224}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation.Toolkit.UI", "Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.UI.csproj", "{5A7CF237-8024-4702-BE2F-388A10745224}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation.Toolkit.WinUI", "Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.WinUI.csproj", "{54E67E51-B1D0-4A3F-9EE9-A58329074CC3}"
 EndProject
@@ -94,7 +94,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.UI"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.UI.WinUI", "Uno.Extensions.Reactive.UI\Uno.Extensions.Reactive.UI.WinUI.csproj", "{0F3C7D7A-C57C-41C0-86B9-34C9B5A1643A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Templates", "Uno.Extensions.Templates\Uno.Extensions.Templates.csproj", "{EA4B5A09-CF0C-4B0F-9328-A3223D7A2BB2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Templates", "Uno.Extensions.Templates\Uno.Extensions.Templates.csproj", "{EA4B5A09-CF0C-4B0F-9328-A3223D7A2BB2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Logging.UWP.Wasm", "Uno.Extensions.Logging\Uno.Extensions.Logging.UWP.Wasm.csproj", "{ABEE641A-A845-468F-A877-1F8BC9AB4D34}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -250,6 +252,10 @@ Global
 		{EA4B5A09-CF0C-4B0F-9328-A3223D7A2BB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA4B5A09-CF0C-4B0F-9328-A3223D7A2BB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA4B5A09-CF0C-4B0F-9328-A3223D7A2BB2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABEE641A-A845-468F-A877-1F8BC9AB4D34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABEE641A-A845-468F-A877-1F8BC9AB4D34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABEE641A-A845-468F-A877-1F8BC9AB4D34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABEE641A-A845-468F-A877-1F8BC9AB4D34}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -289,6 +295,7 @@ Global
 		{54E67E51-B1D0-4A3F-9EE9-A58329074CC3} = {2B4C9E46-EA70-4ADE-B301-E2BB8CC31365}
 		{BFA2A242-D9AE-4FD3-935B-12F8FC08AF20} = {6B956AB1-06A6-4BEC-9467-E7B593A89E34}
 		{0F3C7D7A-C57C-41C0-86B9-34C9B5A1643A} = {6B956AB1-06A6-4BEC-9467-E7B593A89E34}
+		{ABEE641A-A845-468F-A877-1F8BC9AB4D34} = {DFA5C025-922C-4408-8489-D45786D0C5AA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6E7B035D-9A64-4D95-89AA-9D4653F17C42}
