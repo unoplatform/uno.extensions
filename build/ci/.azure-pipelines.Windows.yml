@@ -70,6 +70,10 @@ jobs:
       createLogFile: false
 
   - task: VisualStudioTestPlatformInstaller@1
+    displayName: 'Visual Studio Test Platform Installer'
+    inputs:
+      versionSelector: specificVersion
+      testPlatformVersion: 17.1
 
   - task: VSTest@2
     inputs:
@@ -77,7 +81,7 @@ jobs:
         **/*.testing*.dll
         **/*.tests*.dll
         !**/obj/**
-      vsTestVersion: 17.1.0
+      vsTestVersion: toolsInstaller
       testSelector: testAssemblies
 
   - task: PowerShell@2
