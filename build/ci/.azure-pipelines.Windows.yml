@@ -79,6 +79,7 @@ jobs:
     inputs:
       testAssemblyVer2: |
         **/*test*.dll
+        !**/*UItest*.dll
         !**/obj/**
       vsTestVersion: toolsInstaller
       testSelector: testAssemblies
