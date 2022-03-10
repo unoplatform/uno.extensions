@@ -2,9 +2,9 @@
 
 public static class RouteConstants
 {
-    public const string DialogPrefix = "__dialog__";
+    public const string DialogPrefix = "xxxxdialogxxxx";
 
-    public const string MessageDialogUri = "__md__";
+    public const string MessageDialogUri = "xxxxmessagedialogxxxx";
     public const string MessageDialogParameterContent = MessageDialogUri + "content";
     public const string MessageDialogParameterTitle = MessageDialogUri + "title";
     public const string MessageDialogParameterOptions = MessageDialogUri + "options";
@@ -12,7 +12,7 @@ public static class RouteConstants
     public const string MessageDialogParameterCancelCommand = MessageDialogUri + "cancel";
     public const string MessageDialogParameterCommands = MessageDialogUri + "commands";
 
-    private const string PickerPrefix = "__picker__";
+    private const string PickerPrefix = "xxxxpickerxxxxx";
     public const string PickerItemsSource = PickerPrefix + "itemssource";
     public const string PickerItemTemplate = PickerPrefix + "itemtemplate";
 

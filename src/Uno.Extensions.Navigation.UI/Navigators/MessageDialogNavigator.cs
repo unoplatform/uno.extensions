@@ -37,20 +37,20 @@ public class MessageDialogNavigator : DialogNavigator
 						titleValue as string :
 						messageView?.Title;
 		var options = data.TryGetValue(RouteConstants.MessageDialogParameterOptions, out var optionsValue) ?
-						(optionsValue is MessageDialogOptions opt)?opt:MessageDialogOptions.None :
-						(messageView?.DelayUserInput??false)? MessageDialogOptions.AcceptUserInputAfterDelay : MessageDialogOptions.None;
+						(optionsValue is MessageDialogOptions opt) ? opt : MessageDialogOptions.None :
+						(messageView?.DelayUserInput ?? false) ? MessageDialogOptions.AcceptUserInputAfterDelay : MessageDialogOptions.None;
 		var defaultIndex = (uint)(data.TryGetValue(RouteConstants.MessageDialogParameterDefaultCommand, out var defaultValue) ?
-						(defaultValue is int defIdx) ? defIdx: 0 :
+						(defaultValue is int defIdx) ? defIdx : 0 :
 						messageView?.DefaultButtonIndex ?? 0);
 		var cancelIndex = (uint)(data.TryGetValue(RouteConstants.MessageDialogParameterCancelCommand, out var cancelValue) ?
 						(cancelValue is int cancel) ? cancel : 0 :
 						messageView?.CancelButtonIndex ?? 0);
-		var buttons = data.TryGetValue(RouteConstants.MessageDialogParameterCommands, out var buttonValues) ?
+		var buttons = (data.TryGetValue(RouteConstants.MessageDialogParameterCommands, out var buttonValues) ?
 						buttonValues as DialogAction[] :
-						messageView?.Buttons;
+						messageView?.Buttons) ?? new DialogAction[] { };
 
-		var commands = (from b in buttons
-						select new UICommand(b.Label,new UICommandInvokedHandler(cmd => b.Action?.Invoke()), b.Id));;
+		var commands = from b in buttons
+					   select new UICommand(b.Label, new UICommandInvokedHandler(cmd => b.Action?.Invoke()), b.Id);
 
 		var md = new MessageDialog(
 			content,
@@ -68,7 +68,18 @@ public class MessageDialogNavigator : DialogNavigator
 				{
 					if (result.Status != TaskStatus.Canceled)
 					{
-						navigation?.NavigateBackWithResultAsync(request.Sender, data: Option.Some(result.Result));
+						var msgResult = result.Result;
+						var dialogAction = msgResult is not null ?
+											(buttons.FirstOrDefault(b => b.Label == msgResult.Label) ?? new DialogAction(Label: msgResult.Label, Id: msgResult.Id)) :
+											default;
+						if (dialogAction is not null)
+						{
+							navigation?.NavigateBackWithResultAsync(request.Sender, data: Option.Some(dialogAction));
+						}
+						else
+						{
+							navigation?.NavigateBackWithResultAsync(request.Sender, data: Option.None<DialogAction>());
+						}
 
 					}
 				},

@@ -23,10 +23,8 @@ public class RouteResolver : IRouteResolver
 
 
 		var messageDialogRoute = new RouteMap(
-			Path: typeof(MessageDialog).Name,
-			View: new ViewMap(
-			DynamicView: () => typeof(MessageDialog),
-			ResultData: typeof(MessageDialog))
+			Path: RouteConstants.MessageDialogUri,
+			View: new ViewMap<MessageDialog>(ResultData: typeof(MessageDialog))
 		);
 
 		// Make sure the message dialog is the last route to be listed
