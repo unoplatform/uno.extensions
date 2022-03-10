@@ -23,10 +23,8 @@ public class RouteResolver : IRouteResolver
 
 
 		var messageDialogRoute = new RouteMap(
-			Path: typeof(MessageDialog).Name,
-			View: new ViewMap(
-			View: typeof(MessageDialog),
-			ResultData: typeof(MessageDialog))
+			Path: RouteConstants.MessageDialogUri,
+			View: new ViewMap<MessageDialog>(ResultData: typeof(MessageDialog))
 		);
 
 		// Make sure the message dialog is the last route to be listed
@@ -41,6 +39,22 @@ public class RouteResolver : IRouteResolver
 	{
 	}
 
+	public RouteMap? Parent(RouteMap? routeMap)
+	{
+		if(routeMap is null)
+		{
+			return default;
+		}
+
+		return Mappings
+			.Where(
+				x => x.Value.Nested is not null &&
+					x.Value.Nested.Contains(routeMap))
+			.Select(x=>x.Value)
+			.FirstOrDefault();
+	}
+
+
 	public RouteMap? Find(Route? route) =>
 		route is not null ?
 			FindByPath(route.Base) ??
@@ -48,16 +62,19 @@ public class RouteResolver : IRouteResolver
 					(route.Data?.TryGetValue(String.Empty, out var data) ?? false) ?
 						FindByData(data.GetType()) :
 						default
-				):
+				) :
 			First;
 
 	public virtual RouteMap? FindByPath(string? path)
 	{
-		if (
-			path is null ||
-			string.IsNullOrWhiteSpace(path))
+		if (path is null)
 		{
 			return null;
+		}
+
+		if(path== string.Empty)
+		{
+			return First;
 		}
 
 		path = path.ExtractBase(out var nextQualifier, out var nextPath);
@@ -85,7 +102,7 @@ public class RouteResolver : IRouteResolver
 
 	public virtual RouteMap? FindByView(Type? viewType)
 	{
-		return FindRouteByType(viewType, map => map.View?.View);
+		return FindRouteByType(viewType, map => map.View?.RenderView);
 	}
 
 	public RouteMap? FindByData(Type? dataType)

@@ -187,4 +187,29 @@ public static class NavigatorExtensions
 	{
 		return service.NavigateAsync((Qualifiers.NavigateBack + string.Empty).WithQualifier(qualifier).AsRequest(sender, data, cancellation));
 	}
+
+	public static async Task<NavigationResultResponse<DialogAction>?> ShowMessageDialogAsync(
+		this INavigator service,
+		object sender,
+		string content,
+		string? title = null,
+		bool delayInput = false,
+		uint defaultCommandIndex = 0,
+		uint cancelCommandIndex = 0,
+		DialogAction[]? commands = null,
+		CancellationToken cancellation = default)
+	{
+		var data = new Dictionary<string, object>()
+			{
+				{ RouteConstants.MessageDialogParameterTitle, title! },
+				{ RouteConstants.MessageDialogParameterContent, content },
+				{ RouteConstants.MessageDialogParameterOptions, delayInput },
+				{ RouteConstants.MessageDialogParameterDefaultCommand, defaultCommandIndex },
+				{ RouteConstants.MessageDialogParameterCancelCommand, cancelCommandIndex },
+				{ RouteConstants.MessageDialogParameterCommands, commands! }
+			};
+
+		var result = await service.NavigateAsync((Qualifiers.Dialog + RouteConstants.MessageDialogUri).AsRequest<DialogAction>(sender, data, cancellation));
+		return result?.AsResult<DialogAction>();
+	}
 }

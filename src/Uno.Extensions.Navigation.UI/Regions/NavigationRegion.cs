@@ -65,7 +65,7 @@ public sealed class NavigationRegion : IRegion
 
 		if (services is not null)
         {
-			InitialiseRootRegion(services);
+			InitializeRootRegion(services);
         }
     }
 
@@ -74,7 +74,7 @@ public sealed class NavigationRegion : IRegion
 		this.Parent = null;
 	}
 
-	private void InitialiseRootRegion(IServiceProvider services)
+	private void InitializeRootRegion(IServiceProvider services)
 	{
 		_isRoot = true;
 		_services = services;
@@ -152,7 +152,7 @@ public sealed class NavigationRegion : IRegion
 				return;
 			}
 
-			InitialiseRootRegion(services);
+			InitializeRootRegion(services);
 
 			var nav = this.Navigator();
 			if (nav is not null)

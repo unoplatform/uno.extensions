@@ -1,50 +1,29 @@
-﻿
-namespace Uno.Extensions.Navigation.Navigators;
+﻿namespace Uno.Extensions.Navigation.Navigators;
 
 public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
-where TControl : class
+	where TControl : class
 {
-	protected abstract FrameworkElement? SelectedItem { get; set; }
+	private Action? _detachSelectionChanged;
 
-	protected abstract Action? AttachSelectionChanged(Action<FrameworkElement, FrameworkElement?> selectionChanged);
-
-	protected abstract IEnumerable<FrameworkElement>? Items { get; }
-
-	protected override FrameworkElement? CurrentView => SelectedItem;
-
-	private Action? DetachSelectionChanged { get; set; }
 	public override void ControlInitialize()
 	{
 		if (Control is not null)
 		{
-			DetachSelectionChanged = AttachSelectionChanged(SelectionChanged);
+			_detachSelectionChanged = AttachSelectionChanged(SelectionChanged);
 		}
 	}
+
+	protected abstract FrameworkElement? SelectedItem { get; set; }
+
+	protected abstract Action? AttachSelectionChanged(Action<FrameworkElement, FrameworkElement?> selectionChanged);
+
+	protected abstract IEnumerable<FrameworkElement> Items { get; }
+
+	protected override FrameworkElement? CurrentView => SelectedItem;
 
 	protected override bool CanNavigateToRoute(Route route) =>
-		!route.IsDialog() &&
-		(FindByPath(Resolver.Routes.Find(route)?.Path) is not null);
-
-	private async void SelectionChanged(FrameworkElement sender, FrameworkElement? selectedItem)
-	{
-		await selectedItem.EnsureLoaded();
-
-		var path = selectedItem?.GetName() ?? selectedItem?.Name;
-		if (path is null ||
-			string.IsNullOrEmpty(path))
-		{
-			return;
-		}
-
-			var nav = Region.Navigator();
-		if (nav is null)
-		{
-			return;
-		}
-
-		await nav.NavigateRouteAsync(sender, path);
-	}
-
+		base.CanNavigateToRoute(route) &&
+		(FindByPath(Resolver.Routes.Find(route)?.Path??route.Base) is not null);
 
 	protected SelectorNavigator(
 		ILogger logger,
@@ -62,11 +41,19 @@ where TControl : class
 			return null;
 		}
 
-		DetachSelectionChanged?.Invoke();
+		// Invoke detach and clean up reference to the delegate
+		var detach = _detachSelectionChanged;
+		_detachSelectionChanged = null;
+		detach?.Invoke();
 		try
 		{
 			var item = FindByPath(path);
-			if (item != null)
+
+			// Only set the selected item if it's changed (and not null)
+			// to prevent any visual artefacts that may result from setting
+			// the same item multiple times
+			if (item != null &&
+				SelectedItem != item)
 			{
 				SelectedItem = item;
 			}
@@ -77,9 +64,33 @@ where TControl : class
 		finally
 		{
 			await SelectedItem.EnsureLoaded();
-			DetachSelectionChanged = AttachSelectionChanged(SelectionChanged);
+
+			_detachSelectionChanged = AttachSelectionChanged(SelectionChanged);
 		}
 	}
+
+	private async void SelectionChanged(FrameworkElement sender, FrameworkElement? selectedItem)
+	{
+		if (selectedItem is null)
+		{
+			return;
+		}
+
+		await selectedItem.EnsureLoaded();
+
+		var path = selectedItem.GetRegionOrElementName();
+		var nav = Region.Navigator();
+
+		if (path is null ||
+			string.IsNullOrEmpty(path) ||
+			nav is null)
+		{
+			return;
+		}
+
+		await nav.NavigateRouteAsync(sender, path);
+	}
+
 
 	private FrameworkElement? FindByPath(string? path)
 	{
@@ -88,15 +99,8 @@ where TControl : class
 			return default;
 		}
 
-		var items = Items;
-
-		if (items == null)
-		{
-			return null;
-		}
-
 		var item = (from mi in Items
-					where (mi.GetName() ?? mi.Name) == path
+					where (mi.GetRegionOrElementName() == path)
 					select mi).FirstOrDefault();
 		return item;
 	}

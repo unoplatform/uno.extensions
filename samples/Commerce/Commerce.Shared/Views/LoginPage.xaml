@@ -4,6 +4,7 @@
 	  xmlns:local="using:ExtensionsSampleApp.Views.Twitter"
 	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  xmlns:utu="using:Uno.Toolkit.UI"
 	  mc:Ignorable="d"
 	  Background="{ThemeResource MaterialBackgroundBrush}">
@@ -41,6 +42,7 @@
 							 Style="{StaticResource MaterialFilledPasswordBoxStyle}" />
 				<HyperlinkButton Content="Forgot password?"
 								 x:Uid="Body_HyperlinkButton"
+								 uen:Navigation.Request="!Forgot"
 								 Style="{StaticResource MaterialHyperlinkButtonStyle}" />
 				<Button Content="Login"
 						AutomationProperties.AutomationId="Login"

@@ -1,6 +1,4 @@
 ﻿using Uno.Extensions.Logging;
-using Uno.Extensions.Navigation.Regions;
-using Uno.Extensions.Navigation.UI;
 
 namespace Uno.Extensions.Navigation.Navigators;
 
@@ -19,7 +17,7 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 
 	protected override bool CanNavigateToRoute(Route route)
 	{
-		if (route.IsDialog())
+		if (!base.CanNavigateToRoute(route))
 		{
 			return false;
 		}
@@ -29,7 +27,11 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 		{
 			return false;
 		}
-		return rm?.View?.View?.IsSubclassOf(typeof(FrameworkElement)) ?? true; // Inject a FrameView if no View specified
+
+		var view = rm?.View?.RenderView;
+
+		return ((view?.IsSubclassOf(typeof(Page))??false) && string.IsNullOrWhiteSpace( rm?.DependsOn))
+			|| (view?.IsSubclassOf(typeof(FrameworkElement)) ?? true); // Inject a FrameView if no View specified
 	}
 	protected override async Task<string?> Show(string? path, Type? viewType, object? data)
 	{

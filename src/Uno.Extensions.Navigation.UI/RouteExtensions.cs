@@ -6,14 +6,15 @@ public static class RouteExtensions
 {
 	public static bool IsFrameNavigation(this Route route) =>
 		// We want to make forward navigation between frames simple, so don't require +
-		route.Qualifier == Qualifiers.None || 
+		route.Qualifier == Qualifiers.None ||
 		route.Qualifier.StartsWith(Qualifiers.NavigateBack);
 
 	public static bool IsInternal(this Route route) => route.IsInternal;
 
 	public static bool IsRoot(this Route route) => route.Qualifier.StartsWith(Qualifiers.Root);
 
-	public static bool IsParent(this Route route) => route.Qualifier.StartsWith(Qualifiers.Parent);
+	// Note: Disabling parent routing - leaving this code in case parent routing is required
+	//public static bool IsParent(this Route route) => route.Qualifier.StartsWith(Qualifiers.Parent);
 
 	public static bool IsNested(this Route route) => route.Qualifier.StartsWith(Qualifiers.Nested);
 
@@ -56,7 +57,7 @@ public static class RouteExtensions
 
 	public static bool FrameIsForwardNavigation(this Route route) => !route.FrameIsBackNavigation();
 
-	public static Route[] ForwardNavigationSegments(this Route route, IRouteResolver mappings)
+	public static Route[] ForwardNavigationSegments(this Route route, Route? currentRoute, IRouteResolver mappings)
 	{
 		if (route.IsEmpty() || route.FrameIsBackNavigation())
 		{
@@ -76,7 +77,7 @@ public static class RouteExtensions
 					rm.IsPageRouteMap() &&
 					// Either this is the first segment (dependson should be "" as should be first in sequence) OR
 					// this is not the first segment (so dependson should be set)
-					(string.IsNullOrWhiteSpace(rm.DependsOn) ^ segments.Count > 0)
+					((string.IsNullOrWhiteSpace(rm.DependsOn) && segments.Count == 0) ^ ((segments.Count > 0 && segments[0].Base == rm.DependsOn) || (currentRoute?.Base == rm.DependsOn)))
 				)
 			)
 		)
@@ -119,7 +120,7 @@ public static class RouteExtensions
 			return route;
 		}
 
-		if(route.IsNested() && !handledRoute.IsNested())
+		if (route.IsNested() && !handledRoute.IsNested())
 		{
 			route = route.TrimQualifier(Qualifiers.Nested);
 		}
@@ -130,10 +131,16 @@ public static class RouteExtensions
 			handledRoute = handledRoute.Next();
 		}
 
-		if(route.Qualifier==Qualifiers.NavigateBack && route.Qualifier == handledRoute.Qualifier)
+		if (route.Qualifier == Qualifiers.NavigateBack && route.Qualifier == handledRoute.Qualifier)
 		{
 			route = route with { Qualifier = Qualifiers.None };
 		}
+
+		route = route with
+		{
+			Base = string.IsNullOrWhiteSpace(route.Base) ? null : route.Base,
+			Path = string.IsNullOrWhiteSpace(route.Path) ? null : route.Path
+		};
 
 		return route;
 	}
@@ -174,7 +181,7 @@ public static class RouteExtensions
 			Path = (routeToAppend.Qualifier == Qualifiers.Nested ? Qualifiers.Separator : routeToAppend.Qualifier) +
 					routeToAppend.Base +
 					routeToAppend.Path +
-					(((route.Path?.StartsWith(Qualifiers.Separator) ?? false) ) ?
+					(((route.Path?.StartsWith(Qualifiers.Separator) ?? false)) ?
 						string.Empty :
 						Qualifiers.Separator) +
 					route.Path
@@ -225,7 +232,7 @@ public static class RouteExtensions
 
 	public static bool IsPageRouteMap(this RouteMap? rm)
 	{
-		return (rm?.View?.View?.IsSubclassOf(typeof(Page)) ?? false);
+		return (rm?.View?.RenderView?.IsSubclassOf(typeof(Page)) ?? false);
 	}
 
 	public static bool IsLastFrameRoute(this Route route, IRouteResolver mappings)
@@ -255,7 +262,7 @@ public static class RouteExtensions
 		var _ = path.ExtractBase(out var qualifier, out var _);
 		return !string.IsNullOrWhiteSpace(qualifier);
 	}
-	
+
 
 	public static string FullPath(this Route route)
 	{
@@ -355,7 +362,7 @@ public static class RouteExtensions
 		}
 		else
 		{
-			var segments = currentRoute.ForwardNavigationSegments(resolver.Routes).ToList();
+			var segments = currentRoute.ForwardNavigationSegments(currentRoute, resolver.Routes).ToList();
 			foreach (var qualifierChar in qualifier)
 			{
 				if (qualifierChar + "" == Qualifiers.NavigateBack)
@@ -368,7 +375,7 @@ public static class RouteExtensions
 				}
 			}
 
-			var newSegments = frameRoute.ForwardNavigationSegments(resolver.Routes);
+			var newSegments = frameRoute.ForwardNavigationSegments(currentRoute, resolver.Routes);
 			if (newSegments is not null)
 			{
 				segments.AddRange(newSegments);

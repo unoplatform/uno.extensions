@@ -18,8 +18,11 @@ public class FlyoutNavigator : ControlNavigator
 	}
 
 	protected override bool CanNavigateToRoute(Route route) =>
-		route.IsBackOrCloseNavigation() ||
-		Resolver.Routes.Find(route)?.View?.View is not null;
+		base.CanNavigateToRoute(route) &&
+		(
+			route.IsBackOrCloseNavigation() ||
+			Resolver.Routes.Find(route)?.View?.RenderView is not null
+		);
 
 	protected override async Task<Route?> ExecuteRequestAsync(NavigationRequest request)
 	{
@@ -44,9 +47,9 @@ public class FlyoutNavigator : ControlNavigator
 			}
 
 			var mapping = Resolver.Routes.Find(route);
-			injectedFlyout = !(mapping?.View?.View?.IsSubclassOf(typeof(Flyout))??false);
-			var viewModel = CreateViewModel(Region.Services, route, mapping);
-			Flyout = await DisplayFlyout(request, mapping?.View?.View, viewModel, injectedFlyout);
+			injectedFlyout = !(mapping?.View?.RenderView?.IsSubclassOf(typeof(Flyout))??false);
+			var viewModel = CreateViewModel(Region.Services, request, route, mapping);
+			Flyout = await DisplayFlyout(request, mapping?.View?.RenderView, viewModel, injectedFlyout);
 		}
 		var responseRequest = injectedFlyout ? Route.Empty : route with { Path = null };
 		return responseRequest;

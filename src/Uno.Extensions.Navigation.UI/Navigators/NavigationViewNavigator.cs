@@ -3,11 +3,11 @@
 public class NavigationViewNavigator : SelectorNavigator<Microsoft.UI.Xaml.Controls.NavigationView>
 {
 	public NavigationViewNavigator(
-	ILogger<NavigationViewNavigator> logger,
-	IRegion region,
-	IResolver resolver,
-	RegionControlProvider controlProvider)
-	: base(logger, region, resolver, controlProvider)
+		ILogger<NavigationViewNavigator> logger,
+		IRegion region,
+		IResolver resolver,
+		RegionControlProvider controlProvider)
+		: base(logger, region, resolver, controlProvider)
 	{
 	}
 
@@ -23,12 +23,12 @@ public class NavigationViewNavigator : SelectorNavigator<Microsoft.UI.Xaml.Contr
 		}
 	}
 
-	protected override IEnumerable<FrameworkElement>? Items => Control?.MenuItems.OfType<FrameworkElement>();
+	protected override IEnumerable<FrameworkElement> Items => Control?.MenuItems.OfType<FrameworkElement>() ?? new FrameworkElement[] { };
 
 	protected override Action? AttachSelectionChanged(Action<FrameworkElement, FrameworkElement?> selectionChanged)
 	{
 		var control = Control;
-		if(control is null)
+		if (control is null)
 		{
 			return default;
 		}

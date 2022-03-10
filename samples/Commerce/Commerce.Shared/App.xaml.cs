@@ -180,12 +180,26 @@ namespace Commerce
 
 		private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 		{
+			var forgotPasswordDialog = new MessageDialogViewMap(
+					Content: "Click OK, or Cancel",
+					Title: "Forgot your password!",
+					DelayUserInput: true,
+					DefaultButtonIndex: 1,
+					Buttons:new DialogAction[]
+					{
+						new(Label: "Yeh!",Id:"Y"),
+						new(Label: "Nah", Id:"N")
+					}
+				);
+
 			views.Register(
 				new ViewMap(ViewModel: typeof(ShellViewModel)),
 				new ViewMap(View: typeof(LoginPage), ViewModel: typeof(LoginViewModel.BindableLoginViewModel), ResultData: typeof(Credentials)),
 				new ViewMap(View: typeof(HomePage), Data: new DataMap<Credentials>()),
 				new ViewMap(View: typeof(ProductsPage), ViewModel: typeof(ProductsViewModel.BindableProductsViewModel)),
-				new ViewMap(View: typeof(ProductDetailsPage), ViewModel: typeof(ProductDetailsViewModel.BindableProductDetailsViewModel), Data: new DataMap<Product>(
+				new ViewMap(DynamicView: () =>
+						   (App.Current as App)?.Window?.Content?.ActualSize.X > 800 ? typeof(ProductControl) : typeof(ProductDetailsPage),
+							ViewModel: typeof(ProductDetailsViewModel.BindableProductDetailsViewModel), Data: new DataMap<Product>(
 																						ToQuery: product => new Dictionary<string, string> { { nameof(Product.ProductId), product.ProductId.ToString() } },
 																						FromQuery: async (sp, query) =>
 																						{
@@ -211,24 +225,35 @@ namespace Commerce
 																							var p = products.FirstOrDefault(p => p.ProductId == id);
 																							return new CartItem(p, quantity);
 																						})),
-				new ViewMap(View: typeof(CheckoutPage))
+				new ViewMap(View: typeof(CheckoutPage)),
+				forgotPasswordDialog
 				);
 
 			routes
 				.Register(
 				views =>
-					new("Shell", View: views.FindByViewModel<ShellViewModel>(),
+					new("", View: views.FindByViewModel<ShellViewModel>(), // IsPrivate: true,
 							Nested: new RouteMap[]
 							{
-								new("Login", View: views.FindByResultData<Credentials>()),
+								new("Login", View: views.FindByResultData<Credentials>(),
+										Nested: new RouteMap[]
+										{
+											new ("Forgot", forgotPasswordDialog)
+										}),
 								new RouteMap("Home", View: views.FindByData<Credentials>(),
 										Nested: new RouteMap[]{
-											new ("Products", View: views.FindByViewModel<ProductsViewModel.BindableProductsViewModel>(),
-															IsDefault: true,
-															Nested: new  RouteMap[]{
-																new RouteMap("Filter",  View: views.FindByViewModel<FiltersViewModel.BindableFiltersViewModel>())
-															}),
-											new("Product", DependsOn:"Products", View: views.FindByViewModel<ProductDetailsViewModel.BindableProductDetailsViewModel>()),
+											new ("Products",
+													View: views.FindByViewModel<ProductsViewModel.BindableProductsViewModel>(),
+													IsDefault: true,
+													Nested: new  RouteMap[]{
+														new RouteMap("Filter",  View: views.FindByViewModel<FiltersViewModel.BindableFiltersViewModel>())
+													}),
+											new("Product",
+													View: views.FindByViewModel<ProductDetailsViewModel.BindableProductDetailsViewModel>(),
+													DependsOn:"Products"),
+												//	Init: req => (App.Current as App).Window.Content.ActualSize.X > 800 ?
+												//req with { Route = req.Route with {Base = "Details",Path="Products"} } :
+												//req),
 
 											new("Deals", View:views.FindByViewModel<DealsViewModel>()),
 

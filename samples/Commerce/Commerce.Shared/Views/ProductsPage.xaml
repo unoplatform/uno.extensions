@@ -10,6 +10,7 @@
 	  xmlns:utu="using:Uno.Toolkit.UI"
 	  xmlns:um="using:Uno.Material"
 	  mc:Ignorable="d"
+	  NavigationCacheMode="Required"
 	  Background="{ThemeResource MaterialBackgroundBrush}">
 
 	<Grid>
@@ -224,7 +225,6 @@
 			  Visibility="Collapsed">
 			<ContentControl
 							x:Name="Details"
-							uen:Region.Name="Product"
 							uen:Region.Attached="false"
 							Grid.Column="1"
 							HorizontalAlignment="Stretch"
