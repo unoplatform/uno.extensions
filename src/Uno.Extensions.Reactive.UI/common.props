@@ -12,7 +12,7 @@
   
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
-		<PackageReference Include="Uno.Foundation.Logging" Version="4.0.13" />
+		<PackageReference Include="Uno.Foundation.Logging" Version="4.1.8" />
 		<PackageReference Include="Uno.Core.Extensions.Logging.Singleton" Version="4.0.1" />
 		<PackageReference Include="Uno.Core.Extensions.Logging" Version="4.0.1" />
 	</ItemGroup>

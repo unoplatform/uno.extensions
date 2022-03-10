@@ -1,11 +1,11 @@
-﻿<Project Sdk="MSBuild.Sdk.Extras"  ToolsVersion="15.0">
+﻿<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
 	<!--
 	Adding project references to this project requires some manual adjustments.
 	Please see https://github.com/unoplatform/uno/issues/3909 for more details.
 	-->
 	<PropertyGroup>
 		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'!=''">$(UnoTargetFrameworkOverride)</TargetFrameworks>
-		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'==''">netstandard2.0;netstandard2.1;net5.0;xamarinios10;xamarinmac20;monoandroid10.0;monoandroid11.0</TargetFrameworks>
+		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'==''">netstandard2.0;netstandard2.1;net5.0;xamarinios10;xamarinmac20;monoandroid11.0</TargetFrameworks>
 		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'=='' and '$(UnoExtensionsDisableNet6)'==''">$(TargetFrameworks);net6.0;net5.0-windows10.0.18362.0;net6.0-windows10.0.18362.0;net6.0-ios;net6.0-android</TargetFrameworks>
 		<EnableDefaultPageItems>false</EnableDefaultPageItems>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
@@ -15,7 +15,7 @@
 	<Import Project="common.props" />
 
 	<ItemGroup>
-		<PackageReference Include="Uno.WinUI" Version="4.0.13" />
+		<PackageReference Include="Uno.WinUI" Version="4.1.8" />
 	</ItemGroup>
 	
 	<ItemGroup Condition="'$(TargetFramework)'=='net5.0-windows10.0.18362.0' or '$(TargetFramework)'=='net6.0-windows10.0.18362.0'">
