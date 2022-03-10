@@ -74,7 +74,8 @@ jobs:
   - task: VSTest@2
     inputs:
       testAssemblyVer2: |
-        **/*.test*.dll
+        **/*.testing*.dll
+        **/*.tests*.dll
         !**/obj/**
       vsTestVersion: toolsInstaller
       testSelector: testAssemblies
