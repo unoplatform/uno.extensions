@@ -16,7 +16,7 @@ public class ViewResolver : IViewResolver
 
 	public virtual ViewMap? FindByView(Type? viewType)
 	{
-		return FindByInheritedTypes(_views, viewType, map => map.View);
+		return FindByInheritedTypes(_views, viewType, map => map.RenderView);
 	}
 
 	public ViewMap? FindByData(Type? dataType)

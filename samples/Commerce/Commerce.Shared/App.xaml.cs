@@ -194,9 +194,9 @@ namespace Commerce
 
 			views.Register(
 				new ViewMap(ViewModel: typeof(ShellViewModel)),
-				new ViewMap(DynamicView: () => typeof(LoginPage), ViewModel: typeof(LoginViewModel.BindableLoginViewModel), ResultData: typeof(Credentials)),
-				new ViewMap(DynamicView: () => typeof(HomePage), Data: new DataMap<Credentials>()),
-				new ViewMap(DynamicView: () => typeof(ProductsPage), ViewModel: typeof(ProductsViewModel.BindableProductsViewModel)),
+				new ViewMap(View: typeof(LoginPage), ViewModel: typeof(LoginViewModel.BindableLoginViewModel), ResultData: typeof(Credentials)),
+				new ViewMap(View: typeof(HomePage), Data: new DataMap<Credentials>()),
+				new ViewMap(View: typeof(ProductsPage), ViewModel: typeof(ProductsViewModel.BindableProductsViewModel)),
 				new ViewMap(DynamicView: () =>
 						   (App.Current as App)?.Window?.Content?.ActualSize.X > 800 ? typeof(ProductControl) : typeof(ProductDetailsPage),
 							ViewModel: typeof(ProductDetailsViewModel.BindableProductDetailsViewModel), Data: new DataMap<Product>(
@@ -208,11 +208,11 @@ namespace Commerce
 																							var products = await ps.GetProducts(default, default);
 																							return products.FirstOrDefault(p => p.ProductId == id);
 																						})),
-				new ViewMap(DynamicView: () => typeof(FilterPage), ViewModel: typeof(FiltersViewModel.BindableFiltersViewModel), Data: new DataMap<Filters>()),
-				new ViewMap(DynamicView: () => typeof(DealsPage), ViewModel: typeof(DealsViewModel)),
-				new ViewMap(DynamicView: () => typeof(ProfilePage), ViewModel: typeof(ProfileViewModel)),
-				new ViewMap(DynamicView: () => typeof(CartPage), ViewModel: typeof(CartViewModel)),
-				new ViewMap(DynamicView: () => typeof(ProductDetailsPage), ViewModel: typeof(CartProductDetailsViewModel.BindableCartProductDetailsViewModel), Data: new DataMap<CartItem>(
+				new ViewMap(View: typeof(FilterPage), ViewModel: typeof(FiltersViewModel.BindableFiltersViewModel), Data: new DataMap<Filters>()),
+				new ViewMap(View: typeof(DealsPage), ViewModel: typeof(DealsViewModel)),
+				new ViewMap(View: typeof(ProfilePage), ViewModel: typeof(ProfileViewModel)),
+				new ViewMap(View: typeof(CartPage), ViewModel: typeof(CartViewModel)),
+				new ViewMap(View: typeof(ProductDetailsPage), ViewModel: typeof(CartProductDetailsViewModel.BindableCartProductDetailsViewModel), Data: new DataMap<CartItem>(
 																						ToQuery: cartItem => new Dictionary<string, string> {
 																							{ nameof(Product.ProductId), cartItem.Product.ProductId.ToString() },
 																							{ nameof(CartItem.Quantity),cartItem.Quantity.ToString() } },
@@ -225,7 +225,7 @@ namespace Commerce
 																							var p = products.FirstOrDefault(p => p.ProductId == id);
 																							return new CartItem(p, quantity);
 																						})),
-				new ViewMap(DynamicView: () => typeof(CheckoutPage)),
+				new ViewMap(View: typeof(CheckoutPage)),
 				forgotPasswordDialog
 				);
 

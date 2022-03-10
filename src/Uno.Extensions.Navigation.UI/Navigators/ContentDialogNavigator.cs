@@ -15,7 +15,7 @@ public class ContentDialogNavigator : DialogNavigator
 
 	protected override bool CanNavigateToRoute(Route route) =>
 			base.CanNavigateToRoute(route) &&
-			(Resolver.Routes.Find(route)?.View?.View?.IsSubclassOf(typeof(ContentDialog)) ?? false);
+			(Resolver.Routes.Find(route)?.View?.RenderView?.IsSubclassOf(typeof(ContentDialog)) ?? false);
 
 	protected override async Task<IAsyncInfo?> DisplayDialog(NavigationRequest request, Type? viewType, object? viewModel)
 	{
@@ -26,12 +26,12 @@ public class ContentDialogNavigator : DialogNavigator
 		if (
 			navigation is null ||
 			services is null ||
-			mapping?.View?.View is null)
+			mapping?.View?.RenderView is null)
 		{
 			return null;
 		}
 
-		var dialog = Activator.CreateInstance(mapping.View.View) as ContentDialog;
+		var dialog = Activator.CreateInstance(mapping.View.RenderView) as ContentDialog;
 		if (dialog is null)
 		{
 			return null;

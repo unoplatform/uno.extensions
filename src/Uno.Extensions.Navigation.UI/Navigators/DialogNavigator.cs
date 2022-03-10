@@ -29,7 +29,7 @@ public abstract class DialogNavigator : ControlNavigator
         {
             var mapping = Resolver.Routes.Find(route);
             var viewModel = (Region.Services is not null && mapping?.View?.ViewModel is not null) ? CreateViewModel(Region.Services, request, route, mapping) : default(object);
-            ShowTask = await DisplayDialog(request, mapping?.View?.View, viewModel);
+            ShowTask = await DisplayDialog(request, mapping?.View?.RenderView, viewModel);
         }
         var responseRequest = route with { Path = null };
         return responseRequest;

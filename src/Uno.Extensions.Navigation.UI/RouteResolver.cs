@@ -104,7 +104,7 @@ public class RouteResolver : IRouteResolver
 
 	public virtual RouteMap? FindByView(Type? viewType)
 	{
-		return FindRouteByType(viewType, map => map.View?.View);
+		return FindRouteByType(viewType, map => map.View?.RenderView);
 	}
 
 	public RouteMap? FindByData(Type? dataType)

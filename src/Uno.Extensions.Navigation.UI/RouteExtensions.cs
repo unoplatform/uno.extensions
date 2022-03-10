@@ -232,7 +232,7 @@ public static class RouteExtensions
 
 	public static bool IsPageRouteMap(this RouteMap? rm)
 	{
-		return (rm?.View?.View?.IsSubclassOf(typeof(Page)) ?? false);
+		return (rm?.View?.RenderView?.IsSubclassOf(typeof(Page)) ?? false);
 	}
 
 	public static bool IsLastFrameRoute(this Route route, IRouteResolver mappings)

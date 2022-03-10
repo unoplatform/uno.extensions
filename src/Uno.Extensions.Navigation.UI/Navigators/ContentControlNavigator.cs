@@ -28,7 +28,7 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 			return false;
 		}
 
-		var view = rm?.View?.View;
+		var view = rm?.View?.RenderView;
 
 		return ((view?.IsSubclassOf(typeof(Page))??false) && string.IsNullOrWhiteSpace( rm?.DependsOn))
 			|| (view?.IsSubclassOf(typeof(FrameworkElement)) ?? true); // Inject a FrameView if no View specified

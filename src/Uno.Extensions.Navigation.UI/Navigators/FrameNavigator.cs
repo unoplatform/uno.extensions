@@ -53,7 +53,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 		var rm = Resolver.Routes.FindByPath(route.Base);
 
 		// Can only navigate the frame to a page
-		var viewType = rm?.View?.View;
+		var viewType = rm?.View?.RenderView;
 		if (
 			viewType is null ||
 			!viewType.IsSubclassOf(typeof(Page))
@@ -77,8 +77,8 @@ public class FrameNavigator : ControlNavigator<Frame>
 				// or elsewhere on the backstack
 				if (
 					!(
-						Control.SourcePageType == dependsRM?.View?.View ||
-						Control.BackStack.Any(entry => entry.SourcePageType == dependsRM?.View?.View)
+						Control.SourcePageType == dependsRM?.View?.RenderView ||
+						Control.BackStack.Any(entry => entry.SourcePageType == dependsRM?.View?.RenderView)
 					)
 				)
 				{
@@ -115,8 +115,8 @@ public class FrameNavigator : ControlNavigator<Frame>
 		var route = request.Route;
 		var segments = (from pg in route.ForwardNavigationSegments(FullRoute, Resolver.Routes)
 						let map = Resolver.Routes.FindByPath(pg.Base)
-						where map?.View?.View is not null &&
-								map.View.View.IsSubclassOf(typeof(Page))
+						where map?.View?.RenderView is not null &&
+								map.View.RenderView.IsSubclassOf(typeof(Page))
 						select new { Route = pg, Map = map }).ToArray();
 		if (segments.Length == 0)
 		{
@@ -135,9 +135,9 @@ public class FrameNavigator : ControlNavigator<Frame>
 
 			// Need to navigate the underlying frame if it's not already
 			// displaying the correct page
-			if (Control.SourcePageType != navSegment.Map.View?.View)
+			if (Control.SourcePageType != navSegment.Map.View?.RenderView)
 			{
-				await Show(navSegment.Route.Base, navSegment.Map.View?.View, navSegment.Route.Data);
+				await Show(navSegment.Route.Base, navSegment.Map.View?.RenderView, navSegment.Route.Data);
 			}
 			else
 			{
@@ -157,9 +157,9 @@ public class FrameNavigator : ControlNavigator<Frame>
 				var seg = segments[i];
 				var entry = i < (Control?.BackStack.Count ?? 0) ? Control?.BackStack[i] : default;
 				if (entry is null ||
-					entry.SourcePageType != seg.Map.View?.View)
+					entry.SourcePageType != seg.Map.View?.RenderView)
 				{
-					var newEntry = new PageStackEntry(seg.Map.View?.View, null, null);
+					var newEntry = new PageStackEntry(seg.Map.View?.RenderView, null, null);
 					Control?.BackStack.Add(newEntry);
 				}
 				firstSegment = firstSegment.Append(segments[i + 1].Route);
@@ -185,13 +185,13 @@ public class FrameNavigator : ControlNavigator<Frame>
 			for (var i = 0; i < segments.Length - 1; i++)
 			{
 				var seg = segments[i];
-				var newEntry = new PageStackEntry(seg.Map.View?.View, null, null);
+				var newEntry = new PageStackEntry(seg.Map.View?.RenderView, null, null);
 				Control?.BackStack.Add(newEntry);
 				route = route.Trim(seg.Route);
 				firstSegment = firstSegment.Append(segments[i + 1].Route);
 			}
 
-			await Show(segments.Last().Route.Base, segments.Last().Map.View?.View, route.Data);
+			await Show(segments.Last().Route.Base, segments.Last().Map.View?.RenderView, route.Data);
 
 			// If path starts with / then remove all prior pages and corresponding contexts
 			if (route.FrameIsRooted())

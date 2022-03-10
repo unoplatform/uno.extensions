@@ -42,7 +42,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 		var route = request.Route;
 		var mapping = Resolver.Routes.Find(route);
 
-		var executedPath = await Show(mapping?.Path ?? route.Base, mapping?.View?.View, route.Data);
+		var executedPath = await Show(mapping?.Path ?? route.Base, mapping?.View?.RenderView, route.Data);
 
 		if (executedPath is null)
 		{

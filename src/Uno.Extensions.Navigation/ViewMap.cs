@@ -2,13 +2,14 @@
 
 #pragma warning disable SA1313 // Parameter names should begin with lower-case letter
 public record ViewMap(
+	Type? View = null,
 	Func<Type?>? DynamicView = null,
 	Type? ViewModel = null,
 	DataMap? Data = null,
 	Type? ResultData = null
 )
 {
-	public Type? View => DynamicView?.Invoke();
+	public Type? RenderView => View??DynamicView?.Invoke();
 
 	internal void RegisterTypes(IServiceCollection services)
 	{
@@ -25,14 +26,14 @@ public record ViewMap<TView>(
 	Type? ViewModel = null,
 	DataMap? Data = null,
 	Type? ResultData = null
-) : ViewMap(() => typeof(TView), ViewModel, Data, ResultData)
+) : ViewMap(View: typeof(TView), ViewModel: ViewModel, Data: Data, ResultData: ResultData)
 {
 }
 
 public record ViewMap<TView, TViewModel>(
 	DataMap? Data = null,
 	Type? ResultData = null
-) : ViewMap(() => typeof(TView), typeof(TViewModel), Data, ResultData)
+) : ViewMap(View: typeof(TView), ViewModel: typeof(TViewModel), Data: Data, ResultData: ResultData)
 {
 }
 

@@ -107,7 +107,7 @@ public class NavigatorFactory : INavigatorFactory
 		services.AddInstance<IRegion>(dialogRegion);
 
 		var mapping = Resolver.Routes.FindByPath(request.Route.Base);
-		var serviceLookupType = mapping?.View?.View;
+		var serviceLookupType = mapping?.View?.RenderView;
 		if (serviceLookupType is null)
 		{
 			object? resource = request.RouteResourceView(region);
