@@ -17,7 +17,7 @@
 		<!-- Bundles the WinAppSDK binaries (Uncomment for unpackaged builds) -->
 		<!-- <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained> -->
 		<!-- This bundles the .NET Core libraries (Uncomment for packaged builds)  -->
-		<SelfContained>true</SelfContained>
+		<!--<SelfContained>true</SelfContained>-->
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -41,11 +41,11 @@
 		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.18362.22" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Uno.WinUI" Version="4.0.13" />
-		<PackageReference Include="Uno.Core" Version="4.0.1" />
-		<PackageReference Include="Uno.Material.WinUI" Version="1.3.1" />
-		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="1.3.0" />
-		<PackageReference Include="Uno.Toolkit.WinUI" Version="1.3.0" />
+		<PackageReference Include="Uno.WinUI" Version="4.1.8" />
+    <PackageReference Include="Uno.Core" Version="4.0.1" />
+    <!--<PackageReference Include="Uno.Material.WinUI" Version="1.2.0" />
+    <PackageReference Include="Uno.Toolkit.WinUI.Material" Version="1.2.1" />-->
+    <PackageReference Include="Uno.Toolkit.WinUI" Version="1.2.1" />
 		<PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.0" />
 	</ItemGroup>
 
