@@ -36,20 +36,36 @@
 	</ItemGroup>
 	
 	<ItemGroup>
+		<Content Include="content\unoapp-commerce\**" KeepDuplicates="False">
+			<PackagePath>content\unoapp-commerce</PackagePath>
+			<Pack>true</Pack>
+		</Content>
 		<Content Include="content\unoapp-extensions\**" KeepDuplicates="False">
 			<PackagePath>content\unoapp-extensions</PackagePath>
 			<Pack>true</Pack>
 		</Content>
+		<Content Include="content\unoapp-extensions-net6\**" KeepDuplicates="False">
+			<PackagePath>content\unoapp-extensions-net6</PackagePath>
+			<Pack>true</Pack>
+		</Content>
 	</ItemGroup>
+
+	<Target Name="ReplaceTemplateCode" BeforeTargets="BeforeBuild">
+		<ItemGroup>
+			<MyTemplateSourceFiles Include="content\unoapp-extensions-net6\MyExtensionsApp.Shared\**\*" />
+		</ItemGroup>
+
+		<Copy SourceFiles="@(MyTemplateSourceFiles)" DestinationFiles="@(MyTemplateSourceFiles->'content\unoapp-extensions\MyExtensionsApp.Shared\%(RecursiveDir)%(Filename)%(Extension)')" />
+	</Target>
 
 	<Target Name="ReplaceVersions" BeforeTargets="BeforeBuild" Condition="'$(PackageVersion)'!='255.255.255.255'">
 		<ItemGroup>
 			<MySourceFiles Include="..\..\samples\Commerce\Commerce.Shared\**\*" />
 		</ItemGroup>
 
-		<Copy SourceFiles="@(MySourceFiles)" DestinationFiles="@(MySourceFiles->'content\unoapp-extensions\MyExtensionsApp.Shared\%(RecursiveDir)%(Filename)%(Extension)')" />
+		<Copy SourceFiles="@(MySourceFiles)" DestinationFiles="@(MySourceFiles->'content\unoapp-commerce\MyExtensionsApp.Shared\%(RecursiveDir)%(Filename)%(Extension)')" />
 
-		<RenameFiles SourcePath="content\unoapp-extensions\MyExtensionsApp.Shared" SourceName="Commerce" TargetName="MyExtensionsApp" />
+		<RenameFiles SourcePath="content\unoapp-commerce\MyExtensionsApp.Shared" SourceName="Commerce" TargetName="MyExtensionsApp" />
 		
 		<PropertyGroup>
 			<MSBuildDeveloperNamespace>

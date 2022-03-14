@@ -1,0 +1,14 @@
+{
+  "solution": {
+    "path": "MyExtensionsApp.sln",
+    "projects": [
+		"MyExtensionsApp.Shared\\MyExtensionsApp.Shared.shproj",
+
+		"MyExtensionsApp.Mobile\\MyExtensionsApp.Mobile.csproj",
+
+		"MyExtensionsApp.Wasm\\MyExtensionsApp.Wasm.csproj",
+
+		"MyExtensionsApp.Skia.Gtk\\MyExtensionsApp.Skia.Gtk.csproj",
+    ]
+  }
+}
