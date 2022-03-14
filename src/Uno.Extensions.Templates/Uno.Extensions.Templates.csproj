@@ -50,6 +50,14 @@
 		</Content>
 	</ItemGroup>
 
+	<Target Name="ReplaceTemplateCode" BeforeTargets="BeforeBuild">
+		<ItemGroup>
+			<MyTemplateSourceFiles Include="content\unoapp-extensions-net6\MyExtensionsApp.Shared\**\*" />
+		</ItemGroup>
+
+		<Copy SourceFiles="@(MyTemplateSourceFiles)" DestinationFiles="@(MyTemplateSourceFiles->'content\unoapp-extensions\MyExtensionsApp.Shared\%(RecursiveDir)%(Filename)%(Extension)')" />
+	</Target>
+
 	<Target Name="ReplaceVersions" BeforeTargets="BeforeBuild" Condition="'$(PackageVersion)'!='255.255.255.255'">
 		<ItemGroup>
 			<MySourceFiles Include="..\..\samples\Commerce\Commerce.Shared\**\*" />
