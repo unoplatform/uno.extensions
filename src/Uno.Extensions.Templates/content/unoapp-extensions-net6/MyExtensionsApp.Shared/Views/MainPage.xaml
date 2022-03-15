@@ -15,7 +15,18 @@
 			<RowDefinition />
 		</Grid.RowDefinitions>
 		<utu:NavigationBar Content="Main Page" />
-		<Button Content="Go to Second Page" Grid.Row="1"
-				uen:Navigation.Request="Second" />
+		<StackPanel Grid.Row="1"
+					HorizontalAlignment="Center"
+					VerticalAlignment="Center">
+			<Button Content="Go to Second Page - XAML"
+					HorizontalAlignment="Stretch"
+					uen:Navigation.Request="Second" />
+			<Button Content="Go to Second Page - CodeBehind"
+					HorizontalAlignment="Stretch"
+					Click="GoToSecondPageClick"/>
+			<Button Content="Go to Second Page - ViewModel"
+					HorizontalAlignment="Stretch"
+					Click="{x:Bind ViewModel.GoToSecondPage}"/>
+		</StackPanel>
 	</Grid>
 </Page>
