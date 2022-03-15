@@ -300,7 +300,7 @@ namespace Playground
 			// RouteMap required for Shell if initialRoute or initialViewModel isn't specified when calling NavigationHost
 			routes.Register(
 				views =>
-				new RouteMap("Shell", View: views.FindByViewModel<ShellViewModel>(),
+				new RouteMap("", View: views.FindByViewModel<ShellViewModel>(),
 				Nested: new[]
 				{
 					new RouteMap("Home",View: views.FindByView<HomePage>()),

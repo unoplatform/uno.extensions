@@ -10,6 +10,9 @@ using Microsoft.UI.Xaml.Navigation;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 using Window = Microsoft.UI.Xaml.Window;
 using CoreApplication = Windows.ApplicationModel.Core.CoreApplication;
+using Uno.Extensions;
+using Uno.Extensions.Navigation;
+using MyExtensionsApp.ViewModels;
 #else
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -29,11 +32,27 @@ namespace MyExtensionsApp.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainPage : Page
+    public sealed partial class MainPage : Page, IInjectable<INavigator>
     {
+		public MainViewModel ViewModel { get; private set; }
         public MainPage()
         {
             this.InitializeComponent();
-        }
-    }
+
+			DataContextChanged += (_, changeArgs) => ViewModel = changeArgs.NewValue as MainViewModel;
+
+		}
+
+		public void GoToSecondPageClick(object sender, RoutedEventArgs arg)
+		{
+			_navigator.NavigateViewAsync<SecondPage>(this);
+		}
+
+		public void Inject(INavigator navigator)
+		{
+			_navigator = navigator;
+		}
+
+		private INavigator _navigator;
+	}
 }

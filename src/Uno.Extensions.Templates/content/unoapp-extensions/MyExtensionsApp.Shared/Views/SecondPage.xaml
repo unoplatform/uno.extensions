@@ -9,6 +9,11 @@
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
 	<Grid>
-		<utu:NavigationBar Content="Second Page"/>
+		<utu:NavigationBar Content="Second Page" Style="{StaticResource MaterialRootModalNavigationBarStyle}">
+				<utu:NavigationBar.MainCommand>
+					<AppBarButton uen:Navigation.Request="-"
+								  Foreground="{StaticResource MaterialOnSurfaceBrush}" />
+				</utu:NavigationBar.MainCommand>
+			</utu:NavigationBar>
 	</Grid>
 </Page>

@@ -55,10 +55,10 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Creating instance of type '{viewType.Name}'");
 			var content = Activator.CreateInstance(viewType);
-			if (!string.IsNullOrWhiteSpace(path) &&
+			if (path is not null &&
 					content is UI.Controls.FrameView fe)
 			{
-				fe.SetName(path ?? string.Empty);
+				fe.SetName(path);
 			}
 			Control.Content = content;
 

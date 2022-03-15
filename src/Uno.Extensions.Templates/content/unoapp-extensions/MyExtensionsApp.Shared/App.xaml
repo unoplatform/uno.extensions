@@ -17,18 +17,17 @@
 								OverrideSource="ms-appx:///ColorPaletteOverride.xaml" />
 				<MaterialFonts xmlns="using:Uno.Material"
 							   OverrideSource="ms-appx:///MaterialFontsOverride.xaml" />-->
-
+				
 				<!-- Load the Material control resources -->
-				<!--<MaterialResources xmlns="using:Uno.Material" WithImplicitStyles="True" />-->
+				<MaterialResources xmlns="using:Uno.Material" WithImplicitStyles="True" />
 				<ToolkitResources xmlns="using:Uno.Toolkit.UI" />
 
 				<!-- Load Material Toolkit resources -->
-				<!--<MaterialToolkitColors xmlns="using:Uno.Toolkit.UI.Material" />
-				<MaterialToolkitResources xmlns="using:Uno.Toolkit.UI.Material" />-->
+				<MaterialToolkitColors xmlns="using:Uno.Toolkit.UI.Material" />
+				<MaterialToolkitResources xmlns="using:Uno.Toolkit.UI.Material" />
 
 				<!-- Application's custom styles -->
-				<!--<ResourceDictionary Source="ms-appx:///Styles/FeedView.xaml" />
-				<ResourceDictionary Source="ms-appx:///Styles/NavigationBar.xaml" />-->
+				<ResourceDictionary Source="ms-appx:///Styles/NavigationBar.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 			
 			<x:Double x:Key="LandscapeMaxPageWidth">500</x:Double>
