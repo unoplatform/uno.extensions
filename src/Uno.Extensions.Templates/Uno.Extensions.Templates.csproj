@@ -36,8 +36,8 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-		<Content Include="content\unoapp-commerce\**" KeepDuplicates="False">
-			<PackagePath>content\unoapp-commerce</PackagePath>
+		<Content Include="content\unoapp-samples-commerce\**" KeepDuplicates="False">
+			<PackagePath>content\unoapp-samples-commerce</PackagePath>
 			<Pack>true</Pack>
 		</Content>
 		<Content Include="content\unoapp-extensions\**" KeepDuplicates="False">
@@ -63,9 +63,9 @@
 			<MySourceFiles Include="..\..\samples\Commerce\Commerce.Shared\**\*" />
 		</ItemGroup>
 
-		<Copy SourceFiles="@(MySourceFiles)" DestinationFiles="@(MySourceFiles->'content\unoapp-commerce\MyExtensionsApp.Shared\%(RecursiveDir)%(Filename)%(Extension)')" />
+		<Copy SourceFiles="@(MySourceFiles)" DestinationFiles="@(MySourceFiles->'content\unoapp-samples-commerce\MyExtensionsApp.Shared\%(RecursiveDir)%(Filename)%(Extension)')" />
 
-		<RenameFiles SourcePath="content\unoapp-commerce\MyExtensionsApp.Shared" SourceName="Commerce" TargetName="MyExtensionsApp" />
+		<RenameFiles SourcePath="content\unoapp-samples-commerce\MyExtensionsApp.Shared" SourceName="Commerce" TargetName="MyExtensionsApp" />
 		
 		<PropertyGroup>
 			<MSBuildDeveloperNamespace>

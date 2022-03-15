@@ -21,7 +21,7 @@
     "language": "C#",
     "type": "project"
   },
-  "shortName": "unoapp-commerce",
+  "shortName": "unoapp-samples-commerce",
   "sourceName": "MyExtensionsApp",
   "defaultName": "UnoApp",
   "placeholderFilename": "template-ignore",
