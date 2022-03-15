@@ -275,7 +275,8 @@ namespace Playground
 		private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 		{
 			views.Register(
-						new ViewMap(ViewModel: typeof(ShellViewModel)),
+						new ViewMap<ShellView,ShellViewModel>(),
+						//new ViewMap(ViewModel: typeof(ShellViewModel)),
 						new ViewMap<HomePage, HomeViewModel>(),
 						new ViewMap<CodeBehindPage>(),
 						new ViewMap<VMPage, VMViewModel>(),

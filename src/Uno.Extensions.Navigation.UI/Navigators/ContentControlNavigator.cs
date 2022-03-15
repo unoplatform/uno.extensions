@@ -30,8 +30,16 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 
 		var view = rm?.View?.RenderView;
 
-		return ((view?.IsSubclassOf(typeof(Page))??false) && string.IsNullOrWhiteSpace( rm?.DependsOn))
-			|| (view?.IsSubclassOf(typeof(FrameworkElement)) ?? true); // Inject a FrameView if no View specified
+		return (
+					(view?.IsSubclassOf(typeof(Page)) ?? false) &&
+					string.IsNullOrWhiteSpace(rm?.DependsOn) &&
+					Region.Children.Count == 0
+				)
+				||
+				(
+					!(view?.IsSubclassOf(typeof(Page)) ?? false) &&
+					(view?.IsSubclassOf(typeof(FrameworkElement)) ?? true) // Inject a FrameView if no View specified (ie return true if view is null)
+				); 
 	}
 	protected override async Task<string?> Show(string? path, Type? viewType, object? data)
 	{
