@@ -9,7 +9,8 @@
 	  Background="{ThemeResource MaterialBackgroundBrush}">
 
 	<Grid>
-		<utu:NavigationBar Content="Second Page" Style="{StaticResource MaterialRootModalNavigationBarStyle}">
+		<utu:NavigationBar Content="Second Page" 
+				Style="{StaticResource MaterialNavigationBarStyle}">
 				<utu:NavigationBar.MainCommand>
 					<AppBarButton Foreground="{StaticResource MaterialOnPrimaryMediumBrush}">
 							<AppBarButton.Icon>

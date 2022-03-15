@@ -193,7 +193,7 @@ namespace MyExtensionsApp
 													),
 											new("Second",
 													View: views.FindByViewModel<SecondViewModel>(),
-													DependsOn:"Home"),
+													DependsOn:"Main"),
 							}));
 		}
 

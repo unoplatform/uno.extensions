@@ -7,7 +7,7 @@
 	  mc:Ignorable="d"
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  xmlns:utu="using:Uno.Toolkit.UI"
-	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+	 Background="{ThemeResource MaterialBackgroundBrush}">
 
 	<Grid>
 		<Grid.RowDefinitions>

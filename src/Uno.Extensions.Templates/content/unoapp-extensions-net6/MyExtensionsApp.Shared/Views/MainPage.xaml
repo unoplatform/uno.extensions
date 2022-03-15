@@ -14,7 +14,8 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
 		</Grid.RowDefinitions>
-		<utu:NavigationBar Content="Main Page" />
+		<utu:NavigationBar Content="Main Page" 
+				Style="{StaticResource MaterialNavigationBarStyle}"/>
 		<StackPanel Grid.Row="1"
 					HorizontalAlignment="Center"
 					VerticalAlignment="Center">
