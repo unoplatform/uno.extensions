@@ -142,7 +142,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			{
 				// If parent's Parent is null, then parent is the root
 				// so trim the root qualifier.
-				request = request with { Route = request.Route.TrimQualifier(Qualifiers.Root) };
+				request = request with { Route = request.Route.TrimQualifier(Qualifiers.Root) with { IsInternal = true } };
 			}
 
 			// If the original request came into the root navigator, then

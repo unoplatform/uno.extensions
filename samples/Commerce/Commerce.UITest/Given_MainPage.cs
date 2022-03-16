@@ -13,14 +13,14 @@ namespace Uno.Gallery.UITests
 		[Test]
 		public void When_SmokeTest()
 		{
-			App.WaitForElement(q => q.Marked("UserName"), timeout: TimeSpan.FromSeconds(10));
+			App.WaitForElement(q => q.Marked("UserName"));
 
 			App.EnterText("UserName", "test@test.com");
 			App.EnterText("Password", "passwordpassword");
 
 			App.Tap("Login");
 
-			App.WaitForElement(q => q.Marked("Filters"), timeout: TimeSpan.FromSeconds(10));
+			App.WaitForElement(q => q.Marked("Filters"));
 		}
 	}
 }

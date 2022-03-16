@@ -66,4 +66,21 @@ jobs:
         {
             throw "Exit code must be zero."
         }
+        cd ..
+        # Remove validation for net6 template as it's been temporarily removed
+        # dotnet new unoapp-extensions-net6 --material -o UnoNet6App01
+        # cd UnoNet6App01
+        # & $msbuild /r /m UnoNet6App01.sln
+        # if ($LASTEXITCODE -ne 0)
+        # {
+        #     throw "Exit code must be zero."
+        # }
+        cd ..
+        dotnet new unoapp-samples-commerce --material -o UnoCommerceApp01
+        cd UnoCommerceApp01
+        & $msbuild /r /m UnoCommerceApp01.sln
+        if ($LASTEXITCODE -ne 0)
+        {
+            throw "Exit code must be zero."
+        }
     displayName: Build template app

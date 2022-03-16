@@ -16,6 +16,10 @@
 		-->
     <WasmShellILLinkerEnabled>false</WasmShellILLinkerEnabled>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Debug' or '$(IsUiAutomationMappingEnabled)'=='True'">
+    <IsUiAutomationMappingEnabled>True</IsUiAutomationMappingEnabled>
+    <DefineConstants>$(DefineConstants);USE_UITESTS</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <Content Include="Assets\SplashScreen.png" />
   </ItemGroup>
@@ -70,6 +74,9 @@
     <PackageReference Include="Uno.Extensions.Serialization" Version="255.255.255.255" />
     <PackageReference Include="Uno.Extensions.Reactive" Version="255.255.255.255" />
     <PackageReference Include="Uno.Extensions.Reactive.WinUI" Version="255.255.255.255" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MyExtensionsApp.Core\MyExtensionsApp.Core.csproj" />
   </ItemGroup>
   <Import Project="..\MyExtensionsApp.Shared\MyExtensionsApp.Shared.projitems" Label="Shared" Condition="Exists('..\MyExtensionsApp.Shared\MyExtensionsApp.Shared.projitems')" />
 </Project>

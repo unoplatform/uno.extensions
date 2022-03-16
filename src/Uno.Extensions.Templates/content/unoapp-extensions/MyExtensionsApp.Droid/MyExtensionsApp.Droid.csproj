@@ -124,6 +124,12 @@
   <ItemGroup>
     <AndroidResource Include="Resources\values\Styles.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MyExtensionsApp.Core\MyExtensionsApp.Core.csproj">
+      <Project>{b649beae-838a-49ad-b42a-500ff92d43cd}</Project>
+      <Name>MyExtensionsApp.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="..\MyExtensionsApp.Shared\MyExtensionsApp.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Target Name="Issue3897Workaround" Condition=" '$(ManagedDesignTimeBuild)' == 'True' " AfterTargets="_RemoveLegacyDesigner">

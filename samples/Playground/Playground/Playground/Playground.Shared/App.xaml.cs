@@ -275,7 +275,10 @@ namespace Playground
 		private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 		{
 			views.Register(
-						new ViewMap(ViewModel: typeof(ShellViewModel)),
+						// Option 1: Specify ShellView in order to customise the shell
+						new ViewMap<ShellView,ShellViewModel>(),
+						// Option 2: Only specify the ShellViewModel - this will inject a FrameView where the subsequent pages will be shown
+						//new ViewMap(ViewModel: typeof(ShellViewModel)),
 						new ViewMap<HomePage, HomeViewModel>(),
 						new ViewMap<CodeBehindPage>(),
 						new ViewMap<VMPage, VMViewModel>(),
@@ -300,7 +303,7 @@ namespace Playground
 			// RouteMap required for Shell if initialRoute or initialViewModel isn't specified when calling NavigationHost
 			routes.Register(
 				views =>
-				new RouteMap("Shell", View: views.FindByViewModel<ShellViewModel>(),
+				new RouteMap("", View: views.FindByViewModel<ShellViewModel>(),
 				Nested: new[]
 				{
 					new RouteMap("Home",View: views.FindByView<HomePage>()),
