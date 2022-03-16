@@ -275,7 +275,9 @@ namespace Playground
 		private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 		{
 			views.Register(
+						// Option 1: Specify ShellView in order to customise the shell
 						new ViewMap<ShellView,ShellViewModel>(),
+						// Option 2: Only specify the ShellViewModel - this will inject a FrameView where the subsequent pages will be shown
 						//new ViewMap(ViewModel: typeof(ShellViewModel)),
 						new ViewMap<HomePage, HomeViewModel>(),
 						new ViewMap<CodeBehindPage>(),
