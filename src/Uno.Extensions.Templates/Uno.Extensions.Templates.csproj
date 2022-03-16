@@ -35,30 +35,27 @@
 		<None Include="content/**/*.cs" />
 	</ItemGroup>
 	
-	<ItemGroup>
-		<Content Include="content\unoapp-samples-commerce\**" KeepDuplicates="False">
-			<PackagePath>content\unoapp-samples-commerce</PackagePath>
-			<Pack>true</Pack>
-		</Content>
-		<Content Include="content\unoapp-extensions\**" KeepDuplicates="False">
-			<PackagePath>content\unoapp-extensions</PackagePath>
-			<Pack>true</Pack>
-		</Content>
-		<Content Include="content\unoapp-extensions-net6\**" KeepDuplicates="False">
-			<PackagePath>content\unoapp-extensions-net6</PackagePath>
-			<Pack>true</Pack>
-		</Content>
-	</ItemGroup>
-
 	<Target Name="ReplaceTemplateCode" BeforeTargets="BeforeBuild">
 		<ItemGroup>
 			<MyTemplateSourceFiles Include="content\unoapp-extensions-net6\MyExtensionsApp.Shared\**\*" />
 		</ItemGroup>
 
 		<Copy SourceFiles="@(MyTemplateSourceFiles)" DestinationFiles="@(MyTemplateSourceFiles->'content\unoapp-extensions\MyExtensionsApp.Shared\%(RecursiveDir)%(Filename)%(Extension)')" />
+	
+		<ItemGroup>
+			<Content Include="content\unoapp-extensions\**" KeepDuplicates="False">
+				<PackagePath>content\unoapp-extensions</PackagePath>
+				<Pack>true</Pack>
+			</Content>
+			<Content Include="content\unoapp-extensions-net6\**" KeepDuplicates="False">
+				<PackagePath>content\unoapp-extensions-net6</PackagePath>
+				<Pack>true</Pack>
+			</Content>
+		</ItemGroup>
 	</Target>
 
-	<Target Name="ReplaceVersions" BeforeTargets="BeforeBuild" Condition="'$(PackageVersion)'!='255.255.255.255'">
+	<Target Name="ReplaceVersions" BeforeTargets="BeforeBuild">
+	 <!-- Condition="'$(PackageVersion)'!='255.255.255.255'" -->
 		<ItemGroup>
 			<MySourceFiles Include="..\..\samples\Commerce\Commerce.Shared\**\*" />
 		</ItemGroup>
@@ -123,6 +120,12 @@
 						 Value="@(Uno_Material_WinUI_Version)"
 						 Namespaces="" />
 
+		<ItemGroup>
+			<Content Include="content\unoapp-samples-commerce\**" KeepDuplicates="False">
+				<PackagePath>content\unoapp-samples-commerce</PackagePath>
+				<Pack>true</Pack>
+			</Content>
+		</ItemGroup>
 	</Target>
 
 	<UsingTask TaskName="RenameFiles" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">

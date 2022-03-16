@@ -1,24 +1,21 @@
 //-:cnd:noEmit
-using System.Threading.Tasks;
-using Uno.Extensions.Navigation;
 
-namespace MyExtensionsApp.ViewModels
+namespace MyExtensionsApp.ViewModels;
+
+public class MainViewModel
 {
-	public class MainViewModel
+	private INavigator Navigator { get; }
+
+
+	public MainViewModel(
+		INavigator navigator)
+	{ 
+	
+		Navigator = navigator;
+	}
+
+	public async Task GoToSecondPage()
 	{
-		private INavigator Navigator { get; }
-
-
-		public MainViewModel(
-			INavigator navigator)
-		{ 
-		
-			Navigator = navigator;
-		}
-
-		public async Task GoToSecondPage()
-		{
-			await Navigator.NavigateViewModelAsync<SecondViewModel>(this);
-		}
+		await Navigator.NavigateViewModelAsync<SecondViewModel>(this);
 	}
 }

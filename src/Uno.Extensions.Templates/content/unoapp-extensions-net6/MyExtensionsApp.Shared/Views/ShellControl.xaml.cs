@@ -1,12 +1,10 @@
 ﻿//-:cnd:noEmit
 
 namespace MyExtensionsApp.Views;
-
-public sealed partial class SecondPage : Page
+public sealed partial class ShellControl : UserControl
 {
-    public SecondPage()
+    public ShellControl()
     {
         this.InitializeComponent();
     }
 }
-

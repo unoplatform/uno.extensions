@@ -1,12 +1,10 @@
 //-:cnd:noEmit
 
-namespace MyExtensionsApp.ViewModels
+namespace MyExtensionsApp.ViewModels;
+public class SecondViewModel
 {
-	public class SecondViewModel
+	
+	public SecondViewModel()
 	{
-		
-		public SecondViewModel()
-		{
-		}
 	}
 }
