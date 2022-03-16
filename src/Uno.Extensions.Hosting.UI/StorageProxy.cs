@@ -1,10 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
-using Uno.Extensions.Storage;
-using Windows.Storage;
-
-namespace Uno.Extensions.Hosting;
+﻿namespace Uno.Extensions.Hosting;
 
 public class StorageProxy : IStorageProxy
 {

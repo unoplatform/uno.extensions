@@ -1,7 +1,4 @@
-﻿using System;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace Uno.Extensions.Hosting;
+﻿namespace Uno.Extensions.Hosting;
 
 public static class ServiceCollectionExtensions
 {
