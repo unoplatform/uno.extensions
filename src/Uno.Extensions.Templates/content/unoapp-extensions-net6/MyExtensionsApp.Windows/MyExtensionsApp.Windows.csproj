@@ -74,5 +74,8 @@
   <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnablePreviewMsixTooling)'=='true'">
     <ProjectCapability Include="Msix" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MyExtensionsApp.Core\MyExtensionsApp.Core.csproj" />
+  </ItemGroup>
   <Import Project="..\MyExtensionsApp.Shared\MyExtensionsApp.Shared.projitems" Label="Shared" />
 </Project>

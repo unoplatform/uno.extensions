@@ -47,10 +47,11 @@
 				<PackagePath>content\unoapp-extensions</PackagePath>
 				<Pack>true</Pack>
 			</Content>
-			<Content Include="content\unoapp-extensions-net6\**" KeepDuplicates="False">
+			<!-- Exclude net6 template for the moment until all the dependencies stabalise -->
+			<!-- <Content Include="content\unoapp-extensions-net6\**" KeepDuplicates="False">
 				<PackagePath>content\unoapp-extensions-net6</PackagePath>
 				<Pack>true</Pack>
-			</Content>
+			</Content> -->
 		</ItemGroup>
 	</Target>
 

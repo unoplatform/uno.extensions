@@ -19,6 +19,7 @@
 		<StackPanel Grid.Row="1"
 					HorizontalAlignment="Center"
 					VerticalAlignment="Center">
+			<TextBlock Text="{x:Bind ViewModel.Title, Mode=OneWay}"/>
 			<Button Content="Go to Second Page - XAML"
 					HorizontalAlignment="Stretch"
 					uen:Navigation.Request="Second" />
