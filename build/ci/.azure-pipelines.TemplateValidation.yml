@@ -76,7 +76,7 @@ jobs:
         #     throw "Exit code must be zero."
         # }
         cd ..
-        dotnet new unoapp-sample-commerce --material -o UnoCommerceApp01
+        dotnet new unoapp-samples-commerce --material -o UnoCommerceApp01
         cd UnoCommerceApp01
         & $msbuild /r /m UnoCommerceApp01.sln
         if ($LASTEXITCODE -ne 0)
