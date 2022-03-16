@@ -9,6 +9,7 @@ global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Hosting;
 global using Microsoft.Extensions.Logging;
 global using Windows.ApplicationModel;
+global using Windows.ApplicationModel.Core;
 global using Windows.Foundation;
 global using Windows.UI.Popups;
 global using Uno.Extensions;
