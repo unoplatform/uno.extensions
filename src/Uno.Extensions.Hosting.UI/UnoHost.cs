@@ -1,7 +1,7 @@
 ﻿
 namespace Uno.Extensions.Hosting;
 
-public static class Host
+public static class UnoHost
 {
 	public static IHostBuilder CreateDefaultBuilder(string[]? args = null)
 	{

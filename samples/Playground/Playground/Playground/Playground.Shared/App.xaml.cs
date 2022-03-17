@@ -33,12 +33,12 @@ namespace Playground
 		private Window _window;
 		public Window Window => _window;
 
-		private IHost Host { get; }
+		private IHost _host;
 
 		public App()
 		{
-			Host = UnoHost
-					.CreateDefaultBuilder(true)
+			_host = UnoHost
+					.CreateDefaultBuilder()
 #if DEBUG
 					// Switch to Development environment when running in DEBUG
 					.UseEnvironment(Environments.Development)
@@ -127,12 +127,12 @@ namespace Playground
 			_window = Window.Current;
 #endif
 
-			var notif = Host.Services.GetService<IRouteNotifier>();
+			var notif = _host.Services.GetService<IRouteNotifier>();
 			notif.RouteChanged += RouteUpdated;
 
 			// Option 1: Ad-hoc hosting of Navigation
 			var f = new Frame();
-			f.AttachServiceProvider(Host.Services);
+			f.AttachServiceProvider(_host.Services);
 			_window.Content = f;
 			f.Navigate(typeof(MainPage));
 
@@ -144,12 +144,12 @@ namespace Playground
 			//	HorizontalContentAlignment = HorizontalAlignment.Stretch,
 			//	VerticalContentAlignment = VerticalAlignment.Stretch
 			//};
-			//root.AttachServiceProvider(Host.Services);
+			//root.AttachServiceProvider(_host.Services);
 			//_window.Content = root;
 			//root.Host(initialRoute: "Shell");
 
 			// Option 3: Default hosting
-			//_window.Content = Host.Services.NavigationHost(
+			//_window.Content = _host.Services.NavigationHost(
 			//	// Option 1: This requires Shell to be the first RouteMap - best for perf as no reflection required
 			//	// initialRoute: ""
 			//	// Option 2: Specify route name
@@ -161,7 +161,7 @@ namespace Playground
 
 			_window.Activate();
 
-			await Task.Run(() => Host.StartAsync());
+			await Task.Run(() => _host.StartAsync());
 		}
 
 

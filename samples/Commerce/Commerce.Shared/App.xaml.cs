@@ -59,7 +59,7 @@ namespace Commerce
 
 		public App()
 		{
-			_host = Host
+			_host = UnoHost
 					.CreateDefaultBuilder()
 #if DEBUG
 					// Switch to Development environment when running in DEBUG

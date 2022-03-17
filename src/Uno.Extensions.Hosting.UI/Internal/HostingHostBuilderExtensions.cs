@@ -43,7 +43,7 @@ public static class HostingHostBuilderExtensions
 	/// <param name="builder">The existing builder to configure.</param>
 	/// <param name="args">The command line args.</param>
 	/// <returns>The same instance of the <see cref="IHostBuilder"/> for chaining.</returns>
-	public static IHostBuilder ConfigureCustomDefaults(this IHostBuilder builder, string[] args)
+	public static IHostBuilder ConfigureCustomDefaults(this IHostBuilder builder, string[]? args)
 	{
 		UseContentRoot(builder, Directory.GetCurrentDirectory());
 		builder.ConfigureHostConfiguration(config =>
