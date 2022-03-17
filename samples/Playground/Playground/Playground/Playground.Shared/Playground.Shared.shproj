@@ -31,6 +31,7 @@
     <_Globbed_Compile Remove="Views\BasicFlyout.xaml.cs" />
     <_Globbed_Compile Remove="Views\CodeBehindPage.xaml.cs" />
     <_Globbed_Compile Remove="Views\ContentControlPage.xaml.cs" />
+    <_Globbed_Compile Remove="Views\FlyoutsPopupsDrawerPage.xaml.cs" />
     <_Globbed_Compile Remove="Views\MainPage.xaml.cs" />
     <_Globbed_Compile Remove="Views\NavContentPage.xaml.cs" />
     <_Globbed_Compile Remove="Views\NavContentSecondPage.xaml.cs" />
@@ -47,6 +48,7 @@
     <_Globbled_Page Remove="Views\BasicFlyout.xaml" />
     <_Globbled_Page Remove="Views\CodeBehindPage.xaml" />
     <_Globbled_Page Remove="Views\ContentControlPage.xaml" />
+    <_Globbled_Page Remove="Views\FlyoutsPopupsDrawerPage.xaml" />
     <_Globbled_Page Remove="Views\MainPage.xaml" />
     <_Globbled_Page Remove="Views\NavContentPage.xaml" />
     <_Globbled_Page Remove="Views\NavContentSecondPage.xaml" />

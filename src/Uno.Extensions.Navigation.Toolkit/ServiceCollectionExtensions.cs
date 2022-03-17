@@ -10,6 +10,8 @@ public static class ServiceCollectionExtensions
 
 					.AddRegion<TabBar, TabBarNavigator>()
 
+					.AddRegion<DrawerControl, DrawerControlNavigator>()
+
 					.AddSingleton<IRequestHandler, TabBarItemRequestHandler>();
 	}
 }
