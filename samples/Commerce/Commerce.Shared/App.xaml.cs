@@ -22,7 +22,6 @@ using Commerce.Views;
 using Uno.Extensions.Logging.Serilog;
 using Uno.Extensions.Navigation.UI.Controls;
 using Uno.Extensions.Navigation.Toolkit.Controls;
-using Host = Uno.Extensions.Hosting.Host;
 
 #if WINUI
 using Windows.ApplicationModel;
