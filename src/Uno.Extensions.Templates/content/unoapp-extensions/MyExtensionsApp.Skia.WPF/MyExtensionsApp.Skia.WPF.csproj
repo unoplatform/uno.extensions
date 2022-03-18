@@ -16,7 +16,7 @@
     <PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <UpToDateCheckInput Include="..\MyExtensionsApp.Shared\**\*.xaml" />
+    <UpToDateCheckInput Include="..\MyExtensionsApp.UI\**\*.xaml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Uno.Extensions.Configuration" Version="255.255.255.255" />
@@ -37,5 +37,5 @@
   <ItemGroup>
     <ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />
   </ItemGroup>
-  <Import Project="..\MyExtensionsApp.Shared\MyExtensionsApp.Shared.projitems" Label="Shared" />
+  <Import Project="..\MyExtensionsApp.UI\MyExtensionsApp.UI.projitems" Label="Shared" />
 </Project>

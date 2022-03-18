@@ -50,5 +50,5 @@
   <ItemGroup>
     <ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />
   </ItemGroup>
-  <Import Project="..\MyExtensionsApp.Shared\MyExtensionsApp.Shared.projitems" Label="Shared" />
+  <Import Project="..\MyExtensionsApp.UI\MyExtensionsApp.UI.projitems" Label="Shared" />
 </Project>

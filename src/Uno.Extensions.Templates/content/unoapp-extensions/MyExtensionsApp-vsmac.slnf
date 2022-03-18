@@ -2,7 +2,7 @@
   "solution": {
     "path": "MyExtensionsApp.sln",
     "projects": [
-		"MyExtensionsApp.Shared\\MyExtensionsApp.Shared.shproj",
+		"MyExtensionsApp.UI\\MyExtensionsApp.UI.shproj",
 
 		"MyExtensionsApp.Droid\\MyExtensionsApp.Droid.csproj",
 

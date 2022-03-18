@@ -139,7 +139,7 @@
   },
   "primaryOutputs": [
     {
-      "path": "MyExtensionsApp.Shared\\MyExtensionsApp.Shared.shproj"
+      "path": "MyExtensionsApp.UI\\MyExtensionsApp.UI.shproj"
     },
     {
       "condition": "Android",
