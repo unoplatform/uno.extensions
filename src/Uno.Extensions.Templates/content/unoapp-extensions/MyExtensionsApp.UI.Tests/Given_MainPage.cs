@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using Query = System.Func<Uno.UITest.IAppQuery, Uno.UITest.IAppQuery>;
 
-namespace MyExtensionsApp.UITests
+namespace MyExtensionsApp.UI.Tests
 {
 	public class Given_MainPage : TestBase
     {

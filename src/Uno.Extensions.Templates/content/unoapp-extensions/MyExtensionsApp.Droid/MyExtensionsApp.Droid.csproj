@@ -20,7 +20,7 @@
     <TargetFrameworkVersion>v11.0</TargetFrameworkVersion>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <AndroidUseIntermediateDesignerFile>True</AndroidUseIntermediateDesignerFile>
-    <ResourcesDirectory>..\MyExtensionsApp.Shared\Strings</ResourcesDirectory>
+    <ResourcesDirectory>..\MyExtensionsApp.UI\Strings</ResourcesDirectory>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -125,12 +125,12 @@
     <AndroidResource Include="Resources\values\Styles.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MyExtensionsApp.Core\MyExtensionsApp.Core.csproj">
-      <Project>{b649beae-838a-49ad-b42a-500ff92d43cd}</Project>
-      <Name>MyExtensionsApp.Core</Name>
+    <ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj">
+      <Project>{2636aa43-1233-4584-86fb-443b5241fd0c}</Project>
+      <Name>MyExtensionsApp</Name>
     </ProjectReference>
   </ItemGroup>
-  <Import Project="..\MyExtensionsApp.Shared\MyExtensionsApp.Shared.projitems" Label="Shared" />
+  <Import Project="..\MyExtensionsApp.UI\MyExtensionsApp.UI.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Target Name="Issue3897Workaround" Condition=" '$(ManagedDesignTimeBuild)' == 'True' " AfterTargets="_RemoveLegacyDesigner">
     <!-- See https://github.com/unoplatform/uno/issues/3897 and https://github.com/xamarin/xamarin-android/issues/5069 for more details -->
