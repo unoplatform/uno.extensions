@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "MyExtensionsApp.Shared", "MyExtensionsApp.Shared\MyExtensionsApp.Shared.shproj", "{6279C845-92F8-4333-AB99-3D213163593C}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "MyExtensionsApp.UI", "MyExtensionsApp.Shared\MyExtensionsApp.UI.shproj", "{6279C845-92F8-4333-AB99-3D213163593C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Platforms", "Platforms", "{B33CA1B4-44EE-4E67-ACF2-8DD48F6F5423}"
 EndProject
