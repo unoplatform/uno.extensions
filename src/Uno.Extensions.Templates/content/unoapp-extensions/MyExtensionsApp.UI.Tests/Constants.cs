@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Uno.UITest.Helpers.Queries;
 
-namespace MyExtensionsApp.UITests
+namespace MyExtensionsApp.UI.Tests
 {
     public class Constants
     {

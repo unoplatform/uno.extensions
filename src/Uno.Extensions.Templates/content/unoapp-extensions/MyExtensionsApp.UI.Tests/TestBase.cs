@@ -5,7 +5,7 @@ using Uno.UITest;
 using Uno.UITest.Selenium;
 using Uno.UITests.Helpers;
 
-namespace MyExtensionsApp.UITests
+namespace MyExtensionsApp.UI.Tests
 {
     public class TestBase
     {
