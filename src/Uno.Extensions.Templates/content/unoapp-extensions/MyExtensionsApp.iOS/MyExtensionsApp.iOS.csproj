@@ -6,9 +6,9 @@
     <ProjectGuid>{72B60771-626B-4CB4-B494-C8A00B7B3E11}</ProjectGuid>
     <ProjectTypeGuids>{FEACFBD2-3405-455C-9665-78FE426C6842};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Exe</OutputType>
-    <RootNamespace>MyExtensionsApp</RootNamespace>
+    <RootNamespace>MyExtensionsApp.iOS</RootNamespace>
+    <AssemblyName>MyExtensionsApp.iOS</AssemblyName>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
-    <AssemblyName>MyExtensionsApp</AssemblyName>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <ResourcesDirectory>..\MyExtensionsApp.UI\Strings</ResourcesDirectory>
