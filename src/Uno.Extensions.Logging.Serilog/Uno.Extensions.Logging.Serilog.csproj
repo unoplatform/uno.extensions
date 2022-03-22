@@ -5,7 +5,7 @@
 		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'=='' and '$(UnoExtensionsDisableNet6)'==''">$(TargetFrameworks);uap10.0.18362;net6.0;</TargetFrameworks>
 		<!-- net6.0 ios and android have been temporarily removed until there is a compatible serilog package -->
 		<!--		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'=='' and '$(UnoExtensionsDisableNet6)'==''">$(TargetFrameworks);uap10.0.18362;net6.0</TargetFrameworks>
-		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'=='' and '$(UnoExtensionsDisableNet6)'=='' and '$(UnoExtensionsDisableNet6Mobile)'">$(TargetFrameworks);net6.0-ios;net6.0-android</TargetFrameworks>
+		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'=='' and '$(UnoExtensionsDisableNet6)'=='' and '$(UnoExtensionsDisableNet6Mobile)'==''">$(TargetFrameworks);net6.0-ios;net6.0-android</TargetFrameworks>
 -->
 	</PropertyGroup>
  
