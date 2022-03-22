@@ -154,7 +154,7 @@ public sealed partial class App : Application
 						}));
 	}
 
-	public async void RouteUpdated(object sender, RouteChangedEventArgs e)
+	public async void RouteUpdated(object? sender, RouteChangedEventArgs e)
 	{
 		try
 		{
