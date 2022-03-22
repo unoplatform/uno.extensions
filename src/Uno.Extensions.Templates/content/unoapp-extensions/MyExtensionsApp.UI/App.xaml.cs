@@ -4,8 +4,8 @@ namespace MyExtensionsApp;
 
 public sealed partial class App : Application
 {
-	private Window _window;
-	public Window Window => _window;
+	private Window? _window;
+	public Window? Window => _window;
 
 	private IHost Host { get; }
 
@@ -90,7 +90,10 @@ public sealed partial class App : Application
 #endif
 
 		var notif = Host.Services.GetService<IRouteNotifier>();
-		notif.RouteChanged += RouteUpdated;
+		if (notif is not null)
+		{
+			notif.RouteChanged += RouteUpdated;
+		}
 
 
 		_window.Content = Host.Services.NavigationHost();

@@ -4,7 +4,8 @@ namespace MyExtensionsApp.Views;
 
 public sealed partial class MainPage : Page, IInjectable<INavigator>
 {
-	public MainViewModel ViewModel { get; private set; }
+	public MainViewModel? ViewModel { get; private set; }
+
 	public MainPage()
 	{
 		this.InitializeComponent();
@@ -23,5 +24,5 @@ public sealed partial class MainPage : Page, IInjectable<INavigator>
 		_navigator = navigator;
 	}
 
-	private INavigator _navigator;
+	private INavigator? _navigator;
 }

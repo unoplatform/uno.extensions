@@ -7,6 +7,6 @@ namespace MyExtensionsApp
 {
     public record MyExtensionsAppSettings
     {
-        public string LastSearch { get; init; }
+        public string? LastSearch { get; init; }
     }
 }
