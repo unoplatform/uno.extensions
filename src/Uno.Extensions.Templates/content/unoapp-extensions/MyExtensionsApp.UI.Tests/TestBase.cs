@@ -9,7 +9,7 @@ namespace MyExtensionsApp.UI.Tests
 {
     public class TestBase
     {
-        private IApp _app;
+        private IApp? _app;
 
         static TestBase()
         {
@@ -28,7 +28,7 @@ namespace MyExtensionsApp.UI.Tests
 
         protected IApp App
         {
-            get => _app;
+            get => _app!;
             private set
             {
                 _app = value;
@@ -50,6 +50,11 @@ namespace MyExtensionsApp.UI.Tests
 
         public FileInfo TakeScreenshot(string stepName)
         {
+            if(_app == null)
+            {
+                throw new InvalidOperationException("App is not yet created");
+            }
+            
             var title = $"{TestContext.CurrentContext.Test.Name}_{stepName}"
                 .Replace(" ", "_")
                 .Replace(".", "_");
