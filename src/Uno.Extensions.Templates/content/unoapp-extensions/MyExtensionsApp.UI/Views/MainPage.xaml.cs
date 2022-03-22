@@ -16,7 +16,7 @@ public sealed partial class MainPage : Page, IInjectable<INavigator>
 
 	public void GoToSecondPageClick(object sender, RoutedEventArgs arg)
 	{
-		_navigator.NavigateViewAsync<SecondPage>(this);
+		_navigator?.NavigateViewAsync<SecondPage>(this);
 	}
 
 	public void Inject(INavigator navigator)
