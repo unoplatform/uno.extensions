@@ -54,12 +54,12 @@ namespace Commerce
 		private Window _window;
 		public Window Window => _window;
 
-		private IHost Host { get; }
+		private IHost _host;
 
 		public App()
 		{
-			Host = UnoHost
-					.CreateDefaultBuilder(true)
+			_host = UnoHost
+					.CreateDefaultBuilder()
 #if DEBUG
 					// Switch to Development environment when running in DEBUG
 					.UseEnvironment(Environments.Development)
@@ -140,16 +140,16 @@ namespace Commerce
 			_window = Window.Current;
 #endif
 
-			var notif = Host.Services.GetService<IRouteNotifier>();
+			var notif = _host.Services.GetService<IRouteNotifier>();
 			notif.RouteChanged += RouteUpdated;
 
 
-			_window.Content = Host.Services.NavigationHost();
+			_window.Content = _host.Services.NavigationHost();
 			_window.Activate();
 
 			await Task.Run(async () =>
 			{
-				await Host.StartAsync();
+				await _host.StartAsync();
 			});
 
 		}

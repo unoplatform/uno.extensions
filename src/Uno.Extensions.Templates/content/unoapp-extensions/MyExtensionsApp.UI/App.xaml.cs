@@ -12,7 +12,7 @@ public sealed partial class App : Application
 	public App()
 	{
 		Host = UnoHost
-				.CreateDefaultBuilder(true)
+				.CreateDefaultBuilder()
 #if DEBUG
 				// Switch to Development environment when running in DEBUG
 				.UseEnvironment(Environments.Development)
