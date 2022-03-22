@@ -13,7 +13,7 @@ public class ShellViewModel
 
 		Navigator = navigator;
 
-		Start();
+		_ = Start();
 	}
 
 	public async Task Start()

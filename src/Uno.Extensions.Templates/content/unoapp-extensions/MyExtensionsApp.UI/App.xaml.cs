@@ -4,8 +4,7 @@ namespace MyExtensionsApp;
 
 public sealed partial class App : Application
 {
-	private Window _window;
-	public Window Window => _window;
+	private Window? _window;
 
 	private IHost Host { get; }
 
@@ -86,11 +85,18 @@ public sealed partial class App : Application
 		_window = new Window();
 		_window.Activate();
 #else
-		_window = Window.Current;
+#if WINUI
+		_window = Microsoft.UI.Xaml.Window.Current;
+#else
+		_window = Windows.UI.Xaml.Window.Current;
+#endif
 #endif
 
 		var notif = Host.Services.GetService<IRouteNotifier>();
-		notif.RouteChanged += RouteUpdated;
+		if (notif is not null)
+		{
+			notif.RouteChanged += RouteUpdated;
+		}
 
 
 		_window.Content = Host.Services.NavigationHost();
@@ -151,7 +157,7 @@ public sealed partial class App : Application
 						}));
 	}
 
-	public async void RouteUpdated(object sender, RouteChangedEventArgs e)
+	public async void RouteUpdated(object? sender, RouteChangedEventArgs e)
 	{
 		try
 		{
@@ -175,8 +181,8 @@ public sealed partial class App : Application
 			{
 				var href = WebAssemblyRuntime.InvokeJS("window.location.href");
 				var url = new UriBuilder(href);
-				url.Query = route.Query();
-				url.Path = route.FullPath()?.Replace("+", "/");
+				url.Query = route?.Query();
+				url.Path = route?.FullPath()?.Replace("+", "/");
 				var webUri = url.Uri.OriginalString;
 				var js = $"window.history.pushState(\"{webUri}\",\"\", \"{webUri}\");";
 				Console.WriteLine($"JS:{js}");

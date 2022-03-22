@@ -13,7 +13,7 @@
 			-->
       <Version>6.2.13</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.UI.Xaml" Version="2.7.0" />
+    <PackageReference Include="Microsoft.UI.Xaml" Version="2.7.1" />
 		<PackageReference Include="Uno.Toolkit.UI" Version="1.2.1" />
 		<PackageReference Include="Uno.Toolkit.UI.Material" Version="1.2.1" />
 		<PackageReference Include="Uno.Core" Version="4.0.1" />
