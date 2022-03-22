@@ -17,6 +17,10 @@ using Uno.Extensions.Navigation.Regions;
 using Uno.Extensions.Navigation.Toolkit;
 using Uno.Extensions.Serialization;
 using MyExtensionsApp.Views;
+using Uno.Extensions.Logging.Serilog;
+using Uno.Extensions.Navigation.UI.Controls;
+using Uno.Extensions.Navigation.Toolkit.Controls;
+using Host = Uno.Extensions.Hosting.Host;
 using MyExtensionsApp.Reactive;
 
 #if WINUI

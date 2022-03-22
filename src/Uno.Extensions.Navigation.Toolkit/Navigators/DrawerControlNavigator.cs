@@ -40,7 +40,7 @@ public class DrawerControlNavigator : ControlNavigator<DrawerControl>
 
         try
         {
-            Control.IsOpen = string.Compare(path, RouteConstants.PopupShow, true) == 0;
+            Control.IsOpen = !(path?.StartsWith(Qualifiers.NavigateBack)??false);
             await (Control.Content as FrameworkElement).EnsureLoaded();
             return path;
         }

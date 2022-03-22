@@ -10,12 +10,15 @@
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
+	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition />
 		</Grid.RowDefinitions>
-		<Button Content="Open with Nav - ext Control" uen:Navigation.Request="MyDrawer/Show" />
+		<StackPanel Orientation="Horizontal">
+			<Button Content="Open with Nav - ext Control" uen:Navigation.Request="MyDrawer/Show" />
+			<Button Content="Close with Nav - ext Control" uen:Navigation.Request="MyDrawer/-" />
+		</StackPanel>
 		<utu:DrawerControl x:Name="SampleDrawerControl"
 						   Grid.Row="1"
 						   uen:Region.Attached="True"
