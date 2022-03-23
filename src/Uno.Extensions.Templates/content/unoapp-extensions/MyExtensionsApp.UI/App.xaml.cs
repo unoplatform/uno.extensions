@@ -173,22 +173,6 @@ public sealed partial class App : Application
 			});
 #endif
 
-
-#if __WASM__
-			// Note: This is a hack to avoid error being thrown when loading products async
-			await Task.Delay(1000).ConfigureAwait(false);
-			CoreApplication.MainView?.DispatcherQueue.TryEnqueue(() =>
-			{
-				var href = WebAssemblyRuntime.InvokeJS("window.location.href");
-				var url = new UriBuilder(href);
-				url.Query = route?.Query();
-				url.Path = route?.FullPath()?.Replace("+", "/");
-				var webUri = url.Uri.OriginalString;
-				var js = $"window.history.pushState(\"{webUri}\",\"\", \"{webUri}\");";
-				Console.WriteLine($"JS:{js}");
-				var result = WebAssemblyRuntime.InvokeJS(js);
-			});
-#endif
 		}
 		catch (Exception ex)
 		{

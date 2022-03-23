@@ -15,4 +15,6 @@ global using Microsoft.Extensions.Options;
 global using Uno.Extensions.Storage;
 global using Uno.Extensions.Hosting.Internal;
 global using Windows.Storage;
+global using Windows.ApplicationModel.Core;
+
 
