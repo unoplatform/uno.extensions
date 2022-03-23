@@ -1,4 +1,5 @@
-﻿using Uno.Extensions.Navigation.Navigators;
+﻿using Microsoft.Extensions.Options;
+using Uno.Extensions.Navigation.Navigators;
 using Uno.Extensions.Navigation.Regions;
 using Uno.Extensions.Navigation.UI;
 using Uno.Extensions.Navigation.UI.Controls;
@@ -10,13 +11,29 @@ public static class ServiceCollectionExtensions
 {
 	public static IServiceCollection AddNavigation(
 		this IServiceCollection services,
+		Func<NavigationConfig, NavigationConfig>? configure = null,
 		Action<IViewRegistry, IRouteRegistry>? routeBuilder = null)
 	{
+		var navConfig = new NavigationConfig();
+		navConfig = (configure?.Invoke(navConfig)) ?? navConfig;
+
 		var views = new ViewRegistry();
 		var routes = new RouteRegistry(services, views);
 		routeBuilder?.Invoke(views, routes);
 
 		return services
+					.AddSingleton<NavigationConfig>(sp =>
+					{
+						var config = new NavigationConfig(RouteResolver: typeof(RouteResolverDefault), AddressBarUpdateEnabled: true);
+						//RouteResolver: typeof(RouteResolverDefault), AddressBarUpdateEnabled: true
+						var inputConfig = sp.GetService<IOptions<NavigationConfig>>()?.Value;
+						config = config with
+						{
+							RouteResolver = (navConfig?.RouteResolver) ?? (inputConfig?.RouteResolver) ?? config.RouteResolver,
+							AddressBarUpdateEnabled = (navConfig?.AddressBarUpdateEnabled) ?? (inputConfig?.AddressBarUpdateEnabled) ?? config.AddressBarUpdateEnabled,
+						};
+						return config;
+					})
 					.AddScoped<IInstanceRepository, InstanceRepository>()
 					.AddSingleton<IResponseNavigatorFactory, ResponseNavigatorFactory>()
 
@@ -48,8 +65,13 @@ public static class ServiceCollectionExtensions
 					.AddSingleton<IViewResolver, ViewResolver>()
 
 					.AddSingleton<IRouteRegistry>(routes)
+					.AddSingleton<RouteResolver>()
 					.AddSingleton<RouteResolverDefault>()
-					.AddSingleton<IRouteResolver>(sp => sp.GetRequiredService<RouteResolverDefault>())
+					.AddSingleton<IRouteResolver>(sp =>
+					{
+						var config = sp.GetRequiredService<NavigationConfig>();
+						return (sp.GetRequiredService(config.RouteResolver!) as IRouteResolver)!;
+					})
 
 					.AddSingleton<IResolver, Resolver>()
 

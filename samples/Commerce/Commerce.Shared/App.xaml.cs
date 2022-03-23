@@ -95,7 +95,9 @@ namespace Commerce
 
 
 					// Enable navigation, including registering views and viewmodels
-					.UseNavigation(RegisterRoutes)
+					.UseNavigation(
+						RegisterRoutes,
+						config => config with { AddressBarUpdateEnabled = true })
 
 					// Add navigation support for toolkit controls such as TabBar and NavigationView
 					.UseToolkitNavigation()
@@ -176,7 +178,7 @@ namespace Commerce
 					Title: "Forgot your password!",
 					DelayUserInput: true,
 					DefaultButtonIndex: 1,
-					Buttons:new DialogAction[]
+					Buttons: new DialogAction[]
 					{
 						new(Label: "Yeh!",Id:"Y"),
 						new(Label: "Nah", Id:"N")

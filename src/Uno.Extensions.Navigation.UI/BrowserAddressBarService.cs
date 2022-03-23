@@ -6,18 +6,21 @@ internal class BrowserAddressBarService : IHostedService
 {
 	private readonly IRouteNotifier _notifier;
 	private readonly IHasAddressBar? _addressbarHost;
+	private readonly NavigationConfig? _config;
 	public BrowserAddressBarService(
 		IRouteNotifier notifier,
+		NavigationConfig? config,
 		IHasAddressBar? host = null)
 	{
 		_notifier = notifier;
 		_addressbarHost = host;
+		_config = config;
 	}
 
 
 	public Task StartAsync(CancellationToken cancellationToken)
 	{
-		if (_addressbarHost is not null)
+		if (_addressbarHost is not null && (_config?.AddressBarUpdateEnabled??true))
 		{
 			_notifier.RouteChanged += RouteChanged;
 		}
