@@ -1,8 +1,9 @@
 <Project ToolsVersion="15.0">
 
-	<!-- This is temporary until net6 mobile (ie net6-android and net6-ios) stablises -->
 	<PropertyGroup>
-		<UnoExtensionsDisableNet6Mobile>true</UnoExtensionsDisableNet6Mobile>
+		<!-- This is temporary until net6 mobile (ie net6-android and net6-ios) stablises
+			Note: You need to REMOVE this property to disable!! -->
+		<!-- <UnoExtensionsDisableNet6Mobile>true</UnoExtensionsDisableNet6Mobile> -->
 	</PropertyGroup>
 
 	<PropertyGroup>

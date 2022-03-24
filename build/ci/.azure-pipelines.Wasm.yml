@@ -18,17 +18,7 @@ jobs:
       configFilePath: build/ci/gitversion.yml
     displayName: Use GitVersion
 
-  - task: UseDotNet@2
-    displayName: 'Use .NET 5.0.x'
-    inputs:
-      packageType: sdk
-      version: 5.0.x
-
-  - task: UseDotNet@2
-    displayName: 'Use .NET 6.0.100'
-    inputs:
-      packageType: sdk
-      version: 6.0.100
+  - template: templates/dotnet-install.yml
 
   - script: |
       sudo apt-get update

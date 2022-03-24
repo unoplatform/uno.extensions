@@ -6,10 +6,6 @@ jobs:
     vmImage: 'windows-2022'
 
   variables:
-    - name: UnoCheck_Version
-      value: '1.1.0-dev.22'
-    - name: UnoCheck_Manifest
-      value: 'https://raw.githubusercontent.com/unoplatform/uno.check/90603a57991621c9998fa66534a14e5bf470acc4/manifests/uno.ui-preview.manifest.json'
     - name: UseDotNetNativeToolchain
       value: false
 
@@ -27,20 +23,16 @@ jobs:
       configFilePath: build/ci/gitversion.yml
     displayName: Use GitVersion
 
-  - powershell: .\build\Install-WindowsSdkISO.ps1 18362
-    displayName: Install Windows SDK 18362
+  # - task: UseDotNet@2
+  #   displayName: 'Use .NET 5.0.x'
+  #   inputs:
+  #     packageType: sdk
+  #     version: 5.0.x
 
-  - task: UseDotNet@2
-    displayName: 'Use .NET 5.0.x'
-    inputs:
-      packageType: sdk
-      version: 5.0.x
-
-  - task: UseDotNet@2
-    displayName: 'Use .NET 6.0.200'
-    inputs:
-      packageType: sdk
-      version: 6.0.200
+  - template: templates/dotnet6-install-windows.yml
+  - template: templates/install-windows-sdk.yml
+    parameters:
+      sdkVersion: 18362
 
   - task: DownloadBuildArtifacts@0
     inputs:
@@ -56,7 +48,7 @@ jobs:
 
   - powershell: |
         dotnet nuget add source -n nuget_local $(Build.SourcesDirectory)\src\PackageCache
-        $msbuild = vswhere -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe
+        $msbuild = vswhere -prerelease -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe
         Set-PSDebug -Trace 1
         $ErrorActionPreference = 'Stop'
         dotnet new unoapp-extensions --material -o UnoApp01
