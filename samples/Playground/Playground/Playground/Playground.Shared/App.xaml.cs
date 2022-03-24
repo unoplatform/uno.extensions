@@ -1,27 +1,19 @@
 ﻿#define NO_REFLECTION // MessageDialog currently doesn't work with no-reflection set
-using System;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Playground.Models;
-using Playground.Services;
-using Playground.ViewModels;
-using Playground.Views;
-using Uno.Extensions.Configuration;
-using Uno.Extensions.Hosting;
 using Uno.Extensions.Logging;
-using Uno.Extensions.Navigation;
 using Uno.Extensions.Navigation.Regions;
 using Uno.Extensions.Navigation.Toolkit;
-using Uno.Extensions.Navigation.UI;
 using Uno.Extensions.Serialization;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Navigation;
+
+
+#if WINUI
+using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
+#else
+using LaunchActivatedEventArgs = Windows.ApplicationModel.Activation.LaunchActivatedEventArgs;
+#endif
 
 namespace Playground
 {
@@ -120,7 +112,7 @@ namespace Playground
 			}
 #endif
 
-#if NET5_0 && WINDOWS
+#if NET5_0_OR_GREATER && WINDOWS
             _window = new Window();
             _window.Activate();
 #else
@@ -296,7 +288,8 @@ namespace Playground
 						new ViewMap<ComplexDialogFirstPage>(),
 						new ViewMap<ComplexDialogSecondPage>(),
 						new ViewMap<PanelVisibilityPage>(),
-						new ViewMap<VisualStatesPage>()
+						new ViewMap<VisualStatesPage>(),
+						new ViewMap<AdHocPage, AdHocViewModel>()
 				);
 
 
@@ -330,6 +323,7 @@ namespace Playground
 					}),
 					new RouteMap("PanelVisibility",View: views.FindByView<PanelVisibilityPage>(), DependsOn: "Home"),
 					new RouteMap("VisualStates",View: views.FindByView<VisualStatesPage>(), DependsOn: "Home"),
+					new RouteMap("AdHoc",View: views.FindByViewModel<AdHocViewModel>(), DependsOn: "Home"),
 				}));
 		}
 	}

@@ -1,9 +1,11 @@
-﻿namespace Playground.Views;
+﻿
+namespace Playground.Views;
 
-public sealed partial class XamlPage : Page
+public sealed partial class AdHocPage : Page
 {
-	public XamlViewModel ViewModel { get; private set; }
-	public XamlPage()
+	public AdHocViewModel ViewModel { get; private set; }
+
+	public AdHocPage()
 	{
 		this.InitializeComponent();
 
@@ -12,6 +14,6 @@ public sealed partial class XamlPage : Page
 
 	private void XamlPage_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
 	{
-		ViewModel = args.NewValue as XamlViewModel;
+		ViewModel = args.NewValue as AdHocViewModel;
 	}
 }

@@ -1,15 +1,14 @@
-﻿namespace Playground.Views
-{
-	public sealed partial class MainPage : Page
-    {
-        public MainPage()
-        {
-            this.InitializeComponent();
-        }
+﻿namespace Playground.Views;
 
-		private void AlternateClick(object sender, RoutedEventArgs e)
-		{
-			this.Frame.Navigate(typeof(AlternatePage));
-		}
+public sealed partial class MainPage : Page
+{
+	public MainPage()
+	{
+		this.InitializeComponent();
+	}
+
+	private void AlternateClick(object sender, RoutedEventArgs e)
+	{
+		this.Frame.Navigate(typeof(AlternatePage));
 	}
 }

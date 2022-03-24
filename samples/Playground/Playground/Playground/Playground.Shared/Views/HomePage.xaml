@@ -44,9 +44,11 @@
 			<Button uen:Navigation.Request="Dialogs"
 					Content="Dialogs page" />
 			<Button uen:Navigation.Request="VisualStates"
-					Content="Visual States page" />
+					Content="Visual States" />
 			<Button uen:Navigation.Request="PanelVisibility"
-					Content="Visibility page" />
+					Content="Visibility" />
+			<Button uen:Navigation.Request="AdHoc"
+					Content="Ad Hoc Tests" />
 		</StackPanel>
 	</Grid>
 </Page>
