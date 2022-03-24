@@ -18,12 +18,16 @@ public static class UnoHost
 				{
 					services.AddSingleton(appHost);
 				}
+				if (ctx.HostingEnvironment is IHasAddressBar addressBarHost)
+				{
+					services.AddSingleton(addressBarHost);
+				}
 				services.AddSingleton<IStorageProxy, StorageProxy>();
 			})
 #if __WASM__
 				.ConfigureHostConfiguration(config =>
 				{
-					if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("UNO_BOOTSTRAP_MONO_RUNTIME_MODE")))
+					if (Foundation.WebAssemblyRuntime.IsWebAssembly)
 					{
 						var href = Foundation.WebAssemblyRuntime.InvokeJS("window.location.href");
 						var appsettingsPrefix = new Dictionary<string, string>

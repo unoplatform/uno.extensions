@@ -1,8 +1,13 @@
-﻿namespace Uno.Extensions.Hosting;
+﻿using Uno.Foundation;
+
+namespace Uno.Extensions.Hosting;
 
 public class AppHostingEnvironment : HostingEnvironment, IAppHostEnvironment
+#if __WASM__
+	, IHasAddressBar
+#endif
 {
-    public string? AppDataPath { get; set; }
+	public string? AppDataPath { get; set; }
 
     public static AppHostingEnvironment FromHostEnvironment(IHostEnvironment host, string? appDataPath)
     {
@@ -15,4 +20,24 @@ public class AppHostingEnvironment : HostingEnvironment, IAppHostEnvironment
             EnvironmentName = host.EnvironmentName
         };
     }
+
+#if __WASM__
+	public async Task UpdateAddressBar(Uri applicationUri)
+	{
+		// Note: This is a hack to avoid error being thrown when loading products async
+		await Task.Delay(1000).ConfigureAwait(false);
+		CoreApplication.MainView?.DispatcherQueue.TryEnqueue(() =>
+					{
+						var href = WebAssemblyRuntime.InvokeJS("window.location.href");
+						var appUriBuilder = new UriBuilder(applicationUri);
+						var url = new UriBuilder(href);
+						url.Query = appUriBuilder.Query;
+						url.Path = appUriBuilder.Path;
+						var webUri = url.Uri.OriginalString;
+						var js = $"window.history.pushState(\"{webUri}\",\"\", \"{webUri}\");";
+						Console.WriteLine($"JS:{js}");
+						var result = WebAssemblyRuntime.InvokeJS(js);
+					});
+	}
+#endif
 }

@@ -8,20 +8,14 @@ using Commerce.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Uno.Extensions;
 using Uno.Extensions.Configuration;
 using Uno.Extensions.Hosting;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation;
-using Uno.Extensions.Navigation.UI;
 using Uno.Extensions.Navigation.Regions;
 using Uno.Extensions.Navigation.Toolkit;
 using Uno.Extensions.Serialization;
-using Uno.Foundation;
 using Commerce.Views;
-using Uno.Extensions.Logging.Serilog;
-using Uno.Extensions.Navigation.UI.Controls;
-using Uno.Extensions.Navigation.Toolkit.Controls;
 
 #if WINUI
 using Windows.ApplicationModel;
@@ -36,11 +30,8 @@ using Window = Microsoft.UI.Xaml.Window;
 using CoreApplication = Windows.ApplicationModel.Core.CoreApplication;
 #else
 using Windows.ApplicationModel;
-using Windows.ApplicationModel.Activation;
-using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using LaunchActivatedEventArgs = Windows.ApplicationModel.Activation.LaunchActivatedEventArgs;
 using Window = Windows.UI.Xaml.Window;
@@ -104,7 +95,9 @@ namespace Commerce
 
 
 					// Enable navigation, including registering views and viewmodels
-					.UseNavigation(RegisterRoutes)
+					.UseNavigation(
+						RegisterRoutes,
+						config => config with { AddressBarUpdateEnabled = true })
 
 					// Add navigation support for toolkit controls such as TabBar and NavigationView
 					.UseToolkitNavigation()
@@ -185,7 +178,7 @@ namespace Commerce
 					Title: "Forgot your password!",
 					DelayUserInput: true,
 					DefaultButtonIndex: 1,
-					Buttons:new DialogAction[]
+					Buttons: new DialogAction[]
 					{
 						new(Label: "Yeh!",Id:"Y"),
 						new(Label: "Nah", Id:"N")
@@ -286,22 +279,6 @@ namespace Commerce
 				});
 #endif
 
-
-#if __WASM__
-				// Note: This is a hack to avoid error being thrown when loading products async
-				await Task.Delay(1000).ConfigureAwait(false);
-				CoreApplication.MainView?.DispatcherQueue.TryEnqueue(() =>
-				{
-					var href = WebAssemblyRuntime.InvokeJS("window.location.href");
-					var url = new UriBuilder(href);
-					url.Query = route.Query();
-					url.Path = route.FullPath()?.Replace("+", "/");
-					var webUri = url.Uri.OriginalString;
-					var js = $"window.history.pushState(\"{webUri}\",\"\", \"{webUri}\");";
-					Console.WriteLine($"JS:{js}");
-					var result = WebAssemblyRuntime.InvokeJS(js);
-				});
-#endif
 			}
 			catch (Exception ex)
 			{
