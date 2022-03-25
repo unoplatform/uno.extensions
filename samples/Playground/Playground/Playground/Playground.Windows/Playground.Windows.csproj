@@ -75,4 +75,12 @@
 	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
 	</ItemGroup>
 	<Import Project="..\Playground.Shared\Playground.Shared.projitems" Label="Shared" />
+
+		<Target Name="WorkaroundSkiaWasmTargets" AfterTargets="ResolveProjectReferences">
+		<ItemGroup>
+			<_ResolvedProjectReferencePathsToRemove Include="@(_ResolvedProjectReferencePaths)" Condition="'%(_ResolvedProjectReferencePaths.OriginalItemSpec)'=='Uno.Extensions.Hosting.WinUI.Skia.csproj' or '%(_ResolvedProjectReferencePaths.OriginalItemSpec)'=='Uno.Extensions.Hosting.WinUI.Wasm.csproj'" />
+			<_ResolvedProjectReferencePaths Remove="@(_ResolvedProjectReferencePathsToRemove)" />
+		</ItemGroup>
+		<Message Importance="high" Text="Removed incorrect references: @(_ResolvedProjectReferencePathsToRemove)" />
+	</Target>
 </Project>
