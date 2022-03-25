@@ -52,5 +52,9 @@
 				<TextBlock Text="Three" />
 			</Grid>
 		</Grid>
+		<StackPanel Grid.Row="3">
+			<Button Content="Serialize"
+					Click="{x:Bind ViewModel.RunSerializer}"/>
+		</StackPanel>
 	</Grid>
 </Page>
