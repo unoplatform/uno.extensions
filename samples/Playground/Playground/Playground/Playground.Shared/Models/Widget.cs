@@ -1,4 +1,6 @@
-﻿namespace Playground.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace Playground.Models;
 
 public record Widget
 {
@@ -13,3 +15,7 @@ public record Widget
 
 	public double Weight { get; init; }
 }
+
+[JsonSerializable(typeof(Widget))]
+internal partial class WidgetContext: JsonSerializerContext
+{ }

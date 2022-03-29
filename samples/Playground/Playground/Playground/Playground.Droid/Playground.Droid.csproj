@@ -67,6 +67,9 @@
     <PackageReference Include="CommunityToolkit.Mvvm">
       <Version>7.1.2</Version>
     </PackageReference>
+    <PackageReference Include="System.Text.Json">
+      <Version>6.0.2</Version>
+    </PackageReference>
     <PackageReference Include="Refit">
       <Version>6.3.2</Version>
     </PackageReference>

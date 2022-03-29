@@ -1,4 +1,9 @@
 ﻿#define NO_REFLECTION // MessageDialog currently doesn't work with no-reflection set
+using System.Text.Json.Serialization.Metadata;
+using Uno.Extensions.Logging;
+using Uno.Extensions.Navigation.Regions;
+using Uno.Extensions.Navigation.Toolkit;
+using Uno.Extensions.Serialization;
 using Playground.Services.Endpoints;
 
 using Windows.ApplicationModel;
