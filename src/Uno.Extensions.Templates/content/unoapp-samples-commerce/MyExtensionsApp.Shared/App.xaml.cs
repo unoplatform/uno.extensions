@@ -9,20 +9,14 @@ using MyExtensionsApp.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Uno.Extensions;
 using Uno.Extensions.Configuration;
 using Uno.Extensions.Hosting;
 using Uno.Extensions.Logging;
 using Uno.Extensions.Navigation;
-using Uno.Extensions.Navigation.UI;
 using Uno.Extensions.Navigation.Regions;
 using Uno.Extensions.Navigation.Toolkit;
 using Uno.Extensions.Serialization;
-using Uno.Foundation;
 using MyExtensionsApp.Views;
-using Uno.Extensions.Logging.Serilog;
-using Uno.Extensions.Navigation.UI.Controls;
-using Uno.Extensions.Navigation.Toolkit.Controls;
 
 #if WINUI
 using Windows.ApplicationModel;
@@ -37,11 +31,8 @@ using Window = Microsoft.UI.Xaml.Window;
 using CoreApplication = Windows.ApplicationModel.Core.CoreApplication;
 #else
 using Windows.ApplicationModel;
-using Windows.ApplicationModel.Activation;
-using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using LaunchActivatedEventArgs = Windows.ApplicationModel.Activation.LaunchActivatedEventArgs;
 using Window = Windows.UI.Xaml.Window;
@@ -105,7 +96,9 @@ namespace MyExtensionsApp
 
 
 					// Enable navigation, including registering views and viewmodels
-					.UseNavigation(RegisterRoutes)
+					.UseNavigation(
+						RegisterRoutes,
+						config => config with { AddressBarUpdateEnabled = true })
 
 					// Add navigation support for toolkit controls such as TabBar and NavigationView
 					.UseToolkitNavigation()
@@ -186,7 +179,7 @@ namespace MyExtensionsApp
 					Title: "Forgot your password!",
 					DelayUserInput: true,
 					DefaultButtonIndex: 1,
-					Buttons:new DialogAction[]
+					Buttons: new DialogAction[]
 					{
 						new(Label: "Yeh!",Id:"Y"),
 						new(Label: "Nah", Id:"N")
