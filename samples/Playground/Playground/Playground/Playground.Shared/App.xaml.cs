@@ -165,7 +165,7 @@ namespace Playground
 		}
 
 
-		public async void RouteUpdated(object sender, RouteChangedEventArgs e)
+		public void RouteUpdated(object sender, RouteChangedEventArgs e)
 		{
 			try
 			{
