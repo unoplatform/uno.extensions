@@ -224,26 +224,25 @@ namespace Playground
 
 			// RouteMap required for Shell if initialRoute or initialViewModel isn't specified when calling NavigationHost
 			routes.Register(
-				views =>
-				new RouteMap("", View: views.FindByViewModel<ShellViewModel>(),
+				new DynamicRouteMap("", ViewMap: views => views.FindByViewModel<ShellViewModel>(),
 				Nested: new[]
 				{
-					new RouteMap("Home",View: views.FindByView<HomePage>()),
-					new RouteMap("CodeBehind",View: views.FindByView<CodeBehindPage>(), DependsOn: "Home"),
-					new RouteMap("VM",View: views.FindByView<VMPage>(), DependsOn: "Home"),
-					new RouteMap("Xaml",View: views.FindByView<XamlPage>(), DependsOn: "Home"),
-					new RouteMap("NavigationView",View: views.FindByView<NavigationViewPage>(), DependsOn: "Home"),
-					new RouteMap("TabBar",View: views.FindByView<TabBarPage>(), DependsOn: "Home"),
-					new RouteMap("ContentControl",View: views.FindByView<ContentControlPage>(), DependsOn: "Home"),
-					new RouteMap("Second",View: views.FindByView<SecondPage>(), DependsOn: "Home"),
-					new RouteMap("Third",View: views.FindByView<ThirdPage>(), DependsOn: "Home"),
-					new RouteMap("Fourth",View: views.FindByView<FourthPage>(), DependsOn: "Home"),
-					new RouteMap("Fifth",View: views.FindByView<FifthPage>(), DependsOn: "Home"),
-					new RouteMap("Dialogs",View: views.FindByView<DialogsPage>(), DependsOn: "Home",
+					new DynamicRouteMap("Home",ViewMap: views => views.FindByView<HomePage>()),
+					new DynamicRouteMap("CodeBehind",ViewMap: views => views.FindByView<CodeBehindPage>(), DependsOn: "Home"),
+					new DynamicRouteMap("VM",ViewMap: views => views.FindByView<VMPage>(), DependsOn: "Home"),
+					new DynamicRouteMap("Xaml",ViewMap: views => views.FindByView<XamlPage>(), DependsOn: "Home"),
+					new DynamicRouteMap("NavigationView",ViewMap: views => views.FindByView<NavigationViewPage>(), DependsOn: "Home"),
+					new DynamicRouteMap("TabBar",ViewMap: views => views.FindByView<TabBarPage>(), DependsOn: "Home"),
+					new DynamicRouteMap("ContentControl",ViewMap: views => views.FindByView<ContentControlPage>(), DependsOn: "Home"),
+					new DynamicRouteMap("Second",ViewMap: views => views.FindByView<SecondPage>(), DependsOn: "Home"),
+					new DynamicRouteMap("Third",ViewMap: views => views.FindByView<ThirdPage>(), DependsOn: "Home"),
+					new DynamicRouteMap("Fourth",ViewMap: views => views.FindByView<FourthPage>(), DependsOn: "Home"),
+					new DynamicRouteMap("Fifth",ViewMap: views => views.FindByView<FifthPage>(), DependsOn: "Home"),
+					new DynamicRouteMap("Dialogs",ViewMap: views => views.FindByView<DialogsPage>(), DependsOn: "Home",
 					Nested: new[]
 					{
-						new RouteMap("Simple",View: views.FindByView<SimpleDialog>()),
-						new RouteMap("Complex",View: views.FindByView<ComplexDialog>(), DependsOn: "Simple",
+						new DynamicRouteMap("Simple",ViewMap: views => views.FindByView<SimpleDialog>()),
+						new DynamicRouteMap("Complex",ViewMap: views => views.FindByView<ComplexDialog>(), DependsOn: "Simple",
 						Nested: new[]
 						{
 							new RouteMap("ComplexDialogFirst",View: views.FindByView<ComplexDialogFirstPage>()),
@@ -251,9 +250,9 @@ namespace Playground
 						}),
 						new RouteMap("Basic",View: views.FindByView<BasicFlyout>())
 					}),
-					new RouteMap("PanelVisibility",View: views.FindByView<PanelVisibilityPage>(), DependsOn: "Home"),
-					new RouteMap("VisualStates",View: views.FindByView<VisualStatesPage>(), DependsOn: "Home"),
-					new RouteMap("AdHoc",View: views.FindByViewModel<AdHocViewModel>(), DependsOn: "Home",
+					new DynamicRouteMap("PanelVisibility",ViewMap: views => views.FindByView<PanelVisibilityPage>(), DependsOn: "Home"),
+					new DynamicRouteMap("VisualStates",ViewMap: views => views.FindByView<VisualStatesPage>(), DependsOn: "Home"),
+					new DynamicRouteMap("AdHoc",View: views.FindByViewModel<AdHocViewModel>(), DependsOn: "Home",
 					Nested: new[]
 					{
 						new RouteMap("Auth",View: views.FindByView<AuthTokenDialog>())
