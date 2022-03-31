@@ -7,11 +7,11 @@ public class RouteResolver : IRouteResolver
 
 	protected ILogger Logger { get; }
 
-	protected RouteResolver(ILogger logger, IRouteRegistry routes)
+	protected RouteResolver(ILogger logger, IRouteRegistry routes, IViewResolver viewResolver)
 	{
 		Logger = logger;
 
-		var maps = routes.Routes;
+		var maps = ResolveViewMaps(routes.Items, viewResolver);
 
 		if (maps is not null)
 		{
@@ -31,11 +31,22 @@ public class RouteResolver : IRouteResolver
 		Mappings[messageDialogRoute.Path] = messageDialogRoute;
 	}
 
+	private RouteMap[] ResolveViewMaps(IEnumerable<RouteMap> maps, IViewResolver viewResolver)
+	{
+		if(!(maps?.Any()??false))
+		{
+			return new RouteMap[] {};
+		}
+		return (from m in maps
+				let rm = m is DynamicRouteMap drm ? new RouteMap(drm.Path, drm.ViewMap?.Invoke(viewResolver), drm.IsDefault, drm.DependsOn, drm.Init, ResolveViewMaps(drm.Nested, viewResolver)) : m
+				select rm).ToArray();
+	}
+
 	public RouteResolver(
 		ILogger<RouteResolver> logger,
-		IRouteRegistry routes
-		) : this((ILogger)logger, routes
-			)
+		IRouteRegistry routes,
+		IViewResolver viewResolver
+		) : this((ILogger)logger, routes, viewResolver)
 	{
 	}
 

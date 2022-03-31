@@ -11,7 +11,9 @@ public record ViewMap(
 {
 	public Type? RenderView => View??DynamicView?.Invoke();
 
-	internal void RegisterTypes(IServiceCollection services)
+	public virtual Type? BindingViewModel => ViewModel;
+
+	public virtual void RegisterTypes(IServiceCollection services)
 	{
 		if (ViewModel is not null)
 		{

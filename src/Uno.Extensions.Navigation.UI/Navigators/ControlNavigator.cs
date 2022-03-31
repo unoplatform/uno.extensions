@@ -74,7 +74,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 		var viewModel = view.DataContext;
 		if (refresh ||
 			viewModel is null ||
-			viewModel.GetType() != mapping?.View?.ViewModel)
+			viewModel.GetType() != mapping?.View?.BindingViewModel)
 		{
 			// This will happen if cache mode isn't set to required
 			viewModel = await CreateViewModel(services, request, route, mapping);
@@ -177,7 +177,7 @@ public abstract class ControlNavigator : Navigator
 	protected async Task<object?> CreateViewModel(IServiceProvider services, NavigationRequest request, Route route, RouteMap? mapping)
 	{
 		var navigator = services.GetInstance<INavigator>();
-		if (mapping?.View?.ViewModel is not null)
+		if (mapping?.View?.BindingViewModel is not null)
 		{
 			var parameters = route.Data ?? new Dictionary<string, object>();
 			if (parameters.Any() &&
@@ -196,13 +196,13 @@ public abstract class ControlNavigator : Navigator
 
 			services.AddScopedInstance(request);
 
-			var vm = services.GetService(mapping!.View!.ViewModel);
+			var vm = services.GetService(mapping!.View!.BindingViewModel);
 
 			if (vm is null)
 			{
 				try
 				{
-					var ctr = mapping.View.ViewModel.GetNavigationConstructor(navigator!, Region.Services!, out var args);
+					var ctr = mapping.View.BindingViewModel.GetNavigationConstructor(navigator!, Region.Services!, out var args);
 					if (ctr is not null)
 					{
 						vm = ctr.Invoke(args);

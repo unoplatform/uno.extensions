@@ -1,17 +1,22 @@
-﻿namespace Uno.Extensions.Navigation;
+﻿using Microsoft.Extensions.Options;
+using Uno.Extensions.Navigation.UI.Controls;
+
+namespace Uno.Extensions.Navigation;
 
 public static class ServiceCollectionExtensions
 {
 	public static IServiceCollection AddNavigation(
 		this IServiceCollection services,
 		Func<NavigationConfig, NavigationConfig>? configure = null,
-		Action<IViewRegistry, IRouteRegistry>? routeBuilder = null)
+		Action<IViewRegistry, IRouteRegistry>? routeBuilder = null,
+		Func<IServiceCollection, IViewRegistry>? createViewRegistry = null,
+		Func<IServiceCollection, IRouteRegistry>? createRouteRegistry = null)
 	{
 		var navConfig = new NavigationConfig();
 		navConfig = (configure?.Invoke(navConfig)) ?? navConfig;
 
-		var views = new ViewRegistry();
-		var routes = new RouteRegistry(services, views);
+		var views = createViewRegistry?.Invoke(services) ?? new ViewRegistry(services);
+		var routes = createRouteRegistry?.Invoke(services) ?? new RouteRegistry(services);
 		routeBuilder?.Invoke(views, routes);
 
 		return services

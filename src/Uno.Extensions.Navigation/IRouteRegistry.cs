@@ -1,14 +1,5 @@
 ﻿namespace Uno.Extensions.Navigation;
 
-public interface IRouteRegistry
+public interface IRouteRegistry: IRegistry<RouteMap>
 {
-	IEnumerable<RouteMap> Routes { get; }
-
-	IRouteRegistry Register(Func<IViewResolver,RouteMap> buildRouteMap);
-}
-
-public interface IViewRegistry
-{
-	IEnumerable<ViewMap> Views { get; }
-	IViewRegistry Register(params ViewMap[] view);
 }

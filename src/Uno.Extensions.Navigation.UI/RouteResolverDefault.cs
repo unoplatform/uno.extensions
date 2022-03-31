@@ -12,8 +12,11 @@ public class RouteResolverDefault : RouteResolver
 
 	private IDictionary<string, Type>? loadedTypes;
 
-	public RouteResolverDefault(ILogger<RouteResolverDefault> logger, IRouteRegistry routes
-		) : base(logger, routes)
+	public RouteResolverDefault(
+		ILogger<RouteResolverDefault> logger,
+		IRouteRegistry routes,
+		IViewResolver viewResolver
+		) : base(logger, routes, viewResolver)
 	{
 	}
 

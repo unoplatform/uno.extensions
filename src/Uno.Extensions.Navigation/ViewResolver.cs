@@ -6,7 +6,7 @@ public class ViewResolver : IViewResolver
 
 	public ViewResolver(IViewRegistry registry)
 	{
-		_views = registry.Views.ToArray();
+		_views = registry.Items.ToArray();
 	}
 
 	public virtual ViewMap? FindByViewModel(Type? viewModelType)
