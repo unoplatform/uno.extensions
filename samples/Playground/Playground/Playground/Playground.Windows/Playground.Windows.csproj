@@ -14,6 +14,14 @@
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
 	</PropertyGroup>
 
+
+	<PropertyGroup>
+		<!-- Bundles the WinAppSDK binaries (Uncomment for unpackaged builds) -->
+		<!-- <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained> -->
+		<!-- This bundles the .NET Core libraries (Uncomment for packaged builds)  -->
+		<SelfContained>true</SelfContained>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<Content Include="Assets\SplashScreen.scale-200.png" />
 		<Content Include="Assets\LockScreenLogo.scale-200.png" />
