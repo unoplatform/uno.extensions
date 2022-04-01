@@ -1,6 +1,4 @@
-﻿using Playground.Models;
-
-namespace Playground.ViewModels;
+﻿namespace Playground.ViewModels;
 
 public class VMViewModel
 {

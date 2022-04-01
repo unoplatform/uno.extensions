@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-using Playground.Models;
-
+﻿
 namespace Playground.ViewModels;
 
 public class HomeViewModel

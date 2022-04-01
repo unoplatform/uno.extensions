@@ -7,15 +7,18 @@ global using System.Threading.Tasks;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Hosting;
 global using Microsoft.Extensions.Logging;
+global using Microsoft.Extensions.Options;
 global using Windows.Foundation;
 global using Windows.UI.Popups;
 global using Uno.Extensions;
 global using Uno.Extensions.Configuration;
 global using Uno.Extensions.Hosting;
 global using Uno.Extensions.Navigation;
+global using Playground.Models;
 global using Playground.Views;
 global using Playground.ViewModels;
 global using Playground.Services;
+global using CommunityToolkit.Mvvm.ComponentModel;
 
 #if WINUI
 	global using Microsoft.UI.Dispatching;
