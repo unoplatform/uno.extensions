@@ -20,8 +20,8 @@
     <PackageReference Include="Uno.Core.Extensions.Logging.Singleton" Version="4.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.18362.22" />
-    <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.18362.22" />
+    <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.18362.24" />
+    <FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.18362.24" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Uno.WinUI" Version="4.2.0-dev.534" />
