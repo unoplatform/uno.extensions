@@ -28,11 +28,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Uno.WinUI" Version="4.1.9" />
+		<PackageReference Include="Uno.WinUI" Version="4.2.0-dev.534" />
 		<PackageReference Include="Uno.Core" Version="4.0.1" />
-		<PackageReference Include="Uno.Material.WinUI" Version="1.2.0" />
-    <PackageReference Include="Uno.Toolkit.WinUI.Material" Version="1.2.1" />
-		<PackageReference Include="Uno.Toolkit.WinUI" Version="1.2.1" />
+		<PackageReference Include="Uno.Material.WinUI" Version="1.4.0-dev.30" />
+    <PackageReference Include="Uno.Toolkit.WinUI.Material" Version="1.4.0-dev.3" />
+		<PackageReference Include="Uno.Toolkit.WinUI" Version="1.4.0-dev.3" />
 		<PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.2" />
 	</ItemGroup>
 

@@ -21,11 +21,11 @@
     <PackageReference Include="System.Threading.Tasks.Extensions">
       <Version>4.5.4</Version>
     </PackageReference>
-		<PackageReference Include="Uno.Toolkit.UI" Version="1.2.1" />
-		<PackageReference Include="Uno.Toolkit.UI.Material" Version="1.2.1" />
+		<PackageReference Include="Uno.Toolkit.UI" Version="1.4.0-dev.3" />
+		<PackageReference Include="Uno.Toolkit.UI.Material" Version="1.4.0-dev.3" />
 		<PackageReference Include="Uno.Core" Version="4.0.1" />
-		<PackageReference Include="Uno.Material" Version="1.2.0" />
-    <PackageReference Include="Uno.UI" Version="4.1.9" />
+		<PackageReference Include="Uno.Material" Version="1.4.0-dev.30" />
+    <PackageReference Include="Uno.UI" Version="4.2.0-dev.534" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
