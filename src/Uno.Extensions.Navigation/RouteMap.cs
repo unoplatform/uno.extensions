@@ -13,7 +13,7 @@ public record RouteMap(
 
 public record DynamicRouteMap(
 	string Path,
-	Func<IViewResolver,ViewMap>? ViewMap = null,
+	Func<IViewResolver,ViewMap?> ViewMap = null,
 	bool IsDefault = false,
 	string DependsOn = "",
 	Func<NavigationRequest, NavigationRequest>? Init = null,

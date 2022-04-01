@@ -18,6 +18,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)ReactiveClasses.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)AppInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\ProfileModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Cart.cs" />
