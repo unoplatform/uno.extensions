@@ -59,7 +59,7 @@ namespace Uno.Extensions.Http
              where TInterface : class
         {
             name ??= typeof(TInterface).IsInterface ? typeof(TInterface).Name.TrimStart(InterfaceNamePrefix) : typeof(TInterface).Name;
-            var options = context.Configuration.GetSection(name).Get<EndpointOptions>();
+            var options = ConfigurationBinder.Get<EndpointOptions>(context.Configuration.GetSection(name));
 
             return services.AddClient<TInterface>(context, options, name, httpClientFactory, configure);
         }

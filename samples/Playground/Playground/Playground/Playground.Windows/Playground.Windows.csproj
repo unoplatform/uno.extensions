@@ -73,6 +73,7 @@
 	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
 	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.csproj" />
 	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
+	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Http.Refit\Uno.Extensions.Http.Refit.csproj" />
 	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
 	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Localization\Uno.Extensions.Localization.WinUI.csproj" />
 	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj" />
@@ -82,6 +83,8 @@
 	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
 	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Reactive.UI\Uno.Extensions.Reactive.UI.WinUI.csproj" />
 	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj" />
+	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Serialization.Http\Uno.Extensions.Serialization.Http.csproj" />
+	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Serialization.Refit\Uno.Extensions.Serialization.Refit.csproj" />
 	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
 	</ItemGroup>
 	<Import Project="..\Playground.Shared\Playground.Shared.projitems" Label="Shared" />
