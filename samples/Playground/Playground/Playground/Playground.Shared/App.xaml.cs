@@ -1,10 +1,7 @@
 ﻿#define NO_REFLECTION // MessageDialog currently doesn't work with no-reflection set
-using Uno.Extensions.Logging;
-using Uno.Extensions.Navigation.Regions;
-using Uno.Extensions.Navigation.Toolkit;
-using Uno.Extensions.Serialization;
+using Playground.Services.Endpoints;
+
 using Windows.ApplicationModel;
-using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
 using Windows.UI.ViewManagement;
 
@@ -49,7 +46,7 @@ namespace Playground
 					})
 
 
-					.UseAppSettings()
+					.UseEmbeddedAppSettings<App>()
 
 					.UseCustomSettings("appsettings.platform.json")
 
@@ -60,9 +57,15 @@ namespace Playground
 					.UseSerialization()
 
 					// Register services for the application
-					.ConfigureServices(services =>
+					.ConfigureServices((context, services) =>
 					{
 						services
+											.AddNativeHandler()
+					.AddContentSerializer()
+					.AddRefitClient<ITodoTaskEndpoint>(context, settingsBuilder:
+							settings => settings.AuthorizationHeaderValueGetter =
+							() => Task.FromResult("AccessToken")
+							)
 							.AddHostedService<SimpleStartupService>();
 						//services
 
@@ -268,7 +271,7 @@ namespace Playground
 		{
 			views.Register(
 						// Option 1: Specify ShellView in order to customise the shell
-						new ViewMap<ShellView,ShellViewModel>(),
+						new ViewMap<ShellView, ShellViewModel>(),
 						// Option 2: Only specify the ShellViewModel - this will inject a FrameView where the subsequent pages will be shown
 						//new ViewMap(ViewModel: typeof(ShellViewModel)),
 						new ViewMap<HomePage, HomeViewModel>(),

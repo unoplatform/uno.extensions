@@ -13,12 +13,21 @@ global using Windows.UI.Popups;
 global using Uno.Extensions;
 global using Uno.Extensions.Configuration;
 global using Uno.Extensions.Hosting;
+global using Uno.Extensions.Http;
+global using Uno.Extensions.Http.Refit;
+global using Uno.Extensions.Logging;
 global using Uno.Extensions.Navigation;
+global using Uno.Extensions.Navigation.Regions;
+global using Uno.Extensions.Navigation.Toolkit;
+global using Uno.Extensions.Serialization;
+global using Uno.Extensions.Serialization.Refit;
 global using Playground.Models;
 global using Playground.Views;
 global using Playground.ViewModels;
 global using Playground.Services;
 global using CommunityToolkit.Mvvm.ComponentModel;
+global using System.Text.Json.Serialization;
+global using Refit;
 
 #if WINUI
 	global using Microsoft.UI.Dispatching;

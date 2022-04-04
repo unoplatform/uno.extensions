@@ -4,6 +4,7 @@ using System.Net.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Http;
 
 namespace Uno.Extensions.Http
 {
@@ -85,7 +86,7 @@ namespace Uno.Extensions.Http
             _ = httpClientBuilder
                 .Conditional(
                     options.UseNativeHandler,
-                    builder => builder.ConfigurePrimaryHttpMessageHandler<HttpMessageHandler>())
+                    builder => builder.ConfigurePrimaryAndInnerHttpMessageHandler<HttpMessageHandler>())
                 .ConfigureHttpClient((serviceProvider, client) =>
                 {
                     if (options.Url is not null)
@@ -99,7 +100,32 @@ namespace Uno.Extensions.Http
             return services;
         }
 
-        public static IHttpClientBuilder AddTypedHttpClient<TClient>(
+
+		public static IHttpClientBuilder ConfigurePrimaryAndInnerHttpMessageHandler<THandler>(this IHttpClientBuilder builder) where THandler : HttpMessageHandler
+		{
+			if (builder == null)
+			{
+				throw new ArgumentNullException("builder");
+			}
+
+			builder.Services.Configure(builder.Name, delegate (HttpClientFactoryOptions options)
+			{
+				options.HttpMessageHandlerBuilderActions.Add(delegate (HttpMessageHandlerBuilder b)
+				{
+					var innerHandler = b.Services.GetRequiredService<THandler>() as HttpMessageHandler;
+					if (b.PrimaryHandler is DelegatingHandler delegatingHandler)
+					{
+						delegatingHandler.InnerHandler = innerHandler;
+						innerHandler = delegatingHandler;
+					}
+
+					b.PrimaryHandler = innerHandler;
+				});
+			});
+			return builder;
+		}
+
+		public static IHttpClientBuilder AddTypedHttpClient<TClient>(
             this IServiceCollection services,
             Func<HttpClient, IServiceProvider, TClient> factory)
            where TClient : class
