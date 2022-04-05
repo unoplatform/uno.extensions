@@ -10,8 +10,16 @@
 		<PublishProfile>win10-$(Platform).pubxml</PublishProfile>
 		<UseWinUI>true</UseWinUI>
 		<Nullable>enable</Nullable>
-		<EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
+		<!--<EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>-->
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+	</PropertyGroup>
+
+
+	<PropertyGroup>
+		<!-- Bundles the WinAppSDK binaries (Uncomment for unpackaged builds) -->
+		<!-- <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained> -->
+		<!-- This bundles the .NET Core libraries (Uncomment for packaged builds)  -->
+		<!--<SelfContained>true</SelfContained>-->
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -32,6 +40,8 @@
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.0.1" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22000.197" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
+		<PackageReference Include="Refit" Version="6.3.2" />
+		<PackageReference Include="Refit.HttpClientFactory" Version="6.3.2" />
 		<PackageReference Include="Uno.Core.Extensions.Logging.Singleton" Version="4.0.1" />
 	</ItemGroup>
 
@@ -55,14 +65,15 @@
 	<!-- Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
        Tools extension to be activated for this project even if the Windows App SDK Nuget
        package has not yet been restored -->
-	<ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnablePreviewMsixTooling)'=='true'">
+	<!--<ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnablePreviewMsixTooling)'=='true'">
 		<ProjectCapability Include="Msix" />
-	</ItemGroup>
+	</ItemGroup>-->
 	<ItemGroup>
 	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
 	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
 	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.csproj" />
 	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
+	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Http.Refit\Uno.Extensions.Http.Refit.csproj" />
 	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
 	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Localization\Uno.Extensions.Localization.WinUI.csproj" />
 	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj" />
@@ -72,6 +83,8 @@
 	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
 	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Reactive.UI\Uno.Extensions.Reactive.UI.WinUI.csproj" />
 	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj" />
+	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Serialization.Http\Uno.Extensions.Serialization.Http.csproj" />
+	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Serialization.Refit\Uno.Extensions.Serialization.Refit.csproj" />
 	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
 	</ItemGroup>
 	<Import Project="..\Playground.Shared\Playground.Shared.projitems" Label="Shared" />

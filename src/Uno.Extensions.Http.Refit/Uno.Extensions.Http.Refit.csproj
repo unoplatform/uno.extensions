@@ -9,7 +9,8 @@
 
   <ItemGroup>
     <PackageReference Include="Refit" Version="6.3.2" />
-  </ItemGroup>
+	<PackageReference Include="Refit.HttpClientFactory" Version="6.3.2" />
+</ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />

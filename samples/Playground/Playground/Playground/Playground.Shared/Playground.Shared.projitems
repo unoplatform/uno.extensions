@@ -22,6 +22,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\AppInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Country.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Widget.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Endpoints\ITodoTaskEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\SimpleStartupService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\AdHocViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\FifthViewModel.cs" />
@@ -201,12 +202,12 @@
 		 explicitly included in the projitem, so files can be added from vscode
 		 without manipulating the projitem file.
 	-->
-    <Content Include="$(MSBuildThisFileDirectory)appsettings.development.json">
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)appsettings.development.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="$(MSBuildThisFileDirectory)appsettings.json">
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </EmbeddedResource>
     <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\back.scale-100.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\back.scale-150.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\back.scale-200.png" />
