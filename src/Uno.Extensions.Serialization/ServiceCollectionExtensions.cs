@@ -25,6 +25,8 @@ public static class ServiceCollectionExtensions
 			})
 			.AddSingleton<SystemTextJsonStreamSerializer>()
 			.AddSingleton<ISerializer>(services => services.GetRequiredService<SystemTextJsonStreamSerializer>())
-			.AddSingleton<IStreamSerializer>(services => services.GetRequiredService<SystemTextJsonStreamSerializer>());
+			.AddSingleton(typeof(ISerializer<>), typeof(SystemTextJsonStreamSerializer<>))
+			.AddSingleton<IStreamSerializer>(services => services.GetRequiredService<SystemTextJsonStreamSerializer>())
+			.AddSingleton(typeof(IStreamSerializer<>), typeof(SystemTextJsonStreamSerializer<>));
 	}
 }

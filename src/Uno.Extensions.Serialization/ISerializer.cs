@@ -32,3 +32,9 @@ public interface ISerializer
     //     The instance of targetType deserialized from the source.
     object? FromString(string source, Type targetType);
 }
+
+public interface ISerializer<T> : ISerializer
+{
+	string ToString(T value);
+	T? FromString(string source);
+}

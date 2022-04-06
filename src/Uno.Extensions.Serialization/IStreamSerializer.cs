@@ -37,3 +37,9 @@ public interface IStreamSerializer
     //     object or not.
     void WriteToStream(Stream stream, object value, Type valueType);
 }
+
+public interface IStreamSerializer<T> : IStreamSerializer
+{
+	T? ReadFromStream(Stream source);
+	void WriteToStream(Stream stream, T value);
+}
