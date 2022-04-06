@@ -290,7 +290,7 @@ namespace Playground
 						new ViewMap<FourthPage, FourthViewModel>(),
 						new ViewMap<FifthPage, FifthViewModel>(),
 						new ViewMap<DialogsPage>(),
-						new ViewMap<SimpleDialog>(),
+						new ViewMap<SimpleDialog, SimpleViewModel>(),
 						new ViewMap<ComplexDialog>(),
 						new ViewMap<ComplexDialogFirstPage>(),
 						new ViewMap<ComplexDialogSecondPage>(),
