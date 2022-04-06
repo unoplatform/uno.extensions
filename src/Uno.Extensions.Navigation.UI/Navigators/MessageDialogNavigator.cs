@@ -8,8 +8,16 @@ public class MessageDialogNavigator : DialogNavigator
 	public MessageDialogNavigator(
 		ILogger<DialogNavigator> logger,
 		IResolver resolver,
-		IRegion region)
-		: base(logger, resolver, region)
+		IRegion region
+#if WINUI
+		,IWindowProvider windowProvider
+#endif
+		)
+		: base(logger, resolver, region
+#if WINUI
+		, windowProvider
+#endif
+		)
 	{
 	}
 
@@ -62,6 +70,13 @@ public class MessageDialogNavigator : DialogNavigator
 			CancelCommandIndex = cancelIndex
 		};
 		md.Commands.AddRange(commands);
+
+#if WINUI && WINDOWS
+		var window = WindowProvider.Current;
+		var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
+		WinRT.Interop.InitializeWithWindow.Initialize(md, hwnd);
+#endif
+
 		var showTask = md.ShowAsync();
 		showTask.AsTask()
 			.ContinueWith(result =>

@@ -89,7 +89,11 @@ namespace Playground
 					.ConfigureServices(services =>
 					{
 						// Force the route resolver that doesn't use reflection
-						services.AddSingleton<IRouteResolver, RouteResolver>();
+						services.AddSingleton<IRouteResolver, RouteResolver>()
+#if WINUI
+						.AddSingleton<IWindowProvider>(new WindowProvider(()=>_window))
+#endif
+						;
 					})
 #endif
 					.Build(enableUnoLogging: true);

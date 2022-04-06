@@ -8,15 +8,26 @@ public abstract class DialogNavigator : ControlNavigator
 
     private IAsyncInfo? ShowTask { get; set; }
 
-    protected DialogNavigator(
+#if WINUI
+	protected IWindowProvider WindowProvider { get; }
+#endif
+
+	protected DialogNavigator(
         ILogger<DialogNavigator> logger,
         IResolver resolver,
-        IRegion region)
-        : base(logger, resolver,  region)
-    {
-    }
+        IRegion region
+#if WINUI
+		, IWindowProvider windowProvider
+#endif
+		)
+		: base(logger, resolver, region)
+	{
+#if WINUI
+		WindowProvider = windowProvider;
+#endif
+	}
 
-    protected override async Task<Route?> ExecuteRequestAsync(NavigationRequest request)
+	protected override async Task<Route?> ExecuteRequestAsync(NavigationRequest request)
     {
         var route = request.Route;
         // If this is back navigation, then make sure it's used to close

@@ -8,8 +8,16 @@ public class ContentDialogNavigator : DialogNavigator
 	public ContentDialogNavigator(
 		ILogger<ContentDialogNavigator> logger,
 		IResolver resolver,
-		IRegion region)
-		: base(logger, resolver, region)
+		IRegion region
+#if WINUI
+		, IWindowProvider windowProvider
+#endif
+		)
+		: base(logger, resolver, region
+#if WINUI
+		, windowProvider
+#endif
+		)
 	{
 	}
 
@@ -36,6 +44,10 @@ public class ContentDialogNavigator : DialogNavigator
 		{
 			return null;
 		}
+
+#if WINUI
+		dialog.XamlRoot = WindowProvider.Current.Content.XamlRoot;
+#endif
 
 		dialog.SetInstance(Region);
 
