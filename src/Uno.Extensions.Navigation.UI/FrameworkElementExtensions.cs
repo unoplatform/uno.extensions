@@ -1,6 +1,4 @@
 ﻿using Uno.Extensions.Hosting;
-using Uno.Extensions.Navigation.Regions;
-using Uno.Extensions.Navigation.UI;
 
 namespace Uno.Extensions.Navigation;
 
@@ -8,7 +6,7 @@ public static class FrameworkElementExtensions
 {
 	public static void AttachServiceProvider(this FrameworkElement element, IServiceProvider services)
 	{
-		element.SetServiceProvider(services);
+		element.SetServiceProvider(services.CreateScope().ServiceProvider);
 	}
 
 	public static async Task HostAsync(this FrameworkElement root, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
