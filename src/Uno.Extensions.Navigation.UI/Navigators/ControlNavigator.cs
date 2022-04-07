@@ -199,7 +199,7 @@ public abstract class ControlNavigator : Navigator
 				!parameters.ContainsKey(String.Empty) &&
 				mapping.View?.Data?.UntypedFromQuery is not null)
 			{
-				var data = await mapping.View.Data.UntypedFromQuery(services, parameters.ToDictionary(x => x.Key, x => x.Value + ""));
+				var data = await mapping.View.Data.UntypedFromQuery(services, parameters);
 				if (data is not null)
 				{
 					parameters[string.Empty] = data;
