@@ -17,7 +17,7 @@ public class AdHocViewModel
 		IAuthenticationTokenProvider authenticationToken,
 		ITodoTaskEndpoint todoTaskEndpoint,
 		ISerializer<Widget> widgetSerializer,
-		ISerializer<Person> personSerializer)
+		ISerializer personSerializer)
 	{
 		_navigator = navigator;
 		_authToken = authenticationToken;
@@ -50,7 +50,7 @@ public class AdHocViewModel
 
 		var p = new Person { Name = "Jane",Age=25, Height=160.3, Weight = 60 };
 		str = _personSerializer.ToString(p);
-		var newP = _personSerializer.FromString(str);
+		var newP = _personSerializer.FromString<Person>(str);
 		Debug.Assert(w == newW);
 	}
 

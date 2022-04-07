@@ -1,9 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Text.Json;
-using System.Text.Json.Serialization.Metadata;
-
-namespace Uno.Extensions.Serialization;
+﻿namespace Uno.Extensions.Serialization;
 
 public class SystemTextJsonGeneratedSerializer<T> : ISerializer<T>, IStreamSerializer<T>
 {

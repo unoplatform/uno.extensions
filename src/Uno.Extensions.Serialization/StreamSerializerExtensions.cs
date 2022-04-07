@@ -1,9 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
-using Uno.Extensions.Storage;
-
-namespace Uno.Extensions.Serialization;
+﻿namespace Uno.Extensions.Serialization;
 
 public static class StreamSerializerExtensions
 {

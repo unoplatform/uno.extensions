@@ -19,3 +19,7 @@ public record Person
 	public double  Height { get; set; }
 	public double Weight { get; set; }
 }
+
+[JsonSerializable(typeof(Person))]
+internal partial class PersonContext : JsonSerializerContext
+{ }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-
-namespace Uno.Extensions.Serialization;
+﻿namespace Uno.Extensions.Serialization;
 
 public interface IStreamSerializer
 {

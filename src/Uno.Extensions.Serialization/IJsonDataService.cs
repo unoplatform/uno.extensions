@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace Uno.Extensions.Serialization;
+﻿namespace Uno.Extensions.Serialization;
 
 public interface IJsonDataService<TData>
 {

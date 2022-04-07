@@ -1,5 +1,7 @@
 ﻿using System.IO;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 
 namespace Uno.Extensions.Serialization.Tests;
 
@@ -13,7 +15,8 @@ public class SystemTextJsonStreamSerializerTests
 	[TestInitialize]
 	public void InitializeTests()
 	{
-		Serializer = new SystemTextJsonStreamSerializer();
+		var services = new ServiceCollection().BuildServiceProvider();
+		Serializer = new SystemTextJsonStreamSerializer(services);
 	}
 
 	[TestMethod]

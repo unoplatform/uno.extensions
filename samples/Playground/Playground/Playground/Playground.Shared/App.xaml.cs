@@ -59,7 +59,11 @@ namespace Playground
 
 
 					// Register Json serializers (ISerializer and IStreamSerializer)
-					.UseSerialization()
+					.UseSerialization(
+							services=> services
+											.AddJsonTypeInfo(WidgetContext.Default.Widget)
+											.AddJsonTypeInfo(PersonContext.Default.Person)
+						)
 
 					// Register services for the application
 					.ConfigureServices((context, services) =>

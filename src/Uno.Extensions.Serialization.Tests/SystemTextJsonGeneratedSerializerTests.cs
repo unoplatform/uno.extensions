@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Text.Json.Serialization;
 
@@ -14,7 +15,8 @@ public class SystemTextJsonGeneratedSerializerTests
 	[TestInitialize]
 	public void InitializeTests()
 	{
-		var reflectionSerializer = new SystemTextJsonStreamSerializer();
+		var services = new ServiceCollection().BuildServiceProvider();
+		var reflectionSerializer = new SystemTextJsonStreamSerializer(services);
 		Serializer = new SystemTextJsonGeneratedSerializer<SimpleClass>(reflectionSerializer, reflectionSerializer,SimpleClassContext.Default.SimpleClass);
 	}
 
