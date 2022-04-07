@@ -131,8 +131,6 @@ namespace Playground
 			_window.AttachNavigation(_host.Services);
 			f.Navigate(typeof(MainPage));
 
-
-
 			// Option 2: Ad-hoc hosting using root content control
 			//var root = new ContentControl
 			//{
@@ -141,12 +139,12 @@ namespace Playground
 			//	HorizontalContentAlignment = HorizontalAlignment.Stretch,
 			//	VerticalContentAlignment = VerticalAlignment.Stretch
 			//};
-			//root.AttachServiceProvider(_host.Services);
 			//_window.Content = root;
-			//root.Host(initialRoute: "Shell");
+			//_window.AttachNavigation(_host.Services);
+			//root.Host(initialRoute: "");
 
 			// Option 3: Default hosting
-			//_window.Content = _host.Services.NavigationHost(
+			//_window.AttachNavigationHost(_host.Services,
 			//	// Option 1: This requires Shell to be the first RouteMap - best for perf as no reflection required
 			//	// initialRoute: ""
 			//	// Option 2: Specify route name

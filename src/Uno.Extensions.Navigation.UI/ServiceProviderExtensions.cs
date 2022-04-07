@@ -67,22 +67,7 @@ public static class ServiceProviderExtensions
 		return provider.GetRequiredService<IInstanceRepository>().Instances.TryGetValue(type, out var value) ? value : null;
 	}
 
-	//public static IServiceProvider CloneNavigationScopedServices(this IServiceProvider services)
-	//{
-	//	var scope = services.CreateScope();
-	//	var scopedServices = scope.ServiceProvider;
-
-	//	scopedServices.GetRequiredService<RegionControlProvider>().RegionControl = services.GetRequiredService<RegionControlProvider>().RegionControl;
-	//	var instance = services.GetInstance<INavigator>();
-	//	if (instance is not null)
-	//	{
-	//		scopedServices.AddInstance<INavigator>(instance);
-	//	}
-
-	//	return scopedServices;
-	//}
-
-	public static FrameworkElement NavigationHost(this IServiceProvider services, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
+	public static FrameworkElement AttachNavigationHost(this Window window, IServiceProvider services, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
 	{
 		var root = new ContentControl
 		{
@@ -91,8 +76,9 @@ public static class ServiceProviderExtensions
 			HorizontalContentAlignment = HorizontalAlignment.Stretch,
 			VerticalContentAlignment = VerticalAlignment.Stretch
 		};
+		window.Content = root;
 
-		root.SetServiceProvider(services);
+		window.AttachNavigation(services);
 
 		root.Host(initialRoute, initialView, initialViewModel);
 
