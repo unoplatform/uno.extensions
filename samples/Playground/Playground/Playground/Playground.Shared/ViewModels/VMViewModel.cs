@@ -18,6 +18,10 @@ public class VMViewModel
 	public async void NavigateRouteForResultAsyncClick(object sender, RoutedEventArgs args)
 	{
 		var response = await Navigator.NavigateRouteForResultAsync<Widget>(this, "Second");
+		if (response is null)
+		{
+			return;
+		}
 		var result = await response.Result;
 	}
 
@@ -31,6 +35,11 @@ public class VMViewModel
 	public async void NavigateViewForResultAsyncClick(object sender, RoutedEventArgs args)
 	{
 		var response = await Navigator.NavigateViewForResultAsync<SecondPage, Country>(this);
+		if (response is null)
+		{
+			return;
+		}
+
 		var result = await response.Result;
 	}
 
@@ -44,6 +53,11 @@ public class VMViewModel
 	public async void NavigateViewModelForResultAsyncClick(object sender, RoutedEventArgs args)
 	{
 		var response = await Navigator.NavigateViewModelForResultAsync<SecondViewModel, Country>(this);
+		if (response is null)
+		{
+			return;
+		}
+
 		var result = await response.Result;
 	}
 
@@ -57,6 +71,11 @@ public class VMViewModel
 	public async void NavigateDataForResultAsyncClick(object sender, RoutedEventArgs args)
 	{
 		var response = await Navigator.NavigateDataForResultAsync<Widget, Country>(this, new Widget("Test", 99.0));
+		if (response is null)
+		{
+			return;
+		}
+
 		var result = await response.Result;
 	}
 
@@ -64,6 +83,11 @@ public class VMViewModel
 	public async void NavigateForResultAsyncClick(object sender, RoutedEventArgs args)
 	{
 		var response = await Navigator.NavigateForResultAsync<Country>(this);
+		if (response is null)
+		{
+			return;
+		}
+
 		var result = await response.Result;
 	}
 
@@ -85,6 +109,11 @@ public class VMViewModel
 	public async void ShowMessageDialogAsyncClick(object sender, RoutedEventArgs args)
 	{
 		var response = await Navigator.ShowMessageDialogAsync(this, "Sample content", "Sample title");
+		if (response is null)
+		{
+			return;
+		}
+
 		var result = await response.Result;
 	}
 }

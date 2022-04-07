@@ -3,7 +3,7 @@ namespace Playground.Views;
 
 public sealed partial class AdHocPage : Page
 {
-	public AdHocViewModel ViewModel { get; private set; }
+	public AdHocViewModel? ViewModel { get; private set; }
 
 	public AdHocPage()
 	{

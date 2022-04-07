@@ -19,8 +19,8 @@ namespace Playground
 	/// </summary>
 	public sealed partial class App : Application
 	{
-		private Window _window;
-		public Window Window => _window;
+		private Window? _window;
+		public Window? Window => _window;
 
 		private IHost _host;
 
@@ -126,7 +126,7 @@ namespace Playground
 			_window = Window.Current;
 #endif
 
-			var notif = _host.Services.GetService<IRouteNotifier>();
+			var notif = _host.Services.GetRequiredService<IRouteNotifier>();
 			notif.RouteChanged += RouteUpdated;
 
 			// Option 1: Ad-hoc hosting of Navigation
@@ -164,12 +164,16 @@ namespace Playground
 		}
 
 
-		public void RouteUpdated(object sender, RouteChangedEventArgs e)
+		public void RouteUpdated(object? sender, RouteChangedEventArgs? e)
 		{
 			try
 			{
-				var rootRegion = e.Region.Root();
-				var route = rootRegion.GetRoute();
+				var rootRegion = e?.Region.Root();
+				var route = rootRegion?.GetRoute();
+				if(route is null)
+				{
+					return;
+				}
 
 
 #if !__WASM__ && !WINUI

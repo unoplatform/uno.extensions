@@ -76,7 +76,8 @@ public class ReloadService : IHostedService, IStartupService
 		try
 		{
 			var settings = await Storage.ReadFromApplicationFile(file);
-			if (!string.IsNullOrWhiteSpace(settings))
+			if (settings is not null &&
+				!string.IsNullOrWhiteSpace(settings))
 			{
 				if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($@"Settings '{settings}'");
 				var fullPath = Path.Combine(localFolderPath, file);

@@ -2,7 +2,8 @@
 
 public sealed partial class XamlPage : Page
 {
-	public XamlViewModel ViewModel { get; private set; }
+	public XamlViewModel? ViewModel { get; private set; }
+
 	public XamlPage()
 	{
 		this.InitializeComponent();
