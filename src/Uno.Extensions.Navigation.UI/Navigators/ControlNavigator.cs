@@ -1,7 +1,4 @@
-﻿using Uno.Extensions.Logging;
-using Uno.Extensions.Navigation.UI.Controls;
-
-namespace Uno.Extensions.Navigation.Navigators;
+﻿namespace Uno.Extensions.Navigation.Navigators;
 
 public abstract class ControlNavigator<TControl> : ControlNavigator
 	where TControl : class
@@ -10,10 +7,11 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 
 	protected ControlNavigator(
 		ILogger logger,
+		IWindowProvider window,
 		IRegion region,
 		IResolver resolver,
 		TControl? control)
-		: base(logger, resolver, region)
+		: base(logger, window, region, resolver)
 	{
 		Control = control;
 	}
@@ -22,11 +20,9 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 
 	protected override DispatcherQueue GetDispatcher() =>
 #if WINUI
-		(Control as FrameworkElement)?.DispatcherQueue
-#else
-		Windows.ApplicationModel.Core.CoreApplication.MainView.DispatcherQueue
+		(Control as FrameworkElement)?.DispatcherQueue ??
 #endif
-		?? base.GetDispatcher();
+		base.GetDispatcher();
 
 	protected virtual FrameworkElement? CurrentView => default;
 
@@ -105,9 +101,10 @@ public abstract class ControlNavigator : Navigator
 
 	protected ControlNavigator(
 		ILogger logger,
-		IResolver resolver,
-		IRegion region)
-		: base(logger, region, resolver)
+		IWindowProvider window,
+		IRegion region,
+		IResolver resolver)
+		: base(logger, window, region, resolver)
 	{
 	}
 
@@ -163,8 +160,6 @@ public abstract class ControlNavigator : Navigator
 	public virtual void ControlInitialize()
 	{
 	}
-
-	protected virtual DispatcherQueue GetDispatcher() => DispatcherQueue.GetForCurrentThread();
 
 	protected async Task<NavigationResponse?> ControlNavigateAsync(NavigationRequest request)
 	{

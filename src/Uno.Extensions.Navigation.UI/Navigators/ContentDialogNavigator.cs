@@ -1,23 +1,14 @@
-﻿using Uno.Extensions.Navigation.Regions;
-using Uno.Extensions.Navigation.UI;
-
-namespace Uno.Extensions.Navigation.Navigators;
+﻿namespace Uno.Extensions.Navigation.Navigators;
 
 public class ContentDialogNavigator : DialogNavigator
 {
 	public ContentDialogNavigator(
 		ILogger<ContentDialogNavigator> logger,
-		IResolver resolver,
-		IRegion region
-#if WINUI
-		, IWindowProvider windowProvider
-#endif
+		IWindowProvider window,
+		IRegion region,
+		IResolver resolver
 		)
-		: base(logger, resolver, region
-#if WINUI
-		, windowProvider
-#endif
-		)
+		: base(logger, window, region, resolver)
 	{
 	}
 
@@ -46,7 +37,7 @@ public class ContentDialogNavigator : DialogNavigator
 		}
 
 #if WINUI
-		dialog.XamlRoot = WindowProvider.Current.Content.XamlRoot;
+		dialog.XamlRoot = (Window.Current as Window)!.Content.XamlRoot;
 #endif
 
 		dialog.SetInstance(Region);

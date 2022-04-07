@@ -89,11 +89,7 @@ namespace Playground
 					.ConfigureServices(services =>
 					{
 						// Force the route resolver that doesn't use reflection
-						services.AddSingleton<IRouteResolver, RouteResolver>()
-#if WINUI
-						.AddSingleton<IWindowProvider>(new WindowProvider(()=>_window))
-#endif
-						;
+						services.AddSingleton<IRouteResolver, RouteResolver>();
 					})
 #endif
 					.Build(enableUnoLogging: true);
@@ -131,9 +127,11 @@ namespace Playground
 
 			// Option 1: Ad-hoc hosting of Navigation
 			var f = new Frame();
-			f.AttachServiceProvider(_host.Services);
 			_window.Content = f;
+			_window.AttachNavigation(_host.Services);
 			f.Navigate(typeof(MainPage));
+
+
 
 			// Option 2: Ad-hoc hosting using root content control
 			//var root = new ContentControl

@@ -1,12 +1,12 @@
-﻿using Uno.Extensions.Hosting;
-
-namespace Uno.Extensions.Navigation;
+﻿namespace Uno.Extensions.Navigation;
 
 public static class FrameworkElementExtensions
 {
-	public static void AttachServiceProvider(this FrameworkElement element, IServiceProvider services)
+	internal static IServiceProvider AttachServiceProvider(this UIElement element, IServiceProvider services)
 	{
-		element.SetServiceProvider(services.CreateScope().ServiceProvider);
+		var scopedServices = services.CreateScope().ServiceProvider;
+		element.SetServiceProvider(scopedServices);
+		return scopedServices;
 	}
 
 	public static async Task HostAsync(this FrameworkElement root, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
@@ -21,7 +21,7 @@ public static class FrameworkElementExtensions
 	{
 
 		var sp = root.FindServiceProvider();
-		var services = sp?.CreateScope().ServiceProvider;
+		var services = sp?.CreateNavigationScope();
 
 		// Create the Root region
 		var elementRegion = new NavigationRegion(root, services);

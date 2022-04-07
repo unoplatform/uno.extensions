@@ -1,7 +1,4 @@
-﻿using Uno.Extensions.Navigation.UI;
-using Uno.Extensions.Navigation.Regions;
-
-namespace Uno.Extensions.Navigation.Navigators;
+﻿namespace Uno.Extensions.Navigation.Navigators;
 
 public class FlyoutNavigator : ControlNavigator
 {
@@ -11,9 +8,10 @@ public class FlyoutNavigator : ControlNavigator
 
 	public FlyoutNavigator(
 		ILogger<ContentDialogNavigator> logger,
-		IResolver resolver,
-		IRegion region)
-		: base(logger, resolver, region)
+		IWindowProvider window,
+		IRegion region,
+		IResolver resolver)
+		: base(logger, window, region, resolver)
 	{
 	}
 

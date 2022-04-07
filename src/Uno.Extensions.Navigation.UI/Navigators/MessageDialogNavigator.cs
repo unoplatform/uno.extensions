@@ -1,23 +1,13 @@
-﻿using Uno.Extensions.Navigation.Regions;
-using Windows.UI.Popups;
-
-namespace Uno.Extensions.Navigation.Navigators;
+﻿namespace Uno.Extensions.Navigation.Navigators;
 
 public class MessageDialogNavigator : DialogNavigator
 {
 	public MessageDialogNavigator(
 		ILogger<DialogNavigator> logger,
+		IWindowProvider window,
 		IResolver resolver,
-		IRegion region
-#if WINUI
-		,IWindowProvider windowProvider
-#endif
-		)
-		: base(logger, resolver, region
-#if WINUI
-		, windowProvider
-#endif
-		)
+		IRegion region)
+		: base(logger, window, region, resolver)
 	{
 	}
 
@@ -72,7 +62,7 @@ public class MessageDialogNavigator : DialogNavigator
 		md.Commands.AddRange(commands);
 
 #if WINUI && WINDOWS
-		var window = WindowProvider.Current;
+		var window = (Window.Current as Window)!;
 		var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
 		WinRT.Interop.InitializeWithWindow.Initialize(md, hwnd);
 #endif
