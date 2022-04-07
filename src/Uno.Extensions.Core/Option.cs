@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
@@ -19,6 +20,12 @@ public static class Option
 
 	public static Option<T> Undefined<T>() => Option<T>.Undefined();
 }
+
+//public readonly struct ListOption<T>
+//{
+//	public static implicit operator Option<IImmutableList<T>>(ListOption<T>? value)
+//		=> new(OptionType.Some, value.);
+//}
 
 public readonly struct Option<T> : IOption, IEquatable<Option<T>>
 {
@@ -48,13 +55,13 @@ public readonly struct Option<T> : IOption, IEquatable<Option<T>>
 	public bool IsNone()
 		=> _type is OptionType.None;
 
-	public bool IsSome([NotNullWhen(true)] out T? value)
+	public bool IsSome(out T? value)
 	{
 		value = _value;
 		return _type is OptionType.Some;
 	}
 
-	bool IOption.IsSome([NotNullWhen(true)] out object? value)
+	bool IOption.IsSome(out object? value)
 	{
 		value = _value;
 		return _type is OptionType.Some;

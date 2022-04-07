@@ -45,8 +45,8 @@ internal sealed partial class AsyncCommand : IAsyncCommand, IDisposable
 #pragma warning restore CS8618
 	{
 		_dispatcher = new(onFirstResolved: SubscribeToExternalParameters);
-		_canExecuteChanged = new(this, h => h.Invoke, isCoalescable: true, _dispatcher.FindDispatcher);
-		_propertyChanged = new(this, h => h.Invoke, isCoalescable: false, _dispatcher.FindDispatcher);
+		_canExecuteChanged = new(this, h => h.Invoke, isCoalescable: true, schedulersProvider: _dispatcher.FindDispatcher);
+		_propertyChanged = new(this, h => h.Invoke, isCoalescable: false, schedulersProvider: _dispatcher.FindDispatcher);
 	}
 
 	public AsyncCommand(

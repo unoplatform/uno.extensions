@@ -13,4 +13,15 @@ internal class NotNullWhenAttribute : Attribute
 		ReturnValue = returnValue;
 	}
 }
+
+[AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property | AttributeTargets.ReturnValue, AllowMultiple = true, Inherited = false)]
+internal class NotNullIfNotNullAttribute : Attribute
+{
+	public string ParameterName { get; }
+
+	public NotNullIfNotNullAttribute(string parameterName)
+	{
+		ParameterName = parameterName;
+	}
+}
 #endif

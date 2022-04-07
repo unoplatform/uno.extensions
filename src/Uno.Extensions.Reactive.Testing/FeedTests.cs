@@ -10,7 +10,7 @@ public class FeedTests
 	/// <summary>
 	/// Initialize a test environment without inheriting from this base class.
 	/// </summary>
-	/// <param name="ctx">The context of teh test engine.</param>
+	/// <param name="ctx">The context of the test engine.</param>
 	/// <returns>The context for feeds of the current test.</returns>
 	public static FeedTestContext TestInitialize(TestContext ctx)
 		=> new(ctx);

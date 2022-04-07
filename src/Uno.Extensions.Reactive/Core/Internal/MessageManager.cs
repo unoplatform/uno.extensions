@@ -50,7 +50,7 @@ internal sealed partial class MessageManager<TParent, TResult>
 				return false;
 			}
 
-			// If we have any pending update transaction, we make sure to append it's change set to the locally defined
+			// If we have any pending update transaction, we make sure to append its change set to the locally defined
 			var changeSetToApply = _pendingUpdate?.TransientUpdates is { Count: > 0 } transientUpdates
 				? locallyDefinedChangeSet.ToDictionary().SetItems(transientUpdates)
 				: locallyDefinedChangeSet;

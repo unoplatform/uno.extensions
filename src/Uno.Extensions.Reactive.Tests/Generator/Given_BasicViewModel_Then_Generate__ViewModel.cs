@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -7,6 +9,124 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Reactive.Core;
 
 namespace Uno.Extensions.Reactive.Tests.Generator;
+
+[ReactiveBindable(false)]
+public partial class MyListFeedTestViewModel
+{
+	public MyListFeedTestViewModel(
+		IListFeed<MyRecord> anExternalInput, // External source, we don't do anything with it
+		IListState<MyRecord> anExternalReadWriteInput, // External source, we don't do anything with it
+
+		IInput<MyRecord> aBindableSingleInput,
+		IListInput<MyRecord> aBindableInput // We generate a bindable collection of denormalized MyRecord => Allow Add(MyRecord) AND Add(BindableMyRecord) (drag drop)
+		)
+	{
+		aBindableSingleInput.UpdateValue(i => i.SomeOrDefault(new MyRecord("",0, default!, default!))! with { Property1 = "hello" }, CancellationToken.None);
+
+		aBindableInput.UpdateValue(items => AddFavorite(items), CancellationToken.None);
+
+		// Projection sur un input List feed
+		//aBindableInput.Select(items => items?.Where(r => r.Property1 is not null and not { Length: 0 }));
+		aBindableInput.Select(item => item?.Property1);
+
+
+		// ######## Projection sur un list feed custom (API => Pas de state) ########
+		var myCustomListFeed = default(IFeed<CustomCollection<MyRecord>>);
+
+		//var abc = myCustomListFeed.Select(items => new CustomCollection<string>());
+		//ListFeed<CustomCollection<string>, string> def = abc;
+		//TestFeed<CustomCollection<string>> ghi = abc;
+		//IFeed<CustomCollection<string>> jkl = abc;
+
+		//.AsListFeed().Select(str => str.Count);
+		// Si on n'a pas de support de .Select sur les custom collection ça ne me semble pas dramatique ?
+		// De toute façon on va perdre le type de collection en sortie ...
+		myCustomListFeed.AsListFeed().Select(item => item?.Property1);
+	}
+
+	private Option<IImmutableList<MyRecord>> AddFavorite(Option<IImmutableList<MyRecord>> items)
+	{
+		if (items.IsNone() || (items.IsSome(out var its) && its is {Count:0}))
+		{
+			return Option.None<IImmutableList<MyRecord>>();
+		}
+
+		return items.SomeOrDefault()?.Add(new MyRecord("prop1", 42, default!, default!)).AsOption();
+	}
+}
+
+public class CustomCollection<T> : IImmutableList<T>
+{
+	/// <inheritdoc />
+	public IEnumerator<T> GetEnumerator()
+		=> throw new NotImplementedException();
+
+	/// <inheritdoc />
+	IEnumerator IEnumerable.GetEnumerator()
+		=> GetEnumerator();
+
+	/// <inheritdoc />
+	public int Count { get; }
+
+	/// <inheritdoc />
+	public T this[int index] => throw new NotImplementedException();
+
+	/// <inheritdoc />
+	public IImmutableList<T> Add(T value)
+		=> throw new NotImplementedException();
+
+	/// <inheritdoc />
+	public IImmutableList<T> AddRange(IEnumerable<T> items)
+		=> throw new NotImplementedException();
+
+	/// <inheritdoc />
+	public IImmutableList<T> Clear()
+		=> throw new NotImplementedException();
+
+	/// <inheritdoc />
+	public int IndexOf(T item, int index, int count, IEqualityComparer<T>? equalityComparer)
+		=> throw new NotImplementedException();
+
+	/// <inheritdoc />
+	public IImmutableList<T> Insert(int index, T element)
+		=> throw new NotImplementedException();
+
+	/// <inheritdoc />
+	public IImmutableList<T> InsertRange(int index, IEnumerable<T> items)
+		=> throw new NotImplementedException();
+
+	/// <inheritdoc />
+	public int LastIndexOf(T item, int index, int count, IEqualityComparer<T>? equalityComparer)
+		=> throw new NotImplementedException();
+
+	/// <inheritdoc />
+	public IImmutableList<T> Remove(T value, IEqualityComparer<T>? equalityComparer)
+		=> throw new NotImplementedException();
+
+	/// <inheritdoc />
+	public IImmutableList<T> RemoveAll(Predicate<T> match)
+		=> throw new NotImplementedException();
+
+	/// <inheritdoc />
+	public IImmutableList<T> RemoveAt(int index)
+		=> throw new NotImplementedException();
+
+	/// <inheritdoc />
+	public IImmutableList<T> RemoveRange(IEnumerable<T> items, IEqualityComparer<T>? equalityComparer)
+		=> throw new NotImplementedException();
+
+	/// <inheritdoc />
+	public IImmutableList<T> RemoveRange(int index, int count)
+		=> throw new NotImplementedException();
+
+	/// <inheritdoc />
+	public IImmutableList<T> Replace(T oldValue, T newValue, IEqualityComparer<T>? equalityComparer)
+		=> throw new NotImplementedException();
+
+	/// <inheritdoc />
+	public IImmutableList<T> SetItem(int index, T value)
+		=> throw new NotImplementedException();
+}
 
 public partial class Given_BasicViewModel_Then_Generate__ViewModel
 {
@@ -34,6 +154,7 @@ public partial class Given_BasicViewModel_Then_Generate__ViewModel
 		IInput<MyWeirdRecord> aWeirdRecordInput,
 		IInput<MyRecordWithAValueProperty> aRecordWithAValuePropertyInput,
 		IInput<int> anInputConflictingWithAProperty)
+		//IState<float> testState)
 	{
 		Assert.IsNotNull(anInput);
 		Assert.IsNotNull(aReadWriteInput);

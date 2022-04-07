@@ -1,0 +1,55 @@
+﻿using System;
+using System.ComponentModel;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using Windows.Foundation.Collections;
+using Windows.UI.Xaml.Data;
+using nVentive.Umbrella.Collections;
+using Umbrella.Presentation.Feeds.Collections._BindableCollection.Data;
+
+namespace Umbrella.Presentation.Feeds.Collections._BindableCollection
+{
+	/// <summary>
+	/// A group of items of a bindable collection
+	/// </summary>
+	internal class BindableCollectionGroup : ICollectionViewGroup, INotifyPropertyChanged
+	{
+		private object _group;
+
+		/// <inheritdoc />
+		public event PropertyChangedEventHandler? PropertyChanged;
+
+		public BindableCollectionGroup(IObservableGroup group, DataLayerHolder itemsHolder)
+		{
+			_group = group;
+			Holder = itemsHolder;
+		}
+
+		public void UpdateGroup(IObservableGroup newInstance)
+		{
+			_group = newInstance;
+		}
+
+		/// <summary>
+		/// Gets the holder responsible to maintain the current version of the source
+		/// </summary>
+		public DataLayerHolder Holder { get; }
+
+		/// <inheritdoc />
+		public object Group
+		{
+			get => _group;
+			private set
+			{
+				_group = value;
+				OnPropertyChanged();
+			}
+		}
+
+		/// <inheritdoc />
+		public IObservableVector<object> GroupItems => Holder.View;
+
+		protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) 
+			=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+	}
+}
