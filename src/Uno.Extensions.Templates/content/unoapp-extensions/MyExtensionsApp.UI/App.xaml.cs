@@ -99,7 +99,7 @@ public sealed partial class App : Application
 		}
 
 
-		_window.AttachNavigationHost(_host.Services);
+		_window.AttachNavigationHost(Host.Services);
 		_window.Activate();
 
 		await Task.Run(async () =>
