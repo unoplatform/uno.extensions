@@ -7,14 +7,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Title="TITLE"
-    PrimaryButtonText="Button1"
-    SecondaryButtonText="Button2"
-    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-    SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
-
-    <Grid>
-		<TextBlock Text="Home"
-				   HorizontalAlignment="Center"
-				   FontSize="48" />
-    </Grid>
+    PrimaryButtonText="Add"
+			   CloseButtonText="Cancel"
+			   DefaultButton="Primary"
+			   PrimaryButtonCommand="{Binding AddCommand}">
+   <StackPanel>
+		<TextBlock Text="Widget Name" />
+		<TextBox Text="{Binding Name, Mode=TwoWay}" />
+	</StackPanel>
 </ContentDialog>

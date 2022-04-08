@@ -122,10 +122,10 @@ namespace Playground
 			notif.RouteChanged += RouteUpdated;
 
 			// Option 1: Ad-hoc hosting of Navigation
-			var f = new Frame();
-			_window.Content = f;
-			_window.AttachServices(_host.Services);
-			f.Navigate(typeof(MainPage));
+			//var f = new Frame();
+			//_window.Content = f;
+			//_window.AttachServices(_host.Services);
+			//f.Navigate(typeof(MainPage));
 
 			// Option 2: Ad-hoc hosting using root content control
 			//var root = new ContentControl
@@ -140,14 +140,14 @@ namespace Playground
 			//root.Host(initialRoute: "");
 
 			// Option 3: Default hosting
-			//_window.AttachNavigation(_host.Services,
-			//	// Option 1: This requires Shell to be the first RouteMap - best for perf as no reflection required
-			//	// initialRoute: ""
-			//	// Option 2: Specify route name
-			//	// initialRoute: "Shell"
-			//	// Option 3: Specify the view model. To avoid reflection, you can still define a routemap
-			//	initialViewModel: typeof(ShellViewModel)
-			//	);
+			_window.AttachNavigation(_host.Services,
+				// Option 1: This requires Shell to be the first RouteMap - best for perf as no reflection required
+				// initialRoute: ""
+				// Option 2: Specify route name
+				// initialRoute: "Shell"
+				// Option 3: Specify the view model. To avoid reflection, you can still define a routemap
+				initialViewModel: typeof(ShellViewModel)
+				);
 
 
 			_window.Activate();

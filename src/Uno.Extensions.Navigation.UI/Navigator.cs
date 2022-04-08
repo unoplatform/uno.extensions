@@ -21,7 +21,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 	{
 	}
 
-	protected virtual DispatcherQueue GetDispatcher() =>
+	internal virtual DispatcherQueue GetDispatcher() =>
 #if WINUI
 		Window.Instance!.DispatcherQueue
 #else
