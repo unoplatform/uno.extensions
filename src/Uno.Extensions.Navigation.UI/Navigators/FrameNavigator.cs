@@ -1,9 +1,4 @@
-﻿using Uno.Extensions.Logging;
-using Uno.Extensions.Navigation;
-using Uno.Extensions.Navigation.Regions;
-using Uno.Extensions.Navigation.UI;
-
-namespace Uno.Extensions.Navigation.Navigators;
+﻿namespace Uno.Extensions.Navigation.Navigators;
 
 public class FrameNavigator : ControlNavigator<Frame>
 {
@@ -13,10 +8,11 @@ public class FrameNavigator : ControlNavigator<Frame>
 
 	public FrameNavigator(
 		ILogger<FrameNavigator> logger,
+		IWindowProvider window,
 		IRegion region,
 		IResolver resolver,
 		RegionControlProvider controlProvider)
-		: base(logger, region, resolver, controlProvider.RegionControl as Frame)
+		: base(logger, window, region, resolver, controlProvider.RegionControl as Frame)
 	{
 	}
 

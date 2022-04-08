@@ -1,9 +1,4 @@
-﻿using Uno.Extensions.Logging;
-using Uno.Extensions.Navigation.UI;
-using Uno.Extensions.Navigation.Navigators;
-using Uno.Extensions.Navigation.Regions;
-
-namespace Uno.Extensions.Navigation;
+﻿namespace Uno.Extensions.Navigation;
 
 public class NavigatorFactory : INavigatorFactory
 {
@@ -100,8 +95,7 @@ public class NavigatorFactory : INavigatorFactory
 			return null;
 		}
 
-		var scope = region.Services.CreateScope();
-		var services = scope.ServiceProvider;
+		var services = region.Services.CreateNavigationScope();
 
 		var dialogRegion = new NavigationRegion(services: services);
 		services.AddInstance<IRegion>(dialogRegion);

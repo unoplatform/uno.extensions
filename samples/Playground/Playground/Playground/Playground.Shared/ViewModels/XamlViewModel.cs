@@ -3,7 +3,7 @@
 public partial class XamlViewModel:ObservableObject
 {
 	[ObservableProperty]
-	private Country country;
+	private Country? country;
 
 	public XamlViewModel()
 	{

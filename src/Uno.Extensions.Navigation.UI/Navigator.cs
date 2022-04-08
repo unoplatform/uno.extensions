@@ -1,6 +1,4 @@
-﻿using Uno.Extensions.Navigation.Regions;
-
-namespace Uno.Extensions.Navigation;
+﻿namespace Uno.Extensions.Navigation;
 
 public class Navigator : INavigator, IInstance<IServiceProvider>
 {
@@ -16,16 +14,27 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 	protected IResolver Resolver { get; }
 
-	public Navigator(ILogger<Navigator> logger, IRegion region, IResolver resolver)
-		: this((ILogger)logger, region, resolver)
+	protected IWindowProvider Window { get; }
+
+	public Navigator(ILogger<Navigator> logger, IWindowProvider window, IRegion region, IResolver resolver)
+		: this((ILogger)logger, window, region, resolver)
 	{
 	}
 
-	protected Navigator(ILogger logger, IRegion region, IResolver resolver)
+	protected virtual DispatcherQueue GetDispatcher() =>
+#if WINUI
+		(Window.Current as Window).DispatcherQueue
+#else
+		Windows.ApplicationModel.Core.CoreApplication.MainView.DispatcherQueue
+#endif
+		?? DispatcherQueue.GetForCurrentThread();
+
+	protected Navigator(ILogger logger, IWindowProvider window, IRegion region, IResolver resolver)
 	{
 		Region = region;
 		Logger = logger;
 		Resolver = resolver;
+		Window = window;
 	}
 
 	public async Task<NavigationResponse?> NavigateAsync(NavigationRequest request)
@@ -170,7 +179,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		// If this is a back/close with no other path, then return
 		// as if this navigator can handl it - it can't, so the request
 		// will effetively be terminated
-		if(request.Route.IsBackOrCloseNavigation())
+		if (request.Route.IsBackOrCloseNavigation())
 		{
 			return default;
 		}
@@ -270,7 +279,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 	// By default, all navigators can handle all routes
 	// except where it's dialog - these should only be
 	// handled by the root (ie Region.Parent is null)
-	protected virtual bool CanNavigateToRoute(Route route) => (Region.Parent is null || !route.IsDialog() ) && !route.IsBackOrCloseNavigation();
+	protected virtual bool CanNavigateToRoute(Route route) => (Region.Parent is null || !route.IsDialog()) && !route.IsBackOrCloseNavigation();
 
 	private async Task<NavigationResponse?> DialogNavigateAsync(NavigationRequest request)
 	{

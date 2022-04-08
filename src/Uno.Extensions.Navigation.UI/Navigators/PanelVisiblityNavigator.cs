@@ -1,8 +1,4 @@
-﻿using Uno.Extensions.Logging;
-using Uno.Extensions.Navigation.UI;
-using Uno.Extensions.Navigation.Regions;
-
-namespace Uno.Extensions.Navigation.Navigators;
+﻿namespace Uno.Extensions.Navigation.Navigators;
 
 public class PanelVisiblityNavigator : ControlNavigator<Panel>
 {
@@ -12,10 +8,11 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 
 	public PanelVisiblityNavigator(
 		ILogger<PanelVisiblityNavigator> logger,
+		IWindowProvider window,
 		IRegion region,
 		IResolver resolver,
 		RegionControlProvider controlProvider)
-		: base(logger, region, resolver, controlProvider.RegionControl as Grid)
+		: base(logger, window, region, resolver, controlProvider.RegionControl as Grid)
 	{
 	}
 

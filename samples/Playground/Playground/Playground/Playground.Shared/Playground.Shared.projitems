@@ -30,6 +30,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\HomeViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\SecondViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ShellViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\SimpleViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\VMViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\XamlViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\AdHocPage.xaml.cs">

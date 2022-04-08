@@ -1,6 +1,4 @@
-﻿using Uno.Extensions.Logging;
-
-namespace Uno.Extensions.Navigation.Navigators;
+﻿namespace Uno.Extensions.Navigation.Navigators;
 
 public class ContentControlNavigator : ControlNavigator<ContentControl>
 {
@@ -8,10 +6,11 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 
 	public ContentControlNavigator(
 		ILogger<ContentControlNavigator> logger,
+		IWindowProvider window,
 		IRegion region,
 		IResolver resolver,
 		RegionControlProvider controlProvider)
-		: base(logger, region, resolver, controlProvider.RegionControl as ContentControl)
+		: base(logger, window, region, resolver, controlProvider.RegionControl as ContentControl)
 	{
 	}
 

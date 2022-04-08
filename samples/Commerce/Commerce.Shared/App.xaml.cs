@@ -137,7 +137,7 @@ namespace Commerce
 			notif.RouteChanged += RouteUpdated;
 
 
-			_window.Content = _host.Services.NavigationHost();
+			_window.AttachNavigationHost(_host.Services);
 			_window.Activate();
 
 			await Task.Run(async () =>
@@ -196,7 +196,7 @@ namespace Commerce
 																						ToQuery: product => new Dictionary<string, string> { { nameof(Product.ProductId), product.ProductId.ToString() } },
 																						FromQuery: async (sp, query) =>
 																						{
-																							var id = int.Parse(query[nameof(Product.ProductId)]);
+																							var id = int.Parse(query[nameof(Product.ProductId)] + "");
 																							var ps = sp.GetRequiredService<IProductService>();
 																							var products = await ps.GetProducts(default, default);
 																							return products.FirstOrDefault(p => p.ProductId == id);
@@ -211,8 +211,8 @@ namespace Commerce
 																							{ nameof(CartItem.Quantity),cartItem.Quantity.ToString() } },
 																						FromQuery: async (sp, query) =>
 																						{
-																							var id = int.Parse(query[nameof(Product.ProductId)]);
-																							var quantity = int.Parse(query[nameof(CartItem.Quantity)]);
+																							var id = int.Parse(query[nameof(Product.ProductId)] + "");
+																							var quantity = int.Parse(query[nameof(CartItem.Quantity)] + "");
 																							var ps = sp.GetRequiredService<IProductService>();
 																							var products = await ps.GetProducts(default, default);
 																							var p = products.FirstOrDefault(p => p.ProductId == id);

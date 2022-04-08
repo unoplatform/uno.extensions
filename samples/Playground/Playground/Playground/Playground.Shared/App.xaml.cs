@@ -19,8 +19,8 @@ namespace Playground
 	/// </summary>
 	public sealed partial class App : Application
 	{
-		private Window _window;
-		public Window Window => _window;
+		private Window? _window;
+		public Window? Window => _window;
 
 		private IHost _host;
 
@@ -122,13 +122,13 @@ namespace Playground
 			_window = Window.Current;
 #endif
 
-			var notif = _host.Services.GetService<IRouteNotifier>();
+			var notif = _host.Services.GetRequiredService<IRouteNotifier>();
 			notif.RouteChanged += RouteUpdated;
 
 			// Option 1: Ad-hoc hosting of Navigation
 			var f = new Frame();
-			f.AttachServiceProvider(_host.Services);
 			_window.Content = f;
+			_window.AttachNavigation(_host.Services);
 			f.Navigate(typeof(MainPage));
 
 			// Option 2: Ad-hoc hosting using root content control
@@ -139,12 +139,12 @@ namespace Playground
 			//	HorizontalContentAlignment = HorizontalAlignment.Stretch,
 			//	VerticalContentAlignment = VerticalAlignment.Stretch
 			//};
-			//root.AttachServiceProvider(_host.Services);
 			//_window.Content = root;
-			//root.Host(initialRoute: "Shell");
+			//_window.AttachNavigation(_host.Services);
+			//root.Host(initialRoute: "");
 
 			// Option 3: Default hosting
-			//_window.Content = _host.Services.NavigationHost(
+			//_window.AttachNavigationHost(_host.Services,
 			//	// Option 1: This requires Shell to be the first RouteMap - best for perf as no reflection required
 			//	// initialRoute: ""
 			//	// Option 2: Specify route name
@@ -160,12 +160,16 @@ namespace Playground
 		}
 
 
-		public void RouteUpdated(object sender, RouteChangedEventArgs e)
+		public void RouteUpdated(object? sender, RouteChangedEventArgs? e)
 		{
 			try
 			{
-				var rootRegion = e.Region.Root();
-				var route = rootRegion.GetRoute();
+				var rootRegion = e?.Region.Root();
+				var route = rootRegion?.GetRoute();
+				if(route is null)
+				{
+					return;
+				}
 
 
 #if !__WASM__ && !WINUI
@@ -286,7 +290,7 @@ namespace Playground
 						new ViewMap<FourthPage, FourthViewModel>(),
 						new ViewMap<FifthPage, FifthViewModel>(),
 						new ViewMap<DialogsPage>(),
-						new ViewMap<SimpleDialog>(),
+						new ViewMap<SimpleDialog, SimpleViewModel>(),
 						new ViewMap<ComplexDialog>(),
 						new ViewMap<ComplexDialogFirstPage>(),
 						new ViewMap<ComplexDialogSecondPage>(),

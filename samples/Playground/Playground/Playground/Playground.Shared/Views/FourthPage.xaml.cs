@@ -2,9 +2,10 @@
 
 public sealed partial class FourthPage : Page, IInjectable<INavigator>
 {
-	public FourthViewModel ViewModel { get; private set; }
+	public FourthViewModel? ViewModel { get; private set; }
 
-	private INavigator Navigator { get; set; }
+	private INavigator? Navigator { get; set; }
+	
 	public FourthPage()
 	{
 		this.InitializeComponent();
@@ -19,7 +20,7 @@ public sealed partial class FourthPage : Page, IInjectable<INavigator>
 
 	private void FifthPageClick(object sender, RoutedEventArgs args)
 	{
-		Navigator.NavigateViewAsync<FifthPage>(this);
+		Navigator?.NavigateViewAsync<FifthPage>(this);
 	}
 
 	public void Inject(INavigator entity)

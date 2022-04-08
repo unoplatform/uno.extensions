@@ -1,7 +1,4 @@
-﻿using Uno.Extensions.Logging;
-using Uno.Extensions.Navigation.Regions;
-
-namespace Uno.Extensions.Navigation.Navigators;
+﻿namespace Uno.Extensions.Navigation.Navigators;
 
 public class PopupNavigator : ControlNavigator<Popup>
 {
@@ -9,10 +6,11 @@ public class PopupNavigator : ControlNavigator<Popup>
 
     public PopupNavigator(
         ILogger<ContentControlNavigator> logger,
-        IRegion region,
+		IWindowProvider window,
+		IRegion region,
         IResolver resolver,
         RegionControlProvider controlProvider)
-        : base(logger, region, resolver, controlProvider.RegionControl as Popup)
+        : base(logger, window, region, resolver, controlProvider.RegionControl as Popup)
     {
     }
 

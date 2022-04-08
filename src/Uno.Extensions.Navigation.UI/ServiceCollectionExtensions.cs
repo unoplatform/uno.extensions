@@ -1,11 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-using Uno.Extensions.Navigation.Navigators;
-using Uno.Extensions.Navigation.Regions;
-using Uno.Extensions.Navigation.UI;
-using Uno.Extensions.Navigation.UI.Controls;
-using Windows.UI.Popups;
-
-namespace Uno.Extensions.Navigation;
+﻿namespace Uno.Extensions.Navigation;
 
 public static class ServiceCollectionExtensions
 {
@@ -81,6 +74,8 @@ public static class ServiceCollectionExtensions
 					.AddScopedInstance<IRegion>()
 
 					.AddScopedInstance<NavigationRequest>()
+
+					.AddScoped<IWindowProvider, WindowProvider>()
 
 					.AddScoped<NavigationDataProvider>()
 					.AddScoped<RegionControlProvider>()

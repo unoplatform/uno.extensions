@@ -1,31 +1,47 @@
-﻿using Uno.Extensions.Hosting;
-using Uno.Extensions.Navigation.Regions;
-using Uno.Extensions.Navigation.UI;
-
-namespace Uno.Extensions.Navigation;
+﻿namespace Uno.Extensions.Navigation;
 
 public static class ServiceProviderExtensions
 {
-	public static void AddInstance<T>(this IServiceProvider provider, Func<T> instanceCreator)
+	public static void AttachNavigation(this Window window, IServiceProvider services)
 	{
-		provider.AddInstance(typeof(T), instanceCreator);
+		window.Content
+				.AttachServiceProvider(services)
+				.RegisterWindow(window);
 	}
 
-	public static void AddInstance<T>(this IServiceProvider provider, Type serviceType, Func<T> instanceCreator)
+	internal static IServiceProvider RegisterWindow(this IServiceProvider services, Window window)
+	{
+		var provider = services.GetRequiredService<IWindowProvider>();
+		provider.Current = window;
+		return services;
+	}
+
+	internal static IServiceProvider CreateNavigationScope(this IServiceProvider services)
+	{
+		var scoped = services.CreateScope().ServiceProvider;
+		scoped.GetRequiredService<IWindowProvider>().Current = services.GetRequiredService<IWindowProvider>().Current;
+		return scoped;
+	}
+	public static IServiceProvider AddInstance<T>(this IServiceProvider provider, Func<T> instanceCreator)
+	{
+		return provider.AddInstance(typeof(T), instanceCreator);
+	}
+
+	public static IServiceProvider AddInstance<T>(this IServiceProvider provider, Type serviceType, Func<T> instanceCreator)
 	{
 		provider.GetRequiredService<IInstanceRepository>().Instances[serviceType] = instanceCreator;
+		return provider;
 	}
 
-	public static T AddInstance<T>(this IServiceProvider provider, T instance)
+	public static IServiceProvider AddInstance<T>(this IServiceProvider provider, T instance)
 	{
-		provider.AddInstance(typeof(T), instance!);
-		return instance;
+		return provider.AddInstance(typeof(T), instance!);
 	}
 
-	public static object AddInstance(this IServiceProvider provider, Type serviceType, object instance)
+	public static IServiceProvider AddInstance(this IServiceProvider provider, Type serviceType, object instance)
 	{
 		provider.GetRequiredService<IInstanceRepository>().Instances[serviceType] = instance;
-		return instance;
+		return provider;
 	}
 
 	public static T? GetInstance<T>(this IServiceProvider provider)
@@ -51,22 +67,7 @@ public static class ServiceProviderExtensions
 		return provider.GetRequiredService<IInstanceRepository>().Instances.TryGetValue(type, out var value) ? value : null;
 	}
 
-	public static IServiceProvider CloneNavigationScopedServices(this IServiceProvider services)
-	{
-		var scope = services.CreateScope();
-		var scopedServices = scope.ServiceProvider;
-
-		scopedServices.GetRequiredService<RegionControlProvider>().RegionControl = services.GetRequiredService<RegionControlProvider>().RegionControl;
-		var instance = services.GetInstance<INavigator>();
-		if (instance is not null)
-		{
-			scopedServices.AddInstance<INavigator>(instance);
-		}
-
-		return scopedServices;
-	}
-
-	public static FrameworkElement NavigationHost(this IServiceProvider services, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
+	public static FrameworkElement AttachNavigationHost(this Window window, IServiceProvider services, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
 	{
 		var root = new ContentControl
 		{
@@ -75,8 +76,9 @@ public static class ServiceProviderExtensions
 			HorizontalContentAlignment = HorizontalAlignment.Stretch,
 			VerticalContentAlignment = VerticalAlignment.Stretch
 		};
+		window.Content = root;
 
-		root.SetServiceProvider(services);
+		window.AttachNavigation(services);
 
 		root.Host(initialRoute, initialView, initialViewModel);
 

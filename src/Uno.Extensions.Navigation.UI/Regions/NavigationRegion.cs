@@ -1,6 +1,4 @@
-﻿using Uno.Extensions.Navigation.UI;
-
-namespace Uno.Extensions.Navigation.Regions;
+﻿namespace Uno.Extensions.Navigation.Regions;
 
 public sealed class NavigationRegion : IRegion
 {
@@ -34,7 +32,7 @@ public sealed class NavigationRegion : IRegion
         {
             if (_services is null && Parent is not null)
             {
-                _services = Parent?.Services?.CreateScope()?.ServiceProvider;
+                _services = Parent?.Services?.CreateNavigationScope();
                 if (_services is null)
                 {
                     return null;
@@ -146,7 +144,7 @@ public sealed class NavigationRegion : IRegion
 		if(Parent is null && !_isRoot && _services is null)
 		{
 			var sp = View.FindServiceProvider();
-			var services = sp?.CreateScope().ServiceProvider;
+			var services = sp?.CreateNavigationScope();
 			if (services is null)
 			{
 				return;

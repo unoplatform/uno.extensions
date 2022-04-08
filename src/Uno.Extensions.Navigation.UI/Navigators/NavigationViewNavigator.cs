@@ -4,10 +4,11 @@ public class NavigationViewNavigator : SelectorNavigator<Microsoft.UI.Xaml.Contr
 {
 	public NavigationViewNavigator(
 		ILogger<NavigationViewNavigator> logger,
+		IWindowProvider window,
 		IRegion region,
 		IResolver resolver,
 		RegionControlProvider controlProvider)
-		: base(logger, region, resolver, controlProvider)
+		: base(logger, window, region, resolver, controlProvider)
 	{
 	}
 

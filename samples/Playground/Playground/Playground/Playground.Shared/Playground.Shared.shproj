@@ -18,6 +18,7 @@
     <_Globbed_Compile Remove="ViewModels\AdHocViewModel.cs" />
     <_Globbed_Compile Remove="ViewModels\HomeViewModel.cs" />
     <_Globbed_Compile Remove="ViewModels\SecondViewModel.cs" />
+    <_Globbed_Compile Remove="ViewModels\SimpleViewModel.cs" />
     <_Globbed_Compile Remove="ViewModels\VMViewModel.cs" />
     <_Globbed_Compile Remove="ViewModels\XamlViewModel.cs" />
     <_Globbed_Compile Remove="Views\AdHocPage.xaml.cs" />

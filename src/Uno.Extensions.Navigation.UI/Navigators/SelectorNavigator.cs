@@ -27,10 +27,11 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 
 	protected SelectorNavigator(
 		ILogger logger,
+		IWindowProvider window,
 		IRegion region,
 		IResolver resolver,
 		RegionControlProvider controlProvider)
-		: base(logger, region, resolver, controlProvider.RegionControl as TControl)
+		: base(logger, window, region, resolver, controlProvider.RegionControl as TControl)
 	{
 	}
 

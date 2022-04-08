@@ -4,4 +4,3 @@ public interface IRouteNotifier
 {
 	event EventHandler<RouteChangedEventArgs> RouteChanged;
 }
-
