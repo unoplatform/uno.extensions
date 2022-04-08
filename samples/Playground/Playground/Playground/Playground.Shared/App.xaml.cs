@@ -60,13 +60,17 @@ namespace Playground
 					.ConfigureServices((context, services) =>
 					{
 						services
-											.AddNativeHandler()
-					.AddContentSerializer()
-					.AddRefitClient<ITodoTaskEndpoint>(context, settingsBuilder:
-							settings => settings.AuthorizationHeaderValueGetter =
-							() => Task.FromResult("AccessToken")
-							)
-							.AddHostedService<SimpleStartupService>();
+								.AddSingleton<IAuthenticationToken>(new SimpleAuthenticationToken { AccessToken = "My access token" })
+
+								.AddNativeHandler()
+								.AddContentSerializer()
+								.AddRefitClient<IToDoTaskListEndpoint>(context
+										//,settingsBuilder:
+										//		(sp, settings) => settings.AuthorizationHeaderValueGetter =
+										//		() => Task.FromResult("AccessToken")
+										)
+
+								.AddHostedService<SimpleStartupService>();
 						//services
 
 						//	.AddSingleton<IProductService, ProductService>()
@@ -162,7 +166,7 @@ namespace Playground
 			{
 				var rootRegion = e?.Region.Root();
 				var route = rootRegion?.GetRoute();
-				if(route is null)
+				if (route is null)
 				{
 					return;
 				}
@@ -208,7 +212,8 @@ namespace Playground
 						new ViewMap<ComplexDialogSecondPage>(),
 						new ViewMap<PanelVisibilityPage>(),
 						new ViewMap<VisualStatesPage>(),
-						new ViewMap<AdHocPage, AdHocViewModel>()
+						new ViewMap<AdHocPage, AdHocViewModel>(),
+						new ViewMap<AuthTokenDialog, AuthTokenViewModel>()
 				);
 
 
@@ -242,7 +247,11 @@ namespace Playground
 					}),
 					new RouteMap("PanelVisibility",View: views.FindByView<PanelVisibilityPage>(), DependsOn: "Home"),
 					new RouteMap("VisualStates",View: views.FindByView<VisualStatesPage>(), DependsOn: "Home"),
-					new RouteMap("AdHoc",View: views.FindByViewModel<AdHocViewModel>(), DependsOn: "Home"),
+					new RouteMap("AdHoc",View: views.FindByViewModel<AdHocViewModel>(), DependsOn: "Home",
+					Nested: new[]
+					{
+						new RouteMap("Auth",View: views.FindByView<AuthTokenDialog>())
+					}),
 				}));
 		}
 	}

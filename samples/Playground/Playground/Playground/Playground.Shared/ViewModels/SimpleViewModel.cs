@@ -4,28 +4,27 @@ using System.Text;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 
-namespace Playground.ViewModels
+namespace Playground.ViewModels;
+
+public class SimpleViewModel
 {
-    public  class SimpleViewModel
-    {
-		private INavigator Navigator { get; }
+	private INavigator Navigator { get; }
 
-		public ICommand AddCommand { get; }
+	public ICommand AddCommand { get; }
 
-		public string? Name { get; set; }
+	public string? Name { get; set; }
 
-		public SimpleViewModel(
-			INavigator navigator)
-		{
+	public SimpleViewModel(
+		INavigator navigator)
+	{
 
-			Navigator = navigator;
+		Navigator = navigator;
 
-			AddCommand = new AsyncRelayCommand(Add);
-		}
+		AddCommand = new AsyncRelayCommand(Add);
+	}
 
-		public async Task Add()
-		{
-			await Navigator.NavigateBackWithResultAsync(this, data: new Widget { Name= Name});
-		}
+	public async Task Add()
+	{
+		await Navigator.NavigateBackWithResultAsync(this, data: new Widget { Name = Name });
 	}
 }

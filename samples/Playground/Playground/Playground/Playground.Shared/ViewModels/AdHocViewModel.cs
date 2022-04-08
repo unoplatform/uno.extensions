@@ -8,16 +8,19 @@ namespace Playground.ViewModels;
 public class AdHocViewModel
 {
 	private readonly INavigator _navigator;
-	private readonly ITodoTaskEndpoint _todoTaskEndpoint;
+	private readonly IToDoTaskListEndpoint _todoTaskListEndpoint;
 	private readonly ISerializer<Widget> _serializer;
+	private readonly IAuthenticationToken _authToken;
 	public AdHocViewModel(
 		INavigator navigator,
-		ITodoTaskEndpoint todoTaskEndpoint, 
+		IAuthenticationToken authenticationToken,
+		IToDoTaskListEndpoint todoTaskListEndpoint, 
 		ISerializer<Widget> serializer)
 	{
 		_navigator = navigator;
+		_authToken = authenticationToken;
 		_serializer = serializer;
-		_todoTaskEndpoint = todoTaskEndpoint;
+		_todoTaskListEndpoint = todoTaskListEndpoint;
 	}
 
 	public async Task LongRunning()
@@ -41,5 +44,18 @@ public class AdHocViewModel
 	var str = 	_serializer.ToString(w);
 		var newW = _serializer.FromString(str);
 		Debug.Assert(w == newW);
+	}
+
+	public async Task FetchTasks()
+	{
+		var response = await _navigator.NavigateRouteForResultAsync<string>(this, "Auth", qualifier: Qualifiers.Dialog);
+		if(response?.Result is null)
+		{
+			return;
+		}
+
+		var result = await response.Result;
+		(_authToken as SimpleAuthenticationToken).AccessToken = result.SomeOrDefault() ?? String.Empty;
+		var taskLists = await _todoTaskListEndpoint.GetAllAsync(CancellationToken.None);
 	}
 }
