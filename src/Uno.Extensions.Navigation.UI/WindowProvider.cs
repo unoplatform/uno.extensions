@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions.Navigation;
 
-public class WindowProvider : IWindowProvider
+public class WindowProvider : IWindow
 {
-	public object? Current { get; set; }
+	public Window? Instance { get; internal set; }
 }

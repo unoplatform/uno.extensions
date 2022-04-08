@@ -137,7 +137,7 @@ namespace Commerce
 			notif.RouteChanged += RouteUpdated;
 
 
-			_window.AttachNavigationHost(_host.Services);
+			_window.AttachNavigation(_host.Services);
 			_window.Activate();
 
 			await Task.Run(async () =>

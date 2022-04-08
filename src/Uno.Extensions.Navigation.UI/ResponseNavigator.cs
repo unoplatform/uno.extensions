@@ -8,7 +8,7 @@ public class ResponseNavigator<TResult> : IResponseNavigator, IInstance<IService
 
 	public Route? Route => Navigation.Route;
 
-	private DispatcherQueue Dispatcher { get; } = DispatcherQueue.GetForCurrentThread();
+	private DispatcherQueue Dispatcher => (Navigation as Navigator)?.GetDispatcher() ?? DispatcherQueue.GetForCurrentThread();
 
 	public IServiceProvider? Instance => Navigation.Get<IServiceProvider>();
 
@@ -84,7 +84,7 @@ public class ResponseNavigator<TResult> : IResponseNavigator, IInstance<IService
 
 	public NavigationResponse AsResponseWithResult(NavigationResponse? response)
 	{
-		if(response is NavigationResultResponse<TResult> navResponse)
+		if (response is NavigationResultResponse<TResult> navResponse)
 		{
 			navResponse.Result.ContinueWith(x => ApplyResult(x.Result));
 		}

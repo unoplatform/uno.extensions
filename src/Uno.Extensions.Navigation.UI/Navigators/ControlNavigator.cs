@@ -7,7 +7,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 
 	protected ControlNavigator(
 		ILogger logger,
-		IWindowProvider window,
+		IWindow window,
 		IRegion region,
 		IResolver resolver,
 		TControl? control)
@@ -18,7 +18,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 
 	protected override bool CanNavigateToRoute(Route route) => base.CanNavigateToRoute(route) && Control is not null;
 
-	protected override DispatcherQueue GetDispatcher() =>
+	internal override DispatcherQueue GetDispatcher() =>
 #if WINUI
 		(Control as FrameworkElement)?.DispatcherQueue ??
 #endif
@@ -101,7 +101,7 @@ public abstract class ControlNavigator : Navigator
 
 	protected ControlNavigator(
 		ILogger logger,
-		IWindowProvider window,
+		IWindow window,
 		IRegion region,
 		IResolver resolver)
 		: base(logger, window, region, resolver)

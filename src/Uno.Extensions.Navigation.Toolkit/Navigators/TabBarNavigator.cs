@@ -4,7 +4,7 @@ public class TabBarNavigator : SelectorNavigator<TabBar>
 {
 	public TabBarNavigator(
 		ILogger<TabBarNavigator> logger,
-		IWindowProvider window,
+		IWindow window,
 		IRegion region,
 		IResolver resolver,
 		RegionControlProvider controlProvider)

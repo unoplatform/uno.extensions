@@ -2,7 +2,7 @@
 
 public static class ServiceProviderExtensions
 {
-	public static void AttachNavigation(this Window window, IServiceProvider services)
+	public static void AttachServices(this Window window, IServiceProvider services)
 	{
 		window.Content
 				.AttachServiceProvider(services)
@@ -11,16 +11,13 @@ public static class ServiceProviderExtensions
 
 	internal static IServiceProvider RegisterWindow(this IServiceProvider services, Window window)
 	{
-		var provider = services.GetRequiredService<IWindowProvider>();
-		provider.Current = window;
-		return services;
+		return services.AddInstance<IWindow>(new WindowProvider { Instance = window });
 	}
 
 	internal static IServiceProvider CreateNavigationScope(this IServiceProvider services)
 	{
 		var scoped = services.CreateScope().ServiceProvider;
-		scoped.GetRequiredService<IWindowProvider>().Current = services.GetRequiredService<IWindowProvider>().Current;
-		return scoped;
+		return scoped.AddInstance(services.GetRequiredService<IWindow>());
 	}
 	public static IServiceProvider AddInstance<T>(this IServiceProvider provider, Func<T> instanceCreator)
 	{
@@ -67,7 +64,7 @@ public static class ServiceProviderExtensions
 		return provider.GetRequiredService<IInstanceRepository>().Instances.TryGetValue(type, out var value) ? value : null;
 	}
 
-	public static FrameworkElement AttachNavigationHost(this Window window, IServiceProvider services, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
+	public static FrameworkElement AttachNavigation(this Window window, IServiceProvider services, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
 	{
 		var root = new ContentControl
 		{
@@ -78,7 +75,7 @@ public static class ServiceProviderExtensions
 		};
 		window.Content = root;
 
-		window.AttachNavigation(services);
+		window.AttachServices(services);
 
 		root.Host(initialRoute, initialView, initialViewModel);
 

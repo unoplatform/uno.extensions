@@ -8,7 +8,7 @@ public class FlyoutNavigator : ControlNavigator
 
 	public FlyoutNavigator(
 		ILogger<ContentDialogNavigator> logger,
-		IWindowProvider window,
+		IWindow window,
 		IRegion region,
 		IResolver resolver)
 		: base(logger, window, region, resolver)

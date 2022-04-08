@@ -4,7 +4,7 @@ public class NavigationViewNavigator : SelectorNavigator<Microsoft.UI.Xaml.Contr
 {
 	public NavigationViewNavigator(
 		ILogger<NavigationViewNavigator> logger,
-		IWindowProvider window,
+		IWindow window,
 		IRegion region,
 		IResolver resolver,
 		RegionControlProvider controlProvider)

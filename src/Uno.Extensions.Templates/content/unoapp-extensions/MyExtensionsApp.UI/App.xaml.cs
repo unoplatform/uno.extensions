@@ -42,12 +42,8 @@ public sealed partial class App : Application
 				// Register services for the application
 				.ConfigureServices(services =>
 				{
-					//services
-
-					//	.AddSingleton<IProductService, ProductService>()
-					//	.AddSingleton<ICartService, CartService>()
-					//	.AddSingleton<IDealService, DealService>()
-					//	.AddSingleton<IProfileService, ProfileService>();
+					// TODO: Register your services
+					//services.AddSingleton<IMyService, MyService>();
 				})
 
 
@@ -99,7 +95,7 @@ public sealed partial class App : Application
 		}
 
 
-		_window.AttachNavigationHost(Host.Services);
+		_window.AttachNavigation(Host.Services);
 		_window.Activate();
 
 		await Task.Run(async () =>

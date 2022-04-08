@@ -8,7 +8,7 @@ public abstract class DialogNavigator : ControlNavigator
 
 	protected DialogNavigator(
 		ILogger<DialogNavigator> logger,
-		IWindowProvider window,
+		IWindow window,
 		IRegion region,
 		IResolver resolver)
 		: base(logger, window, region, resolver)

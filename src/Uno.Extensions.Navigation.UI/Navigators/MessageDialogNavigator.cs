@@ -4,7 +4,7 @@ public class MessageDialogNavigator : DialogNavigator
 {
 	public MessageDialogNavigator(
 		ILogger<DialogNavigator> logger,
-		IWindowProvider window,
+		IWindow window,
 		IResolver resolver,
 		IRegion region)
 		: base(logger, window, region, resolver)
@@ -62,7 +62,7 @@ public class MessageDialogNavigator : DialogNavigator
 		md.Commands.AddRange(commands);
 
 #if WINUI && WINDOWS
-		var window = (Window.Current as Window)!;
+		var window = Window.Instance!;
 		var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
 		WinRT.Interop.InitializeWithWindow.Initialize(md, hwnd);
 #endif
