@@ -8,7 +8,7 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 
 	public PanelVisiblityNavigator(
 		ILogger<PanelVisiblityNavigator> logger,
-		IWindowProvider window,
+		IWindow window,
 		IRegion region,
 		IResolver resolver,
 		RegionControlProvider controlProvider)

@@ -7,7 +7,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 
 	protected ControlNavigator(
 		ILogger logger,
-		IWindowProvider window,
+		IWindow window,
 		IRegion region,
 		IResolver resolver,
 		TControl? control)
@@ -101,7 +101,7 @@ public abstract class ControlNavigator : Navigator
 
 	protected ControlNavigator(
 		ILogger logger,
-		IWindowProvider window,
+		IWindow window,
 		IRegion region,
 		IResolver resolver)
 		: base(logger, window, region, resolver)

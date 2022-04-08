@@ -11,15 +11,15 @@ public static class ServiceProviderExtensions
 
 	internal static IServiceProvider RegisterWindow(this IServiceProvider services, Window window)
 	{
-		var provider = services.GetRequiredService<IWindowProvider>();
-		provider.Current = window;
+		var provider = services.GetRequiredService<IWindow>();
+		provider.Instance = window;
 		return services;
 	}
 
 	internal static IServiceProvider CreateNavigationScope(this IServiceProvider services)
 	{
 		var scoped = services.CreateScope().ServiceProvider;
-		scoped.GetRequiredService<IWindowProvider>().Current = services.GetRequiredService<IWindowProvider>().Current;
+		scoped.GetRequiredService<IWindow>().Instance = services.GetRequiredService<IWindow>().Instance;
 		return scoped;
 	}
 	public static IServiceProvider AddInstance<T>(this IServiceProvider provider, Func<T> instanceCreator)

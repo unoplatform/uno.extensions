@@ -6,7 +6,7 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 
 	public ContentControlNavigator(
 		ILogger<ContentControlNavigator> logger,
-		IWindowProvider window,
+		IWindow window,
 		IRegion region,
 		IResolver resolver,
 		RegionControlProvider controlProvider)
