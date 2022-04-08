@@ -2,5 +2,5 @@
 
 public interface IWindow
 {
-	Window? Instance { get; set; }
+	Window? Instance { get; }
 }

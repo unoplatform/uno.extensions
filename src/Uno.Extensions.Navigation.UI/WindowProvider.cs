@@ -2,5 +2,5 @@
 
 public class WindowProvider : IWindow
 {
-	public Window? Instance { get; set; }
+	public Window? Instance { get; internal set; }
 }
