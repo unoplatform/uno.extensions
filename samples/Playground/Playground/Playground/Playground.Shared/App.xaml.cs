@@ -95,10 +95,6 @@ namespace Playground
 					.Build(enableUnoLogging: true);
 
 			this.InitializeComponent();
-
-#if HAS_UNO || NETFX_CORE
-			this.Suspending += OnSuspending;
-#endif
 		}
 
 		/// <summary>
@@ -128,7 +124,7 @@ namespace Playground
 			// Option 1: Ad-hoc hosting of Navigation
 			var f = new Frame();
 			_window.Content = f;
-			_window.AttachNavigation(_host.Services);
+			_window.AttachServices(_host.Services);
 			f.Navigate(typeof(MainPage));
 
 			// Option 2: Ad-hoc hosting using root content control
@@ -140,11 +136,11 @@ namespace Playground
 			//	VerticalContentAlignment = VerticalAlignment.Stretch
 			//};
 			//_window.Content = root;
-			//_window.AttachNavigation(_host.Services);
+			//_window.AttachServices(_host.Services);
 			//root.Host(initialRoute: "");
 
 			// Option 3: Default hosting
-			//_window.AttachNavigationHost(_host.Services,
+			//_window.AttachNavigation(_host.Services,
 			//	// Option 1: This requires Shell to be the first RouteMap - best for perf as no reflection required
 			//	// initialRoute: ""
 			//	// Option 2: Specify route name
@@ -186,90 +182,6 @@ namespace Playground
 				Console.WriteLine("Error: " + ex.Message);
 			}
 		}
-
-		/// <summary>
-		/// Invoked when Navigation to a certain page fails
-		/// </summary>
-		/// <param name="sender">The Frame which failed navigation</param>
-		/// <param name="e">Details about the navigation failure</param>
-		void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
-		{
-			throw new InvalidOperationException($"Failed to load {e.SourcePageType.FullName}: {e.Exception}");
-		}
-
-		/// <summary>
-		/// Invoked when application execution is being suspended.  Application state is saved
-		/// without knowing whether the application will be terminated or resumed with the contents
-		/// of memory still intact.
-		/// </summary>
-		/// <param name="sender">The source of the suspend request.</param>
-		/// <param name="e">Details about the suspend request.</param>
-		private void OnSuspending(object sender, SuspendingEventArgs e)
-		{
-			var deferral = e.SuspendingOperation.GetDeferral();
-			// TODO: Save application state and stop any background activity
-			deferral.Complete();
-		}
-
-		/// <summary>
-		/// Configures global Uno Platform logging
-		/// </summary>
-		//        private static void InitializeLogging()
-		//        {
-		//            var factory = LoggerFactory.Create(builder =>
-		//            {
-		//#if __WASM__
-		//                builder.AddProvider(new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider());
-		//#elif __IOS__
-		//                builder.AddProvider(new global::Uno.Extensions.Logging.OSLogLoggerProvider());
-		//#elif NETFX_CORE
-		//                builder.AddDebug();
-		//#else
-		//                builder.AddConsole();
-		//#endif
-
-		//                // Exclude logs below this level
-		//                builder.SetMinimumLevel(LogLevel.Information);
-
-		//                // Default filters for Uno Platform namespaces
-		//                builder.AddFilter("Uno", LogLevel.Warning);
-		//                builder.AddFilter("Windows", LogLevel.Warning);
-		//                builder.AddFilter("Microsoft", LogLevel.Warning);
-
-		//                // Generic Xaml events
-		//                // builder.AddFilter("Windows.UI.Xaml", LogLevel.Debug );
-		//                // builder.AddFilter("Windows.UI.Xaml.VisualStateGroup", LogLevel.Debug );
-		//                // builder.AddFilter("Windows.UI.Xaml.StateTriggerBase", LogLevel.Debug );
-		//                // builder.AddFilter("Windows.UI.Xaml.UIElement", LogLevel.Debug );
-		//                // builder.AddFilter("Windows.UI.Xaml.FrameworkElement", LogLevel.Trace );
-
-		//                // Layouter specific messages
-		//                // builder.AddFilter("Windows.UI.Xaml.Controls", LogLevel.Debug );
-		//                // builder.AddFilter("Windows.UI.Xaml.Controls.Layouter", LogLevel.Debug );
-		//                // builder.AddFilter("Windows.UI.Xaml.Controls.Panel", LogLevel.Debug );
-
-		//                // builder.AddFilter("Windows.Storage", LogLevel.Debug );
-
-		//                // Binding related messages
-		//                // builder.AddFilter("Windows.UI.Xaml.Data", LogLevel.Debug );
-		//                // builder.AddFilter("Windows.UI.Xaml.Data", LogLevel.Debug );
-
-		//                // Binder memory references tracking
-		//                // builder.AddFilter("Uno.UI.DataBinding.BinderReferenceHolder", LogLevel.Debug );
-
-		//                // RemoteControl and HotReload related
-		//                // builder.AddFilter("Uno.UI.RemoteControl", LogLevel.Information);
-
-		//                // Debug JS interop
-		//                // builder.AddFilter("Uno.Foundation.WebAssemblyRuntime", LogLevel.Debug );
-		//            });
-
-		//            global::Uno.Extensions.LogExtensionPoint.AmbientLoggerFactory = factory;
-
-		//#if HAS_UNO
-		//			global::Uno.UI.Adapter.Microsoft.Extensions.Logging.LoggingAdapter.Initialize();
-		//#endif
-		//        }
 
 		private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 		{
