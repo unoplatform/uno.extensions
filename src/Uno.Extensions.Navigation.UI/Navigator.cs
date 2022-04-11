@@ -179,7 +179,8 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		//		b) route has depends on that doesn't match current route - if parent can navigate to dependson, return false
 		//		c) route has no depends on - if parent can navigate to the route, return false
 
-		if (CanNavigate(request.Route))
+		if (CanNavigate(request.Route) &&
+			!ParentCanNavigate(request.Route))
 		{
 			return default;
 		}
@@ -189,6 +190,11 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		// will effetively be terminated
 		if (request.Route.IsBackOrCloseNavigation())
 		{
+			if (Region.Parent is not null)
+			{
+				return Region.Parent.NavigateAsync(request);
+			}
+
 			return default;
 		}
 
@@ -208,7 +214,10 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			if (!string.IsNullOrWhiteSpace(rm?.DependsOn))
 			{
 				request = request with { Route = (request.Route with { Base = rm?.DependsOn, Path = null }).Append(request.Route) };
+
+				return Region.NavigateAsync(request);
 			}
+
 			return Region.Parent.NavigateAsync(request);
 		}
 		else
@@ -305,18 +314,58 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 		var canNav =  RegionCanNavigate(route);
 
-		if (canNav &&
-			!route.IsInternal &&
-			Region.Parent is not null)
-		{
-			// If the parent can handle this request then return false so the request gets forwarded
-			if (Region.Parent.Navigator()?.CanNavigate(route) ?? false)
-			{
-				return false;
-			}
-		}
+		//if (canNav &&
+		//	!route.IsInternal &&
+		//	Region.Parent is not null)
+		//{
+		//	var parentNavigator = Region.Parent.Navigator();
+		//	if (parentNavigator is not null &&
+		//			(
+		//				parentNavigator.GetType() == typeof(Navigator) ||
+		//				// TODO: PanelVisibilityNavigator needs to be adapted to inherit from SelectorNavigator, or share an interface
+		//				parentNavigator.GetType() == typeof(PanelVisiblityNavigator) ||
+		//				(
+		//					parentNavigator.GetType().BaseType.IsGenericType &&
+		//					parentNavigator.GetType().BaseType.GetGenericTypeDefinition() == typeof(SelectorNavigator<>)
+		//				)
+		//			)
+		//		)
+		//	{
+		//		// If the parent can handle this request then return false so the request gets forwarded
+		//		if (Region.Parent.Navigator()?.CanNavigate(route.RootDependsOn(Resolver)) ?? false)
+		//		{
+		//			return false;
+		//		}
+		//	}
+		//}
 
 		return canNav;
+	}
+
+	private bool ParentCanNavigate(Route route)
+	{
+		if (Region.Parent is null)
+		{
+			return false;
+		}
+
+		var parentNavigator = Region.Parent.Navigator();
+		if (parentNavigator is not null &&
+				(
+					parentNavigator.GetType() == typeof(Navigator) ||
+					// TODO: PanelVisibilityNavigator needs to be adapted to inherit from SelectorNavigator, or share an interface
+					parentNavigator.GetType() == typeof(PanelVisiblityNavigator) ||
+					(
+						parentNavigator.GetType().BaseType.IsGenericType &&
+						parentNavigator.GetType().BaseType.GetGenericTypeDefinition() == typeof(SelectorNavigator<>)
+					)
+				)
+			)
+		{
+			return parentNavigator?.CanNavigate(route) ?? false;
+		}
+
+		return false;
 	}
 
 	protected virtual bool RegionCanNavigate(Route route)
@@ -428,6 +477,12 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 				return null;
 			}
 		}
+
+		if (request.Route.IsBackOrCloseNavigation())
+		{
+			return null;
+		}
+
 
 		// Don't propagate the response request further than a named region
 		if (!string.IsNullOrWhiteSpace(Region.Name) && request.Result is not null)

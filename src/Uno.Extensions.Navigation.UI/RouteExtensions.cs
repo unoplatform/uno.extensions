@@ -171,21 +171,22 @@ public static class RouteExtensions
 
 	public static Route Insert(this Route route, string pathToInsert)
 	{
-		return route.Insert(Route.NestedRoute(pathToInsert));
+		return route.Insert(Route.PageRoute(pathToInsert));
 	}
 
-	public static Route Insert(this Route route, Route routeToAppend)
+	public static Route Insert(this Route route, Route routeToInsert)
 	{
-		return route with
-		{
-			Path = (routeToAppend.Qualifier == Qualifiers.Nested ? Qualifiers.Separator : routeToAppend.Qualifier) +
-					routeToAppend.Base +
-					routeToAppend.Path +
-					(((route.Path?.StartsWith(Qualifiers.Separator) ?? false)) ?
-						string.Empty :
-						Qualifiers.Separator) +
-					route.Path
-		};
+		return routeToInsert.Append(route);
+		//return route with
+		//{
+		//	Path = (routeToAppend.Qualifier == Qualifiers.Nested ? Qualifiers.Separator : routeToAppend.Qualifier) +
+		//			routeToAppend.Base +
+		//			routeToAppend.Path +
+		//			(((route.Path?.StartsWith(Qualifiers.Separator) ?? false)) ?
+		//				string.Empty :
+		//				Qualifiers.Separator) +
+		//			route.Path
+		//};
 		//return route with
 		//{
 		//    Qualifier = routeToAppend.Qualifier,
@@ -391,5 +392,19 @@ public static class RouteExtensions
 
 			return new Route(Qualifiers.None, routeBase, routePath, frameRoute.Data);
 		}
+	}
+
+	public static Route RootDependsOn(this Route currentRoute, IResolver resolver)
+	{
+		var rm = resolver.Routes.FindByPath(currentRoute.Base);
+		while(rm is not null &&
+			!string.IsNullOrEmpty(rm.DependsOn))
+		{
+			currentRoute = currentRoute.Insert(rm.DependsOn);
+			rm = resolver.Routes.FindByPath(rm.DependsOn);
+		}
+
+		return currentRoute;
+
 	}
 }

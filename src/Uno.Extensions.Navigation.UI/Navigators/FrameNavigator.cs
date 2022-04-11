@@ -35,9 +35,12 @@ public class FrameNavigator : ControlNavigator<Frame>
 	{
 		if (route.IsBackOrCloseNavigation())
 		{
-			// Back navigation code should swallow any excess back navigations (ie when
-			// there is nothing on the back stack)
-			return true;
+			// If there's a Base, then can nav forward even
+			// if there's nothing on back stack, so return true
+			// Otherwise, need to check logical back stack
+			// If Frame.GoBack there may be no back stack but
+			// there is still a page on the logical stack
+			return !string.IsNullOrWhiteSpace(route.Base) || !(FullRoute?.Next()?.IsEmpty()??true);
 		}
 
 		if (!base.RegionCanNavigate(route))

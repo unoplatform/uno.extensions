@@ -22,7 +22,7 @@
 					   HorizontalAlignment="Center"
 					   VerticalAlignment="Center" />
 			<Button Content="Done"
-					uen:Navigation.Request="-" />
+					uen:Navigation.Request="/-" />
 		</StackPanel>
 
 	</Grid>

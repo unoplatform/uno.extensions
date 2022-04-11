@@ -111,7 +111,7 @@
 						x:Uid="Body_Apply"
 						utu:AutoLayout.PrimaryAlignment="Stretch"
 						Style="{StaticResource MaterialContainedButtonStyle}"
-						uen:Navigation.Request="-"
+						uen:Navigation.Request="/-"
 						uen:Navigation.Data="{Binding Filter.Value}" />
 			</utu:AutoLayout>
 		</utu:AutoLayout>
