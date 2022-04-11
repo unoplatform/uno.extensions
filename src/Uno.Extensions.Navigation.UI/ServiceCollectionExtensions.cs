@@ -104,7 +104,7 @@ public static class ServiceCollectionExtensions
 	public static IServiceCollection AddRegion<TControl, TRegion>(this IServiceCollection services, bool isRequestRegion = false, string? name = null)
 		where TRegion : class, INavigator
 	{
-		var names = name is not null ? new[] { name, typeof(TControl).Name } : new[] { typeof(TControl).Name };
+		var names = name is not null ? new[] { name } : new[] { typeof(TControl).Name };
 		return services
 				   .AddScoped<TRegion>()
 				   .ConfigureNavigatorFactory(factory => factory.RegisterNavigator<TRegion>(isRequestRegion, names));

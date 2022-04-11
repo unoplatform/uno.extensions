@@ -50,6 +50,7 @@
 		</ui:TabBar>
 
 		<Grid uen:Region.Attached="True"
+			  uen:Region.Navigator="Visibility"
 			  Grid.Row="0">
 			<Grid uen:Region.Name="Products"
 				  Visibility="Collapsed">
@@ -86,6 +87,7 @@
 						</ui:TabBar.Items>
 					</ui:TabBar>
 					<Grid uen:Region.Attached="True"
+						  uen:Region.Navigator="Visibility"
 						  Grid.Row="1">
 						<StackPanel uen:Region.Name="CoolProducts"
 									Visibility="Collapsed">
