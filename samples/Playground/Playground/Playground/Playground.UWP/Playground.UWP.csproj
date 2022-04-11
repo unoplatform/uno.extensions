@@ -15,7 +15,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml" Version="2.7.1" />
     <PackageReference Include="System.Text.Json">
-      <Version>6.0.2</Version>
+      <Version>6.0.1</Version>
     </PackageReference>
     <PackageReference Include="Refit">
       <Version>6.3.2</Version>
