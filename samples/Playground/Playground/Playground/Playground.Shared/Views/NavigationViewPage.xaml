@@ -24,7 +24,8 @@
 				<muxc:NavigationViewItem Content="Profile"
 										 uen:Region.Name="Profile" />
 			</muxc:NavigationView.MenuItems>
-			<Grid uen:Region.Attached="True">
+			<Grid uen:Region.Attached="True"
+				  uen:Region.Navigator="Visibility">
 				<StackPanel uen:Region.Name="Products"
 					  Visibility="Collapsed">
 					<TextBlock Text="Products" />
