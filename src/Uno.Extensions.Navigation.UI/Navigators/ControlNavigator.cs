@@ -16,7 +16,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 		Control = control;
 	}
 
-	protected override bool CanNavigateToRoute(Route route) => base.CanNavigateToRoute(route) && Control is not null;
+	protected override bool RegionCanNavigate(Route route) => base.RegionCanNavigate(route) && Control is not null;
 
 	protected virtual FrameworkElement? CurrentView => default;
 
@@ -126,7 +126,7 @@ public abstract class ControlNavigator : Navigator
 				request = request with { Route = (request.Route with { Base = rm?.DependsOn, Path = null }).Append(request.Route) };
 			}
 
-			return await Region.NavigateAsync(request);
+			return await Region.Parent.NavigateAsync(request);
 		}
 
 		var coreResponse = await base.CoreNavigateAsync(request);
@@ -138,7 +138,7 @@ public abstract class ControlNavigator : Navigator
 	{
 		return await Dispatcher.ExecuteAsync(async () =>
 		{
-			if (CanNavigateToRoute(request.Route))
+			if (RegionCanNavigate(request.Route))
 			{
 				return await ControlNavigateAsync(request);
 			}

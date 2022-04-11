@@ -19,8 +19,8 @@ public class FlyoutNavigator : ControlNavigator
 		_window = window;
 	}
 
-	protected override bool CanNavigateToRoute(Route route) =>
-		base.CanNavigateToRoute(route) &&
+	protected override bool RegionCanNavigate(Route route) =>
+		base.RegionCanNavigate(route) &&
 		(
 			route.IsBackOrCloseNavigation() ||
 			Resolver.Find(route)?.RenderView is not null

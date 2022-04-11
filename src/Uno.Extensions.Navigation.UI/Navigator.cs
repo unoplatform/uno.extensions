@@ -161,17 +161,25 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			return region.NavigateAsync(request);
 		}
 
-		// Exception: If this region is an unnamed child of a composite,
-		// send request to parent
-		if (!Region.IsNamed() &&
-			Region.Parent is not null)
-		{
-			return Region.Parent.NavigateAsync(request);
-		}
+		//// Removing this as it's too unpredictable and hard for developers to
+		//// understand
+		//// Exception: If this region is an unnamed child of a composite,
+		//// send request to parent
+		//if (!Region.IsNamed() &&
+		//	Region.Parent is not null)
+		//{
+		//	return Region.Parent.NavigateAsync(request);
+		//}
 
 		// If the current navigator can handle this route,
 		// then simply return without redirecting the request
-		if (CanNavigateToRoute(request.Route))
+
+		// 1 - navigator can handle the request as it's presented
+		//		a) route has depends on that matches current route, return true
+		//		b) route has depends on that doesn't match current route - if parent can navigate to dependson, return false
+		//		c) route has no depends on - if parent can navigate to the route, return false
+
+		if (CanNavigate(request.Route))
 		{
 			return default;
 		}
@@ -187,6 +195,11 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		var rm = Resolver.FindByPath(request.Route.Base);
 		if (rm is null)
 		{
+			if (Region.Parent is not null)
+			{
+				return Region.Parent.NavigateAsync(request);
+			}
+
 			return default;
 		}
 
@@ -276,10 +289,60 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		return request;
 	}
 
-	// By default, all navigators can handle all routes
-	// except where it's dialog - these should only be
-	// handled by the root (ie Region.Parent is null)
-	protected virtual bool CanNavigateToRoute(Route route) => (Region.Parent is null || !route.IsDialog()) && !route.IsBackOrCloseNavigation();
+	public bool CanNavigate(Route route)
+	{
+		if (!route.IsInternal)
+		{
+			// Only root region should handle dialogs
+			if (Region.Parent is not null)
+			{
+				if (route.IsDialog()) {
+					return false;
+				}
+
+			}
+		}
+
+		var canNav =  RegionCanNavigate(route);
+
+		if (canNav &&
+			!route.IsInternal &&
+			Region.Parent is not null)
+		{
+			// If the parent can handle this request then return false so the request gets forwarded
+			if (Region.Parent.Navigator()?.CanNavigate(route) ?? false)
+			{
+				return false;
+			}
+		}
+
+		return canNav;
+	}
+
+	protected virtual bool RegionCanNavigate(Route route)
+	{
+		// Default behaviour for all navigators is that they can't handle back or close requests
+		// This is overridden by navigators that can handle close operation
+		if (route.IsBackOrCloseNavigation())
+		{
+			return false;
+		}
+
+		// Check type of this navigator - if base class (ie Navigator)
+		// then an check children to see if they can navigate to the route
+		// This won't cause a cycle as we force IsInternal to true, which will
+		// avoid any parent checks in cannavigate
+		if(this.GetType() == typeof(Navigator))
+		{
+			var internalRoute = route with { IsInternal = true };
+			return (from child in Region.Children
+					let nav = child.Navigator()
+					where nav?.CanNavigate(internalRoute)??false
+					select child).Any();
+		}
+
+		return true;
+	}
 
 	private async Task<NavigationResponse?> DialogNavigateAsync(NavigationRequest request)
 	{

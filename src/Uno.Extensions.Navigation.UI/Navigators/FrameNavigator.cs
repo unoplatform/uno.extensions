@@ -31,7 +31,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 		}
 	}
 
-	protected override bool CanNavigateToRoute(Route route)
+	protected override bool RegionCanNavigate(Route route)
 	{
 		if (route.IsBackOrCloseNavigation())
 		{
@@ -40,7 +40,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 			return true;
 		}
 
-		if (!base.CanNavigateToRoute(route))
+		if (!base.RegionCanNavigate(route))
 		{
 			return false;
 		}

@@ -14,9 +14,9 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 	{
 	}
 
-	protected override bool CanNavigateToRoute(Route route)
+	protected override bool RegionCanNavigate(Route route)
 	{
-		if (!base.CanNavigateToRoute(route))
+		if (!base.RegionCanNavigate(route))
 		{
 			return false;
 		}

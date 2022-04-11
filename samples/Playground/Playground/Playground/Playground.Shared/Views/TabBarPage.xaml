@@ -93,17 +93,17 @@
 									Visibility="Collapsed">
 							<TextBlock Text="Cool Products" />
 							<Button Content="Premium"
-									uen:Navigation.Request="../PremiumProducts" />
+									uen:Navigation.Request="PremiumProducts" />
 							<Button Content="Deals"
-									uen:Navigation.Request="../../Deals" />
+									uen:Navigation.Request="Deals" />
 						</StackPanel>
 						<StackPanel uen:Region.Name="PremiumProducts"
 									Visibility="Collapsed">
 							<TextBlock Text="Premium Products" />
 							<Button Content="Cool"
-									uen:Navigation.Request="../CoolProducts" />
+									uen:Navigation.Request="CoolProducts" />
 							<Button Content="Profile"
-									uen:Navigation.Request="../../Profile" />
+									uen:Navigation.Request="Profile" />
 						</StackPanel>
 					</Grid>
 				</Grid>
@@ -111,26 +111,26 @@
 				<StackPanel Grid.Row="1">
 					<TextBlock Text="Products" />
 					<Button Content="Deals"
-							uen:Navigation.Request="../Deals" />
+							uen:Navigation.Request="Deals" />
 					<Button Content="Profile"
-							uen:Navigation.Request="../Profile" />
+							uen:Navigation.Request="Profile" />
 				</StackPanel>
 			</Grid>
 			<StackPanel uen:Region.Name="Deals"
 						Visibility="Collapsed">
 				<TextBlock Text="Deals" />
 				<Button Content="Products"
-						uen:Navigation.Request="../Products" />
+						uen:Navigation.Request="Products" />
 				<Button Content="Profile"
-						uen:Navigation.Request="../Profile" />
+						uen:Navigation.Request="Profile" />
 			</StackPanel>
 			<StackPanel uen:Region.Name="Profile"
 						Visibility="Collapsed">
 				<TextBlock Text="Profile" />
 				<Button Content="Products"
-						uen:Navigation.Request="../Products" />
+						uen:Navigation.Request="Products" />
 				<Button Content="Deals"
-						uen:Navigation.Request="../Deals" />
+						uen:Navigation.Request="Deals" />
 			</StackPanel>
 		</Grid>
 	</Grid>
