@@ -57,43 +57,85 @@ public static class RouteExtensions
 
 	public static bool FrameIsForwardNavigation(this Route route) => !route.FrameIsBackNavigation();
 
-	public static Route[] ForwardNavigationSegments(this Route route, Route? currentRoute, IRouteResolver mappings)
+	/// <returns>
+	/// Route - a single segment in the route (ie has Base but no Path)
+	/// RouteMap - the corresponding route map (if it exists)
+	/// bool - whether or not this is a dependson route (ie one that needs to exist in backstack prior to this route)
+	/// </returns>
+	public static (Route, RouteMap?, bool)[] ForwardNavigationSegments(this Route route, IRouteResolver mappings)
 	{
+		// Here we're interested in the actual page navigation segments.
+		// Start with an empty list, and progressively add routes that
+		// correspond to page navigation segments
+		var segs = new List<(Route, RouteMap?, bool)>();
+
 		if (route.IsEmpty() || route.FrameIsBackNavigation())
 		{
-			return new Route[] { };
+			return segs.ToArray();
 		}
 
-		var segments = new List<Route>() { route with { Qualifier = Qualifiers.None, Path = null, Data = (route.IsLastFrameRoute(mappings) ? route.Data : null) } };
-		var nextRoute = route.Next();
-		var rm = mappings.Find(nextRoute);
+		// For routes that have a depends on, we need to ensure that
+		// the dependson segments are added to the segments list
+		var r = route.RootDependsOn(mappings);
+		var map = mappings.Find(r);
+		var originalRoute = false;
 		while (
-			!nextRoute.IsEmpty() &&
+			!r.IsEmpty() &&
 			(
-				nextRoute.IsBackOrCloseNavigation() ||
+				r.IsBackOrCloseNavigation() ||
 				(
-					rm is not null &&
+					map is not null &&
 					// Checks that there is a View specified and that it inherits from Page
-					rm.IsPageRouteMap() &&
-					// Either this is the first segment (dependson should be "" as should be first in sequence) OR
-					// this is not the first segment (so dependson should be set)
-					((string.IsNullOrWhiteSpace(rm.DependsOn) && segments.Count == 0) ^ ((segments.Count > 0 && segments[0].Base == rm.DependsOn) || (currentRoute?.Base == rm.DependsOn)))
+					map.IsPageRouteMap()
 				)
 			)
 		)
 		{
-			if (nextRoute.IsBackOrCloseNavigation())
-			{
-				segments.Add(nextRoute with { Path = null, Data = null });
-			}
-			else
-			{
-				segments.Add(nextRoute with { Qualifier = Qualifiers.None, Path = null, Data = (nextRoute.IsLastFrameRoute(mappings) ? nextRoute.Data : null) });
-			}
-			nextRoute = nextRoute.Next();
-			rm = mappings.Find(nextRoute);
+			// Check if we've found the origianl route yet (if not, we're still processin dependson routes)
+			originalRoute = originalRoute || r.Base == route.Base; 
+			segs.Add((r with { Qualifier = Qualifiers.None, Path = null, Data = null }, map, !originalRoute));
+			r = r.Next();
+			map = mappings.Find(r);
 		}
-		return segments.ToArray();
+
+		if (segs.Any())
+		{
+			var last = segs[segs.Count - 1];
+			segs[segs.Count - 1] = last with { Item1 = last.Item1 with { Data = route.Data } };
+		}
+
+		return segs.ToArray();
+
+		//var segments = new List<Route>() { route with { Qualifier = Qualifiers.None, Path = null, Data = (route.IsLastFrameRoute(mappings) ? route.Data : null) } };
+		//var nextRoute = route.Next();
+		//var rm = mappings.Find(nextRoute);
+		//while (
+		//	!nextRoute.IsEmpty() &&
+		//	(
+		//		nextRoute.IsBackOrCloseNavigation() ||
+		//		(
+		//			rm is not null &&
+		//			// Checks that there is a View specified and that it inherits from Page
+		//			rm.IsPageRouteMap() &&
+		//			// Either this is the first segment (dependson should be "" as should be first in sequence) OR
+		//			// this is not the first segment (so dependson should be set)
+		//			((string.IsNullOrWhiteSpace(rm.DependsOn) && segments.Count == 0) ^ ((segments.Count > 0 && segments[0].Base == rm.DependsOn) || (currentRoute?.Base == rm.DependsOn)))
+		//		)
+		//	)
+		//)
+		//{
+		//	if (nextRoute.IsBackOrCloseNavigation())
+		//	{
+		//		segments.Add(nextRoute with { Path = null, Data = null });
+		//	}
+		//	else
+		//	{
+		//		segments.Add(nextRoute with { Qualifier = Qualifiers.None, Path = null, Data = (nextRoute.IsLastFrameRoute(mappings) ? nextRoute.Data : null) });
+		//	}
+		//	nextRoute = nextRoute.Next();
+		//	rm = mappings.Find(nextRoute);
+		//}
+		//return segments.ToArray();
 	}
 
 	public static string[] ForwardNavigationSegments(this string path) =>
@@ -363,7 +405,7 @@ public static class RouteExtensions
 		}
 		else
 		{
-			var segments = currentRoute.ForwardNavigationSegments(currentRoute, resolver).ToList();
+			var segments = currentRoute.ForwardNavigationSegments(resolver).ToList();
 			foreach (var qualifierChar in qualifier)
 			{
 				if (qualifierChar + "" == Qualifiers.NavigateBack)
@@ -376,32 +418,35 @@ public static class RouteExtensions
 				}
 			}
 
-			var newSegments = frameRoute.ForwardNavigationSegments(currentRoute, resolver);
+			var newSegments = frameRoute.ForwardNavigationSegments(resolver);
 			if (newSegments is not null)
 			{
+				newSegments = (from seg in newSegments
+							   where !(seg.Item3 && segments.Any(x => x.Item1.Base == seg.Item1.Base))
+							   select seg).ToArray();
 				segments.AddRange(newSegments);
 			}
 
-			var routeBase = segments.FirstOrDefault()?.Base;
+			var routeBase = segments.FirstOrDefault().Item1?.Base;
 			if (segments.Count > 0)
 			{
 				segments.RemoveAt(0);
 			}
 
-			var routePath = segments.Count > 0 ? string.Join(Qualifiers.Separator, segments.Select(x => $"{x.Base}")) : string.Empty;
+			var routePath = segments.Count > 0 ? string.Join(Qualifiers.Separator, segments.Select(x => $"{x.Item1.Base}")) : string.Empty;
 
 			return new Route(Qualifiers.None, routeBase, routePath, frameRoute.Data);
 		}
 	}
 
-	public static Route RootDependsOn(this Route currentRoute, IResolver resolver)
+	public static Route RootDependsOn(this Route currentRoute, IRouteResolver resolver)
 	{
-		var rm = resolver.Routes.FindByPath(currentRoute.Base);
-		while(rm is not null &&
+		var rm = resolver.FindByPath(currentRoute.Base);
+		while (rm is not null &&
 			!string.IsNullOrEmpty(rm.DependsOn))
 		{
 			currentRoute = currentRoute.Insert(rm.DependsOn);
-			rm = resolver.Routes.FindByPath(rm.DependsOn);
+			rm = resolver.FindByPath(rm.DependsOn);
 		}
 
 		return currentRoute;

@@ -39,6 +39,7 @@
 					Content="Second Page Code behind" />
 			<Button uen:Navigation.Request="-/Second"
 					Content="Second Page with clear backstack" />
+			<TextBlock Text="This won't actually clear Home from backstack because Second has dependson set to Home" />
 			<Button uen:Navigation.Request="Fourth"
 					Content="Fourth page" />
 			<Button uen:Navigation.Request="Dialogs"

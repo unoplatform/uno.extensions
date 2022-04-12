@@ -242,18 +242,18 @@ namespace Playground
 				new RouteMap("", View: views.FindByViewModel<ShellViewModel>(),
 				Nested: new[]
 				{
-					new RouteMap("Home", View: views.FindByView<HomePage>()),
-					new RouteMap("CodeBehind", View: views.FindByView<CodeBehindPage>(), DependsOn: "Home"),
-					new RouteMap("VM", View: views.FindByView<VMPage>(), DependsOn: "Home"),
-					new RouteMap("Xaml", View: views.FindByView<XamlPage>(), DependsOn: "Home"),
-					new RouteMap("NavigationView", View: views.FindByView<NavigationViewPage>(), DependsOn: "Home"),
-					new RouteMap("TabBar", View: views.FindByView<TabBarPage>(), DependsOn: "Home"),
-					new RouteMap("ContentControl", View: views.FindByView<ContentControlPage>(), DependsOn: "Home"),
-					new RouteMap("Second", View: views.FindByView<SecondPage>(), DependsOn: "Home"),
-					new RouteMap("Third", View: views.FindByView<ThirdPage>(), DependsOn: "Home"),
-					new RouteMap("Fourth", View: views.FindByView<FourthPage>(), DependsOn: "Home"),
-					new RouteMap("Fifth", View: views.FindByView<FifthPage>(), DependsOn: "Home"),
-					new RouteMap("Dialogs", View: views.FindByView<DialogsPage>(), DependsOn: "Home",
+					new RouteMap("Home",View: views.FindByView<HomePage>()),
+					new RouteMap("CodeBehind",View: views.FindByView<CodeBehindPage>(), DependsOn: "Home"),
+					new RouteMap("VM",View: views.FindByView<VMPage>(), DependsOn: "Home"),
+					new RouteMap("Xaml",View: views.FindByView<XamlPage>(), DependsOn: "Home"),
+					new RouteMap("NavigationView",View: views.FindByView<NavigationViewPage>(), DependsOn: "Home"),
+					new RouteMap("TabBar",View: views.FindByView<TabBarPage>(), DependsOn: "Home"),
+					new RouteMap("ContentControl",View: views.FindByView<ContentControlPage>(), DependsOn: "Home"),
+					new RouteMap("Second",View: views.FindByView<SecondPage>(), DependsOn: "Home"),
+					new RouteMap("Third",View: views.FindByView<ThirdPage>()),
+					new RouteMap("Fourth",View: views.FindByView<FourthPage>()),
+					new RouteMap("Fifth",View: views.FindByView<FifthPage>(), DependsOn: "Third"),
+					new RouteMap("Dialogs",View: views.FindByView<DialogsPage>(),
 					Nested: new[]
 					{
 						new RouteMap("Simple", View: views.FindByView<SimpleDialog>()),
@@ -265,9 +265,9 @@ namespace Playground
 						}),
 						new RouteMap("Basic",View: views.FindByView<BasicFlyout>())
 					}),
-					new RouteMap("PanelVisibility", View: views.FindByView<PanelVisibilityPage>(), DependsOn: "Home"),
-					new RouteMap("VisualStates", View: views.FindByView<VisualStatesPage>(), DependsOn: "Home"),
-					new RouteMap("AdHoc", View: views.FindByViewModel<AdHocViewModel>(), DependsOn: "Home",
+					new RouteMap("PanelVisibility",View: views.FindByView<PanelVisibilityPage>()),
+					new RouteMap("VisualStates",View: views.FindByView<VisualStatesPage>()),
+					new RouteMap("AdHoc",View: views.FindByViewModel<AdHocViewModel>(),
 					Nested: new[]
 					{
 						new RouteMap("Auth", View: views.FindByView<AuthTokenDialog>())
