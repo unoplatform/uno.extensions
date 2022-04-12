@@ -2,7 +2,7 @@
 
 namespace Uno.Extensions.Http;
 
-public class SimpleAuthenticationToken : IAuthenticationToken
+public class SimpleAuthenticationToken : IAuthenticationTokenProvider
 {
 	public string? AccessToken { get; set; }
 

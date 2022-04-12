@@ -10,10 +10,10 @@ public class AdHocViewModel
 	private readonly INavigator _navigator;
 	private readonly IToDoTaskListEndpoint _todoTaskListEndpoint;
 	private readonly ISerializer<Widget> _serializer;
-	private readonly IAuthenticationToken _authToken;
+	private readonly IAuthenticationTokenProvider _authToken;
 	public AdHocViewModel(
 		INavigator navigator,
-		IAuthenticationToken authenticationToken,
+		IAuthenticationTokenProvider authenticationToken,
 		IToDoTaskListEndpoint todoTaskListEndpoint, 
 		ISerializer<Widget> serializer)
 	{

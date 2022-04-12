@@ -2,7 +2,7 @@
 
 namespace Uno.Extensions.Http;
 
-public  interface IAuthenticationToken
+public  interface IAuthenticationTokenProvider
 {
 	Task<string> GetAccessToken();
 }

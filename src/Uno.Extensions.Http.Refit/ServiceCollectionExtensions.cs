@@ -26,7 +26,7 @@ namespace Uno.Extensions.Http.Refit
 						ContentSerializer = serviceProvider.GetRequiredService<IHttpContentSerializer>(),
 					};
 
-					var auth = serviceProvider.GetService<IAuthenticationToken>();
+					var auth = serviceProvider.GetService<IAuthenticationTokenProvider>();
 					if (auth is not null)
 					{
 						settings.AuthorizationHeaderValueGetter = () => auth.GetAccessToken();

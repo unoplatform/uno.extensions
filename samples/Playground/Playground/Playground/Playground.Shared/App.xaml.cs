@@ -60,23 +60,18 @@ namespace Playground
 					.ConfigureServices((context, services) =>
 					{
 						services
-								.AddSingleton<IAuthenticationToken>(new SimpleAuthenticationToken { AccessToken = "My access token" })
+								.AddSingleton<IAuthenticationTokenProvider>(new SimpleAuthenticationToken { AccessToken = "My access token" })
 
 								.AddNativeHandler()
 								.AddContentSerializer()
 								.AddRefitClient<IToDoTaskListEndpoint>(context
+										// Leaving this commented code here as an example of using the settingsBuilder callback
 										//,settingsBuilder:
 										//		(sp, settings) => settings.AuthorizationHeaderValueGetter =
 										//		() => Task.FromResult("AccessToken")
 										)
 
 								.AddHostedService<SimpleStartupService>();
-						//services
-
-						//	.AddSingleton<IProductService, ProductService>()
-						//	.AddSingleton<ICartService, CartService>()
-						//	.AddSingleton<IDealService, DealService>()
-						//	.AddSingleton<IProfileService, ProfileService>();
 					})
 
 
