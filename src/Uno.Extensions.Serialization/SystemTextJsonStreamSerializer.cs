@@ -13,13 +13,13 @@ public class SystemTextJsonStreamSerializer : ISerializer, IStreamSerializer
 		_serializerOptions = serializerOptions;
 	}
 
-	public object? ReadFromStream(Stream source, Type targetType)
+	public object? FromStream(Stream source, Type targetType)
 	{
 		var typedSerializer = TypedSerializer(targetType);
-		return typedSerializer is not null ? typedSerializer.ReadFromStream(source, targetType) : JsonSerializer.Deserialize(source, targetType, _serializerOptions);
+		return typedSerializer is not null ? typedSerializer.FromStream(source, targetType) : JsonSerializer.Deserialize(source, targetType, _serializerOptions);
 	}
 
-	public void WriteToStream(Stream stream, object value, Type valueType)
+	public void ToStream(Stream stream, object value, Type valueType)
 	{
 		var typedSerializer = TypedSerializer(valueType);
 		if (typedSerializer is not null)
@@ -58,28 +58,28 @@ public class SystemTextJsonStreamSerializer<T> : SystemTextJsonStreamSerializer,
 		return FromString(source, typeof(T)) is T value ? value : default;
 	}
 
-	public T? ReadFromStream(Stream source)
+	public T? FromStream(Stream source)
 	{
-		return ReadFromStream(source, typeof(T)) is T value ? value : default;
+		return FromStream(source, typeof(T)) is T value ? value : default;
 	}
 
 	public string ToString(T value)
 	{
 		if (value is null)
 		{
-			return String.Empty;
+			return string.Empty;
 		}
 
 		return ToString(value, typeof(T));
 	}
 
-	public void WriteToStream(Stream stream, T value)
+	public void ToStream(Stream stream, T value)
 	{
 		if (value is null)
 		{
 			return;
 		}
 
-		WriteToStream(stream, value, typeof(T));
+		ToStream(stream, value, typeof(T));
 	}
 }

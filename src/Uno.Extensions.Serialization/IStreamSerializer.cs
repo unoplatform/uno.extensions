@@ -14,7 +14,7 @@ public interface IStreamSerializer
     //
     // Returns:
     //     The instance of targetType deserialized from the source.
-    object? ReadFromStream(Stream source, Type targetType);
+    object? FromStream(Stream source, Type targetType);
 
     // Summary:
     //     Write a serialized representation of an object to a given System.IO.Stream.
@@ -32,11 +32,11 @@ public interface IStreamSerializer
     //   canDisposeStream:
     //     A bool which indicates if the stream can be disposed after having written the
     //     object or not.
-    void WriteToStream(Stream stream, object value, Type valueType);
+    void ToStream(Stream stream, object value, Type valueType);
 }
 
 public interface IStreamSerializer<T> : IStreamSerializer
 {
-	T? ReadFromStream(Stream source);
-	void WriteToStream(Stream stream, T value);
+	T? FromStream(Stream source);
+	void ToStream(Stream stream, T value);
 }

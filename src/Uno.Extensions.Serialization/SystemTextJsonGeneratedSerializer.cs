@@ -32,7 +32,7 @@ public class SystemTextJsonGeneratedSerializer<T> : ISerializer<T>, IStreamSeria
 	}
 	public string ToString(object value, Type valueType) => valueType == typeof(T) ? ToString((T)value) : _nonTypedSerializer.ToString(value, valueType);
 	public object? FromString(string source, Type targetType) => targetType == typeof(T) ? FromString(source) : _nonTypedSerializer.FromString(source, targetType);
-	public T? ReadFromStream(Stream source)
+	public T? FromStream(Stream source)
 	{
 		if (_typeInfo is not null)
 		{
@@ -41,7 +41,7 @@ public class SystemTextJsonGeneratedSerializer<T> : ISerializer<T>, IStreamSeria
 
 		return _nonTypedStreamSerializer.ReadFromStream<T>(source);
 	}
-	public void WriteToStream(Stream stream, T value)
+	public void ToStream(Stream stream, T value)
 	{
 		if (_typeInfo is not null)
 		{
@@ -51,21 +51,21 @@ public class SystemTextJsonGeneratedSerializer<T> : ISerializer<T>, IStreamSeria
 
 		_nonTypedStreamSerializer.WriteToStream<T>(stream, value);
 	}
-	public object? ReadFromStream(Stream source, Type targetType) => targetType == typeof(T) ? ReadFromStream(source) : _nonTypedStreamSerializer.ReadFromStream(source, targetType);
-	public void WriteToStream(Stream stream, object value, Type valueType)
+	public object? FromStream(Stream source, Type targetType) => targetType == typeof(T) ? FromStream(source) : _nonTypedStreamSerializer.FromStream(source, targetType);
+	public void ToStream(Stream stream, object value, Type valueType)
 	{
 		if (valueType == typeof(T))
 		{
 
-			WriteToStream(stream, (T)value);
+			ToStream(stream, (T)value);
 		}
 		else
 		{
-			_nonTypedStreamSerializer.WriteToStream(stream, value, valueType);
+			_nonTypedStreamSerializer.ToStream(stream, value, valueType);
 		}
 	}
 
 	private readonly ISerializer _nonTypedSerializer;
 	private readonly IStreamSerializer _nonTypedStreamSerializer;
-	private readonly JsonTypeInfo<T> _typeInfo;
+	private readonly JsonTypeInfo<T>? _typeInfo;
 }

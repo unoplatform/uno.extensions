@@ -5,7 +5,7 @@ public static class StreamSerializerExtensions
     public static T? ReadFromStream<T>(this IStreamSerializer serializer, Stream stream)
     {
         return serializer is not null ?
-            (serializer.ReadFromStream(stream, typeof(T)) is T tvalue) ?
+            (serializer.FromStream(stream, typeof(T)) is T tvalue) ?
                 tvalue :
                 default :
             default;
@@ -20,7 +20,7 @@ public static class StreamSerializerExtensions
 
         var pos = stream.Position;
         var value = serializer is not null ?
-            (serializer.ReadFromStream(stream, typeof(T)) is T tvalue) ?
+            (serializer.FromStream(stream, typeof(T)) is T tvalue) ?
                 tvalue :
                 default :
             default;
@@ -32,14 +32,14 @@ public static class StreamSerializerExtensions
     {
         if (value is not null)
         {
-            serializer.WriteToStream(stream, value, typeof(T));
+            serializer.ToStream(stream, value, typeof(T));
         }
         return serializer;
     }
 
     public static IStreamSerializer WriteToStream(this IStreamSerializer serializer, Stream stream, object value)
     {
-        serializer.WriteToStream(stream, value, value.GetType());
+        serializer.ToStream(stream, value, value.GetType());
         return serializer;
     }
 
@@ -57,7 +57,7 @@ public static class StreamSerializerExtensions
     {
         var memoryStream = new MemoryStream();
 
-        serializer?.WriteToStream(memoryStream, value, valueType);
+        serializer?.ToStream(memoryStream, value, valueType);
         memoryStream.Seek(0, SeekOrigin.Begin);
 
         return memoryStream;
