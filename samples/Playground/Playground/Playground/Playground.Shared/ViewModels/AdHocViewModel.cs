@@ -8,22 +8,22 @@ namespace Playground.ViewModels;
 public class AdHocViewModel
 {
 	private readonly INavigator _navigator;
-	private readonly ITodoTaskEndpoint _todoTaskEndpoint;
+	private readonly IToDoTaskListEndpoint _todoTaskListEndpoint;
 	private readonly ISerializer<Widget> _widgetSerializer;
 	private readonly ISerializer<Person> _personSerializer;
 	private readonly IAuthenticationTokenProvider _authToken;
 	public AdHocViewModel(
 		INavigator navigator,
 		IAuthenticationTokenProvider authenticationToken,
-		ITodoTaskEndpoint todoTaskEndpoint,
+		IToDoTaskListEndpoint todoTaskEndpoint,
 		ISerializer<Widget> widgetSerializer,
-		ISerializer personSerializer)
+		ISerializer<Person> personSerializer)
 	{
 		_navigator = navigator;
 		_authToken = authenticationToken;
 		_widgetSerializer = widgetSerializer;
 		_personSerializer = personSerializer;
-		_todoTaskEndpoint = todoTaskEndpoint;
+		_todoTaskListEndpoint = todoTaskEndpoint;
 	}
 
 	public async Task LongRunning()
