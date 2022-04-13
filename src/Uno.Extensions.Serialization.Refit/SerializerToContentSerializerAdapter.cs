@@ -47,7 +47,7 @@ namespace Uno.Extensions.Serialization.Refit
 #else
             using var stream = await content.ReadAsStreamAsync();
 #endif
-            return _serializer.ReadFromStream<T>(stream);
+            return _serializer.FromStream<T>(stream);
         }
 
         public string GetFieldNameForProperty(PropertyInfo propertyInfo)
