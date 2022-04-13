@@ -63,9 +63,9 @@ public static class StreamSerializerExtensions
         return memoryStream;
     }
 
-	internal static async Task<TData?> ReadFromFile<TData>(this IStreamSerializer serializer, IStorageProxy storage, string dataFile)
+	internal static async Task<TData?> ReadFromFile<TData>(this IStreamSerializer serializer, IStorage storage, string dataFile)
 	{
-		using var stream = await storage.OpenApplicationFile(dataFile);
+		using var stream = await storage.OpenApplicationFileAsync(dataFile);
 		return serializer.FromStream<TData>(stream);
 	}
 }

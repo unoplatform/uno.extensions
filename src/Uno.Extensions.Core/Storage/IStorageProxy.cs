@@ -3,13 +3,13 @@ using System.Threading.Tasks;
 
 namespace Uno.Extensions.Storage;
 
-public interface IStorageProxy
+public interface IStorage
 {
-	Task<string> CreateLocalFolder(string foldername);
+	Task<string> CreateLocalFolderAsync(string foldername);
 
-	Task<string?> ReadFromApplicationFile(string filename);
+	Task<string?> ReadFromApplicationFileAsync(string filename);
 
-	Task<Stream> OpenApplicationFile(string filename);
+	Task<Stream> OpenApplicationFileAsync(string filename);
 
-	Task WriteToFile(string filename, string text);
+	Task WriteToFileAsync(string filename, string text);
 }

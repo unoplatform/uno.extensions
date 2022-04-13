@@ -18,7 +18,7 @@ public class ReloadService : IHostedService, IStartupService
 		ILogger<ReloadService> logger,
 		Reloader reload,
 		IConfigurationRoot configRoot,
-		IStorageProxy storage)
+		IStorage storage)
 	{
 		Logger = logger;
 		Reload = reload;
@@ -27,7 +27,7 @@ public class ReloadService : IHostedService, IStartupService
 		if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Created");
 	}
 
-	private IStorageProxy Storage { get; }
+	private IStorage Storage { get; }
 
 	private TaskCompletionSource<bool> StartupCompletion { get; } = new TaskCompletionSource<bool>();
 
@@ -39,7 +39,7 @@ public class ReloadService : IHostedService, IStartupService
 
 	public async Task StartAsync(CancellationToken cancellationToken)
 	{
-		var folderPath = await Storage.CreateLocalFolder(HostBuilderExtensions.ConfigurationFolderName);
+		var folderPath = await Storage.CreateLocalFolderAsync(HostBuilderExtensions.ConfigurationFolderName);
 		if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($@"Folder path should be '{folderPath}'");
 
 		var fileProviders = Config.Providers;
@@ -75,13 +75,13 @@ public class ReloadService : IHostedService, IStartupService
 	{
 		try
 		{
-			var settings = await Storage.ReadFromApplicationFile(file);
+			var settings = await Storage.ReadFromApplicationFileAsync(file);
 			if (settings is not null &&
 				!string.IsNullOrWhiteSpace(settings))
 			{
 				if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($@"Settings '{settings}'");
 				var fullPath = Path.Combine(localFolderPath, file);
-				await Storage.WriteToFile(fullPath, settings);
+				await Storage.WriteToFileAsync(fullPath, settings);
 			}
 		}
 		catch

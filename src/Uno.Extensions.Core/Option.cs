@@ -63,7 +63,7 @@ public readonly struct Option<T> : IOption, IEquatable<Option<T>>
 	public T? SomeOrDefault()
 		=> _value;
 
-	object IOption.SomeOrDefault()
+	object? IOption.SomeOrDefault()
 		=> _value;
 
 	public T? SomeOrDefault(T defaultValue)
@@ -105,7 +105,7 @@ public readonly struct Option<T> : IOption, IEquatable<Option<T>>
 		=> Equals(this, other);
 
 	/// <inheritdoc />
-	public override bool Equals(object obj)
+	public override bool Equals(object? obj)
 		=> obj is Option<T> other && Equals(this, other);
 
 	internal static bool Equals(Option<T> x, Option<T> y)

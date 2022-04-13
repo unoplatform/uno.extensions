@@ -8,9 +8,9 @@ public class JsonDataService<TData> : IJsonDataService<TData>
 
 	private IStreamSerializer Serializer { get; }
 
-	private IStorageProxy Storage { get; }
+	private IStorage Storage { get; }
 
-	public JsonDataService(IStreamSerializer serializer, IStorageProxy storage)
+	public JsonDataService(IStreamSerializer serializer, IStorage storage)
 	{
 		Serializer = serializer;
 		Storage = storage;
