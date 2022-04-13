@@ -57,6 +57,8 @@
 					Click="{x:Bind ViewModel.RunSerializer}"/>
 			<Button Content="Fetch Tasks"
 					Click="{x:Bind ViewModel.FetchTasks}" />
+			<Button Content="Load Widgets"
+					Click="{x:Bind ViewModel.LoadWidgets}" />
 		</StackPanel>
 	</Grid>
 </Page>
