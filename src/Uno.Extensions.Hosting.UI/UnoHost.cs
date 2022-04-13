@@ -22,7 +22,7 @@ public static class UnoHost
 				{
 					services.AddSingleton(addressBarHost);
 				}
-				services.AddSingleton<IStorage, StorageProxy>();
+				services.AddSingleton<IStorage, Storage>();
 			})
 #if __WASM__
 				.ConfigureHostConfiguration(config =>
