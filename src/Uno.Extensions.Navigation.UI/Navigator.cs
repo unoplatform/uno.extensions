@@ -14,22 +14,22 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 	protected IResolver Resolver { get; }
 
-	protected IWindow Window { get; }
+	protected Window Window { get; }
 
-	public Navigator(ILogger<Navigator> logger, IWindow window, IRegion region, IResolver resolver)
+	public Navigator(ILogger<Navigator> logger, Window window, IRegion region, IResolver resolver)
 		: this((ILogger)logger, window, region, resolver)
 	{
 	}
 
 	internal virtual DispatcherQueue GetDispatcher() =>
 #if WINUI
-		Window.Instance!.DispatcherQueue
+		Window!.DispatcherQueue
 #else
 		Windows.ApplicationModel.Core.CoreApplication.MainView.DispatcherQueue
 #endif
 		?? DispatcherQueue.GetForCurrentThread();
 
-	protected Navigator(ILogger logger, IWindow window, IRegion region, IResolver resolver)
+	protected Navigator(ILogger logger, Window window, IRegion region, IResolver resolver)
 	{
 		Region = region;
 		Logger = logger;

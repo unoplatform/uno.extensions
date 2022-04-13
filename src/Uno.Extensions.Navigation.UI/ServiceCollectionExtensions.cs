@@ -75,7 +75,7 @@ public static class ServiceCollectionExtensions
 
 					.AddScopedInstance<NavigationRequest>()
 
-					.AddScopedInstance<IWindow>()
+					.AddScopedInstance<Window>()
 
 					.AddScoped<NavigationDataProvider>()
 					.AddScoped<RegionControlProvider>()

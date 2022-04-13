@@ -8,7 +8,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 
 	public FrameNavigator(
 		ILogger<FrameNavigator> logger,
-		IWindow window,
+		Window window,
 		IRegion region,
 		IResolver resolver,
 		RegionControlProvider controlProvider)

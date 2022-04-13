@@ -6,7 +6,7 @@ public class PopupNavigator : ControlNavigator<Popup>
 
     public PopupNavigator(
         ILogger<ContentControlNavigator> logger,
-		IWindow window,
+		Window window,
 		IRegion region,
         IResolver resolver,
         RegionControlProvider controlProvider)
