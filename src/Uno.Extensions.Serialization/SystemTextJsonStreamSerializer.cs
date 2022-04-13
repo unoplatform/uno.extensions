@@ -24,7 +24,7 @@ public class SystemTextJsonStreamSerializer : ISerializer, IStreamSerializer
 		var typedSerializer = TypedSerializer(valueType);
 		if (typedSerializer is not null)
 		{
-			typedSerializer.WriteToStream(stream, value);
+			typedSerializer.ToStream(stream, value);
 		}
 		else
 		{

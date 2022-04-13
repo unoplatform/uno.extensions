@@ -21,15 +21,19 @@ public class StreamSerializerExtensionsTests
 	{
 		var classEntity = SystemTextJsonStreamSerializerTests.CreateSimpleClassInstance();
 		var stream = Serializer.ToStream(classEntity);
+		stream.Seek(0, SeekOrigin.Begin);
 		var cloneClass = Serializer.FromStream<SimpleClass>(stream);
 		VerifyEntity(classEntity, cloneClass);
+		stream.Seek(0, SeekOrigin.Begin);
 		var anotherCloneClass = Serializer.FromStream<SimpleClass>(stream);
 		VerifyEntity(cloneClass, anotherCloneClass);
 
 		var recordEntity = SystemTextJsonStreamSerializerTests.CreateSimpleRecordInstance();
 		stream = Serializer.ToStream(recordEntity);
+		stream.Seek(0, SeekOrigin.Begin);
 		var cloneRecord = Serializer.FromStream<SimpleRecord>(stream);
 		VerifyEntity(recordEntity, cloneRecord);
+		stream.Seek(0, SeekOrigin.Begin);
 		var anotherCloneRecord = Serializer.FromStream<SimpleRecord>(stream);
 		VerifyEntity(cloneRecord, anotherCloneRecord);
 	}
@@ -39,18 +43,18 @@ public class StreamSerializerExtensionsTests
 	{
 		var classEntity = SystemTextJsonStreamSerializerTests.CreateSimpleClassInstance() as SimpleClass;
 		using var ms = new MemoryStream();
-		Serializer.WriteToStream(ms, classEntity);
+		Serializer.ToStream(ms, classEntity);
 		var pos = ms.Position;
 		ms.Seek(0, SeekOrigin.Begin);
-		var cloneClass = Serializer.ReadFromStream<SimpleClass>(ms);
+		var cloneClass = Serializer.FromStream<SimpleClass>(ms);
 		VerifyEntity(classEntity, cloneClass);
 		Assert.AreEqual(pos, ms.Position);
 
 		ms.Seek(0, SeekOrigin.Begin);
-		Serializer.WriteToStream(ms, (object)classEntity);
+		Serializer.ToStream(ms, (object)classEntity);
 		pos = ms.Position;
 		ms.Seek(0, SeekOrigin.Begin);
-		cloneClass = Serializer.ReadFromStream<SimpleClass>(ms);
+		cloneClass = Serializer.FromStream<SimpleClass>(ms);
 		VerifyEntity(classEntity, cloneClass);
 		Assert.AreEqual(pos, ms.Position);
 	}

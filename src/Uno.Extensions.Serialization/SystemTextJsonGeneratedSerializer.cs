@@ -39,7 +39,7 @@ public class SystemTextJsonGeneratedSerializer<T> : ISerializer<T>, IStreamSeria
 			return JsonSerializer.Deserialize(source, _typeInfo);
 		}
 
-		return _nonTypedStreamSerializer.ReadFromStream<T>(source);
+		return _nonTypedStreamSerializer.FromStream<T>(source);
 	}
 	public void ToStream(Stream stream, T value)
 	{
@@ -49,7 +49,7 @@ public class SystemTextJsonGeneratedSerializer<T> : ISerializer<T>, IStreamSeria
 			return;
 		}
 
-		_nonTypedStreamSerializer.WriteToStream<T>(stream, value);
+		_nonTypedStreamSerializer.ToStream<T>(stream, value);
 	}
 	public object? FromStream(Stream source, Type targetType) => targetType == typeof(T) ? FromStream(source) : _nonTypedStreamSerializer.FromStream(source, targetType);
 	public void ToStream(Stream stream, object value, Type valueType)

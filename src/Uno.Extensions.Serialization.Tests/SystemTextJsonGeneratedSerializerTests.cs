@@ -53,13 +53,13 @@ public class SystemTextJsonGeneratedSerializerTests
 	{
 		using (var ms = new MemoryStream())
 		{
-			Serializer.WriteToStream(ms, entity);
+			Serializer.ToStream(ms, entity);
 			ms.Flush();
 
 			// Reset the stream so we can read
 			ms.Seek(0, SeekOrigin.Begin);
 
-			var clonedEntity = Serializer.ReadFromStream<T>(ms);
+			var clonedEntity = Serializer.FromStream<T>(ms);
 			Assert.IsInstanceOfType(clonedEntity, typeof(T));
 			Assert.AreNotSame(entity, clonedEntity);
 			Assert.AreEqual(((T)entity).SimpleTextProperty, ((T)clonedEntity).SimpleTextProperty);
@@ -67,12 +67,12 @@ public class SystemTextJsonGeneratedSerializerTests
 			// Reset the stream so we can write again
 			ms.Seek(0, SeekOrigin.Begin);
 
-			Serializer.WriteToStream<T>(ms, clonedEntity);
+			Serializer.ToStream<T>(ms, clonedEntity);
 			ms.Flush();
 
 			// Reset the stream so we can read
 			ms.Seek(0, SeekOrigin.Begin);
-			var anotherClone = Serializer.ReadFromStream<T>(ms);
+			var anotherClone = Serializer.FromStream<T>(ms);
 
 			Assert.IsInstanceOfType(anotherClone, typeof(T));
 			Assert.AreNotSame(clonedEntity, anotherClone);
