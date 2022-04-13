@@ -7,13 +7,13 @@ using Uno.Extensions.Reactive.Core;
 
 namespace Uno.Extensions.Reactive;
 
-internal record ListFeed<T>(IFeed<IImmutableList<T>> _implementation) : IListFeed<T>, IListFeedWrapper<T>
+internal record ListFeed<T>(IFeed<IImmutableList<T>> implementation) : IListFeed<T>, IListFeedWrapper<T>
 {
-	private readonly IFeed<IImmutableList<T>> _implementation = _implementation;
+	private readonly IFeed<IImmutableList<T>> implementation = implementation;
 
-	IFeed<IImmutableList<T>> IListFeedWrapper<T>.Source => _implementation;
+	IFeed<IImmutableList<T>> IListFeedWrapper<T>.Source => implementation;
 
 	/// <inheritdoc />
 	public IAsyncEnumerable<Message<IImmutableList<T>>> GetSource(SourceContext context, CancellationToken ct = default)
-		=> _implementation.GetSource(context, ct);
+		=> implementation.GetSource(context, ct);
 }

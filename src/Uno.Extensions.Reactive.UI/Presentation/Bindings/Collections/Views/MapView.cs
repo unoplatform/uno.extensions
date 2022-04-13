@@ -17,7 +17,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Views
 	/// </summary>
 	internal class MapView : IObservableVector<object?>, INotifyCollectionChanged
 	{
-		private readonly DifferentialObservableCollection _source;
+		private readonly CollectionFacet _source;
 		private readonly CollectionChangedFacet _sourceChange;
 		private readonly IConverter<object?, object?> _converter;
 
@@ -63,7 +63,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Views
 		}
 
 		public MapView(
-			DifferentialObservableCollection source,
+			CollectionFacet source,
 			CollectionChangedFacet sourceChange,
 			IConverter<object?, object?> converter
 #if NETFX_CORE

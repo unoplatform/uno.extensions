@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Windows.UI.Xaml.Data;
 using nVentive.Umbrella.Collections;
 using nVentive.Umbrella.Collections.Tracking;
 using Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets;
@@ -10,7 +9,7 @@ using Umbrella.Presentation.Feeds.Collections._BindableCollection.Data;
 namespace Umbrella.Presentation.Feeds.Collections._BindableCollection
 {
 	/// <summary>
-	/// The strategy used by a <see cref="DataLayerHolder"/> to maintain a layer of data.
+	/// The strategy used by a <see cref="DataLayer"/> to maintain a layer of data.
 	/// </summary>
 	internal interface IBindableCollectionDataLayerStrategy
 	{
@@ -20,7 +19,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection
 		/// <param name="source"></param>
 		/// <returns></returns>
 		(
-			DifferentialObservableCollection source,  // The underlying collection used for the tracking
+			CollectionFacet source,  // The underlying collection used for the tracking
 			ICollectionView view, // The main view used for this layer
 			IEnumerable<object> facets // The facets that are accessible for the view
 		) 

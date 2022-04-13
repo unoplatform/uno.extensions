@@ -7,7 +7,7 @@ namespace nVentive.Umbrella.Collections.Tracking;
 /// <summary>
 /// The the null pattern implementation of <see cref="ICollectionTrackingVisitor"/>
 /// </summary>
-internal class NullCollectionTrackingVisitor : ICollectionTrackingVisitor
+internal sealed class NullCollectionTrackingVisitor : ICollectionTrackingVisitor
 {
 	/// <summary>
 	/// Singleton instance

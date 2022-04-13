@@ -3,16 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using nVentive.Umbrella.Collections;
 using Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets;
+
+#if WINUI
+using ISchedulerInfo = Microsoft.UI.Dispatching.DispatcherQueue;
+#else
 using ISchedulerInfo = Windows.System.DispatcherQueue;
+#endif
 
 namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 {
 	/// <summary>
 	/// A holder of a data layer for a given scheduler context
 	/// </summary>
-	internal sealed class DataLayerHolder : ILayerHolder, IBindableCollectionViewSource, IDisposable
+	internal sealed class DataLayer : ILayerHolder, IBindableCollectionViewSource, IDisposable
 	{
-		private readonly DataLayerHolder? _parent;
+		private readonly DataLayer? _parent;
 		private readonly ISchedulerInfo? _context;
 		private readonly IBindableCollectionDataLayerStrategy _layerStrategy;
 		private readonly IEnumerable<object> _facets;
@@ -20,11 +25,17 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 		private DataLayerChangesBuffer? _currentChangesBuffer;
 		private DataLayerChangesBuffer? _nextChangesBuffer;
 
+		/// <summary>
+		/// The view of the <see cref="Items"/> that can be used for data bindings.
+		/// </summary>
 		public ICollectionView View { get; }
 
-		public DifferentialObservableCollection Items { get; }
+		/// <summary>
+		/// The source Items of the <see cref="View"/>.
+		/// </summary>
+		public CollectionFacet Items { get; }
 
-		public IObservableCollection? CurrentSource => _currentChangesBuffer?.Collection;
+		//public IObservableCollection? CurrentSource => _currentChangesBuffer?.Collection;
 
 		public IBindableCollectionViewSource? Parent => _parent;
 
@@ -37,12 +48,12 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 		/// <summary>
 		/// Creates a holder for the root layer of data
 		/// </summary>
-		public static DataLayerHolder Create(
+		public static DataLayer Create(
 			IBindableCollectionDataLayerStrategy layerStrategy,
 			IObservableCollection items, 
 			ISchedulerInfo? context)
 		{
-			var holder = new DataLayerHolder(null, layerStrategy, context);
+			var holder = new DataLayer(null, layerStrategy, context);
 			var initContext = layerStrategy.CreateUpdateContext(VisitorType.InitializeCollection, TrackingMode.Reset);
 			var initializer = holder.Init(items, initContext);
 
@@ -55,16 +66,16 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 		/// <summary>
 		/// Creates a holder for a sub data layer of this
 		/// </summary>
-		public (DataLayerHolder holder, DataLayerInitializer initializer) CreateSubLayer(IObservableCollection subItems, IUpdateContext changes)
+		public (DataLayer holder, DataLayerUpdate initializer) CreateSubLayer(IObservableCollection subItems, IUpdateContext changes)
 		{
-			var holder = new DataLayerHolder(this, _layerStrategy.CreateSubLayer(), _context);
+			var holder = new DataLayer(this, _layerStrategy.CreateSubLayer(), _context);
 			var initializer = holder.Init(subItems, changes);
 
 			// Initializer contains a snapshot of items when the collection is added. It's used by parent to raise add for those items on its FlatView.
 			return (holder, initializer);
 		}
 
-		private DataLayerHolder(DataLayerHolder? parent, IBindableCollectionDataLayerStrategy layerStrategy, ISchedulerInfo? context)
+		private DataLayer(DataLayer? parent, IBindableCollectionDataLayerStrategy layerStrategy, ISchedulerInfo? context)
 		{
 			_context = context;
 			_parent = parent;
@@ -73,7 +84,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 			(Items, View, _facets) = _layerStrategy.CreateView(this);
 		}
 
-		private DataLayerInitializer Init(IObservableCollection source, IUpdateContext context)
+		private DataLayerUpdate Init(IObservableCollection source, IUpdateContext context)
 		{
 			// Prepare the buffer responsible to manage the collection changes from both: collection updates and collection changes events
 			// Note: The tracker built here is for FUTURE CollectionChanged events. We MUST NOT use the 'initContext' for that.
@@ -111,34 +122,37 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 			var initializer = PrepareUpdate(source, tracker);
 
 			// Schedule to flush the buffers to apply the update
+			// TODO uno : Here we can send the prevent the Schedule and allow a sync execution at a given time
+			//			 Like when the message reached the view
+
 			Schedule(initializer.Complete);
 		}
 
 		/// <summary>
 		/// Updates a child data layer
 		/// </summary>
-		internal DataLayerInitializer PrepareUpdate(IObservableCollection source, IUpdateContext context)
+		internal DataLayerUpdate PrepareUpdate(IObservableCollection source, IUpdateContext context)
 		{
 			var tracker = _layerStrategy.GetTracker(this, context); // re-use the context of the parent layer
-			var initializer = PrepareUpdate(source, tracker);
+			var update = PrepareUpdate(source, tracker);
 
-			return initializer;
+			return update;
 		}
 
-		private DataLayerInitializer PrepareUpdate(IObservableCollection source, ILayerTracker tracker)
+		private DataLayerUpdate PrepareUpdate(IObservableCollection source, ILayerTracker tracker)
 		{
 			var from = _nextChangesBuffer ?? _currentChangesBuffer ?? throw new InvalidOperationException("Invalid state. You must invoke the init first.");
 			var to = _nextChangesBuffer = from.UpdateTo(source);
 
 			// Detects changes between 'from.Collection' and 'source'
-			var initializer = to.Initialize(tracker);
+			var update = to.Initialize(tracker);
 
 			// Adds the callbacks needed to properly apply the update
 			var previous = default(DataLayerChangesBuffer);
-			initializer.Prepend(WillApplyUpdate);
-			initializer.Append(DidApplyUpdate);
+			update.Prepend(WillApplyUpdate);
+			update.Append(DidApplyUpdate);
 
-			return initializer;
+			return update;
 
 			void WillApplyUpdate()
 			{
@@ -174,7 +188,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 			return _currentChangesBuffer.Stop();
 		}
 
-		#region IBindableCollectionViewSource
+#region IBindableCollectionViewSource
 		public event EventHandler<CurrentSourceUpdateEventArgs>? CurrentSourceChanging;
 		public event EventHandler<CurrentSourceUpdateEventArgs>? CurrentSourceChanged;
 
@@ -187,7 +201,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 			}
 			return facet;
 		}
-		#endregion
+#endregion
 
 		public void Schedule(Action action)
 		{
@@ -195,7 +209,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 			{
 				_parent.Schedule(action);
 			}
-			else if (_context is not null)
+			else if (_context is not null and {HasThreadAccess: false})
 			{
 				_context.TryEnqueue(() => action());
 			}

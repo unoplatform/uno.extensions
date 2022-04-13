@@ -7,7 +7,7 @@ namespace Umbrella.Presentation.Feeds.Collections
 {
 	public class LoadMoreItemsRequest
 	{
-		private readonly TaskCompletionSource<IPageContent> _result = new TaskCompletionSource<IPageContent>();
+		private readonly TaskCompletionSource<IPageContent> _result = new();
 
 		internal LoadMoreItemsRequest(uint requested)
 		{

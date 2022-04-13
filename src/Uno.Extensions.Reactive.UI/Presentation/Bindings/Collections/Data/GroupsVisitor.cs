@@ -12,13 +12,13 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 		private readonly IUpdateContext _context;
 		private readonly ILayerHolder _source;
 		private readonly FlatCollectionChangedFacet _flatCollectionChanged;
-		private readonly BranchItemsHolderCollection _children;
+		private readonly DataLayerCollection _children;
 
 		public GroupsVisitor(
 			IUpdateContext context,
 			ILayerHolder source,
 			FlatCollectionChangedFacet collectionChanged, 
-			BranchItemsHolderCollection children)
+			DataLayerCollection children)
 		{
 			_context = context;
 			_source = source;
@@ -37,7 +37,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 
 			// 1. Create the holder for the child, which enables the tracking of those group itself.
 			//	  ie. Enables the event 'this.View.Groups[X].CollectionChanged'.
-			// Note: Currently we support only one level of branch, so we always create a LeefHolder.
+			// Note: Currently we support only one level of branch, so we always create a LeafHolder.
 			var (holder, initializer) = _source.CreateSubLayer(group, _context);
 			var view = new BindableCollectionGroup(group, holder);
 
@@ -66,7 +66,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 			var oldGroup = (IObservableGroup)original;
 			var newGroup = (IObservableGroup)updated;
 
-			// Even if the items are the "Same" it me be another instance, so ensure to make the _children aware of the new instance.
+			// Even if the items are the "Same" it maybe another instance, so ensure to make the _children aware of the new instance.
 			_children.Update(oldGroup, newGroup);
 		}
 

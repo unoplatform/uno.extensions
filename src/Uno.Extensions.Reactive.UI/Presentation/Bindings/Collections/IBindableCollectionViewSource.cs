@@ -27,8 +27,6 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection
 
 		event EventHandler<CurrentSourceUpdateEventArgs> CurrentSourceChanged;
 
-		IObservableCollection? CurrentSource { get; }
-
 		TFacet GetFacet<TFacet>();
 	}
 

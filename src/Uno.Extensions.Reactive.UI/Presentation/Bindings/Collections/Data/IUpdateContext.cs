@@ -16,7 +16,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 		VisitorType Type { get; }
 
 		/// <summary>
-		/// Gets the mode use to tracke collection changes for this update
+		/// Gets the mode use to track collection changes for this update
 		/// </summary>
 		TrackingMode Mode { get; }
 

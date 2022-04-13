@@ -16,55 +16,55 @@ namespace nVentive.Umbrella.Collections
 		/// Creates a <see cref="NotifyCollectionChangedAction.Add"/> collection changed event args
 		/// </summary>
 		public static NotifyCollectionChangedEventArgs Add(object item, int index)
-			=> new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, new[] { item }, index);
+			=> new(NotifyCollectionChangedAction.Add, new[] { item }, index);
 
 		/// <summary>
 		/// Creates a <see cref="NotifyCollectionChangedAction.Add"/> collection changed event args
 		/// </summary>
 		public static NotifyCollectionChangedEventArgs AddSome(IList items, int index)
-			=> new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, items, index);
+			=> new(NotifyCollectionChangedAction.Add, items, index);
 
 		/// <summary>
 		/// Creates a <see cref="NotifyCollectionChangedAction.Remove"/> collection changed event args
 		/// </summary>
 		public static NotifyCollectionChangedEventArgs Remove(object item, int index)
-			=> new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, new[] { item }, index);
+			=> new(NotifyCollectionChangedAction.Remove, new[] { item }, index);
 
 		/// <summary>
 		/// Creates a <see cref="NotifyCollectionChangedAction.Remove"/> collection changed event args
 		/// </summary>
 		public static NotifyCollectionChangedEventArgs RemoveSome(IList items, int index)
-			=> new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, items, index);
+			=> new(NotifyCollectionChangedAction.Remove, items, index);
 
 		/// <summary>
 		/// Creates a <see cref="NotifyCollectionChangedAction.Replace"/> collection changed event args
 		/// </summary>
 		public static NotifyCollectionChangedEventArgs Replace(object oldItem, object newItem, int index)
-			=> new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, new[] { newItem }, new[] { oldItem }, index);
+			=> new(NotifyCollectionChangedAction.Replace, new[] { newItem }, new[] { oldItem }, index);
 
 		/// <summary>
 		/// Creates a <see cref="NotifyCollectionChangedAction.Replace"/> collection changed event args
 		/// </summary>
 		public static NotifyCollectionChangedEventArgs ReplaceSome(IList oldItems, IList newItems, int index)
-			=> new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, newItems, oldItems, index);
+			=> new(NotifyCollectionChangedAction.Replace, newItems, oldItems, index);
 
 		/// <summary>
 		/// Creates a <see cref="NotifyCollectionChangedAction.Move"/> collection changed event args
 		/// </summary>
 		public static NotifyCollectionChangedEventArgs Move(object item, int oldIndex, int newIndex)
-			=> new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Move, new[] { item }, newIndex, oldIndex);
+			=> new(NotifyCollectionChangedAction.Move, new[] { item }, newIndex, oldIndex);
 
 		/// <summary>
 		/// Creates a <see cref="NotifyCollectionChangedAction.Move"/> collection changed event args
 		/// </summary>
 		public static NotifyCollectionChangedEventArgs MoveSome(IList items, int oldIndex, int newIndex)
-			=> new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Move, items, newIndex, oldIndex);
+			=> new(NotifyCollectionChangedAction.Move, items, newIndex, oldIndex);
 
 		/// <summary>
 		/// Creates a <see cref="NotifyCollectionChangedAction.Reset"/> collection changed event args
 		/// </summary>
 		public static NotifyCollectionChangedEventArgs Reset() => _reset;
-		private static readonly NotifyCollectionChangedEventArgs _reset = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
+		private static readonly NotifyCollectionChangedEventArgs _reset = new(NotifyCollectionChangedAction.Reset);
 
 		/// <summary>
 		/// Converts the old and new items of an <see cref="NotifyCollectionChangedEventArgs"/> using a <see cref="IConverter{TFrom, TTo}"/>

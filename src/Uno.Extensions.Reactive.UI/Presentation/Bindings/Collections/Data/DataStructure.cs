@@ -45,6 +45,6 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 		}
 
 		public BasicUpdateCounter CreateUpdateContext(VisitorType type, TrackingMode mode)
-			=> new BasicUpdateCounter(type, mode, ResetThreshold);
+			=> new(type, mode, ResetThreshold);
 	}
 }

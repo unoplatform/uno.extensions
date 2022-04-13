@@ -6,12 +6,15 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
-using Windows.UI.Xaml.Data;
 using nVentive.Umbrella.Collections;
 using Umbrella.Feeds.Collections.Facades;
 using Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets;
 
-#if HAS_WINDOWS_UI || HAS_UMBRELLA_UI || true
+#if WINUI
+using CurrentChangingEventHandler = Microsoft.UI.Xaml.Data.CurrentChangingEventHandler;
+using CurrentChangingEventArgs = Microsoft.UI.Xaml.Data.CurrentChangingEventArgs;
+using CurrentChangedEventHandler = System.EventHandler<object?>;
+#elif HAS_WINDOWS_UI || HAS_UMBRELLA_UI || true
 using CurrentChangingEventHandler = Windows.UI.Xaml.Data.CurrentChangingEventHandler;
 using CurrentChangingEventArgs = Windows.UI.Xaml.Data.CurrentChangingEventArgs;
 using CurrentChangedEventHandler = System.EventHandler<object?>;
@@ -29,7 +32,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Views
 	/// </summary>
 	internal partial class FlatView : ICollectionView, INotifyCollectionChanged, ISupportIncrementalLoading, IDisposable
 	{
-		private readonly DifferentialObservableCollection _source;
+		private readonly CollectionFacet _source;
 		private readonly SelectionFacet _selection;
 		private readonly PaginationFacet _pagination;
 		private readonly FlatCollectionChangedFacet _collectionChanged;
@@ -46,7 +49,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Views
 		}
 
 		public FlatView(
-			DifferentialObservableCollection source, 
+			CollectionFacet source, 
 			FlatCollectionChangedFacet collectionChangedFacet,
 			SelectionFacet selectionFacet,
 			PaginationFacet paginationFacet,

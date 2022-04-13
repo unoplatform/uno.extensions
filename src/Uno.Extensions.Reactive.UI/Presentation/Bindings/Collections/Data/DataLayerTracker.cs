@@ -44,7 +44,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 		}	
 
 		/// <inheritdoc />
-		public CollectionChangesQueue GetChanges(RichNotifyCollectionChangedEventArgs arg, bool shoudlUseSmartTracking = true)
+		public CollectionChangesQueue GetChanges(RichNotifyCollectionChangedEventArgs arg, bool shouldUseSmartTracking = true)
 		{
 			// Note: we do not use the _counter on changes. As we use a differential collection, 
 			//		 we cannot convert the event to a single reset (we don't have the final collection state)

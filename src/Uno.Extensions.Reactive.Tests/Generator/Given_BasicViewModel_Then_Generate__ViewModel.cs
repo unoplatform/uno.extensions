@@ -5,7 +5,10 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
+using Windows.UI.Xaml.Data;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Umbrella.Presentation.Feeds.Collections;
 using Uno.Extensions.Reactive.Core;
 
 namespace Uno.Extensions.Reactive.Tests.Generator;
@@ -53,6 +56,59 @@ public partial class MyListFeedTestViewModel
 
 		return items.SomeOrDefault()?.Add(new MyRecord("prop1", 42, default!, default!)).AsOption();
 	}
+
+	public ListFeed<MyRecord> MyListFeed { get; }
+
+
+	partial class BindableGiven_BasicViewModel_Then_Generate__ViewModel : Bin
+	{
+		public BindableGiven_BasicViewModel_Then_Generate__ViewModel()
+		{
+			var vm = new MyListFeedTestViewModel(null!, null!, null!, null!);
+			var ctx = global::Uno.Extensions.Reactive.Core.SourceContext.GetOrCreate(vm);
+
+			var abc = new ListState<string>(null!);
+
+
+
+			ctx.GetOrCreateState(vm.MyListFeed.AsFeed() ?? throw new NullReferenceException("The feed field 'AFeedField' is null. Public feeds fields must be initialized in the constructor."));
+		}
+	}
+}
+
+public class BindableListState<T> : IState<ICollectionView>
+{
+	private readonly IListState<T> _source;
+	private readonly BindableCollection _view = BindableCollection.CreateUntyped();
+
+	public BindableListState(IListState<T> source)
+	{
+		_source = source;
+	}
+
+	/// <inheritdoc />
+	public async IAsyncEnumerable<Message<IImmutableList<T>>> GetSource(SourceContext context, CancellationToken ct = default)
+	{
+		await foreach (var message in _source.GetSource(context, ct).WithCancellation(ct).ConfigureAwait(false))
+		{
+			if (message.Changes.Contains(MessageAxis.Data))
+			{
+				_view.Switch();
+
+				// If only the Data has changes, we ignore the message
+				if (message.Changes is { Count: 1 })
+				{
+					continue;
+				}
+			}
+
+			yield return new Message<IImmutableList<T>>()
+		}
+	}
+
+	/// <inheritdoc />
+	public ValueTask Update(Func<Message<IImmutableList<T>>, MessageBuilder<IImmutableList<T>>> updater, CancellationToken ct)
+		=> throw new NotImplementedException();
 }
 
 public class CustomCollection<T> : IImmutableList<T>

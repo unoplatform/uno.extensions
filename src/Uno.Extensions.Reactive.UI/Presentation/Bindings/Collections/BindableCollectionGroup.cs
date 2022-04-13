@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Windows.Foundation.Collections;
-using Windows.UI.Xaml.Data;
 using nVentive.Umbrella.Collections;
 using Umbrella.Presentation.Feeds.Collections._BindableCollection.Data;
 
@@ -19,10 +18,10 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection
 		/// <inheritdoc />
 		public event PropertyChangedEventHandler? PropertyChanged;
 
-		public BindableCollectionGroup(IObservableGroup group, DataLayerHolder itemsHolder)
+		public BindableCollectionGroup(IObservableGroup group, DataLayer layer)
 		{
 			_group = group;
-			Holder = itemsHolder;
+			Holder = layer;
 		}
 
 		public void UpdateGroup(IObservableGroup newInstance)
@@ -33,7 +32,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection
 		/// <summary>
 		/// Gets the holder responsible to maintain the current version of the source
 		/// </summary>
-		public DataLayerHolder Holder { get; }
+		public DataLayer Holder { get; }
 
 		/// <inheritdoc />
 		public object Group

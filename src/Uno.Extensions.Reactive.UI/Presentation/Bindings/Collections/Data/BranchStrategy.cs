@@ -41,7 +41,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 			_diffAnalyzer = diffAnalyzer;
 		}
 
-		public (DifferentialObservableCollection source, ICollectionView view, IEnumerable<object> facets) CreateView(IBindableCollectionViewSource source)
+		public (CollectionFacet source, ICollectionView view, IEnumerable<object> facets) CreateView(IBindableCollectionViewSource source)
 		{
 			/*
 			 * WARNING - KNOWN LIMITATION ABOUT 'RESET' IN GROUPED COLLECTION:
@@ -89,8 +89,8 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 
 			// Init the groups tracking
 			var groupsChanged = new CollectionChangedFacet(() => view?.CollectionGroups ?? throw new InvalidOperationException("The owner provider must be resolved lazily!"));
-			var groupsCollection = new DifferentialObservableCollection(groupsChanged, convertResetToClearAndAdd: ObservableCollectionKind.Vector, onReseted: flatCollectionChanged.NotifyReset);
-			var groupsMappingFacet = new BranchItemsHolderCollection();
+			var groupsCollection = new CollectionFacet(groupsChanged, convertResetToClearAndAdd: ObservableCollectionKind.Vector, onReseted: flatCollectionChanged.NotifyReset);
+			var groupsMappingFacet = new DataLayerCollection();
 
 			// Init the views
 			var groupsView = new MapView(
@@ -119,7 +119,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 
 		public ILayerTracker GetTracker(IBindableCollectionViewSource source, IUpdateContext context)
 		{
-			var groupsMappingFacet = source.GetFacet<BranchItemsHolderCollection>();
+			var groupsMappingFacet = source.GetFacet<DataLayerCollection>();
 			var flatCollectionChanged = source.GetFacet<FlatCollectionChangedFacet>();
 
 			// Note: Currently we support only branch of IObservableGroup, so we always create a GroupsVisitor

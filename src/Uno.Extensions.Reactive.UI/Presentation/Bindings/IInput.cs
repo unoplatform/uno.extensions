@@ -96,33 +96,33 @@ internal record ListInput<T>(IInput<IImmutableList<T>> _implementation) : ListSt
 //		=> new(implementation._implementation);
 
 
-/// <summary>
-/// 
-/// </summary>
-/// <typeparam name="T"></typeparam>
-public readonly struct Input<T> : IInput<T>
-{
-	private readonly IInput<T> _implementation;
+///// <summary>
+///// 
+///// </summary>
+///// <typeparam name="T"></typeparam>
+//public readonly struct Input<T> : IInput<T>
+//{
+//	private readonly IInput<T> _implementation;
 
-	internal Input(IInput<T> implementation)
-	{
-		_implementation = implementation is Input<T> input
-			? input._implementation
-			: implementation ?? throw new NullReferenceException(nameof(implementation));
-	}
+//	internal Input(IInput<T> implementation)
+//	{
+//		_implementation = implementation is Input<T> input
+//			? input._implementation
+//			: implementation ?? throw new NullReferenceException(nameof(implementation));
+//	}
 
-	/// <inheritdoc />
-	public IAsyncEnumerable<Message<T>> GetSource(SourceContext context, CancellationToken ct = default)
-		=> _implementation.GetSource(context, ct);
+//	/// <inheritdoc />
+//	public IAsyncEnumerable<Message<T>> GetSource(SourceContext context, CancellationToken ct = default)
+//		=> _implementation.GetSource(context, ct);
 
-	/// <inheritdoc />
-	public ValueTask Update(Func<Message<T>, MessageBuilder<T>> updater, CancellationToken ct)
-		=> _implementation.Update(updater, ct);
+//	/// <inheritdoc />
+//	public ValueTask Update(Func<Message<T>, MessageBuilder<T>> updater, CancellationToken ct)
+//		=> _implementation.Update(updater, ct);
 
-	/// <inheritdoc />
-	public ValueTask DisposeAsync()
-		=> _implementation.DisposeAsync();
+//	/// <inheritdoc />
+//	public ValueTask DisposeAsync()
+//		=> _implementation.DisposeAsync();
 
-	/// <inheritdoc />
-	public string PropertyName => _implementation.PropertyName;
-}
+//	/// <inheritdoc />
+//	public string PropertyName => _implementation.PropertyName;
+//}

@@ -75,7 +75,7 @@ public static partial class Feed
 	/// <returns>A feed that projects each value of the source feed.</returns>
 	public static IFeed<TResult> Select<TSource, TResult>(
 		this IFeed<TSource> source,
-		Func<TSource?, TResult?> selector)
+		Func<TSource, TResult> selector)
 		=> AttachedProperty.GetOrCreate(source, selector, (src, s) => new SelectFeed<TSource, TResult>(src, s));
 
 	/// <summary>

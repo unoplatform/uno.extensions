@@ -12,9 +12,9 @@ namespace Uno.Extensions.Reactive.Operators;
 internal sealed class SelectFeed<TArg, TResult> : IFeed<TResult>
 {
 	private readonly IFeed<TArg> _parent;
-	private readonly Func<TArg?, TResult?> _projection;
+	private readonly Func<TArg, TResult> _projection;
 
-	public SelectFeed(IFeed<TArg> parent, Func<TArg?, TResult?> projection)
+	public SelectFeed(IFeed<TArg> parent, Func<TArg, TResult> projection)
 	{
 		_parent = parent;
 		_projection = projection;

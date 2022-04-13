@@ -20,7 +20,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets
 	/// A collection which applies a differential logic to maintain its state
 	/// <remarks>This collection is NOT THREAD SAFE </remarks>
 	/// </summary>
-	internal partial class DifferentialObservableCollection : IList, IObservableVector<object?>, INotifyCollectionChanged
+	internal partial class CollectionFacet : IList, IObservableVector<object?>, INotifyCollectionChanged
 	{
 		private static readonly object[] EmptyItems = new object[0];
 		private static readonly IDifferentialCollectionNode Empty = new Reset(EmptyItems);
@@ -52,7 +52,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets
 		/// An optional delegate which is invoked when the collection is reseted
 		/// <remarks>This is the way to get notified when the <paramref name="convertResetToClearAndAdd"/> is enabled.</remarks>
 		/// </param>
-		public DifferentialObservableCollection(
+		public CollectionFacet(
 			CollectionChangedFacet collectionChangedFacet, 
 			ObservableCollectionKind convertResetToClearAndAdd = ObservableCollectionKind.None,
 			Action? onReseted = null)
@@ -82,7 +82,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets
 		/// An optional delegate which is invoked when the collection is reseted
 		/// <remarks>This is the way to get notified when the <paramref name="convertResetToClearAndAdd"/> is enabled.</remarks>
 		/// </param>
-		public DifferentialObservableCollection(
+		public CollectionFacet(
 			CollectionChangedFacet collectionChangedFacet, 
 			IList originalItems, 
 			ObservableCollectionKind convertResetToClearAndAdd = ObservableCollectionKind.None,
@@ -243,7 +243,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets
 		/// <inheritdoc />
 		public bool IsSynchronized => true;
 		/// <inheritdoc />
-		public object SyncRoot { get; } = new object();
+		public object SyncRoot { get; } = new();
 
 		/// <summary>Not supported on this collection</summary>
 		/// <exception cref="NotSupportedException">In any cases, this method is not supported on this collection.</exception>
@@ -584,18 +584,18 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets
 
 		private class CollectionChangeQueueHandler : CollectionChangesQueue.IHandler
 		{
-			private readonly DifferentialObservableCollection _owner;
+			private readonly CollectionFacet _owner;
 
-			public CollectionChangeQueueHandler(DifferentialObservableCollection owner) => _owner = owner;
+			public CollectionChangeQueueHandler(CollectionFacet owner) => _owner = owner;
 			public void Raise(RichNotifyCollectionChangedEventArgs args) => _owner.Raise(args);
 			public void ApplySilently(RichNotifyCollectionChangedEventArgs args) => _owner.UpdateHead(args);
 		}
 
 		private class SilentCollectionChangeQueueHandler : CollectionChangesQueue.IHandler
 		{
-			private readonly DifferentialObservableCollection _owner;
+			private readonly CollectionFacet _owner;
 
-			public SilentCollectionChangeQueueHandler(DifferentialObservableCollection owner) => _owner = owner;
+			public SilentCollectionChangeQueueHandler(CollectionFacet owner) => _owner = owner;
 			public void Raise(RichNotifyCollectionChangedEventArgs args) => _owner.UpdateHead(args);
 			public void ApplySilently(RichNotifyCollectionChangedEventArgs args) => _owner.UpdateHead(args);
 		}
@@ -605,12 +605,12 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets
 		/// </summary>
 		public sealed class BatchUpdateOperation : IDisposable
 		{
-			private readonly DifferentialObservableCollection _owner;
+			private readonly CollectionFacet _owner;
 			private readonly IList _result;
 			private readonly bool _isSilent;
 			private readonly CollectionChangesQueue.IHandler? _handler;
 
-			internal BatchUpdateOperation(DifferentialObservableCollection owner, IList result, bool isSilent = false)
+			internal BatchUpdateOperation(CollectionFacet owner, IList result, bool isSilent = false)
 			{
 				_owner = owner;
 				_result = result;
@@ -625,7 +625,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets
 			/// </summary>
 			/// <exception cref="ArgumentOutOfRangeException">
 			/// If a change is a <see cref="NotifyCollectionChangedAction.Reset"/>. 
-			/// You have either to use a <see cref="RichNotifyCollectionChangedEventArgs"/> or to provide the new items using the <see cref="DifferentialObservableCollection.Set(IList)"/>.
+			/// You have either to use a <see cref="RichNotifyCollectionChangedEventArgs"/> or to provide the new items using the <see cref="CollectionFacet.Set(IList)"/>.
 			/// </exception>
 			public void Update(NotifyCollectionChangedEventArgs change) => _owner.Raise(change);
 

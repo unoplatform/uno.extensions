@@ -60,7 +60,7 @@ public static partial class ListFeed
 		this IFeed<TCollection> source)
 		where TCollection : IImmutableList<TItem>
 		// Note: We are not attaching the "ListFeed" as we always un-wrap them and we attach other operator on the underlying Source.
-		=> new ListFeed<TItem>(source.Select(list => list?.ToImmutableList() as IImmutableList<TItem>));
+		=> new ListFeed<TItem>(source.Select(list => list.ToImmutableList() as IImmutableList<TItem>));
 
 	public static IFeed<IImmutableList<TItem>> AsFeed<TItem>(
 		this IListFeed<TItem> source)
@@ -70,8 +70,22 @@ public static partial class ListFeed
 			// All subsequent operators are going to be attached to the newly created wrap Feed (i.e. not ListFeed)
 			: AttachedProperty.GetOrCreate(source, typeof(TItem), WrapListFeed);
 
+	public static IListState<TItem> AsListState<TItem>(
+		this IState<IImmutableList<TItem>> source)
+		// Note: We are not attaching the "ListFeed" as we always un-wrap them and we attach other operator on the underlying Source.
+		=> new ListState<TItem>(source);
+
+	//public static IState<IImmutableList<TItem>> AsState<TItem>(
+	//	this IListState<TItem> source)
+	//	=> source is IListFeedWrapper<TItem> wrapper
+	//		? wrapper.Source
+	//		// The IListFeed is a direct implementation (external). It's the only case where we attach something to the IListFeed.
+	//		// All subsequent operators are going to be attached to the newly created wrap Feed (i.e. not ListFeed)
+	//		: AttachedProperty.GetOrCreate(source, typeof(TItem), WrapListFeed);
+
 	private static IFeed<IImmutableList<TItem>> WrapListFeed<TItem>(IListFeed<TItem> listFeed, Type _)
 	{
+		// TODO Uno
 		return null!;
 	}
 	#endregion

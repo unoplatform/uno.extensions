@@ -13,6 +13,9 @@ public partial class FeedsGenerator : Uno.SourceGeneration.ISourceGenerator
 
 	public void Execute(Uno.SourceGeneration.GeneratorExecutionContext context)
 	{
+		//Debugger.Launch();
+		//Debugger.Break();
+
 		if (BindableGenerationContext.TryGet(context, out var error) is {} bindableContext)
 		{
 			foreach (var generated in new BindableViewModelGenerator(bindableContext).Generate(context.Compilation.Assembly))

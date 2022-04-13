@@ -11,7 +11,7 @@ using Uno.Threading;
 
 namespace Uno.Extensions.Reactive;
 
-internal class State<T> : IState<T>, IFeed<T>, IAsyncDisposable
+internal sealed class State<T> : IState<T>, IFeed<T>, IAsyncDisposable
 {
 	private readonly FastAsyncLock _updateGate = new();
 	private readonly IForEachRunner? _innerEnumeration;

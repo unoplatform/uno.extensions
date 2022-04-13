@@ -20,6 +20,6 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 		/// <summary>
 		/// Gets the effective changes when receiving a collection change from the source
 		/// </summary>
-		CollectionChangesQueue GetChanges(RichNotifyCollectionChangedEventArgs arg, bool shoudlUseSmartTracking = true);
+		CollectionChangesQueue GetChanges(RichNotifyCollectionChangedEventArgs arg, bool shouldUseSmartTracking = true);
 	}
 }

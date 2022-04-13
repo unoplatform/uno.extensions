@@ -79,7 +79,7 @@ namespace {vm.ContainingNamespace}
 {{
 	partial {(vm.IsRecord ? "record" : "class")} {vm.Name} : global::System.IAsyncDisposable
 	{{
-		public class Bindable{vm.Name} : {NS.Bindings}.BindableViewModelBase
+		public partial class Bindable{vm.Name} : {NS.Bindings}.BindableViewModelBase
 		{{
 			{inputsErrors.Align(3)}
 			{inputs.Select(input => input.GetBackingField()).Align(3)}
@@ -194,6 +194,10 @@ namespace {vm.ContainingNamespace}
 
 				case IFieldSymbol field:
 					yield return new MappedField(field);
+					break;
+
+				case IPropertySymbol property when _ctx.IsListFeed(property.Type, out var valueType):
+					yield return new MappedListFeedProperty(property, valueType);
 					break;
 
 				case IPropertySymbol property when _ctx.IsFeed(property.Type, out var valueType):

@@ -9,7 +9,7 @@ using Umbrella.Presentation.Feeds.Collections._BindableCollection.Views;
 namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 {
 	/// <summary>
-	/// A holder of a leef in a tree of nested <see cref="IObservableCollection"/>, or the root collection in case on non nested collections
+	/// A holder of a leaf in a tree of nested <see cref="IObservableCollection"/>, or the root collection in case on non grouped collections
 	/// </summary>
 	internal class LeafStrategy : IBindableCollectionDataLayerStrategy
 	{
@@ -24,12 +24,12 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 			_isRoot = isRoot;
 		}
 
-		public (DifferentialObservableCollection source, ICollectionView view, IEnumerable<object> facets) CreateView(IBindableCollectionViewSource source)
+		public (CollectionFacet source, ICollectionView view, IEnumerable<object> facets) CreateView(IBindableCollectionViewSource source)
 		{
 			var view = default(ICollectionView);
 
 			var collectionChangedFacet = new CollectionChangedFacet(() => view ?? throw new InvalidOperationException("The owner provider must be resolved lazily!"));
-			var collectionFacet = new DifferentialObservableCollection(collectionChangedFacet);
+			var collectionFacet = new CollectionFacet(collectionChangedFacet);
 			var extendedPropertiesFacet = new BindableCollectionExtendedProperties();
 
 			if (_isRoot) // I.e. Collection is not grouped
@@ -39,13 +39,13 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 
 				view = new BasicView(collectionFacet, collectionChangedFacet, selectionFacet, paginationFacet);
 
-				return (collectionFacet, view, new object[] { collectionChangedFacet, paginationFacet, selectionFacet, extendedPropertiesFacet });
+				return (collectionFacet, view, new object[] { collectionFacet, collectionChangedFacet, paginationFacet, selectionFacet, extendedPropertiesFacet });
 			}
 			else
 			{
 				view = new BasicView(collectionFacet, collectionChangedFacet);
 
-				return (collectionFacet, view, new object[] { collectionChangedFacet, extendedPropertiesFacet });
+				return (collectionFacet, view, new object[] { collectionFacet, collectionChangedFacet, extendedPropertiesFacet });
 			}
 		}
 

@@ -11,21 +11,21 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 	internal interface ILayerHolder
 	{
 		/// <summary>
-		/// Sschedule an action on threading context to which this holder is associated to.
+		/// Schedule an action on threading context to which this holder is associated to.
 		/// </summary>
 		void Schedule(Action action);
 
 		/// <summary>
 		/// Gets the reference collection of items of this layer
 		/// </summary>
-		DifferentialObservableCollection Items { get; }
+		CollectionFacet Items { get; }
 
 		/// <summary>
 		/// Creates a holder for a sub layer of data
 		/// </summary>
 		/// <param name="subItems">Current source of Sub items</param>
 		/// <param name="context">The context of the update which drove to create a new holder for a sub layer</param>
-		(DataLayerHolder holder, DataLayerInitializer initializer) CreateSubLayer(IObservableCollection subItems, IUpdateContext context);
+		(DataLayer holder, DataLayerUpdate initializer) CreateSubLayer(IObservableCollection subItems, IUpdateContext context);
 
 		/// <summary>
 		/// Gets a facet managed by this holder

@@ -13,16 +13,19 @@ using Umbrella.Reactive.Collections;
 using Uno.Extensions.Reactive.Dispatching;
 using Uno.Extensions.Reactive.Utils;
 
-#if HAS_WINDOWS_UI || HAS_UMBRELLA_UI || true
+#if WINUI
+using CurrentChangingEventHandler = Microsoft.UI.Xaml.Data.CurrentChangingEventHandler;
+using CurrentChangedEventHandler = System.EventHandler<object>;
+using ISchedulersProvider = System.Func<Microsoft.UI.Dispatching.DispatcherQueue?>;
+#elif HAS_WINDOWS_UI || HAS_UMBRELLA_UI || true
 using CurrentChangingEventHandler = Windows.UI.Xaml.Data.CurrentChangingEventHandler;
 using CurrentChangedEventHandler = System.EventHandler<object>;
+using ISchedulersProvider = System.Func<Windows.System.DispatcherQueue?>;
 #else
 using CurrentChangingEventHandler = System.ComponentModel.CurrentChangingEventHandler;
 using CurrentChangingEventArgs = System.ComponentModel.CurrentChangingEventArgs;
 using CurrentChangedEventHandler = System.EventHandler;
 #endif
-
-using ISchedulersProvider = System.Func<Windows.System.DispatcherQueue?>;
 
 namespace Umbrella.Presentation.Feeds.Collections
 {
@@ -32,7 +35,7 @@ namespace Umbrella.Presentation.Feeds.Collections
 	public sealed partial class BindableCollection : ICollectionView, INotifyCollectionChanged
 	{
 		private readonly IBindableCollectionDataStructure _dataStructure;
-		private readonly DispatcherLocal<DataLayerHolder> _holder;
+		private readonly DispatcherLocal<DataLayer> _holder;
 
 		private IObservableCollection? _current;
 
@@ -171,7 +174,7 @@ namespace Umbrella.Presentation.Feeds.Collections
 		{
 			_dataStructure = dataStructure;
 			_current = initial;
-			_holder = new DispatcherLocal<DataLayerHolder>(context => DataLayerHolder.Create(_dataStructure.GetRoot(), _current ?? EmptyObservableCollection<object>.Instance, context), schedulersProvider);
+			_holder = new DispatcherLocal<DataLayer>(context => DataLayer.Create(_dataStructure.GetRoot(), _current ?? EmptyObservableCollection<object>.Instance, context), schedulersProvider);
 		}
 
 		/// <summary>
@@ -179,7 +182,7 @@ namespace Umbrella.Presentation.Feeds.Collections
 		/// </summary>
 		/// <param name="source">The new source to use</param>
 		/// <param name="mode"></param>
-		public void Switch(IObservableCollection source, TrackingMode mode = TrackingMode.Auto)
+		public void Switch(IObservableCollection? source, TrackingMode mode = TrackingMode.Auto)
 		{
 			source ??= EmptyObservableCollection<object>.Instance;
 
@@ -220,7 +223,7 @@ namespace Umbrella.Presentation.Feeds.Collections
 		}
 
 		/// <inheritdoc />
-		public void Add(object item)
+		public void Add(object? item)
 		{
 			GetForCurrentThread().Add(item);
 		}
@@ -232,19 +235,19 @@ namespace Umbrella.Presentation.Feeds.Collections
 		}
 
 		/// <inheritdoc />
-		public bool Contains(object item)
+		public bool Contains(object? item)
 		{
 			return GetForCurrentThread().Contains(item);
 		}
 
 		/// <inheritdoc />
-		public void CopyTo(object[] array, int arrayIndex)
+		public void CopyTo(object?[] array, int arrayIndex)
 		{
 			GetForCurrentThread().CopyTo(array, arrayIndex);
 		}
 
 		/// <inheritdoc />
-		public bool Remove(object item)
+		public bool Remove(object? item)
 		{
 			return GetForCurrentThread().Remove(item);
 		}
@@ -262,13 +265,13 @@ namespace Umbrella.Presentation.Feeds.Collections
 		}
 
 		/// <inheritdoc />
-		public int IndexOf(object item)
+		public int IndexOf(object? item)
 		{
 			return GetForCurrentThread().IndexOf(item);
 		}
 
 		/// <inheritdoc />
-		public void Insert(int index, object item)
+		public void Insert(int index, object? item)
 		{
 			GetForCurrentThread().Insert(index, item);
 		}
@@ -280,14 +283,16 @@ namespace Umbrella.Presentation.Feeds.Collections
 		}
 
 		/// <inheritdoc />
-		public object this[int index]
+		public object? this[int index]
 		{
+#pragma warning disable CS8766 // ICollectionView should be IList<object?>
 			get { return GetForCurrentThread()[index]; }
+#pragma warning restore CS8766
 			set { GetForCurrentThread()[index] = value; }
 		}
 
 		/// <inheritdoc />
-		public event VectorChangedEventHandler<object>? VectorChanged
+		public event VectorChangedEventHandler<object?>? VectorChanged
 		{
 			// We directly hit the facet to ease the retrun type mismatch
 			add => _holder.Value.GetFacet<CollectionChangedFacet>().AddVectorChangedHandler(value!);

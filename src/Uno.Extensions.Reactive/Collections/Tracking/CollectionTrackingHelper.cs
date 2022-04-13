@@ -20,7 +20,7 @@ internal static class CollectionTrackingHelper
 	/// <remarks>For better performance, prefer provide null instead of <see cref="EqualityComparer{T}.Default"/>.</remarks>
 	/// </param>
 	/// <param name="itemVersionComparer">
-	/// Comparer used to detect multiple instance of the **same version** of the **same entity (T)**, or null to rely only on the <paramref name="itemComparer"/> (not recommanded).
+	/// Comparer used to detect multiple instance of the **same version** of the **same entity (T)**, or null to rely only on the <paramref name="itemComparer"/> (not recommended).
 	/// <remarks>
 	/// This comparer will determine if two instances of the same entity (which was considered as equals by the <paramref name="itemComparer"/>),
 	/// are effectively equals or not (i.e. same version or not).
@@ -34,7 +34,7 @@ internal static class CollectionTrackingHelper
 		IList<T> oldItems,
 		IList<T> newItems,
 		IEqualityComparer<T> itemComparer,
-		IEqualityComparer<T> itemVersionComparer)
+		IEqualityComparer<T>? itemVersionComparer)
 	{
 		var tracker = new CollectionTracker<T>(itemComparer, itemVersionComparer);
 		var changes = tracker.GetChanges(oldItems, newItems);
@@ -53,7 +53,7 @@ internal static class CollectionTrackingHelper
 	/// <remarks>For better performance, prefer provide null instead of <see cref="EqualityComparer{T}.Default"/>.</remarks>
 	/// </param>
 	/// <param name="itemVersionComparer">
-	/// Comparer used to detect multiple instance of the **same version** of the **same entity (T)**, or null to rely only on the <paramref name="itemComparer"/> (not recommanded).
+	/// Comparer used to detect multiple instance of the **same version** of the **same entity (T)**, or null to rely only on the <paramref name="itemComparer"/> (not recommended).
 	/// <remarks>
 	/// This comparer will determine if two instances of the same entity (which was considered as equals by the <paramref name="itemComparer"/>),
 	/// are effectively equals or not (i.e. same version or not).
@@ -67,7 +67,7 @@ internal static class CollectionTrackingHelper
 		IList oldItems,
 		IList newItems,
 		IEqualityComparer itemComparer,
-		IEqualityComparer itemVersionComparer)
+		IEqualityComparer? itemVersionComparer)
 	{
 		var tracker = new CollectionTracker(itemComparer, itemVersionComparer);
 		var changes = tracker.GetChanges(oldItems, newItems);

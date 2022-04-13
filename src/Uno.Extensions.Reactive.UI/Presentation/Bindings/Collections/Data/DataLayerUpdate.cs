@@ -8,14 +8,14 @@ using Umbrella.Presentation.Feeds.Collections._BindableCollection.Data;
 
 namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 {
-	internal class DataLayerInitializer : ICompositeCallback
+	internal class DataLayerUpdate : ICompositeCallback
 	{
 		private readonly List<BeforeCallback> _before = new();
 		private readonly List<AfterCallback> _after = new();
 
 		private readonly IObservableCollectionSnapshot? _from;
 		private readonly CollectionChangesQueue _changes;
-		private readonly DifferentialObservableCollection _target;
+		private readonly CollectionFacet _target;
 		private readonly IUpdateContext _context;
 		private readonly DataLayerChangesBuffer _buffer;
 
@@ -24,11 +24,11 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 		/// </summary>
 		public IObservableCollectionSnapshot Result { get; }
 
-		public DataLayerInitializer(
+		public DataLayerUpdate(
 			IObservableCollectionSnapshot? from,
 			CollectionChangesQueue changes, 
 			IObservableCollectionSnapshot to, 
-			DifferentialObservableCollection target,
+			CollectionFacet target,
 			IUpdateContext context,
 			DataLayerChangesBuffer buffer)
 		{

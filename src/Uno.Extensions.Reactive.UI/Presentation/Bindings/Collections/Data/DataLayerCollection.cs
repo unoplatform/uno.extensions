@@ -8,9 +8,9 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 {
 	/// <summary>
 	/// A collection responsible to maintain the holders for the children items of a branch 
-	/// (which can be either some other branches or some leefs)
+	/// (which can be either some other branches or some leafs)
 	/// </summary>
-	internal class BranchItemsHolderCollection : IConverter<IObservableGroup, BindableCollectionGroup>
+	internal class DataLayerCollection : IConverter<IObservableGroup, BindableCollectionGroup>
 	{
 		private readonly ConditionalWeakTable<IObservableGroup, BindableCollectionGroup> _views = new();
 

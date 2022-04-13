@@ -8,7 +8,10 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets;
 
-#if HAS_WINDOWS_UI || HAS_UMBRELLA_UI || true
+#if WINUI
+using CurrentChangingEventHandler = Microsoft.UI.Xaml.Data.CurrentChangingEventHandler;
+using CurrentChangedEventHandler = System.EventHandler<object?>;
+#elif HAS_WINDOWS_UI || HAS_UMBRELLA_UI || true
 using CurrentChangingEventHandler = Windows.UI.Xaml.Data.CurrentChangingEventHandler;
 using CurrentChangedEventHandler = System.EventHandler<object?>;
 #else
@@ -24,13 +27,13 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Views
 	/// </summary>
 	internal partial class BasicView : INotifyCollectionChanged, ICollectionView, ISupportIncrementalLoading, IDisposable
 	{
-		private readonly DifferentialObservableCollection _collection;
+		private readonly CollectionFacet _collection;
 		private readonly CollectionChangedFacet _collectionChanged;
 		private readonly SelectionFacet? _selection;
 		private readonly PaginationFacet? _pagination;
 
 		public BasicView(
-			DifferentialObservableCollection collectionFacet,
+			CollectionFacet collectionFacet,
 			CollectionChangedFacet collectionChangedFacet,
 			SelectionFacet? selectionFacet = null,
 			PaginationFacet? paginationFacet = null)
@@ -41,7 +44,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Views
 			_pagination = paginationFacet;
 		}
 
-		#region ICollection
+#region ICollection
 		public event VectorChangedEventHandler<object>? VectorChanged
 		{
 			add => _collectionChanged.AddVectorChangedHandler(value!);
@@ -80,9 +83,9 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Views
 		IEnumerator IEnumerable.GetEnumerator() => _collection.GetEnumerator();
 
 		public void CopyTo(object[] array, int arrayIndex) => _collection.CopyTo(array, arrayIndex);
-		#endregion
+#endregion
 
-		#region Selection (Single)
+#region Selection (Single)
 		/// <inheritdoc />
 		public event CurrentChangingEventHandler CurrentChanging
 		{

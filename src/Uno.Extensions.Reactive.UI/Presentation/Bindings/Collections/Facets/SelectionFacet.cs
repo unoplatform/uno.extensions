@@ -3,9 +3,12 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using Windows.Foundation.Collections;
-using Windows.UI.Xaml.Data;
 
-#if HAS_WINDOWS_UI || HAS_UMBRELLA_UI || true
+#if WINUI
+using CurrentChangingEventHandler = Microsoft.UI.Xaml.Data.CurrentChangingEventHandler;
+using CurrentChangingEventArgs = Microsoft.UI.Xaml.Data.CurrentChangingEventArgs;
+using CurrentChangedEventHandler = System.EventHandler<object?>;
+#elif HAS_WINDOWS_UI || HAS_UMBRELLA_UI || true
 using CurrentChangingEventHandler = Windows.UI.Xaml.Data.CurrentChangingEventHandler;
 using CurrentChangingEventArgs = Windows.UI.Xaml.Data.CurrentChangingEventArgs;
 using CurrentChangedEventHandler = System.EventHandler<object?>;
