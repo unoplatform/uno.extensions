@@ -7,9 +7,9 @@ public interface IStorage
 {
 	Task<string> CreateLocalFolderAsync(string foldername);
 
-	Task<string?> ReadFromApplicationFileAsync(string filename);
+	Task<string?> ReadFileAsync(string filename);
 
-	Task<Stream> OpenApplicationFileAsync(string filename);
+	Task<Stream> OpenFileAsync(string filename);
 
-	Task WriteToFileAsync(string filename, string text);
+	Task WriteFileAsync(string filename, string text);
 }

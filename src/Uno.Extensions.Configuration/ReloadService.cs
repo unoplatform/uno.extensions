@@ -75,13 +75,13 @@ public class ReloadService : IHostedService, IStartupService
 	{
 		try
 		{
-			var settings = await Storage.ReadFromApplicationFileAsync(file);
+			var settings = await Storage.ReadFileAsync(file);
 			if (settings is not null &&
 				!string.IsNullOrWhiteSpace(settings))
 			{
 				if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($@"Settings '{settings}'");
 				var fullPath = Path.Combine(localFolderPath, file);
-				await Storage.WriteToFileAsync(fullPath, settings);
+				await Storage.WriteFileAsync(fullPath, settings);
 			}
 		}
 		catch

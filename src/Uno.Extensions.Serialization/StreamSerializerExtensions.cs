@@ -40,7 +40,7 @@ public static class StreamSerializerExtensions
 
 	internal static async Task<TData?> ReadFromFile<TData>(this IStreamSerializer serializer, IStorage storage, string dataFile)
 	{
-		using var stream = await storage.OpenApplicationFileAsync(dataFile);
+		using var stream = await storage.OpenFileAsync(dataFile);
 		return serializer.FromStream<TData>(stream);
 	}
 }

@@ -9,7 +9,7 @@ public class Storage :IStorage
 		return folder.Path;
 	}
 
-	public async Task<string?> ReadFromApplicationFileAsync(string filename)
+	public async Task<string?> ReadFileAsync(string filename)
 	{
 		try
 		{
@@ -29,14 +29,14 @@ public class Storage :IStorage
 
 	}
 
-	public async Task<Stream> OpenApplicationFileAsync(string filename)
+	public async Task<Stream> OpenFileAsync(string filename)
 	{
 		var storageFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///{filename}"));
 		var stream = await storageFile.OpenStreamForReadAsync();
 		return stream;
 	}
 
-	public async Task WriteToFileAsync(string filename, string text)
+	public async Task WriteFileAsync(string filename, string text)
 	{
 		//var localFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
 		//var settingsFile = await localFolder.CreateFileAsync($"{filename}", CreationCollisionOption.OpenIfExists);
