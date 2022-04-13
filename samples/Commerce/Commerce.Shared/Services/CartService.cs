@@ -20,7 +20,7 @@ class CartService : ICartService
 
 	public async ValueTask<Cart> Get(CancellationToken ct)
 	{
-		var entities = await _dataService.GetDataAsync<Product[]>(_streamSerializer, ProductService.ProductDataFile);
+		var entities = await _dataService.ReadFileAsync<Product[]>(_streamSerializer, ProductService.ProductDataFile);
 		var cart = new Cart(entities!.Select(e => new CartItem(e, 1)).ToArray());
 		return cart;
 	}

@@ -24,7 +24,7 @@ public class ProductService : IProductService
 
 	public async ValueTask<Product[]> GetProducts(string? term, CancellationToken ct)
 	{
-		var entities = await _dataService.GetDataAsync<Product[]>(_streamSerializer, ProductService.ProductDataFile);
+		var entities = await _dataService.ReadFileAsync<Product[]>(_streamSerializer, ProductService.ProductDataFile);
 		var products = entities!.AsEnumerable();
 		if (term is not null)
 		{
@@ -36,7 +36,7 @@ public class ProductService : IProductService
 
 	public async ValueTask<Review[]> GetReviews(int productId, CancellationToken ct)
 	{
-		var reviews = await _dataService.GetDataAsync<Review[]>(_streamSerializer, ProductService.ReviewDataFile);
+		var reviews = await _dataService.ReadFileAsync<Review[]>(_streamSerializer, ProductService.ReviewDataFile);
 		return reviews!;
 	}
 }

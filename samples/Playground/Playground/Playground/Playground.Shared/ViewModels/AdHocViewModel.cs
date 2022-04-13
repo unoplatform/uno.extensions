@@ -76,6 +76,6 @@ public class AdHocViewModel
 
 	public async Task LoadWidgets()
 	{
-		var widgets = await _dataService.GetDataAsync<Widget[]>(_streamSerializer, "data.json");
+		var widgets = await _dataService.ReadFileAsync<Widget[]>(_streamSerializer, "data.json");
 	}
 }

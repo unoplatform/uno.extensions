@@ -22,7 +22,7 @@ class DealService : IDealService
 
     public async ValueTask<Product[]> GetDeals(CancellationToken ct)
     {
-		var products = await _dataService.GetDataAsync<Product[]>(_streamSerializer, ProductService.ProductDataFile);
+		var products = await _dataService.ReadFileAsync<Product[]>(_streamSerializer, ProductService.ProductDataFile);
 
         return products!.Where(p => !p.Discount.IsNullOrEmpty()).ToArray();
     }
