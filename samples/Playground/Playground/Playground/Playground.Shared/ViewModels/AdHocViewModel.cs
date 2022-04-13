@@ -2,6 +2,7 @@
 
 
 using System.Diagnostics;
+using Uno.Extensions.Storage;
 
 namespace Playground.ViewModels;
 
@@ -12,14 +13,16 @@ public class AdHocViewModel
 	private readonly ISerializer<Widget> _widgetSerializer;
 	private readonly ISerializer<Person> _personSerializer;
 	private readonly IAuthenticationTokenProvider _authToken;
-	private readonly IJsonDataService<Widget> _dataService;
+	private readonly IStorage _dataService;
+	private readonly IStreamSerializer _streamSerializer;
 	public AdHocViewModel(
 		INavigator navigator,
 		IAuthenticationTokenProvider authenticationToken,
 		IToDoTaskListEndpoint todoTaskEndpoint,
 		ISerializer<Widget> widgetSerializer,
 		ISerializer<Person> personSerializer,
-		IJsonDataService<Widget> dataService)
+		IStorage dataService,
+		IStreamSerializer streamSerializer)
 	{
 		_navigator = navigator;
 		_authToken = authenticationToken;
@@ -27,7 +30,7 @@ public class AdHocViewModel
 		_personSerializer = personSerializer;
 		_todoTaskListEndpoint = todoTaskEndpoint;
 		_dataService = dataService;
-		_dataService.DataFile = "data.json";
+		_streamSerializer = streamSerializer;
 	}
 
 	public async Task LongRunning()
@@ -73,6 +76,6 @@ public class AdHocViewModel
 
 	public async Task LoadWidgets()
 	{
-		var widgets = await _dataService.GetEntities();
+		var widgets = await _dataService.GetDataAsync<Widget[]>(_streamSerializer, "data.json");
 	}
 }

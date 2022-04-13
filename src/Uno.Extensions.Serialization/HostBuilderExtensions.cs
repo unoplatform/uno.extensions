@@ -7,8 +7,7 @@ public static class HostBuilderExtensions
         return hostBuilder
                 .ConfigureServices((ctx, s) =>
 				{
-					_=s.AddSingleton(typeof(IJsonDataService<>), typeof(JsonDataService<>))
-						.AddSystemTextJsonSerialization();
+					_=s.AddSystemTextJsonSerialization();
 					jsonTypeCallback?.Invoke(s);
 				});
     }
