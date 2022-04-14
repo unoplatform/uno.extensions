@@ -110,9 +110,6 @@ namespace MyExtensionsApp
 
 			this.InitializeComponent();
 
-#if HAS_UNO || NETFX_CORE
-			this.Suspending += OnSuspending;
-#endif
 		}
 
 		/// <summary>
@@ -150,30 +147,6 @@ namespace MyExtensionsApp
 
 		}
 
-		/// <summary>
-		/// Invoked when Navigation to a certain page fails
-		/// </summary>
-		/// <param name="sender">The Frame which failed navigation</param>
-		/// <param name="e">Details about the navigation failure</param>
-		void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
-		{
-			throw new InvalidOperationException($"Failed to load {e.SourcePageType.FullName}: {e.Exception}");
-		}
-
-		/// <summary>
-		/// Invoked when application execution is being suspended.  Application state is saved
-		/// without knowing whether the application will be terminated or resumed with the contents
-		/// of memory still intact.
-		/// </summary>
-		/// <param name="sender">The source of the suspend request.</param>
-		/// <param name="e">Details about the suspend request.</param>
-		private void OnSuspending(object sender, SuspendingEventArgs e)
-		{
-			var deferral = e.SuspendingOperation.GetDeferral();
-			// TODO: Save application state and stop any background activity
-			deferral.Complete();
-		}
-
 		private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 		{
 			var forgotPasswordDialog = new MessageDialogViewMap(
@@ -199,7 +172,7 @@ namespace MyExtensionsApp
 																							ToQuery: product => new Dictionary<string, string> { { nameof(Product.ProductId), product.ProductId.ToString() } },
 																							FromQuery: async (sp, query) =>
 																							{
-																								var id = int.Parse(query[nameof(Product.ProductId)]);
+																								var id = int.Parse(query[nameof(Product.ProductId)]+string.Empty);
 																								var ps = sp.GetRequiredService<IProductService>();
 																								var products = await ps.GetProducts(default, default);
 																								return products.FirstOrDefault(p => p.ProductId == id);
@@ -214,8 +187,8 @@ namespace MyExtensionsApp
 																							{ nameof(CartItem.Quantity),cartItem.Quantity.ToString() } },
 																							FromQuery: async (sp, query) =>
 																							{
-																								var id = int.Parse(query[nameof(Product.ProductId)]);
-																								var quantity = int.Parse(query[nameof(CartItem.Quantity)]);
+																								var id = int.Parse(query[nameof(Product.ProductId)] + string.Empty);
+																								var quantity = int.Parse(query[nameof(CartItem.Quantity)] + string.Empty);
 																								var ps = sp.GetRequiredService<IProductService>();
 																								var products = await ps.GetProducts(default, default);
 																								var p = products.FirstOrDefault(p => p.ProductId == id);
@@ -228,34 +201,34 @@ namespace MyExtensionsApp
 
 			routes
 				.Register(
-					new DynamicRouteMap("", ViewMap: views => views.FindByViewModel<ShellViewModel>(),
+					new RouteMap("", DynamicView: views => views.FindByViewModel<ShellViewModel>(),
 							Nested: new RouteMap[]
 							{
-								new DynamicRouteMap("Login", ViewMap: views=>views.FindByResultData<Credentials>(),
+								new RouteMap("Login", DynamicView: views=>views.FindByResultData<Credentials>(),
 										Nested: new RouteMap[]
 										{
 											new ("Forgot", forgotPasswordDialog)
 										}),
-								new DynamicRouteMap("Home", ViewMap: views=>views.FindByData<Credentials>(),
+								new RouteMap("Home", DynamicView: views=>views.FindByData<Credentials>(),
 										Nested: new RouteMap[]{
-											new DynamicRouteMap("Products",
-													ViewMap: views=>views.FindByViewModel<ProductsViewModel>(),
+											new RouteMap("Products",
+													DynamicView: views=>views.FindByViewModel<ProductsViewModel>(),
 													IsDefault: true,
 													Nested: new  RouteMap[]{
-														new DynamicRouteMap("Filter",  ViewMap: views=>views.FindByViewModel<FiltersViewModel>())
+														new RouteMap("Filter",  DynamicView: views=>views.FindByViewModel<FiltersViewModel>())
 													}),
-											new DynamicRouteMap("Product",
-													ViewMap: views=>views.FindByViewModel<ProductDetailsViewModel>(),
+											new RouteMap("Product",
+													DynamicView: views=>views.FindByViewModel<ProductDetailsViewModel>(),
 													DependsOn:"Products"),
 
-											new DynamicRouteMap("Deals", ViewMap:views=>views.FindByViewModel<DealsViewModel>()),
+											new RouteMap("Deals", DynamicView:views=>views.FindByViewModel<DealsViewModel>()),
 
-											new DynamicRouteMap("Profile", ViewMap:views=>views.FindByViewModel<ProfileViewModel>()),
+											new RouteMap("Profile", DynamicView:views=>views.FindByViewModel<ProfileViewModel>()),
 
-											new DynamicRouteMap("Cart", ViewMap: views=>views.FindByViewModel<CartViewModel>(),
+											new RouteMap("Cart", DynamicView: views=>views.FindByViewModel<CartViewModel>(),
 													Nested: new []{
-														new DynamicRouteMap("CartDetails",ViewMap: views=>views.FindByViewModel<CartProductDetailsViewModel>()),
-														new DynamicRouteMap("Checkout", ViewMap: views=>views.FindByView<CheckoutPage>())
+														new RouteMap("CartDetails",DynamicView: views=>views.FindByViewModel<CartProductDetailsViewModel>()),
+														new RouteMap("Checkout", DynamicView: views=>views.FindByView<CheckoutPage>())
 													})
 											})
 							}));
