@@ -36,7 +36,7 @@ internal sealed class Remove : IDifferentialCollectionNode
 	}
 
 	/// <summary>
-	/// The index at which the remove occures
+	/// The index at which the remove occurs
 	/// </summary>
 	public int At => _fromIndex;
 

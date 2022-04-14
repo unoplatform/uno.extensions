@@ -13,43 +13,24 @@ namespace nVentive.Umbrella.Collections.Tracking;
 [DebuggerTypeProxy(typeof(DebuggerProxy))]
 public sealed partial class CollectionChangesQueue
 {
-	private readonly INode? _head;
+	public static CollectionChangesQueue Empty { get; } = new(new Node());
+
+	private readonly Node _head;
 	private readonly bool _isReset;
 	private readonly IList? _resetOldItems, _resetNewItems;
 
 	internal CollectionChangesQueue(RichNotifyCollectionChangedEventArgs change) 
-		=> _head = new ArgsToNodeAdapter(change);
+		=> _head = new Node(change);
 
-	internal CollectionChangesQueue(INode? head) 
+	internal CollectionChangesQueue(Node head) 
 		=> _head = head;
 
-	private CollectionChangesQueue(INode? head, IList? oldItems, IList? newItems)
+	private CollectionChangesQueue(Node head, IList? oldItems, IList? newItems)
 	{
 		_head = head;
 		_isReset = true;
 		_resetOldItems = oldItems ?? Array.Empty<object>();
 		_resetNewItems = newItems ?? Array.Empty<object>();
-	}
-
-	private IEnumerable<INode> GetNodes()
-	{
-		var node = _head;
-		while (node != null)
-		{
-			yield return node;
-			node = node.Next;
-		}
-	}
-
-	/// <summary>
-	/// Convert the collection of collection changes into a collection of <see cref="NotifyCollectionChangedEventArgs"/>.
-	/// </summary>
-	/// <remarks>This DOES NOT check types! You MUST NOT use this method if you detected changes using a <see cref="ICollectionTrackingVisitor"/>.</remarks>
-	internal ICollection<NotifyCollectionChangedEventArgs> ToCollectionChanges()
-	{
-		return GetNodes()
-			.Select(node => node.ToEvent() as NotifyCollectionChangedEventArgs)
-			.ToList();
 	}
 
 	/// <summary>
@@ -68,31 +49,18 @@ public sealed partial class CollectionChangesQueue
 	{
 		if (_isReset)
 		{
-			foreach (var node in GetNodes())
-			{
-				node.RunBeforeCallbacks();
-			}
+			_head.RunBeforeCallbacks();
 
 			if (!silently)
 			{
 				handler?.Raise(RichNotifyCollectionChangedEventArgs.Reset(_resetOldItems, _resetNewItems));
 			}
 
-			foreach (var node in GetNodes())
-			{
-				node.RunAfterCallbacks();
-			}
+			_head.RunAfterCallbacks();
 		}
 		else if (handler is not null)
 		{
-			foreach (var node in GetNodes())
-			{
-				node.ApplyTo(handler, silently: silently);
-			}
+			_head.ApplyTo(handler, silently: silently);
 		}
 	}
-
-	/// <inheritdoc />
-	public override string ToString()
-		=> string.Join(Environment.NewLine, GetNodes());
 }

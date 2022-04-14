@@ -57,6 +57,15 @@ internal class CollectionTracker<T> : CollectionTracker
 	/// <param name="newItems">The target snapshot</param>
 	/// <param name="visitor">A visitor that can be used to track changes while detecting them.</param>
 	/// <returns>A list of changes that have to be applied to move a collection from <paramref name="oldItems"/> to <paramref name="newItems"/>.</returns>
-	public CollectionChangesQueue GetChanges(IList<T> oldItems, IList<T> newItems, ICollectionTrackingVisitor? visitor = null)
+	public CollectionChangesQueue GetChanges(IList<T> oldItems, IList<T> newItems, ICollectionTrackingVisitor visitor)
 		=> base.GetChanges((IList)oldItems, (IList)newItems, visitor);
+
+	/// <summary>
+	/// Determines the set of changes between two snapshot of an <see cref="IList{T}"/>
+	/// </summary>
+	/// <param name="oldItems">The source snapshot</param>
+	/// <param name="newItems">The target snapshot</param>
+	/// <returns>A list of changes that have to be applied to move a collection from <paramref name="oldItems"/> to <paramref name="newItems"/>.</returns>
+	public CollectionChangeSet GetChanges2(IList<T> oldItems, IList<T> newItems)
+		=> base.GetChanges2((IList)oldItems, (IList)newItems);
 }

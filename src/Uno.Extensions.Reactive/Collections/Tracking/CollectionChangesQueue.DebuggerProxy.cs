@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
@@ -14,6 +15,20 @@ sealed partial class CollectionChangesQueue
 		}
 
 		[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-		public INode[] Nodes { get; }
+		public Node[] Nodes { get; }
 	}
+
+	private IEnumerable<Node> GetNodes()
+	{
+		var node = _head;
+		while (node != null)
+		{
+			yield return node;
+			node = node.Next;
+		}
+	}
+
+	/// <inheritdoc />
+	public override string ToString()
+		=> string.Join(Environment.NewLine, GetNodes());
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 
@@ -22,6 +23,34 @@ public interface ICollectionChange : IChange
 public interface IEntityChange : IChange
 {
 	PropertyChangedEventArgs? ToEventArgs();
+}
+
+internal class CollectionChangeSet // : IChangeSet
+{
+	private readonly CollectionTracker.ChangeBase? _head;
+
+	internal CollectionChangeSet(CollectionTracker.ChangeBase? head)
+	{
+		_head = head;
+	}
+
+	internal ICollection<NotifyCollectionChangedEventArgs> ToCollectionChanges()
+		=> Enumerate().ToList();
+
+	private IEnumerable<NotifyCollectionChangedEventArgs> Enumerate()
+	{
+		var node = _head;
+		while (node is not null)
+		{
+			var args = node.ToEvent();
+			if (args is not null)
+			{
+				yield return args;
+			}
+
+			node = node.Next;
+		}
+	}
 }
 
 //public record CollectionChangeSet(params CollectionChange[] changes) : IEnumerable<CollectionChange>, IChangeSet

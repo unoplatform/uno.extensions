@@ -75,7 +75,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 
 			if (phases.HasFlag(CallbackPhase.Main))
 			{
-				if (_from == null || silently)
+				if (_from is null || silently)
 				{
 					_target.UpdateSilentlyTo(_changes, Result);
 				}

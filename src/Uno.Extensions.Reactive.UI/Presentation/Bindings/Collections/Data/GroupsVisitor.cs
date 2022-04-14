@@ -66,7 +66,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 			var oldGroup = (IObservableGroup)original;
 			var newGroup = (IObservableGroup)updated;
 
-			// Even if the items are the "Same" it maybe another instance, so ensure to make the _children aware of the new instance.
+			// Even if the items are the "Same" it may be another instance, so ensure to make the _children aware of the new instance.
 			_children.Update(oldGroup, newGroup);
 		}
 
@@ -79,14 +79,14 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 			var view = _children.Update(oldGroup, newGroup);
 
 			// Propagate the update to the child group holder
-			var initializer = view.Holder.PrepareUpdate(newGroup, _context);
+			var groupUpdate = view.Holder.PrepareUpdate(newGroup, _context);
 
 			// handled: true
 			// On a group we don't want to update the group itself, instead we will raise a property changed on the Group property
 			// and raise the collection changes for the items of the group (IObservableGroup acts as a proxy).
-			callbacks.Append(initializer); // This is 'Append' in order to let the data been updated before raising the events of the initializer
+			callbacks.Append(groupUpdate); // This is 'Append' in order to let the data been updated before raising the events of the initializer
 			callbacks.Append(UpdateGroupKey);
-			callbacks.Append(initializer.ParentAfter);
+			callbacks.Append(groupUpdate.ParentAfter);
 
 			return true;
 

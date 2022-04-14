@@ -8,7 +8,7 @@ namespace nVentive.Umbrella.Collections.Tracking;
 /// A callback that has to invoked **before** the corresponding event is being dequeue from the <see cref="CollectionChangesQueue"/>.
 /// </summary>
 /// <remarks>Be aware that this callback is invoked each time the <see cref="CollectionChangesQueue.DequeueChanges"/> is invoked.</remarks>
-/// <remarks>Usually this is a good way to execute some action on the UI thread before an item is beeing added / changed / removed from a LisView.</remarks>
+/// <remarks>Usually this is a good way to execute some action on the UI thread before an item is being added / changed / removed from a LisView.</remarks>
 internal delegate void BeforeCallback();
 
 /// <summary>
@@ -19,7 +19,7 @@ internal delegate void BeforeCallback();
 internal delegate void AfterCallback();
 
 /// <summary>
-/// A composite callback which contains callbacks for multiple phases amd potentially some other changes
+/// A composite callback which contains callbacks for multiple phases and potentially some other changes
 /// </summary>
 internal interface ICompositeCallback
 {

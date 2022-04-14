@@ -11,25 +11,22 @@ partial class CollectionTracker
 	private sealed class _Add : ChangeBase
 	{
 		private readonly int _indexOffset;
-		private readonly ICollectionTrackingVisitor _visitor;
 		private readonly List<object> _items;
 
-		public _Add(int at, ICollectionTrackingVisitor visitor, int capacity)
-			: this(at, 0, visitor, capacity)
+		public _Add(int at, int capacity)
+			: this(at, 0, capacity)
 		{
 		}
 
-		public _Add(int at, int indexOffset, ICollectionTrackingVisitor visitor, int capacity)
-			: base(at, capacity)
+		public _Add(int at, int indexOffset, int capacity)
+			: base(at)
 		{
 			_indexOffset = indexOffset;
-			_visitor = visitor;
 			_items = new List<object>(capacity);
 		}
 
 		public void Append(object item)
 		{
-			_visitor.AddItem(item, this);
 			_items.Add(item);
 			Ends++;
 		}
@@ -38,7 +35,24 @@ partial class CollectionTracker
 			=> RichNotifyCollectionChangedEventArgs.AddSome(_items, Starts + _indexOffset);
 
 		/// <inheritdoc />
+		protected override CollectionChangesQueue.Node VisitCore(ICollectionTrackingVisitor visitor)
+			=> Visit(ToEvent(), visitor);
+
+		internal static CollectionChangesQueue.Node Visit(RichNotifyCollectionChangedEventArgs args, ICollectionTrackingVisitor visitor)
+		{
+			var callback = new CollectionChangesQueue.Node(args);
+			var items = args.NewItems;
+
+			for (var i = 0; i < items.Count; i++)
+			{
+				visitor.AddItem(items[i], callback);
+			}
+
+			return callback;
+		}
+
+		/// <inheritdoc />
 		public override string ToString()
-			=> $"Add {_items.Count} @ {Starts} (b: {_before.Count} / a: {_after.Count})";
+			=> $"Add {_items.Count} @ {Starts}";
 	}
 }

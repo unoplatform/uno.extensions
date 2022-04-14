@@ -55,6 +55,33 @@ internal partial class CollectionTracker
 		_versionEqual = versionEqual;
 	}
 
+
+	/// <summary>
+	/// Creates a set of changes that contains only a reset event.
+	/// </summary>
+	/// <param name="oldItems">The source snapshot</param>
+	/// <param name="newItems">The target snapshot</param>
+	/// <returns>A list of changes containing only a 'Reset' event that can be applied to move a collection from <paramref name="oldItems"/> to <paramref name="newItems"/>.</returns>
+	public CollectionChangeSet GetReset2(IList? oldItems, IList newItems)
+		=> GetChanges2(RichNotifyCollectionChangedEventArgs.Reset(oldItems, newItems));
+
+	/// <summary>
+	/// Determines the set of changes between two snapshot of an <see cref="IList{T}"/>
+	/// </summary>
+	/// <param name="oldItems">The source snapshot</param>
+	/// <param name="newItems">The target snapshot</param>
+	/// <returns>A list of changes that have to be applied to move a collection from <paramref name="oldItems"/> to <paramref name="newItems"/>.</returns>
+	public CollectionChangeSet GetChanges2(IList oldItems, IList newItems)
+		=> new(GetChangesCore(oldItems, newItems, _indexOfInSnapshot, _versionEqual));
+
+	/// <summary>
+	/// Determines the set of effective changes produced by a <see cref="NotifyCollectionChangedEventArgs"/>.
+	/// </summary>
+	/// <param name="arg">The event arg to adjust</param>
+	/// <returns>A list of changes that have to be applied to move properly apply the provided event arg.</returns>
+	public CollectionChangeSet GetChanges2(RichNotifyCollectionChangedEventArgs arg)
+		=> new(GetChangesCore(arg));
+
 	/// <summary>
 	/// Creates a set of changes that contains only a reset event.
 	/// </summary>
@@ -62,7 +89,7 @@ internal partial class CollectionTracker
 	/// <param name="newItems">The target snapshot</param>
 	/// <param name="visitor">A visitor that can be used to track changes while detecting them.</param>
 	/// <returns>A list of changes containing only a 'Reset' event that can be applied to move a collection from <paramref name="oldItems"/> to <paramref name="newItems"/>.</returns>
-	public CollectionChangesQueue GetReset(IList? oldItems, IList newItems, ICollectionTrackingVisitor? visitor = null)
+	public CollectionChangesQueue GetReset(IList? oldItems, IList newItems, ICollectionTrackingVisitor visitor)
 		=> GetChanges(RichNotifyCollectionChangedEventArgs.Reset(oldItems, newItems), visitor);
 
 	/// <summary>
@@ -72,8 +99,8 @@ internal partial class CollectionTracker
 	/// <param name="newItems">The target snapshot</param>
 	/// <param name="visitor">A visitor that can be used to track changes while detecting them.</param>
 	/// <returns>A list of changes that have to be applied to move a collection from <paramref name="oldItems"/> to <paramref name="newItems"/>.</returns>
-	public CollectionChangesQueue GetChanges(IList oldItems, IList newItems, ICollectionTrackingVisitor? visitor = null)
-		=> GetChangesCore(oldItems, newItems, _indexOfInSnapshot, _versionEqual, visitor);
+	public CollectionChangesQueue GetChanges(IList oldItems, IList newItems, ICollectionTrackingVisitor visitor)
+		=> CreateUpdaterCore(oldItems, newItems, _indexOfInSnapshot, _versionEqual, visitor);
 
 	/// <summary>
 	/// Determines the set of effective changes produced by a <see cref="NotifyCollectionChangedEventArgs"/>.
@@ -81,43 +108,56 @@ internal partial class CollectionTracker
 	/// <param name="arg">The event arg to adjust</param>
 	/// <param name="visitor">A visitor that can be used to track changes while detecting them.</param>
 	/// <returns>A list of changes that have to be applied to move properly apply the provided event arg.</returns>
-	public CollectionChangesQueue GetChanges(RichNotifyCollectionChangedEventArgs arg, ICollectionTrackingVisitor? visitor = null)
+	public CollectionChangesQueue GetChanges(RichNotifyCollectionChangedEventArgs arg, ICollectionTrackingVisitor visitor)
+	{
+		var changesHead = GetChangesCore(arg);
+		var updaterHead = changesHead?.Visit(visitor);
+
+		return updaterHead is null
+			? CollectionChangesQueue.Empty
+			: new(updaterHead);
+	}
+
+	private static CollectionChangesQueue CreateUpdaterCore<TSnapshot>(
+		TSnapshot oldItems,
+		TSnapshot newItems,
+		IndexOf<TSnapshot> indexOf,
+		VersionEqual? itemVersionComparer,
+		ICollectionTrackingVisitor visitor,
+		int eventArgsOffset = 0)
+		where TSnapshot : IList
+	{
+		var changesHead = GetChangesCore(oldItems, newItems, indexOf, itemVersionComparer, eventArgsOffset);
+		var updaterHead = changesHead?.Visit(visitor);
+
+		return updaterHead is null
+			? CollectionChangesQueue.Empty
+			: new(updaterHead);
+	}
+
+	private ChangeBase? GetChangesCore(RichNotifyCollectionChangedEventArgs arg)
 	{
 		switch (arg.Action)
 		{
-			case NotifyCollectionChangedAction.Add when visitor == null:
-			case NotifyCollectionChangedAction.Remove when visitor == null:
-			case NotifyCollectionChangedAction.Reset when visitor == null:
-			case NotifyCollectionChangedAction.Move:
-				return new CollectionChangesQueue(arg);
-
-			case NotifyCollectionChangedAction.Add :
-				var addNode = new _EventArgChange(arg, arg.NewItems, visitor.AddItem);
-				return new CollectionChangesQueue(addNode);
-
+			case NotifyCollectionChangedAction.Add:
 			case NotifyCollectionChangedAction.Remove:
-				var removeNode = new _EventArgChange(arg, arg.OldItems, visitor.RemoveItem);
-				return new CollectionChangesQueue(removeNode);
-
+			case NotifyCollectionChangedAction.Move:
 			case NotifyCollectionChangedAction.Reset:
-				var resetNode = new _EventArgChange(arg);
-				visitor.Reset(arg.ResetOldItems!, arg.ResetNewItems!, resetNode);
-				return new CollectionChangesQueue(resetNode);
+				return new _EventArgChange(arg);
 
 			case NotifyCollectionChangedAction.Replace:
-				return GetChangesCore(arg.OldItems, arg.NewItems, _indexOfInList, _versionEqual, visitor, arg.OldStartingIndex);
+				return GetChangesCore(arg.OldItems, arg.NewItems, _indexOfInList, _versionEqual, arg.OldStartingIndex);
 
 			default:
 				throw new ArgumentOutOfRangeException(nameof(arg), arg.Action, $"Action '{arg.Action}' not supported.");
 		}
 	}
 
-	private static CollectionChangesQueue GetChangesCore<TSnapshot>(
+	private static ChangeBase? GetChangesCore<TSnapshot>(
 		TSnapshot oldItems,
 		TSnapshot newItems,
 		IndexOf<TSnapshot> indexOf,
 		VersionEqual? itemVersionComparer,
-		ICollectionTrackingVisitor? visitor = null,
 		int eventArgsOffset = 0)
 		where TSnapshot : IList
 	{
@@ -135,8 +175,7 @@ internal partial class CollectionTracker
 		*/
 
 		int added = 0, moved = 0, removed = 0;
-		visitor ??= NullCollectionTrackingVisitor.Instance;
-		var buffer = new ChangesBuffer(oldItems.Count, newItems.Count, eventArgsOffset, visitor);
+		var buffer = new ChangesBuffer(oldItems.Count, newItems.Count, eventArgsOffset);
 
 		var oldEnumerator = new SnapshotEnumerator<TSnapshot>(oldItems, indexOf);
 		while (oldEnumerator.MoveNext())
@@ -212,7 +251,7 @@ internal partial class CollectionTracker
 		var toAddCount = newItems.Count - resultItemsCount;
 		if (toAddCount > 0)
 		{
-			var add = new _Add(at: resultItemsCount, indexOffset: eventArgsOffset, visitor: visitor, capacity: toAddCount);
+			var add = new _Add(at: resultItemsCount, indexOffset: eventArgsOffset, capacity: toAddCount);
 			for (var i = 0; i < toAddCount; i++)
 			{
 				var item = newItems[i + resultItemsCount];

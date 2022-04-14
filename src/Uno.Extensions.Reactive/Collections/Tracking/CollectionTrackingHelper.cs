@@ -37,7 +37,7 @@ internal static class CollectionTrackingHelper
 		IEqualityComparer<T>? itemVersionComparer)
 	{
 		var tracker = new CollectionTracker<T>(itemComparer, itemVersionComparer);
-		var changes = tracker.GetChanges(oldItems, newItems);
+		var changes = tracker.GetChanges2(oldItems, newItems);
 
 		return changes.ToCollectionChanges();
 	}
@@ -70,7 +70,7 @@ internal static class CollectionTrackingHelper
 		IEqualityComparer? itemVersionComparer)
 	{
 		var tracker = new CollectionTracker(itemComparer, itemVersionComparer);
-		var changes = tracker.GetChanges(oldItems, newItems);
+		var changes = tracker.GetChanges2(oldItems, newItems);
 
 		return changes.ToCollectionChanges();
 	}

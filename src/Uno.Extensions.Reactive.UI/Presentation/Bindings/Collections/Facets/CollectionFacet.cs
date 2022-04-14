@@ -22,7 +22,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets
 	/// </summary>
 	internal partial class CollectionFacet : IList, IObservableVector<object?>, INotifyCollectionChanged
 	{
-		private static readonly object[] EmptyItems = new object[0];
+		private static readonly object[] EmptyItems = Array.Empty<object>();
 		private static readonly IDifferentialCollectionNode Empty = new Reset(EmptyItems);
 
 		private readonly CollectionChangedFacet _collectionChanged;
@@ -35,7 +35,6 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets
 		private ILogger? _log;
 		private bool _logIsEnabled;
 		private string? _logIdentifier;
-
 
 		/// <summary>
 		/// Creates a new empty collection
@@ -105,13 +104,15 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets
 		/// Resets the collection with a new set of items.
 		/// </summary>
 		/// <param name="updated">The final collection</param>
-		public void Set(IList updated) => Raise(RichNotifyCollectionChangedEventArgs.Reset(new DifferentialReadOnlyList(_head), updated));
+		public void Set(IList updated)
+			=> Raise(RichNotifyCollectionChangedEventArgs.Reset(new DifferentialReadOnlyList(_head), updated));
 
 		/// <summary>
 		/// Resets SILENTLY (i.e. does not raise any event for this change) the collection with a new set of items.
 		/// </summary>
 		/// <param name="updated">The final collection</param>
-		public void SetSilently(IList updated) => UpdateHead(RichNotifyCollectionChangedEventArgs.Reset(new DifferentialReadOnlyList(_head), updated));
+		public void SetSilently(IList updated)
+			=> UpdateHead(RichNotifyCollectionChangedEventArgs.Reset(new DifferentialReadOnlyList(_head), updated));
 
 		/// <summary>
 		/// Applies a single update to the collection
@@ -154,10 +155,8 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets
 		/// <param name="finalCollection">The final collection</param>
 		public void UpdateTo(CollectionChangesQueue changes, IList finalCollection)
 		{
-			using (var operation = new BatchUpdateOperation(this, finalCollection, isSilent: false))
-			{
-				operation.Update(changes);
-			}
+			using var operation = new BatchUpdateOperation(this, finalCollection, isSilent: false);
+			operation.Update(changes);
 		}
 
 		/// <summary>
@@ -168,10 +167,8 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets
 		/// <param name="finalCollection">The final collection</param>
 		public void UpdateSilentlyTo(CollectionChangesQueue changes, IList finalCollection)
 		{
-			using (var operation = new BatchUpdateOperation(this, finalCollection, isSilent: true))
-			{
-				operation.Update(changes);
-			}
+			using var operation = new BatchUpdateOperation(this, finalCollection, isSilent: true);
+			operation.Update(changes);
 		}
 
 		/// <summary>
@@ -179,7 +176,8 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets
 		/// </summary>
 		/// <remarks>This overload is designed to be used in conjunction with <see cref="CollectionTracker"/>.</remarks>
 		/// <param name="finalCollection">The final collection</param>
-		public BatchUpdateOperation BatchUpdateTo(IList finalCollection) => new BatchUpdateOperation(this, finalCollection);
+		public BatchUpdateOperation BatchUpdateTo(IList finalCollection)
+			=> new(this, finalCollection);
 
 		/// <summary>
 		/// Creates an immutable copy of this collection
@@ -578,7 +576,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets
 			_head = new Reset(updated);
 #if DEBUG
 			var after = this.ToArray();
-			Debug.Assert(before.SequenceEqual(after), "There is an inconsistancy between the current updated by events, and the result collection.");
+			Debug.Assert(before.SequenceEqual(after), "There is an inconsistency between the current updated by events, and the result collection.");
 #endif
 		}
 
@@ -601,7 +599,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets
 		}
 
 		/// <summary>
-		/// An handler to appliy multiple consecutive updates on the collection in order to reset it to a given version
+		/// An handler to apply multiple consecutive updates on the collection in order to reset it to a given version
 		/// </summary>
 		public sealed class BatchUpdateOperation : IDisposable
 		{

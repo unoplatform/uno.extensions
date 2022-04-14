@@ -24,24 +24,19 @@ namespace nVentive.Umbrella.Collections.Tracking
 
 			private readonly int _oldItemsCount, _newItemsCount;
 			private readonly int _eventArgsOffset;
-			private readonly ICollectionTrackingVisitor _visitor;
 
 			private readonly Head _head;
 			private IChange _tail;
-			private readonly _Same _same; // Note: We use a single '_Same' node for all updates
+			private _Same? _sameHead;
 			private _Replace? _replaceHead;
-			private readonly _Replace.CallbacksBuffer _replaceBuffer = new _Replace.CallbacksBuffer();
 
-			public ChangesBuffer(int oldItemsCount, int newItemsCount, int eventArgsOffset, ICollectionTrackingVisitor visitor)
+			public ChangesBuffer(int oldItemsCount, int newItemsCount, int eventArgsOffset)
 			{
 				_oldItemsCount = oldItemsCount;
 				_newItemsCount = newItemsCount;
 				_eventArgsOffset = eventArgsOffset;
-				_visitor = visitor;
 
 				_tail = _head = new Head();
-				_same = new _Same(Math.Min(_oldItemsCount + _newItemsCount, 32));
-				//_replace = null; We keep it 'null'
 			}
 
 			private IChange Tail
@@ -56,27 +51,25 @@ namespace nVentive.Umbrella.Collections.Tracking
 			/// Flush the buffers and retrieve the full list of changes
 			/// </summary>
 			/// <returns></returns>
-			public CollectionChangesQueue GetChanges()
+			public ChangeBase? GetChanges()
 			{
 				// Start with the '_replace'
 				IChange? head = _replaceHead, tail = _replaceHead;
-				while (tail?.Next is not null)
-				{
-					tail = tail.Next;
-				}
 
 				// If we have some '_same', append it to the tail
-				if (_same.HasCallbacks)
+				if (_sameHead is not null)
 				{
 					if (head is null)
 					{
-						head = _same;
-						tail = _same;
+						head = tail = _sameHead;
 					}
 					else
 					{
-						tail = tail!.Next = _same;
+						SeekToTail(ref tail);
+						tail!.Next = _sameHead;
 					}
+
+					
 				}
 
 				// Then append all other changes (Add / Move / Remove)
@@ -87,10 +80,19 @@ namespace nVentive.Umbrella.Collections.Tracking
 				}
 				else
 				{
+					SeekToTail(ref tail);
 					tail!.Next = _head.Next;
 				}
 
-				return new CollectionChangesQueue(head as ChangeBase);
+				return head as ChangeBase;
+
+				static void SeekToTail(ref IChange? tail)
+				{
+					while (tail?.Next is not null)
+					{
+						tail = tail.Next;
+					}
+				}
 			}
 
 			public void Update(object oldItem, object newItem, int index)
@@ -98,48 +100,23 @@ namespace nVentive.Umbrella.Collections.Tracking
 				// As they don't impact the 'result' index, replace-instance are buffered separately and will be inserted at the top of the changes collection.
 				// Note: We use a single '_Same' node for all updates
 
-				_visitor.SameItem(oldItem, newItem, _same);
+				UpdateOrReplace(ref _sameHead, oldItem, newItem, index, (i, o) => new _Same(i, o)); ;
 			}
 
 			public void Replace(object oldItem, object newItem, int index)
 			{
-				// As they don't impact the 'result' index, replaces are buffered separetly and will be inserted at the top of the changes collection.
+				// As they don't impact the 'result' index, replaces are buffered separately and will be inserted at the top of the changes collection.
 
-				var isSilent = _visitor.ReplaceItem(oldItem, newItem, _replaceBuffer);
-				if (_replaceHead == null)
-				{
-					_replaceHead = new _Replace(oldItem, newItem, index, _eventArgsOffset, isSilent, _replaceBuffer);
-
-					return;
-				}
-				
-				// Search the target node
-				var node = _replaceHead;
-				while (node.Next != null && node.Next.Starts < index)
-				{
-					node = node.Next;
-				}
-
-				// Then append the item to the selected nodes
-				if (isSilent == node.IsSilent && node.Ends == index)
-				{
-					node.Append(oldItem, newItem, _replaceBuffer);
-				}
-				else if (node.Next == null || node.Next.Starts > index)
-				{
-					// Item is betwwen selected node and the next one, insert a new node.
-					node.Next = new _Replace(oldItem, newItem, index, _eventArgsOffset, isSilent, _replaceBuffer)
-					{
-						Next = node.Next
-					};
-				}
+				UpdateOrReplace(ref _replaceHead, oldItem, newItem, index, (i, o) => new _Replace(i, o));
 			}
+
+
 
 			public void Add(object item, int at, int max)
 			{
 				if (!(Tail is _Add add) || add.Ends != at)
 				{
-					Tail = add = new _Add(at, _eventArgsOffset, _visitor, max - at);
+					Tail = add = new _Add(at, _eventArgsOffset, max - at);
 				}
 				add.Append(item);
 			}
@@ -157,9 +134,43 @@ namespace nVentive.Umbrella.Collections.Tracking
 			{
 				if (!(Tail is _Remove remove) || remove.Ends != at)
 				{
-					Tail = remove = new _Remove(at, _eventArgsOffset, _visitor, Math.Max(_oldItemsCount - at, 4));
+					Tail = remove = new _Remove(at, _eventArgsOffset, Math.Max(_oldItemsCount - at, 4));
 				}
 				remove.Append(item);
+			}
+
+			private void UpdateOrReplace<T>(ref T? head, object oldItem, object newItem, int index, Func<int, int, T> factory)
+				where T : EntityChangeBase
+			{
+				if (head is null)
+				{
+					head = factory(index, _eventArgsOffset);
+					head.Append(oldItem, newItem);
+
+					return;
+				}
+
+				// Search the target node
+				var node = head;
+				while (node.Next is not null && node.Next.Starts < index)
+				{
+					node = (T)node.Next;
+				}
+
+				// Then append the item to the selected nodes
+				if (node.Ends == index)
+				{
+					node.Append(oldItem, newItem);
+				}
+				else if (node.Next is null || node.Next.Starts > index)
+				{
+					// Item is between selected node and the next one, insert a new node.
+					var intermediate = factory(index, _eventArgsOffset);
+					intermediate.Next = node.Next; // Must be set before Append to allow auto-merge
+					node.Next = intermediate;
+
+					intermediate.Append(oldItem, newItem);
+				}
 			}
 		}
 	}

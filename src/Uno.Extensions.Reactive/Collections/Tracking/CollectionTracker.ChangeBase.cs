@@ -16,18 +16,12 @@ partial class CollectionTracker
 		public IChange? Next { get; set; }
 	}
 
-	private abstract class ChangeBase : IChange, ICollectionTrackingCallbacks, CollectionChangesQueue.INode
+	internal abstract class ChangeBase : IChange
 	{
-		protected readonly List<object> _before;
-		protected readonly List<object> _after;
-
-		public ChangeBase(int at, int capacity)
+		public ChangeBase(int at)
 		{
 			Starts = at;
 			Ends = at;
-
-			_before = new List<object>(capacity);
-			_after = new List<object>(capacity);
 		}
 
 		/// <summary>
@@ -53,136 +47,28 @@ partial class CollectionTracker
 		}
 		#endregion
 
-		#region ICollectionTrackingCallbacks
-		void ICollectionTrackingCallbacks.Prepend(BeforeCallback callback) => _before.Add(callback);
-		void ICollectionTrackingCallbacks.Prepend(ICompositeCallback child) => _before.Add(child);
-		void ICollectionTrackingCallbacks.Append(AfterCallback callback) => _after.Add(callback);
-		void ICollectionTrackingCallbacks.Append(ICompositeCallback child) => _after.Add(child);
-		#endregion
+		public abstract RichNotifyCollectionChangedEventArgs? ToEvent();
 
-		#region CollectionChangesQueue.INode
-		CollectionChangesQueue.INode? CollectionChangesQueue.INode.Next => Next;
-
-		public abstract RichNotifyCollectionChangedEventArgs ToEvent();
-
-		protected virtual void RaiseTo(CollectionChangesQueue.IHandler handler, bool silently)
+		public CollectionChangesQueue.Node Visit(ICollectionTrackingVisitor visitor)
 		{
-			if (silently)
+			var head = VisitCore(visitor);
+
+			if (Next is not null)
 			{
-				handler.ApplySilently(ToEvent());
+				// Search for the tail
+				var node = head;
+				while (node.Next is not null)
+				{
+					node = node.Next;
+				}
+
+				// And append the callbacks of the Next change
+				node.Next = Next.Visit(visitor);
 			}
-			else
-			{
-				handler.Raise(ToEvent());
-			}
+
+			return head;
 		}
 
-		void CollectionChangesQueue.INode.ApplyTo(CollectionChangesQueue.IHandler handler, bool silently)
-		{
-			foreach (var before in _before)
-			{
-				switch (before)
-				{
-					case BeforeCallback callback:
-						callback();
-						break;
-
-					case ICompositeCallback child:
-						child.Invoke(CallbackPhase.Before | CallbackPhase.Main, silently);
-						break;
-
-					default:
-						throw new InvalidOperationException("Unexpected before action");
-				}
-			}
-
-			foreach (var after in _after.OfType<ICompositeCallback>())
-			{
-				after.Invoke(CallbackPhase.Before, silently);
-			}
-
-			RaiseTo(handler, silently);
-
-			foreach (var before in _before.OfType<ICompositeCallback>())
-			{
-				before.Invoke(CallbackPhase.After, silently);
-			}
-
-			foreach (var after in _after.OfType<ICompositeCallback>())
-			{
-				after.Invoke(CallbackPhase.Main, silently);
-			}
-
-			foreach (var after in _after)
-			{
-				switch (after)
-				{
-					case AfterCallback callback:
-						callback();
-						break;
-
-					case ICompositeCallback child:
-						//child.Invoke();
-						child.Invoke(CallbackPhase.After, silently);
-						break;
-
-					default:
-						throw new InvalidOperationException("Unexpected after action");
-				}
-			}
-		}
-
-		void CollectionChangesQueue.INode.RunBeforeCallbacks()
-		{
-			foreach (var before in _before)
-			{
-				switch (before)
-				{
-					case BeforeCallback callback:
-						callback();
-						break;
-
-					case ICompositeCallback child:
-						//child.InvokeCallbacksOnly();
-						child.Invoke(CallbackPhase.Before | CallbackPhase.Main, silently: true);
-						break;
-
-					default:
-						throw new InvalidOperationException("Unexpected before action");
-				}
-			}
-
-			foreach (var after in _after.OfType<ICompositeCallback>())
-			{
-				after.Invoke(CallbackPhase.Before, silently: true);
-			}
-		}
-
-		void CollectionChangesQueue.INode.RunAfterCallbacks()
-		{
-			foreach (var before in _before.OfType<ICompositeCallback>())
-			{
-				before.Invoke(CallbackPhase.After, silently: true);
-			}
-
-			foreach (var after in _after)
-			{
-				switch (after)
-				{
-					case AfterCallback callback:
-						callback();
-						break;
-
-					case ICompositeCallback child:
-						//child.InvokeCallbacksOnly();
-						child.Invoke(CallbackPhase.Main | CallbackPhase.After, silently: true);
-						break;
-
-					default:
-						throw new InvalidOperationException("Unexpected before action");
-				}
-			}
-		}
-		#endregion
+		protected abstract CollectionChangesQueue.Node VisitCore(ICollectionTrackingVisitor visitor);
 	}
 }

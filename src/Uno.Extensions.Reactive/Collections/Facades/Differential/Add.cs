@@ -40,7 +40,7 @@ internal sealed class Add : IDifferentialCollectionNode
 	}
 
 	/// <summary>
-	/// The index at which the add occures
+	/// The index at which the add occurs
 	/// </summary>
 	public int At => _fromIndex;
 

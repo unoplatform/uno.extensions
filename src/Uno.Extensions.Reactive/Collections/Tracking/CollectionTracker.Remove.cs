@@ -11,25 +11,22 @@ partial class CollectionTracker
 	private sealed class _Remove : ChangeBase
 	{
 		private readonly int _indexOffset;
-		private readonly ICollectionTrackingVisitor _visitor;
 		private readonly List<object> _items;
 
-		public _Remove(int at, ICollectionTrackingVisitor visitor, int capacity)
-			: this(at, 0, visitor, capacity)
+		public _Remove(int at, int capacity)
+			: this(at, 0, capacity)
 		{
 		}
 
-		public _Remove(int at, int indexOffset, ICollectionTrackingVisitor visitor, int capacity)
-			: base(at, capacity)
+		public _Remove(int at, int indexOffset, int capacity)
+			: base(at)
 		{
 			_indexOffset = indexOffset;
-			_visitor = visitor;
 			_items = new List<object>(capacity);
 		}
 
 		public void Append(object item)
 		{
-			_visitor.RemoveItem(item, this);
 			_items.Add(item);
 		}
 
@@ -37,7 +34,24 @@ partial class CollectionTracker
 			=> RichNotifyCollectionChangedEventArgs.RemoveSome(_items, Starts + _indexOffset);
 
 		/// <inheritdoc />
+		protected override CollectionChangesQueue.Node VisitCore(ICollectionTrackingVisitor visitor)
+			=> Visit(ToEvent(), visitor);
+
+		internal static CollectionChangesQueue.Node Visit(RichNotifyCollectionChangedEventArgs args, ICollectionTrackingVisitor visitor)
+		{
+			var callback = new CollectionChangesQueue.Node(args);
+			var items = args.OldItems;
+
+			for (var i = 0; i < items.Count; i++)
+			{
+				visitor.RemoveItem(items[i], callback);
+			}
+
+			return callback;
+		}
+
+		/// <inheritdoc />
 		public override string ToString()
-			=> $"Remove {_items.Count} @ {Starts} (b: {_before.Count} / a: {_after.Count})";
+			=> $"Remove {_items.Count} @ {Starts}s";
 	}
 }
