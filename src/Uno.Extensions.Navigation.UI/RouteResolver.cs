@@ -37,8 +37,8 @@ public class RouteResolver : IRouteResolver
 		{
 			return new RouteMap[] {};
 		}
-		return (from m in maps
-				let rm = m is DynamicRouteMap drm ? new RouteMap(drm.Path, drm.ViewMap?.Invoke(viewResolver), drm.IsDefault, drm.DependsOn, drm.Init, ResolveViewMaps(drm.Nested, viewResolver)) : m
+		return (from drm in maps
+				let rm = drm.DynamicView is not null ? new RouteMap(drm.Path, drm.DynamicView?.Invoke(viewResolver), drm.IsDefault, drm.DependsOn, drm.Init,Nested: ResolveViewMaps(drm.Nested, viewResolver)) : drm
 				select rm).ToArray();
 	}
 

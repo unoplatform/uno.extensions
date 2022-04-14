@@ -7,17 +7,8 @@ public record RouteMap(
 	bool IsDefault = false,
 	string DependsOn = "",
 	Func<NavigationRequest, NavigationRequest>? Init = null,
+	Func<IViewResolver, ViewMap?>? DynamicView = null,
 	params RouteMap[] Nested)
-{
-}
-
-public record DynamicRouteMap(
-	string Path,
-	Func<IViewResolver,ViewMap?> ViewMap = null,
-	bool IsDefault = false,
-	string DependsOn = "",
-	Func<NavigationRequest, NavigationRequest>? Init = null,
-	params RouteMap[] Nested) : RouteMap(Path,null,IsDefault,DependsOn,Init,Nested)
 {
 }
 

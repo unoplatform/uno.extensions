@@ -10,9 +10,13 @@ namespace Commerce.Reactive;
 // Need an attribute to identify this as the static class where
 // the ViewModelMappings should be source generated
 // [ReactiveMappings]
-public static class ReactiveViewModelMappings
+public static partial class ReactiveViewModelMappings
 {
-	// ********* Generated ********* //
+}
+
+// ********* Generated ********* //
+public static partial class ReactiveViewModelMappings
+{
 	public static IDictionary<Type, Type> ViewModelMappings = new Dictionary<Type, Type>()
 			{
 				{ typeof(LoginViewModel), typeof(LoginViewModel.BindableLoginViewModel)},
@@ -21,8 +25,10 @@ public static class ReactiveViewModelMappings
 				{ typeof(FiltersViewModel),typeof(FiltersViewModel.BindableFiltersViewModel)},
 				{ typeof(CartProductDetailsViewModel),typeof(CartProductDetailsViewModel.BindableCartProductDetailsViewModel )}
 			};
-	// ***************************** //
 }
+// ***************************** //
+
+
 
 // ********* Classes to be added to Reactive.Navigation ********* //
 public class ReactiveViewRegistry : ViewRegistry
@@ -38,18 +44,10 @@ public class ReactiveViewRegistry : ViewRegistry
 		if (item.ViewModel is not null &&
 			_viewModelMappings.TryGetValue(item.ViewModel, out var bindableViewModel))
 		{
-			item = item.WithBindableViewModel(bindableViewModel);
+			item = new ReactiveViewMap(item.View, item.DynamicView, item.ViewModel, item.Data, item.ResultData, bindableViewModel);
 		}
 
 		base.InsertItem(item);
-	}
-}
-
-public static class ReactiveViewResolverExtension
-{
-	public static ViewMap WithBindableViewModel(this ViewMap item, Type bindableViewModel)
-	{
-		return new ReactiveViewMap(item.View, item.DynamicView, item.ViewModel, item.Data, item.ResultData, bindableViewModel);
 	}
 }
 
