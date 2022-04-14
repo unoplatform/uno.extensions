@@ -80,7 +80,7 @@ namespace MyExtensionsApp
 					.UseSettings<Credentials>()
 
 
-					// Register Json serializers (ISerializer and IStreamSerializer)
+					// Register Json serializers (ISerializer and ISerializer)
 					.UseSerialization()
 
 					// Register services for the application
@@ -138,7 +138,7 @@ namespace MyExtensionsApp
 			notif.RouteChanged += RouteUpdated;
 
 
-			_window.Content = _host.Services.NavigationHost();
+			_window.AttachNavigation(_host.Services);
 			_window.Activate();
 
 			await Task.Run(async () =>

@@ -20,11 +20,9 @@ public static class ServiceCollectionExtensions
 				NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString,
 				AllowTrailingCommas = true
 			})
-			.AddSingleton<SystemTextJsonStreamSerializer>()
-			.AddSingleton<ISerializer>(services => services.GetRequiredService<SystemTextJsonStreamSerializer>())
-			.AddSingleton(typeof(ISerializer<>), typeof(SystemTextJsonGeneratedSerializer<>))
-			.AddSingleton<IStreamSerializer>(services => services.GetRequiredService<SystemTextJsonStreamSerializer>())
-			.AddSingleton(typeof(IStreamSerializer<>), typeof(SystemTextJsonGeneratedSerializer<>));
+			.AddSingleton<SystemTextJsonSerializer>()
+			.AddSingleton<ISerializer>(services => services.GetRequiredService<SystemTextJsonSerializer>())
+			.AddSingleton(typeof(ISerializer<>), typeof(SystemTextJsonGeneratedSerializer<>));
 	}
 
 	public static IServiceCollection AddJsonTypeInfo<TEntity>(
@@ -38,7 +36,7 @@ public static class ServiceCollectionExtensions
 	}
 }
 
-internal interface IJsonTypeInfoWrapper : ISerializer, IStreamSerializer
+internal interface IJsonTypeInfoWrapper : ISerializer
 {
 	Type JsonType { get; }
 }
@@ -48,9 +46,8 @@ internal record JsonTypeInfoWrapper<T>(IServiceProvider Services, JsonTypeInfo<T
 	public Type JsonType => typeof(T);
 
 	private ISerializer<T> Serializer => Services.GetRequiredService<ISerializer<T>>();
-	private IStreamSerializer<T> StreamSerializer => Services.GetRequiredService<IStreamSerializer<T>>();
 	public object? FromString(string source, Type targetType) => Serializer.FromString(source);
-	public object? FromStream(Stream source, Type targetType) => StreamSerializer.FromStream(source);
+	public object? FromStream(Stream source, Type targetType) => Serializer.FromStream(source);
 	public string ToString(object value, Type valueType) => Serializer.ToString((T)value);
-	public void ToStream(Stream stream, object value, Type valueType) => StreamSerializer.ToStream(stream, (T)value);
+	public void ToStream(Stream stream, object value, Type valueType) => Serializer.ToStream(stream, (T)value);
 }

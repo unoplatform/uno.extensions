@@ -17,9 +17,9 @@ namespace Uno.Extensions.Serialization.Refit
     {
         private static readonly MediaTypeHeaderValue _jsonMediaType = new("application/json") { CharSet = Encoding.UTF8.WebName };
 
-        private readonly IStreamSerializer _serializer;
+        private readonly ISerializer _serializer;
 
-        public SerializerToContentSerializerAdapter(IStreamSerializer serializer)
+        public SerializerToContentSerializerAdapter(ISerializer serializer)
         {
             _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
         }

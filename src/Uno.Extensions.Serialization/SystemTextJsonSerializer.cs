@@ -1,13 +1,13 @@
 ﻿namespace Uno.Extensions.Serialization;
 
-public class SystemTextJsonStreamSerializer : ISerializer, IStreamSerializer
+public class SystemTextJsonSerializer : ISerializer
 {
 	private readonly JsonSerializerOptions? _serializerOptions;
 	private readonly IServiceProvider _services;
 
 	private IJsonTypeInfoWrapper? TypedSerializer(Type jsonType) => _services.GetServices<IJsonTypeInfoWrapper>().FirstOrDefault(x => x.JsonType == jsonType);
 
-	public SystemTextJsonStreamSerializer(IServiceProvider services, JsonSerializerOptions? serializerOptions = null)
+	public SystemTextJsonSerializer(IServiceProvider services, JsonSerializerOptions? serializerOptions = null)
 	{
 		_services = services;
 		_serializerOptions = serializerOptions;
@@ -45,9 +45,9 @@ public class SystemTextJsonStreamSerializer : ISerializer, IStreamSerializer
 	}
 }
 
-public class SystemTextJsonStreamSerializer<T> : SystemTextJsonStreamSerializer, ISerializer<T>, IStreamSerializer<T>
+public class SystemTextJsonSerializer<T> : SystemTextJsonSerializer, ISerializer<T>
 {
-	public SystemTextJsonStreamSerializer(
+	public SystemTextJsonSerializer(
 		IServiceProvider services,
 		JsonSerializerOptions? serializerOptions = null) : base(services, serializerOptions)
 	{

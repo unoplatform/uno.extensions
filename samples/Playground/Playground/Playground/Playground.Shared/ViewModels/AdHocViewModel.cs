@@ -14,7 +14,7 @@ public class AdHocViewModel
 	private readonly ISerializer<Person> _personSerializer;
 	private readonly IAuthenticationTokenProvider _authToken;
 	private readonly IStorage _dataService;
-	private readonly IStreamSerializer _streamSerializer;
+	private readonly ISerializer _serializer;
 	public AdHocViewModel(
 		INavigator navigator,
 		IAuthenticationTokenProvider authenticationToken,
@@ -22,7 +22,7 @@ public class AdHocViewModel
 		ISerializer<Widget> widgetSerializer,
 		ISerializer<Person> personSerializer,
 		IStorage dataService,
-		IStreamSerializer streamSerializer)
+		ISerializer serializer)
 	{
 		_navigator = navigator;
 		_authToken = authenticationToken;
@@ -30,7 +30,7 @@ public class AdHocViewModel
 		_personSerializer = personSerializer;
 		_todoTaskListEndpoint = todoTaskEndpoint;
 		_dataService = dataService;
-		_streamSerializer = streamSerializer;
+		_serializer = serializer;
 	}
 
 	public async Task LongRunning()
@@ -76,6 +76,6 @@ public class AdHocViewModel
 
 	public async Task LoadWidgets()
 	{
-		var widgets = await _dataService.ReadFileAsync<Widget[]>(_streamSerializer, "data.json");
+		var widgets = await _dataService.ReadFileAsync<Widget[]>(_serializer, "data.json");
 	}
 }

@@ -17,6 +17,6 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddResponseContentDeserializer(this IServiceCollection services)
     {
         return services
-            .AddSingleton<IResponseContentDeserializer, StreamSerializerToResponseContentDeserializer>();
+            .AddSingleton<IResponseContentDeserializer, SerializerToResponseContentDeserializer>();
     }
 }

@@ -36,7 +36,7 @@ public sealed partial class App : Application
 				// Load AppInfo section
 				.UseConfiguration<AppInfo>()
 
-				// Register Json serializers (ISerializer and IStreamSerializer)
+				// Register Json serializers (ISerializer and ISerializer)
 				.UseSerialization()
 
 				// Register services for the application

@@ -10,17 +10,17 @@ namespace Commerce.Services;
 class CartService : ICartService
 {
 	private readonly IStorage _dataService;
-	private readonly IStreamSerializer _streamSerializer;
+	private readonly ISerializer _serializer;
 
-	public CartService(IStorage dataService, IStreamSerializer streamSerializer)
+	public CartService(IStorage dataService, ISerializer serializer)
 	{
 		_dataService = dataService;
-		_streamSerializer = streamSerializer;
+		_serializer = serializer;
 	}
 
 	public async ValueTask<Cart> Get(CancellationToken ct)
 	{
-		var entities = await _dataService.ReadFileAsync<Product[]>(_streamSerializer, ProductService.ProductDataFile);
+		var entities = await _dataService.ReadFileAsync<Product[]>(_serializer, ProductService.ProductDataFile);
 		var cart = new Cart(entities!.Select(e => new CartItem(e, 1)).ToArray());
 		return cart;
 	}

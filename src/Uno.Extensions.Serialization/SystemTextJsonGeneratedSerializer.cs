@@ -1,14 +1,12 @@
 ﻿namespace Uno.Extensions.Serialization;
 
-public class SystemTextJsonGeneratedSerializer<T> : ISerializer<T>, IStreamSerializer<T>
+public class SystemTextJsonGeneratedSerializer<T> : ISerializer<T>
 {
 	public SystemTextJsonGeneratedSerializer(
 		ISerializer nonTypedSerializer,
-		IStreamSerializer nonTypedStreamSerializer,
 		JsonTypeInfo<T>? typeInfo = null)
 	{
 		_nonTypedSerializer = nonTypedSerializer;
-		_nonTypedStreamSerializer = nonTypedStreamSerializer;
 		_typeInfo = typeInfo;
 	}
 
@@ -39,7 +37,7 @@ public class SystemTextJsonGeneratedSerializer<T> : ISerializer<T>, IStreamSeria
 			return JsonSerializer.Deserialize(source, _typeInfo);
 		}
 
-		return _nonTypedStreamSerializer.FromStream<T>(source);
+		return _nonTypedSerializer.FromStream<T>(source);
 	}
 	public void ToStream(Stream stream, T value)
 	{
@@ -49,9 +47,9 @@ public class SystemTextJsonGeneratedSerializer<T> : ISerializer<T>, IStreamSeria
 			return;
 		}
 
-		_nonTypedStreamSerializer.ToStream<T>(stream, value);
+		_nonTypedSerializer.ToStream<T>(stream, value);
 	}
-	public object? FromStream(Stream source, Type targetType) => targetType == typeof(T) ? FromStream(source) : _nonTypedStreamSerializer.FromStream(source, targetType);
+	public object? FromStream(Stream source, Type targetType) => targetType == typeof(T) ? FromStream(source) : _nonTypedSerializer.FromStream(source, targetType);
 	public void ToStream(Stream stream, object value, Type valueType)
 	{
 		if (valueType == typeof(T))
@@ -61,11 +59,10 @@ public class SystemTextJsonGeneratedSerializer<T> : ISerializer<T>, IStreamSeria
 		}
 		else
 		{
-			_nonTypedStreamSerializer.ToStream(stream, value, valueType);
+			_nonTypedSerializer.ToStream(stream, value, valueType);
 		}
 	}
 
 	private readonly ISerializer _nonTypedSerializer;
-	private readonly IStreamSerializer _nonTypedStreamSerializer;
 	private readonly JsonTypeInfo<T>? _typeInfo;
 }

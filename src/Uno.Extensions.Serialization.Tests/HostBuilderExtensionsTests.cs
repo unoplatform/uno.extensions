@@ -28,9 +28,5 @@ public class HostBuilderExtensionsTests
 		serializer.Should().NotBeNull();
 		serializer = _services.GetService<ISerializer<SimpleClass>>();
 		serializer.Should().NotBeNull();
-		var streamSerializer = _services.GetService<IStreamSerializer>();
-		streamSerializer.Should().NotBeNull();
-		streamSerializer = _services.GetService<IStreamSerializer<SimpleClass>>();
-		streamSerializer.Should().NotBeNull();
 	}
 }
