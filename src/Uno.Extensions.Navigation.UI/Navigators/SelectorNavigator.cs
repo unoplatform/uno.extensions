@@ -27,7 +27,7 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 
 	protected SelectorNavigator(
 		ILogger logger,
-		IWindow window,
+		Window window,
 		IRegion region,
 		IResolver resolver,
 		RegionControlProvider controlProvider)

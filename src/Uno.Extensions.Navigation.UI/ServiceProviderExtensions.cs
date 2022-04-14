@@ -11,13 +11,13 @@ public static class ServiceProviderExtensions
 
 	internal static IServiceProvider RegisterWindow(this IServiceProvider services, Window window)
 	{
-		return services.AddInstance<IWindow>(new WindowProvider { Instance = window });
+		return services.AddInstance(window);
 	}
 
 	internal static IServiceProvider CreateNavigationScope(this IServiceProvider services)
 	{
 		var scoped = services.CreateScope().ServiceProvider;
-		return scoped.AddInstance(services.GetRequiredService<IWindow>());
+		return scoped.AddInstance(services.GetRequiredService<Window>());
 	}
 	public static IServiceProvider AddInstance<T>(this IServiceProvider provider, Func<T> instanceCreator)
 	{

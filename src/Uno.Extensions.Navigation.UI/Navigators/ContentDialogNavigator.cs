@@ -4,7 +4,7 @@ public class ContentDialogNavigator : DialogNavigator
 {
 	public ContentDialogNavigator(
 		ILogger<ContentDialogNavigator> logger,
-		IWindow window,
+		Window window,
 		IRegion region,
 		IResolver resolver
 		)
@@ -37,7 +37,7 @@ public class ContentDialogNavigator : DialogNavigator
 		}
 
 #if WINUI
-		dialog.XamlRoot = Window.Instance!.Content.XamlRoot;
+		dialog.XamlRoot = Window!.Content.XamlRoot;
 #endif
 
 		dialog.SetInstance(Region);

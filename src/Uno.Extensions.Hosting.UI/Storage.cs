@@ -1,15 +1,15 @@
 ﻿namespace Uno.Extensions.Hosting;
 
-public class StorageProxy : IStorageProxy
+public class Storage :IStorage
 {
-	public async Task<string> CreateLocalFolder(string foldername)
+	public async Task<string> CreateLocalFolderAsync(string foldername)
 	{
 		var localFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
 		var folder = await localFolder.CreateFolderAsync(foldername, CreationCollisionOption.OpenIfExists);
 		return folder.Path;
 	}
 
-	public async Task<string?> ReadFromApplicationFile(string filename)
+	public async Task<string?> ReadFileAsync(string filename)
 	{
 		try
 		{
@@ -29,14 +29,14 @@ public class StorageProxy : IStorageProxy
 
 	}
 
-	public async Task<Stream> OpenApplicationFile(string filename)
+	public async Task<Stream> OpenFileAsync(string filename)
 	{
 		var storageFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///{filename}"));
 		var stream = await storageFile.OpenStreamForReadAsync();
 		return stream;
 	}
 
-	public async Task WriteToFile(string filename, string text)
+	public async Task WriteFileAsync(string filename, string text)
 	{
 		//var localFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
 		//var settingsFile = await localFolder.CreateFileAsync($"{filename}", CreationCollisionOption.OpenIfExists);

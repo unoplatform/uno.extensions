@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Uno.Extensions.Serialization;
+﻿namespace Uno.Extensions.Serialization;
 
 public interface ISerializer
 {

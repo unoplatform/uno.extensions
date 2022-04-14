@@ -2,6 +2,7 @@
 
 
 using System.Diagnostics;
+using Uno.Extensions.Storage;
 
 namespace Playground.ViewModels;
 
@@ -9,18 +10,27 @@ public class AdHocViewModel
 {
 	private readonly INavigator _navigator;
 	private readonly IToDoTaskListEndpoint _todoTaskListEndpoint;
-	private readonly ISerializer<Widget> _serializer;
+	private readonly ISerializer<Widget> _widgetSerializer;
+	private readonly ISerializer<Person> _personSerializer;
 	private readonly IAuthenticationTokenProvider _authToken;
+	private readonly IStorage _dataService;
+	private readonly IStreamSerializer _streamSerializer;
 	public AdHocViewModel(
 		INavigator navigator,
 		IAuthenticationTokenProvider authenticationToken,
-		IToDoTaskListEndpoint todoTaskListEndpoint, 
-		ISerializer<Widget> serializer)
+		IToDoTaskListEndpoint todoTaskEndpoint,
+		ISerializer<Widget> widgetSerializer,
+		ISerializer<Person> personSerializer,
+		IStorage dataService,
+		IStreamSerializer streamSerializer)
 	{
 		_navigator = navigator;
 		_authToken = authenticationToken;
-		_serializer = serializer;
-		_todoTaskListEndpoint = todoTaskListEndpoint;
+		_widgetSerializer = widgetSerializer;
+		_personSerializer = personSerializer;
+		_todoTaskListEndpoint = todoTaskEndpoint;
+		_dataService = dataService;
+		_streamSerializer = streamSerializer;
 	}
 
 	public async Task LongRunning()
@@ -41,8 +51,13 @@ public class AdHocViewModel
 	public async Task RunSerializer()
 	{
 		var w = new Widget { Name = "Bob", Weight = 60 };
-	var str = 	_serializer.ToString(w);
-		var newW = _serializer.FromString(str);
+		var str = _widgetSerializer.ToString(w);
+		var newW = _widgetSerializer.FromString(str);
+		Debug.Assert(w == newW);
+
+		var p = new Person { Name = "Jane",Age=25, Height=160.3, Weight = 60 };
+		str = _personSerializer.ToString(p);
+		var newP = _personSerializer.FromString<Person>(str);
 		Debug.Assert(w == newW);
 	}
 
@@ -57,5 +72,10 @@ public class AdHocViewModel
 		var result = await response.Result;
 		(_authToken as SimpleAuthenticationToken).AccessToken = result.SomeOrDefault() ?? String.Empty;
 		var taskLists = await _todoTaskListEndpoint.GetAllAsync(CancellationToken.None);
+	}
+
+	public async Task LoadWidgets()
+	{
+		var widgets = await _dataService.ReadFileAsync<Widget[]>(_streamSerializer, "data.json");
 	}
 }

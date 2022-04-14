@@ -1,64 +1,65 @@
 ﻿using System.IO;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-
+using System.Text.Json.Serialization;
 
 namespace Uno.Extensions.Serialization.Tests;
 
 [TestClass]
-public class SystemTextJsonStreamSerializerTests
+public class SystemTextJsonGeneratedSerializerTests
 {
 	private const string SimpleText = "Hello World!";
 
-	private SystemTextJsonStreamSerializer Serializer { get; set; }
+	private SystemTextJsonGeneratedSerializer<SimpleClass> Serializer { get; set; }
 
 	[TestInitialize]
 	public void InitializeTests()
 	{
 		var services = new ServiceCollection().BuildServiceProvider();
-		Serializer = new SystemTextJsonStreamSerializer(services);
+		var reflectionSerializer = new SystemTextJsonStreamSerializer(services);
+		Serializer = new SystemTextJsonGeneratedSerializer<SimpleClass>(reflectionSerializer, reflectionSerializer,SimpleClassContext.Default.SimpleClass);
 	}
 
 	[TestMethod]
 	public void SimpleClassSerializationTest()
 	{
 		var entity = CreateSimpleClassInstance();
-		TestEntitySerialization<SimpleClass>(entity);
+		TestEntitySerialization<SimpleClass>(entity as SimpleClass);
 	}
 
 	[TestMethod]
 	public void SimpleRecordSerializationTest()
 	{
 		var entity = CreateSimpleRecordInstance();
-		TestEntitySerialization<SimpleRecord>(entity);
+		TestEntitySerialization<SimpleRecord>(entity as SimpleRecord);
 	}
 
 	[TestMethod]
 	public void SimpleClassStringifyTest()
 	{
 		var entity = CreateSimpleClassInstance();
-		TestEntityStringify<SimpleClass>(entity);
+		TestEntityStringify<SimpleClass>(entity as SimpleClass);
 	}
 
 	[TestMethod]
 	public void SimpleRecordStringifyTest()
 	{
 		var entity = CreateSimpleRecordInstance();
-		TestEntityStringify<SimpleRecord>(entity);
+		TestEntityStringify<SimpleRecord>(entity as SimpleRecord);
 	}
 
-	private void TestEntitySerialization<T>(object entity)
+	private void TestEntitySerialization<T>(T entity)
 		where T : ISimpleText
 	{
 		using (var ms = new MemoryStream())
 		{
-			Serializer.ToStream(ms, entity, typeof(T));
+			Serializer.ToStream(ms, entity);
 			ms.Flush();
 
 			// Reset the stream so we can read
 			ms.Seek(0, SeekOrigin.Begin);
 
-			var clonedEntity = Serializer.FromStream(ms, typeof(T));
+			var clonedEntity = Serializer.FromStream<T>(ms);
 			Assert.IsInstanceOfType(clonedEntity, typeof(T));
 			Assert.AreNotSame(entity, clonedEntity);
 			Assert.AreEqual(((T)entity).SimpleTextProperty, ((T)clonedEntity).SimpleTextProperty);
@@ -66,12 +67,12 @@ public class SystemTextJsonStreamSerializerTests
 			// Reset the stream so we can write again
 			ms.Seek(0, SeekOrigin.Begin);
 
-			Serializer.ToStream(ms, clonedEntity, typeof(T));
+			Serializer.ToStream<T>(ms, clonedEntity);
 			ms.Flush();
 
 			// Reset the stream so we can read
 			ms.Seek(0, SeekOrigin.Begin);
-			var anotherClone = Serializer.FromStream(ms, typeof(T));
+			var anotherClone = Serializer.FromStream<T>(ms);
 
 			Assert.IsInstanceOfType(anotherClone, typeof(T));
 			Assert.AreNotSame(clonedEntity, anotherClone);
@@ -80,11 +81,11 @@ public class SystemTextJsonStreamSerializerTests
 	}
 
 
-	private void TestEntityStringify<T>(object entity)
+	private void TestEntityStringify<T>(T entity)
 		where T : ISimpleText
 	{
-		var stringValue = Serializer.ToString(entity, typeof(T));
-		var clonedEntity = Serializer.FromString(stringValue, typeof(T));
+		var stringValue = Serializer.ToString(entity);
+		var clonedEntity = Serializer.FromString<T>(stringValue);
 		Assert.IsInstanceOfType(clonedEntity, typeof(T));
 		Assert.AreNotSame(entity, clonedEntity);
 		Assert.AreEqual(((T)entity).SimpleTextProperty, ((T)clonedEntity).SimpleTextProperty);
@@ -101,16 +102,8 @@ public class SystemTextJsonStreamSerializerTests
 	}
 }
 
-public class SimpleClass : ISimpleText
+[JsonSerializable(typeof(SimpleClass))]
+internal partial class SimpleClassContext : JsonSerializerContext
 {
-	public string SimpleTextProperty { get; set; }
-}
-
-public record SimpleRecord(string SimpleTextProperty) : ISimpleText;
-
-
-public interface ISimpleText
-{
-	string SimpleTextProperty { get; }
 }
 
