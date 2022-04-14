@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
-using nVentive.Umbrella.Conversion;
-using nVentive.Umbrella.Extensions;
+using Uno.Extensions.Collections.Umbrella.Extensions;
+using Uno.Extensions.Collections.Umbrella.Conversion;
 
-namespace nVentive.Umbrella.Collections
+namespace Uno.Extensions.Collections
 {
 	/// <summary>
 	/// A facade over a readonly list which ensure the dynamic projection of items using an <see cref="IConverter{TFrom,TTo}"/>.

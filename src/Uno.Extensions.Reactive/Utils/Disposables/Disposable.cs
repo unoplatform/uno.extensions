@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace Umbrella.Reactive.Collections;
+namespace Uno.Extensions.Reactive.Utils;
 
 internal static class Disposable
 {

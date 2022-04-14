@@ -2,37 +2,37 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace nVentive.Umbrella.Collections.Tracking;
+namespace Uno.Extensions.Collections.Tracking;
 
-partial class CollectionChangesQueue
+partial class CollectionUpdater
 {
-	internal class Node : ICollectionTrackingCallbacks
+	internal class Update : ICollectionUpdateCallbacks
 	{
 		private readonly List<object> _before = new();
 		private readonly List<object> _after = new();
 
 		public RichNotifyCollectionChangedEventArgs? Event { get; set; }
 
-		public Node? Next { get; set; }
+		public Update? Next { get; set; }
 
-		public Node(RichNotifyCollectionChangedEventArgs? @event)
+		public Update(RichNotifyCollectionChangedEventArgs? @event)
 		{
 			Event = @event;
 		}
 
-		public Node()
+		public Update()
 		{
 		}
 
-		void ICollectionTrackingCallbacks.Prepend(BeforeCallback callback) => _before.Add(callback);
+		void ICollectionUpdateCallbacks.Prepend(BeforeCallback callback) => _before.Add(callback);
 
-		void ICollectionTrackingCallbacks.Prepend(ICompositeCallback child) => _before.Add(child);
+		void ICollectionUpdateCallbacks.Prepend(ICompositeCallback child) => _before.Add(child);
 
-		void ICollectionTrackingCallbacks.Append(AfterCallback callback) => _after.Add(callback);
+		void ICollectionUpdateCallbacks.Append(AfterCallback callback) => _after.Add(callback);
 
-		void ICollectionTrackingCallbacks.Append(ICompositeCallback child) => _after.Add(child);
+		void ICollectionUpdateCallbacks.Append(ICompositeCallback child) => _after.Add(child);
 
-		public void FlushTo(Node other)
+		public void FlushTo(Update other)
 		{
 			other._before.AddRange(_before);
 			other._after.AddRange(_after);

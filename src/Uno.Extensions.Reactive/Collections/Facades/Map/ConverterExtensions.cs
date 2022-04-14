@@ -2,10 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using nVentive.Umbrella.Conversion;
 using Umbrella.Feeds.Conversion;
+using Uno.Extensions.Collections.Umbrella.Conversion;
 
-namespace nVentive.Umbrella.Extensions
+namespace Uno.Extensions.Collections.Umbrella.Extensions
 {
 	/// <summary>
 	/// Extensions method over <see cref="IConverter{TFrom,TTo}"/>.

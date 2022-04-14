@@ -2,12 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using nVentive.Umbrella.Collections.Tracking;
+using Uno.Extensions.Collections.Tracking;
 using Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets;
 
 namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 {
-	internal class SelectionVisitor : CollectionTrackingVisitorBase
+	internal class SelectionVisitor : CollectionUpdaterVisitor
 	{
 		private readonly SelectionFacet _selectionFacet;
 
@@ -19,7 +19,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 		/// <summary>
 		/// Ensure the current selection stays the same after a Replace by reapplying it if it has been changed by the UI. 
 		/// </summary>
-		public override bool ReplaceItem(object original, object updated, ICollectionTrackingCallbacks callbacks)
+		public override bool ReplaceItem(object original, object updated, ICollectionUpdateCallbacks callbacks)
 		{
 			int selectionBefore = -1;
 

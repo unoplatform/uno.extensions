@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace nVentive.Umbrella.Conversion
+namespace Uno.Extensions.Collections.Umbrella.Conversion
 {
 	/// <summary>
 	/// An enhanced <see cref="IConverter{TFrom, TTo}"/> which cache the converted values.

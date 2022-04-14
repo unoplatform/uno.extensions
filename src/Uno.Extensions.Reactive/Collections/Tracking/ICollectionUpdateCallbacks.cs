@@ -1,12 +1,12 @@
 using System;
 using System.Linq;
 
-namespace nVentive.Umbrella.Collections.Tracking;
+namespace Uno.Extensions.Collections.Tracking;
 
 /// <summary>
-/// Set of callbacks that are part of a <see cref="CollectionChangesQueue"/>.
+/// Set of callbacks that are part of a <see cref="CollectionUpdater"/>.
 /// </summary>
-internal interface ICollectionTrackingCallbacks
+internal interface ICollectionUpdateCallbacks
 {
 	/// <summary>
 	/// Adds a callback which will be invoked before raising the collection changed event

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using nVentive.Umbrella.Collections;
-using nVentive.Umbrella.Conversion;
+using Uno.Extensions.Collections;
+using Uno.Extensions.Collections.Umbrella.Conversion;
 
 namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 {

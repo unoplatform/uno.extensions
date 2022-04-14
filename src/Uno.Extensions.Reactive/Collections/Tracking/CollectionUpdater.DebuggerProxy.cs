@@ -3,22 +3,23 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace nVentive.Umbrella.Collections.Tracking;
+namespace Uno.Extensions.Collections.Tracking;
 
-sealed partial class CollectionChangesQueue
+[DebuggerTypeProxy(typeof(DebuggerProxy))]
+sealed partial class CollectionUpdater
 {
 	private class DebuggerProxy
 	{
-		public DebuggerProxy(CollectionChangesQueue queue)
+		public DebuggerProxy(CollectionUpdater queue)
 		{
 			Nodes = queue.GetNodes().ToArray();
 		}
 
 		[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-		public Node[] Nodes { get; }
+		public Update[] Nodes { get; }
 	}
 
-	private IEnumerable<Node> GetNodes()
+	private IEnumerable<Update> GetNodes()
 	{
 		var node = _head;
 		while (node != null)

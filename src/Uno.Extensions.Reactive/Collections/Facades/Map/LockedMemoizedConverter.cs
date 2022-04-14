@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
-namespace nVentive.Umbrella.Conversion
+namespace Uno.Extensions.Collections.Umbrella.Conversion
 {
 	/// <summary>
 	/// A thread safe <see cref="IConverter{TFrom, TTo}"/> which weakly cache the converted values.

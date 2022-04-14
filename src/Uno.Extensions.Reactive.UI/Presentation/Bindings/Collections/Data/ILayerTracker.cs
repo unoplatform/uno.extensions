@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
-using nVentive.Umbrella.Collections;
-using nVentive.Umbrella.Collections.Tracking;
+using Uno.Extensions.Collections;
+using Uno.Extensions.Collections.Tracking;
 
 namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 {
@@ -15,11 +15,11 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 		/// <summary>
 		/// Gets the changes when updating the source collection
 		/// </summary>
-		CollectionChangesQueue GetChanges(IObservableCollectionSnapshot? oldItems, IObservableCollectionSnapshot newItems, bool shouldUseSmartTracking = true);
+		CollectionUpdater GetChanges(IObservableCollectionSnapshot? oldItems, IObservableCollectionSnapshot newItems, bool shouldUseSmartTracking = true);
 
 		/// <summary>
 		/// Gets the effective changes when receiving a collection change from the source
 		/// </summary>
-		CollectionChangesQueue GetChanges(RichNotifyCollectionChangedEventArgs arg, bool shouldUseSmartTracking = true);
+		CollectionUpdater GetChanges(RichNotifyCollectionChangedEventArgs arg, bool shouldUseSmartTracking = true);
 	}
 }

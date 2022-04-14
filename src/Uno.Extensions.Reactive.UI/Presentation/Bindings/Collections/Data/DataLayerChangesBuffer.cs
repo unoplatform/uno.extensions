@@ -4,8 +4,8 @@ using System.Collections.Immutable;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Threading;
-using nVentive.Umbrella.Collections;
-using nVentive.Umbrella.Collections.Tracking;
+using Uno.Extensions.Collections;
+using Uno.Extensions.Collections.Tracking;
 using Umbrella.Presentation.Feeds.Collections._BindableCollection.Data;
 using Uno;
 using Uno.Extensions;
@@ -54,7 +54,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 		private readonly ILayerHolder _layer;
 		private readonly ILayerTracker _changesTracker;
 
-		private ImmutableList<CollectionChangesQueue> _buffer = ImmutableList<CollectionChangesQueue>.Empty; // The changes raised while we are changing the thread to applied this version 
+		private ImmutableList<CollectionUpdater> _buffer = ImmutableList<CollectionUpdater>.Empty; // The changes raised while we are changing the thread to applied this version 
 
 		private IObservableCollectionSnapshot? _stopItems; // the state of the collection when this tracker was stopped
 
@@ -185,7 +185,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 
 			if (_buffer.Count > 0)
 			{
-				var buffer = Interlocked.Exchange(ref _buffer, ImmutableList<CollectionChangesQueue>.Empty);
+				var buffer = Interlocked.Exchange(ref _buffer, ImmutableList<CollectionUpdater>.Empty);
 				foreach (var changes in buffer)
 				{
 					_layer.Items.Update(changes);

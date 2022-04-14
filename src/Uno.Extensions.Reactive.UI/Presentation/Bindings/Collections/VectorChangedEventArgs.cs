@@ -2,7 +2,7 @@
 using System.Linq;
 using Windows.Foundation.Collections;
 
-namespace nVentive.Umbrella.Collections
+namespace Uno.Extensions.Collections
 {
 	/// <summary>
 	/// Default implementation of <see cref="IVectorChangedEventArgs"/>.

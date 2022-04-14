@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
-using nVentive.Umbrella.Collections;
-using nVentive.Umbrella.Collections.Tracking;
+using Uno.Extensions.Collections;
+using Uno.Extensions.Collections.Tracking;
 using Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets;
 
 namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 {
-	internal class GroupsVisitor : ICollectionTrackingVisitor
+	internal class GroupsVisitor : ICollectionUpdaterVisitor
 	{
 		private readonly IUpdateContext _context;
 		private readonly ILayerHolder _source;
@@ -26,12 +26,12 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 			_children = children;
 		}
 
-		public void AddItem(object item, ICollectionTrackingCallbacks callbacks)
+		public void AddItem(object item, ICollectionUpdateCallbacks callbacks)
 			// Note: As Windows 10.15063 behavior, if we are initializing the holder (_versionType == Initialize), 
 			//		 we don't have to send events for the items that are currently in the list.
 			=> AddItem(item, callbacks, raiseAddOnFlat: _context.Type != VisitorType.InitializeCollection);
 
-		private void AddItem(object item, ICollectionTrackingCallbacks callbacks, bool raiseAddOnFlat)
+		private void AddItem(object item, ICollectionUpdateCallbacks callbacks, bool raiseAddOnFlat)
 		{
 			var group = (IObservableGroup)item;
 
@@ -61,7 +61,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 			}
 		}
 
-		public void SameItem(object original, object updated, ICollectionTrackingCallbacks callbacks)
+		public void SameItem(object original, object updated, ICollectionUpdateCallbacks callbacks)
 		{
 			var oldGroup = (IObservableGroup)original;
 			var newGroup = (IObservableGroup)updated;
@@ -70,7 +70,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 			_children.Update(oldGroup, newGroup);
 		}
 
-		public bool ReplaceItem(object original, object updated, ICollectionTrackingCallbacks callbacks)
+		public bool ReplaceItem(object original, object updated, ICollectionUpdateCallbacks callbacks)
 		{
 			var oldGroup = (IObservableGroup)original;
 			var newGroup = (IObservableGroup)updated;
@@ -96,10 +96,10 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 			}
 		}
 
-		public void RemoveItem(object item, ICollectionTrackingCallbacks callbacks)
+		public void RemoveItem(object item, ICollectionUpdateCallbacks callbacks)
 			=> RemoveItem(item, callbacks, raiseRemoveOnFlat: true);
 
-		private void RemoveItem(object item, ICollectionTrackingCallbacks callbacks, bool raiseRemoveOnFlat)
+		private void RemoveItem(object item, ICollectionUpdateCallbacks callbacks, bool raiseRemoveOnFlat)
 		{
 			var view = _children.Remove((IObservableGroup)item);
 			var currentItems = view.Holder.PrepareRemove(); // Disable collection tracking
@@ -123,7 +123,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 			}
 		}
 
-		public void Reset(IList oldItems, IList newItems, ICollectionTrackingCallbacks callbacks)
+		public void Reset(IList oldItems, IList newItems, ICollectionUpdateCallbacks callbacks)
 		{
 			foreach (var item in oldItems)
 			{

@@ -5,27 +5,26 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 
-namespace nVentive.Umbrella.Collections.Tracking;
+namespace Uno.Extensions.Collections.Tracking;
 
 /// <summary>
 /// A queue of collection changes
 /// </summary>
-[DebuggerTypeProxy(typeof(DebuggerProxy))]
-public sealed partial class CollectionChangesQueue
+internal sealed partial class CollectionUpdater
 {
-	public static CollectionChangesQueue Empty { get; } = new(new Node());
+	public static CollectionUpdater Empty { get; } = new(new Update());
 
-	private readonly Node _head;
+	private readonly Update _head;
 	private readonly bool _isReset;
 	private readonly IList? _resetOldItems, _resetNewItems;
 
-	internal CollectionChangesQueue(RichNotifyCollectionChangedEventArgs change) 
-		=> _head = new Node(change);
+	internal CollectionUpdater(RichNotifyCollectionChangedEventArgs change) 
+		=> _head = new Update(change);
 
-	internal CollectionChangesQueue(Node head) 
+	internal CollectionUpdater(Update head) 
 		=> _head = head;
 
-	private CollectionChangesQueue(Node head, IList? oldItems, IList? newItems)
+	private CollectionUpdater(Update head, IList? oldItems, IList? newItems)
 	{
 		_head = head;
 		_isReset = true;
@@ -36,7 +35,7 @@ public sealed partial class CollectionChangesQueue
 	/// <summary>
 	/// Convert this queue of changes to a new queue which contains only one reset event
 	/// </summary>
-	public CollectionChangesQueue ToReset(IList oldItems, IList newItems) 
+	public CollectionUpdater ToReset(IList oldItems, IList newItems) 
 		=> new(_head, oldItems, newItems);
 
 	/// <summary>

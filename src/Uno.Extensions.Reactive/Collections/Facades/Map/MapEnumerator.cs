@@ -2,10 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using nVentive.Umbrella.Conversion;
-using nVentive.Umbrella.Extensions;
+using Uno.Extensions.Collections.Umbrella.Extensions;
+using Uno.Extensions.Collections.Umbrella.Conversion;
 
-namespace nVentive.Umbrella.Collections
+namespace Uno.Extensions.Collections
 {
 	/// <summary>
 	/// An <see cref="IEnumerator{T}"/> which ensure dynamic conversion of item using an <see cref="IConverter{TFrom,TTo}"/>.

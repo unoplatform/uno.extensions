@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using nVentive.Umbrella.Extensions;
+using Uno.Extensions.Collections.Umbrella.Extensions;
 
 namespace Umbrella.Collections.Facades.Differential;
 

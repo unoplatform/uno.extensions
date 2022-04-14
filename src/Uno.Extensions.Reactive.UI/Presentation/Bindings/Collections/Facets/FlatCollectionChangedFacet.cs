@@ -8,10 +8,10 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using Windows.Foundation.Collections;
 using Microsoft.Extensions.Logging;
-using nVentive.Umbrella.Collections;
+using Uno.Extensions.Collections;
 using Uno.Extensions;
 using Uno.Logging;
-using _CollectionChanged = nVentive.Umbrella.Collections.RichNotifyCollectionChangedEventArgs;
+using _CollectionChanged = Uno.Extensions.Collections.RichNotifyCollectionChangedEventArgs;
 
 namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets
 {
@@ -86,7 +86,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets
 		/// </summary>
 		public void NotifyReset()
 		{
-			CollectionChanged?.Invoke(nVentive.Umbrella.Collections.CollectionChanged.Reset());
+			CollectionChanged?.Invoke(Uno.Extensions.Collections.CollectionChanged.Reset());
 			VectorChanged?.Invoke(new VectorChangedEventArgs(CollectionChange.Reset, 0));
 		}
 
@@ -111,7 +111,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets
 			}
 
 			var offset = GetChildOffset(sender!); // ! => Cannot be null for the kind of collection we use
-			collectionChanged(nVentive.Umbrella.Collections.CollectionChanged.Offset(args, offset));
+			collectionChanged(Uno.Extensions.Collections.CollectionChanged.Offset(args, offset));
 		}
 
 		private int GetChildOffset(object child)

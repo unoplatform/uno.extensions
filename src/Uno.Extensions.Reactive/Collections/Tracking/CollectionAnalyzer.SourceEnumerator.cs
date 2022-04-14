@@ -4,18 +4,18 @@ using System.Collections.Generic;
 using System.Linq;
 using Uno;
 
-namespace nVentive.Umbrella.Collections.Tracking;
+namespace Uno.Extensions.Collections.Tracking;
 
-partial class CollectionTracker
+partial class CollectionAnalyzer
 {
-	private class SnapshotEnumerator<TCollection>
+	private class SourceEnumerator<TCollection>
 		where TCollection : IList
 	{
 		private readonly TCollection _snapshot;
 		private readonly IndexOf<TCollection> _indexOf;
 		private readonly IgnoredIndexCollection _ignored = new();
 
-		public SnapshotEnumerator(
+		public SourceEnumerator(
 			TCollection snapshot,
 			IndexOf<TCollection> indexOf)
 		{
@@ -148,7 +148,7 @@ partial class CollectionTracker
 				}
 			}
 
-			public Enumerator GetEnumerator() => new Enumerator(_head);
+			public Enumerator GetEnumerator() => new(_head);
 
 			public class IgnoredIndexCollectionNode
 			{

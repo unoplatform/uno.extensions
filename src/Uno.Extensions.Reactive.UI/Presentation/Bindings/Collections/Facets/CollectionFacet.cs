@@ -7,8 +7,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Windows.Foundation.Collections;
 using Microsoft.Extensions.Logging;
-using nVentive.Umbrella.Collections;
-using nVentive.Umbrella.Collections.Tracking;
+using Uno.Extensions.Collections;
+using Uno.Extensions.Collections.Tracking;
 using Umbrella.Collections;
 using Umbrella.Collections.Facades.Differential;
 using Uno.Extensions;
@@ -27,8 +27,8 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets
 
 		private readonly CollectionChangedFacet _collectionChanged;
 		private readonly ObservableCollectionKind _convertResetToClearAndAdd;
-		private readonly CollectionChangesQueue.IHandler _changesHandler;
-		private readonly CollectionChangesQueue.IHandler? _silentChangesHandler;
+		private readonly CollectionUpdater.IHandler _changesHandler;
+		private readonly CollectionUpdater.IHandler? _silentChangesHandler;
 		private readonly Action? _onReseted;
 
 		private IDifferentialCollectionNode _head;
@@ -128,7 +128,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets
 		/// Applies a single update to the collection
 		/// </summary>
 		/// <param name="changes">The change to apply to the collection</param>
-		public void Update(CollectionChangesQueue changes) => changes.DequeueChanges(_changesHandler);
+		public void Update(CollectionUpdater changes) => changes.DequeueChanges(_changesHandler);
 
 		/// <summary>
 		/// Applies some updates to the collection
@@ -150,10 +150,10 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets
 		/// <summary>
 		/// Applies a queue of changes before reseting the list to final collection.
 		/// </summary>
-		/// <remarks>This overload is designed to be used in conjunction with <see cref="CollectionTracker"/>.</remarks>
+		/// <remarks>This overload is designed to be used in conjunction with <see cref="CollectionAnalyzer"/>.</remarks>
 		/// <param name="changes">The changes to apply to current state in order to reach the final collection state</param>
 		/// <param name="finalCollection">The final collection</param>
-		public void UpdateTo(CollectionChangesQueue changes, IList finalCollection)
+		public void UpdateTo(CollectionUpdater changes, IList finalCollection)
 		{
 			using var operation = new BatchUpdateOperation(this, finalCollection, isSilent: false);
 			operation.Update(changes);
@@ -162,10 +162,10 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets
 		/// <summary>
 		/// Applies SILENTLY (i.e. does not raise any event for this queue) a queue of changes before reseting the list to final collection.
 		/// </summary>
-		/// <remarks>This overload is designed to be used in conjunction with <see cref="CollectionTracker"/>.</remarks>
+		/// <remarks>This overload is designed to be used in conjunction with <see cref="CollectionAnalyzer"/>.</remarks>
 		/// <param name="changes">The changes to apply to current state in order to reach the final collection state</param>
 		/// <param name="finalCollection">The final collection</param>
-		public void UpdateSilentlyTo(CollectionChangesQueue changes, IList finalCollection)
+		public void UpdateSilentlyTo(CollectionUpdater changes, IList finalCollection)
 		{
 			using var operation = new BatchUpdateOperation(this, finalCollection, isSilent: true);
 			operation.Update(changes);
@@ -174,7 +174,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets
 		/// <summary>
 		/// Applies some updates before reseting the list to final collection.
 		/// </summary>
-		/// <remarks>This overload is designed to be used in conjunction with <see cref="CollectionTracker"/>.</remarks>
+		/// <remarks>This overload is designed to be used in conjunction with <see cref="CollectionAnalyzer"/>.</remarks>
 		/// <param name="finalCollection">The final collection</param>
 		public BatchUpdateOperation BatchUpdateTo(IList finalCollection)
 			=> new(this, finalCollection);
@@ -580,7 +580,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets
 #endif
 		}
 
-		private class CollectionChangeQueueHandler : CollectionChangesQueue.IHandler
+		private class CollectionChangeQueueHandler : CollectionUpdater.IHandler
 		{
 			private readonly CollectionFacet _owner;
 
@@ -589,7 +589,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets
 			public void ApplySilently(RichNotifyCollectionChangedEventArgs args) => _owner.UpdateHead(args);
 		}
 
-		private class SilentCollectionChangeQueueHandler : CollectionChangesQueue.IHandler
+		private class SilentCollectionChangeQueueHandler : CollectionUpdater.IHandler
 		{
 			private readonly CollectionFacet _owner;
 
@@ -606,7 +606,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets
 			private readonly CollectionFacet _owner;
 			private readonly IList _result;
 			private readonly bool _isSilent;
-			private readonly CollectionChangesQueue.IHandler? _handler;
+			private readonly CollectionUpdater.IHandler? _handler;
 
 			internal BatchUpdateOperation(CollectionFacet owner, IList result, bool isSilent = false)
 			{
@@ -630,7 +630,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets
 			/// <summary>
 			/// Apply a temporary update as a step toward the final collection
 			/// </summary>
-			public void Update(CollectionChangesQueue changes) => changes.DequeueChanges(_handler, _isSilent);
+			public void Update(CollectionUpdater changes) => changes.DequeueChanges(_handler, _isSilent);
 
 			/// <summary>
 			/// Apply the final collection (won't raise any event)

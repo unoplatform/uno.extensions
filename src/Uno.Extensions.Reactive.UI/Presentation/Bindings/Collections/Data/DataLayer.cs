@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using nVentive.Umbrella.Collections;
+using Uno.Extensions.Collections;
 using Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets;
 
 #if WINUI

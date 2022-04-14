@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 
-namespace nVentive.Umbrella.Collections.Tracking;
+namespace Uno.Extensions.Collections.Tracking;
 
 internal static class CollectionTrackingHelper
 { 
@@ -30,14 +30,14 @@ internal static class CollectionTrackingHelper
 	/// </remarks>
 	/// </param>
 	/// <returns>A list of changes that have to be applied to move a collection from <paramref name="oldItems"/> to <paramref name="newItems"/>.</returns>
-	public static ICollection<NotifyCollectionChangedEventArgs> GetChanges<T>(
+	public static ICollection<RichNotifyCollectionChangedEventArgs> GetChanges<T>(
 		IList<T> oldItems,
 		IList<T> newItems,
 		IEqualityComparer<T> itemComparer,
 		IEqualityComparer<T>? itemVersionComparer)
 	{
-		var tracker = new CollectionTracker<T>(itemComparer, itemVersionComparer);
-		var changes = tracker.GetChanges2(oldItems, newItems);
+		var tracker = new CollectionAnalyzer<T>(itemComparer, itemVersionComparer);
+		var changes = tracker.GetChanges(oldItems, newItems);
 
 		return changes.ToCollectionChanges();
 	}
@@ -63,14 +63,14 @@ internal static class CollectionTrackingHelper
 	/// </remarks>
 	/// </param>
 	/// <returns>A list of changes that have to be applied to move a collection from <paramref name="oldItems"/> to <paramref name="newItems"/>.</returns>
-	public static ICollection<NotifyCollectionChangedEventArgs> GetChanges(
+	public static ICollection<RichNotifyCollectionChangedEventArgs> GetChanges(
 		IList oldItems,
 		IList newItems,
 		IEqualityComparer itemComparer,
 		IEqualityComparer? itemVersionComparer)
 	{
-		var tracker = new CollectionTracker(itemComparer, itemVersionComparer);
-		var changes = tracker.GetChanges2(oldItems, newItems);
+		var tracker = new CollectionAnalyzer(itemComparer, itemVersionComparer);
+		var changes = tracker.GetChanges(oldItems, newItems);
 
 		return changes.ToCollectionChanges();
 	}

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace nVentive.Umbrella.Conversion
+namespace Uno.Extensions.Collections.Umbrella.Conversion
 {
 	/// <summary>
 	/// A converter which inverse the target and the source

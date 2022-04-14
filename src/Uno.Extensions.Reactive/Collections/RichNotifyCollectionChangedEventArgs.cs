@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Specialized;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-namespace nVentive.Umbrella.Collections;
+namespace Uno.Extensions.Collections;
 
-[DebuggerDisplay("{Action} {(OldItems??ResetOldItems)?.Count}/{(NewItems??ResetNewItems)?.Count} @ {OldStartingIndex}/{NewStartingIndex}")]
 public class RichNotifyCollectionChangedEventArgs : NotifyCollectionChangedEventArgs
 {
 	/// <summary>

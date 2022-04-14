@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using nVentive.Umbrella.Collections;
-using nVentive.Umbrella.Collections.Tracking;
-using nVentive.Umbrella.Extensions;
+using Uno.Extensions.Collections;
+using Uno.Extensions.Collections.Tracking;
+using Uno.Extensions.Collections.Umbrella.Extensions;
 using Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets;
 using Umbrella.Presentation.Feeds.Collections._BindableCollection.Views;
 
@@ -16,7 +16,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 	{
 		private readonly DataStructure _dataStructure;
 		private readonly uint _dataLevel;
-		private readonly CollectionTracker _diffAnalyzer;
+		private readonly CollectionAnalyzer _diffAnalyzer;
 
 		/*
 		 * 
@@ -34,7 +34,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 		 * 
 		 */
 
-		public BranchStrategy(DataStructure dataStructure, uint dataLevel, CollectionTracker diffAnalyzer)
+		public BranchStrategy(DataStructure dataStructure, uint dataLevel, CollectionAnalyzer diffAnalyzer)
 		{
 			_dataStructure = dataStructure;
 			_dataLevel = dataLevel;

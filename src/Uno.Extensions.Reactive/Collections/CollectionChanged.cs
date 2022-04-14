@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text;
-using nVentive.Umbrella.Conversion;
+using Uno.Extensions.Collections.Umbrella.Conversion;
 
-namespace nVentive.Umbrella.Collections
+namespace Uno.Extensions.Collections
 {
 	/// <summary>
 	/// Helpers for <see cref="INotifyCollectionChanged"/>
@@ -67,7 +67,7 @@ namespace nVentive.Umbrella.Collections
 		private static readonly NotifyCollectionChangedEventArgs _reset = new(NotifyCollectionChangedAction.Reset);
 
 		/// <summary>
-		/// Converts the old and new items of an <see cref="NotifyCollectionChangedEventArgs"/> using a <see cref="IConverter{TFrom, TTo}"/>
+		/// Converts the old and new items of an <see cref="NotifyCollectionChangedEventArgs"/> using a <see cref="IConverter{TFrom,TTo}"/>
 		/// </summary>
 		/// <typeparam name="TFrom">Type of the items in the original args</typeparam>
 		/// <typeparam name="TTo">Type of the items in the result args</typeparam>

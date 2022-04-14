@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Umbrella.Feeds.Collections.Extensions;
+using Uno.Extensions.Collections;
 
 namespace Umbrella.Presentation.Feeds.Collections
 {

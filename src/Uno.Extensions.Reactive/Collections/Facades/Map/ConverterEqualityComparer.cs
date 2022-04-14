@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using nVentive.Umbrella.Conversion;
+using Uno.Extensions.Collections.Umbrella.Conversion;
 
 namespace Umbrella.Feeds.Conversion
 {

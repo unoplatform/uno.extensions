@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
-namespace nVentive.Umbrella.Conversion
+namespace Uno.Extensions.Collections.Umbrella.Conversion
 {
 	/// <summary>
 	/// Something that is capable to convert instances to and from two well-known types <typeparamref name="TFrom"/> and <typeparamref name="TTo"/>.

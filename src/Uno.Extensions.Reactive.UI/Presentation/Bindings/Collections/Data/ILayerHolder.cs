@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using nVentive.Umbrella.Collections;
+using Uno.Extensions.Collections;
 using Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets;
 
 namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data

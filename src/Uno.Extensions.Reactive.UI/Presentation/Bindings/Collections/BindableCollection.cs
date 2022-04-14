@@ -5,7 +5,7 @@ using System.Collections.Specialized;
 using System.Threading;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
-using nVentive.Umbrella.Collections;
+using Uno.Extensions.Collections;
 using Umbrella.Presentation.Feeds.Collections._BindableCollection;
 using Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets;
 using Umbrella.Presentation.Feeds.Collections._BindableCollection.Data;
@@ -60,7 +60,7 @@ namespace Umbrella.Presentation.Feeds.Collections
 		/// </param>
 		/// <param name="schedulersProvider">Schedulers provider to use to handle concurrency.</param>
 		/// <param name="resetThreshold">Threshold on which the a single reset is raised instead of multiple collection changes.</param>
-		public static BindableCollection Create<T>(
+		internal static BindableCollection Create<T>(
 			IObservableCollection<T>? initial = null,
 			IEqualityComparer<T>? itemComparer = null,
 			IEqualityComparer<T>? itemVersionComparer = null,
@@ -81,7 +81,7 @@ namespace Umbrella.Presentation.Feeds.Collections
 		/// <summary>
 		/// Creates a new instance of a <see cref="BindableCollection"/>, without needing to specify the element type.
 		/// </summary>
-		public static BindableCollection CreateUntyped(
+		internal static BindableCollection CreateUntyped(
 			IObservableCollection? initial = null,
 			IEqualityComparer? itemComparer = null,
 			IEqualityComparer? itemVersionComparer = null,
@@ -100,9 +100,7 @@ namespace Umbrella.Presentation.Feeds.Collections
 			return new BindableCollection(dataStructure, initial, schedulersProvider);
 		}
 
-
-
-		public static BindableCollection CreateGrouped<TKey, T>(
+		internal static BindableCollection CreateGrouped<TKey, T>(
 			IObservableCollection<TKey> initial,
 			IEqualityComparer<TKey>? keyComparer,
 			IEqualityComparer<TKey>? keyVersionComparer,
@@ -124,7 +122,7 @@ namespace Umbrella.Presentation.Feeds.Collections
 			return new BindableCollection(dataStructure, initial, schedulersProvider);
 		}
 
-		public static BindableCollection CreateGrouped<TGroup>(
+		internal static BindableCollection CreateGrouped<TGroup>(
 			IObservableCollection initial,
 			IEqualityComparer<TGroup>? groupComparer,
 			IEqualityComparer<TGroup>? groupVersionComparer,
@@ -146,7 +144,7 @@ namespace Umbrella.Presentation.Feeds.Collections
 			return new BindableCollection(dataStructure, initial, schedulersProvider);
 		}
 
-		public static BindableCollection CreateUntypedGrouped(
+		internal static BindableCollection CreateUntypedGrouped(
 			IObservableCollection initial,
 			IEqualityComparer? groupComparer,
 			IEqualityComparer? groupVersionComparer,
@@ -182,7 +180,7 @@ namespace Umbrella.Presentation.Feeds.Collections
 		/// </summary>
 		/// <param name="source">The new source to use</param>
 		/// <param name="mode"></param>
-		public void Switch(IObservableCollection? source, TrackingMode mode = TrackingMode.Auto)
+		internal void Switch(IObservableCollection? source, TrackingMode mode = TrackingMode.Auto)
 		{
 			source ??= EmptyObservableCollection<object>.Instance;
 

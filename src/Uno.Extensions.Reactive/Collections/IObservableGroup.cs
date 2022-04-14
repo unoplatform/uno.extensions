@@ -1,16 +1,15 @@
 using System;
 using System.Linq;
 
-namespace nVentive.Umbrella.Collections
+namespace Uno.Extensions.Collections;
+
+/// <summary>
+/// A group if items which notifies read and write operations.
+/// </summary>
+internal interface IObservableGroup : IObservableCollection /*TODO, IKeyEquatable */
 {
 	/// <summary>
-	/// A group if items which notifies read and write operations.
+	/// The key of the group
 	/// </summary>
-	public interface IObservableGroup : IObservableCollection /*TODO, IKeyEquatable */
-	{
-		/// <summary>
-		/// The key of the group
-		/// </summary>
-		object Key { get; }
-	}
+	object Key { get; }
 }

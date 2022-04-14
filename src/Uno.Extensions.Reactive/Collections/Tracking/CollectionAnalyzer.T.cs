@@ -5,12 +5,12 @@ using System.Collections.Specialized;
 using System.Linq;
 using Uno.Extensions.Reactive.Utils;
 
-namespace nVentive.Umbrella.Collections.Tracking;
+namespace Uno.Extensions.Collections.Tracking;
 
 /// <summary>
 /// Set of helpers to track changes on collections
 /// </summary>
-internal class CollectionTracker<T> : CollectionTracker
+internal class CollectionAnalyzer<T> : CollectionAnalyzer
 {
 	/// <param name="itemComparer">
 	/// Comparer used to detect multiple versions of the **same entity (T)**, or null to use default.
@@ -27,7 +27,7 @@ internal class CollectionTracker<T> : CollectionTracker
 	/// * If **NOT Equals**: it's 2 **distinct versions** of the **same entity** (not all properties are equals) and we have to raise a 'Replace' to re-evaluate those properties.
 	/// </remarks>
 	/// </param>
-	public CollectionTracker(
+	public CollectionAnalyzer(
 		IEqualityComparer<T>? itemComparer = null,
 		IEqualityComparer<T>? itemVersionComparer = null)
 		: base(
@@ -57,8 +57,8 @@ internal class CollectionTracker<T> : CollectionTracker
 	/// <param name="newItems">The target snapshot</param>
 	/// <param name="visitor">A visitor that can be used to track changes while detecting them.</param>
 	/// <returns>A list of changes that have to be applied to move a collection from <paramref name="oldItems"/> to <paramref name="newItems"/>.</returns>
-	public CollectionChangesQueue GetChanges(IList<T> oldItems, IList<T> newItems, ICollectionTrackingVisitor visitor)
-		=> base.GetChanges((IList)oldItems, (IList)newItems, visitor);
+	public CollectionUpdater GetUpdater(IList<T> oldItems, IList<T> newItems, ICollectionUpdaterVisitor visitor)
+		=> base.GetUpdater((IList)oldItems, (IList)newItems, visitor);
 
 	/// <summary>
 	/// Determines the set of changes between two snapshot of an <see cref="IList{T}"/>
@@ -66,6 +66,6 @@ internal class CollectionTracker<T> : CollectionTracker
 	/// <param name="oldItems">The source snapshot</param>
 	/// <param name="newItems">The target snapshot</param>
 	/// <returns>A list of changes that have to be applied to move a collection from <paramref name="oldItems"/> to <paramref name="newItems"/>.</returns>
-	public CollectionChangeSet GetChanges2(IList<T> oldItems, IList<T> newItems)
-		=> base.GetChanges2((IList)oldItems, (IList)newItems);
+	public CollectionChangeSet GetChanges(IList<T> oldItems, IList<T> newItems)
+		=> base.GetChanges((IList)oldItems, (IList)newItems);
 }

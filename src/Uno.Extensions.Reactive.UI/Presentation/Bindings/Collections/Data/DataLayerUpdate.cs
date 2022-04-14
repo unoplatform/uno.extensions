@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using nVentive.Umbrella.Collections;
-using nVentive.Umbrella.Collections.Tracking;
+using Uno.Extensions.Collections;
+using Uno.Extensions.Collections.Tracking;
 using Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets;
 using Umbrella.Presentation.Feeds.Collections._BindableCollection.Data;
 
@@ -14,7 +14,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 		private readonly List<AfterCallback> _after = new();
 
 		private readonly IObservableCollectionSnapshot? _from;
-		private readonly CollectionChangesQueue _changes;
+		private readonly CollectionUpdater _changes;
 		private readonly CollectionFacet _target;
 		private readonly IUpdateContext _context;
 		private readonly DataLayerChangesBuffer _buffer;
@@ -26,7 +26,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 
 		public DataLayerUpdate(
 			IObservableCollectionSnapshot? from,
-			CollectionChangesQueue changes, 
+			CollectionUpdater changes, 
 			IObservableCollectionSnapshot to, 
 			CollectionFacet target,
 			IUpdateContext context,

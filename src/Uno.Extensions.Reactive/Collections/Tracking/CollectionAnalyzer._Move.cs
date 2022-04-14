@@ -4,12 +4,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace nVentive.Umbrella.Collections.Tracking;
+namespace Uno.Extensions.Collections.Tracking;
 
-partial class CollectionTracker
+partial class CollectionAnalyzer
 {
-	[DebuggerDisplay("Move {_items.Count} from {Starts} to {_to}")]
-	private sealed class _Move : ChangeBase
+	private sealed class _Move : Change
 	{
 		private readonly int _to;
 		private readonly int _indexOffset;
@@ -38,11 +37,11 @@ partial class CollectionTracker
 			=> RichNotifyCollectionChangedEventArgs.MoveSome(_items, Starts + _indexOffset, _to + _indexOffset);
 
 		/// <inheritdoc />
-		protected override CollectionChangesQueue.Node VisitCore(ICollectionTrackingVisitor visitor)
+		protected override CollectionUpdater.Update ToUpdaterCore(ICollectionUpdaterVisitor visitor)
 			=> new(ToEvent());
 
 		/// <inheritdoc />
 		public override string ToString()
-			=> $"Move {_items.Count} from {Starts} to {_to}";
+			=> $"Move {_items.Count} items from {Starts} to {_to}";
 	}
 }

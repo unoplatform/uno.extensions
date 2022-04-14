@@ -28,5 +28,5 @@ internal class SingleAssignmentDisposable : IDisposable
 
 	/// <inheritdoc />
 	public void Dispose()
-		=> Interlocked.Exchange(ref _disposable, Umbrella.Reactive.Collections.Disposable.Empty)?.Dispose();
+		=> Interlocked.Exchange(ref _disposable, Uno.Extensions.Reactive.Utils.Disposable.Empty)?.Dispose();
 }

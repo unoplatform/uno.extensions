@@ -1,12 +1,12 @@
 using System;
 using System.Linq;
 
-namespace nVentive.Umbrella.Collections.Tracking;
+namespace Uno.Extensions.Collections.Tracking;
 
-public sealed partial class CollectionChangesQueue
+sealed partial class CollectionUpdater
 {
 	/// <summary>
-	/// An handler of changes detected by a <see cref="CollectionTracker"/>.
+	/// An handler of changes detected by a <see cref="CollectionAnalyzer"/>.
 	/// </summary>
 	public interface IHandler
 	{

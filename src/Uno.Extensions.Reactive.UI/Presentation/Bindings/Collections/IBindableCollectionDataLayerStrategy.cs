@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using nVentive.Umbrella.Collections;
-using nVentive.Umbrella.Collections.Tracking;
+using Uno.Extensions.Collections;
+using Uno.Extensions.Collections.Tracking;
 using Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets;
 using Umbrella.Presentation.Feeds.Collections._BindableCollection.Data;
 

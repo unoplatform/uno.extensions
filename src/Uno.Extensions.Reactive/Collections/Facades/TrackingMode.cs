@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text;
 
-namespace nVentive.Umbrella.Collections
+namespace Uno.Extensions.Collections
 {
 	/// <summary>
 	/// The modes that can be used to track changes between collections

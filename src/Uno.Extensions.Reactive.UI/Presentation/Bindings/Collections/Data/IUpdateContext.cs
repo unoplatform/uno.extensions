@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.Linq;
-using nVentive.Umbrella.Collections;
+using Uno.Extensions.Collections;
 
 namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 {

@@ -7,7 +7,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
-using nVentive.Umbrella.Collections;
+using Uno.Extensions.Collections;
 using Umbrella.Reactive.Collections;
 using Uno.Extensions.Reactive.Utils;
 

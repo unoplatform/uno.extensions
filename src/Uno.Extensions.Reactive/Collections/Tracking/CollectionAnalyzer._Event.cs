@@ -1,21 +1,17 @@
 using System;
-using System.Collections;
-using System.Collections.Specialized;
-using System.Diagnostics;
 using System.Linq;
 
 using static System.Collections.Specialized.NotifyCollectionChangedAction;
 
-namespace nVentive.Umbrella.Collections.Tracking;
+namespace Uno.Extensions.Collections.Tracking;
 
-partial class CollectionTracker
+partial class CollectionAnalyzer
 {
-	[DebuggerDisplay("Event: {_args.Action} {_args.OldItems?.Count}/{_args.NewItems?.Count} @ {_args.OldStartingIndex}/{_args.NewStartingIndex} (b: {_before.Count} / a: {_after.Count})")]
-	private class _EventArgChange : ChangeBase
+	private class _Event : Change
 	{
 		private readonly RichNotifyCollectionChangedEventArgs _args;
 
-		public _EventArgChange(RichNotifyCollectionChangedEventArgs args)
+		public _Event(RichNotifyCollectionChangedEventArgs args)
 			: base(at: -1)
 		{
 			if (args.Action is not Add and not Remove and not Move and not Reset)
@@ -30,7 +26,7 @@ partial class CollectionTracker
 			=> _args;
 
 		/// <inheritdoc />
-		protected override CollectionChangesQueue.Node VisitCore(ICollectionTrackingVisitor visitor)
+		protected override CollectionUpdater.Update ToUpdaterCore(ICollectionUpdaterVisitor visitor)
 		{
 			var arg = _args;
 			switch (arg.Action)
@@ -42,10 +38,10 @@ partial class CollectionTracker
 					return _Remove.Visit(arg, visitor);
 
 				case Move:
-					return new CollectionChangesQueue.Node(_args);
+					return new CollectionUpdater.Update(_args);
 
 				case Reset:
-					var node = new CollectionChangesQueue.Node(_args);
+					var node = new CollectionUpdater.Update(_args);
 					visitor.Reset(_args.ResetOldItems!, _args.ResetNewItems!, node);
 					return node;
 

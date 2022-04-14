@@ -6,12 +6,12 @@ using System.Diagnostics;
 using System.Linq;
 using Uno.Extensions.Reactive.Utils;
 
-namespace nVentive.Umbrella.Collections.Tracking;
+namespace Uno.Extensions.Collections.Tracking;
 
 /// <summary>
 /// Set of helpers to track changes on collections
 /// </summary>
-internal partial class CollectionTracker
+internal partial class CollectionAnalyzer
 {
 	protected delegate int IndexOf<in TCollection>(object item, TCollection snapshot, int startIndex);
 	protected delegate bool VersionEqual(object oldItem, object newItem);
@@ -35,7 +35,7 @@ internal partial class CollectionTracker
 	/// * If **NOT Equals**: it's 2 **distinct versions** of the **same entity** (not all properties are equals) and we have to raise a 'Replace' to re-evaluate those properties.
 	/// </remarks>
 	/// </param>
-	public CollectionTracker(
+	public CollectionAnalyzer(
 		IEqualityComparer? itemComparer = null,
 		IEqualityComparer? itemVersionComparer = null)
 		: this(
@@ -45,7 +45,7 @@ internal partial class CollectionTracker
 	{
 	}
 
-	protected CollectionTracker(
+	protected CollectionAnalyzer(
 		IndexOf<IList> indexOfInSnapshot,
 		IndexOf<IList> indexOfInList,
 		VersionEqual? versionEqual)
@@ -62,8 +62,8 @@ internal partial class CollectionTracker
 	/// <param name="oldItems">The source snapshot</param>
 	/// <param name="newItems">The target snapshot</param>
 	/// <returns>A list of changes containing only a 'Reset' event that can be applied to move a collection from <paramref name="oldItems"/> to <paramref name="newItems"/>.</returns>
-	public CollectionChangeSet GetReset2(IList? oldItems, IList newItems)
-		=> GetChanges2(RichNotifyCollectionChangedEventArgs.Reset(oldItems, newItems));
+	public CollectionChangeSet GetReset(IList? oldItems, IList newItems)
+		=> GetChanges(RichNotifyCollectionChangedEventArgs.Reset(oldItems, newItems));
 
 	/// <summary>
 	/// Determines the set of changes between two snapshot of an <see cref="IList{T}"/>
@@ -71,7 +71,7 @@ internal partial class CollectionTracker
 	/// <param name="oldItems">The source snapshot</param>
 	/// <param name="newItems">The target snapshot</param>
 	/// <returns>A list of changes that have to be applied to move a collection from <paramref name="oldItems"/> to <paramref name="newItems"/>.</returns>
-	public CollectionChangeSet GetChanges2(IList oldItems, IList newItems)
+	public CollectionChangeSet GetChanges(IList oldItems, IList newItems)
 		=> new(GetChangesCore(oldItems, newItems, _indexOfInSnapshot, _versionEqual));
 
 	/// <summary>
@@ -79,7 +79,7 @@ internal partial class CollectionTracker
 	/// </summary>
 	/// <param name="arg">The event arg to adjust</param>
 	/// <returns>A list of changes that have to be applied to move properly apply the provided event arg.</returns>
-	public CollectionChangeSet GetChanges2(RichNotifyCollectionChangedEventArgs arg)
+	public CollectionChangeSet GetChanges(RichNotifyCollectionChangedEventArgs arg)
 		=> new(GetChangesCore(arg));
 
 	/// <summary>
@@ -89,8 +89,8 @@ internal partial class CollectionTracker
 	/// <param name="newItems">The target snapshot</param>
 	/// <param name="visitor">A visitor that can be used to track changes while detecting them.</param>
 	/// <returns>A list of changes containing only a 'Reset' event that can be applied to move a collection from <paramref name="oldItems"/> to <paramref name="newItems"/>.</returns>
-	public CollectionChangesQueue GetReset(IList? oldItems, IList newItems, ICollectionTrackingVisitor visitor)
-		=> GetChanges(RichNotifyCollectionChangedEventArgs.Reset(oldItems, newItems), visitor);
+	public CollectionUpdater GetReset(IList? oldItems, IList newItems, ICollectionUpdaterVisitor visitor)
+		=> GetUpdater(RichNotifyCollectionChangedEventArgs.Reset(oldItems, newItems), visitor);
 
 	/// <summary>
 	/// Determines the set of changes between two snapshot of an <see cref="IList{T}"/>
@@ -99,7 +99,7 @@ internal partial class CollectionTracker
 	/// <param name="newItems">The target snapshot</param>
 	/// <param name="visitor">A visitor that can be used to track changes while detecting them.</param>
 	/// <returns>A list of changes that have to be applied to move a collection from <paramref name="oldItems"/> to <paramref name="newItems"/>.</returns>
-	public CollectionChangesQueue GetChanges(IList oldItems, IList newItems, ICollectionTrackingVisitor visitor)
+	public CollectionUpdater GetUpdater(IList oldItems, IList newItems, ICollectionUpdaterVisitor visitor)
 		=> CreateUpdaterCore(oldItems, newItems, _indexOfInSnapshot, _versionEqual, visitor);
 
 	/// <summary>
@@ -108,34 +108,34 @@ internal partial class CollectionTracker
 	/// <param name="arg">The event arg to adjust</param>
 	/// <param name="visitor">A visitor that can be used to track changes while detecting them.</param>
 	/// <returns>A list of changes that have to be applied to move properly apply the provided event arg.</returns>
-	public CollectionChangesQueue GetChanges(RichNotifyCollectionChangedEventArgs arg, ICollectionTrackingVisitor visitor)
+	public CollectionUpdater GetUpdater(RichNotifyCollectionChangedEventArgs arg, ICollectionUpdaterVisitor visitor)
 	{
 		var changesHead = GetChangesCore(arg);
-		var updaterHead = changesHead?.Visit(visitor);
+		var updaterHead = changesHead?.ToUpdater(visitor);
 
 		return updaterHead is null
-			? CollectionChangesQueue.Empty
+			? CollectionUpdater.Empty
 			: new(updaterHead);
 	}
 
-	private static CollectionChangesQueue CreateUpdaterCore<TSnapshot>(
+	private static CollectionUpdater CreateUpdaterCore<TSnapshot>(
 		TSnapshot oldItems,
 		TSnapshot newItems,
 		IndexOf<TSnapshot> indexOf,
 		VersionEqual? itemVersionComparer,
-		ICollectionTrackingVisitor visitor,
+		ICollectionUpdaterVisitor visitor,
 		int eventArgsOffset = 0)
 		where TSnapshot : IList
 	{
 		var changesHead = GetChangesCore(oldItems, newItems, indexOf, itemVersionComparer, eventArgsOffset);
-		var updaterHead = changesHead?.Visit(visitor);
+		var updaterHead = changesHead?.ToUpdater(visitor);
 
 		return updaterHead is null
-			? CollectionChangesQueue.Empty
+			? CollectionUpdater.Empty
 			: new(updaterHead);
 	}
 
-	private ChangeBase? GetChangesCore(RichNotifyCollectionChangedEventArgs arg)
+	private Change? GetChangesCore(RichNotifyCollectionChangedEventArgs arg)
 	{
 		switch (arg.Action)
 		{
@@ -143,7 +143,7 @@ internal partial class CollectionTracker
 			case NotifyCollectionChangedAction.Remove:
 			case NotifyCollectionChangedAction.Move:
 			case NotifyCollectionChangedAction.Reset:
-				return new _EventArgChange(arg);
+				return new _Event(arg);
 
 			case NotifyCollectionChangedAction.Replace:
 				return GetChangesCore(arg.OldItems, arg.NewItems, _indexOfInList, _versionEqual, arg.OldStartingIndex);
@@ -153,13 +153,13 @@ internal partial class CollectionTracker
 		}
 	}
 
-	private static ChangeBase? GetChangesCore<TSnapshot>(
-		TSnapshot oldItems,
-		TSnapshot newItems,
-		IndexOf<TSnapshot> indexOf,
+	private static Change? GetChangesCore<TCollection>(
+		TCollection oldItems,
+		TCollection newItems,
+		IndexOf<TCollection> indexOf,
 		VersionEqual? itemVersionComparer,
 		int eventArgsOffset = 0)
-		where TSnapshot : IList
+		where TCollection : IList
 	{
 		/*
 		* OLD: the source collection we are going to update to the NEW
@@ -177,7 +177,7 @@ internal partial class CollectionTracker
 		int added = 0, moved = 0, removed = 0;
 		var buffer = new ChangesBuffer(oldItems.Count, newItems.Count, eventArgsOffset);
 
-		var oldEnumerator = new SnapshotEnumerator<TSnapshot>(oldItems, indexOf);
+		var oldEnumerator = new SourceEnumerator<TCollection>(oldItems, indexOf);
 		while (oldEnumerator.MoveNext())
 		{
 			var oldIndex = oldEnumerator.CurrentIndex;

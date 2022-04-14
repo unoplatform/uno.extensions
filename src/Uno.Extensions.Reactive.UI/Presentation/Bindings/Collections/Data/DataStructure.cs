@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
-using nVentive.Umbrella.Collections;
-using nVentive.Umbrella.Collections.Tracking;
+using Uno.Extensions.Collections;
+using Uno.Extensions.Collections.Tracking;
 
 namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 {
@@ -32,7 +32,7 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 			}
 
 			var comparers = _comparersStructure[level];
-			var tracker = new CollectionTracker(comparers.itemComparer, comparers.itemVersionComparer);
+			var tracker = new CollectionAnalyzer(comparers.itemComparer, comparers.itemVersionComparer);
 
 			if (level + 1 == _comparersStructure.Length)
 			{

@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Windows.Foundation.Collections;
-using nVentive.Umbrella.Collections;
+using Uno.Extensions.Collections;
 using Umbrella.Presentation.Feeds.Collections._BindableCollection.Data;
 
 namespace Umbrella.Presentation.Feeds.Collections._BindableCollection

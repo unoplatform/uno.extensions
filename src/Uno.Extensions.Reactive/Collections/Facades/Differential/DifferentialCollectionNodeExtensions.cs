@@ -5,7 +5,7 @@ using System.Collections.Specialized;
 using System.Text;
 using Umbrella.Collections.Facades.Differential;
 
-namespace nVentive.Umbrella.Extensions;
+namespace Uno.Extensions.Collections.Umbrella.Extensions;
 
 /// <summary>
 /// Extensions over <see cref="IDifferentialCollectionNode"/>.

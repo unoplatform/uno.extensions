@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using nVentive.Umbrella.Collections;
-using nVentive.Umbrella.Collections.Tracking;
+using Uno.Extensions.Collections;
+using Uno.Extensions.Collections.Tracking;
 using Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets;
 using Umbrella.Presentation.Feeds.Collections._BindableCollection.Views;
 
@@ -14,10 +14,10 @@ namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
 	internal class LeafStrategy : IBindableCollectionDataLayerStrategy
 	{
 		private readonly DataStructure _dataStructure;
-		private readonly CollectionTracker _diffAnalyzer;
+		private readonly CollectionAnalyzer _diffAnalyzer;
 		private readonly bool _isRoot;
 
-		public LeafStrategy(DataStructure dataStructure, CollectionTracker diffAnalyzer, bool isRoot)
+		public LeafStrategy(DataStructure dataStructure, CollectionAnalyzer diffAnalyzer, bool isRoot)
 		{
 			_dataStructure = dataStructure;
 			_diffAnalyzer = diffAnalyzer;

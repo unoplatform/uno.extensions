@@ -6,7 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
-using nVentive.Umbrella.Collections;
+using Uno.Extensions.Collections;
 using Umbrella.Feeds.Collections.Facades;
 using Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets;
 

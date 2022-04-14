@@ -5,9 +5,9 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Windows.Foundation.Collections;
-using nVentive.Umbrella.Collections;
-using nVentive.Umbrella.Conversion;
-using nVentive.Umbrella.Extensions;
+using Uno.Extensions.Collections;
+using Uno.Extensions.Collections.Umbrella.Conversion;
+using Uno.Extensions.Collections.Umbrella.Extensions;
 using Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets;
 
 namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Views

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace nVentive.Umbrella.Collections.Tracking;
+namespace Uno.Extensions.Collections.Tracking;
 
-internal static class CollectionTrackingVisitorCallbackHelper
+internal static class CollectionUpdateCallbackHelper
 {
 	public static BeforeCallback? Combine(this List<BeforeCallback> uiCallbacks)
 	{

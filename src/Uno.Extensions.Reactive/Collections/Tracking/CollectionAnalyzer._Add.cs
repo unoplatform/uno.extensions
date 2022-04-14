@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace nVentive.Umbrella.Collections.Tracking;
+namespace Uno.Extensions.Collections.Tracking;
 
-partial class CollectionTracker
+partial class CollectionAnalyzer
 {
-	[DebuggerDisplay("Add {_items.Count} @ {Starts} (b: {_before.Count} / a: {_after.Count})")]
-	private sealed class _Add : ChangeBase
+	private sealed class _Add : Change
 	{
 		private readonly int _indexOffset;
 		private readonly List<object> _items;
@@ -35,12 +34,12 @@ partial class CollectionTracker
 			=> RichNotifyCollectionChangedEventArgs.AddSome(_items, Starts + _indexOffset);
 
 		/// <inheritdoc />
-		protected override CollectionChangesQueue.Node VisitCore(ICollectionTrackingVisitor visitor)
+		protected override CollectionUpdater.Update ToUpdaterCore(ICollectionUpdaterVisitor visitor)
 			=> Visit(ToEvent(), visitor);
 
-		internal static CollectionChangesQueue.Node Visit(RichNotifyCollectionChangedEventArgs args, ICollectionTrackingVisitor visitor)
+		internal static CollectionUpdater.Update Visit(RichNotifyCollectionChangedEventArgs args, ICollectionUpdaterVisitor visitor)
 		{
-			var callback = new CollectionChangesQueue.Node(args);
+			var callback = new CollectionUpdater.Update(args);
 			var items = args.NewItems;
 
 			for (var i = 0; i < items.Count; i++)
@@ -53,6 +52,6 @@ partial class CollectionTracker
 
 		/// <inheritdoc />
 		public override string ToString()
-			=> $"Add {_items.Count} @ {Starts}";
+			=> $"Add {_items.Count} items at {Starts}";
 	}
 }
