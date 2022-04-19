@@ -8,9 +8,9 @@ using Windows.Foundation.Collections;
 using Uno.Extensions.Collections;
 using Uno.Extensions.Collections.Umbrella.Conversion;
 using Uno.Extensions.Collections.Umbrella.Extensions;
-using Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets;
+using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets;
 
-namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Views
+namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views
 {
 	/// <summary>
 	/// A view on a <see cref="IBindableCollectionViewSource"/> which map each item into another type.

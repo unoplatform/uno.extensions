@@ -4,10 +4,10 @@ using System.Linq;
 using Uno.Extensions.Collections;
 using Uno.Extensions.Collections.Tracking;
 using Uno.Extensions.Collections.Umbrella.Extensions;
-using Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets;
-using Umbrella.Presentation.Feeds.Collections._BindableCollection.Views;
+using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets;
+using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views;
 
-namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
+namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 {
 	/// <summary>
 	/// A holder of a branch in a tree of nested <see cref="IObservableCollection"/>.

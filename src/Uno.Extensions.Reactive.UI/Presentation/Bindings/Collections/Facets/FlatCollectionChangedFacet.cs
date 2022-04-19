@@ -13,7 +13,7 @@ using Uno.Extensions;
 using Uno.Logging;
 using _CollectionChanged = Uno.Extensions.Collections.RichNotifyCollectionChangedEventArgs;
 
-namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets
+namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets
 {
 	internal class FlatCollectionChangedFacet : CollectionChangedFacet
 	{

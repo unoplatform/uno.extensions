@@ -2,7 +2,7 @@
 using System.Linq;
 using Uno.Extensions.Collections;
 
-namespace Umbrella.Presentation.Feeds.Collections._BindableCollection
+namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection
 {
 	internal interface IBindableCollectionViewSource
 	{

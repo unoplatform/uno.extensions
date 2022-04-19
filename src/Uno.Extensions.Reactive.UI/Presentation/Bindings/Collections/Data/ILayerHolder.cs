@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 using Uno.Extensions.Collections;
-using Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets;
+using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets;
 
-namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
+namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 {
 	/// <summary>
 	/// The state holder of a layer of data

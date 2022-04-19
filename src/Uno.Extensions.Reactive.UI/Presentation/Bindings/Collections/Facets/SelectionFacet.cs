@@ -18,7 +18,7 @@ using CurrentChangingEventArgs = System.ComponentModel.CurrentChangingEventArgs;
 using CurrentChangedEventHandler = System.EventHandler;
 #endif
 
-namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets
+namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets
 {
 	/// <summary>
 	/// The selection facet of the ICollectionView

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
-using Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets;
+using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets;
 
 #if WINUI
 using CurrentChangingEventHandler = Microsoft.UI.Xaml.Data.CurrentChangingEventHandler;
@@ -20,7 +20,7 @@ using CurrentChangingEventArgs = System.ComponentModel.CurrentChangingEventArgs;
 using CurrentChangedEventHandler = System.EventHandler;
 #endif
 
-namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Views
+namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views
 {
 	/// <summary>
 	/// A basic view on a <see cref="IBindableCollectionViewSource"/>.

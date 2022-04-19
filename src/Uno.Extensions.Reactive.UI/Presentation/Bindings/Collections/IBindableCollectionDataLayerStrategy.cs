@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Uno.Extensions.Collections;
 using Uno.Extensions.Collections.Tracking;
-using Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets;
-using Umbrella.Presentation.Feeds.Collections._BindableCollection.Data;
+using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data;
+using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets;
 
-namespace Umbrella.Presentation.Feeds.Collections._BindableCollection
+namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection
 {
 	/// <summary>
 	/// The strategy used by a <see cref="DataLayer"/> to maintain a layer of data.

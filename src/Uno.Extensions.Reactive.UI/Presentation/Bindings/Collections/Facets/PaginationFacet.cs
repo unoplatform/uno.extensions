@@ -5,7 +5,7 @@ using Windows.Foundation;
 using Uno.Extensions;
 using Uno.Logging;
 
-namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets
+namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets
 {
 	/// <summary>
 	/// The pagination facet of an ICollectionView

@@ -3,42 +3,41 @@ using System.Linq;
 using System.Threading.Tasks;
 using Uno.Extensions.Collections;
 
-namespace Umbrella.Presentation.Feeds.Collections
+namespace Uno.Extensions.Reactive.Bindings.Collections;
+
+internal class LoadMoreItemsRequest
 {
-	public class LoadMoreItemsRequest
+	private readonly TaskCompletionSource<IPageContent> _result = new();
+
+	internal LoadMoreItemsRequest(uint requested)
 	{
-		private readonly TaskCompletionSource<IPageContent> _result = new();
+		Requested = requested;
+	}
 
-		internal LoadMoreItemsRequest(uint requested)
+	public uint Requested { get; }
+
+	internal void Completed(IPageContent pageContent)
+		=> _result.TrySetResult(pageContent);
+
+	internal void Failed(Exception error)
+		=> _result.TrySetException(error);
+
+	internal void Aborted()
+		=> _result.TrySetCanceled();
+
+	/// <summary>
+	/// Gets the count of loaded items.
+	/// </summary>
+	/// <returns>Number of items loaded, or 0 if the request was aborted or if the source failed to load more items.</returns>
+	public async Task<uint> GetLoaded()
+	{
+		try
 		{
-			Requested = requested;
+			return (await _result.Task).Count;
 		}
-
-		public uint Requested { get; }
-
-		internal void Completed(IPageContent pageContent)
-			=> _result.TrySetResult(pageContent);
-
-		internal void Failed(Exception error)
-			=> _result.TrySetException(error);
-
-		internal void Aborted()
-			=> _result.TrySetCanceled();
-
-		/// <summary>
-		/// Gets the count of loaded items.
-		/// </summary>
-		/// <returns>Number of items loaded, or 0 if the request was aborted or if the source failed to load more items.</returns>
-		public async Task<uint> GetLoaded()
+		catch
 		{
-			try
-			{
-				return (await _result.Task).Count;
-			}
-			catch
-			{
-				return 0;
-			}
+			return 0;
 		}
 	}
 }

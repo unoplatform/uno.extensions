@@ -14,7 +14,7 @@ using Umbrella.Collections.Facades.Differential;
 using Uno.Extensions;
 using Uno.Logging;
 
-namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets
+namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets
 {
 	/// <summary>
 	/// A collection which applies a differential logic to maintain its state

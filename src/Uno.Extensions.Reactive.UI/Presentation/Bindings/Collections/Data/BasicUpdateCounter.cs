@@ -2,7 +2,7 @@
 using System.Linq;
 using Uno.Extensions.Collections;
 
-namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
+namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 {
 	internal class BasicUpdateCounter : IUpdateContext
 	{

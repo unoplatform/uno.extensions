@@ -4,9 +4,9 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Windows.Foundation.Collections;
 using Uno.Extensions.Collections;
-using Umbrella.Presentation.Feeds.Collections._BindableCollection.Data;
+using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data;
 
-namespace Umbrella.Presentation.Feeds.Collections._BindableCollection
+namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection
 {
 	/// <summary>
 	/// A group of items of a bindable collection

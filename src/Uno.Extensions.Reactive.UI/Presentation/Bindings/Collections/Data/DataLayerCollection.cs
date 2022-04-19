@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using Uno.Extensions.Collections;
 using Uno.Extensions.Collections.Umbrella.Conversion;
 
-namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
+namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 {
 	/// <summary>
 	/// A collection responsible to maintain the holders for the children items of a branch 

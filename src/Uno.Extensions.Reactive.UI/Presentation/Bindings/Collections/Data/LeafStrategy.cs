@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Uno.Extensions.Collections;
 using Uno.Extensions.Collections.Tracking;
-using Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets;
-using Umbrella.Presentation.Feeds.Collections._BindableCollection.Views;
+using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets;
+using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views;
 
-namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
+namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 {
 	/// <summary>
 	/// A holder of a leaf in a tree of nested <see cref="IObservableCollection"/>, or the root collection in case on non grouped collections

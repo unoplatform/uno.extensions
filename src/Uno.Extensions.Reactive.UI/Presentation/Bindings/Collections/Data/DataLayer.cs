@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Uno.Extensions.Collections;
-using Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets;
+using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets;
 
 #if WINUI
 using ISchedulerInfo = Microsoft.UI.Dispatching.DispatcherQueue;
@@ -10,7 +10,7 @@ using ISchedulerInfo = Microsoft.UI.Dispatching.DispatcherQueue;
 using ISchedulerInfo = Windows.System.DispatcherQueue;
 #endif
 
-namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
+namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 {
 	/// <summary>
 	/// A holder of a data layer for a given scheduler context

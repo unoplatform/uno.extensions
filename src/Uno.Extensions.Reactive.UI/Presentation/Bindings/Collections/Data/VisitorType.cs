@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
+namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 {
 	internal enum VisitorType
 	{

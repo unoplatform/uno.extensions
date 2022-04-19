@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading;
 
-namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data;
+namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data;
 
 internal class SingleAssignmentDisposable : IDisposable
 {

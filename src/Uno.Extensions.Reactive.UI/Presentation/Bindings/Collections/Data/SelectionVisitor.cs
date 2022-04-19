@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using Uno.Extensions.Collections.Tracking;
-using Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets;
+using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets;
 
-namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
+namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 {
 	internal class SelectionVisitor : CollectionUpdaterVisitor
 	{

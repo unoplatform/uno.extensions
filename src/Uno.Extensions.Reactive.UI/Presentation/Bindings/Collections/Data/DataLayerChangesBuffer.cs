@@ -6,12 +6,12 @@ using System.Linq;
 using System.Threading;
 using Uno.Extensions.Collections;
 using Uno.Extensions.Collections.Tracking;
-using Umbrella.Presentation.Feeds.Collections._BindableCollection.Data;
+using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data;
 using Uno;
 using Uno.Extensions;
 using Uno.Logging;
 
-namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
+namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 {
 	/// <summary>
 	/// Class responsible to:

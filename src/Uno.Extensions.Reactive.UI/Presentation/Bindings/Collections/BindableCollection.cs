@@ -6,10 +6,10 @@ using System.Threading;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Uno.Extensions.Collections;
-using Umbrella.Presentation.Feeds.Collections._BindableCollection;
-using Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets;
-using Umbrella.Presentation.Feeds.Collections._BindableCollection.Data;
 using Umbrella.Reactive.Collections;
+using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection;
+using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data;
+using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets;
 using Uno.Extensions.Reactive.Dispatching;
 using Uno.Extensions.Reactive.Utils;
 
@@ -27,12 +27,12 @@ using CurrentChangingEventArgs = System.ComponentModel.CurrentChangingEventArgs;
 using CurrentChangedEventHandler = System.EventHandler;
 #endif
 
-namespace Umbrella.Presentation.Feeds.Collections
+namespace Uno.Extensions.Reactive.Bindings.Collections
 {
 	/// <summary>
 	/// A collection which is responsible to manage the items tracking.
 	/// </summary>
-	public sealed partial class BindableCollection : ICollectionView, INotifyCollectionChanged
+	internal sealed partial class BindableCollection : ICollectionView, INotifyCollectionChanged
 	{
 		private readonly IBindableCollectionDataStructure _dataStructure;
 		private readonly DispatcherLocal<DataLayer> _holder;

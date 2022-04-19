@@ -3,7 +3,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using Windows.Foundation.Collections;
 
-namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Facets
+namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets
 {
 	[Flags]
 	internal enum ObservableCollectionKind

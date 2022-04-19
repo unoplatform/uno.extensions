@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace Umbrella.Presentation.Feeds.Collections._BindableCollection
+namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection
 {
 	/// <summary>
 	/// Represents the structure of the data which is handle by a <see cref="BindableCollection"/>

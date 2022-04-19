@@ -3,7 +3,7 @@ using System.Linq;
 using Uno.Extensions.Collections;
 using Uno.Extensions.Collections.Tracking;
 
-namespace Umbrella.Presentation.Feeds.Collections._BindableCollection.Data
+namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 {
 	/// <summary>
 	/// The collection tracker to use to maintain a layer of data
