@@ -10,12 +10,22 @@ using Uno.Extensions.Reactive.Core;
 
 namespace Uno.Extensions.Reactive.Bindings;
 
+/// <summary>
+/// An helper class use to data-bind a <see cref="IListFeed{T}"/>.
+/// </summary>
+/// <typeparam name="T">The type of the items.</typeparam>
 public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListInput<T>, IInput<IImmutableList<T>>
 {
 	private readonly CancellationTokenSource _ct = new();
 	private readonly BindableCollection _items;
 	private readonly IState<IImmutableList<T>> _state;
 
+	/// <summary>
+	/// Creates a new instance.
+	/// </summary>
+	/// <param name="propertyName">The name of the property backed by the object.</param>
+	/// <param name="source">The source data stream.</param>
+	/// <param name="ctx">The context of the owner.</param>
 	public BindableListFeed(string propertyName, IListFeed<T> source, SourceContext ctx)
 	{
 		PropertyName = propertyName;
@@ -51,6 +61,7 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListInput<
 		}
 	}
 
+	/// <inheritdoc />
 	public IAsyncEnumerable<Message<IImmutableList<T>>> GetSource(SourceContext context, CancellationToken ct = default)
 	{
 		// TODO Uno: Should the source be per thread? This is actually not used for bindings.

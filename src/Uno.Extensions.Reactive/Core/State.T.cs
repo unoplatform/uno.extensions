@@ -10,6 +10,10 @@ using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive;
 
+/// <summary>
+/// Provides a set of static methods to create and manipulate <see cref="IState{T}"/>.
+/// </summary>
+/// <typeparam name="T">The type of the data.</typeparam>
 public static partial class State<T>
 {
 	/// <summary>

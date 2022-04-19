@@ -93,8 +93,4 @@
 	  </Compile>
 	</ItemGroup>
 
-	<ItemGroup>
-	  <SourceGeneratorInput Remove="Core\ListFeed.T.cs" />
-	</ItemGroup>
-
 </Project>
