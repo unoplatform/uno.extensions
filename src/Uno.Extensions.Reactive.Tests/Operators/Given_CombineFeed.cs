@@ -7,6 +7,7 @@ using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions;
 using Uno.Extensions.Reactive;
+using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Testing;
 using Uno.Extensions.Reactive.Tests.Sources;
 
@@ -18,8 +19,8 @@ namespace Uno.Reactive.Tests.Operators
 		[TestMethod]
 		public async Task When_Combine2()
 		{
-			var feed1 = new State<int>(Option<int>.Undefined());
-			var feed2 = new State<int>(Option<int>.Undefined());
+			var feed1 = new StateImpl<int>(Option<int>.Undefined());
+			var feed2 = new StateImpl<int>(Option<int>.Undefined());
 
 			var sut = Feed.Combine(feed1, feed2).Record();
 

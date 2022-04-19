@@ -13,7 +13,7 @@ namespace Uno.Extensions.Reactive;
 public static class Feed<T> // We set the T on the class to it greatly helps type inference of factory delegates
 {
 	/// <summary>
-	/// Creates a custom feed from a raw <see cref="IAsyncEnumerable{T}"/> sequence of <see cref="Message{T}"/>.
+	/// Gets or create a custom feed from a raw <see cref="IAsyncEnumerable{T}"/> sequence of <see cref="Message{T}"/>.
 	/// </summary>
 	/// <param name="sourceProvider">The provider of the message enumerable sequence.</param>
 	/// <returns>A feed that encapsulate the source.</returns>
@@ -21,7 +21,7 @@ public static class Feed<T> // We set the T on the class to it greatly helps typ
 		=> AttachedProperty.GetOrCreate(sourceProvider, sp => new CustomFeed<T>(sp));
 
 	/// <summary>
-	/// Creates a custom feed from a raw <see cref="IAsyncEnumerable{T}"/> sequence of <see cref="Message{T}"/>.
+	/// Gets or create a custom feed from a raw <see cref="IAsyncEnumerable{T}"/> sequence of <see cref="Message{T}"/>.
 	/// </summary>
 	/// <param name="sourceProvider">The provider of the message enumerable sequence.</param>
 	/// <returns>A feed that encapsulate the source.</returns>
@@ -29,7 +29,7 @@ public static class Feed<T> // We set the T on the class to it greatly helps typ
 		=> AttachedProperty.GetOrCreate(sourceProvider, sp => new CustomFeed<T>(_ => sp()));
 
 	/// <summary>
-	/// Creates a custom feed from an async method.
+	/// Gets or create a custom feed from an async method.
 	/// </summary>
 	/// <param name="valueProvider">The async method to use to load the value of the resulting feed.</param>
 	/// <param name="refresh">A refresh trigger to reload the <paramref name="valueProvider"/>.</param>
@@ -40,7 +40,7 @@ public static class Feed<T> // We set the T on the class to it greatly helps typ
 			: AttachedProperty.GetOrCreate(refresh, valueProvider, (r, vp) => new AsyncFeed<T>(vp, r));
 
 	/// <summary>
-	/// Creates a custom feed from an async method.
+	/// Gets or create a custom feed from an async method.
 	/// </summary>
 	/// <param name="valueProvider">The async method to use to load the value of the resulting feed.</param>
 	/// <param name="refresh">A refresh trigger to reload the <paramref name="valueProvider"/>.</param>
@@ -51,7 +51,7 @@ public static class Feed<T> // We set the T on the class to it greatly helps typ
 			: AttachedProperty.GetOrCreate(refresh, valueProvider, (r, vp) => new AsyncFeed<T>(vp, r));
 
 	/// <summary>
-	/// Creates a custom feed from an async enumerable sequence of value.
+	/// Gets or create a custom feed from an async enumerable sequence of value.
 	/// </summary>
 	/// <param name="enumerableProvider">The async enumerable sequence of value of the resulting feed.</param>
 	/// <returns>A feed that encapsulate the source.</returns>
@@ -59,7 +59,7 @@ public static class Feed<T> // We set the T on the class to it greatly helps typ
 		=> AttachedProperty.GetOrCreate(enumerableProvider, ep => new AsyncEnumerableFeed<T>(ep));
 
 	/// <summary>
-	/// Creates a custom feed from an async enumerable sequence of value.
+	/// Gets or create a custom feed from an async enumerable sequence of value.
 	/// </summary>
 	/// <param name="enumerableProvider">The async enumerable sequence of value of the resulting feed.</param>
 	/// <returns>A feed that encapsulate the source.</returns>

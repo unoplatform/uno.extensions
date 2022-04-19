@@ -239,7 +239,7 @@ public partial class Given_BasicViewModel_Then_Generate__ViewModel
 
 	public IFeed<string> AFeedField = Feed.Async(async ct => "42");
 
-	public IState<string> AStateField = new State<string>(SourceContext.Current, Feed.Async(async ct => "42"));
+	public IState<string> AStateField = new StateImpl<string>(SourceContext.Current, Feed.Async(async ct => "42"));
 
 	public CustomFeed ACustomFeedField = new CustomFeed();
 
@@ -255,7 +255,7 @@ public partial class Given_BasicViewModel_Then_Generate__ViewModel
 
 	public IFeed<string> AFeedProperty { get; } = Feed.Async(async ct => "AFeedProperty");
 
-	public IState<string> AStateProperty { get; } = new State<string>(SourceContext.Current, Feed.Async(async ct => "AStateProperty"));
+	public IState<string> AStateProperty { get; } = new StateImpl<string>(SourceContext.Current, Feed.Async(async ct => "AStateProperty"));
 
 	public CustomFeed ACustomFeedProperty { get; } = new CustomFeed();
 

@@ -10,7 +10,7 @@ namespace Uno.Extensions.Reactive;
 /// <summary>
 /// Provides a set of static methods to create and manipulate <see cref="IState{T}"/>.
 /// </summary>
-public static class State
+partial class State
 {
 	/// <summary>
 	/// Updates the value of a state

@@ -5,13 +5,12 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Utils;
 using Uno.Threading;
 
-namespace Uno.Extensions.Reactive;
+namespace Uno.Extensions.Reactive.Core;
 
-internal sealed class State<T> : IState<T>, IFeed<T>, IAsyncDisposable
+internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable
 {
 	private readonly FastAsyncLock _updateGate = new();
 	private readonly IForEachRunner? _innerEnumeration;
@@ -43,7 +42,7 @@ internal sealed class State<T> : IState<T>, IFeed<T>, IAsyncDisposable
 		}
 	}
 
-	public State(SourceContext context, IFeed<T> feed, StateSubscriptionMode mode = StateSubscriptionMode.Default)
+	public StateImpl(SourceContext context, IFeed<T> feed, StateSubscriptionMode mode = StateSubscriptionMode.Default)
 	{
 		Context = context;
 		_innerEnumeration = mode.HasFlag(StateSubscriptionMode.RefCounted)
@@ -62,7 +61,7 @@ internal sealed class State<T> : IState<T>, IFeed<T>, IAsyncDisposable
 			=> UpdateCore(currentStateMsg => currentStateMsg.OverrideBy(newSrcMsg), ct);
 	}
 
-	public State(Option<T> defaultValue)
+	public StateImpl(Option<T> defaultValue)
 	{
 		_hasCurrent = true; // Even if undefined, we consider that we do have a value in order to produce an initial state
 

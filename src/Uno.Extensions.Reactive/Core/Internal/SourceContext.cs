@@ -162,7 +162,7 @@ public sealed class SourceContext : IAsyncDisposable
 	public IState<T> GetOrCreateState<T>(IFeed<T> feed)
 		=> GetOrCreateStateCore(feed);
 
-	private State<T> GetOrCreateStateCore<T>(IFeed<T> feed)
+	private StateImpl<T> GetOrCreateStateCore<T>(IFeed<T> feed)
 	{
 		if (_isNone)
 		{
@@ -175,7 +175,7 @@ public sealed class SourceContext : IAsyncDisposable
 			throw new ObjectDisposedException(nameof(SourceContext));
 		}
 
-		if (feed is State<T> state && state.Context == this)
+		if (feed is StateImpl<T> state && state.Context == this)
 		{
 			return state;
 		}
@@ -183,8 +183,8 @@ public sealed class SourceContext : IAsyncDisposable
 		lock (states)
 		{
 			state = states.TryGetValue(feed, out var existing)
-				? (State<T>)existing
-				: (State<T>)(states[feed] = new State<T>(this, feed));
+				? (StateImpl<T>)existing
+				: (StateImpl<T>)(states[feed] = new StateImpl<T>(this, feed));
 		}
 
 		if (_states is null) // The context has been disposed while we where creating the State ...

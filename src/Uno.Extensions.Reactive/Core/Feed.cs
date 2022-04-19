@@ -17,7 +17,7 @@ public static partial class Feed
 	//		 We must have only one overload per method.
 
 	/// <summary>
-	/// Creates a custom feed from a raw <see cref="IAsyncEnumerable{T}"/> sequence of <see cref="Uno.Extensions.Reactive.Message{T}"/>.
+	/// Gets or create a custom feed from a raw <see cref="IAsyncEnumerable{T}"/> sequence of <see cref="Uno.Extensions.Reactive.Message{T}"/>.
 	/// </summary>
 	/// <typeparam name="T">The type of the value of the resulting feed.</typeparam>
 	/// <param name="sourceProvider">The provider of the message enumerable sequence.</param>
@@ -26,7 +26,7 @@ public static partial class Feed
 		=> Feed<T>.Create(sourceProvider);
 
 	/// <summary>
-	/// Creates a custom feed from an async method.
+	/// Gets or create a custom feed from an async method.
 	/// </summary>
 	/// <typeparam name="T">The type of the value of the resulting feed.</typeparam>
 	/// <param name="valueProvider">The async method to use to load the value of the resulting feed.</param>
@@ -36,7 +36,7 @@ public static partial class Feed
 		=> Feed<T>.Async(valueProvider, refresh);
 
 	/// <summary>
-	/// Creates a custom feed from an async enumerable sequence of value.
+	/// Gets or create a custom feed from an async enumerable sequence of value.
 	/// </summary>
 	/// <typeparam name="T">The type of the data of the resulting feed.</typeparam>
 	/// <param name="enumerableProvider">The async enumerable sequence of value of the resulting feed.</param>
@@ -50,7 +50,7 @@ public static partial class Feed
 	//		 To deal with Message<T> or Option<T>, we will request to user to enumerate themselves the source
 
 	/// <summary>
-	/// Creates a feed that filters out some values of a source feed.
+	/// Gets or create a feed that filters out some values of a source feed.
 	/// </summary>
 	/// <typeparam name="TSource">Type of the value of the feed.</typeparam>
 	/// <param name="source">The source feed to filter.</param>
@@ -66,7 +66,7 @@ public static partial class Feed
 		=> AttachedProperty.GetOrCreate(source, predicate, (src, p) => new WhereFeed<TSource>(src, p));
 
 	/// <summary>
-	/// Creates a feed that projects each value of a source feed.
+	/// Gets or create a feed that projects each value of a source feed.
 	/// </summary>
 	/// <typeparam name="TSource">Type of the value of the source feed.</typeparam>
 	/// <typeparam name="TResult">Type of the value of the resulting feed.</typeparam>
@@ -79,7 +79,7 @@ public static partial class Feed
 		=> AttachedProperty.GetOrCreate(source, selector, (src, s) => new SelectFeed<TSource, TResult>(src, s));
 
 	/// <summary>
-	/// Creates a feed that asynchronously projects each value of a source feed.
+	/// Gets or create a feed that asynchronously projects each value of a source feed.
 	/// </summary>
 	/// <typeparam name="TSource">Type of the value of the source feed.</typeparam>
 	/// <typeparam name="TResult">Type of the value of the resulting feed.</typeparam>
