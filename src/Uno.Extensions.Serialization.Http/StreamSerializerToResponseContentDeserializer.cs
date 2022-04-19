@@ -6,11 +6,11 @@ using Uno.Extensions.Http;
 
 namespace Uno.Extensions.Serialization.Http;
 
-public class StreamSerializerToResponseContentDeserializer : IResponseContentDeserializer
+public class SerializerToResponseContentDeserializer : IResponseContentDeserializer
 {
-    private readonly IStreamSerializer _objectSerializer;
+    private readonly ISerializer _objectSerializer;
 
-    public StreamSerializerToResponseContentDeserializer(IStreamSerializer objectSerializer)
+    public SerializerToResponseContentDeserializer(ISerializer objectSerializer)
     {
         _objectSerializer = objectSerializer ?? throw new ArgumentNullException(nameof(objectSerializer));
     }

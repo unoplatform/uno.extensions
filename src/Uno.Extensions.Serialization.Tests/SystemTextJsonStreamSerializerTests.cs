@@ -6,17 +6,17 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Uno.Extensions.Serialization.Tests;
 
 [TestClass]
-public class SystemTextJsonStreamSerializerTests
+public class SystemTextJsonSerializerTests
 {
 	private const string SimpleText = "Hello World!";
 
-	private SystemTextJsonStreamSerializer Serializer { get; set; }
+	private SystemTextJsonSerializer Serializer { get; set; }
 
 	[TestInitialize]
 	public void InitializeTests()
 	{
 		var services = new ServiceCollection().BuildServiceProvider();
-		Serializer = new SystemTextJsonStreamSerializer(services);
+		Serializer = new SystemTextJsonSerializer(services);
 	}
 
 	[TestMethod]

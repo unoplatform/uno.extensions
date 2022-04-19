@@ -5,21 +5,21 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Uno.Extensions.Serialization.Tests;
 
 [TestClass]
-public class StreamSerializerExtensionsTests
+public class SerializerExtensionsTests
 {
-	private SystemTextJsonStreamSerializer Serializer { get; set; }
+	private SystemTextJsonSerializer Serializer { get; set; }
 
 	[TestInitialize]
 	public void InitializeTests()
 	{
 		var services = new ServiceCollection().BuildServiceProvider();
-		Serializer = new SystemTextJsonStreamSerializer(services);
+		Serializer = new SystemTextJsonSerializer(services);
 	}
 
 	[TestMethod]
 	public void ToAndFromStreamTest()
 	{
-		var classEntity = SystemTextJsonStreamSerializerTests.CreateSimpleClassInstance();
+		var classEntity = SystemTextJsonSerializerTests.CreateSimpleClassInstance();
 		var stream = Serializer.ToStream(classEntity);
 		stream.Seek(0, SeekOrigin.Begin);
 		var cloneClass = Serializer.FromStream<SimpleClass>(stream);
@@ -28,7 +28,7 @@ public class StreamSerializerExtensionsTests
 		var anotherCloneClass = Serializer.FromStream<SimpleClass>(stream);
 		VerifyEntity(cloneClass, anotherCloneClass);
 
-		var recordEntity = SystemTextJsonStreamSerializerTests.CreateSimpleRecordInstance();
+		var recordEntity = SystemTextJsonSerializerTests.CreateSimpleRecordInstance();
 		stream = Serializer.ToStream(recordEntity);
 		stream.Seek(0, SeekOrigin.Begin);
 		var cloneRecord = Serializer.FromStream<SimpleRecord>(stream);
@@ -41,7 +41,7 @@ public class StreamSerializerExtensionsTests
 	[TestMethod]
 	public void ReadWriteToStreamTest()
 	{
-		var classEntity = SystemTextJsonStreamSerializerTests.CreateSimpleClassInstance() as SimpleClass;
+		var classEntity = SystemTextJsonSerializerTests.CreateSimpleClassInstance() as SimpleClass;
 		using var ms = new MemoryStream();
 		Serializer.ToStream(ms, classEntity);
 		var pos = ms.Position;
@@ -62,12 +62,12 @@ public class StreamSerializerExtensionsTests
 	[TestMethod]
 	public void ToFromStringTest()
 	{
-		var classEntity = SystemTextJsonStreamSerializerTests.CreateSimpleClassInstance() as SimpleClass;
+		var classEntity = SystemTextJsonSerializerTests.CreateSimpleClassInstance() as SimpleClass;
 		var stringValue = Serializer.ToString(classEntity);
 		var cloneClass = Serializer.FromString<SimpleClass>(stringValue);
 		VerifyEntity(classEntity, cloneClass);
 
-		var recordEntity = SystemTextJsonStreamSerializerTests.CreateSimpleRecordInstance() as SimpleRecord;
+		var recordEntity = SystemTextJsonSerializerTests.CreateSimpleRecordInstance() as SimpleRecord;
 		stringValue = Serializer.ToString(recordEntity);
 		var cloneRecord = Serializer.FromString<SimpleRecord>(stringValue);
 		VerifyEntity(recordEntity, cloneRecord);

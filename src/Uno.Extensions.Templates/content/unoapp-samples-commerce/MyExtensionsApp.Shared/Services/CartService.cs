@@ -4,23 +4,26 @@ using System.Threading;
 using System.Threading.Tasks;
 using MyExtensionsApp.Models;
 using Uno.Extensions.Serialization;
+using Uno.Extensions.Storage;
 
 namespace MyExtensionsApp.Services;
 
 class CartService : ICartService
 {
-    private IJsonDataService<Product> _productDataService;
-    public CartService(IJsonDataService<Product> products)
-    {
-        _productDataService = products;
-        _productDataService.DataFile = ProductService.ProductDataFile;
-    }
+	private readonly IStorage _dataService;
+	private readonly ISerializer _serializer;
 
-    public async ValueTask<Cart> Get(CancellationToken ct)
-    {
-        var entities = await _productDataService.GetEntities();
-        var cart = new Cart(entities.Select(e => new CartItem(e, 1)).ToArray());
-        return cart;
-    }
+	public CartService(IStorage dataService, ISerializer serializer)
+	{
+		_dataService = dataService;
+		_serializer = serializer;
+	}
+
+	public async ValueTask<Cart> Get(CancellationToken ct)
+	{
+		var entities = await _dataService.ReadFileAsync<Product[]>(_serializer, ProductService.ProductDataFile);
+		var cart = new Cart(entities!.Select(e => new CartItem(e, 1)).ToArray());
+		return cart;
+	}
 
 }

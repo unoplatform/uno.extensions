@@ -79,7 +79,7 @@ namespace Commerce
 					.UseSettings<Credentials>()
 
 
-					// Register Json serializers (ISerializer and IStreamSerializer)
+					// Register Json serializers (ISerializer and ISerializer)
 					.UseSerialization()
 
 					// Register services for the application

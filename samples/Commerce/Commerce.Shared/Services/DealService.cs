@@ -11,18 +11,18 @@ namespace Commerce.Services;
 class DealService : IDealService
 {
 	private readonly IStorage _dataService;
-	private readonly IStreamSerializer _streamSerializer;
+	private readonly ISerializer _serializer;
 
-	public DealService(IStorage dataService, IStreamSerializer streamSerializer)
+	public DealService(IStorage dataService, ISerializer serializer)
 	{
 		_dataService = dataService;
-		_streamSerializer = streamSerializer;
+		_serializer = serializer;
 	}
 
 
     public async ValueTask<Product[]> GetDeals(CancellationToken ct)
     {
-		var products = await _dataService.ReadFileAsync<Product[]>(_streamSerializer, ProductService.ProductDataFile);
+		var products = await _dataService.ReadFileAsync<Product[]>(_serializer, ProductService.ProductDataFile);
 
         return products!.Where(p => !p.Discount.IsNullOrEmpty()).ToArray();
     }

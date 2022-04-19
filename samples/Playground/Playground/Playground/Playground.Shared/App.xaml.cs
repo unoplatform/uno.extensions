@@ -58,7 +58,7 @@ namespace Playground
 					.UseConfiguration<Playground.Models.AppInfo>()
 
 
-					// Register Json serializers (ISerializer and IStreamSerializer)
+					// Register Json serializer jsontypeinfo definitions
 					.UseSerialization(
 							services=> services
 											.AddJsonTypeInfo(WidgetContext.Default.Widget)

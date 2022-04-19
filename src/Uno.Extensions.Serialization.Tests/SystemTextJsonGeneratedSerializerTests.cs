@@ -16,8 +16,8 @@ public class SystemTextJsonGeneratedSerializerTests
 	public void InitializeTests()
 	{
 		var services = new ServiceCollection().BuildServiceProvider();
-		var reflectionSerializer = new SystemTextJsonStreamSerializer(services);
-		Serializer = new SystemTextJsonGeneratedSerializer<SimpleClass>(reflectionSerializer, reflectionSerializer,SimpleClassContext.Default.SimpleClass);
+		var reflectionSerializer = new SystemTextJsonSerializer(services);
+		Serializer = new SystemTextJsonGeneratedSerializer<SimpleClass>(reflectionSerializer,SimpleClassContext.Default.SimpleClass);
 	}
 
 	[TestMethod]
