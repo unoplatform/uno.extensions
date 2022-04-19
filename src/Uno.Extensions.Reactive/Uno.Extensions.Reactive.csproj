@@ -2,26 +2,13 @@
 
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
-		<LangVersion>10.0</LangVersion>
-		<Nullable>enable</Nullable>
-		<NoWarn>1701;1702</NoWarn>
-		<NoWarn Condition="$(Configuration)=='Debug'">$(NoWarn);1591</NoWarn>
-		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-		<WarningsAsErrors />
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 		<RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Remove="Collections\Facades\Composite\**" />
-	  <EmbeddedResource Remove="Collections\Facades\Composite\**" />
-	  <None Remove="Collections\Facades\Composite\**" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
 		<PackageReference Include="System.Collections.Immutable" Version="1.2.0" />
-		<PackageReference Include="System.Linq.Async" Version="6.0.1" />
+		<PackageReference Include="System.Linq.Async" Version="4.0.0" />
 		<PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.2" PrivateAssets="None" />
 	</ItemGroup>
 
@@ -51,46 +38,26 @@
 	</Target>
 
 	<ItemGroup>
-	  <Compile Include="..\Uno.Extensions.Core\Compat\NotNullWhenAttribute.cs" Link="Utils\NotNullWhenAttribute.cs" />
-	  <Compile Include="Collections\Facades\Composite\CompositeEnumerator.cs" />
-	  <Compile Include="Collections\Facades\Composite\CompositeEnumerator.T.cs" />
+		<Compile Include="..\Uno.Extensions.Core\_Compat\**\*.cs" Link="_Compat\%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Update="AsyncAction.tt">
-	    <Generator>TextTemplatingFileGenerator</Generator>
-	    <LastGenOutput>AsyncAction.cs</LastGenOutput>
-	  </None>
-	  <None Update="AsyncFunc.tt">
-	    <Generator>TextTemplatingFileGenerator</Generator>
-	    <LastGenOutput>AsyncFunc.cs</LastGenOutput>
-	  </None>
-	  <None Update="Operators\CombineFeed.tt">
-	    <Generator>TextTemplatingFileGenerator</Generator>
-	    <LastGenOutput>CombineFeed.cs</LastGenOutput>
-	  </None>
+		<None Update="Operators\CombineFeed.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>CombineFeed.cs</LastGenOutput>
+		</None>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="AsyncAction.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>AsyncAction.tt</DependentUpon>
-	  </Compile>
-	  <Compile Update="AsyncFunc.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>AsyncFunc.tt</DependentUpon>
-	  </Compile>
-	  <Compile Update="Operators\CombineFeed.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>CombineFeed.tt</DependentUpon>
-	  </Compile>
+		<Compile Update="Operators\CombineFeed.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>CombineFeed.tt</DependentUpon>
+		</Compile>
 	</ItemGroup>
 
 </Project>
