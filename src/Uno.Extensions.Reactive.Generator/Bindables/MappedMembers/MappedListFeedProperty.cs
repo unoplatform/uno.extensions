@@ -14,9 +14,12 @@ internal record MappedListFeedProperty(IPropertySymbol _property, ITypeSymbol _v
 
 	/// <inheritdoc />
 	public string GetDeclaration()
-		=> $"{_property.GetAccessibilityAsCSharpCodeString()} {NS.Reactive}.IListFeed<{_valueType}> {_property.Name} {{ get; }}";
+		=> $"{_property.GetAccessibilityAsCSharpCodeString()} {NS.Reactive}.IListFeed<{_valueType}> {_property.Name} {{ get; }}"; // Note: This should be a State
 
 	/// <inheritdoc />
 	public string GetInitialization()
-		=> $"{_property.Name} = new {NS.Bindings}.BindableListFeed<{_valueType}>(nameof({_property.Name}), {N.Ctor.Model}.{_property.Name} ?? throw new NullReferenceException(\"The list feed property '{_property.Name}' is null. Public feeds properties must be initialized in the constructor.\"), {N.Ctor.Ctx});";
+		=> @$"{_property.Name} = new {NS.Bindings}.BindableListFeed<{_valueType}>(
+				nameof({_property.Name}),
+				{N.Ctor.Model}.{_property.Name} ?? throw new NullReferenceException(""The list feed property '{_property.Name}' is null. Public feeds properties must be initialized in the constructor.""),
+				{N.Ctor.Ctx});";
 }

@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis;
 
 namespace Uno.Extensions.Reactive.Generator;
 
+// Note: This also applies for State
 internal record MappedFeedProperty(IPropertySymbol _property, ITypeSymbol _valueType) : IMappedMember
 {
 	private readonly IPropertySymbol _property = _property;

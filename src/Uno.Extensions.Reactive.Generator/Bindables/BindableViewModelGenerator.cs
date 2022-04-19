@@ -188,6 +188,10 @@ namespace {vm.ContainingNamespace}
 		{
 			switch (member)
 			{
+				case IFieldSymbol field when _ctx.IsListFeed(field.Type, out var valueType):
+					yield return new MappedListFeedField(field, valueType);
+					break;
+
 				case IFieldSymbol field when _ctx.IsFeed(field.Type, out var valueType):
 					yield return new MappedFeedField(field, valueType);
 					break;
