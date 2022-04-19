@@ -85,10 +85,16 @@ public static partial class ListFeed
 			// All subsequent operators are going to be attached to the newly created wrap Feed (i.e. not ListFeed)
 			: AttachedProperty.GetOrCreate(source, typeof(TItem), WrapListFeed);
 
-	//public static IListState<TItem> AsListState<TItem>(
-	//	this IState<IImmutableList<TItem>> source)
-	//	// Note: We are not attaching the "ListFeed" as we always un-wrap them and we attach other operator on the underlying Source.
-	//	=> new ListState<TItem>(source);
+	/// <summary>
+	/// Wraps a feed of list into a <see cref="IListState{T}"/>.
+	/// </summary>
+	/// <typeparam name="TItem">Type of items in the list.</typeparam>
+	/// <param name="source">The source list state to wrap.</param>
+	/// <returns>A <see cref="IListFeed{T}"/> that wraps the given source data stream of list.</returns>
+	public static IListState<TItem> AsListState<TItem>(
+		this IState<IImmutableList<TItem>> source)
+		// Note: We are not attaching the "ListFeed" as we always un-wrap them and we attach other operator on the underlying Source.
+		=> new ListState<TItem>(source);
 
 	//public static IState<IImmutableList<TItem>> AsState<TItem>(
 	//	this IListState<TItem> source)

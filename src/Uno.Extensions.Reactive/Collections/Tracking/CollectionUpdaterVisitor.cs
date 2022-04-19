@@ -9,7 +9,7 @@ namespace Uno.Extensions.Collections.Tracking;
 /// </summary>
 internal abstract class CollectionUpdaterVisitor : ICollectionUpdaterVisitor
 {
-	public ICollectionUpdaterVisitor Null { get; } = new NullVisitor();
+	public static ICollectionUpdaterVisitor Null { get; } = new NullVisitor();
 
 	/// <inheritdoc />
 	public virtual void AddItem(object item, ICollectionUpdateCallbacks callbacks) { }
