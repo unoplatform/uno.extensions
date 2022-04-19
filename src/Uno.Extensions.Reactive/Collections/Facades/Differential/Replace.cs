@@ -6,7 +6,7 @@ using System.Linq;
 using Uno.Extensions;
 using Uno.Extensions.Reactive.Utils;
 
-namespace Umbrella.Collections.Facades.Differential;
+namespace Uno.Extensions.Collections.Facades.Differential;
 
 /// <summary>
 /// A node of a linked stack of <see cref="IDifferentialCollectionNode"/> which replace some items

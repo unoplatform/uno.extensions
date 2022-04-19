@@ -3,55 +3,54 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Umbrella.Feeds.Collections.Facades
+namespace Uno.Extensions.Collections.Facades.Composite;
+
+
+// TODO: Uno : use enumerators!
+internal class CompositeEnumerator : IEnumerator
 {
-	// TODO: Uno : use enumerators!
+	private readonly IEnumerator[] _inners;
+	private int _current;
 
-	public class CompositeEnumerator : IEnumerator
+	public CompositeEnumerator(IEnumerable<IEnumerable> enumerables)
+		: this(enumerables.Select(i => i.GetEnumerator()).ToArray())
 	{
-		private readonly IEnumerator[] _inners;
-		private int _current;
+	}
 
-		public CompositeEnumerator(IEnumerable<IEnumerable> enumerables)
-			: this(enumerables.Select(i => i.GetEnumerator()).ToArray())
+	public CompositeEnumerator(params IEnumerator[] inners)
+	{
+		_inners = inners ?? throw new ArgumentNullException(nameof(inners), "The inners must not be null.");
+	}
+
+	public object? Current { get; private set; }
+
+	public bool MoveNext()
+	{
+		while (_current < _inners.Length)
 		{
-		}
-
-		public CompositeEnumerator(params IEnumerator[] inners)
-		{
-			_inners = inners ?? throw new ArgumentNullException(nameof(inners), "The inners must not be null.");
-		}
-
-		public object? Current { get; private set; }
-
-		public bool MoveNext()
-		{
-			while (_current < _inners.Length)
+			if (_inners[_current].MoveNext())
 			{
-				if (_inners[_current].MoveNext())
-				{
-					Current = _inners[_current].Current;
-					return true;
-				}
-				else
-				{
-					_current++;
-				}
+				Current = _inners[_current].Current;
+				return true;
 			}
-
-			Current = default;
-			return false;
-		}
-
-		public void Reset()
-		{
-			for (var i = 0; i <= Math.Min(_current, _inners.Length - 1); i++)
+			else
 			{
-				_inners[i].Reset();
+				_current++;
 			}
-
-			_current = 0;
-			Current = default;
 		}
+
+		Current = default;
+		return false;
+	}
+
+	public void Reset()
+	{
+		for (var i = 0; i <= Math.Min(_current, _inners.Length - 1); i++)
+		{
+			_inners[i].Reset();
+		}
+
+		_current = 0;
+		Current = default;
 	}
 }

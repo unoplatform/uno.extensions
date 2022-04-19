@@ -66,21 +66,3 @@ public sealed class Message<T> : IMessage
 		return new Message<T>(Current, newMessage.Current, modified.Concat(removed).ToList());
 	}
 }
-
-
-//public class ChangesCollection : IReadOnlyCollection<MessageAxis>
-//{
-//	public bool Contains(MessageAxis axis)
-//	{
-
-//	}
-
-//	public bool Contains(MessageAxis axis, out IMessageAxisChange? change)
-//	{
-
-//	}
-//}
-
-public interface IMessageAxisChange
-{
-}

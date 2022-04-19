@@ -9,8 +9,7 @@ using Windows.Foundation.Collections;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Collections;
 using Uno.Extensions.Collections.Tracking;
-using Umbrella.Collections;
-using Umbrella.Collections.Facades.Differential;
+using Uno.Extensions.Collections.Facades.Differential;
 using Uno.Extensions;
 using Uno.Logging;
 

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Umbrella.Collections.Facades.Differential;
+namespace Uno.Extensions.Collections.Facades.Differential;
 
 internal class DifferentialReadOnlyList<T> : IList, IList<T>, IReadOnlyList<T>
 {

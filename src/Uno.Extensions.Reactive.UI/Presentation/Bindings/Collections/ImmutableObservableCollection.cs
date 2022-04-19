@@ -8,7 +8,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Uno.Extensions.Collections;
-using Umbrella.Reactive.Collections;
 using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive.Bindings.Collections;

@@ -2,9 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Uno.Extensions.Collections.Umbrella.Extensions;
 
-namespace Umbrella.Collections.Facades.Differential;
+namespace Uno.Extensions.Collections.Facades.Differential;
 
 internal sealed class DifferentialReadOnlyList : IList
 {

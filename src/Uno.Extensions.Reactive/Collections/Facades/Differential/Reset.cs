@@ -3,12 +3,12 @@ using System.Collections;
 using System.Linq;
 using Uno.Extensions.Reactive.Utils;
 
-namespace Umbrella.Collections.Facades.Differential;
+namespace Uno.Extensions.Collections.Facades.Differential;
 
 /// <summary>
 /// A node of a linked stack of <see cref="IDifferentialCollectionNode"/> which reset the collection
 /// </summary>
-public sealed class Reset : IDifferentialCollectionNode
+internal sealed class Reset : IDifferentialCollectionNode
 {
 	private readonly IList _items;
 

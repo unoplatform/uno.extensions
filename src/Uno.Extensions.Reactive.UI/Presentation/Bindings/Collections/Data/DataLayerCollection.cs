@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Uno.Extensions.Collections;
-using Uno.Extensions.Collections.Umbrella.Conversion;
+using Uno.Extensions.Conversion;
 
 namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 {

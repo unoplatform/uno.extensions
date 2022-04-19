@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using Uno.Extensions.Collections;
 using Uno.Extensions.Collections.Tracking;
+using TrackingMode = Uno.Extensions.Collections.TrackingMode;
 
 namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 {

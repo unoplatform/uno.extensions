@@ -3,9 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text;
-using Umbrella.Collections.Facades.Differential;
 
-namespace Uno.Extensions.Collections.Umbrella.Extensions;
+namespace Uno.Extensions.Collections.Facades.Differential;
 
 /// <summary>
 /// Extensions over <see cref="IDifferentialCollectionNode"/>.

@@ -78,11 +78,3 @@ public sealed class DataAxis : MessageAxis
 	protected internal override bool AreEquals(MessageAxisValue left, MessageAxisValue right)
 		=> OptionEqualityComparer<object>.RefEquals.Equals((Option<object>)left.Value!, (Option<object>)right.Value!);
 }
-
-internal class CollectionChangedDetails : IMessageAxisChange
-{
-}
-
-internal class PropertyChangedDetails : IMessageAxisChange
-{
-}

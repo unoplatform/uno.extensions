@@ -6,7 +6,6 @@ using System.Threading;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Uno.Extensions.Collections;
-using Umbrella.Reactive.Collections;
 using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection;
 using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data;
 using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets;

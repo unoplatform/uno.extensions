@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Uno.Extensions.Collections;
 using Uno.Extensions.Collections.Tracking;
-using Uno.Extensions.Collections.Umbrella.Extensions;
+using Uno.Extensions.Conversion;
 using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets;
 using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views;
+using TrackingMode = Uno.Extensions.Collections.TrackingMode;
 
 namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 {

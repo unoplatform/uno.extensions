@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Uno.Extensions.Collections;
 
-public class RichNotifyCollectionChangedEventArgs : NotifyCollectionChangedEventArgs
+internal class RichNotifyCollectionChangedEventArgs : NotifyCollectionChangedEventArgs
 {
 	/// <summary>
 	/// Creates a <see cref="NotifyCollectionChangedAction.Add"/> collection changed event args

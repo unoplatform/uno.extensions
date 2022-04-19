@@ -5,6 +5,7 @@ using Uno.Extensions.Collections;
 using Uno.Extensions.Collections.Tracking;
 using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data;
 using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets;
+using TrackingMode = Uno.Extensions.Collections.TrackingMode;
 
 namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection
 {

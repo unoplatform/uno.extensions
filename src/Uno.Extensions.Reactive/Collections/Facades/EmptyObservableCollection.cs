@@ -5,10 +5,9 @@ using System.Collections.Immutable;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using Uno.Extensions.Collections;
 using Uno.Extensions.Reactive.Utils;
 
-namespace Umbrella.Reactive.Collections;
+namespace Uno.Extensions.Collections;
 
 /// <summary>
 /// A <see cref="IObservableCollection{T}"/> which contains no items.
@@ -19,7 +18,7 @@ internal sealed class EmptyObservableCollection<T> : IReadOnlyObservableCollecti
 	/// <summary>
 	/// The singleton instance of the empty collection
 	/// </summary>
-	public static EmptyObservableCollection<T> Instance { get; } = new EmptyObservableCollection<T>();
+	public static EmptyObservableCollection<T> Instance { get; } = new();
 
 	private EmptyObservableCollection()
 	{

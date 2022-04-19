@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Umbrella.Collections.Facades.Differential;
+namespace Uno.Extensions.Collections.Facades.Differential;
 
 /// <summary>
 /// An <see cref="IEnumerator"/> for differential collections

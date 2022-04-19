@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Linq;
 
-namespace Umbrella.Collections.Facades.Differential;
+namespace Uno.Extensions.Collections.Facades.Differential;
 
 /// <summary>
 /// An immutable node of a linked list of a differential collection

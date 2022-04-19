@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Linq;
 
-namespace Umbrella.Collections.Facades.Differential;
+namespace Uno.Extensions.Collections.Facades.Differential;
 
 /// <summary>
 /// A node of a linked stack of <see cref="IDifferentialCollectionNode"/> which does nothing

@@ -6,8 +6,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Windows.Foundation.Collections;
 using Uno.Extensions.Collections;
-using Uno.Extensions.Collections.Umbrella.Conversion;
-using Uno.Extensions.Collections.Umbrella.Extensions;
+using Uno.Extensions.Collections.Facades.Map;
+using Uno.Extensions.Conversion;
 using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets;
 
 namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views

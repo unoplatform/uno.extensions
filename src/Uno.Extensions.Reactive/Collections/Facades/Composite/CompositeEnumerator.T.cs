@@ -3,64 +3,63 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Umbrella.Feeds.Collections.Facades
+namespace Uno.Extensions.Collections.Facades.Composite;
+
+
+// TODO: Uno : use enumerators!
+internal class CompositeEnumerator<T> : IEnumerator<T>
 {
-	// TODO: Uno : use enumerators!
+	private readonly IEnumerator<T>[] _inners;
+	private int _current;
 
-	public class CompositeEnumerator<T> : IEnumerator<T>
+	public CompositeEnumerator(IEnumerable<IEnumerable<T>> enumerables)
+		: this(enumerables.Select(i => i.GetEnumerator()).ToArray())
 	{
-		private readonly IEnumerator<T>[] _inners;
-		private int _current;
+	}
 
-		public CompositeEnumerator(IEnumerable<IEnumerable<T>> enumerables)
-			: this(enumerables.Select(i => i.GetEnumerator()).ToArray())
+	public CompositeEnumerator(params IEnumerator<T>[] inners)
+	{
+		_inners = inners ?? throw new ArgumentNullException(nameof(inners), "The inners must not be null.");
+	}
+
+	object? IEnumerator.Current => Current;
+	public T Current { get; private set; } = default!;
+
+	public bool MoveNext()
+	{
+		while (_current < _inners.Length)
 		{
-		}
-
-		public CompositeEnumerator(params IEnumerator<T>[] inners)
-		{
-			_inners = inners ?? throw new ArgumentNullException(nameof(inners), "The inners must not be null.");
-		}
-
-		object? IEnumerator.Current => Current;
-		public T Current { get; private set; } = default!;
-
-		public bool MoveNext()
-		{
-			while (_current < _inners.Length)
+			if (_inners[_current].MoveNext())
 			{
-				if (_inners[_current].MoveNext())
-				{
-					Current = _inners[_current].Current;
-					return true;
-				}
-				else
-				{
-					_current++;
-				}
+				Current = _inners[_current].Current;
+				return true;
 			}
-
-			Current = default!;
-			return false;
+			else
+			{
+				_current++;
+			}
 		}
 
-		public void Reset()
-		{
-			for (var i = 0; i <= Math.Min(_current, _inners.Length - 1); i++)
-			{
-				_inners[i].Reset();
-			}
+		Current = default!;
+		return false;
+	}
 
-			_current = 0;
-			Current = default!;
+	public void Reset()
+	{
+		for (var i = 0; i <= Math.Min(_current, _inners.Length - 1); i++)
+		{
+			_inners[i].Reset();
 		}
 
-		public void Dispose()
+		_current = 0;
+		Current = default!;
+	}
+
+	public void Dispose()
+	{
+		for (var i = 0; i <= Math.Min(_current, _inners.Length - 1); i++)
 		{
-			for (var i = 0; i <= Math.Min(_current, _inners.Length - 1); i++)
-			{
-				_inners[i].Dispose();
-			}
+			_inners[i].Dispose();
 		}
 	}
 }

@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Uno.Extensions.Collections;
-using Umbrella.Feeds.Collections.Facades;
+using Uno.Extensions.Collections.Facades.Composite;
 using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets;
 
 #if WINUI
