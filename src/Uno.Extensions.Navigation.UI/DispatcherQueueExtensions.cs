@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions;
 
-public static class DispatcherQueueHelpers
+public static class DispatcherQueueExtensions
 {
 	public static Task Run(this DispatcherQueue dispatcher, Func<Task> action)
 	{
