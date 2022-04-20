@@ -395,8 +395,16 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		// Append Internal qualifier to avoid requests being sent back to parent
 		request = request with { Route = request.Route with { IsInternal = true } };
 
+		var dispatcher = this.GetDispatcher();
+		var navigators = await dispatcher.Run(async () =>
+		{
+			return (from child in children
+					let nav = child.Navigator()
+					select nav).ToList();
+		});
+
 		var tasks = new List<Task<NavigationResponse?>>();
-		foreach (var region in children)
+		foreach (var region in navigators)
 		{
 			tasks.Add(region.NavigateAsync(request));
 		}
