@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -64,6 +65,10 @@ public partial class Given_BasicViewModel_Then_Generate__ViewModel
 
 	public IState<string> AStateField = new StateImpl<string>(SourceContext.Current, Feed.Async(async ct => "42"));
 
+	public IListFeed<string> AListFeedField = Feed.Async(async ct => new[] { "AListFeedField_1", "AListFeedField_2" }.ToImmutableList()).AsListFeed();
+
+	public IListState<string> AListStateField = new StateImpl<IImmutableList<string>>(SourceContext.Current, Feed.Async(async ct => new[] { "AListStateField_1", "AListStateField_2" }.ToImmutableList() as IImmutableList<string>)).AsListState();
+
 	public CustomFeed ACustomFeedField = new CustomFeed();
 
 	public string AProperty { get; set; } = "AProperty";
@@ -79,6 +84,10 @@ public partial class Given_BasicViewModel_Then_Generate__ViewModel
 	public IFeed<string> AFeedProperty { get; } = Feed.Async(async ct => "AFeedProperty");
 
 	public IState<string> AStateProperty { get; } = new StateImpl<string>(SourceContext.Current, Feed.Async(async ct => "AStateProperty"));
+
+	public IListFeed<string> AListFeedProperty { get; } = Feed.Async(async ct => new[] { "AListFeedProperty_1", "AListFeedProperty_2" }.ToImmutableList()).AsListFeed();
+
+	public IListState<string> AListStateProperty { get; } = new StateImpl<IImmutableList<string>>(SourceContext.Current, Feed.Async(async ct => new[] { "AListStateProperty_1", "AListStateProperty_2" }.ToImmutableList() as IImmutableList<string>)).AsListState();
 
 	public CustomFeed ACustomFeedProperty { get; } = new CustomFeed();
 

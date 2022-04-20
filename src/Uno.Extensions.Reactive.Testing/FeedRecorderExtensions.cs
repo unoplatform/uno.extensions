@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Uno.Extensions.Reactive;
@@ -16,6 +17,15 @@ public static class FeedRecorderExtensions
 		[CallerMemberName] string? memberName = null,
 		[CallerLineNumber] int line = -1)
 		=> new(_ => feed, context ?? SourceContext.Current, autoEnable, feedExpression ?? $"{memberName}@{line}");
+
+	public static FeedRecorder<IFeed<IImmutableList<T>>, IImmutableList<T>> Record<T>(
+		this IListFeed<T> feed,
+		SourceContext? context = null,
+		bool autoEnable = true,
+		[CallerArgumentExpression("feed")] string? feedExpression = null,
+		[CallerMemberName] string? memberName = null,
+		[CallerLineNumber] int line = -1)
+		=> new(_ => feed.AsFeed(), context ?? SourceContext.Current, autoEnable, feedExpression ?? $"{memberName}@{line}");
 }
 
 public static class F<T>
