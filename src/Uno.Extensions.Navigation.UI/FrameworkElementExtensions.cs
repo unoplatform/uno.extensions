@@ -102,28 +102,26 @@ public static class FrameworkElementExtensions
 		var success = true;
 		if (dispatcher is not null)
 		{
-			var completion = new TaskCompletionSource<bool>();
 			var timeoutToken = new CancellationTokenSource(TimeSpan.FromSeconds(1)).Token;
-			dispatcher.TryEnqueue(async () =>
+			success = await dispatcher.Run(async () =>
+			{
+				try
+				{
+					await EnsureElementLoaded(element, timeoutToken);
+					return true;
+				}
+				catch
+				{
+					if (timeoutToken.IsCancellationRequested)
 					{
-						try
-						{
-							await EnsureElementLoaded(element, timeoutToken);
-							completion.SetResult(true);
-						}
-						catch (Exception ex)
-						{
-							if (timeoutToken.IsCancellationRequested)
-							{
-								completion.SetResult(false);
-							}
-							else
-							{
-								completion.SetException(ex);
-							}
-						}
-					});
-			success = await completion.Task;
+						return false;
+					}
+					else
+					{
+						throw;
+					}
+				}
+			});
 		}
 
 

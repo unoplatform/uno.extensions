@@ -39,13 +39,13 @@ public class FlyoutNavigator : ControlNavigator
 		}
 		else
 		{
-			if(Flyout is not null)
+			if (Flyout is not null)
 			{
 				return Route.Empty;
 			}
 
 			var mapping = Resolver.Routes.Find(route);
-			injectedFlyout = !(mapping?.View?.RenderView?.IsSubclassOf(typeof(Flyout))??false);
+			injectedFlyout = !(mapping?.View?.RenderView?.IsSubclassOf(typeof(Flyout)) ?? false);
 			var viewModel = CreateViewModel(Region.Services, request, route, mapping);
 			Flyout = await DisplayFlyout(request, mapping?.View?.RenderView, viewModel, injectedFlyout);
 		}
@@ -107,6 +107,11 @@ public class FlyoutNavigator : ControlNavigator
 		if (flyoutHost is null)
 		{
 			flyoutHost = Region.View;
+
+			if (flyoutHost is null)
+			{
+				flyoutHost = Window.Content as FrameworkElement;
+			}
 		}
 
 		flyout?.ShowAt(flyoutHost);

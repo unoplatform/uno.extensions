@@ -44,6 +44,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Views\AuthTokenDialog.xaml.cs">
       <DependentUpon>AuthTokenDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\BasicFlyout.xaml.cs">
+      <DependentUpon>BasicFlyout.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\CodeBehindPage.xaml.cs">
       <DependentUpon>CodeBehindPage.xaml</DependentUpon>
     </Compile>
@@ -116,6 +119,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\AuthTokenDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\BasicFlyout.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

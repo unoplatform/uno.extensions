@@ -142,19 +142,15 @@ public abstract class ControlNavigator : Navigator
 
 	private async Task<NavigationResponse?> ControlCoreNavigateAsync(NavigationRequest request)
 	{
-		var completion = new TaskCompletionSource<NavigationResponse?>();
-		GetDispatcher().TryEnqueue(async () =>
+		return await GetDispatcher().Run(async () =>
 		{
 			if (CanNavigateToRoute(request.Route))
 			{
-				var response = await ControlNavigateAsync(request);
-				completion.SetResult(response);
-				return;
+				return await ControlNavigateAsync(request);
 			}
-			completion.SetResult(default);
-		});
 
-		return await completion.Task;
+			return default;
+		});
 	}
 
 	public virtual void ControlInitialize()
