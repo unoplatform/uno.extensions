@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Uno.Extensions.Reactive;
 
-internal record ListState<T>(IState<IImmutableList<T>> implementation) : ListFeed<T>(implementation), IListState<T>
+internal record ListState<T>(IState<IImmutableList<T>> implementation) : ListFeedImpl<T>(implementation), IListState<T>
 {
 	private readonly IState<IImmutableList<T>> implementation = implementation;
 

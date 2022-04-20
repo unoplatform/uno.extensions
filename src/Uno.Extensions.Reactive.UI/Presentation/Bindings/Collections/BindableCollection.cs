@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -209,75 +210,49 @@ namespace Uno.Extensions.Reactive.Bindings.Collections
 		#region ICollectionView
 		/// <inheritdoc />
 		public IEnumerator<object> GetEnumerator()
-		{
-			return GetForCurrentThread().GetEnumerator();
-		}
+			=> GetForCurrentThread().GetEnumerator();
 
 		/// <inheritdoc />
 		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return ((IEnumerable) GetForCurrentThread()).GetEnumerator();
-		}
+			=> ((IEnumerable) GetForCurrentThread()).GetEnumerator();
 
 		/// <inheritdoc />
 		public void Add(object? item)
-		{
-			GetForCurrentThread().Add(item);
-		}
+			=> GetForCurrentThread().Add(item);
 
 		/// <inheritdoc />
 		public void Clear()
-		{
-			GetForCurrentThread().Clear();
-		}
+			=> GetForCurrentThread().Clear();
 
 		/// <inheritdoc />
 		public bool Contains(object? item)
-		{
-			return GetForCurrentThread().Contains(item);
-		}
+			=> GetForCurrentThread().Contains(item);
 
 		/// <inheritdoc />
 		public void CopyTo(object?[] array, int arrayIndex)
-		{
-			GetForCurrentThread().CopyTo(array, arrayIndex);
-		}
+			=> GetForCurrentThread().CopyTo(array, arrayIndex);
 
 		/// <inheritdoc />
 		public bool Remove(object? item)
-		{
-			return GetForCurrentThread().Remove(item);
-		}
+			=> GetForCurrentThread().Remove(item);
 
 		/// <inheritdoc />
-		public int Count
-		{
-			get { return GetForCurrentThread().Count; }
-		}
+		public int Count => GetForCurrentThread().Count;
 
 		/// <inheritdoc />
-		public bool IsReadOnly
-		{
-			get { return GetForCurrentThread().IsReadOnly; }
-		}
+		public bool IsReadOnly => GetForCurrentThread().IsReadOnly;
 
 		/// <inheritdoc />
 		public int IndexOf(object? item)
-		{
-			return GetForCurrentThread().IndexOf(item);
-		}
+			=> GetForCurrentThread().IndexOf(item);
 
 		/// <inheritdoc />
 		public void Insert(int index, object? item)
-		{
-			GetForCurrentThread().Insert(index, item);
-		}
+			=> GetForCurrentThread().Insert(index, item);
 
 		/// <inheritdoc />
 		public void RemoveAt(int index)
-		{
-			GetForCurrentThread().RemoveAt(index);
-		}
+			=> GetForCurrentThread().RemoveAt(index);
 
 		/// <inheritdoc />
 		public object? this[int index]
@@ -291,7 +266,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections
 		/// <inheritdoc />
 		public event VectorChangedEventHandler<object?>? VectorChanged
 		{
-			// We directly hit the facet to ease the retrun type mismatch
+			// We directly hit the facet to ease the return type mismatch
 			add => _holder.Value.GetFacet<CollectionChangedFacet>().AddVectorChangedHandler(value!);
 			remove => _holder.Value.GetFacet<CollectionChangedFacet>().RemoveVectorChangedHandler(value!);
 		}
@@ -299,88 +274,56 @@ namespace Uno.Extensions.Reactive.Bindings.Collections
 		/// <inheritdoc />
 		public event NotifyCollectionChangedEventHandler? CollectionChanged
 		{
-			// We directly hit the facet to ease the retrun type mismatch
+			// We directly hit the facet to ease the return type mismatch
 			add => _holder.Value.GetFacet<CollectionChangedFacet>().AddCollectionChangedHandler(value!);
 			remove => _holder.Value.GetFacet<CollectionChangedFacet>().RemoveCollectionChangedHandler(value!);
 		}
 
 		/// <inheritdoc />
 		public bool MoveCurrentTo(object item)
-		{
-			return GetForCurrentThread().MoveCurrentTo(item);
-		}
+			=> GetForCurrentThread().MoveCurrentTo(item);
 
 		/// <inheritdoc />
 		public bool MoveCurrentToPosition(int index)
-		{
-			return GetForCurrentThread().MoveCurrentToPosition(index);
-		}
+			=> GetForCurrentThread().MoveCurrentToPosition(index);
 
 		/// <inheritdoc />
 		public bool MoveCurrentToFirst()
-		{
-			return GetForCurrentThread().MoveCurrentToFirst();
-		}
+			=> GetForCurrentThread().MoveCurrentToFirst();
 
 		/// <inheritdoc />
 		public bool MoveCurrentToLast()
-		{
-			return GetForCurrentThread().MoveCurrentToLast();
-		}
+			=> GetForCurrentThread().MoveCurrentToLast();
 
 		/// <inheritdoc />
 		public bool MoveCurrentToNext()
-		{
-			return GetForCurrentThread().MoveCurrentToNext();
-		}
+			=> GetForCurrentThread().MoveCurrentToNext();
 
 		/// <inheritdoc />
 		public bool MoveCurrentToPrevious()
-		{
-			return GetForCurrentThread().MoveCurrentToPrevious();
-		}
+			=> GetForCurrentThread().MoveCurrentToPrevious();
 
 		/// <inheritdoc />
 		public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
-		{
-			return GetForCurrentThread().LoadMoreItemsAsync(count);
-		}
+			=> GetForCurrentThread().LoadMoreItemsAsync(count);
 
 		/// <inheritdoc />
-		public IObservableVector<object> CollectionGroups
-		{
-			get { return GetForCurrentThread().CollectionGroups; }
-		}
+		public IObservableVector<object> CollectionGroups => GetForCurrentThread().CollectionGroups;
 
 		/// <inheritdoc />
-		public object? CurrentItem
-		{
-			get { return GetForCurrentThread().CurrentItem; }
-		}
+		public object? CurrentItem => GetForCurrentThread().CurrentItem;
 
 		/// <inheritdoc />
-		public int CurrentPosition
-		{
-			get { return GetForCurrentThread().CurrentPosition; }
-		}
+		public int CurrentPosition => GetForCurrentThread().CurrentPosition;
 
 		/// <inheritdoc />
-		public bool HasMoreItems
-		{
-			get { return GetForCurrentThread().HasMoreItems; }
-		}
+		public bool HasMoreItems => GetForCurrentThread().HasMoreItems;
 
 		/// <inheritdoc />
-		public bool IsCurrentAfterLast
-		{
-			get { return GetForCurrentThread().IsCurrentAfterLast; }
-		}
+		public bool IsCurrentAfterLast => GetForCurrentThread().IsCurrentAfterLast;
 
 		/// <inheritdoc />
-		public bool IsCurrentBeforeFirst
-		{
-			get { return GetForCurrentThread().IsCurrentBeforeFirst; }
-		}
+		public bool IsCurrentBeforeFirst => GetForCurrentThread().IsCurrentBeforeFirst;
 
 		/// <inheritdoc />
 		public event CurrentChangedEventHandler? CurrentChanged
@@ -398,6 +341,28 @@ namespace Uno.Extensions.Reactive.Bindings.Collections
 			remove => _holder.Value.GetFacet<SelectionFacet>().RemoveCurrentChangingHandler(value!);
 		}
 		#endregion
+
+		internal EventRegistrationToken AddVectorChangedHandler(VectorChangedEventHandler<object?>? handler)
+			=> _holder.Value.GetFacet<CollectionChangedFacet>().AddVectorChangedHandler(handler!);
+		internal void RemoveVectorChangedHandler(VectorChangedEventHandler<object?>? handler)
+			=> _holder.Value.GetFacet<CollectionChangedFacet>().RemoveVectorChangedHandler(handler!);
+		internal void RemoveVectorChangedHandler(EventRegistrationToken token)
+			=> _holder.Value.GetFacet<CollectionChangedFacet>().RemoveVectorChangedHandler(token);
+
+		internal EventRegistrationToken AddCurrentChangedHandler(CurrentChangedEventHandler? handler)
+			=> _holder.Value.GetFacet<SelectionFacet>().AddCurrentChangedHandler(handler!);
+		internal void RemoveCurrentChangedHandler(CurrentChangedEventHandler? handler)
+			=> _holder.Value.GetFacet<SelectionFacet>().RemoveCurrentChangedHandler(handler!);
+		internal void RemoveCurrentChangedHandler(EventRegistrationToken token)
+			=> _holder.Value.GetFacet<SelectionFacet>().RemoveCurrentChangedHandler(token);
+
+		internal EventRegistrationToken AddCurrentChangingHandler(CurrentChangingEventHandler? handler)
+			=> _holder.Value.GetFacet<SelectionFacet>().AddCurrentChangingHandler(handler!);
+		internal void RemoveCurrentChangingHandler(CurrentChangingEventHandler? handler)
+			=> _holder.Value.GetFacet<SelectionFacet>().RemoveCurrentChangingHandler(handler!);
+		internal void RemoveCurrentChangingHandler(EventRegistrationToken token)
+			=> _holder.Value.GetFacet<SelectionFacet>().RemoveCurrentChangingHandler(token);
+
 
 		/// <summary>
 		/// Gets some extended properties for this collection

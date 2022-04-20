@@ -2,7 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Runtime.ExceptionServices;
 using System.Threading;
+using System.Threading.Tasks;
+using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive;
@@ -12,38 +16,74 @@ namespace Uno.Extensions.Reactive;
 /// </summary>
 public static partial class ListFeed
 {
-	#region Sources
-	// Note: Those are helpers for which the T is set by type inference on provider.
-	//		 We must have only one overload per method.
+	/// <summary>
+	/// Get an awaiter to asynchronously get the next data produced by a feed.
+	/// </summary>
+	/// <typeparam name="T">The type of the value of the feed.</typeparam>
+	/// <param name="listFeed">The list feed to get data from.</param>
+	/// <returns>An awaiter to asynchronously get the next data produced by the feed.</returns>
+	public static ValueTaskAwaiter<Option<IImmutableList<T>>> GetAwaiter<T>(this IListFeed<T> listFeed)
+		=> listFeed.AsFeed().GetAwaiter();
 
 	/// <summary>
-	/// Creates a custom feed from a raw <see cref="IAsyncEnumerable{T}"/> sequence of <see cref="Uno.Extensions.Reactive.Message{T}"/>.
+	/// Asynchronously get the next data produced by a feed.
 	/// </summary>
-	/// <typeparam name="T">The type of the value of the resulting feed.</typeparam>
-	/// <param name="sourceProvider">The provider of the message enumerable sequence.</param>
-	/// <returns>A feed that encapsulate the source.</returns>
-	public static IListFeed<T> Create<T>(Func<CancellationToken, IAsyncEnumerable<Message<IImmutableList<T>>>> sourceProvider)
-		=> Feed.Create(sourceProvider).AsListFeed();
+	/// <typeparam name="T">The type of the value of the feed.</typeparam>
+	/// <param name="listFeed">The feed to get data from.</param>
+	/// <param name="ct">A cancellation to cancel the async operation.</param>
+	/// <returns>A ValueTask to asynchronously get the next data produced by the feed.</returns>
+	public static ValueTask<Option<IImmutableList<T>>> Value<T>(this IListFeed<T> listFeed, CancellationToken ct)
+		=> listFeed.AsFeed().Value(ct);
 
 	/// <summary>
-	/// Creates a custom feed from an async method.
+	/// Asynchronously get the next data produced by a feed.
 	/// </summary>
-	/// <typeparam name="T">The type of the value of the resulting feed.</typeparam>
-	/// <param name="valueProvider">The async method to use to load the value of the resulting feed.</param>
-	/// <param name="refresh">A refresh trigger to reload the <paramref name="valueProvider"/>.</param>
-	/// <returns>A feed that encapsulate the source.</returns>
-	public static IListFeed<T> Async<T>(AsyncFunc<IImmutableList<T>> valueProvider, Signal? refresh = null)
-		=> Feed.Async(valueProvider, refresh).AsListFeed();
+	/// <typeparam name="T">The type of the value of the feed.</typeparam>
+	/// <param name="listFeed">The list feed to get data from.</param>
+	/// <param name="kind">Specify which data can be returned or not.</param>
+	/// <param name="ct">A cancellation to cancel the async operation.</param>
+	/// <returns>A ValueTask to asynchronously get the next acceptable data produced by the feed.</returns>
+	public static ValueTask<Option<IImmutableList<T>>> Value<T>(this IListFeed<T> listFeed, AsyncFeedValue kind, CancellationToken ct)
+		=> listFeed.AsFeed().Value(kind, ct);
 
 	/// <summary>
-	/// Creates a custom feed from an async enumerable sequence of value.
+	/// Gets an asynchronous enumerable sequence of all data produced by a feed.
 	/// </summary>
-	/// <typeparam name="T">The type of the data of the resulting feed.</typeparam>
-	/// <param name="enumerableProvider">The async enumerable sequence of value of the resulting feed.</param>
-	/// <returns>A feed that encapsulate the source.</returns>
-	public static IListFeed<T> AsyncEnumerable<T>(Func<IAsyncEnumerable<IImmutableList<T>>> enumerableProvider)
-		=> Feed.AsyncEnumerable(enumerableProvider).AsListFeed();
-	#endregion
+	/// <typeparam name="T">The type of the value of the feed.</typeparam>
+	/// <param name="listFeed">The list feed to get data from.</param>
+	/// <param name="kind">Specify which data can be returned or not.</param>
+	/// <param name="ct">A cancellation to cancel the async enumeration.</param>
+	/// <returns>An async enumeration sequence of all acceptable data produced by a feed.</returns>
+	public static IAsyncEnumerable<Option<IImmutableList<T>>> Values<T>(this IListFeed<T> listFeed, AsyncFeedValue kind = AsyncFeedValue.AllowError, [EnumeratorCancellation] CancellationToken ct = default)
+		=> listFeed.AsFeed().Values(kind, ct);
+
+	/// <summary>
+	/// Asynchronously get the next message produced by a feed.
+	/// </summary>
+	/// <typeparam name="T">The type of the value of the feed.</typeparam>
+	/// <param name="listFeed">The list feed to get message from.</param>
+	/// <returns>A ValueTask to asynchronously get the next message produced by the feed.</returns>
+	public static ValueTask<Message<IImmutableList<T>>> Message<T>(this IListFeed<T> listFeed)
+		=> listFeed.AsFeed().Message();
+
+	/// <summary>
+	/// Asynchronously get the next message produced by a feed.
+	/// </summary>
+	/// <typeparam name="T">The type of the value of the feed.</typeparam>
+	/// <param name="listFeed">The list feed to get message from.</param>
+	/// <param name="ct">A cancellation to cancel the async operation.</param>
+	/// <returns>A ValueTask to asynchronously get the next message produced by the feed.</returns>
+	public static ValueTask<Message<IImmutableList<T>>> Message<T>(this IListFeed<T> listFeed, CancellationToken ct)
+		=> listFeed.AsFeed().Message(ct);
+
+	/// <summary>
+	/// Gets an asynchronous enumerable sequence of all messages produced by a feed.
+	/// </summary>
+	/// <typeparam name="T">The type of the value of the feed.</typeparam>
+	/// <param name="listFeed">The list feed to get messages from.</param>
+	/// <returns>An async enumeration sequence of all acceptable messages produced by a feed.</returns>
+	public static IAsyncEnumerable<Message<IImmutableList<T>>> Messages<T>(this IListFeed<T> listFeed)
+		=> listFeed.AsFeed().Messages();
 
 	#region Convertions
 	/// <summary>
@@ -55,7 +95,19 @@ public static partial class ListFeed
 	public static IListFeed<TItem> AsListFeed<TItem>(this IFeed<IImmutableList<TItem>> source)
 	{
 		// Note: We are not attaching the "ListFeed" as we always un-wrap them and we attach other operator on the underlying Source.
-		return new ListFeed<TItem>(source);
+		return new ListFeedImpl<TItem>(source);
+	}
+
+	/// <summary>
+	/// Wraps a feed of list into a <see cref="IListFeed{T}"/>.
+	/// </summary>
+	/// <typeparam name="TItem">Type of items in the list.</typeparam>
+	/// <param name="source">The source list stream to wrap.</param>
+	/// <returns>A <see cref="IListFeed{T}"/> that wraps the given source data stream of list.</returns>
+	public static IListFeed<TItem> AsListFeed<TItem>(this IFeed<ImmutableList<TItem>> source)
+	{
+		// Note: We are not attaching the "ListFeed" as we always un-wrap them and we attach other operator on the underlying Source.
+		return new ListFeedImpl<TItem>(source.Select(list => list as IImmutableList<TItem>));
 	}
 
 	/// <summary>
@@ -69,7 +121,7 @@ public static partial class ListFeed
 		this IFeed<TCollection> source)
 		where TCollection : IImmutableList<TItem>
 		// Note: We are not attaching the "ListFeed" as we always un-wrap them and we attach other operator on the underlying Source.
-		=> new ListFeed<TItem>(source.Select(list => list.ToImmutableList() as IImmutableList<TItem>));
+		=> new ListFeedImpl<TItem>(source.Select(list => list.ToImmutableList() as IImmutableList<TItem>));
 
 	/// <summary>
 	/// Unwraps a <see cref="IListFeed{T}"/> to get the source feed of list.
@@ -109,24 +161,5 @@ public static partial class ListFeed
 		// TODO Uno
 		return null!;
 	}
-	#endregion
-
-	#region Operators
-	//public static IListFeed<TSource> Where<TSource>(
-	//	this IListFeed<TSource> source,
-	//	Predicate<TSource?> predicate)
-	//	=> default!;
-
-	//public static IListFeed<TResult> Select<TSource, TResult>(
-	//	this IListFeed<TSource> source,
-	//	Func<TSource?, TResult?> selector)
-	//	=> default!;
-
-	/*
-	public static IFeed<TResult> SelectAsync<TSource, TResult>(
-		this IFeed<TSource> source,
-		AsyncFunc<TSource?, TResult?> selector)
-		=> default!);
-	*/
 	#endregion
 }
