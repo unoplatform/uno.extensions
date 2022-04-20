@@ -20,7 +20,8 @@
 		<WarningsAsErrors>enable</WarningsAsErrors>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageIcon>uno-logo.png</PackageIcon>
-		<NoWarn>$(NoWarn);NU5104;NU1603</NoWarn>
+		<NoWarn>$(NoWarn);NU5104;NU1603;1701;1702</NoWarn>
+		<NoWarn Condition="$(Configuration)=='Debug'">$(NoWarn);1591</NoWarn>
 	</PropertyGroup>
 
 	<PropertyGroup>
