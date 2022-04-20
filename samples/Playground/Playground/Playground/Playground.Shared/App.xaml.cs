@@ -217,7 +217,8 @@ namespace Playground
 						new ViewMap<PanelVisibilityPage>(),
 						new ViewMap<VisualStatesPage>(),
 						new ViewMap<AdHocPage, AdHocViewModel>(),
-						new ViewMap<AuthTokenDialog, AuthTokenViewModel>()
+						new ViewMap<AuthTokenDialog, AuthTokenViewModel>(),
+						new ViewMap<BasicFlyout>()
 				);
 
 
@@ -247,7 +248,8 @@ namespace Playground
 						{
 							new RouteMap("ComplexDialogFirst",View: views.FindByView<ComplexDialogFirstPage>()),
 							new RouteMap("ComplexDialogSecond",View: views.FindByView<ComplexDialogSecondPage>(), DependsOn: "ComplexDialogFirst")
-						})
+						}),
+						new RouteMap("Basic",View: views.FindByView<BasicFlyout>())
 					}),
 					new RouteMap("PanelVisibility",View: views.FindByView<PanelVisibilityPage>(), DependsOn: "Home"),
 					new RouteMap("VisualStates",View: views.FindByView<VisualStatesPage>(), DependsOn: "Home"),

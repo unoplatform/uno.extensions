@@ -58,4 +58,13 @@ public sealed partial class DialogsPage : Page, IInjectable<INavigator>
 		SimpleDialogResultText.Text = $"Dialog result: {dialogResult.SomeOrDefault()?.ToString()}";
 	}
 	public void Inject(INavigator entity) => Navigator = entity;
+
+	private void FlyoutFromBackgroundClick(object sender, RoutedEventArgs e)
+	{
+		Task.Run(() =>
+		{
+			// Note: Passing object in as sender to make sure navigation doesn't use the sender when showing flyout
+			Navigator.NavigateRouteAsync(new object(), "!Basic");
+		});
+	}
 }

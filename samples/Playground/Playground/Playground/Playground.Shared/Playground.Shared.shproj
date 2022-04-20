@@ -24,6 +24,7 @@
     <_Globbed_Compile Remove="Views\AdHocPage.xaml.cs" />
     <_Globbed_Compile Remove="Views\AlternatePage.xaml.cs" />
     <_Globbed_Compile Remove="Views\AuthTokenDialog.xaml.cs" />
+    <_Globbed_Compile Remove="Views\BasicFlyout.xaml.cs" />
     <_Globbed_Compile Remove="Views\CodeBehindPage.xaml.cs" />
     <_Globbed_Compile Remove="Views\ContentControlPage.xaml.cs" />
     <_Globbed_Compile Remove="Views\MainPage.xaml.cs" />
@@ -37,6 +38,7 @@
     <_Globbled_Page Remove="Views\AdHocPage.xaml" />
     <_Globbled_Page Remove="Views\AlternatePage.xaml" />
     <_Globbled_Page Remove="Views\AuthTokenDialog.xaml" />
+    <_Globbled_Page Remove="Views\BasicFlyout.xaml" />
     <_Globbled_Page Remove="Views\CodeBehindPage.xaml" />
     <_Globbled_Page Remove="Views\ContentControlPage.xaml" />
     <_Globbled_Page Remove="Views\MainPage.xaml" />

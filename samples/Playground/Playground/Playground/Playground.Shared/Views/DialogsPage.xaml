@@ -40,6 +40,10 @@
 			<TextBlock x:Name="SimpleDialogResultText" />
 			<Button uen:Navigation.Request="!Complex/ComplexDialogFirst"
 					Content="Complex Dialog Nav Request" />
+			<Button uen:Navigation.Request="!Basic"
+					Content="Flyout from Xaml" />
+			<Button Content="Flyout from Background Thread"
+					Click="FlyoutFromBackgroundClick" />
 		</StackPanel>
 	</Grid>
 </Page>
