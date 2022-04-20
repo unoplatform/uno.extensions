@@ -6,7 +6,7 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="7.1.2" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
-    <PackageReference Include="System.Text.Json" Version="6.0.1" />
+    <PackageReference Include="System.Text.Json" Version="6.0.3" />
     <PackageReference Include="Refit" Version="6.3.2" />
     <PackageReference Include="Refit.HttpClientFactory" Version="6.3.2" />
     <PackageReference Include="Uno.UI.Skia.Wpf" Version="4.1.9" />
