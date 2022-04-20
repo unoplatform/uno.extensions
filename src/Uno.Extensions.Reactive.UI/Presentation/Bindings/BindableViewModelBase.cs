@@ -58,7 +58,7 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 	/// <returns>Info that can be used to create a bindable object.</returns>
 	protected BindablePropertyInfo<TProperty> Property<TProperty>(string propertyName, TProperty? defaultValue, out IInput<TProperty> state)
 	{
-		var stateImpl = new StateImpl<TProperty>(defaultValue);
+		var stateImpl = new StateImpl<TProperty>(Option.Some(defaultValue!));
 		var info = new BindablePropertyInfo<TProperty>(this, propertyName, ViewModelToView, ViewToViewModel);
 
 		_disposables.Add(stateImpl);
@@ -126,7 +126,7 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 				var current = msg.Current.Data.SomeOrDefault();
 				var updated = updater(current);
 
-				return msg.With().Data(Option.Some(updated)).Set(BindingSource, this);
+				return msg.With().Data(Option.Some(updated!)).Set(BindingSource, this);
 			}
 		}
 	}
