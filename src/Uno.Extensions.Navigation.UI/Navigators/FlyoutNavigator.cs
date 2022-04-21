@@ -33,7 +33,7 @@ public class FlyoutNavigator : ControlNavigator
 		// If this is back navigation, then make sure it's used to close
 		// any of the open dialogs
 		var injectedFlyout = false;
-		if (route.FrameIsBackNavigation() && Flyout is not null)
+		if (route.FrameIsBackNavigation())
 		{
 			CloseFlyout();
 		}
@@ -55,7 +55,11 @@ public class FlyoutNavigator : ControlNavigator
 
 	private void CloseFlyout()
 	{
-		Flyout?.Hide();
+		if (Flyout is not null)
+		{
+			Flyout.Closed -= Flyout_Closed;
+			Flyout.Hide();
+		}
 	}
 
 	private async Task<Flyout?> DisplayFlyout(NavigationRequest request, Type? viewType, object? viewModel, bool injectedFlyout)
@@ -67,7 +71,7 @@ public class FlyoutNavigator : ControlNavigator
 		if (navigation is null ||
 			services is null)
 		{
-			return null;
+			return default;
 		}
 
 		Flyout? flyout = null;
@@ -88,7 +92,12 @@ public class FlyoutNavigator : ControlNavigator
 			flyout = resource as Flyout;
 		}
 
-		var flyoutElement = flyout?.Content as FrameworkElement;
+		if(flyout is null)
+		{
+			return default;
+		}
+
+		var flyoutElement = flyout.Content as FrameworkElement;
 		if (flyoutElement is not null)
 		{
 			if (!injectedFlyout)
@@ -114,8 +123,9 @@ public class FlyoutNavigator : ControlNavigator
 			}
 		}
 
-		flyout?.ShowAt(flyoutHost);
+		flyout.ShowAt(flyoutHost);
 
+		flyout.Closed += Flyout_Closed;
 
 		await flyoutElement.EnsureLoaded();
 
@@ -128,5 +138,23 @@ public class FlyoutNavigator : ControlNavigator
 		}
 
 		return flyout;
+	}
+
+	private async void Flyout_Closed(object sender, object e)
+	{
+		if (Flyout is null)
+		{
+			return;
+		}
+
+		Flyout.Closed -= Flyout_Closed;
+
+		var navigation = Region.Navigator();
+		if(navigation is null)
+		{
+			return;
+		}
+
+		await navigation.NavigateBackAsync(this);
 	}
 }
