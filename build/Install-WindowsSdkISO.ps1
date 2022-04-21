@@ -242,6 +242,12 @@ if ($InstallWindowsSDK)
     # Note: there is a delay from Windows SDK announcements to availability via the static link
     $uri = "https://go.microsoft.com/fwlink/?prd=11966&pver=1.0&plcid=0x409&clcid=0x409&ar=Flight&sar=Sdsurl&o1=$buildNumber"
 
+    if($buildNumber -eq 18362)
+    {
+        # Workaround for removed SDK
+        $uri = "https://go.microsoft.com/fwlink/?linkid=2083448";
+    }
+    
     if($buildNumber -eq 19041)
     {
         # Workaround for missing SDK
