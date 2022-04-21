@@ -59,12 +59,14 @@ public sealed partial class DialogsPage : Page, IInjectable<INavigator>
 	}
 	public void Inject(INavigator entity) => Navigator = entity;
 
-	private void FlyoutFromBackgroundClick(object sender, RoutedEventArgs e)
+	private async void FlyoutFromBackgroundClick(object sender, RoutedEventArgs e)
 	{
-		Task.Run(() =>
+		var response = await Task.Run(async () =>
 		{
 			// Note: Passing object in as sender to make sure navigation doesn't use the sender when showing flyout
-			Navigator.NavigateRouteAsync(new object(), "!Basic");
+			return await Navigator.NavigateRouteForResultAsync<string>(new object(), "!Basic");
 		});
+
+		var result = await response.Result;
 	}
 }
