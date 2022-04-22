@@ -10,6 +10,8 @@ internal sealed partial record CollectionChangeSet : IChangeSet
 {
 	private readonly CollectionAnalyzer.Change? _head;
 
+	public static CollectionChangeSet Empty { get; } = new(head: default);
+
 	internal CollectionChangeSet(CollectionAnalyzer.Change? head)
 	{
 		_head = head;
