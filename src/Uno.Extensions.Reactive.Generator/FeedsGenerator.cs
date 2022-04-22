@@ -22,7 +22,8 @@ public partial class FeedsGenerator : Uno.SourceGeneration.ISourceGenerator
 		}
 		else
 		{
-			context.GetLogger().Info(error);
+			context.GetLogger().Error(error);
+			throw new InvalidOperationException(error);
 		}
 	}
 }
