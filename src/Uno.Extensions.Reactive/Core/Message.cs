@@ -13,9 +13,9 @@ public sealed class Message<T> : IMessage
 	/// <summary>
 	/// The initial message of <see cref="IFeed{T}"/>.
 	/// </summary>
-	public static Message<T> Initial { get; } = new(MessageEntry<T>.Empty, MessageEntry<T>.Empty, Array.Empty<MessageAxis>());
+	public static Message<T> Initial { get; } = new(MessageEntry<T>.Empty, MessageEntry<T>.Empty, ChangeCollection.Empty);
 
-	internal Message(MessageEntry<T> previous, MessageEntry<T> current, IReadOnlyCollection<MessageAxis> changes)
+	internal Message(MessageEntry<T> previous, MessageEntry<T> current, ChangeCollection changes)
 	{
 		Previous = previous;
 		Current = current;
@@ -37,9 +37,7 @@ public sealed class Message<T> : IMessage
 	/// <summary>
 	/// The axes that has been modified in <see cref="Current"/> compared to <see cref="Previous"/>.
 	/// </summary>
-	public IReadOnlyCollection<MessageAxis> Changes { get; }
-
-	//public ChangesCollection Changes { get; }
+	public ChangeCollection Changes { get; }
 
 	/// <summary>
 	/// Begins creation of a new message based on this current message.
@@ -58,11 +56,34 @@ public sealed class Message<T> : IMessage
 		var oldValues = Current.Values;
 		var newValues = newMessage.Current.Values;
 
-		var modified = newValues
-			.Where(kvp => !kvp.Key.AreEquals(Current[kvp.Key], kvp.Value))
-			.Select(kvp => kvp.Key);
-		var removed = oldValues.Keys.Except(newValues.Keys);
+		var changes = new ChangeCollection();
+		foreach (var kvp in newValues)
+		{
+			var axis = kvp.Key;
+			var currentValue = Current[axis];
+			var updatedValue = kvp.Value;
+			if (axis.AreEquals(currentValue, updatedValue))
+			{
+				continue;
+			}
+			if (newMessage.Changes.Contains(axis, out var changeSet)
+				&& changeSet is not null
+				&& axis.AreEquals(currentValue, newMessage.Previous[axis]))
+			{
+				// If we have a changeSet and it applies tu update from the currentValue, we propagate it
+				changes.Add(axis, changeSet);
+			}
+			else
+			{
+				changes.Add(axis);
+			}
+		}
 
-		return new Message<T>(Current, newMessage.Current, modified.Concat(removed).ToList());
+		foreach (var removedAxis in oldValues.Keys.Except(newValues.Keys))
+		{
+			changes.Add(removedAxis);
+		}
+
+		return new Message<T>(Current, newMessage.Current, changes);
 	}
 }

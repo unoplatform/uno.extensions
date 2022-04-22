@@ -12,7 +12,7 @@ namespace Uno.Extensions.Reactive;
 public readonly struct MessageBuilder<T> : IMessageEntry, IMessageBuilder, IMessageBuilder<T>
 {
 	private readonly MessageEntry<T> _previous;
-	private readonly HashSet<MessageAxis> _changes;
+	private readonly ChangeCollection _changes;
 	private readonly Dictionary<MessageAxis, MessageAxisValue> _values;
 
 	internal MessageBuilder(MessageEntry<T> current)
@@ -45,7 +45,7 @@ public readonly struct MessageBuilder<T> : IMessageEntry, IMessageBuilder, IMess
 	internal MessageAxisValue Get(MessageAxis axis)
 		=> _values.TryGetValue(axis, out var value) ? value : default;
 
-	internal void Set(MessageAxis axis, MessageAxisValue value)
+	internal void Set(MessageAxis axis, MessageAxisValue value, IChangeSet? changes = null)
 	{
 		if (axis.AreEquals(this[axis], value))
 		{

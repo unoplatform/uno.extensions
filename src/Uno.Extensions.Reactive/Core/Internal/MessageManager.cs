@@ -66,7 +66,7 @@ internal sealed partial class MessageManager<TParent, TResult>
 			var parentEntry = parent?.Current ?? MessageEntry<TParent>.Empty;
 			var localEntry = _local.result.Current;
 			var values = localEntry.Values.ToDictionary();
-			var changes = new List<MessageAxis>();
+			var changes = new ChangeCollection();
 			foreach (var axis in possiblyChangedAxes.Distinct())
 			{
 				var parentValue = parentEntry[axis];

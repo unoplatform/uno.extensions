@@ -6,7 +6,7 @@ using Uno.Extensions.Collections;
 
 namespace Uno.Extensions.Reactive
 {
-	internal interface IChangeSet : IEnumerable<IChange>
+	public interface IChangeSet : IEnumerable<IChange>
 	{
 	}
 
@@ -15,7 +15,7 @@ namespace Uno.Extensions.Reactive
 	//{
 	//}
 
-	internal interface IChange
+	public interface IChange
 	{
 	}
 

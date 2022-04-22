@@ -20,7 +20,7 @@ public static class ListState
 	/// <param name="item">The item to add.</param>
 	/// <param name="ct">A token to abort the async add operation.</param>
 	/// <returns></returns>
-	public static ValueTask Add<T>(this IListState<T> state, T item, CancellationToken ct)
+	public static ValueTask AddAsync<T>(this IListState<T> state, T item, CancellationToken ct)
 		=> state.UpdateValue(items => items.SomeOrDefault(ImmutableList<T>.Empty).Add(item), ct);
 	#endregion
 }

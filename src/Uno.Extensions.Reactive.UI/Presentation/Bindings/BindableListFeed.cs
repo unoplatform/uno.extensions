@@ -33,7 +33,7 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 		_state = ctx.GetOrCreateState(source.AsFeed());
 
 		((StateImpl<IImmutableList<T>>)_state).GetSource(_ct.Token).ForEachAsync(
-			msg => _items.Switch(new ImmutableObservableCollection<T>(msg.Current.Data.SomeOrDefault(ImmutableList<T>.Empty)!)),
+			msg => _items.Switch(new ImmutableObservableCollection<T>(msg.Current.Data.SomeOrDefault(ImmutableList<T>.Empty))),
 			_ct.Token);
 
 		// Note: we have to listen for collection changes on bindable _items to update the state.
