@@ -56,7 +56,7 @@ partial class CollectionUpdater
 						break;
 
 					default:
-						throw new InvalidOperationException("Unexpected before action");
+						throw new InvalidOperationException($"Unexpected before action, only {nameof(BeforeCallback)} and {nameof(ICompositeCallback)} are supported.");
 				}
 			}
 
@@ -101,7 +101,7 @@ partial class CollectionUpdater
 						break;
 
 					default:
-						throw new InvalidOperationException("Unexpected after action");
+						throw new InvalidOperationException($"Unexpected after action, only {nameof(AfterCallback)} and {nameof(ICompositeCallback)} are supported.");
 				}
 			}
 
@@ -119,12 +119,11 @@ partial class CollectionUpdater
 						break;
 
 					case ICompositeCallback child:
-						//child.InvokeCallbacksOnly();
 						child.Invoke(CallbackPhase.Before | CallbackPhase.Main, silently: true);
 						break;
 
 					default:
-						throw new InvalidOperationException("Unexpected before action");
+						throw new InvalidOperationException($"Unexpected before action, only {nameof(BeforeCallback)} and {nameof(ICompositeCallback)} are supported.");
 				}
 			}
 
@@ -152,12 +151,11 @@ partial class CollectionUpdater
 						break;
 
 					case ICompositeCallback child:
-						//child.InvokeCallbacksOnly();
 						child.Invoke(CallbackPhase.Main | CallbackPhase.After, silently: true);
 						break;
 
 					default:
-						throw new InvalidOperationException("Unexpected before action");
+						throw new InvalidOperationException($"Unexpected after action, only {nameof(AfterCallback)} and {nameof(ICompositeCallback)} are supported.");
 				}
 			}
 

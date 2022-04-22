@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Uno.Extensions.Collections;
+using Uno.Extensions.Reactive.Logging;
 
 namespace Uno.Extensions.Reactive.Bindings.Collections;
 
@@ -35,8 +37,17 @@ internal class LoadMoreItemsRequest
 		{
 			return (await _result.Task).Count;
 		}
-		catch
+		catch (OperationCanceledException)
 		{
+			return 0;
+		}
+		catch (Exception error)
+		{
+			if (this.Log().IsEnabled(LogLevel.Warning))
+			{
+				this.Log().Warn(error, "Failed to load more items.");
+			}
+
 			return 0;
 		}
 	}

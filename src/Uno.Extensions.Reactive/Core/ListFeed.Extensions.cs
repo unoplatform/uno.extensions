@@ -26,7 +26,7 @@ public static partial class ListFeed
 		=> listFeed.AsFeed().GetAwaiter();
 
 	/// <summary>
-	/// Asynchronously get the next data produced by a feed.
+	/// Asynchronously gets the next data produced by a feed.
 	/// </summary>
 	/// <typeparam name="T">The type of the value of the feed.</typeparam>
 	/// <param name="listFeed">The feed to get data from.</param>
@@ -58,7 +58,7 @@ public static partial class ListFeed
 		=> listFeed.AsFeed().Values(kind, ct);
 
 	/// <summary>
-	/// Asynchronously get the next message produced by a feed.
+	/// Asynchronously gets the next message produced by a feed.
 	/// </summary>
 	/// <typeparam name="T">The type of the value of the feed.</typeparam>
 	/// <param name="listFeed">The list feed to get message from.</param>

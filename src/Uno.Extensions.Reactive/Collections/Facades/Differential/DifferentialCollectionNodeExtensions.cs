@@ -51,33 +51,20 @@ internal static class DifferentialCollectionNodeExtensions
 	public static IReadOnlyList<T> AsReadOnlyList<T>(this IDifferentialCollectionNode head)
 		=> new DifferentialReadOnlyList<T>(head);
 
-	///// <summary>
-	///// Creates a new <seealso cref="IDifferentialCollectionNode"/> over the given node which reflects the provided change
-	///// </summary>
-	///// <param name="node">The current head of the collection.</param>
-	///// <param name="args">The change to apply over the current <paramref name="node"/>.</param>
-	///// <returns>A collection head node, which correspond to the current modified by the provided args.</returns>
-	//public static IDifferentialCollectionNode Add(this IDifferentialCollectionNode node, RichNotifyCollectionChangedEventArgs args)
-	//{
-	//	switch (args.Action)
-	//	{
-	//		case NotifyCollectionChangedAction.Add:
-	//			return new Add(node, args);
-
-	//		case NotifyCollectionChangedAction.Move:
-	//			return new Move(node, args);
-
-	//		case NotifyCollectionChangedAction.Remove:
-	//			return new Remove(node, args);
-
-	//		case NotifyCollectionChangedAction.Replace:
-	//			return new Replace(node, args);
-
-	//		case NotifyCollectionChangedAction.Reset:
-	//			return new Reset(args.ResetNewItems);
-
-	//		default:
-	//			throw new ArgumentOutOfRangeException(nameof(args), $"Unkown action '{args.Action}'.");
-	//	}
-	//}
+	/// <summary>
+	/// Creates a new <seealso cref="IDifferentialCollectionNode"/> over the given node which reflects the provided change
+	/// </summary>
+	/// <param name="node">The current head of the collection.</param>
+	/// <param name="args">The change to apply over the current <paramref name="node"/>.</param>
+	/// <returns>A collection head node, which correspond to the current modified by the provided args.</returns>
+	public static IDifferentialCollectionNode Add(this IDifferentialCollectionNode node, RichNotifyCollectionChangedEventArgs args)
+		=> args.Action switch
+		{
+			NotifyCollectionChangedAction.Add => new Add(node, args),
+			NotifyCollectionChangedAction.Move => new Move(node, args),
+			NotifyCollectionChangedAction.Remove => new Remove(node, args),
+			NotifyCollectionChangedAction.Replace => new Replace(node, args),
+			NotifyCollectionChangedAction.Reset => new Reset(args.ResetNewItems!),
+			_ => throw new ArgumentOutOfRangeException(nameof(args), $"Unknown action '{args.Action}'.")
+		};
 }

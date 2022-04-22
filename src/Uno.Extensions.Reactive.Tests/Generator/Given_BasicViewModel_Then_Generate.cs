@@ -113,8 +113,8 @@ public class Given_BasicViewModel_Then_Generate : FeedUITests
 
 		Assert.IsNotNull(bindable.AFeedField as IState<string>);
 		Assert.IsNotNull(bindable.AStateField as IState<string>);
-		Assert.IsNotNull(bindable.AListFeedField as IListState<string>); // This should actually be a IListState
-		Assert.IsNotNull(bindable.AListStateField as IListState<string>); // This should actually be a IListState
+		Assert.IsNotNull(bindable.AListFeedField as IListState<string>);
+		Assert.IsNotNull(bindable.AListStateField as IListState<string>);
 		Assert.IsNotNull(bindable.AListFeedField as ICollectionView);
 		Assert.IsNotNull(bindable.AListStateField as ICollectionView);
 		Assert.IsNotNull(bindable.ACustomFeedField as IState<string>);
@@ -140,8 +140,8 @@ public class Given_BasicViewModel_Then_Generate : FeedUITests
 
 		Assert.IsNotNull(bindable.AFeedProperty as IState<string>);
 		Assert.IsNotNull(bindable.AStateProperty as IState<string>);
-		Assert.IsNotNull(bindable.AListFeedProperty as IListFeed<string>); // This should actually be a IListState
-		Assert.IsNotNull(bindable.AListStateProperty as IListFeed<string>); // This should actually be a IListState
+		Assert.IsNotNull(bindable.AListFeedProperty as IListState<string>);
+		Assert.IsNotNull(bindable.AListStateProperty as IListState<string>);
 		Assert.IsNotNull(bindable.AListFeedProperty as ICollectionView);
 		Assert.IsNotNull(bindable.AListStateProperty as ICollectionView);
 		Assert.IsNotNull(bindable.ACustomFeedProperty as IState<string>);

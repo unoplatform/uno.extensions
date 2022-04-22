@@ -267,10 +267,10 @@ internal partial class CollectionAnalyzer
 		/*
 		*	About equality checks and instance update:
 		*
-		*	Usually the 'itemVersionComparer' checks full Equality, while the 'itemComparer' only checks the KeyEquality.
+		*	Usually the 'itemVersionComparer' checks for full Equality, while the 'itemComparer' only checks for the KeyEquality.
 		*	The idea is to be able to properly track multiple versions of the same item (for instance if a property of the item changed).
 		*
-		*	Here, the "item tracking" was already done, and we are only validating 2 version of the same item
+		*	Here, the "item tracking" was already done, and we are only validating 2 versions of the same item
 		*  (we already determined that they have the same key using the 'itemComparer').
 		*
 		*	If the 'itemVersionComparer' is 'null' (or if the value is a boxed value type) we assume that there is no
@@ -278,11 +278,11 @@ internal partial class CollectionAnalyzer
 		*  Note: in this case we don't raise any 'Replace'.
 		*
 		*	If the 'itemVersionComparer' returns 'true' (or if it's 'null') that means that they are not only KeyEquals but also Equals.
-		*	So as we are usually working with immutable objects, we can ignore that a new instance is availble and
+		*	So as we are usually working with immutable objects, we can ignore that a new instance is available and
 		*  we don't raise any event ('changesBuffer.Update'). Note: We still have to notify the visitor!
 		*
 		*  If the 'itemVersionComparer' returns 'false' that means items are only key equals, but not same version.
-		*  SO we have to raise a 'Replace' event.
+		*  So we have to raise a 'Replace' event.
 		*/
 
 		void UpdateInstanceFromOld(object oldItem, int oldIndex, int newIndex)

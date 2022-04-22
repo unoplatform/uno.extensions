@@ -1,5 +1,5 @@
-﻿#if NET6_0 && (__IOS__ || __ANDROID__)
-#nullable disable
+﻿#if NET6_0_OR_GREATER && (__IOS__ || __ANDROID__)
+#nullable disable // Matches the WinRT API
 
 using System;
 using System.Collections.Generic;
@@ -7,9 +7,7 @@ using System.Text;
 
 namespace System.Runtime.InteropServices.WindowsRuntime;
 
-internal record struct EventRegistrationToken(Delegate Delegate)
-{
-}
+internal record struct EventRegistrationToken(Delegate Delegate);
 
 internal class EventRegistrationTokenTable<THandler>
 	where THandler : Delegate

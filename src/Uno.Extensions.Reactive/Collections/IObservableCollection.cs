@@ -10,7 +10,7 @@ internal interface IObservableCollection : IList, INotifyCollectionChanged /*,IN
 {
 	/// <summary>
 	/// Atomatically adds a <see cref="INotifyCollectionChanged.CollectionChanged"/> event handler from any thread for a given scheduling context.
-	/// <remarks>The handler is attended to be invoked on the provided scheduling context.</remarks>
+	/// <remarks>The handler is expected to be invoked on the provided scheduling context.</remarks>
 	/// </summary>
 	/// <param name="callback">The event handler.</param>
 	/// <param name="current">The items when the handler was added.</param>
@@ -23,7 +23,7 @@ internal interface IObservableCollection : IList, INotifyCollectionChanged /*,IN
 	/// <summary>
 	/// Atomatically removes a <see cref="INotifyCollectionChanged.CollectionChanged"/> event handler from any thread for a given scheduling context.
 	/// <remarks>
-	/// If you don't need to retreive the <paramref name="current"/> version of the collection, you should use the <see cref="IDisposable"/> returned by the <see cref="AddCollectionChangedHandler"/>.
+	/// If you don't need to retrieve the <paramref name="current"/> version of the collection, you should use the <see cref="IDisposable"/> returned by the <see cref="AddCollectionChangedHandler"/>.
 	/// </remarks>
 	/// </summary>
 	/// <param name="callback">The event handler.</param>

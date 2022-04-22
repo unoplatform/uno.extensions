@@ -56,6 +56,8 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 		public ILayerTracker GetTracker(IBindableCollectionViewSource source, IUpdateContext context)
 		{
 			// Use the SelectionFacet of the source if this is a flat view, or the parent if this is the leaf of a nested view
+			// NOTE: we do support only one layer of grouping here. We should get the SelectionFacet of the root collection
+			//		 cf. https://github.com/unoplatform/uno.extensions/issues/371
 			var visitor = new SelectionVisitor((_isRoot ? source : source.Parent!).GetFacet<SelectionFacet>());
 			var analyzer = _diffAnalyzer;
 			var tracker = new DataLayerTracker(context, analyzer, visitor);

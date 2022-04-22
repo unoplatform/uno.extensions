@@ -11,8 +11,3 @@ namespace Uno.Extensions.Reactive;
 public interface IListFeed<T> : ISignal<Message<IImmutableList<T>>>
 {
 }
-
-internal interface IListFeedWrapper<T>
-{
-	IFeed<IImmutableList<T>> Source { get; }
-}

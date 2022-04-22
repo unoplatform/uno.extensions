@@ -5,14 +5,14 @@ using System.Linq;
 namespace Uno.Extensions.Collections.Tracking;
 
 /// <summary>
-/// A callback that has to invoked **before** the corresponding event is being dequeue from the <see cref="CollectionUpdater"/>.
+/// A callback that has to be invoked **before** the corresponding event is being dequeued from the <see cref="CollectionUpdater"/>.
 /// </summary>
 /// <remarks>Be aware that this callback is invoked each time the <see cref="CollectionUpdater.DequeueChanges"/> is invoked.</remarks>
 /// <remarks>Usually this is a good way to execute some action on the UI thread before an item is being added / changed / removed from a LisView.</remarks>
 internal delegate void BeforeCallback();
 
 /// <summary>
-/// A callback that has to invoked **after** the corresponding event has been dequeued from the <see cref="CollectionUpdater"/>.
+/// A callback that has to be invoked **after** the corresponding event has been dequeued from the <see cref="CollectionUpdater"/>.
 /// </summary>
 /// <remarks>Be aware that this callback is invoked each time the <see cref="CollectionUpdater.DequeueChanges"/> is invoked.</remarks>
 /// <remarks>Usually this is a good way to execute some action on the UI thread after an item has been added / changed / removed from a LisView.</remarks>

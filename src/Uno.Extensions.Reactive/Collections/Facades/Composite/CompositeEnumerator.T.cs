@@ -19,7 +19,7 @@ internal class CompositeEnumerator<T> : IEnumerator<T>
 
 	public CompositeEnumerator(params IEnumerator<T>[] inners)
 	{
-		_inners = inners ?? throw new ArgumentNullException(nameof(inners), "The inners must not be null.");
+		_inners = inners ?? Array.Empty<IEnumerator<T>>();
 	}
 
 	object? IEnumerator.Current => Current;

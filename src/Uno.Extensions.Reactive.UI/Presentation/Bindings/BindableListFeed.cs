@@ -14,7 +14,7 @@ namespace Uno.Extensions.Reactive.Bindings;
 /// An helper class use to data-bind a <see cref="IListFeed{T}"/>.
 /// </summary>
 /// <typeparam name="T">The type of the items.</typeparam>
-public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListInput<T>, IInput<IImmutableList<T>>
+public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<T>, IInput<IImmutableList<T>>
 {
 	private readonly CancellationTokenSource _ct = new();
 	private readonly BindableCollection _items;
@@ -36,7 +36,8 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListInput<
 			msg => _items.Switch(new ImmutableObservableCollection<T>(msg.Current.Data.SomeOrDefault(ImmutableList<T>.Empty)!)),
 			_ct.Token);
 
-		// TODO Uno: we have to listen for collection changes on bindable _items to update the state.
+		// Note: we have to listen for collection changes on bindable _items to update the state.
+		// https://github.com/unoplatform/uno.extensions/issues/370
 	}
 
 	/// <inheritdoc />

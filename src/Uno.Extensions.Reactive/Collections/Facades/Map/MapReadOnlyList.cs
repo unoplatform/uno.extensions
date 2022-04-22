@@ -29,7 +29,7 @@ internal class MapReadOnlyList<TFrom, TTo> : IList, IList<TTo>, IReadOnlyList<TT
 
 		if (!source.IsReadOnly)
 		{
-			throw new InvalidOperationException("MapReadOnlyList is only a facade over a list which should be read-only itself.");
+			throw new ArgumentException("MapReadOnlyList is only a facade over a list which should be read-only itself.", nameof(source));
 		}
 	}
 

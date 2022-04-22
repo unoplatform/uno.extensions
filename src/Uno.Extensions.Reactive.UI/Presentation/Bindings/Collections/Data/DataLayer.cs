@@ -119,13 +119,10 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 
 			var context = _layerStrategy.CreateUpdateContext(VisitorType.UpdateCollection, mode);
 			var tracker = _layerStrategy.GetTracker(this, context);
-			var initializer = PrepareUpdate(source, tracker);
+			var update = PrepareUpdate(source, tracker);
 
 			// Schedule to flush the buffers to apply the update
-			// TODO uno : Here we can send the prevent the Schedule and allow a sync execution at a given time
-			//			 Like when the message reached the view
-
-			Schedule(initializer.Complete);
+			Schedule(update.Complete);
 		}
 
 		/// <summary>
@@ -141,7 +138,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 
 		private DataLayerUpdate PrepareUpdate(IObservableCollection source, ILayerTracker tracker)
 		{
-			var from = _nextChangesBuffer ?? _currentChangesBuffer ?? throw new InvalidOperationException("Invalid state. You must invoke the init first.");
+			var from = _nextChangesBuffer ?? _currentChangesBuffer ?? throw new InvalidOperationException("Invalid state. You must invoke the Init() first.");
 			var to = _nextChangesBuffer = from.UpdateTo(source);
 
 			// Detects changes between 'from.Collection' and 'source'
@@ -159,7 +156,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 				previous = _currentChangesBuffer;
 				if (previous != from)
 				{
-					throw new InvalidOperationException("The previous update was not applied yet!");
+					throw new InvalidOperationException("The previous update was not applied yet! Aborting update to prevent native crash.");
 				}
 
 				CurrentSourceChanging?.Invoke(this, new CurrentSourceUpdateEventArgs(previous.Collection, to.Collection));
@@ -171,7 +168,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 			{
 				if (previous != from)
 				{
-					throw new InvalidOperationException("Wooups ... all callbacks was not applied properly, and that is not recoverable!");
+					throw new InvalidOperationException("All callbacks was not applied properly, and that is not recoverable! Aborting update to prevent native crash.");
 				}
 
 				CurrentSourceChanged?.Invoke(this, new CurrentSourceUpdateEventArgs(previous.Collection, to.Collection));
@@ -182,7 +179,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 		{
 			if (_currentChangesBuffer is null)
 			{
-				throw new InvalidOperationException("Invalid state. You must invoke the init first.");
+				throw new InvalidOperationException("Invalid state. You must invoke the Init() first.");
 			}
 
 			return _currentChangesBuffer.Stop();
@@ -195,7 +192,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 		public TFacet GetFacet<TFacet>()
 		{
 			var facet = _facets.OfType<TFacet>().FirstOrDefault();
-			if (facet == null)
+			if (facet is null)
 			{
 				throw new InvalidOperationException($"Facet '{typeof(TFacet).Name}' is not available on this holder ({GetType().Name}).");
 			}

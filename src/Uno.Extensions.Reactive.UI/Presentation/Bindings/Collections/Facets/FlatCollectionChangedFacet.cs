@@ -40,7 +40,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 				// As we don't have to compensate the Count on the FlatView, we can raise collection changes here without using the RaiseItemPerItem of the CollectionChangedFacet
 				// We can also raise the CollectionChanged out of sync with VectorChanged.
 
-				if (_owner.Value.Log().IsEnabled(LogLevel.Information)) _owner.Value.Log().Info($"{_owner.Value.GetType().Name}: As a new group was added, will raise 'Add' @ {offset} of the {currentItemsCount} items  (collection count: {_owner.Value.Count}).");
+				if (_owner.Value.Log().IsEnabled(LogLevel.Trace)) _owner.Value.Log().Trace($"{_owner.Value.GetType().Name}: As a new group was added, will raise 'Add' @ {offset} of the {currentItemsCount} items  (collection count: {_owner.Value.Count}).");
 
 				CollectionChanged?.Invoke(_CollectionChanged.AddSome(currentItems!, offset));
 				if (VectorChanged != null)
@@ -67,7 +67,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 				// As we don't have to compensate the Count on the FlatView, we can raise collection changes here without using the RaiseItemPerItem of the CollectionChangedFacet
 				// We can also raise the CollectionChanged out of sync with VectorChanged.
 
-				if (_owner.Value.Log().IsEnabled(LogLevel.Information)) _owner.Value.Log().Info($"{_owner.Value.GetType().Name}: As a group was removed, will raise 'Remove' @ {offset} of the {currentItemsCount} items  (collection count: {_owner.Value.Count}).");
+				if (_owner.Value.Log().IsEnabled(LogLevel.Trace)) _owner.Value.Log().Trace($"{_owner.Value.GetType().Name}: As a group was removed, will raise 'Remove' @ {offset} of the {currentItemsCount} items  (collection count: {_owner.Value.Count}).");
 
 				CollectionChanged?.Invoke(_CollectionChanged.RemoveSome(currentItems!, offset));
 				if (VectorChanged != null)

@@ -15,8 +15,8 @@ internal class OneWayMemoizedConverter<TFrom, TTo> : ICachedConverter<TFrom, TTo
 	where TFrom : class
 	where TTo : class
 {
-	private readonly ConditionalWeakTable<TFrom, TTo> _convertionStore = new ConditionalWeakTable<TFrom, TTo>();
-	private readonly ConditionalWeakTable<TTo, TFrom> _convertionBackStore = new ConditionalWeakTable<TTo, TFrom>();
+	private readonly ConditionalWeakTable<TFrom, TTo> _convertionStore = new();
+	private readonly ConditionalWeakTable<TTo, TFrom> _convertionBackStore = new();
 	private ImmutableDictionary<int, ImmutableList<WeakReference<TTo>>> _convertionBackAlternativeStore = ImmutableDictionary<int, ImmutableList<WeakReference<TTo>>>.Empty;
 
 	private readonly Func<TFrom, TTo> _convert;
@@ -65,7 +65,7 @@ internal class OneWayMemoizedConverter<TFrom, TTo> : ICachedConverter<TFrom, TTo
 		var result = _convert(source);
 		if (result == null)
 		{
-			throw new InvalidOperationException("The conversion result must not be null.");
+			throw new InvalidOperationException($"Converting '{source}' returned 'null' which is invalid for the memoized converter (Cannot be attached the original value for back conversion).");
 		}
 
 		_convertionBackStore.Add(result, source);
@@ -87,13 +87,13 @@ internal class OneWayMemoizedConverter<TFrom, TTo> : ICachedConverter<TFrom, TTo
 	{
 		if (!_convertionBackAlternativeStore.TryGetValue(_resultComparer.GetHashCode(source), out var alternativesForHashCode))
 		{
-			throw new InvalidOperationException("This converter supports back convertion only for items that was previously converted, or for its alternative versions (KeyEquals).");
+			throw new InvalidOperationException("This converter supports back conversion only for items that was previously converted, or for its alternative versions (KeyEquals).");
 		}
 
 		var (hasAlternativeSource, alternativeSource) = Find(alternativesForHashCode, source, _resultComparer);
 		if (!hasAlternativeSource)
 		{
-			throw new InvalidOperationException("This converter supports back convertion only for items that was previously converted, or for its alternative versions (KeyEquals).");
+			throw new InvalidOperationException("This converter supports back conversion only for items that was previously converted, or for its alternative versions (KeyEquals).");
 		}
 
 		if (alternativeSource is null || !_convertionBackStore.TryGetValue(alternativeSource, out var result))
