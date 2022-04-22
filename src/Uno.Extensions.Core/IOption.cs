@@ -12,5 +12,5 @@ public interface IOption
 
 	bool IsNone();
 
-	bool IsSome([NotNullWhen(true)] out object? value);
+	bool IsSome(out object? value);
 }

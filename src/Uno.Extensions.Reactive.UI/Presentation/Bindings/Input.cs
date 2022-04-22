@@ -7,7 +7,7 @@ using Uno.Extensions.Reactive.Core;
 
 namespace Uno.Extensions.Reactive.Bindings;
 
-internal class Input<T> : IInput<T>
+internal sealed class Input<T> : IInput<T>
 {
 	private readonly IState<T> _state;
 

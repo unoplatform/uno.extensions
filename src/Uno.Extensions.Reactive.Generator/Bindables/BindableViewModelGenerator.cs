@@ -77,9 +77,9 @@ using System.Threading.Tasks;
 
 namespace {vm.ContainingNamespace}
 {{
-	partial {(vm.IsRecord ? "record" : "class")} {vm.Name} : global::System.IAsyncDisposable
+	partial {(vm.IsRecord ? "record" : "class")} {vm.Name} : global::System.IAsyncDisposable, {NS.Core}.ISourceContextAware
 	{{
-		public class Bindable{vm.Name} : {NS.Bindings}.BindableViewModelBase
+		public partial class Bindable{vm.Name} : {NS.Bindings}.BindableViewModelBase
 		{{
 			{inputsErrors.Align(3)}
 			{inputs.Select(input => input.GetBackingField()).Align(3)}
@@ -188,12 +188,20 @@ namespace {vm.ContainingNamespace}
 		{
 			switch (member)
 			{
+				case IFieldSymbol field when _ctx.IsListFeed(field.Type, out var valueType):
+					yield return new MappedListFeedField(field, valueType);
+					break;
+
 				case IFieldSymbol field when _ctx.IsFeed(field.Type, out var valueType):
 					yield return new MappedFeedField(field, valueType);
 					break;
 
 				case IFieldSymbol field:
 					yield return new MappedField(field);
+					break;
+
+				case IPropertySymbol property when _ctx.IsListFeed(property.Type, out var valueType):
+					yield return new MappedListFeedProperty(property, valueType);
 					break;
 
 				case IPropertySymbol property when _ctx.IsFeed(property.Type, out var valueType):

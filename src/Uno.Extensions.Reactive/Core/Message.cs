@@ -39,6 +39,8 @@ public sealed class Message<T> : IMessage
 	/// </summary>
 	public IReadOnlyCollection<MessageAxis> Changes { get; }
 
+	//public ChangesCollection Changes { get; }
+
 	/// <summary>
 	/// Begins creation of a new message based on this current message.
 	/// </summary>

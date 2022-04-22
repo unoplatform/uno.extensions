@@ -144,18 +144,18 @@ public sealed class AttachedProperty
 		factory = factory ?? throw new ArgumentNullException(nameof(factory));
 
 		var cacheKey = (key as object, typeof(TValue));
-		var feeds = _properties.GetOrCreateValue(owner)._values;
-		if (feeds.TryGetValue(cacheKey, out var feed))
+		var values = _properties.GetOrCreateValue(owner)._values;
+		if (values.TryGetValue(cacheKey, out var feed))
 		{
 			return (TValue)feed;
 		}
 
 		var newFeed = factory(owner, key, state) ?? throw new InvalidOperationException("Factory result must not be null.");
-		lock (feeds)
+		lock (values)
 		{
-			return feeds.TryGetValue(cacheKey, out feed)
+			return values.TryGetValue(cacheKey, out feed)
 				? (TValue)feed
-				: (TValue)(feeds[cacheKey] = newFeed);
+				: (TValue)(values[cacheKey] = newFeed);
 		}
 	}
 }

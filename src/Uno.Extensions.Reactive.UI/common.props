@@ -5,6 +5,7 @@
 		<LangVersion>10.0</LangVersion>
 		<Nullable>enable</Nullable>
 		<NoWarn>1701;1702;1998</NoWarn>
+		<NoWarn Condition="$(Configuration)=='Debug'">$(NoWarn);1591</NoWarn>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<WarningsAsErrors />
 	  <AssemblyName>Uno.Extensions.Reactive.UI</AssemblyName>

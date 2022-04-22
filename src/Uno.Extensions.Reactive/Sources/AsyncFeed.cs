@@ -32,7 +32,7 @@ internal sealed class AsyncFeed<T> : IFeed<T>
 	{
 		async IAsyncEnumerable<Unit> Triggers([EnumeratorCancellation] CancellationToken token = default)
 		{
-			// Initial loading of teh value
+			// Initial loading of the value
 			yield return Unit.Default;
 
 			// Then subscribe to refresh

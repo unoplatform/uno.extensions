@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Windows.UI.Xaml.Data;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Uno.Extensions.Reactive.Tests.Generator;
@@ -112,6 +113,10 @@ public class Given_BasicViewModel_Then_Generate : FeedUITests
 
 		Assert.IsNotNull(bindable.AFeedField as IState<string>);
 		Assert.IsNotNull(bindable.AStateField as IState<string>);
+		Assert.IsNotNull(bindable.AListFeedField as IListState<string>);
+		Assert.IsNotNull(bindable.AListStateField as IListState<string>);
+		Assert.IsNotNull(bindable.AListFeedField as ICollectionView);
+		Assert.IsNotNull(bindable.AListStateField as ICollectionView);
 		Assert.IsNotNull(bindable.ACustomFeedField as IState<string>);
 
 		bindable.Model.AProperty = "AProperty_SetFromVM";
@@ -135,6 +140,10 @@ public class Given_BasicViewModel_Then_Generate : FeedUITests
 
 		Assert.IsNotNull(bindable.AFeedProperty as IState<string>);
 		Assert.IsNotNull(bindable.AStateProperty as IState<string>);
+		Assert.IsNotNull(bindable.AListFeedProperty as IListState<string>);
+		Assert.IsNotNull(bindable.AListStateProperty as IListState<string>);
+		Assert.IsNotNull(bindable.AListFeedProperty as ICollectionView);
+		Assert.IsNotNull(bindable.AListStateProperty as ICollectionView);
 		Assert.IsNotNull(bindable.ACustomFeedProperty as IState<string>);
 
 		bindable.AParameterLessMethod();

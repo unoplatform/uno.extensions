@@ -8,7 +8,7 @@ namespace Uno.Extensions.Reactive.Events;
 /// </summary>
 /// <typeparam name="THandler"></typeparam>
 /// <typeparam name="TArgs"></typeparam>
-public interface IInvocationList<in THandler, in TArgs> : IDisposable
+internal interface IInvocationList<in THandler, in TArgs> : IDisposable
 {
 	/// <summary>
 	/// Gets a bool which indicates if the they are any handlers currently subscribed

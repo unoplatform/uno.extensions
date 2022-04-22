@@ -14,7 +14,7 @@ namespace Uno.Extensions.Reactive;
 /// </summary>
 public static class Command
 {
-	internal static Action<Exception> _defaultErrorHandler = e => typeof(AsyncCommand).Log().Error("Failed execute command.", e);
+	internal static Action<Exception> _defaultErrorHandler = e => typeof(AsyncCommand).Log().Error("Failed to execute command.", e);
 
 	/// <summary>
 	/// Creates a command from an async method

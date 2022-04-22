@@ -11,6 +11,7 @@ namespace Uno.Extensions.Reactive.Generator;
 internal record BindableGenerationContext(
 	INamedTypeSymbol Feed,
 	INamedTypeSymbol Input,
+	INamedTypeSymbol ListFeed,
 	INamedTypeSymbol CommandBuilder,
 	INamedTypeSymbol CommandBuilderOfT,
 	INamedTypeSymbol BindableAttribute,
@@ -24,6 +25,7 @@ internal record BindableGenerationContext(
 
 		var feed = compilation.GetTypeByMetadataName("Uno.Extensions.Reactive.IFeed`1");
 		var input = compilation.GetTypeByMetadataName("Uno.Extensions.Reactive.IInput`1");
+		var listFeed = compilation.GetTypeByMetadataName("Uno.Extensions.Reactive.IListFeed`1");
 		var commandBuilder = compilation.GetTypeByMetadataName("Uno.Extensions.Reactive.ICommandBuilder");
 		var commandBuilderOfT = compilation.GetTypeByMetadataName("Uno.Extensions.Reactive.ICommandBuilder`1");
 		var bindable = compilation.GetTypeByMetadataName(typeof(ReactiveBindableAttribute).FullName);
@@ -41,6 +43,11 @@ internal record BindableGenerationContext(
 			if (input is null)
 			{
 				yield return "IInput";
+			}
+
+			if (listFeed is null)
+			{
+				yield return "IListFeed";
 			}
 
 			if (commandBuilder is null)
@@ -85,6 +92,7 @@ internal record BindableGenerationContext(
 		(
 			feed!,
 			input!,
+			listFeed!,
 			commandBuilder!,
 			commandBuilderOfT!,
 			bindable!,
@@ -143,7 +151,7 @@ internal record BindableGenerationContext(
 	public bool IsFeed(IParameterSymbol parameter, [NotNullWhen(true)] out ITypeSymbol? valueType, [NotNullWhen(true)] out InputKind? kind)
 	{
 		var definedKind = default(InputKind?);
-		if (parameter.FindAttribute(Input)?.ConstructorArguments[0].Value is InputKind inputKind)
+		if (parameter.FindAttribute(InputAttribute)?.ConstructorArguments[0].Value is InputKind inputKind)
 		{
 			definedKind = inputKind;
 		}
@@ -159,6 +167,49 @@ internal record BindableGenerationContext(
 			return true;
 		}
 		else if (parameter.Type.GetGenericParametersOfInterface(Feed).FirstOrDefault() is { IsDefaultOrEmpty: false, Length: 1 } feedTypeParam)
+		{
+			valueType = feedTypeParam.Single();
+			kind = definedKind ?? InputKind.External; // If not defined, Feed<T> as considered as external, unlike inputs which are by default Edit
+			return true;
+		}
+		else
+		{
+			valueType = null;
+			kind = default;
+			return false;
+		}
+	}
+
+	public bool IsListFeed(ITypeSymbol type)
+		=> type.GetAllInterfaces().Select(intf => intf.OriginalDefinition).Contains(ListFeed, SymbolEqualityComparer.Default);
+
+	public bool IsListFeed(ITypeSymbol type, [NotNullWhen(true)] out ITypeSymbol? valueType)
+	{
+		if (type.GetGenericParametersOfInterface(ListFeed).FirstOrDefault() is { IsDefaultOrEmpty: false, Length: 1 } feedTypeParam)
+		{
+			valueType = feedTypeParam.Single();
+			return true;
+		}
+		else
+		{
+			valueType = null;
+			return false;
+		}
+	}
+
+	public bool IsListFeed(IParameterSymbol parameter, [NotNullWhen(true)] out ITypeSymbol? valueType, [NotNullWhen(true)] out InputKind? kind)
+	{
+		var definedKind = default(InputKind?);
+		if (parameter.FindAttribute(InputAttribute)?.ConstructorArguments[0].Value is InputKind inputKind)
+		{
+			definedKind = inputKind;
+		}
+		else if (parameter.FindAttribute(ValueAttribute) is not null)
+		{
+			definedKind = InputKind.Value;
+		}
+
+		if (parameter.Type.GetGenericParametersOfInterface(Feed).FirstOrDefault() is { IsDefaultOrEmpty: false, Length: 1 } feedTypeParam)
 		{
 			valueType = feedTypeParam.Single();
 			kind = definedKind ?? InputKind.External; // If not defined, Feed<T> as considered as external, unlike inputs which are by default Edit

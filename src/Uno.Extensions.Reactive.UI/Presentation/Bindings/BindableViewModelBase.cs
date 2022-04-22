@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Dispatching;
 using Uno.Extensions.Reactive.Events;
 using Uno.Extensions.Reactive.Utils;
@@ -57,7 +58,7 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 	/// <returns>Info that can be used to create a bindable object.</returns>
 	protected BindablePropertyInfo<TProperty> Property<TProperty>(string propertyName, TProperty? defaultValue, out IInput<TProperty> state)
 	{
-		var stateImpl = new State<TProperty>(defaultValue);
+		var stateImpl = new StateImpl<TProperty>(defaultValue);
 		var info = new BindablePropertyInfo<TProperty>(this, propertyName, ViewModelToView, ViewToViewModel);
 
 		_disposables.Add(stateImpl);
