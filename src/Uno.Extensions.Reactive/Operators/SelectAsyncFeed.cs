@@ -12,9 +12,9 @@ namespace Uno.Extensions.Reactive.Operators;
 internal sealed class SelectAsyncFeed<TArg, TResult> : IFeed<TResult>
 {
 	private readonly IFeed<TArg> _parent;
-	private readonly AsyncFunc<TArg?, TResult?> _projection;
+	private readonly AsyncFunc<TArg, TResult> _projection;
 
-	public SelectAsyncFeed(IFeed<TArg> parent, AsyncFunc<TArg?, TResult?> projection)
+	public SelectAsyncFeed(IFeed<TArg> parent, AsyncFunc<TArg, TResult> projection)
 	{
 		_parent = parent;
 		_projection = projection;
@@ -47,18 +47,18 @@ internal sealed class SelectAsyncFeed<TArg, TResult> : IFeed<TResult>
 						{
 							case OptionType.Undefined:
 								projectionToken?.Cancel();
-								message.Update(msg => msg.With(parentMsg).Data(Option<TResult>.Undefined()).Error(null), ct);
+								message.Update((local, parent) => local.With(parent).Data(Option<TResult>.Undefined()).Error(null), parentMsg, ct);
 								break;
 
 							case OptionType.None:
 								projectionToken?.Cancel();
-								message.Update(msg => msg.With(parentMsg).Data(Option<TResult>.None()).Error(null), ct);
+								message.Update((local, parent) => local.With(parent).Data(Option<TResult>.None()).Error(null), parentMsg, ct);
 								break;
 
 							case OptionType.Some:
 								var previousProjection = projectionToken;
 								projectionToken = CancellationTokenSource.CreateLinkedTokenSource(ct);
-								projection = InvokeAsync(message, parentMsg, async ct2 => await _projection((TArg?)data, ct2), context, projectionToken.Token);
+								projection = InvokeAsync(message, parentMsg, async ct2 => await _projection((TArg)data, ct2), context, projectionToken.Token);
 
 								// We prefer to cancel the previous projection only AFTER so we are able to keep existing transient axes (cf. message.BeginTransaction)
 								// This will not cause any concurrency issue since a transaction cannot push message updates as soon it's not the current.
@@ -71,7 +71,7 @@ internal sealed class SelectAsyncFeed<TArg, TResult> : IFeed<TResult>
 					}
 					else
 					{
-						message.Update(msg => msg.With(parentMsg), ct);
+						message.Update((local, parent) => local.With(parent), parentMsg, ct);
 					}
 				}
 

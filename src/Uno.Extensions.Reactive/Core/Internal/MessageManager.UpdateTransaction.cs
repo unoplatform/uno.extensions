@@ -51,13 +51,14 @@ internal partial class MessageManager<TParent, TResult>
 			}
 
 			_owner.Update(
-				m =>
+				(m, @params) =>
 				{
 					// We alter the _transientUpdates in the 'updater' delegate so we are thread safe thanks to the _owner._gate
-					_transientUpdates[axis] = new MessageAxisUpdate(axis, new MessageAxisValue(value));
+					_transientUpdates[@params.axis] = new MessageAxisUpdate(@params.axis, new MessageAxisValue(@params.value));
 
 					return m.With();
-				}, 
+				},
+				(axis, value),
 				_ct);
 		}
 
@@ -69,13 +70,14 @@ internal partial class MessageManager<TParent, TResult>
 			}
 
 			_owner.Update(
-				m =>
+				(m, @params) =>
 				{
 					// We alter the _transientUpdates in the 'updater' delegate so we are thread safe thanks to the _owner._gate
-					_transientUpdates[axis] = new MessageAxisUpdate(axis, new MessageAxisValue(value));
+					_transientUpdates[@params.axis] = new MessageAxisUpdate(@params.axis, new MessageAxisValue(@params.value));
 
-					return m.With(parentMsg);
+					return m.With(@params.parentMsg);
 				},
+				(axis, value, parentMsg),
 				_ct);
 		}
 

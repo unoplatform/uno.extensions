@@ -26,51 +26,52 @@ internal sealed class SelectFeed<TArg, TResult> : IFeed<TResult>
 		var localMsg = new MessageManager<TArg, TResult>();
 		await foreach (var parentMsg in _parent.GetSource(context, ct).WithCancellation(ct).ConfigureAwait(false))
 		{
-			if (localMsg.Update(DoUpdate))
+			if (localMsg.Update(DoUpdate, parentMsg))
 			{
 				yield return localMsg.Current;
 			}
+		}
+	}
 
-			MessageBuilder<TArg, TResult> DoUpdate(MessageManager<TArg, TResult>.CurrentMessage current)
+	private MessageBuilder<TArg, TResult> DoUpdate(MessageManager<TArg, TResult>.CurrentMessage current, Message<TArg> parentMsg)
+	{
+		var updated = current.With(parentMsg!);
+
+		if (parentMsg!.Changes.Contains(MessageAxis.Data))
+		{
+			var data = parentMsg.Current.Data;
+			switch (data.Type)
 			{
-				var updated = current.With(parentMsg!);
+				case OptionType.Undefined:
+					updated
+						.Data(Option.Undefined<TResult>())
+						.Error(null);
+					break;
 
-				if (parentMsg!.Changes.Contains(MessageAxis.Data))
-				{
-					var data = parentMsg.Current.Data;
-					switch (data.Type)
+				case OptionType.None:
+					updated
+						.Data(Option.None<TResult>())
+						.Error(null);
+					break;
+
+				case OptionType.Some:
+					try
 					{
-						case OptionType.Undefined:
-							updated
-								.Data(Option.Undefined<TResult>())
-								.Error(null);
-							break;
-
-						case OptionType.None:
-							updated
-								.Data(Option.None<TResult>())
-								.Error(null);
-							break;
-
-						case OptionType.Some:
-							try
-							{
-								updated
-									.Data(Option.Some(_projection(data.SomeOrDefault()!)))
-									.Error(null);
-							}
-							catch (Exception error)
-							{
-								updated
-									.Data(Option.Undefined<TResult>())
-									.Error(error);
-							}
-							break;
+						updated
+							.Data(Option.Some(_projection((TArg)data)))
+							.Error(null);
 					}
-				}
+					catch (Exception error)
+					{
+						updated
+							.Data(Option.Undefined<TResult>())
+							.Error(error);
+					}
 
-				return updated;
+					break;
 			}
 		}
+
+		return updated;
 	}
 }

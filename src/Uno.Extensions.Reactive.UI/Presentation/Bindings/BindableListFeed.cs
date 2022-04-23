@@ -18,7 +18,7 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 {
 	private readonly CancellationTokenSource _ct = new();
 	private readonly BindableCollection _items;
-	private readonly IState<IImmutableList<T>> _state;
+	private readonly IListState<T> _state;
 
 	/// <summary>
 	/// Creates a new instance.
@@ -30,9 +30,9 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 	{
 		PropertyName = propertyName;
 		_items = BindableCollection.Create<T>();
-		_state = ctx.GetOrCreateState(source.AsFeed());
+		_state = ctx.GetOrCreateListState(source);
 
-		((StateImpl<IImmutableList<T>>)_state).GetSource(_ct.Token).ForEachAsync(
+		_state.GetSource(ctx /* not used, could be default! */, _ct.Token).ForEachAsync(
 			msg => _items.Switch(new ImmutableObservableCollection<T>(msg.Current.Data.SomeOrDefault(ImmutableList<T>.Empty))),
 			_ct.Token);
 
@@ -55,7 +55,11 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 
 		await foreach (var parentMsg in _state.GetSource(context, ct).WithCancellation(ct).ConfigureAwait(false))
 		{
-			if (localMsg.Update(current => current.With(parentMsg).Data(parentMsg.Current.Data.Map(_ => collectionViewForCurrentThread))))
+			if (localMsg.Update(
+					(current, @params) => current
+						.With(@params.parentMsg)
+						.Data(@params.parentMsg.Current.Data.Map(_ => @params.collectionViewForCurrentThread)),
+					(parentMsg, collectionViewForCurrentThread)))
 			{
 				yield return localMsg.Current;
 			}
