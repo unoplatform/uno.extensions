@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading;
+using Uno.Extensions.Reactive.Operators;
+using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive;
 
@@ -41,10 +43,22 @@ public static partial class ListFeed
 	#endregion
 
 	#region Operators
-	//public static IListFeed<TSource> Where<TSource>(
-	//	this IListFeed<TSource> source,
-	//	Predicate<TSource?> predicate)
-	//	=> default!;
+	/// <summary>
+	/// Gets or create a list feed that filters out some items of a source feed.
+	/// </summary>
+	/// <typeparam name="TSource">Type of the items of the list feed.</typeparam>
+	/// <param name="source">The source list feed to filter.</param>
+	/// <param name="predicate">The predicate to apply to items.</param>
+	/// <returns>A feed that filters out some items of the source feed</returns>
+	/// <remarks>
+	/// Unlike <see cref="IEnumerable{T}"/>, <see cref="IAsyncEnumerable{T}"/> or <see cref="IObservable{T}"/>,
+	/// if all items are filtered out from source list feed,
+	/// the resulting list feed  **will produce a message** with its data set to None.
+	/// </remarks>
+	public static IListFeed<TSource> Where<TSource>(
+		this IListFeed<TSource> source,
+		Predicate<TSource> predicate)
+		=> AttachedProperty.GetOrCreate(source, predicate, (src, p) => new WhereListFeed<TSource>(src, p));
 
 	//public static IListFeed<TResult> Select<TSource, TResult>(
 	//	this IListFeed<TSource> source,
