@@ -51,7 +51,7 @@ internal class BindableGenerator
 	{
 		var properties = record
 			.GetProperties()
-			.Where(prop => !prop.IsImplicitlyDeclared)
+			.Where(prop => !prop.IsImplicitlyDeclared && prop.IsPublic() && !prop.IsStatic)
 			.Select(prop =>
 			{
 				var subBindable = GetBindableType(prop.Type);
