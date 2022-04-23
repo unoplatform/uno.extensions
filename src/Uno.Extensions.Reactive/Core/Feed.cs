@@ -62,7 +62,7 @@ public static partial class Feed
 	/// </remarks>
 	public static IFeed<TSource> Where<TSource>(
 		this IFeed<TSource> source,
-		Predicate<TSource?> predicate)
+		Predicate<TSource> predicate)
 		=> AttachedProperty.GetOrCreate(source, predicate, (src, p) => new WhereFeed<TSource>(src, p));
 
 	/// <summary>
@@ -88,7 +88,7 @@ public static partial class Feed
 	/// <returns>A feed that projects each value of the source feed.</returns>
 	public static IFeed<TResult> SelectAsync<TSource, TResult>(
 		this IFeed<TSource> source,
-		AsyncFunc<TSource?, TResult?> selector)
+		AsyncFunc<TSource, TResult> selector)
 		=> AttachedProperty.GetOrCreate(source, selector, (src, s) => new SelectAsyncFeed<TSource, TResult>(src, s));
 	#endregion
 }
