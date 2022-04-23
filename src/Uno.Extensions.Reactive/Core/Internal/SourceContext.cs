@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Diagnostics.Contracts;
 using System.Linq;
@@ -154,6 +155,29 @@ public sealed class SourceContext : IAsyncDisposable
 	}
 
 	/// <summary>
+	/// Get or create a cached with replay async enumeration of messages produced by the given feed.
+	/// </summary>
+	/// <typeparam name="T">Type of the value of feed.</typeparam>
+	/// <param name="feed">The feed to get source from.</param>
+	/// <returns>The cached with replay async enumeration of messages produced by the given feed</returns>
+	public IAsyncEnumerable<Message<IImmutableList<T>>> GetOrCreateSource<T>(IListFeed<T> feed)
+	{
+		if (_isNone)
+		{
+			this.Log().Warn(
+				$"[PERFORMANCE HIT] Awaiting a feed '{feed}' outside of a valid SourceContext (None). "
+				+ "This creates a new **detached** subscription to the feed, which has a negative performance impact, "
+				+ "and which might even re-execute some HTTP requests.");
+
+			return feed.AsFeed().GetSource(this);
+		}
+		else
+		{
+			return GetOrCreateStateCore(feed.AsFeed()).GetSource(_ct!.Token);
+		}
+	}
+
+	/// <summary>
 	/// Get or create a <see cref="IState{T}"/> for a given feed.
 	/// </summary>
 	/// <typeparam name="T">Type of the value of feed.</typeparam>
@@ -161,6 +185,24 @@ public sealed class SourceContext : IAsyncDisposable
 	/// <returns>The state wrapping the given feed</returns>
 	public IState<T> GetOrCreateState<T>(IFeed<T> feed)
 		=> GetOrCreateStateCore(feed);
+
+	/// <summary>
+	/// Get or create a <see cref="IListState{T}"/> for a given list feed.
+	/// </summary>
+	/// <typeparam name="T">Type of the value of items.</typeparam>
+	/// <param name="feed">The list feed to get source from.</param>
+	/// <returns>The list state wrapping the given list feed</returns>
+	public IListState<T> GetOrCreateListState<T>(IListFeed<T> feed)
+		=> new ListStateImpl<T>(GetOrCreateStateCore(feed.AsFeed()));
+
+	/// <summary>
+	/// Get or create a <see cref="IListState{T}"/> for a given list feed.
+	/// </summary>
+	/// <typeparam name="T">Type of the value of items.</typeparam>
+	/// <param name="feed">The list feed to get source from.</param>
+	/// <returns>The list state wrapping the given list feed</returns>
+	public IListState<T> GetOrCreateListState<T>(IFeed<IImmutableList<T>> feed)
+		=> new ListStateImpl<T>(GetOrCreateStateCore(feed));
 
 	private StateImpl<T> GetOrCreateStateCore<T>(IFeed<T> feed)
 	{

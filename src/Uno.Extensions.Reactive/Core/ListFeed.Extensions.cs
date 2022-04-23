@@ -7,6 +7,7 @@ using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Uno.Extensions.Reactive.Core;
+using Uno.Extensions.Reactive.Operators;
 using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive;
@@ -23,7 +24,7 @@ public static partial class ListFeed
 	/// <param name="listFeed">The list feed to get data from.</param>
 	/// <returns>An awaiter to asynchronously get the next data produced by the feed.</returns>
 	public static ValueTaskAwaiter<Option<IImmutableList<T>>> GetAwaiter<T>(this IListFeed<T> listFeed)
-		=> listFeed.AsFeed().GetAwaiter();
+		=> listFeed.Value(SourceContext.Current.Token).GetAwaiter();
 
 	/// <summary>
 	/// Asynchronously gets the next data produced by a feed.
@@ -33,7 +34,7 @@ public static partial class ListFeed
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to asynchronously get the next data produced by the feed.</returns>
 	public static ValueTask<Option<IImmutableList<T>>> Value<T>(this IListFeed<T> listFeed, CancellationToken ct)
-		=> listFeed.AsFeed().Value(ct);
+		=> listFeed.Values(AsyncFeedValue.Default, ct).FirstOrDefaultAsync(Option<IImmutableList<T>>.Undefined(), ct);
 
 	/// <summary>
 	/// Asynchronously get the next data produced by a feed.
@@ -44,7 +45,7 @@ public static partial class ListFeed
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to asynchronously get the next acceptable data produced by the feed.</returns>
 	public static ValueTask<Option<IImmutableList<T>>> Value<T>(this IListFeed<T> listFeed, AsyncFeedValue kind, CancellationToken ct)
-		=> listFeed.AsFeed().Value(kind, ct);
+		=> listFeed.Values(kind, ct).FirstOrDefaultAsync(Option<IImmutableList<T>>.Undefined(), ct);
 
 	/// <summary>
 	/// Gets an asynchronous enumerable sequence of all data produced by a feed.
@@ -54,8 +55,25 @@ public static partial class ListFeed
 	/// <param name="kind">Specify which data can be returned or not.</param>
 	/// <param name="ct">A cancellation to cancel the async enumeration.</param>
 	/// <returns>An async enumeration sequence of all acceptable data produced by a feed.</returns>
-	public static IAsyncEnumerable<Option<IImmutableList<T>>> Values<T>(this IListFeed<T> listFeed, AsyncFeedValue kind = AsyncFeedValue.AllowError, [EnumeratorCancellation] CancellationToken ct = default)
-		=> listFeed.AsFeed().Values(kind, ct);
+	public static async IAsyncEnumerable<Option<IImmutableList<T>>> Values<T>(this IListFeed<T> listFeed, AsyncFeedValue kind = AsyncFeedValue.AllowError, [EnumeratorCancellation] CancellationToken ct = default)
+	{
+		await foreach (var message in SourceContext.Current.GetOrCreateSource(listFeed).WithCancellation(ct).ConfigureAwait(false))
+		{
+			var current = message.Current;
+
+			if (current.IsTransient && !kind.HasFlag(AsyncFeedValue.AllowTransient))
+			{
+				continue;
+			}
+
+			if (current.Error is { } error && !kind.HasFlag(AsyncFeedValue.AllowError))
+			{
+				ExceptionDispatchInfo.Capture(error).Throw();
+			}
+
+			yield return current.Data;
+		}
+	}
 
 	/// <summary>
 	/// Asynchronously gets the next message produced by a feed.
@@ -64,7 +82,7 @@ public static partial class ListFeed
 	/// <param name="listFeed">The list feed to get message from.</param>
 	/// <returns>A ValueTask to asynchronously get the next message produced by the feed.</returns>
 	public static ValueTask<Message<IImmutableList<T>>> Message<T>(this IListFeed<T> listFeed)
-		=> listFeed.AsFeed().Message();
+		=> listFeed.Messages().FirstAsync(SourceContext.Current.Token);
 
 	/// <summary>
 	/// Asynchronously get the next message produced by a feed.
@@ -74,7 +92,7 @@ public static partial class ListFeed
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to asynchronously get the next message produced by the feed.</returns>
 	public static ValueTask<Message<IImmutableList<T>>> Message<T>(this IListFeed<T> listFeed, CancellationToken ct)
-		=> listFeed.AsFeed().Message(ct);
+		=> listFeed.Messages().FirstAsync(ct);
 
 	/// <summary>
 	/// Gets an asynchronous enumerable sequence of all messages produced by a feed.
@@ -83,7 +101,7 @@ public static partial class ListFeed
 	/// <param name="listFeed">The list feed to get messages from.</param>
 	/// <returns>An async enumeration sequence of all acceptable messages produced by a feed.</returns>
 	public static IAsyncEnumerable<Message<IImmutableList<T>>> Messages<T>(this IListFeed<T> listFeed)
-		=> listFeed.AsFeed().Messages();
+		=> SourceContext.Current.GetOrCreateSource(listFeed);
 
 	#region Convertions
 	/// <summary>
@@ -93,10 +111,9 @@ public static partial class ListFeed
 	/// <param name="source">The source list stream to wrap.</param>
 	/// <returns>A <see cref="IListFeed{T}"/> that wraps the given source data stream of list.</returns>
 	public static IListFeed<TItem> AsListFeed<TItem>(this IFeed<IImmutableList<TItem>> source)
-	{
-		// Note: We are not attaching the "ListFeed" as we always un-wrap them and we attach other operator on the underlying Source.
-		return new ListFeedImpl<TItem>(source);
-	}
+		=> source is ListFeedToFeedAdapter<TItem> adapter
+			? adapter.Source
+			: AttachedProperty.GetOrCreate(source, typeof(TItem), (s, _) => new FeedToListFeedAdapter<TItem>(s));
 
 	/// <summary>
 	/// Wraps a feed of list into a <see cref="IListFeed{T}"/>.
@@ -105,10 +122,7 @@ public static partial class ListFeed
 	/// <param name="source">The source list stream to wrap.</param>
 	/// <returns>A <see cref="IListFeed{T}"/> that wraps the given source data stream of list.</returns>
 	public static IListFeed<TItem> AsListFeed<TItem>(this IFeed<ImmutableList<TItem>> source)
-	{
-		// Note: We are not attaching the "ListFeed" as we always un-wrap them and we attach other operator on the underlying Source.
-		return new ListFeedImpl<TItem>(source.Select(list => list as IImmutableList<TItem>));
-	}
+		=> source.Select(list => list as IImmutableList<TItem>).AsListFeed();
 
 	/// <summary>
 	/// Wraps a feed of list into a <see cref="IListFeed{T}"/>.
@@ -121,7 +135,7 @@ public static partial class ListFeed
 		this IFeed<TCollection> source)
 		where TCollection : IImmutableList<TItem>
 		// Note: We are not attaching the "ListFeed" as we always un-wrap them and we attach other operator on the underlying Source.
-		=> new ListFeedImpl<TItem>(source.Select(list => list.ToImmutableList() as IImmutableList<TItem>));
+		=> source.Select(list => list.ToImmutableList() as IImmutableList<TItem>).AsListFeed();
 
 	/// <summary>
 	/// Unwraps a <see cref="IListFeed{T}"/> to get the source feed of list.
@@ -131,35 +145,8 @@ public static partial class ListFeed
 	/// <returns>The source data stream of list of the given <see cref="IListFeed{T}"/>.</returns>
 	public static IFeed<IImmutableList<TItem>> AsFeed<TItem>(
 		this IListFeed<TItem> source)
-		=> source is IListFeedWrapper<TItem> wrapper
-			? wrapper.Source
-			// The IListFeed is a direct implementation (external). It's the only case where we attach something to the IListFeed.
-			// All subsequent operators are going to be attached to the newly created wrap Feed (i.e. not ListFeed)
-			: AttachedProperty.GetOrCreate(source, typeof(TItem), WrapListFeed);
-
-	/// <summary>
-	/// Wraps a feed of list into a <see cref="IListState{T}"/>.
-	/// </summary>
-	/// <typeparam name="TItem">Type of items in the list.</typeparam>
-	/// <param name="source">The source list state to wrap.</param>
-	/// <returns>A <see cref="IListFeed{T}"/> that wraps the given source data stream of list.</returns>
-	public static IListState<TItem> AsListState<TItem>(
-		this IState<IImmutableList<TItem>> source)
-		// Note: We are not attaching the "ListFeed" as we always un-wrap them and we attach other operator on the underlying Source.
-		=> new ListState<TItem>(source);
-
-	//public static IState<IImmutableList<TItem>> AsState<TItem>(
-	//	this IListState<TItem> source)
-	//	=> source is IListFeedWrapper<TItem> wrapper
-	//		? wrapper.Source
-	//		// The IListFeed is a direct implementation (external). It's the only case where we attach something to the IListFeed.
-	//		// All subsequent operators are going to be attached to the newly created wrap Feed (i.e. not ListFeed)
-	//		: AttachedProperty.GetOrCreate(source, typeof(TItem), WrapListFeed);
-
-	private static IFeed<IImmutableList<TItem>> WrapListFeed<TItem>(IListFeed<TItem> listFeed, Type _)
-	{
-		// TODO Uno
-		return null!;
-	}
+		=> source is FeedToListFeedAdapter<TItem> adapter
+			? adapter.Source
+			: AttachedProperty.GetOrCreate(source, typeof(TItem), (s, _) => new ListFeedToFeedAdapter<TItem>(s));
 	#endregion
 }

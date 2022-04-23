@@ -19,41 +19,6 @@ internal delegate void BeforeCallback();
 internal delegate void AfterCallback();
 
 /// <summary>
-/// A composite callback which contains callbacks for multiple phases and potentially some other changes
-/// </summary>
-internal interface ICompositeCallback
-{
-	/// <summary>
-	/// Invokes all the callbacks at once
-	/// </summary>
-	void Invoke(CallbackPhase phases, bool silently);
-}
-
-[Flags]
-internal enum CallbackPhase
-{
-	/// <summary>
-	/// Before raising the change event
-	/// </summary>
-	Before = 1,
-
-	/// <summary>
-	/// At (almost) the same time as the event (a.k.a. 'instead of')
-	/// </summary>
-	Main = 2,
-
-	/// <summary>
-	/// After raising the change event
-	/// </summary>
-	After = 4,
-
-	/// <summary>
-	/// All phases at once
-	/// </summary>
-	All = Before | Main | After,
-}
-
-/// <summary>
 /// A visitor which can be used when tracking changes between 2 collections.
 /// </summary>
 internal interface ICollectionUpdaterVisitor

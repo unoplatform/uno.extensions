@@ -58,9 +58,35 @@ public static class MessageAxisExtensions
 	/// Sets the data of an <see cref="MessageBuilder{T}"/>
 	/// </summary>
 	/// <param name="builder">The builder.</param>
+	/// <param name="value">The value to set.</param>
+	/// <param name="changeSet">The changes made from the previous value</param>
+	/// <returns>The <paramref name="builder"/> for fluent building.</returns>
+	internal static TBuilder Data<TBuilder, T>(this TBuilder builder, T value, IChangeSet changeSet)
+		where TBuilder : IMessageBuilder<T>
+		=> builder.Data((Option<T>)value);
+
+	/// <summary>
+	/// Sets the data of an <see cref="MessageBuilder{T}"/>
+	/// </summary>
+	/// <param name="builder">The builder.</param>
 	/// <param name="data">The data to set.</param>
 	/// <returns>The <paramref name="builder"/> for fluent building.</returns>
 	public static TBuilder Data<TBuilder, T>(this TBuilder builder, Option<T> data)
+		where TBuilder : IMessageBuilder<T>
+	{
+		builder[MessageAxis.Data] = MessageAxis.Data.ToMessageValue(data);
+
+		return builder;
+	}
+
+	/// <summary>
+	/// Sets the data of an <see cref="MessageBuilder{T}"/>
+	/// </summary>
+	/// <param name="builder">The builder.</param>
+	/// <param name="data">The data to set.</param>
+	/// <param name="changeSet">The changes made from the previous value</param>
+	/// <returns>The <paramref name="builder"/> for fluent building.</returns>
+	internal static TBuilder Data<TBuilder, T>(this TBuilder builder, Option<T> data, IChangeSet changeSet)
 		where TBuilder : IMessageBuilder<T>
 	{
 		builder[MessageAxis.Data] = MessageAxis.Data.ToMessageValue(data);

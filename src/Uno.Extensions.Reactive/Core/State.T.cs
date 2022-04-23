@@ -158,10 +158,6 @@ public static partial class State<T>
 		return key;
 	}
 
-	private static IState<T> S(Delegate key, IFeed<T> feed)
-		// We make sure to use the SourceContext to create the State, so it will be disposed with the context.
-		=> SourceContext.GetOrCreate(key.Target).GetOrCreateState(feed);
-
 	private static IState<T> S<TOwner>(TOwner owner, IFeed<T> feed)
 		where TOwner : class
 		// We make sure to use the SourceContext to create the State, so it will be disposed with the context.

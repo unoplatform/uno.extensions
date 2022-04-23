@@ -24,5 +24,5 @@ public interface IMessage
 	/// <summary>
 	/// The axes that has been modified in <see cref="Current"/> compared to <see cref="Previous"/>.
 	/// </summary>
-	IReadOnlyCollection<MessageAxis> Changes { get; }
+	ChangeCollection Changes { get; }
 }

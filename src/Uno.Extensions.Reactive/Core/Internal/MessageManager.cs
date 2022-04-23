@@ -33,7 +33,7 @@ internal sealed partial class MessageManager<TParent, TResult>
 		_local = (initialUpdates, initialUpdates, initialMessage);
 	}
 
-	public bool Update(Func<CurrentMessage, MessageBuilder<TParent, TResult>> updater, CancellationToken ct = default)
+	public bool Update<TState>(Func<CurrentMessage, TState, MessageBuilder<TParent, TResult>> updater, TState state, CancellationToken ct = default)
 	{
 		// Even if this method is sync, we force the caller to provide a ct to make sure that we don't send an update if cancelled
 		if (ct.IsCancellationRequested)
@@ -43,7 +43,7 @@ internal sealed partial class MessageManager<TParent, TResult>
 
 		lock (_gate)
 		{
-			var (parent, locallyDefinedChangeSet) = updater(new CurrentMessage(this)).GetResult();
+			var (parent, locallyDefinedChangeSet) = updater(new CurrentMessage(this), state).GetResult();
 
 			if (ct.IsCancellationRequested)
 			{
@@ -66,7 +66,7 @@ internal sealed partial class MessageManager<TParent, TResult>
 			var parentEntry = parent?.Current ?? MessageEntry<TParent>.Empty;
 			var localEntry = _local.result.Current;
 			var values = localEntry.Values.ToDictionary();
-			var changes = new List<MessageAxis>();
+			var changes = new ChangeCollection();
 			foreach (var axis in possiblyChangedAxes.Distinct())
 			{
 				var parentValue = parentEntry[axis];
@@ -110,7 +110,7 @@ internal sealed partial class MessageManager<TParent, TResult>
 	}
 
 	private void Update()
-		=> Update(m => m.With(), CancellationToken.None);
+		=> Update((m, _) => m.With(), default(object), CancellationToken.None);
 
 	public UpdateTransaction BeginUpdate(CancellationToken ct)
 	{
@@ -168,7 +168,7 @@ internal sealed partial class MessageManager<TParent, TResult>
 			if (_pendingUpdate == transaction)
 			{
 				_pendingUpdate = null;
-				Update(result, CancellationToken.None);
+				Update((msg, r) => r(msg), result, CancellationToken.None);
 			}
 		}
 	}

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.Specialized;
 using System.Linq;
 using Uno.Extensions.Reactive.Utils;
@@ -12,6 +13,8 @@ namespace Uno.Extensions.Collections.Tracking;
 /// </summary>
 internal class CollectionAnalyzer<T> : CollectionAnalyzer
 {
+	public static CollectionAnalyzer<T> Default { get; } = new(); // TODO uno: use default and key equlity
+
 	/// <param name="itemComparer">
 	/// Comparer used to detect multiple versions of the **same entity (T)**, or null to use default.
 	/// <remarks>Usually this should only compare the ID of the entities in order to properly track the changes made on an entity.</remarks>
@@ -68,4 +71,10 @@ internal class CollectionAnalyzer<T> : CollectionAnalyzer
 	/// <returns>A list of changes that have to be applied to move a collection from <paramref name="oldItems"/> to <paramref name="newItems"/>.</returns>
 	public CollectionChangeSet GetChanges(IList<T> oldItems, IList<T> newItems)
 		=> base.GetChanges((IList)oldItems, (IList)newItems);
+
+	internal CollectionChangeSet GetChanges(IImmutableList<T> oldItems, IImmutableList<T> newItems)
+		=> base.GetChanges((IList)oldItems, (IList)newItems);
+
+	internal CollectionChangeSet GetReset(IImmutableList<T> oldItems, IImmutableList<T> newItems)
+		=> base.GetReset((IList)oldItems, (IList)newItems);
 }
