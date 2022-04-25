@@ -11,7 +11,11 @@ public static class ServiceProviderExtensions
 
 	internal static IServiceProvider RegisterWindow(this IServiceProvider services, Window window)
 	{
-		return services.AddInstance(window);
+		var sp = services.AddInstance(window);
+		// Force a get on the dispatcher to make sure the instance is created on this
+		// thread, which should ensure the DispatcherQueue exists
+		var dipatcher = services.GetRequiredService<IDispatcher>();
+		return sp;
 	}
 
 	internal static IServiceProvider CreateNavigationScope(this IServiceProvider services)

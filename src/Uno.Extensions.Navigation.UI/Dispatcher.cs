@@ -2,18 +2,25 @@
 
 public class Dispatcher : IDispatcher
 {
-	private readonly Window _window;
+#if WINUI
+	private DispatcherQueue _dispatcher;
+#else
+	private Windows.UI.Core.CoreDispatcher _dispatcher;
+#endif
+
 	public Dispatcher(Window window)
 	{
-		_window = window;
+#if WINUI
+		// We can't grab the DispatcherQueue from the window because it's not supported in Uno yet
+		_dispatcher =global::Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
+#else
+		_dispatcher = window.Dispatcher;
+#endif
 	}
 
 	//public Task Run(Func<Task> action) => _window.DispatcherQueue.Run(action);
-	public Task<TResult> ExecuteAsync<TResult>(Func<Task<TResult>> actionWithResult) {
-#if WINUI
-		return _window.DispatcherQueue.ExecuteAsync(actionWithResult);
-#else
-		return _window.Dispatcher.ExecuteAsync(actionWithResult);
-#endif
+	public Task<TResult> ExecuteAsync<TResult>(Func<Task<TResult>> actionWithResult)
+	{
+		return _dispatcher.ExecuteAsync(actionWithResult);
 	}
 }
