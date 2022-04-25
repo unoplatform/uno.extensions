@@ -91,8 +91,7 @@ namespace Commerce
 							.AddSingleton<IProductService, ProductService>()
 							.AddSingleton<ICartService, CartService>()
 							.AddSingleton<IDealService, DealService>()
-							.AddSingleton<IProfileService, ProfileService>()
-							.AddSingleton<IRouteResolver, ReactiveRouteResolver>();
+							.AddSingleton<IProfileService, ProfileService>();
 					})
 
 
@@ -101,7 +100,11 @@ namespace Commerce
 						RegisterRoutes,
 						createViewRegistry: sc => new ReactiveViewRegistry(sc, ReactiveViewModelMappings.ViewModelMappings),
 						configure: cfg => cfg with { AddressBarUpdateEnabled = true })
-
+					.ConfigureServices(services =>
+					{
+						services
+							.AddSingleton<IRouteResolver, ReactiveRouteResolver>();
+					})
 					// Add navigation support for toolkit controls such as TabBar and NavigationView
 					.UseToolkitNavigation()
 

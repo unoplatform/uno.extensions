@@ -19,7 +19,7 @@ public class RouteResolver : IRouteResolver
 	{
 		Logger = logger;
 
-		var maps = ResolveViewMaps(routes.Items, views);
+		var maps = ResolveViewMaps(routes.Items);
 
 		if (maps is not null)
 		{
@@ -40,7 +40,7 @@ public class RouteResolver : IRouteResolver
 		Mappings[messageDialogRoute.Path] = messageDialogRoute;
 	}
 
-	private InternalRouteMap[] ResolveViewMaps(IEnumerable<RouteMap> maps, IViewRegistry views)
+	protected InternalRouteMap[] ResolveViewMaps(IEnumerable<RouteMap> maps)
 	{
 		if (!(maps?.Any() ?? false))
 		{
@@ -48,25 +48,29 @@ public class RouteResolver : IRouteResolver
 		}
 		return (
 				from drm in maps
-				let viewFunc = (drm.View?.View is not null) ?
-										() => drm.View.View :
-										drm.View?.DynamicView
-				select new InternalRouteMap(
-					Path: drm.Path,
-					View: viewFunc,
-					ViewAttributes: drm.View?.ViewAttributes,
-					ViewModel: drm.View?.ViewModel,
-					Data: drm.View?.Data?.Data,
-					ToQuery: drm.View?.Data?.UntypedToQuery,
-					FromQuery: drm.View?.Data?.UntypedFromQuery,
-					ResultData: drm.View?.ResultData,
-					IsDefault: drm.IsDefault,
-					DependsOn: drm.DependsOn,
-					Init: drm.Init,
-					Nested: ResolveViewMaps(drm.Nested, views))
+				select FromRouteMap(drm)
 				).ToArray();
 	}
 
+	protected virtual InternalRouteMap FromRouteMap(RouteMap drm)
+	{
+		var viewFunc = (drm.View?.View is not null) ?
+										() => drm.View.View :
+										drm.View?.DynamicView;
+		return new InternalRouteMap(
+			Path: drm.Path,
+			View: viewFunc,
+			ViewAttributes: drm.View?.ViewAttributes,
+			ViewModel: drm.View?.ViewModel,
+			Data: drm.View?.Data?.Data,
+			ToQuery: drm.View?.Data?.UntypedToQuery,
+			FromQuery: drm.View?.Data?.UntypedFromQuery,
+			ResultData: drm.View?.ResultData,
+			IsDefault: drm.IsDefault,
+			DependsOn: drm.DependsOn,
+			Init: drm.Init,
+			Nested: ResolveViewMaps(drm.Nested));
+	}
 
 
 	public InternalRouteMap? Parent(InternalRouteMap? routeMap)
