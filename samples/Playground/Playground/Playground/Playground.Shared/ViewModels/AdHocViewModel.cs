@@ -6,8 +6,9 @@ using Uno.Extensions.Storage;
 
 namespace Playground.ViewModels;
 
-public class AdHocViewModel
+public partial class AdHocViewModel:ObservableObject
 {
+	private readonly IDispatcher _dispatcher;
 	private readonly INavigator _navigator;
 	private readonly IToDoTaskListEndpoint _todoTaskListEndpoint;
 	private readonly ISerializer<Widget> _widgetSerializer;
@@ -15,7 +16,12 @@ public class AdHocViewModel
 	private readonly IAuthenticationTokenProvider _authToken;
 	private readonly IStorage _dataService;
 	private readonly ISerializer _serializer;
+
+	[ObservableProperty]
+	private string? backgroundTaskProgress;
+
 	public AdHocViewModel(
+		IDispatcher dispatcher,
 		INavigator navigator,
 		IAuthenticationTokenProvider authenticationToken,
 		IToDoTaskListEndpoint todoTaskEndpoint,
@@ -24,6 +30,7 @@ public class AdHocViewModel
 		IStorage dataService,
 		ISerializer serializer)
 	{
+		_dispatcher = dispatcher;
 		_navigator = navigator;
 		_authToken = authenticationToken;
 		_widgetSerializer = widgetSerializer;
@@ -77,5 +84,26 @@ public class AdHocViewModel
 	public async Task LoadWidgets()
 	{
 		var widgets = await _dataService.ReadFileAsync<Widget[]>(_serializer, "data.json");
+	}
+
+	public async Task RunBackgroundTask()
+	{
+		await _dispatcher.ExecuteAsync(() => BackgroundTaskProgress = "1 - Starting");
+		await Task.Run(async () =>
+		{
+			await Task.Delay(1000);
+			await _dispatcher.ExecuteAsync(() => BackgroundTaskProgress = "2 - In Progress");
+			await Task.Delay(1000);
+			await _dispatcher.ExecuteAsync(async () =>
+			{
+				BackgroundTaskProgress = "3 - Executing on UI thread";
+				await Task.Delay(1000);
+				BackgroundTaskProgress = "4 - UI thread complete";
+			});
+			await Task.Delay(1000);
+			await _dispatcher.ExecuteAsync(() => BackgroundTaskProgress = "5 - Finishing execution");
+			await Task.Delay(1000);
+		});
+		await _dispatcher.ExecuteAsync(() => BackgroundTaskProgress = "6 - Completed");
 	}
 }
