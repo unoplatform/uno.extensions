@@ -22,7 +22,7 @@ global using CurrentChangingEventArgs = Windows.UI.Xaml.Data.CurrentChangingEven
 global using CurrentChangedEventHandler = System.EventHandler<object?>;
 #endif
 
-#if WINUI && (WINDOWS || (NET6_0_OR_GREATER && (__IOS__ || __ANDROID__)))
+#if WINUI && NET5_0_OR_GREATER
 global using WinRT;
 #else
 global using System.Runtime.InteropServices.WindowsRuntime;

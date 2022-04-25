@@ -1,26 +1,39 @@
-﻿#nullable disable // Matches the WinRT API
-#if NET6_0_OR_GREATER && (__IOS__ || __ANDROID__)
-#define IS_NET6_MOBILE
+﻿#if NET5_0_OR_GREATER
+#nullable disable // Matches the WinRT API
+
+
+#if __ANDROID__ || __IOS__
+// Both types are missing on NET6_MOBILE, for UWP and WinUI
+// Note: They are added only to share code, they are actually not exposed publicly
+
+#define NEEDS_EVT_TOKEN
+#define NEEDS_EVT_TOKEN_TABLE
+
+#elif WINUI
+// Types might be in old interop.WinRun namespace, but we want to match the WinUI API and use the WinRT namespace.
+
+#if !WINDOWS // net6-win is the only platform that defines the WinRT.EvtRegToken (but not the table)
+#define NEEDS_EVT_TOKEN
 #endif
-#if WINDOWS && WINUI
-#define IS_WINDOWS_WINUI 
+#define NEEDS_EVT_TOKEN_TABLE // Type might be in old interop.WinRun namespace, but we want to match the WinUI API and use the WinRT namespace
+
 #endif
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-#if WINUI && (WINDOWS || IS_NET6_MOBILE)
+#if WINUI 
 namespace WinRT;
 #else
 namespace System.Runtime.InteropServices.WindowsRuntime;
 #endif
 
-#if IS_NET6_MOBILE
+#if NEEDS_EVT_TOKEN
 internal record struct EventRegistrationToken(long Value);
 #endif
 
-#if IS_NET6_MOBILE || IS_WINDOWS_WINUI
+#if NEEDS_EVT_TOKEN_TABLE
 internal class EventRegistrationTokenTable<THandler>
 	where THandler : Delegate
 {
@@ -91,4 +104,5 @@ internal class EventRegistrationTokenTable<THandler>
 		}
 	}
 }
+#endif
 #endif
