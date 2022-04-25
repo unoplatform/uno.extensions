@@ -6,7 +6,7 @@ public class TabBarNavigator : SelectorNavigator<TabBar>
 		ILogger<TabBarNavigator> logger,
 		IDispatcher dispatcher,
 		IRegion region,
-		IResolver resolver,
+		IRouteResolver resolver,
 		RegionControlProvider controlProvider)
 		: base(logger, dispatcher, region, resolver, controlProvider)
 	{

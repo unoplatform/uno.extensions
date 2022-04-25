@@ -1,6 +1,4 @@
-﻿using Uno.Extensions.Logging;
-
-namespace Uno.Extensions.Navigation;
+﻿namespace Uno.Extensions.Navigation;
 
 public class RouteResolverDefault : RouteResolver
 {
@@ -15,31 +13,31 @@ public class RouteResolverDefault : RouteResolver
 	public RouteResolverDefault(
 		ILogger<RouteResolverDefault> logger,
 		IRouteRegistry routes,
-		IViewResolver viewResolver
-		) : base(logger, routes, viewResolver)
+		IViewRegistry views
+		) : base(logger, routes, views)
 	{
 	}
 
-	public override RouteMap? FindByPath(string? path)
+	public override InternalRouteMap? FindByPath(string? path)
 	{
 		var map = base.FindByPath(path);
 		return map ?? DefaultMapping(path: path);
 	}
 
-	public override RouteMap? FindByViewModel(Type? viewModel)
+	public override InternalRouteMap? FindByViewModel(Type? viewModel)
 	{
 		var map = base.FindByViewModel(viewModel);
 		return map ?? DefaultMapping(viewModel: viewModel);
 	}
 
-	public override RouteMap? FindByView(Type? view)
+	public override InternalRouteMap? FindByView(Type? view)
 	{
 		var map = base.FindByView(view);
 		return map ?? DefaultMapping(view: view);
 	}
 
 
-	private RouteMap? DefaultMapping(string? path = null, Type? view = null, Type? viewModel = null)
+	private InternalRouteMap? DefaultMapping(string? path = null, Type? view = null, Type? viewModel = null)
 	{
 		if (!ReturnImplicitMapping)
 		{
@@ -69,7 +67,7 @@ public class RouteResolverDefault : RouteResolver
 		if (path is not null &&
 			!string.IsNullOrWhiteSpace(path))
 		{
-			var defaultMap = new RouteMap(path, View: new ViewMap(DynamicView: ()=>view, ViewModel: viewModel));
+			var defaultMap = new InternalRouteMap(path, View: ()=>view, ViewModel: viewModel);
 			Mappings[defaultMap.Path] = defaultMap;
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Created default mapping - Path '{defaultMap.Path}'");
 			return defaultMap;

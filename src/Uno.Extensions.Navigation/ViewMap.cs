@@ -6,13 +6,10 @@ public record ViewMap(
 	Func<Type?>? DynamicView = null,
 	Type? ViewModel = null,
 	DataMap? Data = null,
-	Type? ResultData = null
+	Type? ResultData = null,
+	object? ViewAttributes = null
 )
 {
-	public Type? RenderView => View??DynamicView?.Invoke();
-
-	public virtual Type? BindingViewModel => ViewModel;
-
 	public virtual void RegisterTypes(IServiceCollection services)
 	{
 		if (ViewModel is not null)
@@ -27,19 +24,22 @@ public record ViewMap(
 public record ViewMap<TView>(
 	Type? ViewModel = null,
 	DataMap? Data = null,
-	Type? ResultData = null
-) : ViewMap(View: typeof(TView), ViewModel: ViewModel, Data: Data, ResultData: ResultData)
+	Type? ResultData = null,
+	object? ViewAttributes = null
+) : ViewMap(View: typeof(TView), ViewModel: ViewModel, Data: Data, ResultData: ResultData, ViewAttributes: ViewAttributes)
 {
 }
 
 public record ViewMap<TView, TViewModel>(
 	DataMap? Data = null,
-	Type? ResultData = null
-) : ViewMap(View: typeof(TView), ViewModel: typeof(TViewModel), Data: Data, ResultData: ResultData)
+	Type? ResultData = null,
+	object? ViewAttributes = null
+) : ViewMap(View: typeof(TView), ViewModel: typeof(TViewModel), Data: Data, ResultData: ResultData, ViewAttributes: ViewAttributes)
 {
 }
 
 public record DialogAction(string? Label = "", Action? Action = null, object? Id = null) { }
 
 #pragma warning restore SA1313 // Parameter names should begin with lower-case letter
+
 

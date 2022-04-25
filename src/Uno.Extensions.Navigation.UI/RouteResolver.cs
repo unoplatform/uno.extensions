@@ -2,16 +2,24 @@
 
 public class RouteResolver : IRouteResolver
 {
-	private RouteMap? First { get; }
-	protected IDictionary<string, RouteMap> Mappings { get; } = new Dictionary<string, RouteMap>();
+	private InternalRouteMap? First { get; }
+	protected IDictionary<string, InternalRouteMap> Mappings { get; } = new Dictionary<string, InternalRouteMap>();
 
 	protected ILogger Logger { get; }
 
-	protected RouteResolver(ILogger logger, IRouteRegistry routes, IViewResolver viewResolver)
+	public RouteResolver(
+		ILogger<RouteResolver> logger,
+		IRouteRegistry routes,
+		IViewRegistry views
+		) : this((ILogger)logger, routes, views)
+	{
+	}
+
+	protected RouteResolver(ILogger logger, IRouteRegistry routes, IViewRegistry views)
 	{
 		Logger = logger;
 
-		var maps = ResolveViewMaps(routes.Items, viewResolver);
+		var maps = ResolveViewMaps(routes.Items, views);
 
 		if (maps is not null)
 		{
@@ -22,37 +30,48 @@ public class RouteResolver : IRouteResolver
 		}
 
 
-		var messageDialogRoute = new RouteMap(
+		var messageDialogRoute = new InternalRouteMap(
 			Path: RouteConstants.MessageDialogUri,
-			View: new ViewMap<MessageDialog>(ResultData: typeof(MessageDialog))
+			View: () => typeof(MessageDialog),
+			ResultData: typeof(MessageDialog)
 		);
 
 		// Make sure the message dialog is the last route to be listed
 		Mappings[messageDialogRoute.Path] = messageDialogRoute;
 	}
 
-	private RouteMap[] ResolveViewMaps(IEnumerable<RouteMap> maps, IViewResolver viewResolver)
+	private InternalRouteMap[] ResolveViewMaps(IEnumerable<RouteMap> maps, IViewRegistry views)
 	{
-		if(!(maps?.Any()??false))
+		if (!(maps?.Any() ?? false))
 		{
-			return new RouteMap[] {};
+			return Array.Empty<InternalRouteMap>();
 		}
-		return (from drm in maps
-				let rm = drm.DynamicView is not null ? new RouteMap(drm.Path, drm.DynamicView?.Invoke(viewResolver), drm.IsDefault, drm.DependsOn, drm.Init,Nested: ResolveViewMaps(drm.Nested, viewResolver)) : drm
-				select rm).ToArray();
+		return (
+				from drm in maps
+				let viewFunc = (drm.View?.View is not null) ?
+										() => drm.View.View :
+										drm.View?.DynamicView
+				select new InternalRouteMap(
+					Path: drm.Path,
+					View: viewFunc,
+					ViewAttributes: drm.View?.ViewAttributes,
+					ViewModel: drm.View?.ViewModel,
+					Data: drm.View?.Data?.Data,
+					ToQuery: drm.View?.Data?.UntypedToQuery,
+					FromQuery: drm.View?.Data?.UntypedFromQuery,
+					ResultData: drm.View?.ResultData,
+					IsDefault: drm.IsDefault,
+					DependsOn: drm.DependsOn,
+					Init: drm.Init,
+					Nested: ResolveViewMaps(drm.Nested, views))
+				).ToArray();
 	}
 
-	public RouteResolver(
-		ILogger<RouteResolver> logger,
-		IRouteRegistry routes,
-		IViewResolver viewResolver
-		) : this((ILogger)logger, routes, viewResolver)
-	{
-	}
 
-	public RouteMap? Parent(RouteMap? routeMap)
+
+	public InternalRouteMap? Parent(InternalRouteMap? routeMap)
 	{
-		if(routeMap is null)
+		if (routeMap is null)
 		{
 			return default;
 		}
@@ -61,12 +80,12 @@ public class RouteResolver : IRouteResolver
 			.Where(
 				x => x.Value.Nested is not null &&
 					x.Value.Nested.Contains(routeMap))
-			.Select(x=>x.Value)
+			.Select(x => x.Value)
 			.FirstOrDefault();
 	}
 
 
-	public RouteMap? Find(Route? route) =>
+	public InternalRouteMap? Find(Route? route) =>
 		route is not null ?
 			FindByPath(route.Base) ??
 				(
@@ -76,57 +95,44 @@ public class RouteResolver : IRouteResolver
 				) :
 			First;
 
-	public virtual RouteMap? FindByPath(string? path)
+	public virtual InternalRouteMap? FindByPath(string? path)
 	{
 		if (path is null)
 		{
 			return null;
 		}
 
-		if(path== string.Empty)
+		if (path == string.Empty)
 		{
 			return First;
 		}
 
-		path = path.ExtractBase(out var nextQualifier, out var nextPath);
+		path = path.ExtractBase(out var _, out var _);
 
 		return Mappings.TryGetValue(path!, out var map) ? map : default;
 	}
 
-	public RouteMap? FindByViewMap(ViewMap viewMap)
+	public virtual InternalRouteMap? FindByViewModel(Type? viewModelType)
 	{
-		foreach (var rm in Mappings.Values)
-		{
-			if (rm.View == viewMap)
-			{
-				return rm;
-			}
-		}
-
-		return default;
+		return FindRouteByType(viewModelType, map => map.ViewModel);
 	}
 
-	public virtual RouteMap? FindByViewModel(Type? viewModelType)
+	public virtual InternalRouteMap? FindByView(Type? viewType)
 	{
-		return FindRouteByType(viewModelType, map => map.View?.ViewModel);
+		return FindRouteByType(viewType, map => map.RenderView);
 	}
 
-	public virtual RouteMap? FindByView(Type? viewType)
+	public InternalRouteMap? FindByData(Type? dataType)
 	{
-		return FindRouteByType(viewType, map => map.View?.RenderView);
+		return FindRouteByType(dataType, map => map.Data);
 	}
 
-	public RouteMap? FindByData(Type? dataType)
+	public InternalRouteMap? FindByResultData(Type? dataType)
 	{
-		return FindRouteByType(dataType, map => map.View?.Data?.Data);
+		return FindRouteByType(dataType, map => map.ResultData);
 	}
 
-	public RouteMap? FindByResultData(Type? dataType)
-	{
-		return FindRouteByType(dataType, map => map.View?.ResultData);
-	}
-
-	private RouteMap? FindRouteByType(Type? typeToFind, Func<RouteMap, Type?> mapType)
+	private InternalRouteMap? FindRouteByType(Type? typeToFind, Func<InternalRouteMap, Type?> mapType)
 	{
 		return FindByInheritedTypes(Mappings, typeToFind, mapType);
 	}

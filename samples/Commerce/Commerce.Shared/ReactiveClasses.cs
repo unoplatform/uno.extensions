@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Commerce.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation;
 
 
@@ -51,6 +52,29 @@ public class ReactiveViewRegistry : ViewRegistry
 	}
 }
 
+public class ReactiveRouteResolver : RouteResolver
+{
+	private readonly IDictionary<Type, Type> _viewModelMappings;
+	public ReactiveRouteResolver(
+		ILogger<ReactiveRouteResolver> logger,
+		IRouteRegistry routes,
+		ReactiveViewRegistry views,
+		IDictionary<Type, Type> viewModelMappings) : base(logger,routes,views)
+	{
+		_viewModelMappings = viewModelMappings;
+	}
+
+	public override InternalRouteMap FindByViewModel(Type? viewModelType)
+	{
+		if (viewModelType is not null &&
+			_viewModelMappings.TryGetValue(viewModelType, out var bindableViewModel))
+		{
+			return base.FindByViewModel(bindableViewModel);
+		}
+		return base.FindByViewModel(viewModelType);
+	}
+}
+
 public record ReactiveViewMap(
 		Type? View = null,
 		Func<Type?>? DynamicView = null,
@@ -60,8 +84,6 @@ public record ReactiveViewMap(
 		Type? BindableViewModel = null
 	) : ViewMap(View, DynamicView, ViewModel, Data, ResultData)
 {
-	public override Type? BindingViewModel => BindableViewModel;
-
 	public override void RegisterTypes(IServiceCollection services)
 	{
 		if (BindableViewModel is not null)

@@ -91,7 +91,8 @@ namespace Commerce
 							.AddSingleton<IProductService, ProductService>()
 							.AddSingleton<ICartService, CartService>()
 							.AddSingleton<IDealService, DealService>()
-							.AddSingleton<IProfileService, ProfileService>();
+							.AddSingleton<IProfileService, ProfileService>()
+							.AddSingleton<IRouteResolver, ReactiveRouteResolver>();
 					})
 
 
@@ -149,6 +150,7 @@ namespace Commerce
 		private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 		{
 			var forgotPasswordDialog = new MessageDialogViewMap(
+					new MessageDialogAttributes(
 								Content: "Click OK, or Cancel",
 								Title: "Forgot your password!",
 								DelayUserInput: true,
@@ -157,7 +159,7 @@ namespace Commerce
 								{
 								new(Label: "Yeh!",Id:"Y"),
 								new(Label: "Nah", Id:"N")
-								}
+								})
 							);
 
 			views.Register(
@@ -171,7 +173,7 @@ namespace Commerce
 																							ToQuery: product => new Dictionary<string, string> { { nameof(Product.ProductId), product.ProductId.ToString() } },
 																							FromQuery: async (sp, query) =>
 																							{
-																								var id = int.Parse(query[nameof(Product.ProductId)]+string.Empty);
+																								var id = int.Parse(query[nameof(Product.ProductId)] + string.Empty);
 																								var ps = sp.GetRequiredService<IProductService>();
 																								var products = await ps.GetProducts(default, default);
 																								return products.FirstOrDefault(p => p.ProductId == id);
@@ -200,34 +202,34 @@ namespace Commerce
 
 			routes
 				.Register(
-					new RouteMap("", DynamicView: views => views.FindByViewModel<ShellViewModel>(),
+					new RouteMap("", View: views.FindByViewModel<ShellViewModel>(),
 							Nested: new RouteMap[]
 							{
-								new RouteMap("Login", DynamicView: views=>views.FindByResultData<Credentials>(),
+								new RouteMap("Login", View: views.FindByResultData<Credentials>(),
 										Nested: new RouteMap[]
 										{
 											new ("Forgot", forgotPasswordDialog)
 										}),
-								new RouteMap("Home", DynamicView: views=>views.FindByData<Credentials>(),
+								new RouteMap("Home", View: views.FindByData<Credentials>(),
 										Nested: new RouteMap[]{
 											new RouteMap("Products",
-													DynamicView: views=>views.FindByViewModel<ProductsViewModel>(),
+													View: views.FindByViewModel<ProductsViewModel>(),
 													IsDefault: true,
 													Nested: new  RouteMap[]{
-														new RouteMap("Filter",  DynamicView: views=>views.FindByViewModel<FiltersViewModel>())
+														new RouteMap("Filter",  View: views.FindByViewModel<FiltersViewModel>())
 													}),
 											new RouteMap("Product",
-													DynamicView: views=>views.FindByViewModel<ProductDetailsViewModel>(),
+													View: views.FindByViewModel<ProductDetailsViewModel>(),
 													DependsOn:"Products"),
 
-											new RouteMap("Deals", DynamicView:views=>views.FindByViewModel<DealsViewModel>()),
+											new RouteMap("Deals", View: views.FindByViewModel<DealsViewModel>()),
 
-											new RouteMap("Profile", DynamicView:views=>views.FindByViewModel<ProfileViewModel>()),
+											new RouteMap("Profile", View: views.FindByViewModel<ProfileViewModel>()),
 
-											new RouteMap("Cart", DynamicView: views=>views.FindByViewModel<CartViewModel>(),
+											new RouteMap("Cart", View: views.FindByViewModel<CartViewModel>(),
 													Nested: new []{
-														new RouteMap("CartDetails",DynamicView: views=>views.FindByViewModel<CartProductDetailsViewModel>()),
-														new RouteMap("Checkout", DynamicView: views=>views.FindByView<CheckoutPage>())
+														new RouteMap("CartDetails",View: views.FindByViewModel<CartProductDetailsViewModel>()),
+														new RouteMap("Checkout", View: views.FindByView<CheckoutPage>())
 													})
 											})
 							}));

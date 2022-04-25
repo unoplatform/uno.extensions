@@ -10,7 +10,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 		ILogger<FrameNavigator> logger,
 		IDispatcher dispatcher,
 		IRegion region,
-		IResolver resolver,
+		IRouteResolver resolver,
 		RegionControlProvider controlProvider)
 		: base(logger, dispatcher, region, resolver, controlProvider.RegionControl as Frame)
 	{
@@ -46,10 +46,10 @@ public class FrameNavigator : ControlNavigator<Frame>
 		}
 
 
-		var rm = Resolver.Routes.FindByPath(route.Base);
+		var rm = Resolver.FindByPath(route.Base);
 
 		// Can only navigate the frame to a page
-		var viewType = rm?.View?.RenderView;
+		var viewType = rm?.RenderView;
 		if (
 			viewType is null ||
 			!viewType.IsSubclassOf(typeof(Page))
@@ -66,15 +66,15 @@ public class FrameNavigator : ControlNavigator<Frame>
 			Control.BackStack.Any() // We only need to check dependson if there's already a backstack!
 			)
 		{
-			var dependsRM = Resolver.Routes.FindByPath(rm?.DependsOn);
+			var dependsRM = Resolver.FindByPath(rm?.DependsOn);
 			while (dependsRM is not null)
 			{
 				// Check if the dependsOn is either the current page (soon to be on backstack)
 				// or elsewhere on the backstack
 				if (
 					!(
-						Control.SourcePageType == dependsRM?.View?.RenderView ||
-						Control.BackStack.Any(entry => entry.SourcePageType == dependsRM?.View?.RenderView)
+						Control.SourcePageType == dependsRM?.RenderView ||
+						Control.BackStack.Any(entry => entry.SourcePageType == dependsRM?.RenderView)
 					)
 				)
 				{
@@ -82,7 +82,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 				}
 
 				// Check next in a line of dependsOn
-				dependsRM = string.IsNullOrWhiteSpace( dependsRM?.DependsOn)? null: Resolver.Routes.FindByPath(dependsRM?.DependsOn);
+				dependsRM = string.IsNullOrWhiteSpace( dependsRM?.DependsOn)? null: Resolver.FindByPath(dependsRM?.DependsOn);
 			}
 		}
 
@@ -109,10 +109,10 @@ public class FrameNavigator : ControlNavigator<Frame>
 		}
 
 		var route = request.Route;
-		var segments = (from pg in route.ForwardNavigationSegments(FullRoute, Resolver.Routes)
-						let map = Resolver.Routes.FindByPath(pg.Base)
-						where map?.View?.RenderView is not null &&
-								map.View.RenderView.IsSubclassOf(typeof(Page))
+		var segments = (from pg in route.ForwardNavigationSegments(FullRoute, Resolver)
+						let map = Resolver.FindByPath(pg.Base)
+						where map?.RenderView is not null &&
+								map.RenderView.IsSubclassOf(typeof(Page))
 						select new { Route = pg, Map = map }).ToArray();
 		if (segments.Length == 0)
 		{
@@ -131,9 +131,9 @@ public class FrameNavigator : ControlNavigator<Frame>
 
 			// Need to navigate the underlying frame if it's not already
 			// displaying the correct page
-			if (Control.SourcePageType != navSegment.Map.View?.RenderView)
+			if (Control.SourcePageType != navSegment.Map.RenderView)
 			{
-				await Show(navSegment.Route.Base, navSegment.Map.View?.RenderView, navSegment.Route.Data);
+				await Show(navSegment.Route.Base, navSegment.Map.RenderView, navSegment.Route.Data);
 			}
 			else
 			{
@@ -153,9 +153,9 @@ public class FrameNavigator : ControlNavigator<Frame>
 				var seg = segments[i];
 				var entry = i < (Control?.BackStack.Count ?? 0) ? Control?.BackStack[i] : default;
 				if (entry is null ||
-					entry.SourcePageType != seg.Map.View?.RenderView)
+					entry.SourcePageType != seg.Map.RenderView)
 				{
-					var newEntry = new PageStackEntry(seg.Map.View?.RenderView, null, null);
+					var newEntry = new PageStackEntry(seg.Map.RenderView, null, null);
 					Control?.BackStack.Add(newEntry);
 				}
 				firstSegment = firstSegment.Append(segments[i + 1].Route);
@@ -181,13 +181,13 @@ public class FrameNavigator : ControlNavigator<Frame>
 			for (var i = 0; i < segments.Length - 1; i++)
 			{
 				var seg = segments[i];
-				var newEntry = new PageStackEntry(seg.Map.View?.RenderView, null, null);
+				var newEntry = new PageStackEntry(seg.Map.RenderView, null, null);
 				Control?.BackStack.Add(newEntry);
 				route = route.Trim(seg.Route);
 				firstSegment = firstSegment.Append(segments[i + 1].Route);
 			}
 
-			await Show(segments.Last().Route.Base, segments.Last().Map.View?.RenderView, route.Data);
+			await Show(segments.Last().Route.Base, segments.Last().Map.RenderView, route.Data);
 
 			// If path starts with / then remove all prior pages and corresponding contexts
 			if (route.FrameIsRooted())
@@ -203,7 +203,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 			}
 		}
 
-		await InitializeCurrentView(request, route, Resolver.Routes.Find(route), refreshViewModel);
+		await InitializeCurrentView(request, route, Resolver.Find(route), refreshViewModel);
 
 		CurrentView?.SetNavigatorInstance(Region.Navigator()!);
 
@@ -232,7 +232,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 		var responseRoute = route with { Path = null };
 		var previousRoute = FullRoute.ApplyFrameRoute(Resolver, responseRoute);
 		var previousBase = previousRoute?.Last()?.Base;
-		var currentBase = Resolver.Routes.FindByView(Control.Content.GetType())?.Path;
+		var currentBase = Resolver.FindByView(Control.Content.GetType())?.Path;
 		if (previousBase is not null)
 		{
 			if (
@@ -240,7 +240,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 			currentBase != previousBase &&
 			previousBase != Control.Content.GetType().Name)
 			{
-				var previousMapping = Resolver.Routes.FindByView(Control.BackStack.Last().SourcePageType);
+				var previousMapping = Resolver.FindByView(Control.BackStack.Last().SourcePageType);
 				// Invoke the navigation (which will be a back navigation)
 				FrameGoBack(route.Data, previousMapping);
 			}
@@ -251,7 +251,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 			responseRoute = Route.Empty;
 		}
 
-		var mapping = Resolver.Routes.FindByView(Control.Content.GetType());
+		var mapping = Resolver.FindByView(Control.Content.GetType());
 
 		await InitializeCurrentView(request, previousRoute ?? Route.Empty, mapping);
 
@@ -283,7 +283,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 		}
 	}
 
-	private async void FrameGoBack(object? parameter, RouteMap? previousMapping)
+	private async void FrameGoBack(object? parameter, InternalRouteMap? previousMapping)
 	{
 		if (Control is null)
 		{

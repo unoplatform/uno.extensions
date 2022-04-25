@@ -12,7 +12,7 @@ public class FlyoutNavigator : ControlNavigator
 		ILogger<ContentDialogNavigator> logger,
 		IDispatcher dispatcher,
 		IRegion region,
-		IResolver resolver,
+		IRouteResolver resolver,
 		Window window)
 		: base(logger, dispatcher, region, resolver)
 	{
@@ -23,7 +23,7 @@ public class FlyoutNavigator : ControlNavigator
 		base.CanNavigateToRoute(route) &&
 		(
 			route.IsBackOrCloseNavigation() ||
-			Resolver.Routes.Find(route)?.View?.RenderView is not null
+			Resolver.Find(route)?.RenderView is not null
 		);
 
 	protected override async Task<Route?> ExecuteRequestAsync(NavigationRequest request)
@@ -48,10 +48,10 @@ public class FlyoutNavigator : ControlNavigator
 				return Route.Empty;
 			}
 
-			var mapping = Resolver.Routes.Find(route);
-			injectedFlyout = !(mapping?.View?.RenderView?.IsSubclassOf(typeof(Flyout)) ?? false);
+			var mapping = Resolver.Find(route);
+			injectedFlyout = !(mapping?.RenderView?.IsSubclassOf(typeof(Flyout))??false);
 			var viewModel = CreateViewModel(Region.Services, request, route, mapping);
-			Flyout = await DisplayFlyout(request, mapping?.View?.RenderView, viewModel, injectedFlyout);
+			Flyout = await DisplayFlyout(request, mapping?.RenderView, viewModel, injectedFlyout);
 		}
 		var responseRequest = injectedFlyout ? Route.Empty : route with { Path = null };
 		return responseRequest;

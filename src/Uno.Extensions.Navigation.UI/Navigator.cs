@@ -12,7 +12,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 	public Route? Route { get; protected set; }
 
-	protected IResolver Resolver { get; }
+	protected IRouteResolver Resolver { get; }
 
 	internal IDispatcher Dispatcher { get; }
 
@@ -20,7 +20,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		ILogger<Navigator> logger,
 		IDispatcher dispatcher,
 		IRegion region,
-		IResolver resolver)
+		IRouteResolver resolver)
 		: this((ILogger)logger, dispatcher, region, resolver)
 	{
 	}
@@ -184,7 +184,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			return default;
 		}
 
-		var rm = Resolver.Routes.FindByPath(request.Route.Base);
+		var rm = Resolver.FindByPath(request.Route.Base);
 		if (rm is null)
 		{
 			return default;
@@ -200,12 +200,12 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		}
 		else
 		{
-			var routeMaps = new List<RouteMap> { rm };
-			var parent = Resolver.Routes.Parent(rm);
+			var routeMaps = new List<InternalRouteMap> { rm };
+			var parent = Resolver.Parent(rm);
 			while (parent is not null)
 			{
 				routeMaps.Insert(0, parent);
-				parent = Resolver.Routes.Parent(parent);
+				parent = Resolver.Parent(parent);
 			}
 			var route = new Route(Qualifiers.None, Data: request.Route.Data);
 			route = BuildFullRoute(route, routeMaps);
@@ -217,7 +217,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 	}
 
 
-	private static Route BuildFullRoute(Route route, IEnumerable<RouteMap> maps)
+	private static Route BuildFullRoute(Route route, IEnumerable<InternalRouteMap> maps)
 	{
 		foreach (var map in maps)
 		{
@@ -247,7 +247,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			this.Route = Route.Empty;
 
 			// Get the first route map
-			var map = Resolver.Routes.Find(null);
+			var map = Resolver.Find(null);
 			if (map is not null)
 			{
 				request = request with { Route = request.Route.Append(map.Path) };
@@ -257,14 +257,14 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			request = request with { Route = request.Route with { IsInternal = true } };
 		}
 
-		var requestMap = Resolver.Routes.FindByPath(request.Route.Base);
+		var requestMap = Resolver.FindByPath(request.Route.Base);
 		if (requestMap?.Init is not null)
 		{
 			var newRequest = requestMap.Init(request);
 			while (!request.SameRouteBase(newRequest))
 			{
 				request = newRequest;
-				requestMap = Resolver.Routes.FindByPath(request.Route.Base);
+				requestMap = Resolver.FindByPath(request.Route.Base);
 				if (requestMap?.Init is not null)
 				{
 					newRequest = requestMap.Init(request);
@@ -301,8 +301,8 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			return default;
 		}
 
-		var mapping = Resolver.Routes.Find(request.Route);
-		if (mapping?.View?.Data?.UntypedToQuery is not null)
+		var mapping = Resolver.Find(request.Route);
+		if (mapping?.ToQuery is not null)
 		{
 			request = request with { Route = request.Route with { Data = request.Route.Data?.AsParameters(mapping) } };
 		}
@@ -341,14 +341,14 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 	{
 		if (request.Route.IsEmpty())
 		{
-			var dataRoute = Resolver.Routes.Find(request.Route);
+			var dataRoute = Resolver.Find(request.Route);
 			if (dataRoute is not null)
 			{
 				request = request with { Route = request.Route with { Base = dataRoute.Path } };
 			}
 			else
 			{
-				var route = Resolver.Routes.FindByPath(this.Route?.Base);
+				var route = Resolver.FindByPath(this.Route?.Base);
 				if (route is not null)
 				{
 					var defaultRoute = route.Nested?.FirstOrDefault(x => x.IsDefault);
