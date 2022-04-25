@@ -4,11 +4,12 @@ public class ContentDialogNavigator : DialogNavigator
 {
 	public ContentDialogNavigator(
 		ILogger<ContentDialogNavigator> logger,
-		Window window,
+		IDispatcher dispatcher,
 		IRegion region,
-		IResolver resolver
+		IResolver resolver,
+		Window window
 		)
-		: base(logger, window, region, resolver)
+		: base(logger, dispatcher, region, resolver, window)
 	{
 	}
 
@@ -69,9 +70,9 @@ public class ContentDialogNavigator : DialogNavigator
 		if (request.Cancellation.HasValue &&
 			request.Cancellation.Value.CanBeCanceled)
 		{
-			request.Cancellation.Value.Register(() =>
+			request.Cancellation.Value.Register(async () =>
 			{
-				showTask.Cancel();
+				await this.Dispatcher.ExecuteAsync(() => showTask.Cancel());
 			});
 		}
 

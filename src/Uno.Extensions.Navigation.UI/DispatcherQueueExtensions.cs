@@ -2,16 +2,7 @@
 
 public static class DispatcherQueueExtensions
 {
-	public static Task Run(this DispatcherQueue dispatcher, Func<Task> action)
-	{
-		return dispatcher.Run(async () =>
-		{
-			await action();
-			return true;
-		});
-	}
-
-	public static async Task<TResult> Run<TResult>(this DispatcherQueue dispatcher, Func<Task<TResult>> actionWithResult)
+	public static async Task<TResult> ExecuteAsync<TResult>(this DispatcherQueue dispatcher, Func<Task<TResult>> actionWithResult)
 	{
 		var completion = new TaskCompletionSource<TResult>();
 		dispatcher.TryEnqueue(async () =>
