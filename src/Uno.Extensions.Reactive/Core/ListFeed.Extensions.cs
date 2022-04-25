@@ -145,8 +145,7 @@ public static partial class ListFeed
 	/// <returns>The source data stream of list of the given <see cref="IListFeed{T}"/>.</returns>
 	public static IFeed<IImmutableList<TItem>> AsFeed<TItem>(
 		this IListFeed<TItem> source)
-		=> source is FeedToListFeedAdapter<TItem> adapter
-			? adapter.Source
-			: AttachedProperty.GetOrCreate(source, typeof(TItem), (s, _) => new ListFeedToFeedAdapter<TItem>(s));
+		// Note: DO NOT unwrap FeedToListFeedAdapter, as it adds some behavior
+		=> AttachedProperty.GetOrCreate(source, typeof(TItem), (s, _) => new ListFeedToFeedAdapter<TItem>(s));
 	#endregion
 }

@@ -30,10 +30,16 @@ internal record FeedToListFeedAdapter<T>(IFeed<IImmutableList<T>> Source) : ILis
 	{
 		var updated = current.With(parentMsg!);
 
-		if (parentMsg!.Changes.Contains(MessageAxis.Data, out var changeSet))
+		if (parentMsg.Changes.Contains(MessageAxis.Data, out var changeSet))
 		{
 			var error = default(Exception);
 			var updatedData = parentMsg.Current.Data;
+
+			if (updatedData.IsSome(out var items) && items is null or { Count: 0 })
+			{
+				updatedData = Option<IImmutableList<T>>.None();
+			}
+
 			if (changeSet is not CollectionChangeSet)
 			{
 				try // As we might invoke the app Equality implementation, we make sure to try / catch it
