@@ -38,17 +38,39 @@ internal class EventRegistrationTokenTable<THandler>
 	where THandler : Delegate
 {
 	private readonly List<long> _handlersTokenIds = new();
-	private readonly List<WeakReference<THandler>> _handlers = new();
+	private readonly List<THandler> _handlers = new();
 
 	private long _nextTokenId;
+
+	private bool _isInvocationListValid = true;
+	private THandler _invocationList;
+
+	public THandler InvocationList
+	{
+		get
+		{
+			if (!_isInvocationListValid)
+			{
+				_invocationList = _handlers.Count switch
+				{
+					0 => null,
+					1 => _handlers[0],
+					_ => (THandler)Delegate.Combine(_handlers.ToArray<Delegate>())
+				};
+				_isInvocationListValid = true;
+			}
+
+			return _invocationList;
+		}
+	}
 
 	public EventRegistrationToken AddEventHandler(THandler handler)
 	{
 		var token = new EventRegistrationToken(_nextTokenId++);
-		var weakHandler = new WeakReference<THandler>(handler);
 
 		_handlersTokenIds.Add(token.Value);
-		_handlers.Add(weakHandler);
+		_handlers.Add(handler);
+		_isInvocationListValid = false;
 
 		return token;
 	}
@@ -56,51 +78,24 @@ internal class EventRegistrationTokenTable<THandler>
 	public void RemoveEventHandler(EventRegistrationToken token)
 	{
 		var index = _handlersTokenIds.IndexOf(token.Value);
-		if (index >=0)
+		if (index >= 0)
 		{
 			_handlersTokenIds.RemoveAt(index);
 			_handlers.RemoveAt(index);
+			_invocationList = null; // prevent leak
+			_isInvocationListValid = false;
 		}
 	}
 
 	public void RemoveEventHandler(THandler handler)
 	{
-		var index = _handlers.FindIndex(weakHandler => weakHandler.TryGetTarget(out var h) && h == handler);
+		var index = _handlers.IndexOf(handler);
 		if (index >= 0)
 		{
 			_handlersTokenIds.RemoveAt(index);
 			_handlers.RemoveAt(index);
-		}
-	}
-
-	public THandler InvocationList
-	{
-		get
-		{
-			var activeHandlers = new THandler[_handlers.Count];
-			var activeHandlersCount = 0;
-			for (var i = 0; i < _handlers.Count; )
-			{
-				if (_handlers[i].TryGetTarget(out var handler))
-				{
-					activeHandlers[activeHandlersCount++] = handler;
-					i++;
-				}
-				else
-				{
-					_handlersTokenIds.RemoveAt(i);
-					_handlers.RemoveAt(i);
-				}
-			}
-
-			if (activeHandlersCount is 0)
-			{
-				return null;
-			}
-
-			Array.Resize(ref activeHandlers, activeHandlersCount);
-
-			return (THandler)Delegate.Combine(activeHandlers);
+			_invocationList = null; // prevent leak
+			_isInvocationListValid = false;
 		}
 	}
 }
