@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using Windows.Foundation.Collections;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Collections;
-using Uno.Extensions;
 using Uno.Logging;
 using _CollectionChanged = Uno.Extensions.Collections.RichNotifyCollectionChangedEventArgs;
 

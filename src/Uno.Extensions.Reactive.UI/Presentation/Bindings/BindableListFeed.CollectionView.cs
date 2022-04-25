@@ -117,7 +117,7 @@ partial class BindableListFeed<T> : ICollectionView, INotifyCollectionChanged
 	}
 
 	/// <inheritdoc />
-	public event EventHandler<object>? CurrentChanged
+	public event CurrentChangedEventHandler CurrentChanged
 	{
 		add => _items.AddCurrentChangedHandler(value);
 		remove => _items.RemoveCurrentChangedHandler(value);

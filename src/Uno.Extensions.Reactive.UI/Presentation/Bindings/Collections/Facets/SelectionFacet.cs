@@ -1,22 +1,8 @@
 ﻿using System;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using Windows.Foundation.Collections;
 
-#if WINUI
-using CurrentChangingEventHandler = Microsoft.UI.Xaml.Data.CurrentChangingEventHandler;
-using CurrentChangingEventArgs = Microsoft.UI.Xaml.Data.CurrentChangingEventArgs;
-using CurrentChangedEventHandler = System.EventHandler<object?>;
-#elif HAS_WINDOWS_UI || HAS_UMBRELLA_UI || true
-using CurrentChangingEventHandler = Windows.UI.Xaml.Data.CurrentChangingEventHandler;
-using CurrentChangingEventArgs = Windows.UI.Xaml.Data.CurrentChangingEventArgs;
-using CurrentChangedEventHandler = System.EventHandler<object?>;
-#else
-using CurrentChangingEventHandler = System.ComponentModel.CurrentChangingEventHandler;
-using CurrentChangingEventArgs = System.ComponentModel.CurrentChangingEventArgs;
-using CurrentChangedEventHandler = System.EventHandler;
-#endif
 
 namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets
 {

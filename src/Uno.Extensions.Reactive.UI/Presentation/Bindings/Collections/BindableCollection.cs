@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -14,17 +13,9 @@ using Uno.Extensions.Reactive.Dispatching;
 using Uno.Extensions.Reactive.Utils;
 
 #if WINUI
-using CurrentChangingEventHandler = Microsoft.UI.Xaml.Data.CurrentChangingEventHandler;
-using CurrentChangedEventHandler = System.EventHandler<object>;
 using ISchedulersProvider = System.Func<Microsoft.UI.Dispatching.DispatcherQueue?>;
-#elif HAS_WINDOWS_UI || HAS_UMBRELLA_UI || true
-using CurrentChangingEventHandler = Windows.UI.Xaml.Data.CurrentChangingEventHandler;
-using CurrentChangedEventHandler = System.EventHandler<object>;
-using ISchedulersProvider = System.Func<Windows.System.DispatcherQueue?>;
 #else
-using CurrentChangingEventHandler = System.ComponentModel.CurrentChangingEventHandler;
-using CurrentChangingEventArgs = System.ComponentModel.CurrentChangingEventArgs;
-using CurrentChangedEventHandler = System.EventHandler;
+using ISchedulersProvider = System.Func<Windows.System.DispatcherQueue?>;
 #endif
 
 namespace Uno.Extensions.Reactive.Bindings.Collections
@@ -207,7 +198,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections
 		public ICollectionView GetForCurrentThread()
 			=> _holder.Value.View;
 
-		#region ICollectionView
+#region ICollectionView
 		/// <inheritdoc />
 		public IEnumerator<object> GetEnumerator()
 			=> GetForCurrentThread().GetEnumerator();
@@ -340,7 +331,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections
 			add => _holder.Value.GetFacet<SelectionFacet>().AddCurrentChangingHandler(value!);
 			remove => _holder.Value.GetFacet<SelectionFacet>().RemoveCurrentChangingHandler(value!);
 		}
-		#endregion
+#endregion
 
 		internal EventRegistrationToken AddVectorChangedHandler(VectorChangedEventHandler<object?>? handler)
 			=> _holder.Value.GetFacet<CollectionChangedFacet>().AddVectorChangedHandler(handler!);
