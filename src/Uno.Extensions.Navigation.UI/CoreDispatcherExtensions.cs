@@ -11,7 +11,7 @@ public static class CoreDispatcherExtensions
 			try
 			{
 				var result = await actionWithResult();
-				completion.SetResult(result);
+				completion.TrySetResult(result);
 			}
 			catch (Exception ex)
 			{
