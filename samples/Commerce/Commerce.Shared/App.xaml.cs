@@ -153,7 +153,6 @@ namespace Commerce
 		private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 		{
 			var forgotPasswordDialog = new MessageDialogViewMap(
-					new MessageDialogAttributes(
 								Content: "Click OK, or Cancel",
 								Title: "Forgot your password!",
 								DelayUserInput: true,
@@ -162,7 +161,7 @@ namespace Commerce
 								{
 								new(Label: "Yeh!",Id:"Y"),
 								new(Label: "Nah", Id:"N")
-								})
+								}
 							);
 
 			views.Register(
