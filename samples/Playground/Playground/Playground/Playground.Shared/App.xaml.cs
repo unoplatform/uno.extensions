@@ -224,25 +224,25 @@ namespace Playground
 
 			// RouteMap required for Shell if initialRoute or initialViewModel isn't specified when calling NavigationHost
 			routes.Register(
-				new RouteMap("", DynamicView: views => views.FindByViewModel<ShellViewModel>(),
+				new RouteMap("", View: views.FindByViewModel<ShellViewModel>(),
 				Nested: new[]
 				{
-					new RouteMap("Home",DynamicView: views => views.FindByView<HomePage>()),
-					new RouteMap("CodeBehind",DynamicView: views => views.FindByView<CodeBehindPage>(), DependsOn: "Home"),
-					new RouteMap("VM",DynamicView: views => views.FindByView<VMPage>(), DependsOn: "Home"),
-					new RouteMap("Xaml",DynamicView: views => views.FindByView<XamlPage>(), DependsOn: "Home"),
-					new RouteMap("NavigationView",DynamicView: views => views.FindByView<NavigationViewPage>(), DependsOn: "Home"),
-					new RouteMap("TabBar",DynamicView: views => views.FindByView<TabBarPage>(), DependsOn: "Home"),
-					new RouteMap("ContentControl",DynamicView: views => views.FindByView<ContentControlPage>(), DependsOn: "Home"),
-					new RouteMap("Second",DynamicView: views => views.FindByView<SecondPage>(), DependsOn: "Home"),
-					new RouteMap("Third",DynamicView: views => views.FindByView<ThirdPage>(), DependsOn: "Home"),
-					new RouteMap("Fourth",DynamicView: views => views.FindByView<FourthPage>(), DependsOn: "Home"),
-					new RouteMap("Fifth",DynamicView: views => views.FindByView<FifthPage>(), DependsOn: "Home"),
-					new RouteMap("Dialogs",DynamicView: views => views.FindByView<DialogsPage>(), DependsOn: "Home",
+					new RouteMap("Home", View: views.FindByView<HomePage>()),
+					new RouteMap("CodeBehind", View: views.FindByView<CodeBehindPage>(), DependsOn: "Home"),
+					new RouteMap("VM", View: views.FindByView<VMPage>(), DependsOn: "Home"),
+					new RouteMap("Xaml", View: views.FindByView<XamlPage>(), DependsOn: "Home"),
+					new RouteMap("NavigationView", View: views.FindByView<NavigationViewPage>(), DependsOn: "Home"),
+					new RouteMap("TabBar", View: views.FindByView<TabBarPage>(), DependsOn: "Home"),
+					new RouteMap("ContentControl", View: views.FindByView<ContentControlPage>(), DependsOn: "Home"),
+					new RouteMap("Second", View: views.FindByView<SecondPage>(), DependsOn: "Home"),
+					new RouteMap("Third", View: views.FindByView<ThirdPage>(), DependsOn: "Home"),
+					new RouteMap("Fourth", View: views.FindByView<FourthPage>(), DependsOn: "Home"),
+					new RouteMap("Fifth", View: views.FindByView<FifthPage>(), DependsOn: "Home"),
+					new RouteMap("Dialogs", View: views.FindByView<DialogsPage>(), DependsOn: "Home",
 					Nested: new[]
 					{
-						new RouteMap("Simple",DynamicView: views => views.FindByView<SimpleDialog>()),
-						new RouteMap("Complex",DynamicView: views => views.FindByView<ComplexDialog>(), DependsOn: "Simple",
+						new RouteMap("Simple", View: views.FindByView<SimpleDialog>()),
+						new RouteMap("Complex", View: views.FindByView<ComplexDialog>(), DependsOn: "Simple",
 						Nested: new[]
 						{
 							new RouteMap("ComplexDialogFirst",View: views.FindByView<ComplexDialogFirstPage>()),
@@ -250,12 +250,12 @@ namespace Playground
 						}),
 						new RouteMap("Basic",View: views.FindByView<BasicFlyout>())
 					}),
-					new RouteMap("PanelVisibility",DynamicView: views => views.FindByView<PanelVisibilityPage>(), DependsOn: "Home"),
-					new RouteMap("VisualStates",DynamicView: views => views.FindByView<VisualStatesPage>(), DependsOn: "Home"),
-					new RouteMap("AdHoc",DynamicView: views => views.FindByViewModel<AdHocViewModel>(), DependsOn: "Home",
+					new RouteMap("PanelVisibility", View: views.FindByView<PanelVisibilityPage>(), DependsOn: "Home"),
+					new RouteMap("VisualStates", View: views.FindByView<VisualStatesPage>(), DependsOn: "Home"),
+					new RouteMap("AdHoc", View: views.FindByViewModel<AdHocViewModel>(), DependsOn: "Home",
 					Nested: new[]
 					{
-						new RouteMap("Auth",DynamicView: views => views.FindByView<AuthTokenDialog>())
+						new RouteMap("Auth", View: views.FindByView<AuthTokenDialog>())
 					}),
 				}));
 		}

@@ -139,15 +139,13 @@ public sealed partial class App : Application
 
 		routes
 			.Register(
-				new RouteMap("", DynamicView: views=> views.FindByViewModel<ShellViewModel>() ,
+				new RouteMap("", View: views.FindByViewModel<ShellViewModel>() ,
 						Nested: new RouteMap[]
 						{
-										new RouteMap("Main",
-												DynamicView: views=> views.FindByViewModel<MainViewModel>() ,
+										new RouteMap("Main", View: views.FindByViewModel<MainViewModel>() ,
 												IsDefault: true
 												),
-										new RouteMap("Second",
-												DynamicView: views=> views.FindByViewModel<SecondViewModel>() ,
+										new RouteMap("Second", View: views.FindByViewModel<SecondViewModel>() ,
 												DependsOn:"Main"),
 						}));
 	}
