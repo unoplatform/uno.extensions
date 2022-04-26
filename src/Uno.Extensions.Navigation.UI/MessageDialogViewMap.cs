@@ -14,20 +14,41 @@ public record MessageDialogAttributes(
 
 
 public record MessageDialogViewMap(
-	MessageDialogAttributes? attributes = null,
+	string? Content = null,
+	string? Title = null,
+	bool DelayUserInput = false,
+	int DefaultButtonIndex = 0,
+	int CancelButtonIndex = 0,
+	DialogAction[]? Buttons = null,
 	Type? ViewModel = null,
 	DataMap? Data = null,
 	Type? ResultData = null
-) : ViewMap<MessageDialog>(ViewModel, Data, ResultData, attributes)
+) : ViewMap<MessageDialog>(
+		ViewModel,
+		Data,
+		ResultData,
+		new MessageDialogAttributes(
+			Content,
+			Title,
+			DelayUserInput,
+			DefaultButtonIndex,
+			CancelButtonIndex,
+			Buttons)
+		)
 {
 }
 
 public record MessageDialogViewMap<TViewModel>(
-	MessageDialogAttributes? attributes = null,
+	string? Content = null,
+	string? Title = null,
+	bool DelayUserInput = false,
+	int DefaultButtonIndex = 0,
+	int CancelButtonIndex = 0,
+	DialogAction[]? Buttons = null,
 	DataMap? Data = null,
 	Type? ResultData = null
 ) : MessageDialogViewMap(
-	attributes,
+	Content,Title,DelayUserInput,DefaultButtonIndex, CancelButtonIndex, Buttons,
 	typeof(TViewModel), Data, ResultData)
 {
 }

@@ -193,6 +193,20 @@ namespace Playground
 
 		private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 		{
+
+			var confirmDialog = new MessageDialogViewMap(
+					Content: "Confirm this message?",
+					Title: "Confirm?",
+					DelayUserInput: true,
+					DefaultButtonIndex: 1,
+					Buttons: new DialogAction[]
+					{
+								new(Label: "Yeh!",Id:"Y"),
+								new(Label: "Nah", Id:"N")
+					}
+				);
+
+
 			views.Register(
 						// Option 1: Specify ShellView in order to customise the shell
 						new ViewMap<ShellView, ShellViewModel>(),
@@ -218,7 +232,8 @@ namespace Playground
 						new ViewMap<VisualStatesPage>(),
 						new ViewMap<AdHocPage, AdHocViewModel>(),
 						new ViewMap<AuthTokenDialog, AuthTokenViewModel>(),
-						new ViewMap<BasicFlyout>()
+						new ViewMap<BasicFlyout>(),
+						confirmDialog
 				);
 
 
@@ -257,6 +272,7 @@ namespace Playground
 					{
 						new RouteMap("Auth", View: views.FindByView<AuthTokenDialog>())
 					}),
+					new RouteMap("Confirm", View: confirmDialog)
 				}));
 		}
 	}
