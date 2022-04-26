@@ -8,11 +8,6 @@ internal interface IInstanceRepository
     IDictionary<Type, object> Instances { get; }
 }
 
-internal interface ITransientInstanceRepository : IInstanceRepository
-{
-}
-
-
 internal interface IScopedInstanceRepository : IInstanceRepository
 {
 }

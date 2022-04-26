@@ -9,5 +9,6 @@
 	<PropertyGroup>
 		<DebugType>portable</DebugType>
 		<DebugSymbols>True</DebugSymbols>
+		<SynthesizeLinkMetadata>true</SynthesizeLinkMetadata> 
 	</PropertyGroup>
 </Project>

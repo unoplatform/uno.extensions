@@ -11,7 +11,7 @@ public static class ServiceProviderExtensions
 
 	internal static IServiceProvider RegisterWindow(this IServiceProvider services, Window window)
 	{
-		var sp = services.AddSingletonInstance(window);
+		var sp = services.AddScopedInstance(window);
 		// Force a get on the dispatcher to make sure the instance is created on this
 		// thread, which should ensure the DispatcherQueue exists
 		var dipatcher = services.GetRequiredService<IDispatcher>();
@@ -20,22 +20,8 @@ public static class ServiceProviderExtensions
 
 	internal static IServiceProvider CreateNavigationScope(this IServiceProvider services)
 	{
-		return services.CreateScope().ServiceProvider;
-	}
-
-	public static IServiceProvider AddTransientInstance<T>(this IServiceProvider provider, Func<T> instanceCreator)
-	{
-		return provider.AddTransientInstance(typeof(T), instanceCreator);
-	}
-
-	public static IServiceProvider AddTransientInstance<T>(this IServiceProvider provider, T instance)
-	{
-		return provider.AddTransientInstance(typeof(T), instance!);
-	}
-
-	public static IServiceProvider AddTransientInstance(this IServiceProvider provider, Type serviceType, object instance)
-	{
-		return provider.AddInstance<ITransientInstanceRepository>(serviceType, instance!);
+		var scoped = services.CreateScope().ServiceProvider;
+		return scoped.AddScopedInstance(services.GetRequiredService<Window>());
 	}
 
 	public static IServiceProvider AddScopedInstance<T>(this IServiceProvider provider, Func<T> instanceCreator)
@@ -83,9 +69,8 @@ public static class ServiceProviderExtensions
 
 	public static T? GetInstance<T>(this IServiceProvider provider)
 	{
-		return provider.GetInstance<ISingletonInstanceRepository, T>() ??
-				provider.GetInstance<IScopedInstanceRepository, T>() ??
-				provider.GetInstance<IScopedInstanceRepository, T>();
+		return provider.GetInstance<IScopedInstanceRepository, T>() ??
+				provider.GetInstance<ISingletonInstanceRepository, T>();
 	}
 
 
