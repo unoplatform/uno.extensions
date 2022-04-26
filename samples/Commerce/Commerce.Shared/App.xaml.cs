@@ -39,6 +39,7 @@ using Window = Windows.UI.Xaml.Window;
 using CoreApplication = Windows.ApplicationModel.Core.CoreApplication;
 #endif
 
+
 namespace Commerce
 {
 	public sealed partial class App : Application
