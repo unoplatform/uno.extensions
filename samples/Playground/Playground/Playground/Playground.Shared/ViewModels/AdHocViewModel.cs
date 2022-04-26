@@ -101,9 +101,27 @@ public partial class AdHocViewModel:ObservableObject
 				BackgroundTaskProgress = "4 - UI thread complete";
 			});
 			await Task.Delay(1000);
-			await _dispatcher.ExecuteAsync(() => BackgroundTaskProgress = "5 - Finishing execution");
+
+			var token = new CancellationTokenSource(TimeSpan.FromSeconds(1)).Token;
+			try
+			{
+				await _dispatcher.ExecuteAsync(async (t) =>
+				{
+					BackgroundTaskProgress = "5 - Executing on UI thread (again - with cancellation after 1s)";
+					await Task.Delay(3000, t);
+					BackgroundTaskProgress = "Should NOT get here";
+				}, token);
+				await _dispatcher.ExecuteAsync(() => BackgroundTaskProgress = "Should NOT get here");
+			}
+			catch (Exception ex)
+			{
+				await _dispatcher.ExecuteAsync(() => BackgroundTaskProgress = $"6 - UI thread cancelled - raises exception {ex.Message}");
+			}
+
+			await Task.Delay(1000);
+			await _dispatcher.ExecuteAsync(() => BackgroundTaskProgress = "7 - Finishing execution");
 			await Task.Delay(1000);
 		});
-		await _dispatcher.ExecuteAsync(() => BackgroundTaskProgress = "6 - Completed");
+		await _dispatcher.ExecuteAsync(() => BackgroundTaskProgress = "8 - Completed");
 	}
 }
