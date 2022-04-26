@@ -11,7 +11,7 @@ public static class ServiceProviderExtensions
 
 	internal static IServiceProvider RegisterWindow(this IServiceProvider services, Window window)
 	{
-		var sp = services.AddInstance(window);
+		var sp = services.AddSingletonInstance(window);
 		// Force a get on the dispatcher to make sure the instance is created on this
 		// thread, which should ensure the DispatcherQueue exists
 		var dipatcher = services.GetRequiredService<IDispatcher>();
@@ -20,10 +20,106 @@ public static class ServiceProviderExtensions
 
 	internal static IServiceProvider CreateNavigationScope(this IServiceProvider services)
 	{
-		var scoped = services.CreateScope().ServiceProvider;
-		return scoped.AddInstance(services.GetRequiredService<Window>());
+		return services.CreateScope().ServiceProvider;
 	}
-	
+
+	public static IServiceProvider AddTransientInstance<T>(this IServiceProvider provider, Func<T> instanceCreator)
+	{
+		return provider.AddTransientInstance(typeof(T), instanceCreator);
+	}
+
+	public static IServiceProvider AddTransientInstance<T>(this IServiceProvider provider, T instance)
+	{
+		return provider.AddTransientInstance(typeof(T), instance!);
+	}
+
+	public static IServiceProvider AddTransientInstance(this IServiceProvider provider, Type serviceType, object instance)
+	{
+		return provider.AddInstance<ITransientInstanceRepository>(serviceType, instance!);
+	}
+
+	public static IServiceProvider AddScopedInstance<T>(this IServiceProvider provider, Func<T> instanceCreator)
+	{
+		return provider.AddScopedInstance(typeof(T), instanceCreator);
+	}
+
+	public static IServiceProvider AddScopedInstance<T>(this IServiceProvider provider, T instance)
+	{
+		return provider.AddScopedInstance(typeof(T), instance!);
+	}
+
+	public static IServiceProvider AddScopedInstance(this IServiceProvider provider, Type serviceType, object instance)
+	{
+		return provider.AddInstance<IScopedInstanceRepository>(serviceType, instance!);
+	}
+
+	public static IServiceProvider AddSingletonInstance<T>(this IServiceProvider provider, Func<T> instanceCreator)
+	{
+		return provider.AddSingletonInstance(typeof(T), instanceCreator);
+	}
+
+	public static IServiceProvider AddSingletonInstance<T>(this IServiceProvider provider, T instance) 
+	{
+		return provider.AddSingletonInstance(typeof(T), instance!);
+	}
+
+	public static IServiceProvider AddSingletonInstance(this IServiceProvider provider, Type serviceType, object instance)
+	{
+		return provider.AddInstance<ISingletonInstanceRepository>(serviceType, instance!);
+	}
+
+	private static IServiceProvider AddInstance<TRepository>(this IServiceProvider provider, Type serviceType, object instance) where TRepository : IInstanceRepository
+	{
+		provider.GetRequiredService<TRepository>().AddInstance(serviceType,instance);
+		return provider;
+	}
+
+	private static IInstanceRepository AddInstance(this IInstanceRepository repository, Type serviceType, object instance)
+	{
+		repository.Instances[serviceType] = instance;
+		return repository;
+	}
+
+
+	public static T? GetInstance<T>(this IServiceProvider provider)
+	{
+		return provider.GetInstance<ISingletonInstanceRepository, T>() ??
+				provider.GetInstance<IScopedInstanceRepository, T>() ??
+				provider.GetInstance<IScopedInstanceRepository, T>();
+	}
+
+
+	private static T? GetInstance<TRepository, T>(this IServiceProvider provider)
+		where TRepository : IInstanceRepository
+	{
+		var singleton = provider.GetRequiredService<TRepository>().GetInstance<T>();
+		if (singleton is T singletonOfT)
+		{
+			return singletonOfT;
+		}
+		return default;
+	}
+
+	private static T? GetInstance<T>(this IInstanceRepository repository)
+	{
+		var value = repository.Instances.TryGetValue(typeof(T), out var repoValue) ? repoValue : null;
+		if (value is Func<T> valueCreator)
+		{
+			var instance = valueCreator();
+			if (instance is T instanceOfT)
+			{
+				repository.AddInstance(typeof(T),instanceOfT);
+			}
+			return instance;
+		}
+
+		if (value is T typedValue)
+		{
+			return typedValue;
+		}
+
+		return default;
+	}
 
 	public static FrameworkElement AttachNavigation(this Window window, IServiceProvider services, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
 	{

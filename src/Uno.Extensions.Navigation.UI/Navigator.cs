@@ -321,7 +321,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			// the current INavigator is this navigator. This will have override
 			// any responsenavigator that has been registered and avoid incorrectly
 			// sending a response when simply navigating back
-			services.AddInstance<INavigator>(this);
+			services.AddScopedInstance<INavigator>(this);
 		}
 
 		var executedRoute = await CoreNavigateAsync(request);

@@ -16,6 +16,7 @@ public partial class AdHocViewModel:ObservableObject
 	private readonly IAuthenticationTokenProvider _authToken;
 	private readonly IStorage _dataService;
 	private readonly ISerializer _serializer;
+	private readonly NeedsADispatcherService _needsADispatcher;
 
 	[ObservableProperty]
 	private string? backgroundTaskProgress;
@@ -28,7 +29,8 @@ public partial class AdHocViewModel:ObservableObject
 		ISerializer<Widget> widgetSerializer,
 		ISerializer<Person> personSerializer,
 		IStorage dataService,
-		ISerializer serializer)
+		ISerializer serializer,
+		NeedsADispatcherService needsADispatcher)
 	{
 		_dispatcher = dispatcher;
 		_navigator = navigator;
@@ -38,6 +40,7 @@ public partial class AdHocViewModel:ObservableObject
 		_todoTaskListEndpoint = todoTaskEndpoint;
 		_dataService = dataService;
 		_serializer = serializer;
+		_needsADispatcher = needsADispatcher;
 	}
 
 	public async Task LongRunning()
@@ -122,6 +125,10 @@ public partial class AdHocViewModel:ObservableObject
 			await _dispatcher.ExecuteAsync(() => BackgroundTaskProgress = "7 - Finishing execution");
 			await Task.Delay(1000);
 		});
-		await _dispatcher.ExecuteAsync(() => BackgroundTaskProgress = "8 - Completed");
+
+		await _dispatcher.ExecuteAsync(() => BackgroundTaskProgress = "8 - Running something using service with dispatcher");
+		var result = await _needsADispatcher.RunSomethingWithDispatcher();
+
+		await _dispatcher.ExecuteAsync(() => BackgroundTaskProgress = $"9 - Completed {result}");
 	}
 }

@@ -27,7 +27,9 @@ public static class ServiceCollectionExtensions
 						};
 						return config;
 					})
-					.AddScoped<IInstanceRepository, InstanceRepository>()
+					.AddSingleton<ISingletonInstanceRepository, InstanceRepository>()
+					.AddScoped<IScopedInstanceRepository, InstanceRepository>()
+					.AddTransient<ITransientInstanceRepository, InstanceRepository>()
 					.AddSingleton<IResponseNavigatorFactory, ResponseNavigatorFactory>()
 
 					.AddSingleton<RouteNotifier>()

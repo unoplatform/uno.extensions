@@ -194,7 +194,7 @@ public abstract class ControlNavigator : Navigator
 			var dataFactor = services.GetRequiredService<NavigationDataProvider>();
 			dataFactor.Parameters = route.Data ?? new Dictionary<string, object>();
 
-			services.AddInstance(request);
+			services.AddScopedInstance(request);
 
 			var vm = services.GetService(mapping!.View!.ViewModel);
 

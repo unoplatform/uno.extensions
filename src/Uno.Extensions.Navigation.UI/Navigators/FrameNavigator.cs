@@ -259,7 +259,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 		var navigator = CurrentView?.GetNavigatorInstance();
 		if (navigator is not null)
 		{
-			Region.Services?.AddInstance<INavigator>(navigator);
+			Region.Services?.AddScopedInstance<INavigator>(navigator);
 		}
 
 		return responseRoute;

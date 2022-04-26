@@ -70,7 +70,7 @@ namespace Playground
 					{
 						services
 								.AddSingleton<IAuthenticationTokenProvider>(new SimpleAuthenticationToken { AccessToken = "My access token" })
-
+								.AddScoped<NeedsADispatcherService>()
 								.AddNativeHandler()
 								.AddContentSerializer()
 								.AddRefitClient<IToDoTaskListEndpoint>(context

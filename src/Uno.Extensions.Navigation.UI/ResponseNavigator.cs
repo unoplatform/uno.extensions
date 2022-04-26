@@ -28,7 +28,7 @@ public class ResponseNavigator<TResult> : IResponseNavigator, IInstance<IService
 
 
 		// Replace the navigator
-		Navigation.Get<IServiceProvider>()?.AddInstance<INavigator>(this);
+		Navigation.Get<IServiceProvider>()?.AddScopedInstance<INavigator>(this);
 	}
 
 	public async Task<NavigationResponse?> NavigateAsync(NavigationRequest request)
@@ -74,7 +74,7 @@ public class ResponseNavigator<TResult> : IResponseNavigator, IInstance<IService
 		}
 
 		// Restore the navigator
-		Navigation.Get<IServiceProvider>()?.AddInstance<INavigator>(this.Navigation);
+		Navigation.Get<IServiceProvider>()?.AddScopedInstance<INavigator>(this.Navigation);
 
 		await Dispatcher.ExecuteAsync(() =>
 		{
