@@ -38,7 +38,7 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 				binding.DataItem is not null)
 			{
 				var dataObject = binding.DataItem;
-				var bindingPathSegments = binding.ParentBinding.Path.Path.Split('.').ToArray();
+				var bindingPathSegments = binding.ParentBinding.Path?.Path?.Split('.').ToArray() ?? Array.Empty<string>();
 				for (int i = 0; i < bindingPathSegments.Length; i++)
 				{
 					var prop = dataObject.GetType().GetProperty(bindingPathSegments[i]);
