@@ -11,6 +11,10 @@
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
 	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition />
+			<RowDefinition />
+		</Grid.RowDefinitions>
 		<muxc:NavigationView uen:Region.Attached="true">
 			<muxc:NavigationView.MenuItems>
 				<muxc:NavigationViewItem Content="Products"
@@ -46,6 +50,31 @@
 							uen:Navigation.Request="Deals" />
 				</StackPanel>
 			</Grid>
+		</muxc:NavigationView>
+		<muxc:NavigationView Grid.Row="1"
+							 uen:Region.Attached="true">
+			<muxc:NavigationView.MenuItems>
+				<muxc:NavigationViewItem Content="Third"
+										 SelectsOnInvoked="False"
+										 uen:Navigation.Request="./Third"
+										 uen:Navigation.Data="{Binding }">
+					<muxc:NavigationViewItem.DataContext>
+						<x:String>Third Page</x:String>
+					</muxc:NavigationViewItem.DataContext>
+				</muxc:NavigationViewItem>
+
+				<muxc:NavigationViewItem Content="Fourth"
+										 SelectsOnInvoked="False"
+										 uen:Navigation.Request="./Fourth"
+										 uen:Navigation.Data="{Binding }">
+					<muxc:NavigationViewItem.DataContext>
+						<x:String>Fourth Page</x:String>
+					</muxc:NavigationViewItem.DataContext>
+
+				</muxc:NavigationViewItem>
+			</muxc:NavigationView.MenuItems>
+			<Grid uen:Region.Attached="True"
+				  uen:Region.Navigator="Visibility" />
 		</muxc:NavigationView>
 	</Grid>
 </Page>
