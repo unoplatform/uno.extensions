@@ -91,7 +91,7 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 
 	private FrameworkElement? FindByPath(string? path)
 	{
-		if (string.IsNullOrWhiteSpace(path))
+		if (string.IsNullOrWhiteSpace(path) || Control is null)
 		{
 			return default;
 		}

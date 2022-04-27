@@ -66,7 +66,12 @@ public static class NavigatorExtensions
 	public static async Task<NavigationResultResponse?> NavigateRouteForResultAsync(
 	this INavigator service, object sender, string route, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default, Type? resultType = null)
 	{
-		var result = await service.NavigateAsync(route.WithQualifier(qualifier).AsRequest(sender, data, cancellation, resultType));
+		var req = route.WithQualifier(qualifier).AsRequest(sender, data, cancellation, resultType);
+		if(req is null)
+		{
+			return default;
+		}
+		var result = await service.NavigateAsync(req);
 		return result?.AsResult();
 	}
 

@@ -58,13 +58,18 @@ namespace Commerce.ViewModels
 				// Navigate to Login page, requesting Credentials
 				var response = await Navigator.NavigateForResultAsync<Credentials>(this, Qualifiers.ClearBackStack);
 
+				if(response?.Result is null)
+				{
+					_ = Start();
+					return;
+				}
 
 				var loginResult = await response.Result;
 				if (loginResult.IsSome(out var creds) && creds?.UserName is { Length: > 0 })
 				{
 					await CredentialsSettings.Update(c => creds);
 
-					Start();
+					_ = Start();
 				}
 			}
 		}

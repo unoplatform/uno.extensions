@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Linq;
 using Commerce.Models;
-using Commerce.Services;
 
 namespace Commerce.ViewModels;
 
@@ -20,17 +18,17 @@ public record Filters
 			return true;
 		}
 
-		if (Shoes && product.Category.IndexOf("Shoes", StringComparison.OrdinalIgnoreCase) != - 1)
+		if (Shoes && product.Category?.IndexOf("Shoes", StringComparison.OrdinalIgnoreCase) >= 0)
 		{
 			return true;
 		}
 
-		if (Accessories && product.Category.IndexOf("Accessories", StringComparison.OrdinalIgnoreCase) != -1)
+		if (Accessories && product.Category?.IndexOf("Accessories", StringComparison.OrdinalIgnoreCase) >= 0)
 		{
 			return true;
 		}
 
-		if (Headwear && product.Category.IndexOf("Headwear", StringComparison.OrdinalIgnoreCase) != -1)
+		if (Headwear && product.Category?.IndexOf("Headwear", StringComparison.OrdinalIgnoreCase) >=0)
 		{
 			return true;
 		}

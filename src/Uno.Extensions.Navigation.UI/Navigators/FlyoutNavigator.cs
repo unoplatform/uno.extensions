@@ -144,7 +144,7 @@ public class FlyoutNavigator : ControlNavigator
 		return flyout;
 	}
 
-	private async void Flyout_Closed(object sender, object e)
+	private async void Flyout_Closed(object? sender, object e)
 	{
 		if (Flyout is null)
 		{

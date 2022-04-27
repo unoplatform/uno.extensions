@@ -3,7 +3,7 @@ namespace Uno.Extensions.Navigation;
 
 public static class NavigationRequestExtensions
 {
-	public static NavigationRequest AsRequest(this string path, object sender, object? data, CancellationToken cancellationToken, Type? resultType = null)
+	public static NavigationRequest? AsRequest(this string path, object sender, object? data, CancellationToken cancellationToken, Type? resultType = null)
 	{
 		if(resultType is null)
 		{
@@ -16,7 +16,7 @@ public static class NavigationRequestExtensions
 								m.IsGenericMethodDefinition).ToArray();
 		var navMethod = navMethods.First();
 		var constructedNavMethod = navMethod.MakeGenericMethod(resultType);
-		var nav = constructedNavMethod.Invoke(null, new object[] { path, sender, data, cancellationToken }) as NavigationRequest;
+		var nav = constructedNavMethod.Invoke(null, new object?[] { path, sender, data, cancellationToken }) as NavigationRequest;
 		return nav;
 	}
 

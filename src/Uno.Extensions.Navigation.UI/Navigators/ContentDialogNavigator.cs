@@ -46,7 +46,7 @@ public class ContentDialogNavigator : DialogNavigator
 		dialog.InjectServicesAndSetDataContext(services, navigation, viewModel);
 
 		var showTask = dialog.ShowAsync();
-		showTask.AsTask()
+		_ = showTask.AsTask()
 			.ContinueWith(result =>
 				{
 					if (result.Status != TaskStatus.Canceled)

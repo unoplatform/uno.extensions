@@ -69,7 +69,7 @@ public class MessageDialogNavigator : DialogNavigator
 #endif
 
 		var showTask = md.ShowAsync();
-		showTask.AsTask()
+		_ = showTask.AsTask()
 			.ContinueWith(result =>
 				{
 					if (result.Status != TaskStatus.Canceled)
