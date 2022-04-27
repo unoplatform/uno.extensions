@@ -305,40 +305,17 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			// Only root region should handle dialogs
 			if (Region.Parent is not null)
 			{
-				if (route.IsDialog()) {
+				if (route.IsDialog())
+				{
 					return false;
 				}
 
 			}
 		}
 
-		var canNav =  RegionCanNavigate(route);
+		var routeMap = Resolver.Routes.Find(route);
 
-		//if (canNav &&
-		//	!route.IsInternal &&
-		//	Region.Parent is not null)
-		//{
-		//	var parentNavigator = Region.Parent.Navigator();
-		//	if (parentNavigator is not null &&
-		//			(
-		//				parentNavigator.GetType() == typeof(Navigator) ||
-		//				// TODO: PanelVisibilityNavigator needs to be adapted to inherit from SelectorNavigator, or share an interface
-		//				parentNavigator.GetType() == typeof(PanelVisiblityNavigator) ||
-		//				(
-		//					parentNavigator.GetType().BaseType.IsGenericType &&
-		//					parentNavigator.GetType().BaseType.GetGenericTypeDefinition() == typeof(SelectorNavigator<>)
-		//				)
-		//			)
-		//		)
-		//	{
-		//		// If the parent can handle this request then return false so the request gets forwarded
-		//		if (Region.Parent.Navigator()?.CanNavigate(route.RootDependsOn(Resolver)) ?? false)
-		//		{
-		//			return false;
-		//		}
-		//	}
-		//}
-
+		var canNav = RegionCanNavigate(route, routeMap);
 		return canNav;
 	}
 
@@ -368,7 +345,10 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		return false;
 	}
 
-	protected virtual bool RegionCanNavigate(Route route)
+	protected virtual bool CanNavigateToDependentRoutes => false;
+
+
+	protected virtual bool RegionCanNavigate(Route route, RouteMap? routeMap)
 	{
 		// Default behaviour for all navigators is that they can't handle back or close requests
 		// This is overridden by navigators that can handle close operation
@@ -377,16 +357,27 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			return false;
 		}
 
+		// Default behaviour for all navigators is that they can't handle routes that are dependent
+		// on another route (ie DependsOn <> "")
+		// This is overridden by navigators that can handle close operation
+		if ((routeMap?.IsDependent ?? false) &&
+			!CanNavigateToDependentRoutes)
+		{
+			return false;
+		}
+
 		// Check type of this navigator - if base class (ie Navigator)
 		// then an check children to see if they can navigate to the route
 		// This won't cause a cycle as we force IsInternal to true, which will
 		// avoid any parent checks in cannavigate
-		if(this.GetType() == typeof(Navigator))
+		// This is to support the concept of a composite region
+		// whose sole responsibility is to forward navigation requests to all child regions
+		if (this.GetType() == typeof(Navigator))
 		{
 			var internalRoute = route with { IsInternal = true };
 			return (from child in Region.Children
 					let nav = child.Navigator()
-					where nav?.CanNavigate(internalRoute)??false
+					where nav?.CanNavigate(internalRoute) ?? false
 					select child).Any();
 		}
 

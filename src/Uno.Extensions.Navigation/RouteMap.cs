@@ -9,5 +9,8 @@ public record RouteMap(
 	Func<NavigationRequest, NavigationRequest>? Init = null,
 	params RouteMap[] Nested)
 {
+	public bool IsDependent = !string.IsNullOrWhiteSpace(DependsOn);
 }
+
+
 #pragma warning restore SA1313 // Parameter names should begin with lower-case letter

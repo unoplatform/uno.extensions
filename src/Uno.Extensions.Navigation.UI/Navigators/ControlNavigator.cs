@@ -16,7 +16,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 		Control = control;
 	}
 
-	protected override bool RegionCanNavigate(Route route) => base.RegionCanNavigate(route) && Control is not null;
+	protected override bool RegionCanNavigate(Route route, RouteMap? routeMap) => base.RegionCanNavigate(route, routeMap) && Control is not null;
 
 	protected virtual FrameworkElement? CurrentView => default;
 
@@ -136,9 +136,10 @@ public abstract class ControlNavigator : Navigator
 
 	private async Task<NavigationResponse?> ControlCoreNavigateAsync(NavigationRequest request)
 	{
+		var routeMap = Resolver.Routes.Find(request.Route);
 		return await Dispatcher.ExecuteAsync(async () =>
 		{
-			if (RegionCanNavigate(request.Route))
+			if (RegionCanNavigate(request.Route, routeMap))
 			{
 				return await ControlNavigateAsync(request);
 			}

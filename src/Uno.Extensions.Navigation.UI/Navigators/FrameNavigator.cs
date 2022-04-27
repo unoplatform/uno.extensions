@@ -31,7 +31,9 @@ public class FrameNavigator : ControlNavigator<Frame>
 		}
 	}
 
-	protected override bool RegionCanNavigate(Route route)
+	protected override bool CanNavigateToDependentRoutes => true;
+
+	protected override bool RegionCanNavigate(Route route, RouteMap? routeMap)
 	{
 		if (route.IsBackOrCloseNavigation())
 		{
@@ -43,16 +45,18 @@ public class FrameNavigator : ControlNavigator<Frame>
 			return !string.IsNullOrWhiteSpace(route.Base) || !(FullRoute?.Next()?.IsEmpty() ?? true);
 		}
 
-		if (!base.RegionCanNavigate(route))
+		if (!base.RegionCanNavigate(route, routeMap))
 		{
 			return false;
 		}
 
-
-		var rm = Resolver.FindByPath(route.Base);
+		if(routeMap is null)
+		{
+			return false;
+		}
 
 		// Can only navigate the frame to a page
-		var viewType = rm?.RenderView;
+		var viewType = routeMap.RenderView;
 		if (
 			viewType is null ||
 			!viewType.IsSubclassOf(typeof(Page))
@@ -63,7 +67,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 
 		// If the route is dependent on another page, make sure
 		// that page is already navigated to, or is in the backstack
-		if (!string.IsNullOrWhiteSpace(rm?.DependsOn))
+		if (!string.IsNullOrWhiteSpace(routeMap?.DependsOn))
 		{
 			var dependsRoute = route.RootDependsOn(Resolver.Routes);
 			return (FullRoute?.IsEmpty() ?? true) || FullRoute.Contains(dependsRoute.Base!);

@@ -21,9 +21,9 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 
 	protected override FrameworkElement? CurrentView => SelectedItem;
 
-	protected override bool RegionCanNavigate(Route route) =>
-		base.RegionCanNavigate(route) &&
-		(FindByPath(Resolver.Find(route)?.Path??route.Base) is not null);
+	protected override bool RegionCanNavigate(Route route, RouteMap? routeMap) =>
+		base.RegionCanNavigate(route, routeMap) &&
+		(FindByPath(routeMap?.Path??route.Base) is not null);
 
 	protected SelectorNavigator(
 		ILogger logger,

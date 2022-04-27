@@ -16,20 +16,16 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 	{
 	}
 
-	protected override bool RegionCanNavigate(Route route)
+	protected override bool RegionCanNavigate(Route route, RouteMap? routeMap)
 	{
-		if (!base.RegionCanNavigate(route))
+		if (!base.RegionCanNavigate(route, routeMap))
 		{
 			return false;
 		}
-		var map = Resolver.Routes.Find(route);
-		if (!string.IsNullOrWhiteSpace(map?.DependsOn))
-		{
-			return false;
-		}
+
 		return (
-			(FindByPath(map?.Path ?? route.Base) is not null) ||
-			(map?.View?.RenderView?.IsSubclassOf(typeof(FrameworkElement)) ?? false)
+			(FindByPath(routeMap?.Path ?? route.Base) is not null) ||
+			(routeMap?.View?.RenderView?.IsSubclassOf(typeof(FrameworkElement)) ?? false)
 		);
 	}
 
