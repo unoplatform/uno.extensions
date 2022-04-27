@@ -39,4 +39,13 @@
 	<ItemGroup>
 	  <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
 	</ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="Uno.Extensions.Configuration" />
+		<InternalsVisibleTo Include="Uno.Extensions.Navigation" />
+		<InternalsVisibleTo Include="Uno.Extensions.Navigation.UI" />
+		<InternalsVisibleTo Include="Uno.Extensions.Navigation.WinUI" />
+		<InternalsVisibleTo Include="Uno.Extensions.Navigation.Toolkit.UI" />
+		<InternalsVisibleTo Include="Uno.Extensions.Navigation.Toolkit.WinUI" />
+	</ItemGroup>
 </Project>
