@@ -46,7 +46,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 		return executedRoute;
 	}
 
-	protected async Task<object?> InitializeCurrentView(NavigationRequest request, Route route, InternalRouteMap? mapping, bool refresh = false)
+	protected async Task<object?> InitializeCurrentView(NavigationRequest request, Route route, RouteInfo? mapping, bool refresh = false)
 	{
 		var view = CurrentView;
 
@@ -174,7 +174,7 @@ public abstract class ControlNavigator : Navigator
 			? new Route(Qualifiers.None, route.Base, null, route.Data) : null;
 	}
 
-	protected async Task<object?> CreateViewModel(IServiceProvider services, NavigationRequest request, Route route, InternalRouteMap? mapping)
+	protected async Task<object?> CreateViewModel(IServiceProvider services, NavigationRequest request, Route route, RouteInfo? mapping)
 	{
 		var navigator = services.GetInstance<INavigator>();
 		if (mapping?.ViewModel is not null)

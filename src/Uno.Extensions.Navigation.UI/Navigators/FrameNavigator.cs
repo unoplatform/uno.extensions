@@ -283,7 +283,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 		}
 	}
 
-	private async void FrameGoBack(object? parameter, InternalRouteMap? previousMapping)
+	private async void FrameGoBack(object? parameter, RouteInfo? previousMapping)
 	{
 		if (Control is null)
 		{

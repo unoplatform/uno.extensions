@@ -18,26 +18,26 @@ public class RouteResolverDefault : RouteResolver
 	{
 	}
 
-	public override InternalRouteMap? FindByPath(string? path)
+	public override RouteInfo? FindByPath(string? path)
 	{
 		var map = base.FindByPath(path);
 		return map ?? DefaultMapping(path: path);
 	}
 
-	public override InternalRouteMap? FindByViewModel(Type? viewModel)
+	public override RouteInfo? FindByViewModel(Type? viewModel)
 	{
 		var map = base.FindByViewModel(viewModel);
 		return map ?? DefaultMapping(viewModel: viewModel);
 	}
 
-	public override InternalRouteMap? FindByView(Type? view)
+	public override RouteInfo? FindByView(Type? view)
 	{
 		var map = base.FindByView(view);
 		return map ?? DefaultMapping(view: view);
 	}
 
 
-	private InternalRouteMap? DefaultMapping(string? path = null, Type? view = null, Type? viewModel = null)
+	private RouteInfo? DefaultMapping(string? path = null, Type? view = null, Type? viewModel = null)
 	{
 		if (!ReturnImplicitMapping)
 		{
@@ -67,7 +67,7 @@ public class RouteResolverDefault : RouteResolver
 		if (path is not null &&
 			!string.IsNullOrWhiteSpace(path))
 		{
-			var defaultMap = new InternalRouteMap(path, View: ()=>view, ViewModel: viewModel);
+			var defaultMap = new RouteInfo(path, View: ()=>view, ViewModel: viewModel);
 			Mappings[defaultMap.Path] = defaultMap;
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Created default mapping - Path '{defaultMap.Path}'");
 			return defaultMap;

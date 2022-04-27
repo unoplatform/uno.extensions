@@ -1,7 +1,7 @@
 ﻿namespace Uno.Extensions.Navigation;
 
 #pragma warning disable SA1313 // Parameter names should begin with lower-case letter
-public record InternalRouteMap(
+public record RouteInfo(
 	string Path,
 	Func<Type?>? View = null,
 	object? ViewAttributes = null,
@@ -13,7 +13,7 @@ public record InternalRouteMap(
 	bool IsDefault = false,
 	string DependsOn = "",
 	Func<NavigationRequest, NavigationRequest>? Init = null,
-	params InternalRouteMap[] Nested)
+	params RouteInfo[] Nested)
 {
 	public Type? RenderView => View?.Invoke();
 

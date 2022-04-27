@@ -2,8 +2,8 @@
 
 public class RouteResolver : IRouteResolver
 {
-	private InternalRouteMap? First { get; }
-	protected IDictionary<string, InternalRouteMap> Mappings { get; } = new Dictionary<string, InternalRouteMap>();
+	private RouteInfo? First { get; }
+	protected IDictionary<string, RouteInfo> Mappings { get; } = new Dictionary<string, RouteInfo>();
 
 	protected ILogger Logger { get; }
 
@@ -30,7 +30,7 @@ public class RouteResolver : IRouteResolver
 		}
 
 
-		var messageDialogRoute = new InternalRouteMap(
+		var messageDialogRoute = new RouteInfo(
 			Path: RouteConstants.MessageDialogUri,
 			View: () => typeof(MessageDialog),
 			ResultData: typeof(MessageDialog)
@@ -40,11 +40,11 @@ public class RouteResolver : IRouteResolver
 		Mappings[messageDialogRoute.Path] = messageDialogRoute;
 	}
 
-	protected InternalRouteMap[] ResolveViewMaps(IEnumerable<RouteMap> maps)
+	protected RouteInfo[] ResolveViewMaps(IEnumerable<RouteMap> maps)
 	{
 		if (!(maps?.Any() ?? false))
 		{
-			return Array.Empty<InternalRouteMap>();
+			return Array.Empty<RouteInfo>();
 		}
 		return (
 				from drm in maps
@@ -52,12 +52,12 @@ public class RouteResolver : IRouteResolver
 				).ToArray();
 	}
 
-	protected virtual InternalRouteMap FromRouteMap(RouteMap drm)
+	protected virtual RouteInfo FromRouteMap(RouteMap drm)
 	{
 		var viewFunc = (drm.View?.View is not null) ?
 										() => drm.View.View :
 										drm.View?.DynamicView;
-		return new InternalRouteMap(
+		return new RouteInfo(
 			Path: drm.Path,
 			View: viewFunc,
 			ViewAttributes: drm.View?.ViewAttributes,
@@ -73,7 +73,7 @@ public class RouteResolver : IRouteResolver
 	}
 
 
-	public InternalRouteMap? Parent(InternalRouteMap? routeMap)
+	public RouteInfo? Parent(RouteInfo? routeMap)
 	{
 		if (routeMap is null)
 		{
@@ -89,7 +89,7 @@ public class RouteResolver : IRouteResolver
 	}
 
 
-	public InternalRouteMap? Find(Route? route) =>
+	public RouteInfo? Find(Route? route) =>
 		route is not null ?
 			FindByPath(route.Base) ??
 				(
@@ -99,7 +99,7 @@ public class RouteResolver : IRouteResolver
 				) :
 			First;
 
-	public virtual InternalRouteMap? FindByPath(string? path)
+	public virtual RouteInfo? FindByPath(string? path)
 	{
 		if (path is null)
 		{
@@ -116,27 +116,27 @@ public class RouteResolver : IRouteResolver
 		return Mappings.TryGetValue(path!, out var map) ? map : default;
 	}
 
-	public virtual InternalRouteMap? FindByViewModel(Type? viewModelType)
+	public virtual RouteInfo? FindByViewModel(Type? viewModelType)
 	{
 		return FindRouteByType(viewModelType, map => map.ViewModel);
 	}
 
-	public virtual InternalRouteMap? FindByView(Type? viewType)
+	public virtual RouteInfo? FindByView(Type? viewType)
 	{
 		return FindRouteByType(viewType, map => map.RenderView);
 	}
 
-	public InternalRouteMap? FindByData(Type? dataType)
+	public RouteInfo? FindByData(Type? dataType)
 	{
 		return FindRouteByType(dataType, map => map.Data);
 	}
 
-	public InternalRouteMap? FindByResultData(Type? dataType)
+	public RouteInfo? FindByResultData(Type? dataType)
 	{
 		return FindRouteByType(dataType, map => map.ResultData);
 	}
 
-	private InternalRouteMap? FindRouteByType(Type? typeToFind, Func<InternalRouteMap, Type?> mapType)
+	private RouteInfo? FindRouteByType(Type? typeToFind, Func<RouteInfo, Type?> mapType)
 	{
 		return FindByInheritedTypes(Mappings, typeToFind, mapType);
 	}

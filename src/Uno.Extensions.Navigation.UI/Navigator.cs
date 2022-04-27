@@ -200,7 +200,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		}
 		else
 		{
-			var routeMaps = new List<InternalRouteMap> { rm };
+			var routeMaps = new List<RouteInfo> { rm };
 			var parent = Resolver.Parent(rm);
 			while (parent is not null)
 			{
@@ -217,7 +217,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 	}
 
 
-	private static Route BuildFullRoute(Route route, IEnumerable<InternalRouteMap> maps)
+	private static Route BuildFullRoute(Route route, IEnumerable<RouteInfo> maps)
 	{
 		foreach (var map in maps)
 		{

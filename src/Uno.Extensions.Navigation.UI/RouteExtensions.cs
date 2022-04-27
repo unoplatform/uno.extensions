@@ -230,7 +230,7 @@ public static class RouteExtensions
 		return mappings.Find(route).IsPageRouteMap();
 	}
 
-	public static bool IsPageRouteMap(this InternalRouteMap? rm)
+	public static bool IsPageRouteMap(this RouteInfo? rm)
 	{
 		return (rm?.RenderView?.IsSubclassOf(typeof(Page)) ?? false);
 	}
@@ -332,7 +332,7 @@ public static class RouteExtensions
 		};
 	}
 
-	public static IDictionary<string, object> AsParameters(this IDictionary<string, object> data, InternalRouteMap mapping)
+	public static IDictionary<string, object> AsParameters(this IDictionary<string, object> data, RouteInfo mapping)
 	{
 		if (data is null || mapping is null)
 		{

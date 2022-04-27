@@ -2,17 +2,17 @@
 
 public interface IRouteResolver 
 {
-	InternalRouteMap? Parent(InternalRouteMap? routeMap);
+	RouteInfo? Parent(RouteInfo? routeMap);
 
-	InternalRouteMap? Find(Route? route);
+	RouteInfo? Find(Route? route);
 
-	InternalRouteMap? FindByPath(string? path);
+	RouteInfo? FindByPath(string? path);
 
-	InternalRouteMap? FindByViewModel(Type? viewModelType);
+	RouteInfo? FindByViewModel(Type? viewModelType);
 
-	InternalRouteMap? FindByView(Type? viewType);
+	RouteInfo? FindByView(Type? viewType);
 
-	InternalRouteMap? FindByData(Type? dataType);
+	RouteInfo? FindByData(Type? dataType);
 
-	InternalRouteMap? FindByResultData(Type? resultDataType);
+	RouteInfo? FindByResultData(Type? resultDataType);
 }
