@@ -2,5 +2,5 @@
 
 public interface IDispatcher
 {
-	Task<TResult> ExecuteAsync<TResult>(Func<CancellationToken, Task<TResult>> actionWithResult, CancellationToken cancellation);
+	ValueTask<TResult> ExecuteAsync<TResult>(AsyncFunc<TResult> actionWithResult, CancellationToken cancellation);
 }

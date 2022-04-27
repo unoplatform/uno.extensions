@@ -2,9 +2,9 @@
 
 public static class DispatcherQueueExtensions
 {
-	public static async Task<TResult> ExecuteAsync<TResult>(
+	public static async ValueTask<TResult> ExecuteAsync<TResult>(
 		this DispatcherQueue dispatcher,
-		Func<CancellationToken, Task<TResult>> actionWithResult,
+		AsyncFunc<TResult> actionWithResult,
 		CancellationToken cancellation)
 	{
 		var completion = new TaskCompletionSource<TResult>();
@@ -23,7 +23,7 @@ public static class DispatcherQueueExtensions
 		return await completion.Task;
 	}
 
-	public static Task<TResult> ExecuteAsync<TResult>(this DispatcherQueue dispatcher, Func<Task<TResult>> actionWithResult)
+	public static ValueTask<TResult> ExecuteAsync<TResult>(this DispatcherQueue dispatcher, Func<ValueTask<TResult>> actionWithResult)
 	{
 		return dispatcher.ExecuteAsync(async (CancellationToken t) =>
 		{

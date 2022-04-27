@@ -19,8 +19,8 @@ public class Dispatcher : IDispatcher
 	}
 
 	//public Task Run(Func<Task> action) => _window.DispatcherQueue.Run(action);
-	public Task<TResult> ExecuteAsync<TResult>(Func<CancellationToken, Task<TResult>> actionWithResult, CancellationToken cancellation)
+	public async ValueTask<TResult> ExecuteAsync<TResult>(AsyncFunc<TResult> actionWithResult, CancellationToken cancellation)
 	{
-		return _dispatcher.ExecuteAsync(actionWithResult, cancellation);
+		return await _dispatcher.ExecuteAsync(actionWithResult, cancellation);
 	}
 }

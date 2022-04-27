@@ -3,9 +3,9 @@
 #if !WINUI
 public static class CoreDispatcherExtensions
 {
-	public static async Task<TResult> ExecuteAsync<TResult>(
+	public static async ValueTask<TResult> ExecuteAsync<TResult>(
 		this Windows.UI.Core.CoreDispatcher dispatcher,
-		Func<CancellationToken, Task<TResult>> actionWithResult,
+		AsyncFunc<TResult> actionWithResult,
 		CancellationToken cancellation)
 	{
 		var completion = new TaskCompletionSource<TResult>();
