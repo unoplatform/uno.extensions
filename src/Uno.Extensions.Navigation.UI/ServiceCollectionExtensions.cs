@@ -77,7 +77,7 @@ public static class ServiceCollectionExtensions
 					.AddScopedInstance<NavigationRequest>()
 
 					.AddScopedInstance<Window>()
-					.AddScoped<IDispatcher, Dispatcher>()
+					.AddScopedInstance<IDispatcher>()
 					.AddScoped<NavigationDataProvider>()
 					.AddScoped<RegionControlProvider>()
 					.AddTransient<IDictionary<string, object>>(services => services.GetRequiredService<NavigationDataProvider>().Parameters)

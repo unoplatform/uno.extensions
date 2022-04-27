@@ -11,17 +11,20 @@ public static class ServiceProviderExtensions
 
 	internal static IServiceProvider RegisterWindow(this IServiceProvider services, Window window)
 	{
-		var sp = services.AddScopedInstance(window);
-		// Force a get on the dispatcher to make sure the instance is created on this
-		// thread, which should ensure the DispatcherQueue exists
-		var dipatcher = services.GetRequiredService<IDispatcher>();
-		return sp;
+		return services.AddScopedInstance(window)
+						.AddScopedInstance<IDispatcher>(new Dispatcher(window));
 	}
 
 	internal static IServiceProvider CreateNavigationScope(this IServiceProvider services)
 	{
 		var scoped = services.CreateScope().ServiceProvider;
-		return scoped.AddScopedInstance(services.GetRequiredService<Window>());
+		return scoped.CloneScopedInstance<Window>(services)
+					.CloneScopedInstance<IDispatcher>(services);
+	}
+
+	internal static IServiceProvider CloneScopedInstance<T>(this IServiceProvider target, IServiceProvider source ) where T : notnull
+	{
+		return target.AddScopedInstance(source.GetRequiredService<T>());
 	}
 
 	public static IServiceProvider AddScopedInstance<T>(this IServiceProvider provider, Func<T> instanceCreator)
