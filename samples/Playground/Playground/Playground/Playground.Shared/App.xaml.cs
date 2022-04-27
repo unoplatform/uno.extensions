@@ -256,8 +256,8 @@ namespace Playground
 					new RouteMap("Dialogs",View: views.FindByView<DialogsPage>(),
 					Nested: new[]
 					{
-						new RouteMap("Simple", View: views.FindByView<SimpleDialog>()),
-						new RouteMap("Complex", View: views.FindByView<ComplexDialog>(), DependsOn: "Simple",
+						new RouteMap("Simple",View: views.FindByView<SimpleDialog>()),
+						new RouteMap("Complex",View: views.FindByView<ComplexDialog>(),
 						Nested: new[]
 						{
 							new RouteMap("ComplexDialogFirst",View: views.FindByView<ComplexDialogFirstPage>()),
