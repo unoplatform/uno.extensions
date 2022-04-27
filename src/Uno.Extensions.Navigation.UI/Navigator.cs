@@ -29,7 +29,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		ILogger logger,
 		IDispatcher dispatcher,
 		IRegion region,
-		IResolver resolver)
+		IRouteResolver resolver)
 	{
 		Region = region;
 		Logger = logger;

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using MyExtensionsApp.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Uno.Extensions.Navigation;
 
 
@@ -34,21 +35,63 @@ public static partial class ReactiveViewModelMappings
 // ********* Classes to be added to Reactive.Navigation ********* //
 public class ReactiveViewRegistry : ViewRegistry
 {
-	private readonly IDictionary<Type, Type> _viewModelMappings;
+	public IDictionary<Type, Type> ViewModelMappings { get; }
 	public ReactiveViewRegistry(IServiceCollection services, IDictionary<Type, Type> viewModelMappings) : base(services)
 	{
-		_viewModelMappings = viewModelMappings;
+		ViewModelMappings = viewModelMappings;
 	}
 
 	protected override void InsertItem(ViewMap item)
 	{
 		if (item.ViewModel is not null &&
-			_viewModelMappings.TryGetValue(item.ViewModel, out var bindableViewModel))
+			ViewModelMappings.TryGetValue(item.ViewModel, out var bindableViewModel))
 		{
 			item = new ReactiveViewMap(item.View, item.DynamicView, item.ViewModel, item.Data, item.ResultData, bindableViewModel);
 		}
 
 		base.InsertItem(item);
+	}
+}
+
+public class ReactiveRouteResolver : RouteResolver
+{
+	private readonly IDictionary<Type, Type> _viewModelMappings;
+	public ReactiveRouteResolver(
+		ILogger<ReactiveRouteResolver> logger,
+		IRouteRegistry routes,
+		ReactiveViewRegistry views) : base(logger, routes, views)
+	{
+		_viewModelMappings = views.ViewModelMappings;
+	}
+
+	protected override InternalRouteMap FromRouteMap(RouteMap drm)
+	{
+		var viewFunc = (drm.View?.View is not null) ?
+										() => drm.View.View :
+										drm.View?.DynamicView;
+		return new InternalRouteMap(
+			Path: drm.Path,
+			View: viewFunc,
+			ViewAttributes: drm.View?.ViewAttributes,
+			ViewModel: (drm.View is ReactiveViewMap rvmp)?rvmp.BindableViewModel: drm.View?.ViewModel,
+			Data: drm.View?.Data?.Data,
+			ToQuery: drm.View?.Data?.UntypedToQuery,
+			FromQuery: drm.View?.Data?.UntypedFromQuery,
+			ResultData: drm.View?.ResultData,
+			IsDefault: drm.IsDefault,
+			DependsOn: drm.DependsOn,
+			Init: drm.Init,
+			Nested: ResolveViewMaps(drm.Nested));
+	}
+
+	public override InternalRouteMap? FindByViewModel(Type? viewModelType)
+	{
+		if (viewModelType is not null &&
+			_viewModelMappings.TryGetValue(viewModelType, out var bindableViewModel))
+		{
+			return base.FindByViewModel(bindableViewModel);
+		}
+		return base.FindByViewModel(viewModelType);
 	}
 }
 
@@ -61,8 +104,6 @@ public record ReactiveViewMap(
 		Type? BindableViewModel = null
 	) : ViewMap(View, DynamicView, ViewModel, Data, ResultData)
 {
-	public override Type? BindingViewModel => BindableViewModel;
-
 	public override void RegisterTypes(IServiceCollection services)
 	{
 		if (BindableViewModel is not null)
