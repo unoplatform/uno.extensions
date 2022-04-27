@@ -17,12 +17,7 @@ public class VMViewModel
 	// Navigate to a route and expect a result of type TResult
 	public async void NavigateRouteForResultAsyncClick(object sender, RoutedEventArgs args)
 	{
-		var response = await Navigator.NavigateRouteForResultAsync<Widget>(this, "Second");
-		if (response is null)
-		{
-			return;
-		}
-		var result = await response.Result;
+		var result = await Navigator.NavigateRouteForResultAsync<Widget>(this, "Second").AsResult();
 	}
 
 	// Navigate to a view of type TView
@@ -34,13 +29,7 @@ public class VMViewModel
 	// Navigate to a view of type TView and expect a result of type TResult
 	public async void NavigateViewForResultAsyncClick(object sender, RoutedEventArgs args)
 	{
-		var response = await Navigator.NavigateViewForResultAsync<SecondPage, Country>(this);
-		if (response is null)
-		{
-			return;
-		}
-
-		var result = await response.Result;
+		var result = await Navigator.NavigateViewForResultAsync<SecondPage, Country>(this).AsResult();
 	}
 
 	// Navigate to a view model of type TViewModel
@@ -52,13 +41,7 @@ public class VMViewModel
 	// Navigate to a view model of type TViewModel and expect a result of type TResult
 	public async void NavigateViewModelForResultAsyncClick(object sender, RoutedEventArgs args)
 	{
-		var response = await Navigator.NavigateViewModelForResultAsync<SecondViewModel, Country>(this);
-		if (response is null)
-		{
-			return;
-		}
-
-		var result = await response.Result;
+		var result = await Navigator.NavigateViewModelForResultAsync<SecondViewModel, Country>(this).AsResult();
 	}
 
 	// Navigate to the route that handles data of type TData
@@ -70,25 +53,13 @@ public class VMViewModel
 	// Navigate to the route that handles data of type TData and expect a result of type TResult
 	public async void NavigateDataForResultAsyncClick(object sender, RoutedEventArgs args)
 	{
-		var response = await Navigator.NavigateDataForResultAsync<Widget, Country>(this, new Widget("Test", 99.0));
-		if (response is null)
-		{
-			return;
-		}
-
-		var result = await response.Result;
+		var result = await Navigator.NavigateDataForResultAsync<Widget, Country>(this, new Widget("Test", 99.0)).AsResult();
 	}
 
 	// Navigate to the route that will return data of type TResultData
 	public async void NavigateForResultAsyncClick(object sender, RoutedEventArgs args)
 	{
-		var response = await Navigator.NavigateForResultAsync<Country>(this);
-		if (response is null)
-		{
-			return;
-		}
-
-		var result = await response.Result;
+		var result = await Navigator.NavigateForResultAsync<Country>(this).AsResult();
 	}
 
 	// Navigate to previous view (goback on frame or close dialog/popup)

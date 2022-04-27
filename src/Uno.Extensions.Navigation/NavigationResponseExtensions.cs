@@ -22,4 +22,15 @@ public static class NavigationResponseExtensions
 
         return null;
     }
+
+	public static async ValueTask<Option<TResult>> AsResult<TResult>(this Task<NavigationResultResponse<TResult>?> navigationResponse)
+	{
+		var response = await navigationResponse.ConfigureAwait(false);
+		if (response?.Result is not null)
+		{
+			return await response.Result;
+		}
+
+		return Option.None<TResult>();
+	}
 }

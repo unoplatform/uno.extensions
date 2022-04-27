@@ -73,13 +73,8 @@ public partial class AdHocViewModel:ObservableObject
 
 	public async Task FetchTasks()
 	{
-		var response = await _navigator.NavigateRouteForResultAsync<string>(this, "Auth", qualifier: Qualifiers.Dialog);
-		if(response?.Result is null)
-		{
-			return;
-		}
+		var result = await _navigator.NavigateRouteForResultAsync<string>(this, "Auth", qualifier: Qualifiers.Dialog).AsResult();
 
-		var result = await response.Result;
 		(_authToken as SimpleAuthenticationToken).AccessToken = result.SomeOrDefault() ?? String.Empty;
 		var taskLists = await _todoTaskListEndpoint.GetAllAsync(CancellationToken.None);
 	}
