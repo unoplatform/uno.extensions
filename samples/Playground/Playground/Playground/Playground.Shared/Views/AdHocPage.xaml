@@ -59,6 +59,9 @@
 					Click="{x:Bind ViewModel.FetchTasks}" />
 			<Button Content="Load Widgets"
 					Click="{x:Bind ViewModel.LoadWidgets}" />
+			<Button Content="Update UI from Background Task"
+					Click="{x:Bind ViewModel.RunBackgroundTask}" />
+			<TextBlock Text="{Binding BackgroundTaskProgress}" />
 		</StackPanel>
 	</Grid>
 </Page>

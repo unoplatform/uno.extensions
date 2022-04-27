@@ -103,7 +103,7 @@ public static class FrameworkElementExtensions
 		if (dispatcher is not null)
 		{
 			var timeoutToken = new CancellationTokenSource(TimeSpan.FromSeconds(1)).Token;
-			success = await dispatcher.Run(async () =>
+			success = await dispatcher.ExecuteAsync(async () =>
 			{
 				try
 				{

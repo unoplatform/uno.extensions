@@ -8,11 +8,11 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 
 	public PanelVisiblityNavigator(
 		ILogger<PanelVisiblityNavigator> logger,
-		Window window,
+		IDispatcher dispatcher,
 		IRegion region,
 		IResolver resolver,
 		RegionControlProvider controlProvider)
-		: base(logger, window, region, resolver, controlProvider.RegionControl as Grid)
+		: base(logger, dispatcher, region, resolver, controlProvider.RegionControl as Grid)
 	{
 	}
 

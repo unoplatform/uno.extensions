@@ -6,13 +6,17 @@ public class FlyoutNavigator : ControlNavigator
 
 	private Flyout? Flyout { get; set; }
 
+	private Window _window;
+
 	public FlyoutNavigator(
 		ILogger<ContentDialogNavigator> logger,
-		Window window,
+		IDispatcher dispatcher,
 		IRegion region,
-		IResolver resolver)
-		: base(logger, window, region, resolver)
+		IResolver resolver,
+		Window window)
+		: base(logger, dispatcher, region, resolver)
 	{
+		_window = window;
 	}
 
 	protected override bool CanNavigateToRoute(Route route) =>
@@ -119,7 +123,7 @@ public class FlyoutNavigator : ControlNavigator
 
 			if (flyoutHost is null)
 			{
-				flyoutHost = Window.Content as FrameworkElement;
+				flyoutHost = _window.Content as FrameworkElement;
 			}
 		}
 

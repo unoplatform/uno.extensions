@@ -6,13 +6,17 @@ public abstract class DialogNavigator : ControlNavigator
 
 	private IAsyncInfo? ShowTask { get; set; }
 
+	protected Window Window { get; }
+
 	protected DialogNavigator(
 		ILogger<DialogNavigator> logger,
-		Window window,
+		IDispatcher dispatcher,
 		IRegion region,
-		IResolver resolver)
-		: base(logger, window, region, resolver)
+		IResolver resolver,
+		Window window)
+		: base(logger, dispatcher, region, resolver)
 	{
+		Window = window;
 	}
 
 	protected override async Task<Route?> ExecuteRequestAsync(NavigationRequest request)

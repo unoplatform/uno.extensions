@@ -54,7 +54,7 @@ public class NavigatorFactory : INavigatorFactory
 
 		// Make sure the nav service gets added to the container before initialize
 		// is invoked to prevent reentry
-		services.AddInstance<INavigator>(navService);
+		services.AddScopedInstance<INavigator>(navService);
 
 		if (navService is ControlNavigator controlService)
 		{
@@ -98,7 +98,7 @@ public class NavigatorFactory : INavigatorFactory
 		var services = region.Services.CreateNavigationScope();
 
 		var dialogRegion = new NavigationRegion(services: services);
-		services.AddInstance<IRegion>(dialogRegion);
+		services.AddScopedInstance<IRegion>(dialogRegion);
 
 		var mapping = Resolver.Routes.FindByPath(request.Route.Base);
 		var serviceLookupType = mapping?.View?.RenderView;
@@ -133,7 +133,7 @@ public class NavigatorFactory : INavigatorFactory
 			return null;
 		}
 
-		services.AddInstance<INavigator>(navService);
+		services.AddScopedInstance<INavigator>(navService);
 
 		return navService;
 	}

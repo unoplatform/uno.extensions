@@ -6,8 +6,9 @@ using Uno.Extensions.Storage;
 
 namespace Playground.ViewModels;
 
-public class AdHocViewModel
+public partial class AdHocViewModel:ObservableObject
 {
+	private readonly IDispatcher _dispatcher;
 	private readonly INavigator _navigator;
 	private readonly IToDoTaskListEndpoint _todoTaskListEndpoint;
 	private readonly ISerializer<Widget> _widgetSerializer;
@@ -15,15 +16,23 @@ public class AdHocViewModel
 	private readonly IAuthenticationTokenProvider _authToken;
 	private readonly IStorage _dataService;
 	private readonly ISerializer _serializer;
+	private readonly NeedsADispatcherService _needsADispatcher;
+
+	[ObservableProperty]
+	private string? backgroundTaskProgress;
+
 	public AdHocViewModel(
+		IDispatcher dispatcher,
 		INavigator navigator,
 		IAuthenticationTokenProvider authenticationToken,
 		IToDoTaskListEndpoint todoTaskEndpoint,
 		ISerializer<Widget> widgetSerializer,
 		ISerializer<Person> personSerializer,
 		IStorage dataService,
-		ISerializer serializer)
+		ISerializer serializer,
+		NeedsADispatcherService needsADispatcher)
 	{
+		_dispatcher = dispatcher;
 		_navigator = navigator;
 		_authToken = authenticationToken;
 		_widgetSerializer = widgetSerializer;
@@ -31,6 +40,7 @@ public class AdHocViewModel
 		_todoTaskListEndpoint = todoTaskEndpoint;
 		_dataService = dataService;
 		_serializer = serializer;
+		_needsADispatcher = needsADispatcher;
 	}
 
 	public async Task LongRunning()
@@ -77,5 +87,48 @@ public class AdHocViewModel
 	public async Task LoadWidgets()
 	{
 		var widgets = await _dataService.ReadFileAsync<Widget[]>(_serializer, "data.json");
+	}
+
+	public async Task RunBackgroundTask()
+	{
+		await _dispatcher.ExecuteAsync(() => BackgroundTaskProgress = "1 - Starting");
+		await Task.Run(async () =>
+		{
+			await Task.Delay(1000);
+			await _dispatcher.ExecuteAsync(() => BackgroundTaskProgress = "2 - In Progress");
+			await Task.Delay(1000);
+			await _dispatcher.ExecuteAsync(async () =>
+			{
+				BackgroundTaskProgress = "3 - Executing on UI thread";
+				await Task.Delay(1000);
+				BackgroundTaskProgress = "4 - UI thread complete";
+			});
+			await Task.Delay(1000);
+
+			var token = new CancellationTokenSource(TimeSpan.FromSeconds(1)).Token;
+			try
+			{
+				await _dispatcher.ExecuteAsync(async (t) =>
+				{
+					BackgroundTaskProgress = "5 - Executing on UI thread (again - with cancellation after 1s)";
+					await Task.Delay(3000, t);
+					BackgroundTaskProgress = "Should NOT get here";
+				}, token);
+				await _dispatcher.ExecuteAsync(() => BackgroundTaskProgress = "Should NOT get here");
+			}
+			catch (Exception ex)
+			{
+				await _dispatcher.ExecuteAsync(() => BackgroundTaskProgress = $"6 - UI thread cancelled - raises exception {ex.Message}");
+			}
+
+			await Task.Delay(1000);
+			await _dispatcher.ExecuteAsync(() => BackgroundTaskProgress = "7 - Finishing execution");
+			await Task.Delay(1000);
+		});
+
+		await _dispatcher.ExecuteAsync(() => BackgroundTaskProgress = "8 - Running something using service with dispatcher");
+		var result = await _needsADispatcher.RunSomethingWithDispatcher();
+
+		await _dispatcher.ExecuteAsync(() => BackgroundTaskProgress = $"9 - Completed {result}");
 	}
 }

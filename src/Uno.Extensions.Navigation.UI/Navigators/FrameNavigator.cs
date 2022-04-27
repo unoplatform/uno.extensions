@@ -8,11 +8,11 @@ public class FrameNavigator : ControlNavigator<Frame>
 
 	public FrameNavigator(
 		ILogger<FrameNavigator> logger,
-		Window window,
+		IDispatcher dispatcher,
 		IRegion region,
 		IResolver resolver,
 		RegionControlProvider controlProvider)
-		: base(logger, window, region, resolver, controlProvider.RegionControl as Frame)
+		: base(logger, dispatcher, region, resolver, controlProvider.RegionControl as Frame)
 	{
 	}
 
@@ -259,7 +259,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 		var navigator = CurrentView?.GetNavigatorInstance();
 		if (navigator is not null)
 		{
-			Region.Services?.AddInstance<INavigator>(navigator);
+			Region.Services?.AddScopedInstance<INavigator>(navigator);
 		}
 
 		return responseRoute;

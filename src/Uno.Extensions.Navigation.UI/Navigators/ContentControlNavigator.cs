@@ -6,11 +6,11 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 
 	public ContentControlNavigator(
 		ILogger<ContentControlNavigator> logger,
-		Window window,
+		IDispatcher dispatcher,
 		IRegion region,
 		IResolver resolver,
 		RegionControlProvider controlProvider)
-		: base(logger, window, region, resolver, controlProvider.RegionControl as ContentControl)
+		: base(logger, dispatcher, region, resolver, controlProvider.RegionControl as ContentControl)
 	{
 	}
 

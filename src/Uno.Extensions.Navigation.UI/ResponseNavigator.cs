@@ -8,7 +8,7 @@ public class ResponseNavigator<TResult> : IResponseNavigator, IInstance<IService
 
 	public Route? Route => Navigation.Route;
 
-	private DispatcherQueue Dispatcher => (Navigation as Navigator)?.GetDispatcher() ?? DispatcherQueue.GetForCurrentThread();
+	private IDispatcher Dispatcher => (Navigation as Navigator)!.Dispatcher;
 
 	public IServiceProvider? Instance => Navigation.Get<IServiceProvider>();
 
@@ -20,15 +20,15 @@ public class ResponseNavigator<TResult> : IResponseNavigator, IInstance<IService
 
 		if (request.Cancellation.HasValue)
 		{
-			request.Cancellation.Value.Register(() =>
+			request.Cancellation.Value.Register(async () =>
 			{
-				ApplyResult(Option.None<TResult>());
+				await ApplyResult(Option.None<TResult>());
 			});
 		}
 
 
 		// Replace the navigator
-		Navigation.Get<IServiceProvider>()?.AddInstance<INavigator>(this);
+		Navigation.Get<IServiceProvider>()?.AddScopedInstance<INavigator>(this);
 	}
 
 	public async Task<NavigationResponse?> NavigateAsync(NavigationRequest request)
@@ -59,13 +59,13 @@ public class ResponseNavigator<TResult> : IResponseNavigator, IInstance<IService
 					result = Option.None<TResult>();
 				}
 			}
-			ApplyResult(result);
+			await ApplyResult(result);
 		}
 
 		return navResponse;
 	}
 
-	private void ApplyResult(Option<TResult> responseData)
+	private async Task ApplyResult(Option<TResult> responseData)
 	{
 		if (ResultCompletion.Task.Status == TaskStatus.Canceled ||
 			ResultCompletion.Task.Status == TaskStatus.RanToCompletion)
@@ -74,9 +74,9 @@ public class ResponseNavigator<TResult> : IResponseNavigator, IInstance<IService
 		}
 
 		// Restore the navigator
-		Navigation.Get<IServiceProvider>()?.AddInstance<INavigator>(this.Navigation);
+		Navigation.Get<IServiceProvider>()?.AddScopedInstance<INavigator>(this.Navigation);
 
-		Dispatcher.TryEnqueue(() =>
+		await Dispatcher.ExecuteAsync(() =>
 		{
 			ResultCompletion.TrySetResult(responseData);
 		});

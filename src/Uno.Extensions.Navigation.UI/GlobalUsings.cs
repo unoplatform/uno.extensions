@@ -10,6 +10,7 @@ global using Microsoft.Extensions.Logging;
 global using Microsoft.Extensions.Options;
 global using Windows.Foundation;
 global using Windows.UI.Popups;
+global using Uno.Extensions;
 global using Uno.Extensions.Hosting;
 global using Uno.Extensions.Logging;
 global using Uno.Extensions.Navigation;

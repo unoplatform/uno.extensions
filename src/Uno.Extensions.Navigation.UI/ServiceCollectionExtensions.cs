@@ -27,7 +27,8 @@ public static class ServiceCollectionExtensions
 						};
 						return config;
 					})
-					.AddScoped<IInstanceRepository, InstanceRepository>()
+					.AddSingleton<ISingletonInstanceRepository, InstanceRepository>()
+					.AddScoped<IScopedInstanceRepository, InstanceRepository>()
 					.AddSingleton<IResponseNavigatorFactory, ResponseNavigatorFactory>()
 
 					.AddSingleton<RouteNotifier>()
@@ -76,7 +77,7 @@ public static class ServiceCollectionExtensions
 					.AddScopedInstance<NavigationRequest>()
 
 					.AddScopedInstance<Window>()
-
+					.AddScopedInstance<IDispatcher>()
 					.AddScoped<NavigationDataProvider>()
 					.AddScoped<RegionControlProvider>()
 					.AddTransient<IDictionary<string, object>>(services => services.GetRequiredService<NavigationDataProvider>().Parameters)

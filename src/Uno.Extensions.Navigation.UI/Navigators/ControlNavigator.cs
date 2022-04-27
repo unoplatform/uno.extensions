@@ -7,22 +7,16 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 
 	protected ControlNavigator(
 		ILogger logger,
-		Window window,
+		IDispatcher dispatcher,
 		IRegion region,
 		IResolver resolver,
 		TControl? control)
-		: base(logger, window, region, resolver)
+		: base(logger, dispatcher, region, resolver)
 	{
 		Control = control;
 	}
 
 	protected override bool CanNavigateToRoute(Route route) => base.CanNavigateToRoute(route) && Control is not null;
-
-	internal override DispatcherQueue GetDispatcher() =>
-#if WINUI
-		(Control as FrameworkElement)?.DispatcherQueue ??
-#endif
-		base.GetDispatcher();
 
 	protected virtual FrameworkElement? CurrentView => default;
 
@@ -101,10 +95,10 @@ public abstract class ControlNavigator : Navigator
 
 	protected ControlNavigator(
 		ILogger logger,
-		Window window,
+		IDispatcher dispatcher,
 		IRegion region,
 		IResolver resolver)
-		: base(logger, window, region, resolver)
+		: base(logger, dispatcher, region, resolver)
 	{
 	}
 
@@ -142,7 +136,7 @@ public abstract class ControlNavigator : Navigator
 
 	private async Task<NavigationResponse?> ControlCoreNavigateAsync(NavigationRequest request)
 	{
-		return await GetDispatcher().Run(async () =>
+		return await Dispatcher.ExecuteAsync(async () =>
 		{
 			if (CanNavigateToRoute(request.Route))
 			{
@@ -200,7 +194,7 @@ public abstract class ControlNavigator : Navigator
 			var dataFactor = services.GetRequiredService<NavigationDataProvider>();
 			dataFactor.Parameters = route.Data ?? new Dictionary<string, object>();
 
-			services.AddInstance(request);
+			services.AddScopedInstance(request);
 
 			var vm = services.GetService(mapping!.View!.ViewModel);
 

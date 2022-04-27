@@ -14,27 +14,27 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 	protected IResolver Resolver { get; }
 
-	protected Window Window { get; }
+	internal IDispatcher Dispatcher { get; }
 
-	public Navigator(ILogger<Navigator> logger, Window window, IRegion region, IResolver resolver)
-		: this((ILogger)logger, window, region, resolver)
+	public Navigator(
+		ILogger<Navigator> logger,
+		IDispatcher dispatcher,
+		IRegion region,
+		IResolver resolver)
+		: this((ILogger)logger, dispatcher, region, resolver)
 	{
 	}
 
-	internal virtual DispatcherQueue GetDispatcher() =>
-#if WINUI
-		Window!.DispatcherQueue
-#else
-		Windows.ApplicationModel.Core.CoreApplication.MainView.DispatcherQueue
-#endif
-		?? DispatcherQueue.GetForCurrentThread();
-
-	protected Navigator(ILogger logger, Window window, IRegion region, IResolver resolver)
+	protected Navigator(
+		ILogger logger,
+		IDispatcher dispatcher,
+		IRegion region,
+		IResolver resolver)
 	{
 		Region = region;
 		Logger = logger;
 		Resolver = resolver;
-		Window = window;
+		Dispatcher = dispatcher;
 	}
 
 	public async Task<NavigationResponse?> NavigateAsync(NavigationRequest request)
@@ -321,7 +321,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			// the current INavigator is this navigator. This will have override
 			// any responsenavigator that has been registered and avoid incorrectly
 			// sending a response when simply navigating back
-			services.AddInstance<INavigator>(this);
+			services.AddScopedInstance<INavigator>(this);
 		}
 
 		var executedRoute = await CoreNavigateAsync(request);
@@ -395,8 +395,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		// Append Internal qualifier to avoid requests being sent back to parent
 		request = request with { Route = request.Route with { IsInternal = true } };
 
-		var dispatcher = this.GetDispatcher();
-		var navigators = await dispatcher.Run(async () =>
+		var navigators = await Dispatcher.ExecuteAsync(async () =>
 		{
 			return (from child in children
 					let nav = child.Navigator()

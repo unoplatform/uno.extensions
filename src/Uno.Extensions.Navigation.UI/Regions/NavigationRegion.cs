@@ -38,10 +38,10 @@ public sealed class NavigationRegion : IRegion
                     return null;
                 }
 
-                _services.AddInstance<IRegion>(this);
+                _services.AddScopedInstance<IRegion>(this);
                 var serviceFactory = _services.GetRequiredService<INavigatorFactory>();
 #pragma warning disable CS8603 // Possible null reference return.
-                _services.AddInstance<INavigator>(() => serviceFactory.CreateService(this));
+                _services.AddScopedInstance<INavigator>(() => serviceFactory.CreateService(this));
 #pragma warning restore CS8603 // Possible null reference return.
             }
 
@@ -76,11 +76,11 @@ public sealed class NavigationRegion : IRegion
 	{
 		_isRoot = true;
 		_services = services;
-		_services.AddInstance<IRegion>(this);
+		_services.AddScopedInstance<IRegion>(this);
 		var serviceFactory = _services.GetRequiredService<INavigatorFactory>();
 		var navigator = serviceFactory.CreateService(this);
 #pragma warning disable CS8603 // Possible null reference return.
-		_services.AddInstance<INavigator>(() => navigator);
+		_services.AddScopedInstance<INavigator>(() => navigator);
 #pragma warning restore CS8603 // Possible null reference return.
 	}
 

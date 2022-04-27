@@ -4,10 +4,11 @@ public class MessageDialogNavigator : DialogNavigator
 {
 	public MessageDialogNavigator(
 		ILogger<DialogNavigator> logger,
-		Window window,
+		IDispatcher dispatcher,
 		IResolver resolver,
-		IRegion region)
-		: base(logger, window, region, resolver)
+		IRegion region,
+		Window window)
+		: base(logger, dispatcher, region, resolver, window)
 	{
 	}
 
@@ -95,9 +96,9 @@ public class MessageDialogNavigator : DialogNavigator
 		if (request.Cancellation.HasValue &&
 			request.Cancellation.Value.CanBeCanceled)
 		{
-			request.Cancellation.Value.Register(() =>
+			request.Cancellation.Value.Register(async () =>
 			{
-				showTask.Cancel();
+				await this.Dispatcher.ExecuteAsync(() => showTask.Cancel());
 			});
 		}
 

@@ -64,7 +64,7 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 				resultType = routeMap?.View?.ResultData;
 			}
 
-			if(string.IsNullOrWhiteSpace(path) && data is not null)
+			if (string.IsNullOrWhiteSpace(path) && data is not null)
 			{
 				var rm = _resolver.FindByData(data.GetType());
 				path = rm?.Path;
@@ -77,7 +77,9 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 			}
 
 
-			var qualifier = path.HasQualifier() ? Qualifiers.None: DefaultQualifier;
+			var qualifier = path.HasQualifier() ? Qualifiers.None : DefaultQualifier;
+
+			path = path ?? string.Empty;
 
 			if (data is not null ||
 				resultType is not null)
@@ -85,7 +87,7 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 
 				if (resultType is not null)
 				{
-					
+
 					var response = await nav.NavigateRouteForResultAsync(element, path, qualifier, data, resultType: resultType);
 					if (binding is not null &&
 					binding.ParentBinding.Mode == BindingMode.TwoWay)

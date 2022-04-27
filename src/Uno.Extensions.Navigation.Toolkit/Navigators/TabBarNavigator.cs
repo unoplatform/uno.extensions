@@ -4,11 +4,11 @@ public class TabBarNavigator : SelectorNavigator<TabBar>
 {
 	public TabBarNavigator(
 		ILogger<TabBarNavigator> logger,
-		Window window,
+		IDispatcher dispatcher,
 		IRegion region,
 		IResolver resolver,
 		RegionControlProvider controlProvider)
-		: base(logger, window, region, resolver, controlProvider)
+		: base(logger, dispatcher, region, resolver, controlProvider)
 	{
 	}
 
