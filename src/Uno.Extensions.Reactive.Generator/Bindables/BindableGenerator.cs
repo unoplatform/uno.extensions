@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Uno.Extensions.Reactive.Generator;
 
@@ -22,6 +23,11 @@ internal class BindableGenerator
 	{
 		if (symbol is INamedTypeSymbol { IsRecord: true} named && GetDefaultCtor(named) is not null)
 		{
+			if (named is { NullableAnnotation: NullableAnnotation.Annotated })
+			{
+				named = named.OriginalDefinition;
+			}
+
 			_toGenerate.Add(named);
 			return $"{symbol.ContainingNamespace}.Bindable{symbol.GetPascalCaseName()}"; 
 		}

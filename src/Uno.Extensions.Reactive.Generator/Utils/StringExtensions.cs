@@ -81,4 +81,16 @@ internal static class StringExtensions
 			return null;
 		}
 	}
+
+	public static string Replace(this string text, char[] chars, char replacement)
+	{
+		var result = new StringBuilder(text.Length);
+
+		foreach (var @char in text)
+		{
+			result.Append(chars.Contains(@char) ? replacement : @char);
+		}
+
+		return result.ToString();
+	}
 }

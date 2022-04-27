@@ -100,7 +100,7 @@ public partial class Given_BasicViewModel_Then_Generate__ViewModel
 	public (string result1, int result2) AParameterizedMethodReturningATuple(string arg1, int arg2) => (arg1, arg2);
 }
 
-public record MyRecord(string Property1, int Property2, MySubRecord Property3, MyWeirdRecord Property4);
+public record MyRecord(string Property1, int Property2, MySubRecord? Property3, MyWeirdRecord Property4);
 
 public record MySubRecord(string Prop1, int Prop2);
 

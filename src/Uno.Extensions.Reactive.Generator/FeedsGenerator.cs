@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using Microsoft.CodeAnalysis;
+using Uno.Extensions.Reactive.Generator.Utils;
 using Uno.SourceGeneration;
 
 namespace Uno.Extensions.Reactive.Generator;
@@ -17,7 +19,7 @@ public partial class FeedsGenerator : Uno.SourceGeneration.ISourceGenerator
 		{
 			foreach (var generated in new BindableViewModelGenerator(bindableContext).Generate(context.Compilation.Assembly))
 			{
-				context.AddSource(generated.type.ToString(), generated.code);
+				context.AddSource(PathHelper.SanitizeFileName(generated.type.ToString()), generated.code);
 			}
 		}
 		else
