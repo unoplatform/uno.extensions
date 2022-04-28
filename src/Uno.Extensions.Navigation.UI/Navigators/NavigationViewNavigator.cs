@@ -6,7 +6,7 @@ public class NavigationViewNavigator : SelectorNavigator<Microsoft.UI.Xaml.Contr
 		ILogger<NavigationViewNavigator> logger,
 		IDispatcher dispatcher,
 		IRegion region,
-		IResolver resolver,
+		IRouteResolver resolver,
 		RegionControlProvider controlProvider)
 		: base(logger, dispatcher, region, resolver, controlProvider)
 	{

@@ -5,7 +5,7 @@ public class MessageDialogNavigator : DialogNavigator
 	public MessageDialogNavigator(
 		ILogger<DialogNavigator> logger,
 		IDispatcher dispatcher,
-		IResolver resolver,
+		IRouteResolver resolver,
 		IRegion region,
 		Window window)
 		: base(logger, dispatcher, region, resolver, window)
@@ -14,7 +14,7 @@ public class MessageDialogNavigator : DialogNavigator
 
 	protected override bool CanNavigateToRoute(Route route) =>
 		base.CanNavigateToRoute(route) &&
-		(Resolver.Routes.Find(route)?.View?.RenderView == typeof(MessageDialog));
+		(Resolver.Find(route)?.RenderView == typeof(MessageDialog));
 
 	protected override async Task<IAsyncInfo?> DisplayDialog(NavigationRequest request, Type? viewType, object? viewModel)
 	{
@@ -27,7 +27,7 @@ public class MessageDialogNavigator : DialogNavigator
 			return null;
 		}
 
-		var messageView = Resolver.Routes.Find(route)?.View as MessageDialogViewMap;
+		var messageView = Resolver.Find(route)?.ViewAttributes as MessageDialogAttributes;
 
 		var content = data.TryGetValue(RouteConstants.MessageDialogParameterContent, out var contentValue) ?
 						contentValue as string :
@@ -69,7 +69,7 @@ public class MessageDialogNavigator : DialogNavigator
 #endif
 
 		var showTask = md.ShowAsync();
-		showTask.AsTask()
+		_ = showTask.AsTask()
 			.ContinueWith(result =>
 				{
 					if (result.Status != TaskStatus.Canceled)

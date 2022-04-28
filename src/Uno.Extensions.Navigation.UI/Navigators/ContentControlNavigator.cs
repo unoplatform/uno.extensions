@@ -8,7 +8,7 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 		ILogger<ContentControlNavigator> logger,
 		IDispatcher dispatcher,
 		IRegion region,
-		IResolver resolver,
+		IRouteResolver resolver,
 		RegionControlProvider controlProvider)
 		: base(logger, dispatcher, region, resolver, controlProvider.RegionControl as ContentControl)
 	{
@@ -21,13 +21,13 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 			return false;
 		}
 
-		var rm = Resolver.Routes.Find(route);
+		var rm = Resolver.Find(route);
 		if(rm is null )
 		{
 			return false;
 		}
 
-		var view = rm?.View?.RenderView;
+		var view = rm?.RenderView;
 
 		return (
 					(view?.IsSubclassOf(typeof(Page)) ?? false) &&

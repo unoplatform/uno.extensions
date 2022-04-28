@@ -39,7 +39,7 @@ internal class BrowserAddressBarService : IHostedService
 	}
 
 
-	private async void RouteChanged(object sender, RouteChangedEventArgs e)
+	private async void RouteChanged(object? sender, RouteChangedEventArgs e)
 	{
 		try
 		{

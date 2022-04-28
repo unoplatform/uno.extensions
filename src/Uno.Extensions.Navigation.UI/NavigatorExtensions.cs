@@ -24,13 +24,19 @@ public static class NavigatorExtensions
        object? itemTemplate = null,
        CancellationToken cancellation = default)
     {
-        var data = new Dictionary<string, object>()
+        var data = new Dictionary<string, object?>()
             {
                 { RouteConstants.PickerItemsSource, itemsSource },
                 { RouteConstants.PickerItemTemplate, itemTemplate }
             };
 
-        var result = await service.NavigateAsync((Qualifiers.Dialog + typeof(Picker).Name).AsRequest(sender, data, cancellation, typeof(TSource)));
+		var req = (Qualifiers.Dialog + typeof(Picker).Name).AsRequest(sender, data, cancellation, typeof(TSource));
+		if(req is null)
+		{
+			return default;
+		}
+
+		var result = await service.NavigateAsync(req);
         return result?.AsResult<TSource>();
     }
 #endif

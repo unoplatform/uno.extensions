@@ -17,6 +17,7 @@ using Uno.Extensions.Navigation.Regions;
 using Uno.Extensions.Navigation.Toolkit;
 using Uno.Extensions.Serialization;
 using MyExtensionsApp.Views;
+using MyExtensionsApp.Reactive;
 
 #if WINUI
 using Windows.ApplicationModel;
@@ -38,6 +39,7 @@ using LaunchActivatedEventArgs = Windows.ApplicationModel.Activation.LaunchActiv
 using Window = Windows.UI.Xaml.Window;
 using CoreApplication = Windows.ApplicationModel.Core.CoreApplication;
 #endif
+
 
 namespace MyExtensionsApp
 {
@@ -98,8 +100,13 @@ namespace MyExtensionsApp
 					// Enable navigation, including registering views and viewmodels
 					.UseNavigation(
 						RegisterRoutes,
-						config => config with { AddressBarUpdateEnabled = true })
-
+						createViewRegistry: sc => new ReactiveViewRegistry(sc, ReactiveViewModelMappings.ViewModelMappings),
+						configure: cfg => cfg with { AddressBarUpdateEnabled = true })
+					.ConfigureServices(services =>
+					{
+						services
+							.AddSingleton<IRouteResolver, ReactiveRouteResolver>();
+					})
 					// Add navigation support for toolkit controls such as TabBar and NavigationView
 					.UseToolkitNavigation()
 
@@ -108,9 +115,6 @@ namespace MyExtensionsApp
 
 			this.InitializeComponent();
 
-#if HAS_UNO || NETFX_CORE
-			this.Suspending += OnSuspending;
-#endif
 		}
 
 		/// <summary>
@@ -148,114 +152,87 @@ namespace MyExtensionsApp
 
 		}
 
-		/// <summary>
-		/// Invoked when Navigation to a certain page fails
-		/// </summary>
-		/// <param name="sender">The Frame which failed navigation</param>
-		/// <param name="e">Details about the navigation failure</param>
-		void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
-		{
-			throw new InvalidOperationException($"Failed to load {e.SourcePageType.FullName}: {e.Exception}");
-		}
-
-		/// <summary>
-		/// Invoked when application execution is being suspended.  Application state is saved
-		/// without knowing whether the application will be terminated or resumed with the contents
-		/// of memory still intact.
-		/// </summary>
-		/// <param name="sender">The source of the suspend request.</param>
-		/// <param name="e">Details about the suspend request.</param>
-		private void OnSuspending(object sender, SuspendingEventArgs e)
-		{
-			var deferral = e.SuspendingOperation.GetDeferral();
-			// TODO: Save application state and stop any background activity
-			deferral.Complete();
-		}
-
 		private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 		{
 			var forgotPasswordDialog = new MessageDialogViewMap(
-					Content: "Click OK, or Cancel",
-					Title: "Forgot your password!",
-					DelayUserInput: true,
-					DefaultButtonIndex: 1,
-					Buttons: new DialogAction[]
-					{
-						new(Label: "Yeh!",Id:"Y"),
-						new(Label: "Nah", Id:"N")
-					}
-				);
+								Content: "Click OK, or Cancel",
+								Title: "Forgot your password!",
+								DelayUserInput: true,
+								DefaultButtonIndex: 1,
+								Buttons: new DialogAction[]
+								{
+								new(Label: "Yeh!",Id:"Y"),
+								new(Label: "Nah", Id:"N")
+								}
+							);
 
 			views.Register(
-				new ViewMap(ViewModel: typeof(ShellViewModel)),
-				new ViewMap(View: typeof(LoginPage), ViewModel: typeof(LoginViewModel.BindableLoginViewModel), ResultData: typeof(Credentials)),
-				new ViewMap(View: typeof(HomePage), Data: new DataMap<Credentials>()),
-				new ViewMap(View: typeof(ProductsPage), ViewModel: typeof(ProductsViewModel.BindableProductsViewModel)),
-				new ViewMap(DynamicView: () =>
-						   (App.Current as App)?.Window?.Content?.ActualSize.X > 800 ? typeof(ProductControl) : typeof(ProductDetailsPage),
-							ViewModel: typeof(ProductDetailsViewModel.BindableProductDetailsViewModel), Data: new DataMap<Product>(
-																						ToQuery: product => new Dictionary<string, string> { { nameof(Product.ProductId), product.ProductId.ToString() } },
-																						FromQuery: async (sp, query) =>
-																						{
-																							var id = int.Parse(query[nameof(Product.ProductId)]);
-																							var ps = sp.GetRequiredService<IProductService>();
-																							var products = await ps.GetProducts(default, default);
-																							return products.FirstOrDefault(p => p.ProductId == id);
-																						})),
-				new ViewMap(View: typeof(FilterPage), ViewModel: typeof(FiltersViewModel.BindableFiltersViewModel), Data: new DataMap<Filters>()),
-				new ViewMap(View: typeof(DealsPage), ViewModel: typeof(DealsViewModel)),
-				new ViewMap(View: typeof(ProfilePage), ViewModel: typeof(ProfileViewModel)),
-				new ViewMap(View: typeof(CartPage), ViewModel: typeof(CartViewModel)),
-				new ViewMap(View: typeof(ProductDetailsPage), ViewModel: typeof(CartProductDetailsViewModel.BindableCartProductDetailsViewModel), Data: new DataMap<CartItem>(
-																						ToQuery: cartItem => new Dictionary<string, string> {
+					new ViewMap(ViewModel: typeof(ShellViewModel)),
+					new ViewMap(View: typeof(LoginPage), ViewModel: typeof(LoginViewModel), ResultData: typeof(Credentials)),
+					new ViewMap(View: typeof(HomePage), Data: new DataMap<Credentials>()),
+					new ViewMap(View: typeof(ProductsPage), ViewModel: typeof(ProductsViewModel)),
+					new ViewMap(DynamicView: () =>
+							   (App.Current as App)?.Window?.Content?.ActualSize.X > 800 ? typeof(ProductControl) : typeof(ProductDetailsPage),
+								ViewModel: typeof(ProductDetailsViewModel), Data: new DataMap<Product>(
+																							ToQuery: product => new Dictionary<string, string> { { nameof(Product.ProductId), product.ProductId.ToString() } },
+																							FromQuery: async (sp, query) =>
+																							{
+																								var id = int.Parse(query[nameof(Product.ProductId)] + string.Empty);
+																								var ps = sp.GetRequiredService<IProductService>();
+																								var products = await ps.GetProducts(default, default);
+																								return products.FirstOrDefault(p => p.ProductId == id);
+																							})),
+					new ViewMap(View: typeof(FilterPage), ViewModel: typeof(FiltersViewModel), Data: new DataMap<Filters>()),
+					new ViewMap(View: typeof(DealsPage), ViewModel: typeof(DealsViewModel)),
+					new ViewMap(View: typeof(ProfilePage), ViewModel: typeof(ProfileViewModel)),
+					new ViewMap(View: typeof(CartPage), ViewModel: typeof(CartViewModel)),
+					new ViewMap(View: typeof(ProductDetailsPage), ViewModel: typeof(CartProductDetailsViewModel), Data: new DataMap<CartItem>(
+																							ToQuery: cartItem => new Dictionary<string, string> {
 																							{ nameof(Product.ProductId), cartItem.Product.ProductId.ToString() },
 																							{ nameof(CartItem.Quantity),cartItem.Quantity.ToString() } },
-																						FromQuery: async (sp, query) =>
-																						{
-																							var id = int.Parse(query[nameof(Product.ProductId)]);
-																							var quantity = int.Parse(query[nameof(CartItem.Quantity)]);
-																							var ps = sp.GetRequiredService<IProductService>();
-																							var products = await ps.GetProducts(default, default);
-																							var p = products.FirstOrDefault(p => p.ProductId == id);
-																							return new CartItem(p, quantity);
-																						})),
-				new ViewMap(View: typeof(CheckoutPage)),
-				forgotPasswordDialog
-				);
+																							FromQuery: async (sp, query) =>
+																							{
+																								var id = int.Parse(query[nameof(Product.ProductId)] + string.Empty);
+																								var quantity = int.Parse(query[nameof(CartItem.Quantity)] + string.Empty);
+																								var ps = sp.GetRequiredService<IProductService>();
+																								var products = await ps.GetProducts(default, default);
+																								var p = products.FirstOrDefault(p => p.ProductId == id);
+																								return new CartItem(p, quantity);
+																							})),
+					new ViewMap(View: typeof(CheckoutPage)),
+					forgotPasswordDialog
+					);
+
 
 			routes
 				.Register(
-				views =>
-					new("", View: views.FindByViewModel<ShellViewModel>(), // IsPrivate: true,
+					new RouteMap("", View: views.FindByViewModel<ShellViewModel>(),
 							Nested: new RouteMap[]
 							{
-								new("Login", View: views.FindByResultData<Credentials>(),
+								new RouteMap("Login", View: views.FindByResultData<Credentials>(),
 										Nested: new RouteMap[]
 										{
 											new ("Forgot", forgotPasswordDialog)
 										}),
 								new RouteMap("Home", View: views.FindByData<Credentials>(),
 										Nested: new RouteMap[]{
-											new ("Products",
-													View: views.FindByViewModel<ProductsViewModel.BindableProductsViewModel>(),
+											new RouteMap("Products",
+													View: views.FindByViewModel<ProductsViewModel>(),
 													IsDefault: true,
 													Nested: new  RouteMap[]{
-														new RouteMap("Filter",  View: views.FindByViewModel<FiltersViewModel.BindableFiltersViewModel>())
+														new RouteMap("Filter",  View: views.FindByViewModel<FiltersViewModel>())
 													}),
-											new("Product",
-													View: views.FindByViewModel<ProductDetailsViewModel.BindableProductDetailsViewModel>(),
+											new RouteMap("Product",
+													View: views.FindByViewModel<ProductDetailsViewModel>(),
 													DependsOn:"Products"),
-												//	Init: req => (App.Current as App).Window.Content.ActualSize.X > 800 ?
-												//req with { Route = req.Route with {Base = "Details",Path="Products"} } :
-												//req),
 
-											new("Deals", View:views.FindByViewModel<DealsViewModel>()),
+											new RouteMap("Deals", View: views.FindByViewModel<DealsViewModel>()),
 
-											new("Profile", View:views.FindByViewModel<ProfileViewModel>()),
+											new RouteMap("Profile", View: views.FindByViewModel<ProfileViewModel>()),
 
-											new("Cart", View: views.FindByViewModel<CartViewModel>(),
+											new RouteMap("Cart", View: views.FindByViewModel<CartViewModel>(),
 													Nested: new []{
-														new RouteMap("CartDetails",View: views.FindByViewModel<CartProductDetailsViewModel.BindableCartProductDetailsViewModel>()),
+														new RouteMap("CartDetails",View: views.FindByViewModel<CartProductDetailsViewModel>()),
 														new RouteMap("Checkout", View: views.FindByView<CheckoutPage>())
 													})
 											})

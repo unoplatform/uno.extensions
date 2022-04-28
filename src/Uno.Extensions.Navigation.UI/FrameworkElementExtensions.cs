@@ -54,7 +54,7 @@ public static class FrameworkElementExtensions
 									.Where(x => x is not null)
 								.Union(services.GetServices<IStartupService>()).ToArray();
 
-		var startServices = startupServices.Select(x => x?.StartupComplete()).ToArray();
+		var startServices = startupServices.Select(x => x?.StartupComplete() ?? Task.CompletedTask).ToArray();
 		if (startServices?.Any() ?? false)
 		{
 			await Task.WhenAll(startServices);

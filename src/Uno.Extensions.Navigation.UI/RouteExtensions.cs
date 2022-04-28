@@ -230,9 +230,9 @@ public static class RouteExtensions
 		return mappings.Find(route).IsPageRouteMap();
 	}
 
-	public static bool IsPageRouteMap(this RouteMap? rm)
+	public static bool IsPageRouteMap(this RouteInfo? rm)
 	{
-		return (rm?.View?.RenderView?.IsSubclassOf(typeof(Page)) ?? false);
+		return (rm?.RenderView?.IsSubclassOf(typeof(Page)) ?? false);
 	}
 
 	public static bool IsLastFrameRoute(this Route route, IRouteResolver mappings)
@@ -332,7 +332,7 @@ public static class RouteExtensions
 		};
 	}
 
-	public static IDictionary<string, object> AsParameters(this IDictionary<string, object> data, RouteMap mapping)
+	public static IDictionary<string, object> AsParameters(this IDictionary<string, object> data, RouteInfo mapping)
 	{
 		if (data is null || mapping is null)
 		{
@@ -340,20 +340,20 @@ public static class RouteExtensions
 		}
 
 		var mapDict = data;
-		if (mapping?.View?.Data?.UntypedToQuery is not null)
+		if (mapping?.ToQuery is not null)
 		{
 			// TODO: Find nicer way to clone the dictionary
 			mapDict = data.ToArray().ToDictionary(x => x.Key, x => x.Value);
 			if (data.TryGetValue(string.Empty, out var paramData))
 			{
-				var qdict = mapping.View.Data.UntypedToQuery(paramData);
+				var qdict = mapping.ToQuery(paramData);
 				qdict.ForEach(qkvp => mapDict[qkvp.Key] = qkvp.Value);
 			}
 		}
 		return mapDict;
 	}
 
-	public static Route? ApplyFrameRoute(this Route? currentRoute, IResolver resolver, Route frameRoute)
+	public static Route? ApplyFrameRoute(this Route? currentRoute, IRouteResolver resolver, Route frameRoute)
 	{
 		var qualifier = frameRoute.Qualifier;
 		if (currentRoute is null)
@@ -362,7 +362,7 @@ public static class RouteExtensions
 		}
 		else
 		{
-			var segments = currentRoute.ForwardNavigationSegments(currentRoute, resolver.Routes).ToList();
+			var segments = currentRoute.ForwardNavigationSegments(currentRoute, resolver).ToList();
 			foreach (var qualifierChar in qualifier)
 			{
 				if (qualifierChar + "" == Qualifiers.NavigateBack)
@@ -375,7 +375,7 @@ public static class RouteExtensions
 				}
 			}
 
-			var newSegments = frameRoute.ForwardNavigationSegments(currentRoute, resolver.Routes);
+			var newSegments = frameRoute.ForwardNavigationSegments(currentRoute, resolver);
 			if (newSegments is not null)
 			{
 				segments.AddRange(newSegments);

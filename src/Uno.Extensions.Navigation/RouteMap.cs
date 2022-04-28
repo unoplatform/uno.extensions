@@ -6,16 +6,8 @@ public record RouteMap(
 	ViewMap? View = null,
 	bool IsDefault = false,
 	string DependsOn = "",
-	//bool IsPrivate = false,
 	Func<NavigationRequest, NavigationRequest>? Init = null,
 	params RouteMap[] Nested)
 {
-	internal void RegisterTypes(IServiceCollection services)
-	{
-		View?.RegisterTypes(services);
-	}
 }
-
-
 #pragma warning restore SA1313 // Parameter names should begin with lower-case letter
-

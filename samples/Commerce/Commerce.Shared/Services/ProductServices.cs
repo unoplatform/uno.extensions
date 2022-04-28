@@ -28,7 +28,7 @@ public class ProductService : IProductService
 		var products = entities!.AsEnumerable();
 		if (term is not null)
 		{
-			products = products.Where(p => p.Name.IndexOf(term, StringComparison.OrdinalIgnoreCase) != -1);
+			products = products.Where(p => p.Name?.IndexOf(term, StringComparison.OrdinalIgnoreCase) >= 0);
 		}
 
 		return products.ToArray();

@@ -1,12 +1,10 @@
-﻿using Uno.Extensions.Navigation.Regions;
-
-namespace Uno.Extensions.Navigation;
+﻿namespace Uno.Extensions.Navigation;
 
 public static class NavigationRequestExtensions
 {
     public static object? RouteResourceView(this NavigationRequest request, IRegion region)
     {
-        object resource;
+        object? resource;
         if ((request.Sender is FrameworkElement senderElement &&
             senderElement.Resources.TryGetValue(request.Route.Base, out resource)) ||
 
@@ -16,9 +14,8 @@ public static class NavigationRequestExtensions
             (Application.Current.Resources.TryGetValue(request.Route.Base, out resource)))
         {
             return resource;
-
         }
 
-        return null;
+        return default;
     }
 }

@@ -10,7 +10,7 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 		ILogger<PanelVisiblityNavigator> logger,
 		IDispatcher dispatcher,
 		IRegion region,
-		IResolver resolver,
+		IRouteResolver resolver,
 		RegionControlProvider controlProvider)
 		: base(logger, dispatcher, region, resolver, controlProvider.RegionControl as Grid)
 	{
@@ -19,8 +19,8 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 	protected override bool CanNavigateToRoute(Route route) =>
 		base.CanNavigateToRoute(route) && 
 		(
-			(FindByPath(Resolver.Routes.Find(route)?.Path ?? route.Base) is not null) ||
-			(Resolver.Routes.Find(route)?.View?.RenderView?.IsSubclassOf(typeof(FrameworkElement)) ?? false)		
+			(FindByPath(Resolver.Find(route)?.Path ?? route.Base) is not null) ||
+			(Resolver.Find(route)?.RenderView?.IsSubclassOf(typeof(FrameworkElement)) ?? false)		
 		);
 
 	private FrameworkElement? CurrentlyVisibleControl { get; set; }
@@ -91,7 +91,7 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 
 	private FrameworkElement? FindByPath(string? path)
 	{
-		if (string.IsNullOrWhiteSpace(path))
+		if (string.IsNullOrWhiteSpace(path) || Control is null)
 		{
 			return default;
 		}

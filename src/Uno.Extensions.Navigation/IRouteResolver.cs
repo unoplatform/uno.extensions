@@ -1,20 +1,18 @@
 ﻿namespace Uno.Extensions.Navigation;
 
-public interface IRouteResolver
+public interface IRouteResolver 
 {
-	RouteMap? Parent(RouteMap? routeMap);
+	RouteInfo? Parent(RouteInfo? routeMap);
 
-	RouteMap? Find(Route? route);
+	RouteInfo? Find(Route? route);
 
-	RouteMap? FindByPath(string? path);
+	RouteInfo? FindByPath(string? path);
 
-	RouteMap? FindByViewMap(ViewMap viewMap);
+	RouteInfo? FindByViewModel(Type? viewModelType);
 
-	RouteMap? FindByViewModel(Type? viewModelType);
+	RouteInfo? FindByView(Type? viewType);
 
-	RouteMap? FindByView(Type? viewType);
+	RouteInfo? FindByData(Type? dataType);
 
-	RouteMap? FindByData(Type? dataType);
-
-	RouteMap? FindByResultData(Type? resultDataType);
+	RouteInfo? FindByResultData(Type? resultDataType);
 }

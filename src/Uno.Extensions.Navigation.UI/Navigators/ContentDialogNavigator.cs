@@ -6,7 +6,7 @@ public class ContentDialogNavigator : DialogNavigator
 		ILogger<ContentDialogNavigator> logger,
 		IDispatcher dispatcher,
 		IRegion region,
-		IResolver resolver,
+		IRouteResolver resolver,
 		Window window
 		)
 		: base(logger, dispatcher, region, resolver, window)
@@ -15,23 +15,23 @@ public class ContentDialogNavigator : DialogNavigator
 
 	protected override bool CanNavigateToRoute(Route route) =>
 			base.CanNavigateToRoute(route) &&
-			(Resolver.Routes.Find(route)?.View?.RenderView?.IsSubclassOf(typeof(ContentDialog)) ?? false);
+			(Resolver.Find(route)?.RenderView?.IsSubclassOf(typeof(ContentDialog)) ?? false);
 
 	protected override async Task<IAsyncInfo?> DisplayDialog(NavigationRequest request, Type? viewType, object? viewModel)
 	{
 		var route = request.Route;
 		var navigation = Region.Navigator();
 		var services = this.Get<IServiceProvider>();
-		var mapping = Resolver.Routes.Find(route);
+		var mapping = Resolver.Find(route);
 		if (
 			navigation is null ||
 			services is null ||
-			mapping?.View?.RenderView is null)
+			mapping?.RenderView is null)
 		{
 			return null;
 		}
 
-		var dialog = Activator.CreateInstance(mapping.View.RenderView) as ContentDialog;
+		var dialog = Activator.CreateInstance(mapping.RenderView) as ContentDialog;
 		if (dialog is null)
 		{
 			return null;
@@ -46,7 +46,7 @@ public class ContentDialogNavigator : DialogNavigator
 		dialog.InjectServicesAndSetDataContext(services, navigation, viewModel);
 
 		var showTask = dialog.ShowAsync();
-		showTask.AsTask()
+		_ = showTask.AsTask()
 			.ContinueWith(result =>
 				{
 					if (result.Status != TaskStatus.Canceled)

@@ -3,7 +3,7 @@
 public static class RouteMapExtensions
 {
 
-	public static IEnumerable<RouteMap> Flatten(this RouteMap route)
+	internal static IEnumerable<RouteInfo> Flatten(this RouteInfo route)
 	{
 		if (route is null)
 		{
@@ -18,7 +18,7 @@ public static class RouteMapExtensions
 		}
 	}
 
-	public static IEnumerable<RouteMap> Flatten(this IEnumerable<RouteMap> routes)
+	internal static IEnumerable<RouteInfo> Flatten(this IEnumerable<RouteInfo> routes)
 	{
 		if (routes is null)
 		{

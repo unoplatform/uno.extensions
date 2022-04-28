@@ -23,13 +23,13 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 
 	protected override bool CanNavigateToRoute(Route route) =>
 		base.CanNavigateToRoute(route) &&
-		(FindByPath(Resolver.Routes.Find(route)?.Path??route.Base) is not null);
+		(FindByPath(Resolver.Find(route)?.Path??route.Base) is not null);
 
 	protected SelectorNavigator(
 		ILogger logger,
 		IDispatcher dispatcher,
 		IRegion region,
-		IResolver resolver,
+		IRouteResolver resolver,
 		RegionControlProvider controlProvider)
 		: base(logger, dispatcher, region, resolver, controlProvider.RegionControl as TControl)
 	{

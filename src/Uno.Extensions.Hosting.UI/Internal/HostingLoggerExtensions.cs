@@ -6,9 +6,9 @@ internal static class HostingLoggerExtensions
 	{
 		if (exception is ReflectionTypeLoadException reflectionTypeLoadException)
 		{
-			foreach (Exception ex in reflectionTypeLoadException.LoaderExceptions)
+			foreach (var ex in reflectionTypeLoadException.LoaderExceptions)
 			{
-				message = message + Environment.NewLine + ex.Message;
+				message = message + Environment.NewLine + ex?.Message;
 			}
 		}
 
