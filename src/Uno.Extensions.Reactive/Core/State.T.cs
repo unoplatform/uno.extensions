@@ -144,6 +144,17 @@ public static partial class State<T>
 	internal static IState<T> AsyncEnumerable(Func<IAsyncEnumerable<T>> enumerableProvider)
 		=> AttachedProperty.GetOrCreate(Validate(enumerableProvider), ep => S(ep, new AsyncEnumerableFeed<T>(ep)));
 
+	/// <summary>
+	/// Creates a custom feed from an async enumerable sequence of value.
+	/// </summary>
+	/// <typeparam name="TOwner">Type of the owner of the state.</typeparam>
+	/// <param name="owner">The owner of the state.</param>
+	/// <param name="feed">The source feed of the resulting state.</param>
+	/// <returns>A feed that encapsulate the source.</returns>
+	public static IState<T> FromFeed<TOwner>(TOwner owner, IFeed<T> feed)
+		where TOwner : class
+		=> AttachedProperty.GetOrCreate(owner, feed, (o, f) => S(o, f));
+
 	private static TKey Validate<TKey>(TKey key, [CallerMemberName] string? caller = null)
 		where TKey : Delegate
 	{
