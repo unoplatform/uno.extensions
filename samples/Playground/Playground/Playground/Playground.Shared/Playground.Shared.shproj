@@ -13,6 +13,7 @@
   <ItemGroup>
     <_Globbed_Compile Remove="Models\AppInfo.cs" />
     <_Globbed_Compile Remove="Models\Country.cs" />
+    <_Globbed_Compile Remove="Models\NavWidget.cs" />
     <_Globbed_Compile Remove="Models\Widget.cs" />
     <_Globbed_Compile Remove="Services\NeedsADispatcherService.cs" />
     <_Globbed_Compile Remove="Services\SimpleStartupService.cs" />

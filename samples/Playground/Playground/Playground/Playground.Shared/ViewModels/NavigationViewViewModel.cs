@@ -2,11 +2,11 @@
 
 public class NavigationViewViewModel
 {
-	public Widget[] NavigationItems { get; } = new[]
+	public NavWidget[] NavigationItems { get; } = new[]
 	{
-		new Widget{Name="Fred", Weight=100.0},
-		new Widget{Name="Jane", Weight=20.0},
-		new Widget{Name="Bob", Weight=35.0},
-		new Widget{Name="Sarah", Weight=33.0}
+		new NavWidget{Name="Fred", Weight=100.0},
+		new NavWidget{Name="Jane", Weight=20.0},
+		new NavWidget{Name="Bob", Weight=35.0},
+		new NavWidget{Name="Sarah", Weight=33.0}
 	};
 }

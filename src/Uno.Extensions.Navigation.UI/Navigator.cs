@@ -445,7 +445,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		if (request.Route.IsEmpty())
 		{
 			var dataRoute = Resolver.Find(request.Route);
-			if (dataRoute is not null)
+			if (dataRoute is not null && dataRoute.Path !=this.Route?.Base)
 			{
 				request = request with { Route = request.Route with { Base = dataRoute.Path } };
 			}
