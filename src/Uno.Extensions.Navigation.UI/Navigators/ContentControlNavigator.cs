@@ -16,7 +16,7 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 
 	protected override bool CanNavigateToDependentRoutes => true;
 
-	protected override bool RegionCanNavigate(Route route, RouteMap? routeMap)
+	protected override bool RegionCanNavigate(Route route, RouteInfo? routeMap)
 	{
 		if (!base.RegionCanNavigate(route, routeMap))
 		{

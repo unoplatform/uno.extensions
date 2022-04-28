@@ -21,7 +21,7 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 
 	protected override FrameworkElement? CurrentView => SelectedItem;
 
-	protected override bool RegionCanNavigate(Route route, RouteMap? routeMap) =>
+	protected override bool RegionCanNavigate(Route route, RouteInfo? routeMap) =>
 		base.RegionCanNavigate(route, routeMap) &&
 		(FindByPath(routeMap?.Path??route.Base) is not null);
 

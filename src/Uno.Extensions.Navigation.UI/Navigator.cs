@@ -313,7 +313,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			}
 		}
 
-		var routeMap = Resolver.Routes.Find(route);
+		var routeMap = Resolver.Find(route);
 
 		var canNav = RegionCanNavigate(route, routeMap);
 		return canNav;
@@ -333,8 +333,8 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 					// TODO: PanelVisibilityNavigator needs to be adapted to inherit from SelectorNavigator, or share an interface
 					parentNavigator.GetType() == typeof(PanelVisiblityNavigator) ||
 					(
-						parentNavigator.GetType().BaseType.IsGenericType &&
-						parentNavigator.GetType().BaseType.GetGenericTypeDefinition() == typeof(SelectorNavigator<>)
+						(parentNavigator.GetType().BaseType?.IsGenericType??false) &&
+						parentNavigator.GetType().BaseType?.GetGenericTypeDefinition() == typeof(SelectorNavigator<>)
 					)
 				)
 			)
@@ -348,7 +348,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 	protected virtual bool CanNavigateToDependentRoutes => false;
 
 
-	protected virtual bool RegionCanNavigate(Route route, RouteMap? routeMap)
+	protected virtual bool RegionCanNavigate(Route route, RouteInfo? routeMap)
 	{
 		// Default behaviour for all navigators is that they can't handle back or close requests
 		// This is overridden by navigators that can handle close operation

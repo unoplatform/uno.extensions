@@ -16,7 +16,7 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 	{
 	}
 
-	protected override bool RegionCanNavigate(Route route, RouteMap? routeMap)
+	protected override bool RegionCanNavigate(Route route, RouteInfo? routeMap)
 	{
 		if (!base.RegionCanNavigate(route, routeMap))
 		{
@@ -25,7 +25,7 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 
 		return (
 			(FindByPath(routeMap?.Path ?? route.Base) is not null) ||
-			(routeMap?.View?.RenderView?.IsSubclassOf(typeof(FrameworkElement)) ?? false)
+			(routeMap?.RenderView?.IsSubclassOf(typeof(FrameworkElement)) ?? false)
 		);
 	}
 

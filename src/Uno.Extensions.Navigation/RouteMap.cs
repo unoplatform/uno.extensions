@@ -9,7 +9,6 @@ public record RouteMap(
 	Func<NavigationRequest, NavigationRequest>? Init = null,
 	params RouteMap[] Nested)
 {
-	public bool IsDependent = !string.IsNullOrWhiteSpace(DependsOn);
 }
 
 

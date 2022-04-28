@@ -13,9 +13,9 @@ public class ContentDialogNavigator : DialogNavigator
 	{
 	}
 
-	protected override bool RegionCanNavigate(Route route, RouteMap? routeMap) =>
+	protected override bool RegionCanNavigate(Route route, RouteInfo? routeMap) =>
 			base.RegionCanNavigate(route, routeMap) &&
-			(routeMap?.View?.RenderView?.IsSubclassOf(typeof(ContentDialog)) ?? false);
+			(routeMap?.RenderView?.IsSubclassOf(typeof(ContentDialog)) ?? false);
 
 	protected override async Task<IAsyncInfo?> DisplayDialog(NavigationRequest request, Type? viewType, object? viewModel)
 	{

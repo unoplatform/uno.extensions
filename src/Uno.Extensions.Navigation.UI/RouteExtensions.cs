@@ -62,12 +62,12 @@ public static class RouteExtensions
 	/// RouteMap - the corresponding route map (if it exists)
 	/// bool - whether or not this is a dependson route (ie one that needs to exist in backstack prior to this route)
 	/// </returns>
-	public static (Route, RouteMap?, bool)[] ForwardNavigationSegments(this Route route, IRouteResolver mappings)
+	public static (Route, RouteInfo?, bool)[] ForwardNavigationSegments(this Route route, IRouteResolver mappings)
 	{
 		// Here we're interested in the actual page navigation segments.
 		// Start with an empty list, and progressively add routes that
 		// correspond to page navigation segments
-		var segs = new List<(Route, RouteMap?, bool)>();
+		var segs = new List<(Route, RouteInfo?, bool)>();
 
 		if (route.IsEmpty() || route.FrameIsBackNavigation())
 		{
