@@ -113,10 +113,23 @@ public class Given_BasicViewModel_Then_Generate : FeedUITests
 
 		Assert.IsNotNull(bindable.AFeedField as IState<string>);
 		Assert.IsNotNull(bindable.AStateField as IState<string>);
+
+		Assert.IsNotNull(bindable.ARecordFeedField as IFeed<MyRecord>);
+		Assert.IsNotNull(bindable.ARecordFeedField as BindableMyRecord);
+		Assert.IsFalse(bindable.ARecordFeedField.CanWrite);
+		//Assert.AreEqual(bindable.ARecordFeedField.Property1, "ARecordFeedField"); // Source feed is async
+
+		Assert.IsNotNull(bindable.ARecordStateField as IFeed<MyRecord>);
+		Assert.IsNotNull(bindable.ARecordStateField as BindableMyRecord);
+		Assert.IsTrue(bindable.ARecordStateField.CanWrite);
+		//Assert.AreEqual(bindable.ARecordStateField.Property1, "ARecordStateField"); // Source feed is async
+
 		Assert.IsNotNull(bindable.AListFeedField as IListState<string>);
-		Assert.IsNotNull(bindable.AListStateField as IListState<string>);
 		Assert.IsNotNull(bindable.AListFeedField as ICollectionView);
+
+		Assert.IsNotNull(bindable.AListStateField as IListState<string>);
 		Assert.IsNotNull(bindable.AListStateField as ICollectionView);
+
 		Assert.IsNotNull(bindable.ACustomFeedField as IState<string>);
 
 		bindable.Model.AProperty = "AProperty_SetFromVM";
@@ -140,9 +153,20 @@ public class Given_BasicViewModel_Then_Generate : FeedUITests
 
 		Assert.IsNotNull(bindable.AFeedProperty as IState<string>);
 		Assert.IsNotNull(bindable.AStateProperty as IState<string>);
+
+		Assert.IsNotNull(bindable.ARecordFeedProperty as IFeed<MyRecord>);
+		Assert.IsNotNull(bindable.ARecordFeedProperty as BindableMyRecord);
+		Assert.IsFalse(bindable.ARecordFeedProperty.CanWrite);
+		//Assert.AreEqual(bindable.ARecordFeedProperty.Property1, "ARecordFeedProperty"); // Source feed is async
+
+		Assert.IsNotNull(bindable.ARecordStateProperty as IFeed<MyRecord>);
+		Assert.IsNotNull(bindable.ARecordStateProperty as BindableMyRecord);
+		Assert.IsTrue(bindable.ARecordStateProperty.CanWrite);
+		//Assert.AreEqual(bindable.ARecordStateProperty.Property1, "ARecordStateProperty"); // Source feed is async
+
 		Assert.IsNotNull(bindable.AListFeedProperty as IListState<string>);
-		Assert.IsNotNull(bindable.AListStateProperty as IListState<string>);
 		Assert.IsNotNull(bindable.AListFeedProperty as ICollectionView);
+		Assert.IsNotNull(bindable.AListStateProperty as IListState<string>);
 		Assert.IsNotNull(bindable.AListStateProperty as ICollectionView);
 		Assert.IsNotNull(bindable.ACustomFeedProperty as IState<string>);
 

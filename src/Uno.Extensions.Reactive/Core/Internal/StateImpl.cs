@@ -24,6 +24,8 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable
 	/// </summary>
 	internal SourceContext? Context { get; }
 
+	internal Message<T> Current => _current;
+
 	private readonly struct Node
 	{
 		private readonly Message<T> _value;

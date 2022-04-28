@@ -21,7 +21,7 @@ internal class BindableGenerator
 
 	public string? GetBindableType(ITypeSymbol symbol)
 	{
-		if (symbol is INamedTypeSymbol { IsRecord: true} named && GetDefaultCtor(named) is not null)
+		if (symbol is INamedTypeSymbol { IsRecord: true } named && GetDefaultCtor(named) is not null)
 		{
 			if (named is { NullableAnnotation: NullableAnnotation.Annotated })
 			{
@@ -29,7 +29,7 @@ internal class BindableGenerator
 			}
 
 			_toGenerate.Add(named);
-			return $"{symbol.ContainingNamespace}.Bindable{symbol.GetPascalCaseName()}"; 
+			return $"{symbol.ContainingNamespace}.Bindable{symbol.GetPascalCaseName()}";
 		}
 
 		return null;

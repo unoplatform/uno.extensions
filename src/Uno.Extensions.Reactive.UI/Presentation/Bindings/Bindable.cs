@@ -25,6 +25,8 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged, IFeed<T>
 	private readonly BindablePropertyInfo<T> _property;
 	private readonly bool _hasValueProperty;
 
+	internal bool CanWrite => _property.CanWrite;
+
 	/// <summary>
 	/// Creates a new instance.
 	/// </summary>
@@ -58,17 +60,21 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged, IFeed<T>
 	protected BindablePropertyInfo<TProperty> Property<TProperty>(
 		string propertyName,
 		Func<T, TProperty> get,
-		Func<T, TProperty, T> set)
+		Func<T, TProperty, T>? set)
 		=> new(
 			this,
 			propertyName,
-			_property.Feed.Select(get),
-			updated =>
-			{
-				(_onUpdated ??= new()).Add(value => updated(get(value)));
-				updated(get(_value)); // Make sure to propagate the default value
-			},
-			(update, isLeafPropertyChanged, ct) => OnSubPropertyUpdated(propertyName, get, set, update, isLeafPropertyChanged, ct));
+			(
+				_property.Feed.Select(get),
+				updated =>
+				{
+					(_onUpdated ??= new()).Add(value => updated(get(value)));
+					updated(get(_value)); // Make sure to propagate the default value
+				}
+			),
+			_property.CanWrite && set is not null
+				? (update, isLeafPropertyChanged, ct) => OnSubPropertyUpdated(propertyName, get, set, update, isLeafPropertyChanged, ct)
+				: default);
 
 	/// <summary>
 	/// Gets the current value.
@@ -83,6 +89,11 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged, IFeed<T>
 	/// <param name="value">The current value.</param>
 	public void SetValue(T value)
 	{
+		if (!_property.CanWrite)
+		{
+			return;
+		}
+
 		if (SetValueCore(value))
 		{
 			UpdateOwner(value);

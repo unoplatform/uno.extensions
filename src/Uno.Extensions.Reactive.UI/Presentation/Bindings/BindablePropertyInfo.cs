@@ -14,23 +14,23 @@ public readonly struct BindablePropertyInfo<T>
 	private readonly IBindable _owner;
 	private readonly string _name;
 	private readonly Action<Action<T>> _subscribeOwnerUpdated;
-	private readonly AsyncAction<Func<T, T>, bool> _update;
+	private readonly AsyncAction<Func<T, T>, bool>? _update;
 
 	internal BindablePropertyInfo(
 		IBindable owner,
 		string name,
-		IFeed<T> feed,
-		Action<Action<T>> subscribeOwnerUpdated,
-		AsyncAction<Func<T, T>, bool> updateOwner)
+		(IFeed<T> feed, Action<Action<T>> syncUpdated) getter,
+		AsyncAction<Func<T, T>, bool>? setter)
 	{
-		Feed = feed;
 		_owner = owner;
 		_name = name;
-		_subscribeOwnerUpdated = subscribeOwnerUpdated;
-		_update = updateOwner;
+		(Feed, _subscribeOwnerUpdated) = getter;
+		_update = setter;
 	}
 
 	internal bool IsValid => _owner is not null;
+
+	internal bool CanWrite => _update is not null;
 
 	internal IFeed<T> Feed { get; }
 
@@ -50,6 +50,11 @@ public readonly struct BindablePropertyInfo<T>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns></returns>
 	/// <remarks>This method has to be invoked on the UI thread.</remarks>
-	public ValueTask Update(Func<T, T> updater, bool isLeafPropertyChanged, CancellationToken ct)
-		=> _update(updater, isLeafPropertyChanged, ct);
+	public async ValueTask Update(Func<T, T> updater, bool isLeafPropertyChanged, CancellationToken ct)
+	{
+		if (CanWrite)
+		{
+			await _update!(updater, isLeafPropertyChanged, ct);
+		}
+	}
 }

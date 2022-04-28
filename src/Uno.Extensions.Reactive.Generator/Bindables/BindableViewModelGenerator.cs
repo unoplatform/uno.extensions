@@ -189,24 +189,32 @@ namespace {vm.ContainingNamespace}
 			switch (member)
 			{
 				case IFieldSymbol field when _ctx.IsListFeed(field.Type, out var valueType):
-					yield return new MappedListFeedField(field, valueType);
+					yield return new BindableListFeedField(field, valueType);
 					break;
 
 				case IFieldSymbol field when _ctx.IsFeed(field.Type, out var valueType):
-					yield return new MappedFeedField(field, valueType);
+				{
+					yield return _bindables.GetBindableType(valueType) is { } bindableType
+						? new BindableFeedField(field, valueType, bindableType)
+						: new MappedFeedField(field, valueType);
 					break;
+				}
 
 				case IFieldSymbol field:
 					yield return new MappedField(field);
 					break;
 
 				case IPropertySymbol property when _ctx.IsListFeed(property.Type, out var valueType):
-					yield return new MappedListFeedProperty(property, valueType);
+					yield return new BindableListFeedProperty(property, valueType);
 					break;
 
 				case IPropertySymbol property when _ctx.IsFeed(property.Type, out var valueType):
-					yield return new MappedFeedProperty(property, valueType);
+				{
+					yield return _bindables.GetBindableType(valueType) is { } bindableType
+						? new BindableFeedProperty(property, valueType, bindableType)
+						: new MappedFeedProperty(property, valueType);
 					break;
+				}
 
 				case IPropertySymbol property:
 					yield return new MappedProperty(property);

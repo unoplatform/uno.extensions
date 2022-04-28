@@ -49,29 +49,73 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 		=> _disposables.Add(disposable);
 
 	/// <summary>
-	/// Get info for a bindable property.
+	/// Get info for a bindable property given a backing feed.
+	/// </summary>
+	/// <typeparam name="TProperty">The type of the sub-property.</typeparam>
+	/// <param name="propertyName">The name of the sub-property.</param>
+	/// <param name="feed">The backing state of the property.</param>
+	/// <returns>Info that can be used to create a bindable object.</returns>
+	protected BindablePropertyInfo<TProperty> Property<TProperty>(string propertyName, IFeed<TProperty> feed)
+	{
+		var ctx = SourceContext.Find(this) ?? throw new InvalidOperationException(
+			"This must be invoked only after the SourceContext of the parent as been forwarded to this."
+			+ "This method should be used only by generated code, consider to remove usage in your app.");
+
+		var state = ctx.GetOrCreateState(feed);
+
+		return CreateProperty(propertyName, (StateImpl<TProperty>)state, isReadOnly: true);
+	}
+
+	/// <summary>
+	/// Get info for a bindable property given a backing state.
+	/// </summary>
+	/// <typeparam name="TProperty">The type of the sub-property.</typeparam>
+	/// <param name="propertyName">The name of the sub-property.</param>
+	/// <param name="state">The backing state of the property.</param>
+	/// <returns>Info that can be used to create a bindable object.</returns>
+	protected BindablePropertyInfo<TProperty> Property<TProperty>(string propertyName, IState<TProperty> state)
+	{
+		if (state is not StateImpl<TProperty> impl)
+		{
+			throw new InvalidOperationException("Custom implementation of state are not supported yet.");
+		}
+
+		return CreateProperty(propertyName, impl, isReadOnly: false);
+	}
+
+
+	/// <summary>
+	/// LEGACY support for IInput&lt;T&gt; - Get info for a bindable property.
 	/// </summary>
 	/// <typeparam name="TProperty">The type of the sub-property.</typeparam>
 	/// <param name="propertyName">The name of the sub-property.</param>
 	/// <param name="initialValue">The default value of the property.</param>
 	/// <param name="state">The backing state of the property.</param>
 	/// <returns>Info that can be used to create a bindable object.</returns>
+	[EditorBrowsable(EditorBrowsableState.Never)] // Legacy
 	protected BindablePropertyInfo<TProperty> Property<TProperty>(string propertyName, TProperty? initialValue, out IInput<TProperty> state)
 	{
 		initialValue ??= GetDefaultValueForBindings<TProperty>();
 
 		var stateImpl = new StateImpl<TProperty>(Option.Some(initialValue));
-		var info = new BindablePropertyInfo<TProperty>(this, propertyName, stateImpl, ViewModelToView, ViewToViewModel);
+		var info = CreateProperty(propertyName, stateImpl, isReadOnly: false);
 
 		_disposables.Add(stateImpl);
 		state = new Input<TProperty>(propertyName, stateImpl);
 
 		return info;
+	}
+
+	private BindablePropertyInfo<TProperty> CreateProperty<TProperty>(string propertyName, StateImpl<TProperty> stateImpl, bool isReadOnly)
+	{
+		return new BindablePropertyInfo<TProperty>(this, propertyName, (stateImpl, ViewModelToView), isReadOnly ? default : ViewToViewModel);
 
 		async void ViewModelToView(Action<TProperty> updated)
 		{
 			try
 			{
+				var initialValue = stateImpl.Current.Current.Data.SomeOrDefault(GetDefaultValueForBindings<TProperty>());
+
 				// We run the update sync in setup, no matter the thread
 				updated(initialValue);
 				var source = stateImpl.GetSource();
