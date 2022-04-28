@@ -232,7 +232,7 @@ namespace Playground
 						new ViewMap<VisualStatesPage>(),
 						new ViewMap<AdHocPage, AdHocViewModel>(),
 						new ViewMap<AuthTokenDialog, AuthTokenViewModel>(),
-						new ViewMap<BasicFlyout>(),
+						new ViewMap<BasicFlyout, BasicViewModel>(),
 						confirmDialog
 				);
 

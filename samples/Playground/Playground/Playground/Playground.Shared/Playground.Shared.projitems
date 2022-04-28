@@ -27,6 +27,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\NeedsADispatcherService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\SimpleStartupService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\AdHocViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\BasicViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\FifthViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\FourthViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\HomeViewModel.cs" />

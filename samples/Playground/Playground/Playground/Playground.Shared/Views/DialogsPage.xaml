@@ -46,6 +46,8 @@
 					Content="Flyout from Xaml" />
 			<Button Content="Flyout from Background Thread"
 					Click="FlyoutFromBackgroundClick" />
+			<Button Content="Flyout from Background Thread requesting data"
+					Click="FlyoutFromBackgroundRequestingDataClick" />
 		</StackPanel>
 	</Grid>
 </Page>
