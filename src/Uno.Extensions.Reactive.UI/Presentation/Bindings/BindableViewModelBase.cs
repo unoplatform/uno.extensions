@@ -53,25 +53,27 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 	/// </summary>
 	/// <typeparam name="TProperty">The type of the sub-property.</typeparam>
 	/// <param name="propertyName">The name of the sub-property.</param>
-	/// <param name="defaultValue">The default value of the property.</param>
+	/// <param name="initialValue">The default value of the property.</param>
 	/// <param name="state">The backing state of the property.</param>
 	/// <returns>Info that can be used to create a bindable object.</returns>
-	protected BindablePropertyInfo<TProperty> Property<TProperty>(string propertyName, TProperty? defaultValue, out IInput<TProperty> state)
+	protected BindablePropertyInfo<TProperty> Property<TProperty>(string propertyName, TProperty? initialValue, out IInput<TProperty> state)
 	{
-		var stateImpl = new StateImpl<TProperty>(Option.Some(defaultValue!));
-		var info = new BindablePropertyInfo<TProperty>(this, propertyName, ViewModelToView, ViewToViewModel);
+		initialValue ??= GetDefaultValueForBindings<TProperty>();
+
+		var stateImpl = new StateImpl<TProperty>(Option.Some(initialValue));
+		var info = new BindablePropertyInfo<TProperty>(this, propertyName, stateImpl, ViewModelToView, ViewToViewModel);
 
 		_disposables.Add(stateImpl);
 		state = new Input<TProperty>(propertyName, stateImpl);
 
 		return info;
 
-		async void ViewModelToView(Action<TProperty?> updated)
+		async void ViewModelToView(Action<TProperty> updated)
 		{
 			try
 			{
 				// We run the update sync in setup, no matter the thread
-				updated(defaultValue);
+				updated(initialValue);
 				var source = stateImpl.GetSource();
 				var dispatcher = await _dispatcher.GetFirstResolved(CancellationToken.None);
 
@@ -84,7 +86,7 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 						{
 							if (msg.Current.Get(BindingSource) != this)
 							{
-								updated(msg.Current.Data.SomeOrDefault());
+								updated(msg.Current.Data.SomeOrDefault(GetDefaultValueForBindings<TProperty>()));
 							}
 						}
 					}
@@ -106,7 +108,7 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 			}
 		}
 
-		async ValueTask ViewToViewModel(Func<TProperty?, TProperty?> updater, bool isLeafPropertyChanged, CancellationToken ct)
+		async ValueTask ViewToViewModel(Func<TProperty, TProperty> updater, bool isLeafPropertyChanged, CancellationToken ct)
 		{
 			// 1. Notify the View that the property has been updated
 			if (isLeafPropertyChanged)
@@ -123,13 +125,16 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 
 			MessageBuilder<TProperty> DoUpdate(Message<TProperty> msg)
 			{
-				var current = msg.Current.Data.SomeOrDefault();
+				var current = msg.Current.Data.SomeOrDefault(GetDefaultValueForBindings<TProperty>());
 				var updated = updater(current);
 
-				return msg.With().Data(Option.Some(updated!)).Set(BindingSource, this);
+				return msg.With().Data(Option.Some(updated)).Set(BindingSource, this);
 			}
 		}
 	}
+
+	private static T GetDefaultValueForBindings<T>()
+		=> default!; // For now we default to null as we cannot enforce non-null through bindings
 
 	/// <inheritdoc />
 	public async ValueTask DisposeAsync()
