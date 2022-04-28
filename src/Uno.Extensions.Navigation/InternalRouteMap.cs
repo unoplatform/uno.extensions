@@ -16,6 +16,6 @@ public record RouteInfo(
 	params RouteInfo[] Nested)
 {
 	public Type? RenderView => View?.Invoke();
-
+	public bool IsDependent = !string.IsNullOrWhiteSpace(DependsOn);
 }
 #pragma warning restore SA1313 // Parameter names should begin with lower-case letter

@@ -4,5 +4,7 @@ public interface INavigator
 {
     Route? Route { get; }
 
-    Task<NavigationResponse?> NavigateAsync(NavigationRequest request);
+	bool CanNavigate(Route route);
+
+	Task<NavigationResponse?> NavigateAsync(NavigationRequest request);
 }

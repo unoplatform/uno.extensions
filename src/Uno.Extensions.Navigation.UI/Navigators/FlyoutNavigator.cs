@@ -19,12 +19,10 @@ public class FlyoutNavigator : ControlNavigator
 		_window = window;
 	}
 
-	protected override bool CanNavigateToRoute(Route route) =>
-		base.CanNavigateToRoute(route) &&
-		(
-			route.IsBackOrCloseNavigation() ||
-			Resolver.Find(route)?.RenderView is not null
-		);
+	protected override bool RegionCanNavigate(Route route, RouteInfo? routeMap) =>
+		route.IsBackOrCloseNavigation() || 
+		(base.RegionCanNavigate(route, routeMap) &&
+		routeMap?.RenderView is not null);
 
 	protected override async Task<Route?> ExecuteRequestAsync(NavigationRequest request)
 	{

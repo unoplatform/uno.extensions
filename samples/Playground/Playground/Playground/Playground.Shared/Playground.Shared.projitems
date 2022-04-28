@@ -21,15 +21,19 @@
     <Compile Include="$(MSBuildThisFileDirectory)GlobalUsings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\AppInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Country.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\NavWidget.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Person.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Widget.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Endpoints\IToDoTaskListEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\NeedsADispatcherService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\SimpleStartupService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\AdHocViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\BasicViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\FifthViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\FourthViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\HomeViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\NavContentViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\NavigationViewViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\SecondViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ShellViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\AuthTokenViewModel.cs" />
@@ -77,6 +81,9 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\NavContentPage.xaml.cs">
+      <DependentUpon>NavContentPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\NavigationViewPage.xaml.cs">
       <DependentUpon>NavigationViewPage.xaml</DependentUpon>
@@ -164,6 +171,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\MainPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\NavContentPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

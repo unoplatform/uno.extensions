@@ -12,9 +12,9 @@ public class MessageDialogNavigator : DialogNavigator
 	{
 	}
 
-	protected override bool CanNavigateToRoute(Route route) =>
-		base.CanNavigateToRoute(route) &&
-		(Resolver.Find(route)?.RenderView == typeof(MessageDialog));
+	protected override bool RegionCanNavigate(Route route, RouteInfo? routeMap) =>
+		base.RegionCanNavigate(route, routeMap) &&
+		(routeMap?.RenderView == typeof(MessageDialog));
 
 	protected override async Task<IAsyncInfo?> DisplayDialog(NavigationRequest request, Type? viewType, object? viewModel)
 	{

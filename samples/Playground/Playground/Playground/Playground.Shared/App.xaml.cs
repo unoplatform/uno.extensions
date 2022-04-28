@@ -216,7 +216,8 @@ namespace Playground
 						new ViewMap<CodeBehindPage>(),
 						new ViewMap<VMPage, VMViewModel>(),
 						new ViewMap<XamlPage, XamlViewModel>(),
-						new ViewMap<NavigationViewPage>(),
+						new ViewMap<NavigationViewPage, NavigationViewViewModel>(),
+						new ViewMap<NavContentPage, NavContentViewModel>(Data:new DataMap<NavWidget>()),
 						new ViewMap<TabBarPage>(),
 						new ViewMap<ContentControlPage>(),
 						new ViewMap<SecondPage, SecondViewModel>(Data: new DataMap<Widget>(), ResultData: typeof(Country)),
@@ -232,7 +233,7 @@ namespace Playground
 						new ViewMap<VisualStatesPage>(),
 						new ViewMap<AdHocPage, AdHocViewModel>(),
 						new ViewMap<AuthTokenDialog, AuthTokenViewModel>(),
-						new ViewMap<BasicFlyout>(),
+						new ViewMap<BasicFlyout, BasicViewModel>(),
 						confirmDialog
 				);
 
@@ -242,22 +243,31 @@ namespace Playground
 				new RouteMap("", View: views.FindByViewModel<ShellViewModel>(),
 				Nested: new[]
 				{
-					new RouteMap("Home", View: views.FindByView<HomePage>()),
-					new RouteMap("CodeBehind", View: views.FindByView<CodeBehindPage>(), DependsOn: "Home"),
-					new RouteMap("VM", View: views.FindByView<VMPage>(), DependsOn: "Home"),
-					new RouteMap("Xaml", View: views.FindByView<XamlPage>(), DependsOn: "Home"),
-					new RouteMap("NavigationView", View: views.FindByView<NavigationViewPage>(), DependsOn: "Home"),
-					new RouteMap("TabBar", View: views.FindByView<TabBarPage>(), DependsOn: "Home"),
-					new RouteMap("ContentControl", View: views.FindByView<ContentControlPage>(), DependsOn: "Home"),
-					new RouteMap("Second", View: views.FindByView<SecondPage>(), DependsOn: "Home"),
-					new RouteMap("Third", View: views.FindByView<ThirdPage>(), DependsOn: "Home"),
-					new RouteMap("Fourth", View: views.FindByView<FourthPage>(), DependsOn: "Home"),
-					new RouteMap("Fifth", View: views.FindByView<FifthPage>(), DependsOn: "Home"),
-					new RouteMap("Dialogs", View: views.FindByView<DialogsPage>(), DependsOn: "Home",
+					new RouteMap("Home",View: views.FindByView<HomePage>()),
+					new RouteMap("CodeBehind",View: views.FindByView<CodeBehindPage>(), DependsOn: "Home"),
+					new RouteMap("VM",View: views.FindByView<VMPage>(), DependsOn: "Home"),
+					new RouteMap("Xaml",View: views.FindByView<XamlPage>(), DependsOn: "Home"),
+					new RouteMap("NavigationView",View: views.FindByView<NavigationViewPage>(), DependsOn: "Home",
 					Nested: new[]
 					{
-						new RouteMap("Simple", View: views.FindByView<SimpleDialog>()),
-						new RouteMap("Complex", View: views.FindByView<ComplexDialog>(), DependsOn: "Simple",
+						new RouteMap("NavContent", View: views.FindByViewModel<NavContentViewModel>(),
+						Nested: new[]
+						{
+							new RouteMap("Tab1", IsDefault:true),
+							new RouteMap("Tab2")
+						})
+					}),
+					new RouteMap("TabBar",View: views.FindByView<TabBarPage>(), DependsOn: "Home"),
+					new RouteMap("ContentControl",View: views.FindByView<ContentControlPage>(), DependsOn: "Home"),
+					new RouteMap("Second",View: views.FindByView<SecondPage>(), DependsOn: "Home"),
+					new RouteMap("Third",View: views.FindByView<ThirdPage>()),
+					new RouteMap("Fourth",View: views.FindByView<FourthPage>()),
+					new RouteMap("Fifth",View: views.FindByView<FifthPage>(), DependsOn: "Third"),
+					new RouteMap("Dialogs",View: views.FindByView<DialogsPage>(),
+					Nested: new[]
+					{
+						new RouteMap("Simple",View: views.FindByView<SimpleDialog>()),
+						new RouteMap("Complex",View: views.FindByView<ComplexDialog>(),
 						Nested: new[]
 						{
 							new RouteMap("ComplexDialogFirst",View: views.FindByView<ComplexDialogFirstPage>()),
@@ -265,9 +275,9 @@ namespace Playground
 						}),
 						new RouteMap("Basic",View: views.FindByView<BasicFlyout>())
 					}),
-					new RouteMap("PanelVisibility", View: views.FindByView<PanelVisibilityPage>(), DependsOn: "Home"),
-					new RouteMap("VisualStates", View: views.FindByView<VisualStatesPage>(), DependsOn: "Home"),
-					new RouteMap("AdHoc", View: views.FindByViewModel<AdHocViewModel>(), DependsOn: "Home",
+					new RouteMap("PanelVisibility",View: views.FindByView<PanelVisibilityPage>()),
+					new RouteMap("VisualStates",View: views.FindByView<VisualStatesPage>()),
+					new RouteMap("AdHoc",View: views.FindByViewModel<AdHocViewModel>(),
 					Nested: new[]
 					{
 						new RouteMap("Auth", View: views.FindByView<AuthTokenDialog>())

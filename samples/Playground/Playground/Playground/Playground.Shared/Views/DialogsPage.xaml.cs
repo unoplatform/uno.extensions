@@ -37,12 +37,7 @@ public sealed partial class DialogsPage : Page, IInjectable<INavigator>
 	{
 		var dialogResult = await Task.Run(async () =>
 		{
-			var showDialog = await Navigator!.NavigateViewForResultAsync<SimpleDialog, Widget>(this, Qualifiers.Dialog);
-			if (showDialog is null)
-			{
-				return Option.None<Widget>();
-			}
-			return await showDialog.Result;
+			return await Navigator!.NavigateViewForResultAsync<SimpleDialog, Widget>(this, Qualifiers.Dialog).AsResult();
 		});
 		SimpleDialogResultText.Text = $"Dialog result: {dialogResult.SomeOrDefault()?.ToString()}";
 	}
@@ -61,12 +56,21 @@ public sealed partial class DialogsPage : Page, IInjectable<INavigator>
 
 	private async void FlyoutFromBackgroundClick(object sender, RoutedEventArgs e)
 	{
-		var response = await Task.Run(async () =>
+		var result = await Task.Run(async () =>
 		{
 			// Note: Passing object in as sender to make sure navigation doesn't use the sender when showing flyout
-			return await Navigator.NavigateRouteForResultAsync<string>(new object(), "!Basic");
+			return await Navigator.NavigateRouteAsync(new object(), "!Basic");
 		});
 
-		var result = await response.Result;
+	}
+
+	private async void FlyoutFromBackgroundRequestingDataClick(object sender, RoutedEventArgs e)
+	{
+		var result = await Task.Run(async () =>
+		{
+			// Note: Passing object in as sender to make sure navigation doesn't use the sender when showing flyout
+			return await Navigator.NavigateRouteForResultAsync<Widget>(new object(), "!Basic").AsResult();
+		});
+
 	}
 }

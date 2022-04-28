@@ -16,30 +16,36 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 	{
 	}
 
-	protected override bool CanNavigateToRoute(Route route) =>
-		base.CanNavigateToRoute(route) && 
-		(
-			(FindByPath(Resolver.Find(route)?.Path ?? route.Base) is not null) ||
-			(Resolver.Find(route)?.RenderView?.IsSubclassOf(typeof(FrameworkElement)) ?? false)		
+	protected override bool RegionCanNavigate(Route route, RouteInfo? routeMap)
+	{
+		if (!base.RegionCanNavigate(route, routeMap))
+		{
+			return false;
+		}
+
+		return (
+			(FindByPath(routeMap?.Path ?? route.Base) is not null) ||
+			(routeMap?.RenderView?.IsSubclassOf(typeof(FrameworkElement)) ?? false)
 		);
+	}
 
 	private FrameworkElement? CurrentlyVisibleControl { get; set; }
 
-    protected override async Task<string?> Show(string? path, Type? viewType, object? data)
-    {
-        if(Control is null)
-        {
-            return string.Empty;
-        }
+	protected override async Task<string?> Show(string? path, Type? viewType, object? data)
+	{
+		if (Control is null)
+		{
+			return string.Empty;
+		}
 
 		// Clear all child navigation regions
 		Region.Children.Clear();
 
 		var controlToShow = FindByPath(path);
-        if (controlToShow is null)
-        {
-            try
-            {
+		if (controlToShow is null)
+		{
+			try
+			{
 				var regionName = path;
 				if (viewType is null ||
 					viewType.IsSubclassOf(typeof(Page)))
@@ -47,23 +53,23 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 					viewType = typeof(UI.Controls.FrameView);
 				}
 
-				if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Creating instance of type '{viewType.Name}'");
-                controlToShow = Activator.CreateInstance(viewType) as FrameworkElement;
-                if (!string.IsNullOrWhiteSpace(regionName) &&
+				if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Creating instance of type '{viewType.Name}'");
+				controlToShow = Activator.CreateInstance(viewType) as FrameworkElement;
+				if (!string.IsNullOrWhiteSpace(regionName) &&
 					controlToShow is FrameworkElement fe)
-                {
-                    fe.SetName(regionName!);
-                }
-                Control.Children.Add(controlToShow);
-                if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage("Instance created");
-            }
-            catch (Exception ex)
-            {
-                if (Logger.IsEnabled(LogLevel.Error)) Logger.LogErrorMessage($"Unable to create instance - {ex.Message}");
-            }
-        }
+				{
+					fe.SetName(regionName!);
+				}
+				Control.Children.Add(controlToShow);
+				if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage("Instance created");
+			}
+			catch (Exception ex)
+			{
+				if (Logger.IsEnabled(LogLevel.Error)) Logger.LogErrorMessage($"Unable to create instance - {ex.Message}");
+			}
+		}
 
-		if(controlToShow is UI.Controls.FrameView)
+		if (controlToShow is UI.Controls.FrameView)
 		{
 			path = default;
 		}
@@ -82,12 +88,12 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 			CurrentlyVisibleControl = controlToShow;
 
 			await controlToShow.EnsureLoaded();
-
-			controlToShow?.ReassignRegionParent();
 		}
 
-        return path;
-    }
+		Control.ReassignRegionParent();
+
+		return path;
+	}
 
 	private FrameworkElement? FindByPath(string? path)
 	{

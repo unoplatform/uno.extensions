@@ -90,4 +90,6 @@ public class ResponseNavigator<TResult> : IResponseNavigator, IInstance<IService
 		}
 		return new NavigationResultResponse<TResult>(response?.Route ?? Route.Empty, ResultCompletion.Task, response?.Success ?? false);
 	}
+
+	public bool CanNavigate(Route route) => Navigation.CanNavigate(route);
 }

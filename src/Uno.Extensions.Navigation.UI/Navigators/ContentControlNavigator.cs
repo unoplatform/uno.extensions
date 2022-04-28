@@ -14,24 +14,25 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 	{
 	}
 
-	protected override bool CanNavigateToRoute(Route route)
+	protected override bool CanNavigateToDependentRoutes => true;
+
+	protected override bool RegionCanNavigate(Route route, RouteInfo? routeMap)
 	{
-		if (!base.CanNavigateToRoute(route))
+		if (!base.RegionCanNavigate(route, routeMap))
 		{
 			return false;
 		}
 
-		var rm = Resolver.Find(route);
-		if(rm is null )
+		if(routeMap is null )
 		{
 			return false;
 		}
 
-		var view = rm?.RenderView;
+		var view = routeMap.RenderView;
 
 		return (
 					(view?.IsSubclassOf(typeof(Page)) ?? false) &&
-					string.IsNullOrWhiteSpace(rm?.DependsOn) &&
+					string.IsNullOrWhiteSpace(routeMap?.DependsOn) &&
 					Region.Children.Count == 0
 				)
 				||

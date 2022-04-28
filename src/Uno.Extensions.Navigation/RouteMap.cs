@@ -10,4 +10,6 @@ public record RouteMap(
 	params RouteMap[] Nested)
 {
 }
+
+
 #pragma warning restore SA1313 // Parameter names should begin with lower-case letter
