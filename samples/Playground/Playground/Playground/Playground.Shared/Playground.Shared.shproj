@@ -18,6 +18,8 @@
     <_Globbed_Compile Remove="Services\SimpleStartupService.cs" />
     <_Globbed_Compile Remove="ViewModels\AdHocViewModel.cs" />
     <_Globbed_Compile Remove="ViewModels\HomeViewModel.cs" />
+    <_Globbed_Compile Remove="ViewModels\NavContentViewModel.cs" />
+    <_Globbed_Compile Remove="ViewModels\NavigationViewViewModel.cs" />
     <_Globbed_Compile Remove="ViewModels\SecondViewModel.cs" />
     <_Globbed_Compile Remove="ViewModels\SimpleViewModel.cs" />
     <_Globbed_Compile Remove="ViewModels\VMViewModel.cs" />
@@ -29,6 +31,7 @@
     <_Globbed_Compile Remove="Views\CodeBehindPage.xaml.cs" />
     <_Globbed_Compile Remove="Views\ContentControlPage.xaml.cs" />
     <_Globbed_Compile Remove="Views\MainPage.xaml.cs" />
+    <_Globbed_Compile Remove="Views\NavContentPage.xaml.cs" />
     <_Globbed_Compile Remove="Views\NavigationViewPage.xaml.cs" />
     <_Globbed_Compile Remove="Views\ShellView.xaml.cs" />
     <_Globbed_Compile Remove="Views\TabBarPage.xaml.cs" />
@@ -43,6 +46,7 @@
     <_Globbled_Page Remove="Views\CodeBehindPage.xaml" />
     <_Globbled_Page Remove="Views\ContentControlPage.xaml" />
     <_Globbled_Page Remove="Views\MainPage.xaml" />
+    <_Globbled_Page Remove="Views\NavContentPage.xaml" />
     <_Globbled_Page Remove="Views\NavigationViewPage.xaml" />
     <_Globbled_Page Remove="Views\ShellView.xaml" />
     <_Globbled_Page Remove="Views\TabBarPage.xaml" />

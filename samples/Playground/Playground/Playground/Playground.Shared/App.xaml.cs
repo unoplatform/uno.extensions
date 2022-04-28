@@ -216,7 +216,8 @@ namespace Playground
 						new ViewMap<CodeBehindPage>(),
 						new ViewMap<VMPage, VMViewModel>(),
 						new ViewMap<XamlPage, XamlViewModel>(),
-						new ViewMap<NavigationViewPage>(),
+						new ViewMap<NavigationViewPage, NavigationViewViewModel>(),
+						new ViewMap<NavContentPage, NavContentViewModel>(),
 						new ViewMap<TabBarPage>(),
 						new ViewMap<ContentControlPage>(),
 						new ViewMap<SecondPage, SecondViewModel>(Data: new DataMap<Widget>(), ResultData: typeof(Country)),
@@ -246,7 +247,11 @@ namespace Playground
 					new RouteMap("CodeBehind",View: views.FindByView<CodeBehindPage>(), DependsOn: "Home"),
 					new RouteMap("VM",View: views.FindByView<VMPage>(), DependsOn: "Home"),
 					new RouteMap("Xaml",View: views.FindByView<XamlPage>(), DependsOn: "Home"),
-					new RouteMap("NavigationView",View: views.FindByView<NavigationViewPage>(), DependsOn: "Home"),
+					new RouteMap("NavigationView",View: views.FindByView<NavigationViewPage>(), DependsOn: "Home",
+					Nested: new[]
+					{
+						new RouteMap("NavContent", View: views.FindByViewModel<NavContentViewModel>())
+					}),
 					new RouteMap("TabBar",View: views.FindByView<TabBarPage>(), DependsOn: "Home"),
 					new RouteMap("ContentControl",View: views.FindByView<ContentControlPage>(), DependsOn: "Home"),
 					new RouteMap("Second",View: views.FindByView<SecondPage>(), DependsOn: "Home"),
