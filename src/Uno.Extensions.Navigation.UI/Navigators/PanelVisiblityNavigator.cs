@@ -88,9 +88,9 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 			CurrentlyVisibleControl = controlToShow;
 
 			await controlToShow.EnsureLoaded();
-
-			controlToShow?.ReassignRegionParent();
 		}
+
+		Control.ReassignRegionParent();
 
 		return path;
 	}

@@ -38,7 +38,9 @@ public class NavigationRequestBinder
 			{
 				await region.EnsureLoaded();
 
-				var handler = region.Services?.GetServices<IRequestHandler>().FirstOrDefault(x => x.CanBind(element));
+				// This picks the last handler so that handlers can be overridden for
+				// specific controls by registering another handler
+				var handler = region.Services?.GetServices<IRequestHandler>().LastOrDefault(x => x.CanBind(element));
 				if (handler is not null)
 				{
 					var binding = handler.Bind(element);

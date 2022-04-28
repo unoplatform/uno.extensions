@@ -54,6 +54,7 @@ public static class ServiceCollectionExtensions
 					.AddRegion<Flyout, FlyoutNavigator>(true)
 					.AddRegion<Popup, PopupNavigator>(true)
 
+					.AddSingleton<IRequestHandler, TapRequestHandler>()
 					.AddSingleton<IRequestHandler, ButtonBaseRequestHandler>()
 					.AddSingleton<IRequestHandler, SelectorRequestHandler>()
 					.AddSingleton<IRequestHandler, NavigationViewItemRequestHandler>()
