@@ -9,6 +9,7 @@
 	  xmlns:ui="using:Uno.Toolkit.UI"
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+	NavigationCacheMode="Required"
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 	<Grid uen:Region.Attached="True">
 		<Grid.RowDefinitions>
@@ -51,6 +52,8 @@
 				<StackPanel>
 					<TextBlock Text="{Binding Name}" />
 					<TextBlock Text="{Binding Weight}" />
+					<Button Content="Go to Second Nav Page"
+							uen:Navigation.Request="NavContentSecond" />
 				</StackPanel>
 			</StackPanel>
 			<StackPanel uen:Region.Name="Tab2"
