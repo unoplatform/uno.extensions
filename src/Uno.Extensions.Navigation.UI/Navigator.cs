@@ -213,7 +213,18 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		{
 			if (!string.IsNullOrWhiteSpace(rm?.DependsOn))
 			{
-				request = request with { Route = (request.Route with { Base = rm?.DependsOn, Path = null }).Append(request.Route) };
+				var depends = rm?.DependsOn;
+				var parent = Region.Parent;
+				while( parent is not null)
+				{
+					if(parent.Navigator()?.Route?.Base == depends)
+					{
+						return parent.NavigateAsync(request);
+					}
+					parent = parent.Parent;
+				}
+
+				request = request with { Route = (request.Route with { Base = depends, Path = null }).Append(request.Route) };
 
 				return Region.NavigateAsync(request);
 			}
