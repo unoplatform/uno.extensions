@@ -14,10 +14,18 @@ internal record MappedFeedProperty(IPropertySymbol _property, ITypeSymbol _value
 	public string Name => _property.Name;
 
 	/// <inheritdoc />
+	public string GetBackingField()
+		=> $"private {NS.Bindings}.Bindable<{_valueType}> _{_property.GetCamelCaseName()};";
+
+	/// <inheritdoc />
 	public string GetDeclaration()
-		=> $"{_property.GetAccessibilityAsCSharpCodeString()} {NS.Reactive}.IState<{_valueType}> {_property.Name} {{ get; }}";
+		=> new Property(_property.DeclaredAccessibility, _valueType, _property.GetPascalCaseName())
+		{
+			Getter = $"_{_property.GetCamelCaseName()}.GetValue()",
+			Setter = $"_{_property.GetCamelCaseName()}.SetValue(value)",
+		};
 
 	/// <inheritdoc />
 	public string? GetInitialization()
-		=> $"{_property.Name} = {N.Ctor.Ctx}.GetOrCreateState({N.Ctor.Model}.{_property.Name} ?? throw new NullReferenceException(\"The feed property '{_property.Name}' is null. Public feeds properties must be initialized in the constructor.\"));";
+		=> $"_{_property.GetCamelCaseName()} = new {NS.Bindings}.Bindable<{ _valueType}>(base.Property<{_valueType}>(nameof({_property.Name}), {N.Ctor.Model}.{_property.Name} ?? throw new NullReferenceException(\"The feed property '{_property.Name}' is null. Public feeds fields must be initialized in the constructor.\")));";
 }

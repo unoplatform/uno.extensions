@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Uno.Extensions.Reactive.Core;
 using Uno.Logging;
 
 namespace Uno.Extensions.Reactive.Bindings;
@@ -12,17 +13,19 @@ namespace Uno.Extensions.Reactive.Bindings;
 /// An helper class use to data-bind a value.
 /// </summary>
 /// <typeparam name="T">The type of the value</typeparam>
-public class Bindable<T> : IBindable, INotifyPropertyChanged
+public class Bindable<T> : IBindable, INotifyPropertyChanged, IFeed<T>
 {
 	/// <inheritdoc />
 	public event PropertyChangedEventHandler? PropertyChanged;
 
-	private T? _value;
+	private T _value = default!; // This is going to be init by property.Subscribe(OnOwnerUpdated);, and anyway with bindings we cannot ensure non-null!
 	private CancellationTokenSource? _asyncSetCt;
-	private List<Action<T?>>? _onUpdated;
+	private List<Action<T>>? _onUpdated;
 
 	private readonly BindablePropertyInfo<T> _property;
 	private readonly bool _hasValueProperty;
+
+	internal bool CanWrite => _property.CanWrite;
 
 	/// <summary>
 	/// Creates a new instance.
@@ -56,38 +59,48 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged
 	/// <returns>Info that can be used to create a sub-bindable object.</returns>
 	protected BindablePropertyInfo<TProperty> Property<TProperty>(
 		string propertyName,
-		Func<T?, TProperty?> get,
-		Func<T?, TProperty?, T> set)
+		Func<T, TProperty> get,
+		Func<T, TProperty, T>? set)
 		=> new(
 			this,
 			propertyName,
-			updated =>
-			{
-				(_onUpdated ??= new()).Add(value => updated(get(value)));
-				updated(get(_value)); // Make sure to propagate the default value
-			},
-			(update, isLeafPropertyChanged, ct) => OnSubPropertyUpdated(propertyName, get, set, update, isLeafPropertyChanged, ct));
+			(
+				_property.Feed.Select(get),
+				updated =>
+				{
+					(_onUpdated ??= new()).Add(value => updated(get(value)));
+					updated(get(_value)); // Make sure to propagate the default value
+				}
+			),
+			_property.CanWrite && set is not null
+				? (update, isLeafPropertyChanged, ct) => OnSubPropertyUpdated(propertyName, get, set, update, isLeafPropertyChanged, ct)
+				: default);
 
 	/// <summary>
 	/// Gets the current value.
 	/// </summary>
 	/// <returns>The current value.</returns>
-	public T? GetValue()
+	public T GetValue()
 		=> _value;
 
 	/// <summary>
 	/// Sets the current value.
 	/// </summary>
 	/// <param name="value">The current value.</param>
-	public void SetValue(T? value)
+	public void SetValue(T value)
 	{
+		if (!_property.CanWrite)
+		{
+			return;
+		}
+
 		if (SetValueCore(value))
 		{
 			UpdateOwner(value);
 		}
 	}
 
-	private bool SetValueCore(T? value)
+	private bool SetValueCore(T value)
 	{
 		if (object.ReferenceEquals(_value, value))
 		{
@@ -111,12 +124,12 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged
 		return true;
 	}
 
-	private void OnOwnerUpdated(T? value)
+	private void OnOwnerUpdated(T value)
 	{
 		SetValueCore(value);
 	}
 
-	private async void UpdateOwner(T? value)
+	private async void UpdateOwner(T value)
 	{
 		try
 		{
@@ -139,9 +152,9 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged
 
 	private async ValueTask OnSubPropertyUpdated<TProperty>(
 		string propertyName,
-		Func<T?, TProperty?> get,
-		Func<T?, TProperty?, T> set,
-		Func<TProperty?, TProperty?> update,
+		Func<T, TProperty> get,
+		Func<T, TProperty, T> set,
+		Func<TProperty, TProperty> update,
 		bool isLeafPropertyChanged,
 		CancellationToken ct)
 	{
@@ -164,7 +177,7 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged
 		}
 	}
 
-	private void UpdateSubProperties(T? value)
+	private void UpdateSubProperties(T value)
 	{
 		if (_onUpdated is not null)
 		{
@@ -174,4 +187,8 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged
 			}
 		}
 	}
+
+	/// <inheritdoc />
+	public IAsyncEnumerable<Message<T>> GetSource(SourceContext context, CancellationToken ct = default)
+		=> _property.Feed.GetSource(context, ct);
 }

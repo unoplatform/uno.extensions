@@ -65,6 +65,10 @@ public partial class Given_BasicViewModel_Then_Generate__ViewModel
 
 	public IState<string> AStateField = new StateImpl<string>(SourceContext.Current, Feed.Async(async ct => "42"));
 
+	public IFeed<MyRecord> ARecordFeedField = Feed.Async(async ct => new MyRecord("ARecordFeedField", 42, default, new MyWeirdRecord()));
+
+	public IState<MyRecord> ARecordStateField = State<MyRecord>.Async(async ct => new MyRecord("ARecordStateField", 42, default, new MyWeirdRecord()));
+
 	public IListFeed<string> AListFeedField = Feed.Async(async ct => new[] { "AListFeedField_1", "AListFeedField_2" }.ToImmutableList()).AsListFeed();
 
 	public IListState<string> AListStateField = new ListStateImpl<string>(new StateImpl<IImmutableList<string>>(SourceContext.Current, Feed.Async(async ct => new[] { "AListStateField_1", "AListStateField_2" }.ToImmutableList() as IImmutableList<string>)));
@@ -85,6 +89,10 @@ public partial class Given_BasicViewModel_Then_Generate__ViewModel
 
 	public IState<string> AStateProperty { get; } = new StateImpl<string>(SourceContext.Current, Feed.Async(async ct => "AStateProperty"));
 
+	public IFeed<MyRecord> ARecordFeedProperty { get; } = Feed.Async(async ct => new MyRecord("ARecordFeedProperty", 42, default, new MyWeirdRecord()));
+
+	public IState<MyRecord> ARecordStateProperty { get; } = State<MyRecord>.Async(async ct => new MyRecord("ARecordStateProperty", 42, default, new MyWeirdRecord()));
+
 	public IListFeed<string> AListFeedProperty { get; } = Feed.Async(async ct => new[] { "AListFeedProperty_1", "AListFeedProperty_2" }.ToImmutableList()).AsListFeed();
 
 	public IListState<string> AListStateProperty { get; } = new ListStateImpl<string>(new StateImpl<IImmutableList<string>>(SourceContext.Current, Feed.Async(async ct => new[] { "AListStateProperty_1", "AListStateProperty_2" }.ToImmutableList() as IImmutableList<string>)));
@@ -100,7 +108,7 @@ public partial class Given_BasicViewModel_Then_Generate__ViewModel
 	public (string result1, int result2) AParameterizedMethodReturningATuple(string arg1, int arg2) => (arg1, arg2);
 }
 
-public record MyRecord(string Property1, int Property2, MySubRecord Property3, MyWeirdRecord Property4);
+public record MyRecord(string Property1, int Property2, MySubRecord? Property3, MyWeirdRecord Property4);
 
 public record MySubRecord(string Prop1, int Prop2);
 

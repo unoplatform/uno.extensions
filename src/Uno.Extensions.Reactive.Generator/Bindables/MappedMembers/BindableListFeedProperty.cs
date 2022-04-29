@@ -4,13 +4,17 @@ using Microsoft.CodeAnalysis;
 
 namespace Uno.Extensions.Reactive.Generator;
 
-internal record MappedListFeedProperty(IPropertySymbol _property, ITypeSymbol _valueType) : IMappedMember
+internal record BindableListFeedProperty(IPropertySymbol _property, ITypeSymbol _valueType) : IMappedMember
 {
 	private readonly IPropertySymbol _property = _property;
 	private readonly ITypeSymbol _valueType = _valueType;
 
 	/// <inheritdoc />
 	public string Name => _property.Name;
+
+	/// <inheritdoc />
+	public string? GetBackingField()
+		=> null;
 
 	/// <inheritdoc />
 	public string GetDeclaration()

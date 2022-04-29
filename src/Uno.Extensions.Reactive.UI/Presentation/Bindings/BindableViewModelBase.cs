@@ -49,29 +49,75 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 		=> _disposables.Add(disposable);
 
 	/// <summary>
-	/// Get info for a bindable property.
+	/// Get info for a bindable property given a backing feed.
 	/// </summary>
 	/// <typeparam name="TProperty">The type of the sub-property.</typeparam>
 	/// <param name="propertyName">The name of the sub-property.</param>
-	/// <param name="defaultValue">The default value of the property.</param>
+	/// <param name="feed">The backing state of the property.</param>
+	/// <returns>Info that can be used to create a bindable object.</returns>
+	protected BindablePropertyInfo<TProperty> Property<TProperty>(string propertyName, IFeed<TProperty> feed)
+	{
+		var ctx = SourceContext.Find(this) ?? throw new InvalidOperationException(
+			"This must be invoked only after the SourceContext of the parent as been forwarded to this."
+			+ "This method should be used only by generated code, consider to remove usage in your app.");
+
+		var state = ctx.GetOrCreateState(feed);
+
+		return CreateProperty(propertyName, (StateImpl<TProperty>)state, isReadOnly: true);
+	}
+
+	/// <summary>
+	/// Get info for a bindable property given a backing state.
+	/// </summary>
+	/// <typeparam name="TProperty">The type of the sub-property.</typeparam>
+	/// <param name="propertyName">The name of the sub-property.</param>
 	/// <param name="state">The backing state of the property.</param>
 	/// <returns>Info that can be used to create a bindable object.</returns>
-	protected BindablePropertyInfo<TProperty> Property<TProperty>(string propertyName, TProperty? defaultValue, out IInput<TProperty> state)
+	protected BindablePropertyInfo<TProperty> Property<TProperty>(string propertyName, IState<TProperty> state)
 	{
-		var stateImpl = new StateImpl<TProperty>(Option.Some(defaultValue!));
-		var info = new BindablePropertyInfo<TProperty>(this, propertyName, ViewModelToView, ViewToViewModel);
+		if (state is not StateImpl<TProperty> impl)
+		{
+			throw new InvalidOperationException("Custom implementation of state are not supported yet.");
+		}
+
+		return CreateProperty(propertyName, impl, isReadOnly: false);
+	}
+
+
+	/// <summary>
+	/// LEGACY support for IInput&lt;T&gt; - Get info for a bindable property.
+	/// </summary>
+	/// <typeparam name="TProperty">The type of the sub-property.</typeparam>
+	/// <param name="propertyName">The name of the sub-property.</param>
+	/// <param name="initialValue">The default value of the property.</param>
+	/// <param name="state">The backing state of the property.</param>
+	/// <returns>Info that can be used to create a bindable object.</returns>
+	[EditorBrowsable(EditorBrowsableState.Never)] // Legacy
+	protected BindablePropertyInfo<TProperty> Property<TProperty>(string propertyName, TProperty? initialValue, out IInput<TProperty> state)
+	{
+		initialValue ??= GetDefaultValueForBindings<TProperty>();
+
+		var stateImpl = new StateImpl<TProperty>(Option.Some(initialValue));
+		var info = CreateProperty(propertyName, stateImpl, isReadOnly: false);
 
 		_disposables.Add(stateImpl);
 		state = new Input<TProperty>(propertyName, stateImpl);
 
 		return info;
+	}
 
-		async void ViewModelToView(Action<TProperty?> updated)
+	private BindablePropertyInfo<TProperty> CreateProperty<TProperty>(string propertyName, StateImpl<TProperty> stateImpl, bool isReadOnly)
+	{
+		return new BindablePropertyInfo<TProperty>(this, propertyName, (stateImpl, ViewModelToView), isReadOnly ? default : ViewToViewModel);
+
+		async void ViewModelToView(Action<TProperty> updated)
 		{
 			try
 			{
+				var initialValue = stateImpl.Current.Current.Data.SomeOrDefault(GetDefaultValueForBindings<TProperty>());
+
 				// We run the update sync in setup, no matter the thread
-				updated(defaultValue);
+				updated(initialValue);
 				var source = stateImpl.GetSource();
 				var dispatcher = await _dispatcher.GetFirstResolved(CancellationToken.None);
 
@@ -84,7 +130,8 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 						{
 							if (msg.Current.Get(BindingSource) != this)
 							{
-								updated(msg.Current.Data.SomeOrDefault());
+								updated(msg.Current.Data.SomeOrDefault(GetDefaultValueForBindings<TProperty>()));
+								_propertyChanged.Raise(new PropertyChangedEventArgs(propertyName));
 							}
 						}
 					}
@@ -106,7 +153,7 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 			}
 		}
 
-		async ValueTask ViewToViewModel(Func<TProperty?, TProperty?> updater, bool isLeafPropertyChanged, CancellationToken ct)
+		async ValueTask ViewToViewModel(Func<TProperty, TProperty> updater, bool isLeafPropertyChanged, CancellationToken ct)
 		{
 			// 1. Notify the View that the property has been updated
 			if (isLeafPropertyChanged)
@@ -123,13 +170,16 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 
 			MessageBuilder<TProperty> DoUpdate(Message<TProperty> msg)
 			{
-				var current = msg.Current.Data.SomeOrDefault();
+				var current = msg.Current.Data.SomeOrDefault(GetDefaultValueForBindings<TProperty>());
 				var updated = updater(current);
 
-				return msg.With().Data(Option.Some(updated!)).Set(BindingSource, this);
+				return msg.With().Data(Option.Some(updated)).Set(BindingSource, this);
 			}
 		}
 	}
+
+	private static T GetDefaultValueForBindings<T>()
+		=> default!; // For now we default to null as we cannot enforce non-null through bindings
 
 	/// <inheritdoc />
 	public async ValueTask DisposeAsync()
