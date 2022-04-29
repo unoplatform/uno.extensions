@@ -83,6 +83,7 @@ namespace {vm.ContainingNamespace}
 		{{
 			{inputsErrors.Align(3)}
 			{inputs.Select(input => input.GetBackingField()).Align(3)}
+			{mappedMembers.Select(member => member.GetBackingField()).Align(3)}
 
 			{vm
 				.Constructors

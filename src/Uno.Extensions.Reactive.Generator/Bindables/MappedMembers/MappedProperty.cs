@@ -12,6 +12,10 @@ internal record MappedProperty(IPropertySymbol _property) : IMappedMember
 	public string Name => _property.Name;
 
 	/// <inheritdoc />
+	public string? GetBackingField()
+		=> null;
+
+	/// <inheritdoc />
 	public string GetDeclaration()
 		=> Property.FromProperty(_property) with
 		{

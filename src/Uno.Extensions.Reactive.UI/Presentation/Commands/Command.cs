@@ -36,4 +36,58 @@ public static class Command
 			name,
 			(o, e, n) => new AsyncCommand(n, new CommandConfig{Execute = (_, ct) => e(ct)}, _defaultErrorHandler, SourceContext.GetOrCreate(o)));
 	}
+
+	/// <summary>
+	/// Creates a command
+	/// </summary>
+	/// <param name="build">The delegate to build the command.</param>
+	/// <param name="name">The name of the command.</param>
+	/// <returns>The command.</returns>
+	/// <exception cref="InvalidOperationException">The execute delegate is static.</exception>
+	public static IAsyncCommand Create(Action<ICommandBuilder> build, [CallerMemberName] string? name = null)
+	{
+		if (build.Target is null)
+		{
+			throw new InvalidOperationException("The delegate provided in the Command.Create must not be a static method.");
+		}
+
+		return AttachedProperty.GetOrCreate(
+			build.Target,
+			build,
+			name,
+			(o, b, n) =>
+			{
+				var ctx = SourceContext.GetOrCreate(o);
+				var builder = new CommandBuilder<object>(name!);
+				build(builder);
+				return builder.Build(ctx, _defaultErrorHandler);
+			});
+	}
+
+	/// <summary>
+	/// Creates a command
+	/// </summary>
+	/// <param name="build">The delegate to build the command.</param>
+	/// <param name="name">The name of the command.</param>
+	/// <returns>The command.</returns>
+	/// <exception cref="InvalidOperationException">The execute delegate is static.</exception>
+	public static IAsyncCommand Create<T>(Action<ICommandBuilder<T>> build, [CallerMemberName] string? name = null)
+	{
+		if (build.Target is null)
+		{
+			throw new InvalidOperationException("The delegate provided in the Command.Create must not be a static method.");
+		}
+
+		return AttachedProperty.GetOrCreate(
+			build.Target,
+			build,
+			name,
+			(o, b, n) =>
+			{
+				var ctx = SourceContext.GetOrCreate(o);
+				var builder = new CommandBuilder<T>(name!);
+				build(builder);
+				return builder.Build(ctx, _defaultErrorHandler);
+			});
+	}
 }

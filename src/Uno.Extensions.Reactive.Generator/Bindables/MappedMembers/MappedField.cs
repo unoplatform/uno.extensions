@@ -12,6 +12,10 @@ internal record MappedField(IFieldSymbol _field) : IMappedMember
 	public string Name => _field.Name;
 
 	/// <inheritdoc />
+	public string? GetBackingField()
+		=> null;
+
+	/// <inheritdoc />
 	public string GetDeclaration()
 		=> $@"{_field.GetAccessibilityAsCSharpCodeString()} {_field.Type} {_field.Name}
 			{{

@@ -12,6 +12,10 @@ internal record MappedMethod(IMethodSymbol _method) : IMappedMember
 	public string Name => _method.Name;
 
 	/// <inheritdoc />
+	public string? GetBackingField()
+		=> null;
+
+	/// <inheritdoc />
 	public string GetDeclaration()
 	{
 		var parametersDeclaration = _method

@@ -4,14 +4,18 @@ using Microsoft.CodeAnalysis;
 
 namespace Uno.Extensions.Reactive.Generator;
 
-internal record BindableFeedProperty(IPropertySymbol _property, ITypeSymbol _valueType, string _bindableValueType) : IMappedMember
+internal record BindableFeedProperty(IPropertySymbol _property, ITypeSymbol _valueType, string? _bindableValueType) : IMappedMember
 {
 	private readonly IPropertySymbol _property = _property;
 	private readonly ITypeSymbol _valueType = _valueType;
-	private readonly string _bindableValueType = _bindableValueType;
+	private readonly string _bindableValueType = _bindableValueType ?? $"{NS.Bindings}.Bindable<{_valueType}>";
 
 	/// <inheritdoc />
 	public string Name => _property.Name;
+
+	/// <inheritdoc />
+	public string? GetBackingField()
+		=> null;
 
 	/// <inheritdoc />
 	public string GetDeclaration()

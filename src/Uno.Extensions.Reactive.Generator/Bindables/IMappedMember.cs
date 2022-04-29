@@ -10,6 +10,8 @@ internal interface IMappedMember
 {
 	public string Name { get; }
 
+	public string? GetBackingField();
+
 	public string GetDeclaration();
 
 	public string? GetInitialization();

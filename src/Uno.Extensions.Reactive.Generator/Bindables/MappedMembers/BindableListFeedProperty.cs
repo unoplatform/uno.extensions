@@ -13,6 +13,10 @@ internal record BindableListFeedProperty(IPropertySymbol _property, ITypeSymbol 
 	public string Name => _property.Name;
 
 	/// <inheritdoc />
+	public string? GetBackingField()
+		=> null;
+
+	/// <inheritdoc />
 	public string GetDeclaration()
 		=> $"{_property.GetAccessibilityAsCSharpCodeString()} {NS.Reactive}.IListFeed<{_valueType}> {_property.Name} {{ get; }}"; // Note: This should be a State
 

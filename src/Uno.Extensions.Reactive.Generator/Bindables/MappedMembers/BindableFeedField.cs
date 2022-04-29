@@ -14,6 +14,10 @@ internal record BindableFeedField(IFieldSymbol _field, ITypeSymbol _valueType, s
 	public string Name => _field.Name;
 
 	/// <inheritdoc />
+	public string? GetBackingField()
+		=> null;
+
+	/// <inheritdoc />
 	public string GetDeclaration()
 		=> $"{_field.GetAccessibilityAsCSharpCodeString()} {_bindableValueType} {_field.Name};";
 
