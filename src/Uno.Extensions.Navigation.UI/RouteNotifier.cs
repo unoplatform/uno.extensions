@@ -26,6 +26,7 @@ public class RouteNotifier : IRouteNotifier, IRouteUpdater
 		if (!runningNavigations.TryGetValue(root, out var count) ||
 			count == 0)
 		{
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Pre-navigation: - {root.ToString()}");
 			runningNavigations[root] = 1;
 			var timer = new Stopwatch();
 			timers[root] = timer;
@@ -50,6 +51,9 @@ public class RouteNotifier : IRouteNotifier, IRouteUpdater
 		{
 			timers[root].Stop();
 			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Elapsed navigation: {timers[root].ElapsedMilliseconds}");
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Post-navigation: {root.ToString()}");
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Post-navigation (route): {root.GetRoute()}");
+
 			RouteChanged?.Invoke(this, new RouteChangedEventArgs(root));
 		}
 	}

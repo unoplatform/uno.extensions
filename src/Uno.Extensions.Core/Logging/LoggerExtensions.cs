@@ -38,5 +38,5 @@ public static class LoggerExtensions
 		logger?.LogCritical(FormatLogText(callerMethod, message));
 	}
 
-	private static string FormatLogText(string callerMethod, string message) => $"{callerMethod.PadRight(CallerNameFixedWidth)} - {message}";
+	private static string FormatLogText(string callerMethod, string message) => $"{callerMethod} - {message}";
 }

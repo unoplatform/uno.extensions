@@ -85,6 +85,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Views\NavContentPage.xaml.cs">
       <DependentUpon>NavContentPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\NavContentSecondPage.xaml.cs">
+      <DependentUpon>NavContentSecondPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\NavigationViewPage.xaml.cs">
       <DependentUpon>NavigationViewPage.xaml</DependentUpon>
     </Compile>
@@ -175,6 +178,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\NavContentPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\NavContentSecondPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

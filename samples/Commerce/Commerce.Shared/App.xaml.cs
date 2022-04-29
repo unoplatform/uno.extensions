@@ -68,7 +68,8 @@ namespace Commerce
 						logBuilder
 								.SetMinimumLevel(LogLevel.Information)
 								.XamlLogLevel(LogLevel.Information)
-								.XamlLayoutLogLevel(LogLevel.Information);
+								.XamlLayoutLogLevel(LogLevel.Information)
+								.AddFilter("Uno.Extensions.Navigation", LogLevel.Trace);
 					})
 
 					// Load configuration information from appsettings.json
