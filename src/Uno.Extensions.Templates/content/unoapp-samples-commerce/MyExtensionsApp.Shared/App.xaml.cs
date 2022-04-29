@@ -45,8 +45,8 @@ namespace MyExtensionsApp
 {
 	public sealed partial class App : Application
 	{
-		private Window _window;
-		public Window Window => _window;
+		private Window? _window;
+		public Window? Window => _window;
 
 		private IHost _host;
 
@@ -138,7 +138,7 @@ namespace MyExtensionsApp
 			_window = Window.Current;
 #endif
 
-			var notif = _host.Services.GetService<IRouteNotifier>();
+			var notif = _host.Services.GetRequiredService<IRouteNotifier>();
 			notif.RouteChanged += RouteUpdated;
 
 

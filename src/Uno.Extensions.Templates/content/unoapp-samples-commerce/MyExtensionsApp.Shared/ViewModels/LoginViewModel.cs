@@ -1,14 +1,12 @@
 //-:cnd:noEmit
 #nullable enable
 
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Uno.Extensions;
 using Uno.Extensions.Navigation;
 using Uno.Extensions.Reactive;
-using Windows.ApplicationModel.Core;
 
 namespace MyExtensionsApp.ViewModels;
 
@@ -34,7 +32,7 @@ public partial record LoginViewModel
 			.Then(Login);
 	}
 
-	public string Title { get;  }
+	public string? Title { get;  }
 
 	private bool CanLogin(Credentials credentials)
 		=> credentials is { UserName.Length: > 0 } and { Password.Length: > 0 };

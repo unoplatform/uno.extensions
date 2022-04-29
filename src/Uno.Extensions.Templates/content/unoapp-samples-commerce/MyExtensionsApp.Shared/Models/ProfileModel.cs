@@ -1,14 +1,9 @@
 //-:cnd:noEmit
-using System;
-using System.Collections.Generic;
-using System.Text;
+namespace MyExtensionsApp.Models;
 
-namespace MyExtensionsApp.Models
+public record ProfileModel(Profile Profile)
 {
-    public record ProfileModel(Profile Profile)
-    {
-		public string FullName => $"{Profile.FirstName} {Profile.LastName}";
+	public string FullName => $"{Profile.FirstName} {Profile.LastName}";
 
-		public string Avatar => Profile.Avatar;
-    }
+	public string? Avatar => Profile.Avatar;
 }
