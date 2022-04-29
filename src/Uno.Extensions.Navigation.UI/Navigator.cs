@@ -39,10 +39,11 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 	public async Task<NavigationResponse?> NavigateAsync(NavigationRequest request)
 	{
-		if (Logger.IsEnabled(LogLevel.Information)) Logger.LogInformation($"Pre-navigation: - {Region.Root().ToString()}");
 		var regionUpdateId = RouteUpdater?.StartNavigation(Region) ?? Guid.Empty;
 		try
 		{
+			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($" Navigator: {this.GetType().Name} Request: {request.Route}");
+
 			// Do any initialisation logic that may be
 			// defined for the route - allows for
 			// routes to be redirected
@@ -80,8 +81,6 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		}
 		finally
 		{
-			if (Logger.IsEnabled(LogLevel.Information)) Logger.LogInformation($"Post-navigation: {Region.Root().ToString()}");
-			if (Logger.IsEnabled(LogLevel.Information)) Logger.LogInformation($"Post-navigation (route): {Region.Root().GetRoute()}");
 			RouteUpdater?.EndNavigation(regionUpdateId);
 		}
 	}
@@ -100,6 +99,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		if (nested.Any())
 		{
 			request = request with { Route = request.Route.Next() };
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectNavigateAsync: Redirecting to children ({nested.Length}) New request: {request.Route}");
 			return NavigateChildRegions(nested, request);
 		}
 
@@ -114,9 +114,11 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			nested = Region.Children.Where(x => string.IsNullOrWhiteSpace(x.Name) || x.Name == this.Route?.Base).ToArray();
 			if (nested.Any())
 			{
+				if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectNavigateAsync: Forced redirection to children ({nested.Length}) New request: {request.Route}");
 				return NavigateChildRegions(nested, request);
 			}
 
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectNavigateAsync: Forced redirection to children but no matching child regions found");
 			return Task.FromResult(default(NavigationResponse?));
 		}
 
@@ -134,10 +136,12 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 				// // Only trim ../ since ! will be handled by the root navigator
 				// request = request with { Route = request.Route.TrimQualifier(Qualifiers.Parent) };
 
+				if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectNavigateAsync: Redirecting to parent for dialog");
 				return Region.Parent.NavigateAsync(request);
 			}
 			else
 			{
+				if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectNavigateAsync: No redirection - at root region to handle dialog navigation request");
 				return default;
 			}
 		}
@@ -158,6 +162,8 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			// need to redirect request to the same navigator with the
 			// root qualifier stripped
 			var region = Region.Parent is not null ? Region.Parent : Region;
+
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectNavigateAsync: Updating request and redirecting for root request.  New request: {request.Route}");
 			return region.NavigateAsync(request);
 		}
 
@@ -182,6 +188,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		if (CanNavigate(request.Route) &&
 			!ParentCanNavigate(request.Route))
 		{
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectNavigateAsync: No redirection - Navigator can handle request (and parent cannot)");
 			return default;
 		}
 
@@ -192,9 +199,11 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		{
 			if (Region.Parent is not null)
 			{
+				if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectNavigateAsync: Redirecting back navigation to parent");
 				return Region.Parent.NavigateAsync(request);
 			}
 
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectNavigateAsync: Back navigation being handled by root region");
 			return default;
 		}
 
@@ -203,9 +212,11 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		{
 			if (Region.Parent is not null)
 			{
+				if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectNavigateAsync: No routemap redirecting to parent");
 				return Region.Parent.NavigateAsync(request);
 			}
 
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectNavigateAsync: No routemap to be handled by root region");
 			return default;
 		}
 
@@ -219,6 +230,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 				{
 					if(parent.Navigator()?.Route?.Base == depends)
 					{
+						if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectNavigateAsync: Depends on matches current route of parent, so redirecting to parent");
 						return parent.NavigateAsync(request);
 					}
 					parent = parent.Parent;
@@ -226,9 +238,11 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 				request = request with { Route = (request.Route with { Base = depends, Path = null }).Append(request.Route) };
 
+				if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectNavigateAsync: Updating request with depends on and invoking navigate on current region. New request: {request.Route}");
 				return Region.NavigateAsync(request);
 			}
 
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectNavigateAsync: Redirecting unhandled request to parent");
 			return Region.Parent.NavigateAsync(request);
 		}
 		else
@@ -245,6 +259,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			route = route with { Qualifier = Qualifiers.Root };
 			request = request with { Route = route };
 
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectNavigateAsync: Building fully qualified route for unhandled request. New request: {request.Route}");
 			return Region.NavigateAsync(request);
 		}
 	}
