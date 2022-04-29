@@ -131,6 +131,7 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 							if (msg.Current.Get(BindingSource) != this)
 							{
 								updated(msg.Current.Data.SomeOrDefault(GetDefaultValueForBindings<TProperty>()));
+								_propertyChanged.Raise(new PropertyChangedEventArgs(propertyName));
 							}
 						}
 					}
