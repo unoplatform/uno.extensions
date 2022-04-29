@@ -27,5 +27,5 @@ internal record MappedFeedProperty(IPropertySymbol _property, ITypeSymbol _value
 
 	/// <inheritdoc />
 	public string? GetInitialization()
-		=> $"_{_property.Name} = new {NS.Bindings}.Bindable<{ _valueType}>(base.Property<{_valueType}>(nameof({_property.Name}), {N.Ctor.Model}.{_property.Name} ?? throw new NullReferenceException(\"The feed property '{_property.Name}' is null. Public feeds fields must be initialized in the constructor.\")));";
+		=> $"_{_property.GetCamelCaseName()} = new {NS.Bindings}.Bindable<{ _valueType}>(base.Property<{_valueType}>(nameof({_property.Name}), {N.Ctor.Model}.{_property.Name} ?? throw new NullReferenceException(\"The feed property '{_property.Name}' is null. Public feeds fields must be initialized in the constructor.\")));";
 }
