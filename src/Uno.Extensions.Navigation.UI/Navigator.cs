@@ -468,6 +468,12 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 	protected virtual async Task<NavigationResponse?> CoreNavigateAsync(NavigationRequest request)
 	{
+		// Don't propagate the response request further than a named region
+		if (!string.IsNullOrWhiteSpace(Region.Name) && request.Result is not null)
+		{
+			request = request with { Result = null };
+		}
+
 		if (request.Route.IsEmpty())
 		{
 			var dataRoute = Resolver.Find(request.Route);
@@ -483,6 +489,13 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 					var defaultRoute = route.Nested?.FirstOrDefault(x => x.IsDefault);
 					if (defaultRoute is not null)
 					{
+						if(Region.Children.FirstOrDefault(x => x.Name == defaultRoute.Path)  is { } childRegion &&
+							defaultRoute.Nested?.FirstOrDefault(x => x.IsDefault) is { } nestedDefaultRoute)
+						{
+							request = request with { Route = request.Route.Append(nestedDefaultRoute.Path) };
+							return await childRegion.NavigateAsync(request);
+						}
+
 						request = request with { Route = request.Route.Append(defaultRoute.Path) };
 
 					}
@@ -498,13 +511,6 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		if (request.Route.IsBackOrCloseNavigation())
 		{
 			return null;
-		}
-
-
-		// Don't propagate the response request further than a named region
-		if (!string.IsNullOrWhiteSpace(Region.Name) && request.Result is not null)
-		{
-			request = request with { Result = null };
 		}
 
 		var children = Region.Children.Where(region =>
