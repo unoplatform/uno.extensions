@@ -75,8 +75,11 @@ public partial class AdHocViewModel:ObservableObject
 	{
 		var result = await _navigator.NavigateRouteForResultAsync<string>(this, "Auth", qualifier: Qualifiers.Dialog).AsResult();
 
-		(_authToken as SimpleAuthenticationToken).AccessToken = result.SomeOrDefault() ?? String.Empty;
-		var taskLists = await _todoTaskListEndpoint.GetAllAsync(CancellationToken.None);
+		if (_authToken is SimpleAuthenticationToken authToken)
+		{
+			authToken.AccessToken = result.SomeOrDefault() ?? String.Empty;
+			var taskLists = await _todoTaskListEndpoint.GetAllAsync(CancellationToken.None);
+		}
 	}
 
 	public async Task LoadWidgets()

@@ -9,6 +9,7 @@ using Playground.Services.Endpoints;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Core;
 using Windows.UI.ViewManagement;
+using Uno.Extensions.Localization;
 
 
 #if WINUI
@@ -40,6 +41,8 @@ namespace Playground
 
 					// Add platform specific log providers
 					.UseLogging()
+
+					.UseLocalization()
 
 					// Configure log levels for different categories of logging
 					.ConfigureLogging(logBuilder =>

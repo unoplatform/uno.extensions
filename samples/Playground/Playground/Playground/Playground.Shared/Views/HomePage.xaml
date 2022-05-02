@@ -6,7 +6,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-	xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	  xmlns:um="using:Uno.Material"
+	  xmlns:utu="using:Uno.Toolkit.UI"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
@@ -19,9 +21,26 @@
 				   FontSize="48" />
 
 		<StackPanel Grid.Row="1">
+			<TextBlock Text="App Name"
+					   HorizontalAlignment="Center"
+					   FontSize="24"
+					   x:Uid="HomePage_AppName"/>
 			<TextBlock Text="{Binding Platform}"
 					   HorizontalAlignment="Center"
 					   FontSize="24" />
+			<utu:ChipGroup x:Name="LanguageChipGroup"
+						   SelectionMode="Single"
+						   SelectedItem="{Binding SelectedCulture, Mode=TwoWay}"
+						   ItemsSource="{Binding SupportedCultures}"
+						   Style="{StaticResource MaterialFilledChoiceChipGroupStyle}">
+				<utu:ChipGroup.ItemTemplate>
+					<DataTemplate>
+						<TextBlock Text="{Binding}"
+								  Tag="{Binding}"
+								  />
+					</DataTemplate>
+				</utu:ChipGroup.ItemTemplate>
+			</utu:ChipGroup>
 			<Button uen:Navigation.Request="CodeBehind"
 					Content="Code behind samples" />
 			<Button uen:Navigation.Request="VM"

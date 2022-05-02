@@ -27,6 +27,10 @@
 		</ui:NavigationBar>
 
 		<StackPanel Grid.Row="1">
+			<TextBlock Text="App Name"
+					   HorizontalAlignment="Center"
+					   FontSize="24"
+					   x:Uid="HomePage_AppName" />
 			<Button uen:Navigation.Request="-"
 					Content="Back" />
 			<Button uen:Navigation.Request="-"
