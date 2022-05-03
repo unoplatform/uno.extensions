@@ -237,7 +237,8 @@ namespace Playground
 						new ViewMap<VisualStatesPage>(),
 						new ViewMap<AdHocPage, AdHocViewModel>(),
 						new ViewMap<AuthTokenDialog, AuthTokenViewModel>(),
-						new ViewMap<BasicFlyout, BasicViewModel>(),
+						new FlyoutViewMap<BasicFlyout, BasicViewModel>(),
+						new FlyoutViewMap<NonDismissFlyout>(AutoDismiss: false),
 						confirmDialog
 				);
 
@@ -282,7 +283,8 @@ namespace Playground
 							new RouteMap("ComplexDialogFirst",View: views.FindByView<ComplexDialogFirstPage>()),
 							new RouteMap("ComplexDialogSecond",View: views.FindByView<ComplexDialogSecondPage>(), DependsOn: "ComplexDialogFirst")
 						}),
-						new RouteMap("Basic",View: views.FindByView<BasicFlyout>())
+						new RouteMap("Basic",View: views.FindByView<BasicFlyout>()),
+						new RouteMap("NonDismiss",View: views.FindByView<NonDismissFlyout>())
 					}),
 					new RouteMap("PanelVisibility",View: views.FindByView<PanelVisibilityPage>()),
 					new RouteMap("VisualStates",View: views.FindByView<VisualStatesPage>()),
