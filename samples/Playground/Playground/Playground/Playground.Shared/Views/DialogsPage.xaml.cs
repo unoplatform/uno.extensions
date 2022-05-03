@@ -59,7 +59,7 @@ public sealed partial class DialogsPage : Page, IInjectable<INavigator>
 		var result = await Task.Run(async () =>
 		{
 			// Note: Passing object in as sender to make sure navigation doesn't use the sender when showing flyout
-			return await Navigator.NavigateRouteAsync(new object(), "!Basic");
+			return await Navigator!.NavigateRouteAsync(new object(), "!Basic");
 		});
 
 	}
@@ -69,7 +69,7 @@ public sealed partial class DialogsPage : Page, IInjectable<INavigator>
 		var result = await Task.Run(async () =>
 		{
 			// Note: Passing object in as sender to make sure navigation doesn't use the sender when showing flyout
-			return await Navigator.NavigateRouteForResultAsync<Widget>(new object(), "!Basic").AsResult();
+			return await Navigator!.NavigateRouteForResultAsync<Widget>(new object(), "!Basic").AsResult();
 		});
 
 	}

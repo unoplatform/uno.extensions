@@ -4,50 +4,86 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
-using Uno.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Uno.Extensions;
+using Uno.Extensions.Localization;
+using Windows.Globalization;
 
-namespace Uno.Extensions.Localization
+namespace Uno.Extensions.Localization;
+
+public class LocalizationService : IHostedService
 {
-    public class LocalizationService : IHostedService
-    {
-        private ThreadCultureOverrideService? _cultureOverrideService;
+	private static string DefaultCulture = "en-US";
 
-        public LocalizationService(IWritableOptions<LocalizationSettings> settings)
-        {
-            Settings = settings;
-        }
+	private Thread? _uiThread;
 
-        private IWritableOptions<LocalizationSettings> Settings { get; }
+	private readonly ILogger _logger;
 
-        private CultureInfo[] SupportedCultures => !(Settings?.Value?.Cultures?.Any() ?? false) ?
-            new[] { new CultureInfo("en-US") } :
-            Settings.Value.Cultures.Select(c => new CultureInfo(c)).ToArray();
+	private readonly IOptionsMonitor<LocalizationSettings> _settings;
 
-        private CultureInfo CurrentCulture => (Settings?.Value?.CurrentCulture is not null) ?
-            new CultureInfo(Settings.Value.CurrentCulture) :
-            SupportedCultures.First();
+	private IDisposable? _settingsListener;
 
-        public Task StartAsync(CancellationToken cancellationToken)
-        {
-            _cultureOverrideService = new ThreadCultureOverrideService(
-                Thread.CurrentThread,
-                SupportedCultures.Select(c => c.TwoLetterISOLanguageName).ToArray(),
-                CurrentCulture,
-                SupportedCultures.First()
-            );
+	private CultureInfo[] SupportedCultures =>
+		_settings?.CurrentValue?.Cultures?.Select((string c) => new CultureInfo(c)).ToArray() ??
+		new[] { new CultureInfo(DefaultCulture) };
 
-            _cultureOverrideService.TryApply();
+	private CultureInfo CurrentCulture =>
+		(_settings?.CurrentValue?.CurrentCulture != null) ?
+		new CultureInfo(_settings.CurrentValue.CurrentCulture) :
+		(SupportedCultures?.FirstOrDefault() ?? new CultureInfo(DefaultCulture));
 
-#if NET461
-            // This is required for test projects otherwise the ResourceLoader will throw an exception.
-            Windows.ApplicationModel.Resources.ResourceLoader.DefaultLanguage = SupportedCultures.First().Name;
-#endif
-            return Task.CompletedTask;
-        }
+	public LocalizationService(
+		ILogger<LocalizationService> logger,
+		IOptionsMonitor<LocalizationSettings> settings)
+	{
+		_logger = logger;
+		_settings = settings;
+	}
 
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            return Task.CompletedTask;
-        }
-    }
+	public Task StartAsync(CancellationToken cancellationToken)
+	{
+		_uiThread = Thread.CurrentThread;
+		ApplyCurrentCulture();
+		_settingsListener = OptionsMonitorExtensions.OnChange(_settings, delegate
+		{
+			ApplyCurrentCulture(false);
+		});
+		return Task.CompletedTask;
+	}
+
+	public Task StopAsync(CancellationToken cancellationToken)
+	{
+		_settingsListener?.Dispose();
+		return Task.CompletedTask;
+	}
+
+	private void ApplyCurrentCulture(bool updateThreadCulture = true)
+	{
+		try
+		{
+			var culture =
+				((CurrentCulture is not null) ?
+				PickSupportedCulture(CurrentCulture) :
+				PickSupportedCulture(CultureInfo.CurrentCulture)) ?? new CultureInfo(DefaultCulture);
+			ApplicationLanguages.PrimaryLanguageOverride = culture.TwoLetterISOLanguageName;
+			CultureInfo.DefaultThreadCurrentCulture = culture;
+			CultureInfo.DefaultThreadCurrentUICulture = culture;
+			if (updateThreadCulture &&
+				_uiThread is not null)
+			{
+				_uiThread.CurrentCulture = culture;
+				_uiThread.CurrentUICulture = culture;
+			}
+		}
+		catch (Exception e)
+		{
+			_logger.LogError(e, "Failed to apply the culture override.");
+		}
+	}
+
+	private CultureInfo? PickSupportedCulture(CultureInfo culture)
+	{
+		return SupportedCultures.FirstOrDefault(supported => supported.TwoLetterISOLanguageName == culture.TwoLetterISOLanguageName);
+	}
 }
