@@ -1,6 +1,7 @@
-﻿using Uno.Extensions.Navigation.UI;
+﻿using NavigationViewItem = Microsoft.UI.Xaml.Controls.NavigationViewItem;
+using NavigationView = Microsoft.UI.Xaml.Controls.NavigationView;
 
-namespace ToDo.Views;
+namespace Uno.Extensions.Navigation.UI;
 
 public class NavigationViewRequestHandler : ControlRequestHandlerBase<NavigationView>
 {
