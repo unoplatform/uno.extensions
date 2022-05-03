@@ -175,7 +175,7 @@ namespace MyExtensionsApp
 					new ViewMap(View: typeof(LoginPage), ViewModel: typeof(LoginViewModel), ResultData: typeof(Credentials)),
 					new ViewMap(View: typeof(HomePage), Data: new DataMap<Credentials>()),
 					new ViewMap(View: typeof(ProductsPage), ViewModel: typeof(ProductsViewModel)),
-					new ViewMap(DynamicView: () =>
+					new ViewMap(ViewSelector: () =>
 							   (App.Current as App)?.Window?.Content?.ActualSize.X > 800 ? typeof(ProductControl) : typeof(ProductDetailsPage),
 								ViewModel: typeof(ProductDetailsViewModel), Data: new DataMap<Product>(
 																							ToQuery: product => new Dictionary<string, string> { { nameof(Product.ProductId), product.ProductId.ToString() } },

@@ -45,7 +45,7 @@ public class ReactiveViewRegistry : ViewRegistry
 		if (item.ViewModel is not null &&
 			ViewModelMappings.TryGetValue(item.ViewModel, out var bindableViewModel))
 		{
-			item = new ReactiveViewMap(item.View, item.DynamicView, item.ViewModel, item.Data, item.ResultData, bindableViewModel);
+			item = new ReactiveViewMap(item.View, item.ViewSelector, item.ViewModel, item.Data, item.ResultData, bindableViewModel);
 		}
 
 		base.InsertItem(item);
@@ -67,7 +67,7 @@ public class ReactiveRouteResolver : RouteResolver
 	{
 		var viewFunc = (drm.View?.View is not null) ?
 										() => drm.View.View :
-										drm.View?.DynamicView;
+										drm.View?.ViewSelector;
 		return new RouteInfo(
 			Path: drm.Path,
 			View: viewFunc,
@@ -96,12 +96,12 @@ public class ReactiveRouteResolver : RouteResolver
 
 public record ReactiveViewMap(
 		Type? View = null,
-		Func<Type?>? DynamicView = null,
+		Func<Type?>? ViewSelector = null,
 		Type? ViewModel = null,
 		DataMap? Data = null,
 		Type? ResultData = null,
 		Type? BindableViewModel = null
-	) : ViewMap(View, DynamicView, ViewModel, Data, ResultData)
+	) : ViewMap(View, ViewSelector, ViewModel, Data, ResultData)
 {
 	public override void RegisterTypes(IServiceCollection services)
 	{

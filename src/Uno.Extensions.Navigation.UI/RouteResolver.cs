@@ -56,7 +56,7 @@ public class RouteResolver : IRouteResolver
 	{
 		var viewFunc = (drm.View?.View is not null) ?
 										() => drm.View.View :
-										drm.View?.DynamicView;
+										drm.View?.ViewSelector;
 		return new RouteInfo(
 			Path: drm.Path,
 			View: viewFunc,
