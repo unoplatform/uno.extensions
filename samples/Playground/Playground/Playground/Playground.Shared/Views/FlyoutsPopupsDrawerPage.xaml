@@ -18,6 +18,7 @@
 		<StackPanel Orientation="Horizontal">
 			<Button Content="Open with Nav - ext Control" uen:Navigation.Request="MyDrawer/Show" />
 			<Button Content="Close with Nav - ext Control" uen:Navigation.Request="MyDrawer/-" />
+			<Button Content="Open request data - ext Control" Click="OpenDrawerResponseClick" />
 		</StackPanel>
 		<utu:DrawerControl x:Name="SampleDrawerControl"
 						   Grid.Row="1"
@@ -37,7 +38,8 @@
 					<StackPanel>
 						<TextBlock Text="Draw Content" FontSize="36" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 						<Button Click="OpenDrawerClick" Content="Close"/>
-						<Button Content="Close with Nav" uen:Navigation.Request="Hide"/>
+						<Button Content="Close with Nav" uen:Navigation.Request="-"/>
+						<Button Content="Close with Result" Click="CloseDrawerWithResultClick"/>
 					</StackPanel>
 				</Grid>
 			</utu:DrawerControl.DrawerContent>

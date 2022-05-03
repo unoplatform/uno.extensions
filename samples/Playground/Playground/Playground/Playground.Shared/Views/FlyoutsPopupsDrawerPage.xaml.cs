@@ -1,35 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
+﻿
+namespace Playground.Views;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
-
-namespace Playground.Views
+public sealed partial class FlyoutsPopupsDrawerPage : Page
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class FlyoutsPopupsDrawerPage : Page
-    {
-        public FlyoutsPopupsDrawerPage()
-        {
-            this.InitializeComponent();
-        }
+	public FlyoutsPopupsDrawerPage()
+	{
+		this.InitializeComponent();
+	}
 
-		private void OpenDrawerClick(object sender, RoutedEventArgs e)
-		{
-			SampleDrawerControl.IsOpen = !SampleDrawerControl.IsOpen;
-		}
+	private void OpenDrawerClick(object sender, RoutedEventArgs e)
+	{
+		SampleDrawerControl.IsOpen = !SampleDrawerControl.IsOpen;
+	}
+
+	private async void OpenDrawerResponseClick(object sender, RoutedEventArgs e)
+	{
+		var result = await this.Navigator().NavigateRouteForResultAsync<Widget>(this, "MyDrawer/Show").AsResult();
+		await this.Navigator().ShowMessageDialogAsync(this, $"Widget: {result.SomeOrDefault()?.Name}");
+	}
+
+	private async void CloseDrawerWithResultClick(object sender, RoutedEventArgs e)
+	{
+		await (sender as FrameworkElement).Navigator().NavigateBackWithResultAsync(this, data: new Widget { Name = "Drawer Widget" });
 	}
 }
