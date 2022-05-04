@@ -8,6 +8,8 @@ public class FlyoutNavigator : ControlNavigator
 
 	private Window _window;
 
+	private bool _closedByNavigation;
+
 	public FlyoutNavigator(
 		ILogger<ContentDialogNavigator> logger,
 		IDispatcher dispatcher,
@@ -31,6 +33,7 @@ public class FlyoutNavigator : ControlNavigator
 			return default;
 		}
 
+
 		var route = request.Route;
 		// If this is back navigation, then make sure it's used to close
 		// any of the open dialogs
@@ -47,9 +50,14 @@ public class FlyoutNavigator : ControlNavigator
 			}
 
 			var mapping = Resolver.Find(route);
+
+			var attributes = mapping?.ViewAttributes as FlyoutAttributes;
+			var autoDismiss = attributes?.AutoDismiss ?? true; // We default to true, which is the default flyout behaviour
+
+
 			injectedFlyout = !(mapping?.RenderView?.IsSubclassOf(typeof(Flyout))??false);
 			var viewModel = CreateViewModel(Region.Services, request, route, mapping);
-			Flyout = await DisplayFlyout(request, mapping?.RenderView, viewModel, injectedFlyout);
+			Flyout = await DisplayFlyout(request, mapping?.RenderView, viewModel, injectedFlyout, autoDismiss);
 		}
 		var responseRequest = injectedFlyout ? Route.Empty : route with { Path = null };
 		return responseRequest;
@@ -57,6 +65,7 @@ public class FlyoutNavigator : ControlNavigator
 
 	private void CloseFlyout()
 	{
+		_closedByNavigation = true;
 		if (Flyout is not null)
 		{
 			Flyout.Closed -= Flyout_Closed;
@@ -64,7 +73,7 @@ public class FlyoutNavigator : ControlNavigator
 		}
 	}
 
-	private async Task<Flyout?> DisplayFlyout(NavigationRequest request, Type? viewType, object? viewModel, bool injectedFlyout)
+	private async Task<Flyout?> DisplayFlyout(NavigationRequest request, Type? viewType, object? viewModel, bool injectedFlyout, bool autoDismiss)
 	{
 		var route = request.Route;
 		var navigation = Region.Navigator();
@@ -126,6 +135,12 @@ public class FlyoutNavigator : ControlNavigator
 		}
 
 		flyout.ShowAt(flyoutHost);
+
+		if(!autoDismiss)
+		{
+			flyout.Closing += (s, e) => e.Cancel = !_closedByNavigation;
+		}
+
 
 		flyout.Closed += Flyout_Closed;
 

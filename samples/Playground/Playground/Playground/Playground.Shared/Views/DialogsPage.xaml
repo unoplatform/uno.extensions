@@ -48,6 +48,8 @@
 					Click="FlyoutFromBackgroundClick" />
 			<Button Content="Flyout from Background Thread requesting data"
 					Click="FlyoutFromBackgroundRequestingDataClick" />
+			<Button uen:Navigation.Request="!NonDismiss"
+					Content="Non-dismis Flyout from Xaml" />
 		</StackPanel>
 	</Grid>
 </Page>
