@@ -14,8 +14,12 @@ internal static class StringExtensions
 		=> Align(items, new string('\t', indent));
 
 	public static string Align(this IEnumerable<string?> items, string indent)
-		=> string.Join("\r\n" + indent, items.Where(item => !string.IsNullOrWhiteSpace(item)).Select(input => Align(input!, indent)));
+		=> string.Join("\r\n" + indent, items.Where(item => !string.IsNullOrWhiteSpace(item)).Select((input, i) => Align(input!, indent)));
 
+	public static string Align(this string text, int indent)
+		=> Align(text, new string('\t', indent));
+
+	// Note: This WILL NOT align the first (non white) line as it's expected to be used in string interpolation where we already have indentation
 	private static string Align(string text, string indent)
 	{
 		var lines = text
@@ -31,6 +35,8 @@ internal static class StringExtensions
 				return text.TrimStart();
 		}
 
+
+
 		var trimLength = lines
 			.Where(line => line.trimmableLength is not null)
 			.SkipWhile(line => line.trimmableLength is 0)
@@ -39,6 +45,16 @@ internal static class StringExtensions
 		if (trimLength is int.MaxValue)
 		{
 			trimLength = 0;
+		}
+		else if (trimLength > 0
+			&& lines.First().trimmableLength is 0
+			&& lines.SkipWhile(line => line.trimmableLength is null).Skip(1).All(line => line.trimmableLength == trimLength))
+		{
+			// If we have only the first line which is at 0 and all the content is already indented, we make sure to keep one indent.
+			// This is to support declaration like:
+			// => bla
+			//		.Bla();
+			trimLength--;
 		}
 
 		var isFirstNonWhiteLine = true;
@@ -62,7 +78,7 @@ internal static class StringExtensions
 				isFirstNonWhiteLine = false;
 
 				sb.Append(indent);
-				sb.Append(line.Substring(trimLength));
+				sb.Append(line, trimLength, line.Length - trimLength);
 			}
 		}
 

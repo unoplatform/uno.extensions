@@ -74,8 +74,7 @@ public record Property(Accessibility Accessibility, string Type, string Name)
 					sb.Append(" ");
 				}
 
-				sb.AppendLine(init ? "init" : "set");
-				sb.AppendLine($" => {setter};");
+				sb.AppendLine($"{(init ? "init" : "set")} => {setter};");
 				sb.AppendLine();
 			}
 			else if (hasSetter is true)
