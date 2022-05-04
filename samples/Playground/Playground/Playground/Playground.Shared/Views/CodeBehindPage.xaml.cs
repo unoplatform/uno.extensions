@@ -69,6 +69,12 @@ public sealed partial class CodeBehindPage : Page, IInjectable<INavigator>
 		var result = await Navigator!.NavigateForResultAsync<Country>(this).AsResult();
 	}
 
+	// Navigate to the route that will return data of type TResultData
+	public async void GetDataAsyncClick(object sender, RoutedEventArgs args)
+	{
+		var result = await Navigator!.GetDataAsync<Country>(this);
+	}
+
 	// Navigate to previous view (goback on frame or close dialog/popup)
 	public async void NavigateBackAsyncClick(object sender, RoutedEventArgs args)
 	{
