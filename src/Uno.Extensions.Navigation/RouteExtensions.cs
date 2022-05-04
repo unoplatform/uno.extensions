@@ -23,7 +23,7 @@ public static class RouteExtensions
 		}
 
 		var qualifierMatch = nonAlphaRegex.Match(path);
-		if (qualifierMatch.Success)
+		if (qualifierMatch.Success && qualifierMatch.Index == 0)
 		{
 			path = path.TrimStart(qualifierMatch.Value);
 			nextQualifier = qualifierMatch.Value;

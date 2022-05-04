@@ -261,9 +261,9 @@ public static class RouteExtensions
 	{
 		var path = route.Path ?? string.Empty;
 		var routeBase = path.ExtractBase(out var nextQualifier, out var nextPath);
-		if (nextQualifier == Qualifiers.Root)
+		if (nextQualifier.StartsWith(Qualifiers.Root))
 		{
-			nextQualifier = Qualifiers.None;
+			nextQualifier = nextQualifier.TrimStartOnce(Qualifiers.Root);
 		}
 		return route with { Qualifier = nextQualifier, Base = routeBase, Path = nextPath };
 	}

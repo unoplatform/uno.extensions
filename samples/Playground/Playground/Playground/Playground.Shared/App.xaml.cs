@@ -229,6 +229,7 @@ namespace Playground
 						new ViewMap<FourthPage, FourthViewModel>(),
 						new ViewMap<FifthPage, FifthViewModel>(),
 						new ViewMap<DialogsPage>(),
+						new ViewMap<FlyoutsPopupsDrawerPage>(),
 						new ViewMap<SimpleDialog, SimpleViewModel>(),
 						new ViewMap<ComplexDialog>(),
 						new ViewMap<ComplexDialogFirstPage>(),
@@ -272,6 +273,7 @@ namespace Playground
 					new RouteMap("Third",View: views.FindByView<ThirdPage>()),
 					new RouteMap("Fourth",View: views.FindByView<FourthPage>()),
 					new RouteMap("Fifth",View: views.FindByView<FifthPage>(), DependsOn: "Third"),
+					new RouteMap("Flyouts",View: views.FindByView<FlyoutsPopupsDrawerPage>()),
 					new RouteMap("Dialogs",View: views.FindByView<DialogsPage>(),
 					Nested: new[]
 					{

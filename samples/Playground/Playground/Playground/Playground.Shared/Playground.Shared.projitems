@@ -73,6 +73,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Views\FifthPage.xaml.cs">
       <DependentUpon>FifthPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\FlyoutsPopupsDrawerPage.xaml.cs">
+      <DependentUpon>FlyoutsPopupsDrawerPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\FourthPage.xaml.cs">
       <DependentUpon>FourthPage.xaml</DependentUpon>
     </Compile>
@@ -162,6 +165,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\FifthPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\FlyoutsPopupsDrawerPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
