@@ -10,7 +10,7 @@ using Uno.Threading;
 
 namespace Uno.Extensions.Reactive.Core;
 
-internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable
+internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, IStateImpl
 {
 	private readonly FastAsyncLock _updateGate = new();
 	private readonly IForEachRunner? _innerEnumeration;
@@ -23,6 +23,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable
 	/// Gets the context to which this state belongs.
 	/// </summary>
 	internal SourceContext? Context { get; }
+	SourceContext IStateImpl.Context => Context;
 
 	internal Message<T> Current => _current;
 
@@ -63,14 +64,24 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable
 			=> UpdateCore(currentStateMsg => currentStateMsg.OverrideBy(newSrcMsg), ct);
 	}
 
-	public StateImpl(Option<T> defaultValue)
+	public StateImpl(SourceContext context, Option<T> defaultValue)
 	{
+		Context = context;
 		_hasCurrent = true; // Even if undefined, we consider that we do have a value in order to produce an initial state
 
 		if (!defaultValue.IsUndefined())
 		{
 			_current = _current.With().Data(defaultValue);
 		}
+	}
+
+
+	/// <summary>
+	/// Legacy - Used only be legacy IInput syntax
+	/// </summary>
+	public StateImpl(Option<T> defaultValue)
+		: this(null!, defaultValue)
+	{
 	}
 
 	IAsyncEnumerable<Message<T>> ISignal<Message<T>>.GetSource(SourceContext context, CancellationToken ct)

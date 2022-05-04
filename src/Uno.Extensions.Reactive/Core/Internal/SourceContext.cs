@@ -137,6 +137,7 @@ public sealed class SourceContext : IAsyncDisposable
 	/// <typeparam name="T">Type of the value of feed.</typeparam>
 	/// <param name="feed">The feed to get source from.</param>
 	/// <returns>The cached with replay async enumeration of messages produced by the given feed</returns>
+	[EditorBrowsable(EditorBrowsableState.Advanced)]
 	public IAsyncEnumerable<Message<T>> GetOrCreateSource<T>(IFeed<T> feed)
 	{
 		if (_isNone)
@@ -160,6 +161,7 @@ public sealed class SourceContext : IAsyncDisposable
 	/// <typeparam name="T">Type of the value of feed.</typeparam>
 	/// <param name="feed">The feed to get source from.</param>
 	/// <returns>The cached with replay async enumeration of messages produced by the given feed</returns>
+	[EditorBrowsable(EditorBrowsableState.Advanced)]
 	public IAsyncEnumerable<Message<IImmutableList<T>>> GetOrCreateSource<T>(IListFeed<T> feed)
 	{
 		if (_isNone)
@@ -183,6 +185,7 @@ public sealed class SourceContext : IAsyncDisposable
 	/// <typeparam name="T">Type of the value of feed.</typeparam>
 	/// <param name="feed">The feed to get source from.</param>
 	/// <returns>The state wrapping the given feed</returns>
+	[EditorBrowsable(EditorBrowsableState.Advanced)]
 	public IState<T> GetOrCreateState<T>(IFeed<T> feed)
 		=> GetOrCreateStateCore(feed);
 
@@ -192,6 +195,7 @@ public sealed class SourceContext : IAsyncDisposable
 	/// <typeparam name="T">Type of the value of items.</typeparam>
 	/// <param name="feed">The list feed to get source from.</param>
 	/// <returns>The list state wrapping the given list feed</returns>
+	[EditorBrowsable(EditorBrowsableState.Advanced)]
 	public IListState<T> GetOrCreateListState<T>(IListFeed<T> feed)
 		=> new ListStateImpl<T>(GetOrCreateStateCore(feed.AsFeed()));
 
@@ -201,10 +205,16 @@ public sealed class SourceContext : IAsyncDisposable
 	/// <typeparam name="T">Type of the value of items.</typeparam>
 	/// <param name="feed">The list feed to get source from.</param>
 	/// <returns>The list state wrapping the given list feed</returns>
+	[EditorBrowsable(EditorBrowsableState.Advanced)]
 	public IListState<T> GetOrCreateListState<T>(IFeed<IImmutableList<T>> feed)
 		=> new ListStateImpl<T>(GetOrCreateStateCore(feed));
 
 	private StateImpl<T> GetOrCreateStateCore<T>(IFeed<T> feed)
+		=> GetOrCreateStateCore(feed, (ctx, f) => new StateImpl<T>(ctx, f));
+
+	private TState GetOrCreateStateCore<TSource, TState>(TSource source, Func<SourceContext, TSource, TState> factory)
+		where TSource : class
+		where TState : IStateImpl, IAsyncDisposable
 	{
 		if (_isNone)
 		{
@@ -217,16 +227,49 @@ public sealed class SourceContext : IAsyncDisposable
 			throw new ObjectDisposedException(nameof(SourceContext));
 		}
 
-		if (feed is StateImpl<T> state && state.Context == this)
+		if (source is TState state && state.Context == this)
 		{
 			return state;
 		}
 
 		lock (states)
 		{
-			state = states.TryGetValue(feed, out var existing)
-				? (StateImpl<T>)existing
-				: (StateImpl<T>)(states[feed] = new StateImpl<T>(this, feed));
+			state = states.TryGetValue(source, out var existing)
+				? (TState)existing
+				: (TState)(states[source] = factory(this, source));
+		}
+
+		if (_states is null) // The context has been disposed while we where creating the State ...
+		{
+			_ = state.DisposeAsync();
+			throw new ObjectDisposedException(nameof(SourceContext));
+		}
+
+		return state;
+	}
+
+	/// <summary>
+	/// Create a <see cref="IState{T}"/> for a given value.
+	/// </summary>
+	/// <typeparam name="T">Type of the value of items.</typeparam>
+	/// <param name="initialValue">The initial value of the state</param>
+	/// <returns>The list state wrapping the given list feed</returns>
+	/// <exception cref="ObjectDisposedException"></exception>
+	[EditorBrowsable(EditorBrowsableState.Advanced)]
+	public IState<T> CreateState<T>(Option<T> initialValue)
+	{
+		var states = _states;
+		if (states is null)
+		{
+			throw new ObjectDisposedException(nameof(SourceContext));
+		}
+
+		IState<T> state;
+		lock (states)
+		{
+			// Note: we use the **boxed** initialValue as key for the states cache,
+			//		 but it's only to have a key, it's not expected to be retrieved.
+			states[initialValue] = state = new StateImpl<T>(this, initialValue);
 		}
 
 		if (_states is null) // The context has been disposed while we where creating the State ...
