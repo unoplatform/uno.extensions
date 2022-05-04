@@ -1,5 +1,7 @@
 ﻿using NavigationViewItem = Microsoft.UI.Xaml.Controls.NavigationViewItem;
 using NavigationView = Microsoft.UI.Xaml.Controls.NavigationView;
+using NavigationViewSelectionChangedEventArgs = Microsoft.UI.Xaml.Controls.NavigationViewSelectionChangedEventArgs;
+using NavigationViewItemInvokedEventArgs = Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs;
 
 namespace Uno.Extensions.Navigation.UI;
 
