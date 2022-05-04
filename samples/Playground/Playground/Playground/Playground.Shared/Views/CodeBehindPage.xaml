@@ -45,6 +45,8 @@
 					Click="NavigateDataForResultAsyncClick" />
 			<Button Content="NavigateForResultAsync&lt;TResultData&gt;(...);"
 					Click="NavigateForResultAsyncClick" />
+			<Button Content="GetDataAsync&lt;TResultData&gt;(...);"
+					Click="GetDataAsyncClick" />
 			<Button Content="NavigateBackAsync(...);"
 					Click="NavigateBackAsyncClick" />
 			<Button Content="NavigateBackWithResultAsync&lt;TResult&gt;(...);"

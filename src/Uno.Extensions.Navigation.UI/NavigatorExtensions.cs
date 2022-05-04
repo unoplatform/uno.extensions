@@ -37,7 +37,7 @@ public static class NavigatorExtensions
 		}
 
 		var result = await service.NavigateAsync(req);
-        return result?.AsResult<TSource>();
+        return result?.AsResultResponse<TSource>();
     }
 #endif
 

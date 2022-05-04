@@ -2,7 +2,7 @@
 
 public static class NavigationResponseExtensions
 {
-	public static NavigationResultResponse? AsResult(this NavigationResponse response)
+	public static NavigationResultResponse? AsResultResponse(this NavigationResponse response)
 	{
 
 		if (response is NavigationResultResponse genericResultResponse)
@@ -13,7 +13,7 @@ public static class NavigationResponseExtensions
 		return null;
 	}
 
-	public static NavigationResultResponse<TResult>? AsResult<TResult>(this NavigationResponse response)
+	public static NavigationResultResponse<TResult>? AsResultResponse<TResult>(this NavigationResponse response)
     {
         if (response is NavigationResultResponse<TResult> resultResponse)
         {
