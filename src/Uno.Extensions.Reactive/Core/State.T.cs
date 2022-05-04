@@ -61,11 +61,30 @@ public static partial class State<T>
 	/// </summary>
 	/// <typeparam name="TOwner">Type of the owner of the state.</typeparam>
 	/// <param name="owner">The owner of the state.</param>
+	/// <param name="name">The caller member where the state is being declared in code and which is used in the key to uniquely identify the state.</param>
+	/// <param name="line">The line where the state is being declared in code and which is used in the key to uniquely identify the state.</param>
+	/// <returns>A feed that encapsulate the source.</returns>
+	public static IState<T> Empty<TOwner>(TOwner owner, [CallerMemberName] string? name = null, [CallerLineNumber] int line = -1)
+		where TOwner : class
+		=> AttachedProperty.GetOrCreate(
+			owner,
+			(
+				name ?? throw new InvalidOperationException("The name of the state must not be null"),
+				line <0 ? throw new InvalidOperationException("The provided line number is invalid.") : line
+			),
+			(o, _) => SourceContext.GetOrCreate(o).CreateState(Option<T>.None()));
+
+	/// <summary>
+	/// Gets or creates a state from a static initial value.
+	/// </summary>
+	/// <typeparam name="TOwner">Type of the owner of the state.</typeparam>
+	/// <param name="owner">The owner of the state.</param>
 	/// <param name="valueProvider">The provider of the initial value of the state.</param>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IState<T> Value<TOwner>(TOwner owner, Func<T> valueProvider)
 		where TOwner : class
-		=> AttachedProperty.GetOrCreate(owner, valueProvider, (o, v) => SourceContext.GetOrCreate(owner).CreateState(Option<T>.Some(v())));
+		// Note: We force the usage of delegate so 2 properties which are doing State.Value(this, () => 42) will effectively have 2 distinct states.
+		=> AttachedProperty.GetOrCreate(owner, valueProvider, (o, v) => SourceContext.GetOrCreate(o).CreateState(Option<T>.Some(v())));
 
 	/// <summary>
 	/// Gets or creates a state from a static initial value.
@@ -76,6 +95,7 @@ public static partial class State<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IState<T> Value<TOwner>(TOwner owner, Func<Option<T>> valueProvider)
 		where TOwner : class
+		// Note: We force the usage of delegate so 2 properties which are doing State.Value(this, () => 42) will effectively have 2 distinct states.
 		=> AttachedProperty.GetOrCreate(owner, valueProvider, (o, v) => SourceContext.GetOrCreate(owner).CreateState(v()));
 
 	/// <summary>

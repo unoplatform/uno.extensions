@@ -34,7 +34,8 @@ public static partial class State
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IState<TValue> Value<TOwner, TValue>(TOwner owner, Func<TValue> valueProvider)
 		where TOwner : class
-		=> State<TValue>.Value(owner, valueProvider);
+		// Note: We force the usage of delegate so 2 properties which are doing State.Value(this, () => 42) will effectively have 2 distinct states.
+		=> State<TValue>.Value(owner, valueProvider); 
 
 	/// <summary>
 	/// Gets or creates a state from an async method.
