@@ -13,6 +13,7 @@ public record RouteInfo(
 	bool IsDefault = false,
 	string DependsOn = "",
 	Func<NavigationRequest, NavigationRequest>? Init = null,
+	Func<bool>? IsDialogViewType = null,
 	params RouteInfo[] Nested)
 {
 	public Type? RenderView => View?.Invoke();

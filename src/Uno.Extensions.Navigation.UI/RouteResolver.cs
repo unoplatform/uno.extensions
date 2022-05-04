@@ -69,7 +69,25 @@ public class RouteResolver : IRouteResolver
 			IsDefault: drm.IsDefault,
 			DependsOn: drm.DependsOn,
 			Init: drm.Init,
+			IsDialogViewType: () =>
+			{
+				return IsDialogViewType(viewFunc?.Invoke());
+			},
 			Nested: ResolveViewMaps(drm.Nested));
+	}
+
+	private static bool IsDialogViewType(Type? viewType = null)
+	{
+		if(viewType is null)
+		{
+			return false;;
+		}
+
+		return viewType == typeof(MessageDialog) ||
+			viewType == typeof(ContentDialog) ||
+			viewType.IsSubclassOf(typeof(ContentDialog)) ||
+			viewType == typeof(Flyout) ||
+			viewType.IsSubclassOf(typeof(Flyout));
 	}
 
 
