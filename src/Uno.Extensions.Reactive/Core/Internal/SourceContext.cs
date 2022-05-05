@@ -281,6 +281,17 @@ public sealed class SourceContext : IAsyncDisposable
 		return state;
 	}
 
+	/// <summary>
+	/// Create a <see cref="IState{T}"/> for a given value.
+	/// </summary>
+	/// <typeparam name="T">Type of the value of items.</typeparam>
+	/// <param name="initialValue">The initial value of the state</param>
+	/// <returns>The list state wrapping the given list feed</returns>
+	/// <exception cref="ObjectDisposedException"></exception>
+	[EditorBrowsable(EditorBrowsableState.Advanced)]
+	public IListState<T> CreateListState<T>(Option<IImmutableList<T>> initialValue)
+		=> new ListStateImpl<T>(CreateState(initialValue));
+
 	/// <inheritdoc />
 	public async ValueTask DisposeAsync()
 	{

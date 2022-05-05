@@ -6,10 +6,7 @@ using System.Threading.Tasks;
 
 namespace Uno.Extensions.Reactive;
 
-/// <summary>
-/// Provides a set of static methods to create and manipulate <see cref="IListState{T}"/>.
-/// </summary>
-public static class ListState
+static partial class ListState
 {
 	#region Operators
 	/// <summary>

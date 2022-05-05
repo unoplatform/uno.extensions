@@ -57,7 +57,7 @@ public static partial class State<T>
 		=> AttachedProperty.GetOrCreate(Validate(sourceProvider), sp => S(sp, new CustomFeed<T>(_ => sp())));
 
 	/// <summary>
-	/// Gets or creates a state from a static initial value.
+	/// Gets or creates an empty state.
 	/// </summary>
 	/// <typeparam name="TOwner">Type of the owner of the state.</typeparam>
 	/// <param name="owner">The owner of the state.</param>

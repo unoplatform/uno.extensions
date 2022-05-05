@@ -7,9 +7,6 @@ using System.Threading.Tasks;
 
 namespace Uno.Extensions.Reactive;
 
-/// <summary>
-/// Provides a set of static methods to create and manipulate <see cref="IState{T}"/>.
-/// </summary>
 partial class State
 {
 	/// <summary>
