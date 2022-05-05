@@ -38,7 +38,15 @@ public record ViewMap<TView, TViewModel>(
 {
 }
 
-public record DialogAction(string? Label = "", Action? Action = null, object? Id = null) { }
+public record LocalizableDialogAction(Func<IStringLocalizer?, string?>? LabelProvider = default, Action? Action = null, object? Id = null) { }
+
+public record DialogAction(string? Label = default, Action? Action = null, object? Id = null)
+	: LocalizableDialogAction(
+		LabelProvider: _ => Label,
+		Action,
+		Id
+		)
+{ }
 
 #pragma warning restore SA1313 // Parameter names should begin with lower-case letter
 

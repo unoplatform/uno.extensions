@@ -1,35 +1,35 @@
 ﻿namespace Uno.Extensions.Navigation;
 
 #pragma warning disable SA1313 // Parameter names should begin with lower-case letter
-public record MessageDialogAttributes(
-	string? Content = null,
-	string? Title = null,
+internal record MessageDialogAttributes(
+	Func<IStringLocalizer?, string?>? ContentProvider = default,
+	Func<IStringLocalizer?, string?>? TitleProvider = default,
 	bool DelayUserInput = false,
 	int DefaultButtonIndex = 0,
 	int CancelButtonIndex = 0,
-	DialogAction[]? Buttons = null
+	LocalizableDialogAction[]? Buttons = default
 )
 {
 }
 
 
 public record MessageDialogViewMap(
-	string? Content = null,
-	string? Title = null,
+	string? Content = default,
+	string? Title = default,
 	bool DelayUserInput = false,
 	int DefaultButtonIndex = 0,
 	int CancelButtonIndex = 0,
-	DialogAction[]? Buttons = null,
-	Type? ViewModel = null,
-	DataMap? Data = null,
-	Type? ResultData = null
+	DialogAction[]? Buttons = default,
+	Type? ViewModel = default,
+	DataMap? Data = default,
+	Type? ResultData = default
 ) : ViewMap<MessageDialog>(
 		ViewModel,
 		Data,
 		ResultData,
 		new MessageDialogAttributes(
-			Content,
-			Title,
+			ContentProvider: _ => Content,
+			TitleProvider: _ => Title,
 			DelayUserInput,
 			DefaultButtonIndex,
 			CancelButtonIndex,
@@ -38,18 +38,28 @@ public record MessageDialogViewMap(
 {
 }
 
-public record MessageDialogViewMap<TViewModel>(
-	string? Content = null,
-	string? Title = null,
+public record LocalizableMessageDialogViewMap(
+	Func<IStringLocalizer?, string?>? Content = default,
+	Func<IStringLocalizer?, string?>? Title = default,
 	bool DelayUserInput = false,
 	int DefaultButtonIndex = 0,
 	int CancelButtonIndex = 0,
-	DialogAction[]? Buttons = null,
-	DataMap? Data = null,
-	Type? ResultData = null
-) : MessageDialogViewMap(
-	Content,Title,DelayUserInput,DefaultButtonIndex, CancelButtonIndex, Buttons,
-	typeof(TViewModel), Data, ResultData)
+	LocalizableDialogAction[]? Buttons = default,
+	Type? ViewModel = default,
+	DataMap? Data = default,
+	Type? ResultData = default
+) : ViewMap<MessageDialog>(
+		ViewModel,
+		Data,
+		ResultData,
+		new MessageDialogAttributes(
+			ContentProvider: Content,
+			TitleProvider: Title,
+			DelayUserInput,
+			DefaultButtonIndex,
+			CancelButtonIndex,
+			Buttons)
+		)
 {
 }
 

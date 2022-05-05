@@ -92,6 +92,18 @@ public sealed partial class App : Application
 				}
 			);
 
+		var localizedDialog = new LocalizableMessageDialogViewMap(
+				Content: localizer => "[localized]Confirm this message?",
+				Title: localizer => "[localized]Confirm?",
+				DelayUserInput: true,
+				DefaultButtonIndex: 1,
+				Buttons: new LocalizableDialogAction[]
+				{
+								new(LabelProvider: localizer=> localizer["Y"],Id:"Y"),
+								new(LabelProvider: localizer=> localizer["N"], Id:"N")
+				}
+			);
+
 
 		views.Register(
 					// Option 1: Specify ShellView in order to customise the shell
@@ -121,7 +133,8 @@ public sealed partial class App : Application
 					new ViewMap<AdHocPage, AdHocViewModel>(),
 					new ViewMap<AuthTokenDialog, AuthTokenViewModel>(),
 					new ViewMap<BasicFlyout, BasicViewModel>(),
-					confirmDialog
+					confirmDialog,
+					localizedDialog
 			);
 
 
@@ -174,7 +187,8 @@ public sealed partial class App : Application
 					{
 						new RouteMap("Auth", View: views.FindByView<AuthTokenDialog>())
 					}),
-					new RouteMap("Confirm", View: confirmDialog)
+					new RouteMap("Confirm", View: confirmDialog),
+					new RouteMap("LocalizedConfirm", View: localizedDialog)
 			}));
 	}
 }

@@ -126,4 +126,10 @@
   <data name="HomePage_AppName.Text" xml:space="preserve">
     <value>Playground</value>
   </data>
+  <data name="N" xml:space="preserve">
+    <value>N - English</value>
+  </data>
+  <data name="Y" xml:space="preserve">
+    <value>Y - English</value>
+  </data>
 </root>

@@ -2,14 +2,17 @@
 
 public class MessageDialogNavigator : DialogNavigator
 {
+	private readonly IStringLocalizer _localizer;
 	public MessageDialogNavigator(
 		ILogger<DialogNavigator> logger,
 		IDispatcher dispatcher,
 		IRouteResolver resolver,
 		IRegion region,
-		Window window)
+		Window window,
+		IStringLocalizer localizer)
 		: base(logger, dispatcher, region, resolver, window)
 	{
+		_localizer = localizer;
 	}
 
 	protected override bool RegionCanNavigate(Route route, RouteInfo? routeMap) =>
@@ -31,10 +34,10 @@ public class MessageDialogNavigator : DialogNavigator
 
 		var content = data.TryGetValue(RouteConstants.MessageDialogParameterContent, out var contentValue) ?
 						contentValue as string :
-						messageView?.Content;
+						messageView?.ContentProvider?.Invoke(_localizer);
 		var title = data.TryGetValue(RouteConstants.MessageDialogParameterTitle, out var titleValue) ?
 						titleValue as string :
-						messageView?.Title;
+						messageView?.TitleProvider?.Invoke(_localizer);
 		var options = data.TryGetValue(RouteConstants.MessageDialogParameterOptions, out var optionsValue) ?
 						(optionsValue is MessageDialogOptions opt) ? opt : MessageDialogOptions.None :
 						(messageView?.DelayUserInput ?? false) ? MessageDialogOptions.AcceptUserInputAfterDelay : MessageDialogOptions.None;
@@ -49,7 +52,7 @@ public class MessageDialogNavigator : DialogNavigator
 						messageView?.Buttons) ?? new DialogAction[] { };
 
 		var commands = from b in buttons
-					   select new UICommand(b.Label, new UICommandInvokedHandler(cmd => b.Action?.Invoke()), b.Id);
+					   select new UICommand(b.LabelProvider?.Invoke(_localizer), new UICommandInvokedHandler(cmd => b.Action?.Invoke()), b.Id);
 
 		var md = new MessageDialog(
 			content,
@@ -76,7 +79,7 @@ public class MessageDialogNavigator : DialogNavigator
 					{
 						var msgResult = result.Result;
 						var dialogAction = msgResult is not null ?
-											(buttons.FirstOrDefault(b => b.Label == msgResult.Label) ?? new DialogAction(Label: msgResult.Label, Id: msgResult.Id)) :
+											(buttons.FirstOrDefault(b => b.Id == msgResult.Id) ?? new DialogAction(Label: msgResult.Label, Id: msgResult.Id)) :
 											default;
 						if (dialogAction is not null)
 						{
