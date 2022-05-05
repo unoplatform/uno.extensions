@@ -7,12 +7,12 @@ namespace Uno.Extensions.Reactive.Generator;
 
 public record Property(Accessibility Accessibility, string Type, string Name)
 {
-	public static Property FromProperty(IPropertySymbol property)
+	public static Property FromProperty(IPropertySymbol property, bool allowInitOnlySetter = false)
 		=> new(property.Type, property.Name)
 		{
 			Accessibility = property.DeclaredAccessibility,
 			HasGetter = property.GetMethod?.IsAccessible() ?? false,
-			HasSetter = property.SetMethod is {IsInitOnly: false} @set && set.IsAccessible(),
+			HasSetter = property.SetMethod is {} set && set.IsAccessible() && (allowInitOnlySetter || !set.IsInitOnly)
 		};
 
 	public Property(Accessibility accessibility, ITypeSymbol type, string name)
