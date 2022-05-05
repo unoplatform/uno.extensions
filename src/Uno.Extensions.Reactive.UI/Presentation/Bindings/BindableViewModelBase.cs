@@ -128,7 +128,7 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 						// Note: No needs to use .WithCancellation() here as we are enumerating the stateImp which is going to be disposed anyway.
 						await foreach (var msg in source.ConfigureAwait(true))
 						{
-							if (msg.Current.Get(BindingSource) != this)
+							if (msg.Changes.Contains(MessageAxis.Data) && !(msg.Current.Get(BindingSource)?.Equals((this, propertyName)) ?? false))
 							{
 								updated(msg.Current.Data.SomeOrDefault(GetDefaultValueForBindings<TProperty>()));
 								_propertyChanged.Raise(new PropertyChangedEventArgs(propertyName));
@@ -173,7 +173,7 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 				var current = msg.Current.Data.SomeOrDefault(GetDefaultValueForBindings<TProperty>());
 				var updated = updater(current);
 
-				return msg.With().Data(Option.Some(updated)).Set(BindingSource, this);
+				return msg.With().Data(Option.Some(updated)).Set(BindingSource, (this, propertyName));
 			}
 		}
 	}

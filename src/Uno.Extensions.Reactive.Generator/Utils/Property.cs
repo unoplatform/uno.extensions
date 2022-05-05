@@ -12,7 +12,7 @@ public record Property(Accessibility Accessibility, string Type, string Name)
 		{
 			Accessibility = property.DeclaredAccessibility,
 			HasGetter = property.GetMethod?.IsAccessible() ?? false,
-			HasSetter = property.SetMethod?.IsAccessible() ?? false
+			HasSetter = property.SetMethod is {IsInitOnly: false} @set && set.IsAccessible(),
 		};
 
 	public Property(Accessibility accessibility, ITypeSymbol type, string name)
