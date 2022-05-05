@@ -1,4 +1,5 @@
 ﻿
+using System.Globalization;
 using Microsoft.Extensions.Localization;
 using Uno.Extensions.Localization;
 
@@ -16,15 +17,16 @@ public class HomeViewModel
 	{
 		_localization = localization;
 		Platform = appInfo.Value.Platform;
+		SupportedCultures = _localization.Value?.Cultures?.AsCultures() ?? new[] { "en-US".AsCulture() }; 
 
-		var language = localizer[_localization.Value.CurrentCulture ?? "en"];
+		var language = localizer[_localization.Value?.CurrentCulture ?? "en"];
 	}
 
-	public string[] SupportedCultures => _localization.Value?.Cultures ?? new[] { "en-US" };
+	public CultureInfo[] SupportedCultures { get; }
 
-	public string SelectedCulture {
-		get => _localization.Value?.CurrentCulture?? _localization.Value?.Cultures?.FirstOrDefault()??"en-US";
-		set => _localization.Update(settings => settings.CurrentCulture = value);
+	public CultureInfo SelectedCulture {
+		get => SupportedCultures.FirstOrDefault(x=>x.Name == _localization.Value?.CurrentCulture)?? SupportedCultures.First();
+		set => _localization.Update(settings => settings.CurrentCulture = value.Name);
 	}
 
 }

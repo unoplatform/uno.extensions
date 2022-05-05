@@ -12,4 +12,8 @@
 	<ItemGroup>
 		<PackageReference Include="Uno.UI" Version="4.1.9" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <SourceGeneratorInput Remove="LocalizationSettingsExtensions.cs" />
+	</ItemGroup>
 </Project>
