@@ -27,6 +27,8 @@
 		<StackPanel Grid.Row="1">
 			<Button Content="MessageDialog XAML"
 					uen:Navigation.Request="!Confirm" />
+			<Button Content="Localized MessageDialog XAML"
+					uen:Navigation.Request="!LocalizedConfirm" />
 			<Button Content="MessageDialog Codebehind"
 					Click="MessageDialogCodebehindClick" />
 			<TextBlock x:Name="MessageDialogResultText" />

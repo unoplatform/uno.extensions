@@ -24,14 +24,11 @@ public class LocalizationService : IHostedService
 
 	private IDisposable? _settingsListener;
 
-	private CultureInfo[] SupportedCultures =>
-		_settings?.CurrentValue?.Cultures?.Select((string c) => new CultureInfo(c)).ToArray() ??
-		new[] { new CultureInfo(DefaultCulture) };
+	private CultureInfo[] SupportedCultures { get; }
 
 	private CultureInfo CurrentCulture =>
-		(_settings?.CurrentValue?.CurrentCulture != null) ?
-		new CultureInfo(_settings.CurrentValue.CurrentCulture) :
-		(SupportedCultures?.FirstOrDefault() ?? new CultureInfo(DefaultCulture));
+		_settings?.CurrentValue?.CurrentCulture?.AsCulture() ??
+		SupportedCultures.First();
 
 	public LocalizationService(
 		ILogger<LocalizationService> logger,
@@ -39,6 +36,7 @@ public class LocalizationService : IHostedService
 	{
 		_logger = logger;
 		_settings = settings;
+		SupportedCultures = settings.CurrentValue?.Cultures?.AsCultures() ?? new[] { DefaultCulture.AsCulture() };
 	}
 
 	public Task StartAsync(CancellationToken cancellationToken)
@@ -84,6 +82,8 @@ public class LocalizationService : IHostedService
 
 	private CultureInfo? PickSupportedCulture(CultureInfo culture)
 	{
-		return SupportedCultures.FirstOrDefault(supported => supported.TwoLetterISOLanguageName == culture.TwoLetterISOLanguageName);
+		return
+			SupportedCultures.FirstOrDefault(supported => supported.Name == culture.Name) ??
+			SupportedCultures.FirstOrDefault(supported => supported.TwoLetterISOLanguageName == culture.TwoLetterISOLanguageName);
 	}
 }
