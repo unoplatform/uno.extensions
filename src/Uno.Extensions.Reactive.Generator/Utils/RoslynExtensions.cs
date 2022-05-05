@@ -127,8 +127,13 @@ internal static class RoslynExtensions
 
 		bool IsPartialSyntax(SyntaxReference syntaxRef)
 		{
-			var syntax = syntaxRef.GetSyntax(CancellationToken.None) as ClassDeclarationSyntax;
-			return syntax?.Modifiers.Any(SyntaxKind.PartialKeyword) ?? false;
+			var syntax = syntaxRef.GetSyntax(CancellationToken.None);
+			return syntax switch
+			{
+				ClassDeclarationSyntax @class => @class.Modifiers.Any(SyntaxKind.PartialKeyword),
+				RecordDeclarationSyntax @record => @record.Modifiers.Any(SyntaxKind.PartialKeyword),
+				_ => false
+			};
 		}
 	}
 }

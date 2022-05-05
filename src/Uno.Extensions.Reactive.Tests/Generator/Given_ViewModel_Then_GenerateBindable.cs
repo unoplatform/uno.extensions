@@ -32,6 +32,14 @@ public partial class Given_ViewModel_Then_GenerateBindable
 		=> Assert.IsNull(GetBindable(typeof(Given_ViewModel_Then_GenerateBindable_NonPartial_ViewModel)));
 
 	[TestMethod]
+	public void RecordViewModel()
+		=> Assert.IsNotNull(GetBindable(typeof(Given_ViewModel_Then_GenerateBindable_Record_ViewModel)));
+
+	[TestMethod]
+	public void RecordNonPartialViewModel()
+		=> Assert.IsNull(GetBindable(typeof(Given_ViewModel_Then_GenerateBindable_RecordNonPartial_ViewModel)));
+
+	[TestMethod]
 	public void NonPartialNestedViewModel()
 		=> Assert.IsNull(GetBindable(typeof(NestedNonPartial_ViewModel)));
 
@@ -127,6 +135,10 @@ public partial class Given_ViewModel_Then_GenerateBindable_FlaggedNoCodeGen_View
 public partial class Given_ViewModel_Then_GenerateBindable_FlaggedCodeGen_NotSuffixed { }
 
 public class Given_ViewModel_Then_GenerateBindable_NonPartial_ViewModel { }
+
+public partial record Given_ViewModel_Then_GenerateBindable_Record_ViewModel { }
+
+public record Given_ViewModel_Then_GenerateBindable_RecordNonPartial_ViewModel { }
 
 public class Given_ViewModel_Then_GenerateBindable_NonPartialContainer
 {
