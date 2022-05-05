@@ -20,7 +20,7 @@ internal class BindableViewModelGenerator
 
 	private bool IsSupported(INamedTypeSymbol type)
 		=> _ctx.IsGenerationEnabled(type)
-			?? type.Name.EndsWith("ViewModel", StringComparison.Ordinal);
+			?? type.Name.EndsWith("ViewModel", StringComparison.Ordinal) && type.IsPartial();
 
 	public IEnumerable<(INamedTypeSymbol type, string code)> Generate(IAssemblySymbol assembly)
 	{
@@ -43,10 +43,10 @@ internal class BindableViewModelGenerator
 	private string Generate(INamedTypeSymbol vm)
 	{
 		var inputs = GetInputs(vm).ToList();
-		var inputsErrors  = inputs
+		var inputsErrors = inputs
 			.GroupBy(input => input.Parameter.Name)
 			.Where(group => group.Distinct().Count() > 1)
-			.Select(conflictingInput => 
+			.Select(conflictingInput =>
 			{
 				var conflictingDeclarations = conflictingInput
 					.Distinct()

@@ -11,48 +11,6 @@ namespace Uno.Extensions.Reactive.Tests.Generator;
 [TestClass]
 public partial class Given_ViewModel_Then_GenerateBindable
 {
-	public partial class Nested_ViewModel
-	{
-	}
-
-	internal partial class NestedInternal_ViewModel
-	{
-	}
-
-	private partial class NestedPrivate_ViewModel
-	{
-	}
-
-	[ReactiveBindable(false)]
-	public partial class NestedFlaggedNoCodeGen_ViewModel
-	{
-	}
-
-	[ReactiveBindable(false)]
-	internal partial class NestedInternalFlaggedNoCodeGen_ViewModel
-	{
-	}
-
-	[ReactiveBindable(false)]
-	private partial class NestedPrivateFlaggedNoCodeGen_ViewModel
-	{
-	}
-
-	[ReactiveBindable(true)]
-	public partial class NestedFlaggedCodeGen_NotSuffixed
-	{
-	}
-
-	[ReactiveBindable(true)]
-	internal partial class NestedInternalFlaggedCodeGen_NotSuffixed
-	{
-	}
-
-	[ReactiveBindable(true)]
-	private partial class NestedPrivateFlaggedCodeGen_NotSuffixed
-	{
-	}
-
 	[TestMethod]
 	public void SimpleViewModel()
 		=> Assert.IsNotNull(GetBindable(typeof(Given_ViewModel_Then_GenerateBindable_ViewModel)));
@@ -68,6 +26,26 @@ public partial class Given_ViewModel_Then_GenerateBindable
 	[TestMethod]
 	public void NestedPrivateViewModel()
 		=> Assert.IsNotNull(GetBindable(typeof(NestedPrivate_ViewModel)));
+
+	[TestMethod]
+	public void NonPartialViewModel()
+		=> Assert.IsNull(GetBindable(typeof(Given_ViewModel_Then_GenerateBindable_NonPartial_ViewModel)));
+
+	[TestMethod]
+	public void NonPartialNestedViewModel()
+		=> Assert.IsNull(GetBindable(typeof(NestedNonPartial_ViewModel)));
+
+	[TestMethod]
+	public void NonPartialContainer_PublicViewModel()
+		=> Assert.IsNull(GetBindable(typeof(Given_ViewModel_Then_GenerateBindable_NonPartialContainer.Public_ViewModel)));
+
+	[TestMethod]
+	public void NonPartialContainer_InternalViewModel()
+		=> Assert.IsNull(GetBindable(typeof(Given_ViewModel_Then_GenerateBindable_NonPartialContainer.Internal_ViewModel)));
+
+	[TestMethod]
+	public void NonPartialContainer_PrivateViewModel()
+		=> Assert.IsNull(GetBindable("Given_ViewModel_Then_GenerateBindable_NonPartialContainer.Private_ViewModel"));
 
 	[TestMethod]
 	public void FlaggedNoCodeGenViewModel()
@@ -103,18 +81,56 @@ public partial class Given_ViewModel_Then_GenerateBindable
 
 	private Type? GetBindable(Type vmType)
 		=> vmType.GetNestedType($"Bindable{vmType.Name}");
+
+	private Type? GetBindable(string vmType)
+	{
+		var index = vmType.LastIndexOf('.');
+		var bindableType = index >= 0
+			? $"{vmType.Substring(0, index)}.Bindable{vmType.Substring(index + 1)}"
+			: "Bindable" + vmType;
+
+		return GetType().Assembly.GetType(bindableType);
+	}
+
+	public partial class Nested_ViewModel { }
+
+	internal partial class NestedInternal_ViewModel { }
+
+	private partial class NestedPrivate_ViewModel { }
+	public class NestedNonPartial_ViewModel { }
+
+	[ReactiveBindable(false)]
+	public partial class NestedFlaggedNoCodeGen_ViewModel { }
+
+	[ReactiveBindable(false)]
+	internal partial class NestedInternalFlaggedNoCodeGen_ViewModel { }
+
+	[ReactiveBindable(false)]
+	private partial class NestedPrivateFlaggedNoCodeGen_ViewModel { }
+
+	[ReactiveBindable(true)]
+	public partial class NestedFlaggedCodeGen_NotSuffixed { }
+
+	[ReactiveBindable(true)]
+	internal partial class NestedInternalFlaggedCodeGen_NotSuffixed { }
+
+	[ReactiveBindable(true)]
+	private partial class NestedPrivateFlaggedCodeGen_NotSuffixed { }
 }
 
-public partial class Given_ViewModel_Then_GenerateBindable_ViewModel
-{
-}
+public partial class Given_ViewModel_Then_GenerateBindable_ViewModel { }
 
 [ReactiveBindable(false)]
-public partial class Given_ViewModel_Then_GenerateBindable_FlaggedNoCodeGen_ViewModel
-{
-}
+public partial class Given_ViewModel_Then_GenerateBindable_FlaggedNoCodeGen_ViewModel { }
 
 [ReactiveBindable(true)]
-public partial class Given_ViewModel_Then_GenerateBindable_FlaggedCodeGen_NotSuffixed
+public partial class Given_ViewModel_Then_GenerateBindable_FlaggedCodeGen_NotSuffixed { }
+
+public class Given_ViewModel_Then_GenerateBindable_NonPartial_ViewModel { }
+
+public class Given_ViewModel_Then_GenerateBindable_NonPartialContainer
 {
+	public class Public_ViewModel { }
+	internal class Internal_ViewModel { }
+	private class Private_ViewModel { }
 }
