@@ -35,8 +35,8 @@ public sealed partial class App : Application
 #endif
 
 #if NET5_0_OR_GREATER && WINDOWS
-            _window = new Window();
-            _window.Activate();
+			_window = new Window();
+			_window.Activate();
 #else
 		_window = Window.Current;
 #endif
