@@ -60,11 +60,9 @@ namespace Commerce
 
 
 					// Add platform specific log providers
-					.UseLogging()
-
-					// Configure log levels for different categories of logging
-					.ConfigureLogging(logBuilder =>
+					.UseLogging(configure: logBuilder =>
 					{
+						// Configure log levels for different categories of logging
 						logBuilder
 								.SetMinimumLevel(LogLevel.Information)
 								.XamlLogLevel(LogLevel.Information)

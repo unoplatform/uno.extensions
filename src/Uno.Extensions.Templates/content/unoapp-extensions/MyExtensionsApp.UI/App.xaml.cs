@@ -6,56 +6,8 @@ public sealed partial class App : Application
 {
 	private Window? _window;
 
-	private IHost Host { get; }
-
 	public App()
 	{
-		Host = UnoHost
-				.CreateDefaultBuilder()
-#if DEBUG
-				// Switch to Development environment when running in DEBUG
-				.UseEnvironment(Environments.Development)
-#endif
-
-
-				// Add platform specific log providers
-				.UseLogging()
-
-				// Configure log levels for different categories of logging
-				.ConfigureLogging(logBuilder =>
-				{
-					logBuilder
-							.SetMinimumLevel(LogLevel.Information)
-							.XamlLogLevel(LogLevel.Information)
-							.XamlLayoutLogLevel(LogLevel.Information);
-				})
-
-				// Load configuration information from appsettings.json
-				.UseAppSettings()
-
-				// Load AppInfo section
-				.UseConfiguration<AppInfo>()
-
-				// Register Json serializers (ISerializer and ISerializer)
-				.UseSerialization()
-
-				// Register services for the application
-				.ConfigureServices(services =>
-				{
-					// TODO: Register your services
-					//services.AddSingleton<IMyService, MyService>();
-				})
-
-
-				// Enable navigation, including registering views and viewmodels
-				.UseNavigation(RegisterRoutes)
-
-				// Add navigation support for toolkit controls such as TabBar and NavigationView
-				.UseToolkitNavigation()
-
-
-				.Build(enableUnoLogging: true);
-
 		this.InitializeComponent();
 
 #if HAS_UNO || NETFX_CORE
@@ -127,27 +79,6 @@ public sealed partial class App : Application
 		var deferral = e.SuspendingOperation.GetDeferral();
 		// TODO: Save application state and stop any background activity
 		deferral.Complete();
-	}
-
-	private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
-	{
-		views.Register(
-			new ViewMap<ShellControl,ShellViewModel>(),
-			new ViewMap<MainPage, MainViewModel>(),
-			new ViewMap<SecondPage, SecondViewModel>()
-			);
-
-		routes
-			.Register(
-				new RouteMap("", View: views.FindByViewModel<ShellViewModel>() ,
-						Nested: new RouteMap[]
-						{
-										new RouteMap("Main", View: views.FindByViewModel<MainViewModel>() ,
-												IsDefault: true
-												),
-										new RouteMap("Second", View: views.FindByViewModel<SecondViewModel>() ,
-												DependsOn:"Main"),
-						}));
 	}
 
 	public void RouteUpdated(object? sender, RouteChangedEventArgs e)

@@ -9,7 +9,6 @@ public class HomeViewModel
 	public string? Platform { get; }
 
 	private readonly IWritableOptions<LocalizationSettings> _localization;
-	private readonly IStringLocalizer _localizer;
 	public HomeViewModel(
 		IOptions<AppInfo> appInfo,
 		IWritableOptions<LocalizationSettings> localization,
