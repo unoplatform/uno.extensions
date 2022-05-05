@@ -64,12 +64,12 @@ public class ReactiveRouteResolver : RouteResolver
 		_viewModelMappings = views.ViewModelMappings;
 	}
 
-	protected override InternalRouteMap FromRouteMap(RouteMap drm)
+	protected override RouteInfo FromRouteMap(RouteMap drm)
 	{
 		var viewFunc = (drm.View?.View is not null) ?
 										() => drm.View.View :
 										drm.View?.DynamicView;
-		return new InternalRouteMap(
+		return new RouteInfo(
 			Path: drm.Path,
 			View: viewFunc,
 			ViewAttributes: drm.View?.ViewAttributes,
@@ -84,7 +84,7 @@ public class ReactiveRouteResolver : RouteResolver
 			Nested: ResolveViewMaps(drm.Nested));
 	}
 
-	public override InternalRouteMap? FindByViewModel(Type? viewModelType)
+	public override RouteInfo? FindByViewModel(Type? viewModelType)
 	{
 		if (viewModelType is not null &&
 			_viewModelMappings.TryGetValue(viewModelType, out var bindableViewModel))

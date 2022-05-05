@@ -3,20 +3,20 @@ namespace MyExtensionsApp.Models;
 
 public record Product
 {
-	public int ProductId { get; set; }
-	public string Brand { get; set; }
-	public string Name { get; set; }
-	public string LongName { get; set; }
-	public string Description { get; set; }
-	public string Category { get; set; }
-	public string FullPrice { get; set; }
-	public string Price { get; set; }
-	public string Discount { get; set; }
-	public string Photo { get; set; }
-	public double? Rating { get; set; }
+	public int ProductId { get; init; }
+	public string? Brand { get; init; }
+	public string? Name { get; init; }
+	public string? LongName { get; init; }
+	public string? Description { get; init; }
+	public string? Category { get; init; }
+	public string? FullPrice { get; init; }
+	public string? Price { get; init; }
+	public string? Discount { get; init; }
+	public string? Photo { get; init; }
+	public double? Rating { get; init; }
 
-	public string DiscountedPrice => Price;
+	public string? DiscountedPrice => Price;
 
-	public Review[] Reviews { get; set; }
+	public Review[]? Reviews { get; init; }
 
 }

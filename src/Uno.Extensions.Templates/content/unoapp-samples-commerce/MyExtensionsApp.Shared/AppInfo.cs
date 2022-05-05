@@ -7,6 +7,6 @@ namespace MyExtensionsApp
 {
 	public record AppInfo
 	{
-		public string Title { get; init; }
+		public string? Title { get; init; }
 	}
 }
