@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -22,7 +23,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	/// <summary>
 	/// Gets the context to which this state belongs.
 	/// </summary>
-	internal SourceContext? Context { get; }
+	internal SourceContext Context { get; }
 	SourceContext IStateImpl.Context => Context;
 
 	internal Message<T> Current => _current;
@@ -79,6 +80,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	/// <summary>
 	/// Legacy - Used only be legacy IInput syntax
 	/// </summary>
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	public StateImpl(Option<T> defaultValue)
 		: this(null!, defaultValue)
 	{

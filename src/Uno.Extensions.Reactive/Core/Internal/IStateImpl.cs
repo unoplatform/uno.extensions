@@ -5,5 +5,5 @@ namespace Uno.Extensions.Reactive.Core;
 
 internal interface IStateImpl
 {
-	SourceContext? Context { get; }
+	SourceContext Context { get; }
 }
