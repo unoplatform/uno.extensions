@@ -67,7 +67,7 @@ internal class BindableGenerator
 					{
 						Getter = $"_{camelName}"
 					}
-					: Property.FromProperty(prop) with
+					: Property.FromProperty(prop, allowInitOnlySetter: true) with
 					{
 						Getter = $"_{camelName}.GetValue()",
 						Setter = $"_{camelName}.SetValue(value)",

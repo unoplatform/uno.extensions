@@ -176,7 +176,7 @@
     </BundleResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets" />
-  <Import Project="..\..\..\..\src\Uno.Extensions.Reactive.Generator\build\Uno.Extensions.Reactive.props" />
+  <Import Project="..\..\..\..\src\Uno.Extensions.Reactive.Generator\buildTransitive\Uno.Extensions.Reactive.props" />
   <Target Name="VS16Mac_RemoveSystemMemory" BeforeTargets="ResolveAssemblyReferences">
     <!--
 				VS4Mac seems to process System.Memory differently, and removes

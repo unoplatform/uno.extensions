@@ -4,7 +4,6 @@ using System.Linq;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using Uno.Extensions.Reactive.Bindings;
-using Uno.SourceGeneration;
 
 namespace Uno.Extensions.Reactive.Generator;
 
@@ -19,7 +18,7 @@ internal record BindableGenerationContext(
 	INamedTypeSymbol ValueAttribute,
 	INamedTypeSymbol DefaultRecordCtor)
 {
-	public static BindableGenerationContext? TryGet(Uno.SourceGeneration.GeneratorExecutionContext context, out string? error)
+	public static BindableGenerationContext? TryGet(GeneratorExecutionContext context, out string? error)
 	{
 		var compilation = context.Compilation;
 

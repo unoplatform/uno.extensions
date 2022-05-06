@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Uno.Extensions.Reactive.Generator;
 
@@ -108,5 +111,29 @@ internal static class RoslynExtensions
 		}
 
 		throw new ArgumentOutOfRangeException($"{accessibility} is not supported.");
+	}
+
+	public static bool IsPartial(this INamedTypeSymbol type)
+	{
+		var syntaxRefs = type.DeclaringSyntaxReferences;
+		var isPartial = syntaxRefs.Length switch
+		{
+			0 => true,
+			1 => IsPartialSyntax(syntaxRefs[0]),
+			_ => true, // If we have multiple declaration syntax, well the class is partial ^^
+		};
+
+		return isPartial && (type.ContainingType?.IsPartial() ?? true);
+
+		bool IsPartialSyntax(SyntaxReference syntaxRef)
+		{
+			var syntax = syntaxRef.GetSyntax(CancellationToken.None);
+			return syntax switch
+			{
+				ClassDeclarationSyntax @class => @class.Modifiers.Any(SyntaxKind.PartialKeyword),
+				RecordDeclarationSyntax @record => @record.Modifiers.Any(SyntaxKind.PartialKeyword),
+				_ => false
+			};
+		}
 	}
 }

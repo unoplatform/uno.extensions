@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.CodeAnalysis;
+using Uno.RoslynHelpers;
 
 namespace Uno.Extensions.Reactive.Generator;
 
@@ -19,10 +20,7 @@ internal class BindableViewModelGenerator
 
 	private bool IsSupported(INamedTypeSymbol type)
 		=> _ctx.IsGenerationEnabled(type)
-			?? type
-				.Constructors
-				.SelectMany(ctor => ctor.Parameters)
-				.Any(parameter => _ctx.IsInputOrCommand(parameter.Type));
+			?? type.Name.EndsWith("ViewModel", StringComparison.Ordinal) && type.IsPartial();
 
 	public IEnumerable<(INamedTypeSymbol type, string code)> Generate(IAssemblySymbol assembly)
 	{
@@ -45,10 +43,10 @@ internal class BindableViewModelGenerator
 	private string Generate(INamedTypeSymbol vm)
 	{
 		var inputs = GetInputs(vm).ToList();
-		var inputsErrors  = inputs
+		var inputsErrors = inputs
 			.GroupBy(input => input.Parameter.Name)
 			.Where(group => group.Distinct().Count() > 1)
-			.Select(conflictingInput => 
+			.Select(conflictingInput =>
 			{
 				var conflictingDeclarations = conflictingInput
 					.Distinct()
@@ -68,76 +66,86 @@ internal class BindableViewModelGenerator
 			.ToList();
 		mappedMembers = mappedMembers.Except(mappedMembersConflictingWithInputs).ToList();
 
-		var code = $@"#nullable enable
-#pragma warning disable
 
-using System;
-using System.Linq;
-using System.Threading.Tasks;
+		var bindableVmCode = $@"
+			public partial class Bindable{vm.Name} : {NS.Bindings}.BindableViewModelBase
+			{{
+				{inputsErrors.Align(4)}
+				{inputs.Select(input => input.GetBackingField()).Align(4)}
+				{mappedMembers.Select(member => member.GetBackingField()).Align(4)}
 
-namespace {vm.ContainingNamespace}
-{{
-	partial {(vm.IsRecord ? "record" : "class")} {vm.Name} : global::System.IAsyncDisposable, {NS.Core}.ISourceContextAware
-	{{
-		public partial class Bindable{vm.Name} : {NS.Bindings}.BindableViewModelBase
-		{{
-			{inputsErrors.Align(3)}
-			{inputs.Select(input => input.GetBackingField()).Align(3)}
-			{mappedMembers.Select(member => member.GetBackingField()).Align(3)}
+				{vm
+					.Constructors
+					.Where(_ctx.IsGenerationNotDisable)
+					.Select(ctor =>
+					{
+						var parameters = ctor
+							.Parameters
+							.Select(parameter => inputs.First(input => input.Parameter.Name.Equals(parameter.Name, StringComparison.OrdinalIgnoreCase)))
+							.ToArray();
 
-			{vm
-				.Constructors
-				.Where(_ctx.IsGenerationNotDisable)
-				.Select(ctor =>
-				{
-					var parameters = ctor
-						.Parameters
-						.Select(parameter => inputs.First(input => input.Parameter.Name.Equals(parameter.Name, StringComparison.OrdinalIgnoreCase)))
-						.ToArray();
+						var bindableVmParameters = parameters
+							.Select(param => param.GetCtorParameter())
+							.Where(param => param.code is not null)
+							.OrderBy(param => param.isOptional ? 1 : 0)
+							.Select(param => param.code)
+							.JoinBy(", ");
+						var vmParameters = parameters
+							.Select(param => param.GetVMCtorParameter())
+							.JoinBy(", ");
 
-					var bindableVmParameters = parameters
-						.Select(param => param.GetCtorParameter())
-						.Where(param => param.code is not null)
-						.OrderBy(param => param.isOptional ? 1 : 0)
-						.Select(param => param.code)
-						.JoinBy(", ");
-					var vmParameters = parameters
-						.Select(param => param.GetVMCtorParameter())
-						.JoinBy(", ");
+						return $@"
+							{GetCtorAccessibility(ctor)} Bindable{vm.Name}({bindableVmParameters})
+							{{
+								{inputs.Select(input => input.GetCtorInit(parameters.Contains(input))).Align(8)}
 
-					return $@"
-						{GetCtorAccessibility(ctor)} Bindable{vm.Name}({bindableVmParameters})
-						{{
-							{inputs.Select(input => input.GetCtorInit(parameters.Contains(input))).Align(7)}
+								var {N.Ctor.Model} = new {vm}({vmParameters});
+								var {N.Ctor.Ctx} = {NS.Core}.SourceContext.GetOrCreate({N.Ctor.Model});
+								{NS.Core}.SourceContext.Set(this, {N.Ctor.Ctx});
+								base.RegisterDisposable({N.Ctor.Model});
 
-							var {N.Ctor.Model} = new {vm}({vmParameters});
-							var {N.Ctor.Ctx} = {NS.Core}.SourceContext.GetOrCreate({N.Ctor.Model});
-							{NS.Core}.SourceContext.Set(this, {N.Ctor.Ctx});
-							base.RegisterDisposable({N.Ctor.Model});
+								{N.Model} = {N.Ctor.Model};
+								{inputs.Select(input => input.GetPropertyInit()).Align(8)}
+								{mappedMembers.Select(member => member.GetInitialization()).Align(8)}
+							}}";
+					})
+					.Align(4)}
 
-							{N.Model} = {N.Ctor.Model};
-							{inputs.Select(input => input.GetPropertyInit()).Align(7)}
-							{mappedMembers.Select(member => member.GetInitialization()).Align(7)}
-						}}";
-				})
-				.Align(3)}
+				public {vm} {N.Model} {{ get; }}
 
-			public {vm} {N.Model} {{ get; }}
+				{inputs.Select(input => input.Property?.ToString()).Align(4)}
 
-			{inputs.Select(input => input.Property?.ToString()).Align(3)}
+				{mappedMembersErrors.Align(4)}
+				{mappedMembers.Select(member => member.GetDeclaration()).Align(4)}
+			}}";
 
-			{mappedMembersErrors.Align(3)}
-			{mappedMembers.Select(member => member.GetDeclaration()).Align(3)}
-		}}
+		// We make the bindbale VM a nested class of the VM itself
+		var vmCode = $@"partial {(vm.IsRecord ? "record" : "class")} {vm.Name} : global::System.IAsyncDisposable, {NS.Core}.ISourceContextAware
+			{{
+				{bindableVmCode.Align(4)}
 
-		/// <inheritdoc />
-		public global::System.Threading.Tasks.ValueTask DisposeAsync()
-			=> {NS.Core}.SourceContext.Find(this)?.DisposeAsync() ?? default;
-	}}
-}}
-";
+				/// <inheritdoc />
+				public global::System.Threading.Tasks.ValueTask DisposeAsync()
+					=> {NS.Core}.SourceContext.Find(this)?.DisposeAsync() ?? default;
+			}}";
 
-		return code;
+		// Inject usings and declare the full namespace, including class nesting
+		var fileCode = $@"#nullable enable
+			#pragma warning disable
+
+			using System;
+			using System.Linq;
+			using System.Threading.Tasks;
+
+			namespace {vm.ContainingNamespace}
+			{{
+				{vm.GetContainingTypes().Select(type => $"partial {(type.IsRecord ? "record" : "class")} {type.Name}\r\n{{").Align(4)}
+				{vmCode.Align(4).Indent(vm.GetContainingTypes().Count())}
+				{vm.GetContainingTypes().Select(_ => "}").Align(4)}
+			}}
+			";
+
+		return fileCode.Align(0);
 	}
 
 	private string GetCtorAccessibility(IMethodSymbol ctor)

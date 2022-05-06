@@ -111,8 +111,9 @@ public class Given_BasicViewModel_Then_Generate : FeedUITests
 		Assert.AreEqual(bindable.Model.AnInputConflictingWithAProperty, "AnInputConflictingWithAProperty");
 		bindable.AnInputConflictingWithAProperty = 42; // This should be of type 'int'
 
-		Assert.IsNotNull(bindable.AFeedField as string);
-		Assert.IsNotNull(bindable.AStateField as string);
+		Assert.IsTrue(bindable.GetType().GetProperty("AFeedField")?.PropertyType == typeof(string));
+		Assert.IsTrue(bindable.GetType().GetProperty("AStateField")?.PropertyType == typeof(string));
+		Assert.IsTrue(bindable.GetType().GetProperty("ACustomFeedField")?.PropertyType == typeof(string));
 
 		Assert.IsNotNull(bindable.ARecordFeedField as IFeed<MyRecord>);
 		Assert.IsNotNull(bindable.ARecordFeedField as BindableMyRecord);
@@ -129,8 +130,6 @@ public class Given_BasicViewModel_Then_Generate : FeedUITests
 
 		Assert.IsNotNull(bindable.AListStateField as IListState<string>);
 		Assert.IsNotNull(bindable.AListStateField as ICollectionView);
-
-		Assert.IsNotNull(bindable.ACustomFeedField as string);
 
 		bindable.Model.AProperty = "AProperty_SetFromVM";
 		Assert.AreEqual("AProperty_SetFromVM", bindable.AProperty);
@@ -151,8 +150,9 @@ public class Given_BasicViewModel_Then_Generate : FeedUITests
 
 		bindable.ASetOnlyProperty = "hasSetter";
 
-		Assert.IsNotNull(bindable.AFeedProperty as string);
-		Assert.IsNotNull(bindable.AStateProperty as string);
+		Assert.IsTrue(bindable.GetType().GetProperty("AFeedProperty")?.PropertyType == typeof(string));
+		Assert.IsTrue(bindable.GetType().GetProperty("AStateProperty")?.PropertyType == typeof(string));
+		Assert.IsTrue(bindable.GetType().GetProperty("ACustomFeedProperty")?.PropertyType == typeof(string));
 
 		Assert.IsNotNull(bindable.ARecordFeedProperty as IFeed<MyRecord>);
 		Assert.IsNotNull(bindable.ARecordFeedProperty as BindableMyRecord);
@@ -168,8 +168,6 @@ public class Given_BasicViewModel_Then_Generate : FeedUITests
 		Assert.IsNotNull(bindable.AListFeedProperty as ICollectionView);
 		Assert.IsNotNull(bindable.AListStateProperty as IListState<string>);
 		Assert.IsNotNull(bindable.AListStateProperty as ICollectionView);
-
-		Assert.IsNotNull(bindable.ACustomFeedProperty as string);
 
 		bindable.AParameterLessMethod();
 		bindable.AParameterizedMethod("arg1", 42);
