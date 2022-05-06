@@ -26,11 +26,11 @@
 
 	<Target Name="_IncludeGenerator" BeforeTargets="Build;Pack">
 		<ItemGroup>
-			<Content Include="..\Uno.Extensions.Reactive.Generator\buildTransitive\**\*.*" Link="build\%(RecursiveDir)%(Filename)%(Extension)">
+			<Content Include="..\Uno.Extensions.Reactive.Generator\buildTransitive\**\*.*" Link="buildTransitive\%(RecursiveDir)%(Filename)%(Extension)">
 				<Pack>true</Pack>
-				<PackagePath>build</PackagePath>
+				<PackagePath>buildTransitive</PackagePath>
 			</Content>
-			<Content Include="..\Uno.Extensions.Reactive.Generator\bin\Uno.Extensions.Reactive.Generator\$(Configuration)\net461\**\*.dll" Link="tools\%(RecursiveDir)%(Filename)%(Extension)">
+			<Content Include="..\Uno.Extensions.Reactive.Generator\bin\Uno.Extensions.Reactive.Generator\$(Configuration)\netstandard2.0\**\*.dll" Link="tools\%(RecursiveDir)%(Filename)%(Extension)">
 				<Pack>true</Pack>
 				<PackagePath>tools</PackagePath>
 			</Content>
