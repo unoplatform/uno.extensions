@@ -26,7 +26,7 @@
 
 	<Target Name="_IncludeGenerator" BeforeTargets="Build;Pack">
 		<ItemGroup>
-			<Content Include="..\Uno.Extensions.Reactive.Generator\build\**\*.*" Link="build\%(RecursiveDir)%(Filename)%(Extension)">
+			<Content Include="..\Uno.Extensions.Reactive.Generator\buildTransitive\**\*.*" Link="build\%(RecursiveDir)%(Filename)%(Extension)">
 				<Pack>true</Pack>
 				<PackagePath>build</PackagePath>
 			</Content>
