@@ -78,7 +78,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<IsTestProject>$(MSBuildProjectName.Contains('Test'))</IsTestProject>
+		<IsTestProject>$(MSBuildProjectName.Contains('Test')) and !$(MSBuildProjectName.Contains('Testing'))</IsTestProject>
 		<IsSampleProject>$(MSBuildProjectName.Contains('Sample'))</IsSampleProject>
 	</PropertyGroup>
 
