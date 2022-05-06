@@ -12,7 +12,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Content Include="build\Uno.Extensions.Reactive.props" />
+		<Content Include="buildTransitive\Uno.Extensions.Reactive.props" />
 	</ItemGroup>
 
 	<ItemGroup>
