@@ -31,7 +31,7 @@ public static class NavigatorExtensions
 		if (string.IsNullOrWhiteSpace(route))
 		{
 			var mappings = service.GetMapping();
-			var map = (data is not null)?
+			var map = (data is not null) ?
 							mappings?.FindByData(data.GetType()) :
 							mappings?.Find(default!);
 			if (map is null)
@@ -67,7 +67,7 @@ public static class NavigatorExtensions
 	this INavigator service, object sender, string route, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default, Type? resultType = null)
 	{
 		var req = route.WithQualifier(qualifier).AsRequest(sender, data, cancellation, resultType);
-		if(req is null)
+		if (req is null)
 		{
 			return default;
 		}
@@ -178,6 +178,12 @@ public static class NavigatorExtensions
 	public static async Task<TResult?> GetDataAsync<TResult>(this INavigator service, object sender, string qualifier = Qualifiers.None, CancellationToken cancellation = default)
 	{
 		var result = await service.NavigateForResultAsync<TResult>(sender, qualifier, cancellation: cancellation).AsResult();
+		return result.SomeOrDefault();
+	}
+
+	public static async Task<TResult?> GetDataAsync<TViewModel, TResult>(this INavigator service, object sender, string qualifier = Qualifiers.None, CancellationToken cancellation = default)
+	{
+		var result = await service.NavigateViewModelForResultAsync<TViewModel, TResult>(sender, qualifier, cancellation: cancellation).AsResult();
 		return result.SomeOrDefault();
 	}
 
