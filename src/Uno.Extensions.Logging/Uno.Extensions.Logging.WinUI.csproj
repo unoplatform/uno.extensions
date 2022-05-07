@@ -12,7 +12,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Include="buildTransitive\**">
+		<Content Include="buildTransitive\Uno.Extensions.Logging.WinUI.props">
 			<PackagePath>buildTransitive</PackagePath>
 			<Pack>true</Pack>
 		</Content>

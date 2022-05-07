@@ -13,7 +13,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Include="buildTransitive\**">
+		<Content Include="buildTransitive\Uno.Extensions.Logging.UWP.props">
 			<PackagePath>buildTransitive</PackagePath>
 			<Pack>true</Pack>
 		</Content>

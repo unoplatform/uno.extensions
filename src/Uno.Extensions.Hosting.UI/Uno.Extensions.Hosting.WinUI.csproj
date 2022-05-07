@@ -11,7 +11,7 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-		<None Include="buildTransitive\**">
+		<None Include="buildTransitive\Uno.Extensions.Hosting.WinUI.props">
 			<PackagePath>buildTransitive</PackagePath>
 			<Pack>true</Pack>
 		</None>

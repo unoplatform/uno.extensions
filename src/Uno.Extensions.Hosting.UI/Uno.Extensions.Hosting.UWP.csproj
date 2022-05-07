@@ -11,7 +11,7 @@
 		<UnoRuntimeProjectReference Include="Uno.Extensions.Hosting.UWP.Skia.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-		<Content Include="buildTransitive\**">
+		<Content Include="buildTransitive\Uno.Extensions.Hosting.UWP.props">
 			<PackagePath>buildTransitive</PackagePath>
 			<Pack>true</Pack>
 		</Content>

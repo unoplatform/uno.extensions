@@ -6,6 +6,7 @@
 		<RootNamespace>Uno.Extensions.Hosting.UWP</RootNamespace>
 		<UnoRuntimeIdentifier>skia</UnoRuntimeIdentifier>
 		<DefineConstants>$(DefineConstants);__SKIA__</DefineConstants>
+		<AssemblyName>Uno.Extensions.Hosting.UWP</AssemblyName>
 	</PropertyGroup>
 
 	<ItemGroup>

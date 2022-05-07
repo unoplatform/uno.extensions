@@ -3,6 +3,7 @@
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<IsPackable>false</IsPackable>
 		<RootNamespace>Uno.Extensions.Hosting.UWP</RootNamespace>
+		<AssemblyName>Uno.Extensions.Hosting.UWP</AssemblyName>
 	</PropertyGroup>
 
 	<ItemGroup>

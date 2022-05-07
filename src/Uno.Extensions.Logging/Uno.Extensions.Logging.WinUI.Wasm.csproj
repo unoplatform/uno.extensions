@@ -2,7 +2,8 @@
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<IsPackable>false</IsPackable>
-		<RootNamespace>Uno.Extensions.Logging</RootNamespace>
+		<RootNamespace>Uno.Extensions.Logging.WinUI</RootNamespace>
+		<AssemblyName>Uno.Extensions.Logging.WinUI</AssemblyName>
 	</PropertyGroup>
 
 	<ItemGroup>
