@@ -14,9 +14,9 @@
 
 				<!-- Load Material Color Palette -->
 				<MaterialColors xmlns="using:Uno.Material"
-								OverrideSource="ms-appx:///ColorPaletteOverride.xaml" />
+								OverrideSource="ms-appx:///Styles/ColorPaletteOverride.xaml" />
 				<MaterialFonts xmlns="using:Uno.Material"
-							   OverrideSource="ms-appx:///MaterialFontsOverride.xaml" />
+							   OverrideSource="ms-appx:///Styles/MaterialFontsOverride.xaml" />
 				
 				<!-- Load the Material control resources -->
 				<MaterialResources xmlns="using:Uno.Material" WithImplicitStyles="True" />

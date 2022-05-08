@@ -2,7 +2,7 @@
 	<PropertyGroup>
 		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'!=''">$(UnoTargetFrameworkOverride)</TargetFrameworks>
 		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'==''">netstandard2.0;netstandard2.1;net5.0;xamarinios10;xamarinmac20;monoandroid11.0</TargetFrameworks>
-		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'=='' and '$(UnoExtensionsDisableNet6)'==''">$(TargetFrameworks);net6.0;net6.0-windows10.0.18362.0</TargetFrameworks>
+		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'=='' and '$(UnoExtensionsDisableNet6)'==''">$(TargetFrameworks);net6.0;net5.0-windows10.0.18362;net6.0-windows10.0.18362</TargetFrameworks>
 		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'=='' and '$(UnoExtensionsDisableNet6)'=='' and '$(UnoExtensionsDisableNet6Mobile)'==''">$(TargetFrameworks);net6.0-ios;net6.0-android</TargetFrameworks>
 	</PropertyGroup>
 
@@ -12,7 +12,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Include="buildTransitive\**">
+		<Content Include="buildTransitive\Uno.Extensions.Logging.WinUI.props">
 			<PackagePath>buildTransitive</PackagePath>
 			<Pack>true</Pack>
 		</Content>
