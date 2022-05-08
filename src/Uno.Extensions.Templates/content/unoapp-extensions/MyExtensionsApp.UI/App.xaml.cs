@@ -40,20 +40,13 @@ public sealed partial class App : Application
 #endif
 #endif
 
-		var notif = Host.Services.GetService<IRouteNotifier>();
-		if (notif is not null)
-		{
-			notif.RouteChanged += RouteUpdated;
-		}
-
+		var notif = Host.Services.GetRequiredService<IRouteNotifier>();
+		notif.RouteChanged += RouteUpdated;
 
 		_window.AttachNavigation(Host.Services);
 		_window.Activate();
 
-		await Task.Run(async () =>
-		{
-			await Host.StartAsync();
-		});
+		await Task.Run(() => Host.StartAsync());
 
 	}
 

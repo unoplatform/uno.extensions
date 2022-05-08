@@ -27,7 +27,7 @@ public sealed partial class App : Application
 				})
 
 				// Load configuration information from appsettings.json
-				.UseAppSettings()
+				.UseEmbeddedAppSettings<App>()
 
 				// Load AppInfo section
 				.UseConfiguration<AppInfo>()
