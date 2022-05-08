@@ -11,10 +11,10 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-		<None Include="buildTransitive\Uno.Extensions.Hosting.WinUI.props">
+		<Content Include="buildTransitive\Uno.Extensions.Hosting.WinUI.props">
 			<PackagePath>buildTransitive</PackagePath>
 			<Pack>true</Pack>
-		</None>
+		</Content>
 	</ItemGroup>
 
 	<PropertyGroup>
