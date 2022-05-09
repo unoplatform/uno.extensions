@@ -18,7 +18,8 @@ partial class Feed
 	/// <typeparam name="T">The type of the value of the feed.</typeparam>
 	/// <param name="feed">The feed to get data from.</param>
 	/// <returns>An awaiter to asynchronously get the next data produced by the feed.</returns>
-	public static ValueTaskAwaiter<Option<T>> GetAwaiter<T>(this IFeed<T> feed)
+	public static ValueTaskAwaiter<T?> GetAwaiter<T>(this IFeed<T> feed)
+		where T : notnull
 		=> feed.Value(SourceContext.Current.Token).GetAwaiter();
 
 	/// <summary>
@@ -28,8 +29,9 @@ partial class Feed
 	/// <param name="feed">The feed to get data from.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to asynchronously get the next data produced by the feed.</returns>
-	public static ValueTask<Option<T>> Value<T>(this IFeed<T> feed, CancellationToken ct)
-		=> feed.Values(AsyncFeedValue.Default, ct).FirstOrDefaultAsync(Option<T>.Undefined(), ct);
+	public static ValueTask<T?> Value<T>(this IFeed<T> feed, CancellationToken ct)
+		where T : notnull
+		=> feed.Values(AsyncFeedValue.Default, ct).FirstOrDefaultAsync(ct);
 
 	/// <summary>
 	/// Asynchronously get the next data produced by a feed.
@@ -39,8 +41,9 @@ partial class Feed
 	/// <param name="kind">Specify which data can be returned or not.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to asynchronously get the next acceptable data produced by the feed.</returns>
-	public static ValueTask<Option<T>> Value<T>(this IFeed<T> feed, AsyncFeedValue kind, CancellationToken ct)
-		=> feed.Values(kind, ct).FirstOrDefaultAsync(Option<T>.Undefined(), ct);
+	public static ValueTask<T?> Value<T>(this IFeed<T> feed, AsyncFeedValue kind, CancellationToken ct)
+		where T : notnull
+		=> feed.Values(kind, ct).FirstOrDefaultAsync(ct);
 
 	/// <summary>
 	/// Gets an asynchronous enumerable sequence of all data produced by a feed.
@@ -50,7 +53,40 @@ partial class Feed
 	/// <param name="kind">Specify which data can be returned or not.</param>
 	/// <param name="ct">A cancellation to cancel the async enumeration.</param>
 	/// <returns>An async enumeration sequence of all acceptable data produced by a feed.</returns>
-	public static async IAsyncEnumerable<Option<T>> Values<T>(this IFeed<T> feed, AsyncFeedValue kind = AsyncFeedValue.AllowError, [EnumeratorCancellation] CancellationToken ct = default)
+	public static IAsyncEnumerable<T?> Values<T>(this IFeed<T> feed, AsyncFeedValue kind = AsyncFeedValue.AllowError, CancellationToken ct = default)
+		where T : notnull
+		=> feed.Options(kind, ct).Select(opt => opt.SomeOrDefault());
+
+	/// <summary>
+	/// Asynchronously get the next data produced by a feed.
+	/// </summary>
+	/// <typeparam name="T">The type of the value of the feed.</typeparam>
+	/// <param name="feed">The feed to get data from.</param>
+	/// <param name="ct">A cancellation to cancel the async operation.</param>
+	/// <returns>A ValueTask to asynchronously get the next data produced by the feed.</returns>
+	public static ValueTask<Option<T>> Option<T>(this IFeed<T> feed, CancellationToken ct)
+		=> feed.Options(AsyncFeedValue.Default, ct).FirstOrDefaultAsync(Uno.Extensions.Option<T>.Undefined(), ct);
+
+	/// <summary>
+	/// Asynchronously get the next data produced by a feed.
+	/// </summary>
+	/// <typeparam name="T">The type of the value of the feed.</typeparam>
+	/// <param name="feed">The feed to get data from.</param>
+	/// <param name="kind">Specify which data can be returned or not.</param>
+	/// <param name="ct">A cancellation to cancel the async operation.</param>
+	/// <returns>A ValueTask to asynchronously get the next acceptable data produced by the feed.</returns>
+	public static ValueTask<Option<T>> Option<T>(this IFeed<T> feed, AsyncFeedValue kind, CancellationToken ct)
+		=> feed.Options(kind, ct).FirstOrDefaultAsync(Uno.Extensions.Option<T>.Undefined(), ct);
+
+	/// <summary>
+	/// Gets an asynchronous enumerable sequence of all data produced by a feed.
+	/// </summary>
+	/// <typeparam name="T">The type of the value of the feed.</typeparam>
+	/// <param name="feed">The feed to get data from.</param>
+	/// <param name="kind">Specify which data can be returned or not.</param>
+	/// <param name="ct">A cancellation to cancel the async enumeration.</param>
+	/// <returns>An async enumeration sequence of all acceptable data produced by a feed.</returns>
+	public static async IAsyncEnumerable<Option<T>> Options<T>(this IFeed<T> feed, AsyncFeedValue kind = AsyncFeedValue.AllowError, [EnumeratorCancellation] CancellationToken ct = default)
 	{
 		await foreach (var message in SourceContext.Current.GetOrCreateSource(feed).WithCancellation(ct).ConfigureAwait(false))
 		{
