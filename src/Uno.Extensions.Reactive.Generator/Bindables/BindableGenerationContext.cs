@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using Microsoft.CodeAnalysis;
 using Uno.Extensions.Reactive.Bindings;
 
 namespace Uno.Extensions.Reactive.Generator;
 
 internal record BindableGenerationContext(
+	GeneratorExecutionContext Context,
 	INamedTypeSymbol Feed,
 	INamedTypeSymbol Input,
 	INamedTypeSymbol ListFeed,
@@ -16,7 +19,8 @@ internal record BindableGenerationContext(
 	INamedTypeSymbol BindableAttribute,
 	INamedTypeSymbol InputAttribute,
 	INamedTypeSymbol ValueAttribute,
-	INamedTypeSymbol DefaultRecordCtor)
+	INamedTypeSymbol DefaultRecordCtor,
+	INamedTypeSymbol CancellationToken)
 {
 	public static BindableGenerationContext? TryGet(GeneratorExecutionContext context, out string? error)
 	{
@@ -31,6 +35,7 @@ internal record BindableGenerationContext(
 		var inputAttribute = compilation.GetTypeByMetadataName(typeof(InputAttribute).FullName);
 		var valueAttribute = compilation.GetTypeByMetadataName(typeof(ValueAttribute).FullName);
 		var defaultRecordCtor = compilation.GetTypeByMetadataName(typeof(BindableDefaultConstructorAttribute).FullName);
+		var cancellationToken = compilation.GetTypeByMetadataName(typeof(CancellationToken).FullName);
 
 		IEnumerable<string> Missing()
 		{
@@ -78,6 +83,11 @@ internal record BindableGenerationContext(
 			{
 				yield return typeof(BindableDefaultConstructorAttribute).FullName;
 			}
+
+			if (cancellationToken is null)
+			{
+				yield return typeof(CancellationToken).FullName;
+			}
 		}
 
 		if (Missing().ToList() is { Count: > 0 } missings)
@@ -89,6 +99,7 @@ internal record BindableGenerationContext(
 		error = null;
 		return new BindableGenerationContext
 		(
+			context,
 			feed!,
 			input!,
 			listFeed!,
@@ -97,7 +108,8 @@ internal record BindableGenerationContext(
 			bindable!,
 			inputAttribute!,
 			valueAttribute!,
-			defaultRecordCtor!
+			defaultRecordCtor!,
+			cancellationToken!
 		);
 	}
 
@@ -245,5 +257,29 @@ internal record BindableGenerationContext(
 			parameterType = null;
 			return false;
 		}
+	}
+
+	public bool IsAwaitable(ITypeSymbol type)
+	{
+		// We usually use this IsAwaitable for return type of method.
+		if (type.SpecialType == SpecialType.System_Void)
+		{
+			return false;
+		}
+
+		return type.GetMembers("GetAwaiter").Any(IsInstanceGetAwaiter)
+			|| Context.Compilation.GetSymbolsWithName("GetAwaiter", SymbolFilter.Member, Context.CancellationToken).Any(IsExtensionGetAwaiter);
+
+		static bool IsInstanceGetAwaiter(ISymbol symbol)
+			=> symbol is IMethodSymbol { IsStatic: false, Parameters.Length: 0 } method
+				&& IsAwaiter(method.ReturnType);
+
+		bool IsExtensionGetAwaiter(ISymbol symbol)
+			=> symbol is IMethodSymbol { IsStatic: true, Parameters.Length: 1 } method
+				&& SymbolEqualityComparer.Default.Equals(method.Parameters[0].Type, type)
+				&& IsAwaiter(method.ReturnType);
+
+		static bool IsAwaiter(ITypeSymbol returnType)
+			=> returnType.AllInterfaces.Any(intf => intf.ToString().Equals(typeof(INotifyCompletion).FullName));
 	}
 }

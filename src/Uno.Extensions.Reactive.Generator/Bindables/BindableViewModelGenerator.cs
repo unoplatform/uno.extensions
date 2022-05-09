@@ -204,8 +204,8 @@ internal class BindableViewModelGenerator
 				case IFieldSymbol field when _ctx.IsFeed(field.Type, out var valueType):
 				{
 					yield return _bindables.GetBindableType(valueType) is { } bindableType
-						? new BindableFeedField(field, valueType, bindableType)
-						: new MappedFeedField(field, valueType);
+						? new BindableFromFeedField(field, valueType, bindableType)
+						: new PropertyFromFeedField(field, valueType);
 					break;
 				}
 
@@ -220,13 +220,17 @@ internal class BindableViewModelGenerator
 				case IPropertySymbol property when _ctx.IsFeed(property.Type, out var valueType):
 				{
 					yield return _bindables.GetBindableType(valueType) is { } bindableType
-						? new BindableFeedProperty(property, valueType, bindableType)
-						: new MappedFeedProperty(property, valueType);
+						? new BindableFromFeedProperty(property, valueType, bindableType)
+						: new PropertyFromFeedProperty(property, valueType);
 					break;
 				}
 
 				case IPropertySymbol property:
 					yield return new MappedProperty(property);
+					break;
+
+				case IMethodSymbol method when CommandFromMethod.IsSupported(method, _ctx):
+					yield return new CommandFromMethod(method, _ctx);
 					break;
 
 				case IMethodSymbol { MethodKind: MethodKind.Ordinary, IsImplicitlyDeclared: false } method:

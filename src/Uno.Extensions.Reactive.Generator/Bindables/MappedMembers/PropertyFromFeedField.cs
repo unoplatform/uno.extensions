@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis;
 namespace Uno.Extensions.Reactive.Generator;
 
 // Note: This also applies for State
-internal record MappedFeedField(IFieldSymbol _field, ITypeSymbol _valueType) : IMappedMember
+internal record PropertyFromFeedField(IFieldSymbol _field, ITypeSymbol _valueType) : IMappedMember
 {
 	private readonly IFieldSymbol _field = _field;
 	private readonly ITypeSymbol _valueType = _valueType;
