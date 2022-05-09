@@ -53,7 +53,7 @@ internal record CommandFromMethod(IMethodSymbol Method, BindableGenerationContex
 		};
 
 	private string GetAwait()
-		=> Context.IsAwaitable(Method.ReturnType)
+		=> Context.IsAwaitable(Method)
 			? "await "
 			: string.Empty;
 }

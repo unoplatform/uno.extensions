@@ -4,7 +4,11 @@ using System.Linq;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Tags;
 using Uno.Extensions.Reactive.Bindings;
 
 namespace Uno.Extensions.Reactive.Generator;
@@ -259,6 +263,14 @@ internal record BindableGenerationContext(
 		}
 	}
 
+	public bool IsAwaitable(IMethodSymbol method)
+		=> method
+			.DeclaringSyntaxReferences
+			.Select(syntaxRef => syntaxRef.GetSyntax(Context.CancellationToken))
+			.OfType<MethodDeclarationSyntax>()
+			.Any(syntax => syntax.Modifiers.Any(SyntaxKind.AsyncKeyword))
+			|| IsAwaitable(method.ReturnType);
+
 	public bool IsAwaitable(ITypeSymbol type)
 	{
 		// We usually use this IsAwaitable for return type of method.
@@ -267,8 +279,28 @@ internal record BindableGenerationContext(
 			return false;
 		}
 
-		return type.GetMembers("GetAwaiter").Any(IsInstanceGetAwaiter)
-			|| Context.Compilation.GetSymbolsWithName("GetAwaiter", SymbolFilter.Member, Context.CancellationToken).Any(IsExtensionGetAwaiter);
+		// Fast path to avoid lookup into all types
+		var typeStr = type.ToString();
+		if (typeStr.StartsWith(_task, StringComparison.Ordinal)
+			|| typeStr.StartsWith(_valueTask, StringComparison.Ordinal))
+		{
+			return true;
+		}
+
+		lock (_isAwaitableCache)
+		{
+			if (_isAwaitableCache.TryGetValue(type, out var isAwaitable))
+			{
+				return isAwaitable;
+			}
+
+			isAwaitable = type.GetMembers(WellKnownMemberNames.GetAwaiter).Any(IsInstanceGetAwaiter)
+				|| Context.Compilation.GetSymbolsWithName(WellKnownMemberNames.GetAwaiter, SymbolFilter.Member, Context.CancellationToken).Any(IsExtensionGetAwaiter);
+
+			_isAwaitableCache[type] = isAwaitable;
+
+			return isAwaitable;
+		}
 
 		static bool IsInstanceGetAwaiter(ISymbol symbol)
 			=> symbol is IMethodSymbol { IsStatic: false, Parameters.Length: 0 } method
@@ -280,6 +312,13 @@ internal record BindableGenerationContext(
 				&& IsAwaiter(method.ReturnType);
 
 		static bool IsAwaiter(ITypeSymbol returnType)
-			=> returnType.AllInterfaces.Any(intf => intf.ToString().Equals(typeof(INotifyCompletion).FullName));
+			=> returnType.AllInterfaces.Any(intf => intf.ToString().Equals(_notifyCompletion));
 	}
+
+#pragma warning disable RS1024 // Compare symbols correctly => FALSE POSITIVE
+	private static readonly Dictionary<ITypeSymbol, bool> _isAwaitableCache = new(SymbolEqualityComparer.Default);
+#pragma warning restore RS1024 // Compare symbols correctly
+	private static readonly string _notifyCompletion = typeof(INotifyCompletion).FullName;
+	private static readonly string _task = typeof(Task).FullName;
+	private static readonly string _valueTask = typeof(ValueTask).FullName;
 }
