@@ -45,12 +45,53 @@ public class RouteResolverDefault : RouteResolver
 			return null;
 		}
 
-		if (Logger.IsEnabled(LogLevel.Warning)) Logger.LogWarningMessage($"For better performance (avoid reflection), create mapping for for path '{path}', view '{view?.Name}', view model '{viewModel?.Name}'");
+		// Trim any qualifiers
+		path = path.ExtractBase(out _, out _);
 
+		// If no path is provided, attempt to get a path
+		// from the view or viewmodel type provided
 		if (string.IsNullOrWhiteSpace(path))
 		{
 			path = PathFromTypes(view, viewModel);
 		}
+
+		// If path is still null, we can't build a mapping, so just return
+		if (path is null ||
+			string.IsNullOrWhiteSpace(path))
+		{
+			return null;
+		}
+
+		// Attempt to find a viewmap to build the routeinfo from
+		var viewMap = ViewMaps.Items.FirstOrDefault(x =>
+		{
+			var mapView = x.View ?? x.ViewSelector?.Invoke();
+			var mapViewModel = x.ViewModel;
+			var mapPath = PathFromTypes(mapView, mapViewModel);
+			return mapPath == path;
+		});
+		if (viewMap is not null)
+		{
+			var viewFunc = (viewMap.View is not null) ?
+										() => viewMap.View :
+										viewMap.ViewSelector;
+			var defaultMapFromViewMap = new RouteInfo(
+												Path: path,
+												View: viewFunc,
+												ViewAttributes: viewMap.ViewAttributes,
+												ViewModel: viewMap.ViewModel,
+												Data: viewMap.Data?.Data,
+												ToQuery: viewMap?.Data?.UntypedToQuery,
+												FromQuery: viewMap?.Data?.UntypedFromQuery,
+												ResultData: viewMap?.ResultData);
+
+
+			//new RouteInfo(path, View: () => view, ViewModel: viewModel);
+			Mappings[defaultMapFromViewMap.Path] = defaultMapFromViewMap;
+			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Created default mapping from viewmap - Path '{defaultMapFromViewMap.Path}'");
+		}
+
+		if (Logger.IsEnabled(LogLevel.Information)) Logger.LogWarningMessage($"For better performance (avoid reflection), create mapping for for path '{path}', view '{view?.Name}', view model '{viewModel?.Name}'");
 
 		if (view is null)
 		{
@@ -67,13 +108,13 @@ public class RouteResolverDefault : RouteResolver
 		if (path is not null &&
 			!string.IsNullOrWhiteSpace(path))
 		{
-			var defaultMap = new RouteInfo(path, View: ()=>view, ViewModel: viewModel);
+			var defaultMap = new RouteInfo(path, View: () => view, ViewModel: viewModel);
 			Mappings[defaultMap.Path] = defaultMap;
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Created default mapping - Path '{defaultMap.Path}'");
 			return defaultMap;
 		}
 
-		if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Unable to create default mapping");
+		if (Logger.IsEnabled(LogLevel.Warning)) Logger.LogDebugMessage($"Unable to create default mapping");
 		return null;
 	}
 
@@ -105,6 +146,11 @@ public class RouteResolverDefault : RouteResolver
 
 	private string PathFromTypes(Type? view, Type? viewModel)
 	{
+		if (view is null && viewModel is null)
+		{
+			return string.Empty;
+		}
+
 		var path = ViewTypeToPath(view);
 		if (!string.IsNullOrWhiteSpace(path))
 		{

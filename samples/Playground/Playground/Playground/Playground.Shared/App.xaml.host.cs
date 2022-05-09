@@ -177,8 +177,7 @@ public sealed partial class App : Application
 						{
 							new RouteMap("ComplexDialogFirst",View: views.FindByView<ComplexDialogFirstPage>()),
 							new RouteMap("ComplexDialogSecond",View: views.FindByView<ComplexDialogSecondPage>(), DependsOn: "ComplexDialogFirst")
-						}),
-						new RouteMap("Basic",View: views.FindByView<BasicFlyout>())
+						})
 					}),
 					new RouteMap("PanelVisibility",View: views.FindByView<PanelVisibilityPage>()),
 					new RouteMap("VisualStates",View: views.FindByView<VisualStatesPage>()),
