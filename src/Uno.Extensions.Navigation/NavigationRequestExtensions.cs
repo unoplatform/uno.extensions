@@ -3,11 +3,11 @@ namespace Uno.Extensions.Navigation;
 
 public static class NavigationRequestExtensions
 {
-	public static NavigationRequest? AsRequest(this string path, object sender, object? data, CancellationToken cancellationToken, Type? resultType = null)
+	public static NavigationRequest? AsRequest(this string path, IRouteResolver? resolver, object sender, object? data, CancellationToken cancellationToken, Type? resultType = null)
 	{
-		if(resultType is null)
+		if (resultType is null)
 		{
-			return AsRequest(path, sender, data, cancellationToken);
+			return AsRequest(path, resolver, sender, data, cancellationToken);
 		}
 
 		var navMethods = typeof(NavigationRequestExtensions)
@@ -20,21 +20,21 @@ public static class NavigationRequestExtensions
 		return nav;
 	}
 
-	public static NavigationRequest AsRequest<TResult>(this string path, object sender, object? data = null, CancellationToken cancellationToken = default)
-    {
-		var request = new NavigationRequest<TResult>(sender, path.AsRoute(data), cancellationToken);
+	public static NavigationRequest AsRequest<TResult>(this string path, IRouteResolver? resolver, object sender, object? data = null, CancellationToken cancellationToken = default)
+	{
+		var request = new NavigationRequest<TResult>(sender, path.AsRoute(data, resolver), cancellationToken);
 		return request;
 	}
 
-	public static NavigationRequest AsRequest(this string path, object sender, object? data = null, CancellationToken cancellationToken = default)
-    {
-        var request = new NavigationRequest(sender, path.AsRoute(data), cancellationToken);
-        return request;
-    }
+	public static NavigationRequest AsRequest(this string path, IRouteResolver? resolver, object sender, object? data = null, CancellationToken cancellationToken = default)
+	{
+		var request = new NavigationRequest(sender, path.AsRoute(data, resolver), cancellationToken);
+		return request;
+	}
 
 	public static bool SameRouteBase(this NavigationRequest request, NavigationRequest newRequest)
 	{
-		if(request?.Route is null || newRequest?.Route is null)
+		if (request?.Route is null || newRequest?.Route is null)
 		{
 			return false;
 		}
