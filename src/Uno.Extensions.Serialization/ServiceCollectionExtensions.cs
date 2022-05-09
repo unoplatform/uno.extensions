@@ -18,6 +18,7 @@ public static class ServiceCollectionExtensions
 			.AddSingleton(sp => new JsonSerializerOptions
 			{
 				NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString,
+				DefaultIgnoreCondition= System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault,
 				AllowTrailingCommas = true
 			})
 			.AddSingleton<SystemTextJsonSerializer>()
