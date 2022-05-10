@@ -78,16 +78,13 @@ public class MessageDialogNavigator : DialogNavigator
 					if (result.Status != TaskStatus.Canceled)
 					{
 						var msgResult = result.Result;
-						var dialogAction = msgResult is not null ?
-											(buttons.FirstOrDefault(b => b.Id == msgResult.Id) ?? new DialogAction(Label: msgResult.Label, Id: msgResult.Id)) :
-											default;
-						if (dialogAction is not null)
+						if (msgResult is not null)
 						{
-							navigation?.NavigateBackWithResultAsync(request.Sender, data: Option.Some(dialogAction));
+							navigation?.NavigateBackWithResultAsync(request.Sender, data: Option.Some(msgResult.Id ?? msgResult.Label));
 						}
 						else
 						{
-							navigation?.NavigateBackWithResultAsync(request.Sender, data: Option.None<DialogAction>());
+							navigation?.NavigateBackWithResultAsync(request.Sender, data: Option.None<object>());
 						}
 
 					}

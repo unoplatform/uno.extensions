@@ -100,8 +100,8 @@ public sealed partial class App : Application
 				DefaultButtonIndex: 1,
 				Buttons: new LocalizableDialogAction[]
 				{
-								new(LabelProvider: localizer=> localizer["Y"],Id:"Y"),
-								new(LabelProvider: localizer=> localizer["N"], Id:"N")
+								new(LabelProvider: localizer=> localizer!["Y"],Id:"Y"),
+								new(LabelProvider: localizer=> localizer!["N"], Id:"N")
 				}
 			);
 

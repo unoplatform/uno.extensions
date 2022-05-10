@@ -92,7 +92,7 @@ public sealed partial class CodeBehindPage : Page, IInjectable<INavigator>
 	// Show MessageDialog
 	public async void ShowMessageDialogAsyncClick(object sender, RoutedEventArgs args)
 	{
-		var result = await Navigator!.ShowMessageDialogAsync(this, "Sample content", "Sample title").AsResult();
+		var result = await Navigator!.ShowMessageDialogAsync<string>(this, content: "Sample content", title: "Sample title").AsResult();
 	}
 }
 

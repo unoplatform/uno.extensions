@@ -15,12 +15,12 @@ public static class NavigationResponseExtensions
 
 	public static NavigationResultResponse<TResult>? AsResultResponse<TResult>(this NavigationResponse response)
     {
-        if (response is NavigationResultResponse<TResult> resultResponse)
-        {
-            return resultResponse;
-        }
+		if (response is NavigationResultResponse genericResultResponse)
+		{
+			return genericResultResponse.AsResultResponse<TResult>();
+		}
 
-        return null;
+		return null;
     }
 
 	public static async ValueTask<Option<TResult>> AsResult<TResult>(this Task<NavigationResultResponse<TResult>?> navigationResponse)

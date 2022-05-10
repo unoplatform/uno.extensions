@@ -15,12 +15,12 @@ public sealed partial class FlyoutsPopupsDrawerPage : Page
 
 	private async void OpenDrawerResponseClick(object sender, RoutedEventArgs e)
 	{
-		var result = await this.Navigator().NavigateRouteForResultAsync<Widget>(this, "MyDrawer/Show").AsResult();
-		await this.Navigator().ShowMessageDialogAsync(this, $"Widget: {result.SomeOrDefault()?.Name}");
+		var result = await this.Navigator()!.NavigateRouteForResultAsync<Widget>(this, "MyDrawer/Show").AsResult();
+		await this.Navigator()!.ShowMessageDialogAsync(this, content: $"Widget: {result.SomeOrDefault()?.Name}");
 	}
 
 	private async void CloseDrawerWithResultClick(object sender, RoutedEventArgs e)
 	{
-		await (sender as FrameworkElement).Navigator().NavigateBackWithResultAsync(this, data: new Widget { Name = "Drawer Widget" });
+		await (sender as FrameworkElement)!.Navigator()!.NavigateBackWithResultAsync(this, data: new Widget { Name = "Drawer Widget" });
 	}
 }
