@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Uno.RoslynHelpers;
 
 namespace Uno.Extensions.Reactive.Generator;
@@ -203,7 +204,7 @@ internal class BindableViewModelGenerator
 
 				case IFieldSymbol field when _ctx.IsFeed(field.Type, out var valueType):
 				{
-					yield return _bindables.GetBindableType(valueType) is { } bindableType
+					yield return _bindables.GetBindableType(valueType) is { } bindableType && !field.HasAttributes(_ctx.ValueAttribute)
 						? new BindableFromFeedField(field, valueType, bindableType)
 						: new PropertyFromFeedField(field, valueType);
 					break;
@@ -219,7 +220,7 @@ internal class BindableViewModelGenerator
 
 				case IPropertySymbol property when _ctx.IsFeed(property.Type, out var valueType):
 				{
-					yield return _bindables.GetBindableType(valueType) is { } bindableType
+					yield return _bindables.GetBindableType(valueType) is { } bindableType && !property.HasAttributes(_ctx.ValueAttribute)
 						? new BindableFromFeedProperty(property, valueType, bindableType)
 						: new PropertyFromFeedProperty(property, valueType);
 					break;
