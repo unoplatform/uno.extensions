@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Uno.RoslynHelpers;
 
 namespace Uno.Extensions.Reactive.Generator;
@@ -203,9 +204,9 @@ internal class BindableViewModelGenerator
 
 				case IFieldSymbol field when _ctx.IsFeed(field.Type, out var valueType):
 				{
-					yield return _bindables.GetBindableType(valueType) is { } bindableType
-						? new BindableFeedField(field, valueType, bindableType)
-						: new MappedFeedField(field, valueType);
+					yield return _bindables.GetBindableType(valueType) is { } bindableType && !field.HasAttributes(_ctx.ValueAttribute)
+						? new BindableFromFeedField(field, valueType, bindableType)
+						: new PropertyFromFeedField(field, valueType);
 					break;
 				}
 
@@ -219,14 +220,18 @@ internal class BindableViewModelGenerator
 
 				case IPropertySymbol property when _ctx.IsFeed(property.Type, out var valueType):
 				{
-					yield return _bindables.GetBindableType(valueType) is { } bindableType
-						? new BindableFeedProperty(property, valueType, bindableType)
-						: new MappedFeedProperty(property, valueType);
+					yield return _bindables.GetBindableType(valueType) is { } bindableType && !property.HasAttributes(_ctx.ValueAttribute)
+						? new BindableFromFeedProperty(property, valueType, bindableType)
+						: new PropertyFromFeedProperty(property, valueType);
 					break;
 				}
 
 				case IPropertySymbol property:
 					yield return new MappedProperty(property);
+					break;
+
+				case IMethodSymbol method when CommandFromMethod.IsSupported(method, _ctx):
+					yield return new CommandFromMethod(method, _ctx);
 					break;
 
 				case IMethodSymbol { MethodKind: MethodKind.Ordinary, IsImplicitlyDeclared: false } method:

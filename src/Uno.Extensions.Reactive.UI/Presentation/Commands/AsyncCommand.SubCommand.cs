@@ -6,7 +6,7 @@ using Uno.Extensions.Reactive.Core;
 
 namespace Uno.Extensions.Reactive;
 
-internal sealed partial class AsyncCommand
+partial class AsyncCommand
 {
 	private sealed class SubCommand
 	{

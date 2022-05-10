@@ -18,11 +18,21 @@ public class Given_ListFeed : FeedTests
 	// Those are integration tests that demo the basic public API and are not expected to deeply validate feed behavior.
 
 	[TestMethod]
-	public async Task When_Async()
+	public async Task When_GetAwaiter()
 	{
 		var source = new[] { 41, 42, 43 };
 		var sut = ListFeed.Async<int>(async ct => source.ToImmutableList());
 		var result = await sut;
+
+		result.Should().BeEquivalentTo(source);
+	}
+
+	[TestMethod]
+	public async Task When_Async()
+	{
+		var source = new[] { 41, 42, 43 };
+		var sut = ListFeed.Async<int>(async ct => source.ToImmutableList());
+		var result = await sut.Option(CT);
 
 		result.IsSome(out var items).Should().BeTrue();
 		items.Should().BeEquivalentTo(source);

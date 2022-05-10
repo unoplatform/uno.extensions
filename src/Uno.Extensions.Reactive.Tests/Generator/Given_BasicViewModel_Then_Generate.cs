@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Windows.Input;
 using Windows.UI.Xaml.Data;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -169,14 +170,12 @@ public class Given_BasicViewModel_Then_Generate : FeedUITests
 		Assert.IsNotNull(bindable.AListStateProperty as IListState<string>);
 		Assert.IsNotNull(bindable.AListStateProperty as ICollectionView);
 
-		bindable.AParameterLessMethod();
+		Assert.IsNotNull(bindable.AParameterLessMethod as ICommand);
+		Assert.IsNotNull(bindable.AParameterLessMethodReturningATuple as ICommand);
+
 		bindable.AParameterizedMethod("arg1", 42);
 
-		(string result1, int result2) = bindable.AParameterLessMethodReturningATuple();
-		Assert.AreEqual("AParameterLessMethodReturningATuple", result1);
-		Assert.AreEqual(42, result2);
-
-		(result1, result2) = bindable.AParameterizedMethodReturningATuple("AParameterizedMethodReturningATuple", 43);
+		var (result1, result2) = bindable.AParameterizedMethodReturningATuple("AParameterizedMethodReturningATuple", 43);
 		Assert.AreEqual("AParameterizedMethodReturningATuple", result1);
 		Assert.AreEqual(43, result2);
 	}

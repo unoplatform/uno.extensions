@@ -41,7 +41,7 @@ public readonly struct CommandBuilder<T> : ICommandBuilder, ICommandBuilder<T>, 
 	/// <param name="errorHandler">An exception handler.</param>
 	/// <returns>The command.</returns>
 	public IAsyncCommand Build(SourceContext context, Action<Exception>? errorHandler = null)
-		=> new AsyncCommand(_name, _configs, errorHandler ?? Command._defaultErrorHandler, context);
+		=> new AsyncCommand(_name, _configs, errorHandler ?? Command.DefaultErrorHandler, context);
 
 	ICommandBuilder<TArg> ICommandBuilder.Given<TArg>(IFeed<TArg> parameter)
 		=> new CommandBuilder<TArg>(_name, _configs, _current with { Parameter = ctx => ctx.GetOrCreateSource(parameter) });

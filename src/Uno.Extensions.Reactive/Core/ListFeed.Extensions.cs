@@ -23,39 +23,71 @@ public static partial class ListFeed
 	/// <typeparam name="T">The type of the value of the feed.</typeparam>
 	/// <param name="listFeed">The list feed to get data from.</param>
 	/// <returns>An awaiter to asynchronously get the next data produced by the feed.</returns>
-	public static ValueTaskAwaiter<Option<IImmutableList<T>>> GetAwaiter<T>(this IListFeed<T> listFeed)
+	public static ValueTaskAwaiter<IImmutableList<T>> GetAwaiter<T>(this IListFeed<T> listFeed)
 		=> listFeed.Value(SourceContext.Current.Token).GetAwaiter();
 
 	/// <summary>
-	/// Asynchronously gets the next data produced by a feed.
+	/// Asynchronously gets the next collection of items produced by a list feed.
 	/// </summary>
 	/// <typeparam name="T">The type of the value of the feed.</typeparam>
 	/// <param name="listFeed">The feed to get data from.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to asynchronously get the next data produced by the feed.</returns>
-	public static ValueTask<Option<IImmutableList<T>>> Value<T>(this IListFeed<T> listFeed, CancellationToken ct)
-		=> listFeed.Values(AsyncFeedValue.Default, ct).FirstOrDefaultAsync(Option<IImmutableList<T>>.Undefined(), ct);
+	public static ValueTask<IImmutableList<T>> Value<T>(this IListFeed<T> listFeed, CancellationToken ct)
+		=> listFeed.Values(AsyncFeedValue.Default, ct).FirstOrDefaultAsync(ImmutableList<T>.Empty, ct);
 
 	/// <summary>
-	/// Asynchronously get the next data produced by a feed.
+	/// Asynchronously get the next collection of items produced by a list feed.
 	/// </summary>
 	/// <typeparam name="T">The type of the value of the feed.</typeparam>
 	/// <param name="listFeed">The list feed to get data from.</param>
 	/// <param name="kind">Specify which data can be returned or not.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to asynchronously get the next acceptable data produced by the feed.</returns>
-	public static ValueTask<Option<IImmutableList<T>>> Value<T>(this IListFeed<T> listFeed, AsyncFeedValue kind, CancellationToken ct)
-		=> listFeed.Values(kind, ct).FirstOrDefaultAsync(Option<IImmutableList<T>>.Undefined(), ct);
+	public static ValueTask<IImmutableList<T>> Value<T>(this IListFeed<T> listFeed, AsyncFeedValue kind, CancellationToken ct)
+		=> listFeed.Values(kind, ct).FirstOrDefaultAsync(ImmutableList<T>.Empty, ct);
 
 	/// <summary>
-	/// Gets an asynchronous enumerable sequence of all data produced by a feed.
+	/// Gets an asynchronous enumerable sequence of all collection of items produced by a list feed.
 	/// </summary>
 	/// <typeparam name="T">The type of the value of the feed.</typeparam>
 	/// <param name="listFeed">The list feed to get data from.</param>
 	/// <param name="kind">Specify which data can be returned or not.</param>
 	/// <param name="ct">A cancellation to cancel the async enumeration.</param>
 	/// <returns>An async enumeration sequence of all acceptable data produced by a feed.</returns>
-	public static async IAsyncEnumerable<Option<IImmutableList<T>>> Values<T>(this IListFeed<T> listFeed, AsyncFeedValue kind = AsyncFeedValue.AllowError, [EnumeratorCancellation] CancellationToken ct = default)
+	public static IAsyncEnumerable<IImmutableList<T>> Values<T>(this IListFeed<T> listFeed, AsyncFeedValue kind = AsyncFeedValue.AllowError, CancellationToken ct = default)
+		=> listFeed.Options(kind, ct).Select(opt => opt.SomeOrDefault(ImmutableList<T>.Empty));
+
+	/// <summary>
+	/// Asynchronously gets the next collection of items produced by a feed.
+	/// </summary>
+	/// <typeparam name="T">The type of the value of the feed.</typeparam>
+	/// <param name="listFeed">The feed to get data from.</param>
+	/// <param name="ct">A cancellation to cancel the async operation.</param>
+	/// <returns>A ValueTask to asynchronously get the next data produced by the feed.</returns>
+	public static ValueTask<Option<IImmutableList<T>>> Option<T>(this IListFeed<T> listFeed, CancellationToken ct)
+		=> listFeed.Options(AsyncFeedValue.Default, ct).FirstOrDefaultAsync(Extensions.Option<IImmutableList<T>>.Undefined(), ct);
+
+	/// <summary>
+	/// Asynchronously get the next collection of items produced by a feed.
+	/// </summary>
+	/// <typeparam name="T">The type of the value of the feed.</typeparam>
+	/// <param name="listFeed">The list feed to get data from.</param>
+	/// <param name="kind">Specify which data can be returned or not.</param>
+	/// <param name="ct">A cancellation to cancel the async operation.</param>
+	/// <returns>A ValueTask to asynchronously get the next acceptable data produced by the feed.</returns>
+	public static ValueTask<Option<IImmutableList<T>>> Option<T>(this IListFeed<T> listFeed, AsyncFeedValue kind, CancellationToken ct)
+		=> listFeed.Options(kind, ct).FirstOrDefaultAsync(Extensions.Option<IImmutableList<T>>.Undefined(), ct);
+
+	/// <summary>
+	/// Gets an asynchronous enumerable sequence of all collection of items produced by a feed.
+	/// </summary>
+	/// <typeparam name="T">The type of the value of the feed.</typeparam>
+	/// <param name="listFeed">The list feed to get data from.</param>
+	/// <param name="kind">Specify which data can be returned or not.</param>
+	/// <param name="ct">A cancellation to cancel the async enumeration.</param>
+	/// <returns>An async enumeration sequence of all acceptable data produced by a feed.</returns>
+	public static async IAsyncEnumerable<Option<IImmutableList<T>>> Options<T>(this IListFeed<T> listFeed, AsyncFeedValue kind = AsyncFeedValue.AllowError, [EnumeratorCancellation] CancellationToken ct = default)
 	{
 		await foreach (var message in SourceContext.Current.GetOrCreateSource(listFeed).WithCancellation(ct).ConfigureAwait(false))
 		{
