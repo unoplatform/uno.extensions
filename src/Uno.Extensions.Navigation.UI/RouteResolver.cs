@@ -7,7 +7,7 @@ public class RouteResolver : IRouteResolver
 
 	protected ILogger Logger { get; }
 
-	protected IRouteRegistry RouteMapss { get; }
+	protected IRouteRegistry RouteMaps { get; }
 	protected IViewRegistry ViewMaps { get; }
 
 	public RouteResolver(
@@ -21,7 +21,7 @@ public class RouteResolver : IRouteResolver
 	protected RouteResolver(ILogger logger, IRouteRegistry routes, IViewRegistry views)
 	{
 		Logger = logger;
-		RouteMapss = routes;
+		RouteMaps = routes;
 		ViewMaps = views;
 
 		var maps = ResolveViewMaps(routes.Items);
