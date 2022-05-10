@@ -91,7 +91,7 @@ public class RouteResolverDefault : RouteResolver
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Created default mapping from viewmap - Path '{defaultMapFromViewMap.Path}'");
 		}
 
-		if (Logger.IsEnabled(LogLevel.Information)) Logger.LogWarningMessage($"For better performance (avoid reflection), create mapping for for path '{path}', view '{view?.Name}', view model '{viewModel?.Name}'");
+		if (Logger.IsEnabled(LogLevel.Information)) Logger.LogInformationMessage($"For better performance (avoid reflection), create mapping for for path '{path}', view '{view?.Name}', view model '{viewModel?.Name}'");
 
 		if (view is null)
 		{
@@ -114,7 +114,7 @@ public class RouteResolverDefault : RouteResolver
 			return defaultMap;
 		}
 
-		if (Logger.IsEnabled(LogLevel.Warning)) Logger.LogDebugMessage($"Unable to create default mapping");
+		if (Logger.IsEnabled(LogLevel.Warning)) Logger.LogWarningMessage($"Unable to create default mapping");
 		return null;
 	}
 
