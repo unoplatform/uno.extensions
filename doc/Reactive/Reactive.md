@@ -1,13 +1,67 @@
 # Reactive
+## Concept
 
-This package is a building block to create a [reactive application](https://en.wikipedia.org/wiki/Reactive_programming).
+When we are asynchronously loading a data, the standard pattern is to use a `Task<T>`. A _task_ represents a data that will be available in the future:
+```csharp
+public async Task<decimal> GetShippingCost(CancellationToken ct)
+{
+	var country = SelectedCountry;
+	var cost = await _shippingService.GetShippingCost(country);
+
+	return cost;
+}
+```
+The issue is that `Task<T>` represents only one value, you must manually re-fetch the data each time one of its dependencies is updated. For instance, here, each time the user updates the selected country, you have to manually re-invoked the `GetShippingCost` and update the UI.
+
+A solution to this would be to use `IObservable<T>` or `IAsyncEnumerable<T>`. Both are representing a stream of value. The example above can be written like this using `IObservable<T>`:
+```csharp
+public IObservable<Country> SelectedCountry { get; }
+
+public IObservable<decimal> ShippingCost => _selectedCountry.SelectAsync(country => _shippingService.GetShippingCost(country));
+```
+Or with `IAsyncEnumerable`:
+```csharp
+public async IAsyncEnumerable<decimal> GetShippingCost([EnumerationCancellation] CancellationToken ct = default)
+{
+	await foreach (var country in SelectedCountry)
+	{
+		yield return await _shippingService.GetShippingCost(country);
+	}
+}
+```
+
+But in both cases, if there is any exception the stream will be broken. This means that for instance in example above, if we cannot compute the shipping cost for a given country for any reason (network issue, invalid country, …) the stream of data will be terminated, and selecting another country won’t have any effect.
+
+Also, when a dependency is being updated and we may need to do some asynchronously work, like update a projection. In our example, we asynchronously get the updated shipping cost when country is changed. From a UI perspective, it would be great to have a visual indication that the shipping cost is being re-computed for the newly chosen country.
+
+Neither `IObservable<T>` nor `IAsyncEnumerable<T>` have such metadata mechanism for produced values, that the purpose if `IFeed<T>`.
+
+With the data, currently `IFeed<T>` does supports 2 mains metadata (named “axis”):
+•	Error: If there is any exception linked to the current data
+•	Progress: We indicates that the current data is transient or final.
+But we do also have a metadata about the data itself:
+•	Some: The _feed_ does have a valid data.
+•	None: There is no data to display. In our example, when you cannot ship to the selected country.
+•	Undefined: There is no info about the data, typically because we are asynchronously loading it.
+
+Here a diagram of the common messages produced by a feed when asynchronously loading a data:
+
+
+> Keep in mind that this is only an example of the common case, but each _axis_ is independent and can change from one state to another. There is no restriction between states.
+
+
+
+
 
 ## API
 The main API provided by this package is [`IFeed<T>`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Core/IFeed.cs) which represents a stream of _data_.
 
-Unlike `IObservable<T>` or `IAsyncEnumerable<T>`, the _feed_ streams are specialized to handle business data objects which are expected to be rendered by the UI. A _feed_ is a sequence of _messages_ that contains such immutable _data_ with some metadata like its loading progress and/or errors raised while loading it. Everything is about the _data_, this means that a _feed_ will never fail, it will instead report any error encountered with the data itself, remaining active for future updates.
+Unlike `IObservable<T>` or `IAsyncEnumerable<T>`, the _feed_ streams are specialized to handle business data objects which are expected to be rendered by the UI.
+A _feed_ is a sequence of _messages_ that contains such immutable _data_ with some metadata like its loading progress and/or errors raised while loading it.
+Everything is about the _data_, this means that a _feed_ will never fail, it will instead report any error encountered with the data itself, remaining active for future updates.
 
-Each [`Message<T>`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Core/Message.cs) contains the current and the previous state, as well as information about what changed. The means that a message is self-sufficient to get the current data, but also gives enough information to update from the previous state in an optimized way without rebuilding every thing.
+Each [`Message<T>`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Core/Message.cs) contains the current and the previous state, as well as information about what changed.
+The means that a message is self-sufficient to get the current data, but also gives enough information to update from the previous state in an optimized way without rebuilding every thing.
 
 ## General guidelines
 
@@ -16,42 +70,285 @@ Each [`Message<T>`](https://github.com/unoplatform/uno.extensions/blob/main/src/
 * As in functional programming, _data_ is **optional**. A message may contain _data_ (a.k.a. `Some`), the information about the fact that there is no _data_ (a.k.a. `None`) or nothing at all, if for instance the loading failed (a.k.a. `Undefined`).
 * Public _feeds_ are expected to be exposed in property getters. A caching system embedded in reactive framework will then ensure to not re-create a new _feed_ on each get.
 
-## Sources
+## Sources: How to create a _feed_
 You can build a _feed_ from different sources. Main entry point to do that is using the static class `Feed`:
 
-| Method | Usage |
-| ------ | ----- |
-| `Async` | Creates a feed from an async method. The loaded data can be refreshed using a `Signal` trigger that will re-invoke the async method. |
-| `AsyncEnumerable` | This adapts an `IAsyncEnumerable<T>` into a _feed_ |
-| `Create` | This gives you the ability to create you own _feed_ by dealing directly with _messages_. |
-
-## Operators
-You can apply some operators directly on any _feed_:
-
-| Method | Usage |
-| ------ | ----- |
-|`Where` | Applies a predicate on the _data_. Be aware that unlike `IEnumerable`, `IObservable` and `IAsyncEnumerable`, if the predicate returns false, a message with a `None` _data_ will be published. |
-|`Select` | Synchronously projects each data from the source feed. |
-|`SelectAsync` | Asynchronously project each data from the source feed. |
-
-Note : You can use the linq syntax with feeds:
+Assuming this given `IWeatherService` and `ILocationService`:
 ```csharp
-public IFeed<string> Value => from value in _values
-	where value == 42
-	select value.ToString();
+public interface IWeatherService
+{
+	/// <summary>
+	/// Asynchronously gets the current weather
+	/// </summary>
+	Task<WeatherInfo> GetCurrentWeather(CancellationToken ct);
+
+	/// <summary>
+	/// Asynchronously gets the details of a weather alert.
+	/// </summary>
+	Task<string> GetAlertDetails(WeatherAlert alert, CancellationToken ct);
+
+	/// <summary>
+	/// Asynchronously gets the weather forecast for the given day
+	/// </summary>
+	Task<WeatherInfo> GetWeatherForecast(DateTime date, CancellationToken ct);
+}
+
+public record WeatherInfo(double Temperature, WeatherAlert? Alert);
+
+public record WeatherAlert(Guid Id, string? Title);
+
+public interface ILocationService
+{
+	/// <summary>
+	/// Asynchronously gets the name of the current city.
+	/// </summary>
+	Task<string> GetCurrentCity(CancellationToken ct);
+
+	/// <summary>
+	/// Gets teh list of all supported cities.
+	/// </summary>
+	Task<ImmutableList<string>> GetCities(CancellationToken ct);
+}
+```
+
+### Async
+Creates a feed from an async method. The loaded data can be refreshed using a `Signal` trigger that will re-invoke the async method.
+
+```csharp
+private IWeatherService _weatherService;
+
+public IFeed<WeatherInfo> Weather => Feed.Async(async ct => await _weatherService.GetCurrentWeather(ct));
+```
+
+### AsyncEnumerable
+This adapts an `IAsyncEnumerable<T>` into a _feed_
+
+```csharp
+private IWeatherService _weatherService;
+
+public IFeed<WeatherInfo> Weather => Feed.AsyncEnumerable(() => GetWeather());
+
+private async IAsyncEnumerable<WeatherInfo> GetWeather([EnumeratorCancellation] CancellationToken ct = default)
+{
+	while (!ct.IsCancellationRequested)
+	{
+		yield return await _weatherService.GetCurrentWeather(ct);
+		await Task.Delay(TimeSpan.FromHours(1), ct);
+	}
+}
+```
+
+### Create
+This gives you the ability to create your own _feed_ by dealing directly with _messages_.
+
+> This is designed for advanced usage and should probably not be used directly in apps.
+
+```csharp
+public IFeed<WeatherInfo> Weather => Feed.Create(GetWeather);
+
+private async IAsyncEnumerable<Message<WeatherInfo>> GetWeather([EnumeratorCancellation] CancellationToken ct = default)
+{
+	var message = Message<WeatherInfo>.Initial;
+	var weather = Option<WeatherInfo>.Undefined();
+	var error = default(Exception);
+	while (!ct.IsCancellationRequested)
+	{
+		try
+		{
+			weather = await _weatherService.GetCurrentWeather(ct);
+			error = default;
+		}
+		catch (Exception ex)
+		{
+			error = ex;
+		}
+
+		yield return message = message.With().Data(weather).Error(error);
+		await Task.Delay(TimeSpan.FromHours(1), ct);
+	}
+}
+```
+
+## Operators: How to interact with a feed
+You can apply some operators directly on any _feed_.
+
+> Note : You can use the linq syntax with feeds:
+> ```csharp
+> public IFeed<string> Value => from value in _values
+> 	where value == 42
+> 	select value.ToString();
+> ```
+
+### Where
+Applies a predicate on the _data_.
+
+Be aware that unlike `IEnumerable`, `IObservable` and `IAsyncEnumerable`, if the predicate returns false, a message with a `None` _data_ will be published.
+
+```csharp
+public IFeed<WeatherAlert> Alert => Weather
+	.Where(weather => weather.Alert is not null)
+	.Select(weather => weather.Alert!);
+```
+
+### Select
+Synchronously projects each data from the source feed.
+
+```csharp
+public IFeed<WeatherAlert> Alert => Weather
+	.Where(weather => weather.Alert is not null)
+	.Select(weather => weather.Alert!);
+```
+
+### SelectAsync
+Asynchronously project each data from the source feed.
+
+```csharp
+public IFeed<string> AlertDetails => Alert
+	.SelectAsync(async (alert, ct) => await _weatherService.GetAlertDetails(alert, ct));
+```
+
+### GetAwaiter
+This allows you to use `await` on a _feed_, for instance when you want to capture the current value to use it in a command.
+```csharp
+public async ValueTask ShareAlert(CancellationToken ct)
+{
+	var alert = await Alert;
+	await _shareService.Share(alert, ct);
+}
+```
+
+## ListFeed: _Feed_ of collections of _items_
+The `IListFeed<T>` is _feed_ that is speciliazed to handle collections.
+It allows you to declare opreator directly on items instead of dealing with the list itself.
+A _list feed_ goes in _none_ if the list does not have any elements.
+
+To create an `IlistFeed<T>`, on the state `ListFeed` class, you have the same `Async`, `AsyncEnumerable` and `Create` methods that you have for the `Feed`.
+
+You will also have few dedicated operators:
+
+### AsListFeed
+This allows you to create a _list feed_ from a _feed of list_.
+
+```csharp
+public IListFeed<WeatherInfo> Forecast => Feed
+	.Async(async ct => new []
+	{
+		await _weatherService.GetWeatherForecast(DateTime.Today.AddDays(1), ct),
+		await _weatherService.GetWeatherForecast(DateTime.Today.AddDays(2), ct),
+	})
+	.Select(list => list.ToImmutableList())
+	.AsListFeed();
+```
+
+### AsFeed
+This does the opposite, and converts a _list feed_  to a _feed of list_
+
+```csharp
+public IFeed<IImmutableList<WeatherInfo>> ForecastFeed => Forecast.AsFeed();
+```
+
+### Where
+This operator allows you to filter _items_.
+If all _items_ of the collection are filtered out, the resulting feed will go in _none_ state.
+
+```csharp
+public IListFeed<WeatherInfo> HighTempDays => ForecastFeed.Where(weather => weather.Temperature >= 28);
+```
+
+## State: How to maintain and update a _data_
+
+Unlike a _feed_ a `IState<T>`, as it name suggest it, is state full. 
+While a _feed_ is just a query of a stream of _data_, a _state_ also implies a current value (a.k.a. the state of the application) which can be accessed and updated.
+
+There are some noticeable differences with a _feed_:
+* When subscribing to a state, the currently loaded value is going to be replayed.
+* There is a [`Update`](#update) method which allows you to change the current value.
+* _States_ are attached to a owner and share the same lifetime of that owner.
+* The main usage of _state_ is for two-way bindings.
+
+You can create a _state_ using one of the following:
+
+### Empty
+Creates a state without any initial value.
+
+```csharp
+public IState<string> City => State<string>.Empty(this);
+```
+
+### Value
+Creates a state with a synchronous initial value.
+
+```csharp
+public IState<string> City => State.Value(this, () => "Montréal");
+```
+
+### Async
+Creates a state with an asynchronous initial value.
+
+```csharp
+public IState<string> City => State.Async(this, async ct => await _locationService.GetCurrentCity(ct));
+```
+
+### AsyncEnumerable
+Like for `Feed.AsyncEnumerable`, this allows you to adapt an `IAsyncEnumerable<T>` into a _state_.
+
+```csharp
+public IState<string> City => State.AsyncEnumerable(this, () => GetCurrentCity());
+
+public async IAsyncEnumerable<string> GetCurrentCity([EnumeratorCancellation] CancellationToken ct = default)
+{
+	while (!ct.IsCancellationRequested)
+	{
+		yield return await _locationService.GetCurrentCity(ct);
+		await Task.Delay(TimeSpan.FromMinutes(15), ct);
+	}
+}
+```
+
+### Create
+This gives you the ability to create your own _state_ by dealing directly with _messages_.
+
+> This is designed for advanced usage and should probably not be used directly in apps.
+
+```csharp
+public IState<string> City => State.Create(this, GetCurrentCity);
+
+public async IAsyncEnumerable<Message<string>> GetCurrentCity([EnumeratorCancellation] CancellationToken ct = default)
+{
+	var message = Message<string>.Initial;
+	var city = Option<string>.Undefined();
+	var error = default(Exception);
+	while (!ct.IsCancellationRequested)
+	{
+		try
+		{
+			city = await _locationService.GetCurrentCity(ct);
+			error = default;
+		}
+		catch (Exception ex)
+		{
+			error = ex;
+		}
+
+		yield return message = message.With().Data(city).Error(error);
+		await Task.Delay(TimeSpan.FromHours(1), ct);
+	}
+}
 ```
 
 ## Usage in applications
 
 The recommended use for feeds is only in view models.
 
-The reactive framework allows you to design state-less view models, focusing on the presentation logic. Your view models only have to request in their constructors the user _ inputs_ that are expected from the view. Inputs could be:
+The reactive framework allows you to design state-less view models, focusing on the presentation logic. 
+Your view models only have to request in their constructors the user _ inputs_ that are expected from the view. Inputs could be:
 * An `IInput<T>` to get _data_ from the view (e.g. for 2-way bindings);
 * An `ICommandBuilder` for the "trigger" inputs.
 
 Then in order to easily interact with the binding engine in a performant way, a `BindableXXX` class is automatically generated. It is this class that will hold the state and which **has to been set as `DataContext` of your page**.
 
-> Note: That bindable counterpart of a class will be created as soon as there is at least one constructor which is an  _input_ parameter. You can customize that behavior using the `[ReactiveBindable]` attribute.
+> Note: That bindable counterpart of a class will be created as soon as the class name ends with "ViewModel".
+> You can customize that behavior using the `[ReactiveBindable]` attribute.
 
 > Note: In order to be as smooth as possible, public properties of your view model, will also be accessible on the `BindableXXX` class as long as there is no name conflict between these properties and any constructor's _input_. You can also access to the view model itself through the `Model` property.
 
@@ -77,64 +374,9 @@ Then in your page, you can add a `FeedView`:
 </reactive:FeedView>
 ```
 
-### `Input<T>`
-
-The `Input<T>` represents _data_ that the end-user can provide from the UI of the application. If the requested `T` is a "complex" type, **and `T` is a `record`**, then fields will de-normalized in order to allow for 2-way data binding on each field.
-For instance, if you have a record `Filters` used in a `ProductsViewModel` like this:
-```csharp
-public record Filters(bool IsInStockOnly, bool IsShippedFromCanada);
-
-public partial record ProductsViewModel(IInput< Filters > Filters);
-```
-
-Then in the view you can directly data-bind on each property:
-```xaml
-<Button Content="Filter">
-	<Button.Flyout>
-		<Flyout>
-			<StackPanel>
-				<ToggleSwitch Header="In stock only" IsOn="{Binding Filters.IsInStockOnly, Mode=TwoWay}" />
-				<ToggleSwitch Header="In stock only" IsOn="{Binding Filters.IsShippedFromCanada, Mode=TwoWay}" />
-			</StackPanel>
-		</Flyout>
-	</Button.Flyout>
-</Button>
-```
-
-This is however not always desirable, for instance to data-bind the `SelectedItem` of a `Selector`. So, you can disable that behavior by adding a `[Value]` attribute on the _input_ parameter.
-```csharp
-public partial record ProductsViewModel([Value ]IInput< Filters > Filters);
-```
-
-### `ICommandBuilder`
-
-This input represents a "trigger" from the end-user. It will be materialized as an [`ICommand`](https://docs.microsoft.com/en-us/uwp/api/windows.ui.xaml.input.icommand) that can then be data-bound to a `Button`.
-
-You can also request a generic `ICommandBuilder<T>` where `T` is the expected type of the `CommandParameter`.
-
-In the constructor of your view model, you then have to configure which action should be taken when the user triggers the command:
-```csharp
-public class MovieViewModel(
-	IMovieService movieService,
-	ICommandBuilder parameterLessAddToFavorite, 
-	ICommandBuilder<string> parameterizedAddToFavorite)
-{
-	parameterLessAddToFavorite
-		.Given(MyEntity) // Command will be CanExecute = false as long as the Movie feed didn’t get a value.
-		.When(movie => !movie?.IsFavorite ?? false) // Configures the CanExecute
-		.Then(movieService.AddToFavorite); // The action.
-
-	// If the Movie has been data-bound to the CommandParameter
-	parameterizedAddToFavorite
-		.When(movie => !movie?.IsFavorite ?? false) // Configures the CanExecute
-		.Then(movieService.AddToFavorite); // The action.
-}
-
-public IFeed<Movie> Movie = Feed.Async(_movieService.Load);
-
-```
-
-> Note: `Given` and `When` are both optional, but the execute action defined in `Then` is required. If omitted, the command will remain `CanExecute = false` (i.e. the `Button` will be disabled) 
+### Commands
+The generated bindable counterpart of a class will automaticlaly re-expose public methods that has 0 or 1 parameter and an optional `CancellationToken` as `ICommand`.
+The parameter will be fulfilled using the `CommandParameter` property.
 
 ## Testing
 
