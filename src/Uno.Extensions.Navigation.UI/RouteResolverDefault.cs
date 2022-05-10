@@ -84,9 +84,6 @@ public class RouteResolverDefault : RouteResolver
 												ToQuery: viewMap?.Data?.UntypedToQuery,
 												FromQuery: viewMap?.Data?.UntypedFromQuery,
 												ResultData: viewMap?.ResultData);
-
-
-			//new RouteInfo(path, View: () => view, ViewModel: viewModel);
 			Mappings[defaultMapFromViewMap.Path] = defaultMapFromViewMap;
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Created default mapping from viewmap - Path '{defaultMapFromViewMap.Path}'");
 		}
