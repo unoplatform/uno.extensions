@@ -48,7 +48,7 @@ public class FlyoutNavigator : ControlNavigator
 
 			var mapping = Resolver.Find(route);
 			injectedFlyout = !(mapping?.RenderView?.IsSubclassOf(typeof(Flyout))??false);
-			var viewModel = CreateViewModel(Region.Services, request, route, mapping);
+			var viewModel = await CreateViewModel(Region.Services, request, route, mapping);
 			Flyout = await DisplayFlyout(request, mapping?.RenderView, viewModel, injectedFlyout);
 		}
 		var responseRequest = injectedFlyout ? Route.Empty : route with { Path = null };
