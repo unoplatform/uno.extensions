@@ -9,6 +9,8 @@ public class HomeViewModel
 {
 	public string? Platform { get; }
 
+	public string UseMock { get; }
+
 	private readonly IWritableOptions<LocalizationSettings> _localization;
 	public HomeViewModel(
 		IOptions<AppInfo> appInfo,
@@ -20,6 +22,8 @@ public class HomeViewModel
 		SupportedCultures = _localization.Value?.Cultures?.AsCultures() ?? new[] { "en-US".AsCulture() }; 
 
 		var language = localizer[_localization.Value?.CurrentCulture ?? "en"];
+
+		UseMock = (appInfo.Value?.Mock ?? false) ? "Mock ENABLED" : "Mock DISABLED";
 	}
 
 	public CultureInfo[] SupportedCultures { get; }

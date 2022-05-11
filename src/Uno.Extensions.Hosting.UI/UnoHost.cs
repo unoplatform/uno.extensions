@@ -1,4 +1,5 @@
-﻿
+﻿using System.Linq;
+
 namespace Uno.Extensions.Hosting;
 
 public static class UnoHost
@@ -36,6 +37,12 @@ public static class UnoHost
 								{ HostingConstants.LaunchUrlKey, href }
 							};
 						config.AddInMemoryCollection(appsettingsPrefix);
+
+						var query = new Uri(href).Query;
+						var queriesValues = System.Web.HttpUtility.ParseQueryString(query);
+						var queryDict = (from k in queriesValues.AllKeys
+										 select new { Key = k, Value = queriesValues[k] }).ToDictionary(x => x.Key, x => x.Value);
+						config.AddInMemoryCollection(queryDict);
 					}
 				})
 #endif
