@@ -28,6 +28,9 @@
 			<TextBlock Text="{Binding Platform}"
 					   HorizontalAlignment="Center"
 					   FontSize="24" />
+			<TextBlock Text="{Binding UseMock}"
+					   HorizontalAlignment="Center"
+					   FontSize="24" />
 			<utu:ChipGroup x:Name="LanguageChipGroup"
 						   SelectionMode="Single"
 						   SelectedItem="{Binding SelectedCulture, Mode=TwoWay}"

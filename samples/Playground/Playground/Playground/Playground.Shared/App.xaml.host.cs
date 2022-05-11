@@ -24,11 +24,12 @@ public sealed partial class App : Application
 #endif
 
 				// Add platform specific log providers
-				.UseLogging(configure: logBuilder =>
+				.UseLogging(configure: (context, logBuilder) =>
 				{
+					var host = context.HostingEnvironment;
 					// Configure log levels for different categories of logging
 					logBuilder
-							.SetMinimumLevel(LogLevel.Information)
+							.SetMinimumLevel(host.IsDevelopment() ? LogLevel.Trace : LogLevel.Information)
 							.XamlLogLevel(LogLevel.Information)
 							.XamlLayoutLogLevel(LogLevel.Information);
 				})

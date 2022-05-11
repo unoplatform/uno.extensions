@@ -1,53 +1,43 @@
 ﻿using System;
-using System.IO;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Uno.Extensions;
 
-namespace Uno.Extensions.Logging
+namespace Uno.Extensions.Logging;
+
+public static class HostBuilderExtensions
 {
-    public static class HostBuilderExtensions
-    {
+	public static IHostBuilder UseLogging(
+		this IHostBuilder hostBuilder,
+		Action<ILoggingBuilder>? configure = default)
+	{
+		return hostBuilder.UseLogging((context, builder) => configure?.Invoke(builder));
+	}
+	public static IHostBuilder UseLogging(
+		this IHostBuilder hostBuilder,
+		Action<HostBuilderContext, ILoggingBuilder>? configure = default)
+	{
+		return hostBuilder
+				.ConfigureLogging((context, builder) =>
+				{
 #if !__WASM__
-        public static IHostBuilder UseLogging(this IHostBuilder hostBuilder,
-            Action<ILoggingBuilder>? configure = default)
-        {
-            return hostBuilder
-                    .ConfigureLogging(builder =>
-                    {
 #if __IOS__
                         builder.AddProvider(new global::Uno.Extensions.Logging.OSLogLoggerProvider());
 #else
-                        builder.AddDebug();
+						builder.AddDebug();
 #endif
-						configure?.Invoke(builder);
-                    });
-        }
 #elif __WASM__
-        public static IHostBuilder UseLogging(this IHostBuilder hostBuilder,
-            Action<ILoggingBuilder>? configure = default)
-        {
-            return hostBuilder
-                    .ConfigureLogging(builder =>
-                    {
                         builder.AddProvider(new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider());
-                        configure?.Invoke(builder);
-                    });
-        }
-
 #endif
+					configure?.Invoke(context, builder);
+				});
+	}
 
-		public static IHost Build(
-			this IHostBuilder hostBuilder,
-			bool enableUnoLogging)
-		{
-			return hostBuilder
-				.Build()
-				.ConnectUnoLogging(enableUnoLogging);
-		}
-    }
+	public static IHost Build(
+		this IHostBuilder hostBuilder,
+		bool enableUnoLogging)
+	{
+		return hostBuilder
+			.Build()
+			.ConnectUnoLogging(enableUnoLogging);
+	}
 }

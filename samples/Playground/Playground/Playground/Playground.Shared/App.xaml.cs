@@ -41,6 +41,9 @@ public sealed partial class App : Application
 		_window = Window.Current;
 #endif
 
+		
+
+
 		var notif = _host.Services.GetRequiredService<IRouteNotifier>();
 		notif.RouteChanged += RouteUpdated;
 
@@ -76,6 +79,15 @@ public sealed partial class App : Application
 		_window.Activate();
 
 		await Task.Run(() => _host.StartAsync());
+
+
+		var logger = _host.Services.GetRequiredService<ILogger<App>>();
+		if (logger.IsEnabled(LogLevel.Trace)) logger.LogTraceMessage("LogLevel:Trace");
+		if (logger.IsEnabled(LogLevel.Debug)) logger.LogDebugMessage("LogLevel:Debug");
+		if (logger.IsEnabled(LogLevel.Information)) logger.LogInformationMessage("LogLevel:Information");
+		if (logger.IsEnabled(LogLevel.Warning)) logger.LogWarningMessage("LogLevel:Warning");
+		if (logger.IsEnabled(LogLevel.Error)) logger.LogErrorMessage("LogLevel:Error");
+		if (logger.IsEnabled(LogLevel.Critical)) logger.LogCriticalMessage("LogLevel:Critical");
 	}
 
 
