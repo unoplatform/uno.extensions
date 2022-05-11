@@ -66,13 +66,13 @@ public static class RouteExtensions
 
 	public static string WithQualifier(this string path, string qualifier) => string.IsNullOrWhiteSpace(qualifier) ? path : $"{qualifier}{path}";
 
-	public static Route AsRoute(this Uri uri, object? data = null)
+	public static Route AsRoute(this Uri uri, object? data = null, IRouteResolver? resolver = null)
 	{
 		var path = uri.OriginalString;
-		return path.AsRoute(data);
+		return path.AsRoute(data, resolver);
 	}
 
-	public static Route AsRoute(this string? path, object? data = null)
+	public static Route AsRoute(this string? path, object? data = null, IRouteResolver? resolver = null)
 	{
 		if (path is null ||
 			string.IsNullOrWhiteSpace(path))
@@ -106,6 +106,17 @@ public static class RouteExtensions
 		}
 
 		var routeBase = ExtractBase(path, out var qualifier, out path);
+
+		if (resolver is not null &&
+			!string.IsNullOrWhiteSpace(routeBase) &&
+			string.IsNullOrWhiteSpace(qualifier))
+		{
+			var map = resolver.FindByPath(routeBase);
+			if ( map?.IsDialogViewType?.Invoke() ?? false)
+			{
+				qualifier = Qualifiers.Dialog;
+			}
+		}
 
 		var route = new Route(qualifier, routeBase, path, paras);
 		if (route.IsBackOrCloseNavigation() &&

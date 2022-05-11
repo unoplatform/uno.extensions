@@ -2,12 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Tags;
 using Uno.Extensions.Reactive.Bindings;
 
 namespace Uno.Extensions.Reactive.Generator;
 
 internal record BindableGenerationContext(
+	GeneratorExecutionContext Context,
 	INamedTypeSymbol Feed,
 	INamedTypeSymbol Input,
 	INamedTypeSymbol ListFeed,
@@ -16,7 +23,8 @@ internal record BindableGenerationContext(
 	INamedTypeSymbol BindableAttribute,
 	INamedTypeSymbol InputAttribute,
 	INamedTypeSymbol ValueAttribute,
-	INamedTypeSymbol DefaultRecordCtor)
+	INamedTypeSymbol DefaultRecordCtor,
+	INamedTypeSymbol CancellationToken)
 {
 	public static BindableGenerationContext? TryGet(GeneratorExecutionContext context, out string? error)
 	{
@@ -31,6 +39,7 @@ internal record BindableGenerationContext(
 		var inputAttribute = compilation.GetTypeByMetadataName(typeof(InputAttribute).FullName);
 		var valueAttribute = compilation.GetTypeByMetadataName(typeof(ValueAttribute).FullName);
 		var defaultRecordCtor = compilation.GetTypeByMetadataName(typeof(BindableDefaultConstructorAttribute).FullName);
+		var cancellationToken = compilation.GetTypeByMetadataName(typeof(CancellationToken).FullName);
 
 		IEnumerable<string> Missing()
 		{
@@ -78,6 +87,11 @@ internal record BindableGenerationContext(
 			{
 				yield return typeof(BindableDefaultConstructorAttribute).FullName;
 			}
+
+			if (cancellationToken is null)
+			{
+				yield return typeof(CancellationToken).FullName;
+			}
 		}
 
 		if (Missing().ToList() is { Count: > 0 } missings)
@@ -89,6 +103,7 @@ internal record BindableGenerationContext(
 		error = null;
 		return new BindableGenerationContext
 		(
+			context,
 			feed!,
 			input!,
 			listFeed!,
@@ -97,7 +112,8 @@ internal record BindableGenerationContext(
 			bindable!,
 			inputAttribute!,
 			valueAttribute!,
-			defaultRecordCtor!
+			defaultRecordCtor!,
+			cancellationToken!
 		);
 	}
 
@@ -246,4 +262,63 @@ internal record BindableGenerationContext(
 			return false;
 		}
 	}
+
+	public bool IsAwaitable(IMethodSymbol method)
+		=> method
+			.DeclaringSyntaxReferences
+			.Select(syntaxRef => syntaxRef.GetSyntax(Context.CancellationToken))
+			.OfType<MethodDeclarationSyntax>()
+			.Any(syntax => syntax.Modifiers.Any(SyntaxKind.AsyncKeyword))
+			|| IsAwaitable(method.ReturnType);
+
+	public bool IsAwaitable(ITypeSymbol type)
+	{
+		// We usually use this IsAwaitable for return type of method.
+		if (type.SpecialType == SpecialType.System_Void)
+		{
+			return false;
+		}
+
+		// Fast path to avoid lookup into all types
+		var typeStr = type.ToString();
+		if (typeStr.StartsWith(_task, StringComparison.Ordinal)
+			|| typeStr.StartsWith(_valueTask, StringComparison.Ordinal))
+		{
+			return true;
+		}
+
+		lock (_isAwaitableCache)
+		{
+			if (_isAwaitableCache.TryGetValue(type, out var isAwaitable))
+			{
+				return isAwaitable;
+			}
+
+			isAwaitable = type.GetMembers(WellKnownMemberNames.GetAwaiter).Any(IsInstanceGetAwaiter)
+				|| Context.Compilation.GetSymbolsWithName(WellKnownMemberNames.GetAwaiter, SymbolFilter.Member, Context.CancellationToken).Any(IsExtensionGetAwaiter);
+
+			_isAwaitableCache[type] = isAwaitable;
+
+			return isAwaitable;
+		}
+
+		static bool IsInstanceGetAwaiter(ISymbol symbol)
+			=> symbol is IMethodSymbol { IsStatic: false, Parameters.Length: 0 } method
+				&& IsAwaiter(method.ReturnType);
+
+		bool IsExtensionGetAwaiter(ISymbol symbol)
+			=> symbol is IMethodSymbol { IsStatic: true, Parameters.Length: 1 } method
+				&& SymbolEqualityComparer.Default.Equals(method.Parameters[0].Type, type)
+				&& IsAwaiter(method.ReturnType);
+
+		static bool IsAwaiter(ITypeSymbol returnType)
+			=> returnType.AllInterfaces.Any(intf => intf.ToString().Equals(_notifyCompletion));
+	}
+
+#pragma warning disable RS1024 // Compare symbols correctly => FALSE POSITIVE
+	private static readonly Dictionary<ITypeSymbol, bool> _isAwaitableCache = new(SymbolEqualityComparer.Default);
+#pragma warning restore RS1024 // Compare symbols correctly
+	private static readonly string _notifyCompletion = typeof(INotifyCompletion).FullName;
+	private static readonly string _task = typeof(Task).FullName;
+	private static readonly string _valueTask = typeof(ValueTask).FullName;
 }

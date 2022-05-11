@@ -3,13 +3,23 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
+using System.Windows.Input;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Dispatching;
 using Uno.Extensions.Reactive.Events;
 
 namespace Uno.Extensions.Reactive;
 
-internal sealed partial class AsyncCommand : IAsyncCommand, IDisposable
+/// <summary>
+/// An <see cref="ICommand"/> that exposes it's executing state.
+/// </summary>
+/// <remarks>
+/// This command supports parallel executions with different command parameters.
+/// In that case the <see cref="IsExecuting"/> will remain false.
+/// </remarks>
+/// <remarks>Yous should not use this type directly. Instead use builder provided by <see cref="Command"/>, or use code gen.</remarks>
+[EditorBrowsable(EditorBrowsableState.Never)]
+public sealed partial class AsyncCommand : IAsyncCommand, IDisposable
 {
 	private static readonly object _null = new();
 	private static readonly PropertyChangedEventArgs _isExecutingChanged = new(nameof(IsExecuting));
@@ -49,6 +59,14 @@ internal sealed partial class AsyncCommand : IAsyncCommand, IDisposable
 		_propertyChanged = new(this, h => h.Invoke, isCoalescable: false, schedulersProvider: _dispatcher.FindDispatcher);
 	}
 
+	/// <summary>
+	/// Creates a new instance.
+	/// </summary>
+	/// <param name="name">The name of teh command, used for debug and log purposes.</param>
+	/// <param name="config">The configuration of the command.</param>
+	/// <param name="errorHandler">The last chance error handler.</param>
+	/// <param name="context">The context to which this command belongs.</param>
+	/// <exception cref="ArgumentNullException">If <paramref name="errorHandler"/> or <paramref name="context"/> is null.</exception>
 	public AsyncCommand(
 		string? name,
 		CommandConfig config,
@@ -64,7 +82,7 @@ internal sealed partial class AsyncCommand : IAsyncCommand, IDisposable
 		_dispatcher.TryRunCallback();
 	}
 
-	public AsyncCommand(
+	internal AsyncCommand(
 		string? name,
 		IEnumerable<CommandConfig> configs,
 		Action<Exception> errorHandler,

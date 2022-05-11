@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -14,7 +15,13 @@ namespace Uno.Extensions.Reactive;
 /// </summary>
 public static class Command
 {
-	internal static Action<Exception> _defaultErrorHandler = e => typeof(AsyncCommand).Log().Error("Failed to execute command.", e);
+	/// <summary>
+	/// Defines the default error handler that is being invoked if an exception is raised by a command.
+	/// </summary>
+	/// <remarks>By default, this will log the error.</remarks>
+	/// <remarks>This is designed to be a "last chance" handler, you should handle exceptions in each command.</remarks>
+	[EditorBrowsable(EditorBrowsableState.Advanced)]
+	public static Action<Exception> DefaultErrorHandler { get; set; } = e => typeof(AsyncCommand).Log().Error("Failed to execute command.", e);
 
 	/// <summary>
 	/// Creates a command from an async method
@@ -34,7 +41,7 @@ public static class Command
 			execute.Target,
 			execute,
 			name,
-			(o, e, n) => new AsyncCommand(n, new CommandConfig{Execute = (_, ct) => e(ct)}, _defaultErrorHandler, SourceContext.GetOrCreate(o)));
+			(o, e, n) => new AsyncCommand(n, new CommandConfig{Execute = (_, ct) => e(ct)}, DefaultErrorHandler, SourceContext.GetOrCreate(o)));
 	}
 
 	/// <summary>
@@ -60,7 +67,7 @@ public static class Command
 				var ctx = SourceContext.GetOrCreate(o);
 				var builder = new CommandBuilder<object>(name!);
 				build(builder);
-				return builder.Build(ctx, _defaultErrorHandler);
+				return builder.Build(ctx, DefaultErrorHandler);
 			});
 	}
 
@@ -87,7 +94,7 @@ public static class Command
 				var ctx = SourceContext.GetOrCreate(o);
 				var builder = new CommandBuilder<T>(name!);
 				build(builder);
-				return builder.Build(ctx, _defaultErrorHandler);
+				return builder.Build(ctx, DefaultErrorHandler);
 			});
 	}
 }

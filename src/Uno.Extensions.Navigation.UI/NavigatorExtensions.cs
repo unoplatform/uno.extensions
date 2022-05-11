@@ -29,8 +29,9 @@ public static class NavigatorExtensions
                 { RouteConstants.PickerItemsSource, itemsSource },
                 { RouteConstants.PickerItemTemplate, itemTemplate }
             };
+		var resolver = service.GetResolver();
 
-		var req = (Qualifiers.Dialog + typeof(Picker).Name).AsRequest(sender, data, cancellation, typeof(TSource));
+		var req = (Qualifiers.Dialog + typeof(Picker).Name).AsRequest(resolver, sender, data, cancellation, typeof(TSource));
 		if(req is null)
 		{
 			return default;

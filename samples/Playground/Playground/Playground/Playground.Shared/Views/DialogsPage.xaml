@@ -26,7 +26,7 @@
 		</ui:NavigationBar>
 		<StackPanel Grid.Row="1">
 			<Button Content="MessageDialog XAML"
-					uen:Navigation.Request="!Confirm" />
+					uen:Navigation.Request="Confirm" />
 			<Button Content="Localized MessageDialog XAML"
 					uen:Navigation.Request="!LocalizedConfirm" />
 			<Button Content="MessageDialog Codebehind"
@@ -35,7 +35,7 @@
 			<Button Content="MessageDialog Codebehind (cancel after 2s)"
 					Click="MessageDialogCodebehindCancelClick" />
 			<TextBlock x:Name="MessageDialogCancelResultText" />
-			<Button uen:Navigation.Request="!Simple"
+			<Button uen:Navigation.Request="Simple"
 					Content="SimpleDialog Nav Request" />
 			<Button Content="SimpleDialog Codebehind"
 					Click="SimpleDialogCodebehindClick" />

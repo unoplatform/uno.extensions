@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis;
 
 namespace Uno.Extensions.Reactive.Generator;
 
-internal record BindableFeedField(IFieldSymbol _field, ITypeSymbol _valueType, string _bindableValueType) : IMappedMember
+internal record BindableFromFeedField(IFieldSymbol _field, ITypeSymbol _valueType, string _bindableValueType) : IMappedMember
 {
 	private readonly IFieldSymbol _field = _field;
 	private readonly ITypeSymbol _valueType = _valueType;

@@ -16,10 +16,19 @@ public class Given_Feed : FeedTests
 	// Those are integration tests that demo the basic public API and are not expected to deeply validate feed behavior.
 
 	[TestMethod]
-	public async Task When_Async()
+	public async Task When_GetAwaiter()
 	{
 		var sut = Feed.Async<int>(async ct => 42);
 		var result = await sut;
+
+		result.Should().Be(42);
+	}
+
+	[TestMethod]
+	public async Task When_Async()
+	{
+		var sut = Feed.Async<int>(async ct => 42);
+		var result = await sut.Option(CT);
 
 		result.IsSome(out var items).Should().BeTrue();
 		items.Should().Be(42);
