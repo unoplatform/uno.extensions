@@ -2,14 +2,14 @@
 
 public class MessageDialogNavigator : DialogNavigator
 {
-	private readonly IStringLocalizer _localizer;
+	private readonly IStringLocalizer? _localizer;
 	public MessageDialogNavigator(
 		ILogger<DialogNavigator> logger,
 		IDispatcher dispatcher,
 		IRouteResolver resolver,
 		IRegion region,
 		Window window,
-		IStringLocalizer localizer)
+		IStringLocalizer? localizer = default)
 		: base(logger, dispatcher, region, resolver, window)
 	{
 		_localizer = localizer;
