@@ -39,14 +39,14 @@ The generated solution will contain:
 - *Platforms/MyProjectName.** - platform-specific projects for each supported platform.
 - *MyProjectName.Tests* and *MyProjectName.UI.Tests* - for writing unit and UI tests respectively.
 
-![The structure of the generated solution](../../images/ProjectStructure-min.png)
+![The structure of the generated solution](./images/ProjectStructure-min.png)
 
 
 # Running the Application 
 
 1. Select a target from the drop-down as pictured below
 
-    ![A screenshot of the generated targets](../../images/GeneratedTargets-min.png)
+    ![A screenshot of the generated targets](./images/GeneratedTargets-min.png)
 
 2. Click the “play” button, or press F5 to start debugging. The necessary projects in the solution will be compiled and deployed based on the target platform.
 
