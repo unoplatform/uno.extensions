@@ -8,9 +8,9 @@ public static class HostBuilderExtensions
 {
 	public static IHostBuilder UseLogging(
 		this IHostBuilder hostBuilder,
-		Action<ILoggingBuilder>? configure = default)
+		Action<ILoggingBuilder> configure)
 	{
-		return hostBuilder.UseLogging((context, builder) => configure?.Invoke(builder));
+		return hostBuilder.UseLogging((context, builder) => configure.Invoke(builder));
 	}
 	public static IHostBuilder UseLogging(
 		this IHostBuilder hostBuilder,
