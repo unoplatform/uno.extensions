@@ -1,4 +1,4 @@
-# How to use Uno.Extensions
+# How-To: Get Started with Uno.Extensions
 
 Uno.Extensions is a series of NuGet packages designed to encapsulate common developer tasks associated with building multi-platform mobile, desktop and web applications using the Uno platform.
 
