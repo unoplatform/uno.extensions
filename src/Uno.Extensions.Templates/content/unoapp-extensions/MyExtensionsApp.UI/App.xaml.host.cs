@@ -1,5 +1,7 @@
 //-:cnd:noEmit
 
+using MyExtensionsApp.Configuration;
+
 namespace MyExtensionsApp;
 
 public sealed partial class App : Application
@@ -30,7 +32,10 @@ public sealed partial class App : Application
 				.UseEmbeddedAppSettings<App>()
 
 				// Load AppInfo section
-				.UseConfiguration<AppInfo>()
+				.UseConfiguration<AppConfig>()
+
+				// Enable localization (see appsettings.json for supported languages)
+				.UseLocalization()
 
 				// Register Json serializers (ISerializer and ISerializer)
 				.UseSerialization()
