@@ -71,11 +71,8 @@ public sealed partial class App : Application
 				new RouteMap("", View: views.FindByViewModel<ShellViewModel>() ,
 						Nested: new RouteMap[]
 						{
-										new RouteMap("Main", View: views.FindByViewModel<MainViewModel>() ,
-												IsDefault: true
-												),
-										new RouteMap("Second", View: views.FindByViewModel<SecondViewModel>() ,
-												DependsOn:"Main"),
+										new RouteMap("Main", View: views.FindByViewModel<MainViewModel>()),
+										new RouteMap("Second", View: views.FindByViewModel<SecondViewModel>()),
 						}));
 	}
 }
