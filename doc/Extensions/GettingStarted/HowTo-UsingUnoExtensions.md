@@ -39,7 +39,7 @@ The generated solution will contain:
 - *Platforms/MyProjectName.** - platform-specific projects for each supported platform.
 - *MyProjectName.Tests* and *MyProjectName.UI.Tests* - for writing unit and UI tests respectively.
 
-![The structure of the generated solution](./images/ProjectStructure-min.png)
+    ![The structure of the generated solution](./images/ProjectStructure-min.png)
 
 
 # Running the Application 
