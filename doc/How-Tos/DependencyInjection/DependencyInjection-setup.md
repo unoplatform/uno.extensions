@@ -1,4 +1,4 @@
-# How to get started with dependency injection
+# How-To: Use Services with Dependency Injection
 
 Dependency injection (DI) is an important design pattern for building loosely-coupled software that allows for maintainability and testing. This tutorial will walk you through how to register services with a service provider for use throughout your application.
 
@@ -15,7 +15,7 @@ NOTE: This guide assumes you used the Uno.Extensions `dotnet new` template to cr
         }
     ```
 
-2. Add & register a service that encapsulates app functionality
+2. Add and register a service that encapsulates app functionality
     * Write a new service class which implements the interface you created above, defining its member(s):
     ```cs
         public class UserProfilePictureService : IUserProfilePictureService
@@ -28,7 +28,7 @@ NOTE: This guide assumes you used the Uno.Extensions `dotnet new` template to cr
     ```
     * Register this service implementation with the `IServiceProvider` instance provided by your application's `IHostBuilder`:
     ```cs
-        public IHost Host { get; init; }
+        public IHost Host { get; private set; }
 
         public App()
         {
@@ -42,20 +42,38 @@ NOTE: This guide assumes you used the Uno.Extensions `dotnet new` template to cr
                 .Build();
         }
     ```
-3. Get & use an instance of the registered service
-    * You can now retrieve this service in its instantiated form from anywhere in the application such as a view model:
+3. Leverage constructor injection to use an instance of the registered service
+    * Create a new view model class that will use the functionality offered by your service. Add a constructor with a parameter of the same type as the service interface you defined earlier:
     ```cs
         public class MainViewModel
         {
-            private IUserProfilePictureService userPhotoService;
+            private readonly IUserProfilePictureService userPhotoService;
 
-            public MainViewModel()
+            public MainViewModel(IUserProfilePictureService userPhotoService)
             {
-                userPhotoService = (Application.Current as App).Host.Services.GetService<IUserProfilePictureService>();
+                this.userPhotoService = userPhotoService;
             }
         }
     ```
-    * Now, `MainViewModel` has access to the functionality provided by your resolved service implementation:
+    * For the dependency injection framework to handle instantiation of the service as a constructor argument, you must also register your view model with the IServiceProvider:
+    ```cs
+        public IHost Host { get; private set; }
+
+        public App()
+        {
+            Host = UnoHost
+                .CreateDefaultBuilder()
+                .ConfigureServices(services =>
+				{
+					// Register your services below
+					services.AddSingleton<IUserProfilePictureService, UserProfilePictureService>();
+                    // Register view model below
+                    services.AddTransient<MainViewModel>();
+				})
+                .Build();
+        }        
+    ```
+    * Now, `MainViewModel` has access to the functionality provided by the resolved implementation of your service:
     ```cs
         byte[] profilePhotoBytes = await userPhotoService.GetAsync();
     ```
