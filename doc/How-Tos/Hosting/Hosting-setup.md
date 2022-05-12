@@ -1,4 +1,4 @@
-# How to get started with hosting
+# How-To: Get Started with Hosting
 
 Hosting can be used to register services that will be accessible throughout the application via dependency injection. This tutorial will walk you through the critical pieces needed to leverage hosting in your application. 
 
