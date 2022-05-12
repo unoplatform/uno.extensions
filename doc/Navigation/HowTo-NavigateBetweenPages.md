@@ -31,3 +31,101 @@
     }
 ```
 - After navigating to sample page, go back button doesn't work, since the frame backstack is empty
+
+
+- Note that in Output window (add screenshot?) there is a line that says
+`Uno.Extensions.Navigation.RouteResolverDefault: Information: DefaultMapping - For better performance (avoid reflection), create mapping for for path 'Sample', view 'SamplePage', view model ''`
+
+- Add ViewMap and RouteMap
+
+```csharp
+	private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
+	{
+		views.Register(
+			new ViewMap<ShellControl,ShellViewModel>(),
+			new ViewMap<MainPage, MainViewModel>(),
+			new ViewMap<SecondPage, SecondViewModel>(),
+			new ViewMap<SamplePage>()
+            );
+
+		routes
+			.Register(
+				new RouteMap("", View: views.FindByViewModel<ShellViewModel>() ,
+						Nested: new RouteMap[]
+						{
+										new RouteMap("Main", View: views.FindByViewModel<MainViewModel>() ,
+												IsDefault: true
+												),
+										new RouteMap("Second", View: views.FindByViewModel<SecondViewModel>() ,
+												DependsOn:"Main"),
+                                        new RouteMap("Sample", View: views.FindByView<SamplePage>()),
+                        }));
+	}
+```
+
+- We can also wire up a viewmodel to our page - create a new class SampleViewModel in the ViewModels folder of the non-UI project
+
+```csharp
+public class SampleViewModel
+{
+	public string Title => "Sample Page";
+    public SampleViewModel()
+    {
+    }
+}
+```
+
+- Add TextBlock to the Sample page and databind to Title property
+```xml
+<TextBlock Text="{Binding Title}" />
+```
+
+- Update ViewMap to include SampleViewModel
+```csharp
+new ViewMap<SamplePage, SampleViewModel>()
+```
+
+- Show (screenshot) data bound textblock
+
+- Can move navigation to SampleViewModel by taking a dependency on INavigator
+```csharp
+    private readonly INavigator _navigator;
+    public SampleViewModel(INavigator navigator)
+    {
+        _navigator = navigator;
+    }
+    public Task GoBack()
+    {
+        return _navigator.NavigateBackAsync(this);
+    }
+```
+
+- Need to expose ViewModel property to allow x:Bind
+
+```csharp
+    public SampleViewModel? ViewModel { get; private set; }
+
+    public SamplePage()
+    {
+        this.InitializeComponent();
+
+        DataContextChanged += (_, changeArgs) => ViewModel = changeArgs.NewValue as SampleViewModel;
+    }
+```
+
+- Add button to XAML and x:Bind Click to GoBack method
+```xml
+<Button Content="Go Back (View Model)"
+                    Click="{x:Bind ViewModel.GoBack}" />
+```
+
+
+
+
+
+
+
+
+
+
+
