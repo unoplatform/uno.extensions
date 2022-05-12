@@ -77,3 +77,12 @@ NOTE: This guide assumes you used the Uno.Extensions `dotnet new` template to cr
     ```cs
         byte[] profilePhotoBytes = await userPhotoService.GetAsync();
     ```
+4. Associate the view model with a view from code behind
+    * From the code behind of a view, directly reference the application's IHost instance to request an instance of the desired view model. Set this as the DataContext:
+    ```cs
+        public MainPage()
+        {
+            this.InitializeComponent();
+            DataContext = (Application.Current as App).Host.Services.GetRequiredService<MainViewModel>();
+        }
+    ```
