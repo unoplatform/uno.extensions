@@ -12,25 +12,15 @@ public sealed partial class DialogsPage : Page, IInjectable<INavigator>
 
 	private async void MessageDialogCodebehindClick(object sender, RoutedEventArgs args)
 	{
-		var showDialog = await Navigator!.ShowMessageDialogAsync(this, "This is Content", "This is title");
-		if(showDialog is null)
-		{
-			return;
-		}
-		var messageDialogResult = await showDialog.Result;
-		MessageDialogResultText.Text = $"Message dialog result: {messageDialogResult.SomeOrDefault()?.Label}";
+		var messageDialogResult = await Navigator!.ShowMessageDialogAsync<string>(this, content: "This is Content", title:"This is title").AsResult();
+		MessageDialogResultText.Text = $"Message dialog result: {messageDialogResult}";
 	}
 
 	private async void MessageDialogCodebehindCancelClick(object sender, RoutedEventArgs args)
 	{
 		var cancelSource = new CancellationTokenSource(TimeSpan.FromSeconds(2));
-		var showDialog = await Navigator!.ShowMessageDialogAsync(this, "This is Content", "This is title", cancellation: cancelSource.Token);
-		if (showDialog is null)
-		{
-			return;
-		}
-		var messageDialogResult = await showDialog.Result;
-		MessageDialogCancelResultText.Text = $"Message dialog result: {messageDialogResult.SomeOrDefault()?.Label}";
+		var messageDialogResult = await Navigator!.ShowMessageDialogAsync<string>(this, content:"This is Content", title:"This is title", cancellation: cancelSource.Token).AsResult();
+		MessageDialogCancelResultText.Text = $"Message dialog result: {messageDialogResult}";
 	}
 
 	private async void SimpleDialogCodebehindClick(object sender, RoutedEventArgs args)

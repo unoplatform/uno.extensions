@@ -210,29 +210,45 @@ public static class NavigatorExtensions
 		return service.NavigateAsync((Qualifiers.NavigateBack + string.Empty).WithQualifier(qualifier).AsRequest(resolver, sender, data, cancellation));
 	}
 
-	public static async Task<NavigationResultResponse<DialogAction>?> ShowMessageDialogAsync(
+	public static async Task<NavigationResponse?> ShowMessageDialogAsync(
 		this INavigator service,
 		object sender,
-		string content,
-		string? title = null,
-		bool delayInput = false,
-		uint defaultCommandIndex = 0,
-		uint cancelCommandIndex = 0,
-		DialogAction[]? commands = null,
+		string? route = default,
+		string? content = default,
+		string? title = default,
+		bool? delayInput = default,
+		uint? defaultCommandIndex = default,
+		uint? cancelCommandIndex = default,
+		DialogAction[]? commands = default,
+		CancellationToken cancellation = default)
+	{
+		return await service.ShowMessageDialogAsync<object>(sender, route, content, title, delayInput, defaultCommandIndex, cancelCommandIndex, commands, cancellation);
+	}
+
+	public static async Task<NavigationResultResponse<TResult>?> ShowMessageDialogAsync<TResult>(
+		this INavigator service,
+		object sender,
+		string? route = default,
+		string? content = default,
+		string? title = default,
+		bool? delayInput = default,
+		uint? defaultCommandIndex = default,
+		uint? cancelCommandIndex = default,
+		DialogAction[]? commands = default,
 		CancellationToken cancellation = default)
 	{
 		var resolver = service.GetResolver();
 		var data = new Dictionary<string, object>()
 			{
 				{ RouteConstants.MessageDialogParameterTitle, title! },
-				{ RouteConstants.MessageDialogParameterContent, content },
-				{ RouteConstants.MessageDialogParameterOptions, delayInput },
-				{ RouteConstants.MessageDialogParameterDefaultCommand, defaultCommandIndex },
-				{ RouteConstants.MessageDialogParameterCancelCommand, cancelCommandIndex },
+				{ RouteConstants.MessageDialogParameterContent, content! },
+				{ RouteConstants.MessageDialogParameterOptions, delayInput! },
+				{ RouteConstants.MessageDialogParameterDefaultCommand, defaultCommandIndex! },
+				{ RouteConstants.MessageDialogParameterCancelCommand, cancelCommandIndex! },
 				{ RouteConstants.MessageDialogParameterCommands, commands! }
 			};
 
-		var result = await service.NavigateAsync((Qualifiers.Dialog + RouteConstants.MessageDialogUri).AsRequest<DialogAction>(resolver, sender, data, cancellation));
-		return result?.AsResultResponse<DialogAction>();
+		var result = await service.NavigateAsync((route ?? (Qualifiers.Dialog + RouteConstants.MessageDialogUri)).AsRequest<object>(resolver, sender, data, cancellation));
+		return result?.AsResultResponse<TResult>();
 	}
 }

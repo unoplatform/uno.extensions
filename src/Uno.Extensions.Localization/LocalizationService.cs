@@ -36,7 +36,7 @@ public class LocalizationService : IHostedService
 	{
 		_logger = logger;
 		_settings = settings;
-		SupportedCultures = settings.CurrentValue?.Cultures?.AsCultures() ?? new[] { DefaultCulture.AsCulture() };
+		SupportedCultures = settings.CurrentValue?.Cultures?.AsCultures() ?? new[] { DefaultCulture.AsCulture()! };
 	}
 
 	public Task StartAsync(CancellationToken cancellationToken)

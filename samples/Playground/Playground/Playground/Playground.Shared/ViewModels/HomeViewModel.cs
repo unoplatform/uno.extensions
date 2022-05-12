@@ -19,7 +19,7 @@ public class HomeViewModel
 	{
 		_localization = localization;
 		Platform = appInfo.Value.Platform;
-		SupportedCultures = _localization.Value?.Cultures?.AsCultures() ?? new[] { "en-US".AsCulture() }; 
+		SupportedCultures = _localization.Value?.Cultures?.AsCultures() ?? new[] { "en-US".AsCulture()! }; 
 
 		var language = localizer[_localization.Value?.CurrentCulture ?? "en"];
 
