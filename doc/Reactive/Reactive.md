@@ -367,12 +367,13 @@ Your view models only have to request in their constructors the user _ inputs_ t
 * An `IInput<T>` to get _data_ from the view (e.g. for 2-way bindings);
 * An `ICommandBuilder` for the "trigger" inputs.
 
-Then in order to easily interact with the binding engine in a performant way, a `BindableXXX` class is automatically generated. It is this class that will hold the state and which **has to been set as `DataContext` of your page**.
+In order to easily interact with the binding engine in a performant way, a `BindableXXX` class is automatically generated. It is this class that will hold the state and which **has to been set as `DataContext` of your page**.
 
-> Note: That bindable counterpart of a class will be created as soon as the class name ends with "ViewModel".
+> Note: The bindable counterpart of a class will be created when the class name ends with "ViewModel".
 > You can customize that behavior using the `[ReactiveBindable]` attribute.
 
-> Note: In order to be as smooth as possible, public properties of your view model, will also be accessible on the `BindableXXX` class as long as there is no name conflict between these properties and any constructor's _input_. You can also access to the view model itself through the `Model` property.
+> [!NOTE]
+> For easier View Model creation, public properties will also be accessible on the `BindableXXX` class as long as there is no name conflict between these properties and any constructor's _input_. You can also access to the view model itself through the `Model` property.
 
 ### Display some data in the UI (VM to View)
 
