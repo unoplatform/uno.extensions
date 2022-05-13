@@ -36,21 +36,19 @@ Also, when a dependency is being updated and we may need to do some asynchronous
 
 Neither `IObservable<T>` nor `IAsyncEnumerable<T>` have such metadata mechanism for produced values, that is the purpose of `IFeed<T>`.
 
-With data, `IFeed<T>` currently does supports 2 main metadata (named “axis”):
-•	Error: If there is any exception linked to the current data
-•	Progress: We indicates that the current data is transient or final.
-But we do also have a metadata about the data itself:
-•	Some: The _feed_ does have a valid data.
-•	None: There is no data to display. In our example, when you cannot ship to the selected country.
-•	Undefined: There is no info about the data, typically because we are asynchronously loading it.
+With data, `IFeed<T>` currently does supports 3 main metadata (named “axis”):
+* Error: If there is any exception linked to the current data
+* Progress: We indicates that the current data is transient or final.
+* Data: This represents the _data_ itself, but also adds an information about it. 
+	It wraps the value into an `Option<T>` that adds the ability to make distinction between the different state of the value:
+		- Some: Represents a valid data.
+		- None: Indicates that a value has been loaded, but should be consider as empty, and we should not be rendered as is in the UI. In our example, when you cannot ship to the selected country.
+		- Undefined: This represents a missing value, i.e. there is no info about the data yet. Typically this is because we are asynchronously loading it.
 
 Here is a diagram of common messages produced by a feed when asynchronously loading data:
 
 
 > Keep in mind that this is only an example of the common case, but each _axis_ is independent and can change from one state to another. There is no restriction between states.
-
-
-
 
 
 ## API
@@ -70,7 +68,7 @@ This means that a message is self-sufficient to get the current data, but also g
 * As in functional programming, _data_ is **optional**. A message may contain _data_ (a.k.a. `Some`), the information about the fact that there is no _data_ (a.k.a. `None`) or nothing at all, if for instance the loading failed (a.k.a. `Undefined`).
 * Public _feeds_ are expected to be exposed in property getters. A caching system embedded in reactive framework will then ensure to not re-create a new _feed_ on each get.
 
-## Sources: How to create a _feed_
+## Sources: How to create a feed
 You can build a _feed_ from different sources. The main entry point is the static class `Feed`:
 
 Given an `IWeatherService` and `ILocationService`:
@@ -112,7 +110,7 @@ public interface ILocationService
 ```
 
 ### Async
-Creates a feed from an async method. The loaded data can be refreshed using a `Signal` trigger that will re-invoke the async method.
+Creates a feed from an async method.
 
 ```csharp
 private IWeatherService _weatherService;
@@ -120,8 +118,24 @@ private IWeatherService _weatherService;
 public IFeed<WeatherInfo> Weather => Feed.Async(async ct => await _weatherService.GetCurrentWeather(ct));
 ```
 
+The loaded data can be refreshed using a `Signal` trigger that will re-invoke the async method.
+
+> [!NOTE]
+> A `Signal` represents a trigger that can be raised at anytime, for instance within an `ICommand` data-bound to a "pull-to-refresh".
+
+```csharp
+private IWeatherService _weatherService;
+private Signal _refreshWeather = new();
+
+public IFeed<WeatherInfo> Weather => Feed.Async(async ct => await _weatherService.GetCurrentWeather(ct), _refreshWeather);
+
+public void RefreshWeather()
+	=> _refreshWeather.Raise();
+```
+
+
 ### AsyncEnumerable
-This adapts an `IAsyncEnumerable<T>` into a _feed_
+This adapts an `IAsyncEnumerable<T>` into a _feed_.
 
 ```csharp
 private IWeatherService _weatherService;
@@ -137,6 +151,10 @@ private async IAsyncEnumerable<WeatherInfo> GetWeather([EnumeratorCancellation] 
 	}
 }
 ```
+> [!NOTE]
+> Make sure to use a `CancellationToken` marked with the [`[EnumeratorCancellation]` attribute](https://docs.microsoft.com/en-us/dotnet/api/system.runtime.compilerservices.enumeratorcancellationattribute).
+> This token will be flagged as cancelled when the last subscription of the feed is being removed.
+> Typically this will be when the `ViewModel` is being disposed.
 
 ### Create
 This gives you the ability to create a specialized _feed_ by dealing directly with _messages_.
@@ -176,6 +194,8 @@ You can apply some operators directly on any _feed_.
 > [!NOTE]
 > You can use the linq syntax with feeds:
 > ```csharp
+> private IFeed<int> _values;
+> 
 > public IFeed<string> Value => from value in _values
 > 	where value == 42
 > 	select value.ToString();
@@ -193,7 +213,7 @@ public IFeed<WeatherAlert> Alert => Weather
 ```
 
 ### Select
-Synchronously projects each data from the source feed.
+Synchronously projects each data from the source _feed_.
 
 ```csharp
 public IFeed<WeatherAlert> Alert => Weather
@@ -202,7 +222,7 @@ public IFeed<WeatherAlert> Alert => Weather
 ```
 
 ### SelectAsync
-Asynchronously projects each data from the source feed.
+Asynchronously projects each data from the source _feed_.
 
 ```csharp
 public IFeed<string> AlertDetails => Alert
@@ -214,7 +234,7 @@ This allows the use of `await` on a _feed_, for instance when you want to captur
 ```csharp
 public async ValueTask ShareAlert(CancellationToken ct)
 {
-	var alert = await Alert;
+	var alert = await Alert; // Gets the current WeatherAlert
 	await _shareService.Share(alert, ct);
 }
 ```
