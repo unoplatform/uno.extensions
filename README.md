@@ -45,3 +45,10 @@ This project is licensed under the Apache 2.0 license. See the [LICENSE](LICENSE
 ## Contributing
 
 Be mindful of our [Code of Conduct](CODE_OF_CONDUCT.md).
+
+## Contributors
+Thanks goes to these wonderful people (List made with [contrib.rocks](https://contrib.rocks)):
+
+[![Uno.Extensions Contributors](https://contrib.rocks/image?repo=unoplatform/uno.extensions)](https://github.com/unoplatform/uno.extensions/graphs/contributors)
+
+💖 Thank you.
