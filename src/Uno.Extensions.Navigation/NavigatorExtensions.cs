@@ -210,7 +210,7 @@ public static class NavigatorExtensions
 		return service.NavigateAsync((Qualifiers.NavigateBack + string.Empty).WithQualifier(qualifier).AsRequest(resolver, sender, data, cancellation));
 	}
 
-	public static async Task<NavigationResponse?> ShowMessageDialogAsync(
+	public static async Task ShowMessageDialogAsync(
 		this INavigator service,
 		object sender,
 		string? route = default,
@@ -222,10 +222,10 @@ public static class NavigatorExtensions
 		DialogAction[]? commands = default,
 		CancellationToken cancellation = default)
 	{
-		return await service.ShowMessageDialogAsync<object>(sender, route, content, title, delayInput, defaultCommandIndex, cancelCommandIndex, commands, cancellation);
+		await service.ShowMessageDialogAsync<object>(sender, route, content, title, delayInput, defaultCommandIndex, cancelCommandIndex, commands, cancellation);
 	}
 
-	public static async Task<NavigationResultResponse<TResult>?> ShowMessageDialogAsync<TResult>(
+	public static async Task<TResult?> ShowMessageDialogAsync<TResult>(
 		this INavigator service,
 		object sender,
 		string? route = default,
@@ -248,7 +248,13 @@ public static class NavigatorExtensions
 				{ RouteConstants.MessageDialogParameterCommands, commands! }
 			};
 
-		var result = await service.NavigateAsync((route ?? (Qualifiers.Dialog + RouteConstants.MessageDialogUri)).AsRequest<object>(resolver, sender, data, cancellation));
-		return result?.AsResultResponse<TResult>();
+		var response = await service.NavigateAsync((route ?? (Qualifiers.Dialog + RouteConstants.MessageDialogUri)).AsRequest<object>(resolver, sender, data, cancellation));
+		if(response?.AsResultResponse<TResult>() is { } resultResponse &&
+			resultResponse.Result is not null)
+		{
+			var result = await resultResponse.Result;
+			return result.SomeOrDefault();
+		};
+		return default;
 	}
 }

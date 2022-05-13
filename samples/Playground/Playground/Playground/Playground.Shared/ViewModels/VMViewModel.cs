@@ -79,6 +79,6 @@ public class VMViewModel
 	// Show MessageDialog
 	public async void ShowMessageDialogAsyncClick(object sender, RoutedEventArgs args)
 	{
-		var result = await Navigator.ShowMessageDialogAsync<string>(this, content:"Sample content", title:"Sample title").AsResult();
+		var result = await Navigator.ShowMessageDialogAsync<string>(this, content:"Sample content", title:"Sample title");
 	}
 }
