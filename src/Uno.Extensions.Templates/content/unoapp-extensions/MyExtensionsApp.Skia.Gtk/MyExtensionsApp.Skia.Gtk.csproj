@@ -5,9 +5,9 @@
     <TargetFramework>net5.0</TargetFramework>
     <DefineConstants>$(DefinedConstants);WINUI</DefineConstants>
   </PropertyGroup>
-  <ItemGroup Condition="exists('..\MyExtensionsApp.UWP')">
-    <EmbeddedResource Include="..\MyExtensionsApp.UWP\Package.appxmanifest" LogicalName="Package.appxmanifest" />
-    <Content Include="..\MyExtensionsApp.UWP\Assets\StoreLogo.png" Link="Assets\StoreLogo.png" />
+  <ItemGroup Condition="exists('..\MyExtensionsApp.Windows.Package')">
+    <EmbeddedResource Include="..\MyExtensionsApp.Windows.Package\Package.appxmanifest" LogicalName="Package.appxmanifest" />
+    <Content Include="..\MyExtensionsApp.Windows.Package\Images\StoreLogo.png" Link="Assets\StoreLogo.png" />
     <Content Include="Assets\Fonts\uno-fluentui-assets.ttf" />
   </ItemGroup>
   <ItemGroup>

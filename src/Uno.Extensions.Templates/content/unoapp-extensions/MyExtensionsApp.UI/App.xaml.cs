@@ -22,26 +22,13 @@ public sealed partial class App : Application
 	/// <param name="args">Details about the launch request and process.</param>
 	protected async override void OnLaunched(LaunchActivatedEventArgs args)
 	{
-#if DEBUG
-		if (System.Diagnostics.Debugger.IsAttached)
-		{
-			// this.DebugSettings.EnableFrameRateCounter = true;
-		}
-#endif
 
-#if NET5_0 && WINDOWS
+#if NET5_0_OR_GREATER && WINDOWS
 		_window = new Window();
 		_window.Activate();
 #else
-#if WINUI
 		_window = Microsoft.UI.Xaml.Window.Current;
-#else
-		_window = Windows.UI.Xaml.Window.Current;
 #endif
-#endif
-
-		var notif = Host.Services.GetRequiredService<IRouteNotifier>();
-		notif.RouteChanged += RouteUpdated;
 
 		_window.AttachNavigation(Host.Services);
 		_window.Activate();
@@ -72,28 +59,5 @@ public sealed partial class App : Application
 		var deferral = e.SuspendingOperation.GetDeferral();
 		// TODO: Save application state and stop any background activity
 		deferral.Complete();
-	}
-
-	public void RouteUpdated(object? sender, RouteChangedEventArgs e)
-	{
-		try
-		{
-			var rootRegion = e.Region.Root();
-			var route = rootRegion.GetRoute();
-
-
-#if !__WASM__ && !WINUI
-			CoreApplication.MainView?.DispatcherQueue.TryEnqueue(() =>
-			{
-				var appTitle = ApplicationView.GetForCurrentView();
-				appTitle.Title = "MyExtensionsApp: " + (route + "").Replace("+", "/");
-			});
-#endif
-
-		}
-		catch (Exception ex)
-		{
-			Console.WriteLine("Error: " + ex.Message);
-		}
 	}
 }
