@@ -24,7 +24,7 @@ For more documentation on dependency injection, read the references listed at th
   services.AddSingleton<MyService>();
   services.AddSingleton<MyOtherService>();
 
-  public class MyService(MyOtherService myOtherService)
+  public MyService(MyOtherService myOtherService)
   {
     // Resolving MyService will automatically add MyOtherService here.
   }
