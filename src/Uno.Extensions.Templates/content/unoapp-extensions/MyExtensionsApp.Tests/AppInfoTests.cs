@@ -1,5 +1,5 @@
+using MyExtensionsApp.Configuration;
 using NUnit.Framework;
-using MyExtensionsApp;
 
 namespace MyExtensionsApp.Tests;
 
@@ -13,7 +13,7 @@ public class AppInfoTests
 	[Test]
 	public void AppInfoCreation()
 	{
-		var appInfo = new AppInfo { Title = "Test" };
+		var appInfo = new AppConfig { Title = "Test" };
 
 		Assert.AreEqual("Test", appInfo.Title);
 	}
