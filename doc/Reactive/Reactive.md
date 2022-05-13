@@ -1,7 +1,7 @@
 # Reactive
 ## Concept
 
-When we are asynchronously loading a data, the standard pattern is to use a `Task<T>`. A _task_ represents a data that will be available in the future:
+When asynchronously loading a data, the standard pattern is to use a `Task<T>`. A _task_ represents data which  will be available in the future:
 ```csharp
 public async Task<decimal> GetShippingCost(CancellationToken ct)
 {
@@ -11,7 +11,7 @@ public async Task<decimal> GetShippingCost(CancellationToken ct)
 	return cost;
 }
 ```
-The issue is that `Task<T>` represents only one value, you must manually re-fetch the data each time one of its dependencies is updated. For instance, here, each time the user updates the selected country, you have to manually re-invoked the `GetShippingCost` and update the UI.
+An issue here is that `Task<T>` represents only one value, data must manually be fetched again each time one of its dependencies is updated. For instance, here, each time the user updates the selected country, `GetShippingCost` has to be manually re-invoked and the UI updated.
 
 A solution to this would be to use `IObservable<T>` or `IAsyncEnumerable<T>`. Both are representing a stream of value. The example above can be written like this using `IObservable<T>`:
 ```csharp
@@ -30,13 +30,13 @@ public async IAsyncEnumerable<decimal> GetShippingCost([EnumerationCancellation]
 }
 ```
 
-But in both cases, if there is any exception the stream will be broken. This means that for instance in example above, if we cannot compute the shipping cost for a given country for any reason (network issue, invalid country, …) the stream of data will be terminated, and selecting another country won’t have any effect.
+But in both cases, if there is any exception the stream will be broken. This means that for instance in example above, if it is not possible to compute the shipping cost for a given country for any reason (network issue, invalid country, …) the stream of data will be terminated, and selecting another country won’t have any effect.
 
 Also, when a dependency is being updated and we may need to do some asynchronously work, like update a projection. In our example, we asynchronously get the updated shipping cost when country is changed. From a UI perspective, it would be great to have a visual indication that the shipping cost is being re-computed for the newly chosen country.
 
-Neither `IObservable<T>` nor `IAsyncEnumerable<T>` have such metadata mechanism for produced values, that the purpose if `IFeed<T>`.
+Neither `IObservable<T>` nor `IAsyncEnumerable<T>` have such metadata mechanism for produced values, that is the purpose of `IFeed<T>`.
 
-With the data, currently `IFeed<T>` does supports 2 mains metadata (named “axis”):
+With data, `IFeed<T>` currently does supports 2 main metadata (named “axis”):
 •	Error: If there is any exception linked to the current data
 •	Progress: We indicates that the current data is transient or final.
 But we do also have a metadata about the data itself:
@@ -44,7 +44,7 @@ But we do also have a metadata about the data itself:
 •	None: There is no data to display. In our example, when you cannot ship to the selected country.
 •	Undefined: There is no info about the data, typically because we are asynchronously loading it.
 
-Here a diagram of the common messages produced by a feed when asynchronously loading a data:
+Here is a diagram of common messages produced by a feed when asynchronously loading data:
 
 
 > Keep in mind that this is only an example of the common case, but each _axis_ is independent and can change from one state to another. There is no restriction between states.
@@ -56,12 +56,12 @@ Here a diagram of the common messages produced by a feed when asynchronously loa
 ## API
 The main API provided by this package is [`IFeed<T>`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Core/IFeed.cs) which represents a stream of _data_.
 
-Unlike `IObservable<T>` or `IAsyncEnumerable<T>`, the _feed_ streams are specialized to handle business data objects which are expected to be rendered by the UI.
-A _feed_ is a sequence of _messages_ that contains such immutable _data_ with some metadata like its loading progress and/or errors raised while loading it.
-Everything is about the _data_, this means that a _feed_ will never fail, it will instead report any error encountered with the data itself, remaining active for future updates.
+Unlike `IObservable<T>` or `IAsyncEnumerable<T>`, _feed_ streams are specialized to handle business data objects which are expected to be rendered by the UI.
+A _feed_ is a sequence of _messages_ which contains immutable _data_ with metadata such as its loading progress and/or errors raised while loading it.
+Everything is about _data_, this means that a _feed_ will never fail. It will instead report any error encountered with the data itself, remaining active for future updates.
 
 Each [`Message<T>`](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive/Core/Message.cs) contains the current and the previous state, as well as information about what changed.
-The means that a message is self-sufficient to get the current data, but also gives enough information to update from the previous state in an optimized way without rebuilding every thing.
+This means that a message is self-sufficient to get the current data, but also gives enough information to update from the previous state in an optimized way without rebuilding everything.
 
 ## General guidelines
 
@@ -71,9 +71,9 @@ The means that a message is self-sufficient to get the current data, but also gi
 * Public _feeds_ are expected to be exposed in property getters. A caching system embedded in reactive framework will then ensure to not re-create a new _feed_ on each get.
 
 ## Sources: How to create a _feed_
-You can build a _feed_ from different sources. Main entry point to do that is using the static class `Feed`:
+You can build a _feed_ from different sources. The main entry point is the static class `Feed`:
 
-Assuming this given `IWeatherService` and `ILocationService`:
+Given an `IWeatherService` and `ILocationService`:
 ```csharp
 public interface IWeatherService
 {
@@ -139,8 +139,9 @@ private async IAsyncEnumerable<WeatherInfo> GetWeather([EnumeratorCancellation] 
 ```
 
 ### Create
-This gives you the ability to create your own _feed_ by dealing directly with _messages_.
+This gives you the ability to create a specialized _feed_ by dealing directly with _messages_.
 
+> [!NOTE]
 > This is designed for advanced usage and should probably not be used directly in apps.
 
 ```csharp
@@ -172,7 +173,8 @@ private async IAsyncEnumerable<Message<WeatherInfo>> GetWeather([EnumeratorCance
 ## Operators: How to interact with a feed
 You can apply some operators directly on any _feed_.
 
-> Note : You can use the linq syntax with feeds:
+> [!NOTE]
+> You can use the linq syntax with feeds:
 > ```csharp
 > public IFeed<string> Value => from value in _values
 > 	where value == 42
@@ -200,7 +202,7 @@ public IFeed<WeatherAlert> Alert => Weather
 ```
 
 ### SelectAsync
-Asynchronously project each data from the source feed.
+Asynchronously projects each data from the source feed.
 
 ```csharp
 public IFeed<string> AlertDetails => Alert
@@ -208,7 +210,7 @@ public IFeed<string> AlertDetails => Alert
 ```
 
 ### GetAwaiter
-This allows you to use `await` on a _feed_, for instance when you want to capture the current value to use it in a command.
+This allows the use of `await` on a _feed_, for instance when you want to capture the current value to use it in a command.
 ```csharp
 public async ValueTask ShareAlert(CancellationToken ct)
 {
@@ -218,16 +220,16 @@ public async ValueTask ShareAlert(CancellationToken ct)
 ```
 
 ## ListFeed: _Feed_ of collections of _items_
-The `IListFeed<T>` is _feed_ that is speciliazed to handle collections.
-It allows you to declare opreator directly on items instead of dealing with the list itself.
-A _list feed_ goes in _none_ if the list does not have any elements.
+The `IListFeed<T>` is _feed_ specialized for handling collections.
+It allows the declaration of an operator directly on items instead of dealing with the list itself.
+A _list feed_ goes in `None` if the list does not have any elements.
 
-To create an `IlistFeed<T>`, on the state `ListFeed` class, you have the same `Async`, `AsyncEnumerable` and `Create` methods that you have for the `Feed`.
+To create an `IListFeed<T>`, on the state `ListFeed` class, the same `Async`, `AsyncEnumerable` and `Create` methods found on `Feed` can be used.
 
-You will also have few dedicated operators:
+There are also a few dedicated operators:
 
 ### AsListFeed
-This allows you to create a _list feed_ from a _feed of list_.
+This allows the creation of a _list feed_ from a _feed of list_.
 
 ```csharp
 public IListFeed<WeatherInfo> Forecast => Feed
@@ -241,23 +243,23 @@ public IListFeed<WeatherInfo> Forecast => Feed
 ```
 
 ### AsFeed
-This does the opposite, and converts a _list feed_  to a _feed of list_
+This does the opposite of `AsListFeed` and converts a _list feed_ to a _feed of list_.
 
 ```csharp
 public IFeed<IImmutableList<WeatherInfo>> ForecastFeed => Forecast.AsFeed();
 ```
 
 ### Where
-This operator allows you to filter _items_.
+This operator allows the filtering of _items_.
 If all _items_ of the collection are filtered out, the resulting feed will go in _none_ state.
 
 ```csharp
 public IListFeed<WeatherInfo> HighTempDays => ForecastFeed.Where(weather => weather.Temperature >= 28);
 ```
 
-## State: How to maintain and update a _data_
+## State: How to maintain and update data
 
-Unlike a _feed_ a `IState<T>`, as it name suggest it, is state full. 
+Unlike a _feed_ a `IState<T>`, as its name suggest, is state full. 
 While a _feed_ is just a query of a stream of _data_, a _state_ also implies a current value (a.k.a. the state of the application) which can be accessed and updated.
 
 There are some noticeable differences with a _feed_:
