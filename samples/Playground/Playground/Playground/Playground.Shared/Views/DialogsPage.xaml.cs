@@ -16,6 +16,16 @@ public sealed partial class DialogsPage : Page, IInjectable<INavigator>
 		MessageDialogResultText.Text = $"Message dialog result: {messageDialogResult}";
 	}
 
+	private async void MessageDialogCodebehindRouteClick(object sender, RoutedEventArgs args)
+	{
+		var messageDialogResult = await Navigator!.ShowMessageDialogAsync<string>(this, route:"LocalizedConfirm");
+		MessageDialogResultText.Text = $"Message dialog result: {messageDialogResult}";
+	}
+private async void MessageDialogCodebehindRouteOverrideClick(object sender, RoutedEventArgs args)
+	{
+		var messageDialogResult = await Navigator!.ShowMessageDialogAsync<string>(this, route:"LocalizedConfirm", content:"Override content", title:"Override title");
+		MessageDialogResultText.Text = $"Message dialog result: {messageDialogResult}";
+	}
 	private async void MessageDialogCodebehindCancelClick(object sender, RoutedEventArgs args)
 	{
 		var cancelSource = new CancellationTokenSource(TimeSpan.FromSeconds(2));

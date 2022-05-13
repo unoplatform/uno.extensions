@@ -31,6 +31,10 @@
 					uen:Navigation.Request="!LocalizedConfirm" />
 			<Button Content="MessageDialog Codebehind"
 					Click="MessageDialogCodebehindClick" />
+			<Button Content="MessageDialog Codebehind (route)"
+					Click="MessageDialogCodebehindRouteClick" />
+			<Button Content="MessageDialog Codebehind (route override)"
+					Click="MessageDialogCodebehindRouteOverrideClick" />
 			<TextBlock x:Name="MessageDialogResultText" />
 			<Button Content="MessageDialog Codebehind (cancel after 2s)"
 					Click="MessageDialogCodebehindCancelClick" />

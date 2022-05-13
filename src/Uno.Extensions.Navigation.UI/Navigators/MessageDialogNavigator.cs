@@ -32,24 +32,48 @@ public class MessageDialogNavigator : DialogNavigator
 
 		var messageView = Resolver.Find(route)?.ViewAttributes as MessageDialogAttributes;
 
-		var content = data.TryGetValue(RouteConstants.MessageDialogParameterContent, out var contentValue) ?
-						contentValue as string :
+		var content = (data.TryGetValue(RouteConstants.MessageDialogParameterContent, out var contentValue) ?
+						contentValue as string : default) ??
 						messageView?.ContentProvider?.Invoke(_localizer);
-		var title = data.TryGetValue(RouteConstants.MessageDialogParameterTitle, out var titleValue) ?
-						titleValue as string :
+		var title = (data.TryGetValue(RouteConstants.MessageDialogParameterTitle, out var titleValue) ?
+						titleValue as string : default) ??
 						messageView?.TitleProvider?.Invoke(_localizer);
-		var options = data.TryGetValue(RouteConstants.MessageDialogParameterOptions, out var optionsValue) ?
-						(optionsValue is MessageDialogOptions opt) ? opt : MessageDialogOptions.None :
-						(messageView?.DelayUserInput ?? false) ? MessageDialogOptions.AcceptUserInputAfterDelay : MessageDialogOptions.None;
-		var defaultIndex = (uint)(data.TryGetValue(RouteConstants.MessageDialogParameterDefaultCommand, out var defaultValue) ?
-						(defaultValue is int defIdx) ? defIdx : 0 :
-						messageView?.DefaultButtonIndex ?? 0);
-		var cancelIndex = (uint)(data.TryGetValue(RouteConstants.MessageDialogParameterCancelCommand, out var cancelValue) ?
-						(cancelValue is int cancel) ? cancel : 0 :
-						messageView?.CancelButtonIndex ?? 0);
-		var buttons = (data.TryGetValue(RouteConstants.MessageDialogParameterCommands, out var buttonValues) ?
-						buttonValues as DialogAction[] :
-						messageView?.Buttons) ?? new DialogAction[] { };
+		var options =
+			(
+				data.TryGetValue(RouteConstants.MessageDialogParameterOptions, out var optionsValue) &&
+				optionsValue is MessageDialogOptions opt &&
+				opt == MessageDialogOptions.None
+			) ?
+			opt :
+			(
+				(messageView?.DelayUserInput ?? false) ?
+				MessageDialogOptions.AcceptUserInputAfterDelay :
+				MessageDialogOptions.None
+			);
+		var defaultIndex = (uint)(
+			(
+				data.TryGetValue(RouteConstants.MessageDialogParameterDefaultCommand, out var defaultValue) &&
+				defaultValue is int defIdx &&
+				defIdx > 0
+			) ?
+			defIdx :
+			(messageView?.DefaultButtonIndex ?? 0));
+		var cancelIndex = (uint)(
+			(
+				data.TryGetValue(RouteConstants.MessageDialogParameterCancelCommand, out var cancelValue) &&
+				cancelValue is int cancel &&
+				cancel > 0
+			) ?
+			cancel :
+			(messageView?.CancelButtonIndex ?? 0));
+		var buttons =
+			(
+				data.TryGetValue(RouteConstants.MessageDialogParameterCommands, out var buttonValues) &&
+				buttonValues is DialogAction[] butVals &&
+				butVals.Length > 0
+			) ?
+			butVals :
+			(messageView?.Buttons ?? new DialogAction[] { });
 
 		var commands = from b in buttons
 					   select new UICommand(b.LabelProvider?.Invoke(_localizer), new UICommandInvokedHandler(cmd => b.Action?.Invoke()), b.Id);

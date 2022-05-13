@@ -223,12 +223,12 @@ public static class NavigatorExtensions
 		string? content = default,
 		string? title = default,
 		bool? delayInput = default,
-		uint? defaultCommandIndex = default,
-		uint? cancelCommandIndex = default,
-		DialogAction[]? commands = default,
+		int? defaultButtonIndex = default,
+		int? cancelButtonIndex = default,
+		DialogAction[]? buttons = default,
 		CancellationToken cancellation = default)
 	{
-		await service.ShowMessageDialogAsync<object>(sender, route, content, title, delayInput, defaultCommandIndex, cancelCommandIndex, commands, cancellation);
+		await service.ShowMessageDialogAsync<object>(sender, route, content, title, delayInput, defaultButtonIndex, cancelButtonIndex, buttons, cancellation);
 	}
 
 	public static async Task<TResult?> ShowMessageDialogAsync<TResult>(
@@ -238,9 +238,9 @@ public static class NavigatorExtensions
 		string? content = default,
 		string? title = default,
 		bool? delayInput = default,
-		uint? defaultCommandIndex = default,
-		uint? cancelCommandIndex = default,
-		DialogAction[]? commands = default,
+		int? defaultButtonIndex = default,
+		int? cancelButtonIndex = default,
+		DialogAction[]? buttons = default,
 		CancellationToken cancellation = default)
 	{
 		var resolver = service.GetResolver();
@@ -249,9 +249,9 @@ public static class NavigatorExtensions
 				{ RouteConstants.MessageDialogParameterTitle, title! },
 				{ RouteConstants.MessageDialogParameterContent, content! },
 				{ RouteConstants.MessageDialogParameterOptions, delayInput! },
-				{ RouteConstants.MessageDialogParameterDefaultCommand, defaultCommandIndex! },
-				{ RouteConstants.MessageDialogParameterCancelCommand, cancelCommandIndex! },
-				{ RouteConstants.MessageDialogParameterCommands, commands! }
+				{ RouteConstants.MessageDialogParameterDefaultCommand, defaultButtonIndex! },
+				{ RouteConstants.MessageDialogParameterCancelCommand, cancelButtonIndex! },
+				{ RouteConstants.MessageDialogParameterCommands, buttons! }
 			};
 
 		var response = await service.NavigateAsync((route ?? (Qualifiers.Dialog + RouteConstants.MessageDialogUri)).AsRequest<object>(resolver, sender, data, cancellation));
