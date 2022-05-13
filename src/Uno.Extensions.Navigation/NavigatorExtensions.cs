@@ -183,6 +183,12 @@ public static class NavigatorExtensions
 		return result.SomeOrDefault();
 	}
 
+	public static async Task<TResult?> GetDataAsync<TResult>(this INavigator service, object sender, string route, string qualifier = Qualifiers.None, CancellationToken cancellation = default)
+	{
+		var result = await service.NavigateRouteForResultAsync<TResult>(sender, route, qualifier, cancellation: cancellation).AsResult();
+		return result.SomeOrDefault();
+	}
+
 	public static async Task<TResult?> GetDataAsync<TViewModel, TResult>(this INavigator service, object sender, string qualifier = Qualifiers.None, CancellationToken cancellation = default)
 	{
 		var result = await service.NavigateViewModelForResultAsync<TViewModel, TResult>(sender, qualifier, cancellation: cancellation).AsResult();
@@ -249,7 +255,7 @@ public static class NavigatorExtensions
 			};
 
 		var response = await service.NavigateAsync((route ?? (Qualifiers.Dialog + RouteConstants.MessageDialogUri)).AsRequest<object>(resolver, sender, data, cancellation));
-		if(response?.AsResultResponse<TResult>() is { } resultResponse &&
+		if (response?.AsResultResponse<TResult>() is { } resultResponse &&
 			resultResponse.Result is not null)
 		{
 			var result = await resultResponse.Result;
