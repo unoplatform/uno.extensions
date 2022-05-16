@@ -16,7 +16,7 @@ private void GoToSamplePageClearStackClick(object sender, RoutedEventArgs e)
 }
 ```
 
-If you run the application and click on the Go to SamplePage and clear stack button, the go back button doesn't work, since the frame back-stack is empty.
+If you run the application and click on the Go to SamplePage and clear stack button, the go back button is disabled, since the frame back-stack is empty.
 
 
 - Clear stack
