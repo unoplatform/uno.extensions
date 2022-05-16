@@ -1,36 +1,36 @@
 # How-To: Display Item Details
 
-This topic walks through how to use Navigation to display the details of an item selected from a list. This demonstrates and important aspect of Navigation which is the ability to pass data as part of a navigation request.
+This topic walks through how to use Navigation to display the details of an item selected from a list. This demonstrates an important aspect of Navigation which is the ability to pass data as part of a navigation request.
 
 > [!Tip] This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions` template to create the solution. Instructions for creating an application from the template can be found [here](../Extensions/GettingStarted/UsingUnoExtensions.md)
 
 ## Step-by-steps
 
 
-- Define a widget class for data to be passed between viewmodels
+- Define a widget class for data to be passed between view models
 
 ```csharp
 public record Widget(string Name, double Weight){}
 ```
 
-- Change Second viewap to include datamap
+- Change the `ViewMap` associating the second page and its view model to include a `DataMap`
 
 ```csharp
 new ViewMap<SecondPage, SecondViewModel>(Data: new DataMap<Widget>())
 ```
 
-- Change MainViewModel to create a widget and pass as data in navigation method
+- Create a widget inside the main view model, and pass it as `data` into the navigation method
        
 ```csharp
 public async Task GoToSecondPage()
 {
 	var widget = new Widget("CrazySpinner", 34.0);
 
-	await _navigator.NavigateViewModelAsync<SecondViewModel>(this, data:widget);
+	await _navigator.NavigateViewModelAsync<SecondViewModel>(this, data: widget);
 }
 ```
 
-- Update SecondViewModel to received a widget
+- Update the second view model constructor to accept a widget
 
 ```csharp
 public class SecondViewModel
@@ -44,7 +44,7 @@ public class SecondViewModel
 }
 ```
 
-- Add TextBlock to SecondPage xaml
+- Add a TextBlock to second page XAML
 
 ```xml
 <TextBlock HorizontalAlignment="Center"
@@ -59,7 +59,7 @@ await _navigator.NavigateDataAsync(this, data: widget);
 ```
 
 
-- Add Widgets property to MainViewModel
+- Add a `Widgets` property to your main view model, similar to the following:
 
 ```csharp
 public Widget[] Widgets { get; } = new[]
@@ -69,7 +69,7 @@ public Widget[] Widgets { get; } = new[]
 };
 ```
 
-- Add XAML to MainPage
+- Update main page XAML to display widgets
 
 ```xml
 <ListView ItemsSource="{Binding Widgets}"
@@ -86,11 +86,11 @@ public Widget[] Widgets { get; } = new[]
 </ListView>
 ```
  
-- Note that it's the route in the Navigation.Request that defines which view to open
+- NOTE: The route in Navigation.Request defines which view to open
 
-- Change the  request to "" in order for the view to be based on the data type to open)
+- Change the request to `""` to display a view based on the data type
 
-- Add Basic and Advanced Widgets and change Widgets to be a mix of widget types
+- Add additional widgets and change the `Widgets` property in the main view model to include multiple widget types
 
 ```csharp
 public record Widget(string Name, double Weight) { }
@@ -107,12 +107,11 @@ public Widget[] Widgets { get; } = new Widget[]
 };
 ```
 
-- Copy SecondPage to ThirdPage (rename both xaml and cs files)
-- Copy SecondViewModel to ThirdViewModel
-- Change constructor of SecondViewModel to accept BasicWidget
-- Change constructor of ThirdViewModel to accept AdvancedWidget
+- Copy the second page's XAML and code behind to a new third page with a different file name
+- Copy the second view model to a newly-created, third view model
+- Change constructor of both the second and third view models to accept widgets of different types
 
-- Change viewmap and routemap to include thirdviewmodel
+- Change `ViewMap` and `RouteMap` to include the third view model
 
 ```csharp
 private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
