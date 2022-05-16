@@ -121,6 +121,10 @@ new ViewMap<SamplePage, SampleViewModel>()
 
 
 
+>> Go back and forward to different page eg ./NewPage
+>> Go to multiple pages eg NextPage/AnotherPage
+
+
 
 
 
