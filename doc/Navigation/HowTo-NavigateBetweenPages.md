@@ -43,10 +43,11 @@ This topic covers using Navigation to navigate between two pages using frame-bas
 
 ### 3. Defining ViewMap and RouteMap
 
-In that in Output window there is a line that says:  
-`DefaultMapping - For better performance (avoid reflection), create mapping for for path 'Sample', view 'SamplePage', view model ''`
+At this point, if you inspect the Output window you'll see a line that says something similar to:  
+`For better performance (avoid reflection), create mapping for for path 'Sample', view 'SamplePage', view model ''`
+This warning exists because Navigation uses reflection as a fallback mechanism to associate types and the corresponding navigation route. This can be resolved by specifying a `ViewMap` and a `RouteMap` for the `SamplePage` to eliminate the need for reflection 
 
-- To address this warning, add a `ViewMap` and `RouteMap` for the `SamplePage` in the `App.xaml.host.cs` file
+- Update the `RegisterRoutes` method in the `App.xaml.host.cs` file
 
     ```csharp
     private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
@@ -77,7 +78,7 @@ Navigation also supports injecting a view model as the `DataContext` when a page
     ```csharp
     public class SampleViewModel
     {
-    	public string Title => "Sample Page";
+        public string Title => "Sample Page";
         public SampleViewModel()
         {
         }
@@ -112,7 +113,7 @@ The Navigation code can be moved from the `SamplePage.cs` code-behind file to th
     }
     ```
 
-- In order to use x:Bind to invoke the GoBack method on the SampleViewModel the SamplePage needs to expose a property that returns the DataContext as a SampleViewModel.
+- In order to use `x:Bind` to invoke the `GoBack` method on the `SampleViewModel` the `SamplePage` needs to expose a property that returns the `DataContext` as a `SampleViewModel`.
 
     ```csharp
     public SampleViewModel? ViewModel  => DataContext as SampleViewModel;
@@ -123,7 +124,7 @@ The Navigation code can be moved from the `SamplePage.cs` code-behind file to th
     }
     ```
 
-- Add Button to SamplePage.xaml and set the Click method to x:Bind to the GoBack method
+- Add `Button` to `SamplePage.xaml` and set the `Click` method to `x:Bind` to the `GoBack` method
     ```xml
     <Button Content="Go Back (View Model)"
             Click="{x:Bind ViewModel.GoBack}" />
