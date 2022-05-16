@@ -1,5 +1,12 @@
 # How-To: Navigate in XAML
 
+This topic walks through controlling Navigation from XAML. This includes specifying data that should be attached to the navigation request.
+
+> [!Tip] This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions` template to create the solution. Instructions for creating an application from the template can be found [here](../Extensions/GettingStarted/UsingUnoExtensions.md)
+
+## Step-by-steps
+
+
 - Navigation can be triggered from XAML based on:
     - tap an element
     - click on a button

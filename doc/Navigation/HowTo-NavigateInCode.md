@@ -1,5 +1,12 @@
 # How-To: Navigate in Code
 
+This topic walks through controlling Navigation from code, either in the code-behind file of a Page, or in the corresponding view model.
+
+> [!Tip] This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions` template to create the solution. Instructions for creating an application from the template can be found [here](../Extensions/GettingStarted/UsingUnoExtensions.md)
+
+## Step-by-steps
+
+
 - Navigation works both in code behind and in viewmodels with same abstraction
 
 - Add new page, SamplePage.xaml
