@@ -183,6 +183,12 @@ public static class NavigatorExtensions
 		return result.SomeOrDefault();
 	}
 
+	public static async Task<TResult?> GetDataAsync<TResult>(this INavigator service, object sender, string route, string qualifier = Qualifiers.None, CancellationToken cancellation = default)
+	{
+		var result = await service.NavigateRouteForResultAsync<TResult>(sender, route, qualifier, cancellation: cancellation).AsResult();
+		return result.SomeOrDefault();
+	}
+
 	public static async Task<TResult?> GetDataAsync<TViewModel, TResult>(this INavigator service, object sender, string qualifier = Qualifiers.None, CancellationToken cancellation = default)
 	{
 		var result = await service.NavigateViewModelForResultAsync<TViewModel, TResult>(sender, qualifier, cancellation: cancellation).AsResult();
@@ -210,31 +216,31 @@ public static class NavigatorExtensions
 		return service.NavigateAsync((Qualifiers.NavigateBack + string.Empty).WithQualifier(qualifier).AsRequest(resolver, sender, data, cancellation));
 	}
 
-	public static async Task<NavigationResponse?> ShowMessageDialogAsync(
+	public static async Task ShowMessageDialogAsync(
 		this INavigator service,
 		object sender,
 		string? route = default,
 		string? content = default,
 		string? title = default,
 		bool? delayInput = default,
-		uint? defaultCommandIndex = default,
-		uint? cancelCommandIndex = default,
-		DialogAction[]? commands = default,
+		int? defaultButtonIndex = default,
+		int? cancelButtonIndex = default,
+		DialogAction[]? buttons = default,
 		CancellationToken cancellation = default)
 	{
-		return await service.ShowMessageDialogAsync<object>(sender, route, content, title, delayInput, defaultCommandIndex, cancelCommandIndex, commands, cancellation);
+		await service.ShowMessageDialogAsync<object>(sender, route, content, title, delayInput, defaultButtonIndex, cancelButtonIndex, buttons, cancellation);
 	}
 
-	public static async Task<NavigationResultResponse<TResult>?> ShowMessageDialogAsync<TResult>(
+	public static async Task<TResult?> ShowMessageDialogAsync<TResult>(
 		this INavigator service,
 		object sender,
 		string? route = default,
 		string? content = default,
 		string? title = default,
 		bool? delayInput = default,
-		uint? defaultCommandIndex = default,
-		uint? cancelCommandIndex = default,
-		DialogAction[]? commands = default,
+		int? defaultButtonIndex = default,
+		int? cancelButtonIndex = default,
+		DialogAction[]? buttons = default,
 		CancellationToken cancellation = default)
 	{
 		var resolver = service.GetResolver();
@@ -243,12 +249,18 @@ public static class NavigatorExtensions
 				{ RouteConstants.MessageDialogParameterTitle, title! },
 				{ RouteConstants.MessageDialogParameterContent, content! },
 				{ RouteConstants.MessageDialogParameterOptions, delayInput! },
-				{ RouteConstants.MessageDialogParameterDefaultCommand, defaultCommandIndex! },
-				{ RouteConstants.MessageDialogParameterCancelCommand, cancelCommandIndex! },
-				{ RouteConstants.MessageDialogParameterCommands, commands! }
+				{ RouteConstants.MessageDialogParameterDefaultCommand, defaultButtonIndex! },
+				{ RouteConstants.MessageDialogParameterCancelCommand, cancelButtonIndex! },
+				{ RouteConstants.MessageDialogParameterCommands, buttons! }
 			};
 
-		var result = await service.NavigateAsync((route ?? (Qualifiers.Dialog + RouteConstants.MessageDialogUri)).AsRequest<object>(resolver, sender, data, cancellation));
-		return result?.AsResultResponse<TResult>();
+		var response = await service.NavigateAsync((route ?? (Qualifiers.Dialog + RouteConstants.MessageDialogUri)).AsRequest<object>(resolver, sender, data, cancellation));
+		if (response?.AsResultResponse<TResult>() is { } resultResponse &&
+			resultResponse.Result is not null)
+		{
+			var result = await resultResponse.Result;
+			return result.SomeOrDefault();
+		};
+		return default;
 	}
 }
