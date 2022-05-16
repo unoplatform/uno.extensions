@@ -59,7 +59,18 @@
               - name: How to use navigation to display item details
                 href: Navigation/HowTo-DisplayItem.md
         - name: Reactive
-            topicHref: Reactive/Reactive.md
-            items:
-              - name: Introduction
-                href: Reactive/Reactive - Dev.md
+          topicHref: Reactive.01-concept.md
+          items:
+              - name: General guidelines
+                href: Reactive.02-general.md
+              - name: Feed
+                href: Reactive.03-feed.md
+              - name: ListFeed
+                href: Reactive.05-listfeed.md
+              - name: State
+                href: Reactive.05-state.md
+              - name: Usage in applications
+                href: Reactive.01-in-apps.md
+              - name: Testing
+                href: Reactive.07-testing.md
+
