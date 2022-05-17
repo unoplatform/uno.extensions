@@ -2,13 +2,13 @@
 {
 	public class HostingConstants
 	{
-		public static string AppSettingsPrefixKey = "hostConfiguration:appSettingsPrefix";
+		public static string AppConfigPrefixKey = "hostConfiguration:appConfigPrefix";
 		public static string LaunchUrlKey = "hostConfiguration:launchUrl";
 	}
 
 	public class HostConfiguration
 	{
-		public string? AppSettingsPrefix { get; set; }
+		public string? AppConfigPrefix { get; set; }
 		public string? LaunchUrl { get; set; }
 	}
 }
