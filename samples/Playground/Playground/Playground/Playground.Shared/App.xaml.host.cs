@@ -37,9 +37,9 @@ public sealed partial class App : Application
 				.UseLocalization()
 
 
-				.UseEmbeddedAppSettings<App>()
+				.UseEmbeddedAppConfiguration<App>()
 
-				.UseCustomSettings("appsettings.platform.json")
+				.UseCustomConfiguration(string.Format(AppConfiguration.FileNameTemplate,"platform"))
 
 				.UseConfiguration<Playground.Models.AppInfo>()
 
