@@ -30,7 +30,7 @@ public sealed partial class App : Application
 
 				.UseConfiguration(configure: configBuilder=>
 					configBuilder
-						.WithEmbeddedAppSettings<App>()
+						.WithEmbeddedAppConfigFile<App>()
 						.RegisterConfiguration<AppConfig>()
 				)
 
