@@ -1,6 +1,6 @@
 # How-To: Serialize and Deserialize JSON Data
 
-Accessing the serialized and deserialized representation of an object can be important for dynamic, data-rich applications. Uno.Extensions supports the [new](https://devblogs.microsoft.com/dotnet/try-the-new-system-text-json-source-generator) serialization technique powered by code generation, but you can optionally revert to the previous one which uses reflection.
+Accessing the serialized and deserialized representation of an object can be important for dynamic, data-rich applications. Uno.Extensions supports the [new serialization technique](https://devblogs.microsoft.com/dotnet/try-the-new-system-text-json-source-generator) powered by code generation, but you can optionally revert to the previous one which uses reflection.
 
 ## Step-by-steps
 
@@ -37,8 +37,8 @@ Accessing the serialized and deserialized representation of an object can be imp
             Height = height;
             Weight = weight;
         }
-        public string? Name { get; set; }
         
+        public string? Name { get; set; }
         public int Age { get; set; }
         public double  Height { get; set; }
         public double Weight { get; set; }
@@ -64,9 +64,8 @@ Accessing the serialized and deserialized representation of an object can be imp
     {
         Host = UnoHost
             .CreateDefaultBuilder()
-            .UseSerialization(services => 
-                services
-                    .AddJsonTypeInfo(PersonContext.Default.Person)
+            .UseSerialization(services => services
+                .AddJsonTypeInfo(PersonContext.Default.Person)
             )
             .Build();
         // ........ //
@@ -84,9 +83,8 @@ public App()
 {
     Host = UnoHost
         .CreateDefaultBuilder()
-        .UseSerialization(services => 
-            services
-                .AddJsonTypeInfo(PersonContext.Default.Person)
+        .UseSerialization(services => services
+            .AddJsonTypeInfo(PersonContext.Default.Person)
         )
         .ConfigureServices(services =>
         {
@@ -100,7 +98,7 @@ public App()
 
 ### 4. Serialize and deserialize JSON data
 
-* Add a constructor parameter for the `ISerializer<Person>` to a view model you registered:
+* Obtain an instance of `ISerializer<Person>` in the view-model from DI:
 
 ```cs
     public class MainViewModel
@@ -114,7 +112,7 @@ public App()
     }
 ```
 
-* To represent JSON data in both its serialized and deserialized form, you can now do the following:
+* You can now serialize a `Person` object or deserialize from json like below:
 
 ```csharp
     Person person = new Person { Name = "Lydia", Age = 24, Height = 160, Weight = 60 };
