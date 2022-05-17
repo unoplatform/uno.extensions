@@ -44,7 +44,25 @@ With data, `IFeed<T>` currently does supports 3 main metadata (named “axis”)
 	* None: Indicates that a value has been loaded, but should be consider as empty, and we should not be rendered as is in the UI. In our example, when you cannot ship to the selected country.
 	* Undefined: This represents a missing value, i.e. there is no info about the data yet. Typically this is because we are asynchronously loading it.
 
-Here is a diagram of common messages produced by a feed when asynchronously loading data:
+Here is a diagram of common messages produced by a feed when asynchronously loading and refreshing data:
 
+```
+     ┌─────────────────────┐
+     │                     │
+     │         ┌─────────┐ │
+     │      ┌─►│ None    ├─┤
+     │      │  └─────────┘ │
+     ▼      │              │
+┌─────────┐ │  ┌─────────┐ │
+│ Loading ├─┼─►│ Some    ├─┤
+└─────────┘ │  └─────────┘ │
+            │              │
+            │  ┌─────────┐ │
+            └─►│ Error   ├─┘
+               └─────────┘
+```
+[//]: # (Source: https://asciiflow.com/#/share/eJyrVspLzE1VssorzcnRUcpJrEwtUrJSqo5RqohRsrI0MdSJUaoEsozMLYGsktSKEiAnRkkBBB5N2UM5ionJgxmmgA3gUELQXKwaobLTdoFE%2FPLzUlGMwqacVJumIWvF9AdRhhFvJ4jlk5%2BYkpmXjqoH4sPg%2FFwMH1LZBWhexBl3yErINBvhL9eiovwibDGHoR5PulOqVaoFAO48kRs%3D)
 
-> Keep in mind that this is only an example of the common case, but each _axis_ is independent and can change from one state to another. There is no restriction between states.
+> [!NOTE]
+> Keep in mind that this is only an example of the common case, but each _axis_ is independent and can change from one state to another independently.
+> There is no restriction between states and you can combine states like `Loading` and `Some` in your view if you want to.
