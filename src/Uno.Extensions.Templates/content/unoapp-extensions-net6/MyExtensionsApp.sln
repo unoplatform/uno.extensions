@@ -2,7 +2,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32210.308
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "MyExtensionsApp.Shared", "MyExtensionsApp.Shared\MyExtensionsApp.Shared.shproj", "{6279C845-92F8-4333-AB99-3D213163593C}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "MyExtensionsApp.UI", "MyExtensionsApp.UI\MyExtensionsApp.UI.shproj", "{6279C845-92F8-4333-AB99-3D213163593C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.Mobile", "MyExtensionsApp.Mobile\MyExtensionsApp.Mobile.csproj", "{24D56E12-2373-4CBD-9AD4-5C931D15FB0D}"
 EndProject
@@ -16,21 +16,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.Skia.Wpf.Ho
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.Windows", "MyExtensionsApp.Windows\MyExtensionsApp.Windows.csproj", "{1AA13270-F438-4864-9435-54FD806E10EA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.Core", "MyExtensionsApp.Core\MyExtensionsApp.Core.csproj", "{BACDD33A-304C-46C4-9B00-AC166978D7E0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp", "MyExtensionsApp\MyExtensionsApp.csproj", "{BACDD33A-304C-46C4-9B00-AC166978D7E0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.Tests", "MyExtensionsApp.Tests\MyExtensionsApp.Tests.csproj", "{EB3EB846-D5CB-4140-834F-1CC40A0FD6D0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.UITests", "MyExtensionsApp.UITests\MyExtensionsApp.UITests.csproj", "{7229D034-7DBE-4FD7-B0E4-38D617571F93}"
 EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		MyExtensionsApp.Shared\MyExtensionsApp.Shared.projitems*{1aa13270-f438-4864-9435-54fd806e10ea}*SharedItemsImports = 5
-		MyExtensionsApp.Shared\MyExtensionsApp.Shared.projitems*{24d56e12-2373-4cbd-9ad4-5c931d15fb0d}*SharedItemsImports = 5
-		MyExtensionsApp.Shared\MyExtensionsApp.Shared.projitems*{40ea03f7-8a22-4143-b251-79bac3eb13d2}*SharedItemsImports = 5
-		MyExtensionsApp.Shared\MyExtensionsApp.Shared.projitems*{6279c845-92f8-4333-ab99-3d213163593c}*SharedItemsImports = 13
-		MyExtensionsApp.Shared\MyExtensionsApp.Shared.projitems*{6c744695-da38-44d9-b487-fe5804c5508d}*SharedItemsImports = 5
-		MyExtensionsApp.Shared\MyExtensionsApp.Shared.projitems*{a5b8155a-118f-4794-b551-c6f3cf7e5411}*SharedItemsImports = 5
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|ARM = Debug|ARM
@@ -332,5 +324,13 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C7433AE2-B1A0-4C1A-887E-5CAA7AAF67A6}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		MyExtensionsApp.UI\MyExtensionsApp.UI.projitems*{1aa13270-f438-4864-9435-54fd806e10ea}*SharedItemsImports = 5
+		MyExtensionsApp.UI\MyExtensionsApp.UI.projitems*{24d56e12-2373-4cbd-9ad4-5c931d15fb0d}*SharedItemsImports = 5
+		MyExtensionsApp.UI\MyExtensionsApp.UI.projitems*{40ea03f7-8a22-4143-b251-79bac3eb13d2}*SharedItemsImports = 5
+		MyExtensionsApp.UI\MyExtensionsApp.UI.projitems*{6279c845-92f8-4333-ab99-3d213163593c}*SharedItemsImports = 13
+		MyExtensionsApp.UI\MyExtensionsApp.UI.projitems*{6c744695-da38-44d9-b487-fe5804c5508d}*SharedItemsImports = 5
+		MyExtensionsApp.UI\MyExtensionsApp.UI.projitems*{a5b8155a-118f-4794-b551-c6f3cf7e5411}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

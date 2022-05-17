@@ -1,6 +1,7 @@
 //-:cnd:noEmit
 
 using Microsoft.Extensions.Options;
+using MyExtensionsApp.Configuration;
 
 namespace MyExtensionsApp.ViewModels;
 
@@ -10,7 +11,7 @@ public class MainViewModel
 
 	public MainViewModel(
 		INavigator navigator,
-		IOptions<AppInfo> appInfo)
+		IOptions<AppConfig> appInfo)
 	{ 
 	
 		_navigator = navigator;

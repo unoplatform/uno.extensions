@@ -1,0 +1,8 @@
+﻿{
+  "AppInfo": {
+    "Title": "MyExtensionsApp"
+  },
+  "LocalizationSettings": {
+    "Cultures": [ "en", "es", "fr" ]
+  }
+}

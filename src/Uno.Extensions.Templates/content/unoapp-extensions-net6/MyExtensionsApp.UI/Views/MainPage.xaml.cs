@@ -2,9 +2,10 @@
 
 namespace MyExtensionsApp.Views;
 
-public sealed partial class MainPage : Page, IInjectable<INavigator>
+public sealed partial class MainPage : Page
 {
-	public MainViewModel ViewModel { get; private set; }
+	public MainViewModel? ViewModel { get; private set; }
+
 	public MainPage()
 	{
 		this.InitializeComponent();
@@ -15,13 +16,6 @@ public sealed partial class MainPage : Page, IInjectable<INavigator>
 
 	public void GoToSecondPageClick(object sender, RoutedEventArgs arg)
 	{
-		_navigator.NavigateViewAsync<SecondPage>(this);
+		_ = this.Navigator()?.NavigateViewAsync<SecondPage>(this);
 	}
-
-	public void Inject(INavigator navigator)
-	{
-		_navigator = navigator;
-	}
-
-	private INavigator _navigator;
 }

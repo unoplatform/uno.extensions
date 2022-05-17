@@ -82,7 +82,7 @@
     <PackageReference Include="Uno.Extensions.Reactive.WinUI" Version="255.255.255.255" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MyExtensionsApp.Core\MyExtensionsApp.Core.csproj" />
+    <ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />
   </ItemGroup>
-  <Import Project="..\MyExtensionsApp.Shared\MyExtensionsApp.Shared.projitems" Label="Shared" Condition="Exists('..\MyExtensionsApp.Shared\MyExtensionsApp.Shared.projitems')" />
+  <Import Project="..\MyExtensionsApp.UI\MyExtensionsApp.UI.projitems" Label="Shared" Condition="Exists('..\MyExtensionsApp.UI\MyExtensionsApp.UI.projitems')" />
 </Project>
