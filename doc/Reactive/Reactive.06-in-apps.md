@@ -25,7 +25,7 @@ public IFeed<Product[]> Products = Feed.Async(_productService.GetProducts);
 ```
 
 Then in your page, you can add a `FeedView`:
-```xaml
+```xml
 <Page 
 	x:Class="MyProject.MyPage"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -54,6 +54,6 @@ public async ValueTask Share()
 
 This will be exposed into an `ICommand` that can be data-bound to the `Command` property of a `Button`
 
-```xaml
+```xml
 <Button Command="{Binding Share}" Content="Share" />
 ```
