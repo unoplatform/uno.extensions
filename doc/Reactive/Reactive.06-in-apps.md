@@ -7,7 +7,7 @@ Your view models only have to request in their constructors the user _ inputs_ t
 * An `IInput<T>` to get _data_ from the view (e.g. for 2-way bindings);
 * An `ICommandBuilder` for the "trigger" inputs.
 
-In order to easily interact with the binding engine in a performant way, a `BindableXXX` class is automatically generated. It is this class that will hold the state and which **has to been set as `DataContext` of your page**.
+In order to easily interact with the binding engine in a performant way, a `BindableXXX` class is automatically generated. It is this class that will hold the state and which **has to be set as `DataContext` of your page**.
 
 > [!NOTE]
 > The bindable counterpart of a class will be created when the class name ends with "ViewModel".
@@ -15,7 +15,7 @@ In order to easily interact with the binding engine in a performant way, a `Bind
 
 > [!NOTE]
 > For easier View Model creation, public properties will also be accessible on the `BindableXXX` class. 
-> You can also access to the view model itself through the `Model` property.
+> You can also access the view model itself through the `Model` property.
 
 ## Display some data in the UI (VM to View)
 
@@ -40,7 +40,7 @@ Then in your page, you can add a `FeedView`:
 ```
 
 ## Commands
-The generated bindable counterpart of a class will automaticlaly re-expose public methods that has 0 or 1 parameter and an optional `CancellationToken` as `ICommand`.
+The generated bindable counterpart of a class will automatically re-expose public methods that have 0 or 1 parameter and an optional `CancellationToken` as `ICommand`.
 The parameter will be fulfilled using the `CommandParameter` property.
 
 For instance, in your ViewModel:

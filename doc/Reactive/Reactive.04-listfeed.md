@@ -7,7 +7,7 @@ A _list feed_ goes in `None` if the list does not have any elements.
 ## Sources: How to create a feed
 To create an `IListFeed<T>`, on the state `ListFeed` class, the same `Async`, `AsyncEnumerable` and `Create` methods found on `Feed` can be used.
 
-There are also 2 helpers that allows you do convert from/to a _feed_ to/from a _list feed_.
+There are also 2 helpers that allow you to convert from/to a _feed_ to/from a _list feed_.
 
 ### AsListFeed
 This allows the creation of a _list feed_ from a _feed of list_.

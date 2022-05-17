@@ -1,8 +1,8 @@
 # Test feed
 
-In order to test your reactive application, you should install the `Uno.Extensions.Reactive.Testing` package in you test project.
+In order to test your reactive application, you should install the `Uno.Extensions.Reactive.Testing` package in your test project.
 
-Make your test class inherit from `FeedTests`, then in your tests methods you can use the `.Record()` extensions method on the test you want to test.
+Make your test class inherit from `FeedTests`, then in your tests methods, you can use the `.Record()` extensions method on the test you want to test.
 It will subscribe to your feed and persist all received messages. Then you can assert the expected messages using the fluent assertions:
 
 ```csharp

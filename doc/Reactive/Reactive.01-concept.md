@@ -29,19 +29,19 @@ public async IAsyncEnumerable<decimal> GetShippingCost([EnumerationCancellation]
 }
 ```
 
-But in both cases, if there is any exception the stream will be broken. This means that for instance in example above, if it is not possible to compute the shipping cost for a given country for any reason (network issue, invalid country, …) the stream of data will be terminated, and selecting another country won’t have any effect.
+But in both cases, if there is any exception the stream will be broken. This means that for instance in the example above if it is not possible to compute the shipping cost for a given country for any reason (network issue, invalid country, …) the stream of data will be terminated, and selecting another country won’t have any effect.
 
-Also, when a dependency is being updated and we may need to do some asynchronously work, like update a projection. In our example, we asynchronously get the updated shipping cost when country is changed. From a UI perspective, it would be great to have a visual indication that the shipping cost is being re-computed for the newly chosen country.
+Also, when a dependency is being updated and we may need to do some asynchronous work, like update a projection. In our example, we asynchronously get the updated shipping cost when the country is changed. From a UI perspective, it would be great to have a visual indication that the shipping cost is being re-computed for the newly chosen country.
 
 Neither `IObservable<T>` nor `IAsyncEnumerable<T>` have such metadata mechanism for produced values, that is the purpose of `IFeed<T>`.
 
 With data, `IFeed<T>` currently does supports 3 main metadata (named “axis”):
-* Error: If there is any exception linked to the current data
-* Progress: We indicates that the current data is transient or final.
+* Error: If there is any exceptions linked to the current data
+* Progress: We indicate that the current data is transient or final.
 * Data: This represents the _data_ itself, but also adds an information about it. 
-	It wraps the value into an `Option<T>` that adds the ability to make distinction between the different state of the value:
+	It wraps the value into an `Option<T>` that adds the ability to make a distinction between the different states of the value:
 	* Some: Represents a valid data.
-	* None: Indicates that a value has been loaded, but should be consider as empty, and we should not be rendered as is in the UI. In our example, when you cannot ship to the selected country.
+	* None: Indicates that a value has been loaded but should be considered empty, and we should not be rendered as-is in the UI. In our example, when you cannot ship to the selected country.
 	* Undefined: This represents a missing value, i.e. there is no info about the data yet. Typically this is because we are asynchronously loading it.
 
 Here is a diagram of common messages produced by a feed when asynchronously loading and refreshing data:

@@ -1,12 +1,12 @@
 # State
 
-Unlike a _feed_ a `IState<T>`, as its name suggest, is state full. 
-While a _feed_ is just a query of a stream of _data_, a _state_ also implies a current value (a.k.a. the state of the application) which can be accessed and updated.
+Unlike a _feed_ an `IState<T>`, as its name suggests, is state-full. 
+While a _feed_ is just a query of a stream of _data_, a _state_ also implies a current value (a.k.a. the state of the application) that can be accessed and updated.
 
 There are some noticeable differences with a _feed_:
 * When subscribing to a state, the currently loaded value is going to be replayed.
-* There is a [`Update`](#update) method which allows you to change the current value.
-* _States_ are attached to a owner and share the same lifetime of that owner.
+* There is a [`Update`](#update) method that allows you to change the current value.
+* _States_ are attached to an owner and share the same lifetime as that owner.
 * The main usage of _state_ is for two-way bindings.
 
 ## Sources: How to maintain a data
@@ -83,11 +83,11 @@ public async IAsyncEnumerable<Message<string>> GetCurrentCity([EnumeratorCancell
 
 ## Update: How to update a state
 The _state_ is designed to allow to respect the [ACID properties](https://en.wikipedia.org/wiki/ACID).
-This means that all update methods are requesting a delegate which accepts the current value to update.
+This means that all update methods are requesting a delegate that accepts the current value to update.
 This makes sure that you are working with the latest version of the data.
 
 > [!IMPORTANT]
-> The provided delegate might be invoke more than once in case of concurrent updates.
+> The provided delegate might be invoked more than once in case of concurrent updates.
 > It must be a [pure function](https://en.wikipedia.org/wiki/Pure_function) (i.e. it must not alter anything else than the provided data).
 
 ### UpdateValue
@@ -104,7 +104,7 @@ public async ValueTask SetCurrent(CancellationToken ct)
 ```
 
 ### Set
-For value types and string, you also have an `Set` **which does not ensure the respect of the ACID properties**.
+For value types and strings, you also have a `Set` **which does not ensure the respect of the ACID properties**.
 
 ```csharp
 public IState<string> Error => State<string>.Empty(this);

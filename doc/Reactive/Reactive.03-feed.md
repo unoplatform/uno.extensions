@@ -136,7 +136,7 @@ You can apply some operators directly on any _feed_.
 ### Where
 Applies a predicate on the _data_.
 
-Be aware that unlike `IEnumerable`, `IObservable` and `IAsyncEnumerable`, if the predicate returns false, a message with a `None` _data_ will be published.
+Be aware that unlike `IEnumerable`, `IObservable`, and `IAsyncEnumerable`, if the predicate returns false, a message with a `None` _data_ will be published.
 
 ```csharp
 public IFeed<WeatherAlert> Alert => Weather
