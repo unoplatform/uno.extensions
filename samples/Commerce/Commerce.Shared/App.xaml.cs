@@ -70,14 +70,12 @@ namespace Commerce
 								.AddFilter("Uno.Extensions.Navigation", LogLevel.Trace);
 					})
 
-					// Load configuration information from appsettings.json
-					.UseAppSettings()
-
-					// Load AppInfo section
-					.UseConfiguration<AppInfo>()
-
-					// Register entities for saving settings
-					.UseSettings<Credentials>()
+					.UseConfiguration(configure: configBuilder=>
+						configBuilder
+							.WithAppConfigFile()
+							.RegisterConfiguration<AppInfo>()
+							.RegisterConfiguration<Credentials>()
+					)
 
 
 					// Register Json serializers (ISerializer and ISerializer)

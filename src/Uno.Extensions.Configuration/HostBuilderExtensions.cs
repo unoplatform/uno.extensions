@@ -84,15 +84,15 @@ public static class HostBuilderExtensions
 				}).AsConfigBuilder();
 	}
 
-	public static IConfigBuilder RegisterSettings<TSettingsOptions>(
+	public static IConfigBuilder RegisterConfiguration<TSettingsOptions>(
 		this IConfigBuilder hostBuilder,
 		string configurationSection)
 			where TSettingsOptions : class, new()
 	{
-		return hostBuilder.RegisterSettings<TSettingsOptions>(ctx => ctx.Configuration.GetSection(configurationSection));
+		return hostBuilder.RegisterConfiguration<TSettingsOptions>(ctx => ctx.Configuration.GetSection(configurationSection));
 	}
 
-	public static IConfigBuilder RegisterSettings<TSettingsOptions>(
+	public static IConfigBuilder RegisterConfiguration<TSettingsOptions>(
 		this IConfigBuilder hostBuilder,
 		Func<HostBuilderContext, IConfigurationSection>? configSection = null)
 			where TSettingsOptions : class, new()

@@ -40,7 +40,7 @@ public sealed partial class App : Application
 					configBuilder
 						.WithEmbeddedAppConfigFile<App>()			// appconfig.json + appconfig.development.json
 						.WithEmbeddedAppConfigFile<App>("platform")	// appconfig.platform.json
-						.RegisterSettings<Playground.Models.AppInfo>()
+						.RegisterConfiguration<Playground.Models.AppInfo>()
 				)
 
 
