@@ -12,7 +12,7 @@ public static class HostBuilderExtensions
 		this IHostBuilder hostBuilder,
 		Action<IServiceCollection> configure)
 	{
-		return hostBuilder.UseConfiguration((context, builder) => configure.Invoke(builder));
+		return hostBuilder.UseLocalization((context, builder) => configure.Invoke(builder));
 	}
 
 	public static IHostBuilder UseLocalization(
