@@ -30,7 +30,10 @@ public class HomeViewModel
 
 	public CultureInfo SelectedCulture {
 		get => SupportedCultures.FirstOrDefault(x=>x.Name == _localization.Value?.CurrentCulture)?? SupportedCultures.First();
-		set => _localization.Update(settings => settings.CurrentCulture = value.Name);
+		set
+		{
+			_ = _localization.UpdateAsync(settings => settings.CurrentCulture = value.Name);
+		}
 	}
 
 }
