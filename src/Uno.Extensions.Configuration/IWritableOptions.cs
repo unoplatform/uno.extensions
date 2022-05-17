@@ -7,8 +7,8 @@ namespace Uno.Extensions.Configuration
     public interface IWritableOptions<T> : IOptionsSnapshot<T>
         where T : class, new()
     {
-        Task Update(Func<T, T> applyChanges);
+        Task UpdateAsync(Func<T, T> applyChanges);
 
-        Task Update(Action<T> applyChanges);
+        Task UpdateAsync(Action<T> applyChanges);
     }
 }

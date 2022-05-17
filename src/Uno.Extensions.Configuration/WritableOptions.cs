@@ -51,16 +51,16 @@ namespace Uno.Extensions.Configuration
 			return _options.Get(name);
 		}
 
-		public Task Update(Action<T> applyChanges)
+		public Task UpdateAsync(Action<T> applyChanges)
 		{
-			return Update(options =>
+			return UpdateAsync(options =>
 			{
 				applyChanges(options);
 				return options;
 			});
 		}
 
-		public async Task Update(Func<T, T> applyChanges)
+		public async Task UpdateAsync(Func<T, T> applyChanges)
 		{
 			if (_logger.IsEnabled(LogLevel.Debug)) _logger.LogDebugMessage($@"Updating options, saving to file '{_file}'");
 
