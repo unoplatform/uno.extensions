@@ -7,7 +7,7 @@
   IgnorableNamespaces="uap rescap">
 
   <Identity
-    Name="E2E25D90-F549-4FE0-80E4-4BC06AA5380D"
+    Name="E2821155-50B7-468D-A15B-E0EAF55DAC2B"
     Publisher="O=MyExtensionsApp"
     Version="1.0.0.0" />
 
@@ -18,8 +18,8 @@
   </Properties>
 
   <Dependencies>
-    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.18362.0" MaxVersionTested="10.0.19041.0" />
-    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.18362.0" MaxVersionTested="10.0.19041.0" />
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0" />
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0" />
   </Dependencies>
 
   <Resources>
@@ -33,11 +33,11 @@
       <uap:VisualElements
         DisplayName="MyExtensionsApp"
         Description="MyExtensionsApp"
-        BackgroundColor="transparent"
+        BackgroundColor="#086AD1"
         Square150x150Logo="Images\Square150x150Logo.png"
         Square44x44Logo="Images\Square44x44Logo.png">
         <uap:DefaultTile Wide310x150Logo="Images\Wide310x150Logo.png" />
-        <uap:SplashScreen Image="Images\SplashScreen.png" />
+        <uap:SplashScreen Image="Images\SplashScreen.png"  BackgroundColor="#086AD1"/>
       </uap:VisualElements>
     </Application>
   </Applications>
