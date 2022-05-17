@@ -22,6 +22,7 @@ copy .\src\Uno.Extensions.Serialization.Refit\bin\Uno.Extensions.Serialization.R
 copy .\src\Uno.Extensions.Reactive\bin\Uno.Extensions.Reactive\Release\Uno.Extensions.Reactive.255.255.255.255.nupkg .\unofeed\
 copy .\src\Uno.Extensions.Reactive.UI\bin\Uno.Extensions.Reactive.UI\Release\Uno.Extensions.Reactive.UI.255.255.255.255.nupkg .\unofeed\
 copy .\src\Uno.Extensions.Reactive.UI\bin\Uno.Extensions.Reactive.UI.WinUI\Release\Uno.Extensions.Reactive.WinUI.255.255.255.255.nupkg .\unofeed\
+copy .\src\Uno.Extensions.Templates\bin\Uno.Extensions.Templates\Release\Uno.Extensions.Templates.255.255.255.255.nupkg .\unofeed\
 
 
 
