@@ -40,9 +40,9 @@ With data, `IFeed<T>` currently does supports 3 main metadata (named “axis”)
 * Progress: We indicates that the current data is transient or final.
 * Data: This represents the _data_ itself, but also adds an information about it. 
 	It wraps the value into an `Option<T>` that adds the ability to make distinction between the different state of the value:
-		- Some: Represents a valid data.
-		- None: Indicates that a value has been loaded, but should be consider as empty, and we should not be rendered as is in the UI. In our example, when you cannot ship to the selected country.
-		- Undefined: This represents a missing value, i.e. there is no info about the data yet. Typically this is because we are asynchronously loading it.
+	* Some: Represents a valid data.
+	* None: Indicates that a value has been loaded, but should be consider as empty, and we should not be rendered as is in the UI. In our example, when you cannot ship to the selected country.
+	* Undefined: This represents a missing value, i.e. there is no info about the data yet. Typically this is because we are asynchronously loading it.
 
 Here is a diagram of common messages produced by a feed when asynchronously loading data:
 

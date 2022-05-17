@@ -9,11 +9,13 @@ Your view models only have to request in their constructors the user _ inputs_ t
 
 In order to easily interact with the binding engine in a performant way, a `BindableXXX` class is automatically generated. It is this class that will hold the state and which **has to been set as `DataContext` of your page**.
 
-> Note: The bindable counterpart of a class will be created when the class name ends with "ViewModel".
+> [!NOTE]
+> The bindable counterpart of a class will be created when the class name ends with "ViewModel".
 > You can customize that behavior using the `[ReactiveBindable]` attribute.
 
 > [!NOTE]
-> For easier View Model creation, public properties will also be accessible on the `BindableXXX` class as long as there is no name conflict between these properties and any constructor's _input_. You can also access to the view model itself through the `Model` property.
+> For easier View Model creation, public properties will also be accessible on the `BindableXXX` class. 
+> You can also access to the view model itself through the `Model` property.
 
 ## Display some data in the UI (VM to View)
 
@@ -30,11 +32,11 @@ Then in your page, you can add a `FeedView`:
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:uer="using:Uno.Extensions.Reactive.UI">
 
-<reactive:FeedView Source="{Binding Products}">
+<uer:FeedView Source="{Binding Products}">
 	<DataTemplate>
 		<ListView ItemsSource="{Binding Data}" />
 	</DataTemplate>
-</reactive:FeedView>
+</uer:FeedView>
 ```
 
 ## Commands
