@@ -30,7 +30,7 @@ public class ProfileViewModel
 
 	public async void Logout()
 	{
-		await _credentials.Update(c => new Credentials());
+		await _credentials.UpdateAsync(c => new Credentials());
 		await _navigator.NavigateRouteAsync(this, "/");
 	}
 }
