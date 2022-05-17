@@ -36,24 +36,21 @@
 	</ItemGroup>
 	
 	<Target Name="ReplaceTemplateCode" BeforeTargets="BeforeBuild">
-		<!-- 
-		Copying is disabled until the net6 template is completed
 		<ItemGroup>
 			<MyTemplateSourceFiles Include="content\unoapp-extensions-net6\MyExtensionsApp.Shared\**\*" />
 		</ItemGroup>
 
-		<Copy SourceFiles="@(MyTemplateSourceFiles)" DestinationFiles="@(MyTemplateSourceFiles->'content\unoapp-extensions\MyExtensionsApp.Shared\%(RecursiveDir)%(Filename)%(Extension)')" /> -->
+		<Copy SourceFiles="@(MyTemplateSourceFiles)" DestinationFiles="@(MyTemplateSourceFiles->'content\unoapp-extensions\MyExtensionsApp.Shared\%(RecursiveDir)%(Filename)%(Extension)')" /> 
 	
 		<ItemGroup>
 			<Content Include="content\unoapp-extensions\**" KeepDuplicates="False">
 				<PackagePath>content\unoapp-extensions</PackagePath>
 				<Pack>true</Pack>
 			</Content>
-			<!-- Exclude net6 template for the moment until all the dependencies stabalise -->
-			<!-- <Content Include="content\unoapp-extensions-net6\**" KeepDuplicates="False">
+			<Content Include="content\unoapp-extensions-net6\**" KeepDuplicates="False">
 				<PackagePath>content\unoapp-extensions-net6</PackagePath>
 				<Pack>true</Pack>
-			</Content> -->
+			</Content>
 		</ItemGroup>
 	</Target>
 
