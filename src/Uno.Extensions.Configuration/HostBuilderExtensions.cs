@@ -12,13 +12,16 @@ namespace Uno.Extensions.Configuration
     {
         public const string ConfigurationFolderName = "config";
 
-        /// <summary>
-        /// Makes the entire Configuration available to the app (required
-        /// for use with IWritableOptions)
-        /// </summary>
-        /// <param name="hostBuilder"></param>
-        /// <returns></returns>
-        public static IHostBuilder UseConfiguration(this IHostBuilder hostBuilder)
+		public static IHostBuilder UseConfiguration(
+			this IHostBuilder hostBuilder,
+			Action<IServiceCollection> configure)
+		{
+			return hostBuilder.UseConfiguration((context, builder) => configure.Invoke(builder));
+		}
+
+		public static IHostBuilder UseConfiguration(
+			this IHostBuilder hostBuilder,
+			Action<HostBuilderContext, IServiceCollection>? configure = default)
         {
             return hostBuilder
                     .ConfigureServices((ctx, s) =>
@@ -29,6 +32,7 @@ namespace Uno.Extensions.Configuration
 						s.TryAddSingleton<ReloadService>();
                         _ = s.AddHostedService<ReloadService>(sp => sp.GetRequiredService<ReloadService>());
 						s.TryAddSingleton<IStartupService>(sp => sp.GetRequiredService<ReloadService>());
+						configure?.Invoke(ctx, s);
                     });
         }
 

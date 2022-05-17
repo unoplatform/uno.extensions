@@ -3,16 +3,34 @@
 public static class HostBuilderExtensions
 {
 	public static IHostBuilder UseNavigation(
-			this IHostBuilder builder,
-			Action<IViewRegistry, IRouteRegistry>? viewRouteBuilder = null,
-			Func<IServiceCollection, IViewRegistry>? createViewRegistry = null,
-			Func<IServiceCollection, IRouteRegistry>? createRouteRegistry = null,
-			Func<NavigationConfig, NavigationConfig>? configure = null)
+		this IHostBuilder hostBuilder,
+		Action<IViewRegistry, IRouteRegistry>? viewRouteBuilder,
+		Func<IServiceCollection, IViewRegistry>? createViewRegistry,
+		Func<IServiceCollection, IRouteRegistry>? createRouteRegistry,
+		Func<NavigationConfig, NavigationConfig>? configure,
+		Action<IServiceCollection> configureServices)
 	{
-		return builder
-			.ConfigureServices(sp =>
+		return hostBuilder.UseNavigation(
+			viewRouteBuilder,
+			createViewRegistry,
+			createRouteRegistry,
+			configure,
+			(context, builder) => configureServices.Invoke(builder));
+	}
+
+	public static IHostBuilder UseNavigation(
+		this IHostBuilder hostBuilder,
+		Action<IViewRegistry, IRouteRegistry>? viewRouteBuilder = null,
+		Func<IServiceCollection, IViewRegistry>? createViewRegistry = null,
+		Func<IServiceCollection, IRouteRegistry>? createRouteRegistry = null,
+		Func<NavigationConfig, NavigationConfig>? configure = null,
+		Action<HostBuilderContext, IServiceCollection>? configureServices = default)
+	{
+		return hostBuilder
+			.ConfigureServices((ctx,services) =>
 			{
-				_ = sp.AddNavigation(configure, viewRouteBuilder, createViewRegistry, createRouteRegistry);
+				_ = services.AddNavigation(configure, viewRouteBuilder, createViewRegistry, createRouteRegistry);
+				configureServices?.Invoke(ctx, services);
 			});
 	}
 }

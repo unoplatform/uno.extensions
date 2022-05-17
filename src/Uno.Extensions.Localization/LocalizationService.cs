@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Uno.Extensions;
-using Uno.Extensions.Localization;
 using Windows.Globalization;
 
 namespace Uno.Extensions.Localization;
@@ -32,11 +30,12 @@ public class LocalizationService : IHostedService
 
 	public LocalizationService(
 		ILogger<LocalizationService> logger,
+		IOptions<LocalizationConfiguration> configuration,
 		IOptionsMonitor<LocalizationSettings> settings)
 	{
 		_logger = logger;
 		_settings = settings;
-		SupportedCultures = settings.CurrentValue?.Cultures?.AsCultures() ?? new[] { DefaultCulture.AsCulture()! };
+		SupportedCultures = configuration.Value?.Cultures?.AsCultures() ?? new[] { DefaultCulture.AsCulture()! };
 	}
 
 	public Task StartAsync(CancellationToken cancellationToken)
