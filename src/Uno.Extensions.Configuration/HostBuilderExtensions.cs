@@ -6,17 +6,21 @@ public static class HostBuilderExtensions
 
 	public static IHostBuilder UseConfiguration(
 		this IHostBuilder hostBuilder,
-		Action<IServiceCollection> configure)
+		Action<IConfigurationBuilder>? configureHostConfiguration = default,
+		Action<HostBuilderContext, IConfigurationBuilder>? configureAppConfiguration = default,
+		Func<IConfigBuilder, IHostBuilder>? configure = default)
 	{
-		return hostBuilder.UseConfiguration((context, builder) => configure.Invoke(builder));
-	}
+		if (configureHostConfiguration is not null)
+		{
+			hostBuilder = hostBuilder.ConfigureHostConfiguration(configureHostConfiguration);
+		}
 
-	public static IHostBuilder UseConfiguration(
-		this IHostBuilder hostBuilder,
-		Action<HostBuilderContext, IServiceCollection>? configure = default)
-	{
-		return hostBuilder
-				.ConfigureServices((ctx, s) =>
+		if (configureAppConfiguration is not null)
+		{
+			hostBuilder = hostBuilder.ConfigureAppConfiguration(configureAppConfiguration);
+		}
+
+		hostBuilder = hostBuilder.ConfigureServices((ctx, s) =>
 				{
 					s.TryAddSingleton(a => ctx.Configuration);
 					s.TryAddSingleton(a => (IConfigurationRoot)ctx.Configuration);
@@ -24,64 +28,74 @@ public static class HostBuilderExtensions
 					s.TryAddSingleton<ReloadService>();
 					_ = s.AddHostedService(sp => sp.GetRequiredService<ReloadService>());
 					s.TryAddSingleton<IStartupService>(sp => sp.GetRequiredService<ReloadService>());
-					configure?.Invoke(ctx, s);
 				});
+		hostBuilder = configure?.Invoke(hostBuilder.AsConfigBuilder()) ?? hostBuilder;
+		return hostBuilder;
 	}
 
-	public static IHostBuilder UseAppConfiguration(this IHostBuilder hostBuilder, bool includeEnvironmentSettings = true)
+	public static IConfigBuilder WithAppConfigFile(this IConfigBuilder hostBuilder, string? config = null, bool includeEnvironmentSettings = true)
 	{
 		return hostBuilder
 				.UseConfiguration()
 				.ConfigureAppConfiguration((ctx, b) =>
 				{
-					b.AddAppConfiguration(ctx);
-					if (includeEnvironmentSettings)
+					if (config is { Length: > 0 })
 					{
-						b.AddEnvironmentAppConfiguration(ctx);
+						b.AddConfiguration(ctx, config);
+						if (includeEnvironmentSettings)
+						{
+							b.AddEnvironmentConfiguration(ctx, config);
+						}
 					}
-				});
+					else
+					{
+						b.AddAppConfiguration(ctx);
+						if (includeEnvironmentSettings)
+						{
+							b.AddEnvironmentAppConfiguration(ctx);
+						}
+					}
+				}).AsConfigBuilder();
 	}
 
-	public static IHostBuilder UseCustomConfiguration(this IHostBuilder hostBuilder, string customSettingsFileName)
-	{
-		return hostBuilder
-				.UseConfiguration()
-				.ConfigureAppConfiguration((ctx, b) =>
-				{
-					b.AddConfiguration(ctx, customSettingsFileName);
-				});
-	}
-
-	public static IHostBuilder UseEmbeddedAppConfiguration<TApplicationRoot>(this IHostBuilder hostBuilder, bool includeEnvironmentSettings = true)
+	public static IConfigBuilder WithEmbeddedAppConfigFile<TApplicationRoot>(this IConfigBuilder hostBuilder, string? config = null, bool includeEnvironmentSettings = true)
 		where TApplicationRoot : class
 	{
 		return hostBuilder
 				.UseConfiguration()
 				.ConfigureAppConfiguration((ctx, b) =>
 				{
-					b.AddEmbeddedAppConfiguration<TApplicationRoot>();
-					if (includeEnvironmentSettings)
+					if (config is { Length: > 0 })
 					{
-						b.AddEmbeddedEnvironmentAppConfiguration<TApplicationRoot>(ctx);
+						b.AddEmbeddedConfiguration<TApplicationRoot>(config);
+						if (includeEnvironmentSettings)
+						{
+							b.AddEnvironmentConfiguration(ctx, config);
+						}
 					}
-				});
+					else
+					{
+						b.AddEmbeddedAppConfiguration<TApplicationRoot>();
+						if (includeEnvironmentSettings)
+						{
+							b.AddEnvironmentEmbeddedAppConfiguration<TApplicationRoot>(ctx);
+						}
+					}
+				}).AsConfigBuilder();
 	}
 
-	public static IHostBuilder UseCustomEmbeddedConfiguration<TApplicationRoot>(this IHostBuilder hostBuilder, string customSettingsFileName)
-		where TApplicationRoot : class
+	public static IConfigBuilder RegisterSettings<TSettingsOptions>(
+		this IConfigBuilder hostBuilder,
+		string configurationSection)
+			where TSettingsOptions : class, new()
 	{
-		return hostBuilder
-				.UseConfiguration()
-				.ConfigureAppConfiguration((ctx, b) =>
-				{
-					b.AddEmbeddedConfiguration<TApplicationRoot>(customSettingsFileName);
-				});
+		return hostBuilder.RegisterSettings<TSettingsOptions>(ctx => ctx.Configuration.GetSection(configurationSection));
 	}
 
-	public static IHostBuilder UseSettings<TSettingsOptions>(
-			this IHostBuilder hostBuilder,
-			Func<HostBuilderContext, IConfigurationSection>? configSection = null)
-				where TSettingsOptions : class, new()
+	public static IConfigBuilder RegisterSettings<TSettingsOptions>(
+		this IConfigBuilder hostBuilder,
+		Func<HostBuilderContext, IConfigurationSection>? configSection = null)
+			where TSettingsOptions : class, new()
 	{
 		if (configSection is null)
 		{
@@ -90,7 +104,7 @@ public static class HostBuilderExtensions
 
 		static string FilePath(HostBuilderContext hctx)
 		{
-			var file = $"{ConfigurationFolderName}/{string.Format(AppConfiguration.FileNameTemplate,typeof(TSettingsOptions).Name)}";
+			var file = $"{ConfigurationFolderName}/{string.Format(AppConfiguration.FileNameTemplate, typeof(TSettingsOptions).Name)}";
 			var appData = (hctx.HostingEnvironment as IAppHostEnvironment)?.AppDataPath ?? string.Empty;
 			var path = Path.Combine(appData, file);
 			return path;
@@ -109,30 +123,41 @@ public static class HostBuilderExtensions
 					services.ConfigureAsWritable<TSettingsOptions>(section, FilePath(ctx));
 				}
 
-			);
+			).AsConfigBuilder();
 	}
 
-
-	public static IHostBuilder UseConfiguration<TOptions>(this IHostBuilder hostBuilder, string? configurationSection = null)
-		where TOptions : class
-	{
-		if (configurationSection is null)
-		{
-			configurationSection = typeof(TOptions).Name;
-		}
-
-		return hostBuilder
-			.UseConfiguration()
-			.ConfigureServices((ctx, services) => services.Configure<TOptions>(ctx.Configuration.GetSection(configurationSection)));
-	}
-
-	public static IHostBuilder AddConfigurationSectionFromEntity<TEntity>(
-		this IHostBuilder hostBuilder,
+	public static IConfigBuilder WithConfigurationSectionFromEntity<TEntity>(
+		this IConfigBuilder hostBuilder,
 		TEntity entity,
 		string? sectionName = default)
 	{
 		return hostBuilder
 				.ConfigureHostConfiguration(
-					configurationBuilder => configurationBuilder.AddSectionFromEntity(entity, sectionName));
+					configurationBuilder => configurationBuilder.AddSectionFromEntity(entity, sectionName)).AsConfigBuilder();
+	}
+}
+
+public interface IConfigBuilder : IHostBuilder
+{
+}
+
+public record ConfigBuilder(IHostBuilder HostBuilder) : IConfigBuilder
+{
+	public IDictionary<object, object> Properties => HostBuilder.Properties;
+
+	public IHost Build() => HostBuilder.Build();
+	public IHostBuilder ConfigureAppConfiguration(Action<HostBuilderContext, IConfigurationBuilder> configureDelegate) => HostBuilder.ConfigureAppConfiguration(configureDelegate);
+	public IHostBuilder ConfigureContainer<TContainerBuilder>(Action<HostBuilderContext, TContainerBuilder> configureDelegate) => HostBuilder.ConfigureContainer(configureDelegate);
+	public IHostBuilder ConfigureHostConfiguration(Action<IConfigurationBuilder> configureDelegate) => HostBuilder.ConfigureHostConfiguration(configureDelegate);
+	public IHostBuilder ConfigureServices(Action<HostBuilderContext, IServiceCollection> configureDelegate) => HostBuilder.ConfigureServices(configureDelegate);
+	public IHostBuilder UseServiceProviderFactory<TContainerBuilder>(IServiceProviderFactory<TContainerBuilder> factory) where TContainerBuilder : notnull => HostBuilder.UseServiceProviderFactory(factory);
+	public IHostBuilder UseServiceProviderFactory<TContainerBuilder>(Func<HostBuilderContext, IServiceProviderFactory<TContainerBuilder>> factory) where TContainerBuilder : notnull => HostBuilder.UseServiceProviderFactory(factory);
+}
+
+public static class ConfigBuilderExtensions
+{
+	public static IConfigBuilder AsConfigBuilder(this IHostBuilder hostBuilder)
+	{
+		return new ConfigBuilder(hostBuilder);
 	}
 }

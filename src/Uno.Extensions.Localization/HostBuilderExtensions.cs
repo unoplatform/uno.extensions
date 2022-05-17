@@ -20,8 +20,12 @@ public static class HostBuilderExtensions
 		Action<HostBuilderContext, IServiceCollection>? configure = default)
 	{
 		return hostBuilder
-			.UseConfiguration<LocalizationConfiguration>(nameof(LocalizationConfiguration))
-			.UseSettings<LocalizationSettings>(ctx => ctx.Configuration.GetSection(nameof(LocalizationSettings)))
+			.UseConfiguration(
+				configure: configBuilder =>
+					configBuilder
+						.RegisterSettings<LocalizationConfiguration>(nameof(LocalizationConfiguration))
+						.RegisterSettings<LocalizationSettings>(nameof(LocalizationSettings))
+					)
 
 			.ConfigureServices((ctx, services) =>
 		{
