@@ -41,7 +41,7 @@ public sealed partial class App : Application
 
 				.UseCustomSettings("appsettings.platform.json")
 
-				.UseConfiguration<Playground.Models.AppInfo>()
+				.UseSettings<Playground.Models.AppInfo>()
 
 
 				// Register Json serializer jsontypeinfo definitions

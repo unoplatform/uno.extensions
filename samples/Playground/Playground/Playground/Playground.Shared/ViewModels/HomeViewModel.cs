@@ -14,12 +14,13 @@ public class HomeViewModel
 	private readonly IWritableOptions<LocalizationSettings> _localization;
 	public HomeViewModel(
 		IOptions<AppInfo> appInfo,
+		IOptions<LocalizationConfiguration> configuration,
 		IWritableOptions<LocalizationSettings> localization,
 		IStringLocalizer localizer)
 	{
 		_localization = localization;
 		Platform = appInfo.Value.Platform;
-		SupportedCultures = _localization.Value?.Cultures?.AsCultures() ?? new[] { "en-US".AsCulture()! }; 
+		SupportedCultures = configuration.Value?.Cultures?.AsCultures() ?? new[] { "en-US".AsCulture()! }; 
 
 		var language = localizer[_localization.Value?.CurrentCulture ?? "en"];
 
@@ -32,7 +33,7 @@ public class HomeViewModel
 		get => SupportedCultures.FirstOrDefault(x=>x.Name == _localization.Value?.CurrentCulture)?? SupportedCultures.First();
 		set
 		{
-			_ = _localization.UpdateAsync(settings => settings.CurrentCulture = value.Name);
+			_ = _localization.UpdateAsync(settings => settings with { CurrentCulture = value.Name });
 		}
 	}
 
