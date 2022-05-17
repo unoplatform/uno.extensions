@@ -6,15 +6,15 @@ The Uno.Extensions follows the Microsoft.Extensions model that creates a host en
 
 For a more specific description of the functionality included in each referenced package—such as
 Configuration, Logging, Navigation, and
-Reactive—refer to the relevant Uno.Extensions documentation. 
+Reactive—refer to the relevant Uno.Extensions documentation.
 
-This tutorial will walk through how to create an Uno application with the `dotnet new` tool, that is already configured to use the Uno.Extensions. 
+This tutorial will walk through how to create an Uno application with the `dotnet new` tool, that is already configured to use the Uno.Extensions.
 
 ## Step-by-steps
 
 ### 1. Installing extension templates
 
-The `dotnet` templates included in the `Uno.Extensions.Templates` package are used to easily create new projects that already reference the Uno.Extensions. 
+The `dotnet` templates included in the `Uno.Extensions.Templates` package are used to easily create new projects that already reference the Uno.Extensions.
 
 * Open a command prompt and run the following
 
@@ -22,11 +22,11 @@ The `dotnet` templates included in the `Uno.Extensions.Templates` package are us
 
 * Navigate to the desired projects directory, and use the unoapp-extensions template to generate the starter solution discussed above
 
-    `dotnet new unoapp-extensions -o MyProjectName` 
+    `dotnet new unoapp-extensions -o MyProjectName`
 
     The argument specified after the -o flag (i.e. MyProjectName) will act as the name for both a containing directory and the generated solution, so it is not required to create a new directory for the output.
 
-*  Open the solution in Visual Studio
+* Open the solution in Visual Studio
 
     `.\MyProjectName\MyProjectName.sln`
 
@@ -34,15 +34,14 @@ The `dotnet` templates included in the `Uno.Extensions.Templates` package are us
 
 The generated solution will contain:
 
-- *MyProjectName* - for application logic, and other constructs like view models and services that are independent of the UI of the application.
-- *MyProjectName.UI* - for controls, pages, and views comprising the app’s UI layer.
-- *Platforms/MyProjectName.** - platform-specific projects for each supported platform.
-- *MyProjectName.Tests* and *MyProjectName.UI.Tests* - for writing unit and UI tests respectively.
+* *MyProjectName* - for application logic, and other constructs like view models and services that are independent of the UI of the application.
+* *MyProjectName.UI* - for controls, pages, and views comprising the app’s UI layer.
+* *Platforms/MyProjectName.** - platform-specific projects for each supported platform.
+* *MyProjectName.Tests* and *MyProjectName.UI.Tests* - for writing unit and UI tests respectively.
 
     ![The structure of the generated solution](./images/ProjectStructure-min.png)
 
-
-#### 3. Running the Application 
+#### 3. Running the Application
 
 * Select a target from the drop-down as pictured below
 
@@ -68,16 +67,16 @@ The generated solution will contain:
 
 * Press Ctrl + F5 to start the WASM project without debugging.
 
-* Once the application is compiled, it will launch inside your default browser. Take note of the URL which should look something like this: https://localhost:11111/
+* Once the application is compiled, it will launch inside your default browser. Take note of the URL which should look something like this: <https://localhost:11111/>
 
 * Find the project *Tests\\MyProjectName.UI.Tests* and locate the *Constants.cs* file
 
 * Open *Constants.cs* and update the WebAssemblyDefaultUri constant
 
-    It should appear similar to this: 
+    It should appear similar to this:
 
     `public readonly static string WebAssemblyDefaultUri = "https://localhost:11111/";`
 
 * Go back to the project *Tests\\MyProjectName.UI.Tests* and right click. Then, *Run Tests*
 
-TODO: Include screenshot of test explorer
+    ![A screenshot of test explorer in VS](./images/TestExplorer-min.png)
