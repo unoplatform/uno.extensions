@@ -27,14 +27,7 @@ public static class HostBuilderExtensions
 					_ = s.AddHostedService(sp => sp.GetRequiredService<ReloadService>());
 					s.TryAddSingleton<IStartupService>(sp => sp.GetRequiredService<ReloadService>());
 				});
-		var configBuilder = hostBuilder.AsConfigBuilder();
-		hostBuilder = configure?.Invoke(configBuilder) ?? hostBuilder;
-
-		if(configBuilder is ConfigBuilder cBuilder && !cBuilder.UseEmbeddedSourceFiles)
-		{
-			// Use content source by default
-			configBuilder.ContentSource();
-		}
+		hostBuilder = configure?.Invoke(hostBuilder.AsConfigBuilder()) ?? hostBuilder;
 
 		return hostBuilder;
 	}

@@ -11,6 +11,4 @@ internal record ConfigBuilder(IHostBuilder HostBuilder) : IConfigBuilder
 	public IHostBuilder ConfigureServices(Action<HostBuilderContext, IServiceCollection> configureDelegate) => HostBuilder.ConfigureServices(configureDelegate);
 	public IHostBuilder UseServiceProviderFactory<TContainerBuilder>(IServiceProviderFactory<TContainerBuilder> factory) where TContainerBuilder : notnull => HostBuilder.UseServiceProviderFactory(factory);
 	public IHostBuilder UseServiceProviderFactory<TContainerBuilder>(Func<HostBuilderContext, IServiceProviderFactory<TContainerBuilder>> factory) where TContainerBuilder : notnull => HostBuilder.UseServiceProviderFactory(factory);
-
-	public bool UseEmbeddedSourceFiles { get; set; }
 }

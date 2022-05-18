@@ -72,6 +72,7 @@ namespace Commerce
 
 					.UseConfiguration(configure: configBuilder=>
 						configBuilder
+							.ContentSource()
 							.Section<AppInfo>()
 							.Section<Credentials>()
 					)

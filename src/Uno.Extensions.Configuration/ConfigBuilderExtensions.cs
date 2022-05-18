@@ -6,7 +6,6 @@ public static class ConfigBuilderExtensions
 	public static IConfigBuilder ContentSource(this IConfigBuilder hostBuilder, string? config = null, bool includeEnvironmentSettings = true)
 	{
 		return hostBuilder
-				.UseConfiguration()
 				.ConfigureAppConfiguration((ctx, b) =>
 				{
 					if (config is { Length: > 0 })
@@ -31,13 +30,7 @@ public static class ConfigBuilderExtensions
 	public static IConfigBuilder EmbeddedSource<TApplicationRoot>(this IConfigBuilder hostBuilder, string? config = null, bool includeEnvironmentSettings = true)
 		where TApplicationRoot : class
 	{
-		if(hostBuilder is ConfigBuilder cBuilder)
-		{
-			cBuilder.UseEmbeddedSourceFiles = true;
-		}
-
 		return hostBuilder
-				.UseConfiguration()
 				.ConfigureAppConfiguration((ctx, b) =>
 				{
 					if (config is { Length: > 0 })
@@ -86,7 +79,6 @@ public static class ConfigBuilderExtensions
 		}
 
 		return hostBuilder
-			.UseConfiguration()
 			.ConfigureAppConfiguration((ctx, b) =>
 			{
 				var path = FilePath(ctx);
