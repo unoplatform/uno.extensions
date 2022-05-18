@@ -38,9 +38,9 @@ public sealed partial class App : Application
 
 				.UseConfiguration(configure: configBuilder=>
 					configBuilder
-						.WithEmbeddedAppConfigFile<App>()			// appconfig.json + appconfig.development.json
-						.WithEmbeddedAppConfigFile<App>("platform")	// appconfig.platform.json
-						.RegisterConfiguration<Playground.Models.AppInfo>()
+						.EmbeddedSource<App>()			// appconfig.json + appconfig.development.json
+						.EmbeddedSource<App>("platform")	// appconfig.platform.json
+						.Section<Playground.Models.AppInfo>()
 				)
 
 

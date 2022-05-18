@@ -23,8 +23,8 @@ public static class HostBuilderExtensions
 			.UseConfiguration(
 				configure: configBuilder =>
 					configBuilder
-						.RegisterConfiguration<LocalizationConfiguration>(nameof(LocalizationConfiguration))
-						.RegisterConfiguration<LocalizationSettings>(nameof(LocalizationSettings))
+						.Section<LocalizationConfiguration>(nameof(LocalizationConfiguration))
+						.Section<LocalizationSettings>(nameof(LocalizationSettings))
 					)
 
 			.ConfigureServices((ctx, services) =>

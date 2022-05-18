@@ -4,7 +4,7 @@ public static class ConfigurationBuilderExtensions
 {
 	private static IConfigurationBuilder AddConfigurationFile(this IConfigurationBuilder configurationBuilder, HostBuilderContext hostingContext, string configurationFileName)
 	{
-		var relativePath = $"{HostBuilderExtensions.ConfigurationFolderName}/{configurationFileName}";
+		var relativePath = $"{ConfigBuilderExtensions.ConfigurationFolderName}/{configurationFileName}";
 		var rootFolder = (hostingContext.HostingEnvironment as IAppHostEnvironment)?.AppDataPath ?? String.Empty;
 		var fullPath = Path.Combine(rootFolder, relativePath);
 		return configurationBuilder.AddJsonFile(fullPath, optional: true, reloadOnChange: false);

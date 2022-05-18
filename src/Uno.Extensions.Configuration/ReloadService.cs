@@ -27,7 +27,7 @@ public class ReloadService : IHostedService, IStartupService
 
 	public async Task StartAsync(CancellationToken cancellationToken)
 	{
-		var folderPath = await Storage.CreateLocalFolderAsync(HostBuilderExtensions.ConfigurationFolderName);
+		var folderPath = await Storage.CreateLocalFolderAsync(ConfigBuilderExtensions.ConfigurationFolderName);
 		if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($@"Folder path should be '{folderPath}'");
 
 		var fileProviders = Config.Providers;
