@@ -254,10 +254,10 @@
 		 without manipulating the projitem file.
 	-->
     <Content Include="$(MSBuildThisFileDirectory)data.json" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)appconfig.development.json">
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)appsettings.development.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)appconfig.json">
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
     <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\back.scale-100.png" />
