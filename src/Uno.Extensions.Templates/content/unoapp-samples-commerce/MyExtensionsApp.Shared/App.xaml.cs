@@ -73,9 +73,9 @@ namespace MyExtensionsApp
 
 					.UseConfiguration(configure: configBuilder=>
 						configBuilder
-							.WithAppConfigFile()
-							.RegisterConfiguration<AppInfo>()
-							.RegisterConfiguration<Credentials>()
+							.ContentSource()
+							.Section<AppInfo>()
+							.Section<Credentials>()
 					)
 
 

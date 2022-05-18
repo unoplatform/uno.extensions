@@ -30,8 +30,8 @@ public sealed partial class App : Application
 
 				.UseConfiguration(configure: configBuilder=>
 					configBuilder
-						.WithEmbeddedAppConfigFile<App>()
-						.RegisterConfiguration<AppConfig>()
+						.EmbeddedSource<App>()
+						.Section<AppConfig>()
 				)
 
 				// Enable localization (see appsettings.json for supported languages)
