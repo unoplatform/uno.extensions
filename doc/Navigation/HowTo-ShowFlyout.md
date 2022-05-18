@@ -6,22 +6,47 @@ This topic walks through using Navigation to display a modal flyout
 
 ## Step-by-steps
 
+### 1. Displaying flyout from code
+- Add new `Page`, `SamplePage.xaml`, which will be used to display content inside the flyout.
+    ```xml
+    <Page
+        x:Class="ShowFlyout.Views.SamplePage"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="using:ShowFlyout.Views"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    
+        <Grid>
+            <TextBlock Text="Flyout content"
+                       FontSize="32"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center" />
+        </Grid>
+    </Page>
+    ```
 
-- Add new page, SamplePage.xaml
-- Add a button "Go to Sample Page" and in the event handler  
+- Add a `Button` with content `Go to Sample Page` to `MainPage.xaml` and wire up the `Click` event to the `ShowFlyoutClick` method  
 
-**C#**  
-```csharp
+    ```xml
+    <Button Content="Show flyout"
+            Click="ShowFlyoutClick" />
+    ```
+- Add the `ShowFlyoutClick` method to the `MainPage.xaml.cs` file
+    ```csharp
     private void ShowFlyoutClick(object sender, RoutedEventArgs e)
     {
-		_ = this.Navigator()?.NavigateViewAsync<SamplePage>(this, qualifier: Qualifiers.Dialog);
+        _ = this.Navigator()?.NavigateViewAsync<SamplePage>(this, qualifier: Qualifiers.Dialog);
     }
-```
+    ```
 
+### 2. Displaying flyout from XAML
 
-<Button Content="Show flyout from XAML"
-        HorizontalAlignment="Stretch"
-        uen:Navigation.Request="!Sample" />
+- Add a another `Button` with content `Show flyout from XAML` to `MainPage.xaml`. Set the `Navigation.Request` property to `!Sample` which indicates the `Sample` route should be opened as a Flyout.  
 
-- Show how to navigate to a flyout
-- Show how to navigate to a page with ! qualifier to allow navigation within flyout
+    ```csharp
+    <Button Content="Show flyout from XAML"
+            uen:Navigation.Request="!Sample" />
+    ```
