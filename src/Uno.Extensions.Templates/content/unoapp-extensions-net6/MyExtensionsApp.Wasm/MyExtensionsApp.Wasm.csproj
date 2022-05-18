@@ -16,11 +16,15 @@
 		-->
     <WasmShellILLinkerEnabled>false</WasmShellILLinkerEnabled>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Debug' or '$(IsUiAutomationMappingEnabled)'=='True'">
+    <IsUiAutomationMappingEnabled>True</IsUiAutomationMappingEnabled>
+    <DefineConstants>$(DefineConstants);USE_UITESTS</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <Content Include="Assets\SplashScreen.png" />
   </ItemGroup>
   <ItemGroup>
-    <UpToDateCheckInput Include="..\MyExtensionsApp.Shared\**\*.xaml" />
+    <UpToDateCheckInput Include="..\MyExtensionsApp.UI\**\*.xaml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="WasmCSS\Fonts.css" />
@@ -40,16 +44,6 @@
     <None Include="LinkerConfig.xml" />
     <None Include="wwwroot\web.config" />
   </ItemGroup>
-  <!--<ItemGroup>
-		<PackageReference Include="Microsoft.Windows.Compatibility" Version="5.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
-		<PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.0.1" />
-		<PackageReference Include="Uno.WinUI.WebAssembly" Version="4.2.6" />
-		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.2.6" Condition="'$(Configuration)'=='Debug'" />
-		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.2.6" />
-		<PackageReference Include="Uno.Wasm.Bootstrap" Version="3.3.1" />
-		<PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="3.3.1" />
-	</ItemGroup>-->
   <ItemGroup>
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
@@ -82,7 +76,7 @@
     <PackageReference Include="Uno.Extensions.Reactive.WinUI" Version="255.255.255.255" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MyExtensionsApp.Core\MyExtensionsApp.Core.csproj" />
+    <ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />
   </ItemGroup>
-  <Import Project="..\MyExtensionsApp.Shared\MyExtensionsApp.Shared.projitems" Label="Shared" Condition="Exists('..\MyExtensionsApp.Shared\MyExtensionsApp.Shared.projitems')" />
+  <Import Project="..\MyExtensionsApp.UI\MyExtensionsApp.UI.projitems" Label="Shared" Condition="Exists('..\MyExtensionsApp.UI\MyExtensionsApp.UI.projitems')" />
 </Project>

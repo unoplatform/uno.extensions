@@ -6,7 +6,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
-    <PackageReference Include="Uno.WinUI" Version="4.2.6" />
+    <PackageReference Include="Uno.WinUI.Skia.Wpf" Version="4.2.6" />
     <PackageReference Include="Uno.WinUI.RemoteControl" Version="4.2.6" Condition="'$(Configuration)'=='Debug'" />
     <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.2.6" />
     <PackageReference Include="Uno.Core" Version="4.0.1" />
@@ -14,9 +14,6 @@
     <PackageReference Include="Uno.Toolkit.WinUI.Material" Version="1.2.1" />
     <PackageReference Include="Uno.Toolkit.WinUI" Version="1.2.1" />
     <PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.2" />
-  </ItemGroup>
-  <ItemGroup>
-    <UpToDateCheckInput Include="..\MyExtensionsApp.Shared\**\*.xaml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Uno.Extensions.Configuration" Version="255.255.255.255" />
@@ -35,7 +32,10 @@
     <PackageReference Include="Uno.Extensions.Reactive.WinUI" Version="255.255.255.255" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MyExtensionsApp.Core\MyExtensionsApp.Core.csproj" />
+    <UpToDateCheckInput Include="..\MyExtensionsApp.UI\**\*.xaml" />
   </ItemGroup>
-  <Import Project="..\MyExtensionsApp.Shared\MyExtensionsApp.Shared.projitems" Label="Shared" />
+  <ItemGroup>
+    <ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />
+  </ItemGroup>
+  <Import Project="..\MyExtensionsApp.UI\MyExtensionsApp.UI.projitems" Label="Shared" />
 </Project>
