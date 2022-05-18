@@ -98,6 +98,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Templates", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Logging.UWP.Wasm", "Uno.Extensions.Logging\Uno.Extensions.Logging.UWP.Wasm.csproj", "{ABEE641A-A845-468F-A877-1F8BC9AB4D34}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Reactive.Messaging", "Uno.Extensions.Reactive.Messaging\Uno.Extensions.Reactive.Messaging.csproj", "{B54E4D85-188D-4B19-93B0-2248FFAA6144}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -256,6 +258,10 @@ Global
 		{ABEE641A-A845-468F-A877-1F8BC9AB4D34}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ABEE641A-A845-468F-A877-1F8BC9AB4D34}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ABEE641A-A845-468F-A877-1F8BC9AB4D34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B54E4D85-188D-4B19-93B0-2248FFAA6144}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B54E4D85-188D-4B19-93B0-2248FFAA6144}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B54E4D85-188D-4B19-93B0-2248FFAA6144}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B54E4D85-188D-4B19-93B0-2248FFAA6144}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -296,6 +302,7 @@ Global
 		{BFA2A242-D9AE-4FD3-935B-12F8FC08AF20} = {6B956AB1-06A6-4BEC-9467-E7B593A89E34}
 		{0F3C7D7A-C57C-41C0-86B9-34C9B5A1643A} = {6B956AB1-06A6-4BEC-9467-E7B593A89E34}
 		{ABEE641A-A845-468F-A877-1F8BC9AB4D34} = {DFA5C025-922C-4408-8489-D45786D0C5AA}
+		{B54E4D85-188D-4B19-93B0-2248FFAA6144} = {6B956AB1-06A6-4BEC-9467-E7B593A89E34}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6E7B035D-9A64-4D95-89AA-9D4653F17C42}
