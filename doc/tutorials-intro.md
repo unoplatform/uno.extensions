@@ -1,6 +1,6 @@
 # Solve Specific Problems with Uno.Extensions
 
-This section gathers how-tos, advanced tutorials, and detailed explainers that will help you use Uno.Extensions to solve specific problems.
+This section is an one-stop-shop for all how-tos, advanced tutorials, and detailed explanations that will guide you to solve specific problems with Uno.Extensions.
 
 ## How-tos
 
