@@ -16,8 +16,8 @@ internal record ListStateImpl<T>(IState<IImmutableList<T>> implementation) : Fee
 	public SourceContext Context => ((IStateImpl)implementation).Context;
 
 	/// <inheritdoc />
-	public ValueTask Update(Func<Message<IImmutableList<T>>, MessageBuilder<IImmutableList<T>>> updater, CancellationToken ct)
-		=> implementation.Update(updater, ct);
+	public ValueTask UpdateMessage(Func<Message<IImmutableList<T>>, MessageBuilder<IImmutableList<T>>> updater, CancellationToken ct)
+		=> implementation.UpdateMessage(updater, ct);
 
 	/// <inheritdoc />
 	public ValueTask DisposeAsync()

@@ -88,9 +88,11 @@ partial class Feed
 	/// <returns>An async enumeration sequence of all acceptable data produced by a feed.</returns>
 	public static async IAsyncEnumerable<Option<T>> Options<T>(this IFeed<T> feed, AsyncFeedValue kind = AsyncFeedValue.AllowError, [EnumeratorCancellation] CancellationToken ct = default)
 	{
+		var dataHasChanged = true;
 		await foreach (var message in SourceContext.Current.GetOrCreateSource(feed).WithCancellation(ct).ConfigureAwait(false))
 		{
 			var current = message.Current;
+			dataHasChanged |= message.Changes.Contains(MessageAxis.Data);
 
 			if (current.IsTransient && !kind.HasFlag(AsyncFeedValue.AllowTransient))
 			{
@@ -102,7 +104,11 @@ partial class Feed
 				ExceptionDispatchInfo.Capture(error).Throw();
 			}
 
-			yield return current.Data;
+			if (dataHasChanged)
+			{
+				yield return current.Data;
+				dataHasChanged = false;
+			}
 		}
 	}
 

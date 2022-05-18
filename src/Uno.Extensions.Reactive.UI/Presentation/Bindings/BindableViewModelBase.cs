@@ -165,7 +165,7 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 			// Here we also make sure to leave the UI thread so no matter the implementation of the State,
 			// we won't raise the State updated callbacks on the UI Thread.
 			await Task
-				.Run(async () => await stateImpl.Update(DoUpdate, ct).ConfigureAwait(false), ct)
+				.Run(async () => await stateImpl.UpdateMessage(DoUpdate, ct).ConfigureAwait(false), ct)
 				.ConfigureAwait(false);
 
 			MessageBuilder<TProperty> DoUpdate(Message<TProperty> msg)
