@@ -67,7 +67,7 @@ The generated solution will contain:
 
 * Press Ctrl + F5 to start the WASM project without debugging.
 
-* Once the application is compiled, it will launch inside your default browser. Take note of the URL which should look something like this: <https://localhost:11111/>
+* Once the application is compiled, it will launch inside your default browser. Take note of the URL which should look something like this: https://localhost:11111/
 
 * Find the project *Tests\\MyProjectName.UI.Tests* and locate the *Constants.cs* file
 
