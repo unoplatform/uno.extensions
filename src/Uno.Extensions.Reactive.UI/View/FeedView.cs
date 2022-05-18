@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Uno.Extensions.Reactive.Core;
+using Uno.Extensions.Reactive.Logging;
 using Uno.Extensions.Reactive.Utils;
-using Uno.Logging;
 
 namespace Uno.Extensions.Reactive.UI;
 
@@ -284,7 +284,7 @@ public partial class FeedView : Control
 			}
 			catch (Exception error)
 			{
-				this.Log().Error("Subscription to feed failed, view will no longer render updates made by the VM.", error);
+				this.Log().Error(error, "Subscription to feed failed, view will no longer render updates made by the VM.");
 			}
 		}
 
@@ -304,7 +304,7 @@ public partial class FeedView : Control
 			}
 			catch (Exception error)
 			{
-				this.Log().Error("Failed to change visual state.", error);
+				this.Log().Error(error, "Failed to change visual state.");
 			}
 		}
 

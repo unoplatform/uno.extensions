@@ -3,8 +3,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Threading;
 using Windows.Foundation.Collections;
-using Uno.Extensions;
-using Uno.Logging;
+using Uno.Extensions.Reactive.Logging;
 
 namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets
 {
@@ -106,7 +105,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 				}
 				catch (Exception e)
 				{
-					sender.Log().Error("Failed to notify collection changed", e);
+					sender.Log().Error(e, "Failed to notify collection changed");
 				}
 			}
 		}
@@ -141,7 +140,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 				}
 				catch (Exception e)
 				{
-					sender.Log().Error("Failed to notify collection changed", e);
+					sender.Log().Error(e, "Failed to notify collection changed");
 				}
 			}
 		}

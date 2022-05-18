@@ -2,8 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Foundation;
-using Uno.Extensions;
-using Uno.Logging;
+using Uno.Extensions.Reactive.Logging;
 
 namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets
 {

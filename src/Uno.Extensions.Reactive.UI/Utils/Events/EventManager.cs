@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Uno;
-using Uno.Extensions;
-using Uno.Logging;
 
 namespace Uno.Extensions.Reactive.Events;
 

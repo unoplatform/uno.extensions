@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Dispatching;
 using Uno.Extensions.Reactive.Events;
+using Uno.Extensions.Reactive.Logging;
 using Uno.Extensions.Reactive.Utils;
-using Uno.Logging;
 
 namespace Uno.Extensions.Reactive.Bindings;
 
@@ -138,18 +138,18 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 					catch (Exception error)
 					{
 						this.Log().Error(
+							error,
 							$"Synchronization from ViewModel to View of '{propertyName}' failed."
-							+ "(This is a final error, changes made in the VM are no longer propagated to the View.)",
-							error);
+							+ "(This is a final error, changes made in the VM are no longer propagated to the View.)");
 					}
 				});
 			}
 			catch (Exception error)
 			{
 				this.Log().Error(
+					error,
 					$"Synchronization from ViewModel to View of '{propertyName}' failed."
-					+ "(This is a final error, changes made in the VM are no longer propagated to the View.)",
-					error);
+					+ "(This is a final error, changes made in the VM are no longer propagated to the View.)");
 			}
 		}
 
