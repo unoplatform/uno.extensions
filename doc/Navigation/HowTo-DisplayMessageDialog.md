@@ -100,11 +100,11 @@ The `result` variable will be set to the label of the selected button.
 
     ```csharp
     var localizedMessageDialog = new LocalizableMessageDialogViewMap(
-        Content: localizer => localizer!["MyDialog_Content"],
+        Content: localizer => localizer?["MyDialog_Content"]??string.Empty,
     	Buttons: new[]
         {
-    		new LocalizableDialogAction( LabelProvider:localizer=>localizer!["Dialog_Ok"]),
-            new LocalizableDialogAction( LabelProvider:localizer=>localizer!["Dialog_Cancel"])
+    		new LocalizableDialogAction( LabelProvider:localizer=>localizer?["Dialog_Ok"]??string.Empty),
+            new LocalizableDialogAction( LabelProvider:localizer=>localizer?["Dialog_Cancel"]??string.Empty)
         }
     );
     ```
