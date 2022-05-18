@@ -36,12 +36,13 @@ public sealed partial class App : Application
 
 				.UseLocalization()
 
+				.UseConfiguration(configure: configBuilder=>
+					configBuilder
+						.EmbeddedSource<App>()			// appconfig.json + appconfig.development.json
+						.EmbeddedSource<App>("platform")	// appconfig.platform.json
+						.Section<Playground.Models.AppInfo>()
+				)
 
-				.UseEmbeddedAppSettings<App>()
-
-				.UseCustomSettings("appsettings.platform.json")
-
-				.UseConfiguration<Playground.Models.AppInfo>()
 
 
 				// Register Json serializer jsontypeinfo definitions

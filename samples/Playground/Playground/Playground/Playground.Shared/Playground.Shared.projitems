@@ -18,7 +18,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)App.xaml.host.cs"> 
+    <Compile Include="$(MSBuildThisFileDirectory)App.xaml.host.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)GlobalUsings.cs" />
@@ -254,10 +254,10 @@
 		 without manipulating the projitem file.
 	-->
     <Content Include="$(MSBuildThisFileDirectory)data.json" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)appsettings.development.json">
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)appconfig.development.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)appsettings.json">
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)appconfig.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
     <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\back.scale-100.png" />

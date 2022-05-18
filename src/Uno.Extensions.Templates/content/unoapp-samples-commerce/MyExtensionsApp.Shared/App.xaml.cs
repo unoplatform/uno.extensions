@@ -17,10 +17,6 @@ using Uno.Extensions.Navigation.Regions;
 using Uno.Extensions.Navigation.Toolkit;
 using Uno.Extensions.Serialization;
 using MyExtensionsApp.Views;
-using Uno.Extensions.Logging.Serilog;
-using Uno.Extensions.Navigation.UI.Controls;
-using Uno.Extensions.Navigation.Toolkit.Controls;
-using Host = Uno.Extensions.Hosting.Host;
 using MyExtensionsApp.Reactive;
 
 #if WINUI
@@ -65,25 +61,22 @@ namespace MyExtensionsApp
 
 
 					// Add platform specific log providers
-					.UseLogging()
-
-					// Configure log levels for different categories of logging
-					.ConfigureLogging(logBuilder =>
+					.UseLogging(configure: logBuilder =>
 					{
+						// Configure log levels for different categories of logging
 						logBuilder
 								.SetMinimumLevel(LogLevel.Information)
 								.XamlLogLevel(LogLevel.Information)
-								.XamlLayoutLogLevel(LogLevel.Information);
+								.XamlLayoutLogLevel(LogLevel.Information)
+								.AddFilter("Uno.Extensions.Navigation", LogLevel.Trace);
 					})
 
-					// Load configuration information from appsettings.json
-					.UseAppSettings()
-
-					// Load AppInfo section
-					.UseConfiguration<AppInfo>()
-
-					// Register entities for saving settings
-					.UseSettings<Credentials>()
+					.UseConfiguration(configure: configBuilder=>
+						configBuilder
+							.ContentSource()
+							.Section<AppInfo>()
+							.Section<Credentials>()
+					)
 
 
 					// Register Json serializers (ISerializer and ISerializer)

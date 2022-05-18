@@ -1,82 +1,88 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Uno.Extensions.Hosting;
+﻿namespace Uno.Extensions.Configuration;
 
-namespace Uno.Extensions.Configuration
+public static class ConfigurationBuilderExtensions
 {
-    public static class ConfigurationBuilderExtensions
-    {
-		public static IConfigurationBuilder AddSettings(this IConfigurationBuilder configurationBuilder, HostBuilderContext hostingContext, string settingsFileName)
+	private static IConfigurationBuilder AddConfigurationFile(this IConfigurationBuilder configurationBuilder, HostBuilderContext hostingContext, string configurationFileName)
+	{
+		var relativePath = $"{ConfigBuilderExtensions.ConfigurationFolderName}/{configurationFileName}";
+		var rootFolder = (hostingContext.HostingEnvironment as IAppHostEnvironment)?.AppDataPath ?? String.Empty;
+		var fullPath = Path.Combine(rootFolder, relativePath);
+		return configurationBuilder.AddJsonFile(fullPath, optional: true, reloadOnChange: false);
+	}
+
+	public static IConfigurationBuilder AddConfiguration(this IConfigurationBuilder configurationBuilder, HostBuilderContext hostingContext, string? configurationName = null)
+	{
+		var configSection = configurationName is { Length: > 0 } ? string.Format(AppConfiguration.FileNameTemplate, configurationName) : AppConfiguration.FileName;
+		return configurationBuilder.AddConfigurationFile(hostingContext, configSection.ToLower());
+	}
+
+	public static IConfigurationBuilder AddEnvironmentConfiguration(this IConfigurationBuilder configurationBuilder, HostBuilderContext hostingContext, string? configurationName = null)
+	{
+		var env = hostingContext.HostingEnvironment;
+		var configSection = configurationName is { Length: > 0 } ? $"{configurationName}.{env.EnvironmentName}" : env.EnvironmentName;
+		return configurationBuilder.AddConfigurationFile(hostingContext, string.Format(AppConfiguration.FileNameTemplate, configSection).ToLower());
+	}
+
+	public static IConfigurationBuilder AddAppConfiguration(this IConfigurationBuilder configurationBuilder, HostBuilderContext hostingContext)
+	{
+		return configurationBuilder.AddConfigurationFile(hostingContext, AppConfiguration.FileName);
+	}
+
+	public static IConfigurationBuilder AddEnvironmentAppConfiguration(this IConfigurationBuilder configurationBuilder, HostBuilderContext hostingContext)
+	{
+		return configurationBuilder.AddEnvironmentConfiguration(hostingContext, default);
+	}
+
+	public static IConfigurationBuilder AddEmbeddedConfiguration<TApplicationRoot>(this IConfigurationBuilder configurationBuilder, string configurationFileName)
+		where TApplicationRoot : class
+	{
+		var generalAppConfiguration =
+			EmbeddedAppConfigurationFile.AllFiles<TApplicationRoot>()
+			.FirstOrDefault(s => s.FileName.EndsWith(configurationFileName, StringComparison.OrdinalIgnoreCase));
+
+		if (generalAppConfiguration != null)
 		{
-			var relativePath = $"{HostBuilderExtensions.ConfigurationFolderName}/{settingsFileName}";
-			var rootFolder = (hostingContext.HostingEnvironment as IAppHostEnvironment)?.AppDataPath??String.Empty;
-			var fullPath = Path.Combine(rootFolder, relativePath);
-			return configurationBuilder.AddJsonFile(fullPath, optional: true, reloadOnChange: false);
+			configurationBuilder.AddJsonStream(generalAppConfiguration.GetContent());
 		}
 
-		public static IConfigurationBuilder AddAppSettings(this IConfigurationBuilder configurationBuilder, HostBuilderContext hostingContext)
-        {
-			return configurationBuilder.AddSettings(hostingContext, $"{AppSettings.AppSettingsFileName}.json");
-        }
+		return configurationBuilder;
+	}
 
-		public static IConfigurationBuilder AddEnvironmentAppSettings(this IConfigurationBuilder configurationBuilder, HostBuilderContext hostingContext)
-		{
-			var env = hostingContext.HostingEnvironment;
-			return configurationBuilder.AddSettings(hostingContext, $"{AppSettings.AppSettingsFileName}.{env.EnvironmentName}.json".ToLower());
-		}
+	public static IConfigurationBuilder AddEnvironmentEmbeddedConfiguration<TApplicationRoot>(this IConfigurationBuilder configurationBuilder, HostBuilderContext hostingContext, string? configurationName = null)
+		where TApplicationRoot : class
+	{
+		var env = hostingContext.HostingEnvironment;
+		var configSection = configurationName is { Length: > 0 } ? $"{configurationName}.{env.EnvironmentName}" : env.EnvironmentName;
+		return configurationBuilder.AddEmbeddedConfiguration<TApplicationRoot>(string.Format(AppConfiguration.FileNameTemplate, configSection).ToLower());
+	}
 
-		public static IConfigurationBuilder AddEmbeddedSettings<TApplicationRoot>(this IConfigurationBuilder configurationBuilder, string settingsFileName)
+	public static IConfigurationBuilder AddEmbeddedAppConfiguration<TApplicationRoot>(this IConfigurationBuilder configurationBuilder)
+		where TApplicationRoot : class
+	{
+		var generalAppConfigurationFileName = AppConfiguration.FileName;
+		return configurationBuilder.AddEmbeddedConfiguration<TApplicationRoot>(generalAppConfigurationFileName);
+	}
+
+	public static IConfigurationBuilder AddEnvironmentEmbeddedAppConfiguration<TApplicationRoot>(
+		this IConfigurationBuilder configurationBuilder, HostBuilderContext hostingContext)
 			where TApplicationRoot : class
-		{
-			var generalAppSettings =
-				AppSettings.AllAppSettings<TApplicationRoot>()
-				.FirstOrDefault(s => s.FileName.EndsWith(settingsFileName, StringComparison.OrdinalIgnoreCase));
+	{
+		return configurationBuilder.AddEnvironmentEmbeddedConfiguration<TApplicationRoot>(hostingContext, default);
+	}
 
-			if (generalAppSettings != null)
-			{
-				configurationBuilder.AddJsonStream(generalAppSettings.GetContent());
-			}
-
-			return configurationBuilder;
-		}
-
-		public static IConfigurationBuilder AddEmbeddedAppSettings<TApplicationRoot>(this IConfigurationBuilder configurationBuilder)
-			where TApplicationRoot : class
-		{
-			var generalAppSettingsFileName = $"{AppSettings.AppSettingsFileName}.json";
-			return configurationBuilder.AddEmbeddedSettings<TApplicationRoot>(generalAppSettingsFileName);
-		}
-
-        public static IConfigurationBuilder AddEmbeddedEnvironmentAppSettings<TApplicationRoot>(
-            this IConfigurationBuilder configurationBuilder, HostBuilderContext hostingContext)
-                where TApplicationRoot : class
-        {
-            var env = hostingContext.HostingEnvironment;
-
-            var environmentAppSettingsFileName = $"{AppSettings.AppSettingsFileName}.{env.EnvironmentName}.json".ToLower();
-			return configurationBuilder.AddEmbeddedSettings<TApplicationRoot>(environmentAppSettingsFileName);
-        }
-
-        public static IConfigurationBuilder AddSectionFromEntity<TEntity>(
-            this IConfigurationBuilder configurationBuilder,
-            TEntity entity,
-            string? sectionName = null)
-        {
-            return configurationBuilder
-                .AddJsonStream(
-                    new MemoryStream(
-                        Encoding.ASCII.GetBytes(
-                            JsonSerializer.Serialize(
-                                new Dictionary<string, TEntity>
-                                {
-                                    { sectionName ?? typeof(TEntity).Name, entity }
-                                }))));
-        }
-    }
+	public static IConfigurationBuilder AddSectionFromEntity<TEntity>(
+		this IConfigurationBuilder configurationBuilder,
+		TEntity entity,
+		string? sectionName = null)
+	{
+		return configurationBuilder
+			.AddJsonStream(
+				new MemoryStream(
+					Encoding.ASCII.GetBytes(
+						JsonSerializer.Serialize(
+							new Dictionary<string, TEntity>
+							{
+									{ sectionName ?? typeof(TEntity).Name, entity }
+							}))));
+	}
 }

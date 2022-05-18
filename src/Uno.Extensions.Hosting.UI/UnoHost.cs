@@ -33,7 +33,7 @@ public static class UnoHost
 						var href = Foundation.WebAssemblyRuntime.InvokeJS("window.location.href");
 						var appsettingsPrefix = new Dictionary<string, string>
 							{
-								{ HostingConstants.AppSettingsPrefixKey, "local" },
+								{ HostingConstants.AppConfigPrefixKey, "local" },
 								{ HostingConstants.LaunchUrlKey, href }
 							};
 						config.AddInMemoryCollection(appsettingsPrefix);

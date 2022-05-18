@@ -1,16 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Uno.Extensions.Hosting;
-using Uno.Extensions.Logging;
-using Uno.Extensions.Storage;
-
-namespace Uno.Extensions.Configuration;
+﻿namespace Uno.Extensions.Configuration;
 
 public class ReloadService : IHostedService, IStartupService
 {
@@ -39,7 +27,7 @@ public class ReloadService : IHostedService, IStartupService
 
 	public async Task StartAsync(CancellationToken cancellationToken)
 	{
-		var folderPath = await Storage.CreateLocalFolderAsync(HostBuilderExtensions.ConfigurationFolderName);
+		var folderPath = await Storage.CreateLocalFolderAsync(ConfigBuilderExtensions.ConfigurationFolderName);
 		if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($@"Folder path should be '{folderPath}'");
 
 		var fileProviders = Config.Providers;

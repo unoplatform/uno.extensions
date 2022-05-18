@@ -28,11 +28,11 @@ public sealed partial class App : Application
 							.XamlLayoutLogLevel(LogLevel.Information);
 				})
 
-				// Load configuration information from appsettings.json
-				.UseEmbeddedAppSettings<App>()
-
-				// Load AppInfo section
-				.UseConfiguration<AppConfig>()
+				.UseConfiguration(configure: configBuilder=>
+					configBuilder
+						.EmbeddedSource<App>()
+						.Section<AppConfig>()
+				)
 
 				// Enable localization (see appsettings.json for supported languages)
 				.UseLocalization()
