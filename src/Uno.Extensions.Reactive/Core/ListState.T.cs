@@ -78,6 +78,18 @@ public static class ListState<T>
 	/// <param name="owner">The owner of the state.</param>
 	/// <param name="valueProvider">The provider of the initial value of the state.</param>
 	/// <returns>A feed that encapsulate the source.</returns>
+	public static IListState<T> Value<TOwner>(TOwner owner, Func<ImmutableList<T>> valueProvider)
+		where TOwner : class
+	// Note: We force the usage of delegate so 2 properties which are doing State.Value(this, () => 42) will effectively have 2 distinct states.
+		=> AttachedProperty.GetOrCreate(owner, valueProvider, (o, v) => SourceContext.GetOrCreate(o).CreateListState(Option<IImmutableList<T>>.Some(v())));
+
+	/// <summary>
+	/// Gets or creates a list state from a static initial list of items.
+	/// </summary>
+	/// <typeparam name="TOwner">Type of the owner of the state.</typeparam>
+	/// <param name="owner">The owner of the state.</param>
+	/// <param name="valueProvider">The provider of the initial value of the state.</param>
+	/// <returns>A feed that encapsulate the source.</returns>
 	public static IListState<T> Value<TOwner>(TOwner owner, Func<IImmutableList<T>> valueProvider)
 		where TOwner : class
 		// Note: We force the usage of delegate so 2 properties which are doing State.Value(this, () => 42) will effectively have 2 distinct states.

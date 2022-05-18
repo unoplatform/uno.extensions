@@ -11,8 +11,6 @@
 		<EnableDefaultPageItems>false</EnableDefaultPageItems>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
 		<PackageId>Uno.Extensions.Reactive.WinUI</PackageId>
-		<!-- Ensures the .xr.xml files are generated in a proper layout folder -->
-		<GenerateLibraryLayout>true</GenerateLibraryLayout>
 	</PropertyGroup>
 
 	<Import Project="common.props" />

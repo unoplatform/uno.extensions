@@ -89,9 +89,11 @@ public static partial class ListFeed
 	/// <returns>An async enumeration sequence of all acceptable data produced by a feed.</returns>
 	public static async IAsyncEnumerable<Option<IImmutableList<T>>> Options<T>(this IListFeed<T> listFeed, AsyncFeedValue kind = AsyncFeedValue.AllowError, [EnumeratorCancellation] CancellationToken ct = default)
 	{
+		var dataHasChanged = true;
 		await foreach (var message in SourceContext.Current.GetOrCreateSource(listFeed).WithCancellation(ct).ConfigureAwait(false))
 		{
 			var current = message.Current;
+			dataHasChanged |= message.Changes.Contains(MessageAxis.Data);
 
 			if (current.IsTransient && !kind.HasFlag(AsyncFeedValue.AllowTransient))
 			{
@@ -103,7 +105,11 @@ public static partial class ListFeed
 				ExceptionDispatchInfo.Capture(error).Throw();
 			}
 
-			yield return current.Data;
+			if (dataHasChanged)
+			{
+				yield return current.Data;
+				dataHasChanged = false;
+			}
 		}
 	}
 

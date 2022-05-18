@@ -136,7 +136,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	}
 
 	/// <inheritdoc />
-	public ValueTask Update(Func<Message<T>, MessageBuilder<T>> updater, CancellationToken ct)
+	public ValueTask UpdateMessage(Func<Message<T>, MessageBuilder<T>> updater, CancellationToken ct)
 		=> UpdateCore(msg => updater(msg), ct);
 
 	private async ValueTask UpdateCore(Func<Message<T>, Message<T>> updater, CancellationToken ct)

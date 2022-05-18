@@ -3,15 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Windows.Foundation.Collections;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Collections;
 using Uno.Extensions.Collections.Tracking;
 using Uno.Extensions.Collections.Facades.Differential;
-using Uno.Extensions;
-using Uno.Logging;
+using Uno.Extensions.Reactive.Logging;
 
 namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets
 {

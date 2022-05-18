@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Immutable;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -9,6 +10,63 @@ namespace Uno.Extensions.Reactive;
 
 static partial class ListState
 {
+	/// <summary>
+	/// Updates the value of a state
+	/// </summary>
+	/// <typeparam name="T">Type of the value of the state.</typeparam>
+	/// <param name="state">The state to update.</param>
+	/// <param name="updater">The update method to apply to the current value.</param>
+	/// <param name="ct">A cancellation to cancel the async operation.</param>
+	/// <returns>A ValueTask to track the async update.</returns>
+	public static ValueTask Update<T>(this IListState<T> state, Func<IImmutableList<T>, IImmutableList<T>> updater, CancellationToken ct)
+		where T : notnull
+		=> state.UpdateMessage(
+			m =>
+			{
+				var updatedValue = updater(m.Current.Data.SomeOrDefault() ?? ImmutableList<T>.Empty);
+				var updatedData = updatedValue is null or {Count: 0} ? Option<IImmutableList<T>>.None() : Option.Some(updatedValue);
+
+				return m.With().Data(updatedData);
+			},
+			ct);
+
+	/// <summary>
+	/// Updates the value of a list state
+	/// </summary>
+	/// <typeparam name="T">Type of the items of the list state.</typeparam>
+	/// <param name="state">The list state to update.</param>
+	/// <param name="updater">The update method to apply to the current list.</param>
+	/// <param name="ct">A cancellation to cancel the async operation.</param>
+	/// <returns>A ValueTask to track the async update.</returns>
+	public static ValueTask UpdateData<T>(this IListState<T> state, Func<Option<IImmutableList<T>>, Option<IImmutableList<T>>> updater, CancellationToken ct)
+		=> state.UpdateMessage(m => m.With().Data(updater(m.Current.Data)), ct);
+
+	/// <summary>
+	/// Updates the value of a list state
+	/// </summary>
+	/// <typeparam name="T">Type of the items of the list state.</typeparam>
+	/// <param name="state">The list state to update.</param>
+	/// <param name="updater">The update method to apply to the current list.</param>
+	/// <param name="ct">A cancellation to cancel the async operation.</param>
+	/// <returns>A ValueTask to track the async update.</returns>
+	public static ValueTask UpdateData<T>(this IListState<T> state, Func<Option<IImmutableList<T>>, IImmutableList<T>> updater, CancellationToken ct)
+		=> state.UpdateMessage(m => m.With().Data(updater(m.Current.Data)), ct);
+
+	/// <summary>
+	/// [DEPRECATED] Use UpdateData instead
+	/// </summary>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	public static ValueTask UpdateValue<T>(this IListState<T> state, Func<Option<IImmutableList<T>>, Option<IImmutableList<T>>> updater, CancellationToken ct)
+		=> state.UpdateMessage(m => m.With().Data(updater(m.Current.Data)), ct);
+
+	/// <summary>
+	/// [DEPRECATED] Use UpdateData instead
+	/// </summary>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	public static ValueTask UpdateValue<T>(this IListState<T> state, Func<Option<IImmutableList<T>>, IImmutableList<T>> updater, CancellationToken ct)
+		=> state.UpdateMessage(m => m.With().Data(updater(m.Current.Data)), ct);
+
+
 	#region Operators
 	/// <summary>
 	/// Adds an item into a list state
@@ -19,7 +77,7 @@ static partial class ListState
 	/// <param name="ct">A token to abort the async add operation.</param>
 	/// <returns></returns>
 	public static ValueTask AddAsync<T>(this IListState<T> state, T item, CancellationToken ct)
-		=> state.UpdateValue(items => items.SomeOrDefault(ImmutableList<T>.Empty).Add(item), ct);
+		=> state.UpdateData(items => items.SomeOrDefault(ImmutableList<T>.Empty).Add(item), ct);
 
 	/// <summary>
 	/// Removes all matching items from a list state.
@@ -30,7 +88,7 @@ static partial class ListState
 	/// <param name="ct">A token to abort the async add operation.</param>
 	/// <returns></returns>
 	public static ValueTask RemoveAllAsync<T>(this IListState<T> state, Predicate<T> match, CancellationToken ct)
-		=> state.UpdateValue(itemsOpt => itemsOpt.Map(items => items.RemoveAll(match)), ct);
+		=> state.UpdateData(itemsOpt => itemsOpt.Map(items => items.RemoveAll(match)), ct);
 
 	/// <summary>
 	/// Updates all matching items from a list state.
@@ -42,7 +100,7 @@ static partial class ListState
 	/// <param name="ct">A token to abort the async add operation.</param>
 	/// <returns></returns>
 	public static ValueTask UpdateAsync<T>(this IListState<T> state, Predicate<T> match, Func<T, T> updater, CancellationToken ct)
-		=> state.UpdateValue(
+		=> state.UpdateData(
 			itemsOpt => itemsOpt.Map(items =>
 			{
 				var updated = items;

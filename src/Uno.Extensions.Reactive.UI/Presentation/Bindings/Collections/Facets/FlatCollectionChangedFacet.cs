@@ -5,7 +5,7 @@ using System.Threading;
 using Windows.Foundation.Collections;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions.Collections;
-using Uno.Logging;
+using Uno.Extensions.Reactive.Logging;
 using _CollectionChanged = Uno.Extensions.Collections.RichNotifyCollectionChangedEventArgs;
 
 namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets

@@ -19,30 +19,35 @@ partial class State
 	/// <param name="updater">The update method to apply to the current value.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to track the async update.</returns>
+	public static ValueTask Update<T>(this IState<T> state, Func<T?, T?> updater, CancellationToken ct)
+		where T : notnull
+		=> state.UpdateMessage(
+			m =>
+			{
+				var updatedValue = updater(m.Current.Data.SomeOrDefault());
+				var updatedData = updatedValue is null ? Option<T>.None() : Option.Some(updatedValue);
+
+				return m.With().Data(updatedData);
+			},
+			ct);
+
+	/// <summary>
+	/// Updates the value of a state
+	/// </summary>
+	/// <typeparam name="T">Type of the value of the state.</typeparam>
+	/// <param name="state">The state to update.</param>
+	/// <param name="updater">The update method to apply to the current value.</param>
+	/// <param name="ct">A cancellation to cancel the async operation.</param>
+	/// <returns>A ValueTask to track the async update.</returns>
+	public static ValueTask UpdateData<T>(this IState<T> state, Func<Option<T>, Option<T>> updater, CancellationToken ct)
+		=> state.UpdateMessage(m => m.With().Data(updater(m.Current.Data)), ct);
+
+	/// <summary>
+	/// [DEPRECATED] Use UpdateData instead
+	/// </summary>
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	public static ValueTask UpdateValue<T>(this IState<T> state, Func<Option<T>, Option<T>> updater, CancellationToken ct)
-		=> state.Update(m => m.With().Data(updater(m.Current.Data)), ct);
-
-	/// <summary>
-	/// Updates the value of a list state
-	/// </summary>
-	/// <typeparam name="T">Type of the items of the list state.</typeparam>
-	/// <param name="state">The list state to update.</param>
-	/// <param name="updater">The update method to apply to the current list.</param>
-	/// <param name="ct">A cancellation to cancel the async operation.</param>
-	/// <returns>A ValueTask to track the async update.</returns>
-	public static ValueTask UpdateValue<T>(this IListState<T> state, Func<Option<IImmutableList<T>>, Option<IImmutableList<T>>> updater, CancellationToken ct)
-		=> state.Update(m => m.With().Data(updater(m.Current.Data)), ct);
-
-	/// <summary>
-	/// Updates the value of a list state
-	/// </summary>
-	/// <typeparam name="T">Type of the items of the list state.</typeparam>
-	/// <param name="state">The list state to update.</param>
-	/// <param name="updater">The update method to apply to the current list.</param>
-	/// <param name="ct">A cancellation to cancel the async operation.</param>
-	/// <returns>A ValueTask to track the async update.</returns>
-	public static ValueTask UpdateValue<T>(this IListState<T> state, Func<Option<IImmutableList<T>>, IImmutableList<T>> updater, CancellationToken ct)
-		=> state.Update(m => m.With().Data(updater(m.Current.Data)), ct);
+		=> state.UpdateMessage(m => m.With().Data(updater(m.Current.Data)), ct);
 
 	/// <summary>
 	/// Sets the value of a state
@@ -54,7 +59,7 @@ partial class State
 	/// <returns>A ValueTask to track the async update.</returns>
 	public static ValueTask Set<T>(this IState<T> state, T? value, CancellationToken ct)
 		where T : struct
-		=> state.Update(m => m.With().Data(value is null ? Option<T>.None() : Option.Some(value.Value)), ct);
+		=> state.UpdateMessage(m => m.With().Data(value is null ? Option<T>.None() : Option.Some(value.Value)), ct);
 
 	/// <summary>
 	/// Sets the value of a state
@@ -63,8 +68,8 @@ partial class State
 	/// <param name="value">The value to set.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to track the async update.</returns>
-	public static ValueTask Set(this IState<string> state, Option<string> value, CancellationToken ct)
-		=> state.Update(m => m.With().Data(value), ct);
+	public static ValueTask Set(this IState<string> state, string? value, CancellationToken ct)
+		=> state.UpdateMessage(m => m.With().Data(value is { Length: > 0 } ? value : Option<string>.None()), ct);
 
 	/// <summary>
 	/// Execute an async callback each time the state is being updated.

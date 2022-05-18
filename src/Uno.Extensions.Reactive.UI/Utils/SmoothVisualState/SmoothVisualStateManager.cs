@@ -4,9 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
-using Windows.UI.Core;
-using Uno.Logging;
+using Uno.Extensions.Reactive.Logging;
 
 namespace Uno.Extensions.Reactive.UI;
 
@@ -130,7 +128,7 @@ public class SmoothVisualStateManager : VisualStateManager
 					catch (OperationCanceledException) { }
 					catch (Exception error)
 					{
-						_owner.Log().Error("Failed to defer go-to-state", error);
+						_owner.Log().Error(error, "Failed to defer go-to-state");
 					}
 				};
 				timer.Start();

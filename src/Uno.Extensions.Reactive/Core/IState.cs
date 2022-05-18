@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,5 +20,6 @@ public interface IState<T> : IFeed<T>, IAsyncDisposable
 	/// <param name="updater">The update method to apply to the current message.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to track the async update.</returns>
-	ValueTask Update(Func<Message<T>, MessageBuilder<T>> updater, CancellationToken ct);
+	/// <remarks>This is the raw way to update a state, you should consider using the <see cref="State.Update{T}"/> method instead.</remarks>
+	ValueTask UpdateMessage(Func<Message<T>, MessageBuilder<T>> updater, CancellationToken ct);
 }

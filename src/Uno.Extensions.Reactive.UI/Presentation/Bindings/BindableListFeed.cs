@@ -75,12 +75,12 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 	}
 
 	/// <inheritdoc />
-	ValueTask IListState<T>.Update(Func<Message<IImmutableList<T>>, MessageBuilder<IImmutableList<T>>> updater, CancellationToken ct)
-		=> _state.Update(updater, ct);
+	ValueTask IListState<T>.UpdateMessage(Func<Message<IImmutableList<T>>, MessageBuilder<IImmutableList<T>>> updater, CancellationToken ct)
+		=> _state.UpdateMessage(updater, ct);
 
 	/// <inheritdoc />
-	ValueTask IState<IImmutableList<T>>.Update(Func<Message<IImmutableList<T>>, MessageBuilder<IImmutableList<T>>> updater, CancellationToken ct)
-		=> _state.Update(updater, ct);
+	ValueTask IState<IImmutableList<T>>.UpdateMessage(Func<Message<IImmutableList<T>>, MessageBuilder<IImmutableList<T>>> updater, CancellationToken ct)
+		=> _state.UpdateMessage(updater, ct);
 
 	/// <inheritdoc />
 	public async ValueTask DisposeAsync()

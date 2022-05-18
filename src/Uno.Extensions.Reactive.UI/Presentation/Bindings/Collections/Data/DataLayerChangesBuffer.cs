@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using Uno.Extensions.Collections;
 using Uno.Extensions.Collections.Tracking;
-using Uno.Logging;
+using Uno.Extensions.Reactive.Logging;
 
 namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data;
 

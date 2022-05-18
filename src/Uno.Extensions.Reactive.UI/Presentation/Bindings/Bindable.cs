@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Uno.Extensions.Reactive.Core;
-using Uno.Logging;
+using Uno.Extensions.Reactive.Logging;
 
 namespace Uno.Extensions.Reactive.Bindings;
 
@@ -144,9 +144,9 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged, IFeed<T>
 		catch (Exception error)
 		{
 			this.Log().Error(
+				error,
 				$"Synchronization from View to ViewModel of '{_property}' failed. "
-				+ "(This is a temporary error, it will be retried on next change from the View.)",
-				error);
+				+ "(This is a temporary error, it will be retried on next change from the View.)");
 		}
 	}
 

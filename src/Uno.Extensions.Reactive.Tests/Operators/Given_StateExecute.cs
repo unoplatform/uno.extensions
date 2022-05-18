@@ -123,7 +123,7 @@ public class Given_StateExecute : FeedTests
 
 		state.Execute(async (list, ct) => result.Add(list));
 
-		await state.UpdateValue(_ => Option.None<IImmutableList<int>>(), CT);
+		await state.UpdateData(_ => Option.None<IImmutableList<int>>(), CT);
 
 		result.Single().Should().NotBeNull().And.BeEquivalentTo(ImmutableList<int>.Empty);
 	}
