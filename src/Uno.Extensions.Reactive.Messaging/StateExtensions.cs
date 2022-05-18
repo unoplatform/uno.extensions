@@ -27,6 +27,11 @@ public static class StateExtensions
 				var updatedEntityKey = keySelector(message.Value);
 				await state.UpdateValue(current => current.IsSome(out var entity) && AreKeyEquals(updatedEntityKey, keySelector(entity)) ? message.Value : current, ct);
 				break;
+
+			case EntityChange.Deleted:
+				var removedEntityKey = keySelector(message.Value);
+				await state.UpdateValue(current => current.IsSome(out var entity) && AreKeyEquals(removedEntityKey, keySelector(entity)) ? Option<TEntity>.None() : current, ct);
+				break;
 		}
 
 		static bool AreKeyEquals(TKey left, TKey right)
