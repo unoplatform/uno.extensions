@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Immutable;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -50,6 +51,21 @@ static partial class ListState
 	/// <returns>A ValueTask to track the async update.</returns>
 	public static ValueTask UpdateData<T>(this IListState<T> state, Func<Option<IImmutableList<T>>, IImmutableList<T>> updater, CancellationToken ct)
 		=> state.UpdateMessage(m => m.With().Data(updater(m.Current.Data)), ct);
+
+	/// <summary>
+	/// [DEPRECATED] Use UpdateData instead
+	/// </summary>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	public static ValueTask UpdateValue<T>(this IListState<T> state, Func<Option<IImmutableList<T>>, Option<IImmutableList<T>>> updater, CancellationToken ct)
+		=> state.UpdateMessage(m => m.With().Data(updater(m.Current.Data)), ct);
+
+	/// <summary>
+	/// [DEPRECATED] Use UpdateData instead
+	/// </summary>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	public static ValueTask UpdateValue<T>(this IListState<T> state, Func<Option<IImmutableList<T>>, IImmutableList<T>> updater, CancellationToken ct)
+		=> state.UpdateMessage(m => m.With().Data(updater(m.Current.Data)), ct);
+
 
 	#region Operators
 	/// <summary>

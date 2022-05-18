@@ -43,6 +43,13 @@ partial class State
 		=> state.UpdateMessage(m => m.With().Data(updater(m.Current.Data)), ct);
 
 	/// <summary>
+	/// [DEPRECATED] Use UpdateData instead
+	/// </summary>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	public static ValueTask UpdateValue<T>(this IState<T> state, Func<Option<T>, Option<T>> updater, CancellationToken ct)
+		=> state.UpdateMessage(m => m.With().Data(updater(m.Current.Data)), ct);
+
+	/// <summary>
 	/// Sets the value of a state
 	/// </summary>
 	/// <typeparam name="T">Type of the value of the state.</typeparam>
