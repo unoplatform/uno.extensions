@@ -5,7 +5,7 @@ using CommunityToolkit.Mvvm.Messaging;
 namespace Uno.Extensions.Reactive.Messaging;
 
 /// <summary>
-/// A message that can be send through <see cref="IMessenger"/> to indicate that a changed has been successfully made on an entity.
+/// A message that can be sent through <see cref="IMessenger"/> to indicate that a change has been successfully made on an entity.
 /// </summary>
 /// <typeparam name="T">The type of the updated entity.</typeparam>
 /// <param name="Change">The type of the change.</param>

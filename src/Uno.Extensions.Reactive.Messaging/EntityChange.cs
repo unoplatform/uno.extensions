@@ -4,7 +4,7 @@ using System.Linq;
 namespace Uno.Extensions.Reactive.Messaging;
 
 /// <summary>
-/// Defines the possible of updates on an entity
+/// Defines possible types of updates for an entity
 /// </summary>
 public enum EntityChange
 {

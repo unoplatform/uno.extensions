@@ -16,7 +16,7 @@ public static class MessengerExtensions
 	/// <summary>
 	/// Listen for <see cref="EntityMessage{TEntity}"/> on the given <paramref name="messenger"/> and updates the <paramref name="state"/> accordingly.
 	/// </summary>
-	/// <typeparam name="TEntity">Type of the value of teh state.</typeparam>
+	/// <typeparam name="TEntity">Type of the value of the state.</typeparam>
 	/// <typeparam name="TKey">Type of the identifier that uniquely identifies a <typeparamref name="TEntity"/>.</typeparam>
 	/// <param name="messenger">The messenger to listen for <see cref="EntityMessage{TEntity}"/></param>
 	/// <param name="state">The state to update.</param>
@@ -28,7 +28,7 @@ public static class MessengerExtensions
 	/// <summary>
 	/// Listen for <see cref="EntityMessage{TEntity}"/> on the given <paramref name="messenger"/> and updates the <paramref name="listState"/> accordingly.
 	/// </summary>
-	/// <typeparam name="TEntity">Type of the value of teh state.</typeparam>
+	/// <typeparam name="TEntity">Type of the value of the state.</typeparam>
 	/// <typeparam name="TKey">Type of the identifier that uniquely identifies a <typeparamref name="TEntity"/>.</typeparam>
 	/// <param name="messenger">The messenger to listen for <see cref="EntityMessage{TEntity}"/></param>
 	/// <param name="listState">The list state to update.</param>
@@ -41,7 +41,7 @@ public static class MessengerExtensions
 	/// Listen for <see cref="EntityMessage{TEntity}"/> on the given <paramref name="messenger"/>, matches it with another value and updates the <paramref name="state"/> accordingly.
 	/// </summary>
 	/// <typeparam name="TOther">Type of the other value to validate.</typeparam>
-	/// <typeparam name="TEntity">Type of the value of teh state.</typeparam>
+	/// <typeparam name="TEntity">Type of the value of the state.</typeparam>
 	/// <typeparam name="TKey">Type of the identifier that uniquely identifies a <typeparamref name="TEntity"/>.</typeparam>
 	/// <param name="messenger">The messenger to listen for <see cref="EntityMessage{TEntity}"/></param>
 	/// <param name="state">The state to update.</param>
@@ -73,7 +73,7 @@ public static class MessengerExtensions
 	/// Listen for <see cref="EntityMessage{TEntity}"/> on the given <paramref name="messenger"/>, matches it with another value and updates the <paramref name="listState"/> accordingly.
 	/// </summary>
 	/// <typeparam name="TOther">Type of the other value to validate.</typeparam>
-	/// <typeparam name="TEntity">Type of the value of teh state.</typeparam>
+	/// <typeparam name="TEntity">Type of the value of the state.</typeparam>
 	/// <typeparam name="TKey">Type of the identifier that uniquely identifies a <typeparamref name="TEntity"/>.</typeparam>
 	/// <param name="messenger">The messenger to listen for <see cref="EntityMessage{TEntity}"/></param>
 	/// <param name="listState">The list state to update.</param>
