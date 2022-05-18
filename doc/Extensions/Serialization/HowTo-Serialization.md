@@ -112,7 +112,7 @@ Accessing the serialized and deserialized representation of an object can be imp
     }
     ```
 
-* You can now serialize a `Person` object or deserialize from JSON:
+* You can now serialize a `Person` object or deserialize it from JSON:
 
     ```csharp
     Person person = new Person { Name = "Lydia", Age = 24, Height = 160, Weight = 60 };
