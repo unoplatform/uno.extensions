@@ -6,61 +6,58 @@ This topic walks through using Navigation to display a prompt using a `MessageDi
 
 ## Step-by-steps
 
+### 1. Show an ad-hoc `MessageDialog`
+- Add `Button` to `MainPage.xaml` 
 
-- Add button to MainPage 
+    ```xml
+    <Button Content="Show Simple Message Dialog"
+            Click="{x:Bind ViewModel.ShowSimpleDialog}" />
+    ```
 
-```xml
-<Button Content="Show Simple Message Dialog"
-                    Click="{x:Bind ViewModel.ShowSimpleDialog}" />
-```
+- Add `ShowSimpleDialog` method to `MainViewModel`
 
-- Add method to MainViewModel
-
-```csharp
-	public async Task ShowSimpleDialog()
+    ```csharp
+    public async Task ShowSimpleDialog()
     {
-		_ = _navigator.ShowMessageDialogAsync(this, content: "Hello Uno Extensions!");
+        _ = _navigator.ShowMessageDialogAsync(this, content: "Hello Uno Extensions!");
     }
-```
+    ```
 
-- Show output (screenshot)
+### 2. Accessing the `MessageDialog` response
 
-- Change code in MainViewModel method to await response
-TODO: Remove AsResult once this PR has been merged (https://github.com/unoplatform/uno.extensions/pull/429) - do for all code samples
-```csharp
-	public async Task ShowSimpleDialog()
+- Change code in the `ShowSimpleDialog` method to await response
+    ```csharp
+    public async Task ShowSimpleDialog()
     {
-		var result = await _navigator.ShowMessageDialogAsync<string>(this, content: "Hello Uno Extensions!").AsResult();
+    	var result = await _navigator.ShowMessageDialogAsync<string>(this, content: "Hello Uno Extensions!");
     }
-```
-- Show result (screenshot the debug tooltip when hover over result value in breakpoint)
+    ```
 
-- Change call to specify multiple buttons
-```csharp
-	public async Task ShowSimpleDialog()
+- Modify the `ShowMessageDialogAsync` method call to specify multiple buttons. 
+    ```csharp
+    public async Task ShowSimpleDialog()
     {
-		var result = await _navigator.ShowMessageDialogAsync<string>(this, 
-			content: "Hello Uno Extensions!",
-			commands: new[]
+    	var result = await _navigator.ShowMessageDialogAsync<string>(this, 
+    		content: "Hello Uno Extensions!",
+    		buttons: new[]
             {
-				new DialogAction("Ok"),
-				new DialogAction("Cancel")
-            }).AsResult();
+    			new DialogAction("Ok"),
+    			new DialogAction("Cancel")
+            });
     }
-```
+    ```
 
-- Show (Screenshot) dialog with two buttons
+The `result` variable will be set to the label of the selected button.
 
+### 3. Using predefined `MessageDialog`
 
-Advanced - How to use a predefined messagedialog
+- Create a `MessageDialogViewMap` instance and register it with both `views` and `routes` in `App.xaml.host.cs`
 
-Add MessageDialogViewMap to both views and routes
-
-```csharp
-private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
-	{
+    ```csharp
+    private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
+    {
         var messageDialog = new MessageDialogViewMap(
-
+    
             Content: "Hello Uno Extensions",
             Buttons: new[]
             {
@@ -68,64 +65,69 @@ private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
                 new DialogAction(Label:"No")
             }
         );
-
-
-		views.Register(
-			new ViewMap<ShellControl,ShellViewModel>(),
-			new ViewMap<MainPage, MainViewModel>(),
-			new ViewMap<SecondPage, SecondViewModel>(),
+    
+    
+    	views.Register(
+    		new ViewMap<ShellControl,ShellViewModel>(),
+    		new ViewMap<MainPage, MainViewModel>(),
+    		new ViewMap<SecondPage, SecondViewModel>(),
             messageDialog,
-
+    
             localizedMessageDialog
-			);
-
-		routes
-			.Register(
-				new RouteMap("", View: views.FindByViewModel<ShellViewModel>() ,
-						Nested: new RouteMap[]
-						{
-										new RouteMap("Main", View: views.FindByViewModel<MainViewModel>() ,
-												IsDefault: true
-												),
-										new RouteMap("Second", View: views.FindByViewModel<SecondViewModel>() ,
-												DependsOn:"Main"),
-                                        new RouteMap("MyMessage", View: messageDialog)
-                                    }));
-	}
-```
-
-
-- In MainViewModel specify route of message dialog in showmessagedialogasync
-
-```csharp
-var result = await _navigator.ShowMessageDialogAsync<string>(this, route: "MyMessage");
-```
-
-- For localized message dialog, add 
-
-```csharp
-var localizedMessageDialog = new LocalizableMessageDialogViewMap(
-
-    Content: localizer => localizer!["MyDialog_Content"],
-	Buttons: new[]
-    {
-		new LocalizableDialogAction( LabelProvider:localizer=>localizer!["Dialog_Ok"]),
-        new LocalizableDialogAction( LabelProvider:localizer=>localizer!["Dialog_Cancel"])
+    		);
+    
+    	routes
+    		.Register(
+    			new RouteMap("", View: views.FindByViewModel<ShellViewModel>() ,
+                    Nested: new RouteMap[]
+                    {
+                    	new RouteMap("Main", View: views.FindByViewModel<MainViewModel>()),
+                    	new RouteMap("Second", View: views.FindByViewModel<SecondViewModel>()),
+                        new RouteMap("MyMessage", View: messageDialog)
+                    }));
     }
-);
-```
+    ```
 
-- Add resources for MyDialog_Content, Dialog_Ok and Dialog_Cancel to Resources.resw
+- In `MainViewModel` change the `ShowMessageDialogAsync` method to specify the `route` argument, which should be the route specified in the the `RouteMap`
 
-- Add Localization to host builder
+    ```csharp
+    var result = await _navigator.ShowMessageDialogAsync<string>(this, route: "MyMessage");
+    ```
 
-```csharp
-.UseLocalization()
-```
+### 4. Localize the `MessageDialog`
 
-- In MainViewModel change to the localized message dialgo
+- For a localized `MessageDialog` create a `LocalizableMessageDialogViewMap` instance and register it with both `views` and `routes` (as per previous step). Note that each of the properties in the `LocalizableMessageDialogViewMap` that were a simple `string` in the `MessageDialogViewMap`, are now call-back methods that provide an `IStringLocalizer` instance.
 
-```csharp
-        var result = await _navigator.ShowMessageDialogAsync<string>(this, route: "MyLocalizedMessage");
-```
+    ```csharp
+    var localizedMessageDialog = new LocalizableMessageDialogViewMap(
+        Content: localizer => localizer!["MyDialog_Content"],
+    	Buttons: new[]
+        {
+    		new LocalizableDialogAction( LabelProvider:localizer=>localizer!["Dialog_Ok"]),
+            new LocalizableDialogAction( LabelProvider:localizer=>localizer!["Dialog_Cancel"])
+        }
+    );
+    ```
+
+- Add resources for `MyDialog_Content`, `Dialog_Ok` and `Dialog_Cancel` to `Resources.resw`
+
+- Call `UseLocalization` extension method in the `BuildAppHost` method in `App.xaml.host.cs`
+
+    ```csharp
+    private static IHost BuildAppHost()
+    { 
+    	return UnoHost
+    			.CreateDefaultBuilder()
+    			// ... omitted for brevity
+    			.UseLocalization()
+    			.Build(enableUnoLogging: true);
+    
+    }
+    ```
+
+- In `MainViewModel` change the `ShowMessageDialogAsync` method to use the `MyLocalizedMessage` route (this route should match the name of the route that was added to the `routes` earlier).
+
+    ```csharp
+    var result = await _navigator.ShowMessageDialogAsync<string>(this, route: "MyLocalizedMessage");
+    ```
 
