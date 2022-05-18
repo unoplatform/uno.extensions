@@ -31,35 +31,35 @@
             - name: How to serialize and deserialize JSON data
               href: Extensions/Serialization/HowTo-Serialization.md
         - name: HTTP
-            items:
-              - name: How to register HTTP endpoints
-                href: Extensions/Http/HowTo-Http.md
+          items:
+            - name: How to register HTTP endpoints
+              href: Extensions/Http/HowTo-Http.md
         - name: Configuration
-            items:
-              - name: How to view configuration data from multiple sources
-                href: Extensions/Configuration/HowTo-Configuration.md
-              - name: How to update settings from an embedded resource file
-                href: Extensions/Configuration/HowTo-WritableConfiguration.md
+          items:
+            - name: How to view configuration data from multiple sources
+              href: Extensions/Configuration/HowTo-Configuration.md
+            - name: How to update settings from an embedded resource file
+              href: Extensions/Configuration/HowTo-WritableConfiguration.md
         - name: Navigation
-            items:
-              - name: Overview
-                href: Navigation/NavigationOverview.md
-              - name: How to navigate between pages
-                href: Navigation/HowTo-NavigateBetweenPages.md
-              - name: How to control navigation from code
-                href: Navigation/HowTo-NavigateInCode.md
-              - name: How to control navigation from XAML
-                href: Navigation/HowTo-NavigateInXAML.md
-              - name: How to use navigation to display a message dialog
-                href: Navigation/HowTo-DisplayMessageDialog.md
-              - name: How to use navigation to request a value
-                href: Navigation/HowTo-SelectValue.md
-              - name: How to use navigation to display a modal flyout
-                href: Navigation/HowTo-ShowFlyout.md
-              - name: How to use navigation to display item details
-                href: Navigation/HowTo-DisplayItem.md
+          items:
+            - name: Overview
+              href: Navigation/NavigationOverview.md
+            - name: How to navigate between pages
+              href: Navigation/HowTo-NavigateBetweenPages.md
+            - name: How to control navigation from code
+              href: Navigation/HowTo-NavigateInCode.md
+            - name: How to control navigation from XAML
+              href: Navigation/HowTo-NavigateInXAML.md
+            - name: How to use navigation to display a message dialog
+              href: Navigation/HowTo-DisplayMessageDialog.md
+            - name: How to use navigation to request a value
+              href: Navigation/HowTo-SelectValue.md
+            - name: How to use navigation to display a modal flyout
+              href: Navigation/HowTo-ShowFlyout.md
+            - name: How to use navigation to display item details
+              href: Navigation/HowTo-DisplayItem.md
         - name: Reactive
-            topicHref: Reactive/Reactive.md
-            items:
-              - name: Introduction
-                href: Reactive/Reactive - Dev.md
+          topicHref: Reactive/Reactive.md
+          items:
+            - name: Introduction
+              href: Reactive/Reactive - Dev.md
