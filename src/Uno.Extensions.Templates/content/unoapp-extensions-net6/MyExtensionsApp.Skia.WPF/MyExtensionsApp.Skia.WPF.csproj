@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <DefineConstants>$(DefinedConstants);WINUI</DefineConstants>
@@ -32,7 +32,7 @@
     <PackageReference Include="Uno.Extensions.Reactive.WinUI" Version="255.255.255.255" />
   </ItemGroup>
   <ItemGroup>
-    <UpToDateCheckInput Include="..\MyExtensionsApp.Shared\**\*.xaml" />
+    <UpToDateCheckInput Include="..\MyExtensionsApp.UI\**\*.xaml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />
