@@ -33,7 +33,7 @@ public static class ConfigurationBuilderExtensions
 		return configurationBuilder.AddEnvironmentConfiguration(hostingContext, default);
 	}
 
-	public static IConfigurationBuilder AddEmbeddedConfiguration<TApplicationRoot>(this IConfigurationBuilder configurationBuilder, string configurationFileName)
+	public static IConfigurationBuilder AddEmbeddedConfigurationFile<TApplicationRoot>(this IConfigurationBuilder configurationBuilder, string configurationFileName)
 		where TApplicationRoot : class
 	{
 		var generalAppConfiguration =
@@ -48,19 +48,25 @@ public static class ConfigurationBuilderExtensions
 		return configurationBuilder;
 	}
 
+	public static IConfigurationBuilder AddEmbeddedConfiguration<TApplicationRoot>(this IConfigurationBuilder configurationBuilder, HostBuilderContext hostingContext, string? configurationName = null)
+		where TApplicationRoot : class
+	{
+		var configSection = configurationName is { Length: > 0 } ? string.Format(AppConfiguration.FileNameTemplate, configurationName) : AppConfiguration.FileName;
+		return configurationBuilder.AddEmbeddedConfigurationFile<TApplicationRoot>(configSection.ToLower());
+	}
+
 	public static IConfigurationBuilder AddEnvironmentEmbeddedConfiguration<TApplicationRoot>(this IConfigurationBuilder configurationBuilder, HostBuilderContext hostingContext, string? configurationName = null)
 		where TApplicationRoot : class
 	{
 		var env = hostingContext.HostingEnvironment;
 		var configSection = configurationName is { Length: > 0 } ? $"{configurationName}.{env.EnvironmentName}" : env.EnvironmentName;
-		return configurationBuilder.AddEmbeddedConfiguration<TApplicationRoot>(string.Format(AppConfiguration.FileNameTemplate, configSection).ToLower());
+		return configurationBuilder.AddEmbeddedConfigurationFile<TApplicationRoot>(string.Format(AppConfiguration.FileNameTemplate, configSection).ToLower());
 	}
 
 	public static IConfigurationBuilder AddEmbeddedAppConfiguration<TApplicationRoot>(this IConfigurationBuilder configurationBuilder)
 		where TApplicationRoot : class
 	{
-		var generalAppConfigurationFileName = AppConfiguration.FileName;
-		return configurationBuilder.AddEmbeddedConfiguration<TApplicationRoot>(generalAppConfigurationFileName);
+		return configurationBuilder.AddEmbeddedConfigurationFile<TApplicationRoot>(AppConfiguration.FileName);
 	}
 
 	public static IConfigurationBuilder AddEnvironmentEmbeddedAppConfiguration<TApplicationRoot>(
