@@ -44,7 +44,7 @@ This topic walks through using Navigation to display a modal flyout
 
 ### 2. Displaying flyout from XAML
 
-- Add a another `Button` with content `Show flyout from XAML` to `MainPage.xaml`. Set the `Navigation.Request` property to `!Sample` which indicates the `Sample` route should be opened as a Flyout.  
+- Add another `Button` with the content `Show flyout from XAML` to `MainPage.xaml`. Set the `Navigation.Request` property to `!Sample` which indicates the `Sample` route should be opened as a Flyout.  
 
     ```csharp
     <Button Content="Show flyout from XAML"
