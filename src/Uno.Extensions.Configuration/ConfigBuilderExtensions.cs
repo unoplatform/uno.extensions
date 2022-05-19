@@ -35,7 +35,7 @@ public static class ConfigBuilderExtensions
 				{
 					if (config is { Length: > 0 })
 					{
-						b.AddEmbeddedConfiguration<TApplicationRoot>(config);
+						b.AddEmbeddedConfiguration<TApplicationRoot>(ctx, config);
 						if (includeEnvironmentSettings)
 						{
 							b.AddEnvironmentConfiguration(ctx, config);
