@@ -15,7 +15,7 @@ public class MainViewModel
 	{ 
 	
 		_navigator = navigator;
-		Title = appInfo?.Value?.Title;
+		Title = $"Main - {appInfo?.Value?.Title}";
 	}
 
 	public async Task GoToSecondPage()

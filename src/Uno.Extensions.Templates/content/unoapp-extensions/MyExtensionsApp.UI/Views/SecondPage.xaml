@@ -6,18 +6,17 @@
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  xmlns:utu="using:Uno.Toolkit.UI"
-	  Background="{ThemeResource MaterialBackgroundBrush}">
+	  Background="{ThemeResource BackgroundBrush}">
 
 	<Grid>
-		<utu:NavigationBar Content="Second Page" 
-				Style="{StaticResource MaterialNavigationBarStyle}">
-				<utu:NavigationBar.MainCommand>
-					<AppBarButton Foreground="{StaticResource MaterialOnPrimaryMediumBrush}">
-							<AppBarButton.Icon>
-								<BitmapIcon UriSource="ms-appx:///Assets/Icons/back.png" />
-							</AppBarButton.Icon>
-						</AppBarButton>
-				</utu:NavigationBar.MainCommand>
-			</utu:NavigationBar>
+		<utu:NavigationBar Content="Second Page">
+			<utu:NavigationBar.MainCommand>
+				<AppBarButton>
+					<AppBarButton.Icon>
+						<BitmapIcon UriSource="ms-appx:///Assets/Icons/back.png" />
+					</AppBarButton.Icon>
+				</AppBarButton>
+			</utu:NavigationBar.MainCommand>
+		</utu:NavigationBar>
 	</Grid>
 </Page>
