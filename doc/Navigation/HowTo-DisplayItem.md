@@ -8,7 +8,7 @@ This topic walks through how to use Navigation to display the details of an item
 
 Often it is necessary to pass a data item from one page to another. This scenario will start with passing a newly created object along with the navigation request, and how the specified object can be accessed by the destination ViewModel. 
 
-### 1. Define type of data to pass
+### 1. Define the type of data to pass
 - Define a `Widget` record (or class) for data to be passed between view models
 
     ```csharp
