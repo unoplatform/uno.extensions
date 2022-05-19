@@ -12,30 +12,20 @@
 				<!-- Load WinUI resources -->
 				<XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
 
-				<!-- Load Material Color Palette -->
 				<MaterialColors xmlns="using:Uno.Material"
 								OverrideSource="ms-appx:///Styles/ColorPaletteOverride.xaml" />
 				<MaterialFonts xmlns="using:Uno.Material"
 							   OverrideSource="ms-appx:///Styles/MaterialFontsOverride.xaml" />
-				
-				<!-- Load the Material control resources -->
-				<MaterialResources xmlns="using:Uno.Material" WithImplicitStyles="True" />
+				<MaterialResources xmlns="using:Uno.Material"
+								   WithImplicitStyles="True" />
+
+				<!-- Load Uno.UI.Toolkit resources -->
 				<ToolkitResources xmlns="using:Uno.Toolkit.UI" />
 
-				<!-- Load Material Toolkit resources -->
-				<MaterialToolkitColors xmlns="using:Uno.Toolkit.UI.Material" />
-				<MaterialToolkitResources xmlns="using:Uno.Toolkit.UI.Material" />
+				<MaterialToolkitResources xmlns="using:Uno.Toolkit.UI.Material"
+										  WithImplicitStyles="True" />
 
-				<!-- Application's custom styles -->
-				<ResourceDictionary Source="ms-appx:///Styles/NavigationBar.xaml" />
 			</ResourceDictionary.MergedDictionaries>
-			
-			<x:Double x:Key="LandscapeMaxPageWidth">500</x:Double>
-
-			<!-- To override the default FlyoutLightDismissOverlayBackground resource -->
-			<SolidColorBrush x:Key="FlyoutLightDismissOverlayBackground"
-							 Color="{StaticResource MaterialOverlayColor}" />
-			<x:Double x:Key="WideMinWindowWidthh">800</x:Double>
 		</ResourceDictionary>
 	</Application.Resources>
 

@@ -16,16 +16,15 @@ public sealed partial class App : Application
 				// Switch to Development environment when running in DEBUG
 				.UseEnvironment(Environments.Development)
 #endif
-
-
 				// Add platform specific log providers
-				.UseLogging(configure: logBuilder =>
+				.UseLogging(configure: (context, logBuilder) =>
 				{
 					// Configure log levels for different categories of logging
 					logBuilder
-							.SetMinimumLevel(LogLevel.Information)
-							.XamlLogLevel(LogLevel.Information)
-							.XamlLayoutLogLevel(LogLevel.Information);
+							.SetMinimumLevel(
+								context.HostingEnvironment.IsDevelopment()?
+									LogLevel.Debug:
+									LogLevel.Information);
 				})
 
 				.UseConfiguration(configure: configBuilder=>
@@ -53,7 +52,6 @@ public sealed partial class App : Application
 
 				// Add navigation support for toolkit controls such as TabBar and NavigationView
 				.UseToolkitNavigation()
-
 
 				.Build(enableUnoLogging: true);
 
