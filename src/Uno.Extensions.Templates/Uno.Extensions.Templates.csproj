@@ -56,13 +56,13 @@
 
 	<Target Name="ReplaceVersions" BeforeTargets="BeforeBuild">
 	 <!-- Condition="'$(PackageVersion)'!='255.255.255.255'" -->
-		<ItemGroup>
+		<!-- <ItemGroup>
 			<MySourceFiles Include="..\..\samples\Commerce\Commerce.Shared\**\*" />
-		</ItemGroup>
+		</ItemGroup> -->
 
-		<Copy SourceFiles="@(MySourceFiles)" DestinationFiles="@(MySourceFiles->'content\unoapp-samples-commerce\MyExtensionsApp.Shared\%(RecursiveDir)%(Filename)%(Extension)')" />
+		<!-- <Copy SourceFiles="@(MySourceFiles)" DestinationFiles="@(MySourceFiles->'content\unoapp-samples-commerce\MyExtensionsApp.Shared\%(RecursiveDir)%(Filename)%(Extension)')" />
 
-		<RenameFiles SourcePath="content\unoapp-samples-commerce\MyExtensionsApp.Shared" SourceName="Commerce" TargetName="MyExtensionsApp" />
+		<RenameFiles SourcePath="content\unoapp-samples-commerce\MyExtensionsApp.Shared" SourceName="Commerce" TargetName="MyExtensionsApp" /> -->
 		
 		<PropertyGroup>
 			<MSBuildDeveloperNamespace>
@@ -80,7 +80,7 @@
 		<!-- SDK Style projects -->
 		<XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)" Query="//PackageReference[@Version='255.255.255.255']/@Version" Value="$(PackageVersion)" Namespaces="" />
 
-		<XmlPeek XmlInputPath="..\..\samples\Commerce\WinUI\Commerce.Wasm\Commerce.Wasm.csproj" Query="//PackageReference[@Include='Uno.Toolkit.WinUI']/@Version">
+		<!-- <XmlPeek XmlInputPath="..\..\samples\Commerce\WinUI\Commerce.Wasm\Commerce.Wasm.csproj" Query="//PackageReference[@Include='Uno.Toolkit.WinUI']/@Version">
 			<Output TaskParameter="Result" ItemName="Uno_Toolkit_WinUI_Version" />
 		</XmlPeek>
 		<XmlPeek XmlInputPath="..\..\samples\Commerce\WinUI\Commerce.Wasm\Commerce.Wasm.csproj" Query="//PackageReference[@Include='Uno.Toolkit.WinUI.Material']/@Version">
@@ -88,44 +88,44 @@
 		</XmlPeek>
 		<XmlPeek XmlInputPath="..\..\samples\Commerce\WinUI\Commerce.Wasm\Commerce.Wasm.csproj" Query="//PackageReference[@Include='Uno.Material.WinUI']/@Version">
 			<Output TaskParameter="Result" ItemName="Uno_Material_WinUI_Version" />
-		</XmlPeek>
+		</XmlPeek> -->
 
 		<!-- Uno_Toolkit_WinUI_Version -->
-		<XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)"
+		<!-- <XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)"
 						 Query="//x:PackageReference[@Include='Uno.Toolkit.WinUI']/@Version"
 						 Value="@(Uno_Toolkit_WinUI_Version)"
 						 Namespaces="$(MSBuildDeveloperNamespace)" />
 		<XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)"
 						 Query="//PackageReference[@Include='Uno.Toolkit.WinUI']/@Version"
 						 Value="@(Uno_Toolkit_WinUI_Version)"
-						 Namespaces="" />
+						 Namespaces="" /> -->
 
 		<!-- Uno_Toolkit_WinUI_Material_Version -->
-		<XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)"
+		<!-- <XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)"
 						 Query="//x:PackageReference[@Include='Uno.Toolkit.WinUI.Material']/@Version"
 						 Value="@(Uno_Toolkit_WinUI_Material_Version)"
 						 Namespaces="$(MSBuildDeveloperNamespace)" />
 		<XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)"
 						 Query="//PackageReference[@Include='Uno.Toolkit.WinUI.Material']/@Version"
 						 Value="@(Uno_Toolkit_WinUI_Material_Version)"
-						 Namespaces="" />
+						 Namespaces="" /> -->
 
 		<!-- Uno_Material_WinUI_Version -->
-		<XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)"
+		<!-- <XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)"
 						 Query="//x:PackageReference[@Include='Uno.Material.WinUI']/@Version"
 						 Value="@(Uno_Material_WinUI_Version)"
 						 Namespaces="$(MSBuildDeveloperNamespace)" />
 		<XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)"
 						 Query="//PackageReference[@Include='Uno.Material.WinUI']/@Version"
 						 Value="@(Uno_Material_WinUI_Version)"
-						 Namespaces="" />
+						 Namespaces="" /> -->
 
-		<ItemGroup>
+		<!-- <ItemGroup>
 			<Content Include="content\unoapp-samples-commerce\**" KeepDuplicates="False">
 				<PackagePath>content\unoapp-samples-commerce</PackagePath>
 				<Pack>true</Pack>
 			</Content>
-		</ItemGroup>
+		</ItemGroup> -->
 	</Target>
 
 	<UsingTask TaskName="RenameFiles" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
