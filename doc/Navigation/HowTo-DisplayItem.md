@@ -118,7 +118,7 @@ If you have a `ListView` that has items of different types, the navigation route
 
 - Clone the `SecondPage.xaml` and `SecondPage.xaml.cs` files, and rename the files to `ThirdPage.xaml` and `ThirdPage.xaml.cs` respectively. Make sure you also change the class name in both files from `SecondPage` to `ThirdPage`
 - Clone `SecondViewModel.cs` and rename to `ThirdViewModel.cs`. Also rename the class from `SecondViewModel` to `ThirdViewModel`
-- Change constructor of both the `SecondViewModel` and `ThirdViewModel` to accept widgets of different types
+- Change the constructor of both the `SecondViewModel` and `ThirdViewModel` to accept widgets of different types
     ```csharp
     public class SecondViewModel
     {
