@@ -93,7 +93,7 @@ Often it is necessary to pass a data item from one page to another. This scenari
 
 ### 6. Navigating based on the type of data (again!)
  
-If you have a `ListView` that has items of different type, the navigation route can be based on the type of selected item. 
+If you have a `ListView` that has items of different types, the navigation route can be based on the type of selected item. 
 
 - Change the `Navigation.Request` property value to `""`. Navigation will use the type of the selected item to determine what route to use. 
 
