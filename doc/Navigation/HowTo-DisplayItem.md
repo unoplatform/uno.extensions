@@ -74,7 +74,7 @@ Often it is necessary to pass a data item from one page to another. This scenari
     };
     ```
 
-- Update `MainPage.xaml` to add a `ListView` which has the `ItemsSource` property data bound to the `Widgets` property. The `Navigation.Request` property defines the route that will navigated to when an item in the `ListView` is selected. 
+- Update `MainPage.xaml` to add a `ListView` which has the `ItemsSource` property data bound to the `Widgets` property. The `Navigation.Request` property defines the route that will be navigated to when an item in the `ListView` is selected. 
 
     ```xml
     <ListView ItemsSource="{Binding Widgets}"
