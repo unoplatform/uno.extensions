@@ -44,6 +44,10 @@
           items:
             - name: How to update settings from an embedded resource file
               href: Extensions/Configuration/HowTo-WritableConfiguration.md
+        - name: Logging
+          items:
+            - name: How to enable internal logging based on your hosting environment
+              href: Extensions/Logging/HowTo-InternalLogging.md
         - name: Navigation
           items:
             - name: How to navigate between pages
