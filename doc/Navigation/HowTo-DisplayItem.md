@@ -91,7 +91,7 @@ Often it is necessary to pass a data item from one page to another. This scenari
     </ListView>
     ```
 
-### 6. Navigating based on type of data (again!)
+### 6. Navigating based on the type of data (again!)
  
 If you have a `ListView` that has items of different type, the navigation route can be based on the type of selected item. 
 
