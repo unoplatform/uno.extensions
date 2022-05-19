@@ -15,20 +15,11 @@
 
     public App()
     {
-        bool isDevelopment = false;
-
         Host = UnoHost
             .CreateDefaultBuilder()
             .UseLogging()
-            .ConfigureServices((context, services) => {
-                isDevelopment = context.HostingEnvironment.IsDevelopment();
-            })
-            .Build();
-
-        if (isDevelopment)
-        {
-            Host.EnableUnoLogging();
-        }
+            .Build()
+            .EnableUnoLogging();
     }
     ```
 
@@ -45,36 +36,23 @@
 
 * To increase verbosity of the events recorded when using the development hosting environment, you can tweak the minimum levels as well as those for XAML layout 
 
-* Add a call for `ConfigureLogging` to the `IHostBuilder` chain from above, and use the same technique to conditionally enable recording of debug events depending on the hosting environment:
+* Add a call for `UseLogging` to the `IHostBuilder` chain from above, and conditionally enable recording of debug events depending on the hosting environment:
 
     ```csharp
-    private IHost Host { get; }
-
     public App()
     {
-        bool isDevelopment = false;
-
         Host = UnoHost
             .CreateDefaultBuilder()
-            .UseLogging()
-            .ConfigureServices((context, services) => {
-                isDevelopment = context.HostingEnvironment.IsDevelopment();
-            })
-            .ConfigureLogging(logBuilder =>
-            {
-                if (isDevelopment)
-                {
-                    logBuilder
-                        .SetMinimumLevel(LogLevel.Debug)
-                        .XamlLogLevel(LogLevel.Debug)
-                        .XamlLayoutLogLevel(LogLevel.Debug);
-                }
-            })
-            .Build();
-
-        if (isDevelopment)
-        {
-            Host.EnableUnoLogging();
-        }
+#if DEBUG
+            .UseEnvironment(Environments.Development)
+#endif
+            .UseLogging(configure:
+                (context, services) =>
+                    services.SetMinimumLevel(
+                    context.HostingEnvironment.IsDevelopment() ?
+                        LogLevel.Trace :
+                        LogLevel.Error)
+                    )
+            .Build(enableUnoLogging: true);
     }
     ```
