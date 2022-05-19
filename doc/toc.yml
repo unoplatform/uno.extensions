@@ -38,7 +38,7 @@
           items:
             - name: How to enable and use logging
               href: Extensions/Logging/HowTo-Logging.md
-            - name: How to enable internal logging based on your hosting rnvironment
+            - name: How to enable internal logging based on your hosting environment
               href: Extensions/Logging/HowTo-InternalLogging.md
         - name: Localization
           items:
