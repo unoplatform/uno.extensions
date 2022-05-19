@@ -9,7 +9,7 @@
 
 ### 1. Enable Uno internal logging
 
-* To log Uno-internal messages, invoke `EnableUnoLogging` on the `IHost` instance:
+* To log Uno-internal messages, pass `true` for the `Build` method's `enableUnoLogging` argument:
 
     ```csharp
     private IHost Host { get; }
@@ -19,8 +19,7 @@
         Host = UnoHost
             .CreateDefaultBuilder()
             .UseLogging()
-            .Build()
-            .EnableUnoLogging();
+            .Build(enableUnoLogging: true);
     }
     ```
 
