@@ -6,45 +6,45 @@ This topic walks through using Navigation to request a value from the user. For 
 
 ## Step-by-steps
 
+This scenario will use Navigation to navigate to a page in order to select an item, which will be returned to the calling code. 
 
-- Define a widget class for data to be passed between viewmodels
+- Define a `Widget` class for data to be passed during navigation
 
-```csharp
-public record Widget(string Name, double Weight){}
-```
+    ```csharp
+    public record Widget(string Name, double Weight){}
+    ```
 
+- Add `Widgets` property to `SecondViewModel` to define the list of items to pick from.
 
-- Add Widgets property to SecondViewModel
+    ```csharp
+    public Widget[] Widgets { get; } = new[]
+    {
+        new Widget("NormalSpinner", 5.0),
+        new Widget("HeavySpinner",50.0)
+    };
+    ```
+- Add a `ListView` to `SecondPage.xaml` to display the items returned by the `Widgets` property. The `Navigation.Request` property specifies a route of `-` which will navigate back to the previous page.
+    ```xml
+    <ListView ItemsSource="{Binding Widgets}"
+                uen:Navigation.Request="-"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+        <ListView.ItemTemplate>
+            <DataTemplate>
+                <StackPanel Orientation="Horizontal"
+                            Padding="10">
+                    <TextBlock Text="{Binding Name}" />
+                    <TextBlock Text="{Binding Age}" />
+                </StackPanel>
+            </DataTemplate>
+        </ListView.ItemTemplate>
+    </ListView>
+    ```
 
-```csharp
-public Widget[] Widgets { get; } = new[]
-{
-    new Widget("NormalSpinner", 5.0),
-    new Widget("HeavySpinner",50.0)
-};
-```
+- Update `MainViewModel` to use the `NavigateViewModelForResultAsync` method. The `AsResult` extension method is used to access the result value (rather than simply waiting for navigation to complete).
+    
+    ```csharp
+    var widget= await _navigator.NavigateViewModelForResultAsync<SecondViewModel, Widget>(this).AsResult();
+    ```
 
-```xml
-<ListView ItemsSource="{Binding Widgets}"
-            uen:Navigation.Request="-"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center">
-    <ListView.ItemTemplate>
-        <DataTemplate>
-            <StackPanel Orientation="Horizontal"
-                        Padding="10">
-                <TextBlock Text="{Binding Name}" />
-                <TextBlock Text="{Binding Age}" />
-            </StackPanel>
-        </DataTemplate>
-    </ListView.ItemTemplate>
-</ListView>
-```
-
-- Change navigate method to request result
-
-```csharp
-var widget= await _navigator.NavigateViewModelForResultAsync<SecondViewModel, Widget>(this).AsResult();
-```
-
-- Can now select a value from second page that will automatically get returned to mainviewmodel
+- The selected a value from the `ListView` on `SecondPage` will get returned to the `widget` variable in `MainViewModel`.
