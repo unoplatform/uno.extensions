@@ -1,6 +1,22 @@
-- name: Overview
-  topicHref: 00-Introduction.md
+- name: Overview (Get Started)
+  href: Extensions/GettingStarted/HowTo-UsingUnoExtensions.md
   items:
+    - name: Hosting
+      href: Extensions/Hosting/HowTo-HostingSetup.md
+    - name: Dependency Injection
+      href: Extensions/DependencyInjection/HowTo-DependencyInjectionSetup.md
+    - name: Configuration
+      href: Extensions/Configuration/HowTo-Configuration.md
+    - name: Logging
+      href: Extensions/Logging/HowTo-Logging.md
+    - name: Localization
+      href: Extensions/Localization/HowTo-Localization.md
+    - name: Serialization
+      href: Extensions/Serialization/HowTo-Serialization.md
+    - name: HTTP
+      href: Extensions/Http/HowTo-Http.md
+    - name: Navigation
+      href: Navigation/NavigationOverview.md
     - name: Reactive
       topicHref: Reactive.01-concept.md
       items:
@@ -16,50 +32,20 @@
           href: Reactive.01-in-apps.md
         - name: Testing
           href: Reactive.07-testing.md
-- name: How-tos and Samples
+- name: Learn
   items:
-    - name: Overview
-      href: tutorials-intro.md
-    - name: Get Started
-      href: Extensions/GettingStarted/HowTo-UsingUnoExtensions.md
     - name: Tutorials
       items:
-        - name: Hosting
-          items:
-            - name: How to set up hosting
-              href: Extensions/Hosting/HowTo-HostingSetup.md
         - name: Dependency Injection
           items:
-            - name: How to use services with dependency injection
-              href: Extensions/DependencyInjection/HowTo-DependencyInjectionSetup.md
             - name: How to access the DI container with CommunityToolkit API
               href: Extensions/DependencyInjection/HowTo-CommunityToolkit.md
-        - name: Logging
-          items:
-            - name: How to enable and use logging
-              href: Extensions/Logging/HowTo-Logging.md
-        - name: Localization
-          items:
-            - name: How to configure and use localization
-              href: Extensions/Localization/HowTo-Localization.md
-        - name: Serialization
-          items:
-            - name: How to serialize and deserialize JSON data
-              href: Extensions/Serialization/HowTo-Serialization.md
-        - name: HTTP
-          items:
-            - name: How to register HTTP endpoints
-              href: Extensions/Http/HowTo-Http.md
         - name: Configuration
           items:
-            - name: How to view configuration data from multiple sources
-              href: Extensions/Configuration/HowTo-Configuration.md
             - name: How to update settings from an embedded resource file
               href: Extensions/Configuration/HowTo-WritableConfiguration.md
         - name: Navigation
           items:
-            - name: Overview
-              href: Navigation/NavigationOverview.md
             - name: How to navigate between pages
               href: Navigation/HowTo-NavigateBetweenPages.md
             - name: How to control navigation from code
