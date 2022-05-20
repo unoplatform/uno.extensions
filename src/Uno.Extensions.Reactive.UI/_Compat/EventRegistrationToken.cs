@@ -10,7 +10,7 @@ namespace Uno.Extensions.Reactive.UI._Compat;
 // The EventRegsitrationToken is use only in WinRT for native events.
 // On all other platforms, in order to share teh code, we have our own implementation where the EventRegistrationToken is nothing.
 // Note: Even if on some platforms the EventRegistrationToken and the EventRegistrationTokenTable appears as present,
-//		 and compilation of the Reactive.UI package succeed, the resolution of the type at runtime might fail (TypeLoadException).
+//		 and compilation of the Reactive.UI package succeeds, the resolution of the type at runtime might fail (TypeLoadException).
 //		 So to avoid any crash at runtime, we prefer to always use our how version (except on UWP which needs it)!
 
 internal record struct EventRegistrationToken;
