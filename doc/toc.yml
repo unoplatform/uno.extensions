@@ -18,20 +18,20 @@
     - name: Navigation
       href: Navigation/NavigationOverview.md
     - name: Reactive
-      topicHref: Reactive.01-concept.md
+      topicHref: Reactive/concept.md
       items:
         - name: General guidelines
-          href: Reactive.02-general.md
+          href: Reactive/general.md
         - name: Feed
-          href: Reactive.03-feed.md
+          href: Reactive/feed.md
         - name: ListFeed
-          href: Reactive.05-listfeed.md
+          href: Reactive/listfeed.md
         - name: State
-          href: Reactive.05-state.md
+          href: Reactive/state.md
         - name: Usage in applications
-          href: Reactive.01-in-apps.md
+          href: Reactive/in-apps.md
         - name: Testing
-          href: Reactive.07-testing.md
+          href: Reactive/testing.md
 - name: Learn
   items:
     - name: Tutorials
