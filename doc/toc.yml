@@ -12,22 +12,20 @@
     - name: Navigation
       href: Overview/Navigation/NavigationOverview.md
     - name: Reactive
-      topicHref: Overview/Reactive/Reactive.md
+      topicHref: Overview/Reactive/concept.md
       items:
-        - name: Reactive Concepts
-          href: Overview/Reactive/Reactive.01-concept.md
         - name: General guidelines
-          href: Overview/Reactive/Reactive.02-general.md
+          href: Overview/Reactive/general.md
         - name: Feed
-          href: Overview/Reactive/Reactive.03-feed.md
+          href: Overview/Reactive/feed.md
         - name: ListFeed
-          href: Overview/Reactive/Reactive.05-listfeed.md
+          href: Overview/Reactive/listfeed.md
         - name: State
-          href: Overview/Reactive/Reactive.05-state.md
+          href: Overview/Reactive/state.md
         - name: Usage in applications
-          href: Overview/Reactive/Reactive.01-in-apps.md
+          href: Overview/Reactive/in-apps.md
         - name: Testing
-          href: Overview/Reactive/Reactive.07-testing.md
+          href: Overview/Reactive/testing.md
     - name: Localization
       href: Overview/Localization/LocalizationOverview.md
     - name: Serialization
