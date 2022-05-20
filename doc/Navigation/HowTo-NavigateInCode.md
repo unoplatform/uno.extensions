@@ -2,7 +2,8 @@
 
 This topic walks through controlling Navigation from code, either in the code-behind file of a Page, or in the corresponding view model. One of the Navigation objectives was a single navigation construct that applies where ever you choose to write your navigation code.  
 
-> [!Tip] This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions` template to create the solution. Instructions for creating an application from the template can be found [here](../Extensions/GettingStarted/UsingUnoExtensions.md)
+> [!TIP]
+> This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions` template to create the solution. Instructions for creating an application from the template can be found [here](../Extensions/GettingStarted/UsingUnoExtensions.md)
 
 ## Step-by-steps
 
@@ -126,7 +127,8 @@ The `NavigateViewAsync` method uses the type of the view, i.e. `SamplePage`, to 
         Click="{x:Bind ViewModel.GoBack}" />
     ```
 
-> [!Tip] The logic to navigate from `MainPage` to `SamplePage` can also be refactored into the `MainViewModel`. Irrespective of whether the logic is in the code-behind or in the view model, it would use the same `NavigateViewModelAsync<SampleViewModel>` method call.
+> [!TIP]
+> The logic to navigate from `MainPage` to `SamplePage` can also be refactored into the `MainViewModel`. Irrespective of whether the logic is in the code-behind or in the view model, it would use the same `NavigateViewModelAsync<SampleViewModel>` method call.
 
 
 There are many other extension methods on the `INavigator` interface that can be used from either the code-behind or view model. Here are a few of the key navigation methods:  

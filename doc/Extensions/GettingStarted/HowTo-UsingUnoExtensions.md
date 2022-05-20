@@ -57,7 +57,8 @@ The generated solution will contain:
 
     The application will be compiled and the test cases will run.
 
-> [!Tip] If the 'Run Tests' menu item doesn't exist, you need to Rebuild the solution to get Visual Studio to detect the available tests.
+> [!TIP]
+> If the 'Run Tests' menu item doesn't exist, you need to Rebuild the solution to get Visual Studio to detect the available tests.
 
 ### 5. Running the UI tests
 
