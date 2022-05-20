@@ -198,7 +198,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections
 		public ICollectionView GetForCurrentThread()
 			=> _holder.Value.View;
 
-#region ICollectionView
+		#region ICollectionView
 		/// <inheritdoc />
 		public IEnumerator<object> GetEnumerator()
 			=> GetForCurrentThread().GetEnumerator();
@@ -331,29 +331,34 @@ namespace Uno.Extensions.Reactive.Bindings.Collections
 			add => _holder.Value.GetFacet<SelectionFacet>().AddCurrentChangingHandler(value!);
 			remove => _holder.Value.GetFacet<SelectionFacet>().RemoveCurrentChangingHandler(value!);
 		}
-#endregion
+		#endregion
 
 		internal EventRegistrationToken AddVectorChangedHandler(VectorChangedEventHandler<object?>? handler)
 			=> _holder.Value.GetFacet<CollectionChangedFacet>().AddVectorChangedHandler(handler!);
 		internal void RemoveVectorChangedHandler(VectorChangedEventHandler<object?>? handler)
 			=> _holder.Value.GetFacet<CollectionChangedFacet>().RemoveVectorChangedHandler(handler!);
+#if USE_EVENT_TOKEN
 		internal void RemoveVectorChangedHandler(EventRegistrationToken token)
 			=> _holder.Value.GetFacet<CollectionChangedFacet>().RemoveVectorChangedHandler(token);
+#endif
 
 		internal EventRegistrationToken AddCurrentChangedHandler(CurrentChangedEventHandler? handler)
 			=> _holder.Value.GetFacet<SelectionFacet>().AddCurrentChangedHandler(handler!);
 		internal void RemoveCurrentChangedHandler(CurrentChangedEventHandler? handler)
 			=> _holder.Value.GetFacet<SelectionFacet>().RemoveCurrentChangedHandler(handler!);
+#if USE_EVENT_TOKEN
 		internal void RemoveCurrentChangedHandler(EventRegistrationToken token)
 			=> _holder.Value.GetFacet<SelectionFacet>().RemoveCurrentChangedHandler(token);
+#endif
 
 		internal EventRegistrationToken AddCurrentChangingHandler(CurrentChangingEventHandler? handler)
 			=> _holder.Value.GetFacet<SelectionFacet>().AddCurrentChangingHandler(handler!);
 		internal void RemoveCurrentChangingHandler(CurrentChangingEventHandler? handler)
 			=> _holder.Value.GetFacet<SelectionFacet>().RemoveCurrentChangingHandler(handler!);
+#if USE_EVENT_TOKEN
 		internal void RemoveCurrentChangingHandler(EventRegistrationToken token)
 			=> _holder.Value.GetFacet<SelectionFacet>().RemoveCurrentChangingHandler(token);
-
+#endif
 
 		/// <summary>
 		/// Gets some extended properties for this collection

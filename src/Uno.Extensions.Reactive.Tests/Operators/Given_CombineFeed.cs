@@ -1,17 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Uno.Extensions;
-using Uno.Extensions.Reactive;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Testing;
-using Uno.Extensions.Reactive.Tests.Sources;
 
-namespace Uno.Reactive.Tests.Operators
+namespace Uno.Extensions.Reactive.Tests.Operators
 {
 	[TestClass]
 	public class Given_CombineFeed : FeedTests

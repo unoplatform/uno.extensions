@@ -22,8 +22,8 @@ global using CurrentChangingEventArgs = Windows.UI.Xaml.Data.CurrentChangingEven
 global using CurrentChangedEventHandler = System.EventHandler<object?>;
 #endif
 
-#if WINUI && NET5_0_OR_GREATER
-global using WinRT;
-#else
+#if USE_EVENT_TOKEN
 global using System.Runtime.InteropServices.WindowsRuntime;
+#else
+global using Uno.Extensions.Reactive.UI._Compat;
 #endif

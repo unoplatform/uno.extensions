@@ -13,7 +13,11 @@
 		<!-- Ensures the .xr.xml files are generated in a proper layout folder -->
 		<GenerateLibraryLayout>true</GenerateLibraryLayout>
 	</PropertyGroup>
-  
+
+	<PropertyGroup Condition="'$(IsUWP)'=='true'">
+		<DefineConstants>$(DefineConstants);USE_EVENT_TOKEN</DefineConstants>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
 	</ItemGroup>

@@ -36,8 +36,10 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 		public EventRegistrationToken AddCurrentChangedHandler(CurrentChangedEventHandler value)
 			=> _currentChanged.AddEventHandler(value);
 
+#if USE_EVENT_TOKEN
 		public void RemoveCurrentChangedHandler(EventRegistrationToken value)
 			=> _currentChanged.RemoveEventHandler(value);
+#endif
 
 		public void RemoveCurrentChangedHandler(CurrentChangedEventHandler value)
 			=> _currentChanged.RemoveEventHandler(value);
@@ -45,8 +47,10 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 		public EventRegistrationToken AddCurrentChangingHandler(CurrentChangingEventHandler value)
 			=> _currentChanging.AddEventHandler(value);
 
+#if USE_EVENT_TOKEN
 		public void RemoveCurrentChangingHandler(EventRegistrationToken value)
 			=> _currentChanging.RemoveEventHandler(value);
+#endif
 
 		public void RemoveCurrentChangingHandler(CurrentChangingEventHandler value)
 			=> _currentChanging.RemoveEventHandler(value);

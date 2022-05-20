@@ -76,7 +76,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views
 		/// <inheritdoc />
 		public event CurrentChangingEventHandler CurrentChanging
 		{
-#if WINDOWS_UWP
+#if USE_EVENT_TOKEN
 			add => _selection?.AddCurrentChangingHandler(value) ?? default(EventRegistrationToken);
 #else
 			add => _selection?.AddCurrentChangingHandler(value);
@@ -87,7 +87,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views
 		/// <inheritdoc />
 		public event CurrentChangedEventHandler CurrentChanged
 		{
-#if WINDOWS_UWP
+#if USE_EVENT_TOKEN
 			add => _selection?.AddCurrentChangedHandler(value) ?? default(EventRegistrationToken);
 #else
 			add => _selection?.AddCurrentChangedHandler(value);

@@ -44,11 +44,13 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 			return token;
 		}
 
+#if USE_EVENT_TOKEN
 		public void RemoveVectorChangedHandler(EventRegistrationToken value, bool lowPriority = false)
 		{
 			(lowPriority ? _lowPriorityVectorChanged : _normalPriorityVectorChanged).RemoveEventHandler(value);
 			UpdateVectorChanged();
 		}
+#endif
 
 		public void RemoveVectorChangedHandler(VectorChangedEventHandler<object?> value, bool lowPriority = false)
 		{
@@ -63,11 +65,13 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 			return token;
 		}
 
+#if USE_EVENT_TOKEN
 		public void RemoveCollectionChangedHandler(EventRegistrationToken value, bool lowPriority = false)
 		{
 			(lowPriority ? _lowPriorityCollectionChanged : _normalPriorityCollectionChanged).RemoveEventHandler(value);
 			UpdateCollectionChanged();
 		}
+#endif
 
 		public void RemoveCollectionChangedHandler(NotifyCollectionChangedEventHandler value, bool lowPriority = false)
 		{
