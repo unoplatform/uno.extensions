@@ -2,7 +2,8 @@
 
 This topic walks through how to use Navigation to display the details of an item selected from a list. This demonstrates an important aspect of Navigation which is the ability to pass data as part of a navigation request.
 
-> [!Tip] This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions` template to create the solution. Instructions for creating an application from the template can be found [here](../Extensions/GettingStarted/UsingUnoExtensions.md)
+> [!TIP]
+> This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions` template to create the solution. Instructions for creating an application from the template can be found [here](../Extensions/GettingStarted/UsingUnoExtensions.md)
 
 ## Step-by-steps
 

@@ -1,6 +1,7 @@
 ## CommunityToolkit.Mvvm
 
-> [!Tip] This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions` template to create the solution. Instructions for creating an application from the template can be found [here](../GettingStarted/UsingUnoExtensions.md)
+> [!TIP]
+> This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions` template to create the solution. Instructions for creating an application from the template can be found [here](../GettingStarted/UsingUnoExtensions.md)
 
 If you want to access the DI container via the Ioc.Default API exposed via the <a href="https://www.nuget.org/packages/CommunityToolkit.Mvvm" target="_blank">CommunityToolkit.Mvvm</a>, you need to configure the service collection after building the Host.
 

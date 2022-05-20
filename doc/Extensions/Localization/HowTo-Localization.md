@@ -77,4 +77,5 @@
     }
     ```
 
-> [!Tip] This action requires an app restart before you're able to observe the changes
+> [!TIP]
+> This action requires an app restart before you're able to observe the changes

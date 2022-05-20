@@ -2,7 +2,8 @@
 
 Dependency Injection (DI) is an important design pattern for building loosely-coupled software that allows for maintainability and testing. This tutorial will walk you through how to register services so that they can be consumed throughout your application.
 
-> [!Tip] This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions` template to create the solution. Instructions for creating an application from the template can be found [here](../GettingStarted/UsingUnoExtensions.md)
+> [!TIP]
+> This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions` template to create the solution. Instructions for creating an application from the template can be found [here](../GettingStarted/UsingUnoExtensions.md)
 
 ## Step-by-steps
 
@@ -87,4 +88,5 @@ Dependency Injection (DI) is an important design pattern for building loosely-co
             DataContext = (Application.Current as App).Host.Services.GetRequiredService<MainViewModel>();
         }
     ```
-> [!Tip] By default the `Host` property is marked as `private`, so you'll need to change it to `public` in order for the above code to work. Alternatively if you use [Navigation](../../Navigation/NavigationOverview.md), view model classes are automatically connected with the corresponding page, avoiding having to access the `IServiceProvider` directly. 
+> [!TIP]
+> By default the `Host` property is marked as `private`, so you'll need to change it to `public` in order for the above code to work. Alternatively if you use [Navigation](../../Navigation/NavigationOverview.md), view model classes are automatically connected with the corresponding page, avoiding having to access the `IServiceProvider` directly. 

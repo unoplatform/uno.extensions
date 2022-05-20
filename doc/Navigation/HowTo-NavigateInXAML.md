@@ -2,7 +2,8 @@
 
 This topic walks through controlling Navigation from XAML. This includes specifying data that should be attached to the navigation request.
 
-> [!Tip] This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions` template to create the solution. Instructions for creating an application from the template can be found [here](../Extensions/GettingStarted/UsingUnoExtensions.md)
+> [!TIP]
+> This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions` template to create the solution. Instructions for creating an application from the template can be found [here](../Extensions/GettingStarted/UsingUnoExtensions.md)
 
 ## Step-by-steps
 
@@ -41,7 +42,8 @@ Depending on the type of the XAML element, the `Navigation.Request` property wil
             uen:Navigation.Request="-" />
     ```
 
-> [!Tip] Whilst this works, it relies on reflection to convert the request path "Sample" to the corresponding view, i.e. `SamplePage`. It's better to define `ViewMap` and `RouteMap`
+> [!TIP]
+> Whilst this works, it relies on reflection to convert the request path "Sample" to the corresponding view, i.e. `SamplePage`. It's better to define `ViewMap` and `RouteMap`
 
 
 - Add a `ViewMap` and a `RouteMap` for the `SamplePage` into the `RegisterRoutes` method in the `App.xaml.host.cs` file 
