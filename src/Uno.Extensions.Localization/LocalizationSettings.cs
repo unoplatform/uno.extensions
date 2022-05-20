@@ -2,5 +2,5 @@
 
 public record LocalizationSettings
 {
-	public string? CurrentCulture { get; init; }
+	public string? CurrentCulture { get; set; }
 }
