@@ -1,6 +1,7 @@
 <linker>
 	<assembly fullname="MyExtensionsApp" />
 	<assembly fullname="MyExtensionsApp.Wasm" />
+	<assembly fullname="Uno.UI" />
 	<assembly fullname="Microsoft.Extensions.Options" />
 	<assembly fullname="Uno.Extensions.Hosting.WinUI" />
 
