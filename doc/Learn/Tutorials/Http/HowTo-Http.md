@@ -1,3 +1,6 @@
+---
+uid: Learn.Tutorials.Http.HowToHttp
+---
 # How-To: HTTP
 
 Description

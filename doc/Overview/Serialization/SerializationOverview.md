@@ -1,3 +1,6 @@
+---
+uid: Overview.Serialization
+---
 ## Serialization
 
 Register serializer that implements `ISerializer`

@@ -1,3 +1,6 @@
+---
+uid: Reference.Navigation.Regions
+---
 # What is a Navigation Region
 
 ## Region Name

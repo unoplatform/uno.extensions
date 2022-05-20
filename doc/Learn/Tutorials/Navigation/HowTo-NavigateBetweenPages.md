@@ -1,3 +1,6 @@
+---
+uid: Learn.Tutorials.Navigation.HowToNavigateBetweenPages
+---
 # How-To: Navigate Between Pages
 
 This topic covers using Navigation to navigate between two pages using frame-based navigation. 

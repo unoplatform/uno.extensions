@@ -1,3 +1,6 @@
+---
+uid: Reference.Reactive.Dev
+---
 # Feeds architecture
 This document gives information about the architecture and the implementation of _feeds_. To get information about the usage if the _feeds_ framework, you should look [to this doc]( https://github.com/unoplatform/uno.extensions/blob/main/doc/Reactive.md).
 

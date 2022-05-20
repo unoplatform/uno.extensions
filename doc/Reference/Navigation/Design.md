@@ -1,3 +1,6 @@
+---
+uid: Reference.Navigation.Design
+---
 # Design
 
 # Navigation

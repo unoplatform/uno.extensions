@@ -1,3 +1,6 @@
+---
+uid: Learn.Tutorials.Navigation.HowToNavigateInXAML
+---
 # How-To: Navigate in XAML
 
 This topic walks through controlling Navigation from XAML. This includes specifying data that should be attached to the navigation request.

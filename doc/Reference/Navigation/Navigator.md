@@ -1,3 +1,6 @@
+---
+uid: Reference.Navigation.Navigator
+---
 # Custom INavigator Implementation
 
 ## INavigator

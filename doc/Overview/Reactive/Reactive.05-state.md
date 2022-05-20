@@ -1,3 +1,6 @@
+---
+uid: Overview.Reactive.State
+---
 # State
 
 Unlike a _feed_ an `IState<T>`, as its name suggests, is state-full. 

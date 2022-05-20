@@ -1,3 +1,6 @@
+---
+uid: Learn.Tutorials.Localization.HowToUseLocalization
+---
 # How-To: Configure and Use Localization
 
 `Uno.Extensions.Localization` uses the locale-specific resources from `resw` files placed in folders corresponding to the well-known language tag (eg en-US). By opting into localization, an implementation of `IStringLocalizer` is registered with your application's `IServiceCollection`.

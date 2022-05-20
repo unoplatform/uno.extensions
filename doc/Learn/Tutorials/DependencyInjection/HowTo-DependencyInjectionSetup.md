@@ -1,3 +1,6 @@
+---
+uid: Learn.Tutorials.DependencyInjection.HowToDependencyInjection
+---
 # How-To: Use Services with Dependency Injection
 
 Dependency Injection (DI) is an important design pattern for building loosely-coupled software that allows for maintainability and testing. This tutorial will walk you through how to register services so that they can be consumed throughout your application.

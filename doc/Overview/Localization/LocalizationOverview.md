@@ -1,3 +1,6 @@
+---
+uid: Overview.Localization
+---
 # Localization
 Uno.Extensions.Localization uses [Microsoft.Extensions.Localization](https://www.nuget.org/packages/Microsoft.Extensions.Localization) for any localization related work.
 

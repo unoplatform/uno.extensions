@@ -1,3 +1,6 @@
+---
+uid: Overview.Reactive.InApps
+---
 # Usage in applications of feeds
 
 The recommended use for feeds is only in view models.

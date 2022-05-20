@@ -1,3 +1,6 @@
+---
+uid: Learn.Tutorials.Configuration.HowToWritableConfiguration
+---
 # How-To: Writable Configuration
 
 Description

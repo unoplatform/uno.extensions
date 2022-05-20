@@ -1,3 +1,6 @@
+---
+uid: Learn.Tutorials.Navigation.HowToShowFlyout
+---
 # How-To: Show a Flyout
 
 This topic walks through using Navigation to display a modal flyout

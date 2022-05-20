@@ -1,3 +1,6 @@
+---
+uid: Learn.Tutorials.Navigation.HowToSelectValue
+---
 # How-To: Select a Value
 
 This topic walks through using Navigation to request a value from the user. For example selecting a value from a list of items. 

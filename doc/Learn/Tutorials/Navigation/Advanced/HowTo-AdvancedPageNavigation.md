@@ -1,3 +1,6 @@
+---
+uid: Learn.Tutorials.Navigation.Advanced.PageNavigation
+---
 Sometimes when you navigate you don't want to leave the current page in the back-stack. For example after signing into an application, you might want to navigate to the main page of the application; you don't want to have the login page still in the back-stack for a user to accidentally to go back to (unless they explicitly log out of the application). 
 
 - On MainPage add another button and in event handler

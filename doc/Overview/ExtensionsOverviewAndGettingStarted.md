@@ -1,3 +1,6 @@
+---
+uid: Overview.Extensions
+---
 # How-To: Get Started with Uno.Extensions
 
 Uno.Extensions is a series of NuGet packages designed to encapsulate common developer tasks associated with building multi-platform mobile, desktop and web applications using the Uno platform.
@@ -7,6 +10,20 @@ The Uno.Extensions follows the Microsoft.Extensions model that creates a host en
 For a more specific description of the functionality included in each referenced package—such as
 Configuration, Logging, Navigation, and
 Reactive—refer to the relevant Uno.Extensions documentation.
+
+In addition to referencing Uno, the Guidance Template also references the following packages.
+
+| Package                      |                                                                                      |
+|------------------------------|--------------------------------------------------------------------------------------|
+| Uno.Extensions.Hosting       | Initializes the hosting environment, including initialising the dependency container |
+| Uno.Extensions.Configuration | Loads configuration information from various sources                                 |
+| Uno.Extensions.Logging       | Configures application logging                                                       |
+| Uno.Extensions.Navigation    | Routing framework for navigation                                                     |
+| Uno.Extensions.Reactive      | Development framework for reactive applications                                      |
+| Uno.Extensions.Localization  | Provides access to localizable resources                                             |
+| Uno.Extensions.Serialization | Helpers for json serialization                                                       |
+| Uno.Extensions.Http          | Configures native http handlers and register endpoints                               |
+
 
 This tutorial will walk through how to create an Uno application with the `dotnet new` tool, that is already configured to use the Uno.Extensions.
 

@@ -1,3 +1,6 @@
+---
+uid: Learn.Tutorials.Navigation.HowToDisplayItem
+---
 # How-To: Display Item Details
 
 This topic walks through how to use Navigation to display the details of an item selected from a list. This demonstrates an important aspect of Navigation which is the ability to pass data as part of a navigation request.

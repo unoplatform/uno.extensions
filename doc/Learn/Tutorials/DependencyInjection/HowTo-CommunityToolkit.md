@@ -1,3 +1,6 @@
+---
+uid: Learn.Tutorials.DependencyInjection.HowToCommunityToolkit
+---
 ## CommunityToolkit.Mvvm
 
 > [!TIP]

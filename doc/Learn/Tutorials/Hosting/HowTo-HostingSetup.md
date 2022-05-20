@@ -1,3 +1,6 @@
+---
+uid: Learn.Tutorials.Hosting.HowToHostingSetup
+---
 # How-To: Get Started with Hosting
 
 `Uno.Extensions.Hosting` can be used to register services that will be accessible throughout the application via dependency injection (DI). This tutorial will walk you through the critical steps needed to leverage hosting in your application.

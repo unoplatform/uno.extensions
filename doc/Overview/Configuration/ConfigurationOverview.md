@@ -1,3 +1,6 @@
+---
+uid: Overview.Configuration
+---
 # Configuration and Settings
 
 Uno.Extension.Configuration uses [Microsoft.Extensions.Configuration](https://www.nuget.org/packages/Microsoft.Extensions.Configuration) for any configuration related work.

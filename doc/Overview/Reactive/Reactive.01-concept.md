@@ -1,3 +1,6 @@
+---
+uid: Overview.Reactive.Concept
+---
 # Concept
 
 When asynchronously loading a data, the standard pattern is to use a `Task<T>`. A _task_ represents data which  will be available in the future:

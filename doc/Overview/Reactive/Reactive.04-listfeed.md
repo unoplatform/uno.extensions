@@ -1,3 +1,6 @@
+---
+uid: Overview.Reactive.ListFeed
+---
 #ListFeed
 
 The `IListFeed<T>` is _feed_ specialized for handling collections.

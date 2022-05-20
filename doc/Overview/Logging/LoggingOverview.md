@@ -1,3 +1,6 @@
+---
+uid: Overview.Logging
+---
 # Logging
 Uno.Extensions.Logging use [Microsoft.Extensions.Logging](https://www.nuget.org/packages/Microsoft.Extensions.Logging) for logging abstractions.
 

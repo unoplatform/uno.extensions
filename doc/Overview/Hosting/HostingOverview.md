@@ -1,3 +1,6 @@
+---
+uid: Overview.Hosting
+---
 # Hosting
 
 Hosting is provided by [Microsoft.Extensions.Hosting.UWP](https://www.nuget.org/packages/Uno.Extensions.Hosting.UWP) or [Microsoft.Extensions.Hosting.WinUI](https://www.nuget.org/packages/Uno.Extensions.Hosting.WinUI).
