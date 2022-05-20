@@ -1,46 +1,24 @@
-﻿#if NET5_0_OR_GREATER
-#nullable disable // Matches the WinRT API
-
-
-#if __ANDROID__ || __IOS__
-// Both types are missing on NET6_MOBILE, for UWP and WinUI
-// Note: They are added only to share code, they are actually not exposed publicly
-
-#define NEEDS_EVT_TOKEN
-#define NEEDS_EVT_TOKEN_TABLE
-
-#elif WINUI
-// Types might be in old interop.WinRun namespace, but we want to match the WinUI API and use the WinRT namespace.
-
-#if !WINDOWS // net6-win is the only platform that defines the WinRT.EvtRegToken (but not the table)
-#define NEEDS_EVT_TOKEN
-#endif
-#define NEEDS_EVT_TOKEN_TABLE // Type might be in old interop.WinRun namespace, but we want to match the WinUI API and use the WinRT namespace
-
-#endif
+﻿#if !USE_EVENT_TOKEN
+#nullable disable // Matches the UWP API
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-#if WINUI 
-namespace WinRT;
-#else
-namespace System.Runtime.InteropServices.WindowsRuntime;
-#endif
+namespace Uno.Extensions.Reactive.UI._Compat;
 
-#if NEEDS_EVT_TOKEN
-internal record struct EventRegistrationToken(long Value);
-#endif
+// The EventRegsitrationToken is use only in WinRT for native events.
+// On all other platforms, in order to share teh code, we have our own implementation where the EventRegistrationToken is nothing.
+// Note: Even if on some platforms the EventRegistrationToken and the EventRegistrationTokenTable appears as present,
+//		 and compilation of the Reactive.UI package succeed, the resolution of the type at runtime might fail (TypeLoadException).
+//		 So to avoid any crash at runtime, we prefer to always use our how version (except on UWP which needs it)!
 
-#if NEEDS_EVT_TOKEN_TABLE
+internal record struct EventRegistrationToken;
+
 internal class EventRegistrationTokenTable<THandler>
 	where THandler : Delegate
 {
-	private readonly List<long> _handlersTokenIds = new();
 	private readonly List<THandler> _handlers = new();
-
-	private long _nextTokenId;
 
 	private bool _isInvocationListValid = true;
 	private THandler _invocationList;
@@ -66,25 +44,10 @@ internal class EventRegistrationTokenTable<THandler>
 
 	public EventRegistrationToken AddEventHandler(THandler handler)
 	{
-		var token = new EventRegistrationToken(_nextTokenId++);
-
-		_handlersTokenIds.Add(token.Value);
 		_handlers.Add(handler);
 		_isInvocationListValid = false;
 
-		return token;
-	}
-
-	public void RemoveEventHandler(EventRegistrationToken token)
-	{
-		var index = _handlersTokenIds.IndexOf(token.Value);
-		if (index >= 0)
-		{
-			_handlersTokenIds.RemoveAt(index);
-			_handlers.RemoveAt(index);
-			_invocationList = null; // prevent leak
-			_isInvocationListValid = false;
-		}
+		return default;
 	}
 
 	public void RemoveEventHandler(THandler handler)
@@ -92,12 +55,10 @@ internal class EventRegistrationTokenTable<THandler>
 		var index = _handlers.IndexOf(handler);
 		if (index >= 0)
 		{
-			_handlersTokenIds.RemoveAt(index);
 			_handlers.RemoveAt(index);
 			_invocationList = null; // prevent leak
 			_isInvocationListValid = false;
 		}
 	}
 }
-#endif
 #endif
