@@ -25,5 +25,5 @@ global using CurrentChangedEventHandler = System.EventHandler<object?>;
 #if USE_EVENT_TOKEN
 global using System.Runtime.InteropServices.WindowsRuntime;
 #else
-global using Uno.Reactive.UI._Compat;
+global using Uno.Extensions.Reactive.UI._Compat;
 #endif
