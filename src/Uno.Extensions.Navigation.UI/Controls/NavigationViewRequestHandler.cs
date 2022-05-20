@@ -43,6 +43,10 @@ public class NavigationViewRequestHandler : ControlRequestHandlerBase<Navigation
 			}
 
 			var data = sender.GetData() ?? sender.SelectedItem;
+			if (data is null)
+			{
+				return;
+			}
 
 			await action(sender, data);
 		};
@@ -61,6 +65,10 @@ public class NavigationViewRequestHandler : ControlRequestHandlerBase<Navigation
 			}
 
 			var data = sender.GetData() ?? actionArgs.InvokedItem;
+			if (data is null)
+			{
+				return;
+			}
 
 			await action(sender, data);
 		};
@@ -72,6 +80,11 @@ public class NavigationViewRequestHandler : ControlRequestHandlerBase<Navigation
 		{
 			viewList.ItemInvoked += clickAction;
 			viewList.SelectionChanged += selectionAction;
+
+			if (viewList.SelectedItem is not null)
+			{
+				action(viewList, viewList.SelectedItem);
+			}
 		};
 
 		disconnect = () =>
