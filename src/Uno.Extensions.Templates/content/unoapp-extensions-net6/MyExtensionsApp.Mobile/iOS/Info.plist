@@ -39,7 +39,10 @@
 	</array>
 	<key>UIAppFonts</key>
 	<array>
-	  <string>Fonts/uno-fluentui-assets.ttf</string>
+		<string>Fonts/Material/Roboto-Light.ttf</string>
+		<string>Fonts/Material/Roboto-Medium.ttf</string>
+		<string>Fonts/Material/Roboto-Regular.ttf</string>
+		<string>Fonts/uno-fluentui-assets.ttf</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
