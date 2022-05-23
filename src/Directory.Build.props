@@ -27,7 +27,8 @@
 		<!-- Version management is now done through NuGet, this avoids issues related version mismatch -->
 		<Version>255.255.255.255</Version>
 
-		<Product>$(AssemblyName) ($(TargetFramework))</Product>
+		<Product>$(AssemblyName) ($(TargetFramework))</Product> 
+		<Description>Extensions to accelerate your application development with Uno Platform, UWP and WinUI</Description>
 		<DefaultLanguage>en-US</DefaultLanguage>
 	</PropertyGroup>
 
