@@ -7,7 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Uno.UI.Runtime.WebAssembly" Version="4.1.9" />
+		<PackageReference Include="Uno.UI.Runtime.WebAssembly" Version="4.3.6" />
 	</ItemGroup>
 
 	<ItemGroup>
