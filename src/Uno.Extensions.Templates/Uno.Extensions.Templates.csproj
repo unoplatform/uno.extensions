@@ -79,6 +79,7 @@
 
 		<ItemGroup>
 			<_AllCSProjFiles Include="content/**/*.csproj" />
+			<_AllCSProjFiles Include="content/**/Directory.Build.props" />
 		</ItemGroup>
 
 		<!-- Legacy projects -->
