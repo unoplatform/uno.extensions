@@ -6,12 +6,8 @@
 		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'=='' and '$(UnoExtensionsDisableNet6)'=='' and '$(UnoExtensionsDisableNet6Mobile)'==''">$(TargetFrameworks);net6.0-ios;net6.0-android</TargetFrameworks>
 
 	</PropertyGroup>
-  
-  <!--<ItemGroup Condition="'$(IsIOS)' == 'true' or '$(IsAndroid)' == 'true'">
-    <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
-  </ItemGroup>-->
 
-  <ItemGroup Condition="'$(IsUWP)' == 'true' or '$(IsWinUI)' == 'true'">
+  <ItemGroup Condition="'$(_IsUWP)' == 'true' or '$(_IsWinUI)' == 'true'">
     <PackageReference Include="System.Net.Http.WinHttpHandler" Version="6.0.1" />
   </ItemGroup>
   

@@ -9,7 +9,7 @@
 -->
 	</PropertyGroup>
  
-  <ItemGroup Condition="'$(IsIOS)' == 'true' or '$(IsAndroid)' == 'true'">
+  <ItemGroup Condition="'$(_IsIOS)' == 'true' or '$(_IsAndroid)' == 'true'">
     <PackageReference Include="Serilog.Sinks.Xamarin" Version="0.2.0.64" />
   </ItemGroup>
 

@@ -4,7 +4,7 @@
 		<GenerateLibraryLayout>true</GenerateLibraryLayout>
 		<LangVersion>10.0</LangVersion>
 		<Nullable>enable</Nullable>
-		<NoWarn>1701;1702;1998</NoWarn>
+		<NoWarn>$(NoWarn);1701;1702;1998</NoWarn>
 		<NoWarn Condition="$(Configuration)=='Debug'">$(NoWarn);1591</NoWarn>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<WarningsAsErrors />
@@ -14,7 +14,19 @@
 		<GenerateLibraryLayout>true</GenerateLibraryLayout>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(IsUWP)'=='true'">
+  <PropertyGroup Condition="$(_IsIOS)">
+    <SupportedOSPlatformVersion>15.2</SupportedOSPlatformVersion>
+  </PropertyGroup>
+
+  <!-- <PropertyGroup Condition="$(_IsMacOS)">
+    <SupportedOSPlatformVersion>10.0</SupportedOSPlatformVersion>
+  </PropertyGroup> -->
+
+  <PropertyGroup Condition="$(_IsCatalyst)">
+    <SupportedOSPlatformVersion>15.2</SupportedOSPlatformVersion>
+  </PropertyGroup>
+
+	<PropertyGroup Condition="'$(_IsUWP)'=='true'">
 		<DefineConstants>$(DefineConstants);USE_EVENT_TOKEN</DefineConstants>
 	</PropertyGroup>
 
