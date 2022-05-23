@@ -19,7 +19,7 @@
 							   OverrideSource="ms-appx:///MaterialFontsOverride.xaml" />
 
 				<!-- Load the Material control resources -->
-				<MaterialResources xmlns="using:Uno.Material" WithImplicitStyles="True" />
+				<MaterialResources xmlns="using:Uno.Material" />
 				<ToolkitResources xmlns="using:Uno.Toolkit.UI" />
 
 				<!-- Load Material Toolkit resources -->
