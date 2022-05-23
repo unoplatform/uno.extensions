@@ -84,7 +84,7 @@
 		<PackageReference Include="Uno.Toolkit.WinUI" Version="1.2.1" />
 		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="1.2.1" />
 		<PackageReference Include="Uno.Core" Version="4.0.1" />
-		<PackageReference Include="Uno.Material.WinUI" Version="1.2.0" />
+		<PackageReference Include="Uno.Material.WinUI" Version="2.0.0" />
 		<PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.2" />
 	</ItemGroup>
 	<ItemGroup>
