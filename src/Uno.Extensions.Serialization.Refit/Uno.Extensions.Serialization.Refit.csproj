@@ -1,6 +1,6 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
 	<PropertyGroup>
-		<Description>Serialization Extensions for working with ISerializer with Http and Refit for the Uno Platform, UWP and WinUI</Description>
+		<Description>Serialization Extensions for working with ISerializer with HTTP and Refit for the Uno Platform, UWP and WinUI</Description>
 
 		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'!=''">$(UnoTargetFrameworkOverride)</TargetFrameworks>
 		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'==''">netstandard2.0;netstandard2.1;net5.0;xamarinios10;xamarinmac20;monoandroid11.0</TargetFrameworks>
