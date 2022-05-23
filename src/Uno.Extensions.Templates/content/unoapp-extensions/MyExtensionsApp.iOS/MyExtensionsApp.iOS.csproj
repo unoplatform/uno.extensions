@@ -187,6 +187,7 @@
       <Name>MyExtensionsApp</Name>
     </ProjectReference>
   </ItemGroup>
+  <Import Project="..\Extensions.props" />
   <Import Project="..\MyExtensionsApp.UI\MyExtensionsApp.UI.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

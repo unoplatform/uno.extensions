@@ -122,6 +122,7 @@
       <Name>MyExtensionsApp</Name>
     </ProjectReference>
   </ItemGroup>
+  <Import Project="..\Extensions.props" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets" />
   <Target Name="VS16Mac_RemoveSystemMemory" BeforeTargets="ResolveAssemblyReferences">
     <!--
