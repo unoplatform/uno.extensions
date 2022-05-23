@@ -2,6 +2,6 @@
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
 	</PropertyGroup>
-	<Import Project="..\Extensions.props" />
 
+	<Import Project="..\Extensions.props" />
 </Project>
