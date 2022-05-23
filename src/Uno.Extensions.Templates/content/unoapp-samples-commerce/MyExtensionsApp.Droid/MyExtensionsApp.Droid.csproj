@@ -22,6 +22,10 @@
     <AndroidUseIntermediateDesignerFile>True</AndroidUseIntermediateDesignerFile>
     <ResourcesDirectory>..\MyExtensionsApp.Shared\Strings</ResourcesDirectory>
   </PropertyGroup>
+  <PropertyGroup>
+    <!-- Workaround for https://github.com/unoplatform/uno/discussions/5007 -->
+    <SynthesizeLinkMetadata>true</SynthesizeLinkMetadata>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>portable</DebugType>
