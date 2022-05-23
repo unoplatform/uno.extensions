@@ -1,13 +1,15 @@
 <Project ToolsVersion="15.0">
 	<PropertyGroup>
 		<LangVersion>10.0</LangVersion>
-		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+
+		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+	  	<NoWarn>$(NoWarn);Uno0001;CS1998;CA1416</NoWarn>
 	</PropertyGroup>
 
 	<PropertyGroup>
 		<DebugType>portable</DebugType>
 		<DebugSymbols>True</DebugSymbols>
-	  	<NoWarn>$(NoWarn);Uno0001;CS1998;CA1416</NoWarn>
 	</PropertyGroup>
 </Project>

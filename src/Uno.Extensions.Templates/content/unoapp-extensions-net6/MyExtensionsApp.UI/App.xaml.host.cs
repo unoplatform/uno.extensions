@@ -1,7 +1,5 @@
 //-:cnd:noEmit
 
-using MyExtensionsApp.Configuration;
-
 namespace MyExtensionsApp;
 
 public sealed partial class App : Application
