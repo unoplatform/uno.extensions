@@ -9,7 +9,7 @@
 		<ProjectReference Include="..\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
 	</ItemGroup>
 
-	<ItemGroup Condition="'$(IsUWP)' == 'true'">
+	<ItemGroup Condition="'$(_IsUWP)' == 'true'">
 		<PackageReference Include="Microsoft.UI.Xaml" Version="2.7.1" />
 	</ItemGroup>
 

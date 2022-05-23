@@ -5,7 +5,7 @@
 		<LangVersion>10.0</LangVersion>
 		<IsPackable>false</IsPackable>
 		<Nullable>enable</Nullable>
-		<NoWarn>1701;1702;1998</NoWarn>
+		<NoWarn>$(NoWarn);1701;1702;1998</NoWarn>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<WarningsAsErrors />
 		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
