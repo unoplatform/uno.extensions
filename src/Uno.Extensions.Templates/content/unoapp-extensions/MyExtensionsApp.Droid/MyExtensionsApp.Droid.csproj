@@ -71,9 +71,9 @@
     <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.3.5" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="Uno.Core" Version="4.0.1" />
-    <PackageReference Include="Uno.Material.WinUI" Version="2.0.0-dev.216" />
-    <PackageReference Include="Uno.Toolkit.WinUI.Material" Version="1.4.0-dev.34" />
-    <PackageReference Include="Uno.Toolkit.WinUI" Version="1.4.0-dev.34" />
+    <PackageReference Include="Uno.Material.WinUI" Version="2.0.0-dev.218" />
+    <PackageReference Include="Uno.Toolkit.WinUI.Material" Version="1.4.0-dev.35" />
+    <PackageReference Include="Uno.Toolkit.WinUI" Version="1.4.0-dev.35" />
     <PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData" Version="2.1.0" />
     <PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.2" />
   </ItemGroup>
