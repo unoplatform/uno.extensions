@@ -14,18 +14,6 @@
 		<GenerateLibraryLayout>true</GenerateLibraryLayout>
 	</PropertyGroup>
 
-  <PropertyGroup Condition="$(_IsIOS)">
-    <SupportedOSPlatformVersion>15.2</SupportedOSPlatformVersion>
-  </PropertyGroup>
-
-  <!-- <PropertyGroup Condition="$(_IsMacOS)">
-    <SupportedOSPlatformVersion>10.0</SupportedOSPlatformVersion>
-  </PropertyGroup> -->
-
-  <PropertyGroup Condition="$(_IsCatalyst)">
-    <SupportedOSPlatformVersion>15.2</SupportedOSPlatformVersion>
-  </PropertyGroup>
-
 	<PropertyGroup Condition="'$(_IsUWP)'=='true'">
 		<DefineConstants>$(DefineConstants);USE_EVENT_TOKEN</DefineConstants>
 	</PropertyGroup>
