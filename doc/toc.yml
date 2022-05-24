@@ -48,17 +48,17 @@
               href: Learn/Tutorials/DependencyInjection/HowTo-DependencyInjectionSetup.md
             - name: Use the CommunityToolkit with Dependency Injection
               href: Learn/Tutorials/DependencyInjection/HowTo-CommunityToolkit.md
-        # - name: Configuration
-        #   items:
-        #     - name: Get Started with Configuration
-        #       href: Learn/Tutorials/Configuration/HowTo-Configuration.md
+        - name: Configuration
+          items:
+            - name: Get Started with Configuration
+              href: Learn/Tutorials/Configuration/HowTo-Configuration.md
         #     - name: How to update settings from an embedded resource file
         #       href: Learn/Tutorials/Configuration/HowTo-WritableConfiguration.md
         - name: Logging
           items:
             - name: Enable and Use Logging
               href: Learn/Tutorials/Logging/HowTo-Logging.md
-            - name: Enable internal Uno Platform logging 
+            - name: Enable internal Uno Platform logging
               href: Learn/Tutorials/Logging/HowTo-InternalLogging.md
         - name: Navigation
           items:
@@ -80,7 +80,7 @@
             #   items:
             #     - name: Page Navigation
             #       href: Learn/Tutorials/Navigation/Advanced/HowTo-AdvancedPageNavigation.md
-            #     - name: Use a Panel (Grid, StackPanel etc) 
+            #     - name: Use a Panel (Grid, StackPanel etc)
             #       href: Learn/Tutorials/Navigation/Advanced/HowTo-UsePanel.md
             #     - name: Use a TabBar
             #       href: Learn/Tutorials/Navigation/Advanced/HowTo-UseTabBar.md
@@ -124,5 +124,3 @@
       items:
         - name: Feeds Architecture
           href: Reference/Reactive/Reactive - Dev.md
-
-
