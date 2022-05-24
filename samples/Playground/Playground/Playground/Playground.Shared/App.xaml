@@ -10,12 +10,11 @@
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
 
 				<!-- Load the Material control resources -->
-				<MaterialResources xmlns="using:Uno.Material" WithImplicitStyles="True" />
+				<MaterialResourcesV1 xmlns="using:Uno.Material" />
 				<ToolkitResources xmlns="using:Uno.Toolkit.UI" />
 
 				<!-- Load Material Toolkit resources -->
-				<MaterialToolkitColors xmlns="using:Uno.Toolkit.UI.Material" />
-				<MaterialToolkitResources xmlns="using:Uno.Toolkit.UI.Material" />
+				<MaterialToolkitResourcesV1 xmlns="using:Uno.Toolkit.UI.Material" />
 				<!-- Place resources here -->
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
