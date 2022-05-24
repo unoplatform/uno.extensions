@@ -3,7 +3,7 @@ uid: Learn.Tutorials.Configuration.HowToConfiguration
 ---
 # How-To: Get Started with Configuration
 
-Configuration in Uno.Extensions provides you with a consistent way to view configuration data from a number of distinct sources. This pattern is not intended to allow for programmatic writes by itself, but instead offers a single representation of any number of providers or sections.
+`Uno.Extensions.Configuration` provides you with a consistent way to view configuration data from a number of distinct sources. It leverages the `IOptions<T>` interface from [Microsoft.Extensions.Options](https://docs.microsoft.com/dotnet/api/microsoft.extensions.options) to offer [read-only](https://docs.microsoft.com/dotnet/core/extensions/configuration#concepts-and-abstractions) access to values organized into sections. Unlike the Writable Configuration (aka Settings) [pattern](./HowTo-WritableConfiguration.md), this does not allow for programmatic writing by itself.
 
 ## Step-by-steps
 
@@ -26,7 +26,7 @@ Configuration in Uno.Extensions provides you with a consistent way to view confi
     ...
     ```
 
-* By default, this method will extract values from an embedded resource called `appsettings.json`, unless you optionally denote a different file name. The string you pass into the extension method will be concatenated in between `appsettings` and its file extension. For instance, the following will also retrieve values from the file `appsettings.platform.json` embedded inside the `App` assembly:
+* By default, this method will extract values from an embedded resource (using the [EmbeddedResource](https://docs.microsoft.com/en-us/dotnet/api/system.codedom.compiler.compilerparameters.embeddedresources?view=dotnet-plat-ext-6.0#remarks) file build action) called `appsettings.json`, unless you optionally denote a different file name. The string you pass into the extension method will be concatenated in-between `appsettings` and its file extension. For instance, the following will also retrieve values from the file `appsettings.platform.json` embedded inside the `App` assembly:
 
     ```csharp
     public App()
