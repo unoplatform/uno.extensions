@@ -8,10 +8,10 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Commerce</RootNamespace>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
-    <AssemblyName>Commerce</AssemblyName>
+    <AssemblyName>Commerce.iOS</AssemblyName>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <ResourcesDirectory>..\Commerce.Shared\Strings</ResourcesDirectory>
+    <ResourcesDirectory>..\Commerce.UI\Strings</ResourcesDirectory>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
     <DebugSymbols>true</DebugSymbols>
@@ -124,11 +124,13 @@
     <PackageReference Include="Uno.Toolkit.WinUI" Version="2.0.0" />
     <PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.0.0" />
     <PackageReference Include="Uno.Core" Version="4.0.1" />
-		<PackageReference Include="Uno.Material.WinUI" Version="2.0.0" />
+    <PackageReference Include="Uno.Material.WinUI" Version="2.0.0" />
     <PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.2" />
   </ItemGroup>
-    <Import Project="..\..\Extensions.props" />
-
+  <Import Project="..\..\Extensions.winui.props" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\Commerce\Commerce.csproj" />
+  </ItemGroup>
   <ItemGroup>
     <ImageAsset Include="Media.xcassets\AppIcons.appiconset\Contents.json">
       <Visible>false</Visible>
@@ -184,7 +186,6 @@
     <BundleResource Include="Resources\Fonts\Roboto-Regular.ttf" />
   </ItemGroup>
   <ItemGroup />
-  <Import Project="..\..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" />
+  <Import Project="..\..\Commerce.UI\Commerce.UI.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
-  
 </Project>

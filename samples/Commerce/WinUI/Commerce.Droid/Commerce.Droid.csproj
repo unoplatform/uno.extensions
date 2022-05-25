@@ -9,7 +9,7 @@
     <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Commerce.Droid</RootNamespace>
+    <RootNamespace>Commerce</RootNamespace>
     <AssemblyName>Commerce.Droid</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <AndroidApplication>true</AndroidApplication>
@@ -20,7 +20,7 @@
     <TargetFrameworkVersion>v11.0</TargetFrameworkVersion>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <AndroidUseIntermediateDesignerFile>True</AndroidUseIntermediateDesignerFile>
-    <ResourcesDirectory>..\Commerce.Shared\Strings</ResourcesDirectory>
+    <ResourcesDirectory>..\Commerce.UI\Strings</ResourcesDirectory>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -73,12 +73,11 @@
     <PackageReference Include="Uno.Toolkit.WinUI" Version="2.0.0" />
     <PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.0.0" />
     <PackageReference Include="Uno.Core" Version="4.0.1" />
-		<PackageReference Include="Uno.Material.WinUI" Version="2.0.0" />
+    <PackageReference Include="Uno.Material.WinUI" Version="2.0.0" />
     <PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData" Version="2.1.0" />
     <PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.2" />
   </ItemGroup>
-   <Import Project="..\..\Extensions.props" />
-
+  <Import Project="..\..\Extensions.winui.props" />
   <ItemGroup>
     <Compile Include="MainActivity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -110,9 +109,11 @@
   <ItemGroup>
     <AndroidResource Include="Resources\values\Styles.xml" />
   </ItemGroup>
-  <Import Project="..\..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\Commerce\Commerce.csproj" />
+  </ItemGroup>
+  <Import Project="..\..\Commerce.UI\Commerce.UI.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
-  
   <Target Name="Issue3897Workaround" Condition=" '$(ManagedDesignTimeBuild)' == 'True' " AfterTargets="_RemoveLegacyDesigner">
     <!-- See https://github.com/unoplatform/uno/issues/3897 and https://github.com/xamarin/xamarin-android/issues/5069 for more details -->
     <ItemGroup>

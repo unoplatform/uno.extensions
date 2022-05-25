@@ -113,7 +113,7 @@ public abstract class TestBase
 			.Replace(" ", "_")
 			.Replace(".", "_");
 
-		var fileInfo = _app.Screenshot(title);
+		var fileInfo = App.Screenshot(title);
 
 		var fileNameWithoutExt = Path.GetFileNameWithoutExtension(fileInfo.Name);
 		if (fileNameWithoutExt != title)

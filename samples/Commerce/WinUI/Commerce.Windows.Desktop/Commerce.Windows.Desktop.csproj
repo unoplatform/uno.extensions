@@ -9,6 +9,7 @@
 		<RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
 		<UseWinUI>true</UseWinUI>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+		<DefaultLanguage>en</DefaultLanguage>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -36,11 +37,14 @@
 		<PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.2" />
 	</ItemGroup>
 
-  <Import Project="..\..\Extensions.props" />
+	<Import Project="..\..\Extensions.winui.props" />
 
+	<ItemGroup>
+		<ProjectReference Include="..\..\Commerce\Commerce.csproj" />
+	</ItemGroup>
 
-	<Import Project="..\..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" />
-	
+	<Import Project="..\..\Commerce.UI\Commerce.UI.projitems" Label="Shared" />
+
 
 	<Target Name="WorkaroundSkiaWasmTargets" AfterTargets="ResolveProjectReferences">
 		<ItemGroup>

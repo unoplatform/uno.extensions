@@ -6,7 +6,7 @@
     <ProjectGuid>{CCC6E41D-443C-4CBF-B7CD-A8DAEB015831}</ProjectGuid>
     <ProjectTypeGuids>{A3F8F2AB-B479-4A4A-A458-A89E7DC349F1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Commerce.macOS</RootNamespace>
+    <RootNamespace>Commerce</RootNamespace>
     <AssemblyName>Commerce.macOS</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <TargetFrameworkIdentifier>Xamarin.Mac</TargetFrameworkIdentifier>
@@ -83,9 +83,12 @@
 		<PackageReference Include="Uno.Material.WinUI" Version="2.0.0" />
     <PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.2" />
   </ItemGroup>
-    <Import Project="..\..\Extensions.props" />
+    <Import Project="..\..\Extensions.winui.props" />
+	<ItemGroup>
+		<ProjectReference Include="..\..\Commerce\Commerce.csproj" />
+	</ItemGroup>
 
-  <Import Project="..\..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" />
+	<Import Project="..\..\Commerce.UI\Commerce.UI.projitems" Label="Shared" />
   <ItemGroup>
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json" />
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-128.png" />

@@ -21,10 +21,10 @@
     <PackageReference Include="System.Threading.Tasks.Extensions">
       <Version>4.5.4</Version>
     </PackageReference>
-		<PackageReference Include="Uno.Toolkit.UI" Version="2.0.0" />
-		<PackageReference Include="Uno.Toolkit.UI.Material" Version="2.0.0" />
-		<PackageReference Include="Uno.Core" Version="4.0.1" />
-		<PackageReference Include="Uno.Material" Version="2.0.0" />
+    <PackageReference Include="Uno.Toolkit.UI" Version="2.0.0" />
+    <PackageReference Include="Uno.Toolkit.UI.Material" Version="2.0.0" />
+    <PackageReference Include="Uno.Core" Version="4.0.1" />
+    <PackageReference Include="Uno.Material" Version="2.0.0" />
     <PackageReference Include="Uno.UI" Version="4.3.6" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
@@ -41,7 +41,7 @@
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Commerce</RootNamespace>
-    <AssemblyName>Commerce</AssemblyName>
+    <AssemblyName>Commerce.Uwp</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion>10.0.18362.0</TargetPlatformVersion>
@@ -144,8 +144,7 @@
     <Prefer32Bit>true</Prefer32Bit>
     <UseDotNetNativeToolchain>false</UseDotNetNativeToolchain>
   </PropertyGroup>
-   <Import Project="..\..\Extensions.uwp.props" />
-
+  <Import Project="..\..\Extensions.uwp.props" />
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -172,12 +171,14 @@
     <Content Include="Properties\Default.rd.xml" />
   </ItemGroup>
   <ItemGroup />
-  <Import Project="..\..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\Commerce\Commerce.csproj" />
+  </ItemGroup>
+  <Import Project="..\..\Commerce.UI\Commerce.UI.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
-  
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
 			 Other similar extension points exist, see Microsoft.Common.targets.
 	<Target Name="BeforeBuild">

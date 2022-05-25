@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Commerce.Shared", "Commerce.Shared\Commerce.Shared.shproj", "{6279C845-92F8-4333-AB99-3D213163593C}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Commerce.UI", "Commerce.UI\Commerce.UI.shproj", "{6279C845-92F8-4333-AB99-3D213163593C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commerce.Droid", "UWP\Commerce.Droid\Commerce.Droid.csproj", "{FA9B063A-926A-4119-916F-09D0B7AB7BA6}"
 EndProject
@@ -46,6 +46,8 @@ EndProject
 Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "Commerce.Windows.Package", "WinUI\Commerce.Windows.Package\Commerce.Windows.Package.wapproj", "{53611E66-5396-43B9-97C2-DE99465DFFC0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Commerce.UITest", "Commerce.UITest\Commerce.UITest.csproj", "{5141EEC7-B7FA-427E-A167-7FDEB28E4D5C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Commerce", "Commerce\Commerce.csproj", "{DE9101A1-60C4-422A-9D85-E396309B1522}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1187,6 +1189,62 @@ Global
 		{5141EEC7-B7FA-427E-A167-7FDEB28E4D5C}.Release|x64.Build.0 = Release|Any CPU
 		{5141EEC7-B7FA-427E-A167-7FDEB28E4D5C}.Release|x86.ActiveCfg = Release|Any CPU
 		{5141EEC7-B7FA-427E-A167-7FDEB28E4D5C}.Release|x86.Build.0 = Release|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Ad-Hoc|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Ad-Hoc|Any CPU.Build.0 = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Ad-Hoc|ARM.ActiveCfg = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Ad-Hoc|ARM.Build.0 = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Ad-Hoc|ARM64.ActiveCfg = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Ad-Hoc|ARM64.Build.0 = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Ad-Hoc|iPhone.ActiveCfg = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Ad-Hoc|iPhone.Build.0 = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Ad-Hoc|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Ad-Hoc|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Ad-Hoc|x64.ActiveCfg = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Ad-Hoc|x64.Build.0 = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Ad-Hoc|x86.ActiveCfg = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Ad-Hoc|x86.Build.0 = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.AppStore|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.AppStore|Any CPU.Build.0 = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.AppStore|ARM.ActiveCfg = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.AppStore|ARM.Build.0 = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.AppStore|ARM64.ActiveCfg = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.AppStore|ARM64.Build.0 = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.AppStore|iPhone.ActiveCfg = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.AppStore|iPhone.Build.0 = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.AppStore|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.AppStore|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.AppStore|x64.ActiveCfg = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.AppStore|x64.Build.0 = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.AppStore|x86.ActiveCfg = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.AppStore|x86.Build.0 = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Debug|ARM.Build.0 = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Debug|x64.Build.0 = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Debug|x86.Build.0 = Debug|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Release|ARM.ActiveCfg = Release|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Release|ARM.Build.0 = Release|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Release|ARM64.Build.0 = Release|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Release|iPhone.Build.0 = Release|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Release|x64.ActiveCfg = Release|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Release|x64.Build.0 = Release|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Release|x86.ActiveCfg = Release|Any CPU
+		{DE9101A1-60C4-422A-9D85-E396309B1522}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1218,20 +1276,20 @@ Global
 		SolutionGuid = {C7433AE2-B1A0-4C1A-887E-5CAA7AAF67A6}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		Commerce.Shared\Commerce.Shared.projitems*{16449065-b68e-4c0f-86f3-90f2e46129c8}*SharedItemsImports = 5
-		Commerce.Shared\Commerce.Shared.projitems*{1b50af32-455b-4903-8539-9fd7c5c5d86d}*SharedItemsImports = 5
-		Commerce.Shared\Commerce.Shared.projitems*{3630e6a4-dda3-4510-a7fb-eda9d33545f2}*SharedItemsImports = 4
-		Commerce.Shared\Commerce.Shared.projitems*{40ea03f7-8a22-4143-b251-79bac3eb13d2}*SharedItemsImports = 5
-		Commerce.Shared\Commerce.Shared.projitems*{6279c845-92f8-4333-ab99-3d213163593c}*SharedItemsImports = 13
-		Commerce.Shared\Commerce.Shared.projitems*{71df306f-217e-4bb5-a6c1-107f80ad8630}*SharedItemsImports = 4
-		Commerce.Shared\Commerce.Shared.projitems*{72b60771-626b-4cb4-b494-c8a00b7b3e11}*SharedItemsImports = 4
-		Commerce.Shared\Commerce.Shared.projitems*{a5b8155a-118f-4794-b551-c6f3cf7e5411}*SharedItemsImports = 5
-		Commerce.Shared\Commerce.Shared.projitems*{b10538d8-3a21-4cff-a5c9-405d5293584d}*SharedItemsImports = 4
-		Commerce.Shared\Commerce.Shared.projitems*{c37ab4bc-83ef-408d-bb63-fb8bfeca173c}*SharedItemsImports = 5
-		Commerce.Shared\Commerce.Shared.projitems*{ccc6e41d-443c-4cbf-b7cd-a8daeb015831}*SharedItemsImports = 4
-		Commerce.Shared\Commerce.Shared.projitems*{e05db577-91a2-438f-9f53-5efa29da9d8d}*SharedItemsImports = 5
-		Commerce.Shared\Commerce.Shared.projitems*{e46d78e8-8d5c-4377-9f00-355f839c1bfc}*SharedItemsImports = 4
-		Commerce.Shared\Commerce.Shared.projitems*{ec120f62-ba08-40dc-9760-6774b6a956a6}*SharedItemsImports = 5
-		Commerce.Shared\Commerce.Shared.projitems*{fa9b063a-926a-4119-916f-09d0b7ab7ba6}*SharedItemsImports = 4
+		Commerce.UI\Commerce.UI.projitems*{16449065-b68e-4c0f-86f3-90f2e46129c8}*SharedItemsImports = 5
+		Commerce.UI\Commerce.UI.projitems*{1b50af32-455b-4903-8539-9fd7c5c5d86d}*SharedItemsImports = 5
+		Commerce.UI\Commerce.UI.projitems*{3630e6a4-dda3-4510-a7fb-eda9d33545f2}*SharedItemsImports = 4
+		Commerce.UI\Commerce.UI.projitems*{40ea03f7-8a22-4143-b251-79bac3eb13d2}*SharedItemsImports = 5
+		Commerce.UI\Commerce.UI.projitems*{6279c845-92f8-4333-ab99-3d213163593c}*SharedItemsImports = 13
+		Commerce.UI\Commerce.UI.projitems*{71df306f-217e-4bb5-a6c1-107f80ad8630}*SharedItemsImports = 4
+		Commerce.UI\Commerce.UI.projitems*{72b60771-626b-4cb4-b494-c8a00b7b3e11}*SharedItemsImports = 4
+		Commerce.UI\Commerce.UI.projitems*{a5b8155a-118f-4794-b551-c6f3cf7e5411}*SharedItemsImports = 5
+		Commerce.UI\Commerce.UI.projitems*{b10538d8-3a21-4cff-a5c9-405d5293584d}*SharedItemsImports = 4
+		Commerce.UI\Commerce.UI.projitems*{c37ab4bc-83ef-408d-bb63-fb8bfeca173c}*SharedItemsImports = 5
+		Commerce.UI\Commerce.UI.projitems*{ccc6e41d-443c-4cbf-b7cd-a8daeb015831}*SharedItemsImports = 4
+		Commerce.UI\Commerce.UI.projitems*{e05db577-91a2-438f-9f53-5efa29da9d8d}*SharedItemsImports = 5
+		Commerce.UI\Commerce.UI.projitems*{e46d78e8-8d5c-4377-9f00-355f839c1bfc}*SharedItemsImports = 4
+		Commerce.UI\Commerce.UI.projitems*{ec120f62-ba08-40dc-9760-6774b6a956a6}*SharedItemsImports = 5
+		Commerce.UI\Commerce.UI.projitems*{fa9b063a-926a-4119-916f-09d0b7ab7ba6}*SharedItemsImports = 4
 	EndGlobalSection
 EndGlobal

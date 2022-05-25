@@ -3,6 +3,7 @@
     <OutputType Condition="'$(Configuration)'=='Release'">WinExe</OutputType>
     <OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>Commerce</RootNamespace>
   </PropertyGroup>
   <ItemGroup Condition="exists('..\Commerce.UWP')">
     <EmbeddedResource Include="..\Commerce.UWP\Package.appxmanifest" LogicalName="Package.appxmanifest" />
@@ -10,7 +11,7 @@
     <Content Include="Assets\Fonts\uno-fluentui-assets.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <UpToDateCheckInput Include="..\..\Commerce.Shared\**\*.xaml" />
+    <UpToDateCheckInput Include="..\..\Commerce.UI\**\*.xaml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
@@ -25,7 +26,9 @@
 		<PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.2" />
 	</ItemGroup>
 	  <Import Project="..\..\Extensions.uwp.props" />
-
-	<Import Project="..\..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" />
+	<ItemGroup>
+		<ProjectReference Include="..\..\Commerce\Commerce.csproj" />
+	</ItemGroup>
+	<Import Project="..\..\Commerce.UI\Commerce.UI.projitems" Label="Shared" />
 	
 </Project>

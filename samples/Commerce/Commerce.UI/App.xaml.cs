@@ -195,7 +195,7 @@ namespace Commerce
 																								var ps = sp.GetRequiredService<IProductService>();
 																								var products = await ps.Search(default, default);
 																								var p = products.FirstOrDefault(p => p.ProductId == id);
-																								return new CartItem(p, (uint)quantity);
+																								return new CartItem(p!, (uint)quantity);
 																							})),
 					new ViewMap(View: typeof(CheckoutPage)),
 					forgotPasswordDialog
@@ -239,7 +239,7 @@ namespace Commerce
 			;
 		}
 
-		public void RouteUpdated(object sender, RouteChangedEventArgs e)
+		public void RouteUpdated(object? sender, RouteChangedEventArgs e)
 		{
 			try
 			{

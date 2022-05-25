@@ -6,7 +6,7 @@
     <ProjectGuid>{B10538D8-3A21-4CFF-A5C9-405D5293584D}</ProjectGuid>
     <ProjectTypeGuids>{A3F8F2AB-B479-4A4A-A458-A89E7DC349F1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Commerce.macOS</RootNamespace>
+    <RootNamespace>Commerce</RootNamespace>
     <AssemblyName>Commerce.macOS</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <TargetFrameworkIdentifier>Xamarin.Mac</TargetFrameworkIdentifier>
@@ -82,7 +82,7 @@
   </ItemGroup>
     <Import Project="..\..\Extensions.uwp.props" />
 
-  <Import Project="..\..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" />
+  <Import Project="..\..\Commerce.UI\Commerce.UI.projitems" Label="Shared" />
   <ItemGroup>
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json" />
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\AppIcon-128.png" />
@@ -121,7 +121,9 @@
     </BundleResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets" />
-  
+	<ItemGroup>
+		<ProjectReference Include="..\..\Commerce\Commerce.csproj" />
+	</ItemGroup>
   <Target Name="VS16Mac_RemoveSystemMemory" BeforeTargets="ResolveAssemblyReferences">
     <!--
 				VS4Mac seems to process System.Memory differently, and removes

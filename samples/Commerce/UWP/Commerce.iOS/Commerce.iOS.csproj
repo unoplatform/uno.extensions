@@ -8,10 +8,10 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Commerce</RootNamespace>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
-    <AssemblyName>Commerce</AssemblyName>
+    <AssemblyName>Commerce.iOS</AssemblyName>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <ResourcesDirectory>..\Commerce.Shared\Strings</ResourcesDirectory>
+    <ResourcesDirectory>..\Commerce.UI\Strings</ResourcesDirectory>
     <LangVersion>10.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
@@ -185,8 +185,7 @@
   <ItemGroup>
     <BundleResource Include="Resources\SplashScreen.png" />
   </ItemGroup>
-    <Import Project="..\..\Extensions.uwp.props" />
-
+  <Import Project="..\..\Extensions.uwp.props" />
   <ItemGroup>
     <ImageAsset Include="Media.xcassets\AppIcons.appiconset\Icon1024.png">
       <Visible>false</Visible>
@@ -256,9 +255,11 @@
     <Content Include="Media.xcassets\AppIcons.appiconset\iTunesArtwork%402x.png" />
   </ItemGroup>
   <Import Project="XamarinForms.targets" Condition="'$(Configuration)'=='Debug'" />
-  <Import Project="..\..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" />
+  <Import Project="..\..\Commerce.UI\Commerce.UI.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
-  
+  <ItemGroup>
+    <ProjectReference Include="..\..\Commerce\Commerce.csproj" />
+  </ItemGroup>
   <ProjectExtensions>
     <VisualStudio>
       <UserProperties XamarinHotReloadDebuggerTimeoutExceptionCommerceiOSHideInfoBar="True" />

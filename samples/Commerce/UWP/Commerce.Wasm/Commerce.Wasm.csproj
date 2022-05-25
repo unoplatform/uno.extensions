@@ -5,6 +5,7 @@
 		<NoWarn>$(NoWarn);NU1504;NU1505;NU1701</NoWarn>
 		<LangVersion>10.0</LangVersion>
     <WasmShellWebAppBasePath>/</WasmShellWebAppBasePath>
+    <RootNamespace>Commerce</RootNamespace>
 	</PropertyGroup>
 	
 	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -45,7 +46,7 @@
 		<Content Include="Assets\SplashScreen.scale-200.png" />
 	</ItemGroup>
 	<ItemGroup>
-		<UpToDateCheckInput Include="..\..\..\Commerce.Shared\**\*.xaml" />
+		<UpToDateCheckInput Include="..\..\..\Commerce.UI\**\*.xaml" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="WasmCSS\Fonts.css" />
@@ -86,8 +87,11 @@
 		<PackageReference Include="Uno.Material" Version="2.0.0" />
 		<PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.2" />
 	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Commerce\Commerce.csproj" />
+	</ItemGroup>
   <Import Project="..\..\Extensions.uwp.props" />
 
-	<Import Project="..\..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" Condition="Exists('..\..\Commerce.Shared\Commerce.Shared.projitems')" />
+	<Import Project="..\..\Commerce.UI\Commerce.UI.projitems" Label="Shared" Condition="Exists('..\..\Commerce.UI\Commerce.UI.projitems')" />
 	
 </Project>

@@ -9,7 +9,7 @@
     <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Commerce.Droid</RootNamespace>
+    <RootNamespace>Commerce</RootNamespace>
     <AssemblyName>Commerce.Droid</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <AndroidApplication>true</AndroidApplication>
@@ -20,7 +20,7 @@
     <TargetFrameworkVersion>v11.0</TargetFrameworkVersion>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <AndroidUseIntermediateDesignerFile>True</AndroidUseIntermediateDesignerFile>
-    <ResourcesDirectory>..\Commerce.Shared\Strings</ResourcesDirectory>
+    <ResourcesDirectory>..\Commerce.UI\Strings</ResourcesDirectory>
     <LangVersion>10.0</LangVersion>
     <AndroidPackageFormat>apk</AndroidPackageFormat>
     <AndroidPackageFormat Condition="'$(BuildForPlayStore)'=='true'">aab</AndroidPackageFormat>
@@ -68,10 +68,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="7.0.3" />
-		<PackageReference Include="Uno.Toolkit.UI" Version="2.0.0" />
-		<PackageReference Include="Uno.Toolkit.UI.Material" Version="2.0.0" />
-		<PackageReference Include="Uno.Core" Version="4.0.1" />
-		<PackageReference Include="Uno.Material" Version="2.0.0" />
+    <PackageReference Include="Uno.Toolkit.UI" Version="2.0.0" />
+    <PackageReference Include="Uno.Toolkit.UI.Material" Version="2.0.0" />
+    <PackageReference Include="Uno.Core" Version="4.0.1" />
+    <PackageReference Include="Uno.Material" Version="2.0.0" />
     <PackageReference Include="Uno.UI" Version="4.3.6" />
     <PackageReference Include="Uno.UI.RemoteControl" Version="4.3.6" Condition="'$(Configuration)'=='Debug'" />
     <PackageReference Include="Uno.UniversalImageLoader" Version="1.9.35" />
@@ -171,10 +171,14 @@
   <ItemGroup>
     <AndroidResource Include="Resources\mipmap-anydpi-v26\ic_launcher.xml" />
   </ItemGroup>
-  <ItemGroup />
-  <Import Project="..\..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\Commerce\Commerce.csproj">
+      <Project>{de9101a1-60c4-422a-9d85-e396309b1522}</Project>
+      <Name>Commerce</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="..\..\Commerce.UI\Commerce.UI.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
-  
   <!-- This will force the generation of the APK when not building inside visual studio -->
   <Target Name="Issue3897Workaround" Condition=" '$(ManagedDesignTimeBuild)' == 'True' " AfterTargets="_RemoveLegacyDesigner">
     <!-- See https://github.com/unoplatform/uno/issues/3897 and https://github.com/xamarin/xamarin-android/issues/5069 for more details -->
