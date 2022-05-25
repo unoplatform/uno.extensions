@@ -7,7 +7,7 @@ using Uno.Extensions.Reactive;
 
 namespace Commerce.ViewModels;
 
-[ReactiveBindable(true)]
+
 public partial class ProductDetailsViewModel
 {
 	private readonly IProductService _productService;

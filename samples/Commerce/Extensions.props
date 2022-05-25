@@ -8,5 +8,6 @@
 		<PackageReference Include="Uno.Extensions.Navigation" Version="2.0.0" />
 		<PackageReference Include="Uno.Extensions.Serialization" Version="2.0.0" />
 		<PackageReference Include="Uno.Extensions.Reactive" Version="2.0.0" />
+		<PackageReference Include="Uno.Extensions.Reactive.WinUI" Version="2.0.0" />
 	</ItemGroup>
 </Project>

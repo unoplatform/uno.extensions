@@ -7,6 +7,5 @@
 		<PackageReference Include="Uno.Extensions.Logging.WinUI" Version="2.0.0" />
 		<PackageReference Include="Uno.Extensions.Navigation.Toolkit.WinUI" Version="2.0.0" />
 		<PackageReference Include="Uno.Extensions.Navigation.WinUI" Version="2.0.0" />
-		<PackageReference Include="Uno.Extensions.Reactive.WinUI" Version="2.0.0" />
 	</ItemGroup>
 </Project>

@@ -25,7 +25,8 @@ namespace Commerce.ViewModels
 			CredentialsSettings = credentials;
 
 			if (logger.IsEnabled(LogLevel.Information)) logger.LogInformation($"Launch url '{configuration.Value?.LaunchUrl}'");
-			var initialRoute = configuration.Value?.LaunchRoute();
+			// TODO: Fix launch URL
+			var initialRoute = default(Route); // configuration.Value?.LaunchRoute();
 
 			// Go to the login page on app startup
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
@@ -39,8 +40,9 @@ namespace Commerce.ViewModels
 
 			if (currentCredentials?.UserName is { Length: > 0 })
 			{
-				if (initialRoute is not null &&
-					!initialRoute.IsEmpty())
+				if (initialRoute is not null)
+					// TODO: Check for empty route
+					//&& !initialRoute.IsEmpty())
 				{
 					var initialResponse = await Navigator.NavigateRouteForResultAsync<object>(this, initialRoute);
 					if (initialResponse is not null)
