@@ -16,7 +16,7 @@
 		IL Linking is disabled in Debug configuration.
 		When building in Release, see https://platform.uno/docs/articles/features/using-il-linker-webassembly.html
 		-->
-		<WasmShellILLinkerEnabled>true</WasmShellILLinkerEnabled>
+		<WasmShellILLinkerEnabled>false</WasmShellILLinkerEnabled>
 	</PropertyGroup>
 
 	<PropertyGroup>
