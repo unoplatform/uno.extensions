@@ -72,6 +72,14 @@ partial class State
 		=> state.UpdateMessage(m => m.With().Data(value is { Length: > 0 } ? value : Option<string>.None()), ct);
 
 	/// <summary>
+	/// [DEPRECATED] Use .ForEachAsync instead
+	/// </summary>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	public static IDisposable Execute<T>(this IState<T> state, AsyncAction<T?> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
+		where T : notnull
+		=> ForEachAsync(state, action, caller, line);
+
+	/// <summary>
 	/// Execute an async callback each time the state is being updated.
 	/// </summary>
 	/// <typeparam name="T">The type of the state</typeparam>
@@ -80,7 +88,7 @@ partial class State
 	/// <param name="caller"> For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>
 	/// <param name="line">For debug purposes, the name of this subscription. DO NOT provide anything here, let the compiler fulfill this.</param>
 	/// <returns>A <see cref="IDisposable"/> that can be used to remove the callback registration.</returns>
-	public static IDisposable Execute<T>(this IState<T> state, AsyncAction<T?> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
+	public static IDisposable ForEachAsync<T>(this IState<T> state, AsyncAction<T?> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
 		where T : notnull
-		=> new StateExecute<T>(state, action, $"Execute defined in {caller} at line {line}.");
+		=> new StateForEach<T>(state, action, $"Execute defined in {caller} at line {line}.");
 }

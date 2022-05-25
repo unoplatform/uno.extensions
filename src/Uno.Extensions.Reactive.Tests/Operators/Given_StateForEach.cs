@@ -12,7 +12,7 @@ using Uno.Extensions.Reactive.Testing;
 namespace Uno.Extensions.Reactive.Tests.Extensions;
 
 [TestClass]
-public class Given_StateExecute : FeedTests
+public class Given_StateForEach : FeedTests
 {
 	[TestMethod]
 	public async Task When_UpdateState_Then_CallbackInvokedIgnoringInitialValue()
