@@ -18,6 +18,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)App.xaml.host.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Data\CartEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\ICartEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\IProductsEndpoint.cs" />
