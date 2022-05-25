@@ -141,7 +141,7 @@ namespace Uno.Extensions.Http
 #if __IOS__
                 new NSUrlSessionHandler()
 #elif __ANDROID__
-                new Xamarin.Android.Net.AndroidClientHandler()
+                new Xamarin.Android.Net.AndroidMessageHandler()
 #elif NETFX_CORE
                 new WinHttpHandler()
 #else
