@@ -10,51 +10,5 @@
   <PropertyGroup />
   <Import Project="Playground.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeSharing\Microsoft.CodeSharing.CSharp.targets" />
-  <ItemGroup>
-    <_Globbed_Compile Remove="Models\AppInfo.cs" />
-    <_Globbed_Compile Remove="Models\Country.cs" />
-    <_Globbed_Compile Remove="Models\NavWidget.cs" />
-    <_Globbed_Compile Remove="Models\Widget.cs" />
-    <_Globbed_Compile Remove="Services\NeedsADispatcherService.cs" />
-    <_Globbed_Compile Remove="Services\SimpleStartupService.cs" />
-    <_Globbed_Compile Remove="ViewModels\AdHocViewModel.cs" />
-    <_Globbed_Compile Remove="ViewModels\HomeViewModel.cs" />
-    <_Globbed_Compile Remove="ViewModels\NavContentViewModel.cs" />
-    <_Globbed_Compile Remove="ViewModels\NavigationViewViewModel.cs" />
-    <_Globbed_Compile Remove="ViewModels\SecondViewModel.cs" />
-    <_Globbed_Compile Remove="ViewModels\SimpleViewModel.cs" />
-    <_Globbed_Compile Remove="ViewModels\VMViewModel.cs" />
-    <_Globbed_Compile Remove="ViewModels\XamlViewModel.cs" />
-    <_Globbed_Compile Remove="Views\AdHocPage.xaml.cs" />
-    <_Globbed_Compile Remove="Views\AlternatePage.xaml.cs" />
-    <_Globbed_Compile Remove="Views\AuthTokenDialog.xaml.cs" />
-    <_Globbed_Compile Remove="Views\BasicFlyout.xaml.cs" />
-    <_Globbed_Compile Remove="Views\CodeBehindPage.xaml.cs" />
-    <_Globbed_Compile Remove="Views\ContentControlPage.xaml.cs" />
-    <_Globbed_Compile Remove="Views\FlyoutsPopupsDrawerPage.xaml.cs" />
-    <_Globbed_Compile Remove="Views\MainPage.xaml.cs" />
-    <_Globbed_Compile Remove="Views\NavContentPage.xaml.cs" />
-    <_Globbed_Compile Remove="Views\NavContentSecondPage.xaml.cs" />
-    <_Globbed_Compile Remove="Views\NavigationViewPage.xaml.cs" />
-    <_Globbed_Compile Remove="Views\ShellView.xaml.cs" />
-    <_Globbed_Compile Remove="Views\TabBarPage.xaml.cs" />
-    <_Globbed_Compile Remove="Views\ViewModelPage.xaml.cs" />
-    <_Globbed_Compile Remove="Views\XamlPage.xaml.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <_Globbled_Page Remove="Views\AdHocPage.xaml" />
-    <_Globbled_Page Remove="Views\AlternatePage.xaml" />
-    <_Globbled_Page Remove="Views\AuthTokenDialog.xaml" />
-    <_Globbled_Page Remove="Views\BasicFlyout.xaml" />
-    <_Globbled_Page Remove="Views\CodeBehindPage.xaml" />
-    <_Globbled_Page Remove="Views\ContentControlPage.xaml" />
-    <_Globbled_Page Remove="Views\FlyoutsPopupsDrawerPage.xaml" />
-    <_Globbled_Page Remove="Views\MainPage.xaml" />
-    <_Globbled_Page Remove="Views\NavContentPage.xaml" />
-    <_Globbled_Page Remove="Views\NavContentSecondPage.xaml" />
-    <_Globbled_Page Remove="Views\NavigationViewPage.xaml" />
-    <_Globbled_Page Remove="Views\ShellView.xaml" />
-    <_Globbled_Page Remove="Views\TabBarPage.xaml" />
-    <_Globbled_Page Remove="Views\XamlPage.xaml" />
-  </ItemGroup>
+
 </Project>
