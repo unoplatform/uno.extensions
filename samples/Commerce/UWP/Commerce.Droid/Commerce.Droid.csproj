@@ -21,7 +21,6 @@
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <AndroidUseIntermediateDesignerFile>True</AndroidUseIntermediateDesignerFile>
     <ResourcesDirectory>..\Commerce.UI\Strings</ResourcesDirectory>
-    <LangVersion>10.0</LangVersion>
     <AndroidPackageFormat>apk</AndroidPackageFormat>
     <AndroidPackageFormat Condition="'$(BuildForPlayStore)'=='true'">aab</AndroidPackageFormat>
   </PropertyGroup>
