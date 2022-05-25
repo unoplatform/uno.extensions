@@ -80,64 +80,8 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="7.0.3" />
     <PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.2" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj">
-      <Project>{F049B72C-C09E-4040-8461-ECCEDEC44D33}</Project>
-      <Name>Uno.Extensions.Configuration</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Core\Uno.Extensions.Core.csproj">
-      <Project>{4B596C8D-65B8-473E-AC77-60182F95321E}</Project>
-      <Name>Uno.Extensions.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.UWP.csproj">
-      <Project>{fb855301-211a-4716-8162-e2888824b445}</Project>
-      <Name>Uno.Extensions.Hosting.UWP</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj">
-      <Project>{975ff5ca-c780-4c30-9d48-e6a8258aba9e}</Project>
-      <Name>Uno.Extensions.Hosting</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Http\Uno.Extensions.Http.csproj">
-      <Project>{FEC47512-AC91-4046-8866-89FD512873DB}</Project>
-      <Name>Uno.Extensions.Http</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Localization\Uno.Extensions.Localization.csproj">
-      <Project>{064D706F-1CAA-4028-BB66-BAEF49D32B94}</Project>
-      <Name>Uno.Extensions.Localization</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj">
-      <Project>{A2D5DFFB-484B-4365-AAAC-13217A76150E}</Project>
-      <Name>Uno.Extensions.Logging.Serilog</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.UWP.csproj">
-      <Project>{c57652d8-e0df-4108-9ccd-023f91038aee}</Project>
-      <Name>Uno.Extensions.Logging.UWP</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.UI.csproj">
-      <Project>{96429923-5d3a-4509-992a-ff5f7d621b7f}</Project>
-      <Name>Uno.Extensions.Navigation.Toolkit.UI</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UI.csproj">
-      <Project>{eff028a3-ae9d-4a78-8c83-4711386e748b}</Project>
-      <Name>Uno.Extensions.Navigation.UI</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj">
-      <Project>{E11A43D8-9383-467C-924A-00CA6794EE04}</Project>
-      <Name>Uno.Extensions.Navigation</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj">
-      <Project>{609DEE51-CE35-4A3A-A35E-62005F746BD6}</Project>
-      <Name>Uno.Extensions.Serialization</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj">
-      <Project>{74D93A0B-42F9-45A6-8AC3-684DAE9659A8}</Project>
-      <Name>Uno.Extensions.Reactive</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Reactive.UI\Uno.Extensions.Reactive.UI.csproj">
-      <Project>{7516C1F2-6CCB-4B59-91B7-E6D4B4EA5835}</Project>
-      <Name>Uno.Extensions.Reactive.UI</Name>
-    </ProjectReference>
-  </ItemGroup>
+    <Import Project="..\..\Extensions.uwp.props" />
+
   <Import Project="..\..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" />
   <ItemGroup>
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Contents.json" />
@@ -177,7 +121,7 @@
     </BundleResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets" />
-  <Import Project="..\..\..\..\src\Uno.Extensions.Reactive.Generator\buildTransitive\Uno.Extensions.Reactive.props" />
+  
   <Target Name="VS16Mac_RemoveSystemMemory" BeforeTargets="ResolveAssemblyReferences">
     <!--
 				VS4Mac seems to process System.Memory differently, and removes
