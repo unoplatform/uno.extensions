@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Collections.Immutable;
+using System.Threading;
 using System.Threading.Tasks;
 using Commerce.Models;
 using Commerce.Services;
@@ -22,7 +23,7 @@ public partial class ProductDetailsViewModel
 
 	public virtual IFeed<Product> Product => Feed.Async(Load);
 
-	public virtual IFeed<Review[]> Reviews => Product.SelectAsync(async (p, ct) => await _productService.GetReviews(p.ProductId, ct));
+	public virtual IFeed<IImmutableList<Review>> Reviews => Product.SelectAsync(async (p, ct) => await _productService.GetReviews(p.ProductId, ct));
 
 	private async ValueTask<Product> Load(CancellationToken ct)
 		=> _product;

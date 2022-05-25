@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Collections.Immutable;
+using System.Threading;
 using System.Threading.Tasks;
 using Commerce.Models;
 using Commerce.Services;
@@ -20,5 +21,5 @@ public partial class CartProductDetailsViewModel: ProductDetailsViewModel
 
 	public override IFeed<Product> Product => base.Product;
 
-	public override IFeed<Review[]> Reviews => base.Reviews;
+	public override IFeed<IImmutableList<Review>> Reviews => base.Reviews;
 }

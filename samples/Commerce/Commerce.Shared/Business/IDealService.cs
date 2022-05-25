@@ -8,5 +8,5 @@ namespace Commerce.Services;
 
 public interface IDealService
 {
-	ValueTask<Product[]> GetDeals(CancellationToken ct);
+	ValueTask<Product[]> GetAll(CancellationToken ct);
 }

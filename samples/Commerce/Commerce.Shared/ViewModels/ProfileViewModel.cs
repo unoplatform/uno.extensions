@@ -23,9 +23,7 @@ public class ProfileViewModel
 		_profileService = profileService;
 	}
 
-	public IFeed<ProfileModel> Profile => Feed
-		.Async(_profileService.GetProfile)
-		.Select(profile => new ProfileModel(profile));
+	public IFeed<Profile> Profile => Feed.Async(_profileService.GetProfile);
 
 	public async void Logout()
 	{

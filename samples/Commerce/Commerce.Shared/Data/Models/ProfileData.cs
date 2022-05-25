@@ -1,6 +1,6 @@
-namespace Commerce.Models;
+namespace Commerce.Data.Models;
 
-public record Profile
+public record ProfileData
 {
 	public string? FirstName { get; set; }
 	public string? LastName { get; set; }

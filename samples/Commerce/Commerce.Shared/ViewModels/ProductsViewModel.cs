@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
@@ -30,9 +31,9 @@ public partial class ProductsViewModel
 		.Select(FilterProducts)
 		.Where(products => products.Any());
 
-	private IFeed<Product[]> Results => _term
-		.SelectAsync(_products.GetProducts);
+	private IFeed<IImmutableList<Product>> Results => _term
+		.SelectAsync(_products.Search);
 
-	private Product[] FilterProducts((Product[] products, Filters? filter) inputs)
+	private Product[] FilterProducts((IImmutableList<Product> products, Filters? filter) inputs)
 		=> inputs.products.Where(p => inputs.filter?.Match(p) ?? true).ToArray();
 }

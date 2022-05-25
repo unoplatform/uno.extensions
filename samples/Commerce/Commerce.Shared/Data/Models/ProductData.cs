@@ -1,6 +1,6 @@
-namespace Commerce.Models;
+namespace Commerce.Data.Models;
 
-public record Product
+public record ProductData
 {
 	public int ProductId { get; init; }
 	public string? Brand { get; init; }
@@ -13,9 +13,5 @@ public record Product
 	public string? Discount { get; init; }
 	public string? Photo { get; init; }
 	public double? Rating { get; init; }
-
-	public string? DiscountedPrice => Price;
-
-	public Review[]? Reviews { get; init; }
-
+	public ReviewData[]? Reviews { get; init; }
 }

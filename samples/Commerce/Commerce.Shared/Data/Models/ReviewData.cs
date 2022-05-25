@@ -1,6 +1,6 @@
-namespace Commerce.Models;
+namespace Commerce.Data.Models;
 
-public class Review
+public record ReviewData
 {
 	public string? Photo { get; set; }
 	public string? Name { get; set; }
