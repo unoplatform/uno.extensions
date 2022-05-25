@@ -140,7 +140,7 @@ return code;
 		return record
 			.Constructors
 			.Where(ctor => ctor.IsAccessible() && !IsCloneCtor(ctor))
-			.OrderBy(ctor => ctor.HasAttributes(_ctx.DefaultRecordCtor) ? 0 : 1)
+			.OrderBy(ctor => ctor.HasAttributes(_ctx.DefaultRecordCtorAttribute) ? 0 : 1)
 			.ThenBy(ctor => ctor.Parameters.Length)
 			.FirstOrDefault();
 

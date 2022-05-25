@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using Microsoft.CodeAnalysis;
@@ -47,7 +48,7 @@ internal static class RoslynExtensions
 		{
 			throw new ArgumentNullException(nameof(@interface));
 		}
-
+			
 		if (!@interface.IsGenericType)
 		{
 			throw new InvalidOperationException($"Interface {@interface} is not generic.");
@@ -62,6 +63,36 @@ internal static class RoslynExtensions
 			.GetAllInterfaces()
 			.Where(intf => intf.OriginalDefinition.Is(@interface) && intf.IsGenericType && !intf.IsUnboundGenericType)
 			.Select(intf => intf.TypeArguments);
+	}
+
+	/// <summary>
+	/// Determines if the symbol inherits from the specified type.
+	/// </summary>
+	public static bool IsOrImplements(this ITypeSymbol symbol, INamedTypeSymbol typeOrInterface, [NotNullWhen(true)] out INamedTypeSymbol? boundedType)
+	{
+		do
+		{
+			if (symbol is INamedTypeSymbol named
+				&& (IsExpectedType(named) || named.Interfaces.Any(IsExpectedType)))
+			{
+				boundedType = named;
+				return true;
+			}
+
+			symbol = symbol.BaseType!;
+			if (symbol is null)
+			{
+				break;
+			}
+
+		} while (symbol.Name != "Object");
+
+		boundedType = null;
+		return false;
+
+		bool IsExpectedType(INamedTypeSymbol named)
+			=> SymbolEqualityComparer.Default.Equals(named, typeOrInterface)
+			|| SymbolEqualityComparer.Default.Equals(named.ConstructedFrom, typeOrInterface);
 	}
 
 	public static string GetDeclaringLocationsDisplayString(this ISymbol symbol)
