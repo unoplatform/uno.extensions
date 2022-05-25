@@ -17,7 +17,7 @@ public partial class FeedsGenerator : ISourceGenerator
 
 	public void Execute(GeneratorExecutionContext context)
 	{
-#if DEBUG
+#if DEBUGGING_GENERATOR
 		var process = Process.GetCurrentProcess().ProcessName;
 		if (process.IndexOf("VBCSCompiler", StringComparison.OrdinalIgnoreCase) is not -1
 			|| process.IndexOf("csc", StringComparison.OrdinalIgnoreCase) is not -1)
