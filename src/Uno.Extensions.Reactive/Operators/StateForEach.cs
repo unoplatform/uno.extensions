@@ -9,7 +9,7 @@ using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive;
 
-internal class StateExecute<T> : IDisposable
+internal class StateForEach<T> : IDisposable
 	where T : notnull
 {
 	private readonly CancellationTokenSource _ct = new();
@@ -17,7 +17,7 @@ internal class StateExecute<T> : IDisposable
 	private readonly string _name;
 	private readonly Task _task; // Holds ref on the enumeration task. This is also accessed by reflection in tests!
 
-	public StateExecute(ISignal<Message<T>> state, AsyncAction<T?> action, string name = "-unnamed-")
+	public StateForEach(ISignal<Message<T>> state, AsyncAction<T?> action, string name = "-unnamed-")
 	{
 		if (state is not IStateImpl impl)
 		{
