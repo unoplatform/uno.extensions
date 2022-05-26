@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Commerce.Models;
-using Commerce.Services;
+using Commerce.Data.Models;
+using Commerce.Business.Models;
 using Commerce.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -120,7 +120,7 @@ namespace Commerce
 																							{
 																								var id = int.Parse(query[nameof(Product.ProductId)] + string.Empty);
 																								var ps = sp.GetRequiredService<IProductService>();
-																								var products = await ps.GetProducts(default, default);
+																								var products = await ps.GetAll(default);
 																								return products.FirstOrDefault(p => p.ProductId == id);
 																							})),
 					new ViewMap(View: typeof(FilterPage), ViewModel: typeof(FiltersViewModel), Data: new DataMap<Filters>()),
@@ -136,9 +136,9 @@ namespace Commerce
 																								var id = int.Parse(query[nameof(Product.ProductId)] + string.Empty);
 																								var quantity = int.Parse(query[nameof(CartItem.Quantity)] + string.Empty);
 																								var ps = sp.GetRequiredService<IProductService>();
-																								var products = await ps.GetProducts(default, default);
+																								var products = await ps.GetAll(default);
 																								var p = products.FirstOrDefault(p => p.ProductId == id);
-																								return new CartItem(p!, quantity);
+																								return new CartItem(p!, (uint)quantity);
 																							})),
 					new ViewMap(View: typeof(CheckoutPage)),
 					forgotPasswordDialog

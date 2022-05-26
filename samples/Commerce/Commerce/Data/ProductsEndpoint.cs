@@ -1,6 +1,6 @@
 ﻿namespace Commerce.Data;
 
-internal class ProductsEndpoint : IProductsEndpoint
+public class ProductsEndpoint : IProductsEndpoint
 {
 	public const string ProductDataFile = "products.json";
 	private const string ReviewDataFile = "reviews.json";

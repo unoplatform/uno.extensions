@@ -1,6 +1,6 @@
 ﻿namespace Commerce.Data;
 
-internal class CartEndpoint : ICartEndpoint
+public class CartEndpoint : ICartEndpoint
 {
 	private readonly IStorage _dataService;
 	private readonly ISerializer _serializer;
