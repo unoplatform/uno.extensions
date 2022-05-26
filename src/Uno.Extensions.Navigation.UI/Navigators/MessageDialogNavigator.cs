@@ -76,7 +76,7 @@ public class MessageDialogNavigator : DialogNavigator
 			(messageView?.Buttons ?? new DialogAction[] { });
 
 		var commands = from b in buttons
-					   select new UICommand(b.LabelProvider?.Invoke(_localizer), new UICommandInvokedHandler(cmd => b.Action?.Invoke()), b.Id);
+					   select new UICommand(b.LabelProvider?.Invoke(_localizer) ?? string.Empty, new UICommandInvokedHandler(cmd => b.Action?.Invoke()), b.Id);
 
 		var md = new MessageDialog(
 			content,
