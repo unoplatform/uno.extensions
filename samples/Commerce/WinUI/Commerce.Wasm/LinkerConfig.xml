@@ -1,5 +1,6 @@
 <linker>
-  <assembly fullname="Commerce.Wasm" />
+	<assembly fullname="Commerce" />
+	<assembly fullname="Commerce.Wasm" />
  	<assembly fullname="Uno.WinUI" />
 
 

@@ -8,11 +8,10 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Commerce</RootNamespace>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
-    <AssemblyName>Commerce</AssemblyName>
+    <AssemblyName>Commerce.iOS</AssemblyName>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <ResourcesDirectory>..\Commerce.Shared\Strings</ResourcesDirectory>
-    <LangVersion>10.0</LangVersion>
+    <ResourcesDirectory>..\Commerce.UI\Strings</ResourcesDirectory>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
     <DebugSymbols>true</DebugSymbols>
@@ -185,64 +184,7 @@
   <ItemGroup>
     <BundleResource Include="Resources\SplashScreen.png" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj">
-      <Project>{0dde79de-181b-42ef-af00-56dc622a6afa}</Project>
-      <Name>Uno.Extensions.Configuration</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Core\Uno.Extensions.Core.csproj">
-      <Project>{0bf9edde-e6c1-4a3a-b73d-02d867f2054c}</Project>
-      <Name>Uno.Extensions.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.UWP.csproj">
-      <Project>{fb855301-211a-4716-8162-e2888824b445}</Project>
-      <Name>Uno.Extensions.Hosting.UWP</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj">
-      <Project>{ea4f9862-63ee-47d6-bd2b-2d1b83e2fd6a}</Project>
-      <Name>Uno.Extensions.Hosting</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Http\Uno.Extensions.Http.csproj">
-      <Project>{29bfc492-b537-4985-9163-649fc56ebf12}</Project>
-      <Name>Uno.Extensions.Http</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Localization\Uno.Extensions.Localization.csproj">
-      <Project>{3f8f8b81-03af-48e8-a901-ab3b14f15b10}</Project>
-      <Name>Uno.Extensions.Localization</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj">
-      <Project>{3f01a0de-4b9e-496f-ac6b-94daf315a20f}</Project>
-      <Name>Uno.Extensions.Logging.Serilog</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.UWP.csproj">
-      <Project>{c57652d8-e0df-4108-9ccd-023f91038aee}</Project>
-      <Name>Uno.Extensions.Logging.UWP</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.UI.csproj">
-      <Project>{96429923-5d3a-4509-992a-ff5f7d621b7f}</Project>
-      <Name>Uno.Extensions.Navigation.Toolkit.UI</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UI.csproj">
-      <Project>{eff028a3-ae9d-4a78-8c83-4711386e748b}</Project>
-      <Name>Uno.Extensions.Navigation.UI</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj">
-      <Project>{ad3c0a66-450d-4355-b5c4-fdaf0d7746ad}</Project>
-      <Name>Uno.Extensions.Navigation</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj">
-      <Project>{5123670c-9756-4c9e-9844-f4a9c0aee633}</Project>
-      <Name>Uno.Extensions.Serialization</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj">
-      <Project>{74D93A0B-42F9-45A6-8AC3-684DAE9659A8}</Project>
-      <Name>Uno.Extensions.Reactive</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Uno.Extensions.Reactive.UI\Uno.Extensions.Reactive.UI.csproj">
-      <Project>{7516C1F2-6CCB-4B59-91B7-E6D4B4EA5835}</Project>
-      <Name>Uno.Extensions.Reactive.UI</Name>
-    </ProjectReference>
-  </ItemGroup>
+  <Import Project="..\..\Extensions.uwp.props" />
   <ItemGroup>
     <ImageAsset Include="Media.xcassets\AppIcons.appiconset\Icon1024.png">
       <Visible>false</Visible>
@@ -312,9 +254,11 @@
     <Content Include="Media.xcassets\AppIcons.appiconset\iTunesArtwork%402x.png" />
   </ItemGroup>
   <Import Project="XamarinForms.targets" Condition="'$(Configuration)'=='Debug'" />
-  <Import Project="..\..\Commerce.Shared\Commerce.Shared.projitems" Label="Shared" />
+  <Import Project="..\..\Commerce.UI\Commerce.UI.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
-  <Import Project="..\..\..\..\src\Uno.Extensions.Reactive.Generator\buildTransitive\Uno.Extensions.Reactive.props" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\Commerce\Commerce.csproj" />
+  </ItemGroup>
   <ProjectExtensions>
     <VisualStudio>
       <UserProperties XamarinHotReloadDebuggerTimeoutExceptionCommerceiOSHideInfoBar="True" />

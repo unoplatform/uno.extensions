@@ -2,7 +2,7 @@
   "solution": {
     "path": "Commerce.sln",
     "projects": [
-		"Commerce.Shared\\Commerce.Shared.shproj",
+		"Commerce.UI\\Commerce.UI.shproj",
 
 		"Commerce.Droid\\Commerce.Droid.csproj",
 
