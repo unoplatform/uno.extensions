@@ -16,9 +16,9 @@ public class ProductsEndpoint : IProductsEndpoint
 
 	public async ValueTask<ProductData[]> GetAll(CancellationToken ct)
 	{
-		var products = await _dataService.ReadFileAsync<IEnumerable<ProductData>>(_serializer, ProductDataFile);
+		var products = await _dataService.ReadFileAsync<ProductData[]>(_serializer, ProductDataFile);
 
-		return products?.ToArray() ?? Array.Empty<ProductData>();
+		return products ?? Array.Empty<ProductData>();
 	}
 
 	public async ValueTask<ReviewData[]> GetReviews(int productId, CancellationToken ct)

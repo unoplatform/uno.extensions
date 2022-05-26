@@ -25,7 +25,7 @@ public partial class ProfileViewModel
 		_appSettings = appSettings;
 
 		IsDarkTheme = State.Value(this, () => appTheme.IsDark);
-		IsDarkTheme.Execute(ChangeAppTheme);
+		IsDarkTheme.ForEachAsync(ChangeAppTheme);
 	}
 
 	[Value]

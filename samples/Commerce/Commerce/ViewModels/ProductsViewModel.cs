@@ -3,27 +3,28 @@
 public partial class ProductsViewModel
 {
 	private readonly IProductService _products;
-	private readonly IFeed<string> _term;
-	private readonly IFeed<Filters> _filter;
 
 	private ProductsViewModel(
 		IProductService products,
-		IInput<string> term,
-		[Value] IInput<Filters> filter)
+		Filters? filter)
 	{
 		_products = products;
-		_term = term;
-		_filter = filter;
+
+		Filter = State.Value(this, () => filter);
 	}
 
-	public IFeed<Product[]> Items => Feed
-		.Combine(Results, _filter)
-		.Select(FilterProducts)
-		.Where(products => products.Any());
+	public IState<string> Term => State<string>.Value(this, () => "");
 
-	private IFeed<IImmutableList<Product>> Results => _term
+	public IState<Filters?> Filter { get; }
+
+	public IListFeed<Product> Items => Feed
+		.Combine(Results, Filter)
+		.Select(FilterProducts)
+		.AsListFeed();
+
+	private IFeed<IImmutableList<Product>> Results => Term
 		.SelectAsync(_products.Search);
 
-	private Product[] FilterProducts((IImmutableList<Product> products, Filters? filter) inputs)
-		=> inputs.products.Where(p => inputs.filter?.Match(p) ?? true).ToArray();
+	private IImmutableList<Product> FilterProducts((IImmutableList<Product> products, Filters? filter) inputs)
+		=> inputs.products.Where(p => inputs.filter?.Match(p) ?? true).ToImmutableList();
 }

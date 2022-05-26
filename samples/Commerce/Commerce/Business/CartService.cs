@@ -1,24 +1,20 @@
-﻿
-
-namespace Commerce.Business;
+﻿namespace Commerce.Business;
 
 public class CartService : ICartService
 {
-	private readonly ICartEndpoint _client;
+	private IState<Cart> _cart => State<Cart>.Empty(this);
 
-	public CartService(ICartEndpoint client)
-	{
-		_client = client;
-	}
-
-	public IState<Cart> _cart => State<Cart>.Empty(this);
 	public IFeed<Cart> Cart => _cart;
 
-	public async ValueTask<Cart> Get(CancellationToken ct)
-	{
-		var data = await _client.Get(ct);
-		var cart = new Cart(data);
+	public async ValueTask<Cart?> Get(CancellationToken ct)
+		=> await _cart;
 
-		return cart;
-	}
+	public async ValueTask Add(Product product, CancellationToken ct)
+		=> await _cart.Update(cart => (cart ?? new Cart()).Add(product), ct);
+
+	public async ValueTask Update(Product product, uint quantity, CancellationToken ct)
+		=> await _cart.Update(cart => (cart ?? new Cart()).Update(product, quantity), ct);
+
+	public ValueTask Remove(Product product, CancellationToken ct)
+		=> Update(product, 0, ct);
 }

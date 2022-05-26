@@ -1,44 +1,28 @@
-﻿namespace Commerce.ViewModels;
+﻿using System.Windows.Input;
+
+namespace Commerce.ViewModels;
 
 public partial record LoginViewModel
 {
 	private readonly INavigator _navigator;
-	private readonly IState<string> _error;
 
 	private LoginViewModel(
 		INavigator navigator,
-		IOptions<AppInfo> appInfo,
-		IInput<Credentials> credentials,
-		IInput<string> error,
-		ICommandBuilder login)
+		IOptions<AppInfo> appInfo)
 	{
 		Title = appInfo.Value.Title;
 		_navigator = navigator;
-		_error = error;
-
-		login
-			.Given(credentials)
-			.When(CanLogin)
-			.Then(Login);
 	}
 
 	public string? Title { get; }
 
+	public IState<Credentials> Credentials => State<Credentials>.Empty(this);
+
+	public ICommand Login => Command.Create(b => b.Given(Credentials).When(CanLogin).Then(DoLogin));
+
 	private bool CanLogin(Credentials credentials)
 		=> credentials is { UserName.Length: > 0 } and { Password.Length: > 0 };
 
-	private async ValueTask Login(Credentials credentials, CancellationToken ct)
-	{
-		if (credentials is { UserName.Length: >= 3 } and { Password.Length: >= 3 })
-		{
-			await _error.Set(default, ct);
-			await Task.Delay(1, ct);
-
-			await _navigator.NavigateBackWithResultAsync(this, data: Option.Some(credentials));
-		}
-		else
-		{
-			await _error.Set("Login and password must be at least 3 characters long.", ct);
-		}
-	}
+	private async ValueTask DoLogin(Credentials credentials, CancellationToken ct)
+		=> await _navigator.NavigateBackWithResultAsync(this, data: Option.Some(credentials), cancellation: ct);
 }

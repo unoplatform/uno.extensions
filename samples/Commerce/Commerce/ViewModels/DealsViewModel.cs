@@ -1,6 +1,8 @@
 ﻿namespace Commerce.ViewModels;
 
-public record DealsViewModel(IDealService DealService)
+public record DealsViewModel(IDealService DealService, IProductService ProductService)
 {
-	public IFeed<Product[]> Items => Feed.Async(DealService.GetAll);
+	public IListFeed<Product> Items => ListFeed.Async(DealService.GetAll);
+
+	public IListFeed<Product> Favorites => ListFeed.Async(ProductService.GetFavorites);
 }

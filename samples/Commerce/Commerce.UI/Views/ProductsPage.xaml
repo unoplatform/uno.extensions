@@ -104,7 +104,7 @@
 										 utu:AutoLayout.CounterAlignment="Center"
 										 Style="{StaticResource MaterialHyperlinkButtonStyle}"
 										 uen:Navigation.Request="!Filter"
-										 uen:Navigation.Data="{Binding Filter, Mode=TwoWay}" />
+										 uen:Navigation.Data="{Binding Filter.Value, Mode=TwoWay}" />
 					</utu:AutoLayout>
 				</utu:AutoLayout>
 				<uer:FeedView Style="{StaticResource MaterialCompositeFeedViewStyle}"
