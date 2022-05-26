@@ -16,21 +16,22 @@ public sealed partial class App : Application
 
 
 				// Add platform specific log providers
-				.UseLogging(configure: logBuilder =>
-				{
-					// Configure log levels for different categories of logging
-					logBuilder
-							.SetMinimumLevel(LogLevel.Information)
-							.XamlLogLevel(LogLevel.Information)
-							.XamlLayoutLogLevel(LogLevel.Information)
-							.AddFilter("Uno.Extensions.Navigation", LogLevel.Trace);
-				})
+				.UseLogging(configure: (context, logBuilder) =>
+							// Configure log levels for different categories of logging
+							logBuilder
+									.SetMinimumLevel(
+										context.HostingEnvironment.IsDevelopment() ?
+											LogLevel.Information :
+											LogLevel.Warning))
 
 				.UseConfiguration(configure: configBuilder=>
 					configBuilder
-						.ContentSource()
+						.EmbeddedSource<App>()
+
 						.Section<AppInfo>()
+
 						.Section<Credentials>()
+						.Section<CommerceApp>()
 				)
 
 
@@ -41,6 +42,8 @@ public sealed partial class App : Application
 				.ConfigureServices(services =>
 				{
 					services
+						.AddScoped<IAppTheme, AppTheme>()
+
 						.AddSingleton<ICartEndpoint, CartEndpoint>()
 						.AddSingleton<IProductsEndpoint, ProductsEndpoint>()
 
@@ -64,6 +67,8 @@ public sealed partial class App : Application
 				// Add navigation support for toolkit controls such as TabBar and NavigationView
 				.UseToolkitNavigation()
 
+				// Add localization support
+				.UseLocalization()
 
 				.Build(enableUnoLogging: true);
 

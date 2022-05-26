@@ -39,10 +39,11 @@ public sealed partial class App : Application
 		_window.AttachNavigation(_host.Services);
 		_window.Activate();
 
-		await Task.Run(async () =>
-		{
-			await _host.StartAsync();
-		});
+		await Task.Run(() => _host.StartAsync());
+
+		var appSettings = _host.Services.GetRequiredService<IWritableOptions<CommerceApp>>();
+		var isDark = appSettings.Value?.IsDark ?? false;
+		SystemThemeHelper.SetRootTheme(_window.Content.XamlRoot, isDark);
 
 	}
 

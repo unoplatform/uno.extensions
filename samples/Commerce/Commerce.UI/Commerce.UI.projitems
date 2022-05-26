@@ -21,6 +21,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.host.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)AppTheme.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GlobalUsings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ReactiveClasses.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\CartFlyout.xaml.cs">
@@ -121,9 +122,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="$(MSBuildThisFileDirectory)appsettings.json">
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </EmbeddedResource>
     <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\back.scale-100.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\back.scale-150.png" />
     <Content Include="$(MSBuildThisFileDirectory)Assets\Icons\back.scale-200.png" />
@@ -166,9 +167,9 @@
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="$(MSBuildThisFileDirectory)appsettings.development.json">
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)appsettings.development.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </EmbeddedResource>
     <Content Include="$(MSBuildThisFileDirectory)products.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

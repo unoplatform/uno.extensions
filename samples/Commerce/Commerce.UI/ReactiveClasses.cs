@@ -13,6 +13,7 @@ public static partial class ReactiveViewModelMappings
 	public static IDictionary<Type, Type> ViewModelMappings = new Dictionary<Type, Type>()
 			{
 				{ typeof(LoginViewModel), typeof(LoginViewModel.BindableLoginViewModel)},
+				{ typeof(ProfileViewModel),typeof(ProfileViewModel.BindableProfileViewModel)},
 				{ typeof(ProductsViewModel),typeof(ProductsViewModel.BindableProductsViewModel)},
 				{ typeof(ProductDetailsViewModel),typeof(ProductDetailsViewModel.BindableProductDetailsViewModel)},
 				{ typeof(FiltersViewModel),typeof(FiltersViewModel.BindableFiltersViewModel)},
