@@ -1,6 +1,5 @@
 ﻿namespace Commerce.ViewModels;
 
-
 public partial class ProductDetailsViewModel
 {
 	private readonly IProductService _productService;

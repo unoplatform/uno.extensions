@@ -59,11 +59,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)_Compat\IsExternalInit.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="$(MSBuildThisFileDirectory)ColorPaletteOverride.xaml">
+    <Page Include="$(MSBuildThisFileDirectory)Styles\ColorPaletteOverride.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="$(MSBuildThisFileDirectory)MaterialFontsOverride.xaml">
+    <Page Include="$(MSBuildThisFileDirectory)Styles\MaterialFontsOverride.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

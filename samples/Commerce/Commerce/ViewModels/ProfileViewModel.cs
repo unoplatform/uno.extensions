@@ -1,6 +1,4 @@
-﻿
-
-namespace Commerce.ViewModels;
+﻿namespace Commerce.ViewModels;
 
 public class ProfileViewModel
 {
@@ -14,8 +12,8 @@ public class ProfileViewModel
 		IWritableOptions<Credentials> credentials,
 		IProfileService profileService)
 	{
-		_navigator= navigator;
-		_credentials= credentials;
+		_navigator = navigator;
+		_credentials = credentials;
 		_profileService = profileService;
 	}
 

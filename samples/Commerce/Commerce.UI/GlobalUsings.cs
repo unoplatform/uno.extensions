@@ -29,11 +29,13 @@ global using Commerce.Business;
 global using Commerce.Business.Models;
 global using Commerce.Data;
 global using Commerce.Data.Models;
+global using Commerce.ViewModels;
+global using Commerce.Reactive;
+global using Commerce.Views;
 global using Microsoft.Extensions.Options;
 global using Uno.Extensions;
 global using Uno.Extensions.Reactive;
 global using Uno.Extensions.Storage;
-
 
 #if WINUI
 global using Microsoft.UI.Dispatching;
@@ -45,6 +47,8 @@ global using Microsoft.UI.Dispatching;
 	global using Microsoft.UI.Xaml.Markup;
 	global using Microsoft.UI.Xaml.Data;
 	global using Microsoft.UI.Xaml.Media;
+global using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
+global using Window = Microsoft.UI.Xaml.Window;
 #else
 global using Windows.System;
 global using Windows.UI.Xaml;
@@ -55,6 +59,9 @@ global using Windows.UI.Xaml.Navigation;
 global using Windows.UI.Xaml.Markup;
 global using Windows.UI.Xaml.Data;
 global using Windows.UI.Xaml.Media;
+global using LaunchActivatedEventArgs = Windows.ApplicationModel.Activation.LaunchActivatedEventArgs;
+global using Window = Windows.UI.Xaml.Window;
+global using CoreApplication = Windows.ApplicationModel.Core.CoreApplication;
 #endif
 
 

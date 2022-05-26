@@ -1,6 +1,4 @@
-﻿
-
-namespace Commerce.ViewModels;
+﻿namespace Commerce.ViewModels;
 
 public partial record LoginViewModel
 {
@@ -24,7 +22,7 @@ public partial record LoginViewModel
 			.Then(Login);
 	}
 
-	public string? Title { get;  }
+	public string? Title { get; }
 
 	private bool CanLogin(Credentials credentials)
 		=> credentials is { UserName.Length: > 0 } and { Password.Length: > 0 };

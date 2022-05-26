@@ -25,7 +25,7 @@ public record Filters
 			return true;
 		}
 
-		if (Headwear && product.Category?.IndexOf("Headwear", StringComparison.OrdinalIgnoreCase) >=0)
+		if (Headwear && product.Category?.IndexOf("Headwear", StringComparison.OrdinalIgnoreCase) >= 0)
 		{
 			return true;
 		}

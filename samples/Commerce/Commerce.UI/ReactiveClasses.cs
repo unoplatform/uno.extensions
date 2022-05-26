@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Commerce.ViewModels;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Uno.Extensions.Navigation;
-
-
-namespace Commerce.Reactive;
+﻿namespace Commerce.Reactive;
 
 // Need an attribute to identify this as the static class where
 // the ViewModelMappings should be source generated
