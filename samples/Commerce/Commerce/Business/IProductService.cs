@@ -8,7 +8,7 @@ public interface IProductService
 
 	ValueTask<IImmutableList<Review>> GetReviews(int productId, CancellationToken ct);
 
-	ValueTask<IImmutableList<Product>?> GetFavorites(CancellationToken ct);
+	ValueTask<IImmutableList<Product>> GetFavorites(CancellationToken ct);
 
 	ValueTask Update(Product product, CancellationToken ct);
 }

@@ -14,10 +14,14 @@ public class DealService : IDealService
 	}
 
 
-	public async ValueTask<Product[]> GetAll(CancellationToken ct)
+	public async ValueTask<IImmutableList<Product>> GetAll(CancellationToken ct)
 	{
-		var products = await _dataService.ReadFileAsync<Product[]>(_serializer, ProductsEndpoint.ProductDataFile);
+		var products = await _dataService.ReadFileAsync<ProductData[]>(_serializer, ProductsEndpoint.ProductDataFile);
 
-		return products!.Where(p => !string.IsNullOrWhiteSpace(p.Discount)).ToArray();
+		return products
+			?.Where(p => !string.IsNullOrWhiteSpace(p.Discount))
+			.Select(data => new Product(data, false /* TODO */))
+			.ToImmutableList()
+			?? ImmutableList<Product>.Empty;
 	}
 }

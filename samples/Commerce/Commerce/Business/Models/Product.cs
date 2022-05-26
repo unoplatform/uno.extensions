@@ -33,6 +33,6 @@ public record Product()
 	public double? Rating { get; init; }
 	public IImmutableList<Review>? Reviews { get; init; }
 
-	public bool IsFavorite { get; }
+	public bool IsFavorite { get; init; }
 	public string? DiscountedPrice => Price;
 }

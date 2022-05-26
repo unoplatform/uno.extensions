@@ -2,5 +2,5 @@
 
 public interface IDealService
 {
-	ValueTask<Product[]> GetAll(CancellationToken ct);
+	ValueTask<IImmutableList<Product>> GetAll(CancellationToken ct);
 }

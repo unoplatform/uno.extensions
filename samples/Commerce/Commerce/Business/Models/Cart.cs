@@ -1,17 +1,14 @@
 ﻿namespace Commerce.Business.Models;
 
-public record Cart
+public record Cart(IImmutableList<CartItem> Items)
 {
-	public Cart(CartData data)
+	public Cart() : this(ImmutableList<CartItem>.Empty)
 	{
-		Items = data.Items.Select(item => new CartItem(item)).ToImmutableList();
 	}
 
 	public string SubTotal => "$350,97";
 	public string Tax => "$15,75";
 	public string Total => "$405,29";
-
-	public IImmutableList<CartItem> Items { get; init; }
 
 	public Cart Add(Product product)
 	{
@@ -23,7 +20,7 @@ public record Cart
 		return this with { Items = updatedItems };
 	}
 
-	public Cart Update(Product product, uint quantity)
+	public Cart? Update(Product product, uint quantity)
 	{
 		var item = Items.FirstOrDefault(item => item.Product.ProductId == product.ProductId);
 		if (item is null && quantity is 0)
@@ -31,13 +28,17 @@ public record Cart
 			return this;
 		}
 
-		var updatedItems = item is null
-			? Items.Add(new CartItem(product, quantity))
-			: Items.Replace(item, item with { Quantity = quantity });
+		var items = (item, quantity) switch
+		{
+			(null, 0) => Items,
+			(not null, 0) => Items.Remove(item),
+			(null, _) => Items.Add(new CartItem(product, quantity)),
+			(not null, _) => Items.Replace(item, item with { Quantity = quantity })
+		};
 
-		return this with { Items = updatedItems };
+		return items.Count > 0 ? this with { Items = items } : default;
 	}
 
-	public Cart Remove(Product product)
+	public Cart? Remove(Product product)
 		=> Update(product, 0);
 }
