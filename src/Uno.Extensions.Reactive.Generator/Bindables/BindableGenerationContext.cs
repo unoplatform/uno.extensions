@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
@@ -15,86 +16,64 @@ namespace Uno.Extensions.Reactive.Generator;
 
 internal record BindableGenerationContext(
 	GeneratorExecutionContext Context,
+
 	INamedTypeSymbol Feed,
 	INamedTypeSymbol Input,
 	INamedTypeSymbol ListFeed,
 	INamedTypeSymbol CommandBuilder,
 	INamedTypeSymbol CommandBuilderOfT,
+
 	INamedTypeSymbol BindableAttribute,
 	INamedTypeSymbol InputAttribute,
 	INamedTypeSymbol ValueAttribute,
-	INamedTypeSymbol DefaultRecordCtor,
-	INamedTypeSymbol CancellationToken)
+	INamedTypeSymbol DefaultRecordCtorAttribute,
+
+	INamedTypeSymbol CancellationToken,
+	INamedTypeSymbol ImmutableArray,
+	INamedTypeSymbol ImmutableList,
+	INamedTypeSymbol ImmutableQueue,
+	INamedTypeSymbol ImmutableSet,
+	INamedTypeSymbol ImmutableStack)
 {
 	public static BindableGenerationContext? TryGet(GeneratorExecutionContext context, out string? error)
 	{
 		var compilation = context.Compilation;
 
-		var feed = compilation.GetTypeByMetadataName("Uno.Extensions.Reactive.IFeed`1");
-		var input = compilation.GetTypeByMetadataName("Uno.Extensions.Reactive.IInput`1");
-		var listFeed = compilation.GetTypeByMetadataName("Uno.Extensions.Reactive.IListFeed`1");
-		var commandBuilder = compilation.GetTypeByMetadataName("Uno.Extensions.Reactive.ICommandBuilder");
-		var commandBuilderOfT = compilation.GetTypeByMetadataName("Uno.Extensions.Reactive.ICommandBuilder`1");
-		var bindable = compilation.GetTypeByMetadataName(typeof(ReactiveBindableAttribute).FullName);
-		var inputAttribute = compilation.GetTypeByMetadataName(typeof(InputAttribute).FullName);
-		var valueAttribute = compilation.GetTypeByMetadataName(typeof(ValueAttribute).FullName);
-		var defaultRecordCtor = compilation.GetTypeByMetadataName(typeof(BindableDefaultConstructorAttribute).FullName);
-		var cancellationToken = compilation.GetTypeByMetadataName(typeof(CancellationToken).FullName);
+		INamedTypeSymbol? feed = default, input = default, listFeed = default, commandBuilder = default, commandBuilderOfT = default;
+		INamedTypeSymbol? bindableAttribute = default, inputAttribute = default, valueAttribute = default, defaultRecordCtorAttribute = default;
+		INamedTypeSymbol? cancellationToken = default, immutableArray = default, immutableList = default, immutableQueue = default, immutableSet = default, immutableStack = default;
 
-		IEnumerable<string> Missing()
+		IEnumerable<string?> Resolve()
 		{
-			if (feed is null)
-			{
-				yield return "IFeed";
-			}
+			yield return ByName("Uno.Extensions.Reactive.IFeed`1", out feed);
+			yield return ByName("Uno.Extensions.Reactive.IInput`1", out input);
+			yield return ByName("Uno.Extensions.Reactive.IListFeed`1", out listFeed);
+			yield return ByName("Uno.Extensions.Reactive.ICommandBuilder", out commandBuilder);
+			yield return ByName("Uno.Extensions.Reactive.ICommandBuilder`1", out commandBuilderOfT);
 
-			if (input is null)
-			{
-				yield return "IInput";
-			}
+			yield return ByType(typeof(ReactiveBindableAttribute), out bindableAttribute);
+			yield return ByType(typeof(InputAttribute), out inputAttribute);
+			yield return ByType(typeof(ValueAttribute), out valueAttribute);
+			yield return ByType(typeof(BindableDefaultConstructorAttribute), out defaultRecordCtorAttribute);
+			yield return ByType(typeof(CancellationToken), out cancellationToken);
 
-			if (listFeed is null)
-			{
-				yield return "IListFeed";
-			}
-
-			if (commandBuilder is null)
-			{
-				yield return "ICommandBuilder";
-			}
-
-			if (commandBuilderOfT is null)
-			{
-				yield return "ICommandBuilder<T>";
-			}
-
-			if (bindable is null)
-			{
-				yield return typeof(ReactiveBindableAttribute).FullName;
-			}
-
-			if (inputAttribute is null)
-			{
-				yield return typeof(InputAttribute).FullName;
-			}
-
-			if (valueAttribute is null)
-			{
-				yield return typeof(ValueAttribute).FullName;
-			}
-
-			if (defaultRecordCtor is null)
-			{
-				yield return typeof(BindableDefaultConstructorAttribute).FullName;
-			}
-
-			if (cancellationToken is null)
-			{
-				yield return typeof(CancellationToken).FullName;
-			}
+			yield return ByType(typeof(ImmutableArray<>), out immutableArray);
+			yield return ByType(typeof(IImmutableList<>), out immutableList);
+			yield return ByType(typeof(IImmutableQueue<>), out immutableQueue);
+			yield return ByType(typeof(IImmutableSet<>), out immutableSet);
+			yield return ByType(typeof(IImmutableStack<>), out immutableStack);
 		}
 
-		if (Missing().ToList() is { Count: > 0 } missings)
+		string? ByType(Type type, out INamedTypeSymbol symbol)
+			=> ByName(type.FullName, out symbol);
+
+		string? ByName(string type, out INamedTypeSymbol symbol)
+		{
+			symbol = compilation!.GetTypeByMetadataName(type)!;
+			return symbol is null ? type : null;
+		}
+
+		if (Resolve().Where(missing => missing is not null).ToList() is { Count: > 0 } missings)
 		{
 			error = $"Failed to resolve {missings.JoinBy(", ")}";
 			return null;
@@ -103,17 +82,9 @@ internal record BindableGenerationContext(
 		error = null;
 		return new BindableGenerationContext
 		(
-			context,
-			feed!,
-			input!,
-			listFeed!,
-			commandBuilder!,
-			commandBuilderOfT!,
-			bindable!,
-			inputAttribute!,
-			valueAttribute!,
-			defaultRecordCtor!,
-			cancellationToken!
+			context, feed!, input!, listFeed!, commandBuilder!, commandBuilderOfT!,
+			bindableAttribute!, inputAttribute!, valueAttribute!, defaultRecordCtorAttribute!,
+			cancellationToken!, immutableArray!, immutableList!, immutableQueue!, immutableSet!, immutableStack!
 		);
 	}
 
@@ -236,6 +207,58 @@ internal record BindableGenerationContext(
 			kind = default;
 			return false;
 		}
+	}
+
+	public bool IsFeedOfList(ITypeSymbol type)
+		=> IsFeed(type, out var listType) && IsKindOfImmutableList(listType, out _);
+
+	public bool IsFeedOfList(ITypeSymbol type, [NotNullWhen(true)] out ITypeSymbol? collectionType, [NotNullWhen(true)] out ITypeSymbol? itemType)
+	{
+		itemType = null;
+		return IsFeed(type, out collectionType) && IsKindOfImmutableList(collectionType, out itemType);
+	}
+
+	public bool IsFeedOfList(IParameterSymbol parameter, [NotNullWhen(true)] out ITypeSymbol? collectionType, [NotNullWhen(true)] out ITypeSymbol? itemType, [NotNullWhen(true)] out InputKind? kind)
+	{
+		itemType = null;
+		return IsFeed(parameter, out collectionType, out kind) && IsKindOfImmutableList(collectionType, out itemType);
+	}
+
+	private bool IsKindOfImmutableList(ITypeSymbol type, [NotNullWhen(true)] out ITypeSymbol? itemType)
+	{
+		if (type is IArrayTypeSymbol array)
+		{
+			itemType = array.ElementType;
+			return true;
+		}
+		if (type.IsOrImplements(ImmutableArray, out var immutableArray))
+		{
+			itemType = immutableArray.TypeArguments.Single();
+			return true;
+		}
+		if (type.IsOrImplements(ImmutableList, out var immutableList))
+		{
+			itemType = immutableList.TypeArguments.Single();
+			return true;
+		}
+		if (type.IsOrImplements(ImmutableQueue, out var immutableQueue))
+		{
+			itemType = immutableQueue.TypeArguments.Single();
+			return true;
+		}
+		if (type.IsOrImplements(ImmutableSet, out var immutableSet))
+		{
+			itemType = immutableSet.TypeArguments.Single();
+			return true;
+		}
+		if (type.IsOrImplements(ImmutableStack, out var immutableStack))
+		{
+			itemType = immutableStack.TypeArguments.Single();
+			return true;
+		}
+
+		itemType = null;
+		return false;
 	}
 
 	public bool IsInputOrCommand(ITypeSymbol type)

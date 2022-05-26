@@ -90,5 +90,5 @@ partial class State
 	/// <returns>A <see cref="IDisposable"/> that can be used to remove the callback registration.</returns>
 	public static IDisposable ForEachAsync<T>(this IState<T> state, AsyncAction<T?> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
 		where T : notnull
-		=> new StateForEach<T>(state, action, $"Execute defined in {caller} at line {line}.");
+		=> new StateForEach<T>(state, action, $"ForEachAsync defined in {caller} at line {line}.");
 }

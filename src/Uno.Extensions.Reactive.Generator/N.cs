@@ -14,6 +14,16 @@ internal static class N
 		public const string Model = "vm";
 	}
 
-
+	/// <summary>
+	/// Name of the Model property declared in a BindableVM.
+	/// </summary>
 	public const string Model = "Model";
+
+	public static class ListFeed
+	{
+		public static class Extensions
+		{
+			public const string ToListFeed = "global::Uno.Extensions.Reactive.ListFeed.ToListFeed";
+		}
+	}
 }

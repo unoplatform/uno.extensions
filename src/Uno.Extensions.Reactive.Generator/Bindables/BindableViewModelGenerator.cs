@@ -67,7 +67,6 @@ internal class BindableViewModelGenerator
 			.ToList();
 		mappedMembers = mappedMembers.Except(mappedMembersConflictingWithInputs).ToList();
 
-
 		var bindableVmCode = $@"
 			public partial class Bindable{vm.Name} : {NS.Bindings}.BindableViewModelBase
 			{{
@@ -199,7 +198,11 @@ internal class BindableViewModelGenerator
 			switch (member)
 			{
 				case IFieldSymbol field when _ctx.IsListFeed(field.Type, out var valueType):
-					yield return new BindableListFeedField(field, valueType);
+					yield return new BindableListFromListFeedField(field, valueType);
+					break;
+
+				case IFieldSymbol field when _ctx.IsFeedOfList(field.Type, out var collectionType, out var valueType):
+					yield return new BindableListFromFeedOfListField(field, collectionType, valueType);
 					break;
 
 				case IFieldSymbol field when _ctx.IsFeed(field.Type, out var valueType):
@@ -215,7 +218,11 @@ internal class BindableViewModelGenerator
 					break;
 
 				case IPropertySymbol property when _ctx.IsListFeed(property.Type, out var valueType):
-					yield return new BindableListFeedProperty(property, valueType);
+					yield return new BindableListFromListFeedProperty(property, valueType);
+					break;
+
+				case IPropertySymbol property when _ctx.IsFeedOfList(property.Type, out var collectionType, out var valueType):
+					yield return new BindableListFromFeedOfListProperty(property, collectionType, valueType);
 					break;
 
 				case IPropertySymbol property when _ctx.IsFeed(property.Type, out var valueType):

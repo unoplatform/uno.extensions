@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
@@ -160,7 +161,7 @@ public static partial class ListFeed
 	/// <param name="source">The source list stream to wrap.</param>
 	/// <returns>A <see cref="IListFeed{T}"/> that wraps the given source data stream of list.</returns>
 	public static IListFeed<TItem> AsListFeed<TItem>(this IFeed<ImmutableList<TItem>> source)
-		=> source.Select(list => list as IImmutableList<TItem>).AsListFeed();
+		=> AttachedProperty.GetOrCreate(source, typeof(TItem), (s, _) => new FeedToListFeedAdapter<ImmutableList<TItem>, TItem>(s, list => list));
 
 	/// <summary>
 	/// Wraps a feed of list into a <see cref="IListFeed{T}"/>.
@@ -169,11 +170,25 @@ public static partial class ListFeed
 	/// <typeparam name="TItem">Type of items in the list.</typeparam>
 	/// <param name="source">The source list stream to wrap.</param>
 	/// <returns>A <see cref="IListFeed{T}"/> that wraps the given source data stream.</returns>
-	public static IListFeed<TItem> AsListFeed<TCollection, TItem>(
-		this IFeed<TCollection> source)
+	public static IListFeed<TItem> AsListFeed<TCollection, TItem>(this IFeed<TCollection> source)
 		where TCollection : IImmutableList<TItem>
-		// Note: We are not attaching the "ListFeed" as we always un-wrap them and we attach other operator on the underlying Source.
-		=> source.Select(list => list.ToImmutableList() as IImmutableList<TItem>).AsListFeed();
+		=> AttachedProperty.GetOrCreate(source, typeof(TItem), (s, _) => new FeedToListFeedAdapter<TCollection, TItem>(s, list => list));
+
+	/// <summary>
+	/// Converts a feed of list into a <see cref="IListFeed{T}"/>.
+	/// </summary>
+	/// <typeparam name="TCollection">Type of the items collection.</typeparam>
+	/// <typeparam name="TItem">Type of items in the list.</typeparam>
+	/// <param name="source">The source list stream to wrap.</param>
+	/// <returns>A <see cref="IListFeed{T}"/> that wraps the given source data stream.</returns>
+	/// <remarks>
+	/// With this extension, the lists from the source feed might be enumerated more than once.
+	/// Use with caution.
+	/// </remarks>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	public static IListFeed<TItem> ToListFeed<TCollection, TItem>(this IFeed<TCollection> source)
+		where TCollection : IEnumerable<TItem>
+		=> AttachedProperty.GetOrCreate(source, typeof(TItem), (s, _) => new FeedToListFeedAdapter<TCollection, TItem>(s, list => list?.ToImmutableList() ?? ImmutableList<TItem>.Empty));
 
 	/// <summary>
 	/// Unwraps a <see cref="IListFeed{T}"/> to get the source feed of list.
