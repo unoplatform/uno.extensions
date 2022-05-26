@@ -1,8 +1,4 @@
-﻿using Commerce.Models;
-using Commerce.Services;
-using Uno.Extensions.Configuration;
-using Uno.Extensions.Navigation;
-using Uno.Extensions.Reactive;
+﻿
 
 namespace Commerce.ViewModels;
 

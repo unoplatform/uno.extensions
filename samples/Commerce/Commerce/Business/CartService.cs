@@ -1,16 +1,8 @@
-﻿using System.Collections.Immutable;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Commerce.Data;
-using Commerce.Models;
-using Uno.Extensions.Reactive;
-using Uno.Extensions.Serialization;
-using Uno.Extensions.Storage;
+﻿
 
-namespace Commerce.Services;
+namespace Commerce.Business;
 
-class CartService : ICartService
+public class CartService : ICartService
 {
 	private readonly ICartEndpoint _client;
 

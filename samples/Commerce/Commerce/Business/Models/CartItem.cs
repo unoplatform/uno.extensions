@@ -1,8 +1,4 @@
-﻿using System;
-using System.Linq;
-using Commerce.Data.Models;
-
-namespace Commerce.Models;
+﻿namespace Commerce.Business.Models;
 
 public record CartItem(Product Product, uint Quantity)
 {

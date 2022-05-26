@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Immutable;
-using System.Linq;
-using Commerce.Data.Models;
-using Commerce.Services;
-
-namespace Commerce.Models;
+﻿namespace Commerce.Business.Models;
 
 public record Cart
 {

@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Commerce.Data.Models;
-using Commerce.Models;
-using Uno.Extensions.Serialization;
-using Uno.Extensions.Storage;
-
-namespace Commerce.Data;
+﻿namespace Commerce.Data;
 
 internal class ProductsEndpoint : IProductsEndpoint
 {

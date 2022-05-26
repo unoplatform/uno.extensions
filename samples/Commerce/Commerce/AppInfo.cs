@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace Commerce;
 
-namespace Commerce
+public record AppInfo
 {
-	public record AppInfo
-	{
-		public string? Title { get; init; }
-	}
+	public string? Title { get; init; }
 }

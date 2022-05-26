@@ -1,16 +1,4 @@
-﻿using System;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Commerce.Data;
-using Commerce.Models;
-using Uno.Extensions;
-using Uno.Extensions.Reactive;
-using Uno.Extensions.Serialization;
-using Uno.Extensions.Storage;
-
-namespace Commerce.Services;
+﻿namespace Commerce.Business;
 
 public class ProductService : IProductService
 {
@@ -52,7 +40,7 @@ public class ProductService : IProductService
 		=> (await _client.GetReviews(productId, ct)).Select(data => new Review(data)).ToImmutableList();
 
 	/// <inheritdoc />
-	public async ValueTask<IImmutableList<Product>> GetFavorites(CancellationToken ct)
+	public async ValueTask<IImmutableList<Product>?> GetFavorites(CancellationToken ct)
 		=> await _favorites;
 
 	/// <inheritdoc />

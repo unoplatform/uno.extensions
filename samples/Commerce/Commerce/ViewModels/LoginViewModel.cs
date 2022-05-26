@@ -1,11 +1,4 @@
-﻿#nullable enable
-
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
-using Uno.Extensions;
-using Uno.Extensions.Navigation;
-using Uno.Extensions.Reactive;
+﻿
 
 namespace Commerce.ViewModels;
 

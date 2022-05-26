@@ -1,10 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Commerce.Data.Models;
-using Commerce.Models;
-
-namespace Commerce.Services;
+﻿namespace Commerce.Business;
 
 public class ProfileService : IProfileService
 {

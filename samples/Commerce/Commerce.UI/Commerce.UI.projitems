@@ -21,41 +21,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.host.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Data\CartEndpoint.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Data\ICartEndpoint.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Data\IProductsEndpoint.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Data\Models\CartData.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Data\Models\CartItemData.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Data\ProductsEndpoint.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Data\Models\ProductData.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Data\Models\ProfileData.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Data\Models\ReviewData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GlobalUsings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ReactiveClasses.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)AppInfo.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Business\Models\Cart.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Business\Models\CartItem.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Business\CartService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Business\DealService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Business\ICartService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Business\IDealService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Business\IProfileService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Business\ProductServices.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Business\ProfileService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\CartProductDetailsViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\CartViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Business\IProductService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Business\Models\Product.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Business\Models\Profile.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Business\Models\Review.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Credentials.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\DealsViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Filters.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\FiltersViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\LoginViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ProductDetailsViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ProductsViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ProfileViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ShellViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Views\CartFlyout.xaml.cs">
       <DependentUpon>CartFlyout.xaml</DependentUpon>
     </Compile>
@@ -205,11 +172,5 @@
     <Content Include="$(MSBuildThisFileDirectory)products.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Data\Models\" />
-    <Folder Include="$(MSBuildThisFileDirectory)DesignTime\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Business\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Services\" />
   </ItemGroup>
 </Project>

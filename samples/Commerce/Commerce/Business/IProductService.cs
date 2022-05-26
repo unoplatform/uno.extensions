@@ -1,9 +1,4 @@
-using System.Collections.Immutable;
-using System.Threading;
-using System.Threading.Tasks;
-using Commerce.Models;
-
-namespace Commerce.Services;
+namespace Commerce.Business;
 
 public interface IProductService
 {
@@ -13,7 +8,7 @@ public interface IProductService
 
 	ValueTask<IImmutableList<Review>> GetReviews(int productId, CancellationToken ct);
 
-	ValueTask<IImmutableList<Product>> GetFavorites(CancellationToken ct);
+	ValueTask<IImmutableList<Product>?> GetFavorites(CancellationToken ct);
 
 	ValueTask Update(Product product, CancellationToken ct);
 }

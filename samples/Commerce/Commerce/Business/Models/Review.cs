@@ -1,6 +1,4 @@
-using Commerce.Data.Models;
-
-namespace Commerce.Models;
+namespace Commerce.Business.Models;
 
 public class Review
 {

@@ -1,8 +1,4 @@
-using System.Collections.Immutable;
-using System.Linq;
-using Commerce.Data.Models;
-
-namespace Commerce.Models;
+namespace Commerce.Business.Models;
 
 public record Product()
 {
@@ -21,7 +17,7 @@ public record Product()
 		Discount = data.Discount;
 		Photo = data.Photo;
 		Rating = data.Rating;
-		Reviews = data.Reviews?.Select(data => new Review(data)).ToImmutableList() ?? ImmutableList<Review>.Empty;
+		Reviews = (data.Reviews?.Select(data => new Review(data)).ToImmutableList()) ?? ImmutableList<Review>.Empty;
 	}
 
 	public int ProductId { get; init; }
@@ -35,7 +31,7 @@ public record Product()
 	public string? Discount { get; init; }
 	public string? Photo { get; init; }
 	public double? Rating { get; init; }
-	public IImmutableList<Review> Reviews { get; init; }
+	public IImmutableList<Review>? Reviews { get; init; }
 
 	public bool IsFavorite { get; }
 	public string? DiscountedPrice => Price;

@@ -64,10 +64,12 @@ namespace Commerce
 					.ConfigureServices(services =>
 					{
 						services
+							.AddSingleton<ICartEndpoint, CartEndpoint>()
+							.AddSingleton<IProductsEndpoint, ProductsEndpoint>()
 
-							.AddSingleton<IProductService, ProductService>()
 							.AddSingleton<ICartService, CartService>()
 							.AddSingleton<IDealService, DealService>()
+							.AddSingleton<IProductService, ProductService>()
 							.AddSingleton<IProfileService, ProfileService>();
 					})
 

@@ -1,12 +1,4 @@
-﻿using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Uno.Extensions.Navigation;
-using Uno.Extensions.Hosting;
-using Uno.Extensions.Configuration;
-using System;
-
+﻿
 namespace Commerce.ViewModels
 {
 	public class ShellViewModel

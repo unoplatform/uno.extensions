@@ -1,7 +1,4 @@
-﻿using System;
-using Commerce.Models;
-
-namespace Commerce.ViewModels;
+﻿namespace Commerce.ViewModels;
 
 public record Filters
 {

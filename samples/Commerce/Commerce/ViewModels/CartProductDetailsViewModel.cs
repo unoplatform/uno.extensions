@@ -1,11 +1,4 @@
-﻿using System.Collections.Immutable;
-using System.Threading;
-using System.Threading.Tasks;
-using Commerce.Models;
-using Commerce.Services;
-using Uno.Extensions.Reactive;
-
-namespace Commerce.ViewModels;
+﻿namespace Commerce.ViewModels;
 
 
 public partial class CartProductDetailsViewModel: ProductDetailsViewModel

@@ -1,17 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Commerce.Data.Models;
-using Commerce.Models;
-using Commerce.Services;
-using Uno.Extensions.Serialization;
-using Uno.Extensions.Storage;
-
-namespace Commerce.Data;
+﻿namespace Commerce.Data;
 
 internal class CartEndpoint : ICartEndpoint
 {
