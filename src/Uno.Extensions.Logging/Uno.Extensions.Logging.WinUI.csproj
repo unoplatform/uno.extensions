@@ -22,7 +22,7 @@
 	</PropertyGroup>
 
 	<ItemGroup Condition="'$(_IsIOS)' == 'true'">
-		<PackageReference Include="uno.extensions.logging.oslog" Version="1.3.0" />
+		<PackageReference Include="uno.extensions.logging.oslog" Version="1.4.0" />
 	</ItemGroup>
 
 	<ItemGroup>
