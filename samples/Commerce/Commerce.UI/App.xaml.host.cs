@@ -44,7 +44,7 @@ public sealed partial class App : Application
 					services
 						.AddScoped<IAppTheme, AppTheme>()
 
-						.AddSingleton<IProductsEndpoint, ProductsEndpoint>()
+						.AddSingleton<IProductEndpoint, ProductEndpoint>()
 
 						.AddSingleton<ICartService, CartService>()
 						.AddSingleton<IDealService, DealService>()
