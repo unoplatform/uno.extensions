@@ -42,6 +42,13 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		var regionUpdateId = RouteUpdater?.StartNavigation(Region) ?? Guid.Empty;
 		try
 		{
+			if(request.Source is null)
+			{
+				if (Logger.IsEnabled(LogLevel.Information)) Logger.LogInformationMessage($"Starting Navigation - Navigator: {this.GetType().Name} Request: {request.Route}");
+				request = request with { Source = this };
+			}
+
+
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($" Navigator: {this.GetType().Name} Request: {request.Route}");
 
 			// Do any initialisation logic that may be
