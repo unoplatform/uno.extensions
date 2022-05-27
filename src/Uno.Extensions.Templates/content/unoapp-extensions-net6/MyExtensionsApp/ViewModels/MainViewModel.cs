@@ -1,8 +1,5 @@
 //-:cnd:noEmit
 
-using Microsoft.Extensions.Options;
-using MyExtensionsApp.Configuration;
-
 namespace MyExtensionsApp.ViewModels;
 
 public class MainViewModel

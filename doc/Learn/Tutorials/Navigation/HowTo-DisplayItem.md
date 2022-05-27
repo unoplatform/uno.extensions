@@ -6,7 +6,16 @@ uid: Learn.Tutorials.Navigation.HowToDisplayItem
 This topic walks through how to use Navigation to display the details of an item selected from a list. This demonstrates an important aspect of Navigation which is the ability to pass data as part of a navigation request.
 
 > [!TIP]
-> This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions` template to create the solution. Instructions for creating an application from the template can be found [here](../Extensions/GettingStarted/UsingUnoExtensions.md)
+> This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions-net6` template to create the solution. Instructions for creating an application from the template can be found [here](../Extensions/GettingStarted/UsingUnoExtensions.md)
+
+> [!IMPORTANT]
+> The `unoapp-extensions-net6` template requires the following changes for this tutorial:
+1. Add the following inside the `MainPage` class in `MainPage.xaml.cs' 
+    ```csharp
+    public MainViewModel? ViewModel => DataContext as MainViewModel;
+    ```
+    
+2. Replace `Content="Go to Second Page"` with `Click="{x:Bind ViewModel.GoToSecondPage}"` in `MainPage.xaml`
 
 ## Step-by-steps
 
@@ -16,10 +25,10 @@ Often it is necessary to pass a data item from one page to another. This scenari
 - Define a `Widget` record (or class) for data to be passed between view models
 
     ```csharp
-    public record Widget(string Name, double Weight){}
+    public record Widget(string Name, double Weight);
     ```
 
-- Change the `ViewMap` associating the `SecondPage` and `SecondViewModel`, to include a `DataMap` that references the `Widget` type. 
+- Change the `ViewMap` in `App.xaml.host.cs` that associates the `SecondPage` and `SecondViewModel`, to include a `DataMap` that references the `Widget` type. 
 
     ```csharp
     new ViewMap<SecondPage, SecondViewModel>(Data: new DataMap<Widget>())
@@ -46,9 +55,9 @@ Often it is necessary to pass a data item from one page to another. This scenari
         public string Name { get; }
         
         public SecondViewModel(Widget widget)
-    	{
+        {
             Name = widget.Name; 
-    	}
+        }
     }
     ```
 
@@ -68,6 +77,7 @@ Often it is necessary to pass a data item from one page to another. This scenari
     ```
 
 ### 5. Navigating for selected value in a `ListView`
+A common application scenario is to present a list of items, for example presented in a `ListView`. When the user selects an item, the application navigates to a new view in order to display the details of that item. 
 - Add a `Widgets` property to your `MainViewModel`
 
     ```csharp
@@ -78,11 +88,14 @@ Often it is necessary to pass a data item from one page to another. This scenari
     };
     ```
 
-- Update `MainPage.xaml` to add a `ListView` which has the `ItemsSource` property data bound to the `Widgets` property. The `Navigation.Request` property defines the route that will be navigated to when an item in the `ListView` is selected. 
+- Update `MainPage.xaml` to replace the `Button` with a `ListView` which has the `ItemsSource` property data bound to the `Widgets` property. The `Navigation.Request` property defines the route that will be navigated to when an item in the `ListView` is selected. 
 
     ```xml
     <ListView ItemsSource="{Binding Widgets}"
-            uen:Navigation.Request="Second">
+            uen:Navigation.Request="Second"
+            Grid.Row="1"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center">
         <ListView.ItemTemplate>
             <DataTemplate>
                 <StackPanel Orientation="Horizontal"
@@ -104,11 +117,11 @@ If you have a `ListView` that has items of different types, the navigation route
 - Add two additional records, `BasicWidget` and `AdvancedWidget`, that derive from `Widget`. 
 
     ```csharp
-    public record Widget(string Name, double Weight) { }
+    public record Widget(string Name, double Weight);
     
-    public record BasicWidget(string Name, double Weight) : Widget(Name, Weight) { }
+    public record BasicWidget(string Name, double Weight) : Widget(Name, Weight);
     
-    public record AdvancedWidget(string Name, double Weight) : Widget(Name, Weight) { }
+    public record AdvancedWidget(string Name, double Weight) : Widget(Name, Weight);
     ```
 - Change the `Widgets` property in `MainViewModel` to include an array of different types of widgets.
 
@@ -120,7 +133,7 @@ If you have a `ListView` that has items of different types, the navigation route
     };
     ```
 
-- Clone the `SecondPage.xaml` and `SecondPage.xaml.cs` files, and rename the files to `ThirdPage.xaml` and `ThirdPage.xaml.cs` respectively. Make sure you also change the class name in both files from `SecondPage` to `ThirdPage`
+- Clone the `SecondPage.xaml` and `SecondPage.xaml.cs` files, and rename the files to `ThirdPage.xaml` and `ThirdPage.xaml.cs` respectively. Make sure you also change the class name in both files from `SecondPage` to `ThirdPage`, as well as the `Content` property of the `NavigationBar` to read "Third Page".
 - Clone `SecondViewModel.cs` and rename to `ThirdViewModel.cs`. Also rename the class from `SecondViewModel` to `ThirdViewModel`
 - Change the constructor of both the `SecondViewModel` and `ThirdViewModel` to accept widgets of different types
     ```csharp
@@ -129,22 +142,23 @@ If you have a `ListView` that has items of different types, the navigation route
         public string Name { get; }
         
         public SecondViewModel(BasicWidget widget)
-    	{
+        {
             Name = widget.Name; 
-    	}
+        }
     }
+    
     public class ThirdViewModel
     {
         public string Name { get; }
         
         public ThirdViewModel(AdvancedWidget widget)
-    	{
+        {
             Name = widget.Name; 
-    	}
+        }
     }
     ```
 
-- Change `ViewMap` and `RouteMap` to include the `ThirdPage` and `ThirdViewModel`. Also update DataMap for `SecondViewModel` to be `BasicWidget` instead of `Widget`
+- Add a `ViewMap` and `RouteMap` for `ThirdPage` and `ThirdViewModel`, specifying the `AdvancedWidget` in the `DataMap`. Also update DataMap for `SecondViewModel` to be `BasicWidget` instead of `Widget`
 
     ```csharp
     private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
