@@ -56,7 +56,8 @@
 				</utu:NavigationBar.MainCommand>
 
 				<utu:NavigationBar.PrimaryCommands>
-					<AppBarButton Foreground="{ThemeResource MaterialOnPrimaryBrush}">
+					<AppBarButton Foreground="{ThemeResource MaterialOnPrimaryBrush}"
+								  AutomationProperties.AutomationId="DealsNotifications">
 						<AppBarButton.Icon>
 							<BitmapIcon UriSource="ms-appx:///Assets/Icons/notifications.png" />
 						</AppBarButton.Icon>
