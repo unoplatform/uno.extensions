@@ -16,7 +16,7 @@ public class DealService : IDealService
 
 	public async ValueTask<IImmutableList<Product>> GetAll(CancellationToken ct)
 	{
-		var products = await _dataService.ReadFileAsync<ProductData[]>(_serializer, ProductsEndpoint.ProductDataFile);
+		var products = await _dataService.ReadFileAsync<ProductData[]>(_serializer, ProductEndpoint.ProductDataFile);
 
 		return products
 			?.Where(p => !string.IsNullOrWhiteSpace(p.Discount))
