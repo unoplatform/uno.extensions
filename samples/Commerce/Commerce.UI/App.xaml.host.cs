@@ -143,8 +143,15 @@ public sealed partial class App : Application
 							new RouteMap("Home", View: views.FindByData<Credentials>(),
 									Nested: new RouteMap[]{
 										new RouteMap("Deals",
-											View: views.FindByViewModel<DealsViewModel>(),
-											IsDefault: true),
+												View: views.FindByViewModel<DealsViewModel>(),
+												IsDefault: true,
+												Nested: new RouteMap[]{
+													new RouteMap("DealsAndFavorites", IsDefault: true,
+															Nested: new RouteMap[]{
+																new RouteMap("DealsTab", IsDefault: true),
+																new RouteMap("FavoritesTab")
+															})
+												}),
 										new RouteMap("DealsProduct",
 												View: views.FindByViewModel<ProductDetailsViewModel>(),
 												DependsOn:"Deals"),

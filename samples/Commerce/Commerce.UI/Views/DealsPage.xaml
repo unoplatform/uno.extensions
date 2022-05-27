@@ -193,15 +193,15 @@
 			</uer:FeedView>
 		</utu:AutoLayout>
 		<Grid Grid.Column="1"
-			  x:Name="DetailsGrid"
-			  Visibility="Collapsed">
-			<ContentControl x:Name="Details"
-							uen:Region.Attached="false"
-							Grid.Column="1"
-							HorizontalAlignment="Stretch"
-							VerticalAlignment="Stretch"
-							HorizontalContentAlignment="Stretch"
-							VerticalContentAlignment="Stretch" />
-		</Grid>
+				  x:Name="DetailsGrid"
+				  Visibility="Collapsed">
+				<ContentControl x:Name="Details"
+								uen:Region.Attached="false"
+								Grid.Column="1"
+								HorizontalAlignment="Stretch"
+								VerticalAlignment="Stretch"
+								HorizontalContentAlignment="Stretch"
+								VerticalContentAlignment="Stretch" />
+			</Grid>
 	</Grid>
 </Page>
