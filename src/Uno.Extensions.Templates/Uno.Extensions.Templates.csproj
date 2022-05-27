@@ -88,13 +88,13 @@
 		<!-- SDK Style projects -->
 		<XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)" Query="//PackageReference[@Version='255.255.255.255']/@Version" Value="$(PackageVersion)" Namespaces="" />
 
-		<!-- <XmlPeek XmlInputPath="..\..\samples\Commerce\WinUI\Commerce.Wasm\Commerce.Wasm.csproj" Query="//PackageReference[@Include='Uno.Toolkit.WinUI']/@Version">
+		<!-- <XmlPeek XmlInputPath="..\..\samples\Commerce\Commerce.Wasm\Commerce.Wasm.csproj" Query="//PackageReference[@Include='Uno.Toolkit.WinUI']/@Version">
 			<Output TaskParameter="Result" ItemName="Uno_Toolkit_WinUI_Version" />
 		</XmlPeek>
-		<XmlPeek XmlInputPath="..\..\samples\Commerce\WinUI\Commerce.Wasm\Commerce.Wasm.csproj" Query="//PackageReference[@Include='Uno.Toolkit.WinUI.Material']/@Version">
+		<XmlPeek XmlInputPath="..\..\samples\Commerce\Commerce.Wasm\Commerce.Wasm.csproj" Query="//PackageReference[@Include='Uno.Toolkit.WinUI.Material']/@Version">
 			<Output TaskParameter="Result" ItemName="Uno_Toolkit_WinUI_Material_Version" />
 		</XmlPeek>
-		<XmlPeek XmlInputPath="..\..\samples\Commerce\WinUI\Commerce.Wasm\Commerce.Wasm.csproj" Query="//PackageReference[@Include='Uno.Material.WinUI']/@Version">
+		<XmlPeek XmlInputPath="..\..\samples\Commerce\Commerce.Wasm\Commerce.Wasm.csproj" Query="//PackageReference[@Include='Uno.Material.WinUI']/@Version">
 			<Output TaskParameter="Result" ItemName="Uno_Material_WinUI_Version" />
 		</XmlPeek> -->
 
