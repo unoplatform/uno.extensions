@@ -6,16 +6,28 @@ uid: Learn.Tutorials.Navigation.HowToDisplayMessageDialog
 This topic walks through using Navigation to display a prompt using a `MessageDialog`. This can also be used for simple user interactions, such as a confirmation dialog, where the user is prompted with an Ok/Cancel, or Yes/No, question. 
 
 > [!TIP]
-> This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions` template to create the solution. Instructions for creating an application from the template can be found [here](../Extensions/GettingStarted/UsingUnoExtensions.md)
+> This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions-net6` template to create the solution. Instructions for creating an application from the template can be found [here](../Extensions/GettingStarted/UsingUnoExtensions.md)
+
+> [!IMPORTANT]
+> The `unoapp-extensions-net6` template requires the following changes for this tutorial:
+1. Add the following inside the `MainPage` class in `MainPage.xaml.cs' 
+    ```csharp
+    public MainViewModel? ViewModel => DataContext as MainViewModel;
+    ```
+    
+2. Replace `Content="Go to Second Page"` with `Click="{x:Bind ViewModel.GoToSecondPage}"` in `MainPage.xaml`
 
 ## Step-by-steps
 
 ### 1. Show an ad-hoc `MessageDialog`
-- Add `Button` to `MainPage.xaml` 
+- Update the existing `Button` on `MainPage.xaml` 
 
     ```xml
     <Button Content="Show Simple Message Dialog"
-            Click="{x:Bind ViewModel.ShowSimpleDialog}" />
+            Click="{x:Bind ViewModel.ShowSimpleDialog}"
+            Grid.Row="1"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center" />
     ```
 
 - Add `ShowSimpleDialog` method to `MainViewModel`
@@ -25,7 +37,12 @@ This topic walks through using Navigation to display a prompt using a `MessageDi
     {
         _ = _navigator.ShowMessageDialogAsync(this, content: "Hello Uno Extensions!");
     }
-    ```
+    ``` 
+    
+    Run the application to see a `MessageDialog` displayed when you click the `Button`.
+    
+    ![Screenshot of a simple MessageDialog](images/BasicMessageDialog.png)
+
 
 ### 2. Accessing the `MessageDialog` response
 
@@ -33,7 +50,7 @@ This topic walks through using Navigation to display a prompt using a `MessageDi
     ```csharp
     public async Task ShowSimpleDialog()
     {
-    	var result = await _navigator.ShowMessageDialogAsync<string>(this, content: "Hello Uno Extensions!");
+        var result = await _navigator.ShowMessageDialogAsync<string>(this, content: "Hello Uno Extensions!");
     }
     ```
 
@@ -49,11 +66,15 @@ This topic walks through using Navigation to display a prompt using a `MessageDi
     			new DialogAction("Cancel")
             });
     }
-    ```
-
-The `result` variable will be set to the label of the selected button.
+    ```  
+    
+    The `result` variable will be set to the label of the selected button. 
+    
+    ![Screenshot of the MessageDialog result](images/MessageDialogResult.png)
 
 ### 3. Using predefined `MessageDialog`
+
+If you want to use the same `MessageDialog` in different places in your application you can define a `MessageDialogViewMap` and then reference it by the route you assign to it.
 
 - Create a `MessageDialogViewMap` instance and register it with both `views` and `routes` in `App.xaml.host.cs`
 
@@ -75,9 +96,7 @@ The `result` variable will be set to the label of the selected button.
     		new ViewMap<ShellControl,ShellViewModel>(),
     		new ViewMap<MainPage, MainViewModel>(),
     		new ViewMap<SecondPage, SecondViewModel>(),
-            messageDialog,
-    
-            localizedMessageDialog
+            messageDialog
     		);
     
     	routes
@@ -114,8 +133,9 @@ The `result` variable will be set to the label of the selected button.
     ```
 
 - Add resources for `MyDialog_Content`, `Dialog_Ok` and `Dialog_Cancel` to `Resources.resw`
+    ![Localized MessageDialog resources](images/LocalizedMessageDialogResources.png)
 
-- Call `UseLocalization` extension method in the `BuildAppHost` method in `App.xaml.host.cs`
+- Make sure the `UseLocalization` extension method is called in the `BuildAppHost` method in `App.xaml.host.cs`
 
     ```csharp
     private static IHost BuildAppHost()

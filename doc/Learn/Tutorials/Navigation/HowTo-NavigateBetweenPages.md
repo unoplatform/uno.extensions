@@ -6,7 +6,7 @@ uid: Learn.Tutorials.Navigation.HowToNavigateBetweenPages
 This topic covers using Navigation to navigate between two pages using frame-based navigation. 
 
 > [!TIP]
-> This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions` template to create the solution. Instructions for creating an application from the template can be found [here](../Extensions/GettingStarted/UsingUnoExtensions.md)
+> This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions-net6` template to create the solution. Instructions for creating an application from the template can be found [here](../Extensions/GettingStarted/UsingUnoExtensions.md)
 
 ## Step-by-steps
 
