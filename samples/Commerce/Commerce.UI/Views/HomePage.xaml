@@ -76,16 +76,16 @@
 							 OpenPaneLength="200"
 							 uen:Region.Attached="true">
 			<muxc:NavigationView.MenuItems>
-				<muxc:NavigationViewItem Content="Products"
-										 uen:Region.Name="Products">
-					<muxc:NavigationViewItem.Icon>
-						<PathIcon Data="{StaticResource Icon_storefront}" />
-					</muxc:NavigationViewItem.Icon>
-				</muxc:NavigationViewItem>
 				<muxc:NavigationViewItem Content="Deals"
 										 uen:Region.Name="Deals">
 					<muxc:NavigationViewItem.Icon>
 						<PathIcon Data="{StaticResource Icon_bolt}" />
+					</muxc:NavigationViewItem.Icon>
+				</muxc:NavigationViewItem>
+				<muxc:NavigationViewItem Content="Products"
+										 uen:Region.Name="Products">
+					<muxc:NavigationViewItem.Icon>
+						<PathIcon Data="{StaticResource Icon_storefront}" />
 					</muxc:NavigationViewItem.Icon>
 				</muxc:NavigationViewItem>
 				<muxc:NavigationViewItem Content="Profile"
@@ -120,16 +120,6 @@
 							utu:AutoLayout.CounterAlignment="Stretch"
 							Style="{StaticResource MaterialBottomTabBarStyle}">
 					<utu:TabBarItem IsSelectable="True"
-									AutomationProperties.Name="Products"
-									uen:Region.Name="Products"
-									utu:AutoLayout.PrimaryAlignment="Stretch"
-									utu:AutoLayout.CounterLength="56"
-									Style="{StaticResource MaterialBottomTabBarItemStyle}">
-						<utu:TabBarItem.Icon>
-							<PathIcon Data="{StaticResource Icon_storefront}" />
-						</utu:TabBarItem.Icon>
-					</utu:TabBarItem>
-					<utu:TabBarItem IsSelectable="True"
 									AutomationProperties.Name="Deals"
 									uen:Region.Name="Deals"
 									utu:AutoLayout.PrimaryAlignment="Stretch"
@@ -137,6 +127,16 @@
 									Style="{StaticResource MaterialBottomTabBarItemStyle}">
 						<utu:TabBarItem.Icon>
 							<PathIcon Data="{StaticResource Icon_bolt}" />
+						</utu:TabBarItem.Icon>
+					</utu:TabBarItem>
+					<utu:TabBarItem IsSelectable="True"
+									AutomationProperties.Name="Products"
+									uen:Region.Name="Products"
+									utu:AutoLayout.PrimaryAlignment="Stretch"
+									utu:AutoLayout.CounterLength="56"
+									Style="{StaticResource MaterialBottomTabBarItemStyle}">
+						<utu:TabBarItem.Icon>
+							<PathIcon Data="{StaticResource Icon_storefront}" />
 						</utu:TabBarItem.Icon>
 					</utu:TabBarItem>
 					<utu:TabBarItem IsSelectable="True"

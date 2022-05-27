@@ -22,9 +22,10 @@ public sealed partial class App : Application
 									.SetMinimumLevel(
 										context.HostingEnvironment.IsDevelopment() ?
 											LogLevel.Information :
-											LogLevel.Warning))
+											LogLevel.Warning)
+									.AddFilter("Uno.Extensions",LogLevel.Trace))
 
-				.UseConfiguration(configure: configBuilder=>
+				.UseConfiguration(configure: configBuilder =>
 					configBuilder
 						.EmbeddedSource<App>()
 
@@ -71,7 +72,7 @@ public sealed partial class App : Application
 
 				.Build(enableUnoLogging: true);
 
-		
+
 	}
 
 	private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
@@ -138,17 +139,20 @@ public sealed partial class App : Application
 									}),
 							new RouteMap("Home", View: views.FindByData<Credentials>(),
 									Nested: new RouteMap[]{
+										new RouteMap("Deals",
+											View: views.FindByViewModel<DealsViewModel>(),
+											IsDefault: true),
+										new RouteMap("DealsProduct",
+												View: views.FindByViewModel<ProductDetailsViewModel>(),
+												DependsOn:"Deals"),
 										new RouteMap("Products",
 												View: views.FindByViewModel<ProductsViewModel>(),
-												IsDefault: true,
 												Nested: new  RouteMap[]{
 													new RouteMap("Filter",  View: views.FindByViewModel<FiltersViewModel>())
 												}),
 										new RouteMap("Product",
 												View: views.FindByViewModel<ProductDetailsViewModel>(),
 												DependsOn:"Products"),
-
-										new RouteMap("Deals", View: views.FindByViewModel<DealsViewModel>()),
 
 										new RouteMap("Profile", View: views.FindByViewModel<ProfileViewModel>()),
 
