@@ -224,7 +224,7 @@
 					x:Uid="Page_Logout"
 					utu:AutoLayout.CounterAlignment="Stretch"
 					Style="{StaticResource MaterialOutlinedButtonStyle}"
-					Click="{x:Bind ViewModel.Logout}"/>
+					Command="{Binding Logout}"/>
 		</utu:AutoLayout>
 	</utu:AutoLayout>
 </Page>
