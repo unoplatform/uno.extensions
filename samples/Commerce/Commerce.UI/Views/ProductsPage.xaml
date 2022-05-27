@@ -51,27 +51,24 @@
 							   x:Uid="Page_NavigationBar"
 							   utu:AutoLayout.CounterAlignment="Stretch"
 							   Style="{StaticResource MaterialNavigationBarStyle}">
-			<!--Workaround for crash on UWP when using MaterialNavigationBarStyle-->
-			<utu:NavigationBar.MainCommand>
-				<AppBarButton Foreground="{ThemeResource MaterialOnPrimaryMediumBrush}">
-					<AppBarButton.Icon>
-						<BitmapIcon UriSource="ms-appx:///Assets/Icons/back.png"
-									 />
-					</AppBarButton.Icon>
-				</AppBarButton>
-			</utu:NavigationBar.MainCommand>
+				<!--Workaround for crash on UWP when using MaterialNavigationBarStyle-->
+				<utu:NavigationBar.MainCommand>
+					<AppBarButton Foreground="{ThemeResource MaterialOnPrimaryMediumBrush}">
+						<AppBarButton.Icon>
+							<BitmapIcon UriSource="ms-appx:///Assets/Icons/back.png" />
+						</AppBarButton.Icon>
+					</AppBarButton>
+				</utu:NavigationBar.MainCommand>
 
 				<utu:NavigationBar.PrimaryCommands>
 					<AppBarButton Foreground="{ThemeResource MaterialOnPrimaryMediumBrush}">
 						<AppBarButton.Icon>
-							<BitmapIcon UriSource="ms-appx:///Assets/Icons/notifications.png"
-										 />
+							<BitmapIcon UriSource="ms-appx:///Assets/Icons/notifications.png" />
 						</AppBarButton.Icon>
 					</AppBarButton>
 					<AppBarButton Foreground="{ThemeResource MaterialOnPrimaryMediumBrush}">
 						<AppBarButton.Icon>
-							<BitmapIcon UriSource="ms-appx:///Assets/Icons/help_outline.png"
-										 />
+							<BitmapIcon UriSource="ms-appx:///Assets/Icons/help_outline.png" />
 						</AppBarButton.Icon>
 					</AppBarButton>
 				</utu:NavigationBar.PrimaryCommands>
@@ -223,8 +220,7 @@
 		<Grid Grid.Column="1"
 			  x:Name="DetailsGrid"
 			  Visibility="Collapsed">
-			<ContentControl
-							x:Name="Details"
+			<ContentControl x:Name="Details"
 							uen:Region.Attached="false"
 							Grid.Column="1"
 							HorizontalAlignment="Stretch"

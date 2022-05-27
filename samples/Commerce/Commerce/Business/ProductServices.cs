@@ -2,11 +2,11 @@
 
 public class ProductService : IProductService
 {
-	private readonly IProductsEndpoint _client;
+	private readonly IProductEndpoint _client;
 
 	private ImmutableHashSet<int> _favorites = ImmutableHashSet<int>.Empty;
 
-	public ProductService(IProductsEndpoint client)
+	public ProductService(IProductEndpoint client)
 	{
 		_client = client;
 	}

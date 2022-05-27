@@ -14,6 +14,6 @@ public class Given_MainPage : TestBase
 
 		App.Tap("Login");
 
-		App.WaitForElement(q => q.Marked("Filters"));
+		App.WaitForElement(q => q.Marked("DealsNotifications"));
 	}
 }
