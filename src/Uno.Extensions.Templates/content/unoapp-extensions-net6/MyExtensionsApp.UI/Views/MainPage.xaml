@@ -20,6 +20,6 @@
 				VerticalAlignment="Center"
 				AutomationProperties.AutomationId="SecondPageButton"
 				Content="Go to Second Page"
-				uen:Navigation.Request="Second" />
+				Click="{x:Bind ViewModel.GoToSecondPage}"/>
 	</Grid>
 </Page>
