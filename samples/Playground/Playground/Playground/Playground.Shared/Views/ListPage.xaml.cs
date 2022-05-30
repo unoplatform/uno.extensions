@@ -1,9 +1,9 @@
 ﻿
 namespace Playground.Views;
 
-public sealed partial class ListViewPage : Page
+public sealed partial class ListPage : Page
 {
-	public ListViewPage()
+	public ListPage()
 	{
 		this.InitializeComponent();
 	}

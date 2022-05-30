@@ -175,14 +175,17 @@ public abstract class ControlNavigator : Navigator
 			? new Route(Qualifiers.None, route.Base, null, route.Data) : null;
 	}
 
-	protected async Task<object?> CreateViewModel(IServiceProvider services, NavigationRequest request, Route route, RouteInfo? mapping)
+	protected async Task<object?> CreateViewModel(
+		IServiceProvider services,
+		NavigationRequest request,
+		Route route,
+		RouteInfo? mapping)
 	{
 		var navigator = services.GetInstance<INavigator>();
 		if (mapping?.ViewModel is not null)
 		{
 			var parameters = route.Data ?? new Dictionary<string, object>();
 			if (parameters.Any() &&
-				!parameters.ContainsKey(String.Empty) &&
 				mapping.FromQuery is not null)
 			{
 				var data = await mapping.FromQuery(services, parameters);
@@ -192,15 +195,24 @@ public abstract class ControlNavigator : Navigator
 				}
 			}
 
-			var dataFactor = services.GetRequiredService<NavigationDataProvider>();
-			dataFactor.Parameters = route.Data ?? new Dictionary<string, object>();
-
-			services.AddScopedInstance(request);
-
-			var vm = services.GetService(mapping!.ViewModel);
+			// Attempt to use the data object passed with navigation
+			var vm = parameters.TryGetValue(string.Empty, out var navData) &&
+						navData.GetType().IsSubclassOf(mapping.ViewModel) ? navData : default;
 
 			if (vm is null)
 			{
+				// Attempt to create view model using the DI container
+				var dataFactor = services.GetRequiredService<NavigationDataProvider>();
+				dataFactor.Parameters = route.Data ?? new Dictionary<string, object>();
+
+				services.AddScopedInstance(request);
+
+				vm = services.GetService(mapping!.ViewModel);
+			}
+
+			if (vm is null)
+			{
+				// Attempt to create view model using reflection
 				try
 				{
 					var ctr = mapping.ViewModel.GetNavigationConstructor(navigator!, Region.Services!, out var args);

@@ -133,6 +133,8 @@ public sealed partial class App : Application
 					new ViewMap<PanelVisibilityPage>(),
 					new ViewMap<VisualStatesPage>(),
 					new ViewMap<AdHocPage, AdHocViewModel>(),
+					new ViewMap<ListPage, ListViewModel>(),
+					new ViewMap<ItemDetailsPage, ItemDetailsViewModel>(),
 					new ViewMap<AuthTokenDialog, AuthTokenViewModel>(),
 					new ViewMap<BasicFlyout, BasicViewModel>(),
 					confirmDialog,
@@ -188,6 +190,8 @@ public sealed partial class App : Application
 					{
 						new RouteMap("Auth", View: views.FindByView<AuthTokenDialog>())
 					}),
+					new RouteMap("List",View: views.FindByViewModel<ListViewModel>()),
+					new RouteMap("ItemDetails",View: views.FindByViewModel<ItemDetailsViewModel>()),
 					new RouteMap("Confirm", View: confirmDialog),
 					new RouteMap("LocalizedConfirm", View: localizedDialog)
 			}));

@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="Playground.Views.ListViewPage"
+    x:Class="Playground.Views.ItemDetailsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Playground.Views"
@@ -9,6 +9,9 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-
-    </Grid>
+		<TextBlock Text="{Binding Widget.Name}"
+				   FontSize="24"
+				   VerticalAlignment="Center"
+				   HorizontalAlignment="Center" />
+	</Grid>
 </Page>
