@@ -196,8 +196,8 @@ public abstract class ControlNavigator : Navigator
 			}
 
 			// Attempt to use the data object passed with navigation
-			var vm = parameters.TryGetValue(string.Empty, out var navData) &&
-						navData.GetType().IsSubclassOf(mapping.ViewModel) ? navData : default;
+			var vm = (parameters.TryGetValue(string.Empty, out var navData) &&
+						(navData.GetType() ==mapping.ViewModel || navData.GetType().IsSubclassOf(mapping.ViewModel))) ? navData : default;
 
 			if (vm is null)
 			{

@@ -1,17 +1,16 @@
-﻿<Page
-    x:Class="Playground.Views.HomePage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Playground.Views"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
+﻿<Page x:Class="Playground.Views.HomePage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:local="using:Playground.Views"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  mc:Ignorable="d"
 	  xmlns:um="using:Uno.Material"
 	  xmlns:utu="using:Uno.Toolkit.UI"
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
+	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
@@ -19,61 +18,64 @@
 		<TextBlock Text="Home"
 				   HorizontalAlignment="Center"
 				   FontSize="48" />
-
-		<StackPanel Grid.Row="1">
-			<TextBlock Text="App Name"
-					   HorizontalAlignment="Center"
-					   FontSize="24"
-					   x:Uid="HomePage_AppName"/>
-			<TextBlock Text="{Binding Platform}"
-					   HorizontalAlignment="Center"
-					   FontSize="24" />
-			<TextBlock Text="{Binding UseMock}"
-					   HorizontalAlignment="Center"
-					   FontSize="24" />
-			<utu:ChipGroup x:Name="LanguageChipGroup"
-						   SelectionMode="Single"
-						   SelectedItem="{Binding SelectedCulture, Mode=TwoWay}"
-						   ItemsSource="{Binding SupportedCultures}"
-						   Style="{StaticResource MaterialFilledChoiceChipGroupStyle}">
-				<utu:ChipGroup.ItemTemplate>
-					<DataTemplate>
-						<TextBlock Text="{Binding}"
-								  Tag="{Binding}"
-								  />
-					</DataTemplate>
-				</utu:ChipGroup.ItemTemplate>
-			</utu:ChipGroup>
-			<Button uen:Navigation.Request="CodeBehind"
-					Content="Code behind samples" />
-			<Button uen:Navigation.Request="VM"
-					Content="View Model samples" />
-			<Button uen:Navigation.Request="Xaml"
-					Content="Xaml samples" />
-			<Button uen:Navigation.Request="NavigationView"
-					Content="NavigationView" />
-			<Button uen:Navigation.Request="TabBar"
-					Content="TabBar" />
-			<Button uen:Navigation.Request="ContentControl"
-					Content="ContentControl" />
-			<Button uen:Navigation.Request="Second" Content="Second Page" />
-			<Button Click="{x:Bind GoToSecondPageClick}"
-					Content="Second Page Code behind" />
-			<Button uen:Navigation.Request="-/Second"
-					Content="Second Page with clear backstack" />
-			<TextBlock Text="This won't actually clear Home from backstack because Second has dependson set to Home" />
-			<Button uen:Navigation.Request="Fourth"
-					Content="Fourth page" />
-			<Button uen:Navigation.Request="Dialogs"
-					Content="Dialogs page" />
-			<Button uen:Navigation.Request="Flyouts"
-					Content="Flyouts Popups and Drawer page" />
-			<Button uen:Navigation.Request="VisualStates"
-					Content="Visual States" />
-			<Button uen:Navigation.Request="PanelVisibility"
-					Content="Visibility" />
-			<Button uen:Navigation.Request="AdHoc"
-					Content="Ad Hoc Tests" />
-		</StackPanel>
+		<ScrollViewer Grid.Row="1">
+			<StackPanel>
+				<TextBlock Text="App Name"
+						   HorizontalAlignment="Center"
+						   FontSize="24"
+						   x:Uid="HomePage_AppName" />
+				<TextBlock Text="{Binding Platform}"
+						   HorizontalAlignment="Center"
+						   FontSize="24" />
+				<TextBlock Text="{Binding UseMock}"
+						   HorizontalAlignment="Center"
+						   FontSize="24" />
+				<utu:ChipGroup x:Name="LanguageChipGroup"
+							   SelectionMode="Single"
+							   SelectedItem="{Binding SelectedCulture, Mode=TwoWay}"
+							   ItemsSource="{Binding SupportedCultures}"
+							   Style="{StaticResource MaterialFilledChoiceChipGroupStyle}">
+					<utu:ChipGroup.ItemTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding}"
+									   Tag="{Binding}" />
+						</DataTemplate>
+					</utu:ChipGroup.ItemTemplate>
+				</utu:ChipGroup>
+				<Button uen:Navigation.Request="CodeBehind"
+						Content="Code behind samples" />
+				<Button uen:Navigation.Request="VM"
+						Content="View Model samples" />
+				<Button uen:Navigation.Request="Xaml"
+						Content="Xaml samples" />
+				<Button uen:Navigation.Request="NavigationView"
+						Content="NavigationView" />
+				<Button uen:Navigation.Request="TabBar"
+						Content="TabBar" />
+				<Button uen:Navigation.Request="ContentControl"
+						Content="ContentControl" />
+				<Button uen:Navigation.Request="Second"
+						Content="Second Page" />
+				<Button Click="{x:Bind GoToSecondPageClick}"
+						Content="Second Page Code behind" />
+				<Button uen:Navigation.Request="-/Second"
+						Content="Second Page with clear backstack" />
+				<TextBlock Text="This won't actually clear Home from backstack because Second has dependson set to Home" />
+				<Button uen:Navigation.Request="Fourth"
+						Content="Fourth page" />
+				<Button uen:Navigation.Request="Dialogs"
+						Content="Dialogs page" />
+				<Button uen:Navigation.Request="Flyouts"
+						Content="Flyouts Popups and Drawer page" />
+				<Button uen:Navigation.Request="VisualStates"
+						Content="Visual States" />
+				<Button uen:Navigation.Request="PanelVisibility"
+						Content="Visibility" />
+				<Button uen:Navigation.Request="AdHoc"
+						Content="Ad Hoc Tests" />
+				<Button uen:Navigation.Request="List"
+						Content="List Tests" />
+			</StackPanel>
+		</ScrollViewer>
 	</Grid>
 </Page>

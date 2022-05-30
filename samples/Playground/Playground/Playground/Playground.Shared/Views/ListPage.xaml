@@ -15,7 +15,7 @@
 		<ListView ItemsSource="{Binding Items}"
 				  uen:Navigation.Request="ItemDetails">
 			<ListView.ItemTemplate>
-				<DataTemplate x:Type="vm:ItemDetailsViewModel">
+				<DataTemplate x:DataType="vm:ItemDetailsViewModel">
 					<TextBlock Text="{x:Bind Widget.Name}"  FontSize="24"/>
 				</DataTemplate>
 			</ListView.ItemTemplate>
