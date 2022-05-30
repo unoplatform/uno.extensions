@@ -1,8 +1,24 @@
-﻿namespace Commerce.ViewModels;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using Uno.Extensions.Reactive.Messaging;
 
-public record DealsViewModel(IDealService DealService, IProductService ProductService)
+namespace Commerce.ViewModels;
+
+public class DealsViewModel
 {
-	public IListFeed<Product> Items => ListFeed.Async(DealService.GetAll);
+	private readonly IDealService _dealService;
+	private readonly IProductService _productService;
 
-	public IListFeed<Product> Favorites => ListFeed.Async(ProductService.GetFavorites);
+	private readonly Signal _refreshFavorites = new();
+
+	public DealsViewModel(IDealService dealService, IProductService productService, IMessenger messenger)
+	{
+		_dealService = dealService;
+		_productService = productService;
+
+		messenger.Observe(Favorites, p => p.ProductId);
+	}
+
+	public IListFeed<Product> Items => ListFeed.Async(_dealService.GetAll);
+
+	public IListState<Product> Favorites => ListState.Async(this, _productService.GetFavorites);
 }

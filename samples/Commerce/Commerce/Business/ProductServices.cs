@@ -1,14 +1,19 @@
-﻿namespace Commerce.Business;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using Uno.Extensions.Reactive.Messaging;
+
+namespace Commerce.Business;
 
 public class ProductService : IProductService
 {
 	private readonly IProductEndpoint _client;
+	private readonly IMessenger _messenger;
 
 	private ImmutableHashSet<int> _favorites = ImmutableHashSet<int>.Empty;
 
-	public ProductService(IProductEndpoint client)
+	public ProductService(IProductEndpoint client, IMessenger messenger)
 	{
 		_client = client;
+		_messenger = messenger;
 	}
 
 	/// <inheritdoc />
@@ -40,10 +45,14 @@ public class ProductService : IProductService
 
 	/// <inheritdoc />
 	public async ValueTask Update(Product product, CancellationToken ct)
-		=> ImmutableInterlocked.Update(
+	{
+		ImmutableInterlocked.Update(
 			ref _favorites,
 			(favs, prod) => prod.IsFavorite ? favs.Add(prod.ProductId) : favs.Remove(prod.ProductId),
 			product);
+
+		_messenger.Send(new EntityMessage<Product>(product.IsFavorite ? EntityChange.Created : EntityChange.Deleted, product));
+	}
 
 	private IImmutableList<Product> ToProduct(IEnumerable<ProductData> data)
 		=> data
