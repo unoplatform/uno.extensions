@@ -1,4 +1,6 @@
 ﻿
+using CommunityToolkit.Mvvm.Messaging;
+
 namespace Commerce;
 
 public sealed partial class App : Application
@@ -44,6 +46,7 @@ public sealed partial class App : Application
 				{
 					services
 						.AddScoped<IAppTheme, AppTheme>()
+						.AddSingleton<IMessenger, WeakReferenceMessenger>()
 
 						.AddSingleton<IProductEndpoint, ProductEndpoint>()
 
