@@ -37,20 +37,20 @@
 			</Grid.ColumnDefinitions>
 			<StackPanel Orientation="Horizontal"
 						>
-				<Button Content="Second (Name:Info)"
-						uen:Navigation.Request="./Info/Second" />
 				<Button Content="Third (Name:Info)"
 						uen:Navigation.Request="./Info/Third" />
+				<Button Content="Fourth (Name:Info)"
+						uen:Navigation.Request="./Info/Fourth" />
 			</StackPanel>
 			<ContentControl uen:Region.Attached="True"
 							uen:Region.Name="Info"
 							Grid.Row="1" />
 
 			<StackPanel Orientation="Horizontal" Grid.Column="1">
-				<Button Content="Second"
-						uen:Navigation.Request="./Second" />
 				<Button Content="Third"
 						uen:Navigation.Request="./Third" />
+				<Button Content="Fourth"
+						uen:Navigation.Request="./Fourth" />
 			</StackPanel>
 			<ContentControl uen:Region.Attached="True"
 							Grid.Column="1"

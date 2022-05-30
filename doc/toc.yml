@@ -88,8 +88,8 @@
             #       href: Learn/Tutorials/Navigation/Advanced/HowTo-UseNavigationView.md
             #     - name: Build a Responsive Shell
             #       href: Learn/Tutorials/Navigation/Advanced/HowTo-ResponsiveShell.md
-            #     - name: Use a Content Control
-            #       href: Learn/Tutorials/Navigation/Advanced/HowTo-UseContentControl.md
+                - name: Use a Content Control
+                  href: Learn/Tutorials/Navigation/Advanced/HowTo-UseContentControl.md
         - name: Localization
           items:
             - name: Get Started with Localization
