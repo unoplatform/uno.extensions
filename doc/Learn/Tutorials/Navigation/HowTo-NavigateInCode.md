@@ -8,6 +8,17 @@ This topic walks through controlling Navigation from code, either in the code-be
 > [!TIP]
 > This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions-net6` template to create the solution. Instructions for creating an application from the template can be found [here](../Extensions/GettingStarted/UsingUnoExtensions.md)
 
+> [!IMPORTANT]
+> The `unoapp-extensions-net6` template requires the following changes for this tutorial:
+1. Add the following inside the `MainPage` class in `MainPage.xaml.cs' 
+    ```csharp
+    public MainViewModel? ViewModel => DataContext as MainViewModel;
+    ```
+    
+2. Replace `Content="Go to Second Page"` with `Click="{x:Bind ViewModel.GoToSecondPage}"` in `MainPage.xaml`
+
+
+
 ## Step-by-steps
 
 
@@ -16,7 +27,7 @@ This topic walks through controlling Navigation from code, either in the code-be
 Navigation can be invoked in the code-behind file of a `Page` by using the `Navigator` extension method to get an `INavigator` instance.
 
 - Add a new `Page` to navigate to, `SamplePage.xaml`, in the UI (shared) project
-- In `MainPage.xaml` add a `Button` with a handler for the `Click` event  
+- In `MainPage.xaml` update the `Button` to the following XAML, which includes a handler for the `Click` event  
 
     ```xml
     <Button Content="Go to SamplePage"
@@ -79,7 +90,7 @@ The `NavigateViewAsync` method uses the type of the view, i.e. `SamplePage`, to 
         	new RouteMap("", View: views.FindByViewModel<ShellViewModel>() ,
                 Nested: new RouteMap[]
                 {
-                    new RouteMap("Main", View: views.FindByViewModel<MainViewModel>(),),
+                    new RouteMap("Main", View: views.FindByViewModel<MainViewModel>()),
                     new RouteMap("Second", View: views.FindByViewModel<SecondViewModel>()),
                     new RouteMap("Sample", View: views.FindByViewModel<SampleViewModel>()),
                 }));
@@ -113,7 +124,7 @@ The `NavigateViewAsync` method uses the type of the view, i.e. `SamplePage`, to 
     private readonly INavigator _navigator;
     ```
 
-- During Navigation from `MainPage` to `SamplePage` an instance of the `SampleViewModel` will get created and assigned as the `DataContext` of the newly created `SamplePage`. In order to x:Bind to properties and methods on the `SampleViewModel`, expose a `ViewModel` property that returns the `DataContext` property as a `SampleViewModel`. 
+- During Navigation from `MainPage` to `SamplePage` an instance of the `SampleViewModel` will get created and assigned as the `DataContext` of the newly created `SamplePage`. In order to `x:Bind` to properties and methods on the `SampleViewModel`, expose a `ViewModel` property that returns the `DataContext` property as a `SampleViewModel`. 
 
     ```csharp
     public SampleViewModel? ViewModel => DataContext as SampleViewModel;
@@ -124,7 +135,7 @@ The `NavigateViewAsync` method uses the type of the view, i.e. `SamplePage`, to 
     }
     ```
 
-- Add a `Button` to `SamplePage.xaml` and `x:Bind` the `Click` event to the `GoBack` method
+- Update the `Button` in `SamplePage.xaml` to use `x:Bind` to define the event handler for the `Click` event.
     ```xml
     <Button Content="Go Back (View Model)"
         Click="{x:Bind ViewModel.GoBack}" />

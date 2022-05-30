@@ -8,12 +8,22 @@ This topic covers using Navigation to navigate between two pages using frame-bas
 > [!TIP]
 > This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions-net6` template to create the solution. Instructions for creating an application from the template can be found [here](../Extensions/GettingStarted/UsingUnoExtensions.md)
 
+> [!IMPORTANT]
+> The `unoapp-extensions-net6` template requires the following changes for this tutorial:
+1. Add the following inside the `MainPage` class in `MainPage.xaml.cs' 
+    ```csharp
+    public MainViewModel? ViewModel => DataContext as MainViewModel;
+    ```
+    
+2. Replace `Content="Go to Second Page"` with `Click="{x:Bind ViewModel.GoToSecondPage}"` in `MainPage.xaml`
+
+
 ## Step-by-steps
 
 ### 1. Navigating to a New Page
 
-- Add a new `Page` to navigate to, SamplePage.xaml, in the UI (shared) project
-- In `MainPage.xaml` add a `Button` with a handler for the Click event  
+- Add a new `Page` to navigate to, `SamplePage.xaml`, in the UI (shared) project
+- In `MainPage.xaml` replace the existing `Button` with the following XAML, which includes a handler for the Click event  
 
     ```xml
     <Button Content="Go to SamplePage"
@@ -48,7 +58,7 @@ This topic covers using Navigation to navigate between two pages using frame-bas
 ### 3. Defining ViewMap and RouteMap
 
 At this point, if you inspect the Output window you'll see a line that says something similar to:  
-`For better performance (avoid reflection), create mapping for for path 'Sample', view 'SamplePage', view model ''`
+`For better performance (avoid reflection), create mapping for for path 'Sample', view 'SamplePage', view model`
 This warning exists because Navigation uses reflection as a fallback mechanism to associate types and the corresponding navigation route. This can be resolved by specifying a `ViewMap` and a `RouteMap` for the `SamplePage` to eliminate the need for reflection 
 
 - Update the `RegisterRoutes` method in the `App.xaml.host.cs` file
@@ -75,7 +85,7 @@ This warning exists because Navigation uses reflection as a fallback mechanism t
 
 ### 4. Associating a View Model
 
-Navigation also supports injecting a view model as the `DataContext` when a page is navigated to 
+By defining a `ViewMap` that associates a view with a view model, an instance of the view model can dynamically be created and is subsequently set as the `DataContext` on the view that's navigated to.
 
 - Create a new class `SampleViewModel` in the ViewModels folder of the class library project
 
@@ -128,7 +138,7 @@ The Navigation code can be moved from the `SamplePage.cs` code-behind file to th
     }
     ```
 
-- Add `Button` to `SamplePage.xaml` and set the `Click` method to `x:Bind` to the `GoBack` method
+- Update the `Button` in `SamplePage.xaml` to set the `Click` method to `x:Bind` to the `GoBack` method
     ```xml
     <Button Content="Go Back (View Model)"
             Click="{x:Bind ViewModel.GoBack}" />
