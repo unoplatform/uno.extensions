@@ -6,7 +6,7 @@
 
     <Style
         x:Key="MaterialRootModalMainCommandStyle"
-        BasedOn="{StaticResource MaterialModalMainCommandStyle}"
+        BasedOn="{StaticResource ModalMainCommandStyle}"
         TargetType="AppBarButton">
         <Setter Property="Foreground" Value="{ThemeResource MaterialOnPrimaryMediumBrush}" />
         <Setter Property="Icon">
@@ -18,8 +18,8 @@
 
     <Style
         x:Key="MaterialRootModalNavigationBarStyle"
-        BasedOn="{StaticResource MaterialModalNavigationBarStyle}"
+        BasedOn="{StaticResource ModalNavigationBarStyle}"
         TargetType="utu:NavigationBar">
-        <Setter Property="MainCommandStyle" Value="{StaticResource MaterialRootModalMainCommandStyle}" />
+        <Setter Property="MainCommandStyle" Value="{StaticResource RootModalMainCommandStyle}" />
     </Style>
 </ResourceDictionary>

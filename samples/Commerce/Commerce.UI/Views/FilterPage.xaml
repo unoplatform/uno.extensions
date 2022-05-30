@@ -14,7 +14,7 @@
 			<utu:NavigationBar Content="Filters"
 							   x:Uid="Body_NavigationBar"
 							   utu:AutoLayout.CounterAlignment="Stretch"
-							   Style="{StaticResource MaterialRootModalNavigationBarStyle}">
+							   Style="{StaticResource RootModalNavigationBarStyle}">
 				<utu:NavigationBar.MainCommand>
 					<AppBarButton uen:Navigation.Request="-"
 								  Foreground="{ThemeResource MaterialOnSurfaceBrush}" />
@@ -36,70 +36,70 @@
 				<utu:AutoLayout Spacing="16"
 								Padding="16,16,16,16"
 								utu:AutoLayout.CounterAlignment="Stretch">
-					<TextBlock Foreground="{StaticResource MaterialOnBackgroundBrush}"
+					<TextBlock Foreground="{StaticResource OnBackgroundBrush}"
 							   x:Uid="Body_Categories"
 							   Text="Categories"
-							   Style="{StaticResource MaterialSubtitle2}" />
+							   Style="{StaticResource TitleMedium}" />
 					<utu:AutoLayout Spacing="8"
 									Orientation="Horizontal">
 						<utu:Chip Content="Shoes"
 								  x:Uid="Body_Shoes"
 								  IsChecked="{Binding Filter.Shoes, Mode=TwoWay}"
-								  Style="{StaticResource MaterialOutlinedFilterChipStyle}" />
+								  Style="{StaticResource OutlinedFilterChipStyle}" />
 						<utu:Chip Content="Accessories"
 								  x:Uid="Body_Accessproes"
 								  IsChecked="{Binding Filter.Accessories, Mode=TwoWay}"
-								  Style="{StaticResource MaterialOutlinedFilterChipStyle}" />
+								  Style="{StaticResource OutlinedFilterChipStyle}" />
 						<utu:Chip Content="Headwear"
 								  x:Uid="Body_Headwear"
 								  IsChecked="{Binding Filter.Headwear, Mode=TwoWay}"
-								  Style="{StaticResource MaterialOutlinedFilterChipStyle}" />
+								  Style="{StaticResource OutlinedFilterChipStyle}" />
 					</utu:AutoLayout>
 					<utu:AutoLayout Spacing="16"
 									Justify="SpaceBetween"
 									Orientation="Horizontal"
 									utu:AutoLayout.CounterAlignment="Stretch">
-						<TextBlock Foreground="{StaticResource MaterialOnBackgroundBrush}"
+						<TextBlock Foreground="{StaticResource OnBackgroundBrush}"
 								   x:Uid="Body_Body"
 								   Text="In stock only"
 								   utu:AutoLayout.CounterAlignment="Center"
-								   Style="{StaticResource MaterialSubtitle2}" />
+								   Style="{StaticResource TitleMedium}" />
 						<ToggleSwitch utu:AutoLayout.CounterAlignment="Center"
-									  Style="{StaticResource MaterialToggleSwitchStyle}" />
+									  Style="{StaticResource ToggleSwitchStyle}" />
 					</utu:AutoLayout>
 					<utu:AutoLayout Spacing="16"
 									Padding="0,8,8,8"
 									Justify="SpaceBetween"
 									Orientation="Horizontal"
 									utu:AutoLayout.CounterAlignment="Stretch">
-						<TextBlock Foreground="{StaticResource MaterialOnBackgroundBrush}"
+						<TextBlock Foreground="{StaticResource OnBackgroundBrush}"
 								   x:Uid="Body_Body"
 								   Text="Order"
 								   utu:AutoLayout.CounterAlignment="Center"
-								   Style="{StaticResource MaterialSubtitle2}" />
-						<TextBlock Foreground="{StaticResource MaterialOnSurfaceMediumBrush}"
+								   Style="{StaticResource TitleMedium}" />
+						<TextBlock Foreground="{StaticResource OnSurfaceMediumBrush}"
 								   TextAlignment="End"
 								   x:Uid="Body_Body"
 								   Text="Relevance"
 								   utu:AutoLayout.CounterAlignment="Center"
-								   Style="{StaticResource MaterialBody2}" />
+								   Style="{StaticResource BodySmall}" />
 					</utu:AutoLayout>
 					<utu:AutoLayout Spacing="16"
 									Padding="0,8,8,8"
 									Justify="SpaceBetween"
 									Orientation="Horizontal"
 									utu:AutoLayout.CounterAlignment="Stretch">
-						<TextBlock Foreground="{StaticResource MaterialOnBackgroundBrush}"
+						<TextBlock Foreground="{StaticResource OnBackgroundBrush}"
 								   x:Uid="Body_Body"
 								   Text="Currency"
 								   utu:AutoLayout.CounterAlignment="Center"
-								   Style="{StaticResource MaterialSubtitle2}" />
-						<TextBlock Foreground="{StaticResource MaterialOnSurfaceMediumBrush}"
+								   Style="{StaticResource TitleMedium}" />
+						<TextBlock Foreground="{StaticResource OnSurfaceMediumBrush}"
 								   TextAlignment="End"
 								   x:Uid="Body_Body"
 								   Text="CAD"
 								   utu:AutoLayout.CounterAlignment="Center"
-								   Style="{StaticResource MaterialBody2}" />
+								   Style="{StaticResource BodySmall}" />
 					</utu:AutoLayout>
 				</utu:AutoLayout>
 			</utu:AutoLayout>
@@ -110,7 +110,7 @@
 				<Button Content="Apply"
 						x:Uid="Body_Apply"
 						utu:AutoLayout.PrimaryAlignment="Stretch"
-						Style="{StaticResource MaterialContainedButtonStyle}"
+						Style="{StaticResource ContainedButtonStyle}"
 						uen:Navigation.Request="/-"
 						uen:Navigation.Data="{Binding Filter.Value}" />
 			</utu:AutoLayout>

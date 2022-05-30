@@ -44,7 +44,7 @@
 			<utu:NavigationBar Content="Deals"
 							   x:Uid="Page_NavigationBar"
 							   utu:AutoLayout.CounterAlignment="Stretch"
-							   Style="{StaticResource MaterialNavigationBarStyle}">
+							   Style="{StaticResource NavigationBarStyle}">
 
 				<!--Workaround for crash on UWP when using MaterialNavigationBarStyle-->
 				<utu:NavigationBar.MainCommand>
@@ -104,7 +104,7 @@
 							</VisualStateManager.VisualStateGroups>
 
 							<ListView x:Name="DealsListView"
-									  Background="{StaticResource MaterialSurfaceBrush}"
+									  Background="{StaticResource SurfaceBrush}"
 									  ItemsSource="{Binding Data}"
 									  SelectionMode="None"
 									  IsItemClickEnabled="True"
@@ -117,10 +117,10 @@
 								<ListView.ItemTemplate>
 									<DataTemplate>
 										<utu:CardContentControl x:Uid="Page_DealDetails"
-																Style="{StaticResource MaterialOutlinedCardContentControlStyle}">
+																Style="{StaticResource OutlinedCardContentControlStyle}">
 											<utu:CardContentControl.ContentTemplate>
 												<DataTemplate>
-													<utu:AutoLayout Background="{StaticResource MaterialSurfaceBrush}">
+													<utu:AutoLayout Background="{StaticResource SurfaceBrush}">
 														<Image Source="{Binding Photo}"
 															   Stretch="Uniform"
 															   utu:AutoLayout.CounterAlignment="Stretch"
@@ -135,14 +135,14 @@
 																					utu:AutoLayout.CounterAlignment="Stretch">
 																		<utu:AutoLayout PrimaryAxisAlignment="Center"
 																						utu:AutoLayout.CounterAlignment="Stretch">
-																			<TextBlock Foreground="{StaticResource MaterialOnSurfaceLowBrush}"
+																			<TextBlock Foreground="{StaticResource OnSurfaceLowBrush}"
 																					   TextWrapping="Wrap"
 																					   Text="{Binding Brand}"
-																					   Style="{StaticResource MaterialOverline}" />
-																			<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}"
+																					   Style="{StaticResource BodySmall}" />
+																			<TextBlock Foreground="{StaticResource OnSurfaceBrush}"
 																					   TextWrapping="Wrap"
 																					   Text="{Binding Name}"
-																					   Style="{StaticResource MaterialSubtitle1}" />
+																					   Style="{StaticResource TitleLarge}" />
 																		</utu:AutoLayout>
 																	</utu:AutoLayout>
 																</utu:AutoLayout>
@@ -158,21 +158,21 @@
 																								Padding="4,4,4,4"
 																								PrimaryAxisAlignment="End"
 																								Orientation="Horizontal"
-																								Background="{StaticResource MaterialErrorBrush}"
+																								Background="{StaticResource ErrorBrush}"
 																								utu:AutoLayout.CounterAlignment="End">
-																					<TextBlock Foreground="{StaticResource MaterialOnErrorBrush}"
+																					<TextBlock Foreground="{StaticResource OnErrorBrush}"
 																							   TextAlignment="End"
 																							   Text="{Binding Discount}"
-																							   Style="{StaticResource MaterialOverline}" />
+																							   Style="{StaticResource BodySmall}" />
 																				</utu:AutoLayout>
 																				<utu:AutoLayout Spacing="10"
 																								PrimaryAxisAlignment="End"
 																								Orientation="Horizontal"
 																								utu:AutoLayout.CounterAlignment="End">
-																					<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}"
+																					<TextBlock Foreground="{StaticResource OnSurfaceBrush}"
 																							   TextAlignment="End"
 																							   Text="{Binding DiscountedPrice}"
-																							   Style="{StaticResource MaterialBody1}" />
+																							   Style="{StaticResource BodyMedium}" />
 																				</utu:AutoLayout>
 																			</utu:AutoLayout>
 																		</utu:AutoLayout>

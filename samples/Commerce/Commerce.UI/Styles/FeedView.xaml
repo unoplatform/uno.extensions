@@ -13,7 +13,7 @@
 				<DataTemplate>
 					<not_skia:Grid>
 						<winui:ProgressRing
-							Style="{StaticResource MaterialProgressRingStyle}"
+							Style="{StaticResource ProgressRingStyle}"
 							IsActive="{Binding}"
 							Width="50"
 							Height="50"
@@ -37,7 +37,7 @@
 				<DataTemplate>
 					<not_skia:Grid>
 						<winui:ProgressRing
-							Style="{StaticResource MaterialProgressRingStyle}"
+							Style="{StaticResource ProgressRingStyle}"
 							IsActive="{Binding}"
 							Width="50"
 							Height="50"
