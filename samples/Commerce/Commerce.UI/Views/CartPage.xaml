@@ -7,7 +7,7 @@
 	  xmlns:utu="using:Uno.Toolkit.UI"
 	  xmlns:uer="using:Uno.Extensions.Reactive.UI"
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
-	  Background="{ThemeResource MaterialBackgroundBrush}"
+	  Background="{ThemeResource BackgroundBrush}"
 	  mc:Ignorable="d">
 
 	<utu:AutoLayout MaxWidth="{StaticResource LandscapeMaxPageWidth}"
@@ -195,7 +195,7 @@
 												x:Uid="_Checkout"
 												uen:Navigation.Request="Checkout"
 												utu:AutoLayout.CounterAlignment="Stretch"
-												Style="{StaticResource ContainedButtonStyle}" />
+												Style="{StaticResource FilledButtonStyle}" />
 									</utu:AutoLayout>
 								</utu:AutoLayout>
 							</utu:AutoLayout>

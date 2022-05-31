@@ -10,7 +10,7 @@
 			 xmlns:uer="using:Uno.Extensions.Reactive.UI"
 			 xmlns:um="using:Uno.Material"
 			 mc:Ignorable="d"
-			 Background="{ThemeResource MaterialBackgroundBrush}">
+			 Background="{ThemeResource BackgroundBrush}">
 
 	<utu:AutoLayout>
 		<utu:AutoLayout.Resources>
@@ -90,7 +90,7 @@
 								<Button Content="add to cart"
 										x:Uid="_AddToCart"
 										utu:AutoLayout.CounterAlignment="Stretch"
-										Style="{StaticResource ContainedButtonStyle}" />
+										Style="{StaticResource FilledButtonStyle}" />
 								<Button Content="save for later"
 										x:Uid="_SaveForLater"
 										utu:AutoLayout.CounterAlignment="Stretch"

@@ -10,7 +10,7 @@
 	  xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
 	  mc:Ignorable="d"
 	  NavigationCacheMode="Required"
-	  Background="{ThemeResource MaterialBackgroundBrush}">
+	  Background="{ThemeResource BackgroundBrush}">
 	<Grid x:Name="NavRoot">
 		<Grid.Resources>
 			<x:String x:Key="Icon_bolt">M 3.9962074756622314 18 L 2.9962074756622314 18 L 3.9962074756622314 11 L 0.4962073564529419 11 C -0.08379262685775757 11 -0.07379274815320969 10.68000015616417 0.11620724946260452 10.34000015258789 C 0.30620724707841873 10.000000149011612 0.16620741412043571 10.260000266134739 0.18620741367340088 10.220000267028809 C 1.4762073755264282 7.940000295639038 3.4162073135375977 4.539999961853027 5.996207237243652 0 L 6.996207237243652 0 L 5.996207237243652 7 L 9.496207237243652 7 C 9.986207246780396 7 10.056206554174423 7.330000221729279 9.966206550598145 7.510000228881836 L 9.896206855773926 7.659999847412109 C 5.956206798553467 14.549999713897705 3.9962074756622314 18 3.9962074756622314 18 Z</x:String>
@@ -153,7 +153,7 @@
 									AutomationProperties.Name="Cart"
 									utu:AutoLayout.PrimaryAlignment="Stretch"
 									utu:AutoLayout.CounterLength="56"
-									Style="{StaticResource BottomTabBarItemFabStyle}"
+									Style="{StaticResource IconToggleButtonStyle}"
 									uen:Navigation.Request="!Cart">
 						<utu:TabBarItem.Icon>
 							<PathIcon Data="{StaticResource Icon_shopping_cart}" />

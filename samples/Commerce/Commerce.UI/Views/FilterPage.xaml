@@ -17,15 +17,15 @@
 							   Style="{StaticResource RootModalNavigationBarStyle}">
 				<utu:NavigationBar.MainCommand>
 					<AppBarButton uen:Navigation.Request="-"
-								  Foreground="{ThemeResource MaterialOnSurfaceBrush}" />
+								  Foreground="{ThemeResource OnSurfaceBrush}" />
 				</utu:NavigationBar.MainCommand>
 				<utu:NavigationBar.PrimaryCommands>
-					<AppBarButton Foreground="{ThemeResource MaterialOnSurfaceBrush}">
+					<AppBarButton Foreground="{ThemeResource OnSurfaceBrush}">
 						<AppBarButton.Icon>
 							<BitmapIcon UriSource="ms-appx:///Assets/Icons/notifications.png" />
 						</AppBarButton.Icon>
 					</AppBarButton>
-					<AppBarButton Foreground="{ThemeResource MaterialOnSurfaceBrush}">
+					<AppBarButton Foreground="{ThemeResource OnSurfaceBrush}">
 						<AppBarButton.Icon>
 							<BitmapIcon UriSource="ms-appx:///Assets/Icons/share.png" />
 						</AppBarButton.Icon>
@@ -40,21 +40,20 @@
 							   x:Uid="Body_Categories"
 							   Text="Categories"
 							   Style="{StaticResource TitleMedium}" />
-					<utu:AutoLayout Spacing="8"
-									Orientation="Horizontal">
+					<utu:ChipGroup Style="{StaticResource FilterChipGroupStyle}">
 						<utu:Chip Content="Shoes"
 								  x:Uid="Body_Shoes"
 								  IsChecked="{Binding Filter.Shoes, Mode=TwoWay}"
-								  Style="{StaticResource OutlinedFilterChipStyle}" />
+								  Style="{StaticResource FilterChipStyle}" />
 						<utu:Chip Content="Accessories"
 								  x:Uid="Body_Accessproes"
 								  IsChecked="{Binding Filter.Accessories, Mode=TwoWay}"
-								  Style="{StaticResource OutlinedFilterChipStyle}" />
+								  Style="{StaticResource FilterChipStyle}" />
 						<utu:Chip Content="Headwear"
 								  x:Uid="Body_Headwear"
 								  IsChecked="{Binding Filter.Headwear, Mode=TwoWay}"
-								  Style="{StaticResource OutlinedFilterChipStyle}" />
-					</utu:AutoLayout>
+								  Style="{StaticResource FilterChipStyle}" />
+					</utu:ChipGroup>
 					<utu:AutoLayout Spacing="16"
 									Justify="SpaceBetween"
 									Orientation="Horizontal"
@@ -110,7 +109,7 @@
 				<Button Content="Apply"
 						x:Uid="Body_Apply"
 						utu:AutoLayout.PrimaryAlignment="Stretch"
-						Style="{StaticResource ContainedButtonStyle}"
+						Style="{StaticResource FilledButtonStyle}"
 						uen:Navigation.Request="/-"
 						uen:Navigation.Data="{Binding Filter.Value}" />
 			</utu:AutoLayout>

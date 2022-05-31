@@ -11,7 +11,7 @@
 	  xmlns:um="using:Uno.Material"
 	  mc:Ignorable="d"
 	  NavigationCacheMode="Required"
-	  Background="{ThemeResource MaterialBackgroundBrush}">
+	  Background="{ThemeResource BackgroundBrush}">
 
 	<Grid>
 		<VisualStateManager.VisualStateGroups>
@@ -53,7 +53,7 @@
 							   Style="{StaticResource NavigationBarStyle}">
 				<!--Workaround for crash on UWP when using MaterialNavigationBarStyle-->
 				<utu:NavigationBar.MainCommand>
-					<AppBarButton Foreground="{ThemeResource MaterialOnPrimaryMediumBrush}">
+					<AppBarButton Foreground="{ThemeResource OnPrimaryMediumBrush}">
 						<AppBarButton.Icon>
 							<BitmapIcon UriSource="ms-appx:///Assets/Icons/back.png" />
 						</AppBarButton.Icon>
@@ -61,12 +61,12 @@
 				</utu:NavigationBar.MainCommand>
 
 				<utu:NavigationBar.PrimaryCommands>
-					<AppBarButton Foreground="{ThemeResource MaterialOnPrimaryMediumBrush}">
+					<AppBarButton Foreground="{ThemeResource OnPrimaryMediumBrush}">
 						<AppBarButton.Icon>
 							<BitmapIcon UriSource="ms-appx:///Assets/Icons/notifications.png" />
 						</AppBarButton.Icon>
 					</AppBarButton>
-					<AppBarButton Foreground="{ThemeResource MaterialOnPrimaryMediumBrush}">
+					<AppBarButton Foreground="{ThemeResource OnPrimaryMediumBrush}">
 						<AppBarButton.Icon>
 							<BitmapIcon UriSource="ms-appx:///Assets/Icons/help_outline.png" />
 						</AppBarButton.Icon>
