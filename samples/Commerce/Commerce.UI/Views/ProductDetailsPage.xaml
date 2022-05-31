@@ -11,6 +11,6 @@
 	  xmlns:um="using:Uno.Material"
 	  xmlns:views="using:Commerce.Views"
 	  mc:Ignorable="d"
-	  Background="{ThemeResource MaterialBackgroundBrush}">
+	  Background="{ThemeResource BackgroundBrush}">
 	<views:ProductControl />
 </Page>

@@ -5,8 +5,8 @@
     xmlns:utu="using:Uno.Toolkit.UI">
 
     <Style
-        x:Key="MaterialRootModalMainCommandStyle"
-        BasedOn="{StaticResource MaterialModalMainCommandStyle}"
+        x:Key="RootModalMainCommandStyle"
+        BasedOn="{StaticResource ModalMainCommandStyle}"
         TargetType="AppBarButton">
         <Setter Property="Foreground" Value="{ThemeResource MaterialOnPrimaryMediumBrush}" />
         <Setter Property="Icon">
@@ -17,9 +17,9 @@
     </Style>
 
     <Style
-        x:Key="MaterialRootModalNavigationBarStyle"
-        BasedOn="{StaticResource MaterialModalNavigationBarStyle}"
+        x:Key="RootModalNavigationBarStyle"
+        BasedOn="{StaticResource ModalNavigationBarStyle}"
         TargetType="utu:NavigationBar">
-        <Setter Property="MainCommandStyle" Value="{StaticResource MaterialRootModalMainCommandStyle}" />
+        <Setter Property="MainCommandStyle" Value="{StaticResource RootModalMainCommandStyle}" />
     </Style>
 </ResourceDictionary>

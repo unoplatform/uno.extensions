@@ -19,22 +19,22 @@
 							   OverrideSource="ms-appx:///Styles/MaterialFontsOverride.xaml" />
 
 				<!-- Load the Material control resources -->
-				<MaterialResourcesV1 xmlns="using:Uno.Material" />
+				<MaterialResources xmlns="using:Uno.Material" />
 				<ToolkitResources xmlns="using:Uno.Toolkit.UI" />
 
 				<!-- Load Material Toolkit resources -->
-				<MaterialToolkitResourcesV1 xmlns="using:Uno.Toolkit.UI.Material" />
+				<MaterialToolkitResources xmlns="using:Uno.Toolkit.UI.Material" />
 
 				<!-- Application's custom styles -->
 				<ResourceDictionary Source="ms-appx:///Styles/FeedView.xaml" />
 				<ResourceDictionary Source="ms-appx:///Styles/NavigationBar.xaml" />
 			</ResourceDictionary.MergedDictionaries>
-			
+
 			<x:Double x:Key="LandscapeMaxPageWidth">500</x:Double>
 
 			<!-- To override the default FlyoutLightDismissOverlayBackground resource -->
 			<SolidColorBrush x:Key="FlyoutLightDismissOverlayBackground"
-							 Color="{StaticResource MaterialOverlayColor}" />
+							 Color="{StaticResource OverlayColor}" />
 			<x:Double x:Key="WideMinWindowWidthh">800</x:Double>
 		</ResourceDictionary>
 	</Application.Resources>

@@ -10,7 +10,7 @@
 			 xmlns:uer="using:Uno.Extensions.Reactive.UI"
 			 xmlns:um="using:Uno.Material"
 			 mc:Ignorable="d"
-			 Background="{ThemeResource MaterialBackgroundBrush}">
+			 Background="{ThemeResource BackgroundBrush}">
 
 	<utu:AutoLayout>
 		<utu:AutoLayout.Resources>
@@ -23,21 +23,21 @@
 								   Content="{Binding Name}"
 								   x:Uid="Page_NavigationBar"
 								   utu:AutoLayout.CounterAlignment="Stretch"
-								   Style="{StaticResource MaterialNavigationBarStyle}">
+								   Style="{StaticResource NavigationBarStyle}">
 					<utu:NavigationBar.MainCommand>
-						<AppBarButton Foreground="{StaticResource MaterialOnPrimaryMediumBrush}">
+						<AppBarButton Foreground="{StaticResource OnPrimaryMediumBrush}">
 							<AppBarButton.Icon>
 								<BitmapIcon UriSource="ms-appx:///Assets/Icons/back.png" />
 							</AppBarButton.Icon>
 						</AppBarButton>
 					</utu:NavigationBar.MainCommand>
 					<utu:NavigationBar.PrimaryCommands>
-						<AppBarButton Foreground="{StaticResource MaterialOnPrimaryMediumBrush}">
+						<AppBarButton Foreground="{StaticResource OnPrimaryMediumBrush}">
 							<AppBarButton.Icon>
 								<BitmapIcon UriSource="ms-appx:///Assets/Icons/notifications.png" />
 							</AppBarButton.Icon>
 						</AppBarButton>
-						<AppBarButton Foreground="{StaticResource MaterialOnPrimaryMediumBrush}">
+						<AppBarButton Foreground="{StaticResource OnPrimaryMediumBrush}">
 							<AppBarButton.Icon>
 								<BitmapIcon UriSource="ms-appx:///Assets/Icons/help_outline.png" />
 							</AppBarButton.Icon>
@@ -48,7 +48,7 @@
 		</uer:FeedView>
 		<ScrollViewer utu:AutoLayout.CounterAlignment="Stretch"
 					  utu:AutoLayout.PrimaryAlignment="Stretch">
-			<utu:AutoLayout Background="{StaticResource MaterialSurfaceBrush}">
+			<utu:AutoLayout Background="{StaticResource SurfaceBrush}">
 				<uer:FeedView Source="{Binding Product}"
 							  utu:AutoLayout.CounterAlignment="Stretch"
 							  utu:AutoLayout.PrimaryAlignment="Stretch">
@@ -67,21 +67,21 @@
 							<utu:AutoLayout Spacing="8"
 											Padding="16,16,16,16"
 											utu:AutoLayout.CounterAlignment="Stretch">
-								<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}"
+								<TextBlock Foreground="{StaticResource OnSurfaceBrush}"
 										   TextWrapping="Wrap"
 										   Text="{Binding Name}"
 										   utu:AutoLayout.CounterAlignment="Stretch"
-										   Style="{StaticResource MaterialHeadline4}" />
+										   Style="{StaticResource HeadlineLarge}" />
 								<utu:AutoLayout Orientation="Horizontal"
 												utu:AutoLayout.CounterAlignment="Stretch">
-									<TextBlock Foreground="{StaticResource MaterialOnSurfaceLowBrush}"
+									<TextBlock Foreground="{StaticResource OnSurfaceLowBrush}"
 											   TextWrapping="Wrap"
 											   Text="{Binding Brand}"
 											   utu:AutoLayout.PrimaryAlignment="Stretch"
-											   Style="{StaticResource MaterialSubtitle1}" />
-									<TextBlock Foreground="{StaticResource MaterialPrimaryBrush}"
+											   Style="{StaticResource TitleLarge}" />
+									<TextBlock Foreground="{StaticResource PrimaryBrush}"
 											   Text="{Binding Price}"
-											   Style="{StaticResource MaterialSubtitle1}" />
+											   Style="{StaticResource TitleLarge}" />
 								</utu:AutoLayout>
 							</utu:AutoLayout>
 							<utu:AutoLayout Spacing="10"
@@ -90,32 +90,32 @@
 								<Button Content="add to cart"
 										x:Uid="_AddToCart"
 										utu:AutoLayout.CounterAlignment="Stretch"
-										Style="{StaticResource MaterialContainedButtonStyle}" />
+										Style="{StaticResource FilledButtonStyle}" />
 								<Button Content="save for later"
 										x:Uid="_SaveForLater"
 										utu:AutoLayout.CounterAlignment="Stretch"
-										Style="{StaticResource MaterialOutlinedButtonStyle}" />
+										Style="{StaticResource OutlinedButtonStyle}" />
 							</utu:AutoLayout>
 							<utu:AutoLayout Spacing="8"
 											Padding="16,32,16,16"
 											utu:AutoLayout.CounterAlignment="Stretch">
-								<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}"
+								<TextBlock Foreground="{StaticResource OnSurfaceBrush}"
 										   x:Uid="_Product details"
 										   Text="Product details"
-										   Style="{StaticResource MaterialHeadline6}" />
-								<TextBlock Foreground="{StaticResource MaterialOnSurfaceMediumBrush}"
+										   Style="{StaticResource TitleLarge}" />
+								<TextBlock Foreground="{StaticResource OnSurfaceMediumBrush}"
 										   TextWrapping="Wrap"
 										   Text="{Binding Description}"
 										   utu:AutoLayout.CounterAlignment="Stretch"
-										   Style="{StaticResource MaterialBody2}" />
+										   Style="{StaticResource BodySmall}" />
 							</utu:AutoLayout>
 							<utu:AutoLayout Spacing="8"
 											Padding="16,32,16,8"
 											utu:AutoLayout.CounterAlignment="Stretch">
-								<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}"
+								<TextBlock Foreground="{StaticResource OnSurfaceBrush}"
 										   x:Uid="_Reviews"
 										   Text="Reviews"
-										   Style="{StaticResource MaterialHeadline6}" />
+										   Style="{StaticResource TitleLarge}" />
 								<muxc:RatingControl MaxRating="5"
 													Value="{Binding Rating, Mode=TwoWay}" />
 							</utu:AutoLayout>
@@ -153,16 +153,16 @@
 																utu:AutoLayout.CounterAlignment="Stretch">
 													<utu:AutoLayout PrimaryAxisAlignment="Center"
 																	utu:AutoLayout.CounterAlignment="Stretch">
-														<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}"
+														<TextBlock Foreground="{StaticResource OnSurfaceBrush}"
 																   TextWrapping="Wrap"
 																   Text="{Binding Name}"
 																   utu:AutoLayout.CounterAlignment="Stretch"
-																   Style="{StaticResource MaterialBody2}" />
-														<TextBlock Foreground="{StaticResource MaterialOnSurfaceMediumBrush}"
+																   Style="{StaticResource BodySmall}" />
+														<TextBlock Foreground="{StaticResource OnSurfaceMediumBrush}"
 																   TextWrapping="Wrap"
 																   Text="{Binding Message}"
 																   utu:AutoLayout.CounterAlignment="Stretch"
-																   Style="{StaticResource MaterialBody2}" />
+																   Style="{StaticResource BodySmall}" />
 													</utu:AutoLayout>
 												</utu:AutoLayout>
 											</utu:AutoLayout>
@@ -174,7 +174,7 @@
 																Orientation="Horizontal"
 																utu:AutoLayout.CounterAlignment="Stretch">
 													<ToggleButton utu:AutoLayout.CounterAlignment="Center"
-																  Style="{StaticResource MaterialToggleButtonIconStyle}">
+																  Style="{StaticResource ToggleButtonIconStyle}">
 														<ToggleButton.Content>
 															<PathIcon Data="{StaticResource Icon_more_vert}" />
 														</ToggleButton.Content>

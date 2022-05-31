@@ -7,27 +7,27 @@
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  xmlns:utu="using:Uno.Toolkit.UI"
 	  mc:Ignorable="d"
-	  Background="{ThemeResource MaterialBackgroundBrush}">
+	  Background="{ThemeResource BackgroundBrush}">
 
-	<utu:AutoLayout Background="{StaticResource MaterialBackgroundBrush}"
+	<utu:AutoLayout Background="{StaticResource BackgroundBrush}"
 					MaxWidth="{StaticResource LandscapeMaxPageWidth}">
 		<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch"
 						utu:AutoLayout.PrimaryAlignment="Stretch">
 			<utu:AutoLayout Spacing="16"
 							Padding="32,48,32,8"
 							utu:AutoLayout.CounterAlignment="Stretch">
-				<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}"
+				<TextBlock Foreground="{StaticResource OnSurfaceBrush}"
 						   x:Uid="Body_Welcome"
 						   Text="Welcome."
-						   Style="{StaticResource MaterialHeadline4}" />
-				<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}"
+						   Style="{StaticResource HeadlineLarge}" />
+				<TextBlock Foreground="{StaticResource OnSurfaceBrush}"
 						   x:Uid="Body_Title"
 						   Text="{Binding Title}"
-						   Style="{StaticResource MaterialSubtitle2}" />
-				<TextBlock Foreground="{StaticResource MaterialOnSurfaceBrush}"
+						   Style="{StaticResource TitleMedium}" />
+				<TextBlock Foreground="{StaticResource OnSurfaceBrush}"
 						   x:Uid="Body_Log in to your account"
 						   Text="Log in to your account"
-						   Style="{StaticResource MaterialSubtitle2}" />
+						   Style="{StaticResource TitleMedium}" />
 			</utu:AutoLayout>
 			<utu:AutoLayout Spacing="16"
 							Padding="32,8,32,32"
@@ -35,20 +35,20 @@
 				<TextBox AutomationProperties.AutomationId="UserName"
 						 Text="{Binding Credentials.UserName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 						 utu:AutoLayout.CounterAlignment="Stretch"
-						 Style="{StaticResource MaterialFilledTextBoxStyle}" />
+						 Style="{StaticResource FilledTextBoxStyle}" />
 				<PasswordBox AutomationProperties.AutomationId="Password"
 							 Password="{Binding Credentials.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 							 utu:AutoLayout.CounterAlignment="Stretch"
-							 Style="{StaticResource MaterialFilledPasswordBoxStyle}" />
+							 Style="{StaticResource FilledPasswordBoxStyle}" />
 				<HyperlinkButton Content="Forgot password?"
 								 x:Uid="Body_HyperlinkButton"
 								 uen:Navigation.Request="!Forgot"
-								 Style="{StaticResource MaterialHyperlinkButtonStyle}" />
+								 Style="{StaticResource HyperlinkButtonStyle}" />
 				<Button Content="Login"
 						AutomationProperties.AutomationId="Login"
 						x:Uid="Body_Login"
 						utu:AutoLayout.CounterAlignment="Stretch"
-						Style="{StaticResource MaterialContainedButtonStyle}"
+						Style="{StaticResource FilledButtonStyle}"
 						Command="{Binding Login}" />
 			</utu:AutoLayout>
 			<utu:AutoLayout Spacing="16"
@@ -56,13 +56,13 @@
 							PrimaryAxisAlignment="End"
 							utu:AutoLayout.CounterAlignment="Stretch"
 							utu:AutoLayout.PrimaryAlignment="Stretch">
-				<TextBlock Foreground="{StaticResource MaterialOnBackgroundBrush}"
+				<TextBlock Foreground="{StaticResource OnBackgroundBrush}"
 						   TextAlignment="Center"
 						   TextWrapping="Wrap"
 						   x:Uid="Body_Legal mentions"
 						   Text="Legal mentions"
 						   utu:AutoLayout.CounterAlignment="Center"
-						   Style="{StaticResource MaterialCaption}" />
+						   Style="{StaticResource BodySmall}" />
 			</utu:AutoLayout>
 		</utu:AutoLayout>
 	</utu:AutoLayout>
