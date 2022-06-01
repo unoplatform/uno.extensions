@@ -9,7 +9,7 @@ public static class ServiceProviderExtensions
 				.RegisterWindow(window);
 	}
 
-	internal static IServiceProvider RegisterWindow(this IServiceProvider services, Window window)
+	public static IServiceProvider RegisterWindow(this IServiceProvider services, Window window)
 	{
 		return services.AddScopedInstance(window)
 						.AddScopedInstance<IDispatcher>(new Dispatcher(window));

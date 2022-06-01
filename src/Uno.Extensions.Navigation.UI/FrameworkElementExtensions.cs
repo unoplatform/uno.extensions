@@ -2,7 +2,7 @@
 
 public static class FrameworkElementExtensions
 {
-	internal static IServiceProvider AttachServiceProvider(this UIElement element, IServiceProvider services)
+	public static IServiceProvider AttachServiceProvider(this UIElement element, IServiceProvider services)
 	{
 		var scopedServices = services.CreateScope().ServiceProvider;
 		element.SetServiceProvider(scopedServices);

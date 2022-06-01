@@ -1,30 +1,33 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 
-// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
+namespace TestHarness;
 
-namespace TestHarness
+public sealed partial class MainPage : Page
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class MainPage : Page
-    {
-        public MainPage()
-        {
-            this.InitializeComponent();
-        }
-    }
+	public MainPage()
+	{
+		this.InitializeComponent();
+	}
+
+	protected override void OnNavigatedTo(NavigationEventArgs e)
+	{
+		base.OnNavigatedTo(e);
+
+		var testSections = (from type in this.GetType().Assembly.GetTypes()
+							let sectionAttribute = type.GetCustomAttribute<TestSectionRootAttribute>()
+							where sectionAttribute is not null
+							select new TestSection(sectionAttribute.Name, type, sectionAttribute.HostInitializer)).ToArray();
+		TestSectionsComboBox.ItemsSource = testSections;
+	}
+
+
+	private void TestSectionSelectionChanged(object sender, SelectionChangedEventArgs e)
+	{
+		if (TestSectionsComboBox.SelectedItem is TestSection section)
+		{
+
+			this.Frame.Navigate(section.MainPage, Activator.CreateInstance(section.HostInitializer));
+		}
+	}
 }
+
+
