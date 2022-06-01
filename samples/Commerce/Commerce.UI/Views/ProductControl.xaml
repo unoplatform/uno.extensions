@@ -176,8 +176,9 @@
 												<utu:AutoLayout Padding="16,0,0,16"
 																Orientation="Horizontal"
 																utu:AutoLayout.CounterAlignment="Stretch">
-													<ToggleButton utu:AutoLayout.CounterAlignment="Center"
-																  Style="{StaticResource ToggleButtonIconStyle}">
+													<ToggleButton utu:AutoLayout.CounterAlignment="Center">
+														<!-- This style isn't resolving -->
+														<!--Style="{StaticResource ToggleButtonIconStyle}">-->
 														<ToggleButton.Content>
 															<PathIcon Data="{StaticResource Icon_more_vert}" />
 														</ToggleButton.Content>

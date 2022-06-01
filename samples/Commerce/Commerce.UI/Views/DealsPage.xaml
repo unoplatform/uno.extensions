@@ -11,6 +11,126 @@
 	  mc:Ignorable="d"
 	  NavigationCacheMode="Required"
 	  Background="{ThemeResource BackgroundBrush}">
+	<Page.Resources>
+		<DataTemplate  x:Key="FeedViewListTemplate">
+			<UserControl>
+				<Grid>
+					<VisualStateManager.VisualStateGroups>
+						<VisualStateGroup>
+							<VisualState x:Name="Wide">
+								<VisualState.StateTriggers>
+									<AdaptiveTrigger MinWindowWidth="{StaticResource WideMinWindowWidthh}" />
+								</VisualState.StateTriggers>
+								<VisualState.Setters>
+									<Setter Target="DealsListView.SelectionMode"
+											Value="Single" />
+									<Setter Target="DealsListView.IsItemClickEnabled"
+											Value="False" />
+								</VisualState.Setters>
+							</VisualState>
+							<VisualState x:Name="Narrow">
+								<VisualState.StateTriggers>
+									<AdaptiveTrigger MinWindowWidth="0"
+													 MinWindowHeight="0" />
+								</VisualState.StateTriggers>
+								<VisualState.Setters>
+									<Setter Target="DealsListView.SelectionMode"
+											Value="None" />
+									<Setter Target="DealsListView.IsItemClickEnabled"
+											Value="True" />
+								</VisualState.Setters>
+							</VisualState>
+						</VisualStateGroup>
+					</VisualStateManager.VisualStateGroups>
+
+					<ListView x:Name="DealsListView"
+							  Background="{StaticResource SurfaceBrush}"
+							  ItemsSource="{Binding Data}"
+							  SelectionMode="None"
+							  IsItemClickEnabled="True"
+							  uen:Navigation.Request="DealsProduct">
+						<ListView.ItemsPanel>
+							<ItemsPanelTemplate>
+								<ItemsStackPanel Orientation="Vertical" />
+							</ItemsPanelTemplate>
+						</ListView.ItemsPanel>
+						<ListView.ItemTemplate>
+							<DataTemplate>
+								<utu:CardContentControl x:Uid="Page_DealDetails"
+														Style="{StaticResource OutlinedCardContentControlStyle}">
+									<utu:CardContentControl.ContentTemplate>
+										<DataTemplate>
+											<utu:AutoLayout Background="{StaticResource SurfaceBrush}">
+												<Image Source="{Binding Photo}"
+													   Stretch="Uniform"
+													   utu:AutoLayout.CounterAlignment="Stretch"
+													   utu:AutoLayout.PrimaryAlignment="Stretch" />
+												<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch">
+													<utu:AutoLayout Padding="16,16,16,0"
+																	Orientation="Horizontal"
+																	utu:AutoLayout.CounterAlignment="Stretch">
+														<utu:AutoLayout Padding="0,0,0,16"
+																		utu:AutoLayout.PrimaryAlignment="Stretch">
+															<utu:AutoLayout PrimaryAxisAlignment="Center"
+																			utu:AutoLayout.CounterAlignment="Stretch">
+																<utu:AutoLayout PrimaryAxisAlignment="Center"
+																				utu:AutoLayout.CounterAlignment="Stretch">
+																	<TextBlock Foreground="{StaticResource OnSurfaceLowBrush}"
+																			   TextWrapping="Wrap"
+																			   Text="{Binding Brand}"
+																			   Style="{StaticResource BodySmall}" />
+																	<TextBlock Foreground="{StaticResource OnSurfaceBrush}"
+																			   TextWrapping="Wrap"
+																			   Text="{Binding Name}"
+																			   Style="{StaticResource TitleLarge}" />
+																</utu:AutoLayout>
+															</utu:AutoLayout>
+														</utu:AutoLayout>
+														<utu:AutoLayout Orientation="Horizontal">
+															<utu:AutoLayout Padding="16,0,0,16"
+																			PrimaryAxisAlignment="End"
+																			Orientation="Horizontal"
+																			utu:AutoLayout.CounterAlignment="Stretch">
+																<utu:AutoLayout>
+																	<utu:AutoLayout Spacing="4"
+																					utu:AutoLayout.CounterAlignment="End">
+																		<utu:AutoLayout Spacing="10"
+																						Padding="4,4,4,4"
+																						PrimaryAxisAlignment="End"
+																						Orientation="Horizontal"
+																						Background="{StaticResource ErrorBrush}"
+																						utu:AutoLayout.CounterAlignment="End">
+																			<TextBlock Foreground="{StaticResource OnErrorBrush}"
+																					   TextAlignment="End"
+																					   Text="{Binding Discount}"
+																					   Style="{StaticResource BodySmall}" />
+																		</utu:AutoLayout>
+																		<utu:AutoLayout Spacing="10"
+																						PrimaryAxisAlignment="End"
+																						Orientation="Horizontal"
+																						utu:AutoLayout.CounterAlignment="End">
+																			<TextBlock Foreground="{StaticResource OnSurfaceBrush}"
+																					   TextAlignment="End"
+																					   Text="{Binding DiscountedPrice}"
+																					   Style="{StaticResource BodyMedium}" />
+																		</utu:AutoLayout>
+																	</utu:AutoLayout>
+																</utu:AutoLayout>
+															</utu:AutoLayout>
+														</utu:AutoLayout>
+													</utu:AutoLayout>
+												</utu:AutoLayout>
+											</utu:AutoLayout>
+										</DataTemplate>
+									</utu:CardContentControl.ContentTemplate>
+								</utu:CardContentControl>
+							</DataTemplate>
+						</ListView.ItemTemplate>
+					</ListView>
+				</Grid>
+			</UserControl>
+		</DataTemplate>
+	</Page.Resources>
 	<Grid>
 		<VisualStateManager.VisualStateGroups>
 			<VisualStateGroup>
@@ -69,128 +189,68 @@
 					</AppBarButton>
 				</utu:NavigationBar.PrimaryCommands>
 			</utu:NavigationBar>
-			<uer:FeedView Source="{Binding Items}"
+			<!--<uer:FeedView Source="{Binding Items}"
 						  utu:AutoLayout.PrimaryAlignment="Stretch"
 						  utu:AutoLayout.CounterAlignment="Stretch">
-				<DataTemplate>
-					<UserControl>
-						<Grid>
-							<VisualStateManager.VisualStateGroups>
-								<VisualStateGroup>
-									<VisualState x:Name="Wide">
-										<VisualState.StateTriggers>
-											<AdaptiveTrigger MinWindowWidth="{StaticResource WideMinWindowWidthh}" />
-										</VisualState.StateTriggers>
-										<VisualState.Setters>
-											<Setter Target="DealsListView.SelectionMode"
-													Value="Single" />
-											<Setter Target="DealsListView.IsItemClickEnabled"
-													Value="False" />
-										</VisualState.Setters>
-									</VisualState>
-									<VisualState x:Name="Narrow">
-										<VisualState.StateTriggers>
-											<AdaptiveTrigger MinWindowWidth="0"
-															 MinWindowHeight="0" />
-										</VisualState.StateTriggers>
-										<VisualState.Setters>
-											<Setter Target="DealsListView.SelectionMode"
-													Value="None" />
-											<Setter Target="DealsListView.IsItemClickEnabled"
-													Value="True" />
-										</VisualState.Setters>
-									</VisualState>
-								</VisualStateGroup>
-							</VisualStateManager.VisualStateGroups>
+				
+			</uer:FeedView>-->
 
-							<ListView x:Name="DealsListView"
-									  Background="{StaticResource SurfaceBrush}"
-									  ItemsSource="{Binding Data}"
-									  SelectionMode="None"
-									  IsItemClickEnabled="True"
-									  uen:Navigation.Request="DealsProduct">
-								<ListView.ItemsPanel>
-									<ItemsPanelTemplate>
-										<ItemsStackPanel Orientation="Vertical" />
-									</ItemsPanelTemplate>
-								</ListView.ItemsPanel>
-								<ListView.ItemTemplate>
-									<DataTemplate>
-										<utu:CardContentControl x:Uid="Page_DealDetails"
-																Style="{StaticResource OutlinedCardContentControlStyle}">
-											<utu:CardContentControl.ContentTemplate>
-												<DataTemplate>
-													<utu:AutoLayout Background="{StaticResource SurfaceBrush}">
-														<Image Source="{Binding Photo}"
-															   Stretch="Uniform"
-															   utu:AutoLayout.CounterAlignment="Stretch"
-															   utu:AutoLayout.PrimaryAlignment="Stretch" />
-														<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch">
-															<utu:AutoLayout Padding="16,16,16,0"
-																			Orientation="Horizontal"
-																			utu:AutoLayout.CounterAlignment="Stretch">
-																<utu:AutoLayout Padding="0,0,0,16"
-																				utu:AutoLayout.PrimaryAlignment="Stretch">
-																	<utu:AutoLayout PrimaryAxisAlignment="Center"
-																					utu:AutoLayout.CounterAlignment="Stretch">
-																		<utu:AutoLayout PrimaryAxisAlignment="Center"
-																						utu:AutoLayout.CounterAlignment="Stretch">
-																			<TextBlock Foreground="{StaticResource OnSurfaceLowBrush}"
-																					   TextWrapping="Wrap"
-																					   Text="{Binding Brand}"
-																					   Style="{StaticResource BodySmall}" />
-																			<TextBlock Foreground="{StaticResource OnSurfaceBrush}"
-																					   TextWrapping="Wrap"
-																					   Text="{Binding Name}"
-																					   Style="{StaticResource TitleLarge}" />
-																		</utu:AutoLayout>
-																	</utu:AutoLayout>
-																</utu:AutoLayout>
-																<utu:AutoLayout Orientation="Horizontal">
-																	<utu:AutoLayout Padding="16,0,0,16"
-																					PrimaryAxisAlignment="End"
-																					Orientation="Horizontal"
-																					utu:AutoLayout.CounterAlignment="Stretch">
-																		<utu:AutoLayout>
-																			<utu:AutoLayout Spacing="4"
-																							utu:AutoLayout.CounterAlignment="End">
-																				<utu:AutoLayout Spacing="10"
-																								Padding="4,4,4,4"
-																								PrimaryAxisAlignment="End"
-																								Orientation="Horizontal"
-																								Background="{StaticResource ErrorBrush}"
-																								utu:AutoLayout.CounterAlignment="End">
-																					<TextBlock Foreground="{StaticResource OnErrorBrush}"
-																							   TextAlignment="End"
-																							   Text="{Binding Discount}"
-																							   Style="{StaticResource BodySmall}" />
-																				</utu:AutoLayout>
-																				<utu:AutoLayout Spacing="10"
-																								PrimaryAxisAlignment="End"
-																								Orientation="Horizontal"
-																								utu:AutoLayout.CounterAlignment="End">
-																					<TextBlock Foreground="{StaticResource OnSurfaceBrush}"
-																							   TextAlignment="End"
-																							   Text="{Binding DiscountedPrice}"
-																							   Style="{StaticResource BodyMedium}" />
-																				</utu:AutoLayout>
-																			</utu:AutoLayout>
-																		</utu:AutoLayout>
-																	</utu:AutoLayout>
-																</utu:AutoLayout>
-															</utu:AutoLayout>
-														</utu:AutoLayout>
-													</utu:AutoLayout>
-												</DataTemplate>
-											</utu:CardContentControl.ContentTemplate>
-										</utu:CardContentControl>
-									</DataTemplate>
-								</ListView.ItemTemplate>
-							</ListView>
+			<Grid utu:AutoLayout.CounterAlignment="Stretch"
+				  utu:AutoLayout.PrimaryAlignment="Stretch"
+				  uen:Region.Attached="True"
+				  uen:Region.Name="DealsAndFavorites">
+				<utu:AutoLayout utu:AutoLayout.PrimaryAlignment="Stretch">
+					<utu:TabBar uen:Region.Attached="True">
+						<utu:TabBarItem x:Uid="DealsPage_DealsTab"
+										Content="Deals"
+										uen:Region.Name="DealsTab"
+										utu:AutoLayout.PrimaryAlignment="Stretch" />
+						<utu:TabBarItem x:Uid="DealsPage_FavoritesTab"
+										Content="Favorites"
+										uen:Region.Name="FavoritesTab"
+										utu:AutoLayout.PrimaryAlignment="Stretch" />
+					</utu:TabBar>
+					<utu:AutoLayout Spacing="10"
+									Padding="20,10,20,0"
+									utu:AutoLayout.PrimaryAlignment="Stretch">
+						<Grid utu:AutoLayout.CounterAlignment="Stretch"
+							  utu:AutoLayout.PrimaryAlignment="Stretch"
+							  uen:Region.Attached="True"
+							  uen:Region.Navigator="Visibility">
+
+							<!--
+									TODO: Both FeedView should be set to collapsed by default
+									However, currently setting them to Collapsed by default results
+									in no data being shown. Deals is in XAML second, to position
+									it over the top of the Favorites, since they're currently
+									both visible by default
+								-->
+							<uer:FeedView uen:Region.Name="FavoritesTab"
+										  Source="{Binding Favorites}"
+										  utu:AutoLayout.PrimaryAlignment="Stretch"
+										  utu:AutoLayout.CounterAlignment="Stretch"
+										  ValueTemplate="{StaticResource FeedViewListTemplate}"
+										  Visibility="Visible" />
+							<!--
+									Since both FeedView are Visible at the moment we need a layer
+									in between because there are on top of each other
+								-->
+							<Border Visibility="{Binding Path=Visibility, ElementName=DealsFeedView}"
+									VerticalAlignment="Stretch"
+									HorizontalAlignment="Stretch" />
+
+							<uer:FeedView x:Name="DealsFeedView"
+										  Source="{Binding Items}"
+										  utu:AutoLayout.CounterAlignment="Start"
+										  utu:AutoLayout.PrimaryAlignment="Stretch"
+										  uen:Region.Name="DealsTab"
+										  Visibility="Visible"
+										  ValueTemplate="{StaticResource FeedViewListTemplate}" />
+
 						</Grid>
-					</UserControl>
-				</DataTemplate>
-			</uer:FeedView>
+					</utu:AutoLayout>
+				</utu:AutoLayout>
+			</Grid>
 		</utu:AutoLayout>
 		<Grid Grid.Column="1"
 				  x:Name="DetailsGrid"
