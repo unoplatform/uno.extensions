@@ -6,6 +6,7 @@
 								 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 								 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 								 mc:Ignorable="d"
+								 xmlns:uen="using:Uno.Extensions.Navigation.UI"
 								 Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
 	<Grid>
@@ -25,6 +26,9 @@
 						HorizontalContentAlignment="Stretch"
 						VerticalContentAlignment="Stretch"
 						Grid.Row="1" />
+
+		<!--uen:Region.Attached="true"-->
+
 
 		<StackPanel Grid.Row="2"
 					Orientation="Horizontal"

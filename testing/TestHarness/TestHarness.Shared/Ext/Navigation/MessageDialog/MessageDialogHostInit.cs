@@ -17,8 +17,12 @@ public class MessageDialogHostInit : IHostInitialization
 				{
 					var host = context.HostingEnvironment;
 					// Configure log levels for different categories of logging
-					logBuilder.SetMinimumLevel(host.IsDevelopment() ? LogLevel.Warning : LogLevel.Information);
+					logBuilder.SetMinimumLevel(host.IsDevelopment() ? LogLevel.Trace : LogLevel.Information);
 				})
+
+				.UseLocalization()
+
+				.UseConfiguration()
 
 				// Enable navigation, including registering views and viewmodels
 				.UseNavigation(RegisterRoutes)
@@ -67,6 +71,7 @@ public class MessageDialogHostInit : IHostInitialization
 			new RouteMap("",
 			Nested: new[]
 			{
+				new RouteMap("Simple", View: views.FindByViewModel<SimpleDialogsViewModel>()),
 					new RouteMap("Confirm", View: confirmDialog),
 					new RouteMap("LocalizedConfirm", View: localizedDialog)
 			}));

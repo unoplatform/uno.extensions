@@ -20,11 +20,12 @@ global using Uno.Extensions.Configuration;
 global using Uno.Extensions.Hosting;
 global using Uno.Extensions.Navigation;
 global using Uno.Extensions.Logging;
-//global using Uno.Extensions.Localization;
+global using Uno.Extensions.Localization;
 global using Uno.Extensions.Serialization;
 global using Uno.Extensions.Navigation.Toolkit;
 global using Uno.Extensions.Navigation.Regions;
 global using Uno.Extensions.Navigation.UI;
+
 
 global using Uno.Toolkit.UI;
 global using Microsoft.Extensions.Options;

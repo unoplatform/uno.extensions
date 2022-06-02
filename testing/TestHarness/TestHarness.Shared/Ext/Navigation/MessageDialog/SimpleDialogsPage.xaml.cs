@@ -5,6 +5,8 @@ public sealed partial class SimpleDialogsPage : Page
 {
 	public SimpleDialogsPage()
 	{
+		Console.WriteLine("******* Page ");
+
 		this.InitializeComponent();
 	}
 
@@ -29,5 +31,15 @@ public sealed partial class SimpleDialogsPage : Page
 		var cancelSource = new CancellationTokenSource(TimeSpan.FromSeconds(2));
 		var messageDialogResult = await this.Navigator()!.ShowMessageDialogAsync<string>(this, content: "This is Content", title: "This is title", cancellation: cancelSource.Token);
 		MessageDialogResultText.Text = $"Message dialog result: {messageDialogResult}";
+	}
+
+	public void CloseAllMessageDialogs()//object sender, RoutedEventArgs args)
+	{
+		var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+		foreach (var popup in popups)
+		{
+			popup.IsOpen = false;
+		}
+
 	}
 }

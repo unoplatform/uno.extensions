@@ -51,7 +51,9 @@ namespace TestHarness
 			_window = Microsoft.UI.Xaml.Window.Current;
 #endif
 
-            var rootFrame = _window.Content as Frame;
+
+
+			var rootFrame = _window.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
@@ -71,10 +73,12 @@ namespace TestHarness
                 _window.Content = rootFrame;
             }
 
+
+
 #if !(NET6_0_OR_GREATER && WINDOWS)
             if (args.UWPLaunchActivatedEventArgs.PrelaunchActivated == false)
 #endif
-            {
+			{
                 if (rootFrame.Content == null)
                 {
                     // When the navigation stack isn't restored navigate to the first page,

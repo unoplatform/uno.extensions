@@ -1,5 +1,6 @@
 <linker>
-  <assembly fullname="TestHarness.Wasm" />
+	<assembly fullname="TestHarness.Core" />
+	<assembly fullname="TestHarness.Wasm" />
   <assembly fullname="Uno.UI" />
   <assembly fullname="Microsoft.Extensions.Options" />
 

@@ -48,6 +48,7 @@ public static class Region
 
 	private static void AttachedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 	{
+		Console.WriteLine("******** Attached");
 		if (Windows.ApplicationModel.DesignMode.DesignModeEnabled)
 		{
 			return;
@@ -73,6 +74,8 @@ public static class Region
 				existingRegion.Detach();
 			}
 		}
+		Console.WriteLine($"******** Region exists {existingRegion is not null}");
+
 		var region = existingRegion ?? (active ? new NavigationRegion(element) : default);
 	}
 
