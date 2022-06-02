@@ -16,6 +16,8 @@ public class Changed : ConstraintPart<IMessage>
 
 	public static Changed Progress { get; } = new(MessageAxis.Progress);
 
+	public static Changed Version { get; } = new(MessageAxis.Refresh);
+
 	public static Changed Axes(params MessageAxis[] axes) 
 		=> new(axes);
 
