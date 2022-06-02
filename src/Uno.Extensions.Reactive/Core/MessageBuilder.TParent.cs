@@ -44,37 +44,39 @@ public readonly struct MessageBuilder<TParent, TResult> : IMessageEntry, IMessag
 	Option<object> IMessageEntry.Data => CurrentData;
 	Exception? IMessageEntry.Error => CurrentError;
 	bool IMessageEntry.IsTransient => CurrentIsTransient;
-	MessageAxisValue IMessageEntry.this[MessageAxis axis] => Get(axis);
+	MessageAxisValue IMessageEntry.this[MessageAxis axis] => Get(axis).value;
 
-	MessageAxisValue IMessageBuilder.this[MessageAxis axis]
-	{
-		get => Get(axis);
-		set => Set(axis, value);
-	}
-
-	internal Option<TResult> CurrentData => (Option<TResult>)Get(MessageAxis.Data).Value!;
-	internal Exception? CurrentError => (Exception?)Get(MessageAxis.Data).Value;
-	internal bool CurrentIsTransient => Get(MessageAxis.Progress) is { IsSet: true } progress && (bool)progress.Value!;
+	internal Option<TResult> CurrentData => (Option<TResult>)Get(MessageAxis.Data).value.Value!;
+	internal Exception? CurrentError => (Exception?)Get(MessageAxis.Data).value.Value;
+	internal bool CurrentIsTransient => Get(MessageAxis.Progress).value is { IsSet: true } progress && (bool)progress.Value!;
 	internal MessageAxisValue this[MessageAxis axis]
 	{
-		get => Get(axis);
+		get => Get(axis).value;
 		set => Set(axis, value);
 	}
 
-	private MessageAxisValue Get(MessageAxis axis)
+	/// <inheritdoc />
+	(MessageAxisValue value, IChangeSet? changes) IMessageBuilder.Get(MessageAxis axis)
+		=> Get(axis);
+	internal (MessageAxisValue value, IChangeSet? changes) Get(MessageAxis axis)
 	{
 		var parentValue = Parent?.Current[axis] ?? MessageAxisValue.Unset;
 		var localValue = Local.Current[axis];
 		if (_updates.TryGetValue(axis, out var updater))
 		{
-			return updater.GetValue(parentValue, localValue);
+			return (updater.GetValue(parentValue, localValue), default);
 		}
 		else
 		{
-			return parentValue;
+			return (parentValue, default);
 		}
 	}
 
+	/// <inheritdoc />
+	void IMessageBuilder.Set(MessageAxis axis, MessageAxisValue value, IChangeSet? changes)
+		=> Set(axis, value, changes);
+	internal void Set(MessageAxis axis, MessageAxisValue value, IChangeSet? changes)
+		=> Set(axis, value);
 	private void Set(MessageAxis axis, MessageAxisValue value, bool overridesParent = false)
 	{
 		// Note: We are not validating the axis.AreEquals as changes are detected by the MessageManager itself.
