@@ -25,7 +25,11 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj" />
 	</ItemGroup>
-  
+
+	<ItemGroup>
+		<Compile Include="..\Uno.Extensions.Core\_Compat\**\*.cs" Link="_Compat\%(RecursiveDir)%(Filename)%(Extension)" />
+	</ItemGroup>
+
 	<ItemGroup>
 		<Page Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
 		<Compile Update="**\*.xaml.cs">
