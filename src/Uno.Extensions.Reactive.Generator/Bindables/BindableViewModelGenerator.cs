@@ -12,18 +12,20 @@ internal class BindableViewModelGenerator
 {
 	private readonly BindableGenerationContext _ctx;
 	private readonly BindableGenerator _bindables;
+	private readonly BindableViewModelMappingGenerator _viewModelsMapping;
 
 	public BindableViewModelGenerator(BindableGenerationContext ctx)
 	{
 		_ctx = ctx;
 		_bindables = new BindableGenerator(ctx);
+		_viewModelsMapping = new BindableViewModelMappingGenerator(ctx);
 	}
 
 	private bool IsSupported(INamedTypeSymbol type)
 		=> _ctx.IsGenerationEnabled(type)
 			?? type.Name.EndsWith("ViewModel", StringComparison.Ordinal) && type.IsPartial();
 
-	public IEnumerable<(INamedTypeSymbol type, string code)> Generate(IAssemblySymbol assembly)
+	public IEnumerable<(string fileName, string code)> Generate(IAssemblySymbol assembly)
 	{
 		var viewModels = from module in assembly.Modules
 			from type in module.GetNamespaceTypes()
@@ -32,13 +34,15 @@ internal class BindableViewModelGenerator
 
 		foreach (var vm in viewModels)
 		{
-			yield return (vm, Generate(vm));
+			yield return (vm.ToString(), Generate(vm));
 		}
 
-		foreach (var bindable in _bindables.Generate())
+		foreach (var (type, code) in _bindables.Generate())
 		{
-			yield return bindable;
+			yield return (type.ToString(), code: code);
 		}
+
+		yield return _viewModelsMapping.Generate();
 	}
 
 	private string Generate(INamedTypeSymbol vm)
@@ -144,6 +148,14 @@ internal class BindableViewModelGenerator
 				{vm.GetContainingTypes().Select(_ => "}").Align(4)}
 			}}
 			";
+
+		// If type is at least internally accessible, add it to a mapping from the VM type to it's bindable counterpart to ease usage in navigation engine.
+		// (Private types are almost only a test case which is not supported by nav anyway)
+		if (vm.DeclaredAccessibility is not Accessibility.Private
+			&& vm.GetContainingTypes().All(type => type.DeclaredAccessibility is not Accessibility.Private))
+		{
+			_viewModelsMapping.Register(vm, $"{vm.ContainingNamespace}.{vm.GetContainingTypes().Select(type => type.Name + '.').JoinBy("")}{vm.Name}.Bindable{vm.Name}");
+		}
 
 		return fileCode.Align(0);
 	}
