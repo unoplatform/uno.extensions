@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace TestHarness.UITests;
+namespace TestHarness.UITest;
 
 public class Given_MainPage : TestBase
 {

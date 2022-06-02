@@ -6,7 +6,7 @@ using Uno.UITest.Helpers;
 using Uno.UITest.Helpers.Queries;
 using Uno.UITests.Helpers;
 
-namespace TestHarness.UITests;
+namespace TestHarness.UITest;
 
 [TestFixture]
 public abstract class TestBase

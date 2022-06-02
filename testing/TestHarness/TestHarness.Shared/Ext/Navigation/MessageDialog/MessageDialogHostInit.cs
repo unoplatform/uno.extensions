@@ -42,8 +42,23 @@ public class MessageDialogHostInit : IHostInitialization
 				}
 			);
 
+		var localizedDialog = new LocalizableMessageDialogViewMap(
+				Content: localizer => "[localized]Confirm this message?",
+				Title: localizer => "[localized]Confirm?",
+				DelayUserInput: true,
+				DefaultButtonIndex: 1,
+				Buttons: new LocalizableDialogAction[]
+				{
+								new(LabelProvider: localizer=> localizer!["Y"],Id:"Y"),
+								new(LabelProvider: localizer=> localizer!["N"], Id:"N")
+				}
+			);
+
 		views.Register(
-			confirmDialog
+			new ViewMap<SimpleDialogsPage, SimpleDialogsViewModel>(),
+			new ViewMap<LocalizedDialogsPage, LocalizedDialogsViewModel>(),
+			confirmDialog,
+			localizedDialog
 			);
 
 
@@ -53,6 +68,7 @@ public class MessageDialogHostInit : IHostInitialization
 			Nested: new[]
 			{
 					new RouteMap("Confirm", View: confirmDialog),
+					new RouteMap("LocalizedConfirm", View: localizedDialog)
 			}));
 	}
 

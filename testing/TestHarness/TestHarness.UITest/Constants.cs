@@ -1,6 +1,6 @@
 ﻿using Uno.UITest.Helpers.Queries;
 
-namespace TestHarness.UITests;
+namespace TestHarness.UITest;
 
 public class Constants
 {

@@ -1,0 +1,33 @@
+﻿<Page
+    x:Class="TestHarness.Ext.Navigation.MessageDialog.LocalizedDialogsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:TestHarness.Ext.Navigation.MessageDialog"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+
+		<TextBlock x:Name="MessageDialogResultText" />
+		<ScrollViewer Grid.Row="1">
+			<StackPanel>
+				<!--<Button Content="MessageDialog XAML"
+						uen:Navigation.Request="Confirm" />
+				<Button Content="MessageDialog Codebehind"
+						Click="MessageDialogCodebehindClick" />
+				<Button Content="MessageDialog Codebehind (route)"
+						Click="MessageDialogCodebehindRouteClick" />
+				<Button Content="MessageDialog Codebehind (route override)"
+						Click="MessageDialogCodebehindRouteOverrideClick" />
+				<Button Content="MessageDialog Codebehind (cancel after 2s)"
+						Click="MessageDialogCodebehindCancelClick" />-->
+			</StackPanel>
+		</ScrollViewer>
+	</Grid>
+</Page>

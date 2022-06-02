@@ -1,5 +1,5 @@
 ﻿
-namespace TestHarness.UITests.Ext.Navigation;
+namespace TestHarness.UITest.Ext.Navigation;
 
 public abstract class NavigationTestBase : TestBase
 {

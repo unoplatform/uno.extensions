@@ -29,8 +29,12 @@
 		<StackPanel Grid.Row="2"
 					Orientation="Horizontal"
 					HorizontalAlignment="Center">
-			<Button Content="test"
-					Click="TestClick" />
+			<Button AutomationProperties.AutomationId="SimpleDialogsButton"
+					Content="Simple"
+					Click="SimpleDialogsClick" />
+			<Button AutomationProperties.AutomationId="LocalizedDialogsButton"
+					Content="Localized"
+					Click="LocalizedDialogsClick" />
 		</StackPanel>
 	</Grid>
 </testharness:BaseTestSectionPage>

@@ -1,23 +1,24 @@
 ﻿
 
 
-namespace TestHarness.UITests;
+namespace TestHarness.UITest;
 
 public class Given_MessageDialog : NavigationTestBase
 {
 	[Test]
-	public void When_MessageDialog()
+	public void When_MessageDialogFromXAML()
 	{
 		InitTestSection(TestSections.MessageDialog);
-		//App.WaitForElement(q => q.Marked("TestHarnessMainPageTitle"));
+
+		App.WaitThenTap("SimpleDialogsButton");
 
 
-		//App.WaitForElement(App.Marked("TestSectionsComboBox"));
-		//var theComboBox = App.Marked("TestSectionsComboBox");
+		App.WaitForElement("MessageDialogFromXamlButton");
+		var screenBefore=TakeScreenshot("When_MessageDialogFromXAML_Before");
+		App.Tap("MessageDialogFromXamlButton");
+		var screenAfter = TakeScreenshot("When_MessageDialogFromXAML_After");
+		ImageAssert.AreEqual(screenBefore, screenAfter);
 
-		//theComboBox.SetDependencyPropertyValue("SelectedIndex", "0");
 
-		//App.WaitForElement(q => q.Marked("PageNavigationMainText"));
-		
 	}
 }

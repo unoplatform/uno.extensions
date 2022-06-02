@@ -19,10 +19,18 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)BaseTestSectionPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\MessageDialog\LocalizedDialogsPage.xaml.cs">
+      <DependentUpon>LocalizedDialogsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\MessageDialog\MessageDialogHostInit.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\MessageDialog\MessageDialogMainPage.xaml.cs">
       <DependentUpon>MessageDialogMainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\MessageDialog\SimpleDialogsPage.xaml.cs">
+      <DependentUpon>SimpleDialogsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\MessageDialog\LocalizedDialogsViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\MessageDialog\SimpleDialogsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationHostInit.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationMainPage.xaml.cs">
       <DependentUpon>PageNavigationMainPage.xaml</DependentUpon>
@@ -36,6 +44,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)TestSectionRootAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\MessageDialog\LocalizedDialogsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\MessageDialog\MessageDialogMainPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -65,7 +77,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </_Globbled_Page>
-    <Page Include="@(_Globbled_Page)" />
+    <Page Include="@(_Globbled_Page)">
+      <SubType>Designer</SubType>
+    </Page>
     <_Globbed_Compile Include="$(MSBuildThisFileDirectory)**/*.xaml.cs" Exclude="@(Compile)">
       <DependentUpon>%(Filename)</DependentUpon>
     </_Globbed_Compile>
