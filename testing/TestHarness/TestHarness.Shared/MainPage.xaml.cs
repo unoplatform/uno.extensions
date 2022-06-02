@@ -12,20 +12,29 @@ public sealed partial class MainPage : Page
 	{
 		base.OnNavigatedTo(e);
 
-		var testSections = (from type in this.GetType().Assembly.GetTypes()
-							let sectionAttribute = type.GetCustomAttribute<TestSectionRootAttribute>()
-							where sectionAttribute is not null
-							select new TestSection(sectionAttribute.Name, type, sectionAttribute.HostInitializer)).ToArray();
+		var attributedSections = (from type in this.GetType().Assembly.GetTypes()
+								  let sectionAttribute = type.GetCustomAttribute<TestSectionRootAttribute>()
+								  where sectionAttribute is not null
+								  select new TestSection(sectionAttribute.Name, sectionAttribute.Section, sectionAttribute.HostInitializer, type)).ToArray();
+		var allSections = typeof(TestSections).GetEnumValues().OfType<TestSections>().OrderBy(x => (int)x).ToArray();
+
+		var testSections = (from t in allSections
+							let section = attributedSections.FirstOrDefault(x => x.Section == t) ?? new TestSection("--invalid", t, default!, default!)
+							select section).ToArray();
+
 		TestSectionsComboBox.ItemsSource = testSections;
 	}
 
 
 	private void TestSectionSelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
-		if (TestSectionsComboBox.SelectedItem is TestSection section)
+		if (TestSectionsComboBox.SelectedItem is TestSection section &&
+			section.MainPage is not null)
 		{
-
-			this.Frame.Navigate(section.MainPage, Activator.CreateInstance(section.HostInitializer));
+			var hostInit = section.HostInitializer is not null ?
+				Activator.CreateInstance(section.HostInitializer) :
+				default;
+			this.Frame.Navigate(section.MainPage, hostInit);
 		}
 	}
 }

@@ -60,6 +60,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation.W
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation.Toolkit.WinUI", "..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.WinUI.csproj", "{4703D2B5-491F-440C-BA98-98E940032323}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestHarness.Core", "TestHarness.Core\TestHarness.Core.csproj", "{FA92731B-2A4D-4C14-89B8-2C7B58AA3FE9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -706,6 +708,34 @@ Global
 		{4703D2B5-491F-440C-BA98-98E940032323}.Release|x64.Build.0 = Release|Any CPU
 		{4703D2B5-491F-440C-BA98-98E940032323}.Release|x86.ActiveCfg = Release|Any CPU
 		{4703D2B5-491F-440C-BA98-98E940032323}.Release|x86.Build.0 = Release|Any CPU
+		{FA92731B-2A4D-4C14-89B8-2C7B58AA3FE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA92731B-2A4D-4C14-89B8-2C7B58AA3FE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA92731B-2A4D-4C14-89B8-2C7B58AA3FE9}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{FA92731B-2A4D-4C14-89B8-2C7B58AA3FE9}.Debug|ARM.Build.0 = Debug|Any CPU
+		{FA92731B-2A4D-4C14-89B8-2C7B58AA3FE9}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{FA92731B-2A4D-4C14-89B8-2C7B58AA3FE9}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{FA92731B-2A4D-4C14-89B8-2C7B58AA3FE9}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{FA92731B-2A4D-4C14-89B8-2C7B58AA3FE9}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{FA92731B-2A4D-4C14-89B8-2C7B58AA3FE9}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{FA92731B-2A4D-4C14-89B8-2C7B58AA3FE9}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{FA92731B-2A4D-4C14-89B8-2C7B58AA3FE9}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FA92731B-2A4D-4C14-89B8-2C7B58AA3FE9}.Debug|x64.Build.0 = Debug|Any CPU
+		{FA92731B-2A4D-4C14-89B8-2C7B58AA3FE9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FA92731B-2A4D-4C14-89B8-2C7B58AA3FE9}.Debug|x86.Build.0 = Debug|Any CPU
+		{FA92731B-2A4D-4C14-89B8-2C7B58AA3FE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA92731B-2A4D-4C14-89B8-2C7B58AA3FE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA92731B-2A4D-4C14-89B8-2C7B58AA3FE9}.Release|ARM.ActiveCfg = Release|Any CPU
+		{FA92731B-2A4D-4C14-89B8-2C7B58AA3FE9}.Release|ARM.Build.0 = Release|Any CPU
+		{FA92731B-2A4D-4C14-89B8-2C7B58AA3FE9}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{FA92731B-2A4D-4C14-89B8-2C7B58AA3FE9}.Release|ARM64.Build.0 = Release|Any CPU
+		{FA92731B-2A4D-4C14-89B8-2C7B58AA3FE9}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{FA92731B-2A4D-4C14-89B8-2C7B58AA3FE9}.Release|iPhone.Build.0 = Release|Any CPU
+		{FA92731B-2A4D-4C14-89B8-2C7B58AA3FE9}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{FA92731B-2A4D-4C14-89B8-2C7B58AA3FE9}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{FA92731B-2A4D-4C14-89B8-2C7B58AA3FE9}.Release|x64.ActiveCfg = Release|Any CPU
+		{FA92731B-2A4D-4C14-89B8-2C7B58AA3FE9}.Release|x64.Build.0 = Release|Any CPU
+		{FA92731B-2A4D-4C14-89B8-2C7B58AA3FE9}.Release|x86.ActiveCfg = Release|Any CPU
+		{FA92731B-2A4D-4C14-89B8-2C7B58AA3FE9}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -741,11 +771,8 @@ Global
 		SolutionGuid = {C7433AE2-B1A0-4C1A-887E-5CAA7AAF67A6}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		TestHarness.Shared\TestHarness.Shared.projitems*{1692d283-aaa3-410b-abad-eafcc46574b4}*SharedItemsImports = 5
 		TestHarness.Shared\TestHarness.Shared.projitems*{1aa13270-f438-4864-9435-54fd806e10ea}*SharedItemsImports = 5
 		TestHarness.Shared\TestHarness.Shared.projitems*{40ea03f7-8a22-4143-b251-79bac3eb13d2}*SharedItemsImports = 5
-		TestHarness.Shared\TestHarness.Shared.projitems*{46549ece-8a4f-479d-a9d0-131b064412d8}*SharedItemsImports = 5
 		TestHarness.Shared\TestHarness.Shared.projitems*{6279c845-92f8-4333-ab99-3d213163593c}*SharedItemsImports = 13
-		TestHarness.Shared\TestHarness.Shared.projitems*{a5b8155a-118f-4794-b551-c6f3cf7e5411}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

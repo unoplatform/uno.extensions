@@ -24,6 +24,8 @@ global using Uno.Extensions.Logging;
 global using Uno.Extensions.Serialization;
 global using Uno.Extensions.Navigation.Toolkit;
 global using Uno.Extensions.Navigation.Regions;
+global using Uno.Extensions.Navigation.UI;
+
 global using Uno.Toolkit.UI;
 global using Microsoft.Extensions.Options;
 global using Uno.Extensions;
@@ -40,3 +42,6 @@ global using Microsoft.UI.Xaml.Data;
 global using Microsoft.UI.Xaml.Media;
 global using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 global using Window = Microsoft.UI.Xaml.Window;
+
+global using TestHarness.Ext.Navigation.PageNavigation;
+global using TestHarness.Ext.Navigation.MessageDialog;

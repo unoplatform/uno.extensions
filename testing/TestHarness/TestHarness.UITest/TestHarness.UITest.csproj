@@ -14,4 +14,8 @@
 		<PackageReference Include="Xamarin.UITest" Version="3.2.6" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\TestHarness.Core\TestHarness.Core.csproj" />
+	</ItemGroup>
+
 </Project>

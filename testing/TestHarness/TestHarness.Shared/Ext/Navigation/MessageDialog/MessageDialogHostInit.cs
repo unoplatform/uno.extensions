@@ -1,6 +1,6 @@
-﻿namespace TestHarness.Ext.Navigation.PageNavigation;
+﻿namespace TestHarness.Ext.Navigation.MessageDialog;
 
-public class PageNavigationHostInit : IHostInitialization
+public class MessageDialogHostInit : IHostInitialization
 {
 	public IHost InitializeHost()
 	{
@@ -55,6 +55,5 @@ public class PageNavigationHostInit : IHostInitialization
 					new RouteMap("Confirm", View: confirmDialog),
 			}));
 	}
+
 }
-
-

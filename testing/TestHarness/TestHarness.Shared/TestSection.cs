@@ -1,3 +1,3 @@
 ﻿namespace TestHarness;
 
-public record TestSection (string Name, Type MainPage, Type HostInitializer);
+public record TestSection (string Name,TestSections Section, Type HostInitializer, Type MainPage);

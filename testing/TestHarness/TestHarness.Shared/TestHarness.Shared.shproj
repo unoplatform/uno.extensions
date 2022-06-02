@@ -11,12 +11,17 @@
   <Import Project="TestHarness.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeSharing\Microsoft.CodeSharing.CSharp.targets" />
   <ItemGroup>
+    <_Globbed_Compile Remove="BaseTestSectionPage.cs" />
+    <_Globbed_Compile Remove="BaseTestSectionPage.xaml.cs" />
+    <_Globbed_Compile Remove="Ext\Navigation\MessageDialog\MessageDialogHostInit.cs" />
+    <_Globbed_Compile Remove="Ext\Navigation\MessageDialog\PageNavigationMainPage.xaml.cs" />
     <_Globbed_Compile Remove="Ext\Navigation\PageNavigation\PageNavigationMainPage.xaml.cs" />
     <_Globbed_Compile Remove="GlobalUsings.cs" />
     <_Globbed_Compile Remove="IHostInitialization.cs" />
     <_Globbed_Compile Remove="TestSection.cs" />
   </ItemGroup>
   <ItemGroup>
+    <_Globbled_Page Remove="BaseTestSectionPage.xaml" />
     <_Globbled_Page Remove="Ext\Navigation\PageNavigation\PageNavigationMainPage.xaml" />
   </ItemGroup>
 </Project>
