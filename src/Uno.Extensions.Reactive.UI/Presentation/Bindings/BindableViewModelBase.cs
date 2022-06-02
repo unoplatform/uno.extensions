@@ -118,7 +118,7 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 
 				// We run the update sync in setup, no matter the thread
 				updated(initialValue);
-				var source = stateImpl.GetSource();
+				var source = stateImpl.GetSource(CancellationToken.None);
 				var dispatcher = await _dispatcher.GetFirstResolved(CancellationToken.None);
 
 				dispatcher.TryEnqueue(async () =>
