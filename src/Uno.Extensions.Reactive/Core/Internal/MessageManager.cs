@@ -7,8 +7,18 @@ using _ChangeSet = System.Collections.Generic.IReadOnlyDictionary<Uno.Extensions
 
 namespace Uno.Extensions.Reactive.Core;
 
-internal sealed partial class MessageManager<TParent, TResult>
+internal partial class MessageManager<TResult> : MessageManager<Unit, TResult>
 {
+	public MessageManager(Action<Message<TResult>>? send = null)
+		: base(send)
+	{
+	}
+}
+
+internal partial class MessageManager<TParent, TResult>
+{
+	public delegate MessageBuilder<TParent, TResult> Updater<in TState>(CurrentMessage current, TState state);
+
 	private readonly object _gate = new();
 	private readonly Action<Message<TResult>>? _send;
 
@@ -33,7 +43,7 @@ internal sealed partial class MessageManager<TParent, TResult>
 		_local = (initialUpdates, initialUpdates, initialMessage);
 	}
 
-	public bool Update<TState>(Func<CurrentMessage, TState, MessageBuilder<TParent, TResult>> updater, TState state, CancellationToken ct = default)
+	public bool Update<TState>(Updater<TState> updater, TState state, CancellationToken ct = default)
 	{
 		// Even if this method is sync, we force the caller to provide a ct to make sure that we don't send an update if cancelled
 		if (ct.IsCancellationRequested)
@@ -91,7 +101,7 @@ internal sealed partial class MessageManager<TParent, TResult>
 
 				if (!axis.AreEquals(currentValue, updatedValue))
 				{
-					changes.Add(axis);
+					changes.Add(axis/*, TODO*/);
 				}
 			}
 
@@ -161,14 +171,14 @@ internal sealed partial class MessageManager<TParent, TResult>
 		}
 	}
 
-	private void EndUpdate(UpdateTransaction transaction, Func<CurrentMessage, MessageBuilder<TParent, TResult>> result)
+	private void EndUpdate<TState>(UpdateTransaction transaction, Updater<TState> result, TState state)
 	{
 		lock (_gate)
 		{
 			if (_pendingUpdate == transaction)
 			{
 				_pendingUpdate = null;
-				Update((msg, r) => r(msg), result, CancellationToken.None);
+				Update((msg, @params) => @params.result(msg, @params.state), (result, state), CancellationToken.None);
 			}
 		}
 	}

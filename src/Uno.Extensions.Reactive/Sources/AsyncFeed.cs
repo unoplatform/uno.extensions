@@ -50,7 +50,7 @@ internal sealed class AsyncFeed<T> : IFeed<T>
 
 		Triggers(ct)
 			.ForEachAwaitWithCancellationAsync(
-				async (_, ct) => await InvokeAsync(message, null, _dataProvider, context, ct),
+				async (_, ct) => await InvokeAsync(message, null, _dataProvider, null, context, ct),
 				ConcurrencyMode.IgnoreNew, // If _refresh is triggered multiple times, we want to refresh only once.
 				continueOnError: true,
 				ct)

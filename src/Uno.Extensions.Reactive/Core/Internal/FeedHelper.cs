@@ -16,6 +16,7 @@ internal static class FeedHelper
 	/// <param name="msgManager">The message manager used to produce new values messages.</param>
 	/// <param name="parentMsg">Optionally provide the message from a parent feed which needs to be pushed to the <paramref name="msgManager"/> (cf. Remarks).</param>
 	/// <param name="dataProvider">The async method to invoke.</param>
+	/// <param name="extraConfig">Additional configure step for the messages produced while invoking the async method.</param>
 	/// <param name="context">The context to use to invoke the async method.</param>
 	/// <param name="ct">The enumerator cancellation.</param>
 	/// <returns>
@@ -35,7 +36,8 @@ internal static class FeedHelper
 		MessageManager<TParent, TResult> msgManager,
 		Message<TParent>? parentMsg,
 		AsyncFunc<Option<TResult>> dataProvider,
-		SourceContext context, 
+		Action<MessageBuilder<TParent, TResult>>? extraConfig,
+		SourceContext context,
 		CancellationToken ct)
 	{
 		// Note: We DO NOT register the 'message' update transaction into ct.Register, so in case of a "Last wins" usage of this,
@@ -60,7 +62,9 @@ internal static class FeedHelper
 
 		if (error is not null)
 		{
-			message.Commit(m => m.With(parentMsg).Error(error));
+			message.Commit(
+				(m, @params) => m.With(@params.parentMsg).Apply(@params.extraConfig).Error(@params.error),
+				(parentMsg, error, extraConfig));
 			return;
 		}
 
@@ -84,7 +88,15 @@ internal static class FeedHelper
 			// Note: We also provide the parentMsg which will be applied
 			if (!dataTask.IsCompleted)
 			{
-				message.TransientSetWithFinalParentUpdate(MessageAxis.Progress, true, parentMsg);
+				message.Update(
+					(msg, @params) =>
+					{
+						var builder = msg.With(@params.parentMsg);
+						@params.extraConfig?.Invoke(builder.Inner);
+						builder.SetTransient(MessageAxis.Progress, MessageAxis.Progress.ToMessageValue(true));
+						return builder;
+					},
+					(parentMsg, extraConfig));
 			}
 		}
 
@@ -102,22 +114,24 @@ internal static class FeedHelper
 			error = e;
 		}
 
-		message.Commit(msg =>
-		{
-			var builder = msg.With(parentMsg);
-			if (error is null)
+		message.Commit(
+			(msg, @params) =>
 			{
-				// Clear the local error if any.
-				// Note: Thanks to the MessageManager, this will NOT erase the parent's error!
-				builder.Data(data).Error(null);
-			}
-			else
-			{
-				builder.Error(error);
-			}
+				var builder = msg.With(@params.parentMsg).Apply(@params.extraConfig);
+				if (@params.error is null)
+				{
+					// Clear the local error if any.
+					// Note: Thanks to the MessageManager, this will NOT erase the parent's error!
+					builder.Data(@params.data).Error(null);
+				}
+				else
+				{
+					builder.Error(@params.error);
+				}
 
-			return builder;
-		});
+				return builder;
+			},
+			(parentMsg, data, error, extraConfig));
 	}
 
 	public static Exception? AggregateErrors(Exception? error1, Exception? error2)
@@ -161,20 +175,12 @@ internal static class FeedHelper
 				null => Enumerable.Empty<Exception>(),
 				AggregateException aggregate => aggregate.InnerExceptions,
 				_ => new[] { error }
-			});
+			})
+			.Distinct();
 
 		return new AggregateException(flattened);
 	}
 
-	public static MessageAxisValue AggregateErrors(MessageAxisValue left, MessageAxisValue right)
-	{
-		if (AggregateErrors((Exception?)left.Value, (Exception?)right.Value) is { } error)
-		{
-			return new(error);
-		}
-		else
-		{
-			return MessageAxisValue.Unset;
-		}
-	}
+	internal static string GetDebugIdentifier(object? feed)
+		=> feed is null ? "--null--" : $"{feed.GetType().Name}_{feed.GetHashCode():X8}";
 }
