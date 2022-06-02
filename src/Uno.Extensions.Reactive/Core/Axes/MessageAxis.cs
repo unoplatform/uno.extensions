@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using Uno.Extensions.Reactive.Core;
+using Uno.Extensions.Reactive.Sources;
 
 namespace Uno.Extensions.Reactive;
 
@@ -30,6 +31,15 @@ public abstract class MessageAxis : IEquatable<MessageAxis>
 	/// The <see cref="MessageAxis"/> of the <see cref="MessageEntry{T}.IsTransient"/>.
 	/// </summary>
 	public static ProgressAxis Progress => ProgressAxis.Instance;
+
+	/// <summary>
+	/// For a refreshable source, this axis contains information about the version of this source.
+	/// </summary>
+	/// <remarks>
+	/// This is expected to be full-filled only by "source" feed that are refreshable,
+	/// not the sources feed built from a stream of data nor operators.
+	/// </remarks>
+	internal static MessageAxis<RefreshTokenCollection> Refresh => new(MessageAxes.Refresh, RefreshTokenCollection.Aggregate);
 
 	internal MessageAxis(string identifier)
 	{
