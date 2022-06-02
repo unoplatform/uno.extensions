@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Uno.Extensions.Reactive.Core;
@@ -10,7 +9,7 @@ using static Uno.Extensions.Reactive.Core.FeedHelper;
 
 namespace Uno.Extensions.Reactive.Sources;
 
-internal sealed class AsyncFeed<T> : IFeed<T>
+internal sealed class AsyncFeed<T> : IFeed<T>, IRefreshableSource
 {
 	private readonly ISignal? _refresh;
 	private readonly AsyncFunc<Option<T>> _dataProvider;
@@ -30,44 +29,95 @@ internal sealed class AsyncFeed<T> : IFeed<T>
 	/// <inheritdoc />
 	public IAsyncEnumerable<Message<T>> GetSource(SourceContext context, CancellationToken ct = default)
 	{
-		async IAsyncEnumerable<Unit> Triggers([EnumeratorCancellation] CancellationToken token = default)
-		{
-			// Initial loading of the value
-			yield return Unit.Default;
+		var versions = new AsyncEnumerableSubject<RefreshToken>(ReplayMode.EnabledForFirstEnumeratorOnly);
+		var current = RefreshToken.Initial(this, context);
 
-			// Then subscribe to refresh
-			if (_refresh is not null)
+		// Request initial load (without refresh)
+		versions.SetNext(current);
+
+		// Then subscribe to refresh sources
+		var localRefreshTask = _refresh?.GetSource(context, ct).ForEachAsync(BeginRefresh, ct);
+		var contextRefreshTask = context.Requests<RefreshRequest>().ForEachAsync(Refresh, ct);
+
+		localRefreshTask?.ContinueWith(TryComplete, TaskContinuationOptions.AttachedToParent | TaskContinuationOptions.ExecuteSynchronously);
+		contextRefreshTask.ContinueWith(TryComplete, TaskContinuationOptions.AttachedToParent | TaskContinuationOptions.ExecuteSynchronously);
+
+		void Refresh(RefreshRequest request)
+		{
+			var refreshedVersion = RefreshToken.InterlockedIncrement(ref current);
+
+			request.Register(refreshedVersion);
+			versions.SetNext(refreshedVersion);
+		}
+		void BeginRefresh(Unit _)
+		{
+			var refreshedVersion = RefreshToken.InterlockedIncrement(ref current);
+
+			versions.SetNext(refreshedVersion);
+		}
+
+		void TryComplete(Task _)
+		{
+			if (localRefreshTask is not { IsCompleted: false } && contextRefreshTask is { IsCompleted: true })
 			{
-				await foreach (var _ in _refresh.GetSource(context, token).WithCancellation(token).ConfigureAwait(false))
-				{
-					yield return Unit.Default;
-				}
+				versions.TryComplete();
 			}
 		}
 
-		var subject = new AsyncEnumerableSubject<Message<T>>(ReplayMode.EnabledForFirstEnumeratorOnly);
-		var message = new MessageManager<Unit, T>(subject.SetNext);
+		// Note: We prefer to manually enumerate the version instead of using the ForEachAwaitWithCancellationAsync
+		//		 so we have a better control of when we do cancel the 'loadToken' (ak.a. 'previousLoad')
 
-		Triggers(ct)
-			.ForEachAwaitWithCancellationAsync(
-				async (_, ct) => await InvokeAsync(message, null, _dataProvider, null, context, ct),
-				ConcurrencyMode.IgnoreNew, // If _refresh is triggered multiple times, we want to refresh only once.
-				continueOnError: true,
-				ct)
-			.ContinueWith(
-				t =>
-				{
-					if (t.IsFaulted)
-					{
-						subject.TryFail(t.Exception!);
-					}
-					else
-					{
-						subject.Complete();
-					}
-				},
-				TaskContinuationOptions.AttachedToParent | TaskContinuationOptions.ExecuteSynchronously);
+		var subject = new AsyncEnumerableSubject<Message<T>>(ReplayMode.EnabledForFirstEnumeratorOnly);
+		var message = new MessageManager<T>(subject.SetNext);
+		var loadToken = default(CancellationTokenSource);
+		var load = default(Task);
+
+		BeginEnumeration();
 
 		return subject;
+
+		async void BeginEnumeration()
+		{
+			try
+			{
+				var version = versions.GetAsyncEnumerator(ct);
+				while (await version.MoveNextAsync(ct).ConfigureAwait(false))
+				{
+					var previousLoad = loadToken;
+					// Capture the version so if while loop exit we still have the right value.
+					// We also make sure to convert it only once in SourceVersionCollection so we keep the same instance in case of multiple set by the InvokeAsync
+					var loadVersion = (RefreshTokenCollection)version.Current;
+					loadToken = CancellationTokenSource.CreateLinkedTokenSource(ct);
+					load = InvokeAsync(
+						message,
+						null,
+						_dataProvider,
+						b =>
+						{
+							if (loadVersion.Versions.First() is { Version: > 0 })
+							{
+								b.Set(MessageAxis.Refresh, loadVersion);
+							}
+						},
+						context,
+						loadToken.Token);
+
+					// We prefer to cancel the previous projection only AFTER so we are able to keep existing transient axes (cf. message.BeginTransaction)
+					// This will not cause any concurrency issue since a transaction cannot push message updates as soon it's not the current.
+					previousLoad?.Cancel();
+				}
+
+				if (load is not null)
+				{
+					// Make sure to await the end of the last projection before completing the subject!
+					await load;
+				}
+				subject.Complete();
+			}
+			catch (Exception error)
+			{
+				subject.TryFail(error);
+			}
+		}
 	}
 }
