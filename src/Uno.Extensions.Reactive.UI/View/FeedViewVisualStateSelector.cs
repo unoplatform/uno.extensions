@@ -37,6 +37,9 @@ public class FeedViewVisualStateSelector
 			MessageAxes.Progress when MessageAxis.Progress.FromMessageValue(value) => "Indeterminate",
 			MessageAxes.Progress => "NoProgress",
 
+			MessageAxes.BindingSource => null,
+			MessageAxes.Refresh => null,
+
 			_ => value.IsSet ? axis.Identifier + "_" + value.Value! : axis.Identifier
 		};
 }
