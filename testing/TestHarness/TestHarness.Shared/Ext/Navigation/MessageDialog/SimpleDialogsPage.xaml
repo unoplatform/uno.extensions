@@ -31,6 +31,7 @@
 						Click="MessageDialogCodebehindRouteOverrideClick" />
 				<Button Content="MessageDialog Codebehind (cancel after 2s)"
 						Click="MessageDialogCodebehindCancelClick" />
+				<ToggleButton AutomationProperties.AutomationId="CloseMessageDialogToggleButton" Checked="MessageDialogCloseChecked" />
 			</StackPanel>
 		</ScrollViewer>
 	</Grid>

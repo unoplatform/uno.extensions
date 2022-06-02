@@ -42,4 +42,10 @@ public sealed partial class SimpleDialogsPage : Page
 		}
 
 	}
+
+	private void MessageDialogCloseChecked(object sender, RoutedEventArgs e)
+	{
+		(sender as ToggleButton)!.IsChecked = false;
+		CloseAllMessageDialogs();
+	}
 }
