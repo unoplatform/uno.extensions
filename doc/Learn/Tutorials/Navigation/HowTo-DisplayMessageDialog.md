@@ -3,24 +3,27 @@ uid: Learn.Tutorials.Navigation.HowToDisplayMessageDialog
 ---
 # How-To: Display a Message Dialog
 
-This topic walks through using Navigation to display a prompt using a `MessageDialog`. This can also be used for simple user interactions, such as a confirmation dialog, where the user is prompted with an Ok/Cancel, or Yes/No, question. 
+This topic walks through using Navigation to display a prompt using a `MessageDialog`. This can also be used for simple user interactions, such as a confirmation dialog, where the user is prompted with an Ok/Cancel, or Yes/No, question.
 
 > [!TIP]
 > This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions-net6` template to create the solution. Instructions for creating an application from the template can be found [here](../Extensions/GettingStarted/UsingUnoExtensions.md)
 
 > [!IMPORTANT]
 > The `unoapp-extensions-net6` template requires the following changes for this tutorial:
-1. Add the following inside the `MainPage` class in `MainPage.xaml.cs' 
-    ```csharp
-    public MainViewModel? ViewModel => DataContext as MainViewModel;
-    ```
-    
-2. Replace `Content="Go to Second Page"` with `Click="{x:Bind ViewModel.GoToSecondPage}"` in `MainPage.xaml`
+>
+> 1. Add the following inside the `MainPage` class in `MainPage.xaml.cs`:
+>
+>```csharp
+>    public MainViewModel? ViewModel => DataContext as MainViewModel;
+>```
+>
+> 2. Replace `Content="Go to Second Page"` with `Click="{x:Bind ViewModel.GoToSecondPage}"` in `MainPage.xaml`
 
 ## Step-by-steps
 
 ### 1. Show an ad-hoc `MessageDialog`
-- Update the existing `Button` on `MainPage.xaml` 
+
+- Update the existing `Button` on `MainPage.xaml`
 
     ```xml
     <Button Content="Show Simple Message Dialog"
@@ -37,16 +40,16 @@ This topic walks through using Navigation to display a prompt using a `MessageDi
     {
         _ = _navigator.ShowMessageDialogAsync(this, content: "Hello Uno Extensions!");
     }
-    ``` 
-    
-    Run the application to see a `MessageDialog` displayed when you click the `Button`.
-    
-    ![Screenshot of a simple MessageDialog](images/BasicMessageDialog.png)
+    ```
 
+    Run the application to see a `MessageDialog` displayed when you click the `Button`.
+
+    ![Screenshot of a simple MessageDialog](images/BasicMessageDialog.png)
 
 ### 2. Accessing the `MessageDialog` response
 
 - Change code in the `ShowSimpleDialog` method to await response
+
     ```csharp
     public async Task ShowSimpleDialog()
     {
@@ -54,22 +57,23 @@ This topic walks through using Navigation to display a prompt using a `MessageDi
     }
     ```
 
-- Modify the `ShowMessageDialogAsync` method call to specify multiple buttons. 
+- Modify the `ShowMessageDialogAsync` method call to specify multiple buttons.
+
     ```csharp
     public async Task ShowSimpleDialog()
     {
-    	var result = await _navigator.ShowMessageDialogAsync<string>(this, 
-    		content: "Hello Uno Extensions!",
-    		buttons: new[]
+     var result = await _navigator.ShowMessageDialogAsync<string>(this, 
+      content: "Hello Uno Extensions!",
+      buttons: new[]
             {
-    			new DialogAction("Ok"),
-    			new DialogAction("Cancel")
+       new DialogAction("Ok"),
+       new DialogAction("Cancel")
             });
     }
     ```  
-    
-    The `result` variable will be set to the label of the selected button. 
-    
+
+    The `result` variable will be set to the label of the selected button.
+
     ![Screenshot of the MessageDialog result](images/MessageDialogResult.png)
 
 ### 3. Using predefined `MessageDialog`
@@ -92,20 +96,20 @@ If you want to use the same `MessageDialog` in different places in your applicat
         );
     
     
-    	views.Register(
-    		new ViewMap<ShellControl,ShellViewModel>(),
-    		new ViewMap<MainPage, MainViewModel>(),
-    		new ViewMap<SecondPage, SecondViewModel>(),
+     views.Register(
+      new ViewMap<ShellControl,ShellViewModel>(),
+      new ViewMap<MainPage, MainViewModel>(),
+      new ViewMap<SecondPage, SecondViewModel>(),
             messageDialog
-    		);
+      );
     
-    	routes
-    		.Register(
-    			new RouteMap("", View: views.FindByViewModel<ShellViewModel>() ,
+     routes
+      .Register(
+       new RouteMap("", View: views.FindByViewModel<ShellViewModel>() ,
                     Nested: new RouteMap[]
                     {
-                    	new RouteMap("Main", View: views.FindByViewModel<MainViewModel>()),
-                    	new RouteMap("Second", View: views.FindByViewModel<SecondViewModel>()),
+                     new RouteMap("Main", View: views.FindByViewModel<MainViewModel>()),
+                     new RouteMap("Second", View: views.FindByViewModel<SecondViewModel>()),
                         new RouteMap("MyMessage", View: messageDialog)
                     }));
     }
@@ -124,9 +128,9 @@ If you want to use the same `MessageDialog` in different places in your applicat
     ```csharp
     var localizedMessageDialog = new LocalizableMessageDialogViewMap(
         Content: localizer => localizer?["MyDialog_Content"]??string.Empty,
-    	Buttons: new[]
+     Buttons: new[]
         {
-    		new LocalizableDialogAction( LabelProvider:localizer=>localizer?["Dialog_Ok"]??string.Empty),
+      new LocalizableDialogAction( LabelProvider:localizer=>localizer?["Dialog_Ok"]??string.Empty),
             new LocalizableDialogAction( LabelProvider:localizer=>localizer?["Dialog_Cancel"]??string.Empty)
         }
     );
@@ -140,11 +144,11 @@ If you want to use the same `MessageDialog` in different places in your applicat
     ```csharp
     private static IHost BuildAppHost()
     { 
-    	return UnoHost
-    			.CreateDefaultBuilder()
-    			// ... omitted for brevity
-    			.UseLocalization()
-    			.Build(enableUnoLogging: true);
+     return UnoHost
+       .CreateDefaultBuilder()
+       // ... omitted for brevity
+       .UseLocalization()
+       .Build(enableUnoLogging: true);
     
     }
     ```
@@ -154,4 +158,3 @@ If you want to use the same `MessageDialog` in different places in your applicat
     ```csharp
     var result = await _navigator.ShowMessageDialogAsync<string>(this, route: "MyLocalizedMessage");
     ```
-

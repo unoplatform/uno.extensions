@@ -3,26 +3,28 @@ uid: Learn.Tutorials.Navigation.Advanced.PageNavigation
 ---
 # How-To: Advanced Page Navigation
 
-Sometimes when you navigate you don't want to leave the current page in the back-stack. For example after signing into an application, you might want to navigate to the main page of the application; you don't want to have the login page still in the back-stack for a user to accidentally to go back to. 
+Sometimes when you navigate you don't want to leave the current page in the back-stack. For example after signing into an application, you might want to navigate to the main page of the application; you don't want to have the login page still in the back-stack for a user to accidentally to go back to.
 
 > [!TIP]
 > This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions-net6` template to create the solution. Instructions for creating an application from the template can be found [here](../Extensions/GettingStarted/UsingUnoExtensions.md)
 
 > [!IMPORTANT]
 > The `unoapp-extensions-net6` template requires the following changes for this tutorial:
-1. Add the following inside the `MainPage` class in `MainPage.xaml.cs' 
-    ```csharp
-    public MainViewModel? ViewModel => DataContext as MainViewModel;
-    ```
-    
-2. Replace `Content="Go to Second Page"` with `Click="{x:Bind ViewModel.GoToSecondPage}"` in `MainPage.xaml`
+>
+> 1. Add the following inside the `MainPage` class in `MainPage.xaml.cs`:
+>
+>```csharp
+>    public MainViewModel? ViewModel => DataContext as MainViewModel;
+>```
+>
+> 2. Replace `Content="Go to Second Page"` with `Click="{x:Bind ViewModel.GoToSecondPage}"` in `MainPage.xaml`
 
 ## Step-by-steps
-
 
 ### 1. Navigating to a Page and Clearing Back Stack
 
 - Add an additional button to `MainPage.xaml` with the `Click` event bound to the `GoToSecondPageClearBackStack` method
+
     ```csharp
     <StackPanel Grid.Row="1"
                 HorizontalAlignment="Center"
@@ -36,10 +38,11 @@ Sometimes when you navigate you don't want to leave the current page in the back
     ```
 
 - Add the `GoToSecondPageClearBackStack` method in `MainViewModel` which navigates to the `SecondViewModel` and includes the `Qualifiers.ClearBackStack` qualifier.
+
     ```csharp
     public async Task GoToSecondPage()
     {
-    	await _navigator.NavigateViewModelAsync<SecondViewModel>(this, qualifier: Qualifiers.ClearBackStack);
+     await _navigator.NavigateViewModelAsync<SecondViewModel>(this, qualifier: Qualifiers.ClearBackStack);
     }
     ```
 
@@ -58,11 +61,13 @@ Another common scenario is to navigate to a page and then remove the current pag
             Content="Go to Sample Page"
             Click="{x:Bind ViewModel.GoToSamplePage}" />
     ```
-- In `SecondPage.xaml.cs` add the following to expose a `ViewModel` property 
+
+- In `SecondPage.xaml.cs` add the following to expose a `ViewModel` property
 
     ```csharp
     public SecondViewModel? ViewModel => DataContext as SecondViewModel;
     ```
+
 - Update `SecondViewModel` to include the following `GoToSamplePage` method
 
 ```csharp
@@ -71,8 +76,8 @@ public async Task GoToSamplePage()
     await _navigator.NavigateViewModelAsync<SampleViewModel>(this, qualifier: Qualifiers.NavigateBack);
 }
 ```
-The use of `Qualifiers.NavigateBack` will result in the `SecondPage` being removed from the back stack, after navigating forward to the `SamplePage`.
 
+The use of `Qualifiers.NavigateBack` will result in the `SecondPage` being removed from the back stack, after navigating forward to the `SamplePage`.
 
 ### 3. Navigating to Multiple Pages
 
@@ -93,4 +98,5 @@ In some cases you may want to navigate forward to a page and inject an additiona
         await _navigator.NavigateRouteAsync(this, route: "Second/Sample");
     }
     ```
+
 This code uses the `NavigateRouteAsync` method that allows for string route to be specified. In this case the route is a multi-section route that will navigate to the `SamplePage` and inject the `SecondPage` into the back stack. Note that the `SecondPage` isn't actually created until the user navigates back from the `SamplePage`

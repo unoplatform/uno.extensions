@@ -3,21 +3,21 @@ uid: Learn.Tutorials.Navigation.Advanced.ContentControl
 ---
 # How-To: Use a ContentControl to Display a View
 
-
 > [!TIP]
 > This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions-net6` template to create the solution. Instructions for creating an application from the template can be found [here](../Extensions/GettingStarted/UsingUnoExtensions.md)
 
 > [!IMPORTANT]
 > The `unoapp-extensions-net6` template requires the following changes for this tutorial:
-1. Add the following inside the `MainPage` class in `MainPage.xaml.cs' 
-    ```csharp
-    public MainViewModel? ViewModel => DataContext as MainViewModel;
-    ```
-    
-2. Replace `Content="Go to Second Page"` with `Click="{x:Bind ViewModel.GoToSecondPage}"` in `MainPage.xaml`
+>
+> 1. Add the following inside the `MainPage` class in `MainPage.xaml.cs`:
+>
+>```csharp
+>    public MainViewModel? ViewModel => DataContext as MainViewModel;
+>```
+>
+> 2. Replace `Content="Go to Second Page"` with `Click="{x:Bind ViewModel.GoToSecondPage}"` in `MainPage.xaml`
 
 ## Step-by-steps
-
 
 ### 1. Displaying Content with Content Control
 
@@ -89,7 +89,7 @@ uid: Learn.Tutorials.Navigation.Advanced.ContentControl
 </Page>
 ```
 
-This code defines two buttons at the top of the page and a region that takes up the remainder of the page. The `ContentControl` is attached as a `NavigationRegion` using the `Region.Attached` attached property. 
+This code defines two buttons at the top of the page and a region that takes up the remainder of the page. The `ContentControl` is attached as a `NavigationRegion` using the `Region.Attached` attached property.
 
 The `Navigation.Request` attached property is specified on both buttons with a route that starts with `./`. This prefix indicates that the navigation route should be applied to the nested `NavigationRegion`
 
@@ -135,4 +135,5 @@ It is possible to use multiple `ContentControl` elements and load different cont
     </Grid>
 </Page>
 ```
+
 In this XAML the `Region.Name` attached property has been set on the `ContentControl` and the `Navigation.Request` properties on each `Button` has been updated to include the `Region.Name`.

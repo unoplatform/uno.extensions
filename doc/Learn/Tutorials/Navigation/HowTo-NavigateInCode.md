@@ -10,17 +10,16 @@ This topic walks through controlling Navigation from code, either in the code-be
 
 > [!IMPORTANT]
 > The `unoapp-extensions-net6` template requires the following changes for this tutorial:
-1. Add the following inside the `MainPage` class in `MainPage.xaml.cs' 
-    ```csharp
-    public MainViewModel? ViewModel => DataContext as MainViewModel;
-    ```
-    
-2. Replace `Content="Go to Second Page"` with `Click="{x:Bind ViewModel.GoToSecondPage}"` in `MainPage.xaml`
-
-
+>
+> 1. Add the following inside the `MainPage` class in `MainPage.xaml.cs`:
+>
+>```csharp
+>    public MainViewModel? ViewModel => DataContext as MainViewModel;
+>```
+>
+> 2. Replace `Content="Go to Second Page"` with `Click="{x:Bind ViewModel.GoToSecondPage}"` in `MainPage.xaml`
 
 ## Step-by-steps
-
 
 ### 1. Navigating to a New Page
 
@@ -33,7 +32,8 @@ Navigation can be invoked in the code-behind file of a `Page` by using the `Navi
     <Button Content="Go to SamplePage"
             Click="GoToSamplePageClick" />
     ```
-- In the `GoToSamplePageClick` method, use the `Navigator` extension method to get a reference to an  `INavigator` instance and call `NavigateViewAsync` to navigate to the `SamplePage`. This will push a new instance of the `SamplePage` onto the current frame, pushing the `MainPage` to the back-stack. 
+
+- In the `GoToSamplePageClick` method, use the `Navigator` extension method to get a reference to an  `INavigator` instance and call `NavigateViewAsync` to navigate to the `SamplePage`. This will push a new instance of the `SamplePage` onto the current frame, pushing the `MainPage` to the back-stack.
 
     ```csharp
     private void GoToSamplePageClick(object sender, RoutedEventArgs e)
@@ -50,6 +50,7 @@ Navigation can be invoked in the code-behind file of a `Page` by using the `Navi
     <Button Content="Go Back"
             Click="GoBackClick" />
     ```
+
 - Again, use the `Navigator` extension method to access the `INavigator` instance and call `NavigateBackAsync`. This will cause the frame to navigate to the previous page on the back-stack and releasing the `SamplePage` instance.
 
     ```csharp
@@ -87,7 +88,7 @@ The `NavigateViewAsync` method uses the type of the view, i.e. `SamplePage`, to 
             );
     
         routes.Register(
-        	new RouteMap("", View: views.FindByViewModel<ShellViewModel>() ,
+         new RouteMap("", View: views.FindByViewModel<ShellViewModel>() ,
                 Nested: new RouteMap[]
                 {
                     new RouteMap("Main", View: views.FindByViewModel<MainViewModel>()),
@@ -108,7 +109,7 @@ The `NavigateViewAsync` method uses the type of the view, i.e. `SamplePage`, to 
 
 ### 4. View Model Navigation
 
-- The logic for navigating back from `SamplePage` to `MainPage` can be moved into the `SampleViewModel`. Add the `GoBack` method to `SampleViewModel` that uses the `INavigator` instance that's injected via the constructor. 
+- The logic for navigating back from `SamplePage` to `MainPage` can be moved into the `SampleViewModel`. Add the `GoBack` method to `SampleViewModel` that uses the `INavigator` instance that's injected via the constructor.
 
     ```csharp
     public SampleViewModel(INavigator navigator)
@@ -124,7 +125,7 @@ The `NavigateViewAsync` method uses the type of the view, i.e. `SamplePage`, to 
     private readonly INavigator _navigator;
     ```
 
-- During Navigation from `MainPage` to `SamplePage` an instance of the `SampleViewModel` will get created and assigned as the `DataContext` of the newly created `SamplePage`. In order to `x:Bind` to properties and methods on the `SampleViewModel`, expose a `ViewModel` property that returns the `DataContext` property as a `SampleViewModel`. 
+- During Navigation from `MainPage` to `SamplePage` an instance of the `SampleViewModel` will get created and assigned as the `DataContext` of the newly created `SamplePage`. In order to `x:Bind` to properties and methods on the `SampleViewModel`, expose a `ViewModel` property that returns the `DataContext` property as a `SampleViewModel`.
 
     ```csharp
     public SampleViewModel? ViewModel => DataContext as SampleViewModel;
@@ -136,6 +137,7 @@ The `NavigateViewAsync` method uses the type of the view, i.e. `SamplePage`, to 
     ```
 
 - Update the `Button` in `SamplePage.xaml` to use `x:Bind` to define the event handler for the `Click` event.
+
     ```xml
     <Button Content="Go Back (View Model)"
         Click="{x:Bind ViewModel.GoBack}" />
@@ -144,11 +146,9 @@ The `NavigateViewAsync` method uses the type of the view, i.e. `SamplePage`, to 
 > [!TIP]
 > The logic to navigate from `MainPage` to `SamplePage` can also be refactored into the `MainViewModel`. Irrespective of whether the logic is in the code-behind or in the view model, it would use the same `NavigateViewModelAsync<SampleViewModel>` method call.
 
-
 There are many other extension methods on the `INavigator` interface that can be used from either the code-behind or view model. Here are a few of the key navigation methods:  
 **NavigateRouteAsync** - Navigates to a route specified as a string  
 **NavigateViewAsync** - Navigates to a route that matches the view type specified  
 **NavigateViewModelAsync** - Navigates to a route that matches the view model type specified  
 **NavigateDataAsync** - Navigates to a route that is registered for the data type specified  
 **NavigateForResultAsync** - Navigates to a route that is registered to return the result data type specified
-

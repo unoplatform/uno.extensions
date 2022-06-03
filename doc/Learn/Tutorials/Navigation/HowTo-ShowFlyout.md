@@ -10,18 +10,21 @@ This topic walks through using Navigation to display a modal flyout
 
 > [!IMPORTANT]
 > The `unoapp-extensions-net6` template requires the following changes for this tutorial:
-1. Add the following inside the `MainPage` class in `MainPage.xaml.cs' 
-    ```csharp
-    public MainViewModel? ViewModel => DataContext as MainViewModel;
-    ```
-    
-2. Replace `Content="Go to Second Page"` with `Click="{x:Bind ViewModel.GoToSecondPage}"` in `MainPage.xaml`
-
+>
+> 1. Add the following inside the `MainPage` class in `MainPage.xaml.cs`:
+>
+>```csharp
+>    public MainViewModel? ViewModel => DataContext as MainViewModel;
+>```
+>
+> 2. Replace `Content="Go to Second Page"` with `Click="{x:Bind ViewModel.GoToSecondPage}"` in `MainPage.xaml`
 
 ## Step-by-steps
 
 ### 1. Displaying flyout from code
+
 - Add new `Page`, `SamplePage.xaml`, which will be used to display content inside the flyout.
+
     ```xml
     <Page
         x:Class="ShowFlyout.Views.SamplePage"
@@ -51,7 +54,9 @@ This topic walks through using Navigation to display a modal flyout
             HorizontalAlignment="Center"
             VerticalAlignment="Center"/>
     ```
+
 - Add the `ShowFlyoutClick` method to the `MainPage.xaml.cs` file
+
     ```csharp
     private void ShowFlyoutClick(object sender, RoutedEventArgs e)
     {

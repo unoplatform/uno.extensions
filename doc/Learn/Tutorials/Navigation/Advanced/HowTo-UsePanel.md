@@ -3,46 +3,46 @@ uid: Learn.Tutorials.Navigation.Advanced.Panel
 ---
 # How-To: Use a Panel to Switch Views
 
-
 > [!TIP]
 > This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions-net6` template to create the solution. Instructions for creating an application from the template can be found [here](../Extensions/GettingStarted/UsingUnoExtensions.md)
 
 > [!IMPORTANT]
 > The `unoapp-extensions-net6` template requires the following changes for this tutorial:
-1. Add the following inside the `MainPage` class in `MainPage.xaml.cs' 
-    ```csharp
-    public MainViewModel? ViewModel => DataContext as MainViewModel;
-    ```
-    
-2. Replace `Content="Go to Second Page"` with `Click="{x:Bind ViewModel.GoToSecondPage}"` in `MainPage.xaml`
+>
+> 1. Add the following inside the `MainPage` class in `MainPage.xaml.cs`:
+>
+>```csharp
+>    public MainViewModel? ViewModel => DataContext as MainViewModel;
+>```
+>
+> 2. Replace `Content="Go to Second Page"` with `Click="{x:Bind ViewModel.GoToSecondPage}"` in `MainPage.xaml`
 
 ## Step-by-steps
 
+### 1
 
-### 1. 
 # Navigating using a Panel
-
 
 ```xml
 <Page x:Class="UsingPanelRegion.Views.MainPage"
-	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	  xmlns:local="using:UsingPanelRegion.Views"
-	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	  mc:Ignorable="d"
-	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
-	  xmlns:utu="using:Uno.Toolkit.UI"
-	 Background="{ThemeResource MaterialBackgroundBrush}">
+   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+   xmlns:local="using:UsingPanelRegion.Views"
+   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+   mc:Ignorable="d"
+   xmlns:uen="using:Uno.Extensions.Navigation.UI"
+   xmlns:utu="using:Uno.Toolkit.UI"
+  Background="{ThemeResource MaterialBackgroundBrush}">
 
-	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
+ <Grid>
+  <Grid.RowDefinitions>
+   <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition />
-		</Grid.RowDefinitions>
-		<utu:NavigationBar Content="Main Page" 
-				Style="{StaticResource MaterialNavigationBarStyle}"/>
+  </Grid.RowDefinitions>
+  <utu:NavigationBar Content="Main Page" 
+    Style="{StaticResource MaterialNavigationBarStyle}"/>
         <StackPanel Grid.Row="1" HorizontalAlignment="Center" Orientation="Horizontal">
             <Button Content="One"
                     uen:Navigation.Request="./One" />
