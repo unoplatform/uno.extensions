@@ -99,6 +99,7 @@ public partial class FeedView
 		{
 			_ct.Cancel();
 			_requests.Dispose();
+			_view.Refresh.IsExecuting = false;
 		}
 	}
 }
