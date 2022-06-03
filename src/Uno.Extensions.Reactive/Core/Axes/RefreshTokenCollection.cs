@@ -33,9 +33,19 @@ internal record RefreshTokenCollection(IImmutableList<RefreshToken> Versions)
 	/// </summary>
 	public bool IsEmpty => Versions.Count == 0;
 
+	/// <summary>
+	/// Check if the version defined in this collection are all lower than versions defined in the given message
+	/// </summary>
+	/// <param name="message">The message from which version should be compared to.</param>
+	/// <returns>'true' if message contains a version greater or equals to the version contained by this collection, 'false' otherwise.</returns>
 	public bool IsLower(IMessage message)
 		=> IsLower(message.Current.Get(MessageAxis.Refresh) ?? Empty);
 
+	/// <summary>
+	/// Check if the version defined in this collection are all lower than versions defined in the given collection
+	/// </summary>
+	/// <param name="actual">The collection from which version should be compared to.</param>
+	/// <returns>'true' if given collection contains a version greater or equals to the version contained by this collection, 'false' otherwise.</returns>
 	public bool IsLower(RefreshTokenCollection actual)
 	{
 		var joined = Versions
@@ -49,9 +59,19 @@ internal record RefreshTokenCollection(IImmutableList<RefreshToken> Versions)
 		return joined.Count == Versions.Count && joined.All(isGreaterOrEquals => isGreaterOrEquals);
 	}
 
+	/// <summary>
+	/// Check if the version defined in this collection are all greater or equals than versions defined in the given message
+	/// </summary>
+	/// <param name="message">The message from which version should be compared to.</param>
+	/// <returns>'true' if message contains a lower version to the version contained by this collection, 'false' otherwise.</returns>
 	public bool IsGreaterOrEquals(IMessage message)
 		=> IsGreaterOrEquals(message.Current.Get(MessageAxis.Refresh) ?? Empty);
 
+	/// <summary>
+	/// Check if the version defined in this collection are all greater or equals than versions defined in the given collection
+	/// </summary>
+	/// <param name="actual">The collection from which version should be compared to.</param>
+	/// <returns>'true' if given collection contains a lower version to the version contained by this collection, 'false' otherwise.</returns>
 	public bool IsGreaterOrEquals(RefreshTokenCollection actual)
 	{
 		var joined = Versions
@@ -65,6 +85,9 @@ internal record RefreshTokenCollection(IImmutableList<RefreshToken> Versions)
 		return joined.Count == Versions.Count && joined.All(isGreaterOrEquals => isGreaterOrEquals);
 	}
 
+	/// <summary>
+	/// Creates a new collection with a single item.
+	/// </summary>
 	public static implicit operator RefreshTokenCollection(RefreshToken version)
 		=> new(ImmutableList.Create(version));
 
