@@ -16,7 +16,16 @@ internal sealed class CompositeRequestSource : IRequestSource
 	/// <param name="other">The source to add.</param>
 	/// <param name="ct">A cancellation token that can be used to remove the given source.</param>
 	public void Add(IRequestSource other, CancellationToken ct)
-		=> other.ForEachAsync(_subject.SetNext, ct);
+		=> other.ForEachAsync(
+			req =>
+			{
+				// There is kind of a bug in the ForEach, which wait for the **next** item before checking the CT
+				if (ct is not { IsCancellationRequested: true })
+				{
+					_subject.SetNext(req);
+				}
+			},
+			ct);
 
 	/// <inheritdoc />
 	public IAsyncEnumerator<IContextRequest> GetAsyncEnumerator(CancellationToken cancellationToken)
