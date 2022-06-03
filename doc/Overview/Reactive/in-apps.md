@@ -44,7 +44,7 @@ Then in your page, you can add a `FeedView`:
 
 ## Refreshing a data
 
-The `FeedView` expose a `Refresh` command directly in the data context of its content.
+The `FeedView` exposes a `Refresh` command directly in the data context of its content.
 You can use this command to trigger a refresh from the view, like a "pull to refresh".
 
 ```xml
