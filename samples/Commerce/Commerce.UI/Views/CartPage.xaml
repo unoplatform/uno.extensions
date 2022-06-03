@@ -21,8 +21,9 @@
 						utu:AutoLayout.PrimaryAlignment="Stretch">
 			<utu:NavigationBar Content="Your cart"
 							   x:Uid="Body_NavigationBar"
-							   utu:AutoLayout.CounterAlignment="Stretch"
-							   Style="{StaticResource RootModalNavigationBarStyle}">
+							   utu:AutoLayout.CounterAlignment="Stretch">
+				<!-- TODO: This style is cause exceptions -->
+				<!--Style="{StaticResource RootModalNavigationBarStyle}">-->
 				<utu:NavigationBar.MainCommand>
 					<AppBarButton uen:Navigation.Request="-"
 								  Foreground="{StaticResource OnSurfaceBrush}" />

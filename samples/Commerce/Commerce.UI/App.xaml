@@ -33,8 +33,9 @@
 			<x:Double x:Key="LandscapeMaxPageWidth">500</x:Double>
 
 			<!-- To override the default FlyoutLightDismissOverlayBackground resource -->
-			<SolidColorBrush x:Key="FlyoutLightDismissOverlayBackground"
-							 Color="{StaticResource OverlayColor}" />
+			<!-- TODO: This override is breaking the flyouts -->
+			<!--<SolidColorBrush x:Key="FlyoutLightDismissOverlayBackground"
+							 Color="{StaticResource OverlayColor}" />-->
 			<x:Double x:Key="WideMinWindowWidthh">800</x:Double>
 		</ResourceDictionary>
 	</Application.Resources>

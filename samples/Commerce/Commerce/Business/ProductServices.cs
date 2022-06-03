@@ -37,7 +37,7 @@ public class ProductService : IProductService
 		=> (await _client.GetReviews(productId, ct)).Select(data => new Review(data)).ToImmutableList();
 
 	/// <inheritdoc />
-	public async ValueTask<IImmutableList<Product>?> GetFavorites(CancellationToken ct)
+	public async ValueTask<IImmutableList<Product>> GetFavorites(CancellationToken ct)
 		=> (await _client.GetAll(ct))
 			.Where(product => _favorites.Contains(product.ProductId))
 			.Select(product => new Product(product, isFavorite: true))

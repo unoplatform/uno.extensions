@@ -13,8 +13,9 @@
 		<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch">
 			<utu:NavigationBar Content="Filters"
 							   x:Uid="Body_NavigationBar"
-							   utu:AutoLayout.CounterAlignment="Stretch"
-							   Style="{StaticResource RootModalNavigationBarStyle}">
+							   utu:AutoLayout.CounterAlignment="Stretch">
+				<!-- TODO: This style is cause exceptions -->
+				<!--Style="{StaticResource RootModalNavigationBarStyle}">-->
 				<utu:NavigationBar.MainCommand>
 					<AppBarButton uen:Navigation.Request="-"
 								  Foreground="{ThemeResource OnSurfaceBrush}" />

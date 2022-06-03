@@ -9,6 +9,7 @@
 			 xmlns:uen="using:Uno.Extensions.Navigation.UI"
 			 xmlns:uer="using:Uno.Extensions.Reactive.UI"
 			 xmlns:um="using:Uno.Material"
+			 xmlns:controls="using:Commerce.Controls"
 			 mc:Ignorable="d"
 			 Background="{ThemeResource BackgroundBrush}">
 
@@ -32,7 +33,8 @@
 						</AppBarButton>
 					</utu:NavigationBar.MainCommand>
 					<utu:NavigationBar.PrimaryCommands>
-						<AppBarButton Foreground="{StaticResource OnPrimaryMediumBrush}">
+						<AppBarButton Foreground="{StaticResource OnPrimaryMediumBrush}"
+									  Command="{utu:AncestorBinding Path=ToggleIsFavorite, AncestorType=uer:FeedView}">
 							<AppBarButton.Icon>
 								<BitmapIcon UriSource="ms-appx:///Assets/Icons/notifications.png" />
 							</AppBarButton.Icon>
@@ -173,8 +175,9 @@
 												<utu:AutoLayout Padding="16,0,0,16"
 																Orientation="Horizontal"
 																utu:AutoLayout.CounterAlignment="Stretch">
-													<ToggleButton utu:AutoLayout.CounterAlignment="Center"
-																  Style="{StaticResource ToggleButtonIconStyle}">
+													<ToggleButton utu:AutoLayout.CounterAlignment="Center">
+														<!-- This style isn't resolving -->
+														<!--Style="{StaticResource ToggleButtonIconStyle}">-->
 														<ToggleButton.Content>
 															<PathIcon Data="{StaticResource Icon_more_vert}" />
 														</ToggleButton.Content>
