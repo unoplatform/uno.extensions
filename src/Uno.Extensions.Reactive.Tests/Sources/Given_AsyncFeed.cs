@@ -108,7 +108,7 @@ public class Given_AsyncFeed : FeedTests
 
 		result.Should().Be(r => r
 			.Message(Changed.Data, 42, Error.No, Progress.Final)
-			.Message(Changed.Version, 42, Error.No, Progress.Final, Refreshed.Is(1))
+			.Message(Changed.Refreshed, 42, Error.No, Progress.Final, Refreshed.Is(1))
 		);
 	}
 
@@ -128,7 +128,7 @@ public class Given_AsyncFeed : FeedTests
 
 		result.Should().Be(r => r
 			.Message(Changed.Data, 42, Error.No, Progress.Final)
-			.Message(Changed.Version, 42, Error.No, Progress.Final, Refreshed.Is(1))
+			.Message(Changed.Refreshed, 42, Error.No, Progress.Final, Refreshed.Is(1))
 		);
 	}
 
@@ -162,7 +162,7 @@ public class Given_AsyncFeed : FeedTests
 		result.Should().Be(r => r
 			.Message(Changed.Progress, Data.Undefined, Error.No, Progress.Transient)
 			.Message(Changed.Data & Changed.Progress, 42, Error.No, Progress.Final)
-			.Message(Changed.Progress & Changed.Version, 42, Error.No, Progress.Transient, Refreshed.Is(1))
+			.Message(Changed.Progress & Changed.Refreshed, 42, Error.No, Progress.Transient, Refreshed.Is(1))
 			.Message(Changed.Progress, 42, Error.No, Progress.Final, Refreshed.Is(1))
 		);
 	}
@@ -196,7 +196,7 @@ public class Given_AsyncFeed : FeedTests
 		result.Should().Be(r => r
 			.Message(Changed.Progress, Data.Undefined, Error.No, Progress.Transient)
 			.Message(Changed.Data & Changed.Progress, 42, Error.No, Progress.Final)
-			.Message(Changed.Progress & Changed.Version, 42, Error.No, Progress.Transient, Refreshed.Is(1))
+			.Message(Changed.Progress & Changed.Refreshed, 42, Error.No, Progress.Transient, Refreshed.Is(1))
 			.Message(Changed.Progress, 42, Error.No, Progress.Final, Refreshed.Is(1))
 		);
 	}
@@ -214,7 +214,7 @@ public class Given_AsyncFeed : FeedTests
 		await result;
 		result.Should().Be(r => r
 			.Message(Changed.Data, Data.None, Error.No, Progress.Final)
-			.Message(Changed.Version, Data.None, Error.No, Progress.Final, Refreshed.Is(1))
+			.Message(Changed.Refreshed, Data.None, Error.No, Progress.Final, Refreshed.Is(1))
 		);
 	}
 
@@ -231,7 +231,7 @@ public class Given_AsyncFeed : FeedTests
 		await result.WaitForMessages(2, CT);
 		result.Should().Be(r => r
 			.Message(Changed.Data, Data.None, Error.No, Progress.Final)
-			.Message(Changed.Version, Data.None, Error.No, Progress.Final, Refreshed.Is(1))
+			.Message(Changed.Refreshed, Data.None, Error.No, Progress.Final, Refreshed.Is(1))
 		);
 	}
 
@@ -265,7 +265,7 @@ public class Given_AsyncFeed : FeedTests
 		result.Should().Be(r => r
 			.Message(Changed.Progress, Data.Undefined, Error.No, Progress.Transient)
 			.Message(Changed.Data & Changed.Progress, Data.None, Error.No, Progress.Final)
-			.Message(Changed.Progress & Changed.Version, Data.None, Error.No, Progress.Transient, Refreshed.Is(1))
+			.Message(Changed.Progress & Changed.Refreshed, Data.None, Error.No, Progress.Transient, Refreshed.Is(1))
 			.Message(Changed.Progress, Data.None, Error.No, Progress.Final, Refreshed.Is(1))
 		);
 	}
@@ -299,7 +299,7 @@ public class Given_AsyncFeed : FeedTests
 		result.Should().Be(r => r
 			.Message(Changed.Progress, Data.Undefined, Error.No, Progress.Transient)
 			.Message(Changed.Data & Changed.Progress, Data.None, Error.No, Progress.Final)
-			.Message(Changed.Progress & Changed.Version, Data.None, Error.No, Progress.Transient, Refreshed.Is(1))
+			.Message(Changed.Progress & Changed.Refreshed, Data.None, Error.No, Progress.Transient, Refreshed.Is(1))
 			.Message(Changed.Progress, Data.None, Error.No, Progress.Final, Refreshed.Is(1))
 		);
 	}
@@ -317,7 +317,7 @@ public class Given_AsyncFeed : FeedTests
 		await result;
 		result.Should().Be(r => r
 			.Message(Data.Undefined, typeof(TestException), Progress.Final)
-			.Message(Changed.Error & Changed.Version, Data.Undefined, typeof(TestException), Progress.Final, Refreshed.Is(1))
+			.Message(Changed.Error & Changed.Refreshed, Data.Undefined, typeof(TestException), Progress.Final, Refreshed.Is(1))
 		);
 	}
 
@@ -334,7 +334,7 @@ public class Given_AsyncFeed : FeedTests
 		await result.WaitForMessages(2, CT);
 		result.Should().Be(r => r
 			.Message(Changed.Error, Data.Undefined, typeof(TestException), Progress.Final)
-			.Message(Changed.Error & Changed.Version, Data.Undefined, typeof(TestException), Progress.Final, Refreshed.Is(1))
+			.Message(Changed.Error & Changed.Refreshed, Data.Undefined, typeof(TestException), Progress.Final, Refreshed.Is(1))
 		);
 	}
 
@@ -368,7 +368,7 @@ public class Given_AsyncFeed : FeedTests
 		result.Should().Be(r => r
 			.Message(Changed.Progress, Data.Undefined, Error.No, Progress.Transient)
 			.Message(Changed.Error & Changed.Progress, Data.Undefined, typeof(TestException), Progress.Final)
-			.Message(Changed.Progress & Changed.Version, Data.Undefined, typeof(TestException), Progress.Transient, Refreshed.Is(1))
+			.Message(Changed.Progress & Changed.Refreshed, Data.Undefined, typeof(TestException), Progress.Transient, Refreshed.Is(1))
 			.Message(Changed.Error & Changed.Progress, Data.Undefined, typeof(TestException), Progress.Final, Refreshed.Is(1))
 		);
 	}
@@ -401,7 +401,7 @@ public class Given_AsyncFeed : FeedTests
 		result.Should().Be(r => r
 			.Message(Changed.Progress, Data.Undefined, Error.No, Progress.Transient)
 			.Message(Changed.Error & Changed.Progress, Data.Undefined, typeof(TestException), Progress.Final)
-			.Message(Changed.Progress & Changed.Version, Data.Undefined, typeof(TestException), Progress.Transient, Refreshed.Is(1))
+			.Message(Changed.Progress & Changed.Refreshed, Data.Undefined, typeof(TestException), Progress.Transient, Refreshed.Is(1))
 			.Message(Changed.Error & Changed.Progress, Data.Undefined, typeof(TestException), Progress.Final, Refreshed.Is(1))
 		);
 	}
@@ -440,8 +440,8 @@ public class Given_AsyncFeed : FeedTests
 		await result;
 		result.Should().Be(r => r
 			.Message(Changed.Data, 42, Error.No, Progress.Final)
-			.Message(Changed.Error & Changed.Version, 42, typeof(TestException), Progress.Final, Refreshed.Is(1))
-			.Message(Changed.Error & Changed.Version, 42, Error.No, Progress.Final, Refreshed.Is(2))
+			.Message(Changed.Error & Changed.Refreshed, 42, typeof(TestException), Progress.Final, Refreshed.Is(1))
+			.Message(Changed.Error & Changed.Refreshed, 42, Error.No, Progress.Final, Refreshed.Is(2))
 		);
 	}
 
