@@ -26,7 +26,6 @@ public abstract class TestBase
 		AppInitializer.TestEnvironment.WebAssemblyHeadless = false;
 #endif
 
-		AppInitializer.ColdStartApp();
 	}
 
 	protected IApp App
@@ -42,7 +41,7 @@ public abstract class TestBase
 	[SetUp]
 	public void SetUpTest()
 	{
-
+		AppInitializer.ColdStartApp();
 		App = AppInitializer.AttachToApp();
 	}
 
@@ -50,6 +49,13 @@ public abstract class TestBase
 	public void TearDownTest()
 	{
 		TakeScreenshot("teardown");
+
+		// TODO: Update AppInitializer to correctly dispose currentApp rather than reusing it
+		App.Dispose();
+		var field = typeof(AppInitializer).GetField("_currentApp",
+						System.Reflection.BindingFlags.Static |
+						System.Reflection.BindingFlags.NonPublic );
+		field.SetValue(null, null);
 	}
 
 	protected void NavigateToSample(string sample, string? design = null)
