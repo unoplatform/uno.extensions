@@ -34,8 +34,7 @@
 					</utu:NavigationBar.MainCommand>
 					<utu:NavigationBar.PrimaryCommands>
 						<AppBarButton Foreground="{StaticResource OnPrimaryMediumBrush}"
-									  Command="{controls:AncestralBinding Path=ToggleIsFavorite,
-																							  AncestorType=uer:FeedView}">
+									  Command="{utu:AncestorBinding Path=ToggleIsFavorite, AncestorType=uer:FeedView}">
 							<AppBarButton.Icon>
 								<BitmapIcon UriSource="ms-appx:///Assets/Icons/notifications.png" />
 							</AppBarButton.Icon>
