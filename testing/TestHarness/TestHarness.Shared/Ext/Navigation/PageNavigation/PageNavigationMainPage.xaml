@@ -28,8 +28,9 @@
 		<StackPanel Grid.Row="2"
 					Orientation="Horizontal"
 					HorizontalAlignment="Center">
-			<Button Content="test"
-					Click="TestClick" />
+			<Button AutomationProperties.AutomationId="ShowOnePageButton"
+					Content="One"
+					Click="OnePageClick" />
 		</StackPanel>
 	</Grid>
 

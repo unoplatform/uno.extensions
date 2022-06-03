@@ -31,9 +31,29 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\MessageDialog\LocalizedDialogsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\MessageDialog\SimpleDialogsViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationFivePage.xaml.cs">
+      <DependentUpon>PageNavigationFivePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationFourPage.xaml.cs">
+      <DependentUpon>PageNavigationFourPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationHostInit.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationMainPage.xaml.cs">
       <DependentUpon>PageNavigationMainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationOnePage.xaml.cs">
+      <DependentUpon>PageNavigationOnePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationThreeViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationFourViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationFiveViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationTwoViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationOneViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationThreePage.xaml.cs">
+      <DependentUpon>PageNavigationThreePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationTwoPage.xaml.cs">
+      <DependentUpon>PageNavigationTwoPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)GlobalUsings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IHostInitialization.cs" />
@@ -52,7 +72,27 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationFivePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationFourPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationMainPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationOnePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationThreePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationTwoPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

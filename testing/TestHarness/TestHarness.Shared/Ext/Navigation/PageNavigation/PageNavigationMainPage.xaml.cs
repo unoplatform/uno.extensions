@@ -8,9 +8,9 @@ public sealed partial class PageNavigationMainPage : BaseTestSectionPage
 		this.InitializeComponent();
 	}
 
-	public async void TestClick(object sender, RoutedEventArgs e)
+	public async void OnePageClick(object sender, RoutedEventArgs e)
 	{
-		await NavigationRoot.Navigator()!.ShowMessageDialogAsync(this, "Confirm");
+		await NavigationRoot.Navigator()!.NavigateViewModelAsync<PageNavigationOneViewModel>(this);
 	}
 
 }

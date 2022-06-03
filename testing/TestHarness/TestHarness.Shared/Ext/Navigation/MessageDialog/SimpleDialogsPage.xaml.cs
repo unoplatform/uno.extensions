@@ -37,7 +37,7 @@ public sealed partial class SimpleDialogsPage : Page
 
 	public void CloseAllMessageDialogs()
 	{
-		var popups = VisualTreeHelper.GetOpenPopups((App.Current as App).Window);
+		var popups = VisualTreeHelper.GetOpenPopups((App.Current as App)?.Window);
 		foreach (var popup in popups)
 		{
 			popup.IsOpen = false;

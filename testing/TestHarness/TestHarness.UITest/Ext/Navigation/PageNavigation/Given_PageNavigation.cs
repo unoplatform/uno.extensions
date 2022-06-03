@@ -7,15 +7,21 @@ public class Given_PageNavigation : NavigationTestBase
 	{
 		InitTestSection(TestSections.PageNavigation);
 
-		//App.WaitForElement(q => q.Marked("TestHarnessMainPageTitle"));
+		App.WaitThenTap("ShowOnePageButton");
+
+		var screenBefore = TakeScreenshot("When_MessageDialogFromXAML_Before");
+		App.Tap("OnePageToTwoPageButton");
+		App.Tap("TwoPageToThreePageButton");
+		App.Tap("ThreePageToFourPageButton");
+		App.Tap("FourPageToFivePageButton");
+		App.Tap("FivePageBackButton");
+		App.Tap("FourPageBackButton");
+		App.Tap("ThreePageBackButton");
+		App.Tap("TwoPageBackButton");
 
 
-		//App.WaitForElement(App.Marked("TestSectionsComboBox"));
-		//var theComboBox = App.Marked("TestSectionsComboBox");
-
-		//theComboBox.SetDependencyPropertyValue("SelectedIndex", "0");
-
-		//App.WaitForElement(q => q.Marked("PageNavigationMainText"));
+		var screenAfter = TakeScreenshot("When_MessageDialogFromXAML_After");
+		ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(10));
 
 	}
 }

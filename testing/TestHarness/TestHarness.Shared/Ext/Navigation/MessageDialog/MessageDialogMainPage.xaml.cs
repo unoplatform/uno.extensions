@@ -9,11 +9,6 @@ public sealed partial class MessageDialogMainPage : BaseTestSectionPage
 	{
 		this.InitializeComponent();
 
-		//var host = (new MessageDialogHostInit()).InitializeHost();
-
-		//var win = (Application.Current as App)?.Window!;
-		//Console.WriteLine($"*********** Win exists {win is not null}");
-		//win.Content.AttachServiceProvider(host.Services).RegisterWindow(win);
 	}
 
 	public async void SimpleDialogsClick(object sender, RoutedEventArgs e)
