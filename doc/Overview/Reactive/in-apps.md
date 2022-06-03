@@ -42,6 +42,33 @@ Then in your page, you can add a `FeedView`:
 </uer:FeedView>
 ```
 
+## Refreshing a data
+
+The `FeedView` expose a `Refresh` command directly in the data context of its content.
+You can use this command to trigger a refresh from the view, like a "pull to refresh".
+
+```xml
+<Page 
+	x:Class="MyProject.MyPage"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:uer="using:Uno.Extensions.Reactive.UI">
+
+<uer:FeedView Source="{Binding Products}">
+	<DataTemplate>
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition />
+			<Grid.RowDefinitions>
+
+			<Button Grid.Row="0" Content="Refresh" Command="{Binding Refresh}" />
+			<ListView Grid.Row="1" ItemsSource="{Binding Data}" />
+		</Grid>
+	</DataTemplate>
+</uer:FeedView>
+```
+
 ## Commands
 The generated bindable counterpart of a class will automatically re-expose public methods that have 0 or 1 parameter and an optional `CancellationToken` as `ICommand`.
 The parameter will be fulfilled using the `CommandParameter` property.

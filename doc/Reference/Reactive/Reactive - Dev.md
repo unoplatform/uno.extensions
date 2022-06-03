@@ -40,7 +40,8 @@ This caching is achieved by the `SourceContext`.
 
 Those _context_ are weakly attached to a owner (typically a `ViewModel`) and each call to `context.GetOrCreateSource(feed)` will return a state full subscription to the `feed` which will replay the last received _message_.
 
-> When implementing an `IFeed`, the `context` provided in the `GetSource` is only intended to be used to restore it as current in some circumstances, like invoking a user’s async method. You _feed_ must remain state less, so you should not use `context.GetOrCreateSource(parent)`.
+> When implementing an `IFeed`, the `context` provided in the `GetSource` is only intended to be used to restore it as current in some circumstances, like invoking a user’s async method.
+  Your _feed_ must remain state less, so you should not use `context.GetOrCreateSource(parent)`.
 
 > On the other side, each helper that allow user to “subscribe” to a _feed_ should do something like `SourceContext.Current.GetOrCreateSource(feed)` (and not `feed.GetSource(SourceContext.Current)`)
 
@@ -98,6 +99,15 @@ An _axe_ is referring to an “informational axe” related to a given _data_, a
 > The `DataAxis` is a special axis that must be set on all entries. It exists only to unify/ease implementation. You should use `Option.Undefined` to “unset” the data.
 
 > If you are about to add an axe, you should make sure to provided extensions methods over `IMessageBuilder` and `IMessageEntry` to read/write it directly to/from the effective metadata type. The generic `Get` and `Set` are there for that and should not be used directly in user’s code.
+
+## Request
+
+The subscriber of a feed can send some _request_ to the source feed to enhance its behavior.
+The most common _request_ is the `RefreshRequest`.
+
+> When implementing an `IFeed` you have access to those requests using the `Requests<TRequest>()` method on the `SourceContext` you get in the `GetSource`.
+
+> When consuming a feed, you can send a request to the feed you are subscribing by creating a "child" context (`SourceContext.CreateChild()`) giving you own `IRequestSource`.
 
 ## View
 
