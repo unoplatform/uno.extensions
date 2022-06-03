@@ -14,6 +14,13 @@
 			<Button AutomationProperties.AutomationId="OnePageToTwoPageButton"
 					Content="Two"
 					uen:Navigation.Request="PageNavigationTwo" />
+			<Button AutomationProperties.AutomationId="OnePageToTwoPageCodebehindButton"
+					Content="Two (Codebehind)"
+					Click="OnePageToTwoPageCodebehindClick"
+					/>
+			<Button AutomationProperties.AutomationId="OnePageToTwoPageViewModelButton"
+					Content="Two (ViewModel)"
+					Click="{x:Bind ViewModel.GoToTwo}"/>
 		</StackPanel>
 	</Grid>
 </Page>

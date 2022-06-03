@@ -18,6 +18,18 @@
 			<Button AutomationProperties.AutomationId="FourPageBackButton"
 					Content="Back"
 					uen:Navigation.Request="-" />
+			<Button AutomationProperties.AutomationId="FourPageToFivePageCodebehindButton"
+					Content="Five (Codebehind)"
+					Click="FourPageToFivePageCodebehindClick"/>
+			<Button AutomationProperties.AutomationId="FourPageBackCodebehindButton"
+					Content="Back (Codebehind)"
+					Click="FourPageBackCodebehindClick"/>
+			<Button AutomationProperties.AutomationId="FourPageToFivePageViewModelButton"
+					Content="Five (ViewModel)"
+					Click="{x:Bind ViewModel.GoToFive}" />
+			<Button AutomationProperties.AutomationId="FourPageBackViewModelButton"
+					Content="Back (ViewModel)"
+					Click="{x:Bind ViewModel.GoBack}" />
 		</StackPanel>
 	</Grid>
 </Page>

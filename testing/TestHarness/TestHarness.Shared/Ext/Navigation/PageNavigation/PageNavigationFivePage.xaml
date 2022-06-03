@@ -15,6 +15,13 @@
 			<Button AutomationProperties.AutomationId="FivePageBackButton"
 					Content="Back"
 					uen:Navigation.Request="-" />
+			<Button AutomationProperties.AutomationId="FivePageBackCodebehindButton"
+					Content="Back (Codebehind)"
+					Click="FivePageBackCodebehindClick" />
+			<Button AutomationProperties.AutomationId="FivePageBackViewModelButton"
+					Content="Back (ViewModel)"
+					Click="{x:Bind ViewModel.GoBack}" />
+
 		</StackPanel>
 	</Grid>
 </Page>

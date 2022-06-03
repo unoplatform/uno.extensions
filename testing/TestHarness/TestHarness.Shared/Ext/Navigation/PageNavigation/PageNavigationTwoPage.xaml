@@ -17,6 +17,19 @@
 			<Button AutomationProperties.AutomationId="TwoPageBackButton"
 					Content="Back"
 					uen:Navigation.Request="-" />
+			<Button AutomationProperties.AutomationId="TwoPageToThreePageCodebehindButton"
+					Content="Three (Codebehind)"
+					Click="TwoPageToThreePageCodebehindClick"/>
+			<Button AutomationProperties.AutomationId="TwoPageBackCodebehindButton"
+					Content="Back (Codebehind)"
+					Click="TwoPageBackCodebehindClick"/>
+			<Button AutomationProperties.AutomationId="TwoPageToThreePageViewModelButton"
+					Content="Three (ViewModel)"
+					Click="{x:Bind ViewModel.GoToThree}" />
+			<Button AutomationProperties.AutomationId="TwoPageBackViewModelButton"
+					Content="Back (ViewModel)"
+					Click="{x:Bind ViewModel.GoBack}"/>
+
 		</StackPanel>
 	</Grid>
 </Page>
