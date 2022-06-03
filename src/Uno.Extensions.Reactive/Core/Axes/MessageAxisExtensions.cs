@@ -74,7 +74,7 @@ public static class MessageAxisExtensions
 	public static TBuilder Data<TBuilder, T>(this TBuilder builder, Option<T> data)
 		where TBuilder : IMessageBuilder<T>
 	{
-		builder[MessageAxis.Data] = MessageAxis.Data.ToMessageValue(data);
+		builder.Set(MessageAxis.Data, MessageAxis.Data.ToMessageValue(data));
 
 		return builder;
 	}
@@ -86,10 +86,10 @@ public static class MessageAxisExtensions
 	/// <param name="data">The data to set.</param>
 	/// <param name="changeSet">The changes made from the previous value</param>
 	/// <returns>The <paramref name="builder"/> for fluent building.</returns>
-	internal static TBuilder Data<TBuilder, T>(this TBuilder builder, Option<T> data, IChangeSet changeSet)
+	internal static TBuilder Data<TBuilder, T>(this TBuilder builder, Option<T> data, IChangeSet? changeSet)
 		where TBuilder : IMessageBuilder<T>
 	{
-		builder[MessageAxis.Data] = MessageAxis.Data.ToMessageValue(data);
+		builder.Set(MessageAxis.Data, MessageAxis.Data.ToMessageValue(data), changeSet);
 
 		return builder;
 	}
@@ -106,7 +106,7 @@ public static class MessageAxisExtensions
 	[EditorBrowsable(EditorBrowsableState.Advanced)] // Create dedicated extension methods
 	public static T? Get<TBuilder, T>(this TBuilder builder, MessageAxis<T> axis)
 		where TBuilder : IMessageBuilder
-		=> axis.FromMessageValue(builder[axis]);
+		=> axis.FromMessageValue(builder.Get(axis).value);
 
 	/// <summary>
 	/// Gets a metadata of an <see cref="MessageEntry{T}"/>
@@ -130,7 +130,7 @@ public static class MessageAxisExtensions
 	public static TBuilder Set<TBuilder, T>(this TBuilder builder, MessageAxis<T> axis, T? value)
 		where TBuilder : IMessageBuilder
 	{
-		builder[axis] = axis.ToMessageValue(value);
+		builder.Set(axis, axis.ToMessageValue(value));
 		return builder;
 	}
 	#endregion
@@ -177,8 +177,22 @@ public static class MessageAxisExtensions
 	public static TBuilder IsTransient<TBuilder>(this TBuilder builder, bool isTransient)
 		where TBuilder : IMessageBuilder
 	{
-		builder[MessageAxis.Progress] = MessageAxis.Progress.ToMessageValue(isTransient);
+		builder.Set(MessageAxis.Progress, MessageAxis.Progress.ToMessageValue(isTransient));
 
+		return builder;
+	}
+
+	/// <summary>
+	/// Fluently applies an additional configuration action on a message builder.
+	/// </summary>
+	/// <typeparam name="TBuilder">Type of the builder to configure.</typeparam>
+	/// <param name="builder">The builder to configure.</param>
+	/// <param name="configure">The addition configure operation to apply on the builder.</param>
+	/// <returns></returns>
+	internal static TBuilder Apply<TBuilder>(this TBuilder builder, Action<TBuilder>? configure)
+		where TBuilder : IMessageBuilder
+	{
+		configure?.Invoke(builder);
 		return builder;
 	}
 }

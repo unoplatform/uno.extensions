@@ -25,27 +25,25 @@ public readonly struct MessageBuilder<T> : IMessageEntry, IMessageBuilder, IMess
 	Option<object> IMessageEntry.Data => CurrentData;
 	Exception? IMessageEntry.Error => CurrentError;
 	bool IMessageEntry.IsTransient => CurrentIsTransient;
-	MessageAxisValue IMessageEntry.this[MessageAxis axis] => Get(axis);
-
-	MessageAxisValue IMessageBuilder.this[MessageAxis axis]
-	{
-		get => Get(axis);
-		set => Set(axis, value);
-	}
+	MessageAxisValue IMessageEntry.this[MessageAxis axis] => Get(axis).value;
 
 	internal Option<T> CurrentData => this.GetData<T>();
 	internal Exception? CurrentError => this.GetError();
 	internal bool CurrentIsTransient => this.GetProgress();
 	internal MessageAxisValue this[MessageAxis axis]
 	{
-		get => Get(axis);
-		set => Set(axis, value);
+		get => Get(axis).value;
+		set => Set(axis, value, default);
 	}
 
-	internal MessageAxisValue Get(MessageAxis axis)
-		=> _values.TryGetValue(axis, out var value) ? value : default;
+	(MessageAxisValue value, IChangeSet? changes) IMessageBuilder.Get(MessageAxis axis)
+		=> Get(axis);
+	internal (MessageAxisValue value, IChangeSet? changes) Get(MessageAxis axis)
+		=> (_values.TryGetValue(axis, out var value) ? value : default, default);
 
-	internal void Set(MessageAxis axis, MessageAxisValue value, IChangeSet? changes = null)
+	void IMessageBuilder.Set(MessageAxis axis, MessageAxisValue value, IChangeSet? changes)
+		=> Set(axis, value, changes);
+	internal void Set(MessageAxis axis, MessageAxisValue value, IChangeSet? changes)
 	{
 		if (axis.AreEquals(this[axis], value))
 		{
@@ -55,11 +53,11 @@ public readonly struct MessageBuilder<T> : IMessageEntry, IMessageBuilder, IMess
 		if (value.IsSet)
 		{
 			_values[axis] = value;
-			_changes.Add(axis);
+			_changes.Add(axis, changes);
 		}
 		else if (_values.Remove(axis))
 		{
-			_changes.Add(axis);
+			_changes.Add(axis, changes);
 		}
 	}
 

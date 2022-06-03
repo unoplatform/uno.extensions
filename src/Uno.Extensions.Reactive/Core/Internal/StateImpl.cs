@@ -15,6 +15,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 {
 	private readonly FastAsyncLock _updateGate = new();
 	private readonly IForEachRunner? _innerEnumeration;
+	private readonly CompositeRequestSource _requests = new();
 
 	private bool _hasCurrent;
 	private Message<T> _current = Message<T>.Initial;
@@ -48,11 +49,11 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 
 	public StateImpl(SourceContext context, IFeed<T> feed, StateSubscriptionMode mode = StateSubscriptionMode.Default)
 	{
-		Context = context;
+		Context = context.CreateChild(_requests);
+
 		_innerEnumeration = mode.HasFlag(StateSubscriptionMode.RefCounted)
 			? new RefCountedForEachRunner<Message<T>>(GetSource, UpdateState)
 			: new ForEachRunner<Message<T>>(GetSource, UpdateState);
-
 		if (mode.HasFlag(StateSubscriptionMode.Eager))
 		{
 			_innerEnumeration.Prefetch();
@@ -67,15 +68,14 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 
 	public StateImpl(SourceContext context, Option<T> defaultValue)
 	{
-		Context = context;
-		_hasCurrent = true; // Even if undefined, we consider that we do have a value in order to produce an initial state
+		Context = context?.CreateChild(_requests)!; // Null check override only for legacy IInput support
 
+		_hasCurrent = true; // Even if undefined, we consider that we do have a value in order to produce an initial state
 		if (!defaultValue.IsUndefined())
 		{
 			_current = _current.With().Data(defaultValue);
 		}
 	}
-
 
 	/// <summary>
 	/// Legacy - Used only be legacy IInput syntax
@@ -86,12 +86,17 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	{
 	}
 
-	IAsyncEnumerable<Message<T>> ISignal<Message<T>>.GetSource(SourceContext context, CancellationToken ct)
-		=> GetSource(ct);
+	internal IAsyncEnumerable<Message<T>> GetSource(CancellationToken ct)
+		=> GetSource(Context, ct);
 
-	public async IAsyncEnumerable<Message<T>> GetSource([EnumeratorCancellation] CancellationToken ct = default)
+	public async IAsyncEnumerable<Message<T>> GetSource(SourceContext context, [EnumeratorCancellation] CancellationToken ct = default)
 	{
 		using var _ = _innerEnumeration?.Enable();
+
+		if (Context is not null /*Legacy IInput support*/ && context != Context)
+		{
+			_requests.Add(context.RequestSource, ct);
+		}
 
 		var isFirstMessage = true;
 		TaskCompletionSource<Node>? next;
@@ -201,6 +206,8 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	/// <inheritdoc />
 	public async ValueTask DisposeAsync()
 	{
+		await Context.DisposeAsync();
+		_requests.Dispose(); // Safety only, should have already been disposed by the Context
 		_innerEnumeration?.Dispose();
 		Interlocked.Exchange(ref _next, null)?.TrySetCanceled();
 	}

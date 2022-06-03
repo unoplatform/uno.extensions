@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Uno.Extensions.Reactive.Core;
 
-internal sealed partial class MessageManager<TParent, TResult>
+internal partial class MessageManager<TParent, TResult>
 {
 	public struct CurrentMessage
 	{

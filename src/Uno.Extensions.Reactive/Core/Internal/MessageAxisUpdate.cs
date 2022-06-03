@@ -11,10 +11,13 @@ internal class MessageAxisUpdate
 
 	public MessageAxisValue Value { get; set; }
 
-	public MessageAxisUpdate(MessageAxis axis, MessageAxisValue value)
+	public IChangeSet? Changes { get; }
+
+	public MessageAxisUpdate(MessageAxis axis, MessageAxisValue value, IChangeSet? changes = null)
 	{
 		Axis = axis;
 		Value = value;
+		Changes = changes;
 	}
 
 	public MessageAxisValue GetValue(MessageAxisValue parent, MessageAxisValue current)
