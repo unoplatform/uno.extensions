@@ -53,7 +53,7 @@ public partial class BaseTestSectionPage : Page
 
 		var win = (Application.Current as App)?.Window!;
 		Console.WriteLine($"*********** Win exists {win is not null}");
-		this.AttachServiceProvider(Host.Services).RegisterWindow(win);
+		this.AttachServiceProvider(Host.Services).RegisterWindow(win!);
 		Console.WriteLine("*********** Attached and Registered");
 
 		if (this.FindName(Constants.NavigationRoot) is FrameworkElement root)

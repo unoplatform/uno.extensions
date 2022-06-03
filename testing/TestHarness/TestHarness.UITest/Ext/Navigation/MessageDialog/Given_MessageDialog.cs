@@ -19,8 +19,12 @@ public class Given_MessageDialog : NavigationTestBase
 			.Marked("CloseMessageDialogToggleButton")
 			.SetDependencyPropertyValue("IsChecked", true.ToString());
 
+
 		var screenClosed = TakeScreenshot("When_MessageDialogFromXAML_Closed");
 		ImageAssert.AreEqual(screenBefore, screenClosed,tolerance: PixelTolerance.Exclusive(10));
+
+		// TODO: Work out how to tap on individual buttons on the message dialog to close them.
+
 	}
 
 }

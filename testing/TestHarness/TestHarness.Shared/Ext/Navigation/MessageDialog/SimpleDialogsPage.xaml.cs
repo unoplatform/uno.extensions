@@ -1,4 +1,6 @@
 ﻿
+using System.Diagnostics;
+
 namespace TestHarness.Ext.Navigation.MessageDialog;
 
 public sealed partial class SimpleDialogsPage : Page
@@ -33,9 +35,9 @@ public sealed partial class SimpleDialogsPage : Page
 		MessageDialogResultText.Text = $"Message dialog result: {messageDialogResult}";
 	}
 
-	public void CloseAllMessageDialogs()//object sender, RoutedEventArgs args)
+	public void CloseAllMessageDialogs()
 	{
-		var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+		var popups = VisualTreeHelper.GetOpenPopups((App.Current as App).Window);
 		foreach (var popup in popups)
 		{
 			popup.IsOpen = false;
