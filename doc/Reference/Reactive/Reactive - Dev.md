@@ -107,7 +107,7 @@ The most common _request_ is the `RefreshRequest`.
 
 > When implementing an `IFeed` you have access to those requests using the `Requests<TRequest>()` method on the `SourceContext` you get in the `GetSource`.
 
-> When consuming a feed, you can send a request to the feed you are subscribing by creating a "child" context (`SourceContext.CreateChild()`) giving you own `IRequestSource`.
+> When consuming a feed, you can send a request to that feed by creating a "child" context (`SourceContext.CreateChild()`) giving you own `IRequestSource`.
 
 ## View
 
