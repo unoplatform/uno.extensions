@@ -17,6 +17,15 @@ namespace Uno.Extensions.Reactive.Core;
 /// </summary>
 public sealed class SourceContext : IAsyncDisposable
 {
+	internal const string NoneContextErrorDesc =
+		"This error usually means that you are trying to interact with feeds, typically awaiting a feed, out of a valid SourceContext."
+		+ "The SourceContext holds the state of feeds and is accessible through the static SourceContext.Current, "
+		+ "but is valid only within the scope of an async operation invoked by feeds (like Command.Execute or Feed.SelectAsync)."
+		+ "You have to ensure that a valid context is set before doing any application async operation using the SourceContext.AsCurrent()."
+		+ "If you are implementing your own operator, use the context you get in the GetSource before invoking any async operation."
+		+ "If you are trying to react to an external source within a VM, use context of that VM which can be accessed using the static SourceContext.GetOrCreate(VM)."
+		+ "More info: https://github.com/unoplatform/uno.extensions/blob/main/doc/Reference/Reactive/Reactive%20-%20Dev.md";
+
 	private static readonly SourceContext _none = new(isNone: true);
 	private static readonly AsyncLocal<SourceContext> _current = new();
 	private static readonly ConditionalWeakTable<object, SourceContext> _contexts = new();
@@ -133,7 +142,7 @@ public sealed class SourceContext : IAsyncDisposable
 	{
 		if (parent._isNone)
 		{
-			throw new InvalidOperationException("Cannot create a sub context from None context.");
+			throw new InvalidOperationException("Cannot create a sub context from None context. " + NoneContextErrorDesc);
 		}
 
 		_ct = CancellationTokenSource.CreateLinkedTokenSource(parent.Token);
