@@ -79,15 +79,10 @@ public sealed partial class App : Application
 
 
 				// Enable navigation, including registering views and viewmodels
-				.UseNavigation(
+				.UseMappedNavigation(
+					PlaygroundApp.ReactiveViewModelMappings.ViewModelMappings,
 					RegisterRoutes,
-					createViewRegistry: sc => new MappedViewRegistry(sc, PlaygroundApp.ReactiveViewModelMappings.ViewModelMappings),
 					configure: cfg => cfg with { AddressBarUpdateEnabled = true })
-				.ConfigureServices(services =>
-				{
-					services
-						.AddSingleton<IRouteResolver, MappedRouteResolver>();
-				})
 
 				// Add navigation support for toolkit controls such as TabBar and NavigationView
 				.UseToolkitNavigation()

@@ -27,10 +27,31 @@ public static class HostBuilderExtensions
 		Action<HostBuilderContext, IServiceCollection>? configureServices = default)
 	{
 		return hostBuilder
-			.ConfigureServices((ctx,services) =>
+			.ConfigureServices((ctx, services) =>
 			{
 				_ = services.AddNavigation(configure, viewRouteBuilder, createViewRegistry, createRouteRegistry);
 				configureServices?.Invoke(ctx, services);
 			});
+	}
+	public static IHostBuilder UseMappedNavigation(
+		this IHostBuilder hostBuilder,
+		IDictionary<Type, Type> viewModelMapping,
+		Action<IViewRegistry, IRouteRegistry>? viewRouteBuilder = null,
+		Func<IServiceCollection, MappedViewRegistry>? createMappedViewRegistry = null,
+		Func<IServiceCollection, IRouteRegistry>? createRouteRegistry = null,
+		Func<NavigationConfig, NavigationConfig>? configure = null,
+		Action<HostBuilderContext, IServiceCollection>? configureServices = default)
+	{
+		return hostBuilder.UseNavigation(
+					viewRouteBuilder,
+					createViewRegistry: sc => createMappedViewRegistry?.Invoke(sc) ?? new MappedViewRegistry(sc, viewModelMapping),
+					createRouteRegistry: createRouteRegistry,
+					configure: configure,
+					configureServices: (ctx, services) =>
+				{
+					configureServices?.Invoke(ctx, services);
+					services
+						.AddSingleton<IRouteResolver, MappedRouteResolver>();
+				});
 	}
 }
