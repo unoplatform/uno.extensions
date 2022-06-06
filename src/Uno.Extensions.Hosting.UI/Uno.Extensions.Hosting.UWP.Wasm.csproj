@@ -7,7 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Uno.UI.Runtime.WebAssembly" Version="4.3.6" />
+		<PackageReference Include="Uno.UI.Runtime.WebAssembly" Version="4.3.8" />
 	</ItemGroup>
 
 	<Import Project="common.props" />
