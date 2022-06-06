@@ -27,7 +27,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\NavWidget.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Person.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Widget.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ReactiveClasses.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Endpoints\IToDoTaskListEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\NeedsADispatcherService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\SimpleStartupService.cs" />
