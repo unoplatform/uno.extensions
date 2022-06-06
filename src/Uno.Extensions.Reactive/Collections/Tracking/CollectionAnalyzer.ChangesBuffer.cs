@@ -71,8 +71,6 @@ partial class CollectionAnalyzer
 					SeekToTail(ref tail);
 					tail!.Next = _sameHead;
 				}
-
-					
 			}
 
 			// Then append all other changes (Add / Move / Remove)

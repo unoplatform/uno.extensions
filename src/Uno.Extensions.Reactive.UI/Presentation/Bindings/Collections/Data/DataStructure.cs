@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using Uno.Extensions.Collections;
 using Uno.Extensions.Collections.Tracking;
+using Uno.Extensions.Reactive.Collections;
 using TrackingMode = Uno.Extensions.Collections.TrackingMode;
 
 namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
@@ -33,7 +34,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 			}
 
 			var comparers = _comparersStructure[level];
-			var tracker = new CollectionAnalyzer(comparers.itemComparer, comparers.itemVersionComparer);
+			var tracker = new CollectionAnalyzer(new ItemComparer(comparers.itemComparer, comparers.itemVersionComparer));
 
 			if (level + 1 == _comparersStructure.Length)
 			{
