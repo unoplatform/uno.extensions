@@ -31,10 +31,8 @@ public sealed class NavigationRegion : IRegion
     {
         get
         {
-			Console.WriteLine("******** Region Services");
 			if (_services is null && Parent is not null)
             {
-				Console.WriteLine("******** Nav Scope");
 
 				_services = Parent?.Services?.CreateNavigationScope();
                 if (_services is null)
@@ -57,8 +55,6 @@ public sealed class NavigationRegion : IRegion
 
 	public NavigationRegion(FrameworkElement? view = null, IServiceProvider? services = null)
 	{
-		Console.WriteLine($"******** Nav Region {view?.GetType().Name??"null"}");
-
 		View = view;
 		if (View is not null)
 		{
@@ -75,8 +71,6 @@ public sealed class NavigationRegion : IRegion
 		if (View is not null &&
 			View.IsLoaded)
 		{
-			Console.WriteLine("******** View is loaded");
-
 			_ = HandleLoading();
 		}
 
@@ -131,7 +125,6 @@ public sealed class NavigationRegion : IRegion
 
     private Task HandleLoading()
     {
-		Console.WriteLine($"****** Loaded {View.GetType().Name}");
 		if (View is null)
         {
             return Task.CompletedTask;

@@ -7,8 +7,6 @@ public sealed partial class SimpleDialogsPage : Page
 {
 	public SimpleDialogsPage()
 	{
-		Console.WriteLine("******* Page ");
-
 		this.InitializeComponent();
 	}
 
