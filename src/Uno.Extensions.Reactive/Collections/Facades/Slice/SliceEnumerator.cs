@@ -20,7 +20,7 @@ internal class SliceEnumerator : IEnumerator
 	}
 
 	/// <inheritdoc />
-	public object Current => _inner.Current;
+	public object? Current => _inner.Current;
 
 	/// <inheritdoc />
 	public bool MoveNext()

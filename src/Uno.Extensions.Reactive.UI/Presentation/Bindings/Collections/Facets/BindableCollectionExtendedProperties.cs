@@ -17,7 +17,7 @@ internal sealed class BindableCollectionExtendedProperties : INotifyPropertyChan
 	private bool _hasMoreItems;
 
 	/// <summary>
-	/// Gets an observable sequence of load request made by this collection
+	/// Event raised when the view reached the end of the list and requested to load mode data
 	/// </summary>
 	public event EventHandler<LoadMoreItemsRequest>? LoadMoreItemsRequested;
 
