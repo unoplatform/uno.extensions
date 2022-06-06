@@ -2,6 +2,12 @@
 
 public static class ServiceProviderExtensions
 {
+	/// <summary>
+	/// Attached the IServiceProvider instance to the <paramref name="window"/> and
+	/// registers the Window for use in Navigation
+	/// </summary>
+	/// <param name="window">The Window to attach the IServiceProvider to</param>
+	/// <param name="services">The IServiceProvider instance to attach</param>
 	public static void AttachServices(this Window window, IServiceProvider services)
 	{
 		window.Content
@@ -9,6 +15,12 @@ public static class ServiceProviderExtensions
 				.RegisterWindow(window);
 	}
 
+	/// <summary>
+	/// Registers the Window with the specified IServiceProvider instance
+	/// </summary>
+	/// <param name="services">The IServiceProvider to register the Window with</param>
+	/// <param name="window">The Window to be registered with the IServiceProvider instance</param>
+	/// <returns>The IServiceProvider instance (for fluent calling of other methods)</returns>
 	public static IServiceProvider RegisterWindow(this IServiceProvider services, Window window)
 	{
 		return services.AddScopedInstance(window)
