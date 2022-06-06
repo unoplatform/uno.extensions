@@ -31,7 +31,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views
 			_pagination = paginationFacet;
 		}
 
-#region ICollection
+		#region ICollection
 		public event VectorChangedEventHandler<object>? VectorChanged
 		{
 			add => _collectionChanged.AddVectorChangedHandler(value!);
@@ -72,7 +72,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views
 		public void CopyTo(object[] array, int arrayIndex) => _collection.CopyTo(array, arrayIndex);
 #endregion
 
-#region Selection (Single)
+		#region Selection (Single)
 		/// <inheritdoc />
 		public event CurrentChangingEventHandler CurrentChanging
 		{
@@ -124,18 +124,18 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views
 
 		/// <inheritdoc />
 		public bool MoveCurrentToPrevious() => _selection?.MoveCurrentToPrevious() ?? false;
-#endregion
+		#endregion
 
-#region Pagination
+		#region Pagination
 		/// <inheritdoc />
 		public bool HasMoreItems => _pagination?.HasMoreItems ?? false;
 
 		/// <inheritdoc />
 		public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
 			=> _pagination?.LoadMoreItemsAsync(count) ?? PaginationFacet.EmptyResult;
-#endregion
+		#endregion
 
-#region Grouping
+		#region Grouping
 		/// <inheritdoc />
 		public IObservableVector<object?>? CollectionGroups { get; }
 #endregion
