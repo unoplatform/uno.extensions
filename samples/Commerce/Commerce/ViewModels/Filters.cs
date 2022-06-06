@@ -1,13 +1,7 @@
 ﻿namespace Commerce.ViewModels;
 
-public record Filters
+public record Filters(bool Shoes, bool Accessories, bool Headwear, bool InStockOnly)
 {
-	public bool Shoes { get; set; }
-
-	public bool Accessories { get; set; }
-
-	public bool Headwear { get; set; }
-
 	public bool Match(Product product)
 	{
 		if (!Shoes && !Accessories && !Headwear)

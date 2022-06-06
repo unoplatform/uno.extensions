@@ -11,12 +11,12 @@
 	  mc:Ignorable="d"
 	  Background="{ThemeResource BackgroundBrush}"
 	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+
 	<utu:AutoLayout Background="{ThemeResource BackgroundBrush}"
 					CornerRadius="24">
 		<utu:AutoLayout Padding="24,24,24,0"
 						utu:AutoLayout.CounterAlignment="Start"
-						utu:AutoLayout.PrimaryLength="445"
-						utu:AutoLayout.CounterLength="411">
+						utu:AutoLayout.PrimaryLength="445">
 			<utu:AutoLayout utu:AutoLayout.PrimaryAlignment="Stretch">
 				<utu:AutoLayout Padding="0,0,0,16"
 								PrimaryAxisAlignment="Center"
@@ -38,11 +38,14 @@
 								   Style="{StaticResource BodyMedium}"
 								   x:Uid="Search_Filters_Flyout_Categories" />
 						<utu:ChipGroup Style="{StaticResource InputChipGroupStyle}">
-							<utu:Chip Content="{Binding Filter.Shoes}"
+							<utu:Chip Content="Shoes"
+									  IsChecked="{Binding Filter.Shoes, Mode=TwoWay}"
 									  Style="{StaticResource InputChipStyle}" />
-							<utu:Chip Content="{Binding Filter.Accessories}"
+							<utu:Chip Content="Accessories"
+									  IsChecked="{Binding Filter.Accessories, Mode=TwoWay}"
 									  Style="{StaticResource InputChipStyle}" />
-							<utu:Chip Content="{Binding Filter.Headwear}"
+							<utu:Chip Content="Headwear"
+									  IsChecked="{Binding Filter.Headwear, Mode=TwoWay}"
 									  Style="{StaticResource InputChipStyle}" />
 						</utu:ChipGroup>
 						<utu:AutoLayout Spacing="137"
@@ -50,10 +53,11 @@
 							<TextBlock Foreground="{ThemeResource OnBackgroundBrush}"
 									   TextWrapping="Wrap"
 									   Text="In stock only"
+									   utu:AutoLayout.PrimaryAlignment="Stretch"
 									   utu:AutoLayout.CounterAlignment="Center"
 									   Style="{StaticResource BodyMedium}"
 									   x:Uid="Search_Filters_Flyout_Body" />
-							<ToggleSwitch IsOn="{Binding StockOnly, Mode=TwoWay}"
+							<ToggleSwitch IsOn="{Binding Filter.InStockOnly, Mode=TwoWay}"
 										  utu:AutoLayout.CounterAlignment="Center"
 										  Style="{StaticResource ToggleSwitchStyle}" />
 						</utu:AutoLayout>
@@ -70,7 +74,7 @@
 							<TextBlock Foreground="{ThemeResource OnSurfaceMediumBrush}"
 									   TextAlignment="End"
 									   TextWrapping="Wrap"
-									   Text="{Binding Order}"
+									   Text="Relevance"
 									   utu:AutoLayout.CounterAlignment="Center"
 									   Style="{StaticResource BodyMedium}" />
 						</utu:AutoLayout>
@@ -87,7 +91,7 @@
 							<TextBlock Foreground="{ThemeResource OnSurfaceMediumBrush}"
 									   TextAlignment="End"
 									   TextWrapping="Wrap"
-									   Text="{Binding Currency}"
+									   Text="CAD"
 									   utu:AutoLayout.CounterAlignment="Center"
 									   Style="{StaticResource BodyMedium}" />
 						</utu:AutoLayout>
@@ -101,9 +105,12 @@
 							utu:AutoLayout.CounterAlignment="Center"
 							utu:AutoLayout.CounterLength="40"
 							Style="{StaticResource TextButtonStyle}"
-							x:Uid="Search_Filters_Flyout_Button" />
+							x:Uid="Search_Filters_Flyout_Button"
+							uen:Navigation.Request="/-"
+							uen:Navigation.Data="{Binding Filter.Value}" />
 				</utu:AutoLayout>
 			</utu:AutoLayout>
 		</utu:AutoLayout>
 	</utu:AutoLayout>
+
 </Page>

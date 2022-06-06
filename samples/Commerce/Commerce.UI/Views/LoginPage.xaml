@@ -11,7 +11,8 @@
 	  mc:Ignorable="d"
 	  Background="{ThemeResource BackgroundBrush}"
 	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<utu:AutoLayout Background="{ThemeResource BackgroundBrush}">
+	<utu:AutoLayout Background="{ThemeResource BackgroundBrush}"
+					MaxWidth="{StaticResource LandscapeMaxPageWidth}">
 		<utu:AutoLayout Spacing="16"
 						Padding="32,48,32,8">
 			<TextBlock Foreground="{ThemeResource OnSurfaceBrush}"
@@ -27,19 +28,21 @@
 		</utu:AutoLayout>
 		<utu:AutoLayout Spacing="16"
 						Padding="32,8,32,32">
-			<TextBox Text="{Binding Credentials.UserName, Mode=TwoWay}"
+			<TextBox Text="{Binding Credentials.UserName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 					 PlaceholderText="Email"
 					 Style="{StaticResource FilledTextBoxStyle}"
 					 x:Uid="Login_TextBox" />
 			<PasswordBox PlaceholderText="Password"
-						 Password="{Binding Credentials.Password, Mode=TwoWay}"
+						 Password="{Binding Credentials.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 						 Style="{StaticResource FilledPasswordBoxStyle}"
 						 x:Uid="Login_PasswordBox" />
 			<HyperlinkButton Content="Forgot password?"
+							 uen:Navigation.Request="!Forgot"
 							 utu:AutoLayout.CounterAlignment="Start"
 							 Style="{StaticResource HyperlinkButtonStyle}"
 							 x:Uid="Login_Hyperlink_Button" />
 			<Button Content="Login"
+					Command="{Binding Login}"
 					utu:AutoLayout.PrimaryLength="40"
 					Style="{StaticResource FilledButtonStyle}"
 					x:Uid="Login_Button" />

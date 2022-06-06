@@ -203,6 +203,7 @@
 							</utu:AutoLayout>
 							<utu:AutoLayout Padding="16,16,16,16">
 								<Button Content="checkout"
+										uen:Navigation.Request="Checkout"
 										utu:AutoLayout.PrimaryLength="40"
 										Style="{StaticResource FilledButtonStyle}"
 										x:Uid="Cart_Button" />
