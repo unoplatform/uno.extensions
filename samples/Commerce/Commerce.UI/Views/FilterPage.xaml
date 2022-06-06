@@ -1,120 +1,109 @@
 ﻿<Page x:Class="Commerce.Views.FilterPage"
-	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	  xmlns:local="using:Commerce"
-	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	  xmlns:utu="using:Uno.Toolkit.UI"
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	  xmlns:uer="using:Uno.Extensions.Reactive.UI"
+	  xmlns:utu="using:Uno.Toolkit.UI"
+	  xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+	  xmlns:um="using:Uno.Material"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	  mc:Ignorable="d"
-	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
-	<utu:AutoLayout x:Name="FlyoutRoot">
-		<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch">
-			<utu:NavigationBar Content="Filters"
-							   x:Uid="Body_NavigationBar"
-							   utu:AutoLayout.CounterAlignment="Stretch">
-				<!-- TODO: This style is cause exceptions -->
-				<!--Style="{StaticResource RootModalNavigationBarStyle}">-->
-				<utu:NavigationBar.MainCommand>
-					<AppBarButton uen:Navigation.Request="-"
-								  Foreground="{ThemeResource OnSurfaceBrush}" />
-				</utu:NavigationBar.MainCommand>
-				<utu:NavigationBar.PrimaryCommands>
-					<AppBarButton Foreground="{ThemeResource OnSurfaceBrush}">
-						<AppBarButton.Icon>
-							<BitmapIcon UriSource="ms-appx:///Assets/Icons/notifications.png" />
-						</AppBarButton.Icon>
-					</AppBarButton>
-					<AppBarButton Foreground="{ThemeResource OnSurfaceBrush}">
-						<AppBarButton.Icon>
-							<BitmapIcon UriSource="ms-appx:///Assets/Icons/share.png" />
-						</AppBarButton.Icon>
-					</AppBarButton>
-				</utu:NavigationBar.PrimaryCommands>
-			</utu:NavigationBar>
-			<utu:AutoLayout utu:AutoLayout.CounterAlignment="Stretch">
-				<utu:AutoLayout Spacing="16"
-								Padding="16,16,16,16"
-								utu:AutoLayout.CounterAlignment="Stretch">
-					<TextBlock Foreground="{StaticResource OnBackgroundBrush}"
-							   x:Uid="Body_Categories"
-							   Text="Categories"
-							   Style="{StaticResource TitleMedium}" />
-					<utu:ChipGroup Style="{StaticResource FilterChipGroupStyle}">
-						<utu:Chip Content="Shoes"
-								  x:Uid="Body_Shoes"
-								  IsChecked="{Binding Filter.Shoes, Mode=TwoWay}"
-								  Style="{StaticResource FilterChipStyle}" />
-						<utu:Chip Content="Accessories"
-								  x:Uid="Body_Accessproes"
-								  IsChecked="{Binding Filter.Accessories, Mode=TwoWay}"
-								  Style="{StaticResource FilterChipStyle}" />
-						<utu:Chip Content="Headwear"
-								  x:Uid="Body_Headwear"
-								  IsChecked="{Binding Filter.Headwear, Mode=TwoWay}"
-								  Style="{StaticResource FilterChipStyle}" />
-					</utu:ChipGroup>
+	  Background="{ThemeResource BackgroundBrush}"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<utu:AutoLayout Background="{ThemeResource BackgroundBrush}"
+					CornerRadius="24">
+		<utu:AutoLayout Padding="24,24,24,0"
+						utu:AutoLayout.CounterAlignment="Start"
+						utu:AutoLayout.PrimaryLength="445"
+						utu:AutoLayout.CounterLength="411">
+			<utu:AutoLayout utu:AutoLayout.PrimaryAlignment="Stretch">
+				<utu:AutoLayout Padding="0,0,0,16"
+								PrimaryAxisAlignment="Center"
+								Orientation="Horizontal">
+					<TextBlock Foreground="{ThemeResource OnSurfaceBrush}"
+							   TextAlignment="Center"
+							   Text="Filters"
+							   utu:AutoLayout.CounterAlignment="Center"
+							   Style="{StaticResource HeadlineSmall}"
+							   x:Uid="Search_Filters_Flyout_Title" />
+				</utu:AutoLayout>
+				<utu:Divider Style="{StaticResource DividerStyle}" />
+				<utu:AutoLayout utu:AutoLayout.PrimaryAlignment="Stretch">
 					<utu:AutoLayout Spacing="16"
-									Justify="SpaceBetween"
-									Orientation="Horizontal"
-									utu:AutoLayout.CounterAlignment="Stretch">
-						<TextBlock Foreground="{StaticResource OnBackgroundBrush}"
-								   x:Uid="Body_Body"
-								   Text="In stock only"
-								   utu:AutoLayout.CounterAlignment="Center"
-								   Style="{StaticResource TitleMedium}" />
-						<ToggleSwitch utu:AutoLayout.CounterAlignment="Center"
-									  Style="{StaticResource ToggleSwitchStyle}" />
-					</utu:AutoLayout>
-					<utu:AutoLayout Spacing="16"
-									Padding="0,8,8,8"
-									Justify="SpaceBetween"
-									Orientation="Horizontal"
-									utu:AutoLayout.CounterAlignment="Stretch">
-						<TextBlock Foreground="{StaticResource OnBackgroundBrush}"
-								   x:Uid="Body_Body"
-								   Text="Order"
-								   utu:AutoLayout.CounterAlignment="Center"
-								   Style="{StaticResource TitleMedium}" />
-						<TextBlock Foreground="{StaticResource OnSurfaceMediumBrush}"
-								   TextAlignment="End"
-								   x:Uid="Body_Body"
-								   Text="Relevance"
-								   utu:AutoLayout.CounterAlignment="Center"
-								   Style="{StaticResource BodySmall}" />
-					</utu:AutoLayout>
-					<utu:AutoLayout Spacing="16"
-									Padding="0,8,8,8"
-									Justify="SpaceBetween"
-									Orientation="Horizontal"
-									utu:AutoLayout.CounterAlignment="Stretch">
-						<TextBlock Foreground="{StaticResource OnBackgroundBrush}"
-								   x:Uid="Body_Body"
-								   Text="Currency"
-								   utu:AutoLayout.CounterAlignment="Center"
-								   Style="{StaticResource TitleMedium}" />
-						<TextBlock Foreground="{StaticResource OnSurfaceMediumBrush}"
-								   TextAlignment="End"
-								   x:Uid="Body_Body"
-								   Text="CAD"
-								   utu:AutoLayout.CounterAlignment="Center"
-								   Style="{StaticResource BodySmall}" />
+									Padding="0,16,0,16">
+						<TextBlock Foreground="{ThemeResource OnBackgroundBrush}"
+								   Text="Categories"
+								   utu:AutoLayout.CounterAlignment="Start"
+								   Style="{StaticResource BodyMedium}"
+								   x:Uid="Search_Filters_Flyout_Categories" />
+						<utu:ChipGroup Style="{StaticResource InputChipGroupStyle}">
+							<utu:Chip Content="{Binding Filter.Shoes}"
+									  Style="{StaticResource InputChipStyle}" />
+							<utu:Chip Content="{Binding Filter.Accessories}"
+									  Style="{StaticResource InputChipStyle}" />
+							<utu:Chip Content="{Binding Filter.Headwear}"
+									  Style="{StaticResource InputChipStyle}" />
+						</utu:ChipGroup>
+						<utu:AutoLayout Spacing="137"
+										Orientation="Horizontal">
+							<TextBlock Foreground="{ThemeResource OnBackgroundBrush}"
+									   TextWrapping="Wrap"
+									   Text="In stock only"
+									   utu:AutoLayout.CounterAlignment="Center"
+									   Style="{StaticResource BodyMedium}"
+									   x:Uid="Search_Filters_Flyout_Body" />
+							<ToggleSwitch IsOn="{Binding StockOnly, Mode=TwoWay}"
+										  utu:AutoLayout.CounterAlignment="Center"
+										  Style="{StaticResource ToggleSwitchStyle}" />
+						</utu:AutoLayout>
+						<utu:AutoLayout Spacing="16"
+										Padding="0,8,0,8"
+										Justify="SpaceBetween"
+										Orientation="Horizontal">
+							<TextBlock Foreground="{ThemeResource OnBackgroundBrush}"
+									   TextWrapping="Wrap"
+									   Text="Order"
+									   utu:AutoLayout.CounterAlignment="Center"
+									   Style="{StaticResource BodyMedium}"
+									   x:Uid="Search_Filters_Flyout_Body" />
+							<TextBlock Foreground="{ThemeResource OnSurfaceMediumBrush}"
+									   TextAlignment="End"
+									   TextWrapping="Wrap"
+									   Text="{Binding Order}"
+									   utu:AutoLayout.CounterAlignment="Center"
+									   Style="{StaticResource BodyMedium}" />
+						</utu:AutoLayout>
+						<utu:AutoLayout Spacing="16"
+										Padding="0,8,0,8"
+										Justify="SpaceBetween"
+										Orientation="Horizontal">
+							<TextBlock Foreground="{ThemeResource OnBackgroundBrush}"
+									   TextWrapping="Wrap"
+									   Text="Currency"
+									   utu:AutoLayout.CounterAlignment="Center"
+									   Style="{StaticResource BodyMedium}"
+									   x:Uid="Search_Filters_Flyout_Body" />
+							<TextBlock Foreground="{ThemeResource OnSurfaceMediumBrush}"
+									   TextAlignment="End"
+									   TextWrapping="Wrap"
+									   Text="{Binding Currency}"
+									   utu:AutoLayout.CounterAlignment="Center"
+									   Style="{StaticResource BodyMedium}" />
+						</utu:AutoLayout>
 					</utu:AutoLayout>
 				</utu:AutoLayout>
-			</utu:AutoLayout>
-			<utu:AutoLayout Spacing="8"
-							Padding="16,16,16,16"
-							Orientation="Horizontal"
-							utu:AutoLayout.CounterAlignment="Stretch">
-				<Button Content="Apply"
-						x:Uid="Body_Apply"
-						utu:AutoLayout.PrimaryAlignment="Stretch"
-						Style="{StaticResource FilledButtonStyle}"
-						uen:Navigation.Request="/-"
-						uen:Navigation.Data="{Binding Filter.Value}" />
+				<utu:Divider Style="{StaticResource DividerStyle}" />
+				<utu:AutoLayout Padding="0,24,0,24"
+								PrimaryAxisAlignment="End"
+								Orientation="Horizontal">
+					<Button Content="Apply"
+							utu:AutoLayout.CounterAlignment="Center"
+							utu:AutoLayout.CounterLength="40"
+							Style="{StaticResource TextButtonStyle}"
+							x:Uid="Search_Filters_Flyout_Button" />
+				</utu:AutoLayout>
 			</utu:AutoLayout>
 		</utu:AutoLayout>
 	</utu:AutoLayout>
-
 </Page>
