@@ -1,5 +1,5 @@
-﻿using NUnit.Framework;
-using Query = System.Func<Uno.UITest.IAppQuery, Uno.UITest.IAppQuery>;
+﻿//-:cnd:noEmit
+
 
 namespace MyExtensionsApp.UITests;
 
@@ -8,12 +8,8 @@ public class Given_MainPage : TestBase
 	[Test]
 	public void When_SmokeTest()
 	{
-
-		// Make sure the ViewModelButton has rendered
-		App.WaitForElement(q => q.Marked("ViewModelButton"));
-
-		// Query for the XamlButton and then tap it
-		Query xamlButton = q => q.All().Marked("XamlButton");
+		// Query for the SecondPageButton and then tap it
+		Query xamlButton = q => q.All().Marked("SecondPageButton");
 		App.WaitForElement(xamlButton);
 		App.Tap(xamlButton);
 
