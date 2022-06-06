@@ -30,7 +30,7 @@ public partial class FeedsGenerator : ISourceGenerator
 		{
 			foreach (var generated in new BindableViewModelGenerator(bindableContext).Generate(context.Compilation.Assembly))
 			{
-				context.AddSource(PathHelper.SanitizeFileName(generated.type.ToString()), generated.code);
+				context.AddSource(PathHelper.SanitizeFileName(generated.fileName), generated.code);
 			}
 		}
 		else
