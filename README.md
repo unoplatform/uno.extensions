@@ -1,53 +1,27 @@
 ﻿# Uno.Extensions
 
-This is a multi-platform app project template using [Uno](https://github.com/unoplatform/uno) and the latest .NET practices.
+Uno.Extensions is a series of NuGet packages designed to encapsulate common developer tasks associated with building multi-platform mobile, desktop and web applications using the Uno platform.
 
 ## Getting Started
-
-We use `dotnet` project templates to easily create new projects. It simplifies the **project renaming** and supports **conditional inclusions**.
-
-### Installing and uninstalling the template
-
-1. In order to install the template, clone this repository on your machine and open a command prompt at the root of the project and run the following command
-
-   `dotnet new -i Uno.Extensions.Templates`
-
-
-1. If you want to uninstall the template, run the following command.
-
-    `dotnet new -u Uno.Extensions.Templates`
-
-### Running the template to generate a new project
-
-1. To run the template and create a new project, run the following command.
-
-    `dotnet new unoapp-extensions --material -o MyProjectName`
+See the complete [documentation](https://platform.uno/docs/articles/external/uno.extensions/doc/Overview/ExtensionsOverviewAndGettingStarted.html) for getting started with Uno.Extensions.
 
 ## Documentation
+All the documentation for getting you started with [Uno Platform](https://platform.uno/) can be found on our [website](https://platform.uno/docs/articles/external/uno.extensions/doc/Overview/ExtensionsOverviewAndGettingStarted.html).
 
-This repository provides documentation on different topics under the [doc](doc/) folder.
-
-- [Architecture](doc/00-Introduction.md)
-- [Configuration](doc/04-Configuration.md)
-- [Dependency Injection](doc/02-DependencyInjection.md)
-- [HTTP](doc/06-HTTP.md)
-- [Localization](doc/05-Localization.md)
-- [Logging](doc/03-Logging.md)
-- [Navigation](doc/07-Navigation.md)
-- [Serialization](doc/08-Serialization.md)
-- [Validation](doc/09-Validation.md)
-- [Reactive](doc/Reactive.md)
 
 ## License
-
-This project is licensed under the Apache 2.0 license. See the [LICENSE](LICENSE) for details.
+This project is licensed under the Apache 2.0 license - see the [LICENSE](LICENSE) file for details.
 
 ## Contributing
+Please read our [contributing guide](https://github.com/unoplatform/uno/blob/master/CONTRIBUTING.md) to learn about our development process and how to propose bug fixes and improvements. 
+Come visit us on our [Discord Channel #uno-platform](https://discord.gg/eBHZSKG) for help on how to contribute!
 
-Be mindful of our [Code of Conduct](CODE_OF_CONDUCT.md).
+Contribute to Uno in your browser using [GitPod.io](https://gitpod.io), follow [our guide here](https://platform.uno/docs/articles/features/working-with-gitpod.html).
+
+Be also mindful of our [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## Contributors
-Thanks goes to these wonderful people (List made with [contrib.rocks](https://contrib.rocks)):
+Thanks go to these wonderful people (List made with [contrib.rocks](https://contrib.rocks)):
 
 [![Uno.Extensions Contributors](https://contrib.rocks/image?repo=unoplatform/uno.extensions)](https://github.com/unoplatform/uno.extensions/graphs/contributors)
 
