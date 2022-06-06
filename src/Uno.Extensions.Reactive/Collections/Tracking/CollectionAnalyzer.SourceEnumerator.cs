@@ -8,16 +8,15 @@ namespace Uno.Extensions.Collections.Tracking;
 
 partial class CollectionAnalyzer
 {
-	private class SourceEnumerator<TCollection>
-		where TCollection : IList
+	private class SourceEnumerator
 	{
-		private readonly TCollection _snapshot;
-		private readonly IndexOf<TCollection> _indexOf;
+		private readonly IList _snapshot;
+		private readonly IndexOf _indexOf;
 		private readonly IgnoredIndexCollection _ignored = new();
 
 		public SourceEnumerator(
-			TCollection snapshot,
-			IndexOf<TCollection> indexOf)
+			IList snapshot,
+			IndexOf indexOf)
 		{
 			_snapshot = snapshot;
 			_indexOf = indexOf;
@@ -71,7 +70,7 @@ partial class CollectionAnalyzer
 			var index = CurrentIndex;
 			do
 			{
-				index = _indexOf(item, _snapshot, index + 1);
+				index = _indexOf(item, index + 1, _snapshot.Count - index - 1);
 
 				// Item is missing, break
 				if (index < 0)
