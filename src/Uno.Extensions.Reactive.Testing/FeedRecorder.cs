@@ -182,11 +182,28 @@ public class FeedRecorder<TFeed, TValue> : IFeedRecorder<TValue>, ICollection<Me
 		{
 			var message = _messages[i];
 
-			sb.Append($"\t{i + 1:D2}: [{string.Join(",", message.Changes.Select(axis => axis.Identifier))}]");
-			sb.Append($" data: {message.Current.Data}");
-			sb.Append($" | error: {message.Current.Error?.GetType().Name ?? "None"}");
-			sb.Append($" | progress: {(message.Current.IsTransient ? "Transient" : "Final")}");
+			sb.Append($"\t{i + 1:D2}:");
+			sb.Append($" data{HasChanged(MessageAxis.Data)}: {message.Current.Data}");
+			sb.Append($" | error{HasChanged(MessageAxis.Error)}: {message.Current.Error?.GetType().Name ?? "None"}");
+			sb.Append($" | progress{HasChanged(MessageAxis.Progress)}: {(message.Current.IsTransient ? "Transient" : "Final")}");
+
+			foreach (var axis in message.Current.Values)
+			{
+				if (axis.Key == MessageAxis.Data || axis.Key == MessageAxis.Error || axis.Key == MessageAxis.Progress)
+				{
+					continue;
+				}
+
+				if (axis.Value.IsSet)
+				{
+					sb.Append($" | {axis.Key.Identifier}{HasChanged(axis.Key)}: {axis.Value.Value}");
+				}
+			}
+
 			sb.AppendLine();
+
+			string HasChanged(MessageAxis axis)
+				=> message.Changes.Contains(axis) ? "*" : "";
 		}
 
 		return sb.ToString();

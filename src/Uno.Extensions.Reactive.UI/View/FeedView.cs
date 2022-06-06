@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Uno.Extensions.Reactive.Core;
-using Uno.Extensions.Reactive.Logging;
-using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive.UI;
 
@@ -57,7 +52,7 @@ public partial class FeedView : Control
 	/// Backing dependency property for <see cref="State"/>.
 	/// </summary>
 	public static readonly DependencyProperty StateProperty = DependencyProperty.Register(
-		"State", typeof(FeedViewState), typeof(FeedView), new PropertyMetadata(new FeedViewState()));
+		"State", typeof(FeedViewState), typeof(FeedView), new PropertyMetadata(default)); // Default value set in the ctor
 
 	/// <summary>
 	/// The state object that expose the values to template bindings.
@@ -191,6 +186,8 @@ public partial class FeedView : Control
 	private bool _isReady;
 	private Subscription? _subscription;
 
+	internal RefreshCommand Refresh { get; }
+
 	/// <summary>
 	/// Creates a new instance.
 	/// </summary>
@@ -201,7 +198,8 @@ public partial class FeedView : Control
 			ViewDebugger.SetIsEnabled(this, true);
 		}
 
-		State = new FeedViewState { Parent = DataContext }; // Create a State instance specific for this FeedView
+		Refresh = new RefreshCommand(this);
+		State = new FeedViewState(this) { Parent = DataContext }; // Create a State instance specific for this FeedView
 
 		SetBinding(ReroutedDataContextProperty, new Binding());
 
@@ -249,67 +247,5 @@ public partial class FeedView : Control
 
 		_subscription?.Dispose();
 		_subscription = new Subscription(this, feed);
-	}
-
-	private class Subscription : IDisposable
-	{
-		private readonly CancellationTokenSource _ct = new();
-		private readonly FeedView _view;
-		private readonly VisualStateHelper _visualStateManager;
-
-		public ISignal<IMessage> Feed { get; }
-
-		public Subscription(FeedView view, ISignal<IMessage> feed)
-		{
-			_view = view;
-			Feed = feed;
-
-			_visualStateManager = new VisualStateHelper(_view);
-			_ = Enumerate();
-		}
-
-		private async Task Enumerate()
-		{
-			try
-			{
-				// Note: Here we expect the Feed to be an IState, so we use the Feed.GetSource instead of ctx.GetOrCreateSource().
-				//		 The 'ctx' is provided only for safety to improve caching, but it's almost equivalent to SourceContext.None
-				//		 (especially when using SourceContext.GetOrCreate(_view)).
-
-				var ctx = SourceContext.Find(_view.DataContext) ?? SourceContext.GetOrCreate(_view);
-				await foreach (var message in Feed.GetSource(ctx, _ct.Token).WithCancellation(_ct.Token).ConfigureAwait(true))
-				{
-					Update(message);
-				}
-			}
-			catch (Exception error)
-			{
-				this.Log().Error(error, "Subscription to feed failed, view will no longer render updates made by the VM.");
-			}
-		}
-
-		private void Update(IMessage message)
-		{
-			try
-			{
-				_view.State.Update(message);
-
-				if (_view.VisualStateSelector?.GetVisualStates(message).ToList() is { Count: > 0 } visualStates)
-				{
-					foreach (var state in visualStates)
-					{
-						_visualStateManager.GoToState(state.stateName, state.shouldUseTransition);
-					}
-				}
-			}
-			catch (Exception error)
-			{
-				this.Log().Error(error, "Failed to change visual state.");
-			}
-		}
-
-		/// <inheritdoc />
-		public void Dispose()
-			=> _ct.Cancel();
 	}
 }

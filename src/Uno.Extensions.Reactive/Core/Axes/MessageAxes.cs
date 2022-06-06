@@ -26,6 +26,11 @@ public static class MessageAxes
 	public const string Progress = nameof(Progress);
 
 	/// <summary>
+	/// Name of the refresh axis.
+	/// </summary>
+	internal const string Refresh = nameof(Refresh);
+
+	/// <summary>
 	/// Name of the axe used to de-bounce data bound values
 	/// </summary>
 	internal const string BindingSource = nameof(BindingSource);
