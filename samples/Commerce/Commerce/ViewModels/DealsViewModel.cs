@@ -21,4 +21,7 @@ public class DealsViewModel
 	public IListFeed<Product> Items => ListFeed.Async(_dealService.GetAll);
 
 	public IListState<Product> Favorites => ListState.Async(this, _productService.GetFavorites);
+
+	public async ValueTask RemoveFromFavorite(Product product, CancellationToken ct)
+		=> await _productService.Update(product with { IsFavorite = false }, ct);
 }
