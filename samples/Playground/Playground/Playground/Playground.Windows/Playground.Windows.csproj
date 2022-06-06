@@ -3,7 +3,8 @@
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
 		<TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
-		<RootNamespace>Playground.Windows</RootNamespace>
+		<AssemblyName>PlaygroundApp</AssemblyName>
+		<RootNamespace>Playground</RootNamespace>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<Platforms>x86;x64;arm64</Platforms>
 		<RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
@@ -15,16 +16,16 @@
 	</PropertyGroup>
 
 
-	<PropertyGroup>
-		<!-- Bundles the WinAppSDK binaries (Uncomment for unpackaged builds) -->
+	<PropertyGroup><!-- Bundles the WinAppSDK binaries (Uncomment for unpackaged builds) -->
 		<!-- <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained> -->
 		<!-- This bundles the .NET Core libraries (Uncomment for packaged builds)  -->
 		<!--<SelfContained>true</SelfContained>-->
+	
 	</PropertyGroup>
 
 
 	<ItemGroup>
-	  <None Remove="appsettings.platform.json" />
+		<None Remove="appsettings.platform.json" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -38,9 +39,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <EmbeddedResource Include="appsettings.platform.json">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </EmbeddedResource>
+		<EmbeddedResource Include="appsettings.platform.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -81,27 +82,29 @@
 		<ProjectCapability Include="Msix" />
 	</ItemGroup>-->
 	<ItemGroup>
-	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
-	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
-	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.csproj" />
-	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
-	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Http.Refit\Uno.Extensions.Http.Refit.csproj" />
-	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
-	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Localization\Uno.Extensions.Localization.WinUI.csproj" />
-	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj" />
-	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.WinUI.csproj" />
-	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.WinUI.csproj" />
-	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj" />
-	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
-	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Reactive.UI\Uno.Extensions.Reactive.UI.WinUI.csproj" />
-	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj" />
-	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Serialization.Http\Uno.Extensions.Serialization.Http.csproj" />
-	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Serialization.Refit\Uno.Extensions.Serialization.Refit.csproj" />
-	  <ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
+		<ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
+		<ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
+		<ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
+		<ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Http.Refit\Uno.Extensions.Http.Refit.csproj" />
+		<ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
+		<ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Localization\Uno.Extensions.Localization.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj" />
+		<ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
+		<ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Reactive.UI\Uno.Extensions.Reactive.UI.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj" />
+		<ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Serialization.Http\Uno.Extensions.Serialization.Http.csproj" />
+		<ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Serialization.Refit\Uno.Extensions.Serialization.Refit.csproj" />
+		<ProjectReference Include="..\..\..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
 	</ItemGroup>
+	<!-- Reference to Reactive.props only required when referencing Reactive as source code -->
+	<Import Project="..\..\..\..\..\src\Uno.Extensions.Reactive.Generator\buildTransitive\Uno.Extensions.Reactive.props" />
 	<Import Project="..\Playground.Shared\Playground.Shared.projitems" Label="Shared" />
 
-		<Target Name="WorkaroundSkiaWasmTargets" AfterTargets="ResolveProjectReferences">
+	<Target Name="WorkaroundSkiaWasmTargets" AfterTargets="ResolveProjectReferences">
 		<ItemGroup>
 			<_ResolvedProjectReferencePathsToRemove Include="@(_ResolvedProjectReferencePaths)" Condition="'%(_ResolvedProjectReferencePaths.OriginalItemSpec)'=='Uno.Extensions.Hosting.WinUI.Skia.csproj' or '%(_ResolvedProjectReferencePaths.OriginalItemSpec)'=='Uno.Extensions.Hosting.WinUI.Wasm.csproj'" />
 			<_ResolvedProjectReferencePaths Remove="@(_ResolvedProjectReferencePathsToRemove)" />

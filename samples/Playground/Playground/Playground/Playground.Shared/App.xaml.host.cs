@@ -1,4 +1,5 @@
 using System.Net.Http;
+using Playground.Reactive;
 using Playground.Services.Endpoints;
 using Uno.Extensions.Localization;
 
@@ -78,7 +79,16 @@ public sealed partial class App : Application
 
 
 				// Enable navigation, including registering views and viewmodels
-				.UseNavigation(RegisterRoutes)
+				.UseNavigation(
+					RegisterRoutes,
+					createViewRegistry: sc => new ReactiveViewRegistry(sc, PlaygroundApp.ReactiveViewModelMappings.ViewModelMappings),
+					configure: cfg => cfg with { AddressBarUpdateEnabled = true })
+				.ConfigureServices(services =>
+				{
+					services
+						.AddSingleton<IRouteResolver, ReactiveRouteResolver>();
+				})
+
 				// Add navigation support for toolkit controls such as TabBar and NavigationView
 				.UseToolkitNavigation()
 
