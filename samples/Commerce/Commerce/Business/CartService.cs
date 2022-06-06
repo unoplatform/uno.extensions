@@ -2,7 +2,7 @@
 
 public class CartService : ICartService
 {
-	private IState<Cart> _cart => State<Cart>.Empty(this);
+	private IState<Cart> _cart => State<Cart>.Value(this, () => new Cart());
 
 	public IFeed<Cart> Cart => _cart;
 
