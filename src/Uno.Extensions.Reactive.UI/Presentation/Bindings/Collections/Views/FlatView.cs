@@ -131,7 +131,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views
 			}
 		}
 
-#region Selection (Single)
+		#region Selection (Single)
 		/// <inheritdoc />
 		public event CurrentChangingEventHandler CurrentChanging
 		{
@@ -177,19 +177,19 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views
 		public bool MoveCurrentToPrevious() => _selection.MoveCurrentToPrevious();
 #endregion
 
-#region Pagination
+		#region Pagination
 		/// <inheritdoc />
 		public bool HasMoreItems => _pagination.HasMoreItems;
 
 		/// <inheritdoc />
 		public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
 			=> _pagination.LoadMoreItemsAsync(count);
-#endregion
+		#endregion
 
-#region Grouping
+		#region Grouping
 		/// <inheritdoc />
 		public IObservableVector<object?>? CollectionGroups { get; }
-#endregion
+		#endregion
 
 		private NotSupportedException NotSupported([CallerMemberName] string? methodName = null)
 			=> new(methodName + " is not supported on grouped collection.");
