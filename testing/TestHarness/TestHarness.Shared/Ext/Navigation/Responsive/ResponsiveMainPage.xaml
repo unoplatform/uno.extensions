@@ -34,13 +34,19 @@
 					  ScrollViewer.HorizontalScrollMode="Auto"
 					  ScrollViewer.VerticalScrollBarVisibility="Disabled"
 					  ScrollViewer.VerticalScrollMode="Disabled">
-			<ContentControl AutomationProperties.AutomationId="NavigationRoot"
-							x:Name="NavigationRoot"
-							HorizontalAlignment="Left"
-							VerticalAlignment="Stretch"
-							HorizontalContentAlignment="Stretch"
-							VerticalContentAlignment="Stretch"
-							Width="1920" />
+			<Border 							HorizontalAlignment="Left"
+												VerticalAlignment="Stretch"
+												BorderBrush="Black"
+												BorderThickness="2">
+
+				<ContentControl AutomationProperties.AutomationId="NavigationRoot"
+								x:Name="NavigationRoot"
+								HorizontalAlignment="Left"
+								VerticalAlignment="Stretch"
+								HorizontalContentAlignment="Stretch"
+								VerticalContentAlignment="Stretch"
+								Width="1920" />
+			</Border>
 		</ScrollViewer>
 		<StackPanel Grid.Row="2"
 					Orientation="Horizontal"

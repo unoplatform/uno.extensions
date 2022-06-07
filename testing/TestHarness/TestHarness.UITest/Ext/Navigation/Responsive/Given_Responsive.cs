@@ -33,6 +33,7 @@ public class Given_Responsive : NavigationTestBase
 
 		App.WaitThenTap("DetailsBackButton");
 
+		await Task.Yield();
 
 		widgetsListView = App.Marked("WidgetsListView");
 		visibility = widgetsListView.GetDependencyPropertyValue("Visibility");
@@ -45,6 +46,7 @@ public class Given_Responsive : NavigationTestBase
 		// (ie list is still visible)
 		App.WaitThenTap("WideButton");
 
+		await Task.Yield();
 
 		widgetsListView.SetDependencyPropertyValue("SelectedIndex", "1");
 
@@ -52,6 +54,12 @@ public class Given_Responsive : NavigationTestBase
 		visibility = widgetsListView.GetDependencyPropertyValue("Visibility");
 		visibility.Should().NotBeNull();
 
+		await Task.Delay(5000);
+		var screenBefore = TakeScreenshot("When_Responsive_Before");
+		App.WaitThenTap("DetailsBackButton");
+		await Task.Delay(5000);
+		var screenAfter = TakeScreenshot("When_Responsive_After");
+		ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
 	}
 
 }
