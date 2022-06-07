@@ -1,3 +1,4 @@
+using System.Net.Http;
 using Playground.Services.Endpoints;
 using Uno.Extensions.Localization;
 
@@ -59,12 +60,17 @@ public sealed partial class App : Application
 							.AddSingleton<IAuthenticationTokenProvider>(new SimpleAuthenticationToken { AccessToken = "My access token" })
 							.AddScoped<NeedsADispatcherService>()
 							.AddNativeHandler()
+							.AddTransient<DebugHttpHandler>()
 							.AddContentSerializer()
-							.AddRefitClient<IToDoTaskListEndpoint>(context
+
+							.AddRefitClient<IToDoTaskListEndpoint>(context,
 									// Leaving this commented code here as an example of using the settingsBuilder callback
 									//,settingsBuilder:
 									//		(sp, settings) => settings.AuthorizationHeaderValueGetter =
 									//		() => Task.FromResult("AccessToken")
+									configure: (builder, endpoint) =>
+									builder.ConfigurePrimaryAndInnerHttpMessageHandler<DebugHttpHandler>()
+
 									)
 
 							.AddHostedService<SimpleStartupService>();
@@ -195,5 +201,20 @@ public sealed partial class App : Application
 					new RouteMap("Confirm", View: confirmDialog),
 					new RouteMap("LocalizedConfirm", View: localizedDialog)
 			}));
+	}
+}
+
+public class DebugHttpHandler : DelegatingHandler
+{
+	public DebugHttpHandler(HttpMessageHandler? innerHandler = null)
+		: base(innerHandler ?? new HttpClientHandler())
+	{
+	}
+
+	protected async override Task<HttpResponseMessage> SendAsync(
+		HttpRequestMessage request,
+		CancellationToken cancellationToken)
+	{
+		return await base.SendAsync(request, cancellationToken);
 	}
 }
