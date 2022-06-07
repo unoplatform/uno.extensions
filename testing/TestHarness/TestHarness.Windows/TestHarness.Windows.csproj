@@ -33,6 +33,9 @@
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22000.197" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
 		<PackageReference Include="Uno.Core.Extensions.Logging.Singleton" Version="4.0.1" />
+		<PackageReference Include="Uno.Material.WinUI" Version="2.0.0" />
+		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.0.0" />
+		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.0.0" />
 
 		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>

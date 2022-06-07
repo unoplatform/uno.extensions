@@ -10,4 +10,5 @@ public class Constants
 	public readonly static string iOSDeviceNameOrId = "iPad Pro (12.9-inch) (4th generation)";
 
 	public readonly static Platform CurrentPlatform = Platform.Browser;
+	public const int DefaultPixelTolerance = 11;
 }

@@ -14,15 +14,16 @@
 
 		<StackPanel HorizontalAlignment="Center"
 					VerticalAlignment="Center">
-			<ComboBox SelectionChanged="TestSectionSelectionChanged"
-					  AutomationProperties.AutomationId="TestSectionsComboBox"
-					  x:Name="TestSectionsComboBox">
-				<ComboBox.ItemTemplate>
+			<ListView SelectionChanged="TestSectionSelectionChanged"
+					  SelectionMode="Single"
+					  AutomationProperties.AutomationId="TestSectionsListView"
+					  x:Name="TestSectionsListView">
+				<ListView.ItemTemplate>
 					<DataTemplate>
 						<TextBlock Text="{Binding Name}" />
 					</DataTemplate>
-				</ComboBox.ItemTemplate>
-			</ComboBox>
+				</ListView.ItemTemplate>
+			</ListView>
 		</StackPanel>
     </Grid>
 </Page>

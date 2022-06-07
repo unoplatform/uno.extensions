@@ -55,11 +55,28 @@
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationTwoPage.xaml.cs">
       <DependentUpon>PageNavigationTwoPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Responsive\ResponsiveDetailsPage.xaml.cs">
+      <DependentUpon>ResponsiveDetailsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Responsive\ResponsiveDetailsViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Responsive\ResponsiveHomePage.xaml.cs">
+      <DependentUpon>ResponsiveHomePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Responsive\ResponsiveHomeViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Responsive\ResponsiveHostInit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Responsive\ResponsiveListPage.xaml.cs">
+      <DependentUpon>ResponsiveListPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Responsive\ResponsiveListViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Responsive\ResponsiveMainPage.xaml.cs">
+      <DependentUpon>ResponsiveMainPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)GlobalUsings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IHostInitialization.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Widget.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestSection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestSectionRootAttribute.cs" />
   </ItemGroup>
@@ -93,6 +110,22 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationTwoPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\Responsive\ResponsiveDetailsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\Responsive\ResponsiveHomePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\Responsive\ResponsiveListPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\Responsive\ResponsiveMainPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

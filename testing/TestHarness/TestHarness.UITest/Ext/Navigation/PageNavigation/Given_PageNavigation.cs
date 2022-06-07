@@ -21,7 +21,7 @@ public class Given_PageNavigation : NavigationTestBase
 
 
 		var screenAfter = TakeScreenshot("When_PageNavigationXAML_After");
-		ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(10));
+		ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
 
 	}
 
@@ -44,7 +44,7 @@ public class Given_PageNavigation : NavigationTestBase
 
 
 		var screenAfter = TakeScreenshot("When_PageNavigationCodebehind_After");
-		ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(10));
+		ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
 
 	}
 
@@ -67,7 +67,7 @@ public class Given_PageNavigation : NavigationTestBase
 
 
 		var screenAfter = TakeScreenshot("When_PageNavigationViewModel_After");
-		ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(10));
+		ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
 
 	}
 }

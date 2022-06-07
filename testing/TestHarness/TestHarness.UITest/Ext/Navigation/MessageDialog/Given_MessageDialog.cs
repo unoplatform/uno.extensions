@@ -21,7 +21,7 @@ public class Given_MessageDialog : NavigationTestBase
 
 
 		var screenClosed = TakeScreenshot("When_MessageDialogFromXAML_Closed");
-		ImageAssert.AreEqual(screenBefore, screenClosed,tolerance: PixelTolerance.Exclusive(10));
+		ImageAssert.AreEqual(screenBefore, screenClosed,tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
 
 		// TODO: Work out how to tap on individual buttons on the message dialog to close them.
 
