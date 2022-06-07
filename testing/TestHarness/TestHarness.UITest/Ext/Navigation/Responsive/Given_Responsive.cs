@@ -6,7 +6,7 @@ namespace TestHarness.UITest;
 public class Given_Responsive : NavigationTestBase
 {
 	[Test]
-	public void When_Responsive()
+	public async Task When_Responsive()
 	{
 		InitTestSection(TestSections.Responsive);
 
@@ -33,6 +33,8 @@ public class Given_Responsive : NavigationTestBase
 
 		App.WaitThenTap("DetailsBackButton");
 
+
+		widgetsListView = App.Marked("WidgetsListView");
 		visibility = widgetsListView.GetDependencyPropertyValue("Visibility");
 		visibility.Should().NotBeNull();
 
@@ -42,6 +44,7 @@ public class Given_Responsive : NavigationTestBase
 		// into the contentcontrol to the right of the list
 		// (ie list is still visible)
 		App.WaitThenTap("WideButton");
+
 
 		widgetsListView.SetDependencyPropertyValue("SelectedIndex", "1");
 

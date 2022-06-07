@@ -174,20 +174,34 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			return region.NavigateAsync(request);
 		}
 
-		//// Removing this as it's too unpredictable and hard for developers to
-		//// understand
-		//// Exception: If this region is an unnamed child of a composite,
-		//// send request to parent
-		//if (!Region.IsNamed() &&
-		//	Region.Parent is not null)
-		//{
-		//	return Region.Parent.NavigateAsync(request);
-		//}
+		var rm = Resolver.FindByPath(request.Route.Base);
+
+		// If
+		//		route has DependsOn AND
+		//		the current route equals the DependsOn value AND
+		//		there is an un-named child region
+		// Then
+		//		route request to child region
+		if (!string.IsNullOrWhiteSpace(rm?.DependsOn) &&
+			(Region.Ancestors(true).FirstOrDefault(x=>x.Item1?.Base==rm!.DependsOn) is { } ancestor) &&
+			ancestor.Item2 != Region.Parent)
+		{
+			var ancestorRegion = ancestor.Item2;
+			var noNamedChild = ancestorRegion
+								.Children
+								.Where(x => x.IsUnnamed(ancestor.Item1))
+								.FirstOrDefault();
+			if(noNamedChild is not null)
+			{
+				return noNamedChild.NavigateAsync(request);
+			}
+		}
+
 
 		// If the current navigator can handle this route,
 		// then simply return without redirecting the request
 
-		// 1 - navigator can handle the request as it's presented
+		// Navigator can handle the request as it's presented
 		//		a) route has depends on that matches current route, return true
 		//		b) route has depends on that doesn't match current route - if parent can navigate to dependson, return false
 		//		c) route has no depends on - if parent can navigate to the route, return false
@@ -214,7 +228,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			return default;
 		}
 
-		var rm = Resolver.FindByPath(request.Route.Base);
+
 		if (rm is null)
 		{
 			if (Region.Parent is not null)

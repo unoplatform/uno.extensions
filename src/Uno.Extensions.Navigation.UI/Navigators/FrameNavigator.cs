@@ -31,7 +31,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 		}
 	}
 
-	protected override bool CanNavigateToDependentRoutes => true;
+	protected override bool CanNavigateToDependentRoutes => !Region.Children.Any(x=>x.IsUnnamed(this.Route));
 
 	protected override bool RegionCanNavigate(Route route, RouteInfo? routeMap)
 	{
@@ -69,7 +69,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 		// that page is already navigated to, or is in the backstack
 		if (!string.IsNullOrWhiteSpace(routeMap?.DependsOn))
 		{
-			var dependsRoute = route.RootDependsOn(Resolver);
+			var dependsRoute = route.RootDependsOn(Resolver, Region);
 			return (FullRoute?.IsEmpty() ?? true) || FullRoute.Contains(dependsRoute.Base!);
 		}
 
@@ -96,7 +96,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 		}
 
 		var route = request.Route;
-		var segments = route.ForwardNavigationSegments(Resolver);
+		var segments = route.ForwardNavigationSegments(Resolver, Region);
 			//(from pg in route.ForwardNavigationSegments(Resolver)
 			//			let map = Resolver.FindByPath(pg.Base)
 			//			where map?.RenderView is not null &&
@@ -283,7 +283,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 			numberOfPagesToRemove--;
 		}
 		var responseRoute = route with { Path = null };
-		var previousRoute = FullRoute.ApplyFrameRoute(Resolver, responseRoute);
+		var previousRoute = FullRoute.ApplyFrameRoute(Resolver, responseRoute, Region);
 		var previousBase = previousRoute?.Last()?.Base;
 		var currentBase = Resolver.FindByView(Control.Content.GetType())?.Path;
 		if (previousBase is not null)
@@ -461,7 +461,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 			return;
 		}
 
-		FullRoute = FullRoute.ApplyFrameRoute(Resolver, route);
+		FullRoute = FullRoute.ApplyFrameRoute(Resolver, route, Region);
 		var lastRoute = FullRoute;
 		while (lastRoute is not null &&
 			!lastRoute.IsLast())

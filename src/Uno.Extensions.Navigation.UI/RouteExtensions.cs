@@ -62,7 +62,10 @@ public static class RouteExtensions
 	/// RouteMap - the corresponding route map (if it exists)
 	/// bool - whether or not this is a dependson route (ie one that needs to exist in backstack prior to this route)
 	/// </returns>
-	public static (Route, RouteInfo?, bool)[] ForwardNavigationSegments(this Route route, IRouteResolver mappings)
+	public static (Route, RouteInfo?, bool)[] ForwardNavigationSegments(
+		this Route route,
+		IRouteResolver mappings,
+		IRegion region)
 	{
 		// Here we're interested in the actual page navigation segments.
 		// Start with an empty list, and progressively add routes that
@@ -76,7 +79,7 @@ public static class RouteExtensions
 
 		// For routes that have a depends on, we need to ensure that
 		// the dependson segments are added to the segments list
-		var r = route.RootDependsOn(mappings);
+		var r = route.RootDependsOn(mappings, region);
 		var map = mappings.Find(r);
 		var originalRoute = false;
 		while (
@@ -396,7 +399,7 @@ public static class RouteExtensions
 		return mapDict;
 	}
 
-	public static Route? ApplyFrameRoute(this Route? currentRoute, IRouteResolver resolver, Route frameRoute)
+	public static Route? ApplyFrameRoute(this Route? currentRoute, IRouteResolver resolver, Route frameRoute, IRegion region)
 	{
 		var qualifier = frameRoute.Qualifier;
 		if (currentRoute is null)
@@ -405,7 +408,7 @@ public static class RouteExtensions
 		}
 		else
 		{
-			var segments = currentRoute.ForwardNavigationSegments(resolver).ToList();
+			var segments = currentRoute.ForwardNavigationSegments(resolver, region).ToList();
 			foreach (var qualifierChar in qualifier)
 			{
 				if (qualifierChar + "" == Qualifiers.NavigateBack)
@@ -418,7 +421,7 @@ public static class RouteExtensions
 				}
 			}
 
-			var newSegments = frameRoute.ForwardNavigationSegments(resolver);
+			var newSegments = frameRoute.ForwardNavigationSegments(resolver, region);
 			if (newSegments is not null)
 			{
 				newSegments = (from seg in newSegments
@@ -439,12 +442,19 @@ public static class RouteExtensions
 		}
 	}
 
-	public static Route RootDependsOn(this Route currentRoute, IRouteResolver resolver)
+	public static Route RootDependsOn(this Route currentRoute, IRouteResolver resolver, IRegion region)
 	{
 		var rm = resolver.FindByPath(currentRoute.Base);
 		while (rm is not null &&
 			!string.IsNullOrEmpty(rm.DependsOn))
 		{
+			var ancestors = region.Ancestors(true);
+			if (ancestors.Any(x => x.Item1?.Base == rm.DependsOn))
+			{
+				return currentRoute;
+			}
+
+
 			currentRoute = currentRoute.Insert(rm.DependsOn);
 			rm = resolver.FindByPath(rm.DependsOn);
 		}
