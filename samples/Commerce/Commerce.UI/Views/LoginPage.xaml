@@ -30,10 +30,12 @@
 						Padding="32,8,32,32">
 			<TextBox Text="{Binding Credentials.UserName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 					 PlaceholderText="Email"
+					 AutomationProperties.AutomationId="UserName"
 					 Style="{StaticResource FilledTextBoxStyle}"
 					 x:Uid="Login_TextBox" />
 			<PasswordBox PlaceholderText="Password"
 						 Password="{Binding Credentials.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						 AutomationProperties.AutomationId="Password"
 						 Style="{StaticResource FilledPasswordBoxStyle}"
 						 x:Uid="Login_PasswordBox" />
 			<HyperlinkButton Content="Forgot password?"
@@ -44,6 +46,7 @@
 			<Button Content="Login"
 					Command="{Binding Login}"
 					utu:AutoLayout.PrimaryLength="40"
+					AutomationProperties.AutomationId="Login"
 					Style="{StaticResource FilledButtonStyle}"
 					x:Uid="Login_Button" />
 		</utu:AutoLayout>

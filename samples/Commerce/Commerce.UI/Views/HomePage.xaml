@@ -58,6 +58,7 @@
 		</VisualStateManager.VisualStateGroups>
 
 		<muxc:NavigationView x:Name="NavView"
+							 AutomationProperties.AutomationId="NavView"
 							 IsSettingsVisible="False"
 							 IsPaneToggleButtonVisible="False"
 							 PaneDisplayMode="LeftMinimal"
