@@ -4,5 +4,7 @@ public enum TestSections
 {
 	PageNavigation,
 	MessageDialog,
-	Responsive
+	Responsive,
+	Apps_Commerce,
+	Apps_ToDo
 }

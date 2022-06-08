@@ -1,9 +1,8 @@
-﻿
-namespace TestHarness.Ext.Navigation.Responsive;
+﻿namespace TestHarness.Ext.Navigation.Apps.Commerce;
 
-public sealed partial class ResponsiveListPage : Page
+public sealed partial class CommerceHomePage : Page
 {
-	public ResponsiveListPage()
+	public CommerceHomePage()
 	{
 		this.InitializeComponent();
 

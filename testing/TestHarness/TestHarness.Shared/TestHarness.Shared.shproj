@@ -11,6 +11,17 @@
   <Import Project="TestHarness.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeSharing\Microsoft.CodeSharing.CSharp.targets" />
   <ItemGroup>
+    <_Globbed_Compile Remove="Ext\Navigation\Apps\Commerce\CommerceCredentials.cs" />
+    <_Globbed_Compile Remove="Ext\Navigation\Apps\Commerce\CommerceDealsPage.xaml.cs" />
+    <_Globbed_Compile Remove="Ext\Navigation\Apps\Commerce\CommerceHomePage.xaml.cs" />
+    <_Globbed_Compile Remove="Ext\Navigation\Apps\Commerce\CommerceLoginPage.xaml.cs" />
+    <_Globbed_Compile Remove="Ext\Navigation\Apps\Commerce\CommerceProduct.cs" />
+    <_Globbed_Compile Remove="Ext\Navigation\Apps\Commerce\CommerceProductDetailsPage.xaml.cs" />
+    <_Globbed_Compile Remove="Ext\Navigation\Apps\Commerce\CommerceProductsPage.xaml.cs" />
+    <_Globbed_Compile Remove="Ext\Navigation\Apps\Commerce\CommerceProfilePage.xaml.cs" />
+    <_Globbed_Compile Remove="Ext\Navigation\Apps\Commerce\CommerceShellViewModel.cs" />
+    <_Globbed_Compile Remove="Ext\Navigation\Apps\Commerce\HomePage.xaml.cs" />
+    <_Globbed_Compile Remove="Ext\Navigation\Apps\Commerce\ResponsiveMainPage.xaml.cs" />
     <_Globbed_Compile Remove="Ext\Navigation\Responsive\ResponsiveDetailsPage.xaml.cs" />
     <_Globbed_Compile Remove="Ext\Navigation\Responsive\ResponsiveDetailsViewModel.cs" />
     <_Globbed_Compile Remove="Ext\Navigation\Responsive\ResponsiveHomePage.xaml.cs" />
@@ -18,8 +29,16 @@
     <_Globbed_Compile Remove="Ext\Navigation\Responsive\ResponsiveListPage.xaml.cs" />
     <_Globbed_Compile Remove="Ext\Navigation\Responsive\ResponsiveListViewModel.cs" />
     <_Globbed_Compile Remove="Models\Widget.cs" />
+    <_Globbed_Compile Remove="PageExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
+    <_Globbled_Page Remove="Ext\Navigation\Apps\Commerce\CommerceDealsPage.xaml" />
+    <_Globbled_Page Remove="Ext\Navigation\Apps\Commerce\CommerceHomePage.xaml" />
+    <_Globbled_Page Remove="Ext\Navigation\Apps\Commerce\CommerceLoginPage.xaml" />
+    <_Globbled_Page Remove="Ext\Navigation\Apps\Commerce\CommerceProductDetailsPage.xaml" />
+    <_Globbled_Page Remove="Ext\Navigation\Apps\Commerce\CommerceProductsPage.xaml" />
+    <_Globbled_Page Remove="Ext\Navigation\Apps\Commerce\CommerceProfilePage.xaml" />
+    <_Globbled_Page Remove="Ext\Navigation\Apps\Commerce\HomePage.xaml" />
     <_Globbled_Page Remove="Ext\Navigation\Responsive\ResponsiveDetailsPage.xaml" />
     <_Globbled_Page Remove="Ext\Navigation\Responsive\ResponsiveHomePage.xaml" />
     <_Globbled_Page Remove="Ext\Navigation\Responsive\ResponsiveListPage.xaml" />

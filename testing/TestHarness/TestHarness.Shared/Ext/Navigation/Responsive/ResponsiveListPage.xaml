@@ -8,8 +8,7 @@
 	  xmlns:models="using:TestHarness.Models"
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  xmlns:utu="using:Uno.Toolkit.UI"
-	  NavigationCacheMode="Required"
-	  SizeChanged="PageSizeChanged">
+	  NavigationCacheMode="Required">
 
 	<Grid>
 		<VisualStateManager.VisualStateGroups>

@@ -21,5 +21,6 @@ global using Uno.Extensions.Logging;
 global using Uno.Extensions.Navigation;
 global using Uno.Extensions.Navigation.Regions;
 global using Uno.Extensions.Navigation.UI;
+global using Uno.Extensions.Navigation.Toolkit;
 global using Windows.ApplicationModel;
 global using Window = Microsoft.UI.Xaml.Window;
