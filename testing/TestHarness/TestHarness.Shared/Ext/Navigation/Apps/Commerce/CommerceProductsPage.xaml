@@ -9,17 +9,18 @@
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  xmlns:um="using:Uno.Material"
 	  mc:Ignorable="d"
-	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+	  NavigationCacheMode="Required">
 
 	<Grid>
 		<VisualStateManager.VisualStateGroups>
 			<VisualStateGroup>
 				<VisualState x:Name="Wide">
 					<VisualState.Setters>
-						<Setter Target="ProductsListView.SelectionMode"
-								Value="Single" />
-						<Setter Target="ProductsListView.IsItemClickEnabled"
-								Value="False" />
+						<!--<Setter Target="ProductsListView.SelectionMode"
+								Value="Single" />-->
+						<!--<Setter Target="ProductsListView.IsItemClickEnabled"
+								Value="False" />-->
 						<Setter Target="ProductsColumn.Width"
 								Value="*" />
 						<Setter Target="ProductsColumn.MinWidth"
@@ -34,10 +35,10 @@
 				</VisualState>
 				<VisualState x:Name="Narrow">
 					<VisualState.Setters>
-						<Setter Target="ProductsListView.SelectionMode"
-								Value="None" />
-						<Setter Target="ProductsListView.IsItemClickEnabled"
-								Value="True" />
+						<!--<Setter Target="ProductsListView.SelectionMode"
+								Value="None" />-->
+						<!--<Setter Target="ProductsListView.IsItemClickEnabled"
+								Value="True" />-->
 					</VisualState.Setters>
 				</VisualState>
 			</VisualStateGroup>
@@ -47,7 +48,8 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
 		</Grid.RowDefinitions>
-		<utu:NavigationBar Content="Products" />
+		<utu:NavigationBar  AutomationProperties.AutomationId="ProductsNavigationBar"
+							Content="Products" />
 
 		<Grid Grid.Row="1">
 			<Grid.ColumnDefinitions>
@@ -56,11 +58,12 @@
 				<ColumnDefinition Width="0"
 								  x:Name="DetailsColumn" />
 			</Grid.ColumnDefinitions>
-			<ListView x:Name="ProductsListView"
+			<ListView AutomationProperties.AutomationId="ProductsListView"
+					  x:Name="ProductsListView"
 					  ItemsSource="{Binding Products}"
-					  SelectionMode="None"
-					  IsItemClickEnabled="True"
 					  uen:Navigation.Request="Product">
+				<!--SelectionMode="None"
+					  IsItemClickEnabled="True"-->
 				<ListView.ItemTemplate>
 					<DataTemplate x:DataType="local:CommerceProduct">
 						<TextBlock Text="{x:Bind Name}"

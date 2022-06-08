@@ -16,7 +16,8 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
 		</Grid.RowDefinitions>
-		<utu:NavigationBar Content="Login" />
+		<utu:NavigationBar  AutomationProperties.AutomationId="LoginNavigationBar"
+							Content="Login" />
 
 		<Grid Grid.Row="1">
 			<Button AutomationProperties.AutomationId="LoginButton"

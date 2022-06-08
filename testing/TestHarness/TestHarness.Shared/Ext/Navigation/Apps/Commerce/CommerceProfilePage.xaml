@@ -16,7 +16,8 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
 		</Grid.RowDefinitions>
-		<utu:NavigationBar Content="Profile" />
+		<utu:NavigationBar  AutomationProperties.AutomationId="ProfileNavigationBar"
+							Content="Profile" />
 
 		<Grid Grid.Row="1">
 			<Button AutomationProperties.AutomationId="LogoutButton"

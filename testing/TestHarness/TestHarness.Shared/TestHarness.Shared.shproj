@@ -11,6 +11,7 @@
   <Import Project="TestHarness.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeSharing\Microsoft.CodeSharing.CSharp.targets" />
   <ItemGroup>
+    <_Globbed_Compile Remove="AppExtensions.cs" />
     <_Globbed_Compile Remove="Ext\Navigation\Apps\Commerce\CommerceCredentials.cs" />
     <_Globbed_Compile Remove="Ext\Navigation\Apps\Commerce\CommerceDealsPage.xaml.cs" />
     <_Globbed_Compile Remove="Ext\Navigation\Apps\Commerce\CommerceHomePage.xaml.cs" />

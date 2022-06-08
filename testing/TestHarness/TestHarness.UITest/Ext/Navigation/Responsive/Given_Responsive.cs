@@ -1,7 +1,4 @@
-﻿using System.Diagnostics;
-using FluentAssertions;
-
-namespace TestHarness.UITest;
+﻿namespace TestHarness.UITest;
 
 public class Given_Responsive : NavigationTestBase
 {

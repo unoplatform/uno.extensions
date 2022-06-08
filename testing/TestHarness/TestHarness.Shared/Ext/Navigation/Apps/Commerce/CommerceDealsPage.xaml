@@ -9,17 +9,18 @@
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  xmlns:um="using:Uno.Material"
 	  mc:Ignorable="d"
-	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+	  NavigationCacheMode="Required">
 
 	<Grid>
 		<VisualStateManager.VisualStateGroups>
 			<VisualStateGroup>
 				<VisualState x:Name="Wide">
 					<VisualState.Setters>
-						<Setter Target="DealsListView.SelectionMode"
+						<!--<Setter Target="DealsListView.SelectionMode"
 								Value="Single" />
 						<Setter Target="DealsListView.IsItemClickEnabled"
-								Value="False" />
+								Value="False" />-->
 						<Setter Target="DealsColumn.Width"
 								Value="*" />
 						<Setter Target="DealsColumn.MinWidth"
@@ -34,10 +35,10 @@
 				</VisualState>
 				<VisualState x:Name="Narrow">
 					<VisualState.Setters>
-						<Setter Target="DealsListView.SelectionMode"
+						<!--<Setter Target="DealsListView.SelectionMode"
 								Value="None" />
 						<Setter Target="DealsListView.IsItemClickEnabled"
-								Value="True" />
+								Value="True" />-->
 					</VisualState.Setters>
 				</VisualState>
 			</VisualStateGroup>
@@ -47,7 +48,8 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
 		</Grid.RowDefinitions>
-		<utu:NavigationBar Content="Deals" />
+		<utu:NavigationBar  AutomationProperties.AutomationId="DealsNavigationBar"
+							Content="Deals" />
 
 		<Grid Grid.Row="1">
 			<Grid.ColumnDefinitions>
@@ -56,11 +58,13 @@
 				<ColumnDefinition Width="0"
 								  x:Name="DetailsColumn" />
 			</Grid.ColumnDefinitions>
-			<ListView x:Name="DealsListView"
+			<ListView AutomationProperties.AutomationId="DealsListView"
+					  x:Name="DealsListView"
 					  ItemsSource="{Binding Deals}"
-					  SelectionMode="None"
-					  IsItemClickEnabled="True"
+					
 					  uen:Navigation.Request="DealsProduct">
+				<!--SelectionMode="None"
+					  IsItemClickEnabled="True"-->
 				<ListView.ItemTemplate>
 					<DataTemplate x:DataType="local:CommerceProduct">
 						<TextBlock Text="{x:Bind Name}"

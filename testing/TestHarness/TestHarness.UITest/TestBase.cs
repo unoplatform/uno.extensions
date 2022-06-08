@@ -1,12 +1,4 @@
-﻿using System;
-using System.IO;
-using NUnit.Framework;
-using Uno.UITest;
-using Uno.UITest.Helpers;
-using Uno.UITest.Helpers.Queries;
-using Uno.UITests.Helpers;
-
-namespace TestHarness.UITest;
+﻿namespace TestHarness.UITest;
 
 [TestFixture]
 public abstract class TestBase

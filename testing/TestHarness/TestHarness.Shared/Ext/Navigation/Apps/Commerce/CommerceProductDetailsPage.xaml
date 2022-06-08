@@ -16,7 +16,8 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
 		</Grid.RowDefinitions>
-		<utu:NavigationBar Content="Product Details" />
+		<utu:NavigationBar  AutomationProperties.AutomationId="ProductDetailsNavigationBar"
+							Content="Product Details" />
 
 		<Grid Grid.Row="1">
 			<StackPanel>
