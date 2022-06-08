@@ -49,6 +49,34 @@
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceLoginViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceDealsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceShellViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\ToDo\ToDoCredentials.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\ToDo\ToDoHomePage.xaml.cs">
+      <DependentUpon>ToDoHomePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\ToDo\ToDoHomeViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\ToDo\ToDoHostInit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\ToDo\ToDoMainPage.xaml.cs">
+      <DependentUpon>ToDoMainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\ToDo\ToDoSettingsFlyout.xaml.cs">
+      <DependentUpon>ToDoSettingsFlyout.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\ToDo\ToDoSettingsViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\ToDo\ToDoShellViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\ToDo\ToDoTask.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\ToDo\ToDoTaskList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\ToDo\ToDoTaskListPage.xaml.cs">
+      <DependentUpon>ToDoTaskListPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\ToDo\ToDoTaskListViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\ToDo\ToDoTaskPage.xaml.cs">
+      <DependentUpon>ToDoTaskPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\ToDo\ToDoTaskViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\ToDo\ToDoWelcomePage.xaml.cs">
+      <DependentUpon>ToDoWelcomePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\ToDo\ToDoWelcomeViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\MessageDialog\LocalizedDialogsPage.xaml.cs">
       <DependentUpon>LocalizedDialogsPage.xaml</DependentUpon>
     </Compile>
@@ -140,6 +168,30 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\ToDo\ToDoHomePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\ToDo\ToDoMainPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\ToDo\ToDoSettingsFlyout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\ToDo\ToDoTaskListPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\ToDo\ToDoTaskPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\ToDo\ToDoWelcomePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\MessageDialog\LocalizedDialogsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -220,8 +272,5 @@
     <PRIResource Include="@(_Globbed_PRIResource)" />
     <_Globbed_Content Include="$(MSBuildThisFileDirectory)Assets/**/*.*" Exclude="@(Content)" />
     <Content Include="@(_Globbed_Content)" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\ToDo\" />
   </ItemGroup>
 </Project>
