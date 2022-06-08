@@ -51,7 +51,7 @@ public class ToDoHostInit : IHostInitialization
 				{
 					new RouteMap("MultiTaskLists", IsDefault: true, Nested: new[]
 					{
-						new RouteMap("ToDo", IsDefault:true),
+						new RouteMap("Active", IsDefault:true),
 						new RouteMap("Completed")
 					})
 				}),

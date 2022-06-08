@@ -9,9 +9,32 @@
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  xmlns:um="using:Uno.Material"
 	  mc:Ignorable="d"
-	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+	  NavigationCacheMode="Required">
 
 	<Grid>
+		<VisualStateManager.VisualStateGroups>
+			<VisualStateGroup>
+				<VisualState x:Name="Wide">
+					<VisualState.StateTriggers>
+						<AdaptiveTrigger MinWindowWidth="{StaticResource WideMinWindowWidth}" />
+					</VisualState.StateTriggers>
+					<VisualState.Setters>
+						<Setter Target="NavView.(uen:Navigation.Request)"
+								Value="./TaskList" />
+					</VisualState.Setters>
+				</VisualState>
+				<VisualState x:Name="Narrow">
+					<VisualState.StateTriggers>
+						<AdaptiveTrigger MinWindowWidth="0" />
+					</VisualState.StateTriggers>
+					<VisualState.Setters>
+						<Setter Target="NavView.(uen:Navigation.Request)"
+								Value="TaskList" />
+					</VisualState.Setters>
+				</VisualState>
+			</VisualStateGroup>
+		</VisualStateManager.VisualStateGroups>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
@@ -20,7 +43,44 @@
 							Content="Home" />
 
 		<Grid Grid.Row="1">
+			<Grid.RowDefinitions>
+				<RowDefinition />
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+			<muxc:NavigationView x:Name="NavView"
+								 MenuItemsSource="{Binding Lists}"
+								 PaneDisplayMode="Left"
+								 IsPaneToggleButtonVisible="False"
+								 IsSettingsVisible="False"
+								 CompactModeThresholdWidth="0"
+								 ExpandedModeThresholdWidth="0"
+SelectionChanged="NavigationViewSelectionChanged"
+								 >
 
+
+				<!-- Task Lists: template for WellKnownLists & CustomLists -->
+				<muxc:NavigationView.MenuItemTemplate>
+					<DataTemplate>
+						<muxc:NavigationViewItem Content="{Binding Name}"
+												 uen:Navigation.Data="{Binding}" />
+
+					</DataTemplate>
+				</muxc:NavigationView.MenuItemTemplate>
+
+				<Grid uen:Region.Navigator="Visibility"
+					  uen:Region.Attached="True" />
+			</muxc:NavigationView>
+			<StackPanel Grid.Row="1">
+				<Button AutomationProperties.AutomationId="SelectTaskList1Button"
+						Content="Select Item 1"
+						Click="SelectItem1Click" />
+				<Button AutomationProperties.AutomationId="SelectTaskList2Button"
+						Content="Select Item 2"
+						Click="SelectItem2Click" />
+				<Button AutomationProperties.AutomationId="SelectTaskList3Button"
+						Content="Select Item 3"
+						Click="SelectItem3Click" />
+			</StackPanel>
 		</Grid>
 	</Grid>
 </Page>
