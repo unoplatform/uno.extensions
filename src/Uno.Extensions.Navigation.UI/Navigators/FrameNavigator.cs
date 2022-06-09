@@ -30,8 +30,8 @@ public class FrameNavigator : ControlNavigator<Frame>
 			Control.Navigated += Frame_Navigated;
 		}
 	}
-
-	protected override bool CanNavigateToDependentRoutes => !Region.Children.Any(x=>x.IsUnnamed(this.Route));
+	// TODO: IsUnnamed and  composite region
+	protected override bool CanNavigateToDependentRoutes => !Region.Children.Any(x=>x.IsUnnamed(this.Route) && !(x.Navigator()?.IsComposite()??false));
 
 	protected override bool RegionCanNavigate(Route route, RouteInfo? routeMap)
 	{

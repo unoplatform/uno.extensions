@@ -1,11 +1,10 @@
-﻿using Windows.UI.Popups;
-using Uno.Extensions.Navigation.Regions;
-using Uno.Extensions.Navigation.Navigators;
-
-namespace Uno.Extensions.Navigation;
+﻿namespace Uno.Extensions.Navigation;
 
 public static class NavigatorExtensions
 {
+	internal static bool IsComposite(this INavigator navigator) =>
+		navigator.GetType() == typeof(Navigator);
+
 	internal static INavigator? GetParent(this INavigator navigator)
 	{
 		var services = navigator.Get<IServiceProvider>();

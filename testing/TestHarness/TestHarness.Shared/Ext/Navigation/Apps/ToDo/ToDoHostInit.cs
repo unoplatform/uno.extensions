@@ -49,11 +49,8 @@ public class ToDoHostInit : IHostInitialization
 				new("Home", View: views.FindByViewModel<ToDoHomeViewModel>()),
 				new("TaskList", View: views.FindByViewModel<ToDoTaskListViewModel>(), Nested: new[]
 				{
-					new RouteMap("MultiTaskLists", IsDefault: true, Nested: new[]
-					{
-						new RouteMap("Active", IsDefault:true),
-						new RouteMap("Completed")
-					})
+					new RouteMap("Active", IsDefault:true),
+					new RouteMap("Completed")
 				}),
 				new("Task", View: views.FindByViewModel<ToDoTaskViewModel>(), DependsOn:"TaskList"),
 				new("Settings", View: views.FindByViewModel<ToDoSettingsViewModel>())

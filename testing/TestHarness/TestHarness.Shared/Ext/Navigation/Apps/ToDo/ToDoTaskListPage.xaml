@@ -59,8 +59,7 @@
 								  x:Name="TaskColumn" />
 			</Grid.ColumnDefinitions>
 
-			<Grid uen:Region.Attached="True"
-				  uen:Region.Name="MultiTaskLists">
+			<Grid uen:Region.Attached="True">
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto" />
 					<RowDefinition />
