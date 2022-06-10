@@ -31,7 +31,12 @@ partial class CollectionAnalyzer
 
 			CollectionUpdater.Update? head = default, tail = default;
 
+			// Some elements are handled by callbacks only and some are not.
+			// For handled elements we don't need any event (usually when a nested group is updated).
 			var tailIsForHandled = false;
+
+			// An intermediate Update that is used to get the callbacks set by the vivitor.
+			// Depending of the tailIsForHandled it will be either merged to the current, either append in the chained list.
 			var intermediate = new CollectionUpdater.Update();
 			var from = 0;
 
@@ -50,17 +55,10 @@ partial class CollectionAnalyzer
 				}
 				else
 				{
-					// Some elements are handled by callbacks only and some are not.
-					// For handled elements we don't need any event (usually when a nested group is updated).
-
 					if (!tailIsForHandled)
 					{
 						// If the current was not for handled replace, we do have to set its event
-						var count = i - from;
-						tail!.Event = RichNotifyCollectionChangedEventArgs.ReplaceSome(
-							_oldItems.Slice(from, count),
-							_newItems.Slice(from, count),
-							Starts + _indexOffset + from);
+						tail!.Event = CreateEvent(from, i - from);
 					}
 
 					// Move the cursor to next 
@@ -71,8 +69,20 @@ partial class CollectionAnalyzer
 				}
 			}
 
+			if (!tailIsForHandled)
+			{
+				// If the current was not for handled replace, we do have to set its event
+				tail!.Event = CreateEvent(from, _oldItems.Count - from);
+			}
+
 			return head!;
 		}
+
+		private RichNotifyCollectionChangedEventArgs CreateEvent(int from, int count)
+			=> RichNotifyCollectionChangedEventArgs.ReplaceSome(
+				_oldItems.Slice(from, count),
+				_newItems.Slice(from, count),
+				Starts + _indexOffset + from);
 
 		/// <inheritdoc />
 		public override string ToString()

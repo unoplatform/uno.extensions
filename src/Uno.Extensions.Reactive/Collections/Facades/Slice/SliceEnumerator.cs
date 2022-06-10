@@ -35,7 +35,7 @@ internal class SliceEnumerator : IEnumerator
 			return false;
 		}
 
-		if (MoveNext())
+		if (_inner.MoveNext())
 		{
 			_nextIndex++;
 			return true;

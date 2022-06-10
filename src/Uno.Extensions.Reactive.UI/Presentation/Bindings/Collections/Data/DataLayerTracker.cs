@@ -33,7 +33,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 				|| (mode == TrackingMode.Auto && !shouldUseSmartTracking)
 				|| Context.HasReachedLimit)
 			{
-				return _diffAnalyzer.GetReset(oldItems, newItems, _visitor);
+				return _diffAnalyzer.GetResetUpdater(oldItems, newItems, _visitor);
 			}
 			else
 			{

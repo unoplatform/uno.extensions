@@ -2,21 +2,30 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Uno.Extensions.Collections.Tracking;
+using Uno.Extensions.Reactive.Collections;
 using Uno.Extensions.Reactive.Core;
 
 namespace Uno.Extensions.Reactive.Operators;
 
-internal record FeedToListFeedAdapter<T>(IFeed<IImmutableList<T>> Source) : FeedToListFeedAdapter<IImmutableList<T>, T>(Source, list => list);
+internal record FeedToListFeedAdapter<T>(
+	IFeed<IImmutableList<T>> Source,
+	ItemComparer<T> ItemComparer = default)
+	: FeedToListFeedAdapter<IImmutableList<T>, T>(Source, list => list, ItemComparer);
 
-internal record FeedToListFeedAdapter<TCollection, TItem>(IFeed<TCollection> Source, Func<TCollection, IImmutableList<TItem>> ToImmutable) : IListFeed<TItem>
+internal record FeedToListFeedAdapter<TCollection, TItem>(
+	IFeed<TCollection> Source,
+	Func<TCollection, IImmutableList<TItem>> ToImmutable,
+	ItemComparer<TItem> ItemComparer = default)
+	: IListFeed<TItem>
 {
-	private readonly CollectionAnalyzer<TItem> _analyzer = new();
+	private readonly CollectionAnalyzer<TItem> _analyzer = new(ItemComparer);
 
 	/// <inheritdoc />
-	public async IAsyncEnumerable<Message<IImmutableList<TItem>>> GetSource(SourceContext context, CancellationToken ct = default)
+	public async IAsyncEnumerable<Message<IImmutableList<TItem>>> GetSource(SourceContext context, [EnumeratorCancellation] CancellationToken ct = default)
 	{
 		var localMsg = new MessageManager<TCollection, IImmutableList<TItem>>();
 		await foreach (var parentMsg in Source.GetSource(context, ct).WithCancellation(ct).ConfigureAwait(false))
