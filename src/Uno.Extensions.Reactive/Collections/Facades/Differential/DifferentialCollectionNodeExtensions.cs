@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.Specialized;
 using System.Text;
 
@@ -36,7 +37,7 @@ internal static class DifferentialCollectionNodeExtensions
 		=> new DifferentialReadOnlyList(head);
 
 	/// <summary>
-	/// Creates a wrapper which allow to use the given node as an <see cref="IList"/>.
+	/// Creates a wrapper which allow to use the given node as an <see cref="IList{T}"/>.
 	/// </summary>
 	/// <param name="head">The nodes to adapt.</param>
 	/// <returns>A readonly list which wraps the provided node.</returns>
@@ -44,12 +45,20 @@ internal static class DifferentialCollectionNodeExtensions
 		=> new DifferentialReadOnlyList<T>(head);
 
 	/// <summary>
-	/// Creates a wrapper which allow to use the given node as an <see cref="IList"/>.
+	/// Creates a wrapper which allow to use the given node as an <see cref="IReadOnlyList{T}"/>.
 	/// </summary>
 	/// <param name="head">The nodes to adapt.</param>
 	/// <returns>A readonly list which wraps the provided node.</returns>
 	public static IReadOnlyList<T> AsReadOnlyList<T>(this IDifferentialCollectionNode head)
 		=> new DifferentialReadOnlyList<T>(head);
+
+	/// <summary>
+	/// Creates a wrapper which allow to use the given node as an <see cref="IImmutableList{T}"/>.
+	/// </summary>
+	/// <param name="head">The nodes to adapt.</param>
+	/// <returns>An immutable list which wraps the provided node.</returns>
+	public static IImmutableList<T> AsImmutableList<T>(this IDifferentialCollectionNode head)
+		=> new DifferentialImmutableList<T>(head);
 
 	/// <summary>
 	/// Creates a new <seealso cref="IDifferentialCollectionNode"/> over the given node which reflects the provided change

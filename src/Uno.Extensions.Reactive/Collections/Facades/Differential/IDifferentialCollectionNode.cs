@@ -4,11 +4,49 @@ using System.Linq;
 
 namespace Uno.Extensions.Collections.Facades.Differential;
 
+internal static class DifferentialCollectionExtensions
+{
+	public static IDifferentialCollectionNode? FindCommonAncestor(this IDifferentialCollection collection, IDifferentialCollection other)
+	{
+		var node = collection.Head;
+		while (node is not null)
+		{
+			var otherNode = other.Head;
+			while (otherNode is not null)
+			{
+				if (node == otherNode)
+				{
+					return node;
+				}
+
+				otherNode = otherNode.Previous;
+			}
+
+			node = node.Previous;
+		}
+
+		return default;
+	}
+}
+
+internal interface IDifferentialCollection
+{
+	/// <summary>
+	/// Gets the head node of the collection.
+	/// </summary>
+	IDifferentialCollectionNode Head { get; }
+}
+
 /// <summary>
 /// An immutable node of a linked list of a differential collection
 /// </summary>
 internal interface IDifferentialCollectionNode
 {
+	/// <summary>
+	/// Gets the previous node onto which this node has been happened, if any.
+	/// </summary>
+	IDifferentialCollectionNode? Previous { get; }
+
 	/// <summary>
 	/// Gets the number of items currently in the collection 
 	/// </summary>

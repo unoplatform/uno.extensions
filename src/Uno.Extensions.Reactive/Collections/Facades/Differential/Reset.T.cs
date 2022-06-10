@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Uno.Extensions.Reactive.Utils;
 
@@ -9,11 +9,11 @@ namespace Uno.Extensions.Collections.Facades.Differential;
 /// <summary>
 /// A node of a linked stack of <see cref="IDifferentialCollectionNode"/> which reset the collection
 /// </summary>
-internal sealed class Reset : IDifferentialCollectionNode
+internal sealed class Reset<T> : IDifferentialCollectionNode
 {
-	private readonly IList _items;
+	private readonly IImmutableList<T> _items;
 
-	public Reset(IList items)
+	public Reset(IImmutableList<T> items)
 	{
 		_items = items;
 	}
@@ -26,9 +26,9 @@ internal sealed class Reset : IDifferentialCollectionNode
 
 	/// <inheritdoc />
 	public object ElementAt(int index)
-		=> _items[index];
+		=> _items[index]!;
 
 	/// <inheritdoc />
 	public int IndexOf(object? value, int startingAt, IEqualityComparer? comparer)
-		=> _items.IndexOf(value, startingAt, comparer);
+		=> _items.IndexOf((T)value!, startingAt, _items.Count, comparer?.ToEqualityComparer<T>());
 }

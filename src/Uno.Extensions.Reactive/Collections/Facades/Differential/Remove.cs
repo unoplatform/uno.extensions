@@ -11,11 +11,10 @@ namespace Uno.Extensions.Collections.Facades.Differential;
 internal sealed class Remove : IDifferentialCollectionNode
 {
 	private readonly int _totalCount, _removedCount, _fromIndex, _toIndex;
-	private readonly IDifferentialCollectionNode _previous;
 
 	public Remove(IDifferentialCollectionNode previous, NotifyCollectionChangedEventArgs addArg)
 	{
-		_previous = previous;
+		Previous = previous;
 		//_removed = addArg.OldItems; // Useless and prevent reference on removed items (TODO: Deref items in _previous)
 		_removedCount = addArg.OldItems.Count;
 
@@ -24,9 +23,19 @@ internal sealed class Remove : IDifferentialCollectionNode
 		_toIndex = addArg.OldStartingIndex + _removedCount;
 	}
 
+	public Remove(IDifferentialCollectionNode previous, int index, int count)
+	{
+		Previous = previous;
+		_removedCount = count;
+
+		_totalCount = previous.Count - count;
+		_fromIndex = index;
+		_toIndex = index + count;
+	}
+
 	public Remove(IDifferentialCollectionNode previous, object item, int index)
 	{
-		_previous = previous;
+		Previous = previous;
 		//_removed // Useless and prevent reference on removed items (TODO: Deref items in _previous)
 		_removedCount = 1;
 
@@ -34,6 +43,9 @@ internal sealed class Remove : IDifferentialCollectionNode
 		_fromIndex = index;
 		_toIndex = index + 1;
 	}
+
+	/// <inheritdoc />
+	public IDifferentialCollectionNode Previous { get; }
 
 	/// <summary>
 	/// The index at which the remove occurs
@@ -56,7 +68,7 @@ internal sealed class Remove : IDifferentialCollectionNode
 			index += _removedCount;
 		}
 
-		return _previous.ElementAt(index);
+		return Previous.ElementAt(index);
 	}
 
 	/// <inheritdoc />
@@ -67,14 +79,14 @@ internal sealed class Remove : IDifferentialCollectionNode
 			startingAt += _removedCount;
 		}
 
-		var previousIndex = _previous.IndexOf(value, startingAt, comparer);
+		var previousIndex = Previous.IndexOf(value, startingAt, comparer);
 		if (previousIndex < _fromIndex)
 		{
 			return previousIndex;
 		}
 		else if (previousIndex < _toIndex)
 		{
-			return Math.Max(-1, _previous.IndexOf(value, _toIndex, comparer) - _removedCount);
+			return Math.Max(-1, Previous.IndexOf(value, _toIndex, comparer) - _removedCount);
 		}
 		else
 		{

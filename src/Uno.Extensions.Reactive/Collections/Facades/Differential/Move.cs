@@ -10,14 +10,13 @@ namespace Uno.Extensions.Collections.Facades.Differential;
 /// </summary>
 internal sealed class Move : IDifferentialCollectionNode
 {
-	private readonly IDifferentialCollectionNode _previous;
 	private readonly int _movedCount, _oldFromIndex, _oldToIndex, _newFromIndex, _newToIndex;
 	private readonly IList _moved;
 	private readonly bool _isBackward;
 
 	public Move(IDifferentialCollectionNode previous, NotifyCollectionChangedEventArgs arg)
 	{
-		_previous = previous;
+		Previous = previous;
 		Count = previous.Count;
 
 		_moved = arg.OldItems;
@@ -32,6 +31,9 @@ internal sealed class Move : IDifferentialCollectionNode
 	}
 
 	/// <inheritdoc />
+	public IDifferentialCollectionNode Previous { get; }
+
+	/// <inheritdoc />
 	public int Count { get; }
 
 	/// <inheritdoc />
@@ -44,7 +46,7 @@ internal sealed class Move : IDifferentialCollectionNode
 				index += _movedCount;
 			}
 
-			return _previous.ElementAt(index);
+			return Previous.ElementAt(index);
 		}
 		else if (index < _newToIndex)
 		{
@@ -57,7 +59,7 @@ internal sealed class Move : IDifferentialCollectionNode
 				index -= _movedCount;
 			}
 
-			return _previous.ElementAt(index);
+			return Previous.ElementAt(index);
 		}
 	}
 
@@ -67,12 +69,12 @@ internal sealed class Move : IDifferentialCollectionNode
 		if (startingAt > _newToIndex)
 		{
 			// Fast path: we are staring after the affected range, we can just search in previous
-			return _previous.IndexOf(value, _oldToIndex, comparer);
+			return Previous.IndexOf(value, _oldToIndex, comparer);
 		}
 
 		if (_isBackward)
 		{
-			var previousIndex = _previous.IndexOf(value, startingAt, comparer);
+			var previousIndex = Previous.IndexOf(value, startingAt, comparer);
 			if (previousIndex < _newFromIndex)
 			{
 				// item is before the moved range, index is valid
@@ -115,7 +117,7 @@ internal sealed class Move : IDifferentialCollectionNode
 		}
 		else
 		{
-			var previousIndex = _previous.IndexOf(value, startingAt, comparer);
+			var previousIndex = Previous.IndexOf(value, startingAt, comparer);
 			if (previousIndex < _oldFromIndex)
 			{
 				// item is before the moved range, index is valid
@@ -127,7 +129,7 @@ internal sealed class Move : IDifferentialCollectionNode
 				// item is in the moved range. We must validate that another ocurence of the is not present before the place of the item
 				// ****[**OLD**/item/**]****[**NEW**]****
 
-				var alternativePreviousIndex = _previous.IndexOf(value, _oldToIndex, comparer);
+				var alternativePreviousIndex = Previous.IndexOf(value, _oldToIndex, comparer);
 				if (alternativePreviousIndex >= 0 && alternativePreviousIndex < _newFromIndex)
 				{
 					// the other occurrence is between the old position of moved items nad their noew position, we have to use this other index

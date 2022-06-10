@@ -28,16 +28,28 @@ internal sealed class Add : IDifferentialCollectionNode
 		_toIndex = addArg.NewStartingIndex + _addedCount;
 	}
 
+	public Add(IDifferentialCollectionNode previous, IList items, int index)
+	{
+		_previous = previous;
+		_added = items;
+		_addedCount = items.Count;
+
+		_totalCount = previous.Count + _addedCount;
+		_fromIndex = index;
+		_toIndex = index + _addedCount;
+	}
+
 	public Add(IDifferentialCollectionNode previous, object item, int index)
 	{
 		_previous = previous;
-		_added = new[] {item};
+		_added = new[] { item };
 		_addedCount = 1;
 
 		_totalCount = previous.Count + 1;
 		_fromIndex = index;
 		_toIndex = index + 1;
 	}
+
 
 	/// <summary>
 	/// The index at which the add occurs
@@ -48,6 +60,9 @@ internal sealed class Add : IDifferentialCollectionNode
 	/// The number of added items
 	/// </summary>
 	public int Range => _addedCount;
+
+	/// <inheritdoc />
+	public IDifferentialCollectionNode Previous => _previous;
 
 	/// <inheritdoc />
 	public int Count => _totalCount;
