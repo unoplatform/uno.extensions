@@ -11,13 +11,13 @@ namespace Uno.Extensions.Collections.Facades.Differential;
 
 internal sealed class DifferentialImmutableList<T> : IImmutableList<T>, IDifferentialCollection, IList
 {
-	public static DifferentialImmutableList<T> Empty { get; } = new(new Empty());
+	public static DifferentialImmutableList<T> Empty { get; } = new(new EmptyNode());
 
 	public DifferentialImmutableList(IDifferentialCollectionNode head)
 		=> Head = head;
 
 	public DifferentialImmutableList(IImmutableList<T> items)
-		=> Head = new Reset<T>(items);
+		=> Head = new ResetNode<T>(items);
 
 	/// <inheritdoc />
 	public IDifferentialCollectionNode Head { get; }
@@ -56,26 +56,26 @@ internal sealed class DifferentialImmutableList<T> : IImmutableList<T>, IDiffere
 		=> throw new NotSupportedException();
 
 	/// <inheritdoc cref="IImmutableList{T}" />
-	public DifferentialImmutableList<T> Add(T value) => new (new Add(Head, value!, Count));
+	public DifferentialImmutableList<T> Add(T value) => new (new AddNode(Head, value!, Count));
 	IImmutableList<T> IImmutableList<T>.Add(T value) => Add(value);
 
 	/// <inheritdoc cref="IImmutableList{T}" />
-	public DifferentialImmutableList<T> AddRange(IImmutableList<T> items) => new(new Add(Head, items.AsUntypedList(), Count));
+	public DifferentialImmutableList<T> AddRange(IImmutableList<T> items) => new(new AddNode(Head, items.AsUntypedList(), Count));
 	IImmutableList<T> IImmutableList<T>.AddRange(IEnumerable<T> items) => AddRange(items.ToImmutableList());
 
 	/// <inheritdoc cref="IImmutableList{T}" />
-	public DifferentialImmutableList<T> Insert(int index, T element) => new(new Add(Head, element!, index));
+	public DifferentialImmutableList<T> Insert(int index, T element) => new(new AddNode(Head, element!, index));
 	IImmutableList<T> IImmutableList<T>.Insert(int index, T element) => Insert(index, element);
 
 	/// <inheritdoc cref="IImmutableList{T}" />
-	public DifferentialImmutableList<T> InsertRange(int index, IImmutableList<T> items) => new(new Add(Head, items.AsUntypedList(), index));
+	public DifferentialImmutableList<T> InsertRange(int index, IImmutableList<T> items) => new(new AddNode(Head, items.AsUntypedList(), index));
 	IImmutableList<T> IImmutableList<T>.InsertRange(int index, IEnumerable<T> items) => InsertRange(index, items.ToImmutableList());
 
 	/// <inheritdoc cref="IImmutableList{T}" />
 	public DifferentialImmutableList<T> Remove(T value, IEqualityComparer<T> equalityComparer)
 	{
 		var index = Head.IndexOf(value, 0, equalityComparer?.ToEqualityComparer());
-		return new(new Remove(Head, value, index));
+		return new(new RemoveNode(Head, value, index));
 	}
 	IImmutableList<T> IImmutableList<T>.Remove(T value, IEqualityComparer<T> equalityComparer) => Remove(value, equalityComparer);
 
@@ -88,7 +88,7 @@ internal sealed class DifferentialImmutableList<T> : IImmutableList<T>, IDiffere
 			var item = (T)Head.ElementAt(i)!;
 			if (match(item))
 			{
-				head = new Remove(head, item, i);
+				head = new RemoveNode(head, item, i);
 			}
 		}
 
@@ -101,20 +101,20 @@ internal sealed class DifferentialImmutableList<T> : IImmutableList<T>, IDiffere
 	IImmutableList<T> IImmutableList<T>.RemoveRange(IEnumerable<T> items, IEqualityComparer<T> equalityComparer) => throw new NotSupportedException();
 
 	/// <inheritdoc cref="IImmutableList{T}" />
-	public DifferentialImmutableList<T> RemoveRange(int index, int count) => new(new Remove(Head, index, count));
+	public DifferentialImmutableList<T> RemoveRange(int index, int count) => new(new RemoveNode(Head, index, count));
 	IImmutableList<T> IImmutableList<T>.RemoveRange(int index, int count) => RemoveRange(index, count);
 
 
 	/// <inheritdoc cref="IImmutableList{T}" />
-	public DifferentialImmutableList<T> RemoveAt(int index) => new(new Remove(Head, index, 1));
+	public DifferentialImmutableList<T> RemoveAt(int index) => new(new RemoveNode(Head, index, 1));
 	IImmutableList<T> IImmutableList<T>.RemoveAt(int index) => RemoveAt(index);
 
 	/// <inheritdoc cref="IImmutableList{T}" />
-	public DifferentialImmutableList<T> Clear() => new(new Empty());
+	public DifferentialImmutableList<T> Clear() => new(new EmptyNode());
 	IImmutableList<T> IImmutableList<T>.Clear() => Clear();
 
 	/// <inheritdoc cref="IImmutableList{T}" />
-	public DifferentialImmutableList<T> SetItem(int index, T value) => new(new Replace(Head, value, index));
+	public DifferentialImmutableList<T> SetItem(int index, T value) => new(new ReplaceNode(Head, value, index));
 	IImmutableList<T> IImmutableList<T>.SetItem(int index, T value) => SetItem(index, value);
 
 	/// <inheritdoc cref="IImmutableList{T}" />

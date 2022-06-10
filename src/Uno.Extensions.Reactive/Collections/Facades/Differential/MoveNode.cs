@@ -8,13 +8,13 @@ namespace Uno.Extensions.Collections.Facades.Differential;
 /// <summary>
 /// A node of a linked stack of <see cref="IDifferentialCollectionNode"/> which move some items
 /// </summary>
-internal sealed class Move : IDifferentialCollectionNode
+internal sealed class MoveNode : IDifferentialCollectionNode
 {
 	private readonly int _movedCount, _oldFromIndex, _oldToIndex, _newFromIndex, _newToIndex;
 	private readonly IList _moved;
 	private readonly bool _isBackward;
 
-	public Move(IDifferentialCollectionNode previous, NotifyCollectionChangedEventArgs arg)
+	public MoveNode(IDifferentialCollectionNode previous, NotifyCollectionChangedEventArgs arg)
 	{
 		Previous = previous;
 		Count = previous.Count;

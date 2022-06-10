@@ -8,14 +8,13 @@ namespace Uno.Extensions.Collections.Facades.Differential;
 /// <summary>
 /// A node of a linked stack of <see cref="IDifferentialCollectionNode"/> which remove some items
 /// </summary>
-internal sealed class Remove : IDifferentialCollectionNode
+internal sealed class RemoveNode : IDifferentialCollectionNode
 {
 	private readonly int _totalCount, _removedCount, _fromIndex, _toIndex;
 
-	public Remove(IDifferentialCollectionNode previous, NotifyCollectionChangedEventArgs addArg)
+	public RemoveNode(IDifferentialCollectionNode previous, NotifyCollectionChangedEventArgs addArg)
 	{
 		Previous = previous;
-		//_removed = addArg.OldItems; // Useless and prevent reference on removed items (TODO: Deref items in _previous)
 		_removedCount = addArg.OldItems.Count;
 
 		_totalCount = previous.Count - _removedCount;
@@ -23,7 +22,7 @@ internal sealed class Remove : IDifferentialCollectionNode
 		_toIndex = addArg.OldStartingIndex + _removedCount;
 	}
 
-	public Remove(IDifferentialCollectionNode previous, int index, int count)
+	public RemoveNode(IDifferentialCollectionNode previous, int index, int count)
 	{
 		Previous = previous;
 		_removedCount = count;
@@ -33,7 +32,7 @@ internal sealed class Remove : IDifferentialCollectionNode
 		_toIndex = index + count;
 	}
 
-	public Remove(IDifferentialCollectionNode previous, object item, int index)
+	public RemoveNode(IDifferentialCollectionNode previous, object item, int index)
 	{
 		Previous = previous;
 		//_removed // Useless and prevent reference on removed items (TODO: Deref items in _previous)

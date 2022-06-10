@@ -7,7 +7,7 @@ namespace Uno.Extensions.Collections.Facades.Differential;
 /// <summary>
 /// A node of a linked stack of <see cref="IDifferentialCollectionNode"/> which is clears the collection
 /// </summary>
-internal sealed class Empty : IDifferentialCollectionNode
+internal sealed class EmptyNode : IDifferentialCollectionNode
 {
 	/// <inheritdoc />
 	public IDifferentialCollectionNode? Previous => null;

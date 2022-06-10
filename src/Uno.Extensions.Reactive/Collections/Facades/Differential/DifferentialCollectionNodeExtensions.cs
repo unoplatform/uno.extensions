@@ -69,11 +69,11 @@ internal static class DifferentialCollectionNodeExtensions
 	public static IDifferentialCollectionNode Add(this IDifferentialCollectionNode node, RichNotifyCollectionChangedEventArgs args)
 		=> args.Action switch
 		{
-			NotifyCollectionChangedAction.Add => new Add(node, args),
-			NotifyCollectionChangedAction.Move => new Move(node, args),
-			NotifyCollectionChangedAction.Remove => new Remove(node, args),
-			NotifyCollectionChangedAction.Replace => new Replace(node, args),
-			NotifyCollectionChangedAction.Reset => new Reset(args.ResetNewItems!),
+			NotifyCollectionChangedAction.Add => new AddNode(node, args),
+			NotifyCollectionChangedAction.Move => new MoveNode(node, args),
+			NotifyCollectionChangedAction.Remove => new RemoveNode(node, args),
+			NotifyCollectionChangedAction.Replace => new ReplaceNode(node, args),
+			NotifyCollectionChangedAction.Reset => new ResetNode(args.ResetNewItems!),
 			_ => throw new ArgumentOutOfRangeException(nameof(args), $"Unknown action '{args.Action}'.")
 		};
 }

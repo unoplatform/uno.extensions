@@ -7,9 +7,9 @@ namespace Uno.Extensions.Collections.Facades.Differential;
 /// <summary>
 /// A node of a linked stack of <see cref="IDifferentialCollectionNode"/> which does nothing
 /// </summary>
-internal sealed class Null : IDifferentialCollectionNode
+internal sealed class NullNode : IDifferentialCollectionNode
 {
-	public Null(IDifferentialCollectionNode previous)
+	public NullNode(IDifferentialCollectionNode previous)
 		=> Previous = previous;
 
 	/// <inheritdoc />

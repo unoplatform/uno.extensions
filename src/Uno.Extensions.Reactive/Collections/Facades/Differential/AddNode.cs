@@ -11,13 +11,13 @@ namespace Uno.Extensions.Collections.Facades.Differential;
 /// <summary>
 /// A node of a linked stack of <see cref="IDifferentialCollectionNode"/> which add some items
 /// </summary>
-internal sealed class Add : IDifferentialCollectionNode
+internal sealed class AddNode : IDifferentialCollectionNode
 {
 	private readonly int _totalCount, _addedCount, _fromIndex, _toIndex;
 	private readonly IList _added;
 	private readonly IDifferentialCollectionNode _previous;
 
-	public Add(IDifferentialCollectionNode previous, NotifyCollectionChangedEventArgs addArg)
+	public AddNode(IDifferentialCollectionNode previous, NotifyCollectionChangedEventArgs addArg)
 	{
 		_previous = previous;
 		_added = addArg.NewItems;
@@ -28,7 +28,7 @@ internal sealed class Add : IDifferentialCollectionNode
 		_toIndex = addArg.NewStartingIndex + _addedCount;
 	}
 
-	public Add(IDifferentialCollectionNode previous, IList items, int index)
+	public AddNode(IDifferentialCollectionNode previous, IList items, int index)
 	{
 		_previous = previous;
 		_added = items;
@@ -39,7 +39,7 @@ internal sealed class Add : IDifferentialCollectionNode
 		_toIndex = index + _addedCount;
 	}
 
-	public Add(IDifferentialCollectionNode previous, object item, int index)
+	public AddNode(IDifferentialCollectionNode previous, object item, int index)
 	{
 		_previous = previous;
 		_added = new[] { item };

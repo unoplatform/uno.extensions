@@ -11,12 +11,12 @@ namespace Uno.Extensions.Collections.Facades.Differential;
 /// <summary>
 /// A node of a linked stack of <see cref="IDifferentialCollectionNode"/> which replace some items
 /// </summary>
-internal sealed class Replace : IDifferentialCollectionNode
+internal sealed class ReplaceNode : IDifferentialCollectionNode
 {
 	private readonly int _totalCount, _changeCount, _addedCount, _removedCount, _fromIndex, _addToIndex, _removeToIndex;
 	private readonly IList _added;
 
-	public Replace(IDifferentialCollectionNode previous, NotifyCollectionChangedEventArgs arg)
+	public ReplaceNode(IDifferentialCollectionNode previous, NotifyCollectionChangedEventArgs arg)
 	{
 		Previous = previous;
 
@@ -33,12 +33,12 @@ internal sealed class Replace : IDifferentialCollectionNode
 		_removeToIndex = arg.OldStartingIndex + _removedCount;
 	}
 
-	public Replace(IDifferentialCollectionNode previous, object? newItem, int index)
+	public ReplaceNode(IDifferentialCollectionNode previous, object? newItem, int index)
 		: this(previous, null, newItem, index)
 	{
 	}
 
-	public Replace(IDifferentialCollectionNode previous, object? oldItem, object? newItem, int index)
+	public ReplaceNode(IDifferentialCollectionNode previous, object? oldItem, object? newItem, int index)
 	{
 		Previous = previous;
 
