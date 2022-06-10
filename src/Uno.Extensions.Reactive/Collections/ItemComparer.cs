@@ -6,7 +6,7 @@ using System.Linq;
 namespace Uno.Extensions.Reactive.Collections;
 
 /// <summary>
-/// A set of comparer to track items in a list.
+/// A set of comparers to track items in a list.
 /// </summary>
 /// <param name="Entity">Comparer used to detect multiple versions of the **same entity (T)**, or null to use default.</param>
 /// <param name="Version">Comparer used to detect multiple instance of the **same version** of the **same entity (T)**, or null to rely only on the <paramref name="Entity"/> (not recommended).</param>
