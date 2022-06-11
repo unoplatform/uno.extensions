@@ -43,10 +43,10 @@ internal static class ListExtensions
 			switch (list)
 			{
 				case IImmutableList<object?> immutable:
-				{
-					var typedComparer = comparer.ToEqualityComparer<object?>();
-					return (value, index, count) => immutable.IndexOf(value, index, count, typedComparer);
-				}
+					{
+						var typedComparer = comparer.ToEqualityComparer<object?>();
+						return (value, index, count) => immutable.IndexOf(value, index, count, typedComparer);
+					}
 				default:
 					return (value, index, count) =>
 					{
@@ -98,21 +98,21 @@ internal static class ListExtensions
 				case IImmutableList<T> immutable:
 					return (value, index, count) => value is T t ? immutable.IndexOf(t, index, count, comparer) : -1;
 				default:
-				{
-					var untypedComparer = comparer.ToEqualityComparer();
-					return (value, index, count) =>
 					{
-						for (var i = index; i < index + count; i++)
+						var untypedComparer = comparer.ToEqualityComparer();
+						return (value, index, count) =>
 						{
-							if (untypedComparer.Equals(list[i], value))
+							for (var i = index; i < index + count; i++)
 							{
-								return i;
+								if (untypedComparer.Equals(list[i], value))
+								{
+									return i;
+								}
 							}
-						}
 
-						return -1;
-					};
-				}
+							return -1;
+						};
+					}
 			}
 		}
 	}
@@ -141,17 +141,17 @@ internal static class ListExtensions
 				case Array array:
 					return Array.IndexOf(array, value, index, count);
 				default:
-				{
-					for (var i = index; i < index + count; i++)
 					{
-						if (object.Equals(list[i], value))
+						for (var i = index; i < index + count; i++)
 						{
-							return i;
+							if (object.Equals(list[i], value))
+							{
+								return i;
+							}
 						}
-					}
 
-					return -1;
-				}
+						return -1;
+					}
 			}
 		}
 		else
@@ -161,16 +161,16 @@ internal static class ListExtensions
 				case IImmutableList<object?> immutable:
 					return immutable.IndexOf(value, index, count, comparer.ToEqualityComparer<object?>());
 				default:
-				{
-					for (var i = index; i < index + count; i++)
 					{
-						if (comparer.Equals(list[i], value))
+						for (var i = index; i < index + count; i++)
 						{
-							return i;
+							if (comparer.Equals(list[i], value))
+							{
+								return i;
+							}
 						}
+						return -1;
 					}
-					return -1;
-				}
 			}
 		}
 	}
