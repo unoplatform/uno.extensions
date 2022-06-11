@@ -7,20 +7,22 @@ namespace Uno.Extensions.Collections.Facades.Differential;
 /// <summary>
 /// A node of a linked stack of <see cref="IDifferentialCollectionNode"/> which does nothing
 /// </summary>
-internal sealed class Null : IDifferentialCollectionNode
+internal sealed class NullNode : IDifferentialCollectionNode
 {
-	private readonly IDifferentialCollectionNode _previous;
-
-	public Null(IDifferentialCollectionNode previous) => _previous = previous;
+	public NullNode(IDifferentialCollectionNode previous)
+		=> Previous = previous;
 
 	/// <inheritdoc />
-	public int Count => _previous.Count;
+	public IDifferentialCollectionNode Previous { get; }
+
+	/// <inheritdoc />
+	public int Count => Previous.Count;
 
 	/// <inheritdoc />
 	public object? ElementAt(int index)
-		=> _previous.ElementAt(index);
+		=> Previous.ElementAt(index);
 
 	/// <inheritdoc />
 	public int IndexOf(object? element, int startingAt, IEqualityComparer? comparer)
-		=> _previous.IndexOf(element, startingAt, comparer);
+		=> Previous.IndexOf(element, startingAt, comparer);
 }

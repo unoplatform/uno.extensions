@@ -5,6 +5,7 @@ using System.Collections.Immutable;
 using System.Text;
 using Uno.Extensions.Collections.Facades.Slice;
 using Uno.Extensions.Collections.Tracking;
+using Uno.Extensions.Reactive.Collections.Facades.Adapters;
 
 namespace Uno.Extensions.Reactive.Utils;
 
@@ -234,4 +235,7 @@ internal static class ListExtensions
 
 	public static IList Slice(this IList list, int index, int count)
 		=> new SliceList(list, index, count);
+
+	public static IList AsUntypedList<T>(this IImmutableList<T> immutable)
+		=> immutable as IList ?? new ImmutableListToUntypedList<T>(immutable);
 }

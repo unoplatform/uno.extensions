@@ -11,15 +11,14 @@ namespace Uno.Extensions.Collections.Facades.Differential;
 /// <summary>
 /// A node of a linked stack of <see cref="IDifferentialCollectionNode"/> which replace some items
 /// </summary>
-internal sealed class Replace : IDifferentialCollectionNode
+internal sealed class ReplaceNode : IDifferentialCollectionNode
 {
 	private readonly int _totalCount, _changeCount, _addedCount, _removedCount, _fromIndex, _addToIndex, _removeToIndex;
 	private readonly IList _added;
-	private readonly IDifferentialCollectionNode _previous;
 
-	public Replace(IDifferentialCollectionNode previous, NotifyCollectionChangedEventArgs arg)
+	public ReplaceNode(IDifferentialCollectionNode previous, NotifyCollectionChangedEventArgs arg)
 	{
-		_previous = previous;
+		Previous = previous;
 
 		_added = arg.NewItems;
 		_addedCount = arg.NewItems.Count;
@@ -34,9 +33,14 @@ internal sealed class Replace : IDifferentialCollectionNode
 		_removeToIndex = arg.OldStartingIndex + _removedCount;
 	}
 
-	public Replace(IDifferentialCollectionNode previous, object oldItem, object newItem, int index)
+	public ReplaceNode(IDifferentialCollectionNode previous, object? newItem, int index)
+		: this(previous, null, newItem, index)
 	{
-		_previous = previous;
+	}
+
+	public ReplaceNode(IDifferentialCollectionNode previous, object? oldItem, object? newItem, int index)
+	{
+		Previous = previous;
 
 		_added = new[] {newItem};
 		_addedCount = 1;
@@ -51,11 +55,14 @@ internal sealed class Replace : IDifferentialCollectionNode
 		_removeToIndex = index + 1;
 	}
 
+	/// <inheritdoc />
+	public IDifferentialCollectionNode Previous { get; }
+
 	/// <summary>
 	/// The index at which the replace occurs
 	/// </summary>
 	public int At => _fromIndex;
-		
+
 	/// <inheritdoc />
 	public int Count => _totalCount;
 
@@ -64,7 +71,7 @@ internal sealed class Replace : IDifferentialCollectionNode
 	{
 		if (index < _fromIndex)
 		{
-			return _previous.ElementAt(index);
+			return Previous.ElementAt(index);
 		}
 		else if (index < _addToIndex)
 		{
@@ -72,7 +79,7 @@ internal sealed class Replace : IDifferentialCollectionNode
 		}
 		else
 		{
-			return _previous.ElementAt(index - _changeCount);
+			return Previous.ElementAt(index - _changeCount);
 		}
 	}
 
@@ -84,7 +91,7 @@ internal sealed class Replace : IDifferentialCollectionNode
 			// If search begins before the 'added' items, we search the 'previous' version, and then search in 'added' items only 
 			// if the result index from the 'previous' is after the 'added' items.
 
-			var previousIndex = _previous.IndexOf(value, startingAt, comparer);
+			var previousIndex = Previous.IndexOf(value, startingAt, comparer);
 			var previousFound = previousIndex >= 0;
 			if (previousFound && previousIndex < _fromIndex)
 			{
@@ -99,7 +106,7 @@ internal sealed class Replace : IDifferentialCollectionNode
 
 			if (previousFound && previousIndex < _removeToIndex)
 			{
-				return _previous.IndexOf(value, _removeToIndex, comparer) + _changeCount;
+				return Previous.IndexOf(value, _removeToIndex, comparer) + _changeCount;
 			}
 
 			return previousFound
@@ -121,12 +128,12 @@ internal sealed class Replace : IDifferentialCollectionNode
 				}
 			}
 
-			var previousIndex = _previous.IndexOf(value, _fromIndex, comparer);
+			var previousIndex = Previous.IndexOf(value, _fromIndex, comparer);
 			var previousFound = previousIndex >= 0;
 
 			if (previousFound && previousIndex < _removeToIndex)
 			{
-				return _previous.IndexOf(value, _removeToIndex, comparer) + _changeCount;
+				return Previous.IndexOf(value, _removeToIndex, comparer) + _changeCount;
 			}
 
 			return previousFound
@@ -135,12 +142,12 @@ internal sealed class Replace : IDifferentialCollectionNode
 		}
 		else // startAt >= _toIndex
 		{
-			var previousIndex = _previous.IndexOf(value, startingAt - _changeCount, comparer);
+			var previousIndex = Previous.IndexOf(value, startingAt - _changeCount, comparer);
 			var previousFound = previousIndex >= 0;
 
 			if (previousFound && previousIndex < _removeToIndex)
 			{
-				return _previous.IndexOf(value, _removeToIndex, comparer) + _changeCount;
+				return Previous.IndexOf(value, _removeToIndex, comparer) + _changeCount;
 			}
 
 			return previousFound

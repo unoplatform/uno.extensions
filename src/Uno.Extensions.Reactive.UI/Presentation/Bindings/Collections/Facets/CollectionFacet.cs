@@ -20,7 +20,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 	internal partial class CollectionFacet : IList, IObservableVector<object?>, INotifyCollectionChanged
 	{
 		private static readonly object[] EmptyItems = Array.Empty<object>();
-		private static readonly IDifferentialCollectionNode Empty = new Reset(EmptyItems);
+		private static readonly IDifferentialCollectionNode Empty = new ResetNode(EmptyItems);
 
 		private readonly CollectionChangedFacet _collectionChanged;
 		private readonly ObservableCollectionKind _convertResetToClearAndAdd;
@@ -88,7 +88,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 			_convertResetToClearAndAdd = convertResetToClearAndAdd;
 			_onReseted = onReseted;
 
-			_head = new Reset(originalItems);
+			_head = new ResetNode(originalItems);
 			_changesHandler = new CollectionChangeQueueHandler(this);
 		}
 
@@ -414,7 +414,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 			var fromIndex = arg.OldStartingIndex;
 			var toIndex = arg.NewStartingIndex;
 
-			var partialUpdate = new Remove(_head, RichNotifyCollectionChangedEventArgs.Remove(null, fromIndex));
+			var partialUpdate = new RemoveNode(_head, RichNotifyCollectionChangedEventArgs.Remove(null, fromIndex));
 
 			UpdateHead(arg);
 
@@ -512,7 +512,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 					for (var i = 0; i < arg.ResetNewItems.Count; i++)
 					{
 						var add = RichNotifyCollectionChangedEventArgs.Add(arg.ResetNewItems[i], i);
-						_head = new Add(_head, add);
+						_head = new AddNode(_head, add);
 						if (multiCollectionChanged)
 						{
 							_collectionChanged.CollectionChanged?.Invoke(add);
@@ -534,23 +534,23 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 			switch (change.Action)
 			{
 				case NotifyCollectionChangedAction.Add:
-					_head = new Add(head, change);
+					_head = new AddNode(head, change);
 					break;
 
 				case NotifyCollectionChangedAction.Move:
-					_head = new Move(head, change);
+					_head = new MoveNode(head, change);
 					break;
 
 				case NotifyCollectionChangedAction.Remove:
-					_head = new Remove(head, change);
+					_head = new RemoveNode(head, change);
 					break;
 
 				case NotifyCollectionChangedAction.Replace:
-					_head = new Replace(head, change);
+					_head = new ReplaceNode(head, change);
 					break;
 
 				case NotifyCollectionChangedAction.Reset when change is RichNotifyCollectionChangedEventArgs rich:
-					_head = new Reset(rich.ResetNewItems!);
+					_head = new ResetNode(rich.ResetNewItems!);
 					break;
 
 				case NotifyCollectionChangedAction.Reset:
@@ -570,7 +570,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 			var before = this.ToArray();
 #endif
 			// When all event has been raised, we can override the _head (without any events)
-			_head = new Reset(updated);
+			_head = new ResetNode(updated);
 #if DEBUG
 			var after = this.ToArray();
 			Debug.Assert(before.SequenceEqual(after), "There is an inconsistency between the current updated by events, and the result collection.");

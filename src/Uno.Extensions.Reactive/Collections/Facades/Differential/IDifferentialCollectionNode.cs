@@ -10,6 +10,11 @@ namespace Uno.Extensions.Collections.Facades.Differential;
 internal interface IDifferentialCollectionNode
 {
 	/// <summary>
+	/// Gets the previous node onto which this node has been happened, if any.
+	/// </summary>
+	IDifferentialCollectionNode? Previous { get; }
+
+	/// <summary>
 	/// Gets the number of items currently in the collection 
 	/// </summary>
 	int Count { get; }
