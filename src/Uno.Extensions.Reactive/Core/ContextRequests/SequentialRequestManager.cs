@@ -51,6 +51,12 @@ internal class SequentialRequestManager<TRequest, TToken> : IAsyncEnumerable<Tok
 	}
 
 	/// <summary>
+	/// Gets the last request received.
+	/// </summary>
+	/// <remarks>Be aware that this request might not be in sync with the token when enumerating.</remarks>
+	public TRequest? LastRequest { get; private set; }
+
+	/// <summary>
 	/// The current token that is being used to reply to received request.
 	/// </summary>
 	public TToken Current => _current;
@@ -72,6 +78,8 @@ internal class SequentialRequestManager<TRequest, TToken> : IAsyncEnumerable<Tok
 			var next = current.Next();
 			if (Interlocked.CompareExchange(ref _current, next, current) == current)
 			{
+				LastRequest = request;
+
 				_tokens.TrySetNext(next);
 				request.Register(next);
 

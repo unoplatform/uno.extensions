@@ -53,6 +53,12 @@ internal class CoercingRequestManager<TRequest, TToken> : IAsyncEnumerable<Token
 	}
 
 	/// <summary>
+	/// Gets the last request received.
+	/// </summary>
+	/// <remarks>Be aware that this request might not be in sync with the token when enumerating.</remarks>
+	public TRequest? LastRequest { get; private set; }
+
+	/// <summary>
 	/// The current token that is being used to reply to received request.
 	/// </summary>
 	public TToken Current => _current;
@@ -76,6 +82,8 @@ internal class CoercingRequestManager<TRequest, TToken> : IAsyncEnumerable<Token
 		{
 			return;
 		}
+
+		LastRequest = request;
 
 		// If the currentPage has not been requested yet, then request it!
 		if (Interlocked.Exchange(ref _lastRequested, _current) != _current)
