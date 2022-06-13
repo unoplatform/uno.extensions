@@ -8,7 +8,7 @@ namespace Uno.Extensions.Reactive;
 /// <summary>
 /// Defines a metadata axis of a <see cref="MessageEntry{T}"/>
 /// </summary>
-public sealed class MessageAxis<T> : MessageAxis
+public class MessageAxis<T> : MessageAxis
 {
 	internal delegate T Aggregator(IReadOnlyCollection<T> values);
 
@@ -26,7 +26,7 @@ public sealed class MessageAxis<T> : MessageAxis
 	/// <param name="value">The raw axis value.</param>
 	/// <returns>The metadata.</returns>
 	[Pure]
-	public T? FromMessageValue(MessageAxisValue value)
+	public virtual T? FromMessageValue(MessageAxisValue value)
 		=> value is { IsSet: true } and { Value: T raw } ? raw : default;
 
 	/// <summary>
@@ -35,7 +35,7 @@ public sealed class MessageAxis<T> : MessageAxis
 	/// <param name="value">The metadata to encapsulate..</param>
 	/// <returns>The raw axis value.</returns>
 	[Pure]
-	public MessageAxisValue ToMessageValue(T? value)
+	public virtual MessageAxisValue ToMessageValue(T? value)
 		=> value is null ? default : new(value);
 
 	/// <inheritdoc />
