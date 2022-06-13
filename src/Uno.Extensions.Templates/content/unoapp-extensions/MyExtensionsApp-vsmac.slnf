@@ -2,20 +2,13 @@
   "solution": {
     "path": "MyExtensionsApp.sln",
     "projects": [
-		"MyExtensionsApp.UI\\MyExtensionsApp.UI.shproj",
-
-		"MyExtensionsApp.Droid\\MyExtensionsApp.Droid.csproj",
-
-		"MyExtensionsApp.iOS\\MyExtensionsApp.iOS.csproj",
-
-
-		"MyExtensionsApp.Wasm\\MyExtensionsApp.Wasm.csproj",
-
-		"MyExtensionsApp.macOS\\MyExtensionsApp.macOS.csproj",
-
-		"MyExtensionsApp.Skia.Gtk\\MyExtensionsApp.Skia.Gtk.csproj",
-
-		"MyExtensionsApp.Skia.Linux.FrameBuffer\\MyExtensionsApp.Skia.Linux.FrameBuffer.csproj",
+      "MyExtensionsApp.Droid\\MyExtensionsApp.Droid.csproj",
+      "MyExtensionsApp.Skia.Gtk\\MyExtensionsApp.Skia.Gtk.csproj",
+      "MyExtensionsApp.UI\\MyExtensionsApp.UI.shproj",
+      "MyExtensionsApp.Wasm\\MyExtensionsApp.Wasm.csproj",
+      "MyExtensionsApp.iOS\\MyExtensionsApp.iOS.csproj",
+      "MyExtensionsApp.macOS\\MyExtensionsApp.macOS.csproj",
+      "MyExtensionsApp\\MyExtensionsApp.csproj"
     ]
   }
 }

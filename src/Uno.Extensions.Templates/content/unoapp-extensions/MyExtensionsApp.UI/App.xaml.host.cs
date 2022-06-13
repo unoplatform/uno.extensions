@@ -1,5 +1,7 @@
 //-:cnd:noEmit
 
+using MyExtensionsApp.Business.Models;
+
 namespace MyExtensionsApp;
 
 public sealed partial class App : Application

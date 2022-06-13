@@ -1,6 +1,4 @@
-﻿using NUnit.Framework;
-using Uno.UITest;
-using Uno.UITests.Helpers;
+﻿//-:cnd:noEmit
 
 namespace MyExtensionsApp.UITests;
 

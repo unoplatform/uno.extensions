@@ -1,6 +1,6 @@
 //-:cnd:noEmit
 
-namespace MyExtensionsApp.Configuration;
+namespace MyExtensionsApp.Business.Models;
 
 public record AppConfig
 {

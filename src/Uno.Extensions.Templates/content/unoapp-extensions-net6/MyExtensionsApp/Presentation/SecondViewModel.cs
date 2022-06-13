@@ -1,6 +1,7 @@
 //-:cnd:noEmit
 
-namespace MyExtensionsApp.ViewModels;
+namespace MyExtensionsApp.Presentation;
+
 public class SecondViewModel
 {
 	
