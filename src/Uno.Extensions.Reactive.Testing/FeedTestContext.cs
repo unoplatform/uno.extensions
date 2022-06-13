@@ -19,6 +19,8 @@ public class FeedTestContext : ISourceContextAware, IDisposable
 
 		_sourceCtx = SourceContext.GetOrCreate(this);
 		_subscription = _sourceCtx.AsCurrent();
+
+		testContext.CancellationTokenSource.Token.Register(Dispose);
 	}
 
 	public SourceContext SourceContext => _sourceCtx;

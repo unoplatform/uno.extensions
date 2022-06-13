@@ -60,7 +60,7 @@ internal class AsyncEnumerableSubject<T> : IAsyncEnumerable<T>
 	{
 		TaskCompletionSource<Node>? current;
 		var next = mightHaveNext
-			? new TaskCompletionSource<Node>() 
+			? new TaskCompletionSource<Node>(TaskCreationOptions.AttachedToParent) 
 			: default;
 		do
 		{
