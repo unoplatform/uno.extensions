@@ -18,6 +18,7 @@ internal record BindableGenerationContext(
 	GeneratorExecutionContext Context,
 
 	INamedTypeSymbol Feed,
+	INamedTypeSymbol State,
 	INamedTypeSymbol Input,
 	INamedTypeSymbol ListFeed,
 	INamedTypeSymbol CommandBuilder,
@@ -39,13 +40,14 @@ internal record BindableGenerationContext(
 	{
 		var compilation = context.Compilation;
 
-		INamedTypeSymbol? feed = default, input = default, listFeed = default, commandBuilder = default, commandBuilderOfT = default;
+		INamedTypeSymbol? feed = default, state = default, input = default, listFeed = default, commandBuilder = default, commandBuilderOfT = default;
 		INamedTypeSymbol? bindableAttribute = default, inputAttribute = default, valueAttribute = default, defaultRecordCtorAttribute = default;
 		INamedTypeSymbol? cancellationToken = default, immutableArray = default, immutableList = default, immutableQueue = default, immutableSet = default, immutableStack = default;
 
 		IEnumerable<string?> Resolve()
 		{
 			yield return ByName("Uno.Extensions.Reactive.IFeed`1", out feed);
+			yield return ByName("Uno.Extensions.Reactive.IState`1", out state);
 			yield return ByName("Uno.Extensions.Reactive.IInput`1", out input);
 			yield return ByName("Uno.Extensions.Reactive.IListFeed`1", out listFeed);
 			yield return ByName("Uno.Extensions.Reactive.ICommandBuilder", out commandBuilder);
@@ -82,7 +84,8 @@ internal record BindableGenerationContext(
 		error = null;
 		return new BindableGenerationContext
 		(
-			context, feed!, input!, listFeed!, commandBuilder!, commandBuilderOfT!,
+			context,
+			feed!, state!, input!, listFeed!, commandBuilder!, commandBuilderOfT!,
 			bindableAttribute!, inputAttribute!, valueAttribute!, defaultRecordCtorAttribute!,
 			cancellationToken!, immutableArray!, immutableList!, immutableQueue!, immutableSet!, immutableStack!
 		);
@@ -156,6 +159,55 @@ internal record BindableGenerationContext(
 		{
 			valueType = feedTypeParam.Single();
 			kind = definedKind ?? InputKind.External; // If not defined, Feed<T> as considered as external, unlike inputs which are by default Edit
+			return true;
+		}
+		else
+		{
+			valueType = null;
+			kind = default;
+			return false;
+		}
+	}
+
+	public bool IsState(ITypeSymbol type)
+		=> type.GetAllInterfaces().Select(intf => intf.OriginalDefinition).Contains(State, SymbolEqualityComparer.Default);
+
+	public bool IsState(ITypeSymbol type, [NotNullWhen(true)] out ITypeSymbol? valueType)
+	{
+		if (type.GetGenericParametersOfInterface(State).FirstOrDefault() is { IsDefaultOrEmpty: false, Length: 1 } stateTypeParam)
+		{
+			valueType = stateTypeParam.Single();
+			return true;
+		}
+		else
+		{
+			valueType = null;
+			return false;
+		}
+	}
+
+	public bool IsState(IParameterSymbol parameter, [NotNullWhen(true)] out ITypeSymbol? valueType, [NotNullWhen(true)] out InputKind? kind)
+	{
+		var definedKind = default(InputKind?);
+		if (parameter.FindAttribute(InputAttribute)?.ConstructorArguments[0].Value is InputKind inputKind)
+		{
+			definedKind = inputKind;
+		}
+		else if (parameter.FindAttribute(ValueAttribute) is not null)
+		{
+			definedKind = InputKind.Value;
+		}
+
+		if (parameter.Type.GetGenericParametersOfInterface(Input).FirstOrDefault() is { IsDefaultOrEmpty: false, Length: 1 } inputTypeParam)
+		{
+			valueType = inputTypeParam.Single();
+			kind = definedKind ?? InputKind.Edit;
+			return true;
+		}
+		else if (parameter.Type.GetGenericParametersOfInterface(State).FirstOrDefault() is { IsDefaultOrEmpty: false, Length: 1 } feedTypeParam)
+		{
+			valueType = feedTypeParam.Single();
+			kind = definedKind ?? InputKind.External; // If not defined, State<T> as considered as external, unlike inputs which are by default Edit
 			return true;
 		}
 		else

@@ -36,4 +36,14 @@
 		<Compile Include="..\Uno.Extensions.Core\_Compat\**\*.cs" Link="_Compat\%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Compile Remove="Presentation\Bindings\Collections\**" />
+	  <EmbeddedResource Remove="Presentation\Bindings\Collections\**" />
+	  <None Remove="Presentation\Bindings\Collections\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Presentation\Bindings\" />
+	</ItemGroup>
+
 </Project>

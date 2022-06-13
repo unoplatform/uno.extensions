@@ -217,6 +217,10 @@ internal class BindableViewModelGenerator
 					yield return new BindableListFromFeedOfListField(field, collectionType, valueType);
 					break;
 
+				case IFieldSymbol field when _ctx.IsFeed(field.Type, out var valueType) && _ctx.IsGenerationEnabled(field) is false:
+					yield return new MappedFeedField(field, valueType);
+					break;
+
 				case IFieldSymbol field when _ctx.IsFeed(field.Type, out var valueType):
 				{
 					yield return _bindables.GetBindableType(valueType) is { } bindableType && !field.HasAttributes(_ctx.ValueAttribute)
@@ -235,6 +239,10 @@ internal class BindableViewModelGenerator
 
 				case IPropertySymbol property when _ctx.IsFeedOfList(property.Type, out var collectionType, out var valueType):
 					yield return new BindableListFromFeedOfListProperty(property, collectionType, valueType);
+					break;
+
+				case IPropertySymbol property when _ctx.IsFeed(property.Type, out var valueType) && _ctx.IsGenerationEnabled(property) is false:
+					yield return new MappedFeedProperty(property, valueType);
 					break;
 
 				case IPropertySymbol property when _ctx.IsFeed(property.Type, out var valueType):

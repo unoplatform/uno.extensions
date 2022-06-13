@@ -59,18 +59,21 @@ internal partial class MessageManager<TParent, TResult>
 			/// This gives access to raw <see cref="MessageAxisValue"/> for extensibility but it should not be used directly.
 			/// Prefer to use dedicated extensions methods to access to values.
 			/// </remarks>
-			public void SetTransient(MessageAxis axis, MessageAxisValue value)
-				=> _transientUpdates[axis] = new MessageAxisUpdate(axis, value);
+			public MessageBuilder SetTransient(MessageAxis axis, MessageAxisValue value)
+			{
+				_transientUpdates[axis] = new MessageAxisUpdate(axis, value);
+				return this;
+			}
 
 			/// <inheritdoc />
 			(MessageAxisValue value, IChangeSet? changes) IMessageBuilder.Get(MessageAxis axis)
-				=> (Get(axis), default);
+				=> Get(axis);
 
 			/// <inheritdoc />
 			public void Set(MessageAxis axis, MessageAxisValue value, IChangeSet? changes = null)
 				=> Inner.Set(axis, value, changes);
 
-			private MessageAxisValue Get(MessageAxis axis)
+			private (MessageAxisValue value, IChangeSet? changes) Get(MessageAxis axis)
 			{
 				var parentValue = Inner.Parent?.Current[axis] ?? MessageAxisValue.Unset;
 				var localValue = Inner.Local.Current[axis];
@@ -81,7 +84,7 @@ internal partial class MessageManager<TParent, TResult>
 				}
 				else
 				{
-					return parentValue;
+					return (parentValue, null);
 				}
 			}
 

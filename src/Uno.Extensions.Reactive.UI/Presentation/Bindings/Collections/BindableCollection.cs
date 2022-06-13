@@ -6,11 +6,13 @@ using System.Threading;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Uno.Extensions.Collections;
+using Uno.Extensions.Collections.Tracking;
 using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection;
 using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data;
 using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets;
 using Uno.Extensions.Reactive.Dispatching;
 using Uno.Extensions.Reactive.Utils;
+using TrackingMode = Uno.Extensions.Collections.TrackingMode;
 
 #if WINUI
 using ISchedulersProvider = System.Func<Microsoft.UI.Dispatching.DispatcherQueue?>;
@@ -50,12 +52,17 @@ namespace Uno.Extensions.Reactive.Bindings.Collections
 		/// </remarks>
 		/// </param>
 		/// <param name="schedulersProvider">Schedulers provider to use to handle concurrency.</param>
+		/// <param name="services">A set of services that the collection can use (cf. Remarks)</param>
 		/// <param name="resetThreshold">Threshold on which the a single reset is raised instead of multiple collection changes.</param>
+		/// <remarks>
+		/// Currently the BindableCollection can resolve <see cref="IPaginationService"/> on the <paramref name="services"/> provider. 
+		/// </remarks>
 		internal static BindableCollection Create<T>(
 			IObservableCollection<T>? initial = null,
 			IEqualityComparer<T>? itemComparer = null,
 			IEqualityComparer<T>? itemVersionComparer = null,
 			ISchedulersProvider? schedulersProvider = null,
+			IServiceProvider? services = null,
 			int resetThreshold = DataStructure.DefaultResetThreshold)
 		{
 			var dataStructure = new DataStructure
@@ -66,7 +73,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections
 				ResetThreshold = resetThreshold
 			};
 
-			return new BindableCollection(dataStructure, initial, schedulersProvider);
+			return new BindableCollection(dataStructure, initial, schedulersProvider, services);
 		}
 
 		/// <summary>
@@ -159,19 +166,21 @@ namespace Uno.Extensions.Reactive.Bindings.Collections
 		internal BindableCollection(
 			IBindableCollectionDataStructure dataStructure,
 			IObservableCollection? initial = null,
-			ISchedulersProvider? schedulersProvider = null)
+			ISchedulersProvider? schedulersProvider = null,
+			IServiceProvider? services = null)
 		{
 			_dataStructure = dataStructure;
 			_current = initial;
-			_holder = new DispatcherLocal<DataLayer>(context => DataLayer.Create(_dataStructure.GetRoot(), _current ?? EmptyObservableCollection<object>.Instance, context), schedulersProvider);
+			_holder = new DispatcherLocal<DataLayer>(context => DataLayer.Create(_dataStructure.GetRoot(), _current ?? EmptyObservableCollection<object>.Instance, services, context), schedulersProvider);
 		}
 
 		/// <summary>
 		/// Reset the collection of items of the collection
 		/// </summary>
 		/// <param name="source">The new source to use</param>
-		/// <param name="mode"></param>
-		internal void Switch(IObservableCollection? source, TrackingMode mode = TrackingMode.Auto)
+		/// <param name="changes">The changes that has been applied compared to teh previous version.</param>
+		/// <param name="mode">The tracking mode to use.</param>
+		internal void Switch(IObservableCollection? source, CollectionChangeSet? changes, TrackingMode mode = TrackingMode.Auto)
 		{
 			source ??= EmptyObservableCollection<object>.Instance;
 
@@ -186,7 +195,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections
 			{
 				foreach (var holder in _holder.GetValues())
 				{
-					holder.value.Update(source, mode);
+					holder.value.Update(source, changes, mode);
 				}
 			}
 		}
@@ -257,15 +266,13 @@ namespace Uno.Extensions.Reactive.Bindings.Collections
 		/// <inheritdoc />
 		public event VectorChangedEventHandler<object?>? VectorChanged
 		{
-			// We directly hit the facet to ease the return type mismatch
-			add => _holder.Value.GetFacet<CollectionChangedFacet>().AddVectorChangedHandler(value!);
-			remove => _holder.Value.GetFacet<CollectionChangedFacet>().RemoveVectorChangedHandler(value!);
+			add => AddVectorChangedHandler(value);
+			remove => RemoveVectorChangedHandler(value);
 		}
 
 		/// <inheritdoc />
 		public event NotifyCollectionChangedEventHandler? CollectionChanged
 		{
-			// We directly hit the facet to ease the return type mismatch
 			add => _holder.Value.GetFacet<CollectionChangedFacet>().AddCollectionChangedHandler(value!);
 			remove => _holder.Value.GetFacet<CollectionChangedFacet>().RemoveCollectionChangedHandler(value!);
 		}
@@ -319,22 +326,20 @@ namespace Uno.Extensions.Reactive.Bindings.Collections
 		/// <inheritdoc />
 		public event CurrentChangedEventHandler? CurrentChanged
 		{
-			// We directly hit the facet to ease the retrun type mismatch
-			add => _holder.Value.GetFacet<SelectionFacet>().AddCurrentChangedHandler(value!);
-			remove => _holder.Value.GetFacet<SelectionFacet>().RemoveCurrentChangedHandler(value!);
+			add => AddCurrentChangedHandler(value);
+			remove => RemoveCurrentChangedHandler(value);
 		}
 
 		/// <inheritdoc />
 		public event CurrentChangingEventHandler? CurrentChanging
 		{
-			// We directly hit the facet to ease the retrun type mismatch
-			add => _holder.Value.GetFacet<SelectionFacet>().AddCurrentChangingHandler(value!);
-			remove => _holder.Value.GetFacet<SelectionFacet>().RemoveCurrentChangingHandler(value!);
+			add => AddCurrentChangingHandler(value);
+			remove => RemoveCurrentChangingHandler(value);
 		}
 		#endregion
 
 		internal EventRegistrationToken AddVectorChangedHandler(VectorChangedEventHandler<object?>? handler)
-			=> _holder.Value.GetFacet<CollectionChangedFacet>().AddVectorChangedHandler(handler!);
+			=> handler is null ? default : _holder.Value.GetFacet<CollectionChangedFacet>().AddVectorChangedHandler(handler);
 		internal void RemoveVectorChangedHandler(VectorChangedEventHandler<object?>? handler)
 			=> _holder.Value.GetFacet<CollectionChangedFacet>().RemoveVectorChangedHandler(handler!);
 #if USE_EVENT_TOKEN

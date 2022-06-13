@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using Uno.Extensions.Reactive.Sources;
 
 namespace Uno.Extensions.Reactive;
 
@@ -61,9 +62,9 @@ public static class MessageAxisExtensions
 	/// <param name="value">The value to set.</param>
 	/// <param name="changeSet">The changes made from the previous value</param>
 	/// <returns>The <paramref name="builder"/> for fluent building.</returns>
-	internal static TBuilder Data<TBuilder, T>(this TBuilder builder, T value, IChangeSet changeSet)
+	internal static TBuilder Data<TBuilder, T>(this TBuilder builder, T value, IChangeSet? changeSet)
 		where TBuilder : IMessageBuilder<T>
-		=> builder.Data((Option<T>)value);
+		=> builder.Data((Option<T>)value, changeSet);
 
 	/// <summary>
 	/// Sets the data of an <see cref="MessageBuilder{T}"/>
@@ -156,6 +157,35 @@ public static class MessageAxisExtensions
 		where TBuilder : IMessageBuilder
 		=> builder.Set(MessageAxis.Error, error);
 
+	/// <summary>
+	/// Sets the refresh info of an <see cref="MessageBuilder{T}"/>
+	/// </summary>
+	/// <param name="builder">The builder.</param>
+	/// <param name="tokens">The refresh tokens.</param>
+	/// <returns>The <paramref name="builder"/> for fluent building.</returns>
+	internal static TBuilder Refreshed<TBuilder>(this TBuilder builder, TokenCollection<RefreshToken>? tokens)
+		where TBuilder : IMessageBuilder
+		=> builder.Set(MessageAxis.Refresh, tokens);
+
+	/// <summary>
+	/// Gets the pagination info of an <see cref="MessageEntry{T}"/>
+	/// </summary>
+	/// <param name="entry">The entry.</param>
+	/// <returns>The progress.</returns>
+	/// <remarks>Use <see cref="MessageEntry{T}.IsTransient"/> instead.</remarks>
+	[Pure]
+	internal static PaginationInfo? GetPaginationInfo(this IMessageEntry entry)
+		=> entry.Get(MessageAxis.Pagination);
+
+	/// <summary>
+	/// Sets the pagination info of an <see cref="MessageBuilder{T}"/>
+	/// </summary>
+	/// <param name="builder">The builder.</param>
+	/// <param name="page">The pagination info.</param>
+	/// <returns>The <paramref name="builder"/> for fluent building.</returns>
+	internal static TBuilder Paginated<TBuilder>(this TBuilder builder, PaginationInfo? page)
+		where TBuilder : IMessageBuilder
+		=> builder.Set(MessageAxis.Pagination, page);
 
 	/// <summary>
 	/// Gets the progress of an <see cref="MessageEntry{T}"/>

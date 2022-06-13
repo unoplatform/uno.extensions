@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Uno.Extensions.Collections.Facades.Differential;
 using Uno.Extensions.Reactive;
 
 namespace Uno.Extensions.Collections.Tracking;

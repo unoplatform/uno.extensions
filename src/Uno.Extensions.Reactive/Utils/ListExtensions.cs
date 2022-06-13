@@ -11,7 +11,7 @@ namespace Uno.Extensions.Reactive.Utils;
 
 internal static class ListExtensions
 {
-	public static CollectionAnalyzer.IndexOf GetIndexOf(this IList list, IEqualityComparer? comparer)
+	public static CollectionAnalyzer.IndexOfHandler<object?> GetIndexOf(this IList list, IEqualityComparer? comparer)
 	{
 		if (comparer is null)
 		{
@@ -43,10 +43,10 @@ internal static class ListExtensions
 			switch (list)
 			{
 				case IImmutableList<object?> immutable:
-					{
-						var typedComparer = comparer.ToEqualityComparer<object?>();
-						return (value, index, count) => immutable.IndexOf(value, index, count, typedComparer);
-					}
+				{
+					var typedComparer = comparer.ToEqualityComparer<object?>();
+					return (value, index, count) => immutable.IndexOf(value, index, count, typedComparer);
+				}
 				default:
 					return (value, index, count) =>
 					{
@@ -64,16 +64,16 @@ internal static class ListExtensions
 		}
 	}
 
-	public static CollectionAnalyzer.IndexOf GetIndexOf<T>(this IList list, IEqualityComparer<T>? comparer)
+	public static CollectionAnalyzer.IndexOfHandler<T> GetIndexOf<T>(this IList<T> list, IEqualityComparer<T>? comparer)
 	{
 		if (comparer is null)
 		{
 			switch (list)
 			{
 				case IImmutableList<T> immutable:
-					return (value, index, count) => value is T t ? immutable.IndexOf(t, index, count) : -1;
+					return (value, index, count) => immutable.IndexOf(value, index, count);
 				case List<T> impl:
-					return (value, index, count) => value is T t ? impl.IndexOf(t, index, count) : -1;
+					return (value, index, count) => impl.IndexOf(value, index, count);
 				case T[] array:
 					return (value, index, count) => Array.IndexOf(array, value, index, count);
 				default:
@@ -98,21 +98,21 @@ internal static class ListExtensions
 				case IImmutableList<T> immutable:
 					return (value, index, count) => value is T t ? immutable.IndexOf(t, index, count, comparer) : -1;
 				default:
+				{
+					var untypedComparer = comparer.ToEqualityComparer();
+					return (value, index, count) =>
 					{
-						var untypedComparer = comparer.ToEqualityComparer();
-						return (value, index, count) =>
+						for (var i = index; i < index + count; i++)
 						{
-							for (var i = index; i < index + count; i++)
+							if (untypedComparer.Equals(list[i], value))
 							{
-								if (untypedComparer.Equals(list[i], value))
-								{
-									return i;
-								}
+								return i;
 							}
+						}
 
-							return -1;
-						};
-					}
+						return -1;
+					};
+				}
 			}
 		}
 	}
@@ -141,17 +141,17 @@ internal static class ListExtensions
 				case Array array:
 					return Array.IndexOf(array, value, index, count);
 				default:
+				{
+					for (var i = index; i < index + count; i++)
 					{
-						for (var i = index; i < index + count; i++)
+						if (object.Equals(list[i], value))
 						{
-							if (object.Equals(list[i], value))
-							{
-								return i;
-							}
+							return i;
 						}
-
-						return -1;
 					}
+
+					return -1;
+				}
 			}
 		}
 		else
@@ -161,16 +161,16 @@ internal static class ListExtensions
 				case IImmutableList<object?> immutable:
 					return immutable.IndexOf(value, index, count, comparer.ToEqualityComparer<object?>());
 				default:
+				{
+					for (var i = index; i < index + count; i++)
 					{
-						for (var i = index; i < index + count; i++)
+						if (comparer.Equals(list[i], value))
 						{
-							if (comparer.Equals(list[i], value))
-							{
-								return i;
-							}
+							return i;
 						}
-						return -1;
 					}
+					return -1;
+				}
 			}
 		}
 	}

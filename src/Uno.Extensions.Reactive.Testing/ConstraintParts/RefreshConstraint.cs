@@ -28,7 +28,7 @@ public record RefreshConstraint
 
 		if (Version is not null)
 		{
-			score += Version == version.Version ? 1 : -100;
+			score += Version == version.SequenceId ? 1 : -100;
 		}
 
 		return score;

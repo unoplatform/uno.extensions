@@ -47,6 +47,7 @@ internal class DataLayerChangesBuffer : IDisposable
 
 	private DataLayerChangesBuffer? _previous; // The previous version
 	private readonly ILayerHolder _layer;
+	private readonly CollectionChangeSet? _changes;
 	private readonly ILayerTracker _changesTracker;
 
 	private ImmutableList<CollectionUpdater> _buffer = ImmutableList<CollectionUpdater>.Empty; // The changes raised while we are changing the thread to applied this version 
@@ -59,21 +60,22 @@ internal class DataLayerChangesBuffer : IDisposable
 	public IObservableCollection Collection { get; }
 
 	public DataLayerChangesBuffer(ILayerHolder layer, IObservableCollection source, ILayerTracker changesTracker)
-		: this(null, layer, source, changesTracker)
+		: this(null, layer, source, null, changesTracker)
 	{
 	}
 
-	private DataLayerChangesBuffer(DataLayerChangesBuffer? previous, ILayerHolder layer, IObservableCollection source, ILayerTracker changesTracker)
+	private DataLayerChangesBuffer(DataLayerChangesBuffer? previous, ILayerHolder layer, IObservableCollection source, CollectionChangeSet? changes, ILayerTracker changesTracker)
 	{
 		_previous = previous;
 		_layer = layer;
+		_changes = changes;
 		_changesTracker = changesTracker;
 
 		Collection = source;
 	}
 
-	public DataLayerChangesBuffer UpdateTo(IObservableCollection collection)
-		=> new(this, _layer, collection, _changesTracker);
+	public DataLayerChangesBuffer UpdateTo(IObservableCollection collection, CollectionChangeSet? changes)
+		=> new(this, _layer, collection, changes, _changesTracker);
 
 	public DataLayerUpdate Initialize(ILayerTracker tracker)
 	{
@@ -99,9 +101,9 @@ internal class DataLayerChangesBuffer : IDisposable
 			_subscription.Disposable = Collection.AddCollectionChangedHandler(Buffer, out newItems);
 		}
 
-		var changes = tracker.GetChanges(oldItems, newItems, _layer.Items.HasListener);
+		var updater = tracker.GetChanges(oldItems, newItems, _changes, _layer.Items.HasListener);
 
-		return new DataLayerUpdate(oldItems, changes, newItems, _layer.Items, tracker.Context, this);
+		return new DataLayerUpdate(oldItems, updater, newItems, _layer.Items, tracker.Context, this);
 	}
 
 	/// <summary>

@@ -29,11 +29,11 @@ internal sealed class AsyncFeed<T> : IFeed<T>, IRefreshableSource
 	/// <inheritdoc />
 	public IAsyncEnumerable<Message<T>> GetSource(SourceContext context, CancellationToken ct = default)
 	{
-		var versions = new AsyncEnumerableSubject<RefreshToken>(ReplayMode.EnabledForFirstEnumeratorOnly);
+		var loadRequests = new AsyncEnumerableSubject<RefreshToken>(ReplayMode.EnabledForFirstEnumeratorOnly);
 		var current = RefreshToken.Initial(this, context);
 
 		// Request initial load (without refresh)
-		versions.SetNext(current);
+		loadRequests.SetNext(current);
 
 		// Then subscribe to refresh sources
 		var localRefreshTask = _refresh?.GetSource(context, ct).ForEachAsync(BeginRefresh, ct);
@@ -47,20 +47,20 @@ internal sealed class AsyncFeed<T> : IFeed<T>, IRefreshableSource
 			var refreshedVersion = RefreshToken.InterlockedIncrement(ref current);
 
 			request.Register(refreshedVersion);
-			versions.SetNext(refreshedVersion);
+			loadRequests.SetNext(refreshedVersion);
 		}
 		void BeginRefresh(Unit _)
 		{
 			var refreshedVersion = RefreshToken.InterlockedIncrement(ref current);
 
-			versions.SetNext(refreshedVersion);
+			loadRequests.SetNext(refreshedVersion);
 		}
 
 		void TryComplete(Task _)
 		{
 			if (localRefreshTask is not { IsCompleted: false } && contextRefreshTask is { IsCompleted: true })
 			{
-				versions.TryComplete();
+				loadRequests.TryComplete();
 			}
 		}
 
@@ -80,25 +80,19 @@ internal sealed class AsyncFeed<T> : IFeed<T>, IRefreshableSource
 		{
 			try
 			{
-				var version = versions.GetAsyncEnumerator(ct);
-				while (await version.MoveNextAsync(ct).ConfigureAwait(false))
+				var loadRequest = loadRequests.GetAsyncEnumerator(ct);
+				while (await loadRequest.MoveNextAsync(ct).ConfigureAwait(false))
 				{
 					var previousLoad = loadToken;
 					// Capture the version so if while loop exit we still have the right value.
-					// We also make sure to convert it only once in SourceVersionCollection so we keep the same instance in case of multiple set by the InvokeAsync
-					var loadVersion = (RefreshTokenCollection)version.Current;
+					// We also make sure to convert it only once in TokenCollection so we keep the same instance in case of multiple set by the InvokeAsync
+					var refreshToken = (TokenCollection<RefreshToken>)loadRequest.Current;
 					loadToken = CancellationTokenSource.CreateLinkedTokenSource(ct);
 					load = InvokeAsync(
 						message,
 						null,
 						_dataProvider,
-						b =>
-						{
-							if (loadVersion.Versions.First() is { Version: > 0 })
-							{
-								b.Set(MessageAxis.Refresh, loadVersion);
-							}
-						},
+						b => b.Refreshed(refreshToken),
 						context,
 						loadToken.Token);
 

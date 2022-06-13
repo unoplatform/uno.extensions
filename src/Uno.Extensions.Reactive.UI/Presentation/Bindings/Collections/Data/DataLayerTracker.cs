@@ -25,7 +25,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 		}
 
 		/// <inheritdoc />
-		public CollectionUpdater GetChanges(IObservableCollectionSnapshot? oldItems, IObservableCollectionSnapshot newItems, bool shouldUseSmartTracking = true)
+		public CollectionUpdater GetChanges(IObservableCollectionSnapshot? oldItems, IObservableCollectionSnapshot newItems, CollectionChangeSet? changes, bool shouldUseSmartTracking = true)
 		{
 			var mode = Context.Mode;
 			if (oldItems is null 
@@ -38,9 +38,11 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 			else
 			{
 				var visitor = new CounterVisitor(Context, _visitor);
-				var changes = _diffAnalyzer.GetUpdater(oldItems, newItems, visitor);
+				var updater = changes is not null
+					? changes.ToUpdater(visitor)
+					: _diffAnalyzer.GetUpdater(oldItems, newItems, visitor);
 
-				return changes;
+				return updater;
 			}
 		}	
 

@@ -1,0 +1,22 @@
+﻿<Page
+	x:Class="Uno.Extensions.Reactive.SampleApp.RefreshSample"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:local="using:Uno.Extensions.Reactive.SampleApp"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:uer="using:Uno.Extensions.Reactive.UI"
+	mc:Ignorable="d"
+	Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+	<Grid>
+		<uer:FeedView Source="{Binding Content}">
+			<DataTemplate>
+				<StackPanel>
+					<Button Command="{Binding Refresh}" Content="Refresh" />
+					<TextBlock Text="{Binding Data}" />
+				</StackPanel>
+			</DataTemplate>
+		</uer:FeedView>
+	</Grid>
+</Page>

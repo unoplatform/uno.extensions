@@ -9,7 +9,7 @@ partial class CollectionAnalyzer
 	private sealed class _Remove : Change
 	{
 		private readonly int _indexOffset;
-		private readonly List<object> _items;
+		private readonly List<object?> _items;
 
 		public _Remove(int at, int capacity)
 			: this(at, 0, capacity)
@@ -20,10 +20,10 @@ partial class CollectionAnalyzer
 			: base(at)
 		{
 			_indexOffset = indexOffset;
-			_items = new List<object>(capacity);
+			_items = new List<object?>(capacity);
 		}
 
-		public void Append(object item)
+		public void Append(object? item)
 		{
 			_items.Add(item);
 		}

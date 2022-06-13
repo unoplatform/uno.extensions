@@ -61,4 +61,12 @@
 		</Compile>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <SourceGeneratorInput Remove="Collections\Facades\Differential\IDifferentialCollection.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <SourceGeneratorInput Remove="Collections\Facades\Differential\DifferentialCollectionExtensions.cs" />
+	</ItemGroup>
+
 </Project>

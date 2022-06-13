@@ -9,17 +9,12 @@ namespace Uno.Extensions.Reactive.Bindings.Collections;
 /// <summary>
 /// A set of **BINDABLE** properties that are exposing some internal states of the <see cref="BindableCollection"/>.
 /// </summary>
-internal sealed class BindableCollectionExtendedProperties : INotifyPropertyChanged
+internal sealed class BindableCollectionExtendedProperties : INotifyPropertyChanged, IDisposable
 {
 	private readonly EventManager<PropertyChangedEventHandler, PropertyChangedEventArgs> _propertyChanged;
 
 	private bool _isLoadingMoreItems;
 	private bool _hasMoreItems;
-
-	/// <summary>
-	/// Event raised when the view reached the end of the list and requested to load mode data
-	/// </summary>
-	public event EventHandler<LoadMoreItemsRequest>? LoadMoreItemsRequested;
 
 	/// <inheritdoc />
 	public event PropertyChangedEventHandler? PropertyChanged
@@ -30,7 +25,7 @@ internal sealed class BindableCollectionExtendedProperties : INotifyPropertyChan
 
 	internal BindableCollectionExtendedProperties()
 	{
-		// TODO: Uno - We can have only one dispatcher here, no need to support multi threads
+		// Note: We do allow to set those properties from any thread
 		_propertyChanged = new EventManager<PropertyChangedEventHandler, PropertyChangedEventArgs>(this, h => h.Invoke, isCoalescable: false);
 	}
 
@@ -68,9 +63,10 @@ internal sealed class BindableCollectionExtendedProperties : INotifyPropertyChan
 		}
 	}
 
-	internal void LoadMoreRequested(LoadMoreItemsRequest request)
-		=> LoadMoreItemsRequested?.Invoke(this, request);
-
 	private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
 		=> _propertyChanged.Raise(new PropertyChangedEventArgs(propertyName));
+
+	/// <inheritdoc />
+	public void Dispose()
+		=> _propertyChanged.Dispose();
 }

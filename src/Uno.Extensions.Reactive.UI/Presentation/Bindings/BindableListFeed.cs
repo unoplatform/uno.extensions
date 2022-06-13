@@ -5,8 +5,13 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Uno.Extensions.Collections;
+using Uno.Extensions.Collections.Tracking;
 using Uno.Extensions.Reactive.Bindings.Collections;
+using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets;
 using Uno.Extensions.Reactive.Core;
+using Uno.Extensions.Reactive.Sources;
+using Uno.Extensions.Reactive.UI;
 
 namespace Uno.Extensions.Reactive.Bindings;
 
@@ -16,7 +21,6 @@ namespace Uno.Extensions.Reactive.Bindings;
 /// <typeparam name="T">The type of the items.</typeparam>
 public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<T>, IInput<IImmutableList<T>>
 {
-	private readonly CancellationTokenSource _ct = new();
 	private readonly BindableCollection _items;
 	private readonly IListState<T> _state;
 
@@ -29,15 +33,9 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 	public BindableListFeed(string propertyName, IListFeed<T> source, SourceContext ctx)
 	{
 		PropertyName = propertyName;
-		_items = BindableCollection.Create<T>();
+
 		_state = ctx.GetOrCreateListState(source);
-
-		_state.GetSource(ctx, _ct.Token).ForEachAsync(
-			msg => _items.Switch(new ImmutableObservableCollection<T>(msg.Current.Data.SomeOrDefault(ImmutableList<T>.Empty))),
-			_ct.Token);
-
-		// Note: we have to listen for collection changes on bindable _items to update the state.
-		// https://github.com/unoplatform/uno.extensions/issues/370
+		_items = CreateBindableCollection(ctx);
 	}
 
 	/// <inheritdoc />
@@ -82,10 +80,114 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 	ValueTask IState<IImmutableList<T>>.UpdateMessage(Func<Message<IImmutableList<T>>, MessageBuilder<IImmutableList<T>>> updater, CancellationToken ct)
 		=> _state.UpdateMessage(updater, ct);
 
+
+	private BindableCollection CreateBindableCollection(SourceContext ctx)
+	{
+		var currentCount = 0;
+		//var currentPage = default(PaginationInfo?);
+		//var pageLoadTask = default(TaskCompletionSource<Unit>?);
+		//var pageLoadTokens = default(TokenCollection<PageToken>?);
+		var pageTokens = new TokenCompletionHandler<PageToken>();
+
+		var requests = new RequestSource();
+		var pagination = new PaginationService(LoadMore);
+		var services = new SingletonServiceProvider(pagination);
+		var collection = BindableCollection.Create<T>(services: services);
+
+		if (ctx.Token.CanBeCanceled)
+		{
+			ctx.Token.Register(pagination.Dispose);
+			ctx.Token.Register(requests.Dispose);
+			ctx.Token.Register(() => _ = services.DisposeAsync());
+		}
+
+		// Note: we have to listen for collection changes on bindable _items to update the state.
+		// https://github.com/unoplatform/uno.extensions/issues/370
+
+		_state.GetSource(ctx.CreateChild(requests), ctx.Token).ForEachAsync(
+			msg =>
+			{
+				if (ctx.Token.IsCancellationRequested)
+				{
+					return;
+				}
+
+				if (msg.Changes.Contains(MessageAxis.Data, out var changes))
+				{
+					var items = msg.Current.Data.SomeOrDefault(ImmutableList<T>.Empty);
+					currentCount = items.Count;
+
+					collection.Switch(new ImmutableObservableCollection<T>(items), changes as CollectionChangeSet);
+				}
+
+				// We update the HasMoreItems **before** completing the pendingPage, so LV won't try to request a new page.
+				//if (msg.Changes.Contains("HasMoreItems"))
+				//{
+
+				//}
+
+				// ON NE DOIT ACTIVER LE HAS MORE ITEMS QUE SI ON OBTIENT UN PAGEINFO
+				//pagination.HasMoreItems = true;
+
+				if (!msg.Current.IsTransient
+					&& msg.Current.GetPaginationInfo() is { IsLoadingMoreItems: false } page)
+				{
+					pageTokens.Received(page.Tokens);
+				}
+				//currentPage = msg.Current.GetPaginationInfo();
+
+				//if (!msg.Current.IsTransient
+				//	&& pageLoadTokens is {} tokens
+				//	&& currentPage is {IsLoadingMoreItems: false} page
+				//	&& tokens.IsLower(page.Tokens))
+				//{
+				//	pageLoadTask!.TrySetResult(default);
+				//	pageLoadTokens = null;
+				//	pageLoadTask = null;
+				//}
+			},
+			ctx.Token);
+
+		async ValueTask<uint> LoadMore(uint count, CancellationToken ct)
+		{
+			try
+			{
+				var originalCount = currentCount;
+
+				await pageTokens.WaitFor(requests.RequestMoreItems(count), ct);
+
+				// We set the task first to avoid concurrency issue with the ForEachAsync callback
+				//pageLoadTask = new TaskCompletionSource<Unit>();
+				//pageLoadTokens = requests.RequestMoreItems(count);
+
+				//if (pageLoadTokens.IsEmpty)
+				//{
+				//	return 0;
+				//}
+
+				//if (currentPage is not null && !pageLoadTokens.IsLower(currentPage.Tokens))
+				//{
+				//	// If the page was not loaded synchronously, lets wait for the tokens
+				//	await pageLoadTask.Task;
+				//}
+
+				var resultCount = currentCount;
+
+				return (uint)Math.Max(0, resultCount - originalCount);
+			}
+			finally
+			{
+				//pageLoadTask = default;
+				//pageLoadTokens = default;
+			}
+		}
+
+		return collection;
+	}
+
 	/// <inheritdoc />
 	public async ValueTask DisposeAsync()
 	{
-		_ct.Cancel(false);
 		await _state.DisposeAsync();
 	}
 }

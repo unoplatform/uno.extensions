@@ -17,7 +17,10 @@ internal partial class MessageManager<TResult> : MessageManager<Unit, TResult>
 
 internal partial class MessageManager<TParent, TResult>
 {
+	public delegate MessageBuilder<TParent, TResult> Updater(CurrentMessage current);
 	public delegate MessageBuilder<TParent, TResult> Updater<in TState>(CurrentMessage current, TState state);
+
+	private static readonly Updater<Updater> _stateLessUpdater = (cm, u) => u(cm);
 
 	private readonly object _gate = new();
 	private readonly Action<Message<TResult>>? _send;
@@ -38,10 +41,15 @@ internal partial class MessageManager<TParent, TResult>
 		var initialMessage = Message<TResult>.Initial;
 		var initialUpdates = new Dictionary<MessageAxis, MessageAxisUpdate>
 		{
-			{ MessageAxis.Data, new(MessageAxis.Data, new(Option<object>.Undefined())) { IsOverride = true } }
+			// As the DataAxis always returns the local data over the parent one,
+			// this default update ensure that the output will be undefined until explicitly set using Update
+			{ MessageAxis.Data, new(MessageAxis.Data, new(Option<object>.Undefined())) }
 		};
 		_local = (initialUpdates, initialUpdates, initialMessage);
 	}
+
+	public bool Update(Updater updater, CancellationToken ct = default)
+		=> Update(_stateLessUpdater, updater, ct);
 
 	public bool Update<TState>(Updater<TState> updater, TState state, CancellationToken ct = default)
 	{
@@ -86,22 +94,31 @@ internal partial class MessageManager<TParent, TResult>
 				//		 it means that either that "change" has been removed (for instance a transient from an update transaction),
 				//		 either the change is coming from the parent.
 				//		 In all case we just need to propagate the value from the parent.
-				var updatedValue = changeSetToApply.TryGetValue(axis, out var update)
-					? update.GetValue(parentValue, currentValue)
-					: parentValue;
+				var updated = (value: parentValue, changes: default(IChangeSet?));
+				if (changeSetToApply.TryGetValue(axis, out var update))
+				{
+					updated = update.GetValue(parentValue, currentValue);
+				}
+				else if (!_local.applied.ContainsKey(axis)
+					&& (parent?.Changes.Contains(axis, out var parentChanges) ?? false))
+				{
+					// If we don't have any local value (neither in the change set being applied, neither in the previously applied change set),
+					// and the value has been updated on the parent, then it means that changes if the parent message are valid, so we can forward them.
+					updated = (parentValue, parentChanges);
+				}
 
-				if (updatedValue == MessageAxisValue.Unset)
+				if (updated.value == MessageAxisValue.Unset)
 				{
 					values.Remove(axis);
 				}
 				else
 				{
-					values[axis] = updatedValue;
+					values[axis] = updated.value;
 				}
 
-				if (!axis.AreEquals(currentValue, updatedValue))
+				if (!axis.AreEquals(currentValue, updated.value))
 				{
-					changes.Add(axis/*, TODO*/);
+					changes.Add(axis, updated.changes);
 				}
 			}
 
@@ -170,6 +187,9 @@ internal partial class MessageManager<TParent, TResult>
 			return transaction; 
 		}
 	}
+
+	private void EndUpdate(UpdateTransaction transaction, Updater result)
+		=> EndUpdate(transaction, _stateLessUpdater, result);
 
 	private void EndUpdate<TState>(UpdateTransaction transaction, Updater<TState> result, TState state)
 	{

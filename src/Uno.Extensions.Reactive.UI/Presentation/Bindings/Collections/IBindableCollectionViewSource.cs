@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection;
 
-internal interface IBindableCollectionViewSource
+internal interface IBindableCollectionViewSource : IServiceProvider
 {
 	/// <summary>
 	/// Gets the source of the parent data layer, if any.

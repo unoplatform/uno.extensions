@@ -1,6 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Uno.Extensions.Reactive.Logging;
 
 namespace Uno.Extensions.Reactive.UI;
 
@@ -45,6 +48,27 @@ public partial class FeedView
 
 		/// <inheritdoc />
 		public void Execute(object? parameter)
-			=> IsExecuting = _view._subscription?.RequestRefresh() ?? false;
+		{
+			if (_view._subscription is { } subscription)
+			{
+				IsExecuting = true;
+				// We must make sure to run on a background thread to send requests
+				_ = Task.Run(() =>
+				{
+					try
+					{
+						subscription.RequestRefresh(() => IsExecuting = false);
+					}
+					catch (Exception error)
+					{
+						if (this.Log().IsEnabled(LogLevel.Warning))
+						{
+							this.Log().Warn(error, "Failed to send a refresh request");
+						}
+						IsExecuting = false;
+					}
+				});
+			}
+		}
 	}
 }

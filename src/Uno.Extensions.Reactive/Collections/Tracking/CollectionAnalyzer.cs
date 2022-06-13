@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
+using Uno.Extensions.Collections.Facades.Differential;
 using Uno.Extensions.Reactive.Collections;
 using Uno.Extensions.Reactive.Utils;
 
@@ -14,32 +15,28 @@ namespace Uno.Extensions.Collections.Tracking;
 /// </summary>
 internal partial class CollectionAnalyzer
 {
-	internal delegate int IndexOf(object item, int startIndex, int count);
-	internal delegate int IndexOf<in TCollection>(object item, TCollection snapshot, int startIndex);
-	internal delegate bool VersionEqual(object oldItem, object newItem);
 
-	private readonly Func<IList, IndexOf> _indexOfFactory;
-	private readonly VersionEqual? _versionEqual;
+	private readonly IEqualityComparer? _entityComparer;
+	private readonly ComparerRef<object?>? _versionComparer;
 
 	/// <summary>
 	/// Creates a new instance using the given set of comparer.
 	/// </summary>
 	/// <param name="comparer">The set of comparer to use to track items.</param>
 	public CollectionAnalyzer(ItemComparer comparer)
-		: this(
-			list => list.GetIndexOf(comparer.Entity),
-			comparer.Version == null ? null : (VersionEqual)(comparer.Version.Equals))
 	{
+		_entityComparer = comparer.Entity;
+		_versionComparer = GetRef(comparer.Version);
 	}
 
-	protected CollectionAnalyzer(
-		Func<IList, IndexOf> indexOfFactory,
-		VersionEqual? versionEqual)
-	{
-		_indexOfFactory = indexOfFactory;
-		_versionEqual = versionEqual;
-	}
+	private ListRef<object?> GetRef(IList list)
+		=> new(list.Count, i => list[i], list.GetIndexOf(_entityComparer));
 
+	private ComparerRef<object?>? GetRef(IEqualityComparer? comparer)
+		=> comparer is null ? null : comparer.Equals;
+
+	protected ComparerRef<T>? GetRef<T>(IEqualityComparer<T>? comparer)
+		=> comparer is null ? null : comparer.Equals;
 
 	/// <summary>
 	/// Creates a set of changes that contains only a reset event.
@@ -57,7 +54,7 @@ internal partial class CollectionAnalyzer
 	/// <param name="newItems">The target snapshot</param>
 	/// <returns>A list of changes that have to be applied to move a collection from <paramref name="oldItems"/> to <paramref name="newItems"/>.</returns>
 	public CollectionChangeSet GetChanges(IList oldItems, IList newItems)
-		=> new(GetChangesCore(oldItems, newItems));
+		=> new(GetChangesCore(GetRef(oldItems), GetRef(newItems), _versionComparer));
 
 	/// <summary>
 	/// Determines the set of effective changes produced by a <see cref="NotifyCollectionChangedEventArgs"/>.
@@ -85,7 +82,7 @@ internal partial class CollectionAnalyzer
 	/// <param name="visitor">A visitor that can be used to track changes while detecting them.</param>
 	/// <returns>A list of changes that have to be applied to move a collection from <paramref name="oldItems"/> to <paramref name="newItems"/>.</returns>
 	public CollectionUpdater GetUpdater(IList oldItems, IList newItems, ICollectionUpdaterVisitor visitor)
-		=> CreateUpdaterCore(oldItems, newItems, visitor);
+		=> CreateUpdaterCore(GetRef(oldItems), GetRef(newItems), _versionComparer, visitor);
 
 	/// <summary>
 	/// Determines the set of effective changes produced by a <see cref="NotifyCollectionChangedEventArgs"/>.
@@ -103,14 +100,14 @@ internal partial class CollectionAnalyzer
 			: new(updaterHead);
 	}
 
-	private CollectionUpdater CreateUpdaterCore<TSnapshot>(
-		TSnapshot oldItems,
-		TSnapshot newItems,
+	private protected CollectionUpdater CreateUpdaterCore<T>(
+		ListRef<T> oldItems,
+		ListRef<T> newItems,
+		ComparerRef<T>? itemVersionComparer,
 		ICollectionUpdaterVisitor visitor,
 		int eventArgsOffset = 0)
-		where TSnapshot : IList
 	{
-		var changesHead = GetChangesCore(oldItems, newItems, eventArgsOffset);
+		var changesHead = GetChangesCore(oldItems, newItems, itemVersionComparer, eventArgsOffset);
 		var updaterHead = changesHead?.ToUpdater(visitor);
 
 		return updaterHead is null
@@ -118,7 +115,7 @@ internal partial class CollectionAnalyzer
 			: new(updaterHead);
 	}
 
-	private Change? GetChangesCore(RichNotifyCollectionChangedEventArgs arg)
+	private protected Change? GetChangesCore(RichNotifyCollectionChangedEventArgs arg)
 	{
 		switch (arg.Action)
 		{
@@ -129,25 +126,22 @@ internal partial class CollectionAnalyzer
 				return new _Event(arg);
 
 			case NotifyCollectionChangedAction.Replace:
-				return GetChangesCore(arg.OldItems, arg.NewItems, arg.OldStartingIndex);
+				return GetChangesCore(GetRef(arg.OldItems), GetRef(arg.NewItems), _versionComparer, arg.OldStartingIndex);
 
 			default:
 				throw new ArgumentOutOfRangeException(nameof(arg), arg.Action, $"Action '{arg.Action}' not supported.");
 		}
 	}
 
-	private Change? GetChangesCore(
-		IList oldItems,
-		IList newItems,
-		int eventArgsOffset = 0)
-		=> GetChangesCore((oldItems, _indexOfFactory(oldItems)), (newItems, _indexOfFactory(newItems)), _versionEqual, eventArgsOffset);
-
-	private static Change? GetChangesCore(
-		(IList items, IndexOf indexOf) old,
-		(IList items, IndexOf indexOf) @new,
-		VersionEqual? itemVersionComparer,
-		int eventArgsOffset = 0)
+	private protected static Change? GetChangesCore<T>(ListRef<T> oldItems, ListRef<T> newItems, ComparerRef<T>? versionComparer, int eventArgsOffset = 0)
 	{
+		//if (old.items is IDifferentialCollection oldDiff
+		//	&& @new.items is IDifferentialCollection newDiff
+		//	&& oldDiff.FindCommonAncestor(newDiff) is {} node)
+		//{
+
+		//}
+
 		/*
 		* OLD: the source collection we are going to update to the NEW
 		* NEW: the collection that we want to go to
@@ -162,15 +156,15 @@ internal partial class CollectionAnalyzer
 		*/
 
 		int added = 0, moved = 0, removed = 0;
-		var buffer = new ChangesBuffer(old.items.Count, @new.items.Count, eventArgsOffset);
+		var buffer = new ChangesBuffer<T>(oldItems.Count, newItems.Count, eventArgsOffset);
 
-		var oldEnumerator = new SourceEnumerator(old.items, old.indexOf);
+		var oldEnumerator = new SourceEnumerator<T>(oldItems);
 		while (oldEnumerator.MoveNext())
 		{
 			var oldIndex = oldEnumerator.CurrentIndex;
 			var oldItem = oldEnumerator.Current!;
 			var resultIndex = oldIndex - removed + added + moved - oldEnumerator.Ignored; // The current index in the (virtual) result collection (i.e. oldIndex ignoring the removed/added items)
-			var newIndex = @new.indexOf(oldItem, resultIndex, @new.items.Count - resultIndex);
+			var newIndex = newItems.IndexOf(oldItem, resultIndex, newItems.Count - resultIndex);
 
 			if (newIndex < 0)
 			{
@@ -197,7 +191,7 @@ internal partial class CollectionAnalyzer
 				var movedBeforeItemLocal = 0;
 				for (var missingItemNewIndex = resultIndex; missingItemNewIndex < newIndex; missingItemNewIndex++)
 				{
-					var missingItem = @new.items[missingItemNewIndex]; // The item that is missing in the old collection
+					var missingItem = newItems.ElementAt(missingItemNewIndex); // The item that is missing in the old collection
 					var (missingItemOldIndex, missingItemOldIndexOffset) = oldEnumerator.NextIndexOf(missingItem);
 					if (missingItemOldIndex >= 0)
 					{
@@ -234,14 +228,14 @@ internal partial class CollectionAnalyzer
 		Debug.Assert(moved - oldEnumerator.Ignored == 0);
 
 		// Finally add items that remains at the end of the newItems (i.e. was missing in the previous)
-		var resultItemsCount = old.items.Count - removed + added;
-		var toAddCount = @new.items.Count - resultItemsCount;
+		var resultItemsCount = oldItems.Count - removed + added;
+		var toAddCount = newItems.Count - resultItemsCount;
 		if (toAddCount > 0)
 		{
 			var add = new _Add(at: resultItemsCount, indexOffset: eventArgsOffset, capacity: toAddCount);
 			for (var i = 0; i < toAddCount; i++)
 			{
-				var item = @new.items[i + resultItemsCount];
+				var item = newItems.ElementAt(i + resultItemsCount);
 				add.Append(item);
 			}
 
@@ -272,17 +266,17 @@ internal partial class CollectionAnalyzer
 		*  So we have to raise a 'Replace' event.
 		*/
 
-		void UpdateInstanceFromOld(object oldItem, int oldIndex, int newIndex)
+		void UpdateInstanceFromOld(T oldItem, int oldIndex, int newIndex)
 		{
-			if (itemVersionComparer is null || oldItem is ValueType)
+			if (versionComparer is null || oldItem is ValueType)
 			{
 				buffer.Update(oldItem, oldItem, oldIndex);
 
 				return;
 			}
 
-			var newItem = @new.items[newIndex];
-			if (itemVersionComparer(oldItem, newItem))
+			var newItem = newItems.ElementAt(newIndex);
+			if (versionComparer(oldItem, newItem))
 			{
 				buffer.Update(oldItem, newItem, oldIndex);
 			}
@@ -292,17 +286,17 @@ internal partial class CollectionAnalyzer
 			}
 		}
 
-		void UpdateInstanceFromNew(object newItem, int oldIndex)
+		void UpdateInstanceFromNew(T newItem, int oldIndex)
 		{
-			if (itemVersionComparer is null || newItem is ValueType)
+			if (versionComparer is null || newItem is ValueType)
 			{
 				buffer.Update(newItem, newItem, oldIndex);
 
 				return;
 			}
 
-			var oldItem = old.items[oldIndex];
-			if (itemVersionComparer(oldItem, newItem))
+			var oldItem = oldItems.ElementAt(oldIndex);
+			if (versionComparer(oldItem, newItem))
 			{
 				buffer.Update(oldItem, newItem, oldIndex);
 			}

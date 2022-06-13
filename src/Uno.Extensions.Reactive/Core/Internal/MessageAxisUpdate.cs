@@ -5,8 +5,6 @@ namespace Uno.Extensions.Reactive.Core;
 
 internal class MessageAxisUpdate
 {
-	public bool IsOverride { get; set; }
-
 	public MessageAxis Axis { get; }
 
 	public MessageAxisValue Value { get; set; }
@@ -20,6 +18,6 @@ internal class MessageAxisUpdate
 		Changes = changes;
 	}
 
-	public MessageAxisValue GetValue(MessageAxisValue parent, MessageAxisValue current)
-		=> IsOverride ? Value : Axis.GetLocalValue(parent, Value);
+	public (MessageAxisValue value, IChangeSet? changes) GetValue(MessageAxisValue parent, MessageAxisValue current)
+		=> Axis.GetLocalValue(parent, current, (Value, Changes));
 }

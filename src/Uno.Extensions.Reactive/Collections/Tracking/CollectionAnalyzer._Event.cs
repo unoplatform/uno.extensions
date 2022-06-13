@@ -7,7 +7,7 @@ namespace Uno.Extensions.Collections.Tracking;
 
 partial class CollectionAnalyzer
 {
-	private class _Event : Change
+	internal class _Event : Change
 	{
 		private readonly RichNotifyCollectionChangedEventArgs _args;
 

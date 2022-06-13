@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
+using Uno.Extensions.Reactive.Sources;
+using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive;
 
@@ -61,4 +64,22 @@ public static class ListFeed<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IListFeed<T> AsyncEnumerable(Func<IAsyncEnumerable<IImmutableList<T>>> enumerableProvider)
 		=> Feed<IImmutableList<T>>.AsyncEnumerable(enumerableProvider).AsListFeed();
+
+	public static IListFeed<T> Paginated<TCursor>(TCursor firstPage, AsyncFunc<TCursor, Page<TCursor, T>> getPage)
+		=> AttachedProperty.GetOrCreate(getPage.Target ?? getPage.Method, firstPage, getPage, (_, fp, gp) => new PaginatedListFeed<TCursor,T>(fp, gp));
+
+	public static IListFeed<T> PaginatedBy(AsyncFunc<PageInfo, IImmutableList<T>> getPage)
+		=> AttachedProperty.GetOrCreate(getPage, gp => new PaginatedListFeed<uint?, T>(firstPage: 0, PaginatedByIndex(gp)));
+
+	private static AsyncFunc<uint?, Page<uint?, T>> PaginatedByIndex(AsyncFunc<PageInfo, IImmutableList<T>> getPage) => async (pageNumber, ct)
+		=> await getPage(new PageInfo { PageNumber = pageNumber!.Value }, ct) is { Count: > 0 } page
+			? new Page<uint?, T>(page, pageNumber + 1)
+			: Page<uint?, T>.Empty;
+
+	public struct PageInfo
+	{
+		public uint PageNumber { get; init; }
+
+		public uint DesiredCount { get; init; }
+	}
 }

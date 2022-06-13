@@ -15,10 +15,9 @@ public partial class FeedView
 	{
 		private readonly CancellationTokenSource _ct = new();
 		private readonly RequestSource _requests = new();
+		private readonly TokenCompletionHandler<RefreshToken> _refresh = new();
 		private readonly FeedView _view;
 		private readonly VisualStateHelper _visualStateManager;
-		
-		private RefreshTokenCollection? _refresh;
 
 		public ISignal<IMessage> Feed { get; }
 
@@ -31,8 +30,8 @@ public partial class FeedView
 			_ = Enumerate();
 		}
 
-		public bool RequestRefresh()
-			=> _requests.RequestRefresh() is { IsEmpty: false };
+		public bool RequestRefresh(Action completionAction)
+			=> _refresh.WaitFor(_requests.RequestRefresh(), completionAction);
 
 		private async Task Enumerate()
 		{
@@ -50,10 +49,9 @@ public partial class FeedView
 				{
 					Update(message);
 
-					if (!message.Current.IsTransient && _refresh is { } refresh && _refresh.IsLower(message))
+					if (!message.Current.IsTransient)
 					{
-						_refresh = default;
-						_view.Refresh.IsExecuting = false;
+						_refresh.Received(message.Current.Get(MessageAxis.Refresh));
 					}
 				}
 			}
@@ -99,7 +97,118 @@ public partial class FeedView
 		{
 			_ct.Cancel();
 			_requests.Dispose();
-			_view.Refresh.IsExecuting = false;
+			_refresh.Dispose();
 		}
+	}
+}
+
+internal class TokenCompletionHandler<T> : IDisposable
+	where T : IToken
+{
+	private TokenCollection<T>? _lastReceived;
+	private bool _isDisposed;
+
+	private event EventHandler<TokenCollection<T>?>? ReceivedTokens;
+
+	public void Received(TokenCollection<T>? tokens)
+	{
+		if (_isDisposed || tokens is null)
+		{
+			return;
+		}
+
+		_lastReceived = tokens;
+		ReceivedTokens?.Invoke(this, tokens);
+	}
+
+	public Task WaitFor(TokenCollection<T> tokens, CancellationToken ct)
+	{
+		if (_isDisposed || tokens.IsEmpty)
+		{
+			return Task.CompletedTask;
+		}
+
+		var task = new TaskCompletionSource<Unit>();
+		var request = new Request(this, tokens, () => task.TrySetResult(default));
+		ct.Register(request.Complete);
+
+		return task.Task;
+	}
+
+	/// <summary>
+	/// Waits for a minimum version of tokens.
+	/// </summary>
+	/// <param name="tokens">The minimum version of tokens we are waiting for.</param>
+	/// <param name="completionAction">The action to execute when the <paramref name="tokens"/> has been received.</param>
+	/// <returns>True is the tokens are awaited, false if the tokens are already present and <paramref name="completionAction"/> has already been invoked.</returns>
+	public bool WaitFor(TokenCollection<T> tokens, Action completionAction)
+	{
+		if (_isDisposed || tokens.IsEmpty)
+		{
+			return false;
+		}
+
+		return !new Request(this, tokens, completionAction).IsCompleted;
+	}
+
+	private class Request
+	{
+		private readonly TokenCompletionHandler<T> _owner;
+		private readonly TokenCollection<T> _tokens;
+
+		private Action? _completion;
+
+		public bool IsCompleted { get; private set; }
+
+		public Request(TokenCompletionHandler<T> owner, TokenCollection<T> tokens, Action completion)
+		{
+			_owner = owner;
+			_tokens = tokens;
+			_completion = completion;
+
+			Enable(owner, tokens);
+		}
+
+		private void Enable(TokenCompletionHandler<T> owner, TokenCollection<T> tokens)
+		{
+			var lastReceived = owner._lastReceived;
+			if (lastReceived?.IsGreaterOrEquals(tokens) ?? false)
+			{
+				Complete();
+				return;
+			}
+
+			owner.ReceivedTokens += OnTokenReceived;
+
+			// The _lastUpdated might have been already updated by the Received.
+			// If so, we check it again.
+			if (owner._isDisposed || (!ReferenceEquals(owner._lastReceived, lastReceived) && (owner._lastReceived?.IsGreaterOrEquals(tokens) ?? false)))
+			{
+				Complete();
+			}
+		}
+
+		private void OnTokenReceived(object? _, TokenCollection<T>? receivedTokens)
+		{
+			// If receivedTokens is null, it means that the Owner ahs been disposed
+			if (receivedTokens?.IsGreaterOrEquals(_tokens) ?? true)
+			{
+				Complete();
+			}
+		}
+
+		public void Complete()
+		{
+			IsCompleted = true;
+			_owner.ReceivedTokens -= OnTokenReceived;
+			Interlocked.Exchange(ref _completion, null)?.Invoke();
+		}
+	}
+
+	/// <inheritdoc />
+	public void Dispose()
+	{
+		_isDisposed = true;
+		ReceivedTokens?.Invoke(this, null);
 	}
 }

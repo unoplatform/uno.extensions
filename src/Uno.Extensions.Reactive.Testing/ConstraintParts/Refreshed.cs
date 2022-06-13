@@ -34,10 +34,10 @@ public sealed class Refreshed : MessageAxisConstraint
 			return;
 		}
 
-		actual.Versions.Count.Should().Be(_expected.Length, "all source versions should be defined.");
+		actual.Tokens.Count.Should().Be(_expected.Length, "all source versions should be defined.");
 
 		var expected = _expected.ToList();
-		foreach (var actualVersion in actual.Versions)
+		foreach (var actualVersion in actual.Tokens)
 		{
 			var expectedVersion = expected
 				.Select(version => (version, score: version.Match(actualVersion)))
@@ -48,7 +48,7 @@ public sealed class Refreshed : MessageAxisConstraint
 
 			if (expectedVersion is null)
 			{
-				AssertionScope.Current.FailWith($"{AssertionScope.Current.Context.Value} feed {GetDebugIdentifier(actualVersion.Source)} version {actualVersion.Version} for context #{actualVersion.RootContextId} was not expected.");
+				AssertionScope.Current.FailWith($"{AssertionScope.Current.Context.Value} feed {GetDebugIdentifier(actualVersion.Source)} version {actualVersion.SequenceId} for context #{actualVersion.RootContextId} was not expected.");
 			}
 			else
 			{

@@ -140,6 +140,6 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views
 		public IObservableVector<object?>? CollectionGroups { get; }
 #endregion
 
-		public void Dispose() => _pagination?.Dispose();
+		public void Dispose() { }
 	}
 }

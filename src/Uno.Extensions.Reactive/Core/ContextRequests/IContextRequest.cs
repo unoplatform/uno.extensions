@@ -9,3 +9,8 @@ namespace Uno.Extensions.Reactive.Core;
 internal interface IContextRequest
 {
 }
+
+internal interface IContextRequest<in TToken> : IContextRequest
+{
+	void Register(TToken token);
+}
