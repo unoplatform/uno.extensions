@@ -21,7 +21,7 @@ global using Uno.Extensions.Navigation.UI;
 global using Uno.Extensions.Navigation.UI.Controls;
 
 #if WINUI
-	global using Microsoft.UI.Dispatching;
+global using Microsoft.UI.Dispatching;
 	global using Microsoft.UI.Xaml;
 	global using Microsoft.UI.Xaml.Controls;
 	global using Microsoft.UI.Xaml.Controls.Primitives;

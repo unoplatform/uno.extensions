@@ -1,5 +1,5 @@
 ﻿<testharness:BaseTestSectionPage xmlns:testharness="using:TestHarness"
-								 x:Class="TestHarness.Ext.Navigation.Apps.ToDo.ToDoMainPage"
+								 x:Class="TestHarness.Ext.Authentication.Custom.CustomAuthenticationMainPage"
 								 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 								 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 								 xmlns:local="using:TestHarness.Ext.Navigation.PageNavigation"
@@ -26,40 +26,23 @@
 			<RowDefinition />
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
-		<TextBlock Text="Sample App: ToDo Tests"
+		<TextBlock Text="Custom Authentication Tests"
 				   Margin="20"
 				   FontSize="30" />
-		<ScrollViewer Grid.Row="1"
-					  ScrollViewer.HorizontalScrollBarVisibility="Auto"
-					  ScrollViewer.HorizontalScrollMode="Auto"
-					  ScrollViewer.VerticalScrollBarVisibility="Disabled"
-					  ScrollViewer.VerticalScrollMode="Disabled">
-			<Border 							HorizontalAlignment="Left"
-												VerticalAlignment="Stretch"
-												BorderBrush="Black"
-												BorderThickness="2">
-
-				<ContentControl AutomationProperties.AutomationId="NavigationRoot"
-								x:Name="NavigationRoot"
-								HorizontalAlignment="Left"
-								VerticalAlignment="Stretch"
-								HorizontalContentAlignment="Stretch"
-								VerticalContentAlignment="Stretch"
-								Width="1920" />
-			</Border>
-		</ScrollViewer>
+		<ContentControl AutomationProperties.AutomationId="NavigationRoot"
+						x:Name="NavigationRoot"
+						HorizontalAlignment="Stretch"
+						VerticalAlignment="Stretch"
+						HorizontalContentAlignment="Stretch"
+						VerticalContentAlignment="Stretch"
+						Grid.Row="1" />
 		<StackPanel Grid.Row="2"
 					Orientation="Horizontal"
 					HorizontalAlignment="Center">
 			<Button AutomationProperties.AutomationId="ShowAppButton"
-					Content="Commerce App"
+					Content="Custom Authentication"
 					Click="ShowAppClick" />
-			<Button AutomationProperties.AutomationId="NarrowButton"
-					Content="Narrow"
-					Click="NarrowClick" />
-			<Button AutomationProperties.AutomationId="WideButton"
-					Content="Wide"
-					Click="WideClick" />
+
 		</StackPanel>
 	</Grid>
 

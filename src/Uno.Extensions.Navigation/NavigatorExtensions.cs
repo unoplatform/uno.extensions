@@ -95,11 +95,16 @@ public static class NavigatorExtensions
 		return service.NavigateAsync(map.Path.WithQualifier(qualifier).AsRequest(resolver, sender, data, cancellation));
 	}
 
-	public static async Task<NavigationResultResponse<TResult>?> NavigateViewForResultAsync<TView, TResult>(
+	public static Task<NavigationResultResponse<TResult>?> NavigateViewForResultAsync<TView, TResult>(
 		this INavigator service, object sender, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
 	{
+		return service.NavigateViewForResultAsync<TResult>(sender, typeof(TView), qualifier, data, cancellation);
+	}
+	public static async Task<NavigationResultResponse<TResult>?> NavigateViewForResultAsync<TResult>(
+	this INavigator service, object sender, Type viewType, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
+	{
 		var resolver = service.GetResolver();
-		var map = resolver?.FindByView(typeof(TView));
+		var map = resolver?.FindByView(viewType);
 		if (map is null)
 		{
 			return default;
@@ -126,11 +131,16 @@ public static class NavigatorExtensions
 		return service.NavigateAsync(map.Path.WithQualifier(qualifier).AsRequest(resolver, sender, data, cancellation));
 	}
 
-	public static async Task<NavigationResultResponse<TResult>?> NavigateViewModelForResultAsync<TViewViewModel, TResult>(
+	public static Task<NavigationResultResponse<TResult>?> NavigateViewModelForResultAsync<TViewViewModel, TResult>(
 		this INavigator service, object sender, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
 	{
+		return service.NavigateViewModelForResultAsync<TResult>(sender, typeof(TViewViewModel), qualifier, data, cancellation);
+	}
+	public static async Task<NavigationResultResponse<TResult>?> NavigateViewModelForResultAsync<TResult>(
+		this INavigator service, object sender, Type viewModelType, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
+	{
 		var resolver = service.GetResolver();
-		var map = resolver?.FindByViewModel(typeof(TViewViewModel));
+		var map = resolver?.FindByViewModel(viewModelType);
 		if (map is null)
 		{
 			return default;

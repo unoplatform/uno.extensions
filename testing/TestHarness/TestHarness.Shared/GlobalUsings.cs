@@ -1,9 +1,10 @@
 ﻿global using System;
-global using System.Collections;
+global using System.Collections.Generic;
 global using System.Linq;
 global using System.Reflection;
 global using System.Threading;
 global using System.Threading.Tasks;
+global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Hosting;
 global using Microsoft.Extensions.Logging;
 //global using Uno.Extensions.Reactive;
@@ -15,6 +16,7 @@ global using Microsoft.UI.Xaml.Navigation;
 global using TestHarness.Ext.Navigation.MessageDialog;
 global using TestHarness.Ext.Navigation.PageNavigation;
 global using TestHarness.Models;
+global using Uno.Extensions.Authentication;
 global using Uno.Extensions.Configuration;
 global using Uno.Extensions.Hosting;
 global using Uno.Extensions.Localization;
@@ -25,4 +27,5 @@ global using Uno.Extensions.Navigation.Toolkit;
 global using Uno.Extensions.Navigation.UI;
 global using Windows.ApplicationModel;
 global using Window = Microsoft.UI.Xaml.Window;
+
 
