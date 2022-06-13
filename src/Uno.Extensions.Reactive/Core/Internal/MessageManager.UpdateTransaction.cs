@@ -43,6 +43,9 @@ internal partial class MessageManager<TParent, TResult>
 			_ctSubscription = ct.Register(Dispose);
 		}
 
+		public void Update(Func<CurrentMessage, MessageBuilder> updater)
+			=> Update((cm, u) => u(cm), updater);
+
 		public void Update<TState>(Func<CurrentMessage, TState, MessageBuilder> updater, TState state)
 		{
 			if (_state != State.Active)
@@ -57,6 +60,9 @@ internal partial class MessageManager<TParent, TResult>
 				(that: this, updater, state),
 				_ct);
 		}
+
+		public void Commit(Updater resultUpdater)
+			=> Commit(_stateLessUpdater, resultUpdater);
 
 		public void Commit<TState>(Updater<TState> resultUpdater, TState state)
 		{

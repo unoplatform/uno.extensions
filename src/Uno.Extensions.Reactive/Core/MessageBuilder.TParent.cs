@@ -52,7 +52,7 @@ public readonly struct MessageBuilder<TParent, TResult> : IMessageEntry, IMessag
 	internal MessageAxisValue this[MessageAxis axis]
 	{
 		get => Get(axis).value;
-		set => Set(axis, value);
+		set => Set(axis, value, changes: null);
 	}
 
 	/// <inheritdoc />
@@ -64,7 +64,7 @@ public readonly struct MessageBuilder<TParent, TResult> : IMessageEntry, IMessag
 		var localValue = Local.Current[axis];
 		if (_updates.TryGetValue(axis, out var updater))
 		{
-			return (updater.GetValue(parentValue, localValue), default);
+			return updater.GetValue(parentValue, localValue);
 		}
 		else
 		{
@@ -75,12 +75,11 @@ public readonly struct MessageBuilder<TParent, TResult> : IMessageEntry, IMessag
 	/// <inheritdoc />
 	void IMessageBuilder.Set(MessageAxis axis, MessageAxisValue value, IChangeSet? changes)
 		=> Set(axis, value, changes);
-	internal void Set(MessageAxis axis, MessageAxisValue value, IChangeSet? changes)
-		=> Set(axis, value);
-	private void Set(MessageAxis axis, MessageAxisValue value, bool overridesParent = false)
+
+	internal MessageBuilder<TParent, TResult> Set(MessageAxis axis, MessageAxisValue value, IChangeSet? changes)
 	{
 		// Note: We are not validating the axis.AreEquals as changes are detected by the MessageManager itself.
-
-		_updates[axis] = new MessageAxisUpdate(axis, value){IsOverride = overridesParent};
+		_updates[axis] = new MessageAxisUpdate(axis, value, changes);
+		return this;
 	}
 }

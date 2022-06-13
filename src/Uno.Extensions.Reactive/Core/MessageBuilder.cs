@@ -43,11 +43,11 @@ public readonly struct MessageBuilder<T> : IMessageEntry, IMessageBuilder, IMess
 
 	void IMessageBuilder.Set(MessageAxis axis, MessageAxisValue value, IChangeSet? changes)
 		=> Set(axis, value, changes);
-	internal void Set(MessageAxis axis, MessageAxisValue value, IChangeSet? changes)
+	internal MessageBuilder<T> Set(MessageAxis axis, MessageAxisValue value, IChangeSet? changes)
 	{
 		if (axis.AreEquals(this[axis], value))
 		{
-			return;
+			return this;
 		}
 
 		if (value.IsSet)
@@ -59,6 +59,8 @@ public readonly struct MessageBuilder<T> : IMessageEntry, IMessageBuilder, IMess
 		{
 			_changes.Add(axis, changes);
 		}
+
+		return this;
 	}
 
 	/// <summary>
