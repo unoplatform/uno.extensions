@@ -8,10 +8,23 @@ This topic walks through using Navigation to display a modal flyout
 > [!TIP]
 > This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions-net6` template to create the solution. Instructions for creating an application from the template can be found [here](../Extensions/GettingStarted/UsingUnoExtensions.md)
 
+> [!IMPORTANT]
+> The `unoapp-extensions-net6` template requires the following changes for this tutorial:
+>
+> 1. Add the following inside the `MainPage` class in `MainPage.xaml.cs`:
+>
+>```csharp
+>    public MainViewModel? ViewModel => DataContext as MainViewModel;
+>```
+>
+> 2. Replace `Content="Go to Second Page"` with `Click="{x:Bind ViewModel.GoToSecondPage}"` in `MainPage.xaml`
+
 ## Step-by-steps
 
 ### 1. Displaying flyout from code
+
 - Add new `Page`, `SamplePage.xaml`, which will be used to display content inside the flyout.
+
     ```xml
     <Page
         x:Class="ShowFlyout.Views.SamplePage"
@@ -32,13 +45,18 @@ This topic walks through using Navigation to display a modal flyout
     </Page>
     ```
 
-- Add a `Button` with content `Go to Sample Page` to `MainPage.xaml` and wire up the `Click` event to the `ShowFlyoutClick` method  
+- Update the `Button` in `MainPage.xaml` as follows, which wires up the `Click` event to the `ShowFlyoutClick` method  
 
     ```xml
     <Button Content="Show flyout"
-            Click="ShowFlyoutClick" />
+            Click="ShowFlyoutClick" 
+            Grid.Row="1"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"/>
     ```
+
 - Add the `ShowFlyoutClick` method to the `MainPage.xaml.cs` file
+
     ```csharp
     private void ShowFlyoutClick(object sender, RoutedEventArgs e)
     {
@@ -50,7 +68,13 @@ This topic walks through using Navigation to display a modal flyout
 
 - Add another `Button` with the content `Show flyout from XAML` to `MainPage.xaml`. Set the `Navigation.Request` property to `!Sample` which indicates the `Sample` route should be opened as a Flyout.  
 
-    ```csharp
-    <Button Content="Show flyout from XAML"
-            uen:Navigation.Request="!Sample" />
+    ```xml
+    <StackPanel Grid.Row="1"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+        <Button Content="Show flyout"
+                Click="ShowFlyoutClick" />
+        <Button Content="Show flyout from XAML"
+                uen:Navigation.Request="!Sample" />
+    </StackPanel>
     ```

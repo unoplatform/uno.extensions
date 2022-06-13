@@ -76,10 +76,10 @@
               href: Learn/Tutorials/Navigation/HowTo-ShowFlyout.md
             - name: Display an item
               href: Learn/Tutorials/Navigation/HowTo-DisplayItem.md
-            # - name: Advanced
-            #   items:
-            #     - name: Page Navigation
-            #       href: Learn/Tutorials/Navigation/Advanced/HowTo-AdvancedPageNavigation.md
+            - name: Advanced
+              items:
+                - name: Page Navigation
+                  href: Learn/Tutorials/Navigation/Advanced/HowTo-AdvancedPageNavigation.md
             #     - name: Use a Panel (Grid, StackPanel etc)
             #       href: Learn/Tutorials/Navigation/Advanced/HowTo-UsePanel.md
             #     - name: Use a TabBar
@@ -88,8 +88,8 @@
             #       href: Learn/Tutorials/Navigation/Advanced/HowTo-UseNavigationView.md
             #     - name: Build a Responsive Shell
             #       href: Learn/Tutorials/Navigation/Advanced/HowTo-ResponsiveShell.md
-            #     - name: Use a Content Control
-            #       href: Learn/Tutorials/Navigation/Advanced/HowTo-UseContentControl.md
+                - name: Use a Content Control
+                  href: Learn/Tutorials/Navigation/Advanced/HowTo-UseContentControl.md
         - name: Localization
           items:
             - name: Get Started with Localization

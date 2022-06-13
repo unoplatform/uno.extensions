@@ -8,11 +8,22 @@ This topic walks through controlling Navigation from XAML. This includes specify
 > [!TIP]
 > This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions-net6` template to create the solution. Instructions for creating an application from the template can be found [here](../Extensions/GettingStarted/UsingUnoExtensions.md)
 
+> [!IMPORTANT]
+> The `unoapp-extensions-net6` template requires the following changes for this tutorial:
+>
+> 1. Add the following inside the `MainPage` class in `MainPage.xaml.cs`:
+>
+>```csharp
+>    public MainViewModel? ViewModel => DataContext as MainViewModel;
+>```
+>
+> 2. Replace `Content="Go to Second Page"` with `Click="{x:Bind ViewModel.GoToSecondPage}"` in `MainPage.xaml`
+
 ## Step-by-steps
 
 ### 1. Navigation.Request
 
-Navigation can be defined in XAML by placing the `Navigation.Request` attached property on a specific XAML element. The string value specified in the `Navigation.Request` is the route to be navigated to. 
+Navigation can be defined in XAML by placing the `Navigation.Request` attached property on a specific XAML element. The string value specified in the `Navigation.Request` is the route to be navigated to.
 Depending on the type of the XAML element, the `Navigation.Request` property will attach to an appropriate event in order to trigger navigation. For example, on a `Button`, the `Click` event will be used to trigger navigation, where as the `SelectionChanged` event on a `ListView` is used. If you place a `Navigation.Request` property on an static element, such as a `Border`, `Image` or `TextBlock`, the `Tapped` event will be used to trigger navigation.
 
 - Add a new `Page` to navigate to, `SamplePage.xaml`, in the UI (shared) project
@@ -31,14 +42,23 @@ Depending on the type of the XAML element, the `Navigation.Request` property wil
     }
     ```
 
-- In `MainPage.xaml` add a `Button` with the `Navigation.Request` attached property
+- In `MainPage.xaml` update the `Button` to use the `Navigation.Request` attached property instead of the `Click` event handler.
 
     ```xml
     <Button Content="Go to SamplePage"
             uen:Navigation.Request="Sample" />
     ```
 
-- In `SamplePage.xaml` add a `Button`, again with the `Navigation.Request` attached property. The "-" navigation route is used to navigate back. 
+> [!TIP]
+> As Navigation.Request attached property exists in the `Uno.Extensions.Navigation.UI` namespace you will need to import this namespace on the `Page` element with
+
+```csharp
+<Page x:Class="NavigateInXAML.Views.SamplePage" 
+    ...
+    xmlns:uen="using:Uno.Extensions.Navigation.UI">
+```
+
+- In `SamplePage.xaml` add a `Button`, again with the `Navigation.Request` attached property. The "-" navigation route is used to navigate back.
 
     ```xml
     <Button Content="Go Back"
@@ -48,8 +68,7 @@ Depending on the type of the XAML element, the `Navigation.Request` property wil
 > [!TIP]
 > Whilst this works, it relies on reflection to convert the request path "Sample" to the corresponding view, i.e. `SamplePage`. It's better to define `ViewMap` and `RouteMap`
 
-
-- Add a `ViewMap` and a `RouteMap` for the `SamplePage` into the `RegisterRoutes` method in the `App.xaml.host.cs` file 
+- Add a `ViewMap` and a `RouteMap` for the `SamplePage` into the `RegisterRoutes` method in the `App.xaml.host.cs` file
 
     ```csharp
     private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
@@ -76,10 +95,10 @@ Depending on the type of the XAML element, the `Navigation.Request` property wil
 
 In addition to specifying the route to navigate to, the Navigation.Data attached property can be used to define the data to be attached to the navigation request. The data can be accessed by the view model associated with the route using constructor injection.  
 
-- Define a record (or class), `Widget`, that is the type of data that will be attached to the navigation request. 
+- Define a record (or class), `Widget`, that is the type of data that will be attached to the navigation request.
 
     ```csharp
-    public record Widget(string Name, double Weight){}
+    public record Widget(string Name, double Weight);
     ```
 
 - Add a property, `Widgets`, to `MainViewModel` that returns an array of predefined `Widget` instances.
@@ -92,22 +111,29 @@ In addition to specifying the route to navigate to, the Navigation.Data attached
     };
     ```
 
-- Add a `ListView` to `MainPage.xaml` that has the `ItemsSource` property data bound to the `Widgets` property.
+- Replace the `Button` with a `ListView` in `MainPage.xaml` that has the `ItemsSource` property data bound to the `Widgets` property.
 
     ```xml
-    <ListView ItemsSource="{Binding Widgets}" x:Name="WidgetsList">
-        <ListView.ItemTemplate>
-            <DataTemplate>
-                <StackPanel Orientation="Horizontal"
-                            Padding="10">
-                    <TextBlock Text="{Binding Name}" />
-                    <TextBlock Text="{Binding Age}" />
-                </StackPanel>
-            </DataTemplate>
-        </ListView.ItemTemplate>
-    </ListView>
+    <StackPanel Grid.Row="1"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+        <ListView ItemsSource="{Binding Widgets}"
+                    x:Name="WidgetsList"
+                    SelectionMode="Single">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal"
+                                Padding="10">
+                        <TextBlock Text="{Binding Name}" />
+                        <TextBlock Text="{Binding Age}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </StackPanel>
     ```
-- Add a `Button` to `MainPage.xaml` that has both `Navigation.Request`, that specified the navigation route, and the `Navigation.Data` properties. In this case the `Navigation.Data` attached property is data bound to the `SelectedItem` property on the named element `WidgetsList` (which matches the `x:Name` set on the previously added `ListView`)
+
+- Add a `Button` to the `StackPanel` on  `MainPage.xaml` that has both `Navigation.Request`, that specified the navigation route, and the `Navigation.Data` properties. In this case the `Navigation.Data` attached property is data bound to the `SelectedItem` property on the named element `WidgetsList` (which matches the `x:Name` set on the previously added `ListView`)
 
     ```xml
     <Button Content="Go to Sample Page"
@@ -121,27 +147,28 @@ In addition to specifying the route to navigate to, the Navigation.Data attached
     public class SampleViewModel
     {
         public string Title => "Sample Page";
-        private readonly INavigator _navigator;
-    
+
         public string Name { get; }
     
-        public SampleViewModel(INavigator navigator, Widget widget)
+        public SampleViewModel(Widget widget)
         {
-            _navigator = navigator;
             Name = widget.Name;
         }
     }
     
     ```
+
 - Add a `TextBlock` to `SecondPage.xaml` that shows the name of the `Widget` supplied during navigation.
 
     ```xml
-    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
+    <TextBlock HorizontalAlignment="Center"
+                VerticalAlignment="Center">
         <Run Text="Widget Name:" /><Run Text="{Binding Name}" />
     </TextBlock>
-    ```     
+    ```
 
 - In order for the `Widget` to be injected into the `SampleViewModel` during navigation, a `DataMap` has to be added to the `ViewMap`
+
     ```csharp
     new ViewMap<SamplePage, SampleViewModel>(Data: new DataMap<Widget>())
     ```
@@ -150,7 +177,7 @@ In addition to specifying the route to navigate to, the Navigation.Data attached
 
 Instead of having to select an item in the `ListView` and then clicking on the `Button`, Navigation can be triggered when the user selects an item in the `ListView`.
 
-- Add the `Navigation.Request` property to the `ListView`. The `Navigation.Data` property is not required as the selected item will automatically be attached to the navigation request.
+- Add the `Navigation.Request` property to the `ListView`. The `Navigation.Data` property is not required as the selected item will automatically be attached to the navigation request. Also remove the `SelectionMode` property as it is no longer necessary for the `ListView` to track the selected item.
 
     ```xml
     <ListView ItemsSource="{Binding Widgets}"
@@ -166,6 +193,3 @@ Instead of having to select an item in the `ListView` and then clicking on the `
         </ListView.ItemTemplate>
     </ListView>
     ```
-
-
-
