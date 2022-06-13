@@ -81,11 +81,11 @@ internal record FeedToListFeedAdapter<TCollection, TItem>(
 		var hadItems = previousData.IsSome(out var previousItems);
 		var hasItems = updatedData.IsSome(out var updatedItems);
 
-		return ((hadItems, hasItems)) switch
+		return (hadItems, hasItems) switch
 		{
 			(true, true) => collectionAnalyzer.GetChanges(previousItems, updatedItems),
-			(true, false) => collectionAnalyzer.GetReset(previousItems, ImmutableList<TItem>.Empty),
-			(false, true) => collectionAnalyzer.GetReset(ImmutableList<TItem>.Empty, updatedItems),
+			(true, false) => collectionAnalyzer.GetResetChange(previousItems, ImmutableList<TItem>.Empty),
+			(false, true) => collectionAnalyzer.GetResetChange(ImmutableList<TItem>.Empty, updatedItems),
 			(false, false) => CollectionChangeSet.Empty,
 		};
 	}
