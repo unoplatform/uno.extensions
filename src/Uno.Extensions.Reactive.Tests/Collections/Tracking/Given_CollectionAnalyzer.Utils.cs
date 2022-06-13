@@ -13,36 +13,29 @@ using Uno.Extensions.Reactive.Tests._Utils;
 
 namespace Uno.Extensions.Reactive.Tests.Collections.Tracking;
 
-partial class Given_CollectionAnalyzer
+internal abstract class CollectionTrackerTester<TCollection, T>
 {
-	private static CollectionTrackerTester<MyClass> FromObj(params MyClass[] items)
-	=> new(ImmutableList.Create(items), null);
-
-	private static CollectionTrackerTester<int> FromInt(params int[] items)
-		=> new(ImmutableList.Create(items), null);
-}
-
-internal class CollectionTrackerTester<T>
-{
-	private readonly ImmutableList<T> _previous;
-	private ImmutableList<T>? _updated;
+	private readonly TCollection _previous;
+	private TCollection? _updated;
 	private IEqualityComparer<T>? _itemComparer;
 	private IEqualityComparer<T>? _itemVersionComparer;
 
-	public CollectionTrackerTester(ImmutableList<T> previous, ImmutableList<T>? updated)
+	public CollectionTrackerTester(TCollection previous, TCollection? updated)
 	{
 		_previous = previous;
 		_updated = updated;
 	}
 
-	public CollectionTrackerTester<T> To(params T[] updated)
+	public CollectionTrackerTester<TCollection, T> To(params T[] updated)
 	{
-		_updated = ImmutableList.Create(updated);
+		_updated = Create(updated);
 
 		return this;
 	}
 
-	public CollectionTrackerTester<T> With(IEqualityComparer<T>? itemComparer = null, IEqualityComparer<T>? itemVersionComparer = null)
+	protected abstract TCollection Create(T[] items);
+
+	public CollectionTrackerTester<TCollection, T> With(IEqualityComparer<T>? itemComparer = null, IEqualityComparer<T>? itemVersionComparer = null)
 	{
 		_itemComparer = itemComparer;
 		_itemVersionComparer = itemVersionComparer;
@@ -55,6 +48,9 @@ internal class CollectionTrackerTester<T>
 		ShouldBe();
 	}
 
+	protected abstract CollectionUpdater GetUpdater(CollectionAnalyzer<T> analyzer, TCollection previous, TCollection updated, ICollectionUpdaterVisitor visitor);
+	protected abstract IEnumerable<T> AsEnumerable(TCollection collection);
+
 	public void ShouldBe(params NotifyCollectionChangedEventArgs[] expected)
 	{
 		if (_updated is null)
@@ -62,12 +58,11 @@ internal class CollectionTrackerTester<T>
 			Assert.Fail("To collection has not been set.");
 		}
 
-		var s1 = new ObservableCollectionSnapshot<T>(_previous);
-		var s2 = new ObservableCollectionSnapshot<T>(_updated);
-
 		var visitor = new TestVisitor();
 		var tracker = new CollectionAnalyzer<T>(new ItemComparer<T>(_itemComparer, _itemVersionComparer));
-		var changes = tracker.GetUpdater(s1, s2, visitor);
+		var changes = GetUpdater(tracker, _previous, _updated, visitor);
+		var previousEnumerable = AsEnumerable(_previous);
+		var updatedEnumerable = AsEnumerable(_updated);
 
 		IEnumerable<NotifyCollectionChangedEventArgs> GetCollectionChanges()
 		{
@@ -104,14 +99,14 @@ internal class CollectionTrackerTester<T>
 
 		Assert.AreEqual(expected.Length, handler.EventsCount);
 
-		var previousDuplicates = _previous.Count - _previous.Distinct(_itemComparer ?? EqualityComparer<T>.Default).Count();
-		var updatedDuplicates = _updated.Count - _updated.Distinct(_itemComparer ?? EqualityComparer<T>.Default).Count();
+		var previousDuplicates = previousEnumerable.Count() - previousEnumerable.Distinct(_itemComparer ?? EqualityComparer<T>.Default).Count();
+		var updatedDuplicates = updatedEnumerable.Count() - updatedEnumerable.Distinct(_itemComparer ?? EqualityComparer<T>.Default).Count();
 
-		var added = _updated.Except(_previous, _itemComparer ?? EqualityComparer<T>.Default).ToArray();
-		var removed = _previous.Except(_updated, _itemComparer ?? EqualityComparer<T>.Default).ToArray();
+		var added = updatedEnumerable.Except(previousEnumerable, _itemComparer ?? EqualityComparer<T>.Default).ToArray();
+		var removed = previousEnumerable.Except(updatedEnumerable, _itemComparer ?? EqualityComparer<T>.Default).ToArray();
 
-		var kept1 = _previous.Except(removed).ToArray(); // either updated or moved (or nothing at all)
-		var kept2 = _updated.Except(added).ToArray();
+		var kept1 = previousEnumerable.Except(removed).ToArray(); // either updated or moved (or nothing at all)
+		var kept2 = updatedEnumerable.Except(added).ToArray();
 
 		Assert.AreEqual(kept1.Length, kept2.Length);
 
