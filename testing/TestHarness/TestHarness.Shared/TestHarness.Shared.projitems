@@ -273,4 +273,7 @@
     <_Globbed_Content Include="$(MSBuildThisFileDirectory)Assets/**/*.*" Exclude="@(Content)" />
     <Content Include="@(_Globbed_Content)" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Ext\Authentication\" />
+  </ItemGroup>
 </Project>
