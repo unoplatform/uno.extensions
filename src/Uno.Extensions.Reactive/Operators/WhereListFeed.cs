@@ -51,13 +51,13 @@ internal class WhereListFeed<T> : IListFeed<T>
 			{
 				case OptionType.Undefined:
 					updated
-						.Data(Option.Undefined<IImmutableList<T>>(), _analyzer.GetReset(previousFilteredItems, ImmutableList<T>.Empty))
+						.Data(Option.Undefined<IImmutableList<T>>(), _analyzer.GetResetChange(previousFilteredItems, ImmutableList<T>.Empty))
 						.Error(null);
 					break;
 
 				case OptionType.None:
 					updated
-						.Data(Option.None<IImmutableList<T>>(), _analyzer.GetReset(previousFilteredItems, ImmutableList<T>.Empty))
+						.Data(Option.None<IImmutableList<T>>(), _analyzer.GetResetChange(previousFilteredItems, ImmutableList<T>.Empty))
 						.Error(null);
 					break;
 
@@ -79,7 +79,7 @@ internal class WhereListFeed<T> : IListFeed<T>
 						if (updatedFilteredItems is { Count: 0 })
 						{
 							updated
-								.Data(Option.None<IImmutableList<T>>(), _analyzer.GetReset(previousFilteredItems, ImmutableList<T>.Empty))
+								.Data(Option.None<IImmutableList<T>>(), _analyzer.GetResetChange(previousFilteredItems, ImmutableList<T>.Empty))
 								.Error(null);
 						}
 						else

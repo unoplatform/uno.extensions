@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Uno.Extensions.Collections.Tracking;
 using Uno.Extensions.Reactive.Tests._Utils;
 using static Uno.Extensions.Collections.CollectionChanged;
 
 namespace Uno.Extensions.Reactive.Tests.Collections.Tracking;
 
 [TestClass]
-public partial class Given_CollectionAnalyzer
+public partial class Given_CollectionAnalyzer_ListOfT
 {
 	private IEqualityComparer<MyClass> ItemComparer { get; } = FuncEqualityComparer<MyClass>.Create(c => c.Value);
 
@@ -2187,5 +2188,32 @@ public partial class Given_CollectionAnalyzer
 				Move(2, 6, 4),
 				Move(1, 6, 5)
 			);
+	}
+
+	private static ListOfTCollectionTrackerTester<MyClass> FromObj(params MyClass[] items)
+		=> new(new List<MyClass>(items), null);
+
+	private static ListOfTCollectionTrackerTester<int> FromInt(params int[] items)
+		=> new(new List<int>(items), null);
+
+	private class ListOfTCollectionTrackerTester<T> : CollectionTrackerTester<IList<T>, T>
+	{
+		/// <inheritdoc />
+		public ListOfTCollectionTrackerTester(IList<T> previous, IList<T>? updated)
+			: base(previous, updated)
+		{
+		}
+
+		/// <inheritdoc />
+		protected override IList<T> Create(T[] items)
+			=> items;
+
+		/// <inheritdoc />
+		protected override CollectionUpdater GetUpdater(CollectionAnalyzer<T> analyzer, IList<T> previous, IList<T> updated, ICollectionUpdaterVisitor visitor)
+			=> analyzer.GetUpdater(previous, updated, visitor);
+
+		/// <inheritdoc />
+		protected override IEnumerable<T> AsEnumerable(IList<T> collection)
+			=> collection;
 	}
 }

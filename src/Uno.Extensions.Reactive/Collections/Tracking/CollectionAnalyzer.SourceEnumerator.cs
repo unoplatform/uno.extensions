@@ -8,23 +8,19 @@ namespace Uno.Extensions.Collections.Tracking;
 
 partial class CollectionAnalyzer
 {
-	private class SourceEnumerator
+	private class SourceEnumerator<T>
 	{
-		private readonly IList _snapshot;
-		private readonly IndexOf _indexOf;
+		private readonly ListRef<T> _source;
 		private readonly IgnoredIndexCollection _ignored = new();
 
-		public SourceEnumerator(
-			IList snapshot,
-			IndexOf indexOf)
+		public SourceEnumerator(ListRef<T> source)
 		{
-			_snapshot = snapshot;
-			_indexOf = indexOf;
+			_source = source;
 		}
 
 		public int CurrentIndex { get; private set; } = -1;
 
-		public object? Current { get; private set; }
+		public T Current { get; private set; }
 
 		/// <summary>
 		/// Count of items that have been ignored by the enumerator
@@ -39,17 +35,17 @@ partial class CollectionAnalyzer
 				Ignored++;
 			}
 
-			if (index >= _snapshot.Count)
+			if (index >= _source.Count)
 			{
 				CurrentIndex = -1;
-				Current = default(object);
+				Current = default!;
 
 				return false;
 			}
 			else
 			{
 				CurrentIndex = index;
-				Current = _snapshot[index];
+				Current = _source.ElementAt(index);
 
 				return true;
 			}
@@ -64,13 +60,13 @@ partial class CollectionAnalyzer
 			_ignored.Add(index);
 		}
 
-		public (int index, int ignoredItemsAfter) NextIndexOf(object item)
+		public (int index, int ignoredItemsAfter) NextIndexOf(T item)
 		{
 			using var ignored = _ignored.GetEnumerator();
 			var index = CurrentIndex;
 			do
 			{
-				index = _indexOf(item, index + 1, _snapshot.Count - index - 1);
+				index = _source.IndexOf(item, index + 1, _source.Count - index - 1);
 
 				// Item is missing, break
 				if (index < 0)

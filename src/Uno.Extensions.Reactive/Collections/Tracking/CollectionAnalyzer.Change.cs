@@ -67,8 +67,8 @@ partial class CollectionAnalyzer
 	private abstract class EntityChange : Change
 	{
 		protected readonly int _indexOffset;
-		protected readonly List<object> _oldItems = new();
-		protected readonly List<object> _newItems = new();
+		protected readonly List<object?> _oldItems = new();
+		protected readonly List<object?> _newItems = new();
 
 		public new EntityChange? Next
 		{
@@ -83,7 +83,7 @@ partial class CollectionAnalyzer
 			Ends = at;
 		}
 
-		public void Append(object oldItem, object newItem)
+		public void Append(object? oldItem, object? newItem)
 		{
 			_oldItems.Add(oldItem);
 			_newItems.Add(newItem);
