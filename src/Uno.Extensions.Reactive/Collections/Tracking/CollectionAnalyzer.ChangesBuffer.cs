@@ -7,7 +7,7 @@ namespace Uno.Extensions.Collections.Tracking;
 
 partial class CollectionAnalyzer
 {
-	private class ChangesBuffer
+	private class ChangesBuffer<T>
 	{
 		/*
 		* We generate 4 kinds of changes:
@@ -95,7 +95,7 @@ partial class CollectionAnalyzer
 			}
 		}
 
-		public void Update(object oldItem, object newItem, int index)
+		public void Update(T oldItem, T newItem, int index)
 		{
 			// As they don't impact the 'result' index, replace-instance are buffered separately and will be inserted at the top of the changes collection.
 			// Note: We use a single '_Same' node for all updates
@@ -103,14 +103,14 @@ partial class CollectionAnalyzer
 			UpdateOrReplace(ref _sameHead, oldItem, newItem, index, (i, o) => new _Same(i, o)); ;
 		}
 
-		public void Replace(object oldItem, object newItem, int index)
+		public void Replace(T oldItem, T newItem, int index)
 		{
 			// As they don't impact the 'result' index, replaces are buffered separately and will be inserted at the top of the changes collection.
 
 			UpdateOrReplace(ref _replaceHead, oldItem, newItem, index, (i, o) => new _Replace(i, o));
 		}
 
-		public void Add(object item, int at, int max)
+		public void Add(T item, int at, int max)
 		{
 			if (!(Tail is _Add add) || add.Ends != at)
 			{
@@ -119,7 +119,7 @@ partial class CollectionAnalyzer
 			add.Append(item);
 		}
 
-		public void Move(object item, int from, int fromOffset, int to, int max)
+		public void Move(T item, int from, int fromOffset, int to, int max)
 		{
 			if (!(Tail is _Move move) || move.Ends != from)
 			{
@@ -128,7 +128,7 @@ partial class CollectionAnalyzer
 			move.Append(item);
 		}
 
-		public void Remove(object item, int at)
+		public void Remove(T item, int at)
 		{
 			if (!(Tail is _Remove remove) || remove.Ends != at)
 			{
@@ -137,8 +137,8 @@ partial class CollectionAnalyzer
 			remove.Append(item);
 		}
 
-		private void UpdateOrReplace<T>(ref T? head, object oldItem, object newItem, int index, Func<int, int, T> factory)
-			where T : EntityChange
+		private void UpdateOrReplace<TNode>(ref TNode? head, T oldItem, T newItem, int index, Func<int, int, TNode> factory)
+			where TNode : EntityChange
 		{
 			if (head is null)
 			{
@@ -152,7 +152,7 @@ partial class CollectionAnalyzer
 			var node = head;
 			while (node.Next is not null && node.Next.Starts < index)
 			{
-				node = (T)node.Next;
+				node = (TNode)node.Next;
 			}
 
 			// Then append the item to the selected nodes

@@ -12,7 +12,7 @@ partial class CollectionAnalyzer
 	{
 		private readonly int _to;
 		private readonly int _indexOffset;
-		private readonly List<object> _items;
+		private readonly List<object?> _items;
 
 		public _Move(int from, int to, int capacity)
 			: this(from, to, 0, capacity)
@@ -27,7 +27,7 @@ partial class CollectionAnalyzer
 			_items = new(capacity);
 		}
 
-		public void Append(object item)
+		public void Append(object? item)
 		{
 			_items.Add(item);
 			Ends++;
