@@ -1,5 +1,4 @@
 using System.Net.Http;
-using Playground.Reactive;
 using Playground.Services.Endpoints;
 using Uno.Extensions.Localization;
 
@@ -79,7 +78,7 @@ public sealed partial class App : Application
 
 
 				// Enable navigation, including registering views and viewmodels
-				.UseMappedNavigation(
+				.UseNavigation(
 					PlaygroundApp.ReactiveViewModelMappings.ViewModelMappings,
 					RegisterRoutes,
 					configure: cfg => cfg with { AddressBarUpdateEnabled = true })

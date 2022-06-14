@@ -33,7 +33,7 @@ public static class HostBuilderExtensions
 				configureServices?.Invoke(ctx, services);
 			});
 	}
-	public static IHostBuilder UseMappedNavigation(
+	public static IHostBuilder UseNavigation(
 		this IHostBuilder hostBuilder,
 		IDictionary<Type, Type> viewModelMapping,
 		Action<IViewRegistry, IRouteRegistry>? viewRouteBuilder = null,
