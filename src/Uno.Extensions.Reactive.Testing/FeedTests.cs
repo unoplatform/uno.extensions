@@ -27,7 +27,7 @@ public class FeedTests
 	/// </summary>
 	public TestContext TestContext { get; set; } = default!;
 
-	public CancellationToken CT => TestContext?.CancellationTokenSource.Token ?? CancellationToken.None;
+	public CancellationToken CT => Context?.SourceContext.Token ?? TestContext?.CancellationTokenSource.Token ?? CancellationToken.None;
 
 	/// <summary>
 	/// Gets the context for the current feed test.

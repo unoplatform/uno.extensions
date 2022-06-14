@@ -15,10 +15,9 @@ public partial class FeedView
 	{
 		private readonly CancellationTokenSource _ct = new();
 		private readonly RequestSource _requests = new();
+		private readonly TokenSetAwaiter<RefreshToken> _refresh = new();
 		private readonly FeedView _view;
 		private readonly VisualStateHelper _visualStateManager;
-		
-		private RefreshTokenCollection? _refresh;
 
 		public ISignal<IMessage> Feed { get; }
 
@@ -31,8 +30,8 @@ public partial class FeedView
 			_ = Enumerate();
 		}
 
-		public bool RequestRefresh()
-			=> _requests.RequestRefresh() is { IsEmpty: false };
+		public bool RequestRefresh(Action completionAction)
+			=> _refresh.WaitFor(_requests.RequestRefresh(), completionAction);
 
 		private async Task Enumerate()
 		{
@@ -50,10 +49,9 @@ public partial class FeedView
 				{
 					Update(message);
 
-					if (!message.Current.IsTransient && _refresh is { } refresh && _refresh.IsLower(message))
+					if (!message.Current.IsTransient)
 					{
-						_refresh = default;
-						_view.Refresh.IsExecuting = false;
+						_refresh.Received(message.Current.Get(MessageAxis.Refresh));
 					}
 				}
 			}
@@ -99,7 +97,7 @@ public partial class FeedView
 		{
 			_ct.Cancel();
 			_requests.Dispose();
-			_view.Refresh.IsExecuting = false;
+			_refresh.Dispose();
 		}
 	}
 }

@@ -15,7 +15,7 @@ public class Given_RequestSource : FeedTests
 	[TestMethod]
 	public async Task When_Send_Then_Forwarded()
 	{
-		var sut = new RequestSource();
+		using var sut = new RequestSource();
 		var rq = new TestRequest();
 
 		var resultTask = sut.Take(1).ToListAsync(CT);

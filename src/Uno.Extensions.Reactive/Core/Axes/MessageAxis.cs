@@ -39,7 +39,7 @@ public abstract class MessageAxis : IEquatable<MessageAxis>
 	/// This is expected to be full-filled only by "source" feed that are refreshable,
 	/// not the sources feed built from a stream of data nor operators.
 	/// </remarks>
-	internal static MessageAxis<RefreshTokenCollection> Refresh => new(MessageAxes.Refresh, RefreshTokenCollection.Aggregate);
+	internal static MessageAxis<TokenSet<RefreshToken>> Refresh => RefreshAxis.Instance;
 
 	internal MessageAxis(string identifier)
 	{
