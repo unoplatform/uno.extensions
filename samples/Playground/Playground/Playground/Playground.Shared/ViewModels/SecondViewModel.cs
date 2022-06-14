@@ -1,6 +1,6 @@
 ﻿namespace Playground.ViewModels;
 
-public class SecondViewModel
+public partial class SecondViewModel
 {
 	public SecondViewModel(NavigationRequest request)
 	{

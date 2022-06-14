@@ -1,6 +1,6 @@
 ﻿namespace Playground.ViewModels;
 
-public partial class BasicViewModel
+public class BasicViewModel
 {
 	private readonly INavigator _navigator;
 	public BasicViewModel(INavigator navigator)
@@ -8,11 +8,11 @@ public partial class BasicViewModel
 		_navigator = navigator;
 	}
 
-	public async void Close()
+	public async Task Close()
 	{
 		await _navigator.NavigateBackAsync(this);
 	}
-	public async void CloseWithData()
+	public async Task CloseWithData()
 	{
 		await _navigator.NavigateBackWithResultAsync(this, data:new Widget { Name="Dialog Widget"});
 	}
