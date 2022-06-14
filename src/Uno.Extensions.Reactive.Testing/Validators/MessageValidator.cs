@@ -3,17 +3,16 @@ using System.Collections.Immutable;
 using System.Linq;
 using FluentAssertions;
 using FluentAssertions.Execution;
-using Uno.Extensions.Reactive;
 
 namespace Uno.Extensions.Reactive.Testing;
 
-public class MessageConstraint<T>
+public class MessageValidator<T>
 {
-	private readonly MessageEntryConstraint<T>? _previous;
-	private readonly MessageEntryConstraint<T>? _current;
-	private readonly MessageAxis[]? _changes;
+	private readonly Constraint<MessageEntry<T>>? _previous;
+	private readonly Constraint<MessageEntry<T>>? _current;
+	private readonly Constraint<ChangeCollection>? _changes;
 
-	public MessageConstraint(MessageEntryConstraint<T>? previous, MessageEntryConstraint<T>? current, MessageAxis[]? changes)
+	public MessageValidator(Constraint<MessageEntry<T>>? previous, Constraint<MessageEntry<T>>? current, Constraint<ChangeCollection>? changes)
 	{
 		_previous = previous;
 		_current = current;
@@ -26,7 +25,7 @@ public class MessageConstraint<T>
 		{
 			if (previous is null)
 			{
-				MessageEntryConstraint<T>.Initial.Assert(message.Previous);
+				EntryValidator<T>.Initial.Assert(message.Previous);
 			}
 			else
 			{
@@ -51,7 +50,7 @@ public class MessageConstraint<T>
 		{
 			using (AssertionScope.Current.ForContext("reported changes"))
 			{
-				message.Changes.Should().BeEquivalentTo(_changes);
+				_changes.Assert(message.Changes);
 			}
 		}
 	}

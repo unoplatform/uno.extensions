@@ -5,7 +5,7 @@ using Uno.Extensions.Reactive;
 
 namespace Uno.Extensions.Reactive.Testing;
 
-public sealed class Error : MessageAxisConstraint
+public sealed class Error : AxisConstraint
 {
 	public static Error No { get; } = new();
 

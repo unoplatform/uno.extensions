@@ -202,6 +202,20 @@ public class FeedRecorder<TFeed, TValue> : IFeedRecorder<TValue>, ICollection<Me
 
 			sb.AppendLine();
 
+			foreach (var change in message.Changes)
+			{
+				message.Changes.Contains(change, out var changes);
+				if (changes is not null)
+				{
+					sb.AppendLine($"\t\t{change.Identifier} changes:");
+					foreach (var line in changes.ToString().Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
+					{
+						sb.Append("\t\t");
+						sb.Append(line);
+					}
+				}
+			}
+
 			string HasChanged(MessageAxis axis)
 				=> message.Changes.Contains(axis) ? "*" : "";
 		}

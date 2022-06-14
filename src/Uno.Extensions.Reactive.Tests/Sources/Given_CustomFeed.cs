@@ -33,7 +33,7 @@ namespace Uno.Extensions.Reactive.Tests.Sources
 				.Message(Changed.Data, 42, Error.No, Progress.Final)
 				.Message(Changed.Data, 43, Error.No, Progress.Final)
 				.Message(Changed.Error, 43, typeof(TestException), Progress.Final)
-				.Message(Changed.Data, Changed.Error, Changed.Progress, 44, Error.No, Progress.Transient)
+				.Message(Changed.Data & Changed.Error & Changed.Progress, 44, Error.No, Progress.Transient)
 			);
 		}
 
@@ -49,8 +49,8 @@ namespace Uno.Extensions.Reactive.Tests.Sources
 			var sut = await Feed.Create(GetSource).Record();
 
 			sut.Should().Be(r => r
-				.Message(Changed.Data, Changed.Progress, 42, Error.No, Progress.Transient)
-				.Message(Changed.Error, Changed.Progress, 42, typeof(InvalidOperationException), Progress.Final)
+				.Message(Changed.Data & Changed.Progress, 42, Error.No, Progress.Transient)
+				.Message(Changed.Error & Changed.Progress, 42, typeof(InvalidOperationException), Progress.Final)
 			);
 		}
 

@@ -19,6 +19,6 @@ public class MessageAssertions<T> : ReferenceTypeAssertions<Message<T>, MessageA
 	/// <inheritdoc />
 	protected override string Identifier { get; } = typeof(Message<T>).Name;
 
-	public void Be(params EntryAxisConstraint<T>[] assertions)
+	public void Be(params AxisConstraint<T>[] assertions)
 		=> _message.Current.Should().Be(assertions);
 }

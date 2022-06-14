@@ -8,7 +8,7 @@ namespace FluentAssertions;
 
 public class MessageRecorderConstraintBuilder<T>
 {
-	private readonly List<MessageConstraint<T>> _messagesConstraints = new();
+	private readonly List<MessageValidator<T>> _messagesConstraints = new();
 
 	public MessageRecorderConstraintBuilder<T> Message(Action<MessageConstraintBuilder<T>> constraintBuilder)
 	{
@@ -20,24 +20,23 @@ public class MessageRecorderConstraintBuilder<T>
 		return this;
 	}
 
-	public MessageRecorderConstraintBuilder<T> Message(params MessageConstraintPart<T>[] parts)
+	public MessageRecorderConstraintBuilder<T> Message(params MessageConstraint<T>[] constraints)
 	{
-		var currentParts = parts
-			.Where(p => p.CurrentEntry is not null)
-			.Select(p => p.CurrentEntry!)
+		var currentParts = constraints
+			.Where(c => c.CurrentEntry is not null)
+			.Select(c => c.CurrentEntry!)
 			.ToImmutableList();
-		var changes = parts
-			.Select(p => p.Value as Changed)
-			.Where(change => change is not null)
-			.ToList() is {Count: >0} configChanges
-			? configChanges.Aggregate(Changed.None , (total, change) => total & change!)
-			: default;
 
-		_messagesConstraints.Add(new MessageConstraint<T>(default, new MessageEntryConstraint<T>(currentParts), changes?.Expected));
+		var changes = constraints
+			.Where(c => c.Changes is not null)
+			.Select(c => c.Changes!)
+			.ToImmutableList();
+
+		_messagesConstraints.Add(new MessageValidator<T>(default, new EntryValidator<T>(currentParts), new ChangesValidator<T>(changes)));
 
 		return this;
 	}
 
-	internal MessageRecorderConstraint<T> Build()
+	internal RecorderValidator<T> Build()
 		=> new(_messagesConstraints.ToArray());
 }

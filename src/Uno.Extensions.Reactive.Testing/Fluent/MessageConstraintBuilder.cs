@@ -7,28 +7,28 @@ namespace FluentAssertions;
 
 public class MessageConstraintBuilder<T>
 {
-	private MessageEntryConstraint<T>? _previous;
-	private MessageEntryConstraint<T>? _current;
-	private MessageAxis[]? _changes;
+	private EntryValidator<T>? _previous;
+	private EntryValidator<T>? _current;
+	private Constraint<ChangeCollection>? _changes;
 
-	public MessageConstraintBuilder<T> Changed(params MessageAxis[] axes)
+	public MessageConstraintBuilder<T> Changed(params ChangedConstraint<T>[] axes)
 	{
-		_changes = axes;
+		_changes = new ChangesValidator<T>(axes);
 		return this;
 	}
 
-	public MessageConstraintBuilder<T> Previous(params EntryAxisConstraint<T>[] axesConstraints)
+	public MessageConstraintBuilder<T> Previous(params AxisConstraint<T>[] axesConstraints)
 	{
-		_previous = new MessageEntryConstraint<T>(axesConstraints);
+		_previous = new EntryValidator<T>(axesConstraints);
 		return this;
 	}
 
-	public MessageConstraintBuilder<T> Current(params EntryAxisConstraint<T>[] axesConstraints)
+	public MessageConstraintBuilder<T> Current(params AxisConstraint<T>[] axesConstraints)
 	{
-		_current = new MessageEntryConstraint<T>(axesConstraints);
+		_current = new EntryValidator<T>(axesConstraints);
 		return this;
 	}
 
-	internal MessageConstraint<T> Build()
+	internal MessageValidator<T> Build()
 		=> new(_previous, _current, _changes);
 }
