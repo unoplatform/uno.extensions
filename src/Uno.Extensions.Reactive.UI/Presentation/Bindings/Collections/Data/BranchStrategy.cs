@@ -97,11 +97,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 			var groupsView = new MapView(
 				groupsCollection,
 				groupsChanged,
-				groupsMappingFacet.ToConverter()
-#if NETFX_CORE
-				, enableWinRTOutOfRangeHack: true
-#endif
-			);
+				groupsMappingFacet.ToConverter());
 			var flatView = new FlatView(
 				source: groupsCollection,
 				collectionChangedFacet: flatCollectionChanged,

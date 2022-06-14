@@ -1,4 +1,8 @@
-﻿using System;
+﻿#if WINDOWS
+#define NEEDS_OUT_OF_RANGE_HACK
+#endif
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -21,7 +25,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views
 		private readonly CollectionChangedFacet _sourceChange;
 		private readonly IConverter<object?, object?> _converter;
 
-#if NETFX_CORE
+#if NEEDS_OUT_OF_RANGE_HACK
 		/*
 		 * About the "WinRT out of range hack"
 		 *
@@ -66,8 +70,8 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views
 			CollectionFacet source,
 			CollectionChangedFacet sourceChange,
 			IConverter<object?, object?> converter
-#if NETFX_CORE
-			, bool enableWinRTOutOfRangeHack = false)
+#if NEEDS_OUT_OF_RANGE_HACK
+			, bool enableWinRTOutOfRangeHack = true)
 		{
 			_enableWinRtOutOfRangeHack = enableWinRTOutOfRangeHack;
 #else
@@ -85,7 +89,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views
 			{
 				var count = _source.Count;
 
-#if NETFX_CORE
+#if NEEDS_OUT_OF_RANGE_HACK
 				if (_enableWinRtOutOfRangeHack && _lastQueriedIndex >= count - 2)
 				{
 					var caller = Environment.StackTrace.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries).Last();
@@ -108,7 +112,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views
 		{
 			get
 			{
-#if NETFX_CORE
+#if NEEDS_OUT_OF_RANGE_HACK
 				_lastQueriedIndex = index;
 				if (index >= _source.Count)
 				{
@@ -144,6 +148,6 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views
 		public void CopyTo(object?[] array, int arrayIndex) => _converter.ArrayCopy(_source, array, arrayIndex);
 
 		private NotSupportedException NotSupported([CallerMemberName] string? methodName = null)
-			=> new NotSupportedException(methodName + " is not supported on this collection.");
+			=> new(methodName + " is not supported on this collection.");
 	}
 }

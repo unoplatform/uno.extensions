@@ -35,7 +35,7 @@ public sealed class MessageAxis<T> : MessageAxis
 	/// <param name="value">The metadata to encapsulate..</param>
 	/// <returns>The raw axis value.</returns>
 	[Pure]
-	public MessageAxisValue ToMessageValue(T? value)
+	public MessageAxisValue ToMessageValue(T value)
 		=> value is null ? default : new(value);
 
 	/// <inheritdoc />
