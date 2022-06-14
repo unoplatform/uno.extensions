@@ -49,7 +49,7 @@ public partial class FeedView
 		/// <inheritdoc />
 		public void Execute(object? parameter)
 		{
-			if (_view._subscription is { } subscription)
+			if (CanExecute(parameter) && _view._subscription is { } subscription)
 			{
 				IsExecuting = true;
 				// We must make sure to run on a background thread to send requests
