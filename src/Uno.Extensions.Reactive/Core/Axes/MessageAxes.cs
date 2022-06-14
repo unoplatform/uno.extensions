@@ -31,6 +31,11 @@ public static class MessageAxes
 	internal const string Refresh = nameof(Refresh);
 
 	/// <summary>
+	/// Name of the pagination axis.
+	/// </summary>
+	internal const string Pagination = nameof(Pagination);
+
+	/// <summary>
 	/// Name of the axe used to de-bounce data bound values
 	/// </summary>
 	internal const string BindingSource = nameof(BindingSource);
