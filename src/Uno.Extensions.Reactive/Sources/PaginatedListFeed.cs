@@ -69,6 +69,7 @@ internal class PaginatedListFeed<TCursor, TItem> : IListFeed<TItem>, IRefreshabl
 
 				// Prepare the next token we will process
 				pageRequests.MoveNext();
+				refreshRequests.MoveNext();
 				isFirstPage = false;
 			}
 		}
@@ -156,7 +157,7 @@ internal class PaginatedListFeed<TCursor, TItem> : IListFeed<TItem>, IRefreshabl
 
 		var items = (DifferentialImmutableList<TItem>)message.Local.Current.Data.SomeOrDefault(DifferentialImmutableList<TItem>.Empty);
 		var changes = default(CollectionChangeSet?);
-		var nextPage = default(TCursor?);
+		var nextPage = cursor;
 		try
 		{
 			var page = await pageTask;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Uno.Extensions.Reactive.Core;
@@ -18,8 +19,9 @@ internal class CoercingRequestManager<TRequest, TToken> : IAsyncEnumerable<Token
 	where TRequest : IContextRequest<TToken>
 	where TToken : class, IToken<TToken>
 {
-	private readonly AsyncEnumerableSubject<TokenSet<TToken>> _tokens = new(ReplayMode.EnabledForFirstEnumeratorOnly);
+	private readonly AsyncEnumerableSubject<TokenSet<TToken>> _tokens = new(ReplayMode.Disabled);
 	private readonly CancellationToken _ct;
+	private readonly bool _autoPublishInitial;
 
 	private TToken _current;
 	private TToken? _lastRequested;
@@ -41,14 +43,14 @@ internal class CoercingRequestManager<TRequest, TToken> : IAsyncEnumerable<Token
 	{
 		_current = initial; // The page that is being loaded or will be load on next request
 		_ct = ct;
+		_autoPublishInitial = autoPublishInitial;
 
 		if (autoPublishInitial)
 		{
-			_tokens.SetNext(initial);
 			_lastRequested = initial;
 		}
 
-		_ = context.Requests<TRequest>().ForEachAsync(OnRequest, ct);
+		_ = context.Requests<TRequest>().ForEachAsync(OnRequest, ct).ConfigureAwait(false);
 		ct.Register(_tokens.TryComplete);
 	}
 
@@ -64,17 +66,43 @@ internal class CoercingRequestManager<TRequest, TToken> : IAsyncEnumerable<Token
 	public TToken Current => _current;
 
 	/// <inheritdoc />
-	public IAsyncEnumerator<TokenSet<TToken>> GetAsyncEnumerator(CancellationToken cancellationToken = default)
-		=> _tokens.GetAsyncEnumerator(cancellationToken);
+	public async IAsyncEnumerator<TokenSet<TToken>> GetAsyncEnumerator(CancellationToken ct = default)
+	{
+		if (_autoPublishInitial)
+		{
+			yield return _current;
+		}
+
+		await foreach (var token in _tokens.WithCancellation(ct).ConfigureAwait(false))
+		{
+			if (ct.IsCancellationRequested)
+			{
+				yield break;
+			}
+
+			yield return token;
+		}
+	}
 
 	/// <summary>
-	/// Move to the next token that is going to be used for subsequent request.
+	/// Move to the next token that is going to be used for subsequent request, if the current one has already been used.
 	/// </summary>
 	/// <remarks>
 	/// The given token will be published by the <see cref="IAsyncEnumerable{T}"/> only on next request received.
 	/// </remarks>
-	public void MoveNext()
-		=> _current = _current.Next();
+	/// <returns>`True` is the <see cref="Current"/> has been moved to next, `False` if the current has been kept (since it has not been used yet).</returns>
+	public bool MoveNext()
+	{
+		if (_lastRequested == _current)
+		{
+			_current = _current.Next();
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 
 	private void OnRequest(TRequest request)
 	{
@@ -84,13 +112,11 @@ internal class CoercingRequestManager<TRequest, TToken> : IAsyncEnumerable<Token
 		}
 
 		LastRequest = request;
+		request.Register(_current);
 
-		// If the currentPage has not been requested yet, then request it!
 		if (Interlocked.Exchange(ref _lastRequested, _current) != _current)
 		{
 			_tokens.TrySetNext(_current);
 		}
-
-		request.Register(_current);
 	}
 }
