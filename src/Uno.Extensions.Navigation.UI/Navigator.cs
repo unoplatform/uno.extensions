@@ -42,7 +42,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		var regionUpdateId = RouteUpdater?.StartNavigation(Region) ?? Guid.Empty;
 		try
 		{
-			if(request.Source is null)
+			if (request.Source is null)
 			{
 				if (Logger.IsEnabled(LogLevel.Information)) Logger.LogInformationMessage($"Starting Navigation - Navigator: {this.GetType().Name} Request: {request.Route}");
 				request = request with { Source = this };
@@ -174,20 +174,35 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			return region.NavigateAsync(request);
 		}
 
-		//// Removing this as it's too unpredictable and hard for developers to
-		//// understand
-		//// Exception: If this region is an unnamed child of a composite,
-		//// send request to parent
-		//if (!Region.IsNamed() &&
-		//	Region.Parent is not null)
-		//{
-		//	return Region.Parent.NavigateAsync(request);
-		//}
+		var rm = Resolver.FindByPath(request.Route.Base);
+
+		// If
+		//		route has DependsOn AND
+		//		the current route equals the DependsOn value AND
+		//		there is an un-named child region
+		// Then
+		//		route request to child region
+		if (!string.IsNullOrWhiteSpace(rm?.DependsOn) &&
+			(Region.Ancestors(true).FirstOrDefault(x => x.Item1?.Base == rm!.DependsOn) is { } ancestor) &&
+			ancestor.Item2 != Region.Parent)
+		{
+			var ancestorRegion = ancestor.Item2;
+			var noNamedChild = ancestorRegion
+								.Children
+								.Where(x => x.IsUnnamed(ancestor.Item1) &&
+										(x.Navigator()?.CanNavigate(request.Route) ?? false))
+								.FirstOrDefault();
+			if (noNamedChild is not null)
+			{
+				return noNamedChild.NavigateAsync(request);
+			}
+		}
+
 
 		// If the current navigator can handle this route,
 		// then simply return without redirecting the request
 
-		// 1 - navigator can handle the request as it's presented
+		// Navigator can handle the request as it's presented
 		//		a) route has depends on that matches current route, return true
 		//		b) route has depends on that doesn't match current route - if parent can navigate to dependson, return false
 		//		c) route has no depends on - if parent can navigate to the route, return false
@@ -214,7 +229,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			return default;
 		}
 
-		var rm = Resolver.FindByPath(request.Route.Base);
+
 		if (rm is null)
 		{
 			if (Region.Parent is not null)
@@ -233,9 +248,9 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			{
 				var depends = rm?.DependsOn;
 				var parent = Region.Parent;
-				while( parent is not null)
+				while (parent is not null)
 				{
-					if(parent.Navigator()?.Route?.Base == depends)
+					if (parent.Navigator()?.Route?.Base == depends)
 					{
 						if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectNavigateAsync: Depends on matches current route of parent, so redirecting to parent");
 						return parent.NavigateAsync(request);
@@ -362,11 +377,11 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		var parentNavigator = Region.Parent.Navigator();
 		if (parentNavigator is not null &&
 				(
-					parentNavigator.GetType() == typeof(Navigator) ||
+					parentNavigator.IsComposite() ||
 					// TODO: PanelVisibilityNavigator needs to be adapted to inherit from SelectorNavigator, or share an interface
 					parentNavigator.GetType() == typeof(PanelVisiblityNavigator) ||
 					(
-						(parentNavigator.GetType().BaseType?.IsGenericType??false) &&
+						(parentNavigator.GetType().BaseType?.IsGenericType ?? false) &&
 						parentNavigator.GetType().BaseType?.GetGenericTypeDefinition() == typeof(SelectorNavigator<>)
 					)
 				)
@@ -405,13 +420,13 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		// avoid any parent checks in cannavigate
 		// This is to support the concept of a composite region
 		// whose sole responsibility is to forward navigation requests to all child regions
-		if (this.GetType() == typeof(Navigator))
+		if (this.IsComposite())
 		{
 			var internalRoute = route with { IsInternal = true };
 			return (from child in Region.Children
 					let nav = child.Navigator()
-					where nav?.CanNavigate(internalRoute) ?? false
-					select child).Any();
+					let canNavigate = nav?.CanNavigate(internalRoute) ?? false
+					select canNavigate).All(x => x);
 		}
 
 		return true;
@@ -484,7 +499,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		if (request.Route.IsEmpty())
 		{
 			var dataRoute = Resolver.Find(request.Route);
-			if (dataRoute is not null && dataRoute.Path !=this.Route?.Base)
+			if (dataRoute is not null && dataRoute.Path != this.Route?.Base)
 			{
 				request = request with { Route = request.Route with { Base = dataRoute.Path } };
 			}
@@ -496,7 +511,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 					var defaultRoute = route.Nested?.FirstOrDefault(x => x.IsDefault);
 					if (defaultRoute is not null)
 					{
-						if(Region.Children.FirstOrDefault(x => x.Name == defaultRoute.Path)  is { } childRegion &&
+						if (Region.Children.FirstOrDefault(x => x.Name == defaultRoute.Path) is { } childRegion &&
 							defaultRoute.Nested?.FirstOrDefault(x => x.IsDefault) is { } nestedDefaultRoute)
 						{
 							request = request with { Route = request.Route.Append(nestedDefaultRoute.Path) };

@@ -22,13 +22,13 @@ public sealed partial class MainPage : Page
 							let section = attributedSections.FirstOrDefault(x => x.Section == t) ?? new TestSection("--invalid", t, default!, default!)
 							select section).ToArray();
 
-		TestSectionsComboBox.ItemsSource = testSections;
+		TestSectionsListView.ItemsSource = testSections;
 	}
 
 
 	private void TestSectionSelectionChanged(object sender, SelectionChangedEventArgs e)
 	{
-		if (TestSectionsComboBox.SelectedItem is TestSection section &&
+		if (TestSectionsListView.SelectedItem is TestSection section &&
 			section.MainPage is not null)
 		{
 			var hostInit = section.HostInitializer is not null ?

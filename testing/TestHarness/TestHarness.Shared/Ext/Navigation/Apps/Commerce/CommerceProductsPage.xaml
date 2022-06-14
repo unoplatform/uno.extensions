@@ -1,0 +1,87 @@
+﻿<Page x:Class="TestHarness.Ext.Navigation.Apps.Commerce.CommerceProductsPage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:local="using:TestHarness.Ext.Navigation.Apps.Commerce"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+	  xmlns:utu="using:Uno.Toolkit.UI"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	  xmlns:um="using:Uno.Material"
+	  mc:Ignorable="d"
+	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+	  NavigationCacheMode="Required">
+
+	<Grid>
+		<VisualStateManager.VisualStateGroups>
+			<VisualStateGroup>
+				<VisualState x:Name="Wide">
+					<VisualState.Setters>
+						<!--<Setter Target="ProductsListView.SelectionMode"
+								Value="Single" />-->
+						<!--<Setter Target="ProductsListView.IsItemClickEnabled"
+								Value="False" />-->
+						<Setter Target="ProductsColumn.Width"
+								Value="*" />
+						<Setter Target="ProductsColumn.MinWidth"
+								Value="300" />
+						<Setter Target="DetailsColumn.Width"
+								Value="2*" />
+						<Setter Target="DetailsGrid.Visibility"
+								Value="Visible" />
+						<Setter Target="Details.(uen:Region.Attached)"
+								Value="true" />
+					</VisualState.Setters>
+				</VisualState>
+				<VisualState x:Name="Narrow">
+					<VisualState.Setters>
+						<!--<Setter Target="ProductsListView.SelectionMode"
+								Value="None" />-->
+						<!--<Setter Target="ProductsListView.IsItemClickEnabled"
+								Value="True" />-->
+					</VisualState.Setters>
+				</VisualState>
+			</VisualStateGroup>
+		</VisualStateManager.VisualStateGroups>
+		
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+		<utu:NavigationBar  AutomationProperties.AutomationId="ProductsNavigationBar"
+							Content="Products" />
+
+		<Grid Grid.Row="1">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*"
+								  x:Name="ProductsColumn" />
+				<ColumnDefinition Width="0"
+								  x:Name="DetailsColumn" />
+			</Grid.ColumnDefinitions>
+			<ListView AutomationProperties.AutomationId="ProductsListView"
+					  x:Name="ProductsListView"
+					  ItemsSource="{Binding Products}"
+					  uen:Navigation.Request="Product">
+				<!--SelectionMode="None"
+					  IsItemClickEnabled="True"-->
+				<ListView.ItemTemplate>
+					<DataTemplate x:DataType="local:CommerceProduct">
+						<TextBlock Text="{x:Bind Name}"
+								   FontSize="30" />
+					</DataTemplate>
+				</ListView.ItemTemplate>
+			</ListView>
+			<Grid Grid.Column="1"
+				  x:Name="DetailsGrid"
+				  Visibility="Collapsed">
+				<ContentControl x:Name="Details"
+								uen:Region.Attached="false"
+								Grid.Column="1"
+								HorizontalAlignment="Stretch"
+								VerticalAlignment="Stretch"
+								HorizontalContentAlignment="Stretch"
+								VerticalContentAlignment="Stretch" />
+			</Grid>
+		</Grid>
+	</Grid>
+</Page>

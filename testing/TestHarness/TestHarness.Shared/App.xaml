@@ -8,9 +8,28 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
-                <!-- Add resource dictionaries here -->                
-            </ResourceDictionary.MergedDictionaries>
+
+				<!-- Load Uno.UI.Toolkit resources -->
+				<ToolkitResources xmlns="using:Uno.Toolkit.UI" />
+
+				<!-- Load Material Color Palette --><!--
+				<MaterialColors xmlns="using:Uno.Material"
+								OverrideSource="ms-appx:///Styles/ColorPaletteOverride.xaml" />
+
+				--><!-- Load Material FontFamilies --><!--
+				<MaterialFonts xmlns="using:Uno.Material"
+							   OverrideSource="ms-appx:///Styles/MaterialFontsOverride.xaml" />-->
+
+				<!-- Load Material Control Resources -->
+				<MaterialResources xmlns="using:Uno.Material" />
+
+				<!-- Load Material Toolkit Resources -->
+				<MaterialToolkitResources xmlns="using:Uno.Toolkit.UI.Material" />
+
+			</ResourceDictionary.MergedDictionaries>
+			
             <!-- Add resources here -->
+			<x:Double x:Key="WideMinWindowWidth">800</x:Double>
         </ResourceDictionary>
     </Application.Resources>
 

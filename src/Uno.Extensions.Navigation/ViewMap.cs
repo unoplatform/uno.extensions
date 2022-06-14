@@ -38,6 +38,23 @@ public record ViewMap<TView, TViewModel>(
 {
 }
 
+public record DataViewMap<TView, TViewModel, TData>(
+	Func<TData, IDictionary<string, string>>? ToQuery = null,
+	Func<IServiceProvider, IDictionary<string, object>, Task<TData?>>? FromQuery = null,
+	Type? ResultData = null,
+	object? ViewAttributes = null
+) : ViewMap(View: typeof(TView), ViewModel: typeof(TViewModel), Data: new DataMap<TData>(ToQuery, FromQuery), ResultData: ResultData, ViewAttributes: ViewAttributes)
+	where TData : class
+{
+}
+
+public record ResultDataViewMap<TView, TViewModel, TResultData>(
+	DataMap? Data = null,
+	object? ViewAttributes = null
+) : ViewMap(View: typeof(TView), ViewModel: typeof(TViewModel), Data: Data, ResultData: typeof(TResultData), ViewAttributes: ViewAttributes)
+{
+}
+
 public record LocalizableDialogAction(Func<IStringLocalizer?, string?>? LabelProvider = default, Action? Action = null, object? Id = null) { }
 
 public record DialogAction(string? Label = default, Action? Action = null, object? Id = null)

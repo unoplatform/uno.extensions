@@ -1,0 +1,145 @@
+﻿<Page x:Class="TestHarness.Ext.Navigation.Apps.ToDo.ToDoTaskListPage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:local="using:TestHarness.Ext.Navigation.Apps.ToDo"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+	  xmlns:utu="using:Uno.Toolkit.UI"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	  xmlns:um="using:Uno.Material"
+	  mc:Ignorable="d"
+	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+	  NavigationCacheMode="Required">
+	<Page.Resources>
+		<DataTemplate x:Key="TaskTemplate"
+					  x:DataType="local:ToDoTask">
+			<TextBlock Text="{x:Bind Name}"
+					   FontSize="32" />
+		</DataTemplate>
+	</Page.Resources>
+	<Grid>
+
+		<VisualStateManager.VisualStateGroups>
+			<VisualStateGroup>
+				<VisualState x:Name="Wide">
+					<VisualState.Setters>
+						<Setter Target="TaskListColumn.Width"
+								Value="*" />
+						<Setter Target="TaskListColumn.MinWidth"
+								Value="300" />
+						<Setter Target="TaskColumn.Width"
+								Value="2*" />
+						<Setter Target="TaskDetailsGrid.Visibility"
+								Value="Visible" />
+						<Setter Target="TaskDetails.(uen:Region.Attached)"
+								Value="true" />
+						<Setter Target="TaskDetails.(uen:Region.Attached)"
+								Value="true" />
+					</VisualState.Setters>
+				</VisualState>
+				<VisualState x:Name="Narrow">
+				</VisualState>
+			</VisualStateGroup>
+		</VisualStateManager.VisualStateGroups>
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<utu:NavigationBar  AutomationProperties.AutomationId="TaskListNavigationBar"
+							Content="TaskList" />
+
+		<Grid Grid.Row="1">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*"
+								  x:Name="TaskListColumn" />
+				<ColumnDefinition Width="0"
+								  x:Name="TaskColumn" />
+			</Grid.ColumnDefinitions>
+
+			<Grid uen:Region.Attached="True">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+				<utu:TabBar uen:Region.Attached="True">
+					<utu:TabBarItem Content="Active"
+									uen:Region.Name="Active" />
+					<utu:TabBarItem Content="Completed"
+									uen:Region.Name="Completed" />
+				</utu:TabBar>
+				<Grid Grid.Row="1"
+					  uen:Region.Attached="True"
+					  uen:Region.Navigator="Visibility">
+
+					<Grid			  uen:Region.Name="Completed"
+									  Visibility="Collapsed">
+						<ListView ItemsSource="{Binding CompletedTasks}"
+								  uen:Navigation.Request="Task"
+								  SelectionMode="None"
+								  IsItemClickEnabled="True"
+								  x:Name="CompletedTasks"
+								  ItemTemplate="{StaticResource TaskTemplate}" />
+					</Grid>
+
+					<Grid			  uen:Region.Name="Active"
+									  Visibility="Collapsed">
+						<ListView ItemsSource="{Binding ActiveTasks}"
+								  uen:Navigation.Request="Task"
+								  SelectionMode="None"
+								  IsItemClickEnabled="True"
+								  x:Name="ActiveTasks"
+								  ItemTemplate="{StaticResource TaskTemplate}" />
+					</Grid>
+
+				</Grid>
+				<StackPanel Grid.Row="2" Orientation="Horizontal">
+					<StackPanel >
+						<Button AutomationProperties.AutomationId="SelectActiveTask1Button"
+								Content="Select Active Task 1"
+								Click="SelectActiveTask1Click" />
+						<Button AutomationProperties.AutomationId="SelectActiveTask2Button"
+								Content="Select Active Task 2"
+								Click="SelectActiveTask2Click" />
+						<Button AutomationProperties.AutomationId="SelectActiveTask3Button"
+								Content="Select Active Task 3"
+								Click="SelectActiveTask3Click" />
+					</StackPanel>
+					<StackPanel >
+						<Button AutomationProperties.AutomationId="SelectCompletedTask1Button"
+								Content="Select Completed Task 1"
+								Click="SelectCompletedTask1Click" />
+						<Button AutomationProperties.AutomationId="SelectCompletedTask2Button"
+								Content="Select Completed Task 2"
+								Click="SelectCompletedTask2Click" />
+						<Button AutomationProperties.AutomationId="SelectCompletedTask3Button"
+								Content="Select Completed Task 2"
+								Click="SelectCompletedTask3Click" />
+					</StackPanel>
+				</StackPanel>
+			</Grid>
+
+			<Grid Grid.Column="1"
+				  x:Name="TaskDetailsGrid"
+				  Visibility="Collapsed">
+				<ContentControl x:Name="TaskDetails"
+								uen:Region.Attached="false"
+								Grid.Column="1"
+								HorizontalAlignment="Stretch"
+								VerticalAlignment="Stretch"
+								HorizontalContentAlignment="Stretch"
+								VerticalContentAlignment="Stretch" />
+			</Grid>
+
+			
+		</Grid>
+		<Button AutomationProperties.AutomationId="TaskListBackButton"
+				Content="Back"
+				uen:Navigation.Request="-"
+				Grid.Row="2"
+				HorizontalAlignment="Center" />
+	</Grid>
+</Page>

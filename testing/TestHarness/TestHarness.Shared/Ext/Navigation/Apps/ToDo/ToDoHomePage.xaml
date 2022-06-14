@@ -1,0 +1,86 @@
+﻿<Page x:Class="TestHarness.Ext.Navigation.Apps.ToDo.ToDoHomePage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:local="using:TestHarness.Ext.Navigation.Apps.ToDo"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+	  xmlns:utu="using:Uno.Toolkit.UI"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	  xmlns:um="using:Uno.Material"
+	  mc:Ignorable="d"
+	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+	  NavigationCacheMode="Required">
+
+	<Grid>
+		<VisualStateManager.VisualStateGroups>
+			<VisualStateGroup>
+				<VisualState x:Name="Wide">
+					<VisualState.StateTriggers>
+						<AdaptiveTrigger MinWindowWidth="{StaticResource WideMinWindowWidth}" />
+					</VisualState.StateTriggers>
+					<VisualState.Setters>
+						<Setter Target="NavView.(uen:Navigation.Request)"
+								Value="./TaskList" />
+					</VisualState.Setters>
+				</VisualState>
+				<VisualState x:Name="Narrow">
+					<VisualState.StateTriggers>
+						<AdaptiveTrigger MinWindowWidth="0" />
+					</VisualState.StateTriggers>
+					<VisualState.Setters>
+						<Setter Target="NavView.(uen:Navigation.Request)"
+								Value="TaskList" />
+					</VisualState.Setters>
+				</VisualState>
+			</VisualStateGroup>
+		</VisualStateManager.VisualStateGroups>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+		<utu:NavigationBar  AutomationProperties.AutomationId="HomeNavigationBar"
+							Content="Home" />
+
+		<Grid Grid.Row="1">
+			<Grid.RowDefinitions>
+				<RowDefinition />
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+			<muxc:NavigationView x:Name="NavView"
+								 MenuItemsSource="{Binding Lists}"
+								 PaneDisplayMode="Left"
+								 IsPaneToggleButtonVisible="False"
+								 IsSettingsVisible="False"
+								 CompactModeThresholdWidth="0"
+								 ExpandedModeThresholdWidth="0"
+SelectionChanged="NavigationViewSelectionChanged"
+								 >
+
+
+				<!-- Task Lists: template for WellKnownLists & CustomLists -->
+				<muxc:NavigationView.MenuItemTemplate>
+					<DataTemplate>
+						<muxc:NavigationViewItem Content="{Binding Name}"
+												 uen:Navigation.Data="{Binding}" />
+
+					</DataTemplate>
+				</muxc:NavigationView.MenuItemTemplate>
+
+				<Grid uen:Region.Navigator="Visibility"
+					  uen:Region.Attached="True" />
+			</muxc:NavigationView>
+			<StackPanel Grid.Row="1">
+				<Button AutomationProperties.AutomationId="SelectTaskList1Button"
+						Content="Select Item 1"
+						Click="SelectItem1Click" />
+				<Button AutomationProperties.AutomationId="SelectTaskList2Button"
+						Content="Select Item 2"
+						Click="SelectItem2Click" />
+				<Button AutomationProperties.AutomationId="SelectTaskList3Button"
+						Content="Select Item 3"
+						Click="SelectItem3Click" />
+			</StackPanel>
+		</Grid>
+	</Grid>
+</Page>

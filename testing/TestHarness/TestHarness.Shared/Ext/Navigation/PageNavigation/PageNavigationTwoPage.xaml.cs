@@ -2,7 +2,7 @@
 
 public sealed partial class PageNavigationTwoPage : Page
 {
-	public PageNavigationTwoViewModel ViewModel => DataContext as PageNavigationTwoViewModel;
+	public PageNavigationTwoViewModel? ViewModel => DataContext as PageNavigationTwoViewModel;
 
 	public PageNavigationTwoPage()
 	{
