@@ -28,4 +28,26 @@ internal static class RequestSourceExtensions
 
 		return request.GetResult();
 	}
+
+	/// <summary>
+	/// Send a pagination request to (list) feed that has been subscribed using this subscriber context.
+	/// WARNING Read threading consideration in remarks.
+	/// </summary>
+	/// <remarks>
+	/// This is expected to be invoked from a background thread.
+	/// Using this from the UI thread will result into an empty TokenCollection.
+	/// This is due to the fact that the UI thread does not allow attached child tasks,
+	/// driving the request to be re-scheduled on a background thread before flowing into the requests <see cref="IAsyncEnumerable{T}"/>.
+	/// </remarks>
+	/// <returns>
+	/// A collection of <see cref="RefreshToken"/> which indicates the minimum version reflecting the load of the requested page,
+	/// for all source feeds that have been impacted by this request.
+	/// </returns>
+	public static TokenSet<PageToken> RequestMoreItems(this IRequestSource requests, uint count)
+	{
+		var request = new PageRequest(count);
+		requests.Send(request);
+
+		return request.GetResult();
+	}
 }

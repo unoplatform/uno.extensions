@@ -40,6 +40,15 @@ public static partial class ListFeed
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IListFeed<T> AsyncEnumerable<T>(Func<IAsyncEnumerable<IImmutableList<T>>> enumerableProvider)
 		=> Feed.AsyncEnumerable(enumerableProvider).AsListFeed();
+
+	/// <summary>
+	/// Creates a list feed for a paginated collection.
+	/// </summary>
+	/// <typeparam name="T">The type of the data of the resulting feed.</typeparam>
+	/// <param name="getPage">The async method to load a page of items.</param>
+	/// <returns>A paginated list feed.</returns>
+	public static IListFeed<T> Paginated<T>(AsyncFunc<PageInfo, IImmutableList<T>> getPage)
+		=> ListFeed<T>.Paginated(getPage);
 	#endregion
 
 	#region Operators

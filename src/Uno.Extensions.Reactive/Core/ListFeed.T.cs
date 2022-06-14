@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
+using Uno.Extensions.Reactive.Sources;
+using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive;
 
@@ -61,4 +64,27 @@ public static class ListFeed<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IListFeed<T> AsyncEnumerable(Func<IAsyncEnumerable<IImmutableList<T>>> enumerableProvider)
 		=> Feed<IImmutableList<T>>.AsyncEnumerable(enumerableProvider).AsListFeed();
+
+	/// <summary>
+	/// Creates a list feed for a paginated collection.
+	/// </summary>
+	/// <typeparam name="TCursor">Type of the cursor that is used to identify a page to load.</typeparam>
+	/// <param name="firstPage">The cursor of the first page.</param>
+	/// <param name="getPage">The async method to load a page of items.</param>
+	/// <returns>A paginated list feed.</returns>
+	public static IListFeed<T> PaginatedByCursor<TCursor>(TCursor firstPage, GetPage<TCursor, T> getPage)
+		=> AttachedProperty.GetOrCreate(getPage.Target ?? getPage.Method, firstPage, getPage, (_, fp, gp) => new PaginatedListFeed<TCursor,T>(fp, gp));
+
+	/// <summary>
+	/// Creates a list feed for a paginated collection.
+	/// </summary>
+	/// <param name="getPage">The async method to load a page of items.</param>
+	/// <returns>A paginated list feed.</returns>
+	public static IListFeed<T> Paginated(AsyncFunc<PageInfo, IImmutableList<T>> getPage)
+		=> AttachedProperty.GetOrCreate(getPage, gp => new PaginatedListFeed<uint?, T>(firstPage: 0, PaginatedByIndex(gp)));
+
+	private static GetPage<uint?, T> PaginatedByIndex(AsyncFunc<PageInfo, IImmutableList<T>> getPage) => async (pageNumber, desiredPageSize, ct)
+		=> await getPage(new PageInfo { PageIndex = pageNumber!.Value, DesiredPageSize = desiredPageSize }, ct) is { Count: > 0 } page
+			? new Page<uint?, T>(page, pageNumber + 1)
+			: Page<uint?, T>.Empty;
 }

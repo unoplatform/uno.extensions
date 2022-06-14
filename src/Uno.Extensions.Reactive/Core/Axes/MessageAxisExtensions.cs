@@ -168,6 +168,26 @@ public static class MessageAxisExtensions
 		=> builder.Set(MessageAxis.Refresh, tokens);
 
 	/// <summary>
+	/// Gets the pagination info of an <see cref="MessageEntry{T}"/>
+	/// </summary>
+	/// <param name="entry">The entry.</param>
+	/// <returns>The progress.</returns>
+	/// <remarks>Use <see cref="MessageEntry{T}.IsTransient"/> instead.</remarks>
+	[Pure]
+	internal static PaginationInfo? GetPaginationInfo(this IMessageEntry entry)
+		=> entry.Get(MessageAxis.Pagination);
+
+	/// <summary>
+	/// Sets the pagination info of an <see cref="MessageBuilder{T}"/>
+	/// </summary>
+	/// <param name="builder">The builder.</param>
+	/// <param name="page">The pagination info.</param>
+	/// <returns>The <paramref name="builder"/> for fluent building.</returns>
+	internal static TBuilder Paginated<TBuilder>(this TBuilder builder, PaginationInfo? page)
+		where TBuilder : IMessageBuilder
+		=> builder.Set(MessageAxis.Pagination, page);
+
+	/// <summary>
 	/// Gets the progress of an <see cref="MessageEntry{T}"/>
 	/// </summary>
 	/// <param name="entry">The entry.</param>

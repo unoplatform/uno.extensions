@@ -1,64 +1,79 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using FluentAssertions;
+using FluentAssertions.Execution;
 using Uno.Extensions.Collections;
 using Uno.Extensions.Collections.Tracking;
 
 namespace Uno.Extensions.Reactive.Testing;
 
-public sealed class ItemsChanged<T> : ChangesConstraint
+public sealed class ItemsChanged : ChangesConstraint
 {
-	private readonly RichNotifyCollectionChangedEventArgs[] _expectedArgs;
+	private readonly IImmutableList<RichNotifyCollectionChangedEventArgs> _expectedArgs;
 
-	public static ItemsChanged<T> Add(int index, params T[] items)
+	public static ItemsChanged Empty { get; } = new();
+
+	public static ItemsChanged Add<T>(int index, params T[] items)
 		=> new(RichNotifyCollectionChangedEventArgs.AddSome(items, index));
 
-	public static ItemsChanged<T> Add(int index, IEnumerable<T> items)
+	public static ItemsChanged Add<T>(int index, IEnumerable<T> items)
 		=> new(RichNotifyCollectionChangedEventArgs.AddSome(items.ToList(), index));
 
-	public static ItemsChanged<T> Remove(int index, params T[] items)
+	public static ItemsChanged Remove<T>(int index, params T[] items)
 		=> new(RichNotifyCollectionChangedEventArgs.RemoveSome(items, index));
 
-	public static ItemsChanged<T> Remove(int index, IEnumerable<T> items)
+	public static ItemsChanged Remove<T>(int index, IEnumerable<T> items)
 		=> new(RichNotifyCollectionChangedEventArgs.RemoveSome(items.ToList(), index));
 
-	public static ItemsChanged<T> Replace(int index, IEnumerable<T> oldItems, IEnumerable<T> newItems)
+	public static ItemsChanged Replace<T>(int index, IEnumerable<T> oldItems, IEnumerable<T> newItems)
 		=> new(RichNotifyCollectionChangedEventArgs.ReplaceSome(oldItems.ToList(), newItems.ToList(), index));
 
-	public static ItemsChanged<T> Move(int oldIndex, int newIndex, params T[] items)
+	public static ItemsChanged Move<T>(int oldIndex, int newIndex, params T[] items)
 		=> new(RichNotifyCollectionChangedEventArgs.MoveSome(items.ToList(), oldIndex, newIndex));
 
-	public static ItemsChanged<T> Move(int oldIndex, int newIndex, IEnumerable<T> items)
+	public static ItemsChanged Move<T>(int oldIndex, int newIndex, IEnumerable<T> items)
 		=> new(RichNotifyCollectionChangedEventArgs.MoveSome(items.ToList(), oldIndex, newIndex));
 
-	public static ItemsChanged<T> Reset(IEnumerable<T> oldItems, IEnumerable<T> newItems)
+	public static ItemsChanged Reset<T>(IEnumerable<T> oldItems, IEnumerable<T> newItems)
 		=> new(RichNotifyCollectionChangedEventArgs.Reset(oldItems.ToList(), newItems.ToList()));
 
-	public static ItemsChanged<T> Reset(IEnumerable<T> newItems)
+	public static ItemsChanged Reset<T>(IEnumerable<T> newItems)
 		=> new(RichNotifyCollectionChangedEventArgs.Reset(null, newItems.ToList()));
 
 	internal ItemsChanged(params RichNotifyCollectionChangedEventArgs[] expectedArgs)
-		=> _expectedArgs = expectedArgs;
+		=> _expectedArgs = expectedArgs.ToImmutableList();
 
 	/// <inheritdoc />
 	public override void Assert(ChangeCollection actual)
 	{
-		actual.Contains(MessageAxis.Data, out var changeSet).Should().BeTrue();
+		using var _ = AssertionScope.Current.ForContext("of items (Data)");
+
+		if (!actual.Contains(MessageAxis.Data, out var changeSet))
+		{
+			AssertionScope.Current.Fail("is not set, but the collection of items was expected to have been updated.");
+		}
 		changeSet.Should().BeOfType<CollectionChangeSet>();
 
 		if (changeSet is CollectionChangeSet changes)
 		{
 			var actualArgs = changes.ToCollectionChanges().ToList();
 
-			actualArgs.Count.Should().Be(_expectedArgs.Length);
+			using (AssertionScope.Current.ForContext(", the number of collection changed events args"))
+			{
+				actualArgs.Count.Should().Be(_expectedArgs.Count);
+			}
 
-			for (var i = 0; i < Math.Min(actualArgs.Count, _expectedArgs.Length); i++)
+			for (var i = 0; i < Math.Min(actualArgs.Count, _expectedArgs.Count); i++)
 			{
 				var actualArg = actualArgs[i];
 				var expectedArg = _expectedArgs[i];
 
-				NotifyCollectionChangedComparer.Default.Equals(actualArg, expectedArg).Should().BeTrue($"arg [{i}] should be the same as expected");
+				if (!NotifyCollectionChangedComparer.Default.Equals(actualArg, expectedArg))
+				{
+					AssertionScope.Current.Fail($", the collection changed event arg #{i} expected to be {expectedArg}, but found {actualArg}");
+				}
 			}
 		}
 	}

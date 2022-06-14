@@ -18,6 +18,8 @@ public class Changed : ChangesConstraint
 
 	public static Changed Refreshed { get; } = new(MessageAxis.Refresh);
 
+	public static Changed Pagination { get; } = new(MessageAxis.Pagination);
+
 	public static Changed Axes(params MessageAxis[] axes) 
 		=> new(axes);
 

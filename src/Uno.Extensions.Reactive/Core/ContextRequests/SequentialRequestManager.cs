@@ -79,9 +79,9 @@ internal class SequentialRequestManager<TRequest, TToken> : IAsyncEnumerable<Tok
 			if (Interlocked.CompareExchange(ref _current, next, current) == current)
 			{
 				LastRequest = request;
+				request.Register(next);
 
 				_tokens.TrySetNext(next);
-				request.Register(next);
 
 				return;
 			}
