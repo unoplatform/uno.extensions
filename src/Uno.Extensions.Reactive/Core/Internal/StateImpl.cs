@@ -60,7 +60,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		}
 
 		IAsyncEnumerable<Message<T>> GetSource()
-			=> feed.GetSource(context);
+			=> feed.GetSource(Context);
 
 		ValueTask UpdateState(Message<T> newSrcMsg, CancellationToken ct)
 			=> UpdateCore(currentStateMsg => currentStateMsg.OverrideBy(newSrcMsg), ct);

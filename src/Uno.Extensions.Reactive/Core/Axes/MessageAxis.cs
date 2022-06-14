@@ -54,19 +54,19 @@ public abstract class MessageAxis : IEquatable<MessageAxis>
 	public string Identifier { get; }
 
 	[Pure]
-	internal virtual MessageAxisValue GetLocalValue(MessageAxisValue parent, MessageAxisValue local)
+	internal virtual (MessageAxisValue values, IChangeSet? changes) GetLocalValue(MessageAxisValue parent, MessageAxisValue currentLocal, (MessageAxisValue value, IChangeSet? changes) updatedLocal)
 	{
 		if (!parent.IsSet)
 		{
-			return local;
+			return updatedLocal;
 		}
-		else if (!local.IsSet)
+		else if (!updatedLocal.value.IsSet)
 		{
-			return parent;
+			return (parent, null);
 		}
 		else
 		{
-			return Aggregate(new[] { parent, local });
+			return (Aggregate(new[] { parent, updatedLocal.value }), null);
 		}
 	}
 

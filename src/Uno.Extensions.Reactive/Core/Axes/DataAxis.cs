@@ -65,8 +65,8 @@ public sealed class DataAxis : MessageAxis
 
 	/// <inheritdoc />
 	[Pure]
-	internal override MessageAxisValue GetLocalValue(MessageAxisValue parent, MessageAxisValue local)
-		=> local;
+	internal override (MessageAxisValue values, IChangeSet? changes) GetLocalValue(MessageAxisValue parent, MessageAxisValue currentLocal, (MessageAxisValue value, IChangeSet? changes) updatedLocal)
+		=> updatedLocal;
 
 	/// <inheritdoc />
 	[Pure]
