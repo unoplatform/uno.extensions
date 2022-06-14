@@ -111,12 +111,12 @@ The most common _request_ is the `RefreshRequest`.
 
 ## Token and TokenSet
 
-In a response to a _request_ a feed might issue a _token_ that is then added to the messages so the subscriber that has sent the request is able to track the completion of the _request_.
+In a response to a _request_ a feed might issue a _token_ that is then added to its messages so the subscriber that  sent the request is able to track the completion of the _request_.
 This is the case for the *Refresh* and the *Pagination* which are forwarding those tokens through the refresh and the pagintation axes.
 
-As when a subscriber send a _request_ it might be handled by more than one feed (for instance if you have combien 2 `AsyncFeed`, the _refresh request_ will cause those 2 feeds to refresh there data.
-Even if it's not the case yet, we can also imagine that an _operator feed_ (like the `SleectAsyncFeed`) might also trigger a refresh of it's own projection.
-*Refresh*  and *pagination* axes are working with `TokenSet` which is basically a collection of `IToken` that keep only the latests token for a given source, regarding the subscription context.
+As when a subscriber sends a _request_, it might be handled by more than one feed. For instance, when combining two `AsyncFeed` instances, the _refresh request_ will cause those two feeds to refresh their data.
+Even if it's not yet the implemented, we can also imagine that an _operator feed_ (such as the `SelectAsyncFeed`) might also trigger a refresh of its own projection.
+*Refresh*  and *Pagination* axes are working with `TokenSet`. It is a collection of `IToken` that only keep the latest tokens for a given source in relation to the subscription context.
 
 ```
         Subscriber       Combine     Async A     Async B
@@ -152,8 +152,10 @@ IsExecuting │               │           │           │
 ```
 <!-- To edit diagram: https://asciiflow.com/#/share/eJzNVs1OwzAMfhUrJ5B2AYEmelsnDhx2odwoh7ayumpdKppUdJp24xGm8S5oT8OTkK6BNV1Z%2BjexyGrtJLY%2Fx47bJaHOHIlBkzAckNBZYEwMsrRJahPj7uZ2YJOF4K6HQ8FxTLkQbAJyWInLvDhwMZYT42juBhR3%2FIgtqAejAm%2FaNhUEhfG13oI61JkDqT99IWSr44jyOArBmzqUYggXj%2FiaIOMMIgpWlMQeZltE6JdSRTEBzUaVev6SbuFKH4NiJse0p822PKOlnUoBgNahirwUn87Zp8b85rh5gKdohjQrrI44P961aDuYl1wxrW3C7YHy9LbALk%2FabH3CLWqxOguN6uOYdIj%2B3EjAe2D3KXoJD6jfvsHJc8rWJ8iY4%2BNvizsp%2BEYFVjdJP%2ByuIC3kz6OB%2BdLMkFI2de6%2BUoET5sNbwKddmw4A76l71bhbZdR%2FHod47rdWIlNRN0jQaXrAWn5H9pSLDZ3Vrh7QJPUfzJwbdf4xIyuy%2Bga89Mui) -->
 
+> [!NOTE]
 > As a subscriber, you can use the `TokenSetAwaiter` to wait for a set that has been produced by a request.
 
+> [!NOTE]
 > When implementing an `IFeed` you can use the `CoercingRequestManager` or the `SequentialRequestManager` to easily implement such request / token logic.
 
 > When you answer to a request with a token, you **must** then issue a new message with that token.
