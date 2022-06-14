@@ -5,7 +5,7 @@ using Uno.Extensions.Reactive;
 
 namespace Uno.Extensions.Reactive.Testing;
 
-public sealed class Data : MessageAxisConstraint
+public sealed class Data : AxisConstraint
 {
 	public static Data Undefined { get; } = new(OptionType.Undefined);
 

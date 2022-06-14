@@ -6,7 +6,7 @@ using static Uno.Extensions.Reactive.Core.FeedHelper;
 
 namespace Uno.Extensions.Reactive.Testing;
 
-public sealed class Refreshed : MessageAxisConstraint
+public sealed class Refreshed : AxisConstraint
 {
 	public static Refreshed Is(uint version)
 		=> new(new RefreshConstraint { Version = version });

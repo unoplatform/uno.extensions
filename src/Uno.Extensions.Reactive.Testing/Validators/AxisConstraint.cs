@@ -4,7 +4,7 @@ using Uno.Extensions.Reactive;
 
 namespace Uno.Extensions.Reactive.Testing;
 
-public abstract class MessageAxisConstraint : ConstraintPart<IMessageEntry>
+public abstract class AxisConstraint : Constraint<IMessageEntry>
 {
 	public abstract MessageAxis Axis { get; }
 }

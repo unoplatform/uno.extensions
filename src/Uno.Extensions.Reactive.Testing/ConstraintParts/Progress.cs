@@ -5,7 +5,7 @@ using Uno.Extensions.Reactive;
 
 namespace Uno.Extensions.Reactive.Testing;
 
-public sealed class Progress : MessageAxisConstraint
+public sealed class Progress : AxisConstraint
 {
 	public static Progress Transient { get; } = new(true);
 

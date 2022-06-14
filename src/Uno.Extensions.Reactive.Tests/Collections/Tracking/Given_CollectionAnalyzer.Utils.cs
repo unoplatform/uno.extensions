@@ -9,6 +9,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Collections;
 using Uno.Extensions.Collections.Tracking;
 using Uno.Extensions.Reactive.Collections;
+using Uno.Extensions.Reactive.Testing;
 using Uno.Extensions.Reactive.Tests._Utils;
 
 namespace Uno.Extensions.Reactive.Tests.Collections.Tracking;

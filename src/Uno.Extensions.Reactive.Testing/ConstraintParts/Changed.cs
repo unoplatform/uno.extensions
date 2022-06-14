@@ -6,7 +6,7 @@ using FluentAssertions;
 
 namespace Uno.Extensions.Reactive.Testing;
 
-public class Changed : ConstraintPart<IMessage>
+public class Changed : ChangesConstraint
 {
 	public static Changed None { get; } = new();
 
@@ -27,8 +27,8 @@ public class Changed : ConstraintPart<IMessage>
 		=> Expected = expected;
 
 	/// <inheritdoc />
-	public override void Assert(IMessage message)
-		=> message.Changes.Should().BeEquivalentTo(Expected);
+	public override void Assert(ChangeCollection changes)
+		=> changes.Should().BeEquivalentTo(Expected);
 
 	public static Changed operator &(Changed left, Changed right)
 		=> new(left.Expected.Concat(right.Expected).ToArray());

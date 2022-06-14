@@ -5,16 +5,16 @@ using FluentAssertions.Execution;
 
 namespace Uno.Extensions.Reactive.Testing;
 
-public readonly struct MessageRecorderConstraint<T>
+public class RecorderValidator<T> : Constraint<IFeedRecorder<T>>
 {
-	private readonly MessageConstraint<T>[] _messages;
+	private readonly MessageValidator<T>[] _messages;
 
-	public MessageRecorderConstraint(MessageConstraint<T>[] messages)
+	public RecorderValidator(MessageValidator<T>[] messages)
 	{
 		_messages = messages;
 	}
 
-	public void Assert(IFeedRecorder<T> recorder)
+	public override void Assert(IFeedRecorder<T> recorder)
 	{
 		try
 		{

@@ -5,7 +5,7 @@ using Uno.Extensions.Reactive;
 
 namespace Uno.Extensions.Reactive.Testing;
 
-public sealed class Data<T> : MessageAxisConstraint
+public sealed class Data<T> : AxisConstraint
 {
 	private readonly Option<T> _data;
 

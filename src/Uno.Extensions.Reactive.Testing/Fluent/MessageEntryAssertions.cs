@@ -17,11 +17,11 @@ public class MessageEntryAssertions<T> : ReferenceTypeAssertions<MessageEntry<T>
 	/// <inheritdoc />
 	protected override string Identifier { get; } = typeof(MessageEntry<T>).Name;
 
-	public void Be(params EntryAxisConstraint<T>[] constraints)
+	public void Be(params AxisConstraint<T>[] constraints)
 	{
 		using (new AssertionScope(Identifier))
 		{
-			new MessageEntryConstraint<T>(constraints).Assert(Subject);
+			new EntryValidator<T>(constraints).Assert(Subject);
 		}
 	}
 }
