@@ -73,6 +73,7 @@ public static class Region
 				existingRegion.Detach();
 			}
 		}
+
 		var region = existingRegion ?? (active ? new NavigationRegion(element) : default);
 	}
 

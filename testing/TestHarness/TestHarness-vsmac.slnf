@@ -1,0 +1,14 @@
+{
+  "solution": {
+    "path": "TestHarness.sln",
+    "projects": [
+		"TestHarness.Shared\\TestHarness.Shared.shproj",
+
+		"TestHarness.Mobile\\TestHarness.Mobile.csproj",
+
+		"TestHarness.Wasm\\TestHarness.Wasm.csproj",
+
+		"TestHarness.Skia.Gtk\\TestHarness.Skia.Gtk.csproj",
+    ]
+  }
+}

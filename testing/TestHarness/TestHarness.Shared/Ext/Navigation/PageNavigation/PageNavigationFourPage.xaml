@@ -1,0 +1,35 @@
+﻿<Page
+    x:Class="TestHarness.Ext.Navigation.PageNavigation.PageNavigationFourPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:TestHarness.Ext.Navigation.PageNavigation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  mc:Ignorable="d"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+	<Grid>
+		<StackPanel HorizontalAlignment="Center"
+					VerticalAlignment="Center">
+			<Button AutomationProperties.AutomationId="FourPageToFivePageButton"
+					Content="Five"
+					uen:Navigation.Request="PageNavigationFive" />
+			<Button AutomationProperties.AutomationId="FourPageBackButton"
+					Content="Back"
+					uen:Navigation.Request="-" />
+			<Button AutomationProperties.AutomationId="FourPageToFivePageCodebehindButton"
+					Content="Five (Codebehind)"
+					Click="FourPageToFivePageCodebehindClick"/>
+			<Button AutomationProperties.AutomationId="FourPageBackCodebehindButton"
+					Content="Back (Codebehind)"
+					Click="FourPageBackCodebehindClick"/>
+			<Button AutomationProperties.AutomationId="FourPageToFivePageViewModelButton"
+					Content="Five (ViewModel)"
+					Click="{x:Bind ViewModel.GoToFive}" />
+			<Button AutomationProperties.AutomationId="FourPageBackViewModelButton"
+					Content="Back (ViewModel)"
+					Click="{x:Bind ViewModel.GoBack}" />
+		</StackPanel>
+	</Grid>
+</Page>

@@ -2,7 +2,15 @@
 
 public static class FrameworkElementExtensions
 {
-	internal static IServiceProvider AttachServiceProvider(this UIElement element, IServiceProvider services)
+	/// <summary>
+	/// Attaches the specified IServiceProvider instance to the <paramref name="element"/> using the
+	/// Region.ServiceProvider attached property. Any child element can access the IServiceProvider
+	/// instance by traversing up the ancestor hierarchy
+	/// </summary>
+	/// <param name="element">The UIElement to attach the IServiceProvider instance to</param>
+	/// <param name="services">The IServiceProvider instance</param>
+	/// <returns>The attached IServiceProvider instance - scoped for use in this visual hierarchy</returns>
+	public static IServiceProvider AttachServiceProvider(this UIElement element, IServiceProvider services)
 	{
 		var scopedServices = services.CreateScope().ServiceProvider;
 		element.SetServiceProvider(scopedServices);

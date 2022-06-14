@@ -1,0 +1,26 @@
+﻿<Page x:Class="TestHarness.Ext.Navigation.PageNavigation.PageNavigationOnePage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:local="using:TestHarness.Ext.Navigation.PageNavigation"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  mc:Ignorable="d"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+	<Grid>
+		<StackPanel HorizontalAlignment="Center"
+					VerticalAlignment="Center">
+			<Button AutomationProperties.AutomationId="OnePageToTwoPageButton"
+					Content="Two"
+					uen:Navigation.Request="PageNavigationTwo" />
+			<Button AutomationProperties.AutomationId="OnePageToTwoPageCodebehindButton"
+					Content="Two (Codebehind)"
+					Click="OnePageToTwoPageCodebehindClick"
+					/>
+			<Button AutomationProperties.AutomationId="OnePageToTwoPageViewModelButton"
+					Content="Two (ViewModel)"
+					Click="{x:Bind ViewModel.GoToTwo}"/>
+		</StackPanel>
+	</Grid>
+</Page>

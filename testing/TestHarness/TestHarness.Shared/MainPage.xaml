@@ -1,0 +1,28 @@
+<Page
+    x:Class="TestHarness.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:TestHarness"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"    
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+		<TextBlock AutomationProperties.AutomationId="TestHarnessMainPageTitle"
+				   Text="Test Harness" Margin="20" FontSize="30" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+
+		<StackPanel HorizontalAlignment="Center"
+					VerticalAlignment="Center">
+			<ComboBox SelectionChanged="TestSectionSelectionChanged"
+					  AutomationProperties.AutomationId="TestSectionsComboBox"
+					  x:Name="TestSectionsComboBox">
+				<ComboBox.ItemTemplate>
+					<DataTemplate>
+						<TextBlock Text="{Binding Name}" />
+					</DataTemplate>
+				</ComboBox.ItemTemplate>
+			</ComboBox>
+		</StackPanel>
+    </Grid>
+</Page>

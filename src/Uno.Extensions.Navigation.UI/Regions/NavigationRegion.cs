@@ -9,6 +9,7 @@ public sealed class NavigationRegion : IRegion
     private IServiceProvider? _services;
     private IRegion? _parent;
 	private bool _isRoot;
+	private bool _isLoaded;
     public IRegion? Parent
     {
         get => _parent;
@@ -30,9 +31,10 @@ public sealed class NavigationRegion : IRegion
     {
         get
         {
-            if (_services is null && Parent is not null)
+			if (_services is null && Parent is not null)
             {
-                _services = Parent?.Services?.CreateNavigationScope();
+
+				_services = Parent?.Services?.CreateNavigationScope();
                 if (_services is null)
                 {
                     return null;
@@ -51,22 +53,28 @@ public sealed class NavigationRegion : IRegion
 
     public ICollection<IRegion> Children { get; } = new List<IRegion>();
 
-    public NavigationRegion(FrameworkElement? view = null, IServiceProvider? services = null)
-    {
-        View = view;
-        if (View is not null)
-        {
-            View.Loading += ViewLoading;
-            View.Loaded += ViewLoaded;
+	public NavigationRegion(FrameworkElement? view = null, IServiceProvider? services = null)
+	{
+		View = view;
+		if (View is not null)
+		{
+			View.Loading += ViewLoading;
+			View.Loaded += ViewLoaded;
 			View.SetInstance(this);
 		}
 
 		if (services is not null)
-        {
+		{
 			InitializeRootRegion(services);
-        }
-    }
+		}
 
+		if (View is not null &&
+			View.IsLoaded)
+		{
+			_ = HandleLoading();
+		}
+
+	}
 	public void Detach()
 	{
 		this.Parent = null;
@@ -100,12 +108,15 @@ public sealed class NavigationRegion : IRegion
 
     private void ViewUnloaded(object sender, RoutedEventArgs e)
     {
-        if (View is null)
+        if (View is null ||
+			!_isLoaded)
         {
             return;
         }
 
-        View.Loading += ViewLoading;
+		_isLoaded = false;
+
+		View.Loading += ViewLoading;
         View.Loaded += ViewLoaded;
         View.Unloaded -= ViewUnloaded;
 
@@ -114,7 +125,7 @@ public sealed class NavigationRegion : IRegion
 
     private Task HandleLoading()
     {
-        if (View is null)
+		if (View is null)
         {
             return Task.CompletedTask;
         }
@@ -169,12 +180,13 @@ public sealed class NavigationRegion : IRegion
 
     private async Task HandleLoaded()
     {
-        if (View is null)
+        if (View is null || _isLoaded)
         {
             return;
         }
+		_isLoaded = true;
 
-        View.Loading -= ViewLoading;
+		View.Loading -= ViewLoading;
         View.Loaded -= ViewLoaded;
         View.Unloaded += ViewUnloaded;
 
