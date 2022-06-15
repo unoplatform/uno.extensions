@@ -37,7 +37,7 @@ public class CustomAuthenticationHostInit : IHostInitialization
 				.ConfigureServices((context, services) =>
 				{
 					services
-						.AddSingleton<ITokenRepository, TokenRepository>()
+						.AddSingleton<ITokenCache, TokenCache>()
 						.AddSingleton(new CustomAuthenticationSettings(
 							LoginCallback: async (dispatcher, tokenCache, credentials) =>
 								{

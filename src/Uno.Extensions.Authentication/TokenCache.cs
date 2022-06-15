@@ -1,7 +1,7 @@
 ﻿
 namespace Uno.Extensions.Authentication;
 
-public record TokenRepository : ITokenRepository
+public record TokenCache : ITokenCache
 {
 	private IDictionary<string, string> _tokens = new Dictionary<string, string>();
 

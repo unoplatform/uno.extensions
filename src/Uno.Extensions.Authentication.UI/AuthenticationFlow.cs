@@ -6,14 +6,14 @@ public record AuthenticationFlow : IAuthenticationFlow
 	public IAuthenticationService AuthenticationService { get; init; }
 	public INavigator Navigator { get; init; }
 	public IDispatcher Dispatcher { get; init; }
-	public ITokenRepository TokenCache { get; init; }
+	public ITokenCache TokenCache { get; init; }
 	public AuthenticationFlowSettings Settings { get; init; }
 
 	public AuthenticationFlow(
 		IAuthenticationService authenticationService,
 		INavigator navigator,
 		IDispatcher dispatcher,
-		ITokenRepository tokenCache,
+		ITokenCache tokenCache,
 		AuthenticationFlowSettings settings)
 	{
 		AuthenticationService = authenticationService;
@@ -55,21 +55,21 @@ public record AuthenticationFlow : IAuthenticationFlow
 		return tokenResponse.IsSome(out _);
 	}
 
-	private async ValueTask<Option<ITokenRepository>> NavigateToLogin()
+	private async ValueTask<Option<ITokenCache>> NavigateToLogin()
 	{
 		if (Settings.LoginViewModel is not null)
 		{
-			return await Navigator.NavigateViewModelForResultAsync<ITokenRepository>(this, Settings.LoginViewModel, qualifier: Qualifiers.Root).AsResult();
+			return await Navigator.NavigateViewModelForResultAsync<ITokenCache>(this, Settings.LoginViewModel, qualifier: Qualifiers.Root).AsResult();
 		}
 		else if (Settings.LoginView is not null)
 		{
-			return await Navigator.NavigateViewForResultAsync<ITokenRepository>(this, Settings.LoginView, qualifier: Qualifiers.Root).AsResult();
+			return await Navigator.NavigateViewForResultAsync<ITokenCache>(this, Settings.LoginView, qualifier: Qualifiers.Root).AsResult();
 		}
 		else if (Settings.LoginRoute is not null)
 		{
-			return await Navigator.NavigateRouteForResultAsync<ITokenRepository>(this, Settings.LoginRoute ?? string.Empty).AsResult();
+			return await Navigator.NavigateRouteForResultAsync<ITokenCache>(this, Settings.LoginRoute ?? string.Empty).AsResult();
 		}
-		return Option<ITokenRepository>.None();
+		return Option<ITokenCache>.None();
 	}
 	private Task<NavigationResponse?> NavigateToHome()
 	{

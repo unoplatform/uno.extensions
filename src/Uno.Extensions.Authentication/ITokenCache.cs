@@ -1,7 +1,7 @@
 ﻿
 namespace Uno.Extensions.Authentication;
 
-public interface ITokenRepository
+public interface ITokenCache
 {
 	Task Save(IDictionary<string, string> tokens);
 	Task Clear();

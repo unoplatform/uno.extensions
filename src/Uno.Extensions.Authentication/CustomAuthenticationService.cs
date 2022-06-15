@@ -3,7 +3,7 @@ namespace Uno.Extensions.Authentication;
 
 public record CustomAuthenticationService
 (
-	ITokenRepository Tokens,
+	ITokenCache Tokens,
 	CustomAuthenticationSettings Settings
 ) : IAuthenticationService
 {
