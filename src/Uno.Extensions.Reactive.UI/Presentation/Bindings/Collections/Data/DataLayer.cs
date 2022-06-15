@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Uno.Extensions.Collections;
+using Uno.Extensions.Collections.Tracking;
 using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets;
 
 #if WINUI
@@ -15,9 +16,10 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 	/// <summary>
 	/// A holder of a data layer for a given scheduler context
 	/// </summary>
-	internal sealed class DataLayer : ILayerHolder, IBindableCollectionViewSource, IDisposable
+	internal sealed class DataLayer : ILayerHolder, IBindableCollectionViewSource, IServiceProvider, IDisposable
 	{
 		private readonly DataLayer? _parent;
+		private readonly IServiceProvider? _services;
 		private readonly ISchedulerInfo? _context;
 		private readonly IBindableCollectionDataLayerStrategy _layerStrategy;
 		private readonly IEnumerable<object> _facets;
@@ -35,25 +37,18 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 		/// </summary>
 		public CollectionFacet Items { get; }
 
-		//public IObservableCollection? CurrentSource => _currentChangesBuffer?.Collection;
-
 		public IBindableCollectionViewSource? Parent => _parent;
-
-		//public IScheduler Scheduler => _parent != null
-		//	? _parent.Scheduler
-		//	: (_context.IsOnDispatcher
-		//		? _context.GetDispatcher()
-		//		: System.Reactive.Concurrency.Scheduler.Immediate);
 
 		/// <summary>
 		/// Creates a holder for the root layer of data
 		/// </summary>
 		public static DataLayer Create(
 			IBindableCollectionDataLayerStrategy layerStrategy,
-			IObservableCollection items, 
+			IObservableCollection items,
+			IServiceProvider? services,
 			ISchedulerInfo? context)
 		{
-			var holder = new DataLayer(null, layerStrategy, context);
+			var holder = new DataLayer(null, services, layerStrategy, context);
 			var initContext = layerStrategy.CreateUpdateContext(VisitorType.InitializeCollection, TrackingMode.Reset);
 			var initializer = holder.Init(items, initContext);
 
@@ -68,17 +63,18 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 		/// </summary>
 		public (DataLayer holder, DataLayerUpdate initializer) CreateSubLayer(IObservableCollection subItems, IUpdateContext changes)
 		{
-			var holder = new DataLayer(this, _layerStrategy.CreateSubLayer(), _context);
+			var holder = new DataLayer(this, _services, _layerStrategy.CreateSubLayer(), _context);
 			var initializer = holder.Init(subItems, changes);
 
 			// Initializer contains a snapshot of items when the collection is added. It's used by parent to raise add for those items on its FlatView.
 			return (holder, initializer);
 		}
 
-		private DataLayer(DataLayer? parent, IBindableCollectionDataLayerStrategy layerStrategy, ISchedulerInfo? context)
+		private DataLayer(DataLayer? parent, IServiceProvider? services, IBindableCollectionDataLayerStrategy layerStrategy, ISchedulerInfo? context)
 		{
 			_context = context;
 			_parent = parent;
+			_services = services;
 			_layerStrategy = layerStrategy;
 
 			(Items, View, _facets) = _layerStrategy.CreateView(this);
@@ -105,7 +101,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 		/// <summary>
 		/// Updates the root data layer
 		/// </summary>
-		public void Update(IObservableCollection source, TrackingMode mode)
+		public void Update(IObservableCollection source, CollectionChangeSet? changes, TrackingMode mode)
 		{
 			if (_currentChangesBuffer is null)
 			{
@@ -119,7 +115,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 
 			var context = _layerStrategy.CreateUpdateContext(VisitorType.UpdateCollection, mode);
 			var tracker = _layerStrategy.GetTracker(this, context);
-			var update = PrepareUpdate(source, tracker);
+			var update = PrepareUpdate(source, changes, tracker);
 
 			// Schedule to flush the buffers to apply the update
 			Schedule(update.Complete);
@@ -131,15 +127,15 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 		internal DataLayerUpdate PrepareUpdate(IObservableCollection source, IUpdateContext context)
 		{
 			var tracker = _layerStrategy.GetTracker(this, context); // re-use the context of the parent layer
-			var update = PrepareUpdate(source, tracker);
+			var update = PrepareUpdate(source, null, tracker);
 
 			return update;
 		}
 
-		private DataLayerUpdate PrepareUpdate(IObservableCollection source, ILayerTracker tracker)
+		private DataLayerUpdate PrepareUpdate(IObservableCollection source, CollectionChangeSet? changes, ILayerTracker tracker)
 		{
 			var from = _nextChangesBuffer ?? _currentChangesBuffer ?? throw new InvalidOperationException("Invalid state. You must invoke the Init() first.");
-			var to = _nextChangesBuffer = from.UpdateTo(source);
+			var to = _nextChangesBuffer = from.UpdateTo(source, changes);
 
 			// Detects changes between 'from.Collection' and 'source'
 			var update = to.Initialize(tracker);
@@ -185,7 +181,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 			return _currentChangesBuffer.Stop();
 		}
 
-#region IBindableCollectionViewSource
+		#region IBindableCollectionViewSource
 		public event EventHandler<CurrentSourceUpdateEventArgs>? CurrentSourceChanging;
 		public event EventHandler<CurrentSourceUpdateEventArgs>? CurrentSourceChanged;
 
@@ -198,7 +194,11 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 			}
 			return facet;
 		}
-#endregion
+
+		/// <inheritdoc />
+		public object? GetService(Type serviceType)
+			=> _services?.GetService(serviceType);
+		#endregion
 
 		public void Schedule(Action action)
 		{
@@ -220,6 +220,10 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 		{
 			(View as IDisposable)?.Dispose();
 			_currentChangesBuffer?.Dispose();
+			foreach (var facet in _facets.OfType<IDisposable>())
+			{
+				facet.Dispose();
+			}
 		}
 	}
 }
