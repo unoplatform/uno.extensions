@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Text;
 
-namespace Uno.Extensions.Collections;
+namespace Uno.Extensions.Reactive.Bindings.Collections;
 
 /// <summary>
 /// The modes that can be used to track changes between collections
