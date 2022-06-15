@@ -41,8 +41,11 @@ internal sealed class BindableCollectionExtendedProperties : INotifyPropertyChan
 		get => _hasMoreItems;
 		internal set
 		{
-			_hasMoreItems = value; 
-			OnPropertyChanged();
+			if (_hasMoreItems != value)
+			{
+				_hasMoreItems = value;
+				OnPropertyChanged();
+			}
 		}
 	}
 
@@ -58,8 +61,11 @@ internal sealed class BindableCollectionExtendedProperties : INotifyPropertyChan
 		get => _isLoadingMoreItems;
 		internal set
 		{
-			_isLoadingMoreItems = value; 
-			OnPropertyChanged();
+			if (_isLoadingMoreItems != value)
+			{
+				_isLoadingMoreItems = value;
+				OnPropertyChanged();
+			}
 		}
 	}
 

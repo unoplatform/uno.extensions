@@ -5,7 +5,9 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Uno.Extensions.Collections.Tracking;
 using Uno.Extensions.Reactive.Bindings.Collections;
+using Uno.Extensions.Reactive.Bindings.Collections.Services;
 using Uno.Extensions.Reactive.Core;
 
 namespace Uno.Extensions.Reactive.Bindings;
@@ -16,7 +18,6 @@ namespace Uno.Extensions.Reactive.Bindings;
 /// <typeparam name="T">The type of the items.</typeparam>
 public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<T>, IInput<IImmutableList<T>>
 {
-	private readonly CancellationTokenSource _ct = new();
 	private readonly BindableCollection _items;
 	private readonly IListState<T> _state;
 
@@ -29,15 +30,9 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 	public BindableListFeed(string propertyName, IListFeed<T> source, SourceContext ctx)
 	{
 		PropertyName = propertyName;
-		_items = BindableCollection.Create<T>();
+
 		_state = ctx.GetOrCreateListState(source);
-
-		_state.GetSource(ctx, _ct.Token).ForEachAsync(
-			msg => _items.Switch(new ImmutableObservableCollection<T>(msg.Current.Data.SomeOrDefault(ImmutableList<T>.Empty))),
-			_ct.Token);
-
-		// Note: we have to listen for collection changes on bindable _items to update the state.
-		// https://github.com/unoplatform/uno.extensions/issues/370
+		_items = CreateBindableCollection(ctx);
 	}
 
 	/// <inheritdoc />
@@ -82,10 +77,76 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 	ValueTask IState<IImmutableList<T>>.UpdateMessage(Func<Message<IImmutableList<T>>, MessageBuilder<IImmutableList<T>>> updater, CancellationToken ct)
 		=> _state.UpdateMessage(updater, ct);
 
+
+	private BindableCollection CreateBindableCollection(SourceContext ctx)
+	{
+		var currentCount = 0;
+		var pageTokens = new TokenSetAwaiter<PageToken>();
+
+		var requests = new RequestSource();
+		var pagination = new PaginationService(LoadMore);
+		var services = new SingletonServiceProvider(pagination);
+		var collection = BindableCollection.Create<T>(services: services);
+
+		if (ctx.Token.CanBeCanceled)
+		{
+			ctx.Token.Register(pagination.Dispose);
+			ctx.Token.Register(requests.Dispose);
+			ctx.Token.Register(() => _ = services.DisposeAsync());
+		}
+
+		// Note: we have to listen for collection changes on bindable _items to update the state.
+		// https://github.com/unoplatform/uno.extensions/issues/370
+
+		_state.GetSource(ctx.CreateChild(requests), ctx.Token).ForEachAsync(
+			msg =>
+			{
+				if (ctx.Token.IsCancellationRequested)
+				{
+					return;
+				}
+
+				if (msg.Changes.Contains(MessageAxis.Data, out var changes))
+				{
+					var items = msg.Current.Data.SomeOrDefault(ImmutableList<T>.Empty);
+					currentCount = items.Count;
+
+					collection.Switch(new ImmutableObservableCollection<T>(items), changes as CollectionChangeSet);
+				}
+
+				var pageInfo = msg.Current.GetPaginationInfo();
+
+				// Clear the loading state
+				if (!msg.Current.IsTransient && pageInfo is { IsLoadingMoreItems: false } page)
+				{
+					pageTokens.Received(page.Tokens);
+				}
+
+				if (pageInfo is not null)
+				{
+					pagination.HasMoreItems = pageInfo.HasMoreItems;
+					pagination.IsLoadingMoreItems = pageInfo.IsLoadingMoreItems;
+				}
+			},
+			ctx.Token);
+
+		async ValueTask<uint> LoadMore(uint desiredCount, CancellationToken ct)
+		{
+			var originalCount = currentCount;
+
+			await pageTokens.WaitFor(requests.RequestMoreItems(desiredCount), ct);
+
+			var resultCount = currentCount;
+
+			return (uint)Math.Max(0, resultCount - originalCount);
+		}
+
+		return collection;
+	}
+
 	/// <inheritdoc />
 	public async ValueTask DisposeAsync()
 	{
-		_ct.Cancel(false);
 		await _state.DisposeAsync();
 	}
 }
