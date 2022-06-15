@@ -7,14 +7,14 @@ public record TokenCache : ITokenCache
 
 	public event EventHandler? Cleared;
 
-	public Task Clear()
+	public Task ClearAsync()
 	{
 		_tokens.Clear();
 		Cleared?.Invoke(this, EventArgs.Empty);
 		return Task.CompletedTask;
 	}
-	public Task<IDictionary<string, string>> Get() => Task.FromResult(_tokens);
-	public Task Save(IDictionary<string, string> tokens)
+	public Task<IDictionary<string, string>> GetAsync() => Task.FromResult(_tokens);
+	public Task SaveAsync(IDictionary<string, string> tokens)
 	{
 		foreach (var tk in tokens)
 		{

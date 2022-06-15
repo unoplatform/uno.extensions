@@ -3,7 +3,7 @@ namespace Uno.Extensions.Authentication;
 
 public interface IAuthenticationService
 {
-	Task<bool> Login(IDispatcher dispatcher, IDictionary<string, string>? credentials = null);
-	Task<bool> Refresh();
+	Task<bool> LoginAsync(IDispatcher dispatcher, IDictionary<string, string>? credentials = null);
+	Task<bool> RefreshAsync();
 	Task<bool> Logout(IDispatcher dispatcher);
 }

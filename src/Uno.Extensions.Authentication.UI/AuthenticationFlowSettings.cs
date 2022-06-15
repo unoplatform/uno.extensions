@@ -1,17 +1,17 @@
 ﻿
 namespace Uno.Extensions.Authentication;
 
-public record AuthenticationFlowSettings
-(
-	string? LoginRoute = null,
-	Type? LoginView = null,
-	Type? LoginViewModel = null,
+internal record AuthenticationFlowSettings
+{
+	public string? LoginRoute { get; init; }
+	public Type? LoginView { get; init; }
+	public Type? LoginViewModel { get; init; }
 
-	string? HomeRoute = null,
-	Type? HomeView = null,
-	Type? HomeViewModel = null,
+	public string? HomeRoute { get; init; }
+	public Type? HomeView { get; init; }
+	public Type? HomeViewModel { get; init; }
 
-		string? ErrorRoute = null,
-	Type? ErrorView = null,
-	Type? ErrorViewModel = null
-);
+	public string? ErrorRoute { get; init; }
+	public Type? ErrorView { get; init; }
+	public Type? ErrorViewModel { get; init; }
+}

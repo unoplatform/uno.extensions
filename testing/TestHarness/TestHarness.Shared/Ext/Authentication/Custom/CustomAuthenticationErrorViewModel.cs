@@ -5,6 +5,6 @@ public record class CustomAuthenticationErrorViewModel(INavigator Navigator, IAu
 {
 	public async Task Login()
 	{
-		await Flow.Launch();
+		await Flow.LaunchAsync();
 	}
 }

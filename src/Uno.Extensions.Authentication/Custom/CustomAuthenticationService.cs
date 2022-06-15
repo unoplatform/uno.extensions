@@ -1,14 +1,17 @@
-﻿
-namespace Uno.Extensions.Authentication;
+﻿namespace Uno.Extensions.Authentication.Custom;
 
-public record CustomAuthenticationService
+internal record CustomAuthenticationService
 (
 	ITokenCache Tokens,
 	CustomAuthenticationSettings Settings
 ) : IAuthenticationService
 {
-	public async Task<bool> Login(IDispatcher dispatcher, IDictionary<string, string>? credentials = null)
+	public async Task<bool> LoginAsync(IDispatcher dispatcher, IDictionary<string, string>? credentials = null)
 	{
+		if(Settings.LoginCallback is null)
+		{
+			return false;
+		}
 		return await Settings.LoginCallback(dispatcher, Tokens, credentials!);
 	}
 
@@ -23,12 +26,12 @@ public record CustomAuthenticationService
 			}
 		}
 
-		await Tokens.Clear();
+		await Tokens.ClearAsync();
 		return true;
 	}
-	public async Task<bool> Refresh()
+	public async Task<bool> RefreshAsync()
 	{
-		if(Settings.RefreshCallback is null)
+		if (Settings.RefreshCallback is null)
 		{
 			return false;
 		}

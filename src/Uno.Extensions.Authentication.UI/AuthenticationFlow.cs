@@ -1,7 +1,7 @@
 ﻿
 namespace Uno.Extensions.Authentication;
 
-public record AuthenticationFlow : IAuthenticationFlow
+internal record AuthenticationFlow : IAuthenticationFlow
 {
 	public IAuthenticationService AuthenticationService { get; init; }
 	public INavigator Navigator { get; init; }
@@ -27,12 +27,12 @@ public record AuthenticationFlow : IAuthenticationFlow
 
 	private void TokenCache_Cleared(object sender, EventArgs e)
 	{
-		_ = Launch();
+		_ = LaunchAsync();
 	}
 
-	public async Task Launch()
+	public async Task LaunchAsync()
 	{
-		var authenticated = await EnsureAuthenticated();
+		var authenticated = await EnsureAuthenticatedAsync();
 		if (authenticated)
 		{
 			await NavigateToHome();
@@ -43,9 +43,9 @@ public record AuthenticationFlow : IAuthenticationFlow
 		}
 	}
 
-	public async Task<bool> EnsureAuthenticated()
+	public async Task<bool> EnsureAuthenticatedAsync()
 	{
-		var refreshed = await AuthenticationService.Refresh();
+		var refreshed = await AuthenticationService.RefreshAsync();
 		if (refreshed)
 		{
 			return true;
@@ -96,9 +96,9 @@ public record AuthenticationFlow : IAuthenticationFlow
 		}
 		return Task.FromResult(default(NavigationResponse?));
 	}
-	public async Task<bool> Login(IDictionary<string, string>? credentials = null)
+	public async Task<bool> LoginAsync(IDictionary<string, string>? credentials = null)
 	{
-		var loginResult = await AuthenticationService.Login(Dispatcher, credentials);
+		var loginResult = await AuthenticationService.LoginAsync(Dispatcher, credentials);
 		if (loginResult)
 		{
 			await Navigator.NavigateBackWithResultAsync(this, data: TokenCache);
@@ -107,12 +107,12 @@ public record AuthenticationFlow : IAuthenticationFlow
 		return false;
 	}
 
-	public async Task<bool> Logout()
+	public async Task<bool> LogoutAsync()
 	{
 		var logoutResult = await AuthenticationService.Logout(Dispatcher);
 		if (logoutResult)
 		{
-			_ = Launch();
+			_ = LaunchAsync();
 			return true;
 		}
 		return false;

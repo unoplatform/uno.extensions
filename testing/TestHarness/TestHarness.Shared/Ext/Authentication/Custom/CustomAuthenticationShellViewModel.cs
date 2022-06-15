@@ -12,7 +12,7 @@ public record CustomAuthenticationShellViewModel
 
 	private async Task Start()
 	{
-		await Flow.Launch();
+		await Flow.LaunchAsync();
 
 	}
 }

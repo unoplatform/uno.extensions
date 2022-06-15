@@ -6,7 +6,7 @@ public record class CustomAuthenticationLoginViewModel(INavigator Navigator, IAu
 	public string? Password { get; set; }	
 	public async Task Login()
 	{
-		await Flow.Login(new Dictionary<string, string>()
+		await Flow.LoginAsync(new Dictionary<string, string>()
 		{
 			{"Name",Name??string.Empty },
 			{"Password",Password??string.Empty}

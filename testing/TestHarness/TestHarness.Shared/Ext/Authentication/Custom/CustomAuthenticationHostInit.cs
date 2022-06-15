@@ -1,5 +1,7 @@
 ﻿
 
+using Uno.Extensions.Authentication.Custom;
+
 namespace TestHarness.Ext.Authentication.Custom;
 
 public class CustomAuthenticationHostInit : IHostInitialization
@@ -37,34 +39,39 @@ public class CustomAuthenticationHostInit : IHostInitialization
 				.ConfigureServices((context, services) =>
 				{
 					services
-						.AddSingleton<ITokenCache, TokenCache>()
-						.AddSingleton(new CustomAuthenticationSettings(
-							LoginCallback: async (dispatcher, tokenCache, credentials) =>
+						.AddSingleton<ITokenCache, TokenCache>();
+				})
+
+				.UseAuthentication(builder =>
+				{
+					builder
+						.Login(
+								async (dispatcher, tokenCache, credentials) =>
 								{
 									var name = credentials.FirstOrDefault(x => x.Key == "Name").Value;
 									var password = credentials.FirstOrDefault(x => x.Key == "Password").Value;
 									if (ValidCredentials.TryGetValue(name, out var pass) && pass == password)
 									{
-										await tokenCache.Save(credentials);
+										await tokenCache.SaveAsync(credentials);
 										return true;
 									}
 									return false;
-								},
-							RefreshCallback: async (tokenCache) =>
-							{
-								var creds = await tokenCache.Get();
-								return (creds?.Count() ?? 0) > 0;
-							},
-							LogoutCallback: (dispatcher, tokenCache) => Task.FromResult(true)
-							))
-						.AddSingleton<IAuthenticationService, CustomAuthenticationService>()
-						.AddSingleton(new AuthenticationFlowSettings(
-							LoginViewModel: typeof(CustomAuthenticationLoginViewModel),
-							HomeViewModel: typeof(CustomAuthenticationHomeViewModel),
-							ErrorViewModel: typeof(CustomAuthenticationErrorViewModel)
-							))
-						.AddTransient<IAuthenticationFlow, AuthenticationFlow>();
+								})
+						.Refresh(
+								async (tokenCache) =>
+								{
+									var creds = await tokenCache.GetAsync();
+									return (creds?.Count() ?? 0) > 0;
+								})
+						.Logout(
+							(dispatcher, tokenCache) => Task.FromResult(true));
 				})
+
+				.UseAuthenticationFlow(builder=>
+						builder.ViewModels<
+							CustomAuthenticationLoginViewModel,
+							CustomAuthenticationHomeViewModel,
+							CustomAuthenticationErrorViewModel>())
 
 				.Build(enableUnoLogging: true);
 	}
