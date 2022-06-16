@@ -7,5 +7,6 @@ public enum TestSections
 	Responsive,
 	Apps_Commerce,
 	Apps_ToDo,
-	Authentication_Custom
+	Authentication_Custom,
+	Authentication_Msal
 }

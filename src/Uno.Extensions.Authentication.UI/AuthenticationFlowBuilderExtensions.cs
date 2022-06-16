@@ -2,54 +2,50 @@
 
 public static class AuthenticationFlowBuilderExtensions
 {
-	public static IAuthenticationFlowBuilder Routes(
+	public static IAuthenticationFlowBuilder OnLoginRequired(
 		this IAuthenticationFlowBuilder builder,
-		string loginRoute,
-		string homeRoute,
-		string errorRoute)
+		Func<INavigator, IDispatcher, Task> loginRequiredCallback)
 	{
 		if (builder is IBuilder<AuthenticationFlowSettings> flowBuilder)
 		{
 			flowBuilder.Settings = flowBuilder.Settings with
 			{
-				LoginRoute = loginRoute,
-				HomeRoute = homeRoute,
-				ErrorRoute = errorRoute
+				LoginRequiredCallback = loginRequiredCallback
 			};
 		}
 
 		return builder;
 	}
 
-	public static IAuthenticationFlowBuilder Views<TLoginPage, THomePage, TErrorPage>(
-		this IAuthenticationFlowBuilder builder)
+	public static IAuthenticationFlowBuilder OnLoginCompleted(
+		this IAuthenticationFlowBuilder builder,
+		Func<INavigator, IDispatcher, Task> loginCompletedCallback)
 	{
 		if (builder is IBuilder<AuthenticationFlowSettings> flowBuilder)
 		{
 			flowBuilder.Settings = flowBuilder.Settings with
 			{
-				LoginView = typeof(TLoginPage),
-				HomeView = typeof(THomePage),
-				ErrorView = typeof(TErrorPage)
+				LoginCompletedCallback = loginCompletedCallback
 			};
 		}
 
 		return builder;
 	}
 
-	public static IAuthenticationFlowBuilder ViewModels<TLoginViewModel, THomeViewModel, TErrorViewModel>(
-		this IAuthenticationFlowBuilder builder)
+
+	public static IAuthenticationFlowBuilder OnLogout(
+		this IAuthenticationFlowBuilder builder,
+		Func<INavigator, IDispatcher, Task> logoutCallback)
 	{
 		if (builder is IBuilder<AuthenticationFlowSettings> flowBuilder)
 		{
 			flowBuilder.Settings = flowBuilder.Settings with
 			{
-				LoginViewModel = typeof(TLoginViewModel),
-				HomeViewModel = typeof(THomeViewModel),
-				ErrorViewModel = typeof(TErrorViewModel)
+				LogoutCallback = logoutCallback
 			};
 		}
 
 		return builder;
 	}
+
 }

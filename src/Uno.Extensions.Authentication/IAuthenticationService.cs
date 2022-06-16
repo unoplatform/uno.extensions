@@ -1,9 +1,10 @@
-﻿
-namespace Uno.Extensions.Authentication;
+﻿namespace Uno.Extensions.Authentication;
 
 public interface IAuthenticationService
 {
-	Task<bool> LoginAsync(IDispatcher dispatcher, IDictionary<string, string>? credentials = null);
-	Task<bool> RefreshAsync();
-	Task<bool> Logout(IDispatcher dispatcher);
+	Task<bool> CanRefresh();
+	Task<bool> LoginAsync(IDispatcher dispatcher, CancellationToken cancellationToken);
+	Task<bool> LoginAsync(IDispatcher dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken);
+	Task<bool> RefreshAsync(CancellationToken cancellationToken);
+	Task<bool> LogoutAsync(IDispatcher dispatcher, CancellationToken cancellationToken);
 }

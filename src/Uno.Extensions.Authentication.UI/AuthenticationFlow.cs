@@ -4,115 +4,72 @@ namespace Uno.Extensions.Authentication;
 internal record AuthenticationFlow : IAuthenticationFlow
 {
 	public IAuthenticationService AuthenticationService { get; init; }
-	public INavigator Navigator { get; init; }
-	public IDispatcher Dispatcher { get; init; }
+	public INavigator? Navigator { get; private set; }
+	public IDispatcher? Dispatcher { get; private set; }
 	public ITokenCache TokenCache { get; init; }
 	public AuthenticationFlowSettings Settings { get; init; }
 
 	public AuthenticationFlow(
 		IAuthenticationService authenticationService,
-		INavigator navigator,
-		IDispatcher dispatcher,
 		ITokenCache tokenCache,
 		AuthenticationFlowSettings settings)
 	{
 		AuthenticationService = authenticationService;
-		Navigator = navigator;
-		Dispatcher = dispatcher;
 		TokenCache = tokenCache;
 		Settings = settings;
 
 		TokenCache.Cleared += TokenCache_Cleared;
 	}
 
-	private void TokenCache_Cleared(object sender, EventArgs e)
+	public void Initialize(IDispatcher dispatcher, INavigator navigator)
 	{
-		_ = LaunchAsync();
+		Dispatcher = dispatcher;
+		Navigator = navigator;
 	}
 
-	public async Task LaunchAsync()
+	private async void TokenCache_Cleared(object? sender, EventArgs e)
 	{
-		var authenticated = await EnsureAuthenticatedAsync();
-		if (authenticated)
+		if (Settings.LogoutCallback is not null)
 		{
-			await NavigateToHome();
-		}
-		else
-		{
-			await NavigateToError();
+			await Settings.LogoutCallback(Navigator!, Dispatcher!);
 		}
 	}
 
-	public async Task<bool> EnsureAuthenticatedAsync()
+
+	public async Task<bool> EnsureAuthenticatedAsync(CancellationToken ct)
 	{
-		var refreshed = await AuthenticationService.RefreshAsync();
+		var refreshed = await AuthenticationService.RefreshAsync(ct);
 		if (refreshed)
 		{
 			return true;
 		}
 
-		var tokenResponse = await NavigateToLogin();
-		return tokenResponse.IsSome(out _);
+		if (Settings.LoginRequiredCallback is not null)
+		{
+			await Settings.LoginRequiredCallback(Navigator!, Dispatcher!);
+		}
+		return false;
 	}
 
-	private async ValueTask<Option<ITokenCache>> NavigateToLogin()
-	{
-		if (Settings.LoginViewModel is not null)
-		{
-			return await Navigator.NavigateViewModelForResultAsync<ITokenCache>(this, Settings.LoginViewModel, qualifier: Qualifiers.Root).AsResult();
-		}
-		else if (Settings.LoginView is not null)
-		{
-			return await Navigator.NavigateViewForResultAsync<ITokenCache>(this, Settings.LoginView, qualifier: Qualifiers.Root).AsResult();
-		}
-		else if (Settings.LoginRoute is not null)
-		{
-			return await Navigator.NavigateRouteForResultAsync<ITokenCache>(this, Settings.LoginRoute ?? string.Empty).AsResult();
-		}
-		return Option<ITokenCache>.None();
-	}
-	private Task<NavigationResponse?> NavigateToHome()
-	{
-		return Navigate(Settings.HomeViewModel, Settings.HomeView, Settings.HomeRoute);
-	}
-	private Task<NavigationResponse?> NavigateToError()
-	{
-		return Navigate(Settings.ErrorViewModel, Settings.ErrorView, Settings.ErrorRoute);
-	}
 
-	private Task<NavigationResponse?> Navigate(Type? viewModel = null, Type? view = null, string? route = null)
+	public async Task<bool> LoginAsync(IDictionary<string, string>? credentials, CancellationToken ct)
 	{
-		if (viewModel is not null)
+		var loginResult = await AuthenticationService.LoginAsync(Dispatcher!, credentials, ct);
+		if (loginResult && Settings.LoginCompletedCallback is not null)
 		{
-			return Navigator.NavigateViewModelAsync(this, viewModel, qualifier: Qualifiers.Root);
-		}
-		else if (view is not null)
-		{
-			return Navigator.NavigateViewAsync(this, view, qualifier: Qualifiers.Root);
-		}
-		else if (route is not null)
-		{
-			return Navigator.NavigateRouteAsync(this, route ?? string.Empty);
-		}
-		return Task.FromResult(default(NavigationResponse?));
-	}
-	public async Task<bool> LoginAsync(IDictionary<string, string>? credentials = null)
-	{
-		var loginResult = await AuthenticationService.LoginAsync(Dispatcher, credentials);
-		if (loginResult)
-		{
-			await Navigator.NavigateBackWithResultAsync(this, data: TokenCache);
+			await Settings.LoginCompletedCallback(Navigator!, Dispatcher!);
 			return true;
 		}
 		return false;
 	}
 
-	public async Task<bool> LogoutAsync()
+	public async Task<bool> LogoutAsync(CancellationToken ct)
 	{
-		var logoutResult = await AuthenticationService.Logout(Dispatcher);
+		var logoutResult = await AuthenticationService.LogoutAsync(Dispatcher!,ct);
 		if (logoutResult)
 		{
-			_ = LaunchAsync();
+			// We don't need to do anything else here because the Token Cleared event
+			// will be raised, forcing the LogoutCallback to be invoked
 			return true;
 		}
 		return false;

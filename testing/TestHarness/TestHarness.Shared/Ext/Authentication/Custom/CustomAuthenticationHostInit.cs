@@ -43,7 +43,6 @@ public class CustomAuthenticationHostInit : IHostInitialization
 				})
 
 				.UseAuthentication(builder =>
-				{
 					builder
 						.Login(
 								async (dispatcher, tokenCache, credentials) =>
@@ -64,14 +63,27 @@ public class CustomAuthenticationHostInit : IHostInitialization
 									return (creds?.Count() ?? 0) > 0;
 								})
 						.Logout(
-							(dispatcher, tokenCache) => Task.FromResult(true));
-				})
+							(dispatcher, tokenCache) => Task.FromResult(true))
+				)
 
 				.UseAuthenticationFlow(builder=>
-						builder.ViewModels<
-							CustomAuthenticationLoginViewModel,
-							CustomAuthenticationHomeViewModel,
-							CustomAuthenticationErrorViewModel>())
+						builder
+							.OnLoginRequired(
+								async (navigator, dispatcher) =>
+								{
+									await navigator.NavigateViewModelAsync<CustomAuthenticationLoginViewModel>(this, qualifier: Qualifiers.Root);
+								})
+							.OnLoginCompleted(
+								async (navigator, dispatcher) =>
+								{
+									await navigator.NavigateViewModelAsync<CustomAuthenticationHomeViewModel>(this, qualifier: Qualifiers.Root);
+								})
+							.OnLogout(
+								async (navigator, dispatcher) =>
+								{
+									await navigator.NavigateViewModelAsync<CustomAuthenticationLoginViewModel>(this, qualifier: Qualifiers.Root);
+								})
+						)
 
 				.Build(enableUnoLogging: true);
 	}
@@ -83,8 +95,7 @@ public class CustomAuthenticationHostInit : IHostInitialization
 		views.Register(
 				new ViewMap(ViewModel: typeof(CustomAuthenticationShellViewModel)),
 				new ViewMap<CustomAuthenticationLoginPage, CustomAuthenticationLoginViewModel>(),
-				new ViewMap<CustomAuthenticationHomePage, CustomAuthenticationHomeViewModel>(),
-				new ViewMap<CustomAuthenticationErrorPage, CustomAuthenticationErrorViewModel>()
+				new ViewMap<CustomAuthenticationHomePage, CustomAuthenticationHomeViewModel>()
 				);
 
 
@@ -94,8 +105,7 @@ public class CustomAuthenticationHostInit : IHostInitialization
 						Nested: new RouteMap[]
 						{
 							new RouteMap("Login", View: views.FindByViewModel<CustomAuthenticationLoginViewModel>()),
-							new RouteMap("Home", View: views.FindByViewModel<CustomAuthenticationHomeViewModel>()),
-							new RouteMap("Error", View: views.FindByViewModel<CustomAuthenticationErrorViewModel>())
+							new RouteMap("Home", View: views.FindByViewModel<CustomAuthenticationHomeViewModel>())
 						}));
 	}
 }

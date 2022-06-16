@@ -4,7 +4,7 @@ public static class CustomAuthenticationBuilderExtensions
 {
 	public static ICustomAuthenticationBuilder Login(
 		this ICustomAuthenticationBuilder builder,
-		Func<IDispatcher, ITokenCache, IDictionary<string, string>, Task<bool>> loginCallback)
+		AsyncFunc<IDispatcher, ITokenCache, IDictionary<string, string>, bool> loginCallback)
 	{
 		if (builder is IBuilder<CustomAuthenticationSettings> authBuilder)
 		{
@@ -19,7 +19,7 @@ public static class CustomAuthenticationBuilderExtensions
 
 	public static ICustomAuthenticationBuilder Refresh(
 		this ICustomAuthenticationBuilder builder,
-		Func<ITokenCache, Task<bool>> refreshCallback)
+		AsyncFunc<ITokenCache, bool> refreshCallback)
 	{
 		if (builder is IBuilder<CustomAuthenticationSettings> authBuilder)
 		{
@@ -34,7 +34,7 @@ public static class CustomAuthenticationBuilderExtensions
 
 	public static ICustomAuthenticationBuilder Logout(
 		this ICustomAuthenticationBuilder builder,
-		Func<IDispatcher, ITokenCache, Task<bool>> logoutCallback)
+		AsyncFunc<IDispatcher, ITokenCache, bool> logoutCallback)
 	{
 		if (builder is IBuilder<CustomAuthenticationSettings> authBuilder)
 		{

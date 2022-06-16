@@ -19,7 +19,6 @@ global using Uno.Extensions.Navigation.Navigators;
 global using Uno.Extensions.Navigation.Regions;
 global using Uno.Extensions.Navigation.UI;
 global using Uno.Extensions.Navigation.UI.Controls;
-global using Uno.Extensions.Hosting;
 
 
 #if WINUI

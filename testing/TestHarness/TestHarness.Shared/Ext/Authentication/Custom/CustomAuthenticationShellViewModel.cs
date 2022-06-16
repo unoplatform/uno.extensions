@@ -1,18 +1,14 @@
-﻿namespace TestHarness.Ext.Authentication.Custom;
+﻿
+namespace TestHarness.Ext.Authentication.Custom;
 
 public record CustomAuthenticationShellViewModel
 {
-	private IAuthenticationFlow Flow { get; }
-	public CustomAuthenticationShellViewModel(IAuthenticationFlow flow)
+	public CustomAuthenticationShellViewModel(IAuthenticationFlow flow, INavigator navigator, IDispatcher dispatcher)
 	{
-		Flow = flow;
 
-		_ = Start();
+		flow.Initialize(dispatcher, navigator);
+
+		_ = flow.EnsureAuthenticatedAsync();
 	}
 
-	private async Task Start()
-	{
-		await Flow.LaunchAsync();
-
-	}
 }

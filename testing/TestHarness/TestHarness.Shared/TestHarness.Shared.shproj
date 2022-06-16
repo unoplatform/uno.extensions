@@ -11,10 +11,13 @@
   <Import Project="TestHarness.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeSharing\Microsoft.CodeSharing.CSharp.targets" />
   <ItemGroup>
-    <_Globbed_Compile Remove="Ext\Authentication\Custom\CustomAuthenticationErrorPage.xaml.cs" />
-    <_Globbed_Compile Remove="Ext\Authentication\Custom\CustomAuthenticationErrorViewModel.cs" />
+    <_Globbed_Compile Remove="Ext\Authentication\Msal\MsalAuthenticationHomePage.xaml.cs" />
+    <_Globbed_Compile Remove="Ext\Authentication\Msal\MsalAuthenticationHomeViewModel.cs" />
+    <_Globbed_Compile Remove="Ext\Authentication\Msal\MsalAuthenticationWelcomePage.xaml.cs" />
+    <_Globbed_Compile Remove="Ext\Authentication\Msal\MsalAuthenticationWelcomeViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
-    <_Globbled_Page Remove="Ext\Authentication\Custom\CustomAuthenticationErrorPage.xaml" />
+    <_Globbled_Page Remove="Ext\Authentication\Msal\MsalAuthenticationHomePage.xaml" />
+    <_Globbled_Page Remove="Ext\Authentication\Msal\MsalAuthenticationWelcomePage.xaml" />
   </ItemGroup>
 </Project>

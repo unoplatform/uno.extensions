@@ -2,7 +2,7 @@
 
 internal record CustomAuthenticationSettings
 {
-	public Func<IDispatcher, ITokenCache, IDictionary<string, string>, Task<bool>>? LoginCallback { get; init; }
-	public Func<ITokenCache, Task<bool>>? RefreshCallback { get; init; }
-	public Func<IDispatcher, ITokenCache, Task<bool>>? LogoutCallback { get; init; }
+	public AsyncFunc<IDispatcher, ITokenCache, IDictionary<string, string>, bool>? LoginCallback { get; init; }
+	public AsyncFunc<ITokenCache, bool>? RefreshCallback { get; init; }
+	public AsyncFunc<IDispatcher, ITokenCache, bool>? LogoutCallback { get; init; }
 }
