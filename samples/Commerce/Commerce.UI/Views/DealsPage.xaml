@@ -104,7 +104,6 @@
 
 		<utu:AutoLayout Background="{ThemeResource SurfaceBrush}">
 			<utu:AutoLayout uen:Region.Attached="True"
-							uen:Region.Name="DealsAndFavorites"
 							utu:AutoLayout.PrimaryAlignment="Stretch">
 
 				<utu:NavigationBar Content="Uno Commerce"
