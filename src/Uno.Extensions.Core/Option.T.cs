@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
@@ -107,6 +108,6 @@ public readonly struct Option<T> : IOption, IEquatable<Option<T>>
 		{
 			OptionType.Undefined => $"Undefined<{typeof(T).Name}>",
 			OptionType.None => $"None<{typeof(T).Name}>",
-			_ => $"Some({_value})",
+			_ => $"Some({(_value is IEnumerable enumerable ? string.Join(",", enumerable.Cast<object>()) : _value)})",
 		};
 }
