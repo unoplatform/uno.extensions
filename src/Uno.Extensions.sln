@@ -98,7 +98,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Templates", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Logging.UWP.Wasm", "Uno.Extensions.Logging\Uno.Extensions.Logging.UWP.Wasm.csproj", "{ABEE641A-A845-468F-A877-1F8BC9AB4D34}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Reactive.Messaging", "Uno.Extensions.Reactive.Messaging\Uno.Extensions.Reactive.Messaging.csproj", "{B54E4D85-188D-4B19-93B0-2248FFAA6144}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.Messaging", "Uno.Extensions.Reactive.Messaging\Uno.Extensions.Reactive.Messaging.csproj", "{B54E4D85-188D-4B19-93B0-2248FFAA6144}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Reactive.SampleApp", "Uno.Extensions.Reactive.SampleApp\Uno.Extensions.Reactive.SampleApp.csproj", "{86B56D5A-106C-4611-92CA-EEA8906F83A3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -262,6 +264,12 @@ Global
 		{B54E4D85-188D-4B19-93B0-2248FFAA6144}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B54E4D85-188D-4B19-93B0-2248FFAA6144}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B54E4D85-188D-4B19-93B0-2248FFAA6144}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86B56D5A-106C-4611-92CA-EEA8906F83A3}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{86B56D5A-106C-4611-92CA-EEA8906F83A3}.Debug|Any CPU.Build.0 = Debug|x64
+		{86B56D5A-106C-4611-92CA-EEA8906F83A3}.Debug|Any CPU.Deploy.0 = Debug|x64
+		{86B56D5A-106C-4611-92CA-EEA8906F83A3}.Release|Any CPU.ActiveCfg = Release|x64
+		{86B56D5A-106C-4611-92CA-EEA8906F83A3}.Release|Any CPU.Build.0 = Release|x64
+		{86B56D5A-106C-4611-92CA-EEA8906F83A3}.Release|Any CPU.Deploy.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -303,6 +311,7 @@ Global
 		{0F3C7D7A-C57C-41C0-86B9-34C9B5A1643A} = {6B956AB1-06A6-4BEC-9467-E7B593A89E34}
 		{ABEE641A-A845-468F-A877-1F8BC9AB4D34} = {DFA5C025-922C-4408-8489-D45786D0C5AA}
 		{B54E4D85-188D-4B19-93B0-2248FFAA6144} = {6B956AB1-06A6-4BEC-9467-E7B593A89E34}
+		{86B56D5A-106C-4611-92CA-EEA8906F83A3} = {6B956AB1-06A6-4BEC-9467-E7B593A89E34}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6E7B035D-9A64-4D95-89AA-9D4653F17C42}

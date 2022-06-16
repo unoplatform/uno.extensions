@@ -1,0 +1,58 @@
+﻿<Page
+	x:Class="Uno.Extensions.Reactive.SampleApp.PaginationSample"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:local="using:Uno.Extensions.Reactive.SampleApp"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:uer="using:Uno.Extensions.Reactive.UI"
+	mc:Ignorable="d"
+	Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+		<Button Grid.Row="0" Content="Refresh" Command="{Binding State.Refresh, ElementName=FeedView}" />
+
+
+		<uer:FeedView Grid.Row="1" Source="{Binding Items}" x:Name="FeedView">
+			<DataTemplate>
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="*" />
+					</Grid.RowDefinitions>
+
+					<StackPanel>
+						<Button Content="Refresh" Command="{Binding Refresh}" />
+						<TextBlock Text="Load duration (sec):" />
+						<Slider Value="{Binding Parent.Delay, Mode=TwoWay}" Minimum="0" Maximum="30" />
+						<CheckBox Content="Has more items" IsChecked="{Binding Parent.HasMoreItems, Mode=TwoWay}" IsThreeState="False" />
+						<TextBlock>Is loading collection: <Run Text="{Binding Progress}" /></TextBlock>
+						<TextBlock>Collection has more items: <Run Text="{Binding Data.ExtendedProperties.HasMoreItems}" /></TextBlock>
+						<TextBlock>Is collection loading more items: <Run Text="{Binding Data.ExtendedProperties.IsLoadingMoreItems}" /></TextBlock>
+					</StackPanel>
+
+					<ListView
+						Grid.Row="1"
+						ItemsSource="{Binding Data}">
+						<ListView.Footer>
+							<ProgressBar
+								Visibility="{Binding Data.ExtendedProperties.IsLoadingMoreItems}"
+								IsIndeterminate="{Binding Data.ExtendedProperties.IsLoadingMoreItems}"
+								HorizontalAlignment="Stretch" />
+						</ListView.Footer>
+					</ListView>
+				</Grid>
+			</DataTemplate>
+		</uer:FeedView>
+
+<!--<uer:FeedView Source="{Binding Items}">
+	<DataTemplate>
+		<ListView ItemsSource="{Binding Data}" />
+	</DataTemplate>
+</uer:FeedView>-->
+	</Grid>
+</Page>
