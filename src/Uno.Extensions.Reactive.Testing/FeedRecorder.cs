@@ -210,8 +210,8 @@ public class FeedRecorder<TFeed, TValue> : IFeedRecorder<TValue>, ICollection<Me
 					sb.AppendLine($"\t\t{change.Identifier} changes:");
 					foreach (var line in changes.ToString().Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
 					{
-						sb.Append("\t\t");
-						sb.Append(line);
+						sb.Append("\t\t\t");
+						sb.AppendLine(line);
 					}
 				}
 			}

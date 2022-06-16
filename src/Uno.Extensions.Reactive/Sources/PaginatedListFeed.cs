@@ -84,7 +84,7 @@ internal class PaginatedListFeed<TCursor, TItem> : IListFeed<TItem>, IRefreshabl
 		bool isFirstPage,
 		CancellationToken ct)
 	{
-		ValueTask<Page<TCursor, TItem>> pageTask = default;
+		ValueTask<PageResult<TCursor, TItem>> pageTask = default;
 		Exception? error = default;
 		try
 		{

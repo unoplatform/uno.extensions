@@ -22,7 +22,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 			_owner = new Lazy<ICollectionView>(owner, LazyThreadSafetyMode.None);
 		}
 
-		public void AddChild(CollectionChangedFacet item, IObservableVector<object> source, IObservableCollectionSnapshot? currentItems = null)
+		public void AddChild(CollectionChangedFacet item, IObservableVector<object?> source, IObservableCollectionSnapshot? currentItems = null)
 		{
 			item.AddVectorChangedHandler(OnVectorChanged, lowPriority: true);
 			item.AddCollectionChangedHandler(OnCollectionChanged, lowPriority: true);

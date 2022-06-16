@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using FluentAssertions;
+using FluentAssertions.Execution;
 using Uno.Extensions.Reactive;
 
 namespace Uno.Extensions.Reactive.Testing;
@@ -38,8 +39,11 @@ public sealed class Error : AxisConstraint
 		}
 		else if (_errorType is not null)
 		{
-			entry.Error.Should().NotBeNull($"an exception of type {_errorType} was expected.");
-			_errorType.IsInstanceOfType(entry.Error).Should().BeTrue($"an exception of type {_errorType} was expected.");
+			entry.Error.Should().NotBeNull($"an exception of type {_errorType.Name} was expected.");
+			if (entry.Error is not null && !_errorType.IsInstanceOfType(entry.Error))
+			{
+				AssertionScope.Current.Fail($"an exception of type {_errorType.Name} was expected, but get an exception of type {entry.Error.GetType().Name}.");
+			}
 		}
 		else
 		{
