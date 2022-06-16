@@ -15,7 +15,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 		/// <summary>
 		/// Gets the changes when updating the source collection
 		/// </summary>
-		CollectionUpdater GetChanges(IObservableCollectionSnapshot? oldItems, IObservableCollectionSnapshot newItems, bool shouldUseSmartTracking = true);
+		CollectionUpdater GetChanges(IObservableCollectionSnapshot? oldItems, IObservableCollectionSnapshot newItems, CollectionChangeSet? changes, bool shouldUseSmartTracking = true);
 
 		/// <summary>
 		/// Gets the effective changes when receiving a collection change from the source

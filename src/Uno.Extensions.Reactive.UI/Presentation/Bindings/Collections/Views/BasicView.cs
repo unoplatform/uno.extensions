@@ -22,11 +22,13 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views
 		public BasicView(
 			CollectionFacet collectionFacet,
 			CollectionChangedFacet collectionChangedFacet,
+			BindableCollectionExtendedProperties extendedProperties,
 			SelectionFacet? selectionFacet = null,
 			PaginationFacet? paginationFacet = null)
 		{
 			_collection = collectionFacet;
 			_collectionChanged = collectionChangedFacet;
+			ExtendedProperties = extendedProperties;
 			_selection = selectionFacet;
 			_pagination = paginationFacet;
 		}
@@ -138,8 +140,10 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views
 		#region Grouping
 		/// <inheritdoc />
 		public IObservableVector<object?>? CollectionGroups { get; }
-#endregion
+		#endregion
 
-		public void Dispose() => _pagination?.Dispose();
+		public BindableCollectionExtendedProperties ExtendedProperties { get; }
+
+		public void Dispose() { }
 	}
 }

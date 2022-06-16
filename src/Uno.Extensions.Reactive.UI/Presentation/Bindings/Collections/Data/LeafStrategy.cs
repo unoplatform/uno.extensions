@@ -5,7 +5,6 @@ using Uno.Extensions.Collections;
 using Uno.Extensions.Collections.Tracking;
 using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets;
 using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views;
-using TrackingMode = Uno.Extensions.Collections.TrackingMode;
 
 namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 {
@@ -38,13 +37,13 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 				var paginationFacet = new PaginationFacet(source, extendedPropertiesFacet);
 				var selectionFacet = new SelectionFacet(() => view ?? throw new InvalidOperationException("The owner provider must be resolved lazily!"));
 
-				view = new BasicView(collectionFacet, collectionChangedFacet, selectionFacet, paginationFacet);
+				view = new BasicView(collectionFacet, collectionChangedFacet, extendedPropertiesFacet, selectionFacet, paginationFacet);
 
 				return (collectionFacet, view, new object[] { collectionFacet, collectionChangedFacet, paginationFacet, selectionFacet, extendedPropertiesFacet });
 			}
 			else
 			{
-				view = new BasicView(collectionFacet, collectionChangedFacet);
+				view = new BasicView(collectionFacet, collectionChangedFacet, extendedPropertiesFacet);
 
 				return (collectionFacet, view, new object[] { collectionFacet, collectionChangedFacet, extendedPropertiesFacet });
 			}

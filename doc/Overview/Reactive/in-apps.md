@@ -69,6 +69,39 @@ You can use this command to trigger a refresh from the view, like a "pull to ref
 </uer:FeedView>
 ```
 
+## Pagination
+
+When your source supports pagination (like `ListFeed.Paginated`), you can data-bind the collection exposed by the generated view model to a `ListView` to automatically enable pagination.
+
+```xml
+<uer:FeedView Source="{Binding Items}">
+	<DataTemplate>
+		<ListView ItemsSource="{Binding Data}" />
+	</DataTemplate>
+</uer:FeedView>
+```
+
+The collection exposed for binding by the generated view models also exposes some [extended properties](https://github.com/unoplatform/uno.extensions/blob/main/src/Uno.Extensions.Reactive.UI/Presentation/Bindings/Collections/Facets/BindableCollectionExtendedProperties.cs), 
+so you can enhance the UX of the pagination, like display a loading indicator while loading the next page.
+
+```xml
+<uer:FeedView Source="{Binding Items}">
+	<DataTemplate>
+		<ListView
+			Grid.Row="1"
+			ItemsSource="{Binding Data}">
+			<ListView.Footer>
+				<ProgressBar
+					Visibility="{Binding Data.ExtendedProperties.IsLoadingMoreItems}"
+					IsIndeterminate="{Binding Data.ExtendedProperties.IsLoadingMoreItems}"
+					HorizontalAlignment="Stretch" />
+			</ListView.Footer>
+		</ListView>
+	</DataTemplate>
+</uer:FeedView>
+```
+
+
 ## Commands
 The generated bindable counterpart of a class will automatically re-expose public methods that have 0 or 1 parameter and an optional `CancellationToken` as `ICommand`.
 The parameter will be fulfilled using the `CommandParameter` property.

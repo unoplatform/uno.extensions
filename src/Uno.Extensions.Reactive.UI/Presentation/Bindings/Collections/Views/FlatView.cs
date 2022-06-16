@@ -217,6 +217,8 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Views
 			throw new ArgumentOutOfRangeException(nameof(index));
 		}
 
-		public void Dispose() => _pagination.Dispose();
+		public void Dispose()
+		{
+		}
 	}
 }
