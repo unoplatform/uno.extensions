@@ -54,7 +54,11 @@ public class CommerceHostInit : IHostInitialization
 									Nested: new RouteMap[]{
 										new RouteMap("Deals",
 											View: views.FindByViewModel<CommerceDealsViewModel>(),
-											IsDefault: true),
+											IsDefault: true,
+												Nested: new RouteMap[]{
+													new RouteMap("DealsTab", IsDefault: true),
+													new RouteMap("FavoritesTab")
+												}),
 										new RouteMap("DealsProduct",
 												View: views.FindByViewModel<CommerceProductDetailsViewModel>(),
 												DependsOn:"Deals"),

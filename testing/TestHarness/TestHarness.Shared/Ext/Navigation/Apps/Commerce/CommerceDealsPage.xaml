@@ -58,20 +58,46 @@
 				<ColumnDefinition Width="0"
 								  x:Name="DetailsColumn" />
 			</Grid.ColumnDefinitions>
-			<ListView AutomationProperties.AutomationId="DealsListView"
-					  x:Name="DealsListView"
-					  ItemsSource="{Binding Deals}"
-					
-					  uen:Navigation.Request="DealsProduct">
-				<!--SelectionMode="None"
-					  IsItemClickEnabled="True"-->
-				<ListView.ItemTemplate>
-					<DataTemplate x:DataType="local:CommerceProduct">
-						<TextBlock Text="{x:Bind Name}"
-								   FontSize="30" />
-					</DataTemplate>
-				</ListView.ItemTemplate>
-			</ListView>
+			<Grid uen:Region.Attached="True"> 
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition />
+				</Grid.RowDefinitions>
+				<utu:TabBar uen:Region.Attached="True">
+					<utu:TabBarItem x:Uid="DealsPage_DealsTab"
+									AutomationProperties.Name="TabBarItem"
+									Content="Deals"
+									uen:Region.Name="DealsTab"
+									utu:AutoLayout.CounterAlignment="Center"
+									utu:AutoLayout.PrimaryAlignment="Stretch" />
+					<utu:TabBarItem x:Uid="DealsPage_FavoritesTab"
+									AutomationProperties.Name="TabBarItem"
+									Content="Favorites"
+									uen:Region.Name="FavoritesTab"
+									utu:AutoLayout.CounterAlignment="Center"
+									utu:AutoLayout.PrimaryAlignment="Stretch" />
+				</utu:TabBar>
+				<Grid uen:Region.Attached="True"
+					  uen:Region.Navigator="Visibility"
+					  Grid.Row="1">
+					<ListView uen:Region.Name="DealsTab"
+							  AutomationProperties.AutomationId="DealsListView"
+							  x:Name="DealsListView"
+							  ItemsSource="{Binding Deals}"
+							  uen:Navigation.Request="DealsProduct">
+						<ListView.ItemTemplate>
+							<DataTemplate x:DataType="local:CommerceProduct">
+								<TextBlock Text="{x:Bind Name}"
+										   FontSize="30" />
+							</DataTemplate>
+						</ListView.ItemTemplate>
+					</ListView>
+					<Grid uen:Region.Name="FavoritesTab">
+						<TextBlock Text="Favorites go here" />
+					</Grid>
+				</Grid>
+			</Grid>
+			
 			<Grid Grid.Column="1"
 				  x:Name="DetailsGrid"
 				  Visibility="Collapsed">

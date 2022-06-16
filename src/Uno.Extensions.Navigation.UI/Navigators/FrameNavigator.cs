@@ -69,7 +69,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 		// that page is already navigated to, or is in the backstack
 		if (!string.IsNullOrWhiteSpace(routeMap?.DependsOn))
 		{
-			var dependsRoute = route.RootDependsOn(Resolver, Region);
+			var dependsRoute = route.RootDependsOn(Resolver, Region, true);
 			return (FullRoute?.IsEmpty() ?? true) || FullRoute.Contains(dependsRoute.Base!);
 		}
 

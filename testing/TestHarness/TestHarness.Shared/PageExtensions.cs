@@ -36,7 +36,7 @@ public static class PageExtensions
 				// correctly. This isn't an issue when the visual states are driven using
 				// adaptive triggers
 				await Task.Yield();
-				VisualStateManager.GoToState(Page, newState, true);
+				VisualStateManager.GoToState(Page, newState, false);
 			}
 		}
 	}

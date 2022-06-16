@@ -79,7 +79,7 @@ public static class RouteExtensions
 
 		// For routes that have a depends on, we need to ensure that
 		// the dependson segments are added to the segments list
-		var r = route.RootDependsOn(mappings, region);
+		var r = route.RootDependsOn(mappings, region, false);
 		var map = mappings.Find(r);
 		var originalRoute = false;
 		while (
@@ -442,7 +442,7 @@ public static class RouteExtensions
 		}
 	}
 
-	public static Route RootDependsOn(this Route currentRoute, IRouteResolver resolver, IRegion region)
+	public static Route RootDependsOn(this Route currentRoute, IRouteResolver resolver, IRegion region, bool includeCurrentRegion)
 	{
 		var rm = resolver.FindByPath(currentRoute.Base);
 		while (rm is not null &&
@@ -451,11 +451,23 @@ public static class RouteExtensions
 			var ancestors = region.Ancestors(true);
 			if (ancestors.Any(x => x.Item1?.Base == rm.DependsOn))
 			{
+				// In the scenario where we're testing to see if we can navigate to the currentRoute
+				// the root Route needs to include the route for the current region
+				// In the scenario where we're navigating to the currentRoute, we don't
+				// want to include the route for the current region (since the region
+				// is already at that route)
+				if(includeCurrentRegion &&
+					region.Navigator()?.Route?.Base == rm.DependsOn)
+				{
+					currentRoute = currentRoute.Insert(rm.DependsOn);
+				}
+
 				return currentRoute;
 			}
 
-
 			currentRoute = currentRoute.Insert(rm.DependsOn);
+
+
 			rm = resolver.FindByPath(rm.DependsOn);
 		}
 
