@@ -1,32 +1,32 @@
 ﻿using System;
-using System.Collections.Immutable;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Uno.Extensions.Reactive.Sources;
+namespace Uno.Extensions.Reactive;
 
 /// <summary>
-/// Load a page of items of a paginated list.
+/// Information about a page
 /// </summary>
-/// <typeparam name="TCursor">Type of the cursor used by the pagination</typeparam>
-/// <typeparam name="TItem">Type of the items of the list.</typeparam>
-/// <param name="cursor">The cursor of teh page to load.</param>
-/// <param name="desiredPageSize">The desired page size if any.</param>
-/// <param name="ct">A cancellation to cancel the async operation.</param>
-public delegate ValueTask<Page<TCursor, TItem>> GetPage<TCursor, TItem>(TCursor cursor, uint? desiredPageSize, CancellationToken ct);
-
-/// <summary>
-/// A page of items for a paginated list of items.
-/// </summary>
-/// <typeparam name="TCursor">The cursor used to track the pagination.</typeparam>
-/// <typeparam name="TItem">The type of items of the collection.</typeparam>
-/// <param name="Items">The items</param>
-/// <param name="NextPage">The cursor to use to get the next page, if any.</param>
-public record struct Page<TCursor, TItem>(IImmutableList<TItem> Items, TCursor? NextPage)
+public struct Page
 {
 	/// <summary>
-	/// An empty page indicating the end of the list.
+	/// The index of the page.
 	/// </summary>
-	public static Page<TCursor, TItem> Empty => new(ImmutableList<TItem>.Empty, NextPage: default);
+	public uint Index { get; init; }
+
+	/// <summary>
+	/// This is the total number of items currently in the list.
+	/// </summary>
+	public uint TotalCount { get; init; }
+
+	/// <summary>
+	/// The desired number of items for the current page, if any.
+	/// </summary>
+	/// <remarks>
+	/// This is the desired number of items that the view requested to load.
+	/// It's expected to be null only for the first page.
+	/// Be aware that this might change between pages (especially is user resize the window),
+	/// DO NOT use like `source.Skip(page.Index * page.DesiredSize).Take(page.DesiredSize)`.
+	/// Prefer to use the <see cref="TotalCount"/>.
+	/// </remarks>
+	public uint? DesiredSize { get; init; }
 }

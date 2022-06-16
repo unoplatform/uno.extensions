@@ -72,7 +72,7 @@ public static class ListFeed<T>
 	/// <param name="firstPage">The cursor of the first page.</param>
 	/// <param name="getPage">The async method to load a page of items.</param>
 	/// <returns>A paginated list feed.</returns>
-	public static IListFeed<T> PaginatedByCursor<TCursor>(TCursor firstPage, GetPage<TCursor, T> getPage)
+	public static IListFeed<T> AsyncPaginatedByCursor<TCursor>(TCursor firstPage, GetPage<TCursor, T> getPage)
 		=> AttachedProperty.GetOrCreate(getPage.Target ?? getPage.Method, firstPage, getPage, (_, fp, gp) => new PaginatedListFeed<TCursor,T>(fp, gp));
 
 	/// <summary>
@@ -80,11 +80,32 @@ public static class ListFeed<T>
 	/// </summary>
 	/// <param name="getPage">The async method to load a page of items.</param>
 	/// <returns>A paginated list feed.</returns>
-	public static IListFeed<T> Paginated(AsyncFunc<PageInfo, IImmutableList<T>> getPage)
-		=> AttachedProperty.GetOrCreate(getPage, gp => new PaginatedListFeed<uint?, T>(firstPage: 0, PaginatedByIndex(gp)));
+	public static IListFeed<T> AsyncPaginated(AsyncFunc<Page, IImmutableList<T>> getPage)
+		=> AttachedProperty.GetOrCreate(getPage, gp => new PaginatedListFeed<ByIndexCursor, T>(ByIndexCursor.First, PaginatedByIndex(gp)));
 
-	private static GetPage<uint?, T> PaginatedByIndex(AsyncFunc<PageInfo, IImmutableList<T>> getPage) => async (pageNumber, desiredPageSize, ct)
-		=> await getPage(new PageInfo { PageIndex = pageNumber!.Value, DesiredPageSize = desiredPageSize }, ct) is { Count: > 0 } page
-			? new Page<uint?, T>(page, pageNumber + 1)
-			: Page<uint?, T>.Empty;
+	private static GetPage<ByIndexCursor, T> PaginatedByIndex(AsyncFunc<Page, IImmutableList<T>> getPage) => async (cursor, desiredCount, ct) =>
+	{
+		var request = new Page
+		{
+			Index = cursor.Index,
+			TotalCount = cursor.TotalCount,
+			DesiredSize = desiredCount
+		};
+
+		if (await getPage(request, ct) is { Count: > 0 } items)
+		{
+			var nextCursor = cursor with { Index = cursor.Index + 1, TotalCount = cursor.TotalCount + (uint)items.Count };
+
+			return new PageResult<ByIndexCursor, T>(items, nextCursor);
+		}
+		else
+		{
+			return PageResult<ByIndexCursor, T>.Empty;
+		}
+	};
+
+	private record ByIndexCursor(uint Index, uint TotalCount)
+	{
+		public static ByIndexCursor First { get; } = new(0, 0);
+	}
 }

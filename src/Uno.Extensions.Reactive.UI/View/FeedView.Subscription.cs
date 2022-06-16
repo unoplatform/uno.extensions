@@ -6,6 +6,11 @@ using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Logging;
 using Uno.Extensions.Reactive.Sources;
 using Uno.Extensions.Reactive.Utils;
+#if WINUI
+using _Page = Microsoft.UI.Xaml.Controls.Page;
+#else
+using _Page = Windows.UI.Xaml.Controls.Page;
+#endif
 
 namespace Uno.Extensions.Reactive.UI;
 
@@ -87,7 +92,7 @@ public partial class FeedView
 			do
 			{
 				elt = VisualTreeHelper.GetParent(elt) as FrameworkElement;
-			} while (elt is not Page and not null);
+			} while (elt is not _Page and not null);
 
 			return elt;
 		}

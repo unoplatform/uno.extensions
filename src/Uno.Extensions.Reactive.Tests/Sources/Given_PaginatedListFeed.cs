@@ -20,7 +20,7 @@ public class Given_PaginatedListFeed : FeedTests
 	[TestMethod]
 	public async Task When_RequestPage_Then_ItemsAdded()
 	{
-		var sut = ListFeed.Paginated<int>(async (page, ct) => Range((int)page.PageIndex * 20, (int)(page.DesiredPageSize ?? 20)).ToImmutableList());
+		var sut = ListFeed.AsyncPaginated<int>(async (page, ct) => Range((int)page.Index * 20, (int)(page.DesiredSize ?? 20)).ToImmutableList());
 		var requests = new RequestSource();
 		var ctx = Context.SourceContext.CreateChild(requests);
 
@@ -48,8 +48,8 @@ public class Given_PaginatedListFeed : FeedTests
 	[TestMethod]
 	public async Task When_ByIndexAndPageIsEmpty_Then_ReportPaginationCompleted()
 	{
-		async ValueTask<IImmutableList<int>> GetPage(PageInfo page, CancellationToken ct)
-			=> page.PageIndex switch
+		async ValueTask<IImmutableList<int>> GetPage(Page page, CancellationToken ct)
+			=> page.Index switch
 			{
 				0 => Range(0, 10).ToImmutableList(),
 				1 => Range(10, 10).ToImmutableList(),
@@ -59,7 +59,7 @@ public class Given_PaginatedListFeed : FeedTests
 
 		var requests = new RequestSource();
 		var ctx = Context.SourceContext.CreateChild(requests);
-		var result = ListFeed.Paginated(GetPage).Record(ctx);
+		var result = ListFeed.AsyncPaginated(GetPage).Record(ctx);
 
 		requests.RequestMoreItems(42);
 		await result.WaitForMessages(2, CT);
@@ -83,8 +83,8 @@ public class Given_PaginatedListFeed : FeedTests
 	[TestMethod]
 	public async Task When_ByIndexAndFirstPageIsEmpty_Then_ReportPaginationCompleted()
 	{
-		async ValueTask<IImmutableList<int>> GetPage(PageInfo page, CancellationToken ct)
-			=> page.PageIndex switch
+		async ValueTask<IImmutableList<int>> GetPage(Page page, CancellationToken ct)
+			=> page.Index switch
 			{
 				0 => ImmutableList<int>.Empty,
 				_ => throw new InvalidOperationException("Should not happen"),
@@ -92,7 +92,7 @@ public class Given_PaginatedListFeed : FeedTests
 
 		var requests = new RequestSource();
 		var ctx = Context.SourceContext.CreateChild(requests);
-		var result = ListFeed.Paginated(GetPage).Record(ctx);
+		var result = ListFeed.AsyncPaginated(GetPage).Record(ctx);
 
 		await result.WaitForMessages(1, CT);
 
@@ -108,7 +108,7 @@ public class Given_PaginatedListFeed : FeedTests
 	{
 		var requests = new RequestSource();
 		var ctx = Context.SourceContext.CreateChild(requests);
-		var result = ListFeed<int>.PaginatedByCursor(new TestCursor(2), TestCursor.GetPage).Record(ctx);
+		var result = ListFeed<int>.AsyncPaginatedByCursor(new TestCursor(2), TestCursor.GetPage).Record(ctx);
 
 		await result.WaitForMessages(1, CT);
 		requests.RequestMoreItems(42);
@@ -134,7 +134,7 @@ public class Given_PaginatedListFeed : FeedTests
 	{
 		var requests = new RequestSource();
 		var ctx = Context.SourceContext.CreateChild(requests);
-		var result = ListFeed<int>.PaginatedByCursor(new TestCursor(0), TestCursor.GetPage).Record(ctx);
+		var result = ListFeed<int>.AsyncPaginatedByCursor(new TestCursor(0), TestCursor.GetPage).Record(ctx);
 
 		await result.WaitForMessages(1, CT);
 
@@ -150,7 +150,7 @@ public class Given_PaginatedListFeed : FeedTests
 	{
 		var requests = new RequestSource();
 		var ctx = Context.SourceContext.CreateChild(requests);
-		var result = ListFeed<int>.PaginatedByCursor(new TestCursor(0), TestCursor.GetPage).Record(ctx);
+		var result = ListFeed<int>.AsyncPaginatedByCursor(new TestCursor(0), TestCursor.GetPage).Record(ctx);
 
 		await result.WaitForMessages(1, CT);
 
@@ -166,7 +166,7 @@ public class Given_PaginatedListFeed : FeedTests
 	{
 		var requests = new RequestSource();
 		var ctx = Context.SourceContext.CreateChild(requests);
-		var result = ListFeed<int>.PaginatedByCursor(new TestCursor(0, PageSize: 0), TestCursor.GetPage).Record(ctx);
+		var result = ListFeed<int>.AsyncPaginatedByCursor(new TestCursor(0, PageSize: 0), TestCursor.GetPage).Record(ctx);
 
 		await result.WaitForMessages(1, CT);
 
@@ -182,7 +182,7 @@ public class Given_PaginatedListFeed : FeedTests
 	{
 		var requests = new RequestSource();
 		var ctx = Context.SourceContext.CreateChild(requests);
-		var result = ListFeed<int>.PaginatedByCursor(new TestCursor(1, PageSize: 0), TestCursor.GetPage).Record(ctx);
+		var result = ListFeed<int>.AsyncPaginatedByCursor(new TestCursor(1, PageSize: 0), TestCursor.GetPage).Record(ctx);
 
 		await result.WaitForMessages(1, CT);
 		requests.RequestMoreItems(42);
@@ -201,8 +201,8 @@ public class Given_PaginatedListFeed : FeedTests
 	[TestMethod]
 	public async Task When_FirstPageThrow_Then_GoInErrorAndIgnorePageRequest()
 	{
-		async ValueTask<IImmutableList<int>> GetPage(PageInfo page, CancellationToken ct)
-			=> page.PageIndex switch
+		async ValueTask<IImmutableList<int>> GetPage(Page page, CancellationToken ct)
+			=> page.Index switch
 			{
 				0 => throw new TestException(),
 				_ => Range(0,10).ToImmutableList()
@@ -210,7 +210,7 @@ public class Given_PaginatedListFeed : FeedTests
 
 		var requests = new RequestSource();
 		var ctx = Context.SourceContext.CreateChild(requests);
-		var result = ListFeed.Paginated(GetPage).Record(ctx);
+		var result = ListFeed.AsyncPaginated(GetPage).Record(ctx);
 
 		await result.WaitForMessages(1, CT);
 		try
@@ -232,8 +232,8 @@ public class Given_PaginatedListFeed : FeedTests
 	[TestMethod]
 	public async Task When_SubsequentPagesThrow_Then_GoInErrorAndKeepDataAndKeepListeningPageRequest()
 	{
-		async ValueTask<IImmutableList<int>> GetPage(PageInfo page, CancellationToken ct)
-			=> page.PageIndex switch
+		async ValueTask<IImmutableList<int>> GetPage(Page page, CancellationToken ct)
+			=> page.Index switch
 			{
 				0 => Range(0, 10).ToImmutableList(),
 				_ => throw new TestException(),
@@ -241,7 +241,7 @@ public class Given_PaginatedListFeed : FeedTests
 
 		var requests = new RequestSource();
 		var ctx = Context.SourceContext.CreateChild(requests);
-		var result = ListFeed.Paginated(GetPage).Record(ctx);
+		var result = ListFeed.AsyncPaginated(GetPage).Record(ctx);
 
 		await result.WaitForMessages(1, CT);
 		requests.RequestMoreItems(42);
@@ -265,8 +265,8 @@ public class Given_PaginatedListFeed : FeedTests
 	[TestMethod]
 	public async Task When_Refresh()
 	{
-		async ValueTask<IImmutableList<int>> GetPage(PageInfo page, CancellationToken ct)
-			=> page.PageIndex switch
+		async ValueTask<IImmutableList<int>> GetPage(Page page, CancellationToken ct)
+			=> page.Index switch
 			{
 				0 => Range(0, 10).ToImmutableList(),
 				1 => Range(10, 10).ToImmutableList(),
@@ -275,7 +275,7 @@ public class Given_PaginatedListFeed : FeedTests
 
 		var requests = new RequestSource();
 		var ctx = Context.SourceContext.CreateChild(requests);
-		var result = ListFeed.Paginated(GetPage).Record(ctx);
+		var result = ListFeed.AsyncPaginated(GetPage).Record(ctx);
 
 		await result.WaitForMessages(1, CT);
 		requests.RequestMoreItems(42);
@@ -309,10 +309,10 @@ public class Given_PaginatedListFeed : FeedTests
 		void GetNext()
 			=> Interlocked.Exchange(ref delay, new TaskCompletionSource<Unit>())!.SetResult(default);
 
-		async ValueTask<IImmutableList<int>> GetPage(PageInfo page, CancellationToken ct)
+		async ValueTask<IImmutableList<int>> GetPage(Page page, CancellationToken ct)
 		{
 			await delay.Task;
-			return page.PageIndex switch
+			return page.Index switch
 			{
 				0 => Range(0, 10).ToImmutableList(),
 				1 => Range(10, 10).ToImmutableList(),
@@ -322,7 +322,7 @@ public class Given_PaginatedListFeed : FeedTests
 
 		var requests = new RequestSource();
 		var ctx = Context.SourceContext.CreateChild(requests);
-		var result = ListFeed.Paginated(GetPage).Record(ctx);
+		var result = ListFeed.AsyncPaginated(GetPage).Record(ctx);
 
 		await result.WaitForMessages(1, CT);
 		GetNext();
@@ -399,7 +399,7 @@ public class Given_PaginatedListFeed : FeedTests
 
 		public IImmutableList<int> Items => Range(PageIndex * PageSize, PageSize).ToImmutableList();
 
-		public static async ValueTask<Page<TestCursor, int>> GetPage(TestCursor cursor, uint? desiredPageSize, CancellationToken ct)
+		public static async ValueTask<PageResult<TestCursor, int>> GetPage(TestCursor cursor, uint? desiredPageSize, CancellationToken ct)
 			=> new(cursor.Items, cursor.Next);
 	}
 }
