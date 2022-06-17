@@ -36,6 +36,7 @@ global using Microsoft.Extensions.Options;
 global using Uno.Extensions;
 global using Uno.Extensions.Reactive;
 global using Uno.Extensions.Storage;
+global using Page = Microsoft.UI.Xaml.Controls.Page;
 
 #if WINUI
 global using Microsoft.UI.Dispatching;
