@@ -6,7 +6,7 @@ namespace Uno.Extensions.Reactive;
 /// <summary>
 /// Information about a page
 /// </summary>
-public struct Page
+public struct PageRequest
 {
 	/// <summary>
 	/// The index of the page.
@@ -16,7 +16,7 @@ public struct Page
 	/// <summary>
 	/// This is the total number of items currently in the list.
 	/// </summary>
-	public uint TotalCount { get; init; }
+	public uint CurrentCount { get; init; }
 
 	/// <summary>
 	/// The desired number of items for the current page, if any.
@@ -26,7 +26,7 @@ public struct Page
 	/// It's expected to be null only for the first page.
 	/// Be aware that this might change between pages (especially is user resize the window),
 	/// DO NOT use like `source.Skip(page.Index * page.DesiredSize).Take(page.DesiredSize)`.
-	/// Prefer to use the <see cref="TotalCount"/>.
+	/// Prefer to use the <see cref="CurrentCount"/> like `source.Skip(page.CurrentCount).Take(page.DesiredSize)`.
 	/// </remarks>
 	public uint? DesiredSize { get; init; }
 }

@@ -47,7 +47,7 @@ public static partial class ListFeed
 	/// <typeparam name="T">The type of the data of the resulting feed.</typeparam>
 	/// <param name="getPage">The async method to load a page of items.</param>
 	/// <returns>A paginated list feed.</returns>
-	public static IListFeed<T> AsyncPaginated<T>(AsyncFunc<Page, IImmutableList<T>> getPage)
+	public static IListFeed<T> AsyncPaginated<T>(AsyncFunc<PageRequest, IImmutableList<T>> getPage)
 		=> ListFeed<T>.AsyncPaginated(getPage);
 	#endregion
 

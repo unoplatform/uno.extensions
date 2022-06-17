@@ -80,15 +80,15 @@ public static class ListFeed<T>
 	/// </summary>
 	/// <param name="getPage">The async method to load a page of items.</param>
 	/// <returns>A paginated list feed.</returns>
-	public static IListFeed<T> AsyncPaginated(AsyncFunc<Page, IImmutableList<T>> getPage)
+	public static IListFeed<T> AsyncPaginated(AsyncFunc<PageRequest, IImmutableList<T>> getPage)
 		=> AttachedProperty.GetOrCreate(getPage, gp => new PaginatedListFeed<ByIndexCursor, T>(ByIndexCursor.First, PaginatedByIndex(gp)));
 
-	private static GetPage<ByIndexCursor, T> PaginatedByIndex(AsyncFunc<Page, IImmutableList<T>> getPage) => async (cursor, desiredCount, ct) =>
+	private static GetPage<ByIndexCursor, T> PaginatedByIndex(AsyncFunc<PageRequest, IImmutableList<T>> getPage) => async (cursor, desiredCount, ct) =>
 	{
-		var request = new Page
+		var request = new PageRequest
 		{
 			Index = cursor.Index,
-			TotalCount = cursor.TotalCount,
+			CurrentCount = cursor.TotalCount,
 			DesiredSize = desiredCount
 		};
 
