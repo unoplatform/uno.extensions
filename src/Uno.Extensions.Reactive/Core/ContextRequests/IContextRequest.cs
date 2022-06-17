@@ -10,11 +10,11 @@ internal interface IContextRequest
 {
 }
 
-internal class End : IContextRequest
+internal class EndRequest : IContextRequest
 {
-	public static End Instance { get; } = new();
+	public static EndRequest Instance { get; } = new();
 
-	private End()
+	private EndRequest()
 	{
 	}
 }

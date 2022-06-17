@@ -12,7 +12,7 @@ internal sealed class NoneRequestSource : IRequestSource
 	/// <inheritdoc />
 	public event EventHandler<IContextRequest>? RequestRaised
 	{
-		add => value?.Invoke(this, End.Instance);
+		add => value?.Invoke(this, EndRequest.Instance);
 		remove { }
 	}
 

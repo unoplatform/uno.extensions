@@ -112,7 +112,7 @@ public class Given_CompositeRequestSource : FeedTests
 		void OnRequest(object? sender, IContextRequest req)
 		{
 			result.Add(req);
-			if (--count is 0 || req is End)
+			if (--count is 0 || req is EndRequest)
 			{
 				Complete();
 			}

@@ -29,7 +29,7 @@ internal sealed class RequestSource : IRequestSource
 	public void Dispose()
 	{
 		_isDisposed = true;
-		RequestRaised?.Invoke(this, End.Instance);
+		RequestRaised?.Invoke(this, EndRequest.Instance);
 		RequestRaised = null;
 	}
 }

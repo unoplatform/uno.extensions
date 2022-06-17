@@ -39,7 +39,7 @@ internal sealed class AsyncFeed<T> : IFeed<T>, IRefreshableSource
 		var localRefreshTask = _refresh?.GetSource(context, ct).ForEachAsync(BeginRefresh, ct);
 		var contextRefreshEnded = false;
 		context.Requests<RefreshRequest>(Refresh, ct);
-		context.Requests<End>(_ =>
+		context.Requests<EndRequest>(_ =>
 			{
 				contextRefreshEnded = true;
 				TryComplete(null);

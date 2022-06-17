@@ -46,7 +46,7 @@ public class Given_NoneRequestSource : FeedTests
 		void OnRequest(object? sender, IContextRequest req)
 		{
 			result.Add(req);
-			if (req is End)
+			if (req is EndRequest)
 			{
 				Complete();
 			}

@@ -319,7 +319,7 @@ public sealed class SourceContext : IAsyncDisposable
 
 		void OnRequest(object _, IContextRequest request)
 		{
-			if (request is End)
+			if (request is EndRequest)
 			{
 				RequestSource.RequestRaised -= OnRequest;
 			}

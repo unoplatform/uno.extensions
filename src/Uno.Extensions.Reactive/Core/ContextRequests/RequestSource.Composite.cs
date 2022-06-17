@@ -46,7 +46,7 @@ internal sealed class CompositeRequestSource : IRequestSource
 	public void Dispose()
 	{
 		_isDisposed = true;
-		_requestRaised?.Invoke(this, End.Instance);
+		_requestRaised?.Invoke(this, EndRequest.Instance);
 		_requestRaised = null;
 	}
 }
