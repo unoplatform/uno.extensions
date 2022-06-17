@@ -113,20 +113,7 @@ public abstract class ControlNavigator : Navigator
 				return regionResponse;
 			}
 
-			//if (!(regionResponse?.Route?.IsEmpty() ?? true))
-			//{
-				request = request with { Route = request.Route.Trim(regionResponse?.Route) };
-			//}
-		}
-		else if (Region.Parent is not null)
-		{
-			var rm = Resolver.FindByPath(request.Route.Base);
-			if (!string.IsNullOrWhiteSpace(rm?.DependsOn))
-			{
-				request = request with { Route = (request.Route with { Base = rm?.DependsOn, Path = null }).Append(request.Route) };
-			}
-
-			return await Region.Parent.NavigateAsync(request);
+			request = request with { Route = request.Route.Trim(regionResponse?.Route) };
 		}
 
 		var coreResponse = await base.CoreNavigateAsync(request);
@@ -197,7 +184,7 @@ public abstract class ControlNavigator : Navigator
 
 			// Attempt to use the data object passed with navigation
 			var vm = (parameters.TryGetValue(string.Empty, out var navData) &&
-						(navData.GetType() ==mapping.ViewModel || navData.GetType().IsSubclassOf(mapping.ViewModel))) ? navData : default;
+						(navData.GetType() == mapping.ViewModel || navData.GetType().IsSubclassOf(mapping.ViewModel))) ? navData : default;
 
 			if (vm is null)
 			{

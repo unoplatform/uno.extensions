@@ -34,8 +34,6 @@
 								Value="Visible" />
 						<Setter Target="TaskDetails.(uen:Region.Attached)"
 								Value="true" />
-						<Setter Target="TaskDetails.(uen:Region.Attached)"
-								Value="true" />
 					</VisualState.Setters>
 				</VisualState>
 				<VisualState x:Name="Narrow">

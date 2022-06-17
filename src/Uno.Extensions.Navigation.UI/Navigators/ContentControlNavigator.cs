@@ -30,7 +30,8 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 
 		var view = routeMap.RenderView;
 
-		return view?.IsSubclassOf(typeof(FrameworkElement)) ?? true; // Inject a FrameView if no View specified (ie return true if view is null)
+		return view?.IsSubclassOf(typeof(FrameworkElement)) ??
+			(routeMap.View is null && routeMap.ViewModel is not null); // Inject a FrameView if no View specified but there is a viewmodel (eg for shellviewmodel scenario) (ie return true if view is null)
 	}
 	protected override async Task<string?> Show(string? path, Type? viewType, object? data)
 	{
