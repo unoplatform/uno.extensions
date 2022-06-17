@@ -10,7 +10,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Uno.WinUI" Version="4.3.6" />
+		<PackageReference Include="Uno.WinUI" Version="4.3.8" />
 	</ItemGroup>
 
 	<Import Project="common.props" />
