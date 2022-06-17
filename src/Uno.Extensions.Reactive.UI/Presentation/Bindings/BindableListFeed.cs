@@ -117,15 +117,16 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 				var pageInfo = msg.Current.GetPaginationInfo();
 
 				// Clear the loading state
-				if (!msg.Current.IsTransient && pageInfo is { IsLoadingMoreItems: false } page)
-				{
-					pageTokens.Received(page.Tokens);
-				}
-
 				if (pageInfo is not null)
 				{
 					pagination.HasMoreItems = pageInfo.HasMoreItems;
 					pagination.IsLoadingMoreItems = pageInfo.IsLoadingMoreItems;
+				}
+
+				// Then complete the loading request
+				if (!msg.Current.IsTransient && pageInfo is { IsLoadingMoreItems: false } page)
+				{
+					pageTokens.Received(page.Tokens);
 				}
 			},
 			ctx.Token);

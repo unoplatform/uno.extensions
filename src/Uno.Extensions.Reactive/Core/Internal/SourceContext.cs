@@ -312,9 +312,23 @@ public sealed class SourceContext : IAsyncDisposable
 	/// </summary>
 	/// <typeparam name="T">Type of the requests to listen to.</typeparam>
 	/// <returns>An async enumerable sequence of requests.</returns>
-	internal IAsyncEnumerable<T> Requests<T>()
-		where T : IContextRequest
-		=> RequestSource.OfType<T>();
+	internal void Requests<T>(Action<T> callback, CancellationToken ct)
+	{
+		RequestSource.RequestRaised += OnRequest;
+		ct.Register(() => RequestSource.RequestRaised -= OnRequest);
+
+		void OnRequest(object _, IContextRequest request)
+		{
+			if (request is End)
+			{
+				RequestSource.RequestRaised -= OnRequest;
+			}
+			if (request is T req)
+			{
+				callback(req);
+			}
+		}
+	}
 	#endregion
 
 	/// <inheritdoc />

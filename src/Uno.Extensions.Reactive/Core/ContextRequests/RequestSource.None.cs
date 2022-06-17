@@ -10,9 +10,10 @@ namespace Uno.Extensions.Reactive.Core;
 internal sealed class NoneRequestSource : IRequestSource
 {
 	/// <inheritdoc />
-	public async IAsyncEnumerator<IContextRequest> GetAsyncEnumerator(CancellationToken cancellationToken)
+	public event EventHandler<IContextRequest>? RequestRaised
 	{
-		yield break;
+		add => value?.Invoke(this, End.Instance);
+		remove { }
 	}
 
 	/// <inheritdoc />

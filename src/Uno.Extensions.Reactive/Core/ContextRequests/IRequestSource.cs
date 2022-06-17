@@ -7,8 +7,10 @@ namespace Uno.Extensions.Reactive.Core;
 /// <summary>
 /// A source of <see cref="IContextRequest"/> that can be used with a <see cref="SourceContext"/>.
 /// </summary>
-internal interface IRequestSource : IAsyncEnumerable<IContextRequest>, IDisposable
+internal interface IRequestSource : IDisposable
 {
+	public event EventHandler<IContextRequest> RequestRaised;
+
 	/// <summary>
 	/// Send a new request.
 	/// </summary>

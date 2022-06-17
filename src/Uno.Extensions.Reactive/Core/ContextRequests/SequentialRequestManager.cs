@@ -46,7 +46,7 @@ internal class SequentialRequestManager<TRequest, TToken> : IAsyncEnumerable<Tok
 			_tokens.SetNext(initial);
 		}
 
-		_ = context.Requests<TRequest>().ForEachAsync(OnRequest, ct);
+		context.Requests<TRequest>(OnRequest, ct);
 		ct.Register(_tokens.TryComplete);
 	}
 

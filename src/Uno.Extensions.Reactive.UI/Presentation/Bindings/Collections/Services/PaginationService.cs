@@ -11,9 +11,9 @@ namespace Uno.Extensions.Reactive.Bindings.Collections.Services;
 /// </summary>
 internal sealed class PaginationService : IPaginationService, IDisposable
 {
+	private readonly FastAsyncLock _gate = new();
 	private readonly AsyncFunc<uint, uint> _loadMore;
 
-	private LoadRequest? _pending;
 	private bool _hasMoreItems;
 	private bool _isLoadingMoreItems;
 	private bool _isDisposed;
@@ -67,22 +67,10 @@ internal sealed class PaginationService : IPaginationService, IDisposable
 			throw new ObjectDisposedException(nameof(PaginationService));
 		}
 
-		// No matter the count, we coerce the request to get more items so the source will have only one running load request.
-		var request = _pending;
-		if (request is null)
+		using (await _gate.LockAsync(ct))
 		{
-			Interlocked.CompareExchange(ref _pending, new LoadRequest(this, count), null);
-
-			request = _pending; // Make sure to get the winning request!
+			return await new LoadRequest(this, count).GetResult(ct);
 		}
-
-		if (_isDisposed) // We have been disposed while we where starting a new request ...
-		{
-			request?.Dispose();
-			throw new ObjectDisposedException(nameof(PaginationService));
-		}
-
-		return await request.GetResult(ct);
 	}
 
 	private class LoadRequest : IDisposable
@@ -146,7 +134,6 @@ internal sealed class PaginationService : IPaginationService, IDisposable
 			_awaiters = -32768;
 			_owner.IsLoadingMoreItems = false;
 
-			Interlocked.CompareExchange(ref _owner._pending, null, this);
 			_ct.Cancel(throwOnFirstException: false);
 		}
 	}
@@ -155,6 +142,5 @@ internal sealed class PaginationService : IPaginationService, IDisposable
 	public void Dispose()
 	{
 		_isDisposed = true;
-		_pending?.Dispose();
 	}
 }

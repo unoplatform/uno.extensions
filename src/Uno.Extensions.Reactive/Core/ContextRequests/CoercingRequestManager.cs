@@ -50,7 +50,7 @@ internal class CoercingRequestManager<TRequest, TToken> : IAsyncEnumerable<Token
 			_lastRequested = initial;
 		}
 
-		_ = context.Requests<TRequest>().ForEachAsync(OnRequest, ct).ConfigureAwait(false);
+		context.Requests<TRequest>(OnRequest, ct);
 		ct.Register(_tokens.TryComplete);
 	}
 
