@@ -9,14 +9,27 @@ namespace Uno.Extensions.Reactive.Core;
 
 internal sealed class RequestSource : IRequestSource
 {
+	private bool _isDisposed;
+
 	/// <inheritdoc />
 	public event EventHandler<IContextRequest>? RequestRaised;
 
 	/// <inheritdoc />
 	public void Send(IContextRequest request)
-		=> RequestRaised?.Invoke(this, request);
+	{
+		if (_isDisposed)
+		{
+			throw new ObjectDisposedException(nameof(RequestSource));
+		}
+
+		RequestRaised?.Invoke(this, request);
+	}
 
 	/// <inheritdoc />
 	public void Dispose()
-		=> RequestRaised?.Invoke(this, End.Instance);
+	{
+		_isDisposed = true;
+		RequestRaised?.Invoke(this, End.Instance);
+		RequestRaised = null;
+	}
 }

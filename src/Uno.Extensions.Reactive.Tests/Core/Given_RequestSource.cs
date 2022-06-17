@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,7 +19,7 @@ public class Given_RequestSource : FeedTests
 		using var sut = new RequestSource();
 		var rq = new TestRequest();
 
-		var resultTask = sut.Take(1).ToListAsync(CT);
+		var resultTask = Take(sut, 1, CT);
 
 		sut.Send(rq);
 
@@ -32,7 +33,7 @@ public class Given_RequestSource : FeedTests
 	{
 		var sut = new RequestSource();
 
-		var resultTask = sut.ToListAsync(CT);
+		var resultTask = Take(sut, 128, CT);
 
 		sut.Dispose();
 
@@ -40,7 +41,7 @@ public class Given_RequestSource : FeedTests
 	}
 
 	[TestMethod]
-	[ExpectedException(typeof(InvalidOperationException))]
+	[ExpectedException(typeof(ObjectDisposedException))]
 	public async Task When_DisposedAndSend_Then_Throws()
 	{
 		var sut = new CompositeRequestSource();
@@ -48,5 +49,30 @@ public class Given_RequestSource : FeedTests
 
 		sut.Dispose();
 		sut.Send(rq);
+	}
+
+	private Task<List<IContextRequest>> Take(RequestSource sut, int count, CancellationToken ct)
+	{
+		var result = new List<IContextRequest>(count);
+		var tcs = new TaskCompletionSource<List<IContextRequest>>();
+		sut.RequestRaised += OnRequest;
+		ct.Register(Complete);
+
+		return tcs.Task;
+
+		void OnRequest(object? sender, IContextRequest req)
+		{
+			result.Add(req);
+			if (--count is 0 || req is End)
+			{
+				Complete();
+			}
+		}
+
+		void Complete()
+		{
+			sut.RequestRaised -= OnRequest;
+			tcs.TrySetResult(result);
+		}
 	}
 }

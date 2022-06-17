@@ -8,6 +8,7 @@ namespace Uno.Extensions.Reactive.Core;
 
 internal sealed class CompositeRequestSource : IRequestSource
 {
+	private bool _isDisposed;
 	private event EventHandler<IContextRequest>? _requestRaised;
 
 	/// <summary>
@@ -33,11 +34,18 @@ internal sealed class CompositeRequestSource : IRequestSource
 
 	/// <inheritdoc />
 	public void Send(IContextRequest request)
-		=> _requestRaised?.Invoke(this, request);
+	{
+		if (_isDisposed)
+		{
+			throw new ObjectDisposedException(nameof(CompositeRequestSource));
+		}
+		_requestRaised?.Invoke(this, request);
+	}
 
 	/// <inheritdoc />
 	public void Dispose()
 	{
+		_isDisposed = true;
 		_requestRaised?.Invoke(this, End.Instance);
 		_requestRaised = null;
 	}

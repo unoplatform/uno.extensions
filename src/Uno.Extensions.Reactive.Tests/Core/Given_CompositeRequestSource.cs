@@ -25,7 +25,7 @@ public class Given_CompositeRequestSource : FeedTests
 		var rq1 = new TestRequest();
 		var rq2 = new TestRequest();
 
-		var resultTask = sut.Take(2).ToListAsync(CT);
+		var resultTask = Take(sut, 2, CT);
 		
 		sut.Add(src1, ct1.Token);
 		sut.Add(src2, ct2.Token);
@@ -49,7 +49,7 @@ public class Given_CompositeRequestSource : FeedTests
 		var rq1 = new TestRequest();
 		var rq2 = new TestRequest();
 
-		var resultTask = sut.Take(1).ToListAsync(CT);
+		var resultTask = Take(sut, 1, CT);
 
 		sut.Add(src1, ct1.Token);
 		sut.Add(src2, ct2.Token);
@@ -69,7 +69,7 @@ public class Given_CompositeRequestSource : FeedTests
 	{
 		var sut = new CompositeRequestSource();
 
-		var resultTask = sut.ToListAsync(CT);
+		var resultTask = Take(sut, 128, CT);
 
 		sut.Dispose();
 
@@ -87,7 +87,7 @@ public class Given_CompositeRequestSource : FeedTests
 		var rq1 = new TestRequest();
 		var rq2 = new TestRequest();
 
-		var resultTask = sut.Take(1).ToListAsync(CT);
+		var resultTask = Take(sut, 1, CT);
 
 		sut.Add(src1, ct1.Token);
 		sut.Add(src2, ct2.Token);
@@ -98,5 +98,30 @@ public class Given_CompositeRequestSource : FeedTests
 		src2.Send(rq2);
 
 		resultTask.IsCompleted.Should().BeTrue();
+	}
+
+	private Task<List<IContextRequest>> Take(CompositeRequestSource sut, int count, CancellationToken ct)
+	{
+		var result = new List<IContextRequest>(count);
+		var tcs = new TaskCompletionSource<List<IContextRequest>>();
+		sut.RequestRaised += OnRequest;
+		ct.Register(Complete);
+
+		return tcs.Task;
+
+		void OnRequest(object? sender, IContextRequest req)
+		{
+			result.Add(req);
+			if (--count is 0 || req is End)
+			{
+				Complete();
+			}
+		}
+
+		void Complete()
+		{
+			sut.RequestRaised -= OnRequest;
+			tcs.TrySetResult(result);
+		}
 	}
 }
