@@ -25,7 +25,7 @@ public sealed partial class App : Application
 										context.HostingEnvironment.IsDevelopment() ?
 											LogLevel.Information :
 											LogLevel.Warning)
-									.AddFilter("Uno.Extensions",LogLevel.Trace))
+									.AddFilter("Uno.Extensions", LogLevel.Trace))
 
 				.UseConfiguration(configure: configBuilder =>
 					configBuilder
@@ -94,12 +94,10 @@ public sealed partial class App : Application
 
 		views.Register(
 				new ViewMap(ViewModel: typeof(ShellViewModel)),
-				new ViewMap(View: typeof(LoginPage), ViewModel: typeof(LoginViewModel), ResultData: typeof(Credentials)),
-				new ViewMap(View: typeof(HomePage), Data: new DataMap<Credentials>()),
-				new ViewMap(View: typeof(ProductsPage), ViewModel: typeof(ProductsViewModel)),
-				new ViewMap(ViewSelector: () =>
-						   (App.Current as App)?.Window?.Content?.ActualSize.X > 800 ? typeof(ProductControl) : typeof(ProductDetailsPage),
-							ViewModel: typeof(ProductDetailsViewModel), Data: new DataMap<Product>(
+				new ViewMap<LoginPage, LoginViewModel>(ResultData: typeof(Credentials)),
+				new ViewMap<HomePage>(Data: new DataMap<Credentials>()),
+				new ViewMap<ProductsPage, ProductsViewModel>(),
+				new ViewMap<ProductDetailsPage, ProductDetailsViewModel>(Data: new DataMap<Product>(
 																						ToQuery: product => new Dictionary<string, string> { { nameof(Product.ProductId), product.ProductId.ToString() } },
 																						FromQuery: async (sp, query) =>
 																						{
@@ -108,11 +106,11 @@ public sealed partial class App : Application
 																							var products = await ps.GetAll(default);
 																							return products.FirstOrDefault(p => p.ProductId == id);
 																						})),
-				new ViewMap(View: typeof(FilterPage), ViewModel: typeof(FiltersViewModel), Data: new DataMap<Filters>()),
-				new ViewMap(View: typeof(DealsPage), ViewModel: typeof(DealsViewModel)),
-				new ViewMap(View: typeof(ProfilePage), ViewModel: typeof(ProfileViewModel)),
-				new ViewMap(View: typeof(CartPage), ViewModel: typeof(CartViewModel)),
-				new ViewMap(View: typeof(ProductDetailsPage), ViewModel: typeof(CartProductDetailsViewModel), Data: new DataMap<CartItem>(
+				new ViewMap<FilterPage, FiltersViewModel>(Data: new DataMap<Filters>()),
+				new ViewMap<DealsPage, DealsViewModel>(),
+				new ViewMap<ProfilePage, ProfileViewModel>(),
+				new ViewMap<CartPage, CartViewModel>(),
+				new ViewMap<ProductDetailsPage, CartProductDetailsViewModel>(Data: new DataMap<CartItem>(
 																						ToQuery: cartItem => new Dictionary<string, string> {
 																						{ nameof(Product.ProductId), cartItem.Product.ProductId.ToString() },
 																						{ nameof(CartItem.Quantity),cartItem.Quantity.ToString() } },
@@ -125,7 +123,7 @@ public sealed partial class App : Application
 																							var p = products.FirstOrDefault(p => p.ProductId == id);
 																							return new CartItem(p!, (uint)quantity);
 																						})),
-				new ViewMap(View: typeof(CheckoutPage)),
+				new ViewMap<CheckoutPage>(),
 				forgotPasswordDialog
 				);
 
@@ -146,11 +144,11 @@ public sealed partial class App : Application
 												View: views.FindByViewModel<DealsViewModel>(),
 												IsDefault: true,
 												Nested: new RouteMap[]{
-													new RouteMap("DealsAndFavorites", IsDefault: true,
-															Nested: new RouteMap[]{
+													//new RouteMap("DealsAndFavorites", IsDefault: true,
+													//		Nested: new RouteMap[]{
 																new RouteMap("DealsTab", IsDefault: true),
 																new RouteMap("FavoritesTab")
-															})
+															//})
 												}),
 										new RouteMap("DealsProduct",
 												View: views.FindByViewModel<ProductDetailsViewModel>(),
