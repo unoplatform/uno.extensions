@@ -37,10 +37,16 @@ internal sealed class AsyncFeed<T> : IFeed<T>, IRefreshableSource
 
 		// Then subscribe to refresh sources
 		var localRefreshTask = _refresh?.GetSource(context, ct).ForEachAsync(BeginRefresh, ct);
-		var contextRefreshTask = context.Requests<RefreshRequest>().ForEachAsync(Refresh, ct);
+		var contextRefreshEnded = false;
+		context.Requests<RefreshRequest>(Refresh, ct);
+		context.Requests<EndRequest>(_ =>
+			{
+				contextRefreshEnded = true;
+				TryComplete(null);
+			},
+			ct);
 
 		localRefreshTask?.ContinueWith(TryComplete, TaskContinuationOptions.AttachedToParent | TaskContinuationOptions.ExecuteSynchronously);
-		contextRefreshTask.ContinueWith(TryComplete, TaskContinuationOptions.AttachedToParent | TaskContinuationOptions.ExecuteSynchronously);
 
 		void Refresh(RefreshRequest request)
 		{
@@ -58,7 +64,7 @@ internal sealed class AsyncFeed<T> : IFeed<T>, IRefreshableSource
 
 		void TryComplete(Task _)
 		{
-			if (localRefreshTask is not { IsCompleted: false } && contextRefreshTask is { IsCompleted: true })
+			if (localRefreshTask is not { IsCompleted: false } && contextRefreshEnded)
 			{
 				loadRequests.TryComplete();
 			}

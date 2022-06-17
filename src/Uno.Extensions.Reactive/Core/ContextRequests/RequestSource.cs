@@ -9,17 +9,27 @@ namespace Uno.Extensions.Reactive.Core;
 
 internal sealed class RequestSource : IRequestSource
 {
-	private readonly AsyncEnumerableSubject<IContextRequest> _subject = new();
+	private bool _isDisposed;
 
 	/// <inheritdoc />
-	public IAsyncEnumerator<IContextRequest> GetAsyncEnumerator(CancellationToken cancellationToken)
-		=> _subject.GetAsyncEnumerator(cancellationToken);
+	public event EventHandler<IContextRequest>? RequestRaised;
 
 	/// <inheritdoc />
 	public void Send(IContextRequest request)
-		=> _subject.SetNext(request);
+	{
+		if (_isDisposed)
+		{
+			throw new ObjectDisposedException(nameof(RequestSource));
+		}
+
+		RequestRaised?.Invoke(this, request);
+	}
 
 	/// <inheritdoc />
 	public void Dispose()
-		=> _subject.TryComplete();
+	{
+		_isDisposed = true;
+		RequestRaised?.Invoke(this, EndRequest.Instance);
+		RequestRaised = null;
+	}
 }

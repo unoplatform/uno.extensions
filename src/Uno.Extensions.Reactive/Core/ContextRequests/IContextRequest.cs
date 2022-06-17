@@ -9,3 +9,12 @@ namespace Uno.Extensions.Reactive.Core;
 internal interface IContextRequest
 {
 }
+
+internal class EndRequest : IContextRequest
+{
+	public static EndRequest Instance { get; } = new();
+
+	private EndRequest()
+	{
+	}
+}

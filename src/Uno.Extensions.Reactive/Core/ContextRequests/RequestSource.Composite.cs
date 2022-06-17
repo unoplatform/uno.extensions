@@ -8,7 +8,8 @@ namespace Uno.Extensions.Reactive.Core;
 
 internal sealed class CompositeRequestSource : IRequestSource
 {
-	private readonly AsyncEnumerableSubject<IContextRequest> _subject = new();
+	private bool _isDisposed;
+	private event EventHandler<IContextRequest>? _requestRaised;
 
 	/// <summary>
 	/// Adds a new source to this composite source.
@@ -16,26 +17,36 @@ internal sealed class CompositeRequestSource : IRequestSource
 	/// <param name="other">The source to add.</param>
 	/// <param name="ct">A cancellation token that can be used to remove the given source.</param>
 	public void Add(IRequestSource other, CancellationToken ct)
-		=> other.ForEachAsync(
-			req =>
-			{
-				// There is kind of a bug in the ForEach, which wait for the **next** item before checking the CT
-				if (ct is not { IsCancellationRequested: true })
-				{
-					_subject.SetNext(req);
-				}
-			},
-			ct);
+	{
+		other.RequestRaised += OnRequestReceived;
+		ct.Register(() => other.RequestRaised -= OnRequestReceived);
+
+		void OnRequestReceived(object _, IContextRequest request)
+			=> _requestRaised?.Invoke(null, request);
+	}
 
 	/// <inheritdoc />
-	public IAsyncEnumerator<IContextRequest> GetAsyncEnumerator(CancellationToken cancellationToken)
-		=> _subject.GetAsyncEnumerator(cancellationToken);
+	public event EventHandler<IContextRequest>? RequestRaised
+	{
+		add => _requestRaised += value;
+		remove => _requestRaised -= value;
+	}
 
 	/// <inheritdoc />
 	public void Send(IContextRequest request)
-		=> _subject.SetNext(request);
+	{
+		if (_isDisposed)
+		{
+			throw new ObjectDisposedException(nameof(CompositeRequestSource));
+		}
+		_requestRaised?.Invoke(this, request);
+	}
 
 	/// <inheritdoc />
 	public void Dispose()
-		=> _subject.TryComplete();
+	{
+		_isDisposed = true;
+		_requestRaised?.Invoke(this, EndRequest.Instance);
+		_requestRaised = null;
+	}
 }
