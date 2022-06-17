@@ -97,11 +97,6 @@ public class FrameNavigator : ControlNavigator<Frame>
 
 		var route = request.Route;
 		var segments = route.ForwardNavigationSegments(Resolver, Region);
-			//(from pg in route.ForwardNavigationSegments(Resolver)
-			//			let map = Resolver.FindByPath(pg.Base)
-			//			where map?.RenderView is not null &&
-			//					map.View.RenderView.IsSubclassOf(typeof(Page))
-			//			select new { Route = pg, Map = map }).ToArray();
 
 		// As this is a forward navigation
 		if (segments.Length == 0)
@@ -168,93 +163,6 @@ public class FrameNavigator : ControlNavigator<Frame>
 			firstSegment = firstSegment?.Append(r) ?? r;
 		}
 		firstSegment = firstSegment?.Append(lastRoute) ?? lastRoute;
-
-
-
-
-		//var firstSegment = segments.First().Route;
-
-		//var refreshViewModel = false;
-
-		//// If the first segment doesn't have a dependency, then
-		//// need to treat the path as if it were absolute
-		//if (string.IsNullOrWhiteSpace(segments[0].Map.DependsOn))
-		//{
-		//	var navSegment = segments.Last();
-
-		//	// Need to navigate the underlying frame if it's not already
-		//	// displaying the correct page
-		//	if (Control.SourcePageType != navSegment.Map.RenderView)
-		//	{
-		//		await Show(navSegment.Route.Base, navSegment.Map.RenderView, navSegment.Route.Data);
-		//	}
-		//	else
-		//	{
-		//		// Rebuild the nested region hierarchy
-		//		Control.ReassignRegionParent();
-		//		if (segments.Length > 1 ||
-		//			string.IsNullOrWhiteSpace(request.Route.Path))
-		//		{
-		//			refreshViewModel = true;
-		//		}
-		//	}
-
-		//	// Now iterate through the other segments and make
-		//	// sure the back stack is correct
-		//	for (var i = 0; i < segments.Length - 1; i++)
-		//	{
-		//		var seg = segments[i];
-		//		var entry = i < (Control?.BackStack.Count ?? 0) ? Control?.BackStack[i] : default;
-		//		if (entry is null ||
-		//			entry.SourcePageType != seg.Map.RenderView)
-		//		{
-		//			var newEntry = new PageStackEntry(seg.Map.RenderView, null, null);
-		//			Control?.BackStack.Add(newEntry);
-		//		}
-		//		firstSegment = firstSegment.Append(segments[i + 1].Route);
-		//		route = route.Trim(seg.Route);
-		//	}
-
-		//	// Trim any excess backstack values
-		//	while (Control?.BackStack.Count > segments.Length - 1)
-		//	{
-		//		Control.BackStack.RemoveAt(Control.BackStack.Count - 1);
-		//	}
-		//}
-		//else
-		//{
-		//	var numberOfPagesToRemove = route.FrameNumberOfPagesToRemove();
-		//	// We remove 1 less here because we need to remove the current context, after the navigation is completed
-		//	while (numberOfPagesToRemove > 1)
-		//	{
-		//		RemoveLastFromBackStack();
-		//		numberOfPagesToRemove--;
-		//	}
-
-		//	for (var i = 0; i < segments.Length - 1; i++)
-		//	{
-		//		var seg = segments[i];
-		//		var newEntry = new PageStackEntry(seg.Map.RenderView, null, null);
-		//		Control?.BackStack.Add(newEntry);
-		//		route = route.Trim(seg.Route);
-		//		firstSegment = firstSegment.Append(segments[i + 1].Route);
-		//	}
-
-		//	await Show(segments.Last().Route.Base, segments.Last().Map.RenderView, route.Data);
-
-		//	// If path starts with / then remove all prior pages and corresponding contexts
-		//	if (route.FrameIsRooted())
-		//	{
-		//		ClearBackStack();
-		//	}
-
-		//	// If there were pages to remove, after navigating we need to remove
-		//	// the page that we've navigated away from.
-		//	if (route.FrameNumberOfPagesToRemove() > 0)
-		//	{
-		//		RemoveLastFromBackStack();
-		//	}
-		//}
 
 		await InitializeCurrentView(request, lastRoute, lastMap, refreshViewModel);
 
