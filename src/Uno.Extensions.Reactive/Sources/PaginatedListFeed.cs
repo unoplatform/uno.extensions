@@ -29,7 +29,7 @@ internal class PaginatedListFeed<TCursor, TItem> : IListFeed<TItem>, IRefreshabl
 	public IAsyncEnumerable<Message<IImmutableList<TItem>>> GetSource(SourceContext context, CancellationToken ct)
 	{
 		var refreshRequests = new CoercingRequestManager<RefreshRequest, RefreshToken>(context, RefreshToken.Initial(this, context), ct);
-		var pageRequests = new CoercingRequestManager<PageRequest, PageToken>(context, PageToken.Initial(this, context), ct);
+		var pageRequests = new CoercingRequestManager<Core.PageRequest, PageToken>(context, PageToken.Initial(this, context), ct);
 		var subject = new AsyncEnumerableSubject<Message<IImmutableList<TItem>>>(ReplayMode.EnabledForFirstEnumeratorOnly);
 		var messages = new MessageManager<IImmutableList<TItem>>(subject.SetNext);
 

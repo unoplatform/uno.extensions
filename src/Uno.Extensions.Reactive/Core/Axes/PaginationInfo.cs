@@ -27,7 +27,7 @@ internal record PaginationInfo
 	public bool IsLoadingMoreItems { get; init; }
 
 	/// <summary>
-	/// A set of tokens that allows a subscriber to track the progress of a <see cref="PageRequest"/>.
+	/// A set of tokens that allows a subscriber to track the progress of a <see cref="Core.PageRequest"/>.
 	/// </summary>
 	public TokenSet<PageToken> Tokens { get; init; } = TokenSet<PageToken>.Empty;
 

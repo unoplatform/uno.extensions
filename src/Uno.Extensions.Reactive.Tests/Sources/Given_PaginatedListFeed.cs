@@ -48,7 +48,7 @@ public class Given_PaginatedListFeed : FeedTests
 	[TestMethod]
 	public async Task When_ByIndexAndPageIsEmpty_Then_ReportPaginationCompleted()
 	{
-		async ValueTask<IImmutableList<int>> GetPage(Page page, CancellationToken ct)
+		async ValueTask<IImmutableList<int>> GetPage(PageRequest page, CancellationToken ct)
 			=> page.Index switch
 			{
 				0 => Range(0, 10).ToImmutableList(),
@@ -83,7 +83,7 @@ public class Given_PaginatedListFeed : FeedTests
 	[TestMethod]
 	public async Task When_ByIndexAndFirstPageIsEmpty_Then_ReportPaginationCompleted()
 	{
-		async ValueTask<IImmutableList<int>> GetPage(Page page, CancellationToken ct)
+		async ValueTask<IImmutableList<int>> GetPage(PageRequest page, CancellationToken ct)
 			=> page.Index switch
 			{
 				0 => ImmutableList<int>.Empty,
@@ -201,7 +201,7 @@ public class Given_PaginatedListFeed : FeedTests
 	[TestMethod]
 	public async Task When_FirstPageThrow_Then_GoInErrorAndIgnorePageRequest()
 	{
-		async ValueTask<IImmutableList<int>> GetPage(Page page, CancellationToken ct)
+		async ValueTask<IImmutableList<int>> GetPage(PageRequest page, CancellationToken ct)
 			=> page.Index switch
 			{
 				0 => throw new TestException(),
@@ -232,7 +232,7 @@ public class Given_PaginatedListFeed : FeedTests
 	[TestMethod]
 	public async Task When_SubsequentPagesThrow_Then_GoInErrorAndKeepDataAndKeepListeningPageRequest()
 	{
-		async ValueTask<IImmutableList<int>> GetPage(Page page, CancellationToken ct)
+		async ValueTask<IImmutableList<int>> GetPage(PageRequest page, CancellationToken ct)
 			=> page.Index switch
 			{
 				0 => Range(0, 10).ToImmutableList(),
@@ -265,7 +265,7 @@ public class Given_PaginatedListFeed : FeedTests
 	[TestMethod]
 	public async Task When_Refresh()
 	{
-		async ValueTask<IImmutableList<int>> GetPage(Page page, CancellationToken ct)
+		async ValueTask<IImmutableList<int>> GetPage(PageRequest page, CancellationToken ct)
 			=> page.Index switch
 			{
 				0 => Range(0, 10).ToImmutableList(),
@@ -309,7 +309,7 @@ public class Given_PaginatedListFeed : FeedTests
 		void GetNext()
 			=> Interlocked.Exchange(ref delay, new TaskCompletionSource<Unit>())!.SetResult(default);
 
-		async ValueTask<IImmutableList<int>> GetPage(Page page, CancellationToken ct)
+		async ValueTask<IImmutableList<int>> GetPage(PageRequest page, CancellationToken ct)
 		{
 			await delay.Task;
 			return page.Index switch
