@@ -3,7 +3,7 @@ using Uno.Extensions.Reactive.Messaging;
 
 namespace Commerce.ViewModels;
 
-public class DealsViewModel
+public partial class DealsViewModel
 {
 	private readonly IDealService _dealService;
 	private readonly IProductService _productService;
@@ -18,7 +18,12 @@ public class DealsViewModel
 		messenger.Observe(Favorites, p => p.ProductId);
 	}
 
-	public IListFeed<Product> Items => ListFeed.Async(_dealService.GetAll);
+	public IListFeed<Product> Items => ListFeed<Product>.AsyncPaginated(async (page, ct) =>
+	{
+		var results = await _dealService.GetPaginated(ct, (int)page.CurrentCount, (int)(page.DesiredSize ?? 20));
+
+		return results;
+	});
 
 	public IListState<Product> Favorites => ListState.Async(this, _productService.GetFavorites);
 }

@@ -109,7 +109,11 @@
 				<utu:NavigationBar Content="Uno Commerce"
 								   Background="{ThemeResource PrimaryBrush}"
 								   Style="{StaticResource ModalNavigationBarStyle}"
-								   x:Uid="Deals_Navigation_Bar" />
+								   x:Uid="Deals_Navigation_Bar">
+					<utu:NavigationBar.PrimaryCommands>
+						<AppBarButton Label="Refresh" Command="{Binding ElementName=DealsFeedView, Path=State.Refresh}" />
+					</utu:NavigationBar.PrimaryCommands>
+				</utu:NavigationBar>
 
 				<utu:TabBar uen:Region.Attached="True"
 							Style="{StaticResource TopTabBarStyle}">
@@ -227,7 +231,13 @@
 											  SelectionMode="None"
 											  IsItemClickEnabled="True"
 											  uen:Navigation.Request="DealsProduct"
-											  Style="{StaticResource ListViewStyle}" />
+											  Style="{StaticResource ListViewStyle}">
+										<ListView.Footer>
+											<ProgressBar IsIndeterminate="{Binding Data.ExtendedProperties.IsLoadingMoreItems}"
+														 HorizontalAlignment="Stretch"
+														 Visibility="{Binding Data.ExtendedProperties.IsLoadingMoreItems}" />
+										</ListView.Footer>
+									</ListView>
 								</Grid>
 							</UserControl>
 						</DataTemplate>
