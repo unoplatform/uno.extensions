@@ -77,14 +77,10 @@ public class MsalAuthenticationHostInit : IHostInitialization
 							.OnLogoutNavigateViewModel<MsalAuthenticationWelcomeViewModel>(this)
 						)
 
-				.UseSerialization()
-
 				.ConfigureServices((context, services) =>
 				{
 					services
 							.AddNativeHandler()
-							.AddContentSerializer()
-
 							.AddRefitClient<IMsalAuthenticationTaskListEndpoint>(context);
 				})
 

@@ -78,13 +78,11 @@ public class CustomAuthenticationHostInit : IHostInitialization
 							.OnLogoutNavigateViewModel<CustomAuthenticationLoginViewModel>(this)
 						)
 
-				.UseSerialization()
 
 				.ConfigureServices((context, services) =>
 				{
 					services
 							.AddNativeHandler()
-							.AddContentSerializer()
 
 							.AddRefitClient<ICustomAuthenticationDummyJsonEndpoint>(context);
 				})
