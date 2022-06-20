@@ -1,6 +1,5 @@
 ﻿
 
-using Uno.Extensions.Authentication.Custom;
 
 namespace TestHarness.Ext.Authentication.Custom;
 
@@ -31,6 +30,14 @@ public class CustomAuthenticationHostInit : IHostInitialization
 					logBuilder.SetMinimumLevel(host.IsDevelopment() ? LogLevel.Warning : LogLevel.Information);
 				})
 
+				.UseConfiguration()
+
+				// Only use this syntax for UI tests - use UseConfiguration in apps
+				.ConfigureAppConfiguration((ctx, b) =>
+				{
+					b.AddEmbeddedConfigurationFile<App>("TestHarness.Ext.Authentication.Custom.appsettings.dummyjson.json");
+				})
+
 				// Enable navigation, including registering views and viewmodels
 				.UseNavigation(RegisterRoutes)
 
@@ -44,27 +51,32 @@ public class CustomAuthenticationHostInit : IHostInitialization
 
 				.UseAuthentication(builder =>
 					builder
-						.Login(
-								async (dispatcher, tokenCache, credentials, cancellationToken) =>
+						.WithLogin(
+								async (sp, dispatcher, tokenCache, credentials, cancellationToken) =>
 								{
+									var authService = sp.GetRequiredService<ICustomAuthenticationDummyJsonEndpoint>();
 									var name = credentials.FirstOrDefault(x => x.Key == "Name").Value;
 									var password = credentials.FirstOrDefault(x => x.Key == "Password").Value;
-									if (ValidCredentials.TryGetValue(name, out var pass) && pass == password)
+									var creds = new CustomAuthenticationCredentials { Username = name, Password = password };
+									var authResponse = await authService.Login(creds,CancellationToken.None);
+									if (authResponse?.Token is not null)
 									{
 										await tokenCache.SaveAsync(credentials);
 										return true;
 									}
 									return false;
 								})
-						.Refresh(
-								async (tokenCache, cancellationToken) =>
+						.WithRefresh(
+								async (sp, tokenCache, cancellationToken) =>
 								{
 									var creds = await tokenCache.GetAsync();
 									return (creds?.Count() ?? 0) > 0;
 								})
-						.Logout(
-							(dispatcher, tokenCache, cancellationToken) => ValueTask.FromResult(true))
+						.WithLogout(
+							(sp, dispatcher, tokenCache, cancellationToken) => ValueTask.FromResult(true))
 				)
+
+				.UseAuthorization(builder => builder.WithAuthorizationHeader())
 
 				.UseAuthenticationFlow(builder=>
 						builder
@@ -73,6 +85,16 @@ public class CustomAuthenticationHostInit : IHostInitialization
 							.OnLogoutNavigateViewModel<CustomAuthenticationLoginViewModel>(this)
 						)
 
+				.UseSerialization()
+
+				.ConfigureServices((context, services) =>
+				{
+					services
+							.AddNativeHandler()
+							.AddContentSerializer()
+
+							.AddRefitClient<ICustomAuthenticationDummyJsonEndpoint>(context);
+				})
 				.Build(enableUnoLogging: true);
 	}
 

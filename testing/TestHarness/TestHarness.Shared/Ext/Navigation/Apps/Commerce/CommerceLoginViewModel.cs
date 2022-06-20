@@ -1,6 +1,4 @@
-﻿using Uno.Extensions;
-
-namespace TestHarness.Ext.Navigation.Apps.Commerce;
+﻿namespace TestHarness.Ext.Navigation.Apps.Commerce;
 
 public record CommerceLoginViewModel(INavigator Navigator)
 {

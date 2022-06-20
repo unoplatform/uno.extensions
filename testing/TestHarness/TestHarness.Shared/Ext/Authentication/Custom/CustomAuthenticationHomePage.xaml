@@ -14,16 +14,30 @@
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
 			<RowDefinition />
 		</Grid.RowDefinitions>
 		<utu:NavigationBar AutomationProperties.AutomationId="HomeNavigationBar"
 						   Content="Home" />
 
-		<Button Content="Logout"
-				Grid.Row="1"
-				HorizontalAlignment="Center"
-				VerticalAlignment="Center"
-				Click="{x:Bind ViewModel.Logout}" />
+		<StackPanel 				Grid.Row="1"
+									HorizontalAlignment="Center"
+									VerticalAlignment="Center"
+									Orientation="Horizontal">
+			<Button Content="Products"
+					Click="{x:Bind ViewModel.RetrieveProducts}" />
+			<Button Content="Logout"
+					Click="{x:Bind ViewModel.Logout}" />
+		</StackPanel>
 
+		<ListView ItemsSource="{Binding Products}"
+				  Grid.Row="2">
+			<ListView.ItemTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding Title}"
+							   FontSize="32" />
+				</DataTemplate>
+			</ListView.ItemTemplate>
+		</ListView>
 	</Grid>
 </Page>

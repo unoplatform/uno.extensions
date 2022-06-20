@@ -23,9 +23,9 @@
 					HorizontalAlignment="Center"
 					VerticalAlignment="Center">
 			<TextBlock Text="Name" />
-			<TextBox Text="{x:Bind ViewModel.Name, Mode=TwoWay}" />
+			<TextBox Text="{Binding Name, Mode=TwoWay}" />
 			<TextBlock Text="Password" />
-			<TextBox Text="{x:Bind ViewModel.Password, Mode=TwoWay}" />
+			<TextBox Text="{Binding Password, Mode=TwoWay}" />
 			<Button Content="Login"
 					Click="{x:Bind ViewModel.Login}" />
 		</StackPanel>

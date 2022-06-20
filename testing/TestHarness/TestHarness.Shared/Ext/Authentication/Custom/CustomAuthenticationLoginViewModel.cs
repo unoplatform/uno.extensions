@@ -2,8 +2,9 @@
 
 public record class CustomAuthenticationLoginViewModel(INavigator Navigator, IAuthenticationFlow Flow)
 {
-	public string? Name { get; set; }
-	public string? Password { get; set; }	
+	// See https://dummyjson.com/docs/auth for username/password values
+	public string? Name { get; set; } = "kminchelle";
+	public string? Password { get; set; } = "0lelplR";
 	public async Task Login()
 	{
 		await Flow.LoginAsync(new Dictionary<string, string>()

@@ -2,6 +2,7 @@
 
 internal record CustomAuthenticationService
 (
+	IServiceProvider Services,
 	ITokenCache Tokens,
 	CustomAuthenticationSettings Settings
 ) : IAuthenticationService
@@ -19,14 +20,14 @@ internal record CustomAuthenticationService
 		{
 			return false;
 		}
-		return await Settings.LoginCallback(dispatcher, Tokens, credentials!, cancellationToken);
+		return await Settings.LoginCallback(Services,dispatcher, Tokens, credentials!, cancellationToken);
 	}
 
 	public async Task<bool> LogoutAsync(IDispatcher dispatcher, CancellationToken cancellationToken)
 	{
 		if (Settings.LogoutCallback is not null)
 		{
-			var loggedOut = await Settings.LogoutCallback(dispatcher, Tokens, cancellationToken);
+			var loggedOut = await Settings.LogoutCallback(Services,dispatcher, Tokens, cancellationToken);
 			if (!loggedOut)
 			{
 				return false;
@@ -42,6 +43,6 @@ internal record CustomAuthenticationService
 		{
 			return false;
 		}
-		return await Settings.RefreshCallback(Tokens, cancellationToken);
+		return await Settings.RefreshCallback(Services,Tokens, cancellationToken);
 	}
 }

@@ -1,12 +1,5 @@
 ﻿
 
-using System.Net.Http;
-using Uno.Extensions.Authentication.Handlers;
-using Uno.Extensions.Authentication.MSAL;
-using Uno.Extensions.Http;
-using Uno.Extensions.Http.Refit;
-using Uno.Extensions.Serialization;
-using Uno.Extensions.Serialization.Refit;
 
 namespace TestHarness.Ext.Authentication.MSAL;
 
