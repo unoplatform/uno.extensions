@@ -10,6 +10,8 @@ internal class HeaderAuthorizationHandler : BaseAuthorizationHandler
 	) : base(logger, authenticationService, tokens, settings)
 	{
 	}
+	public override bool ShouldIncludeToken(HttpRequestMessage request) => true;
+
 	protected override async Task<bool> ApplyTokensToRequest(HttpRequestMessage request, IDictionary<string, string> tokens, CancellationToken ct)
 	{
 		var accessToken = await _tokens.AccessTokenAsync();

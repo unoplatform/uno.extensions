@@ -45,7 +45,7 @@ public class CustomAuthenticationHostInit : IHostInitialization
 				.UseAuthentication(builder =>
 					builder
 						.Login(
-								async (dispatcher, tokenCache, credentials) =>
+								async (dispatcher, tokenCache, credentials, cancellationToken) =>
 								{
 									var name = credentials.FirstOrDefault(x => x.Key == "Name").Value;
 									var password = credentials.FirstOrDefault(x => x.Key == "Password").Value;
@@ -57,32 +57,20 @@ public class CustomAuthenticationHostInit : IHostInitialization
 									return false;
 								})
 						.Refresh(
-								async (tokenCache) =>
+								async (tokenCache, cancellationToken) =>
 								{
 									var creds = await tokenCache.GetAsync();
 									return (creds?.Count() ?? 0) > 0;
 								})
 						.Logout(
-							(dispatcher, tokenCache) => Task.FromResult(true))
+							(dispatcher, tokenCache, cancellationToken) => ValueTask.FromResult(true))
 				)
 
 				.UseAuthenticationFlow(builder=>
 						builder
-							.OnLoginRequired(
-								async (navigator, dispatcher) =>
-								{
-									await navigator.NavigateViewModelAsync<CustomAuthenticationLoginViewModel>(this, qualifier: Qualifiers.Root);
-								})
-							.OnLoginCompleted(
-								async (navigator, dispatcher) =>
-								{
-									await navigator.NavigateViewModelAsync<CustomAuthenticationHomeViewModel>(this, qualifier: Qualifiers.Root);
-								})
-							.OnLogout(
-								async (navigator, dispatcher) =>
-								{
-									await navigator.NavigateViewModelAsync<CustomAuthenticationLoginViewModel>(this, qualifier: Qualifiers.Root);
-								})
+							.OnLoginRequiredNavigateViewModel<CustomAuthenticationLoginViewModel>(this)
+							.OnLoginCompletedNavigateViewModel<CustomAuthenticationHomeViewModel>(this)
+							.OnLogoutNavigateViewModel<CustomAuthenticationLoginViewModel>(this)
 						)
 
 				.Build(enableUnoLogging: true);

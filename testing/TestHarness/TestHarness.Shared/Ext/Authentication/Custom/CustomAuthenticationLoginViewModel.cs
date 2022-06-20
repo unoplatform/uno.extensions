@@ -10,6 +10,6 @@ public record class CustomAuthenticationLoginViewModel(INavigator Navigator, IAu
 		{
 			{"Name",Name??string.Empty },
 			{"Password",Password??string.Empty}
-		});
+		}, CancellationToken.None);
 	}
 }

@@ -30,6 +30,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="7.1.2" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.1" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22000.197" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
@@ -64,6 +65,8 @@
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization.Http\Uno.Extensions.Serialization.Http.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization.Refit\Uno.Extensions.Serialization.Refit.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http.Refit\Uno.Extensions.Http.Refit.csproj" />

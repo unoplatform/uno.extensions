@@ -1,4 +1,7 @@
 ﻿
+using System.Text.Json.Serialization;
+using Refit;
+
 namespace TestHarness.Ext.Authentication.MSAL;
 
 

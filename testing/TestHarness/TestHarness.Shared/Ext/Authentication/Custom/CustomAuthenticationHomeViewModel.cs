@@ -4,6 +4,6 @@ public record CustomAuthenticationHomeViewModel(INavigator Navigator, IAuthentic
 {
 	public async Task Logout()
 	{
-		await Flow.LogoutAsync();
+		await Flow.LogoutAsync(CancellationToken.None);
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
 using System.Net.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -87,6 +88,7 @@ namespace Uno.Extensions.Http
 				.Conditional(
 					options.UseNativeHandler,
 					builder => builder.ConfigurePrimaryAndInnerHttpMessageHandler<HttpMessageHandler>())
+				.ConfigureDelegatingHandlers()
 				.ConfigureHttpClient((serviceProvider, client) =>
 				{
 					if (options.Url is not null)
@@ -125,6 +127,38 @@ namespace Uno.Extensions.Http
 					}
 
 					b.PrimaryHandler = innerHandler;
+				});
+			});
+			return builder;
+		}
+
+		public static IHttpClientBuilder ConfigureDelegatingHandlers(this IHttpClientBuilder builder)
+		{
+			if (builder == null)
+			{
+				throw new ArgumentNullException("builder");
+			}
+
+			builder.Services.Configure(builder.Name, delegate (HttpClientFactoryOptions options)
+			{
+				options.HttpMessageHandlerBuilderActions.Add(delegate (HttpMessageHandlerBuilder b)
+				{
+					var handlers = b.Services.GetServices<DelegatingHandler>().ToArray();
+					var currentHandler = handlers.FirstOrDefault();
+					if(currentHandler is not null)
+					{
+						for (var i = 1; i < handlers.Length; i++)
+						{
+							currentHandler.InnerHandler = handlers[i];
+							currentHandler=handlers[i];
+						}
+
+						if(b.PrimaryHandler is not null)
+						{
+							currentHandler.InnerHandler = b.PrimaryHandler;
+						}
+						b.PrimaryHandler = handlers[0];
+					}
 				});
 			});
 			return builder;

@@ -1,7 +1,12 @@
 ﻿
 
+using System.Net.Http;
 using Uno.Extensions.Authentication.Handlers;
 using Uno.Extensions.Authentication.MSAL;
+using Uno.Extensions.Http;
+using Uno.Extensions.Http.Refit;
+using Uno.Extensions.Serialization;
+using Uno.Extensions.Serialization.Refit;
 
 namespace TestHarness.Ext.Authentication.MSAL;
 
@@ -30,6 +35,14 @@ public class MsalAuthenticationHostInit : IHostInitialization
 					var host = context.HostingEnvironment;
 					// Configure log levels for different categories of logging
 					logBuilder.SetMinimumLevel(host.IsDevelopment() ? LogLevel.Warning : LogLevel.Information);
+				})
+
+				.UseConfiguration()
+
+				// Only use this syntax for UI tests - use UseConfiguration in apps
+				.ConfigureAppConfiguration((ctx, b) =>
+				{
+					b.AddEmbeddedConfigurationFile<App>("TestHarness.Ext.Authentication.Msal.appsettings.msalauthentication.json");
 				})
 
 				// Enable navigation, including registering views and viewmodels
@@ -66,22 +79,21 @@ public class MsalAuthenticationHostInit : IHostInitialization
 
 				.UseAuthenticationFlow(builder=>
 						builder
-							.OnLoginRequired(
-								async (navigator, dispatcher) =>
-								{
-									await navigator.NavigateViewModelAsync<MsalAuthenticationWelcomeViewModel>(this, qualifier: Qualifiers.Root);
-								})
-							.OnLoginCompleted(
-								async (navigator, dispatcher) =>
-								{
-									await navigator.NavigateViewModelAsync<MsalAuthenticationHomeViewModel>(this, qualifier: Qualifiers.Root);
-								})
-							.OnLogout(
-								async (navigator, dispatcher) =>
-								{
-									await navigator.NavigateViewModelAsync<MsalAuthenticationWelcomeViewModel>(this, qualifier: Qualifiers.Root);
-								})
+							.OnLoginRequiredNavigateViewModel<MsalAuthenticationWelcomeViewModel>(this)
+							.OnLoginCompletedNavigateViewModel<MsalAuthenticationHomeViewModel>(this)
+							.OnLogoutNavigateViewModel<MsalAuthenticationWelcomeViewModel>(this)
 						)
+
+				.UseSerialization()
+
+				.ConfigureServices((context, services) =>
+				{
+					services
+							.AddNativeHandler()
+							.AddContentSerializer()
+
+							.AddRefitClient<IMsalAuthenticationTaskListEndpoint>(context);
+				})
 
 				.Build(enableUnoLogging: true);
 	}

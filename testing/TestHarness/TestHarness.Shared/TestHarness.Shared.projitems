@@ -300,7 +300,7 @@
 		 explicitly included in the projitem, so files can be added from vscode
 		 without manipulating the projitem file.
 	-->
-    <Content Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\appsettings.msalauthentication.json" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\appsettings.msalauthentication.json" />
     <_Globbled_Page Include="$(MSBuildThisFileDirectory)**/*.xaml" Exclude="@(Page);@(ApplicationDefinition)">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

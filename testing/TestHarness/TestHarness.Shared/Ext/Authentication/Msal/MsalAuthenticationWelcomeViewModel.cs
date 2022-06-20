@@ -4,6 +4,6 @@ public record MsalAuthenticationWelcomeViewModel(INavigator Navigator, IAuthenti
 {
 	public async Task Login()
 	{
-		await Flow.LoginAsync();
+		await Flow.LoginAsync(credentials: default, CancellationToken.None);
 	}
 }
