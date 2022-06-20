@@ -25,6 +25,8 @@
 									VerticalAlignment="Center" Orientation="Horizontal">
 			<Button Content="Fetch"
 					Click="{x:Bind ViewModel.RetrieveTasks}" />
+			<Button Content="Clear Access Token"
+					Click="{x:Bind ViewModel.ClearAccessToken}" />
 			<Button Content="Logout"
 					Click="{x:Bind ViewModel.Logout}" />
 		</StackPanel>
