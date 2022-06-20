@@ -5,44 +5,38 @@ internal record CustomAuthenticationService
 	IServiceProvider Services,
 	ITokenCache Tokens,
 	CustomAuthenticationSettings Settings
-) : IAuthenticationService
+) : BaseAuthenticationService(Tokens)
 {
-	public async Task<bool> CanRefresh() => Settings.RefreshCallback is not null;
+	public async override Task<bool> CanRefresh() => Settings.RefreshCallback is not null && await Tokens.HasTokenAsync();
 
-	public Task<bool> LoginAsync(IDispatcher dispatcher, CancellationToken cancellationToken)
+	public async override Task<bool> LoginAsync(IDispatcher dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
 	{
-		return LoginAsync(dispatcher, null, cancellationToken);
-	}
-
-	public async Task<bool> LoginAsync(IDispatcher dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
-	{
-		if(Settings.LoginCallback is null)
+		if (Settings.LoginCallback is null)
 		{
 			return false;
 		}
-		return await Settings.LoginCallback(Services,dispatcher, Tokens, credentials!, cancellationToken);
+		return await Settings.LoginCallback(Services, dispatcher, Tokens, credentials!, cancellationToken);
 	}
 
-	public async Task<bool> LogoutAsync(IDispatcher dispatcher, CancellationToken cancellationToken)
+	protected async override Task<bool> InternalLogoutAsync(IDispatcher dispatcher, CancellationToken cancellationToken)
 	{
 		if (Settings.LogoutCallback is not null)
 		{
-			var loggedOut = await Settings.LogoutCallback(Services,dispatcher, Tokens, cancellationToken);
+			var loggedOut = await Settings.LogoutCallback(Services, dispatcher, Tokens, cancellationToken);
 			if (!loggedOut)
 			{
 				return false;
 			}
 		}
-
-		await Tokens.ClearAsync();
 		return true;
 	}
-	public async Task<bool> RefreshAsync(CancellationToken cancellationToken)
+
+	protected async override Task<bool> InternalRefreshAsync(CancellationToken cancellationToken)
 	{
 		if (Settings.RefreshCallback is null)
 		{
 			return false;
 		}
-		return await Settings.RefreshCallback(Services,Tokens, cancellationToken);
+		return await Settings.RefreshCallback(Services, Tokens, cancellationToken);
 	}
 }

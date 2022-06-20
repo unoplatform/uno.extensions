@@ -14,6 +14,8 @@ public record TokenCache : ITokenCache
 		return Task.CompletedTask;
 	}
 	public Task<IDictionary<string, string>> GetAsync() => Task.FromResult(_tokens);
+	public Task<bool> HasTokenAsync() => Task.FromResult(_tokens.Count > 0);
+
 	public Task SaveAsync(IDictionary<string, string> tokens)
 	{
 		foreach (var tk in tokens)

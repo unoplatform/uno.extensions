@@ -1,9 +1,6 @@
-﻿using System.Threading;
-using Microsoft.Extensions.Options;
+﻿namespace Uno.Extensions.Authentication.MSAL;
 
-namespace Uno.Extensions.Authentication.MSAL;
-
-internal record MsalAuthenticationService : IAuthenticationService
+internal record MsalAuthenticationService : BaseAuthenticationService
 {
 	private readonly ILogger _logger;
 	private readonly ITokenCache _tokens;
@@ -14,7 +11,7 @@ internal record MsalAuthenticationService : IAuthenticationService
 		ILogger<MsalAuthenticationService> Logger,
 		MsalAuthenticationSettings settings,
 		IOptions<MsalConfiguration> configuration,
-		ITokenCache tokens)
+		ITokenCache tokens) : base(tokens)
 	{
 		_logger = Logger;
 		_tokens = tokens;
@@ -36,14 +33,9 @@ internal record MsalAuthenticationService : IAuthenticationService
 
 		_pca = authBuilder.Build();
 	}
-	public async Task<bool> CanRefresh() => (await _pca.GetAccountsAsync()).Count() > 0;
+	public async override Task<bool> CanRefresh() => (await _pca.GetAccountsAsync()).Count() > 0;
 
-	public Task<bool> LoginAsync(IDispatcher dispatcher, CancellationToken cancellationToken)
-	{
-		return LoginAsync(dispatcher, null, cancellationToken);
-	}
-
-	public async Task<bool> LoginAsync(IDispatcher dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
+	public async override Task<bool> LoginAsync(IDispatcher dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
 	{
 		try
 		{
@@ -73,7 +65,7 @@ internal record MsalAuthenticationService : IAuthenticationService
 
 	}
 
-	public async Task<bool> LogoutAsync(IDispatcher dispatcher, CancellationToken cancellationToken)
+	protected async override Task<bool> InternalLogoutAsync(IDispatcher dispatcher, CancellationToken cancellationToken)
 	{
 		var accounts = await _pca.GetAccountsAsync();
 		var firstAccount = accounts.FirstOrDefault();
@@ -89,10 +81,9 @@ internal record MsalAuthenticationService : IAuthenticationService
 			_logger.LogInformation($"Removed account: {firstAccount.Username}, user succesfully logged out.");
 		}
 
-		await _tokens.ClearAsync();
 		return true;
 	}
-	public async Task<bool> RefreshAsync(CancellationToken cancellationToken)
+	protected async override Task<bool> InternalRefreshAsync(CancellationToken cancellationToken)
 	{
 		var result = await AcquireSilentTokenAsync();
 
