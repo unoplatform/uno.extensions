@@ -5,13 +5,6 @@ namespace TestHarness.Ext.Authentication.Custom;
 
 public class CustomAuthenticationHostInit : IHostInitialization
 {
-	private static IDictionary<string, string> ValidCredentials { get; } = new Dictionary<string, string>()
-			{
-				{"Bob", "12345" },
-				{"Jane", "67890" }
-			};
-
-
 	public IHost InitializeHost()
 	{
 
@@ -27,7 +20,7 @@ public class CustomAuthenticationHostInit : IHostInitialization
 				{
 					var host = context.HostingEnvironment;
 					// Configure log levels for different categories of logging
-					logBuilder.SetMinimumLevel(host.IsDevelopment() ? LogLevel.Warning : LogLevel.Information);
+					logBuilder.SetMinimumLevel(host.IsDevelopment() ? LogLevel.Trace : LogLevel.Information);
 				})
 
 				.UseConfiguration()
@@ -73,7 +66,7 @@ public class CustomAuthenticationHostInit : IHostInitialization
 									return (creds?.Count() ?? 0) > 0;
 								})
 						.WithLogout(
-							(sp, dispatcher, tokenCache, cancellationToken) => ValueTask.FromResult(true))
+							async (sp, dispatcher, tokenCache, cancellationToken) => true)
 				)
 
 				.UseAuthorization(builder => builder.WithAuthorizationHeader())

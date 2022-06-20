@@ -44,18 +44,23 @@
 		<None Include="wwwroot\web.config" />
 	</ItemGroup>
 	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="7.1.2" />
+		<PackageReference Include="Microsoft.Identity.Client" Version="4.44.0" />
 		<PackageReference Include="Microsoft.Windows.Compatibility" Version="5.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+		<PackageReference Include="Refit" Version="6.3.2" />
+		<PackageReference Include="Refit.HttpClientFactory" Version="6.3.2" />
+		<PackageReference Include="System.Text.Json" Version="6.0.3" />
 		<PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.3.0" />
-		<PackageReference Include="Uno.WinUI.WebAssembly" Version="4.4.0-dev.114" />
-		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.4.0-dev.114" Condition="'$(Configuration)'=='Debug'" />
-		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.4.0-dev.114" />
+		<PackageReference Include="Uno.WinUI.WebAssembly" Version="4.3.8" />
+		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.3.8" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.3.8" />
 		<PackageReference Include="Uno.Wasm.Bootstrap" Version="3.3.1" />
 		<PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="3.3.1" />
-		<PackageReference Include="Uno.Material.WinUI" Version="2.0.0" />
-		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.0.0" />
-		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.0.0" />
-
+		<PackageReference Include="Uno.Material.WinUI" Version="2.1.0" />
+		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.1.0" />
+		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.1.0" />
+		<PackageReference Include="Uno.WinUI.MSAL" Version="4.3.8" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Authentication\Uno.Extensions.Authentication.csproj" />
@@ -64,13 +69,17 @@
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Localization\Uno.Extensions.Localization.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.Wasm.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.WinUI.Wasm.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization.Http\Uno.Extensions.Serialization.Http.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization.Refit\Uno.Extensions.Serialization.Refit.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http.Refit\Uno.Extensions.Http.Refit.csproj" />
 		<ProjectReference Include="..\TestHarness.Core\TestHarness.Core.csproj" />
 	</ItemGroup>
 	<Import Project="..\TestHarness.Shared\TestHarness.Shared.projitems" Label="Shared" Condition="Exists('..\TestHarness.Shared\TestHarness.Shared.projitems')" />

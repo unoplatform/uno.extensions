@@ -10,5 +10,6 @@
 		<DebugType>portable</DebugType>
 		<DebugSymbols>True</DebugSymbols>
 		<SynthesizeLinkMetadata>true</SynthesizeLinkMetadata> 
+		<RootNamespace>TestHarness</RootNamespace>
 	</PropertyGroup>
 </Project>

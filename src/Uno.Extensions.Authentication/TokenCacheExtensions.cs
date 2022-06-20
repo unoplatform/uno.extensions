@@ -4,8 +4,8 @@ namespace Uno.Extensions.Authentication;
 
 public static class TokenCacheExtensions
 {
-	internal const string AccessTokenKey = "AccessToken";
-	internal const string RefreshTokenKey = "RefreshToken";
+	public const string AccessTokenKey = "AccessToken";
+	public const string RefreshTokenKey = "RefreshToken";
 
 	public static async Task<string> AccessTokenAsync(this ITokenCache cache)
 	{
