@@ -2,7 +2,7 @@
 
 public static class CustomAuthenticationBuilderExtensions
 {
-	public static ICustomAuthenticationBuilder WithLogin(
+	public static ICustomAuthenticationBuilder Login(
 		this ICustomAuthenticationBuilder builder,
 		AsyncFunc<IServiceProvider, IDispatcher, ITokenCache, IDictionary<string, string>, bool> loginCallback)
 	{
@@ -17,7 +17,7 @@ public static class CustomAuthenticationBuilderExtensions
 		return builder;
 	}
 
-	public static ICustomAuthenticationBuilder WithRefresh(
+	public static ICustomAuthenticationBuilder Refresh(
 		this ICustomAuthenticationBuilder builder,
 		AsyncFunc<IServiceProvider, ITokenCache, bool> refreshCallback)
 	{
@@ -32,7 +32,7 @@ public static class CustomAuthenticationBuilderExtensions
 		return builder;
 	}
 
-	public static ICustomAuthenticationBuilder WithLogout(
+	public static ICustomAuthenticationBuilder Logout(
 		this ICustomAuthenticationBuilder builder,
 		AsyncFunc<IServiceProvider, IDispatcher, ITokenCache, bool> logoutCallback)
 	{

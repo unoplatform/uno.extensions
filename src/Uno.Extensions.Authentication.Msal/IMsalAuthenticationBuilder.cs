@@ -2,5 +2,4 @@
 
 public interface IMsalAuthenticationBuilder : IBuilder
 {
-	PublicClientApplicationBuilder? MsalBuilder { get; set; }
 }

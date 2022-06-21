@@ -2,9 +2,10 @@
 
 public static class MsalAuthenticationBuilderExtensions
 {
-	public static IMsalAuthenticationBuilder WithClientId(
+	public static IMsalAuthenticationBuilder MsalClient(
 		this IMsalAuthenticationBuilder builder,
-		string clientId
+		string clientId,
+		Action<PublicClientApplicationBuilder> buildMsalClient
 		)
 	{
 		if (builder is IBuilder<MsalAuthenticationSettings> authBuilder)
@@ -13,13 +14,16 @@ public static class MsalAuthenticationBuilderExtensions
 			{
 				ClientId = clientId
 			};
-			builder.MsalBuilder = authBuilder.Settings.Builder;
+			if (authBuilder.Settings.Builder is not null)
+			{
+				buildMsalClient(authBuilder.Settings.Builder);
+			}
 		}
 
 		return builder;
 	}
 
-	public static IMsalAuthenticationBuilder WithScopes(
+	public static IMsalAuthenticationBuilder Scopes(
 		this IMsalAuthenticationBuilder builder,
 		string[] scopes
 		)

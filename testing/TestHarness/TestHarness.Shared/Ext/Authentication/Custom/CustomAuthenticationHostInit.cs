@@ -38,7 +38,7 @@ public class CustomAuthenticationHostInit : IHostInitialization
 
 				.UseAuthentication(builder =>
 					builder
-						.WithLogin(
+						.Login(
 								async (sp, dispatcher, tokenCache, credentials, cancellationToken) =>
 								{
 									var authService = sp.GetRequiredService<ICustomAuthenticationDummyJsonEndpoint>();
@@ -53,13 +53,13 @@ public class CustomAuthenticationHostInit : IHostInitialization
 									}
 									return false;
 								})
-						.WithRefresh(
+						.Refresh(
 								async (sp, tokenCache, cancellationToken) =>
 								{
 									var creds = await tokenCache.GetAsync();
 									return (creds?.Count() ?? 0) > 0;
 								})
-						.WithLogout(
+						.Logout(
 							async (sp, dispatcher, tokenCache, cancellationToken) => true)
 				)
 
