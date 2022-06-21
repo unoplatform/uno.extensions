@@ -57,7 +57,9 @@ public static class HostBuilderExtensions
 		return builder
 			.ConfigureServices(services =>
 			{
-				services.AddSingleton<IAuthenticationService, TAuthenticationService>();
+				services
+					.AddSingleton<ITokenCache, TokenCache>()
+					.AddSingleton<IAuthenticationService, TAuthenticationService>();
 			});
 	}
 }

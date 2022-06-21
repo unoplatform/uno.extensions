@@ -36,12 +36,6 @@ public class CustomAuthenticationHostInit : IHostInitialization
 
 				.UseToolkitNavigation()
 
-				.ConfigureServices((context, services) =>
-				{
-					services
-						.AddSingleton<ITokenCache, TokenCache>();
-				})
-
 				.UseAuthentication(builder =>
 					builder
 						.WithLogin(

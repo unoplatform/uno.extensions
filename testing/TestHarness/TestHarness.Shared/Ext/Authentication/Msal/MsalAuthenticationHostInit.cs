@@ -43,12 +43,6 @@ public class MsalAuthenticationHostInit : IHostInitialization
 
 				.UseToolkitNavigation()
 
-				.ConfigureServices((context, services) =>
-				{
-					services
-						.AddSingleton<ITokenCache, TokenCache>();
-				})
-
 				.UseAuthentication(
 					(IMsalAuthenticationBuilder builder) => {
 						builder
