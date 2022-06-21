@@ -1,6 +1,8 @@
 ﻿
 
 
+using Uno.Extensions.Configuration;
+
 namespace Uno.Extensions.Authentication;
 
 public static class HostBuilderExtensions
@@ -55,6 +57,7 @@ public static class HostBuilderExtensions
 	where TAuthenticationService : class, IAuthenticationService
 	{
 		return builder
+			.UseConfiguration(configure: builder => builder.Section<TokensData>())
 			.ConfigureServices(services =>
 			{
 				services
