@@ -8,5 +8,6 @@ public enum TestSections
 	Apps_Commerce,
 	Apps_ToDo,
 	Authentication_Custom,
-	Authentication_Msal
+	Authentication_Msal,
+	Authentication_Msal_Settings
 }

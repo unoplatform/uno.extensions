@@ -17,21 +17,31 @@ internal record MsalAuthenticationService : BaseAuthenticationService
 		_tokens = tokens;
 
 
-		_scopes = settings.Scopes ?? new string[] { };
 
 		var config = configuration.Value;
-		var authBuilder = settings.Builder!;
 		if (config is not null)
 		{
-			_scopes = config.Scopes ?? _scopes;
+			if (config.ClientId is not null)
+			{
+				settings = settings with { ClientId = config.ClientId };
+			}
+			if (config.Scopes is not null)
+			{
+				settings = settings with { Scopes = config.Scopes };
+			}
 
+			var authBuilder = settings.Builder!;
 			if (!string.IsNullOrWhiteSpace(config.RedirectUri))
 			{
 				authBuilder.WithRedirectUri(config.RedirectUri);
 			}
+
+			// TODO: Set keychaingroup once net6 fixed for ios
 		}
 
-		_pca = authBuilder.Build();
+		_scopes = settings.Scopes ?? new string[] { };
+
+		_pca = settings.Builder!.Build();
 	}
 	public async override Task<bool> CanRefresh() => (await _pca.GetAccountsAsync()).Count() > 0;
 

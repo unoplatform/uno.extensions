@@ -3,7 +3,7 @@
 
 namespace TestHarness.Ext.Authentication.MSAL;
 
-public class MsalAuthenticationHostInit : IHostInitialization
+public class MsalAuthenticationSettingsHostInit : IHostInitialization
 {
 	public IHost InitializeHost()
 	{
@@ -29,6 +29,7 @@ public class MsalAuthenticationHostInit : IHostInitialization
 				.ConfigureAppConfiguration((ctx, b) =>
 				{
 					b.AddEmbeddedConfigurationFile<App>("TestHarness.Ext.Authentication.Msal.appsettings.msalauthentication.json");
+					b.AddEmbeddedConfigurationFile<App>("TestHarness.Ext.Authentication.Msal.appsettings.msal.json");
 				})
 
 				// Enable navigation, including registering views and viewmodels
@@ -36,26 +37,7 @@ public class MsalAuthenticationHostInit : IHostInitialization
 
 				.UseToolkitNavigation()
 
-				.UseAuthentication(
-					(IMsalAuthenticationBuilder builder) => 
-						builder
-							.Scopes(new[] { "Tasks.Read", "User.Read", "Tasks.ReadWrite" })
-							.MsalClient(
-								clientId: "161a9fb5-3b16-487a-81a2-ac45dcc0ad3b",
-								buildMsalClient:
-									msalBuilder => msalBuilder
-#if __WASM__
-										.WithWebRedirectUri()
-#else
-										.WithRedirectUri("uno-extensions://auth")
-#endif
-						// TODO: add ios support here - see https://github.com/AzureAD/microsoft-authentication-library-for-dotnet/issues/3127
-						//if (!string.IsNullOrWhiteSpace(settings.KeychainSecurityGroup))
-						//{
-						//	builder = builder.WithIosKeychainSecurityGroup(settings.KeychainSecurityGroup);
-						//}
-						)
-				)
+				.UseMsalAuthentication()
 
 				.UseAuthorization(builder => builder.WithAuthorizationHeader())
 
