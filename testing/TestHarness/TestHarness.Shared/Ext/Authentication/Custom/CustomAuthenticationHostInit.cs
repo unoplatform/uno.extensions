@@ -63,8 +63,6 @@ public class CustomAuthenticationHostInit : IHostInitialization
 							async (sp, dispatcher, tokenCache, cancellationToken) => true)
 				)
 
-				.UseAuthorization(builder => builder.WithAuthorizationHeader())
-
 				.UseAuthenticationFlow(builder=>
 						builder
 							.OnLoginRequiredNavigateViewModel<CustomAuthenticationLoginViewModel>(this)

@@ -2,7 +2,7 @@
 
 public static class HandlerBuilderExtensions
 {
-	public static IHandlerBuilder WithCookies(
+	public static IHandlerBuilder Cookies(
 		this IHandlerBuilder builder,
 		string accessTokenCookie,
 		string? refreshTokenCookie=null)
@@ -19,7 +19,7 @@ public static class HandlerBuilderExtensions
 		return builder;
 	}
 
-	public static IHandlerBuilder WithAuthorizationHeader(
+	public static IHandlerBuilder AuthorizationHeader(
 		this IHandlerBuilder builder,
 		string? scheme = "Bearer")
 	{
@@ -28,6 +28,20 @@ public static class HandlerBuilderExtensions
 			authBuilder.Settings = authBuilder.Settings with
 			{
 				AuthorizationHeaderScheme= scheme,
+			};
+		}
+
+		return builder;
+	}
+
+	public static IHandlerBuilder None(
+		this IHandlerBuilder builder)
+	{
+		if (builder is IBuilder<HandlerSettings> authBuilder)
+		{
+			authBuilder.Settings = authBuilder.Settings with
+			{
+				NoHandlers = true,
 			};
 		}
 

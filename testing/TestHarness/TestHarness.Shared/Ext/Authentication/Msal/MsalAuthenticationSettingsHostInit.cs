@@ -39,8 +39,6 @@ public class MsalAuthenticationSettingsHostInit : IHostInitialization
 
 				.UseMsalAuthentication()
 
-				.UseAuthorization(builder => builder.WithAuthorizationHeader())
-
 				.UseAuthenticationFlow(builder=>
 						builder
 							.OnLoginRequiredNavigateViewModel<MsalAuthenticationWelcomeViewModel>(this)

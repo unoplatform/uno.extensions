@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Hosting;
+using Uno.Extensions.Authentication.Handlers;
 using Uno.Extensions.Configuration;
 
 namespace Uno.Extensions.Authentication.MSAL;
@@ -12,7 +13,8 @@ public static class HostBuilderExtensions
 	}
 	public static IHostBuilder UseAuthentication(
 	this IHostBuilder builder,
-	Action<IMsalAuthenticationBuilder>? configure = default)
+	Action<IMsalAuthenticationBuilder>? configure = default,
+		Action<IHandlerBuilder>? configureAuthorization = default)
 	{
 		var authBuilder = builder.AsBuilder<MsalAuthenticationBuilder>();
 
@@ -24,6 +26,6 @@ public static class HostBuilderExtensions
 						.Section<MsalConfiguration>()
 				)
 
-			.UseAuthentication<MsalAuthenticationService, MsalAuthenticationSettings>(authBuilder.Settings);
+			.UseAuthentication<MsalAuthenticationService, MsalAuthenticationSettings>(authBuilder.Settings, configureAuthorization);
 	}
 }
