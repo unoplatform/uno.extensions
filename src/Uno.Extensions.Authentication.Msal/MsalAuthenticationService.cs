@@ -41,6 +41,12 @@ internal record MsalAuthenticationService : BaseAuthenticationService
 
 		_scopes = settings.Scopes ?? new string[] { };
 
+		if (PlatformHelper.IsWebAssembly)
+		{
+			settings.Builder?.WithWebRedirectUri();
+		}
+		settings.Builder?.WithUnoHelpers();
+
 		_pca = settings.Builder!.Build();
 	}
 	public async override Task<bool> CanRefresh() => (await _pca.GetAccountsAsync()).Count() > 0;

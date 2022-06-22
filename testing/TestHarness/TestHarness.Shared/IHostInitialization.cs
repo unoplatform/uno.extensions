@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Hosting;
-
-namespace TestHarness.Ext.Navigation.PageNavigation;
+﻿namespace TestHarness.Ext.Navigation.PageNavigation;
 
 public interface IHostInitialization
 {

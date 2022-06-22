@@ -44,11 +44,7 @@ public class MsalAuthenticationHostInit : IHostInitialization
 								clientId: "161a9fb5-3b16-487a-81a2-ac45dcc0ad3b",
 								buildMsalClient:
 									msalBuilder => msalBuilder
-#if __WASM__
-										.WithWebRedirectUri()
-#else
 										.WithRedirectUri("uno-extensions://auth")
-#endif
 						// TODO: add ios support here - see https://github.com/AzureAD/microsoft-authentication-library-for-dotnet/issues/3127
 						//if (!string.IsNullOrWhiteSpace(settings.KeychainSecurityGroup))
 						//{

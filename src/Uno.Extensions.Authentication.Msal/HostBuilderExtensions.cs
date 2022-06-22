@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Hosting;
-using Uno.Extensions.Authentication.Handlers;
-using Uno.Extensions.Configuration;
+﻿
 
 namespace Uno.Extensions.Authentication.MSAL;
 
