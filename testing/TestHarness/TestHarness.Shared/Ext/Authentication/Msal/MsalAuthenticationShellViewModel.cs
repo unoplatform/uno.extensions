@@ -8,7 +8,7 @@ public record MsalAuthenticationShellViewModel
 
 		flow.Initialize(dispatcher, navigator);
 
-		_ = flow.EnsureAuthenticatedAsync(CancellationToken.None);
+		_ = flow.AuthenticatedNavigateViewModelAsync<MsalAuthenticationHomeViewModel>(this);
 	}
 
 }

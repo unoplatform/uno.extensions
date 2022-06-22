@@ -2,7 +2,7 @@
 
 public static class NavigatorExtensions
 {
-	internal static IRouteResolver? GetResolver(this INavigator navigator)
+	public static IRouteResolver? GetResolver(this INavigator navigator)
 	{
 		return navigator.Get<IServiceProvider>()?.GetRequiredService<IRouteResolver>() ?? default;
 	}
