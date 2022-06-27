@@ -31,6 +31,7 @@ public record TokenCache : ITokenCache
 
 	public async Task SaveAsync(IDictionary<string, string> tokens)
 	{
+		_tokens.Clear();
 		foreach (var tk in tokens)
 		{
 			_tokens[tk.Key] = tk.Value;	

@@ -7,7 +7,7 @@ internal record CustomAuthenticationService
 	CustomAuthenticationSettings Settings
 ) : BaseAuthenticationService(Tokens)
 {
-	public async override Task<bool> CanRefresh() => Settings.RefreshCallback is not null && await Tokens.HasTokenAsync();
+	public async override Task<bool> CanRefresh() => Settings.RefreshCallback is not null && await base.CanRefresh();
 
 	public async override Task<bool> LoginAsync(IDispatcher dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
 	{
@@ -20,22 +20,18 @@ internal record CustomAuthenticationService
 
 	protected async override Task<bool> InternalLogoutAsync(IDispatcher dispatcher, CancellationToken cancellationToken)
 	{
-		if (Settings.LogoutCallback is not null)
+		if (Settings.LogoutCallback is null)
 		{
-			var loggedOut = await Settings.LogoutCallback(Services, dispatcher, Tokens, cancellationToken);
-			if (!loggedOut)
-			{
-				return false;
-			}
+			return true;
 		}
-		return true;
+		return await Settings.LogoutCallback(Services, dispatcher, Tokens, cancellationToken);
 	}
 
 	protected async override Task<bool> InternalRefreshAsync(CancellationToken cancellationToken)
 	{
 		if (Settings.RefreshCallback is null)
 		{
-			return false;
+			return true;
 		}
 		return await Settings.RefreshCallback(Services, Tokens, cancellationToken);
 	}

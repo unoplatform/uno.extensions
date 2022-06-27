@@ -5,91 +5,101 @@ uid: Learn.Tutorials.Authentication.HowToAuthentication
 
 `Uno.Extensions.Authentication` provides you with a consistent way to add authentication to your application. It is recommended to one of the built in `IAuthenticationService` implementations.
 
+
+Sometimes when you navigate you don't want to leave the current page in the back-stack. For example after signing into an application, you might want to navigate to the main page of the application; you don't want to have the login page still in the back-stack for a user to accidentally to go back to.
+
+> [!TIP]
+> This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions-net6` template to create the solution. Instructions for creating an application from the template can be found [here](../Extensions/GettingStarted/UsingUnoExtensions.md)
+
+> [!IMPORTANT]
+> The `unoapp-extensions-net6` template requires the following changes for this tutorial:
+>
+> 1. Add the following inside the `MainPage` class in `MainPage.xaml.cs`:
+>
+>```csharp
+>    public MainViewModel? ViewModel => DataContext as MainViewModel;
+>```
+>
+> 2. Replace `Content="Go to Second Page"` with `Click="{x:Bind ViewModel.GoToSecondPage}"` in `MainPage.xaml`
+
 ## Step-by-steps
 
-### 1. Specify configuration information to load on `IConfigBuilder`
+### 1. Navigating to a Page and Clearing Back Stack
 
-* Uno.Extensions apps specify which configuration information to load by calling the `UseConfiguration()` extension method for `IHostBuilder`.
-
-* Use the `EmbeddedSource<T>()` extension method on `IConfigBuilder` to load configuration information from an assembly type you specify:
+- Add an additional button to `MainPage.xaml` with the `Click` event bound to the `GoToSecondPageClearBackStack` method
 
     ```csharp
-    public App()
-    {
-        Host = UnoHost
-            .CreateDefaultBuilder()
-            .UseConfiguration(configure: configBuilder =>
-                configBuilder
-                    // Load configuration information from appsettings.json
-                    .EmbeddedSource<App>()
-            )
-    ...
+    <StackPanel Grid.Row="1"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+        <Button AutomationProperties.AutomationId="SecondPageButton"
+                Content="Go to Second Page"
+                Click="{x:Bind ViewModel.GoToSecondPage}" />
+        <Button Content="Go to Second Page Clear Stack"
+                Click="{x:Bind ViewModel.GoToSecondPageClearBackStack}" />
+    </StackPanel>
     ```
 
-* By default, this method will extract values from an embedded resource (using the [EmbeddedResource](https://docs.microsoft.com/en-us/dotnet/api/system.codedom.compiler.compilerparameters.embeddedresources?view=dotnet-plat-ext-6.0#remarks) file build action) called `appsettings.json`, unless you optionally denote a different file name. The string you pass into the extension method will be concatenated in-between `appsettings` and its file extension. For instance, the following will also retrieve values from the file `appsettings.platform.json` embedded inside the `App` assembly:
+- Add the `GoToSecondPageClearBackStack` method in `MainViewModel` which navigates to the `SecondViewModel` and includes the `Qualifiers.ClearBackStack` qualifier.
 
     ```csharp
-    public App()
+    public async Task GoToSecondPage()
     {
-        Host = UnoHost
-            .CreateDefaultBuilder()
-            .UseConfiguration(configure: configBuilder =>
-                configBuilder
-                    .EmbeddedSource<App>()
-                    // Load configuration information from appsettings.platform.json
-                    .EmbeddedSource<App>("platform")
-            )
-    ...
-    ```
-
-### 2. Define a class to model the configuration section
-
-* Your JSON file(s) will consist of a serialized representation of multiple properties and their values. Hence, configuration sections allow you to programmatically read a specific subset of these properties from the instantiated class that represents them.
-
-* Author a new class or record with related properties to be used for configuration:
-
-    ```csharp
-    public record Auth
-    {
-        public string? ApplicationId { get; init; }
-        public string[]? Scopes { get; init; }
-        public string? RedirectUri { get; init; }
-        public string? KeychainSecurityGroup { get; init; }
+     await _navigator.NavigateViewModelAsync<SecondViewModel>(this, qualifier: Qualifiers.ClearBackStack);
     }
     ```
 
-### 3. Load a specific configuration section
+If you run the application and navigate to the `SecondPage` the back button in the `NavigationBar` isn't visible, since the frame back-stack is empty.
 
-* You can now use the `Section<T>()` extension method on `IConfigBuilder` to load configuration information for class or record of the type argument you specify:
+### 2. Navigating to a Page and Removing a Page from Back Stack
+
+Another common scenario is to navigate to a page and then remove the current page from the back stack.
+
+- Add a new `Page` to navigate to, `SamplePage.xaml`, in the UI (shared) project
+- In `SecondPage.xaml` add a `Button` with the following XAML, which includes a handler for the Click event  
+
+    ```xml
+    <Button HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Content="Go to Sample Page"
+            Click="{x:Bind ViewModel.GoToSamplePage}" />
+    ```
+
+- In `SecondPage.xaml.cs` add the following to expose a `ViewModel` property
 
     ```csharp
-    public App()
+    public SecondViewModel? ViewModel => DataContext as SecondViewModel;
+    ```
+
+- Update `SecondViewModel` to include the following `GoToSamplePage` method
+
+```csharp
+public async Task GoToSamplePage()
+{
+    await _navigator.NavigateViewModelAsync<SampleViewModel>(this, qualifier: Qualifiers.NavigateBack);
+}
+```
+
+The use of `Qualifiers.NavigateBack` will result in the `SecondPage` being removed from the back stack, after navigating forward to the `SamplePage`.
+
+### 3. Navigating to Multiple Pages
+
+In some cases you may want to navigate forward to a page and inject an additional page into the back stack. This can be done by specifying a multi-section route.
+
+- In `MainPage.xaml` add the following XAML
+
+    ```xml
+    <Button Content="Go to Sample Page"
+            Click="{x:Bind ViewModel.GoToSamplePage}" />
+    ```
+
+- Update `MainViewModel` to define the `GoToSamplePage` method
+
+    ```csharp
+    public async Task GoToSamplePage()
     {
-        Host = UnoHost
-            .CreateDefaultBuilder()
-            .UseConfiguration(configure: configBuilder =>
-                configBuilder
-                    // Load configuration information from appsettings.json
-                    .EmbeddedSource<App>()
-                    // Load configuration information from appsettings.platform.json
-                    .EmbeddedSource<App>("platform")
-                    // Load Auth configuration section
-                    .Section<Auth>()
-            )
-    ...
+        await _navigator.NavigateRouteAsync(this, route: "Second/Sample");
+    }
     ```
 
-### 4. Read configuration section values from a registered service
-
-* To access the instantiated representation of the configuration section you registered above, complete with values populated from the `appsettings.json` file, you'll need to add a new constructor parameter for it to one of your application's services.
-
-* The configuration section will be injected as an object of type `IOptions<T>`, so add a corresponding parameter for it to the constructor of the service:
-
-    ```csharp
-    public class AuthenticationService : IAuthenticationService
-    {        
-        public AuthenticationService(IOptions<Auth> settings)
-        {
-            var authSettings = settings.Value;
-    ...
-    ```
+This code uses the `NavigateRouteAsync` method that allows for string route to be specified. In this case the route is a multi-section route that will navigate to the `SamplePage` and inject the `SecondPage` into the back stack. Note that the `SecondPage` isn't actually created until the user navigates back from the `SamplePage`

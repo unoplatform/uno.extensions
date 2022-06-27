@@ -1,4 +1,4 @@
-﻿namespace Uno.Extensions.Authentication.Custom;
+﻿namespace Uno.Extensions.Authentication;
 
 public static class CustomAuthenticationBuilderExtensions
 {

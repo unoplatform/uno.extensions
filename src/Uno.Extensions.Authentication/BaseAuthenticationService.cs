@@ -5,7 +5,7 @@ public abstract record BaseAuthenticationService
 	ITokenCache Tokens
 ) : IAuthenticationService
 {
-	public async virtual Task<bool> CanRefresh() => false;
+	public virtual Task<bool> CanRefresh() => Tokens.HasTokenAsync();
 
 	public Task<bool> LoginAsync(IDispatcher dispatcher, CancellationToken cancellationToken)
 	{
@@ -37,11 +37,11 @@ public abstract record BaseAuthenticationService
 			return await InternalRefreshAsync(cancellationToken);
 		}
 
-		return false;
+		return await Tokens.HasTokenAsync();
 	}
 
 	protected virtual async Task<bool> InternalRefreshAsync(CancellationToken cancellationToken)
 	{
-		return false;
+		return await Tokens.HasTokenAsync();
 	}
 }

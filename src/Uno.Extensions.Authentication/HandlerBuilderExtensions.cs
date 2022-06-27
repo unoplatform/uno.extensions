@@ -1,4 +1,4 @@
-﻿namespace Uno.Extensions.Authentication.Handlers;
+﻿namespace Uno.Extensions.Authentication;
 
 public static class HandlerBuilderExtensions
 {
