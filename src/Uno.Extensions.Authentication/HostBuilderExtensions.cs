@@ -20,6 +20,22 @@ public static class HostBuilderExtensions
 			.UseAuthentication<CustomAuthenticationService, CustomAuthenticationSettings>(authBuilder.Settings, configureAuthorization);
 	}
 
+	public static IHostBuilder UseAuthentication<TService>(
+	this IHostBuilder builder,
+	Action<ICustomAuthenticationBuilder<TService>>? configureAuthentication = default,
+	Action<IHandlerBuilder>? configureAuthorization = default)
+			where TService : class
+
+	{
+		var authBuilder = builder.AsBuilder<CustomAuthenticationBuilder<TService>>();
+
+		configureAuthentication?.Invoke(authBuilder);
+
+		return builder
+			.UseAuthentication<CustomAuthenticationService<TService>, CustomAuthenticationSettings<TService>>(authBuilder.Settings, configureAuthorization);
+	}
+
+
 	public static IHostBuilder UseAuthentication<TAuthenticationService, TSettings>(
 		this IHostBuilder builder,
 		TSettings settings,

@@ -3,3 +3,7 @@
 public interface ICustomAuthenticationBuilder : IBuilder
 {
 }
+
+public interface ICustomAuthenticationBuilder<TService> : IBuilder
+{
+}

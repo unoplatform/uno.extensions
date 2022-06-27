@@ -7,7 +7,8 @@ internal class CookieAuthorizationHandler : BaseAuthorizationHandler
 		IAuthenticationService authenticationService,
 		ITokenCache tokens,
 		HandlerSettings settings
-	) : base(logger, authenticationService, tokens, settings)
+	) : base(logger, authenticationService,
+					 tokens, settings)
 	{
 	}
 

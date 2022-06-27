@@ -7,7 +7,9 @@ internal class HeaderAuthorizationHandler : BaseAuthorizationHandler
 		IAuthenticationService authenticationService,
 		ITokenCache tokens,
 		HandlerSettings settings
-	) : base(logger, authenticationService, tokens, settings)
+	) : base(logger,
+		authenticationService,
+		tokens, settings)
 	{
 	}
 	public override bool ShouldIncludeToken(HttpRequestMessage request) => true;
