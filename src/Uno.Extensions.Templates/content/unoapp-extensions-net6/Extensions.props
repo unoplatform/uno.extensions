@@ -5,6 +5,7 @@
     <PackageReference Include="Uno.Extensions.Hosting" Version="255.255.255.255" />
     <PackageReference Include="Uno.Extensions.Hosting.WinUI" Version="255.255.255.255" />
     <PackageReference Include="Uno.Extensions.Http" Version="255.255.255.255" />
+    <PackageReference Include="Uno.Extensions.Http.Refit" Version="255.255.255.255" />
     <PackageReference Include="Uno.Extensions.Localization.WinUI" Version="255.255.255.255" />
     <PackageReference Include="Uno.Extensions.Logging.Serilog" Version="255.255.255.255" />
     <PackageReference Include="Uno.Extensions.Logging.WinUI" Version="255.255.255.255" />

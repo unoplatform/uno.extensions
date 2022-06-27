@@ -1,3 +1,8 @@
+copy .\src\Uno.Extensions.Authentication\bin\Uno.Extensions.Authentication\Release\Uno.Extensions.Authentication.255.255.255.255.nupkg .\unofeed\
+copy .\src\Uno.Extensions.Authentication.UI\bin\Uno.Extensions.Authentication.UI\Release\Uno.Extensions.Authentication.UI.255.255.255.255.nupkg .\unofeed\
+copy .\src\Uno.Extensions.Authentication.UI\bin\Uno.Extensions.Authentication.WinUI\Release\Uno.Extensions.Authentication.WinUI.255.255.255.255.nupkg .\unofeed\
+copy .\src\Uno.Extensions.Authentication.Msal\bin\Uno.Extensions.Authentication.Msal.UI\Release\Uno.Extensions.Authentication.Msal.UI.255.255.255.255.nupkg .\unofeed\
+copy .\src\Uno.Extensions.Authentication.Msal\bin\Uno.Extensions.Authentication.Msal.WinUI\Release\Uno.Extensions.Authentication.Msal.WinUI.255.255.255.255.nupkg .\unofeed\
 copy .\src\Uno.Extensions.Configuration\bin\Uno.Extensions.Configuration\Release\Uno.Extensions.Configuration.255.255.255.255.nupkg .\unofeed\
 copy .\src\Uno.Extensions.Core\bin\Uno.Extensions.Core\Release\Uno.Extensions.Core.255.255.255.255.nupkg .\unofeed\
 copy .\src\Uno.Extensions.Hosting\bin\Uno.Extensions.Hosting\Release\Uno.Extensions.Hosting.255.255.255.255.nupkg .\unofeed\
