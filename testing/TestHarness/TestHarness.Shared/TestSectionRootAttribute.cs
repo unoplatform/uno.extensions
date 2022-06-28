@@ -1,5 +1,6 @@
 ﻿namespace TestHarness;
 
+[AttributeUsageAttribute(AttributeTargets.Class, Inherited = true, AllowMultiple = true)]
 public class TestSectionRootAttribute : Attribute
 {
 	public TestSectionRootAttribute(string name,TestSections section, Type hostInitializer)

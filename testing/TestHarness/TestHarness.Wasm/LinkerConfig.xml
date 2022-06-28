@@ -3,6 +3,8 @@
 	<assembly fullname="TestHarness.Wasm" />
   <assembly fullname="Uno.UI" />
   <assembly fullname="Microsoft.Extensions.Options" />
+	<assembly fullname="Refit" />
+	<assembly fullname="System.IdentityModel.Tokens.Jwt" />
 
   <assembly fullname="System.Core">
 	<!-- This is required by JSon.NET and any expression.Compile caller -->

@@ -20,11 +20,11 @@
 				<MaterialFonts xmlns="using:Uno.Material"
 							   OverrideSource="ms-appx:///Styles/MaterialFontsOverride.xaml" />-->
 
-				<!-- Load Material Control Resources -->
+				<!-- Load Material Control Resources --><!--
 				<MaterialResources xmlns="using:Uno.Material" />
 
-				<!-- Load Material Toolkit Resources -->
-				<MaterialToolkitResources xmlns="using:Uno.Toolkit.UI.Material" />
+				--><!-- Load Material Toolkit Resources --><!--
+				<MaterialToolkitResources xmlns="using:Uno.Toolkit.UI.Material" />-->
 
 			</ResourceDictionary.MergedDictionaries>
 			

@@ -26,6 +26,8 @@
           href: Overview/Reactive/in-apps.md
         - name: Testing
           href: Overview/Reactive/testing.md
+    - name: Authentication
+      href: Overview/Authentication/AuthenticationOverview.md
     - name: Localization
       href: Overview/Localization/LocalizationOverview.md
     - name: Serialization

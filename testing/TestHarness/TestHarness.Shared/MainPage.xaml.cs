@@ -13,7 +13,8 @@ public sealed partial class MainPage : Page
 		base.OnNavigatedTo(e);
 
 		var attributedSections = (from type in this.GetType().Assembly.GetTypes()
-								  let sectionAttribute = type.GetCustomAttribute<TestSectionRootAttribute>()
+								  let attributes = type.GetCustomAttributes<TestSectionRootAttribute>()
+								  from sectionAttribute in attributes
 								  where sectionAttribute is not null
 								  select new TestSection(sectionAttribute.Name, sectionAttribute.Section, sectionAttribute.HostInitializer, type)).ToArray();
 		var allSections = typeof(TestSections).GetEnumValues().OfType<TestSections>().OrderBy(x => (int)x).ToArray();

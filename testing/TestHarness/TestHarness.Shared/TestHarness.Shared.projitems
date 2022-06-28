@@ -19,6 +19,36 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)BaseTestSectionPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationHomePage.xaml.cs">
+      <DependentUpon>CustomAuthenticationHomePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationHomeViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationServiceHostInit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationHostInit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationLoginPage.xaml.cs">
+      <DependentUpon>CustomAuthenticationLoginPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationLoginViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationMainPage.xaml.cs">
+      <DependentUpon>CustomAuthenticationMainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationShellViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\ICustomAuthenticationDummyJsonEndpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\IMsalAuthenticationTaskListEndpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\MsalAuthenticationSettingsHostInit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\MsalAuthenticationShellViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\MsalAuthenticationHomePage.xaml.cs">
+      <DependentUpon>MsalAuthenticationHomePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\MsalAuthenticationHomeViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\MsalAuthenticationHostInit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\MsalAuthenticationMainPage.xaml.cs">
+      <DependentUpon>MsalAuthenticationMainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\MsalAuthenticationWelcomePage.xaml.cs">
+      <DependentUpon>MsalAuthenticationWelcomePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\MsalAuthenticationWelcomeViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceCredentials.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceDealsPage.xaml.cs">
       <DependentUpon>CommerceDealsPage.xaml</DependentUpon>
@@ -140,6 +170,22 @@
     <Compile Include="$(MSBuildThisFileDirectory)TestSectionRootAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationHomePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationLoginPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\MsalAuthenticationHomePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\MsalAuthenticationWelcomePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceDealsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -257,6 +303,9 @@
 		 explicitly included in the projitem, so files can be added from vscode
 		 without manipulating the projitem file.
 	-->
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\appsettings.dummyjson.json" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\appsettings.msal.json" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\appsettings.msalauthentication.json" />
     <_Globbled_Page Include="$(MSBuildThisFileDirectory)**/*.xaml" Exclude="@(Page);@(ApplicationDefinition)">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
