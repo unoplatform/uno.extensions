@@ -20,6 +20,6 @@
 				VerticalAlignment="Center"
 				AutomationProperties.AutomationId="SecondPageButton"
 				Content="Go to Second Page"
-				Click="{x:Bind ViewModel.GoToSecond}"/>
+				Command="{Binding GoToSecond}"/>
 	</Grid>
 </Page>

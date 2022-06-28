@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace MyExtensionsApp.WPF.Host.Properties
+namespace MyExtensionsApp.WPF.Properties
 {
 
 
@@ -44,7 +44,7 @@ namespace MyExtensionsApp.WPF.Host.Properties
 			{
 				if ((resourceMan == null))
 				{
-					global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("MyExtensionsApp.WPF.Host.Properties.Resources", typeof(Resources).Assembly);
+					global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("MyExtensionsApp.WPF.Properties.Resources", typeof(Resources).Assembly);
 					resourceMan = temp;
 				}
 				return resourceMan;

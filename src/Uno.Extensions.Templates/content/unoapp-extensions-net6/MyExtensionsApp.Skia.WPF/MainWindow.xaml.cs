@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace MyExtensionsApp.WPF.Host
+namespace MyExtensionsApp.WPF
 {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
@@ -23,8 +23,8 @@ namespace MyExtensionsApp.WPF.Host
 		public MainWindow()
 		{
 			InitializeComponent();
-	
-			root.Content = new global::Uno.UI.Skia.Platform.WpfHost(Dispatcher, () => new MyExtensionsApp.App());
+
+			root.Content = new TextBlock(new Run("Hi!")); //new global::Uno.UI.Skia.Platform.WpfHost(Dispatcher, () => new MyExtensionsApp.App());
 		}
 	}
 }

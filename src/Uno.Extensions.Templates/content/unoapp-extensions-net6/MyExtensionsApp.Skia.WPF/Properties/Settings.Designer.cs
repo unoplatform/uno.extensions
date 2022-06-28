@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace MyExtensionsApp.WPF.Host.Properties
+namespace MyExtensionsApp.WPF.Properties
 {
 
 
