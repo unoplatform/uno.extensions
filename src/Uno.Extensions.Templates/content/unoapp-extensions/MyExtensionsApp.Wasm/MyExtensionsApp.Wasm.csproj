@@ -45,6 +45,7 @@
 		<None Include="LinkerConfig.xml" />
 		<None Include="wwwroot\web.config" />
 	</ItemGroup>
+
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
@@ -63,6 +64,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />
 	</ItemGroup>
-  <Import Project="..\Extensions.props" />
+	<Import Project="..\Extensions.props" />
 	<Import Project="..\MyExtensionsApp.UI\MyExtensionsApp.UI.projitems" Label="Shared" Condition="Exists('..\MyExtensionsApp.UI\MyExtensionsApp.UI.projitems')" />
 </Project>

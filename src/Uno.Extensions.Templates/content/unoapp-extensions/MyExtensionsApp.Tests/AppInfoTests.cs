@@ -1,5 +1,4 @@
-using MyExtensionsApp.Configuration;
-using NUnit.Framework;
+//-:cnd:noEmit
 
 namespace MyExtensionsApp.Tests;
 
