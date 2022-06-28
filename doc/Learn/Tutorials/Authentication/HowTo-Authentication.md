@@ -3,10 +3,7 @@ uid: Learn.Tutorials.Authentication.HowToAuthentication
 ---
 # How-To: Get Started with Authentication
 
-`Uno.Extensions.Authentication` provides you with a consistent way to add authentication to your application. It is recommended to one of the built in `IAuthenticationService` implementations.
-
-
-Sometimes when you navigate you don't want to leave the current page in the back-stack. For example after signing into an application, you might want to navigate to the main page of the application; you don't want to have the login page still in the back-stack for a user to accidentally to go back to.
+`Uno.Extensions.Authentication` provides you with a consistent way to add authentication to your application. It is recommended to one of the built in `IAuthenticationService` implementations. This tutorial will use the custom authorization service to validate user credentials
 
 > [!TIP]
 > This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions-net6` template to create the solution. Instructions for creating an application from the template can be found [here](../Extensions/GettingStarted/UsingUnoExtensions.md)
@@ -23,6 +20,35 @@ Sometimes when you navigate you don't want to leave the current page in the back
 > 2. Replace `Content="Go to Second Page"` with `Click="{x:Bind ViewModel.GoToSecondPage}"` in `MainPage.xaml`
 
 ## Step-by-steps
+
+### 1. Verifying User Credentials
+
+- Install `Uno.Extensions.Authentication` into all projects
+
+- Add `UseAuthentication` to the `BuildAppHost` method. The `Login` callback is used to verify the credentials and update the token cache with the verified credentials.
+
+```csharp
+private static IHost BuildAppHost()
+{ 
+    return UnoHost
+            .CreateDefaultBuilder()
+            ...
+            .UseAuthentication(builder =>
+                builder
+                    .Login(
+                        async (sp, dispatcher, tokenCache, credentials, cancellationToken) =>
+                        {
+                            var isValid = credentials.TryGetValue("Username", out var _username) && _username == "Bob";
+                            if(isValid)
+                            {
+                                await tokenCache.SaveAsync(credentials);
+                            }
+                            return isValid;
+                        })
+            )
+```
+
+
 
 ### 1. Navigating to a Page and Clearing Back Stack
 
