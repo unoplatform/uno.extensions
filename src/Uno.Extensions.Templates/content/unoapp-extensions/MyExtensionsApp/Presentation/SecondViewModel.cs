@@ -2,7 +2,7 @@
 
 namespace MyExtensionsApp.Presentation;
 
-public class SecondViewModel
+public partial class SecondViewModel
 {
 	
 	public SecondViewModel()

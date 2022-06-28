@@ -25,7 +25,6 @@
   <ItemGroup>
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\Resources.resw" />
   </ItemGroup>
-
   <ItemGroup>
     <!--
 		 Add files present in the shared project folder, excluding the ones
@@ -46,6 +45,11 @@
     <PRIResource Include="@(_Globbed_PRIResource)" />
     <_Globbed_Content Include="$(MSBuildThisFileDirectory)Assets/**/*.*" Exclude="@(Content)" />
     <Content Include="@(_Globbed_Content)" />
+    <!-- Mark the files from this folder as being part of WinUI -->
+    <Page Update="$(MSBuildThisFileDirectory)**/*.xaml" XamlRuntime="WinUI" />
+    <ApplicationDefinition Update="$(MSBuildThisFileDirectory)**/*.xaml" XamlRuntime="WinUI" />
+    <!-- Make sure XAML files force reevaluation of up-to-date checks -->
+    <UpToDateCheckInput Include="$(MSBuildThisFileDirectory)**/*.xaml" />
     <_Globbed_Embedded_Resource Include="$(MSBuildThisFileDirectory)*.json" Exclude="@(EmbeddedResource)" />
     <EmbeddedResource Include="@(_Globbed_Embedded_Resource)" />
   </ItemGroup>

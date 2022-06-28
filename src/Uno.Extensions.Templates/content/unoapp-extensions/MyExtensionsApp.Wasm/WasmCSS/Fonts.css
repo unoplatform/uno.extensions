@@ -1,6 +1,6 @@
 /**
-When adding fonts here, make sure to add them using a base64 data uri, otherwise
-fonts loading are delayed, and text may get displayed incorrectly.
+  When adding fonts here, make sure to add them using a base64 data uri, otherwise
+  fonts loading are delayed, and text may get displayed incorrectly.
 */
 
 @font-face {
@@ -26,6 +26,7 @@ fonts loading are delayed, and text may get displayed incorrectly.
   src: url(../Roboto-Medium.ttf) format('truetype');
   font-weight: 500;
 }
+
 
 /* Workaround for uno issue https://github.com/unoplatform/uno/issues/693 */
 body::before {

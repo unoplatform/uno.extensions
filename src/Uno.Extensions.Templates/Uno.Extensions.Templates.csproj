@@ -15,15 +15,14 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<PackageTags>dotnet-new;templates;uno-platform;uno-extensions</PackageTags>
 		<Authors>nventive</Authors>
 		<PackageProjectUrl>https://github.com/unoplatform/uno.extensions</PackageProjectUrl>
 		<PackageIconUrl>https://nv-assets.azurewebsites.net/logos/uno.png</PackageIconUrl>
 		<RepositoryUrl>https://github.com/unoplatform/uno.extensions</RepositoryUrl>
 		<Description></Description>
-		<Copyright>Copyright (C) 2015-2021 nventive inc. - all rights reserved</Copyright>
+		<Copyright>Copyright (C) 2015-2022 nventive inc. - all rights reserved</Copyright>
 		<GeneratePackageOnBuild Condition="'$(Configuration)'=='Release'">true</GeneratePackageOnBuild>
-		<PackageTags>dotnet-new;templates;uno-platform;webassembly;ios;android;uwp;winui;uno-extensions</PackageTags>
+		<PackageTags>dotnet-new;templates;uno-platform;webassembly;ios;android;winui;macos;uno-extensions</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -36,7 +35,7 @@
 	</ItemGroup>
 	
 	<Target Name="ReplaceTemplateCode" BeforeTargets="BeforeBuild">
-		<ItemGroup>
+		<!-- <ItemGroup>
 			<MyTemplateSourceUIFiles Include="content\unoapp-extensions-net6\MyExtensionsApp.UI\**\*" />
 		</ItemGroup>
 
@@ -46,16 +45,16 @@
 			<MyTemplateSourceFiles Include="content\unoapp-extensions-net6\MyExtensionsApp\**\*" />
 		</ItemGroup>
 
-		<Copy SourceFiles="@(MyTemplateSourceFiles)" DestinationFiles="@(MyTemplateSourceFiles->'content\unoapp-extensions\MyExtensionsApp\%(RecursiveDir)%(Filename)%(Extension)')" /> 
+		<Copy SourceFiles="@(MyTemplateSourceFiles)" DestinationFiles="@(MyTemplateSourceFiles->'content\unoapp-extensions\MyExtensionsApp\%(RecursiveDir)%(Filename)%(Extension)')" />  -->
 
 
 		<ItemGroup>
-			<Content Include="content\unoapp-extensions\**" KeepDuplicates="False">
+			<!-- <Content Include="content\unoapp-extensions\**" KeepDuplicates="False">
 				<PackagePath>content\unoapp-extensions</PackagePath>
 				<Pack>true</Pack>
-			</Content>
-			<Content Include="content\unoapp-extensions-net6\**" KeepDuplicates="False">
-				<PackagePath>content\unoapp-extensions-net6</PackagePath>
+			</Content> -->
+			<Content Include="content\unoapp-extensions\**" KeepDuplicates="False">
+				<PackagePath>content\unoapp-extensions</PackagePath>
 				<Pack>true</Pack>
 			</Content>
 		</ItemGroup>

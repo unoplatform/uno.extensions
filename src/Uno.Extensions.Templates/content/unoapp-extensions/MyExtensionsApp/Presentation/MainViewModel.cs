@@ -2,7 +2,7 @@
 
 namespace MyExtensionsApp.Presentation;
 
-public class MainViewModel
+public partial class MainViewModel
 {
 	public string? Title { get; }
 
@@ -15,9 +15,9 @@ public class MainViewModel
 		Title = $"Main - {appInfo?.Value?.Title}";
 	}
 
-	public async Task GoToSecondPage()
+	public async Task GoToSecond(CancellationToken cancellation)
 	{
-		await _navigator.NavigateViewModelAsync<SecondViewModel>(this);
+		await _navigator.NavigateViewModelAsync<SecondViewModel>(this, cancellation: cancellation);
 	}
 
 	private INavigator _navigator;
