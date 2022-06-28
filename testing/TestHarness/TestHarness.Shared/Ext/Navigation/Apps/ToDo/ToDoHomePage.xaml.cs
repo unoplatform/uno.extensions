@@ -1,7 +1,4 @@
-﻿
-using System.Collections.Generic;
-using System.Linq;
-namespace TestHarness.Ext.Navigation.Apps.ToDo;
+﻿namespace TestHarness.Ext.Navigation.Apps.ToDo;
 
 public sealed partial class ToDoHomePage : Page
 {

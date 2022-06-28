@@ -1,7 +1,4 @@
-﻿
-using System.Diagnostics;
-
-namespace TestHarness.Ext.Navigation.MessageDialog;
+﻿namespace TestHarness.Ext.Navigation.MessageDialog;
 
 public sealed partial class SimpleDialogsPage : Page
 {

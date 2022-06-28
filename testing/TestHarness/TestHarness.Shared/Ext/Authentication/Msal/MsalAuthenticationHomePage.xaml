@@ -1,0 +1,44 @@
+﻿<Page x:Class="TestHarness.Ext.Authentication.MSAL.MsalAuthenticationHomePage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:local="using:TestHarness.Ext.Authentication.Msal"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+	  xmlns:utu="using:Uno.Toolkit.UI"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	  xmlns:um="using:Uno.Material"
+	  mc:Ignorable="d"
+	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+		<utu:NavigationBar AutomationProperties.AutomationId="HomeNavigationBar"
+						   Content="Home" />
+
+		<StackPanel 				Grid.Row="1"
+									HorizontalAlignment="Center"
+									VerticalAlignment="Center" Orientation="Horizontal">
+			<Button Content="Fetch"
+					Click="{x:Bind ViewModel.RetrieveTasks}" />
+			<Button Content="Clear Access Token"
+					Click="{x:Bind ViewModel.ClearAccessToken}" />
+			<Button Content="Logout"
+					Click="{x:Bind ViewModel.Logout}" />
+		</StackPanel>
+
+		<ListView ItemsSource="{Binding Tasks}"
+				  Grid.Row="2">
+			<ListView.ItemTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding DisplayName}"
+							   FontSize="32" />
+				</DataTemplate>
+			</ListView.ItemTemplate>
+		</ListView>
+	</Grid>
+</Page>

@@ -6,5 +6,9 @@ public enum TestSections
 	MessageDialog,
 	Responsive,
 	Apps_Commerce,
-	Apps_ToDo
+	Apps_ToDo,
+	Authentication_Custom,
+	Authentication_Custom_Service,
+	Authentication_Msal,
+	Authentication_Msal_Settings
 }
