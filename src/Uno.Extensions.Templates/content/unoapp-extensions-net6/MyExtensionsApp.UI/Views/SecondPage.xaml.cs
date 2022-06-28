@@ -4,7 +4,8 @@ namespace MyExtensionsApp.Views;
 
 public sealed partial class SecondPage : Page
 {
-    public SecondPage()
+	public SecondViewModel? ViewModel => DataContext as SecondViewModel;
+	public SecondPage()
     {
         this.InitializeComponent();
     }
