@@ -3,25 +3,25 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.31911.260
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Playground.Shared", "Playground\Playground.Shared\Playground.Shared.shproj", "{6279C845-92F8-4333-AB99-3D213163593C}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Playground.Shared", "Playground.Shared\Playground.Shared.shproj", "{6279C845-92F8-4333-AB99-3D213163593C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Platforms", "Platforms", "{DD8F5097-D88A-403A-A20C-B22242F46A2D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Playground.Droid", "Playground\Playground.Droid\Playground.Droid.csproj", "{ABBF2CF7-0DDB-4968-A6D8-8F8205F4A8D5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Playground.Droid", "Playground.Droid\Playground.Droid.csproj", "{ABBF2CF7-0DDB-4968-A6D8-8F8205F4A8D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Playground.iOS", "Playground\Playground.iOS\Playground.iOS.csproj", "{398D8331-D046-48D2-8198-1737B4F1C7E9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Playground.iOS", "Playground.iOS\Playground.iOS.csproj", "{398D8331-D046-48D2-8198-1737B4F1C7E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Playground.UWP", "Playground\Playground.UWP\Playground.UWP.csproj", "{ABE60D89-79BB-433C-A674-F3EB6BF2AE1E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Playground.UWP", "Playground.UWP\Playground.UWP.csproj", "{ABE60D89-79BB-433C-A674-F3EB6BF2AE1E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Playground.Wasm", "Playground\Playground.Wasm\Playground.Wasm.csproj", "{0C7A4B61-D7C6-48F8-83B6-D7CFA896B8C9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Playground.Wasm", "Playground.Wasm\Playground.Wasm.csproj", "{0C7A4B61-D7C6-48F8-83B6-D7CFA896B8C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Playground.macOS", "Playground\Playground.macOS\Playground.macOS.csproj", "{E40048E4-478A-4E90-BF63-342B04BDD31E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Playground.macOS", "Playground.macOS\Playground.macOS.csproj", "{E40048E4-478A-4E90-BF63-342B04BDD31E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Playground.Skia.Wpf.Host", "Playground\Playground.Skia.Wpf.Host\Playground.Skia.Wpf.Host.csproj", "{24BFD07E-9BD7-409A-8772-AA8596F90A4C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Playground.Skia.Wpf.Host", "Playground.Skia.Wpf.Host\Playground.Skia.Wpf.Host.csproj", "{24BFD07E-9BD7-409A-8772-AA8596F90A4C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Playground.Skia.Wpf", "Playground\Playground.Skia.Wpf\Playground.Skia.Wpf.csproj", "{0BE93281-9633-484A-9A2F-F3B7BD36A443}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Playground.Skia.Wpf", "Playground.Skia.Wpf\Playground.Skia.Wpf.csproj", "{0BE93281-9633-484A-9A2F-F3B7BD36A443}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Playground.Skia.Gtk", "Playground\Playground.Skia.Gtk\Playground.Skia.Gtk.csproj", "{7034CDEC-7056-4E65-A043-A380582CFBD0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Playground.Skia.Gtk", "Playground.Skia.Gtk\Playground.Skia.Gtk.csproj", "{7034CDEC-7056-4E65-A043-A380582CFBD0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "App", "App", "{9FDE6A95-7086-43A9-A909-74C2FE64B509}"
 EndProject
@@ -99,13 +99,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Localization
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.UI.WinUI", "..\..\src\Uno.Extensions.Reactive.UI\Uno.Extensions.Reactive.UI.WinUI.csproj", "{150F3B28-7E00-4A65-AAD5-46506610DCF0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Playground.Windows", "Playground\Playground.Windows\Playground.Windows.csproj", "{1EFB7B93-88D1-4F14-B335-BAB42A49FAF0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Playground.Windows", "Playground.Windows\Playground.Windows.csproj", "{1EFB7B93-88D1-4F14-B335-BAB42A49FAF0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Hosting.WinUI.Skia", "..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.Skia.csproj", "{1B8A646F-B5D9-4110-A481-7218585ACB21}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Hosting.WinUI.Wasm", "..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.Wasm.csproj", "{9ADF91EF-5C89-4BFD-825F-5AD8F484E3DD}"
 EndProject
-Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "Playground.Windows.Package", "Playground\Playground.Package\Playground.Windows.Package.wapproj", "{53611E66-5396-43B9-97C2-DE99465DFFC0}"
+Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "Playground.Windows.Package", "Playground.Package\Playground.Windows.Package.wapproj", "{53611E66-5396-43B9-97C2-DE99465DFFC0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Logging.WinUI.Skia", "..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.WinUI.Skia.csproj", "{629D3004-86DA-4F3C-B47A-8B90E9120422}"
 EndProject
@@ -2651,14 +2651,14 @@ Global
 		SolutionGuid = {1A645832-60E5-4DA0-9EE7-69F7E34333DC}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		Playground\Playground.Shared\Playground.Shared.projitems*{0be93281-9633-484a-9a2f-f3b7bd36a443}*SharedItemsImports = 5
-		Playground\Playground.Shared\Playground.Shared.projitems*{0c7a4b61-d7c6-48f8-83b6-d7cfa896b8c9}*SharedItemsImports = 5
-		Playground\Playground.Shared\Playground.Shared.projitems*{1efb7b93-88d1-4f14-b335-bab42a49faf0}*SharedItemsImports = 5
-		Playground\Playground.Shared\Playground.Shared.projitems*{398d8331-d046-48d2-8198-1737b4f1c7e9}*SharedItemsImports = 4
-		Playground\Playground.Shared\Playground.Shared.projitems*{6279c845-92f8-4333-ab99-3d213163593c}*SharedItemsImports = 13
-		Playground\Playground.Shared\Playground.Shared.projitems*{7034cdec-7056-4e65-a043-a380582cfbd0}*SharedItemsImports = 5
-		Playground\Playground.Shared\Playground.Shared.projitems*{abbf2cf7-0ddb-4968-a6d8-8f8205f4a8d5}*SharedItemsImports = 4
-		Playground\Playground.Shared\Playground.Shared.projitems*{abe60d89-79bb-433c-a674-f3eb6bf2ae1e}*SharedItemsImports = 4
-		Playground\Playground.Shared\Playground.Shared.projitems*{e40048e4-478a-4e90-bf63-342b04bdd31e}*SharedItemsImports = 4
+		Playground.Shared\Playground.Shared.projitems*{0be93281-9633-484a-9a2f-f3b7bd36a443}*SharedItemsImports = 5
+		Playground.Shared\Playground.Shared.projitems*{0c7a4b61-d7c6-48f8-83b6-d7cfa896b8c9}*SharedItemsImports = 5
+		Playground.Shared\Playground.Shared.projitems*{1efb7b93-88d1-4f14-b335-bab42a49faf0}*SharedItemsImports = 5
+		Playground.Shared\Playground.Shared.projitems*{398d8331-d046-48d2-8198-1737b4f1c7e9}*SharedItemsImports = 4
+		Playground.Shared\Playground.Shared.projitems*{6279c845-92f8-4333-ab99-3d213163593c}*SharedItemsImports = 13
+		Playground.Shared\Playground.Shared.projitems*{7034cdec-7056-4e65-a043-a380582cfbd0}*SharedItemsImports = 5
+		Playground.Shared\Playground.Shared.projitems*{abbf2cf7-0ddb-4968-a6d8-8f8205f4a8d5}*SharedItemsImports = 4
+		Playground.Shared\Playground.Shared.projitems*{abe60d89-79bb-433c-a674-f3eb6bf2ae1e}*SharedItemsImports = 4
+		Playground.Shared\Playground.Shared.projitems*{e40048e4-478a-4e90-bf63-342b04bdd31e}*SharedItemsImports = 4
 	EndGlobalSection
 EndGlobal
