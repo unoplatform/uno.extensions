@@ -36,11 +36,16 @@ public class CustomAuthenticationHostInit : IHostInitialization
 
 				.UseToolkitNavigation()
 
-				.UseAuthentication(builder =>
+				.UseCustomAuthentication(builder =>
 					builder
 						.Login(
-								async (sp, dispatcher, tokenCache, credentials, cancellationToken) =>
+								async (sp, dispatcher, credentials, cancellationToken) =>
 								{
+									if(credentials is null)
+									{
+										return default;
+									}
+
 									var authService = sp.GetRequiredService<ICustomAuthenticationDummyJsonEndpoint>();
 									var name = credentials.FirstOrDefault(x => x.Key == "Name").Value;
 									var password = credentials.FirstOrDefault(x => x.Key == "Password").Value;
@@ -48,20 +53,35 @@ public class CustomAuthenticationHostInit : IHostInitialization
 									var authResponse = await authService.Login(creds,CancellationToken.None);
 									if (authResponse?.Token is not null)
 									{
-										await tokenCache.SaveAsync(credentials);
-										return true;
+										credentials[TokenCacheExtensions.AccessTokenKey] = authResponse.Token;
+										return credentials;
 									}
-									return false;
+									return default;
 								})
 						.Refresh(
-								async (sp, tokenCache, cancellationToken) =>
+								async (sp, tokenDictionary, cancellationToken) =>
 								{
-									var creds = await tokenCache.GetAsync();
-									return (creds?.Count() ?? 0) > 0;
-								})
-						.Logout(
-							async (sp, dispatcher, tokenCache, cancellationToken) => true)
-				)
+									var authService = sp.GetRequiredService<ICustomAuthenticationDummyJsonEndpoint>();
+									var creds = new CustomAuthenticationCredentials
+									{
+										Username = tokenDictionary.TryGetValue("Name", out var name)?name:string.Empty,
+										Password = tokenDictionary.TryGetValue("Password", out var password) ? password : string.Empty
+									};
+									try
+									{
+										var authResponse = await authService.Login(creds, cancellationToken);
+										if (authResponse?.Token is not null)
+										{
+											tokenDictionary[TokenCacheExtensions.AccessTokenKey] = authResponse.Token;
+											return tokenDictionary;
+										}
+									}
+									catch
+									{
+										// Ignore and just return null;
+									}
+									return default;
+								}))
 
 				.UseAuthenticationFlow(builder=>
 						builder

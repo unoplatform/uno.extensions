@@ -36,7 +36,7 @@ public class MsalAuthenticationHostInit : IHostInitialization
 
 				.UseToolkitNavigation()
 
-				.UseAuthentication(
+				.UseMsalAuthentication(
 					(IMsalAuthenticationBuilder builder) => 
 						builder
 							.Scopes(new[] { "Tasks.Read", "User.Read", "Tasks.ReadWrite" })

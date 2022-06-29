@@ -7,19 +7,22 @@ public static class TokenCacheExtensions
 	public const string AccessTokenKey = "AccessToken";
 	public const string RefreshTokenKey = "RefreshToken";
 
-	public static async Task<string> AccessTokenAsync(this ITokenCache cache)
+	public static ValueTask<string> AccessTokenAsync(this IReadonlyTokenCache cache, CancellationToken? cancellation=default)
 	{
-		var tokens = await cache.GetAsync();
-		return tokens.FirstOrDefault(x => x.Key == AccessTokenKey).Value;
+		return cache.TokenAsync(AccessTokenKey, cancellation);
 	}
 
-	public static async Task<string> RefreshTokenAsync(this ITokenCache cache)
+	public static ValueTask<string> RefreshTokenAsync(this IReadonlyTokenCache cache, CancellationToken? cancellation = default)
 	{
-		var tokens = await cache.GetAsync();
-		return tokens.FirstOrDefault(x => x.Key == RefreshTokenKey).Value;
+		return cache.TokenAsync(RefreshTokenKey, cancellation);
 	}
 
-	public static async Task SaveTokensAsync(this ITokenCache cache, string? accessToken=null, string? refreshToken=null)
+	public static async ValueTask<string> TokenAsync(this IReadonlyTokenCache cache, string tokenKey, CancellationToken? cancellation = default)
+	{
+		var tokens = await cache.GetAsync(cancellation);
+		return tokens.FirstOrDefault(x => x.Key == tokenKey).Value;
+	}
+	public static async ValueTask<bool> SaveTokensAsync(this ITokenCache cache, string? accessToken=null, string? refreshToken=null, CancellationToken? cancellation = default)
 	{
 		var dict = new Dictionary<string, string>();
 		if (!string.IsNullOrWhiteSpace(accessToken))
@@ -30,6 +33,6 @@ public static class TokenCacheExtensions
 		{
 			dict[AccessTokenKey] = refreshToken!;
 		}
-		await cache.SaveAsync(dict);
+		return await cache.SaveAsync(dict, cancellation);
 	}
 }

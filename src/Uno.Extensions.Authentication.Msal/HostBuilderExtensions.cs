@@ -7,9 +7,9 @@ public static class HostBuilderExtensions
 	public static IHostBuilder UseMsalAuthentication(
 		this IHostBuilder builder)
 	{
-		return builder.UseAuthentication((IMsalAuthenticationBuilder builder) => { });
+		return builder.UseMsalAuthentication((IMsalAuthenticationBuilder builder) => { });
 	}
-	public static IHostBuilder UseAuthentication(
+	public static IHostBuilder UseMsalAuthentication(
 	this IHostBuilder builder,
 	Action<IMsalAuthenticationBuilder>? configure = default,
 		Action<IHandlerBuilder>? configureAuthorization = default)

@@ -36,30 +36,50 @@ public class CustomAuthenticationServiceHostInit : IHostInitialization
 
 				.UseToolkitNavigation()
 
-				.UseAuthentication<ICustomAuthenticationDummyJsonEndpoint>(builder =>
+				.UseCustomAuthentication<ICustomAuthenticationDummyJsonEndpoint>(builder =>
 					builder
 						.Login(
-								async (authService, dispatcher, tokenCache, credentials, cancellationToken) =>
+								async (authService, dispatcher, credentials, cancellationToken) =>
 								{
+									if(credentials is null)
+									{
+										return default;
+									}
+
 									var name = credentials.FirstOrDefault(x => x.Key == "Name").Value;
 									var password = credentials.FirstOrDefault(x => x.Key == "Password").Value;
 									var creds = new CustomAuthenticationCredentials { Username = name, Password = password };
 									var authResponse = await authService.Login(creds, cancellationToken);
 									if (authResponse?.Token is not null)
 									{
-										await tokenCache.SaveAsync(credentials);
-										return true;
+										credentials[TokenCacheExtensions.AccessTokenKey] = authResponse.Token;
+										return credentials;
 									}
-									return false;
+									return default;
 								})
 						.Refresh(
-								async (authService, tokenCache, cancellationToken) =>
+								async (authService, tokenDictionary, cancellationToken) =>
 								{
-									var creds = await tokenCache.GetAsync();
-									return (creds?.Count() ?? 0) > 0;
+									var creds = new CustomAuthenticationCredentials {
+										Username = tokenDictionary.TryGetValue("Name", out var name) ? name : string.Empty,
+										Password = tokenDictionary.TryGetValue("Password", out var password) ? password : string.Empty
+									};
+
+									try
+									{
+										var authResponse = await authService.Login(creds, cancellationToken);
+										if (authResponse?.Token is not null)
+										{
+											tokenDictionary[TokenCacheExtensions.AccessTokenKey] = authResponse.Token;
+											return tokenDictionary;
+										}
+									}
+									catch
+									{
+										// Ignore and return null
+									}
+									return default;
 								})
-						.Logout(
-							async (authService, dispatcher, tokenCache, cancellationToken) => true)
 				)
 
 				.UseAuthenticationFlow(builder =>

@@ -5,43 +5,59 @@ public abstract record BaseAuthenticationService
 	ITokenCache Tokens
 ) : IAuthenticationService
 {
-	public virtual Task<bool> CanRefresh() => Tokens.HasTokenAsync();
+	public async ValueTask<bool> CanRefresh(CancellationToken? cancellationToken = default) => await Tokens.HasTokenAsync(cancellationToken) && await InternalCanRefresh(cancellationToken ?? CancellationToken.None);
 
-	public Task<bool> LoginAsync(IDispatcher dispatcher, CancellationToken cancellationToken)
+	public async ValueTask<bool> LoginAsync(IDispatcher dispatcher, IDictionary<string, string>? credentials = default, CancellationToken? cancellationToken = default)
 	{
-		return LoginAsync(dispatcher, default, cancellationToken);
+		var tokens = await InternalLoginAsync(dispatcher, credentials, cancellationToken ?? CancellationToken.None);
+		if (!await Tokens.SaveAsync(tokens, cancellationToken))
+		{
+			return false;
+		}
+		return await Tokens.HasTokenAsync(cancellationToken);
 	}
 
-	public abstract Task<bool> LoginAsync(IDispatcher dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken);
-
-	public async Task<bool> LogoutAsync(IDispatcher dispatcher, CancellationToken cancellationToken)
+	public async ValueTask<bool> LogoutAsync(IDispatcher dispatcher, CancellationToken? cancellationToken = default)
 	{
-		if (!await InternalLogoutAsync(dispatcher, cancellationToken))
+		if (!await InternalLogoutAsync(dispatcher, cancellationToken ?? CancellationToken.None))
 		{
 			return false;
 		}
 
-		await Tokens.ClearAsync();
-		return true;
+		return await Tokens.ClearAsync(cancellationToken);
 	}
 
-	protected virtual async Task<bool> InternalLogoutAsync(IDispatcher dispatcher, CancellationToken cancellationToken)
-	{
-		return true;
-	}
-
-	public async Task<bool> RefreshAsync(CancellationToken cancellationToken)
+	public async ValueTask<bool> RefreshAsync(CancellationToken? cancellationToken = default)
 	{
 		if (await CanRefresh())
 		{
-			return await InternalRefreshAsync(cancellationToken);
+			var tokens = await InternalRefreshAsync(cancellationToken ?? CancellationToken.None);
+			if(!await Tokens.SaveAsync(tokens, cancellationToken))
+			{
+				return false;
+			}
 		}
 
-		return await Tokens.HasTokenAsync();
+		return await Tokens.HasTokenAsync(cancellationToken);
 	}
 
-	protected virtual async Task<bool> InternalRefreshAsync(CancellationToken cancellationToken)
+	protected async virtual ValueTask<bool> InternalCanRefresh(CancellationToken cancellationToken) => true;
+
+	protected virtual ValueTask<IDictionary<string, string>?> InternalLoginAsync(IDispatcher dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
 	{
-		return await Tokens.HasTokenAsync();
+		// Default behavior is to return null, which indicates unsuccessful login 
+		return default;
+	}
+
+	protected virtual async ValueTask<bool> InternalLogoutAsync(IDispatcher dispatcher, CancellationToken cancellationToken)
+	{
+		// Default implementation is to return true, which will cause the token cache to be flushed
+		return true;
+	}
+
+	protected virtual async ValueTask<IDictionary<string, string>?> InternalRefreshAsync(CancellationToken cancellationToken)
+	{
+		// Default implementation is to just return the existing tokens (ie success!)
+		return await Tokens.GetAsync();
 	}
 }

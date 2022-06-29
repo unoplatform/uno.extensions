@@ -2,9 +2,8 @@
 
 public interface IAuthenticationService
 {
-	Task<bool> CanRefresh();
-	Task<bool> LoginAsync(IDispatcher dispatcher, CancellationToken cancellationToken);
-	Task<bool> LoginAsync(IDispatcher dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken);
-	Task<bool> RefreshAsync(CancellationToken cancellationToken);
-	Task<bool> LogoutAsync(IDispatcher dispatcher, CancellationToken cancellationToken);
+	ValueTask<bool> CanRefresh(CancellationToken? cancellationToken = default);
+	ValueTask<bool> LoginAsync(IDispatcher dispatcher, IDictionary<string, string>? credentials = default, CancellationToken? cancellationToken = default);
+	ValueTask<bool> RefreshAsync(CancellationToken? cancellationToken = default);
+	ValueTask<bool> LogoutAsync(IDispatcher dispatcher, CancellationToken? cancellationToken = default);
 }

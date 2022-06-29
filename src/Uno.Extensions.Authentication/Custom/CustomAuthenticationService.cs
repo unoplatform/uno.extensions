@@ -7,33 +7,31 @@ internal record CustomAuthenticationService
 	CustomAuthenticationSettings Settings
 ) : BaseAuthenticationService(Tokens)
 {
-	public async override Task<bool> CanRefresh() => Settings.RefreshCallback is not null && await base.CanRefresh();
-
-	public async override Task<bool> LoginAsync(IDispatcher dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
+	protected async override ValueTask<IDictionary<string, string>?> InternalLoginAsync(IDispatcher dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
 	{
 		if (Settings.LoginCallback is null)
 		{
-			return false;
+			return default;
 		}
-		return await Settings.LoginCallback(Services, dispatcher, Tokens, credentials!, cancellationToken);
+		return await Settings.LoginCallback(Services, dispatcher, credentials!, cancellationToken);
 	}
 
-	protected async override Task<bool> InternalLogoutAsync(IDispatcher dispatcher, CancellationToken cancellationToken)
+	protected async override ValueTask<bool> InternalLogoutAsync(IDispatcher dispatcher, CancellationToken cancellationToken)
 	{
 		if (Settings.LogoutCallback is null)
 		{
 			return true;
 		}
-		return await Settings.LogoutCallback(Services, dispatcher, Tokens, cancellationToken);
+		return await Settings.LogoutCallback(Services, dispatcher, await Tokens.GetAsync(cancellationToken), cancellationToken);
 	}
 
-	protected async override Task<bool> InternalRefreshAsync(CancellationToken cancellationToken)
+	protected async override ValueTask<IDictionary<string, string>?> InternalRefreshAsync(CancellationToken cancellationToken)
 	{
 		if (Settings.RefreshCallback is null)
 		{
-			return true;
+			return default;
 		}
-		return await Settings.RefreshCallback(Services, Tokens, cancellationToken);
+		return await Settings.RefreshCallback(Services, await Tokens.GetAsync(cancellationToken), cancellationToken);
 	}
 }
 
@@ -46,36 +44,30 @@ internal record CustomAuthenticationService<TService>
 ) : BaseAuthenticationService(Tokens)
 	where TService: class
 {
-	public async override Task<bool> CanRefresh() => Settings.RefreshCallback is not null && await Tokens.HasTokenAsync();
-
-	public async override Task<bool> LoginAsync(IDispatcher dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
+	protected async override ValueTask<IDictionary<string, string>?> InternalLoginAsync(IDispatcher dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
 	{
 		if (Settings.LoginCallback is null)
 		{
-			return false;
+			return default;
 		}
-		return await Settings.LoginCallback(Services.GetRequiredService<TService>(), dispatcher, Tokens, credentials!, cancellationToken);
+		return await Settings.LoginCallback(Services.GetRequiredService<TService>(), dispatcher, credentials!, cancellationToken);
 	}
 
-	protected async override Task<bool> InternalLogoutAsync(IDispatcher dispatcher, CancellationToken cancellationToken)
+	protected async override ValueTask<bool> InternalLogoutAsync(IDispatcher dispatcher, CancellationToken cancellationToken)
 	{
-		if (Settings.LogoutCallback is not null)
+		if (Settings.LogoutCallback is null)
 		{
-			var loggedOut = await Settings.LogoutCallback(Services.GetRequiredService<TService>(), dispatcher, Tokens, cancellationToken);
-			if (!loggedOut)
-			{
-				return false;
-			}
+			return true;
 		}
-		return true;
+		return await Settings.LogoutCallback(Services.GetRequiredService<TService>(), dispatcher, await Tokens.GetAsync(cancellationToken), cancellationToken);
 	}
 
-	protected async override Task<bool> InternalRefreshAsync(CancellationToken cancellationToken)
+	protected async override ValueTask<IDictionary<string, string>?> InternalRefreshAsync(CancellationToken cancellationToken)
 	{
 		if (Settings.RefreshCallback is null)
 		{
-			return false;
+			return default;
 		}
-		return await Settings.RefreshCallback(Services.GetRequiredService<TService>(), Tokens, cancellationToken);
+		return await Settings.RefreshCallback(Services.GetRequiredService<TService>(), await Tokens.GetAsync(cancellationToken), cancellationToken);
 	}
 }
