@@ -20,6 +20,7 @@ public class Given_PageNavigation : NavigationTestBase
 		App.WaitThenTap("TwoPageBackButton");
 
 
+		App.WaitForElement("ShowOnePageButton");
 		var screenAfter = TakeScreenshot("When_PageNavigationXAML_After");
 		ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
 
@@ -43,9 +44,9 @@ public class Given_PageNavigation : NavigationTestBase
 		App.WaitThenTap("TwoPageBackCodebehindButton");
 
 
+		App.WaitForElement("ShowOnePageButton");
 		var screenAfter = TakeScreenshot("When_PageNavigationCodebehind_After");
 		ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
-
 	}
 
 	[Test]
@@ -66,6 +67,7 @@ public class Given_PageNavigation : NavigationTestBase
 		App.WaitThenTap("TwoPageBackViewModelButton");
 
 
+		App.WaitForElement("ShowOnePageButton");
 		var screenAfter = TakeScreenshot("When_PageNavigationViewModel_After");
 		ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
 
