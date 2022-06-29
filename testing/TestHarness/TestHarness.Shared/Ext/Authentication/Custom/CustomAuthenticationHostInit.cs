@@ -36,10 +36,10 @@ public class CustomAuthenticationHostInit : IHostInitialization
 
 				.UseToolkitNavigation()
 
-				.UseAuthentication(builder =>
+				.UseCustomAuthentication(builder =>
 					builder
 						.Login(
-								async (sp, dispatcher, tokenCache, credentials, cancellationToken) =>
+								async (sp, dispatcher, credentials, cancellationToken) =>
 								{
 									if(credentials is null)
 									{
@@ -53,19 +53,35 @@ public class CustomAuthenticationHostInit : IHostInitialization
 									var authResponse = await authService.Login(creds,CancellationToken.None);
 									if (authResponse?.Token is not null)
 									{
+										credentials[TokenCacheExtensions.AccessTokenKey] = authResponse.Token;
 										return credentials;
 									}
 									return default;
 								})
-						//.Refresh(
-						//		async (sp, tokenCache, cancellationToken) =>
-						//		{
-						//			var creds = await tokenCache.GetAsync();
-						//			return (creds?.Count() ?? 0) > 0;
-						//		})
-						//.Logout(
-						//	async (sp, dispatcher, tokenCache, cancellationToken) => true)
-				)
+						.Refresh(
+								async (sp, tokenDictionary, cancellationToken) =>
+								{
+									var authService = sp.GetRequiredService<ICustomAuthenticationDummyJsonEndpoint>();
+									var creds = new CustomAuthenticationCredentials
+									{
+										Username = tokenDictionary.TryGetValue("Name", out var name)?name:string.Empty,
+										Password = tokenDictionary.TryGetValue("Password", out var password) ? password : string.Empty
+									};
+									try
+									{
+										var authResponse = await authService.Login(creds, cancellationToken);
+										if (authResponse?.Token is not null)
+										{
+											tokenDictionary[TokenCacheExtensions.AccessTokenKey] = authResponse.Token;
+											return tokenDictionary;
+										}
+									}
+									catch
+									{
+										// Ignore and just return null;
+									}
+									return default;
+								}))
 
 				.UseAuthenticationFlow(builder=>
 						builder

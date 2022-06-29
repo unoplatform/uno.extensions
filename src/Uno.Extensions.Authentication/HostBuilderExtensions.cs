@@ -7,7 +7,7 @@ namespace Uno.Extensions.Authentication;
 
 public static class HostBuilderExtensions
 {
-	public static IHostBuilder UseAuthentication(
+	public static IHostBuilder UseCustomAuthentication(
 		this IHostBuilder builder,
 		Action<ICustomAuthenticationBuilder>? configureAuthentication = default,
 		Action<IHandlerBuilder>? configureAuthorization = default)
@@ -20,7 +20,7 @@ public static class HostBuilderExtensions
 			.UseAuthentication<CustomAuthenticationService, CustomAuthenticationSettings>(authBuilder.Settings, configureAuthorization);
 	}
 
-	public static IHostBuilder UseAuthentication<TService>(
+	public static IHostBuilder UseCustomAuthentication<TService>(
 	this IHostBuilder builder,
 	Action<ICustomAuthenticationBuilder<TService>>? configureAuthentication = default,
 	Action<IHandlerBuilder>? configureAuthorization = default)

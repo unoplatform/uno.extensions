@@ -13,7 +13,7 @@ internal record CustomAuthenticationService
 		{
 			return default;
 		}
-		return await Settings.LoginCallback(Services, dispatcher, Tokens, credentials!, cancellationToken);
+		return await Settings.LoginCallback(Services, dispatcher, credentials!, cancellationToken);
 	}
 
 	protected async override ValueTask<bool> InternalLogoutAsync(IDispatcher dispatcher, CancellationToken cancellationToken)
@@ -22,7 +22,7 @@ internal record CustomAuthenticationService
 		{
 			return true;
 		}
-		return await Settings.LogoutCallback(Services, dispatcher, Tokens, cancellationToken);
+		return await Settings.LogoutCallback(Services, dispatcher, await Tokens.GetAsync(cancellationToken), cancellationToken);
 	}
 
 	protected async override ValueTask<IDictionary<string, string>?> InternalRefreshAsync(CancellationToken cancellationToken)
@@ -31,7 +31,7 @@ internal record CustomAuthenticationService
 		{
 			return default;
 		}
-		return await Settings.RefreshCallback(Services, Tokens, cancellationToken);
+		return await Settings.RefreshCallback(Services, await Tokens.GetAsync(cancellationToken), cancellationToken);
 	}
 }
 
@@ -50,7 +50,7 @@ internal record CustomAuthenticationService<TService>
 		{
 			return default;
 		}
-		return await Settings.LoginCallback(Services.GetRequiredService<TService>(), dispatcher, Tokens, credentials!, cancellationToken);
+		return await Settings.LoginCallback(Services.GetRequiredService<TService>(), dispatcher, credentials!, cancellationToken);
 	}
 
 	protected async override ValueTask<bool> InternalLogoutAsync(IDispatcher dispatcher, CancellationToken cancellationToken)
@@ -59,7 +59,7 @@ internal record CustomAuthenticationService<TService>
 		{
 			return true;
 		}
-		return await Settings.LogoutCallback(Services.GetRequiredService<TService>(), dispatcher, Tokens, cancellationToken);
+		return await Settings.LogoutCallback(Services.GetRequiredService<TService>(), dispatcher, await Tokens.GetAsync(cancellationToken), cancellationToken);
 	}
 
 	protected async override ValueTask<IDictionary<string, string>?> InternalRefreshAsync(CancellationToken cancellationToken)
@@ -68,6 +68,6 @@ internal record CustomAuthenticationService<TService>
 		{
 			return default;
 		}
-		return await Settings.RefreshCallback(Services.GetRequiredService<TService>(), Tokens, cancellationToken);
+		return await Settings.RefreshCallback(Services.GetRequiredService<TService>(), await Tokens.GetAsync(cancellationToken), cancellationToken);
 	}
 }

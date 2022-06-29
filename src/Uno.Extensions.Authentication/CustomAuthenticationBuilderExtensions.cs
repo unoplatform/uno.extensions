@@ -4,7 +4,7 @@ public static class CustomAuthenticationBuilderExtensions
 {
 	public static ICustomAuthenticationBuilder Login(
 		this ICustomAuthenticationBuilder builder,
-		AsyncFunc<IServiceProvider, IDispatcher, IReadonlyTokenCache, IDictionary<string, string>?, IDictionary<string, string>?> loginCallback)
+		AsyncFunc<IServiceProvider, IDispatcher, IDictionary<string, string>?, IDictionary<string, string>?> loginCallback)
 	{
 		if (builder is IBuilder<CustomAuthenticationSettings> authBuilder)
 		{
@@ -19,7 +19,7 @@ public static class CustomAuthenticationBuilderExtensions
 
 	public static ICustomAuthenticationBuilder Refresh(
 		this ICustomAuthenticationBuilder builder,
-		AsyncFunc<IServiceProvider, IReadonlyTokenCache, IDictionary<string, string>?> refreshCallback)
+		AsyncFunc<IServiceProvider, IDictionary<string, string>, IDictionary<string, string>?> refreshCallback)
 	{
 		if (builder is IBuilder<CustomAuthenticationSettings> authBuilder)
 		{
@@ -34,7 +34,7 @@ public static class CustomAuthenticationBuilderExtensions
 
 	public static ICustomAuthenticationBuilder Logout(
 		this ICustomAuthenticationBuilder builder,
-		AsyncFunc<IServiceProvider, IDispatcher, IReadonlyTokenCache, bool> logoutCallback)
+		AsyncFunc<IServiceProvider, IDispatcher, IDictionary<string, string>, bool> logoutCallback)
 	{
 		if (builder is IBuilder<CustomAuthenticationSettings> authBuilder)
 		{
@@ -49,7 +49,7 @@ public static class CustomAuthenticationBuilderExtensions
 
 	public static ICustomAuthenticationBuilder<TService> Login<TService>(
 		this ICustomAuthenticationBuilder<TService> builder,
-		AsyncFunc<TService, IDispatcher, IReadonlyTokenCache, IDictionary<string, string>?, IDictionary<string, string>?> loginCallback)
+		AsyncFunc<TService, IDispatcher, IDictionary<string, string>?, IDictionary<string, string>?> loginCallback)
 	{
 		if (builder is IBuilder<CustomAuthenticationSettings< TService >> authBuilder)
 		{
@@ -64,7 +64,7 @@ public static class CustomAuthenticationBuilderExtensions
 
 	public static ICustomAuthenticationBuilder<TService> Refresh<TService>(
 		this ICustomAuthenticationBuilder<TService> builder,
-		AsyncFunc<TService, IReadonlyTokenCache, IDictionary<string, string>?> refreshCallback)
+		AsyncFunc<TService, IDictionary<string, string>, IDictionary<string, string>?> refreshCallback)
 	{
 		if (builder is IBuilder<CustomAuthenticationSettings<TService>> authBuilder)
 		{
@@ -79,7 +79,7 @@ public static class CustomAuthenticationBuilderExtensions
 
 	public static ICustomAuthenticationBuilder<TService> Logout<TService>(
 		this ICustomAuthenticationBuilder<TService> builder,
-		AsyncFunc<TService, IDispatcher, IReadonlyTokenCache, bool> logoutCallback)
+		AsyncFunc<TService, IDispatcher, IDictionary<string, string>, bool> logoutCallback)
 	{
 		if (builder is IBuilder<CustomAuthenticationSettings<TService>> authBuilder)
 		{
