@@ -41,25 +41,38 @@ public class CustomAuthenticationServiceHostInit : IHostInitialization
 						.Login(
 								async (authService, dispatcher, tokenCache, credentials, cancellationToken) =>
 								{
+									if(credentials is null)
+									{
+										return default;
+									}
+
 									var name = credentials.FirstOrDefault(x => x.Key == "Name").Value;
 									var password = credentials.FirstOrDefault(x => x.Key == "Password").Value;
 									var creds = new CustomAuthenticationCredentials { Username = name, Password = password };
 									var authResponse = await authService.Login(creds, cancellationToken);
 									if (authResponse?.Token is not null)
 									{
-										await tokenCache.SaveAsync(credentials);
-										return true;
+										return credentials;
 									}
-									return false;
+									return default;
 								})
 						.Refresh(
 								async (authService, tokenCache, cancellationToken) =>
 								{
-									var creds = await tokenCache.GetAsync();
-									return (creds?.Count() ?? 0) > 0;
+									var creds = new CustomAuthenticationCredentials {
+										Username = await tokenCache.TokenAsync("Name", cancellationToken),
+										Password = await tokenCache.TokenAsync("Password", cancellationToken)
+									};
+
+									var authResponse = await authService.Login(creds, cancellationToken);
+									if (authResponse?.Token is not null)
+									{
+										return await tokenCache.GetAsync(cancellationToken);
+									}
+									return default;
 								})
-						.Logout(
-							async (authService, dispatcher, tokenCache, cancellationToken) => true)
+				//.Logout(
+				//	async (authService, dispatcher, tokenCache, cancellationToken) => true)
 				)
 
 				.UseAuthenticationFlow(builder =>

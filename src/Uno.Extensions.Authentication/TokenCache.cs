@@ -5,7 +5,6 @@ namespace Uno.Extensions.Authentication;
 
 public record TokenCache : ITokenCache
 {
-	private readonly IWritableOptions<TokensData> _tokensCache;
 	public TokenCache(IWritableOptions<TokensData> tokensCache)
 	{
 		_tokensCache = tokensCache;
@@ -16,30 +15,37 @@ public record TokenCache : ITokenCache
 		}
 	}
 
+	private readonly IWritableOptions<TokensData> _tokensCache;
+
 	private readonly IDictionary<string, string> _tokens = new Dictionary<string, string>();
 
 	public event EventHandler? Cleared;
 
-	public async Task ClearAsync()
+	public async ValueTask<bool> ClearAsync(CancellationToken? cancellation = default)
 	{
 		_tokens.Clear();
 		await PersistCacheAsync();
 		Cleared?.Invoke(this, EventArgs.Empty);
+		return true;
 	}
-	public Task<IDictionary<string, string>> GetAsync() => Task.FromResult(_tokens);
-	public Task<bool> HasTokenAsync() => Task.FromResult(_tokens.Count > 0);
+	public async ValueTask<IDictionary<string, string>> GetAsync(CancellationToken? cancellation = default) => _tokens;
+	public async ValueTask<bool> HasTokenAsync(CancellationToken? cancellation = default) => _tokens.Count > 0;
 
-	public async Task SaveAsync(IDictionary<string, string> tokens)
+	public async ValueTask<bool> SaveAsync(IDictionary<string, string>? tokens, CancellationToken? cancellation = default)
 	{
 		_tokens.Clear();
-		foreach (var tk in tokens)
+		if (tokens is not null)
 		{
-			_tokens[tk.Key] = tk.Value;	
+			foreach (var tk in tokens)
+			{
+				_tokens[tk.Key] = tk.Value;
+			}
 		}
-		await PersistCacheAsync(); 
+		await PersistCacheAsync();
+		return true;
 	}
 
-	private async Task PersistCacheAsync()
+	private async ValueTask PersistCacheAsync()
 	{
 		await _tokensCache.UpdateAsync(data => new TokensData { Tokens = _tokens });
 	}

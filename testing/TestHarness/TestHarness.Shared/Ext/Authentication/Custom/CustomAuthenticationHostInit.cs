@@ -41,6 +41,11 @@ public class CustomAuthenticationHostInit : IHostInitialization
 						.Login(
 								async (sp, dispatcher, tokenCache, credentials, cancellationToken) =>
 								{
+									if(credentials is null)
+									{
+										return default;
+									}
+
 									var authService = sp.GetRequiredService<ICustomAuthenticationDummyJsonEndpoint>();
 									var name = credentials.FirstOrDefault(x => x.Key == "Name").Value;
 									var password = credentials.FirstOrDefault(x => x.Key == "Password").Value;
@@ -48,19 +53,18 @@ public class CustomAuthenticationHostInit : IHostInitialization
 									var authResponse = await authService.Login(creds,CancellationToken.None);
 									if (authResponse?.Token is not null)
 									{
-										await tokenCache.SaveAsync(credentials);
-										return true;
+										return credentials;
 									}
-									return false;
+									return default;
 								})
-						.Refresh(
-								async (sp, tokenCache, cancellationToken) =>
-								{
-									var creds = await tokenCache.GetAsync();
-									return (creds?.Count() ?? 0) > 0;
-								})
-						.Logout(
-							async (sp, dispatcher, tokenCache, cancellationToken) => true)
+						//.Refresh(
+						//		async (sp, tokenCache, cancellationToken) =>
+						//		{
+						//			var creds = await tokenCache.GetAsync();
+						//			return (creds?.Count() ?? 0) > 0;
+						//		})
+						//.Logout(
+						//	async (sp, dispatcher, tokenCache, cancellationToken) => true)
 				)
 
 				.UseAuthenticationFlow(builder=>

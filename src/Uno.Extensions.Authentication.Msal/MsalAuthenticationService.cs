@@ -49,24 +49,18 @@ internal record MsalAuthenticationService : BaseAuthenticationService
 
 		_pca = settings.Builder!.Build();
 	}
-	public async override Task<bool> CanRefresh() => (await _pca.GetAccountsAsync()).Count() > 0;
+	protected async override ValueTask<bool> InternalCanRefresh(CancellationToken cancellation) => (await _pca.GetAccountsAsync()).Count() > 0;
 
-	public async override Task<bool> LoginAsync(IDispatcher dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
+	protected async override ValueTask<IDictionary<string, string>?> InternalLoginAsync(IDispatcher dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
 	{
 		try
 		{
 			var result = await AcquireTokenAsync(dispatcher);
-			//_user = !string.IsNullOrEmpty(result?.AccessToken)
-			//	? CreateContextFromAuthResult(result!)
-			//	: default;
-
-			await _tokens.SaveAsync(
-			new Dictionary<string, string>
+			return new Dictionary<string, string>
 			{
 				{ "AccessToken", result?.AccessToken??string.Empty}
-			});
+			};
 
-			return !string.IsNullOrWhiteSpace(result?.AccessToken);
 		}
 		catch (MsalClientException ex)
 		{
@@ -81,7 +75,7 @@ internal record MsalAuthenticationService : BaseAuthenticationService
 
 	}
 
-	protected async override Task<bool> InternalLogoutAsync(IDispatcher dispatcher, CancellationToken cancellationToken)
+	protected async override ValueTask<bool> InternalLogoutAsync(IDispatcher dispatcher, CancellationToken cancellationToken)
 	{
 		var accounts = await _pca.GetAccountsAsync();
 		var firstAccount = accounts.FirstOrDefault();
@@ -99,17 +93,14 @@ internal record MsalAuthenticationService : BaseAuthenticationService
 
 		return true;
 	}
-	protected async override Task<bool> InternalRefreshAsync(CancellationToken cancellationToken)
+	protected async override ValueTask<IDictionary<string, string>?> InternalRefreshAsync(CancellationToken cancellationToken)
 	{
 		var result = await AcquireSilentTokenAsync();
 
-		await _tokens.SaveAsync(
-			new Dictionary<string, string>
+		return new Dictionary<string, string>
 			{
 				{ "AccessToken", result?.AccessToken??string.Empty}
-			});
-
-		return !string.IsNullOrWhiteSpace(result?.AccessToken);
+			};
 	}
 
 
