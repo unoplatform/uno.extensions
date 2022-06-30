@@ -10,5 +10,6 @@ public enum TestSections
 	Authentication_Custom,
 	Authentication_Custom_Service,
 	Authentication_Msal,
-	Authentication_Msal_Settings
+	Authentication_Msal_Settings,
+	Authentication_Multi
 }

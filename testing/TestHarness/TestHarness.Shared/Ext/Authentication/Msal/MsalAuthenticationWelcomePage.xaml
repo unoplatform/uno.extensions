@@ -21,7 +21,15 @@
 		<StackPanel Grid.Row="1"
 					HorizontalAlignment="Center"
 					VerticalAlignment="Center">
+			<ListView ItemsSource="{Binding Providers}" SelectionMode="Single" SelectedItem="{Binding SelectedProvider, Mode=TwoWay}">
+				<ListView.ItemTemplate>
+					<DataTemplate>
+						<TextBlock Text="{Binding}" />
+					</DataTemplate>
+				</ListView.ItemTemplate>
+			</ListView>
 			<Button Content="Login"
+					AutomationProperties.AutomationId="LoginButton"
 					Click="{x:Bind ViewModel.Login}" />
 		</StackPanel>
 	</Grid>

@@ -1,8 +1,8 @@
 ﻿namespace Uno.Extensions.Authentication.Handlers;
 
-internal class HeaderAuthorizationHandler : BaseAuthorizationHandler
+internal class HeaderHandler : BaseAuthorizationHandler
 {
-	public HeaderAuthorizationHandler(
+	public HeaderHandler(
 		ILogger<BaseAuthorizationHandler> logger,
 		IAuthenticationService authenticationService,
 		ITokenCache tokens,

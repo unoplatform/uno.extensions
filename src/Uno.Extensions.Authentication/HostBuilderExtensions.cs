@@ -1,90 +1,126 @@
 ﻿
 
 
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Uno.Extensions.Configuration;
 
 namespace Uno.Extensions.Authentication;
 
 public static class HostBuilderExtensions
 {
-	public static IHostBuilder UseCustomAuthentication(
-		this IHostBuilder builder,
-		Action<ICustomAuthenticationBuilder>? configureAuthentication = default,
-		Action<IHandlerBuilder>? configureAuthorization = default)
+	public static IAuthenticationBuilder AddCustom(
+		this IAuthenticationBuilder builder,
+		Action<ICustomAuthenticationBuilder>? configure = default,
+		string name = CustomAuthenticationProvider.DefaultName)
 	{
 		var authBuilder = builder.AsBuilder<CustomAuthenticationBuilder>();
 
-		configureAuthentication?.Invoke(authBuilder);
+		configure?.Invoke(authBuilder);
 
 		return builder
-			.UseAuthentication<CustomAuthenticationService, CustomAuthenticationSettings>(authBuilder.Settings, configureAuthorization);
+			.AddAuthentication<CustomAuthenticationProvider, CustomAuthenticationSettings>(
+				name,
+				authBuilder.Settings,
+				(provider, settings) => provider with { Name = name, Settings = settings });
 	}
 
-	public static IHostBuilder UseCustomAuthentication<TService>(
-	this IHostBuilder builder,
-	Action<ICustomAuthenticationBuilder<TService>>? configureAuthentication = default,
-	Action<IHandlerBuilder>? configureAuthorization = default)
+	public static IAuthenticationBuilder AddCustom<TService>(
+		this IAuthenticationBuilder builder,
+		Action<ICustomAuthenticationBuilder<TService>>? configure = default,
+		string name = CustomAuthenticationProvider.DefaultName)
 			where TService : class
 
 	{
 		var authBuilder = builder.AsBuilder<CustomAuthenticationBuilder<TService>>();
 
-		configureAuthentication?.Invoke(authBuilder);
+		configure?.Invoke(authBuilder);
 
 		return builder
-			.UseAuthentication<CustomAuthenticationService<TService>, CustomAuthenticationSettings<TService>>(authBuilder.Settings, configureAuthorization);
+			.AddAuthentication<CustomAuthenticationProvider<TService>, CustomAuthenticationSettings<TService>>(
+				name,
+				authBuilder.Settings,
+				(provider, settings) => provider with { Name = name, Settings = settings });
 	}
 
 
-	public static IHostBuilder UseAuthentication<TAuthenticationService, TSettings>(
-		this IHostBuilder builder,
+	internal static IAuthenticationBuilder AddAuthentication<TAuthenticationProvider, TSettings>(
+		this IAuthenticationBuilder builder,
+		string name,
 		TSettings settings,
-		Action<IHandlerBuilder>? configureAuthorization = default)
-		where TAuthenticationService : class, IAuthenticationService
+		Func<TAuthenticationProvider, TSettings, TAuthenticationProvider> configureProvider)
+		where TAuthenticationProvider : class, IAuthenticationProvider
 		where TSettings : class
 	{
-		return builder
+		var hostBuilder = (builder as IBuilder)?.HostBuilder;
+		if (hostBuilder is null)
+		{
+			return builder;
+		}
+
+		hostBuilder
 			.ConfigureServices(services =>
 			{
-				services.AddSingleton(settings);
-			})
-			.UseAuthentication<TAuthenticationService>(configureAuthorization);
+				services.TryAddTransient<TAuthenticationProvider>();
+				services.AddSingleton<IProviderFactory>(sp =>
+								new ProviderFactory<TAuthenticationProvider, TSettings>(
+											name,
+											sp.GetRequiredService<TAuthenticationProvider>(),
+											settings,
+											configureProvider));
+			});
+		return builder;
 	}
 
-	public static IHostBuilder UseAuthentication<TAuthenticationService>(
+	public static IHostBuilder UseAuthentication(
 	this IHostBuilder builder,
+	Action<IAuthenticationBuilder> build,
 	Action<IHandlerBuilder>? configureAuthorization = default)
-	where TAuthenticationService : class, IAuthenticationService
 	{
-		var authBuilder = builder.AsBuilder<HandlerBuilder>();
+		var authBuilder = builder.AsBuilder<AuthenticationBuilder>();
 
-		configureAuthorization?.Invoke(authBuilder);
+		build?.Invoke(authBuilder);
 
-		builder
+		return builder
 			.UseConfiguration(configure: builder => builder.Section<TokensData>())
 			.ConfigureServices(services =>
 			{
 				services
 					.AddSingleton<ITokenCache, TokenCache>()
-					.AddSingleton<IAuthenticationService, TAuthenticationService>()
-					.AddSingleton(authBuilder.Settings);
+					.AddSingleton<IAuthenticationService, AuthenticationService>();
+			})
+			.Authorization(configureAuthorization);
+	}
+
+	internal static IHostBuilder Authorization(
+	this IHostBuilder hostBuilder,
+	Action<IHandlerBuilder>? configure = default)
+	{
+		var authBuilder = hostBuilder.AsBuilder<HandlerBuilder>();
+
+		configure?.Invoke(authBuilder);
+
+		hostBuilder
+			.ConfigureServices(services =>
+			{
+				services.AddSingleton(authBuilder.Settings);
 			});
 
 		if (!authBuilder.Settings.NoHandlers)
 		{
 			var authorizationHeaderType = !string.IsNullOrWhiteSpace(authBuilder.Settings.CookieAccessToken) ?
-									typeof(CookieAuthorizationHandler) :
-									typeof(HeaderAuthorizationHandler);
-			builder
+									typeof(CookieHandler) :
+									typeof(HeaderHandler);
+			hostBuilder
 				.ConfigureServices(services =>
 				{
 					services
-						.AddSingleton(typeof(DelegatingHandler), authorizationHeaderType);
+						.AddTransient(typeof(DelegatingHandler), authorizationHeaderType);
 				});
 		}
 
-		return builder;
+		return hostBuilder;
 	}
+
 }
 
 

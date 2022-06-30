@@ -36,59 +36,57 @@ public class CustomAuthenticationHostInit : IHostInitialization
 
 				.UseToolkitNavigation()
 
-				.UseCustomAuthentication(builder =>
-					builder
-						.Login(
-								async (sp, dispatcher, credentials, cancellationToken) =>
+				.UseAuthentication(auth =>
+					auth.AddCustom(custom =>
+						custom
+							.Login(async (sp, dispatcher, credentials, cancellationToken) =>
+							{
+								if (credentials is null)
 								{
-									if(credentials is null)
-									{
-										return default;
-									}
+									return default;
+								}
 
-									var authService = sp.GetRequiredService<ICustomAuthenticationDummyJsonEndpoint>();
-									var name = credentials.FirstOrDefault(x => x.Key == "Name").Value;
-									var password = credentials.FirstOrDefault(x => x.Key == "Password").Value;
-									var creds = new CustomAuthenticationCredentials { Username = name, Password = password };
-									var authResponse = await authService.Login(creds,CancellationToken.None);
+								var authService = sp.GetRequiredService<ICustomAuthenticationDummyJsonEndpoint>();
+								var name = credentials.FirstOrDefault(x => x.Key == nameof(CustomAuthenticationCredentials.Username)).Value;
+								var password = credentials.FirstOrDefault(x => x.Key == nameof(CustomAuthenticationCredentials.Password)).Value;
+								var creds = new CustomAuthenticationCredentials { Username = name, Password = password };
+								var authResponse = await authService.Login(creds, CancellationToken.None);
+								if (authResponse?.Token is not null)
+								{
+									credentials[TokenCacheExtensions.AccessTokenKey] = authResponse.Token;
+									return credentials;
+								}
+								return default;
+							})
+							.Refresh(async (sp, tokenDictionary, cancellationToken) =>
+							{
+								var authService = sp.GetRequiredService<ICustomAuthenticationDummyJsonEndpoint>();
+								var creds = new CustomAuthenticationCredentials
+								{
+									Username = tokenDictionary.TryGetValue(nameof(CustomAuthenticationCredentials.Username), out var name) ? name : string.Empty,
+									Password = tokenDictionary.TryGetValue(nameof(CustomAuthenticationCredentials.Password), out var password) ? password : string.Empty
+								};
+								try
+								{
+									var authResponse = await authService.Login(creds, cancellationToken);
 									if (authResponse?.Token is not null)
 									{
-										credentials[TokenCacheExtensions.AccessTokenKey] = authResponse.Token;
-										return credentials;
+										tokenDictionary[TokenCacheExtensions.AccessTokenKey] = authResponse.Token;
+										return tokenDictionary;
 									}
-									return default;
-								})
-						.Refresh(
-								async (sp, tokenDictionary, cancellationToken) =>
+								}
+								catch
 								{
-									var authService = sp.GetRequiredService<ICustomAuthenticationDummyJsonEndpoint>();
-									var creds = new CustomAuthenticationCredentials
-									{
-										Username = tokenDictionary.TryGetValue("Name", out var name)?name:string.Empty,
-										Password = tokenDictionary.TryGetValue("Password", out var password) ? password : string.Empty
-									};
-									try
-									{
-										var authResponse = await authService.Login(creds, cancellationToken);
-										if (authResponse?.Token is not null)
-										{
-											tokenDictionary[TokenCacheExtensions.AccessTokenKey] = authResponse.Token;
-											return tokenDictionary;
-										}
-									}
-									catch
-									{
-										// Ignore and just return null;
-									}
-									return default;
-								}))
+									// Ignore and just return null;
+								}
+								return default;
+							})))
 
-				.UseAuthenticationFlow(builder=>
-						builder
-							.OnLoginRequiredNavigateViewModel<CustomAuthenticationLoginViewModel>(this)
-							.OnLoginCompletedNavigateViewModel<CustomAuthenticationHomeViewModel>(this)
-							.OnLogoutNavigateViewModel<CustomAuthenticationLoginViewModel>(this)
-						)
+				.UseAuthenticationFlow(flow =>
+					flow
+						.OnLoginRequiredNavigateViewModel<CustomAuthenticationLoginViewModel>(this)
+						.OnLoginCompletedNavigateViewModel<CustomAuthenticationHomeViewModel>(this)
+						.OnLogoutNavigateViewModel<CustomAuthenticationLoginViewModel>(this))
 
 
 				.ConfigureServices((context, services) =>

@@ -20,16 +20,22 @@
 		<utu:NavigationBar AutomationProperties.AutomationId="HomeNavigationBar"
 						   Content="Home" />
 
-		<StackPanel 				Grid.Row="1"
-									HorizontalAlignment="Center"
-									VerticalAlignment="Center"
-									Orientation="Horizontal">
-			<Button Content="Products"
-					Click="{x:Bind ViewModel.RetrieveProducts}" />
-			<Button Content="Logout"
-					Click="{x:Bind ViewModel.Logout}" />
+		<StackPanel Grid.Row="1">
+			<StackPanel HorizontalAlignment="Center"
+						Orientation="Horizontal">
+				<Button AutomationProperties.AutomationId="RetrieveProductsButton"
+						Content="Products"
+						Click="{x:Bind ViewModel.RetrieveProducts}" />
+				<Button AutomationProperties.AutomationId="ClearAccessTokenButton"
+						Content="Clear Access Token"
+						Click="{x:Bind ViewModel.ClearAccessToken}" />
+				<Button AutomationProperties.AutomationId="LogoutButton"
+						Content="Logout"
+						Click="{x:Bind ViewModel.Logout}" />
+			</StackPanel>
+			<TextBlock AutomationProperties.AutomationId="RetrieveProductsResultTextBlock"
+					   Text="{Binding RetrieveProductsResult}" />
 		</StackPanel>
-
 		<ListView ItemsSource="{Binding Products}"
 				  Grid.Row="2">
 			<ListView.ItemTemplate>

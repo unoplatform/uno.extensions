@@ -26,7 +26,8 @@
 			<TextBox Text="{Binding Name, Mode=TwoWay}" />
 			<TextBlock Text="Password" />
 			<TextBox Text="{Binding Password, Mode=TwoWay}" />
-			<Button Content="Login"
+			<Button AutomationProperties.AutomationId="LoginButton"
+					Content="Login"
 					Click="{x:Bind ViewModel.Login}" />
 		</StackPanel>
 	</Grid>

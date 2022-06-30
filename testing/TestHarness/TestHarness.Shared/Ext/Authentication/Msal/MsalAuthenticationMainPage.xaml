@@ -40,7 +40,7 @@
 					Orientation="Horizontal"
 					HorizontalAlignment="Center">
 			<Button AutomationProperties.AutomationId="ShowAppButton"
-					Content="Custom Authentication"
+					Content="Multi Authentication"
 					Click="ShowAppClick" />
 
 		</StackPanel>

@@ -16,6 +16,7 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
+			<RowDefinition />
 		</Grid.RowDefinitions>
 		<utu:NavigationBar AutomationProperties.AutomationId="HomeNavigationBar"
 						   Content="Home" />
@@ -24,10 +25,13 @@
 									HorizontalAlignment="Center"
 									VerticalAlignment="Center" Orientation="Horizontal">
 			<Button Content="Fetch"
-					Click="{x:Bind ViewModel.RetrieveTasks}" />
+					AutomationProperties.AutomationId="FetchButton"
+					Click="{x:Bind ViewModel.Retrieve}" />
 			<Button Content="Clear Access Token"
-					Click="{x:Bind ViewModel.ClearAccessToken}" />
+					Click="{x:Bind ViewModel.ClearAccessToken}"
+					AutomationProperties.AutomationId="ClearAccessTokenButton" />
 			<Button Content="Logout"
+					AutomationProperties.AutomationId="LogoutButton"
 					Click="{x:Bind ViewModel.Logout}" />
 		</StackPanel>
 
@@ -36,6 +40,15 @@
 			<ListView.ItemTemplate>
 				<DataTemplate>
 					<TextBlock Text="{Binding DisplayName}"
+							   FontSize="32" />
+				</DataTemplate>
+			</ListView.ItemTemplate>
+		</ListView>
+		<ListView ItemsSource="{Binding Products}"
+				  Grid.Row="3">
+			<ListView.ItemTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding Title}"
 							   FontSize="32" />
 				</DataTemplate>
 			</ListView.ItemTemplate>
