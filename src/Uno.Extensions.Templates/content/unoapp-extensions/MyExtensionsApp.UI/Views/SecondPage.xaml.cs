@@ -4,7 +4,7 @@ namespace MyExtensionsApp.Views;
 
 public sealed partial class SecondPage : Page
 {
-    public SecondPage()
+	public SecondPage()
     {
         this.InitializeComponent();
     }

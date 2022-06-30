@@ -27,26 +27,26 @@ uid: Learn.Tutorials.Authentication.HowToAuthentication
 
 - Add `UseAuthentication` to the `BuildAppHost` method. The `Login` callback is used to verify the credentials and update the token cache with the verified credentials.
 
-    ```csharp
-    private static IHost BuildAppHost()
-    { 
-        return UnoHost
-                .CreateDefaultBuilder()
-                ...
-                .UseAuthentication(builder =>
-                    builder
-                        .Login(
-                            async (sp, dispatcher, tokenCache, credentials, cancellationToken) =>
+```csharp
+private static IHost BuildAppHost()
+{ 
+    return UnoHost
+            .CreateDefaultBuilder()
+            ...
+            .UseAuthentication(builder =>
+                builder
+                    .Login(
+                        async (sp, dispatcher, tokenCache, credentials, cancellationToken) =>
+                        {
+                            var isValid = credentials.TryGetValue("Username", out var _username) && _username == "Bob";
+                            if(isValid)
                             {
-                                var isValid = credentials.TryGetValue("Username", out var _username) && _username == "Bob";
-                                if(isValid)
-                                {
-                                    await tokenCache.SaveAsync(credentials);
-                                }
-                                return isValid;
-                            })
-                )
-    ```
+                                await tokenCache.SaveAsync(credentials);
+                            }
+                            return isValid;
+                        })
+            )
+```
 
 - Update `MainPage` to accept input via `TextBox` with a binding expression to connect to the `Username` property on the view model. The `Button` is also bound to the `Authenticate` method. 
 
@@ -59,10 +59,10 @@ uid: Learn.Tutorials.Authentication.HowToAuthentication
 
     ```csharp
     public string? Username { get; set; }
-    
+
     private readonly IAuthenticationService _auth;
     private readonly IDispatcher _dispatcher;
-    
+
     public MainViewModel(
         IDispatcher dispatcher,
         INavigator navigator,
@@ -84,7 +84,7 @@ uid: Learn.Tutorials.Authentication.HowToAuthentication
 
 - Update the `Start` method in `ShellViewModel` to invoke Refresh, which will determine if there are valid credentials. If this returns true, can navigate directly to `SecondViewModel`, otherwise to the `MainViewModel`.
 
-```csharp
+    ```csharp
 public async Task Start()
 {
 	if (await _auth.RefreshAsync(CancellationToken.None))
@@ -96,16 +96,16 @@ public async Task Start()
 		await Navigator.NavigateViewModelAsync<MainViewModel>(this);
 	}
 }
-```
+    ```
 
 - Update the "Second" route in `App.xaml.host.cs` to specify that it depends on the "Main" route. This will make sure that even if the app navigates directly to the SecondPage, the MainPage will be added to the backstack.
 
-```csharp
+    ```csharp
 routes
 	.Register(
 		new RouteMap("", View: views.FindByViewModel<ShellViewModel>() ,
 				Nested: new RouteMap[]
-				{
+    {
 								new RouteMap("Main", View: views.FindByViewModel<MainViewModel>()),
 								new RouteMap("Second", View: views.FindByViewModel<SecondViewModel>(), DependsOn:"Main"),
 				}));
@@ -132,10 +132,11 @@ public record SecondViewModel(IDispatcher Dispatcher, IAuthenticationService Aut
         await Auth.LogoutAsync(Dispatcher, CancellationToken.None);
     }
 }
-```
+    ```
 
 From this walk through you can see how the IAuthenticationService can be used to authenticate a user using a very simple check on the username. The Login, Refresh and Logout method can all be implemented in order to change the behavior of the application.
 
+### 2. Navigating to a Page and Removing a Page from Back Stack
 
 
 ### 2. Invoking an Authentication Service
@@ -165,11 +166,11 @@ public class AuthResponse
     [JsonPropertyName("token")]
     public string? Token { get; set; }
 }
-```
+    ```
 
 - Add configuration for Refit endpoints
 
-```csharp
+    ```csharp
 public IHost InitializeHost()
 {
 
@@ -182,11 +183,12 @@ public IHost InitializeHost()
 						.AddNativeHandler()
 						.AddRefitClient<IDummyJsonEndpoint>(context);
 			})
-```
+    ```
 
 - Update `appsettings.json` to include a section that specifies the base Url for the Refit service. Note that the section name needs to match the interface (dropping the leading I) name. In this case the interface name is `IDummyJsonEndpoint`, so the configuration section is `DummyJsonEndpoint`
 
 ```csharp
+public async Task GoToSamplePage()
 {
   "AppConfig": {
     "Title": "AuthSample"
@@ -231,16 +233,16 @@ In this case the Username and Password are extracted out of the credentials dict
 
 - Update the MainPage to include a TextBox for entering the password:
 
-```xml
+    ```xml
 <TextBox Text="{Binding Username, Mode=TwoWay}" />
 <TextBox Text="{Binding Password, Mode=TwoWay}" />
 <Button Content="Login"
         Click="{x:Bind ViewModel.Authenticate}" />
-```
+    ```
 
 - Update the Authenticate method on the MainViewModel to pass both username and password to the LoginAsync method
 
-```csharp
+    ```csharp
 public async Task Authenticate()
 {
     if (await _auth.LoginAsync(_dispatcher, 
@@ -251,7 +253,7 @@ public async Task Authenticate()
     {
         await _navigator.NavigateViewModelAsync<SecondViewModel>(this);
     }
-}
-```
+    }
+    ```
 
 With this done, the application has changed from self-validating the username entered by the user, to using a back-end service to perform the validation.

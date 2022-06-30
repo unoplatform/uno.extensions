@@ -23,7 +23,7 @@ public sealed partial class App : Application
 	protected async override void OnLaunched(LaunchActivatedEventArgs args)
 	{
 
-#if NET5_0_OR_GREATER && WINDOWS
+#if NET6_0_OR_GREATER && WINDOWS && !HAS_UNO
 		_window = new Window();
 		_window.Activate();
 #else

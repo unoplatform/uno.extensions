@@ -1,32 +1,26 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType Condition="'$(Configuration)'=='Release'">WinExe</OutputType>
 		<OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
 		<TargetFramework>net6.0</TargetFramework>
-		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<DefineConstants>$(DefinedConstants);WINUI</DefineConstants>
 	</PropertyGroup>
 	<ItemGroup Condition="exists('..\MyExtensionsApp.Windows')">
 		<EmbeddedResource Include="..\MyExtensionsApp.Windows\Package.appxmanifest" LogicalName="Package.appxmanifest" />
 		<Content Include="..\MyExtensionsApp.Windows\Images\StoreLogo.png" Link="Assets\StoreLogo.png" />
+		<Content Include="Assets\Fonts\uno-fluentui-assets.ttf" />
 	</ItemGroup>
 	<ItemGroup>
 		<UpToDateCheckInput Include="..\MyExtensionsApp.UI\**\*.xaml" />
 	</ItemGroup>
-
 	<ItemGroup>
-		<Content Include="Assets\Fonts\uno-fluentui-assets.ttf" />
-		<Content Include="Assets\Fonts\Roboto-Light.ttf" />
-		<Content Include="Assets\Fonts\Roboto-Medium.ttf" />
-		<Content Include="Assets\Fonts\Roboto-Regular.ttf" />
-	</ItemGroup>
-	<ItemGroup>
-		<PackageReference Include="Uno.WinUI.Skia.Gtk" Version="4.4.5" />
+		<PackageReference Include="Uno.WinUI.Skia.Linux.FrameBuffer" Version="4.4.5" />
 		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.4.5" Condition="'$(Configuration)'=='Debug'" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />
 	</ItemGroup>
+
 	<Import Project="..\Extensions.props" />
 	<Import Project="..\MyExtensionsApp.UI\MyExtensionsApp.UI.projitems" Label="Shared" />
 </Project>
