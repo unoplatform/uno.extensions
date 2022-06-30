@@ -8,11 +8,11 @@ export UNO_UITEST_CHROME_BINARY_PATH=$BUILD_SOURCESDIRECTORY/build/node_modules/
 export UNO_UITEST_SCREENSHOT_PATH=$BUILD_ARTIFACTSTAGINGDIRECTORY/screenshots/wasm
 export UNO_UITEST_PLATFORM=Browser
 export UNO_UITEST_CHROME_CONTAINER_MODE=true
-export UNO_UITEST_PROJECT=$BUILD_SOURCESDIRECTORY/samples/Commerce/Commerce.UITest/Commerce.UITest.csproj
-export UNO_UITEST_BINARY=$BUILD_SOURCESDIRECTORY/samples/Commerce/Commerce.UITest/bin/Release/net48/Commerce.UITest.dll
+export UNO_UITEST_PROJECT=$BUILD_SOURCESDIRECTORY/testing/TestHarness/TestHarness.UITest/TestHarness.UITest.csproj
+export UNO_UITEST_BINARY=$BUILD_SOURCESDIRECTORY/testing/TestHarness/TestHarness.UITest/bin/Release/net48/TestHarness.UITest.dll
 export UNO_UITEST_LOGFILE=$BUILD_ARTIFACTSTAGINGDIRECTORY/screenshots/wasm/nunit-log.txt
-export UNO_UITEST_WASM_PROJECT=$BUILD_SOURCESDIRECTORY/samples/Commerce/Commerce.Wasm/Commerce.Wasm.csproj
-export UNO_UITEST_WASM_OUTPUT_PATH=$BUILD_SOURCESDIRECTORY/samples/Commerce/Commerce.Wasm/bin/Release/net6.0/dist/
+export UNO_UITEST_WASM_PROJECT=$BUILD_SOURCESDIRECTORY/testing/TestHarness/TestHarness.Wasm/TestHarness.Wasm.csproj
+export UNO_UITEST_WASM_OUTPUT_PATH=$BUILD_SOURCESDIRECTORY/testing/TestHarness/TestHarness.Wasm/bin/Release/net6.0/dist/
 export UNO_UITEST_NUNIT_VERSION=3.13.2
 export UNO_UITEST_NUGET_URL=https://dist.nuget.org/win-x86-commandline/v5.7.0/nuget.exe
 export UNO_UITEST_WASM_PROJECT_BUILD_OPTIONS="/p:UnoExtensionsDisableNet6=true /p:GeneratePackageOnBuild=false"
