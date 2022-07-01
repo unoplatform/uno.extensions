@@ -1,7 +1,7 @@
 <Project ToolsVersion="15.0">
   <ItemGroup>
-    <PackageReference Include="Uno.Extensions.Authentication" Version="255.255.255.255" />
-    <PackageReference Include="Uno.Extensions.Authentication.WinUI" Version="255.255.255.255" />
+    <!--<PackageReference Include="Uno.Extensions.Authentication" Version="255.255.255.255" />
+    <PackageReference Include="Uno.Extensions.Authentication.WinUI" Version="255.255.255.255" />-->
     <PackageReference Include="Uno.Extensions.Configuration" Version="255.255.255.255" />
     <PackageReference Include="Uno.Extensions.Core" Version="255.255.255.255" />
     <PackageReference Include="Uno.Extensions.Hosting" Version="255.255.255.255" />
