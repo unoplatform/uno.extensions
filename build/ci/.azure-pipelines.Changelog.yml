@@ -1,0 +1,29 @@
+jobs:
+- job: WebAssembly
+
+  pool:
+    vmImage: 'ubuntu-latest'
+
+  steps:
+  - checkout: self
+    clean: 'true'
+
+  - task: gitversion/setup@0
+    inputs:
+      versionSpec: '5.6.8'
+
+  - task: gitversion/execute@0
+    inputs:
+      useConfigFile: true
+      configFilePath: build/ci/gitversion.yml
+    displayName: Use GitVersion
+
+  - bash: |
+      npm install -g conventional-changelog-cli
+      mkdir CHANGELOG
+      conventional-changelog -p angular -u -r 1 -o "$(build.artifactstagingdirectory)/CHANGELOG/CHANGELOG-$(GitVersion.SemVer).MD"
+    displayName: 'Generate CHANGELOG.MD'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+        ArtifactName: $(Build.DefinitionName)
