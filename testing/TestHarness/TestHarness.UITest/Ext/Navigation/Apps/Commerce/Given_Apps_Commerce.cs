@@ -86,4 +86,57 @@ public class Given_Apps_Commerce : NavigationTestBase
 
 	}
 
+	[Test]
+	public async Task When_ViewModelInstance()
+	{
+		InitTestSection(TestSections.Apps_Commerce);
+
+		App.WaitThenTap("ShowAppButton");
+
+		// Select the narrow layout
+		App.WaitThenTap("WideButton");
+
+		// Make sure the app has loaded
+		App.WaitForElement("LoginNavigationBar");
+
+		// Login
+		App.WaitThenTap("LoginButton");
+
+
+		/// Tap through each navigation view item
+		await App.TapAndWait("DealsNavigationViewItem", "DealsNavigationBar");
+		var dealsId = App
+			.Marked("DealsViewModelIdTextBlock")
+			.WaitUntilExists()
+			.GetDependencyPropertyValue<string>("Text");
+		dealsId.Should().NotBeNull();
+
+		await App.TapAndWait("ProductsNavigationViewItem", "ProductsNavigationBar");
+		var productsId = App
+			.Marked("ProductsViewModelIdTextBlock")
+			.WaitUntilExists()
+			.GetDependencyPropertyValue<string>("Text");
+		productsId.Should().NotBeNull();
+
+		await App.TapAndWait("ProfileNavigationViewItem", "ProfileNavigationBar");
+
+		// Now go back to Deals and Products page and validate the Ids are the same (ie same instance of the viewmodel)
+		await App.TapAndWait("DealsNavigationViewItem", "DealsNavigationBar");
+		var newDealsId = App
+			.Marked("DealsViewModelIdTextBlock")
+			.WaitUntilExists()
+			.GetDependencyPropertyValue<string>("Text");
+		newDealsId.Should().NotBeNull();
+		newDealsId.Should().BeEquivalentTo(dealsId);
+
+		await App.TapAndWait("ProductsNavigationViewItem", "ProductsNavigationBar");
+		var newProductsId = App
+			.Marked("ProductsViewModelIdTextBlock")
+			.WaitUntilExists()
+			.GetDependencyPropertyValue<string>("Text");
+		newProductsId.Should().NotBeNull();
+		newProductsId.Should().BeEquivalentTo(productsId);
+
+	}
+
 }
