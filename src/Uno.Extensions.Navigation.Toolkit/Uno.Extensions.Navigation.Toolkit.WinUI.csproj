@@ -20,7 +20,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Uno.WinUI" Version="4.3.6" />
+		<PackageReference Include="Uno.WinUI" Version="4.4.13" />
 		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.0.0" />
 		<ProjectReference Include="..\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj" />
 	</ItemGroup>
