@@ -20,7 +20,7 @@ jobs:
 
   - bash: |
       npm install -g conventional-changelog-cli
-      mkdir CHANGELOG
+      mkdir "$(build.artifactstagingdirectory)/CHANGELOG"
       conventional-changelog -p angular -u -r 1 -o "$(build.artifactstagingdirectory)/CHANGELOG/CHANGELOG-$(GitVersion.SemVer).MD"
     displayName: 'Generate CHANGELOG.MD'
 
