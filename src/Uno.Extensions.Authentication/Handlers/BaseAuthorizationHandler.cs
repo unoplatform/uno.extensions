@@ -89,14 +89,7 @@ internal abstract class BaseAuthorizationHandler : DelegatingHandler
 	{
 		await ApplyTokensToRequest(request, tokens, ct);
 
-		var response= await base.SendAsync(request, ct);
-
-		if(IsUnauthorized(request,response))
-		{
-
-		}
-
-		return response;
+		return await base.SendAsync(request, ct);
 	}
 
 	protected abstract Task<bool> ApplyTokensToRequest(

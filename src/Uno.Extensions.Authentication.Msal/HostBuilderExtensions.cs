@@ -4,26 +4,37 @@ namespace Uno.Extensions.Authentication.MSAL;
 
 public static class HostBuilderExtensions
 {
-	public static IHostBuilder UseMsalAuthentication(
-		this IHostBuilder builder)
+	public static IAuthenticationBuilder AddMsal(
+		this IAuthenticationBuilder builder,
+		Action<IMsalAuthenticationBuilder>? configure = default,
+		string name = MsalAuthenticationProvider.DefaultName)
 	{
-		return builder.UseMsalAuthentication((IMsalAuthenticationBuilder builder) => { });
-	}
-	public static IHostBuilder UseMsalAuthentication(
-	this IHostBuilder builder,
-	Action<IMsalAuthenticationBuilder>? configure = default,
-		Action<IHandlerBuilder>? configureAuthorization = default)
-	{
-		var authBuilder = builder.AsBuilder<MsalAuthenticationBuilder>();
+		var hostBuilder = (builder as IBuilder)?.HostBuilder;
+		if (hostBuilder is null)
+		{
+			return builder;
+		}
 
-		configure?.Invoke(authBuilder);
-
-		return builder
+		hostBuilder
 			.UseConfiguration(configure: configBuilder =>
 					configBuilder
-						.Section<MsalConfiguration>()
-				)
+						.Section<MsalConfiguration>(name)
+				);
 
-			.UseAuthentication<MsalAuthenticationService, MsalAuthenticationSettings>(authBuilder.Settings, configureAuthorization);
+
+		var authBuilder = builder.AsBuilder<MsalAuthenticationBuilder>();
+		configure?.Invoke(authBuilder);
+
+
+		return builder
+			.AddAuthentication<MsalAuthenticationProvider, MsalAuthenticationSettings>(
+				name,
+				authBuilder.Settings,
+				(provider, settings) => {
+					provider = provider with { Name = name, Settings = settings };
+					provider.Build();
+					return provider;
+				});
 	}
+
 }

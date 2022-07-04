@@ -100,9 +100,9 @@ internal record AuthenticationFlow : IAuthenticationFlow
 	}
 
 
-	public async Task<bool> LoginAsync(IDictionary<string, string>? credentials, CancellationToken ct = default)
+	public async Task<bool> LoginAsync(IDictionary<string, string>? credentials, string? provider = null, CancellationToken ct = default)
 	{
-		var loginResult = await AuthenticationService.LoginAsync(Dispatcher!, credentials, ct);
+		var loginResult = await AuthenticationService.LoginAsync(Dispatcher!, credentials, provider, ct);
 		if (loginResult)
 		{
 			if(_loginCompletedOverride is not null)

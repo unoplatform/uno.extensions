@@ -2,22 +2,17 @@
 
 public static class MsalAuthenticationBuilderExtensions
 {
-	public static IMsalAuthenticationBuilder MsalClient(
+	public static IMsalAuthenticationBuilder Builder(
 		this IMsalAuthenticationBuilder builder,
-		string clientId,
-		Action<PublicClientApplicationBuilder> buildMsalClient
+		Action<PublicClientApplicationBuilder> build
 		)
 	{
 		if (builder is IBuilder<MsalAuthenticationSettings> authBuilder)
 		{
 			authBuilder.Settings = authBuilder.Settings with
 			{
-				ClientId = clientId
+				Build = build
 			};
-			if (authBuilder.Settings.Builder is not null)
-			{
-				buildMsalClient(authBuilder.Settings.Builder);
-			}
 		}
 
 		return builder;

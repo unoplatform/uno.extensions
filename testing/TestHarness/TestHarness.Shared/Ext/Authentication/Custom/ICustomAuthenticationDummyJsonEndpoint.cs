@@ -2,6 +2,12 @@
 
 namespace TestHarness.Ext.Authentication.Custom;
 
+public static class DummyJsonEndpointConstants
+{
+	// See https://dummyjson.com/docs/auth for username/password values
+	public const string ValidUserName = "kminchelle";
+	public const string ValidPassword = "0lelplR";
+}
 
 [Headers("Content-Type: application/json")]
 public interface ICustomAuthenticationDummyJsonEndpoint

@@ -1,8 +1,8 @@
 ﻿namespace Uno.Extensions.Authentication.Handlers;
 
-internal class CookieAuthorizationHandler : BaseAuthorizationHandler
+internal class CookieHandler : BaseAuthorizationHandler
 {
-	public CookieAuthorizationHandler(
+	public CookieHandler(
 		ILogger<BaseAuthorizationHandler> logger,
 		IAuthenticationService authenticationService,
 		ITokenCache tokens,

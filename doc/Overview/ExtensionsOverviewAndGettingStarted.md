@@ -37,9 +37,9 @@ The `dotnet` templates included in the `Uno.Extensions.Templates` package are us
 
     `dotnet new -i Uno.Extensions.Templates`
 
-* Navigate to the desired projects directory, and use the `unoapp-extensions-net6` template to generate the starter solution discussed above
+* Navigate to the desired projects directory, and use the `unoapp-extensions` template to generate the starter solution discussed above
 
-    `dotnet new unoapp-extensions-net6 -o MyProjectName`
+    `dotnet new unoapp-extensions -o MyProjectName`
 
     The argument specified after the `-o` flag (i.e. MyProjectName) will act as the name for both a containing directory and the generated solution.
 

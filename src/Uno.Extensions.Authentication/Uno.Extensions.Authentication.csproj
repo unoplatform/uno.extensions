@@ -20,5 +20,10 @@
 		<PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
 
 	</ItemGroup>
-
+	<ItemGroup>
+		<InternalsVisibleTo Include="$(AssemblyName).UI" />
+		<InternalsVisibleTo Include="$(AssemblyName).WinUI" />
+		<InternalsVisibleTo Include="$(AssemblyName).Msal.UI" />
+		<InternalsVisibleTo Include="$(AssemblyName).Msal.WinUI" />
+	</ItemGroup>
 </Project>

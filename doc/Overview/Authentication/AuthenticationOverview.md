@@ -17,11 +17,11 @@ The `IAuthenticationService` interface defines the methods that an application c
 ````csharp
 public interface IAuthenticationService
 {
-	Task<bool> CanRefresh();
-	Task<bool> LoginAsync(IDispatcher dispatcher, CancellationToken cancellationToken);
-	Task<bool> LoginAsync(IDispatcher dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken);
-	Task<bool> RefreshAsync(CancellationToken cancellationToken);
-	Task<bool> LogoutAsync(IDispatcher dispatcher, CancellationToken cancellationToken);
+	string[] Providers { get; }
+	ValueTask<bool> CanRefresh(CancellationToken? cancellationToken = default);
+	ValueTask<bool> LoginAsync(IDispatcher dispatcher, IDictionary<string, string>? credentials = default, string? provider = null, CancellationToken? cancellationToken = default);
+	ValueTask<bool> RefreshAsync(CancellationToken? cancellationToken = default);
+	ValueTask<bool> LogoutAsync(IDispatcher dispatcher, CancellationToken? cancellationToken = default);
 }
 ````
 There are any number of different application workflows that require authentication but they typically boil down to using one or more of the `IAuthenticationService` methods. For example
@@ -45,20 +45,23 @@ In this scenario the application doesn't require the user to be authenticated un
 -   If `LoginAsync` returns true, the user is then either navigated to the part of the application they were attempting to access, or back to the view they were on.
 -   The user can logout of the application, which again invokes the `LogoutAsync` method
 
+## Authentication Providers (IAuthenticationProvider)
+
+The process of authentication with a given authority is implemented by an authentication provider (i.e. implements IAuthenticationProvider). Multiple providers, and in fact, multiple instances of any provider, can be registered during application startup. For example, an application may want to provide support for authenticating using Facebook, Twitter and Apple - each of these has a different backend service that you need to connect with. In the application the user selects which registered provider to use by supplying the `provider` argument when invoking the `LoginAsync` method. This argument is optional and is not required if only a single provider has been registered.
+
 ### Custom
-The `CustomAuthenticationService` provides a basic implementation of the `IAuthenticationService` that requires callback methods to be defined for performing login, refresh and logout actions. 
+The `CustomAuthenticationProvider` provides a basic implementation of the `IAuthenticationProvider` that requires callback methods to be defined for performing login, refresh and logout actions. 
 
 ### MSAL
-The `MsalAuthenticationService` wraps the `MSAL` library from Microsoft into an implementation of `IAuthenticationService`. This implementation ignores any credentials passed into the `LoginAsync` method, instead invoking the web based authentication process required to authentication with Microsoft.
+The `MsalAuthenticationService` (in the Uno.Extensions.MSAL.UI or Uno.Extensions.MSAL.WinUI packages) wraps the `MSAL` library from Microsoft into an implementation of `IAuthenticationProvider`. This implementation ignores any credentials passed into the `LoginAsync` method, instead invoking the web based authentication process required to authentication with Microsoft.
 
 ## Http Handlers
 Once a user has been authenticated, the tokens are cached and are available for use when invoking service calls. Rather than developers having to access the tokens and manually appending the tokens to the http request, the Authentication extensions includes http handlers which will be inserted into the request pipeline in order to apply the tokens as required.
 
 ### Authorization Header
-The `HeaderHandler` (TODO: Currently this is called HeaderAuthorizationHandler but I think either AuthorizationHeaderHandler or just HeaderHandler would be better) is used to apply the access token to the http request using the `Authorization` header. The default scheme is `Bearer` but this can be override to use a different scheme, such as basic.
+The `HeaderHandler` is used to apply the access token to the http request using the `Authorization` header. The default scheme is `Bearer` but this can be override to use a different scheme, such as basic.
 
 ### Cookies
-(TODO: Rename CookieAuthenticationHandler to just CookieHandler)
 The `CookieHandler` is used to apply the access token, and/or refresh token, to the http request as cookies. This requires the cookie name for access tokena and request token to be specified as part of configuring the application.
 
 ## IAuthenticationFlow
@@ -67,10 +70,9 @@ The `IAuthenticationFlow` interface is designed to reduce the need for applicati
 public interface IAuthenticationFlow
 {
 	void Initialize(IDispatcher dispatcher, INavigator navigator);
-
 	Task<NavigationResponse?> AuthenticatedNavigateAsync(NavigationRequest request, INavigator? navigator = default, CancellationToken ct = default);
 	Task<bool> EnsureAuthenticatedAsync(CancellationToken ct = default);
-	Task<bool> LoginAsync(IDictionary<string, string>? credentials, CancellationToken ct = default);
+	Task<bool> LoginAsync(IDictionary<string, string>? credentials, string? provider = null, CancellationToken ct = default);
 	Task<bool> LogoutAsync(CancellationToken ct = default);
 }
 ```
