@@ -50,7 +50,9 @@
 		</Grid.RowDefinitions>
 		<utu:NavigationBar  AutomationProperties.AutomationId="ProductsNavigationBar"
 							Content="Products" />
-
+		<TextBlock AutomationProperties.AutomationId="ProductsViewModelIdTextBlock"
+				   Text="{Binding ViewModelId}"
+				   FontWeight="Bold" />
 		<Grid Grid.Row="1">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="*"

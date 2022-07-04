@@ -1,6 +1,6 @@
 ﻿namespace TestHarness.Ext.Navigation.Apps.Commerce;
 
-public record CommerceDealsViewModel(INavigator Navigator)
+public record CommerceDealsViewModel(INavigator Navigator) : BaseCommerceViewModel()
 {
 	public CommerceProduct[] Deals { get; } = new[]
 			{
