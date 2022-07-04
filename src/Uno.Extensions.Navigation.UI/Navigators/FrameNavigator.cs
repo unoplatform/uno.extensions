@@ -96,7 +96,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 		}
 
 		var route = request.Route;
-		var segments = route.ForwardNavigationSegments(Resolver, Region);
+		var segments = route.ForwardNavigationSegments(Resolver, Region, includeDependsOnRoutes: true);
 
 		// As this is a forward navigation
 		if (segments.Length == 0)

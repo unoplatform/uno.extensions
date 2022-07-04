@@ -65,7 +65,8 @@ public static class RouteExtensions
 	public static (Route, RouteInfo?, bool)[] ForwardNavigationSegments(
 		this Route route,
 		IRouteResolver mappings,
-		IRegion region)
+		IRegion region,
+		bool includeDependsOnRoutes)
 	{
 		// Here we're interested in the actual page navigation segments.
 		// Start with an empty list, and progressively add routes that
@@ -79,7 +80,7 @@ public static class RouteExtensions
 
 		// For routes that have a depends on, we need to ensure that
 		// the dependson segments are added to the segments list
-		var r = route.RootDependsOn(mappings, region, false);
+		var r = includeDependsOnRoutes ? route.RootDependsOn(mappings, region, false) : route;
 		var map = mappings.Find(r);
 		var originalRoute = false;
 		while (
@@ -95,7 +96,7 @@ public static class RouteExtensions
 		)
 		{
 			// Check if we've found the origianl route yet (if not, we're still processin dependson routes)
-			originalRoute = originalRoute || r.Base == route.Base; 
+			originalRoute = originalRoute || r.Base == route.Base;
 			segs.Add((r with { Qualifier = Qualifiers.None, Path = null, Data = null }, map, !originalRoute));
 			r = r.Next();
 			map = mappings.Find(r);
@@ -108,41 +109,7 @@ public static class RouteExtensions
 		}
 
 		return segs.ToArray();
-
-		//var segments = new List<Route>() { route with { Qualifier = Qualifiers.None, Path = null, Data = (route.IsLastFrameRoute(mappings) ? route.Data : null) } };
-		//var nextRoute = route.Next();
-		//var rm = mappings.Find(nextRoute);
-		//while (
-		//	!nextRoute.IsEmpty() &&
-		//	(
-		//		nextRoute.IsBackOrCloseNavigation() ||
-		//		(
-		//			rm is not null &&
-		//			// Checks that there is a View specified and that it inherits from Page
-		//			rm.IsPageRouteMap() &&
-		//			// Either this is the first segment (dependson should be "" as should be first in sequence) OR
-		//			// this is not the first segment (so dependson should be set)
-		//			((string.IsNullOrWhiteSpace(rm.DependsOn) && segments.Count == 0) ^ ((segments.Count > 0 && segments[0].Base == rm.DependsOn) || (currentRoute?.Base == rm.DependsOn)))
-		//		)
-		//	)
-		//)
-		//{
-		//	if (nextRoute.IsBackOrCloseNavigation())
-		//	{
-		//		segments.Add(nextRoute with { Path = null, Data = null });
-		//	}
-		//	else
-		//	{
-		//		segments.Add(nextRoute with { Qualifier = Qualifiers.None, Path = null, Data = (nextRoute.IsLastFrameRoute(mappings) ? nextRoute.Data : null) });
-		//	}
-		//	nextRoute = nextRoute.Next();
-		//	rm = mappings.Find(nextRoute);
-		//}
-		//return segments.ToArray();
 	}
-
-	public static string[] ForwardNavigationSegments(this string path) =>
-		path.Split(Qualifiers.Separator.First()).Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
 
 	public static object? ResponseData(this Route route) =>
 		(route?.Data?.TryGetValue(string.Empty, out var result) ?? false) ? result : null;
@@ -408,7 +375,7 @@ public static class RouteExtensions
 		}
 		else
 		{
-			var segments = currentRoute.ForwardNavigationSegments(resolver, region).ToList();
+			var segments = currentRoute.ForwardNavigationSegments(resolver, region, includeDependsOnRoutes: false).ToList();
 			foreach (var qualifierChar in qualifier)
 			{
 				if (qualifierChar + "" == Qualifiers.NavigateBack)
@@ -421,7 +388,7 @@ public static class RouteExtensions
 				}
 			}
 
-			var newSegments = frameRoute.ForwardNavigationSegments(resolver, region);
+			var newSegments = frameRoute.ForwardNavigationSegments(resolver, region, includeDependsOnRoutes: true);
 			if (newSegments is not null)
 			{
 				newSegments = (from seg in newSegments
@@ -445,6 +412,14 @@ public static class RouteExtensions
 	public static Route RootDependsOn(this Route currentRoute, IRouteResolver resolver, IRegion region, bool includeCurrentRegion)
 	{
 		var rm = resolver.FindByPath(currentRoute.Base);
+		if ((rm is null ||
+			string.IsNullOrEmpty(rm.DependsOn)) &&
+			region.Navigator()?.Route?.Base == currentRoute.Base &&
+			!includeCurrentRegion)
+		{
+			return Route.Empty;
+		}
+
 		while (rm is not null &&
 			!string.IsNullOrEmpty(rm.DependsOn))
 		{
@@ -456,7 +431,7 @@ public static class RouteExtensions
 				// In the scenario where we're navigating to the currentRoute, we don't
 				// want to include the route for the current region (since the region
 				// is already at that route)
-				if(includeCurrentRegion &&
+				if (includeCurrentRegion &&
 					region.Navigator()?.Route?.Base == rm.DependsOn)
 				{
 					currentRoute = currentRoute.Insert(rm.DependsOn);
