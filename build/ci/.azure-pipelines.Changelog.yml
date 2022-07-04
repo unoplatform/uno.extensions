@@ -1,5 +1,5 @@
 jobs:
-- job: CHANGELOG generation
+- job: CHANGELOG_generation
 
   pool:
     vmImage: 'ubuntu-latest'
