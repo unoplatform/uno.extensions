@@ -2,9 +2,8 @@
 
 public class Given_Msal : NavigationTestBase
 {
-	// TODO: Fix UI Test fail
 	// [Test]
-	public async Task When_Multi()
+	public async Task When_Multi_Auth()
 	{
 		InitTestSection(TestSections.Authentication_Multi);
 

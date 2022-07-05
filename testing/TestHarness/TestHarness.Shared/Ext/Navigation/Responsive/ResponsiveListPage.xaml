@@ -8,13 +8,17 @@
 	  xmlns:models="using:TestHarness.Models"
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  xmlns:utu="using:Uno.Toolkit.UI"
+	  xmlns:triggers="using:CommunityToolkit.WinUI.UI.Triggers"
 	  NavigationCacheMode="Required">
 
-	<Grid>
+	<Grid x:Name="ParentGrid">
 		<VisualStateManager.VisualStateGroups>
 			<VisualStateGroup>
-				<VisualState x:Name="Narrow" />
 				<VisualState x:Name="Wide">
+					<VisualState.StateTriggers>
+						<triggers:ControlSizeTrigger MinWidth="{StaticResource WideMinWindowWidth}"
+													 TargetElement="{Binding ElementName=ParentGrid}" />
+					</VisualState.StateTriggers>
 					<VisualState.Setters>
 						<Setter Target="ListColumn.Width"
 								Value="*" />
@@ -27,6 +31,12 @@
 						<Setter Target="Details.(uen:Region.Attached)"
 								Value="true" />
 					</VisualState.Setters>
+				</VisualState>
+				<VisualState x:Name="Narrow">
+					<VisualState.StateTriggers>
+						<triggers:ControlSizeTrigger MinWidth="0"
+													 TargetElement="{Binding ElementName=ParentGrid}" />
+					</VisualState.StateTriggers>
 				</VisualState>
 			</VisualStateGroup>
 		</VisualStateManager.VisualStateGroups>
