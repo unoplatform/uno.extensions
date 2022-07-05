@@ -31,6 +31,7 @@
 		<PackageReference Include="Uno.WinUI.MSAL" Version="4.4.5" />
 	</ItemGroup>
 	<ItemGroup>
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Authentication.Oidc\Uno.Extensions.Authentication.Oidc.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Authentication\Uno.Extensions.Authentication.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Authentication.UI\Uno.Extensions.Authentication.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Authentication.Msal\Uno.Extensions.Authentication.Msal.WinUI.csproj" />

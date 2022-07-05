@@ -51,6 +51,20 @@
       <DependentUpon>MsalAuthenticationWelcomePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\MsalAuthenticationWelcomeViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Oidc\OidcAuthenticationHomePage.xaml.cs">
+      <DependentUpon>OidcAuthenticationHomePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Oidc\OidcAuthenticationHomeViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Oidc\OidcAuthenticationHostInit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Oidc\OidcAuthenticationLoginPage.xaml.cs">
+      <DependentUpon>OidcAuthenticationLoginPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Oidc\OidcAuthenticationLoginViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Oidc\OidcAuthenticationMainPage.xaml.cs">
+      <DependentUpon>OidcAuthenticationMainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Oidc\OidcAuthenticationShellViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Oidc\IOidcAuthenticationTestEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\BaseCommerceViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceCredentials.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceDealsPage.xaml.cs">
@@ -209,6 +223,18 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Authentication\Oidc\OidcAuthenticationHomePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Authentication\Oidc\OidcAuthenticationLoginPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Authentication\Oidc\OidcAuthenticationMainPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceDealsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -342,6 +368,7 @@
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\appsettings.multi.json" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\appsettings.msal.json" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\appsettings.msalauthentication.json" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Oidc\appsettings.oidc.json" />
     <_Globbled_Page Include="$(MSBuildThisFileDirectory)**/*.xaml" Exclude="@(Page);@(ApplicationDefinition)">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

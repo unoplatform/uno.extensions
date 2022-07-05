@@ -185,7 +185,7 @@ namespace Uno.Extensions.Http
 #else
                 new Xamarin.Android.Net.AndroidClientHandler()
 #endif
-#elif NETFX_CORE
+#elif WINDOWS || WINDOWS_UWP
                 new WinHttpHandler()
 #else
 				new HttpClientHandler()
