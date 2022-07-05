@@ -1096,11 +1096,8 @@ Global
 		SolutionGuid = {C7433AE2-B1A0-4C1A-887E-5CAA7AAF67A6}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		TestHarness.Shared\TestHarness.Shared.projitems*{1692d283-aaa3-410b-abad-eafcc46574b4}*SharedItemsImports = 5
 		TestHarness.Shared\TestHarness.Shared.projitems*{1aa13270-f438-4864-9435-54fd806e10ea}*SharedItemsImports = 5
 		TestHarness.Shared\TestHarness.Shared.projitems*{40ea03f7-8a22-4143-b251-79bac3eb13d2}*SharedItemsImports = 5
-		TestHarness.Shared\TestHarness.Shared.projitems*{46549ece-8a4f-479d-a9d0-131b064412d8}*SharedItemsImports = 5
 		TestHarness.Shared\TestHarness.Shared.projitems*{6279c845-92f8-4333-ab99-3d213163593c}*SharedItemsImports = 13
-		TestHarness.Shared\TestHarness.Shared.projitems*{a5b8155a-118f-4794-b551-c6f3cf7e5411}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal
