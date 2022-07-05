@@ -18,6 +18,22 @@ public static class MsalAuthenticationBuilderExtensions
 		return builder;
 	}
 
+	public static IMsalAuthenticationBuilder Storage(
+		this IMsalAuthenticationBuilder builder,
+		Action<StorageCreationPropertiesBuilder> store
+		)
+	{
+		if (builder is IBuilder<MsalAuthenticationSettings> authBuilder)
+		{
+			authBuilder.Settings = authBuilder.Settings with
+			{
+				Store = store
+			};
+		}
+
+		return builder;
+	}
+
 	public static IMsalAuthenticationBuilder Scopes(
 		this IMsalAuthenticationBuilder builder,
 		string[] scopes

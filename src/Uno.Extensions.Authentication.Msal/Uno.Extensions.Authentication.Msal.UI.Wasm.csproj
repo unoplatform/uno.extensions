@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<IsPackable>false</IsPackable>
+		<RootNamespace>Uno.Extensions.Authentication.MSAL.UI</RootNamespace>
+		<AssemblyName>Uno.Extensions.Authentication.MSAL.UI</AssemblyName>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Uno.UI.Runtime.WebAssembly" Version="4.3.6" />
+		<PackageReference Include="Uno.UI.MSAL" Version="4.3.6" />
+	</ItemGroup>
+
+	<Import Project="common.props" />
+
+	<ItemGroup>
+		<Compile Include="**\*.wasm.cs" />
+	</ItemGroup>
+</Project>

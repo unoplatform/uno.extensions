@@ -108,9 +108,23 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authenticati
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authentication.WinUI", "Uno.Extensions.Authentication.UI\Uno.Extensions.Authentication.WinUI.csproj", "{C76A3086-846C-4919-A1A3-7F2E67C5A355}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authentication.Msal.UI", "Uno.Extensions.Authentication.Msal\Uno.Extensions.Authentication.Msal.UI.csproj", "{BEE266FC-BC1C-4981-9677-A2E09E201BE0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authentication.MSAL.UI", "Uno.Extensions.Authentication.MSAL\Uno.Extensions.Authentication.MSAL.UI.csproj", "{BEE266FC-BC1C-4981-9677-A2E09E201BE0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authentication.Msal.WinUI", "Uno.Extensions.Authentication.Msal\Uno.Extensions.Authentication.Msal.WinUI.csproj", "{978A32D5-B542-4E4D-9F2E-AE78752F9633}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authentication.MSAL.WinUI", "Uno.Extensions.Authentication.MSAL\Uno.Extensions.Authentication.MSAL.WinUI.csproj", "{978A32D5-B542-4E4D-9F2E-AE78752F9633}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authentication.MSAL.UI.Wasm", "Uno.Extensions.Authentication.MSAL\Uno.Extensions.Authentication.MSAL.UI.Wasm.csproj", "{8048CE5E-57F6-466C-A85C-1A4B867A2440}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authentication.MSAL.WinUI.Wasm", "Uno.Extensions.Authentication.MSAL\Uno.Extensions.Authentication.MSAL.WinUI.Wasm.csproj", "{226E7333-B221-4ABD-8D0A-6CB9BF8B8FD8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BEBE0A7A-DF4F-4250-A50E-6901C936A01B}"
+	ProjectSection(SolutionItems) = preProject
+		crosstargeting_override.props.sample = crosstargeting_override.props.sample
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
+		global.json = global.json
+		Uno.CrossTargeting.props = Uno.CrossTargeting.props
+		winappsdk-workaround.targets = winappsdk-workaround.targets
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -294,6 +308,14 @@ Global
 		{978A32D5-B542-4E4D-9F2E-AE78752F9633}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{978A32D5-B542-4E4D-9F2E-AE78752F9633}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{978A32D5-B542-4E4D-9F2E-AE78752F9633}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8048CE5E-57F6-466C-A85C-1A4B867A2440}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8048CE5E-57F6-466C-A85C-1A4B867A2440}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8048CE5E-57F6-466C-A85C-1A4B867A2440}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8048CE5E-57F6-466C-A85C-1A4B867A2440}.Release|Any CPU.Build.0 = Release|Any CPU
+		{226E7333-B221-4ABD-8D0A-6CB9BF8B8FD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{226E7333-B221-4ABD-8D0A-6CB9BF8B8FD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{226E7333-B221-4ABD-8D0A-6CB9BF8B8FD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{226E7333-B221-4ABD-8D0A-6CB9BF8B8FD8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -340,6 +362,8 @@ Global
 		{C76A3086-846C-4919-A1A3-7F2E67C5A355} = {FEABD28F-23AE-4CDC-9933-44D6717C681C}
 		{BEE266FC-BC1C-4981-9677-A2E09E201BE0} = {FEABD28F-23AE-4CDC-9933-44D6717C681C}
 		{978A32D5-B542-4E4D-9F2E-AE78752F9633} = {FEABD28F-23AE-4CDC-9933-44D6717C681C}
+		{8048CE5E-57F6-466C-A85C-1A4B867A2440} = {FEABD28F-23AE-4CDC-9933-44D6717C681C}
+		{226E7333-B221-4ABD-8D0A-6CB9BF8B8FD8} = {FEABD28F-23AE-4CDC-9933-44D6717C681C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6E7B035D-9A64-4D95-89AA-9D4653F17C42}

@@ -16,7 +16,7 @@
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="7.1.2" />
 		<PackageReference Include="Uno.CommunityToolkit.WinUI.UI" Version="7.1.100-dev.15.g12261e2626" />
-		<PackageReference Include="Microsoft.Identity.Client" Version="4.44.0" />
+		<PackageReference Include="Microsoft.Identity.Client" Version="4.45.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
 		<PackageReference Include="Refit" Version="6.3.2" />

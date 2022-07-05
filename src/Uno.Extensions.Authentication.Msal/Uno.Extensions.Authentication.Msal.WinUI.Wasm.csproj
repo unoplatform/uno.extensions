@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<IsPackable>false</IsPackable>
+		<RootNamespace>Uno.Extensions.Authentication.MSAL.WinUI</RootNamespace>
+		<AssemblyName>Uno.Extensions.Authentication.MSAL.WinUI</AssemblyName>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+	</PropertyGroup>
+
+
+	<ItemGroup>
+		<PackageReference Include="Uno.WinUI.Runtime.WebAssembly" Version="4.3.6" />
+		<PackageReference Include="Uno.WinUI.MSAL" Version="4.3.6" />
+	</ItemGroup>
+
+	<Import Project="common.props" />
+
+	<ItemGroup>
+		<Compile Include="**\*.wasm.cs" />
+	</ItemGroup>
+
+</Project>

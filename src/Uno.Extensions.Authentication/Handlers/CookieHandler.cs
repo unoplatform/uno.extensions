@@ -45,7 +45,8 @@ internal class CookieHandler : BaseAuthorizationHandler
 		{
 			var access = !string.IsNullOrWhiteSpace(_settings.CookieAccessToken) ? cookies.GetCookies(request.RequestUri)[_settings.CookieAccessToken]?.Value : default;
 			var refresh = !string.IsNullOrWhiteSpace(_settings.CookieRefreshToken) ? cookies.GetCookies(request.RequestUri)[_settings.CookieRefreshToken]?.Value : default;
-			await _tokens.SaveTokensAsync(access, refresh);
+			// TODO: Specify the correct provider - https://github.com/unoplatform/uno.extensions/issues/588
+			await _tokens.SaveTokensAsync(_authenticationService.Providers.First(), access, refresh);
 			return true;
 		}
 		return false;
