@@ -9,25 +9,17 @@
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  xmlns:um="using:Uno.Material"
 	  mc:Ignorable="d"
+	  xmlns:triggers="using:CommunityToolkit.WinUI.UI.Triggers"
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-	<Grid>
+	<Grid x:Name="ParentGrid">
 		<VisualStateManager.VisualStateGroups>
 			<VisualStateGroup>
-				<VisualState x:Name="Narrow">
-
-					<VisualState.Setters>
-						<Setter Target="Tabs.Visibility"
-								Value="Visible" />
-						<Setter Target="NavView.IsPaneToggleButtonVisible"
-								Value="false" />
-						<Setter Target="NavView.PaneDisplayMode"
-								Value="LeftMinimal" />
-						<Setter Target="NavView.IsPaneOpen"
-								Value="False" />
-					</VisualState.Setters>
-				</VisualState>
 				<VisualState x:Name="Wide">
+					<VisualState.StateTriggers>
+						<triggers:ControlSizeTrigger MinWidth="{StaticResource WideMinWindowWidth}"
+													 TargetElement="{Binding ElementName=ParentGrid}" />
+					</VisualState.StateTriggers>
 					<VisualState.Setters>
 						<Setter Target="Tabs.Visibility"
 								Value="Collapsed" />
@@ -39,6 +31,22 @@
 								Value="Auto" />
 					</VisualState.Setters>
 				</VisualState>
+				<VisualState x:Name="Narrow">
+					<VisualState.StateTriggers>
+						<triggers:ControlSizeTrigger MinWidth="0" />
+					</VisualState.StateTriggers>
+					<VisualState.Setters>
+						<Setter Target="Tabs.Visibility"
+								Value="Visible" />
+						<Setter Target="NavView.IsPaneToggleButtonVisible"
+								Value="false" />
+						<Setter Target="NavView.PaneDisplayMode"
+								Value="LeftMinimal" />
+						<Setter Target="NavView.IsPaneOpen"
+								Value="False" />
+					</VisualState.Setters>
+				</VisualState>
+
 			</VisualStateGroup>
 		</VisualStateManager.VisualStateGroups>
 

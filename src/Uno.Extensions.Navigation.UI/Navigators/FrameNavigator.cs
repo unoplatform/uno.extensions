@@ -96,7 +96,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 		}
 
 		var route = request.Route;
-		var segments = route.ForwardNavigationSegments(Resolver, Region, includeDependsOnRoutes: true);
+		var segments = route.ForwardNavigationSegments(Resolver, Region);
 
 		// As this is a forward navigation
 		if (segments.Length == 0)
@@ -128,7 +128,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 			// Rebuild the nested region hierarchy
 			Control.ReassignRegionParent();
 			if (segments.Length > 1 ||
-				string.IsNullOrWhiteSpace(request.Route.Path))
+				!string.IsNullOrWhiteSpace(request.Route.Path))
 			{
 				refreshViewModel = true;
 			}
