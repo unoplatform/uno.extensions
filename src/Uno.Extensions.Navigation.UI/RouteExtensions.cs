@@ -65,8 +65,7 @@ public static class RouteExtensions
 	public static (Route, RouteInfo?, bool)[] ForwardNavigationSegments(
 		this Route route,
 		IRouteResolver mappings,
-		IRegion region,
-		bool includeDependsOnRoutes)
+		IRegion region)
 	{
 		// Here we're interested in the actual page navigation segments.
 		// Start with an empty list, and progressively add routes that
@@ -80,7 +79,7 @@ public static class RouteExtensions
 
 		// For routes that have a depends on, we need to ensure that
 		// the dependson segments are added to the segments list
-		var r = includeDependsOnRoutes ? route.RootDependsOn(mappings, region, false) : route;
+		var r = route.RootDependsOn(mappings, region, false);
 		var map = mappings.Find(r);
 		var originalRoute = false;
 		while (
@@ -375,7 +374,7 @@ public static class RouteExtensions
 		}
 		else
 		{
-			var segments = currentRoute.ForwardNavigationSegments(resolver, region, includeDependsOnRoutes: false).ToList();
+			var segments = currentRoute.ForwardNavigationSegments(resolver, region).ToList();
 			foreach (var qualifierChar in qualifier)
 			{
 				if (qualifierChar + "" == Qualifiers.NavigateBack)
@@ -388,7 +387,7 @@ public static class RouteExtensions
 				}
 			}
 
-			var newSegments = frameRoute.ForwardNavigationSegments(resolver, region, includeDependsOnRoutes: true);
+			var newSegments = frameRoute.ForwardNavigationSegments(resolver, region);
 			if (newSegments is not null)
 			{
 				newSegments = (from seg in newSegments
@@ -412,13 +411,13 @@ public static class RouteExtensions
 	public static Route RootDependsOn(this Route currentRoute, IRouteResolver resolver, IRegion region, bool includeCurrentRegion)
 	{
 		var rm = resolver.FindByPath(currentRoute.Base);
-		if ((rm is null ||
-			string.IsNullOrEmpty(rm.DependsOn)) &&
-			region.Navigator()?.Route?.Base == currentRoute.Base &&
-			!includeCurrentRegion)
-		{
-			return Route.Empty;
-		}
+		//if ((rm is null ||
+		//	string.IsNullOrEmpty(rm.DependsOn)) &&
+		//	region.Navigator()?.Route?.Base == currentRoute.Base &&
+		//	!includeCurrentRegion)
+		//{
+		//	return Route.Empty;
+		//}
 
 		while (rm is not null &&
 			!string.IsNullOrEmpty(rm.DependsOn))

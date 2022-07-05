@@ -2,9 +2,8 @@
 
 public class Given_Apps_ToDo : NavigationTestBase
 {
-	// TODO: Work out why this is failing
-	//[Test]
-	public async Task When_Responsive()
+	[Test]
+	public async Task When_ToDo_Responsive()
 	{
 		InitTestSection(TestSections.Apps_ToDo);
 

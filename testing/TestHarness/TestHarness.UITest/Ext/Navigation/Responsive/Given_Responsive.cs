@@ -2,9 +2,8 @@
 
 public class Given_Responsive : NavigationTestBase
 {
-	// TODO: Work out why this is failing
-	//[Test]
-	public async Task When_Responsive()
+	[Test]
+	public async Task When_Navigation_Responsive()
 	{
 		InitTestSection(TestSections.Responsive);
 

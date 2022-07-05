@@ -58,9 +58,16 @@ public sealed class NavigationRegion : IRegion
 		View = view;
 		if (View is not null)
 		{
-			View.Loading += ViewLoading;
-			View.Loaded += ViewLoaded;
 			View.SetInstance(this);
+			if (!View.IsLoaded)
+			{
+				View.Loading += ViewLoading;
+				View.Loaded += ViewLoaded;
+			}
+			else
+			{
+				View.Unloaded += ViewUnloaded;
+			}
 		}
 
 		if (services is not null)
@@ -137,7 +144,7 @@ public sealed class NavigationRegion : IRegion
 
     private void AssignParent()
     {
-        if (View is null || _isRoot)
+        if (View is null || _isRoot || !View.GetAttached())
         {
             return;
         }

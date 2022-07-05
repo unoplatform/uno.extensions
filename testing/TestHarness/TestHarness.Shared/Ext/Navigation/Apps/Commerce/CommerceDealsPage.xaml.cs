@@ -1,4 +1,6 @@
 ﻿
+using System.Diagnostics;
+
 namespace TestHarness.Ext.Navigation.Apps.Commerce;
 
 public sealed partial class CommerceDealsPage : Page
@@ -7,7 +9,11 @@ public sealed partial class CommerceDealsPage : Page
 	public CommerceDealsPage()
 	{
 		this.InitializeComponent();
-
-		this.ApplyAdaptiveTrigger(App.Current.Resources["WideMinWindowWidth"] is double width ? width : 0.0, nameof(Narrow), nameof(Wide));
 	}
+
+	private void ResponsiveStateChanged(object sender, VisualStateChangedEventArgs e)
+	{
+		Debug.WriteLine("State Changed");
+	}
+
 }
