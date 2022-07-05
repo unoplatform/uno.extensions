@@ -87,12 +87,12 @@ public static class Region
 		return (IRegion)element.GetValue(InstanceProperty);
 	}
 
-	public static void SetAttached(DependencyObject element, bool value)
+	public static void SetAttached(this DependencyObject element, bool value)
 	{
 		element.SetValue(AttachedProperty, value);
 	}
 
-	public static bool GetAttached(DependencyObject element)
+	public static bool GetAttached(this DependencyObject element)
 	{
 		return (bool)element.GetValue(AttachedProperty);
 	}

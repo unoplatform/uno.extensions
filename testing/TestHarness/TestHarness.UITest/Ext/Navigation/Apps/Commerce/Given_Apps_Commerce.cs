@@ -2,9 +2,8 @@
 
 public class Given_Apps_Commerce : NavigationTestBase
 {
-	// TODO: Work out why this is failing
-	//[Test]
-	public async Task When_Responsive()
+	[Test]
+	public async Task When_Commerce_Responsive()
 	{
 		InitTestSection(TestSections.Apps_Commerce);
 
@@ -28,14 +27,14 @@ public class Given_Apps_Commerce : NavigationTestBase
 		await App.TapAndWait("ProfileTabBarItem", "ProfileNavigationBar");
 
 		// Select a deal
-		await App.TapAndWait("DealsTabBarItem", "DealsNavigationBar");
+		await App.TapAndWait("DealsTabBarItem", "DealsListView");
 
 		await App.SelectListViewIndexAndWait("DealsListView", "1", "ProductDetailsNavigationBar");
 
 		await App.TapAndWait("DetailsBackButton", "DealsNavigationBar");
 
 		// Select a product
-		await App.TapAndWait("ProductsTabBarItem", "ProductsNavigationBar");
+		await App.TapAndWait("ProductsTabBarItem", "ProductsListView");
 
 		await App.SelectListViewIndexAndWait("ProductsListView", "2", "ProductDetailsNavigationBar");
 
@@ -68,14 +67,14 @@ public class Given_Apps_Commerce : NavigationTestBase
 
 
 		// Select a deal
-		await App.TapAndWait("DealsNavigationViewItem","DealsNavigationBar");
+		await App.TapAndWait("DealsNavigationViewItem", "DealsListView");
 
 		await App.SelectListViewIndexAndWait("DealsListView", "2", "ProductDetailsNavigationBar");
 		App.WaitForElement("DealsNavigationBar");
 
 
 		// Select a product
-		await App.TapAndWait("ProductsNavigationViewItem","ProductsNavigationBar");
+		await App.TapAndWait("ProductsNavigationViewItem", "ProductsListView");
 
 		await App.SelectListViewIndexAndWait("ProductsListView", "1", "ProductDetailsNavigationBar");
 		App.WaitForElement("ProductsNavigationBar");

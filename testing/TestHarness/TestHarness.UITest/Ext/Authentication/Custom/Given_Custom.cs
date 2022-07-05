@@ -2,9 +2,8 @@
 
 public class Given_Custom : NavigationTestBase
 {
-	// TODO: Fix UI Test fail
 	// [Test]
-	public async Task When_Custom()
+	public async Task When_Custom_Auth()
 	{
 		InitTestSection(TestSections.Authentication_Custom);
 

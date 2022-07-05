@@ -8,14 +8,19 @@
 	  xmlns:utu="using:Uno.Toolkit.UI"
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  xmlns:um="using:Uno.Material"
+	  xmlns:triggers="using:CommunityToolkit.WinUI.UI.Triggers"
 	  mc:Ignorable="d"
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
 	  NavigationCacheMode="Required">
 
-	<Grid>
+	<Grid x:Name="ParentGrid">
 		<VisualStateManager.VisualStateGroups>
 			<VisualStateGroup>
 				<VisualState x:Name="Wide">
+					<VisualState.StateTriggers>
+						<triggers:ControlSizeTrigger MinWidth="{StaticResource WideMinWindowWidth}"
+													 TargetElement="{Binding ElementName=ParentGrid}" />
+					</VisualState.StateTriggers>
 					<VisualState.Setters>
 						<!--<Setter Target="ProductsListView.SelectionMode"
 								Value="Single" />-->
@@ -34,6 +39,9 @@
 					</VisualState.Setters>
 				</VisualState>
 				<VisualState x:Name="Narrow">
+					<VisualState.StateTriggers>
+						<triggers:ControlSizeTrigger MinWidth="0" />
+					</VisualState.StateTriggers>
 					<VisualState.Setters>
 						<!--<Setter Target="ProductsListView.SelectionMode"
 								Value="None" />-->
@@ -75,6 +83,7 @@
 			</ListView>
 			<Grid Grid.Column="1"
 				  x:Name="DetailsGrid"
+				  Background="LightPink"
 				  Visibility="Collapsed">
 				<ContentControl x:Name="Details"
 								uen:Region.Attached="false"
