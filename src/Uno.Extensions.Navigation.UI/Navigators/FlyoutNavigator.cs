@@ -19,10 +19,18 @@ public class FlyoutNavigator : ControlNavigator
 		_window = window;
 	}
 
-	protected override bool RegionCanNavigate(Route route, RouteInfo? routeMap) =>
-		route.IsBackOrCloseNavigation() || 
-		(base.RegionCanNavigate(route, routeMap) &&
-		routeMap?.RenderView is not null);
+	protected override Task<bool> RegionCanNavigate(Route route, RouteInfo? routeMap)
+	{
+		if (route.IsBackOrCloseNavigation())
+		{
+			return Task.FromResult(true);
+		}
+		if (routeMap?.RenderView is null)
+		{
+			return Task.FromResult(false);
+		}
+		return base.RegionCanNavigate(route, routeMap);
+	}
 
 	protected override async Task<Route?> ExecuteRequestAsync(NavigationRequest request)
 	{
@@ -47,7 +55,7 @@ public class FlyoutNavigator : ControlNavigator
 			}
 
 			var mapping = Resolver.Find(route);
-			injectedFlyout = !(mapping?.RenderView?.IsSubclassOf(typeof(Flyout))??false);
+			injectedFlyout = !(mapping?.RenderView?.IsSubclassOf(typeof(Flyout)) ?? false);
 			var viewModel = await CreateViewModel(Region.Services, request, route, mapping);
 			Flyout = await DisplayFlyout(request, mapping?.RenderView, viewModel, injectedFlyout);
 		}
@@ -94,7 +102,7 @@ public class FlyoutNavigator : ControlNavigator
 			flyout = resource as Flyout;
 		}
 
-		if(flyout is null)
+		if (flyout is null)
 		{
 			return default;
 		}
@@ -152,7 +160,7 @@ public class FlyoutNavigator : ControlNavigator
 		Flyout.Closed -= Flyout_Closed;
 
 		var navigation = Region.Navigator();
-		if(navigation is null)
+		if (navigation is null)
 		{
 			return;
 		}

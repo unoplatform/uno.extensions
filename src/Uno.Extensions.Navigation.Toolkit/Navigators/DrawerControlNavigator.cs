@@ -32,9 +32,14 @@ public class DrawerControlNavigator : ControlNavigator<DrawerControl>
 		Region.Navigator()?.NavigateRouteAsync((sender ?? Control) ?? this, "hide");
 	}
 
-	protected override bool RegionCanNavigate(Route route, RouteInfo? routeMap) =>
-			route.IsBackOrCloseNavigation() ||
-			base.RegionCanNavigate(route, routeMap);
+	protected override Task<bool> RegionCanNavigate(Route route, RouteInfo? routeMap)
+	{
+		if (route.IsBackOrCloseNavigation())
+		{
+			return Task.FromResult(true);
+		}
+		return base.RegionCanNavigate(route, routeMap);
+	}
 
 	protected override async Task<string?> Show(string? path, Type? viewType, object? data)
 	{

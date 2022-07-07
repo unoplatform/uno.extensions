@@ -4,6 +4,12 @@ public static class RegionExtensions
 {
 	public static INavigator? Navigator(this IRegion region) => region.Services?.GetRequiredService<INavigator>();
 
+	public static Task<bool> CanNavigate(this IRegion region, Route route)
+	{
+		var navigator = region.Navigator();
+		return navigator is not null ? navigator.CanNavigate(route) : Task.FromResult(false);
+	}
+
 	public static Task<NavigationResponse?> NavigateAsync(this IRegion region, NavigationRequest request) => (region.Navigator()?.NavigateAsync(request)) ?? Task.FromResult<NavigationResponse?>(default);
 
 	public static bool IsUnnamed(this IRegion region, Route? parentRoute=null) =>

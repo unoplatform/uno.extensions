@@ -99,13 +99,18 @@
 				</muxc:NavigationView.MenuItems>
 				<Grid>
 					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
 						<RowDefinition />
 						<RowDefinition Height="Auto" />
 					</Grid.RowDefinitions>
+					<StackPanel Orientation="Horizontal">
+						<Button Content="Products (threading test)"
+								Click="{x:Bind ViewModel.GoToProducts}" />
+					</StackPanel>
 					<Grid uen:Region.Attached="True"
-						  uen:Region.Navigator="Visibility" />
+						  uen:Region.Navigator="Visibility" Grid.Row="1"/>
 					<utu:TabBar x:Name="Tabs"
-								Grid.Row="1"
+								Grid.Row="2"
 								uen:Region.Attached="True">
 						<utu:TabBarItem AutomationProperties.AutomationId="DealsTabBarItem"
 										IsSelectable="True"

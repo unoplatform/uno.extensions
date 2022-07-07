@@ -63,6 +63,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceLoginPage.xaml.cs">
       <DependentUpon>CommerceLoginPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceHomeViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceMainPage.xaml.cs">
       <DependentUpon>CommerceMainPage.xaml</DependentUpon>
     </Compile>

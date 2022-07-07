@@ -139,4 +139,37 @@ public class Given_Apps_Commerce : NavigationTestBase
 
 	}
 
+
+	[Test]
+	public async Task When_BackgroundThread()
+	{
+		InitTestSection(TestSections.Apps_Commerce);
+
+		App.WaitThenTap("ShowAppButton");
+
+		// Select the narrow layout
+		App.WaitThenTap("WideButton");
+
+		// Make sure the app has loaded
+		App.WaitForElement("LoginNavigationBar");
+
+		// Login
+		App.WaitThenTap("LoginButton");
+
+
+		/// Tap through each navigation view item
+		await App.TapAndWait("DealsNavigationViewItem", "DealsNavigationBar");
+
+		await App.TapAndWait("ProductsNavigationViewItem", "ProductsNavigationBar");
+
+		await App.TapAndWait("FirstProductButton", "ProductDetailsNavigationBar"); // Navigation by product data type finds the dealsproducts route first!
+
+		await App.TapAndWait("DetailsBackButton", "DealsNavigationBar");
+
+		await App.TapAndWait("ProductsNavigationViewItem", "ProductsNavigationBar");
+
+		await App.TapAndWait("FirstProductBackgroundButton", "ProductDetailsNavigationBar"); // Navigation by product data type finds the dealsproducts route first!
+
+		await App.TapAndWait("DetailsBackButton", "DealsNavigationBar");
+	}
 }

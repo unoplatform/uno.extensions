@@ -16,17 +16,22 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 	{
 	}
 
-	protected override bool RegionCanNavigate(Route route, RouteInfo? routeMap)
+	protected override async Task<bool> RegionCanNavigate(Route route, RouteInfo? routeMap)
 	{
-		if (!base.RegionCanNavigate(route, routeMap))
+		if (!await base.RegionCanNavigate(route, routeMap))
 		{
 			return false;
 		}
 
-		return (
-			(FindByPath(routeMap?.Path ?? route.Base) is not null) ||
-			(routeMap?.RenderView?.IsSubclassOf(typeof(FrameworkElement)) ?? false)
-		);
+		if(routeMap?.RenderView?.IsSubclassOf(typeof(FrameworkElement)) ?? false)
+		{
+			return true;
+		}
+
+		return await Dispatcher.ExecuteAsync(async () =>
+		{
+			return FindByPath(routeMap?.Path ?? route.Base) is not null;
+		});
 	}
 
 	private FrameworkElement? CurrentlyVisibleControl { get; set; }
