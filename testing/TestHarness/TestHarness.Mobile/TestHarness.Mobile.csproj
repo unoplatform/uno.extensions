@@ -19,7 +19,7 @@
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="7.1.2" />
 		<PackageReference Include="Uno.CommunityToolkit.WinUI.UI" Version="7.1.100-dev.15.g12261e2626" />
-		<PackageReference Include="Microsoft.Identity.Client" Version="4.44.0" />
+		<PackageReference Include="Microsoft.Identity.Client" Version="4.45.0" />
 		<PackageReference Include="Uno.WinUI" Version="4.4.5" />
 		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.4.5" Condition="'$(Configuration)'=='Debug'" />
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.4.5" />

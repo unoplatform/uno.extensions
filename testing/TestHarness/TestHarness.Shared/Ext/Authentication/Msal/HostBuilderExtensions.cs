@@ -18,7 +18,7 @@ public static class HostBuilderExtensions
 				{
 					var host = context.HostingEnvironment;
 					// Configure log levels for different categories of logging
-					logBuilder.SetMinimumLevel(host.IsDevelopment() ? LogLevel.Warning : LogLevel.Information);
+					logBuilder.SetMinimumLevel(host.IsDevelopment() ? LogLevel.Trace : LogLevel.Information);
 				})
 
 				.UseConfiguration()

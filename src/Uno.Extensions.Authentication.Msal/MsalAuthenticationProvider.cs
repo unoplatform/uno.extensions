@@ -1,12 +1,21 @@
-﻿namespace Uno.Extensions.Authentication.MSAL;
+﻿
+#if __WASM__
+using MsalCacheHelper = Microsoft.Identity.Client.Extensions.Msal.Wasm.MsalCacheHelper;
+#else
+using MsalCacheHelper = Microsoft.Identity.Client.Extensions.Msal.MsalCacheHelper;
+#endif
+
+namespace Uno.Extensions.Authentication.MSAL;
 
 internal record MsalAuthenticationProvider(
 		ILogger<MsalAuthenticationProvider> Logger,
 		IOptions<MsalConfiguration> Configuration,
 		ITokenCache Tokens,
+		IStorage Storage,
 		MsalAuthenticationSettings? Settings = null) : BaseAuthenticationProvider(DefaultName, Tokens)
 {
 	public const string DefaultName = "Msal";
+	private const string CacheFileName = "msal.cache";
 
 	private IPublicClientApplication? _pca;
 	private string[]? _scopes;
@@ -30,12 +39,16 @@ internal record MsalAuthenticationProvider(
 	}
 
 
-	public async override ValueTask<bool> CanRefresh(CancellationToken cancellation) => (await _pca!.GetAccountsAsync()).Count() > 0;
-
+	public async override ValueTask<bool> CanRefresh(CancellationToken cancellation)
+	{
+		await SetupStorage();
+		return (await _pca!.GetAccountsAsync()).Count() > 0;
+	}
 	public async override ValueTask<IDictionary<string, string>?> LoginAsync(IDispatcher dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
 	{
 		try
 		{
+			await SetupStorage();
 			var result = await AcquireTokenAsync(dispatcher);
 			return new Dictionary<string, string>
 			{
@@ -58,6 +71,7 @@ internal record MsalAuthenticationProvider(
 
 	public async override ValueTask<bool> LogoutAsync(IDispatcher dispatcher, CancellationToken cancellationToken)
 	{
+		await SetupStorage();
 		var accounts = await _pca!.GetAccountsAsync();
 		var firstAccount = accounts.FirstOrDefault();
 		if (firstAccount == null)
@@ -76,6 +90,7 @@ internal record MsalAuthenticationProvider(
 	}
 	public async override ValueTask<IDictionary<string, string>?> RefreshAsync(CancellationToken cancellationToken)
 	{
+		await SetupStorage();
 		var result = await AcquireSilentTokenAsync();
 
 		return new Dictionary<string, string>
@@ -84,6 +99,39 @@ internal record MsalAuthenticationProvider(
 			};
 	}
 
+
+	private bool _isCompleted;
+	private async Task SetupStorage()
+	{
+		try
+		{
+			if (_isCompleted)
+			{
+				return;
+			}
+			_isCompleted = true;
+
+			var folderPath = await Storage.CreateLocalFolderAsync(Name.ToLower());
+			Console.WriteLine($"Folder: {folderPath}");
+			var filePath = Path.Combine(folderPath, CacheFileName);
+			//Console.WriteLine($"File: {filePath}");
+			//var file = await Storage.OpenFileAsync(filePath);
+			//file.Dispose();
+			var builder = new StorageCreationPropertiesBuilder(CacheFileName, folderPath);
+			Settings?.Store?.Invoke(builder);
+			var storage = builder.Build();
+#if __WASM__
+			var cacheHelper = await MsalCacheHelper.CreateAsync(Logger, storage);
+#else
+			var cacheHelper = await MsalCacheHelper.CreateAsync(storage);
+#endif
+			cacheHelper.RegisterCache(_pca!.UserTokenCache);
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine("Error " + ex.Message);
+		}
+	}
 
 	private async Task<AuthenticationResult?> AcquireTokenAsync(IDispatcher dispatcher)
 	{
@@ -131,7 +179,6 @@ internal record MsalAuthenticationProvider(
 
 			return await _pca
 			  .AcquireTokenSilent(_scopes, firstAccount)
-			  //.WaitForRefresh(false)
 			  .ExecuteAsync();
 		}
 		catch (MsalUiRequiredException ex)
@@ -149,3 +196,5 @@ internal record MsalAuthenticationProvider(
 		return default;
 	}
 }
+
+
