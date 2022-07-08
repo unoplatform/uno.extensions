@@ -59,7 +59,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			// Redirect navigation if required
 			// eg route that matches a child, should be routed to that child
 			// eg route that doesn't match a page for frame nav should be sent to parent
-			var redirection = RedirectNavigateAsync(request);
+			var redirection = await RedirectNavigateAsync(request);
 			if (redirection is not null)
 			{
 				return await redirection;
@@ -92,7 +92,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		}
 	}
 
-	private Task<NavigationResponse?>? RedirectNavigateAsync(NavigationRequest request)
+	private async Task<Task<NavigationResponse?>?> RedirectNavigateAsync(NavigationRequest request)
 	{
 		if (request.Route.IsInternal)
 		{
@@ -103,7 +103,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		// Deal with any named children that match the first segment of the request
 		// In this case, the request should be trimmed
 		var nested = Region.Children.Where(x => !string.IsNullOrWhiteSpace(request.Route.Base) && x.Name == request.Route.Base).ToArray();
-		if (nested.Any())
+		if (nested.Any() && !await ParentCanNavigate(request.Route))
 		{
 			request = request with { Route = request.Route.Next() };
 			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectNavigateAsync: Redirecting to children ({nested.Length}) New request: {request.Route}");
@@ -187,14 +187,16 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			ancestor.Item2 != Region.Parent)
 		{
 			var ancestorRegion = ancestor.Item2;
-			var noNamedChild = ancestorRegion
-								.Children
-								.Where(x => x.IsUnnamed(ancestor.Item1) &&
-										(x.Navigator()?.CanNavigate(request.Route) ?? false))
-								.FirstOrDefault();
-			if (noNamedChild is not null)
+			if (ancestorRegion is not null) 
 			{
-				return noNamedChild.NavigateAsync(request);
+				foreach (var child in ancestorRegion.Children)
+				{
+					if(child.IsUnnamed(ancestor.Item1) &&
+						await child.CanNavigate(request.Route))
+					{
+						return child.NavigateAsync(request);
+					}
+				}
 			}
 		}
 
@@ -207,8 +209,8 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		//		b) route has depends on that doesn't match current route - if parent can navigate to dependson, return false
 		//		c) route has no depends on - if parent can navigate to the route, return false
 
-		if (CanNavigate(request.Route) &&
-			!ParentCanNavigate(request.Route))
+		if (await CanNavigate(request.Route) &&
+			!await ParentCanNavigate(request.Route))
 		{
 			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectNavigateAsync: No redirection - Navigator can handle request (and parent cannot)");
 			return default;
@@ -346,7 +348,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		return request;
 	}
 
-	public bool CanNavigate(Route route)
+	public Task<bool> CanNavigate(Route route)
 	{
 		if (!route.IsInternal)
 		{
@@ -355,7 +357,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			{
 				if (route.IsDialog())
 				{
-					return false;
+					return Task.FromResult(false);
 				}
 
 			}
@@ -363,15 +365,15 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 		var routeMap = Resolver.Find(route);
 
-		var canNav = RegionCanNavigate(route, routeMap);
+		var canNav =  RegionCanNavigate(route, routeMap);
 		return canNav;
 	}
 
-	private bool ParentCanNavigate(Route route)
+	private Task<bool> ParentCanNavigate(Route route)
 	{
 		if (Region.Parent is null)
 		{
-			return false;
+			return Task.FromResult(false);
 		}
 
 		var parentNavigator = Region.Parent.Navigator();
@@ -387,16 +389,16 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 				)
 			)
 		{
-			return parentNavigator?.CanNavigate(route) ?? false;
+			return parentNavigator.CanNavigate(route);
 		}
 
-		return false;
+		return Task.FromResult(false);
 	}
 
 	protected virtual bool CanNavigateToDependentRoutes => false;
 
 
-	protected virtual bool RegionCanNavigate(Route route, RouteInfo? routeMap)
+	protected virtual async Task<bool> RegionCanNavigate(Route route, RouteInfo? routeMap)
 	{
 		// Default behaviour for all navigators is that they can't handle back or close requests
 		// This is overridden by navigators that can handle close operation
@@ -423,10 +425,13 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		if (this.IsComposite())
 		{
 			var internalRoute = route with { IsInternal = true };
-			return (from child in Region.Children
-					let nav = child.Navigator()
-					let canNavigate = nav?.CanNavigate(internalRoute) ?? false
-					select canNavigate).All(x => x);
+			foreach (var child in Region.Children)
+			{
+				if (!await child.CanNavigate(internalRoute))
+				{
+					return false;
+				}
+			}
 		}
 
 		return true;

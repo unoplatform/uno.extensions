@@ -35,12 +35,11 @@ public class CommerceHostInit : IHostInitialization
 		views.Register(
 				new ViewMap(ViewModel: typeof(CommerceShellViewModel)),
 				new ViewMap<CommerceLoginPage, CommerceLoginViewModel>(ResultData: typeof(CommerceCredentials)),
-				new ViewMap<CommerceHomePage>(Data: new DataMap<CommerceCredentials>()),
+				new DataViewMap<CommerceHomePage,CommerceHomeViewModel, CommerceCredentials>(),
 				new ViewMap<CommerceProductsPage, CommerceProductsViewModel>(),
-				new ViewMap<CommerceProductDetailsPage, CommerceProductDetailsViewModel>(),
+				new DataViewMap<CommerceProductDetailsPage, CommerceProductDetailsViewModel, CommerceProduct>(),
 				new ViewMap<CommerceDealsPage, CommerceDealsViewModel>(),
-				new ViewMap<CommerceProfilePage, CommerceProfileViewModel>(),
-				new DataViewMap<CommerceProductDetailsPage, CommerceProductDetailsViewModel, CommerceProduct>()
+				new ViewMap<CommerceProfilePage, CommerceProfileViewModel>()
 				);
 
 

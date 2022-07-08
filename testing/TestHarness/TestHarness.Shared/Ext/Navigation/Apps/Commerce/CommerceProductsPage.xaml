@@ -51,7 +51,7 @@
 				</VisualState>
 			</VisualStateGroup>
 		</VisualStateManager.VisualStateGroups>
-		
+
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
@@ -68,19 +68,34 @@
 				<ColumnDefinition Width="0"
 								  x:Name="DetailsColumn" />
 			</Grid.ColumnDefinitions>
-			<ListView AutomationProperties.AutomationId="ProductsListView"
-					  x:Name="ProductsListView"
-					  ItemsSource="{Binding Products}"
-					  uen:Navigation.Request="Product">
-				<!--SelectionMode="None"
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition />
+				</Grid.RowDefinitions>
+				<StackPanel Orientation="Horizontal">
+					<Button AutomationProperties.AutomationId="FirstProductButton"
+							Content="First Product - UI Thread"
+							Click="{x:Bind ViewModel.ShowFirstProductUIThread}" />
+					<Button AutomationProperties.AutomationId="FirstProductBackgroundButton"
+							Content="First Product - Background Thread"
+							Click="{x:Bind ViewModel.ShowFirstProductBackgroundThread}" />
+				</StackPanel>
+				<ListView AutomationProperties.AutomationId="ProductsListView"
+						  Grid.Row="1"
+						  x:Name="ProductsListView"
+						  ItemsSource="{Binding Products}"
+						  uen:Navigation.Request="Product">
+					<!--SelectionMode="None"
 					  IsItemClickEnabled="True"-->
-				<ListView.ItemTemplate>
-					<DataTemplate x:DataType="local:CommerceProduct">
-						<TextBlock Text="{x:Bind Name}"
-								   FontSize="30" />
-					</DataTemplate>
-				</ListView.ItemTemplate>
-			</ListView>
+					<ListView.ItemTemplate>
+						<DataTemplate x:DataType="local:CommerceProduct">
+							<TextBlock Text="{x:Bind Name}"
+									   FontSize="30" />
+						</DataTemplate>
+					</ListView.ItemTemplate>
+				</ListView>
+			</Grid>
 			<Grid Grid.Column="1"
 				  x:Name="DetailsGrid"
 				  Background="LightPink"

@@ -15,9 +15,15 @@ public class MessageDialogNavigator : DialogNavigator
 		_localizer = localizer;
 	}
 
-	protected override bool RegionCanNavigate(Route route, RouteInfo? routeMap) =>
-		base.RegionCanNavigate(route, routeMap) &&
-		(routeMap?.RenderView == typeof(MessageDialog));
+	protected override Task<bool> RegionCanNavigate(Route route, RouteInfo? routeMap)
+	{
+		if (!(routeMap?.RenderView == typeof(MessageDialog)))
+		{
+			return Task.FromResult(false);
+		}
+
+		return base.RegionCanNavigate(route, routeMap);
+	}
 
 	protected override async Task<IAsyncInfo?> DisplayDialog(NavigationRequest request, Type? viewType, object? viewModel)
 	{

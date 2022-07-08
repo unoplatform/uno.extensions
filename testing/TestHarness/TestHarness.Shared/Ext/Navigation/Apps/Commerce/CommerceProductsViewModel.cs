@@ -9,5 +9,15 @@ public record CommerceProductsViewModel(INavigator Navigator) : BaseCommerceView
 					new CommerceProduct("Sun glasses"),
 					new CommerceProduct("Watch")
 				};
-
+	public async Task ShowFirstProductUIThread()
+	{
+		await Navigator.NavigateDataAsync(this, Products.First());
+	}
+	public async Task ShowFirstProductBackgroundThread()
+	{
+		await Task.Run(async () =>
+		{
+			await Navigator.NavigateDataAsync(this, Products.First());
+		});
+	}
 }

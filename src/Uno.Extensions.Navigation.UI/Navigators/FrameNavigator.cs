@@ -33,7 +33,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 	// TODO: IsUnnamed and  composite region
 	protected override bool CanNavigateToDependentRoutes => !Region.Children.Any(x=>x.IsUnnamed(this.Route) && !(x.Navigator()?.IsComposite()??false));
 
-	protected override bool RegionCanNavigate(Route route, RouteInfo? routeMap)
+	protected override async Task<bool> RegionCanNavigate(Route route, RouteInfo? routeMap)
 	{
 		if (route.IsBackOrCloseNavigation())
 		{
@@ -45,7 +45,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 			return !string.IsNullOrWhiteSpace(route.Base) || !(FullRoute?.Next()?.IsEmpty() ?? true);
 		}
 
-		if (!base.RegionCanNavigate(route, routeMap))
+		if (!await base.RegionCanNavigate(route, routeMap))
 		{
 			return false;
 		}
@@ -128,7 +128,8 @@ public class FrameNavigator : ControlNavigator<Frame>
 			// Rebuild the nested region hierarchy
 			Control.ReassignRegionParent();
 			if (segments.Length > 1 ||
-				!string.IsNullOrWhiteSpace(request.Route.Path))
+				!string.IsNullOrWhiteSpace(request.Route.Path)||
+				request.Route.Data?.Count>0)
 			{
 				refreshViewModel = true;
 			}
