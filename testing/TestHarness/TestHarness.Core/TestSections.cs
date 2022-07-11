@@ -5,6 +5,7 @@ public enum TestSections
 	PageNavigation,
 	MessageDialog,
 	Responsive,
+	NavigationView,
 	Apps_Commerce,
 	Apps_ToDo,
 	Authentication_Custom,
