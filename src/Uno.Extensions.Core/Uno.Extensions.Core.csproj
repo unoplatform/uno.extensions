@@ -1,16 +1,13 @@
-﻿<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
 
 	<PropertyGroup>
-		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'!=''">$(UnoTargetFrameworkOverride)</TargetFrameworks>
-		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'==''">netstandard2.0;xamarinios10;xamarinmac20;monoandroid11.0</TargetFrameworks>
-		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'=='' and '$(UnoExtensionsDisableNet6)'==''">$(TargetFrameworks);uap10.0.18362;net6.0-ios;net6.0-macos;net6.0-android;net6.0-maccatalyst</TargetFrameworks>
+		<TargetFramework>netstandard2.0</TargetFramework>
 
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<!--<RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>-->
-		<!--Needed to workaround an issue with packaging of the Playground sample Windows app.-->
+		<RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers><!--Needed to workaround an issue with packaging of the Playground sample Windows app.-->
 		<RootNamespace>Uno.Extensions</RootNamespace>
 	</PropertyGroup>
-	
+
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="1.1.0" />
 		<PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.1" />
