@@ -7,7 +7,7 @@ namespace TestHarness.Legacy.Skia.Tizen
 {
 	static void Main(string[] args)
 	{
-		var host = new TizenHost(() => new TestHarness.Legacy.App());
+		var host = new TizenHost(() => new TestHarness.App());
 		host.Run();
 	}
 }

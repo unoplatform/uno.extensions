@@ -19,6 +19,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)BaseTestSectionPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ControlSizeTrigger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationHomePage.xaml.cs">
       <DependentUpon>CustomAuthenticationHomePage.xaml</DependentUpon>
     </Compile>
