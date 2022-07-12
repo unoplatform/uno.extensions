@@ -59,6 +59,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceHomePage.xaml.cs">
       <DependentUpon>CommerceHomePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceShellControlHostInit.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceHostInit.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceLoginPage.xaml.cs">
       <DependentUpon>CommerceLoginPage.xaml</DependentUpon>
@@ -82,6 +83,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceProductDetailsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceLoginViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceDealsViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceShellControl.xaml.cs">
+      <DependentUpon>CommerceShellControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceShellViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\ToDo\ToDoCredentials.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\ToDo\ToDoHomePage.xaml.cs">
@@ -182,6 +186,9 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Models\Widget.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PageExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TestFrameHost.xaml.cs">
+      <DependentUpon>TestFrameHost.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)TestSection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestSectionRootAttribute.cs" />
   </ItemGroup>
@@ -227,6 +234,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceProfilePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceShellControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -307,6 +318,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)MainPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)TestFrameHost.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

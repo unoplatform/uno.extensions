@@ -7,6 +7,7 @@ public enum TestSections
 	Responsive,
 	NavigationView,
 	Apps_Commerce,
+	Apps_Commerce_ShellControl,
 	Apps_ToDo,
 	Authentication_Custom,
 	Authentication_Custom_Service,

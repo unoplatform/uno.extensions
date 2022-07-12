@@ -11,6 +11,13 @@
   <Import Project="TestHarness.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeSharing\Microsoft.CodeSharing.CSharp.targets" />
   <ItemGroup>
+    <_Globbed_Compile Remove="Ext\Navigation\Apps\Commerce\CommerceShellControl.xaml.cs" />
+    <_Globbed_Compile Remove="Ext\Navigation\Apps\Commerce\CommerceShellViewModel - Copy.cs" />
     <_Globbed_Compile Remove="Ext\Navigation\NavigationView\NavigationViewHomePage - Copy.xaml.cs" />
+    <_Globbed_Compile Remove="TestFrameHost.xaml.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <_Globbled_Page Remove="Ext\Navigation\Apps\Commerce\CommerceShellControl.xaml" />
+    <_Globbled_Page Remove="TestFrameHost.xaml" />
   </ItemGroup>
 </Project>
