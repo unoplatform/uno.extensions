@@ -57,8 +57,7 @@
 								 IsSettingsVisible="False"
 								 CompactModeThresholdWidth="0"
 								 ExpandedModeThresholdWidth="0"
-SelectionChanged="NavigationViewSelectionChanged"
-								 >
+								 SelectionChanged="NavigationViewSelectionChanged">
 
 
 				<!-- Task Lists: template for WellKnownLists & CustomLists -->
