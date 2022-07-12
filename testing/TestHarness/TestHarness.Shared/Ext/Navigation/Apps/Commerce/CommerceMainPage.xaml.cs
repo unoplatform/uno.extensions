@@ -1,6 +1,7 @@
 ﻿namespace TestHarness.Ext.Navigation.Apps.Commerce;
 
 [TestSectionRoot("Sample App: Commerce",TestSections.Apps_Commerce, typeof(CommerceHostInit))]
+[TestSectionRoot("Sample App: Commerce (ShellControl)", TestSections.Apps_Commerce_ShellControl, typeof(CommerceShellControlHostInit))]
 public sealed partial class CommerceMainPage : BaseTestSectionPage
 {
 	public CommerceMainPage()

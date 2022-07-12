@@ -11,7 +11,7 @@ public sealed partial class ToDoHomePage : Page
 
 	}
 
-	public async void NavigationViewSelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs e)
+	public async void NavigationViewSelectionChanged(Microsoft.UI.Xaml.Controls.NavigationView sender, NavigationViewSelectionChangedEventArgs e)
 	{
 		await Task.Delay(500);
 		if(App.Current.Resources["WideMinWindowWidth"] is double threshold &&

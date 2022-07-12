@@ -59,6 +59,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceHomePage.xaml.cs">
       <DependentUpon>CommerceHomePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceShellControlHostInit.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceHostInit.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceLoginPage.xaml.cs">
       <DependentUpon>CommerceLoginPage.xaml</DependentUpon>
@@ -82,6 +83,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceProductDetailsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceLoginViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceDealsViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceShellControl.xaml.cs">
+      <DependentUpon>CommerceShellControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceShellViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\ToDo\ToDoCredentials.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\ToDo\ToDoHomePage.xaml.cs">
@@ -123,6 +127,18 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\MessageDialog\LocalizedDialogsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\MessageDialog\SimpleDialogsViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\NavigationView\NavigationViewHomePage.xaml.cs">
+      <DependentUpon>NavigationViewHomePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\NavigationView\NavigationViewSettingsPage.xaml.cs">
+      <DependentUpon>NavigationViewSettingsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\NavigationView\NavigationViewSettingsViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\NavigationView\NavigationViewHomeViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\NavigationView\NavigationViewHostInit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\NavigationView\NavigationViewMainPage.xaml.cs">
+      <DependentUpon>NavigationViewMainPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationFivePage.xaml.cs">
       <DependentUpon>PageNavigationFivePage.xaml</DependentUpon>
     </Compile>
@@ -170,6 +186,9 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Models\Widget.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PageExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TestFrameHost.xaml.cs">
+      <DependentUpon>TestFrameHost.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)TestSection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestSectionRootAttribute.cs" />
   </ItemGroup>
@@ -218,6 +237,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceShellControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\ToDo\ToDoHomePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -247,6 +270,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\MessageDialog\MessageDialogMainPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\NavigationView\NavigationViewSettingsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -291,6 +318,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)MainPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)TestFrameHost.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
