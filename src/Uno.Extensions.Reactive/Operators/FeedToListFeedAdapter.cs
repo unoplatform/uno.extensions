@@ -73,10 +73,10 @@ internal record FeedToListFeedAdapter<TCollection, TItem>(
 		return updated;
 	}
 
-	internal static CollectionChangeSet GetChangeSet(Option<IImmutableList<TItem>> previousData, Option<IImmutableList<TItem>> updatedData)
+	private static CollectionChangeSet GetChangeSet(Option<IImmutableList<TItem>> previousData, Option<IImmutableList<TItem>> updatedData)
 		=> GetChangeSet(CollectionAnalyzer<TItem>.Default, previousData, updatedData);
 
-	internal static CollectionChangeSet GetChangeSet(CollectionAnalyzer<TItem> collectionAnalyzer, Option<IImmutableList<TItem>> previousData, Option<IImmutableList<TItem>> updatedData)
+	private static CollectionChangeSet GetChangeSet(CollectionAnalyzer<TItem> collectionAnalyzer, Option<IImmutableList<TItem>> previousData, Option<IImmutableList<TItem>> updatedData)
 	{
 		var hadItems = previousData.IsSome(out var previousItems);
 		var hasItems = updatedData.IsSome(out var updatedItems);
@@ -89,4 +89,11 @@ internal record FeedToListFeedAdapter<TCollection, TItem>(
 			(false, false) => CollectionChangeSet.Empty,
 		};
 	}
+
+	// Workaround an issue with mono runtime for Android and iOS which crashes when using instances of this record in dictionaries (caching).
+	// cf. https://github.com/unoplatform/Uno.Samples/issues/139
+	/// <inheritdoc />
+	public override int GetHashCode()
+		=> Source.GetHashCode() ^ ToImmutable.GetHashCode() ^ ItemComparer.GetHashCode();
+
 }
