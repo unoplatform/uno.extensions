@@ -15,7 +15,7 @@
 
 	<Grid x:Name="ParentGrid">
 		<VisualStateManager.VisualStateGroups>
-			<VisualStateGroup CurrentStateChanged="ResponsiveStateChanged">
+			<VisualStateGroup>
 				<VisualState x:Name="Wide">
 					<VisualState.StateTriggers>
 						<triggers:ControlSizeTrigger MinWidth="{StaticResource WideMinWindowWidth}"
