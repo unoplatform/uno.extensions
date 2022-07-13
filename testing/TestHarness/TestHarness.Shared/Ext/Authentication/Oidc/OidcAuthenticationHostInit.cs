@@ -2,49 +2,6 @@
 
 public class OidcAuthenticationHostInit : IHostInitialization
 {
-	//private OidcClient _oidcClient;
-	//private AuthorizeState _loginState;
-	//private Uri _logoutUrl;
-
-	//private async ValueTask PrepareClient()
-	//{
-	//	//var redirectUri = WebAuthenticationBroker.GetCurrentApplicationCallbackUri().OriginalString;
-
-	//	// Create options for endpoint discovery
-	//	var options = new OidcClientOptions
-	//	{
-	//		Authority = "https://demo.duendesoftware.com/",
-	//		ClientId = "interactive.confidential",
-	//		ClientSecret = "secret",
-	//		Scope = "openid profile email api offline_access",
-	//		//RedirectUri = "oidc-auth://callback",
-	//		//PostLogoutRedirectUri = "oidc-auth://callback",
-	//		RedirectUri = WebAuthenticationBroker.GetCurrentApplicationCallbackUri().OriginalString,
-	//		PostLogoutRedirectUri = WebAuthenticationBroker.GetCurrentApplicationCallbackUri().OriginalString,
-	//		Browser = new WebAuthenticatorBrowser()//,
-	//	};
-
-
-	//	options.Policy.Discovery.ValidateEndpoints = false;
-
-	//	// Create the client. In production application, this is often created and stored
-	//	// directly in the Application class.
-	//	_oidcClient = new OidcClient(options);
-
-	//	//// Invoke Discovery and prepare a request state, containing the nonce.
-	//	//// This is done here to ensure the discovery mechanism is done before
-	//	//// the user clicks on the SignIn button. Since the opening of a web window
-	//	//// should be done during the handling of a user interaction (here it's the button click),
-	//	//// it will be too late to reach the discovery endpoint.
-	//	//// Not doing this could trigger popup blocker mechanisms in browsers.
-	//	//_loginState = await _oidcClient.PrepareLoginAsync();
-	//	////btnSignin.IsEnabled = true;
-
-	//	//// Same for logout url.
-	//	//_logoutUrl = new Uri(await _oidcClient.PrepareLogoutAsync(new LogoutRequest()));
-	//	////btnSignout.IsEnabled = true;
-	//}
-
 	public IHost InitializeHost()
 	{
 		return UnoHost
