@@ -9,7 +9,6 @@
 		<ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
 		<OutputType>Library</OutputType>
 		<AppDesignerFolder>Properties</AppDesignerFolder>
-		<RootNamespace>TestHarness.Legacy.Droid</RootNamespace>
 		<AssemblyName>TestHarness.Legacy.Droid</AssemblyName>
 		<FileAlignment>512</FileAlignment>
 		<AndroidApplication>true</AndroidApplication>
@@ -87,7 +86,7 @@
 		<PackageReference Include="Uno.Material" Version="2.2.0" />
 		<PackageReference Include="Uno.Toolkit.UI.Material" Version="2.2.0" />
 		<PackageReference Include="Uno.Toolkit.UI" Version="2.2.0" />
-		<PackageReference Include="Uno.UI.MSAL" Version="4.4.5" />
+		<PackageReference Include="Uno.UI.MSAL" Version="4.4.13" />
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Include="MainActivity.cs" />

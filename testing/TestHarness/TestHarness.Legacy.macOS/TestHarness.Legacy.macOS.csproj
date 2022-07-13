@@ -6,7 +6,6 @@
     <ProjectGuid>623706f6-33fc-4073-b418-596079e0829f</ProjectGuid>
     <ProjectTypeGuids>{A3F8F2AB-B479-4A4A-A458-A89E7DC349F1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Exe</OutputType>
-    <RootNamespace>TestHarness.Legacy.macOS</RootNamespace>
     <AssemblyName>TestHarness.Legacy.macOS</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <TargetFrameworkIdentifier>Xamarin.Mac</TargetFrameworkIdentifier>
@@ -84,7 +83,7 @@
 		<PackageReference Include="Uno.Material" Version="2.2.0" />
 		<PackageReference Include="Uno.Toolkit.UI.Material" Version="2.2.0" />
 		<PackageReference Include="Uno.Toolkit.UI" Version="2.2.0" />
-		<PackageReference Include="Uno.UI.MSAL" Version="4.4.5" />
+		<PackageReference Include="Uno.UI.MSAL" Version="4.4.13" />
   </ItemGroup>
     <ItemGroup>
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Authentication.Oidc\Uno.Extensions.Authentication.Oidc.UI.csproj" />

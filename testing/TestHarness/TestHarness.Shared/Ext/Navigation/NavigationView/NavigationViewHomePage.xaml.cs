@@ -8,7 +8,7 @@ public sealed partial class NavigationViewHomePage : Page
 		this.InitializeComponent();
 	}
 
-	public void NavigationItemInvoked(Microsoft.UI.Xaml.Controls.NavigationView sender, NavigationViewItemInvokedEventArgs e)
+	public void NavigationItemInvoked(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs e)
 	{
 		if(e.InvokedItemContainer == sender.SettingsItem)
 		{

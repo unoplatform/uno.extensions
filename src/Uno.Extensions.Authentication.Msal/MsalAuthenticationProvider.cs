@@ -111,6 +111,10 @@ internal record MsalAuthenticationProvider(
 			}
 			_isCompleted = true;
 
+#if WINDOWS_UWP || !NET6_0_OR_GREATER
+			return;
+#else
+
 			var folderPath = await Storage.CreateLocalFolderAsync(Name.ToLower());
 			Console.WriteLine($"Folder: {folderPath}");
 			var filePath = Path.Combine(folderPath, CacheFileName);
@@ -126,6 +130,7 @@ internal record MsalAuthenticationProvider(
 			var cacheHelper = await MsalCacheHelper.CreateAsync(storage);
 #endif
 			cacheHelper.RegisterCache(_pca!.UserTokenCache);
+#endif
 		}
 		catch (Exception ex)
 		{

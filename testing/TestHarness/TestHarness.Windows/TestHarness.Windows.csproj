@@ -44,7 +44,7 @@
 		<PackageReference Include="Uno.Material.WinUI" Version="2.2.0" />
 		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.2.0" />
 		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.2.0" />
-		<PackageReference Include="Uno.WinUI.MSAL" Version="4.4.5" />
+		<PackageReference Include="Uno.WinUI.MSAL" Version="4.4.13" />
 		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>
 

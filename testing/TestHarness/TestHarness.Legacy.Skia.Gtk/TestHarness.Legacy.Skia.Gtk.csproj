@@ -29,7 +29,7 @@
 		<PackageReference Include="Uno.Material" Version="2.2.0" />
 		<PackageReference Include="Uno.Toolkit.UI.Material" Version="2.2.0" />
 		<PackageReference Include="Uno.Toolkit.UI" Version="2.2.0" />
-		<PackageReference Include="Uno.UI.MSAL" Version="4.4.5" />
+		<PackageReference Include="Uno.UI.MSAL" Version="4.4.13" />
   </ItemGroup>
     <ItemGroup>
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Authentication.Oidc\Uno.Extensions.Authentication.Oidc.UI.csproj" />
