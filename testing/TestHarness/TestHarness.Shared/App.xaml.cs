@@ -2,9 +2,6 @@
 
 namespace TestHarness
 {
-	/// <summary>
-	/// Provides application-specific behavior to supplement the default Application class.
-	/// </summary>
 	public sealed partial class App : Application
 	{
 		private Window? _window;
@@ -15,19 +12,14 @@ namespace TestHarness
 			this.InitializeComponent();
 		}
 
-		/// <summary>
-		/// Invoked when the application is launched normally by the end user.  Other entry points
-		/// will be used such as when the application is launched to open a specific file.
-		/// </summary>
-		/// <param name="args">Details about the launch request and process.</param>
-		protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
+		protected override void OnLaunched(LaunchActivatedEventArgs args)
 		{
 
 
 #if NET6_0_OR_GREATER && WINDOWS
 			_window = new Window();
 #else
-			_window = Microsoft.UI.Xaml.Window.Current;
+			_window = Window.Current;
 #endif
 
 

@@ -8,7 +8,7 @@
 	  xmlns:models="using:TestHarness.Models"
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  xmlns:utu="using:Uno.Toolkit.UI"
-	  xmlns:triggers="using:CommunityToolkit.WinUI.UI.Triggers"
+	  xmlns:triggers="using:TestHarness"
 	  NavigationCacheMode="Required">
 
 	<Grid x:Name="ParentGrid">

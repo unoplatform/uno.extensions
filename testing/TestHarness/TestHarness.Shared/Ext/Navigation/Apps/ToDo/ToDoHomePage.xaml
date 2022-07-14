@@ -8,7 +8,7 @@
 	  xmlns:utu="using:Uno.Toolkit.UI"
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  xmlns:um="using:Uno.Material"
-	  xmlns:triggers="using:CommunityToolkit.WinUI.UI.Triggers"
+	  xmlns:triggers="using:TestHarness"
 	  mc:Ignorable="d"
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
 	  NavigationCacheMode="Required">
@@ -57,8 +57,7 @@
 								 IsSettingsVisible="False"
 								 CompactModeThresholdWidth="0"
 								 ExpandedModeThresholdWidth="0"
-SelectionChanged="NavigationViewSelectionChanged"
-								 >
+								 SelectionChanged="NavigationViewSelectionChanged">
 
 
 				<!-- Task Lists: template for WellKnownLists & CustomLists -->

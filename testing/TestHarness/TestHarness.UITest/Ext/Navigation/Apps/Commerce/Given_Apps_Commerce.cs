@@ -3,6 +3,7 @@
 public class Given_Apps_Commerce : NavigationTestBase
 {
 	[Test]
+	[Retry(5)]
 	public async Task When_Commerce_Responsive()
 	{
 		InitTestSection(TestSections.Apps_Commerce);
