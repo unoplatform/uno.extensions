@@ -13,5 +13,6 @@
   <ItemGroup>
     <_Globbed_Compile Remove="ControlSizeTrigger.cs" />
     <_Globbed_Compile Remove="ControlSizeTrigger.uwp.cs" />
+    <_Globbed_Compile Remove="Ext\Authentication\Custom\CustomAuthenticationHomePage - Copy.xaml.cs" />
   </ItemGroup>
 </Project>

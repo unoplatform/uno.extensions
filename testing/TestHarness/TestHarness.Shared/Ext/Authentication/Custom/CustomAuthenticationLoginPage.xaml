@@ -22,6 +22,8 @@
 		<StackPanel Grid.Row="1"
 					HorizontalAlignment="Center"
 					VerticalAlignment="Center">
+			<TextBlock Text="To run this test you need to run the TestBackend project (set multiple start projects) and make sure that the URI matches the URI in the appsettings.testbackend.json file" />
+
 			<TextBlock Text="Name" />
 			<TextBox Text="{Binding Name, Mode=TwoWay}" />
 			<TextBlock Text="Password" />
