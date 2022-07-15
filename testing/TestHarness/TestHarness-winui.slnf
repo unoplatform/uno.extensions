@@ -16,6 +16,7 @@
       "..\\..\\src\\Uno.Extensions.Http.Refit\\Uno.Extensions.Http.Refit.csproj",
       "..\\..\\src\\Uno.Extensions.Http\\Uno.Extensions.Http.csproj",
       "..\\..\\src\\Uno.Extensions.Localization\\Uno.Extensions.Localization.WinUI.csproj",
+      "..\\..\\src\\Uno.Extensions.Logging.Serilog\\Uno.Extensions.Logging.Serilog.csproj",
       "..\\..\\src\\Uno.Extensions.Logging\\Uno.Extensions.Logging.WinUI.Skia.csproj",
       "..\\..\\src\\Uno.Extensions.Logging\\Uno.Extensions.Logging.WinUI.Wasm.csproj",
       "..\\..\\src\\Uno.Extensions.Logging\\Uno.Extensions.Logging.WinUI.csproj",

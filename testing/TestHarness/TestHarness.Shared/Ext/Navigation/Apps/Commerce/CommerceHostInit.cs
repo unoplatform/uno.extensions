@@ -17,8 +17,16 @@ public class CommerceHostInit : IHostInitialization
 				{
 					var host = context.HostingEnvironment;
 					// Configure log levels for different categories of logging
-					logBuilder.SetMinimumLevel(host.IsDevelopment() ? LogLevel.Warning : LogLevel.Information);
+					logBuilder.SetMinimumLevel(host.IsDevelopment() ? LogLevel.Trace : LogLevel.Warning);
 				})
+
+				// Only use this syntax for UI tests - use UseConfiguration in apps
+				.ConfigureAppConfiguration((ctx, b) =>
+				{
+					b.AddEmbeddedConfigurationFile<App>("TestHarness.Ext.Navigation.Apps.Commerce.appsettings.logging.json");
+				})
+
+				.UseSerilog(true, true)
 
 				// Enable navigation, including registering views and viewmodels
 				.UseNavigation(RegisterRoutes)
