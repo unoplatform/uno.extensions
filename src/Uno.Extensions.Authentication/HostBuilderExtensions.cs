@@ -1,10 +1,4 @@
-﻿
-
-
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Uno.Extensions.Configuration;
-
-namespace Uno.Extensions.Authentication;
+﻿namespace Uno.Extensions.Authentication;
 
 public static class HostBuilderExtensions
 {
