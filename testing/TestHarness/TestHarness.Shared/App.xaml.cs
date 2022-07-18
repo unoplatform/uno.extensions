@@ -1,5 +1,8 @@
 
 
+using System.Diagnostics;
+using WinUIEx;
+
 namespace TestHarness
 {
 	public sealed partial class App : Application
@@ -9,6 +12,7 @@ namespace TestHarness
 
 		public App()
 		{
+			WebAuthenticator.Init();
 			this.InitializeComponent();
 		}
 

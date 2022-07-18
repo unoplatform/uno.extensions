@@ -146,6 +146,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Logging.Seri
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestBackend", "TestBackend\TestBackend.csproj", "{931D4C78-38A0-464C-B152-A13DC519085B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3B07D830-DCAB-4478-ABA4-821128539220}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\src\Directory.Build.props = ..\..\src\Directory.Build.props
+		..\..\src\Directory.Build.targets = ..\..\src\Directory.Build.targets
+		..\..\src\global.json = ..\..\src\global.json
+		..\..\src\Uno.CrossTargeting.props = ..\..\src\Uno.CrossTargeting.props
+		..\..\src\winappsdk-workaround.targets = ..\..\src\winappsdk-workaround.targets
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Ad-Hoc|Any CPU = Ad-Hoc|Any CPU
@@ -3408,6 +3417,7 @@ Global
 		{F0A30D68-8B63-4B6D-98C1-0426DE76D781} = {21238E71-AF63-4120-A97E-63A7581A2C0F}
 		{CDC520C4-FE6B-4784-832D-95D62FCF444D} = {21238E71-AF63-4120-A97E-63A7581A2C0F}
 		{C66A5012-A211-4A4A-A2C7-50539EC6401E} = {7C86419F-578E-4B3B-952B-C9DB9E685251}
+		{3B07D830-DCAB-4478-ABA4-821128539220} = {3DE9532E-61E4-4B25-B0BD-B580BC63F6BD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C7433AE2-B1A0-4C1A-887E-5CAA7AAF67A6}

@@ -1,6 +1,7 @@
 ﻿
 
 #if WINDOWS
+using System.Diagnostics;
 using Windows.ApplicationModel.Activation;
 
 namespace WinUIEx;
@@ -41,10 +42,15 @@ public sealed class WebAuthenticator
 		Microsoft.Windows.AppLifecycle.AppInstance.GetCurrent().Activated += CurrentAppInstance_Activated;
 	}
 
+	private static bool _init;
 	[System.Runtime.CompilerServices.ModuleInitializer]
-
-	internal static void Init()
+	public static void Init()
 	{
+		if (_init)
+		{
+			return;
+		}
+		_init = true;
 		try
 		{
 			OnAppCreation();
@@ -84,6 +90,7 @@ public sealed class WebAuthenticator
 
 	private static NameValueCollection? GetState(IProtocolActivatedEventArgs protocolArgs)
 	{
+		Debug.WriteLine($"args: {protocolArgs.Uri.Query}");
 		var vals = System.Web.HttpUtility.ParseQueryString(protocolArgs.Uri.Query);
 		if (vals["state"] is string state)
 		{
@@ -101,7 +108,6 @@ public sealed class WebAuthenticator
 
 	private static void OnAppCreation()
 	{
-		//Debugger.Break();
 		var activatedEventArgs = Microsoft.Windows.AppLifecycle.AppInstance.GetCurrent()?.GetActivatedEventArgs();
 		if (activatedEventArgs is null)
 			return;
