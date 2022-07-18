@@ -370,6 +370,7 @@
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\appsettings.msal.json" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\appsettings.msalauthentication.json" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Oidc\appsettings.oidc.json" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\appsettings.logging.json" />
     <_Globbled_Page Include="$(MSBuildThisFileDirectory)**/*.xaml" Exclude="@(Page);@(ApplicationDefinition)">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
