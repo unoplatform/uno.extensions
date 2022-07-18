@@ -73,6 +73,20 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Oidc\OidcAuthenticationShellViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Oidc\IOidcAuthenticationTestEndpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Web\IWebAuthenticationTestEndpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Web\WebAuthenticationHomePage.xaml.cs">
+      <DependentUpon>WebAuthenticationHomePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Web\WebAuthenticationHomeViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Web\WebAuthenticationHostInit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Web\WebAuthenticationLoginPage.xaml.cs">
+      <DependentUpon>WebAuthenticationLoginPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Web\WebAuthenticationLoginViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Web\WebAuthenticationMainPage.xaml.cs">
+      <DependentUpon>WebAuthenticationMainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Web\WebAuthenticationShellViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\BaseCommerceViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceCredentials.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceDealsPage.xaml.cs">
@@ -376,6 +390,7 @@
 		 explicitly included in the projitem, so files can be added from vscode
 		 without manipulating the projitem file.
 	-->
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Web\appsettings.webauth.json" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\appsettings.testbackend.json" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\appsettings.dummyjson.json" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\appsettings.multi.json" />

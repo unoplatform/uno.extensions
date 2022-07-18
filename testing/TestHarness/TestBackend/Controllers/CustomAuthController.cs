@@ -9,9 +9,9 @@ namespace TestBackend.Controllers;
 public class CustomAuthController : ControllerBase
 {
 
-	private readonly ILogger<WeatherForecastController> _logger;
+	private readonly ILogger _logger;
 
-	public CustomAuthController(ILogger<WeatherForecastController> logger)
+	public CustomAuthController(ILogger<CustomAuthController> logger)
 	{
 		_logger = logger;
 	}

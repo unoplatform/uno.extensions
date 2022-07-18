@@ -17,4 +17,5 @@ public enum TestSections
 	Authentication_Msal_Settings,
 	Authentication_Multi,
 	Authentication_Oidc,
+	Authentication_Web
 }
