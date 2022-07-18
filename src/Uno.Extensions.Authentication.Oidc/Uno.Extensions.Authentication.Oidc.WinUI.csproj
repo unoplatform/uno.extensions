@@ -10,20 +10,15 @@
 
 	</PropertyGroup>
 
-	<PropertyGroup Condition="$(_IsWinUI)">
-		<Platforms>x86;x64;arm64</Platforms>
-		<RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
-	</PropertyGroup>
-	
 	<Import Project="common.props" />
 	
 	<PropertyGroup>
 		<PackageId>Uno.Extensions.Authentication.Oidc.WinUI</PackageId>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
 	</PropertyGroup>
-
 	<ItemGroup>
 		<PackageReference Include="Uno.WinUI" Version="4.3.6" />
+		<ProjectReference Include="..\Uno.Extensions.Authentication.UI\Uno.Extensions.Authentication.WinUI.csproj" />
 	</ItemGroup>
 
 	<ItemGroup Condition="$(_IsWinUI)">
