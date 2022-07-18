@@ -1,6 +1,5 @@
 ﻿
-
-namespace Uno.Extensions.Authentication.MSAL;
+namespace Uno.Extensions.Authentication;
 
 public static class HostBuilderExtensions
 {

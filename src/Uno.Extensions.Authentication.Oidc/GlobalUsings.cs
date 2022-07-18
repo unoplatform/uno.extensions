@@ -9,6 +9,7 @@ global using Microsoft.Extensions.Hosting;
 global using Microsoft.Extensions.Logging;
 global using Microsoft.Extensions.Options;
 global using Uno.Extensions.Authentication;
+global using Uno.Extensions.Authentication.Oidc;
 global using Uno.Extensions.Authentication.Handlers;
 global using Uno.Extensions.Configuration;
 global using Uno.Extensions.Hosting;

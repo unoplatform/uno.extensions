@@ -1,4 +1,4 @@
-﻿namespace Uno.Extensions.Authentication.Oidc;
+﻿namespace Uno.Extensions.Authentication;
 
 public static class OidcAuthenticationBuilderExtensions
 {

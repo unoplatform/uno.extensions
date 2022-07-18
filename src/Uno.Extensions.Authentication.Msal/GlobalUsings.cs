@@ -11,10 +11,9 @@ global using Microsoft.Extensions.Logging;
 global using Microsoft.Extensions.Options;
 global using Microsoft.Identity.Client;
 global using Microsoft.Identity.Client.Extensions.Msal;
+global using Uno.Extensions.Authentication.MSAL;
 global using Uno.Extensions.Configuration;
 global using Uno.Extensions.Hosting;
 global using Uno.Extensions.Storage;
 global using Uno.UI.MSAL;
 global using Windows.Security.Authentication.Web;
-
-
