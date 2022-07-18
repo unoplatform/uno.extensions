@@ -12,7 +12,7 @@ public sealed partial class NavigationViewHomePage : Page
 	{
 		if(e.InvokedItemContainer == sender.SettingsItem)
 		{
-			this.Navigator().NavigateViewModelAsync<NavigationViewSettingsViewModel>(this);
+			this.Navigator()!.NavigateViewModelAsync<NavigationViewSettingsViewModel>(this);
 		}
 	}
 }
