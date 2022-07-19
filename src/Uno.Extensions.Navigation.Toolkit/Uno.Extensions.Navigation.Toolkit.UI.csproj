@@ -24,7 +24,7 @@
 
 	<!--
 	Fix for: https://github.com/unoplatform/uno.extensions/issues/563 
-	MSBuild Extras excludes .xf.xml layout files from referenced libraries at
+	MSBuild Extras excludes .xr.xml layout files from referenced libraries at
 	https://github.com/novotnyllc/MSBuildSdkExtras/blob/252ba9af3300db98fde54644316567f0c6426e1e/Source/MSBuild.Sdk.Extras/Build/Workarounds.targets#L94
 	-->
 	<Target Name="FixXrXml"
