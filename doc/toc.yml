@@ -40,6 +40,10 @@
   items:
     - name: Tutorials
       items:
+        - name: Authentication
+          items:
+            - name: Get Started with Authentication
+              href: Learn/Tutorials/Authentication/HowTo-Authentication.md
         - name: Hosting
           items:
             - name: Get Started with Hosting
