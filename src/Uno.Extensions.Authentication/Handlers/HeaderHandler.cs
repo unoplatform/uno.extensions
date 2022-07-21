@@ -14,7 +14,7 @@ internal class HeaderHandler : BaseAuthorizationHandler
 	}
 	public override bool ShouldIncludeToken(HttpRequestMessage request) => true;
 
-	protected override async Task<bool> ApplyTokensToRequest(HttpRequestMessage request, IDictionary<string, string> tokens, CancellationToken ct)
+	protected override async Task<bool> ApplyTokensToRequest(HttpRequestMessage request, CancellationToken ct)
 	{
 		var accessToken = await _tokens.AccessTokenAsync();
 		if (!string.IsNullOrWhiteSpace(accessToken) &&

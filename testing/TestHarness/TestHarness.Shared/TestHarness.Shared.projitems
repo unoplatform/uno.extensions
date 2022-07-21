@@ -23,7 +23,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationHomePage.xaml.cs">
       <DependentUpon>CustomAuthenticationHomePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationHomeTestBackendPage.xaml.cs">
+      <DependentUpon>CustomAuthenticationHomeTestBackendPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationHomeTestBackendViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationHomeViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationTestBackendCookieHostInit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationTestBackendHostInit.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationServiceHostInit.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationHostInit.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationLoginPage.xaml.cs">
@@ -34,6 +40,7 @@
       <DependentUpon>CustomAuthenticationMainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationShellViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\ICustomAuthenticationTestBackendEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\ICustomAuthenticationDummyJsonEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\HostBuilderExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\IMsalAuthenticationTaskListEndpoint.cs" />
@@ -208,6 +215,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)TestSectionRootAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationHomeTestBackendPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationHomePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -365,6 +376,7 @@
 		 explicitly included in the projitem, so files can be added from vscode
 		 without manipulating the projitem file.
 	-->
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\appsettings.testbackend.json" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\appsettings.dummyjson.json" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\appsettings.multi.json" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\appsettings.msal.json" />

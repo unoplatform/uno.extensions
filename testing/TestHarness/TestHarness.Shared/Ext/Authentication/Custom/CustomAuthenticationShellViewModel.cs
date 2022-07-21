@@ -7,6 +7,6 @@ public record CustomAuthenticationShellViewModel
 	{
 		flow.Initialize(dispatcher, navigator);
 
-		_ = flow.AuthenticatedNavigateViewModelAsync<CustomAuthenticationHomeViewModel>(this);
+		_ = flow.AuthenticatedNavigateRouteAsync(this, "Home");
 	}
 }
