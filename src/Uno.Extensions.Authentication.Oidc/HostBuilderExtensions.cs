@@ -7,6 +7,10 @@ public static class HostBuilderExtensions
 		Action<IOidcAuthenticationBuilder>? configure = default,
 		string name = OidcAuthenticationProvider.DefaultName)
 	{
+#if WINDOWS
+		WinUIEx.WebAuthenticator.Init();
+#endif
+
 		var hostBuilder = (builder as IBuilder)?.HostBuilder;
 		if (hostBuilder is null)
 		{

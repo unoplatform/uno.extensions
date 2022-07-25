@@ -37,7 +37,7 @@ internal record OidcAuthenticationProvider(
 		return true;
 	}
 
-	public async override ValueTask<IDictionary<string, string>?> LoginAsync(IDispatcher dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
+	public async override ValueTask<IDictionary<string, string>?> LoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
 	{
 		if (_client is null)
 		{
@@ -62,7 +62,7 @@ internal record OidcAuthenticationProvider(
 		return default;
 	}
 
-	public async override ValueTask<bool> LogoutAsync(IDispatcher dispatcher, CancellationToken cancellationToken)
+	public async override ValueTask<bool> LogoutAsync(IDispatcher? dispatcher, CancellationToken cancellationToken)
 	{
 		if (_client is null)
 		{

@@ -4,6 +4,6 @@ public record class WebAuthenticationLoginViewModel(INavigator Navigator, IAuthe
 {
 	public async Task Login()
 	{
-		await Flow.LoginAsync(null);
+		await Flow.LoginAsync(new Dictionary<string, string>(){ { "LoginMetaData", "SocialPlatform" } });
 	}
 }

@@ -10,10 +10,13 @@ internal record WebAuthenticationSettings
 
 	public AsyncFunc<string?, IDictionary<string, string>?, string>? PrepareLoginCallbackUri { get; init; }
 
-	public string? AccessTokenKey { get; init; } = "access_token";
-	public string? RefreshTokenKey { get; init; } = "refresh_token";
+	public string AccessTokenKey { get; init; } = "access_token";
+	public string RefreshTokenKey { get; init; } = "refresh_token";
+	public string IdTokenKey { get; init; } = "id_token";
 
 	public IDictionary<string,string>? OtherTokenKeys { get; init; }
+
+	public AsyncFunc<IServiceProvider, IDictionary<string, string>?, IDictionary<string, string>, IDictionary<string, string>?>? PostLoginCallback { get; init; }
 
 	public string? LogoutStartUri { get; init; }
 
@@ -30,4 +33,6 @@ internal record WebAuthenticationSettings<TService>: WebAuthenticationSettings
 	where TService: notnull
 {
 	public new AsyncFunc<TService, IDictionary<string, string>, IDictionary<string, string>?>? RefreshCallback;
+
+	public new AsyncFunc<TService, IDictionary<string, string>?, IDictionary<string, string>, IDictionary<string, string>?>? PostLoginCallback { get; init; }
 }

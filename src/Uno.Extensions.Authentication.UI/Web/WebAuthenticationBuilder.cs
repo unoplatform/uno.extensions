@@ -4,7 +4,8 @@ internal record WebAuthenticationBuilder : BaseBuilder<WebAuthenticationSettings
 {
 }
 
-internal record WebAuthenticationBuilder<TService> : BaseBuilder<WebAuthenticationSettings<TService>>, IWebAuthenticationBuilder<TService>
+internal record WebAuthenticationBuilder<TService> : BaseBuilder<WebAuthenticationSettings<TService>>, IBuilder<WebAuthenticationSettings>, IWebAuthenticationBuilder<TService>
 	where TService : notnull
 {
+	WebAuthenticationSettings IBuilder<WebAuthenticationSettings>.Settings { get => this.Settings; set => this.Settings = value as WebAuthenticationSettings<TService> ?? this.Settings; }
 }

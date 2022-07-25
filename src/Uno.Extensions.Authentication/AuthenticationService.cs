@@ -12,7 +12,7 @@ internal record AuthenticationService
 
 	public async ValueTask<bool> CanRefresh(CancellationToken? cancellationToken = default) => await Tokens.HasTokenAsync(cancellationToken) && await AuthenticationProvider().CanRefresh(cancellationToken ?? CancellationToken.None);
 
-	public async ValueTask<bool> LoginAsync(IDispatcher dispatcher, IDictionary<string, string>? credentials = default, string? provider = null, CancellationToken? cancellationToken = default)
+	public async ValueTask<bool> LoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials = default, string? provider = null, CancellationToken? cancellationToken = default)
 	{
 		var authProvider = AuthenticationProvider(provider);
 
@@ -24,7 +24,7 @@ internal record AuthenticationService
 		return await Tokens.HasTokenAsync(cancellationToken);
 	}
 
-	public async ValueTask<bool> LogoutAsync(IDispatcher dispatcher, CancellationToken? cancellationToken = default)
+	public async ValueTask<bool> LogoutAsync(IDispatcher? dispatcher, CancellationToken? cancellationToken = default)
 	{
 		var authProvider = AuthenticationProvider();
 		if (!await authProvider.LogoutAsync(dispatcher, cancellationToken ?? CancellationToken.None))

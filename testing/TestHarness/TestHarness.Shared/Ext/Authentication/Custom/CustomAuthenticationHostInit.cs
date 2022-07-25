@@ -60,6 +60,11 @@ public class CustomAuthenticationHostInit : IHostInitialization
 							})
 							.Refresh(async (sp, tokenDictionary, cancellationToken) =>
 							{
+								if(tokenDictionary is null)
+								{
+									return default;
+								}
+
 								var authService = sp.GetRequiredService<ICustomAuthenticationDummyJsonEndpoint>();
 								var creds = new CustomAuthenticationCredentials
 								{

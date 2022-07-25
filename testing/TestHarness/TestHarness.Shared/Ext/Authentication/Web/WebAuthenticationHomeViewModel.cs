@@ -8,7 +8,7 @@ public partial class WebAuthenticationHomeViewModel : ObservableObject
 	public IWebAuthenticationTestEndpoint Endpoint { get; init; }
 
 	[ObservableProperty]
-	private WebAuthenticationTestItem[]? items;
+	private string[]? items;
 
 	public WebAuthenticationHomeViewModel(INavigator navigator, IAuthenticationFlow flow, IWebAuthenticationTestEndpoint endpoint)
 	{
@@ -24,7 +24,7 @@ public partial class WebAuthenticationHomeViewModel : ObservableObject
 
 	public async Task Retrieve()
 	{
-		var response = await Endpoint.Test(CancellationToken.None);
-		Items= response;
+		var response = await Endpoint.GetDataFacebook(CancellationToken.None);
+		Items = response?.ToArray();
 	}
 }

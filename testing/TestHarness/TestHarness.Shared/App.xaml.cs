@@ -1,7 +1,6 @@
 
 
 using System.Diagnostics;
-using WinUIEx;
 
 namespace TestHarness
 {
@@ -12,7 +11,6 @@ namespace TestHarness
 
 		public App()
 		{
-			WebAuthenticator.Init();
 			this.InitializeComponent();
 		}
 

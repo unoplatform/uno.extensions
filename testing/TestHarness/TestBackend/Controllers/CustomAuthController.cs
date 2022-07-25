@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using SameSiteMode = Microsoft.AspNetCore.Http.SameSiteMode;
@@ -50,10 +51,23 @@ public class CustomAuthController : ControllerBase
 				var scheme = tokenBits[0];
 				if (scheme == "Bearer")
 				{
-					var bits = tokenBits[1].Base64Decode().Split(":");
-					if (bits.Length == 2)
+					try
 					{
-						return new[] { "One", "Two", "Three" };
+						var bits = tokenBits[1].Base64Decode().Split(":");
+						if (bits.Length == 2)
+						{
+							return new[] { "One", "Two", "Three" };
+						}
+					}
+					catch
+					{
+						var jwtHandler = new JwtSecurityTokenHandler();
+						var jwt = jwtHandler.ReadJwtToken(tokenBits[1]);
+						if (jwt is not null)
+						{
+							return new[] { "Four", "Five", "Six" };
+						}
+
 					}
 				}
 			}
@@ -65,6 +79,8 @@ public class CustomAuthController : ControllerBase
 		Response.StatusCode = StatusCodes.Status401Unauthorized;
 		return default;
 	}
+
+
 
 	[HttpGet(Name = "GetDataCookie")]
 	public IEnumerable<string>? GetDataCookie()

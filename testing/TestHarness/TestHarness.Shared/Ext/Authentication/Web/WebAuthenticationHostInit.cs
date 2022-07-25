@@ -34,11 +34,15 @@ public class WebAuthenticationHostInit : IHostInitialization
 
 				.UseAuthentication(auth =>
 					auth
-					.AddWeb(web => 
+					.AddWeb<IWebAuthenticationTestEndpoint>(web => 
 						web
-							.LoginStartUri("https://localhost:7193/webauth/Facebook")
+							.LoginStartUri("https://localhost:7193/webauth/Login/Facebook")
 							.LoginCallbackUri("oidc-auth://")
-						))
+							.PostLogin<IWebAuthenticationTestEndpoint>(async
+							(authService, tokens, ct) =>
+							{
+								return tokens;
+							})))
 
 				.UseAuthenticationFlow(builder =>
 						builder

@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 namespace TestBackend.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("[controller]/[action]")]
 public class WebAuthController : ControllerBase
 {
 	private readonly Auth authOptions;
@@ -16,7 +16,7 @@ public class WebAuthController : ControllerBase
 	}
 
 	[HttpGet("{scheme}")]
-	public async Task Get([FromRoute] string scheme)
+	public async Task Login([FromRoute] string scheme)
 	{
 		var auth = await Request.HttpContext.AuthenticateAsync(scheme);
 
@@ -26,7 +26,7 @@ public class WebAuthController : ControllerBase
 			|| string.IsNullOrEmpty(auth.Properties.GetTokenValue("access_token")))
 		{
 			// Not authenticated, challenge
-			await Request.HttpContext.ChallengeAsync(scheme);//,new AuthenticationProperties(new Dictionary<string, string> { { "state", Request.Query["state"] } }));
+			await Request.HttpContext.ChallengeAsync(scheme);
 		}
 		else
 		{
@@ -58,5 +58,37 @@ public class WebAuthController : ControllerBase
 			// Redirect to final url
 			Request.HttpContext.Response.Redirect(url);
 		}
+	}
+
+
+	[HttpGet(Name = "GetDataFacebook")]
+	public async Task<IEnumerable<string>?> GetDataFacebook()
+	{
+		try
+		{
+			var token = Request.Headers.Authorization.FirstOrDefault() ?? string.Empty;
+			var tokenBits = token.Split(' ');
+			if (tokenBits.Length == 2)
+			{
+				var scheme = tokenBits[0];
+				if (scheme == "Bearer")
+				{
+					var fbToken = tokenBits[1];
+					var tokenInfoUrl = $"https://graph.facebook.com/debug_token?input_token={fbToken}&access_token={fbToken}";
+					var client = new HttpClient();
+					var response = await client.GetAsync(tokenInfoUrl);
+					if (response.IsSuccessStatusCode)
+					{
+						return new[] { "One", "Two", "Three" };
+					}
+				}
+			}
+		}
+		catch
+		{
+
+		}
+		Response.StatusCode = StatusCodes.Status401Unauthorized;
+		return default;
 	}
 }

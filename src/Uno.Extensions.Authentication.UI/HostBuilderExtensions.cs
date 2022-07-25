@@ -1,6 +1,4 @@
-﻿using Uno.Extensions.Authentication.WinUI.Web.Social;
-
-namespace Uno.Extensions.Authentication;
+﻿namespace Uno.Extensions.Authentication;
 
 public static class HostBuilderExtensions
 {
@@ -24,6 +22,10 @@ public static class HostBuilderExtensions
 		Action<IWebAuthenticationBuilder>? configure = default,
 		string name = WebAuthenticationProvider.DefaultName)
 	{
+#if WINDOWS
+		WinUIEx.WebAuthenticator.Init();
+#endif
+
 		var authBuilder = builder.AsBuilder<WebAuthenticationBuilder>();
 
 		configure?.Invoke(authBuilder);
@@ -35,31 +37,7 @@ public static class HostBuilderExtensions
 				(provider, settings) => provider with { Name = name, Settings = settings });
 	}
 
-	//public static IAuthenticationBuilder AddFacebook(
-	//	this IAuthenticationBuilder builder,
-	//	Func<FacebookOptions, FacebookOptions> options,
-	//	Action<IWebAuthenticationBuilder>? configure = default,
-	//	string name = FacebookOptions.DefaultName)
-	//{
-	//	var fb = new FacebookOptions();
-	//	fb = options(fb);
-
-	//	var authBuilder = builder.AsBuilder<WebAuthenticationBuilder>();
-
-	//	authBuilder.LoginStartUri(fb.StartUri);
-	//	authBuilder.LoginCallbackUri(fb.CallbackUri);
-
-	//	configure?.Invoke(authBuilder);
-
-	//	return builder
-	//		.AddAuthentication<WebAuthenticationProvider, WebAuthenticationSettings>(
-	//			name,
-	//			authBuilder.Settings,
-	//			(provider, settings) => provider with { Name = name, Settings = settings });
-	//}
-
-
-	public static IAuthenticationBuilder AddCustom<TService>(
+	public static IAuthenticationBuilder AddWeb<TService>(
 		this IAuthenticationBuilder builder,
 		Action<IWebAuthenticationBuilder<TService>>? configure = default,
 		string name = WebAuthenticationProvider.DefaultName)
@@ -71,10 +49,10 @@ public static class HostBuilderExtensions
 		configure?.Invoke(authBuilder);
 
 		return builder
-			.AddAuthentication<WebAuthenticationProvider, WebAuthenticationSettings<TService>>(
+			.AddAuthentication<WebAuthenticationProvider<TService>, WebAuthenticationSettings<TService>>(
 				name,
 				authBuilder.Settings,
-				(provider, settings) => provider with { Name = name, Settings = settings });
+				(provider, settings) => provider with { Name = name, TypedSettings = settings });
 	}
 
 }

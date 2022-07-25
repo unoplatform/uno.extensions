@@ -14,7 +14,7 @@ public static class WebAuthenticationBuilderExtensions
 		this IWebAuthenticationBuilder builder,
 		AsyncFunc<string?, IDictionary<string, string>?, string> prepare) =>
 			builder.Property((WebAuthenticationSettings s)
-				=> s with { PrepareLoginStartUri = prepare});
+				=> s with { PrepareLoginStartUri = prepare });
 
 
 	public static IWebAuthenticationBuilder LoginCallbackUri(
@@ -29,6 +29,43 @@ public static class WebAuthenticationBuilderExtensions
 			builder.Property((WebAuthenticationSettings s)
 				=> s with { PrepareLoginCallbackUri = prepare });
 
+	public static IWebAuthenticationBuilder PostLogin(
+		this IWebAuthenticationBuilder builder,
+		AsyncFunc<IServiceProvider, IDictionary<string, string>?, IDictionary<string, string>, IDictionary<string, string>?> postLogin) =>
+			builder.Property((WebAuthenticationSettings s)
+				=> s with { PostLoginCallback = postLogin });
+
+	public static IWebAuthenticationBuilder PostLogin(
+		this IWebAuthenticationBuilder builder,
+		AsyncFunc<IServiceProvider, IDictionary<string, string>, IDictionary<string, string>?> postLogin) =>
+			builder.Property((WebAuthenticationSettings s)
+				=> s with
+				{
+					PostLoginCallback =
+						postLogin is not null ?
+							(services, credentials, tokens, ct) => postLogin(services, tokens, ct) :
+							default
+				});
+
+	public static IWebAuthenticationBuilder PostLogin<TService>(
+		this IWebAuthenticationBuilder builder,
+		AsyncFunc<TService, IDictionary<string, string>?, IDictionary<string, string>, IDictionary<string, string>?> postLogin)
+			where TService : notnull =>
+				builder.Property((WebAuthenticationSettings<TService> s)
+					=> s with { PostLoginCallback = postLogin });
+
+	public static IWebAuthenticationBuilder PostLogin<TService>(
+	this IWebAuthenticationBuilder builder,
+	AsyncFunc<TService, IDictionary<string, string>, IDictionary<string, string>?> postLogin)
+		where TService : notnull =>
+			builder.Property((WebAuthenticationSettings<TService> s)
+				=> s with
+				{
+					PostLoginCallback =
+						postLogin is not null ?
+							(service, credentials, tokens, ct) => postLogin(service, tokens, ct) :
+							default
+				});
 
 	public static IWebAuthenticationBuilder LogoutStartUri(
 		this IWebAuthenticationBuilder builder,

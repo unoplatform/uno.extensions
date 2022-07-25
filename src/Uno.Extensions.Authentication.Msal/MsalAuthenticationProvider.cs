@@ -44,10 +44,15 @@ internal record MsalAuthenticationProvider(
 		await SetupStorage();
 		return (await _pca!.GetAccountsAsync()).Count() > 0;
 	}
-	public async override ValueTask<IDictionary<string, string>?> LoginAsync(IDispatcher dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
+	public async override ValueTask<IDictionary<string, string>?> LoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
 	{
 		try
 		{
+			if(dispatcher is  null)
+			{
+				throw new ArgumentNullException(nameof(dispatcher),"IDispatcher required to call LoginAsync on MSAL provider");
+			}
+
 			await SetupStorage();
 			var result = await AcquireTokenAsync(dispatcher);
 			return new Dictionary<string, string>
@@ -69,8 +74,13 @@ internal record MsalAuthenticationProvider(
 
 	}
 
-	public async override ValueTask<bool> LogoutAsync(IDispatcher dispatcher, CancellationToken cancellationToken)
+	public async override ValueTask<bool> LogoutAsync(IDispatcher? dispatcher, CancellationToken cancellationToken)
 	{
+		if (dispatcher is null)
+		{
+			throw new ArgumentNullException(nameof(dispatcher), "IDispatcher required to call LogoutAsync on MSAL provider");
+		}
+
 		await SetupStorage();
 		var accounts = await _pca!.GetAccountsAsync();
 		var firstAccount = accounts.FirstOrDefault();

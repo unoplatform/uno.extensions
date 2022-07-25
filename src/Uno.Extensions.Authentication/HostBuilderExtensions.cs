@@ -56,11 +56,14 @@ public static class HostBuilderExtensions
 			{
 				services.TryAddTransient<TAuthenticationProvider>();
 				services.AddSingleton<IProviderFactory>(sp =>
-								new ProviderFactory<TAuthenticationProvider, TSettings>(
-											name,
-											sp.GetRequiredService<TAuthenticationProvider>(),
-											settings,
-											configureProvider));
+				{
+					var auth = sp.GetRequiredService<TAuthenticationProvider>();
+					return new ProviderFactory<TAuthenticationProvider, TSettings>(
+								name,
+								auth,
+								settings,
+								configureProvider);
+				});
 			});
 		return builder;
 	}

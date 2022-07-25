@@ -6,12 +6,13 @@ namespace Uno.Extensions.Authentication.Web;
 internal record WebAuthenticationProvider
 (
 	IServiceProvider Services,
-	ITokenCache Tokens,
-	WebAuthenticationSettings? Settings = null
+	ITokenCache Tokens
 ) : BaseAuthenticationProvider(DefaultName, Tokens)
 {
+	public WebAuthenticationSettings? Settings { get; init; }
+
 	public const string DefaultName = "Web";
-	public async override ValueTask<IDictionary<string, string>?> LoginAsync(IDispatcher dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
+	public async override ValueTask<IDictionary<string, string>?> LoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
 	{
 		var loginStartUri = Settings?.LoginStartUri;
 		if (Settings?.PrepareLoginStartUri is not null)
@@ -37,12 +38,17 @@ internal record WebAuthenticationProvider
 
 #if WINDOWS
 		var userResult = await WinUIEx.WebAuthenticator.AuthenticateAsync(new Uri(loginStartUri), new Uri(loginCallbackUri));
-		var authData = string.Join("&", userResult.Properties.Select(x => $"{x.Key}={x.Value}"));
+		var authData = string.Join("&", userResult.Properties.Select(x => $"{x.Key}={x.Value}"))??string.Empty;
 #else
 		var userResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, new Uri(loginStartUri), new Uri(loginCallbackUri));
-		var authData = userResult?.ResponseData;
+		var authData = userResult?.ResponseData??string.Empty;
 
 #endif
+		var idx = authData.IndexOf("?");
+		if (idx>=0 && idx<authData.Length-1)
+		{
+			authData = authData.Substring(idx+1);
+		}
 
 		if (string.IsNullOrWhiteSpace(authData))
 		{
@@ -67,6 +73,14 @@ internal record WebAuthenticationProvider
 		{
 			tokens[TokenCacheExtensions.RefreshTokenKey] = refreshToken;
 		}
+		if (Settings?.IdTokenKey is not null)
+		{
+			var idToken = query.Get(Settings.IdTokenKey);
+			if (!string.IsNullOrWhiteSpace(idToken))
+			{
+				tokens[Settings.IdTokenKey] = idToken;
+			}
+		}
 		if (Settings?.OtherTokenKeys is not null)
 		{
 			foreach (var key in Settings.OtherTokenKeys)
@@ -79,6 +93,15 @@ internal record WebAuthenticationProvider
 			}
 		}
 
+		return await PostLogin(credentials, tokens, cancellationToken);
+	}
+
+	protected async virtual ValueTask<IDictionary<string, string>?> PostLogin(IDictionary<string, string>? credentials, IDictionary<string,string> tokens, CancellationToken cancellationToken)
+	{
+		if (Settings?.PostLoginCallback is not null)
+		{
+			return await Settings.PostLoginCallback(Services, credentials, tokens, cancellationToken);
+		}
 		return tokens;
 	}
 
@@ -92,7 +115,7 @@ internal record WebAuthenticationProvider
 		return await Settings.RefreshCallback(Services, await Tokens.GetAsync(cancellationToken), cancellationToken);
 	}
 
-	public async override ValueTask<bool> LogoutAsync(IDispatcher dispatcher, CancellationToken cancellationToken)
+	public async override ValueTask<bool> LogoutAsync(IDispatcher? dispatcher, CancellationToken cancellationToken)
 	{
 		var logoutStartUri = Settings?.LogoutStartUri;
 		if (Settings?.PrepareLogoutStartUri is not null)
@@ -133,18 +156,32 @@ internal record WebAuthenticationProvider
 internal record WebAuthenticationProvider<TService>
 (
 	IServiceProvider Services,
-	TService Service,
-	ITokenCache Tokens,
-	WebAuthenticationSettings<TService>? TypedSettings = null
-) : WebAuthenticationProvider(Services, Tokens, TypedSettings)
+	ITokenCache Tokens
+) : WebAuthenticationProvider(Services, Tokens)
 	where TService : notnull
 {
+	public WebAuthenticationSettings<TService>? TypedSettings {
+		get => base.Settings as WebAuthenticationSettings<TService>;
+		init => base.Settings = value;
+	}
+
+
 	public async override ValueTask<IDictionary<string, string>?> RefreshAsync(CancellationToken cancellationToken)
 	{
-		if (TypedSettings?.RefreshCallback is null)
+
+		if (TypedSettings?.RefreshCallback is not null)
 		{
-			return default;
+			return await TypedSettings.RefreshCallback(Services.GetRequiredService<TService>(), await Tokens.GetAsync(cancellationToken), cancellationToken);
 		}
-		return await TypedSettings.RefreshCallback(Service, await Tokens.GetAsync(cancellationToken), cancellationToken);
+		return await base.RefreshAsync(cancellationToken);
+	}
+
+	protected async override ValueTask<IDictionary<string, string>?> PostLogin(IDictionary<string, string>? credentials, IDictionary<string, string> tokens, CancellationToken cancellationToken)
+	{
+		if (TypedSettings?.PostLoginCallback is not null)
+		{
+			return await TypedSettings.PostLoginCallback(Services.GetRequiredService<TService>(), credentials, tokens, cancellationToken);
+		}
+		return await base.PostLogin(credentials, tokens, cancellationToken);
 	}
 }
