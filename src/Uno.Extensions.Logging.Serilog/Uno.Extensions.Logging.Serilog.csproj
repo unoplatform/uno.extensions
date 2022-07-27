@@ -10,7 +10,7 @@
 	</PropertyGroup>
  
   <ItemGroup Condition="'$(_IsIOS)' == 'true' or '$(_IsAndroid)' == 'true' or '$(_IsMacOS)'=='true'">
-    <PackageReference Include="Serilog.Sinks.Xamarin" Version="1.0.0-dev-00104-fd287b7" />
+    <PackageReference Include="Serilog.Sinks.Xamarin" Version="1.0.0" />
   </ItemGroup>
 
 
