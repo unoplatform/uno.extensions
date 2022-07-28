@@ -6,6 +6,7 @@ public enum TestSections
 	MessageDialog,
 	Responsive,
 	NavigationView,
+	Reactive,
 	Apps_Commerce,
 	Apps_Commerce_ShellControl,
 	Apps_ToDo,

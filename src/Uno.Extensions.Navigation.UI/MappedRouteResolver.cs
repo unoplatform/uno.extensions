@@ -28,6 +28,10 @@ public class MappedRouteResolver : RouteResolver
 			IsDefault: drm.IsDefault,
 			DependsOn: drm.DependsOn,
 			Init: drm.Init,
+			IsDialogViewType: () =>
+			{
+				return IsDialogViewType(viewFunc?.Invoke());
+			},
 			Nested: ResolveViewMaps(drm.Nested));
 	}
 

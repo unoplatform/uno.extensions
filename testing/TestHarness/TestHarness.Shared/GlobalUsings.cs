@@ -64,4 +64,5 @@ global using NavigationView = Microsoft.UI.Xaml.Controls.NavigationView;
 global using NavigationViewSelectionChangedEventArgs = Microsoft.UI.Xaml.Controls.NavigationViewSelectionChangedEventArgs;
 #endif
 
+global using TestHarnessApp;
 

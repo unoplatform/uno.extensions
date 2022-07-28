@@ -199,6 +199,30 @@
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationTwoPage.xaml.cs">
       <DependentUpon>PageNavigationTwoPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Reactive\ReactiveFivePage.xaml.cs">
+      <DependentUpon>ReactiveFivePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Reactive\ReactiveFiveViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Reactive\ReactiveFourPage.xaml.cs">
+      <DependentUpon>ReactiveFourPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Reactive\ReactiveFourViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Reactive\ReactiveHostInit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Reactive\ReactiveMainPage.xaml.cs">
+      <DependentUpon>ReactiveMainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Reactive\ReactiveOnePage.xaml.cs">
+      <DependentUpon>ReactiveOnePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Reactive\ReactiveOneViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Reactive\ReactiveThreePage.xaml.cs">
+      <DependentUpon>ReactiveThreePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Reactive\ReactiveThreeViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Reactive\ReactiveTwoPage.xaml.cs">
+      <DependentUpon>ReactiveTwoPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Reactive\ReactiveTwoViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Responsive\ResponsiveDetailsPage.xaml.cs">
       <DependentUpon>ResponsiveDetailsPage.xaml</DependentUpon>
     </Compile>
@@ -350,6 +374,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationTwoPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\Reactive\ReactiveMainPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

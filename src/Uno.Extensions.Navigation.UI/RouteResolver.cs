@@ -81,7 +81,7 @@ public class RouteResolver : IRouteResolver
 			Nested: ResolveViewMaps(drm.Nested));
 	}
 
-	private static bool IsDialogViewType(Type? viewType = null)
+	protected static bool IsDialogViewType(Type? viewType = null)
 	{
 		if(viewType is null)
 		{
