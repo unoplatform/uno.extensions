@@ -84,12 +84,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Serializatio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Serialization.Refit", "..\..\src\Uno.Extensions.Serialization.Refit\Uno.Extensions.Serialization.Refit.csproj", "{C0639C38-F503-4E44-BCE3-BAD312575F8B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{52C41D95-54A4-4BEE-96F3-0742DF383BE5}"
-	ProjectSection(SolutionItems) = preProject
-		Directory.Build.props = Directory.Build.props
-		Directory.Build.targets = Directory.Build.targets
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authentication.Oidc.WinUI", "..\..\src\Uno.Extensions.Authentication.Oidc\Uno.Extensions.Authentication.Oidc.WinUI.csproj", "{CA2D0BCD-14F4-4479-B0BA-B2EFAB483910}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authentication.Msal.WinUI.Wasm", "..\..\src\Uno.Extensions.Authentication.Msal\Uno.Extensions.Authentication.Msal.WinUI.Wasm.csproj", "{56A06113-0BAB-4BCD-8A09-A9C584F4A457}"
@@ -145,15 +139,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Logging.Serilog", "..\..\src\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj", "{C66A5012-A211-4A4A-A2C7-50539EC6401E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestBackend", "TestBackend\TestBackend.csproj", "{931D4C78-38A0-464C-B152-A13DC519085B}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3B07D830-DCAB-4478-ABA4-821128539220}"
-	ProjectSection(SolutionItems) = preProject
-		..\..\src\Directory.Build.props = ..\..\src\Directory.Build.props
-		..\..\src\Directory.Build.targets = ..\..\src\Directory.Build.targets
-		..\..\src\global.json = ..\..\src\global.json
-		..\..\src\Uno.CrossTargeting.props = ..\..\src\Uno.CrossTargeting.props
-		..\..\src\winappsdk-workaround.targets = ..\..\src\winappsdk-workaround.targets
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Reactive", "Reactive", "{A404EC40-25EF-4EFF-8C37-67D7039CF243}"
 EndProject
