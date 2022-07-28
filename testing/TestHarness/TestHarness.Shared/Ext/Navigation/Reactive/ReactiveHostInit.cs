@@ -22,7 +22,7 @@ public class ReactiveHostInit : IHostInitialization
 
 				// Enable navigation, including registering views and viewmodels
 				.UseNavigation(ReactiveViewModelMappings.ViewModelMappings, RegisterRoutes)
-
+				.UseLocalization()
 				.Build(enableUnoLogging: true);
 	}
 
@@ -30,13 +30,26 @@ public class ReactiveHostInit : IHostInitialization
 	private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 	{
 
-		
+		var localizedDialog = new LocalizableMessageDialogViewMap(
+				Content: localizer => "[localized]Confirm this message?",
+				Title: localizer => "[localized]Confirm?",
+				DelayUserInput: true,
+				DefaultButtonIndex: 1,
+				Buttons: new LocalizableDialogAction[]
+				{
+								new(LabelProvider: localizer=> localizer!["Y"],Id:"Y"),
+								new(LabelProvider: localizer=> localizer!["N"], Id:"N")
+				}
+			);
+
+
 		views.Register(
 			new ViewMap<ReactiveOnePage, ReactiveOneViewModel>(),
 			new DataViewMap<ReactiveTwoPage, ReactiveTwoViewModel, TwoModel>(),
 			new DataViewMap<ReactiveThreePage, ReactiveThreeViewModel, ThreeModel>(),
 			new DataViewMap<ReactiveFourPage, ReactiveFourViewModel, FourModel>(),
-			new DataViewMap<ReactiveFivePage, ReactiveFiveViewModel, FiveModel>()
+			new DataViewMap<ReactiveFivePage, ReactiveFiveViewModel, FiveModel>(),
+			localizedDialog
 			);
 
 
@@ -50,6 +63,7 @@ public class ReactiveHostInit : IHostInitialization
 					new RouteMap("Three", View: views.FindByViewModel<ReactiveThreeViewModel>()),
 					new RouteMap("Four", View: views.FindByViewModel<ReactiveFourViewModel>()),
 					new RouteMap("Five", View: views.FindByViewModel<ReactiveFiveViewModel>()),
+					new RouteMap("LocalizedConfirm", View: localizedDialog)
 			}));
 	}
 }

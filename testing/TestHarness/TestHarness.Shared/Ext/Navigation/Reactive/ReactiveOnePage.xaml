@@ -24,6 +24,9 @@
 			<Button AutomationProperties.AutomationId="OnePageToTwoPageDataButton"
 					Content="Two (Data)"
 					Command="{Binding GoToTwoData}" />
+			<Button AutomationProperties.AutomationId="OnePageDialogButton"
+					Content="Dialog"
+					Command="{Binding ShowDialog}" />
 		</StackPanel>
 	</Grid>
 </Page>

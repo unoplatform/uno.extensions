@@ -31,7 +31,6 @@ global using Uno.Extensions.Serialization;
 global using Uno.Extensions.Serialization.Refit;
 global using Windows.ApplicationModel;
 global using Windows.ApplicationModel.Activation;
-global using Window = Microsoft.UI.Xaml.Window;
 
 global using System.Text.Json.Serialization;
 global using Refit;
