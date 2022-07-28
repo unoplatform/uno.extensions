@@ -1,24 +1,21 @@
 ﻿global using System;
 global using System.Collections.Generic;
+global using System.Collections.Specialized;
+global using System.IO;
 global using System.Linq;
-global using System.Text;
 global using System.Threading;
 global using System.Threading.Tasks;
+global using System.Xml;
+global using System.Xml.Linq;
+global using System.Xml.XPath;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Hosting;
-global using Microsoft.Extensions.Localization;
-global using Microsoft.Extensions.Logging;
-global using Microsoft.Extensions.Options;
-global using Windows.Foundation;
-global using Windows.UI.Popups;
 global using Uno.Extensions;
+global using Uno.Extensions.Authentication;
+global using Uno.Extensions.Authentication.Web;
 global using Uno.Extensions.Hosting;
-global using Uno.Extensions.Logging;
 global using Uno.Extensions.Navigation;
-global using Uno.Extensions.Navigation.Navigators;
-global using Uno.Extensions.Navigation.Regions;
-global using Uno.Extensions.Navigation.UI;
-global using Uno.Extensions.Navigation.UI.Controls;
+global using Windows.Security.Authentication.Web;
 
 
 #if WINUI

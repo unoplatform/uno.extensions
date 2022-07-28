@@ -8,7 +8,7 @@ internal record CustomAuthenticationProvider
 ) : BaseAuthenticationProvider(DefaultName, Tokens)
 {
 	public const string DefaultName = "Custom";
-	public async override ValueTask<IDictionary<string, string>?> LoginAsync(IDispatcher dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
+	public async override ValueTask<IDictionary<string, string>?> LoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
 	{
 		if (Settings?.LoginCallback is null)
 		{
@@ -17,7 +17,7 @@ internal record CustomAuthenticationProvider
 		return await Settings.LoginCallback(Services, dispatcher, Tokens, credentials!, cancellationToken);
 	}
 
-	public async override ValueTask<bool> LogoutAsync(IDispatcher dispatcher, CancellationToken cancellationToken)
+	public async override ValueTask<bool> LogoutAsync(IDispatcher? dispatcher, CancellationToken cancellationToken)
 	{
 		if (Settings?.LogoutCallback is null)
 		{
@@ -45,7 +45,7 @@ internal record CustomAuthenticationProvider<TService>
 ) : BaseAuthenticationProvider(CustomAuthenticationProvider.DefaultName, Tokens)
 	where TService: class
 {
-	public async override ValueTask<IDictionary<string, string>?> LoginAsync(IDispatcher dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
+	public async override ValueTask<IDictionary<string, string>?> LoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
 	{
 		if (Settings?.LoginCallback is null)
 		{
@@ -54,7 +54,7 @@ internal record CustomAuthenticationProvider<TService>
 		return await Settings.LoginCallback(Services.GetRequiredService<TService>(), dispatcher, Tokens, credentials!, cancellationToken);
 	}
 
-	public async override ValueTask<bool> LogoutAsync(IDispatcher dispatcher, CancellationToken cancellationToken)
+	public async override ValueTask<bool> LogoutAsync(IDispatcher? dispatcher, CancellationToken cancellationToken)
 	{
 		if (Settings?.LogoutCallback is null)
 		{

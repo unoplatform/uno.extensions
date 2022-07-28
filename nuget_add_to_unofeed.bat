@@ -1,3 +1,11 @@
+copy .\src\Uno.Extensions.Authentication\bin\Uno.Extensions.Authentication\Release\Uno.Extensions.Authentication.255.255.255.255.nupkg .\unofeed\
+copy .\src\Uno.Extensions.Authentication.UI\bin\Uno.Extensions.Authentication.UI\Release\Uno.Extensions.Authentication.UI.255.255.255.255.nupkg .\unofeed\
+copy .\src\Uno.Extensions.Authentication.UI\bin\Uno.Extensions.Authentication.WinUI\Release\Uno.Extensions.Authentication.WinUI.255.255.255.255.nupkg .\unofeed\
+copy .\src\Uno.Extensions.Authentication.MSAL\bin\Uno.Extensions.Authentication.MSAL.UI\Release\Uno.Extensions.Authentication.MSAL.UI.255.255.255.255.nupkg .\unofeed\
+copy .\src\Uno.Extensions.Authentication.MSAL\bin\Uno.Extensions.Authentication.MSAL.WinUI\Release\Uno.Extensions.Authentication.MSAL.WinUI.255.255.255.255.nupkg .\unofeed\
+copy .\src\Uno.Extensions.Authentication.Oidc\bin\Uno.Extensions.Authentication.Oidc.UI\Release\Uno.Extensions.Authentication.Oidc.UI.255.255.255.255.nupkg .\unofeed\
+copy .\src\Uno.Extensions.Authentication.Oidc\bin\Uno.Extensions.Authentication.Oidc.WinUI\Release\Uno.Extensions.Authentication.Oidc.WinUI.255.255.255.255.nupkg .\unofeed\
+
 copy .\src\Uno.Extensions.Configuration\bin\Uno.Extensions.Configuration\Release\Uno.Extensions.Configuration.255.255.255.255.nupkg .\unofeed\
 copy .\src\Uno.Extensions.Core\bin\Uno.Extensions.Core\Release\Uno.Extensions.Core.255.255.255.255.nupkg .\unofeed\
 copy .\src\Uno.Extensions.Hosting\bin\Uno.Extensions.Hosting\Release\Uno.Extensions.Hosting.255.255.255.255.nupkg .\unofeed\
@@ -22,6 +30,7 @@ copy .\src\Uno.Extensions.Serialization.Refit\bin\Uno.Extensions.Serialization.R
 copy .\src\Uno.Extensions.Reactive\bin\Uno.Extensions.Reactive\Release\Uno.Extensions.Reactive.255.255.255.255.nupkg .\unofeed\
 copy .\src\Uno.Extensions.Reactive.UI\bin\Uno.Extensions.Reactive.UI\Release\Uno.Extensions.Reactive.UI.255.255.255.255.nupkg .\unofeed\
 copy .\src\Uno.Extensions.Reactive.UI\bin\Uno.Extensions.Reactive.UI.WinUI\Release\Uno.Extensions.Reactive.WinUI.255.255.255.255.nupkg .\unofeed\
+copy .\src\Uno.Extensions.Reactive.Messaging\bin\Uno.Extensions.Reactive.Messaging\Release\Uno.Extensions.Reactive.Messaging.255.255.255.255.nupkg .\unofeed\
 copy .\src\Uno.Extensions.Templates\bin\Uno.Extensions.Templates\Release\Uno.Extensions.Templates.255.255.255.255.nupkg .\unofeed\
 
 

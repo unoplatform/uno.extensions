@@ -219,7 +219,10 @@ public static class AssemblyExtensions
 		}
 		catch
 		{
-			Excludes.Add(assembly.FullName);
+			if (assembly.FullName is not null)
+			{
+				Excludes.Add(assembly.FullName);
+			}
 			return new Type[] { };
 		}
 	}
