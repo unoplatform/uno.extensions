@@ -4,8 +4,6 @@ namespace TestHarness.Ext.Navigation.Reactive;
 
 public sealed partial class ReactiveFivePage : Page
 {
-	public ReactiveFiveViewModel? ViewModel => DataContext as ReactiveFiveViewModel;
-
 	public ReactiveFivePage()
 	{
 		this.InitializeComponent();

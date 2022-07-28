@@ -2,8 +2,6 @@
 namespace TestHarness.Ext.Navigation.Reactive;
 public sealed partial class ReactiveThreePage : Page
 {
-	public ReactiveThreeViewModel? ViewModel => DataContext as ReactiveThreeViewModel;
-
 	public ReactiveThreePage()
 	{
 		this.InitializeComponent();

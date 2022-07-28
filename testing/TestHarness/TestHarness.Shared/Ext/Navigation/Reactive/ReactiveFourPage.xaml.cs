@@ -2,8 +2,6 @@
 namespace TestHarness.Ext.Navigation.Reactive;
 public sealed partial class ReactiveFourPage : Page
 {
-	public ReactiveFourViewModel? ViewModel => DataContext as ReactiveFourViewModel;
-
 	public ReactiveFourPage()
 	{
 		this.InitializeComponent();

@@ -2,8 +2,6 @@
 
 public sealed partial class ReactiveTwoPage : Page
 {
-	public ReactiveTwoViewModel.BindableReactiveTwoViewModel? ViewModel => DataContext as ReactiveTwoViewModel.BindableReactiveTwoViewModel;
-
 	public ReactiveTwoPage()
 	{
 		this.InitializeComponent();
