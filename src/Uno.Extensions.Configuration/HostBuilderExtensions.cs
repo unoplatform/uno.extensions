@@ -1,4 +1,4 @@
-﻿namespace Uno.Extensions.Configuration;
+﻿namespace Uno.Extensions;
 
 public static class HostBuilderExtensions
 {

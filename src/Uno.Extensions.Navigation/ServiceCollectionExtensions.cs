@@ -1,4 +1,4 @@
-﻿namespace Uno.Extensions.Navigation;
+﻿namespace Uno.Extensions;
 
 public static class ServiceCollectionExtensions
 {

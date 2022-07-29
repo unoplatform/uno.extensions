@@ -5,7 +5,7 @@ namespace TestHarness.Legacy.Wasm
 {
 	public class Program
 	{
-		private static App _app;
+		private static App? _app;
 
 		static int Main(string[] args)
 		{

@@ -13,28 +13,16 @@ global using TestHarness.Ext.Navigation.PageNavigation;
 global using TestHarness.Models;
 global using Uno.Extensions;
 global using Uno.Extensions.Authentication;
-global using Uno.Extensions.Authentication.Custom;
-global using Uno.Extensions.Authentication.Handlers;
-global using Uno.Extensions.Authentication.MSAL;
 global using Uno.Extensions.Configuration;
 global using Uno.Extensions.Hosting;
-global using Uno.Extensions.Http;
-global using Uno.Extensions.Http.Refit;
 global using Uno.Extensions.Localization;
 global using Uno.Extensions.Logging;
-global using Uno.Extensions.Logging.Serilog;
 global using Uno.Extensions.Navigation;
 global using Uno.Extensions.Navigation.Regions;
-global using Uno.Extensions.Navigation.Toolkit;
 global using Uno.Extensions.Navigation.UI;
-global using Uno.Extensions.Serialization;
-global using Uno.Extensions.Serialization.Refit;
-global using Windows.ApplicationModel;
-global using Windows.ApplicationModel.Activation;
 
 global using System.Text.Json.Serialization;
 global using Refit;
-global using Uno.Extensions.Authentication.Oidc;
 
 
 #if WINUI
@@ -47,21 +35,22 @@ global using Uno.Extensions.Authentication.Oidc;
 	global using Microsoft.UI.Xaml.Markup;
 	global using Microsoft.UI.Xaml.Data;
 	global using Microsoft.UI.Xaml.Media;
-global using Window = Microsoft.UI.Xaml.Window;
-global using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
+	global using Window = Microsoft.UI.Xaml.Window;
+	global using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 #else
-global using Windows.System;
-global using Windows.UI.Xaml;
-global using Windows.UI.Xaml.Controls;
-global using Windows.UI.Xaml.Controls.Primitives;
-global using Windows.UI.Xaml.Input;
-global using Windows.UI.Xaml.Navigation;
-global using Windows.UI.Xaml.Markup;
-global using Windows.UI.Xaml.Data;
-global using Windows.UI.Xaml.Media;
-global using Window = Windows.UI.Xaml.Window;
-global using NavigationView = Microsoft.UI.Xaml.Controls.NavigationView;
-global using NavigationViewSelectionChangedEventArgs = Microsoft.UI.Xaml.Controls.NavigationViewSelectionChangedEventArgs;
+	global using Windows.System;
+	global using Windows.UI.Xaml;
+	global using Windows.UI.Xaml.Controls;
+	global using Windows.UI.Xaml.Controls.Primitives;
+	global using Windows.UI.Xaml.Input;
+	global using Windows.UI.Xaml.Navigation;
+	global using Windows.UI.Xaml.Markup;
+	global using Windows.UI.Xaml.Data;
+	global using Windows.UI.Xaml.Media;
+	global using Window = Windows.UI.Xaml.Window;
+	global using NavigationView = Microsoft.UI.Xaml.Controls.NavigationView;
+	global using NavigationViewSelectionChangedEventArgs = Microsoft.UI.Xaml.Controls.NavigationViewSelectionChangedEventArgs;
+	global using LaunchActivatedEventArgs = Windows.ApplicationModel.Activation.LaunchActivatedEventArgs;
 #endif
 
 global using TestHarnessApp;

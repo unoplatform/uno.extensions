@@ -1,10 +1,4 @@
-﻿using System;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-using Uno.Extensions.Http;
-
-namespace Uno.Extensions.Serialization.Http;
+﻿namespace Uno.Extensions.Serialization.Http;
 
 public class SerializerToResponseContentDeserializer : IResponseContentDeserializer
 {

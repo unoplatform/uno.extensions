@@ -1,7 +1,3 @@
-
-
-using System.Diagnostics;
-
 namespace TestHarness
 {
 	public sealed partial class App : Application

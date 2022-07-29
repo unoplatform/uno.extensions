@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace Uno.Extensions.Http;
+﻿namespace Uno.Extensions.Http;
 
 public  interface IAuthenticationTokenProvider
 {

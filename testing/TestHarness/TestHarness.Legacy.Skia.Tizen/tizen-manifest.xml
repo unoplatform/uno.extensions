@@ -2,7 +2,7 @@
 <manifest xmlns="http://tizen.org/ns/packages" api-version="5" package="com.example.TestHarness.Legacy.Skia.Tizen" version="1.0.0">
   <profile name="common" />
   <ui-application appid="com.example.TestHarness.Legacy.Skia.Tizen"
-                  exec="TestHarness.Legacy.Skia.Tizen.dll"
+                  exec="TestHarnessApp.dll"
                   type="dotnet"
                   multiple="false"
                   taskmanage="true"
