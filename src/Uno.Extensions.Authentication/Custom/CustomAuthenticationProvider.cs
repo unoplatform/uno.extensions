@@ -51,7 +51,7 @@ internal record CustomAuthenticationProvider<TService>
 		{
 			return default;
 		}
-		return await Settings.LoginCallback(Services.GetRequiredService<TService>(), dispatcher, Tokens, credentials!, cancellationToken);
+		return await Settings.LoginCallback(Services.GetRequiredService<TService>(), Services, dispatcher, Tokens, credentials!, cancellationToken);
 	}
 
 	public async override ValueTask<bool> LogoutAsync(IDispatcher? dispatcher, CancellationToken cancellationToken)
@@ -60,7 +60,7 @@ internal record CustomAuthenticationProvider<TService>
 		{
 			return true;
 		}
-		return await Settings.LogoutCallback(Services.GetRequiredService<TService>(), dispatcher, Tokens, await Tokens.GetAsync(cancellationToken), cancellationToken);
+		return await Settings.LogoutCallback(Services.GetRequiredService<TService>(), Services, dispatcher, Tokens, await Tokens.GetAsync(cancellationToken), cancellationToken);
 	}
 
 	public async override ValueTask<IDictionary<string, string>?> RefreshAsync(CancellationToken cancellationToken)
@@ -69,6 +69,6 @@ internal record CustomAuthenticationProvider<TService>
 		{
 			return default;
 		}
-		return await Settings.RefreshCallback(Services.GetRequiredService<TService>(), Tokens, await Tokens.GetAsync(cancellationToken), cancellationToken);
+		return await Settings.RefreshCallback(Services.GetRequiredService<TService>(), Services, Tokens, await Tokens.GetAsync(cancellationToken), cancellationToken);
 	}
 }
