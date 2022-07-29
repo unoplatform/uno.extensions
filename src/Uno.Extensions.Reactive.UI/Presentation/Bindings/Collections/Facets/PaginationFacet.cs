@@ -39,16 +39,16 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 				return EmptyResult;
 			}
 
-			return Task
-				.Run(
-					async () =>
-					{
-						var loadedCount = await _service!.LoadMoreItems(requestedCount, _ct.Token);
+			return LoadMoreItemsCore(requestedCount).AsAsyncOperation();
+		}
 
-						return new LoadMoreItemsResult { Count = loadedCount };
-					},
-					_ct.Token)
-				.AsAsyncOperation();
+		private async Task<LoadMoreItemsResult> LoadMoreItemsCore(uint requestedCount)
+		{
+			var loadedCount = await Task
+				.Run(() => _service!.LoadMoreItems(requestedCount, _ct.Token), _ct.Token)
+				.ConfigureAwait(true); // The task must complete on the UI thread!
+
+			return new LoadMoreItemsResult { Count = loadedCount };
 		}
 
 		private void OnServiceStateChanged(object? sender, EventArgs _)
