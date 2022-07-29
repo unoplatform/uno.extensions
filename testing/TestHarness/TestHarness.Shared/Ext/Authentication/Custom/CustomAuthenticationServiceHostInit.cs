@@ -1,6 +1,8 @@
 ﻿
 
 
+using System.Net.Http;
+
 namespace TestHarness.Ext.Authentication.Custom;
 
 public class CustomAuthenticationServiceHostInit : IHostInitialization
@@ -107,7 +109,7 @@ public class CustomAuthenticationServiceHostInit : IHostInitialization
 				{
 					services
 							.AddNativeHandler()
-
+							.AddTransient<DelegatingHandler, DynamicUrlHandler>()
 							.AddRefitClient<ICustomAuthenticationDummyJsonEndpoint>(context);
 				})
 
