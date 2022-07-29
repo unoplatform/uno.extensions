@@ -39,7 +39,7 @@ public class CustomAuthenticationServiceHostInit : IHostInitialization
 				.UseAuthentication(auth =>
 					auth.AddCustom<ICustomAuthenticationDummyJsonEndpoint>(custom =>
 						custom
-							.Login(async (authService, dispatcher, credentials, cancellationToken) =>
+							.Login(async (authService, services, dispatcher, cache, credentials, cancellationToken) =>
 							{
 								if (credentials is null)
 								{
@@ -53,12 +53,24 @@ public class CustomAuthenticationServiceHostInit : IHostInitialization
 								if (authResponse?.Token is not null)
 								{
 									credentials[TokenCacheExtensions.AccessTokenKey] = authResponse.Token;
+
+									var w = new Widget { Name = "Bob" };
+									var serializer = services.GetRequiredService<ISerializer<Widget>>();
+									credentials.Set(serializer, nameof(Widget), w);
+
 									return credentials;
 								}
 								return default;
 							})
-							.Refresh(async (authService, tokenDictionary, cancellationToken) =>
+							.Refresh(async (authService, services, cache, tokenDictionary, cancellationToken) =>
 							{
+								var serializer = services.GetRequiredService<ISerializer<Widget>>();
+								var widget = tokenDictionary.Get(serializer, nameof(Widget));
+								if(widget is null)
+								{
+									return default;
+								}
+
 								var creds = new CustomAuthenticationCredentials
 								{
 									Username = tokenDictionary.TryGetValue(nameof(CustomAuthenticationCredentials.Username), out var name) ? name : string.Empty,
@@ -71,6 +83,7 @@ public class CustomAuthenticationServiceHostInit : IHostInitialization
 									if (authResponse?.Token is not null)
 									{
 										tokenDictionary[TokenCacheExtensions.AccessTokenKey] = authResponse.Token;
+										tokenDictionary.Set<Widget>(serializer, nameof(Widget), widget);
 										return tokenDictionary;
 									}
 								}
@@ -97,6 +110,8 @@ public class CustomAuthenticationServiceHostInit : IHostInitialization
 
 							.AddRefitClient<ICustomAuthenticationDummyJsonEndpoint>(context);
 				})
+
+				.UseSerialization()
 				.Build(enableUnoLogging: true);
 	}
 

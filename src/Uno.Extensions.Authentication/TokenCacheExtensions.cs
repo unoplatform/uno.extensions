@@ -1,5 +1,7 @@
 ﻿
 
+using Uno.Extensions.Serialization;
+
 namespace Uno.Extensions.Authentication;
 
 public static class TokenCacheExtensions
@@ -34,5 +36,19 @@ public static class TokenCacheExtensions
 			dict[AccessTokenKey] = refreshToken!;
 		}
 		return await cache.SaveAsync(provider, dict, cancellation);
+	}
+
+	public static TEntity? Get<TEntity>(this IDictionary<string,string> tokens, ISerializer<TEntity> serializer, string key)
+	{
+		if(tokens.TryGetValue(key, out var value) && !string.IsNullOrWhiteSpace(value))
+		{
+			return serializer.FromString(value);
+		}
+		return default;
+	}
+
+	public static void Set<TEntity>(this IDictionary<string,string> tokens, ISerializer<TEntity> serializer, string key, TEntity entity)
+	{
+		tokens[key] = serializer.ToString(entity);
 	}
 }
