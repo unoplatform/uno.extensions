@@ -127,7 +127,9 @@ public class MsalAuthenticationMultiHostInit : IHostInitialization
 							//	msalBuilder = msalBuilder.WithIosKeychainSecurityGroup(settings.KeychainSecurityGroup);
 							//}
 							, name:"MsalCode")
-						.AddMsal(name: "MsalConfig"))
+						.AddMsal(name: "MsalConfig")
+						.AddApple()
+					)
 
 
 				.Build(enableUnoLogging: true);

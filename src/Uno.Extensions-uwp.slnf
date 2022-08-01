@@ -2,6 +2,7 @@
   "solution": {
     "path": "Uno.Extensions.sln",
     "projects": [
+      "Uno.Extensions.Authentication.Apple\\Uno.Extensions.Authentication.Apple.csproj",
       "Uno.Extensions.Authentication.MSAL\\Uno.Extensions.Authentication.MSAL.UI.Wasm.csproj",
       "Uno.Extensions.Authentication.MSAL\\Uno.Extensions.Authentication.MSAL.UI.csproj",
       "Uno.Extensions.Authentication.UI\\Uno.Extensions.Authentication.UI.csproj",

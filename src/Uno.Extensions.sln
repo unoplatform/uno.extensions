@@ -130,6 +130,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authenticati
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authentication.Oidc.WinUI", "Uno.Extensions.Authentication.Oidc\Uno.Extensions.Authentication.Oidc.WinUI.csproj", "{456DDC7B-4009-4A4E-819D-4E7EA1BEC5FB}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authentication.Apple", "Uno.Extensions.Authentication.Apple\Uno.Extensions.Authentication.Apple.csproj", "{F18961CC-88B3-4793-9A03-58F96011D3D9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -328,6 +330,10 @@ Global
 		{456DDC7B-4009-4A4E-819D-4E7EA1BEC5FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{456DDC7B-4009-4A4E-819D-4E7EA1BEC5FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{456DDC7B-4009-4A4E-819D-4E7EA1BEC5FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F18961CC-88B3-4793-9A03-58F96011D3D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F18961CC-88B3-4793-9A03-58F96011D3D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F18961CC-88B3-4793-9A03-58F96011D3D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F18961CC-88B3-4793-9A03-58F96011D3D9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -378,6 +384,7 @@ Global
 		{226E7333-B221-4ABD-8D0A-6CB9BF8B8FD8} = {FEABD28F-23AE-4CDC-9933-44D6717C681C}
 		{B1A38A3C-CD49-4BEA-A9DF-EEDF49256514} = {FEABD28F-23AE-4CDC-9933-44D6717C681C}
 		{456DDC7B-4009-4A4E-819D-4E7EA1BEC5FB} = {FEABD28F-23AE-4CDC-9933-44D6717C681C}
+		{F18961CC-88B3-4793-9A03-58F96011D3D9} = {FEABD28F-23AE-4CDC-9933-44D6717C681C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6E7B035D-9A64-4D95-89AA-9D4653F17C42}
