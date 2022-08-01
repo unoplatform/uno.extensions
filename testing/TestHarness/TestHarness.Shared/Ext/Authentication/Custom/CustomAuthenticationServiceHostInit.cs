@@ -1,8 +1,4 @@
 ﻿
-
-
-using System.Net.Http;
-
 namespace TestHarness.Ext.Authentication.Custom;
 
 public class CustomAuthenticationServiceHostInit : IHostInitialization

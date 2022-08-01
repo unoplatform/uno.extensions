@@ -1,6 +1,7 @@
 ﻿global using System;
 global using System.Collections.Generic;
 global using System.Linq;
+global using System.Net.Http;
 global using System.Reflection;
 global using System.Threading;
 global using System.Threading.Tasks;
@@ -20,6 +21,7 @@ global using Uno.Extensions.Logging;
 global using Uno.Extensions.Navigation;
 global using Uno.Extensions.Navigation.Regions;
 global using Uno.Extensions.Navigation.UI;
+global using Uno.Extensions.Serialization;
 
 global using System.Text.Json.Serialization;
 global using Refit;
