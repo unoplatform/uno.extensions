@@ -35,8 +35,6 @@ global using Refit;
 	global using Microsoft.UI.Xaml.Markup;
 	global using Microsoft.UI.Xaml.Data;
 	global using Microsoft.UI.Xaml.Media;
-	global using Window = Microsoft.UI.Xaml.Window;
-	global using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 #else
 	global using Windows.System;
 	global using Windows.UI.Xaml;
@@ -47,10 +45,8 @@ global using Refit;
 	global using Windows.UI.Xaml.Markup;
 	global using Windows.UI.Xaml.Data;
 	global using Windows.UI.Xaml.Media;
-	global using Window = Windows.UI.Xaml.Window;
 	global using NavigationView = Microsoft.UI.Xaml.Controls.NavigationView;
 	global using NavigationViewSelectionChangedEventArgs = Microsoft.UI.Xaml.Controls.NavigationViewSelectionChangedEventArgs;
-	global using LaunchActivatedEventArgs = Windows.ApplicationModel.Activation.LaunchActivatedEventArgs;
 #endif
 
 global using TestHarnessApp;
