@@ -11,8 +11,10 @@
 		<PublishProfile>win10-$(Platform).pubxml</PublishProfile>
 		<UseWinUI>true</UseWinUI>
 		<Nullable>enable</Nullable>
+		<DefaultLanguage>en</DefaultLanguage>
 		<!--<EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>-->
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+		<NoWarn>$(NoWarn);CA1416</NoWarn>
 	</PropertyGroup>
 
 

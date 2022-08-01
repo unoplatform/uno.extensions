@@ -5,9 +5,9 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 using Uno.Extensions.Hosting;
 
-namespace Uno.Extensions.Logging.Serilog
-{
-    public static class HostBuilderExtensions
+namespace Uno.Extensions;
+
+public static class HostBuilderExtensions
     {
         public static IHostBuilder UseSerilog(this IHostBuilder hostBuilder,
             bool consoleLoggingEnabled = false,
@@ -97,4 +97,3 @@ namespace Uno.Extensions.Logging.Serilog
             return Path.Combine(logDirectory, $"{assemblyName}.log");
         }
     }
-}

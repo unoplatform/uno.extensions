@@ -1,7 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Uno.Extensions.Http;
-
-namespace Uno.Extensions.Serialization.Http;
+﻿namespace Uno.Extensions;
 
 /// <summary>
 /// This class is used for serialization configuration.

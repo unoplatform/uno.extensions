@@ -1,4 +1,4 @@
-﻿namespace Uno.Extensions.Navigation;
+﻿namespace Uno.Extensions;
 
 public static class ServiceProviderExtensions
 {
@@ -92,7 +92,7 @@ public static class ServiceProviderExtensions
 	private static T? GetInstance<TRepository, T>(this IServiceProvider provider)
 		where TRepository : IInstanceRepository
 	{
-		var singleton = provider.GetRequiredService<TRepository>().GetInstance<T>();
+		var singleton = provider.GetRequiredService<TRepository>().GetRepositoryInstance<T>();
 		if (singleton is T singletonOfT)
 		{
 			return singletonOfT;
@@ -100,7 +100,7 @@ public static class ServiceProviderExtensions
 		return default;
 	}
 
-	private static T? GetInstance<T>(this IInstanceRepository repository)
+	private static T? GetRepositoryInstance<T>(this IInstanceRepository repository)
 	{
 		var value = repository.Instances.TryGetValue(typeof(T), out var repoValue) ? repoValue : null;
 		if (value is Func<T> valueCreator)

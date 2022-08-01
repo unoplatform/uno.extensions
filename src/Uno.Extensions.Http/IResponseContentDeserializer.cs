@@ -1,10 +1,6 @@
-﻿using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
+﻿namespace Uno.Extensions.Http;
 
-namespace Uno.Extensions.Http
-{
-    public interface IResponseContentDeserializer
+public interface IResponseContentDeserializer
     {
         /// <summary>
         /// Deserializes the response into the.
@@ -15,4 +11,3 @@ namespace Uno.Extensions.Http
         /// <returns>Http response.</returns>
         Task<TResponse?> Deserialize<TResponse>(CancellationToken ct, HttpContent content);
     }
-}

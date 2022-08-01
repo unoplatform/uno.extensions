@@ -1,7 +1,4 @@
-﻿using System.Globalization;
-using System.Linq;
-
-namespace Uno.Extensions.Localization;
+﻿namespace Uno.Extensions.Localization;
 
 public static class LocalizationSettingsExtensions
 {

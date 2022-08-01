@@ -1,8 +1,6 @@
-﻿using System;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+﻿
 
-namespace Uno.Extensions.Logging;
+namespace Uno.Extensions;
 
 public static class HostBuilderExtensions
 {

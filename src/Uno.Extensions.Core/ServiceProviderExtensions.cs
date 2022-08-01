@@ -23,27 +23,4 @@ public static class ServiceProviderExtensions
 		provider.GetRequiredService<IInstanceRepository>().Instances[serviceType] = instance;
 		return provider;
 	}
-
-	public static T? GetInstance<T>(this IServiceProvider provider)
-	{
-		var value = provider.GetInstance(typeof(T));
-		if (value is Func<T> valueCreator)
-		{
-			var instance = valueCreator();
-			provider.AddInstance(instance);
-			return instance;
-		}
-
-		if (value is T typedValue)
-		{
-			return typedValue;
-		}
-
-		return default;
-	}
-
-	public static object? GetInstance(this IServiceProvider provider, Type type)
-	{
-		return provider.GetRequiredService<IInstanceRepository>().Instances.TryGetValue(type, out var value) ? value : null;
-	}
 }

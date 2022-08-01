@@ -15,7 +15,6 @@ global using Uno.Extensions;
 global using Uno.Extensions.Configuration;
 global using Uno.Extensions.Hosting;
 global using Uno.Extensions.Http;
-global using Uno.Extensions.Http.Refit;
 global using Uno.Extensions.Logging;
 global using Uno.Extensions.Navigation;
 global using Uno.Extensions.Navigation.Regions;

@@ -1,13 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Refit;
-
-namespace Uno.Extensions.Serialization.Refit
+﻿namespace Uno.Extensions
 {
-    /// <summary>
-    /// This class is used for serialization configuration.
-    /// - Configures the serializers.
-    /// </summary>
-    public static class ServiceCollectionExtensions
+	/// <summary>
+	/// This class is used for serialization configuration.
+	/// - Configures the serializers.
+	/// </summary>
+	public static class ServiceCollectionExtensions
     {
         /// <summary>
         /// Adds the serialization services to the <see cref="IServiceCollection"/>.
