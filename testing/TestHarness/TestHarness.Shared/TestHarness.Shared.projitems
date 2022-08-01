@@ -40,6 +40,7 @@
       <DependentUpon>CustomAuthenticationMainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationShellViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\DynamicUrlHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\ICustomAuthenticationTestBackendEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\ICustomAuthenticationDummyJsonEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\HostBuilderExtensions.cs" />
