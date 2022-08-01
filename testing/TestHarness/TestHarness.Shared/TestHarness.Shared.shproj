@@ -10,7 +10,4 @@
   <PropertyGroup />
   <Import Project="TestHarness.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeSharing\Microsoft.CodeSharing.CSharp.targets" />
-  <ItemGroup>
-    <_Globbed_Compile Remove="Ext\Authentication\Custom\DynamicUrlHandler.cs" />
-  </ItemGroup>
 </Project>
