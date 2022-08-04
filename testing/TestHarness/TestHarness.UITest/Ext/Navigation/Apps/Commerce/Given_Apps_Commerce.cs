@@ -3,6 +3,7 @@
 public class Given_Apps_Commerce : NavigationTestBase
 {
 	[Test]
+	[Ignore("https://github.com/unoplatform/uno.extensions/issues/626")]
 	public async Task When_Commerce_Responsive()
 	{
 		InitTestSection(TestSections.Apps_Commerce);
