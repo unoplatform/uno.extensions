@@ -12,18 +12,10 @@
 				<!-- Load Uno.UI.Toolkit resources -->
 				<ToolkitResources xmlns="using:Uno.Toolkit.UI" />
 
-				<!-- Load Material Color Palette --><!--
-				<MaterialColors xmlns="using:Uno.Material"
-								OverrideSource="ms-appx:///Styles/ColorPaletteOverride.xaml" />
-
-				--><!-- Load Material FontFamilies --><!--
-				<MaterialFonts xmlns="using:Uno.Material"
-							   OverrideSource="ms-appx:///Styles/MaterialFontsOverride.xaml" />-->
-
-				<!-- Load Material Control Resources --><!--
+				<!--<MaterialColors xmlns="using:Uno.Material"  />
+				<MaterialFonts xmlns="using:Uno.Material"  />
 				<MaterialResources xmlns="using:Uno.Material" />
 
-				--><!-- Load Material Toolkit Resources --><!--
 				<MaterialToolkitResources xmlns="using:Uno.Toolkit.UI.Material" />-->
 
 			</ResourceDictionary.MergedDictionaries>

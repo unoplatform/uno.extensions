@@ -1,4 +1,4 @@
-﻿namespace Uno.Extensions.Serialization;
+﻿namespace Uno.Extensions;
 
 public static class HostBuilderExtensions
 {

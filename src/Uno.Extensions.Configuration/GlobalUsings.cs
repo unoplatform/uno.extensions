@@ -16,3 +16,5 @@ global using Microsoft.Extensions.Options;
 global using Uno.Extensions.Hosting;
 global using Uno.Extensions.Logging;
 global using Uno.Extensions.Storage;
+global using Uno.Extensions.Configuration;
+

@@ -19,10 +19,17 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)BaseTestSectionPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ControlSizeTrigger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationHomePage.xaml.cs">
       <DependentUpon>CustomAuthenticationHomePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationHomeTestBackendPage.xaml.cs">
+      <DependentUpon>CustomAuthenticationHomeTestBackendPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationHomeTestBackendViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationHomeViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationTestBackendCookieHostInit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationTestBackendHostInit.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationServiceHostInit.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationHostInit.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationLoginPage.xaml.cs">
@@ -33,6 +40,8 @@
       <DependentUpon>CustomAuthenticationMainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationShellViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\DynamicUrlHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\ICustomAuthenticationTestBackendEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\ICustomAuthenticationDummyJsonEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\HostBuilderExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\IMsalAuthenticationTaskListEndpoint.cs" />
@@ -51,6 +60,34 @@
       <DependentUpon>MsalAuthenticationWelcomePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\MsalAuthenticationWelcomeViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Oidc\OidcAuthenticationHomePage.xaml.cs">
+      <DependentUpon>OidcAuthenticationHomePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Oidc\OidcAuthenticationHomeViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Oidc\OidcAuthenticationHostInit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Oidc\OidcAuthenticationLoginPage.xaml.cs">
+      <DependentUpon>OidcAuthenticationLoginPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Oidc\OidcAuthenticationLoginViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Oidc\OidcAuthenticationMainPage.xaml.cs">
+      <DependentUpon>OidcAuthenticationMainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Oidc\OidcAuthenticationShellViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Oidc\IOidcAuthenticationTestEndpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Web\IWebAuthenticationTestEndpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Web\WebAuthenticationHomePage.xaml.cs">
+      <DependentUpon>WebAuthenticationHomePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Web\WebAuthenticationHomeViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Web\WebAuthenticationHostInit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Web\WebAuthenticationLoginPage.xaml.cs">
+      <DependentUpon>WebAuthenticationLoginPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Web\WebAuthenticationLoginViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Web\WebAuthenticationMainPage.xaml.cs">
+      <DependentUpon>WebAuthenticationMainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Web\WebAuthenticationShellViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\BaseCommerceViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceCredentials.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceDealsPage.xaml.cs">
@@ -59,6 +96,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceHomePage.xaml.cs">
       <DependentUpon>CommerceHomePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceShellControlHostInit.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceHostInit.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceLoginPage.xaml.cs">
       <DependentUpon>CommerceLoginPage.xaml</DependentUpon>
@@ -82,6 +120,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceProductDetailsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceLoginViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceDealsViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceShellControl.xaml.cs">
+      <DependentUpon>CommerceShellControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceShellViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\ToDo\ToDoCredentials.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\ToDo\ToDoHomePage.xaml.cs">
@@ -123,6 +164,18 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\MessageDialog\LocalizedDialogsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\MessageDialog\SimpleDialogsViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\NavigationView\NavigationViewHomePage.xaml.cs">
+      <DependentUpon>NavigationViewHomePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\NavigationView\NavigationViewSettingsPage.xaml.cs">
+      <DependentUpon>NavigationViewSettingsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\NavigationView\NavigationViewSettingsViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\NavigationView\NavigationViewHomeViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\NavigationView\NavigationViewHostInit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\NavigationView\NavigationViewMainPage.xaml.cs">
+      <DependentUpon>NavigationViewMainPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationFivePage.xaml.cs">
       <DependentUpon>PageNavigationFivePage.xaml</DependentUpon>
     </Compile>
@@ -147,6 +200,30 @@
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationTwoPage.xaml.cs">
       <DependentUpon>PageNavigationTwoPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Reactive\ReactiveFivePage.xaml.cs">
+      <DependentUpon>ReactiveFivePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Reactive\ReactiveFiveViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Reactive\ReactiveFourPage.xaml.cs">
+      <DependentUpon>ReactiveFourPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Reactive\ReactiveFourViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Reactive\ReactiveHostInit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Reactive\ReactiveMainPage.xaml.cs">
+      <DependentUpon>ReactiveMainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Reactive\ReactiveOnePage.xaml.cs">
+      <DependentUpon>ReactiveOnePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Reactive\ReactiveOneViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Reactive\ReactiveThreePage.xaml.cs">
+      <DependentUpon>ReactiveThreePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Reactive\ReactiveThreeViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Reactive\ReactiveTwoPage.xaml.cs">
+      <DependentUpon>ReactiveTwoPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Reactive\ReactiveTwoViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Responsive\ResponsiveDetailsPage.xaml.cs">
       <DependentUpon>ResponsiveDetailsPage.xaml</DependentUpon>
     </Compile>
@@ -170,10 +247,18 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Models\Widget.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PageExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TestFrameHost.xaml.cs">
+      <DependentUpon>TestFrameHost.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)TestSection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestSectionRootAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)_Compat\IsExternalInit.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationHomeTestBackendPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationHomePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -187,6 +272,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\MsalAuthenticationWelcomePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Authentication\Oidc\OidcAuthenticationHomePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Authentication\Oidc\OidcAuthenticationLoginPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Authentication\Oidc\OidcAuthenticationMainPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -215,6 +312,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceProfilePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceShellControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -250,6 +351,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\NavigationView\NavigationViewSettingsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationFivePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -274,6 +379,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\Reactive\ReactiveMainPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\Responsive\ResponsiveDetailsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -294,6 +403,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)TestFrameHost.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Assets\SharedAssets.md" />
@@ -307,10 +420,14 @@
 		 explicitly included in the projitem, so files can be added from vscode
 		 without manipulating the projitem file.
 	-->
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Web\appsettings.webauth.json" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\appsettings.testbackend.json" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\appsettings.dummyjson.json" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\appsettings.multi.json" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\appsettings.msal.json" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\appsettings.msalauthentication.json" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Oidc\appsettings.oidc.json" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\appsettings.logging.json" />
     <_Globbled_Page Include="$(MSBuildThisFileDirectory)**/*.xaml" Exclude="@(Page);@(ApplicationDefinition)">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

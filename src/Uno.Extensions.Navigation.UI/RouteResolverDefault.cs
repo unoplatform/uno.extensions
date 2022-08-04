@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Navigation;
+﻿using System.Reflection;
+
+namespace Uno.Extensions.Navigation;
 
 public class RouteResolverDefault : RouteResolver
 {
@@ -195,13 +197,33 @@ public class RouteResolverDefault : RouteResolver
 			if (loadedTypes is null)
 			{
 				loadedTypes = (from asb in AppDomain.CurrentDomain.GetAssemblies()
-							   where (!(asb.FullName ?? string.Empty).StartsWith("_"))
-							   from t in asb.GetTypes()
+							   where (!(asb.FullName ?? string.Empty).StartsWith("_") && !AssemblyExtensions.Excludes.Contains(asb.FullName??string.Empty))
+							   from t in asb.SafeGetTypes()
 							   where t.IsClass
 							   select new { t.Name, Type = t }).ToDictionaryDistinct(x => x.Name, x => x.Type);
 			}
 
 			return loadedTypes;
+		}
+	}
+}
+
+public static class AssemblyExtensions
+{
+	public static IList<string> Excludes { get; } = new List<string>();
+	public static Type[] SafeGetTypes(this Assembly assembly)
+	{
+		try
+		{
+			return assembly.GetTypes();
+		}
+		catch
+		{
+			if (assembly.FullName is not null)
+			{
+				Excludes.Add(assembly.FullName);
+			}
+			return new Type[] { };
 		}
 	}
 }

@@ -11,6 +11,7 @@ global using Windows.Foundation;
 global using Windows.UI.Popups;
 global using Uno.Extensions.Navigation.Navigators;
 global using Uno.Extensions.Navigation.Regions;
+global using Uno.Extensions.Navigation.Toolkit;
 global using Uno.Extensions.Navigation.Toolkit.Controls;
 global using Uno.Extensions.Navigation.Toolkit.Navigators;
 global using Uno.Extensions.Navigation.UI;
@@ -26,12 +27,12 @@ global using Uno.Toolkit.UI;
 	global using Microsoft.UI.Xaml.Data;
 	global using Microsoft.UI.Xaml.Media;
 #else
-global using Windows.System;
-global using Windows.UI.Xaml;
-global using Windows.UI.Xaml.Controls;
-global using Windows.UI.Xaml.Controls.Primitives;
-global using Windows.UI.Xaml.Navigation;
-global using Windows.UI.Xaml.Markup;
-global using Windows.UI.Xaml.Data;
-global using Windows.UI.Xaml.Media;
+	global using Windows.System;
+	global using Windows.UI.Xaml;
+	global using Windows.UI.Xaml.Controls;
+	global using Windows.UI.Xaml.Controls.Primitives;
+	global using Windows.UI.Xaml.Navigation;
+	global using Windows.UI.Xaml.Markup;
+	global using Windows.UI.Xaml.Data;
+	global using Windows.UI.Xaml.Media;
 #endif

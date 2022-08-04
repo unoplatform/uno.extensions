@@ -4,15 +4,13 @@
 
 		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'!=''">$(UnoTargetFrameworkOverride)</TargetFrameworks>
 		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'==''">netstandard2.0;xamarinios10;xamarinmac20;monoandroid11.0</TargetFrameworks>
-		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'=='' and '$(UnoExtensionsDisableNet6)'==''">$(TargetFrameworks);uap10.0.18362;</TargetFrameworks>
 		<!-- net6.0 ios and android have been temporarily removed until there is a compatible serilog package -->
-		<!--		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'=='' and '$(UnoExtensionsDisableNet6)'==''">$(TargetFrameworks);uap10.0.18362;net6.0</TargetFrameworks>
-		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'=='' and '$(UnoExtensionsDisableNet6)'=='' and '$(UnoExtensionsDisableNet6Mobile)'==''">$(TargetFrameworks);net6.0-ios;net6.0-android</TargetFrameworks>
--->
+		<TargetFrameworks Condition="'$(UnoTargetFrameworkOverride)'=='' and '$(UnoExtensionsDisableNet6)'==''">$(TargetFrameworks);net6.0-ios;net6.0-macos;net6.0-android;net6.0-maccatalyst</TargetFrameworks>
+
 	</PropertyGroup>
  
-  <ItemGroup Condition="'$(_IsIOS)' == 'true' or '$(_IsAndroid)' == 'true'">
-    <PackageReference Include="Serilog.Sinks.Xamarin" Version="0.2.0.64" />
+  <ItemGroup Condition="'$(_IsIOS)' == 'true' or '$(_IsAndroid)' == 'true' or '$(_IsMacOS)'=='true'">
+    <PackageReference Include="Serilog.Sinks.Xamarin" Version="1.0.0" />
   </ItemGroup>
 
 

@@ -2,6 +2,26 @@
 
 public static class AuthenticationFlowExtensions
 {
+	public static Task<NavigationResponse?> AuthenticatedNavigateRouteAsync(
+		this IAuthenticationFlow service, object sender, string route, INavigator? navigator = default, string qualifier = Qualifiers.ClearBackStack, object? data = null, CancellationToken cancellation = default)
+	{
+		var resolver = (navigator ?? (service as AuthenticationFlow)?.Navigator)?.GetResolver();
+		if (string.IsNullOrWhiteSpace(route))
+		{
+			var map = (data is not null) ?
+							resolver?.FindByData(data.GetType()) :
+							resolver?.Find(default!);
+			if (map is null)
+			{
+				return Task.FromResult<NavigationResponse?>(null);
+			}
+
+			route = map.Path;
+		}
+
+		return service.AuthenticatedNavigateAsync(route.WithQualifier(qualifier).AsRequest(resolver, sender, data, cancellation), navigator, cancellation);
+	}
+
 	public static Task<NavigationResponse?> AuthenticatedNavigateViewAsync<TView>(
 		this IAuthenticationFlow service, object sender, INavigator? navigator = default, string qualifier = Qualifiers.ClearBackStack, object? data = null, CancellationToken cancellation = default)
 	{

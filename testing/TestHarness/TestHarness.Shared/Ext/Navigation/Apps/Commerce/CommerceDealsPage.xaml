@@ -8,14 +8,14 @@
 	  xmlns:utu="using:Uno.Toolkit.UI"
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  xmlns:um="using:Uno.Material"
-	  xmlns:triggers="using:CommunityToolkit.WinUI.UI.Triggers"
+	  xmlns:triggers="using:TestHarness"
 	  mc:Ignorable="d"
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
 	  NavigationCacheMode="Required">
 
 	<Grid x:Name="ParentGrid">
 		<VisualStateManager.VisualStateGroups>
-			<VisualStateGroup CurrentStateChanged="ResponsiveStateChanged">
+			<VisualStateGroup>
 				<VisualState x:Name="Wide">
 					<VisualState.StateTriggers>
 						<triggers:ControlSizeTrigger MinWidth="{StaticResource WideMinWindowWidth}"

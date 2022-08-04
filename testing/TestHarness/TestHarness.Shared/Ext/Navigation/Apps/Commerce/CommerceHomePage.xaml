@@ -9,7 +9,7 @@
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  xmlns:um="using:Uno.Material"
 	  mc:Ignorable="d"
-	  xmlns:triggers="using:CommunityToolkit.WinUI.UI.Triggers"
+	  xmlns:triggers="using:TestHarness"
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
 	<Grid x:Name="ParentGrid">

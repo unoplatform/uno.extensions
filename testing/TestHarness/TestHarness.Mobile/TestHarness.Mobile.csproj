@@ -3,6 +3,7 @@
 		<TargetFrameworks>net6.0-android;net6.0-ios;net6.0-maccatalyst;net6.0-macos</TargetFrameworks>
 		<SingleProject>true</SingleProject>
 		<OutputType>Exe</OutputType>
+		<AssemblyName>TestHarnessApp</AssemblyName>
 		<RuntimeIdentifier Condition="'$(TargetFramework)' == 'net6.0-ios'">iossimulator-x64</RuntimeIdentifier>
 		<RuntimeIdentifier Condition="'$(TargetFramework)' == 'net6.0-maccatalyst'">maccatalyst-x64</RuntimeIdentifier>
 		<RuntimeIdentifier Condition="'$(TargetFramework)' == 'net6.0-macos'">osx-x64</RuntimeIdentifier>
@@ -15,14 +16,16 @@
 		<SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net6.0-maccatalyst'">14.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net6.0-android'">21.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="'$(TargetFramework)'=='net6.0-macos'">10.14</SupportedOSPlatformVersion>
+		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="7.1.2" />
+		<PackageReference Include="IdentityModel.OidcClient" Version="5.0.0" />
 		<PackageReference Include="Uno.CommunityToolkit.WinUI.UI" Version="7.1.100-dev.15.g12261e2626" />
 		<PackageReference Include="Microsoft.Identity.Client" Version="4.45.0" />
-		<PackageReference Include="Uno.WinUI" Version="4.4.5" />
-		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.4.5" Condition="'$(Configuration)'=='Debug'" />
-		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.4.5" />
+		<PackageReference Include="Uno.WinUI" Version="4.4.13" />
+		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.4.13" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.4.13" />
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
 		<PackageReference Include="Refit" Version="6.3.2" />
@@ -31,9 +34,10 @@
 		<PackageReference Include="Uno.Material.WinUI" Version="2.2.0" />
 		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.2.0" />
 		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.2.0" />
-		<PackageReference Include="Uno.WinUI.MSAL" Version="4.4.5" />
+		<PackageReference Include="Uno.WinUI.MSAL" Version="4.4.13" />
 	</ItemGroup>
 	<ItemGroup>
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Authentication.Oidc\Uno.Extensions.Authentication.Oidc.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Authentication\Uno.Extensions.Authentication.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Authentication.UI\Uno.Extensions.Authentication.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Authentication.Msal\Uno.Extensions.Authentication.Msal.WinUI.csproj" />
@@ -42,10 +46,13 @@
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation\Uno.Extensions.Navigation.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Reactive.UI\Uno.Extensions.Reactive.UI.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Reactive\Uno.Extensions.Reactive.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization.Http\Uno.Extensions.Serialization.Http.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization.Refit\Uno.Extensions.Serialization.Refit.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
@@ -93,5 +100,7 @@
 			</PropertyGroup>
 		</When>
 	</Choose>
+	<Import Project="..\..\..\src\Uno.Extensions.Reactive.Generator\buildTransitive\Uno.Extensions.Reactive.props" />
 	<Import Project="..\TestHarness.Shared\TestHarness.Shared.projitems" Label="Shared" />
+
 </Project>

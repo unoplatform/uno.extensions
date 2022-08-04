@@ -2,8 +2,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Refit;
+using Uno.Extensions.Http;
 
-namespace Uno.Extensions.Http.Refit;
+namespace Uno.Extensions;
 
 public static class ServiceCollectionExtensions
 {

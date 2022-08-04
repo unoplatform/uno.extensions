@@ -4,13 +4,13 @@ public abstract record BaseAuthenticationProvider(string Name, ITokenCache Token
 {
 	public async virtual ValueTask<bool> CanRefresh(CancellationToken cancellationToken) => true;
 
-	public virtual ValueTask<IDictionary<string, string>?> LoginAsync(IDispatcher dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
+	public virtual ValueTask<IDictionary<string, string>?> LoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
 	{
 		// Default behavior is to return null, which indicates unsuccessful login 
 		return default;
 	}
 
-	public virtual async ValueTask<bool> LogoutAsync(IDispatcher dispatcher, CancellationToken cancellationToken)
+	public virtual async ValueTask<bool> LogoutAsync(IDispatcher? dispatcher, CancellationToken cancellationToken)
 	{
 		// Default implementation is to return true, which will cause the token cache to be flushed
 		return true;
@@ -28,17 +28,7 @@ internal record ProviderFactory<TProvider, TSettings>(string Name, TProvider Pro
 	where TProvider : IAuthenticationProvider
 {
 	private IAuthenticationProvider? configuredProvider;
-	public IAuthenticationProvider AuthenticationProvider
-	{
-		get
-		{
-			if (configuredProvider is null)
-			{
-				configuredProvider = ConfigureProvider(Provider, Settings);
-			}
-			return configuredProvider;
-		}
-	}
+	public IAuthenticationProvider AuthenticationProvider => configuredProvider ??= ConfigureProvider(Provider, Settings);
 }
 
 internal interface IProviderFactory

@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using Microsoft.Extensions.Localization;
-using Windows.ApplicationModel.Resources;
+﻿
 
-namespace Uno.Extensions.Localization
-{
-    /// <summary>
-    /// This implementation of <see cref="IStringLocalizer"/> uses <see cref="ResourceLoader"/>
-    /// to get the string resources.
-    /// </summary>
-    public class ResourceLoaderStringLocalizer : IStringLocalizer
+namespace Uno.Extensions.Localization;
+
+/// <summary>
+/// This implementation of <see cref="IStringLocalizer"/> uses <see cref="ResourceLoader"/>
+/// to get the string resources.
+/// </summary>
+public class ResourceLoaderStringLocalizer : IStringLocalizer
     {
         private const string SearchLocation = "Resources";
         private readonly ResourceLoader _resourceLoader;
@@ -62,4 +57,3 @@ namespace Uno.Extensions.Localization
             return new LocalizedString(name, value, resourceNotFound: notFound, searchedLocation: SearchLocation);
         }
     }
-}

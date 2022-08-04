@@ -8,9 +8,12 @@ public static class RouteExtensions
 	private static Regex alphaRegex = new Regex(@"([a-zA-Z0-9])+");
 
 	public static bool IsBackOrCloseNavigation(this Route route) =>
-	route.Qualifier
-		.StartsWith(Qualifiers.NavigateBack);
+		route.Qualifier
+			.StartsWith(Qualifiers.NavigateBack);
 
+	public static bool IsClearBackstack(this Route route) =>
+		route.Qualifier
+			.StartsWith(Qualifiers.ClearBackStack);
 	public static string? ExtractBase(this string? path, out string nextQualifier, out string nextPath)
 	{
 		nextPath = path ?? string.Empty;
@@ -119,7 +122,7 @@ public static class RouteExtensions
 		}
 
 		var route = new Route(qualifier, routeBase, path, paras);
-		if (route.IsBackOrCloseNavigation() &&
+		if ((route.IsBackOrCloseNavigation() && !route.IsClearBackstack()) &&
 			data is not null &&
 			data is not IOption)
 		{

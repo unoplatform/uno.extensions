@@ -1,0 +1,34 @@
+<Project ToolsVersion="15.0">
+	<PropertyGroup>
+	  <GenerateLibraryLayout>true</GenerateLibraryLayout>
+	</PropertyGroup>
+
+
+	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Authentication\Uno.Extensions.Authentication.csproj" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(_IsUWP)' == 'true'">
+		<PackageReference Include="Microsoft.UI.Xaml" Version="2.7.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="6.0.4" />
+		<PackageReference Include="IdentityModel.OidcClient" Version="5.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Uno.Core" Version="4.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Page Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
+		<Compile Update="**\*.xaml.cs">
+			<DependentUpon>%(Filename)</DependentUpon>
+		</Compile>
+		<UpToDateCheckInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
+	</ItemGroup>
+</Project>

@@ -1,7 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-using Uno.Extensions.Navigation.UI.Controls;
-
-namespace Uno.Extensions.Navigation;
+﻿namespace Uno.Extensions;
 
 public static class ServiceCollectionExtensions
 {

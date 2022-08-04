@@ -33,12 +33,11 @@ internal abstract class BaseAuthorizationHandler : DelegatingHandler
 			return await base.SendAsync(request, ct);
 		}
 
-		var tokens = await _tokens.GetAsync();
-
-		var response = await SendWithAuthenticationToken(request, tokens, ct);
+		var response = await SendWithAuthenticationToken(request, ct);
 
 		if (!IsUnauthorized(request, response))
 		{
+			await ExtractTokensFromResponse(request, response, ct);
 			// Request was authorized, return the response.
 			return response;
 		}
@@ -65,7 +64,7 @@ internal abstract class BaseAuthorizationHandler : DelegatingHandler
 			return response;
 		}
 
-		response = await SendWithAuthenticationToken(request, tokens, ct);
+		response = await SendWithAuthenticationToken(request, ct);
 
 		if (IsUnauthorized(request, response))
 		{
@@ -77,29 +76,26 @@ internal abstract class BaseAuthorizationHandler : DelegatingHandler
 			return response;
 		}
 
+		await ExtractTokensFromResponse(request, response, ct);
 		return response;
 	}
 
-	protected virtual async Task<HttpResponseMessage> SendWithAuthenticationToken(
-
+	private async Task<HttpResponseMessage> SendWithAuthenticationToken(
 		HttpRequestMessage request,
-		IDictionary<string, string> tokens,
-				CancellationToken ct
-	)
+		CancellationToken ct)
 	{
-		await ApplyTokensToRequest(request, tokens, ct);
+		await ApplyTokensToRequest(request, ct);
 
 		return await base.SendAsync(request, ct);
 	}
 
 	protected abstract Task<bool> ApplyTokensToRequest(
 	HttpRequestMessage request,
-	IDictionary<string, string> tokens,
 	CancellationToken ct);
 
 	protected virtual Task<bool> ExtractTokensFromResponse(
 	HttpRequestMessage request,
-	IDictionary<string, string> tokens,
+	HttpResponseMessage response,
 	CancellationToken ct) => Task.FromResult(true);
 
 

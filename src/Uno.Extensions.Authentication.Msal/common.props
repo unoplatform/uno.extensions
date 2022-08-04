@@ -1,6 +1,5 @@
 <Project ToolsVersion="15.0">
 	<PropertyGroup>
-		<AssemblyName>Uno.Extensions.Authentication.MSAL.UI</AssemblyName>
 	  <GenerateLibraryLayout>true</GenerateLibraryLayout>
 	</PropertyGroup>
 

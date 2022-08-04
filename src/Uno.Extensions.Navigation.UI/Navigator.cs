@@ -187,11 +187,11 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			ancestor.Item2 != Region.Parent)
 		{
 			var ancestorRegion = ancestor.Item2;
-			if (ancestorRegion is not null) 
+			if (ancestorRegion is not null)
 			{
 				foreach (var child in ancestorRegion.Children)
 				{
-					if(child.IsUnnamed(ancestor.Item1) &&
+					if (child.IsUnnamed(ancestor.Item1) &&
 						await child.CanNavigate(request.Route))
 					{
 						return child.NavigateAsync(request);
@@ -365,7 +365,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 		var routeMap = Resolver.Find(route);
 
-		var canNav =  RegionCanNavigate(route, routeMap);
+		var canNav = RegionCanNavigate(route, routeMap);
 		return canNav;
 	}
 
@@ -503,8 +503,17 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 		if (request.Route.IsEmpty())
 		{
+			// Check to see if there are any child regions, and if there are
+			// whether there are any that don't already have a route
+			if (Region.Children.Count == 0 ||
+				Region.Children.All(r => !(r.GetRoute()?.IsEmpty() ?? true)))
+			{
+				return null;
+			}
+
 			var dataRoute = Resolver.Find(request.Route);
-			if (dataRoute is not null && dataRoute.Path != this.Route?.Base)
+			if (dataRoute is not null &&
+				!Region.Ancestors(true).Any(x=>x.Item1?.Base==dataRoute.Path))
 			{
 				request = request with { Route = request.Route with { Base = dataRoute.Path } };
 			}
@@ -535,7 +544,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			}
 		}
 
-		if (request.Route.IsBackOrCloseNavigation())
+		if (request.Route.IsBackOrCloseNavigation() && !request.Route.IsClearBackstack())
 		{
 			return null;
 		}

@@ -1,4 +1,4 @@
-﻿namespace Uno.Extensions.Serialization;
+﻿namespace Uno.Extensions;
 
 /// <summary>
 /// This class is used for serialization configuration.

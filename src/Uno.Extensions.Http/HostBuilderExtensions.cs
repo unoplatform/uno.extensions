@@ -1,8 +1,4 @@
-﻿using System;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-
-namespace Uno.Extensions.Http;
+﻿namespace Uno.Extensions.Http;
 
 public static class HostBuilderExtensions
 {
