@@ -272,11 +272,11 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		else
 		{
 			var routeMaps = new List<RouteInfo> { rm };
-			var parent = Resolver.Parent(rm);
+			var parent = rm.Parent;
 			while (parent is not null)
 			{
 				routeMaps.Insert(0, parent);
-				parent = Resolver.Parent(parent);
+				parent = parent.Parent;
 			}
 			var route = new Route(Qualifiers.None, Data: request.Route.Data);
 			route = BuildFullRoute(route, routeMaps);
@@ -319,7 +319,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			this.Route = Route.Empty;
 
 			// Get the first route map
-			var map = Resolver.Find(null);
+			var map = Resolver.FindByPath(string.Empty);
 			if (map is not null)
 			{
 				request = request with { Route = request.Route.Append(map.Path) };
@@ -363,7 +363,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			}
 		}
 
-		var routeMap = Resolver.Find(route);
+		var routeMap = Resolver.FindByPath(route.Base);
 
 		var canNav = RegionCanNavigate(route, routeMap);
 		return canNav;
@@ -457,7 +457,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			return default;
 		}
 
-		var mapping = Resolver.Find(request.Route);
+		var mapping = Resolver.FindByPath(request.Route.Base);
 		if (mapping?.ToQuery is not null)
 		{
 			request = request with { Route = request.Route with { Data = request.Route.Data?.AsParameters(mapping) } };
@@ -522,7 +522,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 				return null;
 			}
 
-			var dataRoute = Resolver.Find(request.Route);
+			var dataRoute = Resolver.FindByPath(request.Route.Base);
 			if (dataRoute is not null &&
 				!Region.Ancestors(true).Any(x=>x.Item1?.Base==dataRoute.Path))
 			{

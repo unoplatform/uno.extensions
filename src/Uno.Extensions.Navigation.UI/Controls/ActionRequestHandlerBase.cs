@@ -30,6 +30,8 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 				return;
 			}
 
+			var routeHint = new RouteHint { Route = path };
+
 			var data = element.GetData();
 			var resultType = data?.GetType();
 
@@ -57,44 +59,48 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 					}
 				}
 			}
+			routeHint = routeHint with { Data = data?.GetType(), Result=resultType };
 
-			if (resultType is null && !string.IsNullOrWhiteSpace(path))
-			{
-				var routeMap = _resolver.FindByPath(path);
-				resultType = routeMap?.ResultData;
-			}
+			//if (resultType is null && !string.IsNullOrWhiteSpace(path))
+			//{
+			//	var routeMap = _resolver.FindByPath(path);
+			//	resultType = routeMap?.ResultData;
+			//}
 
-			if (string.IsNullOrWhiteSpace(path) && data is not null)
-			{
-				var rm = _resolver.FindByData(data.GetType());
-				path = rm?.Path;
-			}
+			//if (string.IsNullOrWhiteSpace(path) && data is not null)
+			//{
+			//	var rm = _resolver.FindByData(data.GetType());
+			//	path = rm?.Path;
+			//}
 
-			if (string.IsNullOrWhiteSpace(path) && resultType is not null)
-			{
-				var rm = _resolver.FindByResultData(resultType);
-				path = rm?.Path;
-			}
+			//if (string.IsNullOrWhiteSpace(path) && resultType is not null)
+			//{
+			//	var rm = _resolver.FindByResultData(resultType);
+			//	path = rm?.Path;
+			//}
 
 
 			var qualifier = path.HasQualifier() ? Qualifiers.None : DefaultQualifier;
 
 			path = path ?? string.Empty;
 
-			if (data is not null ||
-				resultType is not null)
-			{
+			var response = await nav.NavigateRouteHintAsync(routeHint, element, data, CancellationToken.None);
 
-				if (resultType is not null)
-				{
+			//if (data is not null ||
+			//	resultType is not null)
+			//{
 
-					var response = await nav.NavigateRouteForResultAsync(element, path, qualifier, data, resultType: resultType);
+			//	if (resultType is not null)
+			//	{
+
+			//		var response = await nav.NavigateRouteForResultAsync(element, path, qualifier, data, resultType: resultType);
 					if (binding is not null &&
 					binding.ParentBinding.Mode == BindingMode.TwoWay)
 					{
-						if (response is not null)
+						var resultResponse = response?.AsResultResponse();
+						if (resultResponse is not null)
 						{
-							var result = await response.UntypedResult;
+							var result = await resultResponse.UntypedResult;
 							if (result.IsSome(out var resultValue))
 							{
 								element.SetData(resultValue);
@@ -102,17 +108,17 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 							}
 						}
 					}
-				}
-				else
-				{
-					await nav.NavigateRouteAsync(element, path, qualifier, data);
+			//	}
+			//	else
+			//	{
+			//		await nav.NavigateRouteAsync(element, path, qualifier, data);
 
-				}
-			}
-			else
-			{
-				await nav.NavigateRouteAsync(element, path, qualifier);
-			}
+			//	}
+			//}
+			//else
+			//{
+			//	await nav.NavigateRouteAsync(element, path, qualifier);
+			//}
 		};
 
 		var handler = eventHandler(action);

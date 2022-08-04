@@ -2,16 +2,25 @@
 
 public static class NavigatorExtensions
 {
-	public static IRouteResolver? GetResolver(this INavigator navigator)
+	public static IRouteResolver GetResolver(this INavigator navigator)
 	{
-		return navigator.Get<IServiceProvider>()?.GetRequiredService<IRouteResolver>() ?? default;
+		return navigator.Get<IServiceProvider>()!.GetRequiredService<IRouteResolver>();
 	}
 
-	public static async Task<NavigationResultResponse<TResult>?> NavigateRouteForResultAsync<TResult>(
-	this INavigator service, object sender, Route route, CancellationToken cancellation = default)
+	public static Task<NavigationResponse?> NavigateRouteHintAsync(
+		this INavigator navigator, RouteHint routeHint, object sender, object? data, CancellationToken cancellation)
 	{
-		var request = new NavigationRequest<TResult>(sender, route, cancellation);
-		var result = await service.NavigateAsync(request);
+		var resolver = navigator.GetResolver();
+		var request = routeHint.ToRequest(navigator, resolver, sender, data, cancellation);
+		return navigator.NavigateAsync(request);
+	}
+
+	public static async Task<NavigationResultResponse<TResult>?> NavigateRouteHintForResultAsync<TResult>(
+		this INavigator navigator, RouteHint routeHint, object sender, object? data, CancellationToken cancellation)
+	{
+		var resolver = navigator.GetResolver();
+		var request = routeHint.ToRequest<TResult>(navigator, resolver, sender, data, cancellation);
+		var result = await navigator.NavigateAsync(request);
 		return result?.AsResultResponse<TResult>();
 	}
 
@@ -26,23 +35,10 @@ public static class NavigatorExtensions
 	/// <param name="cancellation">Cancellation token to allow for cancellation of navigation</param>
 	/// <returns>NavigationResponse that indicates success</returns>
 	public static Task<NavigationResponse?> NavigateRouteAsync(
-		this INavigator service, object sender, string route, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
+		this INavigator navigator, object sender, string route, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
 	{
-		var resolver = service.GetResolver();
-		if (string.IsNullOrWhiteSpace(route))
-		{
-			var map = (data is not null) ?
-							resolver?.FindByData(data.GetType()) :
-							resolver?.Find(default!);
-			if (map is null)
-			{
-				return Task.FromResult<NavigationResponse?>(null);
-			}
-
-			route = map.Path;
-		}
-
-		return service.NavigateAsync(route.WithQualifier(qualifier).AsRequest(resolver, sender, data, cancellation));
+		var hint = new RouteHint { Route = route, Qualifier = qualifier, Data = data?.GetType() };
+		return navigator.NavigateRouteHintAsync(hint, sender, data, cancellation);
 	}
 
 	/// <summary>
@@ -56,178 +52,133 @@ public static class NavigatorExtensions
 	/// <param name="data">Data object to be passed with navigation</param>
 	/// <param name="cancellation">Cancellation token to allow for cancellation of navigation</param>
 	/// <returns>NavigationResultResponse that indicates success and contains an awaitable result</returns>
-	public static async Task<NavigationResultResponse<TResult>?> NavigateRouteForResultAsync<TResult>(
-		this INavigator service, object sender, string route, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
+	public static Task<NavigationResultResponse<TResult>?> NavigateRouteForResultAsync<TResult>(
+		this INavigator navigator, object sender, string route, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
 	{
-		var resolver = service.GetResolver();
-		var result = await service.NavigateAsync(route.WithQualifier(qualifier).AsRequest<TResult>(resolver, sender, data, cancellation));
-		return result?.AsResultResponse<TResult>();
+		var hint = new RouteHint { Route = route, Qualifier = qualifier, Data = data?.GetType(), Result = typeof(TResult) };
+		return navigator.NavigateRouteHintForResultAsync<TResult>(hint, sender, data, cancellation);
 	}
 
 	public static async Task<NavigationResultResponse?> NavigateRouteForResultAsync(
-	this INavigator service, object sender, string route, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default, Type? resultType = null)
+		this INavigator navigator, object sender, string route, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default, Type? resultType = null)
 	{
-		var resolver = service.GetResolver();
-		var req = route.WithQualifier(qualifier).AsRequest(resolver, sender, data, cancellation, resultType);
-		if (req is null)
-		{
-			return default;
-		}
-		var result = await service.NavigateAsync(req);
+		var hint = new RouteHint { Route = route, Qualifier = qualifier, Data = data?.GetType(), Result = resultType };
+		var result = await navigator.NavigateRouteHintAsync(hint, sender, data, cancellation);
 		return result?.AsResultResponse();
 	}
 
 	public static Task<NavigationResponse?> NavigateViewAsync<TView>(
-		this INavigator service, object sender, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
+		this INavigator navigator, object sender, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
 	{
-		return service.NavigateViewAsync(sender, typeof(TView), qualifier, data, cancellation);
+		return navigator.NavigateViewAsync(sender, typeof(TView), qualifier, data, cancellation);
 	}
 
 	public static Task<NavigationResponse?> NavigateViewAsync(
-		this INavigator service, object sender, Type viewType, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
+		this INavigator navigator, object sender, Type viewType, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
 	{
-		var resolver = service.GetResolver();
-		var map = resolver?.FindByView(viewType);
-		if (map is null)
-		{
-			return Task.FromResult<NavigationResponse?>(null);
-		}
-		return service.NavigateAsync(map.Path.WithQualifier(qualifier).AsRequest(resolver, sender, data, cancellation));
+		var hint = new RouteHint { View = viewType, Qualifier = qualifier, Data = data?.GetType() };
+		return navigator.NavigateRouteHintAsync(hint, sender, data, cancellation);
 	}
 
 	public static Task<NavigationResultResponse<TResult>?> NavigateViewForResultAsync<TView, TResult>(
-		this INavigator service, object sender, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
+		this INavigator navigator, object sender, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
 	{
-		return service.NavigateViewForResultAsync<TResult>(sender, typeof(TView), qualifier, data, cancellation);
+		return navigator.NavigateViewForResultAsync<TResult>(sender, typeof(TView), qualifier, data, cancellation);
 	}
-	public static async Task<NavigationResultResponse<TResult>?> NavigateViewForResultAsync<TResult>(
-	this INavigator service, object sender, Type viewType, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
+	public static Task<NavigationResultResponse<TResult>?> NavigateViewForResultAsync<TResult>(
+	this INavigator navigator, object sender, Type viewType, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
 	{
-		var resolver = service.GetResolver();
-		var map = resolver?.FindByView(viewType);
-		if (map is null)
-		{
-			return default;
-		}
-		var result = await service.NavigateAsync(map.Path.WithQualifier(qualifier).AsRequest<TResult>(resolver, sender, data, cancellation));
-		return result?.AsResultResponse<TResult>();
+		var hint = new RouteHint { View = viewType, Qualifier = qualifier, Data = data?.GetType(), Result = typeof(TResult) };
+		return navigator.NavigateRouteHintForResultAsync<TResult>(hint, sender, data, cancellation);
 	}
 
 	public static Task<NavigationResponse?> NavigateViewModelAsync<TViewViewModel>(
-		this INavigator service, object sender, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
+		this INavigator navigator, object sender, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
 	{
-		return service.NavigateViewModelAsync(sender, typeof(TViewViewModel), qualifier, data, cancellation);
+		return navigator.NavigateViewModelAsync(sender, typeof(TViewViewModel), qualifier, data, cancellation);
 	}
 
 	public static Task<NavigationResponse?> NavigateViewModelAsync(
-		this INavigator service, object sender, Type viewModelType, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
+		this INavigator navigator, object sender, Type viewModelType, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
 	{
-		var resolver = service.GetResolver();
-		var map = resolver?.FindByViewModel(viewModelType);
-		if (map is null)
-		{
-			return Task.FromResult<NavigationResponse?>(null);
-		}
-		return service.NavigateAsync(map.Path.WithQualifier(qualifier).AsRequest(resolver, sender, data, cancellation));
+		var hint = new RouteHint { ViewModel = viewModelType, Qualifier = qualifier, Data = data?.GetType() };
+		return navigator.NavigateRouteHintAsync(hint, sender, data, cancellation);
 	}
 
 	public static Task<NavigationResultResponse<TResult>?> NavigateViewModelForResultAsync<TViewViewModel, TResult>(
-		this INavigator service, object sender, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
+		this INavigator navigator, object sender, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
 	{
-		return service.NavigateViewModelForResultAsync<TResult>(sender, typeof(TViewViewModel), qualifier, data, cancellation);
+		return navigator.NavigateViewModelForResultAsync<TResult>(sender, typeof(TViewViewModel), qualifier, data, cancellation);
 	}
-	public static async Task<NavigationResultResponse<TResult>?> NavigateViewModelForResultAsync<TResult>(
-		this INavigator service, object sender, Type viewModelType, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
+	public static Task<NavigationResultResponse<TResult>?> NavigateViewModelForResultAsync<TResult>(
+		this INavigator navigator, object sender, Type viewModelType, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
 	{
-		var resolver = service.GetResolver();
-		var map = resolver?.FindByViewModel(viewModelType);
-		if (map is null)
-		{
-			return default;
-		}
-		var result = await service.NavigateAsync(map.Path.WithQualifier(qualifier).AsRequest<TResult>(resolver, sender, data, cancellation));
-		return result?.AsResultResponse<TResult>();
+		var hint = new RouteHint { ViewModel = viewModelType, Qualifier = qualifier, Data = data?.GetType(), Result = typeof(TResult) };
+		return navigator.NavigateRouteHintForResultAsync<TResult>(hint, sender, data, cancellation);
 	}
 
 	public static Task<NavigationResponse?> NavigateDataAsync<TData>(
-		this INavigator service, object sender, TData data, string qualifier = Qualifiers.None, CancellationToken cancellation = default)
+		this INavigator navigator, object sender, TData data, string qualifier = Qualifiers.None, CancellationToken cancellation = default)
 	{
-		var resolver = service.GetResolver();
-		var map = resolver?.FindByData(typeof(TData));
-		if (map is null)
-		{
-			return Task.FromResult<NavigationResponse?>(null);
-		}
-		return service.NavigateAsync(map.Path.WithQualifier(qualifier).AsRequest(resolver, sender, data, cancellation));
+		var hint = new RouteHint { Qualifier = qualifier, Data = typeof(TData) };
+		return navigator.NavigateRouteHintAsync(hint, sender, data, cancellation);
 	}
 
-	public static async Task<NavigationResultResponse<TResultData>?> NavigateDataForResultAsync<TData, TResultData>(
-		this INavigator service, object sender, TData data, string qualifier = Qualifiers.None, CancellationToken cancellation = default)
+	public static Task<NavigationResultResponse<TResult>?> NavigateDataForResultAsync<TData, TResult>(
+		this INavigator navigator, object sender, TData data, string qualifier = Qualifiers.None, CancellationToken cancellation = default)
 	{
-		var resolver = service.GetResolver();
-		var map = resolver?.FindByData(typeof(TData));
-		if (map is null)
-		{
-			return default;
-		}
-		var result = await service.NavigateAsync(map.Path.WithQualifier(qualifier).AsRequest<TResultData>(resolver, sender, data, cancellation));
-		return result?.AsResultResponse<TResultData>();
+		var hint = new RouteHint { Qualifier = qualifier, Data = typeof(TData), Result = typeof(TResult) };
+		return navigator.NavigateRouteHintForResultAsync<TResult>(hint, sender, data, cancellation);
 	}
 
-	public static async Task<NavigationResultResponse<TResultData>?> NavigateForResultAsync<TResultData>(
-		this INavigator service, object sender, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
+	public static Task<NavigationResultResponse<TResult>?> NavigateForResultAsync<TResult>(
+		this INavigator navigator, object sender, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
 	{
-		var resolver = service.GetResolver();
-		var map = resolver?.FindByResultData(typeof(TResultData));
-		if (map is null)
-		{
-			return default;
-		}
-		var result = await service.NavigateAsync(map.Path.WithQualifier(qualifier).AsRequest<TResultData>(resolver, sender, data, cancellation));
-		return result?.AsResultResponse<TResultData>();
+		var hint = new RouteHint { Qualifier = qualifier, Result = typeof(TResult) };
+		return navigator.NavigateRouteHintForResultAsync<TResult>(hint, sender, data, cancellation);
 	}
 
-	public static async Task<TResult?> GetDataAsync<TResult>(this INavigator service, object sender, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
+	public static async Task<TResult?> GetDataAsync<TResult>(this INavigator navigator, object sender, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
 	{
-		var result = await service.NavigateForResultAsync<TResult>(sender, qualifier, data, cancellation: cancellation).AsResult();
+		var result = await navigator.NavigateForResultAsync<TResult>(sender, qualifier, data, cancellation: cancellation).AsResult();
 		return result.SomeOrDefault();
 	}
 
-	public static async Task<TResult?> GetDataAsync<TResult>(this INavigator service, object sender, string route, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
+	public static async Task<TResult?> GetDataAsync<TResult>(this INavigator navigator, object sender, string route, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
 	{
-		var result = await service.NavigateRouteForResultAsync<TResult>(sender, route, qualifier, data, cancellation: cancellation).AsResult();
+		var result = await navigator.NavigateRouteForResultAsync<TResult>(sender, route, qualifier, data, cancellation: cancellation).AsResult();
 		return result.SomeOrDefault();
 	}
 
-	public static async Task<TResult?> GetDataAsync<TViewModel, TResult>(this INavigator service, object sender, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
+	public static async Task<TResult?> GetDataAsync<TViewModel, TResult>(this INavigator navigator, object sender, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
 	{
-		var result = await service.NavigateViewModelForResultAsync<TViewModel, TResult>(sender, qualifier, data, cancellation: cancellation).AsResult();
+		var result = await navigator.NavigateViewModelForResultAsync<TViewModel, TResult>(sender, qualifier, data, cancellation: cancellation).AsResult();
 		return result.SomeOrDefault();
 	}
 
 	public static Task<NavigationResponse?> NavigateBackAsync(
-		this INavigator service, object sender, string qualifier = Qualifiers.None, CancellationToken cancellation = default)
+		this INavigator navigator, object sender, string qualifier = Qualifiers.None, CancellationToken cancellation = default)
 	{
-		var resolver = service.GetResolver();
-		return service.NavigateAsync((Qualifiers.NavigateBack + string.Empty).WithQualifier(qualifier).AsRequest(resolver, sender, cancellationToken: cancellation));
+		var hint = new RouteHint { Route = Qualifiers.NavigateBack, Qualifier = qualifier};
+		return navigator.NavigateRouteHintAsync(hint, sender, default, cancellation);
 	}
 
 	public static Task<NavigationResponse?> NavigateBackWithResultAsync<TResult>(
-	this INavigator service, object sender, string qualifier = Qualifiers.None, Option<TResult>? data = null, CancellationToken cancellation = default)
+	this INavigator navigator, object sender, string qualifier = Qualifiers.None, Option<TResult>? data = null, CancellationToken cancellation = default)
 	{
-		var resolver = service.GetResolver();
-		return service.NavigateAsync((Qualifiers.NavigateBack + string.Empty).WithQualifier(qualifier).AsRequest(resolver, sender, data, cancellation));
+		var hint = new RouteHint { Route = Qualifiers.NavigateBack, Qualifier = qualifier };
+		return navigator.NavigateRouteHintAsync(hint, sender, data, cancellation);
 	}
 
 	public static Task<NavigationResponse?> NavigateBackWithResultAsync(
-	this INavigator service, object sender, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
+	this INavigator navigator, object sender, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
 	{
-		var resolver = service.GetResolver();
-		return service.NavigateAsync((Qualifiers.NavigateBack + string.Empty).WithQualifier(qualifier).AsRequest(resolver, sender, data, cancellation));
+		var hint = new RouteHint { Route = Qualifiers.NavigateBack, Qualifier = qualifier };
+		return navigator.NavigateRouteHintAsync(hint, sender, data, cancellation);
 	}
 
 	public static async Task ShowMessageDialogAsync(
-		this INavigator service,
+		this INavigator navigator,
 		object sender,
 		string? route = default,
 		string? content = default,
@@ -238,11 +189,11 @@ public static class NavigatorExtensions
 		DialogAction[]? buttons = default,
 		CancellationToken cancellation = default)
 	{
-		await service.ShowMessageDialogAsync<object>(sender, route, content, title, delayInput, defaultButtonIndex, cancelButtonIndex, buttons, cancellation);
+		await navigator.ShowMessageDialogAsync<object>(sender, route, content, title, delayInput, defaultButtonIndex, cancelButtonIndex, buttons, cancellation);
 	}
 
 	public static async Task<TResult?> ShowMessageDialogAsync<TResult>(
-		this INavigator service,
+		this INavigator navigator,
 		object sender,
 		string? route = default,
 		string? content = default,
@@ -253,7 +204,6 @@ public static class NavigatorExtensions
 		DialogAction[]? buttons = default,
 		CancellationToken cancellation = default)
 	{
-		var resolver = service.GetResolver();
 		var data = new Dictionary<string, object>()
 			{
 				{ RouteConstants.MessageDialogParameterTitle, title! },
@@ -263,8 +213,9 @@ public static class NavigatorExtensions
 				{ RouteConstants.MessageDialogParameterCancelCommand, cancelButtonIndex! },
 				{ RouteConstants.MessageDialogParameterCommands, buttons! }
 			};
+		var hint = new RouteHint { Route = route ?? RouteConstants.MessageDialogUri, Qualifier = Qualifiers.Dialog };
 
-		var response = await service.NavigateAsync((route ?? (Qualifiers.Dialog + RouteConstants.MessageDialogUri)).AsRequest<object>(resolver, sender, data, cancellation));
+		var response = await navigator.NavigateRouteHintAsync(hint, sender, data, cancellation);
 		if (response?.AsResultResponse<TResult>() is { } resultResponse &&
 			resultResponse.Result is not null)
 		{
@@ -273,4 +224,14 @@ public static class NavigatorExtensions
 		};
 		return default;
 	}
+}
+
+public record RouteHint
+{
+	public string? Route { get; init; }
+	public Type? ViewModel { get; init; }
+	public Type? View { get; init; }
+	public Type? Data { get; init; }
+	public Type? Result { get; set; }
+	public string? Qualifier { get; set; }
 }

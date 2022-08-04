@@ -23,28 +23,28 @@ public class RouteResolverDefault : RouteResolver
 	public override RouteInfo? FindByPath(string? path)
 	{
 		var map = base.FindByPath(path);
-		return map ?? DefaultMapping(path: path);
+		return map ?? DefaultMapping(path: path).FirstOrDefault();
 	}
 
-	public override RouteInfo? FindByViewModel(Type? viewModel)
+	public override RouteInfo[] FindByViewModel(Type? viewModel)
 	{
 		var map = base.FindByViewModel(viewModel);
-		return map ?? DefaultMapping(viewModel: viewModel);
+		return map.Any() ? map : DefaultMapping(viewModel: viewModel);
 	}
 
-	public override RouteInfo? FindByView(Type? view)
+	public override RouteInfo[] FindByView(Type? view)
 	{
 		var map = base.FindByView(view);
-		return map ?? DefaultMapping(view: view);
+		return map.Any() ? map : DefaultMapping(view: view);
 	}
 
 
-	private RouteInfo? DefaultMapping(string? path = null, Type? view = null, Type? viewModel = null)
+	private RouteInfo[] DefaultMapping(string? path = null, Type? view = null, Type? viewModel = null)
 	{
 		if (!ReturnImplicitMapping)
 		{
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage("Implicit mapping disabled");
-			return null;
+			return Array.Empty<RouteInfo>();
 		}
 
 		// Trim any qualifiers
@@ -61,7 +61,7 @@ public class RouteResolverDefault : RouteResolver
 		if (path is null ||
 			string.IsNullOrWhiteSpace(path))
 		{
-			return null;
+			return Array.Empty<RouteInfo>();
 		}
 
 		// Attempt to find a viewmap to build the routeinfo from
@@ -110,11 +110,11 @@ public class RouteResolverDefault : RouteResolver
 			var defaultMap = new RouteInfo(path, View: () => view, ViewModel: viewModel);
 			Mappings[defaultMap.Path] = defaultMap;
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Created default mapping - Path '{defaultMap.Path}'");
-			return defaultMap;
+			return new RouteInfo[] { defaultMap };
 		}
 
 		if (Logger.IsEnabled(LogLevel.Warning)) Logger.LogWarningMessage($"Unable to create default mapping");
-		return null;
+		return Array.Empty<RouteInfo>();
 	}
 
 	private Type? TypeFromPath(string path, bool allowMatchExact, IEnumerable<string> suffixes, Func<Type, bool>? condition = null)
@@ -197,7 +197,7 @@ public class RouteResolverDefault : RouteResolver
 			if (loadedTypes is null)
 			{
 				loadedTypes = (from asb in AppDomain.CurrentDomain.GetAssemblies()
-							   where (!(asb.FullName ?? string.Empty).StartsWith("_") && !AssemblyExtensions.Excludes.Contains(asb.FullName??string.Empty))
+							   where (!(asb.FullName ?? string.Empty).StartsWith("_") && !AssemblyExtensions.Excludes.Contains(asb.FullName ?? string.Empty))
 							   from t in asb.SafeGetTypes()
 							   where t.IsClass
 							   select new { t.Name, Type = t }).ToDictionaryDistinct(x => x.Name, x => x.Type);

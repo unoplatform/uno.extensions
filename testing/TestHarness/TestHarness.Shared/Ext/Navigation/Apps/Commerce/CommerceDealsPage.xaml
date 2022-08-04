@@ -69,12 +69,21 @@
 				<ColumnDefinition Width="0"
 								  x:Name="DetailsColumn" />
 			</Grid.ColumnDefinitions>
-			<Grid uen:Region.Attached="True"> 
+			<Grid uen:Region.Attached="True">
 				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
 					<RowDefinition />
 				</Grid.RowDefinitions>
-				<utu:TabBar uen:Region.Attached="True">
+				<StackPanel Orientation="Horizontal">
+					<Button AutomationProperties.AutomationId="FirstProductButton"
+							Content="First Deal - UI Thread"
+							Click="{x:Bind ViewModel.ShowFirstProductUIThread}" />
+					<Button AutomationProperties.AutomationId="FirstProductBackgroundButton"
+							Content="First Deal - Background Thread"
+							Click="{x:Bind ViewModel.ShowFirstProductBackgroundThread}" />
+				</StackPanel>
+				<utu:TabBar uen:Region.Attached="True" Grid.Row="1">
 					<utu:TabBarItem x:Uid="DealsPage_DealsTab"
 									AutomationProperties.Name="TabBarItem"
 									Content="Deals"
@@ -90,7 +99,7 @@
 				</utu:TabBar>
 				<Grid uen:Region.Attached="True"
 					  uen:Region.Navigator="Visibility"
-					  Grid.Row="1">
+					  Grid.Row="2">
 					<ListView uen:Region.Name="DealsTab"
 							  AutomationProperties.AutomationId="DealsListView"
 							  x:Name="DealsListView"
@@ -108,7 +117,7 @@
 					</Grid>
 				</Grid>
 			</Grid>
-			
+
 			<Grid Grid.Column="1"
 				  x:Name="DetailsGrid"
 				  Visibility="Collapsed">
