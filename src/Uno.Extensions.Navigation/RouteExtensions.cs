@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Uno.Extensions.Navigation;
 
@@ -67,7 +68,7 @@ public static class RouteExtensions
 		return text;
 	}
 
-	public static string WithQualifier(this string path, string qualifier) => string.IsNullOrWhiteSpace(qualifier) ? path : $"{qualifier}{path}";
+	public static string WithQualifier(this string path, string? qualifier) => (qualifier is null || string.IsNullOrWhiteSpace(qualifier)) ? path : $"{qualifier}{path}";
 
 	public static Route AsRoute(this Uri uri, object? data = null, IRouteResolver? resolver = null)
 	{
@@ -115,7 +116,7 @@ public static class RouteExtensions
 			string.IsNullOrWhiteSpace(qualifier))
 		{
 			var map = resolver.FindByPath(routeBase);
-			if ( map?.IsDialogViewType?.Invoke() ?? false)
+			if (map?.IsDialogViewType?.Invoke() ?? false)
 			{
 				qualifier = Qualifiers.Dialog;
 			}
@@ -133,7 +134,7 @@ public static class RouteExtensions
 		return route;
 	}
 
-	private static IDictionary<string, object> ParseQueryParameters(this string queryString)
+	public static IDictionary<string, object> ParseQueryParameters(this string queryString)
 	{
 		return (from pair in (queryString + string.Empty).Split('&')
 				where pair is not null
@@ -171,5 +172,36 @@ public static class RouteExtensions
 		{
 			return source;
 		}
+	}
+
+	public static bool IsAncestorRoute(this RouteInfo? rm, RouteInfo? route)
+	{
+		return (rm is not null && route is not null) &&
+				(
+					(rm?.DependsOn == route.Path) ||
+					(rm?.DependsOnRoute.IsAncestorRoute(route)?? false) ||
+					(rm?.Parent?.Path == route.Path) ||
+					// This checks to see if there's a match for "route" anywhere in the ancestors of "rm"
+					(rm?.Parent?.IsAncestorRoute(route) ?? false)
+					//||
+					//// This checks to see if there's a match for "route.Parent" anywhere in the ancestors of "rm"
+					//rm.IsAncestorRoute(route.Parent)
+				);
+	}
+
+	public static RouteInfo? SelectMapFromAncestor(this RouteInfo[] maps, RouteInfo? ancestorRoute)
+	{
+		if(ancestorRoute is null)
+		{
+			return default;
+		}
+		foreach (var map in maps)
+		{
+			if (map?.IsAncestorRoute(ancestorRoute) ?? false)
+			{
+				return map;
+			}
+		}
+		return default;
 	}
 }

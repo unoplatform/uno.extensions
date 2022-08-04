@@ -16,38 +16,34 @@ public static class NavigatorExtensions
 	}
 
 #if __IOS__
-    public static async Task<NavigationResultResponse<TSource>?> ShowPickerAsync<TSource>(
-       this INavigator service,
-       object sender,
-       IEnumerable<TSource> itemsSource,
-       object? itemTemplate = null,
-       CancellationToken cancellation = default)
-    {
-        var data = new Dictionary<string, object?>()
-            {
-                { RouteConstants.PickerItemsSource, itemsSource },
-                { RouteConstants.PickerItemTemplate, itemTemplate }
-            };
-		var resolver = service.GetResolver();
+	public static Task<NavigationResultResponse<TSource>?> ShowPickerAsync<TSource>(
+	   this INavigator navigator,
+	   object sender,
+	   IEnumerable<TSource> itemsSource,
+	   object? itemTemplate = null,
+	   CancellationToken cancellation = default)
+	{
+		var data = new Dictionary<string, object?>()
+			{
+				{ RouteConstants.PickerItemsSource, itemsSource },
+				{ RouteConstants.PickerItemTemplate, itemTemplate }
+			};
 
-		var req = (Qualifiers.Dialog + typeof(Picker).Name).AsRequest(resolver, sender, data, cancellation, typeof(TSource));
-		if(req is null)
-		{
-			return default;
-		}
-
-		var result = await service.NavigateAsync(req);
-        return result?.AsResultResponse<TSource>();
-    }
+		var hint = new RouteHint { Route = typeof(Picker).Name, Qualifier = Qualifiers.Dialog, Result = typeof(TSource) };
+		return navigator.NavigateRouteHintForResultAsync<TSource>(hint, sender, data, cancellation);
+	}
 #endif
 
-	public static Task<NavigationResponse?> GoBack(this INavigator navigator, object sender)
+	public static async Task<NavigationResponse?> GoBack(this INavigator navigator, object sender)
 	{
+		var dispatcher = navigator.Get<IServiceProvider>()!.GetRequiredService<IDispatcher>();
 		var region = navigator.Get<IServiceProvider>()?.GetService<IRegion>();
 		region = region?.Root();
-		var gobackNavigator = region?.FindChildren(
+		var gobackNavigator = await dispatcher.ExecuteAsync(async () => region?.FindChildren(
 			child => child.Services?.GetService<INavigator>() is ControlNavigator controlNavigator &&
-				controlNavigator.CanGoBack).LastOrDefault()?.Navigator();
-		return (gobackNavigator?.NavigateBackAsync(sender)) ?? Task.FromResult<NavigationResponse?>(new NavigationResponse(Success: false));
+				controlNavigator.CanGoBack).LastOrDefault()?.Navigator());
+		return gobackNavigator is not null ?
+			await gobackNavigator.NavigateBackAsync(sender) :
+			new NavigationResponse(Success: false);
 	}
 }

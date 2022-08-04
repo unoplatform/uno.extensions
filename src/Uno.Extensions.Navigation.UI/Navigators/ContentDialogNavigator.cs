@@ -27,7 +27,7 @@ public class ContentDialogNavigator : DialogNavigator
 		var route = request.Route;
 		var navigation = Region.Navigator();
 		var services = this.Get<IServiceProvider>();
-		var mapping = Resolver.Find(route);
+		var mapping = Resolver.FindByPath(route.Base);
 		if (
 			navigation is null ||
 			services is null ||

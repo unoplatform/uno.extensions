@@ -16,7 +16,7 @@ public class MappedRouteResolver : RouteResolver
 		var viewFunc = (drm.View?.View is not null) ?
 										() => drm.View.View :
 										drm.View?.ViewSelector;
-		return new RouteInfo(
+		return AssignParentRouteInfo(new RouteInfo(
 			Path: drm.Path,
 			View: viewFunc,
 			ViewAttributes: drm.View?.ViewAttributes,
@@ -32,10 +32,10 @@ public class MappedRouteResolver : RouteResolver
 			{
 				return IsDialogViewType(viewFunc?.Invoke());
 			},
-			Nested: ResolveViewMaps(drm.Nested));
+			Nested: ResolveViewMaps(drm.Nested)));
 	}
 
-	public override RouteInfo? FindByViewModel(Type? viewModelType)
+	public override RouteInfo[] FindByViewModel(Type? viewModelType)
 	{
 		if (viewModelType is not null &&
 			_viewModelMappings.TryGetValue(viewModelType, out var bindableViewModel))

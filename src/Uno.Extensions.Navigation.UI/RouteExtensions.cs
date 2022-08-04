@@ -80,7 +80,7 @@ public static class RouteExtensions
 		// For routes that have a depends on, we need to ensure that
 		// the dependson segments are added to the segments list
 		var r = route.RootDependsOn(mappings, region, false);
-		var map = mappings.Find(r);
+		var map = mappings.FindByPath(r.Base);
 		var originalRoute = false;
 		while (
 			!r.IsEmpty() &&
@@ -98,7 +98,7 @@ public static class RouteExtensions
 			originalRoute = originalRoute || r.Base == route.Base;
 			segs.Add((r with { Qualifier = Qualifiers.None, Path = null, Data = null }, map, !originalRoute));
 			r = r.Next();
-			map = mappings.Find(r);
+			map = mappings.FindByPath(r.Base);
 		}
 
 		if (segs.Any())
@@ -239,7 +239,7 @@ public static class RouteExtensions
 
 	public static bool IsPageRoute(this Route route, IRouteResolver mappings)
 	{
-		return mappings.Find(route).IsPageRouteMap();
+		return mappings.FindByPath(route.Base).IsPageRouteMap();
 	}
 
 	public static bool IsPageRouteMap(this RouteInfo? rm)

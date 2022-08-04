@@ -31,7 +31,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 		}
 	}
 	// TODO: IsUnnamed and  composite region
-	protected override bool CanNavigateToDependentRoutes => !Region.Children.Any(x=>x.IsUnnamed(this.Route) && !(x.Navigator()?.IsComposite()??false));
+	protected override bool CanNavigateToDependentRoutes => !Region.Children.Any(x => x.IsUnnamed(this.Route) && !(x.Navigator()?.IsComposite() ?? false));
 
 	protected override async Task<bool> RegionCanNavigate(Route route, RouteInfo? routeMap)
 	{
@@ -50,7 +50,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 			return false;
 		}
 
-		if(routeMap is null)
+		if (routeMap is null)
 		{
 			return false;
 		}
@@ -128,8 +128,8 @@ public class FrameNavigator : ControlNavigator<Frame>
 			// Rebuild the nested region hierarchy
 			Control.ReassignRegionParent();
 			if (segments.Length > 1 ||
-				!string.IsNullOrWhiteSpace(request.Route.Path)||
-				request.Route.Data?.Count>0)
+				!string.IsNullOrWhiteSpace(request.Route.Path) ||
+				request.Route.Data?.Count > 0)
 			{
 				refreshViewModel = true;
 			}
@@ -154,7 +154,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 		for (var i = 0; i < segments.Length - 1; i++)
 		{
 			var (r, map, isDependsOn) = segments[i];
-			if(r.IsEmpty() || (isDependsOn && (Control?.BackStack.Any(entry=>entry.SourcePageType==map?.RenderView)??false)))
+			if (r.IsEmpty() || (isDependsOn && (Control?.BackStack.Any(entry => entry.SourcePageType == map?.RenderView) ?? false)))
 			{
 				continue;
 			}
@@ -194,12 +194,12 @@ public class FrameNavigator : ControlNavigator<Frame>
 		var responseRoute = route with { Path = null };
 		var previousRoute = FullRoute.ApplyFrameRoute(Resolver, responseRoute, Region);
 		var previousBase = previousRoute?.Last()?.Base;
-		var currentBase = Resolver.FindByView(Control.Content.GetType())?.Path;
+		var currentBases = Resolver.FindByView(Control.Content.GetType());
 		if (previousBase is not null)
 		{
 			if (
 			Control.BackStack.Count > 0 &&
-			currentBase != previousBase &&
+			!currentBases.Any(r => r.Path == previousBase) &&
 			previousBase != Control.Content.GetType().Name)
 			{
 				var previousMapping = Resolver.FindByView(Control.BackStack.Last().SourcePageType);
@@ -213,7 +213,10 @@ public class FrameNavigator : ControlNavigator<Frame>
 			responseRoute = Route.Empty;
 		}
 
-		var mapping = Resolver.FindByView(Control.Content.GetType());
+		var mappings = Resolver.FindByView(Control.Content.GetType());
+		var navParent = this.GetParent();
+		var navRoute = Resolver.FindByPath(navParent?.Route?.Base);
+		var mapping = mappings.SelectMapFromAncestor(navRoute); 
 
 		await InitializeCurrentView(request, previousRoute ?? Route.Empty, mapping);
 
@@ -245,7 +248,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 		}
 	}
 
-	private async void FrameGoBack(object? parameter, RouteInfo? previousMapping)
+	private async void FrameGoBack(object? parameter, RouteInfo[] previousMappings)
 	{
 		if (Control is null)
 		{
@@ -268,6 +271,9 @@ public class FrameNavigator : ControlNavigator<Frame>
 			}
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Invoking Frame.GoBack");
 			Control.GoBack();
+
+			var previousMapping = previousMappings.FirstOrDefault(x => x.RenderView == Control.SourcePageType) ??
+									previousMappings.FirstOrDefault();
 
 			await EnsurePageLoaded(previousMapping?.Path);
 
