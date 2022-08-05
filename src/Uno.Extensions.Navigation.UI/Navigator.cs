@@ -501,6 +501,17 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			request = request with { Result = null };
 		}
 
+		if(Region.Children.Count>0)
+		{
+			// Force navigators to be created on the UI thread before they're accessed
+			var navigators = await Dispatcher.ExecuteAsync(async () =>
+			{
+				return (from child in Region.Children
+						let nav = child.Navigator()
+						select nav).ToList();
+			});
+		}
+
 		if (request.Route.IsEmpty())
 		{
 			// Check to see if there are any child regions, and if there are
@@ -572,17 +583,14 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		// Append Internal qualifier to avoid requests being sent back to parent
 		request = request with { Route = request.Route with { IsInternal = true } };
 
-		var navigators = await Dispatcher.ExecuteAsync(async () =>
-		{
-			return (from child in children
-					let nav = child.Navigator()
-					select nav).ToList();
-		});
-
 		var tasks = new List<Task<NavigationResponse?>>();
-		foreach (var region in navigators)
+		foreach (var child in children)
 		{
-			tasks.Add(region.NavigateAsync(request));
+			var nav = child.Navigator();
+			if (nav is not null)
+			{
+				tasks.Add(nav.NavigateAsync(request));
+			}
 		}
 
 		await Task.WhenAll(tasks);
