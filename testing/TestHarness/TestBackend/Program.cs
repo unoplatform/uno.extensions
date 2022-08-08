@@ -23,12 +23,12 @@ builder.Services
 					o.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 				})
 		.AddCookie()
-		.AddFacebook(fb =>
-		{
-			fb.AppId = auth.FacebookAppId!;
-			fb.AppSecret = auth.FacebookAppSecret!;
-			fb.SaveTokens = true;
-		})
+		//.AddFacebook(fb =>
+		//{
+		//	fb.AppId = auth.FacebookAppId!;
+		//	fb.AppSecret = auth.FacebookAppSecret!;
+		//	fb.SaveTokens = true;
+		//})
 		//.AddGoogle(g =>
 		//{
 		//	g.ClientId = auth.GoogleClientId!;

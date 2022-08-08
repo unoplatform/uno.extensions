@@ -33,7 +33,7 @@ public static class TokenCacheExtensions
 		}
 		if (!string.IsNullOrWhiteSpace(refreshToken))
 		{
-			dict[AccessTokenKey] = refreshToken!;
+			dict[RefreshTokenKey] = refreshToken!;
 		}
 		return await cache.SaveAsync(provider, dict, cancellation);
 	}

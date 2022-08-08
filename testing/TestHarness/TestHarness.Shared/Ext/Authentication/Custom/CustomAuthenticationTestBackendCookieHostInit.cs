@@ -58,7 +58,7 @@ public class CustomAuthenticationTestBackendCookieHostInit : IHostInitialization
 							})),
 							configureAuthorization: builder =>
 							{
-								builder.Cookies("AccessToken");
+								builder.Cookies("AccessToken", "RefreshToken");
 							}
 				)
 
