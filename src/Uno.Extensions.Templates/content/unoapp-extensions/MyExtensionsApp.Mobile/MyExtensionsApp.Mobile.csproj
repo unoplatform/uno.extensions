@@ -18,14 +18,14 @@
 		<SupportedOSPlatformVersion Condition="'$(TargetFramework)'=='net6.0-macos'">10.14</SupportedOSPlatformVersion>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Uno.WinUI" Version="4.4.5" />
-		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.4.5" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.WinUI" Version="4.4.13" />
+		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.4.13" Condition="'$(Configuration)'=='Debug'" />
 	</ItemGroup>
 	<Choose>
 		<When Condition="'$(TargetFramework)'=='net6.0-android'">
 			<ItemGroup>
 				<PackageReference Include="Xamarin.Google.Android.Material" Version="1.4.0.4" />
-				<PackageReference Include="Uno.UniversalImageLoader" Version="1.9.35" />
+				<PackageReference Include="Uno.UniversalImageLoader" Version="1.9.36" />
 			</ItemGroup>
 			<ItemGroup>
 				<AndroidEnvironment Include="Android/environment.conf" />

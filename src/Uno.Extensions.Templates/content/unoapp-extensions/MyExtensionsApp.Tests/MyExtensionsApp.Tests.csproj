@@ -15,5 +15,4 @@
 	<ItemGroup>
 		<ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />
 	</ItemGroup>
-
 </Project>
