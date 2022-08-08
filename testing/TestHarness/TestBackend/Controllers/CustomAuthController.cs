@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using SameSiteMode = Microsoft.AspNetCore.Http.SameSiteMode;
@@ -7,6 +8,7 @@ namespace TestBackend.Controllers;
 
 [ApiController]
 [Route("[controller]/[action]")]
+[AllowAnonymous]
 public class CustomAuthController : ControllerBase
 {
 
@@ -32,6 +34,12 @@ public class CustomAuthController : ControllerBase
 		_logger.LogTrace($"Token: {token}");
 
 		Response.Cookies.Append("AccessToken", token, new CookieOptions
+		{
+			Secure = false, // For local non-https testing this needs to be false otherwise cookies can't be extracted from cookiecontainer
+			HttpOnly = true,
+			SameSite = SameSiteMode.None
+		});
+		Response.Cookies.Append("RefreshToken", "Refresh-" + token, new CookieOptions
 		{
 			Secure = false, // For local non-https testing this needs to be false otherwise cookies can't be extracted from cookiecontainer
 			HttpOnly = true,

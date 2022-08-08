@@ -50,8 +50,8 @@ internal class CookieHandler : BaseAuthorizationHandler
 			}
 		}
 
-		if (string.IsNullOrWhiteSpace(accessToken) ||
-			string.IsNullOrWhiteSpace(_settings.CookieAccessToken)){
+		if (!string.IsNullOrWhiteSpace(accessToken) &&
+			!string.IsNullOrWhiteSpace(_settings.CookieAccessToken)){
 			cookies.Add(request.RequestUri, new Cookie(_settings.CookieAccessToken, accessToken));
 		}
 		
@@ -64,7 +64,7 @@ internal class CookieHandler : BaseAuthorizationHandler
 		// Only set the cookie header manually if there's no cookie container support
 		if (!(clientHandler?.CookieContainer is not null))
 		{
-			request.Headers.Add("Set-Cookie", cookies.GetCookieHeader(request.RequestUri));
+			request.Headers.Add("Cookie", cookies.GetCookieHeader(request.RequestUri));
 		}
 
 
