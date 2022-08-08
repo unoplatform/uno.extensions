@@ -21,8 +21,8 @@ public sealed partial class App : Application
 					logBuilder
 							.SetMinimumLevel(
 								context.HostingEnvironment.IsDevelopment() ?
-									LogLevel.Warning :
-									LogLevel.Information);
+									LogLevel.Information :
+									LogLevel.Warning);
 				})
 
 				.UseConfiguration(configure: configBuilder =>
