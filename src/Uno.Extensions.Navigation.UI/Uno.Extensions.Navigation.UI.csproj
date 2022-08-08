@@ -14,7 +14,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Uno.UI" Version="4.3.6" />
+		<PackageReference Include="Uno.UI" Version="4.4.14" />
 	</ItemGroup>
 
 	<ItemGroup>
