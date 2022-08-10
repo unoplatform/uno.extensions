@@ -187,21 +187,21 @@ public static class NavigatorExtensions
 		return result?.AsResultResponse<TResultData>();
 	}
 
-	public static async Task<TResult?> GetDataAsync<TResult>(this INavigator service, object sender, string qualifier = Qualifiers.None, CancellationToken cancellation = default)
+	public static async Task<TResult?> GetDataAsync<TResult>(this INavigator service, object sender, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
 	{
-		var result = await service.NavigateForResultAsync<TResult>(sender, qualifier, cancellation: cancellation).AsResult();
+		var result = await service.NavigateForResultAsync<TResult>(sender, qualifier, data, cancellation: cancellation).AsResult();
 		return result.SomeOrDefault();
 	}
 
-	public static async Task<TResult?> GetDataAsync<TResult>(this INavigator service, object sender, string route, string qualifier = Qualifiers.None, CancellationToken cancellation = default)
+	public static async Task<TResult?> GetDataAsync<TResult>(this INavigator service, object sender, string route, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
 	{
-		var result = await service.NavigateRouteForResultAsync<TResult>(sender, route, qualifier, cancellation: cancellation).AsResult();
+		var result = await service.NavigateRouteForResultAsync<TResult>(sender, route, qualifier, data, cancellation: cancellation).AsResult();
 		return result.SomeOrDefault();
 	}
 
-	public static async Task<TResult?> GetDataAsync<TViewModel, TResult>(this INavigator service, object sender, string qualifier = Qualifiers.None, CancellationToken cancellation = default)
+	public static async Task<TResult?> GetDataAsync<TViewModel, TResult>(this INavigator service, object sender, string qualifier = Qualifiers.None, object? data = null, CancellationToken cancellation = default)
 	{
-		var result = await service.NavigateViewModelForResultAsync<TViewModel, TResult>(sender, qualifier, cancellation: cancellation).AsResult();
+		var result = await service.NavigateViewModelForResultAsync<TViewModel, TResult>(sender, qualifier, data, cancellation: cancellation).AsResult();
 		return result.SomeOrDefault();
 	}
 
