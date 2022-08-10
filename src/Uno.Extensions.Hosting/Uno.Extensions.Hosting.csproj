@@ -2,6 +2,9 @@
 	<PropertyGroup>
 		<Description>Reference Uno.Extensions.Hosting.UI (UWP) or Uno.Extensions.Hosting.WinUI (WinUI)</Description>
 		<TargetFramework>netstandard2.0</TargetFramework>
+
+		<!--Temporary disable missing XML doc until fixed in the whole package-->
+		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
 	</PropertyGroup>
 
 	<ItemGroup>

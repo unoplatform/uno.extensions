@@ -6,6 +6,7 @@
 	<PropertyGroup>
 		<AssemblyName>Uno.Extensions.Navigation.Toolkit.UI</AssemblyName>
 		<GenerateLibraryLayout>true</GenerateLibraryLayout>
+		<NoWarn>$(NoWarn);CA1416</NoWarn>
 	</PropertyGroup>
 
   <ItemGroup>

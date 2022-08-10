@@ -7,106 +7,102 @@
 		<RepositoryUrl>$(BUILD_REPOSITORY_URI)</RepositoryUrl>
 		<Copyright>Copyright (C) 2015-$([System.DateTime]::Now.ToString(`yyyy`)) Uno Platform - all rights reserved</Copyright>
 		<Product>$(AssemblyName) ($(TargetFramework))</Product>
+		<Description>Extensions to accelerate your application development with Uno Platform, UWP and WinUI</Description>
+		<Version>255.255.255.255</Version><!-- Version management is now done through NuGet, this avoids issues related version mismatch -->
 		<DefaultLanguage>en-US</DefaultLanguage>
-		<LangVersion>10.0</LangVersion>
-		<Nullable>enable</Nullable>
-		<WarningsAsErrors>enable</WarningsAsErrors>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageIcon>uno-logo.png</PackageIcon>
-		<NoWarn>$(NoWarn);NU5104;NU5100;NU5118;NU5123;NU1603;1701;1702;CS1591;XA0101;MSB3277;CS8785;CS8669;CA1416</NoWarn>
-	</PropertyGroup>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 
-	<PropertyGroup>
-		<DebugType>portable</DebugType>
-		<DebugSymbols>True</DebugSymbols>
 		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
 		<GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
 
-		<GeneratePackageOnBuild Condition="'$(Configuration)'=='Release'">true</GeneratePackageOnBuild>
+		<LangVersion>10.0</LangVersion>
+		<Nullable>enable</Nullable>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<NoWarn>$(NoWarn);NU5104;NU5100;NU5118;NU5123;NU1603;CS1701;CS1702;XA0101;MSB3277;CS8785;CS8669;CS1998</NoWarn>
 
-		<!-- Version management is now done through NuGet, this avoids issues related version mismatch -->
-		<Version>255.255.255.255</Version>
+		<DebugType>portable</DebugType>
+		<DebugSymbols>True</DebugSymbols>
+	</PropertyGroup>
 
-		<Product>$(AssemblyName) ($(TargetFramework))</Product> 
-		<Description>Extensions to accelerate your application development with Uno Platform, UWP and WinUI</Description>
-		<DefaultLanguage>en-US</DefaultLanguage>
+	<PropertyGroup Condition="'$(Configuration)'=='Release'">
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
 		<!-- In debug we allow to not add XML doc on all public APIs -->
-		<WarningsNotAsErrors>CS1591</WarningsNotAsErrors>
+		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
 	</PropertyGroup>
 
-<PropertyGroup>
+	<PropertyGroup>
+		<IsMonoAndroid>false</IsMonoAndroid>
+		<IsMonoAndroid Condition="'$(TargetFramework)'=='net6.0-android' or $(TargetFramework.ToLower().StartsWith('monoandroid'))">true</IsMonoAndroid>
 
-	<IsMonoAndroid>false</IsMonoAndroid>
-	<IsMonoAndroid Condition="'$(TargetFramework)'=='net6.0-android' or $(TargetFramework.ToLower().StartsWith('monoandroid'))">true</IsMonoAndroid>
+		<IsXamarinIOS>false</IsXamarinIOS>
+		<IsXamarinIOS Condition="'$(TargetFramework)'=='net6.0-ios' or '$(TargetFramework)'=='net6.0-maccatalyst' or $(TargetFramework.ToLower().StartsWith('xamarinios'))">true</IsXamarinIOS>
 
-	<IsXamarinIOS>false</IsXamarinIOS>
-	<IsXamarinIOS Condition="'$(TargetFramework)'=='net6.0-ios' or '$(TargetFramework)'=='net6.0-maccatalyst' or $(TargetFramework.ToLower().StartsWith('xamarinios'))">true</IsXamarinIOS>
+		<IsXamarinMac>false</IsXamarinMac>
+		<IsXamarinMac Condition="$(TargetFramework.ToLower().StartsWith('xamarinmac')) or '$(TargetFramework)'=='net6.0-macos'">true</IsXamarinMac>
 
-	<IsXamarinMac>false</IsXamarinMac>
-	<IsXamarinMac Condition="$(TargetFramework.ToLower().StartsWith('xamarinmac')) or '$(TargetFramework)'=='net6.0-macos'">true</IsXamarinMac>
+		<_IsAndroid>false</_IsAndroid>
+		<_IsAndroid Condition="$(IsMonoAndroid) or '$(TargetFramework)'=='net6.0-android'">true</_IsAndroid>
 
-    <_IsAndroid>false</_IsAndroid>
-    <_IsAndroid Condition="$(IsMonoAndroid) or '$(TargetFramework)'=='net6.0-android'">true</_IsAndroid>
+		<_IsCatalyst>false</_IsCatalyst>
+		<_IsCatalyst Condition="$(_IsCatalyst) or '$(TargetFramework)'=='net6.0-maccatalyst'">true</_IsCatalyst>
 
-	<_IsCatalyst>false</_IsCatalyst>
-	<_IsCatalyst Condition="$(_IsCatalyst) or '$(TargetFramework)'=='net6.0-maccatalyst'">true</_IsCatalyst>
+		<_IsIOS>false</_IsIOS>
+		<_IsIOS Condition="$(IsXamarinIOS) or '$(TargetFramework)'=='net6.0-ios' or '$(TargetFramework)'=='net6.0-maccatalyst'">true</_IsIOS>
 
-	<_IsIOS>false</_IsIOS>
-	<_IsIOS Condition="$(IsXamarinIOS) or '$(TargetFramework)'=='net6.0-ios' or '$(TargetFramework)'=='net6.0-maccatalyst'">true</_IsIOS>
+		<_IsMacOS>false</_IsMacOS>
+		<_IsMacOS Condition="'$(TargetFramework)'=='xamarinmac20' or '$(TargetFramework)'=='net6.0-macos'">true</_IsMacOS>
 
-	<_IsMacOS>false</_IsMacOS>
-    <_IsMacOS Condition="'$(TargetFramework)'=='xamarinmac20' or '$(TargetFramework)'=='net6.0-macos'">true</_IsMacOS>
+		<_IsNet>false</_IsNet>
+		<_IsNet Condition="'$(TargetFramework)'=='net461'">true</_IsNet>
+		
+		<_IsNetCore>false</_IsNetCore>
+		<_IsNetCore Condition="'$(TargetFramework)'=='net5.0'">true</_IsNetCore>
 
-    <_IsNet>false</_IsNet>
-    <_IsNet Condition="'$(TargetFramework)'=='net461'">true</_IsNet>
-	
-	<_IsNetCore>false</_IsNetCore>
-	<_IsNetCore Condition="'$(TargetFramework)'=='net5.0'">true</_IsNetCore>
+		<_IsNetStd>false</_IsNetStd>
+		<_IsNetStd Condition="'$(TargetFramework)'=='netstandard2.0' or $(_IsNetCore)">true</_IsNetStd>
 
-	<_IsNetStd>false</_IsNetStd>
-	<_IsNetStd Condition="'$(TargetFramework)'=='netstandard2.0' or $(_IsNetCore)">true</_IsNetStd>
+		<_IsUWP>false</_IsUWP>
+		<_IsUWP Condition="$(TargetFramework.StartsWith('uap'))">true</_IsUWP>
 
-	<_IsUWP>false</_IsUWP>
-    <_IsUWP Condition="$(TargetFramework.StartsWith('uap'))">true</_IsUWP>
+		<_IsWinUI>false</_IsWinUI>
+		<_IsWinUI Condition="$(TargetFramework.Contains('windows10'))">true</_IsWinUI>
+	</PropertyGroup>
 
-	<_IsWinUI>false</_IsWinUI>
-    <_IsWinUI Condition="$(TargetFramework.Contains('windows10'))">true</_IsWinUI>
-
-  </PropertyGroup>
-
-  <PropertyGroup Condition="$(_IsIOS)">
-    <DefineConstants>$(DefineConstants);IOS1_0;XAMARIN;XAMARIN_IOS;XAMARIN_IOS_UNIFIED</DefineConstants>
-    <SupportedOSPlatformVersion>10.0</SupportedOSPlatformVersion>
+	<PropertyGroup Condition="$(_IsIOS)">
+		<DefineConstants>$(DefineConstants);IOS1_0;XAMARIN;XAMARIN_IOS;XAMARIN_IOS_UNIFIED</DefineConstants>
+		<SupportedOSPlatformVersion>10.0</SupportedOSPlatformVersion>
 	 <TargetPlatformMinVersion>10.0</TargetPlatformMinVersion>
-  </PropertyGroup>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="$(_IsMacOS)">
-    <DefineConstants>$(DefineConstants);XAMARIN</DefineConstants>
-    <SupportedOSPlatformVersion>10.14</SupportedOSPlatformVersion>
+	<PropertyGroup Condition="$(_IsMacOS)">
+		<DefineConstants>$(DefineConstants);XAMARIN</DefineConstants>
+		<SupportedOSPlatformVersion>10.14</SupportedOSPlatformVersion>
 	<TargetPlatformMinVersion>10.14</TargetPlatformMinVersion>
-  </PropertyGroup>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="$(_IsCatalyst)">
-    <SupportedOSPlatformVersion>13.1</SupportedOSPlatformVersion>
+	<PropertyGroup Condition="$(_IsCatalyst)">
+		<SupportedOSPlatformVersion>13.1</SupportedOSPlatformVersion>
 	<TargetPlatformMinVersion>13.1</TargetPlatformMinVersion>
-  </PropertyGroup>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="$(_IsAndroid)">
-    <AndroidUseIntermediateDesignerFile>True</AndroidUseIntermediateDesignerFile>
-    <AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
-    <DefineConstants>$(DefineConstants);__ANDROID__;XAMARIN;MONOANDROID5_0;XAMARIN_ANDROID</DefineConstants>
+	<PropertyGroup Condition="$(_IsAndroid)">
+		<AndroidUseIntermediateDesignerFile>True</AndroidUseIntermediateDesignerFile>
+		<AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
+		<DefineConstants>$(DefineConstants);__ANDROID__;XAMARIN;MONOANDROID5_0;XAMARIN_ANDROID</DefineConstants>
 	<SupportedOSPlatformVersion>21.0</SupportedOSPlatformVersion>
 	<TargetPlatformMinVersion>21.0</TargetPlatformMinVersion>
-  </PropertyGroup>
+	</PropertyGroup>
 
 	<PropertyGroup Condition="$(_IsUWP)">
 		<TargetPlatformVersion>10.0.19041.0</TargetPlatformVersion>
-  </PropertyGroup>
+	</PropertyGroup>
 
-  	<ItemGroup Condition="$(_IsMacOS)">
+		<ItemGroup Condition="$(_IsMacOS)">
 	<Reference Include="netstandard" />
 	</ItemGroup>
 
@@ -149,15 +145,15 @@
 	</Choose>
 
 	<!--
-  Adjust the output paths for runtime project in order for those
-  projects to stay in the same folder as the original reference one.
-  -->
+	Adjust the output paths for runtime project in order for those
+	projects to stay in the same folder as the original reference one.
+	-->
 	<PropertyGroup>
 		<BaseOutputPath>bin\$(MSBuildProjectName)</BaseOutputPath>
 		<BaseIntermediateOutputPath>obj\$(MSBuildProjectName)</BaseIntermediateOutputPath>
 		<DefaultItemExcludes>$(DefaultItemExcludes);obj/**;bin/**</DefaultItemExcludes>
 	</PropertyGroup>
 
-  <Import Project="Uno.CrossTargeting.props" />
+	<Import Project="Uno.CrossTargeting.props" />
 
 </Project>
