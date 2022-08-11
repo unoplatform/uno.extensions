@@ -38,10 +38,6 @@
 	</Target>
 
 	<ItemGroup>
-		<Compile Include="..\Uno.Extensions.Core\_Compat\**\*.cs" Link="_Compat\%(RecursiveDir)%(Filename)%(Extension)" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<None Update="Operators\CombineFeed.tt">
 			<Generator>TextTemplatingFileGenerator</Generator>
 			<LastGenOutput>CombineFeed.cs</LastGenOutput>

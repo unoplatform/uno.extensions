@@ -31,7 +31,6 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
-		<!-- In debug we allow to not add XML doc on all public APIs -->
 		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
 	</PropertyGroup>
 
@@ -76,56 +75,61 @@
 	<PropertyGroup Condition="$(_IsIOS)">
 		<DefineConstants>$(DefineConstants);IOS1_0;XAMARIN;XAMARIN_IOS;XAMARIN_IOS_UNIFIED</DefineConstants>
 		<SupportedOSPlatformVersion>10.0</SupportedOSPlatformVersion>
-	 <TargetPlatformMinVersion>10.0</TargetPlatformMinVersion>
+		<TargetPlatformMinVersion>10.0</TargetPlatformMinVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="$(_IsMacOS)">
 		<DefineConstants>$(DefineConstants);XAMARIN</DefineConstants>
 		<SupportedOSPlatformVersion>10.14</SupportedOSPlatformVersion>
-	<TargetPlatformMinVersion>10.14</TargetPlatformMinVersion>
+		<TargetPlatformMinVersion>10.14</TargetPlatformMinVersion>
 	</PropertyGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)'=='xamarinmac20'">
+		<!-- Note: We don't use the $(_IsMacOS) condition and this ref is not needed for net6.0-macos and will cause some MSB3243 -->
+		<Reference Include="netstandard" />
+	</ItemGroup>
 
 	<PropertyGroup Condition="$(_IsCatalyst)">
 		<SupportedOSPlatformVersion>13.1</SupportedOSPlatformVersion>
-	<TargetPlatformMinVersion>13.1</TargetPlatformMinVersion>
+		<TargetPlatformMinVersion>13.1</TargetPlatformMinVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="$(_IsAndroid)">
 		<AndroidUseIntermediateDesignerFile>True</AndroidUseIntermediateDesignerFile>
 		<AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
 		<DefineConstants>$(DefineConstants);__ANDROID__;XAMARIN;MONOANDROID5_0;XAMARIN_ANDROID</DefineConstants>
-	<SupportedOSPlatformVersion>21.0</SupportedOSPlatformVersion>
-	<TargetPlatformMinVersion>21.0</TargetPlatformMinVersion>
+		<SupportedOSPlatformVersion>21.0</SupportedOSPlatformVersion>
+		<TargetPlatformMinVersion>21.0</TargetPlatformMinVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="$(_IsUWP)">
 		<TargetPlatformVersion>10.0.19041.0</TargetPlatformVersion>
 	</PropertyGroup>
 
-		<ItemGroup Condition="$(_IsMacOS)">
-	<Reference Include="netstandard" />
-	</ItemGroup>
-
-	<!-- <PropertyGroup Condition="$(TargetFramework.StartsWith('net5.0'))">
-		<DefineConstants>$(DefineConstants);NET5_0</DefineConstants>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="$(TargetFramework.StartsWith('net6.0'))">
-		<DefineConstants>$(DefineConstants);NET6_0</DefineConstants>
-	</PropertyGroup> -->
-
-	<!-- <PropertyGroup Condition="$(TargetFramework.StartsWith('monoandroid')) or $(TargetFramework.EndsWith('android'))">
-		<IsAndroid>true</IsAndroid>
-	</PropertyGroup> -->
-
 	<PropertyGroup>
-		<IsTestProject>$(MSBuildProjectName.Contains('Test')) and !$(MSBuildProjectName.Contains('Testing'))</IsTestProject>
-		<IsSampleProject>$(MSBuildProjectName.Contains('Sample'))</IsSampleProject>
+		<IsCoreProject>False</IsCoreProject>
+		<IsCoreProject Condition="$(MSBuildProjectName.Contains('Uno.Extensions.Core'))">True</IsCoreProject>
+
+		<IsTestProject>False</IsTestProject>
+		<IsTestProject Condition="$(MSBuildProjectName.Contains('Test')) And !$(MSBuildProjectName.Contains('Testing'))">True</IsTestProject>
+
+		<IsSampleProject>False</IsSampleProject>
+		<IsSampleProject Condition="$(MSBuildProjectName.Contains('Sample'))">True</IsSampleProject>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<None Include="$(MSBuildThisFileDirectory)..\build\uno-logo.png" Pack="true" Visible="false" PackagePath="\"/>
+		<Compile Condition="'$(IsCoreProject)' == 'False'" Include="$(MSBuildThisFileDirectory)\Uno.Extensions.Core\_Compat\**\*.cs" Link="_Compat\%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup>
+
+	<Choose>
+		<When Condition="$(IsTestProject) Or $(IsSampleProject)">
+			<PropertyGroup>
+				<GenerateDocumentationFile>False</GenerateDocumentationFile>
+				<NoWarn>$(NoWarn);CS1591</NoWarn>
+			</PropertyGroup>
+		</When>
+	</Choose>
 
 	<Choose>
 		<When Condition="'$(IsTestProject)' != 'true' and '$(SourceLinkEnabled)' != 'false' and '$(IsSampleProject)' != 'true'">
@@ -145,8 +149,8 @@
 	</Choose>
 
 	<!--
-	Adjust the output paths for runtime project in order for those
-	projects to stay in the same folder as the original reference one.
+		Adjust the output paths for runtime project in order for those
+		projects to stay in the same folder as the original reference one.
 	-->
 	<PropertyGroup>
 		<BaseOutputPath>bin\$(MSBuildProjectName)</BaseOutputPath>
