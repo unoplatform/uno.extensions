@@ -1,4 +1,4 @@
-﻿namespace Uno.Extensions.Http;
+﻿namespace Uno.Extensions;
 
 public static class HostBuilderExtensions
 {
@@ -17,7 +17,9 @@ public static class HostBuilderExtensions
 			.ConfigureServices((ctx, services) =>
 		{
 			_ = services
-			.AddNativeHandler();
+				.AddNativeHandler()
+				.AddTransient<DelegatingHandler, DiagnosticHandler>();
+
 			configure?.Invoke(ctx, services);
 		});
 	}
