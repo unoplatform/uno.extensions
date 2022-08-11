@@ -334,22 +334,29 @@ public sealed class SourceContext : IAsyncDisposable
 	/// <inheritdoc />
 	public async ValueTask DisposeAsync()
 	{
-		if (_isNone)
+		try
 		{
-			return;
+			if (_isNone)
+			{
+				return;
+			}
+
+			_ct!.Cancel();
+
+			// Note: We make sure dispose only the values explicitly defined on this context,
+			//		 but not those that are inherited from the parent context.
+			await (_localStates?.DisposeAsync() ?? default);
+			_localRequests?.Dispose();
 		}
-
-		_ct!.Cancel();
-
-		// Note: We make sure dispose only the values explicitly defined on this context,
-		//		 but not those that are inherited from the parent context.
-		await (_localStates?.DisposeAsync() ?? default);
-		_localRequests?.Dispose();
+		catch (Exception) { }
 	}
 
+	/// <inheritdoc />
 	~SourceContext()
 	{
+#pragma warning disable CS4014 // Call not awaited: The dispose cannot throw
 		DisposeAsync();
+#pragma warning restore CS4014
 	}
 
 	/// <summary>

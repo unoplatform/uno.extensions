@@ -62,7 +62,7 @@ internal sealed class AsyncFeed<T> : IFeed<T>, IRefreshableSource
 			loadRequests.SetNext(refreshedVersion);
 		}
 
-		void TryComplete(Task _)
+		void TryComplete(Task? _)
 		{
 			if (localRefreshTask is not { IsCompleted: false } && contextRefreshEnded)
 			{

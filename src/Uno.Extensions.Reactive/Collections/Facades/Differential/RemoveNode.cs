@@ -32,7 +32,7 @@ internal sealed class RemoveNode : IDifferentialCollectionNode
 		_toIndex = index + count;
 	}
 
-	public RemoveNode(IDifferentialCollectionNode previous, object item, int index)
+	public RemoveNode(IDifferentialCollectionNode previous, object? item, int index)
 	{
 		Previous = previous;
 		//_removed // Useless and prevent reference on removed items (TODO: Deref items in _previous)

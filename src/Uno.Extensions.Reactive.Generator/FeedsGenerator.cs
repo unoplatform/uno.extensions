@@ -10,11 +10,16 @@ using Uno.Extensions.Reactive.Generator.Utils;
 
 namespace Uno.Extensions.Reactive.Generator;
 
+/// <summary>
+/// A generator that generates bindable VM for the feed framework
+/// </summary>
 [Generator]
 public partial class FeedsGenerator : ISourceGenerator
 {
+	/// <inheritdoc />
 	public void Initialize(GeneratorInitializationContext context) { }
 
+	/// <inheritdoc />
 	public void Execute(GeneratorExecutionContext context)
 	{
 #if DEBUGGING_GENERATOR

@@ -26,14 +26,14 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 			_children = children;
 		}
 
-		public void AddItem(object item, ICollectionUpdateCallbacks callbacks)
+		public void AddItem(object? item, ICollectionUpdateCallbacks callbacks)
 			// Note: As Windows 10.15063 behavior, if we are initializing the holder (_versionType == Initialize), 
 			//		 we don't have to send events for the items that are currently in the list.
 			=> AddItem(item, callbacks, raiseAddOnFlat: _context.Type != VisitorType.InitializeCollection);
 
-		private void AddItem(object item, ICollectionUpdateCallbacks callbacks, bool raiseAddOnFlat)
+		private void AddItem(object? item, ICollectionUpdateCallbacks callbacks, bool raiseAddOnFlat)
 		{
-			var group = (IObservableGroup)item;
+			var group = (IObservableGroup)item!;
 
 			// 1. Create the holder for the child, which enables the tracking of those group itself.
 			//	  ie. Enables the event 'this.View.Groups[X].CollectionChanged'.
@@ -61,19 +61,19 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 			}
 		}
 
-		public void SameItem(object original, object updated, ICollectionUpdateCallbacks callbacks)
+		public void SameItem(object? original, object? updated, ICollectionUpdateCallbacks callbacks)
 		{
-			var oldGroup = (IObservableGroup)original;
-			var newGroup = (IObservableGroup)updated;
+			var oldGroup = (IObservableGroup)original!;
+			var newGroup = (IObservableGroup)updated!;
 
 			// Even if the items are the "Same" it may be another instance, so ensure to make the _children aware of the new instance.
 			_children.Update(oldGroup, newGroup);
 		}
 
-		public bool ReplaceItem(object original, object updated, ICollectionUpdateCallbacks callbacks)
+		public bool ReplaceItem(object? original, object? updated, ICollectionUpdateCallbacks callbacks)
 		{
-			var oldGroup = (IObservableGroup)original;
-			var newGroup = (IObservableGroup)updated;
+			var oldGroup = (IObservableGroup)original!;
+			var newGroup = (IObservableGroup)updated!;
 
 			// Get the view of the old item and associate it to the new group
 			var view = _children.Update(oldGroup, newGroup);
@@ -96,12 +96,12 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 			}
 		}
 
-		public void RemoveItem(object item, ICollectionUpdateCallbacks callbacks)
+		public void RemoveItem(object? item, ICollectionUpdateCallbacks callbacks)
 			=> RemoveItem(item, callbacks, raiseRemoveOnFlat: true);
 
-		private void RemoveItem(object item, ICollectionUpdateCallbacks callbacks, bool raiseRemoveOnFlat)
+		private void RemoveItem(object? item, ICollectionUpdateCallbacks callbacks, bool raiseRemoveOnFlat)
 		{
-			var view = _children.Remove((IObservableGroup)item);
+			var view = _children.Remove((IObservableGroup)item!);
 			var currentItems = view.Holder.PrepareRemove(); // Disable collection tracking
 
 			callbacks.Prepend(UnsubscribeFromChild);

@@ -5,11 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Uno.Extensions.Reactive.Generator.Utils
+namespace Uno.Extensions.Reactive.Generator.Utils;
+
+internal static class PathHelper
 {
-	internal static class PathHelper
-	{
-		public static string SanitizeFileName(string filename)
-			=> filename.Replace(Path.GetInvalidFileNameChars(), '_');
-	}
+	public static string SanitizeFileName(string filename)
+		=> filename.Replace(Path.GetInvalidFileNameChars(), '_');
 }

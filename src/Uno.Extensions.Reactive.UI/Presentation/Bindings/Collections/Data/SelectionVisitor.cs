@@ -19,7 +19,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 		/// <summary>
 		/// Ensure the current selection stays the same after a Replace by reapplying it if it has been changed by the UI. 
 		/// </summary>
-		public override bool ReplaceItem(object original, object updated, ICollectionUpdateCallbacks callbacks)
+		public override bool ReplaceItem(object? original, object? updated, ICollectionUpdateCallbacks callbacks)
 		{
 			int selectionBefore = -1;
 

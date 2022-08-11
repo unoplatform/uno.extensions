@@ -20,7 +20,7 @@ partial class CollectionAnalyzer
 
 		public int CurrentIndex { get; private set; } = -1;
 
-		public T Current { get; private set; }
+		public T? Current { get; private set; }
 
 		/// <summary>
 		/// Count of items that have been ignored by the enumerator

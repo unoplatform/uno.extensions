@@ -6,15 +6,16 @@ using Uno.Extensions.Collections;
 
 namespace Uno.Extensions.Reactive
 {
+	/// <summary>
+	/// A set of <see cref="IChange"/>.
+	/// </summary>
 	public interface IChangeSet : IEnumerable<IChange>
 	{
 	}
 
-	//internal interface IChangeSet<out TChange> : IChangeSet, IEnumerable<TChange>
-	//	where TChange : IChange
-	//{
-	//}
-
+	/// <summary>
+	/// Describes a change that occurred between 2 instances of the same object.
+	/// </summary>
 	public interface IChange
 	{
 	}

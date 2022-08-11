@@ -66,28 +66,28 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 			}
 
 			/// <inheritdoc />
-			public void AddItem(object item, ICollectionUpdateCallbacks callbacks)
+			public void AddItem(object? item, ICollectionUpdateCallbacks callbacks)
 			{
 				_counter.NotifyAdd();
 				_inner.AddItem(item, callbacks);
 			}
 
 			/// <inheritdoc />
-			public void SameItem(object original, object updated, ICollectionUpdateCallbacks callbacks)
+			public void SameItem(object? original, object? updated, ICollectionUpdateCallbacks callbacks)
 			{
 				_counter.NotifySameItem();
 				_inner.SameItem(original, updated, callbacks);
 			}
 
 			/// <inheritdoc />
-			public bool ReplaceItem(object original, object updated, ICollectionUpdateCallbacks callbacks)
+			public bool ReplaceItem(object? original, object? updated, ICollectionUpdateCallbacks callbacks)
 			{
 				_counter.NotifyReplace();
 				return _inner.ReplaceItem(original, updated, callbacks);
 			}
 
 			/// <inheritdoc />
-			public void RemoveItem(object item, ICollectionUpdateCallbacks callbacks)
+			public void RemoveItem(object? item, ICollectionUpdateCallbacks callbacks)
 			{
 				_counter.NotifyRemove();
 				_inner.RemoveItem(item, callbacks);

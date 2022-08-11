@@ -28,7 +28,7 @@ internal interface ICollectionUpdaterVisitor
 	/// </summary>
 	/// <param name="item">The added item</param>
 	/// <param name="callbacks">Callbacks collection on which some callbacks can be added in order to get them included as part of the result collection of changes.</param>
-	void AddItem(object item, ICollectionUpdateCallbacks callbacks);
+	void AddItem(object? item, ICollectionUpdateCallbacks callbacks);
 
 	/// <summary>
 	/// Invoked when an Equals item appears in both previous and target collections.
@@ -40,7 +40,7 @@ internal interface ICollectionUpdaterVisitor
 	/// Callbacks collection on which some callbacks can be added in order to get them included as part of the result collection of changes.
 	/// <remarks>For the 'Same', as no event is raise, there is no difference between before and after callbacks.</remarks>
 	/// </param>
-	void SameItem(object original, object updated, ICollectionUpdateCallbacks callbacks);
+	void SameItem(object? original, object? updated, ICollectionUpdateCallbacks callbacks);
 
 	/// <summary>
 	/// Invoked when a new version of an item is present in the target collection.
@@ -49,14 +49,14 @@ internal interface ICollectionUpdaterVisitor
 	/// <param name="updated">The updated version</param>
 	/// <param name="callbacks">Callbacks collection on which some callbacks can be added in order to get them included as part of the result collection of changes.</param>
 	/// <returns>A boolean which indicates if a 'Replace' event should be added in the result collection of changes, or if it's manage by the application.</returns>
-	bool ReplaceItem(object original, object updated, ICollectionUpdateCallbacks callbacks);
+	bool ReplaceItem(object? original, object? updated, ICollectionUpdateCallbacks callbacks);
 
 	/// <summary>
 	/// Invoked when an item is removed in the target collection.
 	/// </summary>
 	/// <param name="item">The removed item</param>
 	/// <param name="callbacks">Callbacks collection on which some callbacks can be added in order to get them included as part of the result collection of changes.</param>
-	void RemoveItem(object item, ICollectionUpdateCallbacks callbacks);
+	void RemoveItem(object? item, ICollectionUpdateCallbacks callbacks);
 
 	/// <summary>
 	/// Invoked when a reset event is raised instead of properly tracking the changes between the collections.
