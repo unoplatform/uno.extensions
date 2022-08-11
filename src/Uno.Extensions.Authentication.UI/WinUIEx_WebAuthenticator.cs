@@ -43,7 +43,10 @@ public sealed class WebAuthenticator
 	}
 
 	private static bool _init;
+
+#pragma warning disable CA2255 // The ModuleInitializer attribute should not be used in libraries
 	[System.Runtime.CompilerServices.ModuleInitializer]
+#pragma warning restore
 	public static void Init()
 	{
 		if (_init)
