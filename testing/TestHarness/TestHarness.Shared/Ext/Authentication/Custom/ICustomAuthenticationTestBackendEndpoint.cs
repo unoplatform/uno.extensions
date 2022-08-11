@@ -11,6 +11,10 @@ public interface ICustomAuthenticationTestBackendEndpoint
 	[Post("/customauth/logincookie")]
 	Task LoginCookie([Query] string username, [Query] string password, CancellationToken ct);
 
+	[Post("/customauth/refreshcookie")]
+	Task RefreshCookie(CancellationToken ct);
+
+
 	[Get("/customauth/getdataauthorizationheader")]
 	Task<IEnumerable<string>?> GetDataAuthorizationHeader(CancellationToken ct);
 

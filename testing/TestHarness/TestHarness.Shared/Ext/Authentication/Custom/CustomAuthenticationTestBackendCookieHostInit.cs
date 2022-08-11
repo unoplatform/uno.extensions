@@ -51,10 +51,10 @@ public class CustomAuthenticationTestBackendCookieHostInit : IHostInitialization
 								await authService.LoginCookie(name, password, cancellationToken);
 								return await cache.GetAsync(cancellationToken);
 							})
-							.Refresh(async (authService, tokenDictionary, cancellationToken) =>
+							.Refresh(async (authService,cache, tokenDictionary, cancellationToken) =>
 							{
-								// Don't bother refreshing
-								return default;
+								await authService.RefreshCookie(cancellationToken);
+								return await cache.GetAsync(cancellationToken);
 							})),
 							configureAuthorization: builder =>
 							{

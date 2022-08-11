@@ -1,6 +1,4 @@
-﻿using System.Net;
-
-namespace Uno.Extensions.Authentication.Handlers;
+﻿namespace Uno.Extensions.Authentication.Handlers;
 
 internal class CookieHandler : BaseAuthorizationHandler
 {
@@ -9,7 +7,7 @@ internal class CookieHandler : BaseAuthorizationHandler
 	// token cache using either the current provider (eg refreshing tokens) or
 	// using the TemporaryProviderKey. As part of completing the login process,
 	// The AuthenticationService will correct the current provider in the token cache
-	private const string TemporaryProviderKey = "Cookie"; 
+	private const string TemporaryProviderKey = "Cookie";
 	public CookieHandler(
 		ILogger<BaseAuthorizationHandler> logger,
 		IAuthenticationService authenticationService,
@@ -38,35 +36,21 @@ internal class CookieHandler : BaseAuthorizationHandler
 			return false;
 		}
 
-		var clientHandler = InnerHandler as HttpClientHandler;
-
-		var cookies = clientHandler?.CookieContainer;
-		if (cookies is null)
-		{
-			cookies = new CookieContainer();
-			if (clientHandler is not null)
-			{
-				clientHandler.CookieContainer = cookies;
-			}
-		}
+		var cookies = new CookieContainer();
 
 		if (!string.IsNullOrWhiteSpace(accessToken) &&
-			!string.IsNullOrWhiteSpace(_settings.CookieAccessToken)){
+			!string.IsNullOrWhiteSpace(_settings.CookieAccessToken))
+		{
 			cookies.Add(request.RequestUri, new Cookie(_settings.CookieAccessToken, accessToken));
 		}
-		
+
 		if (!string.IsNullOrWhiteSpace(refreshToken) &&
 			!string.IsNullOrWhiteSpace(_settings.CookieRefreshToken))
 		{
 			cookies.Add(request.RequestUri, new Cookie(_settings.CookieRefreshToken, refreshToken));
 		}
 
-		// Only set the cookie header manually if there's no cookie container support
-		if (!(clientHandler?.CookieContainer is not null))
-		{
-			request.Headers.Add("Cookie", cookies.GetCookieHeader(request.RequestUri));
-		}
-
+		request.Headers.Add("Cookie", cookies.GetCookieHeader(request.RequestUri));
 
 		return true;
 	}
@@ -76,17 +60,12 @@ internal class CookieHandler : BaseAuthorizationHandler
 			HttpResponseMessage response,
 			CancellationToken ct)
 	{
-		var clientHandler = InnerHandler as HttpClientHandler;
 
-		var cookies = clientHandler?.CookieContainer;
-		if (cookies is null)
+		var cookies = new CookieContainer();
+		var cookieHeader = response.Headers.FirstOrDefault(x => x.Key == "Set-Cookie").Value;
+		if (cookieHeader?.Any() ?? false)
 		{
-			cookies = new CookieContainer();
-			var cookieHeader = response.Headers.FirstOrDefault(x => x.Key == "Set-Cookie").Value;
-			if (cookieHeader?.Any()??false)
-			{
-				cookies.SetCookies(request.RequestUri, string.Join(",", cookieHeader));
-			}
+			cookies.SetCookies(request.RequestUri, string.Join(",", cookieHeader));
 		}
 
 		var access = !string.IsNullOrWhiteSpace(_settings.CookieAccessToken) ? cookies.GetCookies(request.RequestUri)[_settings.CookieAccessToken]?.Value : default;

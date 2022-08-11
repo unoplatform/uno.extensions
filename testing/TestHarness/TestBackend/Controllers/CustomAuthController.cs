@@ -47,6 +47,38 @@ public class CustomAuthController : ControllerBase
 		});
 	}
 
+	[HttpPost(Name = "RefreshCookie")]
+	public void RefreshCookie()
+	{
+		try
+		{
+			var token = Request.Cookies.FirstOrDefault(x => x.Key == "AccessToken").Value;
+			var bits = token.Base64Decode().Split(":");
+			if (bits.Length == 2)
+			{
+				Response.Cookies.Append("AccessToken", token, new CookieOptions
+				{
+					Secure = false, // For local non-https testing this needs to be false otherwise cookies can't be extracted from cookiecontainer
+					HttpOnly = true,
+					SameSite = SameSiteMode.None
+				});
+				Response.Cookies.Append("RefreshToken", $"Refresh-{DateTime.Now.ToString("HH:mm:sss")}" + token, new CookieOptions
+				{
+					Secure = false, // For local non-https testing this needs to be false otherwise cookies can't be extracted from cookiecontainer
+					HttpOnly = true,
+					SameSite = SameSiteMode.None
+				});
+				Response.StatusCode = StatusCodes.Status200OK;
+				return;
+			}
+		}
+		catch
+		{
+
+		}
+		Response.StatusCode = StatusCodes.Status401Unauthorized;		
+	}
+
 	[HttpGet(Name = "GetDataAuthorizationHeader")]
 	public IEnumerable<string>? GetDataAuthorizationHeader()
 	{
