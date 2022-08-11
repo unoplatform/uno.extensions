@@ -2,6 +2,9 @@
 	<PropertyGroup>
 		<Description>Authentication Extensions for the Uno Platform, UWP and WinUI. Reference Uno.Extensions.Authentication.UI (UWP) or Uno.Extensions.Authentication.WinUI (WinUI) from head projects</Description>
 		<TargetFramework>netstandard2.0</TargetFramework>
+
+		<!--Temporary disable missing XML doc until fixed in the whole package-->
+		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
 	</PropertyGroup>
 
 	<ItemGroup>

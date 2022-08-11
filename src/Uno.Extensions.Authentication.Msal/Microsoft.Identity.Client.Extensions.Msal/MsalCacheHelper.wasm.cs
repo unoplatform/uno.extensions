@@ -34,8 +34,6 @@ internal class MsalCacheHelper
 	/// </summary>
 	/// <param name="storageCreationProperties">Properties to use when creating storage on disk.</param>
 	/// <param name="logger">Passing null uses a default logger</param>
-	/// <param name="knownAccountIds">The set of known accounts</param>
-	/// <param name="cacheWatcher">Watcher for the cache file, to enable sending updated events</param>
 	private MsalCacheHelper(
 		ILogger logger,
 		StorageCreationProperties storageCreationProperties)

@@ -196,7 +196,7 @@ internal class TestVisitor : ICollectionUpdaterVisitor
 		Assert.AreEqual(Pending, Added + Same + Replaced + Removed + Reseted);
 	}
 
-	public void AddItem(object item, ICollectionUpdateCallbacks callbacks)
+	public void AddItem(object? item, ICollectionUpdateCallbacks callbacks)
 	{
 		Interlocked.Increment(ref _pending);
 		var state = 0;
@@ -223,7 +223,7 @@ internal class TestVisitor : ICollectionUpdaterVisitor
 		}
 	}
 
-	public void SameItem(object original, object updated, ICollectionUpdateCallbacks callbacks)
+	public void SameItem(object? original, object? updated, ICollectionUpdateCallbacks callbacks)
 	{
 		Interlocked.Increment(ref _pending);
 		var state = 0;
@@ -241,7 +241,7 @@ internal class TestVisitor : ICollectionUpdaterVisitor
 		};
 	}
 
-	public bool ReplaceItem(object original, object updated, ICollectionUpdateCallbacks callbacks)
+	public bool ReplaceItem(object? original, object? updated, ICollectionUpdateCallbacks callbacks)
 	{
 		Interlocked.Increment(ref _pending);
 		var state = 0;
@@ -270,7 +270,7 @@ internal class TestVisitor : ICollectionUpdaterVisitor
 		}
 	}
 
-	public void RemoveItem(object item, ICollectionUpdateCallbacks callbacks)
+	public void RemoveItem(object? item, ICollectionUpdateCallbacks callbacks)
 	{
 		Interlocked.Increment(ref _pending);
 		var state = 0;

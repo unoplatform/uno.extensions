@@ -21,7 +21,7 @@ internal class CompositeCollectionUpdaterVisitor : ICollectionUpdaterVisitor
 	}
 
 	/// <inheritdoc />
-	public void AddItem(object item, ICollectionUpdateCallbacks callbacks)
+	public void AddItem(object? item, ICollectionUpdateCallbacks callbacks)
 	{
 		foreach (var inner in _inners)
 		{
@@ -30,7 +30,7 @@ internal class CompositeCollectionUpdaterVisitor : ICollectionUpdaterVisitor
 	}
 
 	/// <inheritdoc />
-	public void SameItem(object original, object updated, ICollectionUpdateCallbacks callbacks)
+	public void SameItem(object? original, object? updated, ICollectionUpdateCallbacks callbacks)
 	{
 		foreach (var inner in _inners)
 		{
@@ -39,7 +39,7 @@ internal class CompositeCollectionUpdaterVisitor : ICollectionUpdaterVisitor
 	}
 
 	/// <inheritdoc />
-	public bool ReplaceItem(object original, object updated, ICollectionUpdateCallbacks callbacks)
+	public bool ReplaceItem(object? original, object? updated, ICollectionUpdateCallbacks callbacks)
 	{
 		var handled = false;
 		foreach (var inner in _inners)
@@ -53,7 +53,7 @@ internal class CompositeCollectionUpdaterVisitor : ICollectionUpdaterVisitor
 	}
 
 	/// <inheritdoc />
-	public void RemoveItem(object item, ICollectionUpdateCallbacks callbacks)
+	public void RemoveItem(object? item, ICollectionUpdateCallbacks callbacks)
 	{
 		foreach (var inner in _inners)
 		{

@@ -33,7 +33,7 @@ internal sealed class WhereFeed<T> : IFeed<T>
 		}
 	}
 
-	private MessageBuilder<T, T> DoUpdate(MessageManager<T, T>.CurrentMessage message, Message<T>? parentMsg)
+	private MessageBuilder<T, T> DoUpdate(MessageManager<T, T>.CurrentMessage message, Message<T> parentMsg)
 	{
 		var updated = message.With(updatedParent: parentMsg);
 		if (parentMsg.Changes.Contains(MessageAxis.Data)

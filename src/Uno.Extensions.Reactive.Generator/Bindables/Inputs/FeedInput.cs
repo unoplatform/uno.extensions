@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis;
 namespace Uno.Extensions.Reactive.Generator;
 
 /// <summary>
-/// A VM parameter that somehow implements IFeed&lt;TValue&gt; and which will be exposed on the BindableVM through a Bindable<T>.
+/// A VM parameter that somehow implements IFeed&lt;TValue&gt; and which will be exposed on the BindableVM through a Bindable{T}.
 /// </summary>
 internal record FeedInput(IParameterSymbol Parameter, ITypeSymbol _valueType) : IInputInfo
 {

@@ -53,7 +53,8 @@ public static class HostBuilderExtensions
 
         private static LoggerConfiguration AddConsoleLogging(LoggerConfiguration configuration)
         {
-            return configuration
+#pragma warning disable CA1416 // Validate platform compatibility: The net6.0 version is not used on older versions of OS
+		return configuration
                 //-:cnd:noEmit
 #if __ANDROID__
                 .WriteTo.AndroidLog(outputTemplate: "{Message:lj} {Exception}{NewLine}")
@@ -63,10 +64,11 @@ public static class HostBuilderExtensions
                 .WriteTo.Console(outputTemplate: "{Timestamp:MM-dd HH:mm:ss.fffzzz} {Level:u1}/{SourceContext}: {Message:lj} {Exception}{NewLine}")
 #endif
                 .WriteTo.Debug(outputTemplate: "{Timestamp:MM-dd HH:mm:ss.fffzzz} {Level:u1}/{SourceContext}: {Message:lj} {Exception}{NewLine}");
-            //+:cnd:noEmit
-        }
+				//+:cnd:noEmit
+#pragma warning restore CA1416 // Validate platform compatibility
+	}
 
-        private static LoggerConfiguration AddFileLogging(LoggerConfiguration configuration, string logFilePath)
+	private static LoggerConfiguration AddFileLogging(LoggerConfiguration configuration, string logFilePath)
         {
             //-:cnd:noEmit
 #if __ANDROID__ || __IOS__ || NETSTANDARD
