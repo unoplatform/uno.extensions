@@ -23,6 +23,7 @@
 		<Copyright>Copyright (C) 2015-2022 nventive inc. - all rights reserved</Copyright>
 		<GeneratePackageOnBuild Condition="'$(Configuration)'=='Release'">true</GeneratePackageOnBuild>
 		<PackageTags>dotnet-new;templates;uno-platform;webassembly;ios;android;winui;macos;uno-extensions</PackageTags>
+		<NoWarn>$(NoWarn);NU5128</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>
