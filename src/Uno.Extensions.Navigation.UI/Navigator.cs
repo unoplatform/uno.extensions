@@ -504,7 +504,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		if(Region.Children.Count>0)
 		{
 			// Force navigators to be created on the UI thread before they're accessed
-			var navigators = await Dispatcher.ExecuteAsync(async () =>
+			var navigators = await Dispatcher.ExecuteAsync(async cancellation =>
 			{
 				return (from child in Region.Children
 						let nav = child.Navigator()

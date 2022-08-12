@@ -28,7 +28,7 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 			return true;
 		}
 
-		return await Dispatcher.ExecuteAsync(async () =>
+		return await Dispatcher.ExecuteAsync(async cancellation =>
 		{
 			return FindByPath(routeMap?.Path ?? route.Base) is not null;
 		});

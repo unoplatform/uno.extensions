@@ -133,7 +133,7 @@ public abstract class ControlNavigator : Navigator
 		var routeMap = Resolver.Find(request.Route);
 		if (await RegionCanNavigate(request.Route, routeMap))
 		{
-			return await Dispatcher.ExecuteAsync(async () =>
+			return await Dispatcher.ExecuteAsync(async cancellation =>
 				{
 					return await ControlNavigateAsync(request);
 				});

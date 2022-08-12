@@ -162,7 +162,7 @@ internal record MsalAuthenticationProvider(
 
 	private ValueTask<AuthenticationResult> AcquireInteractiveTokenAsync(IDispatcher dispatcher)
 	{
-		return dispatcher.ExecuteAsync(async () => await _pca!
+		return dispatcher.ExecuteAsync(async cancellation => await _pca!
 		  .AcquireTokenInteractive(_scopes)
 		  .WithUnoHelpers()
 		  .ExecuteAsync());
