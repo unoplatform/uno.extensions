@@ -15,10 +15,7 @@ internal record WebAuthenticationProvider
 	public async override ValueTask<IDictionary<string, string>?> LoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
 	{
 		var loginStartUri = Settings?.LoginStartUri;
-		if (Settings?.PrepareLoginStartUri is not null)
-		{
-			loginStartUri = await Settings.PrepareLoginStartUri(loginStartUri, credentials, cancellationToken);
-		}
+		loginStartUri = await PrepareLoginStartUri(credentials, loginStartUri, cancellationToken);
 
 		if (string.IsNullOrWhiteSpace(loginStartUri))
 		{
@@ -26,10 +23,8 @@ internal record WebAuthenticationProvider
 		}
 
 		var loginCallbackUri = Settings?.LoginCallbackUri;
-		if (Settings?.PrepareLoginCallbackUri is not null)
-		{
-			loginCallbackUri = await Settings.PrepareLoginCallbackUri(loginCallbackUri, credentials, cancellationToken);
-		}
+
+		loginCallbackUri = await PrepareLoginCallbackUri(credentials, loginCallbackUri, cancellationToken);
 
 		if (string.IsNullOrWhiteSpace(loginCallbackUri))
 		{
@@ -41,13 +36,13 @@ internal record WebAuthenticationProvider
 		var authData = string.Join("&", userResult.Properties.Select(x => $"{x.Key}={x.Value}"))??string.Empty;
 #else
 		var userResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, new Uri(loginStartUri), new Uri(loginCallbackUri));
-		var authData = userResult?.ResponseData??string.Empty;
+		var authData = userResult?.ResponseData ?? string.Empty;
 
 #endif
 		var idx = authData.IndexOf("?");
-		if (idx>=0 && idx<authData.Length-1)
+		if (idx >= 0 && idx < authData.Length - 1)
 		{
-			authData = authData.Substring(idx+1);
+			authData = authData.Substring(idx + 1);
 		}
 
 		if (string.IsNullOrWhiteSpace(authData))
@@ -96,11 +91,29 @@ internal record WebAuthenticationProvider
 		return await PostLogin(credentials, tokens, cancellationToken);
 	}
 
-	protected async virtual ValueTask<IDictionary<string, string>?> PostLogin(IDictionary<string, string>? credentials, IDictionary<string,string> tokens, CancellationToken cancellationToken)
+	protected async virtual Task<string?> PrepareLoginStartUri(IDictionary<string, string>? credentials, string? loginStartUri, CancellationToken cancellationToken)
+	{
+		if (Settings?.PrepareLoginStartUri is not null)
+		{
+			return await Settings.PrepareLoginStartUri(Services, Tokens, credentials, loginStartUri, cancellationToken);
+		}
+		return loginStartUri;
+	}
+
+	protected async virtual Task<string?> PrepareLoginCallbackUri(IDictionary<string, string>? credentials, string? loginCallbackUri, CancellationToken cancellationToken)
+	{
+		if (Settings?.PrepareLoginCallbackUri is not null)
+		{
+			return await Settings.PrepareLoginCallbackUri(Services, Tokens, credentials, loginCallbackUri, cancellationToken);
+		}
+		return loginCallbackUri;
+	}
+
+	protected async virtual ValueTask<IDictionary<string, string>?> PostLogin(IDictionary<string, string>? credentials, IDictionary<string, string> tokens, CancellationToken cancellationToken)
 	{
 		if (Settings?.PostLoginCallback is not null)
 		{
-			return await Settings.PostLoginCallback(Services, credentials, tokens, cancellationToken);
+			return await Settings.PostLoginCallback(Services, Tokens, credentials, tokens, cancellationToken);
 		}
 		return tokens;
 	}
@@ -112,7 +125,7 @@ internal record WebAuthenticationProvider
 		{
 			return default;
 		}
-		return await Settings.RefreshCallback(Services, await Tokens.GetAsync(cancellationToken), cancellationToken);
+		return await Settings.RefreshCallback(Services, Tokens, await Tokens.GetAsync(cancellationToken), cancellationToken);
 	}
 
 	public async override ValueTask<bool> LogoutAsync(IDispatcher? dispatcher, CancellationToken cancellationToken)
@@ -120,7 +133,7 @@ internal record WebAuthenticationProvider
 		var logoutStartUri = Settings?.LogoutStartUri;
 		if (Settings?.PrepareLogoutStartUri is not null)
 		{
-			logoutStartUri = await Settings.PrepareLogoutStartUri(logoutStartUri, await Tokens.GetAsync(), cancellationToken);
+			logoutStartUri = await Settings.PrepareLogoutStartUri(Services, Tokens, await Tokens.GetAsync(), logoutStartUri, cancellationToken);
 		}
 
 		if (string.IsNullOrWhiteSpace(logoutStartUri))
@@ -131,7 +144,7 @@ internal record WebAuthenticationProvider
 		var logoutCallbackUri = Settings?.LogoutCallbackUri ?? Settings?.LoginCallbackUri;
 		if (Settings?.PrepareLogoutCallbackUri is not null)
 		{
-			logoutCallbackUri = await Settings.PrepareLogoutCallbackUri(logoutCallbackUri, await Tokens.GetAsync(), cancellationToken);
+			logoutCallbackUri = await Settings.PrepareLogoutCallbackUri(Services, Tokens, await Tokens.GetAsync(), logoutCallbackUri, cancellationToken);
 		}
 
 		if (string.IsNullOrWhiteSpace(logoutCallbackUri))
@@ -160,9 +173,28 @@ internal record WebAuthenticationProvider<TService>
 ) : WebAuthenticationProvider(Services, Tokens)
 	where TService : notnull
 {
-	public WebAuthenticationSettings<TService>? TypedSettings {
+	public WebAuthenticationSettings<TService>? TypedSettings
+	{
 		get => base.Settings as WebAuthenticationSettings<TService>;
 		init => base.Settings = value;
+	}
+
+	protected async override Task<string?> PrepareLoginStartUri(IDictionary<string, string>? credentials, string? loginStartUri, CancellationToken cancellationToken)
+	{
+		if (TypedSettings?.PrepareLoginStartUri is not null)
+		{
+			return await TypedSettings.PrepareLoginStartUri(Services.GetRequiredService<TService>(), Services, Tokens, credentials, loginStartUri, cancellationToken);
+		}
+		return await base.PrepareLoginStartUri(credentials, loginStartUri, cancellationToken);
+	}
+
+	protected async override Task<string?> PrepareLoginCallbackUri(IDictionary<string, string>? credentials, string? loginCallbackUri, CancellationToken cancellationToken)
+	{
+		if (TypedSettings?.PrepareLoginCallbackUri is not null)
+		{
+			return await TypedSettings.PrepareLoginCallbackUri(Services.GetRequiredService<TService>(), Services, Tokens, credentials, loginCallbackUri, cancellationToken);
+		}
+		return await base.PrepareLoginCallbackUri(credentials, loginCallbackUri, cancellationToken);
 	}
 
 
@@ -171,7 +203,7 @@ internal record WebAuthenticationProvider<TService>
 
 		if (TypedSettings?.RefreshCallback is not null)
 		{
-			return await TypedSettings.RefreshCallback(Services.GetRequiredService<TService>(), await Tokens.GetAsync(cancellationToken), cancellationToken);
+			return await TypedSettings.RefreshCallback(Services.GetRequiredService<TService>(), Services, Tokens, await Tokens.GetAsync(cancellationToken), cancellationToken);
 		}
 		return await base.RefreshAsync(cancellationToken);
 	}
@@ -180,8 +212,9 @@ internal record WebAuthenticationProvider<TService>
 	{
 		if (TypedSettings?.PostLoginCallback is not null)
 		{
-			return await TypedSettings.PostLoginCallback(Services.GetRequiredService<TService>(), credentials, tokens, cancellationToken);
+			return await TypedSettings.PostLoginCallback(Services.GetRequiredService<TService>(), Services, Tokens, credentials, tokens, cancellationToken);
 		}
 		return await base.PostLogin(credentials, tokens, cancellationToken);
 	}
+
 }
