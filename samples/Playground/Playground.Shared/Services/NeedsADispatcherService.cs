@@ -13,11 +13,10 @@ public class NeedsADispatcherService
 	{
 		await Task.Delay(1000).ConfigureAwait(false);
 
-		return await _dispatcher.ExecuteAsync(async () =>
+		return await _dispatcher.ExecuteAsync(async ct =>
 		{
 			await Task.Delay(1000);
 			return "Hi from UI thread";
-
 		});
 
 	}

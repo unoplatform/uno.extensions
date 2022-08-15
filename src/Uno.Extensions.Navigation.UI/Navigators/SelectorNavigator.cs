@@ -28,7 +28,7 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 			return false;
 		}
 
-		return await Dispatcher.ExecuteAsync(async () =>
+		return await Dispatcher.ExecuteAsync(async cancellation =>
 		{
 			return FindByPath(routeMap?.Path ?? route.Base) is not null;
 		});
