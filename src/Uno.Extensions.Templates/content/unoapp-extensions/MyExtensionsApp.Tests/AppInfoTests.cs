@@ -1,5 +1,7 @@
 //-:cnd:noEmit
 
+
+
 namespace MyExtensionsApp.Tests;
 
 public class AppInfoTests
@@ -14,6 +16,7 @@ public class AppInfoTests
 	{
 		var appInfo = new AppConfig { Title = "Test" };
 
-		Assert.AreEqual("Test", appInfo.Title);
+		appInfo.Should().NotBeNull();
+		appInfo.Title.Should().Be("Test");
 	}
 }
