@@ -4,7 +4,7 @@ namespace Uno.Extensions.Authentication;
 
 public interface IAuthenticationFlow
 { 
-	INavigator Navigator { get; }
+	INavigator? Navigator { get; }
 	void Initialize(IDispatcher dispatcher, INavigator navigator);
 
 	Task<NavigationResponse?> AuthenticatedNavigateAsync(NavigationRequest request, INavigator? navigator = default, CancellationToken ct = default);

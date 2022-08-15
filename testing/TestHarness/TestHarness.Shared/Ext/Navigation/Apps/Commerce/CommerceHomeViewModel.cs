@@ -9,5 +9,11 @@ public record CommerceHomeViewModel(ILogger<CommerceHomeViewModel> Logger, INavi
 		await Navigator.NavigateViewModelAsync<CommerceProductsViewModel>(this, qualifier: Qualifiers.Nested)
 		);
 	}
-
+public async Task GoToProductsClearStack()
+	{
+		Logger.LogInformationMessage("Go to products - clear stack");
+		await Task.Run(async () =>
+		await Navigator.NavigateViewModelAsync<CommerceProductsViewModel>(this, qualifier: Qualifiers.Nested+Qualifiers.ClearBackStack)
+		);
+	}
 }

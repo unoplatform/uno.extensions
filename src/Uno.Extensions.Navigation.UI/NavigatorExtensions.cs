@@ -39,7 +39,7 @@ public static class NavigatorExtensions
 		var dispatcher = navigator.Get<IServiceProvider>()!.GetRequiredService<IDispatcher>();
 		var region = navigator.Get<IServiceProvider>()?.GetService<IRegion>();
 		region = region?.Root();
-		var gobackNavigator = await dispatcher.ExecuteAsync(async () => region?.FindChildren(
+		var gobackNavigator = await dispatcher.ExecuteAsync(async ct => region?.FindChildren(
 			child => child.Services?.GetService<INavigator>() is ControlNavigator controlNavigator &&
 				controlNavigator.CanGoBack).LastOrDefault()?.Navigator());
 		return gobackNavigator is not null ?

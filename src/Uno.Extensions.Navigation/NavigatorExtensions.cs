@@ -27,7 +27,7 @@ public static class NavigatorExtensions
 	/// <summary>
 	/// Navigates to the specified route
 	/// </summary>
-	/// <param name="service">The Navigator</param>
+	/// <param name="navigator">The Navigator</param>
 	/// <param name="sender">The sender of the navigation request</param>
 	/// <param name="route">The route to navigate to</param>
 	/// <param name="qualifier">A qualifier to appeand to the request (eg ../ to direct request to parent region)</param>
@@ -45,7 +45,7 @@ public static class NavigatorExtensions
 	/// Navigates to the specified route
 	/// </summary>
 	/// <typeparam name="TResult">The type of data that's expected to be returned</typeparam>
-	/// <param name="service">The Navigator</param>
+	/// <param name="navigator">The Navigator</param>
 	/// <param name="sender">The sender of the navigation request</param>
 	/// <param name="route">The route to navigate to</param>
 	/// <param name="qualifier">A qualifier to appeand to the request (eg ../ to direct request to parent region)</param>

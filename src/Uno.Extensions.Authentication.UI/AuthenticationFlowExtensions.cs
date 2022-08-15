@@ -8,6 +8,10 @@ public static class AuthenticationFlowExtensions
 	this IAuthenticationFlow service, INavigator? navigator, RouteHint routeHint, object sender, object? data, CancellationToken cancellation)
 	{
 		navigator ??= service.Navigator;
+		if(navigator is null)
+		{
+			return Task.FromResult<NavigationResponse?>(default);
+		}
 		var resolver = navigator.GetResolver();
 		var request = routeHint.ToRequest(navigator, resolver, sender, data, cancellation);
 		return service.AuthenticatedNavigateAsync(request, navigator, cancellation);

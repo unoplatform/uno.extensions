@@ -418,26 +418,35 @@ public static class RouteExtensions
 		var ancestors = region.Ancestors(true);
 		while (rm is not null)
 		{
-			if (ancestors.Any(x => x.Item1?.Base == rm.Path))
+			if (ancestors.Any(x => x.Item1?.Contains(rm.Path) ?? false))
 			{
+				var nav = region.Navigator();
+				var route = (nav is IDeepRouteNavigator deepnav) ? deepnav.FullRoute : nav?.Route;
 				// In the scenario where we're testing to see if we can navigate to the currentRoute
 				// the root Route needs to include the route for the current region
 				// In the scenario where we're navigating to the currentRoute, we don't
 				// want to include the route for the current region (since the region
 				// is already at that route)
 				if (includeCurrentRegion &&
-					region.Navigator()?.Route?.Base == rm.Path)
+					(route?.Contains(rm.Path) ?? false))
 				{
 					dependsRoute = dependsRoute.Insert(rm.Path);
 				}
-
+				currentRoute = currentRoute.Next();
+				while(!currentRoute.IsEmpty())
+				{
+					dependsRoute = dependsRoute.Append(currentRoute.Base!);
+					currentRoute = currentRoute.Next();
+				}
 				return dependsRoute;
 			}
+			else
+			{
+				dependsRoute = dependsRoute.Insert(rm.Path);
 
-			dependsRoute = dependsRoute.Insert(rm.Path);
 
-
-			rm = !string.IsNullOrWhiteSpace(rm.DependsOn) ? resolver.FindByPath(rm.DependsOn) : default;
+				rm = !string.IsNullOrWhiteSpace(rm.DependsOn) ? resolver.FindByPath(rm.DependsOn) : default;
+			}
 		}
 
 		return dependsRoute;
