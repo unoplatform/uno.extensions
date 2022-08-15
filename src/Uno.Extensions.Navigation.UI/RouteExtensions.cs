@@ -65,7 +65,8 @@ public static class RouteExtensions
 	public static (Route, RouteInfo?, bool)[] ForwardNavigationSegments(
 		this Route route,
 		IRouteResolver mappings,
-		IRegion region)
+		IRegion region,
+		bool includeCurrentRegionRoute)
 	{
 		// Here we're interested in the actual page navigation segments.
 		// Start with an empty list, and progressively add routes that
@@ -79,7 +80,7 @@ public static class RouteExtensions
 
 		// For routes that have a depends on, we need to ensure that
 		// the dependson segments are added to the segments list
-		var r = route.RootDependsOn(mappings, region, false);
+		var r = route.RootDependsOn(mappings, region, includeCurrentRegionRoute);
 		var map = mappings.FindByPath(r.Base);
 		var originalRoute = false;
 		while (
@@ -374,7 +375,7 @@ public static class RouteExtensions
 		}
 		else
 		{
-			var segments = currentRoute.ForwardNavigationSegments(resolver, region).ToList();
+			var segments = currentRoute.ForwardNavigationSegments(resolver, region, true).ToList();
 			foreach (var qualifierChar in qualifier)
 			{
 				if (qualifierChar + "" == Qualifiers.NavigateBack)
@@ -387,7 +388,7 @@ public static class RouteExtensions
 				}
 			}
 
-			var newSegments = frameRoute.ForwardNavigationSegments(resolver, region);
+			var newSegments = frameRoute.ForwardNavigationSegments(resolver, region, false);
 			if (newSegments is not null)
 			{
 				newSegments = (from seg in newSegments
@@ -411,19 +412,13 @@ public static class RouteExtensions
 	public static Route RootDependsOn(this Route currentRoute, IRouteResolver resolver, IRegion region, bool includeCurrentRegion)
 	{
 		var rm = resolver.FindByPath(currentRoute.Base);
-		//if ((rm is null ||
-		//	string.IsNullOrEmpty(rm.DependsOn)) &&
-		//	region.Navigator()?.Route?.Base == currentRoute.Base &&
-		//	!includeCurrentRegion)
-		//{
-		//	return Route.Empty;
-		//}
 
-		while (rm is not null &&
-			!string.IsNullOrEmpty(rm.DependsOn))
+		var dependsRoute = Route.Empty;
+
+		var ancestors = region.Ancestors(true);
+		while (rm is not null)
 		{
-			var ancestors = region.Ancestors(true);
-			if (ancestors.Any(x => x.Item1?.Base == rm.DependsOn))
+			if (ancestors.Any(x => x.Item1?.Base == rm.Path))
 			{
 				// In the scenario where we're testing to see if we can navigate to the currentRoute
 				// the root Route needs to include the route for the current region
@@ -431,21 +426,21 @@ public static class RouteExtensions
 				// want to include the route for the current region (since the region
 				// is already at that route)
 				if (includeCurrentRegion &&
-					region.Navigator()?.Route?.Base == rm.DependsOn)
+					region.Navigator()?.Route?.Base == rm.Path)
 				{
-					currentRoute = currentRoute.Insert(rm.DependsOn);
+					dependsRoute = dependsRoute.Insert(rm.Path);
 				}
 
-				return currentRoute;
+				return dependsRoute;
 			}
 
-			currentRoute = currentRoute.Insert(rm.DependsOn);
+			dependsRoute = dependsRoute.Insert(rm.Path);
 
 
-			rm = resolver.FindByPath(rm.DependsOn);
+			rm = !string.IsNullOrWhiteSpace(rm.DependsOn) ? resolver.FindByPath(rm.DependsOn) : default;
 		}
 
-		return currentRoute;
+		return dependsRoute;
 
 	}
 }

@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions.Navigation.Navigators;
 
-public class FrameNavigator : ControlNavigator<Frame>
+public class FrameNavigator : ControlNavigator<Frame>, IDeepRouteNavigator
 {
 	protected override FrameworkElement? CurrentView => Control?.Content as FrameworkElement;
 
@@ -96,7 +96,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 		}
 
 		var route = request.Route;
-		var segments = route.ForwardNavigationSegments(Resolver, Region);
+		var segments = route.ForwardNavigationSegments(Resolver, Region, false);
 
 		// As this is a forward navigation
 		if (segments.Length == 0)
@@ -367,7 +367,7 @@ public class FrameNavigator : ControlNavigator<Frame>
 		if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Backstack cleared");
 	}
 
-	private Route? FullRoute { get; set; }
+	public Route? FullRoute { get; private set; }
 
 	protected override void UpdateRoute(Route? route)
 	{
@@ -384,25 +384,5 @@ public class FrameNavigator : ControlNavigator<Frame>
 			lastRoute = lastRoute.Next();
 		}
 		Route = lastRoute;
-	}
-}
-
-public static class FrameNavigatorExtensions
-{
-	public static readonly DependencyProperty NavigatorInstanceProperty =
-		DependencyProperty.RegisterAttached(
-			"NavigatorInstance",
-			typeof(INavigator),
-			typeof(FrameNavigatorExtensions),
-			new PropertyMetadata(null));
-
-	public static void SetNavigatorInstance(this FrameworkElement element, INavigator value)
-	{
-		element.SetValue(NavigatorInstanceProperty, value);
-	}
-
-	public static INavigator GetNavigatorInstance(this FrameworkElement element)
-	{
-		return (INavigator)element.GetValue(NavigatorInstanceProperty);
 	}
 }
