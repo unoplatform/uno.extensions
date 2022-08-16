@@ -402,7 +402,8 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 	{
 		// Default behaviour for all navigators is that they can't handle back or close requests
 		// This is overridden by navigators that can handle close operation
-		if (route.IsBackOrCloseNavigation())
+		if (route.IsBackOrCloseNavigation() &&
+			string.IsNullOrWhiteSpace(route.Base))
 		{
 			return false;
 		}
