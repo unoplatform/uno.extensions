@@ -2,6 +2,8 @@
 
 public static class FrameworkElementExtensions
 {
+	public static bool DisableLoadWaiting { get; set; }
+
 	/// <summary>
 	/// Attaches the specified IServiceProvider instance to the <paramref name="element"/> using the
 	/// Region.ServiceProvider attached property. Any child element can access the IServiceProvider
@@ -72,6 +74,11 @@ public static class FrameworkElementExtensions
 
 	public static async Task EnsureLoaded(this IRegion region)
 	{
+		if (DisableLoadWaiting)
+		{
+			return;
+		}
+
 		if (region.Services is not null)
 		{
 			return;
