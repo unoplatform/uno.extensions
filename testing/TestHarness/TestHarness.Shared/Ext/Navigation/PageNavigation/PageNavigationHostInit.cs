@@ -1,16 +1,22 @@
-﻿namespace TestHarness.Ext.Navigation.PageNavigation;
+﻿using System.Collections.Immutable;
+
+namespace TestHarness.Ext.Navigation.PageNavigation;
 
 public class PageNavigationHostInit : IHostInitialization
 {
 	public IHost InitializeHost()
 	{
-
 		return UnoHost
 				.CreateDefaultBuilder()
 #if DEBUG
 				// Switch to Development environment when running in DEBUG
 				.UseEnvironment(Environments.Development)
 #endif
+
+				.UseConfiguration(configure: builder =>
+				{
+					return builder.Section<PageNavigationSettings>();
+				})
 
 				// Add platform specific log providers
 				.UseLogging(configure: (context, logBuilder) =>
@@ -55,6 +61,13 @@ public class PageNavigationHostInit : IHostInitialization
 					new RouteMap("Confirm", View: confirmDialog),
 			}));
 	}
+}
+
+public record PageNavigationSettings
+{
+	// This doesn't work, use T[] instead
+	//public ImmutableList<string> PagesVisited { get; init; } = ImmutableList<string>.Empty;
+	public string[] PagesVisited { get; init; } = Array.Empty<string>();
 }
 
 

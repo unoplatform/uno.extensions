@@ -6,12 +6,11 @@ public static class TypeExtensions
 {
 	public static ConstructorInfo? GetNavigationConstructor(this Type type, INavigator navigator, IServiceProvider services, out object[] constructorArguments)
 	{
-		var ctrs = type.GetConstructors();
-		foreach (var ctr in ctrs)
+		var ctr = type.GetConstructors().FirstOrDefault();
+		if (ctr is not null)
 		{
 			var paras = ctr.GetParameters();
 			var args = new List<object>();
-			var isValid = true;
 			foreach (var para in paras)
 			{
 				if (para.ParameterType == typeof(IServiceProvider))
@@ -24,15 +23,12 @@ public static class TypeExtensions
 				}
 				else
 				{
-					isValid = false;
-					break;
+					var arg = services.GetService(para.ParameterType);
+					args.Add(arg!);
 				}
 			}
-			if (isValid)
-			{
-				constructorArguments = args.ToArray();
-				return ctr;
-			}
+			constructorArguments = args.ToArray();
+			return ctr;
 		}
 
 		constructorArguments = new object[] { };
