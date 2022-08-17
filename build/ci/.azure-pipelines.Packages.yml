@@ -36,6 +36,8 @@ jobs:
     parameters:
       sdkVersion: 18362
 
+  - template: templates/update-vs-components.yml
+
   - task: MSBuild@1
     displayName: Build Extensions Packages
     inputs:
