@@ -101,7 +101,14 @@ public class FrameNavigator : ControlNavigator<Frame>, IDeepRouteNavigator
 		// As this is a forward navigation
 		if (segments.Length == 0)
 		{
-			return default;
+			Control.ReassignRegionParent();
+			if (!(this.Route?.IsEmpty() ?? true) && (route.Data?.Any() ?? false))
+			{
+				var mapping = Resolver.FindByPath(this.Route!.Base);
+
+				await InitializeCurrentView(request, this.Route, mapping, true);
+			}
+			return request.Route;
 		}
 
 
@@ -216,7 +223,7 @@ public class FrameNavigator : ControlNavigator<Frame>, IDeepRouteNavigator
 		var mappings = Resolver.FindByView(Control.Content.GetType());
 		var navParent = this.GetParentWithRoute();
 		var navRoute = Resolver.FindByPath(navParent?.Route?.Base);
-		var mapping = mappings.SelectMapFromAncestor(navRoute); 
+		var mapping = mappings.Length == 1 ? mappings.First() : mappings.SelectMapFromAncestor(navRoute);
 
 		await InitializeCurrentView(request, previousRoute ?? Route.Empty, mapping);
 

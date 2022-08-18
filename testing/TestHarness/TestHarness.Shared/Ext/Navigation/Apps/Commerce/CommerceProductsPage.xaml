@@ -29,9 +29,9 @@
 						<Setter Target="ProductsColumn.Width"
 								Value="*" />
 						<Setter Target="ProductsColumn.MinWidth"
-								Value="300" />
+								Value="100" />
 						<Setter Target="DetailsColumn.Width"
-								Value="2*" />
+								Value="*" />
 						<Setter Target="DetailsGrid.Visibility"
 								Value="Visible" />
 						<Setter Target="Details.(uen:Region.Attached)"

@@ -224,7 +224,7 @@ public static class RouteExtensions
 
 	public static bool Contains(this Route route, string path)
 	{
-		return route.Base == path || (route.Path?.Contains(path, StringComparison.InvariantCultureIgnoreCase) ?? false);
+		return route.Base == path || (route.Path?.Split('/').Any(x=>x==path)?? false);
 	}
 
 	public static Route Next(this Route route)
