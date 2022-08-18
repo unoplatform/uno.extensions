@@ -52,6 +52,7 @@ public class Given_PageNavigation : NavigationTestBase
 	}
 
 	[Test]
+	[Ignore]
 	public void When_PageNavigationViewModel()
 	{
 		InitTestSection(TestSections.PageNavigation);
