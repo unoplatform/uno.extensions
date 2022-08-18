@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace TestHarness.Ext.Navigation.PageNavigation;
 
@@ -65,9 +66,8 @@ public class PageNavigationHostInit : IHostInitialization
 
 public record PageNavigationSettings
 {
-	// This doesn't work, use T[] instead
-	//public ImmutableList<string> PagesVisited { get; init; } = ImmutableList<string>.Empty;
-	public string[] PagesVisited { get; init; } = Array.Empty<string>();
+	// Make sure you initialise the value
+	public IImmutableList<string> PagesVisited { get; set; } = ImmutableList<string>.Empty;
 }
 
 

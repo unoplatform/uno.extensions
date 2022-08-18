@@ -15,11 +15,3 @@ public sealed partial class PageNavigationOnePage : Page
 	}
 
 }
-
-public static class ArrayExtensions
-{
-	public static T[] Add<T>(this T[] array, T newItem)
-	{
-		return array.Union(new T[] { newItem }).ToArray();
-	}
-}

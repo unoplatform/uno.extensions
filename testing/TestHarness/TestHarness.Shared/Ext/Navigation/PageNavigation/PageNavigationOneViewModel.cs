@@ -7,4 +7,5 @@ public record PageNavigationOneViewModel (INavigator Navigator, IWritableOptions
 		await Settings.UpdateAsync(s => s with { PagesVisited = s.PagesVisited.Add(this.GetType().Name) });
 		await Navigator.NavigateViewModelAsync<PageNavigationTwoViewModel>(this);
 	}
+
 }
