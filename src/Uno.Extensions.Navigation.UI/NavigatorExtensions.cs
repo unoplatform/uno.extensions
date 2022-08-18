@@ -15,6 +15,20 @@ public static class NavigatorExtensions
 		return parentNav;
 	}
 
+	internal static INavigator? GetParentWithRoute(this INavigator navigator)
+	{
+		var parent = navigator.GetParent();
+		while (
+			parent is not null &&
+			(parent.Route?.IsEmpty()??true)
+			)
+		{
+			parent = parent.GetParent();
+		}
+		return parent;
+	}
+	
+
 #if __IOS__
 	public static Task<NavigationResultResponse<TSource>?> ShowPickerAsync<TSource>(
 	   this INavigator navigator,

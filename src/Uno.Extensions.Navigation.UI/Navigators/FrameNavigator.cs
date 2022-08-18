@@ -214,7 +214,7 @@ public class FrameNavigator : ControlNavigator<Frame>, IDeepRouteNavigator
 		}
 
 		var mappings = Resolver.FindByView(Control.Content.GetType());
-		var navParent = this.GetParent();
+		var navParent = this.GetParentWithRoute();
 		var navRoute = Resolver.FindByPath(navParent?.Route?.Base);
 		var mapping = mappings.SelectMapFromAncestor(navRoute); 
 
