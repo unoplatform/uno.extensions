@@ -18,6 +18,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)BaseHostInitialization.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BaseTestSectionPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ControlSizeTrigger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationHomePage.xaml.cs">
@@ -241,6 +242,7 @@
       <DependentUpon>ResponsiveMainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)GlobalUsings.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HostBuilderHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IHostInitialization.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>

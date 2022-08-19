@@ -1,7 +1,10 @@
 ﻿namespace TestHarness.Ext.Navigation.Apps.Commerce;
 
-public class CommerceHostInit : IHostInitialization
+public class CommerceHostInit : BaseHostInitialization
 {
+	protected override string[] ConfigurationFiles => new string[] { "TestHarness.Ext.Navigation.Apps.Commerce.appsettings.logging.json" };
+
+
 	public IHost InitializeHost()
 	{
 
@@ -37,7 +40,7 @@ public class CommerceHostInit : IHostInitialization
 	}
 
 
-	private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
+	protected override void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 	{
 
 		views.Register(

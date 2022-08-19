@@ -2,28 +2,19 @@
 
 namespace TestHarness.Ext.Authentication.MSAL;
 
-public class MsalAuthenticationMultiHostInit : IHostInitialization
+public class MsalAuthenticationMultiHostInit : BaseMsalHostInitialization
 {
-	public IHost InitializeHost()
+	protected override string[] ConfigurationFiles => new string[] { "TestHarness.Ext.Authentication.Custom.appsettings.dummyjson.json",
+																	 "TestHarness.Ext.Authentication.Msal.appsettings.msalauthentication.json",
+																	"TestHarness.Ext.Authentication.Msal.appsettings.multi.json"};
+	protected override IHostBuilder Custom(IHostBuilder builder)
 	{
-
-		return UnoHost
-				.CreateDefaultBuilder()
-				.Defaults(this)
-
-				// Only use this syntax for UI tests - use UseConfiguration in apps
-				.ConfigureAppConfiguration((ctx, b) =>
-				{
-					b.AddEmbeddedConfigurationFile<App>("TestHarness.Ext.Authentication.Custom.appsettings.dummyjson.json");
-					b.AddEmbeddedConfigurationFile<App>("TestHarness.Ext.Authentication.Msal.appsettings.msalauthentication.json");
-					b.AddEmbeddedConfigurationFile<App>("TestHarness.Ext.Authentication.Msal.appsettings.multi.json");
-				})
-
-				.ConfigureServices((context, services) =>
-				{
-					services
-							.AddRefitClient<ICustomAuthenticationDummyJsonEndpoint>(context);
-				})
+		return base.Custom(builder)
+			.ConfigureServices((context, services) =>
+			{
+				services
+						.AddRefitClient<ICustomAuthenticationDummyJsonEndpoint>(context);
+			})
 
 				.UseAuthentication(auth =>
 					auth
@@ -126,11 +117,8 @@ public class MsalAuthenticationMultiHostInit : IHostInitialization
 							//{
 							//	msalBuilder = msalBuilder.WithIosKeychainSecurityGroup(settings.KeychainSecurityGroup);
 							//}
-							, name:"MsalCode")
-						.AddMsal(name: "MsalConfig"))
-
-
-				.Build(enableUnoLogging: true);
+							, name: "MsalCode")
+						.AddMsal(name: "MsalConfig"));
 	}
 
 }

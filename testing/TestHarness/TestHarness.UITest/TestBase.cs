@@ -142,7 +142,7 @@ public abstract class TestBase
 		}
 	}
 
-	public ScreenshotInfo? TakeScreenshot(string stepName, bool? ignoreInSnapshotCompare = null)
+	public ScreenshotInfo TakeScreenshot(string stepName, bool? ignoreInSnapshotCompare = null)
 		=> TakeScreenshot(
 			stepName,
 			ignoreInSnapshotCompare != null
@@ -150,12 +150,12 @@ public abstract class TestBase
 				: new ScreenshotOptions()
 		);
 
-	public ScreenshotInfo? TakeScreenshot(string stepName, ScreenshotOptions options)
+	public ScreenshotInfo TakeScreenshot(string stepName, ScreenshotOptions options)
 	{
 		if (_app == null)
 		{
 			Console.WriteLine($"Skipping TakeScreenshot _app is not available");
-			return default;
+			throw new NotSupportedException("_app is not available to take screenshot");
 		}
 
 		var title = GetCurrentStepTitle(stepName);

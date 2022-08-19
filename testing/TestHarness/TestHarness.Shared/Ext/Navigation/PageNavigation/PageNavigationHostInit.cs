@@ -1,40 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 
-namespace TestHarness.Ext.Navigation.PageNavigation;
+namespace TestHarness;
 
-public class PageNavigationHostInit : IHostInitialization
+public class PageNavigationHostInit : BaseHostInitialization
 {
-	public IHost InitializeHost()
+	protected override IHostBuilder Configuration(IHostBuilder builder)
 	{
-		return UnoHost
-				.CreateDefaultBuilder()
-#if DEBUG
-				// Switch to Development environment when running in DEBUG
-				.UseEnvironment(Environments.Development)
-#endif
-
-				.UseConfiguration(configure: builder =>
-				{
-					return builder.Section<PageNavigationSettings>();
-				})
-
-				// Add platform specific log providers
-				.UseLogging(configure: (context, logBuilder) =>
-				{
-					var host = context.HostingEnvironment;
-					// Configure log levels for different categories of logging
-					logBuilder.SetMinimumLevel(host.IsDevelopment() ? LogLevel.Warning : LogLevel.Information);
-				})
-
-				// Enable navigation, including registering views and viewmodels
-				.UseNavigation(RegisterRoutes)
-
-				.Build(enableUnoLogging: true);
+		return builder.UseConfiguration(configure: builder =>
+		{
+			return builder.Section<PageNavigationSettings>();
+		});
 	}
 
 
-	private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
+	protected override void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 	{
 
 		var confirmDialog = new MessageDialogViewMap(

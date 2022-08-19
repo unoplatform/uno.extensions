@@ -1,4 +1,4 @@
-﻿namespace TestHarness.Ext.Navigation.PageNavigation;
+﻿namespace TestHarness;
 
 public interface IHostInitialization
 {
