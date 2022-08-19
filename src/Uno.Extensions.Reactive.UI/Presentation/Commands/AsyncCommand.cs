@@ -82,7 +82,15 @@ public sealed partial class AsyncCommand : IAsyncCommand, IDisposable
 		_dispatcher.TryRunCallback();
 	}
 
-	internal AsyncCommand(
+	/// <summary>
+	/// Creates a new instance.
+	/// </summary>
+	/// <param name="name">The name of teh command, used for debug and log purposes.</param>
+	/// <param name="configs">The configurations of the command.</param>
+	/// <param name="errorHandler">The last chance error handler.</param>
+	/// <param name="context">The context to which this command belongs.</param>
+	/// <exception cref="ArgumentNullException">If <paramref name="errorHandler"/> or <paramref name="context"/> is null.</exception>
+	public AsyncCommand(
 		string? name,
 		IEnumerable<CommandConfig> configs,
 		Action<Exception> errorHandler,
