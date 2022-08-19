@@ -177,6 +177,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\NavigationView\NavigationViewMainPage.xaml.cs">
       <DependentUpon>NavigationViewMainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationEightPage.xaml.cs">
+      <DependentUpon>PageNavigationEightPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationEightViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationFivePage.xaml.cs">
       <DependentUpon>PageNavigationFivePage.xaml</DependentUpon>
     </Compile>
@@ -187,10 +191,26 @@
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationMainPage.xaml.cs">
       <DependentUpon>PageNavigationMainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationNinePage.xaml.cs">
+      <DependentUpon>PageNavigationNinePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationNineViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationOnePage.xaml.cs">
       <DependentUpon>PageNavigationOnePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationRegisterHostInit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationSevenPage.xaml.cs">
+      <DependentUpon>PageNavigationSevenPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationSevenViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationSixPage.xaml.cs">
+      <DependentUpon>PageNavigationSixPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationSixViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationTenPage.xaml.cs">
+      <DependentUpon>PageNavigationTenPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationTenViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationThreeViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationFourViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationFiveViewModel.cs" />
@@ -358,6 +378,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationEightPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationFivePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -370,7 +394,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationNinePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationOnePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationSevenPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationSixPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\PageNavigation\PageNavigationTenPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

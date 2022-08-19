@@ -6,12 +6,20 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	  mc:Ignorable="d"
+	  xmlns:utu="using:Uno.Toolkit.UI"
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
 	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+		<utu:NavigationBar Content="Page Navigation - Five"
+						   AutomationProperties.AutomationId="PageNavigationFive" />
 		<StackPanel HorizontalAlignment="Center"
-					VerticalAlignment="Center">
+					VerticalAlignment="Center"
+					Grid.Row="1">
 			<Button AutomationProperties.AutomationId="FivePageBackButton"
 					Content="Back"
 					uen:Navigation.Request="-" />
@@ -21,7 +29,21 @@
 			<Button AutomationProperties.AutomationId="FivePageBackViewModelButton"
 					Content="Back (ViewModel)"
 					Click="{x:Bind ViewModel.GoBack}" />
-
+			<Button AutomationProperties.AutomationId="FivePageSixPageButton"
+					Content="Six"
+					uen:Navigation.Request="Six" />
+			<Button AutomationProperties.AutomationId="FivePageSevenPageButton"
+					Content="Seven"
+					uen:Navigation.Request="Seven" />
+			<Button AutomationProperties.AutomationId="FivePageEightPageButton"
+					Content="Eight"
+					uen:Navigation.Request="Eight" />
+			<Button AutomationProperties.AutomationId="FivePageNinePageButton"
+					Content="Nine"
+					uen:Navigation.Request="Nine" />
+			<Button AutomationProperties.AutomationId="FivePageTenPageButton"
+					Content="Ten"
+					uen:Navigation.Request="Ten" />
 		</StackPanel>
 	</Grid>
 </Page>

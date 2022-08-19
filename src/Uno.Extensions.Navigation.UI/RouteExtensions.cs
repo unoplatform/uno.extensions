@@ -168,7 +168,10 @@ public static class RouteExtensions
 		{
 			return route with { Base = routeToAppend.Base };
 		}
-		return route with { Path = route.Path + (routeToAppend.Qualifier == Qualifiers.Nested ? Qualifiers.Separator : routeToAppend.Qualifier) + routeToAppend.Base + routeToAppend.Path };
+		return route with {
+			Path = string.IsNullOrWhiteSpace( route.Path) ?
+						routeToAppend.Base + (!string.IsNullOrWhiteSpace(routeToAppend.Base) && !string.IsNullOrWhiteSpace(routeToAppend.Path)? Qualifiers.Separator:"") + routeToAppend.Path :
+						route.Path + ((routeToAppend.Qualifier == Qualifiers.Nested  || routeToAppend.Qualifier==Qualifiers.None)? Qualifiers.Separator : routeToAppend.Qualifier) + routeToAppend.Base + routeToAppend.Path };
 	}
 
 	public static Route AppendPage<TPage>(this Route route)
@@ -442,7 +445,21 @@ public static class RouteExtensions
 			}
 			else
 			{
-				dependsRoute = dependsRoute.Insert(rm.Path);
+				if (dependsRoute.IsEmpty())
+				{
+					dependsRoute = dependsRoute.Insert(rm.Path);
+
+					currentRoute = currentRoute.Next();
+					while (!currentRoute.IsEmpty())
+					{
+						dependsRoute = dependsRoute.Append(currentRoute.Base!);
+						currentRoute = currentRoute.Next();
+					}
+				}
+				else
+				{
+					dependsRoute = dependsRoute.Insert(rm.Path);
+				}
 
 
 				rm = !string.IsNullOrWhiteSpace(rm.DependsOn) ? resolver.FindByPath(rm.DependsOn) : default;

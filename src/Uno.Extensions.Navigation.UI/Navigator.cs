@@ -184,6 +184,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		//		route request to child region
 		if (!string.IsNullOrWhiteSpace(rm?.DependsOn) &&
 			(Region.Ancestors(true).FirstOrDefault(x => x.Item1?.Base == rm!.DependsOn) is { } ancestor) &&
+			ancestor.Item2 is not null &&
 			ancestor.Item2 != Region.Parent)
 		{
 			var ancestorRegion = ancestor.Item2;

@@ -6,11 +6,18 @@
 	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	  mc:Ignorable="d"
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	  xmlns:utu="using:Uno.Toolkit.UI"
 	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
 	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+		<utu:NavigationBar Content="Page Navigation - One"
+						   AutomationProperties.AutomationId="PageNavigationOne" />
 		<StackPanel HorizontalAlignment="Center"
-					VerticalAlignment="Center">
+					VerticalAlignment="Center" Grid.Row="1">
 			<Button AutomationProperties.AutomationId="OnePageToTwoPageButton"
 					Content="Two"
 					uen:Navigation.Request="PageNavigationTwo" />
