@@ -103,7 +103,7 @@ so you can enhance the UX of the pagination, like display a loading indicator wh
 
 
 ## Commands
-The generated bindable counterpart of a class will automatically re-expose as `ICommand` public methods that are compatible (cf. below).
+The generated bindable counterpart of a class will automatically re-expose as `ICommand` public methods that are compatible (cf. "general rules" below).
 
 For instance, in your ViewModel:
 
@@ -166,5 +166,12 @@ General rules for methods to be re-exposed as commands are:
 
 > [!NOTE]
 > The automatic parameters resolution be configured using attributes:
-> - `[ImplicitFeedCommandParameters]` on assembly or class to enable or disable the implicit parameters resolution.
-> - `[FeedParameter("MyEntity")]` to explicit the property to use.
+> - `[ImplicitFeedCommandParameters(is_enabled)]` on assembly or class to enable or disable the implicit parameters resolution.
+> - `[FeedParameter("MyEntity")]` to explicit the property to use for a given parameter, e.g.
+>      ```csharp
+>      public IFeed<string> Message { get; }
+>      
+>      public async ValueTask Share([FeedParameter(nameof(Message))] string msg)
+>      {
+>      }
+>      ```

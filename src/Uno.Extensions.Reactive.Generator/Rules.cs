@@ -27,6 +27,7 @@ internal static class Rules
 			message,
 			Category.Usage,
 			DiagnosticSeverity.Error,
+			helpLinkUri: "https://platform.uno/docs/articles/external/uno.extensions/doc/Overview/Reactive/rules.html#Feed2001",
 			isEnabledByDefault: true);
 
 		public static string GetMessage(INamedTypeSymbol @class, IMethodSymbol method, string missingPropertyName)
@@ -53,6 +54,7 @@ internal static class Rules
 			message,
 			Category.Usage,
 			DiagnosticSeverity.Error,
+			helpLinkUri: "https://platform.uno/docs/articles/external/uno.extensions/doc/Overview/Reactive/rules.html#Feed2002",
 			isEnabledByDefault: true);
 
 		public static string GetMessage(INamedTypeSymbol @class, IMethodSymbol method, string missingPropertyName)

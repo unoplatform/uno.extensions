@@ -6,4 +6,4 @@
 Rule ID | Category | Severity | Notes
 --------|----------|----------|--------------------
 FEED2001 | Usage    | Error    | Unable to resolve the feed that is configured to be used as command parameter.
-FEED2002 | Usage    | Error    | The property configured to be used as command parameter is not a Feed.
+FEED2002 | Usage    | Error    | The property configured to be used as command parameter is not a Feed of the right type.

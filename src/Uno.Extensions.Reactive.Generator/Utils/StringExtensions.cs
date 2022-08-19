@@ -110,7 +110,4 @@ internal static class StringExtensions
 
 		return result.ToString();
 	}
-
-	public static string RemoveEmptyLines(this string text)
-		=> Regex.Replace(text, "^\\s*$", string.Empty, RegexOptions.Multiline);
 }
