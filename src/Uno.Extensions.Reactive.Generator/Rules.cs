@@ -45,7 +45,7 @@ internal static class Rules
 
 	public static class FEED2002
 	{
-		private const string message = "The property '{0}' resolved on the class '{1}' cannot be used as command parameter for '{2}' as it's not a Feed";
+		private const string message = "The property '{0}' resolved on the class '{1}' is not a Feed. It cannot be used as command parameter for '{2}'.";
 
 		public static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
 			nameof(FEED2002),

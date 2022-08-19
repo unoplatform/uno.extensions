@@ -6,7 +6,7 @@ using System.Windows.Input;
 namespace Uno.Extensions.Reactive.UI.Config;
 
 /// <summary>
-/// Defines for generated commands if parameters should be automatically full-filled based on public feeds properties exposed by the class.
+/// Defines for generated commands whether parameters should be automatically populated based on public feeds properties exposed by the class.
 /// </summary>
 [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class)]
 public class ImplicitFeedCommandParametersAttribute : Attribute

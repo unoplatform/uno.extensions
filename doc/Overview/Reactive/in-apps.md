@@ -120,8 +120,7 @@ This will be exposed into an `ICommand` that can be data-bound to the `Command` 
 <Button Command="{Binding Share}" Content="Share" />
 ```
 
-By default, if the method has a parameter `T myValue` and there is a property `Feed<T> MyValue` on the same class (matching type and name), 
-that parameter will be automatically full-filed from that feed.
+By default, if the method has a parameter `T myValue` and there is a property `Feed<T> MyValue` on the same class (matching type and name), that parameter will automatically be filled from that feed.
 
 For instance, in your ViewModel:
 
@@ -146,12 +145,12 @@ Can be used with or without any `CommandParameter` from the view:
 <Button Command="{Binding Share}" CommandParameter="hello world" Content="Share" />
 ```
 
-You can even mix "feed parameters" with the "view parameter" (i.e. the value of the `CommandParameter`):
+You can also use both "feed parameters" and "view parameter" (i.e. the value of the `CommandParameter`):
 
 ```csharp
 public IFeed<MyEntity> Entity { get; }
 
-public async ValueTask Share(MyEntity myEntity, string origin) 
+public async ValueTask Share(MyEntity entity, string origin) 
 {
 }
 ```
@@ -160,7 +159,7 @@ public async ValueTask Share(MyEntity myEntity, string origin)
 <Button Command="{Binding Share}" CommandParameter="command_bar" Content="Share" />
 ```
 
-General rules for you method to be re-exposed as commands are:
+General rules for methods to be re-exposed as commands are:
 * At most one paramater that cannot be resolved from a _Feed_  property in your VM (a.k.a the `CommandParameter`);
 * At most one `CancellationToken`;
 * Method can be sync, or async
