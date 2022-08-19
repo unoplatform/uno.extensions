@@ -168,6 +168,11 @@ internal static class RoslynExtensions
 		}
 	}
 
+	public static bool IsCloneCtor(this IMethodSymbol ctor, INamedTypeSymbol type)
+		=> ctor.MethodKind is MethodKind.Constructor
+			&& ctor.Parameters is { Length: 1 } parameters
+			&& SymbolEqualityComparer.Default.Equals(parameters[0].Type, type);
+
 	public static (bool isDefined, string? value) FindAttributeValue(this ISymbol symbol, INamedTypeSymbol attributeSymbol, string? propertyName = default, uint? ctorPosition = default)
 		=> FindAttributeValueCore<string>(symbol, attributeSymbol, propertyName, ctorPosition);
 

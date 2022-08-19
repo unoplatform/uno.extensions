@@ -21,7 +21,7 @@ internal class BindableGenerator
 
 	public string? GetBindableType(ITypeSymbol symbol)
 	{
-		if (symbol is INamedTypeSymbol { IsRecord: true } named && GetDefaultCtor(named) is not null)
+		if (symbol is INamedTypeSymbol { IsRecord: true } named && _ctx.GetDefaultCtor(named) is not null)
 		{
 			if (named is { NullableAnnotation: NullableAnnotation.Annotated })
 			{
@@ -129,7 +129,7 @@ namespace {record.ContainingNamespace}
 		}}
 
 		private static {record} CreateDefault()
-			=> new({GetDefaultCtor(record)!.Parameters.Select(p => $"default({p.Type})!").JoinBy(", ")});
+			=> new({_ctx.GetDefaultCtor(record)!.Parameters.Select(p => $"default({p.Type})!").JoinBy(", ")});
 
 		{valueProperty}
 
@@ -139,18 +139,5 @@ namespace {record.ContainingNamespace}
 ";
 
 return code;
-	}
-
-	private IMethodSymbol? GetDefaultCtor(INamedTypeSymbol record)
-	{
-		return record
-			.Constructors
-			.Where(ctor => ctor.IsAccessible() && !IsCloneCtor(ctor))
-			.OrderBy(ctor => ctor.HasAttributes(_ctx.DefaultRecordCtorAttribute) ? 0 : 1)
-			.ThenBy(ctor => ctor.Parameters.Length)
-			.FirstOrDefault();
-
-		bool IsCloneCtor(IMethodSymbol ctor)
-			=> ctor.Parameters is {Length: 1} parameters && SymbolEqualityComparer.Default.Equals(parameters[0].Type, record);
 	}
 }

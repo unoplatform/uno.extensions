@@ -87,6 +87,14 @@ public partial class Given_ViewModel_Then_GenerateBindable
 	public void NestedPrivateFlaggedCodeGenView_NotSuffixedViewModel()
 		=> Assert.IsNotNull(GetBindable(typeof(NestedPrivateFlaggedCodeGen_NotSuffixed)));
 
+	[TestMethod]
+	public void InheritingViewModel()
+		=> Assert.IsNotNull(GetBindable(typeof(SubViewModel)));
+
+	[TestMethod]
+	public void NestedInheritingViewModel()
+		=> Assert.IsNotNull(GetBindable(typeof(NestedSubViewModel)));
+
 	private Type? GetBindable(Type vmType)
 		=> vmType.GetNestedType($"Bindable{vmType.Name}");
 
@@ -124,6 +132,17 @@ public partial class Given_ViewModel_Then_GenerateBindable
 
 	[ReactiveBindable(true)]
 	private partial class NestedPrivateFlaggedCodeGen_NotSuffixed { }
+
+	private partial class NestedBaseViewModel
+	{
+		public NestedBaseViewModel(string parameter) { }
+	}
+
+	private partial class NestedSubViewModel : NestedBaseViewModel
+	{
+		public NestedSubViewModel(string parameter) : base (parameter) { }
+		public NestedSubViewModel() : base("42") { }
+	}
 }
 
 public partial class Given_ViewModel_Then_GenerateBindable_ViewModel { }
@@ -145,4 +164,15 @@ public class Given_ViewModel_Then_GenerateBindable_NonPartialContainer
 	public class Public_ViewModel { }
 	internal class Internal_ViewModel { }
 	private class Private_ViewModel { }
+}
+
+public partial class BaseViewModel
+{
+	public BaseViewModel(string parameter) { }
+}
+
+public partial class SubViewModel : BaseViewModel
+{
+	public SubViewModel(string parameter) : base(parameter) { }
+	public SubViewModel() : base("42") { }
 }

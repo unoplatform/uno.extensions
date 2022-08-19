@@ -34,7 +34,7 @@ internal record BindableGenerationContext(
 	INamedTypeSymbol BindableAttribute,
 	INamedTypeSymbol InputAttribute,
 	INamedTypeSymbol ValueAttribute,
-	INamedTypeSymbol DefaultRecordCtorAttribute,
+	INamedTypeSymbol DefaultCtorAttribute,
 
 	// Commands attributes
 	INamedTypeSymbol CommandAttribute,
@@ -54,7 +54,7 @@ internal record BindableGenerationContext(
 
 		INamedTypeSymbol? feed = default, input = default, listFeed = default, commandBuilder = default, commandBuilderOfT = default;
 		INamedTypeSymbol? implicitCommandsAttribute = default, implicitCommandParametersAttribute = default;
-		INamedTypeSymbol? bindableAttribute = default, inputAttribute = default, valueAttribute = default, defaultRecordCtorAttribute = default;
+		INamedTypeSymbol? bindableAttribute = default, inputAttribute = default, valueAttribute = default, defaultCtorAttribute = default;
 		INamedTypeSymbol? commandAttribute = default, commandParameterAttribute = default;
 		INamedTypeSymbol? cancellationToken = default, immutableArray = default, immutableList = default, immutableQueue = default, immutableSet = default, immutableStack = default;
 
@@ -72,7 +72,7 @@ internal record BindableGenerationContext(
 			yield return ByType(typeof(ReactiveBindableAttribute), out bindableAttribute);
 			yield return ByType(typeof(InputAttribute), out inputAttribute);
 			yield return ByType(typeof(ValueAttribute), out valueAttribute);
-			yield return ByType(typeof(BindableDefaultConstructorAttribute), out defaultRecordCtorAttribute);
+			yield return ByType(typeof(BindableDefaultConstructorAttribute), out defaultCtorAttribute);
 
 			yield return ByType(typeof(CommandAttribute), out commandAttribute);
 			yield return ByType(typeof(FeedParameterAttribute), out commandParameterAttribute);
@@ -106,7 +106,7 @@ internal record BindableGenerationContext(
 			context,
 			feed!, input!, listFeed!, commandBuilder!, commandBuilderOfT!,
 			implicitCommandsAttribute!, implicitCommandParametersAttribute!,
-			bindableAttribute!, inputAttribute!, valueAttribute!, defaultRecordCtorAttribute!,
+			bindableAttribute!, inputAttribute!, valueAttribute!, defaultCtorAttribute!,
 			commandAttribute!, commandParameterAttribute!,
 			cancellationToken!, immutableArray!, immutableList!, immutableQueue!, immutableSet!, immutableStack!
 		);
@@ -339,6 +339,16 @@ internal record BindableGenerationContext(
 
 		static bool IsAwaiter(ITypeSymbol returnType)
 			=> returnType.AllInterfaces.Any(intf => intf.ToString().Equals(_notifyCompletion));
+	}
+
+	public IMethodSymbol? GetDefaultCtor(INamedTypeSymbol type)
+	{
+		return type
+			.Constructors
+			.Where(ctor => ctor.IsAccessible() && !ctor.IsCloneCtor(type))
+			.OrderBy(ctor => ctor.HasAttributes(DefaultCtorAttribute) ? 0 : 1)
+			.ThenBy(ctor => ctor.Parameters.Length)
+			.FirstOrDefault();
 	}
 
 #pragma warning disable RS1024 // Compare symbols correctly => FALSE POSITIVE
