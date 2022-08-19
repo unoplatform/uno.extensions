@@ -44,8 +44,17 @@ partial class AsyncCommand
 				bool isValid, wasValid = _externalParameter is { isValid: true };
 				try
 				{
-					isValid = parameter.Current.Data.IsSome(out var value)
-						&& (_config.CanExecute?.Invoke(value) ?? true);
+					isValid = parameter.Current.Data.IsSome(out var value);
+
+					if (isValid
+						&& _config.CanExecute is not null
+						&& _config.ParametersCoercing.TryCoerce(Option.Undefined<object?>(), Option.Some<object?>(value), out var p))
+					{
+						// If we are not able to coerce parameter here, we consider the value as valid,
+						// and we wait for the [Can]Execute to coerce the parameters with parameter from the view.
+
+						isValid = _config.CanExecute(p);
+					}
 
 					_externalParameter = (value, isValid);
 				}
@@ -62,7 +71,7 @@ partial class AsyncCommand
 			}
 		}
 
-		public bool CanExecute(object? parameter)
+		private bool TryCoerceParameter(ref object? parameter)
 		{
 			if (_externalParameter is { } externalParameter)
 			{
@@ -71,25 +80,24 @@ partial class AsyncCommand
 					return false;
 				}
 
-				parameter = externalParameter.value;
+				if (!_config.ParametersCoercing.TryCoerce(Option.Some(parameter), Option.Some(externalParameter.value), out parameter))
+				{
+					return false;
+				}
 			}
 
-			return !_command.IsExecutingFor(parameter) && (_config.CanExecute?.Invoke(parameter) ?? true);
+			return true;
 		}
+
+		public bool CanExecute(object? parameter)
+			=> TryCoerceParameter(ref parameter)
+				&& !_command.IsExecutingFor(parameter)
+				&& (_config.CanExecute?.Invoke(parameter) ?? true);
 
 		public bool TryExecute(object? parameter, SourceContext context, CancellationToken ct)
 		{
-			if (_externalParameter is { } externalParameter)
-			{
-				if (!externalParameter.isValid)
-				{
-					return false;
-				}
-
-				parameter = externalParameter.value;
-			}
-
-			if (!(_config.CanExecute?.Invoke(parameter) ?? true))
+			if (!TryCoerceParameter(ref parameter)
+				|| !(_config.CanExecute?.Invoke(parameter) ?? true))
 			{
 				return false;
 			}
