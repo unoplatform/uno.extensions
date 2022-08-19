@@ -13,7 +13,7 @@ public class Given_Apps_ToDo : NavigationTestBase
 		App.WaitThenTap("NarrowButton");
 
 		// Make sure the app has loaded
-		App.WaitForElement("WelcomeNavigationBar");
+		App.WaitElement("WelcomeNavigationBar");
 
 		// Login
 		await App.TapAndWait("LoginButton", "HomeNavigationBar");

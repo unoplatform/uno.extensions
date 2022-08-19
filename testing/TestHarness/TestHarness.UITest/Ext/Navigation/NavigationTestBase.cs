@@ -13,4 +13,5 @@ public abstract class NavigationTestBase : TestBase
 		App.WaitForElement(q => q.Marked(TestHarness.Constants.NavigationRoot));
 
 	}
+
 }

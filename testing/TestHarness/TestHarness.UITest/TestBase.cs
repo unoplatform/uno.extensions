@@ -1,9 +1,15 @@
-﻿namespace TestHarness.UITest;
+﻿using FluentAssertions.Common;
+
+namespace TestHarness.UITest;
 
 [TestFixture]
 public abstract class TestBase
 {
 	private IApp? _app;
+
+		private readonly string _screenShotPath = Environment.GetEnvironmentVariable("UNO_UITEST_SCREENSHOT_PATH");
+	private DateTime _startTime;
+
 
 	static TestBase()
 	{
@@ -33,6 +39,7 @@ public abstract class TestBase
 	[SetUp]
 	public void SetUpTest()
 	{
+		_startTime = DateTime.Now;
 		AppInitializer.ColdStartApp();
 		App = AppInitializer.AttachToApp();
 	}
@@ -40,7 +47,19 @@ public abstract class TestBase
 	[TearDown]
 	public void TearDownTest()
 	{
-		TakeScreenshot("teardown");
+		if (
+			TestContext.CurrentContext.Result.Outcome != ResultState.Success
+			&& TestContext.CurrentContext.Result.Outcome != ResultState.Skipped
+			&& TestContext.CurrentContext.Result.Outcome != ResultState.Ignored
+		)
+		{
+			TakeScreenshot($"{TestContext.CurrentContext.Test.Name} - Tear down on error", ignoreInSnapshotCompare: true);
+		}
+
+		WriteSystemLogs(GetCurrentStepTitle("log"));
+
+
+		Console.WriteLine($"Test completed - {TestContext.CurrentContext.Result.Outcome}");
 
 		// TODO: Update AppInitializer to correctly dispose currentApp rather than reusing it
 		App.Dispose();
@@ -105,19 +124,50 @@ public abstract class TestBase
 			.GetDependencyPropertyValue<bool>("IsPaneOpen");
 	}
 
-	public FileInfo TakeScreenshot(string stepName)
+	private void WriteSystemLogs(string fileName)
 	{
-		var title = $"{TestContext.CurrentContext.Test.Name}_{stepName}"
-			.Replace(" ", "_")
-			.Replace(".", "_");
+		if (_app != null && AppInitializer.GetLocalPlatform() == Platform.Browser)
+		{
+			var outputPath = string.IsNullOrEmpty(_screenShotPath)
+				? Environment.CurrentDirectory
+				: _screenShotPath;
 
-		var fileInfo = App.Screenshot(title);
+			using (var logOutput = new StreamWriter(Path.Combine(outputPath, $"{fileName}_{DateTime.Now:yyyy-MM-dd-HH-mm-ss.fff}.txt")))
+			{
+				foreach (var log in _app.GetSystemLogs(_startTime.ToUniversalTime()))
+				{
+					logOutput.WriteLine($"{log.Timestamp}/{log.Level}: {log.Message}");
+				}
+			}
+		}
+	}
+
+	public ScreenshotInfo? TakeScreenshot(string stepName, bool? ignoreInSnapshotCompare = null)
+		=> TakeScreenshot(
+			stepName,
+			ignoreInSnapshotCompare != null
+				? new ScreenshotOptions { IgnoreInSnapshotCompare = ignoreInSnapshotCompare.Value }
+				: new ScreenshotOptions()
+		);
+
+	public ScreenshotInfo? TakeScreenshot(string stepName, ScreenshotOptions options)
+	{
+		if (_app == null)
+		{
+			Console.WriteLine($"Skipping TakeScreenshot _app is not available");
+			return default;
+		}
+
+		var title = GetCurrentStepTitle(stepName);
+
+		var fileInfo = _app.Screenshot(title);
 
 		var fileNameWithoutExt = Path.GetFileNameWithoutExtension(fileInfo.Name);
 		if (fileNameWithoutExt != title)
 		{
 			var destFileName = Path
-				.Combine(Path.GetDirectoryName(fileInfo.FullName), title + Path.GetExtension(fileInfo.Name));
+				.Combine(Path.GetDirectoryName(fileInfo.FullName), title + Path.GetExtension(fileInfo.Name))
+				.GetNormalizedLongPath();
 
 			if (File.Exists(destFileName))
 			{
@@ -135,7 +185,32 @@ public abstract class TestBase
 			TestContext.AddTestAttachment(fileInfo.FullName, stepName);
 		}
 
-		return fileInfo;
+		if (options != null)
+		{
+			SetOptions(fileInfo, options);
+		}
+
+		return new ScreenshotInfo(fileInfo, stepName);
+	}
+
+	private static string GetCurrentStepTitle(string stepName) =>
+				$"{TestContext.CurrentContext.Test.Name}_{stepName}"
+					.Replace(" ", "_")
+					.Replace(".", "_")
+					.Replace(":", "_")
+					.Replace("(", "")
+					.Replace(")", "")
+					.Replace("\"", "")
+					.Replace(",", "_")
+					.Replace("__", "_");
+
+	public void SetOptions(FileInfo screenshot, ScreenshotOptions options)
+	{
+		var fileName = Path
+			.Combine(screenshot.DirectoryName, Path.GetFileNameWithoutExtension(screenshot.FullName) + ".metadata")
+			.GetNormalizedLongPath();
+
+		File.WriteAllText(fileName, $"IgnoreInSnapshotCompare={options.IgnoreInSnapshotCompare}");
 	}
 
 }

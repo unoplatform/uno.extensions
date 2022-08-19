@@ -33,13 +33,24 @@ public static class AppExtensions
 	public static Func<IAppQuery, IAppQuery> WaitThenTap(this IApp app, Func<IAppQuery, IAppQuery> query, TimeSpan? timeout = null)
 	{
 		app.WaitForElement(query, timeout: timeout);
+		Console.WriteLine("Tapping element");
 		app.Tap(query);
 
 		return query;
 	}
 
 	public static Func<IAppQuery, IAppQuery> WaitThenTap(this IApp app, string marked, TimeSpan? timeout = null)
-		=> WaitThenTap(app, q => q.All().Marked(marked), timeout);
+	{
+		Console.WriteLine($"Waiting (before Tap) for '{marked}'");
+		return WaitThenTap(app, q => q.All().Marked(marked), timeout);
+	}
+
+	public static IAppResult[] WaitElement(this IApp app, string marked, string timeoutMessage = "Timed out waiting for element '{0}'...", TimeSpan? timeout = null, TimeSpan? retryFrequency = null, TimeSpan? postTimeout = null)
+	{
+		Console.WriteLine($"Waiting for '{marked}'");
+		return app.WaitForElement(marked, string.Format(timeoutMessage,marked), timeout, retryFrequency, postTimeout);
+	}
+
 
 	public static QueryEx ToQueryEx(this Func<IAppQuery, IAppQuery> query) => new QueryEx(query);
 }
