@@ -110,7 +110,7 @@ public static class NavigationRequestExtensions
 		return route;
 	}
 
-	public static NavigationRequest ToRequest(
+	internal static NavigationRequest ToRequest(
 		this RouteHint hint,
 		INavigator navigator,
 		IRouteResolver resolver,

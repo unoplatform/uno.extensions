@@ -7,7 +7,7 @@ public static class NavigatorExtensions
 		return navigator.Get<IServiceProvider>()!.GetRequiredService<IRouteResolver>();
 	}
 
-	public static Task<NavigationResponse?> NavigateRouteHintAsync(
+	internal static Task<NavigationResponse?> NavigateRouteHintAsync(
 		this INavigator navigator, RouteHint routeHint, object sender, object? data, CancellationToken cancellation)
 	{
 		var resolver = navigator.GetResolver();
@@ -15,7 +15,7 @@ public static class NavigatorExtensions
 		return navigator.NavigateAsync(request);
 	}
 
-	public static async Task<NavigationResultResponse<TResult>?> NavigateRouteHintForResultAsync<TResult>(
+	internal static async Task<NavigationResultResponse<TResult>?> NavigateRouteHintForResultAsync<TResult>(
 		this INavigator navigator, RouteHint routeHint, object sender, object? data, CancellationToken cancellation)
 	{
 		var resolver = navigator.GetResolver();
@@ -224,14 +224,4 @@ public static class NavigatorExtensions
 		};
 		return default;
 	}
-}
-
-public record RouteHint
-{
-	public string? Route { get; init; }
-	public Type? ViewModel { get; init; }
-	public Type? View { get; init; }
-	public Type? Data { get; init; }
-	public Type? Result { get; set; }
-	public string? Qualifier { get; set; }
 }
