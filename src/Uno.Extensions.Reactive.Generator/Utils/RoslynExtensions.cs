@@ -167,4 +167,49 @@ internal static class RoslynExtensions
 			};
 		}
 	}
+
+	public static (bool isDefined, string? value) FindAttributeValue(this ISymbol symbol, INamedTypeSymbol attributeSymbol, string? propertyName = default, uint? ctorPosition = default)
+		=> FindAttributeValueCore<string>(symbol, attributeSymbol, propertyName, ctorPosition);
+
+	public static (bool isDefined, T? value) FindAttributeValue<T>(this ISymbol symbol, INamedTypeSymbol attributeSymbol, string? propertyName = default, uint? ctorPosition = default)
+		where T : struct
+		=> FindAttributeValueCore<T>(symbol, attributeSymbol, propertyName, ctorPosition) is { isDefined: true } result ? result : (false, default(T?));
+
+	private static (bool isDefined, T? value) FindAttributeValueCore<T>(this ISymbol symbol, INamedTypeSymbol attributeSymbol, string? propertyName = default, uint? ctorPosition = default)
+	{
+		if (propertyName is null && ctorPosition is null)
+		{
+			throw new InvalidOperationException($"You must define at least one of the {nameof(propertyName)} and the {nameof(ctorPosition)}");
+		}
+
+		var attribute = symbol.FindAttribute(attributeSymbol);
+		if (attribute is null)
+		{
+			return (false, default);
+		}
+		else if (propertyName is not null
+			&& attribute
+				.NamedArguments
+				.FirstOrDefault(kvp => kvp.Key.Equals(propertyName, StringComparison.Ordinal))
+				.Value is { IsNull: false } namedArg)
+		{
+			return (true, (T)namedArg.Value!);
+		}
+		else if (ctorPosition is not null
+			&& attribute
+				.ConstructorArguments
+				.ElementAt((int)ctorPosition.Value) is { IsNull: false } ctorArg)
+		{
+			return (true, (T)ctorArg.Value!);
+		}
+		else
+		{
+			// This case should happen only if the attribute has been set and we asked for a property that has not been set by the user.
+			// If the ctorPosition has been provided, even if the parameter has a default value, it will be resolved
+			return (true, default);
+		}
+	}
+
+	public static IPropertySymbol? FindProperty(this INamedTypeSymbol type, string propertyName, StringComparison comparison = StringComparison.Ordinal)
+		=> type.GetAllProperties().FirstOrDefault(property => property.Name.Equals(propertyName, comparison));
 }

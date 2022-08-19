@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Uno.Extensions.Reactive.Generator;
 
@@ -109,4 +110,7 @@ internal static class StringExtensions
 
 		return result.ToString();
 	}
+
+	public static string RemoveEmptyLines(this string text)
+		=> Regex.Replace(text, "^\\s*$", string.Empty, RegexOptions.Multiline);
 }
