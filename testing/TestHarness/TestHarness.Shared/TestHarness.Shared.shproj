@@ -10,8 +10,4 @@
   <PropertyGroup />
   <Import Project="TestHarness.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeSharing\Microsoft.CodeSharing.CSharp.targets" />
-  <ItemGroup>
-    <_Globbed_Compile Remove="BaseHostInitialization.cs" />
-    <_Globbed_Compile Remove="HostBuilderHelper.cs" />
-  </ItemGroup>
 </Project>

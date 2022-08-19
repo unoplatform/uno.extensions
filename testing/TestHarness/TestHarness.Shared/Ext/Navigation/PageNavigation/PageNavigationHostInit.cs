@@ -1,10 +1,21 @@
-﻿using System.Collections.Generic;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 
 namespace TestHarness;
 
 public class PageNavigationHostInit : BaseHostInitialization
 {
+	protected MessageDialogViewMap ConfirmDialog { get; }=
+		new MessageDialogViewMap(
+				Content: "Confirm this message?",
+				Title: "Confirm?",
+				DelayUserInput: true,
+				DefaultButtonIndex: 1,
+				Buttons: new DialogAction[]
+				{
+								new(Label: "Yeh!",Id:"Y"),
+								new(Label: "Nah", Id:"N")
+				}
+			);
 	protected override IHostBuilder Configuration(IHostBuilder builder)
 	{
 		return builder.UseConfiguration(configure: builder =>
@@ -17,20 +28,10 @@ public class PageNavigationHostInit : BaseHostInitialization
 	protected override void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 	{
 
-		var confirmDialog = new MessageDialogViewMap(
-				Content: "Confirm this message?",
-				Title: "Confirm?",
-				DelayUserInput: true,
-				DefaultButtonIndex: 1,
-				Buttons: new DialogAction[]
-				{
-								new(Label: "Yeh!",Id:"Y"),
-								new(Label: "Nah", Id:"N")
-				}
-			);
+		
 
 		views.Register(
-			confirmDialog
+			ConfirmDialog
 			);
 
 
@@ -39,7 +40,7 @@ public class PageNavigationHostInit : BaseHostInitialization
 			new RouteMap("",
 			Nested: new[]
 			{
-					new RouteMap("Confirm", View: confirmDialog),
+					new RouteMap("Confirm", View: ConfirmDialog),
 			}));
 	}
 }
