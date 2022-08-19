@@ -1,4 +1,7 @@
-﻿namespace Uno.Extensions.Configuration;
+﻿using System.Collections.Immutable;
+using System.ComponentModel;
+
+namespace Uno.Extensions.Configuration;
 
 public static class ServiceCollectionExtensions
 {
@@ -20,7 +23,13 @@ public static class ServiceCollectionExtensions
 			where T : class, new()
 	{
 		return services
-			.Configure<T>(section)
+			// Note - we've replaced the Configure method call with the three calls subsequent three calls so that
+			// we can use a local copy of ConfigurationBinder that handles ImmutableList
+			//.Configure<T>(section)
+			.AddOptions()
+			.AddSingleton<IOptionsChangeTokenSource<T>>(new ConfigurationChangeTokenSource<T>(Options.DefaultName, section))
+			.AddSingleton<IConfigureOptions<T>>(new Uno.Extensions.Configuration.Internal.NamedConfigureFromConfigurationOptions<T>(Options.DefaultName, section, _ => { }))
+
 			.AddTransient<IWritableOptions<T>>(provider =>
 			{
 				var logger = provider.GetRequiredService<ILogger<IWritableOptions<T>>>();
@@ -30,3 +39,4 @@ public static class ServiceCollectionExtensions
 			});
 	}
 }
+

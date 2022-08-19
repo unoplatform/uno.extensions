@@ -42,15 +42,6 @@ public class WritableOptions<T> : IWritableOptions<T>
 		return _options.Get(name);
 	}
 
-	public Task UpdateAsync(Action<T> applyChanges)
-	{
-		return UpdateAsync(options =>
-		{
-			applyChanges(options);
-			return options;
-		});
-	}
-
 	public async Task UpdateAsync(Func<T, T> applyChanges)
 	{
 		if (_logger.IsEnabled(LogLevel.Debug)) _logger.LogDebugMessage($@"Updating options, saving to file '{_file}'");
