@@ -91,8 +91,13 @@ public sealed class SourceContext : IAsyncDisposable
 	[EditorBrowsable(EditorBrowsableState.Advanced)]
 	public static void Set(object owner, SourceContext ctx)
 	{
-		if (_contexts.TryGetValue(owner, out _))
+		if (_contexts.TryGetValue(owner, out var current))
 		{
+			if (current == ctx)
+			{
+				return; // 'ctx' is already the context defined for the 'owner', nothing to do!
+			}
+
 			throw new InvalidOperationException($"'{owner}' already has a context attached.");
 		}
 

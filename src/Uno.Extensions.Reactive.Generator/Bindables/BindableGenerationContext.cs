@@ -11,23 +11,36 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Tags;
 using Uno.Extensions.Reactive.Bindings;
+using Uno.Extensions.Reactive.UI.Config;
+using Uno.Extensions.Reactive.UI.Presentation.Commands;
 
 namespace Uno.Extensions.Reactive.Generator;
 
 internal record BindableGenerationContext(
 	GeneratorExecutionContext Context,
 
+	// Core types
 	INamedTypeSymbol Feed,
 	INamedTypeSymbol Input,
 	INamedTypeSymbol ListFeed,
 	INamedTypeSymbol CommandBuilder,
 	INamedTypeSymbol CommandBuilderOfT,
 
+	// Generation config attributes
+	INamedTypeSymbol ImplicitCommandsAttribute,
+	INamedTypeSymbol ImplicitCommandParametersAttribute,
+
+	// Bindable attributes
 	INamedTypeSymbol BindableAttribute,
 	INamedTypeSymbol InputAttribute,
 	INamedTypeSymbol ValueAttribute,
-	INamedTypeSymbol DefaultRecordCtorAttribute,
+	INamedTypeSymbol DefaultCtorAttribute,
 
+	// Commands attributes
+	INamedTypeSymbol CommandAttribute,
+	INamedTypeSymbol CommandParameterAttribute,
+
+	// General stuff types
 	INamedTypeSymbol CancellationToken,
 	INamedTypeSymbol ImmutableArray,
 	INamedTypeSymbol ImmutableList,
@@ -40,7 +53,9 @@ internal record BindableGenerationContext(
 		var compilation = context.Compilation;
 
 		INamedTypeSymbol? feed = default, input = default, listFeed = default, commandBuilder = default, commandBuilderOfT = default;
-		INamedTypeSymbol? bindableAttribute = default, inputAttribute = default, valueAttribute = default, defaultRecordCtorAttribute = default;
+		INamedTypeSymbol? implicitCommandsAttribute = default, implicitCommandParametersAttribute = default;
+		INamedTypeSymbol? bindableAttribute = default, inputAttribute = default, valueAttribute = default, defaultCtorAttribute = default;
+		INamedTypeSymbol? commandAttribute = default, commandParameterAttribute = default;
 		INamedTypeSymbol? cancellationToken = default, immutableArray = default, immutableList = default, immutableQueue = default, immutableSet = default, immutableStack = default;
 
 		IEnumerable<string?> Resolve()
@@ -51,12 +66,18 @@ internal record BindableGenerationContext(
 			yield return ByName("Uno.Extensions.Reactive.ICommandBuilder", out commandBuilder);
 			yield return ByName("Uno.Extensions.Reactive.ICommandBuilder`1", out commandBuilderOfT);
 
+			yield return ByType(typeof(ImplicitCommandsAttribute), out implicitCommandsAttribute);
+			yield return ByType(typeof(ImplicitFeedCommandParametersAttribute), out implicitCommandParametersAttribute);
+
 			yield return ByType(typeof(ReactiveBindableAttribute), out bindableAttribute);
 			yield return ByType(typeof(InputAttribute), out inputAttribute);
 			yield return ByType(typeof(ValueAttribute), out valueAttribute);
-			yield return ByType(typeof(BindableDefaultConstructorAttribute), out defaultRecordCtorAttribute);
-			yield return ByType(typeof(CancellationToken), out cancellationToken);
+			yield return ByType(typeof(BindableDefaultConstructorAttribute), out defaultCtorAttribute);
 
+			yield return ByType(typeof(CommandAttribute), out commandAttribute);
+			yield return ByType(typeof(FeedParameterAttribute), out commandParameterAttribute);
+
+			yield return ByType(typeof(CancellationToken), out cancellationToken);
 			yield return ByType(typeof(ImmutableArray<>), out immutableArray);
 			yield return ByType(typeof(IImmutableList<>), out immutableList);
 			yield return ByType(typeof(IImmutableQueue<>), out immutableQueue);
@@ -82,8 +103,11 @@ internal record BindableGenerationContext(
 		error = null;
 		return new BindableGenerationContext
 		(
-			context, feed!, input!, listFeed!, commandBuilder!, commandBuilderOfT!,
-			bindableAttribute!, inputAttribute!, valueAttribute!, defaultRecordCtorAttribute!,
+			context,
+			feed!, input!, listFeed!, commandBuilder!, commandBuilderOfT!,
+			implicitCommandsAttribute!, implicitCommandParametersAttribute!,
+			bindableAttribute!, inputAttribute!, valueAttribute!, defaultCtorAttribute!,
+			commandAttribute!, commandParameterAttribute!,
 			cancellationToken!, immutableArray!, immutableList!, immutableQueue!, immutableSet!, immutableStack!
 		);
 	}
@@ -92,30 +116,9 @@ internal record BindableGenerationContext(
 		=> IsGenerationEnabled(symbol) ?? true;
 
 	public bool? IsGenerationEnabled(ISymbol symbol)
-	{
-		var generatorAttribute = symbol.FindAttribute(BindableAttribute);
-		if (generatorAttribute is null)
-		{
-			return null;
-		}
-		else if (generatorAttribute
-			.NamedArguments
-			.FirstOrDefault(kvp => kvp.Key.Equals(nameof(ReactiveBindableAttribute.IsEnabled), StringComparison.OrdinalIgnoreCase))
-			.Value is { IsNull: false } namedArg)
-		{
-			return (bool)namedArg.Value!;
-		}
-		else if (generatorAttribute
-			.ConstructorArguments
-			.ElementAtOrDefault(0) is { IsNull: false } ctorArg)
-		{
-			return (bool)ctorArg.Value!;
-		}
-		else
-		{
-			return true;
-		}
-	}
+		=> symbol.FindAttributeValue<bool>(BindableAttribute, nameof(ReactiveBindableAttribute.IsEnabled), 0) is { isDefined: true } attribute
+			? attribute.value ?? true
+			: null;
 
 	public bool IsFeed(ITypeSymbol type)
 		=> type.GetAllInterfaces().Select(intf => intf.OriginalDefinition).Contains(Feed, SymbolEqualityComparer.Default);
@@ -336,6 +339,16 @@ internal record BindableGenerationContext(
 
 		static bool IsAwaiter(ITypeSymbol returnType)
 			=> returnType.AllInterfaces.Any(intf => intf.ToString().Equals(_notifyCompletion));
+	}
+
+	public IMethodSymbol? GetDefaultCtor(INamedTypeSymbol type)
+	{
+		return type
+			.Constructors
+			.Where(ctor => ctor.IsAccessible() && !ctor.IsCloneCtor(type))
+			.OrderBy(ctor => ctor.HasAttributes(DefaultCtorAttribute) ? 0 : 1)
+			.ThenBy(ctor => ctor.Parameters.Length)
+			.FirstOrDefault();
 	}
 
 #pragma warning disable RS1024 // Compare symbols correctly => FALSE POSITIVE

@@ -103,8 +103,7 @@ so you can enhance the UX of the pagination, like display a loading indicator wh
 
 
 ## Commands
-The generated bindable counterpart of a class will automatically re-expose public methods that have 0 or 1 parameter and an optional `CancellationToken` as `ICommand`.
-The parameter will be fulfilled using the `CommandParameter` property.
+The generated bindable counterpart of a class will automatically re-expose as `ICommand` public methods that are compatible (cf. "general rules" below).
 
 For instance, in your ViewModel:
 
@@ -120,3 +119,59 @@ This will be exposed into an `ICommand` that can be data-bound to the `Command` 
 ```xml
 <Button Command="{Binding Share}" Content="Share" />
 ```
+
+By default, if the method has a parameter `T myValue` and there is a property `Feed<T> MyValue` on the same class (matching type and name), that parameter will automatically be filled from that feed.
+
+For instance, in your ViewModel:
+
+```csharp
+public IFeed<string> Message { get; }
+
+public async ValueTask Share(string message) 
+{
+
+}
+```
+
+Can be used with or without any `CommandParameter` from the view:
+
+```xml
+<!-- Without CommandParameter -->
+<!-- 'message' arg in the 'Share' method will be the current value of the Message _feed_ -->
+<Button Command="{Binding Share}" Content="Share" />
+
+<!-- With CommandParameter -->
+<!-- 'message' arg in the 'Share' method will be "hello world" -->
+<Button Command="{Binding Share}" CommandParameter="hello world" Content="Share" />
+```
+
+You can also use both "feed parameters" and "view parameter" (i.e. the value of the `CommandParameter`):
+
+```csharp
+public IFeed<MyEntity> Entity { get; }
+
+public async ValueTask Share(MyEntity entity, string origin) 
+{
+}
+```
+
+```xml
+<Button Command="{Binding Share}" CommandParameter="command_bar" Content="Share" />
+```
+
+General rules for methods to be re-exposed as commands are:
+* At most one paramater that cannot be resolved from a _Feed_  property in your VM (a.k.a the `CommandParameter`);
+* At most one `CancellationToken`;
+* Method can be sync, or async
+
+> [!NOTE]
+> The automatic parameters resolution be configured using attributes:
+> - `[ImplicitFeedCommandParameters(is_enabled)]` on assembly or class to enable or disable the implicit parameters resolution.
+> - `[FeedParameter("MyEntity")]` to explicit the property to use for a given parameter, e.g.
+>      ```csharp
+>      public IFeed<string> Message { get; }
+>      
+>      public async ValueTask Share([FeedParameter(nameof(Message))] string msg)
+>      {
+>      }
+>      ```

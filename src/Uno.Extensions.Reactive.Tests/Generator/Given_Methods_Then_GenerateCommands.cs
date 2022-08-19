@@ -1,10 +1,17 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using Windows.UI.Xaml;
 using FluentAssertions;
+using Microsoft.VisualStudio.TestPlatform.Common.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Uno.Extensions.Reactive.UI.Config;
 
 namespace Uno.Extensions.Reactive.Tests.Generator;
 
@@ -211,6 +218,286 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 		vm.EndedCount.Should().Be(1);
 	}
 
+	public partial class When_SyncOneFeedParameter_ViewModel
+	{
+		private TaskCompletionSource _execution = new();
+
+		public IFeed<string> MyParameter => Feed.Async(async ct => "42");
+
+		public int InvokeCount { get; set; }
+		public string? LastInvokeParameter { get; set; }
+
+		public void MyMethod(string myParameter)
+		{
+			LastInvokeParameter = myParameter;
+			InvokeCount++;
+		}
+
+		internal void EndExecution()
+			=> _execution?.SetResult();
+	}
+
+	[TestMethod]
+	public async Task When_SyncOneFeedParameter_WithoutCommandParameter()
+	{
+		var vm = new When_SyncOneFeedParameter_ViewModel.BindableWhen_SyncOneFeedParameter_ViewModel();
+
+		vm.MyMethod.Execute(null);
+		await WaitFor(() => vm.InvokeCount == 1);
+		 
+		vm.LastInvokeParameter.Should().Be("42");
+		vm.InvokeCount.Should().Be(1);
+	}
+
+	[TestMethod]
+	public async Task When_SyncOneFeedParameter_WithCommandParameter()
+	{
+		var vm = new When_SyncOneFeedParameter_ViewModel.BindableWhen_SyncOneFeedParameter_ViewModel();
+
+		vm.MyMethod.Execute("43");
+		await WaitFor(() => vm.InvokeCount == 1);
+
+		vm.LastInvokeParameter.Should().Be("43");
+		vm.InvokeCount.Should().Be(1);
+	}
+
+	public partial class When_AsyncOneFeedParameter_ViewModel
+	{
+		private TaskCompletionSource _execution = new();
+
+		public IFeed<string> MyParameter => Feed.Async(async ct => "42");
+
+		public int InvokeCount { get; set; }
+		public int EndedCount { get; set; }
+
+		public string? LastInvokeParameter { get; set; }
+
+		public async ValueTask MyMethod(string myParameter)
+		{
+			EndExecution();
+			LastInvokeParameter = myParameter;
+			InvokeCount++;
+			_execution = new();
+			await _execution.Task;
+			EndedCount++;
+		}
+
+		internal void EndExecution()
+			=> _execution?.SetResult();
+	}
+
+	[TestMethod]
+	public async Task When_AsyncOneFeedParameter_WithoutCommandParameter()
+	{
+		var vm = new When_AsyncOneFeedParameter_ViewModel.BindableWhen_AsyncOneFeedParameter_ViewModel();
+
+		vm.MyMethod.Execute(null);
+		await WaitFor(() => vm.InvokeCount == 1);
+
+		vm.LastInvokeParameter.Should().Be("42");
+		vm.InvokeCount.Should().Be(1);
+		vm.EndedCount.Should().Be(0);
+
+		vm.Model.EndExecution();
+		await WaitFor(() => vm.EndedCount == 1);
+
+		vm.EndedCount.Should().Be(1);
+	}
+
+	[TestMethod]
+	public async Task When_AsyncOneFeedParameter_WithCommandParameter()
+	{
+		var vm = new When_AsyncOneFeedParameter_ViewModel.BindableWhen_AsyncOneFeedParameter_ViewModel();
+
+		vm.MyMethod.Execute("43");
+		await WaitFor(() => vm.InvokeCount == 1);
+
+		vm.LastInvokeParameter.Should().Be("43");
+		vm.InvokeCount.Should().Be(1);
+		vm.EndedCount.Should().Be(0);
+
+		vm.Model.EndExecution();
+		await WaitFor(() => vm.EndedCount == 1);
+
+		vm.EndedCount.Should().Be(1);
+	}
+
+	public partial class When_MixedViewAndFeedParameter_ViewModel
+	{
+		public IFeed<string> MyParameter => Feed.Async(async ct => nameof(MyParameter));
+		public IFeed<string> MyParameter2 => Feed.Async(async ct => nameof(MyParameter2));
+
+		public int InvokeCount { get; set; }
+		public (string method, object[] args) LastInvoke { get; set; }
+
+		public void MyMethod(string theViewParameter, string myParameter)
+		{
+			LastInvoke = (nameof(MyMethod), new object[] { theViewParameter, myParameter });
+			InvokeCount++;
+		}
+
+		public void MyMethodWithCt(string theViewParameter, string myParameter, CancellationToken ct)
+		{
+			LastInvoke = (nameof(MyMethodWithCt), new object[] { theViewParameter, myParameter, _ct });
+			InvokeCount++;
+		}
+
+		public void MyMethod2(string myParameter, string theViewParameter)
+		{
+			LastInvoke = (nameof(MyMethod2), new object[] { myParameter, theViewParameter });
+			InvokeCount++;
+		}
+
+		public void MyMethod2WithCt(string myParameter, string theViewParameter, CancellationToken ct)
+		{
+			LastInvoke = (nameof(MyMethod2WithCt), new object[] { myParameter, theViewParameter, _ct });
+			InvokeCount++;
+		}
+
+		public void MyMethod3(string theViewParameter, string myParameter, string myParameter2)
+		{
+			LastInvoke = (nameof(MyMethod3), new object[] { theViewParameter, myParameter, myParameter2 });
+			InvokeCount++;
+		}
+
+		public void MyMethod3WithCt(string theViewParameter, string myParameter, string myParameter2, CancellationToken ct)
+		{
+			LastInvoke = (nameof(MyMethod3WithCt), new object[] { theViewParameter, myParameter, myParameter2, _ct });
+			InvokeCount++;
+		}
+	}
+
+	[TestMethod]
+	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod))]
+	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethodWithCt))]
+	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod2))]
+	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod2WithCt))]
+	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod))]
+	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethodWithCt))]
+	public async Task When_MixedViewAndFeedParameter_ViewModel_CanExecuteOnlyWithParameter(string method)
+	{
+		var vm = new When_MixedViewAndFeedParameter_ViewModel.BindableWhen_MixedViewAndFeedParameter_ViewModel();
+
+		var commandInfo = vm.GetType().GetMember(method).Single();
+		commandInfo.Should().BeAssignableTo<PropertyInfo>(because: "a command should have been generated for that method");
+
+		var command = ((PropertyInfo)commandInfo).GetValue(vm) as ICommand;
+		command.Should().NotBeNull();
+
+		command!.CanExecute(null).Should().BeFalse();
+	}
+
+	private const string _viewParam = "view_param";
+	private const string _ct = "CancellationToken";
+
+	[TestMethod]
+	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod), _viewParam, nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter))]
+	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethodWithCt), _viewParam, nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter), _ct)]
+	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod2), nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter), _viewParam)]
+	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod2WithCt), nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter), _viewParam, _ct)]
+	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod), _viewParam, nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter), nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter2))]
+	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethodWithCt), _viewParam, nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter), nameof(When_MixedViewAndFeedParameter_ViewModel.MyParameter2), _ct)]
+	private async Task When_MixedViewAndFeedParameter_ArgsReDispatchedProperly(string method, params string[] expectedArgs)
+	{
+		var vm = new When_MixedViewAndFeedParameter_ViewModel.BindableWhen_MixedViewAndFeedParameter_ViewModel();
+
+		var commandInfo = vm.GetType().GetMember(method).Single();
+		commandInfo.Should().BeAssignableTo<PropertyInfo>(because: "a command should have been generated for that method");
+
+		var command = ((PropertyInfo)commandInfo).GetValue(vm) as ICommand;
+		command.Should().NotBeNull();
+
+		command!.Execute(_viewParam);
+
+		await WaitFor(() => vm.InvokeCount == 1);
+
+		vm.InvokeCount.Should().Be(1);
+		vm.LastInvoke.method.Should().Be(method);
+		vm.LastInvoke.args.Should().BeEquivalentTo(expectedArgs);
+	}
+
+	[ImplicitCommands(false)]
+	public partial class When_ImplicitCommandDisabled_ViewModel
+	{
+		public void Sync() { }
+		public void SyncWithParameter(string myParameter) { }
+		public async Task Async() { }
+		public async Task AsyncWithParameter(string myParameter) { }
+		public async ValueTask Async2() { }
+		public async ValueTask AsyncWithParameter2(string myParameter) { }
+
+		[Uno.Extensions.Reactive.UI.Presentation.Commands.Command]
+		public void WithExplicitAttribute() { }
+	}
+
+	[TestMethod]
+	public async Task When_ImplicitCommandDisabled_ViewModel_Then_CommandNotGenerated()
+	{
+		GetMember(nameof(When_ImplicitCommandDisabled_ViewModel.Sync)).Should().NotBeNull().And.BeAssignableTo<MethodInfo>();
+		GetMember(nameof(When_ImplicitCommandDisabled_ViewModel.SyncWithParameter)).Should().NotBeNull().And.BeAssignableTo<MethodInfo>();
+		GetMember(nameof(When_ImplicitCommandDisabled_ViewModel.Async)).Should().NotBeNull().And.BeAssignableTo<MethodInfo>();
+		GetMember(nameof(When_ImplicitCommandDisabled_ViewModel.AsyncWithParameter)).Should().NotBeNull().And.BeAssignableTo<MethodInfo>();
+		GetMember(nameof(When_ImplicitCommandDisabled_ViewModel.Async2)).Should().NotBeNull().And.BeAssignableTo<MethodInfo>();
+		GetMember(nameof(When_ImplicitCommandDisabled_ViewModel.AsyncWithParameter2)).Should().NotBeNull().And.BeAssignableTo<MethodInfo>();
+
+		MemberInfo GetMember(string name)
+			=> typeof(When_ImplicitCommandDisabled_ViewModel.BindableWhen_ImplicitCommandDisabled_ViewModel).GetMember(name, BindingFlags.Instance | BindingFlags.Public).Single();
+	}
+
+	[TestMethod]
+	public async Task When_ImplicitCommandDisabledAndUseExplicitAttribute_ViewModel_Then_CommandGenerated()
+	{
+		GetMember(nameof(When_ImplicitCommandDisabled_ViewModel.WithExplicitAttribute))
+			.Should().NotBeNull()
+			.And.BeAssignableTo<PropertyInfo>()
+			.Subject.PropertyType.Should().BeAssignableTo(typeof(ICommand));
+
+		MemberInfo GetMember(string name)
+			=> typeof(When_ImplicitCommandDisabled_ViewModel.BindableWhen_ImplicitCommandDisabled_ViewModel).GetMember(name, BindingFlags.Instance | BindingFlags.Public).Single();
+	}
+
+	[ImplicitFeedCommandParameters(false)]
+	public partial class When_ImplicitFeedCommandDisabled_ViewModel
+	{
+		public IFeed<string> MyParameter { get; } = Feed.Async(async _ => "42");
+		public void SyncWithParameter(string myParameter) { }
+		public async Task AsyncWithParameter(string myParameter) { }
+		public async ValueTask AsyncWithParameter2(string myParameter) { }
+
+		public void WithExplicitAttribute([Uno.Extensions.Reactive.UI.Presentation.Commands.FeedParameter] string MyParameter) { }
+		public void WithExplicitAttributeWithName([Uno.Extensions.Reactive.UI.Presentation.Commands.FeedParameter(nameof(MyParameter))] string anArgument) { }
+	}
+
+	[TestMethod]
+	public async Task When_ImplicitFeedCommandDisabled_ViewModel_Then_ParameterNotUsed()
+	{
+		var vm = new When_ImplicitFeedCommandDisabled_ViewModel.BindableWhen_ImplicitFeedCommandDisabled_ViewModel();
+
+		var subs = GetSubCommands(vm.SyncWithParameter);
+		subs.Should().HaveCount(1);
+		HasExternalParameter(subs.First()).Should().BeFalse();
+
+		subs = GetSubCommands(vm.AsyncWithParameter);
+		subs.Should().HaveCount(1);
+		HasExternalParameter(subs.First()).Should().BeFalse();
+
+		subs = GetSubCommands(vm.AsyncWithParameter2);
+		subs.Should().HaveCount(1);
+		HasExternalParameter(subs.First()).Should().BeFalse();
+	}
+
+	[TestMethod]
+	public async Task When_ImplicitFeedCommandDisabledWithExplicitAttribute_ViewModel_Then_ParameterUsed()
+	{
+		var vm = new When_ImplicitFeedCommandDisabled_ViewModel.BindableWhen_ImplicitFeedCommandDisabled_ViewModel();
+
+		// We wait for the feed parameter to be full-filed
+		await WaitFor(() => vm.WithExplicitAttribute.CanExecute(null));
+		await WaitFor(() => vm.WithExplicitAttributeWithName.CanExecute(null));
+
+		GetSubCommands(vm.WithExplicitAttribute).Any(HasExternalParameter).Should().BeTrue(); 
+		GetSubCommands(vm.WithExplicitAttributeWithName).Any(HasExternalParameter).Should().BeTrue();
+	}
 
 	private async ValueTask WaitFor(Func<bool> predicate)
 	{
@@ -223,4 +510,20 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 			await Task.Delay(1, CT);
 		}
 	}
+
+	private static object[] GetSubCommands(ICommand command)
+			=> ((IEnumerable)((FieldInfo)command
+					.GetType()
+					.GetMember("_children", BindingFlags.Instance | BindingFlags.NonPublic)
+					.Single())
+				.GetValue(command)!)
+				.Cast<object>()
+				.ToArray();
+
+	private static bool HasExternalParameter(object subCommand)
+		=> ((FieldInfo)subCommand
+				.GetType()
+				.GetMember("_externalParameter", BindingFlags.Instance | BindingFlags.NonPublic)
+				.Single())
+			.GetValue(subCommand) is not null;
 }

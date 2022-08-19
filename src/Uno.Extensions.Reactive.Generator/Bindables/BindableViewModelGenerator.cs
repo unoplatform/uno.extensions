@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Uno.RoslynHelpers;
+using static Microsoft.CodeAnalysis.Accessibility;
 
 namespace Uno.Extensions.Reactive.Generator;
 
@@ -21,9 +22,10 @@ internal class BindableViewModelGenerator
 		_viewModelsMapping = new BindableViewModelMappingGenerator(ctx);
 	}
 
-	private bool IsSupported(INamedTypeSymbol type)
-		=> _ctx.IsGenerationEnabled(type)
-			?? type.Name.EndsWith("ViewModel", StringComparison.Ordinal) && type.IsPartial();
+	private bool IsSupported(INamedTypeSymbol? type)
+		=> type is not null
+			&& (_ctx.IsGenerationEnabled(type)
+				?? type.Name.EndsWith("ViewModel", StringComparison.Ordinal) && type.IsPartial());
 
 	public IEnumerable<(string fileName, string code)> Generate(IAssemblySymbol assembly)
 	{
@@ -47,20 +49,35 @@ internal class BindableViewModelGenerator
 
 	private string Generate(INamedTypeSymbol vm)
 	{
-		var inputs = GetInputs(vm).ToList();
-		var inputsErrors = inputs
-			.GroupBy(input => input.Parameter.Name)
-			.Where(group => group.Distinct().Count() > 1)
-			.Select(conflictingInput =>
-			{
-				var conflictingDeclarations = conflictingInput
-					.Distinct()
-					.Select(input => $"'{input.Parameter.Type}' [{input.Parameter.GetDeclaringLocationsDisplayString()}]")
-					.JoinBy(", ");
+		var hasBaseType = IsSupported(vm.BaseType);
+		var baseType = hasBaseType
+			? $"{vm.BaseType}.Bindable{vm.BaseType!.Name}"
+			: $"{NS.Bindings}.BindableViewModelBase";
 
-				return $"#error The input named '{conflictingInput.Key}' does not have the same type in all declared constructors (found types {conflictingDeclarations}).";
-			});
-		inputs = inputs.Distinct().ToList();
+		List<IInputInfo> inputs;
+		IEnumerable<string> inputsErrors;
+		if (hasBaseType || vm.IsAbstract)
+		{
+			inputs = new List<IInputInfo>(0);
+			inputsErrors = Enumerable.Empty<string>();
+		}
+		else
+		{
+			inputs = GetInputs(vm).ToList();
+			inputsErrors = inputs
+				.GroupBy(input => input.Parameter.Name)
+				.Where(group => group.Distinct().Count() > 1)
+				.Select(conflictingInput =>
+				{
+					var conflictingDeclarations = conflictingInput
+						.Distinct()
+						.Select(input => $"'{input.Parameter.Type}' [{input.Parameter.GetDeclaringLocationsDisplayString()}]")
+						.JoinBy(", ");
+
+					return $"#error The input named '{conflictingInput.Key}' does not have the same type in all declared constructors (found types {conflictingDeclarations}).";
+				});
+			inputs = inputs.Distinct().ToList();
+		}
 
 		var mappedMembers = GetMembers(vm).ToList();
 		var mappedMembersConflictingWithInputs = mappedMembers
@@ -72,7 +89,7 @@ internal class BindableViewModelGenerator
 		mappedMembers = mappedMembers.Except(mappedMembersConflictingWithInputs).ToList();
 
 		var bindableVmCode = $@"
-			public partial class Bindable{vm.Name} : {NS.Bindings}.BindableViewModelBase
+			public partial class Bindable{vm.Name} : {baseType} 
 			{{
 				{inputsErrors.Align(4)}
 				{inputs.Select(input => input.GetBackingField()).Align(4)}
@@ -80,42 +97,73 @@ internal class BindableViewModelGenerator
 
 				{vm
 					.Constructors
+					.Where(ctor => !ctor.IsCloneCtor(vm)
+						// we do not support inheritance of ctor, inheritance always goes through the same BindableVM(vm) ctor.
+						&& ctor.DeclaredAccessibility is not Protected and not ProtectedAndFriend and not ProtectedAndInternal)
 					.Where(_ctx.IsGenerationNotDisable)
 					.Select(ctor =>
 					{
-						var parameters = ctor
-							.Parameters
-							.Select(parameter => inputs.First(input => input.Parameter.Name.Equals(parameter.Name, StringComparison.OrdinalIgnoreCase)))
-							.ToArray();
+						if (hasBaseType)
+						{
+							var parameters = ctor
+								.Parameters
+								.Select(p => new ParameterInput(p))
+								.ToList();
 
-						var bindableVmParameters = parameters
-							.Select(param => param.GetCtorParameter())
-							.Where(param => param.code is not null)
-							.OrderBy(param => param.isOptional ? 1 : 0)
-							.Select(param => param.code)
-							.JoinBy(", ");
-						var vmParameters = parameters
-							.Select(param => param.GetVMCtorParameter())
-							.JoinBy(", ");
+							return $@"
+								{GetCtorAccessibility(ctor)} Bindable{vm.Name}({parameters.Select(p => p.GetCtorParameter().code).JoinBy(", ")})
+									: base(new {vm}({parameters.Select(p => p.GetVMCtorParameter()).JoinBy(", ")}))
+								{{
+									var {N.Ctor.Model} = {N.Model};
+									var {N.Ctor.Ctx} = {NS.Core}.SourceContext.GetOrCreate({N.Ctor.Model});
 
-						return $@"
-							{GetCtorAccessibility(ctor)} Bindable{vm.Name}({bindableVmParameters})
-							{{
-								{inputs.Select(input => input.GetCtorInit(parameters.Contains(input))).Align(8)}
+									{mappedMembers.Select(member => member.GetInitialization()).Align(9)}
+								}}";
+						}
+						else
+						{
+							var parameters = ctor
+								.Parameters
+								.Select(parameter => inputs.First(input => input.Parameter.Name.Equals(parameter.Name, StringComparison.OrdinalIgnoreCase)))
+								.ToArray();
 
-								var {N.Ctor.Model} = new {vm}({vmParameters});
-								var {N.Ctor.Ctx} = {NS.Core}.SourceContext.GetOrCreate({N.Ctor.Model});
-								{NS.Core}.SourceContext.Set(this, {N.Ctor.Ctx});
-								base.RegisterDisposable({N.Ctor.Model});
+							var bindableVmParameters = parameters
+								.Select(param => param.GetCtorParameter())
+								.Where(param => param.code is not null)
+								.OrderBy(param => param.isOptional ? 1 : 0)
+								.Select(param => param.code)
+								.JoinBy(", ");
+							var vmParameters = parameters
+								.Select(param => param.GetVMCtorParameter())
+								.JoinBy(", ");
 
-								{N.Model} = {N.Ctor.Model};
-								{inputs.Select(input => input.GetPropertyInit()).Align(8)}
-								{mappedMembers.Select(member => member.GetInitialization()).Align(8)}
-							}}";
+							return $@"
+								{GetCtorAccessibility(ctor)} Bindable{vm.Name}({bindableVmParameters})
+								{{
+									{inputs.Select(input => input.GetCtorInit(parameters.Contains(input))).Align(9)}
+
+									var {N.Ctor.Model} = new {vm}({vmParameters});
+									var {N.Ctor.Ctx} = {NS.Core}.SourceContext.GetOrCreate({N.Ctor.Model});
+									{NS.Core}.SourceContext.Set(this, {N.Ctor.Ctx});
+									base.RegisterDisposable({N.Ctor.Model});
+
+									{N.Model} = {N.Ctor.Model};
+									{inputs.Select(input => input.GetPropertyInit()).Align(9)}
+									{mappedMembers.Select(member => member.GetInitialization()).Align(9)}
+								}}";
+						}
 					})
 					.Align(4)}
 
-				public {vm} {N.Model} {{ get; }}
+				protected Bindable{vm.Name}({vm} {N.Ctor.Model}){(hasBaseType ? $" : base({N.Ctor.Model})" : "")}
+				{{
+					var {N.Ctor.Ctx} = {NS.Core}.SourceContext.GetOrCreate({N.Ctor.Model});
+					{(hasBaseType ? "" : $"{NS.Core}.SourceContext.Set(this, {N.Ctor.Ctx});")}
+
+					{mappedMembers.Select(member => member.GetInitialization()).Align(5)}
+				}}
+
+				public {(hasBaseType ? $"new {vm} {N.Model} => ({vm}) base.{N.Model};" : $"{vm} {N.Model} {{ get; }}")}
 
 				{inputs.Select(input => input.Property?.ToString()).Align(4)}
 
@@ -134,7 +182,13 @@ internal class BindableViewModelGenerator
 			}}";
 
 		// Inject usings and declare the full namespace, including class nesting
-		var fileCode = $@"#nullable enable
+		var fileCode = $@"//----------------------
+			// <auto-generated>
+			//	Generated by the {nameof(BindableViewModelGenerator)}. DO NOT EDIT!
+			//	Manual changes to this file will be overwritten if the code is regenerated.
+			// </auto-generated>
+			//----------------------
+			#nullable enable
 			#pragma warning disable
 
 			using System;
@@ -249,8 +303,8 @@ internal class BindableViewModelGenerator
 					yield return new MappedProperty(property);
 					break;
 
-				case IMethodSymbol method when CommandFromMethod.IsSupported(method, _ctx):
-					yield return new CommandFromMethod(method, _ctx);
+				case IMethodSymbol method when CommandFromMethod.TryCreate(type, method, _ctx, out var commandGenerator):
+					yield return commandGenerator;
 					break;
 
 				case IMethodSymbol { MethodKind: MethodKind.Ordinary, IsImplicitlyDeclared: false } method:

@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Text;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Text;
 using Uno.Extensions.Reactive.Generator.Utils;
 
 namespace Uno.Extensions.Reactive.Generator;
@@ -40,7 +36,6 @@ public partial class FeedsGenerator : ISourceGenerator
 		}
 		else
 		{
-			//context.GetLogger().Error(error);
 			throw new InvalidOperationException(error);
 		}
 	}
