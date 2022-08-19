@@ -21,6 +21,7 @@
 
 		<Grid Grid.Row="1">
 			<Button AutomationProperties.AutomationId="LoginButton"
+					VerticalAlignment="Top"
 					Content="Login"
 					Click="{x:Bind ViewModel.Login}" />
 		</Grid>
