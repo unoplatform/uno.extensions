@@ -8,7 +8,7 @@ public record DataMap(
 	Func<IServiceProvider, IDictionary<string, object>, Task<object?>>? UntypedFromQuery = null
 )
 {
-	internal virtual void RegisterTypes(IServiceCollection services)
+	public virtual void RegisterTypes(IServiceCollection services)
 	{
 	}
 }
@@ -22,7 +22,7 @@ public record DataMap<TData>(
 	async (IServiceProvider sp, IDictionary<string, object> query) => await ((FromQuery is not null && query is not null) ? FromQuery(sp, query) : Task.FromResult<TData?>(default)))
 	where TData : class
 {
-	internal override void RegisterTypes(IServiceCollection services)
+	public override void RegisterTypes(IServiceCollection services)
 	{
 		services.AddViewModelData<TData>();
 	}

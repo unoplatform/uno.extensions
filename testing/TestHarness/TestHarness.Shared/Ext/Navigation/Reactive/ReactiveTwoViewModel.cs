@@ -21,6 +21,10 @@ public partial class ReactiveTwoViewModel: BaseViewModel
 		await Navigator.NavigateDataAsync(this, data: new ThreeModel(new ReactiveWidget("From Two",34)));
 	}
 
+	public async Task GoToThreeDataByName()
+	{
+		await Navigator.NavigateViewModelAsync<ReactiveThreeViewModel>(this, data: "From Two - Name");
+	}
 
 	public async Task GoBack()
 	{
