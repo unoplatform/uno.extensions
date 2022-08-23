@@ -18,7 +18,7 @@ namespace Uno.Extensions.Reactive.Tests.Generator;
 [TestClass]
 public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 {
-	public partial class When_SyncParameterLess_Void_ViewModel
+	public partial class When_ParameterLess_Void_ViewModel
 	{
 		public int InvokeCount { get; set; }
 
@@ -27,9 +27,9 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	}
 
 	[TestMethod]
-	public async Task When_SyncParameterLess_Void()
+	public async Task When_ParameterLess_Void()
 	{
-		var vm = new When_SyncParameterLess_Void_ViewModel.BindableWhen_SyncParameterLess_Void_ViewModel();
+		var vm = new When_ParameterLess_Void_ViewModel.BindableWhen_ParameterLess_Void_ViewModel();
 
 		vm.MyMethod.Execute(null);
 		await WaitFor(() => vm.InvokeCount == 1);
@@ -37,7 +37,7 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 		vm.InvokeCount.Should().Be(1);
 	}
 
-	public partial class When_SyncOneParameter_Void_ViewModel
+	public partial class When_OneParameter_Void_ViewModel
 	{
 		public int InvokeCount { get; set; }
 
@@ -51,9 +51,9 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	}
 
 	[TestMethod]
-	public async Task When_SyncOneParameter_Void()
+	public async Task When_OneParameter_Void()
 	{
-		var vm = new When_SyncOneParameter_Void_ViewModel.BindableWhen_SyncOneParameter_Void_ViewModel();
+		var vm = new When_OneParameter_Void_ViewModel.BindableWhen_OneParameter_Void_ViewModel();
 
 		vm.MyMethod.Execute("42");
 		await WaitFor(() => vm.InvokeCount == 1);
@@ -62,7 +62,32 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 		vm.InvokeCount.Should().Be(1);
 	}
 
-	public partial class When_TaskParameterLess_Void_ViewModel
+	public partial class When_OneParameterAndCT_Void_ViewModel
+	{
+		public int InvokeCount { get; set; }
+
+		public string? LastInvokeParameter { get; set; }
+
+		public void MyMethod(string parameter, CancellationToken ct)
+		{
+			LastInvokeParameter = parameter;
+			InvokeCount++;
+		}
+	}
+
+	[TestMethod]
+	public async Task When_OneParameterAndCT_Void()
+	{
+		var vm = new When_OneParameterAndCT_Void_ViewModel.BindableWhen_OneParameterAndCT_Void_ViewModel();
+
+		vm.MyMethod.Execute("42");
+		await WaitFor(() => vm.InvokeCount == 1);
+
+		vm.LastInvokeParameter.Should().Be("42");
+		vm.InvokeCount.Should().Be(1);
+	}
+
+	public partial class When_ParameterLess_Task_ViewModel
 	{
 		private TaskCompletionSource _execution = new();
 
@@ -83,9 +108,9 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	}
 
 	[TestMethod]
-	public async Task When_TaskParameterLess_Void()
+	public async Task When_ParameterLess_Task()
 	{
-		var vm = new When_TaskParameterLess_Void_ViewModel.BindableWhen_TaskParameterLess_Void_ViewModel();
+		var vm = new When_ParameterLess_Task_ViewModel.BindableWhen_ParameterLess_Task_ViewModel();
 
 		vm.MyMethod.Execute(null);
 		await WaitFor(() => vm.InvokeCount == 1);
@@ -99,7 +124,7 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 		vm.EndedCount.Should().Be(1);
 	}
 
-	public partial class When_TaskOneParameter_Void_ViewModel
+	public partial class When_OneParameter_Task_ViewModel
 	{
 		private TaskCompletionSource _execution = new();
 
@@ -123,9 +148,9 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	}
 
 	[TestMethod]
-	public async Task When_TaskOneParameter_Void()
+	public async Task When_OneParameter_Task()
 	{
-		var vm = new When_TaskOneParameter_Void_ViewModel.BindableWhen_TaskOneParameter_Void_ViewModel();
+		var vm = new When_OneParameter_Task_ViewModel.BindableWhen_OneParameter_Task_ViewModel();
 
 		vm.MyMethod.Execute("42");
 		await WaitFor(() => vm.InvokeCount == 1);
@@ -140,7 +165,7 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 		vm.EndedCount.Should().Be(1);
 	}
 
-	public partial class When_ValueTaskParameterLess_Void_ViewModel
+	public partial class When_ParameterLess_ValueTask_ViewModel
 	{
 		private TaskCompletionSource _execution = new();
 
@@ -161,9 +186,9 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	}
 
 	[TestMethod]
-	public async Task When_ValueTaskParameterLess_Void()
+	public async Task When_ParameterLess_ValueTask()
 	{
-		var vm = new When_ValueTaskParameterLess_Void_ViewModel.BindableWhen_ValueTaskParameterLess_Void_ViewModel();
+		var vm = new When_ParameterLess_ValueTask_ViewModel.BindableWhen_ParameterLess_ValueTask_ViewModel();
 
 		vm.MyMethod.Execute(null);
 		await WaitFor(() => vm.InvokeCount == 1);
@@ -177,7 +202,7 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 		vm.EndedCount.Should().Be(1);
 	}
 
-	public partial class When_ValueTaskOneParameter_Void_ViewModel
+	public partial class When_OneParameter_ValueTask_ViewModel
 	{
 		private TaskCompletionSource _execution = new();
 
@@ -201,9 +226,9 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	}
 
 	[TestMethod]
-	public async Task When_ValueTaskOneParameter_Void()
+	public async Task When_OneParameter_ValueTask()
 	{
-		var vm = new When_ValueTaskOneParameter_Void_ViewModel.BindableWhen_ValueTaskOneParameter_Void_ViewModel();
+		var vm = new When_OneParameter_ValueTask_ViewModel.BindableWhen_OneParameter_ValueTask_ViewModel();
 
 		vm.MyMethod.Execute("42");
 		await WaitFor(() => vm.InvokeCount == 1);
@@ -218,7 +243,48 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 		vm.EndedCount.Should().Be(1);
 	}
 
-	public partial class When_SyncOneFeedParameter_ViewModel
+	public partial class When_OneParameterAndCT_ValueTask_ViewModel
+	{
+		private TaskCompletionSource _execution = new();
+
+		public int InvokeCount { get; set; }
+		public int EndedCount { get; set; }
+
+		public string? LastInvokeParameter { get; set; }
+
+		public async ValueTask MyMethod(string parameter, CancellationToken ct)
+		{
+			EndExecution();
+			LastInvokeParameter = parameter;
+			InvokeCount++;
+			_execution = new();
+			await _execution.Task;
+			EndedCount++;
+		}
+
+		internal void EndExecution()
+			=> _execution?.SetResult();
+	}
+
+	[TestMethod]
+	public async Task When_OneParameterAndCT_ValueTask()
+	{
+		var vm = new When_OneParameterAndCT_ValueTask_ViewModel.BindableWhen_OneParameterAndCT_ValueTask_ViewModel();
+
+		vm.MyMethod.Execute("42");
+		await WaitFor(() => vm.InvokeCount == 1);
+
+		vm.LastInvokeParameter.Should().Be("42");
+		vm.InvokeCount.Should().Be(1);
+		vm.EndedCount.Should().Be(0);
+
+		vm.Model.EndExecution();
+		await WaitFor(() => vm.EndedCount == 1);
+
+		vm.EndedCount.Should().Be(1);
+	}
+
+	public partial class When_OneFeedParameter_Void_ViewModel
 	{
 		private TaskCompletionSource _execution = new();
 
@@ -238,9 +304,9 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	}
 
 	[TestMethod]
-	public async Task When_SyncOneFeedParameter_WithoutCommandParameter()
+	public async Task When_OneFeedParameter_Void_WithoutCommandParameter()
 	{
-		var vm = new When_SyncOneFeedParameter_ViewModel.BindableWhen_SyncOneFeedParameter_ViewModel();
+		var vm = new When_OneFeedParameter_Void_ViewModel.BindableWhen_OneFeedParameter_Void_ViewModel();
 
 		vm.MyMethod.Execute(null);
 		await WaitFor(() => vm.InvokeCount == 1);
@@ -250,9 +316,9 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	}
 
 	[TestMethod]
-	public async Task When_SyncOneFeedParameter_WithCommandParameter()
+	public async Task When_OneFeedParameter_Void_WithCommandParameter()
 	{
-		var vm = new When_SyncOneFeedParameter_ViewModel.BindableWhen_SyncOneFeedParameter_ViewModel();
+		var vm = new When_OneFeedParameter_Void_ViewModel.BindableWhen_OneFeedParameter_Void_ViewModel();
 
 		vm.MyMethod.Execute("43");
 		await WaitFor(() => vm.InvokeCount == 1);
@@ -261,7 +327,50 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 		vm.InvokeCount.Should().Be(1);
 	}
 
-	public partial class When_AsyncOneFeedParameter_ViewModel
+	public partial class When_OneFeedParameterAndCT_Void_ViewModel
+	{
+		private TaskCompletionSource _execution = new();
+
+		public IFeed<string> MyParameter => Feed.Async(async ct => "42");
+
+		public int InvokeCount { get; set; }
+		public string? LastInvokeParameter { get; set; }
+
+		public void MyMethod(string myParameter, CancellationToken ct)
+		{
+			LastInvokeParameter = myParameter;
+			InvokeCount++;
+		}
+
+		internal void EndExecution()
+			=> _execution?.SetResult();
+	}
+
+	[TestMethod]
+	public async Task When_OneFeedParameterAndCT_Void_WithoutCommandParameter()
+	{
+		var vm = new When_OneFeedParameterAndCT_Void_ViewModel.BindableWhen_OneFeedParameterAndCT_Void_ViewModel();
+
+		vm.MyMethod.Execute(null);
+		await WaitFor(() => vm.InvokeCount == 1);
+
+		vm.LastInvokeParameter.Should().Be("42");
+		vm.InvokeCount.Should().Be(1);
+	}
+
+	[TestMethod]
+	public async Task When_OneFeedParameterAndCT_Void_WithCommandParameter()
+	{
+		var vm = new When_OneFeedParameterAndCT_Void_ViewModel.BindableWhen_OneFeedParameterAndCT_Void_ViewModel();
+
+		vm.MyMethod.Execute("43");
+		await WaitFor(() => vm.InvokeCount == 1);
+
+		vm.LastInvokeParameter.Should().Be("43");
+		vm.InvokeCount.Should().Be(1);
+	}
+
+	public partial class When_OneFeedParameter_ValueTask_ViewModel
 	{
 		private TaskCompletionSource _execution = new();
 
@@ -287,9 +396,9 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	}
 
 	[TestMethod]
-	public async Task When_AsyncOneFeedParameter_WithoutCommandParameter()
+	public async Task When_OneFeedParameter_ValueTask_WithoutCommandParameter()
 	{
-		var vm = new When_AsyncOneFeedParameter_ViewModel.BindableWhen_AsyncOneFeedParameter_ViewModel();
+		var vm = new When_OneFeedParameter_ValueTask_ViewModel.BindableWhen_OneFeedParameter_ValueTask_ViewModel();
 
 		vm.MyMethod.Execute(null);
 		await WaitFor(() => vm.InvokeCount == 1);
@@ -305,9 +414,70 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 	}
 
 	[TestMethod]
-	public async Task When_AsyncOneFeedParameter_WithCommandParameter()
+	public async Task When_OneFeedParameter_ValueTask_WithCommandParameter()
 	{
-		var vm = new When_AsyncOneFeedParameter_ViewModel.BindableWhen_AsyncOneFeedParameter_ViewModel();
+		var vm = new When_OneFeedParameter_ValueTask_ViewModel.BindableWhen_OneFeedParameter_ValueTask_ViewModel();
+
+		vm.MyMethod.Execute("43");
+		await WaitFor(() => vm.InvokeCount == 1);
+
+		vm.LastInvokeParameter.Should().Be("43");
+		vm.InvokeCount.Should().Be(1);
+		vm.EndedCount.Should().Be(0);
+
+		vm.Model.EndExecution();
+		await WaitFor(() => vm.EndedCount == 1);
+
+		vm.EndedCount.Should().Be(1);
+	}
+
+	public partial class When_OneFeedParameterAndCT_ValueTask_ViewModel
+	{
+		private TaskCompletionSource _execution = new();
+
+		public IFeed<string> MyParameter => Feed.Async(async ct => "42");
+
+		public int InvokeCount { get; set; }
+		public int EndedCount { get; set; }
+
+		public string? LastInvokeParameter { get; set; }
+
+		public async ValueTask MyMethod(string myParameter, CancellationToken ct)
+		{
+			EndExecution();
+			LastInvokeParameter = myParameter;
+			InvokeCount++;
+			_execution = new();
+			await _execution.Task;
+			EndedCount++;
+		}
+
+		internal void EndExecution()
+			=> _execution?.SetResult();
+	}
+
+	[TestMethod]
+	public async Task When_OneFeedParameterAndCT_ValueTask_WithoutCommandParameter()
+	{
+		var vm = new When_OneFeedParameterAndCT_ValueTask_ViewModel.BindableWhen_OneFeedParameterAndCT_ValueTask_ViewModel();
+
+		vm.MyMethod.Execute(null);
+		await WaitFor(() => vm.InvokeCount == 1);
+
+		vm.LastInvokeParameter.Should().Be("42");
+		vm.InvokeCount.Should().Be(1);
+		vm.EndedCount.Should().Be(0);
+
+		vm.Model.EndExecution();
+		await WaitFor(() => vm.EndedCount == 1);
+
+		vm.EndedCount.Should().Be(1);
+	}
+
+	[TestMethod]
+	public async Task When_OneFeedParameterAndCT_ValueTask_WithCommandParameter()
+	{
+		var vm = new When_OneFeedParameterAndCT_ValueTask_ViewModel.BindableWhen_OneFeedParameterAndCT_ValueTask_ViewModel();
 
 		vm.MyMethod.Execute("43");
 		await WaitFor(() => vm.InvokeCount == 1);

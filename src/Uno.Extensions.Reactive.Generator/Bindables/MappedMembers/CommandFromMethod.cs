@@ -128,18 +128,9 @@ internal partial record CommandFromMethod : IMappedMember
 
 				configs.Add(new CommandConfigGenerator(this)
 				{
-					ParameterType = GetTypeOrTuple(parameters),
+					ParameterType = GetTypeOrTuple(parameters.Where(p => !p.IsCancellation)),
 					DeconstructParameters = (args, ct) => GetDeconstruct(args, ct),
 				});
-
-				if (parameters.Any(p => p.IsCancellation))
-				{
-					configs.Add(new CommandConfigGenerator(this)
-					{
-						ParameterType = GetTypeOrTuple(parameters.Where(p => !p.IsCancellation)),
-						DeconstructParameters = (args, ct) => GetDeconstruct(args, ct),
-					});
-				}
 			}
 		}
 		else
@@ -148,20 +139,9 @@ internal partial record CommandFromMethod : IMappedMember
 
 			configs.Add(new CommandConfigGenerator(this)
 			{
-				ParameterType = GetTypeOrTuple(parameters),
+				ParameterType = GetTypeOrTuple(parameters.Where(p => !p.IsCancellation)),
 				DeconstructParameters = (args, ct) => GetDeconstruct(args, ct),
 			});
-
-
-			if (parameters.Any(p => p.IsCancellation))
-			{
-				//AddConfig(null, null, GetTypeOrTuple(parameters.Where(p => !p.IsCancellation)), null, GetDeconstruct(parameters));
-				configs.Add(new CommandConfigGenerator(this)
-				{
-					ParameterType = GetTypeOrTuple(parameters.Where(p => !p.IsCancellation)),
-					DeconstructParameters = (args, ct) => GetDeconstruct(args, ct),
-				});
-			}
 		}
 
 		string GetTypeOrTuple(IEnumerable<CommandParameter> parameters)
