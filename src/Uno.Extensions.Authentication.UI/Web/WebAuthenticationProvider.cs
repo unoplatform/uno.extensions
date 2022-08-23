@@ -45,6 +45,12 @@ internal record WebAuthenticationProvider
 			authData = authData.Substring(idx + 1);
 		}
 
+		idx = authData.IndexOf("#");
+		if (idx >= 0 && idx < authData.Length - 1)
+		{
+			authData = authData.Substring(idx + 1);
+		}
+
 		if (string.IsNullOrWhiteSpace(authData))
 		{
 			return default;

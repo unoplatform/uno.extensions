@@ -18,8 +18,8 @@ public class DiagnosticHandler : DelegatingHandler
 		var req = request;
 		try
 		{
-			_logger.LogInformationMessage($"Host: {req.RequestUri.Scheme}://{req.RequestUri.Host}");
-			_logger.LogInformationMessage($"Method: {req.Method} {req.RequestUri.PathAndQuery} {req.RequestUri.Scheme}/{req.Version}");
+			_logger.LogInformationMessage($"Host: {req.RequestUri?.Scheme}://{req.RequestUri?.Host}");
+			_logger.LogInformationMessage($"Method: {req.Method} {req.RequestUri?.PathAndQuery} {req.RequestUri?.Scheme}/{req.Version}");
 
 			foreach (var header in req.Headers)
 			{
@@ -37,7 +37,7 @@ public class DiagnosticHandler : DelegatingHandler
 		{
 			var resp = response;
 			_logger.LogInformationMessage(
-				$"Response: {req.RequestUri.Scheme.ToUpper()}/{resp.Version} {(int)resp.StatusCode} {resp.ReasonPhrase}");
+				$"Response: {req.RequestUri?.Scheme.ToUpper()}/{resp.Version} {(int)resp.StatusCode} {resp.ReasonPhrase}");
 
 			foreach (var header in resp.Headers)
 			{
