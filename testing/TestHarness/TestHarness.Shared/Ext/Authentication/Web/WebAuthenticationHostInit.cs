@@ -14,6 +14,7 @@ public class WebAuthenticationHostInit : BaseHostInitialization
 							.LoginStartUri("https://localhost:7193/webauth/Login/Facebook")
 							.PrepareLoginCallbackUri(
 									async (service,services, cache, login, ct)=> login!)
+										ValueTask.FromResult(login!))
 							.LoginCallbackUri("oidc-auth://")
 							.PostLogin(async
 							(authService, tokens, ct) =>
