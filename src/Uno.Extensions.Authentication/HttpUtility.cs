@@ -39,7 +39,7 @@ using System.Text;
 
 namespace System.Web
 {
-	internal sealed class AuthHttpUtility
+	public sealed class AuthHttpUtility
 	{
 		sealed class HttpQSCollection : NameValueCollection
 		{
@@ -83,6 +83,22 @@ namespace System.Web
 		#endregion // Constructors
 
 		#region Methods
+
+		public static NameValueCollection ExtractArguments(string uriString)
+		{
+			try
+			{
+				var uri = new Uri(uriString, UriKind.Absolute);
+				var query = !string.IsNullOrWhiteSpace(uri.Fragment)?
+								uri.Fragment :
+								uri.Query;
+				return ParseQueryString(query.TrimStart('#'));
+			}
+			catch
+			{
+				return new HttpQSCollection();
+			}
+		}
 
 		public static NameValueCollection ParseQueryString(string query)
 		{

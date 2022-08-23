@@ -26,6 +26,5 @@
 		<InternalsVisibleTo Include="$(AssemblyName).Msal.WinUI" />
 		<InternalsVisibleTo Include="$(AssemblyName).Oidc.UI" />
 		<InternalsVisibleTo Include="$(AssemblyName).Oidc.WinUI" />
-		<InternalsVisibleTo Include="TestHarness.UITest" />
 	</ItemGroup>
 </Project>
