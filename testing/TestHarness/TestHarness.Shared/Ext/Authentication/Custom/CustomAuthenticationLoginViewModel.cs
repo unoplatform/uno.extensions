@@ -4,7 +4,7 @@ public record class CustomAuthenticationLoginViewModel(INavigator Navigator, IAu
 {
 	public string? Name { get; set; } = DummyJsonEndpointConstants.ValidUserName;
 	public string? Password { get; set; } = DummyJsonEndpointConstants.ValidPassword;
-	public async Task Login()
+	public async void Login()
 	{
 		await Flow.LoginAsync(new Dictionary<string, string>()
 		{

@@ -2,7 +2,7 @@
 
 public record ToDoWelcomeViewModel(INavigator Navigator)
 {
-	public async Task Login()
+	public async void Login()
 	{
 		ToDoShellViewModel.Credentials = new ToDoCredentials();
 		await Navigator.NavigateRouteAsync(this, string.Empty);

@@ -77,6 +77,8 @@ public abstract class BaseHostInitialization : IHostInitialization
 	protected virtual IHostBuilder Logging(IHostBuilder builder)
 	{
 		return builder
+				.UseSerilog(true, true)
+
 				// Add platform specific log providers
 				.UseLogging(configure: (context, logBuilder) =>
 				{
