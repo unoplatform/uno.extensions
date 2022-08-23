@@ -68,12 +68,6 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			// Append Internal qualifier to avoid requests being sent back to parent
 			request = request with { Route = request.Route with { IsInternal = true } };
 
-
-			// Make sure the view has completely loaded before trying to process the nav request
-			// Typically this might happen with the first navigation of the application where the
-			// window hasn't been activated yet, so the root region may not have loaded
-			await Region.View.EnsureLoaded();
-
 			if (request.Route.IsDialog())
 			{
 				// Dialogs will load a separate navigation hierarchy
@@ -503,7 +497,11 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			request = request with { Result = null };
 		}
 
-		if(Region.Children.Count>0)
+		// This is required to ensure nested elements (eg Content in a ContentControl)
+		// are loaded. This will ensure the Children collection is correctly populated
+		await CheckLoadedAsync();
+
+		if (Region.Children.Count > 0)
 		{
 			// Force navigators to be created on the UI thread before they're accessed
 			var navigators = await Dispatcher.ExecuteAsync(async cancellation =>
@@ -526,7 +524,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 			var dataRoute = Resolver.FindByPath(request.Route.Base);
 			if (dataRoute is not null &&
-				!Region.Ancestors(true).Any(x=>x.Item1?.Base==dataRoute.Path))
+				!Region.Ancestors(true).Any(x => x.Item1?.Base == dataRoute.Path))
 			{
 				request = request with { Route = request.Route with { Base = dataRoute.Path } };
 			}
@@ -612,4 +610,9 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 	}
 
 	protected virtual string NavigatorToString { get; } = string.Empty;
+
+	protected virtual Task CheckLoadedAsync()
+	{
+		return Task.CompletedTask;
+	}
 }

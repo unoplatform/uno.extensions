@@ -36,7 +36,7 @@ public class NavigationRequestBinder
 
 			if (region is not null)
 			{
-				await region.EnsureLoaded();
+				await region.View.EnsureLoaded();
 
 				// This picks the last handler so that handlers can be overridden for
 				// specific controls by registering another handler

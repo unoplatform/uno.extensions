@@ -85,7 +85,11 @@ public class RouteResolverDefault : RouteResolver
 												Data: viewMap.Data?.Data,
 												ToQuery: viewMap?.Data?.UntypedToQuery,
 												FromQuery: viewMap?.Data?.UntypedFromQuery,
-												ResultData: viewMap?.ResultData);
+												ResultData: viewMap?.ResultData,
+												IsDialogViewType: () =>
+												{
+													return IsDialogViewType(viewFunc?.Invoke());
+												});
 			Mappings[defaultMapFromViewMap.Path] = defaultMapFromViewMap;
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Created default mapping from viewmap - Path '{defaultMapFromViewMap.Path}'");
 		}
@@ -107,7 +111,10 @@ public class RouteResolverDefault : RouteResolver
 		if (path is not null &&
 			!string.IsNullOrWhiteSpace(path))
 		{
-			var defaultMap = new RouteInfo(path, View: () => view, ViewModel: viewModel);
+			var defaultMap = new RouteInfo(path, View: () => view, ViewModel: viewModel, IsDialogViewType: () =>
+			{
+				return IsDialogViewType(view);
+			});
 			Mappings[defaultMap.Path] = defaultMap;
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Created default mapping - Path '{defaultMap.Path}'");
 			return new RouteInfo[] { defaultMap };

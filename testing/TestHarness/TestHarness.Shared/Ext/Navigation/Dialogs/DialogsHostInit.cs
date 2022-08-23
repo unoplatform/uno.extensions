@@ -1,6 +1,8 @@
-﻿namespace TestHarness.Ext.Navigation.MessageDialog;
+﻿
 
-public class MessageDialogHostInit : BaseHostInitialization
+namespace TestHarness.Ext.Navigation.Dialogs;
+
+public class DialogsHostInit : BaseHostInitialization
 {
 	protected override void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 	{
@@ -30,8 +32,6 @@ public class MessageDialogHostInit : BaseHostInitialization
 			);
 
 		views.Register(
-			new ViewMap<SimpleDialogsPage, SimpleDialogsViewModel>(),
-			new ViewMap<LocalizedDialogsPage, LocalizedDialogsViewModel>(),
 			confirmDialog,
 			localizedDialog
 			);
@@ -42,9 +42,8 @@ public class MessageDialogHostInit : BaseHostInitialization
 			new RouteMap("",
 			Nested: new[]
 			{
-				new RouteMap("Simple", View: views.FindByViewModel<SimpleDialogsViewModel>()),
-					new RouteMap("Confirm", View: confirmDialog),
-					new RouteMap("LocalizedConfirm", View: localizedDialog)
+				new RouteMap("Confirm", View: confirmDialog),
+				new RouteMap("LocalizedConfirm", View: localizedDialog)
 			}));
 	}
 

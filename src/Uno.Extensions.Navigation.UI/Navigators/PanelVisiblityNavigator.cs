@@ -91,8 +91,6 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 				CurrentlyVisibleControl.Visibility = Visibility.Collapsed;
 			}
 			CurrentlyVisibleControl = controlToShow;
-
-			await controlToShow.EnsureLoaded();
 		}
 
 		Control.ReassignRegionParent();

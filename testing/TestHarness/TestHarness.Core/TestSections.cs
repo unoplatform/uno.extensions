@@ -4,7 +4,7 @@ public enum TestSections
 {
 	PageNavigation,
 	PageNavigationRegistered,
-	MessageDialog,
+	Dialogs,
 	Responsive,
 	NavigationView,
 	Reactive,

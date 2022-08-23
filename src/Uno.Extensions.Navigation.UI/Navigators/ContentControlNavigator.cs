@@ -2,7 +2,8 @@
 
 public class ContentControlNavigator : ControlNavigator<ContentControl>
 {
-	protected override FrameworkElement? CurrentView => Control?.Content as FrameworkElement;
+	protected override FrameworkElement? CurrentView => _content;
+	private FrameworkElement? _content;
 
 	public ContentControlNavigator(
 		ILogger<ContentControlNavigator> logger,
@@ -23,7 +24,7 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 			return false;
 		}
 
-		if(routeMap is null )
+		if (routeMap is null)
 		{
 			return false;
 		}
@@ -38,7 +39,7 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 		if (viewType is null ||
 			viewType.IsSubclassOf(typeof(Page)))
 		{
-			if (Logger.IsEnabled(LogLevel.Error)) Logger.LogErrorMessage($"Missing view for navigation path '{path}'");
+			if (viewType is null && Logger.IsEnabled(LogLevel.Warning)) Logger.LogWarningMessage($"Missing view for navigation path '{path}'");
 			path = viewType is null ? path : default;
 			viewType = typeof(UI.Controls.FrameView);
 		}
@@ -61,13 +62,10 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 				fe.SetName(path);
 			}
 			Control.Content = content;
+			_content = Control.Content as FrameworkElement;
 
-
-			if (await (Control.Content as FrameworkElement).EnsureLoaded())
-			{
-				if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage("Instance created");
-				return path;
-			}
+			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage("Instance created");
+			return path;
 		}
 		catch (Exception ex)
 		{
@@ -80,4 +78,7 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 
 		return default;
 	}
+
+	protected override Task CheckLoadedAsync() => _content is not null ? _content.EnsureLoaded() : Task.CompletedTask;
+
 }

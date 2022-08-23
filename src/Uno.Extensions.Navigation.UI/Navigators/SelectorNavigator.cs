@@ -73,8 +73,6 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 		}
 		finally
 		{
-			await SelectedItem.EnsureLoaded();
-
 			_detachSelectionChanged = AttachSelectionChanged(SelectionChanged);
 		}
 	}
@@ -85,8 +83,6 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 		{
 			return;
 		}
-
-		await selectedItem.EnsureLoaded();
 
 		var path = selectedItem.GetRegionOrElementName();
 		var nav = Region.Navigator();

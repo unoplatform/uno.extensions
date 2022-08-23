@@ -2,8 +2,6 @@
 
 public static class FrameworkElementExtensions
 {
-	public static bool DisableLoadWaiting { get; set; }
-
 	/// <summary>
 	/// Attaches the specified IServiceProvider instance to the <paramref name="element"/> using the
 	/// Region.ServiceProvider attached property. Any child element can access the IServiceProvider
@@ -72,33 +70,6 @@ public static class FrameworkElementExtensions
 		await afterStartup();
 	}
 
-	public static async Task EnsureLoaded(this IRegion region)
-	{
-		if (DisableLoadWaiting)
-		{
-			return;
-		}
-
-		if (region.Services is not null)
-		{
-			return;
-		}
-
-		if (region?.View is null)
-		{
-			return;
-		}
-
-		await region.View.EnsureLoaded();
-
-		if (region.Parent is null)
-		{
-			return;
-		}
-
-		await region.Parent.EnsureLoaded();
-	}
-
 	private static DispatcherQueue? GetDispatcher(this FrameworkElement? element) =>
 #if WINUI
 		element?.DispatcherQueue;
@@ -106,7 +77,7 @@ public static class FrameworkElementExtensions
 		Windows.ApplicationModel.Core.CoreApplication.MainView.DispatcherQueue;
 #endif
 
-	public static async Task<bool> EnsureLoaded(this FrameworkElement? element)
+	public static async Task<bool> EnsureLoaded(this FrameworkElement? element, int? timeoutInSeconds=1)
 	{
 		if (element is null)
 		{
@@ -117,7 +88,9 @@ public static class FrameworkElementExtensions
 		var success = true;
 		if (dispatcher is not null)
 		{
-			var timeoutToken = new CancellationTokenSource(TimeSpan.FromSeconds(1)).Token;
+			var timeoutToken = (timeoutInSeconds is not null?
+								new CancellationTokenSource(TimeSpan.FromSeconds(timeoutInSeconds??0.0)):
+								new CancellationTokenSource()).Token;
 			success = await dispatcher.ExecuteAsync(async () =>
 			{
 				try
