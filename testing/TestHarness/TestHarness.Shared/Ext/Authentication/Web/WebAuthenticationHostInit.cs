@@ -12,8 +12,11 @@ public class WebAuthenticationHostInit : BaseHostInitialization
 					.AddWeb<IWebAuthenticationTestEndpoint>(web =>
 						web
 							.LoginStartUri("https://localhost:7193/webauth/Login/Facebook")
+							.PrepareLoginCallbackUri(
+									(service,services, cache, login, ct)=>
+										ValueTask.FromResult(login!))
 							.LoginCallbackUri("oidc-auth://")
-							.PostLogin<IWebAuthenticationTestEndpoint>(async
+							.PostLogin(async
 							(authService, tokens, ct) =>
 							{
 								return tokens;
