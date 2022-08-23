@@ -1,6 +1,4 @@
-﻿using Uno.Extensions.Reactive;
-
-namespace TestHarness.Ext.Navigation.Reactive;
+﻿namespace TestHarness.Ext.Navigation.Reactive;
 
 public partial class ReactiveThreeViewModel : BaseViewModel
 {

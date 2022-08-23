@@ -9,11 +9,11 @@ public record CommerceDealsViewModel(INavigator Navigator) : BaseCommerceViewMod
 					new CommerceProduct("Sun glasses (deal)"),
 					new CommerceProduct("Watch (deal)")
 				};
-	public async Task ShowFirstProductUIThread()
+	public async void ShowFirstProductUIThread()
 	{
 		await Navigator.NavigateDataAsync(this, Deals.First());
 	}
-	public async Task ShowFirstProductBackgroundThread()
+	public async void ShowFirstProductBackgroundThread()
 	{
 		await Task.Run(async () =>
 		{

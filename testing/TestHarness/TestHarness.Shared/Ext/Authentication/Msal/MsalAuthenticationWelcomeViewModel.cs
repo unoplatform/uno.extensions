@@ -1,6 +1,4 @@
-﻿using TestHarness.Ext.Authentication.Custom;
-
-namespace TestHarness.Ext.Authentication.MSAL;
+﻿namespace TestHarness.Ext.Authentication.MSAL;
 
 public record MsalAuthenticationWelcomeViewModel(INavigator Navigator, IAuthenticationFlow Flow, IAuthenticationService Authentication)
 {
@@ -8,7 +6,7 @@ public record MsalAuthenticationWelcomeViewModel(INavigator Navigator, IAuthenti
 
 	public string? SelectedProvider { get; set; }
 
-	public async Task Login()
+	public async void Login()
 	{
 		if(SelectedProvider is null)
 		{

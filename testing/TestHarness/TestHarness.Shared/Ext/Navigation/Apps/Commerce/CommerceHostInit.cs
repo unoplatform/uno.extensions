@@ -4,42 +4,6 @@ public class CommerceHostInit : BaseHostInitialization
 {
 	protected override string[] ConfigurationFiles => new string[] { "TestHarness.Ext.Navigation.Apps.Commerce.appsettings.logging.json" };
 
-
-	public IHost InitializeHost()
-	{
-
-		return UnoHost
-				.CreateDefaultBuilder()
-#if DEBUG
-				// Switch to Development environment when running in DEBUG
-				.UseEnvironment(Environments.Development)
-#endif
-
-				// Add platform specific log providers
-				.UseLogging(configure: (context, logBuilder) =>
-				{
-					var host = context.HostingEnvironment;
-					// Configure log levels for different categories of logging
-					logBuilder.SetMinimumLevel(host.IsDevelopment() ? LogLevel.Trace : LogLevel.Warning);
-				})
-
-				// Only use this syntax for UI tests - use UseConfiguration in apps
-				.ConfigureAppConfiguration((ctx, b) =>
-				{
-					b.AddEmbeddedConfigurationFile<App>("TestHarness.Ext.Navigation.Apps.Commerce.appsettings.logging.json");
-				})
-
-				.UseSerilog(true, true)
-
-				// Enable navigation, including registering views and viewmodels
-				.UseNavigation(RegisterRoutes)
-
-				.UseToolkitNavigation()
-
-				.Build(enableUnoLogging: true);
-	}
-
-
 	protected override void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 	{
 
