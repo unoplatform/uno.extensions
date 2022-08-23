@@ -12,6 +12,7 @@ global using Microsoft.Extensions.Logging;
 global using TestHarness.Ext.Navigation.MessageDialog;
 global using TestHarness.Ext.Navigation.PageNavigation;
 global using TestHarness.Models;
+global using TestHarness;
 global using Uno.Extensions;
 global using Uno.Extensions.Authentication;
 global using Uno.Extensions.Configuration;

@@ -4,7 +4,6 @@ public class Given_Apps_Commerce : NavigationTestBase
 {
 	[Test]
 	[Ignore("https://github.com/unoplatform/uno.extensions/issues/626")]
-	[Retry(5)]
 	public async Task When_Commerce_Responsive()
 	{
 		InitTestSection(TestSections.Apps_Commerce);
@@ -15,7 +14,7 @@ public class Given_Apps_Commerce : NavigationTestBase
 		App.WaitThenTap("NarrowButton");
 
 		// Make sure the app has loaded
-		App.WaitForElement("LoginNavigationBar");
+		App.WaitElement("LoginNavigationBar");
 
 		// Login
 		App.WaitThenTap("LoginButton");
@@ -53,7 +52,7 @@ public class Given_Apps_Commerce : NavigationTestBase
 		App.WaitThenTap("WideButton");
 
 		// Make sure the app has loaded
-		App.WaitForElement("LoginNavigationBar");
+		App.WaitElement("LoginNavigationBar");
 
 		// Login
 		App.WaitThenTap("LoginButton");
@@ -72,14 +71,14 @@ public class Given_Apps_Commerce : NavigationTestBase
 		await App.TapAndWait("DealsNavigationViewItem", "DealsListView");
 
 		await App.SelectListViewIndexAndWait("DealsListView", "2", "ProductDetailsNavigationBar");
-		App.WaitForElement("DealsNavigationBar");
+		App.WaitElement("DealsNavigationBar");
 
 
 		// Select a product
 		await App.TapAndWait("ProductsNavigationViewItem", "ProductsListView");
 
 		await App.SelectListViewIndexAndWait("ProductsListView", "1", "ProductDetailsNavigationBar");
-		App.WaitForElement("ProductsNavigationBar");
+		App.WaitElement("ProductsNavigationBar");
 
 		// Log out
 		App.WaitThenTap("ProfileNavigationViewItem");
@@ -99,7 +98,7 @@ public class Given_Apps_Commerce : NavigationTestBase
 		App.WaitThenTap("WideButton");
 
 		// Make sure the app has loaded
-		App.WaitForElement("LoginNavigationBar");
+		App.WaitElement("LoginNavigationBar");
 
 		// Login
 		App.WaitThenTap("LoginButton");
@@ -153,7 +152,7 @@ public class Given_Apps_Commerce : NavigationTestBase
 		App.WaitThenTap("WideButton");
 
 		// Make sure the app has loaded
-		App.WaitForElement("LoginNavigationBar");
+		App.WaitElement("LoginNavigationBar");
 
 		// Login
 		App.WaitThenTap("LoginButton");
@@ -164,14 +163,14 @@ public class Given_Apps_Commerce : NavigationTestBase
 
 		await App.TapAndWait("ProductsNavigationViewItem", "ProductsNavigationBar");
 
-		await App.TapAndWait("FirstProductButton", "ProductDetailsNavigationBar"); // Navigation by product data type finds the dealsproducts route first!
+		await App.TapAndWait("FirstProductButton", "ProductDetailsNavigationBar");
 
-		await App.TapAndWait("DetailsBackButton", "DealsNavigationBar");
+		await App.TapAndWait("DealsNavigationViewItem", "DealsNavigationBar");
 
 		await App.TapAndWait("ProductsNavigationViewItem", "ProductsNavigationBar");
 
-		await App.TapAndWait("FirstProductBackgroundButton", "ProductDetailsNavigationBar"); // Navigation by product data type finds the dealsproducts route first!
+		await App.TapAndWait("FirstProductBackgroundButton", "ProductDetailsNavigationBar");
 
-		await App.TapAndWait("DetailsBackButton", "DealsNavigationBar");
+		await App.TapAndWait("DealsNavigationViewItem", "DealsNavigationBar");
 	}
 }

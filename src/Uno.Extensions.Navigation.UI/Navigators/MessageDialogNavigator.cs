@@ -36,7 +36,7 @@ public class MessageDialogNavigator : DialogNavigator
 			return null;
 		}
 
-		var messageView = Resolver.Find(route)?.ViewAttributes as MessageDialogAttributes;
+		var messageView = Resolver.FindByPath(route.Base)?.ViewAttributes as MessageDialogAttributes;
 
 		var content = (data.TryGetValue(RouteConstants.MessageDialogParameterContent, out var contentValue) ?
 						contentValue as string : default) ??

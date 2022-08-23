@@ -106,6 +106,8 @@
 					<StackPanel Orientation="Horizontal">
 						<Button Content="Products (threading test)"
 								Click="{x:Bind ViewModel.GoToProducts}" />
+						<Button Content="Products (clear stack)"
+								Click="{x:Bind ViewModel.GoToProductsClearStack}" />
 					</StackPanel>
 					<Grid uen:Region.Attached="True"
 						  uen:Region.Navigator="Visibility" Grid.Row="1"/>

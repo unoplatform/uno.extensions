@@ -3,7 +3,7 @@
 
 namespace TestHarness.Ext.Authentication.Custom;
 
-public class CustomAuthenticationHostInit : IHostInitialization
+public class CustomAuthenticationHostInit : BaseHostInitialization
 {
 	public IHost InitializeHost()
 	{
@@ -105,7 +105,7 @@ public class CustomAuthenticationHostInit : IHostInitialization
 	}
 
 
-	private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
+	protected override void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 	{
 
 		views.Register(

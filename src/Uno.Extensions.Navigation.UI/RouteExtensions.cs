@@ -65,7 +65,8 @@ public static class RouteExtensions
 	public static (Route, RouteInfo?, bool)[] ForwardNavigationSegments(
 		this Route route,
 		IRouteResolver mappings,
-		IRegion region)
+		IRegion region,
+		bool includeCurrentRegionRoute)
 	{
 		// Here we're interested in the actual page navigation segments.
 		// Start with an empty list, and progressively add routes that
@@ -79,8 +80,8 @@ public static class RouteExtensions
 
 		// For routes that have a depends on, we need to ensure that
 		// the dependson segments are added to the segments list
-		var r = route.RootDependsOn(mappings, region, false);
-		var map = mappings.Find(r);
+		var r = route.RootDependsOn(mappings, region, includeCurrentRegionRoute);
+		var map = mappings.FindByPath(r.Base);
 		var originalRoute = false;
 		while (
 			!r.IsEmpty() &&
@@ -98,7 +99,7 @@ public static class RouteExtensions
 			originalRoute = originalRoute || r.Base == route.Base;
 			segs.Add((r with { Qualifier = Qualifiers.None, Path = null, Data = null }, map, !originalRoute));
 			r = r.Next();
-			map = mappings.Find(r);
+			map = mappings.FindByPath(r.Base);
 		}
 
 		if (segs.Any())
@@ -167,7 +168,10 @@ public static class RouteExtensions
 		{
 			return route with { Base = routeToAppend.Base };
 		}
-		return route with { Path = route.Path + (routeToAppend.Qualifier == Qualifiers.Nested ? Qualifiers.Separator : routeToAppend.Qualifier) + routeToAppend.Base + routeToAppend.Path };
+		return route with {
+			Path = string.IsNullOrWhiteSpace( route.Path) ?
+						routeToAppend.Base + (!string.IsNullOrWhiteSpace(routeToAppend.Base) && !string.IsNullOrWhiteSpace(routeToAppend.Path)? Qualifiers.Separator:"") + routeToAppend.Path :
+						route.Path + ((routeToAppend.Qualifier == Qualifiers.Nested  || routeToAppend.Qualifier==Qualifiers.None)? Qualifiers.Separator : routeToAppend.Qualifier) + routeToAppend.Base + routeToAppend.Path };
 	}
 
 	public static Route AppendPage<TPage>(this Route route)
@@ -223,7 +227,7 @@ public static class RouteExtensions
 
 	public static bool Contains(this Route route, string path)
 	{
-		return route.Base == path || (route.Path?.Contains(path, StringComparison.InvariantCultureIgnoreCase) ?? false);
+		return route.Base == path || (route.Path?.Split('/').Any(x=>x==path)?? false);
 	}
 
 	public static Route Next(this Route route)
@@ -239,7 +243,7 @@ public static class RouteExtensions
 
 	public static bool IsPageRoute(this Route route, IRouteResolver mappings)
 	{
-		return mappings.Find(route).IsPageRouteMap();
+		return mappings.FindByPath(route.Base).IsPageRouteMap();
 	}
 
 	public static bool IsPageRouteMap(this RouteInfo? rm)
@@ -374,7 +378,7 @@ public static class RouteExtensions
 		}
 		else
 		{
-			var segments = currentRoute.ForwardNavigationSegments(resolver, region).ToList();
+			var segments = currentRoute.ForwardNavigationSegments(resolver, region, true).ToList();
 			foreach (var qualifierChar in qualifier)
 			{
 				if (qualifierChar + "" == Qualifiers.NavigateBack)
@@ -387,7 +391,7 @@ public static class RouteExtensions
 				}
 			}
 
-			var newSegments = frameRoute.ForwardNavigationSegments(resolver, region);
+			var newSegments = frameRoute.ForwardNavigationSegments(resolver, region, false);
 			if (newSegments is not null)
 			{
 				newSegments = (from seg in newSegments
@@ -411,41 +415,58 @@ public static class RouteExtensions
 	public static Route RootDependsOn(this Route currentRoute, IRouteResolver resolver, IRegion region, bool includeCurrentRegion)
 	{
 		var rm = resolver.FindByPath(currentRoute.Base);
-		//if ((rm is null ||
-		//	string.IsNullOrEmpty(rm.DependsOn)) &&
-		//	region.Navigator()?.Route?.Base == currentRoute.Base &&
-		//	!includeCurrentRegion)
-		//{
-		//	return Route.Empty;
-		//}
 
-		while (rm is not null &&
-			!string.IsNullOrEmpty(rm.DependsOn))
+		var dependsRoute = Route.Empty;
+
+		var ancestors = region.Ancestors(true);
+		while (rm is not null)
 		{
-			var ancestors = region.Ancestors(true);
-			if (ancestors.Any(x => x.Item1?.Base == rm.DependsOn))
+			if (ancestors.Any(x => x.Item1?.Contains(rm.Path) ?? false))
 			{
+				var nav = region.Navigator();
+				var route = (nav is IDeepRouteNavigator deepnav) ? deepnav.FullRoute : nav?.Route;
 				// In the scenario where we're testing to see if we can navigate to the currentRoute
 				// the root Route needs to include the route for the current region
 				// In the scenario where we're navigating to the currentRoute, we don't
 				// want to include the route for the current region (since the region
 				// is already at that route)
 				if (includeCurrentRegion &&
-					region.Navigator()?.Route?.Base == rm.DependsOn)
+					(route?.Contains(rm.Path) ?? false))
 				{
-					currentRoute = currentRoute.Insert(rm.DependsOn);
+					dependsRoute = dependsRoute.Insert(rm.Path);
+				}
+				currentRoute = currentRoute.Next();
+				while(!currentRoute.IsEmpty())
+				{
+					dependsRoute = dependsRoute.Append(currentRoute.Base!);
+					currentRoute = currentRoute.Next();
+				}
+				return dependsRoute;
+			}
+			else
+			{
+				if (dependsRoute.IsEmpty())
+				{
+					dependsRoute = dependsRoute.Insert(rm.Path);
+
+					currentRoute = currentRoute.Next();
+					while (!currentRoute.IsEmpty())
+					{
+						dependsRoute = dependsRoute.Append(currentRoute.Base!);
+						currentRoute = currentRoute.Next();
+					}
+				}
+				else
+				{
+					dependsRoute = dependsRoute.Insert(rm.Path);
 				}
 
-				return currentRoute;
+
+				rm = !string.IsNullOrWhiteSpace(rm.DependsOn) ? resolver.FindByPath(rm.DependsOn) : default;
 			}
-
-			currentRoute = currentRoute.Insert(rm.DependsOn);
-
-
-			rm = resolver.FindByPath(rm.DependsOn);
 		}
 
-		return currentRoute;
+		return dependsRoute;
 
 	}
 }

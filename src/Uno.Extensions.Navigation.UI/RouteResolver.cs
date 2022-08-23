@@ -31,7 +31,16 @@ public class RouteResolver : IRouteResolver
 			// Set the first routemap to be either the first with IsDefault, if
 			// if none have IsDefault then just return the first
 			First = maps.FirstOrDefault(x => x.IsDefault) ?? maps.FirstOrDefault();
-			maps.Flatten().ForEach(route => Mappings[route.Path] = route);
+			var dependentRoutes = new List<RouteInfo>();
+			maps.Flatten().ForEach(route =>
+			{
+				Mappings[route.Path] = route;
+				if (route.IsDependent)
+				{
+					dependentRoutes.Add(route);
+				}
+			});
+			dependentRoutes.ForEach(route => route.DependsOnRoute = Mappings[route.DependsOn]);
 		}
 
 
@@ -62,7 +71,7 @@ public class RouteResolver : IRouteResolver
 		var viewFunc = (drm.View?.View is not null) ?
 										() => drm.View.View :
 										drm.View?.ViewSelector;
-		return new RouteInfo(
+		return AssignParentRouteInfo(new RouteInfo(
 			Path: drm.Path,
 			View: viewFunc,
 			ViewAttributes: drm.View?.ViewAttributes,
@@ -78,7 +87,16 @@ public class RouteResolver : IRouteResolver
 			{
 				return IsDialogViewType(viewFunc?.Invoke());
 			},
-			Nested: ResolveViewMaps(drm.Nested));
+			Nested: ResolveViewMaps(drm.Nested)));
+	}
+
+	protected static RouteInfo AssignParentRouteInfo(RouteInfo info)
+	{
+		foreach (var nestedInfo in info.Nested)
+		{
+			nestedInfo.Parent = info;
+		}
+		return info;
 	}
 
 	protected static bool IsDialogViewType(Type? viewType = null)
@@ -94,34 +112,6 @@ public class RouteResolver : IRouteResolver
 			viewType == typeof(Flyout) ||
 			viewType.IsSubclassOf(typeof(Flyout));
 	}
-
-
-	public RouteInfo? Parent(RouteInfo? routeMap)
-	{
-		if (routeMap is null)
-		{
-			return default;
-		}
-
-		return Mappings
-			.Where(
-				x => x.Value.Nested is not null &&
-					x.Value.Nested.Contains(routeMap))
-			.Select(x => x.Value)
-			.FirstOrDefault();
-	}
-
-
-	public RouteInfo? Find(Route? route) =>
-		route is not null ?
-			FindByPath(route.Base) ??
-				(
-					(route.Data?.TryGetValue(String.Empty, out var data) ?? false) ?
-						FindByData(data.GetType()) :
-						default
-				) :
-			First;
-
 	public virtual RouteInfo? FindByPath(string? path)
 	{
 		if (path is null)
@@ -139,57 +129,33 @@ public class RouteResolver : IRouteResolver
 		return Mappings.TryGetValue(path!, out var map) ? map : default;
 	}
 
-	public virtual RouteInfo? FindByViewModel(Type? viewModelType)
+	public virtual RouteInfo[] FindByViewModel(Type? viewModelType)
 	{
 		return FindRouteByType(viewModelType, map => map.ViewModel);
 	}
 
-	public virtual RouteInfo? FindByView(Type? viewType)
+	public virtual RouteInfo[] FindByView(Type? viewType)
 	{
 		return FindRouteByType(viewType, map => map.RenderView);
 	}
 
-	public RouteInfo? FindByData(Type? dataType)
+	public RouteInfo[] FindByData(Type? dataType)
 	{
 		return FindRouteByType(dataType, map => map.Data);
 	}
 
-	public RouteInfo? FindByResultData(Type? dataType)
+	public RouteInfo[] FindByResultData(Type? dataType)
 	{
 		return FindRouteByType(dataType, map => map.ResultData);
 	}
 
-	private RouteInfo? FindRouteByType(Type? typeToFind, Func<RouteInfo, Type?> mapType)
+	private RouteInfo[] FindRouteByType(Type? typeToFind, Func<RouteInfo, Type?> mapType)
 	{
 		return FindByInheritedTypes(Mappings, typeToFind, mapType);
 	}
 
-	private TMap? FindByInheritedTypes<TMap>(IDictionary<string, TMap> mappings, Type? typeToFind, Func<TMap, Type?> mapType)
+	private TMap[] FindByInheritedTypes<TMap>(IDictionary<string, TMap> mappings, Type? typeToFind, Func<TMap, Type?> mapType)
 	{
-		return FindByInheritedTypes(mappings.Values, typeToFind, mapType);
-	}
-
-	private TMap? FindByInheritedTypes<TMap>(IEnumerable<TMap> mappings, Type? typeToFind, Func<TMap, Type?> mapType)
-	{
-		if (typeToFind is null)
-		{
-			return default;
-		}
-
-		// Handle the non-reflection check first
-		var map = (from m in mappings
-				   where mapType(m) == typeToFind
-				   select m)
-				   .FirstOrDefault();
-		if (map is not null)
-		{
-			return map;
-		}
-
-		return (from baseType in typeToFind.GetBaseTypes()
-				from m in mappings
-				where mapType(m) == baseType
-				select m)
-				   .FirstOrDefault();
+		return mappings.Values.FindByInheritedTypes(typeToFind, mapType);
 	}
 }

@@ -1,33 +1,14 @@
 ﻿namespace TestHarness.Ext.Navigation.Reactive;
 
-public class ReactiveHostInit : IHostInitialization
+public class ReactiveHostInit : BaseHostInitialization
 {
-	public IHost InitializeHost()
+	protected override IHostBuilder Navigation(IHostBuilder builder)
 	{
-
-		return UnoHost
-				.CreateDefaultBuilder()
-#if DEBUG
-				// Switch to Development environment when running in DEBUG
-				.UseEnvironment(Environments.Development)
-#endif
-
-				// Add platform specific log providers
-				.UseLogging(configure: (context, logBuilder) =>
-				{
-					var host = context.HostingEnvironment;
-					// Configure log levels for different categories of logging
-					logBuilder.SetMinimumLevel(host.IsDevelopment() ? LogLevel.Warning : LogLevel.Information);
-				})
-
-				// Enable navigation, including registering views and viewmodels
-				.UseNavigation(ReactiveViewModelMappings.ViewModelMappings, RegisterRoutes)
-				.UseLocalization()
-				.Build(enableUnoLogging: true);
+		return builder.UseNavigation(ReactiveViewModelMappings.ViewModelMappings, RegisterRoutes);
 	}
 
 
-	private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
+	protected override void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 	{
 
 		var localizedDialog = new LocalizableMessageDialogViewMap(

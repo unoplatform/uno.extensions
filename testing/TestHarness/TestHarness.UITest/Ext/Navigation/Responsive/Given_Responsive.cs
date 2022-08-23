@@ -9,11 +9,11 @@ public class Given_Responsive : NavigationTestBase
 
 		App.WaitThenTap("ShowResponsiveHomeButton");
 
-		App.WaitForElement("ResponsiveHomeNavigationBar");
+		App.WaitElement("ResponsiveHomeNavigationBar");
 
 
 		var widgetsListView = App.Marked("WidgetsListView");
-		App.WaitForElement(widgetsListView);
+		App.WaitElement("WidgetsListView");
 
 		// Select the narrow layout
 		// Navigation to the selected item should do a forward navigation

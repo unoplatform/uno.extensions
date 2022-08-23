@@ -9,7 +9,7 @@ public class Given_MessageDialog : NavigationTestBase
 
 		App.WaitThenTap("SimpleDialogsButton");
 		
-		App.WaitForElement("MessageDialogFromXamlButton");
+		App.WaitElement("MessageDialogFromXamlButton");
 		var screenBefore=TakeScreenshot("When_MessageDialogFromXAML_Before");
 		App.Tap("MessageDialogFromXamlButton");
 		var screenAfter = TakeScreenshot("When_MessageDialogFromXAML_After");

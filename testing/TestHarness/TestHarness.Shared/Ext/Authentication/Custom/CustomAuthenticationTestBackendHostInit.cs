@@ -1,42 +1,12 @@
-﻿
+﻿namespace TestHarness.Ext.Authentication.Custom;
 
-
-namespace TestHarness.Ext.Authentication.Custom;
-
-public class CustomAuthenticationTestBackendHostInit : IHostInitialization
+public class CustomAuthenticationTestBackendHostInit : BaseHostInitialization
 {
-	public IHost InitializeHost()
+	protected override string[] ConfigurationFiles => new string[] { "TestHarness.Ext.Authentication.Custom.appsettings.testbackend.json" };
+
+	protected override IHostBuilder Custom(IHostBuilder builder)
 	{
-
-		return UnoHost
-				.CreateDefaultBuilder()
-#if DEBUG
-				// Switch to Development environment when running in DEBUG
-				.UseEnvironment(Environments.Development)
-#endif
-
-				// Add platform specific log providers
-				.UseLogging(configure: (context, logBuilder) =>
-				{
-					var host = context.HostingEnvironment;
-					// Configure log levels for different categories of logging
-					logBuilder.SetMinimumLevel(host.IsDevelopment() ? LogLevel.Trace : LogLevel.Information);
-				})
-
-				.UseConfiguration()
-
-				// Only use this syntax for UI tests - use UseConfiguration in apps
-				.ConfigureAppConfiguration((ctx, b) =>
-				{
-					b.AddEmbeddedConfigurationFile<App>("TestHarness.Ext.Authentication.Custom.appsettings.testbackend.json");
-				})
-
-				// Enable navigation, including registering views and viewmodels
-				.UseNavigation(RegisterRoutes)
-
-				.UseToolkitNavigation()
-
-				.UseAuthentication(auth =>
+		return builder.UseAuthentication(auth =>
 					auth.AddCustom<ICustomAuthenticationTestBackendEndpoint>(custom =>
 						custom
 							.Login(async (authService, dispatcher, credentials, cancellationToken) =>
@@ -94,12 +64,11 @@ public class CustomAuthenticationTestBackendHostInit : IHostInitialization
 							.AddNativeHandler()
 
 							.AddRefitClient<ICustomAuthenticationTestBackendEndpoint>(context);
-				})
-				.Build(enableUnoLogging: true);
+				});
 	}
 
 
-	private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
+	protected override void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 	{
 
 		views.Register(

@@ -16,6 +16,9 @@ public record RouteInfo(
 	Func<bool>? IsDialogViewType = null,
 	params RouteInfo[] Nested)
 {
+	public RouteInfo? Parent { get; set; }
+	public RouteInfo? DependsOnRoute { get; set; }
+
 	public Type? RenderView => View?.Invoke();
 	public bool IsDependent = !string.IsNullOrWhiteSpace(DependsOn);
 }

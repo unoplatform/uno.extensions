@@ -1,26 +1,15 @@
 ﻿namespace TestHarness.Ext.Authentication.MSAL;
 
-public class MsalAuthenticationSettingsHostInit : IHostInitialization
+public class MsalAuthenticationSettingsHostInit : BaseHostInitialization
 {
-	public IHost InitializeHost()
+	protected override string[] ConfigurationFiles => new string[] { "TestHarness.Ext.Authentication.Msal.appsettings.msalauthentication.json",
+																	 "TestHarness.Ext.Authentication.Msal.appsettings.msal.json"};
+
+	protected override IHostBuilder Custom(IHostBuilder builder)
 	{
-
-		return UnoHost
-				.CreateDefaultBuilder()
-				.Defaults(this)
-
-				// Only use this syntax for UI tests - use UseConfiguration in apps
-				.ConfigureAppConfiguration((ctx, b) =>
-				{
-					b.AddEmbeddedConfigurationFile<App>("TestHarness.Ext.Authentication.Msal.appsettings.msalauthentication.json");
-					b.AddEmbeddedConfigurationFile<App>("TestHarness.Ext.Authentication.Msal.appsettings.msal.json");
-				})
-
-				.UseAuthentication(auth => auth.AddMsal())
-
-				.Build(enableUnoLogging: true);
+		return base.Custom(builder)
+			.UseAuthentication(auth => auth.AddMsal());
 	}
-
 }
 
 

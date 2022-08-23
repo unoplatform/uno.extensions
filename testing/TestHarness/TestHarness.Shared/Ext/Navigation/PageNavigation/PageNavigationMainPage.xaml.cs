@@ -1,6 +1,7 @@
 ﻿namespace TestHarness.Ext.Navigation.PageNavigation;
 
 [TestSectionRoot("Page Navigation",TestSections.PageNavigation, typeof(PageNavigationHostInit))]
+[TestSectionRoot("Page Navigation - Registerd Routes", TestSections.PageNavigationRegistered, typeof(PageNavigationRegisterHostInit))]
 public sealed partial class PageNavigationMainPage : BaseTestSectionPage
 {
 	public PageNavigationMainPage()

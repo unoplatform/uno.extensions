@@ -1,40 +1,15 @@
 ﻿namespace TestHarness.Ext.Authentication.Web;
 
-public class WebAuthenticationHostInit : IHostInitialization
+public class WebAuthenticationHostInit : BaseHostInitialization
 {
-	public IHost InitializeHost()
+	protected override string[] ConfigurationFiles => new string[] { "TestHarness.Ext.Authentication.Web.appsettings.webauth.json" };
+
+	protected override IHostBuilder Custom(IHostBuilder builder)
 	{
-		return UnoHost
-				.CreateDefaultBuilder()
-#if DEBUG
-				// Switch to Development environment when running in DEBUG
-				.UseEnvironment(Environments.Development)
-#endif
-
-				// Add platform specific log providers
-				.UseLogging(configure: (context, logBuilder) =>
-				{
-					var host = context.HostingEnvironment;
-					// Configure log levels for different categories of logging
-					logBuilder.SetMinimumLevel(host.IsDevelopment() ? LogLevel.Trace : LogLevel.Information);
-				})
-
-				.UseConfiguration()
-
-				// Only use this syntax for UI tests - use UseConfiguration in apps
-				.ConfigureAppConfiguration((ctx, b) =>
-				{
-					b.AddEmbeddedConfigurationFile<App>("TestHarness.Ext.Authentication.Web.appsettings.webauth.json");
-				})
-
-				// Enable navigation, including registering views and viewmodels
-				.UseNavigation(RegisterRoutes)
-
-				.UseToolkitNavigation()
-
-				.UseAuthentication(auth =>
+		return builder
+			.UseAuthentication(auth =>
 					auth
-					.AddWeb<IWebAuthenticationTestEndpoint>(web => 
+					.AddWeb<IWebAuthenticationTestEndpoint>(web =>
 						web
 							.LoginStartUri("https://localhost:7193/webauth/Login/Facebook")
 							.LoginCallbackUri("oidc-auth://")
@@ -51,7 +26,6 @@ public class WebAuthenticationHostInit : IHostInitialization
 							.OnLogoutNavigateViewModel<WebAuthenticationLoginViewModel>(this)
 						)
 
-				.UseSerialization()
 
 				.ConfigureServices((context, services) =>
 				{
@@ -60,12 +34,10 @@ public class WebAuthenticationHostInit : IHostInitialization
 							.AddContentSerializer()
 
 							.AddRefitClient<IWebAuthenticationTestEndpoint>(context);
-				})
-				.Build(enableUnoLogging: true);
+				});
 	}
 
-
-	private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
+	protected override void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 	{
 
 		views.Register(

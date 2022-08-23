@@ -37,7 +37,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 		}
 
 		var route = request.Route;
-		var mapping = Resolver.Find(route);
+		var mapping = Resolver.FindByPath(route.Base);
 
 		var executedPath = await Show(mapping?.Path ?? route.Base, mapping?.RenderView, route.Data);
 
@@ -130,7 +130,7 @@ public abstract class ControlNavigator : Navigator
 
 	private async Task<NavigationResponse?> ControlCoreNavigateAsync(NavigationRequest request)
 	{
-		var routeMap = Resolver.Find(request.Route);
+		var routeMap = Resolver.FindByPath(request.Route.Base);
 		if (await RegionCanNavigate(request.Route, routeMap))
 		{
 			return await Dispatcher.ExecuteAsync(async cancellation =>

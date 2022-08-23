@@ -21,8 +21,7 @@
 
 		<Grid Grid.Row="1">
 			<Button AutomationProperties.AutomationId="LogoutButton"
-					HorizontalAlignment="Center"
-					VerticalAlignment="Center"
+					VerticalAlignment="Top"
 					Content="Logout"
 					uen:Navigation.Request="/" />
 		</Grid>

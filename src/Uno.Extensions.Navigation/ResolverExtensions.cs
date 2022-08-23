@@ -2,30 +2,30 @@
 
 namespace Uno.Extensions.Navigation;
 
-public static class MapResolverExtensions
+public static class ResolverExtensions
 {
-	public static TMap? FindByInheritedTypes<TMap>(this IEnumerable<TMap> mappings, Type? typeToFind, Func<TMap, Type?> mapType)
+	public static TMap[] FindByInheritedTypes<TMap>(this IEnumerable<TMap> mappings, Type? typeToFind, Func<TMap, Type?> mapType)
 	{
 		if (typeToFind is null)
 		{
-			return default;
+			return Array.Empty<TMap>();
 		}
 
 		// Handle the non-reflection check first
 		var map = (from m in mappings
 				   where mapType(m) == typeToFind
 				   select m)
-				   .FirstOrDefault();
-		if (map is not null)
+				   .ToArray();
+		if (map.Any())
 		{
-			return map;
+			return map.ToArray();
 		}
 
 		return (from baseType in typeToFind.GetBaseTypes()
 				from m in mappings
 				where mapType(m) == baseType
 				select m)
-				   .FirstOrDefault();
+				   .ToArray();
 	}
 
 	public static IEnumerable<Type> GetBaseTypes(this Type type)

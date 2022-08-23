@@ -3,13 +3,13 @@
 public class Given_Reactive : NavigationTestBase
 {
 	[Test]
-	public void When_PageNavigationXAML()
+	public void When_ReactiveXAML()
 	{
-		InitTestSection(TestSections.PageNavigation);
+		InitTestSection(TestSections.Reactive);
 
 		App.WaitThenTap("ShowOnePageButton");
 
-		App.WaitForElement("OnePageToTwoPageButton");
+		App.WaitElement("OnePageToTwoPageButton");
 		var screenBefore = TakeScreenshot("When_PageNavigationXAML_Before");
 		App.WaitThenTap("OnePageToTwoPageButton");
 		App.WaitThenTap("TwoPageToThreePageButton");
@@ -21,20 +21,20 @@ public class Given_Reactive : NavigationTestBase
 		App.WaitThenTap("TwoPageBackButton");
 
 
-		App.WaitForElement("OnePageToTwoPageButton");
+		App.WaitElement("OnePageToTwoPageButton");
 		var screenAfter = TakeScreenshot("When_PageNavigationXAML_After");
 		ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
 
 	}
 
 	[Test]
-	public void When_PageNavigationCodebehind()
+	public void When_ReactiveCodebehind()
 	{
-		InitTestSection(TestSections.PageNavigation);
+		InitTestSection(TestSections.Reactive);
 
 		App.WaitThenTap("ShowOnePageButton");
 
-		App.WaitForElement("OnePageToTwoPageCodebehindButton");
+		App.WaitElement("OnePageToTwoPageCodebehindButton");
 		var screenBefore = TakeScreenshot("When_PageNavigationCodebehind_Before");
 		App.WaitThenTap("OnePageToTwoPageCodebehindButton");
 		App.WaitThenTap("TwoPageToThreePageCodebehindButton");
@@ -46,20 +46,20 @@ public class Given_Reactive : NavigationTestBase
 		App.WaitThenTap("TwoPageBackCodebehindButton");
 
 
-		App.WaitForElement("OnePageToTwoPageCodebehindButton");
+		App.WaitElement("OnePageToTwoPageCodebehindButton");
 		var screenAfter = TakeScreenshot("When_PageNavigationCodebehind_After");
 		ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
 	}
 
 	[Test]
-	[Ignore("Failing CI - Runs ok locally")]
-	public void When_PageNavigationViewModel()
+	//[Ignore("Failing CI - Runs ok locally")]
+	public void When_ReactiveViewModel()
 	{
-		InitTestSection(TestSections.PageNavigation);
+		InitTestSection(TestSections.Reactive);
 
 		App.WaitThenTap("ShowOnePageButton");
 
-		App.WaitForElement("OnePageToTwoPageViewModelButton");
+		App.WaitElement("OnePageToTwoPageViewModelButton");
 		var screenBefore = TakeScreenshot("When_PageNavigationViewModel_Before");
 		App.WaitThenTap("OnePageToTwoPageViewModelButton");
 		App.WaitThenTap("TwoPageToThreePageViewModelButton");
@@ -71,7 +71,7 @@ public class Given_Reactive : NavigationTestBase
 		App.WaitThenTap("TwoPageBackViewModelButton");
 
 
-		App.WaitForElement("OnePageToTwoPageViewModelButton");
+		App.WaitElement("OnePageToTwoPageViewModelButton");
 		var screenAfter = TakeScreenshot("When_PageNavigationViewModel_After");
 		ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
 

@@ -9,7 +9,7 @@ public class Given_PageNavigation : NavigationTestBase
 
 		App.WaitThenTap("ShowOnePageButton");
 
-		App.WaitForElement("OnePageToTwoPageButton");
+		App.WaitElement("OnePageToTwoPageButton");
 		var screenBefore = TakeScreenshot("When_PageNavigationXAML_Before");
 		App.WaitThenTap("OnePageToTwoPageButton");
 		App.WaitThenTap("TwoPageToThreePageButton");
@@ -21,7 +21,7 @@ public class Given_PageNavigation : NavigationTestBase
 		App.WaitThenTap("TwoPageBackButton");
 
 
-		App.WaitForElement("OnePageToTwoPageButton");
+		App.WaitElement("OnePageToTwoPageButton");
 		var screenAfter = TakeScreenshot("When_PageNavigationXAML_After");
 		ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
 
@@ -34,7 +34,7 @@ public class Given_PageNavigation : NavigationTestBase
 
 		App.WaitThenTap("ShowOnePageButton");
 
-		App.WaitForElement("OnePageToTwoPageCodebehindButton");
+		App.WaitElement("OnePageToTwoPageCodebehindButton");
 		var screenBefore = TakeScreenshot("When_PageNavigationCodebehind_Before");
 		App.WaitThenTap("OnePageToTwoPageCodebehindButton");
 		App.WaitThenTap("TwoPageToThreePageCodebehindButton");
@@ -46,7 +46,7 @@ public class Given_PageNavigation : NavigationTestBase
 		App.WaitThenTap("TwoPageBackCodebehindButton");
 
 
-		App.WaitForElement("OnePageToTwoPageCodebehindButton");
+		App.WaitElement("OnePageToTwoPageCodebehindButton");
 		var screenAfter = TakeScreenshot("When_PageNavigationCodebehind_After");
 		ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
 	}
@@ -59,7 +59,7 @@ public class Given_PageNavigation : NavigationTestBase
 
 		App.WaitThenTap("ShowOnePageButton");
 
-		App.WaitForElement("OnePageToTwoPageViewModelButton");
+		App.WaitElement("OnePageToTwoPageViewModelButton");
 		var screenBefore = TakeScreenshot("When_PageNavigationViewModel_Before");
 		App.WaitThenTap("OnePageToTwoPageViewModelButton");
 		App.WaitThenTap("TwoPageToThreePageViewModelButton");
@@ -71,7 +71,7 @@ public class Given_PageNavigation : NavigationTestBase
 		App.WaitThenTap("TwoPageBackViewModelButton");
 
 
-		App.WaitForElement("OnePageToTwoPageViewModelButton");
+		App.WaitElement("OnePageToTwoPageViewModelButton");
 		var screenAfter = TakeScreenshot("When_PageNavigationViewModel_After");
 		ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
 

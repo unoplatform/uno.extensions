@@ -1,38 +1,16 @@
 ﻿
-
-
 namespace TestHarness.Ext.Authentication.MSAL;
 
-public static class HostBuilderExtensions
+public abstract class BaseMsalHostInitialization : BaseHostInitialization
 {
-	public static IHostBuilder Defaults(this IHostBuilder builder, IHostInitialization hostInit)
+	protected override IHostBuilder Custom(IHostBuilder builder)
 	{
 		return builder
-#if DEBUG
-				// Switch to Development environment when running in DEBUG
-				.UseEnvironment(Environments.Development)
-#endif
-
-				// Add platform specific log providers
-				.UseLogging(configure: (context, logBuilder) =>
-				{
-					var host = context.HostingEnvironment;
-					// Configure log levels for different categories of logging
-					logBuilder.SetMinimumLevel(host.IsDevelopment() ? LogLevel.Trace : LogLevel.Information);
-				})
-
-				.UseConfiguration()
-
-				// Enable navigation, including registering views and viewmodels
-				.UseNavigation(RegisterRoutes)
-
-				.UseToolkitNavigation()
-
 				.UseAuthenticationFlow(builder =>
 						builder
-							.OnLoginRequiredNavigateViewModel<MsalAuthenticationWelcomeViewModel>(hostInit)
-							.OnLoginCompletedNavigateViewModel<MsalAuthenticationHomeViewModel>(hostInit)
-							.OnLogoutNavigateViewModel<MsalAuthenticationWelcomeViewModel>(hostInit)
+							.OnLoginRequiredNavigateViewModel<MsalAuthenticationWelcomeViewModel>(this)
+							.OnLoginCompletedNavigateViewModel<MsalAuthenticationHomeViewModel>(this)
+							.OnLogoutNavigateViewModel<MsalAuthenticationWelcomeViewModel>(this)
 						)
 
 				.ConfigureServices((context, services) =>
@@ -44,7 +22,7 @@ public static class HostBuilderExtensions
 	}
 
 
-	private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
+	protected override void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 	{
 
 		views.Register(
