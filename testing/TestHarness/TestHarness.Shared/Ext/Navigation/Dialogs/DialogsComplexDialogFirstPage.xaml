@@ -19,6 +19,8 @@
 		<StackPanel Grid.Row="1">
 			<Button uen:Navigation.Request="DialogsComplexDialogSecond"
 					Content="Second page" />
+			<Button Content="Close dialog"
+					Command="{Binding CloseCommand}" />
 		</StackPanel>
 	</Grid>
 </Page>

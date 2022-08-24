@@ -26,8 +26,12 @@
 				<Button Content="SimpleDialog Codebehind (cancel after 2s)"
 						Click="SimpleDialogCodebehindCancelClick" />
 				<TextBlock x:Name="SimpleDialogResultText" />
+				<Button uen:Navigation.Request="!DialogsComplex"
+						Content="Complex Dialog Nav Request - (Default)" />
 				<Button uen:Navigation.Request="!DialogsComplex/DialogsComplexDialogFirst"
-						Content="Complex Dialog Nav Request" />
+						Content="Complex Dialog Nav Request - First Page" />
+				<Button uen:Navigation.Request="!DialogsComplex/DialogsComplexDialogSecond"
+						Content="Complex Dialog Nav Request - Second Page" />
 
 			</StackPanel>
 		</ScrollViewer>

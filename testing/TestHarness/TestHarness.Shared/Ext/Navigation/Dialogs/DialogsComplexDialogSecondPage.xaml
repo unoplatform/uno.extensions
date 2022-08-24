@@ -25,6 +25,9 @@
 		</ui:NavigationBar>
 
 		<StackPanel Grid.Row="1">
+			<Button Content="Close dialog"
+					Command="{Binding CloseCommand}" />
+
 		</StackPanel>
 	</Grid>
 </Page>

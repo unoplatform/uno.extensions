@@ -32,6 +32,9 @@ public class DialogsHostInit : BaseHostInitialization
 			);
 
 		views.Register(
+			new ViewMap<DialogsComplexDialog>(),
+			new ViewMap<DialogsComplexDialogFirstPage, DialogsComplexDialogFirstViewModel>(),
+			new ViewMap<DialogsComplexDialogSecondPage, DialogsComplexDialogSecondViewModel>(),
 			confirmDialog,
 			localizedDialog
 			);
@@ -42,6 +45,11 @@ public class DialogsHostInit : BaseHostInitialization
 			new RouteMap("",
 			Nested: new[]
 			{
+				new RouteMap("DialogsComplex", View: views.FindByView<DialogsComplexDialog>(), Nested: new[]
+				{
+					new RouteMap("DialogsComplexDialogFirst", View: views.FindByViewModel<DialogsComplexDialogFirstViewModel>(), IsDefault:true),
+					new RouteMap("DialogsComplexDialogSecond", View: views.FindByViewModel<DialogsComplexDialogSecondViewModel>())
+				}),
 				new RouteMap("Confirm", View: confirmDialog),
 				new RouteMap("LocalizedConfirm", View: localizedDialog)
 			}));

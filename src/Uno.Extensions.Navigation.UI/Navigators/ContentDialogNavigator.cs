@@ -17,6 +17,11 @@ public class ContentDialogNavigator : DialogNavigator
 
 	protected override Task<bool> RegionCanNavigate(Route route, RouteInfo? routeMap)
 	{
+		if (route.IsBackOrCloseNavigation() && CanGoBack)
+		{
+			return Task.FromResult(true);
+		}
+
 		if (!(routeMap?.RenderView?.IsSubclassOf(typeof(ContentDialog)) ?? false))
 		{
 			return Task.FromResult(false);

@@ -166,9 +166,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\DialogsComplexDialogFirstPage.xaml.cs">
       <DependentUpon>DialogsComplexDialogFirstPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\DialogsComplexDialogFirstViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\DialogsComplexDialogSecondPage.xaml.cs">
       <DependentUpon>DialogsComplexDialogSecondPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\DialogsComplexDialogSecondViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\DialogsFlyoutsPage.xaml.cs">
       <DependentUpon>DialogsFlyoutsPage.xaml</DependentUpon>
     </Compile>

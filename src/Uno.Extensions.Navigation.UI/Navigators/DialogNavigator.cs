@@ -2,7 +2,7 @@
 
 public abstract class DialogNavigator : ControlNavigator
 {
-	public override bool CanGoBack => true;
+	public override bool CanGoBack => ShowTask is not null;
 
 	private IAsyncInfo? ShowTask { get; set; }
 
