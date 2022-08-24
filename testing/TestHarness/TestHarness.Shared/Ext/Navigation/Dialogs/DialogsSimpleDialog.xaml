@@ -10,9 +10,12 @@
     PrimaryButtonText="Add"
 			   CloseButtonText="Cancel"
 			   DefaultButton="Primary"
-			   PrimaryButtonCommand="{Binding AddCommand}">
+			   PrimaryButtonCommand="{Binding OkCommand}">
    <StackPanel>
 		<TextBlock Text="Widget Name" />
 		<TextBox Text="{Binding Name, Mode=TwoWay}" />
+		<Button Content="Close"
+				Command="{Binding CloseCommand}"
+				AutomationProperties.AutomationId="DialogsSimpleDialogCloseButton" />
 	</StackPanel>
 </ContentDialog>

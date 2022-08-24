@@ -19,11 +19,14 @@
 
 		<ScrollViewer Grid.Row="1">
 			<StackPanel>
-				<Button uen:Navigation.Request="DialogsSimple"
+				<Button AutomationProperties.AutomationId="SimpleDialogNavRequestButton"
+						uen:Navigation.Request="DialogsSimple"
 						Content="SimpleDialog Nav Request" />
-				<Button Content="SimpleDialog Codebehind"
+				<Button AutomationProperties.AutomationId="SimpleDialogCodebehindButton"
+						Content="SimpleDialog Codebehind"
 						Click="SimpleDialogCodebehindClick" />
-				<Button Content="SimpleDialog Codebehind (cancel after 2s)"
+				<Button AutomationProperties.AutomationId="SimpleDialogCodebehindWithCancelButton"
+						Content="SimpleDialog Codebehind (cancel after 2s)"
 						Click="SimpleDialogCodebehindCancelClick" />
 				<TextBlock x:Name="SimpleDialogResultText" />
 				<Button uen:Navigation.Request="!DialogsComplex"

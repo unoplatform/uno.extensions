@@ -14,7 +14,10 @@ public sealed partial class ContentDialogsPage : Page
 		{
 			return await nav.NavigateViewForResultAsync<DialogsSimpleDialog, Widget>(this, Qualifiers.Dialog).AsResult();
 		});
-		SimpleDialogResultText.Text = $"Dialog result: {dialogResult.SomeOrDefault()?.ToString()}";
+		if (dialogResult.Type == OptionType.Some)
+		{
+			SimpleDialogResultText.Text = $"Dialog result: {dialogResult.SomeOrDefault()?.ToString()}";
+		}
 	}
 	private async void SimpleDialogCodebehindCancelClick(object sender, RoutedEventArgs args)
 	{
@@ -25,6 +28,9 @@ public sealed partial class ContentDialogsPage : Page
 			return;
 		}
 		var dialogResult = await showDialog.Result;
-		SimpleDialogResultText.Text = $"Dialog result: {dialogResult.SomeOrDefault()?.ToString()}";
+		if (dialogResult.Type == OptionType.Some)
+		{
+			SimpleDialogResultText.Text = $"Dialog result: {dialogResult.SomeOrDefault()?.ToString()}";
+		}
 	}
 }

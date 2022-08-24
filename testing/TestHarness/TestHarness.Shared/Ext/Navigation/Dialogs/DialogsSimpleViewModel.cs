@@ -5,7 +5,9 @@ public class DialogsSimpleViewModel
 {
 	private INavigator Navigator { get; }
 
-	public ICommand AddCommand { get; }
+	public ICommand OkCommand { get; }
+
+	public ICommand CloseCommand { get; }
 
 	public string? Name { get; set; }
 
@@ -15,11 +17,18 @@ public class DialogsSimpleViewModel
 
 		Navigator = navigator;
 
-		AddCommand = new AsyncRelayCommand(Add);
+		OkCommand = new AsyncRelayCommand(Ok);
+
+		CloseCommand = new AsyncRelayCommand(Close);
 	}
 
-	public async Task Add()
+	public async Task Ok()
 	{
 		await Navigator.NavigateBackWithResultAsync(this, data: new Widget { Name = Name });
+	}
+
+	public async Task Close()
+	{
+		await Navigator.NavigateBackAsync(this);
 	}
 }
