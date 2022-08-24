@@ -1,9 +1,6 @@
-﻿
+﻿namespace TestHarness.Ext.Authentication.MSAL;
 
-using TestHarness.Ext.Authentication.Custom;
-
-namespace TestHarness.Ext.Authentication.MSAL;
-
+[ReactiveBindable(false)]
 public partial class MsalAuthenticationHomeViewModel : ObservableObject
 {
 	public INavigator Navigator { get; init; }
@@ -35,19 +32,19 @@ public partial class MsalAuthenticationHomeViewModel : ObservableObject
 		Endpoint = endpoint;
 	}
 
-	public async Task Logout()
+	public async void Logout()
 	{
 		await Flow.LogoutAsync(CancellationToken.None);
 	}
 
-	public async Task ClearAccessToken()
+	public async void ClearAccessToken()
 	{
 		var creds = await Tokens.GetAsync();
 		creds.Remove(TokenCacheExtensions.AccessTokenKey);
 		await Tokens.SaveAsync(Tokens.CurrentProvider ?? string.Empty, creds);
 	}
 
-	public async Task Retrieve()
+	public async void Retrieve()
 	{
 		if (Tokens.CurrentProvider?.StartsWith("Custom") ?? false)
 		{

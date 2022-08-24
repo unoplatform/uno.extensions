@@ -9,6 +9,7 @@ global using CommunityToolkit.Mvvm.ComponentModel;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Hosting;
 global using Microsoft.Extensions.Logging;
+global using TestHarness.Ext.Authentication.Custom;
 global using TestHarness.Ext.Navigation.MessageDialog;
 global using TestHarness.Ext.Navigation.PageNavigation;
 global using TestHarness.Models;
@@ -22,6 +23,7 @@ global using Uno.Extensions.Logging;
 global using Uno.Extensions.Navigation;
 global using Uno.Extensions.Navigation.Regions;
 global using Uno.Extensions.Navigation.UI;
+global using Uno.Extensions.Reactive;
 global using Uno.Extensions.Serialization;
 
 global using System.Text.Json.Serialization;

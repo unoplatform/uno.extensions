@@ -5,38 +5,12 @@ namespace TestHarness.Ext.Authentication.Custom;
 
 public class CustomAuthenticationHostInit : BaseHostInitialization
 {
-	public IHost InitializeHost()
+	protected override string[] ConfigurationFiles => new string[] { "TestHarness.Ext.Authentication.Custom.appsettings.dummyjson.json" };
+
+	protected override IHostBuilder Custom(IHostBuilder builder)
 	{
-
-		return UnoHost
-				.CreateDefaultBuilder()
-#if DEBUG
-				// Switch to Development environment when running in DEBUG
-				.UseEnvironment(Environments.Development)
-#endif
-
-				// Add platform specific log providers
-				.UseLogging(configure: (context, logBuilder) =>
-				{
-					var host = context.HostingEnvironment;
-					// Configure log levels for different categories of logging
-					logBuilder.SetMinimumLevel(host.IsDevelopment() ? LogLevel.Trace : LogLevel.Information);
-				})
-
-				.UseConfiguration()
-
-				// Only use this syntax for UI tests - use UseConfiguration in apps
-				.ConfigureAppConfiguration((ctx, b) =>
-				{
-					b.AddEmbeddedConfigurationFile<App>("TestHarness.Ext.Authentication.Custom.appsettings.dummyjson.json");
-				})
-
-				// Enable navigation, including registering views and viewmodels
-				.UseNavigation(RegisterRoutes)
-
-				.UseToolkitNavigation()
-
-				.UseAuthentication(auth =>
+		return builder
+			.UseAuthentication(auth =>
 					auth.AddCustom(custom =>
 						custom
 							.Login(async (sp, dispatcher, credentials, cancellationToken) =>
@@ -60,7 +34,7 @@ public class CustomAuthenticationHostInit : BaseHostInitialization
 							})
 							.Refresh(async (sp, tokenDictionary, cancellationToken) =>
 							{
-								if(tokenDictionary is null)
+								if (tokenDictionary is null)
 								{
 									return default;
 								}
@@ -100,10 +74,9 @@ public class CustomAuthenticationHostInit : BaseHostInitialization
 							.AddNativeHandler()
 
 							.AddRefitClient<ICustomAuthenticationDummyJsonEndpoint>(context);
-				})
-				.Build(enableUnoLogging: true);
-	}
+				});
 
+	}
 
 	protected override void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 	{

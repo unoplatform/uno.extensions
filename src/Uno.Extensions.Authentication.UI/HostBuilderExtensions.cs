@@ -44,6 +44,10 @@ public static class HostBuilderExtensions
 			where TService : notnull
 
 	{
+#if WINDOWS
+		WinUIEx.WebAuthenticator.Init();
+#endif
+
 		var authBuilder = builder.AsBuilder<WebAuthenticationBuilder<TService>>();
 
 		configure?.Invoke(authBuilder);

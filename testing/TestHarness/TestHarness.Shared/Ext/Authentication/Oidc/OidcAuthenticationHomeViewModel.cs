@@ -1,5 +1,6 @@
 ﻿namespace TestHarness.Ext.Authentication.Oidc;
 
+[ReactiveBindable(false)]
 public partial class OidcAuthenticationHomeViewModel : ObservableObject
 {
 	public INavigator Navigator { get; init; }
@@ -17,12 +18,12 @@ public partial class OidcAuthenticationHomeViewModel : ObservableObject
 		Endpoint = endpoint;
 	}
 
-	public async Task Logout()
+	public async void Logout()
 	{
 		await Flow.LogoutAsync(CancellationToken.None);
 	}
 
-	public async Task Retrieve()
+	public async void Retrieve()
 	{
 		var response = await Endpoint.Test(CancellationToken.None);
 		Items= response;

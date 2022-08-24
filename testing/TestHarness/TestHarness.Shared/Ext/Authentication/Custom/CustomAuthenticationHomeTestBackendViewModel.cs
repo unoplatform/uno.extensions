@@ -1,5 +1,6 @@
 ﻿namespace TestHarness.Ext.Authentication.Custom;
 
+[ReactiveBindable(false)]
 public partial class CustomAuthenticationHomeTestBackendViewModel : ObservableObject
 {
 	
@@ -28,19 +29,19 @@ public partial class CustomAuthenticationHomeTestBackendViewModel : ObservableOb
 		Tokens = tokens;
 	}
 
-	public async Task Logout()
+	public async void Logout()
 	{
 		await Flow.LogoutAsync(CancellationToken.None);
 	}
 
-	public async Task ClearAccessToken()
+	public async void ClearAccessToken()
 	{
 		var creds = await Tokens.GetAsync();
 		creds.Remove(TokenCacheExtensions.AccessTokenKey);
 		await Tokens.SaveAsync(Tokens.CurrentProvider ?? string.Empty, creds);
 	}
 
-	public async Task Retrieve()
+	public async void Retrieve()
 	{
 		try
 		{
@@ -53,7 +54,7 @@ public partial class CustomAuthenticationHomeTestBackendViewModel : ObservableOb
 			RetrieveProductsResult = Constants.CommerceProducts.ProductsLoadError;
 		}
 	}
-	public async Task RetrieveCookie()
+	public async void RetrieveCookie()
 	{
 		try
 		{

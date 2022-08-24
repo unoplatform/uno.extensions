@@ -2,7 +2,7 @@
 
 public record PageNavigationOneViewModel (INavigator Navigator, IWritableOptions<PageNavigationSettings> Settings)
 {
-	public async Task GoToTwo()
+	public async void GoToTwo()
 	{
 		await Settings.UpdateAsync(s => s with { PagesVisited = s.PagesVisited.Add(this.GetType().Name) });
 		await Navigator.NavigateViewModelAsync<PageNavigationTwoViewModel>(this);

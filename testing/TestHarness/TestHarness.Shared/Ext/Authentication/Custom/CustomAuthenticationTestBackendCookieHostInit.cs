@@ -42,14 +42,9 @@ public class CustomAuthenticationTestBackendCookieHostInit : BaseHostInitializat
 							.OnLogoutNavigateViewModel<CustomAuthenticationLoginViewModel>(this)
 						)
 
+				.UseHttp((ctx, services) =>
+						services.AddRefitClient<ICustomAuthenticationTestBackendEndpoint>(ctx));
 
-				.ConfigureServices((context, services) =>
-				{
-					services
-							.AddNativeHandler()
-
-							.AddRefitClient<ICustomAuthenticationTestBackendEndpoint>(context);
-				});
 	}
 
 	protected override void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)

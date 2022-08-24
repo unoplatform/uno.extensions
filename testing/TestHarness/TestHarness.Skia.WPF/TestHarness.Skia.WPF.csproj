@@ -5,7 +5,7 @@
 		<AssemblyName>TestHarnessApp</AssemblyName>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="CommunityToolkit.Mvvm" Version="7.1.2" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
 		<PackageReference Include="Uno.CommunityToolkit.WinUI.UI" Version="7.1.100-dev.15.g12261e2626" />
 		<PackageReference Include="Microsoft.Identity.Client" Version="4.45.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
@@ -20,6 +20,9 @@
 		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.2.0" />
 		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.2.0" />
 		<PackageReference Include="Uno.WinUI.MSAL" Version="4.4.13" />
+		<PackageReference Include="SkiaSharp.HarfBuzz" Version="2.88.1" />
+		<PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.1" />
+		<PackageReference Include="Uno.SourceGenerationTasks" Version="4.1.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<UpToDateCheckInput Include="..\TestHarness.Shared\**\*.xaml" />
@@ -50,5 +53,11 @@
 	</ItemGroup>
 	<Import Project="..\..\..\src\Uno.Extensions.Reactive.Generator\buildTransitive\Uno.Extensions.Reactive.props" />
 	<Import Project="..\TestHarness.Shared\TestHarness.Shared.projitems" Label="Shared" />
-
+	<Target Name="RemoveDuplicateAnalyzers" BeforeTargets="CoreCompile">
+		<ItemGroup>
+			<FilteredAnalyzer Include="@(Analyzer->Distinct())" />
+			<Analyzer Remove="@(Analyzer)" />
+			<Analyzer Include="@(FilteredAnalyzer)" />
+		</ItemGroup>
+	</Target>
 </Project>

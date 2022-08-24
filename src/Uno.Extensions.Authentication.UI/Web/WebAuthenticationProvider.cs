@@ -39,18 +39,7 @@ internal record WebAuthenticationProvider
 		var authData = userResult?.ResponseData ?? string.Empty;
 
 #endif
-		var idx = authData.IndexOf("?");
-		if (idx >= 0 && idx < authData.Length - 1)
-		{
-			authData = authData.Substring(idx + 1);
-		}
-
-		if (string.IsNullOrWhiteSpace(authData))
-		{
-			return default;
-		}
-
-		var query = AuthHttpUtility.ParseQueryString(authData ?? string.Empty);
+		var query = AuthHttpUtility.ExtractArguments(authData ?? string.Empty);
 
 		var tokens = new Dictionary<string, string>();
 		if (query is null)

@@ -10,13 +10,15 @@
 		<PublishProfile>win10-$(Platform).pubxml</PublishProfile>
 		<UseWinUI>true</UseWinUI>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+		<DefaultLanguage>en</DefaultLanguage>
 	</PropertyGroup>
 
-	<PropertyGroup>
-		<!-- Bundles the WinAppSDK binaries (Uncomment for unpackaged builds) -->
+	<PropertyGroup><!-- Bundles the WinAppSDK binaries (Uncomment for unpackaged builds) -->
 		<!-- <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained> -->
 		<!-- This bundles the .NET Core libraries (Uncomment for packaged builds)  -->
 		<!--<SelfContained>true</SelfContained>-->
+	
+	  <NeutralLanguage>en</NeutralLanguage>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -30,7 +32,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CommunityToolkit.Mvvm" Version="7.1.2" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
 		<PackageReference Include="CommunityToolkit.WinUI.UI" Version="7.1.2" />
 		<PackageReference Include="IdentityModel.OidcClient" Version="5.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
