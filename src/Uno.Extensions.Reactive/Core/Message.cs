@@ -71,17 +71,17 @@ public sealed class Message<T> : IMessage
 				&& axis.AreEquals(currentValue, newMessage.Previous[axis]))
 			{
 				// If we have a changeSet and it applies tu update from the currentValue, we propagate it
-				changes.Add(axis, changeSet);
+				changes.Set(axis, changeSet);
 			}
 			else
 			{
-				changes.Add(axis);
+				changes.Set(axis);
 			}
 		}
 
 		foreach (var removedAxis in oldValues.Keys.Except(newValues.Keys))
 		{
-			changes.Add(removedAxis);
+			changes.Set(removedAxis);
 		}
 
 		return new Message<T>(Current, newMessage.Current, changes);

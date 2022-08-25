@@ -20,6 +20,16 @@ public readonly struct MessageBuilder<T> : IMessageEntry, IMessageBuilder, IMess
 		_previous = current;
 		_changes = new();
 		_values = current.Values.ToDictionary();
+
+		// We make sure to clear all transient axes when we update a message
+		foreach (var value in current.Values)
+		{
+			if (value.Key.IsTransient)
+			{
+				_changes.Set(value.Key);
+				_values.Remove(value.Key);
+			}
+		}
 	}
 
 	Option<object> IMessageEntry.Data => CurrentData;
@@ -53,11 +63,11 @@ public readonly struct MessageBuilder<T> : IMessageEntry, IMessageBuilder, IMess
 		if (value.IsSet)
 		{
 			_values[axis] = value;
-			_changes.Add(axis, changes);
+			_changes.Set(axis, changes);
 		}
 		else if (_values.Remove(axis))
 		{
-			_changes.Add(axis, changes);
+			_changes.Set(axis, changes);
 		}
 
 		return this;

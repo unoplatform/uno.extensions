@@ -118,7 +118,7 @@ internal partial class MessageManager<TParent, TResult>
 
 				if (!axis.AreEquals(currentValue, updated.value))
 				{
-					changes.Add(axis, updated.changes);
+					changes.Set(axis, updated.changes);
 				}
 			}
 

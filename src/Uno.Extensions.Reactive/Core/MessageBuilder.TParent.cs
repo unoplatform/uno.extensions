@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Utils;
+using static Uno.Extensions.Collections.Tracking.CollectionAnalyzer;
 
 namespace Uno.Extensions.Reactive;
 
@@ -23,6 +24,16 @@ public readonly struct MessageBuilder<TParent, TResult> : IMessageEntry, IMessag
 		Local = local.value;
 
 		_updates = local.updates.ToDictionary();
+
+		// We make sure to clear all transient axes when we update a message
+		// Note: We remove only "local" values, parent values are still propagated, it's there responsibility to remove them.
+		foreach (var value in local.updates)
+		{
+			if (value.Key.IsTransient)
+			{
+				_updates.Remove(value.Key);
+			}
+		}
 	}
 
 	/// <summary>

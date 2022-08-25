@@ -26,6 +26,15 @@ public static class FeedRecorderExtensions
 		[CallerMemberName] string? memberName = null,
 		[CallerLineNumber] int line = -1)
 		=> new(_ => feed.AsFeed(), context ?? SourceContext.Current, autoEnable, feedExpression ?? $"{memberName}@{line}");
+
+	public static FeedRecorder<IState<T>, T> Record<T>(
+		this IState<T> state,
+		SourceContext? context = null,
+		bool autoEnable = true,
+		[CallerArgumentExpression("state")] string? feedExpression = null,
+		[CallerMemberName] string? memberName = null,
+		[CallerLineNumber] int line = -1)
+		=> new(_ => state, context ?? SourceContext.Current, autoEnable, feedExpression ?? $"{memberName}@{line}");
 }
 
 public static class F<T>
