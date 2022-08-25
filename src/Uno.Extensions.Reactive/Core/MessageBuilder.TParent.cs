@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Utils;
-using static Uno.Extensions.Collections.Tracking.CollectionAnalyzer;
 
 namespace Uno.Extensions.Reactive;
 
