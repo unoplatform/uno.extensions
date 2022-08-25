@@ -22,17 +22,9 @@ public readonly struct MessageBuilder<TParent, TResult> : IMessageEntry, IMessag
 		Parent = parent;
 		Local = local.value;
 
-		_updates = local.updates.ToDictionary();
-
 		// We make sure to clear all transient axes when we update a message
 		// Note: We remove only "local" values, parent values are still propagated, it's there responsibility to remove them.
-		foreach (var value in local.updates)
-		{
-			if (value.Key.IsTransient)
-			{
-				_updates.Remove(value.Key);
-			}
-		}
+		_updates = local.updates.ToDictionaryWhereKey(k => !k.IsTransient);
 	}
 
 	/// <summary>

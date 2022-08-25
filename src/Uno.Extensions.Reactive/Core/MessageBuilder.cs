@@ -19,17 +19,9 @@ public readonly struct MessageBuilder<T> : IMessageEntry, IMessageBuilder, IMess
 	{
 		_previous = current;
 		_changes = new();
-		_values = current.Values.ToDictionary();
 
 		// We make sure to clear all transient axes when we update a message
-		foreach (var value in current.Values)
-		{
-			if (value.Key.IsTransient)
-			{
-				_changes.Set(value.Key);
-				_values.Remove(value.Key);
-			}
-		}
+		_values = current.Values.ToDictionaryWhereKey(k => !k.IsTransient);
 	}
 
 	Option<object> IMessageEntry.Data => CurrentData;
