@@ -6,6 +6,7 @@ public enum TestSections
 	PageNavigationRegistered,
 	Dialogs,
 	Responsive,
+	ListToDetails,
 	NavigationView,
 	Reactive,
 	Apps_Commerce,

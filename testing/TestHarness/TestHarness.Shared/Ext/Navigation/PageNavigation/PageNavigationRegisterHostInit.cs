@@ -25,7 +25,7 @@ public class PageNavigationRegisterHostInit: PageNavigationHostInit
 			Nested: new[]
 			{
 					new RouteMap("One", View: views.FindByViewModel<PageNavigationOneViewModel>()),
-					new RouteMap("Two", View: views.FindByViewModel<PageNavigationTwoViewModel>()),
+					new RouteMap("Two", View: views.FindByViewModel<PageNavigationTwoViewModel>(), IsDefault: true, DependsOn:"One"),
 					new RouteMap("Three", View: views.FindByViewModel<PageNavigationThreeViewModel>()),
 					new RouteMap("Four", View: views.FindByViewModel<PageNavigationFourViewModel>()),
 					new RouteMap("Five", View: views.FindByViewModel<PageNavigationFiveViewModel>()),

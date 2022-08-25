@@ -188,6 +188,22 @@
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\MessageDialogsPage.xaml.cs">
       <DependentUpon>MessageDialogsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\ListToDetails\ListToDetailsDetailsPage.xaml.cs">
+      <DependentUpon>ListToDetailsDetailsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\ListToDetails\ListToDetailsDetailsViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\ListToDetails\ListToDetailsHomePage.xaml.cs">
+      <DependentUpon>ListToDetailsHomePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\ListToDetails\ListToDetailsHomeViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\ListToDetails\ListToDetailsHostInit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\ListToDetails\ListToDetailsListPage.xaml.cs">
+      <DependentUpon>ListToDetailsListPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\ListToDetails\ListToDetailsListViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\ListToDetails\ListToDetailsMainPage.xaml.cs">
+      <DependentUpon>ListToDetailsMainPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\NavigationView\NavigationViewHomePage.xaml.cs">
       <DependentUpon>NavigationViewHomePage.xaml</DependentUpon>
     </Compile>
@@ -414,6 +430,22 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\DialogsSimpleDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\ListToDetails\ListToDetailsDetailsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\ListToDetails\ListToDetailsHomePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\ListToDetails\ListToDetailsListPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\ListToDetails\ListToDetailsMainPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
