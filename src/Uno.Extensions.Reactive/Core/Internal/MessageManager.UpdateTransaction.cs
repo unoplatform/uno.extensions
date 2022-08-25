@@ -62,21 +62,21 @@ internal partial class MessageManager<TParent, TResult>
 		}
 
 		/// <summary>
-		/// Commits the transaction, cf. remarks for perf considerations.
+		/// Commits the transaction, cf. remarks for performance considerations.
 		/// </summary>
 		/// <remarks>
-		/// For performance consideration,
-		/// especially if you are using transient values (which is the purpose of this UpdateTransaction!),
-		/// avoid to do something like:
+		/// For performance considerations,
+		/// particularly when using transient values (which is the purpose of this UpdateTransaction!),
+		/// avoid doing something like:
 		///		```csharp
 		///		transaction.Update(msg => msg.With().Data(new object()));
 		///		transaction.Commit();
 		///		```
-		/// but prefer to use the overloads of `Commit` that accepts an updater, e.g.:
+		/// and prefer the use of `Commit` overloads which accept an updater, e.g.:
 		///		```csharp
 		///		transaction.Commit(msg => msg.With().Data(new object()));
 		///		```
-		/// This will ensure to push only one message that removes transient axis values among the final update you are doing.
+		/// This will ensure to push only one message that removes transient axis values among the final update being done.
 		/// </remarks>
 		public void Commit()
 		{
