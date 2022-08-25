@@ -213,9 +213,9 @@ public static class NavigatorExtensions
 				{ RouteConstants.MessageDialogParameterCancelCommand, cancelButtonIndex! },
 				{ RouteConstants.MessageDialogParameterCommands, buttons! }
 			};
-		var hint = new RouteHint { Route = route ?? RouteConstants.MessageDialogUri, Qualifier = Qualifiers.Dialog };
+		var hint = new RouteHint { Route = route ?? RouteConstants.MessageDialogUri, Qualifier = Qualifiers.Dialog, Result=typeof(TResult) };
 
-		var response = await navigator.NavigateRouteHintAsync(hint, sender, data, cancellation);
+		var response = await navigator.NavigateRouteHintForResultAsync<TResult>(hint, sender, data, cancellation);
 		if (response?.AsResultResponse<TResult>() is { } resultResponse &&
 			resultResponse.Result is not null)
 		{
