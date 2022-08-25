@@ -168,6 +168,7 @@ public static class RouteExtensions
 		{
 			return route with { Base = routeToAppend.Base };
 		}
+
 		return route with {
 			Path = string.IsNullOrWhiteSpace( route.Path) ?
 						routeToAppend.Base + (!string.IsNullOrWhiteSpace(routeToAppend.Base) && !string.IsNullOrWhiteSpace(routeToAppend.Path)? Qualifiers.Separator:"") + routeToAppend.Path :

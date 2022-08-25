@@ -30,8 +30,8 @@ public class CommerceHostInit : BaseHostInitialization
 											View: views.FindByViewModel<CommerceDealsViewModel>(),
 											IsDefault: true,
 												Nested: new RouteMap[]{
-													new RouteMap("DealsTab", IsDefault: true),
-													new RouteMap("FavoritesTab")
+													new RouteMap("DealsTab"),
+													new RouteMap("FavoritesTab", IsDefault: true)
 												}),
 										new RouteMap("DealsProduct",
 												View: views.FindByViewModel<CommerceProductDetailsViewModel>(),

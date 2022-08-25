@@ -24,7 +24,10 @@ public class RouteResolver : IRouteResolver
 		RouteMaps = routes;
 		ViewMaps = views;
 
+		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Resolving viewmaps - start");
 		var maps = ResolveViewMaps(routes.Items);
+		if (Logger.IsEnabled(LogLevel.Debug)) PrintViewMaps(maps);
+		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Resolving viewmaps - complete");
 
 		if (maps is not null)
 		{
@@ -53,6 +56,22 @@ public class RouteResolver : IRouteResolver
 		// Make sure the message dialog is the last route to be listed
 		Mappings[messageDialogRoute.Path] = messageDialogRoute;
 	}
+
+	private void PrintViewMaps(RouteInfo[] maps, string prefix= "")
+	{
+		if(maps is null)
+		{
+			return;
+		}
+
+		foreach (var map in maps)
+		{
+			Logger.LogDebugMessage($"{prefix} {map}");
+			PrintViewMaps(map.Nested, prefix + "-");
+		}
+
+	}
+
 
 	protected RouteInfo[] ResolveViewMaps(IEnumerable<RouteMap> maps)
 	{

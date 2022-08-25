@@ -28,21 +28,12 @@ public static class NavigationRequestExtensions
 			{
 				maps = resolver.FindByResultData(hint.Result);
 			}
-			if (!maps.Any() &&
-				hint.Data is not null)
-			{
-				maps = resolver.FindByData(hint.Data);
-			}
 
-			if (!maps.Any())
-			{
-				return Route.Empty;
-			}
-			else if (maps.Length == 1)
+			if (maps.Length == 1)
 			{
 				path = maps.First().Path;
 			}
-			else
+			else if (maps.Length > 1)
 			{
 				var navRoute = resolver.FindByPath(navigator.Route?.Base);
 				var map = maps.SelectMapFromAncestor(navRoute);
@@ -52,17 +43,18 @@ public static class NavigationRequestExtensions
 
 
 		// Apply any qualifier specified in the hint
-		path = path?.WithQualifier(hint.Qualifier);
+		path = path?.WithQualifier(hint.Qualifier) ?? hint.Qualifier;
 
-		if (path is null ||
-			string.IsNullOrWhiteSpace(path))
+		if ((path is null ||
+			string.IsNullOrWhiteSpace(path)) &&
+			data is null)
 		{
 			return Route.Empty;
 		}
 
-		var queryIdx = path.IndexOf('?');
+		var queryIdx = path?.IndexOf('?') ?? -1;
 		var query = string.Empty;
-		if (queryIdx >= 0)
+		if (queryIdx >= 0 && path is not null)
 		{
 			queryIdx++; // Step over the ?
 			query = queryIdx < path.Length ? path.Substring(queryIdx) : string.Empty;

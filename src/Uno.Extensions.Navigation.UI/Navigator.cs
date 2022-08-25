@@ -1,4 +1,7 @@
-﻿namespace Uno.Extensions.Navigation;
+﻿using System.Diagnostics;
+using Uno.Extensions.Navigation.UI;
+
+namespace Uno.Extensions.Navigation;
 
 public class Navigator : INavigator, IInstance<IServiceProvider>
 {
@@ -93,6 +96,27 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			return default;
 		}
 
+		// If Route is empty (null or "")
+		//   AND there is Data
+		// THEN lookup the RouteMap for the type of Data
+		// THEN find 
+		if (string.IsNullOrWhiteSpace(request.Route.Base) &&
+			request.Route.NavigationData() is { } navData)
+		{
+			var maps = Resolver.FindByData(navData.GetType());
+			if (maps.Any())
+			{
+				var navRoute = Resolver.FindByPath(this.Route?.Base);
+				var map = maps.SelectMapFromAncestor(navRoute);
+				var path = (map ?? maps.FirstOrDefault())?.Path;
+				if (path is not null)
+				{
+					request = request with { Route = request.Route with { Base = path } };
+					return Region.NavigateAsync(request);
+				}
+			}
+		}
+
 
 		// Deal with any named children that match the first segment of the request
 		// In this case, the request should be trimmed
@@ -156,7 +180,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			{
 				// If parent's Parent is null, then parent is the root
 				// so trim the root qualifier.
-				request = request with { Route = request.Route.TrimQualifier(Qualifiers.Root) with { IsInternal = true } };
+				request = request with { Route = request.Route.TrimQualifier(Qualifiers.Root) with { IsInternal = true, Refresh = true } };
 			}
 
 			// If the original request came into the root navigator, then
@@ -309,6 +333,8 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		if (Region.Parent is null &&
 			request.Route.IsEmpty())
 		{
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Empty route on root region - looking up default route");
+
 			// Clear any existing route information to make
 			// sure the navigation is restarted
 			this.Route = Route.Empty;
@@ -317,6 +343,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			var map = Resolver.FindByPath(string.Empty);
 			if (map is not null)
 			{
+				if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Default route found with path '{map.Path}'");
 				request = request with { Route = request.Route.Append(map.Path) };
 			}
 
@@ -464,8 +491,9 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		dataFactor.Parameters = (request.Route?.Data) ?? new Dictionary<string, object>();
 
 		IResponseNavigator? responseNavigator = default;
-		if(request.Result is not null)
+		if (request.Result is not null)
 		{
+			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Attempting to create response navigator for result type {request.Result.Name}");
 			var responseFactory = services.GetRequiredService<IResponseNavigatorFactory>();
 			// Create ResponseNavigator (and register with service provider) if result is requested
 			responseNavigator = request.GetResponseNavigator(responseFactory, this);
@@ -480,7 +508,9 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			services.AddScopedInstance<INavigator>(this);
 		}
 
+		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Invoking control specific navigation - start");
 		var executedResponse = await CoreNavigateAsync(request);
+		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Invoking control specific navigation - end");
 
 
 		// Convert the NavigationResponse to a typed NavigationResponse where there is a response value
@@ -502,12 +532,25 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			request = request with { Result = null };
 		}
 
+		Stopwatch? stopwatch = default;
+		if (Logger.IsEnabled(LogLevel.Trace))
+		{
+			Logger.LogTraceMessage($"Making sure current view is loaded - start");
+			stopwatch = new Stopwatch();
+			stopwatch.Start();
+		}
 		// This is required to ensure nested elements (eg Content in a ContentControl)
 		// are loaded. This will ensure the Children collection is correctly populated
 		await CheckLoadedAsync();
+		if (Logger.IsEnabled(LogLevel.Trace))
+		{
+			stopwatch?.Stop();
+			Logger.LogTraceMessage($"Making sure current view is loaded - end ({stopwatch?.ElapsedMilliseconds}ms)");
+		}
 
 		if (Region.Children.Count > 0)
 		{
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Region has {Region.Children.Count} children");
 			// Force navigators to be created on the UI thread before they're accessed
 			var navigators = await Dispatcher.ExecuteAsync(async cancellation =>
 			{
@@ -516,25 +559,33 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 						select nav).ToList();
 			});
 		}
+		else
+		{
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Region has no children to forward request to");
+			return default;
+		}
 
 		if (request.Route.IsEmpty())
 		{
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Request is empty, so need to determine if there are default routes to navigate to");
+
 			// Check to see if there are any child regions, and if there are
 			// whether there are any that don't already have a route
-			if (Region.Children.Count == 0 ||
+			if (!request.Route.Refresh &&
 				Region.Children.All(r => !(r.GetRoute()?.IsEmpty() ?? true)))
 			{
+				if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"All child regions already have a route, so don't process default routes");
 				return null;
 			}
 
-			var dataRoute = Resolver.FindByPath(request.Route.Base);
-			if (dataRoute is not null &&
-				!Region.Ancestors(true).Any(x => x.Item1?.Base == dataRoute.Path))
-			{
-				request = request with { Route = request.Route with { Base = dataRoute.Path } };
-			}
-			else
-			{
+			//var dataRoute = Resolver.FindByPath(request.Route.Base);
+			//if (dataRoute is not null &&
+			//	!Region.Ancestors(true).Any(x => x.Item1?.Base == dataRoute.Path))
+			//{
+			//	request = request with { Route = request.Route with { Base = dataRoute.Path } };
+			//}
+			//else
+			//{
 				var route = Resolver.FindByPath(this.Route?.Base);
 				if (route is not null)
 				{
@@ -552,7 +603,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 					}
 				}
-			}
+			//}
 
 			if (request.Route.IsEmpty())
 			{
@@ -574,6 +625,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 										// eg currently selected tab
 										region.Name == Route?.Base
 									).ToArray();
+		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Request is being forwarded to {children.Length} children");
 		return await NavigateChildRegions(children, request);
 
 	}

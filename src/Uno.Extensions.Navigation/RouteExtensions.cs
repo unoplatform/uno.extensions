@@ -8,6 +8,9 @@ public static class RouteExtensions
 	private static Regex nonAlphaRegex = new Regex(@"([^a-zA-Z0-9])+");
 	private static Regex alphaRegex = new Regex(@"([a-zA-Z0-9])+");
 
+	public static object? NavigationData(this Route route) =>
+		(route?.Data?.TryGetValue(string.Empty, out var navData) ?? false) ? navData : default;
+
 	public static bool IsBackOrCloseNavigation(this Route route) =>
 		route.Qualifier
 			.StartsWith(Qualifiers.NavigateBack);

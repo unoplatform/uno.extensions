@@ -21,7 +21,7 @@ public static class AuthenticationFlowExtensions
 	public static Task<NavigationResponse?> AuthenticatedNavigateRouteAsync(
 		this IAuthenticationFlow service, object sender, string route, INavigator? navigator = default, string qualifier = Qualifiers.ClearBackStack, object? data = null, CancellationToken cancellation = default)
 	{
-		var hint = new RouteHint { Route = route, Qualifier = qualifier, Data = data?.GetType() };
+		var hint = new RouteHint { Route = route, Qualifier = qualifier };//, Data = data?.GetType() };
 		return service.AuthenticatedNavigateRouteHintAsync(navigator, hint, sender, data, cancellation);
 	}
 
@@ -34,7 +34,7 @@ public static class AuthenticationFlowExtensions
 	public static Task<NavigationResponse?> AuthenticatedNavigateViewAsync(
 		this IAuthenticationFlow service, object sender, Type viewType, INavigator? navigator = default, string qualifier = Qualifiers.ClearBackStack, object? data = null, CancellationToken cancellation = default)
 	{
-		var hint = new RouteHint { View = viewType, Qualifier = qualifier, Data = data?.GetType() };
+		var hint = new RouteHint { View = viewType, Qualifier = qualifier };//, Data = data?.GetType() };
 		return service.AuthenticatedNavigateRouteHintAsync(navigator, hint, sender, data, cancellation);
 	}
 
@@ -47,7 +47,7 @@ public static class AuthenticationFlowExtensions
 	public static Task<NavigationResponse?> AuthenticatedNavigateViewModelAsync(
 		this IAuthenticationFlow service, object sender, Type viewModelType, INavigator? navigator = default, string qualifier = Qualifiers.ClearBackStack, object? data = null, CancellationToken cancellation = default)
 	{
-		var hint = new RouteHint { ViewModel= viewModelType, Qualifier = qualifier, Data = data?.GetType() };
+		var hint = new RouteHint { ViewModel = viewModelType, Qualifier = qualifier };//, Data = data?.GetType() };
 		return service.AuthenticatedNavigateRouteHintAsync(navigator, hint, sender, data, cancellation);
 	}
 }
