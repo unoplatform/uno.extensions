@@ -77,7 +77,7 @@ public static class FrameworkElementExtensions
 		Windows.ApplicationModel.Core.CoreApplication.MainView.DispatcherQueue;
 #endif
 
-	public static async Task<bool> EnsureLoaded(this FrameworkElement? element, int? timeoutInSeconds=1)
+	public static async Task<bool> EnsureLoaded(this FrameworkElement? element, int? timeoutInSeconds = default)
 	{
 		if (element is null)
 		{
@@ -88,8 +88,8 @@ public static class FrameworkElementExtensions
 		var success = true;
 		if (dispatcher is not null)
 		{
-			var timeoutToken = (timeoutInSeconds is not null?
-								new CancellationTokenSource(TimeSpan.FromSeconds(timeoutInSeconds??0.0)):
+			var timeoutToken = (timeoutInSeconds is not null ?
+								new CancellationTokenSource(TimeSpan.FromSeconds(timeoutInSeconds.Value)) :
 								new CancellationTokenSource()).Token;
 			success = await dispatcher.ExecuteAsync(async () =>
 			{
@@ -123,9 +123,10 @@ public static class FrameworkElementExtensions
 
 		return success;
 	}
-	private static Task EnsureElementLoaded(this FrameworkElement? element, CancellationToken? timeoutToken = null)
+	private static Task EnsureElementLoaded(this FrameworkElement? element, CancellationToken cancellationToken)
 	{
-		if (element == null)
+		if (element == null ||
+			element.IsLoaded)
 		{
 			return Task.CompletedTask;
 		}
@@ -144,14 +145,10 @@ public static class FrameworkElementExtensions
 		Action timeoutAction = () =>
 		{
 			rego?.Dispose();
-
-			if (timeoutToken is not null)
-			{
-				completion.TrySetCanceled(timeoutToken.Value);
-			}
+			completion.TrySetCanceled(cancellationToken);
 		};
 
-		rego = timeoutToken?.Register(timeoutAction);
+		rego = cancellationToken.Register(timeoutAction);
 
 		Action<bool> loadedAction = (overrideLoaded) =>
 		{
