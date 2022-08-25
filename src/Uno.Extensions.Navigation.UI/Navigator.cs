@@ -463,11 +463,15 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		var dataFactor = services.GetRequiredService<NavigationDataProvider>();
 		dataFactor.Parameters = (request.Route?.Data) ?? new Dictionary<string, object>();
 
-		var responseFactory = services.GetRequiredService<IResponseNavigatorFactory>();
-		// Create ResponseNavigator if result is requested
-		var navigator = request.Result is not null ? request.GetResponseNavigator(responseFactory, this) : default;
+		IResponseNavigator? responseNavigator = default;
+		if(request.Result is not null)
+		{
+			var responseFactory = services.GetRequiredService<IResponseNavigatorFactory>();
+			// Create ResponseNavigator (and register with service provider) if result is requested
+			responseNavigator = request.GetResponseNavigator(responseFactory, this);
+		}
 
-		if (navigator is null)
+		if (responseNavigator is null)
 		{
 			// Since this navigation isn't requesting a response, make sure
 			// the current INavigator is this navigator. This will have override
@@ -476,16 +480,17 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			services.AddScopedInstance<INavigator>(this);
 		}
 
-		var executedRoute = await CoreNavigateAsync(request);
+		var executedResponse = await CoreNavigateAsync(request);
 
 
-		if (navigator is not null)
+		// Convert the NavigationResponse to a typed NavigationResponse where there is a response value
+		// to be returned to the caller
+		if (responseNavigator is not null)
 		{
-			return navigator.AsResponseWithResult(executedRoute);
+			return responseNavigator.AsResponseWithResult(executedResponse);
 		}
 
-
-		return executedRoute;
+		return executedResponse;
 
 	}
 
