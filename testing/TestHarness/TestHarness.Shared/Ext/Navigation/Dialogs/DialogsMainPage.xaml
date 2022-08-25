@@ -1,8 +1,7 @@
 ﻿<testharness:BaseTestSectionPage xmlns:testharness="using:TestHarness"
-								 x:Class="TestHarness.Ext.Navigation.PageNavigation.MessageDialogMainPage"
+								 x:Class="TestHarness.Ext.Navigation.Dialogs.DialogsMainPage"
 								 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 								 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-								 xmlns:local="using:TestHarness.Ext.Navigation.PageNavigation"
 								 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 								 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 								 mc:Ignorable="d"
@@ -33,12 +32,18 @@
 		<StackPanel Grid.Row="2"
 					Orientation="Horizontal"
 					HorizontalAlignment="Center">
-			<Button AutomationProperties.AutomationId="SimpleDialogsButton"
-					Content="Simple"
-					Click="SimpleDialogsClick" />
+			<Button AutomationProperties.AutomationId="MessageDialogsButton"
+					Content="Message Dialogs"
+					Click="MessageDialogsClick" />
 			<Button AutomationProperties.AutomationId="LocalizedDialogsButton"
-					Content="Localized"
+					Content="Localized Dialogs"
 					Click="LocalizedDialogsClick" />
+			<Button AutomationProperties.AutomationId="ContentDialogsButton"
+					Content="Content Dialogs"
+					Click="ContentDialogsClick" />
+			<Button AutomationProperties.AutomationId="FlyoutsButton"
+					Content="Flyouts"
+					Click="FlyoutsClick" />
 		</StackPanel>
 	</Grid>
 </testharness:BaseTestSectionPage>

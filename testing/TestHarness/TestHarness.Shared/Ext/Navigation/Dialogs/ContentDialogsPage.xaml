@@ -1,0 +1,42 @@
+﻿<Page x:Class="TestHarness.Ext.Navigation.Dialogs.ContentDialogsPage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:local="using:TestHarness.Ext.Navigation.Dialogs"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  mc:Ignorable="d"
+	  xmlns:utu="using:Uno.Toolkit.UI"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+		<utu:NavigationBar Content="Content Dialogs"
+						   AutomationProperties.AutomationId="DialogsContentDialogsPage" />
+
+		<ScrollViewer Grid.Row="1">
+			<StackPanel>
+				<Button AutomationProperties.AutomationId="SimpleDialogNavRequestButton"
+						uen:Navigation.Request="DialogsSimple"
+						Content="SimpleDialog Nav Request" />
+				<Button AutomationProperties.AutomationId="SimpleDialogCodebehindButton"
+						Content="SimpleDialog Codebehind"
+						Click="SimpleDialogCodebehindClick" />
+				<Button AutomationProperties.AutomationId="SimpleDialogCodebehindWithCancelButton"
+						Content="SimpleDialog Codebehind (cancel after 2s)"
+						Click="SimpleDialogCodebehindCancelClick" />
+				<TextBlock x:Name="SimpleDialogResultText" />
+				<Button uen:Navigation.Request="!DialogsComplex"
+						Content="Complex Dialog Nav Request - (Default)" />
+				<Button uen:Navigation.Request="!DialogsComplex/DialogsComplexDialogFirst"
+						Content="Complex Dialog Nav Request - First Page" />
+				<Button uen:Navigation.Request="!DialogsComplex/DialogsComplexDialogSecond"
+						Content="Complex Dialog Nav Request - Second Page" />
+
+			</StackPanel>
+		</ScrollViewer>
+	</Grid>
+</Page>

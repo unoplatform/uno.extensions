@@ -2,9 +2,10 @@
 
 public class FlyoutNavigator : ControlNavigator
 {
-	public override bool CanGoBack => true;
+	public override bool CanGoBack => _flyout is not null;
 
-	private Flyout? Flyout { get; set; }
+	private Flyout? _flyout;
+	private FrameworkElement? _content;
 
 	private Window _window;
 
@@ -49,7 +50,7 @@ public class FlyoutNavigator : ControlNavigator
 		}
 		else
 		{
-			if (Flyout is not null)
+			if (_flyout is not null)
 			{
 				return Route.Empty;
 			}
@@ -57,7 +58,7 @@ public class FlyoutNavigator : ControlNavigator
 			var mapping = Resolver.FindByPath(route.Base);
 			injectedFlyout = !(mapping?.RenderView?.IsSubclassOf(typeof(Flyout)) ?? false);
 			var viewModel = await CreateViewModel(Region.Services, request, route, mapping);
-			Flyout = await DisplayFlyout(request, mapping?.RenderView, viewModel, injectedFlyout);
+			_flyout = await DisplayFlyout(request, mapping?.RenderView, viewModel, injectedFlyout);
 		}
 		var responseRequest = injectedFlyout ? Route.Empty : route with { Path = null };
 		return responseRequest;
@@ -65,10 +66,10 @@ public class FlyoutNavigator : ControlNavigator
 
 	private void CloseFlyout()
 	{
-		if (Flyout is not null)
+		if (_flyout is not null)
 		{
-			Flyout.Closed -= Flyout_Closed;
-			Flyout.Hide();
+			_flyout.Closed -= Flyout_Closed;
+			_flyout.Hide();
 		}
 	}
 
@@ -120,6 +121,7 @@ public class FlyoutNavigator : ControlNavigator
 			{
 				flyoutElement.SetName(route.Base); // Set the name on the flyout element
 			}
+			_content = flyoutElement;
 		}
 
 		var flyoutHost = request.Sender as FrameworkElement;
@@ -137,8 +139,6 @@ public class FlyoutNavigator : ControlNavigator
 
 		flyout.Closed += Flyout_Closed;
 
-		await flyoutElement.EnsureLoaded();
-
 
 		if (flyoutElement is not null && flyoutElement.Parent is not null)
 		{
@@ -152,12 +152,12 @@ public class FlyoutNavigator : ControlNavigator
 
 	private async void Flyout_Closed(object? sender, object e)
 	{
-		if (Flyout is null)
+		if (_flyout is null)
 		{
 			return;
 		}
 
-		Flyout.Closed -= Flyout_Closed;
+		_flyout.Closed -= Flyout_Closed;
 
 		var navigation = Region.Navigator();
 		if (navigation is null)
@@ -167,4 +167,7 @@ public class FlyoutNavigator : ControlNavigator
 
 		await navigation.NavigateBackAsync(this);
 	}
+
+	protected override Task CheckLoadedAsync() => _content is not null ? _content.EnsureLoaded() : Task.CompletedTask;
+
 }

@@ -153,18 +153,41 @@
       <DependentUpon>ToDoWelcomePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\ToDo\ToDoWelcomeViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\MessageDialog\LocalizedDialogsPage.xaml.cs">
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\ContentDialogsPage.xaml.cs">
+      <DependentUpon>ContentDialogsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\DialogsBasicFlyout.xaml.cs">
+      <DependentUpon>DialogsBasicFlyout.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\DialogsBasicViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\DialogsComplexDialog.xaml.cs">
+      <DependentUpon>DialogsComplexDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\DialogsComplexDialogFirstPage.xaml.cs">
+      <DependentUpon>DialogsComplexDialogFirstPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\DialogsComplexDialogFirstViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\DialogsComplexDialogSecondPage.xaml.cs">
+      <DependentUpon>DialogsComplexDialogSecondPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\DialogsComplexDialogSecondViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\DialogsFlyoutsPage.xaml.cs">
+      <DependentUpon>DialogsFlyoutsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\DialogsHostInit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\DialogsMainPage.xaml.cs">
+      <DependentUpon>DialogsMainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\DialogsSimpleDialog.xaml.cs">
+      <DependentUpon>DialogsSimpleDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\DialogsSimpleViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\LocalizedDialogsPage.xaml.cs">
       <DependentUpon>LocalizedDialogsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\MessageDialog\MessageDialogHostInit.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\MessageDialog\MessageDialogMainPage.xaml.cs">
-      <DependentUpon>MessageDialogMainPage.xaml</DependentUpon>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\MessageDialogsPage.xaml.cs">
+      <DependentUpon>MessageDialogsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\MessageDialog\SimpleDialogsPage.xaml.cs">
-      <DependentUpon>SimpleDialogsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\MessageDialog\LocalizedDialogsViewModel.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\MessageDialog\SimpleDialogsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\NavigationView\NavigationViewHomePage.xaml.cs">
       <DependentUpon>NavigationViewHomePage.xaml</DependentUpon>
     </Compile>
@@ -366,11 +389,31 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\MessageDialog\LocalizedDialogsPage.xaml">
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\ContentDialogsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\MessageDialog\MessageDialogMainPage.xaml">
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\DialogsBasicFlyout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\DialogsComplexDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\DialogsComplexDialogFirstPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\DialogsComplexDialogSecondPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\DialogsFlyoutsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\DialogsSimpleDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

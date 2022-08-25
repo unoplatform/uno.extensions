@@ -3,17 +3,19 @@ global using System.Collections.Generic;
 global using System.Linq;
 global using System.Net.Http;
 global using System.Reflection;
+global using System.Text.Json.Serialization;
 global using System.Threading;
 global using System.Threading.Tasks;
+global using System.Windows.Input;
 global using CommunityToolkit.Mvvm.ComponentModel;
+global using CommunityToolkit.Mvvm.Input;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Hosting;
 global using Microsoft.Extensions.Logging;
+global using Refit;
 global using TestHarness.Ext.Authentication.Custom;
-global using TestHarness.Ext.Navigation.MessageDialog;
-global using TestHarness.Ext.Navigation.PageNavigation;
 global using TestHarness.Models;
-global using TestHarness;
+global using TestHarnessApp;
 global using Uno.Extensions;
 global using Uno.Extensions.Authentication;
 global using Uno.Extensions.Configuration;
@@ -25,9 +27,6 @@ global using Uno.Extensions.Navigation.Regions;
 global using Uno.Extensions.Navigation.UI;
 global using Uno.Extensions.Reactive;
 global using Uno.Extensions.Serialization;
-
-global using System.Text.Json.Serialization;
-global using Refit;
 
 
 #if WINUI
@@ -53,6 +52,3 @@ global using Refit;
 	global using NavigationView = Microsoft.UI.Xaml.Controls.NavigationView;
 	global using NavigationViewSelectionChangedEventArgs = Microsoft.UI.Xaml.Controls.NavigationViewSelectionChangedEventArgs;
 #endif
-
-global using TestHarnessApp;
-

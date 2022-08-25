@@ -39,7 +39,6 @@ public class PopupNavigator : ControlNavigator<Popup>
         try
         {
             Control.IsOpen = string.Compare(path, RouteConstants.PopupShow, true) == 0;
-            await (Control.Child as FrameworkElement).EnsureLoaded();
             return path;
         }
         catch (Exception ex)

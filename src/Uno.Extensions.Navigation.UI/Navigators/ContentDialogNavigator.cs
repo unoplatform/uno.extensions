@@ -2,6 +2,8 @@
 
 public class ContentDialogNavigator : DialogNavigator
 {
+	private ContentDialog? _activeDialog;
+
 	public ContentDialogNavigator(
 		ILogger<ContentDialogNavigator> logger,
 		IDispatcher dispatcher,
@@ -15,7 +17,12 @@ public class ContentDialogNavigator : DialogNavigator
 
 	protected override Task<bool> RegionCanNavigate(Route route, RouteInfo? routeMap)
 	{
-		if(!(routeMap?.RenderView?.IsSubclassOf(typeof(ContentDialog)) ?? false))
+		if (route.IsBackOrCloseNavigation() && CanGoBack)
+		{
+			return Task.FromResult(true);
+		}
+
+		if (!(routeMap?.RenderView?.IsSubclassOf(typeof(ContentDialog)) ?? false))
 		{
 			return Task.FromResult(false);
 		}
@@ -24,6 +31,7 @@ public class ContentDialogNavigator : DialogNavigator
 
 	protected override async Task<IAsyncInfo?> DisplayDialog(NavigationRequest request, Type? viewType, object? viewModel)
 	{
+
 		var route = request.Route;
 		var navigation = Region.Navigator();
 		var services = this.Get<IServiceProvider>();
@@ -63,24 +71,17 @@ public class ContentDialogNavigator : DialogNavigator
 				TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.DenyChildAttach,
 				TaskScheduler.FromCurrentSynchronizationContext());
 
-		await dialog.EnsureLoaded();
-
 		if (dialog.Content is FrameworkElement dialogElement)
 		{
 			dialogElement.SetName(route.Base);
 			dialogElement.ReassignRegionParent();
 		}
 
-
-		if (request.Cancellation.HasValue &&
-			request.Cancellation.Value.CanBeCanceled)
-		{
-			request.Cancellation.Value.Register(async () =>
-			{
-				await this.Dispatcher.ExecuteAsync(() => showTask.Cancel());
-			});
-		}
+		_activeDialog = dialog;
 
 		return showTask;
 	}
+
+
+	protected override Task CheckLoadedAsync() => _activeDialog is not null ? _activeDialog.EnsureLoaded() : Task.CompletedTask;
 }

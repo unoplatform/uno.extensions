@@ -5,7 +5,8 @@ namespace Uno.Extensions.Navigation.Navigators;
 
 public class DrawerControlNavigator : ControlNavigator<DrawerControl>
 {
-	protected override FrameworkElement? CurrentView => Control;
+	protected override FrameworkElement? CurrentView => _content;
+	private FrameworkElement? _content;
 
 	public DrawerControlNavigator(
 		ILogger<ContentControlNavigator> logger,
@@ -51,7 +52,7 @@ public class DrawerControlNavigator : ControlNavigator<DrawerControl>
 		try
 		{
 			Control.IsOpen = !(path?.StartsWith(Qualifiers.NavigateBack) ?? false);
-			await (Control.Content as FrameworkElement).EnsureLoaded();
+			_content = Control?.Content as FrameworkElement;
 			return path;
 		}
 		catch (Exception ex)
@@ -78,7 +79,7 @@ public class DrawerControlNavigator : ControlNavigator<DrawerControl>
 		else
 		{
 			Control.IsOpen = true;
-			await (Control.Content as FrameworkElement).EnsureLoaded();
+			_content = Control?.Content as FrameworkElement;
 		}
 		var responseRequest = route with { Path = null };
 		return responseRequest;
@@ -91,4 +92,6 @@ public class DrawerControlNavigator : ControlNavigator<DrawerControl>
 			Control.IsOpen = false;
 		}
 	}
+
+	protected override Task CheckLoadedAsync() => _content is not null ? _content.EnsureLoaded() : Task.CompletedTask;
 }

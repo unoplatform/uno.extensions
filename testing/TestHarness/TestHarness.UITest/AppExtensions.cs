@@ -2,7 +2,7 @@
 
 public static class AppExtensions
 {
-	private const int UIWaitTimeInMilliseconds = 1000;
+	public const int UIWaitTimeInMilliseconds = 1000;
 	public static async Task TapAndWait(this IApp app, string elementToTap, string elementToWaitFor )
 	{
 		app.WaitElement(elementToTap);

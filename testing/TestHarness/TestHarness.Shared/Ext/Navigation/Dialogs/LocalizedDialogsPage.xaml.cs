@@ -1,5 +1,5 @@
 ﻿
-namespace TestHarness.Ext.Navigation.MessageDialog;
+namespace TestHarness.Ext.Navigation.Dialogs;
 
 public sealed partial class LocalizedDialogsPage : Page
 {

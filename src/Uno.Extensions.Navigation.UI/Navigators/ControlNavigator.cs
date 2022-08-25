@@ -66,6 +66,7 @@ public abstract class ControlNavigator<TControl> : ControlNavigator
 
 		if (view is FrameView fv)
 		{
+			await fv.EnsureLoaded();
 			navigator = fv.Navigator;
 		}
 

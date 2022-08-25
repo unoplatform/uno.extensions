@@ -2,7 +2,8 @@
 
 public class FrameNavigator : ControlNavigator<Frame>, IDeepRouteNavigator
 {
-	protected override FrameworkElement? CurrentView => Control?.Content as FrameworkElement;
+	protected override FrameworkElement? CurrentView => _content;
+	private FrameworkElement? _content;
 
 	public override bool CanGoBack => Control?.BackStackDepth > 0;
 
@@ -172,9 +173,12 @@ public class FrameNavigator : ControlNavigator<Frame>, IDeepRouteNavigator
 		}
 		firstSegment = firstSegment?.Append(lastRoute) ?? lastRoute;
 
+		_content = Control?.Content as FrameworkElement;
+
 		await InitializeCurrentView(request, lastRoute, lastMap, refreshViewModel);
 
 		CurrentView?.SetNavigatorInstance(Region.Navigator()!);
+
 
 		var responseRequest = firstSegment with { Qualifier = route.Qualifier };
 		return responseRequest;
@@ -225,7 +229,10 @@ public class FrameNavigator : ControlNavigator<Frame>, IDeepRouteNavigator
 		var navRoute = Resolver.FindByPath(navParent?.Route?.Base);
 		var mapping = mappings.Length == 1 ? mappings.First() : mappings.SelectMapFromAncestor(navRoute);
 
+		_content = Control?.Content as FrameworkElement;
+
 		await InitializeCurrentView(request, previousRoute ?? Route.Empty, mapping);
+
 
 		// Restore the INavigator instance
 		var navigator = CurrentView?.GetNavigatorInstance();
@@ -347,8 +354,6 @@ public class FrameNavigator : ControlNavigator<Frame>, IDeepRouteNavigator
 			currentPage.SetName(path ?? string.Empty);
 			currentPage.ReassignRegionParent();
 		}
-
-		await (Control.Content as FrameworkElement).EnsureLoaded();
 	}
 
 	private void RemoveLastFromBackStack()
@@ -392,4 +397,6 @@ public class FrameNavigator : ControlNavigator<Frame>, IDeepRouteNavigator
 		}
 		Route = lastRoute;
 	}
+
+	protected override Task CheckLoadedAsync() => _content is not null ? _content.EnsureLoaded() : Task.CompletedTask;
 }

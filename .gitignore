@@ -330,3 +330,4 @@ ASALocalRun/
 .mfractor/
 /unofeed
 /src/crosstargeting_override.props
+/testing/**/*.txt

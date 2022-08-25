@@ -1,8 +1,8 @@
-﻿namespace TestHarness.Ext.Navigation.MessageDialog;
+﻿namespace TestHarness.Ext.Navigation.Dialogs;
 
-public sealed partial class SimpleDialogsPage : Page
+public sealed partial class MessageDialogsPage : Page
 {
-	public SimpleDialogsPage()
+	public MessageDialogsPage()
 	{
 		this.InitializeComponent();
 	}
