@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Immutable;
 using Uno.Extensions.Configuration;
 
 namespace Uno.Extensions.Authentication;
@@ -26,8 +27,7 @@ public record TokenCache : ITokenCache
 
 	public async ValueTask<bool> ClearAsync(CancellationToken? cancellation = default)
 	{
-		_tokens.Clear();
-		await PersistCacheAsync();
+		await SaveAsync(string.Empty,new Dictionary<string, string>(), cancellation);
 		Cleared?.Invoke(this, EventArgs.Empty);
 		return true;
 	}
@@ -51,12 +51,12 @@ public record TokenCache : ITokenCache
 
 	private async ValueTask PersistCacheAsync()
 	{
-		await _tokensCache.UpdateAsync(data => new TokensData { Tokens = _tokens, Provider = _provider });
+		await _tokensCache.UpdateAsync(data => new TokensData { Tokens = _tokens.ToImmutableDictionary(), Provider = _provider });
 	}
 }
 
 public record TokensData
 {
-	public string? Provider { get; init; }
-	public IDictionary<string, string> Tokens { get; init; } = new Dictionary<string, string>();
+	public string? Provider { get; set; }
+	public IDictionary<string, string> Tokens { get; set; } = new Dictionary<string, string>();
 }
