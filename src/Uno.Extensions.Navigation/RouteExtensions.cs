@@ -192,19 +192,19 @@ public static class RouteExtensions
 				);
 	}
 
-	public static RouteInfo? SelectMapFromAncestor(this RouteInfo[] maps, RouteInfo? ancestorRoute)
-	{
-		if (ancestorRoute is null)
-		{
-			return maps.FirstOrDefault(x => x.Parent == null);
-		}
-		foreach (var map in maps)
-		{
-			if (map?.IsAncestorRoute(ancestorRoute) ?? false)
-			{
-				return map;
-			}
-		}
-		return default;
-	}
+	//public static RouteInfo? SelectMapFromAncestor(this RouteInfo[] maps, RouteInfo? ancestorRoute)
+	//{
+	//	if (ancestorRoute is null)
+	//	{
+	//		return maps.FirstOrDefault(x => x.Parent == null);
+	//	}
+	//	foreach (var map in maps)
+	//	{
+	//		if (map?.IsAncestorRoute(ancestorRoute) ?? false)
+	//		{
+	//			return map;
+	//		}
+	//	}
+	//	return default;
+	//}
 }

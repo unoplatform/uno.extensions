@@ -13,31 +13,31 @@ public static class NavigationRequestExtensions
 		if (path is null ||
 			string.IsNullOrWhiteSpace(path))
 		{
-			RouteInfo[]? maps = Array.Empty<RouteInfo>();
+			RouteInfo? maps = default;
 			if (hint.View is not null)
 			{
-				maps = resolver.FindByView(hint.View);
+				maps = resolver.FindByView(hint.View, navigator);
 			}
-			if (!maps.Any() &&
+			if (maps is  null &&
 				hint.ViewModel is not null)
 			{
-				maps = resolver.FindByViewModel(hint.ViewModel);
+				maps = resolver.FindByViewModel(hint.ViewModel, navigator);
 			}
-			if (!maps.Any() &&
+			if (maps is null &&
 				hint.Result is not null)
 			{
-				maps = resolver.FindByResultData(hint.Result);
+				maps = resolver.FindByResultData(hint.Result, navigator);
 			}
 
-			if (maps.Length == 1)
+			if (maps is null &&
+				data is not null)
 			{
-				path = maps.First().Path;
+				maps = resolver.FindByData(data.GetType(), navigator);
 			}
-			else if (maps.Length > 1)
+
+			if (maps is not null)
 			{
-				var navRoute = resolver.FindByPath(navigator.Route?.Base);
-				var map = maps.SelectMapFromAncestor(navRoute);
-				path = (map ?? maps.FirstOrDefault())?.Path;
+				path = maps.Path;
 			}
 		}
 

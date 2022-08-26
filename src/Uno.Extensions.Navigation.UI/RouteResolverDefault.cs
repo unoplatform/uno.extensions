@@ -20,21 +20,21 @@ public class RouteResolverDefault : RouteResolver
 	{
 	}
 
-	public override RouteInfo? FindByPath(string? path)
+	protected override RouteInfo? InternalFindByPath(string? path)
 	{
-		var map = base.FindByPath(path);
+		var map = base.InternalFindByPath(path);
 		return map ?? DefaultMapping(path: path).FirstOrDefault();
 	}
 
-	public override RouteInfo[] FindByViewModel(Type? viewModel)
+	protected override RouteInfo[] InternalFindByViewModel(Type? viewModel)
 	{
-		var map = base.FindByViewModel(viewModel);
+		var map = base.InternalFindByViewModel(viewModel);
 		return map.Any() ? map : DefaultMapping(viewModel: viewModel);
 	}
 
-	public override RouteInfo[] FindByView(Type? view)
+	protected override RouteInfo[] InternalFindByView(Type? view)
 	{
-		var map = base.FindByView(view);
+		var map = base.InternalFindByView(view);
 		return map.Any() ? map : DefaultMapping(view: view);
 	}
 
@@ -90,7 +90,7 @@ public class RouteResolverDefault : RouteResolver
 												{
 													return IsDialogViewType(viewFunc?.Invoke());
 												});
-			Mappings[defaultMapFromViewMap.Path] = defaultMapFromViewMap;
+			Mappings.Add(defaultMapFromViewMap);
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Created default mapping from viewmap - Path '{defaultMapFromViewMap.Path}'");
 		}
 
@@ -115,7 +115,7 @@ public class RouteResolverDefault : RouteResolver
 			{
 				return IsDialogViewType(view);
 			});
-			Mappings[defaultMap.Path] = defaultMap;
+			Mappings.Add( defaultMap);
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Created default mapping - Path '{defaultMap.Path}'");
 			return new RouteInfo[] { defaultMap };
 		}

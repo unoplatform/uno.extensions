@@ -103,17 +103,11 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		if (string.IsNullOrWhiteSpace(request.Route.Base) &&
 			request.Route.NavigationData() is { } navData)
 		{
-			var maps = Resolver.FindByData(navData.GetType());
-			if (maps.Any())
+			var maps = Resolver.FindByData(navData.GetType(), this);
+			if (maps is not null)
 			{
-				var navRoute = Resolver.FindByPath(this.Route?.Base);
-				var map = maps.SelectMapFromAncestor(navRoute);
-				var path = (map ?? maps.FirstOrDefault())?.Path;
-				if (path is not null)
-				{
-					request = request with { Route = request.Route with { Base = path } };
-					return Region.NavigateAsync(request);
-				}
+				request = request with { Route = request.Route with { Base = maps.Path } };
+				return Region.NavigateAsync(request);
 			}
 		}
 
@@ -586,23 +580,23 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			//}
 			//else
 			//{
-				var route = Resolver.FindByPath(this.Route?.Base);
-				if (route is not null)
+			var route = Resolver.FindByPath(this.Route?.Base);
+			if (route is not null)
+			{
+				var defaultRoute = route.Nested?.FirstOrDefault(x => x.IsDefault);
+				if (defaultRoute is not null)
 				{
-					var defaultRoute = route.Nested?.FirstOrDefault(x => x.IsDefault);
-					if (defaultRoute is not null)
+					if (Region.Children.FirstOrDefault(x => x.Name == defaultRoute.Path) is { } childRegion &&
+						defaultRoute.Nested?.FirstOrDefault(x => x.IsDefault) is { } nestedDefaultRoute)
 					{
-						if (Region.Children.FirstOrDefault(x => x.Name == defaultRoute.Path) is { } childRegion &&
-							defaultRoute.Nested?.FirstOrDefault(x => x.IsDefault) is { } nestedDefaultRoute)
-						{
-							request = request with { Route = request.Route.Append(nestedDefaultRoute.Path) };
-							return await childRegion.NavigateAsync(request);
-						}
-
-						request = request with { Route = request.Route.Append(defaultRoute.Path) };
-
+						request = request with { Route = request.Route.Append(nestedDefaultRoute.Path) };
+						return await childRegion.NavigateAsync(request);
 					}
+
+					request = request with { Route = request.Route.Append(defaultRoute.Path) };
+
 				}
+			}
 			//}
 
 			if (request.Route.IsEmpty())

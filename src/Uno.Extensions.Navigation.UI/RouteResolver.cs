@@ -3,7 +3,7 @@
 public class RouteResolver : IRouteResolver
 {
 	private RouteInfo? First { get; }
-	protected IDictionary<string, RouteInfo> Mappings { get; } = new Dictionary<string, RouteInfo>();
+	protected IList<RouteInfo> Mappings { get; } = new List<RouteInfo>();
 
 	protected ILogger Logger { get; }
 
@@ -34,32 +34,23 @@ public class RouteResolver : IRouteResolver
 			// Set the first routemap to be either the first with IsDefault, if
 			// if none have IsDefault then just return the first
 			First = maps.FirstOrDefault(x => x.IsDefault) ?? maps.FirstOrDefault();
-			var dependentRoutes = new List<RouteInfo>();
-			maps.Flatten().ForEach(route =>
-			{
-				Mappings[route.Path] = route;
-				if (route.IsDependent)
-				{
-					dependentRoutes.Add(route);
-				}
-			});
-			dependentRoutes.ForEach(route => route.DependsOnRoute = Mappings[route.DependsOn]);
+
+			Mappings.AddRange(maps.Flatten());
 		}
 
-
+		// Make sure the message dialog is added to the flat list of mappings
 		var messageDialogRoute = new RouteInfo(
 			Path: RouteConstants.MessageDialogUri,
 			View: () => typeof(MessageDialog),
 			ResultData: typeof(MessageDialog)
 		);
+		Mappings.Add(messageDialogRoute);
 
-		// Make sure the message dialog is the last route to be listed
-		Mappings[messageDialogRoute.Path] = messageDialogRoute;
 	}
 
-	private void PrintViewMaps(RouteInfo[] maps, string prefix= "")
+	private void PrintViewMaps(IEnumerable<RouteInfo> maps, string prefix = "")
 	{
-		if(maps is null)
+		if (maps is null)
 		{
 			return;
 		}
@@ -111,18 +102,28 @@ public class RouteResolver : IRouteResolver
 
 	protected static RouteInfo AssignParentRouteInfo(RouteInfo info)
 	{
+		var dependencies = new Dictionary<string, RouteInfo>();
 		foreach (var nestedInfo in info.Nested)
 		{
 			nestedInfo.Parent = info;
+
+			if (!string.IsNullOrWhiteSpace(nestedInfo.Path))
+			{
+				dependencies[nestedInfo.Path] = nestedInfo;
+			}
+			if (dependencies.TryGetValue(nestedInfo.DependsOn, out var dependee))
+			{
+				nestedInfo.DependsOnRoute = dependee;
+			}
 		}
 		return info;
 	}
 
 	protected static bool IsDialogViewType(Type? viewType = null)
 	{
-		if(viewType is null)
+		if (viewType is null)
 		{
-			return false;;
+			return false; ;
 		}
 
 		return viewType == typeof(MessageDialog) ||
@@ -131,7 +132,13 @@ public class RouteResolver : IRouteResolver
 			viewType == typeof(Flyout) ||
 			viewType.IsSubclassOf(typeof(Flyout));
 	}
-	public virtual RouteInfo? FindByPath(string? path)
+
+	public RouteInfo? FindByPath(string? path)
+	{
+		return InternalFindByPath(path);
+	}
+
+	protected virtual RouteInfo? InternalFindByPath(string? path)
 	{
 		if (path is null)
 		{
@@ -145,27 +152,71 @@ public class RouteResolver : IRouteResolver
 
 		path = path.ExtractBase(out var _, out var _);
 
-		return Mappings.TryGetValue(path!, out var map) ? map : default;
+		return Mappings.FirstOrDefault(x => x.Path == path);
+
 	}
 
-	public virtual RouteInfo[] FindByViewModel(Type? viewModelType)
+	private RouteInfo? BestNavigatorRouteInfo(RouteInfo[] maps, INavigator? navigator)
+	{
+		if (maps.Length == 0)
+		{
+			return default;
+		}
+		else if (maps.Length == 1 ||
+			navigator is null)
+		{
+			return maps[0];
+		}
+		else
+		{
+			// Need to locate the mapping that's most appropriate to the current route of the supplied navigator
+			var ancestors = navigator.Ancestors(this);
+			var bestRoute = (0, default(RouteInfo?));
+			foreach (var map in maps)
+			{
+				var routeAncestors = map.Ancestors(this);
+				var match = ancestors.Intersect(routeAncestors).Count();
+				if (match > bestRoute.Item1)
+				{
+					bestRoute = (match, map);
+				}
+			}
+			return bestRoute.Item2 ?? maps.FirstOrDefault();
+		}
+	}
+
+	public RouteInfo? FindByViewModel(Type? viewModelType, INavigator? navigator)
+	{
+		var maps = InternalFindByViewModel(viewModelType);
+		return BestNavigatorRouteInfo(maps, navigator);
+	}
+
+	protected virtual RouteInfo[] InternalFindByViewModel(Type? viewModelType)
 	{
 		return FindRouteByType(viewModelType, map => map.ViewModel);
 	}
 
-	public virtual RouteInfo[] FindByView(Type? viewType)
+	public RouteInfo? FindByView(Type? viewType, INavigator? navigator)
+	{
+		var maps = InternalFindByView(viewType);
+		return BestNavigatorRouteInfo(maps, navigator);
+	}
+
+	protected virtual RouteInfo[] InternalFindByView(Type? viewType)
 	{
 		return FindRouteByType(viewType, map => map.RenderView);
 	}
 
-	public RouteInfo[] FindByData(Type? dataType)
+	public RouteInfo? FindByData(Type? dataType, INavigator? navigator)
 	{
-		return FindRouteByType(dataType, map => map.Data);
+		var maps = FindRouteByType(dataType, map => map.Data);
+		return BestNavigatorRouteInfo(maps, navigator);
 	}
 
-	public RouteInfo[] FindByResultData(Type? dataType)
+	public RouteInfo? FindByResultData(Type? dataType, INavigator? navigator)
 	{
-		return FindRouteByType(dataType, map => map.ResultData);
+		var maps = FindRouteByType(dataType, map => map.ResultData);
+		return BestNavigatorRouteInfo(maps, navigator);
 	}
 
 	private RouteInfo[] FindRouteByType(Type? typeToFind, Func<RouteInfo, Type?> mapType)
@@ -173,8 +224,61 @@ public class RouteResolver : IRouteResolver
 		return FindByInheritedTypes(Mappings, typeToFind, mapType);
 	}
 
-	private TMap[] FindByInheritedTypes<TMap>(IDictionary<string, TMap> mappings, Type? typeToFind, Func<TMap, Type?> mapType)
+	private TMap[] FindByInheritedTypes<TMap>(IList<TMap> mappings, Type? typeToFind, Func<TMap, Type?> mapType)
 	{
-		return mappings.Values.FindByInheritedTypes(typeToFind, mapType);
+		return mappings.FindByInheritedTypes(typeToFind, mapType);
+	}
+}
+
+public static class TempHelpers
+{
+	internal static RouteInfo[] Ancestors(this RouteInfo routeInfo, IRouteResolver resolver)
+	{
+		var routes = new List<RouteInfo>();
+		routeInfo.NavigatorAncestors(resolver, routes);
+		return routes.ToArray();
+	}
+
+	private static void NavigatorAncestors(this RouteInfo routeInfo, IRouteResolver resolver, IList<RouteInfo> routes)
+	{
+		routes.Insert(0, routeInfo);
+
+		while (routeInfo?.DependsOnRoute is { } dependee)
+		{
+			routes.Insert(0, dependee);
+			routeInfo = dependee;
+		}
+
+		if (routeInfo?.Parent is { } parent)
+		{
+			parent.NavigatorAncestors(resolver, routes);
+		}
+	}
+
+
+	internal static RouteInfo[] Ancestors(this INavigator navigator, IRouteResolver resolver)
+	{
+		var routes = new List<RouteInfo>();
+		navigator.NavigatorAncestors(resolver, routes);
+		return routes.ToArray();
+	}
+
+	private static void NavigatorAncestors(this INavigator navigator, IRouteResolver resolver, IList<RouteInfo> routes)
+	{
+		var route = (navigator is IStackNavigator deepNav) ? deepNav.FullRoute : navigator?.Route;
+		while (!(route?.IsEmpty() ?? true))
+		{
+			var info = resolver.FindByPath(route.Base);
+			if (info is not null)
+			{
+				routes.Insert(0, info);
+			}
+			route = route.Next();
+		}
+
+		if (navigator?.GetParent() is { } parent)
+		{
+			parent.NavigatorAncestors(resolver, routes);
+		}
 	}
 }

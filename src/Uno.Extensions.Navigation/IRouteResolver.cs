@@ -1,14 +1,14 @@
 ﻿namespace Uno.Extensions.Navigation;
 
-public interface IRouteResolver 
+public interface IRouteResolver
 {
 	RouteInfo? FindByPath(string? path);
 
-	RouteInfo[] FindByViewModel(Type? viewModelType);
+	RouteInfo? FindByViewModel(Type? viewModelType, INavigator? navigator);
 
-	RouteInfo[] FindByView(Type? viewType);
+	RouteInfo? FindByView(Type? viewType, INavigator? navigator);
 
-	RouteInfo[] FindByData(Type? dataType);
+	RouteInfo? FindByData(Type? dataType, INavigator? navigator);
 
-	RouteInfo[] FindByResultData(Type? resultDataType);
+	RouteInfo? FindByResultData(Type? resultDataType, INavigator? navigator);
 }

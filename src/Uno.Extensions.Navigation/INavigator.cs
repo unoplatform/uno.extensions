@@ -9,7 +9,3 @@ public interface INavigator
 	Task<NavigationResponse?> NavigateAsync(NavigationRequest request);
 }
 
-internal interface IRouteInfo
-{
-	RouteInfo RouteInfo { get; }
-}

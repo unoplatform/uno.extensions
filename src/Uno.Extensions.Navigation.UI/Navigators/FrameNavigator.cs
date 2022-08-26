@@ -205,15 +205,15 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		var responseRoute = route with { Path = null };
 		var previousRoute = FullRoute.ApplyFrameRoute(Resolver, responseRoute, Region);
 		var previousBase = previousRoute?.Last()?.Base;
-		var currentBases = Resolver.FindByView(Control.Content.GetType());
+		var currentBases = Resolver.FindByView(Control.Content.GetType(), this);
 		if (previousBase is not null)
 		{
 			if (
 			Control.BackStack.Count > 0 &&
-			!currentBases.Any(r => r.Path == previousBase) &&
+			currentBases?.Path != previousBase &&
 			previousBase != Control.Content.GetType().Name)
 			{
-				var previousMapping = Resolver.FindByView(Control.BackStack.Last().SourcePageType);
+				var previousMapping = Resolver.FindByView(Control.BackStack.Last().SourcePageType, this);
 				// Invoke the navigation (which will be a back navigation)
 				FrameGoBack(route.Data, previousMapping);
 			}
@@ -224,10 +224,7 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			responseRoute = Route.Empty;
 		}
 
-		var mappings = Resolver.FindByView(Control.Content.GetType());
-		var navParent = this.GetParentWithRoute();
-		var navRoute = Resolver.FindByPath(navParent?.Route?.Base);
-		var mapping = mappings.Length == 1 ? mappings.First() : mappings.SelectMapFromAncestor(navRoute);
+		var mapping = Resolver.FindByView(Control.Content.GetType(), this);
 
 		_content = Control?.Content as FrameworkElement;
 
@@ -262,7 +259,7 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		}
 	}
 
-	private async void FrameGoBack(object? parameter, RouteInfo[] previousMappings)
+	private async void FrameGoBack(object? parameter, RouteInfo? previousMapping)
 	{
 		if (Control is null)
 		{
@@ -285,9 +282,6 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			}
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Invoking Frame.GoBack");
 			Control.GoBack();
-
-			var previousMapping = previousMappings.FirstOrDefault(x => x.RenderView == Control.SourcePageType) ??
-									previousMappings.FirstOrDefault();
 
 			await EnsurePageLoaded(previousMapping?.Path);
 
