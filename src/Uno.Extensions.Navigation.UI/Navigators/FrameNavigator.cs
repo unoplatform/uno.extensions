@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions.Navigation.Navigators;
 
-public class FrameNavigator : ControlNavigator<Frame>, IDeepRouteNavigator
+public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 {
 	protected override FrameworkElement? CurrentView => _content;
 	private FrameworkElement? _content;

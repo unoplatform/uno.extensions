@@ -425,7 +425,7 @@ public static class RouteExtensions
 			if (ancestors.Any(x => x.Item1?.Contains(rm.Path) ?? false))
 			{
 				var nav = region.Navigator();
-				var route = (nav is IDeepRouteNavigator deepnav) ? deepnav.FullRoute : nav?.Route;
+				var route = (nav is IStackNavigator deepnav) ? deepnav.FullRoute : nav?.Route;
 				// In the scenario where we're testing to see if we can navigate to the currentRoute
 				// the root Route needs to include the route for the current region
 				// In the scenario where we're navigating to the currentRoute, we don't
