@@ -65,7 +65,7 @@
 						Content="Fourth page" />
 				<Button uen:Navigation.Request="Dialogs"
 						Content="Dialogs page" />
-				<Button uen:Navigation.Request="Flyouts"
+				<Button uen:Navigation.Request="FlyoutsPopupsDrawer"
 						Content="Flyouts Popups and Drawer page" />
 				<Button uen:Navigation.Request="VisualStates"
 						Content="Visual States" />

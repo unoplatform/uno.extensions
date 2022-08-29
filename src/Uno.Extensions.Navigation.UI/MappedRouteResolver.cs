@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions.Navigation;
 
-public class MappedRouteResolver : RouteResolver
+public class MappedRouteResolver : RouteResolverDefault
 {
 	private readonly IDictionary<Type, Type> _viewModelMappings;
 	public MappedRouteResolver(
