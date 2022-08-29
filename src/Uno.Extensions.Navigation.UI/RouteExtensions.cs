@@ -109,61 +109,6 @@ public static class RouteExtensions
 
 		return segments.ToArray();
 	}
-	//	/// <returns>
-	//	/// Route - a single segment in the route (ie has Base but no Path)
-	//	/// RouteMap - the corresponding route map (if it exists)
-	//	/// bool - whether or not this is a dependson route (ie one that needs to exist in backstack prior to this route)
-	//	/// </returns>
-	//	public static (Route, RouteInfo?, bool)[] ForwardNavigationSegments(
-	//	this Route route,
-	//	IRouteResolver mappings,
-	//	IRegion region,
-	//	bool includeCurrentRegionRoute)
-	//{
-
-
-	//	// Here we're interested in the actual page navigation segments.
-	//	// Start with an empty list, and progressively add routes that
-	//	// correspond to page navigation segments
-	//	var segs = new List<(Route, RouteInfo?, bool)>();
-
-	//	if (route.IsEmpty() || route.FrameIsBackNavigation())
-	//	{
-	//		return segs.ToArray();
-	//	}
-
-	//	// For routes that have a depends on, we need to ensure that
-	//	// the dependson segments are added to the segments list
-	//	var r = route.RootDependsOn(mappings, region, includeCurrentRegionRoute);
-	//	var map = mappings.FindByPath(r.Base);
-	//	var originalRoute = false;
-	//	while (
-	//		!r.IsEmpty() &&
-	//		(
-	//			r.IsBackOrCloseNavigation() ||
-	//			(
-	//				map is not null &&
-	//				// Checks that there is a View specified and that it inherits from Page
-	//				map.IsPageRouteMap()
-	//			)
-	//		)
-	//	)
-	//	{
-	//		// Check if we've found the origianl route yet (if not, we're still processin dependson routes)
-	//		originalRoute = originalRoute || r.Base == route.Base;
-	//		segs.Add((r with { Qualifier = Qualifiers.None, Path = null, Data = null }, map, !originalRoute));
-	//		r = r.Next();
-	//		map = mappings.FindByPath(r.Base);
-	//	}
-
-	//	if (segs.Any())
-	//	{
-	//		var last = segs[segs.Count - 1];
-	//		segs[segs.Count - 1] = last with { Item1 = last.Item1 with { Data = route.Data } };
-	//	}
-
-	//	return segs.ToArray();
-	//}
 
 	public static object? ResponseData(this Route route) =>
 		(route?.Data?.TryGetValue(string.Empty, out var result) ?? false) ? result : null;

@@ -203,13 +203,6 @@ public sealed class NavigationRegion : IRegion
         _ = this.Navigator();
     }
 
-    //public override string ToString()
-    //{
-    //    var sb = new StringBuilder();
-    //    PrintAllRegions(sb, this);
-    //    return sb.ToString();
-    //}
-
 	public async Task<string> GetStringAsync()
 	{
 		var sb = new StringBuilder();

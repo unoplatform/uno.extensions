@@ -181,35 +181,4 @@ public static class RouteExtensions
 			return source;
 		}
 	}
-
-	public static bool IsAncestorRoute(this RouteInfo? rm, RouteInfo? route)
-	{
-		return (rm is not null && route is not null) &&
-				(
-					(rm?.DependsOn == route.Path) ||
-					(rm?.DependsOnRoute.IsAncestorRoute(route) ?? false) ||
-					(rm?.Parent?.Path == route.Path) ||
-					// This checks to see if there's a match for "route" anywhere in the ancestors of "rm"
-					(rm?.Parent?.IsAncestorRoute(route) ?? false)
-				//||
-				//// This checks to see if there's a match for "route.Parent" anywhere in the ancestors of "rm"
-				//rm.IsAncestorRoute(route.Parent)
-				);
-	}
-
-	//public static RouteInfo? SelectMapFromAncestor(this RouteInfo[] maps, RouteInfo? ancestorRoute)
-	//{
-	//	if (ancestorRoute is null)
-	//	{
-	//		return maps.FirstOrDefault(x => x.Parent == null);
-	//	}
-	//	foreach (var map in maps)
-	//	{
-	//		if (map?.IsAncestorRoute(ancestorRoute) ?? false)
-	//		{
-	//			return map;
-	//		}
-	//	}
-	//	return default;
-	//}
 }

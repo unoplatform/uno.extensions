@@ -138,7 +138,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 			// Send request to both unnamed children and any that have the
 			// same name as the current route
-			var nested = Region.Children.Where(x => string.IsNullOrWhiteSpace(x.Name) || x.Name == this.Route?.Base).ToArray();
+			nested = Region.Children.Where(x => string.IsNullOrWhiteSpace(x.Name) || x.Name == this.Route?.Base).ToArray();
 			if (nested.Any())
 			{
 				if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectNavigateAsync: Forced redirection to children ({nested.Length}) New request: {request.Route}");

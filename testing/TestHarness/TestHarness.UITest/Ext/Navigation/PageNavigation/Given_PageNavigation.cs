@@ -163,7 +163,7 @@ public class Given_PageNavigation : NavigationTestBase
 		App.WaitThenTap("FivePageRootOnePageButton"); // Clear back to /One
 
 
-		//App.WaitElement("OnePageToTwoPageButton");
+		App.WaitElement("OnePageToTwoPageButton");
 		var screenAfter = TakeScreenshot("When_PageNavigationXAML_After");
 		ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
 
