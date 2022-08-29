@@ -1,9 +1,13 @@
 ﻿namespace TestHarness.Ext.Authentication.Web;
 
-public record class WebAuthenticationLoginViewModel(INavigator Navigator, IAuthenticationFlow Flow)
+internal record class WebAuthenticationLoginViewModel(INavigator Navigator, IAuthenticationService Authentication, IAuthenticationRouteInfo RouteInfo)
 {
 	public async void Login()
 	{
-		await Flow.LoginAsync(new Dictionary<string, string>(){ { "LoginMetaData", "SocialPlatform" } });
+		var authenticated = await Authentication.LoginAsync(new Dictionary<string, string>(){ { "LoginMetaData", "SocialPlatform" } });
+		if (authenticated)
+		{
+			await Navigator.NavigateViewModelAsync(this, RouteInfo.HomeViewModel, qualifier: Qualifiers.ClearBackStack);
+		}
 	}
 }

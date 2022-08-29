@@ -19,12 +19,13 @@ public class OidcAuthenticationHostInit : BaseHostInitialization
 							.PostLogoutRedirectUri("oidc-auth://callback")
 						))
 
-				.UseAuthenticationFlow(builder =>
-						builder
-							.OnLoginRequiredNavigateViewModel<OidcAuthenticationLoginViewModel>(this)
-							.OnLoginCompletedNavigateViewModel<OidcAuthenticationHomeViewModel>(this)
-							.OnLogoutNavigateViewModel<OidcAuthenticationLoginViewModel>(this)
-						)
+				.ConfigureServices(services =>
+					services
+							.AddSingleton<IAuthenticationRouteInfo>(
+									_ => new AuthenticationRouteInfo<
+											OidcAuthenticationLoginViewModel,
+											OidcAuthenticationHomeViewModel>())
+				)
 
 				.ConfigureServices((context, services) =>
 				{
@@ -40,7 +41,7 @@ public class OidcAuthenticationHostInit : BaseHostInitialization
 	{
 
 		views.Register(
-				new ViewMap(ViewModel: typeof(OidcAuthenticationShellViewModel)),
+				new ViewMap(ViewModel: typeof(AuthenticationShellViewModel)),
 				new ViewMap<OidcAuthenticationLoginPage, OidcAuthenticationLoginViewModel>(),
 				new ViewMap<OidcAuthenticationHomePage, OidcAuthenticationHomeViewModel>()
 				);
@@ -48,7 +49,7 @@ public class OidcAuthenticationHostInit : BaseHostInitialization
 
 		routes
 			.Register(
-				new RouteMap("", View: views.FindByViewModel<OidcAuthenticationShellViewModel>(),
+				new RouteMap("", View: views.FindByViewModel<AuthenticationShellViewModel>(),
 						Nested: new RouteMap[]
 						{
 							new RouteMap("Login", View: views.FindByViewModel<OidcAuthenticationLoginViewModel>()),

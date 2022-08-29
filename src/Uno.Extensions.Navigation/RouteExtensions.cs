@@ -8,6 +8,9 @@ public static class RouteExtensions
 	private static Regex nonAlphaRegex = new Regex(@"([^a-zA-Z0-9])+");
 	private static Regex alphaRegex = new Regex(@"([a-zA-Z0-9])+");
 
+	public static object? NavigationData(this Route route) =>
+		(route?.Data?.TryGetValue(string.Empty, out var navData) ?? false) ? navData : default;
+
 	public static bool IsBackOrCloseNavigation(this Route route) =>
 		route.Qualifier
 			.StartsWith(Qualifiers.NavigateBack);
@@ -69,6 +72,11 @@ public static class RouteExtensions
 	}
 
 	public static string WithQualifier(this string path, string? qualifier) => (qualifier is null || string.IsNullOrWhiteSpace(qualifier)) ? path : $"{qualifier}{path}";
+
+	public static Route AsRoute(this RouteInfo map)
+	{
+		return new Route(Qualifiers.None, map.Path);
+	}
 
 	public static Route AsRoute(this Uri uri, object? data = null, IRouteResolver? resolver = null)
 	{
@@ -172,36 +180,5 @@ public static class RouteExtensions
 		{
 			return source;
 		}
-	}
-
-	public static bool IsAncestorRoute(this RouteInfo? rm, RouteInfo? route)
-	{
-		return (rm is not null && route is not null) &&
-				(
-					(rm?.DependsOn == route.Path) ||
-					(rm?.DependsOnRoute.IsAncestorRoute(route) ?? false) ||
-					(rm?.Parent?.Path == route.Path) ||
-					// This checks to see if there's a match for "route" anywhere in the ancestors of "rm"
-					(rm?.Parent?.IsAncestorRoute(route) ?? false)
-				//||
-				//// This checks to see if there's a match for "route.Parent" anywhere in the ancestors of "rm"
-				//rm.IsAncestorRoute(route.Parent)
-				);
-	}
-
-	public static RouteInfo? SelectMapFromAncestor(this RouteInfo[] maps, RouteInfo? ancestorRoute)
-	{
-		if (ancestorRoute is null)
-		{
-			return maps.FirstOrDefault(x => x.Parent == null);
-		}
-		foreach (var map in maps)
-		{
-			if (map?.IsAncestorRoute(ancestorRoute) ?? false)
-			{
-				return map;
-			}
-		}
-		return default;
 	}
 }

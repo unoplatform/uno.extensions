@@ -41,7 +41,7 @@ public class RouteNotifier : IRouteNotifier, IRouteUpdater
 		return regionUpdateId;
 	}
 
-	public void EndNavigation(Guid regionUpdateId)
+	public async Task EndNavigation(Guid regionUpdateId)
 	{
 		var root= regionRoots[regionUpdateId];
 		regionRoots.Remove(regionUpdateId);
@@ -51,7 +51,7 @@ public class RouteNotifier : IRouteNotifier, IRouteUpdater
 		{
 			timers[root].Stop();
 			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Elapsed navigation: {timers[root].ElapsedMilliseconds}");
-			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Post-navigation: {root.ToString()}");
+			if (Logger.IsEnabled(LogLevel.Trace) && root is NavigationRegion navRegion) Logger.LogTraceMessage($"Post-navigation: {await navRegion.GetStringAsync()}");
 			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Post-navigation (route): {root.GetRoute()}");
 
 			RouteChanged?.Invoke(this, new RouteChangedEventArgs(root));

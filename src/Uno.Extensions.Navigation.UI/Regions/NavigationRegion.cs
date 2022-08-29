@@ -203,14 +203,14 @@ public sealed class NavigationRegion : IRegion
         _ = this.Navigator();
     }
 
-    public override string ToString()
-    {
-        var sb = new StringBuilder();
-        PrintAllRegions(sb, this);
-        return sb.ToString();
-    }
+	public async Task<string> GetStringAsync()
+	{
+		var sb = new StringBuilder();
+		await PrintAllRegions(sb, this);
+		return sb.ToString();
+	}
 
-    private static void PrintAllRegions(StringBuilder builder, IRegion region)
+	private static async Task PrintAllRegions(StringBuilder builder, IRegion region)
     {
         if (!string.IsNullOrWhiteSpace(region.Name))
         {
@@ -222,6 +222,7 @@ public sealed class NavigationRegion : IRegion
             builder.Append($@"({region.View.GetType().Name})-");
         }
 
+		await region.View.EnsureLoaded();
         var nav = region.Navigator();
         if (nav is not null)
         {
@@ -235,7 +236,7 @@ public sealed class NavigationRegion : IRegion
 
         foreach (var child in region.Children)
         {
-            PrintAllRegions(builder, child);
+            await PrintAllRegions(builder, child);
         }
 
         if (region.Children.Any())

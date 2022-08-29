@@ -4,23 +4,24 @@
 public partial class WebAuthenticationHomeViewModel : ObservableObject
 {
 	public INavigator Navigator { get; init; }
-	public IAuthenticationFlow Flow { get; init; }
+	public IAuthenticationService Authentication { get; init; }
 
 	public IWebAuthenticationTestEndpoint Endpoint { get; init; }
 
 	[ObservableProperty]
 	private string[]? items;
 
-	public WebAuthenticationHomeViewModel(INavigator navigator, IAuthenticationFlow flow, IWebAuthenticationTestEndpoint endpoint)
+	public WebAuthenticationHomeViewModel(INavigator navigator, IAuthenticationService auth, IWebAuthenticationTestEndpoint endpoint)
 	{
 		Navigator = navigator;
-		Flow = flow;
+		Authentication = auth;
 		Endpoint = endpoint;
 	}
 
 	public async void Logout()
 	{
-		await Flow.LogoutAsync(CancellationToken.None);
+		await Authentication.LogoutAsync(CancellationToken.None);
+		await Navigator.NavigateViewModelAsync<WebAuthenticationLoginViewModel>(this, qualifier: Qualifiers.ClearBackStack);
 	}
 
 	public async void Retrieve()

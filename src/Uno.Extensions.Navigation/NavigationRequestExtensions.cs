@@ -13,56 +13,48 @@ public static class NavigationRequestExtensions
 		if (path is null ||
 			string.IsNullOrWhiteSpace(path))
 		{
-			RouteInfo[]? maps = Array.Empty<RouteInfo>();
+			RouteInfo? maps = default;
 			if (hint.View is not null)
 			{
-				maps = resolver.FindByView(hint.View);
+				maps = resolver.FindByView(hint.View, navigator);
 			}
-			if (!maps.Any() &&
+			if (maps is  null &&
 				hint.ViewModel is not null)
 			{
-				maps = resolver.FindByViewModel(hint.ViewModel);
+				maps = resolver.FindByViewModel(hint.ViewModel, navigator);
 			}
-			if (!maps.Any() &&
+			if (maps is null &&
 				hint.Result is not null)
 			{
-				maps = resolver.FindByResultData(hint.Result);
-			}
-			if (!maps.Any() &&
-				hint.Data is not null)
-			{
-				maps = resolver.FindByData(hint.Data);
+				maps = resolver.FindByResultData(hint.Result, navigator);
 			}
 
-			if (!maps.Any())
+			if (maps is null &&
+				data is not null)
 			{
-				return Route.Empty;
+				maps = resolver.FindByData(data.GetType(), navigator);
 			}
-			else if (maps.Length == 1)
+
+			if (maps is not null)
 			{
-				path = maps.First().Path;
-			}
-			else
-			{
-				var navRoute = resolver.FindByPath(navigator.Route?.Base);
-				var map = maps.SelectMapFromAncestor(navRoute);
-				path = (map ?? maps.FirstOrDefault())?.Path;
+				path = maps.Path;
 			}
 		}
 
 
 		// Apply any qualifier specified in the hint
-		path = path?.WithQualifier(hint.Qualifier);
+		path = path?.WithQualifier(hint.Qualifier) ?? hint.Qualifier;
 
-		if (path is null ||
-			string.IsNullOrWhiteSpace(path))
+		if ((path is null ||
+			string.IsNullOrWhiteSpace(path)) &&
+			data is null)
 		{
 			return Route.Empty;
 		}
 
-		var queryIdx = path.IndexOf('?');
+		var queryIdx = path?.IndexOf('?') ?? -1;
 		var query = string.Empty;
-		if (queryIdx >= 0)
+		if (queryIdx >= 0 && path is not null)
 		{
 			queryIdx++; // Step over the ?
 			query = queryIdx < path.Length ? path.Substring(queryIdx) : string.Empty;

@@ -1,6 +1,6 @@
 ﻿namespace TestHarness.Ext.Authentication.MSAL;
 
-public record MsalAuthenticationWelcomeViewModel(INavigator Navigator, IAuthenticationFlow Flow, IAuthenticationService Authentication)
+internal record MsalAuthenticationWelcomeViewModel(INavigator Navigator, IAuthenticationService auth, IAuthenticationService Authentication, IAuthenticationRouteInfo RouteInfo)
 {
 	public string[] Providers => Authentication.Providers;
 
@@ -19,6 +19,10 @@ public record MsalAuthenticationWelcomeViewModel(INavigator Navigator, IAuthenti
 				{nameof(CustomAuthenticationCredentials.Password),DummyJsonEndpointConstants.ValidPassword }
 			} :
 			default;
-		await Flow.LoginAsync(credentials: creds, provider: SelectedProvider);
+		var authenticated =await Authentication.LoginAsync(credentials: creds, provider: SelectedProvider);
+		if (authenticated)
+		{
+			await Navigator.NavigateViewModelAsync(this, RouteInfo.HomeViewModel, qualifier: Qualifiers.ClearBackStack);
+		}
 	}
 }

@@ -66,13 +66,13 @@ public class CustomAuthenticationServiceHostInit : BaseHostInitialization
 							}))
 				)
 
-				.UseAuthenticationFlow(builder =>
-						builder
-							.OnLoginRequiredNavigateViewModel<CustomAuthenticationLoginViewModel>(this)
-							.OnLoginCompletedNavigateViewModel<CustomAuthenticationHomeViewModel>(this)
-							.OnLogoutNavigateViewModel<CustomAuthenticationLoginViewModel>(this)
-						)
-
+				.ConfigureServices(services =>
+					services
+							.AddSingleton<IAuthenticationRouteInfo>(
+									_ => new AuthenticationRouteInfo<
+											CustomAuthenticationLoginViewModel,
+											CustomAuthenticationHomeViewModel>())
+				)
 
 				.ConfigureServices((context, services) =>
 				{
@@ -87,7 +87,7 @@ public class CustomAuthenticationServiceHostInit : BaseHostInitialization
 	{
 
 		views.Register(
-				new ViewMap(ViewModel: typeof(CustomAuthenticationShellViewModel)),
+				new ViewMap(ViewModel: typeof(AuthenticationShellViewModel)),
 				new ViewMap<CustomAuthenticationLoginPage, CustomAuthenticationLoginViewModel>(),
 				new ViewMap<CustomAuthenticationHomePage, CustomAuthenticationHomeViewModel>()
 				);
@@ -95,7 +95,7 @@ public class CustomAuthenticationServiceHostInit : BaseHostInitialization
 
 		routes
 			.Register(
-				new RouteMap("", View: views.FindByViewModel<CustomAuthenticationShellViewModel>(),
+				new RouteMap("", View: views.FindByViewModel<AuthenticationShellViewModel>(),
 						Nested: new RouteMap[]
 						{
 							new RouteMap("Login", View: views.FindByViewModel<CustomAuthenticationLoginViewModel>()),

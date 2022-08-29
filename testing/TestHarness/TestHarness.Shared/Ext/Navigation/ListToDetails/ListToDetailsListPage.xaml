@@ -1,0 +1,43 @@
+﻿<Page x:Class="TestHarness.Ext.Navigation.ListToDetails.ListToDetailsListPage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:local="using:TestHarness.Ext.Navigation.ListToDetails"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  mc:Ignorable="d"
+	  xmlns:models="using:TestHarness.Models"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	  xmlns:utu="using:Uno.Toolkit.UI"
+	  xmlns:triggers="using:TestHarness"
+	  NavigationCacheMode="Required"
+	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<utu:NavigationBar Content="List"
+						   AutomationProperties.AutomationId="ListToDetailsListNavigationBar" />
+		<ListView AutomationProperties.AutomationId="WidgetsListView"
+				  ItemsSource="{Binding Widgets}"
+				  uen:Navigation.Request=""
+				  x:Name="WidgetList"
+				  Grid.Row="1">
+			<ListView.ItemTemplate>
+				<DataTemplate x:DataType="models:Widget">
+					<TextBlock Text="{x:Bind Name}"
+							   FontSize="24" />
+				</DataTemplate>
+			</ListView.ItemTemplate>
+		</ListView>
+		<StackPanel Grid.Row="2">
+			<Button AutomationProperties.AutomationId="SelectSecondItemButton"
+					Click="SelectSecondItemClick" Content="Select Second Item" />
+			<Button AutomationProperties.AutomationId="RawNavigateButton"
+					Command="{Binding RawNavigateWithDataCommand}"
+					Content="Raw Navigation" />
+		</StackPanel>
+	</Grid>
+</Page>

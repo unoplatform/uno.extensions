@@ -8,3 +8,4 @@ public interface INavigator
 
 	Task<NavigationResponse?> NavigateAsync(NavigationRequest request);
 }
+

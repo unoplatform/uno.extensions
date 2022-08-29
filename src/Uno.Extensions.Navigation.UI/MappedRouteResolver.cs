@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions.Navigation;
 
-public class MappedRouteResolver : RouteResolver
+public class MappedRouteResolver : RouteResolverDefault
 {
 	private readonly IDictionary<Type, Type> _viewModelMappings;
 	public MappedRouteResolver(
@@ -35,13 +35,13 @@ public class MappedRouteResolver : RouteResolver
 			Nested: ResolveViewMaps(drm.Nested)));
 	}
 
-	public override RouteInfo[] FindByViewModel(Type? viewModelType)
+	protected override RouteInfo[] InternalFindByViewModel(Type? viewModelType)
 	{
 		if (viewModelType is not null &&
 			_viewModelMappings.TryGetValue(viewModelType, out var bindableViewModel))
 		{
-			return base.FindByViewModel(bindableViewModel);
+			return base.InternalFindByViewModel(bindableViewModel);
 		}
-		return base.FindByViewModel(viewModelType);
+		return base.InternalFindByViewModel(viewModelType);
 	}
 }

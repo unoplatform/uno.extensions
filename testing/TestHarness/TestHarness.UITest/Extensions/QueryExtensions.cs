@@ -48,6 +48,17 @@ public static class QueryExtensions
 #endif
 
 	/// <summary>
+	/// ONLY checks the visibility property on the specified element
+	/// This doesn't validate that the element is visible on the screen
+	/// </summary>
+	public static bool IsVisible(this QueryEx element)
+	{
+		var isVisible = element.GetDependencyPropertyValue("Visibility");
+		return isVisible is null ||
+			isVisible.ToString() == "Visible";
+	}
+
+	/// <summary>
 	/// Get the value of the Text property for an element.
 	/// </summary>
 	public static string GetText(this QueryEx element) => element.GetDependencyPropertyValue<string>("Text");

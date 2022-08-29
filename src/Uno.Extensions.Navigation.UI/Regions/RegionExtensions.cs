@@ -33,7 +33,7 @@ public static class RegionExtensions
 		if (includeRegion)
 		{
 			var nav = region.Navigator();
-			var route = (nav is IDeepRouteNavigator deepNav) ? deepNav.FullRoute : nav?.Route;
+			var route = (nav is IStackNavigator deepNav) ? deepNav.FullRoute : nav?.Route;
 			regions.Insert(0, (route, region, nav));
 		}
 

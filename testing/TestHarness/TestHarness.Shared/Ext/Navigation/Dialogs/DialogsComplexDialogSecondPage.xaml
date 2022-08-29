@@ -14,7 +14,8 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
 		</Grid.RowDefinitions>
-		<ui:NavigationBar Content="Complex Second Page">
+		<ui:NavigationBar Content="Complex Second Page"
+						  AutomationProperties.AutomationId="ComplexDialogSecondPageNavigationBar">
 			<ui:NavigationBar.MainCommand>
 				<AppBarButton>
 					<AppBarButton.Icon>
@@ -25,9 +26,9 @@
 		</ui:NavigationBar>
 
 		<StackPanel Grid.Row="1">
-			<Button Content="Close dialog"
+			<Button AutomationProperties.AutomationId="ComplexDialogSecondPageCloseButton"
+					Content="Close dialog"
 					Command="{Binding CloseCommand}" />
-
 		</StackPanel>
 	</Grid>
 </Page>

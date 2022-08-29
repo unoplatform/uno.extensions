@@ -29,21 +29,36 @@
 			<Button AutomationProperties.AutomationId="FivePageBackViewModelButton"
 					Content="Back (ViewModel)"
 					Click="{x:Bind ViewModel.GoBack}" />
-			<Button AutomationProperties.AutomationId="FivePageSixPageButton"
+			<Button AutomationProperties.AutomationId="FivePageToSixPageButton"
 					Content="Six"
-					uen:Navigation.Request="Six" />
-			<Button AutomationProperties.AutomationId="FivePageSevenPageButton"
+					uen:Navigation.Request="PageNavigationSix" />
+			<Button AutomationProperties.AutomationId="FivePageToSevenPageButton"
 					Content="Seven"
-					uen:Navigation.Request="Seven" />
-			<Button AutomationProperties.AutomationId="FivePageEightPageButton"
+					uen:Navigation.Request="PageNavigationSeven" />
+			<Button AutomationProperties.AutomationId="FivePageToEightPageButton"
 					Content="Eight"
-					uen:Navigation.Request="Eight" />
-			<Button AutomationProperties.AutomationId="FivePageNinePageButton"
+					uen:Navigation.Request="PageNavigationEight" />
+			<Button AutomationProperties.AutomationId="FivePageToNinePageButton"
 					Content="Nine"
-					uen:Navigation.Request="Nine" />
-			<Button AutomationProperties.AutomationId="FivePageTenPageButton"
+					uen:Navigation.Request="PageNavigationNine" />
+			<Button AutomationProperties.AutomationId="FivePageToTenPageButton"
 					Content="Ten"
-					uen:Navigation.Request="Ten" />
+					uen:Navigation.Request="PageNavigationTen" />
+			<Button AutomationProperties.AutomationId="FivePageRootPageButton"
+					Content="/ (will navigate to Second (default) with One in backstack)"
+					uen:Navigation.Request="/" />
+			<Button AutomationProperties.AutomationId="FivePageRootOnePageButton"
+					Content="/One (will clear to One)"
+					uen:Navigation.Request="/PageNavigationOne" />
+			<Button AutomationProperties.AutomationId="FivePageRootThreePageButton"
+					Content="/Three (will navigate to Third with One and Two in backstack)"
+					uen:Navigation.Request="/PageNavigationThree" />
+			<Button AutomationProperties.AutomationId="FivePageRootOneFourPageButton"
+					Content="/One/Four (will navigate to Four with One in backstack)"
+					uen:Navigation.Request="/PageNavigationOne/PageNavigationFour" />
+			<Button AutomationProperties.AutomationId="FivePageRootThreeSevenClearPageButton"
+					Content="-/Three/Seven (will navigate to Seven with Six and Three in backstack)"
+					uen:Navigation.Request="-/PageNavigationThree/PageNavigationSeven" />
 		</StackPanel>
 	</Grid>
 </Page>

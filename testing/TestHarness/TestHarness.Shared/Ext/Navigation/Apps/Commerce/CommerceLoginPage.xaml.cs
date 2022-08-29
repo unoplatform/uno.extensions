@@ -2,7 +2,7 @@
 
 public sealed partial class CommerceLoginPage : Page
 {
-	public CommerceLoginViewModel? ViewModel => DataContext as CommerceLoginViewModel;
+	internal CommerceLoginViewModel? ViewModel => DataContext as CommerceLoginViewModel;
 
 	public CommerceLoginPage()
 	{

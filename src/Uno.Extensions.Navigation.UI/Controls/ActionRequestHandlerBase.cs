@@ -59,7 +59,9 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 					}
 				}
 			}
-			routeHint = routeHint with { Data = data?.GetType(), Result = resultType };
+			routeHint = routeHint with {
+				//Data = data?.GetType(),
+				Result = resultType };
 
 			var qualifier = path.HasQualifier() ? Qualifiers.None : DefaultQualifier;
 

@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions.Navigation.Navigators;
 
-public class FrameNavigator : ControlNavigator<Frame>, IDeepRouteNavigator
+public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 {
 	protected override FrameworkElement? CurrentView => _content;
 	private FrameworkElement? _content;
@@ -66,13 +66,13 @@ public class FrameNavigator : ControlNavigator<Frame>, IDeepRouteNavigator
 			return false;
 		}
 
-		// If the route is dependent on another page, make sure
-		// that page is already navigated to, or is in the backstack
-		if (!string.IsNullOrWhiteSpace(routeMap?.DependsOn))
-		{
-			var dependsRoute = route.RootDependsOn(Resolver, Region, true);
-			return (FullRoute?.IsEmpty() ?? true) || FullRoute.Contains(dependsRoute.Base!);
-		}
+		//// If the route is dependent on another page, make sure
+		//// that page is already navigated to, or is in the backstack
+		//if (!string.IsNullOrWhiteSpace(routeMap?.DependsOn))
+		//{
+		//	var dependsRoute = route.RootDependsOn(Resolver, Region, true);
+		//	return (FullRoute?.IsEmpty() ?? true) || FullRoute.Contains(dependsRoute.Base!);
+		//}
 
 		return true;
 
@@ -97,7 +97,7 @@ public class FrameNavigator : ControlNavigator<Frame>, IDeepRouteNavigator
 		}
 
 		var route = request.Route;
-		var segments = route.ForwardNavigationSegments(Resolver, Region, false);
+		var segments = route.ForwardSegments(Resolver, this);
 
 		// As this is a forward navigation
 		if (segments.Length == 0)
@@ -121,15 +121,15 @@ public class FrameNavigator : ControlNavigator<Frame>, IDeepRouteNavigator
 			numberOfPagesToRemove--;
 		}
 
-		var (lastRoute, lastMap, _) = segments.Last();
+		var lastMap = segments.Last();
 		var refreshViewModel = false;
 
 
 		// Need to navigate the underlying frame if it's not already
 		// displaying the correct page
-		if (Control!.SourcePageType != lastMap?.RenderView)
+		if (Control!.SourcePageType != lastMap.RenderView)
 		{
-			await Show(lastRoute.Base, lastMap?.RenderView, lastRoute.Data);
+			await Show(lastMap.Path, lastMap.RenderView, request.Route.Data);
 		}
 		else
 		{
@@ -158,24 +158,24 @@ public class FrameNavigator : ControlNavigator<Frame>, IDeepRouteNavigator
 		}
 
 
-		Route? firstSegment = null;
+		Route firstSegment = Route.Empty;
 		for (var i = 0; i < segments.Length - 1; i++)
 		{
-			var (r, map, isDependsOn) = segments[i];
-			if (r.IsEmpty() || (isDependsOn && (Control?.BackStack.Any(entry => entry.SourcePageType == map?.RenderView) ?? false)))
+			var map = segments[i];
+			if(map.RenderView is null)
 			{
 				continue;
 			}
 
-			var newEntry = new PageStackEntry(map?.RenderView, null, null);
+			var newEntry = new PageStackEntry(map.RenderView, null, null);
 			Control?.BackStack.Add(newEntry);
-			firstSegment = firstSegment?.Append(r) ?? r;
+			firstSegment = firstSegment.Append(map.Path);
 		}
-		firstSegment = firstSegment?.Append(lastRoute) ?? lastRoute;
+		firstSegment = firstSegment.Append(lastMap.Path);
 
 		_content = Control?.Content as FrameworkElement;
 
-		await InitializeCurrentView(request, lastRoute, lastMap, refreshViewModel);
+		await InitializeCurrentView(request, lastMap.AsRoute() with { Data = request.Route.Data}, lastMap, refreshViewModel);
 
 		CurrentView?.SetNavigatorInstance(Region.Navigator()!);
 
@@ -203,17 +203,17 @@ public class FrameNavigator : ControlNavigator<Frame>, IDeepRouteNavigator
 			numberOfPagesToRemove--;
 		}
 		var responseRoute = route with { Path = null };
-		var previousRoute = FullRoute.ApplyFrameRoute(Resolver, responseRoute, Region);
+		var previousRoute = FullRoute.ApplyFrameRoute(Resolver, responseRoute, this);
 		var previousBase = previousRoute?.Last()?.Base;
-		var currentBases = Resolver.FindByView(Control.Content.GetType());
+		var currentBases = Resolver.FindByView(Control.Content.GetType(), this);
 		if (previousBase is not null)
 		{
 			if (
 			Control.BackStack.Count > 0 &&
-			!currentBases.Any(r => r.Path == previousBase) &&
+			currentBases?.Path != previousBase &&
 			previousBase != Control.Content.GetType().Name)
 			{
-				var previousMapping = Resolver.FindByView(Control.BackStack.Last().SourcePageType);
+				var previousMapping = Resolver.FindByView(Control.BackStack.Last().SourcePageType, this);
 				// Invoke the navigation (which will be a back navigation)
 				FrameGoBack(route.Data, previousMapping);
 			}
@@ -224,10 +224,7 @@ public class FrameNavigator : ControlNavigator<Frame>, IDeepRouteNavigator
 			responseRoute = Route.Empty;
 		}
 
-		var mappings = Resolver.FindByView(Control.Content.GetType());
-		var navParent = this.GetParentWithRoute();
-		var navRoute = Resolver.FindByPath(navParent?.Route?.Base);
-		var mapping = mappings.Length == 1 ? mappings.First() : mappings.SelectMapFromAncestor(navRoute);
+		var mapping = Resolver.FindByView(Control.Content.GetType(), this);
 
 		_content = Control?.Content as FrameworkElement;
 
@@ -262,7 +259,7 @@ public class FrameNavigator : ControlNavigator<Frame>, IDeepRouteNavigator
 		}
 	}
 
-	private async void FrameGoBack(object? parameter, RouteInfo[] previousMappings)
+	private async void FrameGoBack(object? parameter, RouteInfo? previousMapping)
 	{
 		if (Control is null)
 		{
@@ -285,9 +282,6 @@ public class FrameNavigator : ControlNavigator<Frame>, IDeepRouteNavigator
 			}
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Invoking Frame.GoBack");
 			Control.GoBack();
-
-			var previousMapping = previousMappings.FirstOrDefault(x => x.RenderView == Control.SourcePageType) ??
-									previousMappings.FirstOrDefault();
 
 			await EnsurePageLoaded(previousMapping?.Path);
 
@@ -388,7 +382,7 @@ public class FrameNavigator : ControlNavigator<Frame>, IDeepRouteNavigator
 			return;
 		}
 
-		FullRoute = FullRoute.ApplyFrameRoute(Resolver, route, Region);
+		FullRoute = FullRoute.ApplyFrameRoute(Resolver, route, this);
 		var lastRoute = FullRoute;
 		while (lastRoute is not null &&
 			!lastRoute.IsLast())
