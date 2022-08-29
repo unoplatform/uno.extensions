@@ -45,6 +45,6 @@ public record ChangeCollection : IReadOnlyCollection<MessageAxis>
 	public bool Contains(MessageAxis axis, out IChangeSet? changeSet)
 		=> _values.TryGetValue(axis, out changeSet);
 
-	internal void Add(MessageAxis axis, IChangeSet? changeSet = null)
-		=> _values.Add(axis, changeSet);
+	internal void Set(MessageAxis axis, IChangeSet? changeSet = null)
+		=> _values[axis] = changeSet;
 }

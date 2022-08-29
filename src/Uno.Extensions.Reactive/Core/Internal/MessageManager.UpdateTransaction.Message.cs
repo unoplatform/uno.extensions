@@ -73,7 +73,7 @@ internal partial class MessageManager<TParent, TResult>
 			public void Set(MessageAxis axis, MessageAxisValue value, IChangeSet? changes = null)
 				=> Inner.Set(axis, value, changes);
 
-			private (MessageAxisValue value, IChangeSet? changes) Get(MessageAxis axis)
+			internal (MessageAxisValue value, IChangeSet? changes) Get(MessageAxis axis)
 			{
 				var parentValue = Inner.Parent?.Current[axis] ?? MessageAxisValue.Unset;
 				var localValue = Inner.Local.Current[axis];

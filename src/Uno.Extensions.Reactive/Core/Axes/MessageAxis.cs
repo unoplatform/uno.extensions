@@ -62,6 +62,8 @@ public abstract class MessageAxis : IEquatable<MessageAxis>
 	/// </summary>
 	public string Identifier { get; }
 
+	internal bool IsTransient { get; init; }
+
 	[Pure]
 	internal virtual (MessageAxisValue values, IChangeSet? changes) GetLocalValue(MessageAxisValue parent, MessageAxisValue currentLocal, (MessageAxisValue value, IChangeSet? changes) updatedLocal)
 	{

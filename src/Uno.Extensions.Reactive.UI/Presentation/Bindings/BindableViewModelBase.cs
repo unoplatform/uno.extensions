@@ -18,7 +18,7 @@ namespace Uno.Extensions.Reactive.Bindings;
 [EditorBrowsable(EditorBrowsableState.Advanced)]
 public abstract partial class BindableViewModelBase : IBindable, INotifyPropertyChanged, IAsyncDisposable
 {
-	internal static MessageAxis<object?> BindingSource { get; } = new(MessageAxes.BindingSource, _ => null);
+	internal static MessageAxis<object?> BindingSource { get; } = new(MessageAxes.BindingSource, _ => null) { IsTransient = true };
 
 	private readonly CompositeAsyncDisposable _disposables = new();
 	private readonly AsyncLazyDispatcherProvider _dispatcher = new();
