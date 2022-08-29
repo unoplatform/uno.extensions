@@ -1,30 +1,25 @@
-﻿namespace TestHarness.Ext.Navigation.Apps.Commerce;
+﻿using TestHarness.Ext.Authentication;
 
-public record CommerceShellViewModel
+namespace TestHarness.Ext.Navigation.Apps.Commerce;
+
+internal record CommerceShellViewModel
 {
-	public INavigator? Navigator { get; init; }
+	public INavigator Navigator { get; init; }
 
-	private CommerceCredentials? _credentials;
+	private IAuthenticationRouteInfo _routeInfo;
 
-	public CommerceShellViewModel(INavigator navigator)
+
+	public CommerceShellViewModel(INavigator navigator, IAuthenticationRouteInfo routeInfo)
 	{
 		Navigator = navigator;
+		_routeInfo = routeInfo;
 
 		_ = Start();
 	}
 
 	public async Task Start()
 	{
-		if (_credentials is not null)
-		{
-			await Navigator!.NavigateDataAsync(this, _credentials, Qualifiers.ClearBackStack);
-			_credentials = null; // Reset credentials to logout works (in actual app the process of logging out would clear the cached credentials)
-		}
-		else
-		{
-			_credentials = await Navigator!.GetDataAsync<CommerceCredentials>(this, qualifier: Qualifiers.ClearBackStack);
-			_ = Start();
-		}
+		await Navigator.NavigateViewModelAsync(this, _routeInfo.LoginViewModel, Qualifiers.ClearBackStack);
 	}
 
 }

@@ -21,13 +21,13 @@ public class WebAuthenticationHostInit : BaseHostInitialization
 								return tokens;
 							})))
 
-				.UseAuthenticationFlow(builder =>
-						builder
-							.OnLoginRequiredNavigateViewModel<WebAuthenticationLoginViewModel>(this)
-							.OnLoginCompletedNavigateViewModel<WebAuthenticationHomeViewModel>(this)
-							.OnLogoutNavigateViewModel<WebAuthenticationLoginViewModel>(this)
-						)
-
+				.ConfigureServices(services =>
+					services
+							.AddSingleton<IAuthenticationRouteInfo>(
+									_ => new AuthenticationRouteInfo<
+											WebAuthenticationLoginViewModel,
+											WebAuthenticationHomeViewModel>())
+				)
 
 				.ConfigureServices((context, services) =>
 				{
@@ -43,7 +43,7 @@ public class WebAuthenticationHostInit : BaseHostInitialization
 	{
 
 		views.Register(
-				new ViewMap(ViewModel: typeof(WebAuthenticationShellViewModel)),
+				new ViewMap(ViewModel: typeof(AuthenticationShellViewModel)),
 				new ViewMap<WebAuthenticationLoginPage, WebAuthenticationLoginViewModel>(),
 				new ViewMap<WebAuthenticationHomePage, WebAuthenticationHomeViewModel>()
 				);
@@ -51,7 +51,7 @@ public class WebAuthenticationHostInit : BaseHostInitialization
 
 		routes
 			.Register(
-				new RouteMap("", View: views.FindByViewModel<WebAuthenticationShellViewModel>(),
+				new RouteMap("", View: views.FindByViewModel<AuthenticationShellViewModel>(),
 						Nested: new RouteMap[]
 						{
 							new RouteMap("Login", View: views.FindByViewModel<WebAuthenticationLoginViewModel>()),

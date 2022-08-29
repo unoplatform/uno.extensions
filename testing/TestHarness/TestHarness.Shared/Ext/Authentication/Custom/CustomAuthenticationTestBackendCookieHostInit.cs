@@ -35,13 +35,13 @@ public class CustomAuthenticationTestBackendCookieHostInit : BaseHostInitializat
 							}
 				)
 
-				.UseAuthenticationFlow(builder =>
-						builder
-							.OnLoginRequiredNavigateViewModel<CustomAuthenticationLoginViewModel>(this)
-							.OnLoginCompletedNavigateViewModel<CustomAuthenticationHomeTestBackendViewModel>(this)
-							.OnLogoutNavigateViewModel<CustomAuthenticationLoginViewModel>(this)
-						)
-
+				.ConfigureServices(services =>
+					services
+							.AddSingleton<IAuthenticationRouteInfo>(
+									_ => new AuthenticationRouteInfo<
+											CustomAuthenticationLoginViewModel,
+											CustomAuthenticationHomeTestBackendViewModel>())
+				)
 				.UseHttp((ctx, services) =>
 						services.AddRefitClient<ICustomAuthenticationTestBackendEndpoint>(ctx));
 
@@ -51,7 +51,7 @@ public class CustomAuthenticationTestBackendCookieHostInit : BaseHostInitializat
 	{
 
 		views.Register(
-				new ViewMap(ViewModel: typeof(CustomAuthenticationShellViewModel)),
+				new ViewMap(ViewModel: typeof(AuthenticationShellViewModel)),
 				new ViewMap<CustomAuthenticationLoginPage, CustomAuthenticationLoginViewModel>(),
 				new ViewMap<CustomAuthenticationHomeTestBackendPage, CustomAuthenticationHomeTestBackendViewModel>()
 				);
@@ -59,7 +59,7 @@ public class CustomAuthenticationTestBackendCookieHostInit : BaseHostInitializat
 
 		routes
 			.Register(
-				new RouteMap("", View: views.FindByViewModel<CustomAuthenticationShellViewModel>(),
+				new RouteMap("", View: views.FindByViewModel<AuthenticationShellViewModel>(),
 						Nested: new RouteMap[]
 						{
 							new RouteMap("Login", View: views.FindByViewModel<CustomAuthenticationLoginViewModel>()),

@@ -5,7 +5,7 @@ public partial class CustomAuthenticationHomeTestBackendViewModel : ObservableOb
 {
 	
 	public INavigator Navigator { get; init; }
-	public IAuthenticationFlow Flow { get; init; }
+	public IAuthenticationService Authentication { get; init; }
 
 	public ICustomAuthenticationTestBackendEndpoint Endpoint { get; init; }
 
@@ -19,19 +19,20 @@ public partial class CustomAuthenticationHomeTestBackendViewModel : ObservableOb
 
 	public CustomAuthenticationHomeTestBackendViewModel(
 		INavigator navigator,
-		IAuthenticationFlow flow,
+		IAuthenticationService auth,
 		ICustomAuthenticationTestBackendEndpoint endpoint,
 		ITokenCache tokens)
 	{
 		Navigator = navigator;
-		Flow = flow;
+		Authentication = auth;
 		Endpoint = endpoint;
 		Tokens = tokens;
 	}
 
 	public async void Logout()
 	{
-		await Flow.LogoutAsync(CancellationToken.None);
+		await Authentication.LogoutAsync(CancellationToken.None);
+		await Navigator.NavigateViewModelAsync<CustomAuthenticationLoginViewModel>(this, qualifier: Qualifiers.ClearBackStack);
 	}
 
 	public async void ClearAccessToken()

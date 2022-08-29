@@ -6,13 +6,13 @@ public abstract class BaseMsalHostInitialization : BaseHostInitialization
 	protected override IHostBuilder Custom(IHostBuilder builder)
 	{
 		return builder
-				.UseAuthenticationFlow(builder =>
-						builder
-							.OnLoginRequiredNavigateViewModel<MsalAuthenticationWelcomeViewModel>(this)
-							.OnLoginCompletedNavigateViewModel<MsalAuthenticationHomeViewModel>(this)
-							.OnLogoutNavigateViewModel<MsalAuthenticationWelcomeViewModel>(this)
-						)
-
+				.ConfigureServices(services =>
+					services
+							.AddSingleton<IAuthenticationRouteInfo>(
+									_ => new AuthenticationRouteInfo<
+											MsalAuthenticationWelcomeViewModel,
+											MsalAuthenticationHomeViewModel>())
+				)
 				.ConfigureServices((context, services) =>
 				{
 					services
@@ -26,7 +26,7 @@ public abstract class BaseMsalHostInitialization : BaseHostInitialization
 	{
 
 		views.Register(
-				new ViewMap(ViewModel: typeof(MsalAuthenticationShellViewModel)),
+				new ViewMap(ViewModel: typeof(AuthenticationShellViewModel)),
 				new ViewMap<MsalAuthenticationWelcomePage, MsalAuthenticationWelcomeViewModel>(),
 				new ViewMap<MsalAuthenticationHomePage, MsalAuthenticationHomeViewModel>()
 				);
@@ -34,7 +34,7 @@ public abstract class BaseMsalHostInitialization : BaseHostInitialization
 
 		routes
 			.Register(
-				new RouteMap("", View: views.FindByViewModel<MsalAuthenticationShellViewModel>(),
+				new RouteMap("", View: views.FindByViewModel<AuthenticationShellViewModel>(),
 						Nested: new RouteMap[]
 						{
 							new RouteMap("Welcome", View: views.FindByViewModel<MsalAuthenticationWelcomeViewModel>()),

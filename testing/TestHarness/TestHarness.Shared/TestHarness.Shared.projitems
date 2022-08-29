@@ -21,6 +21,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)BaseHostInitialization.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BaseTestSectionPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ControlSizeTrigger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\AuthenticationRouteInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\AuthenticationShellViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationHomePage.xaml.cs">
       <DependentUpon>CustomAuthenticationHomePage.xaml</DependentUpon>
     </Compile>
@@ -40,7 +42,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationMainPage.xaml.cs">
       <DependentUpon>CustomAuthenticationMainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationShellViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\DynamicUrlHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\ICustomAuthenticationTestBackendEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\ICustomAuthenticationDummyJsonEndpoint.cs" />
@@ -48,7 +49,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\IMsalAuthenticationTaskListEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\MsalAuthenticationMultiHostInit.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\MsalAuthenticationSettingsHostInit.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\MsalAuthenticationShellViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\MsalAuthenticationHomePage.xaml.cs">
       <DependentUpon>MsalAuthenticationHomePage.xaml</DependentUpon>
     </Compile>
@@ -73,7 +73,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Oidc\OidcAuthenticationMainPage.xaml.cs">
       <DependentUpon>OidcAuthenticationMainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Oidc\OidcAuthenticationShellViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Oidc\IOidcAuthenticationTestEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Web\IWebAuthenticationTestEndpoint.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Web\WebAuthenticationHomePage.xaml.cs">
@@ -88,7 +87,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Web\WebAuthenticationMainPage.xaml.cs">
       <DependentUpon>WebAuthenticationMainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Web\WebAuthenticationShellViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\BaseCommerceViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceCredentials.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceDealsPage.xaml.cs">

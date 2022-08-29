@@ -4,7 +4,7 @@
 public partial class MsalAuthenticationHomeViewModel : ObservableObject
 {
 	public INavigator Navigator { get; init; }
-	public IAuthenticationFlow Flow { get; init; }
+	public IAuthenticationService Authentication { get; init; }
 
 	public IMsalAuthenticationTaskListEndpoint TaskEndpoint { get; init; }
 	public ICustomAuthenticationDummyJsonEndpoint? Endpoint { get; init; }
@@ -20,13 +20,13 @@ public partial class MsalAuthenticationHomeViewModel : ObservableObject
 
 	public MsalAuthenticationHomeViewModel(
 		INavigator navigator,
-		IAuthenticationFlow flow,
+		IAuthenticationService auth,
 		ITokenCache tokens,
 		IMsalAuthenticationTaskListEndpoint taskEndpoint,
 		ICustomAuthenticationDummyJsonEndpoint? endpoint=null)
 	{
 		Navigator = navigator;
-		Flow = flow;
+		Authentication = auth;
 		TaskEndpoint = taskEndpoint;
 		Tokens = tokens;
 		Endpoint = endpoint;
@@ -34,7 +34,8 @@ public partial class MsalAuthenticationHomeViewModel : ObservableObject
 
 	public async void Logout()
 	{
-		await Flow.LogoutAsync(CancellationToken.None);
+		await Authentication.LogoutAsync(CancellationToken.None);
+		await Navigator.NavigateViewModelAsync<MsalAuthenticationWelcomeViewModel>(this, qualifier: Qualifiers.ClearBackStack);
 	}
 
 	public async void ClearAccessToken()

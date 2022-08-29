@@ -1,9 +1,13 @@
 ﻿namespace TestHarness.Ext.Authentication.Oidc;
 
-public record class OidcAuthenticationLoginViewModel(INavigator Navigator, IAuthenticationFlow Flow)
+internal record class OidcAuthenticationLoginViewModel(INavigator Navigator, IAuthenticationService Authentication, IAuthenticationRouteInfo RouteInfo)
 {
 	public async void Login()
 	{
-		await Flow.LoginAsync(null);
+		var authenticated = await Authentication.LoginAsync(null);
+		if (authenticated)
+		{
+			await Navigator.NavigateViewModelAsync(this, RouteInfo.HomeViewModel, qualifier: Qualifiers.ClearBackStack);
+		}
 	}
 }

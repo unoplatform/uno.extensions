@@ -4,23 +4,24 @@
 public partial class OidcAuthenticationHomeViewModel : ObservableObject
 {
 	public INavigator Navigator { get; init; }
-	public IAuthenticationFlow Flow { get; init; }
+	public IAuthenticationService Authentication { get; init; }
 
 	public IOidcAuthenticationTestEndpoint Endpoint { get; init; }
 
 	[ObservableProperty]
 	private OidcAuthenticationTestItem[]? items;
 
-	public OidcAuthenticationHomeViewModel(INavigator navigator, IAuthenticationFlow flow, IOidcAuthenticationTestEndpoint endpoint)
+	public OidcAuthenticationHomeViewModel(INavigator navigator, IAuthenticationService auth, IOidcAuthenticationTestEndpoint endpoint)
 	{
 		Navigator = navigator;
-		Flow = flow;
+		Authentication = auth;
 		Endpoint = endpoint;
 	}
 
 	public async void Logout()
 	{
-		await Flow.LogoutAsync(CancellationToken.None);
+		await Authentication.LogoutAsync(CancellationToken.None);
+		await Navigator.NavigateViewModelAsync<OidcAuthenticationLoginViewModel>(this, qualifier: Qualifiers.ClearBackStack);
 	}
 
 	public async void Retrieve()

@@ -1,10 +1,12 @@
-﻿namespace TestHarness.Ext.Navigation.Apps.Commerce;
+﻿using TestHarness.Ext.Authentication;
 
-public record CommerceLoginViewModel(INavigator Navigator)
+namespace TestHarness.Ext.Navigation.Apps.Commerce;
+
+internal record CommerceLoginViewModel(INavigator Navigator, IAuthenticationRouteInfo RouteInfo)
 {
 	public async void Login()
 	{
-		await Navigator.NavigateBackWithResultAsync(this, data: Option.Some(new CommerceCredentials()));
+			await Navigator.NavigateViewModelAsync(this, RouteInfo.HomeViewModel, qualifier: Qualifiers.ClearBackStack);
 	}
 
 }

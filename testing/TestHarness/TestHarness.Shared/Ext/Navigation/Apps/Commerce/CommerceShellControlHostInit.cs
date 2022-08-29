@@ -1,7 +1,23 @@
-﻿namespace TestHarness.Ext.Navigation.Apps.Commerce;
+﻿using TestHarness.Ext.Authentication;
+
+namespace TestHarness.Ext.Navigation.Apps.Commerce;
 
 public class CommerceShellControlHostInit : BaseHostInitialization
 {
+	protected override string[] ConfigurationFiles => new string[] { "TestHarness.Ext.Navigation.Apps.Commerce.appsettings.logging.json" };
+
+	protected override IHostBuilder Custom(IHostBuilder builder)
+	{
+		return builder.ConfigureServices(services =>
+					services
+							.AddSingleton<IAuthenticationRouteInfo>(
+									_ => new AuthenticationRouteInfo<
+											CommerceLoginViewModel,
+											CommerceHomeViewModel>())
+				);
+	}
+
+
 	protected override void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 	{
 
