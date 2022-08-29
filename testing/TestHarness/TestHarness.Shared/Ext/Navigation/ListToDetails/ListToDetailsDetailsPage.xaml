@@ -15,7 +15,13 @@
 		</Style>
 	</Page.Resources>
 	<Grid>
-		<StackPanel>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+	</Grid.RowDefinitions>
+		<utu:NavigationBar Content="List"
+						   AutomationProperties.AutomationId="ListToDetailsDetailsNavigationBar" />
+		<StackPanel Grid.Row="1">
 			<TextBlock Text="Name"
 					   FontWeight="Bold" />
 			<TextBlock Text="{Binding Widget.Name}" />

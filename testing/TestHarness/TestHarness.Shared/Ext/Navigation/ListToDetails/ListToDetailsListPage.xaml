@@ -23,6 +23,7 @@
 		<ListView AutomationProperties.AutomationId="WidgetsListView"
 				  ItemsSource="{Binding Widgets}"
 				  uen:Navigation.Request=""
+				  x:Name="WidgetList"
 				  Grid.Row="1">
 			<ListView.ItemTemplate>
 				<DataTemplate x:DataType="models:Widget">
@@ -32,7 +33,10 @@
 			</ListView.ItemTemplate>
 		</ListView>
 		<StackPanel Grid.Row="2">
-			<Button Command="{Binding RawNavigateWithDataCommand}"
+			<Button AutomationProperties.AutomationId="SelectSecondItemButton"
+					Click="SelectSecondItemClick" Content="Select Second Item" />
+			<Button AutomationProperties.AutomationId="RawNavigateButton"
+					Command="{Binding RawNavigateWithDataCommand}"
 					Content="Raw Navigation" />
 		</StackPanel>
 	</Grid>

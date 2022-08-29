@@ -96,20 +96,24 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			return default;
 		}
 
-		//// If Route is empty (null or "")
-		////   AND there is Data
-		//// THEN lookup the RouteMap for the type of Data
-		//// THEN find 
-		//if (string.IsNullOrWhiteSpace(request.Route.Base) &&
-		//	request.Route.NavigationData() is { } navData)
-		//{
-		//	var maps = Resolver.FindByData(navData.GetType(), this);
-		//	if (maps is not null)
-		//	{
-		//		request = request with { Route = request.Route with { Base = maps.Path } };
-		//		return Region.NavigateAsync(request);
-		//	}
-		//}
+		// If Route is empty (null or "")
+		//   AND there is Data
+		// THEN lookup the RouteMap for the type of Data
+		// Required for Test: Given_ListToDetails.When_ListToDetails
+		// In most cases navigation by data is already resolved to a route at this point
+		// as the RouteHint will use the data type to determine request route. However,
+		// if the NavigationRequest has been manually prepared with data, this logic will
+		// update the request based on the type of data.
+		if (string.IsNullOrWhiteSpace(request.Route.Base) &&
+			request.Route.NavigationData() is { } navData)
+		{
+			var maps = Resolver.FindByData(navData.GetType(), this);
+			if (maps is not null)
+			{
+				request = request with { Route = request.Route with { Base = maps.Path } };
+				return Region.NavigateAsync(request);
+			}
+		}
 
 
 		//// Deal with any named children that match the first segment of the request
@@ -551,42 +555,17 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		// the visual hierarchy to locate the IServiceProvider
 		var navigators = await NestedNavigatorsAsync();
 
-		//if (request.Route.IsEmpty())
-		//{
-		//	if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Request is empty, so need to determine if there are default routes to navigate to");
+		if (request.Route.IsEmpty())
+		{
+			// Update the request to include any default routes before attempting
+			// to navigate child routes
+			request = DefaultRouteRequest(request);  // Required for Test: Given_ListToDetails.When_ListToDetails
 
-		//	// Check to see if there are any child regions, and if there are
-		//	// whether there are any that don't already have a route
-		//	if (!request.Route.Refresh &&
-		//		Region.Children.All(r => !(r.GetRoute()?.IsEmpty() ?? true)))
-		//	{
-		//		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"All child regions already have a route, so don't process default routes");
-		//		return null;
-		//	}
-
-		//	var route = Resolver.FindByPath(this.Route?.Base);
-		//	if (route is not null)
-		//	{
-		//		var defaultRoute = route.Nested?.FirstOrDefault(x => x.IsDefault);
-		//		if (defaultRoute is not null)
-		//		{
-		//			if (Region.Children.FirstOrDefault(x => x.Name == defaultRoute.Path) is { } childRegion &&
-		//				defaultRoute.Nested?.FirstOrDefault(x => x.IsDefault) is { } nestedDefaultRoute)
-		//			{
-		//				request = request with { Route = request.Route.Append(nestedDefaultRoute.Path) };
-		//				return await childRegion.NavigateAsync(request);
-		//			}
-
-		//			request = request with { Route = request.Route.Append(defaultRoute.Path) };
-
-		//		}
-		//	}
-
-		//	if (request.Route.IsEmpty())
-		//	{
-		//		return null;
-		//	}
-		//}
+			if (request.Route.IsEmpty())
+			{
+				return null;
+			}
+		}
 
 		//if (request.Route.IsBackOrCloseNavigation() && !request.Route.IsClearBackstack())
 		//{
@@ -604,6 +583,40 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 									).ToArray();
 		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Request is being forwarded to {children.Length} children");
 		return await NavigateChildRegions(children, request);
+	}
+
+	private NavigationRequest DefaultRouteRequest(NavigationRequest request)
+	{
+		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Request is empty, so need to determine if there are default routes to navigate to");
+
+		// Check to see if there are any child regions, and if there are
+		// whether there are any that don't already have a route
+		if (!request.Route.Refresh &&
+			Region.Children.All(r => !(r.GetRoute()?.IsEmpty() ?? true)))
+		{
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"All child regions already have a route, so don't process default routes");
+			return request;
+		}
+
+		var route = Resolver.FindByPath(this.Route?.Base);
+		if (route is not null)
+		{
+			var defaultRoute = route.Nested?.FirstOrDefault(x => x.IsDefault);
+			if (defaultRoute is not null)
+			{
+				//if (Region.Children.FirstOrDefault(x => x.Name == defaultRoute.Path) is { } childRegion &&
+				//	defaultRoute.Nested?.FirstOrDefault(x => x.IsDefault) is { } nestedDefaultRoute)
+				//{
+				//	request = request with { Route = request.Route.Append(nestedDefaultRoute.Path) };
+				//	return await childRegion.NavigateAsync(request);
+				//}
+
+				request = request with { Route = request.Route.Append(defaultRoute.Path) };
+
+			}
+		}
+
+		return request;
 	}
 
 	private async Task<INavigator[]> NestedNavigatorsAsync()

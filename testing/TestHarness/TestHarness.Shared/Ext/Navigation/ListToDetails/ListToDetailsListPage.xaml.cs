@@ -9,4 +9,9 @@ public sealed partial class ListToDetailsListPage : Page
 
 		
 	}
+
+	private void SelectSecondItemClick(object sender, RoutedEventArgs e)
+	{
+		WidgetList.SelectedIndex = 1;
+	}
 }

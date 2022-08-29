@@ -26,7 +26,7 @@
 			<RowDefinition />
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
-		<TextBlock Text="Page Navigation Tests"
+		<TextBlock Text="List - Details Tests"
 				   Margin="20"
 				   FontSize="30" />
 		<ScrollViewer Grid.Row="1"
