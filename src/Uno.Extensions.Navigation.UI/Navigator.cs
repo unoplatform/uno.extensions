@@ -149,6 +149,24 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			return Task.FromResult(default(NavigationResponse?));
 		}
 
+		#region unverified
+		// ! route request to parent
+		if (
+			request.Route.IsDialog()
+			)
+		{
+			if (Region.Parent is not null)
+			{
+				if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectNavigateAsync: Redirecting to parent for dialog");
+				return Region.Parent.NavigateAsync(request);
+			}
+			else
+			{
+				if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectNavigateAsync: No redirection - at root region to handle dialog navigation request");
+				return default;
+			}
+		}
+		#endregion
 
 		// / route request to root (via parent)
 		//
