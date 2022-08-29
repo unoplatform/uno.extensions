@@ -66,13 +66,13 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			return false;
 		}
 
-		// If the route is dependent on another page, make sure
-		// that page is already navigated to, or is in the backstack
-		if (!string.IsNullOrWhiteSpace(routeMap?.DependsOn))
-		{
-			var dependsRoute = route.RootDependsOn(Resolver, Region, true);
-			return (FullRoute?.IsEmpty() ?? true) || FullRoute.Contains(dependsRoute.Base!);
-		}
+		//// If the route is dependent on another page, make sure
+		//// that page is already navigated to, or is in the backstack
+		//if (!string.IsNullOrWhiteSpace(routeMap?.DependsOn))
+		//{
+		//	var dependsRoute = route.RootDependsOn(Resolver, Region, true);
+		//	return (FullRoute?.IsEmpty() ?? true) || FullRoute.Contains(dependsRoute.Base!);
+		//}
 
 		return true;
 
@@ -97,7 +97,7 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		}
 
 		var route = request.Route;
-		var segments = route.ForwardNavigationSegments(Resolver, Region, false);
+		var segments = route.ForwardSegments(Resolver, this);
 
 		// As this is a forward navigation
 		if (segments.Length == 0)
@@ -121,15 +121,15 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			numberOfPagesToRemove--;
 		}
 
-		var (lastRoute, lastMap, _) = segments.Last();
+		var lastMap = segments.Last();
 		var refreshViewModel = false;
 
 
 		// Need to navigate the underlying frame if it's not already
 		// displaying the correct page
-		if (Control!.SourcePageType != lastMap?.RenderView)
+		if (Control!.SourcePageType != lastMap.RenderView)
 		{
-			await Show(lastRoute.Base, lastMap?.RenderView, lastRoute.Data);
+			await Show(lastMap.Path, lastMap.RenderView, request.Route.Data);
 		}
 		else
 		{
@@ -158,24 +158,24 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		}
 
 
-		Route? firstSegment = null;
+		Route firstSegment = Route.Empty;
 		for (var i = 0; i < segments.Length - 1; i++)
 		{
-			var (r, map, isDependsOn) = segments[i];
-			if (r.IsEmpty() || (isDependsOn && (Control?.BackStack.Any(entry => entry.SourcePageType == map?.RenderView) ?? false)))
+			var map = segments[i];
+			if(map.RenderView is null)
 			{
 				continue;
 			}
 
-			var newEntry = new PageStackEntry(map?.RenderView, null, null);
+			var newEntry = new PageStackEntry(map.RenderView, null, null);
 			Control?.BackStack.Add(newEntry);
-			firstSegment = firstSegment?.Append(r) ?? r;
+			firstSegment = firstSegment.Append(map.Path);
 		}
-		firstSegment = firstSegment?.Append(lastRoute) ?? lastRoute;
+		firstSegment = firstSegment.Append(lastMap.Path);
 
 		_content = Control?.Content as FrameworkElement;
 
-		await InitializeCurrentView(request, lastRoute, lastMap, refreshViewModel);
+		await InitializeCurrentView(request, lastMap.AsRoute() with { Data = request.Route.Data}, lastMap, refreshViewModel);
 
 		CurrentView?.SetNavigatorInstance(Region.Navigator()!);
 
@@ -203,7 +203,7 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			numberOfPagesToRemove--;
 		}
 		var responseRoute = route with { Path = null };
-		var previousRoute = FullRoute.ApplyFrameRoute(Resolver, responseRoute, Region);
+		var previousRoute = FullRoute.ApplyFrameRoute(Resolver, responseRoute, this);
 		var previousBase = previousRoute?.Last()?.Base;
 		var currentBases = Resolver.FindByView(Control.Content.GetType(), this);
 		if (previousBase is not null)
@@ -382,7 +382,7 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			return;
 		}
 
-		FullRoute = FullRoute.ApplyFrameRoute(Resolver, route, Region);
+		FullRoute = FullRoute.ApplyFrameRoute(Resolver, route, this);
 		var lastRoute = FullRoute;
 		while (lastRoute is not null &&
 			!lastRoute.IsLast())

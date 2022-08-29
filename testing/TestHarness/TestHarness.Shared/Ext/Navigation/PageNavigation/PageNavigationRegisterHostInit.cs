@@ -21,21 +21,18 @@ public class PageNavigationRegisterHostInit: PageNavigationHostInit
 
 		// RouteMap required for Shell if initialRoute or initialViewModel isn't specified when calling NavigationHost
 		routes.Register(
-			new RouteMap("",
-			Nested: new[]
-			{
-					new RouteMap("One", View: views.FindByViewModel<PageNavigationOneViewModel>()),
-					new RouteMap("Two", View: views.FindByViewModel<PageNavigationTwoViewModel>(), IsDefault: true, DependsOn:"One"),
-					new RouteMap("Three", View: views.FindByViewModel<PageNavigationThreeViewModel>()),
-					new RouteMap("Four", View: views.FindByViewModel<PageNavigationFourViewModel>()),
-					new RouteMap("Five", View: views.FindByViewModel<PageNavigationFiveViewModel>()),
-					new RouteMap("Six", View: views.FindByViewModel<PageNavigationSixViewModel>()),
-					new RouteMap("Seven", View: views.FindByViewModel<PageNavigationSevenViewModel>(), DependsOn: "Six"),
-					new RouteMap("Eight", View: views.FindByViewModel<PageNavigationEightViewModel>(), DependsOn: "Seven"),
-					new RouteMap("Nine", View: views.FindByViewModel<PageNavigationNineViewModel>(), DependsOn: "Eight"),
-					new RouteMap("Ten", View: views.FindByViewModel<PageNavigationTenViewModel>(), DependsOn: "Nine"),
-					new RouteMap("Confirm", View: ConfirmDialog),
-			}));
+					new RouteMap("PageNavigationOne", View: views.FindByViewModel<PageNavigationOneViewModel>()),
+					new RouteMap("PageNavigationTwo", View: views.FindByViewModel<PageNavigationTwoViewModel>(), IsDefault: true, DependsOn:"PageNavigationOne"),
+					new RouteMap("PageNavigationThree", View: views.FindByViewModel<PageNavigationThreeViewModel>(), DependsOn: "PageNavigationTwo"),
+					new RouteMap("PageNavigationFour", View: views.FindByViewModel<PageNavigationFourViewModel>()),
+					new RouteMap("PageNavigationFive", View: views.FindByViewModel<PageNavigationFiveViewModel>()),
+					new RouteMap("PageNavigationSix", View: views.FindByViewModel<PageNavigationSixViewModel>()),
+					new RouteMap("PageNavigationSeven", View: views.FindByViewModel<PageNavigationSevenViewModel>(), DependsOn: "PageNavigationSix"),
+					new RouteMap("PageNavigationEight", View: views.FindByViewModel<PageNavigationEightViewModel>(), DependsOn: "PageNavigationSeven"),
+					new RouteMap("PageNavigationNine", View: views.FindByViewModel<PageNavigationNineViewModel>(), DependsOn: "PageNavigationEight"),
+					new RouteMap("PageNavigationTen", View: views.FindByViewModel<PageNavigationTenViewModel>(), DependsOn: "PageNavigationNine"),
+					new RouteMap("Confirm", View: ConfirmDialog)
+			);
 	}
 
 }

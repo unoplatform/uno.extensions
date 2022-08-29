@@ -70,10 +70,23 @@ public class RouteResolver : IRouteResolver
 		{
 			return Array.Empty<RouteInfo>();
 		}
-		return (
+		var rmaps =(
 				from drm in maps
 				select FromRouteMap(drm)
 				).ToArray();
+		var dependencies = new Dictionary<string, RouteInfo>();
+		foreach (var map in rmaps)
+		{
+			if (!string.IsNullOrWhiteSpace(map.Path))
+			{
+				dependencies[map.Path] = map;
+			}
+			if (dependencies.TryGetValue(map.DependsOn, out var dependee))
+			{
+				map.DependsOnRoute = dependee;
+			}
+		}
+		return rmaps;
 	}
 
 	protected virtual RouteInfo FromRouteMap(RouteMap drm)

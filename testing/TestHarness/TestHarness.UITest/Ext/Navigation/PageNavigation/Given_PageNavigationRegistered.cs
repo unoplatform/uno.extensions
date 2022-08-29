@@ -5,7 +5,7 @@ public class Given_PageNavigationRegistered : NavigationTestBase
 	[Test]
 	public void When_PageNavigationRegisteredXAML()
 	{
-		InitTestSection(TestSections.PageNavigation);
+		InitTestSection(TestSections.PageNavigationRegistered);
 
 		App.WaitThenTap("ShowOnePageButton");
 
@@ -30,7 +30,7 @@ public class Given_PageNavigationRegistered : NavigationTestBase
 	[Test]
 	public void When_PageNavigationRegisteredCodebehind()
 	{
-		InitTestSection(TestSections.PageNavigation);
+		InitTestSection(TestSections.PageNavigationRegistered);
 
 		App.WaitThenTap("ShowOnePageButton");
 
@@ -55,7 +55,7 @@ public class Given_PageNavigationRegistered : NavigationTestBase
 	[Ignore("Failing CI - runs ok locally")]
 	public void When_PageNavigationRegisteredViewModel()
 	{
-		InitTestSection(TestSections.PageNavigation);
+		InitTestSection(TestSections.PageNavigationRegistered);
 
 		App.WaitThenTap("ShowOnePageButton");
 
@@ -74,6 +74,116 @@ public class Given_PageNavigationRegistered : NavigationTestBase
 		App.WaitElement("OnePageToTwoPageViewModelButton");
 		var screenAfter = TakeScreenshot("When_PageNavigationViewModel_After");
 		ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
+
+	}
+
+	[Test]
+	public void When_PageNavigationRegisteredDependsn()
+	{
+		InitTestSection(TestSections.PageNavigationRegistered);
+
+		App.WaitThenTap("ShowOnePageButton");
+
+		App.WaitElement("OnePageToTwoPageButton");
+		var screenBefore = TakeScreenshot("When_PageNavigationXAML_Before");
+		App.WaitThenTap("OnePageToTwoPageButton");
+		App.WaitThenTap("TwoPageToThreePageButton");
+		App.WaitThenTap("ThreePageToFourPageButton");
+		App.WaitThenTap("FourPageToFivePageButton");
+
+		App.WaitThenTap("FivePageToSixPageButton");
+		App.WaitThenTap("SixPageBackButton");
+
+
+		App.WaitThenTap("FivePageToSevenPageButton");
+		App.WaitThenTap("SevenPageBackButton");
+		App.WaitThenTap("SixPageBackButton");
+
+		App.WaitThenTap("FivePageToEightPageButton");
+		App.WaitThenTap("EightPageBackButton");
+		App.WaitThenTap("SevenPageBackButton");
+		App.WaitThenTap("SixPageBackButton");
+
+		App.WaitThenTap("FivePageToNinePageButton");
+		App.WaitThenTap("NinePageBackButton");
+		App.WaitThenTap("EightPageBackButton");
+		App.WaitThenTap("SevenPageBackButton");
+		App.WaitThenTap("SixPageBackButton");
+
+		App.WaitThenTap("FivePageToTenPageButton");
+		App.WaitThenTap("TenPageBackButton");
+		App.WaitThenTap("NinePageBackButton");
+		App.WaitThenTap("EightPageBackButton");
+		App.WaitThenTap("SevenPageBackButton");
+		App.WaitThenTap("SixPageBackButton");
+
+
+		App.WaitThenTap("FivePageBackButton");
+		App.WaitThenTap("FourPageBackButton");
+		App.WaitThenTap("ThreePageBackButton");
+		App.WaitThenTap("TwoPageBackButton");
+
+
+		App.WaitElement("OnePageToTwoPageButton");
+		var screenAfter = TakeScreenshot("When_PageNavigationXAML_After");
+		ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
+
+	}
+
+
+	[Test]
+	public void When_PageNavigationRegisteredRoot()
+	{
+		InitTestSection(TestSections.PageNavigationRegistered);
+
+		App.WaitThenTap("ShowOnePageButton");
+
+		App.WaitElement("OnePageToTwoPageButton");
+		var screenBefore = TakeScreenshot("When_PageNavigationXAML_Before");
+		App.WaitThenTap("OnePageToTwoPageButton");
+		App.WaitThenTap("TwoPageToThreePageButton");
+		App.WaitThenTap("ThreePageToFourPageButton");
+		App.WaitThenTap("FourPageToFivePageButton");
+
+		// / (will navigate to Second (default) with One in backstack)
+		App.WaitThenTap("FivePageRootPageButton");
+		App.WaitThenTap("TwoPageBackButton");
+		OnePageToFivePage();
+
+		// /One (will clear to One)
+		App.WaitThenTap("FivePageRootOnePageButton");
+		OnePageToFivePage();
+
+		// /Three (will navigate to Third with One and Two in backstack)
+		App.WaitThenTap("FivePageRootThreePageButton");
+		App.WaitThenTap("ThreePageBackButton");
+		App.WaitThenTap("TwoPageBackButton");
+		OnePageToFivePage();
+
+		// /One/Four (will navigate to Four with One in backstack)
+		App.WaitThenTap("FivePageRootOneFourPageButton");
+		App.WaitThenTap("FourPageBackButton");
+		OnePageToFivePage();
+
+		// -/Three/Seven (will navigate to Seven with Six, Three, Two and One in backstack)
+		App.WaitThenTap("FivePageRootThreeSevenClearPageButton");
+		App.WaitThenTap("SevenPageBackButton");
+		App.WaitThenTap("SixPageBackButton");
+		App.WaitThenTap("ThreePageBackButton");
+		App.WaitThenTap("TwoPageBackButton");
+
+		App.WaitElement("OnePageToTwoPageButton");
+		var screenAfter = TakeScreenshot("When_PageNavigationXAML_After");
+		ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
+
+	}
+
+	private void OnePageToFivePage()
+	{
+		App.WaitThenTap("OnePageToTwoPageButton");
+		App.WaitThenTap("TwoPageToThreePageButton");
+		App.WaitThenTap("ThreePageToFourPageButton");
+		App.WaitThenTap("FourPageToFivePageButton");
 
 	}
 }

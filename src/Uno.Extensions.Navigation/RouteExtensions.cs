@@ -73,6 +73,11 @@ public static class RouteExtensions
 
 	public static string WithQualifier(this string path, string? qualifier) => (qualifier is null || string.IsNullOrWhiteSpace(qualifier)) ? path : $"{qualifier}{path}";
 
+	public static Route AsRoute(this RouteInfo map)
+	{
+		return new Route(Qualifiers.None, map.Path);
+	}
+
 	public static Route AsRoute(this Uri uri, object? data = null, IRouteResolver? resolver = null)
 	{
 		var path = uri.OriginalString;
