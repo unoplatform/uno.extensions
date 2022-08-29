@@ -29,11 +29,14 @@
 						Content="SimpleDialog Codebehind (cancel after 2s)"
 						Click="SimpleDialogCodebehindCancelClick" />
 				<TextBlock x:Name="SimpleDialogResultText" />
-				<Button uen:Navigation.Request="!DialogsComplex"
+				<Button AutomationProperties.AutomationId="ComplexDialogNavRequestButton"
+						uen:Navigation.Request="!DialogsComplex"
 						Content="Complex Dialog Nav Request - (Default)" />
-				<Button uen:Navigation.Request="!DialogsComplex/DialogsComplexDialogFirst"
+				<Button AutomationProperties.AutomationId="ComplexDialogFirstNavRequestButton"
+						uen:Navigation.Request="!DialogsComplex/DialogsComplexDialogFirst"
 						Content="Complex Dialog Nav Request - First Page" />
-				<Button uen:Navigation.Request="!DialogsComplex/DialogsComplexDialogSecond"
+				<Button AutomationProperties.AutomationId="ComplexDialogSecondNavRequestButton"
+						uen:Navigation.Request="!DialogsComplex/DialogsComplexDialogSecond"
 						Content="Complex Dialog Nav Request - Second Page" />
 
 			</StackPanel>

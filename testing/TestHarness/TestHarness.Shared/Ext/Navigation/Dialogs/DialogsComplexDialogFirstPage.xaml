@@ -14,12 +14,15 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition />
 		</Grid.RowDefinitions>
-		<ui:NavigationBar Content="Complex First Page"/>
+		<ui:NavigationBar Content="Complex First Page"
+						  AutomationProperties.AutomationId="ComplexDialogFirstPageNavigationBar"/>
 
 		<StackPanel Grid.Row="1">
-			<Button uen:Navigation.Request="DialogsComplexDialogSecond"
+			<Button AutomationProperties.AutomationId="ComplexDialogFirstPageSecondButton"
+					uen:Navigation.Request="DialogsComplexDialogSecond"
 					Content="Second page" />
-			<Button Content="Close dialog"
+			<Button AutomationProperties.AutomationId="ComplexDialogFirstPageCloseButton"
+					Content="Close dialog"
 					Command="{Binding CloseCommand}" />
 		</StackPanel>
 	</Grid>

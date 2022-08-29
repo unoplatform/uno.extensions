@@ -552,10 +552,10 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 										// Unnamed child regions
 										string.IsNullOrWhiteSpace(region.Name)   // Required for Test: Given_PageNavigation.When_PageNavigationXAML
 																				 //// Regions whose name matches the next route segment
-																				 //|| region.Name == request.Route.Base ||
-																				 //// Regions whose name matches the current route
-																				 //// eg currently selected tab
-																				 //|| region.Name == Route?.Base
+																				 //|| region.Name == request.Route.Base
+																				 // Regions whose name matches the current route
+																				 // eg currently selected tab
+									|| region.Name == Route?.Base // Required for Test: Given_ContentDialog.When_ComplexContentDialog
 									).ToArray();
 		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Request is being forwarded to {children.Length} children");
 		return await NavigateChildRegions(children, request);

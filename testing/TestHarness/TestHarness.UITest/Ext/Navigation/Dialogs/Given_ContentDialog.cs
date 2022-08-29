@@ -43,4 +43,28 @@ public class Given_ContentDialog : NavigationTestBase
 		ImageAssert.AreEqual(screenBefore, screenClosed,tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
 	}
 
+	[Test]
+	public async Task When_ComplexContentDialog()
+	{
+		InitTestSection(TestSections.Dialogs);
+
+		App.WaitThenTap("ContentDialogsButton");
+
+		App.WaitElement("DialogsContentDialogsPage");
+
+		var screenBefore = TakeScreenshot("When_Dialog_Before");
+		App.Tap("ComplexDialogNavRequestButton");
+		var screenAfter = TakeScreenshot("When_Dialog_After");
+		ImageAssert.AreNotEqual(screenBefore, screenAfter);
+
+		App.WaitElement("ComplexDialogFirstPageNavigationBar");
+
+		App.Tap("ComplexDialogFirstPageCloseButton");
+
+		await Task.Delay(AppExtensions.UIWaitTimeInMilliseconds);
+
+		var screenClosed = TakeScreenshot("When_Dialog_Closed");
+		ImageAssert.AreEqual(screenBefore, screenClosed, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
+	}
+
 }
