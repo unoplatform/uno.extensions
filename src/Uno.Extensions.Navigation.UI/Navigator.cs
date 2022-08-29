@@ -146,31 +146,6 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		//}
 
 
-		//// ../ or ! route request to parent
-		//if (
-		//	// Note: Disabling parent routing - leaving this code in case parent routing is required
-		//	// request.Route.IsParent() ||
-		//	request.Route.IsDialog()
-		//	)
-		//{
-		//	if (Region.Parent is not null)
-		//	{
-		//		// Note: Disabling parent routing - leaving this code in case parent routing is required
-		//		// // Only trim ../ since ! will be handled by the root navigator
-		//		// request = request with { Route = request.Route.TrimQualifier(Qualifiers.Parent) };
-
-		//		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectNavigateAsync: Redirecting to parent for dialog");
-		//		return Region.Parent.NavigateAsync(request);
-		//	}
-		//	else
-		//	{
-		//		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectNavigateAsync: No redirection - at root region to handle dialog navigation request");
-		//		return default;
-		//	}
-		//}
-
-
-
 		// / route request to root (via parent)
 		//
 		// Required for Test: Given_PageNavigationRegistered.When_PageNavigationRegisteredRoot
