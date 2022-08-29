@@ -8,6 +8,7 @@ public enum TestSections
 	Responsive,
 	ListToDetails,
 	NavigationView,
+	TabBar,
 	Reactive,
 	Apps_Commerce,
 	Apps_Commerce_ShellControl,

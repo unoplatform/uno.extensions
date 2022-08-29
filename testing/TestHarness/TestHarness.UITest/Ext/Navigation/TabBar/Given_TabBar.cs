@@ -1,51 +1,51 @@
 ﻿namespace TestHarness.UITest;
 
-public class Given_NavigationView : NavigationTestBase
+public class Given_TabBar : NavigationTestBase
 {
 	[Test]
-	public async Task When_NavigationView()
+	public async Task When_TabBar()
 	{
-		InitTestSection(TestSections.NavigationView);
+		InitTestSection(TestSections.TabBar);
 
 
-		// Load the NavigationView home page
-		App.WaitThenTap("ShowNavigationViewHomeButton");
-		App.WaitElement("NavigationViewHomeNavigationBar");
+		// Load the TabBar home page
+		App.WaitThenTap("ShowTabBarHomeButton");
+		App.WaitElement("TabBarHomeNavigationBar");
 
 		// Check basic nav item selection
-		App.WaitThenTap("ProductsNavigationViewItem");
+		App.WaitThenTap("ProductsTabBarItem");
 		CheckProductsVisible();
-		App.WaitThenTap("DealsNavigationViewItem");
+		App.WaitThenTap("DealsTabBarItem");
 		CheckDealsVisible();
-		App.WaitThenTap("ProfileNavigationViewItem");
+		App.WaitThenTap("ProfileTabBarItem");
 		CheckProfileVisible();
-		App.WaitThenTap("ProductsNavigationViewItem");
+		App.WaitThenTap("ProductsTabBarItem");
 		CheckProductsVisible();
 
 		// Check nav from buttons in views
-		App.WaitThenTap("ProductsNavigationViewItem");
+		App.WaitThenTap("ProductsTabBarItem");
 		CheckProductsVisible();
 		App.WaitThenTap("ProductsDealsButton");
 		CheckDealsVisible();
-		App.WaitThenTap("ProductsNavigationViewItem");
+		App.WaitThenTap("ProductsTabBarItem");
 		CheckProductsVisible();
 		App.WaitThenTap("ProductsProfileButton");
 		CheckProfileVisible();
 
-		App.WaitThenTap("DealsNavigationViewItem");
+		App.WaitThenTap("DealsTabBarItem");
 		CheckDealsVisible();
 		App.WaitThenTap("DealsProductsButton");
 		CheckProductsVisible();
-		App.WaitThenTap("DealsNavigationViewItem");
+		App.WaitThenTap("DealsTabBarItem");
 		CheckDealsVisible();
 		App.WaitThenTap("DealsProfileButton");
 		CheckProfileVisible();
 
-		App.WaitThenTap("ProfileNavigationViewItem");
+		App.WaitThenTap("ProfileTabBarItem");
 		CheckProfileVisible();
 		App.WaitThenTap("ProfileProductsButton");
 		CheckProductsVisible();
-		App.WaitThenTap("ProfileNavigationViewItem");
+		App.WaitThenTap("ProfileTabBarItem");
 		CheckProfileVisible();
 		App.WaitThenTap("ProfileDealsButton");
 		CheckDealsVisible();
@@ -54,7 +54,7 @@ public class Given_NavigationView : NavigationTestBase
 
 	private void CheckProductsVisible()
 	{
-		var text = App.Marked("CurrentNavigationViewItemTextBlock").GetText();
+		var text = App.Marked("CurrentTabBarItemTextBlock").GetText();
 		text.Should().Be("Products");
 		var isVisible = App.Marked("ProductsStackPanel").IsVisible();
 		isVisible.Should().Be(true);
@@ -66,7 +66,7 @@ public class Given_NavigationView : NavigationTestBase
 
 	private void CheckDealsVisible()
 	{
-		var text = App.Marked("CurrentNavigationViewItemTextBlock").GetText();
+		var text = App.Marked("CurrentTabBarItemTextBlock").GetText();
 		text.Should().Be("Deals");
 		var isVisible = App.Marked("ProductsStackPanel").IsVisible();
 		isVisible.Should().Be(false);
@@ -80,7 +80,7 @@ public class Given_NavigationView : NavigationTestBase
 
 	private void CheckProfileVisible()
 	{
-		var text = App.Marked("CurrentNavigationViewItemTextBlock").GetText();
+		var text = App.Marked("CurrentTabBarItemTextBlock").GetText();
 		text.Should().Be("Profile");
 		var isVisible = App.Marked("ProductsStackPanel").IsVisible();
 		isVisible.Should().Be(false);

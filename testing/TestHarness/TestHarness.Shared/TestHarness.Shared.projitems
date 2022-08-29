@@ -301,6 +301,18 @@
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Responsive\ResponsiveMainPage.xaml.cs">
       <DependentUpon>ResponsiveMainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\TabBar\TabBarHomePage.xaml.cs">
+      <DependentUpon>TabBarHomePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\TabBar\TabBarHomeViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\TabBar\TabBarHostInit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\TabBar\TabBarMainPage.xaml.cs">
+      <DependentUpon>TabBarMainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\TabBar\TabBarSettingsPage.xaml.cs">
+      <DependentUpon>TabBarSettingsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\TabBar\TabBarSettingsViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GlobalUsings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HostBuilderHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IHostInitialization.cs" />
@@ -514,6 +526,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\Responsive\ResponsiveMainPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\TabBar\TabBarHomePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\TabBar\TabBarMainPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\TabBar\TabBarSettingsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
