@@ -2,7 +2,7 @@ jobs:
 - job: Android
 
   pool:
-    vmImage: macOS-11
+    vmImage: macOS-10.15
 
   variables:
     - name: NUGET_PACKAGES
