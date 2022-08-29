@@ -203,12 +203,13 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		////		b) route has depends on that doesn't match current route - if parent can navigate to dependson, return false
 		////		c) route has no depends on - if parent can navigate to the route, return false
 
-		//if (await CanNavigate(request.Route) &&
-		//	!await ParentCanNavigate(request.Route))
-		//{
-		//	if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectNavigateAsync: No redirection - Navigator can handle request (and parent cannot)");
-		//	return default;
-		//}
+		// Required for Test: Given_NavigationView.When_NavigationView
+		if (await CanNavigate(request.Route) &&
+			!await ParentCanNavigate(request.Route))
+		{
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectNavigateAsync: No redirection - Navigator can handle request (and parent cannot)");
+			return default;
+		}
 
 		//// If this is a back/close with no other path, then return
 		//// as if this navigator can handl it - it can't, so the request
@@ -238,31 +239,31 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		//	return default;
 		//}
 
-		//if (Region.Parent is not null)
-		//{
-		//	if (!string.IsNullOrWhiteSpace(rm?.DependsOn))
-		//	{
-		//		var depends = rm?.DependsOn;
-		//		var parent = Region.Parent;
-		//		while (parent is not null)
-		//		{
-		//			if (parent.Navigator()?.Route?.Base == depends)
-		//			{
-		//				if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectNavigateAsync: Depends on matches current route of parent, so redirecting to parent");
-		//				return parent.NavigateAsync(request);
-		//			}
-		//			parent = parent.Parent;
-		//		}
+		if (Region.Parent is not null)
+		{
+			//	if (!string.IsNullOrWhiteSpace(rm?.DependsOn))
+			//	{
+			//		var depends = rm?.DependsOn;
+			//		var parent = Region.Parent;
+			//		while (parent is not null)
+			//		{
+			//			if (parent.Navigator()?.Route?.Base == depends)
+			//			{
+			//				if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectNavigateAsync: Depends on matches current route of parent, so redirecting to parent");
+			//				return parent.NavigateAsync(request);
+			//			}
+			//			parent = parent.Parent;
+			//		}
 
-		//		request = request with { Route = (request.Route with { Base = depends, Path = null }).Append(request.Route) };
+			//		request = request with { Route = (request.Route with { Base = depends, Path = null }).Append(request.Route) };
 
-		//		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectNavigateAsync: Updating request with depends on and invoking navigate on current region. New request: {request.Route}");
-		//		return Region.NavigateAsync(request);
-		//	}
+			//		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectNavigateAsync: Updating request with depends on and invoking navigate on current region. New request: {request.Route}");
+			//		return Region.NavigateAsync(request);
+			//	}
 
-		//	if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectNavigateAsync: Redirecting unhandled request to parent");
-		//	return Region.Parent.NavigateAsync(request);
-		//}
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectNavigateAsync: Redirecting unhandled request to parent");
+			return Region.Parent.NavigateAsync(request);  // Required for Test: Given_NavigationView.When_NavigationView
+		}
 		//else
 		//{
 		//	var routeMaps = new List<RouteInfo> { rm };
@@ -550,11 +551,11 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		var children = Region.Children.Where(region =>
 										// Unnamed child regions
 										string.IsNullOrWhiteSpace(region.Name)   // Required for Test: Given_PageNavigation.When_PageNavigationXAML
-										//// Regions whose name matches the next route segment
-										//|| region.Name == request.Route.Base ||
-										//// Regions whose name matches the current route
-										//// eg currently selected tab
-										//|| region.Name == Route?.Base
+																				 //// Regions whose name matches the next route segment
+																				 //|| region.Name == request.Route.Base ||
+																				 //// Regions whose name matches the current route
+																				 //// eg currently selected tab
+																				 //|| region.Name == Route?.Base
 									).ToArray();
 		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Request is being forwarded to {children.Length} children");
 		return await NavigateChildRegions(children, request);
@@ -605,14 +606,14 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 
 
-		/// <summary>
-		/// This makes sure that the current view for the region
-		/// is loaded, which will ensure child regions are attached
-		/// Sub-classes can overide <see cref="CheckLoadedAsync">CheckLoadedAsync</see> to customise
-		/// the waiting behaviour
-		/// </summary>
-		/// <returns></returns>
-		private async Task EnsureChildRegionsAreLoaded()
+	/// <summary>
+	/// This makes sure that the current view for the region
+	/// is loaded, which will ensure child regions are attached
+	/// Sub-classes can overide <see cref="CheckLoadedAsync">CheckLoadedAsync</see> to customise
+	/// the waiting behaviour
+	/// </summary>
+	/// <returns></returns>
+	private async Task EnsureChildRegionsAreLoaded()
 	{
 		Stopwatch? stopwatch = default;
 		if (Logger.IsEnabled(LogLevel.Trace))

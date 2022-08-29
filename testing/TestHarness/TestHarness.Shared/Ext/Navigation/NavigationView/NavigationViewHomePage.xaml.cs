@@ -15,4 +15,9 @@ public sealed partial class NavigationViewHomePage : Page
 			this.Navigator()!.NavigateViewModelAsync<NavigationViewSettingsViewModel>(this);
 		}
 	}
+
+	private void NavigationViewItemChanged(Microsoft.UI.Xaml.Controls.NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+	{
+		CurrentNavigationViewItemText.Text = (args.SelectedItem as NavigationViewItem)?.Content + string.Empty;
+	}
 }
