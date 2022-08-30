@@ -1,9 +1,11 @@
-﻿namespace Uno.Extensions.Authentication.Handlers;
+﻿using Uno.Extensions.Logging;
+
+namespace Uno.Extensions.Authentication.Handlers;
 
 internal class HeaderHandler : BaseAuthorizationHandler
 {
 	public HeaderHandler(
-		ILogger<BaseAuthorizationHandler> logger,
+		ILogger<HeaderHandler> logger,
 		IAuthenticationService authenticationService,
 		ITokenCache tokens,
 		HandlerSettings settings
@@ -21,9 +23,11 @@ internal class HeaderHandler : BaseAuthorizationHandler
 			!string.IsNullOrWhiteSpace(_settings.AuthorizationHeaderScheme))
 		{
 			request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(_settings.AuthorizationHeaderScheme, accessToken);
+			if (_logger.IsEnabled(LogLevel.Debug)) _logger.LogDebugMessage($"Set Authorization header with scheme {_settings.AuthorizationHeaderScheme} and token {accessToken}");
 			return true;
 		}
 
+		if (_logger.IsEnabled(LogLevel.Debug)) _logger.LogDebugMessage($"Unable to set access token");
 		return false;
 	}
 }
