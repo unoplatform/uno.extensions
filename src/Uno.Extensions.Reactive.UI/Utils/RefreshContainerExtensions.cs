@@ -93,7 +93,7 @@ public static class RefreshContainerExtensions
 #pragma warning restore Uno0001
 			asyncCommand.PropertyChanged += OnPropertyChanged;
 
-			void OnPropertyChanged(object _, PropertyChangedEventArgs args)
+			void OnPropertyChanged(object? _, PropertyChangedEventArgs args)
 			{
 				if (args.PropertyName == nameof(IAsyncCommand.IsExecuting)
 					&& !asyncCommand.IsExecuting)
