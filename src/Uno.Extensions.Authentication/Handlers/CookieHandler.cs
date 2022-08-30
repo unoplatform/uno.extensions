@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Authentication.Handlers;
+﻿using Uno.Extensions.Logging;
+
+namespace Uno.Extensions.Authentication.Handlers;
 
 internal class CookieHandler : BaseAuthorizationHandler
 {
@@ -8,49 +10,66 @@ internal class CookieHandler : BaseAuthorizationHandler
 	// using the TemporaryProviderKey. As part of completing the login process,
 	// The AuthenticationService will correct the current provider in the token cache
 	private const string TemporaryProviderKey = "Cookie";
+
+	private ICookieManager _cookieManager;
+
 	public CookieHandler(
-		ILogger<BaseAuthorizationHandler> logger,
+		ILogger<CookieHandler> logger,
 		IAuthenticationService authenticationService,
 		ITokenCache tokens,
-		HandlerSettings settings
+		HandlerSettings settings,
+		ICookieManager cookieManager
 	) : base(logger, authenticationService,
 					 tokens, settings)
 	{
+		_cookieManager = cookieManager;
 	}
 
 	public override bool ShouldIncludeToken(HttpRequestMessage request) => true;
 	protected override async Task<bool> ApplyTokensToRequest(HttpRequestMessage request, CancellationToken ct)
 	{
-		var accessToken = await _tokens.AccessTokenAsync();
-		var refreshToken = await _tokens.RefreshTokenAsync();
+		var accessToken = await _tokens.AccessTokenAsync() ?? string.Empty;
+		var refreshToken = await _tokens.RefreshTokenAsync() ?? string.Empty;
 
-		// Return false if we don't have either access or refresh token
-		if (
-			(string.IsNullOrWhiteSpace(accessToken) ||
-			string.IsNullOrWhiteSpace(_settings.CookieAccessToken))
-			&&
-			(string.IsNullOrWhiteSpace(refreshToken) ||
-			string.IsNullOrWhiteSpace(_settings.CookieRefreshToken))
-			)
-		{
-			return false;
-		}
+		// Forcibly expire any existing cookie
+		_cookieManager.ClearCookies(this.InnerHandler, request);
+
+		
 
 		var cookies = new CookieContainer();
 
-		if (!string.IsNullOrWhiteSpace(accessToken) &&
+		// Return false if we don't have either access or refresh token
+		if (
+			(
+			//string.IsNullOrWhiteSpace(accessToken) ||
+			string.IsNullOrWhiteSpace(_settings.CookieAccessToken))
+			&&
+			(
+			//string.IsNullOrWhiteSpace(refreshToken) ||
+			string.IsNullOrWhiteSpace(_settings.CookieRefreshToken))
+			)
+		{
+			if (_logger.IsEnabled(LogLevel.Debug)) _logger.LogDebugMessage("No access or refresh tokens to apply");
+			return false;
+		}
+
+		if (
+			//!string.IsNullOrWhiteSpace(accessToken) &&
 			!string.IsNullOrWhiteSpace(_settings.CookieAccessToken))
 		{
 			cookies.Add(request.RequestUri, new Cookie(_settings.CookieAccessToken, accessToken));
 		}
 
-		if (!string.IsNullOrWhiteSpace(refreshToken) &&
+		if (
+			//!string.IsNullOrWhiteSpace(refreshToken) &&
 			!string.IsNullOrWhiteSpace(_settings.CookieRefreshToken))
 		{
 			cookies.Add(request.RequestUri, new Cookie(_settings.CookieRefreshToken, refreshToken));
 		}
 
-		request.Headers.Add("Cookie", cookies.GetCookieHeader(request.RequestUri));
+		var headerString = cookies.GetCookieHeader(request.RequestUri);
+		if (_logger.IsEnabled(LogLevel.Debug)) _logger.LogDebugMessage($"Cookie: {headerString}");
+		request.Headers.Add("Cookie", headerString);
 
 		return true;
 	}
@@ -65,13 +84,17 @@ internal class CookieHandler : BaseAuthorizationHandler
 		var cookieHeader = response.Headers.FirstOrDefault(x => x.Key == "Set-Cookie").Value;
 		if (cookieHeader?.Any() ?? false)
 		{
-			cookies.SetCookies(request.RequestUri, string.Join(",", cookieHeader));
+			var headerString = string.Join(",", cookieHeader);
+			if (_logger.IsEnabled(LogLevel.Debug)) _logger.LogDebugMessage($"Received Cookie: {headerString}");
+			cookies.SetCookies(request.RequestUri, headerString);
 		}
 
 		var access = !string.IsNullOrWhiteSpace(_settings.CookieAccessToken) ? cookies.GetCookies(request.RequestUri)[_settings.CookieAccessToken]?.Value : default;
 		access = access ?? await _tokens.AccessTokenAsync();
+		if (_logger.IsEnabled(LogLevel.Debug)) _logger.LogDebugMessage($"Access token: {access}");
 		var refresh = !string.IsNullOrWhiteSpace(_settings.CookieRefreshToken) ? cookies.GetCookies(request.RequestUri)[_settings.CookieRefreshToken]?.Value : default;
 		refresh = refresh ?? await _tokens.RefreshTokenAsync();
+		if (_logger.IsEnabled(LogLevel.Debug)) _logger.LogDebugMessage($"Refresh token: {refresh}");
 
 		await _tokens.SaveTokensAsync(_tokens.CurrentProvider ?? TemporaryProviderKey, access, refresh);
 		return true;
