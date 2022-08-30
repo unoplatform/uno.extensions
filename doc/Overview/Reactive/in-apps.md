@@ -69,6 +69,31 @@ You can use this command to trigger a refresh from the view, like a "pull to ref
 </uer:FeedView>
 ```
 
+### Refreshing using a RefreshContainer (a.k.a. pull to refresh)
+
+The `RefreshContainer` does not have a `Command` property to which you can data-bind the command exposed by the `FeedView`.
+This is because the `RefreshContainer` needs to know when the refresh has completed in order to remove the loading wheel.
+
+However, Uno.Extensions defines the `IAsyncCommand.IsExecuting` property which can be used to track the completion of the refresh.
+Uno.Extensions also defines a `RefreshContainerExtensions.Command` attached property which allow to directly data-bind the refresh command 
+(or any generated feed command) to the `RefreshContainer`.
+
+```xml
+<Page 
+	x:Class="MyProject.MyPage"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:uer="using:Uno.Extensions.Reactive.UI">
+
+<uer:FeedView Source="{Binding Products}">
+	<DataTemplate>
+		<RefreshContainer uer:RefreshContainerExtensions.Command="{Binding Refresh}">
+			<ListView ItemsSource="{Binding Data}" />
+		</RefreshContainer>
+	</DataTemplate>
+</uer:FeedView>
+```
+
 ## Pagination
 
 When your source supports pagination (like `ListFeed.Paginated`), you can data-bind the collection exposed by the generated view model to a `ListView` to automatically enable pagination.
