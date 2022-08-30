@@ -1,5 +1,7 @@
 ﻿
 
+using Uno.Extensions.Logging;
+
 namespace Uno.Extensions;
 
 public static class ServiceCollectionExtensions
@@ -138,15 +140,15 @@ public static class ServiceCollectionExtensions
 			{
 				var handlers = b.Services.GetServices<DelegatingHandler>().ToArray();
 				var currentHandler = handlers.FirstOrDefault();
-				if(currentHandler is not null)
+				if (currentHandler is not null)
 				{
 					for (var i = 1; i < handlers.Length; i++)
 					{
 						currentHandler.InnerHandler = handlers[i];
-						currentHandler=handlers[i];
+						currentHandler = handlers[i];
 					}
 
-					if(b.PrimaryHandler is not null)
+					if (b.PrimaryHandler is not null)
 					{
 						currentHandler.InnerHandler = b.PrimaryHandler;
 					}
@@ -169,17 +171,19 @@ public static class ServiceCollectionExtensions
 
 	public static IServiceCollection AddNativeHandler(this IServiceCollection services)
 	{
-		return services.AddTransient<HttpMessageHandler>(s =>
+		return services
+			.AddSingleton<ICookieManager, CookieManager>()
+			.AddTransient<HttpMessageHandler>(s =>
 #if __IOS__
-                new NSUrlSessionHandler()
+				new NSUrlSessionHandler()
 #elif __ANDROID__
 #if NET6_0_OR_GREATER
-                new Xamarin.Android.Net.AndroidMessageHandler()
+				new Xamarin.Android.Net.AndroidMessageHandler()
 #else
                 new Xamarin.Android.Net.AndroidClientHandler()
 #endif
 #elif WINDOWS || WINDOWS_UWP
-                new WinHttpHandler()
+				new WinHttpHandler()
 #else
 			new HttpClientHandler()
 #endif

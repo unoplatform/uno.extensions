@@ -22,10 +22,9 @@ public static class HostBuilderExtensions
 #pragma warning disable CA1416 // Validate platform compatibility: The net6.0 version is not used on older versions of OS
 					builder.AddProvider(new global::Uno.Extensions.Logging.OSLogLoggerProvider());
 #pragma warning restore CA1416 // Validate platform compatibility
-#else
-						builder.AddDebug();
 #endif
-#elif __WASM__
+						builder.AddDebug();
+#elif __WASM__         
                         builder.AddProvider(new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider());
 #endif
 					configure?.Invoke(context, builder);
