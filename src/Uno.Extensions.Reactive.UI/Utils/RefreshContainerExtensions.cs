@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
+using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using Windows.Foundation;
 
 namespace Uno.Extensions.Reactive.UI;
 
@@ -56,8 +56,10 @@ public static class RefreshContainerExtensions
 	/// <param name="container">The refresh container on which command should be set.</param>
 	/// <param name="parameter">The command parameter to set.</param>
 	public static void SetCommandParameter(RefreshContainer container, object? parameter)
-		=> container.SetValue(CommandParameterProperty, parameter); 
+		=> container.SetValue(CommandParameterProperty, parameter);
 	#endregion
+
+	private static readonly ConditionalWeakTable<RefreshContainer, Deferral> _deferrals = new();
 
 	private static void OnCommandChanged(DependencyObject snd, DependencyPropertyChangedEventArgs args)
 	{
@@ -66,6 +68,7 @@ public static class RefreshContainerExtensions
 			return;
 		}
 
+		CompleteDeferral(container);
 		container.RefreshRequested -= OnRefreshRequested;
 
 		if (args.NewValue is ICommand)
@@ -88,20 +91,42 @@ public static class RefreshContainerExtensions
 
 		if (command is IAsyncCommand { IsExecuting: true } asyncCommand)
 		{
+			CompleteDeferral(snd); // Safety: We should not be invoked if there is already a pending deferral!
+
 #pragma warning disable Uno0001 // Uno not up to date
 			var deferral = args.GetDeferral();
 #pragma warning restore Uno0001
+			var weakContainer = new WeakReference<RefreshContainer>(snd);
+			_deferrals.Add(snd, deferral);
+
 			asyncCommand.PropertyChanged += OnPropertyChanged;
 
 			void OnPropertyChanged(object? _, PropertyChangedEventArgs args)
 			{
+				if (!weakContainer.TryGetTarget(out var container))
+				{
+					// The container has been collected, nothing to do anymore!
+					asyncCommand.PropertyChanged -= OnPropertyChanged;
+
+					return;
+				}
+
 				if (args.PropertyName == nameof(IAsyncCommand.IsExecuting)
 					&& !asyncCommand.IsExecuting)
 				{
 					asyncCommand.PropertyChanged -= OnPropertyChanged;
-					deferral.Complete();
+					CompleteDeferral(container);
 				}
 			}
+		}
+	}
+
+	private static void CompleteDeferral(RefreshContainer container)
+	{
+		if (_deferrals.TryGetValue(container, out var deferral))
+		{
+			deferral.Complete();
+			_deferrals.Remove(container);
 		}
 	}
 }
