@@ -297,7 +297,7 @@ public sealed class SourceContext : IAsyncDisposable
 	/// <exception cref="ObjectDisposedException">This context has been disposed.</exception>
 	[EditorBrowsable(EditorBrowsableState.Advanced)]
 	public IState<T> CreateState<T>(Option<T> initialValue)
-		=> States.CreateState(initialValue);
+		=> CreateStateCore(initialValue);
 
 	/// <summary>
 	/// Create a <see cref="IState{T}"/> for a given value.
@@ -308,7 +308,10 @@ public sealed class SourceContext : IAsyncDisposable
 	/// <exception cref="ObjectDisposedException">This context has been disposed.</exception>
 	[EditorBrowsable(EditorBrowsableState.Advanced)]
 	public IListState<T> CreateListState<T>(Option<IImmutableList<T>> initialValue)
-		=> new ListStateImpl<T>(CreateState(initialValue));
+		=> new ListStateImpl<T>(CreateStateCore(initialValue));
+
+	private StateImpl<T> CreateStateCore<T>(Option<T> initialValue)
+		=> States.CreateState(initialValue, (ctx, iv) => new StateImpl<T>(ctx, iv));
 	#endregion
 
 	#region Requests

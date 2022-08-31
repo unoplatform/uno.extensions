@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
 using Uno.Extensions.Reactive.Utils;
@@ -48,7 +49,8 @@ internal class StateStore : IStateStore
 		return state;
 	}
 
-	public IState<T> CreateState<T>(Option<T> initialValue)
+	public TState CreateState<T, TState>(Option<T> initialValue, Func<SourceContext, Option<T>, TState> factory)
+		where TState : IStateImpl, IAsyncDisposable
 	{
 		var states = _states;
 		if (states is null)
@@ -56,13 +58,13 @@ internal class StateStore : IStateStore
 			throw new ObjectDisposedException(nameof(SourceContext));
 		}
 
-		IState<T> state;
+		TState state;
 		lock (states)
 		{
 			// Note: we use the **boxed** initialValue as key for the states cache,
 			//		 but it's only to have a key, it's not expected to be retrieved,
 			//		 we keep it only for dispose.
-			states[initialValue] = state = new StateImpl<T>(_owner, initialValue);
+			states[initialValue] = state = factory(_owner, initialValue);
 		}
 
 		if (_states is null) // The context has been disposed while we where creating the State ...

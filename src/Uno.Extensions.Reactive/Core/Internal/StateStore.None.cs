@@ -13,7 +13,8 @@ internal class NoneStateStore : IStateStore
 		=> throw new InvalidOperationException("Cannot create a state on SourceContext.None. " + SourceContext.NoneContextErrorDesc);
 
 	/// <inheritdoc />
-	public IState<T> CreateState<T>(Option<T> initialValue)
+	public TState CreateState<T, TState>(Option<T> initialValue, Func<SourceContext, Option<T>, TState> factory)
+		where TState : IStateImpl, IAsyncDisposable
 		=> throw new InvalidOperationException("Cannot create a state on SourceContext.None. " + SourceContext.NoneContextErrorDesc);
 
 	/// <inheritdoc />
