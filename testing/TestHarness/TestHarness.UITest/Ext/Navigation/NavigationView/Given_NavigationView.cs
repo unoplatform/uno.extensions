@@ -5,7 +5,7 @@ public class Given_NavigationView : NavigationTestBase
 	[Test]
 	public async Task When_NavigationView()
 	{
-		InitTestSection(TestSections.NavigationView);
+		InitTestSection(TestSections.Navigation_NavigationView);
 
 
 		// Load the NavigationView home page

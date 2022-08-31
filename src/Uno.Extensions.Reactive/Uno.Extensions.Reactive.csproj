@@ -6,6 +6,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="C:\source\github\unoplatform\Uno.Platform\src\Uno.Extensions.Core\_Compat\IsExternalInit.cs" />
+	  <Compile Remove="C:\source\github\unoplatform\Uno.Platform\src\Uno.Extensions.Core\_Compat\NotNullIfNotNullAttribute.cs" />
+	  <Compile Remove="C:\source\github\unoplatform\Uno.Platform\src\Uno.Extensions.Core\_Compat\NotNullWhenAttribute.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="System.Collections.Immutable" Version="1.3.1" /><!--Lower version breaks build of reactive.<UI|WinUI>--> 
 		<PackageReference Include="System.Linq.Async" Version="4.0.0" />
 		<PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.2" PrivateAssets="None" />

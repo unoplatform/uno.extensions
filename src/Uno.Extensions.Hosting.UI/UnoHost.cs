@@ -23,7 +23,8 @@ public static class UnoHost
 				{
 					services.AddSingleton(addressBarHost);
 				}
-				services.AddSingleton<IStorage, Storage>();
+				services.AddSingleton<IStorage, Storage>()
+						.AddNamedSingleton<IKeyedStorage, InMemoryKeyedStorage>(InMemoryKeyedStorage.Name);
 			})
 #if __WASM__
 				.ConfigureHostConfiguration(config =>

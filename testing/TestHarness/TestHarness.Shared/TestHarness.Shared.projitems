@@ -87,6 +87,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Web\WebAuthenticationMainPage.xaml.cs">
       <DependentUpon>WebAuthenticationMainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Core\Storage\StorageHostInit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Core\Storage\StorageMainPage.xaml.cs">
+      <DependentUpon>StorageMainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Core\Storage\StorageOnePage.xaml.cs">
+      <DependentUpon>StorageOnePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Core\Storage\StorageOneViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\BaseCommerceViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceCredentials.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceDealsPage.xaml.cs">
@@ -356,6 +364,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Ext\Authentication\Oidc\OidcAuthenticationMainPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Core\Storage\StorageMainPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Core\Storage\StorageOnePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

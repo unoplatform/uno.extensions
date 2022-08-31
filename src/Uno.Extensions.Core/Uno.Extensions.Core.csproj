@@ -42,6 +42,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<InternalsVisibleTo Include="Uno.Extensions.Reactive" />
+		<InternalsVisibleTo Include="Uno.Extensions.Reactive.UI" />
+		<InternalsVisibleTo Include="Uno.Extensions.Reactive.WinUI" />
 		<InternalsVisibleTo Include="Uno.Extensions.Configuration" />
 		<InternalsVisibleTo Include="Uno.Extensions.Navigation" />
 		<InternalsVisibleTo Include="Uno.Extensions.Navigation.UI" />

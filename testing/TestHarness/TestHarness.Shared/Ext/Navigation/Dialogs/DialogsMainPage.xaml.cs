@@ -2,7 +2,7 @@
 
 namespace TestHarness.Ext.Navigation.Dialogs;
 
-[TestSectionRoot("Dialogs", TestSections.Dialogs, typeof(DialogsHostInit))]
+[TestSectionRoot("Dialogs", TestSections.Navigation_Dialogs, typeof(DialogsHostInit))]
 public sealed partial class DialogsMainPage : BaseTestSectionPage
 {
 	public DialogsMainPage()

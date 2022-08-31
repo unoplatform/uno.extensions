@@ -1,6 +1,6 @@
 ﻿namespace TestHarness.Ext.Navigation.Responsive;
 
-[TestSectionRoot("Responsive Navigation",TestSections.Responsive, typeof(ResponsiveHostInit))]
+[TestSectionRoot("Responsive Navigation",TestSections.Navigation_Responsive, typeof(ResponsiveHostInit))]
 public sealed partial class ResponsiveMainPage : BaseTestSectionPage
 {
 	public ResponsiveMainPage()

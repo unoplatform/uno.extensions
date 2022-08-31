@@ -8,7 +8,7 @@ public class Given_ContentDialog : NavigationTestBase
 	[TestCase("SimpleDialogCodebehindWithCancelButton", 3, true)]
 	public async Task When_SimpleContentDialog(string dialogButton,int delayInSeconds, bool dialogCancelled)
 	{
-		InitTestSection(TestSections.Dialogs);
+		InitTestSection(TestSections.Navigation_Dialogs);
 
 		App.WaitThenTap("ContentDialogsButton");
 		
@@ -46,7 +46,7 @@ public class Given_ContentDialog : NavigationTestBase
 	[Test]
 	public async Task When_ComplexContentDialog()
 	{
-		InitTestSection(TestSections.Dialogs);
+		InitTestSection(TestSections.Navigation_Dialogs);
 
 		App.WaitThenTap("ContentDialogsButton");
 

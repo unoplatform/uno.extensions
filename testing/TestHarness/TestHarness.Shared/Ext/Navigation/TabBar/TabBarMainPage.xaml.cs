@@ -1,6 +1,6 @@
 ﻿namespace TestHarness.Ext.Navigation.TabBar;
 
-[TestSectionRoot("TabBar",TestSections.TabBar, typeof(TabBarHostInit))]
+[TestSectionRoot("TabBar",TestSections.Navigation_TabBar, typeof(TabBarHostInit))]
 public sealed partial class TabBarMainPage : BaseTestSectionPage
 {
 	public TabBarMainPage()
