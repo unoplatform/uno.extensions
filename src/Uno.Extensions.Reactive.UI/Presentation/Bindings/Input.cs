@@ -24,8 +24,14 @@ internal sealed class Input<T> : IInput<T>
 		=> _state.GetSource(context, ct);
 
 	/// <inheritdoc />
-	public ValueTask UpdateMessage(Func<Message<T>, MessageBuilder<T>> updater, CancellationToken ct)
-		=> _state.UpdateMessage(msg => updater(msg).Set(BindableViewModelBase.BindingSource, this), ct);
+	public ValueTask UpdateMessage(Action<MessageBuilder<T>> updater, CancellationToken ct)
+		=> _state.UpdateMessage(
+			msg =>
+			{
+				updater(msg);
+				msg.Set(BindableViewModelBase.BindingSource, this);
+			},
+			ct);
 
 	/// <inheritdoc />
 	public ValueTask DisposeAsync()

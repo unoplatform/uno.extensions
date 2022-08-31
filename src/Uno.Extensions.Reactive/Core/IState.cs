@@ -21,5 +21,5 @@ public interface IState<T> : IFeed<T>, IAsyncDisposable
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to track the async update.</returns>
 	/// <remarks>This is the raw way to update a state, you should consider using the <see cref="State.Update{T}"/> method instead.</remarks>
-	ValueTask UpdateMessage(Func<Message<T>, MessageBuilder<T>> updater, CancellationToken ct);
+	ValueTask UpdateMessage(Action<MessageBuilder<T>> updater, CancellationToken ct);
 }

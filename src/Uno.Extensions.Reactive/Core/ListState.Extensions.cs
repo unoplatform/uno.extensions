@@ -19,14 +19,13 @@ static partial class ListState
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to track the async update.</returns>
 	public static ValueTask Update<T>(this IListState<T> state, Func<IImmutableList<T>, IImmutableList<T>> updater, CancellationToken ct)
-		where T : notnull
 		=> state.UpdateMessage(
 			m =>
 			{
-				var updatedValue = updater(m.Current.Data.SomeOrDefault() ?? ImmutableList<T>.Empty);
+				var updatedValue = updater(m.CurrentData.SomeOrDefault() ?? ImmutableList<T>.Empty);
 				var updatedData = updatedValue is null or {Count: 0} ? Option<IImmutableList<T>>.None() : Option.Some(updatedValue);
 
-				return m.With().Data(updatedData);
+				m.Data(updatedData);
 			},
 			ct);
 
@@ -39,7 +38,7 @@ static partial class ListState
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to track the async update.</returns>
 	public static ValueTask UpdateData<T>(this IListState<T> state, Func<Option<IImmutableList<T>>, Option<IImmutableList<T>>> updater, CancellationToken ct)
-		=> state.UpdateMessage(m => m.With().Data(updater(m.Current.Data)), ct);
+		=> state.UpdateMessage(m => m.Data(updater(m.CurrentData)), ct);
 
 	/// <summary>
 	/// Updates the value of a list state
@@ -50,24 +49,41 @@ static partial class ListState
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to track the async update.</returns>
 	public static ValueTask UpdateData<T>(this IListState<T> state, Func<Option<IImmutableList<T>>, IImmutableList<T>> updater, CancellationToken ct)
-		=> state.UpdateMessage(m => m.With().Data(updater(m.Current.Data)), ct);
+		=> state.UpdateMessage(m => m.Data(updater(m.CurrentData)), ct);
 
 	/// <summary>
 	/// [DEPRECATED] Use UpdateData instead
 	/// </summary>
 	[EditorBrowsable(EditorBrowsableState.Never)]
+#if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
+	[Obsolete("Use UpdateData")]
+#endif
 	public static ValueTask UpdateValue<T>(this IListState<T> state, Func<Option<IImmutableList<T>>, Option<IImmutableList<T>>> updater, CancellationToken ct)
-		=> state.UpdateMessage(m => m.With().Data(updater(m.Current.Data)), ct);
+		=> UpdateData(state, updater, ct);
 
 	/// <summary>
 	/// [DEPRECATED] Use UpdateData instead
 	/// </summary>
 	[EditorBrowsable(EditorBrowsableState.Never)]
+#if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
+	[Obsolete("Use UpdateData")]
+#endif
 	public static ValueTask UpdateValue<T>(this IListState<T> state, Func<Option<IImmutableList<T>>, IImmutableList<T>> updater, CancellationToken ct)
-		=> state.UpdateMessage(m => m.With().Data(updater(m.Current.Data)), ct);
+		=> UpdateData(state, updater, ct);
 
 
 	#region Operators
+	/// <summary>
+	/// Adds an item into a list state
+	/// </summary>
+	/// <typeparam name="T">The type of the items in the list.</typeparam>
+	/// <param name="state">The list state onto which the item should be added.</param>
+	/// <param name="item">The item to add.</param>
+	/// <param name="ct">A token to abort the async add operation.</param>
+	/// <returns></returns>
+	public static ValueTask InsertAsync<T>(this IListState<T> state, T item, CancellationToken ct)
+		=> state.UpdateData(items => items.SomeOrDefault(ImmutableList<T>.Empty).Insert(0, item), ct);
+
 	/// <summary>
 	/// Adds an item into a list state
 	/// </summary>

@@ -18,7 +18,7 @@ public class Given_StateImpl : FeedTests
 	{
 		var (result, sut) = new StateImpl<string>(Context, Option<string>.None()).Record();
 
-		await sut.UpdateMessage(msg => msg.With().Data("42"), CT);
+		await sut.UpdateMessage(msg => msg.Data("42"), CT);
 
 		result.Should().Be(r => r
 			.Message(Data.None, Progress.Final, Error.No)
@@ -30,7 +30,7 @@ public class Given_StateImpl : FeedTests
 	{
 		var (result, sut) = new StateImpl<string>(Context, Option<string>.None()).Record();
 
-		await sut.UpdateValue(_ => "42", CT);
+		await sut.UpdateData(_ => "42", CT);
 
 		result.Should().Be(r => r
 			.Message(Data.None, Progress.Final, Error.No)
@@ -54,7 +54,7 @@ public class Given_StateImpl : FeedTests
 	{
 		var (result, sut) = new StateImpl<string>(Context, Option<string>.Some("0")).Record();
 
-		await sut.UpdateMessage(msg => msg.With().Data("42"), CT);
+		await sut.UpdateMessage(msg => msg.Data("42"), CT);
 
 		result.Should().Be(r => r
 			.Message("0", Progress.Final, Error.No)
@@ -66,7 +66,7 @@ public class Given_StateImpl : FeedTests
 	{
 		var (result, sut) = new StateImpl<string>(Context, Option<string>.Some("0")).Record();
 
-		await sut.UpdateValue(_ => "42", CT);
+		await sut.UpdateData(_ => "42", CT);
 
 		result.Should().Be(r => r
 			.Message("0", Progress.Final, Error.No)

@@ -3,6 +3,9 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
+using Uno.Extensions.Collections.Tracking;
+using Uno.Extensions.Reactive.Collections;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Operators;
 
@@ -12,21 +15,25 @@ namespace Uno.Extensions.Reactive;
 // which crashes when using instances of this record in dictionaries (caching) and break the AOT build.
 // cf. https://github.com/unoplatform/Uno.Samples/issues/139
 
+// Note: This is a "quick implementation". Inheriting from FeedToListFeedAdapter is most probably not a good idea.
+
 internal class ListStateImpl<T> : FeedToListFeedAdapter<T>, IListState<T>, IStateImpl
 {
-	private readonly IState<IImmutableList<T>> _implementation;
+	private readonly StateImpl<IImmutableList<T>> _implementation;
 
-	public ListStateImpl(IState<IImmutableList<T>> implementation)
-		: base(implementation)
+	public ListStateImpl(StateImpl<IImmutableList<T>> implementation, ItemComparer<T> itemComparer = default)
+		: base(implementation, itemComparer)
 	{
 		_implementation = implementation;
 	}
 
-	/// <inheritdoc />
-	public SourceContext Context => ((IStateImpl)_implementation).Context;
+	internal Message<IImmutableList<T>> Current => _implementation.Current;
 
 	/// <inheritdoc />
-	public ValueTask UpdateMessage(Func<Message<IImmutableList<T>>, MessageBuilder<IImmutableList<T>>> updater, CancellationToken ct)
+	public SourceContext Context => _implementation.Context;
+
+	/// <inheritdoc />
+	public ValueTask UpdateMessage(Action<MessageBuilder<IImmutableList<T>>> updater, CancellationToken ct)
 		=> _implementation.UpdateMessage(updater, ct);
 
 	/// <inheritdoc />
