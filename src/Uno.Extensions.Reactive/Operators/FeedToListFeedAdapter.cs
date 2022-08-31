@@ -72,7 +72,7 @@ internal class FeedToListFeedAdapter<TCollection, TItem> : IListFeed<TItem>
 			{
 				try // As we might invoke the app Equality implementation, we make sure to try / catch it
 				{
-					changeSet = GetChangeSet(_analyzer, parentMsg.Previous.Data.Map(_toImmutable), updatedData);
+					changeSet = GetChangeSet(parentMsg.Previous.Data.Map(_toImmutable), updatedData);
 				}
 				catch (Exception e)
 				{
@@ -90,10 +90,10 @@ internal class FeedToListFeedAdapter<TCollection, TItem> : IListFeed<TItem>
 		return updated;
 	}
 
-	private static CollectionChangeSet GetChangeSet(Option<IImmutableList<TItem>> previousData, Option<IImmutableList<TItem>> updatedData)
-		=> GetChangeSet(CollectionAnalyzer<TItem>.Default, previousData, updatedData);
+	private protected CollectionChangeSet GetChangeSet(Option<IImmutableList<TItem>> previousData, Option<IImmutableList<TItem>> updatedData)
+		=> GetChangeSet(_analyzer, previousData, updatedData);
 
-	private static CollectionChangeSet GetChangeSet(CollectionAnalyzer<TItem> collectionAnalyzer, Option<IImmutableList<TItem>> previousData, Option<IImmutableList<TItem>> updatedData)
+	private protected static CollectionChangeSet GetChangeSet(CollectionAnalyzer<TItem> collectionAnalyzer, Option<IImmutableList<TItem>> previousData, Option<IImmutableList<TItem>> updatedData)
 	{
 		var hadItems = previousData.IsSome(out var previousItems);
 		var hasItems = updatedData.IsSome(out var updatedItems);

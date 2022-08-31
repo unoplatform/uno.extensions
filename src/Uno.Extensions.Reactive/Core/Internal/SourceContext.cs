@@ -288,6 +288,11 @@ public sealed class SourceContext : IAsyncDisposable
 	private StateImpl<T> GetOrCreateStateCore<T>(IFeed<T> feed)
 		=> States.GetOrCreateState(feed, (ctx, f) => new StateImpl<T>(ctx, f));
 
+	// WARNING: DO NOT USE, this breaks the cache by providing a custom config!
+	// We need to make those config "upgradable" in order to properly share the instances of State
+	internal ListStateImpl<T> DoNotUse_GetOrCreateListState<T>(IListFeed<T> feed, StateUpdateKind updatesKind)
+		=> new ListStateImpl<T>(States.GetOrCreateState(feed, (ctx, f) => new StateImpl<IImmutableList<T>>(ctx, f.AsFeed(), updatesKind: updatesKind)));
+
 	/// <summary>
 	/// Create a <see cref="IState{T}"/> for a given value.
 	/// </summary>
