@@ -18,17 +18,26 @@ public static class FeedRecorderExtensions
 		[CallerLineNumber] int line = -1)
 		=> new(_ => feed, context ?? SourceContext.Current, autoEnable, feedExpression ?? $"{memberName}@{line}");
 
-	public static FeedRecorder<IFeed<IImmutableList<T>>, IImmutableList<T>> Record<T>(
+	public static FeedRecorder<IListFeed<T>, IImmutableList<T>> Record<T>(
 		this IListFeed<T> feed,
 		SourceContext? context = null,
 		bool autoEnable = true,
 		[CallerArgumentExpression("feed")] string? feedExpression = null,
 		[CallerMemberName] string? memberName = null,
 		[CallerLineNumber] int line = -1)
-		=> new(_ => feed.AsFeed(), context ?? SourceContext.Current, autoEnable, feedExpression ?? $"{memberName}@{line}");
+		=> new(_ => feed, context ?? SourceContext.Current, autoEnable, feedExpression ?? $"{memberName}@{line}");
 
 	public static FeedRecorder<IState<T>, T> Record<T>(
 		this IState<T> state,
+		SourceContext? context = null,
+		bool autoEnable = true,
+		[CallerArgumentExpression("state")] string? feedExpression = null,
+		[CallerMemberName] string? memberName = null,
+		[CallerLineNumber] int line = -1)
+		=> new(_ => state, context ?? SourceContext.Current, autoEnable, feedExpression ?? $"{memberName}@{line}");
+
+	public static FeedRecorder<IListState<T>, IImmutableList<T>> Record<T>(
+		this IListState<T> state,
 		SourceContext? context = null,
 		bool autoEnable = true,
 		[CallerArgumentExpression("state")] string? feedExpression = null,
