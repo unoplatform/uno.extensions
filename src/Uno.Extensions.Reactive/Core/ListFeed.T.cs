@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
+using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Sources;
 using Uno.Extensions.Reactive.Utils;
 
@@ -73,7 +74,7 @@ public static class ListFeed<T>
 	/// <param name="getPage">The async method to load a page of items.</param>
 	/// <returns>A paginated list feed.</returns>
 	public static IListFeed<T> AsyncPaginatedByCursor<TCursor>(TCursor firstPage, GetPage<TCursor, T> getPage)
-		=> AttachedProperty.GetOrCreate(getPage.Target ?? getPage.Method, firstPage, getPage, (_, fp, gp) => new PaginatedListFeed<TCursor,T>(fp, gp));
+		=> AttachedProperty.GetOrCreate(getPage.Target ?? getPage.Method, (firstPage, getPage), (_, args) => new PaginatedListFeed<TCursor,T>(args.firstPage, args.getPage));
 
 	/// <summary>
 	/// Creates a list feed for a paginated collection.
@@ -81,31 +82,5 @@ public static class ListFeed<T>
 	/// <param name="getPage">The async method to load a page of items.</param>
 	/// <returns>A paginated list feed.</returns>
 	public static IListFeed<T> AsyncPaginated(AsyncFunc<PageRequest, IImmutableList<T>> getPage)
-		=> AttachedProperty.GetOrCreate(getPage, gp => new PaginatedListFeed<ByIndexCursor, T>(ByIndexCursor.First, PaginatedByIndex(gp)));
-
-	private static GetPage<ByIndexCursor, T> PaginatedByIndex(AsyncFunc<PageRequest, IImmutableList<T>> getPage) => async (cursor, desiredCount, ct) =>
-	{
-		var request = new PageRequest
-		{
-			Index = cursor.Index,
-			CurrentCount = cursor.TotalCount,
-			DesiredSize = desiredCount
-		};
-
-		if (await getPage(request, ct) is { Count: > 0 } items)
-		{
-			var nextCursor = cursor with { Index = cursor.Index + 1, TotalCount = cursor.TotalCount + (uint)items.Count };
-
-			return new PageResult<ByIndexCursor, T>(items, nextCursor);
-		}
-		else
-		{
-			return PageResult<ByIndexCursor, T>.Empty;
-		}
-	};
-
-	private record ByIndexCursor(uint Index, uint TotalCount)
-	{
-		public static ByIndexCursor First { get; } = new(0, 0);
-	}
+		=> AttachedProperty.GetOrCreate(getPage, gp => new PaginatedListFeed<ByIndexCursor<T>, T>(ByIndexCursor<T>.First, ByIndexCursor<T>.GetPage(gp)));
 }
