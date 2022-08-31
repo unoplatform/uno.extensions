@@ -18,6 +18,9 @@ internal partial class MessageManager<TParent, TResult>
 
 		public Message<TResult> Local => _owner.Current;
 
+		internal MessageBuilder<TParent, TResult> WithParentOnly(Message<TParent>? updatedParent)
+			=> new(updatedParent ?? Parent, _owner._local.result);
+
 		public MessageBuilder<TParent, TResult> With() 
 			=> new(Parent, (_owner._local.defined, _owner._local.result));
 
