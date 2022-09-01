@@ -72,7 +72,7 @@ public partial class FeedView
 			{
 				_view.State.Update(message);
 
-				if (_view.VisualStateSelector?.GetVisualStates(message).ToList() is { Count: > 0 } visualStates)
+				if (_view.VisualStateSelector?.GetVisualStates(_view, message).ToList() is { Count: > 0 } visualStates)
 				{
 					foreach (var state in visualStates)
 					{

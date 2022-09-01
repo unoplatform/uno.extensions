@@ -2,7 +2,7 @@
 					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 					xmlns:uer="using:Uno.Extensions.Reactive.UI">
 
-	<Style TargetType="uer:FeedView">
+	<Style TargetType="uer:FeedView" x:Key="DefaultFeedViewStyle">
 		<Setter Property="VerticalAlignment" Value="Stretch" />
 		<Setter Property="HorizontalAlignment" Value="Stretch" />
 		<Setter Property="VerticalContentAlignment" Value="Stretch" />
@@ -355,4 +355,6 @@
 			</Setter.Value>
 		</Setter>
 	</Style>
+
+	<!--<Style TargetType="uer:FeedView" BasedOn="{StaticResource DefaultFeedViewStyle}"/>-->
 </ResourceDictionary>
