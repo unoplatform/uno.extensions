@@ -8,5 +8,5 @@ global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Logging;
 global using Uno.Extensions.DependencyInjection;
 global using Uno.Extensions.Logging;
-global using Uno.Threading;
+global using Uno.Extensions.Threading;
 

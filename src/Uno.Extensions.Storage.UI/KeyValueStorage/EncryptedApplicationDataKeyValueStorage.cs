@@ -1,10 +1,60 @@
-﻿using System;
+﻿#if WINDOWS_UWP
+
+using Uno.Extensions.Serialization;
+using Windows.Security.Cryptography;
+using Windows.Security.Cryptography.DataProtection;
+
+namespace Uno.Extensions.Storage.KeyValueStorage;
+
+internal record EncryptedApplicationDataKeyValueStorage(ILogger<EncryptedApplicationDataKeyValueStorage> EncryptedLogger, ISerializer Serializer)
+	: ApplicationDataKeyValueStorage(EncryptedLogger, Serializer)
+{
+	public new const string Name = "EncryptedApplicationData";
+
+	private readonly DataProtectionProvider _provider = new DataProtectionProvider(DataProtectionProviderDescriptor);
+
+	private const string DataProtectionProviderDescriptor = "LOCAL=user";
+
+	// TODO: Work out why this method can't be used
+	//protected override async ValueTask<T?> GetTypedValue<T>(object? encryptedData, CancellationToken ct)
+	//{
+	//	if (encryptedData is byte[] byteData)
+	//	{
+
+	//		var encryptedBuffer = CryptographicBuffer.CreateFromByteArray(byteData);
+	//		var decryptedBuffer = await _provider.UnprotectAsync(encryptedBuffer).AsTask(ct);
+	//		var data = CryptographicBuffer.ConvertBinaryToString(BinaryStringEncoding.Utf8, decryptedBuffer);
+
+	//		var decryptedData = Deserialize<T>(data);
+	//		return decryptedData;
+	//	}
+
+	//	return default;
+	//}
+
+	protected override async ValueTask<object> GetObjectValue<T>(T value, CancellationToken ct)
+	{
+		var data = Serializer.ToString(value);
+		var decryptedBuffer = CryptographicBuffer.ConvertStringToBinary(data, BinaryStringEncoding.Utf8);
+		var encryptedBuffer = await _provider.ProtectAsync(decryptedBuffer).AsTask(ct);
+
+		CryptographicBuffer.CopyToByteArray(encryptedBuffer, out var encryptedData);
+
+		return encryptedData;
+	}
+
+}
+#endif
+
+/*
+ * 
+ * using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Uno.Extensions.Storage;
-/*
-internal class ApplicationDataKeyedStorage : IKeyedStorage
+
+internal class ApplicationDataKeyedStorage : IKeyValueStorage
 {
 	public const string Name = "ApplicationData";
 
@@ -36,16 +86,16 @@ internal class ApplicationDataKeyedStorage : IKeyedStorage
 	/// <inheritdoc />
 	public async Task ClearValue(CancellationToken ct, string name)
 	{
-		if (this.Log().IsEnabled(LogLevel.Debug))
+		if (Logger.IsEnabled(LogLevel.Debug))
 		{
-			this.Log().Debug($"Clearing value for key '{name}'.");
+			Logger.LogDebugMessage($"Clearing value for key '{name}'.");
 		}
 
 		var isRemoved = _dataContainer.Values.Remove(GetKey(name));
 
-		if (this.Log().IsEnabled(LogLevel.Information))
+		if (Logger.IsEnabled(LogLevel.Information))
 		{
-			this.Log().Info($"Cleared value for key '{name}'.");
+			Logger.LogInformationMessage($"Cleared value for key '{name}'.");
 		}
 
 		if (isRemoved)
@@ -68,9 +118,9 @@ internal class ApplicationDataKeyedStorage : IKeyedStorage
 	/// <inheritdoc />
 	public async Task<T> GetValue<T>(CancellationToken ct, string name)
 	{
-		if (this.Log().IsEnabled(LogLevel.Debug))
+		if (Logger.IsEnabled(LogLevel.Debug))
 		{
-			this.Log().Debug($"Getting value for key '{name}'.");
+			Logger.LogDebugMessage($"Getting value for key '{name}'.");
 		}
 
 		if (!_dataContainer.Values.TryGetValue(GetKey(name), out var encryptedData))
@@ -80,9 +130,9 @@ internal class ApplicationDataKeyedStorage : IKeyedStorage
 
 		var value = await this.DecryptAndDeserialize<T>(ct, (byte[])encryptedData);
 
-		if (this.Log().IsEnabled(LogLevel.Information))
+		if (Logger.IsEnabled(LogLevel.Information))
 		{
-			this.Log().Info($"Retrieved value for key '{name}'.");
+			Logger.LogInformationMessage($"Retrieved value for key '{name}'.");
 		}
 
 		return value;
@@ -93,17 +143,17 @@ internal class ApplicationDataKeyedStorage : IKeyedStorage
 	/// <inheritdoc />
 	public async Task SetValue<T>(CancellationToken ct, string name, T value)
 	{
-		if (this.Log().IsEnabled(LogLevel.Debug))
+		if (Logger.IsEnabled(LogLevel.Debug))
 		{
-			this.Log().Debug($"Setting value for key '{name}'.");
+			Logger.LogDebugMessage($"Setting value for key '{name}'.");
 		}
 
 		var encryptedData = await this.SerializeAndEncrypt(ct, value);
 		_dataContainer.Values[GetKey(name)] = encryptedData;
 
-		if (this.Log().IsEnabled(LogLevel.Information))
+		if (Logger.IsEnabled(LogLevel.Information))
 		{
-			this.Log().Info($"Value for key '{name}' set.");
+			Logger.LogInformationMessage($"Value for key '{name}' set.");
 		}
 
 		ValueChanged?.Invoke(this, name);
@@ -147,4 +197,5 @@ internal class ApplicationDataKeyedStorage : IKeyedStorage
 		return encryptedData;
 	}
 }
+
 */

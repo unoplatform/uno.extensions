@@ -13,7 +13,7 @@ internal record InMemoryKeyValueStorage(ILogger<InMemoryKeyValueStorage> Logger)
 	private readonly Dictionary<string, object> _values = new Dictionary<string, object>();
 
 	/// <inheritdoc />
-	public async ValueTask Clear(string? name, CancellationToken ct)
+	public async ValueTask ClearAsync(string? name, CancellationToken ct)
 	{
 		if (Logger.IsEnabled(LogLevel.Debug))
 		{
@@ -39,7 +39,7 @@ internal record InMemoryKeyValueStorage(ILogger<InMemoryKeyValueStorage> Logger)
 	}
 
 	/// <inheritdoc />
-	public async ValueTask<T> GetValue<T>(string name, CancellationToken ct)
+	public async ValueTask<T?> GetAsync<T>(string name, CancellationToken ct)
 	{
 		if (Logger.IsEnabled(LogLevel.Debug))
 		{
@@ -70,7 +70,7 @@ internal record InMemoryKeyValueStorage(ILogger<InMemoryKeyValueStorage> Logger)
 	}
 
 	/// <inheritdoc />
-	public async ValueTask SetValue<T>(string name, T value, CancellationToken ct) where T: notnull
+	public async ValueTask SetAsync<T>(string name, T value, CancellationToken ct) where T: notnull
 	{
 		if (Logger.IsEnabled(LogLevel.Debug))
 		{
@@ -89,15 +89,7 @@ internal record InMemoryKeyValueStorage(ILogger<InMemoryKeyValueStorage> Logger)
 	}
 
 	/// <inheritdoc />
-	public async ValueTask<bool> ContainsKey(string key, CancellationToken ct)
-	{
-		var keys = await GetAllKeys(ct);
-		return keys.Contains(key);
-	}
-
-
-	/// <inheritdoc />
-	public async ValueTask<string[]> GetAllKeys(CancellationToken ct)
+	public async ValueTask<string[]> GetKeysAsync(CancellationToken ct)
 	{
 		using (await _lock.LockAsync(ct))
 		{

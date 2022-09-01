@@ -130,6 +130,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authenticati
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Authentication.Oidc.WinUI", "Uno.Extensions.Authentication.Oidc\Uno.Extensions.Authentication.Oidc.WinUI.csproj", "{456DDC7B-4009-4A4E-819D-4E7EA1BEC5FB}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Storage", "Storage", "{8C4F4055-0DDD-4BA9-BC90-12B92D9EE774}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Storage", "Uno.Extensions.Storage\Uno.Extensions.Storage.csproj", "{FE27ED72-D0A7-4C6C-B23D-3D178557D889}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Storage.UI", "Uno.Extensions.Storage.UI\Uno.Extensions.Storage.UI.csproj", "{82419011-4051-419E-A4F5-4192491B8D2A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Storage.WinUI", "Uno.Extensions.Storage.UI\Uno.Extensions.Storage.WinUI.csproj", "{24904601-971A-40B0-BA89-EADB2442513A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -328,6 +336,18 @@ Global
 		{456DDC7B-4009-4A4E-819D-4E7EA1BEC5FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{456DDC7B-4009-4A4E-819D-4E7EA1BEC5FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{456DDC7B-4009-4A4E-819D-4E7EA1BEC5FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE27ED72-D0A7-4C6C-B23D-3D178557D889}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE27ED72-D0A7-4C6C-B23D-3D178557D889}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE27ED72-D0A7-4C6C-B23D-3D178557D889}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE27ED72-D0A7-4C6C-B23D-3D178557D889}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82419011-4051-419E-A4F5-4192491B8D2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82419011-4051-419E-A4F5-4192491B8D2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82419011-4051-419E-A4F5-4192491B8D2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82419011-4051-419E-A4F5-4192491B8D2A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24904601-971A-40B0-BA89-EADB2442513A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24904601-971A-40B0-BA89-EADB2442513A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24904601-971A-40B0-BA89-EADB2442513A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24904601-971A-40B0-BA89-EADB2442513A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -378,6 +398,9 @@ Global
 		{226E7333-B221-4ABD-8D0A-6CB9BF8B8FD8} = {FEABD28F-23AE-4CDC-9933-44D6717C681C}
 		{B1A38A3C-CD49-4BEA-A9DF-EEDF49256514} = {FEABD28F-23AE-4CDC-9933-44D6717C681C}
 		{456DDC7B-4009-4A4E-819D-4E7EA1BEC5FB} = {FEABD28F-23AE-4CDC-9933-44D6717C681C}
+		{FE27ED72-D0A7-4C6C-B23D-3D178557D889} = {8C4F4055-0DDD-4BA9-BC90-12B92D9EE774}
+		{82419011-4051-419E-A4F5-4192491B8D2A} = {8C4F4055-0DDD-4BA9-BC90-12B92D9EE774}
+		{24904601-971A-40B0-BA89-EADB2442513A} = {8C4F4055-0DDD-4BA9-BC90-12B92D9EE774}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6E7B035D-9A64-4D95-89AA-9D4653F17C42}

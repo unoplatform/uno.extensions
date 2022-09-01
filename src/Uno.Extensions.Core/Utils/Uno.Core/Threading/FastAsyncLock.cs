@@ -20,7 +20,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Uno.Threading
+namespace Uno.Extensions.Threading
 {
 	/// <summary>
 	/// An re-entrant asynchronous lock, that can be used in conjuction with C# async/await

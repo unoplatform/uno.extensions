@@ -27,6 +27,7 @@
 	<ItemGroup>
 		<InternalsVisibleTo Include="$(AssemblyName).UI" />
 		<InternalsVisibleTo Include="$(AssemblyName).WinUI" />
+		<InternalsVisibleTo Include="Uno.Extensions.Authentication" />
 	</ItemGroup>
 
 </Project>
