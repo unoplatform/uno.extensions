@@ -1,9 +1,11 @@
-﻿namespace Uno.Extensions.Storage;
+﻿
+
+namespace Uno.Extensions.Storage.KeyValueStorage;
 
 /// <summary>
 /// Represents a service that can store key-value pairs.
 /// </summary>
-public interface IKeyedStorage
+public interface IKeyValueStorage
 {
 	/// <summary>
 	/// Removes any value stored under the provided key.

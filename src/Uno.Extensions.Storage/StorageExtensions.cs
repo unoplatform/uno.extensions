@@ -1,4 +1,4 @@
-namespace Uno.Extensions.Serialization;
+namespace Uno.Extensions.Storage;
 
 public static class StorageExtensions
 {

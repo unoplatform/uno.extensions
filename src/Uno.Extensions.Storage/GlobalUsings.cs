@@ -1,0 +1,12 @@
+﻿global using System;
+global using Microsoft.Extensions.DependencyInjection;
+global using Microsoft.Extensions.Hosting;
+global using Uno.Extensions.Storage;
+global using System.Threading;
+global using System.Threading.Tasks;
+global using System.Collections.Generic;
+global using Microsoft.Extensions.Logging;
+global using Uno.Threading;
+global using System.Linq;
+global using Uno.Extensions.Logging;
+global using Uno.Extensions.Serialization;

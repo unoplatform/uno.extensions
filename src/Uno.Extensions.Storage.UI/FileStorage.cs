@@ -1,6 +1,7 @@
-﻿namespace Uno.Extensions.Hosting;
+﻿
+namespace Uno.Extensions.Storage;
 
-public class Storage :IStorage
+public class FileStorage : IStorage
 {
 	public async Task<string> CreateLocalFolderAsync(string foldername)
 	{

@@ -42,6 +42,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<InternalsVisibleTo Include="Uno.Extensions.Storage" />
+		<InternalsVisibleTo Include="Uno.Extensions.Storage.UI" />
+		<InternalsVisibleTo Include="Uno.Extensions.Storage.WinUI" />
 		<InternalsVisibleTo Include="Uno.Extensions.Reactive" />
 		<InternalsVisibleTo Include="Uno.Extensions.Reactive.UI" />
 		<InternalsVisibleTo Include="Uno.Extensions.Reactive.WinUI" />

@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Extensions.Logging;
-using Uno.Extensions.Logging;
-using Uno.Threading;
+﻿
 
-namespace Uno.Extensions.Storage;
 
-public record InMemoryKeyedStorage(ILogger<InMemoryKeyedStorage> Logger) : IKeyedStorage
+
+
+namespace Uno.Extensions.Storage.KeyValueStorage;
+
+internal record InMemoryKeyValueStorage(ILogger<InMemoryKeyValueStorage> Logger) : IKeyValueStorage
 {
 	public const string Name = "InMemory";
 
