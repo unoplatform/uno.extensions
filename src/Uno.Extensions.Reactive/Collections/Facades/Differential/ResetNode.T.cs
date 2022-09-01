@@ -30,5 +30,5 @@ internal sealed class ResetNode<T> : IDifferentialCollectionNode
 
 	/// <inheritdoc />
 	public int IndexOf(object? value, int startingAt, IEqualityComparer? comparer)
-		=> _items.IndexOf((T)value!, startingAt, _items.Count, comparer?.ToEqualityComparer<T>());
+		=> _items.IndexOf((T)value!, startingAt, _items.Count - startingAt, comparer?.ToEqualityComparer<T>());
 }
