@@ -188,7 +188,7 @@ public partial class FeedView : Control
 	/// Backing dependency property for <see cref="RefreshingState"/>.
 	/// </summary>
 	public static readonly DependencyProperty RefreshingStateProperty = DependencyProperty.Register(
-		"RefreshingState", typeof(FeedViewRefreshState), typeof(FeedView), new PropertyMetadata(default(FeedViewRefreshState)));
+		"RefreshingState", typeof(FeedViewRefreshState), typeof(FeedView), new PropertyMetadata(FeedViewRefreshState.Default));
 
 	/// <summary>
 	/// Defines the visual state that should be used for refresh.

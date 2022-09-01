@@ -85,7 +85,7 @@ Uno.Extensions also defines a `RefreshContainerExtensions.Command` attached prop
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:uer="using:Uno.Extensions.Reactive.UI">
 
-<uer:FeedView Source="{Binding Products}">
+<uer:FeedView Source="{Binding Products}" RefreshingState="None">
 	<DataTemplate>
 		<RefreshContainer uer:RefreshContainerExtensions.Command="{Binding Refresh}">
 			<ListView ItemsSource="{Binding Data}" />
@@ -93,6 +93,11 @@ Uno.Extensions also defines a `RefreshContainerExtensions.Command` attached prop
 	</DataTemplate>
 </uer:FeedView>
 ```
+
+> [!TIP]
+> When you use a `RefreshContainer` to trigger the refresh of your _feed_, as the `RefreshContainer` do have its own loading indicator,
+> you might have 2 loading indicators, one from the `RefreshContainer` itself, and a second one from the `FeedView`.
+> In order to avoid that, you should instruct your `FeedView` to not use the loading state in case of refresh by setting `RefreshingState="None"`.
 
 ## Pagination
 
