@@ -26,12 +26,14 @@ public class CustomAuthenticationTestBackendCookieHostInit : BaseHostInitializat
 							})
 							.Refresh(async (authService, cache, tokenDictionary, cancellationToken) =>
 							{
+								await Task.Delay(3000);
 								await authService.RefreshCookie(cancellationToken);
 								return await cache.GetAsync(cancellationToken);
 							})),
 							configureAuthorization: builder =>
 							{
-								builder.Cookies("AccessToken", "RefreshToken");
+								builder
+									.Cookies("AccessToken", "RefreshToken");
 							}
 				)
 

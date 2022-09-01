@@ -14,7 +14,6 @@ global using Uno.Extensions.Authentication.Custom;
 global using Uno.Extensions.Authentication.Handlers;
 global using Uno.Extensions.Configuration;
 global using Uno.Extensions.Hosting;
-global using Uno.Extensions.Navigation;
 global using Uno.Extensions.Logging;
 
 

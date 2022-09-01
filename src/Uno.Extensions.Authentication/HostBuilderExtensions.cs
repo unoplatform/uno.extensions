@@ -99,7 +99,8 @@ public static class HostBuilderExtensions
 		hostBuilder
 			.ConfigureServices(services =>
 			{
-				services.AddSingleton(authBuilder.Settings);
+				services
+				.AddSingleton(authBuilder.Settings);
 			});
 
 		if (!authBuilder.Settings.NoHandlers)
@@ -119,6 +120,4 @@ public static class HostBuilderExtensions
 	}
 
 }
-
-
 

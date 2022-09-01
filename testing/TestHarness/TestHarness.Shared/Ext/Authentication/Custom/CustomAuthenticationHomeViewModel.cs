@@ -42,6 +42,14 @@ public partial class CustomAuthenticationHomeViewModel : ObservableObject
 		await Tokens.SaveAsync(Tokens.CurrentProvider ?? string.Empty, creds);
 	}
 
+	public async void ClearAllTokens()
+	{
+		var creds = await Tokens.GetAsync();
+		creds.Remove(TokenCacheExtensions.AccessTokenKey);
+		creds.Remove(TokenCacheExtensions.RefreshTokenKey);
+		await Tokens.SaveAsync(Tokens.CurrentProvider ?? string.Empty, creds);
+	}
+
 	public async void RetrieveProducts()
 	{
 		try
