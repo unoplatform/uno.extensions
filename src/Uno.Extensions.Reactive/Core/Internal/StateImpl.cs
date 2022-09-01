@@ -6,14 +6,17 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Uno.Extensions.Reactive.Operators;
 using Uno.Extensions.Reactive.Utils;
 using Uno.Threading;
+using static Uno.Extensions.Collections.Tracking.CollectionUpdater;
 
 namespace Uno.Extensions.Reactive.Core;
 
 internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, IStateImpl
 {
-	private readonly FastAsyncLock _updateGate = new();
+	private readonly object _updateGate = new();
+	private readonly UpdateFeed<T>? _updates;
 	private readonly IForEachRunner? _innerEnumeration;
 	private readonly CompositeRequestSource _requests = new();
 
@@ -47,9 +50,23 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		}
 	}
 
-	public StateImpl(SourceContext context, IFeed<T> feed, StateSubscriptionMode mode = StateSubscriptionMode.Default)
+	public StateImpl(
+		SourceContext context,
+		IFeed<T> feed,
+		StateSubscriptionMode mode = StateSubscriptionMode.Default,
+		StateUpdateKind updatesKind = StateUpdateKind.Volatile)
 	{
 		Context = context.CreateChild(_requests);
+
+		if (updatesKind is StateUpdateKind.Persistent)
+		{
+			// Note: We expect to use the UpdateFeed for all kind of updates, but to avoid silent breaking changes,
+			//		 for now we use it only when using the new Persistent mode.
+			feed = _updates = new UpdateFeed<T>(feed);
+
+			// If updates has to be persistent, the subscription to the UpdateFeed must remain active.
+			mode &= ~StateSubscriptionMode.RefCounted;
+		}
 
 		_innerEnumeration = mode.HasFlag(StateSubscriptionMode.RefCounted)
 			? new RefCountedForEachRunner<Message<T>>(GetSource, UpdateState)
@@ -63,6 +80,9 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 			=> feed.GetSource(Context);
 
 		ValueTask UpdateState(Message<T> newSrcMsg, CancellationToken ct)
+			// Note: When using the StateUpdateKind.Persistent, the newScrMsg is known to be the same as the currentStateMsg
+			//		 (as updates are made on the source 'feed' instead of locally), so this is equivalent to:
+			//=> UpdateCore(_ => newSrcMsg, ct); // Note2 : OverrideBy is optimized to handle that case!
 			=> UpdateCore(currentStateMsg => currentStateMsg.OverrideBy(newSrcMsg), ct);
 	}
 
@@ -100,7 +120,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 
 		var isFirstMessage = true;
 		TaskCompletionSource<Node>? next;
-		using (await _updateGate.LockAsync(ct))
+		lock(_updateGate)
 		{
 			// We access to the _current only in the _updateGate, so we make sure that we would never miss or replay a value
 			// by listening to the _next too late/early
@@ -141,8 +161,20 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	}
 
 	/// <inheritdoc />
-	public ValueTask UpdateMessage(Func<Message<T>, MessageBuilder<T>> updater, CancellationToken ct)
-		=> UpdateCore(msg => updater(msg), ct);
+	public ValueTask UpdateMessage(Action<MessageBuilder<T>> updater, CancellationToken ct)
+	{
+		if (_updates is not null)
+		{
+			// First we make sure that the UpdateFeed is active, so the update will be applied ^^
+			_innerEnumeration?.Prefetch();
+			return _updates.Update(_ => true, updater, ct);
+		}
+		else
+		{
+			// Compatibility mode
+			return UpdateCore(msg => msg.With().Apply(updater).Build(), ct);
+		}
+	}
 
 	private async ValueTask UpdateCore(Func<Message<T>, Message<T>> updater, CancellationToken ct)
 	{
@@ -153,7 +185,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 
 		Message<T> updated;
 		TaskCompletionSource<Node>? current, next;
-		using (await _updateGate.LockAsync(ct))
+		lock (_updateGate)
 		{
 			updated = updater(_current);
 
@@ -206,7 +238,10 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	/// <inheritdoc />
 	public async ValueTask DisposeAsync()
 	{
-		await Context.DisposeAsync();
+		if (Context is not null)
+		{
+			await Context.DisposeAsync();
+		}
 		_requests.Dispose(); // Safety only, should have already been disposed by the Context
 		_innerEnumeration?.Dispose();
 		Interlocked.Exchange(ref _next, null)?.TrySetCanceled();

@@ -25,8 +25,11 @@ internal interface IStateStore : IAsyncDisposable
 	/// Create a <see cref="IState{T}"/> for a given value.
 	/// </summary>
 	/// <typeparam name="T">Type of the value of items.</typeparam>
-	/// <param name="initialValue">The initial value of the state</param>
-	/// <returns>The list state wrapping the given list feed</returns>
+	/// <typeparam name="TState">The requested type of state.</typeparam>
+	/// <param name="initialValue">The initial value of the state.</param>
+	/// <param name="factory">Factory to build the state.</param>
+	/// <returns>A new state initialized with given initial value</returns>
 	/// <exception cref="ObjectDisposedException">This store has been disposed.</exception>
-	IState<T> CreateState<T>(Option<T> initialValue);
+	TState CreateState<T, TState>(Option<T> initialValue, Func<SourceContext, Option<T>, TState> factory)
+		where TState : IStateImpl, IAsyncDisposable;
 }

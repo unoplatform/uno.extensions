@@ -19,8 +19,8 @@ namespace Uno.Extensions.Reactive.Tests.Operators
 
 			var sut = Feed.Combine(feed1, feed2).Record();
 
-			await feed1.UpdateMessage(msg => msg.With().Data(42), CT);
-			await feed2.UpdateMessage(msg => msg.With().Data(43), CT);
+			await feed1.UpdateMessage(msg => msg.Data(42), CT);
+			await feed2.UpdateMessage(msg => msg.Data(43), CT);
 
 			sut.Should().Be(r => r
 				.Message(Changed.None, Data.Undefined, Error.No, Progress.Final)

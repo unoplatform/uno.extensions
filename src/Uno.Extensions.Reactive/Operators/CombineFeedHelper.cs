@@ -100,7 +100,10 @@ internal sealed class CombineFeedHelper<TResult>
 			}
 			else
 			{
-				builder[changedAxis] = changedAxis.Aggregate(_parents.Select(p => p is not null && p.TryGetValue(changedAxis, out var value) ? value : default));
+				var values = _parents.Select(p => p is not null && p.TryGetValue(changedAxis, out var value) ? value : default);
+				var resultValue = changedAxis.Aggregate(values);
+
+				builder.Set(changedAxis, resultValue, changes: null);
 			}
 		}
 

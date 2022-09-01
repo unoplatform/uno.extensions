@@ -12,7 +12,7 @@ using Uno.Extensions.Reactive.Core;
 namespace Uno.Extensions.Reactive.Testing;
 
 public class FeedRecorder<TFeed, TValue> : IFeedRecorder<TValue>, ICollection<Message<TValue>>, IDisposable
-	where TFeed : IFeed<TValue>
+	where TFeed : ISignal<Message<TValue>>
 {
 	private event EventHandler? _messageAdded;
 

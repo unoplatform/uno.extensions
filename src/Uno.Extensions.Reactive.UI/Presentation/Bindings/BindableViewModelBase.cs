@@ -168,12 +168,12 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 				.Run(async () => await stateImpl.UpdateMessage(DoUpdate, ct).ConfigureAwait(false), ct)
 				.ConfigureAwait(false);
 
-			MessageBuilder<TProperty> DoUpdate(Message<TProperty> msg)
+			void DoUpdate(MessageBuilder<TProperty> msg)
 			{
-				var current = msg.Current.Data.SomeOrDefault(GetDefaultValueForBindings<TProperty>());
+				var current = msg.CurrentData.SomeOrDefault(GetDefaultValueForBindings<TProperty>());
 				var updated = updater(current);
 
-				return msg.With().Data(Option.Some(updated)).Set(BindingSource, (this, propertyName));
+				msg.Data(Option.Some(updated)).Set(BindingSource, (this, propertyName));
 			}
 		}
 	}

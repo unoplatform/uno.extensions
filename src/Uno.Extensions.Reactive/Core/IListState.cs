@@ -21,5 +21,5 @@ public interface IListState<T> : IListFeed<T>, IAsyncDisposable
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to track the async update.</returns>
 	/// <remarks>This is the raw way to update a state, you should consider using the <see cref="ListState.Update{T}"/> method instead.</remarks>
-	ValueTask UpdateMessage(Func<Message<IImmutableList<T>>, MessageBuilder<IImmutableList<T>>> updater, CancellationToken ct);
+	ValueTask UpdateMessage(Action<MessageBuilder<IImmutableList<T>>> updater, CancellationToken ct);
 }

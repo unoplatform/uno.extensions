@@ -24,10 +24,10 @@ partial class State
 		=> state.UpdateMessage(
 			m =>
 			{
-				var updatedValue = updater(m.Current.Data.SomeOrDefault());
+				var updatedValue = updater(m.CurrentData.SomeOrDefault());
 				var updatedData = updatedValue is null ? Option<T>.None() : Option.Some(updatedValue);
 
-				return m.With().Data(updatedData);
+				m.Data(updatedData);
 			},
 			ct);
 
@@ -40,14 +40,17 @@ partial class State
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to track the async update.</returns>
 	public static ValueTask UpdateData<T>(this IState<T> state, Func<Option<T>, Option<T>> updater, CancellationToken ct)
-		=> state.UpdateMessage(m => m.With().Data(updater(m.Current.Data)), ct);
+		=> state.UpdateMessage(m => m.Data(updater(m.CurrentData)), ct);
 
 	/// <summary>
 	/// [DEPRECATED] Use UpdateData instead
 	/// </summary>
 	[EditorBrowsable(EditorBrowsableState.Never)]
+#if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
+	[Obsolete("Use UpdateData")]
+#endif
 	public static ValueTask UpdateValue<T>(this IState<T> state, Func<Option<T>, Option<T>> updater, CancellationToken ct)
-		=> state.UpdateMessage(m => m.With().Data(updater(m.Current.Data)), ct);
+		=> UpdateData(state, updater, ct);
 
 	/// <summary>
 	/// Sets the value of a state
@@ -59,7 +62,7 @@ partial class State
 	/// <returns>A ValueTask to track the async update.</returns>
 	public static ValueTask Set<T>(this IState<T> state, T? value, CancellationToken ct)
 		where T : struct
-		=> state.UpdateMessage(m => m.With().Data(value is null ? Option<T>.None() : Option.Some(value.Value)), ct);
+		=> state.UpdateMessage(m => m.Data(value is null ? Option<T>.None() : Option.Some(value.Value)), ct);
 
 	/// <summary>
 	/// Sets the value of a state
@@ -69,12 +72,15 @@ partial class State
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns>A ValueTask to track the async update.</returns>
 	public static ValueTask Set(this IState<string> state, string? value, CancellationToken ct)
-		=> state.UpdateMessage(m => m.With().Data(value is { Length: > 0 } ? value : Option<string>.None()), ct);
+		=> state.UpdateMessage(m => m.Data(value is { Length: > 0 } ? value : Option<string>.None()), ct);
 
 	/// <summary>
 	/// [DEPRECATED] Use .ForEachAsync instead
 	/// </summary>
 	[EditorBrowsable(EditorBrowsableState.Never)]
+#if DEBUG // To avoid usage in internal reactive code, but without forcing apps to update right away
+	[Obsolete("Use ForEachAsync")]
+#endif
 	public static IDisposable Execute<T>(this IState<T> state, AsyncAction<T?> action, [CallerMemberName] string? caller = null, [CallerLineNumber] int line = -1)
 		where T : notnull
 		=> ForEachAsync(state, action, caller, line);

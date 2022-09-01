@@ -15,6 +15,11 @@ public readonly struct MessageBuilder<TParent, TResult> : IMessageEntry, IMessag
 {
 	private readonly Dictionary<MessageAxis, MessageAxisUpdate> _updates;
 
+	/// <summary>
+	/// Creates a new message builder, including some changes (a.k.a. updates) that was previously made on the local message.
+	/// </summary>
+	/// <param name="parent">The last message received from the parent, if any.</param>
+	/// <param name="local">The last message produced by the local Feed.</param>
 	internal MessageBuilder(
 		Message<TParent>? parent,
 		(IReadOnlyDictionary<MessageAxis, MessageAxisUpdate> updates, Message<TResult> value) local)
@@ -25,6 +30,19 @@ public readonly struct MessageBuilder<TParent, TResult> : IMessageEntry, IMessag
 		// We make sure to clear all transient axes when we update a message
 		// Note: We remove only "local" values, parent values are still propagated, it's there responsibility to remove them.
 		_updates = local.updates.ToDictionaryWhereKey(k => !k.IsTransient);
+	}
+
+	/// <summary>
+	/// Creates a new instance without any pending local changes
+	/// </summary>
+	/// <param name="parent">The last message received from the parent, if any.</param>
+	/// <param name="local">The last message produced by the local Feed.</param>
+	internal MessageBuilder(Message<TParent>? parent, Message<TResult> local)
+	{
+		Parent = parent;
+		Local = local;
+
+		_updates = new();
 	}
 
 	/// <summary>
@@ -51,11 +69,6 @@ public readonly struct MessageBuilder<TParent, TResult> : IMessageEntry, IMessag
 	internal Option<TResult> CurrentData => (Option<TResult>)Get(MessageAxis.Data).value.Value!;
 	internal Exception? CurrentError => (Exception?)Get(MessageAxis.Data).value.Value;
 	internal bool CurrentIsTransient => Get(MessageAxis.Progress).value is { IsSet: true } progress && (bool)progress.Value!;
-	internal MessageAxisValue this[MessageAxis axis]
-	{
-		get => Get(axis).value;
-		set => Set(axis, value, changes: null);
-	}
 
 	/// <inheritdoc />
 	(MessageAxisValue value, IChangeSet? changes) IMessageBuilder.Get(MessageAxis axis)
