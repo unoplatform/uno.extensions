@@ -8,11 +8,11 @@ using MsalCacheHelper = Microsoft.Identity.Client.Extensions.Msal.MsalCacheHelpe
 namespace Uno.Extensions.Authentication.MSAL;
 
 internal record MsalAuthenticationProvider(
-		ILogger<MsalAuthenticationProvider> Logger,
+		ILogger<MsalAuthenticationProvider> ProviderLogger,
 		IOptions<MsalConfiguration> Configuration,
 		ITokenCache Tokens,
 		IStorage Storage,
-		MsalAuthenticationSettings? Settings = null) : BaseAuthenticationProvider(DefaultName, Tokens)
+		MsalAuthenticationSettings? Settings = null) : BaseAuthenticationProvider(ProviderLogger, DefaultName, Tokens)
 {
 	public const string DefaultName = "Msal";
 	private const string CacheFileName = "msal.cache";
@@ -44,7 +44,8 @@ internal record MsalAuthenticationProvider(
 		await SetupStorage();
 		return (await _pca!.GetAccountsAsync()).Count() > 0;
 	}
-	public async override ValueTask<IDictionary<string, string>?> LoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
+
+	protected async override ValueTask<IDictionary<string, string>?> InternalLoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
 	{
 		try
 		{
@@ -74,7 +75,7 @@ internal record MsalAuthenticationProvider(
 
 	}
 
-	public async override ValueTask<bool> LogoutAsync(IDispatcher? dispatcher, CancellationToken cancellationToken)
+	protected async override ValueTask<bool> InternalLogoutAsync(IDispatcher? dispatcher, CancellationToken cancellationToken)
 	{
 		if (dispatcher is null)
 		{
@@ -98,7 +99,8 @@ internal record MsalAuthenticationProvider(
 
 		return true;
 	}
-	public async override ValueTask<IDictionary<string, string>?> RefreshAsync(CancellationToken cancellationToken)
+
+	protected async override ValueTask<IDictionary<string, string>?> InternalRefreshAsync(CancellationToken cancellationToken)
 	{
 		await SetupStorage();
 		var result = await AcquireSilentTokenAsync();
