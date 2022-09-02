@@ -180,13 +180,33 @@ public partial class FeedView : Control
 	{
 		get => (DataTemplate)GetValue(ErrorTemplateProperty);
 		set => SetValue(ErrorTemplateProperty, value);
+	}
+	#endregion
+
+	#region RefreshingState (DP)
+	/// <summary>
+	/// Backing dependency property for <see cref="RefreshingState"/>.
+	/// </summary>
+	public static readonly DependencyProperty RefreshingStateProperty = DependencyProperty.Register(
+		"RefreshingState", typeof(FeedViewRefreshState), typeof(FeedView), new PropertyMetadata(FeedViewRefreshState.Default));
+
+	/// <summary>
+	/// Defines the visual state that should be used for refresh.
+	/// </summary>
+	public FeedViewRefreshState RefreshingState
+	{
+		get => (FeedViewRefreshState)GetValue(RefreshingStateProperty);
+		set => SetValue(RefreshingStateProperty, value);
 	} 
 	#endregion
 
 	private bool _isReady;
 	private Subscription? _subscription;
 
-	internal RefreshCommand Refresh { get; }
+	/// <summary>
+	/// Gets a command which request to refresh the source when executed.
+	/// </summary>
+	public IAsyncCommand Refresh { get; }
 
 	/// <summary>
 	/// Creates a new instance.
