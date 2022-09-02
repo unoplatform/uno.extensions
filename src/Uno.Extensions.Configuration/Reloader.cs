@@ -3,7 +3,6 @@
 public class Reloader
 {
 	internal static SemaphoreSlim ReadWriteLock = new SemaphoreSlim(1);
-	private const int MaxReadRetries = 100;
 
 	private ILogger Logger { get; }
 
@@ -41,28 +40,14 @@ public class Reloader
 						Logger.LogDebugMessage($@"Contents '{contents}'");
 						Logger.LogDebugMessage($@"Loading from full path '{info.PhysicalPath}'");
 					}
-					var read = false;
-					var attempt = 0;
-					while (!read && attempt++ < MaxReadRetries)
+					await ReadWriteLock.WaitAsync();
+					try
 					{
-						await ReadWriteLock.WaitAsync();
-						try
-						{
-							fp.Load();
-						}
-						catch (IOException)
-						{
-							// Only retry on IOExceptions eg sharing violation
-							read = false;
-						}
-						finally
-						{
-							ReadWriteLock.Release();
-						}
-						if (!read)
-						{
-							await Task.Delay(50);
-						}
+						fp.Load();
+					}
+					finally
+					{
+						ReadWriteLock.Release();
 					}
 				}
 			}

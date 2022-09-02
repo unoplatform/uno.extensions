@@ -3,8 +3,6 @@
 public class WritableOptions<T> : IWritableOptions<T>
 	where T : class, new()
 {
-	private const int MaxWriteRetries = 100;
-
 	private readonly IOptionsMonitor<T> _options;
 
 	private readonly string _section;
@@ -63,31 +61,15 @@ public class WritableOptions<T> : IWritableOptions<T>
 		{
 			Directory.CreateDirectory(dir);
 		}
-		var written = false;
-		var attempt = 0;
-		while (!written && attempt++ < MaxWriteRetries)
+		await Reloader.ReadWriteLock.WaitAsync();
+		try
 		{
-			await Reloader.ReadWriteLock.WaitAsync();
-			try
-			{
-				written = true;
-				File.WriteAllText(physicalPath, json);
-			}
-			catch(IOException)
-			{
-				// Only retry on IOExceptions eg sharing violation
-				written = false;
-			}
-			finally
-			{
-				Reloader.ReadWriteLock.Release();
-			}
-			if(!written)
-			{
-				await Task.Delay(50);
-			}
+			File.WriteAllText(physicalPath, json);
 		}
-
+		finally
+		{
+			Reloader.ReadWriteLock.Release();
+		}
 
 		await _reloader.ReloadAllFileConfigurationProviders(physicalPath);
 	}
