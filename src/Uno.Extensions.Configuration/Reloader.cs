@@ -2,6 +2,9 @@
 
 public class Reloader
 {
+	internal static SemaphoreSlim ReadWriteLock = new SemaphoreSlim(1);
+	private const int MaxReadRetries = 100;
+
 	private ILogger Logger { get; }
 
 	private IConfigurationRoot Config { get; }
@@ -32,10 +35,35 @@ public class Reloader
 				}
 				else
 				{
-					var contents = File.ReadAllText(info.PhysicalPath);
-					if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($@"Contents '{contents}'");
-					if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($@"Loading from full path '{info.PhysicalPath}'");
-					fp.Load();
+					if (Logger.IsEnabled(LogLevel.Debug))
+					{
+						var contents = File.ReadAllText(info.PhysicalPath);
+						Logger.LogDebugMessage($@"Contents '{contents}'");
+						Logger.LogDebugMessage($@"Loading from full path '{info.PhysicalPath}'");
+					}
+					var read = false;
+					var attempt = 0;
+					while (!read && attempt++ < MaxReadRetries)
+					{
+						await ReadWriteLock.WaitAsync();
+						try
+						{
+							fp.Load();
+						}
+						catch (IOException)
+						{
+							// Only retry on IOExceptions eg sharing violation
+							read = false;
+						}
+						finally
+						{
+							ReadWriteLock.Release();
+						}
+						if (!read)
+						{
+							await Task.Yield();
+						}
+					}
 				}
 			}
 		}
