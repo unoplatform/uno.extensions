@@ -5,10 +5,10 @@ using System.Diagnostics;
 namespace Uno.Extensions.Authentication.Oidc;
 
 internal record OidcAuthenticationProvider(
-		ILogger<OidcAuthenticationProvider> Logger,
+		ILogger<OidcAuthenticationProvider> ProviderLogger,
 		IOptions<OidcClientOptions> Configuration,
 		ITokenCache Tokens,
-		OidcAuthenticationSettings? Settings = null) : BaseAuthenticationProvider(DefaultName, Tokens)
+		OidcAuthenticationSettings? Settings = null) : BaseAuthenticationProvider(ProviderLogger, DefaultName, Tokens)
 {
 	public const string DefaultName = "Oidc";
 
@@ -37,7 +37,7 @@ internal record OidcAuthenticationProvider(
 		return true;
 	}
 
-	public async override ValueTask<IDictionary<string, string>?> LoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
+	protected async override ValueTask<IDictionary<string, string>?> InternalLoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
 	{
 		if (_client is null)
 		{
@@ -62,7 +62,7 @@ internal record OidcAuthenticationProvider(
 		return default;
 	}
 
-	public async override ValueTask<bool> LogoutAsync(IDispatcher? dispatcher, CancellationToken cancellationToken)
+	protected async override ValueTask<bool> InternalLogoutAsync(IDispatcher? dispatcher, CancellationToken cancellationToken)
 	{
 		if (_client is null)
 		{
@@ -72,7 +72,8 @@ internal record OidcAuthenticationProvider(
 		var authenticationResult = await _client.LoginAsync();
 		return true;
 	}
-	public async override ValueTask<IDictionary<string, string>?> RefreshAsync(CancellationToken cancellationToken)
+
+	protected async override ValueTask<IDictionary<string, string>?> InternalRefreshAsync(CancellationToken cancellationToken)
 	{
 		var token = await Tokens.RefreshTokenAsync(cancellationToken);
 		if (_client is null || string.IsNullOrWhiteSpace(token))

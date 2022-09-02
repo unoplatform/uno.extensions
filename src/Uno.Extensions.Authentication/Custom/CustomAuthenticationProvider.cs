@@ -2,13 +2,14 @@
 
 internal record CustomAuthenticationProvider
 (
+	ILogger<CustomAuthenticationProvider> ProviderLogger,
 	IServiceProvider Services,
 	ITokenCache Tokens,
 	CustomAuthenticationSettings? Settings = null
-) : BaseAuthenticationProvider(DefaultName, Tokens)
+) : BaseAuthenticationProvider(ProviderLogger, DefaultName, Tokens)
 {
 	public const string DefaultName = "Custom";
-	public async override ValueTask<IDictionary<string, string>?> LoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
+	protected async override ValueTask<IDictionary<string, string>?> InternalLoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
 	{
 		if (Settings?.LoginCallback is null)
 		{
@@ -17,7 +18,7 @@ internal record CustomAuthenticationProvider
 		return await Settings.LoginCallback(Services, dispatcher, Tokens, credentials!, cancellationToken);
 	}
 
-	public async override ValueTask<bool> LogoutAsync(IDispatcher? dispatcher, CancellationToken cancellationToken)
+	protected async override ValueTask<bool> InternalLogoutAsync(IDispatcher? dispatcher, CancellationToken cancellationToken)
 	{
 		if (Settings?.LogoutCallback is null)
 		{
@@ -26,7 +27,7 @@ internal record CustomAuthenticationProvider
 		return await Settings.LogoutCallback(Services, dispatcher, Tokens, await Tokens.GetAsync(cancellationToken), cancellationToken);
 	}
 
-	public async override ValueTask<IDictionary<string, string>?> RefreshAsync(CancellationToken cancellationToken)
+	protected async override ValueTask<IDictionary<string, string>?> InternalRefreshAsync(CancellationToken cancellationToken)
 	{
 		if (Settings?.RefreshCallback is null)
 		{
@@ -39,36 +40,40 @@ internal record CustomAuthenticationProvider
 
 internal record CustomAuthenticationProvider<TService>
 (
+	ILogger<CustomAuthenticationProvider<TService>> ProviderLogger,
 	IServiceProvider Services,
 	ITokenCache Tokens,
 	CustomAuthenticationSettings<TService>? Settings=null
-) : BaseAuthenticationProvider(CustomAuthenticationProvider.DefaultName, Tokens)
+) : BaseAuthenticationProvider(ProviderLogger, CustomAuthenticationProvider.DefaultName, Tokens)
 	where TService: class
 {
-	public async override ValueTask<IDictionary<string, string>?> LoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
+	protected async override ValueTask<IDictionary<string, string>?> InternalLoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
 	{
 		if (Settings?.LoginCallback is null)
 		{
 			return default;
 		}
-		return await Settings.LoginCallback(Services.GetRequiredService<TService>(), Services, dispatcher, Tokens, credentials!, cancellationToken);
+		var service = Services.GetRequiredService<TService>();
+		return await Settings.LoginCallback(service, Services, dispatcher, Tokens, credentials!, cancellationToken);
 	}
 
-	public async override ValueTask<bool> LogoutAsync(IDispatcher? dispatcher, CancellationToken cancellationToken)
+	protected async override ValueTask<bool> InternalLogoutAsync(IDispatcher? dispatcher, CancellationToken cancellationToken)
 	{
 		if (Settings?.LogoutCallback is null)
 		{
 			return true;
 		}
-		return await Settings.LogoutCallback(Services.GetRequiredService<TService>(), Services, dispatcher, Tokens, await Tokens.GetAsync(cancellationToken), cancellationToken);
+		var service = Services.GetRequiredService<TService>();
+		return await Settings.LogoutCallback(service, Services, dispatcher, Tokens, await Tokens.GetAsync(cancellationToken), cancellationToken);
 	}
 
-	public async override ValueTask<IDictionary<string, string>?> RefreshAsync(CancellationToken cancellationToken)
+	protected async override ValueTask<IDictionary<string, string>?> InternalRefreshAsync(CancellationToken cancellationToken)
 	{
 		if (Settings?.RefreshCallback is null)
 		{
 			return default;
 		}
-		return await Settings.RefreshCallback(Services.GetRequiredService<TService>(), Services, Tokens, await Tokens.GetAsync(cancellationToken), cancellationToken);
+		var service = Services.GetRequiredService<TService>();
+		return await Settings.RefreshCallback(service, Services, Tokens, await Tokens.GetAsync(cancellationToken), cancellationToken);
 	}
 }

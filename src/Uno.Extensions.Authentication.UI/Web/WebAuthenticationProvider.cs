@@ -1,18 +1,19 @@
 ﻿
-using System.Web;
 
 namespace Uno.Extensions.Authentication.Web;
 
 internal record WebAuthenticationProvider
 (
+	ILogger<WebAuthenticationProvider> ProviderLogger,
 	IServiceProvider Services,
 	ITokenCache Tokens
-) : BaseAuthenticationProvider(DefaultName, Tokens)
+) : BaseAuthenticationProvider(ProviderLogger, DefaultName, Tokens)
 {
 	public WebAuthenticationSettings? Settings { get; init; }
 
 	public const string DefaultName = "Web";
-	public async override ValueTask<IDictionary<string, string>?> LoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
+
+	protected async override ValueTask<IDictionary<string, string>?> InternalLoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
 	{
 		var loginStartUri = Settings?.LoginStartUri;
 		loginStartUri = await PrepareLoginStartUri(credentials, loginStartUri, cancellationToken);
@@ -108,7 +109,7 @@ internal record WebAuthenticationProvider
 	}
 
 
-	public async override ValueTask<IDictionary<string, string>?> RefreshAsync(CancellationToken cancellationToken)
+	protected async override ValueTask<IDictionary<string, string>?> InternalRefreshAsync(CancellationToken cancellationToken)
 	{
 		if (Settings?.RefreshCallback is null)
 		{
@@ -117,7 +118,7 @@ internal record WebAuthenticationProvider
 		return await Settings.RefreshCallback(Services, Tokens, await Tokens.GetAsync(cancellationToken), cancellationToken);
 	}
 
-	public async override ValueTask<bool> LogoutAsync(IDispatcher? dispatcher, CancellationToken cancellationToken)
+	protected async override ValueTask<bool> InternalLogoutAsync(IDispatcher? dispatcher, CancellationToken cancellationToken)
 	{
 		var logoutStartUri = Settings?.LogoutStartUri;
 		if (Settings?.PrepareLogoutStartUri is not null)
@@ -157,9 +158,10 @@ internal record WebAuthenticationProvider
 
 internal record WebAuthenticationProvider<TService>
 (
+	ILogger<WebAuthenticationProvider<TService>> ServiceLogger,
 	IServiceProvider Services,
 	ITokenCache Tokens
-) : WebAuthenticationProvider(Services, Tokens)
+) : WebAuthenticationProvider(ServiceLogger, Services, Tokens)
 	where TService : notnull
 {
 	public WebAuthenticationSettings<TService>? TypedSettings
@@ -187,7 +189,7 @@ internal record WebAuthenticationProvider<TService>
 	}
 
 
-	public async override ValueTask<IDictionary<string, string>?> RefreshAsync(CancellationToken cancellationToken)
+	protected async override ValueTask<IDictionary<string, string>?> InternalRefreshAsync(CancellationToken cancellationToken)
 	{
 
 		if (TypedSettings?.RefreshCallback is not null)

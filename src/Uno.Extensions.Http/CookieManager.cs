@@ -44,6 +44,21 @@ public record CookieManager(ILogger<CookieManager> Logger) : ICookieManager
 			try
 			{
 				native.CookieContainer = new CookieContainer();
+
+#if __IOS__
+				native.UseCookies = true;
+#elif __ANDROID__
+#if NET6_0_OR_GREATER
+				native.UseCookies = true;
+#else
+				native.UseCookies = true;
+#endif
+#elif WINDOWS || WINDOWS_UWP
+				native.CookieUsePolicy = CookieUsePolicy.UseSpecifiedCookieContainer;
+#else
+				native.UseCookies = true;
+#endif
+
 			}
 			catch
 			{
