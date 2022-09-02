@@ -84,7 +84,7 @@ public class WritableOptions<T> : IWritableOptions<T>
 			}
 			if(!written)
 			{
-				await Task.Yield();
+				await Task.Delay(50);
 			}
 		}
 

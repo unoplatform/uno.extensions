@@ -61,7 +61,7 @@ public class Reloader
 						}
 						if (!read)
 						{
-							await Task.Yield();
+							await Task.Delay(50);
 						}
 					}
 				}
