@@ -1,8 +1,4 @@
-﻿
-
-using Windows.Security.Cryptography.DataProtection;
-
-namespace Uno.Extensions.Storage.KeyValueStorage;
+﻿namespace Uno.Extensions.Storage.KeyValueStorage;
 
 internal record ApplicationDataKeyValueStorage(ILogger<ApplicationDataKeyValueStorage> Logger, ISerializer Serializer) : IKeyValueStorage
 {
@@ -46,13 +42,14 @@ internal record ApplicationDataKeyValueStorage(ILogger<ApplicationDataKeyValueSt
 		return _dataContainer
 			.Values
 			.Keys
+			.Where(key=>key.EndsWith(KeyNameSuffix))
 			.Select(key => GetName(key)) // filter-out non-encrypted storage
 			.Trim()
 			.ToArray();
 	}
 
 	/// <inheritdoc />
-	public async ValueTask<T?> GetAsync<T>(string name, CancellationToken ct)
+	public virtual async ValueTask<T?> GetAsync<T>(string name, CancellationToken ct)
 	{
 		if (Logger.IsEnabled(LogLevel.Debug))
 		{
@@ -74,12 +71,12 @@ internal record ApplicationDataKeyValueStorage(ILogger<ApplicationDataKeyValueSt
 		return value;
 	}
 
-	protected virtual async ValueTask<T?> GetTypedValue<T>(object? data, CancellationToken ct)
+	protected virtual async Task<T?> GetTypedValue<T>(object? data, CancellationToken ct) 
 	{
 		return this.Deserialize<T>(data as string);
 	}
 
-	protected virtual async ValueTask<object> GetObjectValue<T>(T data, CancellationToken ct) where T :notnull
+	protected virtual async Task<object> GetObjectValue<T>(T data, CancellationToken ct) where T :notnull
 	{
 		return this.Serialize(data);
 	}

@@ -40,14 +40,15 @@ public partial class MsalAuthenticationHomeViewModel : ObservableObject
 
 	public async void ClearAccessToken()
 	{
-		var creds = await Tokens.GetAsync();
+		var creds = await Tokens.GetAsync(CancellationToken.None);
 		creds.Remove(TokenCacheExtensions.AccessTokenKey);
-		await Tokens.SaveAsync(Tokens.CurrentProvider ?? string.Empty, creds);
+		await Tokens.SaveAsync(await Tokens.CurrentProviderAsync(CancellationToken.None) ?? string.Empty, creds, CancellationToken.None);
 	}
 
 	public async void Retrieve()
 	{
-		if (Tokens.CurrentProvider?.StartsWith("Custom") ?? false)
+		var current = await Tokens.CurrentProviderAsync(CancellationToken.None);
+		if (current?.StartsWith("Custom") ?? false)
 		{
 			var response = await Endpoint!.Products(CancellationToken.None);
 			Products = response?.Products?.ToArray();

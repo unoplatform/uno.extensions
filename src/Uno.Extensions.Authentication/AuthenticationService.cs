@@ -26,7 +26,7 @@ internal class AuthenticationService : IAuthenticationService
 
 	public async ValueTask<bool> LoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials = default, string? provider = null, CancellationToken? cancellationToken = default)
 	{
-		var authProvider = AuthenticationProvider(provider);
+		var authProvider = await AuthenticationProvider(provider, cancellationToken ?? CancellationToken.None);
 
 		if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Attempting to login");
 		var tokens = await authProvider.LoginAsync(dispatcher, credentials, cancellationToken ?? CancellationToken.None);
@@ -40,7 +40,7 @@ internal class AuthenticationService : IAuthenticationService
 
 	public async ValueTask<bool> LogoutAsync(IDispatcher? dispatcher, CancellationToken? cancellationToken = default)
 	{
-		var authProvider = AuthenticationProvider();
+		var authProvider = AuthenticationProvider(cancellationToken);
 
 		if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Attempting to logout");
 		if (!await authProvider.LogoutAsync(dispatcher, cancellationToken ?? CancellationToken.None))
@@ -56,8 +56,8 @@ internal class AuthenticationService : IAuthenticationService
 
 	public async ValueTask<bool> RefreshAsync(CancellationToken? cancellationToken = default)
 	{
-		var authProvider = AuthenticationProvider();
-		if (await IsAuthenticated())
+		var authProvider = AuthenticationProvider(cancellationToken);
+		if (await IsAuthenticated(cancellationToken))
 		{
 			if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Attempting to refresh");
 			var tokens = await authProvider.RefreshAsync(cancellationToken ?? CancellationToken.None);

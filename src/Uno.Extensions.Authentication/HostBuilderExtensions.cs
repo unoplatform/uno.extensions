@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions;
+﻿using Uno.Extensions.Storage.KeyValueStorage;
+
+namespace Uno.Extensions;
 
 public static class HostBuilderExtensions
 {
@@ -78,10 +80,13 @@ public static class HostBuilderExtensions
 		build?.Invoke(authBuilder);
 
 		return builder
-			.UseConfiguration(configure: builder => builder.Section<TokensData>())
 			.ConfigureServices(services =>
 			{
 				services
+					.AddSingleton(
+							sp=>new KeyValueStorageSelector<TokenCache>(
+										sp,
+										sp.GetRequiredService<KeyValueStorageIndex>().MostSecureAvailableStorage))
 					.AddSingleton<ITokenCache, TokenCache>()
 					.AddSingleton<IAuthenticationService, AuthenticationService>();
 			})

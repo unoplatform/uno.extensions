@@ -37,9 +37,9 @@ public partial class CustomAuthenticationHomeTestBackendViewModel : ObservableOb
 
 	public async void ClearAccessToken()
 	{
-		var creds = await Tokens.GetAsync();
+		var creds = await Tokens.GetAsync(CancellationToken.None);
 		creds.Remove(TokenCacheExtensions.AccessTokenKey);
-		await Tokens.SaveAsync(Tokens.CurrentProvider ?? string.Empty, creds);
+		await Tokens.SaveAsync(await Tokens.CurrentProviderAsync(CancellationToken.None) ?? string.Empty, creds, CancellationToken.None);
 	}
 
 	public async void ClearAllTokens()

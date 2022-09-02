@@ -126,7 +126,7 @@ internal record WebAuthenticationProvider
 		var logoutStartUri = Settings?.LogoutStartUri;
 		if (Settings?.PrepareLogoutStartUri is not null)
 		{
-			logoutStartUri = await Settings.PrepareLogoutStartUri(Services, Tokens, await Tokens.GetAsync(), logoutStartUri, cancellationToken);
+			logoutStartUri = await Settings.PrepareLogoutStartUri(Services, Tokens, await Tokens.GetAsync(cancellationToken), logoutStartUri, cancellationToken);
 		}
 
 		if (string.IsNullOrWhiteSpace(logoutStartUri))
@@ -137,7 +137,7 @@ internal record WebAuthenticationProvider
 		var logoutCallbackUri = Settings?.LogoutCallbackUri ?? Settings?.LoginCallbackUri;
 		if (Settings?.PrepareLogoutCallbackUri is not null)
 		{
-			logoutCallbackUri = await Settings.PrepareLogoutCallbackUri(Services, Tokens, await Tokens.GetAsync(), logoutCallbackUri, cancellationToken);
+			logoutCallbackUri = await Settings.PrepareLogoutCallbackUri(Services, Tokens, await Tokens.GetAsync(cancellationToken), logoutCallbackUri, cancellationToken);
 		}
 
 		if (string.IsNullOrWhiteSpace(logoutCallbackUri))

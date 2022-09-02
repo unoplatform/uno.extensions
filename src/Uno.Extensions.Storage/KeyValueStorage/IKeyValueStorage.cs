@@ -10,10 +10,10 @@ public interface IKeyValueStorage
 	/// <summary>
 	/// Removes any value stored under the provided key.
 	/// </summary>
-	/// <param name="key">The key to clear (pass null to clear all)</param>
+	/// <param name="key">The key to clear</param>
 	/// <param name="ct">A cancellation token.</param>
 	/// <returns></returns>
-	ValueTask ClearAsync(string? key, CancellationToken ct);
+	ValueTask ClearAsync(string key, CancellationToken ct);
 
 	/// <summary>
 	/// Gets a value saved under that name. If that value does not exist, throws a <seealso cref="KeyNotFoundException"/>.

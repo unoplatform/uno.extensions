@@ -96,7 +96,7 @@ internal class CookieHandler : BaseAuthorizationHandler
 		refresh = refresh ?? await _tokens.RefreshTokenAsync();
 		if (_logger.IsEnabled(LogLevel.Debug)) _logger.LogDebugMessage($"Refresh token: {refresh}");
 
-		await _tokens.SaveTokensAsync(_tokens.CurrentProvider ?? TemporaryProviderKey, access, refresh);
+		await _tokens.SaveTokensAsync((await _tokens.CurrentProviderAsync(ct)) ?? TemporaryProviderKey, access, refresh);
 		return true;
 
 	}

@@ -1,15 +1,17 @@
-﻿namespace Uno.Extensions;
+﻿using System.Reflection;
+
+namespace Uno.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-	
+
 	public static IServiceCollection AddFileStorage(this IServiceCollection services)
 	{
 		return services
-			.AddSingleton<IStorage,FileStorage>();
+			.AddSingleton<IStorage, FileStorage>();
 	}
 
-		public static IServiceCollection AddKeyedStorage(this IServiceCollection services)
+	public static IServiceCollection AddKeyedStorage(this IServiceCollection services)
 	{
 		return services
 				.AddNamedSingleton<IKeyValueStorage, InMemoryKeyValueStorage>(InMemoryKeyValueStorage.Name)
@@ -21,12 +23,13 @@ public static class ServiceCollectionExtensions
 				.AddNamedSingleton<IKeyValueStorage, KeyChainSettingsStorage>(KeyChainSettingsStorage.Name)
 #endif
 #if !WINUI && (__ANDROID__ || __IOS__ || WINDOWS_UWP)
+				.AddSingleton(new PasswordVaultResourceNameProvider((Assembly.GetEntryAssembly()?? Assembly.GetCallingAssembly()?? Assembly.GetExecutingAssembly()).GetName().Name??nameof(PasswordVaultKeyValueStorage)))
 				.AddNamedSingleton<IKeyValueStorage, PasswordVaultKeyValueStorage>(PasswordVaultKeyValueStorage.Name)
 #endif
-#if WINDOWS_UWP
+#if WINDOWS
 				.AddNamedSingleton<IKeyValueStorage, EncryptedApplicationDataKeyValueStorage>(EncryptedApplicationDataKeyValueStorage.Name)
 #endif
-				.AddSingleton(
+				.AddSingleton<KeyValueStorageIndex>(
 #if WINUI
 #if __ANDROID__
 					new KeyValueStorageIndex(
@@ -42,10 +45,11 @@ public static class ServiceCollectionExtensions
 						(KeyChainSettingsStorage.Name, true))
 #elif WINDOWS
 					new KeyValueStorageIndex(
-						ApplicationDataKeyValueStorage.Name,
+						EncryptedApplicationDataKeyValueStorage.Name,
 						(InMemoryKeyValueStorage.Name, false),
-						(ApplicationDataKeyValueStorage.Name, false))
-else
+						(ApplicationDataKeyValueStorage.Name, false),
+						(EncryptedApplicationDataKeyValueStorage.Name, true))
+#else
 					new KeyValueStorageIndex(
 						ApplicationDataKeyValueStorage.Name,
 						(InMemoryKeyValueStorage.Name, false),
@@ -67,14 +71,14 @@ else
 						(ApplicationDataKeyValueStorage.Name, false),
 						(KeyChainSettingsStorage.Name, true),
 						(PasswordVaultKeyValueStorage.Name, true))
-#elif WINDOW
+#elif WINDOWS_UWP
 					new KeyValueStorageIndex(
 						PasswordVaultKeyValueStorage.Name,
 						(InMemoryKeyValueStorage.Name, false),
 						(ApplicationDataKeyValueStorage.Name, false),
 						(EncryptedApplicationDataKeyValueStorage.Name, true),
 						(PasswordVaultKeyValueStorage.Name, true))
-else
+#else
 					new KeyValueStorageIndex(
 						ApplicationDataKeyValueStorage.Name,
 						(InMemoryKeyValueStorage.Name, false),
@@ -82,7 +86,6 @@ else
 #endif
 #endif
 
-					)
-				;
+					);
 	}
 }

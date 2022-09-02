@@ -29,9 +29,9 @@ internal record KeyStoreSettingsStorage : IKeyValueStorage
 
 	private readonly ILogger _logger;
 	private readonly ISerializer _serializer;
-	private readonly string _fileName = DefaultFileName;
-	private readonly char[] _rootPassword  = DefaultPrivatePassword.ToCharArray();
-	private readonly KeyStore.PasswordProtection _protection= new KeyStore.PasswordProtection(DefaultPrivatePassword.ToCharArray());
+	private readonly string _fileName = Path.Combine(ApplicationData.Current.LocalFolder.Path ,DefaultFileName);
+	private readonly char[] _rootPassword = DefaultPrivatePassword.ToCharArray();
+	private readonly KeyStore.PasswordProtection _protection = new KeyStore.PasswordProtection(DefaultPrivatePassword.ToCharArray());
 
 	private Lazy<KeyStore> _keyStoreSelector;
 
@@ -80,10 +80,11 @@ internal record KeyStoreSettingsStorage : IKeyValueStorage
 
 		var result = new List<string>();
 
-		while (aliases?.HasMoreElements??false)
+		while (aliases?.HasMoreElements ?? false)
 		{
 			var item = aliases?.NextElement()?.ToString();
-			if(item is not null){
+			if (item is not null)
+			{
 				result.Add(item);
 			}
 		}
@@ -107,7 +108,7 @@ internal record KeyStoreSettingsStorage : IKeyValueStorage
 		}
 
 		var bytes = entry.SecretKey?.GetEncoded();
-		if(bytes is null)
+		if (bytes is null)
 		{
 			return default;
 		}
@@ -123,7 +124,7 @@ internal record KeyStoreSettingsStorage : IKeyValueStorage
 
 
 	/// <inheritdoc />
-	public async ValueTask SetAsync<T>(string name, T value, CancellationToken ct) where T:notnull
+	public async ValueTask SetAsync<T>(string name, T value, CancellationToken ct) where T : notnull
 	{
 		if (_logger.IsEnabled(LogLevel.Debug))
 		{
@@ -155,7 +156,7 @@ internal record KeyStoreSettingsStorage : IKeyValueStorage
 
 		var keyStore = KeyStore.GetInstance(KeyStore.DefaultType);
 
-		if(keyStore is null)
+		if (keyStore is null)
 		{
 			this.Log().Error("Could not load keystore");
 			throw new Exception("Unable to create keystore");
