@@ -39,7 +39,7 @@ public class CustomAuthController : ControllerBase
 			HttpOnly = true,
 			SameSite = SameSiteMode.None
 		});
-		Response.Cookies.Append("RefreshToken", "Refresh-" + token, new CookieOptions
+		Response.Cookies.Append("RefreshToken", "Refresh|" + token, new CookieOptions
 		{
 			Secure = false, // For local non-https testing this needs to be false otherwise cookies can't be extracted from cookiecontainer
 			HttpOnly = true,
@@ -52,7 +52,8 @@ public class CustomAuthController : ControllerBase
 	{
 		try
 		{
-			var token = Request.Cookies.FirstOrDefault(x => x.Key == "AccessToken").Value;
+			var token = Request.Cookies.FirstOrDefault(x => x.Key == "RefreshToken").Value;
+			token = token.Split('|').Skip(1).FirstOrDefault()??string.Empty;
 			var bits = token.Base64Decode().Split(":");
 			if (bits.Length == 2)
 			{
@@ -62,7 +63,7 @@ public class CustomAuthController : ControllerBase
 					HttpOnly = true,
 					SameSite = SameSiteMode.None
 				});
-				Response.Cookies.Append("RefreshToken", $"Refresh-{DateTime.Now.ToString("HH:mm:sss")}" + token, new CookieOptions
+				Response.Cookies.Append("RefreshToken", $"Refresh-{DateTime.Now.ToString("HH:mm:sss")}|" + token, new CookieOptions
 				{
 					Secure = false, // For local non-https testing this needs to be false otherwise cookies can't be extracted from cookiecontainer
 					HttpOnly = true,
@@ -153,11 +154,19 @@ public static class AuthExtensions
 
 	public static string Base64Encode(this string plainText)
 	{
+		if (string.IsNullOrWhiteSpace(plainText))
+		{
+			return plainText;
+		}
 		var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
 		return System.Convert.ToBase64String(plainTextBytes);
 	}
 	public static string Base64Decode(this string base64EncodedData)
 	{
+		if (string.IsNullOrWhiteSpace(base64EncodedData))
+		{
+			return base64EncodedData;
+		}
 		var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
 		return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
 	}

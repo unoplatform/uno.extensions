@@ -22,16 +22,21 @@ public class CustomAuthenticationTestBackendCookieHostInit : BaseHostInitializat
 								var name = credentials.FirstOrDefault(x => x.Key == nameof(CustomAuthenticationCredentials.Username)).Value;
 								var password = credentials.FirstOrDefault(x => x.Key == nameof(CustomAuthenticationCredentials.Password)).Value;
 								await authService.LoginCookie(name, password, cancellationToken);
-								return await cache.GetAsync(cancellationToken);
+								var tokens = await cache.GetAsync(cancellationToken);
+								tokens["Expiry"] = DateTime.Now.AddMinutes(10).ToString();
+								return tokens;
 							})
 							.Refresh(async (authService, cache, tokenDictionary, cancellationToken) =>
 							{
+								var expiry = tokenDictionary["Expiry"];
+								await Task.Delay(3000);
 								await authService.RefreshCookie(cancellationToken);
 								return await cache.GetAsync(cancellationToken);
 							})),
 							configureAuthorization: builder =>
 							{
-								builder.Cookies("AccessToken", "RefreshToken");
+								builder
+									.Cookies("AccessToken", "RefreshToken");
 							}
 				)
 

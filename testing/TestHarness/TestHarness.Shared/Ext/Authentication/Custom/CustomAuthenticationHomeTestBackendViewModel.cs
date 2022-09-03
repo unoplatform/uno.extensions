@@ -42,6 +42,23 @@ public partial class CustomAuthenticationHomeTestBackendViewModel : ObservableOb
 		await Tokens.SaveAsync(Tokens.CurrentProvider ?? string.Empty, creds);
 	}
 
+	public async void ClearAllTokens()
+	{
+		var creds = await Tokens.GetAsync();
+		creds.Remove(TokenCacheExtensions.AccessTokenKey);
+		creds.Remove(TokenCacheExtensions.RefreshTokenKey);
+		await Tokens.SaveAsync(Tokens.CurrentProvider ?? string.Empty, creds);
+	}
+
+	public async void InvalidateTokens()
+	{
+		var creds = await Tokens.GetAsync();
+		creds[TokenCacheExtensions.AccessTokenKey]= $"Some invalid access token {DateTime.Now.Ticks}";
+		creds[TokenCacheExtensions.RefreshTokenKey] = $"Some invalid refresh token {DateTime.Now.Ticks}"; ;
+		await Tokens.SaveAsync(Tokens.CurrentProvider ?? string.Empty, creds);
+	}
+	
+
 	public async void Retrieve()
 	{
 		try

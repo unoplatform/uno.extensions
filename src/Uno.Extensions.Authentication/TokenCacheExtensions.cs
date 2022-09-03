@@ -26,7 +26,7 @@ public static class TokenCacheExtensions
 	}
 	public static async ValueTask<bool> SaveTokensAsync(this ITokenCache cache, string provider, string? accessToken=null, string? refreshToken=null, CancellationToken? cancellation = default)
 	{
-		var dict = new Dictionary<string, string>();
+		var dict = await cache.GetAsync(cancellation);
 		if (!string.IsNullOrWhiteSpace(accessToken))
 		{
 			dict[AccessTokenKey] = accessToken!;

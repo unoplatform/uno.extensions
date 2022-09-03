@@ -24,9 +24,24 @@ internal abstract class BaseAuthorizationHandler : DelegatingHandler
 		_settings = settings;
 	}
 
+
+	/// <summary>
+	/// This is intentionally a static so that all instances of the BaseAuthorizationHandler
+	/// access the same semaphore to block concurrent access to the refresh token logic
+	/// </summary>
+	private static SemaphoreSlim _refreshSemaphore = new SemaphoreSlim(1);
+
 	/// <inheritdoc/>
 	protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken ct)
 	{
+		var noRefresh = request.Headers.Any(x =>
+							x.Key == Headers.NoRefreshKey &&
+							x.Value.Any(v => bool.TryParse(v, out bool boolV) ? boolV : false));
+		if (noRefresh)
+		{
+			request.Headers.Remove(Headers.NoRefreshKey);
+		}
+
 		if (!ShouldIncludeToken(request))
 		{
 			// Request doesn't require an authentication token.
@@ -35,37 +50,70 @@ internal abstract class BaseAuthorizationHandler : DelegatingHandler
 			return await base.SendAsync(request, ct);
 		}
 
+		var currentTokens = await _tokens.GetAsync();
 		var response = await SendWithAuthenticationToken(request, ct);
 
 		if (!IsUnauthorized(request, response))
 		{
-			if (_logger.IsEnabled(LogLevel.Debug)) _logger.LogDebugMessage("Request successful, extracting tokens");
+			if (_logger.IsEnabled(LogLevel.Debug)) _logger.LogDebugMessage("Request isn't unauthorized");
+			if (response.IsSuccessStatusCode)
+			{
+				if (_logger.IsEnabled(LogLevel.Debug)) _logger.LogDebugMessage("Request successful, extracting tokens");
 
-			await ExtractTokensFromResponse(request, response, ct);
+				await ExtractTokensFromResponse(request, response, ct);
+			}
+
 			// Request was authorized, return the response.
 			return response;
 		}
 
-		if (!await _authenticationService.CanRefresh())
+		if (noRefresh)
 		{
-			if (_logger.IsEnabled(LogLevel.Debug)) _logger.LogDebugMessage($"The request '{request.RequestUri}' was unauthorized and the tokens cannot be refreshed. Considering the session has expired.");
-
+			if (_logger.IsEnabled(LogLevel.Debug)) _logger.LogDebugMessage($"The request '{request.RequestUri}' has been excluded from refresh token logic, so clearing token cache.");
 			// Request was unauthorized and we cannot refresh the authentication token.
 			await _tokens.ClearAsync();
-
 			return response;
 		}
 
-		var refreshedToken = await RefreshAuthenticationToken(ct);
-
-		if (!refreshedToken)
+		if (_logger.IsEnabled(LogLevel.Debug)) _logger.LogDebugMessage($"Authentication needs to refresh, so grab access to the refresh semaphore. WARNING: If {request.RequestUri} is an endpoint for refreshing tokens, make sure it's annotated with Header attribute {Headers.NoRefresh} to avoid recursion");
+		await _refreshSemaphore.WaitAsync();
+		try
 		{
-			if (_logger.IsEnabled(LogLevel.Debug)) _logger.LogDebugMessage($"The request '{request.RequestUri}' was unauthorized and the token failed to refresh. Considering the session has expired.");
+			// Once we have the refresh semaphore, we should check to see if the tokens have changed
+			// If they've changed, then likely another refresh operation took place, so we should
+			// skip refresh and just try the service call again
+			var refreshedTokens = await _tokens.GetAsync();
 
-			// No authentication token to use.
-			await _tokens.ClearAsync();
+			// Check the token dictionaries
+			var match = currentTokens.Count == refreshedTokens.Count && !currentTokens.Except(refreshedTokens).Any();
+			if (match)
+			{
+				if (!await _authenticationService.CanRefresh())
+				{
+					if (_logger.IsEnabled(LogLevel.Debug)) _logger.LogDebugMessage($"The request '{request.RequestUri}' was unauthorized and the tokens cannot be refreshed. Considering the session has expired.");
 
-			return response;
+					// Request was unauthorized and we cannot refresh the authentication token.
+					await _tokens.ClearAsync();
+
+					return response;
+				}
+
+				var refreshedToken = await RefreshAuthenticationToken(ct);
+
+				if (!refreshedToken)
+				{
+					if (_logger.IsEnabled(LogLevel.Debug)) _logger.LogDebugMessage($"The request '{request.RequestUri}' was unauthorized and the token failed to refresh. Considering the session has expired.");
+
+					// No authentication token to use.
+					await _tokens.ClearAsync();
+
+					return response;
+				}
+			}
+		}
+		finally
+		{
+			_refreshSemaphore.Release();
 		}
 
 		response = await SendWithAuthenticationToken(request, ct);
@@ -82,6 +130,7 @@ internal abstract class BaseAuthorizationHandler : DelegatingHandler
 
 		await ExtractTokensFromResponse(request, response, ct);
 		return response;
+
 	}
 
 	private async Task<HttpResponseMessage> SendWithAuthenticationToken(

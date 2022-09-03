@@ -22,13 +22,16 @@
 
 		<StackPanel Grid.Row="1">
 			<StackPanel HorizontalAlignment="Center"
-						Orientation="Horizontal">
+						Orientation="Vertical">
 				<Button AutomationProperties.AutomationId="RetrieveProductsButton"
 						Content="Products"
 						Click="{x:Bind ViewModel.RetrieveProducts}" />
 				<Button AutomationProperties.AutomationId="ClearAccessTokenButton"
-						Content="Clear Access Token"
+						Content="Clear Access Token (test refresh using RefreshToken)"
 						Click="{x:Bind ViewModel.ClearAccessToken}" />
+				<Button AutomationProperties.AutomationId="ClearAccessTokenButton"
+						Content="Clear All Tokens (refresh should fail!)"
+						Click="{x:Bind ViewModel.ClearAllTokens}" />
 				<Button AutomationProperties.AutomationId="LogoutButton"
 						Content="Logout"
 						Click="{x:Bind ViewModel.Logout}" />

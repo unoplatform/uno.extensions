@@ -22,7 +22,7 @@
 
 		<StackPanel Grid.Row="1">
 			<StackPanel HorizontalAlignment="Center"
-						Orientation="Horizontal">
+						Orientation="Vertical">
 				<Button AutomationProperties.AutomationId="RetrieveButton"
 						Content="Items (Authorization header)"
 						Click="{x:Bind ViewModel.Retrieve}" />
@@ -30,12 +30,19 @@
 						Content="Items (Cookie)"
 						Click="{x:Bind ViewModel.RetrieveCookie}" />
 				<Button AutomationProperties.AutomationId="ClearAccessTokenButton"
-						Content="Clear Access Token"
+						Content="Clear Access Token (test refresh using RefreshToken)"
 						Click="{x:Bind ViewModel.ClearAccessToken}" />
+				<Button AutomationProperties.AutomationId="InvalidateTokensButton"
+						Content="Invalidate (don't delete) all Tokens (refresh should fail)"
+						Click="{x:Bind ViewModel.InvalidateTokens}" />
+				<Button AutomationProperties.AutomationId="ClearAccessTokenButton"
+						Content="Clear All Tokens (can't refresh)"
+						Click="{x:Bind ViewModel.ClearAllTokens}" />
 				<Button AutomationProperties.AutomationId="LogoutButton"
 						Content="Logout"
 						Click="{x:Bind ViewModel.Logout}" />
 			</StackPanel>
+			
 			<TextBlock AutomationProperties.AutomationId="RetrieveProductsResultTextBlock"
 					   Text="{Binding RetrieveProductsResult}" />
 		</StackPanel>
