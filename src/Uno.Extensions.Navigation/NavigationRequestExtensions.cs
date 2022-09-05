@@ -121,7 +121,7 @@ public static class NavigationRequestExtensions
 								m.IsGenericMethodDefinition).ToArray();
 		var navMethod = navMethods.First();
 		var constructedNavMethod = navMethod.MakeGenericMethod(hint.Result);
-		var nav = (NavigationRequest)constructedNavMethod.Invoke(null, new object?[] { hint, resolver, sender, data, cancellation });
+		var nav = (NavigationRequest)constructedNavMethod.Invoke(null, new object?[] { hint, navigator, resolver, sender, data, cancellation });
 		return nav;
 
 	}
