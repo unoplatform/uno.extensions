@@ -43,7 +43,7 @@ public static partial class Feed
 	/// <typeparam name="T">The type of the data of the resulting feed.</typeparam>
 	/// <param name="enumerableProvider">The async enumerable sequence of value of the resulting feed.</param>
 	/// <returns>A feed that encapsulate the source.</returns>
-	public static IFeed<T> AsyncEnumerable<T>(Func<IAsyncEnumerable<T>> enumerableProvider)
+	public static IFeed<T> AsyncEnumerable<T>(Func<CancellationToken, IAsyncEnumerable<T>> enumerableProvider)
 		=> Feed<T>.AsyncEnumerable(enumerableProvider);
 	#endregion
 

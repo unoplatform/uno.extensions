@@ -103,7 +103,7 @@ internal static class FeedHelper
 		Option<TResult> data = default;
 		try
 		{
-			data = await dataTask;
+			data = await dataTask.ConfigureAwait(false);
 		}
 		catch (OperationCanceledException) when (ct.IsCancellationRequested)
 		{

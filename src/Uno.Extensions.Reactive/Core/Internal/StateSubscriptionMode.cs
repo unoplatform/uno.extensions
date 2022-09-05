@@ -3,6 +3,7 @@ using System.Linq;
 
 namespace Uno.Extensions.Reactive;
 
+[Flags]
 internal enum StateSubscriptionMode
 {
 	/// <summary>

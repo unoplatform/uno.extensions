@@ -167,6 +167,17 @@ public static class ListState<T>
 	/// <param name="owner">The owner of the state.</param>
 	/// <param name="enumerableProvider">The async enumerable sequence of value of the resulting feed.</param>
 	/// <returns>A feed that encapsulate the source.</returns>
+	public static IListState<T> AsyncEnumerable<TOwner>(TOwner owner, Func<CancellationToken, IAsyncEnumerable<Option<IImmutableList<T>>>> enumerableProvider)
+		where TOwner : class
+		=> AttachedProperty.GetOrCreate(owner, enumerableProvider, (o, ep) => S(o, new AsyncEnumerableFeed<IImmutableList<T>>(ep)));
+
+	/// <summary>
+	/// Creates a custom feed from an async enumerable sequence of value.
+	/// </summary>
+	/// <typeparam name="TOwner">Type of the owner of the state.</typeparam>
+	/// <param name="owner">The owner of the state.</param>
+	/// <param name="enumerableProvider">The async enumerable sequence of value of the resulting feed.</param>
+	/// <returns>A feed that encapsulate the source.</returns>
 	public static IListState<T> AsyncEnumerable<TOwner>(TOwner owner, Func<IAsyncEnumerable<Option<IImmutableList<T>>>> enumerableProvider)
 		where TOwner : class
 		=> AttachedProperty.GetOrCreate(owner, enumerableProvider, (o, ep) => S(o, new AsyncEnumerableFeed<IImmutableList<T>>(ep)));
@@ -179,6 +190,17 @@ public static class ListState<T>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	internal static IListState<T> AsyncEnumerable(Func<IAsyncEnumerable<Option<IImmutableList<T>>>> enumerableProvider)
 		=> AttachedProperty.GetOrCreate(Validate(enumerableProvider), ep => S(ep, new AsyncEnumerableFeed<IImmutableList<T>>(ep)));
+
+	/// <summary>
+	/// Creates a custom feed from an async enumerable sequence of value.
+	/// </summary>
+	/// <typeparam name="TOwner">Type of the owner of the state.</typeparam>
+	/// <param name="owner">The owner of the state.</param>
+	/// <param name="enumerableProvider">The async enumerable sequence of value of the resulting feed.</param>
+	/// <returns>A feed that encapsulate the source.</returns>
+	public static IListState<T> AsyncEnumerable<TOwner>(TOwner owner, Func<CancellationToken, IAsyncEnumerable<IImmutableList<T>>> enumerableProvider)
+		where TOwner : class
+		=> AttachedProperty.GetOrCreate(owner, enumerableProvider, (o, ep) => S(o, new AsyncEnumerableFeed<IImmutableList<T>>(ep)));
 
 	/// <summary>
 	/// Creates a custom feed from an async enumerable sequence of value.

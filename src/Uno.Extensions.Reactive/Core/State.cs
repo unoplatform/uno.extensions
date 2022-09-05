@@ -61,8 +61,20 @@ public static partial class State
 	/// <param name="owner">The owner of the state.</param>
 	/// <param name="enumerableProvider">The async enumerable sequence of value of the resulting feed.</param>
 	/// <returns>A feed that encapsulate the source.</returns>
-	public static IState<TValue> AsyncEnumerable<TOwner, TValue>(TOwner owner, Func<IAsyncEnumerable<TValue>> enumerableProvider)
+	public static IState<TValue> AsyncEnumerable<TOwner, TValue>(TOwner owner, Func<CancellationToken, IAsyncEnumerable<TValue>> enumerableProvider)
 		where TOwner : class
 		=> State<TValue>.AsyncEnumerable(owner, enumerableProvider);
+
+	/// <summary>
+	/// Gets or creates a state from an async enumerable sequence of value.
+	/// </summary>
+	/// <typeparam name="TOwner">Type of the owner of the state.</typeparam>
+	/// <typeparam name="TValue">The type of the value of the resulting feed.</typeparam>
+	/// <param name="owner">The owner of the state.</param>
+	/// <param name="feed">The source feed of the resulting state.</param>
+	/// <returns>A feed that encapsulate the source.</returns>
+	public static IState<TValue> FromFeed<TOwner, TValue>(TOwner owner, IFeed<TValue> feed)
+		where TOwner : class
+		=> State<TValue>.FromFeed(owner, feed);
 	#endregion
 }

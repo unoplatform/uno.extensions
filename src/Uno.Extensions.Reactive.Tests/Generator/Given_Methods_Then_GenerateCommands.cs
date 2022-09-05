@@ -634,7 +634,7 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 		public async Task AsyncWithParameter(string myParameter) { }
 		public async ValueTask AsyncWithParameter2(string myParameter) { }
 
-		public void WithExplicitAttribute([Uno.Extensions.Reactive.UI.Presentation.Commands.FeedParameter] string MyParameter) { }
+		public void WithExplicitAttribute([Uno.Extensions.Reactive.UI.Presentation.Commands.FeedParameter] string myParameter) { }
 		public void WithExplicitAttributeWithName([Uno.Extensions.Reactive.UI.Presentation.Commands.FeedParameter(nameof(MyParameter))] string anArgument) { }
 	}
 

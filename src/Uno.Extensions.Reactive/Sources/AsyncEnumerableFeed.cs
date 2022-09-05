@@ -3,21 +3,35 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 using Uno.Extensions.Reactive.Core;
 
 namespace Uno.Extensions.Reactive.Sources;
 
 internal sealed class AsyncEnumerableFeed<T> : IFeed<T>
 {
-	private readonly Func<IAsyncEnumerable<Option<T>>> _factory;
+	private readonly Func<CancellationToken, IAsyncEnumerable<Option<T>>> _factory;
 
 	public AsyncEnumerableFeed(Func<IAsyncEnumerable<T>> factoryWithoutOptions)
 	{
 		_factory = Factory;
 
-		async IAsyncEnumerable<Option<T>> Factory()
+		async IAsyncEnumerable<Option<T>> Factory([EnumeratorCancellation] CancellationToken ct)
 		{
-			await foreach (var item in factoryWithoutOptions())
+			await foreach (var item in factoryWithoutOptions().WithCancellation(ct).ConfigureAwait(false))
+			{
+				yield return Option.SomeOrNone(item);
+			}
+		}
+	}
+
+	public AsyncEnumerableFeed(Func<CancellationToken, IAsyncEnumerable<T>> factoryWithoutOptions)
+	{
+		_factory = Factory;
+
+		async IAsyncEnumerable<Option<T>> Factory([EnumeratorCancellation] CancellationToken ct)
+		{
+			await foreach (var item in factoryWithoutOptions(ct).WithCancellation(ct).ConfigureAwait(false))
 			{
 				yield return Option.SomeOrNone(item);
 			}
@@ -25,6 +39,11 @@ internal sealed class AsyncEnumerableFeed<T> : IFeed<T>
 	}
 
 	public AsyncEnumerableFeed(Func<IAsyncEnumerable<Option<T>>> factory)
+	{
+		_factory = ct => factory();
+	}
+
+	public AsyncEnumerableFeed(Func<CancellationToken, IAsyncEnumerable<Option<T>>> factory)
 	{
 		_factory = factory;
 	}
@@ -44,7 +63,7 @@ internal sealed class AsyncEnumerableFeed<T> : IFeed<T>
 		{
 			try
 			{
-				enumerator ??= _factory().GetAsyncEnumerator(ct);
+				enumerator ??= _factory(ct).GetAsyncEnumerator(ct);
 				hasCurrent = await enumerator.MoveNextAsync().ConfigureAwait(false);
 			}
 			catch (Exception e)

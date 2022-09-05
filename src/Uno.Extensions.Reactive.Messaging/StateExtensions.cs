@@ -25,12 +25,12 @@ public static class StateExtensions
 		{
 			case EntityChange.Updated:
 				var updatedEntityKey = keySelector(message.Value);
-				await state.UpdateValue(current => current.IsSome(out var entity) && AreKeyEquals(updatedEntityKey, keySelector(entity)) ? message.Value : current, ct);
+				await state.UpdateData(current => current.IsSome(out var entity) && AreKeyEquals(updatedEntityKey, keySelector(entity)) ? message.Value : current, ct);
 				break;
 
 			case EntityChange.Deleted:
 				var removedEntityKey = keySelector(message.Value);
-				await state.UpdateValue(current => current.IsSome(out var entity) && AreKeyEquals(removedEntityKey, keySelector(entity)) ? Option<TEntity>.None() : current, ct);
+				await state.UpdateData(current => current.IsSome(out var entity) && AreKeyEquals(removedEntityKey, keySelector(entity)) ? Option<TEntity>.None() : current, ct);
 				break;
 		}
 

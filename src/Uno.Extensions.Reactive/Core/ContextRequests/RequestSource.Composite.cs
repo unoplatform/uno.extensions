@@ -22,7 +22,12 @@ internal sealed class CompositeRequestSource : IRequestSource
 		ct.Register(() => other.RequestRaised -= OnRequestReceived);
 
 		void OnRequestReceived(object _, IContextRequest request)
-			=> _requestRaised?.Invoke(null, request);
+		{
+			if (request is not EndRequest)
+			{
+				_requestRaised?.Invoke(null, request);
+			}
+		}
 	}
 
 	/// <inheritdoc />
