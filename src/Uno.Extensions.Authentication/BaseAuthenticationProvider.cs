@@ -5,11 +5,11 @@ public abstract record BaseAuthenticationProvider(ILogger Logger, string Name, I
 {
 	public async virtual ValueTask<bool> CanRefresh(CancellationToken cancellationToken) => true;
 
-	public ValueTask<IDictionary<string, string>?> LoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
+	public async ValueTask<IDictionary<string, string>?> LoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
 	{
 		try
 		{
-			return InternalLoginAsync(dispatcher, credentials, cancellationToken);
+			return await InternalLoginAsync(dispatcher, credentials, cancellationToken);
 		}
 		catch (Exception ex)
 		{
@@ -25,16 +25,16 @@ public abstract record BaseAuthenticationProvider(ILogger Logger, string Name, I
 		return default;
 	}
 
-	public ValueTask<bool> LogoutAsync(IDispatcher? dispatcher, CancellationToken cancellationToken)
+	public async ValueTask<bool> LogoutAsync(IDispatcher? dispatcher, CancellationToken cancellationToken)
 	{
 		try
 		{
-			return InternalLogoutAsync(dispatcher, cancellationToken);
+			return await InternalLogoutAsync(dispatcher, cancellationToken);
 		}
 		catch (Exception ex)
 		{
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Error attempting to logout [Error - {ex.Message}]");
-			return new ValueTask<bool>(false);
+			return false;
 		}
 	}
 
