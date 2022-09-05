@@ -34,4 +34,7 @@ public class Changed : ChangesConstraint
 
 	public static Changed operator &(Changed left, Changed right)
 		=> new(left.Expected.Concat(right.Expected).ToArray());
+
+	public static Changed operator &(Changed left, MessageAxis axis)
+		=> new(left.Expected.Concat(new [] {axis}).ToArray());
 }

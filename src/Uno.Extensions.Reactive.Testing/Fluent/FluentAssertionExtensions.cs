@@ -7,7 +7,9 @@ namespace FluentAssertions;
 internal static class FluentAssertionExtensions
 {
 	public static AssertionScope ForContext(this AssertionScope scope, string additionalContext) 
-		=> new($"{scope.Context.Value} {additionalContext.Trim()}");
+		=> scope.Context is null
+			? new (additionalContext.Trim())
+			: new($"{scope.Context.Value} {additionalContext.Trim()}");
 
 	public static void Fail(this AssertionScope scope, string reason)
 		=> scope.FailWith($"{scope.Context.Value} {reason.Trim()}");

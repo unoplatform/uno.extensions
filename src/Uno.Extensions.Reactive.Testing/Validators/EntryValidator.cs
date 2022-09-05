@@ -30,7 +30,7 @@ public class EntryValidator<T> : Constraint<MessageEntry<T>>
 	{
 		foreach (var constraint in _constraints)
 		{
-			using (AssertionScope.Current.ForContext("'" + constraint.Axis.Identifier + "'"))
+			using (AssertionScope.Current.ForContext("'" + constraint.ConstrainedAxis.Identifier + "'"))
 			{
 				constraint.Assert(entry);
 			}

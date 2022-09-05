@@ -28,7 +28,7 @@ public sealed class Error : AxisConstraint
 	}
 
 	/// <inheritdoc />
-	public override MessageAxis Axis => MessageAxis.Error;
+	public override MessageAxis ConstrainedAxis => MessageAxis.Error;
 
 	/// <inheritdoc />
 	public override void Assert(IMessageEntry entry)

@@ -21,7 +21,7 @@ public sealed class Data : AxisConstraint
 	}
 
 	/// <inheritdoc />
-	public override MessageAxis Axis => MessageAxis.Data;
+	public override MessageAxis ConstrainedAxis => MessageAxis.Data;
 
 	/// <inheritdoc />
 	public override void Assert(IMessageEntry entry)

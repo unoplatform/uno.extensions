@@ -24,7 +24,7 @@ public sealed class Refreshed : AxisConstraint
 	/// <inheritdoc />
 	public override void Assert(IMessageEntry entry)
 	{
-		var actual = MessageAxis.Refresh.FromMessageValue(entry[Axis]);
+		var actual = MessageAxis.Refresh.FromMessageValue(entry[ConstrainedAxis]);
 		if (actual is null or {IsEmpty: true})
 		{
 			if (_expected.Length != 0)
@@ -58,5 +58,5 @@ public sealed class Refreshed : AxisConstraint
 	}
 
 	/// <inheritdoc />
-	public override MessageAxis Axis => MessageAxis.Refresh;
+	public override MessageAxis ConstrainedAxis => MessageAxis.Refresh;
 }

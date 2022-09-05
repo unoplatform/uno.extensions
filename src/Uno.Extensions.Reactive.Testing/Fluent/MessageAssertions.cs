@@ -21,4 +21,12 @@ public class MessageAssertions<T> : ReferenceTypeAssertions<Message<T>, MessageA
 
 	public void Be(params AxisConstraint<T>[] assertions)
 		=> _message.Current.Should().Be(assertions);
+
+	public void Be(Action<MessageConstraintBuilder<T>> constraintBuilder)
+	{
+		var builder = new MessageConstraintBuilder<T>();
+		constraintBuilder(builder);
+
+		builder.Build().Assert(null, _message);
+	}
 }
