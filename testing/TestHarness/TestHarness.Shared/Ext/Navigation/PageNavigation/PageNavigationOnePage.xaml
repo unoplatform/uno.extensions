@@ -28,6 +28,9 @@
 			<Button AutomationProperties.AutomationId="OnePageToTwoPageViewModelButton"
 					Content="Two (ViewModel)"
 					Click="{x:Bind ViewModel.GoToTwo}"/>
+			<Button AutomationProperties.AutomationId="RapidSettingsWriteTestButton"
+					Content="Settings Write Test"
+					Click="{x:Bind ViewModel.SettingsWriteTest}" />
 		</StackPanel>
 	</Grid>
 </Page>

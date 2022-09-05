@@ -2,6 +2,8 @@
 
 public class Reloader
 {
+	internal static SemaphoreSlim ReadWriteLock = new SemaphoreSlim(1);
+
 	private ILogger Logger { get; }
 
 	private IConfigurationRoot Config { get; }
@@ -32,10 +34,21 @@ public class Reloader
 				}
 				else
 				{
-					var contents = File.ReadAllText(info.PhysicalPath);
-					if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($@"Contents '{contents}'");
-					if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($@"Loading from full path '{info.PhysicalPath}'");
-					fp.Load();
+					if (Logger.IsEnabled(LogLevel.Debug))
+					{
+						var contents = File.ReadAllText(info.PhysicalPath);
+						Logger.LogDebugMessage($@"Contents '{contents}'");
+						Logger.LogDebugMessage($@"Loading from full path '{info.PhysicalPath}'");
+					}
+					await ReadWriteLock.WaitAsync();
+					try
+					{
+						fp.Load();
+					}
+					finally
+					{
+						ReadWriteLock.Release();
+					}
 				}
 			}
 		}
