@@ -18,7 +18,7 @@ internal record ByIndexCursor<T>(uint Index, uint TotalCount)
 			DesiredSize = desiredCount
 		};
 
-		if (await getPage(request, ct) is { Count: > 0 } items)
+		if (await getPage(request, ct).ConfigureAwait(false) is { Count: > 0 } items)
 		{
 			var nextCursor = cursor with { Index = cursor.Index + 1, TotalCount = cursor.TotalCount + (uint)items.Count };
 

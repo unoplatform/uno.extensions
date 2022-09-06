@@ -38,7 +38,7 @@ public static partial class ListFeed
 	/// <typeparam name="T">The type of the data of the resulting feed.</typeparam>
 	/// <param name="enumerableProvider">The async enumerable sequence of value of the resulting feed.</param>
 	/// <returns>A feed that encapsulate the source.</returns>
-	public static IListFeed<T> AsyncEnumerable<T>(Func<IAsyncEnumerable<IImmutableList<T>>> enumerableProvider)
+	public static IListFeed<T> AsyncEnumerable<T>(Func<CancellationToken, IAsyncEnumerable<IImmutableList<T>>> enumerableProvider)
 		=> Feed.AsyncEnumerable(enumerableProvider).AsListFeed();
 
 	/// <summary>

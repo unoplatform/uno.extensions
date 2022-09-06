@@ -59,7 +59,8 @@ internal class PaginatedListFeed<TCursor, TItem> : IListFeed<TItem>, IRefreshabl
 					pageInfo with { Tokens = pageToken },
 					pageRequests.LastRequest?.DesiredPageSize,
 					isFirstPage,
-					ct);
+					ct)
+					.ConfigureAwait(false);
 
 				// If we reached the end of the list, then exit
 				if (!pageInfo.HasMoreItems)
@@ -160,7 +161,7 @@ internal class PaginatedListFeed<TCursor, TItem> : IListFeed<TItem>, IRefreshabl
 		var nextPage = cursor;
 		try
 		{
-			var page = await pageTask;
+			var page = await pageTask.ConfigureAwait(false);
 			var hadItems = items is { Count: > 0 };
 			var hasItems = page.Items is { Count: > 0 };
 

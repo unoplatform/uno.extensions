@@ -8,8 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Uno.Extensions.Reactive.Operators;
 using Uno.Extensions.Reactive.Utils;
-using Uno.Threading;
-using static Uno.Extensions.Collections.Tracking.CollectionUpdater;
 
 namespace Uno.Extensions.Reactive.Core;
 
@@ -166,7 +164,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 		if (_updates is not null)
 		{
 			// First we make sure that the UpdateFeed is active, so the update will be applied ^^
-			_innerEnumeration?.Prefetch();
+			_innerEnumeration?.Enable();
 			return _updates.Update(_ => true, updater, ct);
 		}
 		else

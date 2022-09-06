@@ -108,7 +108,7 @@ public static partial class State<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IState<T> Async<TOwner>(TOwner owner, AsyncFunc<Option<T>> valueProvider, Signal? refresh = null)
 		where TOwner : class
-		=> AttachedProperty.GetOrCreate(owner, valueProvider, refresh, (o, vp, r) => S(o, new AsyncFeed<T>(vp, r)));
+		=> AttachedProperty.GetOrCreate(owner, (valueProvider, refresh), (o, args) => S(o, new AsyncFeed<T>(args.valueProvider, args.refresh)));
 
 	/// <summary>
 	/// Gets or creates a state from an async method.
@@ -132,7 +132,7 @@ public static partial class State<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IState<T> Async<TOwner>(TOwner owner, AsyncFunc<T> valueProvider, Signal? refresh = null)
 		where TOwner : class
-		=> AttachedProperty.GetOrCreate(owner, valueProvider, refresh, (o, vp, r) => S(o, new AsyncFeed<T>(vp, r)));
+		=> AttachedProperty.GetOrCreate(owner, (valueProvider, refresh), (o, args) => S(o, new AsyncFeed<T>(args.valueProvider, args.refresh)));
 
 	/// <summary>
 	/// Gets or creates a state from an async method.
@@ -160,6 +160,17 @@ public static partial class State<T>
 	/// <summary>
 	/// Gets or creates a state from an async enumerable sequence of value.
 	/// </summary>
+	/// <typeparam name="TOwner">Type of the owner of the state.</typeparam>
+	/// <param name="owner">The owner of the state.</param>
+	/// <param name="enumerableProvider">The async enumerable sequence of value of the resulting feed.</param>
+	/// <returns>A feed that encapsulate the source.</returns>
+	public static IState<T> AsyncEnumerable<TOwner>(TOwner owner, Func<CancellationToken, IAsyncEnumerable<Option<T>>> enumerableProvider)
+		where TOwner : class
+		=> AttachedProperty.GetOrCreate(owner, enumerableProvider, (o, ep) => S(o, new AsyncEnumerableFeed<T>(ep)));
+
+	/// <summary>
+	/// Gets or creates a state from an async enumerable sequence of value.
+	/// </summary>
 	/// <param name="enumerableProvider">The async enumerable sequence of value of the resulting feed.</param>
 	/// <returns>A feed that encapsulate the source.</returns>
 	[EditorBrowsable(EditorBrowsableState.Never)]
@@ -174,6 +185,17 @@ public static partial class State<T>
 	/// <param name="enumerableProvider">The async enumerable sequence of value of the resulting feed.</param>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IState<T> AsyncEnumerable<TOwner>(TOwner owner, Func<IAsyncEnumerable<T>> enumerableProvider)
+		where TOwner : class
+		=> AttachedProperty.GetOrCreate(owner, enumerableProvider, (o, ep) => S(o, new AsyncEnumerableFeed<T>(ep)));
+
+	/// <summary>
+	/// Gets or creates a state from an async enumerable sequence of value.
+	/// </summary>
+	/// <typeparam name="TOwner">Type of the owner of the state.</typeparam>
+	/// <param name="owner">The owner of the state.</param>
+	/// <param name="enumerableProvider">The async enumerable sequence of value of the resulting feed.</param>
+	/// <returns>A feed that encapsulate the source.</returns>
+	public static IState<T> AsyncEnumerable<TOwner>(TOwner owner, Func<CancellationToken, IAsyncEnumerable<T>> enumerableProvider)
 		where TOwner : class
 		=> AttachedProperty.GetOrCreate(owner, enumerableProvider, (o, ep) => S(o, new AsyncEnumerableFeed<T>(ep)));
 

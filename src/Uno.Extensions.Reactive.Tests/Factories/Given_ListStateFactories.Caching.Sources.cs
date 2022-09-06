@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Uno.Extensions.Reactive.Sources;
 using Uno.Extensions.Reactive.Testing;
 
 namespace Uno.Extensions.Reactive.Tests.Factories;
@@ -140,6 +139,25 @@ public partial class Given_ListStateFactories : FeedTests
 	{
 		object owner1 = new();
 		object owner2 = new();
+		Func<CancellationToken, IAsyncEnumerable<Option<IImmutableList<object>>>> enumerableProvider1 = ct => default!;
+		Func<CancellationToken, IAsyncEnumerable<Option<IImmutableList<object>>>> enumerableProvider2 = ct => default!;
+
+		var sut = ListState<object>.AsyncEnumerable(owner1, enumerableProvider1);
+
+		var inst1_1 = ListState<object>.AsyncEnumerable(owner1, enumerableProvider1);
+		var inst1_2 = ListState<object>.AsyncEnumerable(owner1, enumerableProvider2);
+		var inst2_1 = ListState<object>.AsyncEnumerable(owner2, enumerableProvider1);
+
+		inst1_1.Should().BeSameAs(sut, "instance should have been cached on owner using enumerableProvider");
+		inst1_2.Should().NotBeSameAs(sut, "instance should not have been cached as not the same enumerableProvider");
+		inst2_1.Should().NotBeSameAs(sut, "instance should not have been cached as not the same owner");
+	}
+
+	[TestMethod]
+	public void When_AsyncEnumerableOptionsWithoutCT_Then_Cached()
+	{
+		object owner1 = new();
+		object owner2 = new();
 		Func<IAsyncEnumerable<Option<IImmutableList<object>>>> enumerableProvider1 = () => default!;
 		Func<IAsyncEnumerable<Option<IImmutableList<object>>>> enumerableProvider2 = () => default!;
 
@@ -156,6 +174,25 @@ public partial class Given_ListStateFactories : FeedTests
 
 	[TestMethod]
 	public void When_AsyncEnumerable_Then_Cached()
+	{
+		object owner1 = new();
+		object owner2 = new();
+		Func<CancellationToken, IAsyncEnumerable<IImmutableList<object>>> enumerableProvider1 = ct => default!;
+		Func<CancellationToken, IAsyncEnumerable<IImmutableList<object>>> enumerableProvider2 = ct => default!;
+
+		var sut = ListState<object>.AsyncEnumerable(owner1, enumerableProvider1);
+
+		var inst1_1 = ListState<object>.AsyncEnumerable(owner1, enumerableProvider1);
+		var inst1_2 = ListState<object>.AsyncEnumerable(owner1, enumerableProvider2);
+		var inst2_1 = ListState<object>.AsyncEnumerable(owner2, enumerableProvider1);
+
+		inst1_1.Should().BeSameAs(sut, "instance should have been cached on owner using enumerableProvider");
+		inst1_2.Should().NotBeSameAs(sut, "instance should not have been cached as not the same enumerableProvider");
+		inst2_1.Should().NotBeSameAs(sut, "instance should not have been cached as not the same owner");
+	}
+
+	[TestMethod]
+	public void When_AsyncEnumerableWithoutCT_Then_Cached()
 	{
 		object owner1 = new();
 		object owner2 = new();
