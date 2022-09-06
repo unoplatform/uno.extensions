@@ -36,7 +36,7 @@ internal sealed class SelectAsyncFeed<TArg, TResult> : IFeed<TResult>
 		{
 			try
 			{
-				var parentEnumerator = _parent.GetSource(context, ct).GetAsyncEnumerator(ct);
+				var parentEnumerator = context.GetOrCreateSource(_parent).GetAsyncEnumerator(ct);
 				while (await parentEnumerator.MoveNextAsync(ct).ConfigureAwait(false))
 				{
 					var parentMsg = parentEnumerator.Current;

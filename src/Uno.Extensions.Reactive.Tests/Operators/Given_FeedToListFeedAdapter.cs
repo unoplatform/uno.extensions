@@ -11,16 +11,16 @@ using Uno.Extensions.Reactive.Testing;
 namespace Uno.Extensions.Reactive.Tests.Operators;
 
 [TestClass]
-public class Given_FeedToListFeedAdapter : FeedTests
+public partial class Given_FeedToListFeedAdapter : FeedTests
 {
 	[TestMethod]
 	public async Task When_Null_Then_None()
 	{
 		var source = Feed.Async(async ct => default(IImmutableList<int>)!);
 		var sut = source.AsListFeed();
-		var result = await sut.Record();
+		var result = sut.Record();
 
-		result.Should().Be(r => r
+		await result.Should().BeAsync(r => r
 			.Message(Changed.Data, Data.None, Error.No, Progress.Final)
 		);
 	}
@@ -30,9 +30,9 @@ public class Given_FeedToListFeedAdapter : FeedTests
 	{
 		var source = Feed.Async(async ct => ImmutableList<int>.Empty as IImmutableList<int>);
 		var sut = source.AsListFeed();
-		var result = await sut.Record();
+		var result = sut.Record();
 
-		result.Should().Be(r => r
+		await result.Should().BeAsync(r => r
 			.Message(Changed.Data, Data.None, Error.No, Progress.Final)
 		);
 	}

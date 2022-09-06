@@ -32,9 +32,9 @@ namespace Uno.Extensions.Reactive.Tests.Sources
 			}
 
 			var sut = new AsyncEnumerableFeed<int>(() => GetSource());
-			using var result = await sut.Record();
+			using var result = sut.Record();
 
-			result.Should().Be(r => r
+			await result.Should().BeAsync(r => r
 				.Message(Changed.Data, 42, Error.No, Progress.Final)
 				.Message(Changed.Data, 43, Error.No, Progress.Final)
 				.Message(Changed.Data, Data.None, Error.No, Progress.Final)
@@ -63,9 +63,9 @@ namespace Uno.Extensions.Reactive.Tests.Sources
 			}
 
 			var sut = new AsyncEnumerableFeed<int>(() => GetSource());
-			using var result = await sut.Record();
+			using var result = sut.Record();
 
-			result.Should().Be(r => r
+			await result.Should().BeAsync(r => r
 				.Message(Changed.Data, 42, Error.No, Progress.Final)
 				.Message(Changed.Data, 43, Error.No, Progress.Final)
 				.Message(Changed.Data, Data.None, Error.No, Progress.Final)
@@ -78,9 +78,9 @@ namespace Uno.Extensions.Reactive.Tests.Sources
 		public async Task When_ProviderThrowsSync_Then_GetError()
 		{
 			var sut = new AsyncEnumerableFeed<int>(factory: () => throw new TestException());
-			using var result = await sut.Record();
+			using var result = sut.Record();
 
-			result.Should().Be(r => r
+			await result.Should().BeAsync(r => r
 				.Message(Changed.Error, Data.Undefined, typeof(TestException), Progress.Final)
 			);
 		}
@@ -98,9 +98,9 @@ namespace Uno.Extensions.Reactive.Tests.Sources
 			}
 
 			var sut = new AsyncEnumerableFeed<int>(() => GetSource());
-			using var result = await sut.Record();
+			using var result = sut.Record();
 
-			result.Should().Be(r => r
+			await result.Should().BeAsync(r => r
 				.Message(Changed.Error, Data.Undefined, typeof(TestException), Progress.Final)
 			);
 		}
@@ -115,9 +115,9 @@ namespace Uno.Extensions.Reactive.Tests.Sources
 			}
 
 			var sut = new AsyncEnumerableFeed<int>(() => GetSource());
-			using var result = await sut.Record();
+			using var result = sut.Record();
 
-			result.Should().Be(r => r
+			await result.Should().BeAsync(r => r
 				.Message(Changed.Data, 42, Error.No, Progress.Final)
 				.Message(Changed.Error, 42, typeof(TestException), Progress.Final)
 			);
@@ -155,9 +155,9 @@ namespace Uno.Extensions.Reactive.Tests.Sources
 			}
 
 			var sut = new AsyncEnumerableFeed<int>(() => GetSource());
-			using var result = await sut.Record(Context.SourceContext);
+			using var result = sut.Record(Context.SourceContext);
 
-			result.Should().Be(r => r
+			await result.Should().BeAsync(r => r
 				.Message(Error.No)
 			);
 		}

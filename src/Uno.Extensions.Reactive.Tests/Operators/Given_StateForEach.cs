@@ -20,7 +20,7 @@ public class Given_StateForEach : FeedTests
 		var state = State.Value(this, () => 1);
 		var result = new List<int>();
 
-		state.Execute(async (i, ct) => result.Add(i));
+		state.ForEachAsync(async (i, ct) => result.Add(i));
 
 		await state.Set(2, CT);
 		await state.Set(3, CT);
@@ -37,7 +37,7 @@ public class Given_StateForEach : FeedTests
 		var tcs1 = new TaskCompletionSource();
 		var tcs2 = new TaskCompletionSource();
 
-		state.Execute(async (i, ct) =>
+		state.ForEachAsync(async (i, ct) =>
 		{
 			await (i switch
 			{
@@ -64,7 +64,7 @@ public class Given_StateForEach : FeedTests
 		var state = State.Value(this, () => 1);
 		var result = new List<int>();
 
-		state.Execute(async (i, ct) =>
+		state.ForEachAsync(async (i, ct) =>
 		{
 			if (i is 42)
 			{
@@ -84,7 +84,7 @@ public class Given_StateForEach : FeedTests
 	public async Task When_DisposeState_Then_EnumerationStop()
 	{
 		var state = State.Value(this, () => 1);
-		var sut = state.Execute(async (i, ct) => this.ToString());
+		var sut = state.ForEachAsync(async (i, ct) => this.ToString());
 
 		await state.DisposeAsync();
 
@@ -101,7 +101,7 @@ public class Given_StateForEach : FeedTests
 	public async Task When_DisposeExecute_Then_EnumerationStop()
 	{
 		var state = State.Value(this, () => 1);
-		var sut = state.Execute(async (i, ct) => this.ToString());
+		var sut = state.ForEachAsync(async (i, ct) => this.ToString());
 
 		sut.Dispose();
 		await state.Set(42, CT);
@@ -121,7 +121,7 @@ public class Given_StateForEach : FeedTests
 		var state = ListState.Value(this, () => ImmutableList.Create(1, 2, 3));
 		var result = new List<IImmutableList<int>>();
 
-		state.Execute(async (list, ct) => result.Add(list));
+		state.ForEachAsync(async (list, ct) => result.Add(list));
 
 		await state.UpdateData(_ => Option.None<IImmutableList<int>>(), CT);
 

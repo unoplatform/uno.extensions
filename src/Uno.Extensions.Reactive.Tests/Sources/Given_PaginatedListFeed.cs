@@ -212,13 +212,13 @@ public class Given_PaginatedListFeed : FeedTests
 		var ctx = Context.SourceContext.CreateChild(requests);
 		var result = ListFeed.AsyncPaginated(GetPage).Record(ctx);
 
-		await result.WaitForMessages(1, CT);
+		await result.WaitForMessages(1);
 		try
 		{
 			requests.RequestMoreItems(42);
-			await result.WaitForMessages(2, CT, 100);
+			await result.WaitForMessages(2, 100);
 		}
-		catch (OperationCanceledException)
+		catch (TimeoutException)
 		{
 		}
 

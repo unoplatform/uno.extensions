@@ -10,12 +10,55 @@ namespace Uno.Extensions.Reactive.Core;
 
 internal class StateStore : IStateStore
 {
-	private readonly SourceContext _owner;
+	private readonly SourceContext _root;
 	private Dictionary<object, IAsyncDisposable>? _states = new();
+	private Dictionary<object, IAsyncDisposable>? _subscriptions = new();
 
-	public StateStore(SourceContext owner)
+	public StateStore(SourceContext root)
 	{
-		_owner = owner;
+		_root = root;
+	}
+
+	/// <inheritdoc />
+	bool IStateStore.HasSubscription<TSource>(TSource source)
+	{
+		var subscriptions = _subscriptions;
+		if (subscriptions is null)
+		{
+			throw new ObjectDisposedException(nameof(SourceContext));
+		}
+
+		lock (subscriptions)
+		{
+			return subscriptions.ContainsKey(source);
+		}
+	}
+
+	/// <inheritdoc />
+	public FeedSubscription<T> GetOrCreateSubscription<TSource, T>(TSource source)
+		where TSource : class, ISignal<Message<T>>
+	{
+		var subscriptions = _subscriptions;
+		if (subscriptions is null)
+		{
+			throw new ObjectDisposedException(nameof(SourceContext));
+		}
+
+		FeedSubscription<T> subscription;
+		lock (subscriptions)
+		{
+			subscription = (FeedSubscription<T>)(subscriptions.TryGetValue(source, out var existing)
+				? existing
+				: subscriptions[source] = new FeedSubscription<T>(source, _root));
+		}
+
+		if (_subscriptions is null) // The context has been disposed while we where creating the State ...
+		{
+			_ = subscription.DisposeAsync();
+			throw new ObjectDisposedException(nameof(SourceContext));
+		}
+
+		return subscription;
 	}
 
 	public TState GetOrCreateState<TSource, TState>(TSource source, Func<SourceContext, TSource, TState> factory)
@@ -37,7 +80,7 @@ internal class StateStore : IStateStore
 		{
 			state = states.TryGetValue(source, out var existing)
 				? (TState)existing
-				: (TState)(states[source] = factory(_owner, source));
+				: (TState)(states[source] = factory(_root, source));
 		}
 
 		if (_states is null) // The context has been disposed while we where creating the State ...
@@ -64,7 +107,7 @@ internal class StateStore : IStateStore
 			// Note: we use the **boxed** initialValue as key for the states cache,
 			//		 but it's only to have a key, it's not expected to be retrieved,
 			//		 we keep it only for dispose.
-			states[initialValue] = state = factory(_owner, initialValue);
+			states[initialValue] = state = factory(_root, initialValue);
 		}
 
 		if (_states is null) // The context has been disposed while we where creating the State ...
@@ -80,17 +123,28 @@ internal class StateStore : IStateStore
 	public async ValueTask DisposeAsync()
 	{
 		var states = Interlocked.Exchange(ref _states, null);
-		if (states is null or { Count: 0 })
+		var subscriptions = Interlocked.Exchange(ref _subscriptions, null);
+
+		if (subscriptions is { Count: > 0 })
 		{
-			return; // already disposed
+			Task disposeAsync;
+			lock (subscriptions)
+			{
+				disposeAsync = CompositeAsyncDisposable.DisposeAll(subscriptions.Values);
+			}
+
+			await disposeAsync.ConfigureAwait(false);
 		}
 
-		Task disposeAsync;
-		lock (states)
+		if (states is { Count: >0 })
 		{
-			disposeAsync = CompositeAsyncDisposable.DisposeAll(states.Values);
-		}
+			Task disposeAsync;
+			lock (states)
+			{
+				disposeAsync = CompositeAsyncDisposable.DisposeAll(states.Values);
+			}
 
-		await disposeAsync.ConfigureAwait(false);
+			await disposeAsync.ConfigureAwait(false);
+		}
 	}
 }

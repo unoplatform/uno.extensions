@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Uno.Extensions.Collections.Tracking;
 using Uno.Extensions.Reactive.Core;
-using Uno.Extensions.Reactive.Logging;
 
 namespace Uno.Extensions.Reactive.Operators;
 
@@ -29,7 +27,7 @@ internal class WhereListFeed<T> : IListFeed<T>
 	public async IAsyncEnumerable<Message<IImmutableList<T>>> GetSource(SourceContext context, [EnumeratorCancellation] CancellationToken ct = default)
 	{
 		var localMsg = new MessageManager<IImmutableList<T>, IImmutableList<T>>();
-		await foreach (var parentMsg in _parent.GetSource(context, ct).WithCancellation(ct).ConfigureAwait(false))
+		await foreach (var parentMsg in context.GetOrCreateSource(_parent).WithCancellation(ct).ConfigureAwait(false))
 		{
 			if (localMsg.Update(DoUpdate, parentMsg))
 			{
