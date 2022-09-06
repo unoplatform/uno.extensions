@@ -1,4 +1,6 @@
 ﻿
+using Uno.Extensions.Logging;
+using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 #if __WASM__
 using MsalCacheHelper = Microsoft.Identity.Client.Extensions.Msal.Wasm.MsalCacheHelper;
 #else
@@ -22,45 +24,42 @@ internal record MsalAuthenticationProvider(
 
 	public void Build()
 	{
+		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Building MSAL Provider");
 		var config = Configuration.Value ?? new MsalConfiguration();
 		var builder = PublicClientApplicationBuilder.CreateWithApplicationOptions(config);
 
+		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Invoking settings Build callback");
 		Settings?.Build?.Invoke(builder);
 
 		_scopes = Settings?.Scopes ?? new string[] { };
 
 		if (PlatformHelper.IsWebAssembly)
 		{
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Configuring Web RedirectUri");
 			builder.WithWebRedirectUri();
 		}
 		builder.WithUnoHelpers();
 
 		_pca = builder.Build();
-	}
-
-
-	public async override ValueTask<bool> CanRefresh(CancellationToken cancellation)
-	{
-		await SetupStorage();
-		return (await _pca!.GetAccountsAsync()).Count() > 0;
+		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Building MSAL Provider complete");
 	}
 
 	protected async override ValueTask<IDictionary<string, string>?> InternalLoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
 	{
 		try
 		{
-			if(dispatcher is  null)
+			if (dispatcher is null)
 			{
-				throw new ArgumentNullException(nameof(dispatcher),"IDispatcher required to call LoginAsync on MSAL provider");
+				throw new ArgumentNullException(nameof(dispatcher), "IDispatcher required to call LoginAsync on MSAL provider");
 			}
 
 			await SetupStorage();
+
 			var result = await AcquireTokenAsync(dispatcher);
 			return new Dictionary<string, string>
-			{
-				{ TokenCacheExtensions.AccessTokenKey, result?.AccessToken??string.Empty}
-			};
-
+							{
+								{ TokenCacheExtensions.AccessTokenKey, result?.AccessToken??string.Empty}
+							};
 		}
 		catch (MsalClientException ex)
 		{
@@ -71,8 +70,6 @@ internal record MsalAuthenticationProvider(
 		{
 			throw new Exception(ex.Message);
 		}
-
-
 	}
 
 	protected async override ValueTask<bool> InternalLogoutAsync(IDispatcher? dispatcher, CancellationToken cancellationToken)
@@ -103,12 +100,20 @@ internal record MsalAuthenticationProvider(
 	protected async override ValueTask<IDictionary<string, string>?> InternalRefreshAsync(CancellationToken cancellationToken)
 	{
 		await SetupStorage();
-		var result = await AcquireSilentTokenAsync();
 
-		return new Dictionary<string, string>
+		if ((await _pca!.GetAccountsAsync()).Count() > 0)
+		{
+
+
+			var result = await AcquireSilentTokenAsync();
+
+			return new Dictionary<string, string>
 			{
 				{ TokenCacheExtensions.AccessTokenKey, result?.AccessToken??string.Empty}
 			};
+		}
+
+		return default;
 	}
 
 
@@ -124,15 +129,15 @@ internal record MsalAuthenticationProvider(
 			_isCompleted = true;
 
 #if WINDOWS_UWP || !NET6_0_OR_GREATER
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"No further action required for setting up storage");
 			return;
 #else
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Setting up storage location");
 
 			var folderPath = await Storage.CreateLocalFolderAsync(Name.ToLower());
 			Console.WriteLine($"Folder: {folderPath}");
 			var filePath = Path.Combine(folderPath, CacheFileName);
-			//Console.WriteLine($"File: {filePath}");
-			//var file = await Storage.OpenFileAsync(filePath);
-			//file.Dispose();
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"MSAL cache {filePath}");
 			var builder = new StorageCreationPropertiesBuilder(CacheFileName, folderPath);
 			Settings?.Store?.Invoke(builder);
 			var storage = builder.Build();
@@ -142,11 +147,12 @@ internal record MsalAuthenticationProvider(
 			var cacheHelper = await MsalCacheHelper.CreateAsync(storage);
 #endif
 			cacheHelper.RegisterCache(_pca!.UserTokenCache);
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"MSAL storage setup completed");
 #endif
 		}
 		catch (Exception ex)
 		{
-			Console.WriteLine("Error " + ex.Message);
+			if (Logger.IsEnabled(LogLevel.Error)) Logger.LogErrorMessage($"Error setting up storage for MSAL - {ex.Message}");
 		}
 	}
 

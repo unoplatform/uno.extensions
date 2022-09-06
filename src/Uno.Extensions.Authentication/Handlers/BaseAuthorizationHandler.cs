@@ -88,7 +88,7 @@ internal abstract class BaseAuthorizationHandler : DelegatingHandler
 			var match = currentTokens.Count == refreshedTokens.Count && !currentTokens.Except(refreshedTokens).Any();
 			if (match)
 			{
-				if (!await _authenticationService.CanRefresh())
+				if (!await _authenticationService.IsAuthenticated())
 				{
 					if (_logger.IsEnabled(LogLevel.Debug)) _logger.LogDebugMessage($"The request '{request.RequestUri}' was unauthorized and the tokens cannot be refreshed. Considering the session has expired.");
 

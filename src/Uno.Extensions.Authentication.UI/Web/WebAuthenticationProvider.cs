@@ -40,7 +40,10 @@ internal record WebAuthenticationProvider
 		var authData = userResult?.ResponseData ?? string.Empty;
 
 #endif
-		var query = AuthHttpUtility.ExtractArguments(authData ?? string.Empty);
+		var query = authData.StartsWith(loginCallbackUri) ?
+			AuthHttpUtility.ExtractArguments(authData): // authData is a fully qualified url, so need to extract query or fragment
+			AuthHttpUtility.ParseQueryString(authData.TrimStart('#').TrimStart('?')); // authData isn't full url, so just process as query or fragment
+
 
 		var tokens = new Dictionary<string, string>();
 		if (query is null)
@@ -111,11 +114,11 @@ internal record WebAuthenticationProvider
 
 	protected async override ValueTask<IDictionary<string, string>?> InternalRefreshAsync(CancellationToken cancellationToken)
 	{
-		if (Settings?.RefreshCallback is null)
+		if (Settings?.RefreshCallback is not null)
 		{
-			return default;
+			return await Settings.RefreshCallback(Services, Tokens, await Tokens.GetAsync(cancellationToken), cancellationToken);
 		}
-		return await Settings.RefreshCallback(Services, Tokens, await Tokens.GetAsync(cancellationToken), cancellationToken);
+		return await base.InternalRefreshAsync(cancellationToken);
 	}
 
 	protected async override ValueTask<bool> InternalLogoutAsync(IDispatcher? dispatcher, CancellationToken cancellationToken)
@@ -196,7 +199,7 @@ internal record WebAuthenticationProvider<TService>
 		{
 			return await TypedSettings.RefreshCallback(Services.GetRequiredService<TService>(), Services, Tokens, await Tokens.GetAsync(cancellationToken), cancellationToken);
 		}
-		return await base.RefreshAsync(cancellationToken);
+		return await base.InternalRefreshAsync(cancellationToken);
 	}
 
 	protected async override ValueTask<IDictionary<string, string>?> PostLogin(IDictionary<string, string>? credentials, IDictionary<string, string> tokens, CancellationToken cancellationToken)

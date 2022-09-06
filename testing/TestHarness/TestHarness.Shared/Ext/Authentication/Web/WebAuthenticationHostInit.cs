@@ -19,7 +19,8 @@ public class WebAuthenticationHostInit : BaseHostInitialization
 							(authService, tokens, ct) =>
 							{
 								return tokens;
-							})))
+							})
+							.LogoutStartUri("https://localhost:7193/webauth/Logout/Facebook")))
 
 				.ConfigureServices(services =>
 					services

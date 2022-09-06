@@ -59,7 +59,38 @@ public class WebAuthController : ControllerBase
 			Request.HttpContext.Response.Redirect(url);
 		}
 	}
+	[HttpGet("{scheme}")]
+	public async Task Logout([FromRoute] string scheme)
+	{
+		try
+		{
+			await Request.HttpContext.SignOutAsync(scheme);
+		}
+		catch
+		{
 
+			foreach (var c in Request.Cookies)
+			{
+				Response.Cookies.Append(c.Key, c.Value, new CookieOptions { Expires = DateTime.Now.AddDays(-2) });
+			}
+		}
+
+		var qs = new Dictionary<string, string>();
+		var state = Request.Query["state"];
+		if (state.Any())
+		{
+			qs["state"] = state.First();
+		}
+
+		// Build the result url
+		var url = authOptions.CallbackScheme + "://callback?" + string.Join(
+			"&",
+			qs.Where(kvp => !string.IsNullOrEmpty(kvp.Value) && kvp.Value != "-1")
+			.Select(kvp => $"{WebUtility.UrlEncode(kvp.Key)}={WebUtility.UrlEncode(kvp.Value)}"));
+
+		// Redirect to final url
+		Request.HttpContext.Response.Redirect(url);
+	}
 
 	[HttpGet(Name = "GetDataFacebook")]
 	public async Task<IEnumerable<string>?> GetDataFacebook()

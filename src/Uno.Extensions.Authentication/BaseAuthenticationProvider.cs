@@ -3,12 +3,11 @@ namespace Uno.Extensions.Authentication;
 
 public abstract record BaseAuthenticationProvider(ILogger Logger, string Name, ITokenCache Tokens) : IAuthenticationProvider
 {
-	public async virtual ValueTask<bool> CanRefresh(CancellationToken cancellationToken) => true;
-
 	public async ValueTask<IDictionary<string, string>?> LoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
 	{
 		try
 		{
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Started");
 			return await InternalLoginAsync(dispatcher, credentials, cancellationToken);
 		}
 		catch (Exception ex)
@@ -16,6 +15,10 @@ public abstract record BaseAuthenticationProvider(ILogger Logger, string Name, I
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Error attempting to login [Error - {ex.Message}]");
 			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Login credentials {credentials?.ToString()}");
 			return default;
+		}
+		finally
+		{
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"End");
 		}
 	}
 
@@ -29,12 +32,17 @@ public abstract record BaseAuthenticationProvider(ILogger Logger, string Name, I
 	{
 		try
 		{
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Started");
 			return await InternalLogoutAsync(dispatcher, cancellationToken);
 		}
 		catch (Exception ex)
 		{
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Error attempting to logout [Error - {ex.Message}]");
 			return false;
+		}
+		finally
+		{
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"End");
 		}
 	}
 
@@ -49,6 +57,7 @@ public abstract record BaseAuthenticationProvider(ILogger Logger, string Name, I
 		var tokens = await Tokens.GetAsync(cancellationToken);
 		try
 		{
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Started");
 			return await InternalRefreshAsync(cancellationToken);
 		}
 		catch (Exception ex)
@@ -57,12 +66,16 @@ public abstract record BaseAuthenticationProvider(ILogger Logger, string Name, I
 			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Current tokens {tokens}");
 			return default;
 		}
+		finally
+		{
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"End");
+		}
 	}
 
 	protected virtual async ValueTask<IDictionary<string, string>?> InternalRefreshAsync(CancellationToken cancellationToken)
 	{
 		// Default implementation is to just return the existing tokens (ie success!)
-		return await Tokens.GetAsync();
+		return await Tokens.GetAsync(cancellationToken);
 	}
 }
 
