@@ -1,65 +1,102 @@
 ﻿namespace Uno.Extensions.Authentication;
 
-internal record AuthenticationService
-(
-	IEnumerable<IProviderFactory> ProviderFactories,
-	ITokenCache Tokens
-) : IAuthenticationService
+internal class AuthenticationService : IAuthenticationService
 {
+	public event EventHandler? LoggedOut;
+
+	private readonly ILogger _logger;
+	private readonly IEnumerable<IProviderFactory> _providerFactories;
+	private readonly ITokenCache _tokens;
 	private readonly IDictionary<string, IAuthenticationProvider> _providers = new Dictionary<string, IAuthenticationProvider>();
 
-	public string[] Providers => _providers.Keys.ToArray();
+	public AuthenticationService
+	(
+		ILogger<AuthenticationService> logger,
+		IEnumerable<IProviderFactory> providerFactories,
+		ITokenCache tokens
+	)
+	{
+		_logger = logger;
+		_providerFactories = providerFactories;
+		_tokens = tokens;
+		_tokens.Cleared += TokensCleared;
+	}
 
-	public async ValueTask<bool> CanRefresh(CancellationToken? cancellationToken = default) => await Tokens.HasTokenAsync(cancellationToken) && await AuthenticationProvider().CanRefresh(cancellationToken ?? CancellationToken.None);
+	public string[] Providers => _providers.Keys.ToArray();
 
 	public async ValueTask<bool> LoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials = default, string? provider = null, CancellationToken? cancellationToken = default)
 	{
 		var authProvider = AuthenticationProvider(provider);
 
+		if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Attempting to login");
 		var tokens = await authProvider.LoginAsync(dispatcher, credentials, cancellationToken ?? CancellationToken.None);
-		if (!await Tokens.SaveAsync(authProvider.Name, tokens, cancellationToken))
-		{
-			return false;
-		}
-		return await Tokens.HasTokenAsync(cancellationToken);
+
+		if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Login complete, saving tokens");
+		await _tokens.SaveAsync(authProvider.Name, tokens, cancellationToken);
+
+		if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Save tokens complete");
+		return await IsAuthenticated(cancellationToken);
 	}
 
 	public async ValueTask<bool> LogoutAsync(IDispatcher? dispatcher, CancellationToken? cancellationToken = default)
 	{
 		var authProvider = AuthenticationProvider();
+
+		if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Attempting to logout");
 		if (!await authProvider.LogoutAsync(dispatcher, cancellationToken ?? CancellationToken.None))
 		{
+			if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Logout failed (for example logout cancelled)");
 			return false;
 		}
 
-		return await Tokens.ClearAsync(cancellationToken);
+		if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Logout successful, so clear token cache");
+		await _tokens.ClearAsync(cancellationToken);
+		return true;
 	}
 
 	public async ValueTask<bool> RefreshAsync(CancellationToken? cancellationToken = default)
 	{
 		var authProvider = AuthenticationProvider();
-		if (await CanRefresh())
+		if (await IsAuthenticated())
 		{
+			if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Attempting to refresh");
 			var tokens = await authProvider.RefreshAsync(cancellationToken ?? CancellationToken.None);
-			if (!await Tokens.SaveAsync(authProvider.Name, tokens, cancellationToken))
-			{
-				return false;
-			}
 
+			if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Refresh complete, saving new tokens");
+			await _tokens.SaveAsync(authProvider.Name, tokens, cancellationToken);
+
+			if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Save tokens complete");
 			// Successful refresh requires there to be tokens stored
-			return await Tokens.HasTokenAsync(cancellationToken);
+			return await IsAuthenticated(cancellationToken);
 		}
 
 		// If not able to refresh, either no tokens, or some other provider specific reason,
 		// return false to indicate the user should not be treated as authenticated.
+		if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Not logged in, so unable to refresh");
 		return false;
+	}
+
+	public async ValueTask<bool> IsAuthenticated(CancellationToken? cancellationToken = default)
+	{
+		// Successful refresh requires there to be tokens stored
+		var isAuthenticated = await _tokens.HasTokenAsync(cancellationToken);
+		if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Is authenticated - {isAuthenticated}");
+		return isAuthenticated;
+	}
+
+	private void TokensCleared(object sender, EventArgs e)
+	{
+		if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Tokens cleared, raising LoggedOut event");
+		LoggedOut?.Invoke(this, EventArgs.Empty);
 	}
 
 	private IAuthenticationProvider AuthenticationProvider(string? provider = null)
 	{
+		if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Retrieving authentication provider '{provider}'");
 		if (provider is null)
 		{
-			provider = Tokens.CurrentProvider;
+			provider = _tokens.CurrentProvider;
+			if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"No provider specified, so retrieving current provider from token cache '{provider}'");
 		}
 
 		if (_providers.Count == 0)
@@ -67,14 +104,22 @@ internal record AuthenticationService
 			BuildProviders();
 		}
 
+		if (_providers.Count == 0 &&
+			_logger.IsEnabled(LogLevel.Error))
+		{
+			_logger.LogErrorMessage($"No providers specified for the application");
+		}
+
 		return _providers.TryGetValue(provider ?? string.Empty, out var authProvider) ? authProvider : _providers.First().Value;
 	}
 
 	private void BuildProviders()
 	{
-		foreach (var factory in ProviderFactories)
+		if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Building authentication providers");
+		foreach (var factory in _providerFactories)
 		{
 			_providers[factory.Name] = factory.AuthenticationProvider;
+			if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Authentication provider '{factory.Name}' created");
 		}
 	}
 }

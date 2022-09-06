@@ -211,12 +211,27 @@ public class WebAuthenticatorResult
 	public WebAuthenticatorResult(Uri callbackUrl)
 	{
 		RawCallbackUrl = callbackUrl;
-		var str = string.Empty;
-		if (!string.IsNullOrEmpty(callbackUrl.Fragment))
-			str = callbackUrl.Fragment.Substring(1);
-		else if (!string.IsNullOrEmpty(callbackUrl.Query))
-			str = callbackUrl.Query;
-		var query = System.Web.HttpUtility.ParseQueryString(str);
+
+		var query = new NameValueCollection();
+
+		// Retrieve from fragment
+		if (!string.IsNullOrEmpty(callbackUrl.Fragment) && callbackUrl.Fragment.Length>1)
+		{
+			var frag = callbackUrl.Fragment.Substring(1);
+			query = System.Web.HttpUtility.ParseQueryString(frag);
+		}
+
+		// Retrieve from query
+		if (!string.IsNullOrEmpty(callbackUrl.Query))
+		{
+			var str = callbackUrl.Query;
+			var q = System.Web.HttpUtility.ParseQueryString(str);
+			foreach (string key in q.Keys)
+			{
+				query[key] = q[key];
+			}
+		}
+
 		foreach (string key in query.Keys)
 		{
 			if (key == "state")

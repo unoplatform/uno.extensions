@@ -24,7 +24,7 @@ public static class TokenCacheExtensions
 		var tokens = await cache.GetAsync(cancellation);
 		return tokens.FirstOrDefault(x => x.Key == tokenKey).Value;
 	}
-	public static async ValueTask<bool> SaveTokensAsync(this ITokenCache cache, string provider, string? accessToken=null, string? refreshToken=null, CancellationToken? cancellation = default)
+	public static async ValueTask SaveTokensAsync(this ITokenCache cache, string provider, string? accessToken=null, string? refreshToken=null, CancellationToken? cancellation = default)
 	{
 		var dict = await cache.GetAsync(cancellation);
 		if (!string.IsNullOrWhiteSpace(accessToken))
@@ -35,7 +35,7 @@ public static class TokenCacheExtensions
 		{
 			dict[RefreshTokenKey] = refreshToken!;
 		}
-		return await cache.SaveAsync(provider, dict, cancellation);
+		await cache.SaveAsync(provider, dict, cancellation);
 	}
 
 	public static TEntity? Get<TEntity>(this IDictionary<string,string> tokens, ISerializer<TEntity> serializer, string key)

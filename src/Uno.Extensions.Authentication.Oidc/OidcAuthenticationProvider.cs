@@ -27,16 +27,6 @@ internal record OidcAuthenticationProvider(
 		_client = new OidcClient(config);
 	}
 
-	public override async ValueTask<bool> CanRefresh(CancellationToken cancellationToken)
-	{
-		var token = await Tokens.RefreshTokenAsync(cancellationToken);
-		if (_client is null || string.IsNullOrWhiteSpace(token))
-		{
-			return default;
-		}
-		return true;
-	}
-
 	protected async override ValueTask<IDictionary<string, string>?> InternalLoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
 	{
 		if (_client is null)
@@ -69,7 +59,7 @@ internal record OidcAuthenticationProvider(
 			return true;
 		}
 
-		var authenticationResult = await _client.LoginAsync();
+		await _client.LogoutAsync();
 		return true;
 	}
 
@@ -81,7 +71,7 @@ internal record OidcAuthenticationProvider(
 			return default;
 		}
 
-		var result =  await _client.RefreshTokenAsync(token);
+		var result = await _client.RefreshTokenAsync(token);
 		var accessToken = result.AccessToken;
 		var refreshToken = result.RefreshToken;
 
@@ -99,14 +89,14 @@ internal record OidcAuthenticationProvider(
 	}
 
 
-}
 
-internal class WebAuthenticatorBrowser : IBrowser
-{
-	public async Task<BrowserResult> InvokeAsync(BrowserOptions options, CancellationToken cancellationToken = default)
+
+	internal class WebAuthenticatorBrowser : IBrowser
 	{
-		try
+		public async Task<BrowserResult> InvokeAsync(BrowserOptions options, CancellationToken cancellationToken = default)
 		{
+			try
+			{
 #if WINDOWS
 			var userResult = await WinUIEx.WebAuthenticator.AuthenticateAsync(new Uri(options.StartUrl), new Uri(options.EndUrl));
 			var callbackurl = $"{options.EndUrl}/?{string.Join("&", userResult.Properties.Select(x => $"{x.Key}={x.Value}"))}";
@@ -115,26 +105,27 @@ internal class WebAuthenticatorBrowser : IBrowser
 				Response = callbackurl
 			};
 #else
-			var userResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, new Uri(options.StartUrl), new Uri(options.EndUrl));
+				var userResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, new Uri(options.StartUrl), new Uri(options.EndUrl));
 
-			return new BrowserResult
-			{
-				Response = userResult.ResponseData
-			};
+				return new BrowserResult
+				{
+					Response = userResult.ResponseData
+				};
 #endif
-		}
-		catch (Exception ex)
-		{
-			Debug.WriteLine(ex);
-			return new BrowserResult()
+			}
+			catch (Exception ex)
 			{
-				ResultType = BrowserResultType.UnknownError,
-				Error = ex.ToString()
-			};
+				Debug.WriteLine(ex);
+				return new BrowserResult()
+				{
+					ResultType = BrowserResultType.UnknownError,
+					Error = ex.ToString()
+				};
+			}
 		}
+
+
 	}
-
-
 }
 
 
