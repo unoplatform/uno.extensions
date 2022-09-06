@@ -6,5 +6,5 @@ namespace Uno.Extensions.Reactive.Testing;
 
 public abstract class AxisConstraint : Constraint<IMessageEntry>
 {
-	public abstract MessageAxis Axis { get; }
+	public abstract MessageAxis ConstrainedAxis { get; }
 }

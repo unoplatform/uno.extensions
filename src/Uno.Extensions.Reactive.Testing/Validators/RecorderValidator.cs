@@ -7,11 +7,11 @@ namespace Uno.Extensions.Reactive.Testing;
 
 public class RecorderValidator<T> : Constraint<IFeedRecorder<T>>
 {
-	private readonly MessageValidator<T>[] _messages;
+	public readonly MessageValidator<T>[] Messages;
 
 	public RecorderValidator(MessageValidator<T>[] messages)
 	{
-		_messages = messages;
+		Messages = messages;
 	}
 
 	public override void Assert(IFeedRecorder<T> recorder)
@@ -23,15 +23,15 @@ public class RecorderValidator<T> : Constraint<IFeedRecorder<T>>
 
 			using (AssertionScope.Current.ForContext("messages count"))
 			{
-				recorder.Count.Should().Be(_messages.Length, because: "we should have same number of messages than defined as expected");
+				recorder.Count.Should().Be(Messages.Length, because: "we should have same number of messages than defined as expected");
 			}
 
-			for (var i = 0; i < Math.Min(recorder.Count, _messages.Length); i++)
+			for (var i = 0; i < Math.Min(recorder.Count, Messages.Length); i++)
 			{
 				var message = recorder[i];
-				var constraint = _messages[i];
+				var constraint = Messages[i];
 
-				using (AssertionScope.Current.ForContext($"message #{i + 1}/{_messages.Length}"))
+				using (AssertionScope.Current.ForContext($"message #{i + 1}/{Messages.Length}"))
 				{
 					var previous = i == 0 ? default : recorder[i - 1];
 

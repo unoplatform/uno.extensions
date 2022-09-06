@@ -19,7 +19,7 @@ public sealed class Progress : AxisConstraint
 	}
 
 	/// <inheritdoc />
-	public override MessageAxis Axis => MessageAxis.Progress;
+	public override MessageAxis ConstrainedAxis => MessageAxis.Progress;
 
 	/// <inheritdoc />
 	public override void Assert(IMessageEntry entry)

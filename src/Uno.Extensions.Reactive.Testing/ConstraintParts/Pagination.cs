@@ -17,7 +17,7 @@ public class Pagination : AxisConstraint
 	public static Pagination Completed { get; } = new(isLoading: false, hasMoreItems: false);
 
 	/// <inheritdoc />
-	public override MessageAxis Axis => MessageAxis.Pagination;
+	public override MessageAxis ConstrainedAxis => MessageAxis.Pagination;
 
 	public Pagination(bool isLoading, bool hasMoreItems)
 	{
