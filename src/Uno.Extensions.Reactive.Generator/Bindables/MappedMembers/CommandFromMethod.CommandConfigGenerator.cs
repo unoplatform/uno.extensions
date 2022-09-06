@@ -78,7 +78,7 @@ internal partial record CommandFromMethod
 					if (ParameterType is not null)
 					{
 						sb.AppendLine(
-							$@"var reactive_arguments = ({ParameterType}) reactive_commandParameter;
+							$@"var reactive_arguments = ({ParameterType}) reactive_commandParameter!;
 
 							{DeconstructParameters!("reactive_arguments", "reactive_ct").Align(7)}
 

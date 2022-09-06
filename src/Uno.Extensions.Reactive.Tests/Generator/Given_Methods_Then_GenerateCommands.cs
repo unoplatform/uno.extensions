@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -431,6 +432,67 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 		vm.EndedCount.Should().Be(1);
 	}
 
+	public partial class When_OneListFeedParameter_ValueTask_ViewModel
+	{
+		private TaskCompletionSource _execution = new();
+
+		public IListFeed<string> MyParameter => ListFeed.Async(async ct => ImmutableList.Create("41", "42", "43") as IImmutableList<string>);
+
+		public int InvokeCount { get; set; }
+		public int EndedCount { get; set; }
+
+		public IImmutableList<string>? LastInvokeParameter { get; set; }
+
+		public async ValueTask MyMethod(IImmutableList<string> myParameter)
+		{
+			EndExecution();
+			LastInvokeParameter = myParameter;
+			InvokeCount++;
+			_execution = new();
+			await _execution.Task;
+			EndedCount++;
+		}
+
+		internal void EndExecution()
+			=> _execution?.SetResult();
+	}
+
+	[TestMethod]
+	public async Task When_OneListFeedParameter_ValueTask_WithoutCommandParameter()
+	{
+		var vm = new When_OneListFeedParameter_ValueTask_ViewModel.BindableWhen_OneListFeedParameter_ValueTask_ViewModel();
+
+		vm.MyMethod.Execute(null);
+		await WaitFor(() => vm.InvokeCount == 1);
+
+		vm.LastInvokeParameter.Should().BeEquivalentTo("41", "42", "43");
+		vm.InvokeCount.Should().Be(1);
+		vm.EndedCount.Should().Be(0);
+
+		vm.Model.EndExecution();
+		await WaitFor(() => vm.EndedCount == 1);
+
+		vm.EndedCount.Should().Be(1);
+	}
+
+	[TestMethod]
+	public async Task When_OneListFeedParameter_ValueTask_WithCommandParameter()
+	{
+		var vm = new When_OneListFeedParameter_ValueTask_ViewModel.BindableWhen_OneListFeedParameter_ValueTask_ViewModel();
+
+		vm.MyMethod.Execute(ImmutableList.Create("51", "52", "53"));
+		await WaitFor(() => vm.InvokeCount == 1);
+
+		vm.LastInvokeParameter.Should().BeEquivalentTo("51", "52", "53");
+		vm.InvokeCount.Should().Be(1);
+		vm.EndedCount.Should().Be(0);
+
+		vm.Model.EndExecution();
+		await WaitFor(() => vm.EndedCount == 1);
+
+		vm.EndedCount.Should().Be(1);
+	}
+
 	public partial class When_OneFeedParameterAndCT_ValueTask_ViewModel
 	{
 		private TaskCompletionSource _execution = new();
@@ -535,6 +597,26 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 			LastInvoke = (nameof(MyMethod3WithCt), new object[] { theViewParameter, myParameter, myParameter2, _ct });
 			InvokeCount++;
 		}
+	}
+
+	[TestMethod]
+	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod))]
+	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethodWithCt))]
+	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod2))]
+	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod2WithCt))]
+	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethod))]
+	[DataRow(nameof(When_MixedViewAndFeedParameter_ViewModel.MyMethodWithCt))]
+	public async Task When_MixedViewAndFeedParameter_ViewModel_CanExecuteWithParameter(string method)
+	{
+		var vm = new When_MixedViewAndFeedParameter_ViewModel.BindableWhen_MixedViewAndFeedParameter_ViewModel();
+
+		var commandInfo = vm.GetType().GetMember(method).Single();
+		commandInfo.Should().BeAssignableTo<PropertyInfo>(because: "a command should have been generated for that method");
+
+		var command = ((PropertyInfo)commandInfo).GetValue(vm) as ICommand;
+		command.Should().NotBeNull();
+
+		command!.CanExecute(_viewParam).Should().BeTrue();
 	}
 
 	[TestMethod]

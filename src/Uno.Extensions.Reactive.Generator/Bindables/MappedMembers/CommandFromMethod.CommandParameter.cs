@@ -11,5 +11,7 @@ internal partial record CommandFromMethod
 		public bool IsCommandParameter => FeedProperty is null && !IsCancellation;
 
 		public bool IsFeedParameter => FeedProperty is not null;
+
+		public bool IsListFeedParameter { get; init; }
 	}
 }
