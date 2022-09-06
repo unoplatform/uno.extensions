@@ -51,7 +51,7 @@ public class Given_ListFeed : FeedTests
 		var expected = await GetSource().ToArrayAsync();
 		var result = ListFeed<int>.AsyncEnumerable(GetSource).Record();
 
-		await result.WaitForMessages(3);
+		await result.WaitForMessages(3, CT);
 
 		result
 			.Select(msg => msg.Current.Data.SomeOrDefault())
@@ -74,7 +74,7 @@ public class Given_ListFeed : FeedTests
 		var expected = await GetSource(CT).Select(msg => msg.Current.Data.SomeOrDefault()).ToArrayAsync();
 		var result = ListFeed.Create(GetSource).Record();
 
-		await result.WaitForMessages(3);
+		await result.WaitForMessages(3, CT);
 
 		result
 			.Select(msg => msg.Current.Data.SomeOrDefault())
