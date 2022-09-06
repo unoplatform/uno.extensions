@@ -65,6 +65,7 @@ jobs:
         !**/obj/**
       vsTestVersion: toolsInstaller
       testSelector: testAssemblies
+      runSettingsFile: build/tests.runsettings
 
   - task: PowerShell@2
     displayName: Authenticode Sign Packages
