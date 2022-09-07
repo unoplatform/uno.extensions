@@ -1,36 +1,39 @@
-﻿
-using System.Collections.Immutable;
-
-namespace Uno.Extensions.Authentication;
+﻿namespace Uno.Extensions.Authentication;
 
 public record TokenCache : ITokenCache
 {
 	private readonly ILogger _logger;
-	private readonly IWritableOptions<TokensData> _tokensCache;
-	private readonly IDictionary<string, string> _tokens = new Dictionary<string, string>();
-	private string? _provider;
+	private readonly SemaphoreSlim tokenLock = new SemaphoreSlim(1);
+	private readonly IKeyValueStorage _secureCache;
 
 	public TokenCache(
 		ILogger<TokenCache> logger,
-		IWritableOptions<TokensData> tokensCache)
+		KeyValueStorageSelector<TokenCache> secureCacheSelector)
 	{
 		_logger = logger;
-		_tokensCache = tokensCache;
-		var tokens = _tokensCache.Value;
-		if (tokens?.Tokens is not null)
-		{
-			_tokens = tokens.Tokens;
-			_provider = tokens.Provider;
-		}
+		_secureCache = secureCacheSelector.Storage;
 	}
-	public string? CurrentProvider => _provider;
-
 
 	public event EventHandler? Cleared;
 
-	public async ValueTask ClearAsync(CancellationToken? cancellation = default)
+	public async ValueTask<string?> CurrentProviderAsync(CancellationToken ct)
+	{
+		await tokenLock.WaitAsync();
+		try
+		{
+			return await _secureCache.GetStringAsync(nameof(CurrentProviderAsync), ct);
+		}
+		finally
+		{
+			tokenLock.Release();
+		}
+	}
+
+
+	public async ValueTask ClearAsync(CancellationToken cancellation)
 	{
 		if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage("Clearing tokens by invoking SaveAsync with empty dictionary");
+		// Don't acquire lock since this is done in the Save method
 		await SaveAsync(string.Empty, new Dictionary<string, string>(), cancellation);
 		if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage("Tokens cleared");
 		try
@@ -43,33 +46,74 @@ public record TokenCache : ITokenCache
 			if (_logger.IsEnabled(LogLevel.Error)) _logger.LogErrorMessage($"Error raising Cleared event - check listeners to fix errors handling this event {ex.Message}");
 		}
 	}
-	public async ValueTask<IDictionary<string, string>> GetAsync(CancellationToken? cancellation = default) => _tokens.ToDictionary(x => x.Key, x => x.Value);
-	public async ValueTask<bool> HasTokenAsync(CancellationToken? cancellation = default) => _tokens.Count > 0;
 
-	public async ValueTask SaveAsync(string provider, IDictionary<string, string>? tokens, CancellationToken? cancellation = default)
+	public async ValueTask<IDictionary<string, string>> GetAsync(CancellationToken cancellation)
 	{
-		if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Save tokens ({tokens?.Count ?? 0}) for provider '{provider}' - start");
-		_provider = provider;
-		_tokens.Clear();
-		if (tokens is not null)
+		await tokenLock.WaitAsync();
+		try
 		{
-			foreach (var tk in tokens)
+			var all  = await _secureCache.GetAllValuesAsync(cancellation);
+			if (all.ContainsKey(nameof(CurrentProviderAsync)))
 			{
-				_tokens[tk.Key] = tk.Value;
+				all.Remove(nameof(CurrentProviderAsync));
 			}
+			return all;
 		}
-		await PersistCacheAsync();
-		if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage("Save tokens - complete");
+		finally
+		{
+			tokenLock.Release();
+		}
 	}
 
-	private async ValueTask PersistCacheAsync()
+	public async ValueTask<bool> HasTokenAsync(CancellationToken cancellation)
 	{
-		await _tokensCache.UpdateAsync(data => new TokensData { Tokens = _tokens.ToImmutableDictionary(), Provider = _provider });
-	}
-}
+		await tokenLock.WaitAsync();
+		try
+		{
+			var keys = await _secureCache.GetKeysAsync(cancellation);
+			keys = keys.Where(x => x != nameof(CurrentProviderAsync)).ToArray();
+			if (_logger.IsEnabled(LogLevel.Trace))
+			{
+				_logger.LogTraceMessage($"{keys.Length} keys in cache");
+				foreach (var key in keys)
+				{
+					if(key is null)
+					{
+						continue;
+					}
+					var value = await _secureCache.GetAsync<string>(key, cancellation);
+					_logger.LogTraceMessage($">{key}{value}");
+				}
 
-public record TokensData
-{
-	public string? Provider { get; set; }
-	public IDictionary<string, string> Tokens { get; set; } = new Dictionary<string, string>();
+			}
+			return keys.Any();
+		}
+		finally
+		{
+			tokenLock.Release();
+		}
+	}
+
+	public async ValueTask SaveAsync(string provider, IDictionary<string, string>? tokens, CancellationToken cancellation)
+	{
+		await tokenLock.WaitAsync();
+		try
+		{
+			if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Save tokens ({tokens?.Count ?? 0}) for provider '{provider}' - start");
+			await _secureCache.ClearAllAsync(cancellation);
+			await _secureCache.SetAsync(nameof(CurrentProviderAsync), provider, cancellation);
+			if (tokens is not null)
+			{
+				foreach (var tk in tokens)
+				{
+					await _secureCache.SetAsync(tk.Key, tk.Value, cancellation);
+				}
+			}
+			if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage("Save tokens - complete");
+		}
+		finally
+		{
+			tokenLock.Release();
+		}
+	}
 }

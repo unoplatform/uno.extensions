@@ -22,7 +22,7 @@ public sealed partial class App : Application
 
 	protected override void OnLaunched(LaunchActivatedEventArgs args)
 	{
-#if DEBUG
+#if DEBUG && !__WASM__
 		// This seems 
 		if (!Debugger.IsAttached)
 		{
@@ -65,6 +65,4 @@ public sealed partial class App : Application
 
 
 	}
-
-
 }

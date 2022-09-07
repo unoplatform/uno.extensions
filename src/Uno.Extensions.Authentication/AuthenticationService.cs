@@ -26,44 +26,47 @@ internal class AuthenticationService : IAuthenticationService
 
 	public async ValueTask<bool> LoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials = default, string? provider = null, CancellationToken? cancellationToken = default)
 	{
-		var authProvider = await AuthenticationProvider(provider, cancellationToken ?? CancellationToken.None);
+		var ct = cancellationToken ?? CancellationToken.None;
+		var authProvider = await AuthenticationProvider(provider, ct);
 
 		if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Attempting to login");
-		var tokens = await authProvider.LoginAsync(dispatcher, credentials, cancellationToken ?? CancellationToken.None);
+		var tokens = await authProvider.LoginAsync(dispatcher, credentials, ct);
 
 		if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Login complete, saving tokens");
-		await _tokens.SaveAsync(authProvider.Name, tokens, cancellationToken);
+		await _tokens.SaveAsync(authProvider.Name, tokens, ct);
 
 		if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Save tokens complete");
-		return await IsAuthenticated(cancellationToken);
+		return await IsAuthenticated(ct);
 	}
 
 	public async ValueTask<bool> LogoutAsync(IDispatcher? dispatcher, CancellationToken? cancellationToken = default)
 	{
-		var authProvider = AuthenticationProvider(cancellationToken);
+		var ct = cancellationToken ?? CancellationToken.None;
+		var authProvider = await AuthenticationProvider(default, ct);
 
 		if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Attempting to logout");
-		if (!await authProvider.LogoutAsync(dispatcher, cancellationToken ?? CancellationToken.None))
+		if (!await authProvider.LogoutAsync(dispatcher, ct))
 		{
 			if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Logout failed (for example logout cancelled)");
 			return false;
 		}
 
 		if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Logout successful, so clear token cache");
-		await _tokens.ClearAsync(cancellationToken);
+		await _tokens.ClearAsync(ct);
 		return true;
 	}
 
 	public async ValueTask<bool> RefreshAsync(CancellationToken? cancellationToken = default)
 	{
-		var authProvider = AuthenticationProvider(cancellationToken);
+		var ct = cancellationToken ?? CancellationToken.None;
+		var authProvider = await AuthenticationProvider(default, ct);
 		if (await IsAuthenticated(cancellationToken))
 		{
 			if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Attempting to refresh");
-			var tokens = await authProvider.RefreshAsync(cancellationToken ?? CancellationToken.None);
+			var tokens = await authProvider.RefreshAsync(ct);
 
 			if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Refresh complete, saving new tokens");
-			await _tokens.SaveAsync(authProvider.Name, tokens, cancellationToken);
+			await _tokens.SaveAsync(authProvider.Name, tokens, ct);
 
 			if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Save tokens complete");
 			// Successful refresh requires there to be tokens stored
@@ -78,8 +81,9 @@ internal class AuthenticationService : IAuthenticationService
 
 	public async ValueTask<bool> IsAuthenticated(CancellationToken? cancellationToken = default)
 	{
+		var ct = cancellationToken ?? CancellationToken.None;
 		// Successful refresh requires there to be tokens stored
-		var isAuthenticated = await _tokens.HasTokenAsync(cancellationToken);
+		var isAuthenticated = await _tokens.HasTokenAsync(ct);
 		if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Is authenticated - {isAuthenticated}");
 		return isAuthenticated;
 	}
@@ -90,12 +94,12 @@ internal class AuthenticationService : IAuthenticationService
 		LoggedOut?.Invoke(this, EventArgs.Empty);
 	}
 
-	private IAuthenticationProvider AuthenticationProvider(string? provider = null)
+	private async Task<IAuthenticationProvider> AuthenticationProvider(string? provider, CancellationToken cancellation)
 	{
 		if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Retrieving authentication provider '{provider}'");
 		if (provider is null)
 		{
-			provider = _tokens.CurrentProvider;
+			provider = await _tokens.CurrentProviderAsync(cancellation);
 			if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"No provider specified, so retrieving current provider from token cache '{provider}'");
 		}
 
