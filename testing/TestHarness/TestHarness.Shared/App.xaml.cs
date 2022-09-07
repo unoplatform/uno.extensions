@@ -1,12 +1,11 @@
 #if WINUI
 	global using Window = Microsoft.UI.Xaml.Window;
 	global using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
-using System.Diagnostics;
 #else
 	global using Window = Windows.UI.Xaml.Window;
 	global using LaunchActivatedEventArgs = Windows.ApplicationModel.Activation.LaunchActivatedEventArgs;
 #endif
-
+using System.Diagnostics;
 
 namespace TestHarness;
 

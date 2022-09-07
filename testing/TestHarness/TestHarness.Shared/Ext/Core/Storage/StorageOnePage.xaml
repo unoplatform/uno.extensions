@@ -12,16 +12,46 @@
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
 			<RowDefinition />
 		</Grid.RowDefinitions>
 		<utu:NavigationBar Content="Storage - One"
 						   AutomationProperties.AutomationId="StorageOne" />
-		<StackPanel HorizontalAlignment="Center"
-					VerticalAlignment="Center" Grid.Row="1">
-			<!--<Button AutomationProperties.AutomationId="OnePageToTwoPageButton"
-					Content="Two"
-					uen:Navigation.Request="StorageTwo" />-->
-			
+
+		<ComboBox Grid.Row="1"
+				  ItemsSource="{Binding Storage}"
+				  SelectedItem="{Binding Selected, Mode=TwoWay}" >
+		
+			<ComboBox.ItemTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding Name}" />
+				</DataTemplate>
+			</ComboBox.ItemTemplate>
+		</ComboBox>
+		<StackPanel Grid.Row="2" Orientation="Horizontal">
+			<TextBlock Text="Key:" />
+			<TextBox Width="100"
+					 Text="{Binding Key, Mode=TwoWay}" />
+			<TextBlock Text=" Value:" />
+			<TextBox Width="100"
+					 Text="{Binding Value, Mode=TwoWay}" />
+			<Button Content="Add"
+					Click="{x:Bind ViewModel.Add}" />
 		</StackPanel>
+		<ListView Grid.Row="3" ItemsSource="{Binding Data}"
+				  SelectedItem="{Binding SelectedPair, Mode=TwoWay}"
+					SelectionChanged="{x:Bind ViewModel.PairSelected}"
+				  >
+			<ListView.ItemTemplate>
+				<DataTemplate>
+					<TextBlock>
+						<Run Text="{Binding Key}" />
+						<Run Text=" - " />
+						<Run Text="{Binding Value}" />
+					</TextBlock>
+				</DataTemplate>
+			</ListView.ItemTemplate>
+		</ListView>
 	</Grid>
 </Page>
