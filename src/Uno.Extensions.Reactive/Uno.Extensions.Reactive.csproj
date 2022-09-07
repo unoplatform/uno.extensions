@@ -6,9 +6,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Remove="C:\source\github\unoplatform\Uno.Platform\src\Uno.Extensions.Core\_Compat\IsExternalInit.cs" />
-	  <Compile Remove="C:\source\github\unoplatform\Uno.Platform\src\Uno.Extensions.Core\_Compat\NotNullIfNotNullAttribute.cs" />
-	  <Compile Remove="C:\source\github\unoplatform\Uno.Platform\src\Uno.Extensions.Core\_Compat\NotNullWhenAttribute.cs" />
+	  <Compile Remove="..\Uno.Extensions.Core\_Compat\IsExternalInit.cs" />
+	  <Compile Remove="..\Uno.Extensions.Core\_Compat\NotNullIfNotNullAttribute.cs" />
+	  <Compile Remove="..\Uno.Extensions.Core\_Compat\NotNullWhenAttribute.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
