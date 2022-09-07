@@ -21,7 +21,7 @@ internal interface IStateStore : IAsyncDisposable
 	/// Get or create a <see cref="FeedSubscription{T}"/> for a given feed.
 	/// </summary>
 	/// <typeparam name="TSource">Type of the source feed.</typeparam>
-	/// <typeparam name="TValue">Type of teh values of the <paramref name="source"/>.</typeparam>
+	/// <typeparam name="TValue">Type of the values of the <paramref name="source"/>.</typeparam>
 	/// <param name="source">The source feed.</param>
 	/// <returns>The subscription of the given feed</returns>
 	/// <exception cref="ObjectDisposedException">This store has been disposed.</exception>
