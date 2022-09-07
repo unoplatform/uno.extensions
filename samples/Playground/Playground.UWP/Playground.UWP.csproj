@@ -212,6 +212,14 @@
       <Project>{c0d15a9c-bc2a-4a7c-a97f-536421cf84ef}</Project>
       <Name>Uno.Extensions.Serialization</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Uno.Extensions.Storage.UI\Uno.Extensions.Storage.UI.csproj">
+      <Project>{62c380fd-9389-4337-b51a-5faf1d32fbb0}</Project>
+      <Name>Uno.Extensions.Storage.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Uno.Extensions.Storage\Uno.Extensions.Storage.csproj">
+      <Project>{2397a664-9140-45e6-bec0-6e975fcc31d1}</Project>
+      <Name>Uno.Extensions.Storage</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
