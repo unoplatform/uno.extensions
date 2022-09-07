@@ -10,6 +10,18 @@ public static class HostBuilderExtensions
 #if WINDOWS
 		WinUIEx.WebAuthenticator.Init();
 #endif
+		var hostBuilder = (builder as IBuilder)?.HostBuilder;
+		if (hostBuilder is null)
+		{
+			return builder;
+		}
+
+		hostBuilder
+			.UseConfiguration(configure: configBuilder =>
+					configBuilder
+						.Section<WebConfiguration>(name)
+				);
+
 
 		var authBuilder = builder.AsBuilder<WebAuthenticationBuilder>();
 
@@ -32,7 +44,17 @@ public static class HostBuilderExtensions
 #if WINDOWS
 		WinUIEx.WebAuthenticator.Init();
 #endif
+		var hostBuilder = (builder as IBuilder)?.HostBuilder;
+		if (hostBuilder is null)
+		{
+			return builder;
+		}
 
+		hostBuilder
+			.UseConfiguration(configure: configBuilder =>
+					configBuilder
+						.Section<WebConfiguration>(name)
+				);
 		var authBuilder = builder.AsBuilder<WebAuthenticationBuilder<TService>>();
 
 		configure?.Invoke(authBuilder);

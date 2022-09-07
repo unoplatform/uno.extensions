@@ -22,5 +22,6 @@ public enum TestSections
 	Authentication_Multi,
 	Authentication_Oidc,
 	Authentication_Web,
+	Authentication_Web_Settings,
 	Core_Storage
 }

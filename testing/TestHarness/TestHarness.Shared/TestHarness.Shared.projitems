@@ -79,6 +79,7 @@
       <DependentUpon>WebAuthenticationHomePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Web\WebAuthenticationHomeViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Web\WebAuthenticationSettingsHostInit.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Web\WebAuthenticationHostInit.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Web\WebAuthenticationLoginPage.xaml.cs">
       <DependentUpon>WebAuthenticationLoginPage.xaml</DependentUpon>
@@ -576,6 +577,7 @@
 		 explicitly included in the projitem, so files can be added from vscode
 		 without manipulating the projitem file.
 	-->
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Web\appsettings.webauthsettings.json" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Web\appsettings.webauth.json" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\appsettings.testbackend.json" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\appsettings.dummyjson.json" />
