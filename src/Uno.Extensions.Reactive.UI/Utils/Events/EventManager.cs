@@ -14,8 +14,10 @@ internal class EventManager<TArgs> : EventManager<EventHandler<TArgs>, TArgs>
 	/// </summary>
 	/// <param name="owner">Owner of the event.</param>
 	/// <param name="isCoalescable">Determines if each call to Raise should abort any pending previous execution.</param>
-	public EventManager(object owner, bool isCoalescable = false)
-		: base(owner, h => h.Invoke, isCoalescable)
+	/// <param name="isBgThreadAllowed">Indicates if the manager allows registration of handler from background thread.</param>
+	/// <param name="schedulersProvider">Specifies the provider of dispatcher.</param>
+	public EventManager(object owner, bool isCoalescable = false, bool isBgThreadAllowed = true, Func<DispatcherQueue?>? schedulersProvider = null)
+		: base(owner, h => h.Invoke, isCoalescable, isBgThreadAllowed, schedulersProvider)
 	{
 	}
 }

@@ -35,6 +35,7 @@ public sealed partial class AsyncCommand : IAsyncCommand, IDisposable
 	private readonly LazyDispatcherProvider _dispatcher;
 	private readonly EventManager<EventHandler, EventArgs> _canExecuteChanged;
 	private readonly EventManager<PropertyChangedEventHandler, PropertyChangedEventArgs> _propertyChanged;
+	private readonly EventManager<ExecutionCompletedEventArgs> _executingCompleted;
 
 	/// <inheritdoc />
 	public event EventHandler? CanExecuteChanged
@@ -50,6 +51,20 @@ public sealed partial class AsyncCommand : IAsyncCommand, IDisposable
 		remove => _propertyChanged.Remove(value);
 	}
 
+	/// <summary>
+	/// Event raised when the command is being executed.
+	/// </summary>
+	public event EventHandler<ExecutionStartedEventArgs> ExecutionStarted;
+
+	/// <summary>
+	/// Event raised when the command completes an async execution.
+	/// </summary>
+	public event EventHandler<ExecutionCompletedEventArgs> ExecutionCompleted
+	{
+		add => _executingCompleted.Add(value);
+		remove => _executingCompleted.Remove(value);
+	}
+
 #pragma warning disable CS8618 // This is a private base ctor which is invoked only by all other public ctors which are initializing missing fields.
 	private AsyncCommand()
 #pragma warning restore CS8618
@@ -57,6 +72,7 @@ public sealed partial class AsyncCommand : IAsyncCommand, IDisposable
 		_dispatcher = new(onFirstResolved: SubscribeToExternalParameters);
 		_canExecuteChanged = new(this, h => h.Invoke, isCoalescable: true, schedulersProvider: _dispatcher.FindDispatcher);
 		_propertyChanged = new(this, h => h.Invoke, isCoalescable: false, schedulersProvider: _dispatcher.FindDispatcher);
+		_executingCompleted = new(this, isCoalescable: false, schedulersProvider: _dispatcher.FindDispatcher);
 	}
 
 	/// <summary>
@@ -143,49 +159,58 @@ public sealed partial class AsyncCommand : IAsyncCommand, IDisposable
 		_canExecuteChanged.Raise(EventArgs.Empty);
 	}
 
-	private bool IsExecutingFor(object? parameter)
+	private bool IsExecutingFor(object? coercedParameter)
 	{
 		lock (_executions)
 		{
-			return _executions.ContainsKey(parameter ?? _null);
+			return _executions.ContainsKey(coercedParameter ?? _null);
 		}
 	}
 
-	private void ReportExecutionStarting(object? parameter)
+	private void ReportExecutionStarting(Guid executionId, object? coercedParameter, object? viewParameter)
 	{
-		parameter ??= _null;
+		coercedParameter ??= _null;
 
-		// Note: We DO NOT UpdateExecutionState: it will be done only once by the Execute.
+		// Note: We DO NOT UpdateIsExecuting: it will be done only once by the Execute.
 		lock (_executions)
 		{
-			if (!_executions.TryGetValue(parameter, out var count))
+			if (!_executions.TryGetValue(coercedParameter, out var count))
 			{
 				count = 0;
 			}
 
-			_executions[parameter] = count + 1;
+			_executions[coercedParameter] = count + 1;
 		}
+
+		ExecutionStarted?.Invoke(this, new ExecutionStartedEventArgs(executionId, viewParameter));
 	}
 
-	private void ReportExecutionEnded(object? parameter)
+	private void ReportExecutionEnded(Guid executionId, object? coercedParameter, object? viewParameter, Exception? error)
 	{
-		parameter ??= _null;
+		if (error is not null)
+		{
+			ReportError(error, when: $"executing command with '{coercedParameter ?? "-null-"}'");
+		}
+
+		coercedParameter ??= _null;
 
 		var needsUiUpdate = false;
 		lock (_executions)
 		{
-			if (_executions.TryGetValue(parameter, out var count))
+			if (_executions.TryGetValue(coercedParameter, out var count))
 			{
 				if (--count <= 0)
 				{
-					needsUiUpdate = _executions.Remove(parameter);
+					needsUiUpdate = _executions.Remove(coercedParameter);
 				}
 				else
 				{
-					_executions[parameter] = count;
+					_executions[coercedParameter] = count;
 				}
 			}
 		}
+
+		_executingCompleted.Raise(new ExecutionCompletedEventArgs(executionId, viewParameter, error));
 
 		if (needsUiUpdate)
 		{
