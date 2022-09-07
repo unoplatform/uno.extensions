@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Windows.Input;
 
-namespace Uno.Extensions.Reactive.UI.Presentation.Commands;
+namespace Uno.Extensions.Reactive.Commands;
 
 /// <summary>
 /// Defines if the a method should be exposed to binding through an <see cref="ICommand"/> or not.

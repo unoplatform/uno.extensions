@@ -9,7 +9,7 @@ using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using Microsoft.CodeAnalysis;
-using Uno.Extensions.Reactive.UI.Config;
+using Uno.Extensions.Reactive.Config;
 
 namespace Uno.Extensions.Reactive.Generator;
 
@@ -117,7 +117,7 @@ internal partial record CommandFromMethod : IMappedMember
 				configs.Add(new CommandConfigGenerator(this)
 				{
 					ExternalParameter = $"ctx => ctx.GetOrCreateSource({sourceFeed})",
-					ParametersCoercer = $"{NS.Reactive}.CommandParametersCoercingStrategy.UseBoth((viewParameter, feedParameter) => (viewParameter is {viewParameter.Symbol.Type} vp ? vp : default, feedParameter is {GetTypeOrTuple(feedParameters)} fp ? fp : default))",
+					ParametersCoercer = $"{NS.Commands}.CommandParametersCoercingStrategy.UseBoth((viewParameter, feedParameter) => (viewParameter is {viewParameter.Symbol.Type} vp ? vp : default, feedParameter is {GetTypeOrTuple(feedParameters)} fp ? fp : default))",
 					ParameterType = $"global::System.ValueTuple<{viewParameter.Symbol.Type}, {GetTypeOrTuple(feedParameters)}>",
 					DeconstructParameters = (args, ct) => GetDeconstruct($"{args}.Item2", ct, viewArg: $"{args}.Item1"),
 					CanExecute = CheckForNulls(new[] { viewParameter }) is { } check ? args => check($"{args}.Item1") : null,
@@ -133,7 +133,7 @@ internal partial record CommandFromMethod : IMappedMember
 				{
 					// Note: We don't CheckForNull with external parameters only, they are validated by the SubCommand
 					ExternalParameter = $"ctx => ctx.GetOrCreateSource({sourceFeed})",
-					ParametersCoercer = $"{NS.Reactive}.CommandParametersCoercingStrategy.AllowOnlyExternalParameter",
+					ParametersCoercer = $"{NS.Commands}.CommandParametersCoercingStrategy.AllowOnlyExternalParameter",
 					ParameterType = GetTypeOrTuple(feedParameters),
 					DeconstructParameters = (args, ct) => GetDeconstruct(args, ct),
 				});
@@ -214,9 +214,9 @@ internal partial record CommandFromMethod : IMappedMember
 			return result.ToString();
 		};
 
-		return @$"{Name} = new {NS.Reactive}.AsyncCommand(
+		return @$"{Name} = new {NS.Commands}.AsyncCommand(
 					nameof({Name}),
-					new {NS.Reactive}.CommandConfig[]
+					new {NS.Commands}.CommandConfig[]
 					{{
 						{configs.Select(config => config.ToString()).JoinBy(",\r\n").Align(6)}
 					}},

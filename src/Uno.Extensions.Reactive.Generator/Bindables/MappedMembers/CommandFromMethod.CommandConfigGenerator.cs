@@ -24,7 +24,7 @@ internal partial record CommandFromMethod
 		public override string ToString()
 		{
 			var sb = new IndentedStringBuilder();
-			using (sb.BlockInvariant(@$"new {NS.Reactive}.CommandConfig"))
+			using (sb.BlockInvariant(@$"new {NS.Commands}.CommandConfig"))
 			{
 				if (ExternalParameter is not null)
 				{

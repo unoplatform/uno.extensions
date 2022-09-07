@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Input;
-using Uno.Extensions.Reactive.UI.Config;
+using Uno.Extensions.Reactive.Config;
 
-namespace Uno.Extensions.Reactive.UI.Presentation.Commands;
+namespace Uno.Extensions.Reactive.Commands;
 
 /// <summary>
 /// Flags a parameter of a method which is being exposed as <see cref="ICommand"/> (cf. <see cref="CommandAttribute"/>),

@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Uno.Extensions.Reactive.Core;
 
-namespace Uno.Extensions.Reactive;
+namespace Uno.Extensions.Reactive.Commands;
 
 partial class AsyncCommand
 {
@@ -119,14 +119,14 @@ partial class AsyncCommand
 					},
 					_command._ct.Token)
 				.ContinueWith((_, state) =>
+				{
+					try
 					{
-						try
-						{
-							var (command, arg) = ((AsyncCommand, object?))state!;
-							command.ReportExecutionEnded(arg);
-						}
-						catch (Exception) { } // Almost impossible, but an error here would crash the app
-					},
+						var (command, arg) = ((AsyncCommand, object?))state!;
+						command.ReportExecutionEnded(arg);
+					}
+					catch (Exception) { } // Almost impossible, but an error here would crash the app
+				},
 					(_command, parameter),
 					TaskContinuationOptions.AttachedToParent | TaskContinuationOptions.ExecuteSynchronously);
 

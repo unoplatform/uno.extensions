@@ -12,7 +12,7 @@ using Windows.UI.Xaml;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestPlatform.Common.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Uno.Extensions.Reactive.UI.Config;
+using Uno.Extensions.Reactive.Config;
 
 namespace Uno.Extensions.Reactive.Tests.Generator;
 
@@ -678,7 +678,7 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 		public async ValueTask Async2() { }
 		public async ValueTask AsyncWithParameter2(string myParameter) { }
 
-		[Uno.Extensions.Reactive.UI.Presentation.Commands.Command]
+		[Commands.Command]
 		public void WithExplicitAttribute() { }
 	}
 
@@ -716,8 +716,8 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 		public async Task AsyncWithParameter(string myParameter) { }
 		public async ValueTask AsyncWithParameter2(string myParameter) { }
 
-		public void WithExplicitAttribute([Uno.Extensions.Reactive.UI.Presentation.Commands.FeedParameter] string myParameter) { }
-		public void WithExplicitAttributeWithName([Uno.Extensions.Reactive.UI.Presentation.Commands.FeedParameter(nameof(MyParameter))] string anArgument) { }
+		public void WithExplicitAttribute([Commands.FeedParameter] string myParameter) { }
+		public void WithExplicitAttributeWithName([Commands.FeedParameter(nameof(MyParameter))] string anArgument) { }
 	}
 
 	[TestMethod]

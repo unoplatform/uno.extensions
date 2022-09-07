@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Input;
 
-namespace Uno.Extensions.Reactive.UI.Config;
+namespace Uno.Extensions.Reactive.Config;
 
 /// <summary>
 /// Defines for generated commands whether parameters should be automatically populated based on public feeds properties exposed by the class.

@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 
-namespace Uno.Extensions.Reactive;
+namespace Uno.Extensions.Reactive.Commands;
 
 /// <summary>
 /// Defines a strategy used in by a <see cref="CommandConfig"/> to coerce the parameters that are coming from the `CommandParameter` of the view,

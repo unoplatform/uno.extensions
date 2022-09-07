@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using Uno.Extensions.Reactive.Core;
 
-namespace Uno.Extensions.Reactive;
+namespace Uno.Extensions.Reactive.Commands;
 
 /// <summary>
 /// The raw configuration of a command.

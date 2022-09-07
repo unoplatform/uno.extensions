@@ -4,12 +4,12 @@ using System.Linq;
 using System.Windows.Input;
 using Uno.Extensions.Reactive.Core;
 
-namespace Uno.Extensions.Reactive;
+namespace Uno.Extensions.Reactive.Commands;
 
 /// <summary>
 /// A builder of <see cref="IAsyncCommand"/>.
 /// </summary>
-/// <typeparam name="T"></typeparam>
+/// <typeparam name="T">Expected type of the parameter provided by the view to execute the command.</typeparam>
 public readonly struct CommandBuilder<T> : ICommandBuilder, ICommandBuilder<T>, IConditionalCommandBuilder<T>
 {
 	private readonly string _name;

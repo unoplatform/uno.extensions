@@ -11,8 +11,8 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Tags;
 using Uno.Extensions.Reactive.Bindings;
-using Uno.Extensions.Reactive.UI.Config;
-using Uno.Extensions.Reactive.UI.Presentation.Commands;
+using Uno.Extensions.Reactive.Config;
+using Uno.Extensions.Reactive.Commands;
 
 namespace Uno.Extensions.Reactive.Generator;
 

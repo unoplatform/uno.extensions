@@ -24,7 +24,7 @@ internal record CommandInput(IParameterSymbol Parameter, ITypeSymbol? _commandPa
 
 	/// <inheritdoc />
 	public string? GetCtorInit(bool isInVmCtorParameters)
-		=> $"var {Parameter.Name}Builder = new {NS.Reactive}.CommandBuilder<{_commandParameterType?.ToString() ?? "object?"}>(nameof({Parameter.GetPascalCaseName()}));";
+		=> $"var {Parameter.Name}Builder = new {NS.Commands}.CommandBuilder<{_commandParameterType?.ToString() ?? "object?"}>(nameof({Parameter.GetPascalCaseName()}));";
 
 	/// <inheritdoc />
 	public string GetVMCtorParameter()

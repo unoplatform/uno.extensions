@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Uno.Extensions.Reactive.Commands;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Logging;
 using Uno.Extensions.Reactive.Utils;

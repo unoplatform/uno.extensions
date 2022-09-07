@@ -8,7 +8,7 @@ using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Dispatching;
 using Uno.Extensions.Reactive.Events;
 
-namespace Uno.Extensions.Reactive;
+namespace Uno.Extensions.Reactive.Commands;
 
 /// <summary>
 /// An <see cref="ICommand"/> that exposes it's executing state.
