@@ -227,7 +227,7 @@ public sealed class SourceContext : IAsyncDisposable
 		}
 		else
 		{
-			return GetOrCreateStateCore(feed).GetSource(Token);
+			return States.GetOrCreateSubscription<IFeed<T>, T>(feed).GetMessages(this, Token);
 		}
 	}
 
@@ -251,7 +251,7 @@ public sealed class SourceContext : IAsyncDisposable
 		}
 		else
 		{
-			return GetOrCreateStateCore(feed.AsFeed()).GetSource(Token);
+			return States.GetOrCreateSubscription<IListFeed<T>, IImmutableList<T>>(feed).GetMessages(this, Token);
 		}
 	}
 

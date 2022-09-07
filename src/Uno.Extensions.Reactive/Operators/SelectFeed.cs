@@ -24,7 +24,7 @@ internal sealed class SelectFeed<TArg, TResult> : IFeed<TResult>
 	public async IAsyncEnumerable<Message<TResult>> GetSource(SourceContext context, [EnumeratorCancellation] CancellationToken ct = default)
 	{
 		var localMsg = new MessageManager<TArg, TResult>();
-		await foreach (var parentMsg in _parent.GetSource(context, ct).WithCancellation(ct).ConfigureAwait(false))
+		await foreach (var parentMsg in context.GetOrCreateSource(_parent).WithCancellation(ct).ConfigureAwait(false))
 		{
 			if (localMsg.Update(DoUpdate, parentMsg))
 			{

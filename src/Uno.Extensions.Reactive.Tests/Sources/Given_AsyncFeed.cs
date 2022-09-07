@@ -19,9 +19,9 @@ public class Given_AsyncFeed : FeedTests
 	public async Task When_ProviderReturnsValueSync_Then_GetSome()
 	{
 		var sut = new AsyncFeed<int>(async _ => 42);
-		using var result = await sut.Record();
+		using var result = sut.Record();
 
-		result.Should().Be(r => r
+		await result.Should().BeAsync(r => r
 			.Message(Changed.Data, 42, Error.No, Progress.Final)
 		);
 	}
@@ -29,13 +29,13 @@ public class Given_AsyncFeed : FeedTests
 	[TestMethod]
 	public async Task When_ProviderReturnsValueAsync_Then_GetSome()
 	{
-		using var result = await F<int>.Record(r => new AsyncFeed<int>(async ct =>
+		using var result = F<int>.Record(r => new AsyncFeed<int>(async ct =>
 		{
 			await r.WaitForMessages(1, ct);
 			return 42;
 		}));
 
-		result.Should().Be(r => r
+		await result.Should().BeAsync(r => r
 			.Message(Changed.Progress, Data.Undefined, Error.No, Progress.Transient)
 			.Message(Changed.Data & Changed.Progress, 42, Error.No, Progress.Final)
 		);
@@ -45,9 +45,9 @@ public class Given_AsyncFeed : FeedTests
 	public async Task When_ProviderReturnsDefaultSync_Then_GetNone()
 	{
 		var sut = new AsyncFeed<int>(async _ => Option.None<int>());
-		using var result = await sut.Record();
+		using var result = sut.Record();
 
-		result.Should().Be(r => r
+		await result.Should().BeAsync(r => r
 			.Message(Changed.Data, Data.None, Error.No, Progress.Final)
 		);
 	}
@@ -55,13 +55,13 @@ public class Given_AsyncFeed : FeedTests
 	[TestMethod]
 	public async Task When_ProviderReturnsSomeAsync_Then_GetValue()
 	{
-		using var result = await F<int>.Record(r => new AsyncFeed<int>(async ct =>
+		using var result = F<int>.Record(r => new AsyncFeed<int>(async ct =>
 		{
 			await r.WaitForMessages(1, ct);
 			return Option.None<int>();
 		}));
 
-		result.Should().Be(r => r
+		await result.Should().BeAsync(r => r
 			.Message(Changed.Progress, Data.Undefined, Error.No, Progress.Transient)
 			.Message(Changed.Data & Changed.Progress, Data.None, Error.No, Progress.Final)
 		);
@@ -71,9 +71,9 @@ public class Given_AsyncFeed : FeedTests
 	public async Task When_ProviderThrowsSync_Then_GetError()
 	{
 		var sut = new AsyncFeed<int>(async _ => throw new TestException());
-		using var result = await sut.Record();
+		using var result = sut.Record();
 
-		result.Should().Be(r => r
+		await result.Should().BeAsync(r => r
 			.Message(Changed.Error, Data.Undefined, typeof(TestException), Progress.Final)
 		);
 	}
@@ -81,13 +81,13 @@ public class Given_AsyncFeed : FeedTests
 	[TestMethod]
 	public async Task When_ProviderThrowsAsync_Then_GetError()
 	{
-		using var result = await F<int>.Record(r => new AsyncFeed<int>(async ct =>
+		using var result = F<int>.Record(r => new AsyncFeed<int>(async ct =>
 		{
 			await r.WaitForMessages(1, ct);
 			throw new TestException();
 		}));
 
-		result.Should().Be(r => r
+		await result.Should().BeAsync(r => r
 			.Message(Changed.Progress, Data.Undefined, Error.No, Progress.Transient)
 			.Message(Changed.Error & Changed.Progress, Data.Undefined, typeof(TestException), Progress.Final)
 		);
@@ -102,11 +102,8 @@ public class Given_AsyncFeed : FeedTests
 		using var result = sut.Record();
 
 		refresh.Raise();
-		refresh.Dispose();
 
-		await result;
-
-		result.Should().Be(r => r
+		await result.Should().BeAsync(r => r
 			.Message(Changed.Data, 42, Error.No, Progress.Final)
 			.Message(Changed.Refreshed, 42, Error.No, Progress.Final, Refreshed.Is(1))
 		);
@@ -124,9 +121,7 @@ public class Given_AsyncFeed : FeedTests
 
 		requests.RequestRefresh();
 
-		await result.WaitForMessages(2, CT);
-
-		result.Should().Be(r => r
+		await result.Should().BeAsync(r => r
 			.Message(Changed.Data, 42, Error.No, Progress.Final)
 			.Message(Changed.Refreshed, 42, Error.No, Progress.Final, Refreshed.Is(1))
 		);
@@ -153,13 +148,11 @@ public class Given_AsyncFeed : FeedTests
 		await result.WaitForMessages(2, ct);
 		gate = new TaskCompletionSource();
 		refresh.Raise();
-		refresh.Dispose();
 
 		await result.WaitForMessages(3, ct);
 		gate.SetResult();
 
-		await result;
-		result.Should().Be(r => r
+		await result.Should().BeAsync(r => r
 			.Message(Changed.Progress, Data.Undefined, Error.No, Progress.Transient)
 			.Message(Changed.Data & Changed.Progress, 42, Error.No, Progress.Final)
 			.Message(Changed.Progress & Changed.Refreshed, 42, Error.No, Progress.Transient, Refreshed.Is(1))
@@ -192,8 +185,7 @@ public class Given_AsyncFeed : FeedTests
 		await result.WaitForMessages(3, ct);
 		gate.SetResult();
 
-		await result.WaitForMessages(4, ct);
-		result.Should().Be(r => r
+		await result.Should().BeAsync(r => r
 			.Message(Changed.Progress, Data.Undefined, Error.No, Progress.Transient)
 			.Message(Changed.Data & Changed.Progress, 42, Error.No, Progress.Final)
 			.Message(Changed.Progress & Changed.Refreshed, 42, Error.No, Progress.Transient, Refreshed.Is(1))
@@ -209,10 +201,8 @@ public class Given_AsyncFeed : FeedTests
 		using var result = sut.Record();
 
 		refresh.Raise();
-		refresh.Dispose();
 
-		await result;
-		result.Should().Be(r => r
+		await result.Should().BeAsync(r => r
 			.Message(Changed.Data, Data.None, Error.No, Progress.Final)
 			.Message(Changed.Refreshed, Data.None, Error.No, Progress.Final, Refreshed.Is(1))
 		);
@@ -228,8 +218,7 @@ public class Given_AsyncFeed : FeedTests
 
 		requests.RequestRefresh();
 
-		await result.WaitForMessages(2, CT);
-		result.Should().Be(r => r
+		await result.Should().BeAsync(r => r
 			.Message(Changed.Data, Data.None, Error.No, Progress.Final)
 			.Message(Changed.Refreshed, Data.None, Error.No, Progress.Final, Refreshed.Is(1))
 		);
@@ -256,13 +245,11 @@ public class Given_AsyncFeed : FeedTests
 		gate = new TaskCompletionSource();
 		await Task.Delay(10, CT);
 		refresh.Raise();
-		refresh.Dispose();
 
 		await result.WaitForMessages(3, CT);
 		gate.SetResult();
 
-		await result;
-		result.Should().Be(r => r
+		await result.Should().BeAsync(r => r
 			.Message(Changed.Progress, Data.Undefined, Error.No, Progress.Transient)
 			.Message(Changed.Data & Changed.Progress, Data.None, Error.No, Progress.Final)
 			.Message(Changed.Progress & Changed.Refreshed, Data.None, Error.No, Progress.Transient, Refreshed.Is(1))
@@ -295,8 +282,7 @@ public class Given_AsyncFeed : FeedTests
 		await result.WaitForMessages(3, CT);
 		gate.SetResult();
 
-		await result.WaitForMessages(4, CT);
-		result.Should().Be(r => r
+		await result.Should().BeAsync(r => r
 			.Message(Changed.Progress, Data.Undefined, Error.No, Progress.Transient)
 			.Message(Changed.Data & Changed.Progress, Data.None, Error.No, Progress.Final)
 			.Message(Changed.Progress & Changed.Refreshed, Data.None, Error.No, Progress.Transient, Refreshed.Is(1))
@@ -312,10 +298,8 @@ public class Given_AsyncFeed : FeedTests
 		using var result = sut.Record();
 
 		refresh.Raise();
-		refresh.Dispose();
 
-		await result;
-		result.Should().Be(r => r
+		await result.Should().BeAsync(r => r
 			.Message(Data.Undefined, typeof(TestException), Progress.Final)
 			.Message(Changed.Error & Changed.Refreshed, Data.Undefined, typeof(TestException), Progress.Final, Refreshed.Is(1))
 		);
@@ -331,8 +315,7 @@ public class Given_AsyncFeed : FeedTests
 
 		requests.RequestRefresh();
 
-		await result.WaitForMessages(2, CT);
-		result.Should().Be(r => r
+		await result.Should().BeAsync(r => r
 			.Message(Changed.Error, Data.Undefined, typeof(TestException), Progress.Final)
 			.Message(Changed.Error & Changed.Refreshed, Data.Undefined, typeof(TestException), Progress.Final, Refreshed.Is(1))
 		);
@@ -359,13 +342,11 @@ public class Given_AsyncFeed : FeedTests
 		await result.WaitForMessages(2, ct);
 		gate = new TaskCompletionSource();
 		refresh.Raise();
-		refresh.Dispose();
 
 		await result.WaitForMessages(3, ct);
 		gate.SetResult();
 
-		await result;
-		result.Should().Be(r => r
+		await result.Should().BeAsync(r => r
 			.Message(Changed.Progress, Data.Undefined, Error.No, Progress.Transient)
 			.Message(Changed.Error & Changed.Progress, Data.Undefined, typeof(TestException), Progress.Final)
 			.Message(Changed.Progress & Changed.Refreshed, Data.Undefined, typeof(TestException), Progress.Transient, Refreshed.Is(1))
@@ -397,8 +378,7 @@ public class Given_AsyncFeed : FeedTests
 		await result.WaitForMessages(3, CT);
 		gate.SetResult();
 
-		await result.WaitForMessages(4, CT);
-		result.Should().Be(r => r
+		await result.Should().BeAsync(r => r
 			.Message(Changed.Progress, Data.Undefined, Error.No, Progress.Transient)
 			.Message(Changed.Error & Changed.Progress, Data.Undefined, typeof(TestException), Progress.Final)
 			.Message(Changed.Progress & Changed.Refreshed, Data.Undefined, typeof(TestException), Progress.Transient, Refreshed.Is(1))
@@ -434,11 +414,7 @@ public class Given_AsyncFeed : FeedTests
 		shouldThrow = false;
 		refresh.Raise();
 
-		await result.WaitForMessages(3, CT);
-		refresh.Dispose();
-
-		await result;
-		result.Should().Be(r => r
+		await result.Should().BeAsync(r => r
 			.Message(Changed.Data, 42, Error.No, Progress.Final)
 			.Message(Changed.Error & Changed.Refreshed, 42, typeof(TestException), Progress.Final, Refreshed.Is(1))
 			.Message(Changed.Error & Changed.Refreshed, 42, Error.No, Progress.Final, Refreshed.Is(2))
@@ -473,9 +449,9 @@ public class Given_AsyncFeed : FeedTests
 			SourceContext.Current.Should().Be(Context.SourceContext);
 			return Option.None<int>();
 		});
-		using var result = await sut.Record(Context.SourceContext);
+		using var result = sut.Record(Context.SourceContext);
 
-		result.Should().Be(r => r
+		await result.Should().BeAsync(r => r
 			.Message(Error.No)
 		);
 	}

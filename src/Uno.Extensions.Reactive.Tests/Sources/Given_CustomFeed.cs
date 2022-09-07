@@ -27,9 +27,9 @@ namespace Uno.Extensions.Reactive.Tests.Sources
 				yield return current = current.With().Data(44).Error(null).IsTransient(true);
 			}
 
-			var sut = await Feed.Create(GetSource).Record();
+			var sut = Feed.Create(GetSource).Record();
 
-			sut.Should().Be(r => r
+			await sut.Should().BeAsync(r => r
 				.Message(Changed.Data, 42, Error.No, Progress.Final)
 				.Message(Changed.Data, 43, Error.No, Progress.Final)
 				.Message(Changed.Error, 43, typeof(TestException), Progress.Final)
@@ -46,9 +46,9 @@ namespace Uno.Extensions.Reactive.Tests.Sources
 				yield return Message<int>.Initial.With().Data(43);
 			}
 
-			var sut = await Feed.Create(GetSource).Record();
+			var sut = Feed.Create(GetSource).Record();
 
-			sut.Should().Be(r => r
+			await sut.Should().BeAsync(r => r
 				.Message(Changed.Data & Changed.Progress, 42, Error.No, Progress.Transient)
 				.Message(Changed.Error & Changed.Progress, 42, typeof(InvalidOperationException), Progress.Final)
 			);

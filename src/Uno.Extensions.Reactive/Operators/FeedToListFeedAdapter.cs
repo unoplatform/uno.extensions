@@ -45,7 +45,7 @@ internal class FeedToListFeedAdapter<TCollection, TItem> : IListFeed<TItem>
 	public async IAsyncEnumerable<Message<IImmutableList<TItem>>> GetSource(SourceContext context, [EnumeratorCancellation] CancellationToken ct = default)
 	{
 		var localMsg = new MessageManager<TCollection, IImmutableList<TItem>>();
-		await foreach (var parentMsg in _source.GetSource(context, ct).WithCancellation(ct).ConfigureAwait(false))
+		await foreach (var parentMsg in context.GetOrCreateSource(_source).WithCancellation(ct).ConfigureAwait(false))
 		{
 			if (localMsg.Update(DoUpdate, parentMsg))
 			{

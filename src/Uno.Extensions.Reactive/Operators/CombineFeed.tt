@@ -58,7 +58,7 @@ namespace Uno.Extensions.Reactive.Operators
 
 			var messages = AsyncEnumerableExtensions.Merge(
 <# for (var i = 1; i <= typeArgsCount; i++) { #>
-				_feed<#= i #>.GetSource(context, ct).Select<Message<T<#= i #>>, Func<Message<(<#= types #>)>?>>(msg => () => helper.ApplyUpdate(<#= i-1 #>, msg, ref dataSet.Item<#= i #>))<#= i < typeArgsCount ? ",":"" #>
+				context.GetOrCreateSource(_feed<#= i #>).Select<Message<T<#= i #>>, Func<Message<(<#= types #>)>?>>(msg => () => helper.ApplyUpdate(<#= i-1 #>, msg, ref dataSet.Item<#= i #>))<#= i < typeArgsCount ? ",":"" #>
 <# } #>
 			);
 

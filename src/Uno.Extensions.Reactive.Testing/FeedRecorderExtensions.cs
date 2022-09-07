@@ -2,6 +2,8 @@
 using System.Collections.Immutable;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using System.Threading;
 using Uno.Extensions.Reactive;
 using Uno.Extensions.Reactive.Core;
 
@@ -44,6 +46,24 @@ public static class FeedRecorderExtensions
 		[CallerMemberName] string? memberName = null,
 		[CallerLineNumber] int line = -1)
 		=> new(_ => state, context ?? SourceContext.Current, autoEnable, feedExpression ?? $"{memberName}@{line}");
+
+	public static ValueTask WaitForMessages<T>(this IFeedRecorder<T> recorder, int count)
+		=> recorder.WaitForMessages(count, FeedRecorder.DefaultTimeout, SourceContext.Current.Token);
+
+	public static ValueTask WaitForMessages<T>(this IFeedRecorder<T> recorder, int count, int timeout)
+		=> recorder.WaitForMessages(count, timeout, SourceContext.Current.Token);
+
+	public static ValueTask WaitForMessages<T>(this IFeedRecorder<T> recorder, int count, CancellationToken ct)
+		=> recorder.WaitForMessages(count, FeedRecorder.DefaultTimeout, ct);
+
+	public static ValueTask WaitForEnd<T>(this IFeedRecorder<T> recorder)
+		=> recorder.WaitForEnd(FeedRecorder.DefaultTimeout, SourceContext.Current.Token);
+
+	public static ValueTask WaitForEnd<T>(this IFeedRecorder<T> recorder, int timeout)
+		=> recorder.WaitForEnd(timeout, SourceContext.Current.Token);
+
+	public static ValueTask WaitForEnd<T>(this IFeedRecorder<T> recorder, CancellationToken ct)
+		=> recorder.WaitForEnd(FeedRecorder.DefaultTimeout, ct);
 }
 
 public static class F<T>

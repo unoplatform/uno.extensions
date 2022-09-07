@@ -11,5 +11,5 @@ internal record ListFeedToFeedAdapter<T>(IListFeed<T> Source) : IFeed<IImmutable
 {
 	/// <inheritdoc />
 	public IAsyncEnumerable<Message<IImmutableList<T>>> GetSource(SourceContext context, CancellationToken ct = default)
-		=> Source.GetSource(context, ct);
+		=> context.GetOrCreateSource(Source);
 }

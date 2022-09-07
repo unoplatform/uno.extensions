@@ -12,5 +12,7 @@ public interface IFeedRecorder<T> : IReadOnlyList<Message<T>>, IReadOnlyCollecti
 
 	string Name { get; }
 
-	ValueTask WaitForMessages(int count, CancellationToken ct, int timeout = 1000);
+	ValueTask WaitForMessages(int count, int timeout, CancellationToken ct);
+
+	ValueTask WaitForEnd(int timeout, CancellationToken ct);
 }
