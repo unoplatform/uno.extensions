@@ -51,7 +51,10 @@ public static class ServiceCollectionExtensions
 						(EncryptedApplicationDataKeyValueStorage.Name, true))
 #else
 					new KeyValueStorageIndex(
-						ApplicationDataKeyValueStorage.Name,
+						// For WASM and other platforms where we don't currently have
+						// a secure storage option, we default to InMemory to avoid
+						// security concerns with saving plain text
+						InMemoryKeyValueStorage.Name,
 						(InMemoryKeyValueStorage.Name, false),
 						(ApplicationDataKeyValueStorage.Name, false))
 #endif
@@ -80,7 +83,10 @@ public static class ServiceCollectionExtensions
 						(PasswordVaultKeyValueStorage.Name, true))
 #else
 					new KeyValueStorageIndex(
-						ApplicationDataKeyValueStorage.Name,
+						// For WASM and other platforms where we don't currently have
+						// a secure storage option, we default to InMemory to avoid
+						// security concerns with saving plain text
+						InMemoryKeyValueStorage.Name,
 						(InMemoryKeyValueStorage.Name, false),
 						(ApplicationDataKeyValueStorage.Name, false))
 #endif
