@@ -24,7 +24,7 @@ internal partial record CommandFromMethod
 		public override string ToString()
 		{
 			var sb = new IndentedStringBuilder();
-			using (sb.BlockInvariant(@$"new {NS.Reactive}.CommandConfig"))
+			using (sb.BlockInvariant(@$"new {NS.Commands}.CommandConfig"))
 			{
 				if (ExternalParameter is not null)
 				{
@@ -78,7 +78,7 @@ internal partial record CommandFromMethod
 					if (ParameterType is not null)
 					{
 						sb.AppendLine(
-							$@"var reactive_arguments = ({ParameterType}) reactive_commandParameter;
+							$@"var reactive_arguments = ({ParameterType}) reactive_commandParameter!;
 
 							{DeconstructParameters!("reactive_arguments", "reactive_ct").Align(7)}
 

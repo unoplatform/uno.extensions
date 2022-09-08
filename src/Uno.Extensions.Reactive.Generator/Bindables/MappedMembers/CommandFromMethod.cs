@@ -9,7 +9,7 @@ using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using Microsoft.CodeAnalysis;
-using Uno.Extensions.Reactive.UI.Config;
+using Uno.Extensions.Reactive.Config;
 
 namespace Uno.Extensions.Reactive.Generator;
 
@@ -98,8 +98,18 @@ internal partial record CommandFromMethod : IMappedMember
 			// Some parameters are externally injected by the VM using Feeds
 
 			var sourceFeed = feedParameters is { Length: 1 }
-				? $"{N.Ctor.Model}.{feedParameters[0].FeedProperty!.Name}"
-				: $"Feed.Combine({feedParameters.Select(p => $"{N.Ctor.Model}.{p.FeedProperty!.Name}").JoinBy(", ")})";
+				? GetFeed(feedParameters[0])
+				: $"{NS.Reactive}.Feed.Combine(\r\n\t{feedParameters.Select(GetFeed).JoinBy(",\r\n").Align(1)})";
+
+			string GetFeed(CommandParameter parameter)
+			{
+				var feed = $"{N.Ctor.Model}.{parameter.FeedProperty!.Name}";
+				if (parameter.IsListFeedParameter)
+				{
+					feed = $"{NS.Reactive}.ListFeed.AsFeed({feed})";
+				}
+				return feed;
+			}
 
 			if (viewParameter is not null)
 			{
@@ -107,9 +117,10 @@ internal partial record CommandFromMethod : IMappedMember
 				configs.Add(new CommandConfigGenerator(this)
 				{
 					ExternalParameter = $"ctx => ctx.GetOrCreateSource({sourceFeed})",
-					ParametersCoercer = $"{NS.Reactive}.CommandParametersCoercingStrategy.UseBoth((viewParameter, feedParameter) => (viewParameter, feedParameter))",
+					ParametersCoercer = $"{NS.Commands}.CommandParametersCoercingStrategy.UseBoth((viewParameter, feedParameter) => (viewParameter is {viewParameter.Symbol.Type} vp ? vp : default, feedParameter is {GetTypeOrTuple(feedParameters)} fp ? fp : default))",
 					ParameterType = $"global::System.ValueTuple<{viewParameter.Symbol.Type}, {GetTypeOrTuple(feedParameters)}>",
 					DeconstructParameters = (args, ct) => GetDeconstruct($"{args}.Item2", ct, viewArg: $"{args}.Item1"),
+					CanExecute = CheckForNulls(new[] { viewParameter }) is { } check ? args => check($"{args}.Item1") : null,
 				});
 			}
 			else
@@ -120,8 +131,9 @@ internal partial record CommandFromMethod : IMappedMember
 
 				configs.Add(new CommandConfigGenerator(this)
 				{
+					// Note: We don't CheckForNull with external parameters only, they are validated by the SubCommand
 					ExternalParameter = $"ctx => ctx.GetOrCreateSource({sourceFeed})",
-					ParametersCoercer = $"{NS.Reactive}.CommandParametersCoercingStrategy.AllowOnlyExternalParameter",
+					ParametersCoercer = $"{NS.Commands}.CommandParametersCoercingStrategy.AllowOnlyExternalParameter",
 					ParameterType = GetTypeOrTuple(feedParameters),
 					DeconstructParameters = (args, ct) => GetDeconstruct(args, ct),
 				});
@@ -130,6 +142,7 @@ internal partial record CommandFromMethod : IMappedMember
 				{
 					ParameterType = GetTypeOrTuple(parameters.Where(p => !p.IsCancellation)),
 					DeconstructParameters = (args, ct) => GetDeconstruct(args, ct),
+					CanExecute = CheckForNulls(parameters.Where(p => !p.IsCancellation))
 				});
 			}
 		}
@@ -141,6 +154,7 @@ internal partial record CommandFromMethod : IMappedMember
 			{
 				ParameterType = GetTypeOrTuple(parameters.Where(p => !p.IsCancellation)),
 				DeconstructParameters = (args, ct) => GetDeconstruct(args, ct),
+				CanExecute = CheckForNulls(parameters.Where(p => !p.IsCancellation))
 			});
 		}
 
@@ -148,6 +162,29 @@ internal partial record CommandFromMethod : IMappedMember
 			=> parameters.Count() is 1
 				? parameters.First().Symbol.Type.ToString()
 				: $"global::System.ValueTuple<{parameters.Select(p => p.Symbol.Type.ToString()).JoinBy(", ")}>";
+
+		Func<string, string>? CheckForNulls(IEnumerable<CommandParameter> parameters)
+		{
+			if (parameters.Count() is 1)
+			{
+				if (parameters.First().Symbol.NullableAnnotation is NullableAnnotation.NotAnnotated)
+				{
+					return args => $"{args} is not null";
+				}
+			}
+			else
+			{
+				if (parameters.Any(p => p.Symbol.NullableAnnotation is NullableAnnotation.NotAnnotated))
+				{
+					return args => parameters
+						.Select((p, i) => p.Symbol.NullableAnnotation is NullableAnnotation.NotAnnotated ? $"{args}.Item{i} is not null" : null)
+						.Where(s => s is not null)
+						.JoinBy(" && ");
+				}
+			}
+
+			return null;
+		}
 
 		string GetDeconstruct(string args, string ct, string? viewArg = null)
 		{
@@ -177,9 +214,9 @@ internal partial record CommandFromMethod : IMappedMember
 			return result.ToString();
 		};
 
-		return @$"{Name} = new {NS.Reactive}.AsyncCommand(
+		return @$"{Name} = new {NS.Commands}.AsyncCommand(
 					nameof({Name}),
-					new {NS.Reactive}.CommandConfig[]
+					new {NS.Commands}.CommandConfig[]
 					{{
 						{configs.Select(config => config.ToString()).JoinBy(",\r\n").Align(6)}
 					}},
@@ -212,7 +249,7 @@ internal partial record CommandFromMethod : IMappedMember
 					{
 						ctx.Context.ReportDiagnostic(Rules.FEED2001.GetDiagnostic(type, method, parameter));
 					}
-					else if (!ctx.IsFeed(property.Type))
+					else if (!ctx.IsFeed(property.Type) && !ctx.IsListFeed(property.Type))
 					{
 						ctx.Context.ReportDiagnostic(Rules.FEED2002.GetDiagnostic(type, method, parameter));
 					}
@@ -223,6 +260,13 @@ internal partial record CommandFromMethod : IMappedMember
 					&& SymbolEqualityComparer.Default.Equals(parameter.Type, valueType))
 				{
 					return new CommandParameter(parameter, property);
+				}
+
+				if (property is not null
+					&& ctx.IsListFeed(property.Type, out var itemType)
+					&& SymbolEqualityComparer.Default.Equals(parameter.Type, ctx.ImmutableList.Construct(itemType)))
+				{
+					return new CommandParameter(parameter, property) { IsListFeedParameter = true };
 				}
 			}
 

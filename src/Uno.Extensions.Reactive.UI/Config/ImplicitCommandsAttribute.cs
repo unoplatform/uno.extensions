@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Input;
-using Uno.Extensions.Reactive.UI.Presentation.Commands;
+using Uno.Extensions.Reactive.Commands;
 
-namespace Uno.Extensions.Reactive.UI.Config;
+namespace Uno.Extensions.Reactive.Config;
 
 /// <summary>
 /// Indicates if public methods should be automatically exposed to bindings as <see cref="ICommand"/>.

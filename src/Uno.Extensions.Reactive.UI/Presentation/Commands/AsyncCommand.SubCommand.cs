@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Uno.Extensions.Reactive.Core;
 
-namespace Uno.Extensions.Reactive;
+namespace Uno.Extensions.Reactive.Commands;
 
 partial class AsyncCommand
 {
@@ -94,40 +94,36 @@ partial class AsyncCommand
 				&& !_command.IsExecutingFor(parameter)
 				&& (_config.CanExecute?.Invoke(parameter) ?? true);
 
-		public bool TryExecute(object? parameter, SourceContext context, CancellationToken ct)
+		public bool TryExecute(object? viewParameter, SourceContext context, CancellationToken ct)
 		{
-			if (!TryCoerceParameter(ref parameter)
-				|| !(_config.CanExecute?.Invoke(parameter) ?? true))
+			var coercedParameter = viewParameter;
+			if (!TryCoerceParameter(ref coercedParameter)
+				|| !(_config.CanExecute?.Invoke(coercedParameter) ?? true))
 			{
 				return false;
 			}
 
-			_command.ReportExecutionStarting(parameter);
+			var executionId = Guid.NewGuid();
+			_command.ReportExecutionStarting(executionId, coercedParameter, viewParameter);
 
 			Task.Run(
 					async () =>
 					{
-						try
-						{
-							using var _ = context.AsCurrent();
-							await _config.Execute(parameter, _command._ct.Token);
-						}
-						catch (Exception error)
-						{
-							_command.ReportError(error, when: $"executing command with '{parameter ?? "-null-"}'");
-						}
+						using var _ = context.AsCurrent();
+						await _config.Execute(coercedParameter, _command._ct.Token);
 					},
 					_command._ct.Token)
-				.ContinueWith((_, state) =>
+				.ContinueWith((task, state) =>
+				{
+					try
 					{
-						try
-						{
-							var (command, arg) = ((AsyncCommand, object?))state!;
-							command.ReportExecutionEnded(arg);
-						}
-						catch (Exception) { } // Almost impossible, but an error here would crash the app
-					},
-					(_command, parameter),
+						var (command, id, coercedArg, viewArg) = ((AsyncCommand, Guid, object?, object?))state!;
+
+						command.ReportExecutionEnded(id, coercedArg, viewArg, task.Exception);
+					}
+					catch (Exception) { } // Almost impossible, but an error here would crash the app
+				},
+					(_command, executionId, coercedParameter, viewParameter),
 					TaskContinuationOptions.AttachedToParent | TaskContinuationOptions.ExecuteSynchronously);
 
 			return true;
