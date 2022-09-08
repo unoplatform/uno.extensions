@@ -7,7 +7,7 @@ namespace Uno.Extensions.Reactive.Testing;
 
 public class RecorderValidator<T> : Constraint<IFeedRecorder<T>>
 {
-	public readonly MessageValidator<T>[] Messages;
+	public MessageValidator<T>[] Messages { get; }
 
 	public RecorderValidator(MessageValidator<T>[] messages)
 	{
