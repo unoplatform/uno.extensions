@@ -8,7 +8,10 @@ internal class DispatcherHelper
 {
 	public delegate DispatcherQueue? FindDispatcher();
 
-	public static DispatcherQueue GetDispatcher(DispatcherQueue? given = null)
+	public static DispatcherQueue GetDispatcher()
+		=> GetDispatcher(null);
+
+	public static DispatcherQueue GetDispatcher(DispatcherQueue? given)
 		=> given
 			?? GetForCurrentThread()
 #if !WINUI

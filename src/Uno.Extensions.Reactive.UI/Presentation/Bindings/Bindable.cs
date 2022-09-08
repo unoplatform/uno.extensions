@@ -24,8 +24,28 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged, IFeed<T>
 
 	private readonly BindablePropertyInfo<T> _property;
 	private readonly bool _hasValueProperty;
+	private readonly bool _isInherited;
 
 	internal bool CanWrite => _property.CanWrite;
+
+	/// <summary>
+	/// Creates a new instance.
+	/// </summary>
+	/// <param name="property">Info of the property that is backed by this instance.</param>
+	/// <exception cref="ArgumentException">If the property is invalid</exception>
+	public Bindable(BindablePropertyInfo<T> property)
+	{
+		if (!property.IsValid)
+		{
+			throw new ArgumentException("Property IsInvalid, it must be created from a BindableViewModel or a Bindable", nameof(property));
+		}
+
+		_property = property;
+		_hasValueProperty = false;
+		_isInherited = false;
+
+		property.Subscribe(OnOwnerUpdated);
+	}
 
 	/// <summary>
 	/// Creates a new instance.
@@ -36,7 +56,7 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged, IFeed<T>
 	/// Is so, the <see cref="PropertyChanged"/> will be raise accordingly.
 	/// </param>
 	/// <exception cref="ArgumentException">If the property is invalid</exception>
-	public Bindable(BindablePropertyInfo<T> property, bool hasValueProperty = false)
+	protected Bindable(BindablePropertyInfo<T> property, bool hasValueProperty)
 	{
 		if (!property.IsValid)
 		{
@@ -45,6 +65,11 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged, IFeed<T>
 
 		_property = property;
 		_hasValueProperty = hasValueProperty;
+		// This is a hacky way to detect that the concrete type is a subclass,
+		// but it's compliant with the generated code which should be the only one which creates derives type of this.
+		// A more valid approach would be to do _isInherited = hasValueProperty || GetType() != typeof(Bindable<T>) but would involve reflection.
+		// See usage of this flag to understand consequences (and why it's acceptable to not have that flag set is miss-used).
+		_isInherited = true;
 
 		property.Subscribe(OnOwnerUpdated);
 	}
@@ -127,6 +152,15 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged, IFeed<T>
 	private void OnOwnerUpdated(T value)
 	{
 		SetValueCore(value);
+
+		// Usually it's the responsibility of the parent object to raise a property change with the right name,
+		// however when we use generated `BindableMyEntity : Bindable<MyEntity>`,
+		// we keep the same instance of `BindableMyEntity` so bindings are not re-evaluated.
+		// In that case we will also raise a 'PropertyChanged("")' in order to force the binding engine to re-evaluate all properties.
+		if (_isInherited)
+		{
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(""));
+		}
 	}
 
 	private async void UpdateOwner(T value)

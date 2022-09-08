@@ -678,7 +678,7 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 		public async ValueTask Async2() { }
 		public async ValueTask AsyncWithParameter2(string myParameter) { }
 
-		[Commands.Command]
+		[Reactive.Commands.Command]
 		public void WithExplicitAttribute() { }
 	}
 
@@ -716,8 +716,8 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 		public async Task AsyncWithParameter(string myParameter) { }
 		public async ValueTask AsyncWithParameter2(string myParameter) { }
 
-		public void WithExplicitAttribute([Commands.FeedParameter] string myParameter) { }
-		public void WithExplicitAttributeWithName([Commands.FeedParameter(nameof(MyParameter))] string anArgument) { }
+		public void WithExplicitAttribute([Reactive.Commands.FeedParameter] string myParameter) { }
+		public void WithExplicitAttributeWithName([Reactive.Commands.FeedParameter(nameof(MyParameter))] string anArgument) { }
 	}
 
 	[TestMethod]

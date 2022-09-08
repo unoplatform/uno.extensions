@@ -18,7 +18,7 @@ internal sealed class DispatcherLocal<T>
 	private readonly bool _allowBackgroundValue;
 	private readonly bool _allowCreationFromAnotherThread;
 	private readonly Func<DispatcherQueue?, T> _factory;
-	private readonly Func<DispatcherQueue?> _schedulersProvider;
+	private readonly DispatcherHelper.FindDispatcher _schedulersProvider;
 
 	private _Value? _backgroundValue;
 	private _Value? _mainUiValue; // As usually apps have only 1 UI thread, we try to avoid dictionary lookup if unnecessary.
@@ -28,19 +28,19 @@ internal sealed class DispatcherLocal<T>
 	/// Creates a new instance of a dispatcher local value
 	/// </summary>
 	/// <param name="factory">The optional factory use to create the value for all threads</param>
-	/// <param name="schedulersProvider">The scheduler provider to use to determine the current thread. If none set, fallback to the default <see cref="DispatcherQueue.GetForCurrentThread"/>.</param>
+	/// <param name="schedulersProvider">The scheduler provider to use to determine the current thread. If none set, fallback to the default <see cref="DispatcherHelper.GetForCurrentThread"/>.</param>
 	/// <param name="allowBackgroundValue">Indicates if a <typeparamref name="T"/> can be created for background threads</param>
 	/// <param name="allowCreationFromAnotherThread">
 	/// Determines if when using the <see cref="GetValue"/> or <see cref="TryGetValue"/> a value can be create for the given scheduler even if it's not the current
 	/// </param>
 	public DispatcherLocal(
 		Func<T> factory,
-		Func<DispatcherQueue?>? schedulersProvider = null,
+		DispatcherHelper.FindDispatcher? schedulersProvider = null,
 		bool allowBackgroundValue = true,
 		bool allowCreationFromAnotherThread = false)
 	{
 		_factory = _ => factory();
-		_schedulersProvider = schedulersProvider ?? DispatcherQueue.GetForCurrentThread;
+		_schedulersProvider = schedulersProvider ?? DispatcherHelper.GetDispatcher;
 		_allowBackgroundValue = allowBackgroundValue;
 		_allowCreationFromAnotherThread = allowCreationFromAnotherThread;
 	}
@@ -49,19 +49,19 @@ internal sealed class DispatcherLocal<T>
 	/// Creates a new instance of a dispatcher local value
 	/// </summary>
 	/// <param name="factory">The optional factory use to create the value for all threads</param>
-	/// <param name="schedulersProvider">The scheduler provider to use to determine the current thread. If none set, fallback to the default <see cref="DispatcherQueue.GetForCurrentThread"/>.</param>
+	/// <param name="schedulersProvider">The scheduler provider to use to determine the current thread. If none set, fallback to the default <see cref="DispatcherHelper.GetForCurrentThread"/>.</param>
 	/// <param name="allowBackgroundValue">Indicates if a <typeparamref name="T"/> can be created for background threads</param>
 	/// <param name="allowCreationFromAnotherThread">
 	/// Determines if when using the <see cref="GetValue"/> or <see cref="TryGetValue"/> a value can be create for the given scheduler even if it's not the current
 	/// </param>
 	public DispatcherLocal(
 		Func<DispatcherQueue?, T> factory,
-		Func<DispatcherQueue?>? schedulersProvider = null,
+		DispatcherHelper.FindDispatcher? schedulersProvider = null,
 		bool allowBackgroundValue = true,
 		bool allowCreationFromAnotherThread = false)
 	{
 		_factory = factory;
-		_schedulersProvider = schedulersProvider ?? DispatcherQueue.GetForCurrentThread;
+		_schedulersProvider = schedulersProvider ?? DispatcherHelper.GetForCurrentThread;
 		_allowBackgroundValue = allowBackgroundValue;
 		_allowCreationFromAnotherThread = allowCreationFromAnotherThread;
 	}
