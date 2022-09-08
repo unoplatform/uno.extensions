@@ -13,12 +13,7 @@ using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets;
 using Uno.Extensions.Reactive.Bindings.Collections.Services;
 using Uno.Extensions.Reactive.Dispatching;
 using Uno.Extensions.Reactive.Utils;
-
-#if WINUI
-using ISchedulersProvider = System.Func<Microsoft.UI.Dispatching.DispatcherQueue?>;
-#else
-using ISchedulersProvider = System.Func<Windows.System.DispatcherQueue?>;
-#endif
+using ISchedulersProvider = Uno.Extensions.Reactive.Dispatching.DispatcherHelper.FindDispatcher;
 
 namespace Uno.Extensions.Reactive.Bindings.Collections
 {

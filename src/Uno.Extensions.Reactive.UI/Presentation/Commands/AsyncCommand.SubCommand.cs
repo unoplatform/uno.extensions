@@ -118,8 +118,14 @@ partial class AsyncCommand
 					try
 					{
 						var (command, id, coercedArg, viewArg) = ((AsyncCommand, Guid, object?, object?))state!;
+						var error = task.Exception switch
+						{
+							null or { InnerExceptions.Count: 0 } => null,
+							{ InnerExceptions.Count: 1 } aggregated => aggregated.InnerExceptions[0],
+							{ } aggregated => aggregated,
+						};
 
-						command.ReportExecutionEnded(id, coercedArg, viewArg, task.Exception);
+						command.ReportExecutionEnded(id, coercedArg, viewArg, error);
 					}
 					catch (Exception) { } // Almost impossible, but an error here would crash the app
 				},

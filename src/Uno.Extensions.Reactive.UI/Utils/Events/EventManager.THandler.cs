@@ -19,7 +19,7 @@ internal class EventManager<THandler, TArgs>
 		Func<THandler, Action<object, TArgs>> raiseMethod,
 		bool isCoalescable = false,
 		bool isBgThreadAllowed = true,
-		Func<DispatcherQueue?>? schedulersProvider = null)
+		DispatcherHelper.FindDispatcher? schedulersProvider = null)
 	{
 		_owner = owner;
 		_raiseMethod = raiseMethod;
