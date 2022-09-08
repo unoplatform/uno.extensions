@@ -1,0 +1,33 @@
+<Project ToolsVersion="15.0">
+	<PropertyGroup>
+		<AssemblyName>Uno.Extensions.Storage.UI</AssemblyName>
+		<GenerateLibraryLayout>true</GenerateLibraryLayout>
+
+		<!--Temporary disable missing XML doc until fixed in the whole package-->
+		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
+	</PropertyGroup>
+
+
+	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Storage\Uno.Extensions.Storage.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(_IsUWP)' == 'true'">
+		<PackageReference Include="Microsoft.UI.Xaml" Version="2.7.1" />
+		<PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Uno.Core" Version="4.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Page Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
+		<Compile Update="**\*.xaml.cs">
+			<DependentUpon>%(Filename)</DependentUpon>
+		</Compile>
+		<UpToDateCheckInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
+	</ItemGroup>
+</Project>

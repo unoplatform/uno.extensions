@@ -5,7 +5,7 @@ public class Given_MessageDialog : NavigationTestBase
 	[Test]
 	public async Task When_MessageDialogFromXAML()
 	{
-		InitTestSection(TestSections.Dialogs);
+		InitTestSection(TestSections.Navigation_Dialogs);
 
 		App.WaitThenTap("MessageDialogsButton");
 		

@@ -5,7 +5,7 @@ public class Given_TabBar : NavigationTestBase
 	[Test]
 	public async Task When_TabBar()
 	{
-		InitTestSection(TestSections.TabBar);
+		InitTestSection(TestSections.Navigation_TabBar);
 
 
 		// Load the TabBar home page

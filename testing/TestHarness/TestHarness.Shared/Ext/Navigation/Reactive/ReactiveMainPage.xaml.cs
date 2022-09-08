@@ -1,6 +1,6 @@
 ﻿namespace TestHarness.Ext.Navigation.Reactive;
 
-[TestSectionRoot("Reactive ",TestSections.Reactive, typeof(ReactiveHostInit))]
+[TestSectionRoot("Reactive ",TestSections.Navigation_Reactive, typeof(ReactiveHostInit))]
 public sealed partial class ReactiveMainPage : BaseTestSectionPage
 {
 	public ReactiveMainPage()

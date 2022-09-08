@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Uno.Threading;
+using Uno.Extensions.Threading;
 
 namespace Uno.Extensions.Reactive.Bindings.Collections.Services;
 

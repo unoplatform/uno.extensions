@@ -2,14 +2,14 @@
 
 public enum TestSections
 {
-	PageNavigation,
-	PageNavigationRegistered,
-	Dialogs,
-	Responsive,
-	ListToDetails,
-	NavigationView,
-	TabBar,
-	Reactive,
+	Navigation_PageNavigation,
+	Navigation_PageNavigationRegistered,
+	Navigation_Dialogs,
+	Navigation_Responsive,
+	Navigation_ListToDetails,
+	Navigation_NavigationView,
+	Navigation_TabBar,
+	Navigation_Reactive,
 	Apps_Commerce,
 	Apps_Commerce_ShellControl,
 	Apps_ToDo,
@@ -21,5 +21,6 @@ public enum TestSections
 	Authentication_Msal_Settings,
 	Authentication_Multi,
 	Authentication_Oidc,
-	Authentication_Web
+	Authentication_Web,
+	Core_Storage
 }

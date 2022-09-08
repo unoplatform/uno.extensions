@@ -5,7 +5,7 @@ public class Given_PageNavigation : NavigationTestBase
 	[Test]
 	public void When_PageNavigationXAML()
 	{
-		InitTestSection(TestSections.PageNavigation);
+		InitTestSection(TestSections.Navigation_PageNavigation);
 
 		App.WaitThenTap("ShowOnePageButton");
 
@@ -30,7 +30,7 @@ public class Given_PageNavigation : NavigationTestBase
 	[Test]
 	public void When_PageNavigationCodebehind()
 	{
-		InitTestSection(TestSections.PageNavigation);
+		InitTestSection(TestSections.Navigation_PageNavigation);
 
 		App.WaitThenTap("ShowOnePageButton");
 
@@ -55,7 +55,7 @@ public class Given_PageNavigation : NavigationTestBase
 	[Ignore("Failing CI - runs ok locally")]
 	public void When_PageNavigationViewModel()
 	{
-		InitTestSection(TestSections.PageNavigation);
+		InitTestSection(TestSections.Navigation_PageNavigation);
 
 		App.WaitThenTap("ShowOnePageButton");
 
@@ -83,7 +83,7 @@ public class Given_PageNavigation : NavigationTestBase
 	{
 		// Note: There's no DependsOns on, so navigating to pages six, seven, eight .... should just be normal page navigations
 
-		InitTestSection(TestSections.PageNavigation);
+		InitTestSection(TestSections.Navigation_PageNavigation);
 
 		App.WaitThenTap("ShowOnePageButton");
 
@@ -125,7 +125,7 @@ public class Given_PageNavigation : NavigationTestBase
 	[Test]
 	public void When_PageNavigationRegisteredRoot()
 	{
-		InitTestSection(TestSections.PageNavigation);
+		InitTestSection(TestSections.Navigation_PageNavigation);
 
 		App.WaitThenTap("ShowOnePageButton");
 

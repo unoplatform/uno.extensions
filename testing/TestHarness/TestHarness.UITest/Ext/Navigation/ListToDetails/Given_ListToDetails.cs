@@ -5,7 +5,7 @@ public class Given_ListToDetails : NavigationTestBase
 	[Test]
 	public async Task When_ListToDetails()
 	{
-		InitTestSection(TestSections.ListToDetails);
+		InitTestSection(TestSections.Navigation_ListToDetails);
 
 		App.WaitThenTap("ShowListToDetailsHomeButton");
 

@@ -5,7 +5,7 @@ public class Given_Reactive : NavigationTestBase
 	[Test]
 	public void When_ReactiveXAML()
 	{
-		InitTestSection(TestSections.Reactive);
+		InitTestSection(TestSections.Navigation_Reactive);
 
 		App.WaitThenTap("ShowOnePageButton");
 
@@ -30,7 +30,7 @@ public class Given_Reactive : NavigationTestBase
 	[Test]
 	public void When_ReactiveCodebehind()
 	{
-		InitTestSection(TestSections.Reactive);
+		InitTestSection(TestSections.Navigation_Reactive);
 
 		App.WaitThenTap("ShowOnePageButton");
 
@@ -55,7 +55,7 @@ public class Given_Reactive : NavigationTestBase
 	//[Ignore("Failing CI - Runs ok locally")]
 	public void When_ReactiveViewModel()
 	{
-		InitTestSection(TestSections.Reactive);
+		InitTestSection(TestSections.Navigation_Reactive);
 
 		App.WaitThenTap("ShowOnePageButton");
 

@@ -5,7 +5,7 @@ public class Given_PageNavigationRegistered : NavigationTestBase
 	[Test]
 	public void When_PageNavigationRegisteredXAML()
 	{
-		InitTestSection(TestSections.PageNavigationRegistered);
+		InitTestSection(TestSections.Navigation_PageNavigationRegistered);
 
 		App.WaitThenTap("ShowOnePageButton");
 
@@ -30,7 +30,7 @@ public class Given_PageNavigationRegistered : NavigationTestBase
 	[Test]
 	public void When_PageNavigationRegisteredCodebehind()
 	{
-		InitTestSection(TestSections.PageNavigationRegistered);
+		InitTestSection(TestSections.Navigation_PageNavigationRegistered);
 
 		App.WaitThenTap("ShowOnePageButton");
 
@@ -55,7 +55,7 @@ public class Given_PageNavigationRegistered : NavigationTestBase
 	[Ignore("Failing CI - runs ok locally")]
 	public void When_PageNavigationRegisteredViewModel()
 	{
-		InitTestSection(TestSections.PageNavigationRegistered);
+		InitTestSection(TestSections.Navigation_PageNavigationRegistered);
 
 		App.WaitThenTap("ShowOnePageButton");
 
@@ -80,7 +80,7 @@ public class Given_PageNavigationRegistered : NavigationTestBase
 	[Test]
 	public void When_PageNavigationRegisteredDependsn()
 	{
-		InitTestSection(TestSections.PageNavigationRegistered);
+		InitTestSection(TestSections.Navigation_PageNavigationRegistered);
 
 		App.WaitThenTap("ShowOnePageButton");
 
@@ -134,7 +134,7 @@ public class Given_PageNavigationRegistered : NavigationTestBase
 	[Test]
 	public void When_PageNavigationRegisteredRoot()
 	{
-		InitTestSection(TestSections.PageNavigationRegistered);
+		InitTestSection(TestSections.Navigation_PageNavigationRegistered);
 
 		App.WaitThenTap("ShowOnePageButton");
 

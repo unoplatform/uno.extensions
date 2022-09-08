@@ -1,12 +1,11 @@
 #if WINUI
 	global using Window = Microsoft.UI.Xaml.Window;
 	global using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
-using System.Diagnostics;
 #else
 	global using Window = Windows.UI.Xaml.Window;
 	global using LaunchActivatedEventArgs = Windows.ApplicationModel.Activation.LaunchActivatedEventArgs;
 #endif
-
+using System.Diagnostics;
 
 namespace TestHarness;
 
@@ -22,7 +21,7 @@ public sealed partial class App : Application
 
 	protected override void OnLaunched(LaunchActivatedEventArgs args)
 	{
-#if DEBUG
+#if DEBUG && !__WASM__
 		// This seems 
 		if (!Debugger.IsAttached)
 		{
@@ -65,6 +64,4 @@ public sealed partial class App : Application
 
 
 	}
-
-
 }

@@ -1,6 +1,6 @@
 ﻿namespace TestHarness.Ext.Navigation.ListToDetails;
 
-[TestSectionRoot("ListToDetails Navigation",TestSections.ListToDetails, typeof(ListToDetailsHostInit))]
+[TestSectionRoot("ListToDetails Navigation",TestSections.Navigation_ListToDetails, typeof(ListToDetailsHostInit))]
 public sealed partial class ListToDetailsMainPage : BaseTestSectionPage
 {
 	public ListToDetailsMainPage()

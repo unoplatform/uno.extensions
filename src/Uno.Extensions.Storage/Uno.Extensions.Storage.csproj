@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+	<PropertyGroup>
+		<Description>Storage Extensions for Uno Platform, UWP and WinUI</Description>
+
+		<TargetFramework>netstandard2.0</TargetFramework>
+		
+		<!--Temporary disable missing XML doc until fixed in the whole package-->
+		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
+	</PropertyGroup>
+	<ItemGroup>
+	  <Compile Remove="KeyValueStorage\ApplicationDataKeyedStorage.cs" />
+	</ItemGroup>
+
+
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+	</ItemGroup>
+
+	
+	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="$(AssemblyName).UI" />
+		<InternalsVisibleTo Include="$(AssemblyName).WinUI" />
+		<InternalsVisibleTo Include="Uno.Extensions.Authentication" />
+	</ItemGroup>
+
+</Project>

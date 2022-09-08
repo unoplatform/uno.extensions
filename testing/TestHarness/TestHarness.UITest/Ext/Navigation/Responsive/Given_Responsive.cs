@@ -5,7 +5,7 @@ public class Given_Responsive : NavigationTestBase
 	[Test]
 	public async Task When_Navigation_Responsive()
 	{
-		InitTestSection(TestSections.Responsive);
+		InitTestSection(TestSections.Navigation_Responsive);
 
 		App.WaitThenTap("ShowResponsiveHomeButton");
 

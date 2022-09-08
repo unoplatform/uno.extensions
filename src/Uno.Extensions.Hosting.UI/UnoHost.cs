@@ -23,7 +23,6 @@ public static class UnoHost
 				{
 					services.AddSingleton(addressBarHost);
 				}
-				services.AddSingleton<IStorage, Storage>();
 			})
 #if __WASM__
 				.ConfigureHostConfiguration(config =>
@@ -46,6 +45,7 @@ public static class UnoHost
 					}
 				})
 #endif
-			.ConfigureServices((ctx, services) => services.Configure<HostConfiguration>(ctx.Configuration.GetSection(nameof(HostConfiguration))));
+			.ConfigureServices((ctx, services) => services.Configure<HostConfiguration>(ctx.Configuration.GetSection(nameof(HostConfiguration))))
+			.UseStorage();
 	}
 }

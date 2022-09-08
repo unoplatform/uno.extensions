@@ -6,5 +6,4 @@ global using System.Text.Json;
 global using System.Text.Json.Serialization.Metadata;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Hosting;
-global using Uno.Extensions.Storage;
 global using Uno.Extensions.Serialization;

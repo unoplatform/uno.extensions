@@ -1,6 +1,6 @@
 ﻿namespace TestHarness.Ext.Navigation.NavigationView;
 
-[TestSectionRoot("NavigationView",TestSections.NavigationView, typeof(NavigationViewHostInit))]
+[TestSectionRoot("NavigationView",TestSections.Navigation_NavigationView, typeof(NavigationViewHostInit))]
 public sealed partial class NavigationViewMainPage : BaseTestSectionPage
 {
 	public NavigationViewMainPage()

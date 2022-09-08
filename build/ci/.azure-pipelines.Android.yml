@@ -2,13 +2,11 @@ jobs:
 - job: Android
 
   pool:
-    vmImage: macOS-10.15
+    vmImage: macos-latest
 
   variables:
-    - name: NUGET_PACKAGES
-      value: $(build.sourcesdirectory)/.nuget
-    - name: VS_MSBUILD
-      value: '/Applications/Visual Studio.app/Contents/Resources/lib/monodevelop/bin/MSBuild/Current/bin/msbuild.dll'
+    NUGET_PACKAGES: $(Agent.WorkFolder)/.nuget
+    VS_MSBUILD: '/Applications/Visual Studio.app/Contents/MonoBundle/MSBuild/Current/bin/MSBuild.dll'
 
   workspace:
     clean: all
