@@ -33,19 +33,19 @@ public static class ServiceCollectionExtensions
 #if WINUI
 #if __ANDROID__
 					new KeyValueStorageIndex(
-						KeyStoreSettingsStorage.Name,
+						MostSecure: KeyStoreSettingsStorage.Name,
 						(InMemoryKeyValueStorage.Name, false),
 						(ApplicationDataKeyValueStorage.Name, false),
 						(KeyStoreSettingsStorage.Name, true))
 #elif __IOS__
 					new KeyValueStorageIndex(
-						KeyChainSettingsStorage.Name,
+						MostSecure: KeyChainSettingsStorage.Name,
 						(InMemoryKeyValueStorage.Name, false),
 						(ApplicationDataKeyValueStorage.Name, false),
 						(KeyChainSettingsStorage.Name, true))
 #elif WINDOWS
 					new KeyValueStorageIndex(
-						EncryptedApplicationDataKeyValueStorage.Name,
+						MostSecure: EncryptedApplicationDataKeyValueStorage.Name,
 						(InMemoryKeyValueStorage.Name, false),
 						(ApplicationDataKeyValueStorage.Name, false),
 						(EncryptedApplicationDataKeyValueStorage.Name, true))
@@ -54,7 +54,7 @@ public static class ServiceCollectionExtensions
 						// For WASM and other platforms where we don't currently have
 						// a secure storage option, we default to InMemory to avoid
 						// security concerns with saving plain text
-						InMemoryKeyValueStorage.Name,
+						MostSecure: InMemoryKeyValueStorage.Name,
 						(InMemoryKeyValueStorage.Name, false),
 						(ApplicationDataKeyValueStorage.Name, false))
 #endif
@@ -62,21 +62,21 @@ public static class ServiceCollectionExtensions
 #else
 #if __ANDROID__
 					new KeyValueStorageIndex(
-						PasswordVaultKeyValueStorage.Name,
+						MostSecure: PasswordVaultKeyValueStorage.Name,
 						(InMemoryKeyValueStorage.Name, false),
 						(ApplicationDataKeyValueStorage.Name, false),
 						(KeyStoreSettingsStorage.Name, true),
 						(PasswordVaultKeyValueStorage.Name, true))
 #elif __IOS__
 					new KeyValueStorageIndex(
-						PasswordVaultKeyValueStorage.Name,
+						MostSecure: PasswordVaultKeyValueStorage.Name,
 						(InMemoryKeyValueStorage.Name, false),
 						(ApplicationDataKeyValueStorage.Name, false),
 						(KeyChainSettingsStorage.Name, true),
 						(PasswordVaultKeyValueStorage.Name, true))
 #elif WINDOWS_UWP
 					new KeyValueStorageIndex(
-						PasswordVaultKeyValueStorage.Name,
+						MostSecure: PasswordVaultKeyValueStorage.Name,
 						(InMemoryKeyValueStorage.Name, false),
 						(ApplicationDataKeyValueStorage.Name, false),
 						(EncryptedApplicationDataKeyValueStorage.Name, true),
@@ -86,7 +86,7 @@ public static class ServiceCollectionExtensions
 						// For WASM and other platforms where we don't currently have
 						// a secure storage option, we default to InMemory to avoid
 						// security concerns with saving plain text
-						InMemoryKeyValueStorage.Name,
+						MostSecure: InMemoryKeyValueStorage.Name,
 						(InMemoryKeyValueStorage.Name, false),
 						(ApplicationDataKeyValueStorage.Name, false))
 #endif

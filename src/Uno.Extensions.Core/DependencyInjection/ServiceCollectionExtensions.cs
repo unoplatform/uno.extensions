@@ -7,7 +7,7 @@ public static class ServiceCollectionExtensions
 	public static IServiceCollection AddNamedSingleton<TService, TImplementation>(this IServiceCollection services, string Name)
 		where TService : class where TImplementation : class, TService
 	{
-		// Register the concrete type (the NamedTypeResolver will use this
+		// Register the concrete type (the NamedInstance will use this
 		// rather than iterating through all the registered implementations
 		// of TService
 		services.TryAddSingleton<TImplementation>();
@@ -15,18 +15,23 @@ public static class ServiceCollectionExtensions
 		services.TryAddSingleton<TService>(sp => sp.GetService<TImplementation>());
 		return services
 				// Register the named resolve
-				.AddSingleton<INamedResolver<TService>>(new NamedTypeResolver<TService,TImplementation>(Name));
+				.AddSingleton<INamedInstance<TService>>(sp=>new NamedInstance<TService,TImplementation>(sp,Name));
+	}
+
+	private static INamedInstance<TService> FindNamedInstance<TService>(this IServiceProvider sp, string Name)
+	{
+		return sp.GetServices<INamedInstance<TService>>().First(x => x.Name == Name);
 	}
 
 	public static TService? GetNamedService<TService>(this IServiceProvider sp, string Name)
 	{
-		var resolver = sp.GetServices<INamedResolver<TService>>().FirstOrDefault(x=>x.Name==Name);
-		return resolver.Resolve(sp);
+		var resolver = sp.FindNamedInstance<TService>(Name);
+		return resolver.Get();
 	}
 
-	public static TService GetNamedRequiredService<TService>(this IServiceProvider sp, string Name)
+	public static TService GetRequiredNamedService<TService>(this IServiceProvider sp, string Name)
 	{
-		var resolver = sp.GetServices<INamedResolver<TService>>().FirstOrDefault(x => x.Name == Name);
-		return resolver.ResolveRequired(sp);
+		var resolver = sp.FindNamedInstance<TService>(Name);
+		return resolver.GetRequired();
 	}
 }

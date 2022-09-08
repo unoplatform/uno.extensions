@@ -86,7 +86,7 @@ public static class HostBuilderExtensions
 					.AddSingleton(
 							sp=>new KeyValueStorageSelector<TokenCache>(
 										sp,
-										sp.GetRequiredService<KeyValueStorageIndex>().MostSecureAvailableStorage))
+										sp.GetRequiredService<KeyValueStorageIndex>().MostSecure))
 					.AddSingleton<ITokenCache, TokenCache>()
 					.AddSingleton<IAuthenticationService, AuthenticationService>();
 			})

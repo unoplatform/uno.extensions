@@ -39,7 +39,7 @@ public partial class CustomAuthenticationHomeTestBackendViewModel : ObservableOb
 	{
 		var creds = await Tokens.GetAsync(CancellationToken.None);
 		creds.Remove(TokenCacheExtensions.AccessTokenKey);
-		await Tokens.SaveAsync(await Tokens.CurrentProviderAsync(CancellationToken.None) ?? string.Empty, creds, CancellationToken.None);
+		await Tokens.SaveAsync(await Tokens.GetCurrentProviderAsync(CancellationToken.None) ?? string.Empty, creds, CancellationToken.None);
 	}
 
 	public async void ClearAllTokens()
@@ -47,7 +47,7 @@ public partial class CustomAuthenticationHomeTestBackendViewModel : ObservableOb
 		var creds = await Tokens.GetAsync(CancellationToken.None);
 		creds.Remove(TokenCacheExtensions.AccessTokenKey);
 		creds.Remove(TokenCacheExtensions.RefreshTokenKey);
-		await Tokens.SaveAsync(await Tokens.CurrentProviderAsync(CancellationToken.None) ?? string.Empty, creds, CancellationToken.None);
+		await Tokens.SaveAsync(await Tokens.GetCurrentProviderAsync(CancellationToken.None) ?? string.Empty, creds, CancellationToken.None);
 	}
 
 	public async void InvalidateTokens()
@@ -55,7 +55,7 @@ public partial class CustomAuthenticationHomeTestBackendViewModel : ObservableOb
 		var creds = await Tokens.GetAsync(CancellationToken.None);
 		creds[TokenCacheExtensions.AccessTokenKey]= $"Some invalid access token {DateTime.Now.Ticks}";
 		creds[TokenCacheExtensions.RefreshTokenKey] = $"Some invalid refresh token {DateTime.Now.Ticks}"; 
-		await Tokens.SaveAsync(await Tokens.CurrentProviderAsync(CancellationToken.None) ?? string.Empty, creds, CancellationToken.None);
+		await Tokens.SaveAsync(await Tokens.GetCurrentProviderAsync(CancellationToken.None) ?? string.Empty, creds, CancellationToken.None);
 	}
 	
 

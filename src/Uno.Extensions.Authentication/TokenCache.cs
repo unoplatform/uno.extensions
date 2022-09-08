@@ -16,12 +16,12 @@ public record TokenCache : ITokenCache
 
 	public event EventHandler? Cleared;
 
-	public async ValueTask<string?> CurrentProviderAsync(CancellationToken ct)
+	public async ValueTask<string?> GetCurrentProviderAsync(CancellationToken ct)
 	{
 		await tokenLock.WaitAsync();
 		try
 		{
-			return await _secureCache.GetStringAsync(nameof(CurrentProviderAsync), ct);
+			return await _secureCache.GetStringAsync(nameof(GetCurrentProviderAsync), ct);
 		}
 		finally
 		{
@@ -53,9 +53,9 @@ public record TokenCache : ITokenCache
 		try
 		{
 			var all  = await _secureCache.GetAllValuesAsync(cancellation);
-			if (all.ContainsKey(nameof(CurrentProviderAsync)))
+			if (all.ContainsKey(nameof(GetCurrentProviderAsync)))
 			{
-				all.Remove(nameof(CurrentProviderAsync));
+				all.Remove(nameof(GetCurrentProviderAsync));
 			}
 			return all;
 		}
@@ -71,20 +71,10 @@ public record TokenCache : ITokenCache
 		try
 		{
 			var keys = await _secureCache.GetKeysAsync(cancellation);
-			keys = keys.Where(x => x != nameof(CurrentProviderAsync)).ToArray();
+			keys = keys.Where(x => x != nameof(GetCurrentProviderAsync)).ToArray();
 			if (_logger.IsEnabled(LogLevel.Trace))
 			{
-				_logger.LogTraceMessage($"{keys.Length} keys in cache");
-				foreach (var key in keys)
-				{
-					if(key is null)
-					{
-						continue;
-					}
-					var value = await _secureCache.GetAsync<string>(key, cancellation);
-					_logger.LogTraceMessage($">{key}{value}");
-				}
-
+				await LogKeyValues(keys, cancellation);
 			}
 			return keys.Any();
 		}
@@ -94,6 +84,28 @@ public record TokenCache : ITokenCache
 		}
 	}
 
+	private async Task LogKeyValues(string[] keys, CancellationToken cancellation)
+	{
+		_logger.LogTraceMessage($"{keys.Length} keys in cache");
+		foreach (var key in keys)
+		{
+			if (key is null)
+			{
+				continue;
+			}
+			try
+			{
+				var value = await _secureCache.GetAsync<string>(key, cancellation);
+				_logger.LogTraceMessage($">{key}{value}");
+			}
+			catch
+			{
+				_logger.LogTraceMessage($">Unable to log {key} (it may not be a string value)");
+			}
+		}
+
+	}
+
 	public async ValueTask SaveAsync(string provider, IDictionary<string, string>? tokens, CancellationToken cancellation)
 	{
 		await tokenLock.WaitAsync();
@@ -101,7 +113,7 @@ public record TokenCache : ITokenCache
 		{
 			if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Save tokens ({tokens?.Count ?? 0}) for provider '{provider}' - start");
 			await _secureCache.ClearAllAsync(cancellation);
-			await _secureCache.SetAsync(nameof(CurrentProviderAsync), provider, cancellation);
+			await _secureCache.SetAsync(nameof(GetCurrentProviderAsync), provider, cancellation);
 			if (tokens is not null)
 			{
 				foreach (var tk in tokens)

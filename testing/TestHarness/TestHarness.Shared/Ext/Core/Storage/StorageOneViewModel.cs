@@ -9,17 +9,17 @@ public partial class StorageOneViewModel : ObservableObject
 {
 	private readonly INavigator _navigator;
 	private readonly IServiceProvider _services;
-	private readonly IEnumerable<INamedResolver<IKeyValueStorage>> _storage;
-	public IEnumerable<INamedResolver<IKeyValueStorage>> Storage => _storage;
+	private readonly IEnumerable<INamedInstance<IKeyValueStorage>> _storage;
+	public IEnumerable<INamedInstance<IKeyValueStorage>> Storage => _storage;
 
-	public StorageOneViewModel(INavigator navigator, IServiceProvider services, IEnumerable<INamedResolver<IKeyValueStorage>> storage)
+	public StorageOneViewModel(INavigator navigator, IServiceProvider services, IEnumerable<INamedInstance<IKeyValueStorage>> storage)
 	{
 		_navigator = navigator;
 		_services = services;
 		_storage = storage;
 	}
 
-	private INamedResolver<IKeyValueStorage>? _selected;
+	private INamedInstance<IKeyValueStorage>? _selected;
 
 	[ObservableProperty]
 	private string key;
@@ -35,13 +35,13 @@ public partial class StorageOneViewModel : ObservableObject
 
 	private IKeyValueStorage? _selectedStorage;
 
-	public INamedResolver<IKeyValueStorage>? Selected
+	public INamedInstance<IKeyValueStorage>? Selected
 	{
 		get => _selected;
 		set
 		{
 			_selected = value;
-			_selectedStorage = _selected?.Resolve(_services);
+			_selectedStorage = _selected?.Get();
 			_ = LoadAll();
 		}
 	}

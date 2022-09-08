@@ -99,7 +99,7 @@ internal class AuthenticationService : IAuthenticationService
 		if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Retrieving authentication provider '{provider}'");
 		if (provider is null)
 		{
-			provider = await _tokens.CurrentProviderAsync(cancellation);
+			provider = await _tokens.GetCurrentProviderAsync(cancellation);
 			if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"No provider specified, so retrieving current provider from token cache '{provider}'");
 		}
 
