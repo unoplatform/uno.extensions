@@ -1,29 +1,68 @@
-﻿
-
-namespace Uno.Extensions.Authentication.Web;
+﻿namespace Uno.Extensions.Authentication.Web;
 
 internal record WebAuthenticationProvider
 (
 	ILogger<WebAuthenticationProvider> ProviderLogger,
+	Microsoft.Extensions.Options.IOptions<WebConfiguration> Configuration,
 	IServiceProvider Services,
 	ITokenCache Tokens
 ) : BaseAuthenticationProvider(ProviderLogger, DefaultName, Tokens)
 {
+	private const string OAuthRedirectUriParameter = "redirect_uri";
+
 	public WebAuthenticationSettings? Settings { get; init; }
 
 	public const string DefaultName = "Web";
 
+	private WebAuthenticationSettings? _internalSettings;
+	private WebAuthenticationSettings InternalSettings
+	{
+		get
+		{
+			if (_internalSettings is null)
+			{
+				_internalSettings = Settings ?? new WebAuthenticationSettings();
+				var config = Configuration.Value;
+				if (config is not null)
+				{
+					_internalSettings = _internalSettings with
+					{
+						PrefersEphemeralWebBrowserSession = _internalSettings.PrefersEphemeralWebBrowserSession || config.PrefersEphemeralWebBrowserSession,
+						LoginStartUri = !string.IsNullOrWhiteSpace(config.LoginStartUri) ? config.LoginStartUri : _internalSettings.LoginStartUri,
+						LoginCallbackUri = !string.IsNullOrWhiteSpace(config.LoginCallbackUri) ? config.LoginCallbackUri : _internalSettings.LoginCallbackUri,
+						AccessTokenKey = config.AccessTokenKey is not null && !string.IsNullOrWhiteSpace(config.AccessTokenKey) ? config.AccessTokenKey : _internalSettings.AccessTokenKey,
+						RefreshTokenKey = config.RefreshTokenKey is not null && !string.IsNullOrWhiteSpace(config.RefreshTokenKey) ? config.RefreshTokenKey : _internalSettings.RefreshTokenKey,
+						IdTokenKey = config.IdTokenKey is not null && !string.IsNullOrWhiteSpace(config.IdTokenKey) ? config.IdTokenKey : _internalSettings.IdTokenKey,
+						OtherTokenKeys = config.OtherTokenKeys is not null ? config.OtherTokenKeys : _internalSettings.OtherTokenKeys,
+						LogoutStartUri = !string.IsNullOrWhiteSpace(config.LogoutStartUri) ? config.LogoutStartUri : _internalSettings.LogoutStartUri,
+						LogoutCallbackUri = !string.IsNullOrWhiteSpace(config.LogoutCallbackUri) ? config.LogoutCallbackUri : _internalSettings.LogoutCallbackUri,
+					};
+				}
+			}
+			return _internalSettings;
+		}
+	}
+
 	protected async override ValueTask<IDictionary<string, string>?> InternalLoginAsync(IDispatcher? dispatcher, IDictionary<string, string>? credentials, CancellationToken cancellationToken)
 	{
-		var loginStartUri = Settings?.LoginStartUri;
+		var loginStartUri = InternalSettings.LoginStartUri;
 		loginStartUri = await PrepareLoginStartUri(credentials, loginStartUri, cancellationToken);
 
-		if (string.IsNullOrWhiteSpace(loginStartUri))
+		if (loginStartUri is null ||
+			string.IsNullOrWhiteSpace(loginStartUri))
 		{
 			return default;
 		}
 
-		var loginCallbackUri = Settings?.LoginCallbackUri;
+		var loginCallbackUri = InternalSettings.LoginCallbackUri;
+
+		if (string.IsNullOrWhiteSpace(loginCallbackUri) &&
+			loginStartUri.Contains(OAuthRedirectUriParameter))
+		{
+			var args = AuthHttpUtility.ExtractArguments(loginStartUri);
+			loginCallbackUri = args[OAuthRedirectUriParameter];
+		}
+
 
 		loginCallbackUri = await PrepareLoginCallbackUri(credentials, loginCallbackUri, cancellationToken);
 
@@ -31,6 +70,10 @@ internal record WebAuthenticationProvider
 		{
 			return default;
 		}
+
+#if __IOS__
+		WinRTFeatureConfiguration.WebAuthenticationBroker.PrefersEphemeralWebBrowserSession = InternalSettings.PrefersEphemeralWebBrowserSession;
+#endif
 
 #if WINDOWS
 		var userResult = await WinUIEx.WebAuthenticator.AuthenticateAsync(new Uri(loginStartUri), new Uri(loginCallbackUri));
@@ -41,7 +84,7 @@ internal record WebAuthenticationProvider
 
 #endif
 		var query = authData.StartsWith(loginCallbackUri) ?
-			AuthHttpUtility.ExtractArguments(authData): // authData is a fully qualified url, so need to extract query or fragment
+			AuthHttpUtility.ExtractArguments(authData) : // authData is a fully qualified url, so need to extract query or fragment
 			AuthHttpUtility.ParseQueryString(authData.TrimStart('#').TrimStart('?')); // authData isn't full url, so just process as query or fragment
 
 
@@ -51,27 +94,27 @@ internal record WebAuthenticationProvider
 			return tokens;
 		}
 
-		var accessToken = query.Get(Settings?.AccessTokenKey ?? TokenCacheExtensions.AccessTokenKey);
+		var accessToken = query.Get(InternalSettings.AccessTokenKey ?? TokenCacheExtensions.AccessTokenKey);
 		if (!string.IsNullOrWhiteSpace(accessToken))
 		{
 			tokens[TokenCacheExtensions.AccessTokenKey] = accessToken;
 		}
-		var refreshToken = query.Get(Settings?.RefreshTokenKey ?? TokenCacheExtensions.RefreshTokenKey);
+		var refreshToken = query.Get(InternalSettings.RefreshTokenKey ?? TokenCacheExtensions.RefreshTokenKey);
 		if (!string.IsNullOrWhiteSpace(refreshToken))
 		{
 			tokens[TokenCacheExtensions.RefreshTokenKey] = refreshToken;
 		}
-		if (Settings?.IdTokenKey is not null)
+		if (InternalSettings.IdTokenKey is not null)
 		{
-			var idToken = query.Get(Settings.IdTokenKey);
+			var idToken = query.Get(InternalSettings.IdTokenKey);
 			if (!string.IsNullOrWhiteSpace(idToken))
 			{
-				tokens[Settings.IdTokenKey] = idToken;
+				tokens[InternalSettings.IdTokenKey] = idToken;
 			}
 		}
-		if (Settings?.OtherTokenKeys is not null)
+		if (InternalSettings.OtherTokenKeys is not null)
 		{
-			foreach (var key in Settings.OtherTokenKeys)
+			foreach (var key in InternalSettings.OtherTokenKeys)
 			{
 				var token = query.Get(key.Key);
 				if (!string.IsNullOrWhiteSpace(token))
@@ -86,27 +129,27 @@ internal record WebAuthenticationProvider
 
 	protected async virtual Task<string?> PrepareLoginStartUri(IDictionary<string, string>? credentials, string? loginStartUri, CancellationToken cancellationToken)
 	{
-		if (Settings?.PrepareLoginStartUri is not null)
+		if (InternalSettings.PrepareLoginStartUri is not null)
 		{
-			return await Settings.PrepareLoginStartUri(Services, Tokens, credentials, loginStartUri, cancellationToken);
+			return await InternalSettings.PrepareLoginStartUri(Services, Tokens, credentials, loginStartUri, cancellationToken);
 		}
 		return loginStartUri;
 	}
 
 	protected async virtual Task<string?> PrepareLoginCallbackUri(IDictionary<string, string>? credentials, string? loginCallbackUri, CancellationToken cancellationToken)
 	{
-		if (Settings?.PrepareLoginCallbackUri is not null)
+		if (InternalSettings.PrepareLoginCallbackUri is not null)
 		{
-			return await Settings.PrepareLoginCallbackUri(Services, Tokens, credentials, loginCallbackUri, cancellationToken);
+			return await InternalSettings.PrepareLoginCallbackUri(Services, Tokens, credentials, loginCallbackUri, cancellationToken);
 		}
 		return loginCallbackUri;
 	}
 
 	protected async virtual ValueTask<IDictionary<string, string>?> PostLogin(IDictionary<string, string>? credentials, IDictionary<string, string> tokens, CancellationToken cancellationToken)
 	{
-		if (Settings?.PostLoginCallback is not null)
+		if (InternalSettings.PostLoginCallback is not null)
 		{
-			return await Settings.PostLoginCallback(Services, Tokens, credentials, tokens, cancellationToken);
+			return await InternalSettings.PostLoginCallback(Services, Tokens, credentials, tokens, cancellationToken);
 		}
 		return tokens;
 	}
@@ -114,30 +157,47 @@ internal record WebAuthenticationProvider
 
 	protected async override ValueTask<IDictionary<string, string>?> InternalRefreshAsync(CancellationToken cancellationToken)
 	{
-		if (Settings?.RefreshCallback is not null)
+		if (InternalSettings.RefreshCallback is not null)
 		{
-			return await Settings.RefreshCallback(Services, Tokens, await Tokens.GetAsync(cancellationToken), cancellationToken);
+			return await InternalSettings.RefreshCallback(Services, Tokens, await Tokens.GetAsync(cancellationToken), cancellationToken);
 		}
 		return await base.InternalRefreshAsync(cancellationToken);
 	}
 
 	protected async override ValueTask<bool> InternalLogoutAsync(IDispatcher? dispatcher, CancellationToken cancellationToken)
 	{
-		var logoutStartUri = Settings?.LogoutStartUri;
-		if (Settings?.PrepareLogoutStartUri is not null)
+		var logoutStartUri = InternalSettings.LogoutStartUri;
+		if (InternalSettings.PrepareLogoutStartUri is not null)
 		{
-			logoutStartUri = await Settings.PrepareLogoutStartUri(Services, Tokens, await Tokens.GetAsync(cancellationToken), logoutStartUri, cancellationToken);
+			logoutStartUri = await InternalSettings.PrepareLogoutStartUri(Services, Tokens, await Tokens.GetAsync(cancellationToken), logoutStartUri, cancellationToken);
 		}
 
-		if (string.IsNullOrWhiteSpace(logoutStartUri))
+		if (logoutStartUri is null ||
+			string.IsNullOrWhiteSpace(logoutStartUri))
 		{
 			return true;
 		}
 
-		var logoutCallbackUri = Settings?.LogoutCallbackUri ?? Settings?.LoginCallbackUri;
-		if (Settings?.PrepareLogoutCallbackUri is not null)
+		var logoutCallbackUri = InternalSettings.LogoutCallbackUri ?? InternalSettings.LoginCallbackUri;
+
+		if (string.IsNullOrWhiteSpace(logoutCallbackUri) &&
+			logoutStartUri.Contains(OAuthRedirectUriParameter))
 		{
-			logoutCallbackUri = await Settings.PrepareLogoutCallbackUri(Services, Tokens, await Tokens.GetAsync(cancellationToken), logoutCallbackUri, cancellationToken);
+			var args = AuthHttpUtility.ExtractArguments(logoutStartUri);
+			logoutCallbackUri = args[OAuthRedirectUriParameter];
+		}
+
+		if (string.IsNullOrWhiteSpace(logoutCallbackUri) &&
+			InternalSettings.LoginStartUri is { } loginStartUri &&
+			loginStartUri.Contains(OAuthRedirectUriParameter))
+		{
+			var args = AuthHttpUtility.ExtractArguments(loginStartUri);
+			logoutCallbackUri = args[OAuthRedirectUriParameter];
+		}
+
+		if (InternalSettings.PrepareLogoutCallbackUri is not null)
+		{
+			logoutCallbackUri = await InternalSettings.PrepareLogoutCallbackUri(Services, Tokens, await Tokens.GetAsync(cancellationToken), logoutCallbackUri, cancellationToken);
 		}
 
 		if (string.IsNullOrWhiteSpace(logoutCallbackUri))
@@ -162,9 +222,10 @@ internal record WebAuthenticationProvider
 internal record WebAuthenticationProvider<TService>
 (
 	ILogger<WebAuthenticationProvider<TService>> ServiceLogger,
+	Microsoft.Extensions.Options.IOptions<WebConfiguration> Configuration,
 	IServiceProvider Services,
 	ITokenCache Tokens
-) : WebAuthenticationProvider(ServiceLogger, Services, Tokens)
+) : WebAuthenticationProvider(ServiceLogger, Configuration, Services, Tokens)
 	where TService : notnull
 {
 	public WebAuthenticationSettings<TService>? TypedSettings

@@ -14,6 +14,7 @@ global using Microsoft.Extensions.Logging;
 global using Uno.Extensions;
 global using Uno.Extensions.Authentication;
 global using Uno.Extensions.Authentication.Web;
+global using Uno.Extensions.Configuration;
 global using Uno.Extensions.Hosting;
 global using Uno.Extensions.Navigation;
 global using Windows.Security.Authentication.Web;

@@ -2,6 +2,14 @@
 
 public static class WebAuthenticationBuilderExtensions
 {
+	public static TWebAuthenticationBuilder PrefersEphemeralWebBrowserSession<TWebAuthenticationBuilder>(
+	this TWebAuthenticationBuilder builder,
+	bool preferEphemeral)
+	where TWebAuthenticationBuilder : IWebAuthenticationBuilder
+	=>
+		builder.Property((WebAuthenticationSettings s)
+			=> s with { PrefersEphemeralWebBrowserSession = preferEphemeral });
+
 	public static TWebAuthenticationBuilder LoginStartUri<TWebAuthenticationBuilder>(
 		this TWebAuthenticationBuilder builder,
 		string uri)

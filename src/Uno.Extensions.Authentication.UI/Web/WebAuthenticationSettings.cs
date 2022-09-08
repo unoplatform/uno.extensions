@@ -2,6 +2,7 @@
 
 internal record WebAuthenticationSettings
 {
+	public bool PrefersEphemeralWebBrowserSession { get; init; }
 	public string? LoginStartUri { get; init; }
 
 	public AsyncFunc<IServiceProvider, ITokenCache, IDictionary<string, string>?, string?, string>? PrepareLoginStartUri { get; init; }

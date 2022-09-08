@@ -31,7 +31,12 @@ internal record MsalAuthenticationProvider(
 		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Invoking settings Build callback");
 		Settings?.Build?.Invoke(builder);
 
-		_scopes = Settings?.Scopes ?? new string[] { };
+		_scopes = config.Scopes ?? new string[] { };
+		if(_scopes.Length == 0 &&
+			Settings?.Scopes is not null)
+		{
+			_scopes = Settings.Scopes;
+		}
 
 		if (PlatformHelper.IsWebAssembly)
 		{
