@@ -194,7 +194,7 @@ public static class WebAuthenticationBuilderExtensions
 		builder.Property((WebAuthenticationSettings s)
 			=> s with
 			{
-				PostLoginCallback = (services, cache, credentials, tokens, cancellationToken) =>
+				PostLoginCallback = (services, cache, credentials, redirectUri, tokens, cancellationToken) =>
 								postLogin(tokens, cancellationToken)
 			});
 
@@ -207,7 +207,7 @@ public static class WebAuthenticationBuilderExtensions
 			builder.Property((WebAuthenticationSettings s)
 				=> s with
 				{
-					PostLoginCallback = (services, cache, credentials, tokens, cancellationToken) =>
+					PostLoginCallback = (services, cache, credentials, redirectUri, tokens, cancellationToken) =>
 									postLogin(services, cache, credentials, tokens, cancellationToken)
 				});
 
@@ -219,14 +219,14 @@ AsyncFunc<TService, IDictionary<string, string>, IDictionary<string, string>?> p
 			builder.Property((WebAuthenticationSettings<TService> s)
 		=> s with
 		{
-			PostLoginCallback = (service, services, cache, credentials, tokens, cancellationToken) =>
+			PostLoginCallback = (service, services, cache, credentials, redirectUri, tokens, cancellationToken) =>
 							postLogin(service, tokens, cancellationToken)
 		});
 
 
 	public static IWebAuthenticationBuilder<TService> PostLogin<TService>(
 		this IWebAuthenticationBuilder<TService> builder,
-		AsyncFunc<TService, IServiceProvider, ITokenCache, IDictionary<string, string>?, IDictionary<string, string>, IDictionary<string, string>?> postLogin)
+		AsyncFunc<TService, IServiceProvider, ITokenCache, IDictionary<string, string>?, string, IDictionary<string, string>, IDictionary<string, string>?> postLogin)
 			where TService : notnull =>
 				builder.Property((WebAuthenticationSettings<TService> s)
 					=> s with { PostLoginCallback = postLogin });
@@ -385,14 +385,6 @@ AsyncFunc<TService, string> prepare)
 
 			builder.Property((WebAuthenticationSettings s)
 				=> s with { RefreshTokenKey = key });
-
-	public static TWebAuthenticationBuilder OtherTokenKeys<TWebAuthenticationBuilder>(
-		this TWebAuthenticationBuilder builder,
-		IDictionary<string, string> keys)
-		  		where TWebAuthenticationBuilder : IWebAuthenticationBuilder =>
-
-			builder.Property((WebAuthenticationSettings s)
-				=> s with { OtherTokenKeys = keys });
 
 	private static TBuilder Property<TBuilder, TSettings>(
 		this TBuilder builder,

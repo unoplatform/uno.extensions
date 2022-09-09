@@ -32,8 +32,6 @@ internal record WebAuthenticationProvider
 						LoginCallbackUri = !string.IsNullOrWhiteSpace(config.LoginCallbackUri) ? config.LoginCallbackUri : _internalSettings.LoginCallbackUri,
 						AccessTokenKey = config.AccessTokenKey is not null && !string.IsNullOrWhiteSpace(config.AccessTokenKey) ? config.AccessTokenKey : _internalSettings.AccessTokenKey,
 						RefreshTokenKey = config.RefreshTokenKey is not null && !string.IsNullOrWhiteSpace(config.RefreshTokenKey) ? config.RefreshTokenKey : _internalSettings.RefreshTokenKey,
-						IdTokenKey = config.IdTokenKey is not null && !string.IsNullOrWhiteSpace(config.IdTokenKey) ? config.IdTokenKey : _internalSettings.IdTokenKey,
-						OtherTokenKeys = config.OtherTokenKeys is not null ? config.OtherTokenKeys : _internalSettings.OtherTokenKeys,
 						LogoutStartUri = !string.IsNullOrWhiteSpace(config.LogoutStartUri) ? config.LogoutStartUri : _internalSettings.LogoutStartUri,
 						LogoutCallbackUri = !string.IsNullOrWhiteSpace(config.LogoutCallbackUri) ? config.LogoutCallbackUri : _internalSettings.LogoutCallbackUri,
 					};
@@ -104,27 +102,8 @@ internal record WebAuthenticationProvider
 		{
 			tokens[TokenCacheExtensions.RefreshTokenKey] = refreshToken;
 		}
-		if (InternalSettings.IdTokenKey is not null)
-		{
-			var idToken = query.Get(InternalSettings.IdTokenKey);
-			if (!string.IsNullOrWhiteSpace(idToken))
-			{
-				tokens[InternalSettings.IdTokenKey] = idToken;
-			}
-		}
-		if (InternalSettings.OtherTokenKeys is not null)
-		{
-			foreach (var key in InternalSettings.OtherTokenKeys)
-			{
-				var token = query.Get(key.Key);
-				if (!string.IsNullOrWhiteSpace(token))
-				{
-					tokens[key.Value] = token;
-				}
-			}
-		}
 
-		return await PostLogin(credentials, tokens, cancellationToken);
+		return await PostLogin(credentials, authData, tokens, cancellationToken);
 	}
 
 	protected async virtual Task<string?> PrepareLoginStartUri(IDictionary<string, string>? credentials, string? loginStartUri, CancellationToken cancellationToken)
@@ -145,11 +124,11 @@ internal record WebAuthenticationProvider
 		return loginCallbackUri;
 	}
 
-	protected async virtual ValueTask<IDictionary<string, string>?> PostLogin(IDictionary<string, string>? credentials, IDictionary<string, string> tokens, CancellationToken cancellationToken)
+	protected async virtual ValueTask<IDictionary<string, string>?> PostLogin(IDictionary<string, string>? credentials, string redirectUri, IDictionary<string, string> tokens, CancellationToken cancellationToken)
 	{
 		if (InternalSettings.PostLoginCallback is not null)
 		{
-			return await InternalSettings.PostLoginCallback(Services, Tokens, credentials, tokens, cancellationToken);
+			return await InternalSettings.PostLoginCallback(Services, Tokens, credentials, redirectUri, tokens, cancellationToken);
 		}
 		return tokens;
 	}
@@ -263,13 +242,13 @@ internal record WebAuthenticationProvider<TService>
 		return await base.InternalRefreshAsync(cancellationToken);
 	}
 
-	protected async override ValueTask<IDictionary<string, string>?> PostLogin(IDictionary<string, string>? credentials, IDictionary<string, string> tokens, CancellationToken cancellationToken)
+	protected async override ValueTask<IDictionary<string, string>?> PostLogin(IDictionary<string, string>? credentials, string redirectUri, IDictionary<string, string> tokens, CancellationToken cancellationToken)
 	{
 		if (TypedSettings?.PostLoginCallback is not null)
 		{
-			return await TypedSettings.PostLoginCallback(Services.GetRequiredService<TService>(), Services, Tokens, credentials, tokens, cancellationToken);
+			return await TypedSettings.PostLoginCallback(Services.GetRequiredService<TService>(), Services, Tokens, credentials, redirectUri, tokens, cancellationToken);
 		}
-		return await base.PostLogin(credentials, tokens, cancellationToken);
+		return await base.PostLogin(credentials, redirectUri, tokens, cancellationToken);
 	}
 
 }
