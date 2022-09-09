@@ -8,6 +8,11 @@ namespace Uno.Extensions.Storage.KeyValueStorage;
 public interface IKeyValueStorage
 {
 	/// <summary>
+	/// Gets a value indicating whether data is encrypted
+	/// </summary>
+	bool IsEncrypted { get; }
+
+	/// <summary>
 	/// Removes any value stored under the provided key.
 	/// </summary>
 	/// <param name="key">The key to clear</param>

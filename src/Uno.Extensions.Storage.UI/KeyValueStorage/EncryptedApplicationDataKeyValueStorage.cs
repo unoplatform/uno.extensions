@@ -14,6 +14,11 @@ internal record EncryptedApplicationDataKeyValueStorage(ILogger<ApplicationDataK
 	private readonly DataProtectionProvider _provider = new DataProtectionProvider(DataProtectionProviderDescriptor);
 
 	private const string DataProtectionProviderDescriptor = "LOCAL=user";
+
+	/// <inheritdoc />
+	public override bool IsEncrypted => false;
+
+
 #nullable disable
 	protected override async Task<T> GetTypedValue<T>(object encryptedData, CancellationToken ct) 
 	{

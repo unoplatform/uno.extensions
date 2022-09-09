@@ -17,6 +17,9 @@ internal record PasswordVaultKeyValueStorage(
 
 	private readonly PasswordVault _passwordVault = new PasswordVault();
 
+	/// <inheritdoc />
+	public bool IsEncrypted => false;
+
 	/// <inheritdoc/>
 	public async ValueTask ClearAsync(string? name, CancellationToken ct)
 	{

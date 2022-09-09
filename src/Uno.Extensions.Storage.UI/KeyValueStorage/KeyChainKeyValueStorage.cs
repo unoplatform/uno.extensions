@@ -26,6 +26,8 @@ public record KeyChainSettingsStorage(ILogger<KeyChainSettingsStorage> Logger, I
 
 	private readonly FastAsyncLock _clearKeychain = new FastAsyncLock();
 
+	/// <inheritdoc />
+	public bool IsEncrypted => true;
 
 	/// <inheritdoc/>
 	public async ValueTask ClearAsync(string? name, CancellationToken ct)

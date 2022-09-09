@@ -52,6 +52,9 @@ internal record KeyStoreSettingsStorage : IKeyValueStorage
 	}
 
 	/// <inheritdoc />
+	public bool IsEncrypted => true;
+
+	/// <inheritdoc />
 	public async ValueTask ClearAsync(string? name, CancellationToken ct)
 	{
 		if (_logger.IsEnabled(LogLevel.Debug))
