@@ -1,6 +1,6 @@
-﻿namespace Uno.Extensions.Storage.KeyValueStorage;
+﻿namespace Uno.Extensions.Authentication;
 
-public record KeyValueStorageSelector<TService>(IServiceProvider Services, string Name)
+internal record TokenStorageProvider(IServiceProvider Services, string Name)
 {
 	public IKeyValueStorage Storage => Services.GetNamedService<IKeyValueStorage>(Name)??throw new KeyNotFoundException($"No KeyValueStorage available for {Name}");
 }
