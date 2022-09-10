@@ -3,6 +3,7 @@
 internal record WebAuthenticationSettings
 {
 	public bool PrefersEphemeralWebBrowserSession { get; init; }
+
 	public string? LoginStartUri { get; init; }
 
 	public AsyncFunc<IServiceProvider, ITokenCache, IDictionary<string, string>?, string?, string>? PrepareLoginStartUri { get; init; }
@@ -13,11 +14,8 @@ internal record WebAuthenticationSettings
 
 	public string AccessTokenKey { get; init; } = "access_token";
 	public string RefreshTokenKey { get; init; } = "refresh_token";
-	public string IdTokenKey { get; init; } = "id_token";
 
-	public IDictionary<string, string>? OtherTokenKeys { get; init; }
-
-	public AsyncFunc<IServiceProvider, ITokenCache, IDictionary<string, string>?, IDictionary<string, string>, IDictionary<string, string>?>? PostLoginCallback { get; init; }
+	public AsyncFunc<IServiceProvider, ITokenCache, IDictionary<string, string>?, string, IDictionary<string, string>, IDictionary<string, string>?>? PostLoginCallback { get; init; }
 
 	public string? LogoutStartUri { get; init; }
 
@@ -37,11 +35,11 @@ internal record WebAuthenticationSettings<TService> : WebAuthenticationSettings
 
 	public new AsyncFunc<TService, IServiceProvider, ITokenCache, IDictionary<string, string>?, string?, string>? PrepareLoginCallbackUri { get; init; }
 
+	public new AsyncFunc<TService, IServiceProvider, ITokenCache, IDictionary<string, string>?, string, IDictionary<string, string>, IDictionary<string, string>?>? PostLoginCallback { get; init; }
+
 	public new AsyncFunc<TService, IServiceProvider, ITokenCache, IDictionary<string, string>?, string?, string>? PrepareLogoutStartUri { get; init; }
 
 	public new AsyncFunc<TService, IServiceProvider, ITokenCache, IDictionary<string, string>?, string?, string>? PrepareLogoutCallbackUri { get; init; }
 
 	public new AsyncFunc<TService, IServiceProvider, ITokenCache, IDictionary<string, string>, IDictionary<string, string>?>? RefreshCallback;
-
-	public new AsyncFunc<TService, IServiceProvider, ITokenCache, IDictionary<string, string>?, IDictionary<string, string>, IDictionary<string, string>?>? PostLoginCallback { get; init; }
 }
