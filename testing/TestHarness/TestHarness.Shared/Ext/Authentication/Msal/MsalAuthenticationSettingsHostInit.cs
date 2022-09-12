@@ -1,6 +1,6 @@
 ﻿namespace TestHarness.Ext.Authentication.MSAL;
 
-public class MsalAuthenticationSettingsHostInit : BaseHostInitialization
+public class MsalAuthenticationSettingsHostInit : BaseMsalHostInitialization
 {
 	protected override string[] ConfigurationFiles => new string[] { "TestHarness.Ext.Authentication.Msal.appsettings.msalauthentication.json",
 																	 "TestHarness.Ext.Authentication.Msal.appsettings.msal.json"};
