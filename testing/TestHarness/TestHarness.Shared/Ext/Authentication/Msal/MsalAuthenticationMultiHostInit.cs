@@ -1,6 +1,4 @@
-﻿using TestHarness.Ext.Authentication.Custom;
-
-namespace TestHarness.Ext.Authentication.MSAL;
+﻿namespace TestHarness.Ext.Authentication.MSAL;
 
 public class MsalAuthenticationMultiHostInit : BaseMsalHostInitialization
 {
