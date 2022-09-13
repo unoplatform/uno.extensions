@@ -53,7 +53,7 @@ public class LocalizationService : IHostedService
 				((CurrentCulture is not null) ?
 				PickSupportedCulture(CurrentCulture) :
 				PickSupportedCulture(CultureInfo.CurrentCulture)) ?? new CultureInfo(DefaultCulture);
-			ApplicationLanguages.PrimaryLanguageOverride = culture.TwoLetterISOLanguageName;
+			ApplicationLanguages.PrimaryLanguageOverride = culture.Name;
 			CultureInfo.DefaultThreadCurrentCulture = culture;
 			CultureInfo.DefaultThreadCurrentUICulture = culture;
 			if (updateThreadCulture &&

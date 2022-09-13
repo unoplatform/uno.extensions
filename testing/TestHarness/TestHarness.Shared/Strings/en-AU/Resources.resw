@@ -121,6 +121,6 @@
     <value>$ext_safeprojectname$</value>
   </data>
   <data name="Localization_Greeting.Text" xml:space="preserve">
-    <value>Hello</value>
+    <value>G'Day Mate</value>
   </data>
 </root>
