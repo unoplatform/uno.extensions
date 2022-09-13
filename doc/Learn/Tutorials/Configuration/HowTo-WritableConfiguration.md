@@ -3,8 +3,10 @@ uid: Learn.Tutorials.Configuration.HowToWritableConfiguration
 ---
 # How-To: Writable Configuration
 
-Description
+This how-to is currently under construction. It will be available soon.
 
-## Step-by-steps
+## Work in progress 🚧
 
-### 1
+### Have questions or feedback?
+
+* Help us shape the documentation for this topic by providing feedback on the Uno.Extensions [repo](https://github.com/unoplatform/uno.extensions/discussions/categories/general)
