@@ -3,14 +3,21 @@ uid: Learn.Tutorials.Navigation.Advanced.Panel
 ---
 # How-To: Use a Panel to Switch Views
 
+> [!WARNING]
+> **Work in progress:** 
+>This page is currently under construction. It will be available soon. 🚧
+>
+> **Have questions or feedback?**
+>You can help shape the documentation for this topic by providing feedback on the Uno.Extensions [repo](https://github.com/unoplatform/uno.extensions/discussions/categories/general)
+
 > [!TIP]
 > This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions` template to create the solution. Instructions for creating an application from the template can be found [here](xref:Overview.Extensions)
 
 ## Step-by-steps
 
-### 1
+### Code example
 
-# Navigating using a Panel
+#### Navigating using a Panel
 
 ```xml
 <Page x:Class="UsingPanelRegion.Views.MainPage"
