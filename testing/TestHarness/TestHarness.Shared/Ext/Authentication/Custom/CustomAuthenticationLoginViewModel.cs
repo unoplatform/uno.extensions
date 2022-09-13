@@ -6,14 +6,21 @@ internal record class CustomAuthenticationLoginViewModel(INavigator Navigator, I
 	public string? Password { get; set; } = DummyJsonEndpointConstants.ValidPassword;
 	public async void Login()
 	{
-		var authenticated = await Authentication.LoginAsync(new Dictionary<string, string>()
+		try
+		{
+			var authenticated = await Authentication.LoginAsync(new Dictionary<string, string>()
 		{
 			{nameof(CustomAuthenticationCredentials.Username),Name??string.Empty },
 			{nameof(CustomAuthenticationCredentials.Password),Password??string.Empty}
 		});
-		if (authenticated)
+			if (authenticated)
+			{
+				await Navigator.NavigateViewModelAsync(this, RouteInfo.HomeViewModel, qualifier: Qualifiers.ClearBackStack);
+			}
+		}
+		catch(Exception ex)
 		{
-			await Navigator.NavigateViewModelAsync(this, RouteInfo.HomeViewModel, qualifier: Qualifiers.ClearBackStack);
+			await Navigator.ShowMessageDialogAsync(this, title: "Invalid Credentials", content: $"The username and password you have entered are incorrect. Please try {DummyJsonEndpointConstants.ValidUserName} and {DummyJsonEndpointConstants.ValidPassword}");
 		}
 	}
 }
