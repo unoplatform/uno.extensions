@@ -331,3 +331,5 @@ ASALocalRun/
 /unofeed
 /src/crosstargeting_override.props
 /testing/**/*.txt
+
+.vscode/**/*.*
