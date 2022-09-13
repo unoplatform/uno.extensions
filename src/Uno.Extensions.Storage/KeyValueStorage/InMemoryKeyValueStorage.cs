@@ -13,6 +13,9 @@ internal record InMemoryKeyValueStorage(ILogger<InMemoryKeyValueStorage> Logger)
 	private readonly Dictionary<string, object> _values = new Dictionary<string, object>();
 
 	/// <inheritdoc />
+	public bool IsEncrypted => false;
+
+	/// <inheritdoc />
 	public async ValueTask ClearAsync(string? name, CancellationToken ct)
 	{
 		if (Logger.IsEnabled(LogLevel.Debug))

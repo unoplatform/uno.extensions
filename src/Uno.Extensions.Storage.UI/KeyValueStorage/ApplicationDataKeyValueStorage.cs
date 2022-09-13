@@ -10,6 +10,9 @@ internal record ApplicationDataKeyValueStorage(ILogger<ApplicationDataKeyValueSt
 	private readonly ApplicationDataContainer _dataContainer = ApplicationData.Current.LocalSettings;
 
 	/// <inheritdoc />
+	public virtual  bool IsEncrypted => false;
+
+	/// <inheritdoc />
 	public async ValueTask ClearAsync(string? name, CancellationToken ct)
 	{
 		if (Logger.IsEnabled(LogLevel.Debug))

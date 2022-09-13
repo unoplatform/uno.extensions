@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions.Authentication;
 
-public record TokenCache : ITokenCache
+internal record TokenCache : ITokenCache
 {
 	private readonly ILogger _logger;
 	private readonly SemaphoreSlim tokenLock = new SemaphoreSlim(1);
@@ -8,10 +8,10 @@ public record TokenCache : ITokenCache
 
 	public TokenCache(
 		ILogger<TokenCache> logger,
-		KeyValueStorageSelector<TokenCache> secureCacheSelector)
+		IKeyValueStorage secureCache)
 	{
 		_logger = logger;
-		_secureCache = secureCacheSelector.Storage;
+		_secureCache = secureCache;
 	}
 
 	public event EventHandler? Cleared;

@@ -83,11 +83,10 @@ public static class HostBuilderExtensions
 			.ConfigureServices(services =>
 			{
 				services
-					.AddSingleton(
-							sp=>new KeyValueStorageSelector<TokenCache>(
-										sp,
-										sp.GetRequiredService<KeyValueStorageIndex>().MostSecure))
-					.AddSingleton<ITokenCache, TokenCache>()
+					.AddSingleton<ITokenCache>(sp =>
+							new TokenCache(
+								sp.GetRequiredService<ILogger<TokenCache>>(),
+								sp.GetRequiredDefaultInstance<IKeyValueStorage>()))
 					.AddSingleton<IAuthenticationService, AuthenticationService>();
 			})
 			.Authorization(configureAuthorization);

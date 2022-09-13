@@ -1,7 +1,4 @@
-﻿using System.IO;
-using System.Threading.Tasks;
-
-namespace Uno.Extensions.Storage;
+﻿namespace Uno.Extensions.Storage;
 
 public interface IStorage
 {
