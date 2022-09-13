@@ -13,3 +13,4 @@ internal record NamedInstance<TService, TImplementation>(IServiceProvider Servic
 		return Services.GetRequiredService<TImplementation>();
 	}
 }
+

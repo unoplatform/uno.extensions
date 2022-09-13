@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection.Extensions;
-
-namespace Uno.Extensions;
+﻿namespace Uno.Extensions;
 
 public static class ServiceCollectionExtensions
 {
+	private const string DefaultInstanceKey = "Default";
+
 	public static IServiceCollection AddNamedSingleton<TService, TImplementation>(this IServiceCollection services, string Name)
 		where TService : class where TImplementation : class, TService
 	{
@@ -17,6 +17,35 @@ public static class ServiceCollectionExtensions
 				// Register the named resolve
 				.AddSingleton<INamedInstance<TService>>(sp=>new NamedInstance<TService,TImplementation>(sp,Name));
 	}
+
+	private static IServiceCollection AddNamedSingletonReference<TService>(this IServiceCollection services, string OriginalName, string Name)
+	{
+		return services
+				// Register the named resolve
+				.AddSingleton<INamedInstance<TService>>(sp => new NamedInstanceReference<TService>(sp, OriginalName, Name));
+	}
+
+	public static IServiceCollection SetDefaultInstance<TService, TImplementation>(this IServiceCollection services)
+		where TService : class where TImplementation : class, TService
+	{
+		return services.AddNamedSingleton<TService, TImplementation>(DefaultInstanceKey);
+	}
+
+	public static IServiceCollection SetDefaultInstance<TService> (this IServiceCollection services, string ExistingInstance)
+	{
+		return services.AddNamedSingletonReference<TService>(ExistingInstance, DefaultInstanceKey);
+	}
+
+	public static TService? GetDefaultInstance<TService>(this IServiceProvider sp)
+	{
+		return GetNamedService<TService>(sp, DefaultInstanceKey);
+	}
+
+	public static TService GetRequiredDefaultInstance<TService>(this IServiceProvider sp)
+	{
+		return GetRequiredNamedService<TService>(sp, DefaultInstanceKey);
+	}
+
 
 	private static INamedInstance<TService> FindNamedInstance<TService>(this IServiceProvider sp, string Name)
 	{

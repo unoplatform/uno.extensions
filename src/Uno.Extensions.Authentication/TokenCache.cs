@@ -8,10 +8,10 @@ internal record TokenCache : ITokenCache
 
 	public TokenCache(
 		ILogger<TokenCache> logger,
-		TokenStorageProvider secureCacheSelector)
+		IKeyValueStorage secureCache)
 	{
 		_logger = logger;
-		_secureCache = secureCacheSelector.Storage;
+		_secureCache = secureCache;
 	}
 
 	public event EventHandler? Cleared;
