@@ -155,8 +155,15 @@ internal abstract class BaseAuthorizationHandler : DelegatingHandler
 	protected virtual async Task<bool> RefreshAuthenticationToken(CancellationToken ct)
 	{
 		if (_logger.IsEnabled(LogLevel.Debug)) _logger.LogDebugMessage($"Requesting refresh for token.");
-
-		return await _authenticationService.RefreshAsync(ct);
+		try
+		{
+			return await _authenticationService.RefreshAsync(ct);
+		}
+		catch(Exception ex)
+		{
+			if (_logger.IsEnabled(LogLevel.Debug)) _logger.LogDebugMessage($"Error refreshing token - {ex.Message}");
+			return false;
+		}
 	}
 
 	/// <summary>

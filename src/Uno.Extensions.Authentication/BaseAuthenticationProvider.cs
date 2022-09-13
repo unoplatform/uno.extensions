@@ -14,7 +14,9 @@ public abstract record BaseAuthenticationProvider(ILogger Logger, string Name, I
 		{
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Error attempting to login [Error - {ex.Message}]");
 			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Login credentials {credentials?.ToString()}");
-			return default;
+
+			// Exception is bubbled so that the caller of IAuthenticationService.LoginAsync can handle it
+			throw;
 		}
 		finally
 		{
@@ -38,7 +40,9 @@ public abstract record BaseAuthenticationProvider(ILogger Logger, string Name, I
 		catch (Exception ex)
 		{
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Error attempting to logout [Error - {ex.Message}]");
-			return false;
+
+			// Exception is bubbled so that the caller of IAuthenticationService.LogoutAsync can handle it
+			throw;
 		}
 		finally
 		{
@@ -64,7 +68,9 @@ public abstract record BaseAuthenticationProvider(ILogger Logger, string Name, I
 		{
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Error attempting to refresh [Error - {ex.Message}]");
 			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Current tokens {tokens}");
-			return default;
+
+			// Exception is bubbled so that the caller of IAuthenticationService.RefreshAsync can handle it
+			throw;
 		}
 		finally
 		{
