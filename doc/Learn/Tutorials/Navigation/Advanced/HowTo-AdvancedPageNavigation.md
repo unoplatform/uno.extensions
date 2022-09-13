@@ -6,7 +6,7 @@ uid: Learn.Tutorials.Navigation.Advanced.PageNavigation
 Sometimes when you navigate you don't want to leave the current page in the back-stack. For example after signing into an application, you might want to navigate to the main page of the application; you don't want to have the login page still in the back-stack for a user to accidentally to go back to.
 
 > [!TIP]
-> This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions` template to create the solution. Instructions for creating an application from the template can be found [here](../Extensions/GettingStarted/UsingUnoExtensions.md)
+> This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions` template to create the solution. Instructions for creating an application from the template can be found [here](xref:Overview.Extensions)
 
 ## Step-by-steps
 
@@ -59,12 +59,12 @@ Another common scenario is to navigate to a page and then remove the current pag
 
 - Update `SecondViewModel` to include the following `GoToSamplePage` method
 
-```csharp
-public async Task GoToSamplePage()
-{
-    await _navigator.NavigateViewModelAsync<SampleViewModel>(this, qualifier: Qualifiers.NavigateBack);
-}
-```
+    ```csharp
+    public async Task GoToSamplePage()
+    {
+        await _navigator.NavigateViewModelAsync<SampleViewModel>(this, qualifier: Qualifiers.NavigateBack);
+    }
+    ```
 
 The use of `Qualifiers.NavigateBack` will result in the `SecondPage` being removed from the back stack, after navigating forward to the `SamplePage`.
 

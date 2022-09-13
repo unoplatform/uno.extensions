@@ -4,7 +4,7 @@ uid: Learn.Tutorials.Navigation.Advanced.NavigationView
 # How-To: Use a NavigationView to Switch Views
 
 > [!TIP]
-> This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions` template to create the solution. Instructions for creating an application from the template can be found [here](../Extensions/GettingStarted/UsingUnoExtensions.md)
+> This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions` template to create the solution. Instructions for creating an application from the template can be found [here](xref:Overview.Extensions)
 
 ## Step-by-steps
 
