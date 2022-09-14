@@ -63,6 +63,56 @@ public partial class Given_Methods_Then_GenerateCommands : FeedUITests
 		vm.InvokeCount.Should().Be(1);
 	}
 
+	public partial class When_OneValueTypeParameter_Void_ViewModel
+	{
+		public int InvokeCount { get; set; }
+
+		public DateTimeOffset? LastInvokeParameter { get; set; }
+
+		public void MyMethod(DateTimeOffset parameter)
+		{
+			LastInvokeParameter = parameter;
+			InvokeCount++;
+		}
+	}
+
+	[TestMethod]
+	public async Task When_OneValueTypeParameter_Void()
+	{
+		var vm = new When_OneValueTypeParameter_Void_ViewModel.BindableWhen_OneValueTypeParameter_Void_ViewModel();
+
+		vm.MyMethod.Execute(new DateTimeOffset(1983, 9, 9, 15, 00, 00, TimeSpan.FromHours(1)));
+		await WaitFor(() => vm.InvokeCount == 1);
+
+		vm.LastInvokeParameter.Should().Be(new DateTimeOffset(1983, 9, 9, 15, 00, 00, TimeSpan.FromHours(1)));
+		vm.InvokeCount.Should().Be(1);
+	}
+
+	public partial class When_OneNullableValueTypeParameter_Void_ViewModel
+	{
+		public int InvokeCount { get; set; }
+
+		public DateTimeOffset? LastInvokeParameter { get; set; }
+
+		public void MyMethod(DateTimeOffset? parameter)
+		{
+			LastInvokeParameter = parameter;
+			InvokeCount++;
+		}
+	}
+
+	[TestMethod]
+	public async Task When_OneNullableValueTypeParameter_Void()
+	{
+		var vm = new When_OneNullableValueTypeParameter_Void_ViewModel.BindableWhen_OneNullableValueTypeParameter_Void_ViewModel();
+
+		vm.MyMethod.Execute(new DateTimeOffset(1983, 9, 9, 15, 00, 00, TimeSpan.FromHours(1)));
+		await WaitFor(() => vm.InvokeCount == 1);
+
+		vm.LastInvokeParameter.Should().Be(new DateTimeOffset(1983, 9, 9, 15, 00, 00, TimeSpan.FromHours(1)));
+		vm.InvokeCount.Should().Be(1);
+	}
+
 	public partial class When_OneParameterAndCT_Void_ViewModel
 	{
 		public int InvokeCount { get; set; }
