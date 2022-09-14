@@ -10,3 +10,7 @@ Two options:
 ## Reference
 
 - [For more information on FluentValidation](https://fluentvalidation.net/).
+
+### Have questions or feedback?
+
+* Help us shape the documentation for this topic by providing feedback on the Uno.Extensions [repo](https://github.com/unoplatform/uno.extensions/discussions/categories/general)

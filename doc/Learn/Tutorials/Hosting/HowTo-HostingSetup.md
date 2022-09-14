@@ -6,7 +6,7 @@ uid: Learn.Tutorials.Hosting.HowToHostingSetup
 `Uno.Extensions.Hosting` can be used to register services that will be accessible throughout the application via dependency injection (DI). This tutorial will walk you through the critical steps needed to leverage hosting in your application.
 
 > [!TIP]
-> If you used the `dotnet new unoapp-extensions` template to create your solution, the steps outlined here are unnecessary. Instructions for creating an application from the template can be found [here](../GettingStarted/UsingUnoExtensions.md)
+> If you used the `dotnet new unoapp-extensions` template to create your solution, the steps outlined here are unnecessary. Instructions for creating an application from the template can be found [here](xref:Overview.Extensions)
 
 ## Step-by-steps
 

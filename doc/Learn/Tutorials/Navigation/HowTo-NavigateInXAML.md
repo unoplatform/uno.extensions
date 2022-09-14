@@ -6,7 +6,7 @@ uid: Learn.Tutorials.Navigation.HowToNavigateInXAML
 This topic walks through controlling Navigation from XAML. This includes specifying data that should be attached to the navigation request.
 
 > [!TIP]
-> This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions` template to create the solution. Instructions for creating an application from the template can be found [here](../Extensions/GettingStarted/UsingUnoExtensions.md)
+> This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions` template to create the solution. Instructions for creating an application from the template can be found [here](xref:Overview.Extensions)
 
 ## Step-by-steps
 

@@ -3,8 +3,8 @@
   items:
     - name: Hosting
       href: Overview/Hosting/HostingOverview.md
-    # - name: Dependency Injection
-    #   href: Overview/DependencyInjection/DependencyInjectionOverview.md
+    - name: Dependency Injection
+      href: Overview/DependencyInjection/DependencyInjectionOverview.md
     - name: Configuration
       href: Overview/Configuration/ConfigurationOverview.md
     - name: Logging
@@ -36,12 +36,16 @@
       href: Overview/Serialization/SerializationOverview.md
     - name: Http
       href: Overview/Http/HttpOverview.md
-    # - name: Validation
-    #   href: Overview/Validation/ValidationOverview.md
+    - name: Validation
+      href: Overview/Validation/ValidationOverview.md
 - name: Learn
   items:
     - name: Tutorials
       items:
+        - name: Authentication
+          items:
+            - name: Get Started with Authentication
+              href: Learn/Tutorials/Authentication/HowTo-Authentication.md
         - name: Hosting
           items:
             - name: Get Started with Hosting
@@ -56,8 +60,8 @@
           items:
             - name: Get Started with Configuration
               href: Learn/Tutorials/Configuration/HowTo-Configuration.md
-        #     - name: How to update settings from an embedded resource file
-        #       href: Learn/Tutorials/Configuration/HowTo-WritableConfiguration.md
+            - name: How to update settings from an embedded resource file
+              href: Learn/Tutorials/Configuration/HowTo-WritableConfiguration.md
         - name: Logging
           items:
             - name: Enable and Use Logging
@@ -84,14 +88,14 @@
               items:
                 - name: Page Navigation
                   href: Learn/Tutorials/Navigation/Advanced/HowTo-AdvancedPageNavigation.md
-            #     - name: Use a Panel (Grid, StackPanel etc)
-            #       href: Learn/Tutorials/Navigation/Advanced/HowTo-UsePanel.md
-            #     - name: Use a TabBar
-            #       href: Learn/Tutorials/Navigation/Advanced/HowTo-UseTabBar.md
-            #     - name: Use a NavigationView
-            #       href: Learn/Tutorials/Navigation/Advanced/HowTo-UseNavigationView.md
-            #     - name: Build a Responsive Shell
-            #       href: Learn/Tutorials/Navigation/Advanced/HowTo-ResponsiveShell.md
+                - name: Use a Panel (Grid, StackPanel etc)
+                  href: Learn/Tutorials/Navigation/Advanced/HowTo-UsePanel.md
+                - name: Use a TabBar
+                  href: Learn/Tutorials/Navigation/Advanced/HowTo-UseTabBar.md
+                - name: Use a NavigationView
+                  href: Learn/Tutorials/Navigation/Advanced/HowTo-UseNavigationView.md
+                - name: Build a Responsive Shell
+                  href: Learn/Tutorials/Navigation/Advanced/HowTo-ResponsiveShell.md
                 - name: Use a Content Control
                   href: Learn/Tutorials/Navigation/Advanced/HowTo-UseContentControl.md
         - name: Localization
@@ -102,29 +106,30 @@
           items:
             - name: Get Started with Serialization
               href: Learn/Tutorials/Serialization/HowTo-Serialization.md
-        # - name: Http
-        #   items:
-        #     - name: Get Started with Http
-        #       href: Learn/Tutorials/Http/HowTo-Http.md
+        - name: Http
+          items:
+            - name: Get Started with Http
+              href: Learn/Tutorials/Http/HowTo-Http.md
 - name: Reference
   items:
-    # - name: Navigation
-    #   items:
-    #     - name: Design
-    #       href: Reference/Navigation/Design.md
-    #     - name: Navigation Region
-    #       href: Reference/Navigation/NavigationRegion.md
-    #     - name: Qualifiers
-    #       href: Reference/Navigation/Qualifiers.md
-    #     - name: View Map
-    #       href: Reference/Navigation/ViewMap.md
-    #     - name: Route Map
-    #       href: Reference/Navigation/RouteMap.md
-    #     - name: Implement INavigator
-    #       href: Reference/Navigation/Navigator.md
-    #     - name: Implement IRequestHandler
-    #       href: Reference/Navigation/NavigationRequestHandler.md
+    - name: Navigation
+      href: Reference/Navigation/Navigation.md
+      items:
+        - name: Design
+          href: Reference/Navigation/Design.md
+        - name: Navigation Region
+          href: Reference/Navigation/NavigationRegion.md
+        - name: Qualifiers
+          href: Reference/Navigation/Qualifiers.md
+        - name: View Map
+          href: Reference/Navigation/ViewMap.md
+        - name: Route Map
+          href: Reference/Navigation/RouteMap.md
+        - name: Implement INavigator
+          href: Reference/Navigation/Navigator.md
+        - name: Implement IRequestHandler
+          href: Reference/Navigation/NavigationRequestHandler.md
     - name: Reactive
       items:
         - name: Feeds Architecture
-          href: Reference/Reactive/Reactive - Dev.md
+          href: Reference/Reactive/Architecture.md

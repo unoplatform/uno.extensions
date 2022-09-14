@@ -4,35 +4,280 @@ uid: Learn.Tutorials.Navigation.Advanced.ResponsiveShell
 # How-To: Build a Responsive Layout using NavigationView and TabBar
 
 > [!TIP]
-> This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions` template to create the solution. Instructions for creating an application from the template can be found [here](../Extensions/GettingStarted/UsingUnoExtensions.md)
+> This guide assumes you used the Uno.Extensions `dotnet new unoapp-extensions` template to create the solution. Instructions for creating an application from the template can be found [here](xref:Overview.Extensions)
 
 ## Step-by-steps
 
-### 1. Combine NavigationView with TabBar
+### 1. Add necessary XAML namespaces
 
-```xml
-<Page x:Class="UsingNavigationView.Views.MainPage"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:local="using:UsingTabBar.Views"
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      mc:Ignorable="d"
-      xmlns:uen="using:Uno.Extensions.Navigation.UI"
-      xmlns:utu="using:Uno.Toolkit.UI"
-      xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
-      Background="{ThemeResource MaterialBackgroundBrush}">
+* Update the `Page` element in `MainPage.xaml` to include XAML namespace mappings for Navigation, WinUI, and Uno Toolkit:
 
-    <Grid uen:Region.Attached="True">
+    ```xml
+    <Page x:Class="ResponsiveShell.Views.MainPage"
+          xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+          xmlns:uen="using:Uno.Extensions.Navigation.UI"
+          xmlns:utu="using:Uno.Toolkit.UI"
+    ...
+    ```
+
+### 2. Define the view's layout
+* Add necessary `RowDefinitions` to the root `Grid` in `MainPage.xaml`:
+
+    ```xml
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
         <utu:NavigationBar Content="Main Page"
                            Style="{StaticResource MaterialNavigationBarStyle}" />
-        <muxc:NavigationView uen:Region.Attached="true"
-                             x:Name="NavView"
-                             Grid.Row="1">
+    </Grid>
+    ```
+
+* In the root `Grid`, add a `NavigationView` and a few simple `MenuItems`:
+
+    ```xml
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <utu:NavigationBar Content="Main Page"
+                           Style="{StaticResource MaterialNavigationBarStyle}" />
+        <muxc:NavigationView Grid.Row="1"
+                             x:Name="NavView">
+            <muxc:NavigationView.MenuItems>
+                <muxc:NavigationViewItem Content="One" />
+                <muxc:NavigationViewItem Content="Two" />
+                <muxc:NavigationViewItem Content="Three" />
+            </muxc:NavigationView.MenuItems>
+        </muxc:NavigationView>
+    </Grid>
+    ```
+
+* Add multiple sectors of distinct content to the `NavigationView` content area:
+    ```xml
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <utu:NavigationBar Content="Main Page"
+                           Style="{StaticResource MaterialNavigationBarStyle}" />
+        <muxc:NavigationView Grid.Row="1"
+                             x:Name="NavView">
+            <muxc:NavigationView.MenuItems>
+                <muxc:NavigationViewItem Content="One" />
+                <muxc:NavigationViewItem Content="Two" />
+                <muxc:NavigationViewItem Content="Three" />
+            </muxc:NavigationView.MenuItems>
+            <muxc:NavigationView.Content>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid>
+                        <Grid Visibility="Collapsed">
+                            <TextBlock Text="One"
+                                       FontSize="24"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Grid>
+                        <Grid Visibility="Collapsed">
+                            <TextBlock Text="Two"
+                                       FontSize="24"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Grid>
+                        <Grid Visibility="Collapsed">
+                            <TextBlock Text="Three"
+                                       FontSize="24"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </muxc:NavigationView.Content>
+        </muxc:NavigationView>
+    </Grid>    
+    ```
+    It's important to make each element that represents a sector of app content have it's `Visibility` explicitly set to `Collapsed`. Uno Extensions will handle toggling it back to `Visible` when necessary.
+
+**Built for complex layout scenarios:**
+While the WinUI `NavigationView` control by itself is a good choice for a responsive shell layout because of its adaptability to different screen sizes and breakpoints, this guide will demonstrate Uno Extensions navigation features using the `TabBar` control together with it.
+
+### 3. Complementing the NavigationView with a TabBar
+* Add a `TabBar` to the `NavigationView` content area:
+
+    ```xml
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <utu:NavigationBar Content="Main Page"
+                           Style="{StaticResource MaterialNavigationBarStyle}" />
+        <muxc:NavigationView Grid.Row="1"
+                             x:Name="NavView">
+            <muxc:NavigationView.MenuItems>
+                <muxc:NavigationViewItem Content="One" />
+                <muxc:NavigationViewItem Content="Two" />
+                <muxc:NavigationViewItem Content="Three" />
+            </muxc:NavigationView.MenuItems>
+            <muxc:NavigationView.Content>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid>
+                        <Grid Visibility="Collapsed">
+                            <TextBlock Text="One"
+                                       FontSize="24"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Grid>
+                        <Grid Visibility="Collapsed">
+                            <TextBlock Text="Two"
+                                       FontSize="24"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Grid>
+                        <Grid Visibility="Collapsed">
+                            <TextBlock Text="Three"
+                                       FontSize="24"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Grid>
+                    </Grid>
+                    <utu:TabBar Grid.Row="1"
+                                x:Name="Tabs"
+                                VerticalAlignment="Bottom">
+                        <utu:TabBar.Resources>
+                            <x:String x:Key="Icon_bolt">...</x:String>
+                            <x:String x:Key="Icon_person">...</x:String>
+                            <x:String x:Key="Icon_storefront">...<x:String>
+                        </utu:TabBar.Resources>
+                        <utu:TabBar.Items>
+                            <utu:TabBarItem Style="{StaticResource MaterialBottomTabBarItemStyle}">
+                                <utu:TabBarItem.Icon>
+                                    <PathIcon Data="{StaticResource Icon_storefront}" />
+                                </utu:TabBarItem.Icon>
+                            </utu:TabBarItem>
+                            <utu:TabBarItem Style="{StaticResource MaterialBottomTabBarItemStyle}">
+                                <utu:TabBarItem.Icon>
+                                    <PathIcon Data="{StaticResource Icon_bolt}" />
+                                </utu:TabBarItem.Icon>
+                            </utu:TabBarItem>
+                            <utu:TabBarItem Style="{StaticResource MaterialBottomTabBarItemStyle}">
+                                <utu:TabBarItem.Icon>
+                                    <PathIcon Data="{StaticResource Icon_storefront}" />
+                                </utu:TabBarItem.Icon>
+                            </utu:TabBarItem>
+                        </utu:TabBar.Items>
+                    </utu:TabBar>
+                </Grid>
+            </muxc:NavigationView.Content>
+        </muxc:NavigationView>
+    </Grid>    
+    ```
+
+### 4. Set up regions and specify navigator type
+
+* Use the `Region.Attached="True"` attached property to enable regions on the parent element for each of the following:
+  * **Participating controls:** The root grid of the `Page`
+  * **Selectable items:** Both the `TabBar` and `NavigationView` controls contain selectable items
+  * **Sectors of content:** Collapsed `Grid` elements containing item content
+
+    ```xml
+    <Grid Region.Attached="True">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <utu:NavigationBar Content="Main Page"
+                           Style="{StaticResource MaterialNavigationBarStyle}" />
+        <muxc:NavigationView Grid.Row="1"
+                             Region.Attached="True"
+                             x:Name="NavView">
+            <muxc:NavigationView.MenuItems>
+                <muxc:NavigationViewItem Content="One" />
+                <muxc:NavigationViewItem Content="Two" />
+                <muxc:NavigationViewItem Content="Three" />
+            </muxc:NavigationView.MenuItems>
+            <muxc:NavigationView.Content>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid Region.Attached="True">
+                        <Grid Visibility="Collapsed">
+                            <TextBlock Text="One"
+                                       FontSize="24"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Grid>
+                        <Grid Visibility="Collapsed">
+                            <TextBlock Text="Two"
+                                       FontSize="24"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Grid>
+                        <Grid Visibility="Collapsed">
+                            <TextBlock Text="Three"
+                                       FontSize="24"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Grid>
+                    </Grid>
+                    <utu:TabBar Grid.Row="1"
+                                x:Name="Tabs"
+                                Region.Attached="True"
+                                VerticalAlignment="Bottom">
+                        <utu:TabBar.Resources>
+                            <x:String x:Key="Icon_bolt">...</x:String>
+                            <x:String x:Key="Icon_person">...</x:String>
+                            <x:String x:Key="Icon_storefront">...<x:String>
+                        </utu:TabBar.Resources>
+                        <utu:TabBar.Items>
+                            <utu:TabBarItem Style="{StaticResource MaterialBottomTabBarItemStyle}">
+                                <utu:TabBarItem.Icon>
+                                    <PathIcon Data="{StaticResource Icon_storefront}" />
+                                </utu:TabBarItem.Icon>
+                            </utu:TabBarItem>
+                            <utu:TabBarItem Style="{StaticResource MaterialBottomTabBarItemStyle}">
+                                <utu:TabBarItem.Icon>
+                                    <PathIcon Data="{StaticResource Icon_bolt}" />
+                                </utu:TabBarItem.Icon>
+                            </utu:TabBarItem>
+                            <utu:TabBarItem Style="{StaticResource MaterialBottomTabBarItemStyle}">
+                                <utu:TabBarItem.Icon>
+                                    <PathIcon Data="{StaticResource Icon_storefront}" />
+                                </utu:TabBarItem.Icon>
+                            </utu:TabBarItem>
+                        </utu:TabBar.Items>
+                    </utu:TabBar>
+                </Grid>
+            </muxc:NavigationView.Content>
+        </muxc:NavigationView>
+    </Grid>    
+    ```
+
+* Name both the content itself and associated navigation control items using the `Region.Name` attached property:
+
+    ```xml
+    <Grid Region.Attached="True">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <utu:NavigationBar Content="Main Page"
+                           Style="{StaticResource MaterialNavigationBarStyle}" />
+        <muxc:NavigationView Grid.Row="1"
+                             Region.Attached="True"
+                             x:Name="NavView">
             <muxc:NavigationView.MenuItems>
                 <muxc:NavigationViewItem Content="One"
                                          uen:Region.Name="One" />
@@ -41,124 +286,132 @@ uid: Learn.Tutorials.Navigation.Advanced.ResponsiveShell
                 <muxc:NavigationViewItem Content="Three"
                                          uen:Region.Name="Three" />
             </muxc:NavigationView.MenuItems>
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Grid uen:Region.Attached="True"
-                      uen:Region.Navigator="Visibility">
-                    <Grid uen:Region.Name="One"
-                          Visibility="Collapsed">
-                        <TextBlock Text="One"
-                                   FontSize="24"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center" />
+            <muxc:NavigationView.Content>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid Region.Attached="True">
+                        <Grid Visibility="Collapsed"
+                              uen:Region.Name="One">
+                            <TextBlock Text="One"
+                                       FontSize="24"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Grid>
+                        <Grid Visibility="Collapsed"
+                              uen:Region.Name="Two">
+                            <TextBlock Text="Two"
+                                       FontSize="24"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Grid>
+                        <Grid Visibility="Collapsed"
+                              uen:Region.Name="Three">
+                            <TextBlock Text="Three"
+                                       FontSize="24"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Grid>
                     </Grid>
-                    <Grid uen:Region.Name="Two"
-                          Visibility="Collapsed">
-                        <TextBlock Text="Two"
-                                   FontSize="24"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center" />
-                    </Grid>
-                    <Grid uen:Region.Name="Three"
-                          Visibility="Collapsed">
-                        <TextBlock Text="Three"
-                                   FontSize="24"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center" />
-                    </Grid>
+                    <utu:TabBar Grid.Row="1"
+                                x:Name="Tabs"
+                                Region.Attached="True"
+                                VerticalAlignment="Bottom">
+                        <utu:TabBar.Resources>
+                            <x:String x:Key="Icon_bolt">...</x:String>
+                            <x:String x:Key="Icon_person">...</x:String>
+                            <x:String x:Key="Icon_storefront">...<x:String>
+                        </utu:TabBar.Resources>
+                        <utu:TabBar.Items>
+                            <utu:TabBarItem Style="{StaticResource MaterialBottomTabBarItemStyle}"
+                                            uen:Region.Name="One">
+                                <utu:TabBarItem.Icon>
+                                    <PathIcon Data="{StaticResource Icon_storefront}" />
+                                </utu:TabBarItem.Icon>
+                            </utu:TabBarItem>
+                            <utu:TabBarItem Style="{StaticResource MaterialBottomTabBarItemStyle}"
+                                            uen:Region.Name="Two">
+                                <utu:TabBarItem.Icon>
+                                    <PathIcon Data="{StaticResource Icon_bolt}" />
+                                </utu:TabBarItem.Icon>
+                            </utu:TabBarItem>
+                            <utu:TabBarItem Style="{StaticResource MaterialBottomTabBarItemStyle}"
+                                            uen:Region.Name="Three">
+                                <utu:TabBarItem.Icon>
+                                    <PathIcon Data="{StaticResource Icon_storefront}" />
+                                </utu:TabBarItem.Icon>
+                            </utu:TabBarItem>
+                        </utu:TabBar.Items>
+                    </utu:TabBar>
                 </Grid>
-                <utu:TabBar Grid.Row="1"
-                            x:Name="Tabs"
-                            VerticalAlignment="Bottom"
-                            uen:Region.Attached="True">
-                    <utu:TabBar.Resources>
-                        <x:String x:Key="Icon_bolt">M 3.9962074756622314 18 L 2.9962074756622314 18 L 3.9962074756622314 11 L 0.4962073564529419 11 C -0.08379262685775757 11 -0.07379274815320969 10.68000015616417 0.11620724946260452 10.34000015258789 C 0.30620724707841873 10.000000149011612 0.16620741412043571 10.260000266134739 0.18620741367340088 10.220000267028809 C 1.4762073755264282 7.940000295639038 3.4162073135375977 4.539999961853027 5.996207237243652 0 L 6.996207237243652 0 L 5.996207237243652 7 L 9.496207237243652 7 C 9.986207246780396 7 10.056206554174423 7.330000221729279 9.966206550598145 7.510000228881836 L 9.896206855773926 7.659999847412109 C 5.956206798553467 14.549999713897705 3.9962074756622314 18 3.9962074756622314 18 Z</x:String>
-                        <x:String x:Key="Icon_person">M 8 8 C 10.210000038146973 8 12 6.210000038146973 12 4 C 12 1.7899999618530273 10.210000038146973 0 8 0 C 5.789999961853027 0 4 1.7899999618530273 4 4 C 4 6.210000038146973 5.789999961853027 8 8 8 Z M 8 10 C 5.329999923706055 10 0 11.339999914169312 0 14 L 0 16 L 16 16 L 16 14 C 16 11.339999914169312 10.670000076293945 10 8 10 Z</x:String>
-                        <x:String x:Key="Icon_storefront">M 19.894636154174805 5.890000343322754 L 18.844636917114258 1.5199999809265137 C 18.62463691830635 0.6200000047683716 17.844637095928192 8.881784197001252e-16 16.93463706970215 8.881784197001252e-16 L 3.044635772705078 8.881784197001252e-16 C 2.144635796546936 4.440892098500626e-16 1.3546356707811356 0.6299999952316284 1.1446356773376465 1.5199999809265137 L 0.0946355015039444 5.890000343322754 C -0.14536449313163757 6.910000324249268 0.07463562488555908 7.950000464916229 0.7146356105804443 8.770000457763672 C 0.794635608792305 8.880000457167625 0.9046355783939362 8.960000418126583 0.9946355819702148 9.0600004196167 L 0.9946355819702148 16 C 0.9946355819702148 17.100000023841858 1.894635558128357 18 2.994635581970215 18 L 16.99463653564453 18 C 18.09463655948639 18 18.99463653564453 17.100000023841858 18.99463653564453 16 L 18.99463653564453 9.0600004196167 C 19.08463653922081 8.97000041604042 19.19463722407818 8.879999734461308 19.27463722229004 8.779999732971191 C 19.914637207984924 7.959999740123749 20.144636154174805 6.910000324249268 19.894636154174805 5.890000343322754 Z M 16.90463638305664 1.989999771118164 L 17.954635620117188 6.359999656677246 C 18.054635621607304 6.779999643564224 17.964635610580444 7.1999997198581696 17.704635620117188 7.529999732971191 C 17.56463561952114 7.709999740123749 17.264636993408203 8 16.764636993408203 8 C 16.15463697910309 8 15.62463504821062 7.509999632835388 15.554635047912598 6.859999656677246 L 14.974635124206543 2 L 16.90463638305664 1.989999771118164 Z M 10.994635581970215 2 L 12.954635620117188 2 L 13.494635581970215 6.520000457763672 C 13.544635582715273 6.910000443458557 13.424635648727417 7.300000160932541 13.16463565826416 7.590000152587891 C 12.944635659456253 7.8500001430511475 12.624635845422745 8 12.214635848999023 8 C 11.544635832309723 8 10.994635581970215 7.40999960899353 10.994635581970215 6.689999580383301 L 10.994635581970215 2 Z M 6.484635353088379 6.520000457763672 L 7.034635543823242 2 L 8.994635581970215 2 L 8.994635581970215 6.689999580383301 C 8.994635581970215 7.40999960899353 8.44463562965393 8 7.7046356201171875 8 C 7.364635616540909 8 7.054635271430016 7.8500001430511475 6.814635276794434 7.590000152587891 C 6.564635276794434 7.300000160932541 6.444635353982449 6.910000443458557 6.484635353088379 6.520000457763672 Z M 2.034635543823242 6.359999656677246 L 3.044635772705078 2 L 5.0146355628967285 2 L 4.434635639190674 6.859999656677246 C 4.354635640978813 7.509999632835388 3.834635615348816 8 3.224635601043701 8 C 2.734635591506958 8 2.4246357679367065 7.709999740123749 2.294635772705078 7.529999732971191 C 2.024635761976242 7.209999740123749 1.934635542333126 6.779999643564224 2.034635543823242 6.359999656677246 Z M 2.994635581970215 16 L 2.994635581970215 9.970000267028809 C 3.0746355801820755 9.980000266805291 3.1446356028318405 10 3.224635601043701 10 C 4.094635605812073 10 4.884635388851166 9.64000016450882 5.464635372161865 9.050000190734863 C 6.064635396003723 9.650000214576721 6.8646352887153625 10 7.774635314941406 10 C 8.644635319709778 10 9.424635827541351 9.639999687671661 10.00463581085205 9.069999694824219 C 10.594635784626007 9.639999687671661 11.394635796546936 10 12.294635772705078 10 C 13.134635746479034 10 13.9346364736557 9.650000214576721 14.534636497497559 9.050000190734863 C 15.114636480808258 9.64000016450882 15.904637217521667 10 16.77463722229004 10 C 16.8546372205019 10 16.924636766314507 9.980000266805291 17.004636764526367 9.970000267028809 L 17.004636764526367 16 L 2.994635581970215 16 Z</x:String>
-                    </utu:TabBar.Resources>
-                    <utu:TabBar.Items>
-                        <utu:TabBarItem uen:Region.Name="One"
-                                        Style="{StaticResource MaterialBottomTabBarItemStyle}">
-                            <utu:TabBarItem.Icon>
-                                <PathIcon Data="{StaticResource Icon_storefront}" />
-                            </utu:TabBarItem.Icon>
-                        </utu:TabBarItem>
-                        <utu:TabBarItem uen:Region.Name="Two"
-                                        Style="{StaticResource MaterialBottomTabBarItemStyle}">
-                            <utu:TabBarItem.Icon>
-                                <PathIcon Data="{StaticResource Icon_bolt}" />
-                            </utu:TabBarItem.Icon>
-                        </utu:TabBarItem>
-                        <utu:TabBarItem uen:Region.Name="Three"
-                                        Style="{StaticResource MaterialBottomTabBarItemStyle}">
-                            <utu:TabBarItem.Icon>
-                                <PathIcon Data="{StaticResource Icon_storefront}" />
-                            </utu:TabBarItem.Icon>
-                        </utu:TabBarItem>
-                    </utu:TabBar.Items>
-                </utu:TabBar>
-            </Grid>
+            </muxc:NavigationView.Content>
         </muxc:NavigationView>
-    </Grid>
-</Page>
+    </Grid>    
+    ```
 
-```
+* Specify the navigator type as `Visibility` using the `Region.Navigator` attached property on the parent element of your collapsed content `Grid` definitions:
 
-### 2. Toggle Visibility for Responsive Design
+    ```xml
+    <Grid uen:Region.Attached="True"
+          uen:Region.Navigator="Visibility">
+    ...
+    ```
 
-```xml
-<Page x:Class="UsingNavigationView.Views.MainPage"
-      ... >
-    <Grid uen:Region.Attached="True">
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup>
-                <VisualState x:Name="Narrow">
-                    <VisualState.Setters>
-                        <Setter Target="Tabs.Visibility"
-                                Value="Visible" />
-                        <Setter Target="NavView.IsPaneToggleButtonVisible"
-                                Value="false" />
-                        <Setter Target="NavView.PaneDisplayMode"
-                                Value="LeftMinimal" />
-                        <Setter Target="NavView.IsPaneOpen"
-                                Value="False" />
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState x:Name="Normal">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="700" />
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="Tabs.Visibility"
-                                Value="Collapsed" />
-                        <Setter Target="NavView.IsPaneToggleButtonVisible"
-                                Value="True" />
-                        <Setter Target="NavView.IsPaneVisible"
-                                Value="true" />
-                        <Setter Target="NavView.PaneDisplayMode"
-                                Value="Auto" />
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState x:Name="Wide">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="1000" />
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="Tabs.Visibility"
-                                Value="Collapsed" />
-                        <Setter Target="NavView.IsPaneToggleButtonVisible"
-                                Value="True" />
-                        <Setter Target="NavView.IsPaneVisible"
-                                Value="true" />
-                        <Setter Target="NavView.PaneDisplayMode"
-                                Value="Auto" />
-                    </VisualState.Setters>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
-```
+### 5. Toggle visibility for responsive design
+* Finally, specify groups for the VisualStateManager to adjust the Page layout based how close the window size is to a couple of defined breakpoints:
 
-- Build example of using navigationview and tabbar together (similar to commerce)
+    ```xml
+    <Page x:Class="ResponsiveShell.Views.MainPage">
+        <Grid uen:Region.Attached="True">
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup>
+                    <VisualState x:Name="Narrow">
+                        <VisualState.Setters>
+                            <Setter Target="Tabs.Visibility"
+                                    Value="Visible" />
+                            <Setter Target="NavView.IsPaneToggleButtonVisible"
+                                    Value="false" />
+                            <Setter Target="NavView.PaneDisplayMode"
+                                    Value="LeftMinimal" />
+                            <Setter Target="NavView.IsPaneOpen"
+                                    Value="False" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Normal">
+                        <VisualState.StateTriggers>
+                            <AdaptiveTrigger MinWindowWidth="700" />
+                        </VisualState.StateTriggers>
+                        <VisualState.Setters>
+                            <Setter Target="Tabs.Visibility"
+                                    Value="Collapsed" />
+                            <Setter Target="NavView.IsPaneToggleButtonVisible"
+                                    Value="True" />
+                            <Setter Target="NavView.IsPaneVisible"
+                                    Value="true" />
+                            <Setter Target="NavView.PaneDisplayMode"
+                                    Value="Auto" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Wide">
+                        <VisualState.StateTriggers>
+                            <AdaptiveTrigger MinWindowWidth="1000" />
+                        </VisualState.StateTriggers>
+                        <VisualState.Setters>
+                            <Setter Target="Tabs.Visibility"
+                                    Value="Collapsed" />
+                            <Setter Target="NavView.IsPaneToggleButtonVisible"
+                                    Value="True" />
+                            <Setter Target="NavView.IsPaneVisible"
+                                    Value="true" />
+                            <Setter Target="NavView.PaneDisplayMode"
+                                    Value="Auto" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+    ...
+    ```
+
+* When a `TabBarItem` or `NavigationViewItem` is selected, the associated content region will now have its `Visibility` toggled to `Visible`
