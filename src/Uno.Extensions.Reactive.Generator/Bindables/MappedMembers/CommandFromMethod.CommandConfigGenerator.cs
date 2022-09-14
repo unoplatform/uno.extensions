@@ -42,9 +42,13 @@ internal partial record CommandFromMethod
 					{
 						if (ParameterType is not null && CanExecute is not null)
 						{
-							sb.AppendLine($@"
-							if (reactive_commandParameter is not {ParameterType} reactive_arguments
-								|| !({CanExecute("reactive_arguments")}))
+							sb.AppendLine($@"if (!(reactive_commandParameter is {ParameterType}))
+							{{
+								return false;
+							}}
+
+							var reactive_arguments = ({ParameterType}) reactive_commandParameter;
+							if (!({CanExecute("reactive_arguments")}))
 							{{
 								return false;
 							}}".Align(0));
@@ -52,7 +56,7 @@ internal partial record CommandFromMethod
 						}
 						else if (ParameterType is not null)
 						{
-							sb.AppendLine($@"if (reactive_commandParameter is not {ParameterType})
+							sb.AppendLine($@"if (!(reactive_commandParameter is {ParameterType}))
 							{{
 								return false;
 							}}".Align(0));

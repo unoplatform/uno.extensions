@@ -167,7 +167,7 @@ internal partial record CommandFromMethod : IMappedMember
 		{
 			if (parameters.Count() is 1)
 			{
-				if (parameters.First().Symbol.NullableAnnotation is NullableAnnotation.NotAnnotated)
+				if (parameters.First().Symbol is { Type.IsValueType: false, NullableAnnotation: NullableAnnotation.NotAnnotated })
 				{
 					return args => $"{args} is not null";
 				}
@@ -177,7 +177,9 @@ internal partial record CommandFromMethod : IMappedMember
 				if (parameters.Any(p => p.Symbol.NullableAnnotation is NullableAnnotation.NotAnnotated))
 				{
 					return args => parameters
-						.Select((p, i) => p.Symbol.NullableAnnotation is NullableAnnotation.NotAnnotated ? $"{args}.Item{i} is not null" : null)
+						.Select((p, i) => p.Symbol is { Type.IsValueType: false, NullableAnnotation: NullableAnnotation.NotAnnotated }
+							? $"{args}.Item{i} is not null"
+							: null)
 						.Where(s => s is not null)
 						.JoinBy(" && ");
 				}
