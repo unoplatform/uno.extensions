@@ -14,8 +14,8 @@
 		<UpToDateCheckInput Include="..\MyExtensionsApp.UI\**\*.xaml" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Uno.WinUI.Skia.Linux.FrameBuffer" Version="4.4.13" />
-		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.4.13" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.WinUI.Skia.Linux.FrameBuffer" Version="4.5.9" />
+		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.5.9" Condition="'$(Configuration)'=='Debug'" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />

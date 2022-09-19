@@ -33,10 +33,29 @@
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="$(TargetFramework.ToLower().StartsWith('net6')) and $(_IsAndroid)">
+		<SupportedOSPlatformVersion>31.0</SupportedOSPlatformVersion>
+		<TargetPlatformMinVersion>31.0</TargetPlatformMinVersion>
+		<TargetPlatformVersion>31.0</TargetPlatformVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="$(TargetFramework.ToLower().StartsWith('net6')) and $(_IsIOS)">
+		<SupportedOSPlatformVersion>14.2</SupportedOSPlatformVersion>
+		<TargetPlatformMinVersion>14.2</TargetPlatformMinVersion>
+		<TargetPlatformVersion>15.4</TargetPlatformVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="$(TargetFramework.ToLower().StartsWith('net6')) and $(_IsCatalyst)">
+		<SupportedOSPlatformVersion>14.2</SupportedOSPlatformVersion>
+		<TargetPlatformMinVersion>14.2</TargetPlatformMinVersion>
+		<TargetPlatformVersion>15.4</TargetPlatformVersion>
+	</PropertyGroup>
+	
 	<ItemGroup>
 		<PackageReference Include="Uno.WinUI" Version="4.3.6" />
 		<PackageReference Include="Uno.WinUI.MSAL" Version="4.3.6" />
 	</ItemGroup>
+	
 
 	<ItemGroup Condition="$(_IsWinUI)">
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.0.2" />

@@ -18,6 +18,19 @@
 			<Pack>true</Pack>
 		</Content>
 	</ItemGroup>
+
+	<PropertyGroup Condition="$(TargetFramework.ToLower().StartsWith('net6')) and $(_IsIOS)">
+		<DefineConstants>$(DefineConstants);IOS1_0;XAMARIN;XAMARIN_IOS;XAMARIN_IOS_UNIFIED</DefineConstants>
+		<SupportedOSPlatformVersion>14.2</SupportedOSPlatformVersion>
+		<TargetPlatformMinVersion>14.2</TargetPlatformMinVersion>
+		<TargetPlatformVersion>15.4</TargetPlatformVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="$(TargetFramework.ToLower().StartsWith('net6')) and $(_IsCatalyst)">
+		<SupportedOSPlatformVersion>14.2</SupportedOSPlatformVersion>
+		<TargetPlatformMinVersion>14.2</TargetPlatformMinVersion>
+		<TargetPlatformVersion>15.4</TargetPlatformVersion>
+	</PropertyGroup>
 	
 	<Import Project="common.props" />
 

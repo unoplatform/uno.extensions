@@ -19,14 +19,14 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="SkiaSharp.Views" Version="2.88.1-preview.79" />
-		<PackageReference Include="Uno.UI.Skia.Tizen" Version="4.4.13" />
+		<PackageReference Include="Uno.UI.Skia.Tizen" Version="4.5.9" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
 		<PackageReference Include="IdentityModel.OidcClient" Version="5.0.0" />
 		<PackageReference Include="Uno.Microsoft.Toolkit.Uwp.UI" Version="7.1.11" />
-		<PackageReference Include="Microsoft.Identity.Client" Version="4.45.0" />
-		<PackageReference Include="Uno.UI" Version="4.4.13" />
-		<PackageReference Include="Uno.UI.RemoteControl" Version="4.4.13" Condition="'$(Configuration)'=='Debug'" />
-		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.4.13" />
+		<PackageReference Include="Microsoft.Identity.Client" Version="4.47.0" />
+		<PackageReference Include="Uno.UI" Version="4.5.9" />
+		<PackageReference Include="Uno.UI.RemoteControl" Version="4.5.9" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.5.9" />
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
 		<PackageReference Include="Refit" Version="6.3.2" />
@@ -35,7 +35,7 @@
 		<PackageReference Include="Uno.Material" Version="2.2.0" />
 		<PackageReference Include="Uno.Toolkit.UI.Material" Version="2.2.0" />
 		<PackageReference Include="Uno.Toolkit.UI" Version="2.2.0" />
-		<PackageReference Include="Uno.UI.MSAL" Version="4.4.13" />
+		<PackageReference Include="Uno.UI.MSAL" Version="4.5.9" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Authentication.Oidc\Uno.Extensions.Authentication.Oidc.UI.csproj" />
@@ -59,6 +59,8 @@
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http.Refit\Uno.Extensions.Http.Refit.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Storage.UI\Uno.Extensions.Storage.UI.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Storage\Uno.Extensions.Storage.csproj" />
 		<ProjectReference Include="..\TestHarness.Core\TestHarness.Core.csproj" />
 	</ItemGroup>
 	<Import Project="..\TestHarness.Shared\TestHarness.Shared.projitems" Label="Shared" />
