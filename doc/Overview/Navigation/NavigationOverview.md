@@ -11,7 +11,7 @@ Navigation needs to encompass a range of UI concepts:
 * Loading content into a <a href="https://docs.microsoft.com/en-us/uwp/api/windows.ui.xaml.controls.contentcontrol" target="_blank">ContentControl</a>  
 * Loading and toggling visibility of child elements in a <a href="https://docs.microsoft.com/en-us/uwp/api/windows.ui.xaml.controls.grid" target="_blank">`Grid`</a>  
 * Displaying a <a href="https://docs.microsoft.com/en-us/uwp/api/windows.ui.xaml.controls.primitives.popup" target="_blank">`Popup`</a> or <a href="https://docs.microsoft.com/en-us/windows/apps/design/controls/dialogs-and-flyouts/flyouts" target="_blank">`Flyout`</a>
-* Prompt a <a href="https://docs.microsoft.com/en-us/uwp/api/windows.ui.xaml.controls.contentdialoghttps://docs.microsoft.com/en-us/uwp/api/windows.ui.xaml.controls.contentdialog" target="_blank">`ContentDialog`</a> or <a href="https://docs.microsoft.com/en-us/uwp/api/windows.ui.popups.messagedialog" target="_blank">`MessageDialog`</a>
+* Prompt a <a href="https://docs.microsoft.com/en-us/uwp/api/windows.ui.xaml.controls.contentdialog" target="_blank">`ContentDialog`</a> or <a href="https://docs.microsoft.com/en-us/uwp/api/windows.ui.popups.messagedialog" target="_blank">`MessageDialog`</a>
 
 ## What triggers Navigation?
 Navigation can be triggered for a number of reasons:

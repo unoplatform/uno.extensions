@@ -64,7 +64,7 @@ Here is a diagram of common messages produced by a feed when asynchronously load
             └─►│ Error   ├─┘
                └─────────┘
 ```
-[//]: # (Source: https://asciiflow.com/#/share/eJyrVspLzE1VssorzcnRUcpJrEwtUrJSqo5RqohRsrI0MdSJUaoEsozMLYGsktSKEiAnRkkBBB5N2UM5ionJgxmmgA3gUELQXKwaobLTdoFE%2FPLzUlGMwqacVJumIWvF9AdRhhFvJ4jlk5%2BYkpmXjqoH4sPg%2FFwMH1LZBWhexBl3yErINBvhL9eiovwibDGHoR5PulOqVaoFAO48kRs%3D)
+[//]: # [Source](https://asciiflow.com/#/share/eJyrVspLzE1VssorzcnRUcpJrEwtUrJSqo5RqohRsrI0MdSJUaoEsozMLYGsktSKEiAnRkkBBB5N2UM5ionJgxmmgA3gUELQXKwaobLTdoFE%2FPLzUlGMwqacVJumIWvF9AdRhhFvJ4jlk5%2BYkpmXjqoH4sPg%2FFwMH1LZBWhexBl3yErINBvhL9eiovwibDGHoR5PulOqVaoFAO48kRs%3D)
 
 > [!NOTE]
 > Keep in mind that this is only an example of the common case, but each _axis_ is independent and can change from one state to another independently.
