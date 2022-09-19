@@ -2,7 +2,7 @@
 
 namespace Uno.Extensions.Localization;
 
-public class LocalizationService : IServiceInitialize
+public class LocalizationService : IServiceInitialize, IDisposable
 {
 	private static string DefaultCulture = "en-US";
 
@@ -72,5 +72,11 @@ public class LocalizationService : IServiceInitialize
 		return
 			SupportedCultures.FirstOrDefault(supported => supported.Name == culture.Name) ??
 			SupportedCultures.FirstOrDefault(supported => supported.TwoLetterISOLanguageName == culture.TwoLetterISOLanguageName);
+	}
+
+	public void Dispose()
+	{
+		_settingsListener?.Dispose();
+		_settingsListener = null;
 	}
 }

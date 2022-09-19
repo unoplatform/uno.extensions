@@ -9,7 +9,7 @@ For more documentation on configuration, read the references listed at the botto
 
 ## AppSettings
 
-To use `appsettings.json` file packaged as content in the application By default this will also look for settings files that are specific to the current environment, `appsettings.<hostenvironment>.json` (eg `appsettings.development.json`). This can be disabled by setting the `includeEnvironmentSettings` argument to false (default value is true).
+To use `appsettings.json` file packaged as `EmbeddedResource` in the application:  
 
 ```csharp
 private IHost Host { get; }
@@ -18,13 +18,15 @@ public App()
 {
     Host = UnoHost
         .CreateDefaultBuilder()
-        .UseAppSettings(includeEnvironmentSettings: true)
+        .UseConfiguration(configure: builder => 
+            builder.EmbeddedSource<App>( includeEnvironmentSettings: true ))
         .Build();
     // ........ //
 }
-```
+```  
 
-To use appsettings.json file packaged as embedded resources in the application:
+To use `appsettings.json` file packaged as `Content` in the application:   
+
 ```csharp
 private IHost Host { get; }
 
@@ -32,11 +34,16 @@ public App()
 {
     Host = UnoHost
         .CreateDefaultBuilder()
-        .UseEmbeddedAppSettings<App>(includeEnvironmentSettings: true)
+        .UseConfiguration(configure: builder => 
+            builder.ContentSource<App>( includeEnvironmentSettings: true ))
         .Build();
     // ........ //
 }
 ```
+
+By default both `EmbeddedSource` and `ContentSource` methods will also add settings files that are specific to the current environment, `appsettings.<hostenvironment>.json` (eg `appsettings.development.json`). This can be disabled by setting the `includeEnvironmentSettings` argument to `false` (default value is `true`).
+
+It is recommended to use `EmbeddedSource` as this ensures all configuration information is read prior to the `IHost` instance being created, allowing configuration to determine how services are created.
 
 ## App Configuration 
 
@@ -49,7 +56,10 @@ public App()
 {
     Host = UnoHost
         .CreateDefaultBuilder()
-        .UseConfiguration<CustomIntroduction>()
+        .UseConfiguration(configure: builder => 
+            builder
+                .EmbeddedSource<App>()
+                .Section<CustomIntroduction>())
         .Build();
     // ........ //
 }
@@ -65,9 +75,9 @@ public MainPageViewModel(IOptions<CustomIntroduction> settings)
 ```
 
 
-## Custom Configuration Access
+## Configuration Access
 
-Register host configuration for access within the app
+The `IConfiguration` interface is registered as a service when the UseConfiguration extension method is used.
 
 ```csharp
 private IHost Host { get; }
@@ -76,13 +86,13 @@ public App()
 {
     Host = UnoHost
         .CreateDefaultBuilder()
-        .UseHostConfigurationForApp()
+        .UseConfiguration()
         .Build();
     // ........ //
 }
 ```
 
-The `IConfiguration` interface is registered as a service.
+The `IConfiguration` can then be accessed in any class created by the DI container
 
 ```csharp
 // You can resolve the configuration in the constructor of a service using the IoC.
@@ -92,9 +102,9 @@ public class MyService(IConfiguration configuration) { ... }
 var configuration = this.GetService<IConfiguration>();
 ```
 
-## Writable Configuration Section (aka Settings)
+## Writable Configuration Section (a.k.a. Settings)
 
-Register the configuration section (doesn't have to exist in configuration files)
+Register the configuration section the same way as you would for accessing a configuration section (the section doesn't have to exist in any configuration source)
 
 ```csharp
 private IHost Host { get; }
@@ -103,10 +113,15 @@ public App()
 {
     Host = UnoHost
         .CreateDefaultBuilder()
-        .UseSettings<DiagnosticSettings>()
+        .UseConfiguration(configure: builder => 
+            builder
+                .EmbeddedSource<App>()
+                .Section<DiagnosticSettings>())
         .Build();
     // ........ //
 }
+
+public record DiagnosticSettings( bool HasBeenLaunched );
 ```
 
 Modify setting value by calling Update on an IWritableOptions instance
@@ -114,10 +129,9 @@ Modify setting value by calling Update on an IWritableOptions instance
 ```csharp
 public MainViewModel(IWritableOptions<DiagnosticSettings> debug)
 {
-    debug.Update(settings =>
-    {
-        debug.HasBeenLaunched = true;
-    });
+    debug.Update(debugSetting =>
+        debugSetting with {HasBeenLaunched = true}
+        );
 }
 ```
 
