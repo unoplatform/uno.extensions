@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Localization;
+﻿using Uno.Extensions.Hosting;
+
+namespace Uno.Extensions.Localization;
 
 public static class HostBuilderExtensions
 {
@@ -24,7 +26,8 @@ public static class HostBuilderExtensions
 			.ConfigureServices((ctx, services) =>
 		{
 			_ = services
-			.AddHostedService<LocalizationService>()
+			.AddSingleton<LocalizationService>()
+			.AddSingleton<IServiceInitialize>(sp => sp.GetRequiredService<LocalizationService>())
 			.AddSingleton<IStringLocalizer, ResourceLoaderStringLocalizer>();
 		});
 	}

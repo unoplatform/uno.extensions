@@ -1,6 +1,8 @@
-﻿namespace Uno.Extensions.Localization;
+﻿using Uno.Extensions.Hosting;
 
-public class LocalizationService : IHostedService
+namespace Uno.Extensions.Localization;
+
+public class LocalizationService : IServiceInitialize
 {
 	private static string DefaultCulture = "en-US";
 
@@ -28,7 +30,7 @@ public class LocalizationService : IHostedService
 		SupportedCultures = configuration.Value?.Cultures?.AsCultures() ?? new[] { DefaultCulture.AsCulture()! };
 	}
 
-	public Task StartAsync(CancellationToken cancellationToken)
+	public void Initialize()
 	{
 		_uiThread = Thread.CurrentThread;
 		ApplyCurrentCulture();
@@ -36,13 +38,6 @@ public class LocalizationService : IHostedService
 		{
 			ApplyCurrentCulture(false);
 		});
-		return Task.CompletedTask;
-	}
-
-	public Task StopAsync(CancellationToken cancellationToken)
-	{
-		_settingsListener?.Dispose();
-		return Task.CompletedTask;
 	}
 
 	private void ApplyCurrentCulture(bool updateThreadCulture = true)
@@ -53,7 +48,10 @@ public class LocalizationService : IHostedService
 				((CurrentCulture is not null) ?
 				PickSupportedCulture(CurrentCulture) :
 				PickSupportedCulture(CultureInfo.CurrentCulture)) ?? new CultureInfo(DefaultCulture);
-			ApplicationLanguages.PrimaryLanguageOverride = culture.TwoLetterISOLanguageName;
+			if (ApplicationLanguages.PrimaryLanguageOverride != culture.Name)
+			{
+				ApplicationLanguages.PrimaryLanguageOverride = culture.Name;
+			}
 			CultureInfo.DefaultThreadCurrentCulture = culture;
 			CultureInfo.DefaultThreadCurrentUICulture = culture;
 			if (updateThreadCulture &&

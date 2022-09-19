@@ -96,6 +96,14 @@
       <DependentUpon>StorageOnePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Core\Storage\StorageOneViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Localization\LocalizationHostInit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Localization\LocalizationMainPage.xaml.cs">
+      <DependentUpon>LocalizationMainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Localization\LocalizationOnePage.xaml.cs">
+      <DependentUpon>LocalizationOnePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Localization\LocalizationOneViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\BaseCommerceViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceCredentials.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceDealsPage.xaml.cs">
@@ -569,7 +577,9 @@
     <None Include="$(MSBuildThisFileDirectory)Assets\SharedAssets.md" />
   </ItemGroup>
   <ItemGroup>
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en-AU\Resources.resw" />
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\Resources.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\fr\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
     <!--
@@ -585,6 +595,7 @@
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\appsettings.msal.json" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\appsettings.msalauthentication.json" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Oidc\appsettings.oidc.json" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Localization\appsettings.locale.json" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\appsettings.logging.json" />
     <_Globbled_Page Include="$(MSBuildThisFileDirectory)**/*.xaml" Exclude="@(Page);@(ApplicationDefinition)">
       <SubType>Designer</SubType>

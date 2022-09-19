@@ -2,7 +2,7 @@
 
 namespace TestHarness;
 
-public partial class BaseTestSectionPage : Page
+public partial class BaseTestSectionPage : Page, IDisposable
 {
 	protected IHost? Host { get; set; }
 
@@ -16,7 +16,7 @@ public partial class BaseTestSectionPage : Page
 	{
 		if (HostInit is not null)
 		{
-			InitializeHost();
+			_ = InitializeHost();
 		}
 	}
 	protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -28,13 +28,13 @@ public partial class BaseTestSectionPage : Page
 
 			if (this.IsLoaded)
 			{
-				InitializeHost();
+				_ = InitializeHost();
 			}
 		}
 	}
 
 	private bool init;
-	private void InitializeHost()
+	private async Task InitializeHost()
 	{
 		if (init)
 		{
@@ -63,6 +63,13 @@ public partial class BaseTestSectionPage : Page
 				};
 			}
 		}
+
+		await Task.Run(() => Host.StartAsync());
+	}
+
+	public void Dispose()
+	{
+		_ = Host!.StopAsync();
 	}
 }
 

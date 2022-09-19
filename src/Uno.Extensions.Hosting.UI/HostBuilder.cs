@@ -121,7 +121,24 @@ public class HostBuilder : IHostBuilder
 		CreateServiceProvider();
 
 		var host = _appServices?.GetRequiredService<IHost>();
+
+		InitializeBuildServices();
+
 		return host;
+	}
+
+	private void InitializeBuildServices()
+	{
+		var services = _appServices?.GetServices<IServiceInitialize>();
+		if(services is null)
+		{
+			return;
+		}
+
+		foreach (var service in services)
+		{
+			service.Initialize();
+		}
 	}
 
 	private void BuildHostConfiguration()
