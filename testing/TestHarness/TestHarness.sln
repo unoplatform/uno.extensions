@@ -3829,11 +3829,17 @@ Global
 		TestHarness.Shared\TestHarness.Shared.projitems*{1692d283-aaa3-410b-abad-eafcc46574b4}*SharedItemsImports = 5
 		TestHarness.Shared\TestHarness.Shared.projitems*{1aa13270-f438-4864-9435-54fd806e10ea}*SharedItemsImports = 5
 		TestHarness.Shared\TestHarness.Shared.projitems*{1db505f9-950f-48a6-b9ec-e8f3ab33d42f}*SharedItemsImports = 4
+		TestHarness.Shared\TestHarness.Shared.projitems*{2258bfe2-f166-4a08-a015-574d497594c4}*SharedItemsImports = 5
 		TestHarness.Shared\TestHarness.Shared.projitems*{40ea03f7-8a22-4143-b251-79bac3eb13d2}*SharedItemsImports = 5
 		TestHarness.Shared\TestHarness.Shared.projitems*{46549ece-8a4f-479d-a9d0-131b064412d8}*SharedItemsImports = 5
+		TestHarness.Shared\TestHarness.Shared.projitems*{623706f6-33fc-4073-b418-596079e0829f}*SharedItemsImports = 4
 		TestHarness.Shared\TestHarness.Shared.projitems*{6279c845-92f8-4333-ab99-3d213163593c}*SharedItemsImports = 13
+		TestHarness.Shared\TestHarness.Shared.projitems*{6a4424c7-4b39-4ff0-8f4e-fc6427bfdd40}*SharedItemsImports = 5
+		TestHarness.Shared\TestHarness.Shared.projitems*{81629a0b-4b5e-45dd-8651-62327dd540c3}*SharedItemsImports = 5
 		TestHarness.Shared\TestHarness.Shared.projitems*{a5b8155a-118f-4794-b551-c6f3cf7e5411}*SharedItemsImports = 5
+		TestHarness.Shared\TestHarness.Shared.projitems*{cdc520c4-fe6b-4784-832d-95d62fcf444d}*SharedItemsImports = 5
 		TestHarness.Shared\TestHarness.Shared.projitems*{e2c67d69-be5c-454c-845a-1bcb01a07872}*SharedItemsImports = 4
+		TestHarness.Shared\TestHarness.Shared.projitems*{ed9670aa-305f-4536-81e2-86e26275f265}*SharedItemsImports = 5
 		TestHarness.Shared\TestHarness.Shared.projitems*{f0a30d68-8b63-4b6d-98c1-0426de76d781}*SharedItemsImports = 4
 	EndGlobalSection
 EndGlobal

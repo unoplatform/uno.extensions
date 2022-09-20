@@ -7,11 +7,11 @@
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Uno.UI.Skia.Wpf" Version="4.4.13" />
+		<PackageReference Include="Uno.UI.Skia.Wpf" Version="4.5.9" />
 		<PackageReference Include="SkiaSharp.HarfBuzz" Version="2.88.1" />
 		<PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.1" />
-		<PackageReference Include="Uno.UI.RemoteControl" Version="4.4.13" Condition="'$(Configuration)'=='Debug'" />
-		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.4.13" />
+		<PackageReference Include="Uno.UI.RemoteControl" Version="4.5.9" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.5.9" />
 		<PackageReference Include="Uno.SourceGenerationTasks" Version="4.1.0" />
 	</ItemGroup>
 	<ItemGroup>
@@ -20,11 +20,4 @@
 	<ItemGroup>
 		<ProjectReference Include="..\TestHarness.Legacy.Skia.WPF\TestHarness.Legacy.Skia.WPF.csproj" />
 	</ItemGroup>
-	<Target Name="RemoveDuplicateAnalyzers" BeforeTargets="CoreCompile">
-		<ItemGroup>
-			<FilteredAnalyzer Include="@(Analyzer->Distinct())" />
-			<Analyzer Remove="@(Analyzer)" />
-			<Analyzer Include="@(FilteredAnalyzer)" />
-		</ItemGroup>
-	</Target>
 </Project>
