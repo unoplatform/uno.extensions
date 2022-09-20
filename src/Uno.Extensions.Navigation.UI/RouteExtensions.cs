@@ -241,6 +241,24 @@ public static class RouteExtensions
 		return route with { Qualifier = nextQualifier, Base = routeBase, Path = nextPath };
 	}
 
+	public static bool IsChildOf(this RouteInfo? child, RouteInfo? rm)
+	{
+		if(rm is null || child is null)
+		{
+			return false;
+		}
+
+		foreach (var rmChild in rm.Nested)
+		{
+			if (rmChild.Path == child.Path ||
+				child.IsChildOf(rmChild))
+			{
+				return true;
+			}			
+		}
+		return false;
+	}
+
 	public static bool IsPageRoute(this Route route, IRouteResolver mappings)
 	{
 		return mappings.FindByPath(route.Base).IsPageRouteMap();

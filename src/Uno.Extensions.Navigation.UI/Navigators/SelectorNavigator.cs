@@ -1,6 +1,10 @@
 ﻿namespace Uno.Extensions.Navigation.Navigators;
 
-public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
+internal interface ISelectorNavigator
+{
+}
+
+public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>, ISelectorNavigator
 	where TControl : class
 {
 	private Action? _detachSelectionChanged;
@@ -68,8 +72,7 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 				SelectedItem = item;
 			}
 
-			// Don't return path, as we need for path to be passed down to children
-			return default;
+			return path;
 		}
 		finally
 		{

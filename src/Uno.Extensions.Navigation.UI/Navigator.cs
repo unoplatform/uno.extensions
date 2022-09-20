@@ -124,7 +124,14 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		var nested = Region.Children.Where(x => !string.IsNullOrWhiteSpace(request.Route.Base) && x.Name == request.Route.Base).ToArray();
 		if (nested.Any() && !await ParentCanNavigate(request.Route))
 		{
-			request = request with { Route = request.Route.Next() };
+			var map = Resolver.FindByPath(request.Route.Base);
+			// Trim the route if it's just the name of the child
+			// if the route matches a RouteMap then don't trim
+			// as it needs to be forwarded to any nested navigators
+			if (map?.RenderView is null)
+			{
+				request = request with { Route = request.Route.Next() };
+			}
 			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"RedirectNavigateAsync: Redirecting to children ({nested.Length}) New request: {request.Route}");
 			return NavigateChildRegions(nested, request);
 		}
@@ -198,7 +205,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		// Then
 		//		route request to child region
 		if (!string.IsNullOrWhiteSpace(rm?.DependsOn) &&
-			(Region.Ancestors(true).FirstOrDefault(x => x.Item1?.Base == rm!.DependsOn) is { } ancestor) &&
+			(Region.Ancestors(true).LastOrDefault(x => x.Item1?.Base == rm!.DependsOn) is { } ancestor) &&
 			ancestor.Item2 is not null &&
 			ancestor.Item2 != Region.Parent)
 		{
@@ -374,7 +381,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		return request;
 	}
 
-	public Task<bool> CanNavigate(Route route)
+	public async Task<bool> CanNavigate(Route route)
 	{
 		if (!route.IsInternal)
 		{
@@ -383,7 +390,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			{
 				if (route.IsDialog())
 				{
-					return Task.FromResult(false);
+					return false;
 				}
 
 			}
@@ -391,8 +398,46 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 		var routeMap = Resolver.FindByPath(route.Base);
 
-		var canNav = RegionCanNavigate(route, routeMap);
-		return canNav;
+		var canNav = await RegionCanNavigate(route, routeMap);
+
+		if (!canNav)
+		{
+			return false;
+		}
+
+		// Double check that navigating to this route makes sense
+		// by checking the existing nav route of the parent
+		if(routeMap?.Parent is not null &&
+			Region.Parent is not null)
+		{
+			if(!RouteIsChildOfParentRoute(Region.Parent, routeMap))
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	private bool RouteIsChildOfParentRoute(IRegion parentRegion, RouteInfo routeMap)
+	{
+		if (parentRegion.Navigator()?.Route is { } parentRoute)
+		{
+			if (parentRegion.Parent is not null &&
+				parentRoute.IsEmpty())
+			{
+				return RouteIsChildOfParentRoute(parentRegion.Parent, routeMap);
+			}
+
+			var parentRouteInfo = Resolver.FindByPath(parentRoute.Base);
+			if (!routeMap.IsChildOf(parentRouteInfo) &&
+				parentRouteInfo != routeMap.DependsOnRoute)
+			{
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	private Task<bool> ParentCanNavigate(Route route)

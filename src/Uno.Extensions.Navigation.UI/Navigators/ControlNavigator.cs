@@ -159,6 +159,13 @@ public abstract class ControlNavigator : Navigator
 
 		UpdateRoute(executedRoute);
 
+		if(this is ISelectorNavigator)
+		{
+			// Clear the executed to make sure that the
+			// requested route is forwarded to children
+			executedRoute = Route.Empty;
+		}
+
 		return new NavigationResponse(executedRoute ?? Route.Empty);
 	}
 

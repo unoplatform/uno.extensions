@@ -19,11 +19,15 @@
 		<utu:NavigationBar  AutomationProperties.AutomationId="ProfileNavigationBar"
 							Content="Profile" />
 
-		<Grid Grid.Row="1">
+		<StackPanel Grid.Row="1">
 			<Button AutomationProperties.AutomationId="LogoutButton"
 					VerticalAlignment="Top"
 					Content="Logout"
 					uen:Navigation.Request="/" />
-		</Grid>
+			<Button AutomationProperties.AutomationId="LogoutViaForwardNavigationButton"
+					VerticalAlignment="Top"
+					Content="Logout with forward navigation"
+					uen:Navigation.Request="-/Login" />
+		</StackPanel>
 	</Grid>
 </Page>
