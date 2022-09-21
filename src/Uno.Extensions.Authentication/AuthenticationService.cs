@@ -53,6 +53,9 @@ internal class AuthenticationService : IAuthenticationService
 
 		if (_logger.IsEnabled(LogLevel.Trace)) _logger.LogTraceMessage($"Logout successful, so clear token cache");
 		await _tokens.ClearAsync(ct);
+
+		// Don't raise LoggedOut event here - if there were tokens, then the ITokenCache.Cleared event will
+		// be raised, which in turn will trigger the LoggedOut event to be raised
 		return true;
 	}
 
