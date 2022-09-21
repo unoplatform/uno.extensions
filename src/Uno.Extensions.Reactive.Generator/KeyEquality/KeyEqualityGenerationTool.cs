@@ -22,10 +22,10 @@ internal class KeyEqualityGenerationTool : ICodeGenTool
 	/// <inheritdoc />
 	public string Version => "1";
 
-	public KeyEqualityGenerationTool(KeyEqualityGenerationContext context, IAssemblySymbol assembly)
+	public KeyEqualityGenerationTool(KeyEqualityGenerationContext context)
 	{
 		_ctx = context;
-		_assembly = assembly;
+		_assembly = context.Context.Compilation.Assembly;
 	}
 
 	public IEnumerable<(string fileName, string code)> Generate()

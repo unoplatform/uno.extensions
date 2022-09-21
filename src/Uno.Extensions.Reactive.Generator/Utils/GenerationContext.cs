@@ -23,12 +23,17 @@ internal static class GenerationContext
 				.Skip(1) // GeneratorExecutionContext
 				.Select(parameter => (parameter, attribute: parameter.GetCustomAttribute<ContextTypeAttribute>()))
 				.Where(x => x.attribute is not null)
-				.Select(x => (x.parameter, type: x.attribute.Type, symbol: compilation!.GetTypeByMetadataName(x.attribute.Type)))
+				.Select(x =>
+				(
+					x.parameter,
+					type: x.attribute.Type,
+					isOptional: x.attribute.IsOptional || x.parameter.GetCustomAttributesData().Any(attr => attr.AttributeType.FullName.Equals("System.Runtime.CompilerServices.NullableAttribute")),
+					symbol: compilation!.GetTypeByMetadataName(x.attribute.Type)
+				))
 				.ToList();
 
 			if (arguments
-					.Where(arg => arg.symbol is null
-						&& !arg.parameter.GetCustomAttributesData().Any(attr => attr.AttributeType.FullName.Equals("System.Runtime.CompilerServices.NullableAttribute")))
+					.Where(arg => arg is {symbol: null, isOptional: false})
 					.ToList() is { Count: > 0 } missingArgs)
 			{
 				error = $"Failed to resolve types {missingArgs.Select(arg => arg.type).JoinBy(", ")}";

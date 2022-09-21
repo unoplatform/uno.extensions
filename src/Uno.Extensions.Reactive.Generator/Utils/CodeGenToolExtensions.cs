@@ -21,7 +21,6 @@ internal static class CodeGenToolExtensions
 			//	Manual changes to this file will be overwritten if the code is regenerated.
 			// </auto-generated>
 			//----------------------
-			#nullable enable
 			#pragma warning disable".Align(Math.Max(aligned - 1, 0));
 
 	public static string AsPartialOf(this ICodeGenTool tool, INamedTypeSymbol type, string code)

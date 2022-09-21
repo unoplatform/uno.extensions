@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Linq;
 using Microsoft.CodeAnalysis;
-using Uno.Extensions.Reactive.Generator.KeyEquality;
+using Uno.Extensions.Reactive.Generator.Compat;
 using Uno.Extensions.Reactive.Generator.Utils;
 
 namespace Uno.Extensions.Reactive.Generator;
@@ -11,7 +10,7 @@ namespace Uno.Extensions.Reactive.Generator;
 /// A generator that generates IKeyEquatable implementation.
 /// </summary>
 [Generator]
-public partial class KeyEqualityGenerator : ISourceGenerator
+public partial class CompatibilityTypesGenerator : ISourceGenerator
 {
 	/// <inheritdoc />
 	public void Initialize(GeneratorInitializationContext context) { }
@@ -19,7 +18,7 @@ public partial class KeyEqualityGenerator : ISourceGenerator
 	/// <inheritdoc />
 	public void Execute(GeneratorExecutionContext context)
 	{
-#if DEBUGGING_GENERATOR
+#if DEBUGGING_GENERATOR || true
 		var process = Process.GetCurrentProcess().ProcessName;
 		if (process.IndexOf("VBCSCompiler", StringComparison.OrdinalIgnoreCase) is not -1
 			|| process.IndexOf("csc", StringComparison.OrdinalIgnoreCase) is not -1)
@@ -28,9 +27,9 @@ public partial class KeyEqualityGenerator : ISourceGenerator
 		}
 #endif
 
-		if (GenerationContext.TryGet<KeyEqualityGenerationContext>(context, out var error) is { } bindableContext)
+		if (GenerationContext.TryGet<CompatibilityTypesGenerationContext>(context, out var error) is { } bindableContext)
 		{
-			foreach (var generated in new KeyEqualityGenerationTool(bindableContext).Generate())
+			foreach (var generated in new CompatibilityTypesGenerationTool(bindableContext).Generate())
 			{
 				context.AddSource(PathHelper.SanitizeFileName(generated.fileName), generated.code);
 			}

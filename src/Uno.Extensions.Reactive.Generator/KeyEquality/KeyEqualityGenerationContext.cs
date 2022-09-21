@@ -13,11 +13,7 @@ internal record KeyEqualityGenerationContext(
 
 	// Config
 	[ContextType(typeof(ImplicitKeyEqualityAttribute))] INamedTypeSymbol ImplicitKeyAttribute,
-	[ContextType(typeof(KeyAttribute))] INamedTypeSymbol KeyAttribute,
-
-	// Misc
-	[ContextType("global::Foundation.PreserveAttribute")]
-	INamedTypeSymbol? PreserveAttribute // Xamarin only
+	[ContextType(typeof(KeyAttribute))] INamedTypeSymbol KeyAttribute
 )
 {
 	private IMethodSymbol? _getKeyHashCode;
