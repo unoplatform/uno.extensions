@@ -14,6 +14,9 @@ internal static class StringExtensions
 	public static string Align(this IEnumerable<string?> items, int indent)
 		=> Align(items, new string('\t', indent));
 
+	public static string Align(this IEnumerable<string?> items, int indent, string separator)
+		=> string.Join("\r\n" + new string('\t', indent) + separator, items.Where(item => !string.IsNullOrWhiteSpace(item)).Select((input, i) => Align(input!, indent)));
+
 	public static string Align(this IEnumerable<string?> items, string indent)
 		=> string.Join("\r\n" + indent, items.Where(item => !string.IsNullOrWhiteSpace(item)).Select((input, i) => Align(input!, indent)));
 

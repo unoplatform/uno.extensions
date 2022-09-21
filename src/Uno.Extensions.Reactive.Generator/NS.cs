@@ -9,4 +9,6 @@ internal static class NS
 	public const string Bindings = Reactive + ".Bindings";
 	public const string Commands = Reactive + ".Commands";
 	public const string Core = Reactive + ".Core";
+
+	public const string Equality = "global::Uno.Extensions.Equality";
 }
