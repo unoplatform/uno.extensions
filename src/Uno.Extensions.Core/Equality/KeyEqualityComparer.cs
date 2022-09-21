@@ -54,7 +54,7 @@ public static class KeyEqualityComparer
 	/// if <typeparamref name="T"/> implements <see cref="IKeyEquatable{T}"/>,
 	/// `null` otherwise.
 	/// </returns>
-	public static IEqualityComparer<T>? Find<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.NonPublicConstructors | DynamicallyAccessedMemberTypes.NonPublicFields)] T>()
+	public static IEqualityComparer<T>? Find<T>()
 		=> Handler<T>.KeyComparer;
 
 	private class Handler<T>
