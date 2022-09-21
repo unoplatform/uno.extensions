@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Collections.Tracking;
+using Uno.Extensions.Equality;
 using Uno.Extensions.Reactive.Tests._Utils;
 using Uno.Extensions.Reactive.Utils;
 using static Uno.Extensions.Collections.CollectionChanged;
