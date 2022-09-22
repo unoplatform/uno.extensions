@@ -12,10 +12,16 @@ internal record AuthenticationShellViewModel
 		IAuthenticationRouteInfo routing)
 	{
 		_authentication = auth;
+		_authentication.LoggedOut += _authentication_LoggedOut;
 		_navigator = navigator;
 		_routing = routing;
 
 		_ = Start();
+	}
+
+	private async void _authentication_LoggedOut(object? sender, EventArgs e)
+	{
+		await _navigator.NavigateViewModelAsync(this, _routing.LoginViewModel, qualifier: Qualifiers.ClearBackStack);
 	}
 
 	private async Task Start()

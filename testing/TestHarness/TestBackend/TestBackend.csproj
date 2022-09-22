@@ -14,4 +14,8 @@
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="6.0.7" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\TestHarness.Core\TestHarness.Core.csproj" />
+	</ItemGroup>
+
 </Project>
