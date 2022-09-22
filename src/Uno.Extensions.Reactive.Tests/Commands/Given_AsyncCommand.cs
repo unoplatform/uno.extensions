@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Uno.Extensions.Equality;
 using Uno.Extensions.Reactive.Commands;
 using Uno.Extensions.Reactive.Testing;
 
@@ -149,6 +150,7 @@ public class Given_AsyncCommand : FeedUITests
 		return (sut, executions);
 	}
 
+	[ImplicitKeyEquality(IsEnabled = false)]
 	private record Execution(ExecutionStartedEventArgs Start)
 	{
 		public const int DefaultTimeoutMs = 1000;

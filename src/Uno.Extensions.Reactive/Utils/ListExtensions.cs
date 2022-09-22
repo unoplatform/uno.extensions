@@ -5,6 +5,7 @@ using System.Collections.Immutable;
 using System.Text;
 using Uno.Extensions.Collections.Facades.Slice;
 using Uno.Extensions.Collections.Tracking;
+using Uno.Extensions.Equality;
 using Uno.Extensions.Reactive.Collections.Facades.Adapters;
 
 namespace Uno.Extensions.Reactive.Utils;

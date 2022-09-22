@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Uno.Extensions.Equality;
 using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Collections;

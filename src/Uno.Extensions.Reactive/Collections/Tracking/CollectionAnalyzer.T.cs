@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.Specialized;
 using System.Linq;
+using Uno.Extensions.Equality;
 using Uno.Extensions.Reactive.Collections;
 using Uno.Extensions.Reactive.Utils;
 

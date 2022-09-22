@@ -3,15 +3,36 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Uno.Extensions.Reactive.Utils;
+namespace Uno.Extensions.Equality;
 
-internal static class EqualityComparerExtensions
+/// <summary>
+/// Extensions over <see cref="IEqualityComparer{T}"/>.
+/// </summary>
+public static class EqualityComparerExtensions
 {
+	/// <summary>
+	/// Adapts a generic <see cref="IEqualityComparer{T}"/> to an untyped <see cref="IEqualityComparer"/>.
+	/// </summary>
+	/// <typeparam name="T">Type of the compared objects.</typeparam>
+	/// <param name="comparer">The comparer to adapt.</param>
+	/// <returns>
+	/// The given comparer itself if it also implement <see cref="IEqualityComparer"/>
+	/// or a wrapper that encapsulate it hiding the generic parameter.
+	/// </returns>
 	public static IEqualityComparer ToEqualityComparer<T>(this IEqualityComparer<T> comparer)
-		=> comparer is IEqualityComparer untyped ? untyped : new TypedToUntypedEqualityComparerAdapter<T>(comparer);
+		=> comparer as IEqualityComparer ?? new TypedToUntypedEqualityComparerAdapter<T>(comparer);
 
+	/// <summary>
+	/// Adapts an untyped <see cref="IEqualityComparer"/> to an generic <see cref="IEqualityComparer{T}"/>.
+	/// </summary>
+	/// <typeparam name="T">Type of the compared objects.</typeparam>
+	/// <param name="comparer">The comparer to adapt.</param>
+	/// <returns>
+	/// The given comparer itself if it also implement <see cref="IEqualityComparer{T}"/>
+	/// or a wrapper that encapsulate it hiding the generic parameter.
+	/// </returns>
 	public static IEqualityComparer<T> ToEqualityComparer<T>(this IEqualityComparer comparer)
-		=> comparer is IEqualityComparer<T> typed ? typed : new UntypedToTypedEqualityComparerAdapter<T>(comparer);
+		=> comparer as IEqualityComparer<T> ?? new UntypedToTypedEqualityComparerAdapter<T>(comparer);
 
 	private class TypedToUntypedEqualityComparerAdapter<T> : IEqualityComparer<T>, IEqualityComparer
 	{

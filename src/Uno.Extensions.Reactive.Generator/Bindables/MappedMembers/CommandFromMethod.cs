@@ -244,7 +244,7 @@ internal partial record CommandFromMethod : IMappedMember
 			var propertyAttr = parameter.FindAttributeValue(ctx.CommandParameterAttribute, ctorPosition: 0);
 			if (propertyAttr is { isDefined: true } || isImplicitParametersEnabled)
 			{
-				var property = type.FindProperty(propertyAttr.value ?? parameter.Name, StringComparison.OrdinalIgnoreCase);
+				var property = type.FindProperty(propertyAttr.value ?? parameter.Name, allowBaseTypes: true, comparison: StringComparison.OrdinalIgnoreCase);
 				if (propertyAttr.isDefined)
 				{
 					if (property is null)

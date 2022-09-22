@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -69,14 +70,32 @@ internal static class RoslynExtensions
 	/// Determines if the symbol inherits from the specified type.
 	/// </summary>
 	public static bool IsOrImplements(this ITypeSymbol symbol, INamedTypeSymbol typeOrInterface, [NotNullWhen(true)] out INamedTypeSymbol? boundedType)
+		=> IsOrImplements(symbol, typeOrInterface, true, out boundedType);
+
+	/// <summary>
+	/// Determines if the symbol inherits from the specified type.
+	/// </summary>
+	public static bool IsOrImplements(this ITypeSymbol symbol, INamedTypeSymbol typeOrInterface, bool allowBaseTypes, [NotNullWhen(true)] out INamedTypeSymbol? boundedType)
 	{
 		do
 		{
-			if (symbol is INamedTypeSymbol named
-				&& (IsExpectedType(named) || named.Interfaces.Any(IsExpectedType)))
+			if (symbol is INamedTypeSymbol named)
 			{
-				boundedType = named;
-				return true;
+				if (IsExpectedType(named))
+				{
+					boundedType = named;
+					return true;
+				}
+				else if (named.Interfaces.FirstOrDefault(IsExpectedType) is { } concreteType)
+				{
+					boundedType = concreteType;
+					return true;
+				}
+			}
+
+			if (!allowBaseTypes)
+			{
+				break;
 			}
 
 			symbol = symbol.BaseType!;
@@ -94,6 +113,19 @@ internal static class RoslynExtensions
 			=> SymbolEqualityComparer.Default.Equals(named, typeOrInterface)
 			|| SymbolEqualityComparer.Default.Equals(named.ConstructedFrom, typeOrInterface);
 	}
+
+	public static IMethodSymbol? FindLocalImplementationOf(this INamedTypeSymbol type, IMethodSymbol boundedInterfaceMethod, SymbolEqualityComparer? comparer = null)
+		=> type.GetMethods().FirstOrDefault(m => m.IsImplementationOf(boundedInterfaceMethod, comparer));
+
+	public static bool IsImplementationOf(this IMethodSymbol method, IMethodSymbol boundedInterfaceMethod, SymbolEqualityComparer? comparer = null)
+		=> method is { MethodKind: MethodKind.ExplicitInterfaceImplementation }
+			? method.ExplicitInterfaceImplementations.Contains(boundedInterfaceMethod)
+			: method.Name.Equals(boundedInterfaceMethod.Name, StringComparison.Ordinal)
+				&& method.Parameters.Length == boundedInterfaceMethod.Parameters.Length
+				&& method.Parameters
+					.Select((param, i) => (expected: boundedInterfaceMethod.Parameters[i], actual: param))
+					.All(parameters => (comparer ?? SymbolEqualityComparer.IncludeNullability).Equals(parameters.expected.Type, parameters.actual.Type))
+				&& (comparer ?? SymbolEqualityComparer.IncludeNullability).Equals(method.ReturnType, boundedInterfaceMethod.ReturnType);
 
 	public static string GetDeclaringLocationsDisplayString(this ISymbol symbol)
 		=> symbol
@@ -215,6 +247,95 @@ internal static class RoslynExtensions
 		}
 	}
 
-	public static IPropertySymbol? FindProperty(this INamedTypeSymbol type, string propertyName, StringComparison comparison = StringComparison.Ordinal)
-		=> type.GetAllProperties().FirstOrDefault(property => property.Name.Equals(propertyName, comparison));
+	public static TAttribute? FindAttribute<TAttribute>(this ISymbol symbol)
+		where TAttribute : Attribute
+	{
+		var type = typeof(TAttribute);
+		var data = symbol
+			.GetAttributes()
+			.FirstOrDefault(attr => attr.AttributeClass?.ToDisplayString().Equals(type.FullName, StringComparison.Ordinal) ?? false);
+
+		if (data is null)
+		{
+			return default;
+		}
+
+		var ctor = type.GetConstructors().Single(defCtor => Matches(defCtor, data.AttributeConstructor));
+		var ctorArgs = data.ConstructorArguments.Select(GetValue).ToArray();
+
+		var attribute = ctor.Invoke(ctorArgs);
+
+		foreach (var dataProperty in data.NamedArguments)
+		{
+			var prop = type.GetProperty(dataProperty.Key, BindingFlags.Public | BindingFlags.Instance);
+			if (prop is null)
+			{
+				throw new InvalidOperationException($"Failed to get the property named '{dataProperty.Key}' on '{type.FullName}'.");
+			}
+			prop.SetValue(attribute, GetValue(dataProperty.Value));
+		}
+
+		return (TAttribute)attribute;
+	}
+
+	private static SymbolDisplayFormat _reflectionFullNameFormat = SymbolDisplayFormat
+		.FullyQualifiedFormat
+		.RemoveMiscellaneousOptions(SymbolDisplayMiscellaneousOptions.UseSpecialTypes) // Force usage of `System.String` instead of `string`
+		.WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted); // Remove teh `global::` prefix
+	private static bool Matches(MethodBase def, IMethodSymbol? actual)
+	{
+		var actualParameters = actual?.Parameters ?? ImmutableArray<IParameterSymbol>.Empty;
+		var defParameters = def.GetParameters();
+
+		if (actualParameters.Length != defParameters.Length)
+		{
+			return false;
+		}
+
+		for (var i = 0; i < defParameters.Length; i++)
+		{
+			var actualParameter = actualParameters[i];
+			var defParameter = defParameters[i];
+
+			if (!actualParameter.Name.Equals(defParameter.Name, StringComparison.Ordinal)
+				|| !actualParameter.Type.ToDisplayString(_reflectionFullNameFormat).Equals(defParameter.ParameterType.FullName, StringComparison.Ordinal))
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	private static object? GetValue(TypedConstant arg)
+		=> arg switch
+		{
+			{ IsNull: true } => null,
+			{ Kind: TypedConstantKind.Error } => throw new InvalidOperationException("Attribute argument not resolved properly."),
+			{ Kind: TypedConstantKind.Array } => ToTypedArray(Type.GetType(arg.Type!.ToDisplayString(_reflectionFullNameFormat), throwOnError: true, ignoreCase: true)!, arg.Values.Select(GetValue)),
+			{ Kind: TypedConstantKind.Type } => throw new InvalidOperationException("Type arguments are not supported for Attribute re-construction."),
+			{ Kind: TypedConstantKind.Enum or TypedConstantKind.Primitive } => arg.Value!,
+			_ => throw new InvalidOperationException("Attribute argument is unknown."),
+		};
+
+	private static object ToTypedArray(Type type, IEnumerable<object?> values)
+	{
+		var items = values.ToArray();
+		var typedItems = Array.CreateInstance(type.IsArray ? type.GetElementType()! : type, items.Length);
+
+		Array.Copy(items, typedItems, items.Length);
+
+		return typedItems;
+	}
+
+	public static IPropertySymbol? FindProperty(this INamedTypeSymbol type, string propertyName, bool allowBaseTypes = true, StringComparison comparison = StringComparison.Ordinal)
+		=> type.GetProperties().FirstOrDefault(property => property.Name.Equals(propertyName, comparison))
+			?? (allowBaseTypes && type.BaseType is { } @base ? @base.FindProperty(propertyName, allowBaseTypes, comparison) : null);
+
+	public static IMethodSymbol? FindMethod(this INamedTypeSymbol type, string methodName, bool allowBaseTypes = true, StringComparison comparison = StringComparison.Ordinal)
+		=> type.GetMembers().OfType<IMethodSymbol>().FirstOrDefault(method => method.Name.Equals(methodName, comparison))
+			?? (allowBaseTypes && type.BaseType is { } @base? @base.FindMethod(methodName, allowBaseTypes, comparison) : null);
+
+	public static IMethodSymbol GetMethod(this INamedTypeSymbol type, string methodName, bool allowBaseTypes = true, StringComparison comparison = StringComparison.Ordinal)
+		=> type.FindMethod(methodName, allowBaseTypes, comparison) ?? throw new InvalidOperationException($"Method {methodName} not found on {type.Name}.");
 }
