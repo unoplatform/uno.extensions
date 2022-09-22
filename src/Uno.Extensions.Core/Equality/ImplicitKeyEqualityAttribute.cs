@@ -18,14 +18,27 @@ namespace Uno.Extensions.Equality;
 [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false, Inherited = false)]
 public class ImplicitKeyEqualityAttribute : Attribute
 {
+	/// <summary>
+	/// Gets or sets a bool which indicates if the generation of key equality based on property names is enabled of not.
+	/// </summary>
 	public bool IsEnabled { get; init; } = true;
 
+	/// <summary>
+	/// The name of properties that should be implicitly used as key.
+	/// </summary>
 	public string[] PropertyNames { get; } = { "Id", "Key" };
 
+	/// <summary>
+	/// Create a new instance using default values.
+	/// </summary>
 	public ImplicitKeyEqualityAttribute()
 	{
 	}
 
+	/// <summary>
+	/// Creates a new instance specifying the <see cref="PropertyNames"/>.
+	/// </summary>
+	/// <param name="propertyNames">The name of properties that should be implicitly used as key.</param>
 	public ImplicitKeyEqualityAttribute(params string[] propertyNames)
 	{
 		PropertyNames = propertyNames;
