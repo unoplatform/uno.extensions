@@ -18,19 +18,19 @@ internal class CompatibilityTypesGenerationTool : ICodeGenTool
 
 	public IEnumerable<(string fileName, string code)> Generate()
 	{
-		if (_context.NotNullIfNotNullAttribute is null)
+		if (_context.NotNullIfNotNullAttribute is null && !GetIsDisabled("UnoExtensionsGeneration_DisableNotNullIfNotNullAttribute"))
 		{
 			yield return (nameof(_context.NotNullIfNotNullAttribute), GetNotNullIfNotNullAttribute());
 		}
-		if (_context.NotNullWhenAttribute is null)
+		if (_context.NotNullWhenAttribute is null && !GetIsDisabled("UnoExtensionsGeneration_DisableNotNullWhenAttribute"))
 		{
 			yield return (nameof(_context.NotNullWhenAttribute), GetNotNullWhenAttribute());
 		}
-		if (_context.IsExternalInit is null)
+		if (_context.IsExternalInit is null && !GetIsDisabled("UnoExtensionsGeneration_DisableIsExternalInit"))
 		{
 			yield return (nameof(_context.IsExternalInit), GetIsExternalInit());
 		}
-		if (_context.ModuleInitializerAttribute is null)
+		if (_context.ModuleInitializerAttribute is null && !GetIsDisabled("UnoExtensionsGeneration_DisableModuleInitializerAttribute"))
 		{
 			yield return (nameof(_context.ModuleInitializerAttribute), GetModuleInitializerAttribute());
 		}
@@ -38,6 +38,9 @@ internal class CompatibilityTypesGenerationTool : ICodeGenTool
 
 	private string GetModuleInitializerAttribute()
 		=> $@"{this.GetFileHeader(3)}
+
+			// Note: You can disable the generation of this file by setting in your project the property
+			//		 <UnoExtensionsGeneration_DisableModuleInitializerAttribute>true</UnoExtensionsGeneration_DisableModuleInitializerAttribute>
 
 			using global::System;
 
@@ -56,6 +59,9 @@ internal class CompatibilityTypesGenerationTool : ICodeGenTool
 	private string GetIsExternalInit()
 		=> $@"{this.GetFileHeader(3)}
 
+			// Note: You can disable the generation of this file by setting in your project the property
+			//		 <UnoExtensionsGeneration_DisableIsExternalInit>true</UnoExtensionsGeneration_DisableIsExternalInit>
+
 			using global::System;
 
 			namespace System.Runtime.CompilerServices
@@ -72,6 +78,9 @@ internal class CompatibilityTypesGenerationTool : ICodeGenTool
 
 	private string GetNotNullIfNotNullAttribute()
 		=> $@"{this.GetFileHeader(3)}
+
+			// Note: You can disable the generation of this file by setting in your project the property
+			//		 <UnoExtensionsGeneration_DisableNotNullIfNotNullAttribute>true</UnoExtensionsGeneration_DisableNotNullIfNotNullAttribute>
 
 			using global::System;
 
@@ -104,6 +113,9 @@ internal class CompatibilityTypesGenerationTool : ICodeGenTool
 	public string GetNotNullWhenAttribute()
 		=> $@"{this.GetFileHeader(3)}
 
+			// Note: You can disable the generation of this file by setting in your project the property
+			//		 <UnoExtensionsGeneration_DisableNotNullWhenAttribute>true</UnoExtensionsGeneration_DisableNotNullWhenAttribute>
+
 			using global::System;
 
 			namespace System.Diagnostics.CodeAnalysis
@@ -131,6 +143,9 @@ internal class CompatibilityTypesGenerationTool : ICodeGenTool
 				}}
 			}}
 			".Align(0);
+
+	private bool GetIsDisabled(string propertyName)
+		=> bool.TryParse(_context.Context.GetMSBuildPropertyValue(propertyName), out var isDisabled) && isDisabled;
 
 	private (string name, string code) GetTemplate(string fileName)
 	{
