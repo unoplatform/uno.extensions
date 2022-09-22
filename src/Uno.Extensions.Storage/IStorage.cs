@@ -2,11 +2,11 @@
 
 public interface IStorage
 {
-	Task<string> CreateLocalFolderAsync(string foldername);
+	Task<string> CreateFolderAsync(string foldername);
 
-	Task<string?> ReadFileAsync(string filename);
+	Task<string?> ReadPackageFileAsync(string filename);
 
-	Task<Stream> OpenFileAsync(string filename);
+	Task<Stream?> OpenPackageFileAsync(string filename);
 
-	Task WriteFileAsync(string filename, string text);
+	Task WriteFileAsync(string filename, string text, bool overwrite);
 }
