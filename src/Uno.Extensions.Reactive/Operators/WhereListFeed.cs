@@ -10,9 +10,9 @@ using Uno.Extensions.Reactive.Core;
 
 namespace Uno.Extensions.Reactive.Operators;
 
-internal class WhereListFeed<T> : IListFeed<T>
+internal sealed class WhereListFeed<T> : IListFeed<T>
 {
-	private static readonly CollectionAnalyzer<T> _analyzer = CollectionAnalyzer<T>.Default;
+	private static readonly CollectionAnalyzer<T> _analyzer = ListFeed<T>.DefaultAnalyzer;
 
 	private readonly IListFeed<T> _parent;
 	private readonly Predicate<T> _predicate;
