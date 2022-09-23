@@ -24,12 +24,15 @@ internal partial class CollectionAnalyzer
 	/// </summary>
 	protected struct ListRef<T>
 	{
-		public ListRef(int count, ElementAtHandler<T> elementAt, IndexOfHandler<T> indexOf)
+		public ListRef(object instance, int count, ElementAtHandler<T> elementAt, IndexOfHandler<T> indexOf)
 		{
+			Instance = instance;
 			Count = count;
 			ElementAt = elementAt;
 			IndexOf = indexOf;
 		}
+
+		public object Instance { get; }
 
 		public int Count { get; }
 

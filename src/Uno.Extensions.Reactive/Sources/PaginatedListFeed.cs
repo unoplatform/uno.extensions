@@ -167,10 +167,10 @@ internal class PaginatedListFeed<TCursor, TItem> : IListFeed<TItem>, IRefreshabl
 
 			(items, changes) = (hadItems, hasItems, isFirstPage) switch
 			{
-				(false, false, _) => (DifferentialImmutableList<TItem>.Empty, CollectionChangeSet.Empty),
+				(false, false, _) => (DifferentialImmutableList<TItem>.Empty, CollectionChangeSet<TItem>.Empty),
 				(false, true, _) => Reset(items, page.Items),
 				(true, false, true) => Clear(items),
-				(true, false, false) => (items, CollectionChangeSet.Empty),
+				(true, false, false) => (items, CollectionChangeSet<TItem>.Empty),
 				(true, true, true) => Reset(items, page.Items),
 				(true, true, false) => Add(items, page.Items),
 			};
