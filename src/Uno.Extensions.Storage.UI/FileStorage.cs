@@ -1,4 +1,6 @@
 ﻿
+using System.Reflection;
+
 namespace Uno.Extensions.Storage;
 
 public class FileStorage : IStorage
@@ -10,7 +12,20 @@ public class FileStorage : IStorage
 		var files = assets?.List("");
 		filename = Path.GetFileNameWithoutExtension(filename).Replace('.', '_') + Path.GetExtension(filename);
 		return files?.Contains(filename)??false;
-#else
+#elif WINDOWS
+		var executingPath = Assembly.GetExecutingAssembly().Location;
+		if (!string.IsNullOrWhiteSpace(executingPath))
+		{
+			var path = Path.GetDirectoryName(executingPath);
+			if (path is not null &&
+				!string.IsNullOrWhiteSpace(path))
+			{
+				var fullPath = Path.Combine(path, filename);
+				return File.Exists(fullPath);
+			}
+		}
+		return true;
+#else 
 		return true;
 #endif
 
