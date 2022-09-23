@@ -481,6 +481,7 @@ namespace Uno.Core.Tests.Threading
 
 		[TestMethod]
 		[Timeout(_timeout)]
+		[Ignore]
 		public async Task TestExitFromAnotherExecutionContext()
 		{
 			var sut = new FastAsyncLock();
