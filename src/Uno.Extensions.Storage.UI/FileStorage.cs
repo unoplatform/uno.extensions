@@ -1,5 +1,8 @@
 ﻿
 using System.Reflection;
+#if __IOS__ || MACCATALYST || MACOS
+using Foundation;
+#endif
 
 namespace Uno.Extensions.Storage;
 
@@ -12,6 +15,14 @@ public class FileStorage : IStorage
 		var files = assets?.List("");
 		filename = Path.GetFileNameWithoutExtension(filename).Replace('.', '_') + Path.GetExtension(filename);
 		return files?.Contains(filename)??false;
+#elif __IOS__ || MACCATALYST || MACOS
+		var directoryName = global::System.IO.Path.GetDirectoryName(filename) + string.Empty;
+		var fileName = global::System.IO.Path.GetFileNameWithoutExtension(filename);
+		var fileExtension = global::System.IO.Path.GetExtension(filename);
+
+		var resourcePathname = NSBundle.MainBundle.PathForResource(global::System.IO.Path.Combine(directoryName, fileName), fileExtension.Substring(1));
+
+		return resourcePathname != null;
 #elif WINDOWS
 		var executingPath = Assembly.GetExecutingAssembly().Location;
 		if (!string.IsNullOrWhiteSpace(executingPath))
@@ -25,7 +36,7 @@ public class FileStorage : IStorage
 			}
 		}
 		return true;
-#else 
+#else
 		return true;
 #endif
 
@@ -42,7 +53,7 @@ public class FileStorage : IStorage
 	{
 		try
 		{
-			if(!await FileExistsInPackage(filename))
+			if (!await FileExistsInPackage(filename))
 			{
 				return default;
 			}
