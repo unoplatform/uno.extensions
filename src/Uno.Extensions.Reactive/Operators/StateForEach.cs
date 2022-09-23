@@ -9,7 +9,7 @@ using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive;
 
-internal class StateForEach<T> : IDisposable
+internal sealed class StateForEach<T> : IDisposable
 	where T : notnull
 {
 	private readonly CancellationTokenSource _ct = new();

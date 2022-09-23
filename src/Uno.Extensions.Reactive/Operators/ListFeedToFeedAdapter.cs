@@ -7,7 +7,7 @@ using Uno.Extensions.Reactive.Core;
 
 namespace Uno.Extensions.Reactive.Operators;
 
-internal record ListFeedToFeedAdapter<T>(IListFeed<T> Source) : IFeed<IImmutableList<T>>
+internal sealed record ListFeedToFeedAdapter<T>(IListFeed<T> Source) : IFeed<IImmutableList<T>>
 {
 	/// <inheritdoc />
 	public IAsyncEnumerable<Message<IImmutableList<T>>> GetSource(SourceContext context, CancellationToken ct = default)

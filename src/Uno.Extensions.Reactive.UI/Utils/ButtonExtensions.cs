@@ -14,9 +14,9 @@ namespace Uno.Extensions.Reactive.UI;
 /// </summary>
 public static class ButtonExtensions
 {
-	#region IsExtendedVisualStatesEnabled (Attached DP)
+	#region IsExecutionTrackingEnabled (Attached DP)
 	/// <summary>
-	/// Backing property for the IsExtendedVisualStatesEnabled flag.
+	/// Backing property for the IsExecutionTrackingEnabled flag.
 	/// </summary>
 	public static readonly DependencyProperty IsExecutionTrackingEnabledProperty = DependencyProperty.RegisterAttached(
 		"IsExecutionTrackingEnabled", typeof(bool), typeof(ButtonExtensions), new PropertyMetadata(default(bool), OnIsEnabledChanged));
@@ -42,7 +42,7 @@ public static class ButtonExtensions
 		=> button.SetValue(IsExecutionTrackingEnabledProperty, isEnabled);
 	#endregion
 
-	#region ExtendedVisualStatesError (Attached DP)
+	#region LastExecutionError (Attached DP)
 	/// <summary>
 	/// Backing property for the LastExecutionError.
 	/// </summary>

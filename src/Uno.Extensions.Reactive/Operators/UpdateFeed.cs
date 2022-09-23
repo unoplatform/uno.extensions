@@ -11,7 +11,7 @@ namespace Uno.Extensions.Reactive.Operators;
 
 internal record FeedUpdate<T>(Predicate<MessageBuilder<T>> IsActive, Action<MessageBuilder<T>> Apply);
 
-internal class UpdateFeed<T> : IFeed<T>
+internal sealed class UpdateFeed<T> : IFeed<T>
 {
 	private readonly AsyncEnumerableSubject<(UpdateAction action, FeedUpdate<T> update)> _updates = new(ReplayMode.Disabled);
 	private readonly IFeed<T> _source;
