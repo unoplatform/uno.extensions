@@ -123,7 +123,7 @@
 						</utu:TabBarItem>
 						<utu:TabBarItem AutomationProperties.AutomationId="ProductsTabBarItem"
 										IsSelectable="True"
-										uen:Region.Name="Products">
+										uen:Region.Name="-/Products">
 							<utu:TabBarItem.Icon>
 								<PathIcon Data="{StaticResource Icon_storefront}" />
 							</utu:TabBarItem.Icon>
