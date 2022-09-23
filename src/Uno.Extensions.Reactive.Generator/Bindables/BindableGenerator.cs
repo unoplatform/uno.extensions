@@ -62,29 +62,67 @@ internal class BindableGenerator
 			.Where(prop => !prop.IsImplicitlyDeclared && prop.IsPublic() && !prop.IsStatic)
 			.Select(prop =>
 			{
-				var subBindable = GetBindableType(prop.Type);
 				var camelName = prop.GetCamelCaseName();
-				var property = subBindable is not null
-					? new Property(prop.Type.DeclaredAccessibility, subBindable, prop.Name)
+				var canRead = prop.GetMethod is not null;
+				var canWrite = prop.SetMethod is not null;
+				var propertyInfo = $@"base.Property<{prop.Type}>(
+					nameof({prop.Name}),
+					{record.GetCamelCaseName()} => {(canRead ? $"{record.GetCamelCaseName()}?.{prop.Name} ?? default({prop.Type})" : $"default({prop.Type})")},
+					({record.GetCamelCaseName()}, {camelName}) => {(canWrite ? $"({record.GetCamelCaseName()} ?? CreateDefault()) with {{{prop.Name} = {camelName}}}" : record.GetCamelCaseName())})";
+
+				Property property;
+				string bindable, initializer;
+				if (prop.Type.IsOrImplements(_ctx.ImmutableList, out var immutableList)
+					&& GetBindableType(immutableList.TypeArguments.Single()) is {} imlItemBindable)
+				{
+					bindable = $"{NS.Bindings}.BindableImmutableList<{immutableList.TypeArguments.Single()}, {imlItemBindable}>";
+					initializer = $@"_{camelName} = new {bindable}({propertyInfo}, p => new {imlItemBindable}(p));";
+					property = new Property(prop.Type.DeclaredAccessibility, bindable, prop.Name)
 					{
 						Getter = $"_{camelName}"
-					}
-					: Property.FromProperty(prop, allowInitOnlySetter: true) with
+					};
+				}
+				// Not supported for now since it would require us to build a generic Replace method which is not supported for all enumerable types
+				//else if (prop.Type.IsOrImplements(_ctx.Enumerable, out var enumerable)
+				//		&& GetBindableType(enumerable.TypeArguments.Single()) is {} itemBindable)
+				//{
+				//	bindable = $"{NS.Bindings}.BindableEnumerable<{prop.Type}, {enumerable.TypeArguments.Single()}, {itemBindable}>";
+				//	initializer = $@"_{camelName} = new {bindable}({propertyInfo}, p => new {itemBindable}(p), #error TODO);";
+				//	property = new Property(prop.Type.DeclaredAccessibility, bindable, prop.Name)
+				//	{
+				//		Getter = $"_{camelName}"
+				//	};
+				//}
+				else if (GetBindableType(prop.Type) is {} subBindable)
+				{
+					bindable = subBindable;
+					initializer = $@"_{camelName} = new {bindable}({propertyInfo});";
+					property = new Property(prop.Type.DeclaredAccessibility, subBindable, prop.Name)
+					{
+						Getter = $"_{camelName}"
+					};
+				}
+				else
+				{
+					bindable = $"{NS.Bindings}.Bindable<{prop.Type}>";
+					initializer = $@"_{camelName} = new {bindable}({propertyInfo});";
+					property = Property.FromProperty(prop, allowInitOnlySetter: true) with
 					{
 						Getter = $"_{camelName}.GetValue()",
 						Setter = $"_{camelName}.SetValue(value)",
 						IsInit = false // Even if 'prop' is init only, we do allow set.
 					};
+				}
 
 				return
 				(
 					symbol: prop,
+					initializer: initializer,
 					name: prop.Name,
 					camelName: camelName,
 					canRead: prop.GetMethod is not null,
 					canWrite: prop.SetMethod is not null,
-					hasBindable: subBindable is not null,
-					bindable: subBindable ?? $"{NS.Bindings}.Bindable<{prop.Type}>",
+					bindable: bindable,
 					property: property.ToString()
 				);
 			})
@@ -122,13 +160,7 @@ namespace {record.ContainingNamespace}
 		public Bindable{record.GetPascalCaseName()}({NS.Bindings}.BindablePropertyInfo<{record}> property)
 			: base(property, hasValueProperty: {(valueProperty is null ? "false" : "true")})
 		{{
-			{properties
-				.Select(prop => $@"
-					_{prop.camelName} = new {prop.bindable}(base.Property<{prop.symbol.Type}>(
-						nameof({prop.name}),
-						{record.GetCamelCaseName()} => {(prop.canRead ? $"{record.GetCamelCaseName()}?.{prop.name} ?? default" : $"default({prop.symbol.Type})")},
-						({record.GetCamelCaseName()}, {prop.camelName}) => {(prop.canWrite ? $"({record.GetCamelCaseName()} ?? CreateDefault()) with {{{prop.name} = {prop.camelName}}}" : record.GetCamelCaseName())}));")
-				.Align(3)}
+			{properties.Select(prop => prop.initializer).Align(3)}
 		}}
 
 		private static {record} CreateDefault()

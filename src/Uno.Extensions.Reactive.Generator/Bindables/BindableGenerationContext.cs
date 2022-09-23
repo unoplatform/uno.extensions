@@ -42,6 +42,7 @@ internal record BindableGenerationContext(
 
 	// General stuff types
 	INamedTypeSymbol CancellationToken,
+	INamedTypeSymbol Enumerable,
 	INamedTypeSymbol ImmutableArray,
 	INamedTypeSymbol ImmutableList,
 	INamedTypeSymbol ImmutableQueue,
@@ -56,7 +57,7 @@ internal record BindableGenerationContext(
 		INamedTypeSymbol? implicitCommandsAttribute = default, implicitCommandParametersAttribute = default;
 		INamedTypeSymbol? bindableAttribute = default, inputAttribute = default, valueAttribute = default, defaultCtorAttribute = default;
 		INamedTypeSymbol? commandAttribute = default, commandParameterAttribute = default;
-		INamedTypeSymbol? cancellationToken = default, immutableArray = default, immutableList = default, immutableQueue = default, immutableSet = default, immutableStack = default;
+		INamedTypeSymbol? cancellationToken = default, enumerable = default, immutableArray = default, immutableList = default, immutableQueue = default, immutableSet = default, immutableStack = default;
 
 		IEnumerable<string?> Resolve()
 		{
@@ -78,6 +79,7 @@ internal record BindableGenerationContext(
 			yield return ByType(typeof(FeedParameterAttribute), out commandParameterAttribute);
 
 			yield return ByType(typeof(CancellationToken), out cancellationToken);
+			yield return ByType(typeof(IEnumerable<>), out enumerable);
 			yield return ByType(typeof(ImmutableArray<>), out immutableArray);
 			yield return ByType(typeof(IImmutableList<>), out immutableList);
 			yield return ByType(typeof(IImmutableQueue<>), out immutableQueue);
@@ -108,7 +110,7 @@ internal record BindableGenerationContext(
 			implicitCommandsAttribute!, implicitCommandParametersAttribute!,
 			bindableAttribute!, inputAttribute!, valueAttribute!, defaultCtorAttribute!,
 			commandAttribute!, commandParameterAttribute!,
-			cancellationToken!, immutableArray!, immutableList!, immutableQueue!, immutableSet!, immutableStack!
+			cancellationToken!, enumerable!, immutableArray!, immutableList!, immutableQueue!, immutableSet!, immutableStack!
 		);
 	}
 
