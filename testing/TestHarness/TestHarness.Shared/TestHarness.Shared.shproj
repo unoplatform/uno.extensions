@@ -10,12 +10,4 @@
   <PropertyGroup />
   <Import Project="TestHarness.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeSharing\Microsoft.CodeSharing.CSharp.targets" />
-  <ItemGroup>
-    <_Globbed_Compile Remove="Ext\Authentication\AuthenticationRouteInfo.cs" />
-    <_Globbed_Compile Remove="Ext\Authentication\AuthenticationShellViewModel.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <_Globbed_PRIResource Remove="Strings\en-AU\Resources.resw" />
-    <_Globbed_PRIResource Remove="Strings\fr\Resources.resw" />
-  </ItemGroup>
 </Project>

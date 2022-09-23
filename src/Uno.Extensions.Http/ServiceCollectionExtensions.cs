@@ -1,5 +1,6 @@
 ﻿
 
+using System.Net.Sockets;
 using Uno.Extensions.Logging;
 
 namespace Uno.Extensions;
@@ -16,77 +17,53 @@ public static class ServiceCollectionExtensions
 		return (configureBuilder is not null && predicate) ? configureBuilder(builder) : builder;
 	}
 
-	public static IServiceCollection AddClient<TClient, TImplementation>(
-		 this IServiceCollection services,
-		 HostBuilderContext context,
-		 string? name = null,
-		 Func<IHttpClientBuilder, EndpointOptions, IHttpClientBuilder>? configure = null
-	 )
-		where TClient : class
-		where TImplementation : class, TClient
-	{
-		Func<IServiceCollection, HostBuilderContext, IHttpClientBuilder> httpClientFactory = (s, c) => s.AddHttpClient<TClient, TImplementation>();
-
-		return services.AddClient<TClient>(context, name, httpClientFactory, configure);
-	}
 
 	public static IServiceCollection AddClient<TClient, TImplementation>(
 		 this IServiceCollection services,
 		 HostBuilderContext context,
-		 EndpointOptions options,
+		 EndpointOptions? options = null,
 		 string? name = null,
-		 Func<IHttpClientBuilder, EndpointOptions, IHttpClientBuilder>? configure = null
+		 Func<IHttpClientBuilder, EndpointOptions?, IHttpClientBuilder>? configure = null
 	 )
 		where TClient : class
 		where TImplementation : class, TClient
 	{
-		Func<IServiceCollection, HostBuilderContext, IHttpClientBuilder> httpClientFactory = (s, c) => s.AddHttpClient<TClient, TImplementation>();
+		Func<IServiceCollection, HostBuilderContext, IHttpClientBuilder> httpClientFactory =
+			(s, c) => (name is null || string.IsNullOrWhiteSpace(name)) ?
+						s.AddHttpClient<TClient, TImplementation>() :
+						s.AddHttpClient<TClient, TImplementation>(name);
 
 		return services.AddClient<TClient>(context, options, name, httpClientFactory, configure);
 	}
 
 	public static IServiceCollection AddClient<TInterface>(
-		 this IServiceCollection services,
-		 HostBuilderContext context,
-		 string? name = null,
-		 Func<IServiceCollection, HostBuilderContext, IHttpClientBuilder>? httpClientFactory = null,
-		 Func<IHttpClientBuilder, EndpointOptions, IHttpClientBuilder>? configure = null
-	 )
-		 where TInterface : class
-	{
-		name ??= typeof(TInterface).IsInterface ? typeof(TInterface).Name.TrimStart(InterfaceNamePrefix) : typeof(TInterface).Name;
-		var options = ConfigurationBinder.Get<EndpointOptions>(context.Configuration.GetSection(name));
-
-		return services.AddClient<TInterface>(context, options, name, httpClientFactory, configure);
-	}
-
-	public static IServiceCollection AddClient<TInterface>(
 		  this IServiceCollection services,
 		  HostBuilderContext context,
-		  EndpointOptions options,
+		  EndpointOptions? options = null,
 		  string? name = null,
 		  Func<IServiceCollection, HostBuilderContext, IHttpClientBuilder>? httpClientFactory = null,
-		  Func<IHttpClientBuilder, EndpointOptions, IHttpClientBuilder>? configure = null
+		  Func<IHttpClientBuilder, EndpointOptions?, IHttpClientBuilder>? configure = null
 	  )
 		  where TInterface : class
 	{
-		name ??= typeof(TInterface).IsInterface ? typeof(TInterface).Name.TrimStart(InterfaceNamePrefix) : typeof(TInterface).Name;
+		var optionsName = name??( typeof(TInterface).IsInterface ? typeof(TInterface).Name.TrimStart(InterfaceNamePrefix) : typeof(TInterface).Name);
+		options ??= ConfigurationBinder.Get<EndpointOptions>(context.Configuration.GetSection(optionsName));
 
-		if (httpClientFactory is null)
-		{
-			httpClientFactory = (s, c) => s.AddHttpClient(name);
-		}
+		httpClientFactory ??=
+			(s, c) => (name is null || string.IsNullOrWhiteSpace(name)) ?
+						s.AddHttpClient<TInterface>() :
+						s.AddHttpClient<TInterface>(name);
 
 		var httpClientBuilder = httpClientFactory(services, context);
 
 		_ = httpClientBuilder
 			.Conditional(
-				options.UseNativeHandler,
+				options?.UseNativeHandler ?? false,
 				builder => builder.ConfigurePrimaryAndInnerHttpMessageHandler<HttpMessageHandler>())
 			.ConfigureDelegatingHandlers()
 			.ConfigureHttpClient((serviceProvider, client) =>
 			{
-				if (options.Url is not null)
+				if (options?.Url is not null)
 				{
 					client.BaseAddress = new Uri(options.Url);
 				}

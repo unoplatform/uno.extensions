@@ -96,6 +96,23 @@
       <DependentUpon>StorageOnePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Core\Storage\StorageOneViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Http\Endpoints\HttpEndpointsHostInit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Http\Endpoints\HttpEndpointsMainPage.xaml.cs">
+      <DependentUpon>HttpEndpointsMainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Http\Endpoints\HttpEndpointsOnePage.xaml.cs">
+      <DependentUpon>HttpEndpointsOnePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Http\Endpoints\HttpEndpointsOneViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Http\Refit\IHttpRefitDummyJsonEndpoint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Http\Refit\HttpRefitHostInit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Http\Refit\HttpRefitMainPage.xaml.cs">
+      <DependentUpon>HttpRefitMainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Http\Refit\HttpRefitOnePage.xaml.cs">
+      <DependentUpon>HttpRefitOnePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Http\Refit\HttpRefitOneViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Localization\LocalizationHostInit.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Localization\LocalizationMainPage.xaml.cs">
       <DependentUpon>LocalizationMainPage.xaml</DependentUpon>
@@ -384,6 +401,22 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Http\Endpoints\HttpEndpointsMainPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Http\Endpoints\HttpEndpointsOnePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Http\Refit\HttpRefitMainPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Http\Refit\HttpRefitOnePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\CommerceDealsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -587,6 +620,7 @@
 		 explicitly included in the projitem, so files can be added from vscode
 		 without manipulating the projitem file.
 	-->
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Http\Refit\appsettings.httprefit.json" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Web\appsettings.webauthsettings.json" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Web\appsettings.webauth.json" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\appsettings.testbackend.json" />
@@ -595,6 +629,7 @@
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\appsettings.msal.json" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Msal\appsettings.msalauthentication.json" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Authentication\Oidc\appsettings.oidc.json" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Http\Endpoints\appsettings.httpendpoints.json" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Localization\appsettings.locale.json" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\Commerce\appsettings.logging.json" />
     <_Globbled_Page Include="$(MSBuildThisFileDirectory)**/*.xaml" Exclude="@(Page);@(ApplicationDefinition)">
