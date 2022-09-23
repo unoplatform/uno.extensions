@@ -6,10 +6,10 @@ namespace Uno.Extensions.Collections.Tracking;
 
 partial class CollectionAnalyzer
 {
-	private sealed class _Remove : Change
+	private sealed class _Remove<T> : Change<T>
 	{
 		private readonly int _indexOffset;
-		private readonly List<object?> _items;
+		private readonly List<T> _items;
 
 		public _Remove(int at, int capacity)
 			: this(at, 0, capacity)
@@ -20,10 +20,10 @@ partial class CollectionAnalyzer
 			: base(at)
 		{
 			_indexOffset = indexOffset;
-			_items = new List<object?>(capacity);
+			_items = new List<T>(capacity);
 		}
 
-		public void Append(object? item)
+		public void Append(T item)
 		{
 			_items.Add(item);
 		}

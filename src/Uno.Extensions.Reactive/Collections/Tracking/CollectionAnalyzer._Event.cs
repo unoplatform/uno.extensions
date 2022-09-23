@@ -7,7 +7,7 @@ namespace Uno.Extensions.Collections.Tracking;
 
 partial class CollectionAnalyzer
 {
-	private class _Event : Change
+	private class _Event<T> : Change<T>
 	{
 		private readonly RichNotifyCollectionChangedEventArgs _args;
 
@@ -32,10 +32,10 @@ partial class CollectionAnalyzer
 			switch (arg.Action)
 			{
 				case Add:
-					return _Add.Visit(arg, visitor);
+					return _Add<T>.Visit(arg, visitor);
 
 				case Remove:
-					return _Remove.Visit(arg, visitor);
+					return _Remove<T>.Visit(arg, visitor);
 
 				case Move:
 					return new CollectionUpdater.Update(_args);

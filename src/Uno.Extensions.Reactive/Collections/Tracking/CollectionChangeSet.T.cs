@@ -1,0 +1,49 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Uno.Extensions.Reactive;
+
+namespace Uno.Extensions.Collections.Tracking;
+
+internal sealed partial record CollectionChangeSet<T> : CollectionChangeSet
+{
+	private readonly CollectionAnalyzer.Change<T>? _head;
+
+	public static CollectionChangeSet<T> Empty { get; } = new(head: default);
+
+	internal CollectionChangeSet(CollectionAnalyzer.Change<T>? head)
+	{
+		_head = head;
+	}
+
+	protected override IEnumerable<RichNotifyCollectionChangedEventArgs> Enumerate()
+	{
+		var node = _head;
+		while (node is not null)
+		{
+			var args = node.ToEvent();
+			if (args is not null)
+			{
+				yield return args;
+			}
+
+			node = node.Next;
+		}
+	}
+
+	public override IEnumerator<IChange> GetEnumerator()
+	{
+		var node = _head;
+		while (node is not null)
+		{
+			yield return node;
+
+			node = node.Next;
+		}
+	}
+
+	public override CollectionUpdater ToUpdater(ICollectionUpdaterVisitor visitor)
+		=> _head is null
+			? CollectionUpdater.Empty
+			: new(_head.ToUpdater(visitor));
+}

@@ -103,7 +103,7 @@ internal class FeedToListFeedAdapter<TCollection, TItem> : IListFeed<TItem>
 			(true, true) => collectionAnalyzer.GetChanges(previousItems, updatedItems),
 			(true, false) => collectionAnalyzer.GetResetChange(previousItems, ImmutableList<TItem>.Empty),
 			(false, true) => collectionAnalyzer.GetResetChange(ImmutableList<TItem>.Empty, updatedItems),
-			(false, false) => CollectionChangeSet.Empty,
+			(false, false) => CollectionChangeSet<TItem>.Empty,
 		};
 	}
 

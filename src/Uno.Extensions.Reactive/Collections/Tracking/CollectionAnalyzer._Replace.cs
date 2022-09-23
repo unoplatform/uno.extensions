@@ -9,7 +9,7 @@ namespace Uno.Extensions.Collections.Tracking;
 
 partial class CollectionAnalyzer
 {
-	private sealed class _Replace : EntityChange
+	private sealed class _Replace<T> : EntityChange<T>
 	{
 		/// <inheritdoc />
 		public _Replace(int at, int indexOffset)

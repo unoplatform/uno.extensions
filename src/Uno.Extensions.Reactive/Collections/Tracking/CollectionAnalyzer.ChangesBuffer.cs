@@ -25,9 +25,9 @@ partial class CollectionAnalyzer
 		private readonly int _oldItemsCount, _newItemsCount;
 		private readonly int _eventArgsOffset;
 
-		private Change? _head, _tail;
-		private _Same? _sameHead;
-		private _Replace? _replaceHead;
+		private Change<T>? _head, _tail;
+		private _Same<T>? _sameHead;
+		private _Replace<T>? _replaceHead;
 
 		public ChangesBuffer(int oldItemsCount, int newItemsCount, int eventArgsOffset)
 		{
@@ -36,9 +36,9 @@ partial class CollectionAnalyzer
 			_eventArgsOffset = eventArgsOffset;
 		}
 
-		private Change? Tail => _tail;
+		private Change<T>? Tail => _tail;
 
-		public void Append(Change change)
+		public void Append(Change<T> change)
 		{
 			if (_head is null)
 			{
@@ -54,10 +54,10 @@ partial class CollectionAnalyzer
 		/// Flush the buffers and retrieve the full list of changes
 		/// </summary>
 		/// <returns></returns>
-		public Change? GetChanges()
+		public Change<T>? GetChanges()
 		{
 			// Start with the '_replace'
-			Change? head = _replaceHead, tail = _replaceHead;
+			Change<T>? head = _replaceHead, tail = _replaceHead;
 
 			// If we have some '_same', append it to the tail
 			if (_sameHead is not null)
@@ -84,9 +84,9 @@ partial class CollectionAnalyzer
 				tail!.Next = _head;
 			}
 
-			return head as Change;
+			return head as Change<T>;
 
-			static void SeekToTail(ref Change? tail)
+			static void SeekToTail(ref Change<T>? tail)
 			{
 				while (tail?.Next is not null)
 				{
@@ -100,45 +100,45 @@ partial class CollectionAnalyzer
 			// As they don't impact the 'result' index, replace-instance are buffered separately and will be inserted at the top of the changes collection.
 			// Note: We use a single '_Same' node for all updates
 
-			UpdateOrReplace(ref _sameHead, oldItem, newItem, index, (i, o) => new _Same(i, o)); ;
+			UpdateOrReplace(ref _sameHead, oldItem, newItem, index, (i, o) => new _Same<T>(i, o)); ;
 		}
 
 		public void Replace(T oldItem, T newItem, int index)
 		{
 			// As they don't impact the 'result' index, replaces are buffered separately and will be inserted at the top of the changes collection.
 
-			UpdateOrReplace(ref _replaceHead, oldItem, newItem, index, (i, o) => new _Replace(i, o));
+			UpdateOrReplace(ref _replaceHead, oldItem, newItem, index, (i, o) => new _Replace<T>(i, o));
 		}
 
 		public void Add(T item, int at, int max)
 		{
-			if (!(Tail is _Add add) || add.Ends != at)
+			if (!(Tail is _Add<T> add) || add.Ends != at)
 			{
-				Append(add = new _Add(at, _eventArgsOffset, max - at));
+				Append(add = new _Add<T>(at, _eventArgsOffset, max - at));
 			}
 			add.Append(item);
 		}
 
 		public void Move(T item, int from, int fromOffset, int to, int max)
 		{
-			if (!(Tail is _Move move) || move.Ends != from)
+			if (!(Tail is _Move<T> move) || move.Ends != from)
 			{
-				Append(move = new _Move(from + fromOffset, to, _eventArgsOffset, max - to));
+				Append(move = new _Move<T>(from + fromOffset, to, _eventArgsOffset, max - to));
 			}
 			move.Append(item);
 		}
 
 		public void Remove(T item, int at)
 		{
-			if (!(Tail is _Remove remove) || remove.Ends != at)
+			if (!(Tail is _Remove<T> remove) || remove.Ends != at)
 			{
-				Append(remove = new _Remove(at, _eventArgsOffset, Math.Max(_oldItemsCount - at, 4)));
+				Append(remove = new _Remove<T>(at, _eventArgsOffset, Math.Max(_oldItemsCount - at, 4)));
 			}
 			remove.Append(item);
 		}
 
 		private void UpdateOrReplace<TNode>(ref TNode? head, T oldItem, T newItem, int index, Func<int, int, TNode> factory)
-			where TNode : EntityChange
+			where TNode : EntityChange<T>
 		{
 			if (head is null)
 			{

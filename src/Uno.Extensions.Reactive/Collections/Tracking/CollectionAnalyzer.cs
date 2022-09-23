@@ -30,7 +30,7 @@ internal partial class CollectionAnalyzer
 	}
 
 	private ListRef<object?> GetRef(IList list)
-		=> new(list.Count, i => list[i], list.GetIndexOf(_entityComparer));
+		=> new(list, list.Count, i => list[i], list.GetIndexOf(_entityComparer));
 
 	private ComparerRef<object?>? GetRef(IEqualityComparer? comparer)
 		=> comparer is null ? null : comparer.Equals;
@@ -54,7 +54,7 @@ internal partial class CollectionAnalyzer
 	/// <param name="newItems">The target snapshot</param>
 	/// <returns>A list of changes that have to be applied to move a collection from <paramref name="oldItems"/> to <paramref name="newItems"/>.</returns>
 	public CollectionChangeSet GetChanges(IList oldItems, IList newItems)
-		=> new(GetChangesCore(GetRef(oldItems), GetRef(newItems), _versionComparer));
+		=> new CollectionChangeSet<object?>(GetChangesCore(GetRef(oldItems), GetRef(newItems), _versionComparer));
 
 	/// <summary>
 	/// Determines the set of effective changes produced by a <see cref="NotifyCollectionChangedEventArgs"/>.
@@ -62,7 +62,7 @@ internal partial class CollectionAnalyzer
 	/// <param name="arg">The event arg to adjust</param>
 	/// <returns>A list of changes that have to be applied to move properly apply the provided event arg.</returns>
 	public CollectionChangeSet GetChanges(RichNotifyCollectionChangedEventArgs arg)
-		=> new(GetChangesCore(arg));
+		=> new CollectionChangeSet<object?>(GetChangesCore(arg));
 
 	/// <summary>
 	/// Creates a set of changes that contains only a reset event.
@@ -115,7 +115,7 @@ internal partial class CollectionAnalyzer
 			: new(updaterHead);
 	}
 
-	private protected Change? GetChangesCore(RichNotifyCollectionChangedEventArgs arg)
+	private protected Change<object?>? GetChangesCore(RichNotifyCollectionChangedEventArgs arg)
 	{
 		switch (arg.Action)
 		{
@@ -123,7 +123,7 @@ internal partial class CollectionAnalyzer
 			case NotifyCollectionChangedAction.Remove:
 			case NotifyCollectionChangedAction.Move:
 			case NotifyCollectionChangedAction.Reset:
-				return new _Event(arg);
+				return new _Event<object?>(arg);
 
 			case NotifyCollectionChangedAction.Replace:
 				return GetChangesCore(GetRef(arg.OldItems), GetRef(arg.NewItems), _versionComparer, arg.OldStartingIndex);
@@ -133,7 +133,7 @@ internal partial class CollectionAnalyzer
 		}
 	}
 
-	private protected static Change? GetChangesCore<T>(
+	private protected static Change<T>? GetChangesCore<T>(
 		ListRef<T> oldItems,
 		ListRef<T> newItems,
 		ComparerRef<T>? versionComparer,
@@ -185,7 +185,6 @@ internal partial class CollectionAnalyzer
 			{
 				// Item is AFTER the expected index in old, this means that some items was inserted / moved before
 
-				var movedBeforeItemLocal = 0;
 				for (var missingItemNewIndex = resultIndex; missingItemNewIndex < newIndex; missingItemNewIndex++)
 				{
 					var missingItem = newItems.ElementAt(missingItemNewIndex); // The item that is missing in the old collection
@@ -207,7 +206,6 @@ internal partial class CollectionAnalyzer
 						UpdateInstanceFromNew(missingItem, missingItemOldIndex);
 						buffer.Move(missingItem, from: from, fromOffset: fromOffset, to: missingItemNewIndex, max: newIndex);
 						moved++;
-						movedBeforeItemLocal++;
 					}
 					else
 					{
@@ -229,7 +227,7 @@ internal partial class CollectionAnalyzer
 		var toAddCount = newItems.Count - resultItemsCount;
 		if (toAddCount > 0)
 		{
-			var add = new _Add(at: resultItemsCount, indexOffset: eventArgsOffset, capacity: toAddCount);
+			var add = new _Add<T>(at: resultItemsCount, indexOffset: eventArgsOffset, capacity: toAddCount);
 			for (var i = 0; i < toAddCount; i++)
 			{
 				var item = newItems.ElementAt(i + resultItemsCount);
@@ -251,9 +249,9 @@ internal partial class CollectionAnalyzer
 		*	Here, the "item tracking" was already done, and we are only validating 2 versions of the same item
 		*  (we already determined that they have the same key using the 'itemComparer').
 		*
-		*	If the 'itemVersionComparer' is 'null' (or if the value is a boxed value type) we assume that there is no
-		*  notion of version of an item and we rely only on the `itemComparer` to check equality.
-		*  Note: in this case we don't raise any 'Replace'.
+		*	If the 'itemVersionComparer' is 'null' we assume that there is no
+		*	notion of version of an item and we rely only on the `itemComparer` to check equality.
+		*	Note: in this case we don't raise any 'Replace'.
 		*
 		*	If the 'itemVersionComparer' returns 'true' (or if it's 'null') that means that they are not only KeyEquals but also Equals.
 		*	So as we are usually working with immutable objects, we can ignore that a new instance is available and
@@ -265,7 +263,7 @@ internal partial class CollectionAnalyzer
 
 		void UpdateInstanceFromOld(T oldItem, int oldIndex, int newIndex)
 		{
-			if (versionComparer is null || oldItem is ValueType)
+			if (versionComparer is null)
 			{
 				buffer.Update(oldItem, oldItem, oldIndex);
 
@@ -285,7 +283,7 @@ internal partial class CollectionAnalyzer
 
 		void UpdateInstanceFromNew(T newItem, int oldIndex)
 		{
-			if (versionComparer is null || newItem is ValueType)
+			if (versionComparer is null)
 			{
 				buffer.Update(newItem, newItem, oldIndex);
 
