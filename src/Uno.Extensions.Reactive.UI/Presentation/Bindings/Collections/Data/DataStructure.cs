@@ -11,9 +11,9 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 	{
 		public const int DefaultResetThreshold = 5;
 
-		private readonly (IEqualityComparer? itemComparer, IEqualityComparer? itemVersionComparer)[] _comparersStructure;
+		private readonly ItemComparer[] _comparersStructure;
 
-		public DataStructure(params (IEqualityComparer? itemComparer, IEqualityComparer? itemVersionComparer)[] comparersStructure)
+		public DataStructure(params ItemComparer[] comparersStructure)
 		{
 			_comparersStructure = comparersStructure;
 		}
@@ -33,7 +33,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 			}
 
 			var comparers = _comparersStructure[level];
-			var tracker = new CollectionAnalyzer(new ItemComparer(comparers.itemComparer, comparers.itemVersionComparer));
+			var tracker = new CollectionAnalyzer(comparers);
 
 			if (level + 1 == _comparersStructure.Length)
 			{
