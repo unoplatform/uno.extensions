@@ -30,6 +30,9 @@ public sealed class ItemsChanged : ChangesConstraint
 	public static ItemsChanged Replace<T>(int index, IEnumerable<T> oldItems, IEnumerable<T> newItems)
 		=> new(RichNotifyCollectionChangedEventArgs.ReplaceSome(oldItems.ToList(), newItems.ToList(), index));
 
+	public static ItemsChanged Replace<T>(int index, T oldItem, T newItem)
+		=> new(RichNotifyCollectionChangedEventArgs.Replace(oldItem, newItem, index));
+
 	public static ItemsChanged Move<T>(int oldIndex, int newIndex, params T[] items)
 		=> new(RichNotifyCollectionChangedEventArgs.MoveSome(items.ToList(), oldIndex, newIndex));
 
@@ -42,8 +45,15 @@ public sealed class ItemsChanged : ChangesConstraint
 	public static ItemsChanged Reset<T>(IEnumerable<T> newItems)
 		=> new(RichNotifyCollectionChangedEventArgs.Reset(null, newItems.ToList()));
 
+	public static ItemsChanged operator &(ItemsChanged left, ItemsChanged right)
+		=> new(left._expectedArgs.Concat(right._expectedArgs).ToImmutableList());
+
 	internal ItemsChanged(params RichNotifyCollectionChangedEventArgs[] expectedArgs)
 		=> _expectedArgs = expectedArgs.ToImmutableList();
+
+	internal ItemsChanged(IImmutableList<RichNotifyCollectionChangedEventArgs> expectedArgs)
+		=> _expectedArgs = expectedArgs.ToImmutableList();
+
 
 	/// <inheritdoc />
 	public override void Assert(ChangeCollection actual)
