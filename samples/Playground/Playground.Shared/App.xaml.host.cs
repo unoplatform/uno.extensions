@@ -13,7 +13,7 @@ namespace Playground;
 
 public sealed partial class App : Application
 {
-	private readonly IHost _host = BuildAppHost();
+	private IHost? _host;
 
 	private static IHost BuildAppHost()
 	{
@@ -119,9 +119,9 @@ public sealed partial class App : Application
 
 		views.Register(
 					// Option 1: Specify ShellView in order to customise the shell
-					new ViewMap<ShellView, ShellViewModel>(),
+					//new ViewMap<ShellView, ShellViewModel>(),
 					// Option 2: Only specify the ShellViewModel - this will inject a FrameView where the subsequent pages will be shown
-					//new ViewMap(ViewModel: typeof(ShellViewModel)),
+					new ViewMap(ViewModel: typeof(ShellViewModel)),
 					new ViewMap<HomePage, HomeViewModel>(),
 					new ViewMap<CodeBehindPage>(),
 					new ViewMap<VMPage, VMViewModel>(),

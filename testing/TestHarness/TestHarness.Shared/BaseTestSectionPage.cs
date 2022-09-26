@@ -33,6 +33,15 @@ public partial class BaseTestSectionPage : Page, IDisposable
 		}
 	}
 
+	protected INavigator Navigator
+	{
+		get
+		{
+			var root = this.FindName(Constants.NavigationRoot) as ContentControl;
+			return (root!.Content as FrameworkElement)!.Navigator()!;
+		}
+	}
+
 	private bool init;
 	private async Task InitializeHost()
 	{
@@ -44,24 +53,12 @@ public partial class BaseTestSectionPage : Page, IDisposable
 		Host = HostInit!.InitializeHost();
 
 		var win = (Application.Current as App)?.Window!;
-		this.AttachServiceProvider(Host.Services).RegisterWindow(win!);
+		var services = this.AttachServiceProvider(Host.Services).RegisterWindow(win!);
 
-		if (this.FindName(Constants.NavigationRoot) is FrameworkElement root)
+		if (this.FindName(Constants.NavigationRoot) is ContentControl root)
 		{
-			if (root.IsLoaded)
-			{
+			root.AttachNavigation(services);
 
-				Region.SetAttached(root, true);
-			}
-			else
-			{
-
-				root.Loaded += (_, _) =>
-				{
-
-					Region.SetAttached(root, true);
-				};
-			}
 		}
 
 		await Task.Run(() => Host.StartAsync());

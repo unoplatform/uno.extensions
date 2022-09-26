@@ -38,4 +38,9 @@
 		</Compile>
 		<UpToDateCheckInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
 	</ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="Uno.Extensions.Navigation.Toolkit.UI" />
+		<InternalsVisibleTo Include="Uno.Extensions.Navigation.Toolkit.WinUI" />
+	</ItemGroup>
 </Project>

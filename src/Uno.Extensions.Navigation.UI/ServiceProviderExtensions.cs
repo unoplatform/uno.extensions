@@ -1,4 +1,7 @@
-﻿namespace Uno.Extensions;
+﻿using Uno.Extensions.Navigation;
+using Windows.UI.Xaml;
+
+namespace Uno.Extensions;
 
 public static class ServiceProviderExtensions
 {
@@ -8,9 +11,9 @@ public static class ServiceProviderExtensions
 	/// </summary>
 	/// <param name="window">The Window to attach the IServiceProvider to</param>
 	/// <param name="services">The IServiceProvider instance to attach</param>
-	public static void AttachServices(this Window window, IServiceProvider services)
+	public static IServiceProvider AttachServices(this Window window, IServiceProvider services)
 	{
-		window.Content
+		return window.Content
 				.AttachServiceProvider(services)
 				.RegisterWindow(window);
 	}
@@ -34,7 +37,7 @@ public static class ServiceProviderExtensions
 					.CloneScopedInstance<IDispatcher>(services);
 	}
 
-	internal static IServiceProvider CloneScopedInstance<T>(this IServiceProvider target, IServiceProvider source ) where T : notnull
+	internal static IServiceProvider CloneScopedInstance<T>(this IServiceProvider target, IServiceProvider source) where T : notnull
 	{
 		return target.AddScopedInstance(source.GetRequiredService<T>());
 	}
@@ -59,7 +62,7 @@ public static class ServiceProviderExtensions
 		return provider.AddSingletonInstance(typeof(T), instanceCreator);
 	}
 
-	public static IServiceProvider AddSingletonInstance<T>(this IServiceProvider provider, T instance) 
+	public static IServiceProvider AddSingletonInstance<T>(this IServiceProvider provider, T instance)
 	{
 		return provider.AddSingletonInstance(typeof(T), instance!);
 	}
@@ -71,7 +74,7 @@ public static class ServiceProviderExtensions
 
 	private static IServiceProvider AddInstance<TRepository>(this IServiceProvider provider, Type serviceType, object instance) where TRepository : IInstanceRepository
 	{
-		provider.GetRequiredService<TRepository>().AddInstance(serviceType,instance);
+		provider.GetRequiredService<TRepository>().AddInstance(serviceType, instance);
 		return provider;
 	}
 
@@ -108,7 +111,7 @@ public static class ServiceProviderExtensions
 			var instance = valueCreator();
 			if (instance is T instanceOfT)
 			{
-				repository.AddInstance(typeof(T),instanceOfT);
+				repository.AddInstance(typeof(T), instanceOfT);
 			}
 			return instance;
 		}
@@ -123,19 +126,83 @@ public static class ServiceProviderExtensions
 
 	public static FrameworkElement AttachNavigation(this Window window, IServiceProvider services, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
 	{
-		var root = new ContentControl
+		return AttachNavigation((root, services) =>
 		{
-			HorizontalAlignment = HorizontalAlignment.Stretch,
-			VerticalAlignment = VerticalAlignment.Stretch,
-			HorizontalContentAlignment = HorizontalAlignment.Stretch,
-			VerticalContentAlignment = VerticalAlignment.Stretch
-		};
-		window.Content = root;
+			window.Content = root;
+			window.AttachServices(services);
+		}, services, initialRoute, initialView, initialViewModel);
+		//var viewHost = services.GetRequiredService<IViewHostProvider>();
+		//var root = viewHost.CreateViewHost();
+		//window.Content = root;
 
-		window.AttachServices(services);
+		//window.AttachServices(services);
 
-		root.Host(initialRoute, initialView, initialViewModel);
+		//root.Host(services, initialRoute, initialView, initialViewModel);
+
+		//return root;
+	}
+
+	public static FrameworkElement AttachNavigation(this ContentControl parent, IServiceProvider services, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
+	{
+		return AttachNavigation((root, services) => parent.Content = root, services, initialRoute, initialView, initialViewModel);
+		//var viewHost = services.GetRequiredService<IViewHostProvider>();
+		//var root = viewHost.CreateViewHost();
+		//parent.Content = root;
+
+		//root.Host(services, initialRoute, initialView, initialViewModel);
+
+		//return root;
+	}
+
+	private static FrameworkElement AttachNavigation(Action<FrameworkElement, IServiceProvider> assignViewHost, IServiceProvider services, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
+	{
+		var viewHost = services.GetRequiredService<IViewHostProvider>();
+		var root = viewHost.CreateViewHost();
+		assignViewHost(root, services);
+
+		root.Host(services, initialRoute, initialView, initialViewModel);
 
 		return root;
+	}
+
+	public static Task<IHost> InitializeNavigation(this Window window, Func<IHost> buildHost, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
+	{
+		return window.InitializeNavigation<DefaultViewHostProvider>(buildHost, initialRoute, initialView, initialViewModel);
+	}
+
+	internal static Task<IHost> InitializeNavigation<TViewHostProvider>(this Window window, Func<IHost> buildHost, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
+	  where TViewHostProvider : IViewHostProvider, new()
+	{
+		var viewHost = new TViewHostProvider();
+		var root = viewHost.CreateViewHost();
+		window.Content = root;
+		window.Activate();
+
+		IDeferrable? startupDeferral = null;
+
+		var buildTask = window.BuildAndInitializeHost(root, buildHost,()=>startupDeferral!, initialRoute, initialView, initialViewModel);
+		startupDeferral = viewHost.InitializeViewHost(root, buildTask);
+		return buildTask;
+	}
+
+	private static async Task<IHost> BuildAndInitializeHost(this Window window, FrameworkElement viewHost, Func<IHost> buildHost,Func<IDeferrable> startupDeferral, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
+	{
+		// Force immediate return of Task to avoid synchronous execution of buildHost
+		// It's important that buildHost is still executed on UI thread, so can't do
+		// Task.Run to force background execution.
+		await Task.Yield();
+
+		var host = buildHost();
+		var splash = host.Services.GetRequiredService<SplashScreen>();
+		splash.DeferralSource = startupDeferral();
+
+		var services = window.AttachServices(host.Services);
+		var startup = viewHost.Host(services, initialRoute, initialView, initialViewModel);
+
+		await Task.Run(() => host.StartAsync());
+
+		await startup;
+
+		return host;
 	}
 }

@@ -1,12 +1,14 @@
-﻿using Uno.Extensions.Navigation;
-using Uno.Extensions.Navigation.Regions;
-using Uno.Extensions.Navigation.UI;
-
-namespace Uno.Extensions.Navigation;
+﻿namespace Uno.Extensions.Navigation;
 
 public static class DependencyObjectExtensions
 {
-    public static INavigator? Navigator(this FrameworkElement element)
+	public static IDispatcher? Dispatcher(this FrameworkElement element)
+	{
+		var sp = element.FindServiceProvider();
+		return sp?.GetService<IDispatcher>();
+	}
+
+	public static INavigator? Navigator(this FrameworkElement element)
     {
         return element.FindRegion()?.Navigator();
     }
