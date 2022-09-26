@@ -146,10 +146,7 @@ internal record WebAuthenticationProvider
 	protected async override ValueTask<bool> InternalLogoutAsync(IDispatcher? dispatcher, CancellationToken cancellationToken)
 	{
 		var logoutStartUri = InternalSettings.LogoutStartUri;
-		if (InternalSettings.PrepareLogoutStartUri is not null)
-		{
-			logoutStartUri = await InternalSettings.PrepareLogoutStartUri(Services, Tokens, await Tokens.GetAsync(cancellationToken), logoutStartUri, cancellationToken);
-		}
+		logoutStartUri = await PrepareLogoutStartUri(await Tokens.GetAsync(cancellationToken), logoutStartUri, cancellationToken);
 
 		if (logoutStartUri is null ||
 			string.IsNullOrWhiteSpace(logoutStartUri))
@@ -174,10 +171,7 @@ internal record WebAuthenticationProvider
 			logoutCallbackUri = args[OAuthRedirectUriParameter];
 		}
 
-		if (InternalSettings.PrepareLogoutCallbackUri is not null)
-		{
-			logoutCallbackUri = await InternalSettings.PrepareLogoutCallbackUri(Services, Tokens, await Tokens.GetAsync(cancellationToken), logoutCallbackUri, cancellationToken);
-		}
+		logoutCallbackUri = await PrepareLogoutCallbackUri(await Tokens.GetAsync(cancellationToken), logoutCallbackUri, cancellationToken);
 
 		if (string.IsNullOrWhiteSpace(logoutCallbackUri))
 		{
@@ -194,6 +188,24 @@ internal record WebAuthenticationProvider
 #endif
 		return true;
 
+	}
+
+	protected async virtual Task<string?> PrepareLogoutStartUri(IDictionary<string, string>? credentials, string? logoutStartUri, CancellationToken cancellationToken)
+	{
+		if (InternalSettings.PrepareLogoutStartUri is not null)
+		{
+			return await InternalSettings.PrepareLogoutStartUri(Services, Tokens, credentials, logoutStartUri, cancellationToken);
+		}
+		return logoutStartUri;
+	}
+
+	protected async virtual Task<string?> PrepareLogoutCallbackUri(IDictionary<string, string>? credentials, string? logoutCallbackUri, CancellationToken cancellationToken)
+	{
+		if (InternalSettings.PrepareLogoutCallbackUri is not null)
+		{
+			return await InternalSettings.PrepareLogoutCallbackUri(Services, Tokens, credentials, logoutCallbackUri, cancellationToken);
+		}
+		return logoutCallbackUri;
 	}
 
 }
@@ -251,4 +263,21 @@ internal record WebAuthenticationProvider<TService>
 		return await base.PostLogin(credentials, redirectUri, tokens, cancellationToken);
 	}
 
+	protected async override Task<string?> PrepareLogoutStartUri(IDictionary<string, string>? credentials, string? logoutStartUri, CancellationToken cancellationToken)
+	{
+		if (TypedSettings?.PrepareLogoutStartUri is not null)
+		{
+			return await TypedSettings.PrepareLogoutStartUri(Services.GetRequiredService<TService>(), Services, Tokens, credentials, logoutStartUri, cancellationToken);
+		}
+		return await base.PrepareLogoutStartUri(credentials, logoutStartUri, cancellationToken);
+	}
+
+	protected async override Task<string?> PrepareLogoutCallbackUri(IDictionary<string, string>? credentials, string? logoutCallbackUri, CancellationToken cancellationToken)
+	{
+		if (TypedSettings?.PrepareLogoutCallbackUri is not null)
+		{
+			return await TypedSettings.PrepareLogoutCallbackUri(Services.GetRequiredService<TService>(), Services, Tokens, credentials, logoutCallbackUri, cancellationToken);
+		}
+		return await base.PrepareLogoutCallbackUri(credentials, logoutCallbackUri, cancellationToken);
+	}
 }
