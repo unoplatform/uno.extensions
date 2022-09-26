@@ -18,6 +18,7 @@ public static class RouteExtensions
 	public static bool IsClearBackstack(this Route route) =>
 		route.Qualifier
 			.StartsWith(Qualifiers.ClearBackStack);
+
 	public static string? ExtractBase(this string? path, out string nextQualifier, out string nextPath)
 	{
 		nextPath = path ?? string.Empty;
@@ -70,6 +71,23 @@ public static class RouteExtensions
 
 		return text;
 	}
+
+	public static string? WithoutQualifier(this string? path)
+	{
+		if(path is null ||
+			string.IsNullOrWhiteSpace(path))
+		{
+			return path;
+		}
+
+		var qualifierMatch = nonAlphaRegex.Match(path);
+		if (qualifierMatch.Success && qualifierMatch.Index == 0)
+		{
+			return path.TrimStart(qualifierMatch.Value);
+		}
+		return path;
+	}
+
 
 	public static string WithQualifier(this string path, string? qualifier) => (qualifier is null || string.IsNullOrWhiteSpace(qualifier)) ? path : $"{qualifier}{path}";
 

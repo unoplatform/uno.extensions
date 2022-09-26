@@ -106,7 +106,7 @@ public abstract class SelectorNavigator<TControl> : ControlNavigator<TControl>
 		}
 
 		var item = (from mi in Items
-					where (mi.GetRegionOrElementName() == path)
+					where (mi.GetRegionOrElementName().WithoutQualifier() == path)
 					select mi).FirstOrDefault();
 		return item;
 	}
