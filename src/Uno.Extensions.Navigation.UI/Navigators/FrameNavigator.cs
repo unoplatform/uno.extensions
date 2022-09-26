@@ -137,7 +137,8 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			Control.ReassignRegionParent();
 			if (segments.Length > 1 ||
 				!string.IsNullOrWhiteSpace(request.Route.Path) ||
-				request.Route.Data?.Count > 0)
+				request.Route.Data?.Count > 0 ||
+				request.Route.IsClearBackstack())
 			{
 				refreshViewModel = true;
 			}
