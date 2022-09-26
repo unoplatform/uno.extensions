@@ -128,10 +128,11 @@ internal class KeyEqualityGenerationTool : ICodeGenTool
 
 	private List<IPropertySymbol> SearchKeys(INamedTypeSymbol type, ImplicitKeyEqualityAttribute assemblyImplicit)
 	{
-		// Search for properties flagged with [Key] attribute
+		// Search for properties flagged with [Key] attribute (Using Uno's attribute or System.ComponentModel.DataAnnotations.KeyAttribute)
 		var keys = type
 			.GetProperties()
-			.Where(prop => prop.FindAttribute(_ctx.KeyAttribute) is not null)
+			.Where(prop => prop.FindAttribute(_ctx.KeyAttribute) is not null
+				|| (_ctx.DataAnnotationsKeyAttribute is {} daKey && prop.FindAttribute(daKey) is not null))
 			.ToList();
 
 		// If none found, search for implicit key properties

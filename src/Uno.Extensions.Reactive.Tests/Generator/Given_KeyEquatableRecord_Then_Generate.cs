@@ -115,6 +115,25 @@ public class Given_KeyEquatableRecord_Then_Generate
 		inst1.GetKeyHashCode().Should().Be(inst2.GetKeyHashCode());
 		inst1.KeyEquals(inst2).Should().BeTrue();
 	}
+	[TestMethod]
+	public void When_CustomDataAnnotationsKeyEquatable_Then_CustomKeyUsed()
+	{
+		var inst1 = new MyCustomDataAnnotationsKeyEquatableRecord(42, 1);
+		var inst2 = new MyCustomDataAnnotationsKeyEquatableRecord(42, 2);
+
+		inst1.GetKeyHashCode().Should().NotBe(inst2.GetKeyHashCode());
+		inst1.KeyEquals(inst2).Should().BeFalse();
+	}
+
+	[TestMethod]
+	public void When_CustomDataAnnotationsKeyEquatable_Then_OnlyCustomKeyIsUsed()
+	{
+		var inst1 = new MyCustomDataAnnotationsKeyEquatableRecord(1, 42);
+		var inst2 = new MyCustomDataAnnotationsKeyEquatableRecord(2, 42);
+
+		inst1.GetKeyHashCode().Should().Be(inst2.GetKeyHashCode());
+		inst1.KeyEquals(inst2).Should().BeTrue();
+	}
 
 	[TestMethod]
 	public void When_CustomKeyWithImplicitEquatable_Then_CustomKeyUsed()
@@ -365,6 +384,8 @@ public partial record MyNotKeyEquatableRecord(int Id);
 public partial record MyCustomImplicitKeyEquatableRecord(int Id, int MyKey);
 
 public partial record MyCustomKeyEquatableRecord(int Id, [property:Key] int MyKey);
+
+public partial record MyCustomDataAnnotationsKeyEquatableRecord(int Id, [property: System.ComponentModel.DataAnnotations.KeyAttribute] int MyKey);
 
 [ImplicitKeyEquality("MyOtherKey")]
 public partial record MyCustomKeyWithImplicitEquatableRecord(int Id, [property: Key] int MyKey, int MyOtherKey);
