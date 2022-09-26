@@ -18,6 +18,17 @@ public record ViewMap(
 		}
 
 		Data?.RegisterTypes(services);
+
+		RegisterResultDataType(services);
+	}
+
+	internal virtual void RegisterResultDataType(IServiceCollection services)
+	{
+		if (ResultData is not null)
+		{
+			services.AddViewModelData(ResultData);
+		}
+
 	}
 }
 
@@ -52,7 +63,13 @@ public record ResultDataViewMap<TView, TViewModel, TResultData>(
 	DataMap? Data = null,
 	object? ViewAttributes = null
 ) : ViewMap(View: typeof(TView), ViewModel: typeof(TViewModel), Data: Data, ResultData: typeof(TResultData), ViewAttributes: ViewAttributes)
+		where TResultData : class
 {
+	internal override void RegisterResultDataType(IServiceCollection services)
+	{
+		services.AddViewModelData<TResultData>();
+		// DO NOT call base RegisterType method as this will register an untyped version of the data lookup
+	}
 }
 
 public record LocalizableDialogAction(Func<IStringLocalizer?, string?>? LabelProvider = default, Action? Action = null, object? Id = null) { }
