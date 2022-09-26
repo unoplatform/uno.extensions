@@ -22,7 +22,7 @@ internal partial class CollectionAnalyzer
 	/// An helper struct that abstract contract miss-matches between different types of list
 	/// (noticeably <see cref="IList"/> and <see cref="IImmutableList{T}"/>).
 	/// </summary>
-	protected struct ListRef<T>
+	internal struct ListRef<T>
 	{
 		public ListRef(object instance, int count, ElementAtHandler<T> elementAt, IndexOfHandler<T> indexOf)
 		{

@@ -34,7 +34,11 @@ partial class CollectionAnalyzer
 		}
 
 		public override RichNotifyCollectionChangedEventArgs ToEvent()
-			=> RichNotifyCollectionChangedEventArgs.MoveSome(_items, Starts + _indexOffset, _to + _indexOffset);
+			=> RichNotifyCollectionChangedEventArgs.MoveSome<T>(_items, Starts + _indexOffset, _to + _indexOffset);
+
+		/// <inheritdoc />
+		protected internal override void Visit(ICollectionChangeSetVisitor<T> visitor)
+			=> visitor.Move(_items, Starts + _indexOffset, _to + _indexOffset);
 
 		/// <inheritdoc />
 		protected override CollectionUpdater.Update ToUpdaterCore(ICollectionUpdaterVisitor visitor)

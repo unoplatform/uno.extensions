@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.Specialized;
 using System.Linq;
+using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Collections;
 
@@ -16,8 +19,20 @@ internal class RichNotifyCollectionChangedEventArgs : NotifyCollectionChangedEve
 	/// <summary>
 	/// Creates a <see cref="NotifyCollectionChangedAction.Add"/> collection changed event args
 	/// </summary>
+	public static RichNotifyCollectionChangedEventArgs Add<T>(T item, int index)
+		=> new(NotifyCollectionChangedAction.Add, new[] { item }, index);
+
+	/// <summary>
+	/// Creates a <see cref="NotifyCollectionChangedAction.Add"/> collection changed event args
+	/// </summary>
 	public static RichNotifyCollectionChangedEventArgs AddSome(IList items, int index)
 		=> new(NotifyCollectionChangedAction.Add, items, index);
+
+	/// <summary>
+	/// Creates a <see cref="NotifyCollectionChangedAction.Add"/> collection changed event args
+	/// </summary>
+	public static RichNotifyCollectionChangedEventArgs AddSome<T>(IList<T> items, int index)
+		=> new(NotifyCollectionChangedAction.Add, items.AsUntypedList(), index);
 
 	/// <summary>
 	/// Creates a <see cref="NotifyCollectionChangedAction.Remove"/> collection changed event args
@@ -28,8 +43,20 @@ internal class RichNotifyCollectionChangedEventArgs : NotifyCollectionChangedEve
 	/// <summary>
 	/// Creates a <see cref="NotifyCollectionChangedAction.Remove"/> collection changed event args
 	/// </summary>
+	public static RichNotifyCollectionChangedEventArgs Remove<T>(T item, int index)
+		=> new(NotifyCollectionChangedAction.Remove, new [] { item }, index);
+
+	/// <summary>
+	/// Creates a <see cref="NotifyCollectionChangedAction.Remove"/> collection changed event args
+	/// </summary>
 	public static RichNotifyCollectionChangedEventArgs RemoveSome(IList items, int index)
 		=> new(NotifyCollectionChangedAction.Remove, items, index);
+
+	/// <summary>
+	/// Creates a <see cref="NotifyCollectionChangedAction.Remove"/> collection changed event args
+	/// </summary>
+	public static RichNotifyCollectionChangedEventArgs RemoveSome<T>(IList<T> items, int index)
+		=> new(NotifyCollectionChangedAction.Remove, items.AsUntypedList(), index);
 
 	/// <summary>
 	/// Creates a <see cref="NotifyCollectionChangedAction.Replace"/> collection changed event args
@@ -40,8 +67,20 @@ internal class RichNotifyCollectionChangedEventArgs : NotifyCollectionChangedEve
 	/// <summary>
 	/// Creates a <see cref="NotifyCollectionChangedAction.Replace"/> collection changed event args
 	/// </summary>
+	public static RichNotifyCollectionChangedEventArgs Replace<T>(T oldItem, T newItem, int index)
+		=> new(NotifyCollectionChangedAction.Replace, new[] { newItem }, new[] { oldItem }, index);
+
+	/// <summary>
+	/// Creates a <see cref="NotifyCollectionChangedAction.Replace"/> collection changed event args
+	/// </summary>
 	public static RichNotifyCollectionChangedEventArgs ReplaceSome(IList oldItems, IList newItems, int index)
 		=> new(NotifyCollectionChangedAction.Replace, newItems, oldItems, index);
+
+	/// <summary>
+	/// Creates a <see cref="NotifyCollectionChangedAction.Replace"/> collection changed event args
+	/// </summary>
+	public static RichNotifyCollectionChangedEventArgs ReplaceSome<T>(IList<T> oldItems, IList<T> newItems, int index)
+		=> new(NotifyCollectionChangedAction.Replace, newItems.AsUntypedList(), oldItems.AsUntypedList(), index);
 
 	/// <summary>
 	/// Creates a <see cref="NotifyCollectionChangedAction.Move"/> collection changed event args
@@ -52,8 +91,20 @@ internal class RichNotifyCollectionChangedEventArgs : NotifyCollectionChangedEve
 	/// <summary>
 	/// Creates a <see cref="NotifyCollectionChangedAction.Move"/> collection changed event args
 	/// </summary>
+	public static RichNotifyCollectionChangedEventArgs Move<T>(T item, int oldIndex, int newIndex)
+		=> new(NotifyCollectionChangedAction.Move, new [] { item }, newIndex, oldIndex);
+
+	/// <summary>
+	/// Creates a <see cref="NotifyCollectionChangedAction.Move"/> collection changed event args
+	/// </summary>
 	public static RichNotifyCollectionChangedEventArgs MoveSome(IList items, int oldIndex, int newIndex)
 		=> new(NotifyCollectionChangedAction.Move, items, newIndex, oldIndex);
+
+	/// <summary>
+	/// Creates a <see cref="NotifyCollectionChangedAction.Move"/> collection changed event args
+	/// </summary>
+	public static RichNotifyCollectionChangedEventArgs MoveSome<T>(IList<T> items, int oldIndex, int newIndex)
+		=> new(NotifyCollectionChangedAction.Move, items.AsUntypedList(), newIndex, oldIndex);
 
 	/// <summary>
 	/// Creates a <see cref="NotifyCollectionChangedAction.Reset"/> collection changed event args
@@ -63,6 +114,26 @@ internal class RichNotifyCollectionChangedEventArgs : NotifyCollectionChangedEve
 		{
 			ResetOldItems = oldItems ?? Array.Empty<object>(),
 			ResetNewItems = newItems ?? Array.Empty<object>()
+		};
+
+	/// <summary>
+	/// Creates a <see cref="NotifyCollectionChangedAction.Reset"/> collection changed event args
+	/// </summary>
+	public static RichNotifyCollectionChangedEventArgs Reset<T>(IList<T>? oldItems, IList<T>? newItems)
+		=> new(NotifyCollectionChangedAction.Reset)
+		{
+			ResetOldItems = oldItems?.AsUntypedList() ?? Array.Empty<T>(),
+			ResetNewItems = newItems?.AsUntypedList() ?? Array.Empty<T>()
+		};
+
+	/// <summary>
+	/// Creates a <see cref="NotifyCollectionChangedAction.Reset"/> collection changed event args
+	/// </summary>
+	public static RichNotifyCollectionChangedEventArgs Reset<T>(IImmutableList<T>? oldItems, IImmutableList<T>? newItems)
+		=> new(NotifyCollectionChangedAction.Reset)
+		{
+			ResetOldItems = oldItems?.AsUntypedList() ?? Array.Empty<T>(),
+			ResetNewItems = newItems?.AsUntypedList() ?? Array.Empty<T>()
 		};
 
 	private RichNotifyCollectionChangedEventArgs(NotifyCollectionChangedAction action)
