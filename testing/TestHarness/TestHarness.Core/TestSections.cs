@@ -24,5 +24,7 @@ public enum TestSections
 	Authentication_Web,
 	Authentication_Web_Settings,
 	Core_Storage,
-	Localization
+	Localization,
+	Http_Endpoints,
+	Http_Refit
 }

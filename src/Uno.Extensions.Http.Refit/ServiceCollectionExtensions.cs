@@ -13,14 +13,14 @@ public static class ServiceCollectionExtensions
 		   HostBuilderContext context,
 		   string? name = null,
 		   Action<IServiceProvider, RefitSettings>? settingsBuilder = null,
-		   Func<IHttpClientBuilder, EndpointOptions, IHttpClientBuilder>? configure = null
+		   Func<IHttpClientBuilder, EndpointOptions?, IHttpClientBuilder>? configure = null
 	   )
 		   where TInterface : class
 	{
 		return services.AddClient<TInterface>(
 			context,
-			name,
-			(s, c) => HttpClientFactoryExtensions.AddRefitClient<TInterface>(s, settingsAction: serviceProvider =>
+			name: name,
+			httpClientFactory: (s, c) => HttpClientFactoryExtensions.AddRefitClient<TInterface>(s, settingsAction: serviceProvider =>
 			{
 				var serializer = serviceProvider.GetService<IHttpContentSerializer>();
 				var settings = serializer is not null ? new RefitSettings() { ContentSerializer = serializer } : new RefitSettings();
@@ -34,6 +34,6 @@ public static class ServiceCollectionExtensions
 				settingsBuilder?.Invoke(serviceProvider, settings);
 				return settings;
 			}),
-			configure);
+			configure: configure);
 	}
 }
