@@ -58,6 +58,8 @@ partial class CollectionAnalyzer
 		}
 
 		protected abstract CollectionUpdater.Update ToUpdaterCore(ICollectionUpdaterVisitor visitor);
+
+		protected internal abstract void Visit(ICollectionChangeSetVisitor<T> visitor);
 	}
 
 	/// <summary>

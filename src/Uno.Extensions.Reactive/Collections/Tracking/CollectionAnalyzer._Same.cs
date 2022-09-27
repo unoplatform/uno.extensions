@@ -18,6 +18,10 @@ partial class CollectionAnalyzer
 			=> null;
 
 		/// <inheritdoc />
+		protected internal override void Visit(ICollectionChangeSetVisitor<T> visitor)
+			=> visitor.Same(_oldItems, _newItems, Starts + _indexOffset);
+
+		/// <inheritdoc />
 		protected override CollectionUpdater.Update ToUpdaterCore(ICollectionUpdaterVisitor visitor)
 		{
 			var callback = new CollectionUpdater.Update(ToEvent());

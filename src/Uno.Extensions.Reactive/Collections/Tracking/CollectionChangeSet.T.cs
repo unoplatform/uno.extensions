@@ -46,4 +46,23 @@ internal sealed partial record CollectionChangeSet<T> : CollectionChangeSet
 		=> _head is null
 			? CollectionUpdater.Empty
 			: new(_head.ToUpdater(visitor));
+
+	/// <summary>
+	/// Visits this change set.
+	/// </summary>
+	/// <param name="visitor">The visitor.</param>
+	/// <remarks>
+	/// This is almost equivalent to <see cref="Enumerate"/> and interpret each event args,
+	/// but in a lighter way since it avoid the creation of all event args.
+	/// </remarks>
+	internal void Visit(ICollectionChangeSetVisitor<T> visitor)
+	{
+		var node = _head;
+		while (node is not null)
+		{
+			node.Visit(visitor);
+
+			node = node.Next;
+		}
+	}
 }

@@ -16,34 +16,34 @@ public sealed class ItemsChanged : ChangesConstraint
 	public static ItemsChanged Empty { get; } = new();
 
 	public static ItemsChanged Add<T>(int index, params T[] items)
-		=> new(RichNotifyCollectionChangedEventArgs.AddSome(items, index));
+		=> new(RichNotifyCollectionChangedEventArgs.AddSome<T>(items, index));
 
 	public static ItemsChanged Add<T>(int index, IEnumerable<T> items)
-		=> new(RichNotifyCollectionChangedEventArgs.AddSome(items.ToList(), index));
+		=> new(RichNotifyCollectionChangedEventArgs.AddSome<T>(items.ToList(), index));
 
 	public static ItemsChanged Remove<T>(int index, params T[] items)
-		=> new(RichNotifyCollectionChangedEventArgs.RemoveSome(items, index));
+		=> new(RichNotifyCollectionChangedEventArgs.RemoveSome<T>(items, index));
 
 	public static ItemsChanged Remove<T>(int index, IEnumerable<T> items)
-		=> new(RichNotifyCollectionChangedEventArgs.RemoveSome(items.ToList(), index));
+		=> new(RichNotifyCollectionChangedEventArgs.RemoveSome<T>(items.ToList(), index));
 
 	public static ItemsChanged Replace<T>(int index, IEnumerable<T> oldItems, IEnumerable<T> newItems)
-		=> new(RichNotifyCollectionChangedEventArgs.ReplaceSome(oldItems.ToList(), newItems.ToList(), index));
+		=> new(RichNotifyCollectionChangedEventArgs.ReplaceSome<T>(oldItems.ToList(), newItems.ToList(), index));
 
 	public static ItemsChanged Replace<T>(int index, T oldItem, T newItem)
-		=> new(RichNotifyCollectionChangedEventArgs.Replace(oldItem, newItem, index));
+		=> new(RichNotifyCollectionChangedEventArgs.Replace<T>(oldItem, newItem, index));
 
 	public static ItemsChanged Move<T>(int oldIndex, int newIndex, params T[] items)
-		=> new(RichNotifyCollectionChangedEventArgs.MoveSome(items.ToList(), oldIndex, newIndex));
+		=> new(RichNotifyCollectionChangedEventArgs.MoveSome<T>(items.ToList(), oldIndex, newIndex));
 
 	public static ItemsChanged Move<T>(int oldIndex, int newIndex, IEnumerable<T> items)
-		=> new(RichNotifyCollectionChangedEventArgs.MoveSome(items.ToList(), oldIndex, newIndex));
+		=> new(RichNotifyCollectionChangedEventArgs.MoveSome<T>(items.ToList(), oldIndex, newIndex));
 
 	public static ItemsChanged Reset<T>(IEnumerable<T> oldItems, IEnumerable<T> newItems)
-		=> new(RichNotifyCollectionChangedEventArgs.Reset(oldItems.ToList(), newItems.ToList()));
+		=> new(RichNotifyCollectionChangedEventArgs.Reset<T>(oldItems.ToList(), newItems.ToList()));
 
 	public static ItemsChanged Reset<T>(IEnumerable<T> newItems)
-		=> new(RichNotifyCollectionChangedEventArgs.Reset(null, newItems.ToList()));
+		=> new(RichNotifyCollectionChangedEventArgs.Reset<T>(null, newItems.ToList()));
 
 	public static ItemsChanged operator &(ItemsChanged left, ItemsChanged right)
 		=> new(left._expectedArgs.Concat(right._expectedArgs).ToImmutableList());
@@ -64,7 +64,7 @@ public sealed class ItemsChanged : ChangesConstraint
 		{
 			AssertionScope.Current.Fail("is not set, but the collection of items was expected to have been updated.");
 		}
-		changeSet.Should().BeOfType<CollectionChangeSet>();
+		changeSet.Should().BeAssignableTo<CollectionChangeSet>();
 
 		if (changeSet is CollectionChangeSet changes)
 		{

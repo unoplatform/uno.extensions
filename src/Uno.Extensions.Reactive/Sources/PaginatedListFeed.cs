@@ -226,12 +226,12 @@ internal class PaginatedListFeed<TCursor, TItem> : IListFeed<TItem>, IRefreshabl
 	{
 		var updated = new DifferentialImmutableList<TItem>(page);
 
-		return (updated, ((CollectionAnalyzer)_diffAnalyzer).GetResetChange(current, updated));
+		return (updated, _diffAnalyzer.GetResetChange(current, updated));
 	}
 
 	private (DifferentialImmutableList<TItem> items, CollectionChangeSet changes) Clear(DifferentialImmutableList<TItem> current)
 	{
-		return (DifferentialImmutableList<TItem>.Empty, ((CollectionAnalyzer)_diffAnalyzer).GetResetChange(current, Array.Empty<TItem>()));
+		return (DifferentialImmutableList<TItem>.Empty, _diffAnalyzer.GetResetChange(current, DifferentialImmutableList<TItem>.Empty));
 	}
 
 	private (DifferentialImmutableList<TItem> items, CollectionChangeSet changes) Add(DifferentialImmutableList<TItem> current, IImmutableList<TItem> page)

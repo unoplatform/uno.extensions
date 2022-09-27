@@ -5,9 +5,11 @@ using System.Collections.Immutable;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Threading;
+using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Collections;
 using Uno.Extensions.Collections.Tracking;
+using Uno.Extensions.Equality;
 using Uno.Extensions.Reactive.Collections;
 using Uno.Extensions.Reactive.Testing;
 using Uno.Extensions.Reactive.Tests._Utils;
@@ -15,6 +17,7 @@ using Uno.Extensions.Reactive.Tests._Utils;
 namespace Uno.Extensions.Reactive.Tests.Collections.Tracking;
 
 internal abstract class CollectionTrackerTester<TCollection, T>
+	where TCollection : IEnumerable
 {
 	private readonly TCollection _previous;
 	private TCollection? _updated;
@@ -49,7 +52,8 @@ internal abstract class CollectionTrackerTester<TCollection, T>
 		ShouldBe();
 	}
 
-	protected abstract CollectionUpdater GetUpdater(CollectionAnalyzer<T> analyzer, TCollection previous, TCollection updated, ICollectionUpdaterVisitor visitor);
+	protected abstract CollectionUpdater GetUpdater(ItemComparer<T> comparer, TCollection previous, TCollection updated, ICollectionUpdaterVisitor visitor);
+	protected abstract CollectionChangeSet GetChanges(ItemComparer<T> comparer, TCollection previous, TCollection updated);
 	protected abstract IEnumerable<T> AsEnumerable(TCollection collection);
 
 	public void ShouldBe(params NotifyCollectionChangedEventArgs[] expected)
@@ -59,20 +63,26 @@ internal abstract class CollectionTrackerTester<TCollection, T>
 			Assert.Fail("To collection has not been set.");
 		}
 
+		AssertUsingUpdater(expected);
+		AssertUsingCollectionChangeEventArgs(expected);
+		AssertUsingCollectionChangeVisitor(expected);
+	}
+
+	public void AssertUsingUpdater(NotifyCollectionChangedEventArgs[] expected)
+	{
 		var visitor = new TestVisitor();
-		var tracker = new CollectionAnalyzer<T>(new ItemComparer<T>(_itemComparer, _itemVersionComparer));
-		var changes = GetUpdater(tracker, _previous, _updated, visitor);
+		var updater = GetUpdater(new ItemComparer<T>(_itemComparer, _itemVersionComparer), _previous, _updated!, visitor);
 		var previousEnumerable = AsEnumerable(_previous);
-		var updatedEnumerable = AsEnumerable(_updated);
+		var updatedEnumerable = AsEnumerable(_updated!);
 
 		IEnumerable<NotifyCollectionChangedEventArgs> GetCollectionChanges()
 		{
 			// Note: we use reflexion here since it's only for debug output
 
-			var node = changes
+			var node = updater
 				.GetType()
 				.GetField("_head", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
-				?.GetValue(changes) as CollectionUpdater.Update;
+				?.GetValue(updater) as CollectionUpdater.Update;
 
 			while(node != null)
 			{
@@ -96,7 +106,7 @@ internal abstract class CollectionTrackerTester<TCollection, T>
 		Console.WriteLine($"Actual: \r\n{GetCollectionChanges().ToOutputString()}");
 
 		var handler = new Handler(expected);
-		changes.DequeueChanges(handler);
+		updater.DequeueChanges(handler);
 
 		Assert.AreEqual(expected.Length, handler.EventsCount);
 
@@ -134,6 +144,58 @@ Moved or untouched ({notUpdated.Length}):
 		}
 
 		visitor.AssertAllRaised();
+	}
+
+	public void AssertUsingCollectionChangeEventArgs(NotifyCollectionChangedEventArgs[] expected)
+	{
+		var changeSet = GetChanges(new ItemComparer<T>(_itemComparer, _itemVersionComparer), _previous, _updated!);
+		var actual = changeSet.ToCollectionChanges().ToArray();
+		var comparer = new NotifyCollectionChangedComparer(MyClassComparer.Instance);
+
+		actual.Length.Should().Be(expected.Length);
+
+		for (var i = 0; i < actual.Length; i++)
+		{
+			comparer.Equals(expected[i], actual[i]).Should().BeTrue();
+		}
+	}
+
+	public void AssertUsingCollectionChangeVisitor(NotifyCollectionChangedEventArgs[] expected)
+	{
+		var changeSet = GetChanges(new ItemComparer<T>(_itemComparer, _itemVersionComparer), _previous, _updated!);
+
+		IList actual;
+		switch(changeSet)
+		{
+			case CollectionChangeSet<MyClass> classChangeSet:
+			{
+				var visitor = new TestCollectionChangeSet<MyClass>();
+				classChangeSet.Visit(visitor);
+				actual = visitor.Result;
+				break;
+			}
+			case CollectionChangeSet<int> valueTypeChangeSet:
+			{
+				var visitor = new TestCollectionChangeSet<int>();
+				valueTypeChangeSet.Visit(visitor);
+				actual = visitor.Result;
+				break;
+			}
+			case CollectionChangeSet<object?> objectChangeSet:
+			{
+				var visitor = new TestCollectionChangeSet<object?>();
+				objectChangeSet.Visit(visitor);
+				actual = visitor.Result;
+				break;
+			}
+			default: throw new ArgumentException($"Type {typeof(T).Name} not supported");
+		}
+
+		var comparer = new NotifyCollectionChangedComparer(MyClassComparer.Instance);
+		for (var i = 0; i < actual.Count; i++)
+		{
+			comparer.Equals(expected[i], actual[i]).Should().BeTrue();
+		}
 	}
 
 	private class Handler : CollectionUpdater.IHandler
@@ -323,6 +385,36 @@ internal class TestVisitor : ICollectionUpdaterVisitor
 			Interlocked.Increment(ref _reset);
 		}
 	}
+}
+
+internal class TestCollectionChangeSet<T> : CollectionChangeSetVisitorBase<T>
+{
+	public List<RichNotifyCollectionChangedEventArgs> Result { get; }
+
+	public TestCollectionChangeSet()
+	{
+		Result = new List<RichNotifyCollectionChangedEventArgs>();
+	}
+
+	/// <inheritdoc />
+	public override void Add(IReadOnlyList<T> items, int index)
+		=> Result.Add(RichNotifyCollectionChangedEventArgs.AddSome((IList)items.ToList(), index));
+
+	/// <inheritdoc />
+	public override void Move(IReadOnlyList<T> items, int fromIndex, int toIndex)
+		=> Result.Add(RichNotifyCollectionChangedEventArgs.MoveSome((IList)items.ToList(), fromIndex, toIndex));
+
+	/// <inheritdoc />
+	public override void Replace(IReadOnlyList<T> original, IReadOnlyList<T> updated, int index)
+		=> Result.Add(RichNotifyCollectionChangedEventArgs.ReplaceSome((IList)original.ToList(), (IList)updated.ToList(), index));
+
+	/// <inheritdoc />
+	public override void Remove(IReadOnlyList<T> items, int index)
+		=> Result.Add(RichNotifyCollectionChangedEventArgs.RemoveSome((IList)items.ToList(), index));
+
+	/// <inheritdoc />
+	public override void Reset(IReadOnlyList<T> oldItems, IReadOnlyList<T> newItems)
+		=> Result.Add(RichNotifyCollectionChangedEventArgs.Reset((IList)oldItems.ToList(), (IList)newItems.ToList()));
 }
 
 
