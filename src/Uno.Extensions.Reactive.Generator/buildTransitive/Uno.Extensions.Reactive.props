@@ -2,6 +2,7 @@
 	<ItemGroup>
 		<CompilerVisibleProperty Include="UnoExtensionsGeneration_DisableNotNullIfNotNullAttribute" />
 		<CompilerVisibleProperty Include="UnoExtensionsGeneration_DisableNotNullWhenAttribute" />
+		<CompilerVisibleProperty Include="UnoExtensionsGeneration_DisableMemberNotNullWhenAttribute" />
 		<CompilerVisibleProperty Include="UnoExtensionsGeneration_DisableIsExternalInit" />
 		<CompilerVisibleProperty Include="UnoExtensionsGeneration_DisableModuleInitializerAttribute" />
 	</ItemGroup>

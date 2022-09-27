@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Uno;
 
@@ -27,6 +28,9 @@ partial class CollectionAnalyzer
 		/// </summary>
 		public int Ignored { get; private set; }
 
+#pragma warning disable CS0436
+		[MemberNotNullWhen(true, nameof(Current))]
+#pragma warning restore CS0436
 		public bool MoveNext()
 		{
 			var index = CurrentIndex;
@@ -45,7 +49,7 @@ partial class CollectionAnalyzer
 			else
 			{
 				CurrentIndex = index;
-				Current = _source.ElementAt(index);
+				Current = _source.ElementAt(index)!;
 
 				return true;
 			}

@@ -52,17 +52,6 @@ internal partial class CollectionAnalyzer
 		ComparerRef<T>? versionComparer,
 		int eventArgsOffset = 0)
 	{
-		//if (oldItems.Instance is IDifferentialCollection oldDiff
-		//	&& newItems.Instance is IDifferentialCollection newDiff
-		//	&& oldDiff.FindCommonAncestor(newDiff) is { } ancestor
-		//	&& ancestor == oldDiff.Head) // Temp
-		//{
-		//	// 1. Rollback changes from oldDiff to ancestor
-		//	// => Not supported yet, see condition 'ancestor == oldDiff.Head' above
-
-		//	// 2. Apply changes from ancestor to newDiff
-		//	new 
-		//}
 
 		/*
 		* OLD: the source collection we are going to update to the NEW
@@ -84,7 +73,7 @@ internal partial class CollectionAnalyzer
 		while (oldEnumerator.MoveNext())
 		{
 			var oldIndex = oldEnumerator.CurrentIndex;
-			var oldItem = oldEnumerator.Current!;
+			var oldItem = oldEnumerator.Current;
 			var resultIndex = oldIndex - removed + added + moved - oldEnumerator.Ignored; // The current index in the (virtual) result collection (i.e. oldIndex ignoring the removed/added items)
 			var newIndex = newItems.IndexOf(oldItem, resultIndex, newItems.Count - resultIndex);
 
