@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Collections.Tracking;
+using Uno.Extensions.Reactive.Collections;
 using Uno.Extensions.Reactive.Tests._Utils;
 using Uno.Extensions.Reactive.Utils;
 using static Uno.Extensions.Collections.CollectionChanged;
@@ -2210,8 +2211,12 @@ public partial class Given_CollectionAnalyzer_ListOfT
 			=> items;
 
 		/// <inheritdoc />
-		protected override CollectionUpdater GetUpdater(CollectionAnalyzer<T> analyzer, IList<T> previous, IList<T> updated, ICollectionUpdaterVisitor visitor)
-			=> analyzer.GetUpdater(previous, updated, visitor);
+		protected override CollectionUpdater GetUpdater(ItemComparer<T> comparer, IList<T> previous, IList<T> updated, ICollectionUpdaterVisitor visitor)
+			=> new CollectionAnalyzer<T>(comparer).GetUpdater(previous, updated, visitor);
+
+		/// <inheritdoc />
+		protected override CollectionChangeSet<T> GetChanges(ItemComparer<T> comparer, IList<T> previous, IList<T> updated)
+			=> new CollectionAnalyzer<T>(comparer).GetChanges(previous, updated);
 
 		/// <inheritdoc />
 		protected override IEnumerable<T> AsEnumerable(IList<T> collection)

@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Collections.Tracking;
 using Uno.Extensions.Equality;
+using Uno.Extensions.Reactive.Collections;
 using Uno.Extensions.Reactive.Tests._Utils;
 using Uno.Extensions.Reactive.Utils;
 using static Uno.Extensions.Collections.CollectionChanged;
@@ -2220,8 +2221,12 @@ public partial class Given_CollectionAnalyzer_List
 			=> new ArrayList(items.Select(_cast).ToArray()); // Make sure to lost the IList<object?>
 
 		/// <inheritdoc />
-		protected override CollectionUpdater GetUpdater(CollectionAnalyzer<object?> analyzer, IList previous, IList updated, ICollectionUpdaterVisitor visitor)
-			=> analyzer.GetUpdater(previous, updated, visitor);
+		protected override CollectionUpdater GetUpdater(ItemComparer<object?> comparer, IList previous, IList updated, ICollectionUpdaterVisitor visitor)
+			=> new CollectionAnalyzer(new(comparer.Entity?.ToEqualityComparer(), comparer.Version?.ToEqualityComparer())).GetUpdater(previous, updated, visitor);
+
+		/// <inheritdoc />
+		protected override CollectionChangeSet GetChanges(ItemComparer<object?> comparer, IList previous, IList updated)
+			=> new CollectionAnalyzer(new(comparer.Entity?.ToEqualityComparer(), comparer.Version?.ToEqualityComparer())).GetChanges(previous, updated);
 
 		/// <inheritdoc />
 		protected override IEnumerable<object?> AsEnumerable(IList collection)
