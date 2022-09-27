@@ -13,7 +13,8 @@ internal record KeyEqualityGenerationContext(
 
 	// Config
 	[ContextType(typeof(ImplicitKeyEqualityAttribute))] INamedTypeSymbol ImplicitKeyAttribute,
-	[ContextType(typeof(KeyAttribute))] INamedTypeSymbol KeyAttribute
+	[ContextType(typeof(KeyAttribute))] INamedTypeSymbol KeyAttribute,
+	[ContextType("System.ComponentModel.DataAnnotations.KeyAttribute?")] INamedTypeSymbol? DataAnnotationsKeyAttribute
 )
 {
 	private IMethodSymbol? _getKeyHashCode;
