@@ -33,9 +33,6 @@ public sealed class ItemsChanged : ChangesConstraint
 	public static ItemsChanged Replace<T>(int index, T oldItem, T newItem)
 		=> new(RichNotifyCollectionChangedEventArgs.Replace<T>(oldItem, newItem, index));
 
-	public static ItemsChanged Replace<T>(int index, T oldItem, T newItem)
-		=> new(RichNotifyCollectionChangedEventArgs.Replace(oldItem, newItem, index));
-
 	public static ItemsChanged Move<T>(int oldIndex, int newIndex, params T[] items)
 		=> new(RichNotifyCollectionChangedEventArgs.MoveSome<T>(items.ToList(), oldIndex, newIndex));
 
