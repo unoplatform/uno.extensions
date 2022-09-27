@@ -89,7 +89,7 @@ internal partial class CollectionAnalyzer
 
 			if (newIndex < resultIndex)
 			{
-				throw new InvalidOperationException("The index return by the IndexOf is invalid");
+				throw new InvalidOperationException("The index returned by the IndexOf is invalid");
 			}
 
 			// First raise replace if the instance/version of the item changed

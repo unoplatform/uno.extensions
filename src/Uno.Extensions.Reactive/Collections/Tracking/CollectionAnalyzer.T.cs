@@ -39,11 +39,11 @@ internal class CollectionAnalyzer<T>
 		=> new(list, list.Count, i => list[i], list.GetIndexOf(_comparer));
 
 	/// <summary>
-	/// Creates a set of changes that contains only a reset event.
+	/// Creates a set of changes that only contains a reset event.
 	/// </summary>
 	/// <param name="oldItems">The source snapshot</param>
 	/// <param name="newItems">The target snapshot</param>
-	/// <returns>A list of changes containing only a 'Reset' event that can be applied to move a collection from <paramref name="oldItems"/> to <paramref name="newItems"/>.</returns>
+	/// <returns>A list of changes only containing a 'Reset' event that can be applied to move a collection from <paramref name="oldItems"/> to <paramref name="newItems"/>.</returns>
 	internal CollectionChangeSet<T> GetResetChange(IList<T> oldItems, IList<T> newItems)
 		=> new(GetChangesCore(RichNotifyCollectionChangedEventArgs.Reset(oldItems, newItems), GetRef, _versionComparer));
 
@@ -52,7 +52,7 @@ internal class CollectionAnalyzer<T>
 	/// </summary>
 	/// <param name="oldItems">The source snapshot</param>
 	/// <param name="newItems">The target snapshot</param>
-	/// <returns>A list of changes containing only a 'Reset' event that can be applied to move a collection from <paramref name="oldItems"/> to <paramref name="newItems"/>.</returns>
+	/// <returns>A list of changes only containing a 'Reset' event that can be applied to move a collection from <paramref name="oldItems"/> to <paramref name="newItems"/>.</returns>
 	internal CollectionChangeSet<T> GetResetChange(IImmutableList<T> oldItems, IImmutableList<T> newItems)
 		=> new(GetChangesCore(RichNotifyCollectionChangedEventArgs.Reset(oldItems, newItems), GetRef, _versionComparer));
 
