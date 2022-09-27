@@ -15,8 +15,6 @@ namespace Uno.Extensions.Collections.Tracking;
 /// </summary>
 internal class CollectionAnalyzer<T> : CollectionAnalyzer
 {
-	public static CollectionAnalyzer<T> Default { get; } = new(default);
-
 	private readonly IEqualityComparer<T>? _comparer;
 	private readonly ComparerRef<T>? _versionComparer;
 

@@ -32,7 +32,7 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 		PropertyName = propertyName;
 
 		_state = ctx.GetOrCreateListState(source);
-		_items = CreateBindableCollection(ctx);
+		_items = CreateBindableCollection(_state, ctx);
 	}
 
 	/// <inheritdoc />
@@ -78,7 +78,7 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 		=> _state.UpdateMessage(updater, ct);
 
 
-	private BindableCollection CreateBindableCollection(SourceContext ctx)
+	private static BindableCollection CreateBindableCollection(IListState<T> state, SourceContext ctx)
 	{
 		var currentCount = 0;
 		var pageTokens = new TokenSetAwaiter<PageToken>();
@@ -86,7 +86,9 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 		var requests = new RequestSource();
 		var pagination = new PaginationService(LoadMore);
 		var services = new SingletonServiceProvider(pagination);
-		var collection = BindableCollection.Create<T>(services: services);
+		var collection = BindableCollection.Create(
+			services: services,
+			itemComparer: ListFeed<T>.DefaultComparer);
 
 		if (ctx.Token.CanBeCanceled)
 		{
@@ -98,7 +100,7 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 		// Note: we have to listen for collection changes on bindable _items to update the state.
 		// https://github.com/unoplatform/uno.extensions/issues/370
 
-		_state.GetSource(ctx.CreateChild(requests), ctx.Token).ForEachAsync(
+		state.GetSource(ctx.CreateChild(requests), ctx.Token).ForEachAsync(
 			msg =>
 			{
 				if (ctx.Token.IsCancellationRequested)

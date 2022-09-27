@@ -38,6 +38,9 @@ public static class Items
 	public static ItemsChanged Replace<T>(int at, IEnumerable<T> oldItems, IEnumerable<T> newItems)
 		=> ItemsChanged.Replace(at, oldItems, newItems);
 
+	public static ItemsChanged Replace<T>(int at, T oldItem, T newItem)
+		=> ItemsChanged.Replace(at, oldItem, newItem);
+
 	public static ItemsChanged Move<T>(int from, int to, params T[] items)
 		=> ItemsChanged.Move(from, to, items);
 

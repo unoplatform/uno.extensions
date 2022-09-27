@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Uno.Extensions.Collections;
 using Uno.Extensions.Collections.Facades.Differential;
 using Uno.Extensions.Collections.Tracking;
+using Uno.Extensions.Reactive.Collections;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Utils;
 
@@ -18,11 +19,11 @@ internal class PaginatedListFeed<TCursor, TItem> : IListFeed<TItem>, IRefreshabl
 	private readonly GetPage<TCursor, TItem> _getPage;
 	private readonly CollectionAnalyzer<TItem> _diffAnalyzer;
 
-	public PaginatedListFeed(TCursor firstPage, GetPage<TCursor, TItem> getPage)
+	public PaginatedListFeed(TCursor firstPage, GetPage<TCursor, TItem> getPage, ItemComparer<TItem> itemComparer = default)
 	{
 		_firstPage = firstPage;
 		_getPage = getPage;
-		_diffAnalyzer = new CollectionAnalyzer<TItem>(default);
+		_diffAnalyzer = ListFeed<TItem>.GetAnalyzer(itemComparer);
 	}
 
 	/// <inheritdoc />

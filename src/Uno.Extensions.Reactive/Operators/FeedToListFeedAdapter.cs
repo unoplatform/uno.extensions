@@ -37,8 +37,8 @@ internal class FeedToListFeedAdapter<TCollection, TItem> : IListFeed<TItem>
 	{
 		_source = source;
 		_toImmutable = toImmutable;
-		_itemComparer = itemComparer;
-		_analyzer = new(itemComparer);
+		_itemComparer = ListFeed<TItem>.GetComparer(itemComparer);
+		_analyzer = ListFeed<TItem>.GetAnalyzer(itemComparer);
 	}
 
 	/// <inheritdoc />

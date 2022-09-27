@@ -14,7 +14,7 @@ namespace Uno.Extensions.Reactive;
 /// Provides a set of static methods to create and manipulate <see cref="IListFeed{T}"/>.
 /// </summary>
 /// <typeparam name="T">The type of the items.</typeparam>
-public static class ListFeed<T>
+public static partial class ListFeed<T>
 {
 	/// <summary>
 	/// Creates a custom feed from a raw <see cref="IAsyncEnumerable{T}"/> sequence of <see cref="Uno.Extensions.Reactive.Message{T}"/>.
