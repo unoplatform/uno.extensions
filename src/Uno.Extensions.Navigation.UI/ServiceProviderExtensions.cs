@@ -124,68 +124,59 @@ public static class ServiceProviderExtensions
 		return default;
 	}
 
-	public static FrameworkElement AttachNavigation(this Window window, IServiceProvider services, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
+	//public static FrameworkElement AttachNavigation(this Window window, IServiceProvider services, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
+	//{
+	//	return AttachNavigation((root, services) =>
+	//	{
+	//		window.Content = root;
+	//		window.AttachServices(services);
+	//	}, services, initialRoute, initialView, initialViewModel);
+	//}
+
+	//public static FrameworkElement AttachNavigation(this ContentControl parent, IServiceProvider services, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
+	//{
+	//	return AttachNavigation((root, services) => parent.Content = root, services, initialRoute, initialView, initialViewModel);
+	//}
+
+	//private static FrameworkElement AttachNavigation(Action<FrameworkElement, IServiceProvider> assignViewHost, IServiceProvider services, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
+	//{
+	//	var viewHost = services.GetRequiredService<IViewHostProvider>();
+	//	var root = viewHost.CreateViewHost();
+	//	assignViewHost(root, services);
+
+	//	root.Host(services, initialRoute, initialView, initialViewModel);
+
+	//	return root;
+	//}
+
+	public static Task<IHost> InitializeNavigation(this Window window, Func<IHost> buildHost, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null, ContentControl? navigationRoot = null)
 	{
-		return AttachNavigation((root, services) =>
-		{
-			window.Content = root;
-			window.AttachServices(services);
-		}, services, initialRoute, initialView, initialViewModel);
-		//var viewHost = services.GetRequiredService<IViewHostProvider>();
-		//var root = viewHost.CreateViewHost();
-		//window.Content = root;
-
-		//window.AttachServices(services);
-
-		//root.Host(services, initialRoute, initialView, initialViewModel);
-
-		//return root;
+		return window.InitializeNavigation<DefaultViewHostProvider>(buildHost, initialRoute, initialView, initialViewModel, navigationRoot);
 	}
 
-	public static FrameworkElement AttachNavigation(this ContentControl parent, IServiceProvider services, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
-	{
-		return AttachNavigation((root, services) => parent.Content = root, services, initialRoute, initialView, initialViewModel);
-		//var viewHost = services.GetRequiredService<IViewHostProvider>();
-		//var root = viewHost.CreateViewHost();
-		//parent.Content = root;
-
-		//root.Host(services, initialRoute, initialView, initialViewModel);
-
-		//return root;
-	}
-
-	private static FrameworkElement AttachNavigation(Action<FrameworkElement, IServiceProvider> assignViewHost, IServiceProvider services, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
-	{
-		var viewHost = services.GetRequiredService<IViewHostProvider>();
-		var root = viewHost.CreateViewHost();
-		assignViewHost(root, services);
-
-		root.Host(services, initialRoute, initialView, initialViewModel);
-
-		return root;
-	}
-
-	public static Task<IHost> InitializeNavigation(this Window window, Func<IHost> buildHost, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
-	{
-		return window.InitializeNavigation<DefaultViewHostProvider>(buildHost, initialRoute, initialView, initialViewModel);
-	}
-
-	internal static Task<IHost> InitializeNavigation<TViewHostProvider>(this Window window, Func<IHost> buildHost, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
+	internal static Task<IHost> InitializeNavigation<TViewHostProvider>(this Window window, Func<IHost> buildHost, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null, ContentControl? navigationRoot = null)
 	  where TViewHostProvider : IViewHostProvider, new()
 	{
 		var viewHost = new TViewHostProvider();
 		var root = viewHost.CreateViewHost();
-		window.Content = root;
-		window.Activate();
+		if (navigationRoot is null)
+		{
+			window.Content = root;
+			window.Activate();
+		}
+		else
+		{
+			navigationRoot.Content = root;
+		}
 
 		IDeferrable? startupDeferral = null;
 
-		var buildTask = window.BuildAndInitializeHost(root, buildHost,()=>startupDeferral!, initialRoute, initialView, initialViewModel);
+		var buildTask = window.BuildAndInitializeHost(root, buildHost, () => startupDeferral!, initialRoute, initialView, initialViewModel);
 		startupDeferral = viewHost.InitializeViewHost(root, buildTask);
 		return buildTask;
 	}
 
-	private static async Task<IHost> BuildAndInitializeHost(this Window window, FrameworkElement viewHost, Func<IHost> buildHost,Func<IDeferrable> startupDeferral, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
+	private static async Task<IHost> BuildAndInitializeHost(this Window window, FrameworkElement viewHost, Func<IHost> buildHost, Func<IDeferrable> startupDeferral, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
 	{
 		// Force immediate return of Task to avoid synchronous execution of buildHost
 		// It's important that buildHost is still executed on UI thread, so can't do

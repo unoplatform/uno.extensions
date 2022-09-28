@@ -50,23 +50,15 @@ public partial class BaseTestSectionPage : Page, IDisposable
 			return;
 		}
 		init = true;
-		Host = HostInit!.InitializeHost();
 
 		var win = (Application.Current as App)?.Window!;
-		var services = this.AttachServiceProvider(Host.Services).RegisterWindow(win!);
-
-		if (this.FindName(Constants.NavigationRoot) is ContentControl root)
-		{
-			root.AttachNavigation(services);
-
-		}
-
-		await Task.Run(() => Host.StartAsync());
+		var navigationRoot = this.FindName(Constants.NavigationRoot) as ContentControl;
+		Host = await win.InitializeNavigationWithExtendedSplash(HostInit!.InitializeHost, navigationRoot: navigationRoot);
 	}
 
 	public void Dispose()
 	{
-		_ = Host!.StopAsync();
+		_ = Host?.StopAsync();
 	}
 }
 

@@ -21,6 +21,6 @@
 				VerticalAlignment="Center"
 				Content="Go to Second Page"
 				not_skia:AutomationProperties.AutomationId="SecondPageButton"
-				Command="{Binding GoToSecond}"/>
+				Command="{Binding GoToSecond}" />
 	</Grid>
 </Page>

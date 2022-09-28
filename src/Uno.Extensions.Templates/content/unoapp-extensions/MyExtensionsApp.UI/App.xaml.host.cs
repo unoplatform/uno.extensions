@@ -4,7 +4,7 @@ namespace MyExtensionsApp;
 
 public sealed partial class App : Application
 {
-	private IHost Host { get; } = BuildAppHost();
+	private IHost? Host { get; set; }
 
 	private static IHost BuildAppHost()
 	{

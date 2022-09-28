@@ -16,8 +16,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.5.9" />
-		<PackageReference Include="Uno.Material.WinUI" Version="2.2.0" />
-		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.2.0" />
-		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.2.0" />
+		<PackageReference Include="Uno.Material.WinUI" Version="2.3.0-dev.12" />
+		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.4.0-dev.17" />
+		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.4.0-dev.17" />
 	</ItemGroup>
 </Project>

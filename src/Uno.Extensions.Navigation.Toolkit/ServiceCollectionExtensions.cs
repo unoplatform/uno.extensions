@@ -15,8 +15,8 @@ public static class ServiceCollectionExtensions
 					.AddSingleton<IRequestHandler, TabBarItemRequestHandler>();
 	}
 
-	public static Task<IHost> InitializeNavigationWithExtendedSplash(this Window window, Func<IHost> buildHost, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
+	public static Task<IHost> InitializeNavigationWithExtendedSplash(this Window window, Func<IHost> buildHost, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null, ContentControl? navigationRoot=null)
 	{
-		return window.InitializeNavigation<ToolkitViewHostProvider>(buildHost, initialRoute, initialView, initialViewModel);
+		return window.InitializeNavigation<ToolkitViewHostProvider>(buildHost, initialRoute, initialView, initialViewModel, navigationRoot);
 	}
 }

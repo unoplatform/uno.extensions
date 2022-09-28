@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions.Navigation;
 
-public interface ISplashScreen: IDeferrable
+public interface ISplashScreen : IDeferrable
 {
 }
 
@@ -30,5 +30,5 @@ internal class SplashScreen : ISplashScreen
 {
 	public IDeferrable? DeferralSource { get; set; }
 
-	public Deferral GetDeferral() => DeferralSource!.GetDeferral();
+	public Deferral GetDeferral() => DeferralSource?.GetDeferral() ?? new Deferral(() => { });
 }
