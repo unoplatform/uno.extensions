@@ -149,6 +149,16 @@ public static class ServiceProviderExtensions
 	//	return root;
 	//}
 
+	/// <summary>
+	/// Initializes navigation for an application using a ContentControl
+	/// </summary>
+	/// <param name="window">The application Window to initialize navigation for</param>
+	/// <param name="buildHost">Function to create IHost</param>
+	/// <param name="initialRoute">[optional] Initial navigation route</param>
+	/// <param name="initialView">[optional] Initial navigation view</param>
+	/// <param name="initialViewModel">[optional] Initial navigation viewmodel</param>
+	/// <param name="navigationRoot">[optional] Where to host app navigation (only required for nesting navigation in an existing application)</param>
+	/// <returns>The created IHost</returns>
 	public static Task<IHost> InitializeNavigation(this Window window, Func<IHost> buildHost, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null, ContentControl? navigationRoot = null)
 	{
 		return window.InitializeNavigation<DefaultViewHostProvider>(buildHost, initialRoute, initialView, initialViewModel, navigationRoot);
