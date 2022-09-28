@@ -9,7 +9,7 @@ internal class DefaultViewHostProvider : IViewHostProvider, IDeferrable
 		HorizontalContentAlignment = HorizontalAlignment.Stretch,
 		VerticalContentAlignment = VerticalAlignment.Stretch
 	};
-	public Deferral GetDeferral() => new Deferral(() => { });
+	public IDeferral GetDeferral() => new Deferral(() => { });
 
 	public IDeferrable InitializeViewHost(FrameworkElement contentControl, Task InitialNavigation) { return this; }
 }

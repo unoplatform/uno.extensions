@@ -3,8 +3,6 @@ namespace Uno.Extensions.Navigation.Toolkit;
 
 internal class ToolkitViewHostProvider : IViewHostProvider
 {
-	public void Append(Task NavigationTask) => throw new NotImplementedException();
-
 	public FrameworkElement CreateViewHost() => new LoadingView
 	{
 		HorizontalAlignment = HorizontalAlignment.Stretch,
@@ -29,7 +27,7 @@ internal class ToolkitViewHostProvider : IViewHostProvider
 	{
 		private List<(Deferral Deferral, Task Task)> _deferrals = new List<(Deferral, Task)>();
 
-		public Deferral GetDeferral()
+		public IDeferral GetDeferral()
 		{
 			Deferral? d = null;
 			var completion = new TaskCompletionSource<bool>();
@@ -49,20 +47,7 @@ internal class ToolkitViewHostProvider : IViewHostProvider
 			{
 				Init();
 
-				var completed = NavigationTask.IsCompleted;
-				if (!completed && !callbackConnected)
-				{
-					callbackConnected = true;
-					var dispatcher = new Dispatcher(Context);
-					NavigationTask.ContinueWith(async t =>
-					{
-						dispatcher?.ExecuteAsync(async () =>
-						{
-							IsExecutingChanged?.Invoke(this, EventArgs.Empty);
-						});
-					});
-
-				}
+				var completed = NavigationTask.IsCompleted && _deferrals.Count==0;
 				return !completed;
 			}
 		}

@@ -1,5 +1,6 @@
 ﻿namespace Uno.Extensions.Navigation;
 
-public interface ISplashScreen : IDeferrable
+public interface IDeferral
 {
+	void Close();
 }
