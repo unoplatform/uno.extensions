@@ -1,17 +1,22 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Uno.Extensions.Reactive.Dispatching;
 
-internal class LazyDispatcherProvider
+/// <summary>
+/// An helper class to create a <see cref="DispatcherHelper.FindDispatcher"/> with a callback
+/// to get notified when the first dispatcher is being resolved.
+/// </summary>
+internal sealed class LazyDispatcherProvider
 {
 	private Action? _onFirstResolved;
+	private readonly DispatcherHelper.FindDispatcher _dispatcherProvider;
 
-	public LazyDispatcherProvider(Action onFirstResolved)
+	public LazyDispatcherProvider(Action onFirstResolved, DispatcherHelper.FindDispatcher? dispatcherProvider = null)
 	{
 		_onFirstResolved = onFirstResolved;
+		_dispatcherProvider = dispatcherProvider ?? DispatcherHelper.GetForCurrentThread;
 	}
 
 	/// <summary>
@@ -33,9 +38,9 @@ internal class LazyDispatcherProvider
 		}
 	}
 
-	public DispatcherQueue? FindDispatcher()
+	public IDispatcherInternal? FindDispatcher()
 	{
-		if (DispatcherHelper.GetForCurrentThread() is { } dispatcher)
+		if (_dispatcherProvider() is { } dispatcher)
 		{
 			RunCallback();
 
@@ -46,33 +51,4 @@ internal class LazyDispatcherProvider
 			return null;
 		}
 	}
-}
-
-internal class AsyncLazyDispatcherProvider : IDisposable
-{
-	private readonly TaskCompletionSource<DispatcherQueue> _first = new();
-
-	public void TryResolve()
-		=> FindDispatcher();
-
-	public Task<DispatcherQueue> GetFirstResolved(CancellationToken ct)
-		=> _first.Task;
-
-	public DispatcherQueue? FindDispatcher()
-	{
-		if (DispatcherHelper.GetForCurrentThread() is { } dispatcher)
-		{
-			_first.TrySetResult(dispatcher);
-
-			return dispatcher;
-		}
-		else
-		{
-			return null;
-		}
-	}
-
-	/// <inheritdoc />
-	public void Dispose()
-		=> _first.TrySetCanceled();
 }

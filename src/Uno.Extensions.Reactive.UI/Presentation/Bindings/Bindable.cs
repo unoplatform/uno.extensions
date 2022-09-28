@@ -26,6 +26,8 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged, IFeed<T>
 	private readonly bool _hasValueProperty;
 	private readonly bool _isInherited;
 
+	internal string PropertyName => _property.Name;
+
 	internal bool CanWrite => _property.CanWrite;
 
 	/// <summary>

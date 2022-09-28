@@ -1,23 +1,19 @@
 ﻿using System;
 using System.Linq;
-using Windows.ApplicationModel.Core;
 
 namespace Uno.Extensions.Reactive.Dispatching;
 
 internal class DispatcherHelper
 {
-	public delegate DispatcherQueue? FindDispatcher();
+	public delegate IDispatcherInternal? FindDispatcher();
 
-	public static DispatcherQueue GetDispatcher()
+	public static IDispatcherInternal GetDispatcher()
 		=> GetDispatcher(null);
 
-	public static DispatcherQueue GetDispatcher(DispatcherQueue? given)
+	public static IDispatcherInternal GetDispatcher(IDispatcherInternal? given)
 		=> given
 			?? GetForCurrentThread()
-#if !WINUI
-			?? CoreApplication.MainView?.DispatcherQueue
-#endif
 			?? throw new InvalidOperationException("Failed to get dispatcher to use. Either explicitly provide the dispatcher to use, either make sure to invoke this on the UI thread.");
 
-	public static FindDispatcher GetForCurrentThread = DispatcherQueue.GetForCurrentThread;
+	public static FindDispatcher GetForCurrentThread = DispatcherQueueProvider.GetForCurrentThread;
 }

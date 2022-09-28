@@ -28,6 +28,8 @@ public readonly struct BindablePropertyInfo<T>
 		_update = setter;
 	}
 
+	internal string Name => _name;
+
 	internal bool IsValid => _owner is not null;
 
 	internal bool CanWrite => _update is not null;

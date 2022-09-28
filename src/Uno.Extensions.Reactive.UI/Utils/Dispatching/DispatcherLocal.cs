@@ -17,12 +17,12 @@ internal sealed class DispatcherLocal<T>
 
 	private readonly bool _allowBackgroundValue;
 	private readonly bool _allowCreationFromAnotherThread;
-	private readonly Func<DispatcherQueue?, T> _factory;
+	private readonly Func<IDispatcherInternal?, T> _factory;
 	private readonly DispatcherHelper.FindDispatcher _schedulersProvider;
 
 	private _Value? _backgroundValue;
 	private _Value? _mainUiValue; // As usually apps have only 1 UI thread, we try to avoid dictionary lookup if unnecessary.
-	private ImmutableDictionary<DispatcherQueue, _Value>? _otherUiValues;
+	private ImmutableDictionary<IDispatcherInternal, _Value>? _otherUiValues;
 
 	/// <summary>
 	/// Creates a new instance of a dispatcher local value
@@ -40,7 +40,7 @@ internal sealed class DispatcherLocal<T>
 		bool allowCreationFromAnotherThread = false)
 	{
 		_factory = _ => factory();
-		_schedulersProvider = schedulersProvider ?? DispatcherHelper.GetDispatcher;
+		_schedulersProvider = schedulersProvider ?? DispatcherHelper.GetForCurrentThread;
 		_allowBackgroundValue = allowBackgroundValue;
 		_allowCreationFromAnotherThread = allowCreationFromAnotherThread;
 	}
@@ -55,7 +55,7 @@ internal sealed class DispatcherLocal<T>
 	/// Determines if when using the <see cref="GetValue"/> or <see cref="TryGetValue"/> a value can be create for the given scheduler even if it's not the current
 	/// </param>
 	public DispatcherLocal(
-		Func<DispatcherQueue?, T> factory,
+		Func<IDispatcherInternal?, T> factory,
 		DispatcherHelper.FindDispatcher? schedulersProvider = null,
 		bool allowBackgroundValue = true,
 		bool allowCreationFromAnotherThread = false)
@@ -91,7 +91,7 @@ internal sealed class DispatcherLocal<T>
 	/// <summary>
 	/// Gets value for the given scheduler.
 	/// </summary>
-	public T GetValue(DispatcherQueue scheduler)
+	public T GetValue(IDispatcherInternal scheduler)
 	{
 		var (hasValue, value, error) = GetValueCore(
 			owner: scheduler,
@@ -113,7 +113,7 @@ internal sealed class DispatcherLocal<T>
 	/// <remarks>
 	/// If the value is not present for the given scheduler, and if the creation was allowed from another thread, then the value will be created.
 	/// </remarks>
-	public bool TryGetValue(DispatcherQueue scheduler, out T? value)
+	public bool TryGetValue(IDispatcherInternal scheduler, out T? value)
 	{
 		(var hasValue, value, _) = GetValueCore(
 			owner: scheduler,
@@ -122,7 +122,7 @@ internal sealed class DispatcherLocal<T>
 		return hasValue;
 	}
 
-	private (bool hasValue, T? value, string? errorMessage) GetValueCore(DispatcherQueue? owner, DispatcherQueue? current)
+	private (bool hasValue, T? value, string? errorMessage) GetValueCore(IDispatcherInternal? owner, IDispatcherInternal? current)
 	{
 		if (owner is not null)
 		{
@@ -160,7 +160,7 @@ internal sealed class DispatcherLocal<T>
 					}
 
 					createdValue ??= new _Value(owner, _factory(owner));
-					var updatedUiValues = (currentUiValues ?? ImmutableDictionary<DispatcherQueue, _Value>.Empty).Add(owner, createdValue);
+					var updatedUiValues = (currentUiValues ?? ImmutableDictionary<IDispatcherInternal, _Value>.Empty).Add(owner, createdValue);
 					if (Interlocked.CompareExchange(ref _otherUiValues, updatedUiValues, currentUiValues) != currentUiValues)
 					{
 						// We failed to update the _uiValues, which indicates a concurrency conflict, retry whole process!
@@ -195,7 +195,7 @@ internal sealed class DispatcherLocal<T>
 		}
 	}
 
-	private void SetValueCore(DispatcherQueue? scheduler, T rawValue)
+	private void SetValueCore(IDispatcherInternal? scheduler, T rawValue)
 	{
 		if (scheduler is not null)
 		{
@@ -214,8 +214,8 @@ internal sealed class DispatcherLocal<T>
 			{
 				ImmutableInterlocked.Update(ref _otherUiValues, SetItem, value);
 
-				static ImmutableDictionary<DispatcherQueue, _Value> SetItem(ImmutableDictionary<DispatcherQueue, _Value>? current, _Value v2)
-					=> (current ?? ImmutableDictionary<DispatcherQueue, _Value>.Empty).SetItem(v2.Scheduler!, v2);
+				static ImmutableDictionary<IDispatcherInternal, _Value> SetItem(ImmutableDictionary<IDispatcherInternal, _Value>? current, _Value v2)
+					=> (current ?? ImmutableDictionary<IDispatcherInternal, _Value>.Empty).SetItem(v2.Scheduler!, v2);
 			}
 		}
 		else if (_allowBackgroundValue)
@@ -231,7 +231,7 @@ internal sealed class DispatcherLocal<T>
 	/// <summary>
 	///  Gets value for all dispatcher, and optionally for the background thread.
 	/// </summary>
-	public IEnumerable<(DispatcherQueue? scheduler, T value)> GetValues(bool includeBackground = true)
+	public IEnumerable<(IDispatcherInternal? scheduler, T value)> GetValues(bool includeBackground = true)
 	{
 		if (_mainUiValue is not null)
 		{
@@ -254,13 +254,13 @@ internal sealed class DispatcherLocal<T>
 
 	private class _Value
 	{
-		public _Value(DispatcherQueue? scheduler, T value)
+		public _Value(IDispatcherInternal? scheduler, T value)
 		{
 			Scheduler = scheduler;
 			Value = value;
 		}
 
-		public DispatcherQueue? Scheduler { get; }
+		public IDispatcherInternal? Scheduler { get; }
 
 		public T Value { get; }
 	}

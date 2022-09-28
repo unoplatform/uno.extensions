@@ -28,12 +28,13 @@ public sealed class ItemsConstraint<T> : AxisConstraint
 	/// <inheritdoc />
 	public override void Assert(IMessageEntry entry)
 	{
-		var actualItemsOpt = (Option<IImmutableList<T>>)entry.Data;
+		var actualItemsOpt = entry.Data;
 		actualItemsOpt.Type.Should().Be(_items.Type);
 
 		if (actualItemsOpt.IsSome(out var actualItems))
 		{
-			actualItems.Should().BeEquivalentTo(_items.SomeOrDefault()!);
+			actualItems.Should().BeAssignableTo<IImmutableList<T>>();
+			((IImmutableList<T>)actualItems).Should().BeEquivalentTo(_items.SomeOrDefault()!);
 		}
 	}
 
