@@ -266,7 +266,7 @@ internal partial record CommandFromMethod : IMappedMember
 
 				if (property is not null
 					&& ctx.IsListFeed(property.Type, out var itemType)
-					&& SymbolEqualityComparer.Default.Equals(parameter.Type, ctx.ImmutableList.Construct(itemType)))
+					&& SymbolEqualityComparer.Default.Equals(parameter.Type, ctx.IImmutableList.Construct(itemType)))
 				{
 					return new CommandParameter(parameter, property) { IsListFeedParameter = true };
 				}

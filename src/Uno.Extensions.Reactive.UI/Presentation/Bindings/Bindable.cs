@@ -13,6 +13,8 @@ namespace Uno.Extensions.Reactive.Bindings;
 /// An helper class use to data-bind a value.
 /// </summary>
 /// <typeparam name="T">The type of the value</typeparam>
+/// <remarks>This type is not thread safe and is expected to be manipulated only from the UI thread.</remarks>
+[EditorBrowsable(EditorBrowsableState.Never)]
 public class Bindable<T> : IBindable, INotifyPropertyChanged, IFeed<T>
 {
 	/// <inheritdoc />
@@ -54,7 +56,7 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged, IFeed<T>
 	/// </summary>
 	/// <param name="property">Info of the property that is backed by this instance.</param>
 	/// <param name="hasValueProperty">
-	/// Indicates if this instance has a property name Value which can be data bind directly instead of <see cref="GetValue"/> and <see cref="SetValue"/>.
+	/// Indicates if this instance has a property name Value which can be data bind directly instead of <see cref="GetValue"/> and <see cref="SetValue(T)"/>.
 	/// Is so, the <see cref="PropertyChanged"/> will be raise accordingly.
 	/// </param>
 	/// <exception cref="ArgumentException">If the property is invalid</exception>
@@ -114,30 +116,42 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged, IFeed<T>
 	/// Sets the current value.
 	/// </summary>
 	/// <param name="value">The current value.</param>
+	/// <remarks>This is not thread safe and is expected to be invoked from the UI thread.</remarks>
 	public void SetValue(T value)
+		=> SetValue(value, null);
+
+	/// <summary>
+	/// Sets the current value.
+	/// </summary>
+	/// <param name="value">The current value.</param>
+	/// <param name="changes">An optional change set describing the changes applied on the <paramref name="value" /> compared to the current value.</param>
+	/// <remarks>This is not thread safe and is expected to be invoked from the UI thread.</remarks>
+	internal void SetValue(T value, IChangeSet? changes)
 	{
 		if (!_property.CanWrite)
 		{
 			return;
 		}
 
-		if (SetValueCore(value))
+		if (SetValueCore(value, changes))
 		{
 			UpdateOwner(value);
 		}
 	}
 
-	private bool SetValueCore(T value)
+	/// <remarks>This is not thread safe and is expected to be invoked from the UI thread.</remarks>
+	private bool SetValueCore(T value, IChangeSet? changes)
 	{
 		if (object.ReferenceEquals(_value, value))
 		{
 			return false;
 		}
 
+		var previous = _value;
 		_value = value;
 
 		// 1. Notify sub properties that the local value has changed
-		UpdateSubProperties(value);
+		UpdateSubProperties(previous, value, changes);
 
 		// 2. Notify UI that the local value has changed
 		if (_hasValueProperty)
@@ -151,9 +165,10 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged, IFeed<T>
 		return true;
 	}
 
+	/// <remarks>This is not thread safe and is expected to be invoked from the UI thread.</remarks>
 	private void OnOwnerUpdated(T value)
 	{
-		SetValueCore(value);
+		SetValueCore(value, changes: null);
 
 		// Usually it's the responsibility of the parent object to raise a property change with the right name,
 		// however when we use generated `BindableMyEntity : Bindable<MyEntity>`,
@@ -186,6 +201,7 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged, IFeed<T>
 		}
 	}
 
+	/// <remarks>This is not thread safe and is expected to be invoked from the UI thread.</remarks>
 	private async ValueTask OnSubPropertyUpdated<TProperty>(
 		string propertyName,
 		Func<T, TProperty> get,
@@ -195,7 +211,7 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged, IFeed<T>
 		CancellationToken ct)
 	{
 		// First updates the local value (and possibly other sub-properties that are dependent upon computed values)
-		if (SetValueCore(set(_value, update(get(_value)))))
+		if (SetValueCore(set(_value, update(get(_value))), changes: null))
 		{
 			// If we effectively updated the local value, then ...
 
@@ -213,16 +229,20 @@ public class Bindable<T> : IBindable, INotifyPropertyChanged, IFeed<T>
 		}
 	}
 
-	private void UpdateSubProperties(T value)
+	/// <remarks>This is not thread safe and is expected to be invoked from the UI thread.</remarks>
+	private protected virtual void UpdateSubProperties(T previous, T current, IChangeSet? changes)
 	{
 		if (_onUpdated is not null)
 		{
 			foreach (var callback in _onUpdated)
 			{
-				callback(value);
+				callback(current);
 			}
 		}
 	}
+
+	private protected void RaisePropertyChanged(string propertyName)
+		=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
 	/// <inheritdoc />
 	public IAsyncEnumerable<Message<T>> GetSource(SourceContext context, CancellationToken ct = default)
