@@ -69,18 +69,30 @@ public sealed partial class App : Application
 		//await Task.Run(() => _host.StartAsync());
 		//await startup;
 
-		// Option 3: Let Navigation do everything
-		// a) No loadingview
-		//_host = await _window.InitializeNavigation(BuildAppHost,
-		// b) Use loadingview
-		_host = await _window.InitializeNavigationWithExtendedSplash(BuildAppHost,
+		// Option 3: Default hosting
+		_host = BuildAppHost();
+		_window.AttachNavigation(_host.Services,
 			// Option 1: This requires Shell to be the first RouteMap - best for perf as no reflection required
 			// initialRoute: ""
 			// Option 2: Specify route name
 			// initialRoute: "Shell"
 			// Option 3: Specify the view model. To avoid reflection, you can still define a routemap
 			initialViewModel: typeof(ShellViewModel)
-		);
+			);
+		await Task.Run(() => _host.StartAsync());
+
+		// Option 4: Let Navigation do everything
+		// a) No loadingview
+		//_host = await _window.InitializeNavigation(BuildAppHost,
+		// b) Use loadingview
+		//_host = await _window.InitializeNavigationWithExtendedSplash(BuildAppHost,
+		//	// Option 1: This requires Shell to be the first RouteMap - best for perf as no reflection required
+		//	// initialRoute: ""
+		//	// Option 2: Specify route name
+		//	// initialRoute: "Shell"
+		//	// Option 3: Specify the view model. To avoid reflection, you can still define a routemap
+		//	initialViewModel: typeof(ShellViewModel)
+		//);
 
 		var notif = _host.Services.GetRequiredService<IRouteNotifier>();
 		notif.RouteChanged += RouteUpdated;

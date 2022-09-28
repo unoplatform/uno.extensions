@@ -17,6 +17,6 @@ public class ShellViewModel
 		// Option 2: Use this if using ShellView, since need to direct the navigation to the frameview (see viewmap in App.xaml.host.cs)
 		//await navigator.NavigateViewAsync<HomePage>(this, Qualifiers.Nested);
 
-		deferral.Complete();
+		deferral.Close();
 	}
 }

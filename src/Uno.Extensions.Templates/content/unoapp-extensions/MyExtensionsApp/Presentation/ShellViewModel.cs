@@ -27,7 +27,7 @@ public class ShellViewModel
 		}
 		finally
 		{
-			deferral.Complete();
+			deferral.Close();
 		}
 	}
 }

@@ -124,30 +124,21 @@ public static class ServiceProviderExtensions
 		return default;
 	}
 
-	//public static FrameworkElement AttachNavigation(this Window window, IServiceProvider services, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
-	//{
-	//	return AttachNavigation((root, services) =>
-	//	{
-	//		window.Content = root;
-	//		window.AttachServices(services);
-	//	}, services, initialRoute, initialView, initialViewModel);
-	//}
+	public static FrameworkElement AttachNavigation(this Window window, IServiceProvider services, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
+	{
+		var root = new ContentControl
+		{
+			HorizontalAlignment = HorizontalAlignment.Stretch,
+			VerticalAlignment = VerticalAlignment.Stretch,
+			HorizontalContentAlignment = HorizontalAlignment.Stretch,
+			VerticalContentAlignment = VerticalAlignment.Stretch
+		};
+		window.Content = root;
+		services = window.AttachServices(services);
+		root.Host(services, initialRoute, initialView, initialViewModel);
 
-	//public static FrameworkElement AttachNavigation(this ContentControl parent, IServiceProvider services, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
-	//{
-	//	return AttachNavigation((root, services) => parent.Content = root, services, initialRoute, initialView, initialViewModel);
-	//}
-
-	//private static FrameworkElement AttachNavigation(Action<FrameworkElement, IServiceProvider> assignViewHost, IServiceProvider services, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
-	//{
-	//	var viewHost = services.GetRequiredService<IViewHostProvider>();
-	//	var root = viewHost.CreateViewHost();
-	//	assignViewHost(root, services);
-
-	//	root.Host(services, initialRoute, initialView, initialViewModel);
-
-	//	return root;
-	//}
+		return root;
+	}
 
 	/// <summary>
 	/// Initializes navigation for an application using a ContentControl
