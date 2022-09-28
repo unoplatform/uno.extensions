@@ -114,6 +114,43 @@ internal static class RoslynExtensions
 			|| SymbolEqualityComparer.Default.Equals(named.ConstructedFrom, typeOrInterface);
 	}
 
+	/// <summary>
+	/// Determines if the symbol inherits from the specified type.
+	/// </summary>
+	public static bool Is(this ITypeSymbol symbol, INamedTypeSymbol typeOrInterface, bool allowBaseTypes, [NotNullWhen(true)] out INamedTypeSymbol? boundedType)
+	{
+		do
+		{
+			if (symbol is INamedTypeSymbol named)
+			{
+				if (IsExpectedType(named))
+				{
+					boundedType = named;
+					return true;
+				}
+			}
+
+			if (!allowBaseTypes)
+			{
+				break;
+			}
+
+			symbol = symbol.BaseType!;
+			if (symbol is null)
+			{
+				break;
+			}
+
+		} while (symbol.Name != "Object");
+
+		boundedType = null;
+		return false;
+
+		bool IsExpectedType(INamedTypeSymbol named)
+			=> SymbolEqualityComparer.Default.Equals(named, typeOrInterface)
+			|| SymbolEqualityComparer.Default.Equals(named.ConstructedFrom, typeOrInterface);
+	}
+
 	public static IMethodSymbol? FindLocalImplementationOf(this INamedTypeSymbol type, IMethodSymbol boundedInterfaceMethod, SymbolEqualityComparer? comparer = null)
 		=> type.GetMethods().FirstOrDefault(m => m.IsImplementationOf(boundedInterfaceMethod, comparer));
 

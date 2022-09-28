@@ -27,7 +27,7 @@ public partial class FeedsGenerator : ISourceGenerator
 		}
 #endif
 
-		if (BindableGenerationContext.TryGet(context, out var error) is {} bindableContext)
+		if (GenerationContext.TryGet<BindableGenerationContext>(context, out var error) is {} bindableContext)
 		{
 			foreach (var generated in new BindableViewModelGenerator(bindableContext).Generate(context.Compilation.Assembly))
 			{
