@@ -7,6 +7,10 @@ The `IListFeed<T>` is _feed_ specialized for handling collections.
 It allows the declaration of an operator directly on items instead of dealing with the list itself.
 A _list feed_ goes in `None` if the list does not have any elements.
 
+> [!NOTE]
+> `ListFeed<T>` is using the _key equality_ to track multiple version of a same entity whitin different messages of the `ListFeed<T>`.
+> (Read more about _key equality_.)[../KeyEquality/concept.md]
+
 ## Sources: How to create a list feed
 To create an `IListFeed<T>`, on the `ListFeed` class, the same `Async`, `AsyncEnumerable` and `Create` methods found on `Feed` can be used.
 
