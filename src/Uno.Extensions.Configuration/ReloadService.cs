@@ -27,7 +27,7 @@ public class ReloadService : IHostedService, IStartupService
 
 	public async Task StartAsync(CancellationToken cancellationToken)
 	{
-		var folderPath = await Storage.CreateLocalFolderAsync(ConfigBuilderExtensions.ConfigurationFolderName);
+		var folderPath = await Storage.CreateFolderAsync(ConfigBuilderExtensions.ConfigurationFolderName);
 		if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($@"Folder path should be '{folderPath}'");
 
 		var fileProviders = Config.Providers;
@@ -63,13 +63,13 @@ public class ReloadService : IHostedService, IStartupService
 	{
 		try
 		{
-			var settings = await Storage.ReadFileAsync(file);
+			var settings = await Storage.ReadPackageFileAsync(file);
 			if (settings is not null &&
 				!string.IsNullOrWhiteSpace(settings))
 			{
 				if(Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($@"Settings '{settings}'");
 				var fullPath = Path.Combine(localFolderPath, file);
-				await Storage.WriteFileAsync(fullPath, settings);
+				await Storage.WriteFileAsync(fullPath, settings, false);
 			}
 		}
 		catch

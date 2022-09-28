@@ -139,7 +139,7 @@ internal record MsalAuthenticationProvider(
 #else
 			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Setting up storage location");
 
-			var folderPath = await Storage.CreateLocalFolderAsync(Name.ToLower());
+			var folderPath = await Storage.CreateFolderAsync(Name.ToLower());
 			Console.WriteLine($"Folder: {folderPath}");
 			var filePath = Path.Combine(folderPath, CacheFileName);
 			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"MSAL cache {filePath}");
