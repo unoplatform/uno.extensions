@@ -65,7 +65,7 @@ internal class EventManager<THandler, TArgs>
 		}
 	}
 
-	private IInvocationList<THandler, TArgs> CreateInvocationList(DispatcherQueue? dispatcher)
+	private IInvocationList<THandler, TArgs> CreateInvocationList(IDispatcherInternal? dispatcher)
 		=> dispatcher switch
 		{
 			not null when _isCoalescable => new CoalescingDispatcherInvocationList<THandler, TArgs>(_owner, _raiseMethod, dispatcher),

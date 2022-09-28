@@ -4,12 +4,7 @@ using System.Linq;
 using Uno.Extensions.Collections;
 using Uno.Extensions.Collections.Tracking;
 using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets;
-
-#if WINUI
-using ISchedulerInfo = Microsoft.UI.Dispatching.DispatcherQueue;
-#else
-using ISchedulerInfo = Windows.System.DispatcherQueue;
-#endif
+using Uno.Extensions.Reactive.Dispatching;
 
 namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 {
@@ -20,7 +15,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 	{
 		private readonly DataLayer? _parent;
 		private readonly IServiceProvider? _services;
-		private readonly ISchedulerInfo? _context;
+		private readonly IDispatcherInternal? _context;
 		private readonly IBindableCollectionDataLayerStrategy _layerStrategy;
 		private readonly IEnumerable<object> _facets;
 
@@ -46,7 +41,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 			IBindableCollectionDataLayerStrategy layerStrategy,
 			IObservableCollection items,
 			IServiceProvider? services,
-			ISchedulerInfo? context)
+			IDispatcherInternal? context)
 		{
 			var holder = new DataLayer(null, services, layerStrategy, context);
 			var initContext = layerStrategy.CreateUpdateContext(VisitorType.InitializeCollection, TrackingMode.Reset);
@@ -70,7 +65,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 			return (holder, initializer);
 		}
 
-		private DataLayer(DataLayer? parent, IServiceProvider? services, IBindableCollectionDataLayerStrategy layerStrategy, ISchedulerInfo? context)
+		private DataLayer(DataLayer? parent, IServiceProvider? services, IBindableCollectionDataLayerStrategy layerStrategy, IDispatcherInternal? context)
 		{
 			_context = context;
 			_parent = parent;

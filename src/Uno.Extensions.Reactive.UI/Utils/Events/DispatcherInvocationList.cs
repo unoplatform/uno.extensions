@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Uno.Extensions.Reactive.Dispatching;
 
 namespace Uno.Extensions.Reactive.Events;
 
@@ -10,13 +11,13 @@ internal abstract class DispatcherInvocationList<THandler, TArgs> : IInvocationL
 {
 	private readonly object _owner;
 	private readonly Func<THandler, Action<object, TArgs>> _raise;
-	private readonly DispatcherQueue _dispatcher;
+	private readonly IDispatcherInternal _dispatcher;
 
 	private List<THandler>? _handlers = new();
 	private bool _isEnumeratingHandlers;
 	
 
-	public DispatcherInvocationList(object owner, Func<THandler, Action<object, TArgs>> raiseMethod, DispatcherQueue dispatcher)
+	public DispatcherInvocationList(object owner, Func<THandler, Action<object, TArgs>> raiseMethod, IDispatcherInternal dispatcher)
 	{
 		_owner = owner;
 		_raise = raiseMethod;
