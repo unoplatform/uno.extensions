@@ -105,7 +105,57 @@ public class Given_CompositeCommand : FeedUITests
 	}
 
 	[TestMethod]
-	public void When_SubPropertyChanged_Then_CanPropertyChangedPropagated()
+	public void When_SubIsExecutingChanged_Then_IsExecutingChangedPropagated()
+	{
+		var sub1 = new MyTestCommand(_ => true, _ => throw new TestException());
+		var sub2 = new MyTestCommand(_ => true, _ => throw new TestException());
+		var sut = new CompositeAsyncCommand(sub1, sub2);
+		var changed = 0;
+		sut.IsExecutingChanged += (snd, e) => changed++;
+
+		sub1.IsExecuting = true;
+		sub1.RaiseIsExecutingChanged();
+
+		changed.Should().Be(1);
+	}
+
+	[TestMethod]
+	public void When_SubIsExecutingChangedButComposedIsExecutingNotChanged_Then_IsExecutingChangedNotRaised()
+	{
+		var sub1 = new MyTestCommand(_ => true, _ => throw new TestException());
+		var sub2 = new MyTestCommand(_ => true, _ => throw new TestException()) { IsExecuting = true };
+		var sut = new CompositeAsyncCommand(sub1, sub2);
+		var changed = 0;
+		sut.IsExecutingChanged += (snd, e) => changed++;
+
+		sub1.IsExecuting = true;
+		sub1.RaiseIsExecutingChanged();
+
+		changed.Should().Be(0);
+	}
+
+	[TestMethod]
+	public void When_SubIsExecutingAndPropertyChanged_Then_PropertyChangedRaisedOnlyOnce()
+	{
+		var sub1 = new MyTestCommand(_ => true, _ => throw new TestException());
+		var sub2 = new MyTestCommand(_ => true, _ => throw new TestException());
+		var sut = new CompositeAsyncCommand(sub1, sub2);
+
+		var propertyChanged = new List<string?>();
+		sut.PropertyChanged += (snd, e) => propertyChanged.Add(e.PropertyName);
+		var isExecutingChanged = 0;
+		sut.IsExecutingChanged += (snd, e) => isExecutingChanged++;
+
+		sub1.IsExecuting = true;
+		sub1.RaisePropertyChanged("IsExecuting");
+		sub1.RaiseIsExecutingChanged();
+
+		propertyChanged.Should().BeEquivalentTo(new[] { "IsExecuting" });
+		isExecutingChanged.Should().Be(1);
+	}
+
+	[TestMethod]
+	public void When_SubCustomPropertyChanged_Then_PropertyChangedNotPropagated()
 	{
 		var sub1 = new MyTestCommand(_ => true, _ => throw new TestException());
 		var sub2 = new MyTestCommand(_ => true, _ => throw new TestException());
@@ -115,7 +165,7 @@ public class Given_CompositeCommand : FeedUITests
 
 		sub1.RaisePropertyChanged("dummy_property");
 
-		changed.Should().BeEquivalentTo(new[] { "dummy_property" });
+		changed.Should().BeEmpty();
 	}
 
 	private class MyTestCommand : IAsyncCommand
@@ -127,8 +177,10 @@ public class Given_CompositeCommand : FeedUITests
 		public event EventHandler? CanExecuteChanged;
 
 		/// <inheritdoc />
-		public event PropertyChangedEventHandler? PropertyChanged;
+		public event EventHandler? IsExecutingChanged;
 
+		/// <inheritdoc />
+		public event PropertyChangedEventHandler? PropertyChanged;
 
 		public MyTestCommand(Predicate<object?>? canExecute = null, Action<object?>? execute = null)
 		{
@@ -148,6 +200,8 @@ public class Given_CompositeCommand : FeedUITests
 			=> _execute(parameter);
 
 		public void RaiseCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+
+		public void RaiseIsExecutingChanged() => IsExecutingChanged?.Invoke(this, EventArgs.Empty);
 
 		public void RaisePropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 	}

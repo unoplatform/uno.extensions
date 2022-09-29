@@ -17,6 +17,9 @@ public partial class FeedView
 		public event EventHandler? CanExecuteChanged;
 
 		/// <inheritdoc />
+		public event EventHandler? IsExecutingChanged;
+
+		/// <inheritdoc />
 		public event PropertyChangedEventHandler? PropertyChanged;
 
 		private readonly FeedView _view;
@@ -37,6 +40,7 @@ public partial class FeedView
 				{
 					_isExecuting = value;
 					CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+					IsExecutingChanged?.Invoke(this, EventArgs.Empty);
 					PropertyChanged?.Invoke(this, _isExecutingChanged);
 				}
 			}

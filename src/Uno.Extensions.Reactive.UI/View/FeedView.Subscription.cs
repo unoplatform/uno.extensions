@@ -42,6 +42,9 @@ public partial class FeedView
 		{
 			try
 			{
+				// When feed changes, we consider us as loading (but only until we get the first non transient value)
+				_view.SetIsLoading(true);
+
 				// Note: Here we expect the Feed to be an IState, so we use the Feed.GetSource instead of ctx.GetOrCreateSource().
 				//		 The 'ctx' is provided only for safety to improve caching, but it's almost equivalent to SourceContext.None
 				//		 (especially when using SourceContext.GetOrCreate(_view)).
@@ -56,6 +59,7 @@ public partial class FeedView
 
 					if (!message.Current.IsTransient)
 					{
+						_view.SetIsLoading(false);
 						_refresh.Received(message.Current.Get(MessageAxis.Refresh));
 					}
 				}
