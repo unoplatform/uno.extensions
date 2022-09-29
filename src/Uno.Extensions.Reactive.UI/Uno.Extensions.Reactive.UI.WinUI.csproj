@@ -16,15 +16,15 @@
 	<Import Project="common.props" />
 
 	<ItemGroup>
-		<PackageReference Include="Uno.WinUI" Version="4.3.6" />
+		<PackageReference Include="Uno.WinUI" Version="4.5.9" />
+		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.4.0-dev.19" />
 	</ItemGroup>
-	
+
 	<ItemGroup Condition="$(_IsWinUI)">
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.0.2" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.0" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22000.197" />
 
-		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.18362.21" />
-		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.18362.21" />
+		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.18362.24" />
+		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.18362.24" />
 	</ItemGroup>
-
 </Project>
