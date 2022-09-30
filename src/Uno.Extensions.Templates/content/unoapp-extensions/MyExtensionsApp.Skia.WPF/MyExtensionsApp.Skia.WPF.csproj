@@ -11,6 +11,7 @@
 	<ItemGroup>
 		<PackageReference Include="Uno.WinUI.Skia.Wpf" Version="4.5.9" />
 		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.5.9" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="SkiaSharp.Views.Uno.WinUI" Version="2.88.2" />
 	</ItemGroup>
 
 	<ItemGroup>
