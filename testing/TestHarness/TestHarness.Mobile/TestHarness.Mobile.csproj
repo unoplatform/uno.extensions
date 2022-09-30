@@ -31,7 +31,7 @@
 		<PackageReference Include="Refit" Version="6.3.2" />
 		<PackageReference Include="Refit.HttpClientFactory" Version="6.3.2" />
 		<PackageReference Include="System.Text.Json" Version="6.0.3" />
-		<PackageReference Include="Uno.Material.WinUI" Version="2.2.0" />
+		<PackageReference Include="Uno.Material.WinUI" Version="2.3.0" />
 		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.4.0-dev.19" />
 		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.4.0-dev.19" />
 		<PackageReference Include="Uno.WinUI.MSAL" Version="4.5.9" />
