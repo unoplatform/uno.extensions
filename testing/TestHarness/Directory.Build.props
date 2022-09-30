@@ -54,5 +54,7 @@
 	<PropertyGroup Condition="'$(_IsIOS)' == 'true'">
 		<MtouchExtraArgs>$(MtouchExtraArgs) --registrar=static</MtouchExtraArgs>
 	</PropertyGroup>
+
+	<Import Project="..\src\crosstargeting_override.props" Condition="exists('..\src\crosstargeting_override.props')" />
 	
 </Project>
