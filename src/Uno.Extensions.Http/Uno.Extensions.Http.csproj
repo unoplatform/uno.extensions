@@ -28,5 +28,9 @@
 		<ProjectReference Include="..\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<InternalsVisibleTo Include="Uno.Extensions.Authentication" />
+	</ItemGroup>
+
 
 </Project>

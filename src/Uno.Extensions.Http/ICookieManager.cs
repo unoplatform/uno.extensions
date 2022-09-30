@@ -2,7 +2,7 @@
 
 namespace Uno.Extensions;
 
-public interface ICookieManager
+internal interface ICookieManager
 {
-	void ClearCookies(HttpMessageHandler Handler, HttpRequestMessage message);
+	CookieContainer? ClearCookies(HttpMessageHandler Handler, Uri requestUri);
 }

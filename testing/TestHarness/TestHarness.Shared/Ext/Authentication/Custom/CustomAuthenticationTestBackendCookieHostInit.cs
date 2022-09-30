@@ -14,24 +14,39 @@ public class CustomAuthenticationTestBackendCookieHostInit : BaseHostInitializat
 						custom
 							.Login(async (authService, dispatcher, cache, credentials, cancellationToken) =>
 							{
-								if (credentials is null)
+								try
+								{
+									if (credentials is null)
+									{
+										return default;
+									}
+
+									var name = credentials.FirstOrDefault(x => x.Key == nameof(CustomAuthenticationCredentials.Username)).Value;
+									var password = credentials.FirstOrDefault(x => x.Key == nameof(CustomAuthenticationCredentials.Password)).Value;
+									await authService.LoginCookie(name, password, cancellationToken);
+									var tokens = await cache.GetAsync(cancellationToken);
+									tokens["Expiry"] = DateTime.Now.AddMinutes(10).ToString();
+									return tokens;
+								}
+								catch
+								{
+									return default;
+								}
+							})
+							.Refresh(async (authService, cache, tokenDictionary, cancellationToken) =>
+							{
+								try
+								{
+									var expiry = tokenDictionary["Expiry"];
+									await Task.Delay(3000);
+									await authService.RefreshCookie(cancellationToken);
+									return await cache.GetAsync(cancellationToken);
+								}
+								catch
 								{
 									return default;
 								}
 
-								var name = credentials.FirstOrDefault(x => x.Key == nameof(CustomAuthenticationCredentials.Username)).Value;
-								var password = credentials.FirstOrDefault(x => x.Key == nameof(CustomAuthenticationCredentials.Password)).Value;
-								await authService.LoginCookie(name, password, cancellationToken);
-								var tokens = await cache.GetAsync(cancellationToken);
-								tokens["Expiry"] = DateTime.Now.AddMinutes(10).ToString();
-								return tokens;
-							})
-							.Refresh(async (authService, cache, tokenDictionary, cancellationToken) =>
-							{
-								var expiry = tokenDictionary["Expiry"];
-								await Task.Delay(3000);
-								await authService.RefreshCookie(cancellationToken);
-								return await cache.GetAsync(cancellationToken);
 							})),
 							configureAuthorization: builder =>
 							{

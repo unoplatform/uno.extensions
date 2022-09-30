@@ -31,12 +31,14 @@ internal class CookieHandler : BaseAuthorizationHandler
 		var accessToken = await _tokens.AccessTokenAsync() ?? string.Empty;
 		var refreshToken = await _tokens.RefreshTokenAsync() ?? string.Empty;
 
+		var builder = new UriBuilder(request.RequestUri);
+		builder.Path = string.Empty;
+		var baseUrl = builder.Uri;
+
 		// Forcibly expire any existing cookie
-		_cookieManager.ClearCookies(this.InnerHandler, request);
-
-		
-
-		var cookies = new CookieContainer();
+		var cookies = _cookieManager.ClearCookies(this.InnerHandler, baseUrl);
+		var setHeaders = cookies == null;
+		cookies ??= new CookieContainer();
 
 		// Return false if we don't have either access or refresh token
 		if (
@@ -57,19 +59,22 @@ internal class CookieHandler : BaseAuthorizationHandler
 			//!string.IsNullOrWhiteSpace(accessToken) &&
 			!string.IsNullOrWhiteSpace(_settings.CookieAccessToken))
 		{
-			cookies.Add(request.RequestUri, new Cookie(_settings.CookieAccessToken, accessToken));
+			cookies.Add(baseUrl, new Cookie(_settings.CookieAccessToken, accessToken));
 		}
 
 		if (
 			//!string.IsNullOrWhiteSpace(refreshToken) &&
 			!string.IsNullOrWhiteSpace(_settings.CookieRefreshToken))
 		{
-			cookies.Add(request.RequestUri, new Cookie(_settings.CookieRefreshToken, refreshToken));
+			cookies.Add(baseUrl, new Cookie(_settings.CookieRefreshToken, refreshToken));
 		}
 
-		var headerString = cookies.GetCookieHeader(request.RequestUri);
-		if (_logger.IsEnabled(LogLevel.Debug)) _logger.LogDebugMessage($"Cookie: {headerString}");
-		request.Headers.Add("Cookie", headerString);
+		if (setHeaders)
+		{
+			var headerString = cookies.GetCookieHeader(baseUrl);
+			if (_logger.IsEnabled(LogLevel.Debug)) _logger.LogDebugMessage($"Cookie: {headerString}");
+			request.Headers.Add("Cookie", headerString);
+		}
 
 		return true;
 	}
