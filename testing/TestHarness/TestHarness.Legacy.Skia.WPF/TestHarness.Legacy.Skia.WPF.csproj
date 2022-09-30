@@ -17,8 +17,8 @@
 		<PackageReference Include="Refit.HttpClientFactory" Version="6.3.2" />
 		<PackageReference Include="System.Text.Json" Version="6.0.3" />
 		<PackageReference Include="Uno.Material" Version="2.2.0" />
-		<PackageReference Include="Uno.Toolkit.UI.Material" Version="2.2.0" />
-		<PackageReference Include="Uno.Toolkit.UI" Version="2.2.0" />
+		<PackageReference Include="Uno.Toolkit.UI.Material" Version="2.4.0-dev.19" />
+		<PackageReference Include="Uno.Toolkit.UI" Version="2.4.0-dev.19" />
 		<PackageReference Include="Uno.UI.MSAL" Version="4.5.9" />
 		<PackageReference Include="SkiaSharp.HarfBuzz" Version="2.88.1" />
 		<PackageReference Include="SkiaSharp.Views.WPF" Version="2.88.1" />
