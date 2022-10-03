@@ -5,6 +5,9 @@
 
 		<!--Temporary disable missing XML doc until fixed in the whole package-->
 		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
+
+		<!-- As we are InternalsVisibleTo, we disable some compatibility types that are not used by package itself. -->
+		<UnoExtensionsGeneration_DisableModuleInitializerAttribute>True</UnoExtensionsGeneration_DisableModuleInitializerAttribute>
 	</PropertyGroup>
 
 	<ItemGroup>
