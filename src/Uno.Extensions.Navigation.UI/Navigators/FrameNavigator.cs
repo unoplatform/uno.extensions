@@ -7,6 +7,9 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 
 	public override bool CanGoBack => Control?.BackStackDepth > 0;
 
+	private bool _isBackNavigating;
+	private Type? _failedBackPageType;
+
 	public FrameNavigator(
 		ILogger<FrameNavigator> logger,
 		IDispatcher dispatcher,
@@ -29,8 +32,25 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		if (Control is not null)
 		{
 			Control.Navigated += Frame_Navigated;
+			Control.NavigationFailed += Control_NavigationFailed;
 		}
 	}
+
+	private void Control_NavigationFailed(object sender, NavigationFailedEventArgs e)
+	{
+		if(_isBackNavigating)
+		{
+#if __IOS__
+			_failedBackPageType = e.SourcePageType;
+			e.Handled = true;
+			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogErrorMessage($"Navigaton to type '{e.SourcePageType.Name}' failed during back operation (known issue on ios where backstack is changed)");
+			return;
+#endif
+		}
+		if (Logger.IsEnabled(LogLevel.Error)) Logger.LogErrorMessage($"Navigaton to type '{e.SourcePageType.Name}' failed with exception {e.Exception.GetType().Name} - {e.Exception.Message}");
+
+	}
+
 	// TODO: IsUnnamed and  composite region
 	protected override bool CanNavigateToDependentRoutes => !Region.Children.Any(x => x.IsUnnamed(this.Route) && !(x.Navigator()?.IsComposite() ?? false));
 
@@ -282,7 +302,23 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 				Control.BackStack.Add(newEntry);
 			}
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Invoking Frame.GoBack");
-			Control.GoBack();
+
+			_isBackNavigating = true;
+			_failedBackPageType = null;
+			try
+			{
+				Control.GoBack();
+			}
+			finally
+			{
+				_isBackNavigating = false;
+			}
+			if (_failedBackPageType is not null)
+			{
+				var pageType = _failedBackPageType;
+				_failedBackPageType = null;
+				Control.Navigate(pageType);
+			}
 
 			await EnsurePageLoaded(previousMapping?.Path);
 
