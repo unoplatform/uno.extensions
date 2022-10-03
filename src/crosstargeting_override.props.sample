@@ -11,6 +11,7 @@
     <!--<UnoNugetOverrideVersion>2.23.2-dev.667</UnoNugetOverrideVersion>-->
 
     <!-- Include netstandard2.0 to make sure all projects build -->
-    <UnoTargetFrameworkOverride>netstandard2.0;uap10.0.18362</UnoTargetFrameworkOverride>
+    <UnoTargetFrameworkMobileOverride>net6.0-ios</UnoTargetFrameworkMobileOverride>
+    <UnoTargetFrameworkOverride>$(UnoTargetFrameworkMobileOverride);netstandard2.0</UnoTargetFrameworkOverride>
   </PropertyGroup>
 </Project>
