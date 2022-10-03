@@ -28,6 +28,7 @@ public static class HostBuilderExtensions
 			_ = services
 			.AddSingleton<LocalizationService>()
 			.AddSingleton<IServiceInitialize>(sp => sp.GetRequiredService<LocalizationService>())
+			.AddSingleton<ILocalizationService>(sp => sp.GetRequiredService<LocalizationService>())
 			.AddSingleton<IStringLocalizer, ResourceLoaderStringLocalizer>();
 		});
 	}

@@ -55,28 +55,28 @@ uid: Learn.Tutorials.Localization.HowToUseLocalization
 
 ### 3. Update the UI culture with `LocalizationSettings`
 
-* Add a constructor parameter of `IWritableOptions<LocalizationSettings>` type to a view model you registered with the service collection:
+* Add a constructor parameter of `ILocalizationService` type to a view model you registered with the service collection:
 
     ```cs
     public class MainViewModel
     {
-        private readonly IWritableOptions<LocalizationSettings> localizationSettings;
+        private readonly ILocalizationService localizationService;
 
-        public MainViewModel(IWritableOptions<LocalizationSettings> localizationSettings)
+        public MainViewModel(ILocalizationService localizationService)
         {
-            this.localizationSettings = localizationSettings;
+            this.localizationService = localizationService;
         }
     }
     ```
 
 * Toggle the UI culture using the injected service:
     ```cs
-    public void ToggleLocalization()
+    public async Task ToggleLocalization()
     {
-        localizationSettings.Update(settings =>
-        {
-            settings.CurrentCulture = settings.CurrentCulture == "en-US" ? "fr-CA" : "en-US";
-        });
+        var currentCulture = localizationService.CurrentCulture;
+        
+        var culture = localizationService.SupportedCultures.First(culture => culture.Name != currentCulture.Name);
+        await localizationService.UpdateCurrentCulture(culture);
     }
     ```
 

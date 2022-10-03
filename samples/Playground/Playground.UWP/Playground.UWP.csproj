@@ -171,7 +171,7 @@
       <Project>{9f8db209-a0d3-439e-8624-0ddd3608e886}</Project>
       <Name>Uno.Extensions.Http</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\src\Uno.Extensions.Localization\Uno.Extensions.Localization.csproj">
+    <ProjectReference Include="..\..\..\src\Uno.Extensions.Localization.UI\Uno.Extensions.Localization.UI.csproj">
       <Project>{18bb4421-14a0-4402-8d78-d6c1f73d0202}</Project>
       <Name>Uno.Extensions.Localization</Name>
     </ProjectReference>

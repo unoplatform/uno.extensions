@@ -6,6 +6,7 @@
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
 		<AssemblyName>TestHarnessApp</AssemblyName>
+		<UnoExtensionsGeneration_DisableNotNullIfNotNullAttribute>true</UnoExtensionsGeneration_DisableNotNullIfNotNullAttribute>
 	</PropertyGroup>
 	<ItemGroup Condition="exists('..\TestHarness.UWP')">
 		<EmbeddedResource Include="..\TestHarness.UWP\Package.appxmanifest" LogicalName="Package.appxmanifest" />
@@ -38,7 +39,7 @@
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Authentication.UI\Uno.Extensions.Authentication.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Authentication.Msal\Uno.Extensions.Authentication.Msal.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
-		<ProjectReference Include="..\..\..\src\Uno.Extensions.Localization\Uno.Extensions.Localization.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Localization.UI\Uno.Extensions.Localization.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />

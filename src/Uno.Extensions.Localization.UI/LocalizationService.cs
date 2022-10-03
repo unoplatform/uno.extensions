@@ -1,8 +1,9 @@
-﻿using Uno.Extensions.Hosting;
+﻿using Uno.Extensions.Configuration;
+using Uno.Extensions.Hosting;
 
 namespace Uno.Extensions.Localization;
 
-public class LocalizationService : IServiceInitialize
+public class LocalizationService : IServiceInitialize, ILocalizationService
 {
 	private static string DefaultCulture = "en-US";
 
@@ -11,22 +12,53 @@ public class LocalizationService : IServiceInitialize
 	private readonly ILogger _logger;
 
 	private readonly IOptionsMonitor<LocalizationSettings> _settings;
+	private readonly IWritableOptions<LocalizationSettings> _writeSettings;
 
 	private IDisposable? _settingsListener;
 
-	private CultureInfo[] SupportedCultures { get; }
+	/// <inheritdoc/>
+	public CultureInfo[] SupportedCultures { get; }
 
-	private CultureInfo CurrentCulture =>
-		_settings?.CurrentValue?.CurrentCulture?.AsCulture() ??
-		SupportedCultures.First();
+	/// <inheritdoc/>
+	public CultureInfo CurrentCulture
+	{
+		get
+		{
+			var settingsCulture = _settings?.CurrentValue?.CurrentCulture?.AsCulture();
+			if(settingsCulture is null)
+			{
+				var defaultCulture = ApplicationLanguages.PrimaryLanguageOverride ??
+							CultureInfo.DefaultThreadCurrentUICulture?.Name ??
+							CultureInfo.DefaultThreadCurrentCulture?.Name ??
+							_uiThread?.CurrentUICulture?.Name ??
+							_uiThread?.CurrentCulture?.Name;
+				settingsCulture = string.IsNullOrWhiteSpace(defaultCulture)?
+									SupportedCultures.First():
+									SupportedCultures.FirstOrDefault(x=>x.Name==defaultCulture) ??		// Handles full culture match  eg en-AU == en-AU
+										SupportedCultures.FirstOrDefault(x=>x.Name.StartsWith(defaultCulture))?? // Handles language only match eg en-AU.StartsWith(en)
+										SupportedCultures.First(); 
+
+			}
+			return	settingsCulture;
+		}
+	}
+
+	/// <inheritdoc/>
+	public async Task UpdateCurrentCulture(CultureInfo newCulture)
+	{
+		await _writeSettings.UpdateAsync(langSetting => langSetting with { CurrentCulture = newCulture.Name });
+	}
 
 	public LocalizationService(
 		ILogger<LocalizationService> logger,
 		IOptions<LocalizationConfiguration> configuration,
-		IOptionsMonitor<LocalizationSettings> settings)
+		IOptionsMonitor<LocalizationSettings> settings,
+		IWritableOptions<LocalizationSettings> writeSettings)
 	{
 		_logger = logger;
 		_settings = settings;
+		_writeSettings = writeSettings;
+
 		SupportedCultures = configuration.Value?.Cultures?.AsCultures() ?? new[] { DefaultCulture.AsCulture()! };
 	}
 
