@@ -3,7 +3,7 @@ namespace Uno.Extensions.Navigation.Toolkit;
 
 internal class ToolkitViewHostProvider : IViewHostProvider
 {
-	public FrameworkElement CreateViewHost() => new LoadingView
+	public FrameworkElement CreateViewHost() => new ExtendedSplashScreen
 	{
 		HorizontalAlignment = HorizontalAlignment.Stretch,
 		VerticalAlignment = VerticalAlignment.Stretch,

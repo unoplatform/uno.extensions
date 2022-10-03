@@ -16,7 +16,21 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Controls\ExtendedSplashScreen.iOS.cs" />
+	  <Compile Remove="Controls\ExtendedSplashScreen.macOS.cs" />
+	  <Compile Remove="Controls\ExtendedSplashScreen.Wasm.cs" />
+	  <Compile Remove="Controls\ExtendedSplashScreen.Windows.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <None Remove="LinkerDefinition.xml" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="Controls\ExtendedSplashScreen.iOS.cs" />
+	  <None Include="Controls\ExtendedSplashScreen.macOS.cs" />
+	  <None Include="Controls\ExtendedSplashScreen.Wasm.cs" />
+	  <None Include="Controls\ExtendedSplashScreen.Windows.cs" />
 	</ItemGroup>
 
 	<ItemGroup>

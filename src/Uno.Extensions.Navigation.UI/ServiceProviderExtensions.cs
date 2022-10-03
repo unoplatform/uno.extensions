@@ -184,6 +184,8 @@ public static class ServiceProviderExtensions
 		// Task.Run to force background execution.
 		await Task.Yield();
 
+		await Task.Delay(10000);
+
 		var host = buildHost();
 		var splash = host.Services.GetRequiredService<SplashScreen>();
 		splash.DeferralSource = startupDeferral();
