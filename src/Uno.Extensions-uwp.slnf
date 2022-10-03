@@ -16,6 +16,7 @@
       "Uno.Extensions.Http.Tests\\Uno.Extensions.Http.Tests.csproj",
       "Uno.Extensions.Http\\Uno.Extensions.Http.csproj",
       "Uno.Extensions.Localization\\Uno.Extensions.Localization.csproj",
+      "Uno.Extensions.Localization.UI\\Uno.Extensions.Localization.UI.csproj",
       "Uno.Extensions.Logging.Serilog\\Uno.Extensions.Logging.Serilog.csproj",
       "Uno.Extensions.Logging\\Uno.Extensions.Logging.UWP.Skia.csproj",
       "Uno.Extensions.Logging\\Uno.Extensions.Logging.UWP.Wasm.csproj",

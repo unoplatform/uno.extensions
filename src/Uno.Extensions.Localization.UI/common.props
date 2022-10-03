@@ -12,5 +12,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Localization\Uno.Extensions.Localization.csproj" />
 	</ItemGroup>
 </Project>

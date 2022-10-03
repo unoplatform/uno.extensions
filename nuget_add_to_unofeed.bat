@@ -18,7 +18,8 @@ copy .\src\Uno.Extensions.Http\bin\Uno.Extensions.Http\Release\Uno.Extensions.Ht
 copy .\src\Uno.Extensions.Http.Firebase\bin\Uno.Extensions.Http.Firebase\Release\Uno.Extensions.Http.Firebase.255.255.255.255.nupkg .\unofeed\
 copy .\src\Uno.Extensions.Http.Refit\bin\Uno.Extensions.Http.Refit\Release\Uno.Extensions.Http.Refit.255.255.255.255.nupkg .\unofeed\
 copy .\src\Uno.Extensions.Localization\bin\Uno.Extensions.Localization\Release\Uno.Extensions.Localization.255.255.255.255.nupkg .\unofeed\
-copy .\src\Uno.Extensions.Localization\bin\Uno.Extensions.Localization.WinUI\Release\Uno.Extensions.Localization.WinUI.255.255.255.255.nupkg .\unofeed\
+copy .\src\Uno.Extensions.Localization.UI\bin\Uno.Extensions.Localization.UI\Release\Uno.Extensions.Localization.UI.255.255.255.255.nupkg .\unofeed\
+copy .\src\Uno.Extensions.Localization.UI\bin\Uno.Extensions.Localization.WinUI\Release\Uno.Extensions.Localization.WinUI.255.255.255.255.nupkg .\unofeed\
 copy .\src\Uno.Extensions.Logging\bin\Uno.Extensions.Logging.UWP\Release\Uno.Extensions.Logging.UWP.255.255.255.255.nupkg .\unofeed\
 copy .\src\Uno.Extensions.Logging\bin\Uno.Extensions.Logging.WinUI\Release\Uno.Extensions.Logging.WinUI.255.255.255.255.nupkg .\unofeed\
 copy .\src\Uno.Extensions.Logging.Serilog\bin\Uno.Extensions.Logging.Serilog\Release\Uno.Extensions.Logging.Serilog.255.255.255.255.nupkg .\unofeed\
