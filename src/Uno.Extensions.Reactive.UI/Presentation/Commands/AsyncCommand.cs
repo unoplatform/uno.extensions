@@ -22,7 +22,7 @@ namespace Uno.Extensions.Reactive.Commands;
 public sealed partial class AsyncCommand : IAsyncCommand, IDisposable
 {
 	private static readonly object _null = new();
-	private static readonly PropertyChangedEventArgs _isExecutingChanged = new(nameof(IsExecuting));
+	private static readonly PropertyChangedEventArgs _isExecutingChangedArgs = new(nameof(IsExecuting));
 
 	private readonly CancellationTokenSource _ct = new();
 	private readonly Dictionary<object, int> _executions = new();
@@ -34,14 +34,22 @@ public sealed partial class AsyncCommand : IAsyncCommand, IDisposable
 	private readonly ICollection<SubCommand> _children;
 	private readonly LazyDispatcherProvider _dispatcher;
 	private readonly EventManager<EventHandler, EventArgs> _canExecuteChanged;
+	private readonly EventManager<EventHandler, EventArgs> _isExecutingChanged;
 	private readonly EventManager<PropertyChangedEventHandler, PropertyChangedEventArgs> _propertyChanged;
-	private readonly EventManager<ExecutionCompletedEventArgs> _executingCompleted;
+	private readonly EventManager<ExecutionCompletedEventArgs> _executionCompleted;
 
 	/// <inheritdoc />
 	public event EventHandler? CanExecuteChanged
 	{
 		add => _canExecuteChanged.Add(value);
 		remove => _canExecuteChanged.Remove(value);
+	}
+
+	/// <inheritdoc />
+	public event EventHandler? IsExecutingChanged
+	{
+		add => _isExecutingChanged.Add(value);
+		remove => _isExecutingChanged.Remove(value);
 	}
 
 	/// <inheritdoc />
@@ -61,8 +69,8 @@ public sealed partial class AsyncCommand : IAsyncCommand, IDisposable
 	/// </summary>
 	public event EventHandler<ExecutionCompletedEventArgs> ExecutionCompleted
 	{
-		add => _executingCompleted.Add(value);
-		remove => _executingCompleted.Remove(value);
+		add => _executionCompleted.Add(value);
+		remove => _executionCompleted.Remove(value);
 	}
 
 #pragma warning disable CS8618 // This is a private base ctor which is invoked only by all other public ctors which are initializing missing fields.
@@ -71,8 +79,9 @@ public sealed partial class AsyncCommand : IAsyncCommand, IDisposable
 	{
 		_dispatcher = new(onFirstResolved: SubscribeToExternalParameters);
 		_canExecuteChanged = new(this, h => h.Invoke, isCoalescable: true, schedulersProvider: _dispatcher.FindDispatcher);
+		_isExecutingChanged = new(this, h => h.Invoke, isCoalescable: true, schedulersProvider: _dispatcher.FindDispatcher);
 		_propertyChanged = new(this, h => h.Invoke, isCoalescable: false, schedulersProvider: _dispatcher.FindDispatcher);
-		_executingCompleted = new(this, isCoalescable: false, schedulersProvider: _dispatcher.FindDispatcher);
+		_executionCompleted = new(this, isCoalescable: false, schedulersProvider: _dispatcher.FindDispatcher);
 	}
 
 	/// <summary>
@@ -150,12 +159,19 @@ public sealed partial class AsyncCommand : IAsyncCommand, IDisposable
 
 	private void UpdateIsExecuting()
 	{
+		(bool @is, bool was) executing;
 		lock (_executions)
 		{
-			IsExecuting = _executions.Count > 0;
+			executing = (_executions.Count > 0, IsExecuting);
+			IsExecuting = executing.@is;
 		}
 
-		_propertyChanged.Raise(_isExecutingChanged);
+		if (executing.@is != executing.was)
+		{
+			_isExecutingChanged.Raise(EventArgs.Empty);
+			_propertyChanged.Raise(_isExecutingChangedArgs);
+		}
+
 		_canExecuteChanged.Raise(EventArgs.Empty);
 	}
 
@@ -210,7 +226,7 @@ public sealed partial class AsyncCommand : IAsyncCommand, IDisposable
 			}
 		}
 
-		_executingCompleted.Raise(new ExecutionCompletedEventArgs(executionId, viewParameter, error));
+		_executionCompleted.Raise(new ExecutionCompletedEventArgs(executionId, viewParameter, error));
 
 		if (needsUiUpdate)
 		{
@@ -240,6 +256,8 @@ public sealed partial class AsyncCommand : IAsyncCommand, IDisposable
 	{
 		_ct.Cancel();
 		_canExecuteChanged.Dispose();
+		_isExecutingChanged.Dispose();
 		_propertyChanged.Dispose();
+		_executionCompleted.Dispose();
 	}
 }

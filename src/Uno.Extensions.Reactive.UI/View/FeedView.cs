@@ -255,6 +255,7 @@ public partial class FeedView : Control
 	{
 		if (feed is null || !_isReady)
 		{
+			SetIsLoading(!_isReady); // If we set the Source to null while we are already ready, we clear the loading flag.
 			_subscription?.Dispose();
 
 			return;

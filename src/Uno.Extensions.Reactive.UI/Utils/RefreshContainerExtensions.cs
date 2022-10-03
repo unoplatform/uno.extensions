@@ -1,4 +1,8 @@
-﻿using System;
+﻿#if !WINUI
+#pragma warning disable CS0618 // RefreshContainer is flagged as obsolete UWP version of uno as it seems to not be supported also by windows
+#endif
+
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;

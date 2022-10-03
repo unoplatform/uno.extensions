@@ -67,12 +67,12 @@
 
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="7.1.2" />
-		<PackageReference Include="Uno.WinUI" Version="4.3.8" />
+		<PackageReference Include="Uno.WinUI" Version="4.5.9" />
 		<PackageReference Include="Uno.Core" Version="4.0.1" />
-		<PackageReference Include="Uno.Material.WinUI" Version="2.0.0" />
-		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.0.0" />
-		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.0.0" />
-		<PackageReference Include="Uno.SourceGenerationTasks" Version="4.0.2" />
+		<PackageReference Include="Uno.Material.WinUI" Version="2.3.0" />
+		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.4.0-dev.19" />
+		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.4.0-dev.19" />
+		<PackageReference Include="Uno.SourceGenerationTasks" Version="4.1.0" />
 	</ItemGroup>
 
 
