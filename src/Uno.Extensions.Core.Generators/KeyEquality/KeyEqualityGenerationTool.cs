@@ -266,7 +266,7 @@ internal class KeyEqualityGenerationTool : ICodeGenTool
 				/// for all <see cref=""{NS.Equality}.IKeyEquatable{{T}}""/> declared in the Uno.Extensions.Core assembly.
 				/// </summary>
 				/// <remarks>This provider is automatically registered into the <see cref=""{NS.Equality}.KeyEqualityComparer""/> on module load.</remarks>
-				[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)]
+				[global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Never)]
 				{this.GetCodeGenAttribute()}
 				internal sealed class __KeyEqualityProvider : {NS.Equality}.IKeyEqualityProvider
 				{{
@@ -277,8 +277,8 @@ internal class KeyEqualityGenerationTool : ICodeGenTool
 					/// This method is flagged with the [ModuleInitializerAttribute] which means that it will be invoked by the runtime when the module is being loaded.
 					/// You should not have to use it at any time.
 					/// </remarks>
-					[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)]
-					[System.Runtime.CompilerServices.ModuleInitializerAttribute]
+					[global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Never)]
+					[global::System.Runtime.CompilerServices.ModuleInitializerAttribute]
 					internal static void Initialize()
 						=> {NS.Equality}.KeyEqualityComparer.Register(new __KeyEqualityProvider());
 
