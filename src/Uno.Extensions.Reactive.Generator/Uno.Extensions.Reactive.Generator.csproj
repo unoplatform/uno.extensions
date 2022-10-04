@@ -26,13 +26,9 @@
 
 	<ItemGroup>
 		<Compile Include="..\Uno.Extensions.Core\_Compat\**\*.cs" Link="_Compat\%(RecursiveDir)%(Filename)%(Extension)" />
-		<Compile Include="..\Uno.Extensions.Core.Generators\Utils\**\*.cs" Link="Utils\%(RecursiveDir)%(Filename)%(Extension)" />
+		<Compile Include="..\Uno.Extensions.Core.Generators\Common\**\*.cs" Link="Common\%(RecursiveDir)%(Filename)%(Extension)" />
 
 		<Compile Include="..\Uno.Extensions.Reactive\**\*Attribute.cs" Link="Attributes\%(RecursiveDir)%(Filename)%(Extension)" />
 		<Compile Include="..\Uno.Extensions.Reactive.UI\**\*Attribute.cs" Link="Attributes\%(RecursiveDir)%(Filename)%(Extension)" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Utils\" />
 	</ItemGroup>
 </Project>

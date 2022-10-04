@@ -50,7 +50,7 @@
 		</ProjectReference>
 	</ItemGroup>
 
-	<Target Name="_IncludeGenerators" BeforeTargets="Build;Pack">
+	<Target Name="_IncludeUnoExtensionsCoreGenerators" BeforeTargets="Build;Pack">
 		<ItemGroup>
 			<Content Include="..\Uno.Extensions.Core.Generators\buildTransitive\**\*.*" Link="buildTransitive\%(RecursiveDir)%(Filename)%(Extension)">
 				<Pack>true</Pack>

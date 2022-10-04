@@ -34,7 +34,7 @@
 		</ProjectReference>
 	</ItemGroup>
 
-	<Target Name="_IncludeGenerator" BeforeTargets="Build;Pack">
+	<Target Name="_IncludeUnoExtensionsReactiveGenerator" BeforeTargets="Build;Pack">
 		<ItemGroup>
 			<Content Include="..\Uno.Extensions.Reactive.Generator\buildTransitive\**\*.*" Link="buildTransitive\%(RecursiveDir)%(Filename)%(Extension)">
 				<Pack>true</Pack>
