@@ -57,7 +57,7 @@ public sealed partial class App : Application
 	private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 	{
 		views.Register(
-			new ViewMap<ShellControl, ShellViewModel>(),
+			new ViewMap(ViewModel: typeof(ShellViewModel)),
 			new ViewMap<MainPage, MainViewModel>(),
 			new ViewMap<SecondPage, SecondViewModel>()
 			);
