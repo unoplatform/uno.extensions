@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Linq;
-using Microsoft.CodeAnalysis;
 
 namespace Uno.Extensions.Reactive.Generator;
 
-[SuppressMessage("ReSharper", "InconsistentNaming")]
 internal static partial class Rules
 {
 	// references:
