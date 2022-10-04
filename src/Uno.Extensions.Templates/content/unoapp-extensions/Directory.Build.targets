@@ -7,10 +7,11 @@
 		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.4.0-dev.19" />
 
 		<PackageReference Include="Uno.Extensions.Authentication.WinUI" Version="255.255.255.255" />
+		<PackageReference Include="Uno.Extensions.Hosting.WinUI" Version="255.255.255.255" />
+		<PackageReference Include="Uno.Extensions.Localization.WinUI" Version="255.255.255.255" />
 		<PackageReference Include="Uno.Extensions.Logging.WinUI" Version="255.255.255.255" />
 		<PackageReference Include="Uno.Extensions.Navigation.Toolkit.WinUI" Version="255.255.255.255" />
 		<PackageReference Include="Uno.Extensions.Navigation.WinUI" Version="255.255.255.255" />
-		<PackageReference Include="Uno.Extensions.Reactive.WinUI" Version="255.255.255.255" />
 	</ItemGroup>
 
 
@@ -28,5 +29,6 @@
 		<PackageReference Include="Uno.Extensions.Serialization.Http" Version="255.255.255.255" />
 		<PackageReference Include="Uno.Extensions.Serialization.Refit" Version="255.255.255.255" />
 		<PackageReference Include="Uno.Extensions.Reactive" Version="255.255.255.255" />
+		<PackageReference Include="Uno.Extensions.Reactive.WinUI" Version="255.255.255.255" />
 	</ItemGroup>
 </Project>
