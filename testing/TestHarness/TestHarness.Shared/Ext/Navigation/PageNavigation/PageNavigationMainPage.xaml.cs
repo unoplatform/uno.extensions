@@ -11,7 +11,7 @@ public sealed partial class PageNavigationMainPage : BaseTestSectionPage
 
 	public async void OnePageClick(object sender, RoutedEventArgs e)
 	{
-		await NavigationRoot.Navigator()!.NavigateViewModelAsync<PageNavigationOneViewModel>(this);
+		await Navigator.NavigateViewModelAsync<PageNavigationOneViewModel>(this);
 	}
 
 }

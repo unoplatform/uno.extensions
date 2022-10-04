@@ -13,6 +13,6 @@ public sealed partial class CustomAuthenticationMainPage : BaseTestSectionPage
 
 	public async void ShowAppClick(object sender, RoutedEventArgs e)
 	{
-		await NavigationRoot.Navigator()!.NavigateRouteAsync(this,"");
+		await Navigator.NavigateRouteAsync(this,"");
 	}
 }
