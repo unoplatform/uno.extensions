@@ -8,16 +8,26 @@ public class ShellViewModel
 
 
 	public ShellViewModel(
-		INavigator navigator)
+		INavigator navigator,
+		ISplashScreen splash)
 	{
 
 		Navigator = navigator;
 
-		_ = Start();
+		_ = Start(splash);
 	}
 
-	public async Task Start()
+	public async Task Start(ISplashScreen splash)
 	{
-		await Navigator.NavigateViewModelAsync<MainViewModel>(this);
+		var deferral = splash.GetDeferral();
+		try
+		{
+			await Task.Delay(5000);
+			await Navigator.NavigateViewModelAsync<MainViewModel>(this, Qualifiers.Nested);
+		}
+		finally
+		{
+			deferral.Close();
+		}
 	}
 }

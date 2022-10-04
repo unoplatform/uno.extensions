@@ -29,12 +29,7 @@ public sealed partial class App : Application
 #else
 		_window = Microsoft.UI.Xaml.Window.Current;
 #endif
-
-		_window.AttachNavigation(Host.Services);
-		_window.Activate();
-
-		await Task.Run(() => Host.StartAsync());
-
+		Host = await _window.InitializeNavigationWithExtendedSplash(BuildAppHost);
 	}
 
 	/// <summary>

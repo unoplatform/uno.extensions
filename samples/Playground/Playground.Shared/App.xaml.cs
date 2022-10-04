@@ -1,4 +1,5 @@
-﻿using Windows.ApplicationModel.Core;
+﻿using Microsoft.Extensions.Hosting;
+using Windows.ApplicationModel.Core;
 using Windows.UI.ViewManagement;
 
 
@@ -41,19 +42,20 @@ public sealed partial class App : Application
 		_window = Window.Current;
 #endif
 
-		
 
 
-		var notif = _host.Services.GetRequiredService<IRouteNotifier>();
-		notif.RouteChanged += RouteUpdated;
+
 
 		// Option 1: Ad-hoc hosting of Navigation
-		var f = new Frame();
-		_window.Content = f;
-		_window.AttachServices(_host.Services);
-		f.Navigate(typeof(MainPage));
+		//_host = BuildAppHost();
+		//var f = new Frame();
+		//_window.Content = f;
+		//_window.AttachServices(_host.Services);
+		//f.Navigate(typeof(MainPage));
+		//await Task.Run(() => _host.StartAsync());
 
 		// Option 2: Ad-hoc hosting using root content control
+		//_host = BuildAppHost();
 		//var root = new ContentControl
 		//{
 		//	HorizontalAlignment = HorizontalAlignment.Stretch,
@@ -62,23 +64,38 @@ public sealed partial class App : Application
 		//	VerticalContentAlignment = VerticalAlignment.Stretch
 		//};
 		//_window.Content = root;
-		//_window.AttachServices(_host.Services);
-		//root.Host(initialRoute: "");
+		//var services = _window.AttachServices(_host.Services);
+		//var startup = root.Host(services, initialRoute: "");
+		//await Task.Run(() => _host.StartAsync());
+		//await startup;
 
 		// Option 3: Default hosting
-		//_window.AttachNavigation(_host.Services,
+		_host = BuildAppHost();
+		_window.AttachNavigation(_host.Services,
+			// Option 1: This requires Shell to be the first RouteMap - best for perf as no reflection required
+			// initialRoute: ""
+			// Option 2: Specify route name
+			// initialRoute: "Shell"
+			// Option 3: Specify the view model. To avoid reflection, you can still define a routemap
+			initialViewModel: typeof(ShellViewModel)
+			);
+		await Task.Run(() => _host.StartAsync());
+
+		// Option 4: Let Navigation do everything
+		// a) No loadingview
+		//_host = await _window.InitializeNavigation(BuildAppHost,
+		// b) Use loadingview
+		//_host = await _window.InitializeNavigationWithExtendedSplash(BuildAppHost,
 		//	// Option 1: This requires Shell to be the first RouteMap - best for perf as no reflection required
 		//	// initialRoute: ""
 		//	// Option 2: Specify route name
 		//	// initialRoute: "Shell"
 		//	// Option 3: Specify the view model. To avoid reflection, you can still define a routemap
 		//	initialViewModel: typeof(ShellViewModel)
-		//	);
+		//);
 
-
-		_window.Activate();
-
-		await Task.Run(() => _host.StartAsync());
+		var notif = _host.Services.GetRequiredService<IRouteNotifier>();
+		notif.RouteChanged += RouteUpdated;
 
 
 		var logger = _host.Services.GetRequiredService<ILogger<App>>();

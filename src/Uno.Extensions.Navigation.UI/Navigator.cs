@@ -134,6 +134,14 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		// ./ route request to nested region (named or unnamed)
 		if (request.Route.IsNested())
 		{
+			// Nested regions (for example a frame inside a content control) aren't always loaded
+			// at this point. Need to wait for the current view of this region to load to make
+			// sure all nested regions are available
+			// Example: Navigating to a viewmodel from ShellViewModel constructor when using a ShellView.
+			// The nested FrameView won't have loaded at this point
+			await EnsureChildRegionsAreLoaded(); 
+
+
 			request = request with { Route = request.Route.TrimQualifier(Qualifiers.Nested) };
 
 			// Send request to both unnamed children and any that have the
