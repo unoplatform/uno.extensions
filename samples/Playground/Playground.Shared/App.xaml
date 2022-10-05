@@ -17,6 +17,18 @@
 				<MaterialToolkitResources xmlns="using:Uno.Toolkit.UI.Material" />
 				<!-- Place resources here -->
 			</ResourceDictionary.MergedDictionaries>
+			<Style TargetType="utu:ExtendedSplashScreen" BasedOn="{StaticResource DefaultExtendedSplashScreen}">
+				<Setter Property="LoadingContent">
+					<Setter.Value>
+						<Grid Background="Blue">
+							<ProgressRing IsActive="true"
+										  VerticalAlignment="Bottom"
+										  HorizontalAlignment="Center"
+										  Margin="0,0,0,50" />
+						</Grid>
+					</Setter.Value>
+				</Setter>
+			</Style>
 		</ResourceDictionary>
 	</Application.Resources>
 

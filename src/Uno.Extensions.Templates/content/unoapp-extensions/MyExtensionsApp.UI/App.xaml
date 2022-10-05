@@ -4,7 +4,9 @@
 			 xmlns:wasm="http://platform.uno/wasm"
 			 xmlns:local="using:MyExtensionsApp"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 mc:Ignorable="wasm">
+			 mc:Ignorable="wasm"
+			 xmlns:controls="using:Microsoft.UI.Xaml.Controls"
+			 xmlns:utu="using:Uno.Toolkit.UI">
 
 	<Application.Resources>
 		<ResourceDictionary>
@@ -24,6 +26,74 @@
 				<MaterialToolkitResources xmlns="using:Uno.Toolkit.UI.Material" />
 
 			</ResourceDictionary.MergedDictionaries>
+
+			<Style TargetType="utu:LoadingView">
+
+				<Setter Property="HorizontalAlignment"
+						Value="Stretch" />
+				<Setter Property="HorizontalContentAlignment"
+						Value="Stretch" />
+				<Setter Property="VerticalAlignment"
+						Value="Stretch" />
+				<Setter Property="VerticalContentAlignment"
+						Value="Stretch" />
+
+				<Setter Property="Template">
+					<Setter.Value>
+						<ControlTemplate TargetType="utu:LoadingView">
+							<Grid x:Name="RootPanel">
+								<VisualStateManager.VisualStateGroups>
+									<VisualStateGroup x:Name="LoadingStates">
+										<VisualState x:Name="Loading" />
+										<VisualState x:Name="Loaded">
+											<Storyboard>
+												<DoubleAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
+																			   Storyboard.TargetProperty="Opacity">
+													<LinearDoubleKeyFrame KeyTime="{StaticResource DefaultLoadingViewAnimationDuration}"
+																		  Value="1" />
+												</DoubleAnimationUsingKeyFrames>
+												<DoubleAnimationUsingKeyFrames Storyboard.TargetName="LoadingContentPresenter"
+																			   Storyboard.TargetProperty="Opacity">
+													<LinearDoubleKeyFrame KeyTime="{StaticResource DefaultLoadingViewAnimationDuration}"
+																		  Value="0" />
+												</DoubleAnimationUsingKeyFrames>
+											</Storyboard>
+										</VisualState>
+									</VisualStateGroup>
+								</VisualStateManager.VisualStateGroups>
+
+								<ContentControl x:Name="LoadingContentPresenter"
+												Content="{TemplateBinding LoadingContent}"
+												HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+												HorizontalContentAlignment="Stretch"
+												VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+												VerticalContentAlignment="Stretch" />
+								<ContentPresenter x:Name="ContentPresenter"
+												  Content="{TemplateBinding Content}"
+												  Opacity="0"
+												  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+												  HorizontalContentAlignment="Stretch"
+												  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+												  VerticalContentAlignment="Stretch" />
+							</Grid>
+						</ControlTemplate>
+					</Setter.Value>
+				</Setter>
+				<Setter Property="LoadingContent">
+					<Setter.Value>
+						<ContentControl HorizontalAlignment="Center"
+										VerticalAlignment="Center"
+										HorizontalContentAlignment="Center"
+										VerticalContentAlignment="Center">
+							<ContentControl.ContentTemplate>
+								<DataTemplate>
+									<ProgressRing IsActive="True" />
+								</DataTemplate>
+							</ContentControl.ContentTemplate>
+						</ContentControl>
+					</Setter.Value>
+				</Setter>
+			</Style>
 		</ResourceDictionary>
 	</Application.Resources>
 
