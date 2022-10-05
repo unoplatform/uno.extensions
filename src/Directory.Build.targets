@@ -1,38 +1,54 @@
 <Project ToolsVersion="15.0">
-  
-  <PropertyGroup>
-	<!--
-      macOS needs an explicit override of the current compiler when running under mono.
-      On other targets, .NET 6.0's compiler takes precedence.
-      -->
-	<MicrosoftNetCompilerVersionOverride Condition="'$(MSBuildRuntimeType)'!='Core' and ($([MSBuild]::IsOSPlatform('OSX')) or '$(MSBuildVersion)' &lt; '17.0')">4.1.0</MicrosoftNetCompilerVersionOverride>
-  </PropertyGroup>
 
-  <!--
-  This file is imported from Directory.Build.props as the nuget tooling
-  in VS is skipping ItemGroup conditions for legacy projects (iOS, Android, ...).
-  -->
-  <Choose>
-	<When Condition="'$(MicrosoftNetCompilerVersionOverride)'!=''">
-	  <PropertyGroup>
+	<PropertyGroup>
 		<!--
-          Disable shared compilation for the override to take place
-          https://github.com/dotnet/roslyn/blob/315c2e149ba7889b0937d872274c33fcbfe9af5f/src/NuGet/Microsoft.Net.Compilers/build/Microsoft.Net.Compilers.props#L36
-          -->
-		<UseSharedCompilation>false</UseSharedCompilation>
-	  </PropertyGroup>
-	  <ItemGroup>
+			macOS needs an explicit override of the current compiler when running under mono.
+			On other targets, .NET 6.0's compiler takes precedence.
+		-->
+		<MicrosoftNetCompilerVersionOverride Condition="'$(MSBuildRuntimeType)'!='Core' and ($([MSBuild]::IsOSPlatform('OSX')) or '$(MSBuildVersion)' &lt; '17.0')">4.1.0</MicrosoftNetCompilerVersionOverride>
+	</PropertyGroup>
 
-		<!--This override is used to validate the user of specific version of the C# Compiler-->
-		<PackageReference Include="Microsoft.Net.Compilers" Version="$(MicrosoftNetCompilerVersionOverride)">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-		</PackageReference>
-	  </ItemGroup>
+	<!--
+		This file is imported from Directory.Build.props as the nuget tooling
+		in VS is skipping ItemGroup conditions for legacy projects (iOS, Android, ...).
+	-->
+	<Choose>
+		<When Condition="'$(MicrosoftNetCompilerVersionOverride)'!=''">
+		  <PropertyGroup>
+			<!--
+			  Disable shared compilation for the override to take place
+			  https://github.com/dotnet/roslyn/blob/315c2e149ba7889b0937d872274c33fcbfe9af5f/src/NuGet/Microsoft.Net.Compilers/build/Microsoft.Net.Compilers.props#L36
+			  -->
+			<UseSharedCompilation>false</UseSharedCompilation>
+		  </PropertyGroup>
+		  <ItemGroup>
 
-	</When>
-  </Choose>
+			<!--This override is used to validate the user of specific version of the C# Compiler-->
+			<PackageReference Include="Microsoft.Net.Compilers" Version="$(MicrosoftNetCompilerVersionOverride)">
+			  <PrivateAssets>all</PrivateAssets>
+			  <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+			</PackageReference>
+		  </ItemGroup>
 
-  <Import Project="winappsdk-workaround.targets" Condition="exists('winappsdk-workaround.targets')" />
+		</When>
+	</Choose>
+
+	<Choose>
+		<When Condition="'$(IsCoreProject)'== 'False' And '$(IsGeneratorProject)' == 'False'" >
+			<ItemGroup>
+				<ProjectReference Include="$(MSBuildThisFileDirectory)\Uno.Extensions.Core.Generators\Uno.Extensions.Core.Generators.csproj">
+					<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+					<SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+					<UndefineProperties>TargetFramework</UndefineProperties>
+				</ProjectReference>
+			</ItemGroup>
+		</When>
+	</Choose>
+
+	<Import 
+		Condition="'$(IsCoreProject)'== 'False' And '$(IsGeneratorProject)' == 'False'"
+		Project="$(MSBuildThisFileDirectory)\Uno.Extensions.Core.Generators\buildTransitive\Uno.Extensions.Core.props" />
+
+	<Import Project="winappsdk-workaround.targets" Condition="exists('winappsdk-workaround.targets')" />
 	<Import Project="xamarinmac-workaround.targets" Condition="exists('xamarinmac-workaround.targets')" />
 </Project>
