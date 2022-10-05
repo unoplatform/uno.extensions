@@ -10,7 +10,7 @@ public sealed partial class TabBarMainPage : BaseTestSectionPage
 
 	public async void TabBarHomeClick(object sender, RoutedEventArgs e)
 	{
-		await NavigationRoot.Navigator()!.NavigateViewModelAsync<TabBarHomeViewModel>(this);
+		await Navigator.NavigateViewModelAsync<TabBarHomeViewModel>(this);
 	}
 
 }

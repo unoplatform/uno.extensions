@@ -13,20 +13,20 @@ public sealed partial class DialogsMainPage : BaseTestSectionPage
 
 	public async void MessageDialogsClick(object sender, RoutedEventArgs e)
 	{
-		await NavigationRoot.Navigator()!.NavigateViewAsync<MessageDialogsPage>(this);
+		await Navigator.NavigateViewAsync<MessageDialogsPage>(this);
 	}
 
 	public async void LocalizedDialogsClick(object sender, RoutedEventArgs e)
 	{
-		await NavigationRoot.Navigator()!.NavigateViewAsync<LocalizedDialogsPage>(this);
+		await Navigator.NavigateViewAsync<LocalizedDialogsPage>(this);
 	}
 
 	public async void ContentDialogsClick(object sender, RoutedEventArgs e)
 	{
-		await NavigationRoot.Navigator()!.NavigateViewAsync<ContentDialogsPage>(this);
+		await Navigator.NavigateViewAsync<ContentDialogsPage>(this);
 	}
 	public async void FlyoutsClick(object sender, RoutedEventArgs e)
 	{
-		await NavigationRoot.Navigator()!.NavigateViewAsync<DialogsFlyoutsPage>(this);
+		await Navigator.NavigateViewAsync<DialogsFlyoutsPage>(this);
 	}
 }
