@@ -44,7 +44,7 @@ public class LocalizationService : IServiceInitialize, ILocalizationService
 	}
 
 	/// <inheritdoc/>
-	public async Task UpdateCurrentCulture(CultureInfo newCulture)
+	public async Task SetCurrentCultureAsync(CultureInfo newCulture)
 	{
 		await _writeSettings.UpdateAsync(langSetting => langSetting with { CurrentCulture = newCulture.Name });
 	}

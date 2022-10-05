@@ -25,7 +25,7 @@ public partial class LocalizationOneViewModel : ObservableObject
 		get => SupportedCultures.FirstOrDefault(x => x.Name == _localizationService.CurrentCulture.Name) ?? SupportedCultures.First();
 		set
 		{
-			_ = _localizationService.UpdateCurrentCulture(value);
+			_ = _localizationService.SetCurrentCultureAsync(value);
 		}
 	}
 

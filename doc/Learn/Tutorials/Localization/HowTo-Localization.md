@@ -76,7 +76,7 @@ uid: Learn.Tutorials.Localization.HowToUseLocalization
         var currentCulture = localizationService.CurrentCulture;
         
         var culture = localizationService.SupportedCultures.First(culture => culture.Name != currentCulture.Name);
-        await localizationService.UpdateCurrentCulture(culture);
+        await localizationService.SetCurrentCultureAsync(culture);
     }
     ```
 

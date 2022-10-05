@@ -20,5 +20,5 @@ public interface ILocalizationService
 	/// </summary>
 	/// <param name="newCulture">The CultureInfo to set as the new current culture</param>
 	/// <returns>Task to await</returns>
-	Task UpdateCurrentCulture(CultureInfo newCulture);
+	Task SetCurrentCultureAsync(CultureInfo newCulture);
 }
