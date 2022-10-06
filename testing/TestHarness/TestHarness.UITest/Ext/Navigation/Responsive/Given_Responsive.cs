@@ -52,12 +52,12 @@ public class Given_Responsive : NavigationTestBase
 		visibility.Should().NotBeNull();
 
 		await Task.Delay(5000);
-		var screenBefore = TakeScreenshot("When_Responsive_Before");
+		//var screenBefore = TakeScreenshot("When_Responsive_Before");
 		App.WaitThenTap("DetailsBackButton");
 		await Task.Delay(5000);
-		var screenAfter = TakeScreenshot("When_Responsive_After");
+		//var screenAfter = TakeScreenshot("When_Responsive_After");
 		// TODO: Fix image comparison
-		//ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
+		////ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
 	}
 
 }
