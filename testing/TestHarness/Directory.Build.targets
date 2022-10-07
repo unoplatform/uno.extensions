@@ -32,4 +32,6 @@
 
     </When>
   </Choose>
+
+	<Import Project="..\..\src\xamarinmac-workaround.targets" Condition="exists('..\..\src\xamarinmac-workaround.targets')" />
 </Project>
