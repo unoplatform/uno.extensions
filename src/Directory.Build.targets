@@ -33,5 +33,6 @@
 	</When>
   </Choose>
 
-  <Import Project="winappsdk-workaround.targets" />
+  <Import Project="winappsdk-workaround.targets" Condition="exists('winappsdk-workaround.targets')" />
+	<Import Project="xamarinmac-workaround.targets" Condition="exists('xamarinmac-workaround.targets')" />
 </Project>
