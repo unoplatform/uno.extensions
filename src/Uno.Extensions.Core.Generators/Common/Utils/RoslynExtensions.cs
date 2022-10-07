@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -188,6 +189,17 @@ internal static class RoslynExtensions
 	public static bool IsAccessible(this ISymbol symbol)
 		=> symbol.DeclaredAccessibility is Accessibility.Public or Accessibility.Internal or Accessibility.ProtectedOrInternal;
 
+	public static bool IsAccessibleTo(this ISymbol symbol, IAssemblySymbol toAssembly)
+		=> symbol switch
+		{
+			{ DeclaredAccessibility: Accessibility.Public or Accessibility.ProtectedAndInternal } => true,
+			{ DeclaredAccessibility: Accessibility.Internal } when SymbolEqualityComparer.Default.Equals(symbol.ContainingAssembly, toAssembly) => true,
+			{ DeclaredAccessibility: Accessibility.Internal } when symbol.ContainingAssembly.IsInternalsVisibleTo(toAssembly) => true,
+			_ => false
+		};
+
+	public static bool IsInternalsVisibleTo(this IAssemblySymbol assembly, IAssemblySymbol toAssembly)
+		=> assembly.FindAttributes<InternalsVisibleToAttribute>().Any(attr => attr.AssemblyName == toAssembly.Name);
 
 	/// <summary>
 	/// Converts declared accessibility on a symbol to a string usable in generated code.
@@ -286,17 +298,23 @@ internal static class RoslynExtensions
 
 	public static TAttribute? FindAttribute<TAttribute>(this ISymbol symbol)
 		where TAttribute : Attribute
+		=> FindAttributes<TAttribute>(symbol).FirstOrDefault();
+
+	public static IEnumerable<TAttribute> FindAttributes<TAttribute>(this ISymbol symbol)
+		where TAttribute : Attribute
 	{
 		var type = typeof(TAttribute);
-		var data = symbol
+		var instances = symbol
 			.GetAttributes()
-			.FirstOrDefault(attr => attr.AttributeClass?.ToDisplayString().Equals(type.FullName, StringComparison.Ordinal) ?? false);
+			.Where(attr => attr.AttributeClass?.ToDisplayString().Equals(type.FullName, StringComparison.Ordinal) ?? false)
+			.Select(GetInstance<TAttribute>);
 
-		if (data is null)
-		{
-			return default;
-		}
+		return instances;
+	}
 
+	private static TAttribute GetInstance<TAttribute>(AttributeData data)
+	{
+		var type = typeof(TAttribute);
 		var ctor = type.GetConstructors().Single(defCtor => Matches(defCtor, data.AttributeConstructor));
 		var ctorArgs = data.ConstructorArguments.Select(GetValue).ToArray();
 

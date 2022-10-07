@@ -115,11 +115,13 @@
 
 		<IsSampleProject>False</IsSampleProject>
 		<IsSampleProject Condition="$(MSBuildProjectName.Contains('Sample'))">True</IsSampleProject>
+		
+		<IsGeneratorProject>False</IsGeneratorProject>
+		<IsGeneratorProject Condition="$(MSBuildProjectName.Contains('Generator'))">True</IsGeneratorProject>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<None Include="$(MSBuildThisFileDirectory)..\build\uno-logo.png" Pack="true" Visible="false" PackagePath="\"/>
-		<Compile Condition="'$(IsCoreProject)' == 'False'" Include="$(MSBuildThisFileDirectory)\Uno.Extensions.Core\_Compat\**\*.cs" Link="_Compat\%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup>
 
 	<Choose>

@@ -2,18 +2,16 @@
 
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
-		<IsPackable>false</IsPackable>
-		<RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
-
+		<IsPackable>false</IsPackable>	
 		<!--
 			Defines that this project output is a tool of the given package ID,
 			so nuget override will copy it in the 'tools' directory of that package instead of the 'lib' of the current package folder.
 		-->
-		<ToolOfPackage>Uno.Extensions.Reactive</ToolOfPackage>
+		<ToolOfPackage>Uno.Extensions.Core</ToolOfPackage>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Content Include="buildTransitive\Uno.Extensions.Reactive.props" />
+		<Content Include="buildTransitive\Uno.Extensions.Core.props" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -26,9 +24,14 @@
 
 	<ItemGroup>
 		<Compile Include="..\Uno.Extensions.Core\_Compat\**\*.cs" Link="_Compat\%(RecursiveDir)%(Filename)%(Extension)" />
-		<Compile Include="..\Uno.Extensions.Core.Generators\Common\**\*.cs" Link="Common\%(RecursiveDir)%(Filename)%(Extension)" />
 
-		<Compile Include="..\Uno.Extensions.Reactive\**\*Attribute.cs" Link="Attributes\%(RecursiveDir)%(Filename)%(Extension)" />
-		<Compile Include="..\Uno.Extensions.Reactive.UI\**\*Attribute.cs" Link="Attributes\%(RecursiveDir)%(Filename)%(Extension)" />
+		<Compile Include="..\Uno.Extensions.Core\Equality\**\*Attribute.cs" Link="Attributes\Equality\%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="Compat\Templates\" />
+		<Compile Remove="Compat\Templates\*.cs" />
+		<EmbeddedResource Include="Compat\Templates\*.cs" />
+	</ItemGroup>
+
 </Project>

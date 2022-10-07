@@ -2,10 +2,11 @@
 using System.Diagnostics;
 using System.Linq;
 using Microsoft.CodeAnalysis;
+using Uno.Extensions.Reactive.Generator;
 using Uno.Extensions.Reactive.Generator.KeyEquality;
 using Uno.Extensions.Reactive.Generator.Utils;
 
-namespace Uno.Extensions.Reactive.Generator;
+namespace Uno.Extensions.Core.Generators;
 
 /// <summary>
 /// A generator that generates IKeyEquatable implementation.
@@ -27,6 +28,10 @@ public partial class KeyEqualityGenerator : ISourceGenerator
 			Debugger.Launch();
 		}
 #endif
+		if (context.IsDisabled("UnoExtensionsGeneration_DisableKeyEqualityGenerator"))
+		{
+			return;
+		}
 
 		if (GenerationContext.TryGet<KeyEqualityGenerationContext>(context, out var error) is { } bindableContext)
 		{

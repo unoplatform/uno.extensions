@@ -1,13 +1,5 @@
 <Project>
-	<ItemGroup>
-		<CompilerVisibleProperty Include="UnoExtensionsGeneration_DisableNotNullIfNotNullAttribute" />
-		<CompilerVisibleProperty Include="UnoExtensionsGeneration_DisableNotNullWhenAttribute" />
-		<CompilerVisibleProperty Include="UnoExtensionsGeneration_DisableMemberNotNullWhenAttribute" />
-		<CompilerVisibleProperty Include="UnoExtensionsGeneration_DisableIsExternalInit" />
-		<CompilerVisibleProperty Include="UnoExtensionsGeneration_DisableModuleInitializerAttribute" />
-	</ItemGroup>
-
-	<Target Name="_InjectReactiveGenerator" BeforeTargets="BeforeCompile;_UnoSourceGenerator">
+	<Target Name="_InjectUnoExtensionsReactiveGenerator" BeforeTargets="BeforeCompile;_UnoSourceGenerator">
 		<ItemGroup>
 			<Analyzer
 				Include="$(MSBuildThisFileDirectory)..\bin\Uno.Extensions.Reactive.Generator\$(Configuration)\netstandard2.0\Uno.Extensions.Reactive.Generator.dll"

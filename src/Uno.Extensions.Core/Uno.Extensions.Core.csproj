@@ -43,10 +43,30 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Core.Generators\Uno.Extensions.Core.Generators.csproj">
+			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+			<SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+			<UndefineProperties>TargetFramework</UndefineProperties>
+		</ProjectReference>
+	</ItemGroup>
+
+	<Target Name="_IncludeUnoExtensionsCoreGenerators" BeforeTargets="Build;Pack">
+		<ItemGroup>
+			<Content Include="..\Uno.Extensions.Core.Generators\buildTransitive\**\*.*" Link="buildTransitive\%(RecursiveDir)%(Filename)%(Extension)">
+				<Pack>true</Pack>
+				<PackagePath>buildTransitive</PackagePath>
+			</Content>
+			<Content Include="..\Uno.Extensions.Core.Generators\bin\Uno.Extensions.Core.Generators\$(Configuration)\netstandard2.0\**\*.dll" Link="tools\%(RecursiveDir)%(Filename)%(Extension)">
+				<Pack>true</Pack>
+				<PackagePath>tools</PackagePath>
+			</Content>
+		</ItemGroup>
+	</Target>
+
+	<ItemGroup>
 		<InternalsVisibleTo Include="Uno.Extensions.Storage" />
 		<InternalsVisibleTo Include="Uno.Extensions.Storage.UI" />
 		<InternalsVisibleTo Include="Uno.Extensions.Storage.WinUI" />
-		<InternalsVisibleTo Include="Uno.Extensions.Reactive" />
 		<InternalsVisibleTo Include="Uno.Extensions.Reactive.UI" />
 		<InternalsVisibleTo Include="Uno.Extensions.Reactive.WinUI" />
 		<InternalsVisibleTo Include="Uno.Extensions.Reactive.Tests" />

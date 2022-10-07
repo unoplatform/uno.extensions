@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
 using Microsoft.CodeAnalysis;
+using Uno.Extensions.Reactive.Generator;
 using Uno.Extensions.Reactive.Generator.Compat;
 using Uno.Extensions.Reactive.Generator.Utils;
 
-namespace Uno.Extensions.Reactive.Generator;
+namespace Uno.Extensions.Core.Generators;
 
 /// <summary>
 /// A generator that generates IKeyEquatable implementation.
@@ -26,6 +27,11 @@ public partial class CompatibilityTypesGenerator : ISourceGenerator
 			Debugger.Launch();
 		}
 #endif
+
+		if (context.IsDisabled("UnoExtensionsGeneration_DisableCompatibilityTypesGenerator"))
+		{
+			return;
+		}
 
 		if (GenerationContext.TryGet<CompatibilityTypesGenerationContext>(context, out var error) is { } bindableContext)
 		{

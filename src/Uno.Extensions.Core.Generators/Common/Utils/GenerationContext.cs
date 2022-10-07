@@ -8,6 +8,9 @@ namespace Uno.Extensions.Reactive.Generator;
 
 internal static class GenerationContext
 {
+	public static bool IsDisabled(this GeneratorExecutionContext context, string disableGeneratorPropertyName, bool defaultValue = false)
+		=> bool.TryParse(context.GetMSBuildPropertyValue(disableGeneratorPropertyName, defaultValue.ToString()), out var isDisabled) && isDisabled;
+
 	public static TContext? TryGet<TContext>(GeneratorExecutionContext context, [NotNullWhen(true)] out string? error)
 		where TContext : notnull
 	{
