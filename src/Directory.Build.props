@@ -1,4 +1,6 @@
 <Project ToolsVersion="15.0">
+	<Import Project="..\Directory.Build.props" />
+
 	<PropertyGroup>
 		<Authors>Uno Platform</Authors>
 		<PackageProjectUrl>https://github.com/unoplatform/uno.extensions</PackageProjectUrl>

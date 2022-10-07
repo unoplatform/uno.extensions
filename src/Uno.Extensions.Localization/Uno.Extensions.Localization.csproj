@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+	<Import Project="..\tfms-default.props" />
+
 	<PropertyGroup>
 		<Description>Localization Extensions for the Uno Platform, UWP and WinUI. Reference Uno.Extensions.Localization.UI (UWP) or Uno.Extensions.Localization.WinUI (WinUI) from head projects</Description>
-
-		<TargetFramework>netstandard2.0</TargetFramework>
 
 		<!--Temporary disable missing XML doc until fixed in the whole package-->
 		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
