@@ -32,21 +32,21 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
-		<PackageReference Include="CommunityToolkit.WinUI.UI" Version="7.1.2" />
-		<PackageReference Include="IdentityModel.OidcClient" Version="5.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
-		<PackageReference Include="Microsoft.Identity.Client" Version="4.47.0" />
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.2" />
-		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22000.197" />
-		<PackageReference Include="Refit" Version="6.3.2" />
-		<PackageReference Include="Refit.HttpClientFactory" Version="6.3.2" />
-		<PackageReference Include="System.Text.Json" Version="6.0.3" />
-		<PackageReference Include="Uno.Core.Extensions.Logging.Singleton" Version="4.0.1" />
-		<PackageReference Include="Uno.Material.WinUI" Version="2.3.0" />
-		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.4.0-dev.19" />
-		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.4.0-dev.19" />
-		<PackageReference Include="Uno.WinUI.MSAL" Version="4.5.9" />
+		<PackageReference Include="CommunityToolkit.Mvvm" />
+		<PackageReference Include="CommunityToolkit.WinUI.UI"  />
+		<PackageReference Include="IdentityModel.OidcClient" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Console" />
+		<PackageReference Include="Microsoft.Identity.Client" />
+		<PackageReference Include="Microsoft.WindowsAppSDK"  />
+		<PackageReference Include="Microsoft.Windows.SDK.BuildTools"  />
+		<PackageReference Include="Refit" />
+		<PackageReference Include="Refit.HttpClientFactory"  />
+		<PackageReference Include="System.Text.Json" />
+		<PackageReference Include="Uno.Core.Extensions.Logging.Singleton"  />
+		<PackageReference Include="Uno.Material.WinUI" />
+		<PackageReference Include="Uno.Toolkit.WinUI.Material" />
+		<PackageReference Include="Uno.Toolkit.WinUI" />
+		<PackageReference Include="Uno.WinUI.MSAL" />
 		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>
 

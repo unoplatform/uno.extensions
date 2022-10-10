@@ -20,22 +20,22 @@
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
-		<PackageReference Include="IdentityModel.OidcClient" Version="5.0.0" />
-		<PackageReference Include="Uno.CommunityToolkit.WinUI.UI" Version="7.1.100-dev.15.g12261e2626" />
-		<PackageReference Include="Microsoft.Identity.Client" Version="4.47.0" />
-		<PackageReference Include="Uno.WinUI" Version="4.5.9" />
-		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.5.9" Condition="'$(Configuration)'=='Debug'" />
-		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.5.9" />
-		<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
-		<PackageReference Include="Refit" Version="6.3.2" />
-		<PackageReference Include="Refit.HttpClientFactory" Version="6.3.2" />
-		<PackageReference Include="System.Text.Json" Version="6.0.3" />
-		<PackageReference Include="Uno.Material.WinUI" Version="2.3.0" />
-		<PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.4.0-dev.19" />
-		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.4.0-dev.19" />
-		<PackageReference Include="Uno.WinUI.MSAL" Version="4.5.9" />
+		<PackageReference Include="CommunityToolkit.Mvvm" />
+		<PackageReference Include="IdentityModel.OidcClient" />
+		<PackageReference Include="Uno.CommunityToolkit.WinUI.UI" />
+		<PackageReference Include="Microsoft.Identity.Client" />
+		<PackageReference Include="Uno.WinUI" />
+		<PackageReference Include="Uno.WinUI.RemoteControl" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
+		<PackageReference Include="Microsoft.Extensions.Logging" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Console" />
+		<PackageReference Include="Refit" />
+		<PackageReference Include="Refit.HttpClientFactory"  />
+		<PackageReference Include="System.Text.Json" />
+		<PackageReference Include="Uno.Material.WinUI" />
+		<PackageReference Include="Uno.Toolkit.WinUI.Material" />
+		<PackageReference Include="Uno.Toolkit.WinUI" />
+		<PackageReference Include="Uno.WinUI.MSAL" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Authentication.Oidc\Uno.Extensions.Authentication.Oidc.WinUI.csproj" />
@@ -64,8 +64,8 @@
 	<Choose>
 		<When Condition="'$(TargetFramework)'=='net6.0-android'">
 			<ItemGroup>
-				<PackageReference Include="Xamarin.Google.Android.Material" Version="1.4.0.4" />
-				<PackageReference Include="Uno.UniversalImageLoader" Version="1.9.36" />
+				<PackageReference Include="Xamarin.Google.Android.Material" />
+				<PackageReference Include="Uno.UniversalImageLoader" />
 			</ItemGroup>
 			<ItemGroup>
 				<AndroidEnvironment Include="Android/environment.conf" />
@@ -78,7 +78,7 @@
 				<MtouchExtraArgs>$(MtouchExtraArgs) --marshal-objectivec-exceptions:disable</MtouchExtraArgs>
 			</PropertyGroup>
 			<ItemGroup>
-				<PackageReference Include="Uno.Extensions.Logging.OSLog" Version="1.4.0" />
+				<PackageReference Include="Uno.Extensions.Logging.OSLog" />
 			</ItemGroup>
 		</When>
 		<When Condition="'$(TargetFramework)'=='net6.0-maccatalyst'">
@@ -93,7 +93,7 @@
 				<InvariantGlobalization>false</InvariantGlobalization>
 			</PropertyGroup>
 			<ItemGroup>
-				<PackageReference Include="Uno.Extensions.Logging.OSLog" Version="1.4.0" />
+				<PackageReference Include="Uno.Extensions.Logging.OSLog" />
 			</ItemGroup>
 		</When>
 		<When Condition="'$(TargetFramework)'=='net6.0-macos'">
