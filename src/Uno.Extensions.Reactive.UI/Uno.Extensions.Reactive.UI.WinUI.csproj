@@ -17,7 +17,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Uno.WinUI" Version="4.5.9" />
-		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.4.0-dev.19" />
+		<PackageReference Include="Uno.Toolkit.WinUI" Version="2.4.0-dev.55" />
 	</ItemGroup>
 
 	<ItemGroup Condition="$(_IsWinUI)">
