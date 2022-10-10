@@ -18,7 +18,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />
 	</ItemGroup>
-	<Import Project="..\Extensions.props" />
+	
 	<Import Project="..\MyExtensionsApp.UI\MyExtensionsApp.UI.projitems" Label="Shared" />
 
 	<ItemGroup>

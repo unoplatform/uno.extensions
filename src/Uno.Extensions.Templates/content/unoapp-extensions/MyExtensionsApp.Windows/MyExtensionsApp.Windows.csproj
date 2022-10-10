@@ -70,6 +70,6 @@
 		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.22000.25" />
 		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.22000.25" />
 	</ItemGroup>
-	<Import Project="..\Extensions.props" />
+	
 	<Import Project="..\MyExtensionsApp.UI\MyExtensionsApp.UI.projitems" Label="Shared" />
 </Project>

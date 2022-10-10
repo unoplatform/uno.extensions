@@ -50,5 +50,5 @@
 		Project="$(MSBuildThisFileDirectory)\Uno.Extensions.Core.Generators\buildTransitive\Uno.Extensions.Core.props" />
 
 	<Import Project="winappsdk-workaround.targets" Condition="exists('winappsdk-workaround.targets')" />
-	<Import Project="xamarinmac-workaround.targets" Condition="exists('xamarinmac-workaround.targets')" />
+	<Import Project="xamarinmac-workaround.targets" Condition="exists('xamarinmac-workaround.targets') and $(TargetFramework.ToLower().StartsWith('xamarin')) and $(TargetFramework.ToLower().Contains('mac'))" />
 </Project>
