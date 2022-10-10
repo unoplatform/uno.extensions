@@ -33,5 +33,5 @@
     </When>
   </Choose>
 
-	<Import Project="..\..\src\xamarinmac-workaround.targets" Condition="exists('..\..\src\xamarinmac-workaround.targets')" />
+	<Import Project="..\..\src\xamarinmac-workaround.targets" Condition="exists('..\..\src\xamarinmac-workaround.targets') and $(TargetFramework.ToLower().StartsWith('xamarin')) and $(TargetFramework.ToLower().Contains('mac'))" />
 </Project>
