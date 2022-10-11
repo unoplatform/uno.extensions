@@ -9,22 +9,46 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Uno.WinUI.Skia.Wpf" Version="4.5.9" />
-		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.5.9" Condition="'$(Configuration)'=='Debug'" />
-		<PackageReference Include="SkiaSharp.Views.Uno.WinUI" Version="2.88.2" />
-		<PackageReference Include="SkiaSharp.Skottie" Version="2.88.2" />
+		<PackageReference Include="Uno.WinUI.Skia.Wpf" />
+		<PackageReference Include="Uno.WinUI.RemoteControl" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="SkiaSharp.Views.Uno.WinUI" />
+		<PackageReference Include="SkiaSharp.Skottie" />
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
+		<PackageReference Include="Uno.Material.WinUI" />
+		<PackageReference Include="Uno.Toolkit.WinUI.Material" />
+		<PackageReference Include="Uno.Toolkit.WinUI" />
+		<PackageReference Include="Uno.Extensions.Authentication.WinUI" />
+		<PackageReference Include="Uno.Extensions.Hosting.WinUI" />
+		<PackageReference Include="Uno.Extensions.Localization.WinUI" />
+		<PackageReference Include="Uno.Extensions.Logging.WinUI" />
+		<PackageReference Include="Uno.Extensions.Navigation.Toolkit.WinUI" />
+		<PackageReference Include="Uno.Extensions.Navigation.WinUI" />
+		<PackageReference Include="Uno.Extensions.Authentication" />
+		<PackageReference Include="Uno.Extensions.Configuration" />
+		<PackageReference Include="Uno.Extensions.Core" />
+		<PackageReference Include="Uno.Extensions.Hosting" />
+		<PackageReference Include="Uno.Extensions.Http" />
+		<PackageReference Include="Uno.Extensions.Http.Refit" />
+		<PackageReference Include="Uno.Extensions.Localization" />
+		<PackageReference Include="Uno.Extensions.Logging.Serilog" />
+		<PackageReference Include="Uno.Extensions.Navigation" />
+		<PackageReference Include="Uno.Extensions.Serialization" />
+		<PackageReference Include="Uno.Extensions.Serialization.Http" />
+		<PackageReference Include="Uno.Extensions.Serialization.Refit" />
+		<PackageReference Include="Uno.Extensions.Reactive" />
+		<PackageReference Include="Uno.Extensions.Reactive.WinUI" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />
 	</ItemGroup>
-	
+
 	<Import Project="..\MyExtensionsApp.UI\MyExtensionsApp.UI.projitems" Label="Shared" />
 
 	<ItemGroup>
-	  <Content Include="Assets\Fonts\Material\Roboto-Light.ttf" />
-	  <Content Include="Assets\Fonts\Material\Roboto-Medium.ttf" />
-	  <Content Include="Assets\Fonts\Material\Roboto-Regular.ttf" />
-	  <Content Include="Assets\Fonts\uno-fluentui-assets.ttf" />
+		<Content Include="Assets\Fonts\Material\Roboto-Light.ttf" />
+		<Content Include="Assets\Fonts\Material\Roboto-Medium.ttf" />
+		<Content Include="Assets\Fonts\Material\Roboto-Regular.ttf" />
+		<Content Include="Assets\Fonts\uno-fluentui-assets.ttf" />
 	</ItemGroup>
 </Project>

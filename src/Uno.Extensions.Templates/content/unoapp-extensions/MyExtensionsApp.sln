@@ -26,6 +26,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		Directory.Build.props = Directory.Build.props
 		Directory.Build.targets = Directory.Build.targets
+		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.Windows", "MyExtensionsApp.Windows\MyExtensionsApp.Windows.csproj", "{5A78EE9A-1922-468C-96E3-45817727511C}"
@@ -351,11 +352,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		MyExtensionsApp.UI\MyExtensionsApp.UI.projitems*{24d56e12-2373-4cbd-9ad4-5c931d15fb0d}*SharedItemsImports = 5
-		MyExtensionsApp.UI\MyExtensionsApp.UI.projitems*{40ea03f7-8a22-4143-b251-79bac3eb13d2}*SharedItemsImports = 5
-		MyExtensionsApp.UI\MyExtensionsApp.UI.projitems*{5a78ee9a-1922-468c-96e3-45817727511c}*SharedItemsImports = 5
 		MyExtensionsApp.UI\MyExtensionsApp.UI.projitems*{6279c845-92f8-4333-ab99-3d213163593c}*SharedItemsImports = 13
-		MyExtensionsApp.UI\MyExtensionsApp.UI.projitems*{6c744695-da38-44d9-b487-fe5804c5508d}*SharedItemsImports = 5
-		MyExtensionsApp.UI\MyExtensionsApp.UI.projitems*{925c7a3e-6532-4e27-8abe-37a4f9b73c8b}*SharedItemsImports = 5
-		MyExtensionsApp.UI\MyExtensionsApp.UI.projitems*{a5b8155a-118f-4794-b551-c6f3cf7e5411}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal
