@@ -73,21 +73,15 @@
     <Reference Include="System.Memory" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm">
-      <Version>7.1.2</Version>
-    </PackageReference>
-    <PackageReference Include="System.Text.Json" Version="6.0.3" />
-    <PackageReference Include="Refit">
-      <Version>6.3.2</Version>
-    </PackageReference>
-    <PackageReference Include="Refit.HttpClientFactory">
-      <Version>6.3.2</Version>
-    </PackageReference>
-    <PackageReference Include="Uno.UI" Version="4.5.9" />
-    <PackageReference Include="Uno.UI.RemoteControl" Version="4.5.9" Condition="'$(Configuration)'=='Debug'" />
-    <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.5.9" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="System.Text.Json" />
+    <PackageReference Include="Refit" />
+    <PackageReference Include="Refit.HttpClientFactory" />
+    <PackageReference Include="Uno.UI"   />
+    <PackageReference Include="Uno.UI.RemoteControl"  Condition="'$(Configuration)'=='Debug'" />
+    <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging"  />
+    <PackageReference Include="Microsoft.Extensions.Logging"  />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console"   />
   </ItemGroup>
   <Import Project="..\Playground.Shared\Playground.Shared.projitems" Label="Shared" />
   <ItemGroup>
@@ -197,6 +191,7 @@
       <Project>{2397a664-9140-45e6-bec0-6e975fcc31d1}</Project>
       <Name>Uno.Extensions.Storage</Name>
     </ProjectReference>
+
   </ItemGroup>
   <!-- Reference to Reactive.props only required when referencing Reactive as source code -->
   <Import Project="..\..\..\src\Uno.Extensions.Reactive.Generator\buildTransitive\Uno.Extensions.Reactive.props" />
@@ -220,4 +215,6 @@
       <ReferencePath Remove="@(_ReferencePathToRemove)" />
     </ItemGroup>
   </Target>
+
+  
 </Project>
