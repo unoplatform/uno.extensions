@@ -13,6 +13,7 @@
 		<PackageVersion Include="Microsoft.Extensions.Logging" Version="6.0.0" />
 		<PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
 		<PackageVersion Include="Microsoft.Identity.Client" Version="4.47.0" />
+		<PackageVersion Include="Microsoft.Net.Compilers" Version="4.2.0">
 		<PackageVersion Include="Microsoft.NETCore.UniversalWindowsPlatform" Version="6.2.11" />
 		<PackageVersion Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2"/>
 	    <PackageVersion Include="Microsoft.Toolkit.Uwp.UI" Version="7.1.2" />
@@ -25,7 +26,7 @@
 		<PackageVersion Include="SkiaSharp.HarfBuzz" Version="2.88.1" />
 		<PackageVersion Include="SkiaSharp.Views" Version="2.88.1-preview.79" />
 		<PackageVersion Include="SkiaSharp.Views.WPF" Version="2.88.1" />
-<PackageVersion Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+		<PackageVersion Include="Swashbuckle.AspNetCore" Version="6.2.3" />
 		<PackageVersion Include="System.Text.Json" Version="6.0.3" />
 		<PackageVersion Include="Uno.CommunityToolkit.WinUI.UI" Version="7.1.100-dev.15.g12261e2626" />
 		<PackageVersion Include="Uno.Core.Extensions.Logging.Singleton" Version="4.0.1" />
