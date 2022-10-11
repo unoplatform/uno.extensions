@@ -77,7 +77,7 @@
 			</MSBuildDeveloperNamespace>
 		</PropertyGroup>
 
-		<ItemGroup>
+		<ItemGroup>   
 			<_AllCSProjFiles Include="content/**/*.csproj" />
 			<_AllCSProjFiles Include="content/**/Directory.Packages.props" />
 		</ItemGroup>
