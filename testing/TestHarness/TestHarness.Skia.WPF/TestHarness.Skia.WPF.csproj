@@ -23,7 +23,8 @@
 		<PackageReference Include="Uno.WinUI.MSAL" />
 		<PackageReference Include="SkiaSharp.HarfBuzz" />
 		<PackageReference Include="SkiaSharp.Views.WPF" />
-		<PackageReference Include="Uno.SourceGenerationTasks"  />
+		<PackageReference Include="SkiaSharp.Skottie" />
+		<PackageReference Include="SkiaSharp.Views.Uno.WinUI" />
 	</ItemGroup>
 	<ItemGroup>
 		<UpToDateCheckInput Include="..\TestHarness.Shared\**\*.xaml" />
