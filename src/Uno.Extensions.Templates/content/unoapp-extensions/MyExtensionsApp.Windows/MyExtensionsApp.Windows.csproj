@@ -21,6 +21,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="Images\SplashScreen.png" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<Content Include="Images\LockScreenLogo.scale-200.png" />
 		<Content Include="Images\SplashScreen.png" />
 		<Content Include="Images\SplashScreen.scale-100.png" />

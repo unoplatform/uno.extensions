@@ -29,7 +29,14 @@ public sealed partial class App : Application
 #else
 		_window = Microsoft.UI.Xaml.Window.Current;
 #endif
-		Host = await _window.InitializeNavigationWithExtendedSplash(BuildAppHost);
+
+		var root = new Shell();
+		_window.Content = root;
+
+		Host = await _window.InitializeNavigationWithExtendedSplash(
+					BuildAppHost,
+					args.UWPLaunchActivatedEventArgs.SplashScreen,
+					navigationRoot: root.SplashScreen);
 	}
 
 	/// <summary>
