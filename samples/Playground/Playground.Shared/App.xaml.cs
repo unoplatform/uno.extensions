@@ -105,7 +105,7 @@ public sealed partial class App : Application
 		_window.Content = root;
 
 		_host = await _window.InitializeNavigationWithExtendedSplash(BuildAppHost,
-#if WINDOWS_UWP
+#if !WIN_UI
 					args.SplashScreen,
 #else
 					args.UWPLaunchActivatedEventArgs.SplashScreen,
