@@ -11,7 +11,7 @@ public sealed partial class CommerceMainPage : BaseTestSectionPage
 
 	public async void ShowAppClick(object sender, RoutedEventArgs e)
 	{
-		await NavigationRoot.Navigator()!.NavigateRouteAsync(this,"");
+		await Navigator.NavigateRouteAsync(this,"");
 	}
 	public async void NarrowClick(object sender, RoutedEventArgs e)
 	{

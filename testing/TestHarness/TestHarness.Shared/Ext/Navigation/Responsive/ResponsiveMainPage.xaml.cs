@@ -10,7 +10,7 @@ public sealed partial class ResponsiveMainPage : BaseTestSectionPage
 
 	public async void ResponsiveHomeClick(object sender, RoutedEventArgs e)
 	{
-		await NavigationRoot.Navigator()!.NavigateViewModelAsync<ResponsiveHomeViewModel>(this);
+		await Navigator.NavigateViewModelAsync<ResponsiveHomeViewModel>(this);
 	}
 	public async void NarrowClick(object sender, RoutedEventArgs e)
 	{

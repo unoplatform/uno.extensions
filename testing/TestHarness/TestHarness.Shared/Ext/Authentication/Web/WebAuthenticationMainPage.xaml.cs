@@ -11,6 +11,6 @@ public sealed partial class WebAuthenticationMainPage : BaseTestSectionPage
 
 	public async void ShowAppClick(object sender, RoutedEventArgs e)
 	{
-		await NavigationRoot.Navigator()!.NavigateRouteAsync(this,"");
+		await Navigator.NavigateRouteAsync(this,"");
 	}
 }

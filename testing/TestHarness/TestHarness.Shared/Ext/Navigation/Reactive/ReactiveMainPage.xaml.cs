@@ -10,7 +10,7 @@ public sealed partial class ReactiveMainPage : BaseTestSectionPage
 
 	public async void OnePageClick(object sender, RoutedEventArgs e)
 	{
-		await NavigationRoot.Navigator()!.NavigateViewModelAsync<ReactiveOneViewModel>(this);
+		await Navigator.NavigateViewModelAsync<ReactiveOneViewModel>(this);
 	}
 
 }

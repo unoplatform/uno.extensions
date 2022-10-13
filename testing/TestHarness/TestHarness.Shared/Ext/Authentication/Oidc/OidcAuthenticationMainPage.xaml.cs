@@ -10,6 +10,6 @@ public sealed partial class OidcAuthenticationMainPage : BaseTestSectionPage
 
 	public async void ShowAppClick(object sender, RoutedEventArgs e)
 	{
-		await NavigationRoot.Navigator()!.NavigateRouteAsync(this,"");
+		await Navigator.NavigateRouteAsync(this,"");
 	}
 }

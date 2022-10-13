@@ -10,6 +10,6 @@ public sealed partial class ListToDetailsMainPage : BaseTestSectionPage
 
 	public async void ListToDetailsHomeClick(object sender, RoutedEventArgs e)
 	{
-		await NavigationRoot.Navigator()!.NavigateViewModelAsync<ListToDetailsHomeViewModel>(this);
+		await Navigator.NavigateViewModelAsync<ListToDetailsHomeViewModel>(this);
 	}
 }
