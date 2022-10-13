@@ -2,17 +2,10 @@
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <ItemGroup>
-    <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <!--
-			If, in the same solution, you are referencing a project that uses https://github.com/onovotny/MSBuildSdkExtras,
-			you need to make sure that the version provided here matches https://github.com/novotnyllc/MSBuildSdkExtras/blob/main/Source/MSBuild.Sdk.Extras/DefaultItems/ImplicitPackages.targets#L11.
-			This is not an issue when libraries are referenced through nuget packages. See https://github.com/unoplatform/uno/issues/446 for more details.
-			-->
-      <Version>6.2.11</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.UI.Xaml" Version="2.7.1" />
-    <PackageReference Include="Uno.UI" Version="4.5.9" />
-    <PackageReference Include="Uno.Core.Extensions.Logging.Singleton" Version="4.0.1" />
+    <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform" />
+    <PackageReference Include="Microsoft.UI.Xaml" />
+    <PackageReference Include="Uno.UI" />
+    <PackageReference Include="Uno.Core.Extensions.Logging.Singleton" />
   </ItemGroup>
   <PropertyGroup>
     <!-- Workaround for https://github.com/unoplatform/uno/discussions/5007, to remove when original VS issue is fixed. -->
@@ -152,19 +145,19 @@
     <Content Include="Properties\Default.rd.xml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
-    <PackageReference Include="IdentityModel.OidcClient" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Toolkit.Uwp.UI" Version="7.1.2" />
-    <PackageReference Include="Microsoft.Identity.Client" Version="4.47.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
-    <PackageReference Include="Refit" Version="6.3.2" />
-    <PackageReference Include="Refit.HttpClientFactory" Version="6.3.2" />
-    <PackageReference Include="System.Text.Json" Version="6.0.3" />
-    <PackageReference Include="Uno.Material" Version="2.3.0" />
-    <PackageReference Include="Uno.Toolkit.UI.Material" Version="2.4.0-dev.19" />
-    <PackageReference Include="Uno.Toolkit.UI" Version="2.4.0-dev.19" />
-    <PackageReference Include="Uno.UI.MSAL" Version="4.5.9" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="IdentityModel.OidcClient" />
+    <PackageReference Include="Microsoft.Toolkit.Uwp.UI" />
+    <PackageReference Include="Microsoft.Identity.Client" />
+    <PackageReference Include="Microsoft.Extensions.Logging" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" />
+    <PackageReference Include="Refit" />
+    <PackageReference Include="Refit.HttpClientFactory"  />
+    <PackageReference Include="System.Text.Json" />
+    <PackageReference Include="Uno.Material" />
+    <PackageReference Include="Uno.Toolkit.UI.Material" />
+    <PackageReference Include="Uno.Toolkit.UI" />
+    <PackageReference Include="Uno.UI.MSAL"   />
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Authentication.Oidc\Uno.Extensions.Authentication.Oidc.UI.csproj" />
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Authentication\Uno.Extensions.Authentication.csproj" />
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Authentication.UI\Uno.Extensions.Authentication.UI.csproj" />

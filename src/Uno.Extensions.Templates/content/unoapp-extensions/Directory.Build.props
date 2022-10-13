@@ -4,17 +4,13 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 
-		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-	  	<NoWarn>$(NoWarn);Uno0001;CS1998;CA1416</NoWarn>
-		  <SynthesizeLinkMetadata>true</SynthesizeLinkMetadata>
-		<IsTestProject>false</IsTestProject>
-		<IsCoreProject>false</IsCoreProject>
-	</PropertyGroup>
-
-	<PropertyGroup>
 		<DebugType>portable</DebugType>
 		<DebugSymbols>True</DebugSymbols>
+		<SynthesizeLinkMetadata>true</SynthesizeLinkMetadata>
+
+		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+
+		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+	  	<NoWarn>$(NoWarn);Uno0001;CS1998;CA1416;NU1507</NoWarn>
 	</PropertyGroup>
-
-
 </Project>

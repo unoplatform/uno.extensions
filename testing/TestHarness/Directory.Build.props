@@ -3,12 +3,13 @@
 		<LangVersion>10.0</LangVersion>
 		<Nullable>enable</Nullable>
 		<NoWarn>$(NoWarn);NU5104;NU1504;NU1505;CS1591;MSB3277;XA0101;CS8785;CS8669;CA1416</NoWarn>
+		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 	</PropertyGroup>
 
 	<PropertyGroup>
 		<DebugType>portable</DebugType>
 		<DebugSymbols>True</DebugSymbols>
-		<SynthesizeLinkMetadata>true</SynthesizeLinkMetadata> 
+		<SynthesizeLinkMetadata>true</SynthesizeLinkMetadata>
 		<RootNamespace>TestHarness</RootNamespace>
 	</PropertyGroup>
 
@@ -36,7 +37,7 @@
 
 		<_IsNet>false</_IsNet>
 		<_IsNet Condition="'$(TargetFramework)'=='net461'">true</_IsNet>
-		
+
 		<_IsNetCore>false</_IsNetCore>
 		<_IsNetCore Condition="'$(TargetFramework)'=='net5.0'">true</_IsNetCore>
 
@@ -50,11 +51,10 @@
 		<_IsWinUI Condition="$(TargetFramework.Contains('windows10'))">true</_IsWinUI>
 	</PropertyGroup>
 
-	
+
 	<PropertyGroup Condition="'$(_IsIOS)' == 'true'">
 		<MtouchExtraArgs>$(MtouchExtraArgs) --registrar=static</MtouchExtraArgs>
 	</PropertyGroup>
 
 	<Import Project="..\src\crosstargeting_override.props" Condition="exists('..\src\crosstargeting_override.props')" />
-	
 </Project>

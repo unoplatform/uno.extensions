@@ -7,11 +7,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Uno.WinUI.Runtime.WebAssembly" Version="4.3.6" />
+		<PackageReference Include="Uno.WinUI.Runtime.WebAssembly" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.3.0" />
+		<PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" />
 	</ItemGroup>
 
 	<Import Project="common.props" />

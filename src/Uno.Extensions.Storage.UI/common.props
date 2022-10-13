@@ -15,12 +15,12 @@
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(_IsUWP)' == 'true'">
-		<PackageReference Include="Microsoft.UI.Xaml" Version="2.7.1" />
-		<PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
+		<PackageReference Include="Microsoft.UI.Xaml" />
+		<PackageReference Include="System.Threading.Tasks.Extensions" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Uno.Core" Version="4.0.1" />
+		<PackageReference Include="Uno.Core" />
 	</ItemGroup>
 
 	<ItemGroup>

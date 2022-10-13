@@ -77,16 +77,18 @@
 			</MSBuildDeveloperNamespace>
 		</PropertyGroup>
 
-		<ItemGroup>
+		<ItemGroup>   
 			<_AllCSProjFiles Include="content/**/*.csproj" />
-			<_AllCSProjFiles Include="content/**/Directory.Build.targets" />
+			<_AllCSProjFiles Include="content/**/Directory.Packages.props" />
 		</ItemGroup>
 
 		<!-- Legacy projects -->
-		<XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)" Query="//x:PackageReference[@Version='255.255.255.255']/@Version" Value="$(PackageVersion)" Namespaces="$(MSBuildDeveloperNamespace)" />
+		<XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)" Query="//x:PackageVersion[@Version='255.255.255.255']/@Version" Value="$(PackageVersion)" Namespaces="$(MSBuildDeveloperNamespace)" />
+		<XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)" Query="//x:PackageReference[@Version='255.255.255.255']/@VersionOverride" Value="$(PackageVersion)" Namespaces="$(MSBuildDeveloperNamespace)" />
 
 		<!-- SDK Style projects -->
-		<XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)" Query="//PackageReference[@Version='255.255.255.255']/@Version" Value="$(PackageVersion)" Namespaces="" />
+		<XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)" Query="//PackageVersion[@Version='255.255.255.255']/@Version" Value="$(PackageVersion)" Namespaces="" />
+		<XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)" Query="//PackageReference[@Version='255.255.255.255']/@VersionOverride" Value="$(PackageVersion)" Namespaces="" />
 
 		<!-- <XmlPeek XmlInputPath="..\..\samples\Commerce\Commerce.Wasm\Commerce.Wasm.csproj" Query="//PackageReference[@Include='Uno.Toolkit.WinUI']/@Version">
 			<Output TaskParameter="Result" ItemName="Uno_Toolkit_WinUI_Version" />

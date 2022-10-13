@@ -12,7 +12,7 @@ public static class ServiceCollectionExtensions
 		// of TService
 		services.TryAddSingleton<TImplementation>();
 		// Register for TService
-		services.TryAddSingleton<TService>(sp => sp.GetService<TImplementation>());
+		services.TryAddSingleton<TService>(sp => sp.GetRequiredService<TImplementation>());
 		return services
 				// Register the named resolve
 				.AddSingleton<INamedInstance<TService>>(sp=>new NamedInstance<TService,TImplementation>(sp,Name));

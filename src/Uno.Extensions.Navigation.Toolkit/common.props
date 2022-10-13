@@ -1,6 +1,6 @@
 <Project ToolsVersion="15.0">
 	<ItemGroup Condition="'$(_IsUWP)' == 'true'">
-		<PackageReference Include="Microsoft.UI.Xaml" Version="2.7.1" />
+		<PackageReference Include="Microsoft.UI.Xaml" />
 	</ItemGroup>
 
 	<PropertyGroup>
@@ -17,12 +17,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
-		<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" />
+		<PackageReference Include="Microsoft.Extensions.Logging" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Uno.Core" Version="4.0.1" />
+		<PackageReference Include="Uno.Core" />
 	</ItemGroup>
 
   <ItemGroup>

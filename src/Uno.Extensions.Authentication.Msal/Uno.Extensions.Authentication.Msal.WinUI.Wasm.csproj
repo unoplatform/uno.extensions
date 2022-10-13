@@ -12,8 +12,8 @@
 
 
 	<ItemGroup>
-		<PackageReference Include="Uno.WinUI.Runtime.WebAssembly" Version="4.3.6" />
-		<PackageReference Include="Uno.WinUI.MSAL" Version="4.3.6" />
+		<PackageReference Include="Uno.WinUI.Runtime.WebAssembly" />
+		<PackageReference Include="Uno.WinUI.MSAL" />
 	</ItemGroup>
 
 	<Import Project="common.props" />
