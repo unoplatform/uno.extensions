@@ -32,6 +32,8 @@
 		<PackageReference Include="Uno.Toolkit.WinUI.Material" />
 		<PackageReference Include="Uno.Toolkit.WinUI" />
 		<PackageReference Include="Uno.WinUI.MSAL" />
+		<PackageReference Include="SkiaSharp.Skottie" />
+		<PackageReference Include="SkiaSharp.Views.Uno.WinUI" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Authentication.Oidc\Uno.Extensions.Authentication.Oidc.WinUI.csproj" />

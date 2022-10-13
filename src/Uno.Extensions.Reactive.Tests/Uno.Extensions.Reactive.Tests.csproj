@@ -15,7 +15,6 @@
 		<PackageReference Include="MSTest.TestFramework" />
 		<PackageReference Include="coverlet.collector" />
 		<PackageReference Include="System.Collections.Immutable" VersionOverride="6.0.0" /><!--For local usage we use the most recent version-->
-		<PackageReference Include="Uno.SourceGenerationTasks"  />
 		<PackageReference Include="Uno.UI" />
 	</ItemGroup>
 
