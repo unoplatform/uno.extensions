@@ -10,7 +10,7 @@ public sealed partial class StorageMainPage : BaseTestSectionPage
 
 	public async void OnePageClick(object sender, RoutedEventArgs e)
 	{
-		await NavigationRoot.Navigator()!.NavigateViewModelAsync<StorageOneViewModel>(this);
+		await Navigator.NavigateViewModelAsync<StorageOneViewModel>(this);
 	}
 
 }

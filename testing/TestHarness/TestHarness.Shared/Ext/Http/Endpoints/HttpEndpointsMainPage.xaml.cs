@@ -10,7 +10,7 @@ public sealed partial class HttpEndpointsMainPage : BaseTestSectionPage
 
 	public async void OnePageClick(object sender, RoutedEventArgs e)
 	{
-		await NavigationRoot.Navigator()!.NavigateViewModelAsync<HttpEndpointsOneViewModel>(this);
+		await Navigator.NavigateViewModelAsync<HttpEndpointsOneViewModel>(this);
 	}
 
 }

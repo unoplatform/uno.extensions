@@ -33,6 +33,15 @@ public partial class BaseTestSectionPage : Page, IDisposable
 		}
 	}
 
+	protected INavigator Navigator
+	{
+		get
+		{
+			var root = this.FindName(Constants.NavigationRoot) as ContentControl;
+			return (root!.Content as FrameworkElement)!.Navigator()!;
+		}
+	}
+
 	private bool init;
 	private async Task InitializeHost()
 	{

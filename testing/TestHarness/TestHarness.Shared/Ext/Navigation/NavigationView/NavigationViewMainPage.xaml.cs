@@ -10,7 +10,7 @@ public sealed partial class NavigationViewMainPage : BaseTestSectionPage
 
 	public async void NavigationViewHomeClick(object sender, RoutedEventArgs e)
 	{
-		await NavigationRoot.Navigator()!.NavigateViewModelAsync<NavigationViewHomeViewModel>(this);
+		await Navigator.NavigateViewModelAsync<NavigationViewHomeViewModel>(this);
 	}
 
 }

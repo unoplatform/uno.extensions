@@ -10,7 +10,7 @@ public sealed partial class HttpRefitMainPage : BaseTestSectionPage
 
 	public async void OnePageClick(object sender, RoutedEventArgs e)
 	{
-		await NavigationRoot.Navigator()!.NavigateViewModelAsync<HttpRefitOneViewModel>(this);
+		await Navigator.NavigateViewModelAsync<HttpRefitOneViewModel>(this);
 	}
 
 }

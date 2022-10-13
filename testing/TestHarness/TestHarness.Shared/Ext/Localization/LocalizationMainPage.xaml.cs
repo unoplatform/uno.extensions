@@ -10,7 +10,7 @@ public sealed partial class LocalizationMainPage : BaseTestSectionPage
 
 	public async void OnePageClick(object sender, RoutedEventArgs e)
 	{
-		await NavigationRoot.Navigator()!.NavigateViewModelAsync<LocalizationOneViewModel>(this);
+		await Navigator.NavigateViewModelAsync<LocalizationOneViewModel>(this);
 	}
 
 }
