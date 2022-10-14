@@ -151,7 +151,7 @@ public static class ServiceProviderExtensions
 	/// <param name="initialViewModel">[optional] Initial navigation viewmodel</param>
 	/// <param name="navigationRoot">[optional] Where to host app navigation (only required for nesting navigation in an existing application)</param>
 	/// <returns>The created IHost</returns>
-	public static Task<IHost> InitializeNavigation(this Window window, Func<IHost> buildHost, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null, ContentControl? navigationRoot = null)
+	public static Task<IHost> InitializeNavigation(this Window window, Func<Task<IHost>> buildHost, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null, ContentControl? navigationRoot = null)
 	{
 		return window.InitializeNavigation<DefaultViewHostProvider>(buildHost, _=>{ },
 		initialRoute, initialView, initialViewModel, navigationRoot);
@@ -159,7 +159,7 @@ public static class ServiceProviderExtensions
 
 	internal static Task<IHost> InitializeNavigation<TViewHostProvider>(
 		this Window window,
-		Func<IHost> buildHost,
+		Func<Task<IHost>> buildHost,
 		Action<FrameworkElement> initViewHost,
 		string? initialRoute = "",
 		Type? initialView = null,
@@ -188,14 +188,18 @@ public static class ServiceProviderExtensions
 		return buildTask;
 	}
 
-	private static async Task<IHost> BuildAndInitializeHost(this Window window, FrameworkElement viewHost, Func<IHost> buildHost, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
+	private static async Task<IHost> BuildAndInitializeHost(
+		this Window window,
+		FrameworkElement viewHost,
+		Func<Task<IHost>> buildHost,
+		string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
 	{
 		// Force immediate return of Task to avoid synchronous execution of buildHost
 		// It's important that buildHost is still executed on UI thread, so can't do
 		// Task.Run to force background execution.
 		await Task.Yield();
 
-		var host = buildHost();
+		var host = await buildHost();
 		var services = window.AttachServices(host.Services);
 		var startup = viewHost.Host(services, initialRoute, initialView, initialViewModel);
 

@@ -104,12 +104,14 @@ public sealed partial class App : Application
 		var root = new ShellView();
 		_window.Content = root;
 
-		_host = await _window.InitializeNavigationWithExtendedSplash(BuildAppHost,
-#if !WINUI
-					args.SplashScreen,
-#else
-					args.UWPLaunchActivatedEventArgs.SplashScreen,
-#endif
+		_host = await _window.InitializeNavigationWithExtendedSplash(
+			async ()=> {
+
+				// Uncomment to view splashscreen for longer
+				// await Task.Delay(5000);
+				return BuildAppHost();
+			}
+			,args,
 					// Option 1: This requires Shell to be the first RouteMap - best for perf as no reflection required
 					// initialRoute: ""
 					// Option 2: Specify route name

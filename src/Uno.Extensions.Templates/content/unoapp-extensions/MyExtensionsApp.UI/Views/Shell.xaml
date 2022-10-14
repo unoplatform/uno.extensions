@@ -9,8 +9,8 @@
 			 d:DesignHeight="300"
 			 d:DesignWidth="400">
 
-	<utu:ExtendedSplashScreen x:Name="Splash">
-		<utu:ExtendedSplashScreen.LoadingContent>
+	<utu:LoadingView x:Name="Splash">
+		<utu:LoadingView.LoadingContent>
 			<Grid>
 				<Grid.RowDefinitions>
 					<RowDefinition Height="2*" />
@@ -22,6 +22,6 @@
 							  VerticalAlignment="Center"
 							  HorizontalAlignment="Center" Height="100" Width="100" />
 			</Grid>
-		</utu:ExtendedSplashScreen.LoadingContent>
-	</utu:ExtendedSplashScreen>
+		</utu:LoadingView.LoadingContent>
+	</utu:LoadingView>
 </UserControl>

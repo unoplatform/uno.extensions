@@ -2,6 +2,12 @@
 
 namespace Uno.Extensions;
 
+#if WINUI
+using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
+#else
+using LaunchActivatedEventArgs = Windows.ApplicationModel.Activation.LaunchActivatedEventArgs;
+#endif
+
 /// <summary>
 /// Extension methods for adding services to an <see cref="IServiceCollection" />.
 /// </summary>
@@ -31,7 +37,7 @@ public static class ServiceCollectionExtensions
 	/// </summary>
 	/// <param name="window">The application Window to initialize navigation for</param>
 	/// <param name="buildHost">Function to create IHost</param>
-	/// <param name="splashscreen">Splashscreen info to pass to extended splash screen</param>
+	/// <param name="launchArgs">The application launch args, which includes SplashScreen</param>
 	/// <param name="initialRoute">[optional] Initial navigation route</param>
 	/// <param name="initialView">[optional] Initial navigation view</param>
 	/// <param name="initialViewModel">[optional] Initial navigation viewmodel</param>
@@ -39,20 +45,28 @@ public static class ServiceCollectionExtensions
 	/// <returns>The created IHost</returns>
 	public static Task<IHost> InitializeNavigationWithExtendedSplash(
 		this Window window,
-		Func<IHost> buildHost,
-		SplashScreen? splashscreen = null,
+		Func<Task<IHost>> buildHost,
+		LaunchActivatedEventArgs? launchArgs = null,
 		string? initialRoute = "",
 		Type? initialView = null,
 		Type? initialViewModel = null,
-		ContentControl? navigationRoot=null)
+		ContentControl? navigationRoot = null)
 	{
+#if !WINUI
+		var splashscreen=launchArgs?.SplashScreen;
+#elif WINDOWS
+		var splashscreen = launchArgs?.UWPLaunchActivatedEventArgs.SplashScreen;
+#else
+		var splashscreen = default(SplashScreen?);
+#endif
 		return window.InitializeNavigation<ToolkitViewHostProvider>(
 			buildHost,
 			viewHost =>
 			{
-				if(viewHost is ExtendedSplashScreen esplash)
+				if (viewHost is ExtendedSplashScreen esplash)
 				{
 					esplash.SplashScreen = splashscreen;
+					esplash.Window = window;
 				}
 			},
 			initialRoute, initialView, initialViewModel, navigationRoot);
