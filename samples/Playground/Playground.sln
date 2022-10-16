@@ -121,6 +121,22 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Localization
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Core.Generators", "..\..\src\Uno.Extensions.Core.Generators\Uno.Extensions.Core.Generators.csproj", "{DAF3E56C-055C-4F54-9273-CCF970D23619}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Playground Items", "Playground Items", "{8C30A456-0A18-44F4-9803-1CBB9DDB1A09}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
+		Directory.Packages.props = Directory.Packages.props
+		global.json = global.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extension Items", "Extension Items", "{30438887-3F13-49ED-AA19-EBB0531C27E1}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\src\Directory.Build.props = ..\..\src\Directory.Build.props
+		..\..\src\Directory.Build.targets = ..\..\src\Directory.Build.targets
+		..\..\src\Directory.Packages.props = ..\..\src\Directory.Packages.props
+		..\..\src\global.json = ..\..\src\global.json
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Ad-Hoc|Any CPU = Ad-Hoc|Any CPU
@@ -2856,6 +2872,7 @@ Global
 		{AEE62EC1-6694-48FA-A770-BA103DC05865} = {35B2CF6C-0902-4B39-98AA-0A9F2DB0A5D2}
 		{12750E72-31B8-4331-B3BB-850BB590B8F9} = {E8426A49-E2F8-4310-9C70-1DEC12D5F4AB}
 		{DAF3E56C-055C-4F54-9273-CCF970D23619} = {F9372730-80BC-47B6-9E23-B5F69E36768F}
+		{8C30A456-0A18-44F4-9803-1CBB9DDB1A09} = {9FDE6A95-7086-43A9-A909-74C2FE64B509}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1A645832-60E5-4DA0-9EE7-69F7E34333DC}

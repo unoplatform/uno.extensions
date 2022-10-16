@@ -24,12 +24,4 @@
 		<PackageReference Include="Uno.Toolkit.WinUI" />
 		<ProjectReference Include="..\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj" />
 	</ItemGroup>
-
-	<ItemGroup Condition="$(_IsWinUI)">
-		<PackageReference Include="Microsoft.WindowsAppSDK" />
-		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
-
-		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.18362.24" />
-		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.18362.24" />
-	</ItemGroup>
 </Project>

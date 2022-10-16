@@ -24,7 +24,9 @@
 		<PackageVersion Include="Refit" Version="6.3.2" />
 		<PackageVersion Include="Refit.HttpClientFactory" Version="6.3.2" />
 		<PackageVersion Include="SkiaSharp.HarfBuzz" Version="2.88.1" />
-		<PackageVersion Include="SkiaSharp.Views" Version="2.88.1-preview.79" />
+		<PackageVersion Include="SkiaSharp.Skottie" Version="2.88.2" />
+		<PackageVersion Include="SkiaSharp.Views" Version="2.88.1" />
+		<PackageVersion Include="SkiaSharp.Views.Uno.WinUI" Version="2.88.1" />
 		<PackageVersion Include="SkiaSharp.Views.WPF" Version="2.88.1" />
 		<PackageVersion Include="Swashbuckle.AspNetCore" Version="6.2.3" />
 		<PackageVersion Include="System.Text.Json" Version="6.0.3" />
@@ -35,10 +37,10 @@
 		<PackageVersion Include="Uno.Material" Version="2.3.0" />
 		<PackageVersion Include="Uno.Material.WinUI" Version="2.3.0" />
 		<PackageVersion Include="Uno.Microsoft.Toolkit.Uwp.UI" Version="7.1.11" />
-		<PackageVersion Include="Uno.Toolkit.UI" Version="2.4.0-dev.57" />
-		<PackageVersion Include="Uno.Toolkit.UI.Material" Version="2.4.0-dev.57" />
-		<PackageVersion Include="Uno.Toolkit.WinUI" Version="2.4.0-dev.57" />
-		<PackageVersion Include="Uno.Toolkit.WinUI.Material" Version="2.4.0-dev.57" />
+		<PackageVersion Include="Uno.Toolkit.UI" Version="2.4.0-dev.75" />
+		<PackageVersion Include="Uno.Toolkit.UI.Material" Version="2.4.0-dev.75" />
+		<PackageVersion Include="Uno.Toolkit.WinUI" Version="2.4.0-dev.75" />
+		<PackageVersion Include="Uno.Toolkit.WinUI.Material" Version="2.4.0-dev.75" />
 		<PackageVersion Include="Uno.UI" Version="4.6.0-dev.573" />
 		<PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.6.0-dev.573" />
 		<PackageVersion Include="Uno.UI.MSAL" Version="4.6.0-dev.573" />
@@ -52,7 +54,7 @@
 		<PackageVersion Include="Uno.UITest.Selenium" Version="1.1.0-dev.32" />
 		<PackageVersion Include="Uno.UITest.Xamarin" Version="1.1.0-dev.32" />
 		<PackageVersion Include="Uno.UITest.Helpers" Version="1.1.0-dev.32" />
-		<PackageVersion Include="Uno.UniversalImageLoader" Version="1.9.33" />
+		<PackageVersion Include="Uno.UniversalImageLoader" Version="1.9.36" />
 		<PackageVersion Include="Uno.Wasm.Bootstrap" Version="3.3.1" />
 		<PackageVersion Include="Uno.Wasm.Bootstrap.DevServer" Version="3.3.1" />
 		<PackageVersion Include="Uno.WinUI" Version="4.6.0-dev.573" />
@@ -66,7 +68,6 @@
 		<PackageVersion Include="Newtonsoft.Json" Version="13.0.1" />
 		<PackageVersion Include="NUnit" Version="3.13.3" />
 		<PackageVersion Include="NUnit3TestAdapter" Version="4.2.1" />
-		<PackageVersion Include="Uno.UITest.Helpers" Version="1.1.0-dev.32" />
 		<PackageVersion Include="Xamarin.Google.Android.Material" Version="1.4.0.4" />
 		<PackageVersion Include="Xamarin.UITest" Version="3.2.8" />
 
