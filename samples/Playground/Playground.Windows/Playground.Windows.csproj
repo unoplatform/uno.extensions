@@ -22,10 +22,6 @@
 
 	<ItemGroup>
 		<None Remove="appsettings.platform.json" />
-		<None Remove="Assets\SplashScreen.scale-100.png" />
-		<None Remove="Assets\SplashScreen.scale-125.png" />
-		<None Remove="Assets\SplashScreen.scale-150.png" />
-		<None Remove="Assets\SplashScreen.scale-400.png" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -122,11 +118,4 @@
 		</ItemGroup>
 		<Message Importance="high" Text="Removed incorrect references: @(_ResolvedProjectReferencePathsToRemove)" />
 	</Target>
-
-	<ItemGroup>
-	  <_Globbed_Content Remove="Assets\SplashScreen.scale-100.png" />
-	  <_Globbed_Content Remove="Assets\SplashScreen.scale-125.png" />
-	  <_Globbed_Content Remove="Assets\SplashScreen.scale-150.png" />
-	  <_Globbed_Content Remove="Assets\SplashScreen.scale-400.png" />
-	</ItemGroup>
 </Project>
