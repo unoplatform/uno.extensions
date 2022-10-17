@@ -36,6 +36,7 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 	}
 	protected override async Task<string?> Show(string? path, Type? viewType, object? data)
 	{
+		var originalViewType = viewType;
 		if (viewType is null ||
 			viewType.IsSubclassOf(typeof(Page)))
 		{
@@ -60,6 +61,10 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 					content is UI.Controls.FrameView fe)
 			{
 				fe.SetName(path);
+				if (originalViewType?.IsSubclassOf(typeof(Page)) ?? false)
+				{
+					fe.NavigationFrame.SourcePageType = originalViewType;
+				}
 			}
 			Control.Content = content;
 			_content = Control.Content as FrameworkElement;

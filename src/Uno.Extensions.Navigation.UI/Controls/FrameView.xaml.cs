@@ -7,5 +7,7 @@ public sealed partial class FrameView : UserControl
 		this.InitializeComponent();
 	}
 
-	public INavigator? Navigator => NavigationFrame.Navigator();
+	public INavigator? Navigator => NavFrame.Navigator();
+
+	public Frame NavigationFrame => NavFrame;
 }

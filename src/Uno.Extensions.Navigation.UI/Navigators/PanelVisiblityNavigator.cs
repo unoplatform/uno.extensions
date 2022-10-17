@@ -52,6 +52,7 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 			try
 			{
 				var regionName = path;
+				var originalViewType = viewType;
 				if (viewType is null ||
 					viewType.IsSubclassOf(typeof(Page)))
 				{
@@ -61,9 +62,13 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 				if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Creating instance of type '{viewType.Name}'");
 				controlToShow = Activator.CreateInstance(viewType) as FrameworkElement;
 				if (!string.IsNullOrWhiteSpace(regionName) &&
-					controlToShow is FrameworkElement fe)
+					controlToShow is not null)
 				{
-					fe.SetName(regionName!);
+					controlToShow.SetName(regionName!);
+					if(controlToShow is FrameView fv)
+					{
+						fv.NavigationFrame.SourcePageType = originalViewType;
+					}
 				}
 				Control.Children.Add(controlToShow);
 				if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage("Instance created");
