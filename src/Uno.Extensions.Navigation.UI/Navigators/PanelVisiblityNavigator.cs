@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Navigation.Navigators;
+﻿using Microsoft.Extensions.DependencyInjection;
+
+namespace Uno.Extensions.Navigation.Navigators;
 
 public class PanelVisiblityNavigator : ControlNavigator<Panel>
 {
@@ -23,7 +25,7 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 			return false;
 		}
 
-		if(routeMap?.RenderView?.IsSubclassOf(typeof(FrameworkElement)) ?? false)
+		if (routeMap?.RenderView?.IsSubclassOf(typeof(FrameworkElement)) ?? false)
 		{
 			return true;
 		}
@@ -56,19 +58,17 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 				if (viewType is null ||
 					viewType.IsSubclassOf(typeof(Page)))
 				{
-					viewType = typeof(UI.Controls.FrameView);
+					viewType = typeof(BaseFrameView);
 				}
 
 				if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Creating instance of type '{viewType.Name}'");
-				controlToShow = Activator.CreateInstance(viewType) as FrameworkElement;
+				controlToShow = viewType == typeof(BaseFrameView) ?
+							Region.Services?.GetRequiredService<BaseFrameView>() :
+							Activator.CreateInstance(viewType) as FrameworkElement;
 				if (!string.IsNullOrWhiteSpace(regionName) &&
 					controlToShow is not null)
 				{
 					controlToShow.SetName(regionName!);
-					if(controlToShow is FrameView fv)
-					{
-						fv.NavigationFrame.SourcePageType = originalViewType;
-					}
 				}
 				Control.Children.Add(controlToShow);
 				if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage("Instance created");

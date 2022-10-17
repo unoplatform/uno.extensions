@@ -1,13 +1,13 @@
 ﻿namespace Uno.Extensions.Navigation.UI.Controls;
 
-public sealed partial class FrameView : UserControl
+public sealed partial class FrameView : BaseFrameView
 {
 	public FrameView()
 	{
 		this.InitializeComponent();
 	}
 
-	public INavigator? Navigator => NavFrame.Navigator();
+	public override INavigator? Navigator => NavFrame.Navigator();
 
-	public Frame NavigationFrame => NavFrame;
+	public override Frame NavigationFrame => NavFrame;
 }

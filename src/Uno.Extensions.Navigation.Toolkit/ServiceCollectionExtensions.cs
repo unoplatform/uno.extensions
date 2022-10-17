@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions;
+﻿using Uno.Extensions.Navigation.UI.Controls;
+
+namespace Uno.Extensions;
 
 public static class ServiceCollectionExtensions
 {
@@ -7,6 +9,8 @@ public static class ServiceCollectionExtensions
 	{
 		return services
 					.AddTransient<Flyout, ModalFlyout>()
+
+					.AddTransient<BaseFrameView, LoadingFrameView>()
 
 					.AddRegion<TabBar, TabBarNavigator>()
 

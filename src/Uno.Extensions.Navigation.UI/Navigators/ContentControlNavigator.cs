@@ -61,10 +61,6 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 					content is UI.Controls.FrameView fe)
 			{
 				fe.SetName(path);
-				if (originalViewType?.IsSubclassOf(typeof(Page)) ?? false)
-				{
-					fe.NavigationFrame.SourcePageType = originalViewType;
-				}
 			}
 			Control.Content = content;
 			_content = Control.Content as FrameworkElement;
