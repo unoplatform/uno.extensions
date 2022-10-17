@@ -194,12 +194,9 @@ internal static class RoslynExtensions
 		{
 			{ DeclaredAccessibility: Accessibility.Public or Accessibility.ProtectedAndInternal } => true,
 			{ DeclaredAccessibility: Accessibility.Internal } when SymbolEqualityComparer.Default.Equals(symbol.ContainingAssembly, toAssembly) => true,
-			{ DeclaredAccessibility: Accessibility.Internal } when symbol.ContainingAssembly.IsInternalsVisibleTo(toAssembly) => true,
+			{ DeclaredAccessibility: Accessibility.Internal } when symbol.ContainingAssembly.GivesAccessTo(toAssembly) => true,
 			_ => false
 		};
-
-	public static bool IsInternalsVisibleTo(this IAssemblySymbol assembly, IAssemblySymbol toAssembly)
-		=> assembly.FindAttributes<InternalsVisibleToAttribute>().Any(attr => attr.AssemblyName == toAssembly.Name);
 
 	/// <summary>
 	/// Converts declared accessibility on a symbol to a string usable in generated code.
@@ -294,6 +291,14 @@ internal static class RoslynExtensions
 			// If the ctorPosition has been provided, even if the parameter has a default value, it will be resolved
 			return (true, default);
 		}
+	}
+
+	public static bool HasAttribute<TAttribute>(this ISymbol symbol)
+	{
+		var type = typeof(TAttribute);
+		return symbol
+			.GetAttributes()
+			.Any(attr => attr.AttributeClass?.ToDisplayString().Equals(type.FullName, StringComparison.Ordinal) ?? false);
 	}
 
 	public static TAttribute? FindAttribute<TAttribute>(this ISymbol symbol)

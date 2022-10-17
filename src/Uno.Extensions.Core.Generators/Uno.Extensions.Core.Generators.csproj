@@ -8,6 +8,7 @@
 			so nuget override will copy it in the 'tools' directory of that package instead of the 'lib' of the current package folder.
 		-->
 		<ToolOfPackage>Uno.Extensions.Core</ToolOfPackage>
+		<RootNamespace>Uno.Extensions.Generators</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -25,6 +26,7 @@
 	<ItemGroup>
 		<Compile Include="..\Uno.Extensions.Core\_Compat\**\*.cs" Link="_Compat\%(RecursiveDir)%(Filename)%(Extension)" />
 
+		<Compile Include="..\Uno.Extensions.Core\Edition\**\*Attribute.cs" Link="Attributes\Edition\%(RecursiveDir)%(Filename)%(Extension)" />
 		<Compile Include="..\Uno.Extensions.Core\Equality\**\*Attribute.cs" Link="Attributes\Equality\%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup>
 
