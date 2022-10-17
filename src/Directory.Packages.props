@@ -50,7 +50,7 @@
 			<PackageVersion Include="Uno.Toolkit.WinUI" Version="2.4.0-dev.57" />
 			<PackageVersion Include="Uno.UI"  Version="4.6.0-dev.573" />
 			<PackageVersion Include="Uno.UI.MSAL"  Version="4.6.0-dev.573" />
-			<PackageVersion Include="Uno.UI.Runtime.WebAssembly" Version="4.6.0-dev.573" />
+			<PackageVersion Include="Uno.UI.Runtime.WebAssembly" Version="4.6.0-dev.727" />
 			<PackageVersion Include="Uno.WinUI" Version="4.6.0-dev.573" />
 			<PackageVersion Include="Uno.WinUI.MSAL" Version="4.6.0-dev.573" />
 			<PackageVersion Include="Uno.WinUI.Runtime.WebAssembly" Version="4.6.0-dev.573" />
