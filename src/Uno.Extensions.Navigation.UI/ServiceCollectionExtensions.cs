@@ -41,6 +41,8 @@ public static class ServiceCollectionExtensions
 
 					.AddTransient<Flyout, NavigationFlyout>()
 
+					.AddTransient<BaseFrameView, FrameView>()
+
 					// Register the region for each control type
 					.AddRegion<Frame, FrameNavigator>()
 					.AddRegion<ContentControl, ContentControlNavigator>()
@@ -59,11 +61,11 @@ public static class ServiceCollectionExtensions
 
 					// Register the navigation mappings repository
 
-					.AddSingleton(views.GetType(),views)
-					.AddSingleton<IViewRegistry>(sp=>(IViewRegistry)sp.GetRequiredService(views.GetType()))
+					.AddSingleton(views.GetType(), views)
+					.AddSingleton<IViewRegistry>(sp => (IViewRegistry)sp.GetRequiredService(views.GetType()))
 
 					.AddSingleton(routes.GetType(), routes)
-					.AddSingleton<IRouteRegistry>(sp=>(RouteRegistry)sp.GetRequiredService(routes.GetType()))
+					.AddSingleton<IRouteRegistry>(sp => (RouteRegistry)sp.GetRequiredService(routes.GetType()))
 					.AddSingleton<RouteResolver>()
 					.AddSingleton<RouteResolverDefault>()
 					.AddSingleton<IRouteResolver>(sp =>
