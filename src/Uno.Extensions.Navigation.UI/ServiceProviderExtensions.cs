@@ -136,7 +136,7 @@ public static class ServiceProviderExtensions
 		};
 		window.Content = root;
 		services = window.AttachServices(services);
-		root.Host(services, initialRoute, initialView, initialViewModel);
+		root.HostAsync(services, initialRoute, initialView, initialViewModel);
 
 		return root;
 	}
@@ -201,7 +201,7 @@ public static class ServiceProviderExtensions
 
 		var host = await buildHost();
 		var services = window.AttachServices(host.Services);
-		var startup = viewHost.Host(services, initialRoute, initialView, initialViewModel);
+		var startup = viewHost.HostAsync(services, initialRoute, initialView, initialViewModel);
 
 		await Task.Run(() => host.StartAsync());
 

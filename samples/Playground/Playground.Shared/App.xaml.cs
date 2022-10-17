@@ -65,7 +65,7 @@ public sealed partial class App : Application
 		//};
 		//_window.Content = root;
 		//var services = _window.AttachServices(_host.Services);
-		//var startup = root.Host(services, initialRoute: "");
+		//var startup = root.HostAsync(services, initialRoute: "");
 		//await Task.Run(() => _host.StartAsync());
 		//await startup;
 
@@ -123,7 +123,7 @@ public sealed partial class App : Application
 
 
 		//var services = _window.AttachServices(_host.Services);
-		//var startup = root.NavigationRoot.Host(services, initialRoute: "");
+		//var startup = root.NavigationRoot.HostAsyn(services, initialRoute: "");
 		//await Task.Run(() => _host.StartAsync());
 		////await startup;
 		//_window.Activate();

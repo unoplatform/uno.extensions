@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Hosting;
-
-namespace Uno.Extensions.Navigation;
+﻿namespace Uno.Extensions.Navigation;
 
 public static class FrameworkElementExtensions
 {
@@ -19,7 +17,7 @@ public static class FrameworkElementExtensions
 		return scopedServices;
 	}
 
-	public static Task Host(this FrameworkElement root, IServiceProvider sp, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
+	public static Task HostAsync(this FrameworkElement root, IServiceProvider sp, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
 	{
 		var services = sp.CreateNavigationScope();
 
