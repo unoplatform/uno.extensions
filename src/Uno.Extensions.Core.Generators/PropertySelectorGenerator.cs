@@ -15,11 +15,15 @@ public partial class PropertySelectorGenerator : IIncrementalGenerator
 {
 	private readonly PropertySelectorsGenerationTool _tool;
 
+	/// <summary>
+	/// Creates a new instance of the PropertySelectorGenerator
+	/// </summary>
 	public PropertySelectorGenerator()
 	{
 		_tool = new PropertySelectorsGenerationTool();
 	}
 
+	/// <inheritdoc />
 	public void Initialize(IncrementalGeneratorInitializationContext context)
 	{
 #if DEBUGGING_GENERATOR
