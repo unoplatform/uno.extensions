@@ -25,12 +25,11 @@
 		<PackageReference Include="System.Threading.Tasks.Extensions" />
 	</ItemGroup>
 	<ItemGroup>
-		<InternalsVisibleTo Include="Uno.Extensions.Authentication.UI" />
-		<InternalsVisibleTo Include="Uno.Extensions.Authentication.WinUI" />
-		<InternalsVisibleTo Include="Uno.Extensions.Authentication.Msal.UI" />
-		<InternalsVisibleTo Include="Uno.Extensions.Authentication.Msal.WinUI" />
-		<InternalsVisibleTo Include="Uno.Extensions.Authentication.Oidc.UI" />
-		<InternalsVisibleTo Include="Uno.Extensions.Authentication.Oidc.WinUI" />
+		<InternalsVisibleTo Include="$(AssemblyName).UI" />
+		<InternalsVisibleTo Include="$(AssemblyName).WinUI" />
+		<InternalsVisibleTo Include="$(AssemblyName).Msal.UI" />
+		<InternalsVisibleTo Include="$(AssemblyName).Msal.WinUI" />
+		<InternalsVisibleTo Include="$(AssemblyName).Oidc.UI" />
+		<InternalsVisibleTo Include="$(AssemblyName).Oidc.WinUI" />
 	</ItemGroup>
 </Project>
- 

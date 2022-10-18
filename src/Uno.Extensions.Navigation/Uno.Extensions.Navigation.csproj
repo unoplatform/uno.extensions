@@ -23,10 +23,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="Uno.Extensions.Navigation.UI" />
-		<InternalsVisibleTo Include="Uno.Extensions.Navigation.WinUI" />
-		<InternalsVisibleTo Include="Uno.Extensions.Navigation.Toolkit.UI" />
-		<InternalsVisibleTo Include="Uno.Extensions.Navigation.Toolkit.WinUI" />
+		<InternalsVisibleTo Include="$(AssemblyName).UI" />
+		<InternalsVisibleTo Include="$(AssemblyName).WinUI" />
+		<InternalsVisibleTo Include="$(AssemblyName).Toolkit.UI" />
+		<InternalsVisibleTo Include="$(AssemblyName).Toolkit.WinUI" />
 		<InternalsVisibleTo Include="Uno.Extensions.Authentication" />
 		<InternalsVisibleTo Include="Uno.Extensions.Authentication.UI" />
 		<InternalsVisibleTo Include="Uno.Extensions.Authentication.WinUI" />
