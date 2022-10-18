@@ -1,6 +1,4 @@
 <Project>
-	<Import Project="tfms-default.props" />
-
 	<PropertyGroup Condition="'$(UnoTargetFrameworkOverride)'!=''">
 		<TargetFrameworks>$(UnoTargetFrameworkOverride)</TargetFrameworks>
 	</PropertyGroup>
