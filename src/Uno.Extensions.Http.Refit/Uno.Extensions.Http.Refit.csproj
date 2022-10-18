@@ -1,5 +1,5 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
-	<Import Project="..\tfms-all.props" />
+	<Import Project="..\tfms-ui-all.props" />
 
 	<PropertyGroup>
 		<Description>HTTP Refit Extensions for registering Refit endpoints for Uno Platform, UWP and WinUI</Description>

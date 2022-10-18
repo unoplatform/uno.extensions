@@ -123,10 +123,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Directory.Build.targets = Directory.Build.targets
 		Directory.Packages.props = Directory.Packages.props
 		global.json = global.json
-		tfms-all.props = tfms-all.props
-		tfms-default.props = tfms-default.props
-		tfms-uwp.props = tfms-uwp.props
-		tfms-winui.props = tfms-winui.props
+		tfms-ui-all.props = tfms-ui-all.props
+		tfms-non-ui.props = tfms-non-ui.props
+		tfms-ui-uwp.props = tfms-ui-uwp.props
+		tfms-ui-winui.props = tfms-ui-winui.props
 		Uno.CrossTargeting.props = Uno.CrossTargeting.props
 		winappsdk-workaround.targets = winappsdk-workaround.targets
 	EndProjectSection

@@ -1,5 +1,5 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
-	<Import Project="..\tfms-winui.props" />
+	<Import Project="..\tfms-ui-winui.props" />
 
 	<ItemGroup>
 		<UnoRuntimeProjectReference Include="Uno.Extensions.Hosting.WinUI.Wasm.csproj" />

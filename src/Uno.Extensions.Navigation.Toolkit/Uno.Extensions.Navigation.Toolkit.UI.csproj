@@ -1,5 +1,5 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
-	<Import Project="..\tfms-uwp.props" />
+	<Import Project="..\tfms-ui-uwp.props" />
 
 	<PropertyGroup>
 		<Description>Navigation Extensions for working with the Uno Toolkit on the Uno Platform (UWP)</Description>

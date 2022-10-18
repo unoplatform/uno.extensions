@@ -1,5 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
-	<Import Project="..\tfms-default.props" />
+	<Import Project="..\tfms-non-ui.props" />
 
 	<PropertyGroup>
 		<Description>Navigation Extensions for the Uno Platform, UWP and WinUI. Reference Uno.Extensions.Navigation.UI (UWP) or Uno.Extensions.Navigation.WinUI (WinUI) from head projects</Description>

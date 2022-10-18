@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
-	<Import Project="..\tfms-default.props" />
+	<Import Project="..\tfms-non-ui.props" />
 
 	<PropertyGroup>
 		<IsPackable>false</IsPackable>

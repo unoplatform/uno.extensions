@@ -1,3 +1,5 @@
+<!-- TFMS for libraries that have platform specific code but
+	do NOT depend on Uno.UI or Uno.WinUI -->
 <Project>
 	<PropertyGroup Condition="'$(UnoTargetFrameworkOverride)'!=''">
 		<TargetFrameworks>$(UnoTargetFrameworkOverride)</TargetFrameworks>

@@ -1,5 +1,5 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
-	<Import Project="..\tfms-winui.props" />
+	<Import Project="..\tfms-ui-winui.props" />
 
 	<PropertyGroup>
 		<Description>Localization Extensions for registering IStringLocalizer implementation for Uno Platform (WinUI)</Description>

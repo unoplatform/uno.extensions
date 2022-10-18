@@ -1,0 +1,9 @@
+<!-- TFMS for libraries that don't contain UI related code 
+	(i.e. no dependencies on Uno.UI or Uno.WinUI)
+	Exception: this is also used by Skia and Wasm specific projects
+	that are part of a cross-platform library (eg Uno.Extensions.Hosting.UWP.Wasm)-->
+<Project>
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+	</PropertyGroup>
+</Project>

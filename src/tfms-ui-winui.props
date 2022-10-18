@@ -1,3 +1,4 @@
+<!-- TFMS for libraries that references Uno.WinUI (i.e. WinUI) -->
 <Project>
 	<PropertyGroup Condition="'$(UnoTargetFrameworkOverride)'!=''">
 		<TargetFrameworks>$(UnoTargetFrameworkOverride)</TargetFrameworks>
@@ -7,9 +8,9 @@
 		<TargetFrameworks Condition="'$(Build_iOS)'=='true'">$(TargetFrameworks);xamarinios10</TargetFrameworks>
 		<TargetFrameworks Condition="'$(Build_MacOS)'=='true'">$(TargetFrameworks);xamarinmac20</TargetFrameworks>
 		<TargetFrameworks Condition="'$(Build_Android)'=='true'">$(TargetFrameworks);monoandroid11.0</TargetFrameworks>
-		<TargetFrameworks Condition="'$(Build_Windows)'=='true'">$(TargetFrameworks);uap10.0.18362</TargetFrameworks>
 		<TargetFrameworks Condition="'$(Build_iOS)'=='true' and '$(UnoExtensionsDisableNet6)'==''">$(TargetFrameworks);net6.0-ios</TargetFrameworks>
 		<TargetFrameworks Condition="'$(Build_MacOS)'=='true' and '$(UnoExtensionsDisableNet6)'==''">$(TargetFrameworks);net6.0-macos;net6.0-maccatalyst</TargetFrameworks>
 		<TargetFrameworks Condition="'$(Build_Android)'=='true' and '$(UnoExtensionsDisableNet6)'==''">$(TargetFrameworks);net6.0-android</TargetFrameworks>
+		<TargetFrameworks Condition="'$(Build_Windows)'=='true' and '$(UnoExtensionsDisableNet6)'==''">$(TargetFrameworks);net5.0-windows10.0.18362.0;net6.0-windows10.0.18362.0</TargetFrameworks>
 	</PropertyGroup>
 </Project>
