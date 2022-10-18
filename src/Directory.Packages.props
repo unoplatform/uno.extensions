@@ -13,7 +13,7 @@
 			<PackageVersion Include="Microsoft.Extensions.Http" Version="6.0.0" />
 			<PackageVersion Include="Microsoft.Extensions.Localization.Abstractions" Version="6.0.4" />
 			<PackageVersion Include="Microsoft.Extensions.Logging" Version="6.0.0" />
-			<PackageVersion Include="Microsoft.Identity.Client" Version="4.47.0" />
+			<PackageVersion Include="Microsoft.Identity.Client" Version="4.47.2" />
 			<PackageVersion Include="Microsoft.Identity.Client.Extensions.Msal" Version="2.22.0" />
 			<PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
 			<PackageVersion Include="Microsoft.CodeAnalysis.Common" Version="4.0.1" />
