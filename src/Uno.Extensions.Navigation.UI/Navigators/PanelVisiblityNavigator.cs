@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Navigation.Navigators;
+﻿using Microsoft.UI.Xaml.Media.Animation;
+
+namespace Uno.Extensions.Navigation.Navigators;
 
 public class PanelVisiblityNavigator : ControlNavigator<Panel>
 {
@@ -99,18 +101,36 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 		return path;
 	}
 
-	protected override Task PostNavigateAsync()
+	protected override async Task PostNavigateAsync()
 	{
-		if (Control is not null)
+		if (Control is not null &&
+			CurrentlyVisibleControl is not null &&
+			(CurrentlyVisibleControl.Opacity<1.0 ||
+			CurrentlyVisibleControl.Visibility==Visibility.Collapsed))
 		{
+			Control.Children.Remove(CurrentlyVisibleControl);
+			Control.Children.Add(CurrentlyVisibleControl);
+			CurrentlyVisibleControl.Opacity = 0;
+			CurrentlyVisibleControl.Visibility = Visibility.Visible;
+			var animation = new DoubleAnimation
+			{
+				To = 1.0,
+				FillBehavior = FillBehavior.HoldEnd,
+				BeginTime = TimeSpan.FromSeconds(0),
+				Duration = new Duration(TimeSpan.FromSeconds(0.5))
+			};
+			var storyboard = new Storyboard();
+			storyboard.Children.Add(animation);
+			Storyboard.SetTarget(animation, CurrentlyVisibleControl);
+			Storyboard.SetTargetProperty(animation, nameof(FrameworkElement.Opacity));
+			var completion = new TaskCompletionSource<bool>();
+			storyboard.Completed += (s, e) => completion.SetResult(false);
+			storyboard.Begin();
+			await completion.Task;
+
 			foreach (var child in Control.Children.OfType<FrameworkElement>())
 			{
-				if(child == CurrentlyVisibleControl)
-				{
-					child.Opacity = 1;
-					child.Visibility = Visibility.Visible;
-				}
-				else
+				if(child != CurrentlyVisibleControl)
 				{
 					child.Opacity = 0;
 					child.Visibility = Visibility.Collapsed;
@@ -118,8 +138,6 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 				}
 			}
 		}
-
-		return Task.CompletedTask;
 	}
 
 	private FrameworkElement? FindByPath(string? path)
