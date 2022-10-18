@@ -11,7 +11,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace Uno.Extensions.Reactive.Generator;
+namespace Uno.Extensions.Generators;
 
 internal static class RoslynExtensions
 {

@@ -9,6 +9,7 @@ using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using Microsoft.CodeAnalysis;
+using Uno.Extensions.Generators;
 using Uno.Extensions.Reactive.Config;
 
 namespace Uno.Extensions.Reactive.Generator;

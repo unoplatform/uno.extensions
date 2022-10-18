@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.CodeAnalysis;
-using Uno.Extensions.Reactive.Generator;
 
-namespace Uno.Extensions.Generators.Common;
+namespace Uno.Extensions.Generators;
 
 internal class GenerationException : Exception
 {

@@ -6,8 +6,6 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Uno.Extensions.Edition;
-using Uno.Extensions.Generators.Common;
-using Uno.Extensions.Reactive.Generator;
 
 namespace Uno.Extensions.Generators.PropertySelector;
 

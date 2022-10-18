@@ -5,7 +5,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Uno.Extensions.Equality;
 
-namespace Uno.Extensions.Reactive.Generator.KeyEquality;
+namespace Uno.Extensions.Generators.KeyEquality;
 
 internal class KeyEqualityGenerationTool : ICodeGenTool
 {

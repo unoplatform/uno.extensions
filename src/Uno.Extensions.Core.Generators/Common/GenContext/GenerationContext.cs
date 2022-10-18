@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
 
-namespace Uno.Extensions.Reactive.Generator;
+namespace Uno.Extensions.Generators;
 
 internal static class GenerationContext
 {

@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Uno.Extensions.Reactive.Generator.Utils;
+namespace Uno.Extensions.Generators;
 
 internal static class PathHelper
 {

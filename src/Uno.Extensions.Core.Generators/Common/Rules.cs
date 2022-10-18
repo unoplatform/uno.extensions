@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace Uno.Extensions.Reactive.Generator;
+namespace Uno.Extensions.Generators;
 
 internal static partial class Rules
 {

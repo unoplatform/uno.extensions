@@ -2,7 +2,7 @@
 using System.Linq;
 using Microsoft.CodeAnalysis;
 
-namespace Uno.Extensions.Reactive.Generator.Compat;
+namespace Uno.Extensions.Generators.CompatibilityTypes;
 
 internal record CompatibilityTypesGenerationContext(
 	GeneratorExecutionContext Context,

@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 
-namespace Uno.Extensions.Reactive.Generator;
+namespace Uno.Extensions.Generators;
 
 internal static partial class Rules
 {

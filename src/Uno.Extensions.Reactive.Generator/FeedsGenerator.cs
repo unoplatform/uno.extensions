@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using Microsoft.CodeAnalysis;
-using Uno.Extensions.Reactive.Generator.Utils;
+using Uno.Extensions.Generators;
 
 namespace Uno.Extensions.Reactive.Generator;
 

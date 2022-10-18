@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace Uno.Extensions.Reactive.Generator.Compat;
+namespace Uno.Extensions.Generators.CompatibilityTypes;
 
 internal class CompatibilityTypesGenerationTool : ICodeGenTool
 {

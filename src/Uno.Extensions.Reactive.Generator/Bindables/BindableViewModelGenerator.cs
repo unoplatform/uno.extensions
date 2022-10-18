@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Uno.Extensions.Generators;
 using Uno.RoslynHelpers;
 using static Microsoft.CodeAnalysis.Accessibility;
 
