@@ -1,6 +1,7 @@
-﻿<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+	<Import Project="..\tfms-non-ui.props" />
+
 	<PropertyGroup>
-		<TargetFramework>netstandard2.0</TargetFramework>
 		<IsPackable>false</IsPackable>
 		<RootNamespace>Uno.Extensions.Logging.WinUI</RootNamespace>
 		<AssemblyName>Uno.Extensions.Logging.WinUI</AssemblyName>

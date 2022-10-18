@@ -1,7 +1,8 @@
-﻿<Project  Sdk="Microsoft.NET.Sdk"  ToolsVersion="15.0">
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+	<Import Project="..\tfms-non-ui.props" />
+
 	<PropertyGroup>
 		<Description>Reference Uno.Extensions.Hosting.UI (UWP) or Uno.Extensions.Hosting.WinUI (WinUI)</Description>
-		<TargetFramework>netstandard2.0</TargetFramework>
 
 		<!--Temporary disable missing XML doc until fixed in the whole package-->
 		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
