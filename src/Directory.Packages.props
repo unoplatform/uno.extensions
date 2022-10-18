@@ -52,7 +52,7 @@
 			<PackageVersion Include="Uno.UI.MSAL"  Version="4.6.0-dev.573" />
 			<PackageVersion Include="Uno.UI.Runtime.WebAssembly" Version="4.6.0-dev.573" />
 			<PackageVersion Include="Uno.WinUI" Version="4.6.0-dev.573" />
-			<PackageVersion Include="Uno.WinUI.MSAL" Version="4.6.0-dev.573" />
+			<PackageVersion Include="Uno.WinUI.MSAL" Version="4.6.0-dev.749" />
 			<PackageVersion Include="Uno.WinUI.Runtime.WebAssembly" Version="4.6.0-dev.573" />
 			<PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.6.0-dev.573"/>
 			<PackageVersion Include="xunit" Version="2.4.1" />
