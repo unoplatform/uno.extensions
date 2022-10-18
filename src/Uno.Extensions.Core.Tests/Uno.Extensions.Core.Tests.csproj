@@ -26,8 +26,4 @@
 		<ProjectReference Include="..\Uno.Extensions.Core.Generators\Uno.Extensions.Core.Generators.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <SourceGeneratorInput Remove="PropertySelector\Given_PS0001.cs" />
-	</ItemGroup>
-
 </Project>

@@ -3,9 +3,8 @@ using System.Linq;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Equality;
-using Uno.Extensions.Reactive.Config;
 
-namespace Uno.Extensions.Reactive.Tests.Generator;
+namespace Uno.Extensions.Core.Tests.KeyEquality;
 
 [TestClass]
 public class Given_KeyEquatableRecord_Then_Generate

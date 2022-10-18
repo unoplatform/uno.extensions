@@ -31,13 +31,13 @@ internal static class GenerationContext
 					x.parameter,
 					type: x.attribute.Type,
 					isOptional: x.attribute.IsOptional || x.parameter.GetCustomAttributesData().Any(attr => attr.AttributeType.FullName.Equals("System.Runtime.CompilerServices.NullableAttribute")),
-					symbol: compilation!.GetTypeByMetadataName(x.attribute.Type)
+					symbol: compilation.GetTypesByMetadataName(x.attribute.Type).OrderBy(t => t.IsAccessibleTo(compilation.Assembly) ? 0 : 1).FirstOrDefault()
 				))
 				.ToList();
 
 			if (arguments
-					.Where(arg => arg is {symbol: null, isOptional: false})
-					.ToList() is { Count: > 0 } missingArgs)
+				.Where(arg => arg is {symbol: null, isOptional: false})
+				.ToList() is { Count: > 0 } missingArgs)
 			{
 				error = $"Failed to resolve types {missingArgs.Select(arg => arg.type).JoinBy(", ")}";
 				return default;
