@@ -16,16 +16,9 @@
 		<PackageId>Uno.Extensions.Authentication.Oidc.WinUI</PackageId>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
 	</PropertyGroup>
+	
 	<ItemGroup>
 		<PackageReference Include="Uno.WinUI" />
 		<ProjectReference Include="..\Uno.Extensions.Authentication.UI\Uno.Extensions.Authentication.WinUI.csproj" />
-	</ItemGroup>
-
-	<ItemGroup Condition="$(_IsWinUI)">
-		<PackageReference Include="Microsoft.WindowsAppSDK" />
-		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
-
-		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.22000.25" />
-		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.22000.25" />
 	</ItemGroup>
 </Project>

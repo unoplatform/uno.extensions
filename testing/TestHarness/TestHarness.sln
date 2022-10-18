@@ -162,6 +162,24 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Localization
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Core.Generators", "..\..\src\Uno.Extensions.Core.Generators\Uno.Extensions.Core.Generators.csproj", "{597EDAF7-7A82-4D06-8B47-72648F16F47E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestHarness Items", "TestHarness Items", "{37830FA8-B5CF-4889-A4A7-FEBB28CE2381}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
+		Directory.Packages.props = Directory.Packages.props
+		global.json = global.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extension Items", "Extension Items", "{B651E50E-2EE3-4628-A506-A4572964001E}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\src\Directory.Build.props = ..\..\src\Directory.Build.props
+		..\..\src\Directory.Build.targets = ..\..\src\Directory.Build.targets
+		..\..\src\Directory.Packages.props = ..\..\src\Directory.Packages.props
+		..\..\src\global.json = ..\..\src\global.json
+		..\..\src\winappsdk-workaround.targets = ..\..\src\winappsdk-workaround.targets
+		..\..\src\xamarinmac-workaround.targets = ..\..\src\xamarinmac-workaround.targets
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Ad-Hoc|Any CPU = Ad-Hoc|Any CPU
@@ -194,6 +212,34 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6279C845-92F8-4333-AB99-3D213163593C}.Ad-Hoc|Any CPU.ActiveCfg = Release|Any CPU
+		{6279C845-92F8-4333-AB99-3D213163593C}.Ad-Hoc|ARM.ActiveCfg = Release|Any CPU
+		{6279C845-92F8-4333-AB99-3D213163593C}.Ad-Hoc|ARM64.ActiveCfg = Release|Any CPU
+		{6279C845-92F8-4333-AB99-3D213163593C}.Ad-Hoc|iPhone.ActiveCfg = Release|Any CPU
+		{6279C845-92F8-4333-AB99-3D213163593C}.Ad-Hoc|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{6279C845-92F8-4333-AB99-3D213163593C}.Ad-Hoc|x64.ActiveCfg = Release|Any CPU
+		{6279C845-92F8-4333-AB99-3D213163593C}.Ad-Hoc|x86.ActiveCfg = Release|Any CPU
+		{6279C845-92F8-4333-AB99-3D213163593C}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
+		{6279C845-92F8-4333-AB99-3D213163593C}.AppStore|ARM.ActiveCfg = Release|Any CPU
+		{6279C845-92F8-4333-AB99-3D213163593C}.AppStore|ARM64.ActiveCfg = Release|Any CPU
+		{6279C845-92F8-4333-AB99-3D213163593C}.AppStore|iPhone.ActiveCfg = Release|Any CPU
+		{6279C845-92F8-4333-AB99-3D213163593C}.AppStore|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{6279C845-92F8-4333-AB99-3D213163593C}.AppStore|x64.ActiveCfg = Release|Any CPU
+		{6279C845-92F8-4333-AB99-3D213163593C}.AppStore|x86.ActiveCfg = Release|Any CPU
+		{6279C845-92F8-4333-AB99-3D213163593C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6279C845-92F8-4333-AB99-3D213163593C}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{6279C845-92F8-4333-AB99-3D213163593C}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{6279C845-92F8-4333-AB99-3D213163593C}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{6279C845-92F8-4333-AB99-3D213163593C}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{6279C845-92F8-4333-AB99-3D213163593C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6279C845-92F8-4333-AB99-3D213163593C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6279C845-92F8-4333-AB99-3D213163593C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6279C845-92F8-4333-AB99-3D213163593C}.Release|ARM.ActiveCfg = Release|Any CPU
+		{6279C845-92F8-4333-AB99-3D213163593C}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{6279C845-92F8-4333-AB99-3D213163593C}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{6279C845-92F8-4333-AB99-3D213163593C}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{6279C845-92F8-4333-AB99-3D213163593C}.Release|x64.ActiveCfg = Release|Any CPU
+		{6279C845-92F8-4333-AB99-3D213163593C}.Release|x86.ActiveCfg = Release|Any CPU
 		{46549ECE-8A4F-479D-A9D0-131B064412D8}.Ad-Hoc|Any CPU.ActiveCfg = Release|Any CPU
 		{46549ECE-8A4F-479D-A9D0-131B064412D8}.Ad-Hoc|ARM.ActiveCfg = Release|Any CPU
 		{46549ECE-8A4F-479D-A9D0-131B064412D8}.Ad-Hoc|ARM64.ActiveCfg = Release|Any CPU
@@ -3939,6 +3985,7 @@ Global
 		{C9D35B9D-C597-4F62-91F9-1854D32989C3} = {37B8F3D6-827A-4FD7-B4BC-FB0579EDE367}
 		{1BD604FC-7CE8-466C-A4F4-4338F3B807F6} = {66DB0D58-9EEF-45CC-8EB3-76362DCCC918}
 		{597EDAF7-7A82-4D06-8B47-72648F16F47E} = {3DE9532E-61E4-4B25-B0BD-B580BC63F6BD}
+		{B651E50E-2EE3-4628-A506-A4572964001E} = {3DE9532E-61E4-4B25-B0BD-B580BC63F6BD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C7433AE2-B1A0-4C1A-887E-5CAA7AAF67A6}

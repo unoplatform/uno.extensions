@@ -2,16 +2,16 @@
 
 public class Given_ContentDialog : NavigationTestBase
 {
-	[TestCase("SimpleDialogNavRequestButton",0, false)]
+	[TestCase("SimpleDialogNavRequestButton", 0, false)]
 	[TestCase("SimpleDialogCodebehindButton", 0, false)]
 	[TestCase("SimpleDialogCodebehindWithCancelButton", 0, false)]
 	[TestCase("SimpleDialogCodebehindWithCancelButton", 3, true)]
-	public async Task When_SimpleContentDialog(string dialogButton,int delayInSeconds, bool dialogCancelled)
+	public async Task When_SimpleContentDialog(string dialogButton, int delayInSeconds, bool dialogCancelled)
 	{
 		InitTestSection(TestSections.Navigation_Dialogs);
 
 		App.WaitThenTap("ContentDialogsButton");
-		
+
 		App.WaitElement("DialogsContentDialogsPage");
 		//var screenBefore=TakeScreenshot("When_Dialog_Before");
 		App.Tap(dialogButton);
@@ -20,7 +20,7 @@ public class Given_ContentDialog : NavigationTestBase
 
 		if (delayInSeconds > 0)
 		{
-			await Task.Delay(delayInSeconds*1000);
+			await Task.Delay(delayInSeconds * 1000);
 			//var screenAfterDelay = TakeScreenshot("When_Dialog_After_Delay");
 			if (dialogCancelled)
 			{
@@ -33,7 +33,8 @@ public class Given_ContentDialog : NavigationTestBase
 			}
 		}
 
-		if (!dialogCancelled) { 
+		if (!dialogCancelled)
+		{
 			App.WaitThenTap("DialogsSimpleDialogCloseButton");
 		}
 

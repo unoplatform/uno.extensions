@@ -38,7 +38,8 @@ public partial class BaseTestSectionPage : Page, IDisposable
 		get
 		{
 			var root = this.FindName(Constants.NavigationRoot) as ContentControl;
-			return (root!.Content as FrameworkElement)!.Navigator()!;
+			var nav = root?.Navigator();
+			return nav!;
 		}
 	}
 

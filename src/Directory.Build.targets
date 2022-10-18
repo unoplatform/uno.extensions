@@ -45,6 +45,18 @@
 		</When>
 	</Choose>
 
+	<Choose>
+		<When Condition="$(_IsWinUI)">
+			<ItemGroup>
+				<PackageReference Include="Microsoft.WindowsAppSDK" />
+				<PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
+
+				<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.22000.25" />
+				<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.22000.25" />
+			</ItemGroup>
+		</When>
+	</Choose>
+
 	<Import
 		Condition="'$(IsCoreProject)'== 'False' And '$(IsGeneratorProject)' == 'False'"
 		Project="$(MSBuildThisFileDirectory)\Uno.Extensions.Core.Generators\buildTransitive\Uno.Extensions.Core.props" />
