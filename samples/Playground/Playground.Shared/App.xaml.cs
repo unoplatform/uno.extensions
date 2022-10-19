@@ -132,7 +132,7 @@ public sealed partial class App : Application
 							{
 
 								// Uncomment to view splashscreen for longer
-								// await Task.Delay(5000);
+								await Task.Delay(5000);
 								return BuildAppHost();
 							},
 							navigationRoot: appRoot.SplashScreen,

@@ -42,9 +42,18 @@ public static class ServiceCollectionExtensions
 		Type? initialView = null,
 		Type? initialViewModel = null)
 	{
-		return window.InitializeNavigationAsync<ToolkitViewHostProvider>(
+		return window.InternalInitializeNavigationAsync(
 			buildHost,
 			navigationRoot,
-			initialRoute, initialView, initialViewModel);
+			initialRoute, initialView, initialViewModel,
+			(root, navInit) =>
+				{
+					var loading = new LoadingTask(navInit, root);
+					if (root is LoadingView lv)
+					{
+						lv.Source = loading;
+					}
+				}
+			);
 	}
 }

@@ -161,40 +161,39 @@ public static class ServiceProviderExtensions
 		Type? initialView = null,
 		Type? initialViewModel = null)
 	{
-		return window.InitializeNavigationAsync<DefaultViewHostProvider>(
-			buildHost,
-			navigationRoot,
-			initialRoute, initialView, initialViewModel);
-	}
-
-	internal static Task<IHost> InitializeNavigationAsync<TViewHostProvider>(
-		this Window window,
-		Func<Task<IHost>> buildHost,
-		ContentControl? navigationRoot = null,
-		string? initialRoute = "",
-		Type? initialView = null,
-		Type? initialViewModel = null)
-	  where TViewHostProvider : IViewHostProvider, new()
-	{
-		var viewHost = new TViewHostProvider();
 
 		// Make sure we have a navigation root
 		var root = navigationRoot ?? new ContentControl
-					{
-						HorizontalAlignment = HorizontalAlignment.Stretch,
-						VerticalAlignment = VerticalAlignment.Stretch,
-						HorizontalContentAlignment = HorizontalAlignment.Stretch,
-						VerticalContentAlignment = VerticalAlignment.Stretch
-					};
+		{
+			HorizontalAlignment = HorizontalAlignment.Stretch,
+			VerticalAlignment = VerticalAlignment.Stretch,
+			HorizontalContentAlignment = HorizontalAlignment.Stretch,
+			VerticalContentAlignment = VerticalAlignment.Stretch
+		};
 
+		return window.InternalInitializeNavigationAsync(
+			buildHost,
+			root,
+			initialRoute, initialView, initialViewModel);
+	}
+
+	internal static Task<IHost> InternalInitializeNavigationAsync(
+		this Window window,
+		Func<Task<IHost>> buildHost,
+		ContentControl navigationRoot,
+		string? initialRoute = "",
+		Type? initialView = null,
+		Type? initialViewModel = null,
+		Action<FrameworkElement, Task>? initialiseViewHost = null)
+	{
 		if (window.Content is null)
 		{
-			window.Content = root;
+			window.Content = navigationRoot;
 			window.Activate();
 		}
 
-		var buildTask = window.BuildAndInitializeHost(root, buildHost, initialRoute, initialView, initialViewModel);
-		viewHost.InitializeViewHost(root, buildTask);
+		var buildTask = window.BuildAndInitializeHost(navigationRoot, buildHost, initialRoute, initialView, initialViewModel);
+		initialiseViewHost?.Invoke(navigationRoot, buildTask);
 		return buildTask;
 	}
 
