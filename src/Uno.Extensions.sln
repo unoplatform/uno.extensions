@@ -147,6 +147,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Localization
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Core.Generators", "Uno.Extensions.Core.Generators\Uno.Extensions.Core.Generators.csproj", "{A58BFE43-C9CF-40FD-B39A-B0488967810B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Core.Tests", "Uno.Extensions.Core.Tests\Uno.Extensions.Core.Tests.csproj", "{70345491-481C-4B75-902C-8D7E473EE4BA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -365,6 +367,10 @@ Global
 		{A58BFE43-C9CF-40FD-B39A-B0488967810B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A58BFE43-C9CF-40FD-B39A-B0488967810B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A58BFE43-C9CF-40FD-B39A-B0488967810B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70345491-481C-4B75-902C-8D7E473EE4BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70345491-481C-4B75-902C-8D7E473EE4BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70345491-481C-4B75-902C-8D7E473EE4BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70345491-481C-4B75-902C-8D7E473EE4BA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
