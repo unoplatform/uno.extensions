@@ -25,7 +25,6 @@ public sealed partial class App : Application
 
 #if NET6_0_OR_GREATER && WINDOWS && !HAS_UNO
 		_window = new Window();
-		_window.Activate();
 #else
 		_window = Microsoft.UI.Xaml.Window.Current;
 #endif
@@ -39,23 +38,10 @@ public sealed partial class App : Application
 		Host = await _window.InitializeNavigationAsync(
 					async () =>
 					{
-
-						// Uncomment to view splashscreen for longer
-						await Task.Delay(5000);
 						return BuildAppHost();
 					},
 					navigationRoot: appRoot.SplashScreen
 				);
-	}
-
-	/// <summary>
-	/// Invoked when Navigation to a certain page fails
-	/// </summary>
-	/// <param name="sender">The Frame which failed navigation</param>
-	/// <param name="e">Details about the navigation failure</param>
-	void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
-	{
-		throw new InvalidOperationException($"Failed to load {e.SourcePageType.FullName}: {e.Exception}");
 	}
 
 	/// <summary>
