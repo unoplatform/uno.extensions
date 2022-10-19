@@ -20,7 +20,7 @@
     <AndroidUseAapt2>true</AndroidUseAapt2>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <AndroidUseLatestPlatformSdk>False</AndroidUseLatestPlatformSdk>
-    <TargetFrameworkVersion>v11.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v12.0</TargetFrameworkVersion>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <AndroidUseIntermediateDesignerFile>True</AndroidUseIntermediateDesignerFile>
     <ResourcesDirectory>..\Playground.Shared\Strings</ResourcesDirectory>
@@ -70,10 +70,10 @@
     <PackageReference Include="Refit.HttpClientFactory" />
     <PackageReference Include="Uno.UI" />
     <PackageReference Include="Uno.UI.RemoteControl" Condition="'$(Configuration)'=='Debug'" />
-    <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging"  />
-    <PackageReference Include="Uno.UniversalImageLoader"   />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console"  />
-    <PackageReference Include="Microsoft.Extensions.Logging"  />
+    <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
+    <PackageReference Include="Uno.UniversalImageLoader" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" />
+    <PackageReference Include="Microsoft.Extensions.Logging" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />
