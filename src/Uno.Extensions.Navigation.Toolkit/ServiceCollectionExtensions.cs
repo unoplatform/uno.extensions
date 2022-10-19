@@ -1,13 +1,4 @@
-﻿using Windows.ApplicationModel.Activation;
-using Windows.UI.Xaml;
-
-namespace Uno.Extensions;
-
-#if WINUI
-using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
-#else
-using LaunchActivatedEventArgs = Windows.ApplicationModel.Activation.LaunchActivatedEventArgs;
-#endif
+﻿namespace Uno.Extensions;
 
 /// <summary>
 /// Extension methods for adding services to an <see cref="IServiceCollection" />.

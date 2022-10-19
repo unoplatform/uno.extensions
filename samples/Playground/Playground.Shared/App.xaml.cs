@@ -1,15 +1,4 @@
-﻿using Microsoft.Extensions.Hosting;
-using Windows.ApplicationModel.Core;
-using Windows.UI.ViewManagement;
-
-
-#if WINUI
-using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
-#else
-using LaunchActivatedEventArgs = Windows.ApplicationModel.Activation.LaunchActivatedEventArgs;
-#endif
-
-namespace Playground;
+﻿namespace Playground;
 
 public sealed partial class App : Application
 {

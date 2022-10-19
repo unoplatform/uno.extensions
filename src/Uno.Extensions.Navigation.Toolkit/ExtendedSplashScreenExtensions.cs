@@ -6,8 +6,6 @@ using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 using LaunchActivatedEventArgs = Windows.ApplicationModel.Activation.LaunchActivatedEventArgs;
 #endif
 
-
-
 public static class ExtendedSplashScreenExtensions
 {
 	public static void Initialize(this ExtendedSplashScreen splash, Window window, LaunchActivatedEventArgs args)

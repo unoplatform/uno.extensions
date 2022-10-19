@@ -1,14 +1,3 @@
-using System.Net.Http;
-using Playground.Services.Endpoints;
-using Uno.Extensions.Localization;
-
-
-#if WINUI
-using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
-#else
-using LaunchActivatedEventArgs = Windows.ApplicationModel.Activation.LaunchActivatedEventArgs;
-#endif
-
 namespace Playground;
 
 public sealed partial class App : Application

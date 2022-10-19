@@ -4,9 +4,7 @@
 			 xmlns:wasm="http://platform.uno/wasm"
 			 xmlns:local="using:MyExtensionsApp"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 mc:Ignorable="wasm"
-			 xmlns:controls="using:Microsoft.UI.Xaml.Controls"
-			 xmlns:utu="using:Uno.Toolkit.UI">
+			 mc:Ignorable="wasm">
 
 	<Application.Resources>
 		<ResourceDictionary>
