@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions;
+﻿using Microsoft.Extensions.DependencyInjection;
+
+namespace Uno.Extensions;
 
 public static class ServiceCollectionExtensions
 {
@@ -59,11 +61,11 @@ public static class ServiceCollectionExtensions
 
 					// Register the navigation mappings repository
 
-					.AddSingleton(views.GetType(),views)
-					.AddSingleton<IViewRegistry>(sp=>(IViewRegistry)sp.GetRequiredService(views.GetType()))
+					.AddSingleton(views.GetType(), views)
+					.AddSingleton<IViewRegistry>(sp => (IViewRegistry)sp.GetRequiredService(views.GetType()))
 
 					.AddSingleton(routes.GetType(), routes)
-					.AddSingleton<IRouteRegistry>(sp=>(RouteRegistry)sp.GetRequiredService(routes.GetType()))
+					.AddSingleton<IRouteRegistry>(sp => (RouteRegistry)sp.GetRequiredService(routes.GetType()))
 					.AddSingleton<RouteResolver>()
 					.AddSingleton<RouteResolverDefault>()
 					.AddSingleton<IRouteResolver>(sp =>

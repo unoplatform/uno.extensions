@@ -1,5 +1,7 @@
 ﻿
 
+using Uno.Toolkit.UI;
+
 namespace TestHarness;
 
 public partial class BaseTestSectionPage : Page, IDisposable
@@ -51,35 +53,32 @@ public partial class BaseTestSectionPage : Page, IDisposable
 			return;
 		}
 		init = true;
-		Host = HostInit!.InitializeHost();
 
 		var win = (Application.Current as App)?.Window!;
-		this.AttachServiceProvider(Host.Services).RegisterWindow(win!);
-
-		if (this.FindName(Constants.NavigationRoot) is FrameworkElement root)
+		var navigationRoot = this.FindName(Constants.NavigationRoot) as ContentControl;
+		if(navigationRoot is LoadingView loadingView)
 		{
-			if (root.IsLoaded)
+			if (loadingView is ExtendedSplashScreen splash)
 			{
-
-				Region.SetAttached(root, true);
+				splash.Window = win;
 			}
-			else
+			Host = await win.InitializeNavigationAsync(async ()=>
 			{
-
-				root.Loaded += (_, _) =>
-				{
-
-					Region.SetAttached(root, true);
-				};
-			}
+				// Uncomment this delay to see the loading/splash view for longer
+				// The Navigation/Apps/Commerce example uses an ExtendedSplashScreen in CommerceMainPage
+				// await Task.Delay(5000);
+				return HostInit!.InitializeHost();
+			}, navigationRoot: loadingView);
 		}
-
-		await Task.Run(() => Host.StartAsync());
+		else
+		{
+			Host = await win.InitializeNavigationAsync(async ()=>HostInit!.InitializeHost(), navigationRoot: navigationRoot);
+		}
 	}
 
 	public void Dispose()
 	{
-		_ = Host!.StopAsync();
+		_ = Host?.StopAsync();
 	}
 }
 

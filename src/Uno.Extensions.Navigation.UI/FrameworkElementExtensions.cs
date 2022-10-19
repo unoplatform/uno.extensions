@@ -17,19 +17,9 @@ public static class FrameworkElementExtensions
 		return scopedServices;
 	}
 
-	public static async Task HostAsync(this FrameworkElement root, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
+	public static Task HostAsync(this FrameworkElement root, IServiceProvider sp, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
 	{
-		// Make sure the element has loaded and is attached to the visual tree
-		await root.EnsureLoaded();
-
-		Host(root, initialRoute, initialView, initialViewModel);
-	}
-
-	public static void Host(this FrameworkElement root, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
-	{
-
-		var sp = root.FindServiceProvider();
-		var services = sp?.CreateNavigationScope();
+		var services = sp.CreateNavigationScope();
 
 		// Create the Root region
 		var elementRegion = new NavigationRegion(root, services);
@@ -50,11 +40,13 @@ public static class FrameworkElementExtensions
 			{
 				start = () => nav.NavigateRouteAsync(root, initialRoute ?? string.Empty);
 			}
-			elementRegion.Services?.Startup(start);
+			var startupTask = elementRegion.Services!.Startup(start);
+			return startupTask;
 		}
+		return Task.CompletedTask;
 	}
 
-	public static async Task Startup(this IServiceProvider services, Func<Task> afterStartup)
+	internal static async Task Startup(this IServiceProvider services, Func<Task> afterStartup)
 	{
 		var startupServices = services
 								.GetServices<IHostedService>()
@@ -67,7 +59,8 @@ public static class FrameworkElementExtensions
 		{
 			await Task.WhenAll(startServices);
 		}
-		await afterStartup();
+		var postStartupTask = afterStartup();
+		await postStartupTask;
 	}
 
 	private static DispatcherQueue? GetDispatcher(this FrameworkElement? element) =>
@@ -140,6 +133,7 @@ public static class FrameworkElementExtensions
 		RoutedEventHandler? loaded = null;
 		EventHandler<object>? layoutChanged = null;
 		TypedEventHandler<FrameworkElement, object>? loading = null;
+		SizeChangedEventHandler? sizeChanged = null;
 
 		CancellationTokenRegistration? rego = null;
 		Action timeoutAction = () =>
@@ -164,16 +158,19 @@ public static class FrameworkElementExtensions
 				element.Loaded -= loaded;
 				element.Loading -= loading;
 				element.LayoutUpdated -= layoutChanged;
+				element.SizeChanged -= sizeChanged;
 			}
 		};
 
 		loaded = (s, e) => loadedAction(false);
 		loading = (s, e) => loadedAction(false);
 		layoutChanged = (s, e) => loadedAction(true);
+		sizeChanged = (s, e) => loadedAction(true);
 
 		element.Loaded += loaded;
 		element.Loading += loading;
 		element.LayoutUpdated += layoutChanged;
+		element.SizeChanged += sizeChanged;
 
 		if (element.IsLoaded ||
 			(element.ActualHeight > 0 && element.ActualWidth > 0))

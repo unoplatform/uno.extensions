@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions;
+﻿using Windows.UI.Xaml;
+
+namespace Uno.Extensions;
 
 public class Dispatcher : IDispatcher
 {
@@ -16,6 +18,17 @@ public class Dispatcher : IDispatcher
 #else
 		_dispatcher = window.Dispatcher;
 #endif
+	}
+
+	public Dispatcher(FrameworkElement element)
+	{
+#if WINUI
+		// We can't grab the DispatcherQueue from the window because it's not supported in Uno yet
+		_dispatcher = global::Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
+#else
+		_dispatcher = element.Dispatcher;
+#endif
+
 	}
 
 	/// <inheritdoc />

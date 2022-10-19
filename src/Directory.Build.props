@@ -152,7 +152,7 @@
 			</ItemGroup>
 		</When>
 	</Choose>
-
+	
 	<!--
 		Adjust the output paths for runtime project in order for those
 		projects to stay in the same folder as the original reference one.
