@@ -1,4 +1,5 @@
 ﻿using Windows.ApplicationModel.Activation;
+using Windows.UI.Xaml;
 
 namespace Uno.Extensions;
 
@@ -37,38 +38,22 @@ public static class ServiceCollectionExtensions
 	/// </summary>
 	/// <param name="window">The application Window to initialize navigation for</param>
 	/// <param name="buildHost">Function to create IHost</param>
-	/// <param name="launchArgs">The application launch args, which includes SplashScreen</param>
+	/// <param name="navigationRoot">LoadingView to host app navigation (only required for nesting navigation in an existing application)</param>
 	/// <param name="initialRoute">[optional] Initial navigation route</param>
 	/// <param name="initialView">[optional] Initial navigation view</param>
 	/// <param name="initialViewModel">[optional] Initial navigation viewmodel</param>
-	/// <param name="navigationRoot">[optional] Where to host app navigation (only required for nesting navigation in an existing application)</param>
 	/// <returns>The created IHost</returns>
-	public static Task<IHost> InitializeNavigationWithExtendedSplash(
+	public static Task<IHost> InitializeNavigationAsync(
 		this Window window,
 		Func<Task<IHost>> buildHost,
-		LaunchActivatedEventArgs? launchArgs = null,
+		LoadingView navigationRoot,
 		string? initialRoute = "",
 		Type? initialView = null,
-		Type? initialViewModel = null,
-		ContentControl? navigationRoot = null)
+		Type? initialViewModel = null)
 	{
-#if !WINUI
-		var splashscreen=launchArgs?.SplashScreen;
-#elif WINDOWS
-		var splashscreen = launchArgs?.UWPLaunchActivatedEventArgs.SplashScreen;
-#else
-		var splashscreen = default(SplashScreen?);
-#endif
-		return window.InitializeNavigation<ToolkitViewHostProvider>(
+		return window.InitializeNavigationAsync<ToolkitViewHostProvider>(
 			buildHost,
-			viewHost =>
-			{
-				if (viewHost is ExtendedSplashScreen esplash)
-				{
-					esplash.SplashScreen = splashscreen;
-					esplash.Window = window;
-				}
-			},
-			initialRoute, initialView, initialViewModel, navigationRoot);
+			navigationRoot,
+			initialRoute, initialView, initialViewModel);
 	}
 }
