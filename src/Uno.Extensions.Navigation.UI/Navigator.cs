@@ -530,65 +530,75 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 	protected virtual async Task<NavigationResponse?> CoreNavigateAsync(NavigationRequest request)
 	{
-		#region Unverified
-		// Don't propagate the response request further than a named region
-		if (!string.IsNullOrWhiteSpace(Region.Name) && request.Result is not null)
+		try
 		{
-			request = request with { Result = null };
-		}
-		#endregion
+			#region Unverified
+			// Don't propagate the response request further than a named region
+			if (!string.IsNullOrWhiteSpace(Region.Name) && request.Result is not null)
+			{
+				request = request with { Result = null };
+			}
+			#endregion
 
-		// Nested regions (for example a frame inside a content control) aren't always loaded
-		// at this point. Need to wait for the current view of this region to load to make
-		// sure all nested regions are available
-		await EnsureChildRegionsAreLoaded(); // Required for Test: Given_PageNavigation.When_PageNavigationXAML
-
-
-
-		if (Region.Children.Count == 0)
-		{
-			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Region has no children to forward request to");
-			return default;
-		}
-		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Region has {Region.Children.Count} children");
+			// Nested regions (for example a frame inside a content control) aren't always loaded
+			// at this point. Need to wait for the current view of this region to load to make
+			// sure all nested regions are available
+			await EnsureChildRegionsAreLoaded(); // Required for Test: Given_PageNavigation.When_PageNavigationXAML
 
 
-		// Retrieve all the navigators for the nested (child) regions
-		// This needs to be done on the UI thread as it will access
-		// the visual hierarchy to locate the IServiceProvider
-		var navigators = await NestedNavigatorsAsync();
 
-		if (request.Route.IsEmpty())
-		{
-			// Update the request to include any default routes before attempting
-			// to navigate child routes
-			request = DefaultRouteRequest(request);  // Required for Test: Given_ListToDetails.When_ListToDetails
+			if (Region.Children.Count == 0)
+			{
+				if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Region has no children to forward request to");
+				return default;
+			}
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Region has {Region.Children.Count} children");
+
+
+			// Retrieve all the navigators for the nested (child) regions
+			// This needs to be done on the UI thread as it will access
+			// the visual hierarchy to locate the IServiceProvider
+			var navigators = await NestedNavigatorsAsync();
 
 			if (request.Route.IsEmpty())
 			{
+				// Update the request to include any default routes before attempting
+				// to navigate child routes
+				request = DefaultRouteRequest(request);  // Required for Test: Given_ListToDetails.When_ListToDetails
+
+				if (request.Route.IsEmpty())
+				{
+					return default;
+				}
+			}
+
+			#region Unverified
+			if (request.Route.IsBackOrCloseNavigation() && !request.Route.IsClearBackstack())
+			{
 				return null;
 			}
-		}
+			#endregion
 
-		#region Unverified
-		if (request.Route.IsBackOrCloseNavigation() && !request.Route.IsClearBackstack())
+			var children = Region.Children.Where(region =>
+										// Unnamed child regions
+										string.IsNullOrWhiteSpace(region.Name)   // Required for Test: Given_PageNavigation.When_PageNavigationXAML
+																				 // Regions whose name matches the next route segment
+										|| region.Name == request.Route.Base    // Required for Test: Given_Apps_Commerce.When_Commerce_Responsive
+																				// Regions whose name matches the current route
+																				// eg currently selected tab
+										|| region.Name == Route?.Base // Required for Test: Given_ContentDialog.When_ComplexContentDialog
+										).ToArray();
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Request is being forwarded to {children.Length} children");
+			return await NavigateChildRegions(children, request);
+		}
+		finally
 		{
-			return null;
+			await PostNavigateAsync();
 		}
-		#endregion
-
-		var children = Region.Children.Where(region =>
-									// Unnamed child regions
-									string.IsNullOrWhiteSpace(region.Name)   // Required for Test: Given_PageNavigation.When_PageNavigationXAML
-									// Regions whose name matches the next route segment
-									|| region.Name == request.Route.Base	// Required for Test: Given_Apps_Commerce.When_Commerce_Responsive
-									// Regions whose name matches the current route
-									// eg currently selected tab
-									|| region.Name == Route?.Base // Required for Test: Given_ContentDialog.When_ComplexContentDialog
-									).ToArray();
-		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Request is being forwarded to {children.Length} children");
-		return await NavigateChildRegions(children, request);
 	}
+
+	protected virtual Task PostNavigateAsync() { return Task.CompletedTask; }
+
 
 	private NavigationRequest DefaultRouteRequest(NavigationRequest request)
 	{
