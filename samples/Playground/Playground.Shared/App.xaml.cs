@@ -31,7 +31,7 @@ public sealed partial class App : Application
 		_window = Window.Current;
 #endif
 
-		var hostingOption = InitOption.Splash;
+		var hostingOption = InitOption.NoShellViewModel;
 
 		switch (hostingOption)
 		{
@@ -132,7 +132,7 @@ public sealed partial class App : Application
 							{
 
 								// Uncomment to view splashscreen for longer
-								await Task.Delay(5000);
+								// await Task.Delay(5000);
 								return BuildAppHost();
 							},
 							navigationRoot: appRoot.SplashScreen,
@@ -142,6 +142,33 @@ public sealed partial class App : Application
 							// initialRoute: "Shell"
 							// Option 3: Specify the view model. To avoid reflection, you can still define a routemap
 							initialViewModel: typeof(ShellViewModel)
+						);
+
+				break;
+
+			case InitOption.NoShellViewModel:
+				// InitializeNavigationAsync with splash screen and async callback to determine where
+				// initial navigation should go
+
+				var appRootNoShell = new AppRoot();
+				appRootNoShell.SplashScreen.Initialize(_window, args);
+
+				_window.Content = appRootNoShell;
+				_window.Activate();
+
+				_host = await _window.InitializeNavigationAsync(
+							async () =>
+							{
+								return BuildAppHost();
+							},
+							navigationRoot: appRootNoShell.SplashScreen,
+							initialNavigate: async (sp, nav)=>
+							{
+								// Uncomment to view splashscreen for longer
+								await Task.Delay(5000);
+
+								await nav.NavigateViewAsync<HomePage>(this);
+							}
 						);
 
 				break;
@@ -166,7 +193,8 @@ public sealed partial class App : Application
 		NavigationRoot,
 		AttachNavigation,
 		InitializeNavigation,
-		Splash
+		Splash,
+		NoShellViewModel
 	}
 
 
