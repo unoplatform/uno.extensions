@@ -6,7 +6,7 @@ uid: Overview.PropertySelector.Concept
 The `PropertySelector` is a standardized way to declare a _path_ to a _value_ given from a root _entity_.
 Using this _path_, an helper _IValueAccessor_ is being generated at compile time to give read and write access to the target _value_.
 
-This is an helper to avoid the usage a 2 delegates (one for read, and one for write) to edit a _value_ on a given _entity_.
+This is a helper to avoid the usage of 2 delegates (one for read, and one for write) to edit a _value_ on a given _entity_.
 
 For instance, given a `Movie` record:
 ```csharp
