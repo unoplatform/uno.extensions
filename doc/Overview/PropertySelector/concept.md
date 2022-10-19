@@ -13,7 +13,7 @@ For instance, given a `Movie` record:
 public partial record Movie(int Likes);
 ```
 
-And an helper class:
+And a helper class:
 ```csharp
 public static class Math
 {
@@ -24,7 +24,7 @@ public static class Math
 }
 ```
 
-You can do something like:
+You can allow the following usage:
 ```
 var current = new Movie(0);
 var updated = Math.Increment(current, m => m.Likes);
@@ -35,23 +35,22 @@ In this example `current.Likes` will be `0` while `updated.Likes` is `1`.
 ## Limitations
 
 1. Only records are supported.
-2. You can use only property in the delegate. Methods, constant or any other constructs are not supported.
-3. You cannot use method-group, only the lambda syntax is allowed.
-4. You delegate cannot use any capture.
+2. Only properties are supported in the delegate. Methods, constants or any other constructs are not supported.
+3. Only the lambda syntax is allowed, method groups are not supported.
+4. The delegate cannot use any captured variables, fields or members.
 
-Basically you can only write something like `e => e.A.B.C` as `PropertySelector`.
+In short, the only supported syntax is the following: `e => e.A.B.C` as `PropertySelector`.
 
 ## Declare a PropertySelector parameter on a method
 
-To avoid usage of reflection at runtime, the `PropertySelector` relies on generated code to work.
-Considering this we need to match an instance of a `PropertySelector` at runtime to its declaration using an identifier 
-derived from information that are also avaliable at compile time.
+To avoid the use of reflection at runtime, the `PropertySelector` relies on generated code.
+Considering this, the generation tooling needs to match an instance of a `PropertySelector` at runtime to its declaration using an identifier derived from information that are also available at compile time.
 
-To avoid to require from the end user to profide a such unique identifier, we are relying on the `[CallerFilePath]` and `[CallerLineNumber]` attributes.
-When method parameters are flagged with those attributes, values are automatically full-filled by the compiler.
+To avoid requiring from the end user to provide a unique identifier, the generation tooling relies on the `[CallerFilePath]` and `[CallerLineNumber]` attributes.
+When method parameters are flagged with those attributes, values are automatically populated by the compiler.
 
-We are then using those `path` and `line` among the name of the `PropertySelector` argument to uniquely identify it, 
-so you can resove the `IValueAccessor` using the `PropertySelectors.Get`:
+We are then using the `path` and `line` parameters along with the `PropertySelector` argument to uniquely identify it, 
+so it becomes possible to resolve the `IValueAccessor` using the `PropertySelectors.Get`:
 
 ```csharp
 public T Increment(T entity, PropertySelector<T, int> selector, [CallerFilePath] string path = "", [CallerLineNumber] int line = -1)
@@ -67,9 +66,9 @@ public T Increment(T entity, PropertySelector<T, int> selector, [CallerFilePath]
 > The `path` and `line` arguments must be resolvable at compile time to be able to compute the _key_.
 > If a user wants to provide `path` and / or `line`, only constant values are allowed.
 
-## Passing a PropertySelector between methods
+## Providing a PropertySelector between methods
 
-You cannot pass a `PropertySelector` from a method to another one as it would require to provide the `path` and `line` 
+You cannot provide a `PropertySelector` from a method to another method as it would require to specify the `path` and `line`
 as non constant parameters, which is not allowed.
 
 You have to resolve the `IValueAccessor` and pass it as parameter.

@@ -19,7 +19,7 @@ internal static partial class Rules
 			message,
 			Category.Usage,
 			DiagnosticSeverity.Error,
-			helpLinkUri: "https://platform.uno/docs/articles/external/uno.extensions/doc/Overview/PropertySelector/rules.html#PS0001",
+			helpLinkUri: "https://aka.platform.uno/PS0001",
 			isEnabledByDefault: true);
 
 		public static Diagnostic GetDiagnostic(SimpleLambdaExpressionSyntax selectorSyntax, SyntaxNode failingNode)
@@ -44,7 +44,7 @@ internal static partial class Rules
 			message,
 			Category.Usage,
 			DiagnosticSeverity.Error,
-			helpLinkUri: "https://platform.uno/docs/articles/external/uno.extensions/doc/Overview/PropertySelector/rules.html#PS0002",
+			helpLinkUri: "https://aka.platform.uno/PS0002",
 			isEnabledByDefault: true);
 
 		public static Diagnostic GetDiagnostic(SimpleLambdaExpressionSyntax selectorSyntax, SyntaxNode failingNode)
@@ -69,7 +69,7 @@ internal static partial class Rules
 			message,
 			Category.Usage,
 			DiagnosticSeverity.Error,
-			helpLinkUri: "https://platform.uno/docs/articles/external/uno.extensions/doc/Overview/PropertySelector/rules.html#PS0003",
+			helpLinkUri: "https://aka.platform.uno/PS0003",
 			isEnabledByDefault: true);
 
 		public static Diagnostic GetDiagnostic(SyntaxNode selectorSyntax)
@@ -92,7 +92,7 @@ internal static partial class Rules
 			message,
 			Category.Usage,
 			DiagnosticSeverity.Error,
-			helpLinkUri: "https://platform.uno/docs/articles/external/uno.extensions/doc/Overview/PropertySelector/rules.html#PS0004",
+			helpLinkUri: "https://aka.platform.uno/PS0004",
 			isEnabledByDefault: true);
 
 		public static Diagnostic GetDiagnostic(SyntaxNode selectorSyntax, ITypeSymbol type)
@@ -115,7 +115,7 @@ internal static partial class Rules
 			message,
 			Category.Usage,
 			DiagnosticSeverity.Error,
-			helpLinkUri: "https://platform.uno/docs/articles/external/uno.extensions/doc/Overview/PropertySelector/rules.html#PS0005",
+			helpLinkUri: "https://aka.platform.uno/PS0005",
 			isEnabledByDefault: true);
 
 		public static Diagnostic GetDiagnostic(string path, string part, SyntaxNode node, ITypeSymbol type)
@@ -140,7 +140,7 @@ internal static partial class Rules
 			message,
 			Category.Usage,
 			DiagnosticSeverity.Error,
-			helpLinkUri: "https://platform.uno/docs/articles/external/uno.extensions/doc/Overview/PropertySelector/rules.html#PS0006",
+			helpLinkUri: "https://aka.platform.uno/PS0006",
 			isEnabledByDefault: true);
 
 		public static Diagnostic GetDiagnostic(string path, string part, SyntaxNode node, ITypeSymbol type)
@@ -166,7 +166,7 @@ internal static partial class Rules
 			message,
 			Category.Usage,
 			DiagnosticSeverity.Warning,
-			helpLinkUri: "https://platform.uno/docs/articles/external/uno.extensions/doc/Overview/PropertySelector/rules.html#PS0101",
+			helpLinkUri: "https://aka.platform.uno/PS0101",
 			isEnabledByDefault: true);
 
 		public static Diagnostic GetDiagnostic(IMethodSymbol method)
@@ -191,7 +191,7 @@ internal static partial class Rules
 			message,
 			Category.Usage,
 			DiagnosticSeverity.Error,
-			helpLinkUri: "https://platform.uno/docs/articles/external/uno.extensions/doc/Overview/PropertySelector/rules.html#PS0102",
+			helpLinkUri: "https://aka.platform.uno/PS0102",
 			isEnabledByDefault: true);
 
 		public static Diagnostic GetDiagnostic(IMethodSymbol method, string param, SyntaxNode argNode)
@@ -218,7 +218,7 @@ internal static partial class Rules
 			message,
 			Category.Usage,
 			DiagnosticSeverity.Error,
-			helpLinkUri: "https://platform.uno/docs/articles/external/uno.extensions/doc/Overview/PropertySelector/rules.html#PS9999",
+			helpLinkUri: "https://aka.platform.uno/PS9999",
 			isEnabledByDefault: true);
 
 		public static Diagnostic GetDiagnostic(Exception error)
