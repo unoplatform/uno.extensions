@@ -17,7 +17,11 @@ public static class FrameworkElementExtensions
 		return scopedServices;
 	}
 
-	public static Task HostAsync(this FrameworkElement root, IServiceProvider sp, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
+	public static Task HostAsync(
+		this FrameworkElement root,
+		IServiceProvider sp,
+		string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null,
+		Func<IServiceProvider, INavigator, Task>? initialNavigate = null)
 	{
 		var services = sp.CreateNavigationScope();
 
@@ -28,7 +32,11 @@ public static class FrameworkElementExtensions
 		if (nav is not null)
 		{
 			var start = () => Task.CompletedTask;
-			if (initialView is not null)
+			if (initialNavigate is not null)
+			{
+				start = () => initialNavigate(services, nav);
+			}
+			else if (initialView is not null)
 			{
 				start = () => nav.NavigateViewAsync(root, initialView);
 			}

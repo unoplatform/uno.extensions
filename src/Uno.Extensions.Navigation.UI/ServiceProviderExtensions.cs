@@ -152,6 +152,7 @@ public static class ServiceProviderExtensions
 	/// <param name="initialRoute">[optional] Initial navigation route</param>
 	/// <param name="initialView">[optional] Initial navigation view</param>
 	/// <param name="initialViewModel">[optional] Initial navigation viewmodel</param>
+	/// <param name="initialNavigate">[optional] Callback to drive initial navigation for app</param>
 	/// <returns>The created IHost</returns>
 	public static Task<IHost> InitializeNavigationAsync(
 		this Window window,
@@ -159,7 +160,8 @@ public static class ServiceProviderExtensions
 		ContentControl? navigationRoot = null,
 		string? initialRoute = "",
 		Type? initialView = null,
-		Type? initialViewModel = null)
+		Type? initialViewModel = null,
+		Func<IServiceProvider, INavigator, Task>? initialNavigate = null)
 	{
 
 		// Make sure we have a navigation root
@@ -184,7 +186,8 @@ public static class ServiceProviderExtensions
 		string? initialRoute = "",
 		Type? initialView = null,
 		Type? initialViewModel = null,
-		Action<FrameworkElement, Task>? initialiseViewHost = null)
+		Action<FrameworkElement, Task>? initialiseViewHost = null,
+		Func<IServiceProvider, INavigator, Task>? initialNavigate = null)
 	{
 		if (window.Content is null)
 		{
@@ -192,16 +195,17 @@ public static class ServiceProviderExtensions
 			window.Activate();
 		}
 
-		var buildTask = window.BuildAndInitializeHost(navigationRoot, buildHost, initialRoute, initialView, initialViewModel);
+		var buildTask = window.BuildAndInitializeHostAsync(navigationRoot, buildHost, initialRoute, initialView, initialViewModel, initialNavigate);
 		initialiseViewHost?.Invoke(navigationRoot, buildTask);
 		return buildTask;
 	}
 
-	private static async Task<IHost> BuildAndInitializeHost(
+	private static async Task<IHost> BuildAndInitializeHostAsync(
 		this Window window,
 		FrameworkElement viewHost,
 		Func<Task<IHost>> buildHost,
-		string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
+		string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null,
+		Func<IServiceProvider, INavigator, Task>? initialNavigate = null)
 	{
 		// Force immediate return of Task to avoid synchronous execution of buildHost
 		// It's important that buildHost is still executed on UI thread, so can't do
@@ -211,7 +215,7 @@ public static class ServiceProviderExtensions
 		var host = await buildHost();
 		//var host = await Task.Run(() => buildHost());
 		var services = window.AttachServices(host.Services);
-		var startup = viewHost.HostAsync(services, initialRoute, initialView, initialViewModel);
+		var startup = viewHost.HostAsync(services, initialRoute, initialView, initialViewModel, initialNavigate);
 
 		await Task.Run(() => host.StartAsync());
 
