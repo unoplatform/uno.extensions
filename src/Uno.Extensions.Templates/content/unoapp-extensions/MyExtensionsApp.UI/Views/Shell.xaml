@@ -9,19 +9,27 @@
 			 d:DesignHeight="300"
 			 d:DesignWidth="400">
 
-	<utu:LoadingView x:Name="Splash">
-		<utu:LoadingView.LoadingContent>
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="2*" />
-					<RowDefinition />
-				</Grid.RowDefinitions>
+	<utu:ExtendedSplashScreen x:Name="Splash"
+							  HorizontalAlignment="Stretch"
+							  VerticalAlignment="Stretch"
+							  HorizontalContentAlignment="Stretch"
+							  VerticalContentAlignment="Stretch">
+		<utu:ExtendedSplashScreen.LoadingContentTemplate>
+			<DataTemplate>
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="2*" />
+						<RowDefinition />
+					</Grid.RowDefinitions>
 
-				<ProgressRing IsActive="True"
-							  Grid.Row="1"
-							  VerticalAlignment="Center"
-							  HorizontalAlignment="Center" Height="100" Width="100" />
-			</Grid>
-		</utu:LoadingView.LoadingContent>
-	</utu:LoadingView>
+					<ProgressRing IsActive="True"
+								  Grid.Row="1"
+								  VerticalAlignment="Center"
+								  HorizontalAlignment="Center"
+								  Height="100"
+								  Width="100" />
+				</Grid>
+			</DataTemplate>
+		</utu:ExtendedSplashScreen.LoadingContentTemplate>
+	</utu:ExtendedSplashScreen>
 </UserControl>

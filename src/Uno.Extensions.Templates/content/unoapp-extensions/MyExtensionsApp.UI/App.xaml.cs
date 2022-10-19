@@ -30,20 +30,22 @@ public sealed partial class App : Application
 		_window = Microsoft.UI.Xaml.Window.Current;
 #endif
 
-		//var root = new Shell();
-		//_window.Content = root;
+		var appRoot = new Shell();
+		appRoot.SplashScreen.Initialize(_window, args);
 
-		//Host = await _window.InitializeNavigation(
-		//			BuildAppHost
-		//			//args.UWPLaunchActivatedEventArgs.SplashScreen,
-		//			//navigationRoot: root.SplashScreen
-		//			);
-		Host = BuildAppHost();
-
-		_window.AttachNavigation(Host.Services);
+		_window.Content = appRoot;
 		_window.Activate();
 
-		await Task.Run(() => Host.StartAsync());
+		Host = await _window.InitializeNavigationAsync(
+					async () =>
+					{
+
+						// Uncomment to view splashscreen for longer
+						await Task.Delay(5000);
+						return BuildAppHost();
+					},
+					navigationRoot: appRoot.SplashScreen
+				);
 	}
 
 	/// <summary>
