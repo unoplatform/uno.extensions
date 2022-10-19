@@ -1,5 +1,7 @@
 ﻿
 
+using Uno.Toolkit.UI;
+
 namespace TestHarness;
 
 public partial class BaseTestSectionPage : Page, IDisposable
@@ -54,7 +56,24 @@ public partial class BaseTestSectionPage : Page, IDisposable
 
 		var win = (Application.Current as App)?.Window!;
 		var navigationRoot = this.FindName(Constants.NavigationRoot) as ContentControl;
-		Host = await win.InitializeNavigationWithExtendedSplash(HostInit!.InitializeHost,null, navigationRoot: navigationRoot);
+		if(navigationRoot is LoadingView loadingView)
+		{
+			if (loadingView is ExtendedSplashScreen splash)
+			{
+				splash.Window = win;
+			}
+			Host = await win.InitializeNavigationAsync(async ()=>
+			{
+				// Uncomment this delay to see the loading/splash view for longer
+				// The Navigation/Apps/Commerce example uses an ExtendedSplashScreen in CommerceMainPage
+				// await Task.Delay(5000);
+				return HostInit!.InitializeHost();
+			}, navigationRoot: loadingView);
+		}
+		else
+		{
+			Host = await win.InitializeNavigationAsync(async ()=>HostInit!.InitializeHost(), navigationRoot: navigationRoot);
+		}
 	}
 
 	public void Dispose()
