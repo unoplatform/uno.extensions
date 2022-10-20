@@ -189,12 +189,12 @@ internal static class RoslynExtensions
 	public static bool IsAccessible(this ISymbol symbol)
 		=> symbol.DeclaredAccessibility is Accessibility.Public or Accessibility.Internal or Accessibility.ProtectedOrInternal;
 
-	public static bool IsAccessibleTo(this ISymbol symbol, IAssemblySymbol toAssembly)
+	public static bool IsAccessibleTo(this ISymbol symbol, IAssemblySymbol toAssembly, bool allowInternalsVisibleTo = true)
 		=> symbol switch
 		{
 			{ DeclaredAccessibility: Accessibility.Public or Accessibility.ProtectedAndInternal } => true,
 			{ DeclaredAccessibility: Accessibility.Internal } when SymbolEqualityComparer.Default.Equals(symbol.ContainingAssembly, toAssembly) => true,
-			{ DeclaredAccessibility: Accessibility.Internal } when symbol.ContainingAssembly.GivesAccessTo(toAssembly) => true,
+			{ DeclaredAccessibility: Accessibility.Internal } when allowInternalsVisibleTo && symbol.ContainingAssembly.GivesAccessTo(toAssembly) => true,
 			_ => false
 		};
 

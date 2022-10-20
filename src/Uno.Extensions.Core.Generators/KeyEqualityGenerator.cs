@@ -19,7 +19,7 @@ public partial class KeyEqualityGenerator : ISourceGenerator
 	/// <inheritdoc />
 	public void Execute(GeneratorExecutionContext context)
 	{
-#if DEBUGGING_GENERATOR || true
+#if DEBUGGING_GENERATOR
 		var process = Process.GetCurrentProcess().ProcessName;
 		if (process.IndexOf("VBCSCompiler", StringComparison.OrdinalIgnoreCase) is not -1
 			|| process.IndexOf("csc", StringComparison.OrdinalIgnoreCase) is not -1)
