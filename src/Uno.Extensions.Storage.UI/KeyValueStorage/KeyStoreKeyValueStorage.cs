@@ -18,7 +18,7 @@ namespace Uno.Extensions.Storage.KeyValueStorage;
 /// <summary>
 /// Allows saving settings in a secure storage using Android's <see cref="KeyStore"/>.
 /// </summary>
-internal record KeyStoreSettingsStorage : IKeyValueStorage
+internal record KeyStoreSettingsStorage : BaseKeyValueStorageWithCaching
 {
 	public const string Name = "KeyStore";
 
@@ -43,7 +43,11 @@ internal record KeyStoreSettingsStorage : IKeyValueStorage
 	/// <summary>
 	/// Creates a new <see cref="KeyStoreSettingsStorage"/> using a specific filename as the destination storage.
 	/// </summary>
-	public KeyStoreSettingsStorage(ILogger<KeyStoreSettingsStorage> logger, KeyValueStorageSettings settings, ISerializer serializer)
+	public KeyStoreSettingsStorage(
+		ILogger<KeyStoreSettingsStorage> logger,
+		InMemoryKeyValueStorage inMemoryStorage,
+		KeyValueStorageSettings settings,
+		ISerializer serializer) : base(inMemoryStorage, settings)
 	{
 		_serializer = serializer;
 		_logger = logger;
@@ -52,10 +56,10 @@ internal record KeyStoreSettingsStorage : IKeyValueStorage
 	}
 
 	/// <inheritdoc />
-	public bool IsEncrypted => true;
+	public override bool IsEncrypted => true;
 
 	/// <inheritdoc />
-	public async ValueTask ClearAsync(string? name, CancellationToken ct)
+	protected override async ValueTask InternalClearAsync(string? name, CancellationToken ct)
 	{
 		if (_logger.IsEnabled(LogLevel.Debug))
 		{
@@ -77,7 +81,7 @@ internal record KeyStoreSettingsStorage : IKeyValueStorage
 	}
 
 	/// <inheritdoc />
-	public async ValueTask<string[]> GetKeysAsync(CancellationToken ct)
+	protected override async ValueTask<string[]> InternalGetKeysAsync(CancellationToken ct)
 	{
 		var aliases = _keyStoreSelector.Value.Aliases();
 
@@ -96,7 +100,8 @@ internal record KeyStoreSettingsStorage : IKeyValueStorage
 	}
 
 	/// <inheritdoc />
-	public async ValueTask<T?> GetAsync<T>(string name, CancellationToken ct)
+#nullable disable
+	protected override async ValueTask<T> InternalGetAsync<T>(string name, CancellationToken ct)
 	{
 		if (_logger.IsEnabled(LogLevel.Debug))
 		{
@@ -124,10 +129,11 @@ internal record KeyStoreSettingsStorage : IKeyValueStorage
 
 		return value;
 	}
+#nullable restore
 
 
 	/// <inheritdoc />
-	public async ValueTask SetAsync<T>(string name, T value, CancellationToken ct) where T : notnull
+	protected override async ValueTask InternalSetAsync<T>(string name, T value, CancellationToken ct) 
 	{
 		if (_logger.IsEnabled(LogLevel.Debug))
 		{

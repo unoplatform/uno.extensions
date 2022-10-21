@@ -19,10 +19,11 @@ public class StorageHostInit : BaseHostInitialization
 					sp =>
 					{
 						var l = sp.GetRequiredService<ILogger<TestingKeyValueStorage>>();
+						var inmem = sp.GetRequiredService<InMemoryKeyValueStorage>();
 						var s = sp.GetRequiredService<ISerializer>();
 						var config = sp.GetRequiredService<IOptions<KeyValueStorageConfiguration>>();
 						var settings = config.Value.GetSettingsOrDefault(NoCacheStorage);
-						return new TestingKeyValueStorage(l, settings, s);
+						return new TestingKeyValueStorage(l,inmem, settings, s);
 					}));
 #else
 			.AddNamedSingleton<IKeyValueStorage, TestingKeyValueStorage>(
@@ -58,8 +59,9 @@ internal record  TestingKeyValueStorage
 			{
 	public TestingKeyValueStorage(
 		ILogger<TestingKeyValueStorage> logger,
+		InMemoryKeyValueStorage inmem,
 		KeyValueStorageSettings settings,
-		ISerializer serializer) : base(logger, settings, serializer)
+		ISerializer serializer) : base(logger, inmem, settings, serializer)
 	{
 
 	}

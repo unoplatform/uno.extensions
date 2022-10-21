@@ -34,9 +34,10 @@ public static class ServiceCollectionExtensions
 					{
 						var l = sp.GetRequiredService<ILogger<KeyStoreSettingsStorage>>();
 						var s = sp.GetRequiredService<ISerializer>();
+						var inmem = sp.GetRequiredService<InMemoryKeyValueStorage>();
 						var config = sp.GetRequiredService<IOptions<KeyValueStorageConfiguration>>();
 						var settings = config.Value.GetSettingsOrDefault(KeyStoreSettingsStorage.Name);
-						return new KeyStoreSettingsStorage(l, settings, s);
+						return new KeyStoreSettingsStorage(l,inmem, settings, s);
 					})
 #endif
 #if __IOS__
