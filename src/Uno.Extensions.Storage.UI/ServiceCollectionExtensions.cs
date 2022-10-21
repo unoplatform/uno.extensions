@@ -17,9 +17,27 @@ public static class ServiceCollectionExtensions
 	{
 		return services
 				.AddNamedSingleton<IKeyValueStorage, InMemoryKeyValueStorage>(InMemoryKeyValueStorage.Name)
-				.AddNamedSingleton<IKeyValueStorage, ApplicationDataKeyValueStorage>(ApplicationDataKeyValueStorage.Name)
+				.AddNamedSingleton<IKeyValueStorage, ApplicationDataKeyValueStorage>(ApplicationDataKeyValueStorage.Name,
+				sp =>
+				{
+					var l = sp.GetRequiredService<ILogger<ApplicationDataKeyValueStorage>>();
+					var s = sp.GetRequiredService<ISerializer>();
+					var inmem = sp.GetRequiredService<InMemoryKeyValueStorage>();
+					var config = sp.GetRequiredService<IOptions<KeyValueStorageConfiguration>>();
+					var settings = config.Value.GetSettingsOrDefault(ApplicationDataKeyValueStorage.Name);
+					return new ApplicationDataKeyValueStorage(l, inmem, settings, s);
+				})
 #if __ANDROID__
-				.AddNamedSingleton<IKeyValueStorage, KeyStoreSettingsStorage>(KeyStoreSettingsStorage.Name)
+				.AddNamedSingleton<IKeyValueStorage, KeyStoreSettingsStorage>(
+					KeyStoreSettingsStorage.Name,
+					sp =>
+					{
+						var l = sp.GetRequiredService<ILogger<KeyStoreSettingsStorage>>();
+						var s = sp.GetRequiredService<ISerializer>();
+						var config = sp.GetRequiredService<IOptions<KeyValueStorageConfiguration>>();
+						var settings = config.Value.GetSettingsOrDefault(KeyStoreSettingsStorage.Name);
+						return new KeyStoreSettingsStorage(l, settings, s);
+					})
 #endif
 #if __IOS__
 				.AddNamedSingleton<IKeyValueStorage, KeyChainSettingsStorage>(KeyChainSettingsStorage.Name)

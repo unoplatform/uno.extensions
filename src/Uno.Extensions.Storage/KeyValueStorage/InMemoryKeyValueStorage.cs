@@ -1,9 +1,4 @@
-﻿
-
-
-
-
-namespace Uno.Extensions.Storage.KeyValueStorage;
+﻿namespace Uno.Extensions.Storage.KeyValueStorage;
 
 internal record InMemoryKeyValueStorage(ILogger<InMemoryKeyValueStorage> Logger) : IKeyValueStorage
 {
@@ -68,7 +63,7 @@ internal record InMemoryKeyValueStorage(ILogger<InMemoryKeyValueStorage> Logger)
 				Logger.LogInformationMessage($"Key '{name}' not found.");
 			}
 
-			throw new KeyNotFoundException($"Key '{name}' not found");
+			return default(T?);
 		}
 	}
 

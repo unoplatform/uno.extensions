@@ -21,13 +21,13 @@ public sealed partial class App : Application
 
 	protected override void OnLaunched(LaunchActivatedEventArgs args)
 	{
-#if DEBUG && !__WASM__
-		// This seems 
-		if (!Debugger.IsAttached)
-		{
-			Debugger.Launch();
-		}
-#endif
+//#if DEBUG && !__WASM__
+//		// This seems 
+//		if (!Debugger.IsAttached)
+//		{
+//			Debugger.Launch();
+//		}
+//#endif
 
 #if WINDOWS
 		// This is only required because we don't run UnoHost.CreateDefaultHost until a

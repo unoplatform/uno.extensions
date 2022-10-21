@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions;
+﻿
+
+namespace Uno.Extensions;
 
 public static class HostBuilderExtensions
 {
@@ -14,6 +16,11 @@ public static class HostBuilderExtensions
 		Action<HostBuilderContext, IServiceCollection>? configure = default)
 	{
 		return builder
+			.UseConfiguration(
+				configure: configBuilder =>
+				configBuilder
+						.Section<KeyValueStorageConfiguration>(nameof(KeyValueStorageConfiguration))
+					)
 			.ConfigureServices((ctx, services) =>
 		{
 			_ = services

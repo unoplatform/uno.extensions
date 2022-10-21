@@ -30,6 +30,7 @@
 		<InternalsVisibleTo Include="$(AssemblyName).UI" />
 		<InternalsVisibleTo Include="$(AssemblyName).WinUI" />
 		<InternalsVisibleTo Include="Uno.Extensions.Authentication" />
+		<InternalsVisibleTo Include="TestHarnessApp" />
 	</ItemGroup>
 
 </Project>

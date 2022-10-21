@@ -6,8 +6,12 @@ using Windows.Security.Cryptography.DataProtection;
 
 namespace Uno.Extensions.Storage.KeyValueStorage;
 
-internal record EncryptedApplicationDataKeyValueStorage(ILogger<ApplicationDataKeyValueStorage> EncryptedLogger, ISerializer Serializer)
-	: ApplicationDataKeyValueStorage(EncryptedLogger, Serializer)
+internal record EncryptedApplicationDataKeyValueStorage(
+	ILogger<ApplicationDataKeyValueStorage> EncryptedLogger,
+	InMemoryKeyValueStorage InMemoryStorage,
+	KeyValueStorageSettings Settings,
+	ISerializer Serializer)
+	: ApplicationDataKeyValueStorage(EncryptedLogger, InMemoryStorage, Settings, Serializer)
 {
 	public new const string Name = "EncryptedApplicationData";
 

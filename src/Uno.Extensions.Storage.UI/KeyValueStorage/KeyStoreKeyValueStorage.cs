@@ -43,7 +43,7 @@ internal record KeyStoreSettingsStorage : IKeyValueStorage
 	/// <summary>
 	/// Creates a new <see cref="KeyStoreSettingsStorage"/> using a specific filename as the destination storage.
 	/// </summary>
-	public KeyStoreSettingsStorage(ILogger<KeyStoreSettingsStorage> logger, ISerializer serializer)
+	public KeyStoreSettingsStorage(ILogger<KeyStoreSettingsStorage> logger, KeyValueStorageSettings settings, ISerializer serializer)
 	{
 		_serializer = serializer;
 		_logger = logger;
