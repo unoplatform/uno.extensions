@@ -252,6 +252,55 @@ public static class MessageAxisExtensions
 		where TBuilder : IMessageBuilder
 		=> builder.Set(MessageAxis.Pagination, page);
 
+	/// <summary>
+	/// Gets the selection info of an <see cref="MessageEntry{T}"/>
+	/// </summary>
+	/// <param name="entry">The entry.</param>
+	/// <returns>The selection info.</returns>
+	[Pure]
+	public static SelectionInfo? GetSelectionInfo(this IMessageEntry entry)
+		=> entry.Get(MessageAxis.Selection);
+
+
+	/// <summary>
+	/// Gets the selected items of a list <see cref="MessageEntry{T}"/>
+	/// </summary>
+	/// <param name="entry">The entry.</param>
+	/// <returns>The selected items or an empty collection if none.</returns>
+	[Pure]
+	public static IImmutableList<T> GetSelectedItems<T>(this MessageEntry<IImmutableList<T>> entry)
+	{
+		var items = entry.Data.SomeOrDefault(ImmutableList<T>.Empty);
+		var info = entry.Get(MessageAxis.Selection) ?? SelectionInfo.Empty;
+
+		return info.GetSelectedItems(items);
+	}
+
+	/// <summary>
+	/// Gets the **first** selected item of a list <see cref="MessageEntry{T}"/> if any.
+	/// </summary>
+	/// <remarks>If more than one items are selected, this will return only the first selected item.</remarks>
+	/// <param name="entry">The entry.</param>
+	/// <returns>The selected item if any.</returns>
+	[Pure]
+	public static T? GetSelectedItem<T>(this MessageEntry<IImmutableList<T>> entry)
+		where T : notnull
+	{
+		var items = entry.Data.SomeOrDefault(ImmutableList<T>.Empty);
+		var info = entry.Get(MessageAxis.Selection) ?? SelectionInfo.Empty;
+
+		return info.GetSelectedItem(items);
+	}
+
+	/// <summary>
+	/// Sets the selection info of an <see cref="MessageBuilder{T}"/>
+	/// </summary>
+	/// <param name="builder">The builder.</param>
+	/// <param name="selection">The selection info.</param>
+	/// <returns>The <paramref name="builder"/> for fluent building.</returns>
+	public static TBuilder Selected<TBuilder>(this TBuilder builder, SelectionInfo selection)
+		where TBuilder : IMessageBuilder
+		=> builder.Set(MessageAxis.Selection, selection);
 
 	/// <summary>
 	/// Fluently applies an additional configuration action on a message builder.

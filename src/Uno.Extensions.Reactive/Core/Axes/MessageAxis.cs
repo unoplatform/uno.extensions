@@ -50,6 +50,15 @@ public abstract class MessageAxis : IEquatable<MessageAxis>
 	/// </remarks>
 	internal static MessageAxis<PaginationInfo> Pagination => new(MessageAxes.Pagination, PaginationInfo.Aggregate);
 
+	/// <summary>
+	/// For a refreshable source, this axis contains information about the version of this source.
+	/// </summary>
+	/// <remarks>
+	/// This is expected to be full-filled only by "source" feed that are refreshable,
+	/// not the sources feed built from a stream of data nor operators.
+	/// </remarks>
+	internal static MessageAxis<SelectionInfo> Selection => new(MessageAxes.Selection, SelectionInfo.Aggregate);
+
 	internal MessageAxis(string identifier)
 	{
 		Identifier = identifier;
