@@ -42,7 +42,7 @@ internal sealed class UpdateFeed<T> : IFeed<T>
 		=> _updates.SetNext((new[] { update }, null));
 
 	internal void Replace(IFeedUpdate<T> previous, IFeedUpdate<T> current)
-		=> _updates.SetNext((new[] { previous }, new[] { current }));
+		=> _updates.SetNext((new[] { current }, new[] { previous }));
 
 	internal void Remove(IFeedUpdate<T> update)
 		=> _updates.SetNext((null, new[] { update }));
