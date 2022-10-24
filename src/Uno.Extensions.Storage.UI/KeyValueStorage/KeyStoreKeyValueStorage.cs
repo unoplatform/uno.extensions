@@ -10,22 +10,22 @@ using Java.Security;
 using Javax.Crypto;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions;
-using Uno.Logging;
 using Uno.Extensions.Threading;
+using Uno.Logging;
 
 namespace Uno.Extensions.Storage.KeyValueStorage;
 
 /// <summary>
 /// Allows saving settings in a secure storage using Android's <see cref="KeyStore"/>.
 /// </summary>
-internal record KeyStoreSettingsStorage : BaseKeyValueStorageWithCaching
+internal record KeyStoreKeyValueStorage : BaseKeyValueStorageWithCaching
 {
 	public const string Name = "KeyStore";
 
 	// It is not an issue if this password becomes public, as it's simply added encryption
 	// above the app-level encryption.
 	private const string DefaultPrivatePassword = "95407C28724B42F78A035C55987FDB21C7C2CB53529148B5A3021B715447E593";
-	private const string DefaultFileName = "KeyStoreSettingsStorage";
+	private const string DefaultFileName = "KeyStoreKeyValueStorage";
 
 	private readonly ILogger _logger;
 	private readonly ISerializer _serializer;
@@ -41,10 +41,10 @@ internal record KeyStoreSettingsStorage : BaseKeyValueStorageWithCaching
 	private static readonly Encoding _utf8 = new UTF8Encoding(false);
 
 	/// <summary>
-	/// Creates a new <see cref="KeyStoreSettingsStorage"/> using a specific filename as the destination storage.
+	/// Creates a new <see cref="KeyStoreKeyValueStorage"/> using a specific filename as the destination storage.
 	/// </summary>
-	public KeyStoreSettingsStorage(
-		ILogger<KeyStoreSettingsStorage> logger,
+	public KeyStoreKeyValueStorage(
+		ILogger<KeyStoreKeyValueStorage> logger,
 		InMemoryKeyValueStorage inMemoryStorage,
 		KeyValueStorageSettings settings,
 		ISerializer serializer) : base(inMemoryStorage, settings)

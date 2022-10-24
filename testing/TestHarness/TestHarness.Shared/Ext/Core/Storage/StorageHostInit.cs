@@ -13,7 +13,6 @@ public class StorageHostInit : BaseHostInitialization
 	{
 		return builder
 			.ConfigureServices(services => services
-#if __ANDROID__
 			.AddNamedSingleton<IKeyValueStorage, TestingKeyValueStorage>(
 					NoCacheStorage,
 					sp =>
@@ -25,19 +24,6 @@ public class StorageHostInit : BaseHostInitialization
 						var settings = config.Value.GetSettingsOrDefault(NoCacheStorage);
 						return new TestingKeyValueStorage(l,inmem, settings, s);
 					}));
-#else
-			.AddNamedSingleton<IKeyValueStorage, TestingKeyValueStorage>(
-				NoCacheStorage,
-				sp =>
-				{
-					var l = sp.GetRequiredService<ILogger<TestingKeyValueStorage>>();
-					var s = sp.GetRequiredService<ISerializer>();
-					var inmem = sp.GetRequiredService<InMemoryKeyValueStorage>();
-					var config = sp.GetRequiredService<IOptions<KeyValueStorageConfiguration>>();
-					var settings = config.Value.GetSettingsOrDefault(NoCacheStorage);
-					return new TestingKeyValueStorage(l, inmem, settings, s);
-				}));
-#endif
 	}
 
 
@@ -55,7 +41,7 @@ public class StorageHostInit : BaseHostInitialization
 
 internal record  TestingKeyValueStorage
 #if __ANDROID__
-			: KeyStoreSettingsStorage
+			: KeyStoreKeyValueStorage
 			{
 	public TestingKeyValueStorage(
 		ILogger<TestingKeyValueStorage> logger,
@@ -65,6 +51,13 @@ internal record  TestingKeyValueStorage
 	{
 
 	}
+#elif __IOS__
+			(ILogger<TestingKeyValueStorage> TestingLogger,
+	InMemoryKeyValueStorage InMemoryStorage,
+	KeyValueStorageSettings Settings,
+	ISerializer Serializer) : KeyChainKeyValueStorage(TestingLogger, InMemoryStorage, Settings, Serializer)
+{
+
 #else
 			(ILogger<TestingKeyValueStorage> TestingLogger,
 	InMemoryKeyValueStorage InMemoryStorage,

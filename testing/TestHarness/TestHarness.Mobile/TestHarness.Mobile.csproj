@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks Condition="'$(UnoTargetFrameworkMobileOverride)'!=''">$(UnoTargetFrameworkMobileOverride)</TargetFrameworks>
 		<TargetFrameworks Condition="'$(UnoTargetFrameworkMobileOverride)'==''">net6.0-android;net6.0-ios;net6.0-maccatalyst;net6.0-macos</TargetFrameworks>
@@ -30,7 +30,7 @@
 		<PackageReference Include="Microsoft.Extensions.Logging" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" />
 		<PackageReference Include="Refit" />
-		<PackageReference Include="Refit.HttpClientFactory"  />
+		<PackageReference Include="Refit.HttpClientFactory" />
 		<PackageReference Include="System.Text.Json" />
 		<PackageReference Include="Uno.Material.WinUI" />
 		<PackageReference Include="Uno.Toolkit.WinUI.Material" />
@@ -61,6 +61,11 @@
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http.Refit\Uno.Extensions.Http.Refit.csproj" />
 		<ProjectReference Include="..\TestHarness.Core\TestHarness.Core.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+	  <None Update="iOS\Entitlements.plist">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
 	<Choose>
 		<When Condition="'$(TargetFramework)'=='net6.0-android'">
 			<ItemGroup>
@@ -76,6 +81,7 @@
 				<MtouchExtraArgs>$(MtouchExtraArgs) --setenv=MONO_GC_PARAMS=soft-heap-limit=512m,nursery-size=64m,evacuation-threshold=66,major=marksweep,concurrent-sweep</MtouchExtraArgs>
 				<!-- https://github.com/xamarin/xamarin-macios/issues/14812 -->
 				<MtouchExtraArgs>$(MtouchExtraArgs) --marshal-objectivec-exceptions:disable</MtouchExtraArgs>
+				<CodesignEntitlements>iOS\Entitlements.plist</CodesignEntitlements>
 			</PropertyGroup>
 			<ItemGroup>
 				<PackageReference Include="Uno.Extensions.Logging.OSLog" />
