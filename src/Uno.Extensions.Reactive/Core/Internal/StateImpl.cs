@@ -163,9 +163,12 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	{
 		if (_updates is not null)
 		{
+			// WARNING: There is a MAJOR issue here: if updater fails, the error will be propagated into the output feed instead of the caller!
+			// This is acceptable for now as so far there is no way to reach this code from public API
+
 			// First we make sure that the UpdateFeed is active, so the update will be applied ^^
 			_innerEnumeration?.Enable();
-			return _updates.Update(_ => true, updater, ct);
+			return _updates.Update((_, _) => true, (_, msg) => updater(new(msg.Get, ((IMessageBuilder)msg).Set)), ct);
 		}
 		else
 		{
