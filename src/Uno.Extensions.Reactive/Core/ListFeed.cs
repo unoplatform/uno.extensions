@@ -1,7 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
+using Uno.Extensions.Edition;
+using Uno.Extensions.Equality;
 using Uno.Extensions.Reactive.Operators;
 using Uno.Extensions.Reactive.Utils;
 
@@ -30,6 +35,16 @@ public static partial class ListFeed
 	/// <param name="refresh">A refresh trigger to reload the <paramref name="valueProvider"/>.</param>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IListFeed<T> Async<T>(AsyncFunc<IImmutableList<T>> valueProvider, Signal? refresh = null)
+		=> Feed.Async(valueProvider, refresh).AsListFeed();
+
+	/// <summary>
+	/// Creates a custom feed from an async method.
+	/// </summary>
+	/// <typeparam name="T">The type of the value of the resulting feed.</typeparam>
+	/// <param name="valueProvider">The async method to use to load the value of the resulting feed.</param>
+	/// <param name="refresh">A refresh trigger to reload the <paramref name="valueProvider"/>.</param>
+	/// <returns>A feed that encapsulate the source.</returns>
+	public static IListFeed<T> Async<T>(AsyncFunc<ImmutableList<T>> valueProvider, Signal? refresh = null)
 		=> Feed.Async(valueProvider, refresh).AsListFeed();
 
 	/// <summary>
