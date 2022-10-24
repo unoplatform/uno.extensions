@@ -1,8 +1,8 @@
 ﻿namespace Uno.Extensions.Storage.KeyValueStorage;
 
-public record KeyValueStorageConfiguration
+public record KeyValueStorageConfiguration : KeyValueStorageSettings
 {
-	public IDictionary<string, KeyValueStorageSettings> StorageProviders { get; init; } = new Dictionary<string, KeyValueStorageSettings>();
+	public IDictionary<string, KeyValueStorageSettings> Providers { get; init; } = new Dictionary<string, KeyValueStorageSettings>();
 
 
 }
@@ -11,11 +11,14 @@ internal static class KeyValueStorageConfigurationExtensions
 {
 	public static KeyValueStorageSettings GetSettingsOrDefault(this KeyValueStorageConfiguration? config, string name)
 	{
-		if (config?.StorageProviders.TryGetValue(name, out var settings) ?? false)
+		if (config?.Providers.TryGetValue(name, out var settings) ?? false)
 		{
 			return settings;
 		}
-		return new KeyValueStorageSettings();
+
+		// If there isn't a match for settings for the supplied name, return
+		// the default settings
+		return config ?? new KeyValueStorageSettings();
 	}
 }
 
