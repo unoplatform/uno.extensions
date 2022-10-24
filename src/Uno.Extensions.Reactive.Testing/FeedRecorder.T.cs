@@ -140,7 +140,7 @@ public class FeedRecorder<TFeed, TValue> : IFeedRecorder<TValue>, ICollection<Me
 			}
 			catch (OperationCanceledException) when (!ct.IsCancellationRequested && cts.IsCancellationRequested)
 			{
-				throw new TimeoutException($"[{Name}] The source feed did not produced the expected {count} messages (got only {_messages.Count}) within the given delay of {TimeSpan.FromMilliseconds(timeout):g}.");
+				throw new TimeoutException($"[{Name}] The source feed did not produced the expected {count} messages (got only {_messages.Count}) within the given delay of {TimeSpan.FromMilliseconds(timeout):g}.\r\n{this}");
 			}
 			finally
 			{
