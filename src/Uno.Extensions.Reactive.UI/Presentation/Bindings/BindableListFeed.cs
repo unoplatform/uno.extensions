@@ -85,7 +85,8 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 
 		var requests = new RequestSource();
 		var pagination = new PaginationService(LoadMore);
-		var services = new SingletonServiceProvider(pagination);
+		var selection = new SelectionService(SetSelected);
+		var services = new SingletonServiceProvider(pagination, selection);
 		var collection = BindableCollection.Create(
 			services: services,
 			itemComparer: ListFeed<T>.DefaultComparer);
@@ -108,9 +109,10 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 					return;
 				}
 
+				var items = default(IImmutableList<T>);
 				if (msg.Changes.Contains(MessageAxis.Data, out var changes))
 				{
-					var items = msg.Current.Data.SomeOrDefault(ImmutableList<T>.Empty);
+					items = msg.Current.Data.SomeOrDefault(ImmutableList<T>.Empty);
 					currentCount = items.Count;
 
 					collection.Switch(new ImmutableObservableCollection<T>(items), changes as CollectionChangeSet);
@@ -130,6 +132,15 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 				{
 					pageTokens.Received(page.Tokens);
 				}
+
+				if (msg.Changes.Contains(MessageAxis.Selection) && msg.Current.GetSelectionInfo() is {} selectionInfo)
+				{
+					var selectedIndex = selectionInfo.IsEmpty
+						? null
+						: selectionInfo.GetSelectedIndex(items ??= msg.Current.Data.SomeOrDefault(ImmutableList<T>.Empty), failIfOutOfRange: false, failIfMultiple: false);
+
+					selection.SelectFromModel(selectedIndex);
+				}
 			},
 			ctx.Token);
 
@@ -142,6 +153,14 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 			var resultCount = currentCount;
 
 			return (uint)Math.Max(0, resultCount - originalCount);
+		}
+
+		async ValueTask SetSelected(uint? selectedIndex, CancellationToken ct)
+		{
+			var info = selectedIndex is null
+				? SelectionInfo.Empty
+				: SelectionInfo.Single(selectedIndex.Value);
+			await state.UpdateMessage(msg => msg.Selected(info), ct);
 		}
 
 		return collection;

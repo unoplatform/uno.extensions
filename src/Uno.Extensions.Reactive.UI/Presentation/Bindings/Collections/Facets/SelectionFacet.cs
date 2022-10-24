@@ -2,14 +2,15 @@
 using System.Linq;
 using System.Threading;
 using Windows.Foundation.Collections;
-
+using Uno.Extensions.Reactive.Bindings.Collections.Services;
+using Uno.Extensions.Reactive.Dispatching;
 
 namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets
 {
 	/// <summary>
 	/// The selection facet of the ICollectionView
 	/// </summary>
-	internal class SelectionFacet
+	internal class SelectionFacet : IDisposable
 	{
 		/* 
 		 * Note: The selection is sync beetween the ListView and the CollectionView only when SelectionMode is 'Single'
@@ -23,15 +24,36 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 		 * 
 		 */
 
-		private readonly Lazy<IObservableVector<object>> _target;
-
-		public SelectionFacet(Func<IObservableVector<object>> target)
-		{
-			_target = new Lazy<IObservableVector<object>>(target, LazyThreadSafetyMode.None);
-		}
-
 		private readonly EventRegistrationTokenTable<CurrentChangedEventHandler> _currentChanged = new();
 		private readonly EventRegistrationTokenTable<CurrentChangingEventHandler> _currentChanging = new();
+		private readonly ISelectionService? _service;
+		private readonly Lazy<IObservableVector<object>> _target;
+		private readonly IDispatcherInternal? _dispatcher;
+
+		public SelectionFacet(IBindableCollectionViewSource source, Func<IObservableVector<object>> target)
+		{
+			_service = source.GetService(typeof(ISelectionService)) as ISelectionService;
+			_target = new Lazy<IObservableVector<object>>(target, LazyThreadSafetyMode.None);
+			_dispatcher = source.Dispatcher;
+
+			if (_service is not null)
+			{
+				_service.StateChanged += OnServiceStateChanged;
+				OnServiceStateChanged(_service, EventArgs.Empty);
+			}
+		}
+
+		private void OnServiceStateChanged(object? snd, EventArgs args)
+		{
+			if (_dispatcher is null or { HasThreadAccess: true })
+			{
+				MoveCurrentToPosition((int?)_service!.SelectedIndex ?? -1);
+			}
+			else
+			{
+				_dispatcher.TryEnqueue(() => MoveCurrentToPosition((int?)_service!.SelectedIndex ?? -1));
+			}
+		}
 
 		public EventRegistrationToken AddCurrentChangedHandler(CurrentChangedEventHandler value)
 			=> _currentChanged.AddEventHandler(value);
@@ -67,7 +89,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 		{
 			if (CurrentPosition == index && CurrentItem == value)
 			{
-				// Current is already update to date, do not raise events for nothing!
+				// Current is already up to date, do not raise events for nothing!
 				return true;
 			}
 
@@ -81,6 +103,8 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 					return false;
 				}
 			}
+
+			_service?.SelectFromView(index);
 
 			CurrentPosition = index;
 			CurrentItem = value;
@@ -123,5 +147,13 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 		public bool MoveCurrentToNext() => CurrentPosition + 1 < _target.Value.Count && MoveCurrentToPosition(CurrentPosition + 1);
 
 		public bool MoveCurrentToPrevious() => CurrentPosition > 0 && MoveCurrentToPosition(CurrentPosition - 1);
+
+		public void Dispose()
+		{
+			if (_service is not null)
+			{
+				_service.StateChanged -= OnServiceStateChanged;
+			}
+		}
 	}
 }

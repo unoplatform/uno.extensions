@@ -34,6 +34,8 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 
 		public IBindableCollectionViewSource? Parent => _parent;
 
+		public IDispatcherInternal? Dispatcher => _context;
+
 		/// <summary>
 		/// Creates a holder for the root layer of data
 		/// </summary>
