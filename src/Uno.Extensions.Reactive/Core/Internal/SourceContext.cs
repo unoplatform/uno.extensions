@@ -263,7 +263,7 @@ public sealed class SourceContext : IAsyncDisposable
 	/// <returns>The state wrapping the given feed</returns>
 	[EditorBrowsable(EditorBrowsableState.Advanced)]
 	public IState<T> GetOrCreateState<T>(IFeed<T> feed)
-		=> GetOrCreateStateCore(feed);
+		=> States.GetOrCreateState<IFeed<T>, IState<T>>(feed, static (ctx, f) => new StateImpl<T>(ctx, f));
 
 	/// <summary>
 	/// Get or create a <see cref="IListState{T}"/> for a given list feed.
@@ -273,7 +273,7 @@ public sealed class SourceContext : IAsyncDisposable
 	/// <returns>The list state wrapping the given list feed</returns>
 	[EditorBrowsable(EditorBrowsableState.Advanced)]
 	public IListState<T> GetOrCreateListState<T>(IListFeed<T> feed)
-		=> new ListStateImpl<T>(GetOrCreateStateCore(feed.AsFeed()));
+		=> States.GetOrCreateState<IListFeed<T>, IListState<T>>(feed, static (ctx, f) => new ListStateImpl<T>((StateImpl<IImmutableList<T>>)ctx.GetOrCreateState(f.AsFeed())));
 
 	/// <summary>
 	/// Get or create a <see cref="IListState{T}"/> for a given list feed.
@@ -283,15 +283,12 @@ public sealed class SourceContext : IAsyncDisposable
 	/// <returns>The list state wrapping the given list feed</returns>
 	[EditorBrowsable(EditorBrowsableState.Advanced)]
 	public IListState<T> GetOrCreateListState<T>(IFeed<IImmutableList<T>> feed)
-		=> new ListStateImpl<T>(GetOrCreateStateCore(feed));
-
-	private StateImpl<T> GetOrCreateStateCore<T>(IFeed<T> feed)
-		=> States.GetOrCreateState(feed, (ctx, f) => new StateImpl<T>(ctx, f));
+		=> States.GetOrCreateState<IFeed<IImmutableList<T>>, IListState<T>>(feed, static (ctx, f) => new ListStateImpl<T>((StateImpl<IImmutableList<T>>)ctx.GetOrCreateState(f)));
 
 	// WARNING: DO NOT USE, this breaks the cache by providing a custom config!
 	// We need to make those config "upgradable" in order to properly share the instances of State
 	internal ListStateImpl<T> DoNotUse_GetOrCreateListState<T>(IListFeed<T> feed, StateUpdateKind updatesKind)
-		=> new ListStateImpl<T>(States.GetOrCreateState(feed, (ctx, f) => new StateImpl<IImmutableList<T>>(ctx, f.AsFeed(), updatesKind: updatesKind)));
+		=> States.GetOrCreateState(feed, /*static*/ (ctx, f) => new ListStateImpl<T>(new StateImpl<IImmutableList<T>>(ctx, f.AsFeed(), updatesKind: updatesKind)));
 
 	/// <summary>
 	/// Create a <see cref="IState{T}"/> for a given value.
@@ -302,7 +299,7 @@ public sealed class SourceContext : IAsyncDisposable
 	/// <exception cref="ObjectDisposedException">This context has been disposed.</exception>
 	[EditorBrowsable(EditorBrowsableState.Advanced)]
 	public IState<T> CreateState<T>(Option<T> initialValue)
-		=> CreateStateCore(initialValue);
+		=> States.CreateState<T, IState<T>>(initialValue, static (ctx, iv) => new StateImpl<T>(ctx, iv));
 
 	/// <summary>
 	/// Create a <see cref="IState{T}"/> for a given value.
@@ -313,10 +310,7 @@ public sealed class SourceContext : IAsyncDisposable
 	/// <exception cref="ObjectDisposedException">This context has been disposed.</exception>
 	[EditorBrowsable(EditorBrowsableState.Advanced)]
 	public IListState<T> CreateListState<T>(Option<IImmutableList<T>> initialValue)
-		=> new ListStateImpl<T>(CreateStateCore(initialValue));
-
-	private StateImpl<T> CreateStateCore<T>(Option<T> initialValue)
-		=> States.CreateState(initialValue, (ctx, iv) => new StateImpl<T>(ctx, iv));
+		=> States.CreateState<IImmutableList<T>, IListState<T>>(initialValue, static (ctx, iv) => new ListStateImpl<T>((StateImpl<IImmutableList<T>>)ctx.CreateState(iv)));
 	#endregion
 
 	#region Requests

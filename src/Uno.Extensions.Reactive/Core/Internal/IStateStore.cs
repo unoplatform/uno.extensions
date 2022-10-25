@@ -39,7 +39,7 @@ internal interface IStateStore : IAsyncDisposable
 	/// <exception cref="ObjectDisposedException">This store has been disposed.</exception>
 	TState GetOrCreateState<TSource, TState>(TSource source, Func<SourceContext, TSource, TState> factory)
 		where TSource : class
-		where TState : IStateImpl, IAsyncDisposable;
+		where TState : IState;
 
 	/// <summary>
 	/// Create a <see cref="IState{T}"/> for a given value.
@@ -51,5 +51,5 @@ internal interface IStateStore : IAsyncDisposable
 	/// <returns>A new state initialized with given initial value</returns>
 	/// <exception cref="ObjectDisposedException">This store has been disposed.</exception>
 	TState CreateState<T, TState>(Option<T> initialValue, Func<SourceContext, Option<T>, TState> factory)
-		where TState : IStateImpl, IAsyncDisposable;
+		where TState : IState;
 }

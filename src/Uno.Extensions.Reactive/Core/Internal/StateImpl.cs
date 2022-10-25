@@ -25,7 +25,7 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 	/// <summary>
 	/// Gets the context to which this state belongs.
 	/// </summary>
-	internal SourceContext Context { get; }
+	public SourceContext Context { get; }
 	SourceContext IStateImpl.Context => Context;
 
 	internal Message<T> Current => _current;
