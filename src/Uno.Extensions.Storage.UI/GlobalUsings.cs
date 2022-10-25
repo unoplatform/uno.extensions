@@ -14,6 +14,7 @@ global using Uno.Extensions.Serialization;
 global using Uno.Extensions.Storage;
 global using Uno.Extensions.Storage.KeyValueStorage;
 global using Uno.Extensions.Threading;
+global using Windows.Security.Credentials;
 global using Windows.Storage;
 
 #if WINUI
@@ -27,7 +28,7 @@ global using Microsoft.UI.Dispatching;
 	global using Microsoft.UI.Xaml.Data;
 	global using Microsoft.UI.Xaml.Media;
 #else
-	global using Windows.System;
+global using Windows.System;
 	global using Windows.UI.Xaml;
 	global using Windows.UI.Xaml.Controls;
 	global using Windows.UI.Xaml.Controls.Primitives;

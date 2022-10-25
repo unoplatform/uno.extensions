@@ -1,4 +1,6 @@
-﻿using Uno.Foundation;
+﻿#if __WASM__
+using Uno.Foundation;
+#endif
 
 namespace Uno.Extensions.Hosting;
 
