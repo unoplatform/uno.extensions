@@ -45,11 +45,17 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		var regionUpdateId = RouteUpdater?.StartNavigation(Region) ?? Guid.Empty;
 		try
 		{
+
+			if (Dispatcher.HasThreadAccess)
+			{
+				if (Logger.IsEnabled(LogLevel.Information)) Logger.LogInformationMessage($"Navigation started on UI thread, so moving to background thread");
+				return await Task.Run(() => NavigateAsync(request));
+			}
+
 			if (request.Source is null)
 			{
 				if (Logger.IsEnabled(LogLevel.Information)) Logger.LogInformationMessage($"Starting Navigation - Navigator: {this.GetType().Name} Request: {request.Route}");
 				request = request with { Source = this };
-				return await Task.Run(() => NavigateAsync(request));
 			}
 
 
