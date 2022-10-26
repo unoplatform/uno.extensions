@@ -99,27 +99,28 @@ public class PanelVisiblityNavigator : ControlNavigator<Panel>
 		return path;
 	}
 
-	protected override Task PostNavigateAsync()
+	protected override async Task PostNavigateAsync()
 	{
 		if (Control is not null)
 		{
-			foreach (var child in Control.Children.OfType<FrameworkElement>())
+			await Dispatcher.ExecuteAsync(async cancellation =>
 			{
-				if(child == CurrentlyVisibleControl)
+				foreach (var child in Control.Children.OfType<FrameworkElement>())
 				{
-					child.Opacity = 1;
-					child.Visibility = Visibility.Visible;
-				}
-				else
-				{
-					child.Opacity = 0;
-					child.Visibility = Visibility.Collapsed;
+					if (child == CurrentlyVisibleControl)
+					{
+						child.Opacity = 1;
+						child.Visibility = Visibility.Visible;
+					}
+					else
+					{
+						child.Opacity = 0;
+						child.Visibility = Visibility.Collapsed;
 
+					}
 				}
-			}
+			});
 		}
-
-		return Task.CompletedTask;
 	}
 
 	private FrameworkElement? FindByPath(string? path)

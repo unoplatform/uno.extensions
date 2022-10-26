@@ -49,6 +49,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			{
 				if (Logger.IsEnabled(LogLevel.Information)) Logger.LogInformationMessage($"Starting Navigation - Navigator: {this.GetType().Name} Request: {request.Route}");
 				request = request with { Source = this };
+				return await Task.Run(() => NavigateAsync(request));
 			}
 
 
