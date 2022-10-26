@@ -24,7 +24,7 @@
 		  <ItemGroup>
 
 			<!--This override is used to validate the user of specific version of the C# Compiler-->
-			<PackageReference Include="Microsoft.Net.Compilers" VersionOverride="$(MicrosoftNetCompilerVersionOverride)">
+			<PackageReference Include="Microsoft.Net.Compilers.Toolset" VersionOverride="$(MicrosoftNetCompilerVersionOverride)">
 			  <PrivateAssets>all</PrivateAssets>
 			  <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
 			</PackageReference>
@@ -33,6 +33,7 @@
 		</When>
 	</Choose>
 
+	<!-- Enable the Core.Generators for all projects, except Core itself and other generators -->
 	<Choose>
 		<When Condition="'$(IsCoreProject)'== 'False' And '$(IsGeneratorProject)' == 'False'" >
 			<ItemGroup>
@@ -44,6 +45,9 @@
 			</ItemGroup>
 		</When>
 	</Choose>
+	<Import
+		Condition="'$(IsCoreProject)'== 'False' And '$(IsGeneratorProject)' == 'False'"
+		Project="$(MSBuildThisFileDirectory)\Uno.Extensions.Core.Generators\buildTransitive\Uno.Extensions.Core.props" />
 
 	<Choose>
 		<When Condition="$(_IsWinUI)">
@@ -56,10 +60,6 @@
 			</ItemGroup>
 		</When>
 	</Choose>
-
-	<Import
-		Condition="'$(IsCoreProject)'== 'False' And '$(IsGeneratorProject)' == 'False'"
-		Project="$(MSBuildThisFileDirectory)\Uno.Extensions.Core.Generators\buildTransitive\Uno.Extensions.Core.props" />
 
 	<Import Project="winappsdk-workaround.targets" Condition="exists('winappsdk-workaround.targets')" />
 	<Import Project="xamarinmac-workaround.targets" Condition="exists('xamarinmac-workaround.targets') and $(TargetFramework.ToLower().StartsWith('xamarin')) and $(TargetFramework.ToLower().Contains('mac'))" />

@@ -17,8 +17,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="Uno.Roslyn" PrivateAssets="All" />
-		<PackageReference Include="Microsoft.CodeAnalysis.Common"  PrivateAssets="All" />
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp"  PrivateAssets="All" />
+		<PackageReference Include="Microsoft.CodeAnalysis.Common" PrivateAssets="All" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="All" />
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" PrivateAssets="All" />
 		<PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" PrivateAssets="All" />
 	</ItemGroup>

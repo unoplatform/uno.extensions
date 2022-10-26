@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace Uno.Extensions.Reactive.Generator.Compat;
+namespace Uno.Extensions.Generators.CompatibilityTypes;
 
 internal class CompatibilityTypesGenerationTool : ICodeGenTool
 {
@@ -32,8 +32,11 @@ internal class CompatibilityTypesGenerationTool : ICodeGenTool
 		{
 			yield return (nameof(_context.MemberNotNullWhenAttribute), GetMemberNotNullWhenAttribute());
 		}
-		if (!(_context.IsExternalInit?.IsAccessibleTo(assembly) ?? false) && !GetIsDisabled("UnoExtensionsGeneration_DisableIsExternalInit"))
+		if (!(_context.IsExternalInit?.IsAccessibleTo(assembly, allowInternalsVisibleTo: false) ?? false) && !GetIsDisabled("UnoExtensionsGeneration_DisableIsExternalInit"))
 		{
+			// Note: about 'allowInternalsVisibleTo: false'
+			//		For the compiler to allow 'init' keyword, the IsExternalInit must be either public in a ref assembly, either declared in teh current assembly.
+			//		This means that it does not allow an internal class that has been made accessible to the current assembly using `InternalsVisibleTo`
 			yield return (nameof(_context.IsExternalInit), GetIsExternalInit());
 		}
 		if (!(_context.ModuleInitializerAttribute?.IsAccessibleTo(assembly) ?? false) && !GetIsDisabled("UnoExtensionsGeneration_DisableModuleInitializerAttribute"))

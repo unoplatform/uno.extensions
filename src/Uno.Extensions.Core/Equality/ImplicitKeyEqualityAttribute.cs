@@ -16,7 +16,7 @@ namespace Uno.Extensions.Equality;
 ///		and only the first one witch match will be used.
 /// </remarks>
 [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false, Inherited = false)]
-public class ImplicitKeyEqualityAttribute : Attribute
+partial class ImplicitKeyEqualityAttribute : Attribute
 {
 	/// <summary>
 	/// Gets or sets a bool which indicates if the generation of key equality based on property names is enabled of not.

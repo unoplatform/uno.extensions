@@ -7,6 +7,6 @@ namespace Uno.Extensions.Edition;
 /// Flags the default constructor to use to create an instance of a record that is being edited.
 /// </summary>
 [AttributeUsage(AttributeTargets.Constructor)]
-public class DefaultConstructorAttribute : Attribute
+partial class DefaultConstructorAttribute : Attribute
 {
 }

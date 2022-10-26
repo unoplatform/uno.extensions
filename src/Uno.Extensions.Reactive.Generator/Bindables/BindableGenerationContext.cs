@@ -10,6 +10,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Tags;
+using Uno.Extensions.Generators;
 using Uno.Extensions.Reactive.Bindings;
 using Uno.Extensions.Reactive.Config;
 using Uno.Extensions.Reactive.Commands;

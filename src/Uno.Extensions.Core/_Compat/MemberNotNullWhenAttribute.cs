@@ -4,7 +4,7 @@ namespace System.Diagnostics.CodeAnalysis
 {
 	/// <summary>Specifies that the method or property will ensure that the listed field and property members have non-null values when returning with the specified return value condition.</summary>
 	[AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, AllowMultiple = true, Inherited = false)]
-	public sealed class MemberNotNullWhenAttribute : Attribute
+	internal sealed class MemberNotNullWhenAttribute : Attribute
 	{
 		/// <summary>Initializes the attribute with the specified return value condition and a field or property member.</summary>
 		/// <param name="returnValue">The return value condition. If the method returns this value, the associated parameter will not be <see langword="null" />.</param>

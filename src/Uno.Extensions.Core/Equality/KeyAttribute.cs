@@ -7,6 +7,6 @@ namespace Uno.Extensions.Equality;
 /// Flags a property as the key for entity tracking.
 /// </summary>
 [AttributeUsage(AttributeTargets.Property)]
-public class KeyAttribute : Attribute
+partial class KeyAttribute : Attribute
 {
 }

@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using Microsoft.CodeAnalysis;
-using Uno.Extensions.Reactive.Generator;
-using Uno.Extensions.Reactive.Generator.Compat;
-using Uno.Extensions.Reactive.Generator.Utils;
+using Uno.Extensions.Generators;
+using Uno.Extensions.Generators.CompatibilityTypes;
 
 namespace Uno.Extensions.Core.Generators;
 

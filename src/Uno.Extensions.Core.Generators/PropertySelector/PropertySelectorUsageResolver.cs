@@ -4,7 +4,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Uno.Extensions.Reactive.Generator;
 
 namespace Uno.Extensions.Generators.PropertySelector;
 

@@ -43,7 +43,7 @@ public static class KeyEqualityComparer
 	/// <remarks>This should not be used since the discovery is expected to be generated at compile time by the KeyEqualityGenerationTool.</remarks>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public static void Register(IKeyEqualityProvider provider)
-		=> ImmutableInterlocked.Update(ref _providers, providers => providers.Add(provider));
+		=> ImmutableInterlocked.Update(ref _providers, (providers, p) => providers.Add(p), provider);
 
 	/// <summary>
 	/// Gets an <see cref="IEqualityComparer{T}"/> which compares only the key,

@@ -3,7 +3,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Uno.Extensions.Equality;
 
-namespace Uno.Extensions.Reactive.Generator;
+namespace Uno.Extensions.Generators.KeyEquality;
 
 internal record KeyEqualityGenerationContext(
 	GeneratorExecutionContext Context,

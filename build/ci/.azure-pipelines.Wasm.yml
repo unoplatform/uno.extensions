@@ -1,5 +1,6 @@
 jobs:
-- job: WebAssembly
+- job: Samples_WebAssembly
+  displayName: 'Samples - WebAssembly'
 
   pool:
     vmImage: 'ubuntu-latest'
@@ -39,5 +40,6 @@ jobs:
       flattenFolders: false
 
   - task: PublishBuildArtifacts@1
+    condition: always()
     inputs:
         ArtifactName: $(Build.DefinitionName)

@@ -13,4 +13,9 @@
 		<DebugSymbols>True</DebugSymbols>
 		<SynthesizeLinkMetadata>true</SynthesizeLinkMetadata>
 	</PropertyGroup>
+
+	<ItemGroup>
+		<!--This override is used to validate the use of specific version of the C# Compiler-->
+		<PackageReference Include="Microsoft.Net.Compilers.Toolset" PrivateAssets="all" />
+	</ItemGroup>
 </Project>
