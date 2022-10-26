@@ -14,8 +14,11 @@
 
 	<Import Project="common.props" />
 
-	<ItemGroup>
+	<ItemGroup Condition="'$(_IsWinUI)'=='false'">
 		<PackageReference Include="Uno.WinUI" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Uno.Toolkit.WinUI" />
 	</ItemGroup>
 </Project>

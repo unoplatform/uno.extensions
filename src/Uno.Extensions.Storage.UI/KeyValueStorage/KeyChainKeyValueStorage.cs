@@ -9,15 +9,19 @@ using Foundation;
 using Microsoft.Extensions.Logging;
 using Security;
 using Uno.Extensions;
-using Uno.Logging;
 using Uno.Extensions.Threading;
+using Uno.Logging;
 
 namespace Uno.Extensions.Storage.KeyValueStorage;
 
 /// <summary>
 /// Allows saving settings in a secure storage using iOS' keychain.
 /// </summary>
-public record KeyChainSettingsStorage(ILogger<KeyChainSettingsStorage> Logger, ISerializer Serializer) : IKeyValueStorage
+internal record KeyChainKeyValueStorage(
+	ILogger<KeyChainKeyValueStorage> Logger,
+	InMemoryKeyValueStorage InMemoryStorage,
+	KeyValueStorageSettings Settings,
+	ISerializer Serializer) : BaseKeyValueStorageWithCaching(InMemoryStorage, Settings)
 {
 	public const string Name = "KeyChain";
 
@@ -27,10 +31,10 @@ public record KeyChainSettingsStorage(ILogger<KeyChainSettingsStorage> Logger, I
 	private readonly FastAsyncLock _clearKeychain = new FastAsyncLock();
 
 	/// <inheritdoc />
-	public bool IsEncrypted => true;
+	public override bool IsEncrypted => true;
 
 	/// <inheritdoc/>
-	public async ValueTask ClearAsync(string? name, CancellationToken ct)
+	protected override async ValueTask InternalClearAsync(string? name, CancellationToken ct)
 	{
 		if (Logger.IsEnabled(LogLevel.Debug))
 		{
@@ -67,7 +71,7 @@ public record KeyChainSettingsStorage(ILogger<KeyChainSettingsStorage> Logger, I
 
 	// TODO: Need to understand what the issue is that this is solving
 	/*
-	// This public method is not part of the interface because it is very specific to KeychainSettingsStorage;
+	// This public method is not part of the interface because it is very specific to KeyChainKeyValueStorage;
 	// other implementations of the ISettingsStorage interface will not need to offer this because they did not have this bug.
 
 	/// <summary>
@@ -120,7 +124,8 @@ public record KeyChainSettingsStorage(ILogger<KeyChainSettingsStorage> Logger, I
 	}
 
 	/// <inheritdoc/>
-	public async ValueTask<T?> GetAsync<T>(string name, CancellationToken ct)
+#nullable disable
+	protected override async ValueTask<T> InternalGetAsync<T>(string name, CancellationToken ct)
 	{
 		if (Logger.IsEnabled(LogLevel.Debug))
 		{
@@ -147,9 +152,10 @@ public record KeyChainSettingsStorage(ILogger<KeyChainSettingsStorage> Logger, I
 
 		throw new KeyNotFoundException(name);
 	}
+#nullable restore
 
 	/// <inheritdoc/>
-	public async ValueTask SetAsync<T>(string name, T value, CancellationToken ct) where T:notnull
+	protected override async ValueTask InternalSetAsync<T>(string name, T value, CancellationToken ct)
 	{
 		if (Logger.IsEnabled(LogLevel.Debug))
 		{
@@ -217,7 +223,7 @@ public record KeyChainSettingsStorage(ILogger<KeyChainSettingsStorage> Logger, I
 	}
 
 	/// <inheritdoc/>
-	public async ValueTask<string[]> GetKeysAsync(CancellationToken ct)
+	protected override async ValueTask<string[]> InternalGetKeysAsync(CancellationToken ct)
 	{
 		await CheckConsistencyWithFileStorage(ct);
 
@@ -241,7 +247,7 @@ public record KeyChainSettingsStorage(ILogger<KeyChainSettingsStorage> Logger, I
 		{
 			Account = name,
 			Label = name,
-			Service = "_KeychainSettingsStorage_"
+			Service = "_KeyChainKeyValueStorage_"
 		};
 	}
 
@@ -335,11 +341,11 @@ public record KeyChainSettingsStorage(ILogger<KeyChainSettingsStorage> Logger, I
 	{
 		private readonly string[] _originalKeys;
 		private readonly SecRecord _record;
-		private readonly KeyChainSettingsStorage _parent;
+		private readonly KeyChainKeyValueStorage _parent;
 
 		private string? _updatedKey;
 
-		public SingleKeyOperation(string[] keys, SecRecord record, KeyChainSettingsStorage parent)
+		public SingleKeyOperation(string[] keys, SecRecord record, KeyChainKeyValueStorage parent)
 		{
 			_originalKeys = keys;
 			_record = record;

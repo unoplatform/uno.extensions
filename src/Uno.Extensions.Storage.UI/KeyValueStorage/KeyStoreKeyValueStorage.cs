@@ -10,22 +10,22 @@ using Java.Security;
 using Javax.Crypto;
 using Microsoft.Extensions.Logging;
 using Uno.Extensions;
-using Uno.Logging;
 using Uno.Extensions.Threading;
+using Uno.Logging;
 
 namespace Uno.Extensions.Storage.KeyValueStorage;
 
 /// <summary>
 /// Allows saving settings in a secure storage using Android's <see cref="KeyStore"/>.
 /// </summary>
-internal record KeyStoreSettingsStorage : IKeyValueStorage
+internal record KeyStoreKeyValueStorage : BaseKeyValueStorageWithCaching
 {
 	public const string Name = "KeyStore";
 
 	// It is not an issue if this password becomes public, as it's simply added encryption
 	// above the app-level encryption.
 	private const string DefaultPrivatePassword = "95407C28724B42F78A035C55987FDB21C7C2CB53529148B5A3021B715447E593";
-	private const string DefaultFileName = "KeyStoreSettingsStorage";
+	private const string DefaultFileName = "KeyStoreKeyValueStorage";
 
 	private readonly ILogger _logger;
 	private readonly ISerializer _serializer;
@@ -41,9 +41,13 @@ internal record KeyStoreSettingsStorage : IKeyValueStorage
 	private static readonly Encoding _utf8 = new UTF8Encoding(false);
 
 	/// <summary>
-	/// Creates a new <see cref="KeyStoreSettingsStorage"/> using a specific filename as the destination storage.
+	/// Creates a new <see cref="KeyStoreKeyValueStorage"/> using a specific filename as the destination storage.
 	/// </summary>
-	public KeyStoreSettingsStorage(ILogger<KeyStoreSettingsStorage> logger, ISerializer serializer)
+	public KeyStoreKeyValueStorage(
+		ILogger<KeyStoreKeyValueStorage> logger,
+		InMemoryKeyValueStorage inMemoryStorage,
+		KeyValueStorageSettings settings,
+		ISerializer serializer) : base(inMemoryStorage, settings)
 	{
 		_serializer = serializer;
 		_logger = logger;
@@ -52,10 +56,10 @@ internal record KeyStoreSettingsStorage : IKeyValueStorage
 	}
 
 	/// <inheritdoc />
-	public bool IsEncrypted => true;
+	public override bool IsEncrypted => true;
 
 	/// <inheritdoc />
-	public async ValueTask ClearAsync(string? name, CancellationToken ct)
+	protected override async ValueTask InternalClearAsync(string? name, CancellationToken ct)
 	{
 		if (_logger.IsEnabled(LogLevel.Debug))
 		{
@@ -77,7 +81,7 @@ internal record KeyStoreSettingsStorage : IKeyValueStorage
 	}
 
 	/// <inheritdoc />
-	public async ValueTask<string[]> GetKeysAsync(CancellationToken ct)
+	protected override async ValueTask<string[]> InternalGetKeysAsync(CancellationToken ct)
 	{
 		var aliases = _keyStoreSelector.Value.Aliases();
 
@@ -96,7 +100,8 @@ internal record KeyStoreSettingsStorage : IKeyValueStorage
 	}
 
 	/// <inheritdoc />
-	public async ValueTask<T?> GetAsync<T>(string name, CancellationToken ct)
+#nullable disable
+	protected override async ValueTask<T> InternalGetAsync<T>(string name, CancellationToken ct)
 	{
 		if (_logger.IsEnabled(LogLevel.Debug))
 		{
@@ -124,10 +129,11 @@ internal record KeyStoreSettingsStorage : IKeyValueStorage
 
 		return value;
 	}
+#nullable restore
 
 
 	/// <inheritdoc />
-	public async ValueTask SetAsync<T>(string name, T value, CancellationToken ct) where T : notnull
+	protected override async ValueTask InternalSetAsync<T>(string name, T value, CancellationToken ct) 
 	{
 		if (_logger.IsEnabled(LogLevel.Debug))
 		{

@@ -1,6 +1,10 @@
 ﻿namespace Uno.Extensions.Storage.KeyValueStorage;
 
-internal record ApplicationDataKeyValueStorage(ILogger<ApplicationDataKeyValueStorage> Logger, ISerializer Serializer) : IKeyValueStorage
+internal record ApplicationDataKeyValueStorage
+	(ILogger<ApplicationDataKeyValueStorage> Logger,
+	InMemoryKeyValueStorage InMemoryStorage,
+	KeyValueStorageSettings Settings,
+	ISerializer Serializer) : BaseKeyValueStorageWithCaching(InMemoryStorage, Settings)
 {
 	public const string Name = "ApplicationData";
 
@@ -10,10 +14,10 @@ internal record ApplicationDataKeyValueStorage(ILogger<ApplicationDataKeyValueSt
 	private readonly ApplicationDataContainer _dataContainer = ApplicationData.Current.LocalSettings;
 
 	/// <inheritdoc />
-	public virtual  bool IsEncrypted => false;
+	public override bool IsEncrypted => false;
 
 	/// <inheritdoc />
-	public async ValueTask ClearAsync(string? name, CancellationToken ct)
+	protected override async ValueTask InternalClearAsync(string? name, CancellationToken ct)
 	{
 		if (Logger.IsEnabled(LogLevel.Debug))
 		{
@@ -40,7 +44,7 @@ internal record ApplicationDataKeyValueStorage(ILogger<ApplicationDataKeyValueSt
 	}
 
 	/// <inheritdoc />
-	public async ValueTask<string[]> GetKeysAsync(CancellationToken ct)
+	protected override async ValueTask<string[]> InternalGetKeysAsync(CancellationToken ct)
 	{
 		return _dataContainer
 			.Values
@@ -52,7 +56,8 @@ internal record ApplicationDataKeyValueStorage(ILogger<ApplicationDataKeyValueSt
 	}
 
 	/// <inheritdoc />
-	public virtual async ValueTask<T?> GetAsync<T>(string name, CancellationToken ct)
+#nullable disable
+	protected override async ValueTask<T> InternalGetAsync<T>(string name, CancellationToken ct)
 	{
 		if (Logger.IsEnabled(LogLevel.Debug))
 		{
@@ -73,6 +78,7 @@ internal record ApplicationDataKeyValueStorage(ILogger<ApplicationDataKeyValueSt
 
 		return value;
 	}
+#nullable restore
 
 	protected virtual async Task<T?> GetTypedValue<T>(object? data, CancellationToken ct) 
 	{
@@ -85,7 +91,7 @@ internal record ApplicationDataKeyValueStorage(ILogger<ApplicationDataKeyValueSt
 	}
 
 	/// <inheritdoc />
-	public async ValueTask SetAsync<T>(string name, T value, CancellationToken ct) where T : notnull
+	protected override async ValueTask InternalSetAsync<T>(string name, T value, CancellationToken ct)
 	{
 		if (Logger.IsEnabled(LogLevel.Debug))
 		{
@@ -128,157 +134,3 @@ internal record ApplicationDataKeyValueStorage(ILogger<ApplicationDataKeyValueSt
 		return Serializer.ToString(value);
 	}
 }
-
-/*
- * 
- * using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Uno.Extensions.Storage;
-
-internal class ApplicationDataKeyedStorage : IKeyValueStorage
-{
-	public const string Name = "ApplicationData";
-
-	// Do not change this value.
-	private const string KeyNameSuffix = "_ADCSSS";
-
-	private readonly ISerializer _serializer;
-	private readonly ApplicationDataContainer _dataContainer;
-	private readonly DataProtectionProvider _provider;
-
-	private const string DataProtectionProviderDescriptor = "LOCAL=user";
-
-	/// <summary>
-	/// Creates a new <see cref="ApplicationDataContainerSecureSettingsStorage"/> with a specific <see cref="ApplicationDataContainer"/>
-	/// to save data into.
-	/// </summary>
-	/// <param name="serializer">A serializer for transforming values back and forth to strings.</param>
-	/// <param name="dataContainer">The container to store data into and retrive data from.</param>
-	public ApplicationDataContainerSecureSettingsStorage(
-		ISettingsSerializer serializer,
-		ApplicationDataContainer dataContainer)
-	{
-		_serializer = serializer;
-		_dataContainer = dataContainer;
-
-		_provider = new DataProtectionProvider(DataProtectionProviderDescriptor);
-	}
-
-	/// <inheritdoc />
-	public async Task ClearValue(CancellationToken ct, string name)
-	{
-		if (Logger.IsEnabled(LogLevel.Debug))
-		{
-			Logger.LogDebugMessage($"Clearing value for key '{name}'.");
-		}
-
-		var isRemoved = _dataContainer.Values.Remove(GetKey(name));
-
-		if (Logger.IsEnabled(LogLevel.Information))
-		{
-			Logger.LogInformationMessage($"Cleared value for key '{name}'.");
-		}
-
-		if (isRemoved)
-		{
-			ValueChanged?.Invoke(this, name);
-		}
-	}
-
-	/// <inheritdoc />
-	public async Task<string[]> GetAllKeys(CancellationToken ct)
-	{
-		return _dataContainer
-			.Values
-			.Keys
-			.Select(key => GetName(key)) // filter-out non-encrypted storage
-			.Trim()
-			.ToArray();
-	}
-
-	/// <inheritdoc />
-	public async Task<T> GetValue<T>(CancellationToken ct, string name)
-	{
-		if (Logger.IsEnabled(LogLevel.Debug))
-		{
-			Logger.LogDebugMessage($"Getting value for key '{name}'.");
-		}
-
-		if (!_dataContainer.Values.TryGetValue(GetKey(name), out var encryptedData))
-		{
-			throw new KeyNotFoundException(name);
-		}
-
-		var value = await this.DecryptAndDeserialize<T>(ct, (byte[])encryptedData);
-
-		if (Logger.IsEnabled(LogLevel.Information))
-		{
-			Logger.LogInformationMessage($"Retrieved value for key '{name}'.");
-		}
-
-		return value;
-	}
-
-	public event EventHandler<string> ValueChanged;
-
-	/// <inheritdoc />
-	public async Task SetValue<T>(CancellationToken ct, string name, T value)
-	{
-		if (Logger.IsEnabled(LogLevel.Debug))
-		{
-			Logger.LogDebugMessage($"Setting value for key '{name}'.");
-		}
-
-		var encryptedData = await this.SerializeAndEncrypt(ct, value);
-		_dataContainer.Values[GetKey(name)] = encryptedData;
-
-		if (Logger.IsEnabled(LogLevel.Information))
-		{
-			Logger.LogInformationMessage($"Value for key '{name}' set.");
-		}
-
-		ValueChanged?.Invoke(this, name);
-	}
-
-	/// <inheritdoc />
-	public void Dispose()
-	{
-		ValueChanged = null;
-	}
-
-	private static string GetKey(string name)
-	{
-		return name + KeyNameSuffix;
-	}
-
-	private static string GetName(string key)
-	{
-		return key.EndsWith(KeyNameSuffix, StringComparison.Ordinal)
-			? key.Substring(0, key.Length - KeyNameSuffix.Length)
-			: null;
-	}
-
-	private async Task<T> DecryptAndDeserialize<T>(CancellationToken ct, byte[] encryptedData)
-	{
-		var encryptedBuffer = CryptographicBuffer.CreateFromByteArray(encryptedData);
-		var decryptedBuffer = await _provider.UnprotectAsync(encryptedBuffer).AsTask(ct);
-		var data = CryptographicBuffer.ConvertBinaryToString(BinaryStringEncoding.Utf8, decryptedBuffer);
-
-		return (T)_serializer.FromString(data, typeof(T));
-	}
-
-	private async Task<byte[]> SerializeAndEncrypt<T>(CancellationToken ct, T value)
-	{
-		var data = _serializer.ToString(value, typeof(T));
-		var decryptedBuffer = CryptographicBuffer.ConvertStringToBinary(data, BinaryStringEncoding.Utf8);
-		var encryptedBuffer = await _provider.ProtectAsync(decryptedBuffer).AsTask(ct);
-
-		CryptographicBuffer.CopyToByteArray(encryptedBuffer, out var encryptedData);
-
-		return encryptedData;
-	}
-}
-
-*/

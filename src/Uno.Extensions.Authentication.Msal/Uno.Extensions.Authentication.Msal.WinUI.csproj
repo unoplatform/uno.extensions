@@ -4,7 +4,6 @@
 	<PropertyGroup>
 		<Description>MSAL Authentication Extensions for the Uno Platform (WinUI)</Description>
 		<EnableDefaultPageItems>false</EnableDefaultPageItems>
-
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -48,9 +47,12 @@
 		<TargetPlatformMinVersion>14.2</TargetPlatformMinVersion>
 		<TargetPlatformVersion>15.4</TargetPlatformVersion>
 	</PropertyGroup>
-	
-	<ItemGroup>
+
+	<ItemGroup  Condition="'$(_IsWinUI)'=='false'">
 		<PackageReference Include="Uno.WinUI" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Uno.WinUI.MSAL" />
 	</ItemGroup>
 
@@ -61,4 +63,5 @@
 	<ItemGroup>
 	  <SourceGeneratorInput Remove="buildTransitive\Uno.Extensions.Authentication.MSAL.WinUI.props" />
 	</ItemGroup>
+
 </Project>

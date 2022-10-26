@@ -17,8 +17,10 @@
 	  <None Remove="LinkerDefinition.xml" />
 	</ItemGroup>
 
-	<ItemGroup>
+	<ItemGroup Condition="'$(_IsWinUI)'=='false'">
 		<PackageReference Include="Uno.WinUI" />
+	</ItemGroup>
+	<ItemGroup>
 		<PackageReference Include="Uno.Toolkit.WinUI" />
 		<ProjectReference Include="..\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj" />
 	</ItemGroup>
