@@ -15,4 +15,9 @@
 		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
 	  	<NoWarn>$(NoWarn);Uno0001;CS1998;CA1416;NU1507</NoWarn>
 	</PropertyGroup>
+
+	<ItemGroup>
+		<!--This override is used to validate the use of specific version of the C# Compiler-->
+		<PackageReference Include="Microsoft.Net.Compilers.Toolset" PrivateAssets="all" />
+	</ItemGroup>
 </Project>
