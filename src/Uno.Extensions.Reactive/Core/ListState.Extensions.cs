@@ -153,4 +153,41 @@ static partial class ListState
 		where T : notnull
 		=> new StateForEach<IImmutableList<T>>(state, (list, ct) => action(list ?? ImmutableList<T>.Empty, ct), $"ForEachAsync defined in {caller} at line {line}.");
 	#endregion
+
+	public static async ValueTask<bool> TrySelectAsync<T>(this IListState<T> state, IImmutableList<T> selectedItems, CancellationToken ct)
+	{
+		var comparer = ListFeed<T>.DefaultComparer.Entity;
+		var success = false;
+
+		await state.UpdateMessage(msg =>
+		{
+			var items = msg.CurrentData.SomeOrDefault(ImmutableList<T>.Empty);
+			if (SelectionInfo.TryCreateMultiple(items, selectedItems, out var selection, comparer))
+			{
+				success = true;
+				msg.Selected(selection);
+			}
+		}, ct);
+
+		return success;
+	}
+
+	public static async ValueTask<bool> TrySelectAsync<T>(this IListState<T> state, T selectedItem, CancellationToken ct)
+		where T : notnull
+	{
+		var comparer = ListFeed<T>.DefaultComparer.Entity;
+		var success = false;
+
+		await state.UpdateMessage(msg =>
+		{
+			var items = msg.CurrentData.SomeOrDefault(ImmutableList<T>.Empty);
+			if (SelectionInfo.TryCreateSingle(items, selectedItem, out var selection, comparer))
+			{
+				success = true;
+				msg.Selected(selection);
+			}
+		}, ct);
+
+		return success;
+	}
 }
