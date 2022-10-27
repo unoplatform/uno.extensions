@@ -36,24 +36,7 @@
 	</ItemGroup>
 	
 	<Target Name="ReplaceTemplateCode" BeforeTargets="BeforeBuild">
-		<!-- <ItemGroup>
-			<MyTemplateSourceUIFiles Include="content\unoapp-extensions-net6\MyExtensionsApp.UI\**\*" />
-		</ItemGroup>
-
-		<Copy SourceFiles="@(MyTemplateSourceUIFiles)" DestinationFiles="@(MyTemplateSourceUIFiles->'content\unoapp-extensions\MyExtensionsApp.UI\%(RecursiveDir)%(Filename)%(Extension)')" /> 
-
 		<ItemGroup>
-			<MyTemplateSourceFiles Include="content\unoapp-extensions-net6\MyExtensionsApp\**\*" />
-		</ItemGroup>
-
-		<Copy SourceFiles="@(MyTemplateSourceFiles)" DestinationFiles="@(MyTemplateSourceFiles->'content\unoapp-extensions\MyExtensionsApp\%(RecursiveDir)%(Filename)%(Extension)')" />  -->
-
-
-		<ItemGroup>
-			<!-- <Content Include="content\unoapp-extensions\**" KeepDuplicates="False">
-				<PackagePath>content\unoapp-extensions</PackagePath>
-				<Pack>true</Pack>
-			</Content> -->
 			<Content Include="content\unoapp-extensions\**" KeepDuplicates="False">
 				<PackagePath>content\unoapp-extensions</PackagePath>
 				<Pack>true</Pack>
