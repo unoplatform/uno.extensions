@@ -17,7 +17,7 @@ namespace Uno.Extensions.Equality;
 ///		and only the first one witch match will be used.
 /// </remarks>
 [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false, Inherited = false)]
-partial class ImplicitKeysAttribute : Attribute
+sealed partial class ImplicitKeysAttribute : Attribute
 {
 	/// <summary>
 	/// Gets or sets a bool which indicates if the generation of key equality based on property names is enabled of not.
@@ -44,12 +44,4 @@ partial class ImplicitKeysAttribute : Attribute
 	{
 		PropertyNames = propertyNames;
 	}
-}
-
-/// <summary>
-/// Legacy attribute, please use ImplicitKeysAttribute instead
-/// </summary>
-[EditorBrowsable(EditorBrowsableState.Never)]
-partial class ImplicitKeyEqualityAttribute : ImplicitKeysAttribute
-{
 }

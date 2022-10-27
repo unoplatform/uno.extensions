@@ -154,6 +154,14 @@ static partial class ListState
 		=> new StateForEach<IImmutableList<T>>(state, (list, ct) => action(list ?? ImmutableList<T>.Empty, ct), $"ForEachAsync defined in {caller} at line {line}.");
 	#endregion
 
+	/// <summary>
+	/// Tries to select some items in a list state.
+	/// </summary>
+	/// <typeparam name="T">The type of the state</typeparam>
+	/// <param name="state">The state to update.</param>
+	/// <param name="selectedItems">The items to flag as selected.</param>
+	/// <param name="ct">A token to abort the async operation.</param>
+	/// <returns></returns>
 	public static async ValueTask<bool> TrySelectAsync<T>(this IListState<T> state, IImmutableList<T> selectedItems, CancellationToken ct)
 	{
 		var comparer = ListFeed<T>.DefaultComparer.Entity;
@@ -172,6 +180,14 @@ static partial class ListState
 		return success;
 	}
 
+	/// <summary>
+	/// Tries to select a single item in a list state.
+	/// </summary>
+	/// <typeparam name="T">The type of the state</typeparam>
+	/// <param name="state">The state to update.</param>
+	/// <param name="selectedItem">The item to flag as selected.</param>
+	/// <param name="ct">A token to abort the async operation.</param>
+	/// <returns></returns>
 	public static async ValueTask<bool> TrySelectAsync<T>(this IListState<T> state, T selectedItem, CancellationToken ct)
 		where T : notnull
 	{
@@ -190,4 +206,15 @@ static partial class ListState
 
 		return success;
 	}
+
+	/// <summary>
+	/// Clear the selection info of a list state.
+	/// </summary>
+	/// <typeparam name="T">The type of the state</typeparam>
+	/// <param name="state">The state to update.</param>
+	/// <param name="ct">A token to abort the async operation.</param>
+	/// <returns></returns>
+	public static async ValueTask ClearSelection<T>(this IListState<T> state, CancellationToken ct)
+		where T : notnull
+		=> await state.UpdateMessage(msg => msg.Selected(SelectionInfo.Empty), ct);
 }

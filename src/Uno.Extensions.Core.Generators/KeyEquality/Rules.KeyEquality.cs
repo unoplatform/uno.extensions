@@ -11,7 +11,7 @@ internal static partial class Rules
 	public static class KE0001
 	{
 		private const string message = "The record '{0}' is eligible to IKeyEquatable generation (due to {1}) but is not partial."
-			+ " Either make it partial (recommended), either disable implicit IKeyEquality generation using [ImplicitKeyEquality(IsEnabled = false)]"
+			+ " Either make it partial (recommended), either disable implicit IKeyEquality generation using [ImplicitKeys(IsEnabled = false)]"
 			+ " on the record itself or on the whole assembly (not recommended).";
 
 		public static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
@@ -96,13 +96,13 @@ internal static partial class Rules
 
 	public static class KE0004
 	{
-		private const string message = "The record '{0}' is flagged with [ImplicitKeyEquality] attribute, but no property match any of the defined implicit keys."
+		private const string message = "The record '{0}' is flagged with [ImplicitKeys] attribute, but no property match any of the defined implicit keys."
 			+ " The IKeyEquatable implementation cannot be generated."
-			+ " You should either remove the [ImplicitKeyEquality] attribute, either add property named {1}.";
+			+ " You should either remove the [ImplicitKeys] attribute, either add property named {1}.";
 
 		public static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
 			nameof(KE0004),
-			"Records flags with [ImplicitKeyEquality] attribute should have a matching key",
+			"Records flags with [ImplicitKeys] attribute should have a matching key",
 			message,
 			Category.Usage,
 			DiagnosticSeverity.Warning,

@@ -15,10 +15,6 @@ public partial class ImplicitKeysAttribute
 {
 }
 
-public partial class ImplicitKeyEqualityAttribute // Legacy
-{
-}
-
 public partial class KeyAttribute
 {
 }
