@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions;
 
-public class PlatformHelper
+public static class PlatformHelper
 {
 	private static bool _isNetCore;
 	private static bool _initialized;
