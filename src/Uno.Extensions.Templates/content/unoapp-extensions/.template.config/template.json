@@ -11,12 +11,13 @@
     "Linux",
     "WebAssembly",
     "WinUI",
+    "WindowsAppSdk",
     "dotnet-new"
   ],
   "name": "Multi-Platform App (Uno.Extensions)",
   "identity": "Uno.Extensions",
   "groupIdentity": "Uno.Extensions",
-  "description": "Template for creating a multi-platform C# & XAML application targeting Windows App SDK, Android, iOS, macOS, WebAssembly, Skia/WPF and Skia/GTK for Linux.",
+  "description": "Solution template for creating a multi-platform C# & XAML application targeting Windows App SDK, Android, iOS, macOS, WebAssembly, Skia/WPF and Skia/GTK for Linux.",
   "precedence": "6001",
   "tags": {
     "language": "C#",
@@ -42,30 +43,29 @@
     "E2821155-50B7-468D-A15B-E0EAF55DAC2B", // WINDOWS - Package.appxmanifest Identity.Name
   ],
   "symbols": { 
-    "windowsPublisherName": {
-      "type": "parameter",
-      "datatype": "text",
-      "replaces": "$XmlEscapedPublisherDistinguishedName$",
-      "description": "Provides the value to use for the Windows head publisher",
-      "defaultValue": "O=MyCompany"
-    },
     "wasm": {
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "true",
-      "description": "Enables the WebAssembly (WASM) platform support project"
+      "description": "Enables the WebAssembly platform support project"
     },
-    "mobile": {
+    "ios": {
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "true",
-      "description": "Enables the mobile platform (iOS, Android, MacOS) support project"
+      "description": "Enables the iOS platform in the Mobile support project"
     },
-    "skia-wpf": {
+    "android": {
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "true",
-      "description": "Enables the Skia/WPF platform support project"
+      "description": "Enables the Android platform in the Mobile support project"
+    },
+    "winAppSdk": {
+      "type": "parameter",
+      "dataType": "bool",
+      "defaultValue": "true",
+      "description": "Enables the Windows App Sdk platform support project"
     },
     "skia-gtk": {
       "type": "parameter",
@@ -73,17 +73,52 @@
       "defaultValue": "true",
       "description": "Enables the Skia/GTK platform support project"
     },
+    "maccatalyst": {
+      "type": "parameter",
+      "dataType": "bool",
+      "defaultValue": "true",
+      "description": "Enables the macOS (Catalyst) platform in the Mobile support project"
+    },
+    "macos": {
+      "type": "parameter",
+      "dataType": "bool",
+      "defaultValue": "true",
+      "description": "Enables the macOS (AppKit) platform in the Mobile support project"
+    },
+    "skia-wpf": {
+      "type": "parameter",
+      "dataType": "bool",
+      "defaultValue": "true",
+      "description": "Enables the Skia/WPF platform support project"
+    },
+    "skia-linux-fb": {
+      "type": "parameter",
+      "dataType": "bool",
+      "defaultValue": "true",
+      "description": "Enables the Skia/Linux Framebuffer platform support project"
+    },
+    "mobile": {
+      "type": "computed",
+      "dataType": "bool",
+      "value": "(android || ios || macos || maccatalyst)"
+    },
     "vscode": {
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "false",
-      "description": "Adds the Visual Studio Code Debugging support files"
+      "description": "Adds the Visual Studio Code Debugging support files for WebAssembly"
     },
     "skipRestore": {
       "type": "parameter",
       "datatype": "bool",
       "description": "If specified, skips the automatic restore of the project on create.",
       "defaultValue": "false"
+    },
+    "wasm-pwa-manifest": {
+      "type": "parameter",
+      "datatype": "bool",
+      "description": "Enables the generation of a PWA manifest for WebAssembly",
+      "defaultValue": "true"
     }
   },
   "primaryOutputs": [
@@ -94,8 +129,18 @@
       "path": "MyExtensionsApp\\MyExtensionsApp.csproj"
     },
     {
+      "path": "MyExtensionsApp.Tests\\MyExtensionsApp.Tests.csproj"
+    },
+    {
+      "path": "MyExtensionsApp.UITests\\MyExtensionsApp.UITests.csproj"
+    },
+    {
       "condition": "mobile",
       "path": "MyExtensionsApp.Mobile\\MyExtensionsApp.Mobile.csproj"
+    },
+    {
+      "condition": "winAppSdk",
+      "path": "MyExtensionsApp.Windows\\MyExtensionsApp.Windows.csproj"
     },
     {
       "condition": "wasm",
@@ -108,6 +153,10 @@
     {
       "condition": "skia-wpf",
       "path": "MyExtensionsApp.Skia.WPF\\MyExtensionsApp.Skia.Wpf.csproj"
+    },
+    {
+      "condition": "skia-linux-fb",
+      "path": "MyExtensionsApp.Skia.Linux.FrameBuffer\\MyExtensionsApp.Skia.Linux.FrameBuffer.csproj"
     }
   ],
   "sources": [
@@ -147,10 +196,29 @@
           ]
         },
         {
+          "condition": "(!skia-linux-fb)",
+          "exclude": [
+            "MyExtensionsApp.Skia.Linux.FrameBuffer/**/*"
+          ]
+        },
+        {
+          "condition": "(!winAppSdk)",
+          "exclude": [
+            "MyExtensionsApp.Windows/**/*"
+          ]
+        },
+        {
           "condition": "(!vscode)",
           "exclude": [
             ".vscode/**/*"
           ]
+        },
+        {
+        "condition": "(!wasm-pwa-manifest)",
+        "exclude": [
+          "MyExtensionsApp.Wasm/manifest.json",
+          "MyExtensionsApp.Wasm/Assets/AppIcon-*"
+        ]
         }
       ]
     }

@@ -25,5 +25,25 @@
       "longName": "skia-gtk",
       "shortName": "skia-gtk"
     },
+    "skia-linux-fb": {
+      "longName": "skia-linux-fb",
+      "shortName": "skia-linux-fb"
+    },
+    "winAppSdk": {
+      "longName": "windowsAppSdk",
+      "shortName": "winAppSdk"
+    },
+    "vscode": {
+      "longName": "vscode",
+      "shortName": "vscode"
+    },
+    "skipRestore": {
+      "longName": "skipPackageRestore",
+      "shortName": "skipRestore"
+    },
+    "wasm-pwa-manifest": {
+      "longName": "wasm-pwa-manifest",
+      "shortName": "wasm-pwa-manifest"
+    }
   }
 }
