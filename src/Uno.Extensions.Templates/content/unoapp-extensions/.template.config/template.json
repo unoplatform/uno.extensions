@@ -10,12 +10,13 @@
     "macOS",
     "Linux",
     "WebAssembly",
+    "WinUI",
     "dotnet-new"
   ],
   "name": "Multi-Platform App (Uno.Extensions)",
   "identity": "Uno.Extensions",
   "groupIdentity": "Uno.Extensions",
-  "description": "Template for creating a multi-platform C# & XAML application targeting WinUI, Android, iOS, macOS, WebAssembly, Skia/WPF and Skia/GTK for Linux.",
+  "description": "Template for creating a multi-platform C# & XAML application targeting Windows App SDK, Android, iOS, macOS, WebAssembly, Skia/WPF and Skia/GTK for Linux.",
   "precedence": "6001",
   "tags": {
     "language": "C#",
@@ -23,58 +24,24 @@
   },
   "shortName": "unoapp-extensions",
   "sourceName": "MyExtensionsApp",
-  "defaultName": "UnoApp",
+  "defaultName": "UnoExtApp",
   "placeholderFilename": "template-ignore",
   "preferNameDirectory": true,
   "guids": [
-    "4C26868E-5E7C-458D-82E3-040509D0C71F", // Solution file (SLN)
-    "99E19497-29A6-4B77-B773-BEC55F9B55DC", // .NET Standard Library
-    "8D9F8CF0-E178-402D-8D40-A88B7B5F3D42", // Android
-    "91D74A40-E440-42AD-B51F-C2D641C49384", // iOS
-    "B445DF73-AC9E-4276-9FBA-7CB5AD5D2518",
-    "3EA9E612-E717-4E55-9034-DE653429FEFD", // WPF
+    "C7433AE2-B1A0-4C1A-887E-5CAA7AAF67A6", // Solution file (SolutionGuid)
+    "6279C845-92F8-4333-AB99-3D213163593C", // UI
+    "24D56E12-2373-4CBD-9AD4-5C931D15FB0D", // Mobile
+    "40EA03F7-8A22-4143-B251-79BAC3EB13D2", // Wasm
+    "A5B8155A-118F-4794-B551-C6F3CF7E5411", // Skia.Gtk
+    "6C744695-DA38-44D9-B487-FE5804C5508D", // Skia.WPF
+    "BACDD33A-304C-46C4-9B00-AC166978D7E0", // (core) .NET Standard Library
+    "EB3EB846-D5CB-4140-834F-1CC40A0FD6D0", // Tests
+    "7229D034-7DBE-4FD7-B0E4-38D617571F93", // UITests
+    "5A78EE9A-1922-468C-96E3-45817727511C", // Windows
+    "925C7A3E-6532-4E27-8ABE-37A4F9B73C8B", // Skia.Linux.FrameBuffer
+    "E2821155-50B7-468D-A15B-E0EAF55DAC2B", // WINDOWS - Package.appxmanifest Identity.Name
   ],
-  "symbols": {
-    "guid1": {
-      "type": "generated",
-      "generator": "guid",
-      "replaces": "$guid1$",
-      "parameters": {
-        "format": "N"
-      }
-    },
-    "guid2": {
-      "type": "generated",
-      "generator": "guid",
-      "replaces": "$guid2$",
-      "parameters": {
-        "format": "N"
-      }
-    },
-    "guid3": {
-      "type": "generated",
-      "generator": "guid",
-      "replaces": "$guid3$",
-      "parameters": {
-        "format": "N"
-      }
-    },
-    "guid4": {
-      "type": "generated",
-      "generator": "guid",
-      "replaces": "$guid4$",
-      "parameters": {
-        "format": "N"
-      }
-    },
-    "guid5": {
-      "type": "generated",
-      "generator": "guid",
-      "replaces": "$guid5$",
-      "parameters": {
-        "format": "N"
-      }
-    },
+  "symbols": { 
     "windowsPublisherName": {
       "type": "parameter",
       "datatype": "text",
