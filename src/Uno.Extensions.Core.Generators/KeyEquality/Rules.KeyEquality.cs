@@ -166,6 +166,31 @@ internal static partial class Rules
 				FormatKeys(allPossibleKeys.Except(new[] { usedKey }).ToList(), " and "));
 	}
 
+	public static class KE0006
+	{
+		private const string message = "The record '{0}' provides custom implemenation of IKeyEquatable but does not implements IKeyed";
+
+		public static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(
+			nameof(KE0006),
+			"A record that implements IKeyEquatable should also implement IKeyed",
+			message,
+			Category.Usage,
+			DiagnosticSeverity.Warning,
+			helpLinkUri: "https://platform.uno/docs/articles/external/uno.extensions/doc/Overview/KeyEquality/rules.html#KE0006",
+			isEnabledByDefault: true);
+
+		public static string GetMessage(INamedTypeSymbol @class)
+			=> string.Format(CultureInfo.InvariantCulture, message, @class.Name);
+
+		public static Diagnostic GetDiagnostic(INamedTypeSymbol @class, IMethodSymbol equatableImpl)
+			=> Diagnostic.Create(
+				Descriptor,
+				equatableImpl.DeclaringSyntaxReferences.FirstOrDefault() is { } syntax
+					? Location.Create(syntax.SyntaxTree, syntax.Span)
+					: Location.None,
+				@class.Name);
+	}
+
 	private static string FormatKeys(ICollection<string> keys, string separator)
 		=> keys?.Count switch
 		{

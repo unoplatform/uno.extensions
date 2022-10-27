@@ -10,6 +10,7 @@ KE0002 | Usage | Error   | A record that implements GetKeyHashCode should also i
 KE0003 | Usage | Error   | A record that implements KeyEquals should also implement GetKeyHashCode.
 KE0004 | Usage | Warning | A record flagged with [ImplicitKeyEquality] attribute must have an eligible key property.
 KE0005 | Usage | Warning | A record should have only one matching key property for implicit IKeyEquatable generation.
+KE0006 | Usage | Warning | A record that implements IKeyEquatable should also implement IKeyed.
 PS0001 | Usage | Error | A property selector can only use property members.
 PS0002 | Usage | Error | A property selector cannot have any closure.
 PS0003 | Usage | Error | A property selector must be a lambda.

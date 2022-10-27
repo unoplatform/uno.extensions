@@ -33,10 +33,12 @@ internal static class GenerationContext
 					isOptional: x.attribute.IsOptional || x.parameter.GetCustomAttributesData().Any(attr => attr.AttributeType.FullName.Equals("System.Runtime.CompilerServices.NullableAttribute")),
 					symbol: compilation
 						.GetTypesByMetadataName(x.attribute.Type)
-						.OrderBy(t =>
-							SymbolEqualityComparer.Default.Equals(t.ContainingAssembly, compilation.Assembly) ? 0
-							: t.IsAccessibleTo(compilation.Assembly) ? 1
-							: 2)
+						.OrderBy(t => t switch
+							{
+								_ when SymbolEqualityComparer.Default.Equals(t.ContainingAssembly, compilation.Assembly) => 0,
+								_ when t.IsAccessibleTo(compilation.Assembly) => 1,
+								_ => 2
+							})
 						.FirstOrDefault()
 				))
 				.ToList();

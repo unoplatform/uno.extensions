@@ -3,4 +3,4 @@ using Uno.Extensions.Equality;
 
 [assembly: InternalsVisibleTo("Uno.Extensions.Reactive.Tests")]
 
-[assembly: ImplicitKeyEquality(IsEnabled = false)]
+[assembly: ImplicitKeys(IsEnabled = false)]

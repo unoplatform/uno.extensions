@@ -126,7 +126,7 @@ public partial class Given_FeedToListFeedAdapter : FeedTests
 
 	public partial record MyKeyedRecord(int Id, int Version);
 
-	[ImplicitKeyEquality(IsEnabled = false)]
+	[ImplicitKeys(IsEnabled = false)]
 	public partial record MyNotKeyedRecord(int Id, int Version);
 
 	public partial class MyNotKeyedClass

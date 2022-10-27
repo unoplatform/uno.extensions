@@ -261,6 +261,6 @@ public class Given_Messaging : FeedTests
 	private static IImmutableList<MyEntity> Items(params (int key, int version)[] items)
 		=> items.Select(i => new MyEntity(i.key, i.version)).ToImmutableList();
 
-	[ImplicitKeyEquality(IsEnabled = false)]
+	[ImplicitKeys(IsEnabled = false)]
 	private record MyEntity(int Key, int Version = 0);
 }

@@ -15,6 +15,9 @@ namespace Uno.Extensions.Generators;
 
 internal static class RoslynExtensions
 {
+	public static string ToFullString(this ISymbol symbol)
+		=> symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+
 	public static IEnumerable<INamedTypeSymbol> GetNamespaceTypes(this INamespaceSymbol sym)
 	{
 		foreach (var child in sym.GetTypeMembers())
@@ -151,6 +154,18 @@ internal static class RoslynExtensions
 			=> SymbolEqualityComparer.Default.Equals(named, typeOrInterface)
 			|| SymbolEqualityComparer.Default.Equals(named.ConstructedFrom, typeOrInterface);
 	}
+
+	public static IPropertySymbol? FindImplementationOf(this INamedTypeSymbol type, IPropertySymbol boundedInterfaceProperty, SymbolEqualityComparer? comparer = null)
+		=> type.GetAllProperties().FirstOrDefault(p => p.IsImplementationOf(boundedInterfaceProperty, comparer));
+
+	public static IPropertySymbol? FindLocalImplementationOf(this INamedTypeSymbol type, IPropertySymbol boundedInterfaceProperty, SymbolEqualityComparer? comparer = null)
+		=> type.GetProperties().FirstOrDefault(p => p.IsImplementationOf(boundedInterfaceProperty, comparer));
+
+	public static bool IsImplementationOf(this IPropertySymbol property, IPropertySymbol boundedInterfaceProperty, SymbolEqualityComparer? comparer = null)
+		=> property is { OverriddenProperty: not null }
+			? SymbolEqualityComparer.IncludeNullability.Equals(property.OverriddenProperty, boundedInterfaceProperty)
+			: property.Name.Equals(boundedInterfaceProperty.Name, StringComparison.Ordinal)
+			&& (comparer ?? SymbolEqualityComparer.IncludeNullability).Equals(property.Type, boundedInterfaceProperty.Type);
 
 	public static IMethodSymbol? FindLocalImplementationOf(this INamedTypeSymbol type, IMethodSymbol boundedInterfaceMethod, SymbolEqualityComparer? comparer = null)
 		=> type.GetMethods().FirstOrDefault(m => m.IsImplementationOf(boundedInterfaceMethod, comparer));
@@ -395,6 +410,9 @@ internal static class RoslynExtensions
 	public static IMethodSymbol? FindMethod(this INamedTypeSymbol type, string methodName, bool allowBaseTypes = true, StringComparison comparison = StringComparison.Ordinal)
 		=> type.GetMembers().OfType<IMethodSymbol>().FirstOrDefault(method => method.Name.Equals(methodName, comparison))
 			?? (allowBaseTypes && type.BaseType is { } @base? @base.FindMethod(methodName, allowBaseTypes, comparison) : null);
+
+	public static IPropertySymbol GetProperty(this INamedTypeSymbol type, string methodName, bool allowBaseTypes = true, StringComparison comparison = StringComparison.Ordinal)
+		=> type.FindProperty(methodName, allowBaseTypes, comparison) ?? throw new InvalidOperationException($"Property {methodName} not found on {type.Name}.");
 
 	public static IMethodSymbol GetMethod(this INamedTypeSymbol type, string methodName, bool allowBaseTypes = true, StringComparison comparison = StringComparison.Ordinal)
 		=> type.FindMethod(methodName, allowBaseTypes, comparison) ?? throw new InvalidOperationException($"Method {methodName} not found on {type.Name}.");
