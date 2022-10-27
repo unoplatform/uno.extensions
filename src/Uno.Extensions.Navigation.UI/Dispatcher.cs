@@ -34,7 +34,7 @@ public class Dispatcher : IDispatcher
 	/// <inheritdoc />
 	public async ValueTask<TResult> ExecuteAsync<TResult>(AsyncFunc<TResult> func, CancellationToken cancellation)
 	{
-		if (!PlatformHelper.IsWebAssembly && // Assume for web that we always call executeasync on dispatcher
+		if (PlatformHelper.IsThreadingEnabled && 
 			HasThreadAccess)
 		{
 			return await func(cancellation);
