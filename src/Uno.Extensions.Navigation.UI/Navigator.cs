@@ -46,8 +46,10 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		try
 		{
 
-			if (Dispatcher.HasThreadAccess)
+			if (Dispatcher.HasThreadAccess &&
+				!request.InProgress)
 			{
+				request = request with { InProgress = true }; // Prevent multiple re-entrance where HasThreadAccess always returns true eg WASM
 				if (Logger.IsEnabled(LogLevel.Information)) Logger.LogInformationMessage($"Navigation started on UI thread, so moving to background thread");
 				return await Task.Run(() => NavigateAsync(request));
 			}
