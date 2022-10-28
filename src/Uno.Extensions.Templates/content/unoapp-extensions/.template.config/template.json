@@ -175,6 +175,11 @@
           ]
         },
         {
+          "exclude": [
+            "MyExtensionsApp.Debugging.sln"
+          ]
+        },
+        {
           "condition": "(!mobile)",
           "exclude": [
             "MyExtensionsApp.Mobile/**/*"
