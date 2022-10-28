@@ -34,9 +34,9 @@ public static class PlatformHelper
 	/// Determines if the current runtime supports threading
 	/// </summary>
 	public static bool IsThreadingEnabled
-		{ get; } = !IsWebAssembly || IsWebAssemblyThreadingSupported;
+	{ get; } = !IsWebAssembly || IsWebAssemblyThreadingSupported;
 
-	private static bool IsWebAssemblyThreadingSupported { get; } = Environment.GetEnvironmentVariable("UNO_BOOTSTRAP_MONO_RUNTIME_CONFIGURATION").StartsWith("threads", StringComparison.OrdinalIgnoreCase);
+	private static bool IsWebAssemblyThreadingSupported { get; } = Environment.GetEnvironmentVariable("UNO_BOOTSTRAP_MONO_RUNTIME_CONFIGURATION")?.StartsWith("threads", StringComparison.OrdinalIgnoreCase) ?? false;
 
 
 	/// <summary>
