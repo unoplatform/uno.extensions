@@ -100,9 +100,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />
 	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Android\Resources\values\NewFolder\" />
-	</ItemGroup>
 
 	<Import Project="..\MyExtensionsApp.UI\MyExtensionsApp.UI.projitems" Label="Shared" />
 </Project>

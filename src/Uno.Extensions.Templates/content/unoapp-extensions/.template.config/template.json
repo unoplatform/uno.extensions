@@ -12,6 +12,7 @@
     "WebAssembly",
     "WinUI",
     "WindowsAppSdk",
+    "Extensions",
     "dotnet-new"
   ],
   "name": "Multi-Platform App (Uno.Extensions)",
@@ -187,6 +188,30 @@
         {
           "exclude": [
             "MyExtensionsApp.Debugging.sln"
+          ]
+        },
+        {
+          "condition": "(!android)",
+          "exclude": [
+            "MyExtensionsApp.Mobile/Android/**/*"
+          ]
+        },
+        {
+          "condition": "(!ios)",
+          "exclude": [
+            "MyExtensionsApp.Mobile/iOS/**/*"
+          ]
+        },
+        {
+          "condition": "(!macos)",
+          "exclude": [
+            "MyExtensionsApp.Mobile/macOS/**/*"
+          ]
+        },
+        {
+          "condition": "(!maccatalyst)",
+          "exclude": [
+            "MyExtensionsApp.Mobile/MacCatalyst/**/*"
           ]
         },
         {
