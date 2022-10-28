@@ -44,7 +44,7 @@ internal class BindableViewModelGenerator : ICodeGenTool
 		}
 
 		if (type.IsPartial()
-			&& type.ContainingAssembly.FindAttribute<ImplicitBindablesAttribute>() is { IsEnabled: true } @implicit // Note: the type might be from another assembly than current
+			&& (type.ContainingAssembly.FindAttribute<ImplicitBindablesAttribute>() ?? new ()) is { IsEnabled: true } @implicit // Note: the type might be from another assembly than current
 			&& @implicit.Patterns.Any(pattern => Regex.IsMatch(type.ToString(), pattern)))
 		{
 			return true;

@@ -96,7 +96,7 @@ public partial class Given_ViewModel_Then_GenerateBindable
 		=> Assert.IsNotNull(GetBindable(typeof(NestedSubViewModel)));
 
 	private Type? GetBindable(Type vmType)
-		=> vmType.GetNestedType($"Bindable{vmType.Name}");
+		=> vmType.GetNestedType(vmType.Name.Contains("ViewModel") ? $"Bindable{vmType.Name}" : $"{vmType.Name}ViewModel");
 
 	private Type? GetBindable(string vmType)
 	{
