@@ -15,7 +15,7 @@
     "dotnet-new"
   ],
   "name": "Multi-Platform App (Uno.Extensions) y",
-  "identity": "Uno.Extensions.X",
+  "identity": "Uno.Extensions",
   "groupIdentity": "Uno.Extensions",
   "description": "Solution template for creating a multi-platform C# & XAML application targeting Windows App SDK, Android, iOS, macOS, WebAssembly, Skia/WPF and Skia/GTK for Linux.",
   "precedence": "6001",
@@ -23,7 +23,7 @@
     "language": "C#",
     "type": "solution"
   },
-  "shortName": "unoapp-extensions-x",
+  "shortName": "unoapp-extensions",
   "sourceName": "MyExtensionsApp",
   "defaultName": "UnoExtApp",
   "placeholderFilename": "template-ignore",
@@ -97,6 +97,12 @@
       "defaultValue": "true",
       "description": "Enables the Skia/Linux Framebuffer platform support project"
     },
+    "tests": {
+      "type": "parameter",
+      "dataType": "bool",
+      "defaultValue": "true",
+      "description": "Includes unit and UI test projects"
+    },
     "mobile": {
       "type": "computed",
       "dataType": "bool",
@@ -132,9 +138,11 @@
       "path": "MyExtensionsApp\\MyExtensionsApp.csproj"
     },
     {
+      "condition": "tests",
       "path": "MyExtensionsApp.Tests\\MyExtensionsApp.Tests.csproj"
     },
     {
+      "condition": "tests",
       "path": "MyExtensionsApp.UITests\\MyExtensionsApp.UITests.csproj"
     },
     {
@@ -213,6 +221,13 @@
           "condition": "(!winAppSdk)",
           "exclude": [
             "MyExtensionsApp.Windows/**/*"
+          ]
+        },
+        {
+          "condition": "(!tests)",
+          "exclude": [
+            "MyExtensionsApp.Tests/**/*",
+            "MyExtensionsApp.UITests/**/*"
           ]
         },
         {
