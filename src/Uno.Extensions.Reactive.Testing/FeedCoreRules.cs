@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using FluentAssertions.Execution;
+using Uno.Extensions.Reactive.Core;
 
 namespace Uno.Extensions.Reactive.Testing;
 
@@ -53,7 +54,10 @@ public class FeedCoreRules
 
 		using var scope = new AssertionScope("initial message content");
 		await When_Subscribe_Then_FirstMessageHasDataOrIsTransient(sut.Value, ct);
-		await When_SubscribeMultipleTimeWithSameContext_Then_GetSameResult(sut.Dependencies, sut.Value, ct);
+		if (sut.Value is not IStateImpl)
+		{
+			await When_SubscribeMultipleTimeWithSameContext_Then_GetSameResult(sut.Dependencies, sut.Value, ct);
+		}
 	}
 
 	/// <summary>
@@ -68,7 +72,10 @@ public class FeedCoreRules
 
 		using var scope = new AssertionScope("initial message content");
 		await When_Subscribe_Then_FirstMessageHasDataOrIsTransient(sut.Value, ct);
-		await When_SubscribeMultipleTimeWithSameContext_Then_GetSameResult(sut.Dependencies, sut.Value, ct);
+		if (sut.Value is not IStateImpl)
+		{
+			await When_SubscribeMultipleTimeWithSameContext_Then_GetSameResult(sut.Dependencies, sut.Value, ct);
+		}
 	}
 
 
@@ -105,7 +112,7 @@ public class FeedCoreRules
 		}
 	}
 
-	private static async Task When_SubscribeMultipleTimeWithSameContext_Then_GetSameResult<TFeed>(
+	internal static async Task When_SubscribeMultipleTimeWithSameContext_Then_GetSameResult<TFeed>(
 		ImmutableArray<ISignal<IMessage>> dependencies,
 		TFeed feed,
 		CancellationToken ct)

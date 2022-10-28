@@ -1,15 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Windows.Foundation.Collections;
-
+using Uno.Extensions.Reactive.Bindings.Collections.Services;
+using Uno.Extensions.Reactive.Dispatching;
 
 namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets
 {
 	/// <summary>
 	/// The selection facet of the ICollectionView
 	/// </summary>
-	internal class SelectionFacet
+	internal class SelectionFacet : IDisposable
 	{
 		/* 
 		 * Note: The selection is sync beetween the ListView and the CollectionView only when SelectionMode is 'Single'
@@ -23,37 +25,90 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 		 * 
 		 */
 
-		private readonly Lazy<IObservableVector<object>> _target;
-
-		public SelectionFacet(Func<IObservableVector<object>> target)
-		{
-			_target = new Lazy<IObservableVector<object>>(target, LazyThreadSafetyMode.None);
-		}
-
 		private readonly EventRegistrationTokenTable<CurrentChangedEventHandler> _currentChanged = new();
 		private readonly EventRegistrationTokenTable<CurrentChangingEventHandler> _currentChanging = new();
+		private readonly ISelectionService? _service;
+		private readonly Lazy<IObservableVector<object>> _target;
+		private readonly IDispatcherInternal? _dispatcher;
+
+		private bool _isInit;
+
+		public SelectionFacet(IBindableCollectionViewSource source, Func<IObservableVector<object>> target)
+		{
+			_service = source.GetService(typeof(ISelectionService)) as ISelectionService;
+			_target = new Lazy<IObservableVector<object>>(target, LazyThreadSafetyMode.None);
+			_dispatcher = source.Dispatcher;
+		}
+
+		private void Init()
+		{
+			// Note: As the OnServiceStateChanged might cause a SetCurrent, which will try to resolve the _target,
+			//		 we must keep this Init lazy.
+
+			if (_isInit)
+			{
+				return;
+			}
+			_isInit = true;
+
+			if (_service is not null)
+			{
+				_service.StateChanged += OnServiceStateChanged;
+				OnServiceStateChanged(_service, EventArgs.Empty);
+			}
+		}
+
+		private void OnServiceStateChanged(object? snd, EventArgs args)
+		{
+			if (_dispatcher is null or { HasThreadAccess: true })
+			{
+				MoveCurrentToPosition((int?)_service!.SelectedIndex ?? -1);
+			}
+			else
+			{
+				_dispatcher.TryEnqueue(() => MoveCurrentToPosition((int?)_service!.SelectedIndex ?? -1));
+			}
+		}
 
 		public EventRegistrationToken AddCurrentChangedHandler(CurrentChangedEventHandler value)
-			=> _currentChanged.AddEventHandler(value);
+		{
+			Init();
+			return _currentChanged.AddEventHandler(value);
+		}
 
 #if USE_EVENT_TOKEN
 		public void RemoveCurrentChangedHandler(EventRegistrationToken value)
-			=> _currentChanged.RemoveEventHandler(value);
+		{
+			Init();
+			_currentChanged.RemoveEventHandler(value);
+		}
 #endif
 
 		public void RemoveCurrentChangedHandler(CurrentChangedEventHandler value)
-			=> _currentChanged.RemoveEventHandler(value);
+		{
+			Init();
+			_currentChanged.RemoveEventHandler(value);
+		}
 
 		public EventRegistrationToken AddCurrentChangingHandler(CurrentChangingEventHandler value)
-			=> _currentChanging.AddEventHandler(value);
+		{
+			Init();
+			return _currentChanging.AddEventHandler(value);
+		}
 
 #if USE_EVENT_TOKEN
 		public void RemoveCurrentChangingHandler(EventRegistrationToken value)
-			=> _currentChanging.RemoveEventHandler(value);
+		{
+			Init();
+			_currentChanging.RemoveEventHandler(value);
+		}
 #endif
 
 		public void RemoveCurrentChangingHandler(CurrentChangingEventHandler value)
-			=> _currentChanging.RemoveEventHandler(value);
+		{
+			Init();
+			_currentChanging.RemoveEventHandler(value);
+		}
 
 		public object? CurrentItem { get; private set; }
 
@@ -61,13 +116,66 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 
 		public bool IsCurrentAfterLast => false;
 
-		public bool IsCurrentBeforeFirst => CurrentPosition < 0;
+		public bool IsCurrentBeforeFirst
+		{
+			get
+			{
+				Init();
+				return CurrentPosition < 0;
+			}
+		}
+
+		public bool MoveCurrentTo(object item)
+		{
+			Init();
+
+			if (item == null)
+			{
+				return SetCurrent(-1, null);
+			}
+			else
+			{
+				var index = _target.Value.IndexOf(item);
+
+				return index >= 0 && SetCurrent(index, item);
+			}
+		}
+
+		public bool MoveCurrentToPosition(int index)
+		{
+			Init();
+
+			if (index < 0)
+			{
+				return SetCurrent(-1, null);
+			}
+			else
+			{
+				return index < _target.Value.Count && SetCurrent(index, _target.Value[index]);
+			}
+		}
+
+		public bool MoveCurrentToFirst() => MoveCurrentToPosition(0); // No needs to Init: are not using any Current***
+
+		public bool MoveCurrentToLast() => MoveCurrentToPosition(_target.Value.Count - 1); // No needs to Init: are not using any Current***
+
+		public bool MoveCurrentToNext()
+		{
+			Init();
+			return CurrentPosition + 1 < _target.Value.Count && MoveCurrentToPosition(CurrentPosition + 1);
+		}
+
+		public bool MoveCurrentToPrevious()
+		{
+			Init();
+			return CurrentPosition > 0 && MoveCurrentToPosition(CurrentPosition - 1);
+		}
 
 		private bool SetCurrent(int index, object? value, bool isCancelable = true)
 		{
-			if (CurrentPosition == index && CurrentItem == value)
+			if (CurrentPosition == index && EqualityComparer<object?>.Default.Equals(CurrentItem, value))
 			{
-				// Current is already update to date, do not raise events for nothing!
+				// Current is already up to date, do not raise events for nothing!
 				return true;
 			}
 
@@ -85,43 +193,19 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 			CurrentPosition = index;
 			CurrentItem = value;
 
+			_service?.SelectFromView(index);
+
 			_currentChanged.InvocationList?.Invoke(this, CurrentItem);
 
 			return true;
 		}
 
-		public bool MoveCurrentTo(object item)
+		public void Dispose()
 		{
-			if (item == null)
+			if (_service is not null)
 			{
-				return SetCurrent(-1, null);
-			}
-			else
-			{
-				var index = _target.Value.IndexOf(item);
-
-				return index >= 0 && SetCurrent(index, item);
+				_service.StateChanged -= OnServiceStateChanged;
 			}
 		}
-
-		public bool MoveCurrentToPosition(int index)
-		{
-			if (index < 0)
-			{
-				return SetCurrent(-1, null);
-			}
-			else
-			{
-				return index < _target.Value.Count && SetCurrent(index, _target.Value[index]);
-			}
-		}
-
-		public bool MoveCurrentToFirst() => MoveCurrentToPosition(0);
-
-		public bool MoveCurrentToLast() => MoveCurrentToPosition(_target.Value.Count - 1);
-
-		public bool MoveCurrentToNext() => CurrentPosition + 1 < _target.Value.Count && MoveCurrentToPosition(CurrentPosition + 1);
-
-		public bool MoveCurrentToPrevious() => CurrentPosition > 0 && MoveCurrentToPosition(CurrentPosition - 1);
 	}
 }

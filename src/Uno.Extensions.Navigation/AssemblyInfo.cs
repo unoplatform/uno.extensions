@@ -6,4 +6,4 @@ using Uno.Extensions.Equality;
 [assembly: InternalsVisibleTo("Uno.Extensions.Navigation.Toolkit.UI")]
 [assembly: InternalsVisibleTo("Uno.Extensions.Navigation.Toolkit.WinUI")]
 
-[assembly: ImplicitKeyEquality(IsEnabled = false)]
+[assembly: ImplicitKeys(IsEnabled = false)]

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Diagnostics.Contracts;
 using System.Linq;
@@ -51,8 +52,7 @@ public static class MessageAxisExtensions
 	/// <param name="builder">The builder.</param>
 	/// <param name="value">The value to set.</param>
 	/// <returns>The <paramref name="builder"/> for fluent building.</returns>
-	public static TBuilder Data<TBuilder, T>(this TBuilder builder, T value)
-		where TBuilder : IMessageBuilder<T>
+	public static MessageBuilder<T> Data<T>(this MessageBuilder<T> builder, T value)
 		=> builder.Data((Option<T>)value);
 
 	/// <summary>
@@ -60,11 +60,27 @@ public static class MessageAxisExtensions
 	/// </summary>
 	/// <param name="builder">The builder.</param>
 	/// <param name="value">The value to set.</param>
-	/// <param name="changeSet">The changes made from the previous value</param>
 	/// <returns>The <paramref name="builder"/> for fluent building.</returns>
-	internal static TBuilder Data<TBuilder, T>(this TBuilder builder, T value, IChangeSet? changeSet)
-		where TBuilder : IMessageBuilder<T>
-		=> builder.Data((Option<T>)value, changeSet);
+	public static MessageBuilder<TParent, TResult> Data<TParent, TResult>(this MessageBuilder<TParent, TResult> builder, TResult value)
+		=> builder.Data((Option<TResult>)value);
+
+	/// <summary>
+	/// Sets the data of an <see cref="MessageBuilder{T}"/>
+	/// </summary>
+	/// <param name="builder">The builder.</param>
+	/// <param name="value">The value to set.</param>
+	/// <returns>The <paramref name="builder"/> for fluent building.</returns>
+	public static MessageBuilder<IImmutableList<T>> Data<T>(this MessageBuilder<IImmutableList<T>> builder, ImmutableList<T> value)
+		=> builder.Data((Option<IImmutableList<T>>)value);
+
+	/// <summary>
+	/// Sets the data of an <see cref="MessageBuilder{T}"/>
+	/// </summary>
+	/// <param name="builder">The builder.</param>
+	/// <param name="value">The value to set.</param>
+	/// <returns>The <paramref name="builder"/> for fluent building.</returns>
+	public static MessageBuilder<TParent, IImmutableList<TResult>> Data<TParent, TResult>(this MessageBuilder<TParent, IImmutableList<TResult>> builder, ImmutableList<TResult> value)
+		=> builder.Data((Option<IImmutableList<TResult>>)value);
 
 	/// <summary>
 	/// Sets the data of an <see cref="MessageBuilder{T}"/>
@@ -72,10 +88,22 @@ public static class MessageAxisExtensions
 	/// <param name="builder">The builder.</param>
 	/// <param name="data">The data to set.</param>
 	/// <returns>The <paramref name="builder"/> for fluent building.</returns>
-	public static TBuilder Data<TBuilder, T>(this TBuilder builder, Option<T> data)
-		where TBuilder : IMessageBuilder<T>
+	public static MessageBuilder<T> Data<T>(this MessageBuilder<T> builder, Option<T> data)
 	{
-		builder.Set(MessageAxis.Data, MessageAxis.Data.ToMessageValue(data));
+		builder.Set(MessageAxis.Data, MessageAxis.Data.ToMessageValue(data), null);
+
+		return builder;
+	}
+
+	/// <summary>
+	/// Sets the data of an <see cref="MessageBuilder{T}"/>
+	/// </summary>
+	/// <param name="builder">The builder.</param>
+	/// <param name="data">The data to set.</param>
+	/// <returns>The <paramref name="builder"/> for fluent building.</returns>
+	public static MessageBuilder<TParent, TResult> Data<TParent, TResult>(this MessageBuilder<TParent, TResult> builder, Option<TResult> data)
+	{
+		builder.Set(MessageAxis.Data, MessageAxis.Data.ToMessageValue(data), null);
 
 		return builder;
 	}
@@ -87,8 +115,21 @@ public static class MessageAxisExtensions
 	/// <param name="data">The data to set.</param>
 	/// <param name="changeSet">The changes made from the previous value</param>
 	/// <returns>The <paramref name="builder"/> for fluent building.</returns>
-	internal static TBuilder Data<TBuilder, T>(this TBuilder builder, Option<T> data, IChangeSet? changeSet)
-		where TBuilder : IMessageBuilder<T>
+	internal static MessageBuilder<T> Data<T>(this MessageBuilder<T> builder, Option<T> data, IChangeSet? changeSet)
+	{
+		builder.Set(MessageAxis.Data, MessageAxis.Data.ToMessageValue(data), changeSet);
+
+		return builder;
+	}
+
+	/// <summary>
+	/// Sets the data of an <see cref="MessageBuilder{T}"/>
+	/// </summary>
+	/// <param name="builder">The builder.</param>
+	/// <param name="data">The data to set.</param>
+	/// <param name="changeSet">The changes made from the previous value</param>
+	/// <returns>The <paramref name="builder"/> for fluent building.</returns>
+	internal static MessageBuilder<TParent, TResult> Data<TParent, TResult>(this MessageBuilder<TParent, TResult> builder, Option<TResult> data, IChangeSet? changeSet)
 	{
 		builder.Set(MessageAxis.Data, MessageAxis.Data.ToMessageValue(data), changeSet);
 
@@ -158,36 +199,6 @@ public static class MessageAxisExtensions
 		=> builder.Set(MessageAxis.Error, error);
 
 	/// <summary>
-	/// Sets the refresh info of an <see cref="MessageBuilder{T}"/>
-	/// </summary>
-	/// <param name="builder">The builder.</param>
-	/// <param name="tokens">The refresh tokens.</param>
-	/// <returns>The <paramref name="builder"/> for fluent building.</returns>
-	internal static TBuilder Refreshed<TBuilder>(this TBuilder builder, TokenSet<RefreshToken>? tokens)
-		where TBuilder : IMessageBuilder
-		=> builder.Set(MessageAxis.Refresh, tokens);
-
-	/// <summary>
-	/// Gets the pagination info of an <see cref="MessageEntry{T}"/>
-	/// </summary>
-	/// <param name="entry">The entry.</param>
-	/// <returns>The progress.</returns>
-	/// <remarks>Use <see cref="MessageEntry{T}.IsTransient"/> instead.</remarks>
-	[Pure]
-	internal static PaginationInfo? GetPaginationInfo(this IMessageEntry entry)
-		=> entry.Get(MessageAxis.Pagination);
-
-	/// <summary>
-	/// Sets the pagination info of an <see cref="MessageBuilder{T}"/>
-	/// </summary>
-	/// <param name="builder">The builder.</param>
-	/// <param name="page">The pagination info.</param>
-	/// <returns>The <paramref name="builder"/> for fluent building.</returns>
-	internal static TBuilder Paginated<TBuilder>(this TBuilder builder, PaginationInfo? page)
-		where TBuilder : IMessageBuilder
-		=> builder.Set(MessageAxis.Pagination, page);
-
-	/// <summary>
 	/// Gets the progress of an <see cref="MessageEntry{T}"/>
 	/// </summary>
 	/// <param name="entry">The entry.</param>
@@ -211,6 +222,85 @@ public static class MessageAxisExtensions
 
 		return builder;
 	}
+
+	/// <summary>
+	/// Sets the refresh info of an <see cref="MessageBuilder{T}"/>
+	/// </summary>
+	/// <param name="builder">The builder.</param>
+	/// <param name="tokens">The refresh tokens.</param>
+	/// <returns>The <paramref name="builder"/> for fluent building.</returns>
+	internal static TBuilder Refreshed<TBuilder>(this TBuilder builder, TokenSet<RefreshToken>? tokens)
+		where TBuilder : IMessageBuilder
+		=> builder.Set(MessageAxis.Refresh, tokens);
+
+	/// <summary>
+	/// Gets the pagination info of an <see cref="MessageEntry{T}"/>
+	/// </summary>
+	/// <param name="entry">The entry.</param>
+	/// <returns>The pagination info.</returns>
+	[Pure]
+	internal static PaginationInfo? GetPaginationInfo(this IMessageEntry entry)
+		=> entry.Get(MessageAxis.Pagination);
+
+	/// <summary>
+	/// Sets the pagination info of an <see cref="MessageBuilder{T}"/>
+	/// </summary>
+	/// <param name="builder">The builder.</param>
+	/// <param name="page">The pagination info.</param>
+	/// <returns>The <paramref name="builder"/> for fluent building.</returns>
+	internal static TBuilder Paginated<TBuilder>(this TBuilder builder, PaginationInfo? page)
+		where TBuilder : IMessageBuilder
+		=> builder.Set(MessageAxis.Pagination, page);
+
+	/// <summary>
+	/// Gets the selection info of an <see cref="MessageEntry{T}"/>
+	/// </summary>
+	/// <param name="entry">The entry.</param>
+	/// <returns>The selection info.</returns>
+	[Pure]
+	public static SelectionInfo? GetSelectionInfo(this IMessageEntry entry)
+		=> entry.Get(MessageAxis.Selection);
+
+
+	/// <summary>
+	/// Gets the selected items of a list <see cref="MessageEntry{T}"/>
+	/// </summary>
+	/// <param name="entry">The entry.</param>
+	/// <returns>The selected items or an empty collection if none.</returns>
+	[Pure]
+	public static IImmutableList<T> GetSelectedItems<T>(this MessageEntry<IImmutableList<T>> entry)
+	{
+		var items = entry.Data.SomeOrDefault(ImmutableList<T>.Empty);
+		var info = entry.Get(MessageAxis.Selection) ?? SelectionInfo.Empty;
+
+		return info.GetSelectedItems(items);
+	}
+
+	/// <summary>
+	/// Gets the **first** selected item of a list <see cref="MessageEntry{T}"/> if any.
+	/// </summary>
+	/// <remarks>If more than one items are selected, this will return only the first selected item.</remarks>
+	/// <param name="entry">The entry.</param>
+	/// <returns>The selected item if any.</returns>
+	[Pure]
+	public static T? GetSelectedItem<T>(this MessageEntry<IImmutableList<T>> entry)
+		where T : notnull
+	{
+		var items = entry.Data.SomeOrDefault(ImmutableList<T>.Empty);
+		var info = entry.Get(MessageAxis.Selection) ?? SelectionInfo.Empty;
+
+		return info.GetSelectedItem(items);
+	}
+
+	/// <summary>
+	/// Sets the selection info of an <see cref="MessageBuilder{T}"/>
+	/// </summary>
+	/// <param name="builder">The builder.</param>
+	/// <param name="selection">The selection info.</param>
+	/// <returns>The <paramref name="builder"/> for fluent building.</returns>
+	public static TBuilder Selected<TBuilder>(this TBuilder builder, SelectionInfo selection)
+		where TBuilder : IMessageBuilder
+		=> builder.Set(MessageAxis.Selection, selection);
 
 	/// <summary>
 	/// Fluently applies an additional configuration action on a message builder.

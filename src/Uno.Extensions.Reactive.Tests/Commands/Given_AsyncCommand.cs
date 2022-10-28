@@ -150,7 +150,7 @@ public class Given_AsyncCommand : FeedUITests
 		return (sut, executions);
 	}
 
-	[ImplicitKeyEquality(IsEnabled = false)]
+	[ImplicitKeys(IsEnabled = false)]
 	private record Execution(ExecutionStartedEventArgs Start)
 	{
 		public const int DefaultTimeoutMs = 1000;

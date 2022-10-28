@@ -11,7 +11,7 @@ namespace Uno.Extensions.Equality;
 // To resolve this, we don't set any access modifier in **Attributes.cs files (so they are internal by default),
 // and then make them public only in the Core project.
 
-public partial class ImplicitKeyEqualityAttribute
+public partial class ImplicitKeysAttribute
 {
 }
 

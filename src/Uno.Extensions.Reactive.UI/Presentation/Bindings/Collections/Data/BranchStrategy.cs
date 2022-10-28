@@ -70,7 +70,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 			 * The issue is that the first event makes **absoluteley no sense** (the index is the index of the group while on root we usually deals with item indexes).
 			 *
 			 * As currently we will do either some add / remove in groups, either a **FULL** reset on the whole grouped collection,
-			 * we admit this as limitiation and we won't support this.
+			 * we admit this as limitation and we won't support this.
 			 *
 			 * Behavior of full reset in grouped collection is validated by the test 'Given_BindableCollection.When_Grouped_SwitchWithReset'
 			 *
@@ -84,7 +84,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 
 			// Init the flat tracking view (ie. the flatten view of the groups that can be consumed directly by the ICollectionView properties)
 			var flatCollectionChanged = new FlatCollectionChangedFacet(() => view ?? throw new InvalidOperationException("The owner provider must be resolved lazily!"));
-			var flatSelectionFacet = new SelectionFacet(() => view ?? throw new InvalidOperationException("The owner provider must be resolved lazily!"));
+			var flatSelectionFacet = new SelectionFacet(source, () => view ?? throw new InvalidOperationException("The owner provider must be resolved lazily!"));
 			var flatPaginationFacet = new PaginationFacet(source, extendedPropertiesFacet);
 
 			// Init the groups tracking

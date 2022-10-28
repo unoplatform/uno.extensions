@@ -74,7 +74,7 @@ internal sealed class WhereListFeed<T> : IListFeed<T>
 						//	changes = FeedToListFeedAdapter<T>.GetChangeSet(parentMsg.Previous.Data, data);
 						//}
 
-						var updatedFilteredItems = updatedItems.Where(item => _predicate(item)).ToImmutableList();
+						var updatedFilteredItems = updatedItems.Where(item => _predicate(item)).ToImmutableList() as IImmutableList<T>;
 						if (updatedFilteredItems is { Count: 0 })
 						{
 							updated

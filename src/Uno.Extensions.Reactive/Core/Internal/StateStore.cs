@@ -63,7 +63,7 @@ internal class StateStore : IStateStore
 
 	public TState GetOrCreateState<TSource, TState>(TSource source, Func<SourceContext, TSource, TState> factory)
 		where TSource : class
-		where TState : IStateImpl, IAsyncDisposable
+		where TState : IState
 	{
 		var states = _states;
 		if (states is null)
@@ -93,7 +93,7 @@ internal class StateStore : IStateStore
 	}
 
 	public TState CreateState<T, TState>(Option<T> initialValue, Func<SourceContext, Option<T>, TState> factory)
-		where TState : IStateImpl, IAsyncDisposable
+		where TState : IState
 	{
 		var states = _states;
 		if (states is null)

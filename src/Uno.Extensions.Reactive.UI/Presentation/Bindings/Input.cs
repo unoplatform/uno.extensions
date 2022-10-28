@@ -11,6 +11,9 @@ internal sealed class Input<T> : IInput<T>
 {
 	private readonly IState<T> _state;
 
+	/// <inheritdoc />
+	SourceContext IState.Context => _state.Context;
+
 	public string PropertyName { get; }
 
 	public Input(string propertyName, IState<T> state)

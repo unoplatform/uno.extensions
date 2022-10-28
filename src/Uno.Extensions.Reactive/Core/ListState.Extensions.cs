@@ -153,4 +153,68 @@ static partial class ListState
 		where T : notnull
 		=> new StateForEach<IImmutableList<T>>(state, (list, ct) => action(list ?? ImmutableList<T>.Empty, ct), $"ForEachAsync defined in {caller} at line {line}.");
 	#endregion
+
+	/// <summary>
+	/// Tries to select some items in a list state.
+	/// </summary>
+	/// <typeparam name="T">The type of the state</typeparam>
+	/// <param name="state">The state to update.</param>
+	/// <param name="selectedItems">The items to flag as selected.</param>
+	/// <param name="ct">A token to abort the async operation.</param>
+	/// <returns></returns>
+	public static async ValueTask<bool> TrySelectAsync<T>(this IListState<T> state, IImmutableList<T> selectedItems, CancellationToken ct)
+	{
+		var comparer = ListFeed<T>.DefaultComparer.Entity;
+		var success = false;
+
+		await state.UpdateMessage(msg =>
+		{
+			var items = msg.CurrentData.SomeOrDefault(ImmutableList<T>.Empty);
+			if (SelectionInfo.TryCreateMultiple(items, selectedItems, out var selection, comparer))
+			{
+				success = true;
+				msg.Selected(selection);
+			}
+		}, ct);
+
+		return success;
+	}
+
+	/// <summary>
+	/// Tries to select a single item in a list state.
+	/// </summary>
+	/// <typeparam name="T">The type of the state</typeparam>
+	/// <param name="state">The state to update.</param>
+	/// <param name="selectedItem">The item to flag as selected.</param>
+	/// <param name="ct">A token to abort the async operation.</param>
+	/// <returns></returns>
+	public static async ValueTask<bool> TrySelectAsync<T>(this IListState<T> state, T selectedItem, CancellationToken ct)
+		where T : notnull
+	{
+		var comparer = ListFeed<T>.DefaultComparer.Entity;
+		var success = false;
+
+		await state.UpdateMessage(msg =>
+		{
+			var items = msg.CurrentData.SomeOrDefault(ImmutableList<T>.Empty);
+			if (SelectionInfo.TryCreateSingle(items, selectedItem, out var selection, comparer))
+			{
+				success = true;
+				msg.Selected(selection);
+			}
+		}, ct);
+
+		return success;
+	}
+
+	/// <summary>
+	/// Clear the selection info of a list state.
+	/// </summary>
+	/// <typeparam name="T">The type of the state</typeparam>
+	/// <param name="state">The state to update.</param>
+	/// <param name="ct">A token to abort the async operation.</param>
+	/// <returns></returns>
+	public static async ValueTask ClearSelection<T>(this IListState<T> state, CancellationToken ct)
+		where T : notnull
+		=> await state.UpdateMessage(msg => msg.Selected(SelectionInfo.Empty), ct);
 }
