@@ -1,37 +1,49 @@
 ﻿{
   "$schema": "http://json.schemastore.org/dotnetcli.host",
   "symbolInfo": {
-    "WebAssembly": {
+    "wasm": {
       "longName": "webassembly",
       "shortName": "wasm"
     },
-    "iOS": {
+    "ios": {
       "longName": "ios",
       "shortName": "ios"
     },
-    "Android": {
+    "android": {
       "longName": "android",
-      "shortName": "android"
+      "shortName": "droid"
     },
-    "macOS": {
+    "macos": {
       "longName": "macos",
       "shortName": "macos"
     },
+    "maccatalyst": {
+      "longName": "maccatalyst",
+      "shortName": "catalyst"
+    },
     "skia-wpf": {
       "longName": "skia-wpf",
-      "shortName": "skia-wpf"
+      "shortName": "wpf"
     },
     "skia-gtk": {
       "longName": "skia-gtk",
-      "shortName": "skia-gtk"
+      "shortName": "gtk"
     },
     "skia-linux-fb": {
       "longName": "skia-linux-fb",
-      "shortName": "skia-linux-fb"
+      "shortName": "linux"
     },
     "winAppSdk": {
       "longName": "windowsAppSdk",
-      "shortName": "winAppSdk"
+      "shortName": "win"
+    },
+    "tests": {
+      "longName": "tests",
+      "shortName": "tests"
+    },
+    "wasm-pwa-manifest": {
+      "longName": "wasm-pwa-manifest",
+      "shortName": "pwa"
     },
     "vscode": {
       "longName": "vscode",
@@ -40,10 +52,6 @@
     "skipRestore": {
       "longName": "skipPackageRestore",
       "shortName": "skipRestore"
-    },
-    "wasm-pwa-manifest": {
-      "longName": "wasm-pwa-manifest",
-      "shortName": "wasm-pwa-manifest"
     }
   }
 }

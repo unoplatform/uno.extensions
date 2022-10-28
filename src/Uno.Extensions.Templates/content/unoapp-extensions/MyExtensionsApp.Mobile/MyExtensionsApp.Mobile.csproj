@@ -1,6 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>net6.0-android;net6.0-ios;net6.0-maccatalyst;net6.0-macos</TargetFrameworks>
+<!--#if (android)
+<TargetFrameworks>$(TargetFrameworks);net6.0-android</TargetFrameworks>
+#endif -->
+<!--#if (ios)
+<TargetFrameworks>$(TargetFrameworks);net6.0-ios</TargetFrameworks>
+#endif -->
+<!--#if (macos)
+<TargetFrameworks>$(TargetFrameworks);net6.0-macos</TargetFrameworks>
+#endif -->
+<!--#if (maccatalyst)
+<TargetFrameworks>$(TargetFrameworks);net6.0-maccatalyst</TargetFrameworks>
+#endif -->
 		<SingleProject>true</SingleProject>
 		<OutputType>Exe</OutputType>
 		<DefineConstants>$(DefinedConstants);WINUI</DefineConstants>

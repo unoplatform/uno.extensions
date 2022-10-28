@@ -14,7 +14,7 @@
     "WindowsAppSdk",
     "dotnet-new"
   ],
-  "name": "Multi-Platform App (Uno.Extensions) y",
+  "name": "Multi-Platform App (Uno.Extensions)",
   "identity": "Uno.Extensions",
   "groupIdentity": "Uno.Extensions",
   "description": "Solution template for creating a multi-platform C# & XAML application targeting Windows App SDK, Android, iOS, macOS, WebAssembly, Skia/WPF and Skia/GTK for Linux.",
@@ -30,16 +30,18 @@
   "preferNameDirectory": true,
   "guids": [
     "C7433AE2-B1A0-4C1A-887E-5CAA7AAF67A6", // Solution file (SolutionGuid)
+    "BACDD33A-304C-46C4-9B00-AC166978D7E0", // (core) .NET Standard Library
     "6279C845-92F8-4333-AB99-3D213163593C", // UI
+    "339C569C-EE23-445E-B908-743673EE5BC9", // Platforms Solution folder
     "24D56E12-2373-4CBD-9AD4-5C931D15FB0D", // Mobile
     "40EA03F7-8A22-4143-B251-79BAC3EB13D2", // Wasm
     "A5B8155A-118F-4794-B551-C6F3CF7E5411", // Skia.Gtk
     "6C744695-DA38-44D9-B487-FE5804C5508D", // Skia.WPF
-    "BACDD33A-304C-46C4-9B00-AC166978D7E0", // (core) .NET Standard Library
-    "EB3EB846-D5CB-4140-834F-1CC40A0FD6D0", // Tests
-    "7229D034-7DBE-4FD7-B0E4-38D617571F93", // UITests
     "5A78EE9A-1922-468C-96E3-45817727511C", // Windows
     "925C7A3E-6532-4E27-8ABE-37A4F9B73C8B", // Skia.Linux.FrameBuffer
+    "7EF70027-9874-4112-A14F-33F02169CF8A", // Tests Solution folder
+    "EB3EB846-D5CB-4140-834F-1CC40A0FD6D0", // Tests
+    "7229D034-7DBE-4FD7-B0E4-38D617571F93", // UITests
     "E2821155-50B7-468D-A15B-E0EAF55DAC2B", // WINDOWS - Package.appxmanifest Identity.Name
   ],
   "symbols": { 
