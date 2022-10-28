@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions;
 
-public class PlatformHelper
+public static class PlatformHelper
 {
 	private static bool _isNetCore;
 	private static bool _initialized;
@@ -29,6 +29,15 @@ public class PlatformHelper
 			return _isNetCore;
 		}
 	}
+
+	/// <summary>
+	/// Determines if the current runtime supports threading
+	/// </summary>
+	public static bool IsThreadingEnabled
+		{ get; } = !IsWebAssembly || IsWebAssemblyThreadingSupported;
+
+	private static bool IsWebAssemblyThreadingSupported { get; } = Environment.GetEnvironmentVariable("UNO_BOOTSTRAP_MONO_RUNTIME_CONFIGURATION").StartsWith("threads", StringComparison.OrdinalIgnoreCase);
+
 
 	/// <summary>
 	/// Initialization is performed explicitly to avoid a mono/mono issue regarding .cctor and FullAOT

@@ -33,5 +33,15 @@ public class Dispatcher : IDispatcher
 
 	/// <inheritdoc />
 	public async ValueTask<TResult> ExecuteAsync<TResult>(AsyncFunc<TResult> func, CancellationToken cancellation)
-		=> await _dispatcher.ExecuteAsync(func, cancellation);
+	{
+		if (PlatformHelper.IsThreadingEnabled && 
+			HasThreadAccess)
+		{
+			return await func(cancellation);
+		}
+		return await _dispatcher.ExecuteAsync(func, cancellation);
+	}
+
+	/// <inheritdoc />
+	public bool HasThreadAccess => _dispatcher.HasThreadAccess;
 }
