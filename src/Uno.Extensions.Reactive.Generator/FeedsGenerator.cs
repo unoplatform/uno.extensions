@@ -29,7 +29,7 @@ public partial class FeedsGenerator : ISourceGenerator
 
 		if (GenerationContext.TryGet<BindableGenerationContext>(context, out var error) is {} bindableContext)
 		{
-			foreach (var generated in new BindableViewModelGenerator(bindableContext).Generate(context.Compilation.Assembly))
+			foreach (var generated in new BindableViewModelGenerator(bindableContext).Generate())
 			{
 				context.AddSource(PathHelper.SanitizeFileName(generated.fileName) + ".g.cs", generated.code);
 			}

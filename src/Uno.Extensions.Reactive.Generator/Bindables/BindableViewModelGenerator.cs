@@ -2,37 +2,60 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Uno.Extensions.Generators;
+using Uno.Extensions.Reactive.Config;
 using Uno.RoslynHelpers;
 using static Microsoft.CodeAnalysis.Accessibility;
 
 namespace Uno.Extensions.Reactive.Generator;
 
-internal class BindableViewModelGenerator
+internal class BindableViewModelGenerator : ICodeGenTool
 {
-	private const string _version = "1";
+	/// <inheritdoc />
+	public string Version => "1";
 
 	private readonly BindableGenerationContext _ctx;
 	private readonly BindableGenerator _bindables;
 	private readonly BindableViewModelMappingGenerator _viewModelsMapping;
+	private readonly IAssemblySymbol _assembly;
 
 	public BindableViewModelGenerator(BindableGenerationContext ctx)
 	{
 		_ctx = ctx;
 		_bindables = new BindableGenerator(ctx);
 		_viewModelsMapping = new BindableViewModelMappingGenerator(ctx);
+		_assembly = ctx.Context.Compilation.Assembly;
 	}
 
 	private bool IsSupported(INamedTypeSymbol? type)
-		=> type is not null
-			&& (_ctx.IsGenerationEnabled(type)
-				?? type.Name.EndsWith("ViewModel", StringComparison.Ordinal) && type.IsPartial());
-
-	public IEnumerable<(string fileName, string code)> Generate(IAssemblySymbol assembly)
 	{
-		var viewModels = from module in assembly.Modules
+		if (type is null)
+		{
+			return false;
+		}
+
+		if (_ctx.IsGenerationEnabled(type) is {} isEnabled)
+		{
+			// If the attribute is set, we don't check for the `partial`: the build as to fail if not
+			return isEnabled;
+		}
+
+		if (type.IsPartial()
+			&& type.ContainingAssembly.FindAttribute<ImplicitBindablesAttribute>() is { IsEnabled: true } @implicit // Note: the type might be from another assembly than current
+			&& @implicit.Patterns.Any(pattern => Regex.IsMatch(type.ToString(), pattern)))
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	public IEnumerable<(string fileName, string code)> Generate()
+	{
+		var viewModels = from module in _assembly.Modules
 			from type in module.GetNamespaceTypes()
 			where IsSupported(type)
 			select type;
@@ -50,23 +73,35 @@ internal class BindableViewModelGenerator
 		yield return _viewModelsMapping.Generate();
 	}
 
-	private string Generate(INamedTypeSymbol vm)
+	private static string GetViewModelName(INamedTypeSymbol type)
 	{
-		var hasBaseType = IsSupported(vm.BaseType);
+		// Note: the type might be from another assembly than current
+		var isLegacyMode = type.ContainingAssembly.FindAttribute<ImplicitBindablesAttribute>() is { Patterns.Length: 1 } config
+			&& config.Patterns[0] is ImplicitBindablesAttribute.LegacyPattern;
+
+		return !isLegacyMode && type.Name.IndexOf("ViewModel", StringComparison.OrdinalIgnoreCase) < 0
+			? $"{type.Name}ViewModel"
+			: $"Bindable{type.Name}";
+	}
+
+	private string Generate(INamedTypeSymbol model)
+	{
+		var vmName = GetViewModelName(model);
+		var hasBaseType = IsSupported(model.BaseType);
 		var baseType = hasBaseType
-			? $"{vm.BaseType}.Bindable{vm.BaseType!.Name}"
+			? $"{model.BaseType}.{GetViewModelName(model.BaseType!)}"
 			: $"{NS.Bindings}.BindableViewModelBase";
 
 		List<IInputInfo> inputs;
 		IEnumerable<string> inputsErrors;
-		if (hasBaseType || vm.IsAbstract)
+		if (hasBaseType || model.IsAbstract)
 		{
 			inputs = new List<IInputInfo>(0);
 			inputsErrors = Enumerable.Empty<string>();
 		}
 		else
 		{
-			inputs = GetInputs(vm).ToList();
+			inputs = GetInputs(model).ToList();
 			inputsErrors = inputs
 				.GroupBy(input => input.Parameter.Name)
 				.Where(group => group.Distinct().Count() > 1)
@@ -82,7 +117,7 @@ internal class BindableViewModelGenerator
 			inputs = inputs.Distinct().ToList();
 		}
 
-		var mappedMembers = GetMembers(vm).ToList();
+		var mappedMembers = GetMembers(model).ToList();
 		var mappedMembersConflictingWithInputs = mappedMembers
 			.Where(member => inputs.Any(input => input.Property?.Name.Equals(member.Name, StringComparison.Ordinal) ?? false))
 			.ToList();
@@ -92,16 +127,16 @@ internal class BindableViewModelGenerator
 		mappedMembers = mappedMembers.Except(mappedMembersConflictingWithInputs).ToList();
 
 		var bindableVmCode = $@"
-			[global::System.CodeDom.Compiler.GeneratedCode(""{nameof(BindableViewModelGenerator)}"", ""{_version}"")]
-			public partial class Bindable{vm.Name} : {baseType} 
+			{this.GetCodeGenAttribute()}
+			public partial class {vmName} : {baseType} 
 			{{
 				{inputsErrors.Align(4)}
 				{inputs.Select(input => input.GetBackingField()).Align(4)}
 				{mappedMembers.Select(member => member.GetBackingField()).Align(4)}
 
-				{vm
+				{model
 					.Constructors
-					.Where(ctor => !ctor.IsCloneCtor(vm)
+					.Where(ctor => !ctor.IsCloneCtor(model)
 						// we do not support inheritance of ctor, inheritance always goes through the same BindableVM(vm) ctor.
 						&& ctor.DeclaredAccessibility is not Protected and not ProtectedAndFriend and not ProtectedAndInternal)
 					.Where(_ctx.IsGenerationNotDisable)
@@ -115,8 +150,8 @@ internal class BindableViewModelGenerator
 								.ToList();
 
 							return $@"
-								{GetCtorAccessibility(ctor)} Bindable{vm.Name}({parameters.Select(p => p.GetCtorParameter().code).JoinBy(", ")})
-									: base(new {vm}({parameters.Select(p => p.GetVMCtorParameter()).JoinBy(", ")}))
+								{GetCtorAccessibility(ctor)} {vmName}({parameters.Select(p => p.GetCtorParameter().code).JoinBy(", ")})
+									: base(new {model}({parameters.Select(p => p.GetVMCtorParameter()).JoinBy(", ")}))
 								{{
 									var {N.Ctor.Model} = {N.Model};
 									var {N.Ctor.Ctx} = {NS.Core}.SourceContext.GetOrCreate({N.Ctor.Model});
@@ -142,11 +177,11 @@ internal class BindableViewModelGenerator
 								.JoinBy(", ");
 
 							return $@"
-								{GetCtorAccessibility(ctor)} Bindable{vm.Name}({bindableVmParameters})
+								{GetCtorAccessibility(ctor)} {vmName}({bindableVmParameters})
 								{{
 									{inputs.Select(input => input.GetCtorInit(parameters.Contains(input))).Align(9)}
 
-									var {N.Ctor.Model} = new {vm}({vmParameters});
+									var {N.Ctor.Model} = new {model}({vmParameters});
 									var {N.Ctor.Ctx} = {NS.Core}.SourceContext.GetOrCreate({N.Ctor.Model});
 									{NS.Core}.SourceContext.Set(this, {N.Ctor.Ctx});
 									base.RegisterDisposable({N.Ctor.Model});
@@ -159,7 +194,7 @@ internal class BindableViewModelGenerator
 					})
 					.Align(4)}
 
-				protected Bindable{vm.Name}({vm} {N.Ctor.Model}){(hasBaseType ? $" : base({N.Ctor.Model})" : "")}
+				protected {vmName}({model} {N.Ctor.Model}){(hasBaseType ? $" : base({N.Ctor.Model})" : "")}
 				{{
 					var {N.Ctor.Ctx} = {NS.Core}.SourceContext.GetOrCreate({N.Ctor.Model});
 					{(hasBaseType ? "" : $"{NS.Core}.SourceContext.Set(this, {N.Ctor.Ctx});")}
@@ -167,7 +202,7 @@ internal class BindableViewModelGenerator
 					{mappedMembers.Select(member => member.GetInitialization()).Align(5)}
 				}}
 
-				public {(hasBaseType ? $"new {vm} {N.Model} => ({vm}) base.{N.Model};" : $"{vm} {N.Model} {{ get; }}")}
+				public {(hasBaseType ? $"new {model} {N.Model} => ({model}) base.{N.Model};" : $"{model} {N.Model} {{ get; }}")}
 
 				{inputs.Select(input => input.Property?.ToString()).Align(4)}
 
@@ -175,45 +210,24 @@ internal class BindableViewModelGenerator
 				{mappedMembers.Select(member => member.GetDeclaration()).Align(4)}
 			}}";
 
-		// We make the bindbale VM a nested class of the VM itself
-		var vmCode = $@"partial {(vm.IsRecord ? "record" : "class")} {vm.Name} : global::System.IAsyncDisposable, {NS.Core}.ISourceContextAware
-			{{
+		var fileCode = this.AsPartialOf(
+			model,
+			$"global::System.IAsyncDisposable, {NS.Core}.ISourceContextAware",
+			$@"
 				{bindableVmCode.Align(4)}
 
 				/// <inheritdoc />
-				[global::System.CodeDom.Compiler.GeneratedCode(""{nameof(BindableViewModelGenerator)}"", ""{_version}"")]
+				{this.GetCodeGenAttribute()}
 				public global::System.Threading.Tasks.ValueTask DisposeAsync()
 					=> {NS.Core}.SourceContext.Find(this)?.DisposeAsync() ?? default;
-			}}";
-
-		// Inject usings and declare the full namespace, including class nesting
-		var fileCode = $@"//----------------------
-			// <auto-generated>
-			//	Generated by the {nameof(BindableViewModelGenerator)} v{_version}. DO NOT EDIT!
-			//	Manual changes to this file will be overwritten if the code is regenerated.
-			// </auto-generated>
-			//----------------------
-			#nullable enable
-			#pragma warning disable
-
-			using System;
-			using System.Linq;
-			using System.Threading.Tasks;
-
-			namespace {vm.ContainingNamespace}
-			{{
-				{vm.GetContainingTypes().Select(type => $"partial {(type.IsRecord ? "record" : "class")} {type.Name}\r\n{{").Align(4)}
-				{vmCode.Align(4).Indent(vm.GetContainingTypes().Count())}
-				{vm.GetContainingTypes().Select(_ => "}").Align(4)}
-			}}
-			";
+			");
 
 		// If type is at least internally accessible, add it to a mapping from the VM type to it's bindable counterpart to ease usage in navigation engine.
 		// (Private types are almost only a test case which is not supported by nav anyway)
-		if (vm.DeclaredAccessibility is not Accessibility.Private
-			&& vm.GetContainingTypes().All(type => type.DeclaredAccessibility is not Accessibility.Private))
+		if (model.DeclaredAccessibility is not Accessibility.Private
+			&& model.GetContainingTypes().All(type => type.DeclaredAccessibility is not Accessibility.Private))
 		{
-			_viewModelsMapping.Register(vm, $"{vm.ContainingNamespace}.{vm.GetContainingTypes().Select(type => type.Name + '.').JoinBy("")}{vm.Name}.Bindable{vm.Name}");
+			_viewModelsMapping.Register(model, $"{model.ContainingNamespace}.{model.GetContainingTypes().Select(type => type.Name + '.').JoinBy("")}{model.Name}.{vmName}");
 		}
 
 		return fileCode.Align(0);
