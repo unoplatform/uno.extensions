@@ -79,9 +79,12 @@ internal class BindableViewModelGenerator : ICodeGenTool
 		var isLegacyMode = type.ContainingAssembly.FindAttribute<ImplicitBindablesAttribute>() is { Patterns.Length: 1 } config
 			&& config.Patterns[0] is ImplicitBindablesAttribute.LegacyPattern;
 
-		return !isLegacyMode && type.Name.IndexOf("ViewModel", StringComparison.OrdinalIgnoreCase) < 0
-			? $"{type.Name}ViewModel"
-			: $"Bindable{type.Name}";
+		return isLegacyMode switch
+		{
+			true => $"Bindable{type.Name}",
+			_ when type.Name.EndsWith("ViewModel", StringComparison.OrdinalIgnoreCase) => $"Bindable{type.Name}",
+			_ => $"{type.Name.TrimEnd("Model", StringComparison.OrdinalIgnoreCase)}ViewModel",
+		};
 	}
 
 	private string Generate(INamedTypeSymbol model)
