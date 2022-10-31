@@ -41,6 +41,7 @@
 				<PackagePath>content\unoapp-extensions</PackagePath>
 				<Pack>true</Pack>
 			</Content>
+			<Content Remove="content\unoapp-extensions\MyExtensionsApp.Debugging.sln" />
 		</ItemGroup>
 	</Target>
 
