@@ -10,4 +10,9 @@
   <PropertyGroup />
   <Import Project="MyExtensionsApp.UI.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeSharing\Microsoft.CodeSharing.CSharp.targets" />
+  <ItemGroup>
+    <_Globbed_Content Remove="Assets\Fonts\Material\Roboto-Light.ttf" />
+    <_Globbed_Content Remove="Assets\Fonts\Material\Roboto-Medium.ttf" />
+    <_Globbed_Content Remove="Assets\Fonts\Material\Roboto-Regular.ttf" />
+  </ItemGroup>
 </Project>

@@ -15,15 +15,12 @@
 
 	<ItemGroup>
 		<Content Include="Assets\Fonts\uno-fluentui-assets.ttf" />
-		<Content Include="Assets\Fonts\Roboto-Light.ttf" />
-		<Content Include="Assets\Fonts\Roboto-Medium.ttf" />
-		<Content Include="Assets\Fonts\Roboto-Regular.ttf" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Uno.WinUI.Skia.Gtk"  />
-		<PackageReference Include="Uno.WinUI.RemoteControl"  Condition="'$(Configuration)'=='Debug'" />
-		<PackageReference Include="SkiaSharp.Views.Uno.WinUI"  />
-		<PackageReference Include="SkiaSharp.Skottie"  />
+		<PackageReference Include="Uno.WinUI.Skia.Gtk" />
+		<PackageReference Include="Uno.WinUI.RemoteControl" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="SkiaSharp.Views.Uno.WinUI" />
+		<PackageReference Include="SkiaSharp.Skottie" />
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
 		<PackageReference Include="Uno.Material.WinUI" />
 		<PackageReference Include="Uno.Toolkit.WinUI.Material" />

@@ -54,9 +54,6 @@
 	<Import Project="..\MyExtensionsApp.UI\MyExtensionsApp.UI.projitems" Label="Shared" />
 
 	<ItemGroup>
-		<Content Include="Assets\Fonts\Material\Roboto-Light.ttf" />
-		<Content Include="Assets\Fonts\Material\Roboto-Medium.ttf" />
-		<Content Include="Assets\Fonts\Material\Roboto-Regular.ttf" />
 		<Content Include="Assets\Fonts\uno-fluentui-assets.ttf" />
 	</ItemGroup>
 </Project>
