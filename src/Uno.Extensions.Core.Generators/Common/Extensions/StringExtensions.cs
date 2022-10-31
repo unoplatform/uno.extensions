@@ -113,4 +113,9 @@ internal static class StringExtensions
 
 		return result.ToString();
 	}
+
+	public static string TrimEnd(this string text, string value, StringComparison comparison)
+		=> text.EndsWith(value, comparison)
+			? text.Substring(0, text.Length - value.Length)
+			: text;
 }
