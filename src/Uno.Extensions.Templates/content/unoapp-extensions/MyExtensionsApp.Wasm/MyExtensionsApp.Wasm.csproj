@@ -3,7 +3,6 @@
 		<OutputType>Exe</OutputType>
 		<TargetFramework>net6.0</TargetFramework>
 		<NoWarn>$(NoWarn);NU1504;NU1505;NU1701</NoWarn>
-		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
 		<ImplicitUsings>disable</ImplicitUsings>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)'=='Debug'">

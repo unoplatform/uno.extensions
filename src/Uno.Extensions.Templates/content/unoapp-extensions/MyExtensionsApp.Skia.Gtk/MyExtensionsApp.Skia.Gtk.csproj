@@ -4,7 +4,6 @@
 		<OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
 		<TargetFramework>net6.0</TargetFramework>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
-		<DefineConstants>$(DefinedConstants);WINUI</DefineConstants>
 	</PropertyGroup>
 	<ItemGroup Condition="exists('..\MyExtensionsApp.Windows')">
 		<EmbeddedResource Include="..\MyExtensionsApp.Windows\Package.appxmanifest" LogicalName="Package.appxmanifest" />

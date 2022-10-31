@@ -4,8 +4,6 @@
 		<OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
 		<TargetFramework>net6.0-windows</TargetFramework>
 		<UseWPF>true</UseWPF>
-		<ApplicationManifest>app.manifest</ApplicationManifest>
-		<DefineConstants>$(DefinedConstants);WINUI</DefineConstants>
 	</PropertyGroup>
 
 	<ItemGroup>
