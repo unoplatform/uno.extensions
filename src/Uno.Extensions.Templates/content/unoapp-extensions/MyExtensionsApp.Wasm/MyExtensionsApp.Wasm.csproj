@@ -3,6 +3,7 @@
 		<OutputType>Exe</OutputType>
 		<TargetFramework>net6.0</TargetFramework>
 		<NoWarn>$(NoWarn);NU1504;NU1505;NU1701</NoWarn>
+		<!-- Disabled due to issue with Central Package Management with implicit using -->
 		<ImplicitUsings>disable</ImplicitUsings>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
