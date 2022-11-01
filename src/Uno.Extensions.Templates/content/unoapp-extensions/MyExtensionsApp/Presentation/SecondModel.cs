@@ -2,6 +2,6 @@
 
 namespace MyExtensionsApp.Presentation;
 
-public partial record SecondViewModel (Entity Entity)
+public partial record SecondModel (Entity Entity)
 {
 }

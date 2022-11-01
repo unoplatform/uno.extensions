@@ -2,12 +2,12 @@
 
 namespace MyExtensionsApp.Presentation;
 
-public class ShellViewModel
+public class ShellModel
 {
 	private INavigator Navigator { get; }
 
 
-	public ShellViewModel(
+	public ShellModel(
 		INavigator navigator)
 	{
 
@@ -18,6 +18,6 @@ public class ShellViewModel
 
 	public async Task Start()
 	{
-		await Navigator.NavigateViewModelAsync<MainViewModel>(this);
+		await Navigator.NavigateViewModelAsync<MainModel>(this);
 	}
 }

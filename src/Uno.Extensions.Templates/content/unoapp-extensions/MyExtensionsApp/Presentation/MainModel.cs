@@ -9,14 +9,14 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace MyExtensionsApp.Presentation;
 
-#if(reactive)
-public partial class MainViewModel 
+#if (reactive)
+public partial class MainModel 
 {
 	public string? Title { get; }
 
 	public IState<string> Name { get; }
 
-	public MainViewModel(
+	public MainModel(
 		INavigator navigator,
 		IOptions<AppConfig> appInfo)
 	{
@@ -30,13 +30,13 @@ public partial class MainViewModel
 	public async Task GoToSecond()
 	{
 		var name = await Name;
-		await _navigator.NavigateViewModelAsync<SecondViewModel>(this, data: new Entity(name!));
+		await _navigator.NavigateViewModelAsync<SecondModel>(this, data: new Entity(name!));
 	}
 
 	private INavigator _navigator;
 }
 #else
-public partial class MainViewModel:ObservableObject
+public partial class MainModel:ObservableObject
 {
 	public string? Title { get; }
 
@@ -45,7 +45,7 @@ public partial class MainViewModel:ObservableObject
 
 	public ICommand GoToSecond { get; }
 
-	public MainViewModel(
+	public MainModel(
 		INavigator navigator,
 		IOptions<AppConfig> appInfo)
 	{ 
@@ -58,7 +58,7 @@ public partial class MainViewModel:ObservableObject
 
 	public async Task GoToSecondView()
 	{
-		await _navigator.NavigateViewModelAsync<SecondViewModel>(this, data: new Entity(Name!));
+		await _navigator.NavigateViewModelAsync<SecondModel>(this, data: new Entity(Name!));
 	}
 
 	private INavigator _navigator;
