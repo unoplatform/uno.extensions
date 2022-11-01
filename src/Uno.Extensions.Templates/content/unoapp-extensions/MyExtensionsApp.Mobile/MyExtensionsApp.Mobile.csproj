@@ -1,9 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>net6.0-android;net6.0-ios;net6.0-maccatalyst;net6.0-macos</TargetFrameworks>
+<!--#if (android)
+<TargetFrameworks>$(TargetFrameworks);net6.0-android</TargetFrameworks>
+#endif -->
+<!--#if (ios)
+<TargetFrameworks>$(TargetFrameworks);net6.0-ios</TargetFrameworks>
+#endif -->
+<!--#if (macos)
+<TargetFrameworks>$(TargetFrameworks);net6.0-macos</TargetFrameworks>
+#endif -->
+<!--#if (maccatalyst)
+<TargetFrameworks>$(TargetFrameworks);net6.0-maccatalyst</TargetFrameworks>
+#endif -->
 		<SingleProject>true</SingleProject>
 		<OutputType>Exe</OutputType>
-		<DefineConstants>$(DefinedConstants);WINUI</DefineConstants>
 		<RuntimeIdentifier Condition="'$(TargetFramework)' == 'net6.0-ios'">iossimulator-x64</RuntimeIdentifier>
 		<RuntimeIdentifier Condition="'$(TargetFramework)' == 'net6.0-maccatalyst'">maccatalyst-x64</RuntimeIdentifier>
 		<RuntimeIdentifier Condition="'$(TargetFramework)' == 'net6.0-macos'">osx-x64</RuntimeIdentifier>
@@ -88,9 +98,6 @@
 	</Choose>
 	<ItemGroup>
 		<ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />
-	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Android\Resources\values\NewFolder\" />
 	</ItemGroup>
 
 	<Import Project="..\MyExtensionsApp.UI\MyExtensionsApp.UI.projitems" Label="Shared" />

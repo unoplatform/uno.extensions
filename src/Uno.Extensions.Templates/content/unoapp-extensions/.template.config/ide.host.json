@@ -1,0 +1,134 @@
+﻿{
+  "$schema": "http://json.schemastore.org/ide.host",
+  "name": {
+    "text": "Multi-Platform App (Uno.Extensions)"
+  },
+  "description": {
+    "text": "Solution template for creating a multi-platform C# & XAML application targeting Windows App SDK, Android, iOS, macOS, WebAssembly, Skia/WPF and Skia/GTK for Linux."
+  },
+  "order": 610,
+  "icon": "uno-logo.png",
+  "learnMoreLink": "https://github.com/unoplatform/uno",
+  "symbolInfo": [
+    {
+      "id": "wasm",
+      "name": {
+        "text": "Web - WebAssembly"
+      },
+      "description":
+      {
+        "text": "Enables the WebAssembly platform support project"
+      },
+      "defaultValue": "true",
+      "isVisible":true
+    },
+    {
+      "id": "ios",
+      "name": {
+        "text": "Mobile - iOS"
+      },
+      "description":
+      {
+        "text": "Enables the iOS platform in the Mobile support project"
+      },
+      "defaultValue": "true",
+      "isVisible":true
+    },
+    {
+      "id": "android",
+      "name": {
+        "text": "Mobile - Android"
+      },
+      "description":
+      {
+        "text": "Enables the Android platform in the Mobile support project"
+      },
+      "defaultValue": "true",
+      "isVisible":true
+    },
+    {
+      "id": "winAppSdk",
+      "name": {
+        "text": "Desktop - WinUI (Windows App SDK)"
+      },
+      "description":
+      {
+        "text": "Enables the Widnows App SDK platform support project"
+      },
+      "defaultValue": "true",
+      "isVisible":true
+    },
+    {
+      "id": "skia-gtk",
+      "name": {
+        "text": "Desktop - Gtk (Linux, macOS, Windows 7 or later)"
+      },
+      "description":
+      {
+        "text": "Enables the Skia/GTK platform support project"
+      },
+      "defaultValue": "true",
+      "isVisible":true
+    },
+    {
+      "id": "macos",
+      "name": {
+        "text": "Desktop - macOS (AppKit)"
+      },
+      "description":
+      {
+        "text": "Enables the macOS (AppKit) platform in the Mobile support project"
+      },
+      "defaultValue": "false",
+      "isVisible":true
+    },
+    {
+      "id": "maccatalyst",
+      "name": {
+        "text": "Desktop - macOS (Catalyst)"
+      },
+      "description":
+      {
+        "text": "Enables the macOS (Catalyst) platform in the Mobile support project"
+      },
+      "defaultValue": "true",
+      "isVisible":true
+    },
+    {
+      "id": "skia-wpf",
+      "name": {
+        "text": "Desktop - WPF (Windows 7 or later)"
+      },
+      "description":
+      {
+        "text": "Enables the Skia/WPF platform support project"
+      },
+      "defaultValue": "false",
+      "isVisible":true
+    },
+    {
+      "id": "skia-linux-fb",
+      "name": {
+        "text": "Desktop - Linux Framebuffer"
+      },
+      "description":
+      {
+        "text": "Enables the Skia/Linux Framebuffer platform support project"
+      },
+      "defaultValue": "false",
+      "isVisible":true
+    },
+    {
+      "id": "tests",
+      "name": {
+        "text": "Testing - Unit and UI Tests"
+      },
+      "description":
+      {
+        "text": "Includes projects for unit and UI tests"
+      },
+      "defaultValue": "true",
+      "isVisible":true
+    }
+  ]
+}

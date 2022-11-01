@@ -36,41 +36,16 @@
 	</ItemGroup>
 	
 	<Target Name="ReplaceTemplateCode" BeforeTargets="BeforeBuild">
-		<!-- <ItemGroup>
-			<MyTemplateSourceUIFiles Include="content\unoapp-extensions-net6\MyExtensionsApp.UI\**\*" />
-		</ItemGroup>
-
-		<Copy SourceFiles="@(MyTemplateSourceUIFiles)" DestinationFiles="@(MyTemplateSourceUIFiles->'content\unoapp-extensions\MyExtensionsApp.UI\%(RecursiveDir)%(Filename)%(Extension)')" /> 
-
 		<ItemGroup>
-			<MyTemplateSourceFiles Include="content\unoapp-extensions-net6\MyExtensionsApp\**\*" />
-		</ItemGroup>
-
-		<Copy SourceFiles="@(MyTemplateSourceFiles)" DestinationFiles="@(MyTemplateSourceFiles->'content\unoapp-extensions\MyExtensionsApp\%(RecursiveDir)%(Filename)%(Extension)')" />  -->
-
-
-		<ItemGroup>
-			<!-- <Content Include="content\unoapp-extensions\**" KeepDuplicates="False">
-				<PackagePath>content\unoapp-extensions</PackagePath>
-				<Pack>true</Pack>
-			</Content> -->
 			<Content Include="content\unoapp-extensions\**" KeepDuplicates="False">
 				<PackagePath>content\unoapp-extensions</PackagePath>
 				<Pack>true</Pack>
 			</Content>
+			<Content Remove="content\unoapp-extensions\MyExtensionsApp.Debugging.sln" />
 		</ItemGroup>
 	</Target>
 
 	<Target Name="ReplaceVersions" BeforeTargets="BeforeBuild">
-	 <!-- Condition="'$(PackageVersion)'!='255.255.255.255'" -->
-		<!-- <ItemGroup>
-			<MySourceFiles Include="..\..\samples\Commerce\Commerce.Shared\**\*" />
-		</ItemGroup> -->
-
-		<!-- <Copy SourceFiles="@(MySourceFiles)" DestinationFiles="@(MySourceFiles->'content\unoapp-samples-commerce\MyExtensionsApp.Shared\%(RecursiveDir)%(Filename)%(Extension)')" />
-
-		<RenameFiles SourcePath="content\unoapp-samples-commerce\MyExtensionsApp.Shared" SourceName="Commerce" TargetName="MyExtensionsApp" /> -->
-		
 		<PropertyGroup>
 			<MSBuildDeveloperNamespace>
 				<Namespace Prefix="x" Uri="http://schemas.microsoft.com/developer/msbuild/2003" />
@@ -90,115 +65,7 @@
 		<XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)" Query="//PackageVersion[@Version='255.255.255.255']/@Version" Value="$(PackageVersion)" Namespaces="" />
 		<XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)" Query="//PackageReference[@Version='255.255.255.255']/@VersionOverride" Value="$(PackageVersion)" Namespaces="" />
 
-		<!-- <XmlPeek XmlInputPath="..\..\samples\Commerce\Commerce.Wasm\Commerce.Wasm.csproj" Query="//PackageReference[@Include='Uno.Toolkit.WinUI']/@Version">
-			<Output TaskParameter="Result" ItemName="Uno_Toolkit_WinUI_Version" />
-		</XmlPeek>
-		<XmlPeek XmlInputPath="..\..\samples\Commerce\Commerce.Wasm\Commerce.Wasm.csproj" Query="//PackageReference[@Include='Uno.Toolkit.WinUI.Material']/@Version">
-			<Output TaskParameter="Result" ItemName="Uno_Toolkit_WinUI_Material_Version" />
-		</XmlPeek>
-		<XmlPeek XmlInputPath="..\..\samples\Commerce\Commerce.Wasm\Commerce.Wasm.csproj" Query="//PackageReference[@Include='Uno.Material.WinUI']/@Version">
-			<Output TaskParameter="Result" ItemName="Uno_Material_WinUI_Version" />
-		</XmlPeek> -->
 
-		<!-- Uno_Toolkit_WinUI_Version -->
-		<!-- <XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)"
-						 Query="//x:PackageReference[@Include='Uno.Toolkit.WinUI']/@Version"
-						 Value="@(Uno_Toolkit_WinUI_Version)"
-						 Namespaces="$(MSBuildDeveloperNamespace)" />
-		<XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)"
-						 Query="//PackageReference[@Include='Uno.Toolkit.WinUI']/@Version"
-						 Value="@(Uno_Toolkit_WinUI_Version)"
-						 Namespaces="" /> -->
 
-		<!-- Uno_Toolkit_WinUI_Material_Version -->
-		<!-- <XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)"
-						 Query="//x:PackageReference[@Include='Uno.Toolkit.WinUI.Material']/@Version"
-						 Value="@(Uno_Toolkit_WinUI_Material_Version)"
-						 Namespaces="$(MSBuildDeveloperNamespace)" />
-		<XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)"
-						 Query="//PackageReference[@Include='Uno.Toolkit.WinUI.Material']/@Version"
-						 Value="@(Uno_Toolkit_WinUI_Material_Version)"
-						 Namespaces="" /> -->
-
-		<!-- Uno_Material_WinUI_Version -->
-		<!-- <XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)"
-						 Query="//x:PackageReference[@Include='Uno.Material.WinUI']/@Version"
-						 Value="@(Uno_Material_WinUI_Version)"
-						 Namespaces="$(MSBuildDeveloperNamespace)" />
-		<XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)"
-						 Query="//PackageReference[@Include='Uno.Material.WinUI']/@Version"
-						 Value="@(Uno_Material_WinUI_Version)"
-						 Namespaces="" /> -->
-
-		<!-- <ItemGroup>
-			<Content Include="content\unoapp-samples-commerce\**" KeepDuplicates="False">
-				<PackagePath>content\unoapp-samples-commerce</PackagePath>
-				<Pack>true</Pack>
-			</Content>
-		</ItemGroup> -->
 	</Target>
-
-	<UsingTask TaskName="RenameFiles" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
-		<ParameterGroup>
-			<SourcePath ParameterType="System.String" Required="True" Output="False" />
-			<SourceName ParameterType="System.String" Required="True" Output="False" />
-			<TargetName ParameterType="System.String" Required="True" Output="False" />
-		</ParameterGroup>
-		<Task>
-			<Reference Include="System.Xml" />
-			<Using Namespace="System" />
-			<Using Namespace="System.Linq" />
-			<Using Namespace="System.IO" />
-			<Code Type="Fragment" Language="cs">
-				<![CDATA[
-					string[] filters = new[] { "*.cs", "*.xml", "*.xaml", "*.plist", "*.js", "*.config", "*.appxmanifest", "*.projitems", "*.shproj", "*.csproj", "*.sln" };
-					foreach (var file in filters.SelectMany(f => Directory.EnumerateFiles(SourcePath, f, SearchOption.AllDirectories)))
-					{
-						Log.LogMessage("Converting file: " + file);
-						var s = File.ReadAllText(file);
-						s = s
-							.Replace(SourceName, TargetName)
-							;
-							
-						if(Path.GetExtension(file).ToLower() == ".cs" && !s.StartsWith("//-:cnd:noEmit"))
-						{
-							// Disable conditionals for all imported files
-							s = "//-:cnd:noEmit\r\n" + s;
-						}
-
-						var fileName = Path.GetFileName(file);
-						var filePath = Path.GetDirectoryName(file);
-						var updatedFileName = fileName.Replace(SourceName, TargetName);
-						
-						File.WriteAllText(file, s);
-						if(updatedFileName != fileName)
-						{
-							File.Delete(Path.Combine(filePath, updatedFileName));
-							Log.LogMessage("Move file: " + file + " to " + Path.Combine(filePath, updatedFileName));
-							File.Move(file, Path.Combine(filePath, updatedFileName));
-						}
-					}
-					Func<string[]> getFolders = () => Directory.GetDirectories(SourcePath, "*.*", SearchOption.AllDirectories);
-					var folders = getFolders();
-					for (int i = 0; i < folders.Length; i++)
-					{
-						var dir = folders[i];
-						if(!Directory.Exists(dir)) continue;
-						var dirName = Path.GetFileName(dir);
-						var path = Path.GetDirectoryName(dir);
-						var updatedDirName = dirName.Replace(SourceName, TargetName);
-						if(updatedDirName != dirName)
-						{
-							i = 0;
-							folders = getFolders();
-							var target = Path.Combine(path, updatedDirName);
-							Log.LogMessage("Moving: " + dir + " to " + target);
-							Directory.Move(dir, target);
-						}
-					}
-				]]>
-			</Code>
-		</Task>
-	</UsingTask>
-
 </Project>
