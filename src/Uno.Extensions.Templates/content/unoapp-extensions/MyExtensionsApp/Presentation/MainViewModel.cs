@@ -1,10 +1,49 @@
-//-:cnd:noEmit
+//+:cnd:noEmit
+#if(reactive)
+using Uno.Extensions.Reactive;
+#else
+using System.Windows.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+#endif
 
 namespace MyExtensionsApp.Presentation;
 
-public partial class MainViewModel
+#if(reactive)
+public partial class MainViewModel 
 {
 	public string? Title { get; }
+
+	public IState<string> Name { get; }
+
+	public MainViewModel(
+		INavigator navigator,
+		IOptions<AppConfig> appInfo)
+	{
+
+		_navigator = navigator;
+		Title = $"Main - {appInfo?.Value?.Title}";
+
+		Name = State<string>.Value(this, ()=>"");
+	}
+
+	public async Task GoToSecond()
+	{
+		var name = await Name;
+		await _navigator.NavigateViewModelAsync<SecondViewModel>(this, data: new Entity(name!));
+	}
+
+	private INavigator _navigator;
+}
+#else
+public partial class MainViewModel:ObservableObject
+{
+	public string? Title { get; }
+
+	[ObservableProperty]
+	private string? name;
+
+	public ICommand GoToSecond { get; }
 
 	public MainViewModel(
 		INavigator navigator,
@@ -13,12 +52,18 @@ public partial class MainViewModel
 	
 		_navigator = navigator;
 		Title = $"Main - {appInfo?.Value?.Title}";
+
+		GoToSecond = new AsyncRelayCommand(GoToSecondView);
 	}
 
-	public async Task GoToSecond(CancellationToken cancellation)
+	public async Task GoToSecondView()
 	{
-		await _navigator.NavigateViewModelAsync<SecondViewModel>(this, cancellation: cancellation);
+		await _navigator.NavigateViewModelAsync<SecondViewModel>(this, data: new Entity(Name!));
 	}
 
 	private INavigator _navigator;
 }
+#endif
+
+//-:cnd:noEmit
+

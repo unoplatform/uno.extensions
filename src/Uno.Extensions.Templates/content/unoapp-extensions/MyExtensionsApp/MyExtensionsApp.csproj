@@ -2,21 +2,25 @@
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 	</PropertyGroup>
-	
-  <ItemGroup>
-    <PackageReference Include="Uno.Extensions.Authentication" />
-    <PackageReference Include="Uno.Extensions.Configuration" />
-    <PackageReference Include="Uno.Extensions.Core" />
-    <PackageReference Include="Uno.Extensions.Hosting" />
-    <PackageReference Include="Uno.Extensions.Http" />
-    <PackageReference Include="Uno.Extensions.Http.Refit" />
-    <PackageReference Include="Uno.Extensions.Localization" />
-    <PackageReference Include="Uno.Extensions.Logging.Serilog" />
-    <PackageReference Include="Uno.Extensions.Navigation" />
-    <PackageReference Include="Uno.Extensions.Serialization" />
-    <PackageReference Include="Uno.Extensions.Serialization.Http" />
-    <PackageReference Include="Uno.Extensions.Serialization.Refit" />
-    <PackageReference Include="Uno.Extensions.Reactive" />
-    <PackageReference Include="Uno.Extensions.Reactive.WinUI" />
-  </ItemGroup>
+
+	<ItemGroup>
+		<!--#if (!reactive) -->
+		<PackageReference Include="CommunityToolkit.Mvvm" />
+		<!--#endif -->
+
+		<PackageReference Include="Uno.Extensions.Authentication" />
+		<PackageReference Include="Uno.Extensions.Configuration" />
+		<PackageReference Include="Uno.Extensions.Core" />
+		<PackageReference Include="Uno.Extensions.Hosting" />
+		<PackageReference Include="Uno.Extensions.Http" />
+		<PackageReference Include="Uno.Extensions.Http.Refit" />
+		<PackageReference Include="Uno.Extensions.Localization" />
+		<PackageReference Include="Uno.Extensions.Logging.Serilog" />
+		<PackageReference Include="Uno.Extensions.Navigation" />
+		<PackageReference Include="Uno.Extensions.Serialization" />
+		<PackageReference Include="Uno.Extensions.Serialization.Http" />
+		<PackageReference Include="Uno.Extensions.Serialization.Refit" />
+		<PackageReference Include="Uno.Extensions.Reactive" />
+		<PackageReference Include="Uno.Extensions.Reactive.WinUI" />
+	</ItemGroup>
 </Project>

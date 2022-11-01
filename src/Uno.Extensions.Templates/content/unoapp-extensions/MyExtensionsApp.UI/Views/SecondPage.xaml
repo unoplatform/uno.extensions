@@ -18,5 +18,10 @@
 				</AppBarButton>
 			</utu:NavigationBar.MainCommand>
 		</utu:NavigationBar>
+
+		<TextBlock Text="{Binding Entity.Name}"
+				   HorizontalAlignment="Center"
+				   VerticalAlignment="Center"
+				   />
 	</Grid>
 </Page>

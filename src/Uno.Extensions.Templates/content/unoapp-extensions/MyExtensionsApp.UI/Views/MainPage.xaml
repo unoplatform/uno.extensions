@@ -8,6 +8,7 @@
 	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
 	  xmlns:utu="using:Uno.Toolkit.UI"
 	  xmlns:not_skia="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  NavigationCacheMode="Required"
 	  Background="{ThemeResource BackgroundBrush}">
 
 	<Grid>
@@ -16,11 +17,16 @@
 			<RowDefinition />
 		</Grid.RowDefinitions>
 		<utu:NavigationBar Content="{Binding Title}" />
-		<Button Grid.Row="1"
-				HorizontalAlignment="Center"
-				VerticalAlignment="Center"
-				Content="Go to Second Page"
-				not_skia:AutomationProperties.AutomationId="SecondPageButton"
-				Command="{Binding GoToSecond}"/>
+
+		<StackPanel Grid.Row="1"
+					HorizontalAlignment="Center"
+					VerticalAlignment="Center">
+			<TextBox Text="{Binding Name, Mode=TwoWay}"
+					 PlaceholderText="Enter your name:"
+					 Margin="8" />
+			<Button 				Content="Go to Second Page"
+									not_skia:AutomationProperties.AutomationId="SecondPageButton"
+									Command="{Binding GoToSecond}" />
+		</StackPanel>
 	</Grid>
 </Page>
