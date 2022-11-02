@@ -165,6 +165,23 @@
           href: Overview/Maui/ThirdParty-Telerik.md
 - name: Reference
   items:
+    - name: Markup
+      href: Reference/Markup/GettingStarted.md
+      items:
+        - name: Generating Extensions
+          href: Reference/Markup/GeneratingExtensions.md
+        - name: Dependency Property Builder
+          href: Reference/Markup/DependencyPropertyBuilder.md
+        - name: Attached Properties
+          href: Reference/Markup/AttachedProperties.md
+        - name: Resources
+          href: Reference/Markup/Resources.md
+        - name: Styles
+          href: Reference/Markup/Styles.md
+        - name: Templates
+          href: Reference/Markup/Templates.md
+        - name: VisualStateManager
+          href: Reference/Markup/VisualStateManager.md
     - name: MVUX
       href: Reference/Reactive/concept.md
       items:
