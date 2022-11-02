@@ -1,5 +1,4 @@
 //-:cnd:noEmit
-
 namespace MyExtensionsApp;
 
 public sealed partial class App : Application
@@ -46,7 +45,13 @@ public sealed partial class App : Application
 
 
 				// Enable navigation, including registering views and viewmodels
-				.UseNavigation(ReactiveViewModelMappings.ViewModelMappings, RegisterRoutes)
+				.UseNavigation(
+//+:cnd:noEmit
+#if(reactive)
+			ReactiveViewModelMappings.ViewModelMappings,
+#endif
+//-:cnd:noEmit
+			RegisterRoutes)
 
 				// Add navigation support for toolkit controls such as TabBar and NavigationView
 				.UseToolkitNavigation()
@@ -57,18 +62,18 @@ public sealed partial class App : Application
 	private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 	{
 		views.Register(
-			new ViewMap(ViewModel: typeof(ShellViewModel)),
-			new ViewMap<MainPage, MainViewModel>(),
-			new ViewMap<SecondPage, SecondViewModel>()
+			new ViewMap(ViewModel: typeof(ShellModel)),
+			new ViewMap<MainPage, MainModel>(),
+			new DataViewMap<SecondPage, SecondModel, Entity>()
 			);
 
 		routes
 			.Register(
-				new RouteMap("", View: views.FindByViewModel<ShellViewModel>(),
+				new RouteMap("", View: views.FindByViewModel<ShellModel>(),
 						Nested: new RouteMap[]
 						{
-										new RouteMap("Main", View: views.FindByViewModel<MainViewModel>()),
-										new RouteMap("Second", View: views.FindByViewModel<SecondViewModel>()),
+										new RouteMap("Main", View: views.FindByViewModel<MainModel>()),
+										new RouteMap("Second", View: views.FindByViewModel<SecondModel>()),
 						}));
 	}
 }

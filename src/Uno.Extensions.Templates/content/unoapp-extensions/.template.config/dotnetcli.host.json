@@ -41,6 +41,10 @@
       "longName": "tests",
       "shortName": "tests"
     },
+    "reactive": {
+      "longName": "reactive",
+      "shortName": "reactive"
+    },
     "wasm-pwa-manifest": {
       "longName": "wasm-pwa-manifest",
       "shortName": "pwa"

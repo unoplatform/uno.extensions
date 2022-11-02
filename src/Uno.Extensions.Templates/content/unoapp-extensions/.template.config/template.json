@@ -106,6 +106,12 @@
       "defaultValue": "true",
       "description": "Includes unit and UI test projects"
     },
+    "reactive": {
+      "type": "parameter",
+      "dataType": "bool",
+      "defaultValue": "true",
+      "description": "Whether or not to use Reactive extensions"
+    },
     "mobile": {
       "type": "computed",
       "dataType": "bool",

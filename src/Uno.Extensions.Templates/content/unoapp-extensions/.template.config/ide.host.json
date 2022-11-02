@@ -129,6 +129,18 @@
       },
       "defaultValue": "true",
       "isVisible":true
+    },
+    {
+      "id": "Reactive",
+      "name": {
+        "text": "Data - Reactive Extensions"
+      },
+      "description":
+      {
+        "text": "Uses Reactive extensions"
+      },
+      "defaultValue": "true",
+      "isVisible":true
     }
   ]
 }
