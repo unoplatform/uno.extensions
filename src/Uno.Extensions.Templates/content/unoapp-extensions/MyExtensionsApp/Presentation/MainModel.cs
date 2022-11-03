@@ -10,7 +10,7 @@ using CommunityToolkit.Mvvm.Input;
 namespace MyExtensionsApp.Presentation;
 
 #if (reactive)
-public partial class MainModel 
+public partial record MainModel 
 {
 	public string? Title { get; }
 
