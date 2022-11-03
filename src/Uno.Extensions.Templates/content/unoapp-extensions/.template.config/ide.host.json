@@ -131,7 +131,7 @@
       "isVisible":true
     },
     {
-      "id": "Reactive",
+      "id": "reactive",
       "name": {
         "text": "Data - Reactive Extensions"
       },
@@ -141,6 +141,18 @@
       },
       "defaultValue": "true",
       "isVisible":true
+    },
+    {
+      "id": "cpm",
+      "name": {
+        "text": "Central Package Management"
+      },
+      "description":
+      {
+        "text": "Enables Central Package Management - packages are versioned in central Directory.Packages.props file"
+      },
+      "defaultValue": "false",
+      "isVisible":false
     }
   ]
 }
