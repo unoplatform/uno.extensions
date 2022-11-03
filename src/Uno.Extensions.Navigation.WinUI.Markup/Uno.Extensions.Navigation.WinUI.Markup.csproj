@@ -4,6 +4,8 @@
 	<PropertyGroup>
 		<PackageId>Uno.Extensions.Navigation.WinUI.Markup</PackageId>
 		<GenerateLibraryLayout>true</GenerateLibraryLayout>
+		<!--Temporary disable missing XML doc until fixed in the whole package-->
+		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
 	</PropertyGroup>
 
