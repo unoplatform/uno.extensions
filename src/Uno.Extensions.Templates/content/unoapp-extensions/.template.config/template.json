@@ -112,6 +112,12 @@
       "defaultValue": "true",
       "description": "Whether or not to use Reactive extensions"
     },
+    "cpm": {
+      "type": "parameter",
+      "dataType": "bool",
+      "defaultValue": "false",
+      "description": "Whether or not to use Central Package Management - package versions are via central Directory.Packages.props file"
+    },
     "mobile": {
       "type": "computed",
       "dataType": "bool",
@@ -153,6 +159,10 @@
     {
       "condition": "tests",
       "path": "MyExtensionsApp.UITests\\MyExtensionsApp.UITests.csproj"
+    },
+    {
+      "condition": "cpm",
+      "path": "Directory.Packages.props"
     },
     {
       "condition": "mobile",
@@ -264,6 +274,29 @@
           ]
         },
         {
+          "condition": "(!cpm)",
+          "exclude": [
+            "MyExtensionsApp//MyExtensionsApp.csproj",
+            "MyExtensionsApp.Mobile//MyExtensionsApp.Mobile.csproj",
+            "MyExtensionsApp.Skia.Gtk//MyExtensionsApp.Skia.Gtk.csproj",
+            "MyExtensionsApp.Skia.Linux.FrameBuffer//MyExtensionsApp.Skia.Linux.FrameBuffer.csproj",
+            "MyExtensionsApp.Skia.WPF//MyExtensionsApp.Skia.WPF.csproj",
+            "MyExtensionsApp.Tests//MyExtensionsApp.Tests.csproj",
+            "MyExtensionsApp.UITests//MyExtensionsApp.UITests.csproj",
+            "MyExtensionsApp.Wasm//MyExtensionsApp.Wasm.csproj",
+            "MyExtensionsApp.Windows//MyExtensionsApp.Windows.csproj",
+            "Directory.Build.props",
+            "Directory.Packages.props"
+          ]
+        },
+        {
+          "condition": "(cpm)",
+          "exclude": [
+            "**/*.nocpm.props",
+            "**/*.nocpm.csproj"
+          ]
+        },
+        {
           "condition": "(!vscode)",
           "exclude": [
             ".vscode/**/*"
@@ -275,6 +308,13 @@
           "MyExtensionsApp.Wasm/manifest.json",
           "MyExtensionsApp.Wasm/Assets/AppIcon-*"
         ]
+        },
+        {
+          "condition": "(!cpm)",
+          "rename": {
+              ".nocpm.csproj": ".csproj",
+              "Directory.Build.nocpm.props": "Directory.Build.props"
+          }
         }
       ]
     }
