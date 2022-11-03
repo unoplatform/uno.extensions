@@ -27,6 +27,7 @@ copy .\src\Uno.Extensions.Navigation\bin\Uno.Extensions.Navigation\Release\Uno.E
 copy .\src\Uno.Extensions.Navigation.Toolkit\bin\Uno.Extensions.Navigation.toolkit.WinUI\Release\Uno.Extensions.Navigation.toolkit.WinUI.255.255.255.255.nupkg .\unofeed\
 copy .\src\Uno.Extensions.Navigation.Toolkit\bin\Uno.Extensions.Navigation.toolkit.UI\Release\Uno.Extensions.Navigation.toolkit.UI.255.255.255.255.nupkg .\unofeed\
 copy .\src\Uno.Extensions.Navigation.UI\bin\Uno.Extensions.Navigation.WinUI\Release\Uno.Extensions.Navigation.WinUI.255.255.255.255.nupkg .\unofeed\
+copy .\src\Uno.Extensions.Navigation.WinUI.Markup\bin\Uno.Extensions.Navigation.WinUI.Markup\Release\Uno.Extensions.Navigation.WinUI.Markup.255.255.255.255.nupkg .\unofeed\
 copy .\src\Uno.Extensions.Navigation.UI\bin\Uno.Extensions.Navigation.UI\Release\Uno.Extensions.Navigation.UI.255.255.255.255.nupkg .\unofeed\
 copy .\src\Uno.Extensions.Serialization\bin\Uno.Extensions.Serialization\Release\Uno.Extensions.Serialization.255.255.255.255.nupkg .\unofeed\
 copy .\src\Uno.Extensions.Serialization.Http\bin\Uno.Extensions.Serialization.Http\Release\Uno.Extensions.Serialization.Http.255.255.255.255.nupkg .\unofeed\
@@ -34,6 +35,7 @@ copy .\src\Uno.Extensions.Serialization.Refit\bin\Uno.Extensions.Serialization.R
 copy .\src\Uno.Extensions.Reactive\bin\Uno.Extensions.Reactive\Release\Uno.Extensions.Reactive.255.255.255.255.nupkg .\unofeed\
 copy .\src\Uno.Extensions.Reactive.UI\bin\Uno.Extensions.Reactive.UI\Release\Uno.Extensions.Reactive.UI.255.255.255.255.nupkg .\unofeed\
 copy .\src\Uno.Extensions.Reactive.UI\bin\Uno.Extensions.Reactive.UI.WinUI\Release\Uno.Extensions.Reactive.WinUI.255.255.255.255.nupkg .\unofeed\
+copy .\src\Uno.Extensions.Reactive.WinUI.Markup\bin\Uno.Extensions.Reactive.WinUI.Markup\Release\Uno.Extensions.Reactive.WinUI.Markup.255.255.255.255.nupkg .\unofeed\
 copy .\src\Uno.Extensions.Reactive.Messaging\bin\Uno.Extensions.Reactive.Messaging\Release\Uno.Extensions.Reactive.Messaging.255.255.255.255.nupkg .\unofeed\
 copy .\src\Uno.Extensions.Templates\bin\Uno.Extensions.Templates\Release\Uno.Extensions.Templates.255.255.255.255.nupkg .\unofeed\
 
