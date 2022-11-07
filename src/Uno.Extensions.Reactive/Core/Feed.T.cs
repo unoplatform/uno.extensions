@@ -19,7 +19,7 @@ public static class Feed<T> // We set the T on the class to it greatly helps typ
 	/// <param name="sourceProvider">The provider of the message enumerable sequence.</param>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IFeed<T> Create(Func<CancellationToken, IAsyncEnumerable<Message<T>>> sourceProvider)
-		=> AttachedProperty.GetOrCreate(sourceProvider, sp => new CustomFeed<T>(sp));
+		=> AttachedProperty.GetOrCreate(sourceProvider, static sp => new CustomFeed<T>(sp));
 
 	/// <summary>
 	/// Gets or create a custom feed from a raw <see cref="IAsyncEnumerable{T}"/> sequence of <see cref="Message{T}"/>.
@@ -27,7 +27,7 @@ public static class Feed<T> // We set the T on the class to it greatly helps typ
 	/// <param name="sourceProvider">The provider of the message enumerable sequence.</param>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IFeed<T> Create(Func<IAsyncEnumerable<Message<T>>> sourceProvider)
-		=> AttachedProperty.GetOrCreate(sourceProvider, sp => new CustomFeed<T>(_ => sp()));
+		=> AttachedProperty.GetOrCreate(sourceProvider, static sp => new CustomFeed<T>(_ => sp()));
 
 	/// <summary>
 	/// Gets or create a custom feed from an async method.
@@ -38,7 +38,7 @@ public static class Feed<T> // We set the T on the class to it greatly helps typ
 	public static IFeed<T> Async(AsyncFunc<Option<T>> valueProvider, Signal? refresh = null)
 		=> refresh is null
 			? AttachedProperty.GetOrCreate(valueProvider, vp => new AsyncFeed<T>(vp))
-			: AttachedProperty.GetOrCreate(refresh, valueProvider, (r, vp) => new AsyncFeed<T>(vp, r));
+			: AttachedProperty.GetOrCreate(refresh, valueProvider, static (r, vp) => new AsyncFeed<T>(vp, r));
 
 	/// <summary>
 	/// Gets or create a custom feed from an async method.
@@ -49,7 +49,7 @@ public static class Feed<T> // We set the T on the class to it greatly helps typ
 	public static IFeed<T> Async(AsyncFunc<T> valueProvider, Signal? refresh = null)
 		=> refresh is null
 			? AttachedProperty.GetOrCreate(valueProvider, vp => new AsyncFeed<T>(vp))
-			: AttachedProperty.GetOrCreate(refresh, valueProvider, (r, vp) => new AsyncFeed<T>(vp, r));
+			: AttachedProperty.GetOrCreate(refresh, valueProvider, static (r, vp) => new AsyncFeed<T>(vp, r));
 
 	/// <summary>
 	/// Gets or create a custom feed from an async enumerable sequence of value.
@@ -57,7 +57,7 @@ public static class Feed<T> // We set the T on the class to it greatly helps typ
 	/// <param name="enumerableProvider">The async enumerable sequence of value of the resulting feed.</param>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IFeed<T> AsyncEnumerable(Func<IAsyncEnumerable<Option<T>>> enumerableProvider)
-		=> AttachedProperty.GetOrCreate(enumerableProvider, ep => new AsyncEnumerableFeed<T>(ep));
+		=> AttachedProperty.GetOrCreate(enumerableProvider, static ep => new AsyncEnumerableFeed<T>(ep));
 
 	/// <summary>
 	/// Gets or create a custom feed from an async enumerable sequence of value.
@@ -65,7 +65,7 @@ public static class Feed<T> // We set the T on the class to it greatly helps typ
 	/// <param name="enumerableProvider">The async enumerable sequence of value of the resulting feed.</param>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IFeed<T> AsyncEnumerable(Func<CancellationToken, IAsyncEnumerable<Option<T>>> enumerableProvider)
-		=> AttachedProperty.GetOrCreate(enumerableProvider, ep => new AsyncEnumerableFeed<T>(ep));
+		=> AttachedProperty.GetOrCreate(enumerableProvider, static ep => new AsyncEnumerableFeed<T>(ep));
 
 	/// <summary>
 	/// Gets or create a custom feed from an async enumerable sequence of value.
@@ -73,7 +73,7 @@ public static class Feed<T> // We set the T on the class to it greatly helps typ
 	/// <param name="enumerableProvider">The async enumerable sequence of value of the resulting feed.</param>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IFeed<T> AsyncEnumerable(Func<IAsyncEnumerable<T>> enumerableProvider)
-		=> AttachedProperty.GetOrCreate(enumerableProvider, ep => new AsyncEnumerableFeed<T>(ep));
+		=> AttachedProperty.GetOrCreate(enumerableProvider, static ep => new AsyncEnumerableFeed<T>(ep));
 
 	/// <summary>
 	/// Gets or create a custom feed from an async enumerable sequence of value.
@@ -81,5 +81,5 @@ public static class Feed<T> // We set the T on the class to it greatly helps typ
 	/// <param name="enumerableProvider">The async enumerable sequence of value of the resulting feed.</param>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IFeed<T> AsyncEnumerable(Func<CancellationToken, IAsyncEnumerable<T>> enumerableProvider)
-		=> AttachedProperty.GetOrCreate(enumerableProvider, ep => new AsyncEnumerableFeed<T>(ep));
+		=> AttachedProperty.GetOrCreate(enumerableProvider, static ep => new AsyncEnumerableFeed<T>(ep));
 }
