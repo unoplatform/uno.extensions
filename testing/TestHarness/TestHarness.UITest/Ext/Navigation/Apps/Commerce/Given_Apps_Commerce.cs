@@ -3,7 +3,43 @@
 public class Given_Apps_Commerce : NavigationTestBase
 {
 	[Test]
-	[Ignore("https://github.com/unoplatform/uno.extensions/issues/626")]
+	public async Task When_Commerce_Backbutton()
+	{
+		InitTestSection(TestSections.Apps_Commerce);
+
+		App.WaitThenTap("ShowAppButton");
+
+		// Select the narrow layout
+		App.WaitThenTap("NarrowButton");
+
+		// Make sure the app has loaded
+		App.WaitElement("LoginNavigationBar");
+
+		// Login
+		App.WaitThenTap("LoginButton");
+
+		// Select Deals tab
+
+		await App.TapAndWait("DealsTabBarItem", "DealsNavigationBar");
+
+		// Select a deal
+		await App.TapAndWait("DealsPage_DealsTabBarItem", "DealsListView");
+
+		await App.SelectListViewIndexAndWait("DealsListView", "1", "ProductDetailsNavigationBar");
+
+		// Go back to list of deals
+		await App.TapAndWait("DetailsBackButton", "DealsListView");
+
+
+		// Select another deal
+		await App.SelectListViewIndexAndWait("DealsListView", "2", "ProductDetailsNavigationBar");
+
+		// Go back to list of deals
+		await App.TapAndWait("DetailsBackButton", "DealsListView");
+
+	}
+
+	[Test]
 	public async Task When_Commerce_Responsive()
 	{
 		InitTestSection(TestSections.Apps_Commerce);
@@ -60,11 +96,11 @@ public class Given_Apps_Commerce : NavigationTestBase
 
 		/// Tap through each navigation view item
 
-		await App.TapAndWait("DealsNavigationViewItem","DealsNavigationBar");
+		await App.TapAndWait("DealsNavigationViewItem", "DealsNavigationBar");
 
-		await App.TapAndWait("ProductsNavigationViewItem","ProductsNavigationBar");
+		await App.TapAndWait("ProductsNavigationViewItem", "ProductsNavigationBar");
 
-		await App.TapAndWait("ProfileNavigationViewItem","ProfileNavigationBar");
+		await App.TapAndWait("ProfileNavigationViewItem", "ProfileNavigationBar");
 
 
 		// Select a deal
@@ -86,6 +122,7 @@ public class Given_Apps_Commerce : NavigationTestBase
 
 
 	}
+
 
 	[Test]
 	public async Task When_ViewModelInstance()

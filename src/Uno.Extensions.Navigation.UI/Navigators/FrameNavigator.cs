@@ -129,10 +129,12 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		// displaying the correct page
 		if (Control!.SourcePageType != lastMap.RenderView)
 		{
-			await Show(lastMap.Path, lastMap.RenderView, request.Route.Data);
+			await Show(lastMap.Path, lastMap.RenderView, request.Route.NavigationData());
 		}
 		else
 		{
+			_content = Control.Content as FrameworkElement;
+
 			// Rebuild the nested region hierarchy
 			Control.ReassignRegionParent();
 			if (segments.Length > 1 ||
@@ -174,7 +176,6 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		}
 		firstSegment = firstSegment.Append(lastMap.Path);
 
-		_content = Control?.Content as FrameworkElement;
 
 		await InitializeCurrentView(request, lastMap.AsRoute() with { Data = request.Route.Data}, lastMap, refreshViewModel);
 
@@ -216,18 +217,22 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			{
 				var previousMapping = Resolver.FindByView(Control.BackStack.Last().SourcePageType, this);
 				// Invoke the navigation (which will be a back navigation)
-				FrameGoBack(route.Data, previousMapping);
+				FrameGoBack(route.NavigationData(), previousMapping);
+			}
+			else
+			{
+				_content = Control.Content as FrameworkElement;
 			}
 		}
 		else
 		{
 			// Attempting to navigate back when there's no previous page
 			responseRoute = Route.Empty;
+			_content = Control.Content as FrameworkElement;
 		}
 
 		var mapping = Resolver.FindByView(Control.Content.GetType(), this);
 
-		_content = Control?.Content as FrameworkElement;
 
 		await InitializeCurrentView(request, previousRoute ?? Route.Empty, mapping);
 
@@ -284,6 +289,7 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Invoking Frame.GoBack");
 			Control.GoBack();
 
+			_content = Control.Content as FrameworkElement;
 			await EnsurePageLoaded(previousMapping?.Path);
 
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Frame.GoBack completed");
@@ -309,6 +315,7 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			{
 				if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Invoking Frame.Navigate to type '{viewType.Name}'");
 				var nav = Control.Navigate(viewType, data);
+				_content = Control.Content as FrameworkElement;
 
 				var currentPage = Control.Content as Page;
 				if (currentPage is not null)

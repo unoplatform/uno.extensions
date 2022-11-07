@@ -18,6 +18,9 @@
 						   AutomationProperties.AutomationId="PageNavigationOne" />
 		<StackPanel HorizontalAlignment="Center"
 					VerticalAlignment="Center" Grid.Row="1">
+			<TextBlock>
+				<Run Text="Created on UI Thread: " /><Run Text="{Binding CreatedOnUIThread}" />
+			</TextBlock>
 			<Button AutomationProperties.AutomationId="OnePageToTwoPageButton"
 					Content="Two"
 					uen:Navigation.Request="PageNavigationTwo" />

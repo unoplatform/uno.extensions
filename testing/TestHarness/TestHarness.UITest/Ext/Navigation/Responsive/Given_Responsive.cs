@@ -45,19 +45,11 @@ public class Given_Responsive : NavigationTestBase
 
 		await Task.Yield();
 
-		widgetsListView.SetDependencyPropertyValue("SelectedIndex", "1");
+		widgetsListView.SetDependencyPropertyValue("SelectedIndex", "2");
 
 		// List should still be visible (since details should be in contentcontrol)
 		visibility = widgetsListView.GetDependencyPropertyValue("Visibility");
 		visibility.Should().NotBeNull();
-
-		await Task.Delay(5000);
-		//var screenBefore = TakeScreenshot("When_Responsive_Before");
-		App.WaitThenTap("DetailsBackButton");
-		await Task.Delay(5000);
-		//var screenAfter = TakeScreenshot("When_Responsive_After");
-		// TODO: Fix image comparison
-		////ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
 	}
 
 }

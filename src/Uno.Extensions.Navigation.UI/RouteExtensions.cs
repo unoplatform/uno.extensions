@@ -86,7 +86,7 @@ public static class RouteExtensions
 		var segments = route.ForwardSegments(resolver);
 
 		var navRoute = (navigator is IStackNavigator deepNav) ? deepNav.FullRoute : navigator.Route;
-		if(!isClear && navRoute is not null && !navRoute.IsEmpty())
+		if (!isClear && navRoute is not null && !navRoute.IsEmpty())
 		{
 			return segments.Where(x => !navRoute.Contains(x.Path)).ToArray();
 		}
@@ -103,15 +103,14 @@ public static class RouteExtensions
 		while (rm is not null)
 		{
 			segments.Add(rm);
-			route=route.Next();
+			route = route.Next();
 			rm = resolver.FindByPath(route.Base);
 		}
 
 		return segments.ToArray();
 	}
 
-	public static object? ResponseData(this Route route) =>
-		(route?.Data?.TryGetValue(string.Empty, out var result) ?? false) ? result : null;
+	public static object? ResponseData(this Route route) => route.NavigationData();
 
 
 	public static Route TrimQualifier(this Route route, string qualifierToTrim)
@@ -168,10 +167,12 @@ public static class RouteExtensions
 			return route with { Base = routeToAppend.Base };
 		}
 
-		return route with {
-			Path = string.IsNullOrWhiteSpace( route.Path) ?
-						routeToAppend.Base + (!string.IsNullOrWhiteSpace(routeToAppend.Base) && !string.IsNullOrWhiteSpace(routeToAppend.Path)? Qualifiers.Separator:"") + routeToAppend.Path :
-						route.Path + ((routeToAppend.Qualifier == Qualifiers.Nested  || routeToAppend.Qualifier==Qualifiers.None)? Qualifiers.Separator : routeToAppend.Qualifier) + routeToAppend.Base + routeToAppend.Path };
+		return route with
+		{
+			Path = string.IsNullOrWhiteSpace(route.Path) ?
+						routeToAppend.Base + (!string.IsNullOrWhiteSpace(routeToAppend.Base) && !string.IsNullOrWhiteSpace(routeToAppend.Path) ? Qualifiers.Separator : "") + routeToAppend.Path :
+						route.Path + ((routeToAppend.Qualifier == Qualifiers.Nested || routeToAppend.Qualifier == Qualifiers.None) ? Qualifiers.Separator : routeToAppend.Qualifier) + routeToAppend.Base + routeToAppend.Path
+		};
 	}
 
 	public static Route AppendPage<TPage>(this Route route)
@@ -227,7 +228,7 @@ public static class RouteExtensions
 
 	public static bool Contains(this Route route, string path)
 	{
-		return route.Base == path || (route.Path?.Split('/').Any(x=>x==path)?? false);
+		return route.Base == path || (route.Path?.Split('/').Any(x => x == path) ?? false);
 	}
 
 	public static Route Next(this Route route)
@@ -417,7 +418,7 @@ public static class RouteExtensions
 
 		while (rm is not null)
 		{
-			segments.Insert(0,rm);
+			segments.Insert(0, rm);
 			rm = rm.DependsOnRoute;
 		}
 
