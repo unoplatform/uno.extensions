@@ -136,6 +136,7 @@ public sealed partial class AsyncCommand : IAsyncCommand, IDisposable
 	/// <inheritdoc />
 	public bool CanExecute(object? parameter)
 	{
+		// No matter if we are on the UI thread or not, we must make sure that the command is fully initialized.
 		_dispatcher.RunCallback();
 
 		return _children.Any(child => child.CanExecute(parameter));
@@ -144,6 +145,7 @@ public sealed partial class AsyncCommand : IAsyncCommand, IDisposable
 	/// <inheritdoc />
 	public void Execute(object? parameter)
 	{
+		// No matter if we are on the UI thread or not, we must make sure that the command is fully initialized.
 		_dispatcher.RunCallback();
 
 		if (_children.Aggregate(false, (isExecuting, child) => isExecuting | child.TryExecute(parameter, _context, _ct.Token)))

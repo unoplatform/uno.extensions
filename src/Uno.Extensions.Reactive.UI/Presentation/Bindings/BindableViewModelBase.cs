@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
@@ -7,6 +8,7 @@ using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Dispatching;
 using Uno.Extensions.Reactive.Events;
 using Uno.Extensions.Reactive.Logging;
+using Uno.Extensions.Reactive.UI.Utils;
 using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive.Bindings;
@@ -118,15 +120,16 @@ public abstract partial class BindableViewModelBase : IBindable, INotifyProperty
 
 				// We run the update sync in setup, no matter the thread
 				updated(initialValue);
-				var source = stateImpl.GetSource(stateImpl.Context.Token);
-				var dispatcher = await _dispatcher.GetFirstResolved(stateImpl.Context.Token);
+				var ct = stateImpl.Context.Token;
+				var source = FeedUIHelper.GetSource(stateImpl, stateImpl.Context);
+				var dispatcher = await _dispatcher.GetFirstResolved(ct);
 
 				dispatcher.TryEnqueue(async () =>
 				{
 					try
 					{
 						// Note: No needs to use .WithCancellation() here as we are enumerating the stateImp which is going to be disposed anyway.
-						await foreach (var msg in source.ConfigureAwait(true))
+						await foreach (var msg in source.WithCancellation(ct).ConfigureAwait(true))
 						{
 							if (msg.Changes.Contains(MessageAxis.Data) && !(msg.Current.Get(BindingSource)?.Equals((this, propertyName)) ?? false))
 							{

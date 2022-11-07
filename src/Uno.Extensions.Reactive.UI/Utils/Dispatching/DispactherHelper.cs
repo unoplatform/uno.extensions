@@ -16,4 +16,6 @@ internal class DispatcherHelper
 			?? throw new InvalidOperationException("Failed to get dispatcher to use. Either explicitly provide the dispatcher to use, either make sure to invoke this on the UI thread.");
 
 	public static FindDispatcher GetForCurrentThread = DispatcherQueueProvider.GetForCurrentThread;
+
+	public static bool HasThreadAccess => GetForCurrentThread()?.HasThreadAccess ?? false;
 }

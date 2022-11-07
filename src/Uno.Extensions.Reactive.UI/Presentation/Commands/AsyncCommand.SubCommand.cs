@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Uno.Extensions.Reactive.Core;
+using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive.Commands;
 
@@ -34,12 +35,17 @@ partial class AsyncCommand
 			_externalParameter = (null, false);
 			_command.UpdateCanExecute();
 
-			var parameters = _config
-				.Parameter(context)
-				.Where(message => message.Changes.Contains(MessageAxis.Data))
-				.WithCancellation(ct)
+			// Note: We cannot use the FeedUIHelper has we want to filter-out some values (.Where) without coming back on UI thread,
+			//		 but this is doing the same a FeedUIHelper.GetSource.
+			var parameters = await Task
+				.Run(
+					() => _config
+						.Parameter(context)
+						.Where(message => message.Changes.Contains(MessageAxis.Data))
+						.ToDeferredEnumerable(),
+					ct)
 				.ConfigureAwait(true);
-			await foreach (var parameter in parameters)
+			await foreach (var parameter in parameters.WithCancellation(ct).ConfigureAwait(true))
 			{
 				bool isValid, wasValid = _externalParameter is { isValid: true };
 				try

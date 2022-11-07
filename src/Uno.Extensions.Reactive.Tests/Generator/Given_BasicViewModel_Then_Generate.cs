@@ -6,6 +6,7 @@ using Windows.ApplicationModel.AppService;
 using Windows.UI.Xaml.Data;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Uno.Extensions.Reactive.Tests.Generator;
 
@@ -15,19 +16,19 @@ public partial class Given_BasicViewModel_Then_Generate : FeedUITests
 	// Those are mostly compilation tests!
 
 	[TestMethod]
-	public void Test_Constructors()
+	public async Task Test_Constructors()
 	{
-		var bindableCtor1 = new Given_BasicViewModel_Then_Generate__ViewModel.BindableGiven_BasicViewModel_Then_Generate__ViewModel();
+		await using var bindableCtor1 = new Given_BasicViewModel_Then_Generate__ViewModel.BindableGiven_BasicViewModel_Then_Generate__ViewModel();
 
-		var bindableCtor2 = new Given_BasicViewModel_Then_Generate__ViewModel.BindableGiven_BasicViewModel_Then_Generate__ViewModel(aRandomService: "aRandomService");
+		await using var bindableCtor2 = new Given_BasicViewModel_Then_Generate__ViewModel.BindableGiven_BasicViewModel_Then_Generate__ViewModel(aRandomService: "aRandomService");
 
-		var bindableCtor3 = new Given_BasicViewModel_Then_Generate__ViewModel.BindableGiven_BasicViewModel_Then_Generate__ViewModel(
+		await using var bindableCtor3 = new Given_BasicViewModel_Then_Generate__ViewModel.BindableGiven_BasicViewModel_Then_Generate__ViewModel(
 			anExternalInput: default(IFeed<string>)!,
 			anExternalReadWriteInput: default(IState<string>)!,
 			anExternalRecordInput: default(IFeed<MyRecord>)!,
 			anExternalWeirdRecordInput: default(IFeed<MyWeirdRecord>)!);
 
-		var bindableCtor4 = new Given_BasicViewModel_Then_Generate__ViewModel.BindableGiven_BasicViewModel_Then_Generate__ViewModel(
+		await using var bindableCtor4 = new Given_BasicViewModel_Then_Generate__ViewModel.BindableGiven_BasicViewModel_Then_Generate__ViewModel(
 			aParameterToNotBeAParameterLessCtor1: (short)0,
 			defaultAnInput: default(string)!,
 			defaultAReadWriteInput: default(string)!,
@@ -36,19 +37,19 @@ public partial class Given_BasicViewModel_Then_Generate : FeedUITests
 			defaultARecordWithAValuePropertyInput: default(MyRecordWithAValueProperty)!,
 			defaultAnInputConflictingWithAProperty: (int)42);
 
-		var bindableCtor5 = new Given_BasicViewModel_Then_Generate__ViewModel.BindableGiven_BasicViewModel_Then_Generate__ViewModel(
+		await using var bindableCtor5 = new Given_BasicViewModel_Then_Generate__ViewModel.BindableGiven_BasicViewModel_Then_Generate__ViewModel(
 			aParameterToNotBeAParameterLessCtor2: (int)0);
 	}
 
 	[TestMethod]
-	public void Test_PublicMembers()
+	public async Task Test_PublicMembers()
 	{
 		var mysSubRecord = new MySubRecord("prop1", 42);
 		var myWeirdRecord = new MyWeirdRecord();
 		var myRecord = new MyRecord("prop1", 42, mysSubRecord, myWeirdRecord);
 		var myRecordWithAValueProperty = new MyRecordWithAValueProperty("42");
 
-		var bindable = new Given_BasicViewModel_Then_Generate__ViewModel.BindableGiven_BasicViewModel_Then_Generate__ViewModel(
+		await using var bindable = new Given_BasicViewModel_Then_Generate__ViewModel.BindableGiven_BasicViewModel_Then_Generate__ViewModel(
 			aParameterToNotBeAParameterLessCtor1: (short)42,
 			defaultAnInput: "anInput",
 			defaultAReadWriteInput: "aReadWriteInput",
@@ -184,9 +185,9 @@ public partial class Given_BasicViewModel_Then_Generate : FeedUITests
 	}
 
 	[TestMethod]
-	public void When_FeedOfKindOfImmutableList_Then_TreatAsListFeed()
+	public async Task When_FeedOfKindOfImmutableList_Then_TreatAsListFeed()
 	{
-		var bindable = new When_FeedOfKindOfImmutableList_Then_TreatAsListFeed_ViewModel.BindableWhen_FeedOfKindOfImmutableList_Then_TreatAsListFeed_ViewModel();
+		await using var bindable = new When_FeedOfKindOfImmutableList_Then_TreatAsListFeed_ViewModel.BindableWhen_FeedOfKindOfImmutableList_Then_TreatAsListFeed_ViewModel();
 
 		AssertIsValid(bindable.AFeedOfArray);
 		AssertIsValid(bindable.AFeedOfImmutableList);
@@ -231,9 +232,9 @@ public partial class Given_BasicViewModel_Then_Generate : FeedUITests
 	}
 
 	[TestMethod]
-	public void When_FeedOfKindOfRawEnumerable_Then_DoNotTreatAsListFeed()
+	public async Task When_FeedOfKindOfRawEnumerable_Then_DoNotTreatAsListFeed()
 	{
-		var bindable = new When_FeedOfKindOfRawEnumerable_Then_DoNotTreatAsListFeed_ViewModel.BindableWhen_FeedOfKindOfRawEnumerable_Then_DoNotTreatAsListFeed_ViewModel();
+		await using var bindable = new When_FeedOfKindOfRawEnumerable_Then_DoNotTreatAsListFeed_ViewModel.BindableWhen_FeedOfKindOfRawEnumerable_Then_DoNotTreatAsListFeed_ViewModel();
 
 		AssertIsValid(bindable.AFeedOfEnumerable);
 
