@@ -81,7 +81,7 @@ public static partial class ListFeed
 	public static IListFeed<TSource> Where<TSource>(
 		this IListFeed<TSource> source,
 		Predicate<TSource> predicate)
-		=> AttachedProperty.GetOrCreate(source, predicate, (src, p) => new WhereListFeed<TSource>(src, p));
+		=> AttachedProperty.GetOrCreate(source, predicate, static (src, p) => new WhereListFeed<TSource>(src, p));
 
 	//public static IListFeed<TResult> Select<TSource, TResult>(
 	//	this IListFeed<TSource> source,
