@@ -1,4 +1,9 @@
 <Project ToolsVersion="15.0">
+	<PropertyGroup>
+		<UnoVersion>4.6.19</UnoVersion>
+		<UnoToolkitVersion>2.4.0-dev.112</UnoToolkitVersion>
+		<UnoMaterialVersion>2.3.0</UnoMaterialVersion>
+	</PropertyGroup>
 	<ItemGroup>
 		<PackageVersion Include="CommunityToolkit.Mvvm" Version="8.0.0" />
 		<PackageVersion Include="CommunityToolkit.WinUI.UI" Version="7.1.2" />
@@ -32,22 +37,22 @@
 		<PackageVersion Include="Uno.Core.Extensions.Logging.Singleton" Version="4.0.1" />
 		<PackageVersion Include="Uno.Extensions.Logging.OSLog " Version="1.4.0" />
 		<PackageVersion Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.3.0" />
-		<PackageVersion Include="Uno.Material" Version="2.3.0" />
-		<PackageVersion Include="Uno.Material.WinUI" Version="2.3.0" />
+		<PackageVersion Include="Uno.Material" Version="$(UnoMaterialVersion)" />
+		<PackageVersion Include="Uno.Material.WinUI" Version="$(UnoMaterialVersion)" />
 		<PackageVersion Include="Uno.Microsoft.Toolkit.Uwp.UI" Version="7.1.11" />
-		<PackageVersion Include="Uno.Toolkit.UI" Version="2.4.0-dev.85" />
-		<PackageVersion Include="Uno.Toolkit.UI.Material" Version="2.4.0-dev.85" />
-		<PackageVersion Include="Uno.Toolkit.WinUI" Version="2.4.0-dev.85" />
-		<PackageVersion Include="Uno.Toolkit.WinUI.Material" Version="2.4.0-dev.85" />
-		<PackageVersion Include="Uno.UI" Version="4.6.18" />
-		<PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.6.18" />
-		<PackageVersion Include="Uno.UI.MSAL" Version="4.6.18" />
-		<PackageVersion Include="Uno.UI.RemoteControl" Version="4.6.18" />
-		<PackageVersion Include="Uno.UI.Skia.Gtk" Version="4.6.18" />
-		<PackageVersion Include="Uno.UI.Skia.Linux.FrameBuffer" Version="4.6.18" />
-		<PackageVersion Include="Uno.UI.Skia.Tizen" Version="4.6.18" />
-		<PackageVersion Include="Uno.UI.Skia.Wpf" Version="4.6.18" />
-		<PackageVersion Include="Uno.UI.WebAssembly" Version="4.6.18" />
+		<PackageVersion Include="Uno.Toolkit.UI" Version="$(UnoToolkitVersion)" />
+		<PackageVersion Include="Uno.Toolkit.UI.Material" Version="$(UnoToolkitVersion)" />
+		<PackageVersion Include="Uno.Toolkit.WinUI" Version="$(UnoToolkitVersion)" />
+		<PackageVersion Include="Uno.Toolkit.WinUI.Material" Version="$(UnoToolkitVersion)" />
+		<PackageVersion Include="Uno.UI" Version="$(UnoVersion)" />
+		<PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="$(UnoVersion)" />
+		<PackageVersion Include="Uno.UI.MSAL" Version="$(UnoVersion)" />
+		<PackageVersion Include="Uno.UI.RemoteControl" Version="$(UnoVersion)" />
+		<PackageVersion Include="Uno.UI.Skia.Gtk" Version="$(UnoVersion)" />
+		<PackageVersion Include="Uno.UI.Skia.Linux.FrameBuffer" Version="$(UnoVersion)" />
+		<PackageVersion Include="Uno.UI.Skia.Tizen" Version="$(UnoVersion)" />
+		<PackageVersion Include="Uno.UI.Skia.Wpf" Version="$(UnoVersion)" />
+		<PackageVersion Include="Uno.UI.WebAssembly" Version="$(UnoVersion)" />
 		<PackageVersion Include="Uno.UITest" Version="1.1.0-dev.32" />
 		<PackageVersion Include="Uno.UITest.Selenium" Version="1.1.0-dev.32" />
 		<PackageVersion Include="Uno.UITest.Xamarin" Version="1.1.0-dev.32" />
@@ -55,13 +60,13 @@
 		<PackageVersion Include="Uno.UniversalImageLoader" Version="1.9.36" />
 		<PackageVersion Include="Uno.Wasm.Bootstrap" Version="3.3.1" />
 		<PackageVersion Include="Uno.Wasm.Bootstrap.DevServer" Version="3.3.1" />
-		<PackageVersion Include="Uno.WinUI" Version="4.6.18" />
-		<PackageVersion Include="Uno.WinUI.Skia.Gtk" Version="4.6.18" />
-		<PackageVersion Include="Uno.WinUI.Skia.Linux.FrameBuffer" Version="4.6.18" />
-		<PackageVersion Include="Uno.WinUI.Skia.Wpf" Version="4.6.18" />
-		<PackageVersion Include="Uno.WinUI.MSAL" Version="4.6.18" />
-		<PackageVersion Include="Uno.WinUI.RemoteControl" Version="4.6.18" />
-		<PackageVersion Include="Uno.WinUI.WebAssembly" Version="4.6.18" />
+		<PackageVersion Include="Uno.WinUI" Version="$(UnoVersion)" />
+		<PackageVersion Include="Uno.WinUI.Skia.Gtk" Version="$(UnoVersion)" />
+		<PackageVersion Include="Uno.WinUI.Skia.Linux.FrameBuffer" Version="$(UnoVersion)" />
+		<PackageVersion Include="Uno.WinUI.Skia.Wpf" Version="$(UnoVersion)" />
+		<PackageVersion Include="Uno.WinUI.MSAL" Version="$(UnoVersion)" />
+		<PackageVersion Include="Uno.WinUI.RemoteControl" Version="$(UnoVersion)" />
+		<PackageVersion Include="Uno.WinUI.WebAssembly" Version="$(UnoVersion)" />
 		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
 		<PackageVersion Include="Newtonsoft.Json" Version="13.0.1" />
 		<PackageVersion Include="NUnit" Version="3.13.3" />
