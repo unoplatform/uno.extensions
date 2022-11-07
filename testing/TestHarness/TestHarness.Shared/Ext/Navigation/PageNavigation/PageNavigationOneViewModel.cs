@@ -2,8 +2,11 @@
 
 namespace TestHarness.Ext.Navigation.PageNavigation;
 
-public record PageNavigationOneViewModel(IServiceProvider Services, INavigator Navigator, IWritableOptions<PageNavigationSettings> Settings)
+public record PageNavigationOneViewModel(IServiceProvider Services, INavigator Navigator, IDispatcher Dispatcher, IWritableOptions<PageNavigationSettings> Settings)
+	: BasePageNavigationViewModel(Dispatcher)
 {
+
+
 	public async void GoToTwo()
 	{
 		await Settings.UpdateAsync(s => s with { PagesVisited = s.PagesVisited.Add(this.GetType().Name) });
@@ -34,6 +37,16 @@ public record PageNavigationOneViewModel(IServiceProvider Services, INavigator N
 			settings = accessor.Value;
 		}
 
+	}
+
+}
+
+public record BasePageNavigationViewModel
+{
+	public bool CreatedOnUIThread { get; }
+	public BasePageNavigationViewModel(IDispatcher dispatcher)
+	{
+		CreatedOnUIThread = dispatcher.HasThreadAccess;
 	}
 
 }
