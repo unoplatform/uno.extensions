@@ -82,14 +82,4 @@ jobs:
         }
         cd ..
 
-        # Create app with cpm enabled, reactive disabled
-        dotnet new unoapp-extensions -o UnoAppCPMNoReactive01 --cpm true --reactive false
-        cd UnoAppCPMNoReactive01
-        & $msbuild /r /m UnoAppCPMNoReactive01.sln
-        if ($LASTEXITCODE -ne 0)
-        {
-            throw "Exit code must be zero."
-        }
-        cd ..
-
     displayName: Build template app
