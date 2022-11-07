@@ -51,6 +51,8 @@ jobs:
         $msbuild = vswhere -prerelease -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe
         Set-PSDebug -Trace 1
         $ErrorActionPreference = 'Stop'
+
+        # Create app with defaults
         dotnet new unoapp-extensions -o UnoApp01
         cd UnoApp01
         & $msbuild /r /m UnoApp01.sln
@@ -58,4 +60,26 @@ jobs:
         {
             throw "Exit code must be zero."
         }
+        cd ..
+
+        # Create app without reactive extensions
+        dotnet new unoapp-extensions -o UnoAppNoReactive01 --reactive false
+        cd UnoAppNoReactive01
+        & $msbuild /r /m UnoAppNoReactive01.sln
+        if ($LASTEXITCODE -ne 0)
+        {
+            throw "Exit code must be zero."
+        }
+        cd ..
+
+        # Create app with cpm enabled
+        dotnet new unoapp-extensions -o UnoAppCPM01 --cpm true
+        cd UnoAppCPM01
+        & $msbuild /r /m UnoAppCPM01.sln
+        if ($LASTEXITCODE -ne 0)
+        {
+            throw "Exit code must be zero."
+        }
+        cd ..
+
     displayName: Build template app

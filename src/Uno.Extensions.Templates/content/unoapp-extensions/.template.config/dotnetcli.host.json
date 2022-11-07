@@ -45,6 +45,10 @@
       "longName": "reactive",
       "shortName": "reactive"
     },
+    "cpm": {
+      "longName": "cpm",
+      "shortName": "cpm"
+    },
     "wasm-pwa-manifest": {
       "longName": "wasm-pwa-manifest",
       "shortName": "pwa"
@@ -54,8 +58,8 @@
       "shortName": "vscode"
     },
     "skipRestore": {
-      "longName": "skipPackageRestore",
-      "shortName": "skipRestore"
+      "longName": "skipRestore",
+      "shortName": "skip"
     }
   }
 }
