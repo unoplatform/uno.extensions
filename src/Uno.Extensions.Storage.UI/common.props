@@ -31,9 +31,4 @@
 		</Compile>
 		<UpToDateCheckInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
 	</ItemGroup>
-
-
-	<ItemGroup>
-		<InternalsVisibleTo Include="TestHarnessApp" />
-	</ItemGroup>
 </Project>

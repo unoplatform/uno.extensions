@@ -185,6 +185,20 @@
       <DependentUpon>ToDoWelcomePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\ToDo\ToDoWelcomeViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\ContentControl\ContentControlHomePage.xaml.cs">
+      <DependentUpon>ContentControlHomePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\ContentControl\ContentControlHomeViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\ContentControl\ContentControlHostInit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\ContentControl\ContentControlMainPage.xaml.cs">
+      <DependentUpon>ContentControlMainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\ContentControl\ContentControlOnePage.xaml.cs">
+      <DependentUpon>ContentControlOnePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\ContentControl\ContentControlTwoPage.xaml.cs">
+      <DependentUpon>ContentControlTwoPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\ContentDialogsPage.xaml.cs">
       <DependentUpon>ContentDialogsPage.xaml</DependentUpon>
     </Compile>
@@ -470,6 +484,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\ToDo\ToDoWelcomePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\ContentControl\ContentControlOnePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

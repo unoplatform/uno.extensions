@@ -39,7 +39,7 @@ public static class ServiceCollectionExtensions
 					.AddSingleton<IRouteNotifier>(sp => sp.GetRequiredService<RouteNotifier>())
 					.AddSingleton<IRouteUpdater>(sp => sp.GetRequiredService<RouteNotifier>())
 					.AddHostedService<BrowserAddressBarService>()
-					//.AddScoped<Navigator>()
+					.AddScoped<Navigator>()
 
 					.AddTransient<Flyout, NavigationFlyout>()
 

@@ -23,8 +23,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="$(AssemblyName).UI" />
-		<InternalsVisibleTo Include="$(AssemblyName).WinUI" />
 		<InternalsVisibleTo Include="$(AssemblyName).Toolkit.UI" />
 		<InternalsVisibleTo Include="$(AssemblyName).Toolkit.WinUI" />
 		<InternalsVisibleTo Include="Uno.Extensions.Authentication" />
