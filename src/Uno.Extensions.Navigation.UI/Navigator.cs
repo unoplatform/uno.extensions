@@ -9,7 +9,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 	protected IRegion Region { get; }
 
-	private IRouteUpdater? RouteUpdater => Region.Services?.GetRequiredService<IRouteUpdater>();
+	private IRouteUpdater RouteUpdater => Region.Services!.GetRequiredService<IRouteUpdater>();
 
 	IServiceProvider? IInstance<IServiceProvider>.Instance => Region.Services;
 
@@ -42,7 +42,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 	public async Task<NavigationResponse?> NavigateAsync(NavigationRequest request)
 	{
-		var regionUpdateId = RouteUpdater?.StartNavigation(Region) ?? Guid.Empty;
+		RouteUpdater.StartNavigation(this, Region, request);
 		try
 		{
 
@@ -60,6 +60,9 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 				request = request with { Source = this };
 			}
 
+#if !WASM
+			Debug.Assert(!Dispatcher.HasThreadAccess, "Navigation should be running on background thread");
+#endif
 
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($" Navigator: {this.GetType().Name} Request: {request.Route}");
 
@@ -94,10 +97,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		}
 		finally
 		{
-			if (RouteUpdater is { } routeUpdater)
-			{
-				await routeUpdater.EndNavigation(regionUpdateId);
-			}
+			RouteUpdater.EndNavigation(this, Region, request);
 		}
 	}
 

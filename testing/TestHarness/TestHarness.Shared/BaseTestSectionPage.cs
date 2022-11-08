@@ -1,5 +1,6 @@
 ﻿
 
+using Uno.Extensions.Diagnostics;
 using Uno.Toolkit.UI;
 
 namespace TestHarness;
@@ -10,6 +11,7 @@ public partial class BaseTestSectionPage : Page, IDisposable
 
 	public BaseTestSectionPage()
 	{
+		PerformanceTimer.InitializeTimers();
 		Loaded += BaseTestSectionPage_Loaded;
 	}
 
