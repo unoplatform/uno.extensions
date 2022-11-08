@@ -25,7 +25,7 @@ public static partial class State<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IState<T> Create<TOwner>(TOwner owner, Func<CancellationToken, IAsyncEnumerable<Message<T>>> sourceProvider)
 		where TOwner : class
-		=> AttachedProperty.GetOrCreate(owner, sourceProvider, (o, sp) => S(o, new CustomFeed<T>(sp)));
+		=> AttachedProperty.GetOrCreate(owner, sourceProvider, static (o, sp) => S(o, new CustomFeed<T>(sp)));
 
 	/// <summary>
 	/// Creates a custom feed from a raw <see cref="IAsyncEnumerable{T}"/> sequence of <see cref="Message{T}"/>.
@@ -34,7 +34,7 @@ public static partial class State<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	internal static IState<T> Create(Func<CancellationToken, IAsyncEnumerable<Message<T>>> sourceProvider)
-		=> AttachedProperty.GetOrCreate(Validate(sourceProvider), sp => S(sp, new CustomFeed<T>(sp)));
+		=> AttachedProperty.GetOrCreate(Validate(sourceProvider), static sp => S(sp, new CustomFeed<T>(sp)));
 
 	/// <summary>
 	/// Creates a custom feed from a raw <see cref="IAsyncEnumerable{T}"/> sequence of <see cref="Message{T}"/>.
@@ -45,7 +45,7 @@ public static partial class State<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IState<T> Create<TOwner>(TOwner owner, Func<IAsyncEnumerable<Message<T>>> sourceProvider)
 		where TOwner : class
-		=> AttachedProperty.GetOrCreate(owner, sourceProvider, (o, sp) => S(o, new CustomFeed<T>(_ => sp())));
+		=> AttachedProperty.GetOrCreate(owner, sourceProvider, static (o, sp) => S(o, new CustomFeed<T>(_ => sp())));
 
 	/// <summary>
 	/// Creates a custom feed from a raw <see cref="IAsyncEnumerable{T}"/> sequence of <see cref="Message{T}"/>.
@@ -54,7 +54,7 @@ public static partial class State<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	internal static IState<T> Create(Func<IAsyncEnumerable<Message<T>>> sourceProvider)
-		=> AttachedProperty.GetOrCreate(Validate(sourceProvider), sp => S(sp, new CustomFeed<T>(_ => sp())));
+		=> AttachedProperty.GetOrCreate(Validate(sourceProvider), static sp => S(sp, new CustomFeed<T>(_ => sp())));
 
 	/// <summary>
 	/// Gets or creates an empty state.
@@ -72,7 +72,7 @@ public static partial class State<T>
 				name ?? throw new InvalidOperationException("The name of the state must not be null"),
 				line <0 ? throw new InvalidOperationException("The provided line number is invalid.") : line
 			),
-			(o, _) => SourceContext.GetOrCreate(o).CreateState(Option<T>.None()));
+			static (o, _) => SourceContext.GetOrCreate(o).CreateState(Option<T>.None()));
 
 	/// <summary>
 	/// Gets or creates a state from a static initial value.
@@ -84,7 +84,7 @@ public static partial class State<T>
 	public static IState<T> Value<TOwner>(TOwner owner, Func<T> valueProvider)
 		where TOwner : class
 		// Note: We force the usage of delegate so 2 properties which are doing State.Value(this, () => 42) will effectively have 2 distinct states.
-		=> AttachedProperty.GetOrCreate(owner, valueProvider, (o, v) => SourceContext.GetOrCreate(o).CreateState(Option<T>.Some(v())));
+		=> AttachedProperty.GetOrCreate(owner, valueProvider, static (o, v) => SourceContext.GetOrCreate(o).CreateState(Option<T>.Some(v())));
 
 	/// <summary>
 	/// Gets or creates a state from a static initial value.
@@ -96,7 +96,7 @@ public static partial class State<T>
 	public static IState<T> Value<TOwner>(TOwner owner, Func<Option<T>> valueProvider)
 		where TOwner : class
 		// Note: We force the usage of delegate so 2 properties which are doing State.Value(this, () => 42) will effectively have 2 distinct states.
-		=> AttachedProperty.GetOrCreate(owner, valueProvider, (o, v) => SourceContext.GetOrCreate(owner).CreateState(v()));
+		=> AttachedProperty.GetOrCreate(owner, valueProvider, static (o, v) => SourceContext.GetOrCreate(o).CreateState(v()));
 
 	/// <summary>
 	/// Gets or creates a state from an async method.
@@ -108,7 +108,7 @@ public static partial class State<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IState<T> Async<TOwner>(TOwner owner, AsyncFunc<Option<T>> valueProvider, Signal? refresh = null)
 		where TOwner : class
-		=> AttachedProperty.GetOrCreate(owner, (valueProvider, refresh), (o, args) => S(o, new AsyncFeed<T>(args.valueProvider, args.refresh)));
+		=> AttachedProperty.GetOrCreate(owner, (valueProvider, refresh), static (o, args) => S(o, new AsyncFeed<T>(args.valueProvider, args.refresh)));
 
 	/// <summary>
 	/// Gets or creates a state from an async method.
@@ -120,7 +120,7 @@ public static partial class State<T>
 	internal static IState<T> Async(AsyncFunc<Option<T>> valueProvider, Signal? refresh = null)
 		=> refresh is null
 			? AttachedProperty.GetOrCreate(Validate(valueProvider), vp => S(vp, new AsyncFeed<T>(vp)))
-			: AttachedProperty.GetOrCreate(refresh, Validate(valueProvider), (r, vp) => S(vp, new AsyncFeed<T>(vp, r)));
+			: AttachedProperty.GetOrCreate(refresh, Validate(valueProvider), static (r, vp) => S(vp, new AsyncFeed<T>(vp, r)));
 
 	/// <summary>
 	/// Gets or creates a state from an async method.
@@ -132,7 +132,7 @@ public static partial class State<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IState<T> Async<TOwner>(TOwner owner, AsyncFunc<T> valueProvider, Signal? refresh = null)
 		where TOwner : class
-		=> AttachedProperty.GetOrCreate(owner, (valueProvider, refresh), (o, args) => S(o, new AsyncFeed<T>(args.valueProvider, args.refresh)));
+		=> AttachedProperty.GetOrCreate(owner, (valueProvider, refresh), static (o, args) => S(o, new AsyncFeed<T>(args.valueProvider, args.refresh)));
 
 	/// <summary>
 	/// Gets or creates a state from an async method.
@@ -143,8 +143,8 @@ public static partial class State<T>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	internal static IState<T> Async(AsyncFunc<T> valueProvider, Signal? refresh = null)
 		=> refresh is null
-			? AttachedProperty.GetOrCreate(Validate(valueProvider), vp => S(vp, new AsyncFeed<T>(vp)))
-			: AttachedProperty.GetOrCreate(refresh, Validate(valueProvider), (r, vp) => S(vp, new AsyncFeed<T>(vp, r)));
+			? AttachedProperty.GetOrCreate(Validate(valueProvider), static vp => S(vp, new AsyncFeed<T>(vp)))
+			: AttachedProperty.GetOrCreate(refresh, Validate(valueProvider), static (r, vp) => S(vp, new AsyncFeed<T>(vp, r)));
 
 	/// <summary>
 	/// Gets or creates a state from an async enumerable sequence of value.
@@ -155,7 +155,7 @@ public static partial class State<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IState<T> AsyncEnumerable<TOwner>(TOwner owner, Func<IAsyncEnumerable<Option<T>>> enumerableProvider)
 		where TOwner : class
-		=> AttachedProperty.GetOrCreate(owner, enumerableProvider, (o, ep) => S(o, new AsyncEnumerableFeed<T>(ep)));
+		=> AttachedProperty.GetOrCreate(owner, enumerableProvider, static (o, ep) => S(o, new AsyncEnumerableFeed<T>(ep)));
 
 	/// <summary>
 	/// Gets or creates a state from an async enumerable sequence of value.
@@ -166,7 +166,7 @@ public static partial class State<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IState<T> AsyncEnumerable<TOwner>(TOwner owner, Func<CancellationToken, IAsyncEnumerable<Option<T>>> enumerableProvider)
 		where TOwner : class
-		=> AttachedProperty.GetOrCreate(owner, enumerableProvider, (o, ep) => S(o, new AsyncEnumerableFeed<T>(ep)));
+		=> AttachedProperty.GetOrCreate(owner, enumerableProvider, static (o, ep) => S(o, new AsyncEnumerableFeed<T>(ep)));
 
 	/// <summary>
 	/// Gets or creates a state from an async enumerable sequence of value.
@@ -175,7 +175,7 @@ public static partial class State<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	internal static IState<T> AsyncEnumerable(Func<IAsyncEnumerable<Option<T>>> enumerableProvider)
-		=> AttachedProperty.GetOrCreate(Validate(enumerableProvider), ep => S(ep, new AsyncEnumerableFeed<T>(ep)));
+		=> AttachedProperty.GetOrCreate(Validate(enumerableProvider), static ep => S(ep, new AsyncEnumerableFeed<T>(ep)));
 
 	/// <summary>
 	/// Gets or creates a state from an async enumerable sequence of value.
@@ -186,7 +186,7 @@ public static partial class State<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IState<T> AsyncEnumerable<TOwner>(TOwner owner, Func<IAsyncEnumerable<T>> enumerableProvider)
 		where TOwner : class
-		=> AttachedProperty.GetOrCreate(owner, enumerableProvider, (o, ep) => S(o, new AsyncEnumerableFeed<T>(ep)));
+		=> AttachedProperty.GetOrCreate(owner, enumerableProvider, static (o, ep) => S(o, new AsyncEnumerableFeed<T>(ep)));
 
 	/// <summary>
 	/// Gets or creates a state from an async enumerable sequence of value.
@@ -197,7 +197,7 @@ public static partial class State<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IState<T> AsyncEnumerable<TOwner>(TOwner owner, Func<CancellationToken, IAsyncEnumerable<T>> enumerableProvider)
 		where TOwner : class
-		=> AttachedProperty.GetOrCreate(owner, enumerableProvider, (o, ep) => S(o, new AsyncEnumerableFeed<T>(ep)));
+		=> AttachedProperty.GetOrCreate(owner, enumerableProvider, static (o, ep) => S(o, new AsyncEnumerableFeed<T>(ep)));
 
 	/// <summary>
 	/// Gets or creates a state from an async enumerable sequence of value.
@@ -206,7 +206,7 @@ public static partial class State<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	internal static IState<T> AsyncEnumerable(Func<IAsyncEnumerable<T>> enumerableProvider)
-		=> AttachedProperty.GetOrCreate(Validate(enumerableProvider), ep => S(ep, new AsyncEnumerableFeed<T>(ep)));
+		=> AttachedProperty.GetOrCreate(Validate(enumerableProvider), static ep => S(ep, new AsyncEnumerableFeed<T>(ep)));
 
 	/// <summary>
 	/// Gets or creates a state from an async enumerable sequence of value.
@@ -217,7 +217,7 @@ public static partial class State<T>
 	/// <returns>A feed that encapsulate the source.</returns>
 	public static IState<T> FromFeed<TOwner>(TOwner owner, IFeed<T> feed)
 		where TOwner : class
-		=> AttachedProperty.GetOrCreate(owner, feed, (o, f) => S(o, f));
+		=> AttachedProperty.GetOrCreate(owner, feed, static (o, f) => S(o, f));
 
 	private static TKey Validate<TKey>(TKey key, [CallerMemberName] string? caller = null)
 		where TKey : Delegate
