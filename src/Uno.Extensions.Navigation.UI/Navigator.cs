@@ -3,7 +3,10 @@ using Uno.Extensions.Navigation.UI;
 
 namespace Uno.Extensions.Navigation;
 
-public class Navigator : INavigator, IInstance<IServiceProvider>
+/// <summary>
+/// Base navigator implementation
+/// </summary>
+public abstract class Navigator : INavigator, IInstance<IServiceProvider>
 {
 	protected ILogger Logger { get; }
 
@@ -13,6 +16,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 	IServiceProvider? IInstance<IServiceProvider>.Instance => Region.Services;
 
+	/// <inheritdoc />
 	public Route? Route { get; protected set; }
 
 	protected IRouteResolver Resolver { get; }
@@ -40,6 +44,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		Dispatcher = dispatcher;
 	}
 
+	/// <inheritdoc />
 	public async Task<NavigationResponse?> NavigateAsync(NavigationRequest request)
 	{
 		RouteUpdater.StartNavigation(this, Region, request);
@@ -108,24 +113,11 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			return default;
 		}
 
-		// If Route is empty (null or "")
-		//   AND there is Data
-		// THEN lookup the RouteMap for the type of Data
-		// Required for Test: Given_ListToDetails.When_ListToDetails
-		// In most cases navigation by data is already resolved to a route at this point
-		// as the RouteHint will use the data type to determine request route. However,
-		// if the NavigationRequest has been manually prepared with data, this logic will
-		// update the request based on the type of data.
-		if (string.IsNullOrWhiteSpace(request.Route.Base) &&
-			request.Route.NavigationData() is { } navData)
+		if(RedirectForNavigationData(request) is { } dataNavResponse)
 		{
-			var maps = Resolver.FindByData(navData.GetType(), this);
-			if (maps is not null)
-			{
-				request = request with { Route = request.Route with { Base = maps.Path } };
-				return Region.NavigateAsync(request);
-			}
+			return dataNavResponse;
 		}
+
 
 		#region unverified
 		// Deal with any named children that match the first segment of the request
@@ -328,6 +320,29 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		#endregion
 	}
 
+	private Task<NavigationResponse?>? RedirectForNavigationData(NavigationRequest request)
+	{
+		// If Route is empty (null or "")
+		//   AND there is Data
+		// THEN lookup the RouteMap for the type of Data
+		// Required for Test: Given_ListToDetails.When_ListToDetails
+		// In most cases navigation by data is already resolved to a route at this point
+		// as the RouteHint will use the data type to determine request route. However,
+		// if the NavigationRequest has been manually prepared with data, this logic will
+		// update the request based on the type of data.
+		if (string.IsNullOrWhiteSpace(request.Route.Base) &&
+			request.Route.NavigationData() is { } navData)
+		{
+			var maps = Resolver.FindByData(navData.GetType(), this);
+			if (maps is not null)
+			{
+				request = request with { Route = request.Route with { Base = maps.Path } };
+				return NavigateAsync(request);
+			}
+		}
+
+		return default;
+	}
 
 	private static Route BuildFullRoute(Route route, IEnumerable<RouteInfo> maps)
 	{
@@ -391,6 +406,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		return request;
 	}
 
+	/// <inheritdoc />
 	public Task<bool> CanNavigate(Route route)
 	{
 		if (!route.IsInternal)
