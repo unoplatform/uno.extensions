@@ -16,8 +16,9 @@ namespace Uno.Extensions.Reactive.UI.Utils;
 internal static class FeedUIHelper
 {
 	/// <summary>
-	/// Get the source of a feed making sure that everything is dispatched on background thread (GetSource and enumeration of the source itself).
+	/// Get the source of a feed
 	/// </summary>
+	/// <remarks>Ensures that everything is dispatched on background thread (GetSource and enumeration of the source itself).</remarks>
 	/// <param name="feed">The feed to get the source for.</param>
 	/// <param name="context">The context to use to get the source.</param>
 	/// <returns>The async enumeration of items produced by this signal optimized to be UI friendly (i.e. do the less work possible on UI thread).</returns>
@@ -32,8 +33,9 @@ internal static class FeedUIHelper
 	}
 
 	/// <summary>
-	/// Get the source of a feed making sure that everything is dispatched on background thread (GetSource and enumeration of the source itself).
+	/// Get the source of a feed.
 	/// </summary>
+	/// <remarks>Ensures that everything is dispatched on background thread (GetSource and enumeration of the source itself).</remarks>
 	/// <param name="feed">The feed to get the source for.</param>
 	/// <param name="context">The context to use to get the source.</param>
 	/// <returns>The async enumeration of items produced by this signal optimized to be UI friendly (i.e. do the less work possible on UI thread).</returns>
