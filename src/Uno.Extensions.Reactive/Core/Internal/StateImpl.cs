@@ -118,17 +118,20 @@ internal sealed class StateImpl<T> : IState<T>, IFeed<T>, IAsyncDisposable, ISta
 
 		var isFirstMessage = true;
 		TaskCompletionSource<Node>? next;
+		(bool hasMessage, Message<T> message) initial;
 		lock(_updateGate)
 		{
 			// We access to the _current only in the _updateGate, so we make sure that we would never miss or replay a value
 			// by listening to the _next too late/early
-			if (_hasCurrent)
-			{
-				yield return Message<T>.Initial.OverrideBy(_current);
-				isFirstMessage = false;
-			}
+			initial = (_hasCurrent, _current);
 
 			next = _next;
+		}
+
+		if (initial.hasMessage)
+		{
+			yield return Message<T>.Initial.OverrideBy(initial.message);
+			isFirstMessage = false;
 		}
 
 		while (!ct.IsCancellationRequested && next is not null)

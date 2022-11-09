@@ -16,9 +16,9 @@ namespace Uno.Extensions.Reactive.Tests.Generator;
 public partial class Given_RecordWithList_Then_GenerateListOfBindable : FeedUITests
 {
 	[TestMethod]
-	public void IsListOfBindable()
+	public async Task IsListOfBindable()
 	{
-		var sut = new MyViewModel.BindableMyViewModel();
+		await using var sut = new MyViewModel.BindableMyViewModel();
 
 		sut.MyFeed.Items.Should().BeAssignableTo<IEnumerable<BindableMyRecordWithListItem>>();
 	}
@@ -26,7 +26,7 @@ public partial class Given_RecordWithList_Then_GenerateListOfBindable : FeedUITe
 	[TestMethod]
 	public async Task SupportsAdd()
 	{
-		var sut = new MyViewModel.BindableMyViewModel();
+		await using var sut = new MyViewModel.BindableMyViewModel();
 		var args = new List<NotifyCollectionChangedEventArgs>();
 		var result = sut.Model.MyFeed.Select(r => r.Items).Record();
 
@@ -48,7 +48,7 @@ public partial class Given_RecordWithList_Then_GenerateListOfBindable : FeedUITe
 	[TestMethod]
 	public async Task SupportsRemove()
 	{
-		var sut = new MyViewModel.BindableMyViewModel();
+		await using var sut = new MyViewModel.BindableMyViewModel();
 		var args = new List<NotifyCollectionChangedEventArgs>();
 		var result = sut.Model.MyFeed.Select(r => r.Items).Record();
 

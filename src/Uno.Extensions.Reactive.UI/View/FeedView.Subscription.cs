@@ -2,9 +2,11 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Uno.Extensions.Reactive.Bindings;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Logging;
 using Uno.Extensions.Reactive.Sources;
+using Uno.Extensions.Reactive.UI.Utils;
 using Uno.Extensions.Reactive.Utils;
 #if WINUI
 using _Page = Microsoft.UI.Xaml.Controls.Page;
@@ -52,8 +54,9 @@ public partial class FeedView
 				var ctx = SourceContext.Find(_view.DataContext)
 					?? SourceContext.Find(FindPage()?.DataContext)
 					?? SourceContext.GetOrCreate(_view);
+				ctx = ctx.CreateChild(_requests);
 
-				await foreach (var message in Feed.GetSource(ctx.CreateChild(_requests), _ct.Token).WithCancellation(_ct.Token).ConfigureAwait(true))
+				await foreach (var message in FeedUIHelper.GetSource(Feed, ctx).WithCancellation(_ct.Token).ConfigureAwait(true))
 				{
 					Update(message);
 
