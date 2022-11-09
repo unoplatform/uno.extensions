@@ -117,122 +117,50 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			return dataNavResponse;
 		}
 
-
-		#region unverified
-		// Deal with any named children that match the first segment of the request
-		// In this case, the request should be trimmed
-		var nested = Region.Children.Where(x => !string.IsNullOrWhiteSpace(request.Route.Base) && x.Name == request.Route.Base).ToArray();
-		if (nested.Any() && !await ParentCanNavigate(request.Route))
+		// If first section of Route matches the NAme of a nested region
+		// then route the request to the region
+		if (await RedirectForNamedNestedRegion(request) is { } namedNavResponse)
 		{
-			request = request with { Route = request.Route.Next() };
-			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Redirecting to children ({nested.Length}) New request: {request.Route}");
-			return NavigateChildRegions(nested, request);
-		}
-		#endregion
-
-
-		// ./ route request to nested region (named or unnamed)
-		if (request.Route.IsNested())
-		{
-			// Nested regions (for example a frame inside a content control) aren't always loaded
-			// at this point. Need to wait for the current view of this region to load to make
-			// sure all nested regions are available
-			// Example: Navigating to a viewmodel from ShellViewModel constructor when using a ShellView.
-			// The nested FrameView won't have loaded at this point
-			await EnsureChildRegionsAreLoaded();
-
-
-			request = request with { Route = request.Route.TrimQualifier(Qualifiers.Nested) };
-
-			// Send request to both unnamed children and any that have the
-			// same name as the current route
-			nested = Region.Children.Where(x => string.IsNullOrWhiteSpace(x.Name) || x.Name == this.Route?.Base).ToArray();
-			if (nested.Any())
-			{
-				if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Forced redirection to children ({nested.Length}) New request: {request.Route}");
-				return NavigateChildRegions(nested, request);
-			}
-
-			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Forced redirection to children but no matching child regions found");
-			return Task.FromResult(default(NavigationResponse?));
+			return namedNavResponse;
 		}
 
-		#region unverified
-		// ! route request to parent
-		if (
-			request.Route.IsDialog()
-			)
+		// Handle ./ qualifier (Nested)
+		if (await RedirectForNestedQualifier(request) is { } nestedNavResponse)
 		{
-			if (Region.Parent is not null)
-			{
-				if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Redirecting to parent for dialog");
-				return Region.Parent.NavigateAsync(request);
-			}
-			else
-			{
-				if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"No redirection - at root region to handle dialog navigation request");
-				return default;
-			}
+			return nestedNavResponse;
 		}
-		#endregion
 
-		// / route request to root (via parent)
-		//
-		// Required for Test: Given_PageNavigationRegistered.When_PageNavigationRegisteredRoot
-		if (request.Route.IsRoot())
+		// Handle ! qualifier (Dialog)
+		if (request.Route.IsDialog())
 		{
-			if (Region.Parent?.Parent is null)
-			{
-				// If parent's Parent is null, then parent is the root
-				// so trim the root qualifier.
-				request = request with { Route = request.Route.TrimQualifier(Qualifiers.Root) with { IsInternal = true, Refresh = true } };
-			}
-
-			// If the original request came into the root navigator, then
-			// need to redirect request to the same navigator with the
-			// root qualifier stripped
-			var region = Region.Parent is not null ? Region.Parent : Region;
-
-			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Updating request and redirecting for root request.  New request: {request.Route}");
-			return region.NavigateAsync(request);
+			return RedirectForDialogQualifier(request);
 		}
+
+		// Handle / qualifiter (Root)
+		if (RedirectForRootQualifier(request) is { } rootNavResponse)
+		{
+			return rootNavResponse;
+		}
+
 
 		var rm = Resolver.FindByPath(request.Route.Base);
 
-		// If
-		//		route has DependsOn AND
-		//		the current route equals the DependsOn value AND
-		//		there is an un-named child region
-		// Then
-		//		route request to child region
-		if (!string.IsNullOrWhiteSpace(rm?.DependsOn) &&
-			(Region.Ancestors(true).FirstOrDefault(x => x.Item1?.Base == rm!.DependsOn) is { } ancestor) &&
-			ancestor.Item2 is not null &&
-			ancestor.Item2 != Region.Parent)
+		// Handle DependsOn
+		if (await RedirectForDependsOn(request, rm) is { } dependsNavResponse)
 		{
-			var ancestorRegion = ancestor.Item2;
-			if (ancestorRegion is not null)
-			{
-				foreach (var child in ancestorRegion.Children)
-				{
-					if (child.IsUnnamed(ancestor.Item1) &&
-						await child.CanNavigate(request.Route))
-					{
-						return child.NavigateAsync(request);
-					}
-				}
-			}
+			return dependsNavResponse;
 		}
 
 
-		//// If the current navigator can handle this route,
-		//// then simply return without redirecting the request
 
-		//// Navigator can handle the request as it's presented
-		////		a) route has depends on that matches current route, return true
-		////		b) route has depends on that doesn't match current route - if parent can navigate to dependson, return false
-		////		c) route has no depends on - if parent can navigate to the route, return false
-
+		// If the current navigator can handle this route,
+		// then simply return without redirecting the request
+		//
+		// Navigator can handle the request as it's presented
+		//		a) route has depends on that matches current route, return true
+		//		b) route has depends on that doesn't match current route - if parent can navigate to dependson, return false
+		//		c) route has no depends on - if parent can navigate to the route, return false
+		//
 		// Required for Test: Given_NavigationView.When_NavigationView
 		if (await CanNavigate(request.Route) &&
 			!await ParentCanNavigate(request.Route))
@@ -241,23 +169,16 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			return default;
 		}
 
-		#region Unverified
+		
 		// If this is a back/close with no other path, then return
 		// as if this navigator can handl it - it can't, so the request
 		// will effetively be terminated
 		if (request.Route.IsBackOrCloseNavigation())
 		{
-			if (Region.Parent is not null)
-			{
-				if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Redirecting back navigation to parent");
-				return Region.Parent.NavigateAsync(request);
-			}
-
-			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Back navigation being handled by root region");
-			return default;
+			return RedirectForBackOrClose(request);
 		}
 
-
+#region Unverified
 		if (rm is null)
 		{
 			if (Region.Parent is not null)
@@ -319,7 +240,142 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		#endregion
 	}
 
-	
+	private Task<NavigationResponse?>? RedirectForBackOrClose(NavigationRequest request)
+	{
+		// TODO: Specify test case
+		if (Region.Parent is not null)
+		{
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Redirecting back navigation to parent");
+			return Region.Parent.NavigateAsync(request);
+		}
+
+		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Back navigation being handled by root region");
+		return default;
+	}
+
+	private async Task<Task<NavigationResponse?>?> RedirectForDependsOn(NavigationRequest request, RouteInfo? rm)
+	{
+		// If
+		//		route has DependsOn AND
+		//		the current route equals the DependsOn value AND
+		//		there is an un-named child region
+		// Then
+		//		route request to child region
+		// Example: In commerce sample in landscape when selecting a product/deal
+		// the info is presented in an unnamed contentcontrol that's located on the
+		// current productlist/deallist page
+		// Required for test: Given_Apps_Commerce.When_Commerce_Responsive
+		if (!string.IsNullOrWhiteSpace(rm?.DependsOn) &&
+			(Region.Ancestors(true).FirstOrDefault(x => x.Item1?.Base == rm!.DependsOn) is { } ancestor) &&
+			ancestor.Item2 is not null &&
+			ancestor.Item2 != Region.Parent)
+		{
+			var ancestorRegion = ancestor.Item2;
+			if (ancestorRegion is not null)
+			{
+				foreach (var child in ancestorRegion.Children)
+				{
+					if (child.IsUnnamed(ancestor.Item1) &&
+						await child.CanNavigate(request.Route))
+					{
+						return child.NavigateAsync(request);
+					}
+				}
+			}
+		}
+		return default;
+	}
+
+	private Task<NavigationResponse?>? RedirectForRootQualifier(NavigationRequest request)
+	{
+		// / route request to root (via parent)
+		//
+		// Required for Test: Given_PageNavigationRegistered.When_PageNavigationRegisteredRoot
+		if (request.Route.IsRoot())
+		{
+			if (Region.Parent?.Parent is null)
+			{
+				// If parent's Parent is null, then parent is the root
+				// so trim the root qualifier.
+				request = request with { Route = request.Route.TrimQualifier(Qualifiers.Root) with { IsInternal = true, Refresh = true } };
+			}
+
+			// If the original request came into the root navigator, then
+			// need to redirect request to the same navigator with the
+			// root qualifier stripped
+			var region = Region.Parent is not null ? Region.Parent : Region;
+
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Updating request and redirecting for root request.  New request: {request.Route}");
+			return region.NavigateAsync(request);
+		}
+
+		return default;
+	}
+
+	private Task<NavigationResponse?>? RedirectForDialogQualifier(NavigationRequest request)
+	{
+		// ! route request to parent
+		// Required for Test: Given_ContentDialog.When_SimpleContentDialog
+			if (Region.Parent is not null)
+			{
+				if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Redirecting to parent for dialog");
+				return Region.Parent.NavigateAsync(request);
+			}
+			else
+			{
+				if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"No redirection - at root region to handle dialog navigation request");
+				return default;
+			}
+	}
+
+	private async Task<Task<NavigationResponse?>?> RedirectForNamedNestedRegion(NavigationRequest request)
+	{
+		// Deal with any named children that match the first segment of the request
+		// In this case, the request should be trimmed
+		// Required for Test: Given_ContentControl.When_ContentControl
+		var nested = Region.Children.Where(x => !string.IsNullOrWhiteSpace(request.Route.Base) && x.Name == request.Route.Base).ToArray();
+		if (nested.Any() && !await ParentCanNavigate(request.Route))
+		{
+			request = request with { Route = request.Route.Next() };
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Redirecting to children ({nested.Length}) New request: {request.Route}");
+			return NavigateChildRegions(nested, request);
+		}
+
+		return default;
+	}
+
+	private async Task<Task<NavigationResponse?>?> RedirectForNestedQualifier(NavigationRequest request)
+	{
+		// ./ route request to nested region (named or unnamed)
+		if (request.Route.IsNested())
+		{
+			// Nested regions (for example a frame inside a content control) aren't always loaded
+			// at this point. Need to wait for the current view of this region to load to make
+			// sure all nested regions are available
+			// Example: Navigating to a viewmodel from ShellViewModel constructor when using a ShellView.
+			// The nested FrameView won't have loaded at this point
+			await EnsureChildRegionsAreLoaded();
+
+
+			request = request with { Route = request.Route.TrimQualifier(Qualifiers.Nested) };
+
+			// Send request to both unnamed children and any that have the
+			// same name as the current route
+			var nested = Region.Children.Where(x => string.IsNullOrWhiteSpace(x.Name) || x.Name == this.Route?.Base).ToArray();
+			if (nested.Any())
+			{
+				if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Forced redirection to children ({nested.Length}) New request: {request.Route}");
+				return NavigateChildRegions(nested, request);
+			}
+
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Forced redirection to children but no matching child regions found");
+			return Task.FromResult(default(NavigationResponse?));
+		}
+
+		return default;
+	}
+
+
 
 	private static Route BuildFullRoute(Route route, IEnumerable<RouteInfo> maps)
 	{
