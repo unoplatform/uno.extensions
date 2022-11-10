@@ -18,4 +18,20 @@ public static class NavigationRequestExtensions
 
         return default;
     }
+
+	public static NavigationRequest AsInternal(this NavigationRequest request)
+	{
+		return request with { Route = request.Route.AsInternal() };
+	}
+
+	public static NavigationRequest IncludeDependentRoutes(this NavigationRequest request, IRouteResolver resolver)
+	{
+		var rm = resolver.FindByPath(request.Route.Base);
+		while (rm?.DependsOnRoute is not null)
+		{
+			request = request with { Route = (request.Route with { Base = rm.DependsOnRoute.Path, Path = null }).Append(request.Route) };
+			rm = rm.DependsOnRoute;
+		}
+		return request;
+	}
 }

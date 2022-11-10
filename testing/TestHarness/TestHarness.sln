@@ -176,6 +176,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extension Items", "Extensio
 		..\..\src\Directory.Build.targets = ..\..\src\Directory.Build.targets
 		..\..\src\Directory.Packages.props = ..\..\src\Directory.Packages.props
 		..\..\src\global.json = ..\..\src\global.json
+		..\..\src\tfms-non-ui.props = ..\..\src\tfms-non-ui.props
+		..\..\src\tfms-ui-all.props = ..\..\src\tfms-ui-all.props
+		..\..\src\tfms-ui-net6-only.props = ..\..\src\tfms-ui-net6-only.props
+		..\..\src\tfms-ui-uwp.props = ..\..\src\tfms-ui-uwp.props
+		..\..\src\tfms-ui-winui.props = ..\..\src\tfms-ui-winui.props
 		..\..\src\winappsdk-workaround.targets = ..\..\src\winappsdk-workaround.targets
 		..\..\src\xamarinmac-workaround.targets = ..\..\src\xamarinmac-workaround.targets
 	EndProjectSection

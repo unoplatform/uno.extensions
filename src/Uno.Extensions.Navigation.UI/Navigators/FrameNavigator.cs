@@ -32,7 +32,7 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		}
 	}
 	// TODO: IsUnnamed and  composite region
-	protected override bool CanNavigateToDependentRoutes => !Region.Children.Any(x => x.IsUnnamed(this.Route) && !(x.Navigator()?.IsComposite() ?? false));
+	//protected override bool CanNavigateToDependentRoutes => !Region.Children.Any(x => x.IsUnnamed(this.Route) && !(x.Navigator()?.IsComposite() ?? false));
 
 	protected override async Task<bool> RegionCanNavigate(Route route, RouteInfo? routeMap)
 	{
@@ -65,14 +65,6 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		{
 			return false;
 		}
-
-		//// If the route is dependent on another page, make sure
-		//// that page is already navigated to, or is in the backstack
-		//if (!string.IsNullOrWhiteSpace(routeMap?.DependsOn))
-		//{
-		//	var dependsRoute = route.RootDependsOn(Resolver, Region, true);
-		//	return (FullRoute?.IsEmpty() ?? true) || FullRoute.Contains(dependsRoute.Base!);
-		//}
 
 		return true;
 

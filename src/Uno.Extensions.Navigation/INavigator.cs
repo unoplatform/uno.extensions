@@ -8,7 +8,7 @@ public interface INavigator
 	/// <summary>
 	/// Gets the current route of the navigator
 	/// </summary>
-    Route? Route { get; }
+	Route? Route { get; }
 
 	/// <summary>
 	/// Determines whether the navigator can navigate to the specified route

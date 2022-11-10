@@ -78,10 +78,13 @@
 				<StackPanel Orientation="Horizontal">
 					<Button AutomationProperties.AutomationId="FirstDealButton"
 							Content="First Deal - UI Thread"
-							Click="{x:Bind ViewModel.ShowFirstProductUIThread}" />
+							Click="{x:Bind ViewModel.ShowFirstDealUIThread}" />
 					<Button AutomationProperties.AutomationId="FirstDealBackgroundButton"
 							Content="First Deal - Background Thread"
-							Click="{x:Bind ViewModel.ShowFirstProductBackgroundThread}" />
+							Click="{x:Bind ViewModel.ShowFirstDealBackgroundThread}" />
+					<Button AutomationProperties.AutomationId="ProductButton"
+							Content="Product Details"
+							Click="{x:Bind ViewModel.ShowProduct}" />
 				</StackPanel>
 				<utu:TabBar uen:Region.Attached="True" Grid.Row="1">
 					<utu:TabBarItem x:Uid="DealsPage_DealsTab"

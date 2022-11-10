@@ -15,7 +15,7 @@ public class ContentControlNavigator : ControlNavigator<ContentControl>
 	{
 	}
 
-	protected override bool CanNavigateToDependentRoutes => true;
+	//protected override bool CanNavigateToDependentRoutes => true;
 
 	protected override async Task<bool> RegionCanNavigate(Route route, RouteInfo? routeMap)
 	{

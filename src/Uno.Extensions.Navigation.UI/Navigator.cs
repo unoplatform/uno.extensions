@@ -83,7 +83,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			}
 
 			// Append Internal qualifier to avoid requests being sent back to parent
-			request = request with { Route = request.Route with { IsInternal = true } };
+			request = request.AsInternal();
 
 			if (request.Route.IsDialog())
 			{
@@ -143,10 +143,11 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		}
 
 
-		var rm = Resolver.FindByPath(request.Route.Base);
+		var rm = !string.IsNullOrWhiteSpace(request.Route.Base) ? Resolver.FindByPath(request.Route.Base) : default;
 
 		// Handle DependsOn
-		if (await RedirectForDependsOn(request, rm) is { } dependsNavResponse)
+		if (rm is not null &&
+			await RedirectForDependsOn(request, rm) is { } dependsNavResponse)
 		{
 			return dependsNavResponse;
 		}
@@ -154,13 +155,10 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 
 		// If the current navigator can handle this route,
-		// then simply return without redirecting the request
-		//
-		// Navigator can handle the request as it's presented
-		//		a) route has depends on that matches current route, return true
-		//		b) route has depends on that doesn't match current route - if parent can navigate to dependson, return false
-		//		c) route has no depends on - if parent can navigate to the route, return false
-		//
+		// then simply return without redirecting the request but
+		// only if parent can't navigate to route (eg composite region
+		// where request needs to be sent to parent so that all child
+		// regions receive the request)
 		// Required for Test: Given_NavigationView.When_NavigationView
 		if (await CanNavigate(request.Route) &&
 			!await ParentCanNavigate(request.Route))
@@ -169,7 +167,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			return default;
 		}
 
-		
+
 		// If this is a back/close with no other path, then return
 		// as if this navigator can handl it - it can't, so the request
 		// will effetively be terminated
@@ -178,66 +176,37 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			return RedirectForBackOrClose(request);
 		}
 
-#region Unverified
-		if (rm is null)
-		{
-			if (Region.Parent is not null)
-			{
-				if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"No routemap redirecting to parent");
-				return Region.Parent.NavigateAsync(request);
-			}
-
-			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"No routemap to be handled by root region");
-			return default;
-		}
-		#endregion
 
 		if (Region.Parent is not null)
 		{
-			#region Unverified
-			if (!string.IsNullOrWhiteSpace(rm?.DependsOn))
-			{
-				var depends = rm?.DependsOn;
-				var parent = Region.Parent;
-				while (parent is not null)
-				{
-					if (parent.Navigator()?.Route?.Base == depends)
-					{
-						if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Depends on matches current route of parent, so redirecting to parent");
-						return parent.NavigateAsync(request);
-					}
-					parent = parent.Parent;
-				}
-
-				request = request with { Route = (request.Route with { Base = depends, Path = null }).Append(request.Route) };
-
-				if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Updating request with depends on and invoking navigate on current region. New request: {request.Route}");
-				return Region.NavigateAsync(request);
-			}
-			#endregion
-
 			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Redirecting unhandled request to parent");
 			return Region.Parent.NavigateAsync(request);  // Required for Test: Given_NavigationView.When_NavigationView
 		}
-		#region Unverified
-		else
+		else if(rm is not null)
 		{
-			var routeMaps = new List<RouteInfo> { rm };
-			var parent = rm.Parent;
-			while (parent is not null)
-			{
-				routeMaps.Insert(0, parent);
-				parent = parent.Parent;
-			}
-			var route = new Route(Qualifiers.None, Data: request.Route.Data);
-			route = BuildFullRoute(route, routeMaps);
-			route = route with { Qualifier = Qualifiers.Root };
-			request = request with { Route = route };
-
-			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Building fully qualified route for unhandled request. New request: {request.Route}");
-			return Region.NavigateAsync(request);
+			return RedirectForFullRoute(request, rm);
 		}
-		#endregion
+
+		return default;
+	}
+
+	private Task<NavigationResponse?>? RedirectForFullRoute(NavigationRequest request, RouteInfo rm)
+	{
+		var routeMaps = new List<RouteInfo> { rm };
+		var parent = rm.Parent;
+		while (parent is not null)
+		{
+			routeMaps.Insert(0, parent);
+			parent = parent.Parent;
+		}
+		var route = new Route(Qualifiers.None, Data: request.Route.Data);
+		route = BuildFullRoute(route, routeMaps);
+		route = route with { Qualifier = Qualifiers.Root };
+		request = request with { Route = route };
+
+		if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Building fully qualified route for unhandled request. New request: {request.Route}");
+		return Region.NavigateAsync(request);
+
 	}
 
 	private Task<NavigationResponse?>? RedirectForBackOrClose(NavigationRequest request)
@@ -255,33 +224,80 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 
 	private async Task<Task<NavigationResponse?>?> RedirectForDependsOn(NavigationRequest request, RouteInfo? rm)
 	{
-		// If
-		//		route has DependsOn AND
-		//		the current route equals the DependsOn value AND
-		//		there is an un-named child region
-		// Then
-		//		route request to child region
-		// Example: In commerce sample in landscape when selecting a product/deal
-		// the info is presented in an unnamed contentcontrol that's located on the
-		// current productlist/deallist page
-		// Required for test: Given_Apps_Commerce.When_Commerce_Responsive
-		if (!string.IsNullOrWhiteSpace(rm?.DependsOn) &&
-			(Region.Ancestors(true).FirstOrDefault(x => x.Item1?.Base == rm!.DependsOn) is { } ancestor) &&
-			ancestor.Item2 is not null &&
-			ancestor.Item2 != Region.Parent)
+		if (rm?.DependsOnRoute is { } dependsOnRoute)
 		{
-			var ancestorRegion = ancestor.Item2;
-			if (ancestorRegion is not null)
+			var ancestors = Region.Ancestors(true);
+
+			// If
+			//		route has DependsOn AND
+			//		the current route equals the DependsOn value AND
+			//		there is an un-named child region
+			// Then
+			//		route request to child region
+			// Example: In commerce sample in landscape when selecting a product/deal
+			// the info is presented in an unnamed contentcontrol that's located on the
+			// current productlist/deallist page
+			// Required for test: Given_Apps_Commerce.When_Commerce_Responsive (lanscape/wide layout)
+			foreach (var ancestor in ancestors)
 			{
-				foreach (var child in ancestorRegion.Children)
+				if (ancestor.Route?.Base != dependsOnRoute.Path)
 				{
-					if (child.IsUnnamed(ancestor.Item1) &&
+					continue;
+				}
+
+				// Iterate through the child regions and
+				// look for any child regions which are unnamed
+				// and that can be navigated to 
+				foreach (var child in ancestor.Region.Children)
+				{
+					if (child.IsUnnamed(ancestor.Route) &&
 						await child.CanNavigate(request.Route))
 					{
+						request = request.AsInternal();
 						return child.NavigateAsync(request);
 					}
 				}
 			}
+
+			var depRequest = request.IncludeDependentRoutes(Resolver).AsInternal();
+			INavigator? redirectNav = default;
+
+			foreach (var navAncestor in ancestors)
+			{
+				if (navAncestor.Navigator is IStackNavigator stackNavigator &&
+					navAncestor.Route is { } route &&
+					route.Contains(depRequest.Route.Base!))
+				{
+					// Required for test: Given_Apps_ToDo.When_ToDo_Responsive
+					return navAncestor.Navigator!.NavigateAsync(depRequest);
+				}
+
+				if (!(navAncestor.Navigator is null ||
+					// Ignore stack navigators, as they'll
+					// always be able to nav to requests with dependson
+					// by adding dependson to the stack before the request
+					navAncestor.Navigator is IStackNavigator) &&
+					await navAncestor.Navigator.CanNavigate(depRequest.Route))
+				{
+					redirectNav = navAncestor.Navigator;
+				}
+				else if (redirectNav is not null)
+				{
+					if(navAncestor.Navigator?.IsComposite()??false)
+					{
+						// navAncestor is a composite region but since
+						// it doesn't support navigating to the depRequest
+						// we just need to reset redirectNav to null and
+						// continue looking for the correct region to navigate
+						redirectNav = null;
+						continue;
+					}
+
+					// Required for test: Given_Apps_Commerce.When_Commerce_Responsive (portrait/narrow layout)
+					return redirectNav.NavigateAsync(depRequest);
+				}
+			}
+
 		}
 		return default;
 	}
@@ -316,16 +332,16 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 	{
 		// ! route request to parent
 		// Required for Test: Given_ContentDialog.When_SimpleContentDialog
-			if (Region.Parent is not null)
-			{
-				if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Redirecting to parent for dialog");
-				return Region.Parent.NavigateAsync(request);
-			}
-			else
-			{
-				if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"No redirection - at root region to handle dialog navigation request");
-				return default;
-			}
+		if (Region.Parent is not null)
+		{
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"Redirecting to parent for dialog");
+			return Region.Parent.NavigateAsync(request);
+		}
+		else
+		{
+			if (Logger.IsEnabled(LogLevel.Trace)) Logger.LogTraceMessage($"No redirection - at root region to handle dialog navigation request");
+			return default;
+		}
 	}
 
 	private async Task<Task<NavigationResponse?>?> RedirectForNamedNestedRegion(NavigationRequest request)
@@ -417,7 +433,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			}
 
 			// Append Internal qualifier to avoid requests being sent back to parent
-			request = request with { Route = request.Route with { IsInternal = true } };
+			request = request.AsInternal();
 		}
 
 		var requestMap = Resolver.FindByPath(request.Route.Base);
@@ -487,7 +503,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		return Task.FromResult(false);
 	}
 
-	protected virtual bool CanNavigateToDependentRoutes => false;
+	//protected virtual bool CanNavigateToDependentRoutes => false;
 
 
 	protected virtual async Task<bool> RegionCanNavigate(Route route, RouteInfo? routeMap)
@@ -500,14 +516,14 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 			return false;
 		}
 
-		// Default behaviour for all navigators is that they can't handle routes that are dependent
-		// on another route (ie DependsOn <> "")
-		// This is overridden by navigators that can handle close operation
-		if ((routeMap?.IsDependent ?? false) &&
-			!CanNavigateToDependentRoutes)
-		{
-			return false;
-		}
+		//// Default behaviour for all navigators is that they can't handle routes that are dependent
+		//// on another route (ie DependsOn <> "")
+		//// This is overridden by navigators that can handle close operation
+		//if ((routeMap?.IsDependent ?? false) &&
+		//	!CanNavigateToDependentRoutes)
+		//{
+		//	return false;
+		//}
 
 		// Check type of this navigator - if base class (ie Navigator)
 		// then an check children to see if they can navigate to the route
@@ -736,7 +752,7 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		}
 
 		// Append Internal qualifier to avoid requests being sent back to parent
-		request = request with { Route = request.Route with { IsInternal = true } };
+		request = request.AsInternal();
 
 		var tasks = new List<Task<NavigationResponse?>>();
 		foreach (var child in children)
