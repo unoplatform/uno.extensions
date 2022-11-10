@@ -29,7 +29,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 		private readonly EventRegistrationTokenTable<CurrentChangingEventHandler> _currentChanging = new();
 		private readonly ISelectionService? _service;
 		private readonly Lazy<IObservableVector<object>> _target;
-		private readonly IDispatcherInternal? _dispatcher;
+		private readonly IDispatcher? _dispatcher;
 
 		private bool _isInit;
 

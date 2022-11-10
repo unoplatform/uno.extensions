@@ -10,7 +10,7 @@ internal class CoalescingDispatcherInvocationList<THandler, TArgs> : DispatcherI
 {
 	private TArgs? _pending;
 
-	public CoalescingDispatcherInvocationList(object owner, Func<THandler, Action<object, TArgs>> raiseMethod, IDispatcherInternal dispatcher)
+	public CoalescingDispatcherInvocationList(object owner, Func<THandler, Action<object, TArgs>> raiseMethod, IDispatcher dispatcher)
 		: base(owner, raiseMethod, dispatcher)
 	{
 	}

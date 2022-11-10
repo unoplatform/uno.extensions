@@ -19,7 +19,7 @@ internal class EventManager<THandler, TArgs>
 		Func<THandler, Action<object, TArgs>> raiseMethod,
 		bool isCoalescable = false,
 		bool isBgThreadAllowed = true,
-		DispatcherHelper.FindDispatcher? schedulersProvider = null)
+		FindDispatcher? schedulersProvider = null)
 	{
 		_owner = owner;
 		_raiseMethod = raiseMethod;
@@ -65,7 +65,7 @@ internal class EventManager<THandler, TArgs>
 		}
 	}
 
-	private IInvocationList<THandler, TArgs> CreateInvocationList(IDispatcherInternal? dispatcher)
+	private IInvocationList<THandler, TArgs> CreateInvocationList(IDispatcher? dispatcher)
 		=> dispatcher switch
 		{
 			not null when _isCoalescable => new CoalescingDispatcherInvocationList<THandler, TArgs>(_owner, _raiseMethod, dispatcher),

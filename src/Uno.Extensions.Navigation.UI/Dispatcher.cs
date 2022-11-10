@@ -30,6 +30,10 @@ public class Dispatcher : IDispatcher
 #endif
 
 	}
+	
+	/// <inheritdoc />
+	public bool TryEnqueue(Action action)
+		=> _dispatcher.TryEnqueue(() => action());
 
 	/// <inheritdoc />
 	public async ValueTask<TResult> ExecuteAsync<TResult>(AsyncFunc<TResult> func, CancellationToken cancellation)

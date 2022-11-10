@@ -10,7 +10,7 @@ internal class QueueingDispatcherInvocationList<THandler, TArgs> : DispatcherInv
 {
 	private Node _head, _tail;
 
-	public QueueingDispatcherInvocationList(object owner, Func<THandler, Action<object, TArgs>> raiseMethod, IDispatcherInternal dispatcher)
+	public QueueingDispatcherInvocationList(object owner, Func<THandler, Action<object, TArgs>> raiseMethod, IDispatcher dispatcher)
 		: base(owner, raiseMethod, dispatcher)
 	{
 		_head = _tail = new();
