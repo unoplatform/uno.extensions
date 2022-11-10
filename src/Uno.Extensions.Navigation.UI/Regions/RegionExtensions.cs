@@ -12,14 +12,16 @@ public static class RegionExtensions
 
 	public static Task<NavigationResponse?> NavigateAsync(this IRegion region, NavigationRequest request) => (region.Navigator()?.NavigateAsync(request)) ?? Task.FromResult<NavigationResponse?>(default);
 
-	public static bool IsUnnamed(this IRegion region, Route? parentRoute=null) =>
+	public static bool IsUnnamed(this IRegion region, Route? parentRoute = null) =>
 		string.IsNullOrEmpty(region.Name) ||
 		(region.Name == parentRoute?.Base);  // Where an un-named region is nested, the name is updated to the current route
 
-	public static IRegion Root(this IRegion region)
-	{
-		return region.Parent is not null ? region.Parent.Root() : region;
-	}
+	/// <summary>
+	/// Returns the root region at the top of the region hierarchy
+	/// </summary>
+	/// <param name="region">The start point of the hierarchy search</param>
+	/// <returns>The root region</returns>
+	public static IRegion Root(this IRegion region) => region.Parent?.Root() ?? region;
 
 	internal static (Route?, IRegion, INavigator?)[] Ancestors(
 		this IRegion region,
