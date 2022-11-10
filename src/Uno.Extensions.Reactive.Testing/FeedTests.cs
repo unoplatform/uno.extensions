@@ -5,6 +5,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Uno.Extensions.Reactive.Testing;
 
+/// <summary>
+/// Base class to tests class that are using the reactive framework.
+/// </summary>
 public class FeedTests
 {
 	/// <summary>
@@ -27,6 +30,9 @@ public class FeedTests
 	/// </summary>
 	public TestContext TestContext { get; set; } = default!;
 
+	/// <summary>
+	/// A global cancellation token which will be cancelled on tear down.
+	/// </summary>
 	public CancellationToken CT => Context?.SourceContext.Token ?? TestContext?.CancellationTokenSource.Token ?? CancellationToken.None;
 
 	/// <summary>
@@ -34,10 +40,16 @@ public class FeedTests
 	/// </summary>
 	protected FeedTestContext Context { get; private set; } = default!;
 
+	/// <summary>
+	/// Initialize the test context.
+	/// </summary>
 	[TestInitialize]
 	public virtual void Initialize()
 		=> Context = TestInitialize(TestContext);
 
+	/// <summary>
+	/// Tear down the test context.
+	/// </summary>
 	[TestCleanup]
 	public virtual void Cleanup()
 		=> TestCleanup(Context);

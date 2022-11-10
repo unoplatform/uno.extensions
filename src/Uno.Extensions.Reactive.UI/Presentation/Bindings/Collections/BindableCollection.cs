@@ -15,7 +15,7 @@ using Uno.Extensions.Reactive.Bindings.Collections.Services;
 using Uno.Extensions.Reactive.Collections;
 using Uno.Extensions.Reactive.Dispatching;
 using Uno.Extensions.Reactive.Utils;
-using ISchedulersProvider = Uno.Extensions.Reactive.Dispatching.DispatcherHelper.FindDispatcher;
+using ISchedulersProvider = Uno.Extensions.Reactive.Dispatching.FindDispatcher;
 
 namespace Uno.Extensions.Reactive.Bindings.Collections
 {

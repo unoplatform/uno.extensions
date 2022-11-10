@@ -5,15 +5,15 @@ using System.Threading;
 namespace Uno.Extensions.Reactive.Dispatching;
 
 /// <summary>
-/// An helper class to create a <see cref="DispatcherHelper.FindDispatcher"/> with a callback
+/// An helper class to create a <see cref="Dispatching.FindDispatcher"/> with a callback
 /// to get notified when the first dispatcher is being resolved.
 /// </summary>
 internal sealed class LazyDispatcherProvider
 {
 	private Action? _onFirstResolved;
-	private readonly DispatcherHelper.FindDispatcher _dispatcherProvider;
+	private readonly FindDispatcher _dispatcherProvider;
 
-	public LazyDispatcherProvider(Action onFirstResolved, DispatcherHelper.FindDispatcher? dispatcherProvider = null)
+	public LazyDispatcherProvider(Action onFirstResolved, FindDispatcher? dispatcherProvider = null)
 	{
 		_onFirstResolved = onFirstResolved;
 		_dispatcherProvider = dispatcherProvider ?? DispatcherHelper.GetForCurrentThread;
@@ -38,7 +38,7 @@ internal sealed class LazyDispatcherProvider
 		}
 	}
 
-	public IDispatcherInternal? FindDispatcher()
+	public IDispatcher? FindDispatcher()
 	{
 		if (_dispatcherProvider() is { } dispatcher)
 		{

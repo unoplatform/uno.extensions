@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
@@ -15,7 +14,7 @@ namespace Uno.Extensions.Reactive.Tests;
 
 public class FeedUITests : FeedTests
 {
-	private readonly Dispatcher _dispatcher = new();
+	private readonly TestDispatcher _dispatcher = new();
 
 	/// <inheritdoc />
 	[TestInitialize]
@@ -114,75 +113,5 @@ public class FeedUITests : FeedTests
 		});
 
 		await tcs.Task;
-	}
-
-	private class Dispatcher : IDispatcherInternal, IDisposable
-	{
-		private readonly Thread _thread;
-		private readonly Queue<Action> _queue = new();
-		private readonly AutoResetEvent _evt = new(false);
-
-		private bool _isDisposed;
-
-		public Dispatcher()
-		{
-			_thread = new Thread(Run);
-			_thread.Start();
-		}
-
-		/// <inheritdoc />
-		public bool HasThreadAccess => Thread.CurrentThread == _thread;
-
-		/// <inheritdoc />
-		public void TryEnqueue(Action action)
-		{
-			if (_isDisposed)
-			{
-				throw new InvalidOperationException("Dispatcher has already been aborted!");
-			}
-
-			lock (_queue)
-			{
-				_queue.Enqueue(action);
-			}
-
-			_evt.Set();
-		}
-
-		private void Run()
-		{
-			while (!_isDisposed)
-			{
-				try
-				{
-					bool hasItem;
-					Action? item;
-					lock (_queue)
-					{
-						hasItem = _queue.TryDequeue(out item);
-					}
-
-					if (hasItem)
-					{
-						item!();
-					}
-					else
-					{
-						_evt.WaitOne();
-					}
-				}
-				catch (Exception error)
-				{
-					throw new InvalidOperationException("Got an exception on the UI thread", error);
-				}
-			}
-		}
-
-		public void Dispose()
-		{
-			_isDisposed = true;
-			_evt.Set();
-			_thread.Join();
-		}
 	}
 }
