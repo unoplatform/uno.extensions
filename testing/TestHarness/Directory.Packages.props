@@ -67,6 +67,6 @@
 		<PackageVersion Include="NUnit" Version="3.13.3" />
 		<PackageVersion Include="NUnit3TestAdapter" Version="4.3.0-alpha-net7.4" />
 		<PackageVersion Include="Xamarin.Google.Android.Material" Version="1.4.0.4" />
-		<PackageVersion Include="Xamarin.UITest" Version="3.2.8" />
+		<PackageVersion Include="Xamarin.UITest" Version="3.2.9" />
 	</ItemGroup>
 </Project>

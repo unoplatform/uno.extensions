@@ -5,7 +5,9 @@ public record PageNavigationFiveViewModel(INavigator Navigator, IDispatcher Disp
 {
 	public async void GoBack()
 	{
+#if !__WASM__
 		await Settings.UpdateAsync(s => s with { PagesVisited = s.PagesVisited.Add(this.GetType().Name) });
+#endif
 		await Navigator.GoBack(this);
 	}
 }

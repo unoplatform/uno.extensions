@@ -13,22 +13,22 @@ public class Given_ContentDialog : NavigationTestBase
 		App.WaitThenTap("ContentDialogsButton");
 
 		App.WaitElement("DialogsContentDialogsPage");
-		//var screenBefore=TakeScreenshot("When_Dialog_Before");
+		var screenBefore = TakeScreenshot("When_Dialog_Before");
 		App.Tap(dialogButton);
-		//var screenAfter = TakeScreenshot("When_Dialog_After");
-		//ImageAssert.AreNotEqual(screenBefore, screenAfter);
+		var screenAfter = TakeScreenshot("When_Dialog_After");
+		ImageAssert.AreNotEqual(screenBefore, screenAfter);
 
 		if (delayInSeconds > 0)
 		{
 			await Task.Delay(delayInSeconds * 1000);
-			//var screenAfterDelay = TakeScreenshot("When_Dialog_After_Delay");
+			var screenAfterDelay = TakeScreenshot("When_Dialog_After_Delay");
 			if (dialogCancelled)
 			{
-				//ImageAssert.AreNotEqual(screenAfter, screenAfterDelay);
+				ImageAssert.AreNotEqual(screenAfter, screenAfterDelay);
 			}
 			else
 			{
-				//ImageAssert.AreEqual(screenAfter, screenAfterDelay);
+				ImageAssert.AreEqual(screenAfter, screenAfterDelay);
 
 			}
 		}
@@ -40,8 +40,8 @@ public class Given_ContentDialog : NavigationTestBase
 
 		await Task.Delay(AppExtensions.UIWaitTimeInMilliseconds);
 
-		//var screenClosed = TakeScreenshot("When_Dialog_Closed");
-		//ImageAssert.AreEqual(screenBefore, screenClosed,tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
+		var screenClosed = TakeScreenshot("When_Dialog_Closed");
+		ImageAssert.AreEqual(screenBefore, screenClosed,tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
 	}
 
 	[Test]
@@ -53,10 +53,10 @@ public class Given_ContentDialog : NavigationTestBase
 
 		App.WaitElement("DialogsContentDialogsPage");
 
-		//var screenBefore = TakeScreenshot("When_Dialog_Before");
+		var screenBefore = TakeScreenshot("When_Dialog_Before");
 		App.Tap("ComplexDialogNavRequestButton");
-		//var screenAfter = TakeScreenshot("When_Dialog_After");
-		//ImageAssert.AreNotEqual(screenBefore, screenAfter);
+		var screenAfter = TakeScreenshot("When_Dialog_After");
+		ImageAssert.AreNotEqual(screenBefore, screenAfter);
 
 		App.WaitElement("ComplexDialogFirstPageNavigationBar");
 
@@ -64,8 +64,8 @@ public class Given_ContentDialog : NavigationTestBase
 
 		await Task.Delay(AppExtensions.UIWaitTimeInMilliseconds);
 
-		//var screenClosed = TakeScreenshot("When_Dialog_Closed");
-		//ImageAssert.AreEqual(screenBefore, screenClosed, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
+		var screenClosed = TakeScreenshot("When_Dialog_Closed");
+		ImageAssert.AreEqual(screenBefore, screenClosed, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
 	}
 
 }

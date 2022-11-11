@@ -69,61 +69,7 @@ public abstract class TestBase
 		field.SetValue(null, null);
 	}
 
-	protected void NavigateToSample(string sample, string? design = null)
-	{
-		var backdoorPropVal = string.Join("-", sample, design);
-
-		var shell = App.Marked("AppShell").WaitUntilExists();
-		shell.SetDependencyPropertyValue("CurrentSampleBackdoor", backdoorPropVal);
-	}
-
-	protected void ShowMaterialTheme()
-	{
-		App.WaitThenTap("PART_MaterialRadioButton");
-	}
-
-	protected void ShowFluentTheme()
-	{
-		App.WaitThenTap("PART_FluentRadioButton");
-	}
-
-	protected void ShowCupertinoTheme()
-	{
-		App.WaitThenTap("PART_CupertinoRadioButton");
-	}
-
-	protected void ShowNativeTheme()
-	{
-		App.WaitThenTap("PART_NativeRadioButton");
-	}
-
-	protected void OpenNavView()
-	{
-		if (!IsNavViewOpen())
-		{
-			App.WaitThenTap("NavToggle");
-
-			//Give the nav view time to open up
-			App.Wait(TimeSpan.FromSeconds(2));
-		}
-	}
-
-	protected void CloseNavView()
-	{
-		if (IsNavViewOpen())
-		{
-			App.WaitThenTap("NavToggle");
-		}
-	}
-
-	private bool IsNavViewOpen()
-	{
-		App.WaitForElement("RootSplitView", timeout: TimeSpan.FromSeconds(60));
-		return App
-			.Marked("RootSplitView")
-			.GetDependencyPropertyValue<bool>("IsPaneOpen");
-	}
-
+	
 	private void WriteSystemLogs(string fileName)
 	{
 		if (_app != null && AppInitializer.GetLocalPlatform() == Platform.Browser)
@@ -147,10 +93,10 @@ public abstract class TestBase
 			stepName,
 			ignoreInSnapshotCompare != null
 				? new ScreenshotOptions { IgnoreInSnapshotCompare = ignoreInSnapshotCompare.Value }
-				: new ScreenshotOptions()
+				: null
 		);
 
-	public ScreenshotInfo TakeScreenshot(string stepName, ScreenshotOptions options)
+	public ScreenshotInfo TakeScreenshot(string stepName, ScreenshotOptions? options)
 	{
 		if (_app == null)
 		{

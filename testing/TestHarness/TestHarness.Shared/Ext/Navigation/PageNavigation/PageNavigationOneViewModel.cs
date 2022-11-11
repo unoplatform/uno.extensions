@@ -9,7 +9,9 @@ public record PageNavigationOneViewModel(IServiceProvider Services, INavigator N
 
 	public async void GoToTwo()
 	{
+#if !__WASM__
 		await Settings.UpdateAsync(s => s with { PagesVisited = s.PagesVisited.Add(this.GetType().Name) });
+#endif
 		await Navigator.NavigateViewModelAsync<PageNavigationTwoViewModel>(this);
 	}
 
