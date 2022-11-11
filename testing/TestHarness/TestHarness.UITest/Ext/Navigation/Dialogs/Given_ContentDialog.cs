@@ -28,7 +28,7 @@ public class Given_ContentDialog : NavigationTestBase
 			}
 			else
 			{
-				ImageAssert.AreEqual(screenAfter, screenAfterDelay);
+				ImageAssert.AreEqual(screenAfter, screenAfterDelay, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
 
 			}
 		}
