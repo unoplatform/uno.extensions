@@ -31,8 +31,6 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 			Control.Navigated += Frame_Navigated;
 		}
 	}
-	// TODO: IsUnnamed and  composite region
-	//protected override bool CanNavigateToDependentRoutes => !Region.Children.Any(x => x.IsUnnamed(this.Route) && !(x.Navigator()?.IsComposite() ?? false));
 
 	protected override async Task<bool> RegionCanNavigate(Route route, RouteInfo? routeMap)
 	{

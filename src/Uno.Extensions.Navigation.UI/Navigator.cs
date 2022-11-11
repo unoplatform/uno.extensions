@@ -503,9 +503,6 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		return Task.FromResult(false);
 	}
 
-	//protected virtual bool CanNavigateToDependentRoutes => false;
-
-
 	protected virtual async Task<bool> RegionCanNavigate(Route route, RouteInfo? routeMap)
 	{
 		// Default behaviour for all navigators is that they can't handle back or close requests
@@ -515,15 +512,6 @@ public class Navigator : INavigator, IInstance<IServiceProvider>
 		{
 			return false;
 		}
-
-		//// Default behaviour for all navigators is that they can't handle routes that are dependent
-		//// on another route (ie DependsOn <> "")
-		//// This is overridden by navigators that can handle close operation
-		//if ((routeMap?.IsDependent ?? false) &&
-		//	!CanNavigateToDependentRoutes)
-		//{
-		//	return false;
-		//}
 
 		// Check type of this navigator - if base class (ie Navigator)
 		// then an check children to see if they can navigate to the route
