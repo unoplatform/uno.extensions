@@ -52,7 +52,6 @@ public class Given_PageNavigationRegistered : NavigationTestBase
 	}
 
 	[Test]
-	//[Ignore("Failing CI - runs ok locally")]
 	public void When_PageNavigationRegisteredViewModel()
 	{
 		InitTestSection(TestSections.Navigation_PageNavigationRegistered);
