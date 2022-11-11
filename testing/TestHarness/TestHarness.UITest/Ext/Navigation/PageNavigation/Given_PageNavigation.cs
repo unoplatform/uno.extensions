@@ -52,7 +52,7 @@ public class Given_PageNavigation : NavigationTestBase
 	}
 
 	[Test]
-	[Ignore("Failing CI - runs ok locally")]
+	//[Ignore("Failing CI - runs ok locally")]
 	public void When_PageNavigationViewModel()
 	{
 		InitTestSection(TestSections.Navigation_PageNavigation);
