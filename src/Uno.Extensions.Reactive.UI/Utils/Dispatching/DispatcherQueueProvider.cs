@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -6,17 +7,33 @@ using System.Threading.Tasks;
 
 namespace Uno.Extensions.Reactive.Dispatching;
 
-internal static class DispatcherQueueProvider
+/// <summary>
+/// Provider of dispatcher.
+/// </summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
+public static class DispatcherQueueProvider
 {
-//#pragma warning disable CA2255 // The 'ModuleInitializer' attribute should not be used in libraries
-//	[ModuleInitializer]
-//#pragma warning restore CA2255 // The 'ModuleInitializer' attribute should not be used in libraries
-//	public static void Initialize()
-//		=> DispatcherHelper.GetForCurrentThread = GetForCurrentThread;
+	private static int _isInitialized;
+
+	/// <summary>
+	/// Register the <seealso cref="DispatcherQueueProvider"/> as provider of <see cref="IDispatcher"/> for the reactive platform.
+	/// </summary>
+	/// <remarks>This method is flagged with ModuleInitializer attribute and should not be used by application.</remarks>
+#pragma warning disable CA2255 // The 'ModuleInitializer' attribute should not be used in libraries
+	[ModuleInitializer]
+#pragma warning restore CA2255 // The 'ModuleInitializer' attribute should not be used in libraries
+	public static void Initialize()
+	{
+		// This method might be invoked by 
+		if (Interlocked.CompareExchange(ref _isInitialized, 1, 0) is 0)
+		{
+			DispatcherHelper.GetForCurrentThread = GetForCurrentThread;
+		}
+	}
 
 	private static readonly ThreadLocal<IDispatcher?> _value = new(CreateForCurrentThread, false);
 
-	public static IDispatcher? GetForCurrentThread()
+	private static IDispatcher? GetForCurrentThread()
 		=> _value.Value;
 
 	private static IDispatcher? CreateForCurrentThread()
