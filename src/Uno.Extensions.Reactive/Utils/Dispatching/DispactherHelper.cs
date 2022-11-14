@@ -48,6 +48,6 @@ public static class DispatcherHelper
 		=> throw new InvalidOperationException(
 			"The API you are using requires access to the dispatcher but it has not been setup for this platform. "
 			+ "You need to add a reference to Uno.Extensions.Reactive.UI or Uno.Extensions.Reactive.WinUI package in you application head, "
-			+ "or Uno.Extensions.Reactive.Testing if your running a test project. "
+			+ "or use the Uno.Extensions.Reactive.Testing.TestDispatcher if your running a test project. "
 			+ "Alternatively you have to manually setup the dispatcher provider by setting the Uno.Extensions.Reactive.Dispatching.DispatcherHelper.GetForCurrentThread (not recommended).");
 }
