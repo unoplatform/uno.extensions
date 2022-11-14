@@ -8,7 +8,7 @@ using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Dispatching;
 using Uno.Extensions.Reactive.Utils;
 
-namespace Uno.Extensions.Reactive.UI.Utils;
+namespace Uno.Extensions.Reactive.Utils;
 
 /// <summary>
 /// Helpers to work with feed from the UI thread.

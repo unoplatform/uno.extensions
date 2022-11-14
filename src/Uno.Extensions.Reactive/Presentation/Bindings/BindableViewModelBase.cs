@@ -8,7 +8,6 @@ using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Dispatching;
 using Uno.Extensions.Reactive.Events;
 using Uno.Extensions.Reactive.Logging;
-using Uno.Extensions.Reactive.UI.Utils;
 using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive.Bindings;
