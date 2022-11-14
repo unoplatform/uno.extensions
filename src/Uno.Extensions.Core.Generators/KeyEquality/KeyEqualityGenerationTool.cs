@@ -209,8 +209,9 @@ internal class KeyEqualityGenerationTool : ICodeGenTool
 
 		return this.AsPartialOf(
 			type,
-			$"{NS.Equality}.IKeyEquatable<{type}>{(config.IKeyed is null ? "" : ", " + config.IKeyed.ToFullString())}", // i.e. config.IKeyEquatable
-			$@"
+			attributes: null,
+			bases: $"{NS.Equality}.IKeyEquatable<{type}>{(config.IKeyed is null ? "" : ", " + config.IKeyed.ToFullString())}", // i.e. config.IKeyEquatable
+			code: $@"
 				{(config.IsCustomImplementation
 					? "// Skipping IKeyed.Key as user is providing a custom implementation of IKeyEquatable"
 					: $@"/// <inheritdoc cref=""{{NS.Equality}}.IKeyed{{T}}"" />
