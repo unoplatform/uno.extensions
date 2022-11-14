@@ -56,6 +56,6 @@
 		<PackageVersion Include="xunit" Version="2.4.1" />
 		<PackageVersion Include="xunit.runner.visualstudio" Version="2.4.1" />
 		<PackageVersion Include="Uno.WinUI.Markup" Version="4.6.0-dev.12" />
-		<PackageVersion Include="Uno.Extensions.Markup.Generators" Version="1.0.0-dev.125" />
+		<PackageVersion Include="Uno.Extensions.Markup.Generators" Version="1.0.0-dev.139" />
 	</ItemGroup>
 </Project>
