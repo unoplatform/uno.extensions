@@ -21,6 +21,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)BaseHostInitialization.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BaseTestSectionPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ControlSizeTrigger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\AdHoc\AdHocHostInit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\AdHoc\AdHocMainPage.xaml.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\AdHoc\AdHocOnePage.xaml.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\AdHoc\AdHocOneViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\AuthenticationRouteInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\AuthenticationShellViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Authentication\Custom\CustomAuthenticationHomePage.xaml.cs">
@@ -185,6 +189,20 @@
       <DependentUpon>ToDoWelcomePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Apps\ToDo\ToDoWelcomeViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\ContentControl\ContentControlHomePage.xaml.cs">
+      <DependentUpon>ContentControlHomePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\ContentControl\ContentControlHomeViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\ContentControl\ContentControlHostInit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\ContentControl\ContentControlMainPage.xaml.cs">
+      <DependentUpon>ContentControlMainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\ContentControl\ContentControlOnePage.xaml.cs">
+      <DependentUpon>ContentControlOnePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\ContentControl\ContentControlTwoPage.xaml.cs">
+      <DependentUpon>ContentControlTwoPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\ContentDialogsPage.xaml.cs">
       <DependentUpon>ContentDialogsPage.xaml</DependentUpon>
     </Compile>
@@ -473,6 +491,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\ContentControl\ContentControlOnePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="$(MSBuildThisFileDirectory)Ext\Navigation\Dialogs\ContentDialogsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -608,6 +630,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Assets\SharedAssets.md" />
+    <Content Include="$(MSBuildThisFileDirectory)Ext\AdHoc\data.json" />
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en-AU\Resources.resw" />

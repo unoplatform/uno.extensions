@@ -2,6 +2,8 @@
 
 public enum TestSections
 {
+	AdHoc,
+	Navigation_ContentControl,
 	Navigation_PageNavigation,
 	Navigation_PageNavigationRegistered,
 	Navigation_Dialogs,

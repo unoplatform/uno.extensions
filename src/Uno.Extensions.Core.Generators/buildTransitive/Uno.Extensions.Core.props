@@ -10,7 +10,7 @@
 		<CompilerVisibleProperty Include="UnoExtensionsGeneration_DisableModuleInitializerAttribute" />
 	</ItemGroup>
 
-	<Target Name="_InjectUnoExtensionsCoreGenerators" BeforeTargets="BeforeCompile;_UnoSourceGenerator">
+	<Target Name="_InjectUnoExtensionsCoreGenerators" BeforeTargets="BeforeCompile;MarkupCompilePass1">
 		<ItemGroup>
 			<Analyzer
 				Include="$(MSBuildThisFileDirectory)..\bin\Uno.Extensions.Core.Generators\$(Configuration)\netstandard2.0\Uno.Extensions.Core.Generators.dll"

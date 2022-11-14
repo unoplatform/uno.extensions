@@ -1,9 +1,9 @@
 ﻿namespace Uno.Extensions.Navigation;
 
 #pragma warning disable SA1313 // Parameter names should begin with lower-case letter
-public record Route(string Qualifier, string? Base = null, string? Path = null, IDictionary<string, object>? Data = null, bool Refresh = false)
+public record Route(string Qualifier = Qualifiers.None, string? Base = null, string? Path = null, IDictionary<string, object>? Data = null, bool Refresh = false)
 {
-	internal  bool IsInternal { get; set; }
+	internal bool IsInternal { get; set; }
 
 	public static Route Empty => new Route(Qualifiers.None, string.Empty, null, null);
 

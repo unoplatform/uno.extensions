@@ -234,4 +234,29 @@ public static class NavigatorExtensions
 		};
 		return default;
 	}
+
+
+	internal static Task<NavigationResponse?>? RedirectForNavigationData(this INavigator navigator, IRouteResolver resolver, NavigationRequest request)
+	{
+		// If Route is empty (null or "")
+		//   AND there is Data
+		// THEN lookup the RouteMap for the type of Data
+		// Required for Test: Given_ListToDetails.When_ListToDetails
+		// In most cases navigation by data is already resolved to a route at this point
+		// as the RouteHint will use the data type to determine request route. However,
+		// if the NavigationRequest has been manually prepared with data, this logic will
+		// update the request based on the type of data.
+		if (string.IsNullOrWhiteSpace(request.Route.Base) &&
+			request.Route.NavigationData() is { } navData)
+		{
+			var maps = resolver.FindByData(navData.GetType(), navigator);
+			if (maps is not null)
+			{
+				request = request with { Route = request.Route with { Base = maps.Path } };
+				return navigator.NavigateAsync(request);
+			}
+		}
+
+		return default;
+	}
 }

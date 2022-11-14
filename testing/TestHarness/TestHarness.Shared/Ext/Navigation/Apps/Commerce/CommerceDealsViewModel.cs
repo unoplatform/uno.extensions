@@ -9,15 +9,19 @@ public record CommerceDealsViewModel(INavigator Navigator) : BaseCommerceViewMod
 					new CommerceProduct("Sun glasses (deal)"),
 					new CommerceProduct("Watch (deal)")
 				};
-	public async void ShowFirstProductUIThread()
+	public async void ShowFirstDealUIThread()
 	{
 		await Navigator.NavigateDataAsync(this, Deals.First());
 	}
-	public async void ShowFirstProductBackgroundThread()
+	public async void ShowFirstDealBackgroundThread()
 	{
 		await Task.Run(async () =>
 		{
 			await Navigator.NavigateDataAsync(this, Deals.First());
 		});
+	}
+	public async void ShowProduct()
+	{
+			await Navigator.NavigateRouteAsync(this, "Product",data: Deals.First());
 	}
 }

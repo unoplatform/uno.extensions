@@ -170,4 +170,11 @@
 	</PropertyGroup>
 
 	<Import Project="Uno.CrossTargeting.props" />
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="$(AssemblyName).UI" />
+		<InternalsVisibleTo Include="$(AssemblyName).WinUI" />
+		<InternalsVisibleTo Include="$(AssemblyName).Tests" />
+		<InternalsVisibleTo Include="TestHarnessApp" />
+	</ItemGroup>
 </Project>

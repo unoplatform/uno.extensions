@@ -10,7 +10,7 @@ public class Given_PageNavigationRegistered : NavigationTestBase
 		App.WaitThenTap("ShowOnePageButton");
 
 		App.WaitElement("OnePageToTwoPageButton");
-		//var screenBefore = TakeScreenshot("When_PageNavigationXAML_Before");
+		var screenBefore = TakeScreenshot("When_PageNavigationXAML_Before");
 		App.WaitThenTap("OnePageToTwoPageButton");
 		App.WaitThenTap("TwoPageToThreePageButton");
 		App.WaitThenTap("ThreePageToFourPageButton");
@@ -22,8 +22,8 @@ public class Given_PageNavigationRegistered : NavigationTestBase
 
 
 		App.WaitElement("OnePageToTwoPageButton");
-		//var screenAfter = TakeScreenshot("When_PageNavigationXAML_After");
-		//ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
+		var screenAfter = TakeScreenshot("When_PageNavigationXAML_After");
+		ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
 
 	}
 
@@ -35,7 +35,7 @@ public class Given_PageNavigationRegistered : NavigationTestBase
 		App.WaitThenTap("ShowOnePageButton");
 
 		App.WaitElement("OnePageToTwoPageCodebehindButton");
-		//var screenBefore = TakeScreenshot("When_PageNavigationCodebehind_Before");
+		var screenBefore = TakeScreenshot("When_PageNavigationCodebehind_Before");
 		App.WaitThenTap("OnePageToTwoPageCodebehindButton");
 		App.WaitThenTap("TwoPageToThreePageCodebehindButton");
 		App.WaitThenTap("ThreePageToFourPageCodebehindButton");
@@ -47,12 +47,11 @@ public class Given_PageNavigationRegistered : NavigationTestBase
 
 
 		App.WaitElement("OnePageToTwoPageCodebehindButton");
-		//var screenAfter = TakeScreenshot("When_PageNavigationCodebehind_After");
-		//ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
+		var screenAfter = TakeScreenshot("When_PageNavigationCodebehind_After");
+		ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
 	}
 
 	[Test]
-	[Ignore("Failing CI - runs ok locally")]
 	public void When_PageNavigationRegisteredViewModel()
 	{
 		InitTestSection(TestSections.Navigation_PageNavigationRegistered);
@@ -60,9 +59,9 @@ public class Given_PageNavigationRegistered : NavigationTestBase
 		App.WaitThenTap("ShowOnePageButton");
 
 		App.WaitElement("OnePageToTwoPageViewModelButton");
-		//var screenBefore = TakeScreenshot("When_PageNavigationViewModel_Before");
+		var screenBefore = TakeScreenshot("When_PageNavigationViewModel_Before");
 		App.WaitThenTap("OnePageToTwoPageViewModelButton");
-		App.WaitThenTap("TwoPageToThreePageViewModelButton");
+		App.WaitThenTap("TwoPageToThreePageViewModelButton", timeout:TimeSpan.FromSeconds(30));
 		App.WaitThenTap("ThreePageToFourPageViewModelButton");
 		App.WaitThenTap("FourPageToFivePageViewModelButton");
 		App.WaitThenTap("FivePageBackViewModelButton");
@@ -72,8 +71,8 @@ public class Given_PageNavigationRegistered : NavigationTestBase
 
 
 		App.WaitElement("OnePageToTwoPageViewModelButton");
-		//var screenAfter = TakeScreenshot("When_PageNavigationViewModel_After");
-		//ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
+		var screenAfter = TakeScreenshot("When_PageNavigationViewModel_After");
+		ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
 
 	}
 
@@ -85,7 +84,7 @@ public class Given_PageNavigationRegistered : NavigationTestBase
 		App.WaitThenTap("ShowOnePageButton");
 
 		App.WaitElement("OnePageToTwoPageButton");
-		//var screenBefore = TakeScreenshot("When_PageNavigationXAML_Before");
+		var screenBefore = TakeScreenshot("When_PageNavigationXAML_Before");
 		App.WaitThenTap("OnePageToTwoPageButton");
 		App.WaitThenTap("TwoPageToThreePageButton");
 		App.WaitThenTap("ThreePageToFourPageButton");
@@ -125,8 +124,8 @@ public class Given_PageNavigationRegistered : NavigationTestBase
 
 
 		App.WaitElement("OnePageToTwoPageButton");
-		//var screenAfter = TakeScreenshot("When_PageNavigationXAML_After");
-		//ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
+		var screenAfter = TakeScreenshot("When_PageNavigationXAML_After");
+		ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
 
 	}
 
@@ -139,7 +138,7 @@ public class Given_PageNavigationRegistered : NavigationTestBase
 		App.WaitThenTap("ShowOnePageButton");
 
 		App.WaitElement("OnePageToTwoPageButton");
-		//var screenBefore = TakeScreenshot("When_PageNavigationXAML_Before");
+		var screenBefore = TakeScreenshot("When_PageNavigationXAML_Before");
 		App.WaitThenTap("OnePageToTwoPageButton");
 		App.WaitThenTap("TwoPageToThreePageButton");
 		App.WaitThenTap("ThreePageToFourPageButton");
@@ -173,8 +172,8 @@ public class Given_PageNavigationRegistered : NavigationTestBase
 		App.WaitThenTap("TwoPageBackButton");
 
 		App.WaitElement("OnePageToTwoPageButton");
-		//var screenAfter = TakeScreenshot("When_PageNavigationXAML_After");
-		//ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
+		var screenAfter = TakeScreenshot("When_PageNavigationXAML_After");
+		ImageAssert.AreEqual(screenBefore, screenAfter, tolerance: PixelTolerance.Exclusive(Constants.DefaultPixelTolerance));
 
 	}
 
