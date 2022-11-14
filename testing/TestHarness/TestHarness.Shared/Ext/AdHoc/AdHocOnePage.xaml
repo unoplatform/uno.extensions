@@ -1,0 +1,61 @@
+﻿<Page x:Class="TestHarness.Ext.AdHoc.AdHocOnePage"
+	  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	  xmlns:local="using:TestHarness.Ext.AdHoc"
+	  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	  mc:Ignorable="d"
+	  xmlns:uen="using:Uno.Extensions.Navigation.UI"
+	  xmlns:utu="using:Uno.Toolkit.UI"
+	  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+		<utu:NavigationBar Content="AdHoc"
+						   AutomationProperties.AutomationId="AdHocOnePage" />
+		<StackPanel Grid.Row="1">
+			<Button Content="One"
+					uen:Navigation.Request="./AdHocNestedOne" />
+			<Button Content="Two"
+					uen:Navigation.Request="./AdHocNestedTwo" />
+			<Button Content="Three"
+					uen:Navigation.Request="./AdHocNestedThree" />
+			<Button Content="Long Running"
+					Click="{x:Bind ViewModel.LongRunning}" />
+		</StackPanel>
+		<Grid uen:Region.Attached="True"
+			  uen:Region.Navigator="Visibility"
+			  Grid.Row="2">
+			<Grid uen:Region.Name="AdHocNestedOne"
+				  Visibility="Collapsed">
+				<TextBlock Text="One" />
+			</Grid>
+			<Grid uen:Region.Name="AdHocNestedTwo"
+				  Visibility="Collapsed">
+				<TextBlock Text="Two" />
+			</Grid>
+			<Grid uen:Region.Name="AdHocNestedThree"
+				  Visibility="Collapsed">
+				<TextBlock Text="Three" />
+			</Grid>
+		</Grid>
+		<StackPanel Grid.Row="3">
+			<Button Content="Serialize"
+					Click="{x:Bind ViewModel.RunSerializer}" />
+			<TextBlock Text="{Binding PersonSerilizationOutput}" />
+			<TextBlock Text="{Binding WidgetSerilizationOutput}" />
+			<TextBlock Text="{Binding ImmutableListSerilizationOutput}" />
+			<Button Content="Load Widgets"
+					Click="{x:Bind ViewModel.LoadWidgets}" />
+			<Button Content="Update UI from Background Task"
+					Click="{x:Bind ViewModel.RunBackgroundTask}" />
+			<TextBlock Text="{Binding BackgroundTaskProgress}" />
+		</StackPanel>
+	</Grid>
+</Page>

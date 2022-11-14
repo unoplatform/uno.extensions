@@ -5,9 +5,7 @@ public record PageNavigationTwoViewModel (INavigator Navigator, IDispatcher Disp
 {
 	public async void GoToThree()
 	{
-#if !__WASM__
 		await Settings.UpdateAsync(s => s with { PagesVisited = s.PagesVisited.Add(this.GetType().Name) });
-#endif
 		await Navigator.NavigateViewModelAsync<PageNavigationThreeViewModel>(this);
 	}
 

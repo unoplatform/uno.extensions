@@ -5,9 +5,7 @@ public record PageNavigationFourViewModel(INavigator Navigator, IDispatcher Disp
 {
 	public async void GoToFive()
 	{
-#if !__WASM__
 		await Settings.UpdateAsync(s => s with { PagesVisited = s.PagesVisited.Add(this.GetType().Name) });
-#endif
 		await Navigator.NavigateViewModelAsync<PageNavigationFiveViewModel>(this);
 	}
 

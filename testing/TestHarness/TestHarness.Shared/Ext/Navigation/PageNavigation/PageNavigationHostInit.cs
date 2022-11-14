@@ -52,3 +52,7 @@ public record PageNavigationSettings
 }
 
 
+[JsonSerializable(typeof(PageNavigationSettings))]
+internal partial class PageNavigationSettingsContext : JsonSerializerContext
+{ }
+
