@@ -15,8 +15,12 @@ namespace Uno.Extensions.Generators;
 
 internal static class RoslynExtensions
 {
+	private static readonly SymbolDisplayFormat _fullStringFormat = SymbolDisplayFormat
+		.FullyQualifiedFormat
+		.WithParameterOptions(SymbolDisplayParameterOptions.IncludeName | SymbolDisplayParameterOptions.IncludeType | SymbolDisplayParameterOptions.IncludeDefaultValue | SymbolDisplayParameterOptions.IncludeParamsRefOut);
+
 	public static string ToFullString(this ISymbol symbol)
-		=> symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+		=> symbol.ToDisplayString(_fullStringFormat);
 
 	public static IEnumerable<INamedTypeSymbol> GetNamespaceTypes(this INamespaceSymbol sym)
 	{

@@ -12,7 +12,7 @@ using static Microsoft.CodeAnalysis.Accessibility;
 
 namespace Uno.Extensions.Reactive.Generator;
 
-internal class BindableViewModelGenerator : ICodeGenTool
+internal class ViewModelGenTool_1 : ICodeGenTool
 {
 	/// <inheritdoc />
 	public string Version => "1";
@@ -22,7 +22,7 @@ internal class BindableViewModelGenerator : ICodeGenTool
 	private readonly BindableViewModelMappingGenerator _viewModelsMapping;
 	private readonly IAssemblySymbol _assembly;
 
-	public BindableViewModelGenerator(BindableGenerationContext ctx)
+	public ViewModelGenTool_1(BindableGenerationContext ctx)
 	{
 		_ctx = ctx;
 		_bindables = new BindableGenerator(ctx);
@@ -31,27 +31,9 @@ internal class BindableViewModelGenerator : ICodeGenTool
 	}
 
 	private bool IsSupported(INamedTypeSymbol? type)
-	{
-		if (type is null)
-		{
-			return false;
-		}
-
-		if (_ctx.IsGenerationEnabled(type) is {} isEnabled)
-		{
-			// If the attribute is set, we don't check for the `partial`: the build as to fail if not
-			return isEnabled;
-		}
-
-		if (type.IsPartial()
-			&& (type.ContainingAssembly.FindAttribute<ImplicitBindablesAttribute>() ?? new ()) is { IsEnabled: true } @implicit // Note: the type might be from another assembly than current
-			&& @implicit.Patterns.Any(pattern => Regex.IsMatch(type.ToString(), pattern)))
-		{
-			return true;
-		}
-
-		return false;
-	}
+		=> type is not null
+			&& (_ctx.IsGenerationEnabled(type)
+				?? type.Name.EndsWith("ViewModel", StringComparison.Ordinal) && type.IsPartial());
 
 	public IEnumerable<(string fileName, string code)> Generate()
 	{
@@ -74,18 +56,7 @@ internal class BindableViewModelGenerator : ICodeGenTool
 	}
 
 	private static string GetViewModelName(INamedTypeSymbol type)
-	{
-		// Note: the type might be from another assembly than current
-		var isLegacyMode = type.ContainingAssembly.FindAttribute<ImplicitBindablesAttribute>() is { Patterns.Length: 1 } config
-			&& config.Patterns[0] is ImplicitBindablesAttribute.LegacyPattern;
-
-		return isLegacyMode switch
-		{
-			true => $"Bindable{type.Name}",
-			_ when type.Name.EndsWith("ViewModel", StringComparison.OrdinalIgnoreCase) => $"Bindable{type.Name}",
-			_ => $"{type.Name.TrimEnd("Model", StringComparison.OrdinalIgnoreCase)}ViewModel",
-		};
-	}
+		=> $"Bindable{type.Name}";
 
 	private string Generate(INamedTypeSymbol model)
 	{
@@ -215,8 +186,9 @@ internal class BindableViewModelGenerator : ICodeGenTool
 
 		var fileCode = this.AsPartialOf(
 			model,
-			$"global::System.IAsyncDisposable, {NS.Core}.ISourceContextAware",
-			$@"
+			attributes: null,
+			bases: $"global::System.IAsyncDisposable, {NS.Core}.ISourceContextAware",
+			code: $@"
 				{bindableVmCode.Align(4)}
 
 				/// <inheritdoc />

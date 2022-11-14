@@ -27,32 +27,6 @@ public partial class Given_BasicViewModel_Then_Generate__ViewModel
 	{
 	}
 
-	public Given_BasicViewModel_Then_Generate__ViewModel(
-		short aParameterToNotBeAParameterLessCtor1,
-		IInput<string> anInput,
-		IInput<string> aReadWriteInput,
-		IInput<MyRecord> aRecordInput,
-		IInput<MyWeirdRecord> aWeirdRecordInput,
-		IInput<MyRecordWithAValueProperty> aRecordWithAValuePropertyInput,
-		IInput<int> anInputConflictingWithAProperty)
-	{
-		Assert.IsNotNull(anInput);
-		Assert.IsNotNull(aReadWriteInput);
-		Assert.IsNotNull(aRecordInput);
-		Assert.IsNotNull(aWeirdRecordInput);
-		Assert.IsNotNull(aRecordWithAValuePropertyInput);
-		Assert.IsNotNull(anInputConflictingWithAProperty);
-	}
-
-	public Given_BasicViewModel_Then_Generate__ViewModel(
-		int aParameterToNotBeAParameterLessCtor2,
-		ICommandBuilder aTriggerInput,
-		ICommandBuilder<string> aTypedTriggerInput)
-	{
-		Assert.IsNotNull(aTriggerInput);
-		Assert.IsNotNull(aTypedTriggerInput);
-	}
-
 	public string AnInputConflictingWithAProperty { get; } = "AnInputConflictingWithAProperty";
 
 	public string AField = "AField";
