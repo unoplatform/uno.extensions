@@ -14,7 +14,7 @@
 		<PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
 		<PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
 		<PackageVersion Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
-		<PackageVersion Include="Microsoft.Extensions.Http" Version="6.0.0" />
+		<PackageVersion Include="Microsoft.Extensions.Http" Version="7.0.0" />
 		<PackageVersion Include="Microsoft.Extensions.Localization.Abstractions" Version="6.0.4" />
 		<PackageVersion Include="Microsoft.Extensions.Logging" Version="6.0.0" />
 		<PackageVersion Include="Microsoft.Identity.Client" Version="4.47.0" />
