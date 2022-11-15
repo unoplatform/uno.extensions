@@ -18,4 +18,8 @@
 		<!--This override is used to validate the use of specific version of the C# Compiler-->
 		<PackageReference Include="Microsoft.Net.Compilers.Toolset" PrivateAssets="all" />
 	</ItemGroup>
+	
+	<!-- Reference generators props. This required only when referencing extensions project as source code (instead of packages) -->
+	<Import Project="$(MSBuildThisFileDirectory)\..\..\src\Uno.Extensions.Core.Generators\buildTransitive\Uno.Extensions.Core.props" />
+	<Import Project="$(MSBuildThisFileDirectory)\..\..\src\Uno.Extensions.Reactive.Generator\buildTransitive\Uno.Extensions.Reactive.props" />
 </Project>

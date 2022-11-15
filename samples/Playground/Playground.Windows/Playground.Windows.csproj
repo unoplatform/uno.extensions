@@ -107,8 +107,6 @@
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Storage.UI\Uno.Extensions.Storage.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Storage\Uno.Extensions.Storage.csproj" />
 	</ItemGroup>
-	<!-- Reference to Reactive.props only required when referencing Reactive as source code -->
-	<Import Project="..\..\..\src\Uno.Extensions.Reactive.Generator\buildTransitive\Uno.Extensions.Reactive.props" />
 	<Import Project="..\Playground.Shared\Playground.Shared.projitems" Label="Shared" />
 
 	<Target Name="WorkaroundSkiaWasmTargets" AfterTargets="ResolveProjectReferences">

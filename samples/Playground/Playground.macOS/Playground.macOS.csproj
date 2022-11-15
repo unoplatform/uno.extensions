@@ -194,7 +194,6 @@
 
   </ItemGroup>
   <!-- Reference to Reactive.props only required when referencing Reactive as source code -->
-  <Import Project="..\..\..\src\Uno.Extensions.Reactive.Generator\buildTransitive\Uno.Extensions.Reactive.props" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Mac\Xamarin.Mac.CSharp.targets" />
   <Target Name="VS16Mac_RemoveSystemMemory" BeforeTargets="ResolveAssemblyReferences">
     <!--
