@@ -1,4 +1,5 @@
-﻿using Windows.UI.Xaml;
+﻿using Windows.UI.Core;
+using Windows.UI.Xaml;
 
 namespace Uno.Extensions;
 
@@ -30,10 +31,17 @@ public class Dispatcher : IDispatcher
 #endif
 
 	}
-	
+
 	/// <inheritdoc />
 	public bool TryEnqueue(Action action)
+#if WINUI
 		=> _dispatcher.TryEnqueue(() => action());
+#else
+	{
+		_ = _dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => action());
+		return true;
+	}
+#endif
 
 	/// <inheritdoc />
 	public async ValueTask<TResult> ExecuteAsync<TResult>(AsyncFunc<TResult> func, CancellationToken cancellation)
