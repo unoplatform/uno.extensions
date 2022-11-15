@@ -8,32 +8,18 @@ using System.Threading.Tasks;
 namespace Uno.Extensions.Reactive.Dispatching;
 
 /// <summary>
-/// Provider of dispatcher.
+/// Provider of <see cref="IDispatcher"/>.
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
 public static class DispatcherQueueProvider
 {
-	private static int _isInitialized;
-
-	/// <summary>
-	/// Register the <seealso cref="DispatcherQueueProvider"/> as provider of <see cref="IDispatcher"/> for the reactive platform.
-	/// </summary>
-	/// <remarks>This method is flagged with ModuleInitializer attribute and should not be used by application.</remarks>
-#pragma warning disable CA2255 // The 'ModuleInitializer' attribute should not be used in libraries
-	[ModuleInitializer]
-#pragma warning restore CA2255 // The 'ModuleInitializer' attribute should not be used in libraries
-	public static void Initialize()
-	{
-		// This method might be invoked by 
-		if (Interlocked.CompareExchange(ref _isInitialized, 1, 0) is 0)
-		{
-			DispatcherHelper.GetForCurrentThread = GetForCurrentThread;
-		}
-	}
-
 	private static readonly ThreadLocal<IDispatcher?> _value = new(CreateForCurrentThread, false);
 
-	private static IDispatcher? GetForCurrentThread()
+	/// <summary>
+	/// Gets a dispatcher queue instance that will execute tasks serially on the current thread, or null if no such queue exists.
+	/// </summary>
+	/// <returns>The dispatcher associated to the current thread if the thread is a UI thread.</returns>
+	public static IDispatcher? GetForCurrentThread()
 		=> _value.Value;
 
 	private static IDispatcher? CreateForCurrentThread()

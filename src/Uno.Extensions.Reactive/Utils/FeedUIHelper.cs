@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Text;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Dispatching;
-using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive.Utils;
 
 /// <summary>
 /// Helpers to work with feed from the UI thread.
 /// </summary>
-internal static class FeedUIHelper
+[EditorBrowsable(EditorBrowsableState.Advanced)]
+public static class FeedUIHelper
 {
 	/// <summary>
 	/// Get the source of a feed

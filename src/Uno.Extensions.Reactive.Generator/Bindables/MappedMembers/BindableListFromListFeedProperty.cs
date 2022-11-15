@@ -23,8 +23,8 @@ internal record BindableListFromListFeedProperty(IPropertySymbol _property, ITyp
 
 	/// <inheritdoc />
 	public string GetInitialization()
-		=> @$"{_property.Name} = new {NS.Bindings}.BindableListFeed<{_valueType}>(
-				nameof({_property.Name}),
-				{N.Ctor.Model}.{_property.Name} ?? throw new NullReferenceException(""The list feed property '{_property.Name}' is null. Public feeds properties must be initialized in the constructor.""),
-				{N.Ctor.Ctx});";
+		=> @$"
+			var {_property.GetCamelCaseName()}Source = {N.Ctor.Model}.{_property.Name} ?? throw new NullReferenceException(""The list feed property '{_property.Name}' is null. Public feeds properties must be initialized in the constructor."");
+			var {_property.GetCamelCaseName()}SourceListState = {N.Ctor.Ctx}.GetOrCreateListState({_property.GetCamelCaseName()}Source);
+			{_property.Name} = {NS.Bindings}.BindableHelper.CreateBindableList(nameof({_property.Name}), {_property.GetCamelCaseName()}SourceListState);";
 }

@@ -10,10 +10,10 @@ using Uno.Extensions.Reactive.Generator.Dispatching;
 namespace Uno.Extensions.Reactive.Generator;
 
 /// <summary>
-/// A generator that generates dispatcher initialization for the reactive framework.
+/// A generator that generates UI module initialization for the reactive framework.
 /// </summary>
 [Generator]
-public class DispatcherInitializerGenerator : ISourceGenerator
+public class UIModuleInitializerGenerator : ISourceGenerator
 {
 	/// <inheritdoc />
 	public void Initialize(GeneratorInitializationContext context) { }
@@ -30,9 +30,9 @@ public class DispatcherInitializerGenerator : ISourceGenerator
 		}
 #endif
 
-		if (GenerationContext.TryGet<DispatcherInitializerGenerationContext>(context, out _) is { } dispatcherContext)
+		if (GenerationContext.TryGet<UIModuleInitializerGenerationContext>(context, out _) is { } dispatcherContext)
 		{
-			foreach (var generated in new DispatcherInitializerGenerationTool(dispatcherContext).Generate())
+			foreach (var generated in new UIModuleInitializerGenerationTool(dispatcherContext).Generate())
 			{
 				context.AddSource(PathHelper.SanitizeFileName(generated.Name) + ".g.cs", generated.Code);
 			}
