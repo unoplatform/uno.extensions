@@ -216,6 +216,17 @@ public static class ListState<T>
 	internal static IListState<T> AsyncEnumerable(Func<IAsyncEnumerable<IImmutableList<T>>> enumerableProvider)
 		=> AttachedProperty.GetOrCreate(Validate(enumerableProvider), static ep => S(ep, new AsyncEnumerableFeed<IImmutableList<T>>(ep)));
 
+	/// <summary>
+	/// Gets or creates a state from an async enumerable sequence of value.
+	/// </summary>
+	/// <typeparam name="TOwner">Type of the owner of the state.</typeparam>
+	/// <param name="owner">The owner of the state.</param>
+	/// <param name="feed">The source feed of the resulting state.</param>
+	/// <returns>A feed that encapsulate the source.</returns>
+	public static IListState<T> FromFeed<TOwner>(TOwner owner, IListFeed<T> feed)
+		where TOwner : class
+		=> AttachedProperty.GetOrCreate(owner, feed, static (o, f) => S(o, f));
+
 	// WARNING: This not implemented for restrictions described in the remarks section of the AsyncPaginated
 	//			While restrictions are acceptable for a paginated by index ListState, it would be invalid for custom cursors.
 	///// <summary>
