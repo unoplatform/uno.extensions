@@ -15,7 +15,7 @@ public class TabBarItemRequestHandler : ActionRequestHandlerBase<TabBarItem>
 		}
 
 		return BindAction(viewButton,
-			action => new RoutedEventHandler((sender, args) => action((TabBarItem)sender)),
+			action => new RoutedEventHandler((sender, args) => action((TabBarItem)sender, args)),
 			(element, handler) => element.Click += handler,
 			(element, handler) => element.Click -= handler);
 	}

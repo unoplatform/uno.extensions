@@ -1,4 +1,6 @@
-﻿namespace TestHarness.Ext.Navigation.PageNavigation;
+﻿using System.Reflection;
+
+namespace TestHarness.Ext.Navigation.PageNavigation;
 
 public class PageNavigationRegisterHostInit: PageNavigationHostInit
 {
@@ -6,7 +8,7 @@ public class PageNavigationRegisterHostInit: PageNavigationHostInit
 	{
 		views.Register(
 			new ViewMap<PageNavigationOnePage, PageNavigationOneViewModel>(),
-			new ViewMap<PageNavigationTwoPage, PageNavigationTwoViewModel>(),
+			new DataViewMap<PageNavigationTwoPage, PageNavigationTwoViewModel, PageNavigationModel>(),
 			new ViewMap<PageNavigationThreePage, PageNavigationThreeViewModel>(),
 			new ViewMap<PageNavigationFourPage, PageNavigationFourViewModel>(),
 			new ViewMap<PageNavigationFivePage, PageNavigationFiveViewModel>(),
