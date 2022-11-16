@@ -41,7 +41,9 @@ public class BindableImmutableList<TItem, TBindableItem> : BindableEnumerable<II
 
 	/// <inheritdoc />
 	private protected override CollectionChangeSet<TItem> GetChanges(IImmutableList<TItem> previous, IImmutableList<TItem> current)
-		=> _analyzer.GetChanges(previous ?? ImmutableList<TItem>.Empty, current);
+		// '_analyzer' might be null when the base.ctor subscribe to the 'property' and invokes the 'OnOwnerUpdated'
+		// We can safely fallback on ListFeed<TItem>.DefaultAnalyzer as in that case the 'previous' will be null/empty anyway.
+		=> (_analyzer ?? ListFeed<TItem>.DefaultAnalyzer).GetChanges(previous ?? ImmutableList<TItem>.Empty, current);
 
 	private protected override IImmutableList<TItem> Replace(IImmutableList<TItem>? items, TItem oldItem, TItem newItem)
 	{
