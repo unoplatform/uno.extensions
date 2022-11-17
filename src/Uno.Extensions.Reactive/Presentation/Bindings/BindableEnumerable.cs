@@ -33,7 +33,7 @@ public abstract class BindableEnumerable<TCollection, TItem, TBindableItem> : Bi
 	private readonly BindablePropertyInfo<TCollection> _listProperty;
 	private readonly Func<BindablePropertyInfo<TItem>, TBindableItem> _bindableFactory;
 
-	private readonly Visitor _visitor;
+	private Visitor? _visitor;
 
 	/// <summary>
 	/// Creates a new instance
@@ -47,7 +47,6 @@ public abstract class BindableEnumerable<TCollection, TItem, TBindableItem> : Bi
 	{
 		_listProperty = property;
 		_bindableFactory = bindableFactory;
-		_visitor = new Visitor(this);
 	}
 
 	private protected abstract CollectionChangeSet<TItem> GetChanges(TCollection previous, TCollection current);
@@ -58,7 +57,7 @@ public abstract class BindableEnumerable<TCollection, TItem, TBindableItem> : Bi
 	{
 		var collectionChanges = (changes as CollectionChangeSet<TItem> ?? GetChanges(previous, current));
 		base.UpdateSubProperties(previous, current, collectionChanges);
-		collectionChanges.Visit(_visitor);
+		collectionChanges.Visit(_visitor ??= new(this));
 	}
 
 	#region IList (read-only)
