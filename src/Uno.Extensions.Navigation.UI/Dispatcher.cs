@@ -1,7 +1,4 @@
-﻿using Windows.UI.Core;
-using Windows.UI.Xaml;
-
-namespace Uno.Extensions;
+﻿namespace Uno.Extensions;
 
 public class Dispatcher : IDispatcher
 {

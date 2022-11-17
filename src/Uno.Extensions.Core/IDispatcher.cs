@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace Uno.Extensions;
+﻿namespace Uno.Extensions;
 
 /// <summary>
 /// An abstraction of the dispatcher that is associated to the UI thread.
