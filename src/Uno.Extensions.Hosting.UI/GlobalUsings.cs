@@ -12,10 +12,11 @@ global using Microsoft.Extensions.Hosting;
 global using Microsoft.Extensions.Hosting.Internal;
 global using Microsoft.Extensions.Logging;
 global using Microsoft.Extensions.Options;
+global using Microsoft.UI.Xaml;
+global using Microsoft.UI.Xaml.Controls;
 global using Uno.Extensions.Hosting;
 global using Uno.Extensions.Storage;
 global using Uno.Extensions.Hosting.Internal;
 global using Windows.Storage;
 global using Windows.ApplicationModel.Core;
-
-
+global using Application = Microsoft.UI.Xaml.Application;
