@@ -11,13 +11,13 @@ internal abstract class DispatcherInvocationList<THandler, TArgs> : IInvocationL
 {
 	private readonly object _owner;
 	private readonly Func<THandler, Action<object, TArgs>> _raise;
-	private readonly IDispatcherInternal _dispatcher;
+	private readonly IDispatcher _dispatcher;
 
 	private List<THandler>? _handlers = new();
 	private bool _isEnumeratingHandlers;
 	
 
-	public DispatcherInvocationList(object owner, Func<THandler, Action<object, TArgs>> raiseMethod, IDispatcherInternal dispatcher)
+	public DispatcherInvocationList(object owner, Func<THandler, Action<object, TArgs>> raiseMethod, IDispatcher dispatcher)
 	{
 		_owner = owner;
 		_raise = raiseMethod;

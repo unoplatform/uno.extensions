@@ -31,7 +31,8 @@ global using Uno.Extensions.Navigation.UI.Controls;
 	global using Microsoft.UI.Xaml.Data;
 	global using Microsoft.UI.Xaml.Media;
 #else
-global using Windows.System;
+	global using Windows.System;
+	global using Windows.UI.Core;
 	global using Windows.UI.Xaml;
 	global using Windows.UI.Xaml.Controls;
 	global using Windows.UI.Xaml.Controls.Primitives;

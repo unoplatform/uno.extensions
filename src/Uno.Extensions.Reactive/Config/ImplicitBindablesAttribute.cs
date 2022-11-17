@@ -11,11 +11,6 @@ namespace Uno.Extensions.Reactive.Config;
 public class ImplicitBindablesAttribute : Attribute
 {
 	/// <summary>
-	/// Gets the legacy pattern that was used in versions prior to 2.3.
-	/// </summary>
-	public const string LegacyPattern = "ViewModel$";
-
-	/// <summary>
 	/// Gets or sets a bool which indicates if the generation of view models based on class names is enabled of not.
 	/// </summary>
 	public bool IsEnabled { get; init; } = true;
@@ -23,6 +18,8 @@ public class ImplicitBindablesAttribute : Attribute
 	/// <summary>
 	/// The patterns that the class FullName has to match to implicitly trigger view model generation.
 	/// </summary>
+	/// <seealso cref="BindableGenerationToolAttribute"/>
+	/// <remarks>For generation tool version 2 and above.</remarks>
 	public string[] Patterns { get; } = { "Model$" };
 
 	/// <summary>

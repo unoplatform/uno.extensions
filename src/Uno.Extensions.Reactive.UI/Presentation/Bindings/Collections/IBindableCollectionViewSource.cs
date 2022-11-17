@@ -19,7 +19,7 @@ internal interface IBindableCollectionViewSource : IServiceProvider
 	/// Gets the dispatcher to which this collection view source belongs.
 	/// </summary>
 	/// <remarks>This can be null if this collection belongs to background threads (uncommon).</remarks>
-	IDispatcherInternal? Dispatcher { get; }
+	IDispatcher? Dispatcher { get; }
 
 	/// <summary>
 	/// Get a specific facet of this collection.

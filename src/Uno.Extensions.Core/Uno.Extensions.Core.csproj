@@ -66,9 +66,6 @@
 		<InternalsVisibleTo Include="Uno.Extensions.Storage" />
 		<InternalsVisibleTo Include="Uno.Extensions.Storage.UI" />
 		<InternalsVisibleTo Include="Uno.Extensions.Storage.WinUI" />
-		<InternalsVisibleTo Include="Uno.Extensions.Reactive.UI" />
-		<InternalsVisibleTo Include="Uno.Extensions.Reactive.WinUI" />
-		<InternalsVisibleTo Include="Uno.Extensions.Reactive.Tests" />
 		<InternalsVisibleTo Include="Uno.Extensions.Configuration" />
 		<InternalsVisibleTo Include="Uno.Extensions.Navigation" />
 		<InternalsVisibleTo Include="Uno.Extensions.Navigation.UI" />

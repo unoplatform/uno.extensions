@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -10,6 +11,8 @@ using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Equality;
 using Uno.Extensions.Reactive.Commands;
+using Uno.Extensions.Reactive.Core;
+using Uno.Extensions.Reactive.Dispatching;
 using Uno.Extensions.Reactive.Testing;
 
 namespace Uno.Extensions.Reactive.Tests.Commands;
@@ -123,6 +126,27 @@ public class Given_AsyncCommand : FeedUITests
 		sut.Dispose();
 
 		await executions[0].Wait();
+	}
+
+	[TestMethod]
+	public async Task When_ProvidingParameter_Then_ParameterNotInvokedOnUIThread()
+	{
+		var isOnUIThread = new TaskCompletionSource<bool>();
+		async IAsyncEnumerable<IMessage> Parameter(SourceContext ctx)
+		{
+			isOnUIThread.TrySetResult(DispatcherHelper.HasThreadAccess);
+			yield break;
+		}
+		var config = new CommandConfig
+		{
+			Parameter = Parameter,
+			Execute = async (p, ct) => { }
+		};
+		var (sut, executions) = Create(config);
+
+		await ExecuteOnDispatcher(() => sut.Execute(null));
+
+		(await isOnUIThread.Task).Should().BeFalse();
 	}
 
 	private async Task WaitFor(Func<bool> predicate)

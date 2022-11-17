@@ -3,11 +3,12 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Uno.Extensions.Generators;
+using Uno.Extensions.Reactive.Config;
 
 namespace Uno.Extensions.Reactive.Generator;
 
 /// <summary>
-/// A generator that generates bindable VM for the feed framework
+/// A generator that generates bindable VM for the reactive framework
 /// </summary>
 [Generator]
 public partial class FeedsGenerator : ISourceGenerator
@@ -29,9 +30,22 @@ public partial class FeedsGenerator : ISourceGenerator
 
 		if (GenerationContext.TryGet<BindableGenerationContext>(context, out var error) is {} bindableContext)
 		{
-			foreach (var generated in new BindableViewModelGenerator(bindableContext).Generate())
+			var tool = bindableContext.Context.Compilation.Assembly.FindAttribute<BindableGenerationToolAttribute>() ?? new BindableGenerationToolAttribute();
+			switch (tool.Version)
 			{
-				context.AddSource(PathHelper.SanitizeFileName(generated.fileName) + ".g.cs", generated.code);
+				case 1:
+					foreach (var generated in new ViewModelGenTool_1(bindableContext).Generate())
+					{
+						context.AddSource(PathHelper.SanitizeFileName(generated.fileName) + ".g.cs", generated.code);
+					}
+					break;
+
+				case 2:
+					foreach (var generated in new ViewModelGenTool_2(bindableContext).Generate())
+					{
+						context.AddSource(PathHelper.SanitizeFileName(generated.fileName) + ".g.cs", generated.code);
+					}
+					break;
 			}
 		}
 		else

@@ -1,4 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
+using Uno.Extensions.Equality;
+
+[assembly: ImplicitKeys(IsEnabled = false)]
 
 [assembly: InternalsVisibleTo("Uno.Extensions.Reactive.Tests")]
 [assembly: InternalsVisibleTo("Uno.Extensions.Reactive.Testing")]

@@ -6,7 +6,6 @@ using Uno.Extensions.Reactive.Bindings;
 using Uno.Extensions.Reactive.Core;
 using Uno.Extensions.Reactive.Logging;
 using Uno.Extensions.Reactive.Sources;
-using Uno.Extensions.Reactive.UI.Utils;
 using Uno.Extensions.Reactive.Utils;
 #if WINUI
 using _Page = Microsoft.UI.Xaml.Controls.Page;

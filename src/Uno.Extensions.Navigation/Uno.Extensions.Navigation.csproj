@@ -25,6 +25,7 @@
 	<ItemGroup>
 		<InternalsVisibleTo Include="$(AssemblyName).Toolkit.UI" />
 		<InternalsVisibleTo Include="$(AssemblyName).Toolkit.WinUI" />
+		<InternalsVisibleTo Include="$(AssemblyName).Tests" />
 		<InternalsVisibleTo Include="Uno.Extensions.Authentication" />
 		<InternalsVisibleTo Include="Uno.Extensions.Authentication.UI" />
 		<InternalsVisibleTo Include="Uno.Extensions.Authentication.WinUI" />
