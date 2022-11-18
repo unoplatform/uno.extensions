@@ -25,7 +25,6 @@
 		<PackageReference Include="Uno.WinUI.Lottie" Version="4.6.19" />
 		<PackageReference Include="SkiaSharp.Views.Uno.WinUI" Version="2.88.3" />
 		<PackageReference Include="SkiaSharp.Skottie" Version="2.88.3" />
-		<PackageReference Include="Uno.UI.RuntimeTests.Engine" Version="0.1.0-dev.32" />
 	</ItemGroup>
 	<Import Project="..\Uno.Extensions.RuntimeTests.Shared\Uno.Extensions.RuntimeTests.Shared.projitems" Label="Shared" />
 	<Import Project="..\Uno.Extensions.RuntimeTests.Shared\common.props" />

@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Uno.UI.RuntimeTests;
 
 namespace Uno.Extensions.RuntimeTests
 {
@@ -41,6 +42,10 @@ namespace Uno.Extensions.RuntimeTests
 #else
 			_window = Microsoft.UI.Xaml.Window.Current;
 #endif
+
+			// Initialize the UnitTestsUIContentHelperProxy for the test assembly
+			UIHelper.ContentSetter = e => UnitTestsUIContentHelper.Content = e;
+			UIHelper.ContentGetter = () => UnitTestsUIContentHelper.Content;
 
 			_window.Content ??= new Uno.UI.RuntimeTests.UnitTestsControl();
 		}

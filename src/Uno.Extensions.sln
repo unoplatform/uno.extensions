@@ -152,7 +152,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Core.Tests",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation.WinUI.Markup", "Uno.Extensions.Navigation.UI.Markup\Uno.Extensions.Navigation.WinUI.Markup.csproj", "{93D4147A-94BC-4599-94EB-51E77E673BF9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Reactive.WinUI.Markup", "Uno.Extensions.Reactive.UI.Markup\Uno.Extensions.Reactive.WinUI.Markup.csproj", "{2890C1C1-D58C-4D39-963E-F27D17F96E9F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.WinUI.Markup", "Uno.Extensions.Reactive.UI.Markup\Uno.Extensions.Reactive.WinUI.Markup.csproj", "{2890C1C1-D58C-4D39-963E-F27D17F96E9F}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Uno.Extensions.RuntimeTests.Shared", "Uno.Extensions.RuntimeTests\Uno.Extensions.RuntimeTests.Shared\Uno.Extensions.RuntimeTests.Shared.shproj", "{6279C845-92F8-4333-AB99-3D213163593C}"
 EndProject
@@ -168,7 +168,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.RuntimeTests
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Tests", "Solution Tests", "{FB399485-A0B1-4416-A494-E19AC7F5A665}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.Reactive.WinUI.Tests", "Uno.Extensions.Reactive.UI.Tests\Uno.Extensions.Reactive.WinUI.Tests.csproj", "{38982DC2-D562-4702-B215-3819EC434DA1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.WinUI.Tests", "Uno.Extensions.Reactive.UI.Tests\Uno.Extensions.Reactive.WinUI.Tests.csproj", "{38982DC2-D562-4702-B215-3819EC434DA1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.Extensions.RuntimeTests.Core", "Uno.Extensions.RuntimeTests.Core\Uno.Extensions.RuntimeTests.Core.csproj", "{6E9AB6B9-AC41-4CB2-8EA6-29DF9036B4EA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -914,6 +916,22 @@ Global
 		{38982DC2-D562-4702-B215-3819EC434DA1}.Release|x64.Build.0 = Release|Any CPU
 		{38982DC2-D562-4702-B215-3819EC434DA1}.Release|x86.ActiveCfg = Release|Any CPU
 		{38982DC2-D562-4702-B215-3819EC434DA1}.Release|x86.Build.0 = Release|Any CPU
+		{6E9AB6B9-AC41-4CB2-8EA6-29DF9036B4EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E9AB6B9-AC41-4CB2-8EA6-29DF9036B4EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E9AB6B9-AC41-4CB2-8EA6-29DF9036B4EA}.Debug|arm64.ActiveCfg = Debug|Any CPU
+		{6E9AB6B9-AC41-4CB2-8EA6-29DF9036B4EA}.Debug|arm64.Build.0 = Debug|Any CPU
+		{6E9AB6B9-AC41-4CB2-8EA6-29DF9036B4EA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6E9AB6B9-AC41-4CB2-8EA6-29DF9036B4EA}.Debug|x64.Build.0 = Debug|Any CPU
+		{6E9AB6B9-AC41-4CB2-8EA6-29DF9036B4EA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6E9AB6B9-AC41-4CB2-8EA6-29DF9036B4EA}.Debug|x86.Build.0 = Debug|Any CPU
+		{6E9AB6B9-AC41-4CB2-8EA6-29DF9036B4EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E9AB6B9-AC41-4CB2-8EA6-29DF9036B4EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E9AB6B9-AC41-4CB2-8EA6-29DF9036B4EA}.Release|arm64.ActiveCfg = Release|Any CPU
+		{6E9AB6B9-AC41-4CB2-8EA6-29DF9036B4EA}.Release|arm64.Build.0 = Release|Any CPU
+		{6E9AB6B9-AC41-4CB2-8EA6-29DF9036B4EA}.Release|x64.ActiveCfg = Release|Any CPU
+		{6E9AB6B9-AC41-4CB2-8EA6-29DF9036B4EA}.Release|x64.Build.0 = Release|Any CPU
+		{6E9AB6B9-AC41-4CB2-8EA6-29DF9036B4EA}.Release|x86.ActiveCfg = Release|Any CPU
+		{6E9AB6B9-AC41-4CB2-8EA6-29DF9036B4EA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -977,6 +995,7 @@ Global
 		{AAE553FF-60E9-4C29-A59F-A833F053EDD0} = {FB399485-A0B1-4416-A494-E19AC7F5A665}
 		{1F67939C-BC51-4076-9FD3-A9385DEFDEE6} = {FB399485-A0B1-4416-A494-E19AC7F5A665}
 		{38982DC2-D562-4702-B215-3819EC434DA1} = {6B956AB1-06A6-4BEC-9467-E7B593A89E34}
+		{6E9AB6B9-AC41-4CB2-8EA6-29DF9036B4EA} = {FB399485-A0B1-4416-A494-E19AC7F5A665}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6E7B035D-9A64-4D95-89AA-9D4653F17C42}

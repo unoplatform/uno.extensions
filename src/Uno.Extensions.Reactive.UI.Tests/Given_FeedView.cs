@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Reactive.UI;
+using Uno.UI.RuntimeTests;
 
 namespace Uno.Extensions.Reactive.WinUI.Tests;
 
@@ -16,6 +17,6 @@ public class Given_FeedView
 		var sut = new FeedView();
 
 
-
+		UIHelper.Content = sut;
 	}
 }
