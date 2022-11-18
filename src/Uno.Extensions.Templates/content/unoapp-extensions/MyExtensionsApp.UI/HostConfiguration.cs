@@ -46,8 +46,7 @@ public static class HostConfiguration
 				context.HostingEnvironment.IsDevelopment() ?
 					LogLevel.Information :
 					LogLevel.Warning);
-		})
-		.ConfigureServices(services => services.AddSingleton<IServiceInitialize, LoggingInitializer>()));
+		}, enableUnoLogging: true));
 	}
 
 	public static IApplicationBuilder UseConfiguration(this IApplicationBuilder builder)
@@ -135,13 +134,5 @@ public static class HostConfiguration
 				navigationRoot: navRoot
 			);
 		}
-	}
-
-	private class LoggingInitializer : IServiceInitialize
-	{
-		private readonly IHost _host;
-		public LoggingInitializer(IHost host) => _host = host;
-		public void Initialize() =>
-			_host.ConnectUnoLogging(true);
 	}
 }

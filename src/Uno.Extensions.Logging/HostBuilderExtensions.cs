@@ -6,13 +6,14 @@ public static class HostBuilderExtensions
 {
 	public static IHostBuilder UseLogging(
 		this IHostBuilder hostBuilder,
-		Action<ILoggingBuilder> configure)
+		Action<ILoggingBuilder> configure, bool enableUnoLogging = false)
 	{
-		return hostBuilder.UseLogging((context, builder) => configure.Invoke(builder));
+		return hostBuilder.UseLogging((context, builder) => configure.Invoke(builder), enableUnoLogging);
 	}
+
 	public static IHostBuilder UseLogging(
 		this IHostBuilder hostBuilder,
-		Action<HostBuilderContext, ILoggingBuilder>? configure = default)
+		Action<HostBuilderContext, ILoggingBuilder>? configure = default, bool enableUnoLogging = false)
 	{
 		return hostBuilder
 				.ConfigureLogging((context, builder) =>
@@ -30,6 +31,11 @@ public static class HostBuilderExtensions
                         builder.AddProvider(new global::Uno.Extensions.Logging.WebAssembly.WebAssemblyConsoleLoggerProvider());
 #endif
 					configure?.Invoke(context, builder);
+				})
+				.ConfigureServices(services =>
+				{
+					if (enableUnoLogging)
+						services.AddSingleton<IServiceInitialize, LoggingInitializer>();
 				});
 	}
 
@@ -40,5 +46,13 @@ public static class HostBuilderExtensions
 		return hostBuilder
 			.Build()
 			.ConnectUnoLogging(enableUnoLogging);
+	}
+
+	private class LoggingInitializer : IServiceInitialize
+	{
+		private readonly IHost _host;
+		public LoggingInitializer(IHost host) => _host = host;
+		public void Initialize() =>
+			_host.ConnectUnoLogging(true);
 	}
 }

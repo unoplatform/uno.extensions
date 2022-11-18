@@ -1,4 +1,4 @@
-﻿<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
+<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
 	<Import Project="..\tfms-ui-winui.props" />
 
 	<ItemGroup>
@@ -28,6 +28,7 @@
 	<Import Project="common.props"/>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
 		<ProjectReference Include="Uno.Extensions.Logging.WinUI.Wasm.csproj"
 			ReferenceOutputAssembly="false"
 			LinkLibraryDependencies="false"
