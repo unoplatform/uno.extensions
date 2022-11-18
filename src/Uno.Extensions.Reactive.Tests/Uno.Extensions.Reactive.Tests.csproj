@@ -15,7 +15,6 @@
 		<PackageReference Include="MSTest.TestFramework" />
 		<PackageReference Include="coverlet.collector" />
 		<PackageReference Include="System.Collections.Immutable" VersionOverride="6.0.0" /><!--For local usage we use the most recent version-->
-		<PackageReference Include="Uno.UI" />
 	</ItemGroup>
 
 	<Import Project="..\Uno.Extensions.Reactive.Generator\buildTransitive\Uno.Extensions.Reactive.props" />
@@ -24,7 +23,6 @@
 		<ProjectReference Include="..\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.Reactive.Messaging\Uno.Extensions.Reactive.Messaging.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.Reactive.Testing\Uno.Extensions.Reactive.Testing.csproj" />
-		<ProjectReference Include="..\Uno.Extensions.Reactive.UI\Uno.Extensions.Reactive.UI.csproj" />
 	</ItemGroup>
 
 </Project>

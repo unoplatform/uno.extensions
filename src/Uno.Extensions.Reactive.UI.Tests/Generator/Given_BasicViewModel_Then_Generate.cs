@@ -2,33 +2,19 @@
 using System.Collections.Immutable;
 using System.Linq;
 using System.Windows.Input;
+using Windows.ApplicationModel.AppService;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.UI.Xaml.Data;
 
-namespace Uno.Extensions.Reactive.Tests.Generator;
+namespace Uno.Extensions.Reactive.UI.Tests.Generator;
 
 [TestClass]
-public partial class Given_BasicViewModel_Then_Generate : FeedUITests
+public partial class Given_BasicViewModel_Then_Generate
 {
-	// Those are mostly compilation tests!
-
 	[TestMethod]
-	public async Task Test_Constructors()
-	{
-		await using var bindableCtor1 = new BindableGiven_BasicViewModel_Then_Generate__ViewModel();
-
-		await using var bindableCtor2 = new BindableGiven_BasicViewModel_Then_Generate__ViewModel(aRandomService: "aRandomService");
-
-		await using var bindableCtor3 = new BindableGiven_BasicViewModel_Then_Generate__ViewModel(
-			anExternalInput: default(IFeed<string>)!,
-			anExternalReadWriteInput: default(IState<string>)!,
-			anExternalRecordInput: default(IFeed<MyRecord>)!,
-			anExternalWeirdRecordInput: default(IFeed<MyWeirdRecord>)!);
-	}
-
-	[TestMethod]
-	public async Task When_FeedOfKindOfImmutableList_Then_TreatAsListFeed()
+	public async Task When_FeedOfKindOfImmutableList_Then_TreatAsListFeed_And_ICollectionView()
 	{
 		await using var bindable = new BindableWhen_FeedOfKindOfImmutableList_Then_TreatAsListFeed_ViewModel();
 
@@ -47,10 +33,7 @@ public partial class Given_BasicViewModel_Then_Generate : FeedUITests
 		{
 			Assert.IsNotNull(bindable);
 			Assert.IsNotNull(bindable as IListState<string>);
-
-			// This is not the case on UI agnostic targets.
-			// See When_FeedOfKindOfImmutableList_Then_TreatAsListFeed_And_ICollectionView in runtime tests project
-			//Assert.IsNotNull(bindable as ICollectionView);
+			Assert.IsNotNull(bindable as ICollectionView);
 		}
 	}
 
@@ -78,7 +61,7 @@ public partial class Given_BasicViewModel_Then_Generate : FeedUITests
 	}
 
 	[TestMethod]
-	public async Task When_FeedOfKindOfRawEnumerable_Then_DoNotTreatAsListFeed()
+	public async Task When_FeedOfKindOfRawEnumerable_Then_DoNotTreatAsListFeed_And_ICollectionView()
 	{
 		await using var bindable = new BindableWhen_FeedOfKindOfRawEnumerable_Then_DoNotTreatAsListFeed_ViewModel();
 
@@ -87,11 +70,7 @@ public partial class Given_BasicViewModel_Then_Generate : FeedUITests
 		static void AssertIsValid(object bindable)
 		{
 			Assert.IsNull(bindable as IListState<string>);
-
-
-			// This is not the case on UI agnostic targets.
-			// See When_FeedOfKindOfRawEnumerable_Then_DoNotTreatAsListFeed_And_ICollectionView in runtime tests project
-			//Assert.IsNull(bindable as ICollectionView);
+			Assert.IsNull(bindable as ICollectionView);
 		}
 	}
 

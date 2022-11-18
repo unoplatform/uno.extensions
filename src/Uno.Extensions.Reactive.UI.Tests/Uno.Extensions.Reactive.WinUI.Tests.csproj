@@ -26,4 +26,6 @@
 		<ProjectReference Include="..\Uno.Extensions.Reactive.UI\Uno.Extensions.Reactive.WinUI.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.RuntimeTests.Core\Uno.Extensions.RuntimeTests.Core.csproj" />
 	</ItemGroup>
+
+	<Import Project="..\Uno.Extensions.Reactive.Generator\buildTransitive\Uno.Extensions.Reactive.props" />
 </Project>
