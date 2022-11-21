@@ -24,13 +24,13 @@ public sealed partial class App : Application
 	protected async override void OnLaunched(LaunchActivatedEventArgs args)
 	{
 		var builder = this.CreateBuilder(args)
-			.UseEnvironment()
-			.UseLogging()
-			.UseConfiguration()
-			.UseLocalization()
-			.UseSerialization()
-			.ConfigureServices()
-			.UseNavigation();
+			.Environment()
+			.Logging()
+			.Configuration()
+			.Localization()
+			.Serialization()
+			.Services()
+			.Navigation();
 		_window = builder.Window;
 
 		_host = await builder.ShowAsync<Shell>();
