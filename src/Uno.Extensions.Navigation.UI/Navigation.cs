@@ -51,11 +51,21 @@ public static class Navigation
         element.SetValue(DataProperty, value);
     }
 
-    public static object GetData(this FrameworkElement element)
+    public static object? GetData(this FrameworkElement element)
     {
         return (object)element.GetValue(DataProperty);
     }
 
+	internal static object? GetDataFromOriginalSource(this FrameworkElement element, object? originalSource)
+	{
+		if(originalSource is FrameworkElement fe &&
+			element != fe)
+		{
+			return fe.GetData() ?? element.GetDataFromOriginalSource(VisualTreeHelper.GetParent(fe));
+		}
+
+		return default;
+	}
 
 	public static void SetRequestBinding(this FrameworkElement element, IRequestBinding value)
 	{

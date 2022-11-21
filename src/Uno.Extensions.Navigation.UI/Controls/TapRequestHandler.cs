@@ -14,7 +14,7 @@ public class TapRequestHandler : ActionRequestHandlerBase<FrameworkElement>
 		}
 
 		return BindAction(view,
-			action => new TappedEventHandler((sender, args) => action((FrameworkElement)sender)),
+			action => new TappedEventHandler((sender, args) => action((FrameworkElement)sender, args)),
 			(element, handler) => element.Tapped += handler,
 			(element, handler) => element.Tapped -= handler);
 	}

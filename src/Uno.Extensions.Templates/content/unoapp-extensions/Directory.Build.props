@@ -9,8 +9,6 @@
 		<SynthesizeLinkMetadata>true</SynthesizeLinkMetadata>
 
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-		<!-- Workaround for CPM with multi-target projects https://github.com/dotnet/sdk/issues/27840 -->
-		<DisableImplicitLibraryPacksFolder>true</DisableImplicitLibraryPacksFolder>
 
 		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
 	  	<NoWarn>$(NoWarn);Uno0001;CS1998;CA1416;NU1507</NoWarn>

@@ -3,6 +3,7 @@
 public sealed partial class XamlPage : Page
 {
 	public XamlViewModel? ViewModel { get; private set; }
+	public List<int> Items => Enumerable.Range(0, 50).ToList();
 
 	public XamlPage()
 	{
