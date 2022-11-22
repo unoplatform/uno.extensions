@@ -5,7 +5,7 @@ namespace Uno.Extensions.Hosting;
 /// <summary>
 /// Extensions for the <see cref="IApplicationBuilder" />
 /// </summary>
-public static class IApplicationExtensions
+public static class ApplicationExtensions
 {
 	/// <summary>
 	/// Creates an instance of the <see cref="IApplicationBuilder" /> for the given <see cref="Application" />
