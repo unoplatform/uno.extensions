@@ -1,0 +1,24 @@
+{
+  "author": "Microsoft",
+  "classifications": [ "Test" ],
+  "name": "ServiceSecondTemplate",
+  "description": "Generic description...",
+  "groupIdentity": "Microsoft.Templates.Test.ServiceSecondTemplate",
+  "identity": "Microsoft.Templates.Test.ServiceSecondTemplate.CSharp",
+  "shortName": "ServiceSecondTemplate",
+  "tags": {
+    "language": "C#",
+    "type": "item",
+    "ts.platform": "test",
+    "ts.projecttype": "all",
+    "ts.frontendframework": "all",
+    "ts.type": "service",
+    "ts.displayOrder": "1",
+    "ts.genGroup": "0",
+    "ts.isHidden": "true",
+    "ts.defaultInstance": "ServiceSecondTemplateInstance",
+    "ts.multipleInstance": "false"
+  },
+  "sourceName": "App_Name",
+  "preferNameDirectory": true
+}

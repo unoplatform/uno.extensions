@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+<!--^^-->
+<!--{[{-->
+  <data name="Param_ItemName_NoSelection.Text" xml:space="preserve">
+    <value>Select an item from the list.</value>
+  </data>
+<!--}]}-->
+</root>

@@ -1,0 +1,23 @@
+{
+  "author": "Microsoft",
+  "classifications": [ "Test" ],
+  "name": "ProjectTemplate",
+  "groupIdentity": "Microsoft.Templates.Test.ProjectTemplate",
+  "identity": "Microsoft.Templates.Test.ProjectTemplate.VisualBasic",
+  "shortName": "project-test",
+  "tags": {
+    "language": "VisualBasic",
+    "type": "project",
+    "ts.type": "project",
+    "ts.projecttype": "pt1|pt2|TestProjectType",
+    "ts.frontendframework": "fx1|TestFramework",
+    "ts.platform": "test",
+    "ts.version": "1.0.0",
+    "ts.licenses": "[text1](url1)|[text2](url2)",
+    "ts.group": "group1",
+    "ts.defaultInstance": "DefaultName",
+    "ts.requiredVersions": "sdk1|sdk2"
+  },
+  "sourceName": "App_Name",
+  "preferNameDirectory": true
+}

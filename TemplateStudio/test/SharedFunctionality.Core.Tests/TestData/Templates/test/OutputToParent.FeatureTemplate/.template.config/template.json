@@ -1,0 +1,17 @@
+{
+  "author": "Microsoft",
+  "classifications": [ "Test" ],
+  "name": "OutputToParentTemplate",
+  "groupIdentity": "Microsoft.Templates.Test.OutputToParentTemplate",
+  "identity": "Microsoft.Templates.Test.OutputToParentTemplate.CSharp",
+  "shortName": "OutputToParentTemplate",
+  "tags": {
+    "language": "C#",
+    "type": "item",
+    "ts.platform": "test",
+    "ts.type": "feature",
+    "ts.outputToParent": "true"
+  },
+  "sourceName": "App_Name",
+  "preferNameDirectory": true
+}

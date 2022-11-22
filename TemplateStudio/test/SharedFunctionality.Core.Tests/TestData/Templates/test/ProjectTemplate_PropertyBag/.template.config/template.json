@@ -1,0 +1,26 @@
+{
+  "author": "Microsoft",
+  "classifications": [ "Test" ],
+  "name": "ProjectTemplatePropertyBag",
+  "groupIdentity": "Microsoft.Templates.Test.ProjectTemplatePropertyBag",
+  "identity": "Microsoft.Templates.Test.ProjectTemplatePropertyBag.CSharp",
+  "shortName": "ProjectTemplate",
+  "tags": {
+    "language": "C#",
+    "type": "project",
+    "ts.type": "project",
+    "ts.projecttype": "pt1",
+    "ts.frontendframework": "fx4",
+    "ts.pb1": "value1",
+    "ts.pb2": "all",
+    "ts.platform": "test",
+    "ts.version": "1.0.0",
+    "ts.licenses": "[text1](url1)|[text2](url2)",
+    "ts.group": "group1",
+    "ts.defaultInstance": "DefaultName",
+    "ts.requiredVersions": "sdk1|sdk2"
+
+  },
+  "sourceName": "App_Name",
+  "preferNameDirectory": true
+}

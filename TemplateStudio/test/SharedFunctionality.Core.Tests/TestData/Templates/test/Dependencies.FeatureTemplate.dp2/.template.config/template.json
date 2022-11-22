@@ -1,0 +1,19 @@
+{
+  "author": "Microsoft",
+  "classifications": [ "Test" ],
+  "name": "dp2",
+  "groupIdentity": "dp2",
+  "identity": "dp2",
+  "shortName": "dp2",
+  "tags": {
+    "language": "C#",
+    "type": "item",
+    "ts.platform": "test",
+    "ts.type": "feature",
+    "ts.multipleInstance": "false",
+    "ts.projecttype": "all",
+    "ts.frontendframework": "all"
+  },
+  "sourceName": "App_Name",
+  "preferNameDirectory": true
+}

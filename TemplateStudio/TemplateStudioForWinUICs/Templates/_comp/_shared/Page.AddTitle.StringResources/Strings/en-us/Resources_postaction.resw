@@ -1,0 +1,13 @@
+﻿<!--{**-->
+<!--This xml blocks include string resources for the BlankViewPage to your project.-->
+<!--**}-->
+
+<root>
+  <!--^^-->
+  <!--{[{-->
+  <data name="Param_ItemName_Title.Text" xml:space="preserve">
+    <value>Param_ItemName</value>
+    <comment>Page title for Param_ItemNamePage</comment>
+  </data>
+  <!--}]}-->
+</root>

@@ -1,0 +1,24 @@
+{
+  "author": "Microsoft",
+  "classifications": [ "Test" ],
+  "name": "ServiceTemplate",
+  "description": "Generic description...",
+  "groupIdentity": "Microsoft.Templates.Test.ServiceTemplate",
+  "identity": "Microsoft.Templates.Test.ServiceTemplate.CSharp",
+  "shortName": "ServiceTemplate",
+  "tags": {
+    "language": "C#",
+    "type": "item",
+    "ts.platform": "test",
+    "ts.projecttype": "all",
+    "ts.frontendframework": "fx1",
+    "ts.backendframework": "fx3",
+    "ts.type": "service",
+    "ts.displayOrder": "1",
+    "ts.genGroup": "1",
+    "ts.export.baseclass": "ViewModelBase",
+    "ts.export.setter": "Set"
+  },
+  "sourceName": "App_Name",
+  "preferNameDirectory": true
+}

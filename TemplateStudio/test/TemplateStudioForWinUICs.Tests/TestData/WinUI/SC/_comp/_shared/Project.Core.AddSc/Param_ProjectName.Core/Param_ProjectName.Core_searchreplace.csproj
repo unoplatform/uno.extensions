@@ -1,0 +1,5 @@
+﻿    <TargetFramework>net6.0</TargetFramework>
+^^^-searchabove-replacebelow-vvv
+    <TargetFramework>net6.0</TargetFramework>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />

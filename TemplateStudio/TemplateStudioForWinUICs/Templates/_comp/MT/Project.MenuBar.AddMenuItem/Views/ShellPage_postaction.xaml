@@ -1,0 +1,8 @@
+﻿                <MenuBarItem x:Uid="ShellMenuBarItem_Views">
+                    <MenuBarItem.Items>
+<!--^^-->
+<!--{[{-->
+                        <MenuFlyoutItem x:Uid="ShellMenuItem_Views_Param_ItemName" Command="{x:Bind ViewModel.MenuViewsParam_ItemNameCommand}" />
+<!--}]}-->
+                    </MenuBarItem.Items>
+                </MenuBarItem>

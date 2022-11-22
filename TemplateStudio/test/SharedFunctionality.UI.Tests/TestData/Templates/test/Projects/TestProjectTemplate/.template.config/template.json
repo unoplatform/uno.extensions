@@ -1,0 +1,20 @@
+{
+  "author": "Microsoft",
+  "name": "Microsoft.Templates.Test.TestProjectTemplate",
+  "groupIdentity": "Microsoft.Templates.Test.TestProjectTemplate",
+  "identity": "Microsoft.Templates.Test.TestProjectTemplate",
+  "shortName": "Microsoft.Templates.Test.TestProjectTemplate",
+  "tags": {
+    "language": "C#",
+    "type": "project",
+    "ts.type": "project",
+    "ts.projecttype": "TestProjectType",
+    "ts.frontendframework": "TestFramework",
+    "ts.platform": "test",
+    "ts.version": "1.0.0",
+    "ts.licenses": "[text1](url1)|[text2](url2)",
+    "ts.group": "group1"
+  },
+  "sourceName": "wts.ProjectName",
+  "preferNameDirectory": true
+}
