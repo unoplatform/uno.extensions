@@ -8,7 +8,7 @@ internal record ApplicationBuilder(Application App, LaunchActivatedEventArgs Arg
 #if NET6_0_OR_GREATER && WINDOWS && !HAS_UNO
 		new Window();
 #else
-		Microsoft.UI.Xaml.Window.Current;
+		Window.Current;
 #endif
 
 	public IHost Build()

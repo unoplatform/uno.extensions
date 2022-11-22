@@ -1,12 +1,3 @@
-#if WINUI
-	global using Window = Microsoft.UI.Xaml.Window;
-	global using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
-#else
-	global using Window = Windows.UI.Xaml.Window;
-	global using LaunchActivatedEventArgs = Windows.ApplicationModel.Activation.LaunchActivatedEventArgs;
-#endif
-using System.Diagnostics;
-
 namespace TestHarness;
 
 public sealed partial class App : Application
@@ -21,14 +12,6 @@ public sealed partial class App : Application
 
 	protected override void OnLaunched(LaunchActivatedEventArgs args)
 	{
-//#if DEBUG && !__WASM__
-//		// This seems 
-//		if (!Debugger.IsAttached)
-//		{
-//			Debugger.Launch();
-//		}
-//#endif
-
 #if WINDOWS
 		// This is only required because we don't run UnoHost.CreateDefaultHost until a
 		// test scenario is selected. This line is included to ensure web auth test cases
