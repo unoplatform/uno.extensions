@@ -1,5 +1,6 @@
 ﻿global using System;
 global using System.Collections.Generic;
+global using System.Diagnostics;
 global using System.Linq;
 global using System.Net.Http;
 global using System.Reflection;
@@ -28,7 +29,6 @@ global using Uno.Extensions.Navigation.UI;
 global using Uno.Extensions.Reactive;
 global using Uno.Extensions.Serialization;
 
-
 #if WINUI
 	global using Microsoft.UI.Dispatching;
 	global using Microsoft.UI.Xaml;
@@ -39,6 +39,9 @@ global using Uno.Extensions.Serialization;
 	global using Microsoft.UI.Xaml.Markup;
 	global using Microsoft.UI.Xaml.Data;
 	global using Microsoft.UI.Xaml.Media;
+	global using Window = Microsoft.UI.Xaml.Window;
+	global using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
+	global using Application = Microsoft.UI.Xaml.Application;
 #else
 	global using Windows.System;
 	global using Windows.UI.Xaml;
@@ -51,4 +54,7 @@ global using Uno.Extensions.Serialization;
 	global using Windows.UI.Xaml.Media;
 	global using NavigationView = Microsoft.UI.Xaml.Controls.NavigationView;
 	global using NavigationViewSelectionChangedEventArgs = Microsoft.UI.Xaml.Controls.NavigationViewSelectionChangedEventArgs;
+	global using Window = Windows.UI.Xaml.Window;
+	global using LaunchActivatedEventArgs = Windows.ApplicationModel.Activation.LaunchActivatedEventArgs;
+	global using Application = Windows.UI.Xaml.Application;
 #endif

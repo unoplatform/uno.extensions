@@ -5,6 +5,7 @@ namespace MyExtensionsApp;
 public sealed partial class App : Application
 {
 	private Window? _window;
+	private IHost? _host;
 
 	public App()
 	{
@@ -22,26 +23,17 @@ public sealed partial class App : Application
 	/// <param name="args">Details about the launch request and process.</param>
 	protected async override void OnLaunched(LaunchActivatedEventArgs args)
 	{
+		var builder = this.CreateBuilder(args)
+			.Environment()
+			.Logging()
+			.Configuration()
+			.Localization()
+			.Serialization()
+			.Services()
+			.Navigation();
+		_window = builder.Window;
 
-#if NET6_0_OR_GREATER && WINDOWS && !HAS_UNO
-		_window = new Window();
-#else
-		_window = Microsoft.UI.Xaml.Window.Current;
-#endif
-
-		var appRoot = new Shell();
-		appRoot.SplashScreen.Initialize(_window, args);
-
-		_window.Content = appRoot;
-		_window.Activate();
-
-		Host = await _window.InitializeNavigationAsync(
-					async () =>
-					{
-						return BuildAppHost();
-					},
-					navigationRoot: appRoot.SplashScreen
-				);
+		_host = await builder.ShowAsync<Shell>();
 	}
 
 	/// <summary>

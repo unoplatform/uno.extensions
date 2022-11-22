@@ -4,7 +4,7 @@
 	<PropertyGroup>
 		<IsPackable>false</IsPackable>
 		<RootNamespace>Uno.Extensions.Logging.UWP</RootNamespace>
-		<AssemblyName>Uno.Extensions.Logging.UWP</AssemblyName>		
+		<AssemblyName>Uno.Extensions.Logging.UWP</AssemblyName>
 	</PropertyGroup>
 
 	<ItemGroup>
