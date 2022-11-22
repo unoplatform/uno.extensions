@@ -1,0 +1,20 @@
+{
+  "author": "Microsoft",
+  "classifications": [ "Test" ],
+  "name": "PageTemplate",
+  "groupIdentity": "Microsoft.Templates.Test.PageTemplate",
+  "identity": "Microsoft.Templates.Test.PageTemplate.VisualBasic",
+  "shortName": "page-test",
+  "tags": {
+    "language": "VisualBasic",
+    "type": "item",
+    "ts.platform": "test",
+    "ts.type": "page",
+    "ts.genGroup": "1",
+    "ts.export.baseclass": "ViewModelBase",
+    "ts.export.setter": "Set",
+    "ts.casing.sourceName": "kebab|camel|pascal|snake"
+  },
+  "sourceName": "App_Name",
+  "preferNameDirectory": true
+}

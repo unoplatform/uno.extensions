@@ -1,0 +1,22 @@
+{
+  "author": "Microsoft",
+  "classifications": [ "Test" ],
+  "name": "TestingTemplate",
+  "description": "Generic Testing description...",
+  "groupIdentity": "Microsoft.Templates.Test.TestingTemplate",
+  "identity": "Microsoft.Templates.Test.TestingTemplate.CSharp",
+  "shortName": "TestingTemplate",
+  "tags": {
+    "language": "C#",
+    "type": "item",
+    "ts.platform": "test",
+    "ts.projecttype": "all",
+    "ts.frontendframework": "fx1",
+    "ts.backendframework": "fx3",
+    "ts.type": "testing",
+    "ts.multipleInstance": "false",
+    "ts.isGroupExclusiveSelection": "true"
+  },
+  "sourceName": "App_Name",
+  "preferNameDirectory": true
+}

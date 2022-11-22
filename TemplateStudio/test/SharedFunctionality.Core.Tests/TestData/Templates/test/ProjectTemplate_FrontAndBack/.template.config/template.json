@@ -1,0 +1,23 @@
+{
+  "author": "Microsoft",
+  "classifications": [ "Test" ],
+  "name": "ProjectTemplate2",
+  "groupIdentity": "Microsoft.Templates.Test.ProjectTemplate2",
+  "identity": "Microsoft.Templates.Test.ProjectTemplate2.CSharp",
+  "shortName": "ProjectTemplate2",
+  "tags": {
+    "language": "C#",
+    "type": "project",
+    "ts.type": "project",
+    "ts.projecttype": "pt3",
+    "ts.frontendframework": "fx3",
+    "ts.backendframework": "fx4|TestFramework",
+    "ts.platform": "test",
+    "ts.version": "1.0.0",
+    "ts.licenses": "[text1](url1)|[text2](url2)",
+    "ts.group": "group1",
+    "ts.defaultInstance": "DefaultName"
+  },
+  "sourceName": "App_Name",
+  "preferNameDirectory": true
+}

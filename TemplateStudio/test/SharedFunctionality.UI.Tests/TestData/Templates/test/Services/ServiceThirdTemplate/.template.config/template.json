@@ -1,0 +1,24 @@
+{
+  "author": "Microsoft",
+  "classifications": [ "Test" ],
+  "name": "ServiceThirdTemplate",
+  "description": "Generic description...",
+  "groupIdentity": "Microsoft.Templates.Test.ServiceThirdTemplate",
+  "identity": "Microsoft.Templates.Test.ServiceThirdTemplate.CSharp",
+  "shortName": "ServiceThirdTemplate",
+  "tags": {
+    "language": "C#",
+    "type": "item",
+    "ts.platform": "test",
+    "ts.projecttype": "all",
+    "ts.frontendframework": "all",
+    "ts.type": "service",
+    "ts.displayOrder": "1",
+    "ts.genGroup": "0",
+    "ts.isHidden": "false",
+    "ts.defaultInstance": "ServiceThirdTemplateInstance",
+    "ts.multipleInstance": "false"
+  },
+  "sourceName": "App_Name",
+  "preferNameDirectory": true
+}

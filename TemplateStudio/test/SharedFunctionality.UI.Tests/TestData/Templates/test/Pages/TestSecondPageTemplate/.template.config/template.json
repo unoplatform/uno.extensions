@@ -1,0 +1,21 @@
+{
+  "author": "Microsoft",
+  "classifications": [ "Test" ],
+  "name": "TestSecondPageTemplate",
+  "description": "Generic description...",
+  "groupIdentity": "Microsoft.Templates.Test.TestSecondPageTemplate",
+  "identity": "Microsoft.Templates.Test.TestSecondPageTemplate.CSharp",
+  "shortName": "page-test",
+  "tags": {
+    "language": "C#",
+    "type": "item",
+    "ts.platform": "test",
+    "ts.projecttype": "all",
+    "ts.frontendframework": "all",
+    "ts.type": "page",
+    "ts.displayOrder": "2",
+    "ts.genGroup": "1"
+  },
+  "sourceName": "App_Name",
+  "preferNameDirectory": true
+}

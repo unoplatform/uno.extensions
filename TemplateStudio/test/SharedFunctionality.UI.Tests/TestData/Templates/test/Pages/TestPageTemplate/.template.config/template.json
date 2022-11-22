@@ -1,0 +1,21 @@
+{
+  "author": "Microsoft",
+  "classifications": [ "Test" ],
+  "name": "TestPageTemplate",
+  "description": "Generic description...",
+  "groupIdentity": "Microsoft.Templates.Test.TestPageTemplate",
+  "identity": "Microsoft.Templates.Test.TestPageTemplate.CSharp",
+  "shortName": "TestPageTemplate",
+  "tags": {
+    "language": "C#",
+    "type": "item",
+    "ts.platform": "test",
+    "ts.projecttype": "TestProjectType",
+    "ts.frontendframework": "TestFramework",
+    "ts.type": "page",
+    "ts.displayOrder": "1",
+    "ts.genGroup": "1"
+  },
+  "sourceName": "App_Name",
+  "preferNameDirectory": true
+}

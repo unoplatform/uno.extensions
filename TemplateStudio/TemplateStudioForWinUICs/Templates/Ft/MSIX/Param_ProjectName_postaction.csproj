@@ -1,0 +1,7 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <EnableMsixTooling>true</EnableMsixTooling>
+<!--{--{-->
+    <WindowsPackageType>None</WindowsPackageType>
+<!--}--}-->
+  </PropertyGroup>

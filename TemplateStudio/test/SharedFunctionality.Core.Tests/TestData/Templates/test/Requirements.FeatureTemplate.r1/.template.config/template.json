@@ -1,0 +1,19 @@
+{
+  "author": "Microsoft",
+  "classifications": [ "Test" ],
+  "name": "r1",
+  "groupIdentity": "r1",
+  "identity": "r1",
+  "shortName": "r1",
+  "tags": {
+    "language": "C#",
+    "type": "item",
+    "ts.platform": "test",
+    "ts.type": "feature",
+    "ts.multipleInstance": "false",
+    "ts.projecttype": "all",
+    "ts.frontendframework": "all"
+  },
+  "sourceName": "App_Name",
+  "preferNameDirectory": true
+}

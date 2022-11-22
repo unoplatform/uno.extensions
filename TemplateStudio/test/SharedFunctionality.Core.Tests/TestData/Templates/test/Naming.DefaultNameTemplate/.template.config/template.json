@@ -1,0 +1,18 @@
+{
+  "author": "Microsoft",
+  "classifications": [ "Test" ],
+  "name": "LiveTile",
+  "groupIdentity": "Microsoft.Templates.Test.Naming.DefaultName",
+  "identity": "Microsoft.Templates.Test.Naming.DefaultName.CSharp",
+  "shortName": "HiddenTemplate",
+  "tags": {
+    "language": "C#",
+    "type": "item",
+    "ts.platform": "test",
+    "ts.type": "feature",
+    "ts.multipleInstance": "false",
+    "ts.defaultInstance": "LiveTile"
+  },
+  "sourceName": "App_Name",
+  "preferNameDirectory": true
+}

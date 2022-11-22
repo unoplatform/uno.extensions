@@ -1,0 +1,22 @@
+{
+  "author": "Microsoft",
+  "classifications": [ "Test" ],
+  "name": "TestPageWithDependenciesTemplate",
+  "description": "Generic description...",
+  "groupIdentity": "Microsoft.Templates.Test.TestPageWithDependenciesTemplate",
+  "identity": "Microsoft.Templates.Test.TestPageWithDependenciesTemplate.CSharp",
+  "shortName": "TestPageWithDependenciesTemplate",
+  "tags": {
+    "language": "C#",
+    "type": "item",
+    "ts.platform": "test",
+    "ts.projecttype": "TestProjectType",
+    "ts.frontendframework": "TestFramework",
+    "ts.type": "page",
+    "ts.displayOrder": "3",
+    "ts.genGroup": "1",
+    "ts.dependencies": "Microsoft.Templates.Test.TestFeatureTemplate.CSharp"
+  },
+  "sourceName": "App_Name",
+  "preferNameDirectory": true
+}

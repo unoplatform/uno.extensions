@@ -1,0 +1,19 @@
+{
+  "author": "Microsoft",
+  "classifications": [ "Test" ],
+  "name": "ServiceTemplate",
+  "groupIdentity": "Microsoft.Templates.Test.ServiceTemplate",
+  "identity": "Microsoft.Templates.Test.ServiceTemplate.VisualBasic",
+  "shortName": "service-test",
+  "tags": {
+    "language": "VisualBasic",
+    "type": "item",
+    "ts.platform": "test",
+    "ts.type": "service",
+    "ts.genGroup": "1",
+    "ts.export.baseclass": "ViewModelBase",
+    "ts.export.setter": "Set"
+  },
+  "sourceName": "App_Name",
+  "preferNameDirectory": true
+}

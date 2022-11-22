@@ -1,0 +1,22 @@
+{
+  "author": "Microsoft",
+  "classifications": [ "Test" ],
+  "name": "Microsoft.Templates.Test.TestSecondProjectTemplate",
+  "groupIdentity": "Microsoft.Templates.Test.TestSecondProjectTemplate",
+  "identity": "Microsoft.Templates.Test.TestSecondProjectTemplate",
+  "shortName": "Microsoft.Templates.Test.TestSecondProjectTemplate",
+  "tags": {
+    "language": "C#",
+    "type": "project",
+    "ts.type": "project",
+    "ts.projecttype": "TestSecondProjectType",
+    "ts.frontendframework": "TestFramework",
+    "ts.platform": "test",
+    "ts.version": "1.0.0",
+    "ts.licenses": "[text1](url1)|[text2](url2)",
+    "ts.group": "group1",
+    "ts.defaultInstance": "DefaultName"
+  },
+  "sourceName": "App_Name",
+  "preferNameDirectory": true
+}

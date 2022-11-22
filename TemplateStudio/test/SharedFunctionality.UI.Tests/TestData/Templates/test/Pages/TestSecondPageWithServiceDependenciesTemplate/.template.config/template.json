@@ -1,0 +1,22 @@
+{
+  "author": "Microsoft",
+  "classifications": [ "Test" ],
+  "name": "TestSecondPageWithServiceDependenciesTemplate",
+  "description": "Generic description...",
+  "groupIdentity": "Microsoft.Templates.Test.TestSecondPageWithServiceDependenciesTemplate",
+  "identity": "Microsoft.Templates.Test.TestSecondPageWithServiceDependenciesTemplate.CSharp",
+  "shortName": "TestSecondPageWithServiceDependenciesTemplate",
+  "tags": {
+    "language": "C#",
+    "type": "item",
+    "ts.platform": "test",
+    "ts.projecttype": "TestProjectType",
+    "ts.frontendframework": "TestFramework",
+    "ts.type": "page",
+    "ts.displayOrder": "4",
+    "ts.genGroup": "1",
+    "ts.dependencies": "Microsoft.Templates.Test.ServiceSecondTemplate.CSharp"
+  },
+  "sourceName": "App_Name",
+  "preferNameDirectory": true
+}
