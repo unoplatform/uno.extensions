@@ -1,33 +1,24 @@
 ﻿namespace Uno.Extensions.Hosting;
 
-internal class ApplicationBuilder : IApplicationBuilder
+internal record ApplicationBuilder(Application App, LaunchActivatedEventArgs Arguments) : IApplicationBuilder
 {
 	private readonly List<Action<IHostBuilder>> _delegates = new List<Action<IHostBuilder>>();
-	public ApplicationBuilder(Application app, LaunchActivatedEventArgs arguments)
-	{
-		App = app;
-		Arguments = arguments;
 
+	public Window Window { get; } =
 #if NET6_0_OR_GREATER && WINDOWS && !HAS_UNO
-		Window = new Window();
+		new Window();
 #else
-        Window = Microsoft.UI.Xaml.Window.Current;
+		Microsoft.UI.Xaml.Window.Current;
 #endif
-	}
-
-	public Application App { get; }
-	public LaunchActivatedEventArgs Arguments { get; }
-	public Window Window { get; }
 
 	public IHost Build()
 	{
 		var builder = UnoHost.CreateDefaultBuilder();
-		foreach (var @delegate in _delegates)
+		foreach (var del in _delegates)
 		{
-			@delegate(builder);
+			del(builder);
 		}
 
-		// TODO: Need to expose the "enableUnoLogging" as part of UseLogging
 		return builder.Build();
 	}
 

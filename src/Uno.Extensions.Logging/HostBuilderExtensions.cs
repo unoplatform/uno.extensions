@@ -48,11 +48,9 @@ public static class HostBuilderExtensions
 			.ConnectUnoLogging(enableUnoLogging);
 	}
 
-	private class LoggingInitializer : IServiceInitialize
+	private record LoggingInitializer(IHost Host) : IServiceInitialize
 	{
-		private readonly IHost _host;
-		public LoggingInitializer(IHost host) => _host = host;
 		public void Initialize() =>
-			_host.ConnectUnoLogging(true);
+			Host.ConnectUnoLogging(true);
 	}
 }
