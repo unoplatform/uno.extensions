@@ -45,7 +45,30 @@
     "7229D034-7DBE-4FD7-B0E4-38D617571F93", // UITests
     "E2821155-50B7-468D-A15B-E0EAF55DAC2B", // WINDOWS - Package.appxmanifest Identity.Name
   ],
-  "symbols": { 
+  "symbols": {
+    "appid": {
+      "type": "parameter",
+      "datatype": "string",
+      "replaces": "com.companyname.myextensionsapp",
+      "description": "The application identifier (e.g. com.mycompany.myapp).",
+      "defaultValue": "com.companyname.myextensionsapp"
+    },
+    "tfm": {
+      "type": "parameter",
+      "datatype": "choice",
+      "replaces": "net6.0",
+      "description": "The target framework for the project.",
+      "choices": [
+        {
+          "choice": "net6.0",
+          "description": "Target net6.0 (Long Term Support)"
+        },
+        {
+          "choice": "net7.0",
+          "description": "Target net7.0 (Standard Term Support)"
+        }
+      ]
+    },
     "wasm": {
       "type": "parameter",
       "dataType": "bool",
@@ -100,11 +123,65 @@
       "defaultValue": "true",
       "description": "Enables the Skia/Linux Framebuffer platform support project"
     },
-    "tests": {
+    "unittest": {
       "type": "parameter",
-      "dataType": "bool",
+      "datatype": "bool",
       "defaultValue": "true",
-      "description": "Includes unit and UI test projects"
+      "description": "Includes the Unit test project"
+    },
+    "uitest": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "true",
+      "description": "Includes the UI test project"
+    },
+    "configuration": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "true",
+      "description": "Includes Uno.Extensions.Configuration"
+    },
+    "localization": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "true",
+      "description": ""
+    },
+    "logging": {
+      "type": "parameter",
+      "datatype": "choice",
+      "defaultValue": "true",
+      "choices": [
+        {
+          "choice": "None",
+          "description": "No logging"
+        },
+        {
+          "choice": "Enabled",
+          "description": "Enables Logging"
+        },
+        {
+          "choice": "Serilog",
+          "description": "Adds Logging with Serilog"
+        }
+      ],
+      "description": ""
+    },
+    "uselogging": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "logging != 'None'"
+    },
+    "useserilog": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "logging == 'Serilog'"
+    },
+    "markup": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "Use C# Markup Extensions instead of XAML"
     },
     "reactive": {
       "type": "parameter",
@@ -153,11 +230,11 @@
       "path": "MyExtensionsApp\\MyExtensionsApp.csproj"
     },
     {
-      "condition": "tests",
+      "condition": "unittest",
       "path": "MyExtensionsApp.Tests\\MyExtensionsApp.Tests.csproj"
     },
     {
-      "condition": "tests",
+      "condition": "uitest",
       "path": "MyExtensionsApp.UITests\\MyExtensionsApp.UITests.csproj"
     },
     {
@@ -267,9 +344,14 @@
           ]
         },
         {
-          "condition": "(!tests)",
+          "condition": "(!unittest)",
           "exclude": [
             "MyExtensionsApp.Tests/**/*",
+          ]
+        },
+        {
+          "condition": "(!uitest)",
+          "exclude": [
             "MyExtensionsApp.UITests/**/*"
           ]
         },

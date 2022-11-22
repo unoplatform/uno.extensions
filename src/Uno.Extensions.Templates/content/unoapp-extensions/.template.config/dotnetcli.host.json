@@ -1,6 +1,14 @@
 ﻿{
   "$schema": "http://json.schemastore.org/dotnetcli.host",
   "symbolInfo": {
+    "appid": {
+      "longName": "app-id",
+      "shortName": "id"
+    },
+    "tfm": {
+      "longName": "tfm",
+      "shortName": "tfm"
+    },
     "wasm": {
       "longName": "webassembly",
       "shortName": "wasm"
@@ -37,9 +45,25 @@
       "longName": "windowsAppSdk",
       "shortName": "win"
     },
-    "tests": {
-      "longName": "tests",
-      "shortName": "tests"
+    "unittest": {
+      "longName": "unittest",
+      "shortName": "unittest"
+    },
+    "uitest": {
+      "longName": "uitest",
+      "shortName": "uitest"
+    },
+    "configuration": {
+      "isHidden": true
+    },
+    "localization": {
+      "isHidden": true
+    },
+    "logging": {
+      "isHidden": true
+    },
+    "markup": {
+      "isHidden": true
     },
     "reactive": {
       "longName": "reactive",

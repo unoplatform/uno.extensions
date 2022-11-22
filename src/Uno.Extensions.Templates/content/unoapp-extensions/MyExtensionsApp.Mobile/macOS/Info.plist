@@ -5,7 +5,7 @@
 	<key>CFBundleName</key>
 	<string>MyExtensionsApp.macOS</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.companyname.MyExtensionsApp-macOS</string>
+	<string>com.companyname.myextensionsapp</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleVersion</key>

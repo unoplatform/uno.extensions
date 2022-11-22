@@ -47,6 +47,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<!--#if (markup)-->
+		<PackageReference Include="Uno.WinUI.Markup" />
+		<!--#endif-->
 		<PackageReference Include="Microsoft.Windows.Compatibility" />
 		<PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" />
 		<PackageReference Include="Uno.WinUI.WebAssembly" />
@@ -57,21 +60,29 @@
 		<PackageReference Include="Uno.Material.WinUI" />
 		<PackageReference Include="Uno.Toolkit.WinUI.Material" />
 		<PackageReference Include="Uno.Toolkit.WinUI" />
+		<PackageReference Include="Uno.Extensions.Authentication" />
 		<PackageReference Include="Uno.Extensions.Authentication.WinUI" />
+		<PackageReference Include="Uno.Extensions.Hosting" />
 		<PackageReference Include="Uno.Extensions.Hosting.WinUI" />
+		<!--#if (configuration)-->
+		<PackageReference Include="Uno.Extensions.Configuration" />
+		<!--#endif-->
+		<!--#if (localization)-->
+		<PackageReference Include="Uno.Extensions.Localization" />
 		<PackageReference Include="Uno.Extensions.Localization.WinUI" />
+		<!--#endif-->
+		<!--#if (uselogging)-->
 		<PackageReference Include="Uno.Extensions.Logging.WinUI" />
+		<!--#endif-->
+    <!--#if (useserilog)-->
+		<PackageReference Include="Uno.Extensions.Logging.Serilog" />
+		<!--#endif-->
+		<PackageReference Include="Uno.Extensions.Navigation" />
 		<PackageReference Include="Uno.Extensions.Navigation.Toolkit.WinUI" />
 		<PackageReference Include="Uno.Extensions.Navigation.WinUI" />
-		<PackageReference Include="Uno.Extensions.Authentication" />
-		<PackageReference Include="Uno.Extensions.Configuration" />
 		<PackageReference Include="Uno.Extensions.Core" />
-		<PackageReference Include="Uno.Extensions.Hosting" />
 		<PackageReference Include="Uno.Extensions.Http" />
 		<PackageReference Include="Uno.Extensions.Http.Refit" />
-		<PackageReference Include="Uno.Extensions.Localization" />
-		<PackageReference Include="Uno.Extensions.Logging.Serilog" />
-		<PackageReference Include="Uno.Extensions.Navigation" />
 		<PackageReference Include="Uno.Extensions.Serialization" />
 		<PackageReference Include="Uno.Extensions.Serialization.Http" />
 		<PackageReference Include="Uno.Extensions.Serialization.Refit" />

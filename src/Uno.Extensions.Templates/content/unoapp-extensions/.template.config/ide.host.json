@@ -11,6 +11,38 @@
   "learnMoreLink": "https://github.com/unoplatform/uno",
   "symbolInfo": [
     {
+      "id": "appid",
+      "name": {
+        "text": "Application Id"
+      },
+      "description": {
+        "text": "The application identifier used to identify the app (e.g. com.mycompany.myapp)"
+      },
+      "defaultValue": "com.companyname.myapp",
+      "isVisible": true
+    },
+    {
+      "id": "tfm",
+      "name": {
+        "text": "Target Framework"
+      },
+      "description": {
+        "text": "The target framework for the project (e.g. net6.0 or net7.0)"
+      },
+      "defaultValue": "net6.0",
+      "choices": [
+        {
+          "id": "net6.0",
+          "description": "Use the net6.0 target framework"
+        },
+        {
+          "id": "net7.0",
+          "description": "Use the net7.0 target framework"
+        }
+      ],
+      "isVisible": true
+    },
+    {
       "id": "wasm",
       "name": {
         "text": "Web - WebAssembly"
@@ -119,16 +151,73 @@
       "isVisible":true
     },
     {
-      "id": "tests",
+      "id": "unittest",
       "name": {
-        "text": "Testing - Unit and UI Tests"
+        "text": "Unit Tests"
+      },
+      "description": {
+        "text": "Includes Unit Test Project"
+      },
+      "defaultValue": "true",
+      "isVisible": true
+    },
+    {
+      "id": "uitest",
+      "name": {
+        "text": "UI Tests"
+      },
+      "description": {
+        "text": "Includes UI Test Project"
+      },
+      "defaultValue": "true",
+      "isVisible": true
+    },
+    {
+      "id": "configuration",
+      "name": {
+        "text": "Extensions - Configuration"
       },
       "description":
       {
-        "text": "Includes projects for unit and UI tests"
+        "text": "Uses Configuration extensions to support appsettings.json"
+      },
+      "isVisible": false
+    },
+    {
+      "id": "localization",
+      "name": {
+        "text": "Extensions - Localization"
+      },
+      "description":
+      {
+        "text": "Uses Localization Extensions"
       },
       "defaultValue": "true",
-      "isVisible":true
+      "isVisible": false
+    },
+    {
+      "id": "logging",
+      "name": {
+        "text": "Extensions - Logging"
+      },
+      "description":
+      {
+        "text": "Enables app logging"
+      },
+      "defaultValue": "Enabled",
+      "isVisible": false
+    },
+    {
+      "id": "markup",
+      "name": {
+        "text": "Code Style - Use C# Markup"
+      },
+      "description":
+      {
+        "text": "Uses Uno C# Markup for your UI instead of XAML"
+      },
+      "defaultValue": "Serilog",
+      "isVisible": false
     },
     {
       "id": "reactive",

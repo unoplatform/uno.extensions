@@ -7,15 +7,23 @@
 		<!--#if (!reactive) -->
 		<PackageReference Include="CommunityToolkit.Mvvm" />
 		<!--#endif -->
-
 		<PackageReference Include="Uno.Extensions.Authentication" />
+		<!--#if (configuration)-->
 		<PackageReference Include="Uno.Extensions.Configuration" />
+		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Core" />
 		<PackageReference Include="Uno.Extensions.Hosting" />
 		<PackageReference Include="Uno.Extensions.Http" />
 		<PackageReference Include="Uno.Extensions.Http.Refit" />
+		 <!--#if (localization)-->
 		<PackageReference Include="Uno.Extensions.Localization" />
+		<!--#endif-->
+		<!--#if (uselogging && !useserilog)-->
+		<PackageReference Include="Uno.Extensions.Logging.WinUI" />
+		<!--#endif-->
+		<!--#if (useserilog)-->
 		<PackageReference Include="Uno.Extensions.Logging.Serilog" />
+		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Navigation" />
 		<PackageReference Include="Uno.Extensions.Serialization" />
 		<PackageReference Include="Uno.Extensions.Serialization.Http" />
