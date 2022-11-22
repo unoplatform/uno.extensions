@@ -1,4 +1,4 @@
-﻿namespace Playground;
+namespace Playground;
 
 public sealed partial class App : Application
 {
@@ -24,14 +24,15 @@ public sealed partial class App : Application
 		}
 #endif
 
+		var appBuilder = this.CreateBuilder(args)
+			.ConfigureApp()
+			.AddToolkitNavigation();
+		_window = appBuilder.Window;
 #if NET5_0_OR_GREATER && WINDOWS
-		_window = new Window();
 		_window.Activate();
-#else
-		_window = Window.Current;
 #endif
 
-		var hostingOption = InitOption.NoShellViewModel;
+		var hostingOption = InitOption.Splash;
 
 		switch (hostingOption)
 		{
@@ -39,7 +40,7 @@ public sealed partial class App : Application
 				// Ad-hoc hosting of Navigation on a UI element with Region.Attached set
 
 
-				_host = BuildAppHost();
+				_host = appBuilder.Build();
 
 				// Create Frame and navigate to MainPage
 				// MainPage has a ContentControl with Region.Attached set
@@ -59,7 +60,7 @@ public sealed partial class App : Application
 			case InitOption.NavigationRoot:
 				// Explicitly create the navigation root to use
 
-				_host = BuildAppHost();
+				_host = appBuilder.Build();
 
 				var root = new ContentControl
 				{
@@ -83,7 +84,7 @@ public sealed partial class App : Application
 #pragma warning disable CS0618 // AttachNavigation is obsolete - init option is left here to test backward compat
 				// Attach navigation to a Window which will create the navigation root
 				// and assign to Content property on the Window
-				_host = BuildAppHost();
+				_host = appBuilder.Build();
 
 				_window.AttachNavigation(_host.Services,
 					// Option 1: This requires Shell to be the first RouteMap - best for perf as no reflection required
@@ -105,7 +106,7 @@ public sealed partial class App : Application
 				// will invoke the host builder (host is returned) and awaits both start up
 				// tasks, as well as first navigation
 
-				_host = await _window.InitializeNavigationAsync(async () => BuildAppHost(),
+				_host = await _window.InitializeNavigationAsync(async () => appBuilder.Build(),
 							// Option 1: This requires Shell to be the first RouteMap - best for perf as no reflection required
 							// initialRoute: ""
 							// Option 2: Specify route name
@@ -133,7 +134,7 @@ public sealed partial class App : Application
 
 								// Uncomment to view splashscreen for longer
 								// await Task.Delay(5000);
-								return BuildAppHost();
+								return appBuilder.Build();
 							},
 							navigationRoot: appRoot.SplashScreen,
 							// Option 1: This requires Shell to be the first RouteMap - best for perf as no reflection required
@@ -143,7 +144,11 @@ public sealed partial class App : Application
 							// Option 3: Specify the view model. To avoid reflection, you can still define a routemap
 							initialViewModel: typeof(ShellViewModel)
 						);
+				break;
 
+			case InitOption.AppBuilderShell:
+
+				_host = await appBuilder.ShowAsync<AppRoot>();
 				break;
 
 			case InitOption.NoShellViewModel:
@@ -159,7 +164,7 @@ public sealed partial class App : Application
 				_host = await _window.InitializeNavigationAsync(
 							async () =>
 							{
-								return BuildAppHost();
+								return appBuilder.Build();
 							},
 							navigationRoot: appRootNoShell.SplashScreen,
 							initialNavigate: async (sp, nav)=>
@@ -194,7 +199,8 @@ public sealed partial class App : Application
 		AttachNavigation,
 		InitializeNavigation,
 		Splash,
-		NoShellViewModel
+		NoShellViewModel,
+		AppBuilderShell
 	}
 
 

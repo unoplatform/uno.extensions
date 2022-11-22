@@ -2,6 +2,7 @@
 using Uno.Extensions.Navigation;
 using Windows.Foundation.Metadata;
 using Windows.UI.Xaml;
+using Uno.Extensions.Hosting;
 
 namespace Uno.Extensions;
 
@@ -176,7 +177,7 @@ public static class ServiceProviderExtensions
 		return window.InternalInitializeNavigationAsync(
 			buildHost,
 			root,
-			initialRoute, initialView, initialViewModel);
+			initialRoute, initialView, initialViewModel, null, initialNavigate);
 	}
 
 	internal static Task<IHost> InternalInitializeNavigationAsync(
@@ -186,7 +187,7 @@ public static class ServiceProviderExtensions
 		string? initialRoute = "",
 		Type? initialView = null,
 		Type? initialViewModel = null,
-		Action<FrameworkElement, Task>? initialiseViewHost = null,
+		Action<FrameworkElement, Task>? initializeViewHost = null,
 		Func<IServiceProvider, INavigator, Task>? initialNavigate = null)
 	{
 		if (window.Content is null)
@@ -196,7 +197,7 @@ public static class ServiceProviderExtensions
 		}
 
 		var buildTask = window.BuildAndInitializeHostAsync(navigationRoot, buildHost, initialRoute, initialView, initialViewModel, initialNavigate);
-		initialiseViewHost?.Invoke(navigationRoot, buildTask);
+		initializeViewHost?.Invoke(navigationRoot, buildTask);
 		return buildTask;
 	}
 
@@ -213,7 +214,6 @@ public static class ServiceProviderExtensions
 		await Task.Yield();
 
 		var host = await buildHost();
-		//var host = await Task.Run(() => buildHost());
 		var services = window.AttachServices(host.Services);
 		var startup = viewHost.HostAsync(services, initialRoute, initialView, initialViewModel, initialNavigate);
 

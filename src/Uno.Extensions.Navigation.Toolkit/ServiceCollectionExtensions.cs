@@ -1,10 +1,41 @@
-﻿namespace Uno.Extensions;
+﻿using Uno.Extensions.Hosting;
+
+namespace Uno.Extensions;
 
 /// <summary>
 /// Extension methods for adding services to an <see cref="IServiceCollection" />.
 /// </summary>
 public static class ServiceCollectionExtensions
 {
+	private struct ToolkitViewInitializer : IRootViewInitializer
+	{
+		public ContentControl CreateDefaultView() => new LoadingView();
+
+		public void InitializeViewHost(FrameworkElement element, Task loadingTask)
+		{
+			if (element is LoadingView loadingView)
+			{
+				loadingView.Source = new LoadingTask(loadingTask, element);
+			}
+		}
+
+		public void PreInitialize(FrameworkElement element, IApplicationBuilder builder)
+		{
+			if (element is ExtendedSplashScreen splash)
+			{
+				splash.Initialize(builder.Window, builder.Arguments);
+			}
+		}
+	}
+
+	public static IApplicationBuilder AddToolkitNavigation(this IApplicationBuilder builder)
+	{
+		builder.Properties.Add(typeof(IRootViewInitializer), new ToolkitViewInitializer());
+		return builder.Configure(host => host.ConfigureServices(
+			 services => services.AddToolkitNavigation()));
+	}
+
+	private static bool _didRegisterServices;
 	/// <summary>
 	/// Adds navigation support for toolkit controls such as TabBar and DrawControl
 	/// </summary>
@@ -13,6 +44,12 @@ public static class ServiceCollectionExtensions
 	public static IServiceCollection AddToolkitNavigation(
 		this IServiceCollection services)
 	{
+		if (_didRegisterServices)
+		{
+			return services;
+		}
+
+		_didRegisterServices = true;
 		return services
 					.AddTransient<Flyout, ModalFlyout>()
 

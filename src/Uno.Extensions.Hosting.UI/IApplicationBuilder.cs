@@ -20,6 +20,8 @@ public interface IApplicationBuilder
 	/// </summary>
 	Window Window { get; }
 
+	IDictionary<object, object> Properties { get; }
+
 	/// <summary>
 	/// Adds a configuration delegate for the <see cref="IHostBuilder" />
 	/// </summary>
