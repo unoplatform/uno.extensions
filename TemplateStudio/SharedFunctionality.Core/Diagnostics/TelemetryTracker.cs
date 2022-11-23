@@ -141,12 +141,16 @@ namespace Microsoft.Templates.Core.Diagnostics
                 metrics.Add(TelemetryMetrics.TimeSpent, timeSpent.Value);
             }
 
-            if (genItemsTelemetryData.FeaturesCount.HasValue)
-            {
-                metrics.Add(TelemetryMetrics.FeaturesCount, genItemsTelemetryData.FeaturesCount.Value);
-            }
+			if (genItemsTelemetryData.FeaturesCount.HasValue)
+			{
+				metrics.Add(TelemetryMetrics.FeaturesCount, genItemsTelemetryData.FeaturesCount.Value);
+			}
+			if (genItemsTelemetryData.PlatformCount.HasValue)
+			{
+				metrics.Add(TelemetryMetrics.PlatformCount, genItemsTelemetryData.PlatformCount.Value);
+			}
 
-            if (genItemsTelemetryData.ServicesCount.HasValue)
+			if (genItemsTelemetryData.ServicesCount.HasValue)
             {
                 metrics.Add(TelemetryMetrics.ServicesCount, genItemsTelemetryData.ServicesCount.Value);
             }
@@ -195,12 +199,16 @@ namespace Microsoft.Templates.Core.Diagnostics
 
             var metrics = new Dictionary<string, double>();
 
-            if (genItemsTelemetryData.PagesCount.HasValue)
-            {
-                metrics.Add(TelemetryMetrics.PagesCount, genItemsTelemetryData.PagesCount.Value);
-            }
+			if (genItemsTelemetryData.PagesCount.HasValue)
+			{
+				metrics.Add(TelemetryMetrics.PagesCount, genItemsTelemetryData.PagesCount.Value);
+			}
+			if (genItemsTelemetryData.PlatformCount.HasValue)
+			{
+				metrics.Add(TelemetryMetrics.PlatformCount, genItemsTelemetryData.PlatformCount.Value);
+			}
 
-            if (genItemsTelemetryData.FeaturesCount.HasValue)
+			if (genItemsTelemetryData.FeaturesCount.HasValue)
             {
                 metrics.Add(TelemetryMetrics.FeaturesCount, genItemsTelemetryData.FeaturesCount.Value);
             }

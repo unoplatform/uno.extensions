@@ -34,9 +34,11 @@ namespace Microsoft.Templates.Core.Gen
 
         public List<UserSelectionItem> Services { get; } = new List<UserSelectionItem>();
 
-        public List<UserSelectionItem> Testing { get; } = new List<UserSelectionItem>();
+		public List<UserSelectionItem> Testing { get; } = new List<UserSelectionItem>();
 
-        public IEnumerable<UserSelectionItem> Items
+		public List<UserSelectionItem> Platform { get; } = new List<UserSelectionItem>();
+
+		public IEnumerable<UserSelectionItem> Items
         {
             get
             {
@@ -55,11 +57,15 @@ namespace Microsoft.Templates.Core.Gen
                     yield return service;
                 }
 
-                foreach (var testing in Testing)
-                {
-                    yield return testing;
-                }
-            }
+				foreach (var testing in Testing)
+				{
+					yield return testing;
+				}
+				foreach (var platform in Platform)
+				{
+					yield return platform;
+				}
+			}
         }
 
         public override string ToString()
@@ -104,13 +110,19 @@ namespace Microsoft.Templates.Core.Gen
                 sb.AppendLine();
             }
 
-            if (Features.Any())
-            {
-                sb.AppendFormat("Features: '{0}'", string.Join(", ", Features.Select(p => $"{p.Name} - {p.TemplateId}").ToArray()));
-                sb.AppendLine();
-            }
+			if (Features.Any())
+			{
+				sb.AppendFormat("Features: '{0}'", string.Join(", ", Features.Select(p => $"{p.Name} - {p.TemplateId}").ToArray()));
+				sb.AppendLine();
+			}
 
-            if (Services.Any())
+			if (Platform.Any())
+			{
+				sb.AppendFormat("Platform: '{0}'", string.Join(", ", Platform.Select(p => $"{p.Name} - {p.TemplateId}").ToArray()));
+				sb.AppendLine();
+			}
+
+			if (Services.Any())
             {
                 sb.AppendFormat("Services: '{0}'", string.Join(", ", Services.Select(p => $"{p.Name} - {p.TemplateId}").ToArray()));
                 sb.AppendLine();
@@ -138,10 +150,13 @@ namespace Microsoft.Templates.Core.Gen
                 case TemplateType.Service:
                     Services.Add(template);
                     break;
-                case TemplateType.Testing:
-                    Testing.Add(template);
-                    break;
-            }
+				case TemplateType.Testing:
+					Testing.Add(template);
+					break;
+				case TemplateType.Platform:
+					Platform.Add(template);
+					break;
+			}
         }
     }
 }

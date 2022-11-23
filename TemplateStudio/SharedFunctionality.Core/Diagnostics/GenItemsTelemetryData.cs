@@ -14,12 +14,14 @@ namespace Microsoft.Templates.Core.Diagnostics
         public GenItemsTelemetryData(IEnumerable<GenInfo> genItems)
         {
             PagesCount = genItems.Count(t => t.Template.GetTemplateType() == TemplateType.Page);
-            FeaturesCount = genItems.Count(t => t.Template.GetTemplateType() == TemplateType.Feature);
-            ServicesCount = genItems.Count(t => t.Template.GetTemplateType() == TemplateType.Service);
+			FeaturesCount = genItems.Count(t => t.Template.GetTemplateType() == TemplateType.Feature);
+			PlatformCount = genItems.Count(t => t.Template.GetTemplateType() == TemplateType.Platform);
+			ServicesCount = genItems.Count(t => t.Template.GetTemplateType() == TemplateType.Service);
             TestingCount = genItems.Count(t => t.Template.GetTemplateType() == TemplateType.Testing);
             PageIdentities = string.Join(",", genItems.Where(t => t.Template.GetTemplateType() == TemplateType.Page).Select(t => t.Template.Identity));
-            FeatureIdentities = string.Join(",", genItems.Where(t => t.Template.GetTemplateType() == TemplateType.Feature).Select(t => t.Template.Identity));
-            ServiceIdentities = string.Join(",", genItems.Where(t => t.Template.GetTemplateType() == TemplateType.Service).Select(t => t.Template.Identity));
+			FeatureIdentities = string.Join(",", genItems.Where(t => t.Template.GetTemplateType() == TemplateType.Feature).Select(t => t.Template.Identity));
+			PlatformIdentities = string.Join(",", genItems.Where(t => t.Template.GetTemplateType() == TemplateType.Platform).Select(t => t.Template.Identity));
+			ServiceIdentities = string.Join(",", genItems.Where(t => t.Template.GetTemplateType() == TemplateType.Service).Select(t => t.Template.Identity));
             TestingIdentities = string.Join(",", genItems.Where(t => t.Template.GetTemplateType() == TemplateType.Testing).Select(t => t.Template.Identity));
         }
 
@@ -29,11 +31,15 @@ namespace Microsoft.Templates.Core.Diagnostics
 
         public int? ServicesCount { get; set; }
 
-        public int? TestingCount { get; set; }
+		public int? TestingCount { get; set; }
 
-        public string PageIdentities { get; set; }
+		public int? PlatformCount { get; set; }
 
-        public string FeatureIdentities { get; set; }
+		public string PageIdentities { get; set; }
+
+		public string PlatformIdentities { get; set; }
+
+		public string FeatureIdentities { get; set; }
 
         public string ServiceIdentities { get; set; }
 

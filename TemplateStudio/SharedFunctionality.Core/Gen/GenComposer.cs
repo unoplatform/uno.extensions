@@ -26,8 +26,9 @@ namespace Microsoft.Templates.Core.Gen
             AddProject(userSelection, genQueue);
             AddTemplates(userSelection.Pages, genQueue, userSelection, newItemGeneration: false);
             AddTemplates(userSelection.Features, genQueue, userSelection, newItemGeneration: false);
-            AddTemplates(userSelection.Services, genQueue, userSelection, newItemGeneration: false);
-            AddTemplates(userSelection.Testing, genQueue, userSelection, newItemGeneration: false);
+			AddTemplates(userSelection.Services, genQueue, userSelection, newItemGeneration: false);
+			AddTemplates(userSelection.Platform, genQueue, userSelection, newItemGeneration: false);
+			AddTemplates(userSelection.Testing, genQueue, userSelection, newItemGeneration: false);
 
             if (addProjectDependencies)
             {
@@ -85,9 +86,10 @@ namespace Microsoft.Templates.Core.Gen
             AddTemplates(userSelection.Pages, genQueue, userSelection, true);
             AddTemplates(userSelection.Features, genQueue, userSelection, true);
             AddTemplates(userSelection.Services, genQueue, userSelection, true);
-            AddTemplates(userSelection.Testing, genQueue, userSelection, true);
+			AddTemplates(userSelection.Testing, genQueue, userSelection, true);
+			AddTemplates(userSelection.Platform, genQueue, userSelection, true);
 
-            genQueue = AddInCompositionTemplates(genQueue, userSelection, true);
+			genQueue = AddInCompositionTemplates(genQueue, userSelection, true);
 
             return genQueue;
         }
@@ -198,8 +200,9 @@ namespace Microsoft.Templates.Core.Gen
             {
                 new QueryableProperty("projecttype", userSelection.Context.ProjectType),
                 new QueryableProperty("page", string.Join("|", userSelection.Pages.Select(p => p.TemplateId))),
-                new QueryableProperty("feature", string.Join("|", userSelection.Features.Select(p => p.TemplateId))),
-                new QueryableProperty("service", string.Join("|", userSelection.Services.Select(p => p.TemplateId))),
+				new QueryableProperty("feature", string.Join("|", userSelection.Features.Select(p => p.TemplateId))),
+				new QueryableProperty("platform", string.Join("|", userSelection.Platform.Select(p => p.TemplateId))),
+				new QueryableProperty("service", string.Join("|", userSelection.Services.Select(p => p.TemplateId))),
                 new QueryableProperty("testing", string.Join("|", userSelection.Testing.Select(p => p.TemplateId))),
             };
 

@@ -36,9 +36,11 @@ namespace Microsoft.Templates.Core
                     return TemplateType.Service;
                 case "TESTING":
                     return TemplateType.Testing;
-                case "COMPOSITION":
-                    return TemplateType.Composition;
-                default:
+				case "COMPOSITION":
+					return TemplateType.Composition;
+				case "PLATFORM":
+					return TemplateType.Platform;
+				default:
                     return TemplateType.Unspecified;
             }
         }

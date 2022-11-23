@@ -11,63 +11,6 @@
              AutomationProperties.Name="{x:Static res:Resources.AccessibilityNotificationPanel}"
              d:DesignHeight="300" d:DesignWidth="300">
 
-    <!--<UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/TemplateStudio.UI;component/Styles/Styles.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-
-            <DataTemplate x:Key="InformationTemplate">
-                <Grid Style="{StaticResource TSGridNotification}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <Image Source="{StaticResource TSIconInfo}"
-                        Style="{StaticResource TSImageNotificationIcon}"
-                        Grid.RowSpan="2" />
-                    <local:NotificationMarkdownBlock Grid.Column="1" Text="{Binding Message}" Style="{StaticResource TSNotificationMarkdownStyle}"  />
-                    <Button Grid.Column="2" Style="{StaticResource TSButtonCloseNotification}" Command="{Binding CloseCommand}" Visibility="{Binding CanClose, Converter={StaticResource BoolToVisibilityConverter}}" />
-                </Grid>
-            </DataTemplate>
-
-            <DataTemplate x:Key="WarningTemplate">
-                <Grid Style="{StaticResource TSGridNotification}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <Image Source="{StaticResource TSIconInfo}"
-                        Style="{StaticResource TSImageNotificationIcon}"
-                        Grid.RowSpan="2" />
-                    <local:NotificationMarkdownBlock Grid.Column="1" Text="{Binding Message}" Style="{StaticResource TSNotificationMarkdownStyle}" />
-                    <Button Grid.Column="2" Style="{StaticResource TSButtonCloseNotification}" Command="{Binding CloseCommand}" />
-                </Grid>
-            </DataTemplate>
-
-            <DataTemplate x:Key="ErrorTemplate">
-                <Grid Style="{StaticResource TSGridNotification}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Image Source="{StaticResource TSIconInfo}"
-                        Style="{StaticResource TSImageNotificationIcon}"
-                        Grid.RowSpan="2" />
-                    <local:NotificationMarkdownBlock Grid.Column="1" Text="{Binding Message}" Style="{StaticResource TSNotificationMarkdownStyle}" />
-                </Grid>
-            </DataTemplate>
-
-            <ts:NotificationTemplateSelector
-                x:Key="NotificationTemplateSelector"
-                Information="{StaticResource InformationTemplate}"
-                Warning="{StaticResource WarningTemplate}"
-                Error="{StaticResource ErrorTemplate}" />
-        </ResourceDictionary>
-    </UserControl.Resources>-->
-
     <Grid Height="50" VerticalAlignment="Top">
         <StackPanel VerticalAlignment="Bottom">
             <ContentControl

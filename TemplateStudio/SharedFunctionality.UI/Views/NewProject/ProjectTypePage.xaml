@@ -20,7 +20,10 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <TextBlock
+
+
+		<!--Project type-->
+		<TextBlock
             Grid.Row="0"
             Text="{x:Static res:Resources.ProjectTypeTitle}"
             Margin="{StaticResource Margin_L_LeftRight_M2_Top}"

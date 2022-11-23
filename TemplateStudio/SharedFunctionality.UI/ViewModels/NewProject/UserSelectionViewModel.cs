@@ -37,8 +37,9 @@ namespace Microsoft.Templates.UI.ViewModels.NewProject
         public UserSelectionViewModel()
         {
             Groups.Add(new UserSelectionGroup(TemplateType.Page, Resources.ProjectDetailsPagesSectionTitle, true));
-            Groups.Add(new UserSelectionGroup(TemplateType.Feature, Resources.ProjectDetailsFeaturesSectionTitle));
-            Groups.Add(new UserSelectionGroup(TemplateType.Service, Resources.ProjectDetailsServicesSectionTitle));
+			Groups.Add(new UserSelectionGroup(TemplateType.Feature, Resources.ProjectDetailsFeaturesSectionTitle));
+			Groups.Add(new UserSelectionGroup(TemplateType.Platform, Resources.ProjectDetailsPlatformSectionTitle));
+			Groups.Add(new UserSelectionGroup(TemplateType.Service, Resources.ProjectDetailsServicesSectionTitle));
             Groups.Add(new UserSelectionGroup(TemplateType.Testing, Resources.ProjectDetailsTestingSectionTitle));
         }
 
@@ -179,10 +180,13 @@ namespace Microsoft.Templates.UI.ViewModels.NewProject
             selection.HomeName = pages.FirstOrDefault()?.Name ?? string.Empty;
             selection.Pages.AddRange(pages.Select(i => i.ToUserSelectionItem()));
 
-            var features = Groups.First(g => g.TemplateType == TemplateType.Feature).Items;
-            selection.Features.AddRange(features.Select(i => i.ToUserSelectionItem()));
+			var features = Groups.First(g => g.TemplateType == TemplateType.Feature).Items;
+			selection.Features.AddRange(features.Select(i => i.ToUserSelectionItem()));
 
-            var services = Groups.First(g => g.TemplateType == TemplateType.Service).Items;
+			var platform = Groups.First(g => g.TemplateType == TemplateType.Platform).Items;
+			selection.Platform.AddRange(platform.Select(i => i.ToUserSelectionItem()));
+
+			var services = Groups.First(g => g.TemplateType == TemplateType.Service).Items;
             selection.Services.AddRange(services.Select(i => i.ToUserSelectionItem()));
 
             var tests = Groups.First(g => g.TemplateType == TemplateType.Testing).Items;

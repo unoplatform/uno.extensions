@@ -13,8 +13,9 @@ namespace Microsoft.Templates.UI.Extensions
         private const string _newProjectStepFeatures = "04Features";
         private const string _newProjectStepServices = "05Services";
         private const string _newProjectStepTests = "06Tests";
+		private const string _newProjectStepPlatform = "07Platform";
 
-        public static string GetNewProjectStepId(this TemplateType templateType)
+		public static string GetNewProjectStepId(this TemplateType templateType)
         {
             switch (templateType)
             {
@@ -24,9 +25,11 @@ namespace Microsoft.Templates.UI.Extensions
                     return _newProjectStepFeatures;
                 case TemplateType.Service:
                     return _newProjectStepServices;
-                case TemplateType.Testing:
-                    return _newProjectStepTests;
-                default:
+				case TemplateType.Testing:
+					return _newProjectStepTests;
+				case TemplateType.Platform:
+					return _newProjectStepPlatform;
+				default:
                     return string.Empty;
             }
         }
@@ -41,9 +44,11 @@ namespace Microsoft.Templates.UI.Extensions
                     return Resources.NewProjectStepFeatures;
                 case TemplateType.Service:
                     return Resources.NewProjectStepServices;
-                case TemplateType.Testing:
-                    return Resources.NewProjectStepTesting;
-                default:
+				case TemplateType.Testing:
+					return Resources.NewProjectStepTesting;
+				case TemplateType.Platform:
+					return Resources.NewProjectStepPlatform;
+				default:
                     return string.Empty;
             }
         }
@@ -60,7 +65,9 @@ namespace Microsoft.Templates.UI.Extensions
                     return Resources.AddServiceTitle;
                 case TemplateType.Testing:
                     return Resources.AddTestingTitle;
-                default:
+				case TemplateType.Platform:
+					return Resources.AddPlatformTitle;
+				default:
                     return string.Empty;
             }
         }

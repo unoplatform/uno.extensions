@@ -127,7 +127,9 @@ namespace Microsoft.Templates.Core
 
         public IEnumerable<ITemplateInfo> Get(Func<ITemplateInfo, bool> predicate)
         {
-            var result = GetAll().Where(predicate).ToList();
+			var all = GetAll();
+			var plat = all.Where(e => e.GetTemplateType() == TemplateType.Platform).FirstOrDefault();
+			var result = all.Where(predicate).ToList();
 
             if (AdditionalTemplates.Any())
             {
@@ -196,12 +198,17 @@ namespace Microsoft.Templates.Core
                 throw new ArgumentNullException(nameof(context.ProjectType));
             }
 
-            return Get(t => t.GetTemplateType() == type
+            return Get(
+
+
+				t => t.GetTemplateType() == type
                 && t.GetPlatform().Equals(context.Platform, StringComparison.OrdinalIgnoreCase)
                 && (t.GetProjectTypeList().Contains(context.ProjectType) || t.GetProjectTypeList().Contains(All))
                 && IsMatchFrontEnd(t, context.FrontEndFramework)
-                ////&& IsMatchBackEnd(t, context.BackEndFramework)
-                && IsMatchPropertyBag(t, context.PropertyBag));
+                //&& IsMatchBackEnd(t, context.BackEndFramework)
+                && IsMatchPropertyBag(t, context.PropertyBag)
+
+				);
         }
 
         public TemplateInfo GetTemplateInfo(ITemplateInfo template, UserSelectionContext context)

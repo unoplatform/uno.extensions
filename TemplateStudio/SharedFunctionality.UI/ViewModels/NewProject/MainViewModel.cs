@@ -86,12 +86,7 @@ namespace Microsoft.Templates.UI.ViewModels.NewProject
         {
             switch (context.Platform)
             {
-                case Platforms.Uwp:
-                    WizardStatus.Title = $"{Resources.NewProjectTitleUWP} ({GenContext.Current.ProjectName})";
-                    break;
-                case Platforms.Wpf:
-                    WizardStatus.Title = $"{Resources.NewProjectTitleWPF} ({GenContext.Current.ProjectName})";
-                    break;
+                
                 case Platforms.WinUI:
                     switch (context.GetAppModel())
                     {
@@ -223,12 +218,15 @@ namespace Microsoft.Templates.UI.ViewModels.NewProject
 
             UserSelection.Initialize(Context);
 
-            await BuildStepViewModelAsync(TemplateType.Page);
-            await BuildStepViewModelAsync(TemplateType.Feature);
-            await BuildStepViewModelAsync(TemplateType.Service);
-            await BuildStepViewModelAsync(TemplateType.Testing);
+			await BuildStepViewModelAsync(TemplateType.Feature);
 
-            await UserSelection.AddLayoutTemplatesAsync();
+
+			await BuildStepViewModelAsync(TemplateType.Platform);
+			await BuildStepViewModelAsync(TemplateType.Page);
+			await BuildStepViewModelAsync(TemplateType.Service);
+			await BuildStepViewModelAsync(TemplateType.Testing);
+
+			await UserSelection.AddLayoutTemplatesAsync();
 
             WizardStatus.IsLoading = false;
         }

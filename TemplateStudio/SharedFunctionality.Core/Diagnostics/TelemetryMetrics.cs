@@ -8,9 +8,11 @@ namespace Microsoft.Templates.Core.Diagnostics
     {
         public static string PagesCount { get; private set; } = TelemetryEvents.Prefix + "PagesCount";
 
-        public static string FeaturesCount { get; private set; } = TelemetryEvents.Prefix + "FeaturesCount";
+		public static string FeaturesCount { get; private set; } = TelemetryEvents.Prefix + "FeaturesCount";
 
-        public static string ServicesCount { get; private set; } = TelemetryEvents.Prefix + "ServicesCount";
+		public static string PlatformCount { get; private set; } = TelemetryEvents.Prefix + "PlatformCount";
+
+		public static string ServicesCount { get; private set; } = TelemetryEvents.Prefix + "ServicesCount";
 
         public static string TestingCount { get; private set; } = TelemetryEvents.Prefix + "TestingCount";
 

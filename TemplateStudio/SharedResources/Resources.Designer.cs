@@ -160,7 +160,7 @@ namespace Microsoft.Templates.SharedResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add features.
+        ///   Looks up a localized string similar to Add Features.
         /// </summary>
         public static string AddFeaturesTitle {
             get {
@@ -183,6 +183,15 @@ namespace Microsoft.Templates.SharedResources {
         public static string AddPagesTitle {
             get {
                 return ResourceManager.GetString("AddPagesTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to AddPlatformTitle.
+        /// </summary>
+        public static string AddPlatformTitle {
+            get {
+                return ResourceManager.GetString("AddPlatformTitle", resourceCulture);
             }
         }
         
@@ -1396,6 +1405,15 @@ namespace Microsoft.Templates.SharedResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Platform Options.
+        /// </summary>
+        public static string NewProjectStepPlatform {
+            get {
+                return ResourceManager.GetString("NewProjectStepPlatform", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Project type.
         /// </summary>
         public static string NewProjectStepProjectType {
@@ -1860,6 +1878,15 @@ namespace Microsoft.Templates.SharedResources {
         public static string ProjectDetailsPagesSectionTitle {
             get {
                 return ResourceManager.GetString("ProjectDetailsPagesSectionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Platforms.
+        /// </summary>
+        public static string ProjectDetailsPlatformSectionTitle {
+            get {
+                return ResourceManager.GetString("ProjectDetailsPlatformSectionTitle", resourceCulture);
             }
         }
         

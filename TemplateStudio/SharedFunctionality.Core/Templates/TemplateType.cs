@@ -12,6 +12,7 @@ namespace Microsoft.Templates.Core
         Service,
         Testing,
         Composition,
-        Unspecified,
-    }
+		Unspecified,
+		Platform,
+	}
 }

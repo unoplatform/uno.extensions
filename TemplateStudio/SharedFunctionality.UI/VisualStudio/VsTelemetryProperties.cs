@@ -10,6 +10,7 @@ namespace Microsoft.Templates.UI.VisualStudio
 
         public static string Pages { get; private set; } = Prefix + "Pages";
 
-        public static string Features { get; private set; } = Prefix + "Features";
-    }
+		public static string Features { get; private set; } = Prefix + "Features";
+		public static string Platform { get; private set; } = Prefix + "Platforms";
+	}
 }

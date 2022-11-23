@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddFeaturesTitle" xml:space="preserve">
-    <value>Add features</value>
+    <value>Add Features</value>
     <comment>AddFeatures title on AddFeaturesPage</comment>
   </data>
   <data name="AddServiceTitle" xml:space="preserve">
@@ -1410,5 +1410,17 @@ See the final result: {2}
   <data name="TemplateGroup_Deployment" xml:space="preserve">
     <value>Deployment</value>
     <comment>Group header for Deployment</comment>
+  </data>
+  <data name="NewProjectStepPlatform" xml:space="preserve">
+    <value>Add Platform Options</value>
+    <comment>Add Platform Options</comment>
+  </data>
+  <data name="AddPlatformTitle" xml:space="preserve">
+    <value>AddPlatformTitle</value>
+    <comment>AddPlatformTitle</comment>
+  </data>
+  <data name="ProjectDetailsPlatformSectionTitle" xml:space="preserve">
+    <value>Platforms</value>
+    <comment>ProjectDetailsPlatformSectionTitle</comment>
   </data>
 </root>
