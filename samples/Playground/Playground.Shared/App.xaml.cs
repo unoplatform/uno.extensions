@@ -1,9 +1,12 @@
-﻿namespace Playground;
+﻿using Uno.Extensions.Navigation.UI;
+
+namespace Playground;
 
 public sealed partial class App : Application
 {
 	private Window? _window;
 	public Window? Window => _window;
+	private ThemeService ts;
 
 	public App()
 	{
@@ -185,6 +188,10 @@ public sealed partial class App : Application
 		if (logger.IsEnabled(LogLevel.Warning)) logger.LogWarningMessage("LogLevel:Warning");
 		if (logger.IsEnabled(LogLevel.Error)) logger.LogErrorMessage("LogLevel:Error");
 		if (logger.IsEnabled(LogLevel.Critical)) logger.LogCriticalMessage("LogLevel:Critical");
+
+		ts = new ThemeService(_window, new Dispatcher(_window));
+		ts.UseSystemTheme = false;
+		await ts.SetThemeAsync();
 	}
 
 	private enum InitOption

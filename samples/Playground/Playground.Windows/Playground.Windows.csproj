@@ -22,6 +22,7 @@
 
 	<ItemGroup>
 		<None Remove="appsettings.platform.json" />
+		<None Remove="ThemeSwitchPage.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -118,4 +119,12 @@
 		</ItemGroup>
 		<Message Importance="high" Text="Removed incorrect references: @(_ResolvedProjectReferencePathsToRemove)" />
 	</Target>
+
+	<ItemGroup>
+	  <_Globbed_Compile Remove="ThemeSwitchPage.xaml.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <_Globbled_Page Remove="ThemeSwitchPage.xaml" />
+	</ItemGroup>
 </Project>
