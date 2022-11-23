@@ -1,0 +1,7 @@
+﻿{
+  "name": "Platform Web Wasm (WebAssembly)",
+  "description": "Adds Platform Web Wasm (WebAssembly) to your application.",
+
+  "_name.comment": "Label for feature that enables users to change UI color Platform.",
+  "_description.comment": "Label description for Platform Selection."
+}

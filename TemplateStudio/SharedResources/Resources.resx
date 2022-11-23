@@ -1412,15 +1412,27 @@ See the final result: {2}
     <comment>Group header for Deployment</comment>
   </data>
   <data name="NewProjectStepPlatform" xml:space="preserve">
-    <value>Add Platform Options</value>
+    <value>Platform</value>
     <comment>Add Platform Options</comment>
   </data>
   <data name="AddPlatformTitle" xml:space="preserve">
-    <value>AddPlatformTitle</value>
-    <comment>AddPlatformTitle</comment>
+    <value>Platform</value>
+    <comment>Platform</comment>
   </data>
   <data name="ProjectDetailsPlatformSectionTitle" xml:space="preserve">
     <value>Platforms</value>
     <comment>ProjectDetailsPlatformSectionTitle</comment>
+  </data>
+  <data name="TemplateGroup_DesktopInteraction" xml:space="preserve">
+    <value>Desktop</value>
+    <comment>Desktop</comment>
+  </data>
+  <data name="TemplateGroup_MobileInteraction" xml:space="preserve">
+    <value> Mobile</value>
+    <comment>Mobile</comment>
+  </data>
+  <data name="TemplateGroup_WebInteraction" xml:space="preserve">
+    <value>Web</value>
+    <comment>Web</comment>
   </data>
 </root>

@@ -217,6 +217,42 @@
       <SubType>Designer</SubType>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows\.template.config\icon.xaml">
+      <SubType>Designer</SubType>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows.WPF\.template.config\icon.xaml">
+      <SubType>Designer</SubType>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux.GTK\.template.config\icon.xaml">
+      <SubType>Designer</SubType>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux\.template.config\icon.xaml">
+      <SubType>Designer</SubType>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.MacOS\.template.config\icon.xaml">
+      <SubType>Designer</SubType>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.Catalyst\.template.config\icon.xaml">
+      <SubType>Designer</SubType>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.IOS\.template.config\icon.xaml">
+      <SubType>Designer</SubType>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.Android\.template.config\icon.xaml">
+      <SubType>Designer</SubType>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Web.Wasm\.template.config\icon.xaml">
+      <SubType>Designer</SubType>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\SharedStyles\AllStylesDictionary.cs">
@@ -239,6 +275,62 @@
       <DependentUpon>source.extension.vsixmanifest</DependentUpon>
     </Compile>
     <Compile Include="TemplateStudioForWinUICsPackage.cs" />
+    <Content Include="Templates\Ft\Platform.Web.Wasm\Services\PlatformSelectorService.cs">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Web.Wasm\Contracts\Services\IPlatformWebWasmSelectorService.cs">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.Android\Services\PlatformMobileAndroidSelectorService.cs">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.Android\Contracts\Services\IPlatformMobileAndroidSelectorService.cs">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.IOS\Services\PlatformMobileIOSSelectorService.cs">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.IOS\Contracts\Services\IPlatformMobileIOSSelectorService.cs">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.Catalyst\Services\PlatformMacCatalystSelectorService.cs">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.Catalyst\Contracts\Services\IPlatformMacCatalystSelectorService.cs">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.MacOS\Services\PlatformSelectorService.cs">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.MacOS\Contracts\Services\IPlatformMacMacOSSelectorService.cs">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux\Services\PlatformLinuxFrameService.cs">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux\Contracts\Services\IPlatformLinuxFrameService.cs">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux.GTK\Services\PlatformDesktopLinuxGTKSelectorService.cs">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux.GTK\Contracts\Services\IPlatformDesktopLinuxGTKSelectorService.cs">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows.WPF\Services\PlatformSelectorService.cs">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows.WPF\Contracts\Services\IPlatformDesktopWindowsWPFSelectorService.cs">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows\Services\PlatformDesktopWindowsSelectorService.cs">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows\Contracts\Services\IPlatformDesktopWindowsSelectorService.cs">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\_comp\MT\Platform.Mobile\Services\ActivationService_postaction.cs" />
+    <Content Include="Templates\_comp\MT\Platform.Mobile\App_postaction.xaml.cs" />
     <Content Include="Templates\Ft\PlatformSelection\Services\PlatformSelectorService.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -394,6 +486,790 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Templates\Ft\PlatformSelection\.template.config\template.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\_comp\MT\Platform.Mobile\.template.config\template.json" />
+    <Content Include="Templates\Ft\Platform.Desktop.Windows\.template.config\localize\description.cs-CZ.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows\.template.config\localize\description.de-DE.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows\.template.config\localize\description.es-ES.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows\.template.config\localize\description.fr-FR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows\.template.config\localize\description.it-IT.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows\.template.config\localize\description.ja-JP.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows\.template.config\localize\description.ko-KR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows\.template.config\localize\description.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows\.template.config\localize\description.pl-PL.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows\.template.config\localize\description.pt-BR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows\.template.config\localize\description.ru-RU.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows\.template.config\localize\description.tr-TR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows\.template.config\localize\description.zh-CN.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows\.template.config\localize\description.zh-TW.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows\.template.config\localize\templatestrings.cs-CZ.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows\.template.config\localize\templatestrings.de-DE.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows\.template.config\localize\templatestrings.es-ES.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows\.template.config\localize\templatestrings.fr-FR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows\.template.config\localize\templatestrings.it-IT.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows\.template.config\localize\templatestrings.ja-JP.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows\.template.config\localize\templatestrings.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows\.template.config\localize\templatestrings.ko-KR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows\.template.config\localize\templatestrings.pl-PL.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows\.template.config\localize\templatestrings.pt-BR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows\.template.config\localize\templatestrings.ru-RU.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows\.template.config\localize\templatestrings.tr-TR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows\.template.config\localize\templatestrings.zh-CN.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows\.template.config\localize\templatestrings.zh-TW.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows\.template.config\template.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows.WPF\.template.config\localize\description.cs-CZ.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows.WPF\.template.config\localize\description.de-DE.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows.WPF\.template.config\localize\description.es-ES.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows.WPF\.template.config\localize\description.fr-FR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows.WPF\.template.config\localize\description.it-IT.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows.WPF\.template.config\localize\description.ja-JP.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows.WPF\.template.config\localize\description.ko-KR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows.WPF\.template.config\localize\description.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows.WPF\.template.config\localize\description.pl-PL.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows.WPF\.template.config\localize\description.pt-BR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows.WPF\.template.config\localize\description.ru-RU.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows.WPF\.template.config\localize\description.tr-TR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows.WPF\.template.config\localize\description.zh-CN.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows.WPF\.template.config\localize\description.zh-TW.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows.WPF\.template.config\localize\templatestrings.cs-CZ.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows.WPF\.template.config\localize\templatestrings.de-DE.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows.WPF\.template.config\localize\templatestrings.es-ES.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows.WPF\.template.config\localize\templatestrings.fr-FR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows.WPF\.template.config\localize\templatestrings.it-IT.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows.WPF\.template.config\localize\templatestrings.ja-JP.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows.WPF\.template.config\localize\templatestrings.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows.WPF\.template.config\localize\templatestrings.ko-KR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows.WPF\.template.config\localize\templatestrings.pl-PL.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows.WPF\.template.config\localize\templatestrings.pt-BR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows.WPF\.template.config\localize\templatestrings.ru-RU.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows.WPF\.template.config\localize\templatestrings.tr-TR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows.WPF\.template.config\localize\templatestrings.zh-CN.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows.WPF\.template.config\localize\templatestrings.zh-TW.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Windows.WPF\.template.config\template.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux.GTK\.template.config\localize\description.cs-CZ.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux.GTK\.template.config\localize\description.de-DE.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux.GTK\.template.config\localize\description.es-ES.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux.GTK\.template.config\localize\description.fr-FR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux.GTK\.template.config\localize\description.it-IT.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux.GTK\.template.config\localize\description.ja-JP.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux.GTK\.template.config\localize\description.ko-KR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux.GTK\.template.config\localize\description.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux.GTK\.template.config\localize\description.pl-PL.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux.GTK\.template.config\localize\description.pt-BR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux.GTK\.template.config\localize\description.ru-RU.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux.GTK\.template.config\localize\description.tr-TR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux.GTK\.template.config\localize\description.zh-CN.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux.GTK\.template.config\localize\description.zh-TW.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux.GTK\.template.config\localize\templatestrings.cs-CZ.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux.GTK\.template.config\localize\templatestrings.de-DE.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux.GTK\.template.config\localize\templatestrings.es-ES.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux.GTK\.template.config\localize\templatestrings.fr-FR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux.GTK\.template.config\localize\templatestrings.it-IT.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux.GTK\.template.config\localize\templatestrings.ja-JP.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux.GTK\.template.config\localize\templatestrings.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux.GTK\.template.config\localize\templatestrings.ko-KR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux.GTK\.template.config\localize\templatestrings.pl-PL.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux.GTK\.template.config\localize\templatestrings.pt-BR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux.GTK\.template.config\localize\templatestrings.ru-RU.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux.GTK\.template.config\localize\templatestrings.tr-TR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux.GTK\.template.config\localize\templatestrings.zh-CN.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux.GTK\.template.config\localize\templatestrings.zh-TW.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux.GTK\.template.config\template.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux\.template.config\localize\description.cs-CZ.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux\.template.config\localize\description.de-DE.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux\.template.config\localize\description.es-ES.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux\.template.config\localize\description.fr-FR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux\.template.config\localize\description.it-IT.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux\.template.config\localize\description.ja-JP.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux\.template.config\localize\description.ko-KR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux\.template.config\localize\description.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux\.template.config\localize\description.pl-PL.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux\.template.config\localize\description.pt-BR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux\.template.config\localize\description.ru-RU.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux\.template.config\localize\description.tr-TR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux\.template.config\localize\description.zh-CN.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux\.template.config\localize\description.zh-TW.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux\.template.config\localize\templatestrings.cs-CZ.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux\.template.config\localize\templatestrings.de-DE.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux\.template.config\localize\templatestrings.es-ES.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux\.template.config\localize\templatestrings.fr-FR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux\.template.config\localize\templatestrings.it-IT.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux\.template.config\localize\templatestrings.ja-JP.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux\.template.config\localize\templatestrings.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux\.template.config\localize\templatestrings.ko-KR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux\.template.config\localize\templatestrings.pl-PL.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux\.template.config\localize\templatestrings.pt-BR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux\.template.config\localize\templatestrings.ru-RU.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux\.template.config\localize\templatestrings.tr-TR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux\.template.config\localize\templatestrings.zh-CN.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux\.template.config\localize\templatestrings.zh-TW.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Linux\.template.config\template.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.MacOS\.template.config\localize\description.cs-CZ.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.MacOS\.template.config\localize\description.de-DE.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.MacOS\.template.config\localize\description.es-ES.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.MacOS\.template.config\localize\description.fr-FR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.MacOS\.template.config\localize\description.it-IT.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.MacOS\.template.config\localize\description.ja-JP.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.MacOS\.template.config\localize\description.ko-KR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.MacOS\.template.config\localize\description.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.MacOS\.template.config\localize\description.pl-PL.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.MacOS\.template.config\localize\description.pt-BR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.MacOS\.template.config\localize\description.ru-RU.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.MacOS\.template.config\localize\description.tr-TR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.MacOS\.template.config\localize\description.zh-CN.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.MacOS\.template.config\localize\description.zh-TW.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.MacOS\.template.config\localize\templatestrings.cs-CZ.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.MacOS\.template.config\localize\templatestrings.de-DE.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.MacOS\.template.config\localize\templatestrings.es-ES.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.MacOS\.template.config\localize\templatestrings.fr-FR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.MacOS\.template.config\localize\templatestrings.it-IT.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.MacOS\.template.config\localize\templatestrings.ja-JP.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.MacOS\.template.config\localize\templatestrings.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.MacOS\.template.config\localize\templatestrings.ko-KR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.MacOS\.template.config\localize\templatestrings.pl-PL.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.MacOS\.template.config\localize\templatestrings.pt-BR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.MacOS\.template.config\localize\templatestrings.ru-RU.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.MacOS\.template.config\localize\templatestrings.tr-TR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.MacOS\.template.config\localize\templatestrings.zh-CN.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.MacOS\.template.config\localize\templatestrings.zh-TW.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.MacOS\.template.config\template.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.Catalyst\.template.config\localize\description.cs-CZ.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.Catalyst\.template.config\localize\description.de-DE.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.Catalyst\.template.config\localize\description.es-ES.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.Catalyst\.template.config\localize\description.fr-FR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.Catalyst\.template.config\localize\description.it-IT.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.Catalyst\.template.config\localize\description.ja-JP.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.Catalyst\.template.config\localize\description.ko-KR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.Catalyst\.template.config\localize\description.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.Catalyst\.template.config\localize\description.pl-PL.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.Catalyst\.template.config\localize\description.pt-BR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.Catalyst\.template.config\localize\description.ru-RU.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.Catalyst\.template.config\localize\description.tr-TR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.Catalyst\.template.config\localize\description.zh-CN.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.Catalyst\.template.config\localize\description.zh-TW.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.Catalyst\.template.config\localize\templatestrings.cs-CZ.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.Catalyst\.template.config\localize\templatestrings.de-DE.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.Catalyst\.template.config\localize\templatestrings.es-ES.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.Catalyst\.template.config\localize\templatestrings.fr-FR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.Catalyst\.template.config\localize\templatestrings.it-IT.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.Catalyst\.template.config\localize\templatestrings.ja-JP.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.Catalyst\.template.config\localize\templatestrings.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.Catalyst\.template.config\localize\templatestrings.ko-KR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.Catalyst\.template.config\localize\templatestrings.pl-PL.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.Catalyst\.template.config\localize\templatestrings.pt-BR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.Catalyst\.template.config\localize\templatestrings.ru-RU.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.Catalyst\.template.config\localize\templatestrings.tr-TR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.Catalyst\.template.config\localize\templatestrings.zh-CN.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.Catalyst\.template.config\localize\templatestrings.zh-TW.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Desktop.Mac.Catalyst\.template.config\template.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.IOS\.template.config\localize\description.cs-CZ.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.IOS\.template.config\localize\description.de-DE.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.IOS\.template.config\localize\description.es-ES.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.IOS\.template.config\localize\description.fr-FR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.IOS\.template.config\localize\description.it-IT.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.IOS\.template.config\localize\description.ja-JP.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.IOS\.template.config\localize\description.ko-KR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.IOS\.template.config\localize\description.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.IOS\.template.config\localize\description.pl-PL.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.IOS\.template.config\localize\description.pt-BR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.IOS\.template.config\localize\description.ru-RU.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.IOS\.template.config\localize\description.tr-TR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.IOS\.template.config\localize\description.zh-CN.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.IOS\.template.config\localize\description.zh-TW.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.IOS\.template.config\localize\templatestrings.cs-CZ.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.IOS\.template.config\localize\templatestrings.de-DE.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.IOS\.template.config\localize\templatestrings.es-ES.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.IOS\.template.config\localize\templatestrings.fr-FR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.IOS\.template.config\localize\templatestrings.it-IT.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.IOS\.template.config\localize\templatestrings.ja-JP.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.IOS\.template.config\localize\templatestrings.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.IOS\.template.config\localize\templatestrings.ko-KR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.IOS\.template.config\localize\templatestrings.pl-PL.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.IOS\.template.config\localize\templatestrings.pt-BR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.IOS\.template.config\localize\templatestrings.ru-RU.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.IOS\.template.config\localize\templatestrings.tr-TR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.IOS\.template.config\localize\templatestrings.zh-CN.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.IOS\.template.config\localize\templatestrings.zh-TW.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.IOS\.template.config\template.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.Android\.template.config\localize\description.cs-CZ.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.Android\.template.config\localize\description.de-DE.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.Android\.template.config\localize\description.es-ES.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.Android\.template.config\localize\description.fr-FR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.Android\.template.config\localize\description.it-IT.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.Android\.template.config\localize\description.ja-JP.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.Android\.template.config\localize\description.ko-KR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.Android\.template.config\localize\description.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.Android\.template.config\localize\description.pl-PL.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.Android\.template.config\localize\description.pt-BR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.Android\.template.config\localize\description.ru-RU.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.Android\.template.config\localize\description.tr-TR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.Android\.template.config\localize\description.zh-CN.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.Android\.template.config\localize\description.zh-TW.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.Android\.template.config\localize\templatestrings.cs-CZ.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.Android\.template.config\localize\templatestrings.de-DE.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.Android\.template.config\localize\templatestrings.es-ES.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.Android\.template.config\localize\templatestrings.fr-FR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.Android\.template.config\localize\templatestrings.it-IT.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.Android\.template.config\localize\templatestrings.ja-JP.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.Android\.template.config\localize\templatestrings.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.Android\.template.config\localize\templatestrings.ko-KR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.Android\.template.config\localize\templatestrings.pl-PL.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.Android\.template.config\localize\templatestrings.pt-BR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.Android\.template.config\localize\templatestrings.ru-RU.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.Android\.template.config\localize\templatestrings.tr-TR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.Android\.template.config\localize\templatestrings.zh-CN.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.Android\.template.config\localize\templatestrings.zh-TW.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Mobile.Android\.template.config\template.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Web.Wasm\.template.config\localize\description.cs-CZ.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Web.Wasm\.template.config\localize\description.de-DE.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Web.Wasm\.template.config\localize\description.es-ES.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Web.Wasm\.template.config\localize\description.fr-FR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Web.Wasm\.template.config\localize\description.it-IT.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Web.Wasm\.template.config\localize\description.ja-JP.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Web.Wasm\.template.config\localize\description.ko-KR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Web.Wasm\.template.config\localize\description.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Web.Wasm\.template.config\localize\description.pl-PL.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Web.Wasm\.template.config\localize\description.pt-BR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Web.Wasm\.template.config\localize\description.ru-RU.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Web.Wasm\.template.config\localize\description.tr-TR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Web.Wasm\.template.config\localize\description.zh-CN.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Web.Wasm\.template.config\localize\description.zh-TW.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Web.Wasm\.template.config\localize\templatestrings.cs-CZ.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Web.Wasm\.template.config\localize\templatestrings.de-DE.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Web.Wasm\.template.config\localize\templatestrings.es-ES.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Web.Wasm\.template.config\localize\templatestrings.fr-FR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Web.Wasm\.template.config\localize\templatestrings.it-IT.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Web.Wasm\.template.config\localize\templatestrings.ja-JP.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Web.Wasm\.template.config\localize\templatestrings.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Web.Wasm\.template.config\localize\templatestrings.ko-KR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Web.Wasm\.template.config\localize\templatestrings.pl-PL.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Web.Wasm\.template.config\localize\templatestrings.pt-BR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Web.Wasm\.template.config\localize\templatestrings.ru-RU.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Web.Wasm\.template.config\localize\templatestrings.tr-TR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Web.Wasm\.template.config\localize\templatestrings.zh-CN.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Web.Wasm\.template.config\localize\templatestrings.zh-TW.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Ft\Platform.Web.Wasm\.template.config\template.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <VSCTCompile Include="Commands\TemplateStudioForWinuiPackage.vsct">

@@ -187,7 +187,7 @@ namespace Microsoft.Templates.SharedResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to AddPlatformTitle.
+        ///   Looks up a localized string similar to Platform.
         /// </summary>
         public static string AddPlatformTitle {
             get {
@@ -1405,7 +1405,7 @@ namespace Microsoft.Templates.SharedResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add Platform Options.
+        ///   Looks up a localized string similar to Platform.
         /// </summary>
         public static string NewProjectStepPlatform {
             get {
@@ -2576,11 +2576,29 @@ namespace Microsoft.Templates.SharedResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Desktop.
+        /// </summary>
+        public static string TemplateGroup_DesktopInteraction {
+            get {
+                return ResourceManager.GetString("TemplateGroup_DesktopInteraction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Identity (choose one).
         /// </summary>
         public static string TemplateGroup_Identity {
             get {
                 return ResourceManager.GetString("TemplateGroup_Identity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  Mobile.
+        /// </summary>
+        public static string TemplateGroup_MobileInteraction {
+            get {
+                return ResourceManager.GetString("TemplateGroup_MobileInteraction", resourceCulture);
             }
         }
         
@@ -2608,6 +2626,15 @@ namespace Microsoft.Templates.SharedResources {
         public static string TemplateGroup_UserInteraction {
             get {
                 return ResourceManager.GetString("TemplateGroup_UserInteraction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Web.
+        /// </summary>
+        public static string TemplateGroup_WebInteraction {
+            get {
+                return ResourceManager.GetString("TemplateGroup_WebInteraction", resourceCulture);
             }
         }
         
