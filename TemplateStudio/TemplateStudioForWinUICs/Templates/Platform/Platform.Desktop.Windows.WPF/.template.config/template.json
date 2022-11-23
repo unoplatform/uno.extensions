@@ -1,0 +1,41 @@
+﻿{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Microsoft",
+  "classifications": [ "Universal" ],
+  "name": "Windows (WPF)",
+  "shortName": "Windows WPF",
+  "groupIdentity": "ts.WinUI.Feat.PlatformDesktopWindowsWPFSelection",
+  "identity": "ts.WinUI.Feat.PlatformDesktopWindowsWPFSelection",
+  "description": "Adds Windows (WPF) project to your application.",
+  "tags": {
+    "language": "C#",
+    "type": "item",
+    "ts.type": "platform",
+    "ts.projecttype": "Blank|NavView|MenuBar",
+    "ts.frontendframework": "all",
+    "ts.platform": "WinUI",
+    "ts.appmodel": "Desktop",
+    "ts.version": "1.0.0",
+    "ts.displayOrder": "1",
+    "ts.group": "DesktopInteraction",
+    "ts.multipleInstance": "false",
+    "ts.genGroup": "0",
+    "ts.rightClickEnabled": "true"
+  },
+  "sourceName": "PlatformDesktopWindowsWPFSelection",
+  "preferNameDirectory": true,
+  "PrimaryOutputs": [
+    {
+      "path": "Contracts/Services/IPlatformDesktopWindowsWPFmSelectorService.cs"
+    },
+    {
+      "path": "Services/PlatformDesktopWindowsWPFSelectorService.cs"
+    }
+  ],
+  "symbols": {
+    "ts.rootNamespace": {
+      "type": "parameter",
+      "replaces": "Param_RootNamespace"
+    }
+  }
+}

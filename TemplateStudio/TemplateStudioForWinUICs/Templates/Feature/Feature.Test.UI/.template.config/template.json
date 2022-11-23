@@ -1,0 +1,41 @@
+﻿{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Microsoft",
+  "classifications": [ "Universal" ],
+  "name": "UI Test",
+  "shortName": "UI Test",
+  "groupIdentity": "ts.WinUI.Feat.FeatureUITestService",
+  "identity": "ts.WinUI.Feat.FeatureUITestService",
+  "description": "Adds Linux (Frame Buffer) project to your application.",
+  "tags": {
+    "language": "C#",
+    "type": "item",
+    "ts.type": "feature",
+    "ts.projecttype": "Blank|NavView|MenuBar",
+    "ts.frontendframework": "all",
+    "ts.platform": "WinUI",
+    "ts.appmodel": "Desktop",
+    "ts.version": "1.0.0",
+    "ts.displayOrder": "1",
+    "ts.group": "TestInteraction",
+    "ts.multipleInstance": "false",
+    "ts.genGroup": "0",
+    "ts.rightClickEnabled": "true"
+  },
+  "sourceName": "FeatureUITestService",
+  "preferNameDirectory": true,
+  "PrimaryOutputs": [
+    {
+      "path": "Contracts/Services/IFeatureUITestService.cs"
+    },
+    {
+      "path": "Services/FeatureUITestService.cs"
+    }
+  ],
+  "symbols": {
+    "ts.rootNamespace": {
+      "type": "parameter",
+      "replaces": "Param_RootNamespace"
+    }
+  }
+}

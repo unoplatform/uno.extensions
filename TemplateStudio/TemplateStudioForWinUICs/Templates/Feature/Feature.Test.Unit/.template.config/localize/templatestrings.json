@@ -1,0 +1,7 @@
+﻿{
+  "name": "Feature Unit Test",
+  "description": "Adds Unit Test",
+
+  "_name.comment": "Label for feature that enables users to add Unit Test.",
+  "_description.comment": "Label description for Platform Selection."
+}

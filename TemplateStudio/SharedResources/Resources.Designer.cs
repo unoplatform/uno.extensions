@@ -2594,6 +2594,15 @@ namespace Microsoft.Templates.SharedResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Manigest.
+        /// </summary>
+        public static string TemplateGroup_ManifestInteraction {
+            get {
+                return ResourceManager.GetString("TemplateGroup_ManifestInteraction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to  Mobile.
         /// </summary>
         public static string TemplateGroup_MobileInteraction {
@@ -2608,6 +2617,15 @@ namespace Microsoft.Templates.SharedResources {
         public static string TemplateGroup_Packaging {
             get {
                 return ResourceManager.GetString("TemplateGroup_Packaging", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Test.
+        /// </summary>
+        public static string TemplateGroup_TestInteraction {
+            get {
+                return ResourceManager.GetString("TemplateGroup_TestInteraction", resourceCulture);
             }
         }
         

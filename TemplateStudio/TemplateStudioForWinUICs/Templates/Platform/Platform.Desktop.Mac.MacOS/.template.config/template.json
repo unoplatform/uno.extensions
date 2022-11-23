@@ -1,0 +1,41 @@
+﻿{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Microsoft",
+  "classifications": [ "Universal" ],
+  "name": "Mac (MacOS)",
+  "shortName": "Mac MacOS",
+  "groupIdentity": "ts.WinUI.Feat.PlatformMacMacOSSelection",
+  "identity": "ts.WinUI.Feat.PlatformMacMacOSSelection",
+  "description": "Adds Mac (MacOS) project to your application.",
+  "tags": {
+    "language": "C#",
+    "type": "item",
+    "ts.type": "platform",
+    "ts.projecttype": "Blank|NavView|MenuBar",
+    "ts.frontendframework": "all",
+    "ts.platform": "WinUI",
+    "ts.appmodel": "Desktop",
+    "ts.version": "1.0.0",
+    "ts.displayOrder": "1",
+    "ts.group": "DesktopInteraction",
+    "ts.multipleInstance": "false",
+    "ts.genGroup": "0",
+    "ts.rightClickEnabled": "true"
+  },
+  "sourceName": "PlatformMacMacOSSelection",
+  "preferNameDirectory": true,
+  "PrimaryOutputs": [
+    {
+      "path": "Contracts/Services/IPlatformMacMacOSSelectorService.cs"
+    },
+    {
+      "path": "Services/PlatformMacMacOSSelectorService.cs"
+    }
+  ],
+  "symbols": {
+    "ts.rootNamespace": {
+      "type": "parameter",
+      "replaces": "Param_RootNamespace"
+    }
+  }
+}

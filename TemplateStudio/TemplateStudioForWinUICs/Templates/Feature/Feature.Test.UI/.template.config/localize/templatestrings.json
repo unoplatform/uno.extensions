@@ -1,0 +1,7 @@
+﻿{
+  "name": "Feature UI Test",
+  "description": "Adds UI Test to project",
+
+  "_name.comment": "Label for feature that enables users to add UI.",
+  "_description.comment": "Label description for Platform Selection."
+}

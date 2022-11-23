@@ -1,0 +1,42 @@
+﻿{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Microsoft",
+  "classifications": [ "Universal" ],
+  "name": "PWA Manifest for WASM",
+  "shortName": "PWA",
+  "groupIdentity": "ts.WinUI.Feat.FeaturePWAService",
+  "identity": "ts.WinUI.Feat.FeaturePWAService",
+  "description": "Adds Linux (Frame Buffer) project to your application.",
+  "tags": {
+    "language": "C#",
+    "type": "item",
+    "ts.type": "feature",
+    "ts.projecttype": "Blank|NavView|MenuBar",
+    "ts.frontendframework": "all",
+    "ts.platform": "WinUI",
+    "ts.appmodel": "Desktop",
+    "ts.version": "1.0.0",
+    "ts.displayOrder": "1",
+    "ts.group": "ManifestInteraction",
+    "ts.multipleInstance": "false",
+    "ts.genGroup": "0",
+    "ts.dependencies": "ts.WinUI.Feat.PlatformWebWasmSelection",
+    "ts.rightClickEnabled": "true"
+  },
+  "sourceName": "FeaturePWAService",
+  "preferNameDirectory": true,
+  "PrimaryOutputs": [
+    {
+      "path": "Contracts/Services/IFeaturePWAService.cs"
+    },
+    {
+      "path": "Services/FeaturePWAService.cs"
+    }
+  ],
+  "symbols": {
+    "ts.rootNamespace": {
+      "type": "parameter",
+      "replaces": "Param_RootNamespace"
+    }
+  }
+}

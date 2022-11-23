@@ -1,0 +1,7 @@
+﻿{
+  "name": "Feature.PWA",
+  "description": "Adds PWA Manifest for WASM",
+
+  "_name.comment": "Label for feature that enables users to add PWA Manifest for WASM.",
+  "_description.comment": "Label description for Platform Selection."
+}

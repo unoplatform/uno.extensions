@@ -1427,9 +1427,17 @@ See the final result: {2}
     <value>Desktop</value>
     <comment>Desktop</comment>
   </data>
+  <data name="TemplateGroup_ManifestInteraction" xml:space="preserve">
+    <value>Manigest</value>
+    <comment>Manifest</comment>
+  </data>
   <data name="TemplateGroup_MobileInteraction" xml:space="preserve">
     <value> Mobile</value>
     <comment>Mobile</comment>
+  </data>
+  <data name="TemplateGroup_TestInteraction" xml:space="preserve">
+    <value>Test</value>
+    <comment>Test</comment>
   </data>
   <data name="TemplateGroup_WebInteraction" xml:space="preserve">
     <value>Web</value>
