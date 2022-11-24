@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Uno.Extensions.RuntimeTests.WPF
+namespace RuntimeTests.WPF
 {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
@@ -24,7 +24,7 @@ namespace Uno.Extensions.RuntimeTests.WPF
 		{
 			InitializeComponent();
 
-			root.Content = new global::Uno.UI.Skia.Platform.WpfHost(Dispatcher, () => new Uno.Extensions.RuntimeTests.App());
+			root.Content = new global::Uno.UI.Skia.Platform.WpfHost(Dispatcher, () => new RuntimeTests.App());
 		}
 	}
 }

@@ -3,6 +3,9 @@
 		<DefineConstants>$(DefineConstants);UNO_RUNTIMETESTS_DISABLE_INJECTEDPOINTERATTRIBUTE</DefineConstants>
 		<DefineConstants>$(DefineConstants);UNO_RUNTIMETESTS_DISABLE_REQUIRESFULLWINDOWATTRIBUTE</DefineConstants>
 		<DefineConstants>$(DefineConstants);UNO_RUNTIMETESTS_DISABLE_RUNSONUITHREADATTRIBUTE</DefineConstants>
+
+		<RootNamespace>RuntimeTests</RootNamespace><!--Avoids conflicts with Uno namespace for WPF-->
+		<BaseOutputPath>bin</BaseOutputPath><!--Reduce file path lenght-->
 	</PropertyGroup>
 
 	<ItemGroup>

@@ -7,9 +7,10 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Uno.Extensions.Reactive.WinUI.Tests;
 using Uno.UI.RuntimeTests;
 
-namespace Uno.Extensions.RuntimeTests
+namespace RuntimeTests
 {
 	/// <summary>
 	/// Provides application-specific behavior to supplement the default Application class.
@@ -17,6 +18,11 @@ namespace Uno.Extensions.RuntimeTests
 	public sealed partial class App : Application
 	{
 		private Window? _window;
+
+		private static void ForceAssemblyLoading()
+		{
+			var reactive_UI_Tests = new Given_FeedView();
+		}
 
 		/// <summary>
 		/// Initializes the singleton application object.  This is the first line of authored code
@@ -47,6 +53,7 @@ namespace Uno.Extensions.RuntimeTests
 			UIHelper.ContentSetter = e => UnitTestsUIContentHelper.Content = e;
 			UIHelper.ContentGetter = () => UnitTestsUIContentHelper.Content;
 
+			ForceAssemblyLoading();
 			_window.Content ??= new Uno.UI.RuntimeTests.UnitTestsControl();
 		}
 

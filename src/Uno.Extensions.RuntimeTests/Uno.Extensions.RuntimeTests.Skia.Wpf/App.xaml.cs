@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Uno.Extensions.RuntimeTests.WPF
+namespace RuntimeTests.WPF
 {
 	/// <summary>
 	/// Interaction logic for App.xaml

@@ -11,7 +11,7 @@
 		<UseWinUI>true</UseWinUI>
 		<EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
 		<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
-		<DefineConstants>$(DefineConstants);WINDOWS_WINUI</DefineConstants>
+		<DefineConstants>$(DefineConstants);WINDOWS_WINUI;WINUI</DefineConstants>
 	</PropertyGroup>
 
 	<ItemGroup>

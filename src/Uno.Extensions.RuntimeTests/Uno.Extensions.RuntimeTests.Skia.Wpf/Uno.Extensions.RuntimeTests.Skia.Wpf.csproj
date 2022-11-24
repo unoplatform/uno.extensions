@@ -7,6 +7,7 @@
 		<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
 		<DefineConstants>$(DefineConstants);WINDOWS_WINUI</DefineConstants>
 	</PropertyGroup>
+
 	<ItemGroup Label="AssemblyInfo">
 		<AssemblyAttribute Include="System.Runtime.InteropServices.ComVisibleAttribute">
 			<_Parameter1>false</_Parameter1>
@@ -18,6 +19,7 @@
 			<_Parameter2_IsLiteral>true</_Parameter2_IsLiteral>
 		</AssemblyAttribute>
 	</ItemGroup>
+
 	<ItemGroup>
 		<PackageReference Update="Microsoft.Net.Compilers.Toolset" Version="4.2.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
@@ -36,4 +38,15 @@
 	</ItemGroup>
 	<Import Project="..\Uno.Extensions.RuntimeTests.Shared\Uno.Extensions.RuntimeTests.Shared.projitems" Label="Shared" />
 	<Import Project="..\Uno.Extensions.RuntimeTests.Shared\common.props" />
+
+	<Target Name="RemoveDuplicateAnalyzers" BeforeTargets="CoreCompile">
+		<!-- https://github.com/unoplatform/uno/discussions/9562 -->
+		<!-- Work around https://github.com/dotnet/wpf/issues/6792 -->
+
+		<ItemGroup>
+			<FilteredAnalyzer Include="@(Analyzer-&gt;Distinct())" />
+			<Analyzer Remove="@(Analyzer)" />
+			<Analyzer Include="@(FilteredAnalyzer)" />
+		</ItemGroup>
+	</Target>
 </Project>
