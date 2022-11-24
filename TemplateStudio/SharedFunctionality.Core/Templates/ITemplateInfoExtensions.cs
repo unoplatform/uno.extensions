@@ -204,22 +204,35 @@ namespace Microsoft.Templates.Core
 
             return result;
         }
+		
+		public static List<string> GetArchitecturesList(this ITemplateInfo ti)
+		{
+			var frontEndArchitectures = GetValueFromTag(ti, TagPrefix + "architectures");
 
-        public static List<string> GetFrontEndFrameworkList(this ITemplateInfo ti)
-        {
-            var frontEndFrameworks = GetValueFromTag(ti, TagPrefix + "frontendframework");
+			var result = new List<string>();
 
-            var result = new List<string>();
+			if (!string.IsNullOrEmpty(frontEndArchitectures))
+			{
+				result.AddRange(frontEndArchitectures.Split(Separator.ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
+			}
 
-            if (!string.IsNullOrEmpty(frontEndFrameworks))
-            {
-                result.AddRange(frontEndFrameworks.Split(Separator.ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
-            }
+			return result;
+		}
+		public static List<string> GetFrontEndFrameworkList(this ITemplateInfo ti)
+		{
+			var frontEndFrameworks = GetValueFromTag(ti, TagPrefix + "frontendframework");
 
-            return result;
-        }
+			var result = new List<string>();
 
-        public static List<string> GetBackEndFrameworkList(this ITemplateInfo ti)
+			if (!string.IsNullOrEmpty(frontEndFrameworks))
+			{
+				result.AddRange(frontEndFrameworks.Split(Separator.ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
+			}
+
+			return result;
+		}
+
+		public static List<string> GetBackEndFrameworkList(this ITemplateInfo ti)
         {
             var backEndFrameworks = GetValueFromTag(ti, TagPrefix + "backendframework");
 

@@ -338,7 +338,7 @@
     <comment>Notification message for Sync Error, {0}:Version</comment>
   </data>
   <data name="NotificationSyncStatus_NewWizardVersionAvailable" xml:space="preserve">
-    <value>Template Studio Version {0} is available. Update the extension to enjoy the latest features.</value>
+    <value>Template Uno Extensions Version {0} is available. Update the extension to enjoy the latest features.</value>
     <comment>Notification message for Sync Status: New Wizard Version available, {0}:New Version</comment>
   </data>
   <data name="NotificationSyncStatus_Preparing" xml:space="preserve">
@@ -1405,7 +1405,7 @@ See the final result: {2}
     <value>Error reading the instance locking file.</value>
   </data>
   <data name="TemplateStudioForWinUI" xml:space="preserve">
-    <value>Template Studio for WinUI</value>
+    <value>Template for Uno Extensions</value>
   </data>
   <data name="TemplateGroup_Deployment" xml:space="preserve">
     <value>Deployment</value>
@@ -1443,9 +1443,19 @@ See the final result: {2}
     <value>Web</value>
     <comment>Web</comment>
   </data>
+  <data name="AccessibilityArchitecturePageList" xml:space="preserve">
+    <value>Architecture</value>
+  </data>
   <data name="AddUnoExtensionsTitle" xml:space="preserve">
     <value>Extensions</value>
     <comment>Extensions</comment>
+  </data>
+  <data name="ArchitecturePageTitle" xml:space="preserve">
+    <value>Architecture</value>
+  </data>
+  <data name="NewProjectStepArchitecture" xml:space="preserve">
+    <value>Architecture</value>
+    <comment>Architecture</comment>
   </data>
   <data name="NewProjectStepUnoExtensions" xml:space="preserve">
     <value>Extensions</value>

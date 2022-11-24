@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -157,24 +158,41 @@ namespace Microsoft.Templates.Core
             return GetMetadataInfo("projectTypes").Where(m => m.Platform == context.Platform && (projectTypes.Contains(m.Name) || projectTypes.Contains(All)));
         }
 
-        public IEnumerable<MetadataInfo> GetFrontEndFrameworks(UserSelectionContext context)
-        {
-            if (string.IsNullOrEmpty(context.ProjectType))
-            {
-                throw new ArgumentNullException(nameof(context.ProjectType));
-            }
+		public IEnumerable<MetadataInfo> GetFrontEndFrameworks(UserSelectionContext context)
+		{
+			if (string.IsNullOrEmpty(context.ProjectType))
+			{
+				throw new ArgumentNullException(nameof(context.ProjectType));
+			}
 
-            var frameworks = GetSupportedFx(context);
+			var frameworks = GetSupportedFx(context);
 
-            var results = GetMetadataInfo("frontendframeworks")
-                .Where(f => f.Platform == context.Platform
-                            && frameworks.Any(fx => fx.Name == f.Name && fx.Type == FrameworkTypes.FrontEnd));
+			var results = GetMetadataInfo("frontendframeworks")
+				.Where(f => f.Platform == context.Platform
+							&& frameworks.Any(fx => fx.Name == f.Name && fx.Type == FrameworkTypes.FrontEnd));
 
-            results.ToList().ForEach(meta => meta.Tags["type"] = "frontend");
-            return results;
-        }
+			results.ToList().ForEach(meta => meta.Tags["type"] = "frontend");
+			return results;
+		}
 
-        public IEnumerable<MetadataInfo> GetBackEndFrameworks(UserSelectionContext context)
+		public IEnumerable<MetadataInfo> GetFrontEndArchitectures(UserSelectionContext context)
+		{
+			if (string.IsNullOrEmpty(context.ProjectType))
+			{
+				throw new ArgumentNullException(nameof(context.ProjectType));
+			}
+
+			var Architectures = GetSupportedArchitectures(context);
+
+			var results = GetMetadataInfo("frontendframeworks")
+				.Where(f => f.Platform == context.Platform
+							&& Architectures.Any(fx => fx.Name == f.Name && fx.Type == FrameworkTypes.BackEnd));
+
+			results.ToList().ForEach(meta => meta.Tags["type"] = "backend");
+			return results;
+		}
+
+		public IEnumerable<MetadataInfo> GetBackEndFrameworks(UserSelectionContext context)
         {
             if (string.IsNullOrEmpty(context.ProjectType))
             {
@@ -366,7 +384,22 @@ namespace Microsoft.Templates.Core
             return result;
         }
 
-        public IEnumerable<ITemplateInfo> GetDependencies(ITemplateInfo template, UserSelectionContext context, IList<ITemplateInfo> dependencyList)
+		private IEnumerable<SupportedFramework> GetSupportedArchitectures(UserSelectionContext context)
+		{
+			var filtered = GetAll()
+						  .Where(t => t.GetTemplateType() == TemplateType.Project
+						  && (t.GetProjectTypeList().Contains(context.ProjectType) || t.GetProjectTypeList().Contains(All))
+						  && IsMatchPropertyBag(t, context.PropertyBag)
+						  && t.GetPlatform().Equals(context.Platform, StringComparison.OrdinalIgnoreCase)).ToList();
+
+			var result = new List<SupportedFramework>();
+			result.AddRange(filtered.SelectMany(t => t.GetArchitecturesList()).Select(name => new SupportedFramework(name, FrameworkTypes.BackEnd)).ToList());
+			result = result.Distinct().ToList();
+
+			return result;
+		}
+
+		public IEnumerable<ITemplateInfo> GetDependencies(ITemplateInfo template, UserSelectionContext context, IList<ITemplateInfo> dependencyList)
         {
             if (string.IsNullOrEmpty(context.ProjectType))
             {

@@ -5,6 +5,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Microsoft.Templates.Core;
 using Microsoft.Templates.Core.Gen;
 using Microsoft.Templates.UI.ViewModels.Common;
@@ -66,7 +67,24 @@ namespace Microsoft.Templates.UI.Services
             return frameworks.Any();
         }
 
-        public static bool HasTemplatesFromType(TemplateType templateType, UserSelectionContext context)
+		public static bool LoadArchitectures(ObservableCollection<ArchitectureMetaDataViewModel> architectures, UserSelectionContext context)
+		{
+			var targetArchitecture = GenContext.ToolBox.Repo.GetFrontEndArchitectures(context)
+										.Select(m => new ArchitectureMetaDataViewModel(m))
+										.OrderBy(f => f.Order)
+										.ToList();
+
+			architectures.Clear();
+
+			foreach (var item in targetArchitecture)
+			{
+				architectures.Add(item);
+			}
+
+			return architectures.Any();
+		}
+
+		public static bool HasTemplatesFromType(TemplateType templateType, UserSelectionContext context)
         {
             return GenContext.ToolBox.Repo.GetTemplatesInfo(templateType, context)
                 .Where(t => !t.IsHidden)

@@ -61,6 +61,15 @@ namespace Microsoft.Templates.SharedResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Architecture.
+        /// </summary>
+        public static string AccessibilityArchitecturePageList {
+            get {
+                return ResourceManager.GetString("AccessibilityArchitecturePageList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Code viewer.
         /// </summary>
         public static string AccessibilityCodeViewerControl {
@@ -228,6 +237,15 @@ namespace Microsoft.Templates.SharedResources {
         public static string AddUnoExtensionsTitle {
             get {
                 return ResourceManager.GetString("AddUnoExtensionsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Architecture.
+        /// </summary>
+        public static string ArchitecturePageTitle {
+            get {
+                return ResourceManager.GetString("ArchitecturePageTitle", resourceCulture);
             }
         }
         
@@ -1387,6 +1405,15 @@ namespace Microsoft.Templates.SharedResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Architecture.
+        /// </summary>
+        public static string NewProjectStepArchitecture {
+            get {
+                return ResourceManager.GetString("NewProjectStepArchitecture", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Design pattern.
         /// </summary>
         public static string NewProjectStepDesignPattern {
@@ -1594,7 +1621,7 @@ namespace Microsoft.Templates.SharedResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Template Studio Version {0} is available. Update the extension to enjoy the latest features..
+        ///   Looks up a localized string similar to Template Uno Extensions Version {0} is available. Update the extension to enjoy the latest features..
         /// </summary>
         public static string NotificationSyncStatus_NewWizardVersionAvailable {
             get {
@@ -2936,7 +2963,7 @@ namespace Microsoft.Templates.SharedResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Template Studio for WinUI.
+        ///   Looks up a localized string similar to Template for Uno Extensions.
         /// </summary>
         public static string TemplateStudioForWinUI {
             get {

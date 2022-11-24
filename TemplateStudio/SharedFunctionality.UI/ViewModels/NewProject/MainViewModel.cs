@@ -25,9 +25,10 @@ namespace Microsoft.Templates.UI.ViewModels.NewProject
     public class MainViewModel : BaseMainViewModel
     {
         public const string NewProjectStepProjectType = "01ProjectType";
-        public const string NewProjectStepFramework = "02Framework";
+		public const string NewProjectStepFramework = "02Framework";
+		public const string NewProjectStepArchitecture = "03Architecture";
 
-        private RelayCommand _refreshTemplatesCacheCommand;
+		private RelayCommand _refreshTemplatesCacheCommand;
         private RelayCommand _compositionToolCommand;
 
         public Dictionary<TemplateType, TemplatesStepViewModel> StepsViewModels { get; } = new Dictionary<TemplateType, TemplatesStepViewModel>();
@@ -36,9 +37,11 @@ namespace Microsoft.Templates.UI.ViewModels.NewProject
 
         public ProjectTypeViewModel ProjectType { get; } = new ProjectTypeViewModel(() => Instance.IsSelectionEnabled(MetadataType.ProjectType), () => Instance.OnProjectTypeSelectedAsync());
 
-        public FrameworkViewModel Framework { get; } = new FrameworkViewModel(() => Instance.IsSelectionEnabled(MetadataType.Framework), () => Instance.OnFrameworkSelectedAsync());
+		public FrameworkViewModel Framework { get; } = new FrameworkViewModel(() => Instance.IsSelectionEnabled(MetadataType.Framework), () => Instance.OnFrameworkSelectedAsync());
 
-        public UserSelectionViewModel UserSelection { get; } = new UserSelectionViewModel();
+		public ArchitectureViewModel Architecture { get; } = new ArchitectureViewModel(() => Instance.IsSelectionEnabled(MetadataType.Architecture), () => Instance.OnArchitectureSelectedAsync());
+
+		public UserSelectionViewModel UserSelection { get; } = new UserSelectionViewModel();
 
         public CompositionToolViewModel CompositionTool { get; } = new CompositionToolViewModel();
 
@@ -78,8 +81,9 @@ namespace Microsoft.Templates.UI.ViewModels.NewProject
             get
             {
                 yield return StepData.MainStep(NewProjectStepProjectType, "1", Resources.NewProjectStepProjectType, () => new ProjectTypePage(), true, true);
-                yield return StepData.MainStep(NewProjectStepFramework, "2", Resources.NewProjectStepDesignPattern, () => new FrameworkPage());
-            }
+				yield return StepData.MainStep(NewProjectStepFramework, "2", Resources.NewProjectStepDesignPattern, () => new FrameworkPage());
+				yield return StepData.MainStep(NewProjectStepFramework, "3", Resources.NewProjectStepArchitecture, () => new ArchitecturePage());
+			}
         }
 
         public override void Initialize(UserSelectionContext context)
@@ -219,7 +223,6 @@ namespace Microsoft.Templates.UI.ViewModels.NewProject
             UserSelection.Initialize(Context);
 
 			await BuildStepViewModelAsync(TemplateType.Feature);
-
 
 			await BuildStepViewModelAsync(TemplateType.Platform);
 			await BuildStepViewModelAsync(TemplateType.UnoExtensions);
