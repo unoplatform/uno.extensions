@@ -9,7 +9,7 @@
   "description": "Adds Linux (Frame Buffer) project to your application.",
   "tags": {
     "language": "C#",
-    "type": "item",
+    "type": "project",
     "ts.type": "feature",
     "ts.projecttype": "Blank|NavView|MenuBar",
     "ts.frontendframework": "all",

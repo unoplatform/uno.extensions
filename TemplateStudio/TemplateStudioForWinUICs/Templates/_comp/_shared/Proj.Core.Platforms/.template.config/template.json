@@ -14,7 +14,6 @@
         "ts.outputToParent": "true",
         "ts.platform": "WinUI",
         "ts.version": "1.0.0",
-        "ts.compositionFilter": "$projecttype != Blank & groupidentity == ts.WinUI.Feat.MSIXPackaging"
     },
     "sourceName": "Param_ItemName",
     "symbols": {

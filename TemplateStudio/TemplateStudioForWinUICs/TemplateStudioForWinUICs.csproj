@@ -180,9 +180,6 @@
     <Content Include="Templates\Proj\Default\Param_ProjectName\Assets\WindowIcon.ico">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Test\App.MSTest\Param_ProjectName.Tests.MSTest\TestClass.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <Content Include="Templates\_comp\MT\Project.NavView.AddNavViewItem.WebView\Views\ShellPage_postaction.xaml">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -202,9 +199,6 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Templates\Proj\Default\Param_ProjectName\MainWindow.xaml">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Test\App.MSTest\.template.config\icon.xaml">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Templates\Platform\Platform.Desktop.Windows\.template.config\icon.xaml">
@@ -245,12 +239,15 @@
     </Content>
     <Content Include="Templates\Feature\Feature.PWA\.template.config\icon.xaml">
       <SubType>Designer</SubType>
+      <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\icon.xaml">
       <SubType>Designer</SubType>
+      <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Templates\Feature\Feature.Test.UI\.template.config\icon.xaml">
       <SubType>Designer</SubType>
+      <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
   </ItemGroup>
   <ItemGroup>
@@ -274,12 +271,24 @@
       <DependentUpon>source.extension.vsixmanifest</DependentUpon>
     </Compile>
     <Compile Include="TemplateStudioForWinUICsPackage.cs" />
-    <Content Include="Templates\Feature\Feature.Test.UI\Services\FeatureUITestService.cs" />
-    <Content Include="Templates\Feature\Feature.Test.UI\Contracts\Services\IFeatureUITestService.cs" />
-    <Content Include="Templates\Feature\Feature.Test.Unit\Services\FeatureUnitTestService.cs" />
-    <Content Include="Templates\Feature\Feature.Test.Unit\Contracts\Services\IFeatureUnitTestService.cs" />
-    <Content Include="Templates\Feature\Feature.PWA\Services\FeaturePWAServiceService.cs" />
-    <Content Include="Templates\Feature\Feature.PWA\Contracts\Services\IFeaturePWAServiceService.cs" />
+    <Content Include="Templates\Feature\Feature.Test.UI\Services\FeatureUITestService.cs">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.UI\Contracts\Services\IFeatureUITestService.cs">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.Unit\Services\FeatureUnitTestService.cs">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.Unit\Contracts\Services\IFeatureUnitTestService.cs">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.PWA\Services\FeaturePWAServiceService.cs">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.PWA\Contracts\Services\IFeaturePWAServiceService.cs">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="Templates\Platform\Platform.Web.Wasm\Services\PlatformWebWasmSelectorService.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -342,12 +351,6 @@
     <Content Include="Templates\_comp\MT\Platform.PlatformSelection\App_postaction.xaml.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Test\App.MSTest\Param_ProjectName.Tests.MSTest\Initialize.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Test\App.MSTest\Param_ProjectName.Tests.MSTest\Usings.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <Content Include="Templates\Proj\Default\Param_ProjectName\Helpers\RuntimeHelper.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -368,12 +371,6 @@
     </Content>
     <Content Include="Commands\Resources\TemplateStudioCommand.png" />
     <Content Include="Templates\_comp\MT\Feature.AppNotifications\Strings\en-us\Resources_postaction.resw">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Test\App.MSTest\Param_ProjectName.Tests.MSTest\README.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Test\App.MSTest\.template.config\localize\templatestrings.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Templates\Proj\Default\Param_ProjectName.Core\README.md">
@@ -1166,93 +1163,267 @@
     <Content Include="Templates\Platform\Platform.Web.Wasm\.template.config\template.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\description.cs-CZ.md" />
-    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\description.de-DE.md" />
-    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\description.es-ES.md" />
-    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\description.fr-FR.md" />
-    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\description.it-IT.md" />
-    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\description.ja-JP.md" />
-    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\description.ko-KR.md" />
-    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\description.md" />
-    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\description.pl-PL.md" />
-    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\description.pt-BR.md" />
-    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\description.ru-RU.md" />
-    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\description.tr-TR.md" />
-    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\description.zh-CN.md" />
-    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\description.zh-TW.md" />
-    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\templatestrings.cs-CZ.json" />
-    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\templatestrings.de-DE.json" />
-    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\templatestrings.es-ES.json" />
-    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\templatestrings.fr-FR.json" />
-    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\templatestrings.it-IT.json" />
-    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\templatestrings.ja-JP.json" />
-    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\templatestrings.json" />
-    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\templatestrings.ko-KR.json" />
-    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\templatestrings.pl-PL.json" />
-    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\templatestrings.pt-BR.json" />
-    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\templatestrings.ru-RU.json" />
-    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\templatestrings.tr-TR.json" />
-    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\templatestrings.zh-CN.json" />
-    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\templatestrings.zh-TW.json" />
-    <Content Include="Templates\Feature\Feature.PWA\.template.config\template.json" />
-    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\description.cs-CZ.md" />
-    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\description.de-DE.md" />
-    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\description.es-ES.md" />
-    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\description.fr-FR.md" />
-    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\description.it-IT.md" />
-    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\description.ja-JP.md" />
-    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\description.ko-KR.md" />
-    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\description.md" />
-    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\description.pl-PL.md" />
-    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\description.pt-BR.md" />
-    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\description.ru-RU.md" />
-    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\description.tr-TR.md" />
-    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\description.zh-CN.md" />
-    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\description.zh-TW.md" />
-    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\templatestrings.cs-CZ.json" />
-    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\templatestrings.de-DE.json" />
-    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\templatestrings.es-ES.json" />
-    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\templatestrings.fr-FR.json" />
-    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\templatestrings.it-IT.json" />
-    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\templatestrings.ja-JP.json" />
-    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\templatestrings.json" />
-    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\templatestrings.ko-KR.json" />
-    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\templatestrings.pl-PL.json" />
-    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\templatestrings.pt-BR.json" />
-    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\templatestrings.ru-RU.json" />
-    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\templatestrings.tr-TR.json" />
-    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\templatestrings.zh-CN.json" />
-    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\templatestrings.zh-TW.json" />
-    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\template.json" />
-    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\description.cs-CZ.md" />
-    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\description.de-DE.md" />
-    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\description.es-ES.md" />
-    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\description.fr-FR.md" />
-    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\description.it-IT.md" />
-    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\description.ja-JP.md" />
-    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\description.ko-KR.md" />
-    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\description.md" />
-    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\description.pl-PL.md" />
-    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\description.pt-BR.md" />
-    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\description.ru-RU.md" />
-    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\description.tr-TR.md" />
-    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\description.zh-CN.md" />
-    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\description.zh-TW.md" />
-    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\templatestrings.cs-CZ.json" />
-    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\templatestrings.de-DE.json" />
-    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\templatestrings.es-ES.json" />
-    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\templatestrings.fr-FR.json" />
-    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\templatestrings.it-IT.json" />
-    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\templatestrings.ja-JP.json" />
-    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\templatestrings.json" />
-    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\templatestrings.ko-KR.json" />
-    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\templatestrings.pl-PL.json" />
-    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\templatestrings.pt-BR.json" />
-    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\templatestrings.ru-RU.json" />
-    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\templatestrings.tr-TR.json" />
-    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\templatestrings.zh-CN.json" />
-    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\templatestrings.zh-TW.json" />
-    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\template.json" />
+    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\description.cs-CZ.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\description.de-DE.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\description.es-ES.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\description.fr-FR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\description.it-IT.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\description.ja-JP.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\description.ko-KR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\description.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\description.pl-PL.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\description.pt-BR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\description.ru-RU.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\description.tr-TR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\description.zh-CN.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\description.zh-TW.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\templatestrings.cs-CZ.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\templatestrings.de-DE.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\templatestrings.es-ES.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\templatestrings.fr-FR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\templatestrings.it-IT.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\templatestrings.ja-JP.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\templatestrings.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\templatestrings.ko-KR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\templatestrings.pl-PL.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\templatestrings.pt-BR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\templatestrings.ru-RU.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\templatestrings.tr-TR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\templatestrings.zh-CN.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.PWA\.template.config\localize\templatestrings.zh-TW.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.PWA\.template.config\template.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\description.cs-CZ.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\description.de-DE.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\description.es-ES.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\description.fr-FR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\description.it-IT.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\description.ja-JP.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\description.ko-KR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\description.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\description.pl-PL.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\description.pt-BR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\description.ru-RU.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\description.tr-TR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\description.zh-CN.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\description.zh-TW.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\templatestrings.cs-CZ.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\templatestrings.de-DE.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\templatestrings.es-ES.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\templatestrings.fr-FR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\templatestrings.it-IT.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\templatestrings.ja-JP.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\templatestrings.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\templatestrings.ko-KR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\templatestrings.pl-PL.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\templatestrings.pt-BR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\templatestrings.ru-RU.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\templatestrings.tr-TR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\templatestrings.zh-CN.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\localize\templatestrings.zh-TW.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.Unit\.template.config\template.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\description.cs-CZ.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\description.de-DE.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\description.es-ES.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\description.fr-FR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\description.it-IT.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\description.ja-JP.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\description.ko-KR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\description.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\description.pl-PL.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\description.pt-BR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\description.ru-RU.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\description.tr-TR.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\description.zh-CN.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\description.zh-TW.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\templatestrings.cs-CZ.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\templatestrings.de-DE.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\templatestrings.es-ES.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\templatestrings.fr-FR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\templatestrings.it-IT.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\templatestrings.ja-JP.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\templatestrings.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\templatestrings.ko-KR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\templatestrings.pl-PL.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\templatestrings.pt-BR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\templatestrings.ru-RU.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\templatestrings.tr-TR.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\templatestrings.zh-CN.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\localize\templatestrings.zh-TW.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Feature\Feature.Test.UI\.template.config\template.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <VSCTCompile Include="Commands\TemplateStudioForWinuiPackage.vsct">
       <Generator>VsctGenerator</Generator>
       <ResourceName>Menus.ctmenu</ResourceName>
@@ -1365,582 +1536,87 @@
     <Content Include="Templates\_comp\_shared\Page.AddBackground.Blank\.template.config\template.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Test\App.MSTest\.template.config\localize\description.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Test\App.MSTest\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Test\App.MSTest\Param_ProjectName.Tests.MSTest\Param_ProjectName.Tests.MSTest.csproj">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Templates\Pg\WebView\.template.config\localize\templatestrings.json">
+    <Content Include="Templates\Page\Blank\.template.config\localize\templatestrings.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Pg\Settings\.template.config\localize\templatestrings.json">
+    <Content Include="Templates\Page\Blank\.template.config\localize\description.cs-CZ.md">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Pg\List\.template.config\localize\templatestrings.json">
+    <Content Include="Templates\Page\Blank\.template.config\localize\description.de-DE.md">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Pg\Form\.template.config\localize\templatestrings.json">
+    <Content Include="Templates\Page\Blank\.template.config\localize\description.es-ES.md">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Pg\DGrid\.template.config\localize\templatestrings.json">
+    <Content Include="Templates\Page\Blank\.template.config\localize\description.fr-FR.md">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Pg\CGrid\.template.config\localize\templatestrings.json">
+    <Content Include="Templates\Page\Blank\.template.config\localize\description.it-IT.md">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Pg\Blank\.template.config\localize\templatestrings.json">
+    <Content Include="Templates\Page\Blank\.template.config\localize\description.ja-JP.md">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Pg\Blank\.template.config\localize\description.cs-CZ.md">
+    <Content Include="Templates\Page\Blank\.template.config\localize\description.ko-KR.md">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Pg\Blank\.template.config\localize\description.de-DE.md">
+    <Content Include="Templates\Page\Blank\.template.config\localize\description.pl-PL.md">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Pg\Blank\.template.config\localize\description.es-ES.md">
+    <Content Include="Templates\Page\Blank\.template.config\localize\description.pt-BR.md">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Pg\Blank\.template.config\localize\description.fr-FR.md">
+    <Content Include="Templates\Page\Blank\.template.config\localize\description.ru-RU.md">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Pg\Blank\.template.config\localize\description.it-IT.md">
+    <Content Include="Templates\Page\Blank\.template.config\localize\description.tr-TR.md">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Pg\Blank\.template.config\localize\description.ja-JP.md">
+    <Content Include="Templates\Page\Blank\.template.config\localize\description.zh-CN.md">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Pg\Blank\.template.config\localize\description.ko-KR.md">
+    <Content Include="Templates\Page\Blank\.template.config\localize\description.zh-TW.md">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Pg\Blank\.template.config\localize\description.pl-PL.md">
+    <Content Include="Templates\Page\Blank\.template.config\localize\templatestrings.cs-CZ.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Pg\Blank\.template.config\localize\description.pt-BR.md">
+    <Content Include="Templates\Page\Blank\.template.config\localize\templatestrings.de-DE.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Pg\Blank\.template.config\localize\description.ru-RU.md">
+    <Content Include="Templates\Page\Blank\.template.config\localize\templatestrings.es-ES.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Pg\Blank\.template.config\localize\description.tr-TR.md">
+    <Content Include="Templates\Page\Blank\.template.config\localize\templatestrings.fr-FR.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Pg\Blank\.template.config\localize\description.zh-CN.md">
+    <Content Include="Templates\Page\Blank\.template.config\localize\templatestrings.it-IT.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Pg\Blank\.template.config\localize\description.zh-TW.md">
+    <Content Include="Templates\Page\Blank\.template.config\localize\templatestrings.ja-JP.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Pg\CGrid\.template.config\localize\description.cs-CZ.md">
+    <Content Include="Templates\Page\Blank\.template.config\localize\templatestrings.ko-KR.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Pg\CGrid\.template.config\localize\description.de-DE.md">
+    <Content Include="Templates\Page\Blank\.template.config\localize\templatestrings.pl-PL.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Pg\CGrid\.template.config\localize\description.es-ES.md">
+    <Content Include="Templates\Page\Blank\.template.config\localize\templatestrings.pt-BR.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Pg\CGrid\.template.config\localize\description.fr-FR.md">
+    <Content Include="Templates\Page\Blank\.template.config\localize\templatestrings.ru-RU.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Pg\CGrid\.template.config\localize\description.it-IT.md">
+    <Content Include="Templates\Page\Blank\.template.config\localize\templatestrings.tr-TR.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Pg\CGrid\.template.config\localize\description.ja-JP.md">
+    <Content Include="Templates\Page\Blank\.template.config\localize\templatestrings.zh-CN.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Pg\CGrid\.template.config\localize\description.ko-KR.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\CGrid\.template.config\localize\description.pl-PL.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\CGrid\.template.config\localize\description.pt-BR.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\CGrid\.template.config\localize\description.ru-RU.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\CGrid\.template.config\localize\description.tr-TR.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\CGrid\.template.config\localize\description.zh-CN.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\CGrid\.template.config\localize\description.zh-TW.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\DGrid\.template.config\localize\description.cs-CZ.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\DGrid\.template.config\localize\description.de-DE.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\DGrid\.template.config\localize\description.es-ES.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\DGrid\.template.config\localize\description.fr-FR.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\DGrid\.template.config\localize\description.it-IT.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\DGrid\.template.config\localize\description.ja-JP.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\DGrid\.template.config\localize\description.ko-KR.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\DGrid\.template.config\localize\description.pl-PL.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\DGrid\.template.config\localize\description.pt-BR.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\DGrid\.template.config\localize\description.ru-RU.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\DGrid\.template.config\localize\description.tr-TR.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\DGrid\.template.config\localize\description.zh-CN.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\DGrid\.template.config\localize\description.zh-TW.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\.template.config\localize\description.cs-CZ.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\.template.config\localize\description.de-DE.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\.template.config\localize\description.es-ES.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\.template.config\localize\description.fr-FR.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\.template.config\localize\description.it-IT.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\.template.config\localize\description.ja-JP.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\.template.config\localize\description.ko-KR.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\.template.config\localize\description.pl-PL.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\.template.config\localize\description.pt-BR.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\.template.config\localize\description.ru-RU.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\.template.config\localize\description.tr-TR.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\.template.config\localize\description.zh-CN.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\.template.config\localize\description.zh-TW.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\.template.config\localize\description.cs-CZ.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\.template.config\localize\description.de-DE.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\.template.config\localize\description.es-ES.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\.template.config\localize\description.fr-FR.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\.template.config\localize\description.it-IT.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\.template.config\localize\description.ja-JP.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\.template.config\localize\description.ko-KR.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\.template.config\localize\description.pl-PL.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\.template.config\localize\description.pt-BR.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\.template.config\localize\description.ru-RU.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\.template.config\localize\description.tr-TR.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\.template.config\localize\description.zh-CN.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\.template.config\localize\description.zh-TW.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Settings\.template.config\localize\description.cs-CZ.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Settings\.template.config\localize\description.de-DE.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Settings\.template.config\localize\description.es-ES.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Settings\.template.config\localize\description.fr-FR.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Settings\.template.config\localize\description.it-IT.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Settings\.template.config\localize\description.ja-JP.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Settings\.template.config\localize\description.ko-KR.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Settings\.template.config\localize\description.pl-PL.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Settings\.template.config\localize\description.pt-BR.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Settings\.template.config\localize\description.ru-RU.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Settings\.template.config\localize\description.tr-TR.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Settings\.template.config\localize\description.zh-CN.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Settings\.template.config\localize\description.zh-TW.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\.template.config\localize\description.cs-CZ.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\.template.config\localize\description.de-DE.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\.template.config\localize\description.es-ES.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\.template.config\localize\description.fr-FR.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\.template.config\localize\description.it-IT.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\.template.config\localize\description.ja-JP.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\.template.config\localize\description.ko-KR.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\.template.config\localize\description.pl-PL.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\.template.config\localize\description.pt-BR.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\.template.config\localize\description.ru-RU.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\.template.config\localize\description.tr-TR.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\.template.config\localize\description.zh-CN.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\.template.config\localize\description.zh-TW.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Blank\.template.config\localize\templatestrings.cs-CZ.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Blank\.template.config\localize\templatestrings.de-DE.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Blank\.template.config\localize\templatestrings.es-ES.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Blank\.template.config\localize\templatestrings.fr-FR.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Blank\.template.config\localize\templatestrings.it-IT.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Blank\.template.config\localize\templatestrings.ja-JP.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Blank\.template.config\localize\templatestrings.ko-KR.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Blank\.template.config\localize\templatestrings.pl-PL.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Blank\.template.config\localize\templatestrings.pt-BR.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Blank\.template.config\localize\templatestrings.ru-RU.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Blank\.template.config\localize\templatestrings.tr-TR.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Blank\.template.config\localize\templatestrings.zh-CN.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Blank\.template.config\localize\templatestrings.zh-TW.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\CGrid\.template.config\localize\templatestrings.cs-CZ.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\CGrid\.template.config\localize\templatestrings.de-DE.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\CGrid\.template.config\localize\templatestrings.es-ES.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\CGrid\.template.config\localize\templatestrings.fr-FR.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\CGrid\.template.config\localize\templatestrings.it-IT.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\CGrid\.template.config\localize\templatestrings.ja-JP.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\CGrid\.template.config\localize\templatestrings.ko-KR.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\CGrid\.template.config\localize\templatestrings.pl-PL.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\CGrid\.template.config\localize\templatestrings.pt-BR.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\CGrid\.template.config\localize\templatestrings.ru-RU.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\CGrid\.template.config\localize\templatestrings.tr-TR.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\CGrid\.template.config\localize\templatestrings.zh-CN.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\CGrid\.template.config\localize\templatestrings.zh-TW.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\DGrid\.template.config\localize\templatestrings.cs-CZ.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\DGrid\.template.config\localize\templatestrings.de-DE.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\DGrid\.template.config\localize\templatestrings.es-ES.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\DGrid\.template.config\localize\templatestrings.fr-FR.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\DGrid\.template.config\localize\templatestrings.it-IT.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\DGrid\.template.config\localize\templatestrings.ja-JP.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\DGrid\.template.config\localize\templatestrings.ko-KR.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\DGrid\.template.config\localize\templatestrings.pl-PL.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\DGrid\.template.config\localize\templatestrings.pt-BR.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\DGrid\.template.config\localize\templatestrings.ru-RU.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\DGrid\.template.config\localize\templatestrings.tr-TR.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\DGrid\.template.config\localize\templatestrings.zh-CN.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\DGrid\.template.config\localize\templatestrings.zh-TW.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\.template.config\localize\templatestrings.cs-CZ.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\.template.config\localize\templatestrings.de-DE.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\.template.config\localize\templatestrings.es-ES.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\.template.config\localize\templatestrings.fr-FR.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\.template.config\localize\templatestrings.it-IT.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\.template.config\localize\templatestrings.ja-JP.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\.template.config\localize\templatestrings.ko-KR.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\.template.config\localize\templatestrings.pl-PL.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\.template.config\localize\templatestrings.pt-BR.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\.template.config\localize\templatestrings.ru-RU.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\.template.config\localize\templatestrings.tr-TR.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\.template.config\localize\templatestrings.zh-CN.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\.template.config\localize\templatestrings.zh-TW.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\.template.config\localize\templatestrings.cs-CZ.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\.template.config\localize\templatestrings.de-DE.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\.template.config\localize\templatestrings.es-ES.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\.template.config\localize\templatestrings.fr-FR.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\.template.config\localize\templatestrings.it-IT.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\.template.config\localize\templatestrings.ja-JP.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\.template.config\localize\templatestrings.ko-KR.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\.template.config\localize\templatestrings.pl-PL.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\.template.config\localize\templatestrings.pt-BR.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\.template.config\localize\templatestrings.ru-RU.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\.template.config\localize\templatestrings.tr-TR.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\.template.config\localize\templatestrings.zh-CN.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\.template.config\localize\templatestrings.zh-TW.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Settings\.template.config\localize\templatestrings.cs-CZ.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Settings\.template.config\localize\templatestrings.de-DE.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Settings\.template.config\localize\templatestrings.es-ES.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Settings\.template.config\localize\templatestrings.fr-FR.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Settings\.template.config\localize\templatestrings.it-IT.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Settings\.template.config\localize\templatestrings.ja-JP.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Settings\.template.config\localize\templatestrings.ko-KR.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Settings\.template.config\localize\templatestrings.pl-PL.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Settings\.template.config\localize\templatestrings.pt-BR.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Settings\.template.config\localize\templatestrings.ru-RU.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Settings\.template.config\localize\templatestrings.tr-TR.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Settings\.template.config\localize\templatestrings.zh-CN.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Settings\.template.config\localize\templatestrings.zh-TW.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\.template.config\localize\templatestrings.cs-CZ.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\.template.config\localize\templatestrings.de-DE.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\.template.config\localize\templatestrings.es-ES.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\.template.config\localize\templatestrings.fr-FR.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\.template.config\localize\templatestrings.it-IT.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\.template.config\localize\templatestrings.ja-JP.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\.template.config\localize\templatestrings.ko-KR.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\.template.config\localize\templatestrings.pl-PL.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\.template.config\localize\templatestrings.pt-BR.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\.template.config\localize\templatestrings.ru-RU.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\.template.config\localize\templatestrings.tr-TR.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\.template.config\localize\templatestrings.zh-CN.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\.template.config\localize\templatestrings.zh-TW.json">
+    <Content Include="Templates\Page\Blank\.template.config\localize\templatestrings.zh-TW.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Templates\_comp\MT\Feature.AppNotifications\.template.config\template.json">
@@ -1993,91 +1669,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Templates\Pg\Blank\ViewModels\Param_ItemNameViewModel.cs">
+    <Content Include="Templates\Page\Blank\ViewModels\Param_ItemNameViewModel.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Pg\Blank\Views\Param_ItemNamePage.xaml.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\CGrid\Param_ProjectName.Core\Contracts\Services\ISampleDataService%24Param_ItemName_gpostaction.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\CGrid\Param_ProjectName.Core\Services\SampleDataService%24Param_ItemName_gpostaction.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\CGrid\Param_ProjectName\ViewModels\Param_ItemNameDetailViewModel.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\CGrid\Param_ProjectName\ViewModels\Param_ItemNameViewModel.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\CGrid\Param_ProjectName\Views\Param_ItemNameDetailPage.xaml.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\CGrid\Param_ProjectName\Views\Param_ItemNamePage.xaml.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\DGrid\Param_ProjectName.Core\Contracts\Services\ISampleDataService%24Param_ItemName_gpostaction.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\DGrid\Param_ProjectName.Core\Services\SampleDataService%24Param_ItemName_gpostaction.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\DGrid\Param_ProjectName\ViewModels\Param_ItemNameViewModel.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\DGrid\Param_ProjectName\Views\Param_ItemNamePage.xaml.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\Param_ProjectName.Core\Contracts\Services\ISampleDataService%24Param_ItemName_gpostaction.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\Param_ProjectName.Core\Models\SampleSymbol.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\Param_ProjectName.Core\Services\SampleDataService%24Param_ItemName_gpostaction.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\Param_ProjectName\ViewModels\Param_ItemNameViewModel.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\Param_ProjectName\Views\Param_ItemNamePage.xaml.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\Param_ProjectName.Core\Contracts\Services\ISampleDataService%24Param_ItemName_gpostaction.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\Param_ProjectName.Core\Services\SampleDataService%24Param_ItemName_gpostaction.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\Param_ProjectName\ViewModels\Param_ItemNameViewModel.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\Param_ProjectName\Views\Param_ItemNameDetailControl.xaml.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\Param_ProjectName\Views\Param_ItemNamePage.xaml.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Settings\Helpers\EnumToBooleanConverter.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Settings\ViewModels\Param_ItemNameViewModel.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Settings\Views\Param_ItemNamePage.xaml.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\Contracts\Services\IWebViewService.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\Services\WebViewService.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\ViewModels\Param_ItemNameViewModel.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\Views\Param_ItemNamePage.xaml.cs">
+    <Content Include="Templates\Page\Blank\Views\Param_ItemNamePage.xaml.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Templates\Proj\Default\Param_ProjectName\App.xaml.cs">
@@ -2221,58 +1816,10 @@
     <Content Include="Templates\itemNameValidation.config.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Pg\Blank\.template.config\localize\description.md">
+    <Content Include="Templates\Page\Blank\.template.config\localize\description.md">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Pg\Blank\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\CGrid\.template.config\localize\description.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\CGrid\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\DGrid\.template.config\localize\description.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\DGrid\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\.template.config\localize\description.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\Param_ProjectName\Strings\en-us\Resources_postaction.resw">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\.template.config\localize\description.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\Param_ProjectName\Strings\en-us\Resources_postaction.resw">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Settings\.template.config\localize\description.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Settings\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Settings\Strings\en-us\Resources_postaction.resw">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\.template.config\localize\description.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\Strings\en-us\Resources_postaction.resw">
+    <Content Include="Templates\Page\Blank\.template.config\template.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Templates\projectNameValidation.config.json">
@@ -2692,55 +2239,10 @@
     <Content Include="Templates\Proj\Default\Param_ProjectName\TemplateStudio.xml">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Pg\Blank\.template.config\icon.xaml">
+    <Content Include="Templates\Page\Blank\.template.config\icon.xaml">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Pg\Blank\Views\Param_ItemNamePage.xaml">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\CGrid\.template.config\icon.xaml">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\CGrid\Param_ProjectName\Views\Param_ItemNameDetailPage.xaml">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\CGrid\Param_ProjectName\Views\Param_ItemNamePage.xaml">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\DGrid\.template.config\icon.xaml">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\DGrid\Param_ProjectName\Views\Param_ItemNamePage.xaml">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\.template.config\icon.xaml">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Form\Param_ProjectName\Views\Param_ItemNamePage.xaml">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\.template.config\icon.xaml">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\Param_ProjectName\Styles\TextBlock_postaction.xaml">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\Param_ProjectName\Views\Param_ItemNameDetailControl.xaml">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\List\Param_ProjectName\Views\Param_ItemNamePage.xaml">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Settings\.template.config\icon.xaml">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\Settings\Views\Param_ItemNamePage.xaml">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\.template.config\icon.xaml">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Pg\WebView\Views\Param_ItemNamePage.xaml">
+    <Content Include="Templates\Page\Blank\Views\Param_ItemNamePage.xaml">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Templates\Proj\Default\Param_ProjectName\App.xaml">

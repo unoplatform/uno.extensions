@@ -1,0 +1,7 @@
+﻿{
+  "name": "Extensions Configuration (appsettings.json)",
+  "description": "Adds Extensions Configuration (appsettings.json) to Project",
+
+  "_name.comment": "Label for feature that enables users to add Extensions Configuration (appsettings.json)",
+  "_description.comment": "Label description for Platform Selection."
+}

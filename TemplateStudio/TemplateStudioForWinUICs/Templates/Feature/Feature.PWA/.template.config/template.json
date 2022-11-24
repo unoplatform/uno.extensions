@@ -9,21 +9,38 @@
   "description": "Adds Linux (Frame Buffer) project to your application.",
   "tags": {
     "language": "C#",
-    "type": "item",
+    "type": "project",
     "ts.type": "feature",
-    "ts.projecttype": "Blank|NavView|MenuBar",
+    "ts.projecttype": "all",
     "ts.frontendframework": "all",
     "ts.platform": "WinUI",
     "ts.appmodel": "Desktop",
     "ts.version": "1.0.0",
-    "ts.displayOrder": "1",
-    "ts.group": "ManifestInteraction",
-    "ts.multipleInstance": "false",
     "ts.genGroup": "0",
-    "ts.dependencies": "ts.WinUI.Feat.PlatformWebWasmSelection",
+    "ts.group": "Deployment",
+    "ts.displayOrder": "1",
+    "ts.multipleInstance": "false",
     "ts.rightClickEnabled": "true"
   },
-  "sourceName": "FeaturePWAService",
+
+
+  //"tags": {
+  //  "language": "C#",
+  //  "type": "project",
+  //  "ts.type": "feature",
+  //  "ts.projecttype": "all",
+  //  "ts.frontendframework": "all",
+  //  "ts.platform": "WinUI",
+  //  "ts.appmodel": "Desktop",
+  //  "ts.version": "1.0.0",
+  //  "ts.displayOrder": "1",
+  //  "ts.group": "ManifestInteraction",
+  //  "ts.multipleInstance": "false",
+  //  "ts.genGroup": "0",
+  //  "ts.dependencies": "ts.WinUI.Feat.PlatformWebWasmSelection",
+  //  "ts.rightClickEnabled": "true"
+  //},
+  "sourceName": "Param_ItemName",
   "preferNameDirectory": true,
   "PrimaryOutputs": [
     {

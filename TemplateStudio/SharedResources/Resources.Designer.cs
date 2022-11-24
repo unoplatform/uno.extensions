@@ -1000,6 +1000,15 @@ namespace Microsoft.Templates.SharedResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Extentions.
+        /// </summary>
+        public static string ExtentionsInteraction {
+            get {
+                return ResourceManager.GetString("ExtentionsInteraction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open in a new browser tab.
         /// </summary>
         public static string ExternalHyperlinkTooltipMessage {

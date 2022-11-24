@@ -1443,4 +1443,8 @@ See the final result: {2}
     <value>Web</value>
     <comment>Web</comment>
   </data>
+  <data name="ExtentionsInteraction" xml:space="preserve">
+    <value>Extentions</value>
+    <comment>Extentions</comment>
+  </data>
 </root>
