@@ -14,5 +14,6 @@ namespace Microsoft.Templates.Core
         Composition,
 		Unspecified,
 		Platform,
+		UnoExtensions
 	}
 }

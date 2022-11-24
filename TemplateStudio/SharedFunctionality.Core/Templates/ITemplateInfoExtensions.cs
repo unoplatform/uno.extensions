@@ -40,6 +40,8 @@ namespace Microsoft.Templates.Core
 					return TemplateType.Composition;
 				case "PLATFORM":
 					return TemplateType.Platform;
+				case "UNOEXTENSIONS":
+					return TemplateType.UnoExtensions;
 				default:
                     return TemplateType.Unspecified;
             }

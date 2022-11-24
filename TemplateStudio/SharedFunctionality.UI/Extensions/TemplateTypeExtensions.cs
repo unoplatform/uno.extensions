@@ -14,6 +14,7 @@ namespace Microsoft.Templates.UI.Extensions
         private const string _newProjectStepServices = "05Services";
         private const string _newProjectStepTests = "06Tests";
 		private const string _newProjectStepPlatform = "07Platform";
+		private const string _newProjectStepUnoExtensions = "08UnoExtensions";
 
 		public static string GetNewProjectStepId(this TemplateType templateType)
         {
@@ -29,6 +30,8 @@ namespace Microsoft.Templates.UI.Extensions
 					return _newProjectStepTests;
 				case TemplateType.Platform:
 					return _newProjectStepPlatform;
+				case TemplateType.UnoExtensions:
+					return _newProjectStepUnoExtensions;
 				default:
                     return string.Empty;
             }
@@ -48,6 +51,8 @@ namespace Microsoft.Templates.UI.Extensions
 					return Resources.NewProjectStepTesting;
 				case TemplateType.Platform:
 					return Resources.NewProjectStepPlatform;
+				case TemplateType.UnoExtensions:
+					return Resources.NewProjectStepUnoExtensions;
 				default:
                     return string.Empty;
             }
@@ -67,6 +72,8 @@ namespace Microsoft.Templates.UI.Extensions
                     return Resources.AddTestingTitle;
 				case TemplateType.Platform:
 					return Resources.AddPlatformTitle;
+				case TemplateType.UnoExtensions:
+					return Resources.AddUnoExtensionsTitle;
 				default:
                     return string.Empty;
             }

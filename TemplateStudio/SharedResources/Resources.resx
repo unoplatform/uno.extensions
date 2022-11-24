@@ -1443,8 +1443,24 @@ See the final result: {2}
     <value>Web</value>
     <comment>Web</comment>
   </data>
-  <data name="ExtentionsInteraction" xml:space="preserve">
-    <value>Extentions</value>
-    <comment>Extentions</comment>
+  <data name="AddUnoExtensionsTitle" xml:space="preserve">
+    <value>Extensions</value>
+    <comment>Extensions</comment>
+  </data>
+  <data name="NewProjectStepUnoExtensions" xml:space="preserve">
+    <value>Extensions</value>
+    <comment>Extensions</comment>
+  </data>
+  <data name="ProjectDetailsUnoExtensionsSectionTitle" xml:space="preserve">
+    <value>Extensions</value>
+    <comment>Extensions</comment>
+  </data>
+  <data name="TemplateGroup_ExtensionsInteraction" xml:space="preserve">
+    <value>Extensions Options</value>
+    <comment>Extensions Options</comment>
+  </data>
+  <data name="TemplateGroup_ExtensionsLogInteraction" xml:space="preserve">
+    <value>Logging</value>
+    <comment>Logging</comment>
   </data>
 </root>

@@ -1,0 +1,42 @@
+﻿{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Microsoft",
+  "classifications": [ "Universal" ],
+  "name": "Navigation",
+  "shortName": "Navigation",
+  "groupIdentity": "ts.WinUI.Feat.ExtensionsNavigationService",
+  "identity": "ts.WinUI.Feat.ExtensionsNavigationService",
+  "description": "Adds Extensions Navigation to your application.",
+  "tags": {
+    "language": "C#",
+    "type": "project",
+    "ts.type": "UNOEXTENSIONS",
+    "ts.projecttype": "all",
+    "ts.frontendframework": "all",
+    "ts.platform": "WinUI",
+    "ts.appmodel": "Desktop",
+    "ts.version": "1.0.0",
+    "ts.genGroup": "0",
+    "ts.group": "ExtensionsInteraction",
+    "ts.displayOrder": "1",
+    "ts.multipleInstance": "false",
+    "ts.rightClickEnabled": "true"
+  },
+
+  "sourceName": "Param_ItemName",
+  "preferNameDirectory": true,
+  "PrimaryOutputs": [
+    {
+      "path": "Contracts/Services/IFeaturePWAService.cs"
+    },
+    {
+      "path": "Services/FeaturePWAService.cs"
+    }
+  ],
+  "symbols": {
+    "ts.rootNamespace": {
+      "type": "parameter",
+      "replaces": "Param_RootNamespace"
+    }
+  }
+}

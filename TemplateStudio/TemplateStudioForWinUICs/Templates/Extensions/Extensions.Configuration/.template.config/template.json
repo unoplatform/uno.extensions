@@ -10,14 +10,14 @@
   "tags": {
     "language": "C#",
     "type": "project",
-    "ts.type": "extentions",
+    "ts.type": "UNOEXTENSIONS",
     "ts.projecttype": "all",
     "ts.frontendframework": "all",
     "ts.platform": "WinUI",
     "ts.appmodel": "Desktop",
     "ts.version": "1.0.0",
     "ts.genGroup": "0",
-    "ts.group": "ExtentionsInteraction",
+    "ts.group": "ExtensionsInteraction",
     "ts.displayOrder": "1",
     "ts.multipleInstance": "false",
     "ts.rightClickEnabled": "true"

@@ -38,6 +38,7 @@ namespace Microsoft.Templates.UI.ViewModels.NewProject
         {
             Groups.Add(new UserSelectionGroup(TemplateType.Page, Resources.ProjectDetailsPagesSectionTitle, true));
 			Groups.Add(new UserSelectionGroup(TemplateType.Feature, Resources.ProjectDetailsFeaturesSectionTitle));
+			Groups.Add(new UserSelectionGroup(TemplateType.UnoExtensions, Resources.ProjectDetailsUnoExtensionsSectionTitle));
 			Groups.Add(new UserSelectionGroup(TemplateType.Platform, Resources.ProjectDetailsPlatformSectionTitle));
 			Groups.Add(new UserSelectionGroup(TemplateType.Service, Resources.ProjectDetailsServicesSectionTitle));
             Groups.Add(new UserSelectionGroup(TemplateType.Testing, Resources.ProjectDetailsTestingSectionTitle));
@@ -185,6 +186,9 @@ namespace Microsoft.Templates.UI.ViewModels.NewProject
 
 			var platform = Groups.First(g => g.TemplateType == TemplateType.Platform).Items;
 			selection.Platform.AddRange(platform.Select(i => i.ToUserSelectionItem()));
+
+			var unoExtensions = Groups.First(g => g.TemplateType == TemplateType.UnoExtensions).Items;
+			selection.UnoExtensions.AddRange(unoExtensions.Select(i => i.ToUserSelectionItem()));
 
 			var services = Groups.First(g => g.TemplateType == TemplateType.Service).Items;
             selection.Services.AddRange(services.Select(i => i.ToUserSelectionItem()));

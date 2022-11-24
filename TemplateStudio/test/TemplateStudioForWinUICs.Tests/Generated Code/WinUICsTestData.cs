@@ -39,6 +39,10 @@ namespace TemplateStudioForWinUICs.Tests
 
              yield return new object[] { @"..\..\TemplateStudioForWinUICs\Templates\_comp\MT\Page.WebView\.template.config\template.json" };
 
+             yield return new object[] { @"..\..\TemplateStudioForWinUICs\Templates\_comp\MT\Platform.Mobile\.template.config\template.json" };
+
+             yield return new object[] { @"..\..\TemplateStudioForWinUICs\Templates\_comp\MT\Platform.PlatformSelection\.template.config\template.json" };
+
              yield return new object[] { @"..\..\TemplateStudioForWinUICs\Templates\_comp\MT\Project\.template.config\template.json" };
 
              yield return new object[] { @"..\..\TemplateStudioForWinUICs\Templates\_comp\MT\Project.Blank\.template.config\template.json" };

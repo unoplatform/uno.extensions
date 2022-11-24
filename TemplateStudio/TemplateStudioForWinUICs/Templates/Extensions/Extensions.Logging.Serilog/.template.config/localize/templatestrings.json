@@ -1,0 +1,7 @@
+﻿{
+  "name": "Extensions Logging.Serilog",
+  "description": "Adds Extensions Logging.Serilog to Project",
+
+  "_name.comment": "Label for feature that enables users to add Extensions Logging.Serilog",
+  "_description.comment": "Label description for Platform Selection."
+}

@@ -222,6 +222,7 @@ namespace Microsoft.Templates.UI.ViewModels.NewProject
 
 
 			await BuildStepViewModelAsync(TemplateType.Platform);
+			await BuildStepViewModelAsync(TemplateType.UnoExtensions);
 			await BuildStepViewModelAsync(TemplateType.Page);
 			await BuildStepViewModelAsync(TemplateType.Service);
 			await BuildStepViewModelAsync(TemplateType.Testing);

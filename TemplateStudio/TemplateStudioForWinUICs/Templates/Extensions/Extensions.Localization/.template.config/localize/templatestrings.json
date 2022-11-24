@@ -1,0 +1,7 @@
+﻿{
+  "name": "Extensions Localization",
+  "description": "Adds Extensions Localization to Project",
+
+  "_name.comment": "Label for feature that enables users to add Extensions Localization",
+  "_description.comment": "Label description for Platform Selection."
+}

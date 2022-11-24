@@ -38,6 +38,8 @@ namespace Microsoft.Templates.Core.Gen
 
 		public List<UserSelectionItem> Platform { get; } = new List<UserSelectionItem>();
 
+		public List<UserSelectionItem> UnoExtensions { get; } = new List<UserSelectionItem>();
+
 		public IEnumerable<UserSelectionItem> Items
         {
             get
@@ -64,6 +66,10 @@ namespace Microsoft.Templates.Core.Gen
 				foreach (var platform in Platform)
 				{
 					yield return platform;
+				}
+				foreach (var unoExtensions in UnoExtensions)
+				{
+					yield return unoExtensions;
 				}
 			}
         }
@@ -121,6 +127,11 @@ namespace Microsoft.Templates.Core.Gen
 				sb.AppendFormat("Platform: '{0}'", string.Join(", ", Platform.Select(p => $"{p.Name} - {p.TemplateId}").ToArray()));
 				sb.AppendLine();
 			}
+			if (UnoExtensions.Any())
+			{
+				sb.AppendFormat("UnoExtensions: '{0}'", string.Join(", ", UnoExtensions.Select(p => $"{p.Name} - {p.TemplateId}").ToArray()));
+				sb.AppendLine();
+			}
 
 			if (Services.Any())
             {
@@ -155,6 +166,9 @@ namespace Microsoft.Templates.Core.Gen
 					break;
 				case TemplateType.Platform:
 					Platform.Add(template);
+					break;
+				case TemplateType.UnoExtensions:
+					UnoExtensions.Add(template);
 					break;
 			}
         }

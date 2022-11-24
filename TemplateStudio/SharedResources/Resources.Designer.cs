@@ -223,6 +223,15 @@ namespace Microsoft.Templates.SharedResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Extensions.
+        /// </summary>
+        public static string AddUnoExtensionsTitle {
+            get {
+                return ResourceManager.GetString("AddUnoExtensionsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Assembly File Version.
         /// </summary>
         public static string AssemblyFileVersionString {
@@ -1000,15 +1009,6 @@ namespace Microsoft.Templates.SharedResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Extentions.
-        /// </summary>
-        public static string ExtentionsInteraction {
-            get {
-                return ResourceManager.GetString("ExtentionsInteraction", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Open in a new browser tab.
         /// </summary>
         public static string ExternalHyperlinkTooltipMessage {
@@ -1446,6 +1446,15 @@ namespace Microsoft.Templates.SharedResources {
         public static string NewProjectStepTesting {
             get {
                 return ResourceManager.GetString("NewProjectStepTesting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Extensions.
+        /// </summary>
+        public static string NewProjectStepUnoExtensions {
+            get {
+                return ResourceManager.GetString("NewProjectStepUnoExtensions", resourceCulture);
             }
         }
         
@@ -1950,6 +1959,15 @@ namespace Microsoft.Templates.SharedResources {
         public static string ProjectDetailsTitle {
             get {
                 return ResourceManager.GetString("ProjectDetailsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Extensions.
+        /// </summary>
+        public static string ProjectDetailsUnoExtensionsSectionTitle {
+            get {
+                return ResourceManager.GetString("ProjectDetailsUnoExtensionsSectionTitle", resourceCulture);
             }
         }
         
@@ -2590,6 +2608,24 @@ namespace Microsoft.Templates.SharedResources {
         public static string TemplateGroup_DesktopInteraction {
             get {
                 return ResourceManager.GetString("TemplateGroup_DesktopInteraction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Extensions Options.
+        /// </summary>
+        public static string TemplateGroup_ExtensionsInteraction {
+            get {
+                return ResourceManager.GetString("TemplateGroup_ExtensionsInteraction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Logging.
+        /// </summary>
+        public static string TemplateGroup_ExtensionsLogInteraction {
+            get {
+                return ResourceManager.GetString("TemplateGroup_ExtensionsLogInteraction", resourceCulture);
             }
         }
         

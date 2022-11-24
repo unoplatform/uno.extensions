@@ -12,6 +12,8 @@ namespace Microsoft.Templates.Core.Diagnostics
 
 		public static string PlatformCount { get; private set; } = TelemetryEvents.Prefix + "PlatformCount";
 
+		public static string UnoExtensionsCount { get; private set; } = TelemetryEvents.Prefix + "UnoExtensionsCount";
+
 		public static string ServicesCount { get; private set; } = TelemetryEvents.Prefix + "ServicesCount";
 
         public static string TestingCount { get; private set; } = TelemetryEvents.Prefix + "TestingCount";
