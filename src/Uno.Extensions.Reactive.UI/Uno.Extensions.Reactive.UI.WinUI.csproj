@@ -10,6 +10,8 @@
 		<EnableDefaultPageItems>false</EnableDefaultPageItems>
 		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
 		<PackageId>Uno.Extensions.Reactive.WinUI</PackageId>
+		
+		<UnoXamlResourcesTrimming Condition="'$(MSBuildRuntimeType)'=='Core' and '$(Configuration)'=='Release'">true</UnoXamlResourcesTrimming>
 	</PropertyGroup>
 
 	<Import Project="common.props" />
