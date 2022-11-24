@@ -1,8 +1,10 @@
+using Uno.Extensions.Navigation.UI;
+
 namespace Playground;
 
 public sealed partial class App : Application
 {
-	private IHost? _host;
+	public IHost? _host;
 
 	private static IHost BuildAppHost()
 	{
@@ -33,6 +35,11 @@ public sealed partial class App : Application
 						.Section<Playground.Models.AppInfo>()
 				)
 
+				//Configure ThemeSettings
+				.UseConfiguration(configure: configBuilder =>
+					configBuilder
+						.Section<ThemeSettings>(nameof(ThemeSettings))
+				)
 
 
 				// Register Json serializer jsontypeinfo definitions
@@ -46,6 +53,7 @@ public sealed partial class App : Application
 				.ConfigureServices((context, services) =>
 				{
 					services
+							.AddSingleton<IThemeService>(sp => new ThemeService((Current as App)?.Window, new Dispatcher((Current as App)?.Window), sp.GetRequiredService<IWritableOptions<ThemeSettings>>()))
 							.AddSingleton<IAuthenticationTokenProvider>(new SimpleAuthenticationToken { AccessToken = "My access token" })
 							.AddScoped<NeedsADispatcherService>()
 							.AddNativeHandler()

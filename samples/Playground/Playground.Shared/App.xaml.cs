@@ -6,7 +6,8 @@ public sealed partial class App : Application
 {
 	private Window? _window;
 	public Window? Window => _window;
-	private ThemeService ts;
+
+	public IThemeService ThemeService;
 
 	public App()
 	{
@@ -189,9 +190,8 @@ public sealed partial class App : Application
 		if (logger.IsEnabled(LogLevel.Error)) logger.LogErrorMessage("LogLevel:Error");
 		if (logger.IsEnabled(LogLevel.Critical)) logger.LogCriticalMessage("LogLevel:Critical");
 
-		ts = new ThemeService(_window, new Dispatcher(_window));
-		ts.UseSystemTheme = false;
-		await ts.SetThemeAsync();
+		ThemeService = _host.Services.GetService<IThemeService>();
+		await ThemeService.SetThemeAsync();
 	}
 
 	private enum InitOption

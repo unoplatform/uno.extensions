@@ -1,14 +1,14 @@
 ﻿<Page
-    x:Class="Playground.ThemeSwitchPage"
+	x:Class="Playground.Views.ThemeSwitchPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Playground"
+    xmlns:local="using:Playground.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
 	xmlns:ui="using:Uno.Toolkit.UI"
 	xmlns:uen="using:Uno.Extensions.Navigation.UI"
-	Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
 	<Grid>
 		<Grid.RowDefinitions>
@@ -32,7 +32,15 @@
 
 		<StackPanel
 			Grid.Row="1">
-			<Button Content="Change Theme" Click="Button_Click"/>
+			<Button
+				Content="Change To Dark"
+				Click="ButtonDark_Click"/>
+			<Button
+				Content="Change To Light"
+				Click="ButtonLight_Click"/>
+			<Button
+				Content="Change To System"
+				Click="ButtonSystem_Click" />
 		</StackPanel>
 
 	</Grid>
