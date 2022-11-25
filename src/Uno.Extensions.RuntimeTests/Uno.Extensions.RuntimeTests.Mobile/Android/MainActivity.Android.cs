@@ -4,7 +4,7 @@ using Android.OS;
 using Android.Views;
 using Android.Widget;
 
-namespace Uno.Extensions.RuntimeTests
+namespace Uno.Extensions.RuntimeTests.Droid
 {
 	[Activity(
 			MainLauncher = true,

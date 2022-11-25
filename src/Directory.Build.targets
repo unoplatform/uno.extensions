@@ -63,7 +63,7 @@
 
 	<Choose>
 		<When Condition="$(_IsAndroid)">
-			<PropertyGroup >
+			<PropertyGroup Condition="'$(AndroidApplication)'!='True'">
 				<AndroidGenerateResourceDesigner>false</AndroidGenerateResourceDesigner>
 				<AndroidUseIntermediateDesignerFile>false</AndroidUseIntermediateDesignerFile>
 			</PropertyGroup>

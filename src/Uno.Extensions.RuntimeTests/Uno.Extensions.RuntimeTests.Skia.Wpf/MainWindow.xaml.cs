@@ -24,7 +24,7 @@ namespace RuntimeTests.WPF
 		{
 			InitializeComponent();
 
-			root.Content = new global::Uno.UI.Skia.Platform.WpfHost(Dispatcher, () => new RuntimeTests.App());
+			root.Content = new global::Uno.UI.Skia.Platform.WpfHost(Dispatcher, () => new Uno.Extensions.RuntimeTests.App());
 		}
 	}
 }

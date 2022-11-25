@@ -20,6 +20,7 @@
 		<SupportedOSPlatformVersion Condition="'$(TargetFramework)'=='net6.0-macos'">10.14</SupportedOSPlatformVersion>
 		<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
 		<DefineConstants>$(DefineConstants);WINDOWS_WINUI</DefineConstants>
+		<!--<RootNamespace>Uno.Extensions.RuntimeTests</RootNamespace>-->
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(RuntimeIdentifier)'==''">
 		<!-- Default values for command line builds -->
@@ -29,14 +30,17 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Update="Microsoft.Net.Compilers.Toolset" Version="4.2.0" />
-		<PackageReference Include="Uno.WinUI" Version="4.6.19" />
-		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.6.19" Condition="'$(Configuration)'=='Debug'" />
-		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.6.19" />
+		<PackageReference Include="Uno.WinUI" Version="4.7.0-dev.417" />
+		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.7.0-dev.417" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.7.0-dev.417" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
-		<PackageReference Include="Uno.WinUI.Lottie" Version="4.6.19" />
+		<PackageReference Include="Uno.WinUI.Lottie" Version="4.7.0-dev.417" />
 	</ItemGroup>
 	<Choose>
 		<When Condition="'$(TargetFramework)'=='net6.0-android'">
+			<PropertyGroup>
+				<UnoUISourceGeneratorDebuggerBreak>True</UnoUISourceGeneratorDebuggerBreak>
+			</PropertyGroup>
 			<ItemGroup>
 				<PackageReference Include="Xamarin.Google.Android.Material" Version="1.4.0.4" />
 				<PackageReference Include="Uno.UniversalImageLoader" Version="1.9.36" />

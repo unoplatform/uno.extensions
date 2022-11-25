@@ -1,7 +1,6 @@
 ﻿using UIKit;
-using RuntimeTests;
 
-namespace Uno.Extensions.RuntimeTests
+namespace Uno.Extensions.RuntimeTests.iOS
 {
 	public class EntryPoint
 	{

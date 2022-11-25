@@ -1,7 +1,6 @@
-﻿using RuntimeTests;
-using UIKit;
+﻿using UIKit;
 
-namespace Uno.Extensions.RuntimeTests
+namespace Uno.Extensions.RuntimeTests.MacCatalyst
 {
 	public class EntryPoint
 	{

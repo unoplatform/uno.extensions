@@ -6,6 +6,9 @@
 		<UseWPF>true</UseWPF>
 		<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
 		<DefineConstants>$(DefineConstants);WINDOWS_WINUI</DefineConstants>
+
+		<!--Avoids conflicts with Uno namespace-->
+		<RootNamespace>RuntimeTests</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup Label="AssemblyInfo">

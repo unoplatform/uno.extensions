@@ -1,6 +1,5 @@
 ﻿using System;
 using GLib;
-using RuntimeTests;
 using Uno.UI.Runtime.Skia;
 
 namespace Uno.Extensions.RuntimeTests.Skia.Gtk

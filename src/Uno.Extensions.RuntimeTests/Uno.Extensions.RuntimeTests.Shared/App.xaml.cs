@@ -10,7 +10,7 @@ using Windows.ApplicationModel.Activation;
 using Uno.Extensions.Reactive.WinUI.Tests;
 using Uno.UI.RuntimeTests;
 
-namespace RuntimeTests
+namespace Uno.Extensions.RuntimeTests
 {
 	/// <summary>
 	/// Provides application-specific behavior to supplement the default Application class.
