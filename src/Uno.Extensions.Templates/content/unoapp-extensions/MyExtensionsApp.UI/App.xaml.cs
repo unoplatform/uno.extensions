@@ -30,9 +30,7 @@ public sealed partial class App : Application
 			.Localization()
 			.Serialization()
 			.Services()
-			.Navigation()
-			// Add navigation support for toolkit controls such as TabBar and NavigationView
-			.UseToolkitNavigation();;
+			.Navigation();
 		_window = builder.Window;
 
 		_host = await builder.ShowAsync<Shell>();

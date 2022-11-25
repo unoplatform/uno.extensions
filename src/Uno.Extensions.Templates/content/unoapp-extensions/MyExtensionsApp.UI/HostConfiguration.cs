@@ -57,13 +57,16 @@ public static class HostConfiguration
 	public static IApplicationBuilder Navigation(this IApplicationBuilder builder)
 	{
 		// Enable navigation, including registering views and viewmodels
-		return builder.Configure(host => host.UseNavigation(
+		return builder
+			.Configure(host => host.UseNavigation(
 //+:cnd:noEmit
 #if(reactive)
 			ReactiveViewModelMappings.ViewModelMappings,
 #endif
 //-:cnd:noEmit
-			RegisterRoutes));
+			RegisterRoutes))
+			// Add navigation support for toolkit controls such as TabBar and NavigationView
+			.UseToolkitNavigation();
 	}
 
 	private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)

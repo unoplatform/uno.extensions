@@ -26,7 +26,7 @@ public sealed partial class App : Application
 
 		var appBuilder = this.CreateBuilder(args)
 			.ConfigureApp()
-			.AddToolkitNavigation();
+			.UseToolkitNavigation();
 		_window = appBuilder.Window;
 #if NET5_0_OR_GREATER && WINDOWS
 		_window.Activate();

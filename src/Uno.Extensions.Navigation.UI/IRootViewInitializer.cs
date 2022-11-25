@@ -3,7 +3,7 @@
 namespace Uno.Extensions.Navigation;
 
 [EditorBrowsable(EditorBrowsableState.Never)]
-public interface IRootViewInitializer
+internal interface IRootViewInitializer
 {
 	/// <summary>
 	/// Creates a default navigation root container
