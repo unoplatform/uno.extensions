@@ -1,0 +1,335 @@
+﻿{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Uno Platform",
+  "classifications": [
+    "Multi-platform",
+    "Uno Platform",
+    "Android",
+    "iOS",
+    "Windows",
+    "macOS",
+    "Linux",
+    "WebAssembly",
+    "WinUI",
+    "WindowsAppSdk",
+    "Extensions",
+    "dotnet-new"
+  ],
+  "name": "Multi-Platform App (Uno.Extensions)",
+  "identity": "Uno.Extensions",
+  "groupIdentity": "Uno.Extensions",
+  "description": "Solution template for creating a multi-platform C# & XAML application targeting Windows App SDK, Android, iOS, macOS, WebAssembly, Skia/WPF and Skia/GTK for Linux.",
+  "precedence": "6001",
+  "tags": {
+    "language": "C#",
+    "type": "solution"
+  },
+  "shortName": "unoapp-extensions",
+  "sourceName": "MyExtensionsApp",
+  "defaultName": "UnoExtApp",
+  "placeholderFilename": "template-ignore",
+  "preferNameDirectory": true,
+  "guids": [
+    "C7433AE2-B1A0-4C1A-887E-5CAA7AAF67A6", // Solution file (SolutionGuid)
+    "BACDD33A-304C-46C4-9B00-AC166978D7E0", // (core) .NET Standard Library
+    "6279C845-92F8-4333-AB99-3D213163593C", // UI
+    "339C569C-EE23-445E-B908-743673EE5BC9", // Platforms Solution folder
+    "24D56E12-2373-4CBD-9AD4-5C931D15FB0D", // Mobile
+    "40EA03F7-8A22-4143-B251-79BAC3EB13D2", // Wasm
+    "A5B8155A-118F-4794-B551-C6F3CF7E5411", // Skia.Gtk
+    "6C744695-DA38-44D9-B487-FE5804C5508D", // Skia.WPF
+    "5A78EE9A-1922-468C-96E3-45817727511C", // Windows
+    "925C7A3E-6532-4E27-8ABE-37A4F9B73C8B", // Skia.Linux.FrameBuffer
+    "7EF70027-9874-4112-A14F-33F02169CF8A", // Tests Solution folder
+    "EB3EB846-D5CB-4140-834F-1CC40A0FD6D0", // Tests
+    "7229D034-7DBE-4FD7-B0E4-38D617571F93", // UITests
+    "E2821155-50B7-468D-A15B-E0EAF55DAC2B", // WINDOWS - Package.appxmanifest Identity.Name
+  ],
+  "symbols": { 
+    "wasm": {
+      "type": "parameter",
+      "dataType": "bool",
+      "defaultValue": "true",
+      "description": "Enables the WebAssembly platform support project"
+    },
+    "ios": {
+      "type": "parameter",
+      "dataType": "bool",
+      "defaultValue": "true",
+      "description": "Enables the iOS platform in the Mobile support project"
+    },
+    "android": {
+      "type": "parameter",
+      "dataType": "bool",
+      "defaultValue": "true",
+      "description": "Enables the Android platform in the Mobile support project"
+    },
+    "winAppSdk": {
+      "type": "parameter",
+      "dataType": "bool",
+      "defaultValue": "true",
+      "description": "Enables the Windows App Sdk platform support project"
+    },
+    "skia-gtk": {
+      "type": "parameter",
+      "dataType": "bool",
+      "defaultValue": "true",
+      "description": "Enables the Skia/GTK platform support project"
+    },
+    "maccatalyst": {
+      "type": "parameter",
+      "dataType": "bool",
+      "defaultValue": "true",
+      "description": "Enables the macOS (Catalyst) platform in the Mobile support project"
+    },
+    "macos": {
+      "type": "parameter",
+      "dataType": "bool",
+      "defaultValue": "true",
+      "description": "Enables the macOS (AppKit) platform in the Mobile support project"
+    },
+    "skia-wpf": {
+      "type": "parameter",
+      "dataType": "bool",
+      "defaultValue": "true",
+      "description": "Enables the Skia/WPF platform support project"
+    },
+    "skia-linux-fb": {
+      "type": "parameter",
+      "dataType": "bool",
+      "defaultValue": "true",
+      "description": "Enables the Skia/Linux Framebuffer platform support project"
+    },
+    "tests": {
+      "type": "parameter",
+      "dataType": "bool",
+      "defaultValue": "true",
+      "description": "Includes unit and UI test projects"
+    },
+    "reactive": {
+      "type": "parameter",
+      "dataType": "bool",
+      "defaultValue": "true",
+      "description": "Whether or not to use Reactive extensions"
+    },
+    "cpm": {
+      "type": "parameter",
+      "dataType": "bool",
+      "defaultValue": "false",
+      "description": "Whether or not to use Central Package Management - package versions are via central Directory.Packages.props file"
+    },
+    "mobile": {
+      "type": "computed",
+      "dataType": "bool",
+      "value": "(android || ios || macos || maccatalyst)"
+    },
+    "vscode": {
+      "type": "parameter",
+      "dataType": "bool",
+      "defaultValue": "false",
+      "description": "Adds the Visual Studio Code Debugging support files for WebAssembly"
+    },
+    "skipRestore": {
+      "type": "parameter",
+      "datatype": "bool",
+      "description": "If specified, skips the automatic restore of the project on create.",
+      "defaultValue": "false"
+    },
+    "wasm-pwa-manifest": {
+      "type": "parameter",
+      "datatype": "bool",
+      "description": "Enables the generation of a PWA manifest for WebAssembly",
+      "defaultValue": "true"
+    }
+  },
+  "primaryOutputs": [
+    {
+      "path": "MyExtensionsApp.sln"
+    },
+    {
+      "path": "MyExtensionsApp.UI\\MyExtensionsApp.UI.shproj"
+    },
+    {
+      "path": "MyExtensionsApp\\MyExtensionsApp.csproj"
+    },
+    {
+      "condition": "tests",
+      "path": "MyExtensionsApp.Tests\\MyExtensionsApp.Tests.csproj"
+    },
+    {
+      "condition": "tests",
+      "path": "MyExtensionsApp.UITests\\MyExtensionsApp.UITests.csproj"
+    },
+    {
+      "condition": "cpm",
+      "path": "Directory.Packages.props"
+    },
+    {
+      "condition": "mobile",
+      "path": "MyExtensionsApp.Mobile\\MyExtensionsApp.Mobile.csproj"
+    },
+    {
+      "condition": "winAppSdk",
+      "path": "MyExtensionsApp.Windows\\MyExtensionsApp.Windows.csproj"
+    },
+    {
+      "condition": "wasm",
+      "path": "MyExtensionsApp.Wasm\\MyExtensionsApp.Wasm.csproj"
+    },
+    {
+      "condition": "skia-gtk",
+      "path": "MyExtensionsApp.Skia.Gtk\\MyExtensionsApp.Skia.Gtk.csproj"
+    },
+    {
+      "condition": "skia-wpf",
+      "path": "MyExtensionsApp.Skia.WPF\\MyExtensionsApp.Skia.Wpf.csproj"
+    },
+    {
+      "condition": "skia-linux-fb",
+      "path": "MyExtensionsApp.Skia.Linux.FrameBuffer\\MyExtensionsApp.Skia.Linux.FrameBuffer.csproj"
+    }
+  ],
+  "sources": [
+    {
+      "modifiers": [
+        {
+          "copyOnly": [
+            "**/*.png",
+            "**/*.jpg",
+            "**/*.gif",
+            "**/*.woff",
+            "**/*.ttf"
+          ]
+        },
+        {
+          "exclude": [
+            "MyExtensionsApp.Debugging.sln"
+          ]
+        },
+        {
+          "condition": "(!android)",
+          "exclude": [
+            "MyExtensionsApp.Mobile/Android/**/*"
+          ]
+        },
+        {
+          "condition": "(!ios)",
+          "exclude": [
+            "MyExtensionsApp.Mobile/iOS/**/*"
+          ]
+        },
+        {
+          "condition": "(!macos)",
+          "exclude": [
+            "MyExtensionsApp.Mobile/macOS/**/*"
+          ]
+        },
+        {
+          "condition": "(!maccatalyst)",
+          "exclude": [
+            "MyExtensionsApp.Mobile/MacCatalyst/**/*"
+          ]
+        },
+        {
+          "condition": "(!mobile)",
+          "exclude": [
+            "MyExtensionsApp.Mobile/**/*"
+          ]
+        },
+        {
+          "condition": "(!wasm)",
+          "exclude": [
+            "MyExtensionsApp.Wasm/**/*"
+          ]
+        },
+        {
+          "condition": "(!skia-gtk)",
+          "exclude": [
+            "MyExtensionsApp.Skia.Gtk/**/*"
+          ]
+        },
+        {
+          "condition": "(!skia-wpf)",
+          "exclude": [
+            "MyExtensionsApp.Skia.WPF/**/*"
+          ]
+        },
+        {
+          "condition": "(!skia-linux-fb)",
+          "exclude": [
+            "MyExtensionsApp.Skia.Linux.FrameBuffer/**/*"
+          ]
+        },
+        {
+          "condition": "(!winAppSdk)",
+          "exclude": [
+            "MyExtensionsApp.Windows/**/*"
+          ]
+        },
+        {
+          "condition": "(!tests)",
+          "exclude": [
+            "MyExtensionsApp.Tests/**/*",
+            "MyExtensionsApp.UITests/**/*"
+          ]
+        },
+        {
+          "condition": "(!cpm)",
+          "exclude": [
+            "MyExtensionsApp//MyExtensionsApp.csproj",
+            "MyExtensionsApp.Mobile//MyExtensionsApp.Mobile.csproj",
+            "MyExtensionsApp.Skia.Gtk//MyExtensionsApp.Skia.Gtk.csproj",
+            "MyExtensionsApp.Skia.Linux.FrameBuffer//MyExtensionsApp.Skia.Linux.FrameBuffer.csproj",
+            "MyExtensionsApp.Skia.WPF//MyExtensionsApp.Skia.WPF.csproj",
+            "MyExtensionsApp.Tests//MyExtensionsApp.Tests.csproj",
+            "MyExtensionsApp.UITests//MyExtensionsApp.UITests.csproj",
+            "MyExtensionsApp.Wasm//MyExtensionsApp.Wasm.csproj",
+            "MyExtensionsApp.Windows//MyExtensionsApp.Windows.csproj",
+            "Directory.Build.props",
+            "Directory.Packages.props"
+          ]
+        },
+        {
+          "condition": "(cpm)",
+          "exclude": [
+            "**/*.nocpm.props",
+            "**/*.nocpm.csproj"
+          ]
+        },
+        {
+          "condition": "(!vscode)",
+          "exclude": [
+            ".vscode/**/*"
+          ]
+        },
+        {
+        "condition": "(!wasm-pwa-manifest)",
+        "exclude": [
+          "MyExtensionsApp.Wasm/manifest.json",
+          "MyExtensionsApp.Wasm/Assets/AppIcon-*"
+        ]
+        },
+        {
+          "condition": "(!cpm)",
+          "rename": {
+              ".nocpm.csproj": ".csproj",
+              "Directory.Build.nocpm.props": "Directory.Build.props"
+          }
+        }
+      ]
+    }
+  ],
+  "postActions": [
+    {
+      "condition": "(!skipRestore)",
+      "description": "Restore NuGet packages required by this project",
+      "manualInstructions": [
+        {
+          "text": "Run 'dotnet restore'"
+        }
+      ],
+      "actionId": "210D431B-A78B-4D2F-B762-4ED3E3EA9025",
+      "continueOnError": true
+    }
+  ]
+}
