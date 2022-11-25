@@ -12,6 +12,8 @@ namespace Uno.Extensions.Navigation.UI
 		private readonly Window _window;
 		private readonly IDispatcher _dispatcher;
 		private readonly IWritableOptions<ThemeSettings> _writeSettings;
+
+		/// <inheritdoc/>
 		public event EventHandler<DesiredTheme>? DesiredThemeChanged;
 
 		public ThemeService(Window window, IDispatcher dispatcher, IWritableOptions<ThemeSettings> writeSettings)
@@ -21,19 +23,13 @@ namespace Uno.Extensions.Navigation.UI
 			_writeSettings = writeSettings;
 		}
 
-		/// <summary>
-		/// Get if the application is currently in dark mode.
-		/// </summary>
+		/// <inheritdoc/>
 		public bool IsDark => SystemThemeHelper.IsRootInDarkMode(_window.Content.XamlRoot!);
 
-		/// <summary>
-		///  Get the previously saved theme.
-		/// </summary>
+		/// <inheritdoc/>
 		public DesiredTheme Theme => GetSavedTheme();
 
-		/// <summary>
-		/// Sets the system theme for the provided XamlRoot using desired theme.
-		/// </summary>
+		/// <inheritdoc/>
 		public async Task SetThemeAsync(DesiredTheme theme)
 		{
 			if (theme != DesiredTheme.System)
