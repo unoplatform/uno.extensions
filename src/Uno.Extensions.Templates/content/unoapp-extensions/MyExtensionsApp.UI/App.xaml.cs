@@ -63,10 +63,10 @@ public sealed partial class App : Application
 #if(reactive)
 				.UseNavigation(ReactiveViewModelMappings.ViewModelMappings, RegisterRoutes));
 #else
-				.UseNavigation(RegisterRoutes));
+				.UseNavigation(RegisterRoutes)
 #endif
 //-:cnd:noEmit
-
+			)
 			// Add navigation support for toolkit controls such as TabBar and NavigationView
 			.UseToolkitNavigation();
 		_window = builder.Window;
