@@ -1,0 +1,8 @@
+﻿[
+    {
+        "name": "Main",
+        "templateGroupIdentity": "ts.WinUI.Page.Blank",
+        "readonly": "false",
+        "projecttype": "Blank|NavView|MenuBar"
+    }
+]

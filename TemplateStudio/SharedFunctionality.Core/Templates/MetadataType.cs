@@ -7,6 +7,7 @@ namespace Microsoft.Templates.Core
     public enum MetadataType
     {
         ProjectType = 0,
-        Framework = 1,
-    }
+		Framework = 1,
+		Architecture = 3,
+	}
 }

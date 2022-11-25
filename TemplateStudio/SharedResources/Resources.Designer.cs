@@ -1873,6 +1873,15 @@ namespace Microsoft.Templates.SharedResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Architecture.
+        /// </summary>
+        public static string ProjectDetailsArchitectureSectionTitle {
+            get {
+                return ResourceManager.GetString("ProjectDetailsArchitectureSectionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Features.
         /// </summary>
         public static string ProjectDetailsFeaturesSectionTitle {

@@ -177,7 +177,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default\Param_ProjectName\Assets\WindowIcon.ico">
+    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\Assets\WindowIcon.ico" />
+    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\TemplateStudio.xml">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Proj\Default-MVVM\Param_ProjectName\Assets\WindowIcon.ico">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Templates\_comp\MT\Project.NavView.AddNavViewItem.WebView\Views\ShellPage_postaction.xaml">
@@ -198,7 +202,7 @@
     <Content Include="Templates\_comp\_shared\Page.AddBackground.Blank\Views\Param_ItemNamePage_postaction.xaml">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default\Param_ProjectName\MainWindow.xaml">
+    <Content Include="Templates\Proj\Default-MVVM\Param_ProjectName\MainWindow.xaml">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Templates\Platform\Platform.Desktop.Windows\.template.config\icon.xaml">
@@ -269,6 +273,27 @@
       <SubType>Designer</SubType>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\App.xaml">
+      <SubType>Designer</SubType>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\MainWindow.xaml">
+      <SubType>Designer</SubType>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\Styles\FontSizes.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\Styles\TextBlock.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\Styles\Thickness.xaml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Page Include="Templates\_catalog\Architectures\Architecture.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\SharedStyles\AllStylesDictionary.cs">
@@ -291,6 +316,21 @@
       <DependentUpon>source.extension.vsixmanifest</DependentUpon>
     </Compile>
     <Compile Include="TemplateStudioForWinUICsPackage.cs" />
+    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName.Core\Services\FileService.cs" />
+    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName.Core\Contracts\Services\IFileService.cs" />
+    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\Usings.cs">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\MainWindow.xaml.cs">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\Helpers\TitleBarHelper.cs" />
+    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\Helpers\RuntimeHelper.cs" />
+    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\Helpers\ResourceExtensions.cs" />
+    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\Contracts\ViewModels\INavigationAware.cs" />
+    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\App.xaml.cs">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="Templates\Extensions\Extensions.Localization\Services\FeaturePWAServiceService.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -401,19 +441,19 @@
     <Content Include="Templates\_comp\MT\Platform.PlatformSelection\App_postaction.xaml.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default\Param_ProjectName\Helpers\RuntimeHelper.cs">
+    <Content Include="Templates\Proj\Default-MVVM\Param_ProjectName\Helpers\RuntimeHelper.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default\Param_ProjectName\MainWindow.xaml.cs">
+    <Content Include="Templates\Proj\Default-MVVM\Param_ProjectName\MainWindow.xaml.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default\Param_ProjectName\Usings.cs">
+    <Content Include="Templates\Proj\Default-MVVM\Param_ProjectName\Usings.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Templates\_comp\MT\Feature.AppNotifications\App_postaction.xaml.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default\Param_ProjectName\Helpers\TitleBarHelper.cs">
+    <Content Include="Templates\Proj\Default-MVVM\Param_ProjectName\Helpers\TitleBarHelper.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Templates\_comp\MT\Project.MenuBar.AddMenuItem.Settings\Views\ShellPage_postaction.xaml.cs">
@@ -423,7 +463,7 @@
     <Content Include="Templates\_comp\MT\Feature.AppNotifications\Strings\en-us\Resources_postaction.resw">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default\Param_ProjectName.Core\README.md">
+    <Content Include="Templates\Proj\Default-MVVM\Param_ProjectName.Core\README.md">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Templates\_comp\MT\Platform.PlatformSelection\.template.config\template.json">
@@ -1909,6 +1949,61 @@
     <Content Include="Templates\Extensions\Extensions.Localization\.template.config\template.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Content Include="Templates\_catalog\Architectures\Architecture.cs-CZ.md" />
+    <Content Include="Templates\Proj\Default-MVU-X\.editorconfig">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Proj\Default-MVU-X\.template.config\Layout.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Proj\Default-MVU-X\.template.config\template.json" />
+    <Content Include="Templates\Proj\Default-MVU-X\.vsconfig">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\app.manifest">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\Param_ProjectName.csproj">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\Properties\launchsettings.json" />
+    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\Properties\PublishProfiles\win10-arm64.pubxml" />
+    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\Properties\PublishProfiles\win10-x64.pubxml" />
+    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\Properties\PublishProfiles\win10-x86.pubxml" />
+    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\README.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\Strings\en-us\Resources.resw" />
+    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName.Core\Models\-.-" />
+    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName.Core\Param_ProjectName.Core.csproj" />
+    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName.Core\README.md" />
+    <None Include="Templates\_catalog\Architectures\Architecture.cs-CZ.json" />
+    <None Include="Templates\_catalog\Architectures\Architecture.de-DE.json" />
+    <None Include="Templates\_catalog\Architectures\Architecture.de-DE.md" />
+    <None Include="Templates\_catalog\Architectures\Architecture.es-ES.json" />
+    <None Include="Templates\_catalog\Architectures\Architecture.es-ES.md" />
+    <None Include="Templates\_catalog\Architectures\Architecture.fr-FR.json" />
+    <None Include="Templates\_catalog\Architectures\Architecture.fr-FR.md" />
+    <None Include="Templates\_catalog\Architectures\Architecture.it-IT.json" />
+    <None Include="Templates\_catalog\Architectures\Architecture.it-IT.md" />
+    <None Include="Templates\_catalog\Architectures\Architecture.ja-JP.json" />
+    <None Include="Templates\_catalog\Architectures\Architecture.ja-JP.md" />
+    <None Include="Templates\_catalog\Architectures\Architecture.json" />
+    <None Include="Templates\_catalog\Architectures\Architecture.ko-KR.json" />
+    <None Include="Templates\_catalog\Architectures\Architecture.ko-KR.md" />
+    <None Include="Templates\_catalog\Architectures\Architecture.md" />
+    <None Include="Templates\_catalog\Architectures\Architecture.pl-PL.json" />
+    <None Include="Templates\_catalog\Architectures\Architecture.pl-PL.md" />
+    <None Include="Templates\_catalog\Architectures\Architecture.pt-BR.json" />
+    <None Include="Templates\_catalog\Architectures\Architecture.pt-BR.md" />
+    <None Include="Templates\_catalog\Architectures\Architecture.ru-RU.json" />
+    <None Include="Templates\_catalog\Architectures\Architecture.ru-RU.md" />
+    <None Include="Templates\_catalog\Architectures\Architecture.tr-TR.json" />
+    <None Include="Templates\_catalog\Architectures\Architecture.tr-TR.md" />
+    <None Include="Templates\_catalog\Architectures\Architecture.zh-CN.json" />
+    <None Include="Templates\_catalog\Architectures\Architecture.zh-CN.md" />
+    <None Include="Templates\_catalog\Architectures\Architecture.zh-TW.json" />
+    <None Include="Templates\_catalog\Architectures\Architecture.zh-TW.md" />
     <VSCTCompile Include="Commands\TemplateStudioForWinuiPackage.vsct">
       <Generator>VsctGenerator</Generator>
       <ResourceName>Menus.ctmenu</ResourceName>
@@ -1982,7 +2077,7 @@
       <Generator>VsixManifestGenerator</Generator>
       <LastGenOutput>source.extension.cs</LastGenOutput>
     </None>
-    <Content Include="Templates\Proj\Default\.vsconfig">
+    <Content Include="Templates\Proj\Default-MVVM\.vsconfig">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Templates\_comp\MT\Project.NavView.AddNavViewItem.WebView\.template.config\template.json">
@@ -2015,7 +2110,7 @@
     <Content Include="Templates\_comp\MT\Project.NavView.AddNavViewItem.DataGrid\Strings\en-us\Resources_postaction.resw">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default\.editorconfig">
+    <Content Include="Templates\Proj\Default-MVVM\.editorconfig">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Templates\_comp\_shared\Page.AddBackground.Blank\.template.config\template.json">
@@ -2160,13 +2255,13 @@
     <Content Include="Templates\Page\Blank\Views\Param_ItemNamePage.xaml.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default\Param_ProjectName\App.xaml.cs">
+    <Content Include="Templates\Proj\Default-MVVM\Param_ProjectName\App.xaml.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default\Param_ProjectName\Contracts\ViewModels\INavigationAware.cs">
+    <Content Include="Templates\Proj\Default-MVVM\Param_ProjectName\Contracts\ViewModels\INavigationAware.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default\Param_ProjectName\Helpers\ResourceExtensions.cs">
+    <Content Include="Templates\Proj\Default-MVVM\Param_ProjectName\Helpers\ResourceExtensions.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Templates\_comp\MT\AddConnectedAnimation\Contracts\Services\INavigationService_postaction.cs">
@@ -2310,37 +2405,37 @@
     <Content Include="Templates\projectNameValidation.config.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default\.template.config\Layout.json">
+    <Content Include="Templates\Proj\Default-MVVM\.template.config\Layout.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default\.template.config\template.json">
+    <Content Include="Templates\Proj\Default-MVVM\.template.config\template.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default\Param_ProjectName.Core\Models\-.-">
+    <Content Include="Templates\Proj\Default-MVVM\Param_ProjectName.Core\Models\-.-">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default\Param_ProjectName.Core\Param_ProjectName.Core.csproj">
+    <Content Include="Templates\Proj\Default-MVVM\Param_ProjectName.Core\Param_ProjectName.Core.csproj">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default\Param_ProjectName\app.manifest">
+    <Content Include="Templates\Proj\Default-MVVM\Param_ProjectName\app.manifest">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default\Param_ProjectName\Properties\PublishProfiles\win10-arm64.pubxml">
+    <Content Include="Templates\Proj\Default-MVVM\Param_ProjectName\Properties\PublishProfiles\win10-arm64.pubxml">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default\Param_ProjectName\Properties\PublishProfiles\win10-x64.pubxml">
+    <Content Include="Templates\Proj\Default-MVVM\Param_ProjectName\Properties\PublishProfiles\win10-x64.pubxml">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default\Param_ProjectName\Properties\PublishProfiles\win10-x86.pubxml">
+    <Content Include="Templates\Proj\Default-MVVM\Param_ProjectName\Properties\PublishProfiles\win10-x86.pubxml">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default\Param_ProjectName\README.md">
+    <Content Include="Templates\Proj\Default-MVVM\Param_ProjectName\README.md">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default\Param_ProjectName\Strings\en-us\Resources.resw">
+    <Content Include="Templates\Proj\Default-MVVM\Param_ProjectName\Strings\en-us\Resources.resw">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default\Param_ProjectName\Param_ProjectName.csproj">
+    <Content Include="Templates\Proj\Default-MVVM\Param_ProjectName\Param_ProjectName.csproj">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Templates\_catalog\FrontendFrameworks\FrontendFrameworks.cs-CZ.json">
@@ -2721,7 +2816,7 @@
     <Content Include="Templates\_comp\_shared\Proj.Core.Platforms\Param_ProjectName.Core\Param_ProjectName.Core_postaction.csproj">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default\Param_ProjectName\TemplateStudio.xml">
+    <Content Include="Templates\Proj\Default-MVVM\Param_ProjectName\TemplateStudio.xml">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Templates\Page\Blank\.template.config\icon.xaml">
@@ -2730,10 +2825,10 @@
     <Content Include="Templates\Page\Blank\Views\Param_ItemNamePage.xaml">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default\Param_ProjectName\App.xaml">
+    <Content Include="Templates\Proj\Default-MVVM\Param_ProjectName\App.xaml">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default\Param_ProjectName\Styles\TextBlock.xaml">
+    <Content Include="Templates\Proj\Default-MVVM\Param_ProjectName\Styles\TextBlock.xaml">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Templates\_catalog\FrontendFrameworks\MVVMToolkit.xaml">
@@ -2793,16 +2888,16 @@
     <Content Include="Templates\_comp\_shared\Page.NavView.AddHeaderModeNever\Views\Param_ItemNamePage_postaction.xaml">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default\Param_ProjectName\Styles\FontSizes.xaml">
+    <Content Include="Templates\Proj\Default-MVVM\Param_ProjectName\Styles\FontSizes.xaml">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default\Param_ProjectName\Styles\Thickness.xaml">
+    <Content Include="Templates\Proj\Default-MVVM\Param_ProjectName\Styles\Thickness.xaml">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default\Param_ProjectName.Core\Contracts\Services\IFileService.cs">
+    <Content Include="Templates\Proj\Default-MVVM\Param_ProjectName.Core\Contracts\Services\IFileService.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default\Param_ProjectName.Core\Services\FileService.cs">
+    <Content Include="Templates\Proj\Default-MVVM\Param_ProjectName.Core\Services\FileService.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Templates\_comp\MT\Project.NavView\Helpers\NavigationHelper.cs">
@@ -2814,10 +2909,11 @@
     <Content Include="Templates\_comp\MT\Feature.SettingsStorage\.template.config\template.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default\Param_ProjectName\Properties\launchsettings.json">
+    <Content Include="Templates\Proj\Default-MVVM\Param_ProjectName\Properties\launchsettings.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="..\SharedFunctionality.Core\SharedFunctionality.Core.projitems" Label="Shared" />
   <Import Project="..\SharedFunctionality.UI\SharedFunctionality.UI.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

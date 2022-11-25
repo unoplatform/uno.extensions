@@ -37,9 +37,9 @@ namespace Microsoft.Templates.UI.ViewModels.NewProject
 
         public ProjectTypeViewModel ProjectType { get; } = new ProjectTypeViewModel(() => Instance.IsSelectionEnabled(MetadataType.ProjectType), () => Instance.OnProjectTypeSelectedAsync());
 
-		public FrameworkViewModel Framework { get; } = new FrameworkViewModel(() => Instance.IsSelectionEnabled(MetadataType.Framework), () => Instance.OnFrameworkSelectedAsync());
-
 		public ArchitectureViewModel Architecture { get; } = new ArchitectureViewModel(() => Instance.IsSelectionEnabled(MetadataType.Architecture), () => Instance.OnArchitectureSelectedAsync());
+
+		public FrameworkViewModel Framework { get; } = new FrameworkViewModel(() => Instance.IsSelectionEnabled(MetadataType.Framework), () => Instance.OnFrameworkSelectedAsync());
 
 		public UserSelectionViewModel UserSelection { get; } = new UserSelectionViewModel();
 
@@ -82,7 +82,7 @@ namespace Microsoft.Templates.UI.ViewModels.NewProject
             {
                 yield return StepData.MainStep(NewProjectStepProjectType, "1", Resources.NewProjectStepProjectType, () => new ProjectTypePage(), true, true);
 				yield return StepData.MainStep(NewProjectStepFramework, "2", Resources.NewProjectStepDesignPattern, () => new FrameworkPage());
-				yield return StepData.MainStep(NewProjectStepFramework, "3", Resources.NewProjectStepArchitecture, () => new ArchitecturePage());
+				yield return StepData.MainStep(NewProjectStepArchitecture, "3", Resources.NewProjectStepArchitecture, () => new ArchitecturePage());
 			}
         }
 
@@ -195,12 +195,16 @@ namespace Microsoft.Templates.UI.ViewModels.NewProject
             if (item is ProjectTypeMetaDataViewModel projectTypeMetaData)
             {
                 ProjectType.Selected = projectTypeMetaData;
-            }
-            else if (item is FrameworkMetaDataViewModel frameworkMetaData)
-            {
-                Framework.Selected = frameworkMetaData;
-            }
-            else if (item is TemplateInfoViewModel template)
+			}
+			else if (item is FrameworkMetaDataViewModel frameworkMetaData)
+			{
+				Framework.Selected = frameworkMetaData;
+			}
+			else if (item is ArchitectureMetaDataViewModel ArchitectureMetaData)
+			{
+				Architecture.Selected = ArchitectureMetaData;
+			}
+			else if (item is TemplateInfoViewModel template)
             {
                 await AddTemplateAsync(template);
             }
@@ -211,31 +215,38 @@ namespace Microsoft.Templates.UI.ViewModels.NewProject
             await SafeThreading.JoinableTaskFactory.SwitchToMainThreadAsync();
 
             Context.ProjectType = ProjectType.Selected.Name;
-            await Framework.LoadDataAsync(Context);
-        }
+			await Framework.LoadDataAsync(Context);
+			await Architecture.LoadDataAsync(Context);
+		}
 
         private async Task OnFrameworkSelectedAsync()
         {
             await SafeThreading.JoinableTaskFactory.SwitchToMainThreadAsync();
 
             Context.FrontEndFramework = Framework.Selected.Name;
+			//Context.Architecture = Architecture.Selected.Name;
 
-            UserSelection.Initialize(Context);
+			UserSelection.Initialize(Context);
 
 			await BuildStepViewModelAsync(TemplateType.Feature);
-
 			await BuildStepViewModelAsync(TemplateType.Platform);
 			await BuildStepViewModelAsync(TemplateType.UnoExtensions);
 			await BuildStepViewModelAsync(TemplateType.Page);
 			await BuildStepViewModelAsync(TemplateType.Service);
 			await BuildStepViewModelAsync(TemplateType.Testing);
+			await BuildStepViewModelAsync(TemplateType.Architecture);
 
 			await UserSelection.AddLayoutTemplatesAsync();
 
             WizardStatus.IsLoading = false;
         }
 
-        private async Task BuildStepViewModelAsync(TemplateType templateType)
+		private async Task OnArchitectureSelectedAsync()
+		{
+			Context.Architecture = Architecture.Selected.Name;
+		}
+
+		private async Task BuildStepViewModelAsync(TemplateType templateType)
         {
             var hasTemplates = DataService.HasTemplatesFromType(templateType, Context);
             var stepId = templateType.GetNewProjectStepId();

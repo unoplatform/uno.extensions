@@ -175,7 +175,7 @@ namespace Microsoft.Templates.Core
 			return results;
 		}
 
-		public IEnumerable<MetadataInfo> GetFrontEndArchitectures(UserSelectionContext context)
+		public IEnumerable<MetadataInfo> GetArchitectures(UserSelectionContext context)
 		{
 			if (string.IsNullOrEmpty(context.ProjectType))
 			{
@@ -186,9 +186,9 @@ namespace Microsoft.Templates.Core
 
 			var results = GetMetadataInfo("frontendframeworks")
 				.Where(f => f.Platform == context.Platform
-							&& Architectures.Any(fx => fx.Name == f.Name && fx.Type == FrameworkTypes.BackEnd));
+							&& Architectures.Any(fx => fx.Name == f.Name && fx.Type == FrameworkTypes.FrontEnd));
 
-			results.ToList().ForEach(meta => meta.Tags["type"] = "backend");
+			results.ToList().ForEach(meta => meta.Tags["type"] = "frontend");
 			return results;
 		}
 
@@ -393,7 +393,8 @@ namespace Microsoft.Templates.Core
 						  && t.GetPlatform().Equals(context.Platform, StringComparison.OrdinalIgnoreCase)).ToList();
 
 			var result = new List<SupportedFramework>();
-			result.AddRange(filtered.SelectMany(t => t.GetArchitecturesList()).Select(name => new SupportedFramework(name, FrameworkTypes.BackEnd)).ToList());
+			result.AddRange(filtered.SelectMany(t => t.GetFrontEndFrameworkList()).Select(name => new SupportedFramework(name, FrameworkTypes.FrontEnd)).ToList());
+
 			result = result.Distinct().ToList();
 
 			return result;
@@ -632,7 +633,7 @@ namespace Microsoft.Templates.Core
 
                         metadata.ForEach(m => SetMetadataDescription(m, folderName, type));
                         metadata.ForEach(m => SetMetadataIcon(m, folderName, type));
-                        metadata.ForEach(m => m.MetadataType = type == "projectTypes" ? MetadataType.ProjectType : MetadataType.Framework);
+                        metadata.ForEach(m => m.MetadataType = ( type == "projectTypes" ? MetadataType.ProjectType : type == "Framework" ? MetadataType.Framework : MetadataType.Architecture) );
                         metadata.ForEach(m => SetLicenseTerms(m));
                         metadata.ForEach(m => SetDefaultTags(m));
 

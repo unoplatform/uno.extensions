@@ -39,6 +39,7 @@ namespace Microsoft.Templates.UI.ViewModels.NewProject
             Groups.Add(new UserSelectionGroup(TemplateType.Page, Resources.ProjectDetailsPagesSectionTitle, true));
 			Groups.Add(new UserSelectionGroup(TemplateType.Feature, Resources.ProjectDetailsFeaturesSectionTitle));
 			Groups.Add(new UserSelectionGroup(TemplateType.UnoExtensions, Resources.ProjectDetailsUnoExtensionsSectionTitle));
+			Groups.Add(new UserSelectionGroup(TemplateType.Architecture, Resources.ProjectDetailsArchitectureSectionTitle));
 			Groups.Add(new UserSelectionGroup(TemplateType.Platform, Resources.ProjectDetailsPlatformSectionTitle));
 			Groups.Add(new UserSelectionGroup(TemplateType.Service, Resources.ProjectDetailsServicesSectionTitle));
             Groups.Add(new UserSelectionGroup(TemplateType.Testing, Resources.ProjectDetailsTestingSectionTitle));

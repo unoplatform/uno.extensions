@@ -53,6 +53,8 @@ namespace Microsoft.Templates.UI.Extensions
 					return Resources.NewProjectStepPlatform;
 				case TemplateType.UnoExtensions:
 					return Resources.NewProjectStepUnoExtensions;
+				case TemplateType.Architecture:
+					return Resources.NewProjectStepArchitecture;
 				default:
                     return string.Empty;
             }

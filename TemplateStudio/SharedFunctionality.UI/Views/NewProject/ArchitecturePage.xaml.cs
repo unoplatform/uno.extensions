@@ -8,14 +8,14 @@ using Microsoft.Templates.UI.ViewModels.NewProject;
 
 namespace Microsoft.Templates.UI.Views.NewProject
 {
-    public partial class ArchitecturePage : Page
-    {
-        public ArchitecturePage()
-        {
-            Resources.MergedDictionaries.Add(AllStylesDictionary.GetMergeDictionary());
+	public partial class ArchitecturePage : Page
+	{
+		public ArchitecturePage()
+		{
+			Resources.MergedDictionaries.Add(AllStylesDictionary.GetMergeDictionary());
 
-            DataContext = MainViewModel.Instance;
-            InitializeComponent();
-        }
-    }
+			DataContext = MainViewModel.Instance;
+			InitializeComponent();
+		}
+	}
 }

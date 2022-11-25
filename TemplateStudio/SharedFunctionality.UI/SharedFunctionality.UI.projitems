@@ -99,6 +99,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Common\DataItems\BasicInfoViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Common\DataItems\FileExtension.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Common\DataItems\FileStatus.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Common\DataItems\ArchitectureMetaDataViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Common\DataItems\FrameworkMetaDataViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Common\DataItems\ItemsGroupViewModel`1.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Common\DataItems\LayoutViewModel.cs" />
@@ -120,12 +121,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\NewItem\MainViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\NewItem\ProjectConfigurationViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\NewItem\TemplateSelectionViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\NewProject\ArchitectureViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\NewProject\FrameworkViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\NewProject\MainViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\NewProject\ProjectTypeViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\NewProject\TemplatesStepViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\NewProject\UserSelectionGroup.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\NewProject\UserSelectionViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\NewProject\ArchitecturePage.xaml.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)VisualStudio\GenShell\VsGenShell.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)VisualStudio\GenShell\VsGenShellCertificate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)VisualStudio\GenShell\VsGenShellProject.cs" />

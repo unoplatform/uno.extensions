@@ -69,7 +69,7 @@ namespace Microsoft.Templates.UI.Services
 
 		public static bool LoadArchitectures(ObservableCollection<ArchitectureMetaDataViewModel> architectures, UserSelectionContext context)
 		{
-			var targetArchitecture = GenContext.ToolBox.Repo.GetFrontEndArchitectures(context)
+			var targetArchitecture = GenContext.ToolBox.Repo.GetArchitectures(context)
 										.Select(m => new ArchitectureMetaDataViewModel(m))
 										.OrderBy(f => f.Order)
 										.ToList();

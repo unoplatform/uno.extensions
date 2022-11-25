@@ -21,33 +21,49 @@ namespace Microsoft.Templates.Core
         private const string TagPrefix = "ts.";
         private const string LicensesPattern = @"\[(?<text>.*?)\]\((?<url>.*?)\)\" + Separator + "?";
 
-        public static TemplateType GetTemplateType(this ITemplateInfo ti)
-        {
-            var type = GetValueFromTag(ti, TagPrefix + "type");
-            switch (type?.ToUpperInvariant())
-            {
-                case "PROJECT":
-                    return TemplateType.Project;
-                case "PAGE":
-                    return TemplateType.Page;
-                case "FEATURE":
-                    return TemplateType.Feature;
-                case "SERVICE":
-                    return TemplateType.Service;
-                case "TESTING":
-                    return TemplateType.Testing;
+		public static TemplateType GetTemplateType(this ITemplateInfo ti)
+		{
+			var type = GetValueFromTag(ti, TagPrefix + "type");
+			switch (type?.ToUpperInvariant())
+			{
+				case "PROJECT":
+					return TemplateType.Project;
+				case "PAGE":
+					return TemplateType.Page;
+				case "FEATURE":
+					return TemplateType.Feature;
+				case "SERVICE":
+					return TemplateType.Service;
+				case "TESTING":
+					return TemplateType.Testing;
 				case "COMPOSITION":
 					return TemplateType.Composition;
 				case "PLATFORM":
 					return TemplateType.Platform;
 				case "UNOEXTENSIONS":
 					return TemplateType.UnoExtensions;
+				case "ARCHITECTURE":
+					return TemplateType.Architecture;
 				default:
-                    return TemplateType.Unspecified;
-            }
-        }
+					return TemplateType.Unspecified;
+			}
+		}
 
-        public static TemplateOutputType GetTemplateOutputType(this ITemplateInfo ti)
+		public static TemplateType GetArchitecture(this ITemplateInfo ti)
+		{
+			var type = GetValueFromTag(ti, TagPrefix + "architecture");
+			switch (type?.ToUpperInvariant())
+			{
+				case "MVU-X":
+					return TemplateType.Architecture;
+				case "MVVM":
+					return TemplateType.Architecture;
+				default:
+					return TemplateType.Unspecified;
+			}
+		}
+
+		public static TemplateOutputType GetTemplateOutputType(this ITemplateInfo ti)
         {
             var type = GetValueFromTag(ti, "type");
             switch (type?.ToUpperInvariant())
@@ -207,7 +223,7 @@ namespace Microsoft.Templates.Core
 		
 		public static List<string> GetArchitecturesList(this ITemplateInfo ti)
 		{
-			var frontEndArchitectures = GetValueFromTag(ti, TagPrefix + "architectures");
+			var frontEndArchitectures = GetValueFromTag(ti, TagPrefix + "frontendframework");
 
 			var result = new List<string>();
 

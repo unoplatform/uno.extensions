@@ -11,9 +11,11 @@ namespace Microsoft.Templates.Core.Gen
     {
         public string ProjectType { get; set; }
 
-        public string FrontEndFramework { get; set; }
+		public string FrontEndFramework { get; set; }
 
-        public string BackEndFramework { get; set; }
+		public string Architecture { get; set; }
+
+		public string BackEndFramework { get; set; }
 
         public string Platform { get; private set; }
 
