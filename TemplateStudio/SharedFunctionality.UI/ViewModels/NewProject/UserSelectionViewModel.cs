@@ -39,6 +39,8 @@ namespace Microsoft.Templates.UI.ViewModels.NewProject
             Groups.Add(new UserSelectionGroup(TemplateType.Page, Resources.ProjectDetailsPagesSectionTitle, true));
 			Groups.Add(new UserSelectionGroup(TemplateType.Feature, Resources.ProjectDetailsFeaturesSectionTitle));
 			Groups.Add(new UserSelectionGroup(TemplateType.UnoExtensions, Resources.ProjectDetailsUnoExtensionsSectionTitle));
+			Groups.Add(new UserSelectionGroup(TemplateType.UnoFramework, Resources.ProjectDetailsUnoFrameworkSectionTitle));
+			Groups.Add(new UserSelectionGroup(TemplateType.CodingStyle, Resources.ProjectDetailsCodingStylesSectionTitle));
 			Groups.Add(new UserSelectionGroup(TemplateType.Architecture, Resources.ProjectDetailsArchitectureSectionTitle));
 			Groups.Add(new UserSelectionGroup(TemplateType.Platform, Resources.ProjectDetailsPlatformSectionTitle));
 			Groups.Add(new UserSelectionGroup(TemplateType.Service, Resources.ProjectDetailsServicesSectionTitle));
@@ -190,6 +192,12 @@ namespace Microsoft.Templates.UI.ViewModels.NewProject
 
 			var unoExtensions = Groups.First(g => g.TemplateType == TemplateType.UnoExtensions).Items;
 			selection.UnoExtensions.AddRange(unoExtensions.Select(i => i.ToUserSelectionItem()));
+
+			var unoFramework = Groups.First(g => g.TemplateType == TemplateType.UnoFramework).Items;
+			selection.UnoFrameworks.AddRange(unoFramework.Select(i => i.ToUserSelectionItem()));
+
+			var codingStyles = Groups.First(g => g.TemplateType == TemplateType.CodingStyle).Items;
+			selection.CodingStyles.AddRange(unoExtensions.Select(i => i.ToUserSelectionItem()));
 
 			var services = Groups.First(g => g.TemplateType == TemplateType.Service).Items;
             selection.Services.AddRange(services.Select(i => i.ToUserSelectionItem()));

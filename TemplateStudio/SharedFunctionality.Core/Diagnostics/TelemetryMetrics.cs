@@ -14,6 +14,10 @@ namespace Microsoft.Templates.Core.Diagnostics
 
 		public static string UnoExtensionsCount { get; private set; } = TelemetryEvents.Prefix + "UnoExtensionsCount";
 
+		public static string UnoFrameworkCount { get; private set; } = TelemetryEvents.Prefix + "UnoFrameworkCount";
+
+		public static string CodingStyle { get; private set; } = TelemetryEvents.Prefix + "CodingStyleCount";
+
 		public static string ServicesCount { get; private set; } = TelemetryEvents.Prefix + "ServicesCount";
 
         public static string TestingCount { get; private set; } = TelemetryEvents.Prefix + "TestingCount";

@@ -310,11 +310,11 @@
     <comment>New project: Navigation step pages</comment>
   </data>
   <data name="NewProjectStepDesignPattern" xml:space="preserve">
-    <value>Design pattern</value>
+    <value>Framework</value>
     <comment>New project: Navigation step design pattern</comment>
   </data>
   <data name="NewProjectTitleUWP" xml:space="preserve">
-    <value>New Universal Windows Platform app</value>
+    <value>New Uno Extensions app</value>
     <comment>Wizard title on WizardShell page for UWP projects</comment>
   </data>
   <data name="NewProjectTitleWPF" xml:space="preserve">
@@ -414,11 +414,11 @@
     <comment>Framework changed message</comment>
   </data>
   <data name="ProjectDetailsFrameworkResetTitle" xml:space="preserve">
-    <value>Design pattern changed</value>
+    <value>Framework changed</value>
     <comment>Framework changed title</comment>
   </data>
   <data name="ProjectDetailsFrameworkSectionTitle" xml:space="preserve">
-    <value>Design pattern</value>
+    <value>Framework</value>
     <comment>Framework combobox header on project details</comment>
   </data>
   <data name="ProjectDetailsLicensesSectionTitle" xml:space="preserve">
@@ -594,7 +594,7 @@
     <comment>User selection page list to accessibility</comment>
   </data>
   <data name="AccessibilityDesignPatternList" xml:space="preserve">
-    <value>Design patterns</value>
+    <value>Frameworks</value>
     <comment>Design pattern list to accessibility</comment>
   </data>
   <data name="AccessibilityTemplatesList" xml:space="preserve">
@@ -896,10 +896,10 @@ Please verify the following list of packages needed by your project's code and m
     <value>Invalid Requirement Type {0}</value>
   </data>
   <data name="NewProjectTitleWinUIDesktop" xml:space="preserve">
-    <value>New WinUI 3 Desktop app</value>
+    <value>New Uno Extensions app</value>
   </data>
   <data name="NewProjectTitleWinUIUWP" xml:space="preserve">
-    <value>New WinUI 3 UWP app</value>
+    <value>New Uno Extensions app</value>
   </data>
   <data name="WinUI" xml:space="preserve">
     <value>Windows UI</value>
@@ -1475,5 +1475,37 @@ See the final result: {2}
   <data name="TemplateGroup_ExtensionsLogInteraction" xml:space="preserve">
     <value>Logging</value>
     <comment>Logging</comment>
+  </data>
+  <data name="AddCodingStyleTitle" xml:space="preserve">
+    <value>Coding Styles</value>
+    <comment>Coding Styles</comment>
+  </data>
+  <data name="AddUnoFrameworkTitle" xml:space="preserve">
+    <value>UnoFramework</value>
+    <comment>UnoFramework</comment>
+  </data>
+  <data name="NewProjectStepCodingStyle" xml:space="preserve">
+    <value>Coding Style</value>
+    <comment>Coding Style</comment>
+  </data>
+  <data name="NewProjectStepUnoFramework" xml:space="preserve">
+    <value>UnoFramework</value>
+    <comment>UnoFramework</comment>
+  </data>
+  <data name="ProjectDetailsCodingStylesSectionTitle" xml:space="preserve">
+    <value>Coding Styles</value>
+    <comment>Coding Styles</comment>
+  </data>
+  <data name="ProjectDetailsUnoFrameworkSectionTitle" xml:space="preserve">
+    <value>UnoFramework</value>
+    <comment>UnoFramework</comment>
+  </data>
+  <data name="TemplateGroup_CodeStyleInteraction" xml:space="preserve">
+    <value>Coding Styles</value>
+    <comment>Coding Styles</comment>
+  </data>
+  <data name="TemplateGroup_FrameworkInteraction" xml:space="preserve">
+    <value>Framework</value>
+    <comment>Framework</comment>
   </data>
 </root>

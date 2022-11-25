@@ -1,0 +1,42 @@
+﻿{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Microsoft",
+  "classifications": [ "Universal" ],
+  "name": "Framework NET6",
+  "shortName": "Framework NET6",
+  "groupIdentity": "ts.WinUI.Feat.FrameworkNET6Service",
+  "identity": "ts.WinUI.Feat.FrameworkNET6Service",
+  "description": "Adds Framework NET6 project to your application.",
+  "tags": {
+    "language": "C#",
+    "type": "project",
+    "ts.type": "UNOFRAMEWORK",
+    "ts.projecttype": "all",
+    "ts.frontendframework": "all",
+    "ts.platform": "WinUI",
+    "ts.appmodel": "Desktop",
+    "ts.version": "1.0.0",
+    "ts.genGroup": "0",
+    "ts.group": "FrameworkInteraction",
+    "ts.displayOrder": "1",
+    "ts.multipleInstance": "false",
+    "ts.rightClickEnabled": "true"
+  },
+
+  "sourceName": "Param_ItemName",
+  "preferNameDirectory": true,
+  "PrimaryOutputs": [
+    {
+      "path": "Contracts/Services/IFeaturePWAService.cs"
+    },
+    {
+      "path": "Services/FeaturePWAService.cs"
+    }
+  ],
+  "symbols": {
+    "ts.rootNamespace": {
+      "type": "parameter",
+      "replaces": "Param_RootNamespace"
+    }
+  }
+}

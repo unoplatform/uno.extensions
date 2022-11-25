@@ -1,0 +1,7 @@
+﻿{
+  "name": "Framework NET6",
+  "description": "Adds Framework NET6 to Project",
+
+  "_name.comment": "Label for feature that enables users to add Framework NET6",
+  "_description.comment": "Label description for Platform Selection."
+}

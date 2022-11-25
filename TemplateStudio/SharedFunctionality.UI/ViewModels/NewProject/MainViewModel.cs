@@ -24,9 +24,9 @@ namespace Microsoft.Templates.UI.ViewModels.NewProject
 {
     public class MainViewModel : BaseMainViewModel
     {
-        public const string NewProjectStepProjectType = "01ProjectType";
-		public const string NewProjectStepFramework = "02Framework";
-		public const string NewProjectStepArchitecture = "03Architecture";
+        public const string NewProjectStepProjectType = "09ProjectType";
+		public const string NewProjectStepFramework = "10Framework";
+		public const string NewProjectStepArchitecture = "11Architecture";
 
 		private RelayCommand _refreshTemplatesCacheCommand;
         private RelayCommand _compositionToolCommand;
@@ -80,9 +80,9 @@ namespace Microsoft.Templates.UI.ViewModels.NewProject
         {
             get
             {
-                yield return StepData.MainStep(NewProjectStepProjectType, "1", Resources.NewProjectStepProjectType, () => new ProjectTypePage(), true, true);
-				yield return StepData.MainStep(NewProjectStepFramework, "2", Resources.NewProjectStepDesignPattern, () => new FrameworkPage());
-				yield return StepData.MainStep(NewProjectStepArchitecture, "3", Resources.NewProjectStepArchitecture, () => new ArchitecturePage());
+                //yield return StepData.MainStep(NewProjectStepProjectType, "1", Resources.NewProjectStepProjectType, () => new ProjectTypePage(), true, true);
+				yield return StepData.MainStep(NewProjectStepFramework, "10", Resources.NewProjectStepDesignPattern, () => new FrameworkPage());
+				yield return StepData.MainStep(NewProjectStepArchitecture, "11", Resources.NewProjectStepArchitecture, () => new ArchitecturePage());
 			}
         }
 
@@ -231,10 +231,13 @@ namespace Microsoft.Templates.UI.ViewModels.NewProject
 			await BuildStepViewModelAsync(TemplateType.Feature);
 			await BuildStepViewModelAsync(TemplateType.Platform);
 			await BuildStepViewModelAsync(TemplateType.UnoExtensions);
+			await BuildStepViewModelAsync(TemplateType.UnoFramework);
+			await BuildStepViewModelAsync(TemplateType.CodingStyle);
+			await BuildStepViewModelAsync(TemplateType.Architecture);
+
 			await BuildStepViewModelAsync(TemplateType.Page);
 			await BuildStepViewModelAsync(TemplateType.Service);
 			await BuildStepViewModelAsync(TemplateType.Testing);
-			await BuildStepViewModelAsync(TemplateType.Architecture);
 
 			await UserSelection.AddLayoutTemplatesAsync();
 

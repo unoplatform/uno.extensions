@@ -15,6 +15,8 @@ namespace Microsoft.Templates.Core
 		Unspecified,
 		Platform,
 		UnoExtensions,
-		Architecture
+		Architecture,
+		CodingStyle,
+		UnoFramework
 	}
 }

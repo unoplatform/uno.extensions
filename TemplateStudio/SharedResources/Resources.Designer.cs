@@ -79,7 +79,7 @@ namespace Microsoft.Templates.SharedResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Design patterns.
+        ///   Looks up a localized string similar to Frameworks.
         /// </summary>
         public static string AccessibilityDesignPatternList {
             get {
@@ -169,6 +169,15 @@ namespace Microsoft.Templates.SharedResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Coding Styles.
+        /// </summary>
+        public static string AddCodingStyleTitle {
+            get {
+                return ResourceManager.GetString("AddCodingStyleTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add Features.
         /// </summary>
         public static string AddFeaturesTitle {
@@ -237,6 +246,15 @@ namespace Microsoft.Templates.SharedResources {
         public static string AddUnoExtensionsTitle {
             get {
                 return ResourceManager.GetString("AddUnoExtensionsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to UnoFramework.
+        /// </summary>
+        public static string AddUnoFrameworkTitle {
+            get {
+                return ResourceManager.GetString("AddUnoFrameworkTitle", resourceCulture);
             }
         }
         
@@ -1414,7 +1432,16 @@ namespace Microsoft.Templates.SharedResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Design pattern.
+        ///   Looks up a localized string similar to Coding Style.
+        /// </summary>
+        public static string NewProjectStepCodingStyle {
+            get {
+                return ResourceManager.GetString("NewProjectStepCodingStyle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Framework.
         /// </summary>
         public static string NewProjectStepDesignPattern {
             get {
@@ -1486,7 +1513,16 @@ namespace Microsoft.Templates.SharedResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to New Universal Windows Platform app.
+        ///   Looks up a localized string similar to UnoFramework.
+        /// </summary>
+        public static string NewProjectStepUnoFramework {
+            get {
+                return ResourceManager.GetString("NewProjectStepUnoFramework", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New Uno Extensions app.
         /// </summary>
         public static string NewProjectTitleUWP {
             get {
@@ -1495,7 +1531,7 @@ namespace Microsoft.Templates.SharedResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to New WinUI 3 Desktop app.
+        ///   Looks up a localized string similar to New Uno Extensions app.
         /// </summary>
         public static string NewProjectTitleWinUIDesktop {
             get {
@@ -1504,7 +1540,7 @@ namespace Microsoft.Templates.SharedResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to New WinUI 3 UWP app.
+        ///   Looks up a localized string similar to New Uno Extensions app.
         /// </summary>
         public static string NewProjectTitleWinUIUWP {
             get {
@@ -1882,6 +1918,15 @@ namespace Microsoft.Templates.SharedResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Coding Styles.
+        /// </summary>
+        public static string ProjectDetailsCodingStylesSectionTitle {
+            get {
+                return ResourceManager.GetString("ProjectDetailsCodingStylesSectionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Features.
         /// </summary>
         public static string ProjectDetailsFeaturesSectionTitle {
@@ -1900,7 +1945,7 @@ namespace Microsoft.Templates.SharedResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Design pattern changed.
+        ///   Looks up a localized string similar to Framework changed.
         /// </summary>
         public static string ProjectDetailsFrameworkResetTitle {
             get {
@@ -1909,7 +1954,7 @@ namespace Microsoft.Templates.SharedResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Design pattern.
+        ///   Looks up a localized string similar to Framework.
         /// </summary>
         public static string ProjectDetailsFrameworkSectionTitle {
             get {
@@ -2004,6 +2049,15 @@ namespace Microsoft.Templates.SharedResources {
         public static string ProjectDetailsUnoExtensionsSectionTitle {
             get {
                 return ResourceManager.GetString("ProjectDetailsUnoExtensionsSectionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to UnoFramework.
+        /// </summary>
+        public static string ProjectDetailsUnoFrameworkSectionTitle {
+            get {
+                return ResourceManager.GetString("ProjectDetailsUnoFrameworkSectionTitle", resourceCulture);
             }
         }
         
@@ -2612,6 +2666,15 @@ namespace Microsoft.Templates.SharedResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Coding Styles.
+        /// </summary>
+        public static string TemplateGroup_CodeStyleInteraction {
+            get {
+                return ResourceManager.GetString("TemplateGroup_CodeStyleInteraction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Connected Experiences.
         /// </summary>
         public static string TemplateGroup_ConnectedExperiences {
@@ -2662,6 +2725,15 @@ namespace Microsoft.Templates.SharedResources {
         public static string TemplateGroup_ExtensionsLogInteraction {
             get {
                 return ResourceManager.GetString("TemplateGroup_ExtensionsLogInteraction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Framework.
+        /// </summary>
+        public static string TemplateGroup_FrameworkInteraction {
+            get {
+                return ResourceManager.GetString("TemplateGroup_FrameworkInteraction", resourceCulture);
             }
         }
         

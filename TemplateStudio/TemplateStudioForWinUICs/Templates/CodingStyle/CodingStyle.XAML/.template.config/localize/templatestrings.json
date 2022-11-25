@@ -1,0 +1,7 @@
+﻿{
+  "name": "XAML CodingStyle",
+  "description": "Adds CodingStyle.XAML",
+
+  "_name.comment": "Label for feature that enables users to add XAML CodingStyle",
+  "_description.comment": "Label description for Platform Selection."
+}

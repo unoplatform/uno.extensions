@@ -40,6 +40,10 @@ namespace Microsoft.Templates.Core.Gen
 
 		public List<UserSelectionItem> UnoExtensions { get; } = new List<UserSelectionItem>();
 
+		public List<UserSelectionItem> UnoFrameworks { get; } = new List<UserSelectionItem>(); 
+
+		public List<UserSelectionItem> CodingStyles { get; } = new List<UserSelectionItem>();
+
 		public IEnumerable<UserSelectionItem> Items
         {
             get
@@ -67,9 +71,18 @@ namespace Microsoft.Templates.Core.Gen
 				{
 					yield return platform;
 				}
+				
+				foreach (var unoFramework in UnoFrameworks)
+				{
+					yield return unoFramework;
+				}
 				foreach (var unoExtensions in UnoExtensions)
 				{
 					yield return unoExtensions;
+				}
+				foreach (var codingStyle in CodingStyles)
+				{
+					yield return codingStyle;
 				}
 			}
         }
@@ -115,6 +128,12 @@ namespace Microsoft.Templates.Core.Gen
                 sb.AppendFormat("Pages: '{0}'", string.Join(", ", Pages.Select(p => $"{p.Name} - {p.TemplateId}").ToArray()));
                 sb.AppendLine();
             }
+			
+			if (UnoFrameworks.Any())
+			{
+				sb.AppendFormat("UnoFrameworks: '{0}'", string.Join(", ", UnoFrameworks.Select(p => $"{p.Name} - {p.TemplateId}").ToArray()));
+				sb.AppendLine();
+			}
 
 			if (Features.Any())
 			{
@@ -130,6 +149,12 @@ namespace Microsoft.Templates.Core.Gen
 			if (UnoExtensions.Any())
 			{
 				sb.AppendFormat("UnoExtensions: '{0}'", string.Join(", ", UnoExtensions.Select(p => $"{p.Name} - {p.TemplateId}").ToArray()));
+				sb.AppendLine();
+			}
+
+			if (CodingStyles.Any())
+			{
+				sb.AppendFormat("CodingStyle: '{0}'", string.Join(", ", CodingStyles.Select(p => $"{p.Name} - {p.TemplateId}").ToArray()));
 				sb.AppendLine();
 			}
 
@@ -169,6 +194,12 @@ namespace Microsoft.Templates.Core.Gen
 					break;
 				case TemplateType.UnoExtensions:
 					UnoExtensions.Add(template);
+					break;
+				case TemplateType.CodingStyle:
+					CodingStyles.Add(template);
+					break;
+				case TemplateType.UnoFramework:
+					UnoFrameworks.Add(template);
 					break;
 			}
         }

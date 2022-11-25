@@ -56,14 +56,21 @@ namespace Microsoft.Templates.UI.Styles
                     }
 
                     break;
-                case FrameworkMetaDataViewModel frameworkMetadata:
-                    if (!BaseMainViewModel.BaseInstance.IsSelectionEnabled(frameworkMetadata.MetadataType))
-                    {
-                        return;
-                    }
+				case FrameworkMetaDataViewModel frameworkMetadata:
+					if (!BaseMainViewModel.BaseInstance.IsSelectionEnabled(frameworkMetadata.MetadataType))
+					{
+						return;
+					}
 
-                    break;
-                default:
+					break;
+				case ArchitectureMetaDataViewModel architectureMetadata:
+					if (!BaseMainViewModel.BaseInstance.IsSelectionEnabled(architectureMetadata.MetadataType))
+					{
+						return;
+					}
+
+					break;
+				default:
                     break;
             }
 

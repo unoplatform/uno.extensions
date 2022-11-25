@@ -1,0 +1,7 @@
+﻿{
+  "name": "C# Markup CodingStyle",
+  "description": "Adds CodingStyle.C# Markup",
+
+  "_name.comment": "Label for feature that enables users to add C# Markup CodingStyle",
+  "_description.comment": "Label description for Platform Selection."
+}

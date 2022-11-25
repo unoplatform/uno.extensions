@@ -41,9 +41,13 @@ namespace Microsoft.Templates.Core
 				case "PLATFORM":
 					return TemplateType.Platform;
 				case "UNOEXTENSIONS":
-					return TemplateType.UnoExtensions;
+					return TemplateType.UnoExtensions; 
 				case "ARCHITECTURE":
 					return TemplateType.Architecture;
+				case "CODINGSTYLE":
+					return TemplateType.CodingStyle;
+				case "UNOFRAMEWORK":
+					return TemplateType.UnoFramework;
 				default:
 					return TemplateType.Unspecified;
 			}

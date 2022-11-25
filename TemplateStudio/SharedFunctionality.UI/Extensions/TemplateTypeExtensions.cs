@@ -9,29 +9,35 @@ namespace Microsoft.Templates.UI.Extensions
 {
     public static class TemplateTypeExtensions
     {
-        private const string _newProjectStepPages = "03Pages";
-        private const string _newProjectStepFeatures = "04Features";
-        private const string _newProjectStepServices = "05Services";
-        private const string _newProjectStepTests = "06Tests";
-		private const string _newProjectStepPlatform = "07Platform";
-		private const string _newProjectStepUnoExtensions = "08UnoExtensions";
+        private const string _newProjectStepPages = "08Pages";
+        private const string _newProjectStepFeatures = "02Features";
+        //private const string _newProjectStepServices = "05Services";
+        //private const string _newProjectStepTests = "06Tests";
+		private const string _newProjectStepPlatform = "01Platform";
+		private const string _newProjectStepUnoExtensions = "03UnoExtensions";
+		private const string _newProjectStepCodingStyles = "04CodingStyles";
+		private const string _newProjectStepUnoFrameworks = "05UnoFrameworkS";
 
 		public static string GetNewProjectStepId(this TemplateType templateType)
         {
             switch (templateType)
             {
-                case TemplateType.Page:
-                    return _newProjectStepPages;
-                case TemplateType.Feature:
+				case TemplateType.Page:
+					return _newProjectStepPages;
+				case TemplateType.Feature:
                     return _newProjectStepFeatures;
-                case TemplateType.Service:
-                    return _newProjectStepServices;
-				case TemplateType.Testing:
-					return _newProjectStepTests;
+                //case TemplateType.Service:
+                //    return _newProjectStepServices;
+				//case TemplateType.Testing:
+				//	return _newProjectStepTests;
 				case TemplateType.Platform:
 					return _newProjectStepPlatform;
 				case TemplateType.UnoExtensions:
 					return _newProjectStepUnoExtensions;
+				case TemplateType.CodingStyle:
+					return _newProjectStepCodingStyles;
+				case TemplateType.UnoFramework:
+					return _newProjectStepUnoFrameworks;
 				default:
                     return string.Empty;
             }
@@ -55,6 +61,10 @@ namespace Microsoft.Templates.UI.Extensions
 					return Resources.NewProjectStepUnoExtensions;
 				case TemplateType.Architecture:
 					return Resources.NewProjectStepArchitecture;
+				case TemplateType.CodingStyle:
+					return Resources.NewProjectStepCodingStyle;
+				case TemplateType.UnoFramework:
+					return Resources.NewProjectStepUnoFramework;
 				default:
                     return string.Empty;
             }
@@ -76,6 +86,10 @@ namespace Microsoft.Templates.UI.Extensions
 					return Resources.AddPlatformTitle;
 				case TemplateType.UnoExtensions:
 					return Resources.AddUnoExtensionsTitle;
+				case TemplateType.CodingStyle:
+					return Resources.AddCodingStyleTitle;
+				case TemplateType.UnoFramework:
+					return Resources.AddUnoFrameworkTitle;
 				default:
                     return string.Empty;
             }
