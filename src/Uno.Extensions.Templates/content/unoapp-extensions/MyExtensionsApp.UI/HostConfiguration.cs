@@ -57,16 +57,16 @@ public static class HostConfiguration
 	public static IApplicationBuilder Navigation(this IApplicationBuilder builder)
 	{
 		// Enable navigation, including registering views and viewmodels
-		return builder.Configure(host => host.UseNavigation(
+		return builder
+			.Configure(host => host.UseNavigation(
 //+:cnd:noEmit
 #if(reactive)
 			ReactiveViewModelMappings.ViewModelMappings,
 #endif
 //-:cnd:noEmit
-			RegisterRoutes)
-
+			RegisterRoutes))
 			// Add navigation support for toolkit controls such as TabBar and NavigationView
-			.UseToolkitNavigation());
+			.UseToolkitNavigation();
 	}
 
 	private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
@@ -85,50 +85,5 @@ public static class HostConfiguration
 					new RouteMap("Second", View: views.FindByViewModel<SecondModel>()),
 				})
 		);
-	}
-
-	public static async Task<IHost> ShowAsync<TShell>(this IApplicationBuilder appBuilder)
-		where TShell : UIElement, new()
-	{
-		var appRoot = new TShell();
-		var navRoot = appRoot as ContentControl;
-		if (appRoot is IContentControlProvider contentProvider)
-		{
-			navRoot = contentProvider.ContentControl;
-		}
-
-		if (navRoot is ExtendedSplashScreen splashScreen)
-		{
-			splashScreen.Initialize(appBuilder.Window, appBuilder.Arguments);
-		}
-
-		appBuilder.Window.Content = appRoot;
-		appBuilder.Window.Activate();
-
-		// TODO: This needs tidying up inside Navigation library so that there's a single
-		// InitializeNavigationAsync method that can make the determination on whether
-		// to use the logic from Navigation.Toolkit or not
-		if (navRoot is LoadingView loading)
-		{
-			// InitializeNavigationAsync from Navigation.Toolkit to deal with LoadingView
-			return await appBuilder.Window.InitializeNavigationAsync(
-				async () =>
-				{
-					return appBuilder.Build();
-				},
-				navigationRoot: loading
-			);
-		}
-		else
-		{
-			// InitializeNavigationAsync from Navigation that simply attaches navigation
-			return await appBuilder.Window.InitializeNavigationAsync(
-				async () =>
-				{
-					return appBuilder.Build();
-				},
-				navigationRoot: navRoot
-			);
-		}
 	}
 }

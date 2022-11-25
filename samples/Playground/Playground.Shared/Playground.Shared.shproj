@@ -11,6 +11,7 @@
   <Import Project="Playground.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeSharing\Microsoft.CodeSharing.CSharp.targets" />
   <ItemGroup>
+    <_Globbed_Compile Remove="AppHost.cs" />
     <_Globbed_Compile Remove="ReactiveClasses.cs" />
     <_Globbed_Compile Remove="ViewModels\ItemDetailsViewModel.cs" />
     <_Globbed_Compile Remove="ViewModels\ListViewModel.cs" />
