@@ -6,6 +6,7 @@ public record PageNavigationOneViewModel(IServiceProvider Services, INavigator N
 	: BasePageNavigationViewModel(Dispatcher)
 {
 
+	public List<PageNavigationModel> Items { get; } = Enumerable.Range(0, 50).Select(x => new PageNavigationModel(x)).ToList();
 
 	public async void GoToTwo()
 	{
@@ -18,7 +19,7 @@ public record PageNavigationOneViewModel(IServiceProvider Services, INavigator N
 		var tasks = new List<Task>();
 		for (int i = 0; i < 5; i++)
 		{
-			tasks.Add(Task.Run(()=>ReadWriteTest()));
+			tasks.Add(Task.Run(() => ReadWriteTest()));
 		}
 		await Task.WhenAll(tasks);
 	}
@@ -40,6 +41,8 @@ public record PageNavigationOneViewModel(IServiceProvider Services, INavigator N
 	}
 
 }
+
+public record PageNavigationModel(int Value);
 
 public record BasePageNavigationViewModel
 {

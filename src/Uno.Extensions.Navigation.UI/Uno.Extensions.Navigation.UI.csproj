@@ -21,6 +21,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.UWP.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
 	</ItemGroup>
 	

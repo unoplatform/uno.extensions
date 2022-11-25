@@ -15,7 +15,7 @@ public class ButtonBaseRequestHandler : ActionRequestHandlerBase<ButtonBase>
 		}
 
 		return BindAction(viewButton,
-			action => new RoutedEventHandler((sender, args) => action((ButtonBase)sender)),
+			action => new RoutedEventHandler((sender, args) => action((ButtonBase)sender, args)),
 			(element, handler) => element.Click += handler,
 			(element, handler) => element.Click -= handler);
 	}

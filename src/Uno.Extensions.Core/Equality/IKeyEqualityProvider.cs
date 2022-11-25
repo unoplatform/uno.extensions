@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.ComponentModel;
 using System.Linq;
 
 namespace Uno.Extensions.Equality;

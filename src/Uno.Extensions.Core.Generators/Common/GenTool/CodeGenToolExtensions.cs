@@ -24,16 +24,38 @@ internal static class CodeGenToolExtensions
 			#pragma warning disable".Align(Math.Max(aligned - 1, 0));
 
 	public static string AsPartialOf(this ICodeGenTool tool, INamedTypeSymbol type, string code)
-		=> AsPartialOf(tool, type, null, code);
+		=> AsPartialOf(tool, type, null, null, code);
 
-	public static string AsPartialOf(this ICodeGenTool tool, INamedTypeSymbol type, string? bases, string code)
+	public static string AsPartialOf(this ICodeGenTool tool, INamedTypeSymbol type, string? attributes, string? bases, string code)
 	{
 		var types = type
 			.GetContainingTypes()
 			.Reverse()
 			.Select(t => $"partial {t.ToDisplayString(_symbolDeclaration)}")
 			.ToList();
-		types.Add($"partial {type.ToDisplayString(_symbolDeclaration)}{(bases is null ? "" : $" : {bases}")}");
+		types.Add($"{attributes?.Align(0)}\r\npartial {type.ToDisplayString(_symbolDeclaration)}{(bases is null ? "" : $" : {bases}")}");
+
+		return $@"{tool.GetFileHeader(3)}
+
+			using global::System;
+			using global::System.Linq;
+			using global::System.Threading.Tasks;
+
+			namespace {type.ContainingNamespace}
+			{{
+				{types.Select((def, i) => $"{def.Indent(i + (i == 0 ? 0 : 4))}\r\n{"{".Indent(i + 4)}").JoinBy("\r\n")}
+				{code.Align(4 + types.Count)}
+				{types.Select((_, i) => "}".Indent((types.Count - 1 - i) + (i == 0 ? 0 : 4))).JoinBy("\r\n")}
+			}}".Align(0);
+	}
+
+	public static string InSameNamespaceOf(this ICodeGenTool tool, INamedTypeSymbol type, string code)
+	{
+		var types = type
+			.GetContainingTypes()
+			.Reverse()
+			.Select(t => $"partial {t.ToDisplayString(_symbolDeclaration)}")
+			.ToList();
 
 		return $@"{tool.GetFileHeader(3)}
 

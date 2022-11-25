@@ -4,6 +4,9 @@
 	<PropertyGroup>
 		<Description>Storage Extensions for Uno Platform (WinUI)</Description>
 		<EnableDefaultPageItems>false</EnableDefaultPageItems>
+
+		<!-- As we are InternalsVisibleTo, we disable some compatibility types that are not used by package itself. -->
+		<UnoExtensionsGeneration_DisableModuleInitializerAttribute>True</UnoExtensionsGeneration_DisableModuleInitializerAttribute>
 	</PropertyGroup>
 
 	<Import Project="common.props" />
@@ -15,5 +18,9 @@
 
 	<ItemGroup Condition="'$(_IsWinUI)'=='false'">
 		<PackageReference Include="Uno.WinUI" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="TestHarnessApp" />
 	</ItemGroup>
 </Project>

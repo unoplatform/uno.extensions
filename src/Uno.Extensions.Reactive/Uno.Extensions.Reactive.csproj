@@ -11,20 +11,21 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Remove="..\Uno.Extensions.Core\_Compat\IsExternalInit.cs" />
-	  <Compile Remove="..\Uno.Extensions.Core\_Compat\NotNullIfNotNullAttribute.cs" />
-	  <Compile Remove="..\Uno.Extensions.Core\_Compat\NotNullWhenAttribute.cs" />
+		<Compile Remove="..\Uno.Extensions.Core\_Compat\IsExternalInit.cs" />
+		<Compile Remove="..\Uno.Extensions.Core\_Compat\NotNullIfNotNullAttribute.cs" />
+		<Compile Remove="..\Uno.Extensions.Core\_Compat\NotNullWhenAttribute.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="System.Collections.Immutable" /> 
+		<PackageReference Include="System.Collections.Immutable" />
 		<PackageReference Include="System.Linq.Async" />
+		<PackageReference Include="Uno.Toolkit" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
 	</ItemGroup>
-	
+
 	<ItemGroup>
 		<ProjectReference Include="..\Uno.Extensions.Reactive.Generator\Uno.Extensions.Reactive.Generator.csproj">
 			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>

@@ -3,6 +3,9 @@
 
 	<PropertyGroup>
 		<Description>Storage Extensions for Uno Platform (UWP)</Description>
+
+		<!-- As we are InternalsVisibleTo, we disable some compatibility types that are not used by package itself. -->
+		<UnoExtensionsGeneration_DisableModuleInitializerAttribute>True</UnoExtensionsGeneration_DisableModuleInitializerAttribute>
 	</PropertyGroup>
 
 	<Import Project="common.props" />
@@ -13,5 +16,9 @@
 
 	<ItemGroup>
 		<PackageReference Include="Uno.UI" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="TestHarnessApp" />
 	</ItemGroup>
 </Project>

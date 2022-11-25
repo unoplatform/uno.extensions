@@ -29,12 +29,6 @@
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 	</PropertyGroup>
 
-	<ItemGroup>
-		<!--This override is used to validate the use of specific version of the C# Compiler-->
-		<PackageReference Include="Microsoft.Net.Compilers.Toolset" PrivateAssets="all" />
-	</ItemGroup>
-
-
 	<PropertyGroup Condition="'$(Configuration)'=='Release'">
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	</PropertyGroup>
@@ -104,8 +98,6 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="$(_IsAndroid)">
-		<AndroidUseIntermediateDesignerFile>True</AndroidUseIntermediateDesignerFile>
-		<AndroidResgenFile>Resources\Resource.Designer.cs</AndroidResgenFile>
 		<DefineConstants>$(DefineConstants);__ANDROID__;XAMARIN;MONOANDROID5_0;XAMARIN_ANDROID</DefineConstants>
 		<SupportedOSPlatformVersion>21.0</SupportedOSPlatformVersion>
 		<TargetPlatformMinVersion>21.0</TargetPlatformMinVersion>
@@ -171,10 +163,4 @@
 
 	<Import Project="Uno.CrossTargeting.props" />
 
-	<ItemGroup>
-		<InternalsVisibleTo Include="$(AssemblyName).UI" />
-		<InternalsVisibleTo Include="$(AssemblyName).WinUI" />
-		<InternalsVisibleTo Include="$(AssemblyName).Tests" />
-		<InternalsVisibleTo Include="TestHarnessApp" />
-	</ItemGroup>
 </Project>

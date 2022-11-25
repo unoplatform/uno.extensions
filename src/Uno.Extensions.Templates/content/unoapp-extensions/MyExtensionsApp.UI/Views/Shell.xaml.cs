@@ -2,12 +2,12 @@
 
 namespace MyExtensionsApp.Views;
 
-public sealed partial class Shell : UserControl
+public sealed partial class Shell : UserControl, IContentControlProvider
 {
-	public ExtendedSplashScreen SplashScreen => Splash;
-
 	public Shell()
 	{
 		this.InitializeComponent();
 	}
+
+	public ContentControl ContentControl => Splash;
 }

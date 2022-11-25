@@ -58,6 +58,7 @@ public static class ServiceCollectionExtensions
 					.AddSingleton<IRequestHandler, SelectorRequestHandler>()
 					.AddSingleton<IRequestHandler, NavigationViewItemRequestHandler>()
 					.AddSingleton<IRequestHandler, NavigationViewRequestHandler>()
+					.AddSingleton<IRequestHandler, ItemsRepeaterRequestHandler>()
 
 					// Register the navigation mappings repository
 

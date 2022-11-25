@@ -13,14 +13,14 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 
 	protected IRequestBinding? BindAction<TElement, TEventHandler>(
 		TElement view,
-		Func<Action<FrameworkElement>, TEventHandler> eventHandler,
+		Func<Action<FrameworkElement, RoutedEventArgs?>, TEventHandler> eventHandler,
 		Action<TElement, TEventHandler> subscribe,
 		Action<TElement, TEventHandler> unsubscribe
 		)
 		where TElement : FrameworkElement
 	{
 		var viewToBind = view;
-		Action<FrameworkElement> action = async (element) =>
+		Action<FrameworkElement, RoutedEventArgs?> action = async (element, eventArgs) =>
 		{
 			var path = element.GetRequest();
 			var nav = element.Navigator();
@@ -32,7 +32,7 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 
 			var routeHint = new RouteHint { Route = path };
 
-			var data = element.GetData();
+			var data = element.GetData() ?? element.GetDataFromOriginalSource(eventArgs?.OriginalSource);
 			var resultType = data?.GetType();
 
 			var binding = element.GetBindingExpression(Navigation.DataProperty);
@@ -59,9 +59,11 @@ public abstract class ActionRequestHandlerBase<TView> : ControlRequestHandlerBas
 					}
 				}
 			}
-			routeHint = routeHint with {
+			routeHint = routeHint with
+			{
 				//Data = data?.GetType(),
-				Result = resultType };
+				Result = resultType
+			};
 
 			var qualifier = path.HasQualifier() ? Qualifiers.None : DefaultQualifier;
 

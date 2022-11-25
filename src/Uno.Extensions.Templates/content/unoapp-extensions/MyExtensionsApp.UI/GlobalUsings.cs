@@ -15,5 +15,6 @@ global using Uno.Extensions.Configuration;
 global using Uno.Extensions.Hosting;
 global using Uno.Extensions.Localization;
 global using Uno.Extensions.Navigation;
+global using Uno.Toolkit.UI;
 global using Windows.ApplicationModel;
 global using Application = Microsoft.UI.Xaml.Application;

@@ -35,9 +35,10 @@ internal class PropertySelectorsGenerationTool : ICodeGenTool
 				return;
 			}
 
+			var assembly = candidate.Context.SemanticModel.Compilation.Assembly;
 			var id = GetId(candidate);
-
-			ctx.AddSource(id, GenerateRegistrationClass(id, usage.Value, accessors));
+			
+			ctx.AddSource(id, GenerateRegistrationClass(assembly, id, usage.Value, accessors));
 		}
 		catch (GenerationException genError)
 		{
@@ -78,10 +79,10 @@ internal class PropertySelectorsGenerationTool : ICodeGenTool
 		}
 	}
 
-	private string GenerateRegistrationClass(string id, PropertySelectorUsage usage, IEnumerable<(string key, string accessor)> accessors)
+	private string GenerateRegistrationClass(IAssemblySymbol assembly, string id, PropertySelectorUsage usage, IEnumerable<(string key, string accessor)> accessors)
 		=> $@"{this.GetFileHeader(3)}
 
-			namespace {NS.EditionNonGlobal}.__PropertySelectors
+			namespace {assembly.Name}.__PropertySelectors
 			{{
 				/// <summary>
 				/// Auto registration class for PropertySelector used in {usage.Method.ContainingModule.GlobalNamespace}.

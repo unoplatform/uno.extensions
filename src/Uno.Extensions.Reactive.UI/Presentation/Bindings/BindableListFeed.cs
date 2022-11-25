@@ -32,7 +32,20 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 		PropertyName = propertyName;
 
 		_state = ctx.GetOrCreateListState(source);
-		_items = CreateBindableCollection(_state, ctx);
+		_items = CreateBindableCollection(_state);
+	}
+
+	/// <summary>
+	/// Creates a new instance.
+	/// </summary>
+	/// <param name="propertyName">The name of the property backed by the object.</param>
+	/// <param name="source">The source data stream.</param>
+	public BindableListFeed(string propertyName, IListState<T> source)
+	{
+		PropertyName = propertyName;
+
+		_state = source;
+		_items = CreateBindableCollection(source);
 	}
 
 	/// <inheritdoc />
@@ -81,8 +94,9 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 		=> _state.UpdateMessage(updater, ct);
 
 
-	private static BindableCollection CreateBindableCollection(IListState<T> state, SourceContext ctx)
+	private static BindableCollection CreateBindableCollection(IListState<T> state)
 	{
+		var ctx = state.Context;
 		var currentCount = 0;
 		var pageTokens = new TokenSetAwaiter<PageToken>();
 

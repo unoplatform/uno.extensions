@@ -61,6 +61,37 @@
 		</When>
 	</Choose>
 
+	<Choose>
+		<When Condition="$(_IsAndroid)">
+			<PropertyGroup >
+				<AndroidGenerateResourceDesigner>false</AndroidGenerateResourceDesigner>
+				<AndroidUseIntermediateDesignerFile>false</AndroidUseIntermediateDesignerFile>
+			</PropertyGroup>
+		</When>
+		<Otherwise>
+			<PropertyGroup>
+				<!--
+				This works around the fact that AndroidResgenFile is
+				automatically included as compiled file, even if AndroidUseIntermediateDesignerFile
+				is set to true.
+				-->
+				<AndroidUseIntermediateDesignerFile>True</AndroidUseIntermediateDesignerFile>
+				<AndroidResgenFile>obj\$(TargetFramework)\Resources\Resource.Designer.cs</AndroidResgenFile>
+			</PropertyGroup>
+		</Otherwise>
+	</Choose>
+
+	<Target Name="AndroidResourceGenWorkaround" BeforeTargets="Build" Condition="'$(AndroidUseIntermediateDesignerFile)'=='True' and $(IsMonoAndroid) and '$(TargetFramework)'!='net6.0-android'">
+		<Message Importance="high" Text="************************* Making Resources DIR" />
+		<MakeDir Directories="obj\$(TargetFramework)\Resources" />
+		<WriteLinesToFile File="$(AndroidResgenFile)" Lines="// Empty Content from uno.ui Directory.Build.targets." />
+	</Target>
+
+	<Target Name="AndroidResourceGenWorkaround_16_2" AfterTargets="_UpdateAndroidResgen" Condition="'$(AndroidUseIntermediateDesignerFile)'=='True' and !Exists($(_AndroidResourceDesignerFile))">
+		<Message Importance="high" Text="************************* Empyt designer file" />
+		<WriteLinesToFile File="$(_AndroidResourceDesignerFile)" Lines="// Empty Content from uno.ui Directory.Build.targets." />
+	</Target>
+
 	<Import Project="winappsdk-workaround.targets" Condition="exists('winappsdk-workaround.targets')" />
 	<Import Project="xamarinmac-workaround.targets" Condition="exists('xamarinmac-workaround.targets') and $(TargetFramework.ToLower().StartsWith('xamarin')) and $(TargetFramework.ToLower().Contains('mac'))" />
 </Project>

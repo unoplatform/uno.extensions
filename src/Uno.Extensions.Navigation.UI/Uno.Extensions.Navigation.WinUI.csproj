@@ -18,6 +18,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.WinUI.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <PackageReference Include="Uno.Toolkit.WinUI" />
 	</ItemGroup>
 

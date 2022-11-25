@@ -259,7 +259,6 @@
 		</ProjectReference>
 	</ItemGroup>
 	<!-- Reference to Reactive.props only required when referencing Reactive as source code -->
-	<Import Project="..\..\..\src\Uno.Extensions.Reactive.Generator\buildTransitive\Uno.Extensions.Reactive.props" />
 	<Import Project="..\Playground.Shared\Playground.Shared.projitems" Label="Shared" />
 	<Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

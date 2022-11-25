@@ -1,4 +1,4 @@
-﻿<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
+<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
 	<Import Project="..\tfms-ui-uwp.props" />
 
 	<PropertyGroup>
@@ -35,13 +35,13 @@
 			CopyLocal="false"
 			SkipGetTargetFrameworkProperties="true"
 			GlobalPropertiesToRemove="TargetFramework"
-    />
+		/>
 		<ProjectReference Include="Uno.Extensions.Logging.UWP.Skia.csproj"
 			ReferenceOutputAssembly="false"
 			LinkLibraryDependencies="false"
 			CopyLocal="false"
 			SkipGetTargetFrameworkProperties="true"
 			GlobalPropertiesToRemove="TargetFramework"
-    />
+		/>
 	</ItemGroup>
 </Project>
