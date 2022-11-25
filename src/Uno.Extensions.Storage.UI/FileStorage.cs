@@ -10,12 +10,7 @@ public class FileStorage : IStorage
 {
 	private async Task<bool> FileExistsInPackage(string filename)
 	{
-#if __ANDROID__
-		var assets = global::Android.App.Application.Context.Assets;
-		var files = assets?.List("");
-		filename = Path.GetFileNameWithoutExtension(filename).Replace('.', '_') + Path.GetExtension(filename);
-		return files?.Contains(filename)??false;
-#elif __IOS__ || MACCATALYST || MACOS
+#if __IOS__ || MACCATALYST || MACOS
 		var directoryName = global::System.IO.Path.GetDirectoryName(filename) + string.Empty;
 		var fileName = global::System.IO.Path.GetFileNameWithoutExtension(filename);
 		var fileExtension = global::System.IO.Path.GetExtension(filename);
@@ -53,36 +48,55 @@ public class FileStorage : IStorage
 	{
 		try
 		{
+#if __ANDROID__
+				var assets = global::Android.App.Application.Context.Assets;
+				var inputStream = assets?.Open(filename);
+				var content = inputStream?.ReadToEnd();
+				inputStream?.Close();
+				return content;
+#else
+
 			if (!await FileExistsInPackage(filename))
 			{
 				return default;
 			}
+
 			var storageFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///{filename}"));
 			if (File.Exists(storageFile.Path))
 			{
 				var settings = File.ReadAllText(storageFile.Path);
 				return settings;
 			}
-
-			return default;
+#endif
 		}
-		catch
-		{
-			return default;
-		}
+		catch {}
 
+		return default;
 	}
 
 	public async Task<Stream?> OpenPackageFileAsync(string filename)
 	{
-		if (!await FileExistsInPackage(filename))
+		
+		try
 		{
-			return default;
-		}
+#if __ANDROID__
+			var assets = global::Android.App.Application.Context.Assets;
+			var inputStream = assets?.Open(filename);
+			return inputStream;
+#else
+			if (!await FileExistsInPackage(filename))
+			{
+				return default;
+			}
 
-		var storageFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///{filename}"));
-		var stream = await storageFile.OpenStreamForReadAsync();
-		return stream;
+			var storageFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///{filename}"));
+			var stream = await storageFile.OpenStreamForReadAsync();
+			return stream;
+#endif
+		}
+		catch {}
+
+		return default;
 	}
 
 	public async Task WriteFileAsync(string filename, string text, bool overwrite)

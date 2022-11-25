@@ -14,6 +14,10 @@ public sealed partial class AdHocPage : Page
 
 	private void XamlPage_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
 	{
-		ViewModel = args.NewValue as AdHocViewModel;
+		if (args.NewValue != null)
+		{
+			var bvm = args.NewValue as BindableAdHocViewModel;
+			ViewModel = bvm?.Model as AdHocViewModel;
+		}
 	}
 }
