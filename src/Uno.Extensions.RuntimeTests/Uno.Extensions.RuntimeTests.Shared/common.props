@@ -6,6 +6,7 @@
 
 		<RootNamespace>RuntimeTests</RootNamespace><!--Avoids conflicts with Uno namespace for WPF-->
 		<BaseOutputPath>bin</BaseOutputPath><!--Reduce file path lenght-->
+		<NoWarn>$(NoWarn);CS1998</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>

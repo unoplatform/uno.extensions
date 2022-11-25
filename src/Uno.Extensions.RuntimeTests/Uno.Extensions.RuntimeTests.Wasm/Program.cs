@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.UI.Xaml;
+using RuntimeTests;
 
 namespace Uno.Extensions.RuntimeTests.Wasm
 {

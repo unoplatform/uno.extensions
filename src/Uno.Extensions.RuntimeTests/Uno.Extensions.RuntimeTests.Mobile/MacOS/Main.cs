@@ -1,4 +1,5 @@
 ﻿using AppKit;
+using RuntimeTests;
 
 namespace Uno.Extensions.RuntimeTests.macOS
 {

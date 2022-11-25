@@ -10,6 +10,7 @@ using Android.Views;
 using Android.Widget;
 using Com.Nostra13.Universalimageloader.Core;
 using Microsoft.UI.Xaml.Media;
+using RuntimeTests;
 
 namespace Uno.Extensions.RuntimeTests.Droid
 {

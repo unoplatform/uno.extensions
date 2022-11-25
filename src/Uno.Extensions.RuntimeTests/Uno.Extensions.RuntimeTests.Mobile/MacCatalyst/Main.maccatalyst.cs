@@ -1,4 +1,5 @@
-﻿using UIKit;
+﻿using RuntimeTests;
+using UIKit;
 
 namespace Uno.Extensions.RuntimeTests
 {

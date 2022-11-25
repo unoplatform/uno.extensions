@@ -1,4 +1,5 @@
 ﻿using UIKit;
+using RuntimeTests;
 
 namespace Uno.Extensions.RuntimeTests
 {
