@@ -19,5 +19,9 @@
 	<ItemGroup>
 	  <SourceGeneratorInput Remove="Controls\TapRequestHandler.cs" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
+	</ItemGroup>
 	
 </Project>

@@ -6,8 +6,10 @@ namespace Uno.Extensions.Navigation.UI
 {
 	public interface IThemeService
 	{
-		bool IsDarkMode { get; }
-		Task SetThemeAsync(bool darkMode);
-		Task SetThemeAsync();
+		bool IsDark { get; }
+		DesiredTheme Theme { get; }
+		Task SetThemeAsync(DesiredTheme theme = DesiredTheme.System);
+
+		event EventHandler<DesiredTheme> DesiredThemeChanged;
 	}
 }

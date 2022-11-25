@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Uno.Extensions.Configuration;
 using Uno.Toolkit.UI;
 using Windows.Storage;
 
@@ -10,102 +11,68 @@ namespace Uno.Extensions.Navigation.UI
 	{
 		private readonly Window _window;
 		private readonly IDispatcher _dispatcher;
-		private ApplicationTheme _storedTheme;
-		private ApplicationDataContainer _localSettings;
-		private const string _storedThemeKey = "localStorageThemeKey";
-		private const string _useSystemThemeKey = "localStorageSystemThemeKey";
+		private readonly IWritableOptions<ThemeSettings> _writeSettings;
+		public event EventHandler<DesiredTheme>? DesiredThemeChanged;
 
-		public ThemeService(Window window, IDispatcher dispatcher)
+		public ThemeService(Window window, IDispatcher dispatcher, IWritableOptions<ThemeSettings> writeSettings)
 		{
 			_window = window;
 			_dispatcher = dispatcher;
-			_storedTheme = SystemThemeHelper.GetCurrentOsTheme();
-			_localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-		}
-
-		private bool CheckForStoredTheme()
-		{
-			try
-			{
-				var storedValue = _localSettings.Values[_storedThemeKey] as string;
-				if (Enum.TryParse(storedValue, out ApplicationTheme storedTheme)) _storedTheme = storedTheme;
-				return true;
-			} catch { }
-
-			return false;
+			_writeSettings = writeSettings;
 		}
 
 		/// <summary>
 		/// Get if the application is currently in dark mode.
 		/// </summary>
-		public bool IsDarkMode => SystemThemeHelper.IsRootInDarkMode(_window.Content.XamlRoot!);
+		public bool IsDark => SystemThemeHelper.IsRootInDarkMode(_window.Content.XamlRoot!);
 
 		/// <summary>
-		/// Gets/Sets if SystemTheme should be used when calling SetThemeAsync()
+		///  Get the previously saved theme.
 		/// </summary>
-		public bool UseSystemTheme
-		{
-			get
-			{
-				var storedValue = _localSettings.Values[_useSystemThemeKey] as string;
-				return !string.IsNullOrEmpty(storedValue) ? bool.Parse(storedValue) : false;
-			}
-			set
-			{
-				if (value) _localSettings.Values[_useSystemThemeKey] = "true";
-				else _localSettings.Values[_useSystemThemeKey] = "false";
-			}
-		}
+		public DesiredTheme Theme => GetSavedTheme();
 
 		/// <summary>
-		/// Sets the theme for the provided XamlRoot
+		/// Sets the system theme for the provided XamlRoot using desired theme.
 		/// </summary>
-		/// <param name="darkMode">Desired mode</param>
-		public async Task SetThemeAsync(bool darkMode)
+		public async Task SetThemeAsync(DesiredTheme theme)
 		{
-			await _dispatcher.ExecuteAsync(() =>
+			if (theme != DesiredTheme.System)
 			{
-				SystemThemeHelper.SetRootTheme(_window.Content.XamlRoot, darkMode);
-				if (darkMode) _storedTheme = ApplicationTheme.Dark;
-				else _storedTheme = ApplicationTheme.Light;
-
-				//Override previously saved values
-				UseSystemTheme = false;
-				_localSettings.Values[_storedThemeKey] = _storedTheme.ToString();
-			});
-		}
-
-		/// <summary>
-		/// Sets the system theme for the provided XamlRoot using previously saved theme value (if any)
-		/// or the default system theme if property UseSystemTheme is set to true.
-		/// </summary>
-		public async Task SetThemeAsync()
-		{
-			if (!UseSystemTheme)
-			{
-				//Set previously saved theme
-				if (CheckForStoredTheme())
+				await _dispatcher.ExecuteAsync(async () =>
 				{
-					await _dispatcher.ExecuteAsync(() =>
-					{
-						SystemThemeHelper.SetRootTheme(_window.Content.XamlRoot, _storedTheme == ApplicationTheme.Dark);
-						_localSettings.Values[_storedThemeKey] = _storedTheme.ToString();
-					});
-				}
-				else
-				{
-					//No Theme found. Save current one
-					_storedTheme = SystemThemeHelper.GetCurrentOsTheme();
-					_localSettings.Values[_storedThemeKey] = _storedTheme;
+					SystemThemeHelper.SetRootTheme(_window.Content.XamlRoot, theme == DesiredTheme.Dark);
+				});
 
-				}
 			}
 			else
 			{
 				//Set System theme
-				_storedTheme = SystemThemeHelper.GetCurrentOsTheme();
-				SystemThemeHelper.SetRootTheme(_window.Content.XamlRoot, _storedTheme == ApplicationTheme.Dark);
+				var systemTheme = SystemThemeHelper.GetCurrentOsTheme();
+				SystemThemeHelper.SetRootTheme(_window.Content.XamlRoot, systemTheme == ApplicationTheme.Dark);
 			}
+
+			await SaveDesiredTheme(theme);
+			DesiredThemeChanged?.Invoke(this, theme);
+		}
+
+		private async Task SaveDesiredTheme(DesiredTheme theme)
+		{
+			try
+			{
+				await _writeSettings.UpdateAsync(themeSetting => themeSetting with { CurrentTheme = theme });
+			}
+			catch { }
+		}
+
+		private DesiredTheme GetSavedTheme()
+		{
+			try
+			{
+				return _writeSettings.Value.CurrentTheme;
+			}
+			catch { }
+
+			return DesiredTheme.System;
 		}
 	}
 }

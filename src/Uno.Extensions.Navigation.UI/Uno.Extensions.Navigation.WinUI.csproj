@@ -20,4 +20,8 @@
 	<ItemGroup>
 	  <PackageReference Include="Uno.Toolkit.WinUI" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
+	</ItemGroup>
 </Project>
