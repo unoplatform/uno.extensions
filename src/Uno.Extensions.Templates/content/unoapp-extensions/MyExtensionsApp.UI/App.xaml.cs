@@ -61,7 +61,7 @@ public sealed partial class App : Application
 					//services.AddSingleton<IMyService, MyService>();
 				})
 #if(reactive)
-				.UseNavigation(ReactiveViewModelMappings.ViewModelMappings, RegisterRoutes));
+				.UseNavigation(ReactiveViewModelMappings.ViewModelMappings, RegisterRoutes)
 #else
 				.UseNavigation(RegisterRoutes)
 #endif
