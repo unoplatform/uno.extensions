@@ -1,10 +1,8 @@
-using Uno.Extensions.Navigation.UI;
-
 namespace Playground;
 
 public sealed partial class App : Application
 {
-	public IHost? _host;
+	private IHost? _host;
 }
 
 public class DebugHttpHandler : DelegatingHandler

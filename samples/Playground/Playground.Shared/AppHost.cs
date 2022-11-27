@@ -1,4 +1,5 @@
-﻿using Uno.Extensions.Navigation.UI;
+﻿using Uno.Extensions.Navigation.Toolkit.UI;
+using Uno.Extensions.Navigation.UI;
 
 namespace Playground;
 
@@ -30,6 +31,7 @@ internal static class AppHost
 					.EmbeddedSource<App>()          // appsettings.json + appsettings.development.json
 					.EmbeddedSource<App>("platform")    // appsettings.platform.json
 					.Section<Playground.Models.AppInfo>()
+					.Section<ThemeSettings>()
 			)
 
 
@@ -41,17 +43,23 @@ internal static class AppHost
 					.AddJsonTypeInfo(PersonContext.Default.Person)
 			)
 
+			// NR: I've moved this up to where the AppInfo Section is configured
+			// and there's no need to specify nameof(ThemeSettings) since this is
+			// the default
 			//Configure ThemeSettings
-			.UseConfiguration(configure: configBuilder =>
-				configBuilder
-					.Section<ThemeSettings>(nameof(ThemeSettings))
-				)
+			//.UseConfiguration(configure: configBuilder =>
+			//	configBuilder
+			//		.Section<ThemeSettings>(nameof(ThemeSettings))
+			//	)
 
 			// Register services for the application
 			.ConfigureServices((context, services) =>
 			{
 				services
-					.AddSingleton<IThemeService>(sp => new ThemeService((App.Current as App)?.Window, new Dispatcher((App.Current as App)?.Window), sp.GetRequiredService<IWritableOptions<ThemeSettings>>()))
+					// NR: The constructor parameters are injected automatically, so just need to register the type
+					// It also needs to be scoped so that it can pick up the Window and Dispatcher
+					.AddScoped<IThemeService, ThemeService>()
+					//.AddSingleton<IThemeService>(sp => new ThemeService((App.Current as App)?.Window, new Dispatcher((App.Current as App)?.Window), sp.GetRequiredService<IWritableOptions<ThemeSettings>>()))
 					.AddSingleton<IAuthenticationTokenProvider>(new SimpleAuthenticationToken { AccessToken = "My access token" })
 					.AddScoped<NeedsADispatcherService>()
 					.AddNativeHandler()

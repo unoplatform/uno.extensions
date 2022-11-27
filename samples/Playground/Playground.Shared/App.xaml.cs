@@ -1,4 +1,4 @@
-using Uno.Extensions.Navigation.UI;
+using Uno.Extensions.Navigation.Toolkit.UI;
 
 namespace Playground;
 
@@ -6,8 +6,6 @@ public sealed partial class App : Application
 {
 	private Window? _window;
 	public Window? Window => _window;
-
-	public IThemeService ThemeService;
 
 	public App()
 	{
@@ -171,7 +169,7 @@ public sealed partial class App : Application
 								return appBuilder.Build();
 							},
 							navigationRoot: appRootNoShell.SplashScreen,
-							initialNavigate: async (sp, nav)=>
+							initialNavigate: async (sp, nav) =>
 							{
 								// Uncomment to view splashscreen for longer
 								await Task.Delay(5000);
@@ -195,8 +193,9 @@ public sealed partial class App : Application
 		if (logger.IsEnabled(LogLevel.Error)) logger.LogErrorMessage("LogLevel:Error");
 		if (logger.IsEnabled(LogLevel.Critical)) logger.LogCriticalMessage("LogLevel:Critical");
 
-		ThemeService = _host.Services.GetService<IThemeService>();
-		await ThemeService.SetThemeAsync();
+		var windowServices = (_window.Content as FrameworkElement)!.FindServiceProvider();
+		var ts = windowServices.GetRequiredService<IThemeService>();
+		await ts.SetThemeAsync();
 	}
 
 	private enum InitOption
