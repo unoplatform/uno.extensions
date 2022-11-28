@@ -49,10 +49,14 @@
     <!--#if (markup)-->
     <PackageReference Include="Uno.WinUI.Markup" Version="4.6.0-dev.13" />
     <!--#endif-->
+    <!--#if (msftextv6) -->
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.0" />
-    <PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.4.0" />
-    <PackageReference Include="Uno.Wasm.Bootstrap" Version="3.3.1" />
-    <PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="3.3.1" />
+    <!--#endif -->
+    <!--#if (msftextv7) -->
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="7.0.0" />
+    <!--#endif -->
+    <PackageReference Include="Uno.Wasm.Bootstrap" Version="7.0.8" />
+    <PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="7.0.8" />
     <PackageReference Include="Uno.WinUI.WebAssembly" Version="4.6.19" />
     <PackageReference Include="Uno.WinUI.RemoteControl" Version="4.6.19" Condition="'$(Configuration)'=='Debug'" />
     <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.6.19" />

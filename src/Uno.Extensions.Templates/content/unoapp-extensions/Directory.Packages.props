@@ -3,17 +3,27 @@
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.0.0" />
     <PackageVersion Include="coverlet.collector" Version="3.1.0" />
     <PackageVersion Include="FluentAssertions" Version="6.7.0" />
+    <!--#if (msftextv6) -->
     <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
-    <PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="4.2.0" />
+    <!--#endif-->
+    <!--#if (msftextv7) -->
+    <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
+    <!--#endif-->
+    <PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="4.4.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.3.0" />
+    <!--#if (msftextv6) -->
     <PackageVersion Include="Microsoft.Windows.Compatibility" Version="6.0.0" />
-    <PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22000.197" />
-    <PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.1.4" />
+    <!--#endif-->
+    <!--#if (msftextv7) -->
+    <PackageVersion Include="Microsoft.Windows.Compatibility" Version="7.0.0" />
+    <!--#endif-->
+    <PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.755" />
+    <PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.2.221116.1" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageVersion Include="NUnit" Version="3.13.2" />
     <PackageVersion Include="NUnit3TestAdapter" Version="4.0.0" />
-    <PackageVersion Include="SkiaSharp.Skottie" Version="2.88.2" />
-    <PackageVersion Include="SkiaSharp.Views.Uno.WinUI" Version="2.88.2" />
+    <PackageVersion Include="SkiaSharp.Skottie" Version="2.88.3" />
+    <PackageVersion Include="SkiaSharp.Views.Uno.WinUI" Version="2.88.3" />
     <PackageVersion Include="Uno.Core.Extensions.Logging.Singleton" Version="4.0.1" />
     <PackageVersion Include="Uno.Extensions.Authentication" Version="255.255.255.255" />
     <PackageVersion Include="Uno.Extensions.Authentication.WinUI" Version="255.255.255.255" />
@@ -51,8 +61,8 @@
     <PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.6.19" />
     <PackageVersion Include="Uno.UITest.Helpers" Version="1.1.0-dev.32" />
     <PackageVersion Include="Uno.UniversalImageLoader" Version="1.9.36" />
-    <PackageVersion Include="Uno.Wasm.Bootstrap" Version="3.3.1" />
-    <PackageVersion Include="Uno.Wasm.Bootstrap.DevServer" Version="3.3.1" />
+    <PackageVersion Include="Uno.Wasm.Bootstrap" Version="7.0.8" />
+    <PackageVersion Include="Uno.Wasm.Bootstrap.DevServer" Version="7.0.8" />
     <PackageVersion Include="Uno.WinUI" Version="4.6.19" />
     <!--#if (markup)-->
     <PackageVersion Include="Uno.WinUI.Markup" Version="4.6.0-dev.13" />
