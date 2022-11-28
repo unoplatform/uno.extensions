@@ -1,3 +1,5 @@
+using Uno.Extensions.Navigation.Toolkit.UI;
+
 namespace Playground;
 
 public sealed partial class App : Application
@@ -190,6 +192,10 @@ public sealed partial class App : Application
 		if (logger.IsEnabled(LogLevel.Warning)) logger.LogWarningMessage("LogLevel:Warning");
 		if (logger.IsEnabled(LogLevel.Error)) logger.LogErrorMessage("LogLevel:Error");
 		if (logger.IsEnabled(LogLevel.Critical)) logger.LogCriticalMessage("LogLevel:Critical");
+
+		var windowServices = (_window.Content as FrameworkElement)!.FindServiceProvider();
+		var ts = windowServices.GetRequiredService<IThemeService>();
+		await ts.SetThemeAsync();
 	}
 
 	private enum InitOption

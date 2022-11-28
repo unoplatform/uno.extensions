@@ -74,6 +74,8 @@
 						Content="Ad Hoc Tests" />
 				<Button uen:Navigation.Request="List"
 						Content="List Tests" />
+				<Button uen:Navigation.Request="ThemeSwitch"
+						Content="Theme Switch" />
 			</StackPanel>
 		</ScrollViewer>
 	</Grid>

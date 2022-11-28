@@ -18,6 +18,7 @@ global using Uno.Extensions.Navigation.Toolkit.Controls;
 global using Uno.Extensions.Navigation.Toolkit.Navigators;
 global using Uno.Extensions.Navigation.UI;
 global using Uno.Toolkit.UI;
+global using Uno.Extensions.Configuration;
 
 #if WINUI
 	global using Microsoft.UI.Dispatching;
@@ -29,7 +30,7 @@ global using Uno.Toolkit.UI;
 	global using Microsoft.UI.Xaml.Data;
 	global using Microsoft.UI.Xaml.Media;
 #else
-	global using Windows.System;
+global using Windows.System;
 	global using Windows.UI.Xaml;
 	global using Windows.UI.Xaml.Controls;
 	global using Windows.UI.Xaml.Controls.Primitives;

@@ -1,4 +1,6 @@
-﻿namespace Playground;
+﻿using Uno.Extensions.Navigation.Toolkit.UI;
+
+namespace Playground;
 
 internal static class AppHost
 {
@@ -28,6 +30,7 @@ internal static class AppHost
 					.EmbeddedSource<App>()          // appsettings.json + appsettings.development.json
 					.EmbeddedSource<App>("platform")    // appsettings.platform.json
 					.Section<Playground.Models.AppInfo>()
+					.Section<ThemeSettings>()
 			)
 
 
@@ -43,6 +46,7 @@ internal static class AppHost
 			.ConfigureServices((context, services) =>
 			{
 				services
+					.AddScoped<IThemeService, ThemeService>()
 					.AddSingleton<IAuthenticationTokenProvider>(new SimpleAuthenticationToken { AccessToken = "My access token" })
 					.AddScoped<NeedsADispatcherService>()
 					.AddNativeHandler()
@@ -128,6 +132,7 @@ internal static class AppHost
 			new ViewMap<ItemDetailsPage, ItemDetailsViewModel>(),
 			new ViewMap<AuthTokenDialog, AuthTokenViewModel>(),
 			new ViewMap<BasicFlyout, BasicViewModel>(),
+			new ViewMap<ThemeSwitchPage, ThemeSwitchViewModel>(),
 			confirmDialog,
 			localizedDialog
 		);
