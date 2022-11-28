@@ -43,6 +43,30 @@
       "isVisible": true
     },
     {
+      "id": "architecture",
+      "name": {
+        "text": "Design - Use MVVM or MVUx"
+      },
+      "description":
+      {
+        "text": "Select between MVVM or MVUx for a design pattern"
+      },
+      "defaultValue": "mvux",
+      "isVisible":true
+    },
+    {
+      "id": "markup",
+      "name": {
+        "text": "Code Style - Use C# Markup"
+      },
+      "description":
+      {
+        "text": "Uses Uno C# Markup for your UI instead of XAML"
+      },
+      "defaultValue": "Serilog",
+      "isVisible": false
+    },
+    {
       "id": "wasm",
       "name": {
         "text": "Web - WebAssembly"
@@ -208,30 +232,6 @@
       "isVisible": false
     },
     {
-      "id": "markup",
-      "name": {
-        "text": "Code Style - Use C# Markup"
-      },
-      "description":
-      {
-        "text": "Uses Uno C# Markup for your UI instead of XAML"
-      },
-      "defaultValue": "Serilog",
-      "isVisible": false
-    },
-    {
-      "id": "reactive",
-      "name": {
-        "text": "Data - Reactive Extensions"
-      },
-      "description":
-      {
-        "text": "Uses Reactive extensions"
-      },
-      "defaultValue": "true",
-      "isVisible":true
-    },
-    {
       "id": "cpm",
       "name": {
         "text": "Central Package Management"
@@ -242,6 +242,14 @@
       },
       "defaultValue": "false",
       "isVisible":false
+    },
+    {
+      "id": "vscode",
+      "isVisible": false
+    },
+    {
+      "id": "skipRestore",
+      "isVisible": false
     }
   ]
 }

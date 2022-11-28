@@ -9,17 +9,20 @@
       "longName": "tfm",
       "shortName": "tfm"
     },
-    "wasm": {
-      "longName": "webassembly",
-      "shortName": "wasm"
+    "architecture": {
+      "longName": "architecture",
+      "shortName": "arch"
     },
-    "ios": {
-      "longName": "ios",
-      "shortName": "ios"
+    "markup": {
+      "isHidden": true
     },
     "android": {
       "longName": "android",
       "shortName": "droid"
+    },
+    "ios": {
+      "longName": "ios",
+      "shortName": "ios"
     },
     "macos": {
       "longName": "macos",
@@ -42,8 +45,16 @@
       "shortName": "linux"
     },
     "winAppSdk": {
-      "longName": "windowsAppSdk",
+      "longName": "windows-app-sdk",
       "shortName": "win"
+    },
+    "wasm": {
+      "longName": "webassembly",
+      "shortName": "wasm"
+    },
+    "wasm-pwa-manifest": {
+      "longName": "wasm-pwa-manifest",
+      "shortName": "pwa"
     },
     "unittest": {
       "longName": "unittest",
@@ -54,28 +65,20 @@
       "shortName": "uitest"
     },
     "configuration": {
-      "isHidden": true
+      "longName": "configuration",
+      "shortName": "config"
     },
     "localization": {
-      "isHidden": true
+      "longName": "localization",
+      "shortName": "loc"
     },
     "logging": {
-      "isHidden": true
-    },
-    "markup": {
-      "isHidden": true
-    },
-    "reactive": {
-      "longName": "reactive",
-      "shortName": "reactive"
+      "longName": "logging",
+      "shortName": "log"
     },
     "cpm": {
       "longName": "cpm",
       "shortName": "cpm"
-    },
-    "wasm-pwa-manifest": {
-      "longName": "wasm-pwa-manifest",
-      "shortName": "pwa"
     },
     "vscode": {
       "longName": "vscode",

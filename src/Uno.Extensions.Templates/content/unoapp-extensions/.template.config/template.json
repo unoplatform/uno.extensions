@@ -47,6 +47,7 @@
   ],
   "symbols": {
     "appid": {
+      "displayName": "App ID",
       "type": "parameter",
       "datatype": "string",
       "replaces": "com.companyname.myextensionsapp",
@@ -54,6 +55,7 @@
       "defaultValue": "com.companyname.myextensionsapp"
     },
     "tfm": {
+      "displayName": "Target Framework",
       "type": "parameter",
       "datatype": "choice",
       "replaces": "net6.0",
@@ -69,88 +71,128 @@
         }
       ]
     },
-    "wasm": {
+    "architecture": {
+      "displayName": "Design Architecture",
+      "description": "Selects either MVVM or MVUx for the design architecture.",
       "type": "parameter",
-      "dataType": "bool",
-      "defaultValue": "true",
-      "description": "Enables the WebAssembly platform support project"
+      "datatype": "choice",
+      "defaultValue": "mvux",
+      "choices": [
+        {
+          "choice": "mvvm",
+          "description": "Use the MVVM design pattern",
+          "displayName": "MVVM"
+        },
+        {
+          "choice": "mvux",
+          "description": "Use the MVUx design pattern with Uno.Extensions.Reactive",
+          "displayName": "MVUx"
+        }
+      ]
     },
-    "ios": {
+    "markup": {
+      "displayName": "C# Markup",
       "type": "parameter",
-      "dataType": "bool",
-      "defaultValue": "true",
-      "description": "Enables the iOS platform in the Mobile support project"
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "Use C# Markup Extensions instead of XAML"
     },
     "android": {
+      "displayName": "Mobile - Android",
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "true",
       "description": "Enables the Android platform in the Mobile support project"
     },
-    "winAppSdk": {
+    "ios": {
+      "displayName": "Mobile - iOS",
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "true",
-      "description": "Enables the Windows App Sdk platform support project"
-    },
-    "skia-gtk": {
-      "type": "parameter",
-      "dataType": "bool",
-      "defaultValue": "true",
-      "description": "Enables the Skia/GTK platform support project"
+      "description": "Enables the iOS platform in the Mobile support project"
     },
     "maccatalyst": {
+      "displayName": "Desktop - macOS (Catalyst)",
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "true",
       "description": "Enables the macOS (Catalyst) platform in the Mobile support project"
     },
     "macos": {
+      "displayName": "Desktop - macOS (AppKit)",
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "true",
       "description": "Enables the macOS (AppKit) platform in the Mobile support project"
     },
+    "skia-gtk": {
+      "displayName": "Desktop - Gtk (Linux, macOS, Windows 7 or later)",
+      "type": "parameter",
+      "dataType": "bool",
+      "defaultValue": "true",
+      "description": "Enables the Skia/GTK platform support project"
+    },
     "skia-wpf": {
+      "displayName": "Desktop - WPF (Windows 7 or later)",
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "true",
       "description": "Enables the Skia/WPF platform support project"
     },
     "skia-linux-fb": {
+      "displayName": "Desktop - Linux Framebuffer",
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "true",
       "description": "Enables the Skia/Linux Framebuffer platform support project"
     },
+    "winAppSdk": {
+      "displayName": "Desktop - WinUI (Windows App SDK)",
+      "type": "parameter",
+      "dataType": "bool",
+      "defaultValue": "true",
+      "description": "Enables the Windows App Sdk platform support project"
+    },
+    "wasm": {
+      "displayName": "Web - WebAssembly",
+      "type": "parameter",
+      "dataType": "bool",
+      "defaultValue": "true",
+      "description": "Enables the WebAssembly platform support project"
+    },
     "unittest": {
+      "displayName": "Tests - Unit Tests",
       "type": "parameter",
       "datatype": "bool",
       "defaultValue": "true",
       "description": "Includes the Unit test project"
     },
     "uitest": {
+      "displayName": "Tests - UI Tests",
       "type": "parameter",
       "datatype": "bool",
       "defaultValue": "true",
       "description": "Includes the UI test project"
     },
     "configuration": {
+      "displayName": "Configuration",
       "type": "parameter",
       "datatype": "bool",
       "defaultValue": "true",
       "description": "Includes Uno.Extensions.Configuration"
     },
     "localization": {
+      "displayName": "Localization",
       "type": "parameter",
       "datatype": "bool",
       "defaultValue": "true",
       "description": ""
     },
     "logging": {
+      "displayName": "Logging",
       "type": "parameter",
       "datatype": "choice",
-      "defaultValue": "true",
+      "defaultValue": "Enabled",
       "choices": [
         {
           "choice": "None",
@@ -177,19 +219,13 @@
       "datatype": "bool",
       "value": "logging == 'Serilog'"
     },
-    "markup": {
-      "type": "parameter",
-      "datatype": "bool",
-      "defaultValue": "false",
-      "description": "Use C# Markup Extensions instead of XAML"
-    },
     "reactive": {
-      "type": "parameter",
-      "dataType": "bool",
-      "defaultValue": "true",
-      "description": "Whether or not to use Reactive extensions"
+      "type": "computed",
+      "datatype": "bool",
+      "value": "architecture == 'mvux'"
     },
     "cpm": {
+      "displayName": "Central Package Management",
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "false",
@@ -201,6 +237,7 @@
       "value": "(android || ios || macos || maccatalyst)"
     },
     "vscode": {
+      "displayName": "WebAssembly - Visual Studio Code Debugging",
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "false",
@@ -213,10 +250,21 @@
       "defaultValue": "false"
     },
     "wasm-pwa-manifest": {
+      "displayName": "WebAssembly - PWA Manifest",
       "type": "parameter",
       "datatype": "bool",
       "description": "Enables the generation of a PWA manifest for WebAssembly",
       "defaultValue": "true"
+    },
+    "msftextv6" :{
+      "type": "computed",
+      "datatype": "bool",
+      "value": "tfm == 'net6.0'"
+    },
+    "msftextv7": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "tfm == 'net7.0'"
     }
   },
   "primaryOutputs": [
