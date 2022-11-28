@@ -84,9 +84,11 @@
 				<MtouchExtraArgs>$(MtouchExtraArgs) --marshal-objectivec-exceptions:disable</MtouchExtraArgs>
 				<MtouchExtraArgs>$(MtouchExtraArgs) --registrar:static</MtouchExtraArgs>
 			</PropertyGroup>
+			<!--#if (uselogging)-->
 			<ItemGroup>
 				<PackageReference Include="Uno.Extensions.Logging.OSLog" />
 			</ItemGroup>
+			<!--#endif-->
 		</When>
 		<When Condition="'$(TargetFramework)'=='net6.0-maccatalyst'">
 			<PropertyGroup>
@@ -99,9 +101,11 @@
 				<!-- Full globalization is required for Uno -->
 				<InvariantGlobalization>false</InvariantGlobalization>
 			</PropertyGroup>
+			<!--#if (uselogging)-->
 			<ItemGroup>
 				<PackageReference Include="Uno.Extensions.Logging.OSLog" />
 			</ItemGroup>
+			<!--#endif-->
 		</When>
 		<When Condition="'$(TargetFramework)'=='net6.0-macos'">
 			<PropertyGroup>

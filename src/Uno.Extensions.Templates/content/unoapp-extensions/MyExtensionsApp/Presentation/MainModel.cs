@@ -10,7 +10,7 @@ using CommunityToolkit.Mvvm.Input;
 namespace MyExtensionsApp.Presentation;
 
 #if (reactive)
-public partial record MainModel 
+public partial record MainModel
 {
 	public string? Title { get; }
 
@@ -36,7 +36,7 @@ public partial record MainModel
 	private INavigator _navigator;
 }
 #else
-public partial class MainModel:ObservableObject
+public partial class MainModel : ObservableObject
 {
 	public string? Title { get; }
 
@@ -48,8 +48,8 @@ public partial class MainModel:ObservableObject
 	public MainModel(
 		INavigator navigator,
 		IOptions<AppConfig> appInfo)
-	{ 
-	
+	{
+
 		_navigator = navigator;
 		Title = $"Main - {appInfo?.Value?.Title}";
 

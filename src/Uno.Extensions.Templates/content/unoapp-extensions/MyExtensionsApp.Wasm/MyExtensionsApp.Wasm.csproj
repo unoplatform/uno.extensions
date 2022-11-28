@@ -51,7 +51,6 @@
 		<PackageReference Include="Uno.WinUI.Markup" />
 		<!--#endif-->
 		<PackageReference Include="Microsoft.Windows.Compatibility" />
-		<PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" />
 		<PackageReference Include="Uno.WinUI.WebAssembly" />
 		<PackageReference Include="Uno.WinUI.RemoteControl" Condition="'$(Configuration)'=='Debug'" />
 		<PackageReference Include="Uno.Wasm.Bootstrap" />
@@ -73,6 +72,7 @@
 		<!--#endif-->
 		<!--#if (uselogging)-->
 		<PackageReference Include="Uno.Extensions.Logging.WinUI" />
+		<PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" />
 		<!--#endif-->
     <!--#if (useserilog)-->
 		<PackageReference Include="Uno.Extensions.Logging.Serilog" />
