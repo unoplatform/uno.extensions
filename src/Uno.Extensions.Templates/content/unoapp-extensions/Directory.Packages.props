@@ -56,8 +56,8 @@
     <PackageVersion Include="Uno.Extensions.Serialization.Http" Version="255.255.255.255" />
     <PackageVersion Include="Uno.Extensions.Serialization.Refit" Version="255.255.255.255" />
     <PackageVersion Include="Uno.Material.WinUI" Version="2.3.0" />
-    <PackageVersion Include="Uno.Toolkit.WinUI" Version="2.4.0-dev.114" />
-    <PackageVersion Include="Uno.Toolkit.WinUI.Material" Version=" 2.4.0-dev.114" />
+    <PackageVersion Include="Uno.Toolkit.WinUI" Version="2.4.0-dev.129" />
+    <PackageVersion Include="Uno.Toolkit.WinUI.Material" Version=" 2.4.0-dev.129" />
     <PackageVersion Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.6.19" />
     <PackageVersion Include="Uno.UITest.Helpers" Version="1.1.0-dev.32" />
     <PackageVersion Include="Uno.UniversalImageLoader" Version="1.9.36" />
@@ -66,7 +66,7 @@
     <PackageVersion Include="Uno.WinUI" Version="4.6.19" />
     <!--#if (markup)-->
     <PackageVersion Include="Uno.WinUI.Markup" Version="4.6.0-dev.13" />
-    <PackageVersion Include="Uno.Toolkit.WinUI.Markup" Version="2.4.0-dev.114" />
+    <PackageVersion Include="Uno.Toolkit.WinUI.Markup" Version="2.4.0-dev.129" />
     <!--#endif-->
     <PackageVersion Include="Uno.WinUI.RemoteControl" Version="4.6.19" />
     <PackageVersion Include="Uno.WinUI.Skia.Gtk" Version="4.6.19" />
