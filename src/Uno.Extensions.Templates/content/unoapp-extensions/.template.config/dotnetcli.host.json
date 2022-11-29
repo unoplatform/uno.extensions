@@ -88,6 +88,9 @@
     "skipRestore": {
       "longName": "skipRestore",
       "shortName": "skip"
+    },
+    "is-vsix": {
+      "isHidden": true
     }
   }
 }

@@ -250,6 +250,11 @@
     {
       "id": "skipRestore",
       "isVisible": false
+    },
+    {
+      "id": "is-vsix",
+      "isVisible": false,
+      "defaultValue": "true"
     }
   ]
 }

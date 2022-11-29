@@ -265,11 +265,17 @@
       "type": "computed",
       "datatype": "bool",
       "value": "tfm == 'net7.0'"
+    },
+    "is-vsix": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false"
     }
   },
   "primaryOutputs": [
     {
-      "path": "MyExtensionsApp.sln"
+      "path": "MyExtensionsApp.sln",
+      "condition": "!is-vsix"
     },
     {
       "path": "MyExtensionsApp.UI\\MyExtensionsApp.UI.shproj"
@@ -329,6 +335,12 @@
         {
           "exclude": [
             "MyExtensionsApp.Debugging.sln"
+          ]
+        },
+        {
+          "condition": "is-vsix",
+          "exclude": [
+            "**/*.sln"
           ]
         },
         {
