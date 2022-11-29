@@ -1,3 +1,7 @@
+//+:cnd:noEmit
+#if markup
+using MyExtensionsApp.Extensions;
+#endif
 //-:cnd:noEmit
 
 namespace MyExtensionsApp;
@@ -24,13 +28,56 @@ public sealed partial class App : Application
 	protected async override void OnLaunched(LaunchActivatedEventArgs args)
 	{
 		var builder = this.CreateBuilder(args)
-			.Environment()
-			.Logging()
-			.Configuration()
-			.Localization()
-			.Serialization()
-			.Services()
-			.Navigation();
+//+:cnd:noEmit
+#if markup
+			.ConfigureResources()
+#endif
+//-:cnd:noEmit
+			.Configure(host => host
+#if DEBUG
+				// Switch to Development environment when running in DEBUG
+				.UseEnvironment(Environments.Development)
+#endif
+//+:cnd:noEmit
+#if uselogging
+				.UseLogging(configure: (context, logBuilder) =>
+				{
+					// Configure log levels for different categories of logging
+					logBuilder.SetMinimumLevel(
+						context.HostingEnvironment.IsDevelopment() ?
+							LogLevel.Information :
+							LogLevel.Warning);
+				}, enableUnoLogging: true)
+#if useserilog
+				.UseSerilog(consoleLoggingEnabled: true, fileLoggingEnabled: true)
+#endif
+#endif
+#if configuration
+				.UseConfiguration(configure: configBuilder =>
+					configBuilder
+						.EmbeddedSource<App>()
+						.Section<AppConfig>()
+				)
+#endif
+#if localization
+				// Enable localization (see appsettings.json for supported languages)
+				.UseLocalization()
+#endif
+				// Register Json serializers (ISerializer and ISerializer)
+				.UseSerialization()
+				.ConfigureServices(services => {
+					// TODO: Register your services
+					//services.AddSingleton<IMyService, MyService>();
+				})
+#if(reactive)
+				.UseNavigation(ReactiveViewModelMappings.ViewModelMappings, RegisterRoutes)
+#else
+				.UseNavigation(RegisterRoutes)
+#endif
+//-:cnd:noEmit
+			)
+			// Add navigation support for toolkit controls such as TabBar and NavigationView
+			.UseToolkitNavigation();
 		_window = builder.Window;
 
 		_host = await builder.ShowAsync<Shell>();
@@ -48,5 +95,23 @@ public sealed partial class App : Application
 		var deferral = e.SuspendingOperation.GetDeferral();
 		// TODO: Save application state and stop any background activity
 		deferral.Complete();
+	}
+
+	private static void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
+	{
+		views.Register(
+			new ViewMap(ViewModel: typeof(ShellModel)),
+			new ViewMap<MainPage, MainModel>(),
+			new DataViewMap<SecondPage, SecondModel, Entity>()
+		);
+
+		routes.Register(
+			new RouteMap("", View: views.FindByViewModel<ShellModel>(),
+				Nested: new RouteMap[]
+				{
+					new RouteMap("Main", View: views.FindByViewModel<MainModel>()),
+					new RouteMap("Second", View: views.FindByViewModel<SecondModel>()),
+				})
+		);
 	}
 }

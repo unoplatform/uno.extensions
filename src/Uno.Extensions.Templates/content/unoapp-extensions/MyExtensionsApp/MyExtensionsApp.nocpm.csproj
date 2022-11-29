@@ -7,13 +7,22 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
     <!--#endif -->
     <PackageReference Include="Uno.Extensions.Authentication" Version="255.255.255.255" />
+    <!--#if (configuration)-->
     <PackageReference Include="Uno.Extensions.Configuration" Version="255.255.255.255" />
+    <!--#endif-->
     <PackageReference Include="Uno.Extensions.Core" Version="255.255.255.255" />
     <PackageReference Include="Uno.Extensions.Hosting" Version="255.255.255.255" />
     <PackageReference Include="Uno.Extensions.Http" Version="255.255.255.255" />
     <PackageReference Include="Uno.Extensions.Http.Refit" Version="255.255.255.255" />
+    <!--#if (localization)-->
     <PackageReference Include="Uno.Extensions.Localization" Version="255.255.255.255" />
+    <!--#endif-->
+    <!--#if (uselogging && !useserilog)-->
+    <PackageReference Include="Uno.Extensions.Logging.WinUI" Version="255.255.255.255" />
+    <!--#endif-->
+    <!--#if (useserilog)-->
     <PackageReference Include="Uno.Extensions.Logging.Serilog" Version="255.255.255.255" />
+    <!--#endif-->
     <PackageReference Include="Uno.Extensions.Navigation" Version="255.255.255.255" />
     <PackageReference Include="Uno.Extensions.Serialization" Version="255.255.255.255" />
     <PackageReference Include="Uno.Extensions.Serialization.Http" Version="255.255.255.255" />

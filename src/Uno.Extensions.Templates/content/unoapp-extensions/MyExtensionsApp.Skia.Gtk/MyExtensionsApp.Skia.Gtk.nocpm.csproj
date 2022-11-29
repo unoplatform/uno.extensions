@@ -16,29 +16,44 @@
     <Content Include="Assets\Fonts\uno-fluentui-assets.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="SkiaSharp.Views.Uno.WinUI" Version="2.88.2" />
-    <PackageReference Include="SkiaSharp.Skottie" Version="2.88.2" />
+    <!--#if (markup)-->
+    <PackageReference Include="Uno.WinUI.Markup" Version="4.6.0-dev.13" />
+    <!--#endif-->
+    <PackageReference Include="SkiaSharp.Views.Uno.WinUI" Version="2.88.3" />
+    <PackageReference Include="SkiaSharp.Skottie" Version="2.88.3" />
     <PackageReference Include="Uno.WinUI.Skia.Gtk" Version="4.6.19" />
     <PackageReference Include="Uno.WinUI.RemoteControl" Version="4.6.19" Condition="'$(Configuration)'=='Debug'" />
     <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.6.19" />
     <PackageReference Include="Uno.Material.WinUI" Version="2.3.0" />
-    <PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.4.0-dev.114" />
-    <PackageReference Include="Uno.Toolkit.WinUI" Version="2.4.0-dev.114" />
+    <PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.4.0-dev.129" />
+    <!--#if (markup)-->
+    <PackageReference Include="Uno.Toolkit.WinUI.Markup" Version="2.4.0-dev.129" />
+    <!--#else-->
+    <PackageReference Include="Uno.Toolkit.WinUI" Version="2.4.0-dev.129" />
+    <!--#endif-->
+    <PackageReference Include="Uno.Extensions.Authentication" Version="255.255.255.255" />
     <PackageReference Include="Uno.Extensions.Authentication.WinUI" Version="255.255.255.255" />
+    <PackageReference Include="Uno.Extensions.Hosting" Version="255.255.255.255" />
     <PackageReference Include="Uno.Extensions.Hosting.WinUI" Version="255.255.255.255" />
+    <!--#if (localization)-->
+    <PackageReference Include="Uno.Extensions.Localization" Version="255.255.255.255" />
     <PackageReference Include="Uno.Extensions.Localization.WinUI" Version="255.255.255.255" />
+    <!--#endif-->
+    <!--#if (uselogging)-->
     <PackageReference Include="Uno.Extensions.Logging.WinUI" Version="255.255.255.255" />
+    <!--#endif-->
+    <!--#if (useserilog)-->
+    <PackageReference Include="Uno.Extensions.Logging.Serilog" Version="255.255.255.255" />
+    <!--#endif-->
+    <PackageReference Include="Uno.Extensions.Navigation" Version="255.255.255.255" />
     <PackageReference Include="Uno.Extensions.Navigation.Toolkit.WinUI" Version="255.255.255.255" />
     <PackageReference Include="Uno.Extensions.Navigation.WinUI" Version="255.255.255.255" />
-    <PackageReference Include="Uno.Extensions.Authentication" Version="255.255.255.255" />
+    <!--#if (configuration)-->
     <PackageReference Include="Uno.Extensions.Configuration" Version="255.255.255.255" />
+    <!--#endif-->
     <PackageReference Include="Uno.Extensions.Core" Version="255.255.255.255" />
-    <PackageReference Include="Uno.Extensions.Hosting" Version="255.255.255.255" />
     <PackageReference Include="Uno.Extensions.Http" Version="255.255.255.255" />
     <PackageReference Include="Uno.Extensions.Http.Refit" Version="255.255.255.255" />
-    <PackageReference Include="Uno.Extensions.Localization" Version="255.255.255.255" />
-    <PackageReference Include="Uno.Extensions.Logging.Serilog" Version="255.255.255.255" />
-    <PackageReference Include="Uno.Extensions.Navigation" Version="255.255.255.255" />
     <PackageReference Include="Uno.Extensions.Serialization" Version="255.255.255.255" />
     <PackageReference Include="Uno.Extensions.Serialization.Http" Version="255.255.255.255" />
     <PackageReference Include="Uno.Extensions.Serialization.Refit" Version="255.255.255.255" />

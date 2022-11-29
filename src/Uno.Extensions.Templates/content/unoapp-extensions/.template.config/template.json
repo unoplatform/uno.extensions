@@ -45,74 +45,187 @@
     "7229D034-7DBE-4FD7-B0E4-38D617571F93", // UITests
     "E2821155-50B7-468D-A15B-E0EAF55DAC2B", // WINDOWS - Package.appxmanifest Identity.Name
   ],
-  "symbols": { 
-    "wasm": {
+  "symbols": {
+    "appid": {
+      "displayName": "App ID",
       "type": "parameter",
-      "dataType": "bool",
-      "defaultValue": "true",
-      "description": "Enables the WebAssembly platform support project"
+      "datatype": "string",
+      "replaces": "com.companyname.myextensionsapp",
+      "description": "The application identifier (e.g. com.mycompany.myapp).",
+      "defaultValue": "com.companyname.myextensionsapp"
     },
-    "ios": {
+    "tfm": {
+      "displayName": "Target Framework",
       "type": "parameter",
-      "dataType": "bool",
-      "defaultValue": "true",
-      "description": "Enables the iOS platform in the Mobile support project"
+      "datatype": "choice",
+      "replaces": "net6.0",
+      "description": "The target framework for the project.",
+      "choices": [
+        {
+          "choice": "net6.0",
+          "description": "Target net6.0 (Long Term Support)"
+        },
+        {
+          "choice": "net7.0",
+          "description": "Target net7.0 (Standard Term Support)"
+        }
+      ]
+    },
+    "architecture": {
+      "displayName": "Design Architecture",
+      "description": "Selects either MVVM or MVUx for the design architecture.",
+      "type": "parameter",
+      "datatype": "choice",
+      "defaultValue": "mvux",
+      "choices": [
+        {
+          "choice": "mvvm",
+          "description": "Use the MVVM design pattern",
+          "displayName": "MVVM"
+        },
+        {
+          "choice": "mvux",
+          "description": "Use the MVUx design pattern with Uno.Extensions.Reactive",
+          "displayName": "MVUx"
+        }
+      ]
+    },
+    "markup": {
+      "displayName": "C# Markup",
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "Use C# Markup Extensions instead of XAML"
     },
     "android": {
+      "displayName": "Mobile - Android",
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "true",
       "description": "Enables the Android platform in the Mobile support project"
     },
-    "winAppSdk": {
+    "ios": {
+      "displayName": "Mobile - iOS",
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "true",
-      "description": "Enables the Windows App Sdk platform support project"
-    },
-    "skia-gtk": {
-      "type": "parameter",
-      "dataType": "bool",
-      "defaultValue": "true",
-      "description": "Enables the Skia/GTK platform support project"
+      "description": "Enables the iOS platform in the Mobile support project"
     },
     "maccatalyst": {
+      "displayName": "Desktop - macOS (Catalyst)",
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "true",
       "description": "Enables the macOS (Catalyst) platform in the Mobile support project"
     },
     "macos": {
+      "displayName": "Desktop - macOS (AppKit)",
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "true",
       "description": "Enables the macOS (AppKit) platform in the Mobile support project"
     },
+    "skia-gtk": {
+      "displayName": "Desktop - Gtk (Linux, macOS, Windows 7 or later)",
+      "type": "parameter",
+      "dataType": "bool",
+      "defaultValue": "true",
+      "description": "Enables the Skia/GTK platform support project"
+    },
     "skia-wpf": {
+      "displayName": "Desktop - WPF (Windows 7 or later)",
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "true",
       "description": "Enables the Skia/WPF platform support project"
     },
     "skia-linux-fb": {
+      "displayName": "Desktop - Linux Framebuffer",
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "true",
       "description": "Enables the Skia/Linux Framebuffer platform support project"
     },
-    "tests": {
+    "winAppSdk": {
+      "displayName": "Desktop - WinUI (Windows App SDK)",
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "true",
-      "description": "Includes unit and UI test projects"
+      "description": "Enables the Windows App Sdk platform support project"
+    },
+    "wasm": {
+      "displayName": "Web - WebAssembly",
+      "type": "parameter",
+      "dataType": "bool",
+      "defaultValue": "true",
+      "description": "Enables the WebAssembly platform support project"
+    },
+    "unittest": {
+      "displayName": "Tests - Unit Tests",
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "true",
+      "description": "Includes the Unit test project"
+    },
+    "tests": {
+      "displayName": "Tests - UI Tests",
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "true",
+      "description": "Includes the UI test project"
+    },
+    "configuration": {
+      "displayName": "Extensions - Configuration",
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "true",
+      "description": "Includes Uno.Extensions.Configuration"
+    },
+    "localization": {
+      "displayName": "Extensions - Localization",
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "true",
+      "description": ""
+    },
+    "logging": {
+      "displayName": "Extensions - Logging",
+      "type": "parameter",
+      "datatype": "choice",
+      "defaultValue": "Enabled",
+      "choices": [
+        {
+          "choice": "None",
+          "description": "No logging"
+        },
+        {
+          "choice": "Enabled",
+          "description": "Enables Logging"
+        },
+        {
+          "choice": "Serilog",
+          "description": "Adds Logging with Serilog"
+        }
+      ],
+      "description": ""
+    },
+    "uselogging": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "logging != 'None'"
+    },
+    "useserilog": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "logging == 'Serilog'"
     },
     "reactive": {
-      "type": "parameter",
-      "dataType": "bool",
-      "defaultValue": "true",
-      "description": "Whether or not to use Reactive extensions"
+      "type": "computed",
+      "datatype": "bool",
+      "value": "architecture == 'mvux'"
     },
     "cpm": {
+      "displayName": "Central Package Management",
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "false",
@@ -124,6 +237,7 @@
       "value": "(android || ios || macos || maccatalyst)"
     },
     "vscode": {
+      "displayName": "WebAssembly - Visual Studio Code Debugging",
       "type": "parameter",
       "dataType": "bool",
       "defaultValue": "false",
@@ -136,15 +250,32 @@
       "defaultValue": "false"
     },
     "wasm-pwa-manifest": {
+      "displayName": "WebAssembly - PWA Manifest",
       "type": "parameter",
       "datatype": "bool",
       "description": "Enables the generation of a PWA manifest for WebAssembly",
       "defaultValue": "true"
+    },
+    "msftextv6" :{
+      "type": "computed",
+      "datatype": "bool",
+      "value": "tfm == 'net6.0'"
+    },
+    "msftextv7": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "tfm == 'net7.0'"
+    },
+    "is-vsix": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false"
     }
   },
   "primaryOutputs": [
     {
-      "path": "MyExtensionsApp.sln"
+      "path": "MyExtensionsApp.sln",
+      "condition": "!is-vsix"
     },
     {
       "path": "MyExtensionsApp.UI\\MyExtensionsApp.UI.shproj"
@@ -153,7 +284,7 @@
       "path": "MyExtensionsApp\\MyExtensionsApp.csproj"
     },
     {
-      "condition": "tests",
+      "condition": "unittest",
       "path": "MyExtensionsApp.Tests\\MyExtensionsApp.Tests.csproj"
     },
     {
@@ -204,6 +335,12 @@
         {
           "exclude": [
             "MyExtensionsApp.Debugging.sln"
+          ]
+        },
+        {
+          "condition": "is-vsix",
+          "exclude": [
+            "**/*.sln"
           ]
         },
         {
@@ -267,9 +404,14 @@
           ]
         },
         {
+          "condition": "(!unittest)",
+          "exclude": [
+            "MyExtensionsApp.Tests/**/*"
+          ]
+        },
+        {
           "condition": "(!tests)",
           "exclude": [
-            "MyExtensionsApp.Tests/**/*",
             "MyExtensionsApp.UITests/**/*"
           ]
         },
@@ -314,6 +456,25 @@
           "rename": {
               ".nocpm.csproj": ".csproj",
               "Directory.Build.nocpm.props": "Directory.Build.props"
+          }
+        },
+        {
+          "condition": "(!markup)",
+          "exclude": [
+            "MyExtensionsApp.UI/Extensions/ApplicationBuilderExtensions.cs",
+            "MyExtensionsApp.UI/**/Styles/*.cs"
+          ]
+        },
+        {
+          "condition": "(markup)",
+          "exclude": [
+            "MyExtensionsApp.UI/**/Styles/*.xaml",
+            "MyExtensionsApp.UI/**/Views/*.xaml"
+          ],
+          "rename": {
+            "MyExtensionsApp.UI/Views/MainPage.xaml.cs": "MyExtensionsApp.UI/Views/MainPage.cs",
+            "MyExtensionsApp.UI/Views/SecondPage.xaml.cs": "MyExtensionsApp.UI/Views/SecondPage.cs",
+            "MyExtensionsApp.UI/Views/Shell.xaml.cs": "MyExtensionsApp.UI/Views/Shell.cs"
           }
         }
       ]

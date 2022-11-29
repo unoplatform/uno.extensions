@@ -31,11 +31,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.Skia.WPF", 
 EndProject
 #//#endif
 
-#//#if (tests)
+#//#if (unittest)
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.Tests", "MyExtensionsApp.Tests\MyExtensionsApp.Tests.csproj", "{EB3EB846-D5CB-4140-834F-1CC40A0FD6D0}"
 EndProject
+#//#endif
+#//#if (tests)
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyExtensionsApp.UITests", "MyExtensionsApp.UITests\MyExtensionsApp.UITests.csproj", "{7229D034-7DBE-4FD7-B0E4-38D617571F93}"
 EndProject
+#//#endif
+#//#if (tests || unittest)
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{7EF70027-9874-4112-A14F-33F02169CF8A}"
 EndProject
 #//#endif
@@ -256,7 +260,7 @@ Global
 		{BACDD33A-304C-46C4-9B00-AC166978D7E0}.Release|x86.ActiveCfg = Release|Any CPU
 		{BACDD33A-304C-46C4-9B00-AC166978D7E0}.Release|x86.Build.0 = Release|Any CPU
 
-#//#if (tests)
+#//#if (unittest)
 		{EB3EB846-D5CB-4140-834F-1CC40A0FD6D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EB3EB846-D5CB-4140-834F-1CC40A0FD6D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB3EB846-D5CB-4140-834F-1CC40A0FD6D0}.Debug|ARM.ActiveCfg = Debug|Any CPU
@@ -408,8 +412,10 @@ Global
 #//#if (skia-linux-fb)
 		{925C7A3E-6532-4E27-8ABE-37A4F9B73C8B} = {339C569C-EE23-445E-B908-743673EE5BC9}
 #//#endif
-#//#if (tests)
+#//#if (unittest)
 		{EB3EB846-D5CB-4140-834F-1CC40A0FD6D0} = {7EF70027-9874-4112-A14F-33F02169CF8A}
+#//#endif
+#//#if (tests)
 		{7229D034-7DBE-4FD7-B0E4-38D617571F93} = {7EF70027-9874-4112-A14F-33F02169CF8A}
 #//#endif
 	EndGlobalSection
