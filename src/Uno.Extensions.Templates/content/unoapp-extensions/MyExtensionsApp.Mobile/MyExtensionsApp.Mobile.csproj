@@ -1,31 +1,61 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-<!--#if (android)
-<TargetFrameworks>$(TargetFrameworks);net6.0-android</TargetFrameworks>
-#endif -->
-<!--#if (ios)
-<TargetFrameworks>$(TargetFrameworks);net6.0-ios</TargetFrameworks>
-#endif -->
-<!--#if (macos)
-<TargetFrameworks>$(TargetFrameworks);net6.0-macos</TargetFrameworks>
-#endif -->
-<!--#if (maccatalyst)
-<TargetFrameworks>$(TargetFrameworks);net6.0-maccatalyst</TargetFrameworks>
-#endif -->
+		<!--#if (android && ios && macos && maccatalyst)-->
+		<TargetFrameworks>net6.0-android;net6.0-ios;net6.0-macos;net6.0-maccatalyst</TargetFrameworks>
+		<!--#elif (android && ios && macos && !maccatalyst)-->
+		<TargetFrameworks>net6.0-android;net6.0-ios;net6.0-macos</TargetFrameworks>
+		<!--#elif (android && ios && !macos && maccatalyst)-->
+		<TargetFrameworks>net6.0-android;net6.0-ios;net6.0-maccatalyst</TargetFrameworks>
+		<!--#elif (!android && ios && macos && maccatalyst)-->
+		<TargetFrameworks>net6.0-ios;net6.0-macos;net6.0-maccatalyst</TargetFrameworks>
+		<!--#elif (android && ios && !macos && !maccatalyst)-->
+		<TargetFrameworks>net6.0-android;net6.0-ios</TargetFrameworks>
+		<!--#elif (!android && ios && !macos && maccatalyst)-->
+		<TargetFrameworks>net6.0-ios;net6.0-maccatalyst</TargetFrameworks>
+		<!--#elif (!android && ios && macos && !maccatalyst)-->
+		<TargetFrameworks>net6.0-ios;net6.0-macos</TargetFrameworks>
+		<!--#else-->
+		<!--#if (android)-->
+		<TargetFrameworks>$(TargetFrameworks);net6.0-android</TargetFrameworks>
+		<!--#endif-->
+		<!--#if (ios)-->
+		<TargetFrameworks>$(TargetFrameworks);net6.0-ios</TargetFrameworks>
+		<!--#endif-->
+		<!--#if (macos)-->
+		<TargetFrameworks>$(TargetFrameworks);net6.0-macos</TargetFrameworks>
+		<!--#endif-->
+		<!--#if (maccatalyst)-->
+		<TargetFrameworks>$(TargetFrameworks);net6.0-maccatalyst</TargetFrameworks>
+		<!--#endif -->
+		<!--#endif -->
 		<SingleProject>true</SingleProject>
 		<OutputType>Exe</OutputType>
+		<!--#if (ios)-->
 		<RuntimeIdentifier Condition="'$(TargetFramework)' == 'net6.0-ios'">iossimulator-x64</RuntimeIdentifier>
+		<!--#endif-->
+		<!--#if (maccatalyst)-->
 		<RuntimeIdentifier Condition="'$(TargetFramework)' == 'net6.0-maccatalyst'">maccatalyst-x64</RuntimeIdentifier>
+		<!--#endif-->
+		<!--#if (macos)-->
 		<RuntimeIdentifier Condition="'$(TargetFramework)' == 'net6.0-macos'">osx-x64</RuntimeIdentifier>
+		<!--#endif-->
 		<!-- Debugger workaround https://github.com/dotnet/maui-samples/blob/8aa6b8780b12e97b157514c3bdc54bb4a13001cd/HelloMacCatalyst/HelloMacCatalyst.csproj#L7 -->
 		<!-- <MtouchExtraArgs Condition="'$(TargetFramework)' == 'net6.0-maccatalyst'">$(MtouchExtraArgs) -setenv:MONO_THREADS_SUSPEND=preemptive</MtouchExtraArgs> -->
 		<!-- Required for C# Hot Reload -->
 		<UseInterpreter Condition="'$(Configuration)' == 'Debug' and '$(TargetFramework)' != 'net6.0-maccatalyst'">True</UseInterpreter>
 		<IsUnoHead>true</IsUnoHead>
+		<!--#if (ios)-->
 		<SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net6.0-ios'">14.2</SupportedOSPlatformVersion>
+		<!--#endif -->
+		<!--#if (maccatalyst)-->
 		<SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net6.0-maccatalyst'">14.0</SupportedOSPlatformVersion>
+		<!--#endif -->
+		<!--#if (android)-->
 		<SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net6.0-android'">21.0</SupportedOSPlatformVersion>
+		<!--#endif -->
+		<!--#if (macos)-->
 		<SupportedOSPlatformVersion Condition="'$(TargetFramework)'=='net6.0-macos'">10.14</SupportedOSPlatformVersion>
+		<!--#endif -->
 	</PropertyGroup>
 	<ItemGroup>
 		<!--#if (markup)-->
