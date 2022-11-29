@@ -445,6 +445,25 @@
               ".nocpm.csproj": ".csproj",
               "Directory.Build.nocpm.props": "Directory.Build.props"
           }
+        },
+        {
+          "condition": "(!markup)",
+          "exclude": [
+            "MyExtensionsApp.UI/Extensions/ApplicationBuilderExtensions.cs",
+            "MyExtensionsApp.UI/**/Styles/*.cs"
+          ]
+        },
+        {
+          "condition": "(markup)",
+          "exclude": [
+            "MyExtensionsApp.UI/**/Styles/*.xaml",
+            "MyExtensionsApp.UI/**/Views/*.xaml"
+          ],
+          "rename": {
+            "MyExtensionsApp.UI/Views/MainPage.xaml.cs": "MyExtensionsApp.UI/Views/MainPage.cs",
+            "MyExtensionsApp.UI/Views/SecondPage.xaml.cs": "MyExtensionsApp.UI/Views/SecondPage.cs",
+            "MyExtensionsApp.UI/Views/Shell.xaml.cs": "MyExtensionsApp.UI/Views/Shell.cs"
+          }
         }
       ]
     }

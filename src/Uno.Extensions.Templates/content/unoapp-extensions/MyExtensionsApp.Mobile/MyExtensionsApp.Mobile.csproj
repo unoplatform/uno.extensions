@@ -37,7 +37,11 @@
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
 		<PackageReference Include="Uno.Material.WinUI" />
 		<PackageReference Include="Uno.Toolkit.WinUI.Material" />
+		<!--#if (markup)-->
+		<PackageReference Include="Uno.Toolkit.WinUI.Markup" />
+		<!--#else-->
 		<PackageReference Include="Uno.Toolkit.WinUI" />
+		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Authentication" />
 		<PackageReference Include="Uno.Extensions.Authentication.WinUI" />
 		<!--#if (configuration)-->

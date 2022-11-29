@@ -1,3 +1,7 @@
+//+:cnd:noEmit
+#if markup
+using MyExtensionsApp.Extensions;
+#endif
 //-:cnd:noEmit
 
 namespace MyExtensionsApp;
@@ -24,6 +28,11 @@ public sealed partial class App : Application
 	protected async override void OnLaunched(LaunchActivatedEventArgs args)
 	{
 		var builder = this.CreateBuilder(args)
+//+:cnd:noEmit
+#if markup
+			.ConfigureResources()
+#endif
+//-:cnd:noEmit
 			.Configure(host => host
 #if DEBUG
 				// Switch to Development environment when running in DEBUG
