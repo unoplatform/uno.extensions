@@ -186,7 +186,7 @@
       "isVisible": true
     },
     {
-      "id": "uitest",
+      "id": "tests",
       "name": {
         "text": "UI Tests"
       },

@@ -167,7 +167,7 @@
       "defaultValue": "true",
       "description": "Includes the Unit test project"
     },
-    "uitest": {
+    "tests": {
       "displayName": "Tests - UI Tests",
       "type": "parameter",
       "datatype": "bool",
@@ -175,21 +175,21 @@
       "description": "Includes the UI test project"
     },
     "configuration": {
-      "displayName": "Configuration",
+      "displayName": "Extensions - Configuration",
       "type": "parameter",
       "datatype": "bool",
       "defaultValue": "true",
       "description": "Includes Uno.Extensions.Configuration"
     },
     "localization": {
-      "displayName": "Localization",
+      "displayName": "Extensions - Localization",
       "type": "parameter",
       "datatype": "bool",
       "defaultValue": "true",
       "description": ""
     },
     "logging": {
-      "displayName": "Logging",
+      "displayName": "Extensions - Logging",
       "type": "parameter",
       "datatype": "choice",
       "defaultValue": "Enabled",
@@ -282,7 +282,7 @@
       "path": "MyExtensionsApp.Tests\\MyExtensionsApp.Tests.csproj"
     },
     {
-      "condition": "uitest",
+      "condition": "tests",
       "path": "MyExtensionsApp.UITests\\MyExtensionsApp.UITests.csproj"
     },
     {
@@ -394,11 +394,11 @@
         {
           "condition": "(!unittest)",
           "exclude": [
-            "MyExtensionsApp.Tests/**/*",
+            "MyExtensionsApp.Tests/**/*"
           ]
         },
         {
-          "condition": "(!uitest)",
+          "condition": "(!tests)",
           "exclude": [
             "MyExtensionsApp.UITests/**/*"
           ]

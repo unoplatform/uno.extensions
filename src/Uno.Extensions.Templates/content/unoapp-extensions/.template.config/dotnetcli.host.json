@@ -61,9 +61,9 @@
       "longName": "unittest",
       "shortName": "unittest"
     },
-    "uitest": {
-      "longName": "uitest",
-      "shortName": "uitest"
+    "tests": {
+      "longName": "ui-tests",
+      "shortName": "tests"
     },
     "configuration": {
       "longName": "configuration",
