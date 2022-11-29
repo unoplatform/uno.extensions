@@ -3,7 +3,6 @@
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<IsPackable>false</IsPackable>
-		<RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
 
 		<!--
 			Defines that this project output is a tool of the given package ID,
