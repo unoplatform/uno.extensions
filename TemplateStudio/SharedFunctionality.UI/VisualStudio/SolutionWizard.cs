@@ -140,7 +140,19 @@ namespace Microsoft.Templates.UI.VisualStudio
                     var requiredworkloads = _replacementsDictionary.SafeGet("$ts.requiredworkloads$");
 
                     _userSelection = WizardLauncher.Instance.StartNewProject(context, requiredVersion, requiredworkloads, new VSStyleValuesProvider());
-                }
+
+
+
+					replacementsDictionary.Add("passthrough:skia-gtk", true.ToString());
+					replacementsDictionary.Add("passthrough:wasm", false.ToString());
+					replacementsDictionary.Add("passthrough:ios", false.ToString());
+					replacementsDictionary.Add("passthrough:android", true.ToString());
+					replacementsDictionary.Add("passthrough:macos", false.ToString());
+					replacementsDictionary.Add("passthrough:maccatalyst", false.ToString());
+					replacementsDictionary.Add("passthrough:tests", false.ToString());
+					replacementsDictionary.Add("passthrough:skia-wpf", false.ToString());
+
+				}
             }
             catch (WizardBackoutException)
             {

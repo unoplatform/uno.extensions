@@ -1,0 +1,3 @@
+﻿//dotnet Templates
+[$RootKey$\TemplateEngine\Templates\TemplateStudio]
+"InstalledPath"="$PackageFolder$\Templates"
