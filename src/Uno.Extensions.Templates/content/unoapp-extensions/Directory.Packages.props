@@ -9,7 +9,7 @@
     <!--#if (msftextv7) -->
     <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
     <!--#endif-->
-    <PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="4.4.0" />
+    <PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="4.2.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.3.0" />
     <!--#if (msftextv6) -->
     <PackageVersion Include="Microsoft.Windows.Compatibility" Version="6.0.0" />

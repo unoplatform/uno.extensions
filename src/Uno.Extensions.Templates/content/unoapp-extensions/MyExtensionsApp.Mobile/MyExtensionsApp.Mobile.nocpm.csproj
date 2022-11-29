@@ -101,6 +101,7 @@
 		<PackageReference Include="Uno.Extensions.Reactive.WinUI" Version="255.255.255.255" />
 	</ItemGroup>
 	<Choose>
+		<!--#if (android)-->
 		<When Condition="'$(TargetFramework)'=='net6.0-android'">
 			<ItemGroup>
 				<PackageReference Include="Xamarin.Google.Android.Material" Version="1.4.0.4" />
@@ -110,6 +111,8 @@
 				<AndroidEnvironment Include="Android/environment.conf" />
 			</ItemGroup>
 		</When>
+		<!--#endif-->
+		<!--#if (ios)-->
 		<When Condition="'$(TargetFramework)'=='net6.0-ios'">
 			<PropertyGroup Condition="'$(TargetFramework)'=='net6.0-ios'">
 				<MtouchExtraArgs>$(MtouchExtraArgs) --setenv=MONO_GC_PARAMS=soft-heap-limit=512m,nursery-size=64m,evacuation-threshold=66,major=marksweep,concurrent-sweep</MtouchExtraArgs>
@@ -123,6 +126,8 @@
 			</ItemGroup>
 			<!--#endif-->
 		</When>
+		<!--#endif-->
+		<!--#if (maccatalyst)-->
 		<When Condition="'$(TargetFramework)'=='net6.0-maccatalyst'">
 			<PropertyGroup>
 				<!-- Configure the GC -->
@@ -140,10 +145,13 @@
 			</ItemGroup>
 			<!--#endif-->
 		</When>
+		<!--#endif-->
+		<!--#if (macos)-->
 		<When Condition="'$(TargetFramework)'=='net6.0-macos'">
 			<PropertyGroup>
 			</PropertyGroup>
 		</When>
+		<!--#endif-->
 	</Choose>
 	<ItemGroup>
 		<ProjectReference Include="..\MyExtensionsApp\MyExtensionsApp.csproj" />
