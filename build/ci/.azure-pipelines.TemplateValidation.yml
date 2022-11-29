@@ -5,6 +5,27 @@ jobs:
   pool:
     vmImage: 'windows-2022'
 
+  strategy:
+    matrix:
+      DefaultArguments:
+        createdProjectName: UnoApp01
+        templateArgs: ''
+      MVVM:
+        createdProjectName: UnoAppNoReactive01
+        templateArgs: '--architecture mvvm'
+      CentralPackageManagement:
+        createdProjectName: UnoAppCPM01
+        templateArgs: '--cpm true'
+      CSharpMarkup:
+        createdProjectName: UnoAppCSharpMarkup01
+        templateArgs: '--csharp-markup true'
+      NoExtensions:
+        createdProjectName: UnoAppNoExtensions01
+        templateArgs: '-config false -loc false -log None'
+      Serilog:
+        createdProjectName: UnoAppSerilog01
+        templateArgs: '--logging Serilog'
+
   variables:
     - name: UseDotNetNativeToolchain
       value: false
@@ -53,29 +74,10 @@ jobs:
         $ErrorActionPreference = 'Stop'
 
         # Create app with defaults
-        dotnet new unoapp-extensions -o UnoApp01
-        cd UnoApp01
-        & $msbuild /r /m UnoApp01.sln
-        if ($LASTEXITCODE -ne 0)
-        {
-            throw "Exit code must be zero."
-        }
-        cd ..
+        Invoke-Expression -Command "dotnet new unoapp-extensions -o $env:createdProjectName $env:templateArgs"
 
-        # Create app without reactive extensions
-        dotnet new unoapp-extensions -o UnoAppNoReactive01 --reactive false
-        cd UnoAppNoReactive01
-        & $msbuild /r /m UnoAppNoReactive01.sln
-        if ($LASTEXITCODE -ne 0)
-        {
-            throw "Exit code must be zero."
-        }
-        cd ..
-
-        # Create app with cpm enabled
-        dotnet new unoapp-extensions -o UnoAppCPM01 --cpm true
-        cd UnoAppCPM01
-        & $msbuild /r /m UnoAppCPM01.sln
+        cd $env:createdProjectName
+        & $msbuild /r /m $env:createdProjectName.sln
         if ($LASTEXITCODE -ne 0)
         {
             throw "Exit code must be zero."

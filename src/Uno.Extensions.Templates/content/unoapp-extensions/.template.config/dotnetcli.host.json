@@ -14,7 +14,8 @@
       "shortName": "arch"
     },
     "markup": {
-      "isHidden": true
+      "longName": "csharp-markup",
+      "shortName": "markup"
     },
     "android": {
       "longName": "android",
