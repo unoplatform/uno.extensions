@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType Condition="'$(Configuration)'=='Release'">WinExe</OutputType>
+    <OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup Condition="exists('..\UnoExtApp1.Windows')">
+    <EmbeddedResource Include="..\UnoExtApp1.Windows\Package.appxmanifest" LogicalName="Package.appxmanifest" />
+    <Content Include="..\UnoExtApp1.Windows\Images\StoreLogo.png" Link="Assets\StoreLogo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <UpToDateCheckInput Include="..\UnoExtApp1.UI\**\*.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\Fonts\uno-fluentui-assets.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="SkiaSharp.Views.Uno.WinUI" Version="2.88.2" />
+    <PackageReference Include="SkiaSharp.Skottie" Version="2.88.2" />
+    <PackageReference Include="Uno.WinUI.Skia.Gtk" Version="4.6.19" />
+    <PackageReference Include="Uno.WinUI.RemoteControl" Version="4.6.19" Condition="'$(Configuration)'=='Debug'" />
+    <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.6.19" />
+    <PackageReference Include="Uno.Material.WinUI" Version="2.3.0" />
+    <PackageReference Include="Uno.Toolkit.WinUI.Material" Version="2.4.0-dev.114" />
+    <PackageReference Include="Uno.Toolkit.WinUI" Version="2.4.0-dev.114" />
+    <PackageReference Include="Uno.Extensions.Authentication.WinUI" Version="2.3.0-dev.343" />
+    <PackageReference Include="Uno.Extensions.Hosting.WinUI" Version="2.3.0-dev.343" />
+    <PackageReference Include="Uno.Extensions.Localization.WinUI" Version="2.3.0-dev.343" />
+    <PackageReference Include="Uno.Extensions.Logging.WinUI" Version="2.3.0-dev.343" />
+    <PackageReference Include="Uno.Extensions.Navigation.Toolkit.WinUI" Version="2.3.0-dev.343" />
+    <PackageReference Include="Uno.Extensions.Navigation.WinUI" Version="2.3.0-dev.343" />
+    <PackageReference Include="Uno.Extensions.Authentication" Version="2.3.0-dev.343" />
+    <PackageReference Include="Uno.Extensions.Configuration" Version="2.3.0-dev.343" />
+    <PackageReference Include="Uno.Extensions.Core" Version="2.3.0-dev.343" />
+    <PackageReference Include="Uno.Extensions.Hosting" Version="2.3.0-dev.343" />
+    <PackageReference Include="Uno.Extensions.Http" Version="2.3.0-dev.343" />
+    <PackageReference Include="Uno.Extensions.Http.Refit" Version="2.3.0-dev.343" />
+    <PackageReference Include="Uno.Extensions.Localization" Version="2.3.0-dev.343" />
+    <PackageReference Include="Uno.Extensions.Logging.Serilog" Version="2.3.0-dev.343" />
+    <PackageReference Include="Uno.Extensions.Navigation" Version="2.3.0-dev.343" />
+    <PackageReference Include="Uno.Extensions.Serialization" Version="2.3.0-dev.343" />
+    <PackageReference Include="Uno.Extensions.Serialization.Http" Version="2.3.0-dev.343" />
+    <PackageReference Include="Uno.Extensions.Serialization.Refit" Version="2.3.0-dev.343" />
+    <PackageReference Include="Uno.Extensions.Reactive" Version="2.3.0-dev.343" />
+    <PackageReference Include="Uno.Extensions.Reactive.WinUI" Version="2.3.0-dev.343" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\UnoExtApp1\UnoExtApp1.csproj" />
+  </ItemGroup>
+  <Import Project="..\UnoExtApp1.UI\UnoExtApp1.UI.projitems" Label="Shared" />
+</Project>

@@ -1,0 +1,12 @@
+{
+  "solution": {
+    "path": "UnoExtApp1.sln",
+    "projects": [
+      "UnoExtApp1.Mobile\\UnoExtApp1.Mobile.csproj",
+      "UnoExtApp1.Skia.Gtk\\UnoExtApp1.Skia.Gtk.csproj",
+      "UnoExtApp1.Wasm\\UnoExtApp1.Wasm.csproj",
+      "UnoExtApp1.UI\\UnoExtApp1.UI.shproj",
+      "UnoExtApp1\\UnoExtApp1.csproj"
+    ]
+  }
+}
