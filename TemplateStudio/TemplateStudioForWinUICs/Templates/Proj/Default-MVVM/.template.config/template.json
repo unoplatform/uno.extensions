@@ -70,6 +70,8 @@
       "replaces": "System.ComponentModel.INotifyPropertyChanged"
     }
   },
+
+
   "postActions": [
     {
       "description": "Add nuget package",
@@ -137,4 +139,7 @@
       "continueOnError": true
     }
   ]
+
+
+
 }

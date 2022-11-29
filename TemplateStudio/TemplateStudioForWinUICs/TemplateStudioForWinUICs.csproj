@@ -172,6 +172,7 @@
       <Link>Styles\TemplateStudioStyles.xaml</Link>
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Page>
     <Content Include="TemplateStudio.targetsize-128.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -314,10 +315,12 @@
   <ItemGroup>
     <Compile Include="..\SharedStyles\AllStylesDictionary.cs">
       <Link>Styles\AllStylesDictionary.cs</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
     <Compile Include="..\SharedStyles\TemplateStudioStyles.xaml.cs">
       <Link>Styles\TemplateStudioStyles.xaml.cs</Link>
       <DependentUpon>TemplateStudioStyles.xaml</DependentUpon>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Commands\TemplateStudioCommand.cs" />
     <Compile Include="Commands\TemplateStudioForWinuiPackage.cs">
