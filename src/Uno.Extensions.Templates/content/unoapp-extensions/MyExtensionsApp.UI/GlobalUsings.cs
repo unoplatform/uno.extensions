@@ -18,9 +18,13 @@ global using MyExtensionsApp.Business.Models;
 global using MyExtensionsApp.Presentation;
 global using MyExtensionsApp.Views;
 global using Uno.Extensions;
+#if configuration
 global using Uno.Extensions.Configuration;
+#endif
 global using Uno.Extensions.Hosting;
+#if localization
 global using Uno.Extensions.Localization;
+#endif
 global using Uno.Extensions.Navigation;
 #if markup
 global using Uno.Material;
@@ -32,6 +36,7 @@ global using Uno.Toolkit.UI;
 global using Windows.ApplicationModel;
 global using Application = Microsoft.UI.Xaml.Application;
 #if markup
+global using Button = Microsoft.UI.Xaml.Controls.Button;
 global using Color = Windows.UI.Color;
 #endif
 //-:cnd:noEmit
