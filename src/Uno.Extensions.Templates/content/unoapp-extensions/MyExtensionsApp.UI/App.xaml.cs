@@ -80,7 +80,7 @@ public sealed partial class App : Application
 			.UseToolkitNavigation();
 		_window = builder.Window;
 
-		_host = await builder.ShowAsync<Shell>();
+		_host = await builder.NavigateAsync<Shell>();
 	}
 
 	/// <summary>

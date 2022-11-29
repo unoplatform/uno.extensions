@@ -148,7 +148,7 @@ public sealed partial class App : Application
 
 			case InitOption.AppBuilderShell:
 
-				_host = await appBuilder.ShowAsync<AppRoot>();
+				_host = await appBuilder.NavigateAsync<AppRoot>();
 				break;
 
 			case InitOption.NoShellViewModel:

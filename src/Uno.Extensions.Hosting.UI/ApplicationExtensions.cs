@@ -1,6 +1,4 @@
-﻿using Microsoft.UI.Xaml;
-
-namespace Uno.Extensions.Hosting;
+﻿namespace Uno.Extensions.Hosting;
 
 /// <summary>
 /// Extensions for the <see cref="IApplicationBuilder" />
