@@ -178,10 +178,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\Assets\WindowIcon.ico" />
-    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\TemplateStudio.xml">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <Content Include="Templates\Proj\Default-MVVM\Param_ProjectName\Assets\WindowIcon.ico">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -274,23 +270,6 @@
       <SubType>Designer</SubType>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\App.xaml">
-      <SubType>Designer</SubType>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\MainWindow.xaml">
-      <SubType>Designer</SubType>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\Styles\FontSizes.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\Styles\TextBlock.xaml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\Styles\Thickness.xaml">
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="Templates\CodingStyle\CodingStyle.XAML\.template.config\icon.xaml">
       <SubType>Designer</SubType>
       <IncludeInVSIX>true</IncludeInVSIX>
@@ -335,73 +314,62 @@
       <DependentUpon>source.extension.vsixmanifest</DependentUpon>
     </Compile>
     <Compile Include="TemplateStudioForWinUICsPackage.cs" />
-    <Content Include="Templates\UnoFramework\UnoFramework.net7\Services\FeaturePWAServiceService.cs">
+    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\Program.cs">
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\UnoFramework\UnoFramework.net7\Services\FeaturePWAService.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\UnoFramework\UnoFramework.net7\Contracts\Services\IFeaturePWAServiceService.cs">
+    <Content Include="Templates\UnoFramework\UnoFramework.net7\Contracts\Services\IFeaturePWAService.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\UnoFramework\UnoFramework.net6\Services\FeaturePWAServiceService.cs">
+    <Content Include="Templates\UnoFramework\UnoFramework.net6\Services\FeaturePWAService.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\UnoFramework\UnoFramework.net6\Contracts\Services\IFeaturePWAServiceService.cs">
+    <Content Include="Templates\UnoFramework\UnoFramework.net6\Contracts\Services\IFeaturePWAService.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\CodingStyle\CodingStyle.CSharpMarkup\Services\FeaturePWAServiceService.cs">
+    <Content Include="Templates\CodingStyle\CodingStyle.CSharpMarkup\Services\FeaturePWAService.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\CodingStyle\CodingStyle.CSharpMarkup\Contracts\Services\IFeaturePWAServiceService.cs">
+    <Content Include="Templates\CodingStyle\CodingStyle.CSharpMarkup\Contracts\Services\IFeaturePWAService.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\CodingStyle\CodingStyle.XAML\Services\FeaturePWAServiceService.cs">
+    <Content Include="Templates\CodingStyle\CodingStyle.XAML\Services\FeaturePWAService.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\CodingStyle\CodingStyle.XAML\Contracts\Services\IFeaturePWAServiceService.cs">
+    <Content Include="Templates\CodingStyle\CodingStyle.XAML\Contracts\Services\IFeaturePWAService.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName.Core\Services\FileService.cs" />
-    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName.Core\Contracts\Services\IFileService.cs" />
-    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\Usings.cs">
+    <Content Include="Templates\Extensions\Extensions.Localization\Services\FeaturePWAService.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\MainWindow.xaml.cs">
+    <Content Include="Templates\Extensions\Extensions.Localization\Contracts\Services\IFeaturePWAService.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\Helpers\TitleBarHelper.cs" />
-    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\Helpers\RuntimeHelper.cs" />
-    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\Helpers\ResourceExtensions.cs" />
-    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\Contracts\ViewModels\INavigationAware.cs" />
-    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\App.xaml.cs">
+    <Content Include="Templates\Extensions\Extensions.Navigation\Services\FeaturePWAService.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Extensions\Extensions.Localization\Services\FeaturePWAServiceService.cs">
+    <Content Include="Templates\Extensions\Extensions.Navigation\Contracts\Services\IFeaturePWAService.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Extensions\Extensions.Localization\Contracts\Services\IFeaturePWAServiceService.cs">
+    <Content Include="Templates\Extensions\Extensions.Logging.Serilog\Services\FeaturePWAService.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Extensions\Extensions.Navigation\Services\FeaturePWAServiceService.cs">
+    <Content Include="Templates\Extensions\Extensions.Logging.Serilog\Contracts\Services\IFeaturePWAService.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Extensions\Extensions.Navigation\Contracts\Services\IFeaturePWAServiceService.cs">
+    <Content Include="Templates\Extensions\Extensions.Logging\Services\FeaturePWAService.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Extensions\Extensions.Logging.Serilog\Services\FeaturePWAServiceService.cs">
+    <Content Include="Templates\Extensions\Extensions.Logging\Contracts\Services\IFeaturePWAService.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Extensions\Extensions.Logging.Serilog\Contracts\Services\IFeaturePWAServiceService.cs">
+    <Content Include="Templates\Extensions\Extensions.Configuration\Services\FeaturePWAService.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Extensions\Extensions.Logging\Services\FeaturePWAServiceService.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Extensions\Extensions.Logging\Contracts\Services\IFeaturePWAServiceService.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Extensions\Extensions.Configuration\Services\FeaturePWAServiceService.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Extensions\Extensions.Configuration\Contracts\Services\IFeaturePWAServiceService.cs">
+    <Content Include="Templates\Extensions\Extensions.Configuration\Contracts\Services\IFeaturePWAService.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Templates\Feature\Feature.Test.UI\Services\FeatureUITestService.cs">
@@ -416,10 +384,10 @@
     <Content Include="Templates\Feature\Feature.Test.Unit\Contracts\Services\IFeatureUnitTestService.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Feature\Feature.PWA\Services\FeaturePWAServiceService.cs">
+    <Content Include="Templates\Feature\Feature.PWA\Services\FeaturePWAService.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Feature\Feature.PWA\Contracts\Services\IFeaturePWAServiceService.cs">
+    <Content Include="Templates\Feature\Feature.PWA\Contracts\Services\IFeaturePWAService.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Templates\Platform\Platform.Web.Wasm\Services\PlatformWebWasmSelectorService.cs">
@@ -509,9 +477,7 @@
     <Content Include="Templates\Proj\Default-MVVM\Param_ProjectName.Core\README.md">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\_comp\MT\Platform.PlatformSelection\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
+    <Content Include="Templates\_comp\MT\Platform.PlatformSelection\.template.config\template.json" />
     <Content Include="Templates\_comp\MT\Platform.Mobile\.template.config\template.json" />
     <Content Include="Templates\Platform\Platform.Desktop.Windows\.template.config\localize\description.cs-CZ.md">
       <IncludeInVSIX>true</IncludeInVSIX>
@@ -1999,27 +1965,12 @@
     <Content Include="Templates\Proj\Default-MVU-X\.template.config\Layout.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default-MVU-X\.template.config\template.json" />
+    <Content Include="Templates\Proj\Default-MVU-X\.template.config\template.json">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="Templates\Proj\Default-MVU-X\.vsconfig">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\app.manifest">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\Param_ProjectName.csproj">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\Properties\launchsettings.json" />
-    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\Properties\PublishProfiles\win10-arm64.pubxml" />
-    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\Properties\PublishProfiles\win10-x64.pubxml" />
-    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\Properties\PublishProfiles\win10-x86.pubxml" />
-    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\README.md">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\Strings\en-us\Resources.resw" />
-    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName.Core\Models\-.-" />
-    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName.Core\Param_ProjectName.Core.csproj" />
-    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName.Core\README.md" />
     <Content Include="Templates\CodingStyle\CodingStyle.XAML\.template.config\localize\description.cs-CZ.md">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -2368,6 +2319,10 @@
     <Content Include="Templates\UnoFramework\UnoFramework.net7\.template.config\template.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Content Include="Templates\Proj\Default-MVU-X\Param_ProjectName\Param_ProjectName.csproj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <None Include="Templates\_catalog\Architectures\Architecture.cs-CZ.json" />
     <None Include="Templates\_catalog\Architectures\Architecture.de-DE.json" />
     <None Include="Templates\_catalog\Architectures\Architecture.de-DE.md" />
@@ -2471,42 +2426,30 @@
     <Content Include="Templates\Proj\Default-MVVM\.vsconfig">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\_comp\MT\Project.NavView.AddNavViewItem.WebView\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
+    <Content Include="Templates\_comp\MT\Project.NavView.AddNavViewItem.WebView\.template.config\template.json" />
     <Content Include="Templates\_comp\MT\Project.NavView.AddNavViewItem.WebView\Strings\en-us\Resources_postaction.resw">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\_comp\MT\Project.NavView.AddNavViewItem.Blank\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
+    <Content Include="Templates\_comp\MT\Project.NavView.AddNavViewItem.Blank\.template.config\template.json" />
     <Content Include="Templates\_comp\MT\Project.NavView.AddNavViewItem.Blank\Strings\en-us\Resources_postaction.resw">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\_comp\MT\Project.NavView.AddNavViewItem.ListDetails\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
+    <Content Include="Templates\_comp\MT\Project.NavView.AddNavViewItem.ListDetails\.template.config\template.json" />
     <Content Include="Templates\_comp\MT\Project.NavView.AddNavViewItem.ListDetails\Strings\en-us\Resources_postaction.resw">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\_comp\MT\Project.NavView.AddNavViewItem.ContentGrid\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
+    <Content Include="Templates\_comp\MT\Project.NavView.AddNavViewItem.ContentGrid\.template.config\template.json" />
     <Content Include="Templates\_comp\MT\Project.NavView.AddNavViewItem.ContentGrid\Strings\en-us\Resources_postaction.resw">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\_comp\MT\Project.NavView.AddNavViewItem.DataGrid\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
+    <Content Include="Templates\_comp\MT\Project.NavView.AddNavViewItem.DataGrid\.template.config\template.json" />
     <Content Include="Templates\_comp\MT\Project.NavView.AddNavViewItem.DataGrid\Strings\en-us\Resources_postaction.resw">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Templates\Proj\Default-MVVM\.editorconfig">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\_comp\_shared\Page.AddBackground.Blank\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
+    <Content Include="Templates\_comp\_shared\Page.AddBackground.Blank\.template.config\template.json" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Templates\Page\Blank\.template.config\localize\templatestrings.json">
@@ -2590,9 +2533,7 @@
     <Content Include="Templates\Page\Blank\.template.config\localize\templatestrings.zh-TW.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\_comp\MT\Feature.AppNotifications\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
+    <Content Include="Templates\_comp\MT\Feature.AppNotifications\.template.config\template.json" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="cs-CZ\Extension.vsixlangpack">
@@ -2799,9 +2740,7 @@
     <Content Include="Templates\Proj\Default-MVVM\.template.config\Layout.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\Proj\Default-MVVM\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
+    <Content Include="Templates\Proj\Default-MVVM\.template.config\template.json" />
     <Content Include="Templates\Proj\Default-MVVM\Param_ProjectName.Core\Models\-.-">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -3111,99 +3050,45 @@
     <Content Include="Templates\_catalog\ProjectTypes\ProjectTypes.zh-TW.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\_comp\MT\AddConnectedAnimation\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\_comp\MT\ExportParams.Page\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\_comp\MT\ExportParams.Project\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\_comp\MT\Feature.SampleData\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\_comp\MT\Feature.ThemeSelection\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\_comp\MT\Page.AddBackCommand\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\_comp\MT\Page.AddCommandNS\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\_comp\MT\Page.AddViewModelDetail\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\_comp\MT\Page.AddViewModel\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\_comp\MT\Page.WebView\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\_comp\MT\Project.Blank\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\_comp\MT\Project.MenuBar.AddMenuItem.Settings\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
+    <Content Include="Templates\_comp\MT\AddConnectedAnimation\.template.config\template.json" />
+    <Content Include="Templates\_comp\MT\ExportParams.Page\.template.config\template.json" />
+    <Content Include="Templates\_comp\MT\ExportParams.Project\.template.config\template.json" />
+    <Content Include="Templates\_comp\MT\Feature.SampleData\.template.config\template.json" />
+    <Content Include="Templates\_comp\MT\Feature.ThemeSelection\.template.config\template.json" />
+    <Content Include="Templates\_comp\MT\Page.AddBackCommand\.template.config\template.json" />
+    <Content Include="Templates\_comp\MT\Page.AddCommandNS\.template.config\template.json" />
+    <Content Include="Templates\_comp\MT\Page.AddViewModelDetail\.template.config\template.json" />
+    <Content Include="Templates\_comp\MT\Page.AddViewModel\.template.config\template.json" />
+    <Content Include="Templates\_comp\MT\Page.WebView\.template.config\template.json" />
+    <Content Include="Templates\_comp\MT\Project.Blank\.template.config\template.json" />
+    <Content Include="Templates\_comp\MT\Project.MenuBar.AddMenuItem.Settings\.template.config\template.json" />
     <Content Include="Templates\_comp\MT\Project.MenuBar.AddMenuItem.Settings\Strings\en-us\Resources_postaction.resw">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\_comp\MT\Project.MenuBar.AddMenuItem\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
+    <Content Include="Templates\_comp\MT\Project.MenuBar.AddMenuItem\.template.config\template.json" />
     <Content Include="Templates\_comp\MT\Project.MenuBar.AddMenuItem\Strings\en-us\Resources_postaction.resw">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\_comp\MT\Project.MenuBar\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
+    <Content Include="Templates\_comp\MT\Project.MenuBar\.template.config\template.json" />
     <Content Include="Templates\_comp\MT\Project.MenuBar\Strings\en-us\Resources_postaction.resw">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\_comp\MT\Project.NavView.AddNavViewItem.Settings\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\_comp\MT\Project.NavView\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\_comp\MT\Project\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\_comp\_shared\Page.AddTitle.Blank\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\_comp\_shared\Page.AddTitle.ContentGrid\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\_comp\_shared\Page.AddTitle.DataGrid\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\_comp\_shared\Page.AddTitle.Form\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\_comp\_shared\Page.AddTitle.Settings\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\_comp\_shared\Page.AddTitle.StringResources\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
+    <Content Include="Templates\_comp\MT\Project.NavView.AddNavViewItem.Settings\.template.config\template.json" />
+    <Content Include="Templates\_comp\MT\Project.NavView\.template.config\template.json" />
+    <Content Include="Templates\_comp\MT\Project\.template.config\template.json" />
+    <Content Include="Templates\_comp\_shared\Page.AddTitle.Blank\.template.config\template.json" />
+    <Content Include="Templates\_comp\_shared\Page.AddTitle.ContentGrid\.template.config\template.json" />
+    <Content Include="Templates\_comp\_shared\Page.AddTitle.DataGrid\.template.config\template.json" />
+    <Content Include="Templates\_comp\_shared\Page.AddTitle.Form\.template.config\template.json" />
+    <Content Include="Templates\_comp\_shared\Page.AddTitle.Settings\.template.config\template.json" />
+    <Content Include="Templates\_comp\_shared\Page.AddTitle.StringResources\.template.config\template.json" />
     <Content Include="Templates\_comp\_shared\Page.AddTitle.StringResources\Strings\en-us\Resources_postaction.resw">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\_comp\_shared\Page.ListDetail.Blank.MenuBar\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\_comp\_shared\Page.ListDetail.NavView\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\_comp\_shared\Page.NavView.AddHeaderModeNever\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\_comp\_shared\Proj.Core.Platforms\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
+    <Content Include="Templates\_comp\_shared\Page.ListDetail.Blank.MenuBar\.template.config\template.json" />
+    <Content Include="Templates\_comp\_shared\Page.ListDetail.NavView\.template.config\template.json" />
+    <Content Include="Templates\_comp\_shared\Page.NavView.AddHeaderModeNever\.template.config\template.json" />
+    <Content Include="Templates\_comp\_shared\Proj.Core.Platforms\.template.config\template.json" />
     <Content Include="Templates\_comp\_shared\Proj.Core.Platforms\Param_ProjectName.Core\Param_ProjectName.Core_postaction.csproj">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -3297,9 +3182,7 @@
     <Content Include="Templates\_comp\MT\Feature.SettingsStorage\App_postaction.xaml.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Templates\_comp\MT\Feature.SettingsStorage\.template.config\template.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
+    <Content Include="Templates\_comp\MT\Feature.SettingsStorage\.template.config\template.json" />
     <Content Include="Templates\Proj\Default-MVVM\Param_ProjectName\Properties\launchsettings.json">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
