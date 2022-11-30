@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net472</TargetFramework>
@@ -7,22 +7,14 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Remove="Views\Page1.xaml" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <EmbeddedResource Include="Views\Page1.xaml">
-	    <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-	  </EmbeddedResource>
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="Microsoft.VisualStudio.SDK">
 			<Version>17.1.32210.191</Version>
 		</PackageReference>
 		<PackageReference Include="Microsoft.VisualStudio.TemplateWizardInterface">
 			<Version>17.1.32210.191</Version>
 		</PackageReference>
+		<PackageReference Include="System.Runtime.WindowsRuntime.UI.Xaml" Version="4.7.0" />
+		<PackageReference Include="Uno.UI" Version="4.6.19" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -32,7 +24,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="ViewModel\" />
+	  <None Update="Views\MainPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </None>
 	</ItemGroup>
 	
 </Project>
