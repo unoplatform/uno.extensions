@@ -3,8 +3,13 @@
 	<PropertyGroup>
 		<TargetFramework>net472</TargetFramework>
 		<SignAssembly>true</SignAssembly>
-		<AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
+		<AssemblyOriginatorKeyFile>Keys\key.snk</AssemblyOriginatorKeyFile>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Remove="Views\MainPage.xaml" />
+	  <None Remove="Views\Page1.xaml" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.VisualStudio.SDK">
@@ -13,20 +18,42 @@
 		<PackageReference Include="Microsoft.VisualStudio.TemplateWizardInterface">
 			<Version>17.1.32210.191</Version>
 		</PackageReference>
-		<PackageReference Include="System.Runtime.WindowsRuntime.UI.Xaml" Version="4.7.0" />
-		<PackageReference Include="Uno.UI" Version="4.6.19" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="UserInputForm.cs">
-	    <SubType>Form</SubType>
+	  <Page Include="Views\MainPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Page>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Include="Views\Page1.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Page>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Reference Include="System.Data.DataSetExtensions" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="String\Resources.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>Resources.resx</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\Page1.xaml.cs">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Update="Views\MainPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </None>
+	  <EmbeddedResource Update="String\Resources.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
 	</ItemGroup>
 	
 </Project>

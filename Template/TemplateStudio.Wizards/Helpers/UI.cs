@@ -26,7 +26,6 @@ namespace TemplateStudio.Wizards.Helpers
 				dialog.Topmost = true;  // important
 				dialog.Topmost = false; // important
 				dialog.Focus();         // important
-
 			}
 		}
 		
