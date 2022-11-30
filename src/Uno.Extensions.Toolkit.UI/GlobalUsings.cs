@@ -1,10 +1,12 @@
 ﻿global using System;
 global using System.Threading.Tasks;
 global using Microsoft.Extensions.Logging;
-global using Uno.Toolkit.UI;
+global using Uno.Toolkit;
+global using Uno.Extensions.Toolkit;
 global using Uno.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Hosting;
+global using Uno.Toolkit.UI;
 #if WINUI
 	global using Microsoft.UI.Dispatching;
 	global using Microsoft.UI.Xaml;

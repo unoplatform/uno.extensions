@@ -43,7 +43,6 @@ internal static class AppHost
 			.ConfigureServices((context, services) =>
 			{
 				services
-					.AddScoped<IThemeService, ThemeService>()
 					.AddSingleton<IAuthenticationTokenProvider>(new SimpleAuthenticationToken { AccessToken = "My access token" })
 					.AddScoped<NeedsADispatcherService>()
 					.AddNativeHandler()

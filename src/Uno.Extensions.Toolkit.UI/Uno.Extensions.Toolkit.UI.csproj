@@ -7,8 +7,5 @@
 		<PackageReference Include="Uno.Toolkit.UI" />
 		<PackageReference Include="Uno.UI" />
 	</ItemGroup>
-	<ItemGroup>
-		<ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
-		<ProjectReference Include="..\Uno.Extensions.Toolkit\Uno.Extensions.Toolkit.csproj" />
-	</ItemGroup>
+	<Import Project="common.props" />
 </Project>

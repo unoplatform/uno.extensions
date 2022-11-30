@@ -1,16 +1,23 @@
-﻿namespace Uno.Extensions.Toolkit.UI
+﻿namespace Uno.Extensions.Toolkit
 {
 	public static class HostBuilderExtensions
 	{
 		public static IHostBuilder UseThemeSwitching(
-		this IHostBuilder hostBuilder)
+		this IHostBuilder hostBuilder,
+		Action<HostBuilderContext, IServiceCollection>? configure = default)
 		{
-			return
-			 hostBuilder
-			.UseConfiguration(configure: configBuilder =>
-				configBuilder
-					.Section<ThemeSettings>()
-			);
+			return hostBuilder
+				.UseConfiguration(
+					configure: configBuilder =>
+						configBuilder
+							.Section<ThemeSettings>()
+						)
+
+				.ConfigureServices((ctx, services) =>
+				{
+					_ = services
+					.AddScoped<IThemeService, ThemeService>();
+				});
 		}
 	}
 }
