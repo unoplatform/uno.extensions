@@ -40,7 +40,7 @@
 				<ProjectReference Include="$(MSBuildThisFileDirectory)\Uno.Extensions.Core.Generators\Uno.Extensions.Core.Generators.csproj">
 					<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
 					<SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
-					<UndefineProperties>TargetFramework</UndefineProperties>
+					<UndefineProperties>TargetFramework;RuntimeIdentifiers;RuntimeIdentifier</UndefineProperties>
 				</ProjectReference>
 			</ItemGroup>
 		</When>
