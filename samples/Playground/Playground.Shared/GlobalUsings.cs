@@ -23,12 +23,14 @@ global using Uno.Extensions.Http;
 global using Uno.Extensions.Localization;
 global using Uno.Extensions.Logging;
 global using Uno.Extensions.Navigation;
+global using Uno.Extensions.Toolkit;
 global using Uno.Extensions.Navigation.Regions;
 global using Uno.Extensions.Serialization;
 global using Windows.ApplicationModel.Core;
 global using Windows.UI.ViewManagement;
 
 #if WINUI
+	global using Uno.Extensions.Toolkit.UI;
 	global using Microsoft.UI.Dispatching;
 	global using Microsoft.UI.Xaml;
 	global using Microsoft.UI.Xaml.Controls;
@@ -40,6 +42,7 @@ global using Windows.UI.ViewManagement;
 	global using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 #else
 	global using Windows.System;
+	global using Uno.Extensions.Toolkit.UI;
 	global using Windows.UI.Xaml;
 	global using Windows.UI.Xaml.Controls;
 	global using Windows.UI.Xaml.Controls.Primitives;

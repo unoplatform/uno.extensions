@@ -1,6 +1,4 @@
-﻿using Uno.Extensions.Navigation.Toolkit.UI;
-
-namespace Playground.ViewModels;
+﻿namespace Playground.ViewModels;
 public class ThemeSwitchViewModel
 {
 	private readonly IThemeService _ts;

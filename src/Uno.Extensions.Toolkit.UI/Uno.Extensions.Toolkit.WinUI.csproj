@@ -1,0 +1,17 @@
+﻿<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
+	<Import Project="..\tfms-ui-winui.props" />
+	<PropertyGroup>
+		<Description>Toolkit Extensions for the Uno Platform (WinUI)</Description>
+	</PropertyGroup>
+	<Import Project="common.props" />
+	<ItemGroup>
+		<PackageReference Include="Uno.Toolkit.WinUI" />
+	</ItemGroup>
+	<ItemGroup>
+
+		<ProjectReference Include="..\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
+	</ItemGroup>
+	<ItemGroup Condition="'$(_IsWinUI)'=='false'">
+		<PackageReference Include="Uno.WinUI" />
+	</ItemGroup>
+</Project>

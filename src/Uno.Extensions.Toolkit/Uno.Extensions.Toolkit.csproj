@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<Import Project="..\tfms-non-ui.props" />
+
+	<PropertyGroup>
+		<Description>Extensions for Uno Platform, UWP and WinUI</Description>
+
+		<TargetFramework>netstandard2.0</TargetFramework>
+
+		<!--Temporary disable missing XML doc until fixed in the whole package-->
+		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
+
+		<!-- As we are InternalsVisibleTo, we disable some compatibility types that are not used by package itself. -->
+		<UnoExtensionsGeneration_DisableModuleInitializerAttribute>True</UnoExtensionsGeneration_DisableModuleInitializerAttribute>
+	</PropertyGroup>
+
+</Project>

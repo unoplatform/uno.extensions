@@ -53,7 +53,11 @@
       "Uno.Extensions.Storage.UI\\Uno.Extensions.Storage.WinUI.csproj",
       "Uno.Extensions.Storage\\Uno.Extensions.Storage.csproj",
       "Uno.Extensions.Templates\\Uno.Extensions.Templates.csproj",
-      "Uno.Extensions\\Uno.Extensions.csproj"
+      "Uno.Extensions\\Uno.Extensions.csproj",
+	  "Uno.Extensions.Toolkit\\Uno.Extensions.Toolkit.csproj",
+	  "Uno.Extensions.Toolkit.UI\\Uno.Extensions.Toolkit.UI.csproj",
+      "Uno.Extensions.Toolkit.UI\\Uno.Extensions.Toolkit.WinUI.csproj"
+	  
     ]
   }
 }

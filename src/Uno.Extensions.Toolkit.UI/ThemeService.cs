@@ -1,4 +1,4 @@
-﻿namespace Uno.Extensions.Navigation.Toolkit.UI;
+﻿namespace Uno.Extensions.Toolkit.UI;
 
 public class ThemeService : IThemeService
 {

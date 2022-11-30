@@ -1,6 +1,4 @@
-﻿using Uno.Extensions.Navigation.Toolkit.UI;
-
-namespace Playground;
+﻿namespace Playground;
 
 internal static class AppHost
 {
@@ -30,10 +28,9 @@ internal static class AppHost
 					.EmbeddedSource<App>()          // appsettings.json + appsettings.development.json
 					.EmbeddedSource<App>("platform")    // appsettings.platform.json
 					.Section<Playground.Models.AppInfo>()
-					.Section<ThemeSettings>()
 			)
 
-
+			.UseThemeSwitching()
 
 			// Register Json serializer jsontypeinfo definitions
 			.UseSerialization(

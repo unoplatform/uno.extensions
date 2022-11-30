@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Uno.Extensions.Navigation.Toolkit.UI
+﻿namespace Uno.Extensions.Toolkit
 {
 	public interface IThemeService
 	{

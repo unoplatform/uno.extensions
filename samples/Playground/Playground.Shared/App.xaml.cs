@@ -1,5 +1,3 @@
-using Uno.Extensions.Navigation.Toolkit.UI;
-
 namespace Playground;
 
 public sealed partial class App : Application
@@ -195,7 +193,7 @@ public sealed partial class App : Application
 
 		var windowServices = (_window.Content as FrameworkElement)!.FindServiceProvider();
 		var ts = windowServices.GetRequiredService<IThemeService>();
-		await ts.SetThemeAsync();
+		await ts.SetThemeAsync(ts.Theme);
 	}
 
 	private enum InitOption
