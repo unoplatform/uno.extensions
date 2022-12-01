@@ -1,7 +1,6 @@
-﻿namespace Uno.Extensions.Toolkit
+﻿namespace Uno.Extensions.Toolkit;
+
+public record ThemeSettings
 {
-	public record ThemeSettings
-	{
-		public DesiredTheme CurrentTheme { get; set; }
-	}
+	public DesiredTheme CurrentTheme { get; set; }
 }
