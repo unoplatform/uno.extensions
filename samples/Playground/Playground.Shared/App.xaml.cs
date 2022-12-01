@@ -171,7 +171,8 @@ public sealed partial class App : Application
 							{
 								// Uncomment to view splashscreen for longer
 								await Task.Delay(5000);
-
+								var ts = sp.GetRequiredService<IThemeService>();
+								await ts.SetThemeAsync(ts.Theme);
 								await nav.NavigateViewAsync<HomePage>(this);
 							}
 						);
@@ -190,10 +191,6 @@ public sealed partial class App : Application
 		if (logger.IsEnabled(LogLevel.Warning)) logger.LogWarningMessage("LogLevel:Warning");
 		if (logger.IsEnabled(LogLevel.Error)) logger.LogErrorMessage("LogLevel:Error");
 		if (logger.IsEnabled(LogLevel.Critical)) logger.LogCriticalMessage("LogLevel:Critical");
-
-		var windowServices = (_window.Content as FrameworkElement)!.FindServiceProvider();
-		var ts = windowServices.GetRequiredService<IThemeService>();
-		await ts.SetThemeAsync(ts.Theme);
 	}
 
 	private enum InitOption
