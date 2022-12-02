@@ -86,7 +86,12 @@ public partial class AdHocViewModel:ObservableObject
 	{
 		var widgets = await _dataService.ReadPackageFileAsync<Widget[]>(_serializer, "data.json");
 		var nestedImage = await _dataService.ReadPackageFileAsync("Assets/Icons/back.png");
-		var nestedFile = await _dataService.ReadPackageFileAsync("Assets/SharedAssets.md");
+		var nestedImageWithDashes = await _dataService.ReadPackageFileAsync("Assets/Icons/help_outline.png");
+		var nestedImageWithDashesAndPoints = await _dataService.ReadPackageFileAsync("Assets/Icons/image.with-dashes.png");
+		var file = await _dataService.ReadPackageFileAsync("Assets/SharedAssets.md");
+		var fileWithDashes = await _dataService.ReadPackageFileAsync("Assets/Asset-GetFileFromApplicationUriAsyncNested-Dashes.xml");
+		var fileWithDashesAndPoints = await _dataService.ReadPackageFileAsync("Assets/Asset.GetFileFromApplicationUriAsyncNested-Dashes.xml");
+		var invalidFile = await _dataService.ReadPackageFileAsync("Assets/Icons/back.log.png");
 	}
 
 	public async Task RunBackgroundTask()
