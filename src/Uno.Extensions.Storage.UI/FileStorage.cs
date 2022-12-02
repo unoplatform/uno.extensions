@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿
+using System.Reflection;
 #if __IOS__ || MACCATALYST || MACOS
 using Foundation;
 #endif
@@ -47,45 +48,30 @@ public class FileStorage : IStorage
 	{
 		try
 		{
-#if __ANDROID__
-				var assets = global::Android.App.Application.Context.Assets;
-				var inputStream = assets?.Open(filename);
-				var content = inputStream?.ReadToEnd();
-				inputStream?.Close();
-				return content;
-#else
-
 			if (!await FileExistsInPackage(filename))
 			{
 				return default;
 			}
-
 			var storageFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///{filename}"));
 			if (File.Exists(storageFile.Path))
 			{
 				var settings = File.ReadAllText(storageFile.Path);
 				return settings;
 			}
-#endif
+
+			return default;
 		}
 		catch
 		{
-			
+			return default;
 		}
 
-		return default;
 	}
 
 	public async Task<Stream?> OpenPackageFileAsync(string filename)
 	{
-
 		try
 		{
-#if __ANDROID__
-			var assets = global::Android.App.Application.Context.Assets;
-			var inputStream = assets?.Open(filename);
-			return inputStream;
-#else
 			if (!await FileExistsInPackage(filename))
 			{
 				return default;
@@ -94,13 +80,11 @@ public class FileStorage : IStorage
 			var storageFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///{filename}"));
 			var stream = await storageFile.OpenStreamForReadAsync();
 			return stream;
-#endif
 		}
 		catch
 		{
+			return default;
 		}
-
-		return default;
 	}
 
 	public async Task WriteFileAsync(string filename, string text, bool overwrite)
@@ -110,4 +94,5 @@ public class FileStorage : IStorage
 			File.WriteAllText(filename, text);
 		}
 	}
+
 }

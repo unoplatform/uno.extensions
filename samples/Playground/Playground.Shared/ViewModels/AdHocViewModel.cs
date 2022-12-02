@@ -85,10 +85,8 @@ public partial class AdHocViewModel:ObservableObject
 	public async Task LoadWidgets()
 	{
 		var widgets = await _dataService.ReadPackageFileAsync<Widget[]>(_serializer, "data.json");
-		var nestedAndroidFileText = await _dataService.ReadPackageFileAsync("Fonts/uno-fluentui-assets.ttf");
-		var nestedAndroidFileStream = await _dataService.OpenPackageFileAsync("Fonts/uno-fluentui-assets.ttf");
-		var nestedUWPFileText = await _dataService.ReadPackageFileAsync("Assets/SplashScreen.png");
-		var nestedUWPFileStream = await _dataService.OpenPackageFileAsync("Assets/SplashScreen.png");
+		var nestedImage = await _dataService.ReadPackageFileAsync("Assets/Icons/back.png");
+		var nestedFile = await _dataService.ReadPackageFileAsync("Assets/SharedAssets.md");
 	}
 
 	public async Task RunBackgroundTask()
