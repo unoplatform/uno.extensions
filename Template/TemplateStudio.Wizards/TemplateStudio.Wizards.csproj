@@ -8,6 +8,7 @@
 
 	<ItemGroup>
 	  <None Remove="Views\MainPage.xaml" />
+	  <None Remove="Views\NewProjectMainPage.xaml" />
 	  <None Remove="Views\Page1.xaml" />
 	</ItemGroup>
 
@@ -24,6 +25,11 @@
 	  <Page Include="Views\MainPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Page>
+	  <Page Include="Views\NewProjectMainPage.xaml">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	    <SubType>Designer</SubType>
+	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>
 
