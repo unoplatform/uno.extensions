@@ -1,0 +1,164 @@
+﻿<Page
+    x:Class="Microsoft.Templates.UI.Views.NewItem.TemplateSelectionPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:res="clr-namespace:Microsoft.Templates.SharedResources;assembly=SharedResources"
+    xmlns:extensions="clr-namespace:Microsoft.Templates.UI.Extensions"
+    xmlns:services="clr-namespace:Microsoft.Templates.UI.Services"
+    xmlns:converters="clr-namespace:Microsoft.Templates.UI.Converters"
+    mc:Ignorable="d" 
+    d:DesignHeight="300" d:DesignWidth="300">
+
+    <!--<Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/TemplateStudio.UI;component/Styles/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <converters:HasItemsVisibilityConverter x:Key="HasItemsVisibilityConverter" />
+            <converters:SavedTemplateGridConverter x:Key="SavedTemplateGridConverter" />
+            <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        </ResourceDictionary>
+    </Page.Resources>-->
+
+    <Grid Style="{StaticResource TSGridMainPage}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="252" />
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <TextBlock
+                Grid.Row="0"
+                Text="{x:Static res:Resources.TemplateSelectionTitle}"
+                Margin="{StaticResource Margin_L_LeftRight_M2_Top}"
+                Style="{StaticResource TSTextBlockSectionTitle}" />
+            <ScrollViewer Grid.Row="1" Style="{StaticResource TSScrollViewer}">
+                <ItemsControl
+                    Focusable="False"
+                    ItemsSource="{Binding TemplateSelection.Groups}"
+                    ItemTemplate="{StaticResource TSNewItemGroupTemplatePageFeature}" />
+            </ScrollViewer>
+        </Grid>
+        <Grid Grid.Column="1" Style="{StaticResource TSGridSectionDividerVertical}" />
+        <ScrollViewer Grid.Column="2" Style="{StaticResource TSScrollViewer}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <StackPanel>
+                    <TextBlock
+                        Style="{StaticResource TSTextBlockSectionTitle}"
+                        Margin="{StaticResource Margin_M2_LeftTopRight}"
+                        Text="{x:Static res:Resources.NewItemTemplateDetailsTitle}" />
+                    <TextBlock
+                        Text="{x:Static res:Resources.NewItemTemplateDetailsNameSectionTitle}"
+                        Style="{StaticResource TSTextBlockSubSectionTitle}"
+                        Margin="{StaticResource Margin_M2_LeftRight_L_Top}" />
+                    <Grid>
+                        <Grid Style="{Binding TemplateSelection.HasErrors, Converter={StaticResource SavedTemplateGridConverter}}"/>
+                        <TextBox
+                            Style="{StaticResource TSTextBoxStyle}"
+                            Text="{Binding TemplateSelection.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Margin="16,12,26,12"
+                            Visibility="{Binding TemplateSelection.NameEditable, Converter={StaticResource BoolToVisibilityConverter}}"
+                            extensions:TextBoxExtensions.IsTextSelected="{Binding TemplateSelection.IsTextSelected}"
+                            AutomationProperties.Name="{x:Static res:Resources.AccessibilityEditPageItem}"
+                            Tag="{Binding TemplateSelection.LostKeyboardFocusCommand}"
+                            LostKeyboardFocus="OnLostKeyboardFocus">
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Enter" Command="{Binding TemplateSelection.SetFocusCommand}" />
+                            </TextBox.InputBindings>
+                        </TextBox>
+                        <TextBlock
+                            Text="{Binding TemplateSelection.Name, Mode=OneWay}"
+                            Style="{StaticResource TSTextBlockSavedTemplateName}"
+                            Margin="23,17,16,17"
+                            Visibility="{Binding TemplateSelection.NameEditable, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=reverse}" />
+                    </Grid>
+                    <StackPanel Visibility="{Binding TemplateSelection.Dependencies, Converter={StaticResource HasItemsVisibilityConverter}}">
+                        <TextBlock
+                            Style="{StaticResource TSTextBlockSubSectionTitle}"
+                            Margin="{StaticResource Margin_M2_LeftRight_L_Top}"
+                            Text="{x:Static res:Resources.NewItemTemplateDetailsDependenciesSectionTitle}" />
+                            <ItemsControl
+                            Style="{StaticResource TSItemsControl}"
+                            ItemsSource="{Binding TemplateSelection.Dependencies}"
+                            Margin="20,4,4,4"
+                            ItemTemplate="{StaticResource TSItemTemplateDependency}" />
+                    </StackPanel>
+                    <StackPanel Visibility="{Binding TemplateSelection.Licenses, Converter={StaticResource HasItemsVisibilityConverter}}">
+                        <TextBlock
+                            Style="{StaticResource TSTextBlockSubSectionTitle}"
+                            Margin="{StaticResource Margin_M2_LeftRight_L_Top}"
+                            Text="{x:Static res:Resources.NewItemTemplateDetailsLicensesSectionTitle}" />
+                        <ItemsControl
+                            Style="{StaticResource TSItemsControl}"
+                            ItemsSource="{Binding TemplateSelection.Licenses}"
+                            Margin="20,4,4,4"
+                            ItemTemplate="{StaticResource TSItemTemplateLicense}" />
+
+                    </StackPanel>
+                    <TextBlock
+                        Style="{StaticResource TSTextBlockSubSectionTitle}"
+                        Margin="{StaticResource Margin_M2_LeftRight_L_Top}"
+                        Text="{x:Static res:Resources.ProjectDetailsAboutSectionTitle}" />
+                    <TextBlock Margin="{StaticResource Margin_M2_LeftRight_S_Top}" AutomationProperties.Name="{x:Static res:Resources.ProjectDetailsAboutSectionLink}">
+                        <Hyperlink Style="{StaticResource TSHyperlink}" Command="{Binding WizardStatus.OpenWebSiteCommand}" AutomationProperties.Name="{x:Static res:Resources.ProjectDetailsAboutSectionLink}">
+                            <TextBlock Text="{x:Static res:Resources.ProjectDetailsAboutSectionLink}" Style="{StaticResource TSTextBlockHyperlinkAbout}" />
+                        </Hyperlink>
+                    </TextBlock>
+                    <TextBlock Margin="{StaticResource Margin_M2_LeftRight_S_Top}" AutomationProperties.Name="{x:Static res:Resources.ProjectDetailsAboutSectionLink}">
+                            <Hyperlink Style="{StaticResource TSHyperlink}" Command="{Binding WizardStatus.CreateIssueCommand}" AutomationProperties.Name="{x:Static res:Resources.ProjectDetailsAboutSectionLink}">
+                                <TextBlock Text="{x:Static res:Resources.ProjectDetailsAboutSectionIssuesLink}" Style="{StaticResource TSTextBlockHyperlinkAbout}" />
+                            </Hyperlink>
+                        </TextBlock>
+                    <TextBox
+                        Style="{StaticResource TSTextBoxVersion}"
+                        Margin="{StaticResource Margin_M1_LeftRight_S_Top}"
+                        Text="{Binding WizardStatus.Versions}"
+                        AutomationProperties.Name="{Binding Text, RelativeSource={RelativeSource Self}}"/>
+                </StackPanel>
+                <StackPanel VerticalAlignment="Bottom" Grid.Row="1">
+                    <Border
+                        Background="{Binding IBInfoBarBackground, Source={x:Static services:UIStylesService.Instance}}"
+                        Margin="{StaticResource Margin_S_Top}">
+                        <StackPanel
+                            Margin="{StaticResource Margin_M2_LeftRight_S_TopBottom}"
+                            Visibility="{Binding BreakingChangesErrors, Converter={StaticResource HasItemsVisibilityConverter}}">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="{StaticResource TSIconWarning}"
+                                    Style="{StaticResource TSBreakingChangesImageIcon}" />
+                                <TextBlock
+                                    Style="{StaticResource TSTextBlockSubSectionTitle}"
+                                    Margin="{StaticResource Margin_XS_Left}"
+                                    VerticalAlignment="Bottom"
+                                    Text="{x:Static res:Resources.BreakingChanges}" />
+                            </StackPanel>
+                            <TextBlock
+                                TextWrapping="Wrap"
+                                Margin="{StaticResource Margin_M_Top}"
+                                Text="{x:Static res:Resources.BreakingChangesDialogMessage}" />
+                            <ItemsControl
+                                Style="{StaticResource TSItemsControl}"
+                                ItemsSource="{Binding BreakingChangesErrors}"
+                                ItemTemplate="{StaticResource TSItemTemplateBreakingChanges}" />
+                        </StackPanel>
+                    </Border>
+                    <!--<Button
+                        Margin="16,8,26,0"
+                        Style="{StaticResource ButtonRefreshTemplatesStyle}"
+                        Content="{x:Static res:Resources.ButtonRefreshTemplatesCache}"
+                        Command="{Binding RefreshTemplatesCacheCommand}"
+                        Visibility="{Binding RefreshTemplateCacheVisibility}" />-->
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</Page>
