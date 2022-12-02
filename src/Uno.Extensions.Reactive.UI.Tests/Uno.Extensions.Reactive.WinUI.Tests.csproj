@@ -1,0 +1,37 @@
+﻿<Project Sdk="MSBuild.Sdk.Extras" ToolsVersion="15.0">
+	<Import Project="..\tfms-ui-winui.props" />
+
+	<PropertyGroup>
+		<Description>Test libarary for the reactive extensions for the Uno Platform (WinUI)</Description>
+		<EnableDefaultPageItems>false</EnableDefaultPageItems>
+		<DefineConstants>$(DefineConstants);WINUI</DefineConstants>
+	</PropertyGroup>
+
+	<ItemGroup Condition="$(IsXamarinIOS) or $(IsXamarinMac) or $(IsMonoAndroid)">
+		<Reference Include="System.Data" />
+		<Reference Include="System.Xml.Linq" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)'!='net6.0-windows10.0.18362'">
+		<Content Include="Assets\**" />
+		<Page Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
+		<Compile Update="**\*.xaml.cs">
+			<DependentUpon>%(Filename)</DependentUpon>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<UpToDateCheckInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MSTest.TestFramework" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Reactive.Testing\Uno.Extensions.Reactive.Testing.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.Reactive.UI\Uno.Extensions.Reactive.WinUI.csproj" />
+		<ProjectReference Include="..\Uno.Extensions.RuntimeTests.Core\Uno.Extensions.RuntimeTests.Core.csproj" />
+	</ItemGroup>
+
+	<Import Project="..\Uno.Extensions.Reactive.Generator\buildTransitive\Uno.Extensions.Reactive.props" />
+</Project>

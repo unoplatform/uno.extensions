@@ -2,8 +2,6 @@
 using System.Collections.Immutable;
 using System.Linq;
 using System.Windows.Input;
-using Windows.ApplicationModel.AppService;
-using Windows.UI.Xaml.Data;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -49,7 +47,10 @@ public partial class Given_BasicViewModel_Then_Generate : FeedUITests
 		{
 			Assert.IsNotNull(bindable);
 			Assert.IsNotNull(bindable as IListState<string>);
-			Assert.IsNotNull(bindable as ICollectionView);
+
+			// This is not the case on UI agnostic targets.
+			// See When_FeedOfKindOfImmutableList_Then_TreatAsListFeed_And_ICollectionView in runtime tests project
+			//Assert.IsNotNull(bindable as ICollectionView);
 		}
 	}
 
@@ -86,7 +87,11 @@ public partial class Given_BasicViewModel_Then_Generate : FeedUITests
 		static void AssertIsValid(object bindable)
 		{
 			Assert.IsNull(bindable as IListState<string>);
-			Assert.IsNull(bindable as ICollectionView);
+
+
+			// This is not the case on UI agnostic targets.
+			// See When_FeedOfKindOfRawEnumerable_Then_DoNotTreatAsListFeed_And_ICollectionView in runtime tests project
+			//Assert.IsNull(bindable as ICollectionView);
 		}
 	}
 

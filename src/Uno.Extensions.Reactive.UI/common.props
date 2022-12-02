@@ -18,13 +18,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Compile Remove="..\Uno.Extensions.Core\_Compat\IsExternalInit.cs" />
-		<Compile Remove="..\Uno.Extensions.Core\_Compat\NotNullIfNotNullAttribute.cs" />
-		<Compile Remove="..\Uno.Extensions.Core\_Compat\NotNullWhenAttribute.cs" />
-	</ItemGroup>
-
-
-	<ItemGroup>
 		<Page Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
 		<Compile Update="**\*.xaml.cs">
 			<DependentUpon>%(Filename)</DependentUpon>

@@ -97,7 +97,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Navigation.W
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Localization.WinUI", "..\..\src\Uno.Extensions.Localization.UI\Uno.Extensions.Localization.WinUI.csproj", "{71D7E1C9-892D-49E7-AAB8-F841C15A2B96}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.UI.WinUI", "..\..\src\Uno.Extensions.Reactive.UI\Uno.Extensions.Reactive.UI.WinUI.csproj", "{150F3B28-7E00-4A65-AAD5-46506610DCF0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.Extensions.Reactive.WinUI", "..\..\src\Uno.Extensions.Reactive.UI\Uno.Extensions.Reactive.WinUI.csproj", "{150F3B28-7E00-4A65-AAD5-46506610DCF0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Playground.Windows", "Playground.Windows\Playground.Windows.csproj", "{1EFB7B93-88D1-4F14-B335-BAB42A49FAF0}"
 EndProject

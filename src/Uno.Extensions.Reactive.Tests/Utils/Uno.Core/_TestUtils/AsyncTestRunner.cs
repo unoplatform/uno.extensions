@@ -28,7 +28,6 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions;
 using Uno.Extensions.Reactive;
-using Uno.Threading;
 
 namespace Uno.Core.Tests.TestUtils
 {
