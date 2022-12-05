@@ -10,12 +10,19 @@ namespace Microsoft.Templates.Core
     {
         public static TValue SafeGet<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, TKey key, TValue defaultResult = default(TValue))
         {
-            if (dictionary.ContainsKey(key))
-            {
-                return dictionary[key];
-            }
+			try
+			{
+				if (dictionary.ContainsKey(key))
+				{
+					return dictionary[key];
+				}
 
-            return defaultResult;
-        }
+				return defaultResult;
+			}
+			catch {
+				return defaultResult;
+			}
+
+		}
     }
 }

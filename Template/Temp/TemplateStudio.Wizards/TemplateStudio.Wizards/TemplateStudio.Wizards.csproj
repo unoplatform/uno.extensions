@@ -553,6 +553,17 @@
     <Compile Include="Styles\TemplateStudioStyles.xaml.cs">
       <DependentUpon>TemplateStudioStyles.xaml</DependentUpon>
     </Compile>
+    <Content Include="Templates\Default-MVVM\Param_ProjectName\App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Content>
+    <Content Include="Templates\Default-MVVM\Param_ProjectName\Contracts\ViewModels\INavigationAware.cs" />
+    <Content Include="Templates\Default-MVVM\Param_ProjectName\Helpers\ResourceExtensions.cs" />
+    <Content Include="Templates\Default-MVVM\Param_ProjectName\Helpers\RuntimeHelper.cs" />
+    <Content Include="Templates\Default-MVVM\Param_ProjectName\Helpers\TitleBarHelper.cs" />
+    <Content Include="Templates\Default-MVVM\Param_ProjectName\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Content>
+    <Content Include="Templates\Default-MVVM\Param_ProjectName\Usings.cs" />
     <Compile Include="ViewModels\ArchitectureMetaDataViewModel.cs" />
     <Compile Include="ViewModels\ArchitectureViewModel.cs" />
     <Compile Include="ViewModels\ContextViewModel.cs" />
@@ -587,6 +598,26 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Content Include="Templates\Default-MVVM\Param_ProjectName\App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Templates\Default-MVVM\Param_ProjectName\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Templates\Default-MVVM\Param_ProjectName\Styles\FontSizes.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Templates\Default-MVVM\Param_ProjectName\Styles\TextBlock.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Templates\Default-MVVM\Param_ProjectName\Styles\Thickness.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Content>
     <Page Include="Views\ArchitecturePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -631,6 +662,18 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="Templates\Default-MVVM\.editorconfig" />
+    <None Include="Templates\Default-MVVM\.template.config\Layout.json" />
+    <None Include="Templates\Default-MVVM\.template.config\template.json" />
+    <None Include="Templates\Default-MVVM\.vsconfig" />
+    <Content Include="Templates\Default-MVVM\Param_ProjectName\app.manifest" />
+    <Content Include="Templates\Default-MVVM\Param_ProjectName\Param_ProjectName.csproj" />
+    <Content Include="Templates\Default-MVVM\Param_ProjectName\Properties\launchsettings.json" />
+    <None Include="Templates\Default-MVVM\Param_ProjectName\Properties\PublishProfiles\win10-arm64.pubxml" />
+    <None Include="Templates\Default-MVVM\Param_ProjectName\Properties\PublishProfiles\win10-x64.pubxml" />
+    <None Include="Templates\Default-MVVM\Param_ProjectName\Properties\PublishProfiles\win10-x86.pubxml" />
+    <Content Include="Templates\Default-MVVM\Param_ProjectName\README.md" />
+    <Content Include="Templates\Default-MVVM\Param_ProjectName\Strings\en-us\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -663,6 +706,11 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Templates\Default-MVVM\Param_ProjectName\Assets\WindowIcon.ico" />
+    <Content Include="Templates\Default-MVVM\Param_ProjectName\TemplateStudio.xml" />
   </ItemGroup>
   <Import Project="..\SharedFunctionality.Core\SharedFunctionality.Core.projitems" Label="Shared" />
   <Import Project="..\SharedFunctionality.UI\SharedFunctionality.UI.projitems" Label="Shared" />

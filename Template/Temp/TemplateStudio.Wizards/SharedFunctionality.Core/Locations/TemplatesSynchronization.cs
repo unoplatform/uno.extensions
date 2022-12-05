@@ -48,7 +48,7 @@ namespace Microsoft.Templates.Core.Locations
             CurrentContentFolder = _content.TemplatesFolder;
 
             //// Doing this here rather than as a part of the downloading & checking for new templates flow
-            CodeGen.Instance.Cache = CodeGen.Instance.Scanner.Scan(_content.TemplatesFolder);
+            //CodeGen.Instance.Cache = CodeGen.Instance.Scanner.Scan(_content.TemplatesFolder);
         }
 
         public async Task EnsureContentAsync(bool force = false, CancellationToken ct = default)

@@ -45,11 +45,13 @@ namespace Microsoft.Templates.UI.VisualStudio.GenShell
             if (string.IsNullOrEmpty(_vsVersionInstance))
             {
                 ISetupConfiguration configuration = new SetupConfiguration() as ISetupConfiguration;
-                ISetupInstance instance = configuration.GetInstanceForCurrentProcess();
-                string version = instance.GetInstallationVersion();
-                string instanceId = instance.GetInstanceId();
-                _vsVersionInstance = $"{version}-{instanceId}";
-            }
+                //ISetupInstance instance = configuration.GetInstanceForCurrentProcess();
+                //string version = instance.GetInstallationVersion();
+                //string instanceId = instance.GetInstanceId();
+                //_vsVersionInstance = $"{version}-{instanceId}";
+				_vsVersionInstance = "";
+
+			}
 
             return _vsVersionInstance;
         }

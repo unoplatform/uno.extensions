@@ -30,9 +30,11 @@ namespace Microsoft.Templates.UI.VisualStudio
         // This one enables tests to build (& run)
         private const string TemplatesPaneGuid = "0a914691-adb5-48d0-908e-58479f8cdbd3";
 #else
-#warning Use one of DebugXXX or ReleaseXXX (to get appropriate TemplatesPaneGuid)
+
+		private const string TemplatesPaneGuid = "342605f0-d1cf-40cf-8aa6-ed3912f97b9f";
+//#warning Use one of DebugXXX or ReleaseXXX (to get appropriate TemplatesPaneGuid)
 #endif
-        private OutputWindowPane _pane;
+		private OutputWindowPane _pane;
 
         public VsOutputPane()
         {
@@ -40,15 +42,15 @@ namespace Microsoft.Templates.UI.VisualStudio
 
         public async Task InitializeAsync()
         {
-            //await SafeThreading.JoinableTaskFactory.SwitchToMainThreadAsync();
+			await SafeThreading.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-            //_pane = await GetOrCreatePaneAsync(Guid.Parse(TemplatesPaneGuid), true, false);
+			_pane = await GetOrCreatePaneAsync(Guid.Parse(TemplatesPaneGuid), true, false);
 
-            //if (_pane != null)
-            //{
-            //    _pane.Activate();
-            //}
-        }
+			if (_pane != null)
+			{
+				_pane.Activate();
+			}
+		}
 
         public void Write(string data)
         {

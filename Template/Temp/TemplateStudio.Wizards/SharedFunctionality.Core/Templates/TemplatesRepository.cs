@@ -68,7 +68,7 @@ namespace Microsoft.Templates.Core
             Sync = new TemplatesSynchronization(source, wizardVersion);
 
             string currentContentFolder = source.GetContentRootFolder(); // CodeGen.Instance?.GetCurrentContentSource(Configuration.Current.RepositoryFolderName, source.Id, source.Platform, source.Language);
-            LoadNamingConfigs(currentContentFolder);
+            //LoadNamingConfigs(currentContentFolder);
         }
 
         public async Task SynchronizeAsync(bool force = false, bool removeTemplates = false)
@@ -694,7 +694,7 @@ namespace Microsoft.Templates.Core
                 }
                 else
                 {
-                    AppHealth.Current.Error.TrackAsync(string.Format(Resources.NamingErrorConfigFileNotFound, projectNameValidationConfigFile)).FireAndForget();
+                    //AppHealth.Current.Error.TrackAsync(string.Format(Resources.NamingErrorConfigFileNotFound, projectNameValidationConfigFile)).FireAndForget();
                 }
             }
 
