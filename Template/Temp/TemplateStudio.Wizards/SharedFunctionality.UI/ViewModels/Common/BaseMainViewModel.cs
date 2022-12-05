@@ -38,7 +38,7 @@ namespace Microsoft.Templates.UI.ViewModels.Common
             BaseInstance = this;
             MainView = mainView;
             SystemService = new SystemService();
-            //WizardStatus = new WizardStatus();
+            WizardStatus = new WizardStatus();
             //StylesService = new UIStylesService(provider);
             Navigation = new WizardNavigation(mainView, steps, canFinish);
             ResourcesService.Instance.Initialize(mainView);

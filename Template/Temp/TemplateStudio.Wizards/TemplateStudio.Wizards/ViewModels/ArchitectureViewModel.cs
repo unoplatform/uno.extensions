@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
@@ -38,7 +39,7 @@ namespace TemplateStudio.Wizards.ViewModels
 				Order = 0,
 				MetadataType = 0,
 				Licenses = null,
-
+				Tags= new Dictionary<string, object> { { "int", 123 } }
 			};
 			this.Items.Add(new ArchitectureMetaDataViewModel(metadataInfo));
 			await BaseMainViewModel.BaseInstance.ProcessItemAsync(Items.First());

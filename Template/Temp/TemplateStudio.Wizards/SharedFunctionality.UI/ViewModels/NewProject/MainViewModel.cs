@@ -47,10 +47,10 @@ namespace Microsoft.Templates.UI.ViewModels.NewProject
 
         public CompositionToolViewModel CompositionTool { get; } = new CompositionToolViewModel();
 
-        public RelayCommand RefreshTemplatesCacheCommand => _refreshTemplatesCacheCommand ?? (_refreshTemplatesCacheCommand = new RelayCommand(
-             () => SafeThreading.JoinableTaskFactory.RunAsync(async () => await OnRefreshTemplatesCacheAsync())));
+		public RelayCommand RefreshTemplatesCacheCommand => _refreshTemplatesCacheCommand ?? (_refreshTemplatesCacheCommand = new RelayCommand(
+			 () => SafeThreading.JoinableTaskFactory.RunAsync(async () => await OnRefreshTemplatesCacheAsync())));
 
-        public RelayCommand CompositionToolCommand => _compositionToolCommand ?? (_compositionToolCommand = new RelayCommand(() => OnCompositionTool()));
+		public RelayCommand CompositionToolCommand => _compositionToolCommand ?? (_compositionToolCommand = new RelayCommand(() => OnCompositionTool()));
 
         public Visibility RefreshTemplateCacheVisibility
         {
@@ -112,7 +112,7 @@ namespace Microsoft.Templates.UI.ViewModels.NewProject
 
                     break;
                 default:
-					//WizardStatus.Title = Resources.NewProjectTitleWinUIDesktop;
+					WizardStatus.Title = Resources.NewProjectTitleWinUIDesktop;
 
 					break;
             }
@@ -190,9 +190,10 @@ namespace Microsoft.Templates.UI.ViewModels.NewProject
 
         public override async Task OnTemplatesAvailableAsync()
         {
-            //ValidationService.Initialize(UserSelection.GetNames, UserSelection.GetPageNames);
-            //await ProjectType.LoadDataAsync(Context);
+			//ValidationService.Initialize(UserSelection.GetNames, UserSelection.GetPageNames);
+			//await ProjectType.LoadDataAsync(Context);
 			//ShowNoContentPanel = !ProjectType.Items.Any();
+			await Architecture.LoadDataAsync(this);
 			ShowNoContentPanel = false;
 		}
 
@@ -223,7 +224,7 @@ namespace Microsoft.Templates.UI.ViewModels.NewProject
 
         public async Task OnProjectTypeSelectedAsync()
         {
-            await SafeThreading.JoinableTaskFactory.SwitchToMainThreadAsync();
+            //await SafeThreading.JoinableTaskFactory.SwitchToMainThreadAsync();
 
             Context.ProjectType = ProjectType.Selected.Name;
 			await Framework.LoadDataAsync(Context);
@@ -237,7 +238,7 @@ namespace Microsoft.Templates.UI.ViewModels.NewProject
 
 		private async Task OnFrameworkSelectedAsync()
         {
-            await SafeThreading.JoinableTaskFactory.SwitchToMainThreadAsync();
+            //await SafeThreading.JoinableTaskFactory.SwitchToMainThreadAsync();
 
             Context.FrontEndFramework = Framework.Selected.Name;
 

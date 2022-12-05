@@ -80,7 +80,7 @@ namespace TemplateStudio.Wizards
 #pragma warning restore VSTHRD100 // Avoid async void methods
 		{
 			MainViewModel.Instance.Initialize(_context);
-			////await MainViewModel.Instance.SynchronizeAsync();
+			//await MainViewModel.Instance.SynchronizeAsync();
 			await MainViewModel.Instance.OnTemplatesAvailableAsync();
 		}
 
