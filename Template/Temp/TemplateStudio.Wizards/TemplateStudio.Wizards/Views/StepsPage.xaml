@@ -10,7 +10,7 @@
 		xmlns:res="clr-namespace:Microsoft.Templates.SharedResources;assembly=SharedResources"
 		xmlns:converters="clr-namespace:Microsoft.Templates.UI.Converters"
 		xmlns:common="clr-namespace:Microsoft.Templates.UI.Views.Common"
-	   d:DesignHeight="450" d:DesignWidth="800"
+	 
        Loaded="OnLoaded">
 
 	<Grid Style="{StaticResource TSGridMainPage}">

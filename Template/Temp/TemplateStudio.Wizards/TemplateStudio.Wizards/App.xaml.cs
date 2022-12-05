@@ -84,7 +84,7 @@ namespace TemplateStudio.Wizards
 			Resources.Add("HasItemsVisibilityConverter", new HasItemsVisibilityConverter());
 			Resources.Add("BoolToVisibilityConverter", new BoolToVisibilityConverter());
 
-			Initialize();
+			//Initialize();
 		}
 		public void Initialize()
 		{

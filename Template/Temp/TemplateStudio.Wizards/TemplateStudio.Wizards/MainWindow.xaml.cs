@@ -47,9 +47,8 @@ namespace TemplateStudio.Wizards
 
 			var context = new UserSelectionContext(GenContext.CurrentLanguage, Platforms.WinUI);
 			_context = context;
-			MainViewModel.Instance.Initialize(context);
 			InitializeComponent();
-			NavigationService.InitializeMainFrame(mainFrame, new StepsPage());
+			//NavigationService.InitializeMainFrame(mainFrame, new StepsPage());
 		}
 
 		private void OnKeyDown(object sender, KeyEventArgs e)

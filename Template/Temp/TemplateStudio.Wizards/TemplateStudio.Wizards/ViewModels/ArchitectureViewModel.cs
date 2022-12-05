@@ -38,7 +38,7 @@ namespace TemplateStudio.Wizards.ViewModels
 				Icon = "metadataInfo.Icon",
 				Order = 0,
 				MetadataType = 0,
-				Licenses = null,
+				Licenses = "[Microsoft.WindowsAppSDK](https://www.nuget.org/packages/Microsoft.WindowsAppSDK/1.1.3/License)|[WinUIEx](https://licenses.nuget.org/Apache-2.0)",
 				Tags= new Dictionary<string, object> { { "int", 123 } }
 			};
 			this.Items.Add(new ArchitectureMetaDataViewModel(metadataInfo));

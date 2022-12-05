@@ -34,7 +34,7 @@ namespace TemplateStudio.Wizards.ViewModels
             Order = metadataInfo.Order;
             MetadataType = metadataInfo.MetadataType;
             Licenses = metadataInfo.LicenseTerms?.Select(l => new LicenseViewModel(l));
-            Deprecated = bool.TryParse(metadataInfo.Tags.FirstOrDefault(t => t.Key.Equals("deprecated", StringComparison.Ordinal)).Value?.ToString(), out bool isDeprecated);
+            Deprecated = false;
         }
     }
 }

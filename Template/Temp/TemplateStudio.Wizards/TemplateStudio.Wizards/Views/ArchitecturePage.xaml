@@ -10,9 +10,10 @@
       Title="ArchitecturePage">
 
 
+
 	<Grid>
-		<Button>ArchitecturePage</Button>
-		<Grid>
+		<Button>TEste</Button>
+		<!--<Grid>
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="*" />
@@ -25,9 +26,10 @@
 			<ListView
             Grid.Row="1"
             Style="{StaticResource TSListViewSingleSelection}"
-            ItemsSource="{Binding Architecture.Items}"
+            ItemsSource="{Binding Framework.Items}"
             ItemTemplate="{StaticResource TSItemTemplateBasicInfo}"
             AutomationProperties.Name="{x:Static res:Resources.AccessibilityDesignPatternList}" />
-		</Grid>
+		</Grid>-->
 	</Grid>
+
 </Page>

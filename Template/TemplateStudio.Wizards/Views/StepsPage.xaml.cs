@@ -17,20 +17,22 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using TemplateStudio.Wizards;
 using TemplateStudio.Wizards.Views;
 using Microsoft.Templates.UI.Services;
 using Microsoft.Templates.UI.ViewModels.NewProject;
 using Microsoft.Templates.UI.Views.NewProject;
 
+
 namespace TemplateStudio.Wizards.Views
 {
 	/// <summary>
-	/// Interaction logic for NewWindow.xaml
+	/// Interaction logic for StepsPage.xaml
 	/// </summary>
-	public partial class NewWindow : Window
+	public partial class StepsPage : Page
 	{
 		private IInputElement _focusedElement;
-		public NewWindow()
+		public StepsPage()
 		{
 			DataContext = MainViewModel.Instance;
 
@@ -44,7 +46,7 @@ namespace TemplateStudio.Wizards.Views
 		{
 			if (stepFrame.Content == null)
 			{
-				NavigationService.InitializeSecondaryFrame(stepFrame, WizardNavigation.Current.CurrentStep.GetPage());
+				Microsoft.Templates.UI.Services.NavigationService.InitializeSecondaryFrame(stepFrame, WizardNavigation.Current.CurrentStep.GetPage());
 				sequentialFlow.FocusFirstStep();
 			}
 
@@ -54,14 +56,14 @@ namespace TemplateStudio.Wizards.Views
 				Keyboard.Focus(_focusedElement);
 			}
 
-			NavigationService.SubscribeEventHandlers();
+			Microsoft.Templates.UI.Services.NavigationService.SubscribeEventHandlers();
 			WizardNavigation.Current.SubscribeEventHandlers();
 			PreviewGotKeyboardFocus += OnPreviewGotKeyboardFocus;
 		}
 
 		private void OnUnloaded(object sender, RoutedEventArgs e)
 		{
-			NavigationService.UnsubscribeEventHandlers();
+			Microsoft.Templates.UI.Services.NavigationService.UnsubscribeEventHandlers();
 			WizardNavigation.Current.UnsubscribeEventHandlers();
 			PreviewGotKeyboardFocus -= OnPreviewGotKeyboardFocus;
 		}

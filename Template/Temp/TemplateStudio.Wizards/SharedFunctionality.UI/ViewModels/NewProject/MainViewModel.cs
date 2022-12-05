@@ -84,7 +84,7 @@ namespace Microsoft.Templates.UI.ViewModels.NewProject
         {
             get
             {
-                yield return StepData.MainStep(NewProjectStepProjectType, "1", Resources.NewProjectStepProjectType, () => new ArchitecturePage(), false, false);
+                yield return StepData.MainStep(NewProjectStepProjectType, "1", Resources.NewProjectStepProjectType, () => new ArchitecturePage(), true, true);
                 yield return StepData.MainStep(NewProjectStepFramework, "2", Resources.NewProjectStepDesignPattern, () => new CodingStyle());
             }
         }
@@ -193,7 +193,7 @@ namespace Microsoft.Templates.UI.ViewModels.NewProject
 			//ValidationService.Initialize(UserSelection.GetNames, UserSelection.GetPageNames);
 			//await ProjectType.LoadDataAsync(Context);
 			//ShowNoContentPanel = !ProjectType.Items.Any();
-			await Architecture.LoadDataAsync(this);
+			//await Architecture.LoadDataAsync(this);
 			ShowNoContentPanel = false;
 		}
 
@@ -228,7 +228,7 @@ namespace Microsoft.Templates.UI.ViewModels.NewProject
 
             Context.ProjectType = ProjectType.Selected.Name;
 			await Framework.LoadDataAsync(Context);
-			await Architecture.LoadDataAsync(this);
+			//await Architecture.LoadDataAsync(this);
 		}
 
 		private async Task OnArchitectureSelectedAsync()

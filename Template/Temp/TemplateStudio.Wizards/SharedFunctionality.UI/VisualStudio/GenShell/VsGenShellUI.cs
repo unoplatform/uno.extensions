@@ -184,7 +184,7 @@ namespace Microsoft.Templates.UI.VisualStudio.GenShell
             {
                 await SafeThreading.JoinableTaskFactory.SwitchToMainThreadAsync();
                 var output = await _vsShellService.GetVsOutputPaneAsync();
-                output.Write(data);
+                //output.Write(data);
             });
         }
 

@@ -7,9 +7,21 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="String\Resources.Designer.cs" />
+	  <Compile Remove="Views\NewProjectMainPage.xaml.cs" />
+	  <Compile Remove="Views\StepsPage.xaml.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Remove="String\Resources.resx" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <None Remove="Views\MainPage.xaml" />
+	  <None Remove="Views\MainUnoPage.xaml" />
 	  <None Remove="Views\NewProjectMainPage.xaml" />
 	  <None Remove="Views\Page1.xaml" />
+	  <None Remove="Views\StepsPage.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -22,18 +34,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Page Include="Views\MainUnoPage.xaml">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	    <Generator>XamlIntelliSenseFileGenerator</Generator>
+	  </Page>
 	  <Page Include="Views\MainPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 	  </Page>
-	  <Page Include="Views\NewProjectMainPage.xaml">
-	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-	    <SubType>Designer</SubType>
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
-
-	<ItemGroup>
 	  <Page Include="Views\Page1.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
@@ -45,21 +53,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="String\Resources.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>Resources.resx</DependentUpon>
-	  </Compile>
-	  <Compile Update="Views\Page1.xaml.cs">
-	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-	  </Compile>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <EmbeddedResource Update="String\Resources.resx">
-	    <Generator>ResXFileCodeGenerator</Generator>
-	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
+	  <Folder Include="String\" />
 	</ItemGroup>
 	
 </Project>

@@ -19,7 +19,9 @@
 		KeyDown="OnKeyDown"
 		mc:Ignorable="d"
 		xmlns:local="clr-namespace:TemplateStudio.Wizards"
-		Title="MainWindow">
+		Title="MainWindow"
+  
+		>
 
 
 	<Window.Style>
@@ -69,9 +71,10 @@
 		<!--Separator-->
 		<Frame Grid.Row="2" x:Name="mainFrame" NavigationUIVisibility="Hidden" Focusable="False" />
 		<controls:NotificationsControl Grid.Row="2" VerticalAlignment="Top"/>
-
+		
 
 		<!--Separator-->
+
 		<StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right">
 			<Grid>
 				<Button  Style="{StaticResource TSButtonRestoreWindow}" Command="{Binding Navigation.RestoreCommand}" Visibility="{Binding Navigation.IsMaximized, Converter={StaticResource BoolToVisibilityConverter}}" />

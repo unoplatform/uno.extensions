@@ -22,8 +22,7 @@ namespace TemplateStudio.Wizards.Views
 	{
 		public Page1()
 		{
-			InitializeComponent();
-			
+			InitializeComponent();			
 		}
 
 	}
