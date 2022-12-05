@@ -2,16 +2,15 @@
 
 public static class ApplicationBuilderExtensions
 {
-	public static Task<IHost> ShowAsync<TShell>(this IApplicationBuilder appBuilder)
-		where TShell : UIElement, new() =>
-		NavigateInternalAsync<TShell>(appBuilder, null);
-
-	public static Task<IHost> NavigateAsync<TShell>(this IApplicationBuilder appBuilder,
-		Func<IServiceProvider, INavigator, Task> initialNavigate)
-		where TShell : UIElement, new() =>
-		NavigateInternalAsync<TShell>(appBuilder, initialNavigate);
-
-	private static async Task<IHost> NavigateInternalAsync<TShell>(IApplicationBuilder appBuilder,
+	/// <summary>
+	/// Creates the Application Shell and will initialize the Shell Content before creating
+	/// the <see cref="IHost" /> and initializing the app with the initial navigation.
+	/// </summary>
+	/// <typeparam name="TShell">The <see cref="UIElement" /> to use for the App Shell.</typeparam>
+	/// <param name="appBuilder">The <see cref="IApplicationBuilder" />.</param>
+	/// <param name="initialNavigate">An optional Navigation Delegate to conditionally control where the app should navigate on launch.</param>
+	/// <returns>The <see cref="IHost" />.</returns>
+	public static async Task<IHost> NavigateAsync<TShell>(this IApplicationBuilder appBuilder,
 		Func<IServiceProvider, INavigator, Task>? initialNavigate = null)
 		where TShell : UIElement, new()
 	{

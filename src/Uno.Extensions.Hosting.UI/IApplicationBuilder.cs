@@ -20,6 +20,9 @@ public interface IApplicationBuilder
 	/// </summary>
 	Window Window { get; }
 
+	/// <summary>
+	/// Gets stateful properties that Extensions can use to work with each other.
+	/// </summary>
 	IDictionary<object, object> Properties { get; }
 
 	/// <summary>
