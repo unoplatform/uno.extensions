@@ -18,17 +18,10 @@
 		 <!--#if (localization)-->
 		<PackageReference Include="Uno.Extensions.Localization" />
 		<!--#endif-->
-		<!--#if (uselogging && !useserilog)-->
-		<PackageReference Include="Uno.Extensions.Logging.WinUI" />
-		<!--#endif-->
-		<!--#if (useserilog)-->
-		<PackageReference Include="Uno.Extensions.Logging.Serilog" />
-		<!--#endif-->
 		<PackageReference Include="Uno.Extensions.Navigation" />
 		<PackageReference Include="Uno.Extensions.Serialization" />
 		<PackageReference Include="Uno.Extensions.Serialization.Http" />
 		<PackageReference Include="Uno.Extensions.Serialization.Refit" />
 		<PackageReference Include="Uno.Extensions.Reactive" />
-		<PackageReference Include="Uno.Extensions.Reactive.WinUI" />
 	</ItemGroup>
 </Project>
