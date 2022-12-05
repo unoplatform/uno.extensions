@@ -16,6 +16,8 @@ public class FileStorage : IStorage
 		//Look in assets first***
 		var context = global::Android.App.Application.Context;
 		var assets = context.Assets;
+
+		//Get only the filename with extension and apply internal UNO naming rules so we are able to find the compiled resources by replacing '.' and '-' by underscore.
 		var normalizedFileName = Path.GetFileNameWithoutExtension(filename).Replace('.', '_').Replace('-','_') + Path.GetExtension(filename);
 		var files = new List<string>();
 		ScanPackageAssets(assets, files);
@@ -24,12 +26,15 @@ public class FileStorage : IStorage
 			return true;
 		}
 
+		//If not asset found and we detect "/" in filename means we are looking for a nested resource file.
+		//In this case we need to replace '/, -, .' by '_' and remove filename extension before trying to pull it from app resources.
 		var nameArray = filename.ToLower().Split("/")?.ToList();
 		var normalizedResName = Path.GetFileNameWithoutExtension(filename).Replace('.', '_').Replace('-','_');
 		if(nameArray?.Count() > 1 )
 		{
-			//Nested resource name
+			//Replace original filename in our array by our normalized resource filename.
 			nameArray[nameArray.Count() -1] = normalizedResName;
+			//Join our normalized elements without extension
 			normalizedResName = string.Join("_", nameArray);
 		}
 
@@ -81,6 +86,7 @@ public class FileStorage : IStorage
 
 #if __ANDROID__
 	//This method will scan for all the assets within current package
+	//This method will return a list of {file}.{extension}
 	private bool ScanPackageAssets(AssetManager? assets, List<string> files, string rootPath = "")
 	{
 		try
