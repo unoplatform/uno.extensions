@@ -1,6 +1,8 @@
 ﻿
 using System.Reflection;
-#if __IOS__ || MACCATALYST || MACOS
+#if __ANDROID__
+using Android.Content.Res;
+#elif __IOS__ || MACCATALYST || MACOS
 using Foundation;
 #endif
 
@@ -16,8 +18,11 @@ public class FileStorage : IStorage
 		var assets = context.Assets;
 		var normalizedFileName = Path.GetFileNameWithoutExtension(filename).Replace('.', '_').Replace('-','_') + Path.GetExtension(filename);
 		var files = new List<string>();
-		ScanPackageAssets();
-		if (files.Contains(normalizedFileName)) return true;
+		ScanPackageAssets(assets, files);
+		if (files.Contains(normalizedFileName))
+		{
+			return true;
+		}
 
 		var nameArray = filename.ToLower().Split("/")?.ToList();
 		var normalizedResName = Path.GetFileNameWithoutExtension(filename).Replace('.', '_').Replace('-','_');
@@ -32,31 +37,19 @@ public class FileStorage : IStorage
 		var resources = context.Resources;
 		int resId =0;
 		resId = resources?.GetIdentifier(normalizedResName, "drawable", context.PackageName) ?? 0;
-		if(resId != 0) return true;
+		if (resId != 0)
+		{
+			return true;
+		}
 
 		//Look in mipmap resources***
 		resId = resources?.GetIdentifier(normalizedResName, "mipmap", context.PackageName) ?? 0;
-		if(resId != 0) return true;
-
-		//This method will scan for all the assets within current package
-		bool ScanPackageAssets(string rootPath = "")
+		if (resId != 0)
 		{
-			try
-			{
-				var Paths = assets?.List(rootPath);
-				if(Paths?.Length >0)
-				{
-					foreach (var file in Paths)
-					{
-						string path = string.IsNullOrEmpty(rootPath)? file: rootPath+"/"+file;
-						if(!ScanPackageAssets(path)) return false;
-						else if(path.Contains('.')) files.Add(Path.GetFileNameWithoutExtension(path) + Path.GetExtension(path));
-					}
-				}
-			}
-			catch{return false;}
 			return true;
 		}
+
+		
 
 		return false;
 #elif __IOS__ || MACCATALYST || MACOS
@@ -85,6 +78,37 @@ public class FileStorage : IStorage
 #endif
 
 	}
+
+#if __ANDROID__
+	//This method will scan for all the assets within current package
+	private bool ScanPackageAssets(AssetManager? assets, List<string> files, string rootPath = "")
+	{
+		try
+		{
+			var Paths = assets?.List(rootPath);
+			if (Paths?.Length > 0)
+			{
+				foreach (var file in Paths)
+				{
+					string path = string.IsNullOrWhiteSpace(rootPath) ? file : Path.Combine(rootPath, file);
+					if (!ScanPackageAssets(assets, files, path))
+					{
+						return false;
+					}
+
+					if (path.Contains('.'))
+					{
+						files.Add(Path.GetFileNameWithoutExtension(path) + Path.GetExtension(path));
+					}
+				}
+			}
+			return true;
+		}
+		catch {
+			return false;
+		}
+	}
+#endif
 
 	public async Task<string> CreateFolderAsync(string foldername)
 	{

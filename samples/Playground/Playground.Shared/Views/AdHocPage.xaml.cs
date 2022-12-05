@@ -15,8 +15,7 @@ public sealed partial class AdHocPage : Page
 	{
 		if (args.NewValue != null)
 		{
-			var bvm = args.NewValue as BindableAdHocViewModel;
-			ViewModel = bvm?.Model as AdHocViewModel;
+			ViewModel = args.NewValue as AdHocViewModel;
 		}
 	}
 }
