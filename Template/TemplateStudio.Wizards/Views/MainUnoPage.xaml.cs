@@ -19,14 +19,14 @@ using System.Windows.Shapes;
 
 namespace TemplateStudio.Wizards.Views
 {
-	public partial class MainUnoPage : System.Windows.Window
+	public partial class MainUnoPage : Window
 	{
 		public ContextViewModel ContextViewModel = null;
 		
 		public MainUnoPage()
 		{
 			DataContext= this;
-			InitializeComponent();
+			//InitializeComponent();
 		}
 	}
 }

@@ -7,10 +7,10 @@
         mc:Ignorable="d"
         >
 	<!--Title="MainUnoPage" Height="450" Width="800"-->
-	<!--<Grid>
-		<Button>asdf</Button>
+	<Grid>
+		<Button>test</Button>
 		<Button Content="Button" HorizontalAlignment="Left" Margin="187,138,0,0" VerticalAlignment="Top"/>
-		<Button>asdf</Button>
-	</Grid>-->
+		
+	</Grid>
 </Window>
 
