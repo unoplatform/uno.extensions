@@ -106,6 +106,8 @@
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Storage.UI\Uno.Extensions.Storage.WinUI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Storage\Uno.Extensions.Storage.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Toolkit.UI\Uno.Extensions.Toolkit.WinUI.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Toolkit\Uno.Extensions.Toolkit.csproj" />
 	</ItemGroup>
 	<Import Project="..\Playground.Shared\Playground.Shared.projitems" Label="Shared" />
 

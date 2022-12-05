@@ -47,7 +47,7 @@ public sealed partial class App : Application
 				// which will host navigation
 				var f = new Frame();
 				_window.Content = f;
-				_window.AttachServices(_host.Services);
+				await _window.AttachServicesAsync(_host.Services);
 				f.Navigate(typeof(MainPage));
 
 				await Task.Run(() => _host.StartAsync());
@@ -70,7 +70,7 @@ public sealed partial class App : Application
 					VerticalContentAlignment = VerticalAlignment.Stretch
 				};
 				_window.Content = root;
-				var services = _window.AttachServices(_host.Services);
+				var services = await _window.AttachServicesAsync(_host.Services);
 				var startup = root.HostAsync(services, initialRoute: "");
 
 				await Task.Run(() => _host.StartAsync());
@@ -79,27 +79,6 @@ public sealed partial class App : Application
 				// first navigation
 				await startup;
 				break;
-
-			case InitOption.AttachNavigation:
-#pragma warning disable CS0618 // AttachNavigation is obsolete - init option is left here to test backward compat
-				// Attach navigation to a Window which will create the navigation root
-				// and assign to Content property on the Window
-				_host = appBuilder.Build();
-
-				_window.AttachNavigation(_host.Services,
-					// Option 1: This requires Shell to be the first RouteMap - best for perf as no reflection required
-					// initialRoute: ""
-					// Option 2: Specify route name
-					// initialRoute: "Shell"
-					// Option 3: Specify the view model. To avoid reflection, you can still define a routemap
-					initialViewModel: typeof(ShellViewModel)
-					);
-
-				await Task.Run(() => _host.StartAsync());
-
-				// With this way there's no way to await for navigation to finish
-				break;
-#pragma warning restore CS0618 // Type or member is obsolete
 
 			case InitOption.InitializeNavigation:
 				// InitializeNavigationAsync will create the navigation host (ContentControl),
@@ -171,7 +150,6 @@ public sealed partial class App : Application
 							{
 								// Uncomment to view splashscreen for longer
 								await Task.Delay(5000);
-
 								await nav.NavigateViewAsync<HomePage>(this);
 							}
 						);
@@ -196,7 +174,6 @@ public sealed partial class App : Application
 	{
 		AdHocHosting,
 		NavigationRoot,
-		AttachNavigation,
 		InitializeNavigation,
 		Splash,
 		NoShellViewModel,

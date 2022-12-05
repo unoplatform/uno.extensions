@@ -35,7 +35,9 @@
       "Uno.Extensions.Serialization.Tests\\Uno.Extensions.Serialization.Tests.csproj",
       "Uno.Extensions.Serialization\\Uno.Extensions.Serialization.csproj",
       "Uno.Extensions.Templates\\Uno.Extensions.Templates.csproj",
-      "Uno.Extensions\\Uno.Extensions.csproj"
+      "Uno.Extensions\\Uno.Extensions.csproj",
+	  "Uno.Extensions.Toolkit\\Uno.Extensions.Toolkit.csproj",
+	  "Uno.Extensions.Toolkit.UI\\Uno.Extensions.Toolkit.UI.csproj"
     ]
   }
 }

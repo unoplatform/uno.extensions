@@ -333,3 +333,4 @@ ASALocalRun/
 /testing/**/*.txt
 
 .vscode/**/*.*
+DebugPlatforms.props

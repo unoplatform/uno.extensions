@@ -22,6 +22,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Uno.Toolkit.WinUI" />
+		<ProjectReference Include="..\Uno.Extensions.Toolkit.UI\Uno.Extensions.Toolkit.WinUI.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.WinUI.csproj" />
 	</ItemGroup>
 </Project>

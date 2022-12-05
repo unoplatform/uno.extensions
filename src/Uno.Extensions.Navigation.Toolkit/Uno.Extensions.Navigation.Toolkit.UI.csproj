@@ -10,6 +10,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Uno.Extensions.Toolkit.UI\Uno.Extensions.Toolkit.UI.csproj" />
 		<ProjectReference Include="..\Uno.Extensions.Navigation.UI\Uno.Extensions.Navigation.UI.csproj" />
 	</ItemGroup>
 

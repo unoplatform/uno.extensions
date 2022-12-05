@@ -30,7 +30,7 @@ internal static class AppHost
 					.Section<Playground.Models.AppInfo>()
 			)
 
-
+			.UseThemeSwitching()
 
 			// Register Json serializer jsontypeinfo definitions
 			.UseSerialization(
@@ -128,6 +128,7 @@ internal static class AppHost
 			new ViewMap<ItemDetailsPage, ItemDetailsViewModel>(),
 			new ViewMap<AuthTokenDialog, AuthTokenViewModel>(),
 			new ViewMap<BasicFlyout, BasicViewModel>(),
+			new ViewMap<ThemeSwitchPage, ThemeSwitchViewModel>(),
 			confirmDialog,
 			localizedDialog
 		);

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace Uno.Extensions.Navigation;
+﻿namespace Uno.Extensions.Navigation;
 
 [EditorBrowsable(EditorBrowsableState.Never)]
 internal interface IRootViewInitializer

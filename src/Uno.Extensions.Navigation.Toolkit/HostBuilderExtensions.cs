@@ -6,6 +6,7 @@ public static class HostBuilderExtensions
 			this IHostBuilder builder)
 	{
 		return builder
+			.UseToolkit()
 			.ConfigureServices(sp =>
 			{
 				_ = sp.AddToolkitNavigation();

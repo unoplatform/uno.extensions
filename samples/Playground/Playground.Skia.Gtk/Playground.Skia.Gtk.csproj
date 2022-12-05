@@ -15,15 +15,15 @@
 		<UpToDateCheckInput Include="..\Playground.Shared\**\*.xaml" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="CommunityToolkit.Mvvm"  />
-		<PackageReference Include="Microsoft.Extensions.Logging"  />
-		<PackageReference Include="Microsoft.Extensions.Logging.Console"   />
-		<PackageReference Include="System.Text.Json"  />
-		<PackageReference Include="Refit"   />
-		<PackageReference Include="Refit.HttpClientFactory"   />
-		<PackageReference Include="Uno.UI.Skia.Gtk"   />
-		<PackageReference Include="Uno.UI.RemoteControl"   Condition="'$(Configuration)'=='Debug'" />
-		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging"   />
+		<PackageReference Include="CommunityToolkit.Mvvm" />
+		<PackageReference Include="Microsoft.Extensions.Logging" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Console" />
+		<PackageReference Include="System.Text.Json" />
+		<PackageReference Include="Refit" />
+		<PackageReference Include="Refit.HttpClientFactory" />
+		<PackageReference Include="Uno.UI.Skia.Gtk" />
+		<PackageReference Include="Uno.UI.RemoteControl" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Configuration\Uno.Extensions.Configuration.csproj" />
@@ -45,6 +45,8 @@
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Storage.UI\Uno.Extensions.Storage.UI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Storage\Uno.Extensions.Storage.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Toolkit.UI\Uno.Extensions.Toolkit.UI.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Toolkit\Uno.Extensions.Toolkit.csproj" />
 	</ItemGroup>
 
 	<Import Project="..\Playground.Shared\Playground.Shared.projitems" Label="Shared" />

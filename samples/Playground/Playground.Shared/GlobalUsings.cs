@@ -23,6 +23,7 @@ global using Uno.Extensions.Http;
 global using Uno.Extensions.Localization;
 global using Uno.Extensions.Logging;
 global using Uno.Extensions.Navigation;
+global using Uno.Extensions.Toolkit;
 global using Uno.Extensions.Navigation.Regions;
 global using Uno.Extensions.Serialization;
 global using Windows.ApplicationModel.Core;
