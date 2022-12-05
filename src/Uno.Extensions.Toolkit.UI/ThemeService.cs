@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions.Toolkit;
 
-public class ThemeService : IThemeService
+internal class ThemeService : IThemeService
 {
 	private readonly Window _window;
 	private readonly IDispatcher _dispatcher;
@@ -10,7 +10,11 @@ public class ThemeService : IThemeService
 	/// <inheritdoc/>
 	public event EventHandler<DesiredTheme>? DesiredThemeChanged;
 
-	public ThemeService(Window window, IDispatcher dispatcher,ILogger<ThemeService> logger, IWritableOptions<ThemeSettings> writeSettings)
+	public ThemeService(
+		ILogger<ThemeService> logger,
+		Window window,
+		IDispatcher dispatcher,
+		IWritableOptions<ThemeSettings> writeSettings)
 	{
 		_window = window;
 		_dispatcher = dispatcher;
@@ -54,7 +58,7 @@ public class ThemeService : IThemeService
 		}
 		catch(Exception ex)
 		{
-			_logger?.LogError(ex, $"[ThemeService.SaveDesiredTheme({theme})] - Error while updating current theme.");
+			if(_logger.IsEnabled(LogLevel.Error)) _logger.LogError(ex, $"[ThemeService.SaveDesiredTheme({theme})] - Error while updating current theme.");
 		}
 	}
 
@@ -66,7 +70,7 @@ public class ThemeService : IThemeService
 		}
 		catch (Exception ex)
 		{
-			_logger?.LogError(ex, $"[ThemeService.GetSavedTheme()] - Error while reading stored theme.");
+			if (_logger.IsEnabled(LogLevel.Error)) _logger.LogErrorMessage(ex, $"[ThemeService.GetSavedTheme()] - Error while reading stored theme.");
 		}
 
 		return DesiredTheme.System;
