@@ -1,10 +1,4 @@
-﻿using Microsoft.UI.Xaml;
-using Uno.Extensions.Navigation;
-using Windows.Foundation.Metadata;
-using Windows.UI.Xaml;
-using Uno.Extensions.Hosting;
-
-namespace Uno.Extensions;
+﻿namespace Uno.Extensions;
 
 public static class ServiceProviderExtensions
 {
@@ -14,11 +8,11 @@ public static class ServiceProviderExtensions
 	/// </summary>
 	/// <param name="window">The Window to attach the IServiceProvider to</param>
 	/// <param name="services">The IServiceProvider instance to attach</param>
-	public static IServiceProvider AttachServices(this Window window, IServiceProvider services)
+	public async static Task<IServiceProvider> AttachServicesAsync(this Window window, IServiceProvider services)
 	{
-		return window.Content
+		return await window.Content
 				.AttachServiceProvider(services)
-				.RegisterWindow(window);
+				.RegisterWindowAsync(window);
 	}
 
 	/// <summary>
@@ -27,10 +21,21 @@ public static class ServiceProviderExtensions
 	/// <param name="services">The IServiceProvider to register the Window with</param>
 	/// <param name="window">The Window to be registered with the IServiceProvider instance</param>
 	/// <returns>The IServiceProvider instance (for fluent calling of other methods)</returns>
-	public static IServiceProvider RegisterWindow(this IServiceProvider services, Window window)
+	public async static Task<IServiceProvider> RegisterWindowAsync(this IServiceProvider services, Window window)
 	{
-		return services.AddScopedInstance(window)
+
+		services = services.AddScopedInstance(window)
 						.AddScopedInstance<IDispatcher>(new Dispatcher(window));
+
+		// Initialization is done after adding both Window and IDispatcher to the scoped container
+		// this way if any initializer relies on IDispatcher, it can be retrieved.
+		var initializers = services.GetServices<IWindowInitializer>();
+		foreach (var init in initializers)
+		{
+			await init.InitializeWindowAsync(window);
+		}
+
+		return services;
 	}
 
 	internal static IServiceProvider CreateNavigationScope(this IServiceProvider services)
@@ -127,23 +132,6 @@ public static class ServiceProviderExtensions
 		return default;
 	}
 
-	[Obsolete("Use InitializeNavigationAsync instead")]
-	public static FrameworkElement AttachNavigation(this Window window, IServiceProvider services, string? initialRoute = "", Type? initialView = null, Type? initialViewModel = null)
-	{
-		var root = new ContentControl
-		{
-			HorizontalAlignment = HorizontalAlignment.Stretch,
-			VerticalAlignment = VerticalAlignment.Stretch,
-			HorizontalContentAlignment = HorizontalAlignment.Stretch,
-			VerticalContentAlignment = VerticalAlignment.Stretch
-		};
-		window.Content = root;
-		services = window.AttachServices(services);
-		root.HostAsync(services, initialRoute, initialView, initialViewModel);
-
-		return root;
-	}
-
 	/// <summary>
 	/// Initializes navigation for an application using a ContentControl
 	/// </summary>
@@ -214,7 +202,7 @@ public static class ServiceProviderExtensions
 		await Task.Yield();
 
 		var host = await buildHost();
-		var services = window.AttachServices(host.Services);
+		var services = await window.AttachServicesAsync(host.Services);
 		var startup = viewHost.HostAsync(services, initialRoute, initialView, initialViewModel, initialNavigate);
 
 		await Task.Run(() => host.StartAsync());

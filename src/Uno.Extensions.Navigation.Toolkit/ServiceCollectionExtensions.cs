@@ -27,6 +27,8 @@ public static class ServiceCollectionExtensions
 
 					.AddRegion<DrawerControl, DrawerControlNavigator>()
 
-					.AddSingleton<IRequestHandler, TabBarItemRequestHandler>();
+					.AddSingleton<IRequestHandler, TabBarItemRequestHandler>()
+
+					.AddSingleton<IWindowInitializer, ThemeWindowInitializer>();
 	}
 }

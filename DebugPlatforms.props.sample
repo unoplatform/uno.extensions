@@ -1,0 +1,10 @@
+﻿<Project>
+	<!-- To use, copy this file to DebugPlatforms.props and uncomment the 
+	platform(s) you want to disable from build. -->
+	<PropertyGroup>
+		<!-- <Build_Android>false</Build_Android> -->
+		<!-- <Build_iOS>false</Build_iOS> -->
+		<!-- <Build_MacOS>false</Build_MacOS> -->
+		<!-- <Build_Windows>false</Build_Windows> -->
+	</PropertyGroup>
+</Project>
