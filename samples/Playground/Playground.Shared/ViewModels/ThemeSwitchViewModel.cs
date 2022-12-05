@@ -8,7 +8,7 @@ public class ThemeSwitchViewModel
 		_ts.DesiredThemeChanged += ts_DesiredThemeChanged;
 	}
 
-	private void ts_DesiredThemeChanged(object? sender, DesiredTheme e)
+	private void ts_DesiredThemeChanged(object? sender, AppTheme e)
 	{
 		Console.WriteLine($"Theme was changed to:{e.ToString()}");
 		Console.WriteLine($"Desired Theme is:{_ts.Theme}");
@@ -16,17 +16,17 @@ public class ThemeSwitchViewModel
 
 	public async Task ChangeToSystem()
 	{
-		await _ts.SetThemeAsync(DesiredTheme.System);
+		await _ts.SetThemeAsync(AppTheme.System);
 	}
 
 	public async Task ChangeToLight()
 	{
-		await _ts.SetThemeAsync(DesiredTheme.Light);
+		await _ts.SetThemeAsync(AppTheme.Light);
 	}
 
 	public async Task ChangeToDark()
 	{
-		await _ts.SetThemeAsync(DesiredTheme.Dark);
+		await _ts.SetThemeAsync(AppTheme.Dark);
 	}
 }
 

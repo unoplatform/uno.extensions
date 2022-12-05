@@ -2,5 +2,5 @@
 
 public record ThemeSettings
 {
-	public DesiredTheme CurrentTheme { get; set; }
+	public AppTheme CurrentTheme { get; set; }
 }

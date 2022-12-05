@@ -8,7 +8,7 @@ internal class ThemeService : IThemeService
 	private readonly IWritableOptions<ThemeSettings> _writeSettings;
 
 	/// <inheritdoc/>
-	public event EventHandler<DesiredTheme>? DesiredThemeChanged;
+	public event EventHandler<AppTheme>? DesiredThemeChanged;
 
 	public ThemeService(
 		ILogger<ThemeService> logger,
@@ -26,16 +26,16 @@ internal class ThemeService : IThemeService
 	public bool IsDark => SystemThemeHelper.IsRootInDarkMode(_window.Content.XamlRoot!);
 
 	/// <inheritdoc/>
-	public DesiredTheme Theme => GetSavedTheme();
+	public AppTheme Theme => GetSavedTheme();
 
 	/// <inheritdoc/>
-	public async Task SetThemeAsync(DesiredTheme theme)
+	public async Task SetThemeAsync(AppTheme theme)
 	{
-		if (theme != DesiredTheme.System)
+		if (theme != AppTheme.System)
 		{
 			await _dispatcher.ExecuteAsync(async () =>
 			{
-				SystemThemeHelper.SetRootTheme(_window.Content.XamlRoot, theme == DesiredTheme.Dark);
+				SystemThemeHelper.SetRootTheme(_window.Content.XamlRoot, theme == AppTheme.Dark);
 			});
 
 		}
@@ -50,7 +50,7 @@ internal class ThemeService : IThemeService
 		DesiredThemeChanged?.Invoke(this, theme);
 	}
 
-	private async Task SaveDesiredTheme(DesiredTheme theme)
+	private async Task SaveDesiredTheme(AppTheme theme)
 	{
 		try
 		{
@@ -62,7 +62,7 @@ internal class ThemeService : IThemeService
 		}
 	}
 
-	private DesiredTheme GetSavedTheme()
+	private AppTheme GetSavedTheme()
 	{
 		try
 		{
@@ -73,6 +73,6 @@ internal class ThemeService : IThemeService
 			if (_logger.IsEnabled(LogLevel.Error)) _logger.LogErrorMessage(ex, $"[ThemeService.GetSavedTheme()] - Error while reading stored theme.");
 		}
 
-		return DesiredTheme.System;
+		return AppTheme.System;
 	}
 }

@@ -10,15 +10,15 @@ public interface IThemeService
 	/// <summary>
 	///  Get the previously saved theme.
 	/// </summary>
-	DesiredTheme Theme { get; }
+	AppTheme Theme { get; }
 
 	/// <summary>
 	/// Sets the system theme for the provided XamlRoot.
 	/// </summary>
-	Task SetThemeAsync(DesiredTheme theme);
+	Task SetThemeAsync(AppTheme theme);
 
 	/// <summary>
 	/// Event that fires up whenever SetThemeAsync() is called.
 	/// </summary>
-	event EventHandler<DesiredTheme> DesiredThemeChanged;
+	event EventHandler<AppTheme> DesiredThemeChanged;
 }

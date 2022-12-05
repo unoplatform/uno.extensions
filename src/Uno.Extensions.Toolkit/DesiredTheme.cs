@@ -1,6 +1,6 @@
 ﻿namespace Uno.Extensions.Toolkit;
 
-public enum DesiredTheme
+public enum AppTheme
 {
 	System = default,
 	Light = 1,
