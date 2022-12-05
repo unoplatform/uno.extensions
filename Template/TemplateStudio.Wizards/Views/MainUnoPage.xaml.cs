@@ -24,6 +24,7 @@ namespace TemplateStudio.Wizards.Views
 		public MainUnoPage()
 		{
 			DataContext= this;
+			InitializeComponent();
 		}
 	}
 }
