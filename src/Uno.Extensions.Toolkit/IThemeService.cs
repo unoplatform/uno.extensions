@@ -1,4 +1,5 @@
 ﻿namespace Uno.Extensions.Toolkit;
+
 public interface IThemeService
 {
 	/// <summary>
@@ -14,7 +15,7 @@ public interface IThemeService
 	/// <summary>
 	/// Sets the system theme for the provided XamlRoot.
 	/// </summary>
-	Task SetThemeAsync(DesiredTheme theme = DesiredTheme.System);
+	Task SetThemeAsync(DesiredTheme theme);
 
 	/// <summary>
 	/// Event that fires up whenever SetThemeAsync() is called.

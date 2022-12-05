@@ -1,4 +1,5 @@
 ﻿namespace Uno.Extensions.Toolkit;
+
 public enum DesiredTheme
 {
 	System = default,
