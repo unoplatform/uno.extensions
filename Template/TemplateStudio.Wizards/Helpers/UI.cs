@@ -28,6 +28,12 @@ namespace TemplateStudio.Wizards.Helpers
 				dialog.Focus();         // important
 			}
 		}
-		
+		public static void ShowModal(Page shell)
+		{
+			if (shell is Page dialog)
+			{				
+				dialog.Focus();         // important
+			}
+		}
 	}
 }

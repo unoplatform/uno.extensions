@@ -1,0 +1,12 @@
+{
+  "solution": {
+    "path": "UnoConfigProject.sln",
+    "projects": [
+      "UnoConfigProject.Mobile\\UnoConfigProject.Mobile.csproj",
+      "UnoConfigProject.Skia.Gtk\\UnoConfigProject.Skia.Gtk.csproj",
+      "UnoConfigProject.UI\\UnoConfigProject.UI.shproj",
+      "UnoConfigProject.Wasm\\UnoConfigProject.Wasm.csproj",
+      "UnoConfigProject\\UnoConfigProject.csproj"
+    ]
+  }
+}

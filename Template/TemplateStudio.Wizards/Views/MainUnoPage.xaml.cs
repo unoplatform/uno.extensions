@@ -8,16 +8,18 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using TemplateStudio.Wizards.Model;
 using TemplateStudio.Wizards.ViewModel;
-
+using System.Windows.Forms;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+
+
 namespace TemplateStudio.Wizards.Views
 {
-	public partial class MainUnoPage : Window
+	public partial class MainUnoPage : System.Windows.Window
 	{
 		public ContextViewModel ContextViewModel = null;
 		

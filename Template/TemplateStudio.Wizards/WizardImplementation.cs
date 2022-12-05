@@ -23,6 +23,7 @@ using TemplateStudio.Wizards.Model;
 using TemplateStudio.Wizards.ViewModel;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
+
 namespace TemplateStudio.Wizards
 {
 	public class WizardImplementation : IWizard
@@ -66,7 +67,6 @@ namespace TemplateStudio.Wizards
 
 				//var page1 = new MainPage();
 				var page1 = new MainUnoPage();
-				page1.Owner = Application.Current.MainWindow;
 				page1.Focus();
 				UI.ShowModal(page1);
 

@@ -5,11 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TemplateStudio.Wizards"
         mc:Ignorable="d"
-        Title="MainUnoPage" Height="450" Width="800">
-	<Grid>
+        >
+	<!--Title="MainUnoPage" Height="450" Width="800"-->
+	<!--<Grid>
 		<Button>asdf</Button>
 		<Button Content="Button" HorizontalAlignment="Left" Margin="187,138,0,0" VerticalAlignment="Top"/>
 		<Button>asdf</Button>
-	</Grid>
+	</Grid>-->
 </Window>
 
