@@ -28,6 +28,7 @@ global using Uno.Extensions.Navigation.Regions;
 global using Uno.Extensions.Serialization;
 global using Windows.ApplicationModel.Core;
 global using Windows.UI.ViewManagement;
+global using Uno.Extensions.Validation;
 
 #if WINUI
 	global using Microsoft.UI.Dispatching;
@@ -40,7 +41,7 @@ global using Windows.UI.ViewManagement;
 	global using Microsoft.UI.Xaml.Media;
 	global using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 #else
-	global using Windows.System;
+global using Windows.System;
 	global using Windows.UI.Xaml;
 	global using Windows.UI.Xaml.Controls;
 	global using Windows.UI.Xaml.Controls.Primitives;

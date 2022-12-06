@@ -56,7 +56,9 @@
       "Uno.Extensions\\Uno.Extensions.csproj",
 	  "Uno.Extensions.Toolkit\\Uno.Extensions.Toolkit.csproj",
 	  "Uno.Extensions.Toolkit.UI\\Uno.Extensions.Toolkit.UI.csproj",
-      "Uno.Extensions.Toolkit.UI\\Uno.Extensions.Toolkit.WinUI.csproj"
+      "Uno.Extensions.Toolkit.UI\\Uno.Extensions.Toolkit.WinUI.csproj",
+	  "Uno.Extensions.Validation\\Uno.Extensions.Validation.csproj",
+      "Uno.Extensions.Validation.Fluent\\Uno.Extensions.Validation.Fluent.csproj"
 	  
     ]
   }
