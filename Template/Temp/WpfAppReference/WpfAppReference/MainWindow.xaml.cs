@@ -22,7 +22,12 @@ namespace WpfAppReference
     {
         public MainWindow()
         {
-            InitializeComponent();
+			try
+			{
+				var pag = new Microsoft.UI.Xaml.Controls.Page();
+			}
+			catch { }
+			InitializeComponent();
         }
     }
 }
