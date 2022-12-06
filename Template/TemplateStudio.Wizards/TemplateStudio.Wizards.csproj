@@ -10,6 +10,16 @@
 		<UseWPF>true</UseWPF>
 	</PropertyGroup>
 
+	<!--<ItemGroup>
+	  <Compile Remove="Uno\App.xaml.cs" />
+	  <Compile Remove="Uno\MainUnoPage.xaml.cs" />
+	</ItemGroup>-->
+
+	<ItemGroup>
+	  <Page Remove="Uno\App.xaml" />
+	  <Page Remove="Uno\MainUnoPage.xaml" />
+	</ItemGroup>
+
 	<ItemGroup>
 		<PackageReference Include="Microsoft.VisualStudio.SDK">
 			<Version>17.1.32210.191</Version>
@@ -17,6 +27,11 @@
 		<PackageReference Include="Microsoft.VisualStudio.TemplateWizardInterface">
 			<Version>17.1.32210.191</Version>
 		</PackageReference>
+		<PackageReference Include="Uno.WinUI.Skia.Wpf" Version="4.5.0-dev.453" />
+		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.5.0-dev.453" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.5.0-dev.453" />
+		<PackageReference Include="Uno.WinUI.XamlHost" Version="4.5.0-dev.453" />
+		<PackageReference Include="Uno.WinUI.XamlHost.Skia.Wpf" Version="4.5.0-dev.453" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -26,5 +41,13 @@
 		<Reference Include="PresentationFramework" />
 	</ItemGroup>
 
+	<ItemGroup>
+	<Page Include="Uno\MainUnoPage.xaml" XamlRuntime="WinUI" />
+	<ApplicationDefinition Include="Uno\App.xaml" XamlRuntime="WinUI" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Uno\" />
+	</ItemGroup>
 
 </Project>
