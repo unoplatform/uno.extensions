@@ -11,26 +11,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Remove="Views\MainPage.xaml" />
-	  <None Remove="Views\MainUnoPage.xaml" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="Microsoft.VisualStudio.SDK">
 			<Version>17.1.32210.191</Version>
 		</PackageReference>
 		<PackageReference Include="Microsoft.VisualStudio.TemplateWizardInterface">
 			<Version>17.1.32210.191</Version>
 		</PackageReference>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Page Include="Views\MainPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	  <Page Include="Views\MainUnoPage.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
 	</ItemGroup>
 
 	<ItemGroup>
