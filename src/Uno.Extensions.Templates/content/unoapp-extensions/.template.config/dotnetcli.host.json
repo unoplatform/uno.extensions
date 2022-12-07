@@ -10,12 +10,16 @@
       "shortName": "tfm"
     },
     "architecture": {
-      "longName": "architecture",
-      "shortName": "arch"
+      "longName": "presentation",
+      "shortName": "presentation"
     },
-    "markup": {
-      "longName": "csharp-markup",
-      "shortName": "markup"
+    "ui-markup": {
+      "longName": "ui-markup",
+      "shortName": "ui"
+    },
+    "app-theme": {
+      "longName": "app-theme",
+      "shortName": "theme"
     },
     "android": {
       "longName": "android",
@@ -53,29 +57,45 @@
       "longName": "webassembly",
       "shortName": "wasm"
     },
+    "server": {
+      "longName": "server",
+      "shortName": "server"
+    },
     "wasm-pwa-manifest": {
       "longName": "wasm-pwa-manifest",
       "shortName": "pwa"
     },
     "unittest": {
-      "longName": "unittest",
-      "shortName": "unittest"
+      "longName": "unit-tests",
+      "shortName": "unit-tests"
     },
     "tests": {
       "longName": "ui-tests",
-      "shortName": "tests"
+      "shortName": "ui-tests"
     },
-    "configuration": {
+    "use-configuration": {
       "longName": "configuration",
       "shortName": "config"
     },
-    "localization": {
+    "use-http": {
+      "longName": "use-http",
+      "shortName": "http"
+    },
+    "use-localization": {
       "longName": "localization",
       "shortName": "loc"
     },
     "logging": {
       "longName": "logging",
       "shortName": "log"
+    },
+    "serilog": {
+      "longName": "logging-serilog",
+      "shortName": "serilog"
+    },
+    "navigation": {
+      "longName": "navigation",
+      "shortName": "nav"
     },
     "cpm": {
       "longName": "cpm",
@@ -86,7 +106,7 @@
       "shortName": "vscode"
     },
     "skipRestore": {
-      "longName": "skipRestore",
+      "longName": "skip-restore",
       "shortName": "skip"
     },
     "is-vsix": {

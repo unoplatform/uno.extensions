@@ -13,6 +13,7 @@ indent_style = tab
 
 [{*.ts, *.json}]
 indent_style = tab
+indent_size = 2
 
 [*.csproj]
 indent_style = tab

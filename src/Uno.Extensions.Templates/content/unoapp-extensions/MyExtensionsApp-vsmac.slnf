@@ -3,15 +3,20 @@
     "path": "MyExtensionsApp.sln",
     "projects": [
 #//#if (mobile)
-      "MyExtensionsApp.Mobile\\MyExtensionsApp.Mobile.csproj",
+      "MyExtensionsApp.App\\MyExtensionsApp.Mobile.csproj",
 #//#endif
 #//#if (skia-gtk)
-      "MyExtensionsApp.Skia.Gtk\\MyExtensionsApp.Skia.Gtk.csproj",
+      "MyExtensionsApp.App\\MyExtensionsApp.Skia.Gtk.csproj",
 #//#endif
 #//#if (wasm)
-      "MyExtensionsApp.Wasm\\MyExtensionsApp.Wasm.csproj",
+      "MyExtensionsApp.App\\MyExtensionsApp.Wasm.csproj",
 #//#endif
-      "MyExtensionsApp.UI\\MyExtensionsApp.UI.shproj",
+#//#if (server)
+      "MyExtensionsApp.Server\\MyExtensionsApp.Server.csproj",
+#//#endif
+#//#if (server || use-http)
+      "MyExtensionsApp.DataContracts\\MyExtensionsApp.DataContracts.csproj",
+#//#endif
       "MyExtensionsApp\\MyExtensionsApp.csproj"
     ]
   }

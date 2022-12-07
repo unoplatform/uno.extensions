@@ -34,14 +34,16 @@
 		<Compile Remove="content/**/*.cs" />
 		<None Include="content/**/*.cs" />
 	</ItemGroup>
-	
+
 	<Target Name="ReplaceTemplateCode" BeforeTargets="BeforeBuild">
 		<ItemGroup>
 			<Content Include="content\unoapp-extensions\**" KeepDuplicates="False">
 				<PackagePath>content\unoapp-extensions</PackagePath>
 				<Pack>true</Pack>
 			</Content>
-			<Content Remove="content\unoapp-extensions\MyExtensionsApp.Debugging.sln" />
+			<Content Remove="**\*.Debugging.sln" />
+			<Content Remove="**\bin\**" />
+			<Content Remove="**\obj\**" />
 		</ItemGroup>
 	</Target>
 
@@ -52,7 +54,7 @@
 			</MSBuildDeveloperNamespace>
 		</PropertyGroup>
 
-		<ItemGroup>   
+		<ItemGroup>
 			<_AllCSProjFiles Include="content/**/*.csproj" />
 			<_AllCSProjFiles Include="content/**/Directory.Packages.props" />
 		</ItemGroup>

@@ -12,19 +12,25 @@ jobs:
         templateArgs: ''
       MVVM:
         createdProjectName: UnoAppNoReactive01
-        templateArgs: '--architecture mvvm'
+        templateArgs: '-presentation mvvm'
       CentralPackageManagement:
         createdProjectName: UnoAppCPM01
         templateArgs: '--cpm true'
       CSharpMarkup:
         createdProjectName: UnoAppCSharpMarkup01
-        templateArgs: '--csharp-markup true'
+        templateArgs: '--ui-markup csharp'
       NoExtensions:
         createdProjectName: UnoAppNoExtensions01
-        templateArgs: '-config false -loc false -log None'
+        templateArgs: '-config false -loc false -log false'
       Serilog:
         createdProjectName: UnoAppSerilog01
-        templateArgs: '--logging Serilog'
+        templateArgs: '--logging-serilog'
+      NoServer:
+        createdProjectName: UnoAppNoServer01
+        templateArgs: '-server false'
+      NoServerNoHttp:
+        createdProjectName: UnoAppNoServerNoHttp01
+        templateArgs: '-server false -http false'
 
   variables:
     - name: UseDotNetNativeToolchain

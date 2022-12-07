@@ -1,0 +1,45 @@
+<!--#if (use-csharp-markup)-->
+<Application x:Class="MyExtensionsApp.App"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<!--#else-->
+<Application x:Class="MyExtensionsApp.App"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:wasm="http://platform.uno/wasm"
+			 xmlns:local="using:MyExtensionsApp"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 mc:Ignorable="wasm">
+
+	<Application.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<!-- Load WinUI resources -->
+				<XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+
+<!--#if (use-material)-->
+				<MaterialColors xmlns="using:Uno.Material"
+								OverrideSource="ms-appx:///Styles/ColorPaletteOverride.xaml" />
+				<MaterialFonts xmlns="using:Uno.Material"
+							   OverrideSource="ms-appx:///Styles/MaterialFontsOverride.xaml" />
+				<MaterialResources xmlns="using:Uno.Material" />
+<!--#elif (use-cupertino)-->
+				<CupertinoColors xmlns="using:Uno.Cupertino" />
+				<CupertinoFonts xmlns="using:Uno.Cupertino" />
+				<CupertinoResources xmlns="using:Uno.Cupertino" />
+<!--#endif-->
+
+				<!-- Load Uno.UI.Toolkit resources -->
+				<ToolkitResources xmlns="using:Uno.Toolkit.UI" />
+<!--#if (use-material)-->
+				<MaterialToolkitResources xmlns="using:Uno.Toolkit.UI.Material" />
+<!--#endif-->
+
+				<!-- Load Uno.UI.Toolkit resources -->
+				<UnoResources xmlns="using:Uno.UI" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</Application.Resources>
+
+<!--#endif-->
+</Application>

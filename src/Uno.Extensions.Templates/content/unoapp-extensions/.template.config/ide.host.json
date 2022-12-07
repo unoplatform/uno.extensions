@@ -24,7 +24,7 @@
     {
       "id": "tfm",
       "name": {
-        "text": "Target Framework"
+        "text": "Framework"
       },
       "description": {
         "text": "The target framework for the project (e.g. net6.0 or net7.0)"
@@ -33,11 +33,15 @@
       "choices": [
         {
           "id": "net6.0",
-          "description": "Use the net6.0 target framework"
+          "name": {
+            "text": ".NET 6.0 (Long Term Support)"
+          }
         },
         {
           "id": "net7.0",
-          "description": "Use the net7.0 target framework"
+           "name": {
+             "text": ".NET 7.0 (Standard Term Support)"
+           }
         }
       ],
       "isVisible": true
@@ -45,26 +49,36 @@
     {
       "id": "architecture",
       "name": {
-        "text": "Design - Use MVVM or MVUx"
+        "text": "Presentation"
       },
       "description":
       {
-        "text": "Select between MVVM or MVUx for a design pattern"
+        "text": "Select between MVVM or MVUX for a design pattern"
       },
       "defaultValue": "mvux",
       "isVisible":true
     },
     {
-      "id": "markup",
+      "id": "ui-markup",
       "name": {
-        "text": "Code Style - Use C# Markup"
+        "text": "UI Markup"
       },
       "description":
       {
-        "text": "Uses Uno C# Markup for your UI instead of XAML"
+        "text": "Choose whether to use XAML or C# Markup for your UI"
       },
-      "defaultValue": "Serilog",
-      "isVisible": false
+      "defaultValue": "xaml"
+    },
+    {
+      "id": "app-theme",
+      "name": {
+        "text": "Theme"
+      },
+      "description":
+      {
+        "text": "Choose whether to use the Material, Fluent or Cupertino theme"
+      },
+      "defaultValue": "material"
     },
     {
       "id": "wasm",
@@ -197,18 +211,39 @@
       "isVisible": true
     },
     {
-      "id": "configuration",
+      "id": "server",
+      "name": {
+        "text": "Server - API (WASM Host)"
+      },
+      "description": {
+        "text": "Includes API Server project which will additionally host the WASM head if included"
+      },
+      "defaultValue": "true",
+      "isVisible": true
+    },
+    {
+      "id": "use-configuration",
       "name": {
         "text": "Extensions - Configuration"
       },
       "description":
       {
         "text": "Uses Configuration extensions to support appsettings.json"
-      },
-      "isVisible": false
+      }
     },
     {
-      "id": "localization",
+      "id": "use-http",
+      "name": {
+        "text": "Extensions - Http"
+      },
+      "description":
+      {
+        "text": "Enables Http & Refit Extensions"
+      },
+      "defaultValue": "true"
+    },
+    {
+      "id": "use-localization",
       "name": {
         "text": "Extensions - Localization"
       },
@@ -216,8 +251,7 @@
       {
         "text": "Uses Localization Extensions"
       },
-      "defaultValue": "true",
-      "isVisible": false
+      "defaultValue": "true"
     },
     {
       "id": "logging",
@@ -228,8 +262,29 @@
       {
         "text": "Enables app logging"
       },
-      "defaultValue": "Enabled",
-      "isVisible": false
+      "defaultValue": "true"
+    },
+    {
+      "id": "serilog",
+      "name": {
+        "text": "Extensions - Logging Serilog"
+      },
+      "description":
+      {
+        "text": "Enables app logging with Serilog"
+      },
+      "defaultValue": "true"
+    },
+    {
+      "id": "navigation",
+      "name": {
+        "text": "Navigation"
+      },
+      "description":
+      {
+        "text": "Sets the base Navigation style"
+      },
+      "defaultValue": "toolkit"
     },
     {
       "id": "cpm",
