@@ -265,17 +265,6 @@ public class FrameNavigator : ControlNavigator<Frame>, IStackNavigator
 		try
 		{
 			Control.Navigated -= Frame_Navigated;
-			if (parameter is not null)
-			{
-				if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Replacing last backstack item to inject parameter '{parameter.GetType().Name}'");
-				// If a parameter is being sent back, we need to replace
-				// the last frame on the backstack with one that has the correct
-				// parameter value. This value can be extracted via the OnNavigatedTo method
-				var entry = Control.BackStack.Last();
-				var newEntry = new PageStackEntry(entry.SourcePageType, parameter, entry.NavigationTransitionInfo);
-				Control.BackStack.Remove(entry);
-				Control.BackStack.Add(newEntry);
-			}
 			if (Logger.IsEnabled(LogLevel.Debug)) Logger.LogDebugMessage($"Invoking Frame.GoBack");
 			Control.GoBack();
 
