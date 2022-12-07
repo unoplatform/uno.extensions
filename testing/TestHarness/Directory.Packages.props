@@ -24,6 +24,7 @@
 		<PackageVersion Include="SkiaSharp.HarfBuzz" Version="2.88.3" />
 		<PackageVersion Include="SkiaSharp.Skottie" Version="2.88.3" />
 		<PackageVersion Include="SkiaSharp.Views" Version="2.88.3" />
+		<PackageVersion Include="SkiaSharp.Views.Uno" Version="2.88.3" />
 		<PackageVersion Include="SkiaSharp.Views.Uno.WinUI" Version="2.88.3" />
 		<PackageVersion Include="SkiaSharp.Views.WPF" Version="2.88.3" />
 		<PackageVersion Include="Swashbuckle.AspNetCore" Version="6.2.3" />
