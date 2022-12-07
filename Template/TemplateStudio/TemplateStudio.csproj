@@ -67,10 +67,49 @@
     <Compile Include="TemplateStudioPackage.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="HarfBuzzSharp.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="x64\libHarfBuzzSharp.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="x64\libSkiaSharp.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="x86\libHarfBuzzSharp.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="x86\libSkiaSharp.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="libHarfBuzzSharp.dylib">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="libSkiaSharp.dylib">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
+    <Content Include="arm64\libHarfBuzzSharp.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="arm64\libSkiaSharp.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="TemplateStudio.pkgdef">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="TemplateStudio.Wizards.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -80,7 +119,72 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="HarfBuzzSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libs\HarfBuzzSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="SkiaSharp">
+      <HintPath>..\Libs\SkiaSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="SkiaSharp.HarfBuzz">
+      <HintPath>..\Libs\SkiaSharp.HarfBuzz.dll</HintPath>
+    </Reference>
+    <Reference Include="SkiaSharp.Views.Desktop.Common">
+      <HintPath>..\Libs\SkiaSharp.Views.Desktop.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="SkiaSharp.Views.WPF">
+      <HintPath>..\Libs\SkiaSharp.Views.WPF.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="TemplateStudio.Wizards, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b6095caac3cb32b7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libs\TemplateStudio.Wizards.dll</HintPath>
+    </Reference>
+    <Reference Include="Uno">
+      <HintPath>..\Libs\Uno.dll</HintPath>
+    </Reference>
+    <Reference Include="Uno.Diagnostics.Eventing">
+      <HintPath>..\Libs\Uno.Diagnostics.Eventing.dll</HintPath>
+    </Reference>
+    <Reference Include="Uno.Foundation">
+      <HintPath>..\Libs\Uno.Foundation.dll</HintPath>
+    </Reference>
+    <Reference Include="Uno.Foundation.Logging">
+      <HintPath>..\Libs\Uno.Foundation.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Uno.UI">
+      <HintPath>..\Libs\Uno.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="Uno.UI.Composition">
+      <HintPath>..\Libs\Uno.UI.Composition.dll</HintPath>
+    </Reference>
+    <Reference Include="Uno.UI.Dispatching">
+      <HintPath>..\Libs\Uno.UI.Dispatching.dll</HintPath>
+    </Reference>
+    <Reference Include="Uno.UI.FluentTheme">
+      <HintPath>..\Libs\Uno.UI.FluentTheme.dll</HintPath>
+    </Reference>
+    <Reference Include="Uno.UI.FluentTheme.v1">
+      <HintPath>..\Libs\Uno.UI.FluentTheme.v1.dll</HintPath>
+    </Reference>
+    <Reference Include="Uno.UI.FluentTheme.v2">
+      <HintPath>..\Libs\Uno.UI.FluentTheme.v2.dll</HintPath>
+    </Reference>
+    <Reference Include="Uno.UI.Runtime.Skia.Wpf">
+      <HintPath>..\Libs\Uno.UI.Runtime.Skia.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="Uno.UI.Toolkit">
+      <HintPath>..\Libs\Uno.UI.Toolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="Uno.UI.XamlHost">
+      <HintPath>..\Libs\Uno.UI.XamlHost.dll</HintPath>
+    </Reference>
+    <Reference Include="Uno.UI.XamlHost.Skia.Wpf">
+      <HintPath>..\Libs\Uno.UI.XamlHost.Skia.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="Uno.Xaml">
+      <HintPath>..\Libs\Uno.Xaml.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.SDK" Version="17.1.32210.191" ExcludeAssets="runtime">
@@ -89,12 +193,12 @@
     <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.4.2118" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TemplateStudio.Wizards\TemplateStudio.Wizards.csproj">
+    <!--<ProjectReference Include="..\TemplateStudio.Wizards\TemplateStudio.Wizards.csproj">
       <Project>{F85B23F5-D2AF-42E5-A81A-70B4B3CAA939}</Project>
       <Name>TemplateStudio.Wizards</Name>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
-    </ProjectReference>
+    </ProjectReference>-->
     <ProjectReference Include="..\UnoProjectTemplate\UnoProjectTemplate.csproj">
       <Project>{BBB7197B-CB92-4B49-B89B-1F322B7F71A3}</Project>
       <Name>UnoProjectTemplate</Name>
@@ -112,4 +216,10 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Target Name="CopyFiles" AfterTargets="Build">
+    <ItemGroup>
+      <MySourceFiles Include="..\Libs\*.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(MySourceFiles)" DestinationFiles="$(TargetDir)%(RecursiveDir)%(Filename)%(Extension)" />
+  </Target>
 </Project>

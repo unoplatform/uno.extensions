@@ -3,8 +3,8 @@
 	<PropertyGroup>
 		<TargetFramework>net472</TargetFramework>
 		<LangVersion>11.0</LangVersion>
-		<SignAssembly>true</SignAssembly>
-		<AssemblyOriginatorKeyFile>Keys\key.snk</AssemblyOriginatorKeyFile>
+		<!--<SignAssembly>true</SignAssembly>
+		<AssemblyOriginatorKeyFile>Keys\key.snk</AssemblyOriginatorKeyFile>-->
 		<Platforms>AnyCPU;x86;x64</Platforms>
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<UseWPF>true</UseWPF>
@@ -28,14 +28,76 @@
 			<Version>17.1.32210.191</Version>
 		</PackageReference>
 		<PackageReference Include="Uno.WinUI.Skia.Wpf" Version="4.5.0-dev.453" />
+		<!--
 		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.5.0-dev.453" Condition="'$(Configuration)'=='Debug'" />
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.5.0-dev.453" />
+		-->
 		<PackageReference Include="Uno.WinUI.XamlHost" Version="4.5.0-dev.453" />
 		<PackageReference Include="Uno.WinUI.XamlHost.Skia.Wpf" Version="4.5.0-dev.453" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Reference Include="System.Data.DataSetExtensions" />
+	  <!--<Reference Include="Uno">
+	    <HintPath>..\Libs\Uno.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Uno.Core.Extensions.Logging">
+	    <HintPath>..\Libs\Uno.Core.Extensions.Logging.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Uno.Core.Extensions.Logging.Singleton">
+	    <HintPath>..\Libs\Uno.Core.Extensions.Logging.Singleton.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Uno.Diagnostics.Eventing">
+	    <HintPath>..\Libs\Uno.Diagnostics.Eventing.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Uno.Foundation">
+	    <HintPath>..\Libs\Uno.Foundation.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Uno.Foundation.Logging">
+	    <HintPath>..\Libs\Uno.Foundation.Logging.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Uno.UI">
+	    <HintPath>..\Libs\Uno.UI.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging">
+	    <HintPath>..\Libs\Uno.UI.Adapter.Microsoft.Extensions.Logging.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Uno.UI.Composition">
+	    <HintPath>..\Libs\Uno.UI.Composition.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Uno.UI.Dispatching">
+	    <HintPath>..\Libs\Uno.UI.Dispatching.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Uno.UI.FluentTheme">
+	    <HintPath>..\Libs\Uno.UI.FluentTheme.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Uno.UI.FluentTheme.v1">
+	    <HintPath>..\Libs\Uno.UI.FluentTheme.v1.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Uno.UI.FluentTheme.v2">
+	    <HintPath>..\Libs\Uno.UI.FluentTheme.v2.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Uno.UI.RemoteControl">
+	    <HintPath>..\Libs\Uno.UI.RemoteControl.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Uno.UI.Runtime.Skia.Wpf">
+	    <HintPath>..\Libs\Uno.UI.Runtime.Skia.Wpf.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Uno.UI.Toolkit">
+	    <HintPath>..\Libs\Uno.UI.Toolkit.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Uno.UI.XamlHost">
+	    <HintPath>..\Libs\Uno.UI.XamlHost.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Uno.UI.XamlHost.Skia.Wpf">
+	    <HintPath>..\Libs\Uno.UI.XamlHost.Skia.Wpf.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Uno.Wasm.WebSockets">
+	    <HintPath>..\Libs\Uno.Wasm.WebSockets.dll</HintPath>
+	  </Reference>
+	  <Reference Include="Uno.Xaml">
+	    <HintPath>..\Libs\Uno.Xaml.dll</HintPath>
+	  </Reference>-->
 		<Reference Include="WindowsBase" />
 		<Reference Include="PresentationCore" />
 		<Reference Include="PresentationFramework" />
@@ -50,4 +112,15 @@
 	  <Folder Include="Uno\" />
 	</ItemGroup>
 
+
+	<!--<Target Name="CopyFiles" AfterTargets="Build">
+		<ItemGroup>
+			<MySourceFiles Include="..\Libs\*.*"/>
+		</ItemGroup>
+
+		<Copy
+				SourceFiles="@(MySourceFiles)"
+				DestinationFiles="$(TargetDir)%(RecursiveDir)%(Filename)%(Extension)"
+        />
+	</Target>-->
 </Project>
