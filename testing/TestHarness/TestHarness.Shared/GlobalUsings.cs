@@ -42,6 +42,7 @@ global using Uno.Extensions.Serialization;
 	global using Window = Microsoft.UI.Xaml.Window;
 	global using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 	global using Application = Microsoft.UI.Xaml.Application;
+	global using ToggleButton = Microsoft.UI.Xaml.Controls.Primitives.ToggleButton;
 #else
 	global using Windows.System;
 	global using Windows.UI.Xaml;
@@ -57,4 +58,5 @@ global using Uno.Extensions.Serialization;
 	global using Window = Windows.UI.Xaml.Window;
 	global using LaunchActivatedEventArgs = Windows.ApplicationModel.Activation.LaunchActivatedEventArgs;
 	global using Application = Windows.UI.Xaml.Application;
+global using ToggleButton = Windows.UI.Xaml.Controls.Primitives.ToggleButton;
 #endif

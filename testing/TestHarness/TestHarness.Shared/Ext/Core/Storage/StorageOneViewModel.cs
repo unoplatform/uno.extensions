@@ -9,6 +9,7 @@ namespace TestHarness.Ext.Navigation.Storage;
 [ReactiveBindable(false)]
 public partial class StorageOneViewModel : ObservableObject
 {
+	private readonly Random _random = new Random();
 	private readonly INavigator _navigator;
 	private readonly IServiceProvider _services;
 	private readonly IEnumerable<INamedInstance<IKeyValueStorage>> _storage;
@@ -105,8 +106,8 @@ public partial class StorageOneViewModel : ObservableObject
 			var keyValues = new List<(string Key, string Value)>();
 			for (int i = 0; i < keyCount; i++)
 			{
-				var key = GenerateString(Random.Shared.Next(0, 100));
-				var value = GenerateString(Random.Shared.Next(0, 1000));
+				var key = GenerateString(_random.Next(0, 100));
+				var value = GenerateString(_random.Next(0, 1000));
 				keyValues.Add((key, value));
 			}
 
@@ -123,7 +124,7 @@ public partial class StorageOneViewModel : ObservableObject
 			var max = (5 * keyCount);
 			for (int i = 0; i < max; i++)
 			{
-				var key = Random.Shared.Next(0, keyCount);
+				var key = _random.Next(0, keyCount);
 				var val = await _selectedStorage.GetAsync<string>(keyValues[key].Key, CancellationToken.None);
 				if (i % 20 == 0)
 				{
@@ -149,7 +150,7 @@ public partial class StorageOneViewModel : ObservableObject
 		char[] chars = new char[size];
 		for (int i = 0; i < size; i++)
 		{
-			chars[i] = Alphabet[Random.Shared.Next(Alphabet.Length)];
+			chars[i] = Alphabet[_random.Next(Alphabet.Length)];
 		}
 		return new string(chars);
 	}
