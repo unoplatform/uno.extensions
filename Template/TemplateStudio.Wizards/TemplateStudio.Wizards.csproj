@@ -109,8 +109,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Folder Include="References\DLLs\Signed\" />
+	  <Folder Include="References\DLLs\Unsigned\" />
 	  <Folder Include="Uno\" />
 	</ItemGroup>
+
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+	  <Exec Command="call $(SolutionDir)TemplateStudio.Wizards\References\SignDLLs.bat" />
+	</Target>
 
 
 	<!--<Target Name="CopyFiles" AfterTargets="Build">
