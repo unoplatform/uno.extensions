@@ -1,204 +1,48 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <MinimumVisualStudioVersion>17.0</MinimumVisualStudioVersion>
-    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectTypeGuids>{82b43b9b-a64c-4715-b499-d71e9ca2bd60};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <ProjectGuid>{F42A41E2-2C83-4D1E-94B4-5D424873AAFE}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TemplateStudio</RootNamespace>
-    <AssemblyName>TemplateStudio</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <GeneratePkgDefFile>false</GeneratePkgDefFile>
-    <UseCodebase>true</UseCodebase>
-    <IncludeAssemblyInVSIXContainer>true</IncludeAssemblyInVSIXContainer>
-    <IncludeDebugSymbolsInVSIXContainer>false</IncludeDebugSymbolsInVSIXContainer>
-    <IncludeDebugSymbolsInLocalVSIXDeployment>false</IncludeDebugSymbolsInLocalVSIXDeployment>
-    <CopyBuildOutputToOutputDirectory>true</CopyBuildOutputToOutputDirectory>
-    <CopyOutputSymbolsToOutputDirectory>true</CopyOutputSymbolsToOutputDirectory>
-    <StartAction>Program</StartAction>
-    <StartProgram Condition="'$(DevEnvDir)' != ''">$(DevEnvDir)devenv.exe</StartProgram>
-    <StartArguments>/rootsuffix Exp</StartArguments>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TemplateStudioPackage.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="HarfBuzzSharp.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TemplateStudio.Wizards.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="x64\libHarfBuzzSharp.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="x64\libSkiaSharp.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="x86\libHarfBuzzSharp.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="x86\libSkiaSharp.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="libHarfBuzzSharp.dylib">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="libSkiaSharp.dylib">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <None Include="source.extension.vsixmanifest">
-      <SubType>Designer</SubType>
-    </None>
-    <Content Include="arm64\libHarfBuzzSharp.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="arm64\libSkiaSharp.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net472</TargetFramework>
+
+		<LangVersion>11.0</LangVersion>
+		<Platforms>AnyCPU;x86;x64</Platforms>
+		<PlatformTarget>AnyCPU</PlatformTarget>		
+		<OutputPath>bin\Debug\</OutputPath>
+
+		
+		<AppDesignerFolder>Properties</AppDesignerFolder>
+		<GeneratePkgDefFile>false</GeneratePkgDefFile>
+		<IncludeAssemblyInVSIXContainer>true</IncludeAssemblyInVSIXContainer>
+		<IncludeDebugSymbolsInVSIXContainer>false</IncludeDebugSymbolsInVSIXContainer>
+		<IncludeDebugSymbolsInLocalVSIXDeployment>false</IncludeDebugSymbolsInLocalVSIXDeployment>
+		<CopyBuildOutputToOutputDirectory>true</CopyBuildOutputToOutputDirectory>
+		<CopyOutputSymbolsToOutputDirectory>true</CopyOutputSymbolsToOutputDirectory>
+		<StartAction>Program</StartAction>
+		<StartProgram Condition="'$(DevEnvDir)' != ''">$(DevEnvDir)devenv.exe</StartProgram>
+		<StartArguments>/rootsuffix Exp</StartArguments>
+	</PropertyGroup>
+	
+
+	<ItemGroup>   
     <Content Include="TemplateStudio.pkgdef">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Templates\uno.extensions.templates.2.3.0-dev.343.nupkg">
+    </Content>		
+		<None Include="source.extension.vsixmanifest">
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Templates\*.nupkg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <Reference Include="HarfBuzzSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Libs\HarfBuzzSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="SkiaSharp">
-      <HintPath>..\Libs\SkiaSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="SkiaSharp.HarfBuzz">
-      <HintPath>..\Libs\SkiaSharp.HarfBuzz.dll</HintPath>
-    </Reference>
-    <Reference Include="SkiaSharp.Views.Desktop.Common">
-      <HintPath>..\Libs\SkiaSharp.Views.Desktop.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="SkiaSharp.Views.WPF">
-      <HintPath>..\Libs\SkiaSharp.Views.WPF.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="TemplateStudio.Wizards, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b6095caac3cb32b7, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Libs\TemplateStudio.Wizards.dll</HintPath>
-    </Reference>
-    <Reference Include="Uno">
-      <HintPath>..\Libs\Uno.dll</HintPath>
-    </Reference>
-    <Reference Include="Uno.Diagnostics.Eventing">
-      <HintPath>..\Libs\Uno.Diagnostics.Eventing.dll</HintPath>
-    </Reference>
-    <Reference Include="Uno.Foundation">
-      <HintPath>..\Libs\Uno.Foundation.dll</HintPath>
-    </Reference>
-    <Reference Include="Uno.Foundation.Logging">
-      <HintPath>..\Libs\Uno.Foundation.Logging.dll</HintPath>
-    </Reference>
-    <Reference Include="Uno.UI">
-      <HintPath>..\Libs\Uno.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="Uno.UI.Composition">
-      <HintPath>..\Libs\Uno.UI.Composition.dll</HintPath>
-    </Reference>
-    <Reference Include="Uno.UI.Dispatching">
-      <HintPath>..\Libs\Uno.UI.Dispatching.dll</HintPath>
-    </Reference>
-    <Reference Include="Uno.UI.FluentTheme">
-      <HintPath>..\Libs\Uno.UI.FluentTheme.dll</HintPath>
-    </Reference>
-    <Reference Include="Uno.UI.FluentTheme.v1">
-      <HintPath>..\Libs\Uno.UI.FluentTheme.v1.dll</HintPath>
-    </Reference>
-    <Reference Include="Uno.UI.FluentTheme.v2">
-      <HintPath>..\Libs\Uno.UI.FluentTheme.v2.dll</HintPath>
-    </Reference>
-    <Reference Include="Uno.UI.Runtime.Skia.Wpf">
-      <HintPath>..\Libs\Uno.UI.Runtime.Skia.Wpf.dll</HintPath>
-    </Reference>
-    <Reference Include="Uno.UI.Toolkit">
-      <HintPath>..\Libs\Uno.UI.Toolkit.dll</HintPath>
-    </Reference>
-    <Reference Include="Uno.UI.XamlHost">
-      <HintPath>..\Libs\Uno.UI.XamlHost.dll</HintPath>
-    </Reference>
-    <Reference Include="Uno.UI.XamlHost.Skia.Wpf">
-      <HintPath>..\Libs\Uno.UI.XamlHost.Skia.Wpf.dll</HintPath>
-    </Reference>
-    <Reference Include="Uno.Xaml">
-      <HintPath>..\Libs\Uno.Xaml.dll</HintPath>
-    </Reference>
+
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.VisualStudio.SDK" Version="17.1.32210.191" ExcludeAssets="runtime" />
+		<PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.4.2118" />
   </ItemGroup>
+	
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.SDK" Version="17.1.32210.191" ExcludeAssets="runtime">
-      <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.4.2118" />
-  </ItemGroup>
-  <ItemGroup>
-    <!--<ProjectReference Include="..\TemplateStudio.Wizards\TemplateStudio.Wizards.csproj">
-      <Project>{F85B23F5-D2AF-42E5-A81A-70B4B3CAA939}</Project>
-      <Name>TemplateStudio.Wizards</Name>
-      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
-      <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
-    </ProjectReference>-->
     <ProjectReference Include="..\UnoProjectTemplate\UnoProjectTemplate.csproj">
       <Project>{BBB7197B-CB92-4B49-B89B-1F322B7F71A3}</Project>
       <Name>UnoProjectTemplate</Name>
@@ -207,15 +51,13 @@
       <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
     </ProjectReference>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
+
+	
+  <!--<Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />-->
+
+	
   <!-- Step 1... Build the Wizard -->
   <Target Name="PrepareWizard" AfterTargets="Build">
     <ItemGroup>
@@ -223,42 +65,33 @@
     </ItemGroup>
     <MSBuild Projects="@(WizardProjectReference)" Targets="Build" Properties="Configuration=$(Configuration);Platform=$(Platform)" />
   </Target>
-  <!-- Step 2... Gather the required files and copy to a temporary directory -->
+
+	<!-- Step 2... Gather the required files and copy to a temporary directory -->
   <Target Name="GatherUnsignedWizardFiles" AfterTargets="PrepareWizard">
     <ItemGroup>
       <UnsignedWizardAssembly Include="..\TemplateStudio.Wizards\bin\$(Configuration)\net472\*.dll" />
       <UnsignedWizardAssembly Include="C:\Windows\Microsoft.NET\Framework64\v4.0.30319\netstandard.dll" />
       <UnsignedWizardAssembly Include="C:\Windows\Microsoft.NET\Framework64\v4.0.30319\msc*.dll" />
       <UnsignedWizardAssembly Include="C:\Windows\Microsoft.NET\Framework64\v4.0.30319\System*.dll" />
-    </ItemGroup>
+
+		</ItemGroup>
     <Copy SourceFiles="@(UnsignedWizardAssembly)" DestinationFolder="$(IntermediateOutputPath)wizard\Unsigned" />
   </Target>
-  <!-- Step 3... Sign the files -->
+
+	<!-- Step 3... Sign the files -->
   <Target Name="SignWizardFiles" AfterTargets="GatherUnsignedWizardFiles">
-    <Exec ContinueOnError="false" Command="&quot;$(NuGetPackageRoot)brutal.dev.strongnamesigner\3.1.1\build\StrongNameSigner.Console.exe&quot; -in &quot;$(IntermediateOutputPath)wizard\Unsigned&quot; -out &quot;$(IntermediateOutputPath)wizard\Signed&quot; -k &quot;$(SolutionDir)TemplateStudio.Wizards\keys\key.snk&quot; -l Silent" />
+		<MakeDir Directories="$(IntermediateOutputPath)wizard\Signed" />
+		<Exec ContinueOnError="false" Command="&quot;$(NuGetPackageRoot)brutal.dev.strongnamesigner\3.1.1\build\StrongNameSigner.Console.exe&quot; -in &quot;$(IntermediateOutputPath)wizard\Unsigned&quot; -out &quot;$(IntermediateOutputPath)wizard\Signed&quot; -k &quot;$(SolutionDir)TemplateStudio.Wizards\keys\key.snk&quot;" />
     <ItemGroup>
       <SignedWizardAssembly Include="$(IntermediateOutputPath)wizard\Signed\*.dll" />
     </ItemGroup>
   </Target>
-  <!-- Step 4... Add the signed files to the project -->
+
+	<!-- Step 4... Add the signed files to the project -->
   <Target Name="ReferenceWizardAssemblies" AfterTargets="SignWizardFiles" BeforeTargets="CoreCompile">
     <ItemGroup>
       <Content Include="@(SignedWizardAssembly)" CopyToOutputDirectory="Always" IncludeInVSIX="true" Visible="false" />
-    </ItemGroup>
-  </Target>
-	
-	<Target Name="CopyFilesTemplateStudioWizards" AfterTargets="ReferenceWizardAssemblies">
-		<ItemGroup>
-			<FileTemplateStudioWizards Include="$(IntermediateOutputPath)wizard\Signed\TemplateStudio.Wizards.dll" />
 		</ItemGroup>
-		<Copy SourceFiles="@(FileTemplateStudioWizards)" DestinationFiles="$(SolutionDir)TemplateStudio\TemplateStudio.Wizards.dll" />
-	</Target>
-
-  <!--<Target Name="CopyFiles" AfterTargets="ReferenceWizardAssemblies">
-    <ItemGroup>
-      <MySourceFiles Include="..\Libs\*.*" />
-    </ItemGroup>
-    <Copy SourceFiles="@(MySourceFiles)" DestinationFiles="$(TargetDir)%(RecursiveDir)%(Filename)%(Extension)" />
-  </Target>-->
+  </Target>
 	
 </Project>

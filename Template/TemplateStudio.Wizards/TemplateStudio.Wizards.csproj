@@ -17,9 +17,9 @@
 	</ItemGroup>-->
 
 	<ItemGroup>
-	  <Page Remove="Uno\App.xaml" />
-	  <Page Remove="Uno\MainUnoPage.xaml" />
-		<Page Remove="Uno\SelectPage.xaml" />
+		<None Remove="Views\**\*.xaml" />
+		<ApplicationDefinition Include="Views\App.xaml" XamlRuntime="WinUI" />
+		<Page Include="Views\**\*.xaml" Exclude="Views\App.xaml" XamlRuntime="WinUI" />		
 	</ItemGroup>
 
 	<ItemGroup>
@@ -39,83 +39,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Reference Include="System.Data.DataSetExtensions" />
-	  <!--<Reference Include="Uno">
-	    <HintPath>..\Libs\Uno.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Uno.Core.Extensions.Logging">
-	    <HintPath>..\Libs\Uno.Core.Extensions.Logging.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Uno.Core.Extensions.Logging.Singleton">
-	    <HintPath>..\Libs\Uno.Core.Extensions.Logging.Singleton.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Uno.Diagnostics.Eventing">
-	    <HintPath>..\Libs\Uno.Diagnostics.Eventing.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Uno.Foundation">
-	    <HintPath>..\Libs\Uno.Foundation.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Uno.Foundation.Logging">
-	    <HintPath>..\Libs\Uno.Foundation.Logging.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Uno.UI">
-	    <HintPath>..\Libs\Uno.UI.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging">
-	    <HintPath>..\Libs\Uno.UI.Adapter.Microsoft.Extensions.Logging.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Uno.UI.Composition">
-	    <HintPath>..\Libs\Uno.UI.Composition.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Uno.UI.Dispatching">
-	    <HintPath>..\Libs\Uno.UI.Dispatching.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Uno.UI.FluentTheme">
-	    <HintPath>..\Libs\Uno.UI.FluentTheme.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Uno.UI.FluentTheme.v1">
-	    <HintPath>..\Libs\Uno.UI.FluentTheme.v1.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Uno.UI.FluentTheme.v2">
-	    <HintPath>..\Libs\Uno.UI.FluentTheme.v2.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Uno.UI.RemoteControl">
-	    <HintPath>..\Libs\Uno.UI.RemoteControl.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Uno.UI.Runtime.Skia.Wpf">
-	    <HintPath>..\Libs\Uno.UI.Runtime.Skia.Wpf.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Uno.UI.Toolkit">
-	    <HintPath>..\Libs\Uno.UI.Toolkit.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Uno.UI.XamlHost">
-	    <HintPath>..\Libs\Uno.UI.XamlHost.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Uno.UI.XamlHost.Skia.Wpf">
-	    <HintPath>..\Libs\Uno.UI.XamlHost.Skia.Wpf.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Uno.Wasm.WebSockets">
-	    <HintPath>..\Libs\Uno.Wasm.WebSockets.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Uno.Xaml">
-	    <HintPath>..\Libs\Uno.Xaml.dll</HintPath>
-	  </Reference>-->
+	  <Reference Include="System.Data.DataSetExtensions" />	 
 		<Reference Include="WindowsBase" />
 		<Reference Include="PresentationCore" />
 		<Reference Include="PresentationFramework" />
 	</ItemGroup>
-
-	<ItemGroup>
-		<Page Include="Uno\MainUnoPage.xaml" XamlRuntime="WinUI" />
-		<Page Include="Uno\SelectPage.xaml" XamlRuntime="WinUI" />
-		<ApplicationDefinition Include="Uno\App.xaml" XamlRuntime="WinUI" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="References\DLLs\Signed\" />
-	  <Folder Include="References\DLLs\Unsigned\" />
-	</ItemGroup>
-
 
 	<!--<Target Name="CopyFiles" AfterTargets="Build">
 		<ItemGroup>
