@@ -70,6 +70,10 @@
     <Content Include="HarfBuzzSharp.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="TemplateStudio.Wizards.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="x64\libHarfBuzzSharp.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
@@ -106,10 +110,6 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="TemplateStudio.pkgdef">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="TemplateStudio.Wizards.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -216,10 +216,49 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <Target Name="CopyFiles" AfterTargets="Build">
+  <!-- Step 1... Build the Wizard -->
+  <Target Name="PrepareWizard" AfterTargets="Build">
+    <ItemGroup>
+      <WizardProjectReference Include="..\TemplateStudio.Wizards\TemplateStudio.Wizards.csproj" />
+    </ItemGroup>
+    <MSBuild Projects="@(WizardProjectReference)" Targets="Build" Properties="Configuration=$(Configuration);Platform=$(Platform)" />
+  </Target>
+  <!-- Step 2... Gather the required files and copy to a temporary directory -->
+  <Target Name="GatherUnsignedWizardFiles" AfterTargets="PrepareWizard">
+    <ItemGroup>
+      <UnsignedWizardAssembly Include="..\TemplateStudio.Wizards\bin\$(Configuration)\net472\*.dll" />
+      <UnsignedWizardAssembly Include="C:\Windows\Microsoft.NET\Framework64\v4.0.30319\netstandard.dll" />
+      <UnsignedWizardAssembly Include="C:\Windows\Microsoft.NET\Framework64\v4.0.30319\msc*.dll" />
+      <UnsignedWizardAssembly Include="C:\Windows\Microsoft.NET\Framework64\v4.0.30319\System*.dll" />
+    </ItemGroup>
+    <Copy SourceFiles="@(UnsignedWizardAssembly)" DestinationFolder="$(IntermediateOutputPath)wizard\Unsigned" />
+  </Target>
+  <!-- Step 3... Sign the files -->
+  <Target Name="SignWizardFiles" AfterTargets="GatherUnsignedWizardFiles">
+    <Exec ContinueOnError="false" Command="&quot;$(NuGetPackageRoot)brutal.dev.strongnamesigner\3.1.1\build\StrongNameSigner.Console.exe&quot; -in &quot;$(IntermediateOutputPath)wizard\Unsigned&quot; -out &quot;$(IntermediateOutputPath)wizard\Signed&quot; -k &quot;$(SolutionDir)TemplateStudio.Wizards\keys\key.snk&quot; -l Silent" />
+    <ItemGroup>
+      <SignedWizardAssembly Include="$(IntermediateOutputPath)wizard\Signed\*.dll" />
+    </ItemGroup>
+  </Target>
+  <!-- Step 4... Add the signed files to the project -->
+  <Target Name="ReferenceWizardAssemblies" AfterTargets="SignWizardFiles" BeforeTargets="CoreCompile">
+    <ItemGroup>
+      <Content Include="@(SignedWizardAssembly)" CopyToOutputDirectory="Always" IncludeInVSIX="true" Visible="false" />
+    </ItemGroup>
+  </Target>
+	
+	<Target Name="CopyFilesTemplateStudioWizards" AfterTargets="ReferenceWizardAssemblies">
+		<ItemGroup>
+			<FileTemplateStudioWizards Include="$(IntermediateOutputPath)wizard\Signed\TemplateStudio.Wizards.dll" />
+		</ItemGroup>
+		<Copy SourceFiles="@(FileTemplateStudioWizards)" DestinationFiles="$(SolutionDir)TemplateStudio\TemplateStudio.Wizards.dll" />
+	</Target>
+
+  <!--<Target Name="CopyFiles" AfterTargets="ReferenceWizardAssemblies">
     <ItemGroup>
       <MySourceFiles Include="..\Libs\*.*" />
     </ItemGroup>
     <Copy SourceFiles="@(MySourceFiles)" DestinationFiles="$(TargetDir)%(RecursiveDir)%(Filename)%(Extension)" />
-  </Target>
+  </Target>-->
+	
 </Project>

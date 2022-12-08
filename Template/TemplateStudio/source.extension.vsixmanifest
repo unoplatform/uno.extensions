@@ -3,7 +3,7 @@
 	<Metadata>
 		<Identity Id="TemplateStudio.aeb7ff1f-dbe4-4ebb-be6d-2b8b1c466a61" Version="1.0" Language="en-US" Publisher="Rafael Rosa" />
 		<DisplayName>TemplateStudio</DisplayName>
-		<Description>Empty VSIX Project.</Description>
+		<Description xml:space="preserve">Empty VSIX Project. </Description>
 	</Metadata>
 	<Installation>
 		<InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[17.0, 18.0)">
