@@ -10,6 +10,7 @@
 		<UseWPF>true</UseWPF>
 	</PropertyGroup>
 
+
 	<!--<ItemGroup>
 	  <Compile Remove="Uno\App.xaml.cs" />
 	  <Compile Remove="Uno\MainUnoPage.xaml.cs" />
@@ -18,6 +19,7 @@
 	<ItemGroup>
 	  <Page Remove="Uno\App.xaml" />
 	  <Page Remove="Uno\MainUnoPage.xaml" />
+		<Page Remove="Uno\SelectPage.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -104,14 +106,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	<Page Include="Uno\MainUnoPage.xaml" XamlRuntime="WinUI" />
-	<ApplicationDefinition Include="Uno\App.xaml" XamlRuntime="WinUI" />
+		<Page Include="Uno\MainUnoPage.xaml" XamlRuntime="WinUI" />
+		<Page Include="Uno\SelectPage.xaml" XamlRuntime="WinUI" />
+		<ApplicationDefinition Include="Uno\App.xaml" XamlRuntime="WinUI" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Folder Include="References\DLLs\Signed\" />
 	  <Folder Include="References\DLLs\Unsigned\" />
-	  <Folder Include="Uno\" />
 	</ItemGroup>
 
 

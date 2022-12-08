@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using TemplateStudio.Wizards.ViewModel;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 
@@ -19,8 +20,11 @@ namespace TemplateStudio.Wizards
 {
 	public partial class MainUnoPage : Page
 	{
+		SequentialFlowvViewModel sequentialFlowvViewModel = null;
 		public MainUnoPage()
 		{
+			sequentialFlowvViewModel = new SequentialFlowvViewModel();
+			DataContext = this;
 			this.InitializeComponent();
 		}
 	}
