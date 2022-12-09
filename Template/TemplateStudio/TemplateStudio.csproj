@@ -89,16 +89,22 @@
 	<!-- Step 4... Add the signed files to the project -->
 	<Target Name="ReferenceWizardAssemblies" AfterTargets="SignWizardFiles">
 		<ItemGroup>
-			<!--<Content Include="@(SignedWizardAssembly)" CopyToOutputDirectory="Always" IncludeInVSIX="true" Visible="false"/>-->
-	
+		<!--<Content Include="@(SignedWizardAssembly)" CopyToOutputDirectory="Always" IncludeInVSIX="true" Visible="false"/>-->
+	  <Reference Include="System" />
 			<Reference Include="@(SignedWizardAssembly)">
 				<HintPath>$(OutputPath)%(Filename)%(Extension)</HintPath>
 			</Reference>
-
-			<!--<Content Include="TemplateStudio.Wizards.dll">
-				<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-				<IncludeInVSIX>true</IncludeInVSIX>
-			</Content>-->
 		</ItemGroup>
 	</Target>
+
+
+  <Target Name="CopyFiles" AfterTargets="ReferenceWizardAssemblies">
+    <ItemGroup>
+      <MySourceFiles Include="..\LibsRef\**\*.*" />	  
+			<Reference Include="@(MySourceFiles)">
+					<HintPath>$(OutputPath)%(Filename)%(Extension)</HintPath>
+			</Reference>
+    </ItemGroup>
+		<Copy SourceFiles="@(MySourceFiles)" DestinationFiles="$(TargetDir)%(RecursiveDir)%(Filename)%(Extension)" />
+  </Target>
 </Project>

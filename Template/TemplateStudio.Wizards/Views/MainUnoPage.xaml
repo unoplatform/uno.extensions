@@ -7,8 +7,6 @@
 		mc:Ignorable="d"
 		Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
 	  >
-
-	<!--Title="MainUnoPage" Height="450" Width="800"-->
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="10*" />
@@ -38,13 +36,13 @@
 			</Grid.RowDefinitions>
 
 			<Grid Grid.Row="0">
-					<Grid.ColumnDefinitions>
-						<!--Sequential flow-->
-						<ColumnDefinition Width="220" />
-						<ColumnDefinition Width="Auto" />
-						<!--Selection area-->
-						<ColumnDefinition Width="*" />
-					</Grid.ColumnDefinitions>
+				<Grid.ColumnDefinitions>
+					<!--Sequential flow-->
+					<ColumnDefinition Width="220" />
+					<ColumnDefinition Width="Auto" />
+					<!--Selection area-->
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
 
 				<Grid Grid.Column="0">
 					<ListView x:Name="listViewSequentialFlow" ItemsSource="{x:Bind sequentialFlowvViewModel.SequentialFlowList}">
@@ -60,59 +58,10 @@
 				<Grid Grid.Column="1" Background="Gray" Height="1.5" />
 
 				<Grid Grid.Column="2">
-					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-
-						<!-- Platform -->
-						<TextBlock Text="Platform" Foreground="#242424" FontWeight="Bold" FontSize="16" />
-
-						<TextBlock Text="Mobile" Foreground="#242424" FontWeight="SemiBold" FontSize="14" />
-						<CheckBox Content="iOS" IsChecked="True" />
-						<CheckBox Content="Android" IsChecked="True" />
 
 
-						<TextBlock Text="Desktop" Foreground="#242424" FontWeight="SemiBold" FontSize="14" />
-						<CheckBox Content="Windows (Windows App SDK)" IsChecked="True" />
-						<CheckBox Content="Windows (Wpf)" IsChecked="True" />
-						<CheckBox Content="Linux (GTK)" IsChecked="True" />
-						<CheckBox Content="Linux (Frame Buffer)" IsChecked="True" />
-						<CheckBox Content="Mac (MacOS)" IsChecked="True" />
-						<CheckBox Content="Mac (Catalyst)" IsChecked="True" />
-
-						<TextBlock Text="Web" Foreground="#242424" FontWeight="SemiBold" FontSize="14" />
-						<CheckBox Content="Wasm (WebAssembly)" IsChecked="True" />
-
-						<!-- Features -->
-						<TextBlock Text="Features" Foreground="#242424" FontWeight="Bold" FontSize="16" />
-						<CheckBox Content="PWA Manifest for WASM" IsChecked="True" />
-						<CheckBox Content="Configuration (appsettings.json)" IsChecked="True" />
-						<CheckBox Content="Localization" IsChecked="True" />
-
-						<TextBlock Text="Mobile" Foreground="#242424" FontWeight="SemiBold" FontSize="14" />
-
-						<RadioButton GroupName="EnabledLogging" Content="No Logging Extensions (None)" />
-						<RadioButton GroupName="EnabledLogging" Content="Logging (Enabled)" />
-						<RadioButton GroupName="EnabledLogging" Content="Logging - Serilog (Enabled)" />
-
-
-						<!-- Coding Style -->
-						<TextBlock Text="Coding Style" Foreground="#242424" FontWeight="Bold" FontSize="16" />
-						<RadioButton GroupName="EnabledCodingStyle" Content="XAML" />
-						<RadioButton GroupName="EnabledCodingStyle" Content="C# Markup" />
-
-						<!-- Framework -->
-						<TextBlock Text="Framework" Foreground="#242424" FontWeight="Bold" FontSize="16" />
-						<RadioButton GroupName="EnabledFramework" Content="net6" />
-						<RadioButton GroupName="EnabledFramework" Content="net7" />
-
-						<!-- Architecture -->
-						<TextBlock Text="Architecture" Foreground="#242424" FontWeight="Bold" FontSize="16" />
-						<RadioButton GroupName="EnabledArchitecture" Content="Mvvm (CommunityToolkit.mvvm)  " />
-						<RadioButton GroupName="EnabledArchitecture" Content="MVU-X (Uno.Extensions.Reactive)" />
-
-					</StackPanel>
 				</Grid>
-				<!--<Frame Grid.Column="2" x:Name="stepFrame" NavigationUIVisibility="Hidden" Focusable="False" />-->
-
+				
 			</Grid>
 
 			<Grid Grid.Row="1">
