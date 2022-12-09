@@ -23,6 +23,7 @@ public class WeatherForecastController : ControllerBase
 	/// <remarks>A 5 Day Forecast</remarks>
 	/// <response code="200">Weather Forecast returned</response>
 	[HttpGet(Name = "GetWeatherForecast")]
+	[Produces("application/json")]
 	[ProducesResponseType(typeof(IEnumerable<WeatherForecast>), 200)]
 	public IEnumerable<WeatherForecast> Get() =>
 		Enumerable.Range(1, 5).Select(index =>
