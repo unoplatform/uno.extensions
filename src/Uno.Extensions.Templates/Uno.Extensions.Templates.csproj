@@ -28,48 +28,55 @@
 
 	<ItemGroup>
 		<UpToDateCheckInput Include="content\**" />
+		<Compile Remove="content/**/*" />
+		<Page Remove="content/**/*" />
+		<Content Remove="content/**/*" />
+		<Content Include="content/**/*"
+				Exclude="**/obj/**;**/bin/**;**/*.Debugging.sln"
+				KeepDuplicates="False"
+				PackagePath="content\unoapp-extensions"
+				Pack="true" />
+		<_AllCSProjFiles Include="content/**/*.csproj" />
+		<_AllCSProjFiles Include="content/**/Directory.Packages.props" />
 	</ItemGroup>
-
-	<ItemGroup>
-		<Compile Remove="content/**/*.cs" />
-		<None Include="content/**/*.cs" />
-	</ItemGroup>
-
-	<Target Name="ReplaceTemplateCode" BeforeTargets="BeforeBuild">
-		<ItemGroup>
-			<Content Include="content\unoapp-extensions\**" KeepDuplicates="False">
-				<PackagePath>content\unoapp-extensions</PackagePath>
-				<Pack>true</Pack>
-			</Content>
-			<Content Remove="**\*.Debugging.sln" />
-			<Content Remove="**\bin\**" />
-			<Content Remove="**\obj\**" />
-		</ItemGroup>
-	</Target>
 
 	<Target Name="ReplaceVersions" BeforeTargets="BeforeBuild">
-		<PropertyGroup>
-			<MSBuildDeveloperNamespace>
-				<Namespace Prefix="x" Uri="http://schemas.microsoft.com/developer/msbuild/2003" />
-			</MSBuildDeveloperNamespace>
-		</PropertyGroup>
 
-		<ItemGroup>
-			<_AllCSProjFiles Include="content/**/*.csproj" />
-			<_AllCSProjFiles Include="content/**/Directory.Packages.props" />
-		</ItemGroup>
-
-		<!-- Legacy projects -->
-		<XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)" Query="//x:PackageVersion[@Version='255.255.255.255']/@Version" Value="$(PackageVersion)" Namespaces="$(MSBuildDeveloperNamespace)" />
-		<XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)" Query="//x:PackageReference[@Version='255.255.255.255']/@VersionOverride" Value="$(PackageVersion)" Namespaces="$(MSBuildDeveloperNamespace)" />
-		<XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)" Query="//x:PackageReference[@Version='255.255.255.255']/@Version" Value="$(PackageVersion)" Namespaces="$(MSBuildDeveloperNamespace)" />
-
-		<!-- SDK Style projects -->
-		<XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)" Query="//PackageVersion[@Version='255.255.255.255']/@Version" Value="$(PackageVersion)" Namespaces="" />
-		<XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)" Query="//PackageReference[@Version='255.255.255.255']/@VersionOverride" Value="$(PackageVersion)" Namespaces="" />
-		<XmlPoke XmlInputPath="%(_AllCSProjFiles.Identity)" Query="//PackageReference[@Version='255.255.255.255']/@Version" Value="$(PackageVersion)" Namespaces="" />
-
-
+		<ReplaceFileText Filename="%(_AllCSProjFiles.Identity)"
+					MatchExpression="Version=&quot;255.255.255.255&quot;"
+					ReplacementText="Version=&quot;$(PackageVersion)&quot;" />
 
 	</Target>
+
+	<Target Name="ResetVersions" AfterTargets="Pack">
+
+		<ReplaceFileText Filename="%(_AllCSProjFiles.Identity)"
+					MatchExpression="Version=&quot;$(PackageVersion)&quot;"
+					ReplacementText="Version=&quot;255.255.255.255&quot;" />
+
+	</Target>
+
+	<!-- Using Regex Replace prevents XmlPoke from replacing Tabs with Spaces -->
+	<UsingTask TaskName="ReplaceFileText"
+			TaskFactory="RoslynCodeTaskFactory"
+			AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+		<ParameterGroup>
+			<Filename ParameterType="System.String" Required="true" />
+			<MatchExpression ParameterType="System.String" Required="true" />
+			<ReplacementText ParameterType="System.String" Required="true" />
+		</ParameterGroup>
+		<Task>
+			<Using Namespace="System" />
+			<Using Namespace="System.IO" />
+			<Using Namespace="System.Text.RegularExpressions" />
+			<Code Type="Fragment" Language="cs">
+				<![CDATA[
+					File.WriteAllText(
+						Filename,
+						Regex.Replace(File.ReadAllText(Filename), MatchExpression, ReplacementText)
+						);
+				]]>
+			</Code>
+		</Task>
+	</UsingTask>
 </Project>

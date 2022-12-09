@@ -31,8 +31,10 @@
   "preferNameDirectory": true,
   "guids": [
     "C7433AE2-B1A0-4C1A-887E-5CAA7AAF67A6", // Solution file (SolutionGuid)
-    "BACDD33A-304C-46C4-9B00-AC166978D7E0", // (core) .NET Standard Library
-    "339C569C-EE23-445E-B908-743673EE5BC9", // Platforms Solution folder
+    "FAA2C1DE-F859-4053-9573-6245F7E832EF", // src solution folder
+    "BACDD33A-304C-46C4-9B00-AC166978D7E0", // (core) library
+    "339C569C-EE23-445E-B908-743673EE5BC9", // Platforms solution folder
+    "BA1ACE40-623E-4F42-94BB-11CF4D52C445", // Web solution folder
     "24D56E12-2373-4CBD-9AD4-5C931D15FB0D", // Mobile
     "40EA03F7-8A22-4143-B251-79BAC3EB13D2", // Wasm
     "A5B8155A-118F-4794-B551-C6F3CF7E5411", // Skia.Gtk
@@ -140,21 +142,6 @@
       ],
       "defaultValue": "material"
     },
-    "use-material": {
-      "type": "computed",
-      "datatype": "bool",
-      "value": "(app-theme == 'material')"
-    },
-    "use-fluent": {
-      "type": "computed",
-      "datatype": "bool",
-      "value": "(app-theme == 'fluent')"
-    },
-    "use-cupertino": {
-      "type": "computed",
-      "datatype": "bool",
-      "value": "(app-theme == 'cupertino')"
-    },
     "android": {
       "displayName": "Mobile - Android",
       "type": "parameter",
@@ -236,7 +223,7 @@
       "displayName": "Server - API",
       "type": "parameter",
       "datatype": "bool",
-      "defaultValue": "false",
+      "defaultValue": "true",
       "description": "Includes a Server project for an API & host for the WebAssembly project"
     },
     "use-configuration": {
@@ -300,6 +287,41 @@
       "defaultValue": "false",
       "description": "Whether or not to use Central Package Management - package versions are via central Directory.Packages.props file"
     },
+    "vscode": {
+      "displayName": "WebAssembly - Visual Studio Code Debugging",
+      "type": "parameter",
+      "dataType": "bool",
+      "defaultValue": "false",
+      "description": "Adds the Visual Studio Code Debugging support files for WebAssembly"
+    },
+    "wasm-pwa-manifest": {
+      "displayName": "WebAssembly - PWA Manifest",
+      "type": "parameter",
+      "datatype": "bool",
+      "description": "Enables the generation of a PWA manifest for WebAssembly",
+      "defaultValue": "true"
+    },
+    "skipRestore": {
+      "type": "parameter",
+      "datatype": "bool",
+      "description": "If specified, skips the automatic restore of the project on create.",
+      "defaultValue": "false"
+    },
+    "use-material": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(app-theme == 'material')"
+    },
+    "use-fluent": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(app-theme == 'fluent')"
+    },
+    "use-cupertino": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(app-theme == 'cupertino')"
+    },
     "use-logging": {
       "type": "computed",
       "datatype": "bool",
@@ -320,26 +342,6 @@
       "dataType": "bool",
       "value": "(android || ios || macos || maccatalyst)"
     },
-    "vscode": {
-      "displayName": "WebAssembly - Visual Studio Code Debugging",
-      "type": "parameter",
-      "dataType": "bool",
-      "defaultValue": "false",
-      "description": "Adds the Visual Studio Code Debugging support files for WebAssembly"
-    },
-    "skipRestore": {
-      "type": "parameter",
-      "datatype": "bool",
-      "description": "If specified, skips the automatic restore of the project on create.",
-      "defaultValue": "false"
-    },
-    "wasm-pwa-manifest": {
-      "displayName": "WebAssembly - PWA Manifest",
-      "type": "parameter",
-      "datatype": "bool",
-      "description": "Enables the generation of a PWA manifest for WebAssembly",
-      "defaultValue": "true"
-    },
     "msftextv6" :{
       "type": "computed",
       "datatype": "bool",
@@ -359,17 +361,11 @@
       "type": "computed",
       "datatype": "bool",
       "value": "navigation == 'toolkit'"
-    },
-    "is-vsix": {
-      "type": "parameter",
-      "datatype": "bool",
-      "defaultValue": "false"
     }
   },
   "primaryOutputs": [
     {
-      "path": "MyExtensionsApp.sln",
-      "condition": "!is-vsix"
+      "path": "MyExtensionsApp.sln"
     },
     {
       "path": "MyExtensionsApp\\MyExtensionsApp.csproj"
@@ -432,12 +428,6 @@
           ],
           "exclude": [
             "MyExtensionsApp.Debugging.sln"
-          ]
-        },
-        {
-          "condition": "is-vsix",
-          "exclude": [
-            "**/*.sln"
           ]
         },
         {
