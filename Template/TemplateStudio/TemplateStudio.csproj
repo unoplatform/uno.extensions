@@ -95,10 +95,10 @@
 				<HintPath>$(OutputPath)%(Filename)%(Extension)</HintPath>
 			</Reference>
 
-			<Content Include="TemplateStudio.Wizards.dll">
+			<!--<Content Include="TemplateStudio.Wizards.dll">
 				<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 				<IncludeInVSIX>true</IncludeInVSIX>
-			</Content>
+			</Content>-->
 		</ItemGroup>
 	</Target>
 </Project>

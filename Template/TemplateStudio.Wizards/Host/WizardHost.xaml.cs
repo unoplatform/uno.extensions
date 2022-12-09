@@ -159,7 +159,7 @@ namespace TemplateStudio.Wizards.Host
 
 
 			var grid = new Grid { Height = 500, Width = 500 };
-			var butt = new Button { Content = "Click" };
+			var butt = new Button { Content = "ClickEd" };
 			butt.Click += Butt_Click;
 			grid.Children.Add(butt);
 			this.Content = grid;
