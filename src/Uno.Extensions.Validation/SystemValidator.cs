@@ -17,9 +17,9 @@ public class SystemValidator<T> : IValidator<T> where T: class
         ICollection<ValidationResult> results = new List<ValidationResult>();
 		var succeeded = Validator.TryValidateObject(instance, context, results, true);
 
-		if (!succeeded && instance is INotifyDataErrorInfo)
+		if (!succeeded && instance is INotifyDataErrorInfo _instance)
 		{
-			results = (instance as INotifyDataErrorInfo)?.GetErrors(null).OfType<ValidationResult>()?.ToList()
+			results = _instance?.GetErrors(null).OfType<ValidationResult>()?.ToList()
 				?? new List<ValidationResult>();
 		}
 
