@@ -44,6 +44,7 @@ namespace TemplateStudio.Wizards.Host
 			Initialize();
 			DataContext = this;
 			ContextViewModel.DataReplacement.android = true;
+			//InitializeComponent();
 		}
 		protected void Initialize()
 		{
@@ -154,14 +155,15 @@ namespace TemplateStudio.Wizards.Host
 			//this.RootGrid.Children.Add(GridForButtons);
 
 
-			//this.Content = this.RootGrid;
-			//this.Content = new UnoXamlHost() { InitialTypeName="TemplateStudio.Wizards.MainUnoPage", Height=500,Width=500 };
-			var grid= new Grid { Height = 500, Width = 500 };
+			this.Content = this.RootGrid;
+			this.Content = new UnoXamlHost() { InitialTypeName = "TemplateStudio.Wizards.MainUnoPage", Height = 500, Width = 500 };
+			var grid = new Grid { Height = 500, Width = 500 };
 			var butt = new Button { Content = "Click" };
 			butt.Click += Butt_Click;
 			grid.Children.Add(butt);
 			this.Content = grid;
 			this.SizeToContent = SizeToContent.WidthAndHeight;
+			this.Loaded += Butt_Click;
 		}
 
 		private void Butt_Click(object sender, RoutedEventArgs e)

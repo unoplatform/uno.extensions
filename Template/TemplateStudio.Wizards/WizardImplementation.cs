@@ -28,8 +28,6 @@ namespace TemplateStudio.Wizards
 {
 	public class WizardImplementation : IWizard
 	{
-		private string customMessage;
-
 		// This method is called before opening any item that
 		// has the OpenInEditor attribute.
 		public void BeforeOpeningFile(ProjectItem projectItem)
@@ -85,7 +83,7 @@ namespace TemplateStudio.Wizards
 			}
 			catch (Exception ex)
 			{
-				//MessageBox.Show(ex.ToString());
+				MessageBox.Show(ex.ToString());
 			}
 		}
 

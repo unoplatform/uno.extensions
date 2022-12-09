@@ -17,6 +17,11 @@
 	</ItemGroup>-->
 
 	<ItemGroup>
+	  <None Remove="Host\WizardHost.xaml" />
+		<Page Include="Host\WizardHost.xaml" XamlRuntime="wpf" Generator="MSBuild:Compile" SubType="Designer"/>
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Remove="Views\**\*.xaml" />
 		<ApplicationDefinition Include="Views\App.xaml" XamlRuntime="WinUI" />
 		<Page Include="Views\**\*.xaml" Exclude="Views\App.xaml" XamlRuntime="WinUI" />		
@@ -45,14 +50,4 @@
 		<Reference Include="PresentationFramework" />
 	</ItemGroup>
 
-	<!--<Target Name="CopyFiles" AfterTargets="Build">
-		<ItemGroup>
-			<MySourceFiles Include="..\Libs\*.*"/>
-		</ItemGroup>
-
-		<Copy
-				SourceFiles="@(MySourceFiles)"
-				DestinationFiles="$(TargetDir)%(RecursiveDir)%(Filename)%(Extension)"
-        />
-	</Target>-->
 </Project>

@@ -5,10 +5,10 @@
 
 		<LangVersion>11.0</LangVersion>
 		<Platforms>AnyCPU;x86;x64</Platforms>
-		<PlatformTarget>AnyCPU</PlatformTarget>		
+		<PlatformTarget>AnyCPU</PlatformTarget>
 		<OutputPath>bin\Debug\</OutputPath>
 
-		
+
 		<AppDesignerFolder>Properties</AppDesignerFolder>
 		<GeneratePkgDefFile>false</GeneratePkgDefFile>
 		<IncludeAssemblyInVSIXContainer>true</IncludeAssemblyInVSIXContainer>
@@ -20,78 +20,82 @@
 		<StartProgram Condition="'$(DevEnvDir)' != ''">$(DevEnvDir)devenv.exe</StartProgram>
 		<StartArguments>/rootsuffix Exp</StartArguments>
 	</PropertyGroup>
-	
 
-	<ItemGroup>   
-    <Content Include="TemplateStudio.pkgdef">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>		
+
+	<ItemGroup>
+		<Content Include="TemplateStudio.pkgdef">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+			<IncludeInVSIX>true</IncludeInVSIX>
+		</Content>
 		<None Include="source.extension.vsixmanifest">
-      <SubType>Designer</SubType>
-    </None>
-    <Content Include="Templates\*.nupkg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-  </ItemGroup>
+			<SubType>Designer</SubType>
+		</None>
+		<Content Include="Templates\*.nupkg">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+			<IncludeInVSIX>true</IncludeInVSIX>
+		</Content>
+	</ItemGroup>
 
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.VisualStudio.SDK" Version="17.1.32210.191" ExcludeAssets="runtime" />
 		<PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.4.2118" />
-  </ItemGroup>
-	
-  <ItemGroup>
-    <ProjectReference Include="..\UnoProjectTemplate\UnoProjectTemplate.csproj">
-      <Project>{BBB7197B-CB92-4B49-B89B-1F322B7F71A3}</Project>
-      <Name>UnoProjectTemplate</Name>
-      <VSIXSubPath>ProjectTemplates</VSIXSubPath>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
-    </ProjectReference>
-  </ItemGroup>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\UnoProjectTemplate\UnoProjectTemplate.csproj">
+			<Project>{BBB7197B-CB92-4B49-B89B-1F322B7F71A3}</Project>
+			<Name>UnoProjectTemplate</Name>
+			<VSIXSubPath>ProjectTemplates</VSIXSubPath>
+			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+			<IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+		</ProjectReference>
+	</ItemGroup>
 
 
-	
-  <!--<Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
+	<!--<Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />-->
 
-	
-  <!-- Step 1... Build the Wizard -->
-  <Target Name="PrepareWizard" AfterTargets="Build">
-    <ItemGroup>
-      <WizardProjectReference Include="..\TemplateStudio.Wizards\TemplateStudio.Wizards.csproj" />
-    </ItemGroup>
-    <MSBuild Projects="@(WizardProjectReference)" Targets="Build" Properties="Configuration=$(Configuration);Platform=$(Platform)" />
-  </Target>
+
+	<!-- Step 1... Build the Wizard -->
+	<Target Name="PrepareWizard" AfterTargets="BeforeBuild">
+		<ItemGroup>
+			<WizardProjectReference Include="..\TemplateStudio.Wizards\TemplateStudio.Wizards.csproj" />
+		</ItemGroup>
+		<MSBuild Projects="@(WizardProjectReference)" Targets="Build" Properties="Configuration=$(Configuration);Platform=$(Platform)" />
+	</Target>
 
 	<!-- Step 2... Gather the required files and copy to a temporary directory -->
-  <Target Name="GatherUnsignedWizardFiles" AfterTargets="PrepareWizard">
-    <ItemGroup>
-      <UnsignedWizardAssembly Include="..\TemplateStudio.Wizards\bin\$(Configuration)\net472\*.dll" />
-      <UnsignedWizardAssembly Include="C:\Windows\Microsoft.NET\Framework64\v4.0.30319\netstandard.dll" />
-      <UnsignedWizardAssembly Include="C:\Windows\Microsoft.NET\Framework64\v4.0.30319\msc*.dll" />
-      <UnsignedWizardAssembly Include="C:\Windows\Microsoft.NET\Framework64\v4.0.30319\System*.dll" />
+	<Target Name="GatherUnsignedWizardFiles" AfterTargets="PrepareWizard">
+		<ItemGroup>
+			<UnsignedWizardAssembly Include="..\TemplateStudio.Wizards\bin\$(Configuration)\net472\*.dll" />
+			<UnsignedWizardAssembly Include="C:\Windows\Microsoft.NET\Framework64\v4.0.30319\netstandard.dll" />
+			<UnsignedWizardAssembly Include="C:\Windows\Microsoft.NET\Framework64\v4.0.30319\msc*.dll" />
+			<UnsignedWizardAssembly Include="C:\Windows\Microsoft.NET\Framework64\v4.0.30319\System*.dll" />
 
 		</ItemGroup>
-    <Copy SourceFiles="@(UnsignedWizardAssembly)" DestinationFolder="$(IntermediateOutputPath)wizard\Unsigned" />
-  </Target>
+		<Copy SourceFiles="@(UnsignedWizardAssembly)" DestinationFolder="$(IntermediateOutputPath)wizard\Unsigned" />
+	</Target>
 
 	<!-- Step 3... Sign the files -->
-  <Target Name="SignWizardFiles" AfterTargets="GatherUnsignedWizardFiles">
+	<Target Name="SignWizardFiles" AfterTargets="GatherUnsignedWizardFiles">
 		<MakeDir Directories="$(IntermediateOutputPath)wizard\Signed" />
 		<Exec ContinueOnError="false" Command="&quot;$(NuGetPackageRoot)brutal.dev.strongnamesigner\3.1.1\build\StrongNameSigner.Console.exe&quot; -in &quot;$(IntermediateOutputPath)wizard\Unsigned&quot; -out &quot;$(IntermediateOutputPath)wizard\Signed&quot; -k &quot;$(SolutionDir)TemplateStudio.Wizards\keys\key.snk&quot;" />
-    <ItemGroup>
-      <SignedWizardAssembly Include="$(IntermediateOutputPath)wizard\Signed\*.dll" />
-    </ItemGroup>
-  </Target>
+
+		<ItemGroup>
+			<SignedWizardAssembly Include="$(IntermediateOutputPath)wizard\Signed\*.dll" />
+		</ItemGroup>
+	</Target>
 
 	<!-- Step 4... Add the signed files to the project -->
-  <Target Name="ReferenceWizardAssemblies" AfterTargets="SignWizardFiles" BeforeTargets="CoreCompile">
-    <ItemGroup>
-      <Content Include="@(SignedWizardAssembly)" CopyToOutputDirectory="Always" IncludeInVSIX="true" Visible="false" />
-		</ItemGroup>
-  </Target>
+	<Target Name="ReferenceWizardAssemblies" AfterTargets="SignWizardFiles"  >
+		<ItemGroup>
+			<Content Include="@(SignedWizardAssembly)" CopyToOutputDirectory="Always" IncludeInVSIX="true" Visible="false"/>
 	
+			<!--<Reference  Include="@(SignedWizardAssembly)">
+				<HintPath>$(OutputPath)%(Filename)%(Extension)</HintPath>
+			</Reference>-->
+			</ItemGroup>
+	</Target>
 </Project>
