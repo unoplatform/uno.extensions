@@ -1,4 +1,6 @@
-﻿namespace Uno.Extensions.Validation;
+﻿using System.ComponentModel;
+
+namespace Uno.Extensions.Validation;
 
 /// <summary>
 /// Class that can be used to validate objects, properties and methods based on the associated ValidationAttributes. 
@@ -13,7 +15,13 @@ public class SystemValidator<T> : IValidator<T> where T: class
 		CancellationToken cancellationToken = default)
 	{
         ICollection<ValidationResult> results = new List<ValidationResult>();
-		Validator.TryValidateObject(instance, context, results, true);
+		var succeeded = Validator.TryValidateObject(instance, context, results, true);
+
+		if (!succeeded && instance is INotifyDataErrorInfo)
+		{
+			results = (instance as INotifyDataErrorInfo)?.GetErrors(null).OfType<ValidationResult>()?.ToList()
+				?? new List<ValidationResult>();
+		}
 
 		return new ValueTask<IEnumerable<ValidationResult>>(results.ToList());
 	}
