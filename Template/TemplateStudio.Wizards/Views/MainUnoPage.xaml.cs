@@ -25,6 +25,7 @@ namespace TemplateStudio.Wizards
 		{
 			sequentialFlowvViewModel = new SequentialFlowvViewModel();
 			DataContext = this;
+			//stepFrame.Content = new SelectPage();
 			this.InitializeComponent();
 		}
 	}

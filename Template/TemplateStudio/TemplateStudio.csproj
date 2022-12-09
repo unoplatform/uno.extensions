@@ -1,17 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
+ <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  
 	<PropertyGroup>
 		<TargetFramework>net472</TargetFramework>
 
 		<LangVersion>11.0</LangVersion>
 		<Platforms>AnyCPU;x86;x64</Platforms>
 		<PlatformTarget>AnyCPU</PlatformTarget>
-		<OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
 
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
 
 		<AppDesignerFolder>Properties</AppDesignerFolder>
 		<GeneratePkgDefFile>false</GeneratePkgDefFile>
-		<IncludeAssemblyInVSIXContainer>true</IncludeAssemblyInVSIXContainer>
+		<IncludeAssemblyInVSIXContainer>false</IncludeAssemblyInVSIXContainer>
 		<IncludeDebugSymbolsInVSIXContainer>false</IncludeDebugSymbolsInVSIXContainer>
 		<IncludeDebugSymbolsInLocalVSIXDeployment>false</IncludeDebugSymbolsInLocalVSIXDeployment>
 		<CopyBuildOutputToOutputDirectory>true</CopyBuildOutputToOutputDirectory>
@@ -35,8 +37,7 @@
 			<IncludeInVSIX>true</IncludeInVSIX>
 		</Content>
 	</ItemGroup>
-
-
+	
 	<ItemGroup>
 		<PackageReference Include="Microsoft.VisualStudio.SDK" Version="17.1.32210.191" ExcludeAssets="runtime" />
 		<PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.4.2118" />
@@ -51,11 +52,9 @@
 			<IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
 		</ProjectReference>
 	</ItemGroup>
-
-
-
-	<!--<Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />-->
+	
+	<Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
 
 
 	<!-- Step 1... Build the Wizard -->
@@ -73,7 +72,6 @@
 			<UnsignedWizardAssembly Include="C:\Windows\Microsoft.NET\Framework64\v4.0.30319\netstandard.dll" />
 			<UnsignedWizardAssembly Include="C:\Windows\Microsoft.NET\Framework64\v4.0.30319\msc*.dll" />
 			<UnsignedWizardAssembly Include="C:\Windows\Microsoft.NET\Framework64\v4.0.30319\System*.dll" />
-
 		</ItemGroup>
 		<Copy SourceFiles="@(UnsignedWizardAssembly)" DestinationFolder="$(IntermediateOutputPath)wizard\Unsigned" />
 	</Target>
@@ -89,13 +87,18 @@
 	</Target>
 
 	<!-- Step 4... Add the signed files to the project -->
-	<Target Name="ReferenceWizardAssemblies" AfterTargets="SignWizardFiles"  >
+	<Target Name="ReferenceWizardAssemblies" AfterTargets="SignWizardFiles">
 		<ItemGroup>
-			<Content Include="@(SignedWizardAssembly)" CopyToOutputDirectory="Always" IncludeInVSIX="true" Visible="false"/>
+			<!--<Content Include="@(SignedWizardAssembly)" CopyToOutputDirectory="Always" IncludeInVSIX="true" Visible="false"/>-->
 	
-			<!--<Reference  Include="@(SignedWizardAssembly)">
+			<Reference Include="@(SignedWizardAssembly)">
 				<HintPath>$(OutputPath)%(Filename)%(Extension)</HintPath>
-			</Reference>-->
-			</ItemGroup>
+			</Reference>
+
+			<Content Include="TemplateStudio.Wizards.dll">
+				<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+				<IncludeInVSIX>true</IncludeInVSIX>
+			</Content>
+		</ItemGroup>
 	</Target>
 </Project>

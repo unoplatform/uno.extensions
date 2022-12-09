@@ -154,22 +154,24 @@ namespace TemplateStudio.Wizards.Host
 			//Grid.SetColumn(GridForButtons, 0);
 			//this.RootGrid.Children.Add(GridForButtons);
 
+			//this.Content = this.RootGrid;
+			//this.Content = new UnoXamlHost() { InitialTypeName = "TemplateStudio.Wizards.MainUnoPage", Height = 500, Width = 500 };
 
-			this.Content = this.RootGrid;
-			this.Content = new UnoXamlHost() { InitialTypeName = "TemplateStudio.Wizards.MainUnoPage", Height = 500, Width = 500 };
+
 			var grid = new Grid { Height = 500, Width = 500 };
 			var butt = new Button { Content = "Click" };
 			butt.Click += Butt_Click;
 			grid.Children.Add(butt);
 			this.Content = grid;
 			this.SizeToContent = SizeToContent.WidthAndHeight;
-			this.Loaded += Butt_Click;
+			//this.Loaded += Butt_Click;
 		}
 
 		private void Butt_Click(object sender, RoutedEventArgs e)
 		{
-			this.Content = new UnoXamlHost() { InitialTypeName="TemplateStudio.Wizards.MainUnoPage", Height=500,Width=500 };
+			this.Content = new UnoXamlHost() { InitialTypeName="TemplateStudio.Wizards.MainUnoPage", Height=1024,Width=786 };
 
+			this.SizeToContent = SizeToContent.WidthAndHeight;
 		}
 
 		private void Button_Close_Click(object sender, RoutedEventArgs e)
