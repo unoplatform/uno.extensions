@@ -19,8 +19,7 @@
 		<PackageProjectUrl>https://github.com/unoplatform/uno.extensions</PackageProjectUrl>
 		<PackageIconUrl>https://nv-assets.azurewebsites.net/logos/uno.png</PackageIconUrl>
 		<RepositoryUrl>https://github.com/unoplatform/uno.extensions</RepositoryUrl>
-		<Description></Description>
-		<Copyright>Copyright (C) 2015-2022 nventive inc. - all rights reserved</Copyright>
+		<Description>Quickstart template for using Uno Extensions.</Description>
 		<GeneratePackageOnBuild Condition="'$(Configuration)'=='Release'">true</GeneratePackageOnBuild>
 		<PackageTags>dotnet-new;templates;uno-platform;webassembly;ios;android;winui;macos;uno-extensions</PackageTags>
 		<NoWarn>$(NoWarn);NU5128</NoWarn>
