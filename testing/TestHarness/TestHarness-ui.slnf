@@ -33,6 +33,8 @@
       "..\\..\\src\\Uno.Extensions.Serialization\\Uno.Extensions.Serialization.csproj",
       "..\\..\\src\\Uno.Extensions.Storage.UI\\Uno.Extensions.Storage.UI.csproj",
       "..\\..\\src\\Uno.Extensions.Storage\\Uno.Extensions.Storage.csproj",
+      "..\\..\\src\\Uno.Extensions.Toolkit.UI\\Uno.Extensions.Toolkit.UI.csproj",
+      "..\\..\\src\\Uno.Extensions.Toolkit\\Uno.Extensions.Toolkit.csproj",
       "TestBackend\\TestBackend.csproj",
       "TestHarness.Core\\TestHarness.Core.csproj",
       "TestHarness.Legacy.Droid\\TestHarness.Legacy.Droid.csproj",
