@@ -21,6 +21,7 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" />
+		<PackageReference Include="System.ComponentModel.Annotations" />
 		<PackageReference Include="Uno.CommunityToolkit.WinUI.UI" />
 		<PackageReference Include="FluentValidation" />
 		<PackageReference Include="IdentityModel.OidcClient" />

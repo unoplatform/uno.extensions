@@ -48,21 +48,22 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" />
+		<PackageReference Include="System.ComponentModel.Annotations" />
 		<PackageReference Include="Uno.CommunityToolkit.WinUI.UI" />
 		<PackageReference Include="FluentValidation" />
 		<PackageReference Include="IdentityModel.OidcClient" />
 		<PackageReference Include="Microsoft.Identity.Client" />
-		<PackageReference Include="Microsoft.Windows.Compatibility"  />
+		<PackageReference Include="Microsoft.Windows.Compatibility" />
 		<PackageReference Include="Microsoft.Extensions.Logging" />
 		<PackageReference Include="Refit" />
-		<PackageReference Include="Refit.HttpClientFactory"  />
+		<PackageReference Include="Refit.HttpClientFactory" />
 		<PackageReference Include="System.Text.Json" />
 		<PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" />
-		<PackageReference Include="Uno.WinUI.WebAssembly"   />
+		<PackageReference Include="Uno.WinUI.WebAssembly" />
 		<PackageReference Include="Uno.WinUI.RemoteControl" Condition="'$(Configuration)'=='Debug'" />
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" />
-		<PackageReference Include="Uno.Wasm.Bootstrap"   />
-		<PackageReference Include="Uno.Wasm.Bootstrap.DevServer"   />
+		<PackageReference Include="Uno.Wasm.Bootstrap" />
+		<PackageReference Include="Uno.Wasm.Bootstrap.DevServer" />
 		<PackageReference Include="Uno.Material.WinUI" />
 		<PackageReference Include="Uno.Toolkit.WinUI.Material" />
 		<PackageReference Include="Uno.Toolkit.WinUI" />
