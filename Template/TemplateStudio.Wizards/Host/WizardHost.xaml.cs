@@ -41,10 +41,10 @@ namespace TemplateStudio.Wizards.Host
 		public CheckBox CheckBoxSkipRestore { get; private set; }
 		public WizardHost()
 		{
-			Initialize();
-			DataContext = this;
-			ContextViewModel.DataReplacement.android = true;
-			//InitializeComponent();
+			//Initialize();
+			//DataContext = this;
+			//ContextViewModel.DataReplacement.android = true;
+			InitializeComponent();
 		}
 		protected void Initialize()
 		{
