@@ -145,7 +145,8 @@
     <Content Include="Properties\Default.rd.xml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" />
+		<PackageReference Include="FluentValidation" />
+		<PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="IdentityModel.OidcClient" />
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI" />
     <PackageReference Include="Microsoft.Identity.Client" />
@@ -167,10 +168,7 @@
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Core\Uno.Extensions.Core.csproj" />
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting.UI\Uno.Extensions.Hosting.UWP.csproj" />
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Hosting\Uno.Extensions.Hosting.csproj" />
-    <ProjectReference Include="..\..\..\src\Uno.Extensions.Localization\Uno.Extensions.Localization.csproj">
-      <Project>{b15d7a81-5380-40c6-83d0-5e953a56e7ed}</Project>
-      <Name>Uno.Extensions.Localization</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\..\..\src\Uno.Extensions.Localization\Uno.Extensions.Localization.csproj"/>
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Logging.Serilog\Uno.Extensions.Logging.Serilog.csproj" />
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Logging\Uno.Extensions.Logging.UWP.csproj" />
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Navigation.Toolkit\Uno.Extensions.Navigation.Toolkit.UI.csproj" />
@@ -183,15 +181,11 @@
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Http.Refit\Uno.Extensions.Http.Refit.csproj" />
-    <ProjectReference Include="..\..\..\src\Uno.Extensions.Storage.UI\Uno.Extensions.Storage.UI.csproj">
-      <Project>{2688b639-4cd7-46e1-af3e-1c9b86325a00}</Project>
-      <Name>Uno.Extensions.Storage.UI</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\src\Uno.Extensions.Storage\Uno.Extensions.Storage.csproj">
-      <Project>{26b4d624-949c-4ff1-89c1-2dc12b2558b8}</Project>
-      <Name>Uno.Extensions.Storage</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TestHarness.Core\TestHarness.Core.csproj" />
+    <ProjectReference Include="..\..\..\src\Uno.Extensions.Storage.UI\Uno.Extensions.Storage.UI.csproj"/>
+    <ProjectReference Include="..\..\..\src\Uno.Extensions.Storage\Uno.Extensions.Storage.csproj"/>
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Validation\Uno.Extensions.Validation.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Validation.Fluent\Uno.Extensions.Validation.Fluent.csproj" />
+		<ProjectReference Include="..\TestHarness.Core\TestHarness.Core.csproj" />
   </ItemGroup>
   <Import Project="..\TestHarness.Shared\TestHarness.Shared.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

@@ -34,6 +34,7 @@
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" />
 		<PackageReference Include="CommunityToolkit.WinUI.UI"  />
+		<PackageReference Include="FluentValidation" />
 		<PackageReference Include="IdentityModel.OidcClient" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" />
 		<PackageReference Include="Microsoft.Identity.Client" />
@@ -47,7 +48,6 @@
 		<PackageReference Include="Uno.Toolkit.WinUI.Material" />
 		<PackageReference Include="Uno.Toolkit.WinUI" />
 		<PackageReference Include="Uno.WinUI.MSAL" />
-		<PackageReference Include="FluentValidation" />
 		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>
 

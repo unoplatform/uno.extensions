@@ -42,6 +42,7 @@
 		<None Include="wwwroot\web.config" />
 	</ItemGroup>
 	<ItemGroup>
+		<PackageReference Include="FluentValidation" />
 		<PackageReference Include="Microsoft.Windows.Compatibility" />
 		<PackageReference Include="Uno.UI.WebAssembly" />
 		<PackageReference Include="Uno.Wasm.Bootstrap" />
@@ -89,6 +90,8 @@
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http.Refit\Uno.Extensions.Http.Refit.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Storage.UI\Uno.Extensions.Storage.UI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Storage\Uno.Extensions.Storage.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Validation\Uno.Extensions.Validation.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Validation.Fluent\Uno.Extensions.Validation.Fluent.csproj" />
 		<ProjectReference Include="..\TestHarness.Core\TestHarness.Core.csproj" />
 	</ItemGroup>
 	<Import Project="..\TestHarness.Shared\TestHarness.Shared.projitems" Label="Shared" />

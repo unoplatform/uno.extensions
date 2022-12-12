@@ -15,6 +15,7 @@
 		<UpToDateCheckInput Include="..\TestHarness.Legacy.Shared\**\*.xaml" />
 	</ItemGroup>
 	<ItemGroup>
+		<PackageReference Include="FluentValidation" />
 		<PackageReference Include="Uno.UI.Skia.Gtk"  />
 		<PackageReference Include="CommunityToolkit.Mvvm" />
 		<PackageReference Include="IdentityModel.OidcClient" />
@@ -60,6 +61,8 @@
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http.Refit\Uno.Extensions.Http.Refit.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Storage.UI\Uno.Extensions.Storage.UI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Storage\Uno.Extensions.Storage.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Validation\Uno.Extensions.Validation.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Validation.Fluent\Uno.Extensions.Validation.Fluent.csproj" />
 		<ProjectReference Include="..\TestHarness.Core\TestHarness.Core.csproj" />
 	</ItemGroup>
 	<Import Project="..\TestHarness.Shared\TestHarness.Shared.projitems" Label="Shared" />
