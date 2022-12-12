@@ -78,6 +78,7 @@
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Serialization\Uno.Extensions.Serialization.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http.Refit\Uno.Extensions.Http.Refit.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Validation\Uno.Extensions.Validation.csproj" />
 		<ProjectReference Include="..\TestHarness.Core\TestHarness.Core.csproj" />
 	</ItemGroup>
 

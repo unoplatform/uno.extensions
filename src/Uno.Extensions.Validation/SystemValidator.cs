@@ -15,6 +15,9 @@ public class SystemValidator<T> : IValidator<T> where T: class
 		CancellationToken cancellationToken = default)
 	{
         ICollection<ValidationResult> results = new List<ValidationResult>();
+
+		context ??= new ValidationContext(instance);
+
 		var succeeded = Validator.TryValidateObject(instance, context, results, true);
 
 		if (!succeeded && instance is INotifyDataErrorInfo _instance)
