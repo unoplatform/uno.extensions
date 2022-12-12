@@ -12,8 +12,8 @@
 
 
 		<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-
-			<!-- Platform -->
+			<TextBlock Text="Selection Page" />
+			<!-- Platform --><!--
 			<TextBlock Text="Platform" Foreground="#242424" FontWeight="Bold" FontSize="16" />
 
 			<TextBlock Text="Mobile" Foreground="#242424" FontWeight="SemiBold" FontSize="14" />
@@ -32,7 +32,7 @@
 			<TextBlock Text="Web" Foreground="#242424" FontWeight="SemiBold" FontSize="14" />
 			<CheckBox Content="Wasm (WebAssembly)" IsChecked="True" />
 
-			<!-- Features -->
+			--><!-- Features --><!--
 			<TextBlock Text="Features" Foreground="#242424" FontWeight="Bold" FontSize="16" />
 			<CheckBox Content="PWA Manifest for WASM" IsChecked="True" />
 			<CheckBox Content="Configuration (appsettings.json)" IsChecked="True" />
@@ -45,20 +45,20 @@
 			<RadioButton GroupName="EnabledLogging" Content="Logging - Serilog (Enabled)" />
 			
 
-			<!-- Coding Style -->
+			--><!-- Coding Style --><!--
 			<TextBlock Text="Coding Style" Foreground="#242424" FontWeight="Bold" FontSize="16" />
 			<RadioButton GroupName="EnabledCodingStyle" Content="XAML" />
 			<RadioButton GroupName="EnabledCodingStyle" Content="C# Markup" />
 
-			<!-- Framework -->
+			--><!-- Framework --><!--
 			<TextBlock Text="Framework" Foreground="#242424" FontWeight="Bold" FontSize="16" />
 			<RadioButton GroupName="EnabledFramework" Content="net6" />
 			<RadioButton GroupName="EnabledFramework" Content="net7" />
 
-			<!-- Architecture -->
+			--><!-- Architecture --><!--
 			<TextBlock Text="Architecture" Foreground="#242424" FontWeight="Bold" FontSize="16" />
 			<RadioButton GroupName="EnabledArchitecture" Content="Mvvm (CommunityToolkit.mvvm)  " />
-			<RadioButton GroupName="EnabledArchitecture" Content="MVU-X (Uno.Extensions.Reactive)" />
+			<RadioButton GroupName="EnabledArchitecture" Content="MVU-X (Uno.Extensions.Reactive)" />-->
 
 		</StackPanel>
 	</Grid>
