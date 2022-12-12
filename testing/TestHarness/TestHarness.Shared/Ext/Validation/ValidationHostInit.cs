@@ -7,6 +7,7 @@ public class ValidationHostInit : BaseHostInitialization
 	protected override IHostBuilder Custom(IHostBuilder builder)
 		=>builder
 			.UseValidation()
+			.UseCommunityToolkitValidation()
 			.UseFluentValidation(
 			configureDelegate: (ctx,services)=>
 			{

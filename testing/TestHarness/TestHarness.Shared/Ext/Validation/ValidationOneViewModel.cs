@@ -8,12 +8,15 @@ public partial class ValidationOneViewModel : ObservableObject
 {
 	private readonly IValidator<SimpleEntity> _simpleValidator;
 	private readonly IValidator<ValidationUser> _userValidator;
+	private readonly IValidator<SimpleObservableUser> _simpleObservableUser;
 	public ValidationOneViewModel(
 		IValidator<SimpleEntity> simpleValidator,
-		IValidator<ValidationUser> userValidator)
+		IValidator<ValidationUser> userValidator,
+		IValidator<SimpleObservableUser> simpleObservableUser)
 	{
 		_simpleValidator = simpleValidator;
 		_userValidator = userValidator;
+		_simpleObservableUser = simpleObservableUser;
 
 		_ = ValidateEntities();
 	}
@@ -25,6 +28,9 @@ public partial class ValidationOneViewModel : ObservableObject
 
 		var user = new ValidationUser();
 		var userResult = await _userValidator.ValidateAsync(user);
+
+		var observableUser = new SimpleObservableUser();
+		var observableUserResult = _simpleObservableUser.ValidateAsync(observableUser);
 	}
 
 
@@ -46,6 +52,22 @@ public partial class ValidationOneViewModel : ObservableObject
 	}
 
 
+}
+
+public class SimpleObservableUser : ObservableValidator
+{
+	private string firstName;
+	private string lastName;
+
+	[Required]
+	[MinLength(2)]
+	[MaxLength(100)]
+	public string First { get => firstName; set => SetProperty(ref firstName, value, true); }
+
+	[Required]
+	[MinLength(2)]
+	[MaxLength(100)]
+	public string Last { get => lastName; set => SetProperty(ref lastName, value, true); }
 }
 
 public record ValidationUser(string? Name = default);

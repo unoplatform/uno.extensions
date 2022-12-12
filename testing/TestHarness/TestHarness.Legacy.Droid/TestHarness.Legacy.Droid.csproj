@@ -143,6 +143,10 @@
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Http.Refit\Uno.Extensions.Http.Refit.csproj" />
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Storage.UI\Uno.Extensions.Storage.UI.csproj" />
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Storage\Uno.Extensions.Storage.csproj" />
+    <ProjectReference Include="..\..\..\src\Uno.Extensions.Validation.CommunityToolkit\Uno.Extensions.Validation.CommunityToolkit.csproj">
+      <Project>{ecc4b8f7-c167-42aa-99d7-be04cbb0ae78}</Project>
+      <Name>Uno.Extensions.Validation.CommunityToolkit</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Validation\Uno.Extensions.Validation.csproj" />
     <ProjectReference Include="..\..\..\src\Uno.Extensions.Validation.Fluent\Uno.Extensions.Validation.Fluent.csproj" />
     <ProjectReference Include="..\TestHarness.Core\TestHarness.Core.csproj" />

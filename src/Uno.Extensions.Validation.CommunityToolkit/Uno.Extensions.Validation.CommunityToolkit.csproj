@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<Import Project="..\tfms-non-ui.props" />
+
+	<PropertyGroup>
+		<Description>CommunityToolkit.Mvvm validation extensions for Uno Platform, UWP and WinUI</Description>
+
+		<!--Temporary disable missing XML doc until fixed in the whole package-->
+		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS1591</WarningsNotAsErrors>
+
+		<!-- As we are InternalsVisibleTo, we disable some compatibility types that are not used by package itself. -->
+		<UnoExtensionsGeneration_DisableModuleInitializerAttribute>True</UnoExtensionsGeneration_DisableModuleInitializerAttribute>
+
+		<UnoExtensionsGeneration_DisableNotNullIfNotNullAttribute>true</UnoExtensionsGeneration_DisableNotNullIfNotNullAttribute>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="CommunityToolkit.Mvvm" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Uno.Extensions.Validation\Uno.Extensions.Validation.csproj" />
+	</ItemGroup>
+
+</Project>
