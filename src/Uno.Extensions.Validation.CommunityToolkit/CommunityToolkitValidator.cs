@@ -1,7 +1,7 @@
 ﻿namespace Uno.Extensions.Validation;
 
 /// <summary>
-/// Class that can be used to validate objects, properties and methods based for a given ObservableValidator class. 
+/// Class that can be used to validate objects, properties and methods for a given ObservableValidator class. 
 /// </summary>
 public class CommunityToolkitValidator<T>: IValidator<T> where T : ObservableValidator
 {
