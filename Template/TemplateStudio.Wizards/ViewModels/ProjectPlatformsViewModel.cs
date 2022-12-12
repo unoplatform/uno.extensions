@@ -8,6 +8,12 @@ internal class ProjectPlatformsViewModel : WizardViewModelBase
 	public ProjectPlatformsViewModel(IDictionary<string, string> replacementsDictionary)
 		: base(replacementsDictionary)
 	{
+		Android = true;
+		iOS = true;
+		WebAssembly = true;
+		Gtk = true;
+		WinUI = true;
+		Server = true;
 	}
 
 	[TemplateParameter("android")]

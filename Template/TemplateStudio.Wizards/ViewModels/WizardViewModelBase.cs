@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using TemplateStudio.Wizards.ComponentModel;
+using TemplateStudio.Wizards.Model;
 
 namespace TemplateStudio.Wizards.ViewModels;
 
@@ -40,7 +41,16 @@ public class WizardViewModelBase : INotifyPropertyChanged
 		_values[propertyName] = value;
 		if(_parameters.ContainsKey(propertyName))
 		{
-			_replacements[$"passthrough:{_parameters[propertyName]}"] = value.ToString();
+			var key = $"passthrough:{_parameters[propertyName]}";
+			if(value is null)
+			{
+				_replacements.Remove(key);
+			}
+			else
+			{
+				var passthrough = value is TemplateChoice choice ? choice.Choice : value.ToString();
+				_replacements[key] = passthrough;
+			}
 		}
 
 		PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
