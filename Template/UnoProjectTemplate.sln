@@ -5,7 +5,7 @@ VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnoProjectTemplate", "UnoProjectTemplate\UnoProjectTemplate.csproj", "{BBB7197B-CB92-4B49-B89B-1F322B7F71A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemplateStudio", "TemplateStudio\TemplateStudio.csproj", "{F42A41E2-2C83-4D1E-94B4-5D424873AAFE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemplateStudio", "TemplateStudio\TemplateStudio.csproj", "{F42A41E2-2C83-4D1E-94B4-5D424873AAFE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TemplateStudio.Wizards", "TemplateStudio.Wizards\TemplateStudio.Wizards.csproj", "{F85B23F5-D2AF-42E5-A81A-70B4B3CAA939}"
 EndProject
