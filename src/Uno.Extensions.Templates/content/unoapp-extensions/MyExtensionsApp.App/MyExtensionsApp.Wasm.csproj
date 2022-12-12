@@ -9,6 +9,7 @@
 		<WasmPWAManifestFile>manifest.webmanifest</WasmPWAManifestFile>
 		<!--#endif -->
 		<UnoSingleLocationProject>true</UnoSingleLocationProject>
+		<AppDesignerFolder>Platforms\WebAssembly\Properties</AppDesignerFolder>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
 		<MonoRuntimeDebuggerEnabled>true</MonoRuntimeDebuggerEnabled>
