@@ -4,7 +4,16 @@ namespace TestHarness;
 
 public class ValidationHostInit : BaseHostInitialization
 {
-	protected override IHostBuilder Custom(IHostBuilder builder) =>builder.UseValidation();
+	protected override IHostBuilder Custom(IHostBuilder builder)
+		=>builder
+			.UseValidation()
+			.UseFluentValidation(
+			configureDelegate: (ctx,services)=>
+			{
+				services.RegisterValidator<
+					TestHarness.Ext.Navigation.Validation.ValidationUser,
+					TestHarness.Ext.Navigation.Validation.ValidationUserValidator>();
+			});
 
 	protected override void RegisterRoutes(IViewRegistry views, IRouteRegistry routes)
 	{

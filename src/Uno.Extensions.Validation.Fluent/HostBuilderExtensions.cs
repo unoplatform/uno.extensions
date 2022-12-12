@@ -4,15 +4,20 @@ public static class HostBuilderExtensions
 {
 	public static IHostBuilder UseFluentValidation(
 		this IHostBuilder hostBuilder,
-		Action<HostBuilderContext, IServiceCollection> configureDelegate)
+		Action<HostBuilderContext, IServiceCollection>? configureDelegate = default)
 	{
 		hostBuilder
-	   .ConfigureServices((ctx, services) =>
-	   {
-		   _ = services
-		   .AddScoped(typeof(IValidator<>), typeof(FluentValidator<>));
-	   });
+			.UseValidation();
 
-		return hostBuilder.ConfigureServices(configureDelegate ?? throw new ArgumentNullException(nameof(configureDelegate)));
+		return configureDelegate is not null ? hostBuilder.ConfigureServices(configureDelegate) : hostBuilder;
+	}
+
+	public static IServiceCollection RegisterValidator<TEntity, TValidator>(
+		this IServiceCollection services)
+		where TValidator: class, FluentValidation.IValidator<TEntity>
+	{
+		return services
+			.AddScoped<IValidator<TEntity>,FluentValidator<TEntity>>()
+			.AddScoped<FluentValidation.IValidator<TEntity>, TValidator>();
 	}
 }

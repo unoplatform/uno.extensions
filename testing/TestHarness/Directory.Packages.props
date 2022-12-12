@@ -2,7 +2,8 @@
 	<ItemGroup>
 		<PackageVersion Include="CommunityToolkit.Mvvm" Version="8.0.0" />
 		<PackageVersion Include="CommunityToolkit.WinUI.UI" Version="7.1.2" />
-		<PackageVersion Include="FluentAssertions" Version="6.7.0" />
+		<PackageVersion Include="FluentAssertions" Version="6.6.0" />
+		<PackageVersion Include="FluentValidation" Version="11.4.0" />
 		<PackageVersion Include="IdentityModel.OidcClient" Version="5.0.0" />
 		<PackageVersion Include="AspNet.Security.OAuth.Apple" Version="6.0.4" />
 		<PackageVersion Include="Microsoft.AspNetCore.Authentication.Facebook" Version="6.0.7" />

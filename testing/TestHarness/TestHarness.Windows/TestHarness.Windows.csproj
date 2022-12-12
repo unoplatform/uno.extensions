@@ -47,6 +47,7 @@
 		<PackageReference Include="Uno.Toolkit.WinUI.Material" />
 		<PackageReference Include="Uno.Toolkit.WinUI" />
 		<PackageReference Include="Uno.WinUI.MSAL" />
+		<PackageReference Include="FluentValidation" />
 		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>
 
@@ -79,6 +80,7 @@
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http\Uno.Extensions.Http.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Http.Refit\Uno.Extensions.Http.Refit.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Validation\Uno.Extensions.Validation.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Validation.Fluent\Uno.Extensions.Validation.Fluent.csproj" />
 		<ProjectReference Include="..\TestHarness.Core\TestHarness.Core.csproj" />
 	</ItemGroup>
 
