@@ -6,7 +6,7 @@ namespace Uno.Extensions.Reactive.UI;
 
 partial class FeedView : ILoadable
 {
-	private bool _isLoading = true; // True by default
+	private bool _isLoading = true; // True by default, so we are considered as loading even before the source is being set.
 	private event EventHandler? _isLoadingChanged;
 
 	/// <inheritdoc />
