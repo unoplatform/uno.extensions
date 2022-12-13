@@ -1,4 +1,6 @@
-﻿using System;
+﻿#pragma warning disable Uno0001 // ISelectionInfo is only an interface!
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -11,7 +13,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 	/// <summary>
 	/// The selection facet of the ICollectionView
 	/// </summary>
-	internal class SelectionFacet : IDisposable
+	internal class SelectionFacet : IDisposable, ISelectionInfo
 	{
 		/* 
 		 * Note: The selection is sync beetween the ListView and the CollectionView only when SelectionMode is 'Single'
@@ -60,16 +62,23 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 
 		private void OnServiceStateChanged(object? snd, EventArgs args)
 		{
+			if (_service!.IsSelected(CurrentPosition))
+			{
+				return;
+			}
+
+			var index = _service.GetSelectedRanges().FirstOrDefault()?.FirstIndex ?? -1;
 			if (_dispatcher is null or { HasThreadAccess: true })
 			{
-				MoveCurrentToPosition((int?)_service!.SelectedIndex ?? -1);
+				MoveCurrentToPosition(index);
 			}
 			else
 			{
-				_dispatcher.TryEnqueue(() => MoveCurrentToPosition((int?)_service!.SelectedIndex ?? -1));
+				_dispatcher.TryEnqueue(() => MoveCurrentToPosition(index));
 			}
 		}
 
+		#region ICollectionView.Current
 		public EventRegistrationToken AddCurrentChangedHandler(CurrentChangedEventHandler value)
 		{
 			Init();
@@ -193,12 +202,29 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facet
 			CurrentPosition = index;
 			CurrentItem = value;
 
-			_service?.SelectFromView(index);
+			SelectRange(new ItemIndexRange(index, 1));
 
 			_currentChanged.InvocationList?.Invoke(this, CurrentItem);
 
 			return true;
-		}
+		} 
+		#endregion
+
+		/// <inheritdoc />
+		public void SelectRange(ItemIndexRange itemIndexRange)
+			=> _service?.SelectRange(itemIndexRange);
+
+		/// <inheritdoc />
+		public void DeselectRange(ItemIndexRange itemIndexRange)
+			=> _service?.DeselectRange(itemIndexRange);
+
+		/// <inheritdoc />
+		public bool IsSelected(int index)
+			=> _service?.IsSelected(index) ?? false;
+
+		/// <inheritdoc />
+		public IReadOnlyList<ItemIndexRange> GetSelectedRanges()
+			=> _service?.GetSelectedRanges() ?? Array.Empty<ItemIndexRange>();
 
 		public void Dispose()
 		{
