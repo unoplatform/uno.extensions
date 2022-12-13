@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Uno.Extensions.Reactive;
 using Uno.Extensions.Reactive.Core;
@@ -9,6 +10,9 @@ namespace Uno.Extensions.Reactive.Testing;
 
 public class FeedTestContext : ISourceContextAware, IDisposable
 {
+	private static long _contextCount = 0;
+	private long _contextId = Interlocked.Increment(ref _contextCount);
+
 	private readonly string _name;
 	private readonly SourceContext _sourceCtx;
 			
@@ -16,12 +20,14 @@ public class FeedTestContext : ISourceContextAware, IDisposable
 
 	public FeedTestContext(TestContext testContext)
 	{
-		_name = $"[FeedContext] {testContext.FullyQualifiedTestClassName}.{testContext.TestName}"; //{(_testCtx.DataRow is {} dataRow ? $" ({dataRow})" : "")}";
+		_name = testContext is null // On runtime test
+			? $"runtime_tests.{_contextId:D4}"
+			: $"{testContext.FullyQualifiedTestClassName}.{testContext.TestName}";
 
 		_sourceCtx = SourceContext.GetOrCreate(this);
 		_subscription = _sourceCtx.AsCurrent();
 
-		testContext.CancellationTokenSource.Token.Register(Dispose);
+		testContext?.CancellationTokenSource.Token.Register(Dispose);
 
 		// For tests we prefer to replay all vales
 		FeedSubscription.IsInitialSyncValuesSkippingAllowed = false;
