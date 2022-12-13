@@ -8,6 +8,11 @@
 		Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
 	  >
 	<Grid>
-		<Frame  SourcePageType="local:SelectPage" />
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+		<TextBlock Text="{Binding Test}" />
+		<Frame x:Name="RootFrame"  SourcePageType="local:SelectPage" Grid.Row="1"/>
 	</Grid>
 </Page>

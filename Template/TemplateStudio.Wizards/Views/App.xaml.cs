@@ -1,16 +1,15 @@
-﻿//using Microsoft.Extensions.Logging;
+﻿using System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 
-namespace TemplateStudio.Wizards
-{
-    /// <summary>
-    /// Provides application-specific behavior to supplement the default Application class.
-    /// </summary>
+namespace TemplateStudio.Wizards;
+
+/// <summary>
+/// Provides application-specific behavior to supplement the default Application class.
+/// </summary>
 public sealed partial class App : Uno.UI.XamlHost.XamlApplication
     {
         private Window _window;
@@ -180,4 +179,3 @@ public sealed partial class App : Uno.UI.XamlHost.XamlApplication
 //#endif
 //        }
     }
-}

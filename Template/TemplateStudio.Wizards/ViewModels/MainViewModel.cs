@@ -8,6 +8,7 @@ namespace TemplateStudio.Wizards.ViewModels
 {
 	internal class MainViewModel
 	{
+		public string Test => "Hello Wizard!";
 		public Dictionary<string, string> Replacements { get; set; }
 
 		

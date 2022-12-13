@@ -1,56 +1,48 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml.Controls;
 using TemplateStudio.Wizards.ViewModels;
-using Uno.Extensions;
-using TemplateStudio.Wizards.Model;
 
-namespace TemplateStudio.Wizards.Views
+namespace TemplateStudio.Wizards.Views;
+
+internal class SelectAppConfigurationView : StackPanel
 {
-	internal class SelectAppConfigurationView : StackPanel
-	{
-		public SelectAppConfigurationView() {
-			this.DataContext<AppConfigurationViewModel>((panel, vm) => panel
-				.Children(
+	public SelectAppConfigurationView() {
+		this.DataContext<AppConfigurationViewModel>((panel, vm) => panel
+			.Children(
 
-					new TextBlock().Text("Coding Style").FontSize(16),
-					new RadioButton()
-						.Content("C# Markup")
-						.GroupName("Markup")
-						.IsChecked(() => vm.Markup),
+				new TextBlock().Text("Coding Style").FontSize(16),
+				new RadioButton()
+					.Content("C# Markup")
+					.GroupName("Markup")
+					.IsChecked(() => vm.Markup),
 
-					new RadioButton()
-						.Content("XAML")
-						.GroupName("Markup")
-						.IsChecked(() => vm.Markup)
+				new RadioButton()
+					.Content("XAML")
+					.GroupName("Markup")
+					.IsChecked(() => vm.Markup)
 
 
-					//vm.MarkupChoices.ForEach(x => {
-					//	new RadioButton()
-					//	.Content(x.DisplayName)
-					//	.GroupName("Markup")
-					//	.IsChecked(() =>  vm.Markup.Choice == x.Choice);
-					//})
-					//,
+				//vm.MarkupChoices.ForEach(x => {
+				//	new RadioButton()
+				//	.Content(x.DisplayName)
+				//	.GroupName("Markup")
+				//	.IsChecked(() =>  vm.Markup.Choice == x.Choice);
+				//})
+				//,
 
-					//new TextBlock().Text("Framework").FontSize(16),
+				//new TextBlock().Text("Framework").FontSize(16),
 
-					//vm.TargetFrameworkChoices.ForEach(x => {
-					//	new RadioButton()
-					//	.Content(x.DisplayName)
-					//	.GroupName(x.Choice)
-					//	.IsChecked(() => vm.Markup);
-					//})
+				//vm.TargetFrameworkChoices.ForEach(x => {
+				//	new RadioButton()
+				//	.Content(x.DisplayName)
+				//	.GroupName(x.Choice)
+				//	.IsChecked(() => vm.Markup);
+				//})
 
 
 
-				)
-			);
-		}
-
-
+			)
+		);
 	}
+
+
 }

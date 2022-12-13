@@ -62,6 +62,7 @@ namespace TemplateStudio.Wizards
 				UI.ShowModal(host);
 
 				replacementsDictionary.Add("passthrough:is-visx", true.ToString());
+				MessageBox.Show("Wizard done!");
 
 			}
 			catch (Exception ex)
