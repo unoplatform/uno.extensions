@@ -6,11 +6,11 @@ namespace Uno.Extensions.Validation;
 /// Class that can be used to validate objects, properties and methods based on the associated ValidationAttributes. 
 /// </summary>
 /// <typeparam name="T">Type</typeparam>
-public class SystemValidator<T> : IValidator<T> where T: class
+public class SystemValidator<T> : IValidator
 {
 	///<inheritdoc/>
 	public ValueTask<IEnumerable<ValidationResult>> ValidateAsync(
-		T instance,
+		object instance,
 		ValidationContext? context = null,
 		CancellationToken cancellationToken = default)
 	{
@@ -18,7 +18,7 @@ public class SystemValidator<T> : IValidator<T> where T: class
 
 		context ??= new ValidationContext(instance);
 
-		var succeeded = Validator.TryValidateObject(instance, context, results, true);
+		var succeeded = System.ComponentModel.DataAnnotations.Validator.TryValidateObject(instance, context, results, true);
 
 		if (!succeeded && instance is INotifyDataErrorInfo _instance)
 		{

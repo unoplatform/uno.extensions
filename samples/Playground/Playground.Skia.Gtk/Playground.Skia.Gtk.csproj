@@ -47,6 +47,9 @@
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Storage\Uno.Extensions.Storage.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Toolkit.UI\Uno.Extensions.Toolkit.UI.csproj" />
 		<ProjectReference Include="..\..\..\src\Uno.Extensions.Toolkit\Uno.Extensions.Toolkit.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Validation.CommunityToolkit\Uno.Extensions.Validation.CommunityToolkit.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Validation.Fluent\Uno.Extensions.Validation.Fluent.csproj" />
+		<ProjectReference Include="..\..\..\src\Uno.Extensions.Validation\Uno.Extensions.Validation.csproj" />
 	</ItemGroup>
 
 	<Import Project="..\Playground.Shared\Playground.Shared.projitems" Label="Shared" />

@@ -15,9 +15,10 @@ public static class HostBuilderExtensions
 	public static IServiceCollection RegisterValidator<TEntity, TValidator>(
 		this IServiceCollection services)
 		where TValidator: class, FluentValidation.IValidator<TEntity>
+		where TEntity : class
 	{
 		return services
-			.AddScoped<IValidator<TEntity>,FluentValidator<TEntity>>()
+			.AddScoped(typeof(IValidator<TEntity>), typeof(FluentValidator<TEntity>))
 			.AddScoped<FluentValidation.IValidator<TEntity>, TValidator>();
 	}
 }

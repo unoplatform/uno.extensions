@@ -4,7 +4,7 @@
 /// Class that can be used to validate objects, properties and methods based on the associated Fluent Validators. 
 /// </summary>
 /// <typeparam name="T">Type</typeparam>
-public class FluentValidator<T> : IValidator<T> 
+public class FluentValidator<T> : IValidator
 {
 	/// <summary>
 	/// Fluent validator
@@ -18,12 +18,13 @@ public class FluentValidator<T> : IValidator<T>
 
 	///<inheritdoc/>
 	public async ValueTask<IEnumerable<ValidationResult>> ValidateAsync(
-		T instance,
+		object instance,
 		ValidationContext? context = null,
 		CancellationToken cancellationToken = default)
 	{
 		List<ValidationResult> result = new List<ValidationResult>();
-		var validationResult = (await _validator.ValidateAsync(instance, cancellationToken));
+		
+		var validationResult = (await _validator.ValidateAsync((T)instance, cancellationToken));
 		validationResult?.Errors.ForEach(error =>
 		{
 			result.Add(new ValidationResult(error.ErrorMessage));
