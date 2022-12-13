@@ -78,4 +78,5 @@ internal class ProjectPlatformsViewModel : WizardViewModelBase
 		get => Get<bool>();
 		set => Set(value);
 	}
+
 }

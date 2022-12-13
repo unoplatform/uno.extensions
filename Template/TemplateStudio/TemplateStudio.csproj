@@ -93,6 +93,8 @@
 	<!-- Step 4... Add the signed files to the project -->
 	<Target Name="ReferenceWizardAssemblies" AfterTargets="SignWizardFiles">
 		<ItemGroup>
+			<SignedWizardAssembly Include="$(WizardAssemblySignDir)\*\*.dll" />
+			<SignedWizardAssembly Include="$(WizardAssemblySignDir)\**\*.dylib" />
 			<SignedWizardAssembly Include="$(WizardAssemblySignDir)\**\Uno*.dll" />
 			<SignedWizardAssembly Include="$(WizardAssemblySignDir)\**\HarfBuzzSharp*.dll" />
 			<SignedWizardAssembly Include="$(WizardAssemblySignDir)\**\SkiaSharp*.dll" />

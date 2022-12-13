@@ -8,8 +8,18 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
-                <!-- Add resource dictionaries here -->                
-            </ResourceDictionary.MergedDictionaries>
+                <!-- Add resource dictionaries here -->
+
+
+				<!--<MaterialColors xmlns="using:Uno.Material"
+                                OverrideSource="ms-appx:///Styles/ColorPaletteOverride.xaml"/>
+				<MaterialFonts xmlns="using:Uno.Material" />
+				<MaterialResources xmlns="using:Uno.Material" />
+
+				--><!-- Load Uno.Toolkit.UI resources --><!--
+				<ToolkitResources xmlns="using:Uno.Toolkit.UI" />
+				<MaterialToolkitResources xmlns="using:Uno.Toolkit.UI.Material" />-->
+			</ResourceDictionary.MergedDictionaries>
             <!-- Add resources here -->
         </ResourceDictionary>
     </Application.Resources>

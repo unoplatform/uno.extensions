@@ -17,12 +17,12 @@
 	</ItemGroup>-->
 
 	<ItemGroup>
-		<Page Update="Host\WizardHost.xaml" XamlRuntime="wpf" Generator="MSBuild:Compile" SubType="Designer"/>
+		<Page Include="Host\WizardHost.xaml" XamlRuntime="wpf" Generator="MSBuild:Compile" SubType="Designer"/>
 	</ItemGroup>
 
 	<ItemGroup>
-		<ApplicationDefinition Update="Views\App.xaml" XamlRuntime="WinUI" />
-		<Page Update="Views\**\*.xaml" XamlRuntime="WinUI" />		
+		<ApplicationDefinition Include="Views\App.xaml" XamlRuntime="WinUI" />
+		<Page Include="Views\**\*.xaml" XamlRuntime="WinUI" />		
 	</ItemGroup>
 
 	<ItemGroup>
@@ -33,6 +33,8 @@
 			<Version>17.1.32210.191</Version>
 		</PackageReference>
 		<PackageReference Include="Uno.WinUI.Skia.Wpf" Version="4.5.0-dev.453" />
+		<PackageReference Include="Uno.Toolkit.WinUI.Markup" Version="2.4.0-dev.115" />
+		<PackageReference Include="Uno.Themes.WinUI.Markup" Version="2.4.0-dev.64" />
 		<!--
 		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.5.0-dev.453" Condition="'$(Configuration)'=='Debug'" />
 		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.5.0-dev.453" />
