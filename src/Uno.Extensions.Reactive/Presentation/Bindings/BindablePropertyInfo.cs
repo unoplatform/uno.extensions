@@ -48,7 +48,7 @@ public readonly struct BindablePropertyInfo<T>
 	/// Updates the property.
 	/// </summary>
 	/// <param name="updater">The method to update the current value.</param>
-	/// <param name="isLeafPropertyChanged">Indicates if the update is directly on this property (true) or it's dure to an update of a sub-property.</param>
+	/// <param name="isLeafPropertyChanged">Indicates if the update is directly on this property (true) or it's due to an update of a sub-property.</param>
 	/// <param name="ct">A cancellation to cancel the async operation.</param>
 	/// <returns></returns>
 	/// <remarks>This method has to be invoked on the UI thread.</remarks>
