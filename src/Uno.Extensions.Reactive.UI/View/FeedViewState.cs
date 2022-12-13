@@ -51,7 +51,7 @@ public sealed class FeedViewState : System.ComponentModel.INotifyPropertyChanged
 	}
 
 	/// <summary>
-	/// Gets the parent DataContext
+	/// Gets the parent DataContext (i.e. The DataContext of the FeedView itself).
 	/// </summary>
 	public object? Parent
 	{
