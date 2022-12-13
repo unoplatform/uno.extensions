@@ -1,4 +1,7 @@
-﻿using System;
+﻿#pragma warning disable Uno0001 // ISelectionInfo is only an interface!
+
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,51 +11,82 @@ namespace Uno.Extensions.Reactive.Bindings.Collections.Services;
 /// <summary>
 /// A simple selection service which acts as a push-pull adapter between source and the <see cref="BindableCollection"/>.
 /// </summary>
-internal sealed class SelectionService : ISelectionService, IDisposable
+internal sealed class SelectionService : ISelectionService, IDisposable, ISelectionInfo
 {
-	private readonly AsyncAction<uint?> _setSelectionFromView;
+	private readonly AsyncAction<SelectionInfo> _setSelectionFromView;
 
 	private CancellationTokenSource? _setSelectionFromViewToken;
-	private uint? _selectedIndex;
+	private SelectionInfo _selection = SelectionInfo.Empty;
 	private bool _isDisposed;
 
 	/// <inheritdoc />
 	public event EventHandler? StateChanged;
 
-
-	public SelectionService(AsyncAction<uint?> setSelectionFromView)
+	public SelectionService(AsyncAction<SelectionInfo> setSelectionFromView)
 	{
 		_setSelectionFromView = setSelectionFromView;
 	}
 
-	/// <inheritdoc />
-	public uint? SelectedIndex
+
+	#region Change selection from source
+	public void SetFromSource(SelectionInfo selection)
 	{
-		get => _selectedIndex;
-		private set
+		if (Update((_, s) => s, selection))
 		{
-			if (_selectedIndex != value)
-			{
-				_selectedIndex = value;
-				StateChanged?.Invoke(this, EventArgs.Empty);
-			}
+			StateChanged?.Invoke(this, EventArgs.Empty);
+		}
+	} 
+	#endregion
+
+	#region Modify selection from View
+	/// <inheritdoc />
+	public bool IsSelected(int index)
+		=> _selection.Contains(index);
+
+	/// <inheritdoc />
+	public IReadOnlyList<ItemIndexRange> GetSelectedRanges()
+		=> _selection.Ranges.Select(range => new ItemIndexRange((int)range.FirstIndex, range.Length)).ToList();
+
+	/// <inheritdoc />
+	public void SelectRange(ItemIndexRange itemIndexRange)
+	{
+		if (Update((info, removed) => info.Add(removed), new SelectionIndexRange((uint)itemIndexRange.FirstIndex, (uint)itemIndexRange.LastIndex)))
+		{
+			PushToSource();
 		}
 	}
 
 	/// <inheritdoc />
-	public void SelectFromModel(uint? index)
-		=> SelectedIndex = index;
-
-	/// <inheritdoc />
-	public void SelectFromView(int index)
+	public void DeselectRange(ItemIndexRange itemIndexRange)
 	{
-		var selectedIndex = SelectedIndex = index > 0 ? (uint?)index : null;
-
-		if (_isDisposed)
+		if (Update((info, removed) => info.Remove(removed), new SelectionIndexRange((uint)itemIndexRange.FirstIndex, (uint)itemIndexRange.LastIndex)))
 		{
-			return;
+			PushToSource();
 		}
+	} 
+	#endregion
 
+	private bool Update<T>(Func<SelectionInfo, T, SelectionInfo> update, T arg)
+	{
+		while (true)
+		{
+			var original = _selection;
+			var updated = update(original, arg);
+
+			if (original == updated)
+			{
+				return false;
+			}
+
+			if (Interlocked.CompareExchange(ref _selection, updated, original) == original)
+			{
+				return true;
+			}
+		}
+	}
+
+	private void PushToSource()
+	{
 		var ct = new CancellationTokenSource();
 		Interlocked.Exchange(ref _setSelectionFromViewToken, ct)?.Cancel();
 
@@ -62,7 +96,7 @@ internal sealed class SelectionService : ISelectionService, IDisposable
 			return;
 		}
 
-		Task.Run(() => _setSelectionFromView(selectedIndex, ct.Token), ct.Token);
+		Task.Run(() => _setSelectionFromView(_selection, ct.Token), ct.Token);
 	}
 
 	/// <inheritdoc />
