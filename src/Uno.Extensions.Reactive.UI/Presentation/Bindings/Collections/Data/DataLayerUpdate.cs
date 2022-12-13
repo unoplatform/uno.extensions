@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Uno.Extensions.Collections;
+using Uno.Extensions.Collections.Facades.Differential;
 using Uno.Extensions.Collections.Tracking;
 using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data;
 using Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Facets;
@@ -82,7 +83,7 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 				else if (_context.HasReachedLimit)
 				{
 					// We should reach this code only for a root holder, for children we should have been invoked with 'silently = true'
-					_target.UpdateTo(_changes.ToReset(_target.ToImmutable(), Result), Result);
+					_target.UpdateTo(_changes.ToReset(_target.Head.AsList(), Result), Result);
 				}
 				else
 				{

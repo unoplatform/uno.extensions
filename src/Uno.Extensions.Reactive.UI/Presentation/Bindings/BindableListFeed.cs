@@ -5,6 +5,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Uno.Extensions.Collections;
+using Uno.Extensions.Collections.Facades.Differential;
 using Uno.Extensions.Collections.Tracking;
 using Uno.Extensions.Reactive.Bindings.Collections;
 using Uno.Extensions.Reactive.Bindings.Collections.Services;
@@ -104,8 +106,9 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 		var requests = new RequestSource();
 		var pagination = new PaginationService(LoadMore);
 		var selection = new SelectionService(SetSelected);
-		var services = new SingletonServiceProvider(pagination, selection);
-		
+		var edition = new EditionService(Edit);
+		var services = new SingletonServiceProvider(pagination, selection, edition);
+
 		collection = BindableCollection.Create(
 			services: services,
 			itemComparer: ListFeed<T>.DefaultComparer);
@@ -174,6 +177,26 @@ public sealed partial class BindableListFeed<T> : ISignal<IMessage>, IListState<
 
 		async ValueTask SetSelected(SelectionInfo info, CancellationToken ct)
 			=> await state.UpdateMessage(msg => msg.Selected(info).Set(BindableViewModelBase.BindingSource, collection), ct);
+
+		async ValueTask Edit(Func<IDifferentialCollectionNode, IDifferentialCollectionNode> change, CancellationToken ct)
+			=> await state.UpdateMessage(msg =>
+			{
+				// Note: The change might have been computed on an older version of the collection
+				// We are NOT validating this. It means that we cou;d get an out-of-range for remove for instance.
+
+				var currentItems = msg.CurrentData.SomeOrDefault();
+				var currentHead = currentItems switch
+				{
+					IDifferentialCollection diffCollection => diffCollection.Head,
+					null => new EmptyNode(),
+					_ => new ResetNode<T>(currentItems)
+				};
+				var newHead = change(currentHead);
+				var newItems = new DifferentialImmutableList<T>(newHead) as IImmutableList<T>;
+
+				msg.Data(newItems).Set(BindableViewModelBase.BindingSource, collection);
+			},
+				ct);
 
 		return collection;
 	}
