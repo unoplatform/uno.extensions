@@ -106,7 +106,7 @@
 		</ItemGroup>
 		<Copy SourceFiles="@(SignedWizardAssembly)" DestinationFiles="$(TargetDir)%(RecursiveDir)%(Filename)%(Extension)" />
 		<ItemGroup>
-			<WizardContent Include="$(WizardAssemblySignDir)\*\*.dll" />
+			<WizardContent Include="$(WizardAssemblySignDir)\**\*.dll" />
 			<WizardContent Include="$(WizardAssemblySignDir)\**\*.dylib" />
 
 			<Content Include="$(WizardContent)">

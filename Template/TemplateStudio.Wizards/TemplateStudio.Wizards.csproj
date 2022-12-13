@@ -17,12 +17,12 @@
 	</ItemGroup>-->
 
 	<ItemGroup>
-		<Page Include="Host\WizardHost.xaml" XamlRuntime="wpf" Generator="MSBuild:Compile" SubType="Designer"/>
+		<Page Update="Host\WizardHost.xaml" XamlRuntime="wpf" Generator="MSBuild:Compile" SubType="Designer"/>
 	</ItemGroup>
 
 	<ItemGroup>
-		<ApplicationDefinition Include="Views\App.xaml" XamlRuntime="WinUI" />
-		<Page Include="Views\**\*.xaml" XamlRuntime="WinUI" />		
+		<ApplicationDefinition Update="Views\App.xaml" XamlRuntime="WinUI" />
+		<Page Update="Views\**\*.xaml" XamlRuntime="WinUI" />		
 	</ItemGroup>
 
 	<ItemGroup>

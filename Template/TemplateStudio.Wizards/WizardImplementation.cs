@@ -57,7 +57,8 @@ namespace TemplateStudio.Wizards
 			try
 			{
 				
-				var host = new WizardHost(replacementsDictionary);
+				var host = new WizardHost();
+				host.DataContext = new MainViewModel() { Replacements = replacementsDictionary };
 				UI.ShowModal(host);
 
 				replacementsDictionary.Add("passthrough:is-visx", true.ToString());
