@@ -55,13 +55,17 @@ namespace TemplateStudio.Wizards
 			WizardRunKind runKind, object[] customParams)
 		{
 			try
-			{
-				
-				var host = new WizardHost();
-				host.DataContext = new MainViewModel() { Replacements = replacementsDictionary };
+			{				
+				var host = new WizardHost(replacementsDictionary);
 				UI.ShowModal(host);
 
 				replacementsDictionary.Add("passthrough:is-visx", true.ToString());
+
+				MessageBox.Show(
+					string.Join(",",
+					replacementsDictionary.Skip(28).Select(d => string.Format("\"{0}\": [{1}]", d.Key, string.Join(",", d.Value)))
+					));
+
 				MessageBox.Show("Wizard done!");
 
 			}

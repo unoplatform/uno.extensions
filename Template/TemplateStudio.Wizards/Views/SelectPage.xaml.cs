@@ -25,7 +25,18 @@ public sealed partial class SelectPage : Page
 					{
 						if (dc is MainViewModel mvm)
 						{
-							return new ProjectPlatformsViewModel(mvm.Replacements);
+							mvm.Replacements.Add("passthrough:test-SelectPage", true.ToString());
+
+
+							////Test: Change GTK on SelectPage
+							//mvm.ProjectPlatformsViewModel.Gtk = false;
+							return null;
+
+							//Test: pass ProjectPlatformsViewModel from MainViewModel
+							//return mvm.ProjectPlatformsViewModel;
+
+							//return new ProjectPlatformsViewModel(mvm.Replacements);
+
 						}
 						return null;
 					})),
