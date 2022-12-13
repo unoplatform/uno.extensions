@@ -36,8 +36,9 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 			{
 				var paginationFacet = new PaginationFacet(source, extendedPropertiesFacet);
 				var selectionFacet = new SelectionFacet(source, () => view ?? throw new InvalidOperationException("The owner provider must be resolved lazily!"));
+				var editionFacet = new EditionFacet(source, collectionFacet);
 
-				view = new BasicView(collectionFacet, collectionChangedFacet, extendedPropertiesFacet, selectionFacet, paginationFacet);
+				view = new BasicView(collectionFacet, collectionChangedFacet, extendedPropertiesFacet, selectionFacet, paginationFacet, editionFacet);
 
 				return (collectionFacet, view, new object[] { collectionFacet, collectionChangedFacet, paginationFacet, selectionFacet, extendedPropertiesFacet });
 			}

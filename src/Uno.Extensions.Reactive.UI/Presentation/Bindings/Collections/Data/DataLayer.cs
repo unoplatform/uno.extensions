@@ -195,6 +195,9 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 		/// <inheritdoc />
 		public object? GetService(Type serviceType)
 			=> _services?.GetService(serviceType);
+
+		public void Update(RichNotifyCollectionChangedEventArgs args)
+			=> _currentChangesBuffer?.Add(args); // Note: _currentChangesBuffer should never be 'null' here.
 		#endregion
 
 		public void Schedule(Action action)
@@ -203,9 +206,9 @@ namespace Uno.Extensions.Reactive.Bindings.Collections._BindableCollection.Data
 			{
 				_parent.Schedule(action);
 			}
-			else if (_context is not null and {HasThreadAccess: false})
+			else if (_context is not null and { HasThreadAccess: false })
 			{
-				_context.TryEnqueue(() => action());
+				_context.TryEnqueue(action);
 			}
 			else
 			{
