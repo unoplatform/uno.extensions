@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Uno.Extensions.Reactive.Utils;
 
 namespace Uno.Extensions.Reactive;
 
@@ -193,6 +194,42 @@ public sealed record SelectionInfo
 
 		return selectedItems.ToImmutable();
 	}
+
+	/// <summary>
+	/// Determines if an index is contained by any of the ranges of this selection info
+	/// </summary>
+	/// <param name="index">The index to validate.</param>
+	/// <returns>True is the index is present, false otherwise.</returns>
+	public bool Contains(int index)
+		=> Ranges.Any(range => range.FirstIndex >= index && range.LastIndex <= index);
+
+	/// <summary>
+	/// Create a new SelectionInfo which contains ranges of this instance among the provided <paramref name="range"/>.
+	/// </summary>
+	/// <remarks>The provided range will be coerced with current ranges to avoid duplicate and reduce the number of ranges.</remarks>
+	/// <param name="range">The range to add.</param>
+	/// <returns>A new SelectionInfo which contains all selected ranges.</returns>
+	public SelectionInfo Add(SelectionIndexRange range)
+		=> new(SelectionHelper.Add(Ranges, range));
+
+	/// <summary>
+	/// Create a new SelectionInfo which contains ranges of this instance except the provided <paramref name="range"/>.
+	/// </summary>
+	/// <remarks>
+	/// The provided range is not required to be an instance of the <see cref="Ranges"/>, it can be a subset of any current range
+	/// and even be out of current ranges (i.e. this method won't have any impact).
+	/// </remarks>
+	/// <param name="range">The range to remove.</param>
+	/// <returns>A new SelectionInfo which contains current ranges except <paramref name="range"/>.</returns>
+	public SelectionInfo Remove(SelectionIndexRange range)
+		=> new(SelectionHelper.Remove(Ranges, range));
+
+	/// <summary>
+	/// Returns the <see cref="Empty"/> instance.
+	/// </summary>
+	/// <returns>Returns the <see cref="Empty"/> instance.</returns>
+	public SelectionInfo Clear()
+		=> Empty;
 
 	/// <inheritdoc />
 	public override string ToString()
