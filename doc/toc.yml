@@ -170,6 +170,8 @@
       items:
         - name: Generating Extensions
           href: Reference/Markup/GeneratingExtensions.md
+        - name: Binding 101
+          href: Reference/Markup/Binding101.md
         - name: Dependency Property Builder
           href: Reference/Markup/DependencyPropertyBuilder.md
         - name: Attached Properties

@@ -11,8 +11,11 @@ WinUI has a number of different templates. All templates are generated based on 
 
 ```cs
 new ListView()
-	.ItemTemplate<TodoItem>(item => new TextBlock().Text(item.Title))
+	.ItemTemplate<TodoItem>(item => new TextBlock().Text(() => item.Title))
 ```
+
+> [!WARNING]
+> The delegate property `item` will be null and cannot be used to access the state of the model. Attempting to access property values directly will result in a NullReferenceException. You must use Bindings to set values from your Model. If you need to dynamically update the view based on the state of the model, you should consider using a `DataTemplateSelector` instead.
 
 ### DataTemplateSelector
 
@@ -25,10 +28,10 @@ new ListView()
 		.Case(v => v.Year < 1960, () => new TextBlock().Text(() => vehicle.Model)))
 		.Case<Car>(car => car.Doors > 2, car => new StackPanel()
 			.Children(
-				new Image().Source(Resource.Static<ImageSource>("Sedan.png")),
+				new Image().Source(StaticResource.Get<ImageSource>("Sedan.png")),
 				new TextBlock().Text(() => car.Model)))
 		.Case<Truck>(truck => new StackPanel().Children(
-			new Image().Source(Resource.Static<ImageSource>("truck.png")),
+			new Image().Source(StaticResource.Get<ImageSource>("truck.png")),
 			new TextBlock().Text(() => truck.TowingCapacity)
 		))
 ```
